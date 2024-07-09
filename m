@@ -1,182 +1,155 @@
-Return-Path: <linux-kernel+bounces-245331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAE2992B15F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:41:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EB7592B14C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE5D11C2144B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:41:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AB6228231D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D10D14A615;
-	Tue,  9 Jul 2024 07:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99898145324;
+	Tue,  9 Jul 2024 07:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ohzxsFGG"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dqlOdBIy"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50AC13BC30;
-	Tue,  9 Jul 2024 07:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5258827713;
+	Tue,  9 Jul 2024 07:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720510860; cv=none; b=X8g/jWq8SKAemRSljG2EGMhI87tgGoJp3KV+9cpkqK90FoVM2oDyAGqNoFxP9lAweWSNHqgWmKkasZK4zefeIO167bFuE9lzTBA+4xFefHgMOtcckmuhaTMUscYkdkpb3FzruK422cPC0d4Gnte89SWE1JmFmM3pNEYFsrsDcQQ=
+	t=1720510648; cv=none; b=bjJM2QiKl2njvx1M7Nic8U3XnN9oM1eJDmTcUyF7TGZQgUOuF76/4aoyvvkdlfGXUEdr0r6p1KKE9xplwUHZ5f3puy5yzvwTKq5+lsc8b1NHzhiB5EQv56w6lxic/XCsxOEhp//2TPAdKSfSM8mD24J/z8OzxdUyKnuvYuAg8N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720510860; c=relaxed/simple;
-	bh=mYo7BBhpvpBBP6FL1/v+q7xQ7NJIq+ysLMBI1P5ITMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=YMFsH+wXjc1SgzMixiaf3tqbotWDSW2zjIaOFXClcpHWzbvjfbLhi51Sfk8v9RJprzgUSb82SQew5+VDeHZMDYh9ySgUY/yZZx/40nImGi18YLgFNkG4eEXijQR60hYeZt0Dmlw/uuBvnbY8oRKN3mOCB8hK8CXPa5erPnse3YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ohzxsFGG; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720510855;
-	bh=OwVQjnWdc27b9qsSsgiOeJjlBd4pbZkQSedap0Ld7VQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ohzxsFGG8wwni+M09QuRQ3hBteffi336ndNeCuSnZK8Efyp+CfyQ73tpnzT99Voh/
-	 r+146Vl0EdRwaXYDGGBtlVSJd+sA/jtACtQP43xc2x1yNxeYTk2LOuMuuW+U5SP8oh
-	 rkTtWTXibjvTRZA4+0kIBEdN4ENpJyimugxdBF7IkPoEOZt4D9hskl5EyrRyfpfBQT
-	 Za4doTFYFwDTgrVjh1RFVQQrNPyfS+joFzHEClI1cuRrg8YFxnkrRz5oBPIP/KuSjb
-	 1yTARMy4ip7R3LQZ79nMpW7YHbVfWKOTYr1aTCxJd8ySyNe633p4eZknAX52dkFF/J
-	 ZaEmwtfDiasHQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJCbB4M48z4w2R;
-	Tue,  9 Jul 2024 17:40:54 +1000 (AEST)
-Date: Tue, 9 Jul 2024 17:40:53 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Theodore Ts'o <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Barry Song <baohua@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
- Lance Yang <ioworker0@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the random tree with the mm-stable tree
-Message-ID: <20240709174053.051a46a4@canb.auug.org.au>
+	s=arc-20240116; t=1720510648; c=relaxed/simple;
+	bh=HyE1OC2jUz69RbLf+QbjEwXtvPn9VOx/T6a0hK703Co=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rVxSUV2qRQVewxFQOqFsC0eAl/FyFMflykLPgT3MvZ/JTWDbpfdkK/q1eNii0r+BUOPVcJUUX4xInPCbPjpIUqaZNHP5FUJ+mxpIFqAoX71YXICR0a17HgwboujFeR9HETdBiFpMXG/BOSiWRxFtPEPPqM6KLgeqb8CeSxf+ISA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dqlOdBIy; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ee910d6aaeso53860861fa.1;
+        Tue, 09 Jul 2024 00:37:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720510645; x=1721115445; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gJblcrgCB69StiCEtXH3DZ/GYofswUEElGj+y5LAqrc=;
+        b=dqlOdBIy3T1ujy5KSBThBeW3TzJu9lv6DKxYBcQtxLtfurTbhJ1MiTNQ07KZV7+IXo
+         3OIRr/paFAnPf4a8eMasuDEb/R3/SD3I3cq85jKVMEUO5at0/xvoa5qc0OuFjD3tO5zC
+         AwZs49ySZ5KjqQW2zejnVASd2oFWWdWjUvPIB1a/ihlRVrg11/nzwcGacdMjJkqWFlua
+         PtgDtwD3HVsjP3JqZan6PnibLC8XuiAc5hQEWDdmJG19ftpdkVlgT32L/1M06Kz9T2sd
+         pQdsb7eNRaUZljbP6KvNBac82kBJagY2GozJuZvRq6fM+JJKxoOZ5nXnAXjRLOLXjWW0
+         xPsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720510645; x=1721115445;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gJblcrgCB69StiCEtXH3DZ/GYofswUEElGj+y5LAqrc=;
+        b=JXYdjJXgYM+vce3xZKaS8ooJWfcYIDe7JY8QNbQR6B38TwVhCM32d2zXmJhvovcQ0p
+         x2izwinsBR7cEIENZOvTSQXZX/aQ/rnLqYUN+3fElYap5HanS7IgBOtt9wEdme2gHEwX
+         rWvmqpa/LDAOs+tXT5mtDK6PdZCTVhHuVedAMbxyUpsEYcpdRG2yZg6VEcoj3365V7FY
+         GNFbbNm4B79aaM2e4ZteDGgEWc0mZmMDvEALD/f2ifnGC6gjIEor2alRxevYAWhhikAr
+         JBOd+mgsHtCNLdHuS9s6Fv7a8PE1rsc2xhDxpwVuhal4cCPc+/C3Ex30bQHDM6DZSqv/
+         QKgA==
+X-Forwarded-Encrypted: i=1; AJvYcCVO+eYYpy3xqfkuvyIsxu7JgjeQwt8+YJKOgPVmB7mD0GtTy1E3yqMBKSfoQD2AIAr3wlxQ8eSCo2ZkuAl5ap5EcRNau2KgwjaYnpWiq7odRf+Fs2ECrdApiZGmJ/Cl4NkA8JDKzdPAgcqsIDrIKfgdCZO44ZbxoWnfHb7fd9pqsI74VzDK0pExxH6HuUj9ccAuvkucnn3Fnxq/cOdTWg==
+X-Gm-Message-State: AOJu0YyQf4X9/PE7s57PAS01EbDBgqscgUUYr5Y8EgjhQqSJch2dlFmE
+	jj6RL+NiW9o1KD28TXW6Hs102tiLADOVBBt/DKvWCXJaJ9Q5UWht
+X-Google-Smtp-Source: AGHT+IF1DuvD0MmXmObeiIwlMnO3IreBxRQdx/tSoUTS0K1lrv/8qspqFspqy+cy1inG25V9c4HGcw==
+X-Received: by 2002:a05:6512:31c8:b0:52d:b118:5063 with SMTP id 2adb3069b0e04-52eb99cc6camr965176e87.47.1720510645078;
+        Tue, 09 Jul 2024 00:37:25 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bd459e2csm737131a12.65.2024.07.09.00.37.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 00:37:24 -0700 (PDT)
+Message-ID: <5c7fcaa93c8184dd62beeccccfa07e144042fdc4.camel@gmail.com>
+Subject: Re: [PATCH v6 6/7] iio: adc: Add support for AD4000
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org, 
+ lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+  nuno.sa@analog.com, dlechner@baylibre.com, corbet@lwn.net, 
+ marcelo.schmitt1@gmail.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 09 Jul 2024 09:41:18 +0200
+In-Reply-To: <628a85cb8cbee32ea7d2930c63e73f2ef449a800.1719686465.git.marcelo.schmitt@analog.com>
+References: <cover.1719686465.git.marcelo.schmitt@analog.com>
+	 <628a85cb8cbee32ea7d2930c63e73f2ef449a800.1719686465.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Nss_ongiZk.IhXDCBHpNi9z";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/Nss_ongiZk.IhXDCBHpNi9z
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sat, 2024-06-29 at 16:06 -0300, Marcelo Schmitt wrote:
+> Add support for AD4000 series of low noise, low power, high speed,
+> successive approximation register (SAR) ADCs.
+>=20
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> ---
 
-Hi all,
+Hi Marcelo,
 
-Today's linux-next merge of the random tree got a conflict in:
+LGTM. Only one thing that needs to be addressed. With that,
 
-  mm/rmap.c
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-between commits:
+> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> =C2=A0drivers/iio/adc/Kconfig=C2=A0 |=C2=A0 12 +
+> =C2=A0drivers/iio/adc/Makefile |=C2=A0=C2=A0 1 +
+> =C2=A0drivers/iio/adc/ad4000.c | 708 ++++++++++++++++++++++++++++++++++++=
++++
+> =C2=A04 files changed, 722 insertions(+)
+> =C2=A0create mode 100644 drivers/iio/adc/ad4000.c
+>=20
 
-  26d21b18d971 ("mm/rmap: remove duplicated exit code in pagewalk loop")
-  15bde4abab73 ("mm: extend rmap flags arguments for folio_add_new_anon_rma=
-p")
+...
 
-from the mm-stable tree and commit:
+>=20
+> +	st->gain_milli =3D 1000;
+> +	if (chip->has_hardware_gain &&
+> +	=C2=A0=C2=A0=C2=A0 device_property_present(dev, "adi,gain-milli")) {
+> +		ret =3D device_property_read_u16(dev, "adi,gain-milli",
+> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &st->gain_milli);
+> +		if (ret)
+> +			return dev_err_probe(dev, ret,
+> +					=C2=A0=C2=A0=C2=A0=C2=A0 "Failed to read gain
+> property\n");
+> +	}
 
-  94beef29e110 ("mm: add MAP_DROPPABLE for designating always lazily freeab=
-le mappings")
+The above is odd. Why not reading directly device_property_read_u16()? Skip=
+ the
+call to device_property_present().=C2=A0
 
-from the random tree.
+But most importantly, you're not doing any validation on gain_milli which i=
+s an
+enum (by looking at the bindings). So in theory even 0 would be accepted wh=
+ich
+would lead to a divide by 0 later on. I would do:
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+if (chip->has_hardware_gain) {
+	ret =3D device_property_read_u16(...)
+	if (!ret) {
+		/* validate here for a proper value /*
+	}
+}
 
---=20
-Cheers,
-Stephen Rothwell
+You can also check for ret < 0 and -EINVAL to detect an invalid devicetree
+parameter instead of completely ignoring return codes (but for non mandator=
+y
+properties one typically does not care much - up to you)
 
-diff --cc mm/rmap.c
-index 8616308610b9,1f9b5a9cb121..000000000000
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@@ -1394,27 -1384,26 +1394,30 @@@ void folio_add_anon_rmap_pmd(struct fol
-   *
-   * Like folio_add_anon_rmap_*() but must only be called on *new* folios.
-   * This means the inc-and-test can be bypassed.
- - * The folio does not have to be locked.
- + * The folio doesn't necessarily need to be locked while it's exclusive
- + * unless two threads map it concurrently. However, the folio must be
- + * locked if it's shared.
-   *
- - * If the folio is pmd-mappable, it is accounted as a THP.  As the folio
- - * is new, it's assumed to be mapped exclusively by a single process.
- + * If the folio is pmd-mappable, it is accounted as a THP.
-   */
-  void folio_add_new_anon_rmap(struct folio *folio, struct vm_area_struct *=
-vma,
- -		unsigned long address)
- +		unsigned long address, rmap_t flags)
-  {
- -	int nr =3D folio_nr_pages(folio);
- +	const int nr =3D folio_nr_pages(folio);
- +	const bool exclusive =3D flags & RMAP_EXCLUSIVE;
- +	int nr_pmdmapped =3D 0;
- =20
-  	VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
- +	VM_WARN_ON_FOLIO(!exclusive && !folio_test_locked(folio), folio);
-  	VM_BUG_ON_VMA(address < vma->vm_start ||
-  			address + (nr << PAGE_SHIFT) > vma->vm_end, vma);
--=20
-- 	if (!folio_test_swapbacked(folio))
-+ 	/*
-+ 	 * VM_DROPPABLE mappings don't swap; instead they're just dropped when
-+ 	 * under memory pressure.
-+ 	 */
- -	if (!(vma->vm_flags & VM_DROPPABLE))
-++	if (!folio_test_swapbacked(folio) && !(vma->vm_flags & VM_DROPPABLE))
-  		__folio_set_swapbacked(folio);
- -	__folio_set_anon(folio, vma, address, true);
- +	__folio_set_anon(folio, vma, address, exclusive);
- =20
-  	if (likely(!folio_test_large(folio))) {
-  		/* increment count (starts at -1) */
-@@@ -1858,8 -1862,15 +1867,13 @@@ static bool try_to_unmap_one(struct fol
-  				 * discarded. Remap the page to page table.
-  				 */
-  				set_pte_at(mm, address, pvmw.pte, pteval);
-- 				folio_set_swapbacked(folio);
-+ 				/*
-+ 				 * Unlike MADV_FREE mappings, VM_DROPPABLE ones
-+ 				 * never get swap backed on failure to drop.
-+ 				 */
-+ 				if (!(vma->vm_flags & VM_DROPPABLE))
-+ 					folio_set_swapbacked(folio);
- -				ret =3D false;
- -				page_vma_mapped_walk_done(&pvmw);
- -				break;
- +				goto walk_abort;
-  			}
- =20
-  			if (swap_duplicate(entry) < 0) {
+- Nuno S=C3=A1
 
---Sig_/Nss_ongiZk.IhXDCBHpNi9z
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaM6YYACgkQAVBC80lX
-0GybgAf9ECAKGIckkbB4BocYWJ2LMVtImP9MpX5fijc2X7IUsowkamBueLMpgVIa
-o06Z6BEgfLrs5IDk/2KJLh2blwxaub/cQJbIylL4BiyGTKQM6+TwvuBDDbNESaQX
-rH9C5CrGBjNDFCL+R0qOS0NyK98Q9gOLb7MpsdnI3KjKYPczM4TVwQgKcpn8UFBG
-6szVfoxMtWWspV6rvMDRKCrqoKn8SFY+1n2yB0grzs9ZYnY4jooO49xqyiwbaqlh
-xqN+gDGASx7jZ35vH5qFfMvHiUNZxr5fPKsR06nPHk7H4xpOtrAMIRvTAxH8/eIl
-B+IPAD1AUGOo/PXILnAJDPjyZZ5igw==
-=xolW
------END PGP SIGNATURE-----
-
---Sig_/Nss_ongiZk.IhXDCBHpNi9z--
 
