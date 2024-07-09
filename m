@@ -1,366 +1,150 @@
-Return-Path: <linux-kernel+bounces-246053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6265792BD0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:37:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2990792BD14
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF5C7B25F2C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:37:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D82CC288DB7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6C219D88D;
-	Tue,  9 Jul 2024 14:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5825619DF54;
+	Tue,  9 Jul 2024 14:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fciBUmLW"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mZlr3z5u"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCFDA19D076;
-	Tue,  9 Jul 2024 14:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B76819D8BB;
+	Tue,  9 Jul 2024 14:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720535722; cv=none; b=W9/+OVovikxkRlz+f1bxGzuGVIklAaj+QgU2ddChTXyWZfxKvEdYaKxZPiwC43ershGX8HpoxNZ665+Ox1diNZZGZ3nZS7HxX7dTEZSyi7P0AiL+69Y87t3atnXETc/ihvfwx5gV/K4BQBwwEhchHOip1qEBsFFDrzRT+PkvAi8=
+	t=1720535751; cv=none; b=mDwmAMNn8phGdf6SHNduozd5RJQ3RG+13CcuNJoTTlY5y0dcZYriMGrmA3Fsrtw3cz8IwjO7kSw4LVnlek/BXozZ9lyN4QQTsk2b0kGHKXhpAxWCfGJnyE0nYEbcD1JZba8juqfUA2gs6P9RZiDBMyrNg3moKv+RPi37QdTPZXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720535722; c=relaxed/simple;
-	bh=JgDEnFt8RqK4LXup0WYHlgili2GXBkDCKWKpa9McN7Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dCkA33ieswV9OIlMEpUVWNYenGe7iEuT7CI/V9wg8hDZj8PR2PrExEwp1qYhfFl28a6Lyta5A6qDGj0Z6It+WXedVOJ4rtMa+1MpiTHWu8Mi6YX2VsxXuDoWef0qBck+Dh13fUOssBcKQcpSTvq3YmUg6A4QcH3fQ0kkwivMLZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fciBUmLW; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469DvnJC024297;
-	Tue, 9 Jul 2024 14:35:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=i
-	PbDXvfPgD6q0soddCJjbSeVGFtOhxVtZok3llCgX0k=; b=fciBUmLWBKx0v2puv
-	nbMB8FEhppgsndiU7K+5S0vYRFs2klNuGrN3W+prtQI2n3FN5juFajbJl59eN3p7
-	l/aMBgMSVKMBYI8rbgt8NDp5ulhrhMXzRWhuAw1LdH9dBHVJO5eSt91fMm8SGJiz
-	UzZk8HGWolghbjcyVQpxWxSiFZlqKzr6HBxYGCF+gHVWnEKhbIft2MuaXs2giyO7
-	vbNkLCGrHfKuNZsszU9MhkR4acsAjG8Z+uvpS+j5YVE80rmLVN8Nt5s34TaJUrwo
-	DUfwgAgnQHMzGPmpmCayxAO/V6b2mRUygkbsvPWQdBsOEp/7+tevcsXD8xF4eBuU
-	qvbDQ==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4092ks8sj6-1
+	s=arc-20240116; t=1720535751; c=relaxed/simple;
+	bh=4+fmzR+/2ETRPs+s3fUsvIAsy410FKmf8CL51ifTPrs=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=HtjEAU8zJ8TMt0Wvu6GK7S10Vypjywtdyew7Ixy0uj0RD0M8PY21kcD2JuUrBG8zRlBuDHO2knWzqJJyITewFd2ddgUHiVIScKtP/1w/MFH3Au8U8p16nThVjj6+3FJMr9ILwUxA85+1gX964cry2uERrUrxEGK5Ko93wXYlCHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mZlr3z5u; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469Aqu6V029428;
+	Tue, 9 Jul 2024 14:35:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=h7yzyLhCdR3TeTqKzaFi+D
+	Da20giDro5hsjyGrqhKgc=; b=mZlr3z5uyEjsjjBdkn9nh2JUqTuMVrSlZ3Edrb
+	0eFcYl2W9dR2i5PWpPVfX6cGpeRu8USeMGjR5nqIMZLtCsTT8ytNDAd0B/2rt7J+
+	aFshnrDmTy9FcG32YyNu6jCNuLLJfEL1pToAC8BN1tivtZk4O5U/ZZJUzB0uOOGU
+	rd4tUMU/EvdJ2xijjoYOmulmcCT+XYKIzeOHaYTX/96/TKjzQGdWmRfZB+bdADTm
+	d6VgKgUzLCMmbyuquFnBxHMkCUHHonzIYKD+J3U5YjOV1T0e83sAJWJR/84+27UC
+	SPgQOWZUfh2/TInTdvQfy23Fu/ynJuUjdXbmPmq4i/hrt8ww==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406xa66n1j-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 14:35:08 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 469CMk3K024575;
-	Tue, 9 Jul 2024 14:35:07 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 407hrmmwc8-1
+	Tue, 09 Jul 2024 14:35:46 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469EZinF028867
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 14:35:07 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 469EZ4wP38076946
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 9 Jul 2024 14:35:07 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 99C9B58064;
-	Tue,  9 Jul 2024 14:35:04 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 450BF58056;
-	Tue,  9 Jul 2024 14:35:04 +0000 (GMT)
-Received: from [9.61.77.123] (unknown [9.61.77.123])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  9 Jul 2024 14:35:04 +0000 (GMT)
-Message-ID: <ccae0209-d48d-4c5f-964d-cb384e5fd9e8@linux.ibm.com>
-Date: Tue, 9 Jul 2024 09:35:03 -0500
+	Tue, 9 Jul 2024 14:35:44 GMT
+Received: from tengfan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 9 Jul 2024 07:35:39 -0700
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+Subject: [PATCH v2 0/2] clk: qcom: rpmh: Add QCS9100 rpmh compatible
+Date: Tue, 9 Jul 2024 22:35:28 +0800
+Message-ID: <20240709-add_qcs9100_rpmh_clk_compatible-v2-0-b6f516c36818@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 15/60] i2c: fsi: reword according to newest
- specification
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org
-Cc: Andi Shyti <andi.shyti@kernel.org>, openbmc@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
- <20240706112116.24543-16-wsa+renesas@sang-engineering.com>
-Content-Language: en-US
-From: Eddie James <eajames@linux.ibm.com>
-In-Reply-To: <20240706112116.24543-16-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: hCiKMkG92dDewDjYyLNMlv65ZRknNhOI
-X-Proofpoint-ORIG-GUID: hCiKMkG92dDewDjYyLNMlv65ZRknNhOI
+X-B4-Tracking: v=1; b=H4sIALBKjWYC/zXNSw6CMBSF4a2Yji25LW9H7sOQppYL3AgFWiQaw
+ t4tJA6/Mzj/xjw6Qs9ul405XMnTaAPk9cJMp22LnOpgJkEmkEPJdV2r2fhSACg3DZ0y/UuZcZj
+ 0Qs8eOaZ5nBUJCJElLLxMDhv6nIVHFdyRX0b3PYOrONb/dwwyLVKIpMglQMEFn99k1IK2bbS9H
+ yBrotBi1b7vPyeaB9q7AAAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Tengfei Fan <quic_tengfan@quicinc.com>
+X-Mailer: b4 0.15-dev-a66ce
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720535738; l=1678;
+ i=quic_tengfan@quicinc.com; s=20240709; h=from:subject:message-id;
+ bh=4+fmzR+/2ETRPs+s3fUsvIAsy410FKmf8CL51ifTPrs=;
+ b=CnKuolB0ZL242WWh596qjAMaELQmggXSLXyr8FjYlEVgEwNDGTbK7jmrV6/SI6EZKAEzhbteL
+ P726spHVCLXBBeXBhm9s8FzsbS2i0GJJ09JLzSPvGf9Q0yIVao6KkA1
+X-Developer-Key: i=quic_tengfan@quicinc.com; a=ed25519;
+ pk=4VjoTogHXJhZUM9XlxbCAcZ4zmrLeuep4dfOeKqQD0c=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 4N0jpF_9louQnVpb2glEnYyVn_UPZh8c
+X-Proofpoint-ORIG-GUID: 4N0jpF_9louQnVpb2glEnYyVn_UPZh8c
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-07-09_04,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- suspectscore=0 clxscore=1011 bulkscore=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=999 adultscore=0 impostorscore=0 phishscore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=649
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0 spamscore=0
+ clxscore=1015 adultscore=0 malwarescore=0 mlxscore=0 bulkscore=0
  priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090093
+ engine=8.19.0-2406140001 definitions=main-2407090095
 
+Introduce support for the QCS9100 SoC device tree (DTSI) and the
+QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+While the QCS9100 platform is still in the early design stage, the
+QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+mounts the QCS9100 SoC instead of the SA8775p SoC.
 
-On 7/6/24 06:20, Wolfram Sang wrote:
-> Change the wording of this driver wrt. the newest I2C v7 and SMBus 3.2
-> specifications and replace "master/slave" with more appropriate terms.
+The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
+all the compatible strings will be updated from "SA8775p" to "QCS9100".
+The QCS9100 device tree patches will be pushed after all the device tree
+bindings and device driver patches are reviewed.
 
+The final dtsi will like:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
 
-Reviewed-by: Eddie James <eajames@linux.ibm.com>
+The detailed cover letter reference:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
 
+Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+---
+Changes in v2:
+  - Split huge patch series into different patch series according to
+    subsytems
+  - Update patch commit message
 
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->   drivers/i2c/busses/i2c-fsi.c | 56 ++++++++++++++++++------------------
->   1 file changed, 28 insertions(+), 28 deletions(-)
->
-> diff --git a/drivers/i2c/busses/i2c-fsi.c b/drivers/i2c/busses/i2c-fsi.c
-> index 10332693edf0..ae016a9431da 100644
-> --- a/drivers/i2c/busses/i2c-fsi.c
-> +++ b/drivers/i2c/busses/i2c-fsi.c
-> @@ -1,6 +1,6 @@
->   // SPDX-License-Identifier: GPL-2.0+
->   /*
-> - * FSI-attached I2C master algorithm
-> + * FSI-attached I2C controller algorithm
->    *
->    * Copyright 2018 IBM Corporation
->    *
-> @@ -145,7 +145,7 @@
->   /* choose timeout length from legacy driver; it's well tested */
->   #define I2C_ABORT_TIMEOUT	msecs_to_jiffies(100)
->   
-> -struct fsi_i2c_master {
-> +struct fsi_i2c_ctrl {
->   	struct fsi_device	*fsi;
->   	u8			fifo_size;
->   	struct list_head	ports;
-> @@ -155,7 +155,7 @@ struct fsi_i2c_master {
->   struct fsi_i2c_port {
->   	struct list_head	list;
->   	struct i2c_adapter	adapter;
-> -	struct fsi_i2c_master	*master;
-> +	struct fsi_i2c_ctrl	*ctrl;
->   	u16			port;
->   	u16			xfrd;
->   };
-> @@ -183,7 +183,7 @@ static int fsi_i2c_write_reg(struct fsi_device *fsi, unsigned int reg,
->   	return fsi_device_write(fsi, reg, &data_be, sizeof(data_be));
->   }
->   
-> -static int fsi_i2c_dev_init(struct fsi_i2c_master *i2c)
-> +static int fsi_i2c_dev_init(struct fsi_i2c_ctrl *i2c)
->   {
->   	int rc;
->   	u32 mode = I2C_MODE_ENHANCED, extended_status, watermark;
-> @@ -214,7 +214,7 @@ static int fsi_i2c_dev_init(struct fsi_i2c_master *i2c)
->   static int fsi_i2c_set_port(struct fsi_i2c_port *port)
->   {
->   	int rc;
-> -	struct fsi_device *fsi = port->master->fsi;
-> +	struct fsi_device *fsi = port->ctrl->fsi;
->   	u32 mode, dummy = 0;
->   
->   	rc = fsi_i2c_read_reg(fsi, I2C_FSI_MODE, &mode);
-> @@ -236,7 +236,7 @@ static int fsi_i2c_set_port(struct fsi_i2c_port *port)
->   static int fsi_i2c_start(struct fsi_i2c_port *port, struct i2c_msg *msg,
->   			 bool stop)
->   {
-> -	struct fsi_i2c_master *i2c = port->master;
-> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
->   	u32 cmd = I2C_CMD_WITH_START | I2C_CMD_WITH_ADDR;
->   
->   	port->xfrd = 0;
-> @@ -268,7 +268,7 @@ static int fsi_i2c_write_fifo(struct fsi_i2c_port *port, struct i2c_msg *msg,
->   {
->   	int write;
->   	int rc;
-> -	struct fsi_i2c_master *i2c = port->master;
-> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
->   	int bytes_to_write = i2c->fifo_size - fifo_count;
->   	int bytes_remaining = msg->len - port->xfrd;
->   
-> @@ -294,7 +294,7 @@ static int fsi_i2c_read_fifo(struct fsi_i2c_port *port, struct i2c_msg *msg,
->   {
->   	int read;
->   	int rc;
-> -	struct fsi_i2c_master *i2c = port->master;
-> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
->   	int bytes_to_read;
->   	int xfr_remaining = msg->len - port->xfrd;
->   	u32 dummy;
-> @@ -330,7 +330,7 @@ static int fsi_i2c_get_scl(struct i2c_adapter *adap)
->   {
->   	u32 stat = 0;
->   	struct fsi_i2c_port *port = adap->algo_data;
-> -	struct fsi_i2c_master *i2c = port->master;
-> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
->   
->   	fsi_i2c_read_reg(i2c->fsi, I2C_FSI_STAT, &stat);
->   
-> @@ -341,7 +341,7 @@ static void fsi_i2c_set_scl(struct i2c_adapter *adap, int val)
->   {
->   	u32 dummy = 0;
->   	struct fsi_i2c_port *port = adap->algo_data;
-> -	struct fsi_i2c_master *i2c = port->master;
-> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
->   
->   	if (val)
->   		fsi_i2c_write_reg(i2c->fsi, I2C_FSI_SET_SCL, &dummy);
-> @@ -353,7 +353,7 @@ static int fsi_i2c_get_sda(struct i2c_adapter *adap)
->   {
->   	u32 stat = 0;
->   	struct fsi_i2c_port *port = adap->algo_data;
-> -	struct fsi_i2c_master *i2c = port->master;
-> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
->   
->   	fsi_i2c_read_reg(i2c->fsi, I2C_FSI_STAT, &stat);
->   
-> @@ -364,7 +364,7 @@ static void fsi_i2c_set_sda(struct i2c_adapter *adap, int val)
->   {
->   	u32 dummy = 0;
->   	struct fsi_i2c_port *port = adap->algo_data;
-> -	struct fsi_i2c_master *i2c = port->master;
-> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
->   
->   	if (val)
->   		fsi_i2c_write_reg(i2c->fsi, I2C_FSI_SET_SDA, &dummy);
-> @@ -377,7 +377,7 @@ static void fsi_i2c_prepare_recovery(struct i2c_adapter *adap)
->   	int rc;
->   	u32 mode;
->   	struct fsi_i2c_port *port = adap->algo_data;
-> -	struct fsi_i2c_master *i2c = port->master;
-> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
->   
->   	rc = fsi_i2c_read_reg(i2c->fsi, I2C_FSI_MODE, &mode);
->   	if (rc)
-> @@ -392,7 +392,7 @@ static void fsi_i2c_unprepare_recovery(struct i2c_adapter *adap)
->   	int rc;
->   	u32 mode;
->   	struct fsi_i2c_port *port = adap->algo_data;
-> -	struct fsi_i2c_master *i2c = port->master;
-> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
->   
->   	rc = fsi_i2c_read_reg(i2c->fsi, I2C_FSI_MODE, &mode);
->   	if (rc)
-> @@ -402,7 +402,7 @@ static void fsi_i2c_unprepare_recovery(struct i2c_adapter *adap)
->   	fsi_i2c_write_reg(i2c->fsi, I2C_FSI_MODE, &mode);
->   }
->   
-> -static int fsi_i2c_reset_bus(struct fsi_i2c_master *i2c,
-> +static int fsi_i2c_reset_bus(struct fsi_i2c_ctrl *i2c,
->   			     struct fsi_i2c_port *port)
->   {
->   	int rc;
-> @@ -435,7 +435,7 @@ static int fsi_i2c_reset_bus(struct fsi_i2c_master *i2c,
->   	return fsi_i2c_dev_init(i2c);
->   }
->   
-> -static int fsi_i2c_reset_engine(struct fsi_i2c_master *i2c, u16 port)
-> +static int fsi_i2c_reset_engine(struct fsi_i2c_ctrl *i2c, u16 port)
->   {
->   	int rc;
->   	u32 mode, dummy = 0;
-> @@ -478,7 +478,7 @@ static int fsi_i2c_abort(struct fsi_i2c_port *port, u32 status)
->   	unsigned long start;
->   	u32 cmd = I2C_CMD_WITH_STOP;
->   	u32 stat;
-> -	struct fsi_i2c_master *i2c = port->master;
-> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
->   	struct fsi_device *fsi = i2c->fsi;
->   
->   	rc = fsi_i2c_reset_engine(i2c, port->port);
-> @@ -505,7 +505,7 @@ static int fsi_i2c_abort(struct fsi_i2c_port *port, u32 status)
->   	if (rc)
->   		return rc;
->   
-> -	/* wait until we see command complete in the master */
-> +	/* wait until we see command complete in the controller */
->   	start = jiffies;
->   
->   	do {
-> @@ -579,7 +579,7 @@ static int fsi_i2c_wait(struct fsi_i2c_port *port, struct i2c_msg *msg,
->   	unsigned long start = jiffies;
->   
->   	do {
-> -		rc = fsi_i2c_read_reg(port->master->fsi, I2C_FSI_STAT,
-> +		rc = fsi_i2c_read_reg(port->ctrl->fsi, I2C_FSI_STAT,
->   				      &status);
->   		if (rc)
->   			return rc;
-> @@ -609,10 +609,10 @@ static int fsi_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
->   	int i, rc;
->   	unsigned long start_time;
->   	struct fsi_i2c_port *port = adap->algo_data;
-> -	struct fsi_i2c_master *master = port->master;
-> +	struct fsi_i2c_ctrl *ctrl = port->ctrl;
->   	struct i2c_msg *msg;
->   
-> -	mutex_lock(&master->lock);
-> +	mutex_lock(&ctrl->lock);
->   
->   	rc = fsi_i2c_set_port(port);
->   	if (rc)
-> @@ -633,7 +633,7 @@ static int fsi_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
->   	}
->   
->   unlock:
-> -	mutex_unlock(&master->lock);
-> +	mutex_unlock(&ctrl->lock);
->   	return rc ? : num;
->   }
->   
-> @@ -654,7 +654,7 @@ static struct i2c_bus_recovery_info fsi_i2c_bus_recovery_info = {
->   };
->   
->   static const struct i2c_algorithm fsi_i2c_algorithm = {
-> -	.master_xfer = fsi_i2c_xfer,
-> +	.xfer = fsi_i2c_xfer,
->   	.functionality = fsi_i2c_functionality,
->   };
->   
-> @@ -676,7 +676,7 @@ static struct device_node *fsi_i2c_find_port_of_node(struct device_node *fsi,
->   
->   static int fsi_i2c_probe(struct device *dev)
->   {
-> -	struct fsi_i2c_master *i2c;
-> +	struct fsi_i2c_ctrl *i2c;
->   	struct fsi_i2c_port *port;
->   	struct device_node *np;
->   	u32 port_no, ports, stat;
-> @@ -699,7 +699,7 @@ static int fsi_i2c_probe(struct device *dev)
->   		return rc;
->   
->   	ports = FIELD_GET(I2C_STAT_MAX_PORT, stat) + 1;
-> -	dev_dbg(dev, "I2C master has %d ports\n", ports);
-> +	dev_dbg(dev, "I2C controller has %d ports\n", ports);
->   
->   	for (port_no = 0; port_no < ports; port_no++) {
->   		np = fsi_i2c_find_port_of_node(dev->of_node, port_no);
-> @@ -712,7 +712,7 @@ static int fsi_i2c_probe(struct device *dev)
->   			break;
->   		}
->   
-> -		port->master = i2c;
-> +		port->ctrl = i2c;
->   		port->port = port_no;
->   
->   		port->adapter.owner = THIS_MODULE;
-> @@ -742,7 +742,7 @@ static int fsi_i2c_probe(struct device *dev)
->   
->   static int fsi_i2c_remove(struct device *dev)
->   {
-> -	struct fsi_i2c_master *i2c = dev_get_drvdata(dev);
-> +	struct fsi_i2c_ctrl *i2c = dev_get_drvdata(dev);
->   	struct fsi_i2c_port *port, *tmp;
->   
->   	list_for_each_entry_safe(port, tmp, &i2c->ports, list) {
-> @@ -772,5 +772,5 @@ static struct fsi_driver fsi_i2c_driver = {
->   module_fsi_driver(fsi_i2c_driver);
->   
->   MODULE_AUTHOR("Eddie James <eajames@us.ibm.com>");
-> -MODULE_DESCRIPTION("FSI attached I2C master");
-> +MODULE_DESCRIPTION("FSI attached I2C controller");
->   MODULE_LICENSE("GPL");
+prevous disscussion here:
+[1] v1: https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+
+---
+Tengfei Fan (2):
+      dt-bindings: clock: qcom-rpmhcc: Add RPMHCC bindings for QCS9100
+      clk: qcom: rpmh: Add support for QCS9100 rpmh clocks
+
+ Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
+ drivers/clk/qcom/clk-rpmh.c                              | 1 +
+ 2 files changed, 2 insertions(+)
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240709-add_qcs9100_rpmh_clk_compatible-e57368401164
+
+Best regards,
+-- 
+Tengfei Fan <quic_tengfan@quicinc.com>
+
 
