@@ -1,142 +1,331 @@
-Return-Path: <linux-kernel+bounces-245410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB9492B234
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:35:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AC2A92B236
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5C2EB219ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:35:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48440B2198C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C042153569;
-	Tue,  9 Jul 2024 08:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dNIGnZgA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDAE12D75A
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACDD153585;
+	Tue,  9 Jul 2024 08:35:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBBA152796
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720514105; cv=none; b=jx5pkYnXxj9x6fGaek7ctS4MkoGG2N0K4HZPH/X60J914JWothQKo2sqd9n95IZdON5Dlo9dp3cSgA6hDfZnrVuj94szEi+uMxYsA6rOiXPfDljqB1xx4okkXfs0NuHhF6VhfZZpjfDaz9WH85knXLL7/rFNTmAwKVbh08hqXMA=
+	t=1720514139; cv=none; b=O8h3dbkw2v/xEo4wbzuFFrOPY0sCngunH4D7Etnrpnd3ZXbKH2nCEW52qqYV4j8OHUQ0yFyokzbE0T2ezVno87SgHwX7IJD7FhNwSrk8lSuT9mx5loBr8kozUDIwSH7SlGtYhmQSD48OT0AgpoYNfArAPtSlphoAUeBOxNvNoJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720514105; c=relaxed/simple;
-	bh=DG9rCxhCwbStHk+MslBqrJkCywgdt6JqcE6YhliXnHA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TpR3vXztTwo+8XBKu2eJ0rdrZiChGnGaqKvm9Fr5vkrkzjJuTVIzFOIsEDEniEEZ5OHixVMq2K1PKbrIEMzNUeMxFFKgfz6lo0274+NtHVuOy1ZG8F9QJed2/d6QLfUuV0Qj77aXGhndBAQ0O04nn50O2fyIic0RYr+GSbUK4o8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dNIGnZgA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720514102;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=DG9rCxhCwbStHk+MslBqrJkCywgdt6JqcE6YhliXnHA=;
-	b=dNIGnZgA4lAHmK79v08GyTqHhtacCsqKxBz8BGHCVyA21PzuhzSfGkJKM0eUXkJIlwcTh2
-	I7dHDON1RtBgTUdkMPXZdoTspP1tMjtfgWKoi/yZKT66Sw20O0wSXgSRBWcHFo0MhBBScZ
-	6QTGhb6eAQLFip4x1qdRiHzGvw15Ot8=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-413-iWSajMYUNQuCZgZ7_tIZbQ-1; Tue, 09 Jul 2024 04:35:00 -0400
-X-MC-Unique: iWSajMYUNQuCZgZ7_tIZbQ-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-367b6e63573so114574f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 01:35:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720514099; x=1721118899;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DG9rCxhCwbStHk+MslBqrJkCywgdt6JqcE6YhliXnHA=;
-        b=s1kOhO+4yT1FeIRcfAH7gpmI1qNtl0hEI4UIu32AIzUTRmp1v4vCeuPKuvGIIWAWUO
-         INOZO5gmpYBLXVHTn0w6FqxSh2QFrcdUELVnAe0zEBzhLyaxVCvXwkU+E8gatq8Ijdk4
-         f/asqz2Ay0MxwUISoUF6KrYPXNqi9ZnNECyPrurhWvZgnNAqV/cCj6HAGA/mKq9TpTnZ
-         Ex2jcxizaePKcRW9hD0cfDmIcLQyiXR+8fDreNH4TcUV7SynLBZ94qQi+jcKn3siKSrF
-         5Kz2Fv5NxPEdqRMPS+nxlcc09cvB/PyzZojARFmIVdNRSadcLRvyzB1yWCYzJlgTmSpx
-         lq1A==
-X-Forwarded-Encrypted: i=1; AJvYcCX33s+NElTVR1iWS+68oLeM744Anp3MqoDr0FRnAoJzvb4m/G8nQ+x9Lz7XMMvAxDNJ1r8kDh1JObLG5CF4FabjP5lyZikUJ7BbHtsp
-X-Gm-Message-State: AOJu0YyDpOsbigafKQ+YFUMij3WTfOxooRmtxmCQzlxD+6jCWlG5PH7/
-	q6w2oxpll0NWSXMmwnHRAzJ4xEkpiShIdJ+NRIBZnAVP/M6hbB0Z75dILCtVxGZobcv0GF4DIqS
-	rB4IJVZC8LEj4vJ35Gy06pkJzzuiukfb28fYj1oK0Lk/tMYv60eiYemUJKgQ8PQ==
-X-Received: by 2002:a05:600c:35c8:b0:425:7ac6:96f9 with SMTP id 5b1f17b1804b1-42670081862mr12037265e9.0.1720514099664;
-        Tue, 09 Jul 2024 01:34:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGbHUFShpWDqVC/iXoaB83+FNJ0Ugkyu72KYIYZxA0budzUHM+msC/YYqBXCo9/2uaMWdZ8WQ==
-X-Received: by 2002:a05:600c:35c8:b0:425:7ac6:96f9 with SMTP id 5b1f17b1804b1-42670081862mr12037145e9.0.1720514099268;
-        Tue, 09 Jul 2024 01:34:59 -0700 (PDT)
-Received: from gerbillo.redhat.com ([2a0d:3344:1710:e810:1180:8096:5705:abe])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2fc49fsm196127595e9.39.2024.07.09.01.34.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 01:34:58 -0700 (PDT)
-Message-ID: <6124782dffadef83707edc7fd4d87a327d5cba1b.camel@redhat.com>
-Subject: Re: [net-next,v1] net: phy: phy_device: fix PHY WOL enabled, PM
- failed to suspend
-From: Paolo Abeni <pabeni@redhat.com>
-To: Youwan Wang <youwan@nfschina.com>, andrew@lunn.ch
-Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 09 Jul 2024 10:34:57 +0200
-In-Reply-To: <20240704123200.603654-1-youwan@nfschina.com>
-References: <20240704123200.603654-1-youwan@nfschina.com>
-Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=mQINBGISiDUBEAC5uMdJicjm3ZlWQJG4u2EU1EhWUSx8IZLUTmEE8zmjPJFSYDcjtfGcbzLPb63BvX7FADmTOkO7gwtDgm501XnQaZgBUnCOUT8qv5MkKsFH20h1XJyqjPeGM55YFAXc+a4WD0YyO5M0+KhDeRLoildeRna1ey944VlZ6Inf67zMYw9vfE5XozBtytFIrRyGEWkQwkjaYhr1cGM8ia24QQVQid3P7SPkR78kJmrT32sGk+TdR4YnZzBvVaojX4AroZrrAQVdOLQWR+w4w1mONfJvahNdjq73tKv51nIpu4SAC1Zmnm3x4u9r22mbMDr0uWqDqwhsvkanYmn4umDKc1ZkBnDIbbumd40x9CKgG6ogVlLYeJa9WyfVMOHDF6f0wRjFjxVoPO6p/ZDkuEa67KCpJnXNYipLJ3MYhdKWBZw0xc3LKiKc+nMfQlo76T/qHMDfRMaMhk+L8gWc3ZlRQFG0/Pd1pdQEiRuvfM5DUXDo/YOZLV0NfRFU9SmtIPhbdm9cV8Hf8mUwubihiJB/9zPvVq8xfiVbdT0sPzBtxW0fXwrbFxYAOFvT0UC2MjlIsukjmXOUJtdZqBE3v3Jf7VnjNVj9P58+MOx9iYo8jl3fNd7biyQWdPDfYk9ncK8km4skfZQIoUVqrWqGDJjHO1W9CQLAxkfOeHrmG29PK9tHIwARAQABtB9QYW9sbyBBYmVuaSA8cGFiZW5pQHJlZGhhdC5jb20+iQJSBBMBCAA8FiEEg1AjqC77wbdLX2LbKSR5jcyPE6QFAmISiDUCGwMFCwkIBwIDIgIBBhUKCQgLAgQWAgMBAh4HAheAAAoJECkkeY3MjxOkJSYQAJcc6MTsuFxYdYZkeWjW//zbD3ApRHzpNlHLVSuJqHr9/aDS+tyszgS8jj9MiqALzgq4iZbg
- 7ZxN9ZsDL38qVIuFkSpgMZCiUHdxBC11J8nbBSLlpnc924UAyr5XrGA99 6Wl5I4Km3128GY6iAkH54pZpOmpoUyBjcxbJWHstzmvyiXrjA2sMzYjt3Xkqp0cJfIEekOi75wnNPofEEJg28XPcFrpkMUFFvB4Aqrdc2yyR8Y36rbw18sIX3dJdomIP3dL7LoJi9mfUKOnr86Z0xltgcLPGYoCiUZMlXyWgB2IPmmcMP2jLJrusICjZxLYJJLofEjznAJSUEwB/3rlvFrSYvkKkVmfnfro5XEr5nStVTECxfy7RTtltwih85LlZEHP8eJWMUDj3P4Q9CWNgz2pWr1t68QuPHWaA+PrXyasDlcRpRXHZCOcvsKhAaCOG8TzCrutOZ5NxdfXTe3f1jVIEab7lNgr+7HiNVS+UPRzmvBc73DAyToKQBn9kC4jh9HoWyYTepjdcxnio0crmara+/HEyRZDQeOzSexf85I4dwxcdPKXv0fmLtxrN57Ae82bHuRlfeTuDG3x3vl/Bjx4O7Lb+oN2BLTmgpYq7V1WJPUwikZg8M+nvDNcsOoWGbU417PbHHn3N7yS0lLGoCCWyrK1OY0QM4EVsL3TjOfUtCNQYW9sbyBBYmVuaSA8cGFvbG8uYWJlbmlAZ21haWwuY29tPokCUgQTAQgAPBYhBINQI6gu+8G3S19i2ykkeY3MjxOkBQJiEoitAhsDBQsJCAcCAyICAQYVCgkICwIEFgIDAQIeBwIXgAAKCRApJHmNzI8TpBzHD/45pUctaCnhee1vkQnmStAYvHmwrWwIEH1lzDMDCpJQHTUQOOJWDAZOFnE/67bxSS81Wie0OKW2jvg1ylmpBA0gPpnzIExQmfP72cQ1TBoeVColVT6Io35BINn+ymM7c0Bn8RvngSEpr3jBtqvvWXjvtnJ5/HbOVQCg62NC6ewosoKJPWpGXMJ9SKsVIOUHsmoWK60spzeiJoSmAwm3zTJQnM5kRh2q
- iWjoCy8L35zPqR5TV+f5WR5hTVCqmLHSgm1jxwKhPg9L+GfuE4d0SWd84y GeOB3sSxlhWsuTj1K6K3MO9srD9hr0puqjO9sAizd0BJP8ucf/AACfrgmzIqZXCfVS7jJ/M+0ic+j1Si3yY8wYPEi3dvbVC0zsoGj9n1R7B7L9c3g1pZ4L9ui428vnPiMnDN3jh9OsdaXeWLvSvTylYvw9q0DEXVQTv4/OkcoMrfEkfbXbtZ3PRlAiddSZA5BDEkkm6P9KA2YAuooi1OD9d4MW8LFAeEicvHG+TPO6jtKTacdXDRe611EfRwTjBs19HmabSUfFcumL6BlVyceIoSqXFe5jOfGpbBevTZtg4kTSHqymGb6ra6sKs+/9aJiONs5NXY7iacZ55qG3Ib1cpQTps9bQILnqpwL2VTaH9TPGWwMY3Nc2VEc08zsLrXnA/yZKqZ1YzSY9MGXWYLkCDQRiEog1ARAAyXMKL+x1lDvLZVQjSUIVlaWswc0nV5y2EzBdbdZZCP3ysGC+s+n7xtq0o1wOvSvaG9h5q7sYZs+AKbuUbeZPu0bPWKoO02i00yVoSgWnEqDbyNeiSW+vI+VdiXITV83lG6pS+pAoTZlRROkpb5xo0gQ5ZeYok8MrkEmJbsPjdoKUJDBFTwrRnaDOfb+Qx1D22PlAZpdKiNtwbNZWiwEQFm6mHkIVSTUe2zSemoqYX4QQRvbmuMyPIbwbdNWlItukjHsffuPivLF/XsI1gDV67S1cVnQbBgrpFDxN62USwewXkNl+ndwa+15wgJFyq4Sd+RSMTPDzDQPFovyDfA/jxN2SK1Lizam6o+LBmvhIxwZOfdYH8bdYCoSpqcKLJVG3qVcTwbhGJr3kpRcBRz39Ml6iZhJyI3pEoX3bJTlR5Pr1Kjpx13qGydSMos94CIYWAKhegI06aTdvvuiigBwjngo/Rk5S+iEGR5KmTqGyp27o6YxZy6D4NIc6PKUzhIUxfvuHNvfu
- sD2W1U7eyLdm/jCgticGDsRtweytsgCSYfbz0gdgUuL3EBYN3JLbAU+UZpy v/fyD4cHDWaizNy/KmOI6FFjvVh4LRCpGTGDVPHsQXaqvzUybaMb7HSfmBBzZqqfVbq9n5FqPjAgD2lJ0rkzb9XnVXHgr6bmMRlaTlBMAEQEAAYkCNgQYAQgAIBYhBINQI6gu+8G3S19i2ykkeY3MjxOkBQJiEog1AhsMAAoJECkkeY3MjxOkY1YQAKdGjHyIdOWSjM8DPLdGJaPgJdugHZowaoyCxffilMGXqc8axBtmYjUIoXurpl+f+a7S0tQhXjGUt09zKlNXxGcebL5TEPFqgJTHN/77ayLslMTtZVYHE2FiIxkvW48yDjZUlefmphGpfpoXe4nRBNto1mMB9Pb9vR47EjNBZCtWWbwJTIEUwHP2Z5fV9nMx9Zw2BhwrfnODnzI8xRWVqk7/5R+FJvl7s3nY4F+svKGD9QHYmxfd8Gx42PZc/qkeCjUORaOf1fsYyChTtJI4iNm6iWbD9HK5LTMzwl0n0lL7CEsBsCJ97i2swm1DQiY1ZJ95G2Nz5PjNRSiymIw9/neTvUT8VJJhzRl3Nb/EmO/qeahfiG7zTpqSn2dEl+AwbcwQrbAhTPzuHIcoLZYV0xDWzAibUnn7pSrQKja+b8kHD9WF+m7dPlRVY7soqEYXylyCOXr5516upH8vVBmqweCIxXSWqPAhQq8d3hB/Ww2A0H0PBTN1REVw8pRLNApEA7C2nX6RW0XmA53PIQvAP0EAakWsqHoKZ5WdpeOcH9iVlUQhRgemQSkhfNaP9LqR1XKujlTuUTpoyT3xwAzkmSxN1nABoutHEO/N87fpIbpbZaIdinF7b9srwUvDOKsywfs5HMiUZhLKoZzCcU/AEFjQsPTATACGsWf3JYPnWxL9
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1720514139; c=relaxed/simple;
+	bh=u5kukLhqVySNwkMxmecPpCT3gAfvp268c2GIQYWpB7c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dyQvdY7rlCRw2lILY08iBesxQK7f7noxoQtwjO8c3qX4YiDAdlmfyN6rjMlG6oylvAaTR+zlNiMUC68Pv40hPLyJOA9v3SfztXJlFgCqBIGyBaTT77R7x//EL9evthUQXw9g6dFbEaSizR2iVmAi/o/nEVSJ714JAQVAfA3FzqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B9441042;
+	Tue,  9 Jul 2024 01:36:01 -0700 (PDT)
+Received: from [10.57.76.194] (unknown [10.57.76.194])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF6CF3F762;
+	Tue,  9 Jul 2024 01:35:33 -0700 (PDT)
+Message-ID: <ca200353-da41-4f2e-b036-f22ab4bbf1b6@arm.com>
+Date: Tue, 9 Jul 2024 09:35:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mm: shmem: Rename mTHP shmem counters
+Content-Language: en-GB
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, baolin.wang@linux.alibaba.com, corbet@lwn.net,
+ da.gomez@samsung.com, david@redhat.com, hughd@google.com,
+ ioworker0@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ willy@infradead.org, ziy@nvidia.com
+References: <744749c3-4506-40d9-ac48-0dbc59689f92@arm.com>
+ <20240709014413.18044-1-21cnbao@gmail.com>
+ <70ac8a5d-f6cf-41e6-b295-cd40b81fa85e@arm.com>
+ <CAGsJ_4xy+ADGF2te4Xh=DMABDGEAAp-7QGPgJF6MstOYXVNYtA@mail.gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <CAGsJ_4xy+ADGF2te4Xh=DMABDGEAAp-7QGPgJF6MstOYXVNYtA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On 09/07/2024 09:13, Barry Song wrote:
+> On Tue, Jul 9, 2024 at 7:55 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>
+>> On 09/07/2024 02:44, Barry Song wrote:
+>>> On Tue, Jul 9, 2024 at 12:30 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>>>
+>>>> On 08/07/2024 12:36, Barry Song wrote:
+>>>>> On Mon, Jul 8, 2024 at 11:24 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>>>>>
+>>>>>> The legacy PMD-sized THP counters at /proc/vmstat include
+>>>>>> thp_file_alloc, thp_file_fallback and thp_file_fallback_charge, which
+>>>>>> rather confusingly refer to shmem THP and do not include any other types
+>>>>>> of file pages. This is inconsistent since in most other places in the
+>>>>>> kernel, THP counters are explicitly separated for anon, shmem and file
+>>>>>> flavours. However, we are stuck with it since it constitutes a user ABI.
+>>>>>>
+>>>>>> Recently, commit 66f44583f9b6 ("mm: shmem: add mTHP counters for
+>>>>>> anonymous shmem") added equivalent mTHP stats for shmem, keeping the
+>>>>>> same "file_" prefix in the names. But in future, we may want to add
+>>>>>> extra stats to cover actual file pages, at which point, it would all
+>>>>>> become very confusing.
+>>>>>>
+>>>>>> So let's take the opportunity to rename these new counters "shmem_"
+>>>>>> before the change makes it upstream and the ABI becomes immutable.
+>>>>>
+>>>>> Personally, I think this approach is much clearer. However, I recall
+>>>>> we discussed this
+>>>>> before [1], and it seems that inconsistency is a concern?
+>>>>
+>>>> Embarrassingly, I don't recall that converstation at all :-| but at least what I
+>>>> said then is consistent with what I've done in this patch.
+>>>>
+>>>> I think David's conclusion from that thread was to call them FILE_, and add both
+>>>> shmem and pagecache counts to those counters, meaning we can keep the same name
+>>>> as legacy THP counters. But those legacy THP counters only count shmem, and I
+>>>> don't think we would get away with adding pagecache counts to those at this
+>>>> point? (argument: they have been around for long time and there is a risk that
+>>>> user space relies on them and if they were to dramatically increase due to
+>>>> pagecache addition now that could break things). In that case, there is still
+>>>> inconsistency, but its worse; the names are consistent but the semantics are
+>>>> inconsistent.
+>>>>
+>>>> So my vote is to change to SHMEM_ as per this patch :)
+>>>
+>>> I have no objections. However, I dislike the documentation for
+>>> thp_file_*. Perhaps we can clean it all up together ?
+>>
+>> I agree that we should clean this documentation up and I'm happy to roll it into
+>> v2. However, I don't think what you have suggested is quite right.
+>>
+>> thp_file_alloc, thp_file_fallback and thp_file_fallback_charge *only* count
+>> shmem. They don't count pagecache. So perhaps the change should be "...every
+>> time a shmem huge page (dispite being named after "file", the counter measures
+>> only shmem) is..."?
+> 
+> I understand what you are saying, and I know that thp_file_* has only
+> included shmem so far. My question is whether it will include regular
+> files in the future? If not, I am perfectly fine with your approach.
 
-On Thu, 2024-07-04 at 20:32 +0800, Youwan Wang wrote:
-> If the PHY of the mido bus is enabled with Wake-on-LAN (WOL),
-> we cannot suspend the PHY. Although the WOL status has been
-> checked in phy_suspend(), returning -EBUSY(-16) would cause
-> the Power Management (PM) to fail to suspend. Since
-> phy_suspend() is an exported symbol (EXPORT_SYMBOL),
-> timely error reporting is needed. Therefore, an additional
-> check is performed here. If the PHY of the mido bus is enabled
-> with WOL, we skip calling phy_suspend() to avoid PM failure.
->=20
-> Thank you all for your analysis.
+My whole reasoning for this patch is based on the assertion that since
+THP_FILE_ALLOC has been there for 8 years and in all that time has only counted
+shmem, then its highly likely that someone is depending on that semantic and we
+can't change it. I don't have any actual evidence of code that relies on it though.
 
-Please, use an incremental version number (in this case: 'v2') when
-sending a new revision of this patch, it will make easier to track the
-previous discussion. Even when the changes affect only the
-changelog/commit message.
+I propose I change the docs to reflect what's actually happening today (i.e.
+shmem *only*). If we later decide we want to also report page cache numbers
+through that same counter, then we can change the docs at that point. But if I
+get my way, we'll soon have mTHP counters for FILE, which is solely for page
+cache. So You'll be able to get all the fine-grained info out of those and there
+will be no need to mess with the legacy counters.
 
-> I am using the Linux kernel version 6.6, the current system is
-> utilizing ACPI firmware. However, in terms of configuration,
-> the system only includes MAC layer configuration while lacking
-> PHY configuration. Furthermore, it has been observed that the
-> phydev->attached_dev is NULL, phydev is "stmmac-0:01", it not
-> attached, but it will affect suspend and resume. The actually
-> attached "stmmac-0:00" will not dpm_run_callback():
-> mdio_bus_phy_suspend().
-
-It looks like the underlying issue is still under investigation.
-As noted by Andrew, the NULL attached_dev hints at some other root
-cause issue, possibly elsewhere. Please reply to Andrew's questions:
-
-https://lore.kernel.org/netdev/b61cae2b-6b94-465e-b4e4-6c220c6c66d9@lunn.ch=
-/
-
-before posting a new revision. At very least the replies should be
-reflected in some additional info in the commit message.
-
-Thanks,
-
-Paolo
+> 
+> READ_ONLY_THP_FOR_FS isn't applicable in this path as it is created
+> by khugepaged collapse.
+> 
+>>
+>> thp_file_mapped includes both file and shmem, so agree with your change there.
+>>
+>> What do you think?
+>>
+>>
+>>>
+>>> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+>>> index 709fe10b60f4..65df48cb3bbb 100644
+>>> --- a/Documentation/admin-guide/mm/transhuge.rst
+>>> +++ b/Documentation/admin-guide/mm/transhuge.rst
+>>> @@ -417,21 +417,22 @@ thp_collapse_alloc_failed
+>>>       the allocation.
+>>>
+>>>  thp_file_alloc
+>>> -     is incremented every time a file huge page is successfully
+>>> -     allocated.
+>>> +     is incremented every time a file (including shmem) huge page is
+>>> +     successfully allocated.
+>>>
+>>>  thp_file_fallback
+>>> -     is incremented if a file huge page is attempted to be allocated
+>>> -     but fails and instead falls back to using small pages.
+>>> +     is incremented if a file (including shmem) huge page is attempted
+>>> +     to be allocated but fails and instead falls back to using small
+>>> +     pages.
+>>>
+>>>  thp_file_fallback_charge
+>>> -     is incremented if a file huge page cannot be charged and instead
+>>> -     falls back to using small pages even though the allocation was
+>>> -     successful.
+>>> +     is incremented if a file (including shmem) huge page cannot be
+>>> +     charged and instead falls back to using small pages even though
+>>> +     the allocation was successful.
+>>>
+>>>  thp_file_mapped
+>>> -     is incremented every time a file huge page is mapped into
+>>> -     user address space.
+>>> +     is incremented every time a file (including shmem) huge page is
+>>> +     mapped into user address space.
+>>>
+>>>  thp_split_page
+>>>       is incremented every time a huge page is split into base
+>>>
+>>>>
+>>>>>
+>>>>> [1] https://lore.kernel.org/linux-mm/05d0096e4ec3e572d1d52d33a31a661321ac1551.1713755580.git.baolin.wang@linux.alibaba.com/
+>>>>>
+>>>>>
+>>>>>>
+>>>>>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>>>>>> ---
+>>>>>>
+>>>>>> Hi All,
+>>>>>>
+>>>>>> Applies on top of today's mm-unstable (2073cda629a4) and tested with mm
+>>>>>> selftests; no regressions observed.
+>>>>>>
+>>>>>> The backstory here is that I'd like to introduce some counters for regular file
+>>>>>> folio allocations to observe how often large folio allocation succeeds, but
+>>>>>> these shmem counters are named "file" which is going to make things confusing.
+>>>>>> So hoping to solve that before commit 66f44583f9b6 ("mm: shmem: add mTHP
+>>>>>> counters for anonymous shmem") goes upstream (it is currently in mm-stable).
+>>>>>>
+>>>>>> Admittedly, this change means the mTHP stat names are not the same as the legacy
+>>>>>> PMD-size THP names, but I think that's a smaller issue than having "file_" mTHP
+>>>>>> stats that only count shmem, then having to introduce "file2_" or "pgcache_"
+>>>>>> stats for the regular file memory, which is even more inconsistent IMHO. I guess
+>>>>>> the alternative is to count both shmem and file in these mTHP stats (that's how
+>>>>>> they were documented anyway) but I think it's better to be able to consider them
+>>>>>> separately like we do for all the other counters.
+>>>>>>
+>>>>>> Thanks,
+>>>>>> Ryan
+>>>>>>
+>>>>>>  Documentation/admin-guide/mm/transhuge.rst | 12 ++++++------
+>>>>>>  include/linux/huge_mm.h                    |  6 +++---
+>>>>>>  mm/huge_memory.c                           | 12 ++++++------
+>>>>>>  mm/shmem.c                                 |  8 ++++----
+>>>>>>  4 files changed, 19 insertions(+), 19 deletions(-)
+>>>>>>
+>>>>>> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+>>>>>> index 747c811ee8f1..8b891689fc13 100644
+>>>>>> --- a/Documentation/admin-guide/mm/transhuge.rst
+>>>>>> +++ b/Documentation/admin-guide/mm/transhuge.rst
+>>>>>> @@ -496,16 +496,16 @@ swpout_fallback
+>>>>>>         Usually because failed to allocate some continuous swap space
+>>>>>>         for the huge page.
+>>>>>>
+>>>>>> -file_alloc
+>>>>>> -       is incremented every time a file huge page is successfully
+>>>>>> +shmem_alloc
+>>>>>> +       is incremented every time a shmem huge page is successfully
+>>>>>>         allocated.
+>>>>>>
+>>>>>> -file_fallback
+>>>>>> -       is incremented if a file huge page is attempted to be allocated
+>>>>>> +shmem_fallback
+>>>>>> +       is incremented if a shmem huge page is attempted to be allocated
+>>>>>>         but fails and instead falls back to using small pages.
+>>>>>>
+>>>>>> -file_fallback_charge
+>>>>>> -       is incremented if a file huge page cannot be charged and instead
+>>>>>> +shmem_fallback_charge
+>>>>>> +       is incremented if a shmem huge page cannot be charged and instead
+>>>>>>         falls back to using small pages even though the allocation was
+>>>>>>         successful.
+>>>>>>
+>>>>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>>>>>> index acb6ac24a07e..cff002be83eb 100644
+>>>>>> --- a/include/linux/huge_mm.h
+>>>>>> +++ b/include/linux/huge_mm.h
+>>>>>> @@ -269,9 +269,9 @@ enum mthp_stat_item {
+>>>>>>         MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
+>>>>>>         MTHP_STAT_SWPOUT,
+>>>>>>         MTHP_STAT_SWPOUT_FALLBACK,
+>>>>>> -       MTHP_STAT_FILE_ALLOC,
+>>>>>> -       MTHP_STAT_FILE_FALLBACK,
+>>>>>> -       MTHP_STAT_FILE_FALLBACK_CHARGE,
+>>>>>> +       MTHP_STAT_SHMEM_ALLOC,
+>>>>>> +       MTHP_STAT_SHMEM_FALLBACK,
+>>>>>> +       MTHP_STAT_SHMEM_FALLBACK_CHARGE,
+>>>>>>         MTHP_STAT_SPLIT,
+>>>>>>         MTHP_STAT_SPLIT_FAILED,
+>>>>>>         MTHP_STAT_SPLIT_DEFERRED,
+>>>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>>>>> index 9ec64aa2be94..f9696c94e211 100644
+>>>>>> --- a/mm/huge_memory.c
+>>>>>> +++ b/mm/huge_memory.c
+>>>>>> @@ -568,9 +568,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
+>>>>>>  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
+>>>>>>  DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
+>>>>>>  DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
+>>>>>> -DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
+>>>>>> -DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
+>>>>>> -DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHARGE);
+>>>>>> +DEFINE_MTHP_STAT_ATTR(shmem_alloc, MTHP_STAT_SHMEM_ALLOC);
+>>>>>> +DEFINE_MTHP_STAT_ATTR(shmem_fallback, MTHP_STAT_SHMEM_FALLBACK);
+>>>>>> +DEFINE_MTHP_STAT_ATTR(shmem_fallback_charge, MTHP_STAT_SHMEM_FALLBACK_CHARGE);
+>>>>>>  DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
+>>>>>>  DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
+>>>>>>  DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
+>>>>>> @@ -581,9 +581,9 @@ static struct attribute *stats_attrs[] = {
+>>>>>>         &anon_fault_fallback_charge_attr.attr,
+>>>>>>         &swpout_attr.attr,
+>>>>>>         &swpout_fallback_attr.attr,
+>>>>>> -       &file_alloc_attr.attr,
+>>>>>> -       &file_fallback_attr.attr,
+>>>>>> -       &file_fallback_charge_attr.attr,
+>>>>>> +       &shmem_alloc_attr.attr,
+>>>>>> +       &shmem_fallback_attr.attr,
+>>>>>> +       &shmem_fallback_charge_attr.attr,
+>>>>>>         &split_attr.attr,
+>>>>>>         &split_failed_attr.attr,
+>>>>>>         &split_deferred_attr.attr,
+>>>>>> diff --git a/mm/shmem.c b/mm/shmem.c
+>>>>>> index 921d59c3d669..f24dfbd387ba 100644
+>>>>>> --- a/mm/shmem.c
+>>>>>> +++ b/mm/shmem.c
+>>>>>> @@ -1777,7 +1777,7 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
+>>>>>>                         if (pages == HPAGE_PMD_NR)
+>>>>>>                                 count_vm_event(THP_FILE_FALLBACK);
+>>>>>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>>>>> -                       count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
+>>>>>> +                       count_mthp_stat(order, MTHP_STAT_SHMEM_FALLBACK);
+>>>>>>  #endif
+>>>>>>                         order = next_order(&suitable_orders, order);
+>>>>>>                 }
+>>>>>> @@ -1804,8 +1804,8 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
+>>>>>>                                 count_vm_event(THP_FILE_FALLBACK_CHARGE);
+>>>>>>                         }
+>>>>>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>>>>> -                       count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK);
+>>>>>> -                       count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK_CHARGE);
+>>>>>> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_FALLBACK);
+>>>>>> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_FALLBACK_CHARGE);
+>>>>>>  #endif
+>>>>>>                 }
+>>>>>>                 goto unlock;
+>>>>>> @@ -2181,7 +2181,7 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
+>>>>>>                         if (folio_test_pmd_mappable(folio))
+>>>>>>                                 count_vm_event(THP_FILE_ALLOC);
+>>>>>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>>>>> -                       count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_ALLOC);
+>>>>>> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_ALLOC);
+>>>>>>  #endif
+>>>>>>                         goto alloced;
+>>>>>>                 }
+>>>>>> --
+>>>>>> 2.43.0
+>>>>>>
+>>>>>
+> 
+> Thanks
+> Barry
 
 
