@@ -1,151 +1,129 @@
-Return-Path: <linux-kernel+bounces-246584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD0592C3E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:27:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CABA92C3E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB6461C21D34
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:26:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9C86B2233C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456E6182A5B;
-	Tue,  9 Jul 2024 19:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64709182A74;
+	Tue,  9 Jul 2024 19:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="acmoILYP"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jnYN+9U5"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4001B86C9;
-	Tue,  9 Jul 2024 19:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7B4182A67
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 19:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720553212; cv=none; b=ajKF8f+T2dHFLpm1df1pFsu0aTEkDSpNhu4Xcws/XEfr6pOi4y9sfhUU0WHAcjcb7a0u0M5YYUq+vBnZs1Reg0WzUKucgJ/Ao23mgOnFPJrCa3WuAgPQuhh92XzbHxi9W74ZeBtHDY5PxHjFynQBbiEBSssg9attQsgPVDQxxgc=
+	t=1720553288; cv=none; b=MtIETNwfcHHBl7vqKe7WGiBAFVu2l51UTcvzAQAJWmA9aFea86InvlJ8uyELTCm4ZxAH0AtAPyax1U0g1qt/Rgooo6f+4cV6KCzib+XZZNDc8vK/MaiT1mihX7aLJBM1CzBG8aihxPLwQaCGO6gjA3VsJjOzmWJpR6mVI8fIT/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720553212; c=relaxed/simple;
-	bh=1Rep24U8JtuvtSnlbLq8XyraNP75pXoMYlPXmPJORgM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tpqNkEV2eKqCnnAr8Lu0yXZ5i/gEmorakUvRo935yI6Zg9FK3mMaI/CXaH2wjs9vZcpF1MFxpzPF+2Vc9JmmF3JtZZVB7TI6L69MGL1rLi4CjElazChTFhGGwtb29z6VWxHu5xtYPrPRXljPPXsJ4hytcvXVqdyu8geshTuBBYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=acmoILYP; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ee9b098bd5so49786711fa.0;
-        Tue, 09 Jul 2024 12:26:50 -0700 (PDT)
+	s=arc-20240116; t=1720553288; c=relaxed/simple;
+	bh=tGk64PZTZhXihUtRm6IYWWYJazPp+3ZgAGpmSoZB3ro=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=GEtiPdFreu39g8T++TELB3TRqGHpG6FvfI4nxKyZGk/lgEdMMNjxsN9b9Uv1lfMW1nG3fSfqlIN/eh0YeZfDkkkYbWPmi9b/8cHmEfZYld7zdzIwn/itM3pVC+iNy9rtyvRLFi+AKJnR8KRjSRpTokNbBzNIs/GViVLnCeVM/JQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jnYN+9U5; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1faf6103680so25657275ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 12:28:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720553209; x=1721158009; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VlzucciAEK5IyU0Y2LaBT/n/FoJVAJOkfoOJxJ3dyIM=;
-        b=acmoILYPhUhXA+D9UiTARqo2s1DAG3wvVhVfFVRsLarZ/e61ZG3Pu8KU/TQBOtvs5p
-         wo8DW2k48en1XLSk9dVmTJDJxWhgPkcDMHmHaf2XlPrMxDLgTgCG2sXlOy/MOarylSKc
-         ay55rfc3PNtDToALY8/NtIvw/0B8iFFjUJonVlxZbB/dvgS5yptTAvDWxrPDBBuDiJtp
-         9OOpqlHm+u1hEdeyPJe3PGRzhQWonQumO+Q+CumZxUy7u85ZiGjNYwhk3HGNmPDxxdjm
-         2RkAaZp2VvVzTowiDKsgvGYtzoRu6EniJbvEJnE6GW20PFrnXdl2U6TNaHbW1RuVyoMw
-         B4/g==
+        d=google.com; s=20230601; t=1720553287; x=1721158087; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8BfHp9bQzvvOsKp2JilOmjO7TBNJLedjR/ZG6jBd2vA=;
+        b=jnYN+9U5f9nJUmTLrypaEUgiP6tK+WF3Y3e1NveKBF8A65sOztA3VCIJj8cLxAhMko
+         uFbuWgtrm1Ln62JPVM6XD4rCzgSNkVWI/DapXXa4bkENjzYuuoUiWSAFd3O+Oglfo5g8
+         WCDW73vKsKoN1h2Y42vDY1aECaRF1SVxJIeiJmc14O7XY5cvuCGNQvcSim+qLQb3xwDw
+         6U0POcugwlX8QTxPJxxe5b3wDG8L9Ko52t0aka12dP+MRnNXxiwe83qMF/bBcce29Z7N
+         2xlPAiNuHLfk2ileCbDjs+UZQqf+Dn515UknkkV5wlkmj0kh8mg5dy8Q5Dja2mAxzAPo
+         IzYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720553209; x=1721158009;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VlzucciAEK5IyU0Y2LaBT/n/FoJVAJOkfoOJxJ3dyIM=;
-        b=GJlJzFLnRagCdeiIEplwDQzsd/1qlB+A0y/ucQ7yGRuQZpSRCAIAF464n7lL2wnQXC
-         NPusnq1HzegpnS173YrKG6NVt8TZiJ4fbL9hcuot4Y1wbew8tPfjMhTlGmirqJmilfQ8
-         0Kvq9mxeF6NDO7eIW5pr5ie14eSQRI8d4We2pNHhlAG7OYvoCDgnwxDd8Ag1cZ2ypqpd
-         yAvGmDZ4KovA49B+pIZ/14BJxpcKNuPb9p8XM/FEj/LDhecLIz6CvPwshQ33VxaP9nk9
-         zCU4pYn8FOYSr91JcXEHx5ZtP4rl2MC4qZQi1lzQ3r+R8fef3qIZZBgsjo2wXF75cldh
-         6oqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ9WCsBOCJzy1DA5aorsjj8ti5GhWsCMGnv3DEaLa8lFQnQz3oU9Tfznm5UI1N+ygkEJCExfc4fPkyWswD6Nl8S6Le/iqGsi3F43rB
-X-Gm-Message-State: AOJu0YwxKPLA1vBhRH6rqOUU9IlHvqMwGYcGKu8Sbn4c0IBway/WgxBz
-	lJFNwIyWJGunzPsqMu7e2zYx9ilWNMAtQqxZksnjJDR5U6eTQH/a
-X-Google-Smtp-Source: AGHT+IHg783yiXF4Ft+iDt5WqfZaszG2oTjdUJQSGqgm5JMqAKbAIO1TqQqcbm5TBWz6Qs3M1S7qUg==
-X-Received: by 2002:a05:651c:201:b0:2ee:7a71:6e2d with SMTP id 38308e7fff4ca-2eeb30fee15mr27794691fa.28.1720553208709;
-        Tue, 09 Jul 2024 12:26:48 -0700 (PDT)
-Received: from [192.168.42.222] ([148.252.145.239])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6e09e5sm53289275e9.5.2024.07.09.12.26.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 12:26:48 -0700 (PDT)
-Message-ID: <d2667002-1631-4f42-8aad-a9ea56c0762b@gmail.com>
-Date: Tue, 9 Jul 2024 20:26:56 +0100
+        d=1e100.net; s=20230601; t=1720553287; x=1721158087;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8BfHp9bQzvvOsKp2JilOmjO7TBNJLedjR/ZG6jBd2vA=;
+        b=psmx/0bxN4E6pgHcHUswVutRQueBhqncpb/9/ipp0+ObRrPzYJJ1YeeKrP2iTAOrGc
+         oNuLi57iVAIsJyoagAgiEO0w1hBGBlM+9luPcLIdkkzp3stYUyq3+d3tvCtNe3xptezW
+         2iOwQHBq9zJBQb0cJ9WJv5QnQuFULUDc3hZzpn4/ekgTKnzChI+QxxTZX9DCtGdgLZt7
+         YayPZ/MUgeYRSNcqCsO2pC7E+vExEBKxIVfvQYdCs2UMfoyl9qQrEJ2ckfTkMPaXN+EF
+         03O0ilWKO7Zh+qZsGSGDPYQAPKgloWbM68PL2QilPscWCwFWtShQzWrkgEJlWKHO8vzJ
+         3ykA==
+X-Forwarded-Encrypted: i=1; AJvYcCWo9v5bltQJfUavaOy0TfbGUeMaG061BHpEk60FhY/5hrGQ6/sN/X5b3rRgd8MnqHi2t/I4D1GZHq1+UotP/3pQyQu65ryAFwbMlQMI
+X-Gm-Message-State: AOJu0Yz8FjorIo5OUhoLAkPjOS5QTrGxfjhTBKwKejqzqUeNryreMJed
+	9L/yro4kAYsHJYPL5Gd6x/NXm4aLm2Ad/AJNRi1ERQNYLt/V0nDj4OsFKwAFuz1SqaljwncwyEE
+	lHw==
+X-Google-Smtp-Source: AGHT+IGWhkiIz2Y2g3Ner7BOHEwPH6Z/gYQ/jE0/y9L37RbGyZJn6Z1cRXZGPxQRndFfUlsvmeisfjj31Zs=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:903:2442:b0:1fa:13d8:a09c with SMTP id
+ d9443c01a7336-1fbb6d601c4mr1788535ad.10.1720553286750; Tue, 09 Jul 2024
+ 12:28:06 -0700 (PDT)
+Date: Tue, 9 Jul 2024 12:28:05 -0700
+In-Reply-To: <924352564a5ab003b85bf7e2ee422907f9951e26.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] kernel: rerun task_work while freezing in
- get_signal()
-To: Oleg Nesterov <oleg@redhat.com>, Tejun Heo <tj@kernel.org>
-Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- Andrew Morton <akpm@linux-foundation.org>,
- Christian Brauner <brauner@kernel.org>,
- Tycho Andersen <tandersen@netflix.com>, Thomas Gleixner
- <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
- Julian Orth <ju.orth@gmail.com>, Peter Zijlstra <peterz@infradead.org>
-References: <cover.1720368770.git.asml.silence@gmail.com>
- <1d935e9d87fd8672ef3e8a9a0db340d355ea08b4.1720368770.git.asml.silence@gmail.com>
- <20240708104221.GA18761@redhat.com>
- <62c11b59-c909-4c60-8370-77729544ec0a@gmail.com>
- <20240709103617.GB28495@redhat.com>
- <658da3fe-fa02-423b-aff0-52f54e1332ee@gmail.com>
- <Zo1ntduTPiF8Gmfl@slm.duckdns.org> <20240709190743.GB3892@redhat.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240709190743.GB3892@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-34-seanjc@google.com>
+ <924352564a5ab003b85bf7e2ee422907f9951e26.camel@redhat.com>
+Message-ID: <Zo2PRdv1KMf_Mgwj@google.com>
+Subject: Re: [PATCH v2 33/49] KVM: x86: Advertise TSC_DEADLINE_TIMER in KVM_GET_SUPPORTED_CPUID
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
+	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
+	Robert Hoo <robert.hoo.linux@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On 7/9/24 20:07, Oleg Nesterov wrote:
-> Hi Tejun,
+On Thu, Jul 04, 2024, Maxim Levitsky wrote:
+> On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
+> >  4.47 KVM_PPC_GET_PVINFO
+> >  -----------------------
+> > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> > index 699ce4261e9c..d1f427284ccc 100644
+> > --- a/arch/x86/kvm/cpuid.c
+> > +++ b/arch/x86/kvm/cpuid.c
+> > @@ -680,8 +680,8 @@ void kvm_set_cpu_caps(void)
+> >  		F(FMA) | F(CX16) | 0 /* xTPR Update */ | F(PDCM) |
+> >  		F(PCID) | 0 /* Reserved, DCA */ | F(XMM4_1) |
+> >  		F(XMM4_2) | EMUL_F(X2APIC) | F(MOVBE) | F(POPCNT) |
+> > -		0 /* Reserved*/ | F(AES) | F(XSAVE) | 0 /* OSXSAVE */ | F(AVX) |
+> > -		F(F16C) | F(RDRAND)
+> > +		EMUL_F(TSC_DEADLINE_TIMER) | F(AES) | F(XSAVE) |
+> > +		0 /* OSXSAVE */ | F(AVX) | F(F16C) | F(RDRAND)
+> >  	);
+> >  
+> >  	kvm_cpu_cap_init(CPUID_1_EDX,
 > 
-> Thanks for looking at this, can you review this V2 patch from Pavel?
-> To me it makes sense even without 1/2 which I didn't even bother to
-> read. At least as a simple workaround for now.
-
-They are kind of separate but without 1/2 this patch creates
-another infinite loop, even though it's harder to hit and
-is io_uring specific.
-
-  
-> On 07/09, Tejun Heo wrote:
->>
->> Hello,
->>
->> On Tue, Jul 09, 2024 at 03:05:21PM +0100, Pavel Begunkov wrote:
->>>> -----------------------------------------------------------------------
->>>> Either way I have no idea whether a cgroup_task_frozen() task should
->>>> react to task_work_add(TWA_SIGNAL) or not.
->>>>
->>>> Documentation/admin-guide/cgroup-v2.rst says
->>>>
->>>> 	Writing "1" to the file causes freezing of the cgroup and all
->>>> 	descendant cgroups. This means that all belonging processes will
->>>> 	be stopped and will not run until the cgroup will be explicitly
->>>> 	unfrozen.
->>>>
->>>> AFAICS this is not accurate, they can run but can't return to user-mode.
->>>> So I guess task_work_run() is fine.
->>>
->>> IIUC it's a user facing doc, so maybe it's accurate enough from that
->>> perspective. But I do agree that the semantics around task_work is
->>> not exactly clear.
->>
->> A good correctness test for cgroup freezer is whether it'd be safe to
->> snapshot and restore the tasks in the cgroup while frozen.
+> Hi,
 > 
-> Well, I don't really understand what can snapshot/restore actually mean...
+> I have a mixed feeling about this.
+> 
+> First of all KVM_GET_SUPPORTED_CPUID documentation explicitly states that it
+> returns bits that are supported in *default* configuration TSC_DEADLINE_TIMER
+> and arguably X2APIC are only supported after enabling various caps, e.g not
+> default configuration.
 
-CRIU, I assume. I'll try it ...
+Another side topic, in the near future, I think we should push to make an in-kernel
+local APIC a hard requirement.  AFAIK, userspace local APIC gets no meaningful
+test coverage, and IIRC we have known bugs where a userspace APIC doesn't work
+as it should, e.g. commit 6550c4df7e50 ("KVM: nVMX: Fix interrupt window request
+with "Acknowledge interrupt on exit"").
 
-> I forgot everything about cgroup freezer and I am already sleeping, but even
-> if we forget about task_work_add/TIF_NOTIFY_SIGNAL/etc, afaics ptrace can
-> change the state of cgroup_task_frozen() task between snapshot and restore ?
+> However, since X2APIC also in KVM_GET_SUPPORTED_CPUID (also wrongly IMHO),
+> for consistency it does make sense to add TSC_DEADLINE_TIMER as well.
+> 
+> I do think that we need at least to update the documentation of KVM_GET_SUPPORTED_CPUID
+> and KVM_GET_EMULATED_CPUID, as I state in a review of a later patch.
 
-... but I'm inclined to think the patch makes sense regardless,
-we're replacing an infinite loop with wait-wake-execute-wait.
-
--- 
-Pavel Begunkov
++1
 
