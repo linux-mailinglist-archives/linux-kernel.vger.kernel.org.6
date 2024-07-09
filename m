@@ -1,81 +1,177 @@
-Return-Path: <linux-kernel+bounces-246605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EBC692C433
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:58:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE7C92C435
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:58:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCA2928229D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:58:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F5CF1F231CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8BE185602;
-	Tue,  9 Jul 2024 19:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96F918561F;
+	Tue,  9 Jul 2024 19:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="UFOyz84B"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FA2154448;
-	Tue,  9 Jul 2024 19:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zq6ZKeZE"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A003F185601
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 19:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720555118; cv=none; b=bTYxa5tx5sZIHlSwz7hHmM37SfjHSBo/CCN9tcLNIAwzCW6dKGS3d+c9n+xNggbWQPtMWhLPFIQk6fjCqXRtx+qiFssK1EscQFsB5LEHgJHPqPzgnil/M2KIiXbWpWLdA+UwD5o3SCwHPdluQpTZwq7IHBSs/ca9zO4LIg0Zb+Q=
+	t=1720555120; cv=none; b=TepLlOUzWl3ELVtXD0PNW7VLK9H2p6opL2hJgCin4CigQiDtIsOwJMfR82pbjJooLGr0yCq1UcssWOb7E+76kQdcuBmA5OSTn+1un0S1yC92rEmy5m78J/ySds1Sx552zB26bdogxEoGCxSkvFaEyz1//PWBA5MnXjfdUrd+o5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720555118; c=relaxed/simple;
-	bh=rHyXzjyH5K5pfelYo3/Kz9dGWJTOKDmJqpvDGNtn5a8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SrbnEoH5SL356COHS3iVqvUTm0TMszbv0eWPWTQY2j7CNu6A4VELY060vi/j4caE5z0XJAxv0iPixkDpatTYs1sw4dDW+clVRo8A3ZL5WBRaGH4StfQVZQyzWoiPm+00PdYMgy6VTv2aIkoX3PbzlyRTJJIQPt7U1YWmD8Kf2eI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=UFOyz84B; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1131)
-	id 4C2AD20B7165; Tue,  9 Jul 2024 12:58:36 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4C2AD20B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1720555116;
-	bh=YaYzdEHDjrY+tAYOL+KMOdyXShBdqlDZ0+gicROvX/s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UFOyz84BspjncxL8xf2N2qxPFdIJF9Rv/KnFPO7s6nA1Xcl3VtS+TMPdAa8OYXjLp
-	 P9nO5ok+J1E2mwi5q7A6IMOzUPUvKC1fMLExX6lx/H3SPOLiM4QpZBcRgL3cKE+Z8e
-	 w2ltpK0FYZOZ0rRankSmRw6CiIMW3YRlcbf+2kvs=
+	s=arc-20240116; t=1720555120; c=relaxed/simple;
+	bh=BufCoQvPcrMLdZydelzJEkWvQqMULRiWl+BErt3I6lA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=UdfBD1M1wAtaM6tOxKscvk4/33rp3drL9/I309Vo38IOtPM/+FGPMgR1rA5/D2JZTqyrmGR2iGqAYWmXDQcAojQKGNQdGaHACuTGGlRPHYEF7ch2LRci0976589XiePV1MhFZQASnzm67opqZsaiaQEtQbJodh35moEYDe+JXJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zq6ZKeZE; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-654c14abdcfso1137597b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 12:58:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720555117; x=1721159917; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OH4mJgHtAMjKpYrLchkY0/kYwpApwxh1WzFZLLQJUK4=;
+        b=zq6ZKeZERlsTg9o2IihuLZAW9AppUg6GZGU1bfpZkca7IJVRl3OUtYVvyNS2Y2IKLI
+         7NnlMGn/0403KHRcYne18sX8iRKbiFEdLYHbnvNFI0CHLpkWne6HljOBnSeVWuCnDJo3
+         pfivL0YIaAS3i7ZWLvtal2uPEFlyTrbUzcKWLtATbM/SGm/vpt7Wa7pRMe8E3lH3CWv+
+         dMdyFvFfJy0QVchaXwXV4t23ImKiIuIv3pt01rtNzs5ecikpqmIQhTce40tfAaGOmltz
+         QUduyjbixqyVK0/nRkznw9M/KJm9d9sbwgygigWv9AHbbYTOojhjOINpNyuJbXsN3DBo
+         bTkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720555117; x=1721159917;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OH4mJgHtAMjKpYrLchkY0/kYwpApwxh1WzFZLLQJUK4=;
+        b=kGlTSW9jzs0z5G7/nrci23NfhaPgLNnBgL/rJ1XZkvzu9naPCJLRNA+k1qKEOBgSYz
+         TCLiK3teSE9I/7qxFLI1Nt10qHyMgyAFv6h0W3N8e+3E66UaEwe+Uoh3PL3SJBQNiuZs
+         P1taVm3ZNyqXkA6M+FsFrPwSoURFwBavtqiotKpLULBauAFFzrynUcYrP4V7mj70wvxX
+         lDj0nyYxFk9KsVFpGjJJ98SSb65I7JqAfqIIZoLJJgr+qQ+GG5TDUUIcF7OniD0kPDlr
+         jLUvQhsyRkf4iPosKcql84brGFKc6pd5HNMkZ+QDXI0qwa0/i3g+d04ThjAdOsZ3EfDw
+         8f4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVYLdWMzf0BPmp29XO/+pWZZFrS6wcfZy+BOiJ6fJqwFg/NZoqecIPu9hEkMQuW7n/sQSKkqSYx93GDp+7cwXVB3Q1sa7GW9F1WQSSe
+X-Gm-Message-State: AOJu0YzMsT6urQdJnrtWBHRdFP59ebBJCIEERf7tYyGLd3X5wN7jb1RZ
+	tUDeHiwbitkKUpdGF/1xvhH1uk40YwsSjiUyH+gQJXV6Rr6bTr2Gkk43z0y6acYmYaBWaRFQUxC
+	ZvQ==
+X-Google-Smtp-Source: AGHT+IFPRc0GUmnw3tx5z0WM631Lp7VCqKEfr6zvcufCRCt0z7N+TzzPpJWrOmKAgFEWRWTwRbf3RhDOBAI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:340a:b0:64b:a38:31d0 with SMTP id
+ 00721157ae682-65919f6157bmr98987b3.4.1720555117531; Tue, 09 Jul 2024 12:58:37
+ -0700 (PDT)
 Date: Tue, 9 Jul 2024 12:58:36 -0700
-From: Kelsey Steele <kelseysteele@linux.microsoft.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.6 000/139] 6.6.39-rc1 review
-Message-ID: <20240709195836.GB28302@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20240709110658.146853929@linuxfoundation.org>
+In-Reply-To: <2c8a398c9899a50c9d8f06fa916eb8eb13b6fbc5.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240709110658.146853929@linuxfoundation.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Mime-Version: 1.0
+References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-4-seanjc@google.com>
+ <2c8a398c9899a50c9d8f06fa916eb8eb13b6fbc5.camel@redhat.com>
+Message-ID: <Zo2WbN5m6eI03AW8@google.com>
+Subject: Re: [PATCH v2 03/49] KVM: x86: Account for KVM-reserved CR4 bits when
+ passing through CR4 on VMX
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
+	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
+	Robert Hoo <robert.hoo.linux@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Jul 09, 2024 at 01:08:20PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.39 release.
-> There are 139 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Thu, Jul 04, 2024, Maxim Levitsky wrote:
+> On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrote:
+> > Drop x86.c's local pre-computed cr4_reserved bits and instead fold KVM's
+> > reserved bits into the guest's reserved bits.  This fixes a bug where VMX's
+> > set_cr4_guest_host_mask() fails to account for KVM-reserved bits when
+> > deciding which bits can be passed through to the guest.  In most cases,
+> > letting the guest directly write reserved CR4 bits is ok, i.e. attempting
+> > to set the bit(s) will still #GP, but not if a feature is available in
+> > hardware but explicitly disabled by the host, e.g. if FSGSBASE support is
+> > disabled via "nofsgsbase".
+> > 
+> > Note, the extra overhead of computing host reserved bits every time
+> > userspace sets guest CPUID is negligible.  The feature bits that are
+> > queried are packed nicely into a handful of words, and so checking and
+> > setting each reserved bit costs in the neighborhood of ~5 cycles, i.e. the
+> > total cost will be in the noise even if the number of checked CR4 bits
+> > doubles over the next few years.  In other words, x86 will run out of CR4
+> > bits long before the overhead becomes problematic.
 > 
-> Responses should be made by Thu, 11 Jul 2024 11:06:25 +0000.
-> Anything received after that time might be too late.
+> It might be just me, but IMHO this justification is confusing, leading me to
+> belive that maybe the code is on the hot-path instead.
 > 
-No regressions found on WSL (x86 and arm64).
+> The right justification should be just that this code is in
+> kvm_vcpu_after_set_cpuid is usually (*) only called once per vCPU (twice
+> after your patch #1)
 
-Built, booted, and reviewed dmesg.
+Ya.  I was trying to capture that even if that weren't true, i.e. even if userspace
+was doing something odd, that the extra cost is irrelevant.  I'll expand and reword
+the paragraph to make it clear this isn't a hot path for any sane userspace.
 
-Thank you. :)
+> (*) Qemu also calls it, each time vCPU is hotplugged but this doesn't change
+> anything performance wise.
 
-Tested-by: Kelsey Steele <kelseysteele@linux.microsoft.com> 
+...
+
+> > @@ -9831,10 +9826,6 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
+> >  	if (!kvm_cpu_cap_has(X86_FEATURE_XSAVES))
+> >  		kvm_caps.supported_xss = 0;
+> >  
+> > -#define __kvm_cpu_cap_has(UNUSED_, f) kvm_cpu_cap_has(f)
+> > -	cr4_reserved_bits = __cr4_reserved_bits(__kvm_cpu_cap_has, UNUSED_);
+> > -#undef __kvm_cpu_cap_has
+> > -
+> >  	if (kvm_caps.has_tsc_control) {
+> >  		/*
+> >  		 * Make sure the user can only configure tsc_khz values that
+> 
+> 
+> I mostly agree with this patch - caching always carries risks and when it doesn't
+> value performance wise, it should always be removed.
+> 
+> 
+> However I don't think that this patch fixes a bug as it claims:
+> 
+> This is the code prior to this patch:
+> 
+> kvm_x86_vendor_init ->
+> 
+> 	r = ops->hardware_setup();
+> 		svm_hardware_setup
+> 			svm_set_cpu_caps + kvm_set_cpu_caps
+> 
+> 		-- or --
+> 
+> 		vmx_hardware_setup ->
+> 			vmx_set_cpu_caps + + kvm_set_cpu_caps
+> 
+> 
+> 	# read from 'kvm_cpu_caps'
+> 	cr4_reserved_bits = __cr4_reserved_bits(__kvm_cpu_cap_has, UNUSED_);
+> 
+> 
+> AFAIK kvm cpu caps are never touched outside of svm_set_cpu_caps/vmx_hardware_setup
+> (they don't depend on some later post-processing, cpuid, etc).
+> 
+> In fact a good refactoring would to make kvm_cpu_caps const after this point,
+> using cast, assert or something like that.
+> 
+> This leads me to believe that cr4_reserved_bits is computed correctly.
+
+cr4_reserved_bits is computed correctly.  The bug is that cr4_reserved_bits isn't
+consulted by set_cr4_guest_host_mask(), which is what I meant by "KVM-reserved
+bits" in the changelog.
+
+> I could be wrong, but then IMHO it is a very good idea to provide an explanation
+> on how this bug can happen.
+
+The first paragraph of the changelog tries to do that, and I'm struggling to come
+up with different wording that makes it more clear what's wrong.  Any ideas/suggestions?
 
