@@ -1,111 +1,144 @@
-Return-Path: <linux-kernel+bounces-245670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6836692B5D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:48:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC6D92B5D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6FD8B20F88
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:48:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 729FF1F214B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CF21581E9;
-	Tue,  9 Jul 2024 10:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6DA156F5E;
+	Tue,  9 Jul 2024 10:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Asfd1295"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YH2oSUoS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93665154C0D;
-	Tue,  9 Jul 2024 10:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92D614290;
+	Tue,  9 Jul 2024 10:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720522093; cv=none; b=QxUXsgI5O7fYrHoD5hnmsEYW4712lRvYkHaqxUSlobf6a/XKZLZi0wQwPcfyR4OdCQ1q9HdwVb+wSgUI8cvUGwZAfgnEdTqQsxASF8sxcuwdv5PhH/PWdwsGK0XB2+YFMPD7LE3SYWLn/ocEvOvL5pGjbp/H2Ii2PNSoVC7I4B4=
+	t=1720522138; cv=none; b=ulXAOx7Y8OAambgd83XwxT59I1rv2I9FXl0bGxBo5ZnDpvAMPZ7MggIIaydObJw9HSdFlfkhSWjV8VEhCfWhB27NFbZrRoZe4QAJXDaxzA82I7CK+TMOrbKtxYgMhf/7of497SZzjwOqoUXNgjJYOyH/0S9J8EkgKay70+4ixGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720522093; c=relaxed/simple;
-	bh=0xkU7IgIYUv4NKxJJEVpD6QkCpmpQXa8gGCjanhQcg0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=C/akBFa6MyzdqdYS0AhTP+8rp2VgEeY/hHMA+Nx8mJTfbMdwoGdPS9lFKIUqVC7rxGMvGVgAZ2UFN+W/Ann8jfLVP/fpGOiBPjVXLV8OAeIO9g8uu9qJ5QLwBSq/DH/6ATEuMUznlzubvRtheNf0/r/ZzKObyx1fDP6FW45N+oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Asfd1295; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-367b0cc6c65so2315216f8f.3;
-        Tue, 09 Jul 2024 03:48:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720522090; x=1721126890; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F6j93NAgaEbkg9TwwMnNk+h0n998d/UHM8aDpgO3P40=;
-        b=Asfd1295GLD7bUozXnSsiUuINcj/j5vKIAd1jdlYAUql/s2Pnvrx1IEckqvqQ8ujaA
-         T2qCy6ODdrSqVLjqk3R8apYQvZRuCc4IHyaNIKmRko+T9lWGsROYbCHWsaWMtprxdUD5
-         OtC/BPO6A1NHKE4IJC02modseQpkgU+KcC1k3261TODPvmYa5iMyjiZrTzWMrk02q5BK
-         r7kg5N4e4QBjqxhrKsXXL3SpwwZ15b9K/MRiDBP+oUjHn/JZezjRGwRlQRg29fohn28y
-         jo2lfKrztH3dwE6CEu0n97LbC5WcD8NsCcRRkCOvtEfOPvTnaUyZgH5YlXgdnO4Ox9ZM
-         UR8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720522090; x=1721126890;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F6j93NAgaEbkg9TwwMnNk+h0n998d/UHM8aDpgO3P40=;
-        b=YqVDNaR5DIhxGHuFnbrV0wSrLPPe43rA1dXJlEDtFthWH5j593vcyjiQA7zNFeL8iW
-         rfHwhLFcD2hybCTEdfAnjJPx8BMaBq5Jws3/jz0f40HLFCRJwPBkvALtmUrvFDFybmX0
-         o6EtgBEYDlV4dMNbiB2/EbmAtMea+skFyxdslvmEZVBAjpR1WxnRzRlnFIygCheV+BYN
-         DzOrJ9FizOrmG0vaDFNWpejyPx3hAvxa/yPygrVSstM04JyzIEvQ1nO7OyeWE5Kow8LF
-         ZPctGO5uv2i2PXMxWg/Y3xnovXs1mc2E5XgkDo3gKsHED8+DPBmP8Gu1UYmRyRWXaU7f
-         Hscg==
-X-Forwarded-Encrypted: i=1; AJvYcCVL5y0CuDoV/qsczEtrqUj/Y1vIDupKaoQnLgA300LOTBL9DVQGMRq+niBO7HO4pP0vjusbbTonV4FjBUAs/iyc5cJ5Oei2F6SB05kBAxAEa+b8D7tOM9xf//2YM2nmHwrbB9gVxXQB8EQ=
-X-Gm-Message-State: AOJu0YzoaE6wT508xD2oyZLTM16fxLi0uYEzam/UrAH0VQmNHt+bN9vK
-	K9oU1eEPuLjrhk5395i9PmxFateLcXQsuOLzK0mHDbOVLYtcRCp4
-X-Google-Smtp-Source: AGHT+IF2vPtRPRrXhmooa5/sHFCSJ7g/iHCxCxNwXFB0+bGtFhLdonWOHqLcr98ixTtVqydWUbG5sQ==
-X-Received: by 2002:adf:f84e:0:b0:367:8459:a56c with SMTP id ffacd0b85a97d-367cea73576mr1392955f8f.15.1720522088390;
-        Tue, 09 Jul 2024 03:48:08 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde7e023sm2187690f8f.13.2024.07.09.03.48.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 03:48:07 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Zhi Mao <zhi.mao@mediatek.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: i2c: GC05A2: Fix spelling mistake "Horizental" -> "Horizontal"
-Date: Tue,  9 Jul 2024 11:48:07 +0100
-Message-Id: <20240709104807.167992-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1720522138; c=relaxed/simple;
+	bh=+0UCCKX9eTmUCtlh6j65FUsSAck/OtEeFegBRXqawoA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c9SapNBiHMa5QFDTJOipdci4jrOVm099kJLfEEFGOy+JUEoAfg7zXJQgahyTMNuBjPa7F3/XJxS/GdmQLGqU7zmLPc00HEceVeuEJSXNa9OfMgkajcTLHBh1dxwrzQlxbwkFm9tFPw0Ve33DHOG5HXLpa5/FmFdcCx+pSy41byM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YH2oSUoS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CBF3C3277B;
+	Tue,  9 Jul 2024 10:48:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720522138;
+	bh=+0UCCKX9eTmUCtlh6j65FUsSAck/OtEeFegBRXqawoA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YH2oSUoS8Mrw383mytbFplGa9CwGgWmEBAuIXD1eNNWw4D8cmmis+Ey6BXCcyhJu4
+	 dSUSlQqkWVZoqbU2ratz0Ul7+lyCNt8lJmeFy+hEl8RgcBWlLTxKHSkr6x7QHTphsi
+	 FSpKjRepjzSseN2lHHu+UXddVEyNrKX+oyyOvdT5sSgG23FKJT44aYcNBQ+1kOxtU6
+	 8RG+CQVCSWZpUzpAq3baaIm+lD/O8GT/+BLZLh3rjX8XEdk3tw/Wo+tGOAG8+zdZrS
+	 yCZF/uUk165W3pxsBTnS4IU8KwSwKto9ja749I67GhEjcYLGBg/bgNzUq4NMSLOLbD
+	 WW7gvGuz4JwiQ==
+Date: Tue, 9 Jul 2024 11:48:51 +0100
+From: Will Deacon <will@kernel.org>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Subject: Re: [PATCH v4 02/15] firmware/psci: Add psci_early_test_conduit()
+Message-ID: <20240709104851.GE12978@willie-the-truck>
+References: <20240701095505.165383-1-steven.price@arm.com>
+ <20240701095505.165383-3-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240701095505.165383-3-steven.price@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-There is a spelling mistake in a string in the gc05a2_test_pattern_menu
-array. Fix it.
+On Mon, Jul 01, 2024 at 10:54:52AM +0100, Steven Price wrote:
+> From: Jean-Philippe Brucker <jean-philippe@linaro.org>
+> 
+> Add a function to test early if PSCI is present and what conduit it
+> uses. Because the PSCI conduit corresponds to the SMCCC one, this will
+> let the kernel know whether it can use SMC instructions to discuss with
+> the Realm Management Monitor (RMM), early enough to enable RAM and
+> serial access when running in a Realm.
+> 
+> Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> v4: New patch
+> ---
+>  drivers/firmware/psci/psci.c | 25 +++++++++++++++++++++++++
+>  include/linux/psci.h         |  5 +++++
+>  2 files changed, 30 insertions(+)
+> 
+> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+> index d9629ff87861..a40dcaf17822 100644
+> --- a/drivers/firmware/psci/psci.c
+> +++ b/drivers/firmware/psci/psci.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/errno.h>
+>  #include <linux/linkage.h>
+>  #include <linux/of.h>
+> +#include <linux/of_fdt.h>
+>  #include <linux/pm.h>
+>  #include <linux/printk.h>
+>  #include <linux/psci.h>
+> @@ -767,6 +768,30 @@ int __init psci_dt_init(void)
+>  	return ret;
+>  }
+>  
+> +/*
+> + * Test early if PSCI is supported, and if its conduit matches @conduit
+> + */
+> +bool __init psci_early_test_conduit(enum arm_smccc_conduit conduit)
+> +{
+> +	int len;
+> +	int psci_node;
+> +	const char *method;
+> +	unsigned long dt_root;
+> +
+> +	/* DT hasn't been unflattened yet, we have to work with the flat blob */
+> +	dt_root = of_get_flat_dt_root();
+> +	psci_node = of_get_flat_dt_subnode_by_name(dt_root, "psci");
+> +	if (psci_node <= 0)
+> +		return false;
+> +
+> +	method = of_get_flat_dt_prop(psci_node, "method", &len);
+> +	if (!method)
+> +		return false;
+> +
+> +	return  (conduit == SMCCC_CONDUIT_SMC && strncmp(method, "smc", len) == 0) ||
+> +		(conduit == SMCCC_CONDUIT_HVC && strncmp(method, "hvc", len) == 0);
+> +}
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/media/i2c/gc05a2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hmm, I don't think this is sufficient to check for SMCCC reliably.
+Instead, I think you need to do something more involved:
 
-diff --git a/drivers/media/i2c/gc05a2.c b/drivers/media/i2c/gc05a2.c
-index dcba29ee725c..0413c557e594 100644
---- a/drivers/media/i2c/gc05a2.c
-+++ b/drivers/media/i2c/gc05a2.c
-@@ -65,7 +65,7 @@
- 
- static const char *const gc05a2_test_pattern_menu[] = {
- 	"No Pattern",  "Fade_to_gray_Color Bar", "Color Bar",
--	"PN9",	       "Horizental_gradient",    "Checkboard Pattern",
-+	"PN9",	       "Horizontal_gradient",    "Checkboard Pattern",
- 	"Slant",       "Resolution",	         "Solid Black",
- 	"Solid White",
- };
--- 
-2.39.2
+1. Check for PSCI in the DT
+2. Check that the PSCI major version is >= 1
+3. Use PSCI_FEATURES to check that you have SMCCC
+4. Use SMCCC_VERSION to find out which version of SMCCC you have
 
+That's roughly what the PSCI driver does, so we should avoid duplicating
+that logic.
+
+Will
 
