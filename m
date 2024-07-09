@@ -1,412 +1,226 @@
-Return-Path: <linux-kernel+bounces-245220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C83792AFDE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:15:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 623A792AFE2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F4101C21691
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:15:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A08E281D7C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99316139566;
-	Tue,  9 Jul 2024 06:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E255812F5BF;
+	Tue,  9 Jul 2024 06:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ahBZa1Yd"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="faq9+OjW"
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2040.outbound.protection.outlook.com [40.107.105.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB2B823CB;
-	Tue,  9 Jul 2024 06:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720505700; cv=none; b=hYw32g6Vum5xY3xwKI04coGxcCufd6yMQHwZDjPRS/FJU7c80y3NJ6d8sudUz7nd3g+5pWz+qIrAiAWiHQnGfieNqkJihZlUHlwZov8/zjXwAqUlZbGrWY3D0j7oojmf73Z9OUXC96XJCigcoT4PgsM6oMZHAEFUIYvH/dfYtVs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720505700; c=relaxed/simple;
-	bh=uaf0k918GNzEIlQzbepz4RbQ9hFNTvCjKeogRrx7w48=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QDkFyxoNIINDBf4j1X5H09ihyZewS2BHQDtN2mP4Cy/UByRGgJ27IRdszttDX5SAOcn8GLDx9XbxJ7RNRGmU3rMZ+OziM0+A2d7lxdscupp3L2gmOTePwPdPsIG/9h+mc7wx/aDAp37YIfGgiQxwMeKK5P+DZlN7IBCOnP/mHZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ahBZa1Yd; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-70df213542bso2423527a12.3;
-        Mon, 08 Jul 2024 23:14:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720505698; x=1721110498; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6flLYQpcWy6NEE80YV45Eq5sQtMIrLlINbc9bk0jDk8=;
-        b=ahBZa1Ydqlt+/DQBdo3h+E3erVt+kM8PErCSF8tkyZEU9AMO/c80NSDZpCI9xIvMfT
-         H/1mG1Qpgx2ZjyN7ShpWdzBG+qmm7ElbiAsjlZ7YiC4GzXLMPzj6oLxYOuw5solzpIe1
-         q4rD3WCGk5EDFY55F5aq4fPR2EIisibmpVRSZI3HL7EFLpZpiRO9qOP8dT2+1Tzz0T+N
-         D5yL1oqTpd89ofHFjZvM8jiKD7/9AcacsU3YngVbcZHQxhAAKgYm1koim1iUiEpG/NX6
-         SaQlegXfDAJG7f2CihL9EvuRdx5QX5706Qtz0EUMOxRHX1bLRofz4NKy2AJvORGiPOEf
-         x30w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720505698; x=1721110498;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6flLYQpcWy6NEE80YV45Eq5sQtMIrLlINbc9bk0jDk8=;
-        b=AHodKyKxcjFyJWmx5M9jvRzdljFv399Ov/b1aiHAUde7HNrm+hs1RxnMXwgkVrP3z3
-         YSafM9vAc1s5EcE5mff7u/+02TVLK/1s6Hb6M8DUfEAw+4bu79Abyg0nFlf18WwYR0ta
-         WTPDhzgCvRWE07QBKcln+t5/Amhap1mzoWIK6uRKPOrpVbbCfVYJ9ze/JQp6yrpo9huv
-         KZ7iKmNXAa89iMl6FD1P2Ii5lvj+aFd1YitHbvEs/tvQqnjFjb5qHIH41is3KuUmSugm
-         FlMNUR5FDxJlGsSH368CHXOaLHUrnNmObK6MIJNGGZNTkvmEsoizTotMvmKfEFWu+2MN
-         1YBw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXGLbtO/bH6M16SREHjiVUw7uY0HB9E4aQYjDzcWJpGGNaCu1KFFc9xcmC4jNZ7XMxjbr+0UhrCUPMlyNxG2/rYltBkVR4wfXaaLiZegGlwOXcgP28WkYvEZgzSr43bkPk
-X-Gm-Message-State: AOJu0YyH4xlTOqo3+HNjLJfaAdbFnGr4yLrBGXIZB0t0xVsT3g38e65m
-	d3UuU2WuLYnvI8+n0v6+9xeawGPrft1qmhTq+Na9JV4/hIY16s8cpdR5RahxFO5qopa2OIZVR2K
-	ABO3X2htxJqlyN/D6bR9x6+EV79s=
-X-Google-Smtp-Source: AGHT+IHa+53zCDeHmR81WLYyQi8Pxc0H3r7o79OYQ/LY6Lrj6JsBdDahghtssfQXCcWDEr4CTVzp2NcOeeRiO8Qi0wc=
-X-Received: by 2002:a05:6a20:4320:b0:1c0:e629:390d with SMTP id
- adf61e73a8af0-1c29821e1abmr1955596637.16.1720505697720; Mon, 08 Jul 2024
- 23:14:57 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6518614A85;
+	Tue,  9 Jul 2024 06:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720505804; cv=fail; b=KnoWcaD1OS8odDuU2yuwbgMe80GBfEVIJtgf0jkwFqdnA19O/fLOYxlOzEk/FgsyLOGNHZ9xha3HuFYE0aFpTKwkCHKQS7gWt3DxjHctdrGG128V82yJODHnxR9AwJ/i6wsdy5ghX2UWDKQTljPrvYba+StoFFScCX/n3XbRSYY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720505804; c=relaxed/simple;
+	bh=DnooNqsPyGLJhzpgThhlDfHZrSKa1PxnI6H6gjx5fc4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=j342niLA/9Bd9+B2ubWRZaWs61WmA+/0F4CfOLlWKIrEkKIrxVSIL0e8gYP6gpXSTx853y5CIU4W+T5tIgApvVCfU6yZEZ0X6W1Mj9FDCihQEDXiQFsfilyys4rjHcTFNpTMv9ms9vr34TH9nPEXbywSdC0qlA9et9+ZD43o7is=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=faq9+OjW; arc=fail smtp.client-ip=40.107.105.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=eHva7Xm09pUQvPdfk5KF9azZpl4RNCd2TUQ5BCLemjdhU1uevHNnSVUq6edeaO9EmxCNupnPls31YPrMs/oUkVTCEnfJ9lV0mNCzoaT4Z9GjIWhbSD53fkhqMT8ug9IpCtt+04db2mF9OAXnUFSguiGHAtPe+FW/t3Gn+2a96LGTL45CJnmAQznWlzYgawDG35OXoHTv2w2DmDhj9HHZi9zxfq/JaJ3yhM7VXhiSZ5Gcn0QHWhs2ouMQ/YDqgQ7/8T/hxThZuykRWTIRlXMDTrBaSJun7Ed0z3scMEZToFQoMqFR2mn046cRRe+KZ7f9mTuKFUPdqi6CJGxsf75PKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DnooNqsPyGLJhzpgThhlDfHZrSKa1PxnI6H6gjx5fc4=;
+ b=ODuiCuVTWuyodP5kLS1sod1t+dJ2DhCg7B8+ZP2XKPQFZRDu5whIZNbDjQbm31mUIB7lDWxto0tjZlv/41MvHMibQgPKSZg0A9WHSlfhK3Hh91xNafIXRjKDuMRuR5i+xmcuf0ASDh23QhGg1h77ImxIHLfcqOVr20dQRf4On0mV4cTSal1XA5khbQ1/XQSQbLKtNSzuoFL2x5LxkXJ/JP8kRuufLzUoTcIT0cN9GOIEc0lNXJJ1Q+55nIHLoM1fZxm0FOSYD0UC8/fzZKVeabsqwEUwvnwet3xgbKAtE20D4EMrFCQ0Owyhcw2O5CYBHTPhY4Yta9XBOw3xC230rA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DnooNqsPyGLJhzpgThhlDfHZrSKa1PxnI6H6gjx5fc4=;
+ b=faq9+OjW79gMhZDi2qCVXTur7Z0wffor7L3iHg0n6zA+qXOVTK8MR3Nlmc7dq9kBHk0nqWQI/Kt6teNzJ56CSRV/RxJOKtydDC/pzPJVAeCmZV1w1bAx9PibzsWxnABur6nGB9yuxbSAiR9bzBcZknerPngyRsZeU3MGv0YqanM=
+Received: from AM9PR04MB8604.eurprd04.prod.outlook.com (2603:10a6:20b:43b::21)
+ by DB8PR04MB7098.eurprd04.prod.outlook.com (2603:10a6:10:fd::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Tue, 9 Jul
+ 2024 06:16:38 +0000
+Received: from AM9PR04MB8604.eurprd04.prod.outlook.com
+ ([fe80::e751:223e:aa3d:5827]) by AM9PR04MB8604.eurprd04.prod.outlook.com
+ ([fe80::e751:223e:aa3d:5827%3]) with mapi id 15.20.7741.033; Tue, 9 Jul 2024
+ 06:16:38 +0000
+From: Pankaj Gupta <pankaj.gupta@nxp.com>
+To: Randy Dunlap <rdunlap@infradead.org>, Jonathan Corbet <corbet@lwn.net>,
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Rob Herring
+	<robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+CC: "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [EXT] Re: [PATCH v4 4/5] firmware: imx: add driver for NXP
+ EdgeLock Enclave
+Thread-Topic: [EXT] Re: [PATCH v4 4/5] firmware: imx: add driver for NXP
+ EdgeLock Enclave
+Thread-Index: AQHazuMXk5fiLsrWBE6WkZNs4dui17Homl8AgAVV/4A=
+Date: Tue, 9 Jul 2024 06:16:38 +0000
+Message-ID:
+ <AM9PR04MB86045A7D4612D40950B7DF8395DB2@AM9PR04MB8604.eurprd04.prod.outlook.com>
+References: <20240705-imx-se-if-v4-0-52d000e18a1d@nxp.com>
+ <20240705-imx-se-if-v4-4-52d000e18a1d@nxp.com>
+ <318ebc29-df94-495d-b2bc-b24340c3d82a@infradead.org>
+In-Reply-To: <318ebc29-df94-495d-b2bc-b24340c3d82a@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM9PR04MB8604:EE_|DB8PR04MB7098:EE_
+x-ms-office365-filtering-correlation-id: 68d4e078-2cf3-4d96-139a-08dc9fdeb138
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|1800799024|376014|366016|921020|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?Q3dlNEFLaHd1L1E2WEhaaDlXeS9zczlMZFBaL0w4bnM1blZNMWRUcEZyczdX?=
+ =?utf-8?B?TFdMZUJYcFpjVS9WUzUvenBvSm9RSy93L3JQOGI5cXNYNEdiWm9HZkVYdEtk?=
+ =?utf-8?B?VTNqL1Y4bWFjSGpXeEdtS2RIUnBZYkx5QmR4NllkenFwdXRoMmQrUysycFJ1?=
+ =?utf-8?B?eEk2dTl4UkRKVHVycW9zR3ZLME9ESGZ0Q3BhWCtHZmdmTDdkbHY3Vjl3ZHBZ?=
+ =?utf-8?B?elVHQnJRMG5kalNFMWRlT3ZCRVRxWHdDbWhaK3BkTUc0dVBpcG5Nc3gwSmEy?=
+ =?utf-8?B?TzU5aG1IVlBNNlA2V0cwVG1WeC81UGNkWk9wRGFZcWhXOW8wKzFlbjY1YnBl?=
+ =?utf-8?B?cVd2WXNKZ0lzSDJaNDJWdWcxMUEvbWV4QnJjekhyVkNvOFJ3VGZsY3RhaFlv?=
+ =?utf-8?B?VUorSStPaXpIYTl5bTBHK1EzbWdOQUpIWklJQlZQemhjV2RENjNoaEI4N0xL?=
+ =?utf-8?B?NjBEZkV2MEMrNE45R20xcW1vZzhNK29McVBveEVDeFNTN0lzMFhPL25weUto?=
+ =?utf-8?B?cW9MTTZKVVpMajlNY3FCejNWZ2lSR1VWSmxsN0NZc0g1SmFxMG16ZkpEcEJR?=
+ =?utf-8?B?L0NPVGNWRk51MXBFNTRrak1VZ3RqL2RJTXoxcUpXYmJPMmVEZHk3U1RMcjN5?=
+ =?utf-8?B?SWVMWmZ1UjFCMUhVYktzNVMrcWs5SjV1N3NOMjFRRFFpek9rK3YvSHFpS1BQ?=
+ =?utf-8?B?cityTzBocEU0aSthT0t0bUp3RmxicWc2V0RVZ0ptWXdpTTRhR29WbE1XZzFx?=
+ =?utf-8?B?M3dlWHRsOTlSbTRpSEJmeS8vL3lzYkZqY3J0QUFvZTNMYkh1bWwvVUxhNmE4?=
+ =?utf-8?B?UTZ0dEhvN3Z4RGNzVk5ZMDJyVDNkeTlXWG9QRlIrNi9WZWsvZ3ZqcFF1VUkv?=
+ =?utf-8?B?N3lZOEVKQ3JiN0xlRjN5VXdWYklJYW03eEtNd0NQUUYzN2VIOXJleStOMDQ4?=
+ =?utf-8?B?eDlsVjJpY2lNZHlZZ0UrYW9UeUd6S1hEbVhiSmI3TXBVN21hVUUrcHRUekZS?=
+ =?utf-8?B?UmxQLzVCK1ZsZ2pYa2dKTXVZS0JKT0pKSE1UcVQwM0IvS0xMWVIyOHVSK3pF?=
+ =?utf-8?B?WFlFMXBOd0lTay9sM1R1SjBXTzJCMGpYVm1XUFBreGJBMDRHYjNIOFFwVUlN?=
+ =?utf-8?B?MVBoOHJGWndOeXkzK0RpZFNqZzl6c1pkVlpPQk4rcU9BOUpDSkZDdnFqdU1Z?=
+ =?utf-8?B?T3ZmazI2ek1vdlVqWkQ0SnJDN0c1NCtPWTdOL0hrUmFGSHorVVpReDZqUTdl?=
+ =?utf-8?B?cDBIYVU5Y1ZjZDFnN2FoU0wxK2pYd3FzVzFENG5KODJzRTA3cWlsZkVES1Vo?=
+ =?utf-8?B?akpvMjlWNlZ1aE1RbFFoN21yZCtUdy9FL2ZpWXlMdEJNb2J2ZDZaNzRsUnRI?=
+ =?utf-8?B?YU52VUJ4N2ZNZ0NSZC9KVWJqTW9oOWd5eVdtdThaNVJLanl5aHNPcjFYdWp2?=
+ =?utf-8?B?L082bU5FQ3Zjd0NEcjRIeUxOeU1GRVBLNEtjdDgwdGljVTYvMGwzZ1BSOEVP?=
+ =?utf-8?B?cThGeTJDWnBDRGllNEU2MS8xUklCK1ZkbnQxdWpkbldoblBmR254bXhabTdJ?=
+ =?utf-8?B?ZGhwTkZLSFByZWVEVTNta1ViN3JPVzEwUnBhdUZQTFdtUUoxT3laaDhLMStX?=
+ =?utf-8?B?cUNGV09sUlorUUU2eGF0N2tEYlFVOVBUYUNMSW5PTzlleXZYZDdUQmtpOUQ3?=
+ =?utf-8?B?NVJya0VmeVNZN2xKcE1MblZ4dmdQd0pqeTQrcUV2c0xQWWdFa1ZHRjBoSFVC?=
+ =?utf-8?B?b0ZielphNDU1WVFYVUt6UElkYmZpY01DaGdRV3YxOW1zWmlpbGVaQUxoOWV6?=
+ =?utf-8?B?ZTZobHNZTE9Obm83bWlXS1lpWDYzU2ZQaUh5R01Ob2tWSE9vdDFIK2ZaRE40?=
+ =?utf-8?B?cG9oYlpRd0MyRWxRWm5ibTR6bHphMVlQZzhlM3M2Q05WNGplSTMxVnNJaWtV?=
+ =?utf-8?Q?UFavd0vEvFY=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8604.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?VWxmTEJ5NlhSZWQ3clpyemt1Tmh6ZlJQWUZ4eEVCeWdRVkhhTTdCd1ZoVEdh?=
+ =?utf-8?B?MTBTSElocGNxUHV3a0tuMmM3Mmlsb1E4US9DOTRxaFY2ODkxekZ5MzBCaHZa?=
+ =?utf-8?B?OStqc0RCNUs2OGV5QXBqbFBEb0xNclVmTTRnZDlzaWs3cHlGQkNKbis5VkV6?=
+ =?utf-8?B?S3J4OU0vbDYrN0pHQXJJV0NNVFdkS2FrVENQaEg3clphcU1GUmE0RWdWZHFx?=
+ =?utf-8?B?Uk9GSlIxc1pmOC9aR3N3S3VGeVFSV1pKMWJtV2phSTY4Z0czeFRmS2t0UnNt?=
+ =?utf-8?B?MHE4Rm5obGRIcXRCWDdZR25rR2ozcHNpYzlhSE9lck1yUUZNUmNnT0RhQk9C?=
+ =?utf-8?B?anB5SkpmNlgwY08zcDU5K3Zkb0h3WHh3alZoYkVZY3g2cXlsem9qZUJXVUVh?=
+ =?utf-8?B?aHdsRjJHeWxMTFpoU0l1WWM2RzdXbW5yKzNSVzBlanpiOE5mb25oVHc0OHRW?=
+ =?utf-8?B?VFRWRXEzMUcxZ0hWQzhPVzRRM0EwUE95aEFsYytyeXVOcWhQSk9xdWRjNzUv?=
+ =?utf-8?B?NmZsdmdWeGdFUlc1OTVqZTV6T2s0dUg1WVBwWGNNWUFFME1GT2R5Rk8rSVZn?=
+ =?utf-8?B?aWlvOHRiSkUrK01ZQUtaMlVvaTNHU3lDMTdNVFJ5UUtsNDV4aUxUS01neWxo?=
+ =?utf-8?B?ZUxsVjdQYXBucjFya25PbEo0d0FMN3h3ZmZqZjB6K2xrUWtHMGVVdzM3Qnp6?=
+ =?utf-8?B?MFowcXFoRUl5ajN6ZWdTMTJjMmpBeXQ4c1BOTGhuV1NWeUI2K0hmWE9uemN3?=
+ =?utf-8?B?ZW92OHViS3FmYjZHdVJnc2pWd3d4aUU5OFZsYkxUSXJ1SXlaWHJVaUNFdDhx?=
+ =?utf-8?B?L2Vxako2blFDcEJuZG5NVFZtbkJGMHNTWTVYRnpGZ0kwS3FPZURNcnd5UWJv?=
+ =?utf-8?B?TTN4c0pYeVk3aVNSNXJYOHdLYzB6QnJrL3ZVUHMxVkluaEEyTy9GUTI3cEY3?=
+ =?utf-8?B?a2FCTlQ5RWl5ak43UkJnL2hRcXJXalJtOVdZK0x3UnRQcXlwMkh3cVlybUhk?=
+ =?utf-8?B?YksyOFBWdDluSWFkazhhcjN5U25NQ2d1K3plTXRZWUpVR1JuU3lGaERNVmNy?=
+ =?utf-8?B?aXduTFU1UTFHWE4rWmsyRlRLUDBSbU83dXdET0tBaWNKdVBtdmgzVDU0YjJu?=
+ =?utf-8?B?YVRmcnlZcUdXQmQvdHFaTVNGM3BkNzdFSUxJMjFrRmNCcW9TU3F4MmlZK2U3?=
+ =?utf-8?B?azFyRjN3aWFEdTFBbGZDaDI5cVdvR1U0N1RYaEN1MHVjK2FQaXkycThxeEhV?=
+ =?utf-8?B?dFljTXA1dmtLVGtncDR6a1VSSS90SVhQckt1VmlVSWgyNzkxWnNuN2w5WGJB?=
+ =?utf-8?B?c3pteExqZUQ3N3hCRmZ0Mms5SGZzaWRiOFdmdlJkTEE0OXJJaVdENFBWcE5x?=
+ =?utf-8?B?eUNTSVRDeHhySkRybEVGTFFTUGFzRThXNUc2R3JuMEc3c2NPMWFrenNVbjQy?=
+ =?utf-8?B?dlRWb3RpSE1qZGdQQUthYjBYbVRXNWN3M1QvWXFUb2l2QnhuL0oxZm5DOGE1?=
+ =?utf-8?B?TzV1bjVuUEI5ME80MStBK1NPb2pqbVZteDhYRllWNmsrQ2NuOVZsci95bkFy?=
+ =?utf-8?B?M0l4aFlGOWkwYVRkaVBpYWppOGEvOUNwbDBMYXUyYUcxSGF5YVVtR1prMVQ3?=
+ =?utf-8?B?YnNrNHI2aG8xeXVNaGcrVXFSQ1JEdllYYXNDWE1aTzNtT1lZSVp6dFJrdGdH?=
+ =?utf-8?B?WUFacEh3OUFoR0NhWExFZlVGc2pvYlJXdVZkYWNETXRwSXowd1ZqNmxUbzZn?=
+ =?utf-8?B?VWtBYnZiRTAyVVZqdFJBdDdhanpnNTZrUEJ5SEgydUVHY1YxblVUc21SbDFM?=
+ =?utf-8?B?eHNjMm9FLyt4TWdORkZpVEgrLzNBazJlUjV2Snp5ejRES09QME03aEo2ckll?=
+ =?utf-8?B?SmFVRjN3RDBLR0Jac1RtU0U5YWpYeFBCMGRCa3h0a2xPOHZXOXZrWUU1VS9E?=
+ =?utf-8?B?OUUweXpleHZXQ3AvMVY2ZjBTaVExRVZlVGtiS0xuMHlCL0tyZHUzV281N3Y4?=
+ =?utf-8?B?Uzc3YldWaVMxWTBzNHN1SVpiblVwcFhBRjd5d2xwS0h2enRGa2YyUEhSeWFU?=
+ =?utf-8?B?U2xWc21rc0JhVUFlNjI0UTBXOVRRdTVzSDVkMTJqZVFFTDF1Z1FhSmc2M2F3?=
+ =?utf-8?Q?6eOSuDIOaHi95GpOZgcKat0xv?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240604085401.14733-1-qiang.zhang1211@gmail.com> <CAFwiDX-fFSHmHxKyM8U1Eu89hj5ZZjLJMsW2Q2z6gqsdoaem9g@mail.gmail.com>
-In-Reply-To: <CAFwiDX-fFSHmHxKyM8U1Eu89hj5ZZjLJMsW2Q2z6gqsdoaem9g@mail.gmail.com>
-From: Z qiang <qiang.zhang1211@gmail.com>
-Date: Tue, 9 Jul 2024 14:14:45 +0800
-Message-ID: <CALm+0cUX+kz10LpCxj8ww+VEs4ifduODuJ1TM3t1GzAH13M9Zw@mail.gmail.com>
-Subject: Re: [PATCH v2] rcu-tasks: Fix access non-existent percpu rtpcp
- variable in rcu_tasks_need_gpcb()
-To: Neeraj upadhyay <neeraj.iitr10@gmail.com>
-Cc: paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org, 
-	joel@joelfernandes.org, urezki@gmail.com, rcu@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, zhixu.liu@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8604.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68d4e078-2cf3-4d96-139a-08dc9fdeb138
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2024 06:16:38.4468
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Kl8nJ1FRdmPnHNTbGcx6rs4pMgZzQXPjDMjAuG4w5gECBFZyEw4X9+9YJWDQJDxs1sIxoyUgug7Bg3qZuLBqRA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7098
 
->
-> Hi Zqiang,
->
->
-> On Tue, Jun 4, 2024 at 2:24=E2=80=AFPM Zqiang <qiang.zhang1211@gmail.com>=
- wrote:
-> >
-> > For kernels built with CONFIG_FORCE_NR_CPUS=3Dy, the nr_cpu_ids is
-> > defined as NR_CPUS instead of the number of possible cpus, this
-> > will cause the following system panic:
-> >
-> > [    0.015349][    T0] smpboot: Allowing 4 CPUs, 0 hotplug CPUs
-> > ...
-> > [    0.021342][    T0] setup_percpu: NR_CPUS:512 nr_cpumask_bits:512 nr=
-_cpu_ids:512 nr_node_ids:1
-> > ...
-> > [    3.681252][   T15] BUG: unable to handle page fault for address: ff=
-ffffff9911c8c8
-> > [    3.689415][   T45] ehci-pci 0000:00:1a.0: debug port 2
-> > [    3.697008][   T15] #PF: supervisor read access in kernel mode
-> > [    3.697009][   T15] #PF: error_code(0x0000) - not-present page
-> > [    3.706233][   T45] ehci-pci 0000:00:1a.0: irq 16, io mem 0xf7e3c000
-> > [    3.708152][   T15] PGD 40fa24067 P4D 40fa24067 PUD 40fa25063 PMD 41=
-0bff063
-> > [    3.720380][   T45] ehci-pci 0000:00:1a.0: USB 2.0 started, EHCI 1.0=
-0
-> > [    3.720430][   T15] PTE 800ffffbefee3062
-> > [    3.720431][   T15] Oops: 0000 [#1] PREEMPT SMP PTI
-> > [    3.727873][   T45] usb usb2: New USB device found, idVendor=3D1d6b,=
- idProduct=3D0002, bcdDevice=3D 6.06
-> > [    3.734009][   T15] CPU: 0 PID: 15 Comm: rcu_tasks_trace Tainted: G =
-W          6.6.21 #1 5dc7acf91a5e8e9ac9dcfc35bee0245691283ea6
-> > [    3.734011][   T15] Hardware name: Dell Inc. OptiPlex 9020/005T15, B=
-IOS A14 09/14/2015
-> > [    3.734012][   T15] RIP: 0010:rcu_tasks_need_gpcb+0x25d/0x2c0
-> > [    3.737962][   T45] usb usb2: New USB device strings: Mfr=3D3, Produ=
-ct=3D2, SerialNumber=3D1
-> > [    3.742877][   T15] RSP: 0018:ffffa371c00a3e60 EFLAGS: 00010082
-> > [    3.751891][   T45] usb usb2: Product: EHCI Host Controller
-> > [    3.764495][   T15]
-> > [    3.764496][   T15] RAX: ffffffff98929ca0 RBX: ffffffff98b3b328 RCX:=
- 0000000000021880
-> > [    3.764497][   T15] RDX: ffffffff9911c880 RSI: 0000000000000000 RDI:=
- 0000000000000000
-> > [    3.772461][   T45] usb usb2: Manufacturer: Linux 6.6.21 ehci_hcd
-> > [    3.778248][   T15] RBP: 0000000000000202 R08: 0000000000000000 R09:=
- 0000000000000000
-> > [    3.778249][   T15] R10: 0000000000000000 R11: 0000000000000000 R12:=
- 0000000000000003
-> > [    3.778249][   T15] R13: 0000000000000000 R14: 0000000000000001 R15:=
- ffffffff98b3b320
-> > [    3.786216][   T45] usb usb2: SerialNumber: 0000:00:1a.0
-> > [    3.805811][   T15] FS:  0000000000000000(0000) GS:ffff8c781ea00000(=
-0000) knlGS:0000000000000000
-> > [    3.805813][   T15] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003=
-3
-> > [    3.811993][   T45] hub 2-0:1.0: USB hub found
-> > [    3.817383][   T15] CR2: ffffffff9911c8c8 CR3: 000000040fa20005 CR4:=
- 00000000001706f0
-> > [    3.817385][   T15] Call Trace:
-> > [    3.817386][   T15]  <TASK>
-> > [    3.817388][   T15]  ? __die+0x23/0x80
-> > [    3.819643][   T45] hub 2-0:1.0: 2 ports detected
-> > [    3.827481][   T15]  ? page_fault_oops+0xa4/0x180
-> > [    3.827485][   T15]  ? exc_page_fault+0x152/0x180
-> > [    3.922376][   T15]  ? asm_exc_page_fault+0x26/0x40
-> > [    3.927289][   T15]  ? rcu_tasks_need_gpcb+0x25d/0x2c0
-> > [    3.932459][   T15]  ? __pfx_rcu_tasks_kthread+0x40/0x40
-> > [    3.937806][   T15]  rcu_tasks_one_gp+0x69/0x180
-> > [    3.942451][   T15]  rcu_tasks_kthread+0x94/0xc0
-> > [    3.947096][   T15]  kthread+0xe8/0x140
-> > [    3.950956][   T15]  ? __pfx_kthread+0x40/0x40
-> > [    3.955425][   T15]  ret_from_fork+0x34/0x80
-> > [    3.959721][   T15]  ? __pfx_kthread+0x40/0x40
-> > [    3.964192][   T15]  ret_from_fork_asm+0x1b/0x80
-> > [    3.968841][   T15]  </TASK>
-> >
-> > Consider that there may be holes in the CPU numbers, this commit
-> > use the maxcpu variable to store the CPU numbers after traversing
-> > possible cpu, and generate the rcu_task_cpu_ids variable and assign
-> > it to (maxcpu +1) instead of nr_cpu_ids.
-> >
-> > Closes: https://lore.kernel.org/linux-input/CALMA0xaTSMN+p4xUXkzrtR5r6k=
-7hgoswcaXx7baR_z9r5jjskw@mail.gmail.com/T/#u
-> > Reported-by: Zhixu Liu <zhixu.liu@gmail.com>
-> > Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
-> > ---
-> >  kernel/rcu/tasks.h | 78 +++++++++++++++++++++++++++++-----------------
-> >  1 file changed, 49 insertions(+), 29 deletions(-)
-> >
-> > diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
-> > index e362f72bb65d..22310965acc7 100644
-> > --- a/kernel/rcu/tasks.h
-> > +++ b/kernel/rcu/tasks.h
-> > @@ -49,6 +49,7 @@ struct rcu_tasks_percpu {
-> >         struct list_head rtp_blkd_tasks;
-> >         struct list_head rtp_exit_list;
-> >         int cpu;
-> > +       int index;
-> >         struct rcu_tasks *rtpp;
-> >  };
-> >
-> > @@ -110,6 +111,7 @@ struct rcu_tasks {
-> >         call_rcu_func_t call_func;
-> >         unsigned int wait_state;
-> >         struct rcu_tasks_percpu __percpu *rtpcpu;
-> > +       struct rcu_tasks_percpu **rtpcp_array;
-> >         int percpu_enqueue_shift;
-> >         int percpu_enqueue_lim;
-> >         int percpu_dequeue_lim;
-> > @@ -182,6 +184,8 @@ module_param(rcu_task_collapse_lim, int, 0444);
-> >  static int rcu_task_lazy_lim __read_mostly =3D 32;
-> >  module_param(rcu_task_lazy_lim, int, 0444);
-> >
-> > +static int rcu_task_cpu_ids;
-> > +
-> >  /* RCU tasks grace-period state for debugging. */
-> >  #define RTGS_INIT               0
-> >  #define RTGS_WAIT_WAIT_CBS      1
-> > @@ -245,6 +249,8 @@ static void cblist_init_generic(struct rcu_tasks *r=
-tp)
-> >         int cpu;
-> >         int lim;
-> >         int shift;
-> > +       int maxcpu;
-> > +       int index =3D 0;
-> >
-> >         if (rcu_task_enqueue_lim < 0) {
-> >                 rcu_task_enqueue_lim =3D 1;
-> > @@ -254,14 +260,9 @@ static void cblist_init_generic(struct rcu_tasks *=
-rtp)
-> >         }
-> >         lim =3D rcu_task_enqueue_lim;
-> >
-> > -       if (lim > nr_cpu_ids)
-> > -               lim =3D nr_cpu_ids;
-> > -       shift =3D ilog2(nr_cpu_ids / lim);
-> > -       if (((nr_cpu_ids - 1) >> shift) >=3D lim)
-> > -               shift++;
-> > -       WRITE_ONCE(rtp->percpu_enqueue_shift, shift);
-> > -       WRITE_ONCE(rtp->percpu_dequeue_lim, lim);
-> > -       smp_store_release(&rtp->percpu_enqueue_lim, lim);
-> > +       rtp->rtpcp_array =3D kcalloc(num_possible_cpus(), sizeof(struct=
- rcu_tasks_percpu *), GFP_KERNEL);
-> > +       BUG_ON(!rtp->rtpcp_array);
-> > +
-> >         for_each_possible_cpu(cpu) {
-> >                 struct rcu_tasks_percpu *rtpcp =3D per_cpu_ptr(rtp->rtp=
-cpu, cpu);
-> >
-> > @@ -273,14 +274,29 @@ static void cblist_init_generic(struct rcu_tasks =
-*rtp)
-> >                 INIT_WORK(&rtpcp->rtp_work, rcu_tasks_invoke_cbs_wq);
-> >                 rtpcp->cpu =3D cpu;
-> >                 rtpcp->rtpp =3D rtp;
-> > +               rtpcp->index =3D index;
-> > +               rtp->rtpcp_array[index] =3D rtpcp;
-> > +               index++;
-> >                 if (!rtpcp->rtp_blkd_tasks.next)
-> >                         INIT_LIST_HEAD(&rtpcp->rtp_blkd_tasks);
-> >                 if (!rtpcp->rtp_exit_list.next)
-> >                         INIT_LIST_HEAD(&rtpcp->rtp_exit_list);
-> > +               maxcpu =3D cpu;
-> >         }
-> >
-> > -       pr_info("%s: Setting shift to %d and lim to %d rcu_task_cb_adju=
-st=3D%d.\n", rtp->name,
-> > -                       data_race(rtp->percpu_enqueue_shift), data_race=
-(rtp->percpu_enqueue_lim), rcu_task_cb_adjust);
-> > +       rcu_task_cpu_ids =3D maxcpu + 1;
-> > +       if (lim > rcu_task_cpu_ids)
-> > +               lim =3D rcu_task_cpu_ids;
-> > +       shift =3D ilog2(rcu_task_cpu_ids / lim);
-> > +       if (((rcu_task_cpu_ids - 1) >> shift) >=3D lim)
-> > +               shift++;
-> > +       WRITE_ONCE(rtp->percpu_enqueue_shift, shift);
-> > +       WRITE_ONCE(rtp->percpu_dequeue_lim, lim);
-> > +       smp_store_release(&rtp->percpu_enqueue_lim, lim);
-> > +
-> > +       pr_info("%s: Setting shift to %d and lim to %d rcu_task_cb_adju=
-st=3D%d rcu_task_cpu_ids=3D%d.\n",
-> > +                       rtp->name, data_race(rtp->percpu_enqueue_shift)=
-, data_race(rtp->percpu_enqueue_lim),
-> > +                       rcu_task_cb_adjust, rcu_task_cpu_ids);
-> >  }
-> >
-> >  // Compute wakeup time for lazy callback timer.
-> > @@ -348,7 +364,7 @@ static void call_rcu_tasks_generic(struct rcu_head =
-*rhp, rcu_callback_t func,
-> >                         rtpcp->rtp_n_lock_retries =3D 0;
-> >                 }
-> >                 if (rcu_task_cb_adjust && ++rtpcp->rtp_n_lock_retries >=
- rcu_task_contend_lim &&
-> > -                   READ_ONCE(rtp->percpu_enqueue_lim) !=3D nr_cpu_ids)
-> > +                   READ_ONCE(rtp->percpu_enqueue_lim) !=3D rcu_task_cp=
-u_ids)
-> >                         needadjust =3D true;  // Defer adjustment to av=
-oid deadlock.
-> >         }
-> >         // Queuing callbacks before initialization not yet supported.
-> > @@ -368,10 +384,10 @@ static void call_rcu_tasks_generic(struct rcu_hea=
-d *rhp, rcu_callback_t func,
-> >         raw_spin_unlock_irqrestore_rcu_node(rtpcp, flags);
-> >         if (unlikely(needadjust)) {
-> >                 raw_spin_lock_irqsave(&rtp->cbs_gbl_lock, flags);
-> > -               if (rtp->percpu_enqueue_lim !=3D nr_cpu_ids) {
-> > +               if (rtp->percpu_enqueue_lim !=3D rcu_task_cpu_ids) {
-> >                         WRITE_ONCE(rtp->percpu_enqueue_shift, 0);
-> > -                       WRITE_ONCE(rtp->percpu_dequeue_lim, nr_cpu_ids)=
-;
-> > -                       smp_store_release(&rtp->percpu_enqueue_lim, nr_=
-cpu_ids);
-> > +                       WRITE_ONCE(rtp->percpu_dequeue_lim, rcu_task_cp=
-u_ids);
-> > +                       smp_store_release(&rtp->percpu_enqueue_lim, rcu=
-_task_cpu_ids);
-> >                         pr_info("Switching %s to per-CPU callback queui=
-ng.\n", rtp->name);
-> >                 }
-> >                 raw_spin_unlock_irqrestore(&rtp->cbs_gbl_lock, flags);
-> > @@ -481,7 +497,7 @@ static int rcu_tasks_need_gpcb(struct rcu_tasks *rt=
-p)
-> >         if (rcu_task_cb_adjust && ncbs <=3D rcu_task_collapse_lim) {
-> >                 raw_spin_lock_irqsave(&rtp->cbs_gbl_lock, flags);
-> >                 if (rtp->percpu_enqueue_lim > 1) {
-> > -                       WRITE_ONCE(rtp->percpu_enqueue_shift, order_bas=
-e_2(nr_cpu_ids));
-> > +                       WRITE_ONCE(rtp->percpu_enqueue_shift, order_bas=
-e_2(rcu_task_cpu_ids));
-> >                         smp_store_release(&rtp->percpu_enqueue_lim, 1);
-> >                         rtp->percpu_dequeue_gpseq =3D get_state_synchro=
-nize_rcu();
-> >                         gpdone =3D false;
-> > @@ -496,7 +512,9 @@ static int rcu_tasks_need_gpcb(struct rcu_tasks *rt=
-p)
-> >                         pr_info("Completing switch %s to CPU-0 callback=
- queuing.\n", rtp->name);
-> >                 }
-> >                 if (rtp->percpu_dequeue_lim =3D=3D 1) {
-> > -                       for (cpu =3D rtp->percpu_dequeue_lim; cpu < nr_=
-cpu_ids; cpu++) {
-> > +                       for (cpu =3D rtp->percpu_dequeue_lim; cpu < rcu=
-_task_cpu_ids; cpu++) {
-> > +                               if (!cpu_possible(cpu))
-> > +                                       continue;
->
-> Do we also need a `!cpu_possible(cpu)` check in `for (cpu =3D 0; cpu <
-> dequeue_limit; cpu++)`
-> loop in the same function rcu_tasks_need_gpcb()?
-
-Thanks Neeraj, I will update :)
-
->
->
-> - Neeraj
->
->
->
-> >                                 struct rcu_tasks_percpu *rtpcp =3D per_=
-cpu_ptr(rtp->rtpcpu, cpu);
-> >
-> >                                 WARN_ON_ONCE(rcu_segcblist_n_cbs(&rtpcp=
-->cblist));
-> > @@ -511,30 +529,32 @@ static int rcu_tasks_need_gpcb(struct rcu_tasks *=
-rtp)
-> >  // Advance callbacks and invoke any that are ready.
-> >  static void rcu_tasks_invoke_cbs(struct rcu_tasks *rtp, struct rcu_tas=
-ks_percpu *rtpcp)
-> >  {
-> > -       int cpu;
-> > -       int cpunext;
-> >         int cpuwq;
-> >         unsigned long flags;
-> >         int len;
-> > +       int index;
-> >         struct rcu_head *rhp;
-> >         struct rcu_cblist rcl =3D RCU_CBLIST_INITIALIZER(rcl);
-> >         struct rcu_tasks_percpu *rtpcp_next;
-> >
-> > -       cpu =3D rtpcp->cpu;
-> > -       cpunext =3D cpu * 2 + 1;
-> > -       if (cpunext < smp_load_acquire(&rtp->percpu_dequeue_lim)) {
-> > -               rtpcp_next =3D per_cpu_ptr(rtp->rtpcpu, cpunext);
-> > -               cpuwq =3D rcu_cpu_beenfullyonline(cpunext) ? cpunext : =
-WORK_CPU_UNBOUND;
-> > -               queue_work_on(cpuwq, system_wq, &rtpcp_next->rtp_work);
-> > -               cpunext++;
-> > -               if (cpunext < smp_load_acquire(&rtp->percpu_dequeue_lim=
-)) {
-> > -                       rtpcp_next =3D per_cpu_ptr(rtp->rtpcpu, cpunext=
-);
-> > -                       cpuwq =3D rcu_cpu_beenfullyonline(cpunext) ? cp=
-unext : WORK_CPU_UNBOUND;
-> > +       index =3D rtpcp->index * 2 + 1;
-> > +       if (index < num_possible_cpus()) {
-> > +               rtpcp_next =3D rtp->rtpcp_array[index];
-> > +               if (rtpcp_next->cpu < smp_load_acquire(&rtp->percpu_deq=
-ueue_lim)) {
-> > +                       cpuwq =3D rcu_cpu_beenfullyonline(rtpcp_next->c=
-pu) ? rtpcp_next->cpu : WORK_CPU_UNBOUND;
-> >                         queue_work_on(cpuwq, system_wq, &rtpcp_next->rt=
-p_work);
-> > +                       index++;
-> > +                       if (index < num_possible_cpus()) {
-> > +                               rtpcp_next =3D rtp->rtpcp_array[index];
-> > +                               if (rtpcp_next->cpu < smp_load_acquire(=
-&rtp->percpu_dequeue_lim)) {
-> > +                                       cpuwq =3D rcu_cpu_beenfullyonli=
-ne(rtpcp_next->cpu) ? rtpcp_next->cpu : WORK_CPU_UNBOUND;
-> > +                                       queue_work_on(cpuwq, system_wq,=
- &rtpcp_next->rtp_work);
-> > +                               }
-> > +                       }
-> >                 }
-> >         }
-> >
-> > -       if (rcu_segcblist_empty(&rtpcp->cblist) || !cpu_possible(cpu))
-> > +       if (rcu_segcblist_empty(&rtpcp->cblist))
-> >                 return;
-> >         raw_spin_lock_irqsave_rcu_node(rtpcp, flags);
-> >         rcu_segcblist_advance(&rtpcp->cblist, rcu_seq_current(&rtp->tas=
-ks_gp_seq));
-> > --
-> > 2.17.1
-> >
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUmFuZHkgRHVubGFwIDxy
+ZHVubGFwQGluZnJhZGVhZC5vcmc+DQo+IFNlbnQ6IFNhdHVyZGF5LCBKdWx5IDYsIDIwMjQgMjox
+NCBBTQ0KPiBUbzogUGFua2FqIEd1cHRhIDxwYW5rYWouZ3VwdGFAbnhwLmNvbT47IEpvbmF0aGFu
+IENvcmJldA0KPiA8Y29yYmV0QGx3bi5uZXQ+OyBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3Jn
+PjsgS3J6eXN6dG9mIEtvemxvd3NraQ0KPiA8a3J6aytkdEBrZXJuZWwub3JnPjsgQ29ub3IgRG9v
+bGV5IDxjb25vcitkdEBrZXJuZWwub3JnPjsgU2hhd24gR3VvDQo+IDxzaGF3bmd1b0BrZXJuZWwu
+b3JnPjsgU2FzY2hhIEhhdWVyIDxzLmhhdWVyQHBlbmd1dHJvbml4LmRlPjsNCj4gUGVuZ3V0cm9u
+aXggS2VybmVsIFRlYW0gPGtlcm5lbEBwZW5ndXRyb25peC5kZT47IEZhYmlvIEVzdGV2YW0NCj4g
+PGZlc3RldmFtQGdtYWlsLmNvbT47IFJvYiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+OyBL
+cnp5c3p0b2YNCj4gS296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpK2R0QGxpbmFyby5vcmc+
+DQo+IENjOiBsaW51eC1kb2NAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJu
+ZWwub3JnOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgaW14QGxpc3RzLmxpbnV4LmRl
+djsgbGludXgtYXJtLQ0KPiBrZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZw0KPiBTdWJqZWN0OiBb
+RVhUXSBSZTogW1BBVENIIHY0IDQvNV0gZmlybXdhcmU6IGlteDogYWRkIGRyaXZlciBmb3IgTlhQ
+IEVkZ2VMb2NrDQo+IEVuY2xhdmUNCj4gDQo+IENhdXRpb246IFRoaXMgaXMgYW4gZXh0ZXJuYWwg
+ZW1haWwuIFBsZWFzZSB0YWtlIGNhcmUgd2hlbiBjbGlja2luZyBsaW5rcyBvcg0KPiBvcGVuaW5n
+IGF0dGFjaG1lbnRzLiBXaGVuIGluIGRvdWJ0LCByZXBvcnQgdGhlIG1lc3NhZ2UgdXNpbmcgdGhl
+ICdSZXBvcnQNCj4gdGhpcyBlbWFpbCcgYnV0dG9uDQo+IA0KPiANCj4gT24gNy81LzI0IDY6NTIg
+QU0sIFBhbmthaiBHdXB0YSB3cm90ZToNCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9maXJtd2Fy
+ZS9pbXgvS2NvbmZpZw0KPiA+IGIvZHJpdmVycy9maXJtd2FyZS9pbXgvS2NvbmZpZyBpbmRleCAx
+ODM2MTNmODJhMTEuLjU2YmRjYTliZDkxNw0KPiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2Zp
+cm13YXJlL2lteC9LY29uZmlnDQo+ID4gKysrIGIvZHJpdmVycy9maXJtd2FyZS9pbXgvS2NvbmZp
+Zw0KPiA+IEBAIC0yMiwzICsyMiwxNSBAQCBjb25maWcgSU1YX1NDVQ0KPiA+DQo+ID4gICAgICAg
+ICBUaGlzIGRyaXZlciBtYW5hZ2VzIHRoZSBJUEMgaW50ZXJmYWNlIGJldHdlZW4gaG9zdCBDUFUg
+YW5kIHRoZQ0KPiA+ICAgICAgICAgU0NVIGZpcm13YXJlIHJ1bm5pbmcgb24gTTQuDQo+ID4gKw0K
+PiA+ICtjb25maWcgSU1YX1NFQ19FTkNMQVZFDQo+ID4gKyAgICAgdHJpc3RhdGUgImkuTVggRW1i
+ZWRkZWQgU2VjdXJlIEVuY2xhdmUgLSBFZGdlTG9jayBFbmNsYXZlIEZpcm13YXJlDQo+IGRyaXZl
+ci4iDQo+ID4gKyAgICAgZGVwZW5kcyBvbiBJTVhfTUJPWCAmJiBBUkNIX01YQyAmJiBBUk02NA0K
+PiA+ICsgICAgIGRlZmF1bHQgbSBpZiBBUkNIX01YQw0KPiA+ICsNCj4gPiArICAgICBoZWxwDQo+
+ID4gKyAgICAgICBJdCBpcyBwb3NzaWJsZSB0byB1c2UgQVBJcyBleHBvc2VkIGJ5IHRoZSBpTVgg
+U2VjdXJlIEVuY2xhdmUgSFcgSVANCj4gY2FsbGVkOg0KPiA+ICsgICAgICAgICAgLSBFZGdlTG9j
+ayBFbmNsYXZlIEZpcm13YXJlIChmb3IgaS5NWDhVTFAsIGkuTVg5MyksDQo+ID4gKyAgICAgICAg
+ICBsaWtlIGJhc2UsIEhTTSwgVjJYICYgU0hFIHVzaW5nIHRoZSBTQUIgcHJvdG9jb2wgdmlhIHRo
+ZSBzaGFyZWQNCj4gTWVzc2FnaW5nDQo+ID4gKyAgICAgICAgICBVbml0LiBUaGlzIGRyaXZlciBl
+eHBvc2VzIHRoZXNlIGludGVyZmFjZXMgdmlhIGEgc2V0IG9mIGZpbGUgZGVzY3JpcHRvcnMNCj4g
+PiArICAgICAgICAgIGFsbG93aW5nIHRvIGNvbmZpZ3VyZSBzaGFyZWQgbWVtb3J5LCBzZW5kIGFu
+ZCByZWNlaXZlIG1lc3NhZ2VzLg0KPiANCj4gVGhlIDQgbGluZXMgYWJvdmUgc2hvdWxkIGJlIGlu
+ZGVudGVkIHdpdGggb25lIHRhYiArIDIgc3BhY2VzIGluc3RlYWQgb2YNCj4gX21hbnlfIHNwYWNl
+cy4NCkFjY2VwdGVkLg0KDQo+IA0KPiAtLQ0KPiB+UmFuZHkNCg==
 
