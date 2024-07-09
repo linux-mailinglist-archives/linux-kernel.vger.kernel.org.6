@@ -1,492 +1,175 @@
-Return-Path: <linux-kernel+bounces-245304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0B4292B0E8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:14:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A1B292B0EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 001F01C21D0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:14:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4918D1C20C5E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D2F13BC35;
-	Tue,  9 Jul 2024 07:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B23313DDC7;
+	Tue,  9 Jul 2024 07:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MrH+wXCJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="R4rzsbtR";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MrH+wXCJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="R4rzsbtR"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jGJEV+5m"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217F813BC30
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 07:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D4013D880;
+	Tue,  9 Jul 2024 07:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720509292; cv=none; b=gKpiD2SaUwtlw5GLqefXRg/QGGIRaD9UYW2lce2uDbuQURx8QWQmXENADsV72ja+9Wwv5Etmg6JIkL0bfe0ZEyeXinPpG4h/DEKPROxg1zEEBpOVNrVeFjmTnd6I+3DbNLI68smbPmL7A8JcsBI8apyajfONLBdYnuY46w6W2cQ=
+	t=1720509303; cv=none; b=gVjegeZEnVyFO1limSeaz6c1BRyaRobuMmyp3r7Vb7jk5qX7fprARVMIea/YZ33rPUFkBYra3V8ER80x0M+h9p2hy+sl7d5rRnBWSbGa058L/9sMf5vvdtX2JQmU/gEfBJwW/ZCa6iu8iCSwLcWl5662COTLd9hl7R/UIb4CPMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720509292; c=relaxed/simple;
-	bh=Kiy7Hnjm+HTtYP1F0HXGp+99AO62Wi7IR23FTVu6Q58=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oHiE78T61iDUBfx4APH7l65rXDU7ETC/t5PDQrU8vWHPQ7huXDBvWSh1eNeKNPVJVkICGy6bpc5TfMrnQ+o+Ip656IUYn7gydnL+oAr7130ZRgeFgT4C9BOK7trtr+t5cLp9YKTCIiKzLwrFIjHQWNgQl7/XFF9JKs6qA3n/LwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MrH+wXCJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=R4rzsbtR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MrH+wXCJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=R4rzsbtR; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 238EA21B8B;
-	Tue,  9 Jul 2024 07:14:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1720509288; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/AleoyyoKXqA93MBg6urXoyOknwxwnFWdPcvrSR4WQQ=;
-	b=MrH+wXCJSdmjNQ3lwLSGV9d5fFPBLu3HBhJlOuPxfYBBaios4pHp6EB2IA+sFtheZ2j14S
-	Ruk/XyL2bBDPFG41XHkckEtuzWfpemNnK+bp5Q4htMLC9PbCqreV5/SXdmXyAeYggBjOGf
-	yPof8YRkfGC0BeYPXL1LJWJZtlhz/dY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1720509288;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/AleoyyoKXqA93MBg6urXoyOknwxwnFWdPcvrSR4WQQ=;
-	b=R4rzsbtRiSeEbNCfxbqZYfoAgApugqo8WfJBOiYh4affJW1CfFJicVXZL26K64orO8p+L2
-	EkP0Ubpaz7ceA6Bg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=MrH+wXCJ;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=R4rzsbtR
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1720509288; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/AleoyyoKXqA93MBg6urXoyOknwxwnFWdPcvrSR4WQQ=;
-	b=MrH+wXCJSdmjNQ3lwLSGV9d5fFPBLu3HBhJlOuPxfYBBaios4pHp6EB2IA+sFtheZ2j14S
-	Ruk/XyL2bBDPFG41XHkckEtuzWfpemNnK+bp5Q4htMLC9PbCqreV5/SXdmXyAeYggBjOGf
-	yPof8YRkfGC0BeYPXL1LJWJZtlhz/dY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1720509288;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/AleoyyoKXqA93MBg6urXoyOknwxwnFWdPcvrSR4WQQ=;
-	b=R4rzsbtRiSeEbNCfxbqZYfoAgApugqo8WfJBOiYh4affJW1CfFJicVXZL26K64orO8p+L2
-	EkP0Ubpaz7ceA6Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CB0521396E;
-	Tue,  9 Jul 2024 07:14:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id e05EMGfjjGYtEQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 09 Jul 2024 07:14:47 +0000
-Message-ID: <0236d6a0-a8c5-47bb-a3f2-c4022b49b09d@suse.de>
-Date: Tue, 9 Jul 2024 09:14:47 +0200
+	s=arc-20240116; t=1720509303; c=relaxed/simple;
+	bh=0IRkMnPjOmr42J2uUwAmWKuvX5+19g/fLDCTdqFPxTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FYly1kDbeiRoUgsaOGhKZXnMOFsG6+5lc3fu+Iu+s/6hT0b0hCVo2EHRTYIiv3sCRI8FImgB6J1CvbmeLUoVU+a/z+cE8CWvE/KabYCxh1hCKuxxmq8Lz3aZ4dD/YQkX63wr/bclq2tdewjW7iY8av7NcKOEla5pWS4o/dCmQRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jGJEV+5m; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 923881440;
+	Tue,  9 Jul 2024 09:14:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1720509261;
+	bh=0IRkMnPjOmr42J2uUwAmWKuvX5+19g/fLDCTdqFPxTw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jGJEV+5m6IeQijZqZsfr9YCYjDkcJIIq+owCKm0JLZYo9ytf7U/9INtOojdA9PzbN
+	 ivUNceIK+SRvNjFG/BZnyuGc6B4EUE1fqKgemxJEI3ZVFoZss2nSoRGUinSL8k8lXe
+	 OZhhQ3H96vKE1InNXtDgnkNND/u6F0D0bsVSc2eU=
+Date: Tue, 9 Jul 2024 09:14:50 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	David Plowman <david.plowman@raspberrypi.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Naushir Patuck <naush@raspberrypi.com>, 
+	Nick Hollinghurst <nick.hollinghurst@raspberrypi.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Message-ID: <5p5oghlbzhnstri7auqq2ku6djjij7quhcw5lwyxtanjh4nffb@umcurt4wizy2>
+References: <20240709163715.3bcd6ab3@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/format-helper: Add conversion from XRGB8888 to BGR888
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch"
- <daniel@ffwll.ch>, Orlando Chamberlain <orlandoch.dev@gmail.com>,
- Kerem Karabay <kekrby@gmail.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <4C98332B-4E56-4314-8BDA-709AD3974899@live.com>
- <37c0df72-498b-44ad-9a47-d69f0515edd7@suse.de>
- <6D311D35-6F8F-4E14-9A3F-EEEBE5490ACD@live.com>
- <bf43c9de-32fe-4abc-9045-043c16687cca@suse.de>
- <4365B424-E585-43ED-BDA9-F722B3E6CD56@live.com>
- <abbb7883-6b57-4261-9fc1-9c9eac1665e3@suse.de>
- <MA0P287MB021775E5A6E676498F3A975DB8DA2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <MA0P287MB021775E5A6E676498F3A975DB8DA2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[live.com];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
-	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	TAGGED_RCPT(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,live.com:email]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 238EA21B8B
-X-Spam-Flag: NO
-X-Spam-Score: -3.00
-X-Spam-Level: 
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="k4m6oak7gqfijgea"
+Content-Disposition: inline
+In-Reply-To: <20240709163715.3bcd6ab3@canb.auug.org.au>
 
-Hi
 
-Am 08.07.24 um 10:37 schrieb Aditya Garg:
+--k4m6oak7gqfijgea
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+MIME-Version: 1.0
+
+Hi Stephen
+
+On Tue, Jul 09, 2024 at 04:37:15PM GMT, Stephen Rothwell wrote:
+> Hi all,
 >
->> On 8 Jul 2024, at 1:59 PM, Thomas Zimmermann <tzimmermann@suse.de> wrote:
->>
->> ﻿Hi
->>
->>> Am 08.07.24 um 10:10 schrieb Aditya Garg:
->>> Hi
->>>> I see. Best would be to submit this patch together with the driver for review.
->>>>
->>> Although it’s your take, but I really doubt whether the driver would make it upstream. It shall most likely be provided as a DKMS module.
->> What's wrong with upstreaming the driver?
-> 1. The author of the driver seems to have abandoned the driver.
-> 2. It currently supports only T2 Macs. T1 Mac support is uncertain.
-> 3. It only handles the DRM part. 2 additional HID drivers are also needed for the touch bar to work, which again work only for T2 Macs.
-> 4. Although I can legally submit it since the author signed the commit and it's GPL2, I would prefer getting consent from the author for a bigger patch like adding the driver.
+> After merging the driver-core tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 >
-> Do you still think it will be able to make upstream?
-
-It's up to you. But you'd effectively sign up for maintainership.
-
-Best regards
-Thomas
-
+> drivers/media/platform/raspberrypi/pisp_be/pisp_be.c:1786:27: error: initialization of 'void (*)(struct platform_device *)' from incompatible pointer type 'int (*)(struct platform_device *)' [-Werror=incompatible-pointer-types]
+>  1786 |         .remove         = pispbe_remove,
+>       |                           ^~~~~~~~~~~~~
+> drivers/media/platform/raspberrypi/pisp_be/pisp_be.c:1786:27: note: (near initialization for 'pispbe_pdrv.<anonymous>.remove')
+> cc1: all warnings being treated as errors
 >
->>> What should be the best case scenario then?
->> We only add helpers that have callers. So the conversion routine would have to remain in the driver module. If we have have an upstream user of that helper, we can pick up your patch later.
->>
-> Makes sense. Thanks for clarifying!
+> Caused by commit
 >
->> Best regards
->> Thomas
->>
->>
->>
->>>> Best regards
->>>> Thomas
->>>>
->>>>>> Best regards
->>>>>> Thomas
->>>>>>
->>>>>>> Signed-off-by: Kerem Karabay <kekrby@gmail.com>
->>>>>>> Signed-off-by: Aditya Garg <gargaditya08@live.com>
->>>>>>> ---
->>>>>>>   drivers/gpu/drm/drm_format_helper.c           | 54 +++++++++++++
->>>>>>>   .../gpu/drm/tests/drm_format_helper_test.c    | 81 +++++++++++++++++++
->>>>>>>   include/drm/drm_format_helper.h               |  3 +
->>>>>>>   3 files changed, 138 insertions(+)
->>>>>>>
->>>>>>> diff --git a/drivers/gpu/drm/drm_format_helper.c b/drivers/gpu/drm/drm_format_helper.c
->>>>>>> index b1be458ed..28c0e76a1 100644
->>>>>>> --- a/drivers/gpu/drm/drm_format_helper.c
->>>>>>> +++ b/drivers/gpu/drm/drm_format_helper.c
->>>>>>> @@ -702,6 +702,57 @@ void drm_fb_xrgb8888_to_rgb888(struct iosys_map *dst, const unsigned int *dst_pi
->>>>>>>   }
->>>>>>>   EXPORT_SYMBOL(drm_fb_xrgb8888_to_rgb888);
->>>>>>>   +static void drm_fb_xrgb8888_to_bgr888_line(void *dbuf, const void *sbuf, unsigned int pixels)
->>>>>>> +{
->>>>>>> + u8 *dbuf8 = dbuf;
->>>>>>> + const __le32 *sbuf32 = sbuf;
->>>>>>> + unsigned int x;
->>>>>>> + u32 pix;
->>>>>>> +
->>>>>>> + for (x = 0; x < pixels; x++) {
->>>>>>> + pix = le32_to_cpu(sbuf32[x]);
->>>>>>> + /* write red-green-blue to output in little endianness */
->>>>>>> + *dbuf8++ = (pix & 0x00FF0000) >> 16;
->>>>>>> + *dbuf8++ = (pix & 0x0000FF00) >> 8;
->>>>>>> + *dbuf8++ = (pix & 0x000000FF) >> 0;
->>>>>>> + }
->>>>>>> +}
->>>>>>> +
->>>>>>> +/**
->>>>>>> + * drm_fb_xrgb8888_to_bgr888 - Convert XRGB8888 to BGR888 clip buffer
->>>>>>> + * @dst: Array of BGR888 destination buffers
->>>>>>> + * @dst_pitch: Array of numbers of bytes between the start of two consecutive scanlines
->>>>>>> + *             within @dst; can be NULL if scanlines are stored next to each other.
->>>>>>> + * @src: Array of XRGB8888 source buffers
->>>>>>> + * @fb: DRM framebuffer
->>>>>>> + * @clip: Clip rectangle area to copy
->>>>>>> + * @state: Transform and conversion state
->>>>>>> + *
->>>>>>> + * This function copies parts of a framebuffer to display memory and converts the
->>>>>>> + * color format during the process. Destination and framebuffer formats must match. The
->>>>>>> + * parameters @dst, @dst_pitch and @src refer to arrays. Each array must have at
->>>>>>> + * least as many entries as there are planes in @fb's format. Each entry stores the
->>>>>>> + * value for the format's respective color plane at the same index.
->>>>>>> + *
->>>>>>> + * This function does not apply clipping on @dst (i.e. the destination is at the
->>>>>>> + * top-left corner).
->>>>>>> + *
->>>>>>> + * Drivers can use this function for BGR888 devices that don't natively
->>>>>>> + * support XRGB8888.
->>>>>>> + */
->>>>>>> +void drm_fb_xrgb8888_to_bgr888(struct iosys_map *dst, const unsigned int *dst_pitch,
->>>>>>> +        const struct iosys_map *src, const struct drm_framebuffer *fb,
->>>>>>> +        const struct drm_rect *clip, struct drm_format_conv_state *state)
->>>>>>> +{
->>>>>>> + static const u8 dst_pixsize[DRM_FORMAT_MAX_PLANES] = {
->>>>>>> + 3,
->>>>>>> + };
->>>>>>> +
->>>>>>> + drm_fb_xfrm(dst, dst_pitch, dst_pixsize, src, fb, clip, false, state,
->>>>>>> +     drm_fb_xrgb8888_to_bgr888_line);
->>>>>>> +}
->>>>>>> +EXPORT_SYMBOL(drm_fb_xrgb8888_to_bgr888);
->>>>>>> +
->>>>>>>   static void drm_fb_xrgb8888_to_argb8888_line(void *dbuf, const void *sbuf, unsigned int pixels)
->>>>>>>   {
->>>>>>>    __le32 *dbuf32 = dbuf;
->>>>>>> @@ -1035,6 +1086,9 @@ int drm_fb_blit(struct iosys_map *dst, const unsigned int *dst_pitch, uint32_t d
->>>>>>>    } else if (dst_format == DRM_FORMAT_RGB888) {
->>>>>>>    drm_fb_xrgb8888_to_rgb888(dst, dst_pitch, src, fb, clip, state);
->>>>>>>    return 0;
->>>>>>> + } else if (dst_format == DRM_FORMAT_BGR888) {
->>>>>>> + drm_fb_xrgb8888_to_bgr888(dst, dst_pitch, src, fb, clip, state);
->>>>>>> + return 0;
->>>>>>>    } else if (dst_format == DRM_FORMAT_ARGB8888) {
->>>>>>>    drm_fb_xrgb8888_to_argb8888(dst, dst_pitch, src, fb, clip, state);
->>>>>>>    return 0;
->>>>>>> diff --git a/drivers/gpu/drm/tests/drm_format_helper_test.c b/drivers/gpu/drm/tests/drm_format_helper_test.c
->>>>>>> index 08992636e..e54f0f6e7 100644
->>>>>>> --- a/drivers/gpu/drm/tests/drm_format_helper_test.c
->>>>>>> +++ b/drivers/gpu/drm/tests/drm_format_helper_test.c
->>>>>>> @@ -60,6 +60,11 @@ struct convert_to_rgb888_result {
->>>>>>>    const u8 expected[TEST_BUF_SIZE];
->>>>>>>   };
->>>>>>>   +struct convert_to_bgr888_result {
->>>>>>> + unsigned int dst_pitch;
->>>>>>> + const u8 expected[TEST_BUF_SIZE];
->>>>>>> +};
->>>>>>> +
->>>>>>>   struct convert_to_argb8888_result {
->>>>>>>    unsigned int dst_pitch;
->>>>>>>    const u32 expected[TEST_BUF_SIZE];
->>>>>>> @@ -107,6 +112,7 @@ struct convert_xrgb8888_case {
->>>>>>>    struct convert_to_argb1555_result argb1555_result;
->>>>>>>    struct convert_to_rgba5551_result rgba5551_result;
->>>>>>>    struct convert_to_rgb888_result rgb888_result;
->>>>>>> + struct convert_to_bgr888_result bgr888_result;
->>>>>>>    struct convert_to_argb8888_result argb8888_result;
->>>>>>>    struct convert_to_xrgb2101010_result xrgb2101010_result;
->>>>>>>    struct convert_to_argb2101010_result argb2101010_result;
->>>>>>> @@ -151,6 +157,10 @@ static struct convert_xrgb8888_case convert_xrgb8888_cases[] = {
->>>>>>>    .dst_pitch = TEST_USE_DEFAULT_PITCH,
->>>>>>>    .expected = { 0x00, 0x00, 0xFF },
->>>>>>>    },
->>>>>>> + .bgr888_result = {
->>>>>>> + .dst_pitch = TEST_USE_DEFAULT_PITCH,
->>>>>>> + .expected = { 0xFF, 0x00, 0x00 },
->>>>>>> + },
->>>>>>>    .argb8888_result = {
->>>>>>>    .dst_pitch = TEST_USE_DEFAULT_PITCH,
->>>>>>>    .expected = { 0xFFFF0000 },
->>>>>>> @@ -217,6 +227,10 @@ static struct convert_xrgb8888_case convert_xrgb8888_cases[] = {
->>>>>>>    .dst_pitch = TEST_USE_DEFAULT_PITCH,
->>>>>>>    .expected = { 0x00, 0x00, 0xFF },
->>>>>>>    },
->>>>>>> + .bgr888_result = {
->>>>>>> + .dst_pitch = TEST_USE_DEFAULT_PITCH,
->>>>>>> + .expected = { 0xFF, 0x00, 0x00 },
->>>>>>> + },
->>>>>>>    .argb8888_result = {
->>>>>>>    .dst_pitch = TEST_USE_DEFAULT_PITCH,
->>>>>>>    .expected = { 0xFFFF0000 },
->>>>>>> @@ -330,6 +344,15 @@ static struct convert_xrgb8888_case convert_xrgb8888_cases[] = {
->>>>>>>    0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x00,
->>>>>>>    },
->>>>>>>    },
->>>>>>> + .bgr888_result = {
->>>>>>> + .dst_pitch = TEST_USE_DEFAULT_PITCH,
->>>>>>> + .expected = {
->>>>>>> + 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00,
->>>>>>> + 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00,
->>>>>>> + 0x00, 0x00, 0xFF, 0xFF, 0x00, 0xFF,
->>>>>>> + 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF,
->>>>>>> + },
->>>>>>> + },
->>>>>>>    .argb8888_result = {
->>>>>>>    .dst_pitch = TEST_USE_DEFAULT_PITCH,
->>>>>>>    .expected = {
->>>>>>> @@ -468,6 +491,17 @@ static struct convert_xrgb8888_case convert_xrgb8888_cases[] = {
->>>>>>>    0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
->>>>>>>    },
->>>>>>>    },
->>>>>>> + .bgr888_result = {
->>>>>>> + .dst_pitch = 15,
->>>>>>> + .expected = {
->>>>>>> + 0x0E, 0x44, 0x9C, 0x11, 0x4D, 0x05, 0xA8, 0xF3, 0x03,
->>>>>>> + 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
->>>>>>> + 0x6C, 0xF0, 0x73, 0x0E, 0x44, 0x9C, 0x11, 0x4D, 0x05,
->>>>>>> + 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
->>>>>>> + 0xA8, 0x03, 0x03, 0x6C, 0xF0, 0x73, 0x0E, 0x44, 0x9C,
->>>>>>> + 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
->>>>>>> + },
->>>>>>> + },
->>>>>>>    .argb8888_result = {
->>>>>>>    .dst_pitch = 20,
->>>>>>>    .expected = {
->>>>>>> @@ -914,6 +948,52 @@ static void drm_test_fb_xrgb8888_to_rgb888(struct kunit *test)
->>>>>>>    KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
->>>>>>>   }
->>>>>>>   +static void drm_test_fb_xrgb8888_to_bgr888(struct kunit *test)
->>>>>>> +{
->>>>>>> + const struct convert_xrgb8888_case *params = test->param_value;
->>>>>>> + const struct convert_to_bgr888_result *result = &params->bgr888_result;
->>>>>>> + size_t dst_size;
->>>>>>> + u8 *buf = NULL;
->>>>>>> + __le32 *xrgb8888 = NULL;
->>>>>>> + struct iosys_map dst, src;
->>>>>>> +
->>>>>>> + struct drm_framebuffer fb = {
->>>>>>> + .format = drm_format_info(DRM_FORMAT_XRGB8888),
->>>>>>> + .pitches = { params->pitch, 0, 0 },
->>>>>>> + };
->>>>>>> +
->>>>>>> + dst_size = conversion_buf_size(DRM_FORMAT_BGR888, result->dst_pitch,
->>>>>>> +        &params->clip, 0);
->>>>>>> + KUNIT_ASSERT_GT(test, dst_size, 0);
->>>>>>> +
->>>>>>> + buf = kunit_kzalloc(test, dst_size, GFP_KERNEL);
->>>>>>> + KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buf);
->>>>>>> + iosys_map_set_vaddr(&dst, buf);
->>>>>>> +
->>>>>>> + xrgb8888 = cpubuf_to_le32(test, params->xrgb8888, TEST_BUF_SIZE);
->>>>>>> + KUNIT_ASSERT_NOT_ERR_OR_NULL(test, xrgb8888);
->>>>>>> + iosys_map_set_vaddr(&src, xrgb8888);
->>>>>>> +
->>>>>>> + /*
->>>>>>> +  * BGR888 expected results are already in little-endian
->>>>>>> +  * order, so there's no need to convert the test output.
->>>>>>> +  */
->>>>>>> + drm_fb_xrgb8888_to_bgr888(&dst, &result->dst_pitch, &src, &fb, &params->clip,
->>>>>>> +   &fmtcnv_state);
->>>>>>> + KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
->>>>>>> +
->>>>>>> + buf = dst.vaddr; /* restore original value of buf */
->>>>>>> + memset(buf, 0, dst_size);
->>>>>>> +
->>>>>>> + int blit_result = 0;
->>>>>>> +
->>>>>>> + blit_result = drm_fb_blit(&dst, &result->dst_pitch, DRM_FORMAT_BGR888, &src, &fb, &params->clip,
->>>>>>> +   &fmtcnv_state);
->>>>>>> +
->>>>>>> + KUNIT_EXPECT_FALSE(test, blit_result);
->>>>>>> + KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
->>>>>>> +}
->>>>>>> +
->>>>>>>   static void drm_test_fb_xrgb8888_to_argb8888(struct kunit *test)
->>>>>>>   {
->>>>>>>    const struct convert_xrgb8888_case *params = test->param_value;
->>>>>>> @@ -1851,6 +1931,7 @@ static struct kunit_case drm_format_helper_test_cases[] = {
->>>>>>>    KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb1555, convert_xrgb8888_gen_params),
->>>>>>>    KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_rgba5551, convert_xrgb8888_gen_params),
->>>>>>>    KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_rgb888, convert_xrgb8888_gen_params),
->>>>>>> + KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_bgr888, convert_xrgb8888_gen_params),
->>>>>>>    KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb8888, convert_xrgb8888_gen_params),
->>>>>>>    KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_xrgb2101010, convert_xrgb8888_gen_params),
->>>>>>>    KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb2101010, convert_xrgb8888_gen_params),
->>>>>>> diff --git a/include/drm/drm_format_helper.h b/include/drm/drm_format_helper.h
->>>>>>> index f13b34e0b..b53cf85ca 100644
->>>>>>> --- a/include/drm/drm_format_helper.h
->>>>>>> +++ b/include/drm/drm_format_helper.h
->>>>>>> @@ -95,6 +95,9 @@ void drm_fb_xrgb8888_to_rgba5551(struct iosys_map *dst, const unsigned int *dst_
->>>>>>>   void drm_fb_xrgb8888_to_rgb888(struct iosys_map *dst, const unsigned int *dst_pitch,
->>>>>>>           const struct iosys_map *src, const struct drm_framebuffer *fb,
->>>>>>>           const struct drm_rect *clip, struct drm_format_conv_state *state);
->>>>>>> +void drm_fb_xrgb8888_to_bgr888(struct iosys_map *dst, const unsigned int *dst_pitch,
->>>>>>> +        const struct iosys_map *src, const struct drm_framebuffer *fb,
->>>>>>> +        const struct drm_rect *clip, struct drm_format_conv_state *state);
->>>>>>>   void drm_fb_xrgb8888_to_argb8888(struct iosys_map *dst, const unsigned int *dst_pitch,
->>>>>>>     const struct iosys_map *src, const struct drm_framebuffer *fb,
->>>>>>>     const struct drm_rect *clip, struct drm_format_conv_state *state);
->>>>>> --
->>>>>> --
->>>>>> Thomas Zimmermann
->>>>>> Graphics Driver Developer
->>>>>> SUSE Software Solutions Germany GmbH
->>>>>> Frankenstrasse 146, 90461 Nuernberg, Germany
->>>>>> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
->>>>>> HRB 36809 (AG Nuernberg)
->>>> --
->>>> --
->>>> Thomas Zimmermann
->>>> Graphics Driver Developer
->>>> SUSE Software Solutions Germany GmbH
->>>> Frankenstrasse 146, 90461 Nuernberg, Germany
->>>> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
->>>> HRB 36809 (AG Nuernberg)
->> --
->> --
->> Thomas Zimmermann
->> Graphics Driver Developer
->> SUSE Software Solutions Germany GmbH
->> Frankenstrasse 146, 90461 Nuernberg, Germany
->> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
->> HRB 36809 (AG Nuernberg)
->>
+>   0edb555a65d1 ("platform: Make platform_driver::remove() return void")
+>
+> interacting withc commit
+>
+>   12187bd5d4f8 ("media: raspberrypi: Add support for PiSP BE")
+>
+> from the vl4-dvb-next tree.
+>
+> I have applied the following fix up patch.
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 9 Jul 2024 16:03:05 +1000
+> Subject: [PATCH] fix up for "platform: Make platform_driver::remove() return void"
+>
+> interacting with commit
+>
+>   12187bd5d4f8 ("media: raspberrypi: Add support for PiSP BE")
+>
+> from the v4l-dvb-next tree.
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Thanks, I haven't noticed it as I've based my work on the linux media
+staging branch which doesn't include 0edb555a65d1.
 
+Acked-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+
+Thanks
+  j
+
+> ---
+>  drivers/media/platform/raspberrypi/pisp_be/pisp_be.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c b/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
+> index e74df5b116dc..7596ae1f7de6 100644
+> --- a/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
+> +++ b/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
+> @@ -1756,7 +1756,7 @@ static int pispbe_probe(struct platform_device *pdev)
+>  	return ret;
+>  }
+>
+> -static int pispbe_remove(struct platform_device *pdev)
+> +static void pispbe_remove(struct platform_device *pdev)
+>  {
+>  	struct pispbe_dev *pispbe = platform_get_drvdata(pdev);
+>
+> @@ -1765,8 +1765,6 @@ static int pispbe_remove(struct platform_device *pdev)
+>  	pispbe_runtime_suspend(pispbe->dev);
+>  	pm_runtime_dont_use_autosuspend(pispbe->dev);
+>  	pm_runtime_disable(pispbe->dev);
+> -
+> -	return 0;
+>  }
+>
+>  static const struct dev_pm_ops pispbe_pm_ops = {
+> --
+> 2.43.0
+>
+> --
+> Cheers,
+> Stephen Rothwell
+
+
+
+--k4m6oak7gqfijgea
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAmaM42oACgkQcjQGjxah
+Vjw32BAAj3VA7n1T1s0ZS92IyHhovhWnnxHMNJsa+6/F5Hbp5lFEDDSyhvo22wL5
++02hadQfR1Jpqr3wp5pnPD/Bio1ZUNqyTD43SLCvy9tUG1oUjuNDiKez4OmzOQDy
+rxe+w1SMoTpxH2pb1ZomB1OkPkLJQBMsobo0/O9WU2S7cGUuBRKUNw/LZOZCa46P
+rX3pNeAYdr5WammNO08Ww0kleRgObpDp/VBSLVVIIeZAzsEuuicDlISSu+3jHSBn
+s5Uq6zWnuUos5+J92vG35Ka/BOjsZ+HltZmQarDWzvTcu1e2JHvkrr2TGSqJHoQt
+B2djXTwzcKVBXbAH0t4W0AX2wFpKmL2fkAW5Y68SVGlQftGhXPe5yZIuPjNj3gLK
+jmqAY92753mDMimcMZBJ0E219Cml1ICuKtYts7V1c5pKAdPiYwvcCGh5eBJLkHoO
+Xqi4NaLjxp3+FoD+u17+MOjYGs7SJkWPTamOY+lE5WnyHCfWQ/1kYlV/IKxA1wKu
+OkZOP8wETegzcEX9fZeed+6x1EUSyAgn4qzjMPejwODXnvzt1dlnEDb921AAimKL
+vUtMTA2YRSIu+0SOEm0wiJBp4Px59TpV+kN/lJz+4bVnktYwJM7r4Lvf2FX1GDkK
+fhMUvnJKCeefbDxEqQOyGc7lrGBBeAibNCwH9dzyEuAcjenrVwg=
+=CYxR
+-----END PGP SIGNATURE-----
+
+--k4m6oak7gqfijgea--
 
