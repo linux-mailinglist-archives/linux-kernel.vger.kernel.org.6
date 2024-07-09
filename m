@@ -1,230 +1,119 @@
-Return-Path: <linux-kernel+bounces-246425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B071592C194
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:03:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5628C92C198
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DB81281E47
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:03:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA00D1F23316
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618B119E810;
-	Tue,  9 Jul 2024 16:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093A219E7D0;
+	Tue,  9 Jul 2024 16:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eTj75iwZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHdvWKaQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D0C19D8A2;
-	Tue,  9 Jul 2024 16:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533CE158A36
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 16:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720542743; cv=none; b=E0eiszO7+gnq+25zh6DDPR0Tt+fSvFPGqZGyeKwLhH3wnIYxZCGFHv2Dr0Tyx/pfyoaEEKZlTnaTPhBweHRCL3qAR+iG0e2jd7LiLN8QxcVWqTkR1U7Lb0aEV/VXW6AGy4Ua/8mFHJtpwNsNX7iGi9pqVPzxm6FpDsmE53TiWAw=
+	t=1720542831; cv=none; b=SDae4U5KZbooJ+0GdzNdetkzIvWic34ae7chjNinQXmwFAQZ3f2/He3pFRqbUoFJ9FXSLcsNykeXI1XO8xLcB3LyNW+7vhmkIcworNRDonUQqfbmXjH8Olohj1e+WXTmcy/28VL4PxCwPbAXpKcj1Ekyq7xMccdcaZV5Q9BJoTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720542743; c=relaxed/simple;
-	bh=FLdjgr6meJn+TXvEGqYcf52cjuR6shaot6RCYkVxb8E=;
+	s=arc-20240116; t=1720542831; c=relaxed/simple;
+	bh=ieyUAGYiVa46emkVrhl4+PzpqIB/zaKo65nwYoPV9AI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yfa+GoZB/whZTXUFKf9tso4j0/H/8EzW/xZbDB9+FTY8jf3vltbBPqeqPhpJJSlWAUHwY5PPmjLUABXrULirF0WZHNO4FAHXDPdLi5YNTWWcfECAieg7UrilmSG2QHOiMSAQ/UvoWjT7afy5R8hCXIReRLPUbjRWLNJvMbfoxO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eTj75iwZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17B78C3277B;
-	Tue,  9 Jul 2024 16:32:23 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=KKkXgiKz1C/nihvAwsZAuY2k+QfRSJcaDW4sL+HfY+YkWUraKvHfxpa/rnGSDPKgiLMIAsSJHFzmiJG/pgrfSAFClWe3TEeaY8rPSZ/JBjgye3FUn+0Uj9E33BOEdd2XEozx7uZJCDZadUwbvSetissBYxglzoImrzcoE+Fsoa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHdvWKaQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4870CC3277B;
+	Tue,  9 Jul 2024 16:33:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720542743;
-	bh=FLdjgr6meJn+TXvEGqYcf52cjuR6shaot6RCYkVxb8E=;
+	s=k20201202; t=1720542830;
+	bh=ieyUAGYiVa46emkVrhl4+PzpqIB/zaKo65nwYoPV9AI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eTj75iwZnk1OpJyXM9r7G1cS70S6Xcgm89zZriykuejpXMPaH/Y25kY9lldYBVoJ4
-	 kIxag7yX2o+u4MESoVReiciDUmjyh64RxiOnjQEJ1xm0IVpO68q/Ab/AEESqTZ/sk1
-	 qsNbE+sIyyoaYQUSe0PqxH9UDsgKtxCbNmast2D0ZdMJO39ZCYIZXU9pOllqszIofq
-	 Jq2PNHyxDDQSrTxoZIMjo3mK/nufqS3q0xb5N5rSiQXXoFOXBkdVBL6ddGTZ1hMQ7U
-	 UR7lW0cIwdXyvBiXsVImIQe1/YUiUT9TbruDmqM0IWMpxALo3ISTn0IMarUJx9mik3
-	 sgQjVkaUZblgQ==
-Date: Tue, 9 Jul 2024 09:32:22 -0700
-From: Kees Cook <kees@kernel.org>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	linux-hardening@vger.kernel.org, Jann Horn <jannh@google.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Marco Elver <elver@google.com>,
-	Nathan Chancellor <nathan@kernel.org>, Hao Luo <haoluo@google.com>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jakub Kicinski <kuba@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Tony Ambardar <tony.ambardar@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC][PATCH 4/4] pstore: Replace classic kmalloc code pattern
- with typed argument
-Message-ID: <202407090910.87821CD@keescook>
-References: <20240708190924.work.846-kees@kernel.org>
- <20240708191840.335463-4-kees@kernel.org>
- <093108ea-f567-4210-9f2e-eb8e5039d1eb@intel.com>
+	b=BHdvWKaQJdfVE98jA3FQVY5aUw2hlHkm/tinrJt2MBRd03MlIG7+FAdP8Po1idu8T
+	 jkfokUVp96HAzYpkwSyyMOqsjRF5mghpNsbGj36NcwMaA7p1NmM1VIbROUxa6OOSd8
+	 FASymBzQiQOUNoBPhChuIZTQPoHDe+cTPl4QpQJfkltA+okchRmxVYoDU9wIrVfJRG
+	 1uDzyL+qixZnsjn1puzrBdxWYZsrb+uwtHkqtk/LwUxps9hSK/16ugPvd9EUDAxu9z
+	 rnyTxraHL+BzZFvANMMnxQbL5HigybhWXnWBNnhbvQ3G28+3b3474omhMhahcXHpQK
+	 4SVu7mwFv7lvQ==
+Date: Tue, 9 Jul 2024 17:33:46 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	David Abdurachmanov <david.abdurachmanov@gmail.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Ross Burton <ross.burton@arm.com>
+Subject: Re: [PATCH v2] clocksource: sp804: Make user selectable
+Message-ID: <97f02ddd-5e9a-440a-bda8-82c2fd7957d5@sirena.org.uk>
+References: <20240529-arm64-vexpress-sp804-v2-1-c542a80af33a@kernel.org>
+ <2b946a68-dcdd-4a1e-b7c3-416725033c2e@linaro.org>
+ <ddfc867d-2431-44d2-9753-b577e8f5ddea@sirena.org.uk>
+ <11c5de84-21f0-45de-81e0-dc765a391123@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="KfBOkOhXk/hPZUaU"
+Content-Disposition: inline
+In-Reply-To: <11c5de84-21f0-45de-81e0-dc765a391123@linaro.org>
+X-Cookie: Most of your faults are not your fault.
+
+
+--KfBOkOhXk/hPZUaU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <093108ea-f567-4210-9f2e-eb8e5039d1eb@intel.com>
 
-On Tue, Jul 09, 2024 at 09:06:58AM +0200, Przemek Kitszel wrote:
-> On 7/8/24 21:18, Kees Cook wrote:
-> > diff --git a/fs/pstore/blk.c b/fs/pstore/blk.c
-> > index de8cf5d75f34..7bb9cacb380f 100644
-> > --- a/fs/pstore/blk.c
-> > +++ b/fs/pstore/blk.c
-> > @@ -297,7 +297,7 @@ static int __init __best_effort_init(void)
-> >   		return -EINVAL;
-> >   	}
-> > -	best_effort_dev = kzalloc(sizeof(*best_effort_dev), GFP_KERNEL);
-> > +	best_effort_dev = kzalloc(best_effort_dev, GFP_KERNEL);
-> >   	if (!best_effort_dev)
-> >   		return -ENOMEM;
-> I expect raised eyebrows and typical vocalizations of amusement :D -
-> IOW: we should consider changing the name of the macro, although I like
-> it as is :)
+On Tue, Jul 09, 2024 at 06:15:40PM +0200, Daniel Lezcano wrote:
+> On 08/07/2024 19:44, Mark Brown wrote:
+> > On Mon, Jul 08, 2024 at 06:49:38PM +0200, Daniel Lezcano wrote:
 
-Yeah, I prefer keeping the name too. I feel like adding yet more macros
-around the allocators does not make anyone too happy. :)
+> > > Would it make sense to add the option in the platform so it selects the
+> > > timer ?
 
-> other:
-> you repeat the pointer name twice, and code is magic anyway, so perhaps:
-> 	kzalloc_me(best_effort_dev, GFP_KERNEL);
-> and another variant to cover declaration-with-init.
+> > As the commit log says far as I'm aware all the platforms that rely on
+> > the sp804 timer already select it (they wouldn't otherwise be able to
+> > work unless COMPILE_TEST was enabled).  The Arm models and possibly
+> > other platforms have the sp804 but it will currently be ignored by Linux
+> > and the architected timers used instead so it would be wasteful to force
+> > it on for them.
 
-Switch the calling style is, however, where I think it'd be good
-to change the name. I've had push-back in the past on changing away
-from the "assignment style" to the "pass by reference" style, but I
-would honestly prefer dropping the assignment: it is almost always
-redundant. (I understood the push-back to be around the case of not
-being able to easily use the "return kmalloc(...)" code pattern.)
+> The policy of the Kconfig is we should keep the option silent.
 
-It also makes it easier to deal with fixed array and flexible array
-variants, as the argument count can be examined to determine if this is
-a fixed-size struct or a flexible object:
+That's not what the changelog claimed was the reason for adding the
+dependency, and we have other number of Kconfig options (eg,
+TEGRA186_TIMER or ARM_ARCH_TIMER_EVTSTREAM) which don't.  There does
+seem to be a bit of a randomness if the options are only visible with
+COMPILE_TEST too, quite a few depend on an arch or COMPILE_TEST.
 
-	kzalloc_struct(ptr, GFP_KERNEL);
+> My suggestion was to provide the option in the platforms Kconfig and
+> [un]select the ARM_TIMER_SP804 from there
 
-	kzalloc_struct(ptr, flex_member, count, GFP_KERNEL);
-		-> uses struct_size() to get allocation size
+I can't parse what that means, sorry.  The goal here is to not have the
+FVP platforms depend on the driver since they don't actually depend on
+it, it's merely physially present.
 
-I wonder if we can find a way to also handle the array case at compile
-time:
+--KfBOkOhXk/hPZUaU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-	kzalloc_struct(array, count, GFP_KERNEL);
+-----BEGIN PGP SIGNATURE-----
 
-And if so, maybe the naming should be "kzalloc_me" like you suggest, or
-maybe "kzalloc_obj"?
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaNZmkACgkQJNaLcl1U
+h9BS3Qf/bc4q1MlGYJLMX7Dgq5dtc5dAQv6Z47lh53EhMgwBxwRH17pMSPtQ/B/D
+nwY8BnlKyBEKspXIixKxYBGMbe0L8T+f8rUDzSewqx/0yHk7ym0SkBQvucuofCLF
+0xbsXmnhVusN2+Z76MeTeu5TLhHrujBapn5m2xuhfbmcl0fmTBMnFjD0vMscaa/F
+yOZAY9yJHjEMYocu58A2fHFDF6uWXwEq4R9oi0g09tkECyasmZqjyQnvZNVxSN+7
+leFwH6vh3Lqc79B/4DjzQgHSc7VdO4bizSwIi0/hACZWVce8qjFA9JLt5s/E3CTr
+7XeLU1SpvvVo/Pbtpr4NJyrXcw/xmA==
+=7r4/
+-----END PGP SIGNATURE-----
 
-The resulting Coccinelle script gets a little more complex since we have
-to rewrite the matched function, but it's not bad:
-
-@find@
-type TYPE;
-TYPE *P;
-expression GFP;
-identifier ALLOC =~ "k[mz]alloc";
-@@
-
-	P = ALLOC(\(sizeof(*P)\|sizeof(TYPE)\), GFP)
-
-@script:python rename@
-alloc_name << find.ALLOC;
-ALLOC_OBJ;
-@@
-
-coccinelle.ALLOC_OBJ = cocci.make_ident(alloc_name + "_obj")
-
-@convert@
-type find.TYPE;
-TYPE *find.P;
-expression find.GFP;
-identifier find.ALLOC;
-identifier rename.ALLOC_OBJ;
-@@
-
--	P = ALLOC(\(sizeof(*P)\|sizeof(TYPE)\), GFP)
-+	ALLOC_OBJ(P, GFP)
-
-And the results in fs/pstore/ look like this:
-
-
-diff --git a/fs/pstore/blk.c b/fs/pstore/blk.c
-index de8cf5d75f34..bc0e0a170604 100644
---- a/fs/pstore/blk.c
-+++ b/fs/pstore/blk.c
-@@ -297,7 +297,7 @@ static int __init __best_effort_init(void)
- 		return -EINVAL;
- 	}
- 
--	best_effort_dev = kzalloc(sizeof(*best_effort_dev), GFP_KERNEL);
-+	kzalloc_obj(best_effort_dev, GFP_KERNEL);
- 	if (!best_effort_dev)
- 		return -ENOMEM;
- 
-diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-index 03425928d2fb..e0ba70543121 100644
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@ -682,7 +682,7 @@ void pstore_get_backend_records(struct pstore_info *psi,
- 		struct pstore_record *record;
- 		int rc;
- 
--		record = kzalloc(sizeof(*record), GFP_KERNEL);
-+		kzalloc_obj(record, GFP_KERNEL);
- 		if (!record) {
- 			pr_err("out of memory creating record\n");
- 			break;
-diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-index b1a455f42e93..93064ba2c480 100644
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -228,8 +228,7 @@ static ssize_t ramoops_pstore_read(struct pstore_record *record)
- 			 */
- 			struct persistent_ram_zone *tmp_prz, *prz_next;
- 
--			tmp_prz = kzalloc(sizeof(struct persistent_ram_zone),
--					  GFP_KERNEL);
-+			kzalloc_obj(tmp_prz, GFP_KERNEL);
- 			if (!tmp_prz)
- 				return -ENOMEM;
- 			prz = tmp_prz;
-diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
-index f1848cdd6d34..9561f4dfa853 100644
---- a/fs/pstore/ram_core.c
-+++ b/fs/pstore/ram_core.c
-@@ -588,7 +588,7 @@ struct persistent_ram_zone *persistent_ram_new(phys_addr_t start, size_t size,
- 	struct persistent_ram_zone *prz;
- 	int ret = -ENOMEM;
- 
--	prz = kzalloc(sizeof(struct persistent_ram_zone), GFP_KERNEL);
-+	kzalloc_obj(prz, GFP_KERNEL);
- 	if (!prz) {
- 		pr_err("failed to allocate persistent ram zone\n");
- 		goto err;
-diff --git a/fs/pstore/zone.c b/fs/pstore/zone.c
-index 694db616663f..312796dc93f0 100644
---- a/fs/pstore/zone.c
-+++ b/fs/pstore/zone.c
-@@ -1165,7 +1165,7 @@ static struct pstore_zone *psz_init_zone(enum pstore_type_id type,
- 		return ERR_PTR(-ENOMEM);
- 	}
- 
--	zone = kzalloc(sizeof(struct pstore_zone), GFP_KERNEL);
-+	kzalloc_obj(zone, GFP_KERNEL);
- 	if (!zone)
- 		return ERR_PTR(-ENOMEM);
- 
-
--- 
-Kees Cook
+--KfBOkOhXk/hPZUaU--
 
