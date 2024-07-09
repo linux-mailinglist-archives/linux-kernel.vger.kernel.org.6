@@ -1,176 +1,150 @@
-Return-Path: <linux-kernel+bounces-245728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4579092B863
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:35:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A16C92B86C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97C8FB20BCE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:35:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB7C3281935
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3213F155744;
-	Tue,  9 Jul 2024 11:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D813157E7D;
+	Tue,  9 Jul 2024 11:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HGVygQy4"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="czzGHMBw"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D15255E4C
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 11:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A46E156F57
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 11:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720524937; cv=none; b=gsBkypu7aCX2p7DWPuXo4watbMCzQgcHdZC0XFF6uj7q5q9eLS3wY+tPd0t8IaOubcl1NMXVii6yk1gjawj79X2xz+eHreAegAxrV3V+iuft4JeES9t5tXgsmd1/YS2UOMLOYheeT3pNLvajm8tPboAFgx0LZCnsd5+/NIKcGS8=
+	t=1720525020; cv=none; b=dOvgFrUJEpMaU+aJXEbXUz8VsvM/r3E3V8YddHBMf7SEgqzRCKqkbMVYKSRQZbl4MyifRgV2uwXCZceQz2LdiSw6ACXGQsrsdAWdZa7+EpMiAHSz/fZez4KKOy3Q9i8qeC7WwEa1ek0ltkbAIO7wcZopsJKBmjTsSd21roXTm54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720524937; c=relaxed/simple;
-	bh=MN8tQlU/WjfJAm5vJUB/k6Sbg2NBCUv0pDcfrVCj4T0=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=rmPLlys+TszfdbtZYM7ngELtyCVd/D9BvItt+EeKVEKiJsDqeAG61YaYkuqRuFH27+flcgnwJBtIsJ1VKNPnGeiSw3Tt+pz/KV1V50q90rnLbYLapD1nk9SdJF3rs3AuIT0u3dgj05v06h2fpNAvhvtEU1keKZVLJDTxNy/GTL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HGVygQy4; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240709113532epoutp04113d442178dfa9672a231ffafdb97789~giE9gK4Cx1199611996epoutp04l
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 11:35:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240709113532epoutp04113d442178dfa9672a231ffafdb97789~giE9gK4Cx1199611996epoutp04l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1720524932;
-	bh=1/vAaKQvg/yK38AxX7tzEigXwlhSdwGh+WKBfS50Va0=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=HGVygQy4shpvOpMMxlQwY82C0LZ5854xzqS64pnx+dAEO8/3aconBI8FRsDRjvt9B
-	 Xx+zpMeTX1Uzh8InF7ZA4RzvQPm3XCFppptA9FGZ0XECx1/mcGfrNzYeveD0puQSAQ
-	 HOnF07gi3BO1ZMa2eGDOHDZ3TAL1ZiPV4a1/jzYY=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-	20240709113531epcas1p44ff51bb93c0ef9c60bddbb4c2a0272ac~giE9EbOps0486104861epcas1p45;
-	Tue,  9 Jul 2024 11:35:31 +0000 (GMT)
-Received: from epsmgec1p1.samsung.com (unknown [182.195.36.223]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4WJJnv1zSQz4x9Py; Tue,  9 Jul
-	2024 11:35:31 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	FC.78.09847.3802D866; Tue,  9 Jul 2024 20:35:31 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240709113530epcas1p493461714f6a520e29ba42d132c0b4af1~giE8H_ZWT0486104861epcas1p44;
-	Tue,  9 Jul 2024 11:35:30 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240709113530epsmtrp2aafe2cecd213d687aebf67bfb37ea3c8~giE8HQrJu2310623106epsmtrp2_;
-	Tue,  9 Jul 2024 11:35:30 +0000 (GMT)
-X-AuditID: b6c32a36-60dff70000002677-1e-668d20832a40
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	C8.44.29940.2802D866; Tue,  9 Jul 2024 20:35:30 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240709113530epsmtip2bb740741224e63ca19c26fb3e3dbf6c9~giE76K2Fp3215932159epsmtip2g;
-	Tue,  9 Jul 2024 11:35:30 +0000 (GMT)
-From: "Sungjong Seo" <sj1557.seo@samsung.com>
-To: "'OGAWA Hirofumi'" <hirofumi@mail.parknet.co.jp>
-Cc: <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-	<sj1557.seo@samsung.com>
-In-Reply-To: <87bk37t3zl.fsf@mail.parknet.co.jp>
-Subject: RE: [PATCH] fat: print s_dev via fat_msg
-Date: Tue, 9 Jul 2024 20:35:30 +0900
-Message-ID: <0c5c01dad1f4$1a46bd80$4ed43880$@samsung.com>
+	s=arc-20240116; t=1720525020; c=relaxed/simple;
+	bh=ZtNRV4Jm6sPuWpuKQi5CEZcuR4lAkjSRolFdjhONrG0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SyxtiPo4MOfNr1NjSzx7TpLwiwT+OXFsB7AaBICUuLXZwssj0iXyC/pChFKKktWieNv30CNGPRa69Q2UBX6URWo+Z2blnFWKQK5+cjmKW/gII4HhOMoW3eAbcksDAj3DvVtQ8ctpocZCmz0PVnmGO5/eAPUUFcE1/sruG2T3Ll0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=czzGHMBw; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-58e76294858so8175696a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 04:36:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720525017; x=1721129817; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=rgLuI4zwg8PxbQKXHmtny45se35KRkb0hnsunMD3BTs=;
+        b=czzGHMBwWjuaOF1ty8wTai1ph/sUDGef6bACSO3A/SfNG5pymKrwwKtZ49NsJ4HUQD
+         UG74jhSVMmyika83JTs/uSz3VIl2bZLRKDvflgruEVMyIegew7e6E+YZ3T+svGgGC3hQ
+         q67CluVdkcOzf6IncFJfK2kGUWxAwhRG+pVgmBz8ULS6vuzzq5evUsOuMP5LsziYNi5q
+         o5WKUrJPSMkRfeuig4D8/c3O7yFAth8lLtcbnun4lcKNnta4IJiawKCL4hdK79mMjB+T
+         PcIIIC92p6WSgCjI5YAYxp84GhG5LL6Qr4z38QDX+aKqil534VEAlp471KXYGOfW//SM
+         nj/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720525017; x=1721129817;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rgLuI4zwg8PxbQKXHmtny45se35KRkb0hnsunMD3BTs=;
+        b=qJVazlqCD7SpNPQeueSZ5NOXCTih/5A1ONrfsxzfgfs5vWl5LRDIcM5UMYCfh2O8lu
+         xljU7yqv3FUxOJIqg8id7+Ev8p6bU1UEP6IY/gdASr53B/Jp0V5605vPvdOw6hAUpfwy
+         R1K/iwba/cQ9nrIN5tVsbjAQGExhcIL8Dd4/NXQ0//LRqAVEuvCrUxeCXx1DP2wI7oeY
+         Doc2qN+wJSmLaYfUJaemOk7sr5JIICJXSq1LJ6OBGi7vx6sI/NSBtbSZ3J158Q1EIZYf
+         JZX2gnCA0Xpch7Ip0nYR9CieO8OThw/qrKDT7NBMYEfBgUylGdPEXiRAJ5eih9JNWBba
+         MtLA==
+X-Gm-Message-State: AOJu0Yx7tI12DE68fQ0dvhC78/JdpiC0xDIJvL+YfQrHrdih6Rfj4hSJ
+	nYDsM0mVgz4ljLSq+A8FL4W4UtDz5P9rBXBxzT3RYd84zlPkAy1SZ4gY4qFJbb4=
+X-Google-Smtp-Source: AGHT+IE6gJHtpA9KuKJI2l0zj/TFNL7ZuQMOTPOeH2TreABUUNa4U1aLool/MPDIRPHLPPPCuG3FgA==
+X-Received: by 2002:a05:6402:5157:b0:57d:6bb:d264 with SMTP id 4fb4d7f45d1cf-594dc4ae2bamr1597947a12.1.1720525017302;
+        Tue, 09 Jul 2024 04:36:57 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bb96062bsm970232a12.12.2024.07.09.04.36.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 04:36:56 -0700 (PDT)
+Message-ID: <0a1a7b1e-1088-483d-894c-19ab4dbb9ce1@linaro.org>
+Date: Tue, 9 Jul 2024 13:36:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v17] arm64: dts: qcom: sa8295p-adp: Enable the four USB
+ Type-A ports
+To: Krishna Kurapati <quic_kriskura@quicinc.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Johan Hovold <johan@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, quic_ppratap@quicinc.com, quic_jackp@quicinc.com
+References: <20240707085624.3411961-1-quic_kriskura@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240707085624.3411961-1-quic_kriskura@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQHwcbNQtGVXTyWTefViKeJrDA01VgFnFHFwAi3Zi2MBwlUF6QGrmzuusYrholA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGJsWRmVeSWpSXmKPExsWy7bCmnm6zQm+awd8eDos569ewWUyfu4HF
-	4vKuOWwWW/4dYXVg8Tgx4zeLx/23iR59W1YxenzeJBfAEtXAaJNYlJyRWZaqkJqXnJ+SmZdu
-	qxQa4qZroaSQkV9cYqsUbWhopGdoYK5nZGSkZ2oUa2VkqqSQl5ibaqtUoQvVq6RQlFwAVJtb
-	WQw0ICdVDyquV5yal+KQlV8KcqZecWJucWleul5yfq6SQlliTinQCCX9hG+MGVsOaRQ84KnY
-	P3sRawNjC1cXIyeHhICJRM+ClexdjFwcQgI7GCVuL2pkhnA+MUq0fumDynxjlNjTsJ6ti5ED
-	rKX3DBtEfC+jxOOp3YwQzktGiZl/v7CCzGUT0JV4cuMnM4gtAtTw8yLIDk4OZoFoiZ2LDrKB
-	2JwCBhLP/t1hArGFBQwlTvc1gdksAioS1yZ+BuvlFbCUuPLhGQuELShxcuYTFog58hLb385h
-	hvhBQWL3p6OsIMeJCPhJTGnIgCgRkZjd2Qb2jYTAV3aJzgN9UPUuEid3r2SDsIUlXh3fwg5h
-	S0l8freXDaKhm1Hi+Md3LBCJGYwSSzocIGx7iebWZnBIMAtoSqzfpQ+xjE/i3dceVogSQYnT
-	17qZIYHFK9HRJgQRVpH4/mEnC8yqKz+uMk1gVJqF5LNZSD6bheSFWQjLFjCyrGIUSy0ozk1P
-	LTYsMEKO7k2M4CSqZbaDcdLbD3qHGJk4GA8xSnAwK4nwzr/RnSbEm5JYWZValB9fVJqTWnyI
-	MRkY1hOZpUST84FpPK8k3tDMzNLC0sjE0NjM0JCwsImlgYmZkYmFsaWxmZI475krZalCAumJ
-	JanZqakFqUUwW5g4OKUamBSfpEmVxPP8Lrt0w77hE++FXs5muVeLnV7cK5149xx/YNmNV/JN
-	gfOaSu6vC1oSmstefG/6I8OOprbtx0+9S2J/sV1rkvJWOe3Wp8oMhZttf72ISDPp4N/2jGvf
-	DB6G5DuTTm66JPdif9ShO5HzHqilRZve/nk3c47TGSPJ6QpVLFc3B38Pb3/mclF8j1ukv6On
-	yVW+OLX8OUkHT3VsXeSW09sTVXt8ZtCVohf7dQ69P8O5sPT4pZ5DbiVbmOsOexf9m6VTJjRh
-	rtMusVmVxz2et+RZxT089PWYRf6ztZt635vJz3kyxf7V0t/sShK3DQ2rLk295tWbGPiiYQuP
-	1eXdXx2dnuc9uHsjbMGjb/OVWIozEg21mIuKEwEuvB5tWQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsWy7bCSvG6TQm+awfEuRYs569ewWUyfu4HF
-	4vKuOWwWW/4dYXVg8Tgx4zeLx/23iR59W1YxenzeJBfAEsVlk5Kak1mWWqRvl8CVseWQRsED
-	nor9sxexNjC2cHUxcnBICJhI9J5h62Lk4hAS2M0ose3RfFaIuJTEwX2aEKawxOHDxRAlzxkl
-	Fs1Yx97FyMnBJqAr8eTGT2YQWwRozM+LK8HizAKxEtv/voSa2cokcebOWlaQBKeAgcSzf3eY
-	QGxhAUOJ031NYDaLgIrEtYmfwQbxClhKXPnwjAXCFpQ4OfMJC8gRzAJ6Em0bGSHmy0tsfzsH
-	rFxCQEFi96ejYCeLCPhJTGnIgCgRkZjd2cY8gVF4FpJBsxAGzUIyaBaSjgWMLKsYJVMLinPT
-	c4sNCwzzUsv1ihNzi0vz0vWS83M3MYIjQ0tzB+P2VR/0DjEycTAeYpTgYFYS4Z1/oztNiDcl
-	sbIqtSg/vqg0J7X4EKM0B4uSOK/4i94UIYH0xJLU7NTUgtQimCwTB6dUA9OaeXfaxdvylJfn
-	x0pcOZsbMkHMa0tRqcIkO4V5R05ovxVkza97KZ9pkbY16VpDMZfpuwyXmZxmaoynwye4qglF
-	TFylHHAiorSp0P10st7mfbP/y8/6uue7unloZ/uF23u/TtcMW2/wZ33ocv9TqpNenlqh8SPA
-	6em5zfMnLpDd8Yq9bsG/npTiSf1Oyj++ceVy1EY87lZx2Cb7cX/sBb25dXzRNw6aPZkue7CA
-	+8Hnzf9b7v7VPTk92HYbN/ftab9ya7f9epunsXzXkhNXJ0my9Se7KP9tjprnGBTw/PuMV8I/
-	m27N3j9nydYLcvlB615z2zYfPNjRmH0n79u9lf/rYxdkTYz/KPO5N+1zkOVNJZbijERDLeai
-	4kQAC6Lv4PsCAAA=
-X-CMS-MailID: 20240709113530epcas1p493461714f6a520e29ba42d132c0b4af1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-ArchiveUser: EV
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240709041754epcas1p4ee6f7b1fd0dbf287e756b709aba321c8
-References: <CGME20240709041754epcas1p4ee6f7b1fd0dbf287e756b709aba321c8@epcas1p4.samsung.com>
-	<20240709041734.3719513-1-sj1557.seo@samsung.com>
-	<87frsjt9i2.fsf@mail.parknet.co.jp>
-	<000001dad1ca$6b61c720$42255560$@samsung.com>
-	<87bk37t3zl.fsf@mail.parknet.co.jp>
 
-> "Sungjong Seo" <sj1557.seo@samsung.com> writes:
+On 7.07.2024 10:56 AM, Krishna Kurapati wrote:
+> The multiport USB controller in the SA8295P ADP is connected to four USB
+> Type-A ports. VBUS for each of these ports are provided by a
+> TPS2559QWDRCTQ1 regulator, controlled from PMIC GPIOs.
 > 
-> >> Sungjong Seo <sj1557.seo@samsung.com> writes:
-> >>
-> >> > To clarify MAJOR/MINOR number of a mounted device, fat_msg prints
-> prefix
-> >> > that includes them.
-> >>
-> >> Hm, why do we need the major/minor (why can't use sysfs to resolve if
-> >> need), and why do you care only fat?
-> >> Thanks.
-> > You're right, if you can access to sysfs on a system, this might not
-> > be useful. However, when analyzing problems based on logs, s_dev can be
-> > very helpful for identifying devices. This is because, in systems like
-> > Android, a filesystem gets mounted on a device node with a nickname
-> > like public:179,1.
-> >
-> > I think it would be really useful if applied to representative
-> filesystems
-> > for removable storage devices such as fat and exfat. So I will send the
-> > similar PR to exfat as well.
+> Add the necessary regulators and GPIO configuration to power these.
 > 
-> So this is for the naming policy like android?
-Yes, but I think it is just one of examples.
->
-> And why don't you care the other places (like vfs) that using ->s_id?
-Because, I think it's enough to change fat-fs and exfat-fs.
+> It seems reasonable that these regulators should be referenced as vbus
+> supply of usb-a-connector nodes and controlled by e.g. dwc3, but as this
+> is not supported in Linux today the regulators are left always-on for
+> now.
 > 
-> Because I dislike to use the inconsitent stuff, some logs are "sda3" and
-> some logs are "sda3[8:3]".
-Do you mean consistency between all logs under Linux VFS?
-If so, I think it's meaningless. As mentioned above, this patch
-helps analyze removable storage devices, so it would be nice if it could
-be applied to both fat-fs and exfat-fs.
+> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
+> ---
 
-Anyway, this is just my opinion and I think you might have a different one.
-Thanks!
-> 
-> Thanks.
-> --
-> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Looks reasonable, thanks for taking this all the way through the review
+process!
 
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Konrad
 
