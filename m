@@ -1,117 +1,113 @@
-Return-Path: <linux-kernel+bounces-246238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79CCD92BF76
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:15:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B366F92BF79
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A95041C22837
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:15:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E530C1C22CE1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA16319E7E9;
-	Tue,  9 Jul 2024 16:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E68E19F483;
+	Tue,  9 Jul 2024 16:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pkMfWZI9"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V26PpVon"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF5319E7D1;
-	Tue,  9 Jul 2024 16:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB4D19D89F;
+	Tue,  9 Jul 2024 16:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720541450; cv=none; b=bOa0Q4Xx/ZZAiq6XXV7fxjzVlewEzNv5Et5syEaynx86BSpR9HeojFX0CYnlUw8HmJZdPFU9tBlO9b4JTI0HNq/nXxYRXeu+acNGWYLqvVHj/BwHhjL0/Qmp4sTGEaWm1/WXqPdMvp4T/XtBGXuNwhoAgtWiVITb9g0OVToajPE=
+	t=1720541481; cv=none; b=p2NQfT5Fsquae/DwjLWBpR4C+GL5vmuzmfhoAEyYUE0SsSCgvUFzM2s94T/e1ctbigyiYqP/q3uW/yg6b2/XbsmJDiUNbYNXcNt31JoBZBy82kK/1JPrBeOngLZjtaVpTUCwv78CgDo/ia+yak9B0xovk+JwuCLZl+ollBZaWnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720541450; c=relaxed/simple;
-	bh=dgC6tmtgrbQlFS4J2iYnZJ7iHw/grcAUBzAVqZ6jQVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t+JVByKRF3pTMZw0Hh6TynMkJi9m/AHZYV66KToBHY7tpzfQFZYcWJWN3EYMaAlKKJSMPOQM1Lymz61xQliglUCd0SOk8xXzf1AzaSX0MFLAHe2HHW704tWnU9FExtpaOBpghERSWC6YmpsH4eqGFuNYJ0FdR7GUF0yTc4aSPb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pkMfWZI9; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LnWIqChk4eTwYt1NcOMi/u0QVSohlymD7QkWGfATE+g=; b=pkMfWZI9YY6pgUaFUThC3X3Lai
-	DDNYdlTMoPovZjS1u0TxpFAhZHLmGD/vwicLPLFMrpEs045b1XsY343XZ7bOa0ZKLYmzKGFqUIuNW
-	Cbk/WR/i9G2ziZiuDC8bxp+VnlDDjqgmFsSgCNSD3traCbat7oWYF3aVjcXpEbzy6knS6/X5ym7Nb
-	FNhWeNWbpg53gKuB7rsYg0RoiZFKFJBFYMOSEXHHnJZGZbWAztGjfyWXOmI5Yu9mS3jPYX7kJ9O5q
-	o1pPl5yLdAvveDqnKk01eb8g2Xl05U9LSZr2Fgk7TpGXOtgzLR5GksqFP4lyNpdTVh87Uj4z2y3Fm
-	0S3S3Imw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sRDQS-0000000831E-45TG;
-	Tue, 09 Jul 2024 16:10:45 +0000
-Date: Tue, 9 Jul 2024 17:10:44 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org,
-	andrii@kernel.org, linux-kernel@vger.kernel.org,
-	rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org,
-	clm@meta.com, bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
-Message-ID: <Zo1hBFS7c_J-Yx-7@casper.infradead.org>
-References: <20240708091241.544262971@infradead.org>
- <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
- <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
- <20240709090153.GF27299@noisy.programming.kicks-ass.net>
- <91d37ad3-137b-4feb-8154-4deaa4b11dc3@paulmck-laptop>
- <20240709142943.GL27299@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1720541481; c=relaxed/simple;
+	bh=pvfRHHMEyM4nFW2ey50I0mDkZd5H1y+Ryq0X74YEc8Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eCoR5N7ujOGhwZiJxVc+eVblg+bSPpG5eUOSISzq70ok1jMjGkZlSS1uj+B21JBoKM8XZ1gOFRffYLT2VO9xtBkSqT6Y4dFi1vj4Yb42wj54bf80ZLw7CImOrNaIhl5hamc0K0S2F4qMBUtPAErKPvfmE5SXGkT/wutapUXccHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V26PpVon; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 021FFC32782;
+	Tue,  9 Jul 2024 16:11:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720541481;
+	bh=pvfRHHMEyM4nFW2ey50I0mDkZd5H1y+Ryq0X74YEc8Q=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=V26PpVongjNya1kz3lRNhrzSK2NW+jIW7dVqbEaGJZ1GAZu/GaE7SctU7MkBfNkT3
+	 Vu2muCiJk/ZUwhlklWGK2nnQds85/d8LiDbfkr87O5G7M/30PcEFDumPKE2O4/3KC1
+	 x6gVSAxFOZMgebHc6SoJv2BqBeImEzsQIt4xPx7Fe+44o3t92cBCk2Zx/PPzdHBllW
+	 Kj7B25C8iD+LEYdYrM13xlNrVQjInaIBXvauz4UvQ6FdJr6LOMNcSaf2HO3mgAdGL4
+	 ltuuyRasJVwkV7gzQyePXDpykHSiSQo4QsRO9KoQGL6Y5RJQwuy7fFzUY9vkmZkDNA
+	 IVbdd6QEuuXkg==
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5c6927d1969so24969eaf.3;
+        Tue, 09 Jul 2024 09:11:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUNOdGVXghVHj/9o+KrXk6GUVJE4KyUmJwReMp6LaZRNvhaAoFr2Khdyn4aigaNenwBmwYf6Uf4bNhicosae43qewKtfP2XtuRD0ie2r3lXRIkVnZIGvAtMdLPxkvMhcfm/fe4CA5aK3A==
+X-Gm-Message-State: AOJu0YxYc7igQwmSdHaDi3M0+xnzK6LCJIbZeEzPzrqru8MN50qgLHFn
+	zlNF0B5KHo5IT7Tu3Jja7oDOT917Zww70UtnSM3u2A8mlL3yng+bFzYDId1ySSmfCe8bD6x2fGL
+	N+v0rV9uq0x/y0+tTsmSRcF9Lwvc=
+X-Google-Smtp-Source: AGHT+IEjFhar5iSXGYsbrr8yTaAt03wty+C0y+fzLa16Zwp5Jlz/ssboxHdbqYeG7dM2MHL+s5c5uOR7zXkZAt+BYfE=
+X-Received: by 2002:a4a:a28d:0:b0:5c6:6abd:b46 with SMTP id
+ 006d021491bc7-5c68e12a3efmr2835317eaf.1.1720541480321; Tue, 09 Jul 2024
+ 09:11:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240709142943.GL27299@noisy.programming.kicks-ass.net>
+References: <20240705191835.152189-1-thomas.andreatta2000@gmail.com>
+In-Reply-To: <20240705191835.152189-1-thomas.andreatta2000@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 9 Jul 2024 18:11:09 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iDPiz3Q-eu5AaKmi39xfxUNYPnWvpjCQCvgK_evEJ8-w@mail.gmail.com>
+Message-ID: <CAJZ5v0iDPiz3Q-eu5AaKmi39xfxUNYPnWvpjCQCvgK_evEJ8-w@mail.gmail.com>
+Subject: Re: [PATCH] Staging: acpi: fixed a coding style issue moving from
+ strcpy to strscpy.
+To: Thomas Andreatta <thomasandreatta2000@gmail.com>
+Cc: rafael@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Thomas Andreatta <thomas.andreatta2000@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 09, 2024 at 04:29:43PM +0200, Peter Zijlstra wrote:
-> On Tue, Jul 09, 2024 at 07:11:23AM -0700, Paul E. McKenney wrote:
-> > On Tue, Jul 09, 2024 at 11:01:53AM +0200, Peter Zijlstra wrote:
-> > > On Mon, Jul 08, 2024 at 05:25:14PM -0700, Andrii Nakryiko wrote:
-> > > 
-> > > > Quick profiling for the 8-threaded benchmark shows that we spend >20%
-> > > > in mmap_read_lock/mmap_read_unlock in find_active_uprobe. I think
-> > > > that's what would prevent uprobes from scaling linearly. If you have
-> > > > some good ideas on how to get rid of that, I think it would be
-> > > > extremely beneficial. 
-> > > 
-> > > That's find_vma() and friends. I started RCU-ifying that a *long* time
-> > > ago when I started the speculative page fault patches. I sorta lost
-> > > track of that effort, Willy where are we with that?
+On Fri, Jul 5, 2024 at 9:18=E2=80=AFPM Thomas Andreatta
+<thomasandreatta2000@gmail.com> wrote:
+>
+> fixed a coding style issue moving from strcpy to strscpy.
 
-Probably best to start with lock_vma_under_rcu() in mm/memory.c.
+This is not a coding style issue and the change below is not a fix.
 
-> > > Specifically, how feasible would it be to get a simple RCU based
-> > > find_vma() version sorted these days?
-> > 
-> > Liam's and Willy's Maple Tree work, combined with Suren's per-VMA locking
-> > combined with some of Vlastimil's slab work is pushing in that direction.
-> > I believe that things are getting pretty close.
-> 
-> So I fundamentally do not believe in per-VMA locking. Specifically for
-> this case that would be trading one hot line for another. I tried
-> telling people that, but it doesn't seem to stick :/
+It just replaces strcpy() with strscpy() which is preferred (for some
+reason that needs to be mentioned).
 
-SRCU also had its own performance problems, so we've got problems one
-way or the other.  The per-VMA lock probably doesn't work quite the way
-you think it does, but it absoutely can be a hot cacheline.
+> Signed-off-by: Thomas Andreatta <thomas.andreatta2000@gmail.com>
+> ---
+>  drivers/acpi/ac.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/acpi/ac.c b/drivers/acpi/ac.c
+> index 09a87fa222c7..f4b5ba033df8 100644
+> --- a/drivers/acpi/ac.c
+> +++ b/drivers/acpi/ac.c
+> @@ -213,8 +213,11 @@ static int acpi_ac_probe(struct platform_device *pde=
+v)
+>                 return -ENOMEM;
+>
+>         ac->device =3D adev;
+> -       strcpy(acpi_device_name(adev), ACPI_AC_DEVICE_NAME);
+> -       strcpy(acpi_device_class(adev), ACPI_AC_CLASS);
+> +       char *device_class =3D acpi_device_class(adev);
+> +       char *device_name =3D acpi_device_name(adev);
+> +
+> +       strscpy(acpi_device_name(adev), ACPI_AC_DEVICE_NAME, strlen(devic=
+e_name));
+> +       strscpy(device_class, ACPI_AC_CLASS, strlen(device_class));
 
-I did propose a store-free variant at LSFMM 2022 and again at 2023,
-but was voted down.  https://lwn.net/Articles/932298/
+The last argument of strscpy() is not necessary in both cases.
 
-I don't think the door is completely closed to a migration to that,
-but it's a harder sell than what we've got.  Of course, data helps ...
-
-> Per VMA refcounts or per VMA locks are a complete fail IMO.
-> 
-> I suppose I should go dig out the latest versions of those patches to
-> see where they're at :/
-
-Merged in v6.4 ;-P
+>
+>         platform_set_drvdata(pdev, ac);
+>
+> --
 
