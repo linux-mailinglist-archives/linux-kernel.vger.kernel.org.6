@@ -1,97 +1,147 @@
-Return-Path: <linux-kernel+bounces-246707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE23F92C564
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:38:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D277B92C562
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 842CA1F215B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:38:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D7501F22FB4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A83187860;
-	Tue,  9 Jul 2024 21:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110FD182A62;
+	Tue,  9 Jul 2024 21:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8wYnrEW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u2sQbdUL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7C1187846;
-	Tue,  9 Jul 2024 21:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5902E185611
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 21:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720561075; cv=none; b=WuumjtxFdAvgE88/WPp1xovnRLCjvG51gazFANgDJXawKkIb15fTuI3LsVly1V6ooNBErhsaVcdExg3cIW7X2Q/RrfhgS6BGoDX89/whtFCTfgvNAcjqJgGc5OA66LaAUfGCxOI6z7sLa801ymQKArEqNuf1HusdAWpn+VUEKBA=
+	t=1720561073; cv=none; b=km3glISLcBnWC8hEuWw6korna24Kl9RzBDEzFGTYDgs96CACovKd4tS96Z/yTIdQ0r3zAQjR9/ggqzbgrj15O/AkIlGTLVnOjqnyjfS886zutpUHha8ew8VSTJRQGBfJepTEqUelrN4/e5j3pn35BwHdnrV8c8aBMOBZcyQsQ/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720561075; c=relaxed/simple;
-	bh=yll4p92pWnXFg8uTkbrS6QqisXcIuNQqSWjDINPmlbk=;
+	s=arc-20240116; t=1720561073; c=relaxed/simple;
+	bh=gsLdDddWkHg5lq2YwUFU5nuknJozwpUymGvYM9nQiIg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bL6/665rjK1mhXnyT+zC1Lne9ktiVSTiwRVA5bES15gnvhxtVoowQQIesR12V0cXiC7ATwTr2xzDngxwgpWWAVHqW43xez8wDYiZchqI3OCVh+ouI5QWEg0nQ59NrXbXBjyOzl/fJPWA1Nqtbq7AGr2fndIL92wIev70g8Ec878=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H8wYnrEW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 750C7C3277B;
-	Tue,  9 Jul 2024 21:37:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=b2vV5fVbibA0VoGFOoTWIf+Czm9eg+8CyqAvmZNHNAE9jM6153uBgRxQ4Pnr5qz2nhMdEIy5MOFwFY+KXjwoXhjtvBCb/14+rwGvrCakwjrk+u4xtoAest8dhiPq/At9agtaH9+RvlV0T3iiJ5ysuASm3m89Xlms0TPb3FaRUs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u2sQbdUL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC2F0C32786;
+	Tue,  9 Jul 2024 21:37:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720561074;
-	bh=yll4p92pWnXFg8uTkbrS6QqisXcIuNQqSWjDINPmlbk=;
+	s=k20201202; t=1720561073;
+	bh=gsLdDddWkHg5lq2YwUFU5nuknJozwpUymGvYM9nQiIg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H8wYnrEWHWwKdmO4cfK2NrpD70XNs++M9M5MyMGvIJHOjJrSNmR+Ft8nYkwo8Fs98
-	 LBd9wTfa7q5T48Vfv3QB9UqyFyFFRyO5pvTQFOV46MVCEyokMqZQPbMfdJNyKm49cW
-	 mqJyg0GdYxcQotK6Dq5EraPFHoKT7TRxFU2jyHPlF0Je0gEzbVbBsPK3AW6iHyCWa1
-	 OT5Uc6VMO3NiGRqAOgk+22X0I9YBYltnCwsTOdh/Z7LcbpDANyEzr9dSFwG3BV4MZg
-	 aJ0YSpUTWnotrisYMbvlEjn6IqThsgvm01H7AiTk2dvEKmy0PSCkUV+7ZMJDdJbY1B
-	 9gVi6lnThoVYA==
-Date: Tue, 9 Jul 2024 22:37:48 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com
-Subject: Re: [PATCH 6.6 000/139] 6.6.39-rc1 review
-Message-ID: <e7319894-d714-4e73-81c1-bd0db9ada998@sirena.org.uk>
-References: <20240709110658.146853929@linuxfoundation.org>
+	b=u2sQbdUL2DveWVPjld3UkF5xK9RsJt0/zgw/DBnaUDWI5oRY+neLWb02TwwXgQ8f8
+	 PQWbp1O8UTT4yC4s6Va2/skbZyiLALG6N2YfsYkJpuSACpqHCSR7V0egmQX3FN21Yo
+	 41W7jGc0Juiwu0IeT9J6YYL3CH0PcrXlr8XEitaFSFXKjiMmuagYlljioeJr4Y2lvC
+	 JSwIjbhTJcyDSDl1rrex62LjiFPG6SlsANrQrK7tVN+5CAbQyiC9+66k1lsBdAX4XQ
+	 VI9g76/9wdEsVfGbHNr50mKUoasEGmpI6DHWQm+aqQeyvT+Cm1lH19k1zDsgAWERU/
+	 s8dxAIzFp+QVg==
+Date: Tue, 9 Jul 2024 21:37:51 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Sheng Yong <shengyong@oppo.com>
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org, daehojeong@google.com
+Subject: Re: [PATCH v2] f2fs: only fragment segment in the same section
+Message-ID: <Zo2tr92oxPEuKBFm@google.com>
+References: <20240625075839.3750112-1-shengyong@oppo.com>
+ <20240625121512.3877754-1-shengyong@oppo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cgAC78/IOTxDqwCl"
-Content-Disposition: inline
-In-Reply-To: <20240709110658.146853929@linuxfoundation.org>
-X-Cookie: Most of your faults are not your fault.
-
-
---cgAC78/IOTxDqwCl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240625121512.3877754-1-shengyong@oppo.com>
 
-On Tue, Jul 09, 2024 at 01:08:20PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.39 release.
-> There are 139 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 06/25, Sheng Yong wrote:
+> When new_curseg() is allocating a new segment, if mode=fragment:xxx is
+> switched on in large section scenario, __get_next_segno() will select
+> the next segno randomly in the range of [0, maxsegno] in order to
+> fragment segments.
+> 
+> If the candidate segno is free, get_new_segment() will use it directly
+> as the new segment.
+> 
+> However, if the section of the candidate is not empty, and some other
+> segments have already been used, and have a different type (e.g NODE)
+> with the candidate (e.g DATA), GC will complain inconsistent segment
+> type later.
+> 
+> This could be reproduced by the following steps:
+> 
+>   dd if=/dev/zero of=test.img bs=1M count=10240
+>   mkfs.f2fs -s 128 test.img
+>   mount -t f2fs test.img /mnt -o mode=fragment:block
+>   echo 1 > /sys/fs/f2fs/loop0/max_fragment_chunk
+>   echo 512 > /sys/fs/f2fs/loop0/max_fragment_hole
+>   dd if=/dev/zero of=/mnt/testfile bs=4K count=100
+>   umount /mnt
+> 
+>   F2FS-fs (loop0): Inconsistent segment (4377) type [0, 1] in SSA and SIT
+> 
+> In order to allow simulating segment fragmentation in large section
+> scenario, this patch reduces the candidate range:
+>  * if curseg is the last segment in the section, return curseg->segno
+>    to make get_new_segment() itself find the next free segment.
+>  * if curseg is in the middle of the secion, select candicate randomly in
+>    the range of [curseg + 1, last_seg_in_the_same_section] to keep type
+>    consistent.
+> 
+> Signed-off-by: Sheng Yong <shengyong@oppo.com>
+> ---
+> v2: update commit msg
+> ---
+>  fs/f2fs/segment.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index a0ce3d080f80a..55d474f5c2103 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -2782,10 +2782,21 @@ static unsigned int __get_next_segno(struct f2fs_sb_info *sbi, int type)
+>  {
+>  	struct curseg_info *curseg = CURSEG_I(sbi, type);
+>  	unsigned short seg_type = curseg->seg_type;
+> +	unsigned int hint;
+>  
+>  	sanity_check_seg_type(sbi, seg_type);
+> -	if (f2fs_need_rand_seg(sbi))
+> -		return get_random_u32_below(MAIN_SECS(sbi) * SEGS_PER_SEC(sbi));
+> +	if (f2fs_need_rand_seg(sbi)) {
+> +		if (__is_large_section(sbi)) {
+> +			hint = GET_SEC_FROM_SEG(sbi, curseg->segno);
+> +			if (GET_SEC_FROM_SEG(sbi, curseg->segno + 1) != hint)
+> +				return curseg->segno;
+> +			return get_random_u32_inclusive(curseg->segno + 1,
+> +					GET_SEG_FROM_SEC(sbi, hint + 1) - 1);
+> +		} else {
+> +			return get_random_u32_below(MAIN_SECS(sbi) *
+> +						SEGS_PER_SEC(sbi));
+> +		}
+> +	}
+>  
+>  	if (__is_large_section(sbi))
+>  		return curseg->segno;
 
-Tested-by: Mark Brown <broonie@kernel.org>
+	if (__is_large_section(sbi)) {
+		if (f2fs_need_rand_seg(sbi)) {
+			unsigned int hint = GET_SEC_FROM_SEG(sbi, curseg->segno);
+			if (GET_SEC_FROM_SEG(sbi, curseg->segno + 1) != hint)
+				return curseg->segno;
+			return get_random_u32_inclusive(curseg->segno + 1,
+					GET_SEG_FROM_SEC(sbi, hint + 1) - 1);
+		}
+		return curseg->segno;
+	} else if (f2fs_need_rand_seg(sbi)) {
+		return get_random_u32_below(MAIN_SECS(sbi) * SEGS_PER_SEC(sbi));
+	}
 
---cgAC78/IOTxDqwCl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaNrasACgkQJNaLcl1U
-h9CHFwf+NYZChjFG3/qpacc2PrJAMc0FfRUnx0nFbbRgwpMAtwsXf1Qo6+mg7CYd
-C1XTY3FvO2coc8pi9DfLAi2VOF+ADKjn1hKqhuNA6zqtBzoSi8nuoUjg0a52DZJD
-ErJcwsp5OuxO007MO03u36Tl6bmGz+LW3U2v0haskZIbGzJhHYd5/Xayhik9nxKl
-dbcJ7KMEv78TwZ2xZ94YGuGtnKuxIhi4jwKmn6ReR0ESaxzmvMwkxxHo7F005RWH
-EvMVIe7l6OUUCVJSrUS4rRojACADPWF3YywQVoCvS1C9sO5NwJB33zbri/O2yxow
-pFQ26twJY0C7PTijKvygOyzG6OJ8rg==
-=dBi8
------END PGP SIGNATURE-----
-
---cgAC78/IOTxDqwCl--
+> -- 
+> 2.40.1
 
