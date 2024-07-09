@@ -1,150 +1,117 @@
-Return-Path: <linux-kernel+bounces-245580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8E3992B48F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:59:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF90F92B498
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:01:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 015901C227B7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:59:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A2B31F22C12
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BED815575C;
-	Tue,  9 Jul 2024 09:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942DF156257;
+	Tue,  9 Jul 2024 10:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bmqg5BEZ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="udF14+mV";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="n6cdigFQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dVSUL5VV"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lH1HdJCR"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B3A26AC9;
-	Tue,  9 Jul 2024 09:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6467813C8E5;
+	Tue,  9 Jul 2024 10:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720519160; cv=none; b=gwMcCAxq2l7mU4aQo0XZapfD6zh45AwhsRwTQ98OJTwzGA2iKcouedRtadi+vsnLOU3xIAjbE5e4EzkGdKCzIxvTg756j4Z8WWG4s6g+T8qWhR56aPav21+o/hu+9iQcmkNUKQwr/hX/R7z53KmfohSua67nE1ZQU+Snvgw5y2A=
+	t=1720519269; cv=none; b=CnmcPvxr5dE2oxAXWIKYlygNGpVFANgxCvwXYvvFGa6d8ZXqyDrZ+G9LIzhg7Qtk9A7jbeL3KBtgTmX2E966RWCSyn6OGGQgW9TweGM0oFHaiVio8Ne8D/FrfxBLJIO4N2Voa6/4Ke2Qyd/qFx26p84d/kBphnGRJyBiYYUtLlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720519160; c=relaxed/simple;
-	bh=0L8qZkIRswnVHIoZOL+QpI04Q8AqBRQSC0Xu+OGaZs8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XyUJx1L2bFsZJu6HPuKrKnb/DcaJudexpkBRJTINHZTQ0n2gNqH34clof5tkQ1S53jboizMiNsokfEG4lxbyqCCxsPiLZz+PixzluhZenfcj09vXvtGpC/Rbz64wfsoAEFxnm2zHHIis0j6ls8Wrh6ru+r5Mbd66cqsr6FhnZH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bmqg5BEZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=udF14+mV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=n6cdigFQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dVSUL5VV; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0E55221B9A;
-	Tue,  9 Jul 2024 09:59:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1720519157; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eFGyhwLjwHvqnxzFNZDxqYKqmIP/aQi15p3X3ME9A3o=;
-	b=bmqg5BEZ5b48Xex84v8vIqjga9EzKe8xHztDHcnQyLQ4MMUPhEoGvK37VOaDnKVJ3hq7ib
-	Hg9iX8u1aZo3u8UPw4YXoQdfE5AVCe5GfCfa+gL0E4h4WIAaD7iTxkoQJ3uB6/jom5SalV
-	z9SNnHGlJQPPHLDYkqP6cG4dW8MkGa0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1720519157;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eFGyhwLjwHvqnxzFNZDxqYKqmIP/aQi15p3X3ME9A3o=;
-	b=udF14+mVf4SnwpCqK7VBfc8N7pyRSORzth19dk9ss3c3jgYttrmeBhritgXd/Hl9lHCSsw
-	BMuxaGf0uAKFqKAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=n6cdigFQ;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=dVSUL5VV
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1720519156; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eFGyhwLjwHvqnxzFNZDxqYKqmIP/aQi15p3X3ME9A3o=;
-	b=n6cdigFQhLcLLZEnHKZ2+8bjmo1bLYgVsne3zCW7t8hGjnwHfxN+QC4OrZY7kKAeBnPbvA
-	+ZVaIAaNYGWU/OY9LrZ0nDuUz2JrM+ESc/1X2ZSGdkWaMC5FzH/nHaebC8Ol1bCkaXCo8A
-	mjoxNlJQruCz/hR5ZWjnRS66171WkXY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1720519156;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eFGyhwLjwHvqnxzFNZDxqYKqmIP/aQi15p3X3ME9A3o=;
-	b=dVSUL5VVE2wrfVPGBbq+3qAPxBGTkfblA/rcRQR6iajM1gaR81MuIQEpj6kCiisYdItrqt
-	7v474Mh2ESFeUvAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EBD051369A;
-	Tue,  9 Jul 2024 09:59:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 24cBOfMJjWY5RQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 09 Jul 2024 09:59:15 +0000
-Date: Tue, 09 Jul 2024 11:59:46 +0200
-Message-ID: <878qyadgx9.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Nazar Bilinskyi <nbilinskyi@gmail.com>
-Cc: tiwai@suse.com,
-	alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda/realtek: Enable Mute LED on HP 250 G7
-In-Reply-To: <20240709080546.18344-1-nbilinskyi@gmail.com>
-References: <20240709080546.18344-1-nbilinskyi@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1720519269; c=relaxed/simple;
+	bh=YXEKDrHx7xU7GSPly2qCLsA3q7mmRiQWaxxv09opKo8=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gMcvL5h7bl7ORnjBxvia1qeuXql7lM5nZ53LS7E6pFWURq8M3G4VQtX/uaHtRn2/yNCrv4LjBth2ASFGK6XzGtG+NunRJlsVEPsuznHFypYhxWnEQiDSMWL3W2/mJJfPOF2P5qOcp8pf3yv+UmOACn2DXqR0ueIYH0X/hhiNZbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lH1HdJCR; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a77c0b42a8fso710904066b.1;
+        Tue, 09 Jul 2024 03:01:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720519267; x=1721124067; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cesQpqTyuCsvlvVlu0V81EvNragai1Z9EpcRXpHE97A=;
+        b=lH1HdJCROQeO6VZV4DgGdk06ky381v9w4GhMR2N1/PAsoejeopnZVrrMK2RjG6m6tg
+         TW6tlU84kIe15DQii/OUn5u8MgVE63ApZU/KGwsapFmEL15THXl1OCeM3Ym9tMaFeKtg
+         feFOo/Q9Rbi3J4CkzMp3/0bIqCHOwgcOVlkdYb5hRbqXGTUhCqtKUdJ4dw4A4ztqKU8A
+         2HH9RkoEaJLxf1qwB61Xihi769dlge18wwE14Uyq4fEIbkOMpQwhhWJ3TjQo5dpF5Q8S
+         lBGkKkstZZ4UkZPUrzFsdrYCCzFBELF+uex8tr37A2IWAXsSpDDMwvIOxbCj1Tgyo37L
+         GARA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720519267; x=1721124067;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cesQpqTyuCsvlvVlu0V81EvNragai1Z9EpcRXpHE97A=;
+        b=cZEkpcw7kfUIKKkUtux94FuD1ArzQsBewnvmCWNJehhrvRs7zLd4HS7TEL87e6W5sC
+         d06ioWJgECah4ukHsco4lwz46Rj34Q2RE2qoGolZDyuYyONkpAIW9YiBVsZzAgcejUpS
+         QFtFREErmaDcnoZW9agCeDHsTNRLdp9OFDHZiTdDU1MuwNI4AESUKd4Ye766YxBfXmTG
+         W44nlpUdRM/LYe8COhGkw23MgPyoDSVuI0gZ0vbVYeuNAwmSFfhgeAomwpL5WrqdG+rO
+         bcMaSHlbqw3a1iiQxoF6Xw413avpxrzMHH0DAiQIgkGeapzwB2LobcNKPXVW6TOcKYG3
+         2kfA==
+X-Forwarded-Encrypted: i=1; AJvYcCU160y4ZmcQCknGfBGslWBV6AAUatQGZNQSobF+gc5h11Zltup6NQZtRsQHv4BzgUUKW1UqjBhElKoo/dugrJ0+EtgGLtrXrUoy2y9cJ9O8pXktRB8y6ZaBT2JrDw3cu8qA
+X-Gm-Message-State: AOJu0YwUz+XZqFCxGb0GQfw6lN3EnFWa8Xgha8rbE5eqebXstcucb26b
+	pu3SKpLOhshR+kTftP6SJ9WaOCpqFip65dKMVaFNyZU+DR4T0GoW
+X-Google-Smtp-Source: AGHT+IGqolitkJi7LU77VU4RtQ2pZKdfOwoNB5MgkaNN9UGCZTwxQvk4CI7P+sWki44gweKV+4nvuA==
+X-Received: by 2002:a17:906:c103:b0:a72:7a71:7f4f with SMTP id a640c23a62f3a-a780d20ea49mr185628866b.7.1720519266511;
+        Tue, 09 Jul 2024 03:01:06 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a72fd39sm64567266b.91.2024.07.09.03.01.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 03:01:06 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 9 Jul 2024 12:01:03 +0200
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org,
+	andrii@kernel.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, oleg@redhat.com, clm@meta.com,
+	paulmck@kernel.org, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+Message-ID: <Zo0KX1P8L3Yt4Z8j@krava>
+References: <20240708091241.544262971@infradead.org>
+ <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
+ <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
+ <20240709090304.GG27299@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 0E55221B9A
-X-Spam-Score: -3.50
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.50 / 50.00];
-	BAYES_HAM(-2.99)[99.97%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709090304.GG27299@noisy.programming.kicks-ass.net>
 
-On Tue, 09 Jul 2024 10:05:46 +0200,
-Nazar Bilinskyi wrote:
+On Tue, Jul 09, 2024 at 11:03:04AM +0200, Peter Zijlstra wrote:
+> On Mon, Jul 08, 2024 at 05:25:14PM -0700, Andrii Nakryiko wrote:
 > 
-> HP 250 G7 has a mute LED that can be made to work using quirk
-> ALC269_FIXUP_HP_LINE1_MIC1_LED. Enable already existing quirk.
+> > Ramping this up to 16 threads shows that mmap_rwsem is getting more
+> > costly, up to 45% of CPU. SRCU is also growing a bit slower to 19% of
+> > CPU. Is this expected? (I'm not familiar with the implementation
+> > details)
 > 
-> Signed-off-by: Nazar Bilinskyi <nbilinskyi@gmail.com>
+> SRCU getting more expensive is a bit unexpected, it's just a per-cpu
+> inc/dec and a full barrier.
+> 
+> > P.S. Would you be able to rebase your patches on top of latest
+> > probes/for-next, which include Jiri's sys_uretprobe changes. Right now
+> > uretprobe benchmarks are quite unrepresentative because of that.
+> 
+> What branch is that? kernel/events/ stuff usually goes through tip, no?
 
-Thanks, applied now.
+it went through the trace tree:
 
+https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git probes/for-next
 
-Takashi
+and it's in linux-next/master already
+
+jirka
 
