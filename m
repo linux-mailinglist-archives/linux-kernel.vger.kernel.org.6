@@ -1,92 +1,130 @@
-Return-Path: <linux-kernel+bounces-245175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5675492AF4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:12:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 735A692AF50
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8521A1C215F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:12:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28C601F2207D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7769612F5BF;
-	Tue,  9 Jul 2024 05:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971AF12DD8A;
+	Tue,  9 Jul 2024 05:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iYFaE+fd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xUdWgw4X"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BB6839E4;
-	Tue,  9 Jul 2024 05:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8603D12DDAE
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 05:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720501914; cv=none; b=pljVK14IC47ePbLE+RxeJSSZxdTh21l49TbHKHVTN4bwOS7YaolEHggx9jowVSbViIdR4OTYUESqcvUDGTxw2ezRFWbsKQHpe+b8dv+0hjbALmndbEwgy7vi4zmnok8hwL4wIRHmePiIjTXYZfwmb5M3ojhZOzH3mO85DxJOa0w=
+	t=1720501930; cv=none; b=e3gsvKqCQjBQew7ifdDQ/RS7zXN+SvHkpohqfyE0E0tAqWNiPDGBoJoQzmrCtIN1dOnEihQqYKYLodCJIZ/nd02NiUFgCpOyaCeANG6GR0mCicyuG/edZLljqLPBF3qm5t2ei9YYMMu6DXazF9+ws2x+0QYnpPXYXhUbnFmA8Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720501914; c=relaxed/simple;
-	bh=7cpn1M8UubDR5oy31LdsuFTSJsPll1C64fA13ivd5kY=;
+	s=arc-20240116; t=1720501930; c=relaxed/simple;
+	bh=hZrNby8Wqv1N1agmOmeRetovV+1eWf/UR5CpaOhm0R8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uGOM7YM0nwD0z8UdzDr/MaONukX1rudM2Mpcrl7vVx5REY4elng5IjzpnEXNysaYR8OVqR1t8fSD5qZI77Z3zgSJEkYooXkWUHyAHWQ/tIU8lmf4dPFfGOPawvH064VG8PNppHUbp3yA+KVedmYyfCkO4iSOGiS1GbnIbua9+ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iYFaE+fd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42A4DC32782;
-	Tue,  9 Jul 2024 05:11:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720501913;
-	bh=7cpn1M8UubDR5oy31LdsuFTSJsPll1C64fA13ivd5kY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iYFaE+fdfx3Y8cqJeSB7s0hvcMPY2wLz+74CQSr5Lnh11blVQjuQo9NT/0mQDjK1x
-	 AM2ECoymb2bdFehg+TpXybuxj6Bs0g+Kjh7HMOH7AovdFGgXXqokL9teRx1pykzRZw
-	 JxHOTzrr90v6rRD/nwYZ39Cb6nKLrJZYv+eXqa8c=
-Date: Tue, 9 Jul 2024 07:11:49 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Shivani Gupta <shivani07g@gmail.com>
-Cc: laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mathias.nyman@intel.com, linux-usb@vger.kernel.org,
-	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
-Subject: Re: [PATCH] usb: xhci: Fix compiler warning in xhci.c
-Message-ID: <2024070912-tigress-glacier-273d@gregkh>
-References: <20240709030604.1347546-1-shivani07g@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZsoIMSgQ0HmEMOhf2vuz03s4das7TooUjdOfK6hZatN/Ij/1U04rG2NiZtkT8CVIKVj1zuKQrUqUOWE7sZ2MAO1XqYGsH6p2BcCQcleo1lXsND6tgndVAJGaCC5tO8Tm5hFcPLZNg1YWHSBmL1T8XfzrJksLOk6k+WdJvMWeHVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xUdWgw4X; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fa2ea1c443so35405465ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 22:12:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720501929; x=1721106729; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5dnB1YYKwyLNgKX3mrii2OWpX3QNNGe1qm9HISwK1nM=;
+        b=xUdWgw4XANdVplxUzfgRvHB5QQfSFwktQUWWkfM0mnWvMTC3ffCAFX7gz3gHgPcIDe
+         5+lIvNGuTmrJCk83lAL+zmKG/W1bDcX6nOQzVoW9Sq/OgkEQINXpjiSUx1j3y646mE7G
+         BqtBFAGt9UQ4wYYZmxoBzM2p+l70HAJmuZjG58oxPeWcxMVBSU/H8kAgEB/zYvNGzx4o
+         ruiiw+OKz4pmONm7uvBeQfzNdgTheIOzIVYz1ZWxTOUZdt9VYrrqTXXPm5uj6y7jz8Av
+         8y2En0kyc/U8pESKWo2j4k2yVTGxKgWdkgG+JQVc7cruyTO5HuNrb7u+ZIejTE80YMH2
+         c5mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720501929; x=1721106729;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5dnB1YYKwyLNgKX3mrii2OWpX3QNNGe1qm9HISwK1nM=;
+        b=cpD5NKVlJ61dJt68SMbAMFSTrzO+5fMbc1zVYr7PcWFjDMSxdwfdVgPUXyEyyFR+2f
+         NJmsSwfL2uPel5KdA7isTg0gBrJRvC218OCOLlutX403FypwuLa0UwIvO78yiF+dF01k
+         ZX3TGNIom4mvhxwu6+UpbhgolovAEzGW5bpXx77XRxsENR/d9bny6jIwtlq4wdue/ti8
+         aPCJhwEhHe/ftoXfsY0vLAxtzcqpxv1K7hzESCGoOraqdZC16jy9m9Pl8x43KxsNSQYc
+         UvOimo30z7xqAFWSKQxUXlbw6iBlXsDjUXKQO0YfyVzNuL9b7Q9pzTwCZJbpHefZHg4V
+         vDuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVeenETx6WLWVD6dw7iFqAaV8TOVRtUynrpUImnJOBXdgW9m67bvAfixGEn9l4jyRYgc14hyi15yQUuCtHdOO5yWIUymgadKWmDWiNI
+X-Gm-Message-State: AOJu0YwTNO+NB1yih6pSGdGsMDXtZ2aKg1vgzRLlb2btkAw9eRoR/OWr
+	NcpGh8LKeFygy7KMjrcUrzh/82EBWcZFkJ9rBQsjiR1J3yUpX8qGhOv3PLdNl6faTDGsJTLD5VE
+	=
+X-Google-Smtp-Source: AGHT+IGUuK2UPKdJxtdpUL/3YL7x4TdstpPSjGT5aU1aDddxROeYmfS2zo6ROceQtZz5OxfKCLYnNQ==
+X-Received: by 2002:a17:902:db03:b0:1fa:abda:cf7b with SMTP id d9443c01a7336-1fbb6cdac2cmr14557545ad.9.1720501928752;
+        Mon, 08 Jul 2024 22:12:08 -0700 (PDT)
+Received: from thinkpad ([117.193.209.237])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a2bedbsm7161425ad.101.2024.07.08.22.12.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 22:12:08 -0700 (PDT)
+Date: Tue, 9 Jul 2024 10:41:55 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] PCI: qcom: Fix missing error code in
+ qcom_pcie_probe()
+Message-ID: <20240709051155.GG3820@thinkpad>
+References: <20240708180539.1447307-1-dan.carpenter@linaro.org>
+ <20240708180539.1447307-2-dan.carpenter@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240709030604.1347546-1-shivani07g@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240708180539.1447307-2-dan.carpenter@linaro.org>
 
-On Tue, Jul 09, 2024 at 03:06:04AM +0000, Shivani Gupta wrote:
-> Fixes the following compiler warnings by changing the comment syntax
-> from "/**" to "/*" in the specified comments:
-
-That's not a normal compiler warning, but rather a documentation builder
-warning, right?
-
+On Mon, Jul 08, 2024 at 01:05:36PM -0500, Dan Carpenter wrote:
+> Return a negative error code if dev_pm_opp_find_freq_floor() fails.
+> Don't return success.
 > 
-> drivers/usb/host/xhci.c:1369: warning: Function parameter or struct member
-> 'desc' not described in 'xhci_get_endpoint_index'
-> 
-> Signed-off-by: Shivani Gupta <shivani07g@gmail.com>
+> Fixes: 78b5f6f8855e ("PCI: qcom: Add OPP support to scale performance")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
 > ---
->  drivers/usb/host/xhci.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/pci/controller/dwc/pcie-qcom.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-> index 37eb37b0affa..67168661aa52 100644
-> --- a/drivers/usb/host/xhci.c
-> +++ b/drivers/usb/host/xhci.c
-> @@ -1355,7 +1355,7 @@ static void xhci_unmap_urb_for_dma(struct usb_hcd *hcd, struct urb *urb)
->  		usb_hcd_unmap_urb_for_dma(hcd, urb);
->  }
->  
-> -/**
-> +/*
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 26405fcfa499..1d36311f9adb 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -1574,7 +1574,8 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>  	if (!ret) {
+>  		opp = dev_pm_opp_find_freq_floor(dev, &max_freq);
+>  		if (IS_ERR(opp)) {
+> -			dev_err_probe(pci->dev, PTR_ERR(opp),
+> +			ret = PTR_ERR(opp);
+> +			dev_err_probe(pci->dev, ret,
+>  				      "Unable to find max freq OPP\n");
+>  			goto err_pm_runtime_put;
+>  		} else {
+> -- 
+> 2.43.0
+> 
 
-This feels wrong, why not fix up the kerneldoc instead?
-
-thanks,
-
-greg k-h
+-- 
+மணிவண்ணன் சதாசிவம்
 
