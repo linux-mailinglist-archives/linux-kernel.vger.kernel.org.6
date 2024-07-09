@@ -1,126 +1,163 @@
-Return-Path: <linux-kernel+bounces-245103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB15C92AE5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:57:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E86D692AE62
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 864AF282A4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:57:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 739B5282AB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCD537147;
-	Tue,  9 Jul 2024 02:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJTFvf0B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F353742078;
+	Tue,  9 Jul 2024 02:57:29 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159633A29C;
-	Tue,  9 Jul 2024 02:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C98641C73;
+	Tue,  9 Jul 2024 02:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720493828; cv=none; b=a+YKt37iP5zQwej83SOuKul0+pTpdtHDc7EETC+T/477DE6cbyoOZuxNRSO7gMGa3rkvR9IvYHdz7IVRXmkgHIm2D358Q2poSyFJVRM4Ch4WCU7U7B+TPoN9Nq7TFXsfPglcgjsVgIiNlEOkZ8qA4s4Ya7+MI0uCujb6fOtMD7Y=
+	t=1720493849; cv=none; b=TktUM6ugWS83CkiFYdDypPgGUfeulHTJz0k/wU7yEN6QjPd1Iy8iErS/9rNE8zLyuEKRO1HJRGStQTd3FJ5M7S+c7kIo9DRP6ZKq/J6/b3aIRLQkJvywTDE29v2RC6ThzBrDNYN4hxlRY6dUkfG/Ysv49yikn9TpSFP2ZKDYCAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720493828; c=relaxed/simple;
-	bh=L4KvOLHA9APNyAatBQSWMGun+WkqibNGe1IIFkU3g1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i8G3Rw3shNNdxmiF7f02t3R0B9/ZzdZr9mA1AoWRmvM0eAKwilF5p5Ux0/k10LcXT2W4AqYupgDauCdBh24I+9yq56BJCGQNNKIvPBpxlXYHtyPIdt2uH2BDfEJ+L2M5y8OdAI2065Z/7dpbMNfPl0JcFqpoYb7+ABoPPEe6oXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJTFvf0B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20843C116B1;
-	Tue,  9 Jul 2024 02:57:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720493827;
-	bh=L4KvOLHA9APNyAatBQSWMGun+WkqibNGe1IIFkU3g1M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kJTFvf0BvektW9iHALrfIGynBQq3arEi0n0dtny0Wolco0jDKblApjyZgjjwHIbrd
-	 wqBltwIW8POIay2xibWNM0rR1iPrF87KKYQ82J6OicGQeILAguPYmonDQoSg1SP4of
-	 NPoETE7RQtRwfstO7BcMTwk4K7s3+b+YWNUD3iKJ0ZDDynjc/fPrbU3Z3oA2mXtwRq
-	 1W4N2TPNGL5hbjj5GQsJ3GLB2FE+OWQrWbzsNXlTwgq/LItfsg88rz8N4PaMqApm36
-	 RZxw42FQGP/CvapHoJPer/2JrmbWk4RjdupEdlzssohwFSNHHGl1Tx6SbaTJ+SiHi3
-	 spy+8h5f4MbXQ==
-Message-ID: <bf238892-4d53-4732-a138-11aa6af1dbe3@kernel.org>
-Date: Mon, 8 Jul 2024 21:57:06 -0500
+	s=arc-20240116; t=1720493849; c=relaxed/simple;
+	bh=f8tf64RYLXczMC87XQUo/kloKRfhEw9Bo//uVd9bMow=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=WRt6Zp4FOVTohw6HhXzQI3BpUjX/1B/Lo3LMcqH00QjHFHvsxw2YdbNs/TEmtWFLPDfGwDSM812gReHxCA/po1bS0M3uqCvW5JcNdB7jTjw2RhZ9wlVjZTN02IeS70ZfokRu95RBFAB99AGv6VWzHHyRS+t3gxR8iseNxiSBA1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WJ5Hp1GrDz4f3kvv;
+	Tue,  9 Jul 2024 10:57:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id EDAF81A0B14;
+	Tue,  9 Jul 2024 10:57:22 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP2 (Coremail) with SMTP id Syh0CgBn0YYRp4xmfplTBg--.35701S3;
+	Tue, 09 Jul 2024 10:57:21 +0800 (CST)
+Subject: Re: [REGRESSION] Cannot start degraded RAID1 array with device with
+ write-mostly flag
+To: =?UTF-8?Q?Mateusz_Jo=c5=84czyk?= <mat.jonczyk@o2.pl>,
+ linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: regressions@lists.linux.dev, Song Liu <song@kernel.org>,
+ Paul Luse <paul.e.luse@linux.intel.com>, "yukuai (C)" <yukuai3@huawei.com>
+References: <20240706143038.7253-1-mat.jonczyk@o2.pl>
+ <a703ec45-6cd5-4970-db22-fb9e7469332a@huawei.com>
+ <e6c48984-01ee-411f-a013-7e5068641363@o2.pl>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <349e4894-b6ea-6bc4-b040-4a816b6960ab@huaweicloud.com>
+Date: Tue, 9 Jul 2024 10:57:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI/PM: Avoid D3cold for HP Spectre x360 Convertible
- 15-ch0xx PCIe Ports
-To: superm1@kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-Cc: "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>, Tony Murray <murraytony@gmail.com>
-References: <20240629001743.1573581-1-superm1@kernel.org>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20240629001743.1573581-1-superm1@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <e6c48984-01ee-411f-a013-7e5068641363@o2.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgBn0YYRp4xmfplTBg--.35701S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7tw4UCw43Wr4rtw48Kw1DAwb_yoW8Cr1kpw
+	1kJFWrZrWUGr18Aw1Utr18Wryrtw1UGa4UXr18X3W8XrnFqFyqqr1UXryqgr1DJr4rGw17
+	X3WUJr17uF1jvFUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVW3JVWrJr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUbPEf5UUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 6/28/2024 19:17, superm1@kernel.org wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
-> 
-> HP Spectre x360 Convertible 15-ch0xx is an Intel Kaby Lake-G system that
-> contains an AMD Polaris Radeon dGPU.
-> Attempting to use the dGPU fails with the following sequence:
-> 
->    amdgpu 0000:01:00.0: not ready 1023ms after resume; waiting
->    amdgpu 0000:01:00.0: not ready 2047ms after resume; waiting
->    amdgpu 0000:01:00.0: not ready 4095ms after resume; waiting
->    amdgpu 0000:01:00.0: not ready 8191ms after resume; waiting
->    amdgpu 0000:01:00.0: not ready 16383ms after resume; waiting
->    amdgpu 0000:01:00.0: not ready 32767ms after resume; waiting
->    amdgpu 0000:01:00.0: not ready 65535ms after resume; giving up
->    amdgpu 0000:01:00.0: Unable to change power state from D3cold to D0, device inaccessible
->    [drm:atom_op_jump [amdgpu]] *ERROR* atombios stuck in loop for more than 20secs aborting
-> 
-> The issue is that the Root Port the dGPU is connected to can't handle the
-> transition from D3cold to D0 so the dGPU can't properly exit runtime PM.
-> 
-> The existing logic in pci_bridge_d3_possible() checks for systems that are
-> newer than 2015 to decide that D3 is safe, but this system appears not to
-> work properly.
-> 
-> Add the system to bridge_d3_blacklist to prevent D3cold from being used.
-> 
-> Reported-and-tested-by: Tony Murray <murraytony@gmail.com>
-> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3389
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->   drivers/pci/pci.c | 11 +++++++++++
->   1 file changed, 11 insertions(+)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 35fb1f17a589..65e3a550052f 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -2965,6 +2965,17 @@ static const struct dmi_system_id bridge_d3_blacklist[] = {
->   			DMI_MATCH(DMI_BOARD_VERSION, "95.33"),
->   		},
->   	},
-> +	{
-> +		/*
-> +		 * Changing power state of root port dGPU is connected fails
-> +		 * https://gitlab.freedesktop.org/drm/amd/-/issues/3229
-> +		 */
-> +		.ident = "HP Spectre x360 Convertible 15-ch0xx",
-> +		.matches = {
-> +			DMI_MATCH(DMI_BOARD_VENDOR, "HP"),
-> +			DMI_MATCH(DMI_BOARD_NAME, "83BB"),
-> +		},
-> +	},
->   #endif
->   	{ }
->   };
+Hi,
 
-Bjorn,
+在 2024/07/09 4:09, Mateusz Jończyk 写道:
+> W dniu 8.07.2024 o 03:54, Yu Kuai pisze:
+>> Hi,
+>>
+>> 在 2024/07/06 22:30, Mateusz Jończyk 写道:
+>>> Subject: [RFC PATCH] md/raid1: fill in max_sectors
+>>>
+>>>
+>>>
+>>> Not yet fully tested or carefully investigated.
+>>>
+>>>
+>>>
+>>> Signed-off-by: Mateusz Jo艅czyk<mat.jonczyk@o2.pl>
+>>>
+>>>
+>>>
+>>> ---
+>>>
+>>>    drivers/md/raid1.c | 1 +
+>>>
+>>>    1 file changed, 1 insertion(+)
+>>>
+>>>
+>>>
+>>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+>>>
+>>> index 7b8a71ca66dd..82f70a4ce6ed 100644
+>>>
+>>> --- a/drivers/md/raid1.c
+>>>
+>>> +++ b/drivers/md/raid1.c
+>>>
+>>> @@ -680,6 +680,7 @@ static int choose_slow_rdev(struct r1conf *conf, struct r1bio *r1_bio,
+>>>
+>>>            len = r1_bio->sectors;
+>>>
+>>>            read_len = raid1_check_read_range(rdev, this_sector, &len);
+>>>
+>>>            if (read_len == r1_bio->sectors) {
+>>>
+>>> +            *max_sectors = read_len;
+>>>
+>>>                update_read_sectors(conf, disk, this_sector, read_len);
+>>>
+>>>                return disk;
+>>>
+>>>            }
+>>
+>> This looks correct, can you give it a test and cook a patch?
+>>
+>> Thanks,
+>> Kuai
+> Hello,
+> 
+> Yes, I'm working on it. Patch description is nearly done.
+> Kernel with this patch works well with normal usage and
+> fsstress, except when modifying the array, as I have written
+> in my previous email. Will test some more.
 
-Ping on this one.  It's a trivial quirk that Tony and I already root 
-caused on Gitlab, I'd hope this can be squeezed in.
+Please run mdadm tests at least. And we may need to add a new test.
+
+https://kernel.googlesource.com/pub/scm/utils/mdadm/mdadm.git
+
+./test --dev=loop
 
 Thanks,
+Kuai
+
+> 
+> I'm feeling nervous working on such sensitive code as md, though.
+> I'm not an experienced kernel dev.
+> 
+> Greetings,
+> 
+> Mateusz
+> 
+> .
+> 
+
 
