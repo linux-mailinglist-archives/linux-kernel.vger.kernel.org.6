@@ -1,170 +1,60 @@
-Return-Path: <linux-kernel+bounces-245719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB6F992B75D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:23:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6423792B757
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 775171F234D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:23:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7481B24423
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005C6159209;
-	Tue,  9 Jul 2024 11:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kkozKfJV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29ED0158A19;
+	Tue,  9 Jul 2024 11:22:02 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347AE158DCD;
-	Tue,  9 Jul 2024 11:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F63714E2F4;
+	Tue,  9 Jul 2024 11:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720524132; cv=none; b=L95IkQaBUwTBlJuB8NkRJng5eaBS9USboZn58HLzpWJ7sCw5+7o8iN38pnj3WcVKwIZb/qtnzw+Ii7rxhJjVb6IT5FRCCleUN+Zb0ydiUCZ+Pe29tw+5hQ2Yzo1IB6PZfFSIHLwyw9QFrQAT6OlEabpMpOQtBRt9EG7jBMz+jMk=
+	t=1720524121; cv=none; b=Za42ipddkEJwPUq7s6eU5iDTRenqNN7jU6h3sVUn7S7xb5sW4L4GMvdHc/FzoWLi2neRNb2HF9HtA2awRkx4g2v1QE9XUTnLxX65wZISAZkXn1li7SfTgDaDtVh9xTheU+OQBgB3dHv+SZNX+TmbNfMiBpdTYAl0ovQG/itdGm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720524132; c=relaxed/simple;
-	bh=0bIQwvttVlhEBLtbAG0LnxAJT60Athlg39gMLKlKBKc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mtcsDs7JK2L7mJKF5fvXNZmSsT74v2QGW1K79SACV/n3IMT9iUuB7yUtXCYFi+9CYSonVkjHfYJg5xv/yD0xL6SPeXTtPTluWn5wRpxMq47PyzeuS8ucZvOchGftJlzZSjnr3t1Lkibu69GOMZ1yMC6OUC/KiWcVugesDlTrws8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kkozKfJV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9B83C3277B;
-	Tue,  9 Jul 2024 11:22:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720524132;
-	bh=0bIQwvttVlhEBLtbAG0LnxAJT60Athlg39gMLKlKBKc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kkozKfJVAE1H97lBT62JnvFUrcHE1xcKecw/I3BmYVHdJIQcY7Nu4VCo20EfBmMR1
-	 4CrYDJofcHws6wS1jplT3QwyZ6QvpOJ9l4t4ZvpJKKDY8eDTArw94calAhV2943r+W
-	 1x7OowB3UUc+mq+i7ZaZpSB3EQ7RDdhO+fLRtkYF62+AzLyF78lSfzZIg+OIO149tf
-	 prp/aguWyAXb2mJE309ZR1gxVk2CLmhPdSPwCrVpj1lZMyq+XqgpMW8zrrJgjPzebL
-	 vONB9i3Hdrj/BzgSCnB+L4GEND+p4VxBvgj3vyFRFL2AvhATvc6z6gHPf85/JR1W27
-	 XOMBech8LZV2A==
-From: Georgi Djakov <djakov@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	djakov@kernel.org
-Subject: [GIT PULL] interconnect changes for 6.11
-Date: Tue,  9 Jul 2024 14:21:34 +0300
-Message-Id: <20240709112134.782462-1-djakov@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720524121; c=relaxed/simple;
+	bh=11Ws7j9YCcvj3i9pyOgfNbD+v9u81gyoh05llGlfvws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gW8SBOVnwbs7uAj7RTskzKaUWVzRTZ3gQBkguLlB+5SLovuZw6usQ4KfZIR6y8J/Hig1KV/EDu0FVDnyGIhOj00uEcDTv658fARTUE+c2m0qqup5hftI+WgWvZlm95Wr36+f7yjixc5WuAY8i4sb6AVGNguF0J4mAbJYj4tBvDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 7E3AB68CFE; Tue,  9 Jul 2024 13:21:57 +0200 (CEST)
+Date: Tue, 9 Jul 2024 13:21:57 +0200
+From: "hch@lst.de" <hch@lst.de>
+To: Gulam Mohamed <gulam.mohamed@oracle.com>
+Cc: "hch@lst.de" <hch@lst.de>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"yukuai1@huaweicloud.com" <yukuai1@huaweicloud.com>,
+	"axboe@kernel.dk" <axboe@kernel.dk>
+Subject: Re: [PATCH V6 for-6.11/block] loop: Fix a race between loop detach
+ and loop open
+Message-ID: <20240709112157.GA5266@lst.de>
+References: <20240618164042.343777-1-gulam.mohamed@oracle.com> <202406281350.b7298127-oliver.sang@intel.com> <IA1PR10MB7240DE46976A3B027DE5484998D22@IA1PR10MB7240.namprd10.prod.outlook.com> <20240702155020.GB1037@lst.de> <IA1PR10MB7240AE0551BCF41FB1A69FD198DF2@IA1PR10MB7240.namprd10.prod.outlook.com> <IA1PR10MB7240AC320F4DBC43E73E758898DB2@IA1PR10MB7240.namprd10.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <IA1PR10MB7240AC320F4DBC43E73E758898DB2@IA1PR10MB7240.namprd10.prod.outlook.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hello Greg,
+Hi Gulam,
 
-This is the pull request with interconnect changes for the v6.11-rc1 merge
-window. It contains some new drivers and bugfixes. As always, the summary
-is in the signed tag.
+the patch has been queue up by the block maintainers for Linux 6.11.
 
-The patches have been in linux-next for a while. There are no reported issues
-currently. Please pull into char-misc-next when possible.
-
-Thanks,
-Georgi
-
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
-
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/djakov/icc.git tags/icc-6.11-rc1
-
-for you to fetch changes up to 226e58b20975000960cb40b7488f55f173007489:
-
-  Merge branch 'icc-rpmh-qos' into icc-next (2024-07-04 22:45:20 +0300)
-
-----------------------------------------------------------------
-interconnect changes for 6.11
-
-This pull request contains the interconnect changes for the 6.11-rc1 merge
-window. It contains just driver changes with the following highlights:
-
-Driver changes:
-- New driver for MediaTek MT8183/8195 platforms
-- New driver for MSM8953 platforms
-- New QoS support for RPMh-based platforms with SC7280 being the
-  first one to benefit from it.
-- Fix incorrect master-id value in qcm2290 driver
-- Add missing MODULE_DESCRIPTION in a few drivers
-
-Signed-off-by: Georgi Djakov <djakov@kernel.org>
-
-----------------------------------------------------------------
-AngeloGioacchino Del Regno (2):
-      dt-bindings: interconnect: Add MediaTek EMI Interconnect bindings
-      interconnect: mediatek: Add MediaTek MT8183/8195 EMI Interconnect driver
-
-Georgi Djakov (4):
-      Merge branch 'icc-mtk' into icc-next
-      Merge branch 'icc-fixes' into icc-next
-      Merge branch 'icc-msm8953' into icc-next
-      Merge branch 'icc-rpmh-qos' into icc-next
-
-Jeff Johnson (2):
-      interconnect: imx: add missing MODULE_DESCRIPTION() macros
-      interconnect: qcom: add missing MODULE_DESCRIPTION() macros
-
-Jiapeng Chong (1):
-      interconnect: mediatek: remove unneeded semicolon
-
-Konrad Dybcio (1):
-      interconnect: qcom: qcm2290: Fix mas_snoc_bimc RPM master ID
-
-Odelu Kukatla (4):
-      dt-bindings: interconnect: add clock property to enable QOS on SC7280
-      interconnect: qcom: icc-rpmh: Add QoS configuration support
-      interconnect: qcom: sc7280: enable QoS configuration
-      interconnect: qcom: Fix DT backwards compatibility for QoS
-
-Vladimir Lypak (2):
-      dt-bindings: interconnect: qcom: Add Qualcomm MSM8953 NoC
-      interconnect: qcom: Add MSM8953 driver
-
- .../devicetree/bindings/interconnect/mediatek,mt8183-emi.yaml  |   51 +
- .../devicetree/bindings/interconnect/qcom,msm8953.yaml         |  101 +
- .../devicetree/bindings/interconnect/qcom,sc7280-rpmh.yaml     |   53 +
- drivers/interconnect/Kconfig                                   |    1 +
- drivers/interconnect/Makefile                                  |    1 +
- drivers/interconnect/imx/imx.c                                 |    1 +
- drivers/interconnect/imx/imx8mm.c                              |    1 +
- drivers/interconnect/imx/imx8mn.c                              |    1 +
- drivers/interconnect/imx/imx8mp.c                              |    1 +
- drivers/interconnect/imx/imx8mq.c                              |    1 +
- drivers/interconnect/mediatek/Kconfig                          |   29 +
- drivers/interconnect/mediatek/Makefile                         |    5 +
- drivers/interconnect/mediatek/icc-emi.c                        |  153 +
- drivers/interconnect/mediatek/icc-emi.h                        |   40 +
- drivers/interconnect/mediatek/mt8183.c                         |  143 +
- drivers/interconnect/mediatek/mt8195.c                         |  339 ++
- drivers/interconnect/qcom/Kconfig                              |    9 +
- drivers/interconnect/qcom/Makefile                             |    2 +
- drivers/interconnect/qcom/icc-common.c                         |    1 +
- drivers/interconnect/qcom/icc-rpmh.c                           |   94 +
- drivers/interconnect/qcom/icc-rpmh.h                           |   36 +
- drivers/interconnect/qcom/msm8953.c                            | 1321 ++++++++
- drivers/interconnect/qcom/qcm2290.c                            |    2 +-
- drivers/interconnect/qcom/sc7280.c                             |  276 ++
- include/dt-bindings/interconnect/mediatek,mt8183.h             |   23 +
- include/dt-bindings/interconnect/mediatek,mt8195.h             |   44 +
- include/dt-bindings/interconnect/qcom,msm8953.h                |   93 +
- 27 files changed, 2821 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/interconnect/mediatek,mt8183-emi.yaml
- create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,msm8953.yaml
- create mode 100644 drivers/interconnect/mediatek/Kconfig
- create mode 100644 drivers/interconnect/mediatek/Makefile
- create mode 100644 drivers/interconnect/mediatek/icc-emi.c
- create mode 100644 drivers/interconnect/mediatek/icc-emi.h
- create mode 100644 drivers/interconnect/mediatek/mt8183.c
- create mode 100644 drivers/interconnect/mediatek/mt8195.c
- create mode 100644 drivers/interconnect/qcom/msm8953.c
- create mode 100644 include/dt-bindings/interconnect/mediatek,mt8183.h
- create mode 100644 include/dt-bindings/interconnect/mediatek,mt8195.h
- create mode 100644 include/dt-bindings/interconnect/qcom,msm8953.h
 
