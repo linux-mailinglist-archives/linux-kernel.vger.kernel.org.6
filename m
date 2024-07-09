@@ -1,241 +1,139 @@
-Return-Path: <linux-kernel+bounces-245653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E97D92B586
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:40:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F67092B58A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8328B1F2179B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:40:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 570B1281E88
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F81156F23;
-	Tue,  9 Jul 2024 10:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED22D157496;
+	Tue,  9 Jul 2024 10:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ffjJAooU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q3elC37S";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ffjJAooU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="q3elC37S"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cUyfbcmq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C47156885;
-	Tue,  9 Jul 2024 10:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92ABE152DF7
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720521617; cv=none; b=SErFTdZalw97FJR/gg0F8WxVbJWW6qn1oNMmmgI3PB1pItE26xUCMAK+v7214ZZzvjnnpWP77BjW3gVgSa25/pOvx742egCL6HEXhPeLioIq3QgakoiEetma2HvAvrV8xTvQa+CUU1nBFOynjn9AwCpTnnMKFprKYjVabiufdss=
+	t=1720521630; cv=none; b=CGP6Sta3ImA9V8kiHRqda30V2pyUeRuAMMwMTZOAhLAh+8jvrc21K4/MYLDu4hQon5oPEwlYZjXx6Oa3T5+FpDqHfuKTXbCBc5zcuSoJwjUYrTn21b3VKSVCYIiS1EGPH9zJd1FEFzxhs0mrdAvDnCq6fXj0Iqo7lqE6z4cyQKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720521617; c=relaxed/simple;
-	bh=j4nAGjlqk0s6JCedOC+ToR9MmvhbH/VebVGhaGM/As8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B5fDyB1aq6Ii8EMhZXeL4zRumOv5cwv77feSb537eLkjcbl3D61eMwVuW2ifCklzhfc/XD3diXwww3YUJtnR/ANDn3PyUxdIz+nA01FsZsN3rZyElrM7iyXoLufpdvbYc+hnWBOM4zSZQ27mjg2MpOd5sgU5U4S2JNUZEasQ75c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ffjJAooU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q3elC37S; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ffjJAooU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=q3elC37S; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A25AE1F7AF;
-	Tue,  9 Jul 2024 10:40:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1720521613; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1720521630; c=relaxed/simple;
+	bh=6OlBGMZfwdHm2rXl7oNRloLQl3kO9ks+lodaOuu87fg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nIFjVF5O4LGNZq8gBTg4MRs1oDYWzh+ifl1TwU+jh5/ph4y3PoESISfrqyYBbsjQipc/djL7xNHbFBqr8JIL3Ouh5c81FDmCFV/mDEw1EcoxF9DcgJalhZ0mr7NQfg/7x+V3M5H2yPbHcH/b61T+ny1pTRChVr3zrx8H+n9Aorg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cUyfbcmq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720521627;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Xc1SEDVZfS6KIWmNHqHPZKqyWsRkfp+pqAh29HViIbk=;
-	b=ffjJAooUkivBge2q56s/MzXHopSODh/RDYwRzvCKg7cMhityeC423NtMDuD0oy/1hSjloX
-	PrF1VSXvb3Bxu9+EHL2mad0wAfy3io4OgYwGeJipEEr5HhWF+9sJCCl1/Nmtjq7HeC08LN
-	136/9OpYH8mhfutEeUfMGktIYYbW060=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1720521613;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Xc1SEDVZfS6KIWmNHqHPZKqyWsRkfp+pqAh29HViIbk=;
-	b=q3elC37SiSo9auR+TlMos9AFrNWOwV4nUacnKBa7gUhVxn3aOucS00btYlZMtjyPX/v2L7
-	5ZxAEdNPYDBrpqAw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ffjJAooU;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=q3elC37S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1720521613; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Xc1SEDVZfS6KIWmNHqHPZKqyWsRkfp+pqAh29HViIbk=;
-	b=ffjJAooUkivBge2q56s/MzXHopSODh/RDYwRzvCKg7cMhityeC423NtMDuD0oy/1hSjloX
-	PrF1VSXvb3Bxu9+EHL2mad0wAfy3io4OgYwGeJipEEr5HhWF+9sJCCl1/Nmtjq7HeC08LN
-	136/9OpYH8mhfutEeUfMGktIYYbW060=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1720521613;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Xc1SEDVZfS6KIWmNHqHPZKqyWsRkfp+pqAh29HViIbk=;
-	b=q3elC37SiSo9auR+TlMos9AFrNWOwV4nUacnKBa7gUhVxn3aOucS00btYlZMtjyPX/v2L7
-	5ZxAEdNPYDBrpqAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 79EF21369A;
-	Tue,  9 Jul 2024 10:40:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BZPxHI0TjWanUgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 09 Jul 2024 10:40:13 +0000
-Message-ID: <f8658375-db8c-4fc1-9401-5e59b61c76a1@suse.cz>
-Date: Tue, 9 Jul 2024 12:40:12 +0200
+	bh=6OlBGMZfwdHm2rXl7oNRloLQl3kO9ks+lodaOuu87fg=;
+	b=cUyfbcmqKno/pPBjnaaKBh+hpXE8NJWKHYHtebdepzrznhdMMUlOuFTcnLsZHq5aGCLwwv
+	Am/JbGeKKris7/I65QkjL+R7yi8l7gF/bbd+FpbcV5HnzaEO4txviZ0RUZuiCnsIys8hog
+	27ypE99JZ6TSpmVaVBeUmBeltTa+c3c=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-317-WCJ0qsdDO0C8acH6xJQhtg-1; Tue, 09 Jul 2024 06:40:26 -0400
+X-MC-Unique: WCJ0qsdDO0C8acH6xJQhtg-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-36794d92c46so171599f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 03:40:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720521625; x=1721126425;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6OlBGMZfwdHm2rXl7oNRloLQl3kO9ks+lodaOuu87fg=;
+        b=Va6Oe6WfNsiMWDt1Mt3iVISmlFggy1CpBfrvxpIjKP+fkjfTMlPeTasEC9ea8LdgiE
+         so4Sfy9fdvmRXjN9cDjWWUw/t/OWCDKmkw3Jll9thHvXv6SDDoF3hLFimi3Zxrmaq9X7
+         jrgX25ih5+wvQZvB9isiEN34R9/cFtd59LvS5Unh0KkNwA0/Lyd+dqzqwb2Y1fG9+dRF
+         D8+dF+sfUTXF3/nHyjUXYcAwu2tWQLiOZ5HqS8RuY9KQPYzVmMgqPj3yZU5Vb0t2JlIX
+         daQm+GTzAopzoFzJRuhPWk4pBZ3yloD1dvrJa+PExK2M6LuBAv8iM+9yrWYM0VhBY6RE
+         wYQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhDwQ9qcPK+enOPV9TfXFPuWzLR5IkxqmZOE5L0n3SOE9vSSrIGxek+HqMT8uwiMjhYmA1KcjPeO3FFlrxhxE2hnMh4g12bnvz2Tu0
+X-Gm-Message-State: AOJu0YyTDfLKU6JfAc5DreETri6p4UsyX1iVuaM0gT/bLSfhuj7CKN23
+	TCpBqjJJgHrmazGczPD9xhKsW6dfPb0oRrx+wh8Sz5LV5OD6WCx7EYJ4CQqEXfFZEJCu5AnDUnb
+	9Lx/5tr5bw6330rl0MMGE4vu7sAtUILFp2EmzkCsREKcTQZsGmcwL5PNA90w2Ww==
+X-Received: by 2002:a05:6000:2ad:b0:367:4d9d:56a6 with SMTP id ffacd0b85a97d-367cea452damr1529343f8f.1.1720521625096;
+        Tue, 09 Jul 2024 03:40:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHNCKJ0T7kZ55W4np4jEaOXrU3VVZKHqlYR3BXWtqZzKQ7qSmz5O3yTc2H9GGMw6jEQR7/Y5Q==
+X-Received: by 2002:a05:6000:2ad:b0:367:4d9d:56a6 with SMTP id ffacd0b85a97d-367cea452damr1529322f8f.1.1720521624681;
+        Tue, 09 Jul 2024 03:40:24 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3344:1710:e810:1180:8096:5705:abe])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfab09esm2161820f8f.101.2024.07.09.03.40.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 03:40:24 -0700 (PDT)
+Message-ID: <16e61611ecc9209bdf7de68f77804793386850dd.camel@redhat.com>
+Subject: Re: [PATCH net v2] net/sched: Fix UAF when resolving a clash
+From: Paolo Abeni <pabeni@redhat.com>
+To: Chengen Du <chengen.du@canonical.com>, Michal Kubiak
+	 <michal.kubiak@intel.com>
+Cc: Florian Westphal <fw@strlen.de>, jhs@mojatatu.com,
+ xiyou.wangcong@gmail.com,  jiri@resnulli.us, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org,  ozsh@nvidia.com, paulb@nvidia.com,
+ marcelo.leitner@gmail.com,  netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Gerald Yang <gerald.yang@canonical.com>
+Date: Tue, 09 Jul 2024 12:40:22 +0200
+In-Reply-To: <CAPza5qc0J7QaEjxJBW=AyHOpiSUN9nkhOor_K2dMcpC_kg0cPg@mail.gmail.com>
+References: <20240705025056.12712-1-chengen.du@canonical.com>
+	 <ZoetDiKtWnPT8VTD@localhost.localdomain>
+	 <20240705093525.GA30758@breakpoint.cc>
+	 <CAPza5qdAzt7ztcA=8sBhLZiiGp2THZF+1yFcbsm3+Ed8pDYSHg@mail.gmail.com>
+	 <ZoukPaoTJKefF1g+@localhost.localdomain>
+	 <CAPza5qc0J7QaEjxJBW=AyHOpiSUN9nkhOor_K2dMcpC_kg0cPg@mail.gmail.com>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] userfaultfd: move core VMA manipulation logic to
- mm/userfaultfd.c
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Matthew Wilcox <willy@infradead.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, SeongJae Park <sj@kernel.org>,
- Shuah Khan <shuah@kernel.org>, Brendan Higgins <brendanhiggins@google.com>,
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
-References: <cover.1720121068.git.lorenzo.stoakes@oracle.com>
- <76a0f9c7191544ad9ccd5c156d8c524cde67a894.1720121068.git.lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <76a0f9c7191544ad9ccd5c156d8c524cde67a894.1720121068.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: A25AE1F7AF
-X-Spam-Score: -4.50
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-On 7/4/24 9:27 PM, Lorenzo Stoakes wrote:
-> This patch forms part of a patch series intending to separate out VMA logic
-> and render it testable from userspace, which requires that core
-> manipulation functions be exposed in an mm/-internal header file.
-> 
-> In order to do this, we must abstract APIs we wish to test, in this
-> instance functions which ultimately invoke vma_modify().
-> 
-> This patch therefore moves all logic which ultimately invokes vma_modify()
-> to mm/userfaultfd.c, trying to transfer code at a functional granularity
-> where possible.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+On Mon, 2024-07-08 at 17:39 +0800, Chengen Du wrote:
+> On Mon, Jul 8, 2024 at 4:33=E2=80=AFPM Michal Kubiak <michal.kubiak@intel=
+.com> wrote:
+> > For example, if "nf_conntrack_confirm()" returns NF_ACCEPT, (even after
+> > the clash resolving), I would not expect calling "goto drop".
+> > That is why I suggested a less invasive solution which is just blocking
+> > calling "tcf_ct_flow_table_process_conn()" where there is a risk of UAF=
+.
+> > So, I asked if such solution would work in case of this function.
+>=20
+> Thank you for expressing your concerns in detail.
+>=20
+> In my humble opinion, skipping the addition of an entry in the flow
+> table is controlled by other logic and may not be suitable to mix with
+> error handling. If nf_conntrack_confirm returns NF_ACCEPT, I believe
+> there is no reason for nf_ct_get to fail. The nf_ct_get function
+> simply converts skb->_nfct into a struct nf_conn type. The only
+> instance it might fail is when CONFIG_NF_CONNTRACK is disabled. The
+> CONFIG_NET_ACT_CT depends on this configuration and determines whether
+> act_ct.c needs to be compiled. Actually, the "goto drop" logic is
+> included for completeness and might only be relevant if the memory is
+> corrupted. Perhaps we could wrap the judgment with "unlikely" to
+> emphasize this point?
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+I agree with Michal, I think it should be better to just skip
+tcf_ct_flow_table_process_conn() in case of clash to avoid potential
+behavior changes.
 
-> --- a/include/linux/userfaultfd_k.h
-> +++ b/include/linux/userfaultfd_k.h
-> @@ -264,6 +264,25 @@ extern void userfaultfd_unmap_complete(struct mm_struct *mm,
->  extern bool userfaultfd_wp_unpopulated(struct vm_area_struct *vma);
->  extern bool userfaultfd_wp_async(struct vm_area_struct *vma);
->  
-> +extern void userfaultfd_reset_ctx(struct vm_area_struct *vma);
-> +
-> +extern struct vm_area_struct *userfaultfd_clear_vma(struct vma_iterator *vmi,
-> +						    struct vm_area_struct *prev,
-> +						    struct vm_area_struct *vma,
-> +						    unsigned long start,
-> +						    unsigned long end);
-> +
-> +int userfaultfd_register_range(struct userfaultfd_ctx *ctx,
-> +			       struct vm_area_struct *vma,
-> +			       unsigned long vm_flags,
-> +			       unsigned long start, unsigned long end,
-> +			       bool wp_async);
-> +
-> +extern void userfaultfd_release_new(struct userfaultfd_ctx *ctx);
-> +
-> +extern void userfaultfd_release_all(struct mm_struct *mm,
-> +				    struct userfaultfd_ctx *ctx);
-> +
+Thanks,
 
-Nit: the externs are superfluous. AFAIU the tribal knowledge (or is it
-documented?), we don't add them even if other declarations around have them,
-but we don't also actively remove them unless the lines are touched for
-other reasons. So the declarations are inconsistent but slowly move towards
-no externs.
-
->  #else /* CONFIG_USERFAULTFD */
->  
->  /* mm helpers */
+Paolo
 
 
