@@ -1,86 +1,165 @@
-Return-Path: <linux-kernel+bounces-246021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16A6B92BCCF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:24:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56E0B92BCD6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5D362817F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:24:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E20D282016
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:25:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE1718FC6E;
-	Tue,  9 Jul 2024 14:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D6A19B5B5;
+	Tue,  9 Jul 2024 14:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bNw5Rkyl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OAgDNPGh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E02132112
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 14:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C8017B425;
+	Tue,  9 Jul 2024 14:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720535075; cv=none; b=CSeHwbSMoIMjFF3Q/eAi60A502a6RbdwPF7jFJp03Ywkf/GemyzGv3E0FIOoQdFXgdDW17CX4OqsojmBPoJOupyoUm2EpvSFpEVcnoHABzQOPtTV6Fy3qYeQUb4ZE9ZOUjKRd1XM2kiNMjmbsLX80Aq7Mm0M8L2/Qinm3FCL0Dk=
+	t=1720535111; cv=none; b=RuS/9qix9s+2KxY3K5PJ1okZBZMfopIStW5Zh4kToPhJX21gdPJKCofUPrTh9RDg1T3GrlJ8n0eKy9JHCISk7ApEjz68XfkVoO7L76DQqRlu22W+Bc0d7bbRgVAzbWAs6Oc/y3XXbTOOUQCXPwz63zSHO//fB9NwwekepYWVJgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720535075; c=relaxed/simple;
-	bh=0G+H+5Q/xwH/f4CxWVLQn9oSZHX/23Z/fMFGonhovSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RfPWa6BSXqURrxrjrhwTTmrW28s/K3t+zpB/ak776dQl9T3+ZSjiRU7Q2yqbNXxtCFi2CNF/fCHf5SNzDoAYByQxj9bdoM5rsyzaiCvnFURfu34NbIACkUjZFWcI+wTEx+8prufiPbWGKWOL6/hmp0M85dXaD14oJ6B9G4K3gtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bNw5Rkyl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22949C3277B;
-	Tue,  9 Jul 2024 14:24:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720535074;
-	bh=0G+H+5Q/xwH/f4CxWVLQn9oSZHX/23Z/fMFGonhovSw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bNw5Rkylzsxbi+hPih8LuzVCLJWofAlOQYq9YkGM77vz//5TUH+GLbRj2lqeYFSsX
-	 BwOBPGi4bOLrNcKni6yVttnhCOpwqZ7VB0aKcn4usJJB3NpTpJriz4OqtpoLIvKOvP
-	 P5E4I+Tg5HrMG2P+jzrvgINM1+hEYVtatAlCDyFQ=
-Date: Tue, 9 Jul 2024 16:24:31 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Lizhe <sensor1010@163.com>
-Cc: rafael@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] driver:core: no need to invert the return value of
- the call_driver_probe()
-Message-ID: <2024070904-blob-unvarying-715f@gregkh>
-References: <20240709141417.3349-1-sensor1010@163.com>
+	s=arc-20240116; t=1720535111; c=relaxed/simple;
+	bh=rTVreeQeeUehrzS18D5D4yWwP0iHYjdMpTwvSeZlFSU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=keP4d5fCLII+7xJkxDcwezuxSGqrFNTsCxjuvAm1JtEgm3koP94z1Ul3xSsEEor4vxCedhuMcEm6lz/nNCM6zRTzrmR6QV+qsmCUfhIIPiQu5CP0XdWDyBvexRGBzj8McwDbT15q4+6d0ujHJ/aW6Rco9QuvkpZpR3RRIWUGU84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OAgDNPGh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469BC6qa008024;
+	Tue, 9 Jul 2024 14:25:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=4B5NeufGiHXUSU6+BPK+St
+	lGv3+aN4n4S9qxonIxJvU=; b=OAgDNPGh+JwetCVpy+I8i/JcQBmM2SsHNWX3AA
+	7UDLrhD4RVHptSMqy5Pb+/Ep7r2edz9L1HIUFFmtIaF96t0UKHSchWbiZx1ADjDC
+	bvRmUC7zdDaCXJEMus5A5VuXDH2/m4fgIhpLcAmss1T1aWD8YUvMxGMgdSC2P9bY
+	kZN3cogffgXyFINAFJSFM7GsE27IJTVkdK7vKoXaf/sCN6T1upMQfQSWbbFcJwQb
+	Vd78FtYq6p6Ww8hp+Ku4VoV+hIvhQA2kJmXs+X4Zz9tFvrVJrTT5DPSPbr/+GFx2
+	yI9UfCyGdq4+53phsP2KdkPV0qGEEuzC0gobbx6IgygaauPg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406we8xk83-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 14:25:05 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469EP4va011882
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 14:25:04 GMT
+Received: from tengfan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 9 Jul 2024 07:24:59 -0700
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+Date: Tue, 9 Jul 2024 22:24:49 +0800
+Subject: [PATCH v2] dt-bindings: soc: qcom,aoss-qmp: Document the QCS9100
+ AOSS channel
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240709141417.3349-1-sensor1010@163.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240709-document_qcs9100_aoss_qmp_compatible-v2-1-6c7f35bc9ec3@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIADFIjWYC/zXNQQ6DIBCF4as0rIsZsIp21Xs0hlAcdZIKKmraG
+ O9eNOnyf4v3bSzgRBjY/bKxCVcK5F0Meb0w2xnXIqc6NpMgb6Cg5LW3S49u1qMNpQDQxoegx37
+ Q1veDmen1Rm5UqvJclmhyy+LVMGFDn5N5VrE7CrOfvqe6imP9AynIrMggkUJJgIILPi5k9Yyub
+ Yx7HEHOJtFi1b7vPwVBk6PAAAAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Tengfei Fan
+	<quic_tengfan@quicinc.com>
+X-Mailer: b4 0.15-dev-a66ce
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720535099; l=2402;
+ i=quic_tengfan@quicinc.com; s=20240709; h=from:subject:message-id;
+ bh=rTVreeQeeUehrzS18D5D4yWwP0iHYjdMpTwvSeZlFSU=;
+ b=0d1I8qXPr9zZfrPXTkSD1Gd7931U+HDJOlQa9tuDne465ZXXhbhU8sfJA9y0vBrb8Nmbtgj0u
+ 7wZyMbVwbs2DsqARgLA5Axe6SAjT7ZkKFtmyuWYutJIbrEna04264Ci
+X-Developer-Key: i=quic_tengfan@quicinc.com; a=ed25519;
+ pk=4VjoTogHXJhZUM9XlxbCAcZ4zmrLeuep4dfOeKqQD0c=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: zi7J8I_QDlNN7-oSQZHY8e8ts0apC4FJ
+X-Proofpoint-GUID: zi7J8I_QDlNN7-oSQZHY8e8ts0apC4FJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_04,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
+ bulkscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
+ priorityscore=1501 mlxlogscore=999 malwarescore=0 mlxscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407090093
 
-On Tue, Jul 09, 2024 at 07:14:17AM -0700, Lizhe wrote:
-> In the probe function (either drv->bus->probe() or drv->probe()),
-> there is no return value of EPROBE_DEFER. the error return from probe
-> should be -EPROBE_DEFER, hence no negation of call_driver_probe()'s
-> return is needed, nor should there be an EPROBE_DEFER check in
-> driver_probe_device()
-> 
-> Signed-off-by: Lizhe <sensor1010@163.com>
-> 
-> v3:
-> 	Modify commit message and versions go below the ---
-> v2:
-> 	Delete the judgment with the return value of EPROBEDEFER
-> 	from the _driver_probe.device()
-> v1:
-> 	Add the judgment with the return value of EPROBEDEFER
-> 	from the _driver_probe.device()
-> ---
->  drivers/base/dd.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
+Document the Always-On Subsystem side channel on the QCS9100 Platform.
+QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+platform use non-SCMI resource. In the future, the SA8775p platform will
+move to use SCMI resources and it will have new sa8775p-related device
+tree. Consequently, introduce "qcom,qcs9100-aoss-qmp" to describe
+non-SCMI based AOSS channel.
 
-The documentation says to put the vN: stuff below the --- line, right?
+Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+---
+Introduce support for the QCS9100 SoC device tree (DTSI) and the
+QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+While the QCS9100 platform is still in the early design stage, the
+QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+mounts the QCS9100 SoC instead of the SA8775p SoC.
 
-And how did you find this issue?
+The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
+all the compatible strings will be updated from "SA8775p" to "QCS9100".
+The QCS9100 device tree patches will be pushed after all the device tree
+bindings and device driver patches are reviewed.
 
-thanks,
+The final dtsi will like:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
 
-greg kh-
+The detailed cover letter reference:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+---
+Changes in v2:
+  - Split huge patch series into different patch series according to
+    subsytems
+  - Update patch commit message
+
+prevous disscussion here:
+[1] v1: https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+---
+ Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
+index 7afdb60edb22..80e1a8b43586 100644
+--- a/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
++++ b/Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.yaml
+@@ -25,6 +25,7 @@ properties:
+   compatible:
+     items:
+       - enum:
++          - qcom,qcs9100-aoss-qmp
+           - qcom,qdu1000-aoss-qmp
+           - qcom,sa8775p-aoss-qmp
+           - qcom,sc7180-aoss-qmp
+
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240709-document_qcs9100_aoss_qmp_compatible-a7376629ea6c
+
+Best regards,
+-- 
+Tengfei Fan <quic_tengfan@quicinc.com>
+
 
