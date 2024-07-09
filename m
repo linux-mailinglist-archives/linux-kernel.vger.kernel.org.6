@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-245834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1694592BA36
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:00:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1897D92BA3C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E4FE1F242EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:00:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FA5C1F242A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC88515E5AE;
-	Tue,  9 Jul 2024 12:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DDA415FA93;
+	Tue,  9 Jul 2024 13:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r3p18c5+"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gj0VHe7N"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB4D15B147
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 12:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F0F15E5C0
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 12:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720529998; cv=none; b=BWnFBf/WcBFaFyuFYLxNtqHh1ywY+JR/B4D/WQjQSjtvuixclySlmLKRTbTNL4b44j1yF+NhNajGru28NK6LV5FS+1LRvMOO9IPd0cI45AJBSL2ZKXyYZaUZGcGgs3rplHMS26+1e6OEgT0uUTi8gBc2JyJ5IrnS6t1sp88D4iE=
+	t=1720530001; cv=none; b=Ln8SkfxW/Py2Q56XkQHtnSpICoF1uNpuMRuqSJvomrvW1dGHv1s3/zUSDR80DiboLAcN5Evc/Qd8iBIzH4mKlAmLoecFc9lYtMItqPbcZ2vvtuu34GR8zqwWwmBLjKDASAapppUcztrb/TbtL9vIgXrmRnjGx4FJRFpD4KWKe4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720529998; c=relaxed/simple;
-	bh=iOmmg+031BO+zTgqj4Da5Rimz0tYxzcZBtos8xp+M6k=;
+	s=arc-20240116; t=1720530001; c=relaxed/simple;
+	bh=RjQC1uaBbB53Yhyi/P627uqyyfOFXDOXyq3s45ZWBxM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HPGl1oVHl/cZ6fQlquqqivtoZlhZWy0LwxUFUIN14iBBDJi2yBrB1kymuT7uC3PljqLfJNA1ZCImT33ZVLrzFq2FFQOC6LkiVfyED8kSTUUjjk5FYoU7s+7Qe4YyimVIpjcSxodRorzkC9eKehjCbW4YvzWnEVOMLpVgfQQqbmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r3p18c5+; arc=none smtp.client-ip=209.85.208.42
+	 In-Reply-To:To:Cc; b=L0lGO6PDeNr4Z8RBpJEb5EH+ecii7sF99zUE6boeLSav0z1w5hGXe5kTCncBzQIkeROddvmJ0bNxtJTqpSxRxLC8nRk0oh89r7XVQ1/QZZX7KDOcK+I89VlosHN5JxcV/7vY+bKXpwXt687Klbv1AfSOU5LKUJQ8LvvAidMympA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gj0VHe7N; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-58b3fee65d8so5694103a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 05:59:56 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-58bac81f419so6777372a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 05:59:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720529995; x=1721134795; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720529997; x=1721134797; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Hpq15xCFbtYALDYFY4KDY3RIliIQDLzZlDT5dVHuf9o=;
-        b=r3p18c5+wh7LfWBepgVgu2EyR5nasCnEG41JkyIj/nzLfBc5hXwJPb6oOv5Vnh4tMA
-         zTOJu8NPoV0apuCbvClJgOSZIdz/yOQXg9R+Cnu0/6Y6CrGKiLB7OBzVr9bv3m1PUZF1
-         ejclrxDBfNcTLO4B/53B1sjR2WlgrAyJE8SIiCZLI5IYpbgwQ/ylLLGphyJyEp4Y4MEo
-         tJCp6WG76IrNlN9HmdCJ9bOGeOiFyXotqXbYPvFp7ekmbo4EUNsxqSepPEqpV0pROAKH
-         9hHdWlDylFRK7ib62APSaAD/pTTG2GtumSBBqLQzUcv0jhnIznXA/9xyF48Dw9JaUNIh
-         YdjA==
+        bh=fJcFoKTGACpTmim9P1Jj976nNi4mK1jNtUQEiTDOytw=;
+        b=gj0VHe7Nbctx68GXt3585TYM0d7NqeTsYiS6w9NpR0WninOqd+nO/OTf9oky7BKSqC
+         rLSIoeqDBBCOTVAtz3uWVMT04Mw+9T1+BxfYYK/d67BJBizp6/UoS7whQJG7epju6WCH
+         lX5kBdHk9R1sH+aZ912k1gApSzjtxHUGkYvl7yRuSTCuDFj7pCMoD4hPo90Uau4bc/zH
+         /yVLutSD1gyIEsfnl69OTiFi0dNiEwevnOLIB8xLEU9X+pVjz3hKNPt5INdJrBK1fFl3
+         7VHaP3BiV1ar1QnmmFMHIs5eQAXhM+fdQdHx9/PjMhDuOOG8n4+KIvjHYFU7d1jGh8fL
+         7m4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720529995; x=1721134795;
+        d=1e100.net; s=20230601; t=1720529997; x=1721134797;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Hpq15xCFbtYALDYFY4KDY3RIliIQDLzZlDT5dVHuf9o=;
-        b=cItVE7+9VygImukmcPtPqlzGYornW66NGZNXfkJ1jGa+fnqIcnhsYAaeo0DdoG3r5p
-         9U8vAv/6HWBsmJnwMJ/L0o32gA/AIQ1FhdHWyaLc2XioJuoHHI5QYILdtKQv3Bnc0HfE
-         CNwV1ecmjTtKRIYWQg2Zqens0ahPba+6vhCU9sd8nwf4DDdZ39V6MiHSorEJC/A7/Wm0
-         lAQPPV09xiip0vr5V/PqvoP0/gOgIli0k5EVOoF1DAcJnYeH2MVveo3rjsnpdQV18Cng
-         PRyn3LqlDKs0E+X/smlgEoI8c9d5uajRMrOudRoBud3dYZmDkwhShk92/v92NBdWfHGI
-         0ZgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQYr2PhUZTaCxqgvAAkBKQc4OX2VTPgS6zEPY4D2xxsjzPYx42ToCvCmVGp17j7iZpVX7iWyYKsQeBi+shyO38BouLzJkiSNYBQT+e
-X-Gm-Message-State: AOJu0YybETi2ayQJTtcJ0VHEzXtTso44Vgx7E2r8oNCIvKxP9TKqiM0u
-	6XdsFL6nmlbnZvrPpeNofYF4eH6zf4Jtbxyt/4LVUVauFsMmdtoNgOi1VMVQGco=
-X-Google-Smtp-Source: AGHT+IEnBykQHOg72vb+3a+PwqhhC6nKKTeE5KfSm0UJxuh/0+T6xpvhz21MgJnNUb9TuX3+w8AJwQ==
-X-Received: by 2002:a05:6402:5256:b0:58d:eca:b9bf with SMTP id 4fb4d7f45d1cf-594bcab156emr1744682a12.37.1720529995591;
-        Tue, 09 Jul 2024 05:59:55 -0700 (PDT)
+        bh=fJcFoKTGACpTmim9P1Jj976nNi4mK1jNtUQEiTDOytw=;
+        b=CrZ2gBNuwKoSq5YF1BSQ7Pp/rD1DKOOwJFXZ+70dwMKCpt+O8NftIsYwiQb7acEaGY
+         g6FKs+a+gdWeFWsci/jS3S6ckyqHaMoj/rdbjQ6bL4lbvxbWKIUSv4+R27KJnpXzSJ14
+         BZ1dMZYsI/WBxK3vw4fKqVaDfUoDyhTjCMLECQIFtQYvW2YmrBg1fTvQOSeBLU+C55oR
+         /NB4X/38v/rP/QMYBFfhy1xtvdptC4G23aCUgNMACmEQWQAdNN7N/WzbS6iJN2D+wbbQ
+         S7sFONG99dUtgFI3PjoMDfYq7bu1R2yX02T4X+X7oaPgUHXelrgxWk8CnM0Ow5fj7jeM
+         0kwA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPeS837VKtIGYwHrF82ZGQnGVSHa986ce/8txAOaOoN0he4nJ9queSp/Gdfr6OSrA05RUymGXYUZhLe7bjg3O09fJeJJTwrygHqncv
+X-Gm-Message-State: AOJu0Yz2VGH0f3v03jOnhZ+rN3Lif/4T0cypUhjBpBoZuI/ssypTTn4p
+	4Oiorz5DJx2yyvAb7GHtPKShf42C8Y2aiFFDBWFFxHafkYEJnaUsEpvZ6I5s6No=
+X-Google-Smtp-Source: AGHT+IG/EpZ0t5toIJgYsDmy+lSlwqUPLBP4gxC5n68gAk80zAa31z2OQcnm9hjDsoTrcaOQEdEFCA==
+X-Received: by 2002:a05:6402:3549:b0:57c:8022:a3db with SMTP id 4fb4d7f45d1cf-594baa8bb2amr1889713a12.6.1720529997238;
+        Tue, 09 Jul 2024 05:59:57 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6e157bsm76643166b.80.2024.07.09.05.59.54
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6e157bsm76643166b.80.2024.07.09.05.59.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 05:59:55 -0700 (PDT)
+        Tue, 09 Jul 2024 05:59:56 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Tue, 09 Jul 2024 14:59:31 +0200
-Subject: [PATCH 01/12] thermal/drivers/broadcom: fix race between removal
- and clock disable
+Date: Tue, 09 Jul 2024 14:59:32 +0200
+Subject: [PATCH 02/12] thermal/drivers/broadcom: simplify probe() with
+ local dev variable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240709-thermal-probe-v1-1-241644e2b6e0@linaro.org>
+Message-Id: <20240709-thermal-probe-v1-2-241644e2b6e0@linaro.org>
 References: <20240709-thermal-probe-v1-0-241644e2b6e0@linaro.org>
 In-Reply-To: <20240709-thermal-probe-v1-0-241644e2b6e0@linaro.org>
 To: "Rafael J. Wysocki" <rafael@kernel.org>, 
@@ -97,117 +97,107 @@ To: "Rafael J. Wysocki" <rafael@kernel.org>,
 Cc: linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-msm@vger.kernel.org, stable@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3012;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2740;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=iOmmg+031BO+zTgqj4Da5Rimz0tYxzcZBtos8xp+M6k=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmjTQ83IPlStNA8YpS9fGSEe7VT+gKCvXpGdAfJ
- 5hWjtkURB6JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZo00PAAKCRDBN2bmhouD
- 117aEACEcxeLvNx+Ph7F3Sf3xCVkyz8ERxrRXQXccTRTOYxedP0TJzaaKHlqyz+OlCmtcu9wKpm
- WRjmQxWKqPDDFmWgr4Y04n4SFXB05HI6p/7z3w+Qythc9voHFnPIezcyDwyr0H0DR+jZ1HLki57
- pixbSiu1Oh7tFR6L/Za/4zrtmS0BDmJqfKOyUciOuKmucNdB5o2lOEIG5pGuaTP95+3pVvbGYoO
- ECPivYLlIIgzh4JRpRQdSKVewxs5TqSOc7Fjq9LI/I9XylD0k3GwhSVwvYdKAPJ6fhQcCIyeagv
- uX+tI+vwiGKZIXEGskAnZfwjacFGXNFY8hQKwXSiBooGOi5Bmdqh7FwGlomD0+XPFzSqUkyLJ4u
- qqUQ13wRtzhsc7FhtAlIHw2yrME7IeTNrORvMj9NSD1BEixkbPEN6uc22OqcVS/+bF+PyFVIL4j
- NEJbL+MzL5fhn176g4N+LyG+L7fpLqJvjWwgHOOmOZk0CTwie+3BOocSd40x7giMK+RhpOJPiDQ
- v0SF1Cy6EIdDlduw+X5sl681DnxfiPWMg3FZ1Sy2OGhh7M0UKc20QG3ecnPvMZys7AmalVQY14E
- 8ywJEmETlZS04IXHms1rYHSYGBL2DP4tNxOGJNNE4Prn+GgvrOltn4hs5agcW27LEZSHJsj9d7N
- 8KUwp2YTb4FzNfQ==
+ bh=RjQC1uaBbB53Yhyi/P627uqyyfOFXDOXyq3s45ZWBxM=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmjTQ9amtrI+aNEa3oCx4ZxPydRqeuklpa52dAB
+ LGNOL97Zk2JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZo00PQAKCRDBN2bmhouD
+ 1z5sD/99WDRBu4QU5V6WwYvNDyQArr+Kc2PBsmf7Idjv8/MU3ZqLQIQuCWsC5nPd11Ql1+rOivm
+ OEh6aMGPc06qrxHrXChjSuuZT1n2lUMbuT4NSG0enYERdETI3Ocj5LE/XiwWz0CO1ONudHpaBsH
+ F+PRAMNIuskbDHmKhGgaMzY4ekLQUD2ari8bhiE6AWwC7iBqwC43Vz1Y5a9TiIBU7GLLGDleKaR
+ p1S2xYbuRg1L5MrR42iA0Yh/ZERZPK6pe9aZqRR/OKrAAQE3U20uV7o+ujzlOEpgjCpIUODy2hz
+ MclX9k/EQI6gIgM3OVI4raCPyFOpmGybe+XhpDJl+Kpl/Su756LC2Njv61g4LkomaJ9M2QDtJME
+ VFz036ln7aRMRWHLnYhwRLQOgrK3P7ZqDLv84hNPcgC7cSpKGXOvY/+9SoybNVYa27VTUX4M93R
+ +yfkJx1zshd4RJbTAmPt5GUkf40Zw3hwD4iEB2/soETgKykZNflVmSMC6byQaem9oq9I4qd5ixh
+ CG8JnwcJolzgqSh7/6gj4qSj6GlZVaJJT50IelYMGOGCj/TFCL5oayXWeKgNG7i5tYfKZXO69mc
+ dFzUE5BnRVEncP9OHsl4AJ530wlEYhnH2y1o3wUuFmuRFyLbRdCabfqKDg18j1PksVyDdKs/xOo
+ lpZZiFYAvBM7lXg==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-During the probe, driver enables clocks necessary to access registers
-(in get_temp()) and then registers thermal zone with managed-resources
-(devm) interface.  Removal of device is not done in reversed order,
-because:
-1. Clock will be disabled in driver remove() callback - thermal zone is
-   still registered and accessible to users,
-2. devm interface will unregister thermal zone.
+Simplify the probe() function by using local 'dev' instead of
+&pdev->dev.
 
-This leaves short window between (1) and (2) for accessing the
-get_temp() callback with disabled clock.
-
-Fix this by enabling clock also via devm-interface, so entire cleanup
-path will be in proper, reversed order.
-
-Fixes: 8454c8c09c77 ("thermal/drivers/bcm2835: Remove buggy call to thermal_of_zone_unregister")
-Cc: <stable@vger.kernel.org>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/thermal/broadcom/bcm2835_thermal.c | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
+ drivers/thermal/broadcom/bcm2835_thermal.c | 23 +++++++++--------------
+ 1 file changed, 9 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
-index 5c1cebe07580..3b1030fc4fbf 100644
+index 3b1030fc4fbf..38fb0c8cd55e 100644
 --- a/drivers/thermal/broadcom/bcm2835_thermal.c
 +++ b/drivers/thermal/broadcom/bcm2835_thermal.c
-@@ -185,7 +185,7 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
+@@ -163,6 +163,7 @@ MODULE_DEVICE_TABLE(of, bcm2835_thermal_of_match_table);
+ 
+ static int bcm2835_thermal_probe(struct platform_device *pdev)
+ {
++	struct device *dev = &pdev->dev;
+ 	const struct of_device_id *match;
+ 	struct thermal_zone_device *tz;
+ 	struct bcm2835_thermal_data *data;
+@@ -170,12 +171,11 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
+ 	u32 val;
+ 	unsigned long rate;
+ 
+-	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
++	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-	match = of_match_device(bcm2835_thermal_of_match_table,
+-				&pdev->dev);
++	match = of_match_device(bcm2835_thermal_of_match_table, dev);
+ 	if (!match)
+ 		return -EINVAL;
+ 
+@@ -185,28 +185,25 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
  		return err;
  	}
  
--	data->clk = devm_clk_get(&pdev->dev, NULL);
-+	data->clk = devm_clk_get_enabled(&pdev->dev, NULL);
+-	data->clk = devm_clk_get_enabled(&pdev->dev, NULL);
++	data->clk = devm_clk_get_enabled(dev, NULL);
  	if (IS_ERR(data->clk)) {
  		err = PTR_ERR(data->clk);
  		if (err != -EPROBE_DEFER)
-@@ -193,10 +193,6 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
+-			dev_err(&pdev->dev, "Could not get clk: %d\n", err);
++			dev_err(dev, "Could not get clk: %d\n", err);
  		return err;
  	}
  
--	err = clk_prepare_enable(data->clk);
--	if (err)
--		return err;
--
  	rate = clk_get_rate(data->clk);
  	if ((rate < 1920000) || (rate > 5000000))
- 		dev_warn(&pdev->dev,
-@@ -211,7 +207,7 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev,
- 			"Failed to register the thermal device: %d\n",
- 			err);
--		goto err_clk;
-+		return err;
+-		dev_warn(&pdev->dev,
++		dev_warn(dev,
+ 			 "Clock %pCn running at %lu Hz is outside of the recommended range: 1.92 to 5MHz\n",
+ 			 data->clk, rate);
+ 
+ 	/* register of thermal sensor and get info from DT */
+-	tz = devm_thermal_of_zone_register(&pdev->dev, 0, data,
+-					   &bcm2835_thermal_ops);
++	tz = devm_thermal_of_zone_register(dev, 0, data, &bcm2835_thermal_ops);
+ 	if (IS_ERR(tz)) {
+ 		err = PTR_ERR(tz);
+-		dev_err(&pdev->dev,
+-			"Failed to register the thermal device: %d\n",
+-			err);
++		dev_err(dev, "Failed to register the thermal device: %d\n", err);
+ 		return err;
  	}
  
- 	/*
-@@ -236,7 +232,7 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
- 			dev_err(&pdev->dev,
- 				"Not able to read trip_temp: %d\n",
- 				err);
--			goto err_tz;
-+			return err;
+@@ -229,9 +226,7 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
+ 		 */
+ 		err = thermal_zone_get_trip(tz, 0, &trip);
+ 		if (err < 0) {
+-			dev_err(&pdev->dev,
+-				"Not able to read trip_temp: %d\n",
+-				err);
++			dev_err(dev, "Not able to read trip_temp: %d\n", err);
+ 			return err;
  		}
  
- 		/* set bandgap reference voltage and enable voltage regulator */
-@@ -269,17 +265,11 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
- 	 */
- 	err = thermal_add_hwmon_sysfs(tz);
- 	if (err)
--		goto err_tz;
-+		return err;
- 
- 	bcm2835_thermal_debugfs(pdev);
- 
- 	return 0;
--err_tz:
--	devm_thermal_of_zone_unregister(&pdev->dev, tz);
--err_clk:
--	clk_disable_unprepare(data->clk);
--
--	return err;
- }
- 
- static void bcm2835_thermal_remove(struct platform_device *pdev)
-@@ -287,7 +277,6 @@ static void bcm2835_thermal_remove(struct platform_device *pdev)
- 	struct bcm2835_thermal_data *data = platform_get_drvdata(pdev);
- 
- 	debugfs_remove_recursive(data->debugfsdir);
--	clk_disable_unprepare(data->clk);
- }
- 
- static struct platform_driver bcm2835_thermal_driver = {
 
 -- 
 2.43.0
