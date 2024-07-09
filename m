@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-245737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3315492B88B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:42:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2E8E92B890
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EB801C21D86
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:42:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D048282707
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B74158A0D;
-	Tue,  9 Jul 2024 11:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAB3158D78;
+	Tue,  9 Jul 2024 11:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="X3btMmIP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j2BGF8vI"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tL9hj3tQ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Txa1D+Yo"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA148158202;
-	Tue,  9 Jul 2024 11:41:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F4315821A;
+	Tue,  9 Jul 2024 11:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720525319; cv=none; b=TO98l21Akg6auAjBBqCrXCEp2xOJJKn0FkJati4ImnpdJU0pvqTdF1Is1xJVmOQ3JHvvuhb0sEmVIoxCzzcosRSf3udiul9Eejpnm9/NovPVQFKRh/cAaK9QLf4k3k9TaHR+Eu6udWAlO0449iCCMY6/j4ywZtGv1awDhX0oo9c=
+	t=1720525319; cv=none; b=KX0M0ovQzbv+gGpdJaiRS6/tuROiCv7KlY9a8ydDeQ6j6TiOzo2QjKUPCodJ9ZMZo76e9FotdVD0UzAIIBtiQcepYjPmkGwalhNX2DBADmkYL372CTwwunXcb2hwpkc5XUc6ViqLgWJGNm5oDaBLoSv6vK0g2kdb20EWC2MZssk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720525319; c=relaxed/simple;
-	bh=1764vrQOyFf+W8/zcN2ULspPhlu0+SDEuGDSHQRcW1o=;
+	bh=7SYB1kdDUn3buUg2wZEG8/LJQdwEAVKy+zXhYxhDN48=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=DR4sdh5kShiPo2qBSaHDROF0pzVvw/gwjwd+82uAUk1s6kui4KmrNLgEVtwN3GBZisghZZ7rbc+fXOz6aaFzBb9qJu5HAi5+EavvruPM52FJu/GbtNiCiNjzxNba/JF7iwdHfm2PNTR9U9/ajgU2J4JgOLs0Ez6gAvYUjpuoq3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=X3btMmIP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j2BGF8vI; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=XGZxiv0lRC++9cKU912oCxBrSUSn4whQPq7/VhpOD121NwNSHrmxFAu+7jDalwMD0jU1uX3GCSra8oNNbOeLem7dD1D2SIP3UmIwV/8rsVwv6ZCgEARjj5O/r7Mmwqeu71wCtv9W++rYHutTcpEE+/6qMyJeD1LyQCc/iONRQic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tL9hj3tQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Txa1D+Yo; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 09 Jul 2024 11:41:55 -0000
+Date: Tue, 09 Jul 2024 11:41:56 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1720525316;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=eU5FkUAsWlcZKXWxEwHv/MhW/ib6aXTvhCd4AJUPA8k=;
-	b=X3btMmIP3ROnr/LRF4AeSBs892FIACcxgC9ZCues5UcmTwBcGj8PDXQ07aDpKl0D5QzKmv
-	HFML2qrctSDY8AQsmIDa2rPDGzt4E3jDmHFUSl9GGt7lqunPbJKsaiYDrxrDrX7TJ9n+Dh
-	+cvNUxnglOwFDF5shM5Re86YoGdNFkU1/YnK0L9zY2cVmcxiFKf7jbrk41ThCWsjqqFm9X
-	mtPrL13o4sj3IAQHYqyvPmBpWy7RWhEW1hc4FzIT5Oq9+1WpDEjFhwAEXjc6O6nEimX3cg
-	8Xag92M0UHx+10Lrt7+T0n0rhoXl4S6fWVvo6pVdEOenhlxWHpDl1Dx/QGS6Wg==
+	bh=hIk0SFb4FtA05uKIiO3ilIbf+6k/czv9BAvhUTUZ730=;
+	b=tL9hj3tQSeCJ/XTlwdBeJViZUe4bYoNSGSSBU84DNoq4p3si5TPmu2gYIcljs99f4JRika
+	FD7mb3nyCCSP4W9m2gzYPIP2ZiSP1J5nB3HcwKiEtwMUAkRw6KemPPaa4EFs5iaRHD409+
+	yHUte80BNJNI++4/VBxccu9pFo6etjBIz2/qII49xwWF2oeg8/WveV6MepVcoyDaCDPQgK
+	3XuhzM3oiNBF5Gvv/isn5/GzbPJD8KyvVk13kIhWEak2mpJhjImi5PtgTOC32d3SSL1E7k
+	+fjhWlQjRcj56wNmGVzai2GdXKBi4U49eVvbZSv++GuT3RZTFJHhTbGu+l4cRA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1720525316;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,104 +52,130 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=eU5FkUAsWlcZKXWxEwHv/MhW/ib6aXTvhCd4AJUPA8k=;
-	b=j2BGF8vIdUgSg4X64Res3pS0wlDFLrynRglFUfchIdX6EHBtEobStyrh/1naMs6d7Kkldq
-	7sVICh5wFgb2htDg==
+	bh=hIk0SFb4FtA05uKIiO3ilIbf+6k/czv9BAvhUTUZ730=;
+	b=Txa1D+YocvruhTbMHHfzqInhLV80gWMFDC50PPjF4mspUAmmWsucyxDZuvOuuw8aWPZFtC
+	hCa0e5AAAU9JZMDQ==
 From: "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: perf/core] perf/x86/intel: Add a distinct name for Granite Rapids
-Cc: Ahmad Yasin <ahmad.yasin@intel.com>, Kan Liang <kan.liang@linux.intel.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, stable@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240708193336.1192217-3-kan.liang@linux.intel.com>
-References: <20240708193336.1192217-3-kan.liang@linux.intel.com>
+Subject: [tip: perf/core] perf/x86/intel: Hide Topdown metrics events if the
+ feature is not enumerated
+Cc: Dongli Zhang <dongli.zhang@oracle.com>,
+ Kan Liang <kan.liang@linux.intel.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240708193336.1192217-2-kan.liang@linux.intel.com>
+References: <20240708193336.1192217-2-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172052531554.2215.6640350424955122434.tip-bot2@tip-bot2>
+Message-ID: <172052531640.2215.2187640866774751729.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
 Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     fa0c1c9d283b37fdb7fc1dcccbb88fc8f48a4aa4
-Gitweb:        https://git.kernel.org/tip/fa0c1c9d283b37fdb7fc1dcccbb88fc8f48=
-a4aa4
+Commit-ID:     556a7c039a52c21da33eaae9269984a1ef59189b
+Gitweb:        https://git.kernel.org/tip/556a7c039a52c21da33eaae9269984a1ef59189b
 Author:        Kan Liang <kan.liang@linux.intel.com>
-AuthorDate:    Mon, 08 Jul 2024 12:33:35 -07:00
+AuthorDate:    Mon, 08 Jul 2024 12:33:34 -07:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Tue, 09 Jul 2024 13:26:39 +02:00
+CommitterDate: Tue, 09 Jul 2024 13:26:38 +02:00
 
-perf/x86/intel: Add a distinct name for Granite Rapids
+perf/x86/intel: Hide Topdown metrics events if the feature is not enumerated
 
-Currently, the Sapphire Rapids and Granite Rapids share the same PMU
-name, sapphire_rapids. Because from the kernel=E2=80=99s perspective, GNR is
-similar to SPR. The only key difference is that they support different
-extra MSRs. The code path and the PMU name are shared.
+The below error is observed on Ice Lake VM.
 
-However, from end users' perspective, they are quite different. Besides
-the extra MSRs, GNR has a newer PEBS format, supports Retire Latency,
-supports new CPUID enumeration architecture, doesn't required the
-load-latency AUX event, has additional TMA Level 1 Architectural Events,
-etc. The differences can be enumerated by CPUID or the PERF_CAPABILITIES
-MSR. They weren't reflected in the model-specific kernel setup.
-But it is worth to have a distinct PMU name for GNR.
+$ perf stat
+Error:
+The sys_perf_event_open() syscall returned with 22 (Invalid argument)
+for event (slots).
+/bin/dmesg | grep -i perf may provide additional information.
 
-Fixes: a6742cb90b56 ("perf/x86/intel: Fix the FRONTEND encoding on GNR and MT=
-L")
-Suggested-by: Ahmad Yasin <ahmad.yasin@intel.com>
+In a virtualization env, the Topdown metrics and the slots event haven't
+been supported yet. The guest CPUID doesn't enumerate them. However, the
+current kernel unconditionally exposes the slots event and the Topdown
+metrics events to sysfs, which misleads the perf tool and triggers the
+error.
+
+Hide the perf-metrics topdown events and the slots event if the
+perf-metrics feature is not enumerated.
+
+The big core of a hybrid platform can also supports the perf-metrics
+feature. Fix the hybrid platform as well.
+
+Closes: https://lore.kernel.org/lkml/CAM9d7cj8z+ryyzUHR+P1Dcpot2jjW+Qcc4CPQpfafTXN=LEU0Q@mail.gmail.com/
+Reported-by: Dongli Zhang <dongli.zhang@oracle.com>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20240708193336.1192217-3-kan.liang@linux.inte=
-l.com
+Tested-by: Dongli Zhang <dongli.zhang@oracle.com>
+Link: https://lkml.kernel.org/r/20240708193336.1192217-2-kan.liang@linux.intel.com
 ---
- arch/x86/events/intel/core.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ arch/x86/events/intel/core.c | 34 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index b613679..0c9c270 100644
+index cd8f2db..b613679 100644
 --- a/arch/x86/events/intel/core.c
 +++ b/arch/x86/events/intel/core.c
-@@ -6943,12 +6943,18 @@ __init int intel_pmu_init(void)
- 	case INTEL_EMERALDRAPIDS_X:
- 		x86_pmu.flags |=3D PMU_FL_MEM_LOADS_AUX;
- 		x86_pmu.extra_regs =3D intel_glc_extra_regs;
--		fallthrough;
-+		pr_cont("Sapphire Rapids events, ");
-+		name =3D "sapphire_rapids";
-+		goto glc_common;
+@@ -5830,8 +5830,22 @@ exra_is_visible(struct kobject *kobj, struct attribute *attr, int i)
+ 	return x86_pmu.version >= 2 ? attr->mode : 0;
+ }
+ 
++static umode_t
++td_is_visible(struct kobject *kobj, struct attribute *attr, int i)
++{
++	/*
++	 * Hide the perf metrics topdown events
++	 * if the feature is not enumerated.
++	 */
++	if (x86_pmu.num_topdown_events)
++		return x86_pmu.intel_cap.perf_metrics ? attr->mode : 0;
 +
- 	case INTEL_GRANITERAPIDS_X:
- 	case INTEL_GRANITERAPIDS_D:
-+		x86_pmu.extra_regs =3D intel_rwc_extra_regs;
-+		pr_cont("Granite Rapids events, ");
-+		name =3D "granite_rapids";
++	return attr->mode;
++}
 +
-+	glc_common:
- 		intel_pmu_init_glc(NULL);
--		if (!x86_pmu.extra_regs)
--			x86_pmu.extra_regs =3D intel_rwc_extra_regs;
- 		x86_pmu.pebs_ept =3D 1;
- 		x86_pmu.hw_config =3D hsw_hw_config;
- 		x86_pmu.get_event_constraints =3D glc_get_event_constraints;
-@@ -6959,8 +6965,6 @@ __init int intel_pmu_init(void)
- 		td_attr =3D glc_td_events_attrs;
- 		tsx_attr =3D glc_tsx_events_attrs;
- 		intel_pmu_pebs_data_source_skl(true);
--		pr_cont("Sapphire Rapids events, ");
--		name =3D "sapphire_rapids";
- 		break;
-=20
- 	case INTEL_ALDERLAKE:
+ static struct attribute_group group_events_td  = {
+ 	.name = "events",
++	.is_visible = td_is_visible,
+ };
+ 
+ static struct attribute_group group_events_mem = {
+@@ -6057,9 +6071,27 @@ static umode_t hybrid_format_is_visible(struct kobject *kobj,
+ 	return (cpu >= 0) && (pmu->pmu_type & pmu_attr->pmu_type) ? attr->mode : 0;
+ }
+ 
++static umode_t hybrid_td_is_visible(struct kobject *kobj,
++				    struct attribute *attr, int i)
++{
++	struct device *dev = kobj_to_dev(kobj);
++	struct x86_hybrid_pmu *pmu =
++		 container_of(dev_get_drvdata(dev), struct x86_hybrid_pmu, pmu);
++
++	if (!is_attr_for_this_pmu(kobj, attr))
++		return 0;
++
++
++	/* Only the big core supports perf metrics */
++	if (pmu->pmu_type == hybrid_big)
++		return pmu->intel_cap.perf_metrics ? attr->mode : 0;
++
++	return attr->mode;
++}
++
+ static struct attribute_group hybrid_group_events_td  = {
+ 	.name		= "events",
+-	.is_visible	= hybrid_events_is_visible,
++	.is_visible	= hybrid_td_is_visible,
+ };
+ 
+ static struct attribute_group hybrid_group_events_mem = {
 
