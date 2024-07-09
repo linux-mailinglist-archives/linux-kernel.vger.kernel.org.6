@@ -1,144 +1,114 @@
-Return-Path: <linux-kernel+bounces-245504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B746A92B38C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:18:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7573892B396
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8B1A1C216DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:18:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 203611F22E86
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84961552FF;
-	Tue,  9 Jul 2024 09:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZTiHpEnf"
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F4615534B;
+	Tue,  9 Jul 2024 09:20:37 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D9C154C16
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A3D1552FC;
+	Tue,  9 Jul 2024 09:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720516707; cv=none; b=dUm1+10ffvNBA96tEWrYo0qtkQngoihxjNcZT9hSZ+uRlVUIO81ulF0go4LmlBdeeAwE1v3Jtcp6Tyw7cJ4yD9t+Qu7zKqzHaGj6ydnxgUQep/hG2dT8vs75geRuG1Yz+vYE5GaHC07yl0ofdUT+GuTy/rPCDKwlkjVYmiV6p18=
+	t=1720516837; cv=none; b=T42IF2oGVpT5wCjGrdXyg0PRjQlCFbQvVk0ixaYsgmjIfzCC5JuIU2ZvYV34lOIwmjneVwxNilP7tneO0QP+UzACvFPSpMfe5AeVXNd3A2fKg0wdMWTPCsHLm82qMp+pQ+2dYnjh7z2QBhiWUppQLgR+ywA/QbYKFS6kpm+eaQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720516707; c=relaxed/simple;
-	bh=eVK1yU/K1gUCeypMeHvP2ycH4mth7QtdS8bCm7eN+/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FCcfvIUHJScrmwYyFZ45vgAbpA0Ll13k2ZPU1o37KpVdL0Zo43FKscX9nx9w0ttmYMzO0YMsFTgbfLs632puIUrd8KA0eBReycU98tOylqdsgCAWJDQ+TkmzgyfDV3rfdN+6Zm/7kLFWQGzm++nwk3NLODzN5ZS+XLfuoChj/fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZTiHpEnf; arc=none smtp.client-ip=83.166.143.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WJFlW6pv4z5T6;
-	Tue,  9 Jul 2024 11:18:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1720516695;
-	bh=v/JFEHCX3gZ0MVpHje3ikJ9/D0FTAcZwjQbECtZLdZE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZTiHpEnfNR3mlatCxWux7y7Eu0qGDnEqSh+8W8s09JC/3VLLlbrWZwmN1jeWX5Vho
-	 ndmFxLkDKg4N0dPsk7JixdJH7Olf3q4BBy/rLZ/oO3L8jaUA2xpIdzwOIgKnGlTAP3
-	 N7+HAeqyif99g6G9CBVvsU6dg8SkNZKc9yNMrgvw=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WJFlH1ZZFzVjC;
-	Tue,  9 Jul 2024 11:18:03 +0200 (CEST)
-Date: Tue, 9 Jul 2024 11:18:00 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jeff Xu <jeffxu@google.com>
-Cc: Florian Weimer <fweimer@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
-	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-Message-ID: <20240709.gae4cu4Aiv6s@digikod.net>
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-2-mic@digikod.net>
- <87bk3bvhr1.fsf@oldenburg.str.redhat.com>
- <CALmYWFu_JFyuwYhDtEDWxEob8JHFSoyx_SCcsRVKqSYyyw30Rg@mail.gmail.com>
- <87ed83etpk.fsf@oldenburg.str.redhat.com>
- <CALmYWFvkUnevm=npBeaZVkK_PXm=A8MjgxFXkASnERxoMyhYBg@mail.gmail.com>
- <87r0c3dc1c.fsf@oldenburg.str.redhat.com>
- <CALmYWFvA7VPz06Tg8E-R_Jqn2cxMiWPPC6Vhy+vgqnofT0GELg@mail.gmail.com>
+	s=arc-20240116; t=1720516837; c=relaxed/simple;
+	bh=Gkur90fiYO/JPC/5MPkXfG8nVmHJVQGchFAyBoIJ0m8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d3WSip3l8DsGG/DkorCG8k8L1mCBtUw9BDTqaq3Zl1/y/rTUJ/AFZu0GO8gPSO+cU2Si4fUI2G0oUEylpqBt960aZ/W3AZ/T2dyG8n2TaVDDHxBAdEF4BUYOyyVkAtCXkQr5QiwwMy+lNIYfzE37hm7UkfxB9LXOdxDk8GMb4OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowADX3+fNAI1moC5XAg--.38064S2;
+	Tue, 09 Jul 2024 17:20:22 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: patrik.r.jakobsson@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	daniel.vetter@ffwll.ch,
+	alan@linux.intel.com,
+	airlied@redhat.com,
+	akpm@linux-foundation.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v3] drm/gma500: fix null pointer dereference in psb_intel_lvds_get_modes
+Date: Tue,  9 Jul 2024 17:20:11 +0800
+Message-Id: <20240709092011.3204970-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALmYWFvA7VPz06Tg8E-R_Jqn2cxMiWPPC6Vhy+vgqnofT0GELg@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+X-CM-TRANSID:zQCowADX3+fNAI1moC5XAg--.38064S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Jw1xZFy7AF1xJFykXr45GFg_yoW8JrW5pF
+	W7Ga4YyF4rtFZFgF48CF18uFWUCa17J3WxKr18Wws3C3Z8trWUJry5Z343XrW7JFW3Jr4r
+	trnFyay3GFyUCr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUFYFADUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On Mon, Jul 08, 2024 at 10:52:36AM -0700, Jeff Xu wrote:
-> On Mon, Jul 8, 2024 at 10:33 AM Florian Weimer <fweimer@redhat.com> wrote:
-> >
-> > * Jeff Xu:
-> >
-> > > On Mon, Jul 8, 2024 at 9:26 AM Florian Weimer <fweimer@redhat.com> wrote:
-> > >>
-> > >> * Jeff Xu:
-> > >>
-> > >> > Will dynamic linkers use the execveat(AT_CHECK) to check shared
-> > >> > libraries too ?  or just the main executable itself.
-> > >>
-> > >> I expect that dynamic linkers will have to do this for everything they
-> > >> map.
-> > > Then all the objects (.so, .sh, etc.) will go through  the check from
-> > > execveat's main  to security_bprm_creds_for_exec(), some of them might
-> > > be specific for the main executable ?
+In psb_intel_lvds_get_modes(), the return value of drm_mode_duplicate() is
+assigned to mode, which will lead to a possible NULL pointer dereference
+on failure of drm_mode_duplicate(). Add a check to avoid npd.
 
-Yes, we should check every executable code (including seccomp filters)
-to get a consistent policy.
+Cc: stable@vger.kernel.org
+Fixes: 89c78134cc54 ("gma500: Add Poulsbo support")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v3:
+- added the recipient's email address, due to the prolonged absence of a 
+response from the recipients.
+Changes in v2:
+- modified the patch according to suggestions;
+- added Fixes line;
+- added Cc stable.
+---
+ drivers/gpu/drm/gma500/psb_intel_lvds.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-What do you mean by "specific for the main executable"?
+diff --git a/drivers/gpu/drm/gma500/psb_intel_lvds.c b/drivers/gpu/drm/gma500/psb_intel_lvds.c
+index 8486de230ec9..8d1be94a443b 100644
+--- a/drivers/gpu/drm/gma500/psb_intel_lvds.c
++++ b/drivers/gpu/drm/gma500/psb_intel_lvds.c
+@@ -504,6 +504,9 @@ static int psb_intel_lvds_get_modes(struct drm_connector *connector)
+ 	if (mode_dev->panel_fixed_mode != NULL) {
+ 		struct drm_display_mode *mode =
+ 		    drm_mode_duplicate(dev, mode_dev->panel_fixed_mode);
++		if (!mode)
++			return 0;
++
+ 		drm_mode_probed_add(connector, mode);
+ 		return 1;
+ 	}
+-- 
+2.25.1
 
-> >
-> > If we want to avoid that, we could have an agreed-upon error code which
-> > the LSM can signal that it'll never fail AT_CHECK checks, so we only
-> > have to perform the extra system call once.
-
-I'm not sure to follow.  Either we check executable code or we don't,
-but it doesn't make sense to only check some parts (except for migration
-of user space code in a system, which is one purpose of the securebits
-added with the next patch).
-
-The idea with AT_CHECK is to unconditionnaly check executable right the
-same way it is checked when a file is executed.  User space can decide
-to check that or not according to its policy (i.e. securebits).
-
-> >
-> Right, something like that.
-> I would prefer not having AT_CHECK specific code in LSM code as an
-> initial goal, if that works, great.
-
-LSMs should not need to change anything, but they are free to implement
-new access right according to AT_CHECK.
-
-> 
-> -Jeff
-> 
-> > Thanks,
-> > Florian
-> >
 
