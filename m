@@ -1,111 +1,139 @@
-Return-Path: <linux-kernel+bounces-246385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAD7192C120
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:52:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E489892C1C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5588289027
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:52:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 133E2B2D616
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48D51A650A;
-	Tue,  9 Jul 2024 16:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320F41AA365;
+	Tue,  9 Jul 2024 16:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aGCb+20a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kWhP8UhB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D5F19A86E;
-	Tue,  9 Jul 2024 16:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C8D1AA358;
+	Tue,  9 Jul 2024 16:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720542383; cv=none; b=ASntNNheEu9Ziz/SmdlzOdTM1OCjo9Lt1h+mxgkopQSFpvtLEW7YBPC+ZSVo4mm37zmHNy+hQ+EwK9qWBscwDladQpjMIakWLW7Lv3603P6BzYYzL4++6XnU296GsaCsQHHhK2bRQEJXYgsifphGNO0QLadhy0iA8GAFOfgzVF4=
+	t=1720542416; cv=none; b=gSXUgQMP1bdMaPpJCOpoTmrQdNp1m086YWSDN4g7eXplZnvCTnL0oAPwf1AF1husoxvJo4QXXiX4rqeKwybaVUxJMTSiMpk1KeyDLAon5Z7s2Jz2gsAWkdoolgZxVB2EntxVe+78uGTRQFuGwpvRgRzJE8ZERwO93onbvL1TWGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720542383; c=relaxed/simple;
-	bh=9LvZ/VKou4FmKLWBcdKcpGHtv7xBlcn4z4HXRAwZyhU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=KyyQbehREAQ3GP4fQC/22XlhgQobneS/kl5HCMMjmT3GnMnx+jILzMw2flPY6dCoWURzTNWetPynS12EUAqNwNzzIw8OCrbu1tXCCdOMaBKjonviUHEA4A3J+Q1Jvf8XdCNs+pPJNafDkdSnv1m/iR7ceziKcLMLzR7k6VrYFRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aGCb+20a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF199C3277B;
-	Tue,  9 Jul 2024 16:26:22 +0000 (UTC)
+	s=arc-20240116; t=1720542416; c=relaxed/simple;
+	bh=gOcCp+LQ0kE3urmjpfxXHzJf4UqCQl6qhAqq2kc3Qts=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V+lWAPDVbCQyNuA/Tn3/Ww7uW+wVyAfVQ6yRUo98NavkDf2xhpB3CUSZ3sHk5KwukqQMbqDlzHfVhAcMJLgwvyZDxVnwZLpsQsTalBnFDA/BKAJirWZgDzGrW9V6Kv8pwybOvXI6N/AyH5xBzBDcfyCHengdqomGmreZpLVyIvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kWhP8UhB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81CABC3277B;
+	Tue,  9 Jul 2024 16:26:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720542383;
-	bh=9LvZ/VKou4FmKLWBcdKcpGHtv7xBlcn4z4HXRAwZyhU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=aGCb+20aGOoaL23EBtm/kEXkY2NUQakENOVw3rJLSQHVugpNqzGFu2ENhy9gHOD4A
-	 mqDDj7BAmOh5va/DLjP9EM8LlJFBk5VfvwDcsmC8VI0YpcFybjy9ZD83qD5VwPI+KP
-	 x5FXerm2/Dky43YYqzG13DyQ66KoaEFVA/Vck0sd03sQZt+hEt18l0hYPxuVoHJLrD
-	 llb5w1f7M6cTCkYz4fN63YfVsNksePrJq4/LXbXTJrKbX/6xaR2ylI1gbFfeiaYu6A
-	 cj6u+Jg1noOyKY6N8cr+iIs5+axnfqqJrie9+0dIwQDaztCBsbhEZWMGtW/FU+OqRc
-	 Peb5tDF8ezMvg==
-Date: Tue, 9 Jul 2024 11:26:21 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Tengfei Fan <quic_tengfan@quicinc.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, kernel@quicinc.com,
-	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] PCI: qcom-ep: Add HDMA support for QCS9100 SoC
-Message-ID: <20240709162621.GA175973@bhelgaas>
+	s=k20201202; t=1720542416;
+	bh=gOcCp+LQ0kE3urmjpfxXHzJf4UqCQl6qhAqq2kc3Qts=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kWhP8UhBOkvzfWjkQj0b24j9uKOlWnVZgzsANGtpURQ+5CfF6jnAl6cFTYfMkFvcn
+	 vaHZKjSVyhwY9sE70lqxIGTQRtDGu0ZGSAFKOviG4hwfPElyrhCVO7JiGX28jEfiqk
+	 CFz1T2NkIGhwmoZdQn84aueABHArmFkqp5NWYlzvLrizG/ssZPuZ1G7Qa/snfEXYRb
+	 CJU+jby+9YRuxzCNmhCnoo5vQvL144k4UdgByUZjqI+1xDCyDbxTehqr6bb1kxeHYA
+	 7ng4Zi08keZdSHFJdMxGhx0PFuxODmeh4NDWC+2Y/6LveHyz77bIabpju99bu13VXZ
+	 XoFmZ83B3C8rQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Jonathan Denose <jdenose@google.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Sasha Levin <sashal@kernel.org>,
+	jefferymiller@google.com,
+	linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 01/11] Input: elantech - fix touchpad state on resume for Lenovo N24
+Date: Tue,  9 Jul 2024 12:26:34 -0400
+Message-ID: <20240709162654.33343-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240709-add_qcs9100_pcie_ep_compatible-v2-2-217742eac32b@quicinc.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.4.279
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 09, 2024 at 10:53:44PM +0800, Tengfei Fan wrote:
-> QCS9100 SoC supports the new Hyper DMA (HDMA) DMA Engine inside the DWC IP,
-> so add support for it by passing the mapping format and the number of
-> read/write channels count.
-> 
-> The PCIe EP controller used on this SoC is of version 1.34.0, so a separate
-> config struct is introduced for the sake of enabling HDMA conditionally.
+From: Jonathan Denose <jdenose@google.com>
 
-This patch doesn't add a new config struct.
+[ Upstream commit a69ce592cbe0417664bc5a075205aa75c2ec1273 ]
 
-> It should be noted that for the eDMA support (predecessor of HDMA), there
-> are no mapping format and channels count specified. That is because eDMA
-> supports auto detection of both parameters, whereas HDMA doesn't.
-> 
-> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
-> platform use non-SCMI resource. In the future, the SA8775p platform will
-> move to use SCMI resources and it will have new sa8775p-related device
-> tree. Consequently, introduce "qcom,qcs9100-pcie-ep" to the PCIe device
-> match table.
+The Lenovo N24 on resume becomes stuck in a state where it
+sends incorrect packets, causing elantech_packet_check_v4 to fail.
+The only way for the device to resume sending the correct packets is for
+it to be disabled and then re-enabled.
 
-This series doesn't add the new SCMI stuff you mention.  It sounds
-like this should be deferred and added when you actually move to using
-SCMI resources.
+This change adds a dmi check to trigger this behavior on resume.
 
-> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
-> ---
->  drivers/pci/controller/dwc/pcie-qcom-ep.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> index 236229f66c80..e2775f4ca7ee 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> @@ -904,6 +904,7 @@ static const struct qcom_pcie_ep_cfg cfg_1_34_0 = {
->  };
->  
->  static const struct of_device_id qcom_pcie_ep_match[] = {
-> +	{ .compatible = "qcom,qcs9100-pcie-ep", .data = &cfg_1_34_0},
->  	{ .compatible = "qcom,sa8775p-pcie-ep", .data = &cfg_1_34_0},
->  	{ .compatible = "qcom,sdx55-pcie-ep", },
->  	{ .compatible = "qcom,sm8450-pcie-ep", },
-> 
-> -- 
-> 2.25.1
-> 
+Signed-off-by: Jonathan Denose <jdenose@google.com>
+Link: https://lore.kernel.org/r/20240503155020.v2.1.Ifa0e25ebf968d8f307f58d678036944141ab17e6@changeid
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/input/mouse/elantech.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/drivers/input/mouse/elantech.c b/drivers/input/mouse/elantech.c
+index 9ff89bfda7a24..8e286e023916f 100644
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -1476,16 +1476,47 @@ static void elantech_disconnect(struct psmouse *psmouse)
+ 	psmouse->private = NULL;
+ }
+ 
++/*
++ * Some hw_version 4 models fail to properly activate absolute mode on
++ * resume without going through disable/enable cycle.
++ */
++static const struct dmi_system_id elantech_needs_reenable[] = {
++#if defined(CONFIG_DMI) && defined(CONFIG_X86)
++	{
++		/* Lenovo N24 */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "81AF"),
++		},
++	},
++#endif
++	{ }
++};
++
+ /*
+  * Put the touchpad back into absolute mode when reconnecting
+  */
+ static int elantech_reconnect(struct psmouse *psmouse)
+ {
++	int err;
++
+ 	psmouse_reset(psmouse);
+ 
+ 	if (elantech_detect(psmouse, 0))
+ 		return -1;
+ 
++	if (dmi_check_system(elantech_needs_reenable)) {
++		err = ps2_command(&psmouse->ps2dev, NULL, PSMOUSE_CMD_DISABLE);
++		if (err)
++			psmouse_warn(psmouse, "failed to deactivate mouse on %s: %d\n",
++				     psmouse->ps2dev.serio->phys, err);
++
++		err = ps2_command(&psmouse->ps2dev, NULL, PSMOUSE_CMD_ENABLE);
++		if (err)
++			psmouse_warn(psmouse, "failed to reactivate mouse on %s: %d\n",
++				     psmouse->ps2dev.serio->phys, err);
++	}
++
+ 	if (elantech_set_absolute_mode(psmouse)) {
+ 		psmouse_err(psmouse,
+ 			    "failed to put touchpad back into absolute mode.\n");
+-- 
+2.43.0
+
 
