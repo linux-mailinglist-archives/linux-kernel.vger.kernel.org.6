@@ -1,95 +1,133 @@
-Return-Path: <linux-kernel+bounces-246001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA92792BC88
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:11:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E92B92BC8B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:13:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8574B281BA3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:11:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 235A81F22C13
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C842518FC8D;
-	Tue,  9 Jul 2024 14:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5689819046B;
+	Tue,  9 Jul 2024 14:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShyYfvpX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="N0n0Yu/w"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A3A15699E;
-	Tue,  9 Jul 2024 14:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D100E1591F1;
+	Tue,  9 Jul 2024 14:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720534284; cv=none; b=urinkBLDff3nFaSNJU/2M4Xe9loxo9fi5jpSxCpLyzNdwxtmltRl9cyp2/2ajQNlcQQ+wfgygO0jJKep7D5ZMeAcUif3XpgetfGr87LHwZpgfd3vT9LwgUfltNcQR26KC/56kQosHHP/JgTbn/iUhpz7bupFdHU4E7fhs5B2GnI=
+	t=1720534382; cv=none; b=AcnI/supfoGv97qvlvuK2fpZmHt4kMba/cmdLxRU1m5TLGFB38pYNnOmcwuekN1C7Juodx6T84b0IrZFq+qoCClAcjMlBOTgsILLEZLySXnTpej1fAJTU1KPdiya+nKkbonoJwmQ/umBqDEtMkr6A8bVIyOOR1DdbGJR/YjBg7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720534284; c=relaxed/simple;
-	bh=PCnMnXirJqSJMZG4xB6vc8i/BajoHnEezI7p3NPAu7E=;
+	s=arc-20240116; t=1720534382; c=relaxed/simple;
+	bh=GxCbFSpRXr64YpzKYWZI94Ttfcr28x+E1SDBHeAOR+E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VQ8k4MPs/a5gzRq81apIPsO3rxLnWT6/LwBMX3GA9zcWO5m79V7DkAnR96QWmaV/rnq5scCTJgEQ835FGCJ76sbnbdSxKtuo1qIgCB7dm8aja9gRYDAZZc84rsAHLmP9/TcBLMWf3LQ/nXT7pts/IqHOviv263VFQMFq7rxe/zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShyYfvpX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82F8EC32782;
-	Tue,  9 Jul 2024 14:11:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720534283;
-	bh=PCnMnXirJqSJMZG4xB6vc8i/BajoHnEezI7p3NPAu7E=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=ShyYfvpXIFXG/TEJCH6AD5pggW+nn/4afDRuoxSwc0LNjxjA3yjDJKYDRt5BQjgpv
-	 voVtz+ewLOwTsHPCGGpJVOQsBR8/GGncNHs4L29f6vFuUGdt3AiBdXNrtpQhFhuJcz
-	 NeBTnIJTQyuLCBK1ey64t8hZQgYO1f2U6N7BS75hdLcvtI8zj+GauYowYV0ehAu6yM
-	 JIKlK/w1m9/zeewqlun79JpSDFUUwLw+J1XfzCdi2Rc0vlU+wy/vMW/ank81bhnT4b
-	 FnhxhqO7+EIi38rv4BYMqU2XHMpKesASUPbcVpv3rzaaF6o/xgEowwe7xCdp8e9YS/
-	 JFiB56wdTFyIg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 26FE3CE09F8; Tue,  9 Jul 2024 07:11:23 -0700 (PDT)
-Date: Tue, 9 Jul 2024 07:11:23 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org,
-	andrii@kernel.org, linux-kernel@vger.kernel.org,
-	rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org,
-	clm@meta.com, bpf <bpf@vger.kernel.org>, willy@infradead.org
-Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
-Message-ID: <91d37ad3-137b-4feb-8154-4deaa4b11dc3@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240708091241.544262971@infradead.org>
- <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
- <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
- <20240709090153.GF27299@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rrjpxLkRzUktOR7aSQMJBDsPfJDKZlXz0XmEe+/tf6UGn+TR3j8dXsVhOXQKBrdTfoOk30ThPPd4bGBnfQFaQ6KLjxSvg+orkv9ZkphyRRmVUIN6a+EdI7mI9mxMgVHKT+GGc4fPp7IK2NXV+pmyxApyEj29OniPNsKCYFVt8j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=N0n0Yu/w; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D601340E019D;
+	Tue,  9 Jul 2024 14:12:58 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id RmGZsl2mVGvi; Tue,  9 Jul 2024 14:12:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1720534370; bh=d6Y0klRaJpMwWQ/ZJWm/uK8e91UNmkVpoE3tOQ0KROI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N0n0Yu/wx44luhZ60gTCJ9YsMWqFT8zATOMCpfYpDGpuTXM9s2/gKSSDFPzxEHOoJ
+	 TZ7Wq0ONcVgET4UY0ClKYaQBdRMOzr3ISeuXpczYpFtwsEUX9pP0JNRQCLI/1bc0fl
+	 m2Zpaxrj2TL4YrVnkKDLY8TsAIS2TBHBLjwlAcPcS/xfEWjBuVUy9Zk94RYPNQ97Qb
+	 2J0Kp89kol2NQpEE/Qpf91g2TDrugnnCYhThZ+pxq5XLdj0uvlRdSE2/Cddds0A+Zb
+	 EaS2aVD7+vAWZBIn7g9PPQMS1esvsaT6OjwUFg3eqxWJPVZa0tbL92mQ1QTmcwPXdI
+	 wwOoFAGlLOA6w9IZeRxQO7AqbRHy04QQeHNT7291BayJRbr+yJghZWxSnwZ/lMgV4Z
+	 hw+VRBFP4EVhbogH3kD/aekZJQfMjeucfDb7zd0P6YU5BWUncTu+QYGLdDvwiA+WIg
+	 fH33fJFBMoJCDhxCgTSAdE8Ufe6z+/lERMza0op64D9F27/Cd1dMxfy04ze1NiOVF1
+	 dIKw/p2THA2GIKfvu7JcYVC2hoM1At5anFU2TjBYQL7Omr5hWPE4L36VEnyBgtl0Bs
+	 wL1CBRBJ8CrL5F5d3FCNsKgNGyMPRwcx0W/NPiu1vBRZgz4KDon7ApIhZDcistYNfV
+	 LiLcNcxhYMJNldaV1aBLgNHE=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 79DFE40E0185;
+	Tue,  9 Jul 2024 14:12:43 +0000 (UTC)
+Date: Tue, 9 Jul 2024 16:12:38 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jim Mattson <jmattson@google.com>, Ingo Molnar <mingo@kernel.org>,
+	x86@kernel.org, linux-kernel@vger.kernel.org,
+	Greg Thelen <gthelen@google.com>, stable@vger.kernel.org
+Subject: [PATCH 6.1] x86/retpoline: Move a NOENDBR annotation to the SRSO
+ dummy return thunk
+Message-ID: <20240709141238.GJZo1FVpZU0jRganFu@fat_crate.local>
+References: <20240709132058.227930-1-jmattson@google.com>
+ <2024070930-monument-cola-a36e@gregkh>
+ <20240709135545.GIZo1BYUeDD6UrvZNd@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240709090153.GF27299@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240709135545.GIZo1BYUeDD6UrvZNd@fat_crate.local>
 
-On Tue, Jul 09, 2024 at 11:01:53AM +0200, Peter Zijlstra wrote:
-> On Mon, Jul 08, 2024 at 05:25:14PM -0700, Andrii Nakryiko wrote:
-> 
-> > Quick profiling for the 8-threaded benchmark shows that we spend >20%
-> > in mmap_read_lock/mmap_read_unlock in find_active_uprobe. I think
-> > that's what would prevent uprobes from scaling linearly. If you have
-> > some good ideas on how to get rid of that, I think it would be
-> > extremely beneficial. 
-> 
-> That's find_vma() and friends. I started RCU-ifying that a *long* time
-> ago when I started the speculative page fault patches. I sorta lost
-> track of that effort, Willy where are we with that?
-> 
-> Specifically, how feasible would it be to get a simple RCU based
-> find_vma() version sorted these days?
+From: Jim Mattson <jmattson@google.com>
+Subject: [PATCH] x86/retpoline: Move a NOENDBR annotation to the SRSO dummy return thunk
 
-Liam's and Willy's Maple Tree work, combined with Suren's per-VMA locking
-combined with some of Vlastimil's slab work is pushing in that direction.
-I believe that things are getting pretty close.
+The linux-6.1-y backport of commit b377c66ae350 ("x86/retpoline: Add
+NOENDBR annotation to the SRSO dummy return thunk") misplaced the new
+NOENDBR annotation, repeating the annotation on __x86_return_thunk,
+rather than adding the annotation to the !CONFIG_CPU_SRSO version of
+srso_alias_untrain_ret, as intended.
 
-As with your work in 2010 and MIT guy's work in 2013, corner-case
-correctness and corner-case performance regressions continue to provide
-quite a bit of good clean fun.
+Move the annotation to the right place.
 
-							Thanx, Paul
+Fixes: 0bdc64e9e716 ("x86/retpoline: Add NOENDBR annotation to the SRSO dummy return thunk")
+Reported-by: Greg Thelen <gthelen@google.com>
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Cc: stable@vger.kernel.org
+---
+ arch/x86/lib/retpoline.S | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/lib/retpoline.S b/arch/x86/lib/retpoline.S
+index 055955c9bfcb..7880e2a7ec6a 100644
+--- a/arch/x86/lib/retpoline.S
++++ b/arch/x86/lib/retpoline.S
+@@ -107,6 +107,7 @@ __EXPORT_THUNK(srso_alias_untrain_ret)
+ /* dummy definition for alternatives */
+ SYM_START(srso_alias_untrain_ret, SYM_L_GLOBAL, SYM_A_NONE)
+ 	ANNOTATE_UNRET_SAFE
++	ANNOTATE_NOENDBR
+ 	ret
+ 	int3
+ SYM_FUNC_END(srso_alias_untrain_ret)
+@@ -261,7 +262,6 @@ SYM_CODE_START(__x86_return_thunk)
+ 	UNWIND_HINT_FUNC
+ 	ANNOTATE_NOENDBR
+ 	ANNOTATE_UNRET_SAFE
+-	ANNOTATE_NOENDBR
+ 	ret
+ 	int3
+ SYM_CODE_END(__x86_return_thunk)
+-- 
+2.43.0
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
