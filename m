@@ -1,298 +1,181 @@
-Return-Path: <linux-kernel+bounces-245846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A63D292BA68
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:03:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 928A392BA6C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:04:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C940284CF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:03:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 133E41F23D5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD80C158875;
-	Tue,  9 Jul 2024 13:03:01 +0000 (UTC)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7667715381B;
+	Tue,  9 Jul 2024 13:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aJ/spdJw"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8147715699E
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 13:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BFD382
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 13:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720530181; cv=none; b=geeoC7ohuQlG5RaFDXCnkWYAS/N3vEz+OHTEg6bSyPZW7qx1oNfSuqrNdiD/fuP3tOrEh13SNcFXCpk63ZPIVDJnsl/w/d9x4BsxlKI6uggaDRXjmcbpDwQ/9EDUv3eawh1Vxu/tu/q+CwAcu7Y3uQeDMsVHT1nkXjN97EPYk0w=
+	t=1720530245; cv=none; b=IZbqOYyz91CJFIhZKHdOUNOHWHQup10990FBSkTyb2arNjLppCQn4pkRpHyQiJvSFayyMLP5bdCgNGM6O+eCKk9ugO4IgC2jdBPU0ef+A0VfKEypchbQKoZYy+Q5o0QuxlCJ7kRpyBkxl7t+mRBZtL+THd8RSuzkfcG+bK7ARVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720530181; c=relaxed/simple;
-	bh=n7j9ooaiLsbwoKvpFEKHF9cKgUwC9R3TbhHjZiZFYUc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nOgjMS/6V+TU/MnMshyVCiAYRnyYYORef6Yr7Qi8R+L9V7ZVNDQtH8nGEuUP47EZx6WBkItEVA+Pw4DjBDmM5tSDGwAg7o1B1hHsP/WmWWuVpgdDBVky2StZesB6r77R6jvMSyQ0d5NfED29UDXiTAhP3OnuWg0fnLyo2yImAIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-48fdf2d5309so1698722137.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 06:02:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720530178; x=1721134978;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IMi7us1d4l4SwS+BzMlANRr5BsQBfw+Uxq4fBAlUSPM=;
-        b=LSWd2ipvH4iDuBPIS7oH018uMrKLgkCbdq8gT3T5redHPBO9VnoceD5BEYplMFSiJX
-         cPm5xjaKOhWGBirqXVQJKKzOfnlhU1etFW2Ke0qQqoedfRss0VdfjOMrgDH78xySJcPy
-         6H+bqZhJcsFRueF87bGIFBm2lcnT+tQVBSAkoZz7YG9C35BFGDqToI8Alr9++x12vYAY
-         2WotDZzPs0N4sd+BSs7/+nAueKIPl+/gx/XVDzF8MrI+0dfdIaY+/zBTI1kWSVSPdhQY
-         6moBA4dlvpESg5JILTuonuLZgAOrP/bPnBAV60WYa4RG05uiTVvfPXa3R3fqCEF9bZsZ
-         Gkaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWIjeksMpOfKNOwV7WYez4toW2aV0Cqi4c2KN/wlfLJzWOAU1dcO34CjXfyNWv/0BlgeKrLEXJY84v8VhbBbSVjXuSfB/N7sw6uNwYY
-X-Gm-Message-State: AOJu0Yw22+VHo57rGFeYF4GZiM61CKAYNNusso3T7OltXpVmeCDc/jEf
-	HCXZR9KUiBYQV0ALA7m6biO8VIr0O/psCPPfu75o1Cp1SsKyukJNiNTyKtFEgvICSzzkViA4XU7
-	9J/GbQ1AvwUrIQuya9AmTPDIdM5w=
-X-Google-Smtp-Source: AGHT+IH1DUYHkvESitkatNt9z8R+LNiPwJYkZABrwfIcxNbp5gyHkiGQMCZMExTRkccnJg7pFIdkBN6IrWrox6EkwPs=
-X-Received: by 2002:a05:6102:fa9:b0:48f:1763:c389 with SMTP id
- ada2fe7eead31-4903222af4bmr2398604137.35.1720530178226; Tue, 09 Jul 2024
- 06:02:58 -0700 (PDT)
+	s=arc-20240116; t=1720530245; c=relaxed/simple;
+	bh=CBJ99x43/70zGwHPjM38CAlxxeD2VQFXSI6RVuuM9wQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NVIsox5Y+I7OdeMEUe/38FzatJCSlGCu11kDo7tU34q1QVdYrLqNZmR6aoGF1qJtzrH0CtXd9dV5a6yPU6CyIWh4thYn8OuC11PbWNwu0rtkxtERKLfbxLC4hcx3+7VHIDiFfJYtp1JL+S5sk5hw9ROnu90GdHGxm9v4M5f9KKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aJ/spdJw; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: axboe@kernel.dk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1720530235;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ebK7bmN5g56VOCyyzOzUAvkTrnBN4ITiAsuNihnZjQY=;
+	b=aJ/spdJwG3nfjXdkjEEn3aT5cHRPpEes6XnS9OT7NaBvO98BgA13moroZlR8IljkjedC92
+	ozZ2LKBIx8vOV91iLFgTAv0Y1YRE7ma/ucrdn66Z7S4nUGtVorx1eeYFcZbJKA/Be0B0WM
+	aS9pWeEwF6KIG64yGJaakhda5GnJD+s=
+X-Envelope-To: dan.j.williams@intel.com
+X-Envelope-To: gregory.price@memverge.com
+X-Envelope-To: john@groves.net
+X-Envelope-To: jonathan.cameron@huawei.com
+X-Envelope-To: bbhushan2@marvell.com
+X-Envelope-To: chaitanyak@nvidia.com
+X-Envelope-To: rdunlap@infradead.org
+X-Envelope-To: linux-block@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-cxl@vger.kernel.org
+X-Envelope-To: dongsheng.yang@linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Dongsheng Yang <dongsheng.yang@linux.dev>
+To: axboe@kernel.dk,
+	dan.j.williams@intel.com,
+	gregory.price@memverge.com,
+	John@groves.net,
+	Jonathan.Cameron@Huawei.com,
+	bbhushan2@marvell.com,
+	chaitanyak@nvidia.com,
+	rdunlap@infradead.org
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	Dongsheng Yang <dongsheng.yang@linux.dev>
+Subject: [PATCH v1 0/7] Introduce CBD (CXL Block Device)
+Date: Tue,  9 Jul 2024 13:03:36 +0000
+Message-Id: <20240709130343.858363-1-dongsheng.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240709123115.117-1-justinjiang@vivo.com>
-In-Reply-To: <20240709123115.117-1-justinjiang@vivo.com>
-From: Barry Song <baohua@kernel.org>
-Date: Tue, 9 Jul 2024 21:02:45 +0800
-Message-ID: <CAGsJ_4x1+T9+=WydkjsQmetGFOqzkOvhqQim5UOzytof5XHQ_g@mail.gmail.com>
-Subject: Re: [PATCH v7] mm: shrink skip folio mapped by an exiting process
-To: Zhiguo Jiang <justinjiang@vivo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 9, 2024 at 8:31=E2=80=AFPM Zhiguo Jiang <justinjiang@vivo.com> =
-wrote:
->
-> The releasing process of the non-shared anonymous folio mapped solely by
-> an exiting process may go through two flows: 1) the anonymous folio is
-> firstly is swaped-out into swapspace and transformed into a swp_entry
-> in shrink_folio_list; 2) then the swp_entry is released in the process
-> exiting flow. This will result in the high cpu load of releasing a
-> non-shared anonymous folio mapped solely by an exiting process.
->
-> When the low system memory and the exiting process exist at the same
-> time, it will be likely to happen, because the non-shared anonymous
-> folio mapped solely by an exiting process may be reclaimed by
-> shrink_folio_list.
->
-> This patch is that shrink skips the non-shared anonymous folio solely
-> mapped by an exting process and this folio is only released directly in
-> the process exiting flow, which will save swap-out time and alleviate
-> the load of the process exiting.
->
-> Signed-off-by: Zhiguo Jiang <justinjiang@vivo.com>
+Hi all,
+        This is V1 for CXL Block Device. This patchset is based on v6.9 and
+it's available at: https://github.com/DataTravelGuide/linux branch cbd.
 
-You should have collected tags such as reviewed-by, acked-by you got in v6
-while sending v7.
+changes from RFC: (https://lore.kernel.org/lkml/20240422071606.52637-1-dongsheng.yang@easystack.cn/)
+        (1) only support hardware-consistency cxl shared memory.
+		As discussed in the RFC, the current cbd only supports
+hardware-consistency for CXL shared memory, and some code related to
+software-consistency support has been removed from the RFC. In the
+current tests, whether using local PMEM or QEMU-simulated shared memory
+devices, they all are hardware-consistency.
 
-Again,
-Acked-by: Barry Song <baohua@kernel.org>
+        (2) add a segment abstraction for transport data space management.
+		The layout of the transport remains essentially
+unchanged, with the only difference being the addition of a segment
+abstraction for scalability purposes. A channel is a type of segment
+used for data transfer between the blkdev and the backend. In the
+future, there will be more segment types, such as a cache segment for
+caching data for the blkdev.
 
-> ---
->
-> Change log:
-> v6->v7:
-> 1.Modify tab indentation to space indentation of the continuation
-> lines of the condition.
-> v5->v6:
-> 1.Move folio_likely_mapped_shared() under the PTL.
-> 2.Add check_stable_address_space() to replace MMF_OOM_SKIP.
-> 3.Remove folio_test_anon(folio).
-> v4->v5:
-> 1.Further modify to skip non-shared anonymous folio only.
-> 2.Update comments for pra->referenced =3D -1.
-> v3->v4:
-> 1.Modify to skip only the non-shared anonymous folio mapped solely
-> by an exiting process.
-> v2->v3:
-> Nothing.
-> v1->v2:
-> 1.The VM_EXITING added in v1 patch is removed, because it will fail
-> to compile in 32-bit system.
->
->
-> Comments from participants and my responses:
-> [v6->v7]:
-> 1.Matthew Wilcox <willy@infradead.org>
-> You told me you'd fix the indentation.  You cannot indent both the
-> continuation lines of the condition and the body of the if by one tab
-> each!
-> -->
-> Modify tab indentation to space indentation of the continuation
-> lines of the condition.
->
-> [v5->v6]:
-> 1.David Hildenbrand <david@redhat.com>
-> I'm currently working on moving all folio_likely_mapped_shared() under
-> the PTL, where we are then sure that the folio is actually mapped by
-> this process (e.g., no concurrent unmapping poisslbe). Can we do the
-> same here directly?
-> -->
-> You are right. we might use page_vma_mapped_walk_done() to bail out.
-> (Barry Song)
->
-> 2.Barry Song <baohua@kernel.org>
-> By the way, I am not convinced that using test_bit(MMF_OOM_SKIP,
-> &vma->vm_mm->flags) is correct (I think it is wrong). And exit_mmap()
-> automatically has MMF_OOM_SKIP. What is the purpose of this check?
-> Is there a better way to determine if a process is an OOM target?
-> What about check_stable_address_space() ?
-> -->
-> Sorry, I overlook the situation with if (is_global_init(p)),
-> MMF_OOM_SKIP is indeed not suitable. It seems feasible for
-> check_stable_address_space() replacing MMF_OOM_SKIP.
-> check_stable_address_space() can indicate oom kill, and
-> !atomic_read(&vma->vm_mm->mm_users) can indicate the normal
-> process exiting.
->
-> I also think we actually can remove "folio_test_anon(folio)".
-> -->
-> Yes, update in patch v6.
->
-> [v4->v5]:
-> 1.Barry Song <baohua@kernel.org>
-> I don't think this is correct. folio_likely_mapped_shared() is almost
-> "correct" but not always.
-> Please explain why you set  pra->referenced =3D  -1. Please address all
-> comments before you send a new version.
-> -->
-> Update in patch v5.
->
-> 2.Matthew Wilcox <willy@infradead.org>
-> How is the file folio similar?  File folios are never written to swap,
-> and they'll be written back from the page cache whenever the filesystem
-> decides it's a good time to do so.
-> -->
-> What do you mean is that the file folio will not have any relevant
-> identifier left in memory after it is reclamed in the shrink flow,
-> and it will not be released again during an exiting process? If that's
-> the case, I think we only need the anon folio is skipped here.
->
-> [v3->v4]:
-> 1.Barry Song <baohua@kernel.org>
-> This is clearly version 3, as you previously sent version 2, correct?
-> -->
-> Yes.
->
-> Could you please describe the specific impact on users, including user
-> experience and power consumption? How serious is this problem?
-> -->
-> At present, I do not have a suitable method to accurately measure the
-> optimization benefit datas of this modifications, but I believe it
-> theoretically has some benefits.
-> Launching large memory app (for example, starting the camera) in multiple
-> backend scenes may result in the high cpu load of the exiting processes.
->
-> Applications?
-> -->
-> Yes, when system is low memory, it more likely to occur.
->
-> I'm not completely convinced this patch is correct, but it appears to be
-> heading in the right direction. Therefore, I expect to see new versions
-> rather than it being dead.
-> You changed the file mode to 755, which is incorrect.
-> -->
-> Solved.
->
-> Why use -1? Is this meant to simulate lock contention to keep the folio
-> without activating it? Please do have some comments to explain why.
-> I'm not convinced this change is appropriate for shared folios. It seems
-> more suitable for exclusive folios used solely by the exiting process.
-> -->
-> The skiped folios are FOLIOREF_KEEP and added into inactive lru, beacase
-> the folios will be freed soon in the exiting process flow.
-> Yes, the shared folios can not be simply skipped. I have made relevant
-> modifications in patch v4 and please help to further review.
-> https://lore.kernel.org/linux-mm/20240708031517.856-1-justinjiang@vivo.co=
-m/
->
-> 2.David Hildenbrand <david@redhat.com>
-> but what if it is shared among multiple processes and only one of them
-> is exiting?
-> -->
-> Modify to skip only the non-shared anonymous folio mapped solely
-> by an exiting process in next version v4.
->
-> [v2->v3:]
-> Nothing.
->
-> [v1->v2]:
-> 1.Matthew Wilcox <willy@infradead.org>
-> What testing have you done of this patch?  How often does it happen?
-> Are there particular workloads that benefit from this?  (I'm not sure
-> what "mutil backed-applications" are?)
-> And I do mean specifically of this patch, because to my eyes it
-> shouldn't even compile. Except on 32-bit where it'll say "warning:
-> integer constant out of range".
-> -->
-> Yes, I have tested. When the low system memory and the exiting process
-> exist at the same time, it will happen. This modification can alleviate
-> the load of the exiting process.
-> "mutil backed-applications" means that there are a large number of
-> the backend applications in the system.
-> The VM_EXITING added in v1 patch is removed, because it will fail
-> to compile in 32-bit system.
->
->  mm/rmap.c   | 14 ++++++++++++++
->  mm/vmscan.c |  7 ++++++-
->  2 files changed, 20 insertions(+), 1 deletion(-)
->
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 88156deb46a6..bb9954773cce 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -877,6 +877,20 @@ static bool folio_referenced_one(struct folio *folio=
-,
->                         continue;
->                 }
->
-> +               /*
-> +                * Skip the non-shared swapbacked folio mapped solely by
-> +                * the exiting or OOM-reaped process. This avoids redunda=
-nt
-> +                * swap-out followed by an immediate unmap.
-> +                */
-> +               if ((!atomic_read(&vma->vm_mm->mm_users) ||
-> +                   check_stable_address_space(vma->vm_mm)) &&
-> +                   folio_test_swapbacked(folio) &&
-> +                   !folio_likely_mapped_shared(folio)) {
-> +                       pra->referenced =3D -1;
-> +                       page_vma_mapped_walk_done(&pvmw);
-> +                       return false;
-> +               }
-> +
->                 if (pvmw.pte) {
->                         if (lru_gen_enabled() &&
->                             pte_young(ptep_get(pvmw.pte))) {
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 80f9a486cf27..1d5f78a3dbeb 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -863,7 +863,12 @@ static enum folio_references folio_check_references(=
-struct folio *folio,
->         if (vm_flags & VM_LOCKED)
->                 return FOLIOREF_ACTIVATE;
->
-> -       /* rmap lock contention: rotate */
-> +       /*
-> +        * There are two cases to consider.
-> +        * 1) Rmap lock contention: rotate.
-> +        * 2) Skip the non-shared swapbacked folio mapped solely by
-> +        *    the exiting or OOM-reaped process.
-> +        */
->         if (referenced_ptes =3D=3D -1)
->                 return FOLIOREF_KEEP;
->
-> --
-> 2.39.0
->
+        (3) add CONFIG_CBD_CRC option in Kconfig
+		We only support hardware-consistency, so theoretically,
+there should be no data consistency issues when transferring data
+between blkdev and the backend. However, cbd provides a verification
+mechanism, offering CRC checks for both metadata and data to verify
+after data reception. This method impacts performance, so it is an
+option in Kconfig.
+
+        (4) allow user to clear dead object in transport metadata
+		When a host using cbd, whether backend or blkdev, dies
+without unregistering, the metadata in the transport will retain some
+dead information. In v1, users are allowed to clear this dead metadata
+via sysfs. Of course, there is a heartbeat mechanism to ensure users do
+not mistakenly delete alive metadata.
+
+        (5) allow user to force stop blkdev and reattach backend
+		This also handles scenarios where the host goes offline
+unexpectedly. When the backend goes offline unexpectedly, the
+corresponding blkdev might have I/O operations that cannot finish. In
+such cases, cbd provides two ways to handle this:
+		a) If the backend can recover, we can re-add the backend to the
+corresponding transport, allowing the blkdev's I/O operations to continue being processed.
+		b) If the backend cannot recover, the blkdev can be force-stopped, and
+the incomplete I/O operations will return EIO, but they will no longer remain blocked.
+
+        (6) dont allocate new pages in hander for bio data.
+		The backend handler does not allocate pages for bio.
+Instead, the handler can directly map the data pages from the transport
+to the bio, and then send the bio to the backend disk, achieving zero
+copy on the backend side.
+
+        (7) new test project cbd-tests:
+		cbd-tests (https://github.com/DataTravelGuide/cbd-tests), for testing cbd. It is
+an automated testing project based on the Avocado testing framework. Currently,
+it includes xfstests on cbd block devices with XFS, V1 Passed all 944 tests in xfstests
+(https://datatravelguide.github.io/dtg-blog/cbd/test-results/test_result_v1/test-results/xfstests-1-xfstests.py_Xfstests.test_run-cbdd_timeout-no_timeout-disk_type-fs_type-fs_xfs-f090/debug.log). as well as fio performance testing directly on /dev/cbdX block devices.
+
+The test results can be viewed here in [test results]:
+	https://datatravelguide.github.io/dtg-blog/cbd/cbd.html#test-results
+
+Thanx
+
+Dongsheng Yang (7):
+  cbd: introduce cbd_transport
+  cbd: introduce cbd_host
+  cbd: introduce cbd_segment
+  cbd: introduce cbd_channel
+  cbd: introduce cbd_blkdev
+  cbd: introduce cbd_backend
+  block: Init for CBD(CXL Block Device) module
+
+ drivers/block/Kconfig             |   2 +
+ drivers/block/Makefile            |   2 +
+ drivers/block/cbd/Kconfig         |  23 +
+ drivers/block/cbd/Makefile        |   3 +
+ drivers/block/cbd/cbd_backend.c   | 296 ++++++++++
+ drivers/block/cbd/cbd_blkdev.c    | 417 ++++++++++++++
+ drivers/block/cbd/cbd_channel.c   | 153 ++++++
+ drivers/block/cbd/cbd_handler.c   | 263 +++++++++
+ drivers/block/cbd/cbd_host.c      | 128 +++++
+ drivers/block/cbd/cbd_internal.h  | 848 ++++++++++++++++++++++++++++
+ drivers/block/cbd/cbd_main.c      | 224 ++++++++
+ drivers/block/cbd/cbd_queue.c     | 526 ++++++++++++++++++
+ drivers/block/cbd/cbd_segment.c   | 108 ++++
+ drivers/block/cbd/cbd_transport.c | 883 ++++++++++++++++++++++++++++++
+ 14 files changed, 3876 insertions(+)
+ create mode 100644 drivers/block/cbd/Kconfig
+ create mode 100644 drivers/block/cbd/Makefile
+ create mode 100644 drivers/block/cbd/cbd_backend.c
+ create mode 100644 drivers/block/cbd/cbd_blkdev.c
+ create mode 100644 drivers/block/cbd/cbd_channel.c
+ create mode 100644 drivers/block/cbd/cbd_handler.c
+ create mode 100644 drivers/block/cbd/cbd_host.c
+ create mode 100644 drivers/block/cbd/cbd_internal.h
+ create mode 100644 drivers/block/cbd/cbd_main.c
+ create mode 100644 drivers/block/cbd/cbd_queue.c
+ create mode 100644 drivers/block/cbd/cbd_segment.c
+ create mode 100644 drivers/block/cbd/cbd_transport.c
+
+-- 
+2.34.1
+
 
