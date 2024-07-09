@@ -1,132 +1,229 @@
-Return-Path: <linux-kernel+bounces-246247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A5992BF8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:18:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BAC492BF93
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F2D0B2195E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:18:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93ADF1C237B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EECF19D896;
-	Tue,  9 Jul 2024 16:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B946419D886;
+	Tue,  9 Jul 2024 16:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="RcWFOJgf"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DvjEAu1G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8952319DF52
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 16:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2AD19E801;
+	Tue,  9 Jul 2024 16:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720541891; cv=none; b=RN8eRbXyyYr2iUAHBU7CIXbi/bW+lN79qDhV8c1HvRheM0UhptfOE2GMj/heuxGO8H8yNViSxqHBRZfI2vHwjQgvsHdCHcXG/rqqluUuDaSsOQhm8rsgjHn0vKw3HmEhuZ3KdEoXIbeA+1ZONdNqTY0QONI5FbxtQrNgbIff+wA=
+	t=1720542010; cv=none; b=LURwOqGF9lqveYiB+D47nC4EKgKRhkBDVH8r43SiI+2grGguGhdbFi6j+jc84yPSltw0pqFL4mdykUxN9UsPHAyz6GukcFQxYl/IvMSVlpisPggVEjG7t82SXkU4pytwJWIYKx1ASUWbmlD0G576KQyRyfvBw4vjvRjlQK2QraM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720541891; c=relaxed/simple;
-	bh=KRYihZR7H2DlQzSpWhmUqRWHFjakI5MdooYGS+5oC4A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lBMQC7NoObkWsCs/rgnxwnQVj8/zq+I1S42ihcYBkj7+4fycfnm+3q+xuwEVotNuJTHmGobHjoiid+NIvx/QyivagyaoYwm1vdnOXfMmFpROlyuFSUg2y8Z+VFjQ1EgltTMGzVZqBFxDzGICsQpoGFuzmFxePRgjHQTcs8ofEjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=RcWFOJgf; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id B3B0E120007;
-	Tue,  9 Jul 2024 19:18:02 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru B3B0E120007
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1720541882;
-	bh=S9FkQhTEebRMp+SNphzeGH/wOFsrs5/J2sxtT3f3Sgg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=RcWFOJgfxhwatsKX20my7xQ/BIyHtk2AbI1B9zErONAMxWytIhX7TLltD9DO4Cuda
-	 UT9rNc2M+4jEEX+98Bj6zyhUJ0AHMI8lWCu3sx5v5EZv1ljXgjmjGqz9NtBqN01/Yb
-	 Au4lnWLHxC+s7qO6jxSLLAlMK8aKBMGSOF/izNIPs0TrPR9eN0KOW925WOyX0NxO33
-	 YLqOdQipLp7fqxQaWh0cxk67AQdh1Sgamj+DUBvSpsLnSTzF3gTDsoEifqch91w08r
-	 r3wgIYp525j8Dm2QqpFWz4EhN4adDu1V9SJmBs4M4ONA5LIX2waUPKfJsPUcDv2dFk
-	 lWya/1ZnZXKVw==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Tue,  9 Jul 2024 19:18:02 +0300 (MSK)
-Received: from [192.168.1.143] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Tue, 9 Jul 2024 19:18:01 +0300
-Message-ID: <94ee7fda-68d8-4720-b95c-10783f2e51a5@salutedevices.com>
-Date: Tue, 9 Jul 2024 19:18:01 +0300
+	s=arc-20240116; t=1720542010; c=relaxed/simple;
+	bh=J8/MTkpWCv3WMsUd6UelnOrKxoMOixttjofPbmHSPVM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fvvWPYK0PIDljixf2KrXbxOs65FD3fNioEyIDzRTAw09zH4wpnPOolQp2MyZHJCo/4PgYzHR2WaXjf4GGEhzrh5cmYB+4KIa0jO1n3lEj6FLBY/sSA0hvRNTTeZ6VibTgieC/oiQ5TDL16y/7E54w/kPjh7412xaxlTsuIJ2P34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DvjEAu1G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B043BC3277B;
+	Tue,  9 Jul 2024 16:20:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720542009;
+	bh=J8/MTkpWCv3WMsUd6UelnOrKxoMOixttjofPbmHSPVM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DvjEAu1GHLcYDGiKGyBcLSem/ZzrNTKHck4/frc9UlJG1PT09fUgW6esXzAj3W44D
+	 CoXZvloOVQ4fpHU/bj9Qtk2zM8zP3H7UApH6lrDaaOcJohX7oLwHhZqikbpBshhtdN
+	 uzJpPuPnGGW6BOk4q4mXGUcmRjktwjXjLTeN1f2RbIodlmkGki5TjJ5Qi8eNh+RUzv
+	 /dF0XMkvQOGNVj21eC4zQcCSPNJ+dbQtcU0JRWOFR116q+nEqO0L4j8Abg+DiFlIvM
+	 maZUiCppNmFjIrfmnpavoiP4oyOk/psggw9AVoqyjVQsmjUlY9DIHoVSgnJdJ0fDs/
+	 r2SL8oIKL7+DQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Jan Engelhardt <jengelh@inai.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.9 01/40] workqueue: Refactor worker ID formatting and make wq_worker_comm() use full ID string
+Date: Tue,  9 Jul 2024 12:18:41 -0400
+Message-ID: <20240709162007.30160-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] initrd: use O_SYNC flag while opening /dev/ram for
- write
-To: Christoph Hellwig <hch@infradead.org>
-CC: <linux-kernel@vger.kernel.org>, <kernel@salutedevices.com>
-References: <20240708200923.1824270-1-gnstark@salutedevices.com>
- <ZozSlCGyKCkj3uUl@infradead.org>
-Content-Language: en-US
-From: George Stark <gnstark@salutedevices.com>
-In-Reply-To: <ZozSlCGyKCkj3uUl@infradead.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186396 [Jul 09 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/09 15:25:00 #25923573
-X-KSMG-AntiVirus-Status: Clean, skipped
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.9.8
+Content-Transfer-Encoding: 8bit
 
-Hello Christoph
+From: Tejun Heo <tj@kernel.org>
 
-Thanks for the review
+[ Upstream commit 2a1b02bcba78f8498ab00d6142e1238d85b01591 ]
 
-On 7/9/24 09:03, Christoph Hellwig wrote:
-> On Mon, Jul 08, 2024 at 11:09:23PM +0300, George Stark wrote:
->> initrd image is written to the /dev/ram block device using filp_open(),
->> kernel_write()
-> 
-> First question: why are you using the legacy initrd and not initramfs?
+Currently, worker ID formatting is open coded in create_worker(),
+init_rescuer() and worker_thread() (for %WORKER_DIE case). The formatted ID
+is saved into task->comm and wq_worker_comm() uses it as the base name to
+append extra information to when generating the name to be shown to
+userspace.
 
-I was playing around with initrd to have ability to mount initrd fs from 
-disk after switching to main root and use files from it. We can't mount 
-initramfs image. In embedded system mounting vs extracting makes a 
-difference due to resource limitations. In the end we dropped that idea
-partly because of initrd is marked as deprecated.
-But since it has been deprecated since 2020 and it's still there I 
-thought may be it was used by someone so this patch was worth publishing.
+However, TASK_COMM_LEN is only 16 leading to badly truncated names for
+rescuers. For example, the rescuer for the inet_frag_wq workqueue becomes:
 
-If initrd really counts its last days then this patch can be thrown away.
+  $ ps -ef | grep '[k]worker/R-inet'
+  root         483       2  0 Apr26 ?        00:00:00 [kworker/R-inet_]
 
-> 
->> . After fput() /dev/ram is mounted and may fail due to not
->> all data is actually written to the device yet. The mount error remains
->> hidden due to MS_SILENT flag usage and mount_root_generic has retries.
->> So use O_SYNC flag to have all data written to /dev/ram before mounting.
-> 
-> O_SYNC is highly inefficient.  If you have a valid reason to care about
-> a corner case in the hopefully soon to be remvoved legacy initrd code,
-> the right way to do this is a single fdatasync after the writes have
-> finished.
+Even for non-rescue workers, it's easy to run over 15 characters on
+moderately large machines.
 
-Ok.
+Fit it by consolidating worker ID formatting into a new helper
+format_worker_id() and calling it from wq_worker_comm() to obtain the
+untruncated worker ID string.
 
+  $ ps -ef | grep '[k]worker/R-inet'
+  root          60       2  0 12:10 ?        00:00:00 [kworker/R-inet_frag_wq]
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-and-tested-by: Jan Engelhardt <jengelh@inai.de>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ kernel/workqueue.c | 51 ++++++++++++++++++++++++++++++----------------
+ 1 file changed, 34 insertions(+), 17 deletions(-)
+
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index d2dbe099286b9..7634fc32ee05a 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -124,6 +124,7 @@ enum wq_internal_consts {
+ 	HIGHPRI_NICE_LEVEL	= MIN_NICE,
+ 
+ 	WQ_NAME_LEN		= 32,
++	WORKER_ID_LEN		= 10 + WQ_NAME_LEN, /* "kworker/R-" + WQ_NAME_LEN */
+ };
+ 
+ /*
+@@ -2778,6 +2779,26 @@ static void worker_detach_from_pool(struct worker *worker)
+ 		complete(detach_completion);
+ }
+ 
++static int format_worker_id(char *buf, size_t size, struct worker *worker,
++			    struct worker_pool *pool)
++{
++	if (worker->rescue_wq)
++		return scnprintf(buf, size, "kworker/R-%s",
++				 worker->rescue_wq->name);
++
++	if (pool) {
++		if (pool->cpu >= 0)
++			return scnprintf(buf, size, "kworker/%d:%d%s",
++					 pool->cpu, worker->id,
++					 pool->attrs->nice < 0  ? "H" : "");
++		else
++			return scnprintf(buf, size, "kworker/u%d:%d",
++					 pool->id, worker->id);
++	} else {
++		return scnprintf(buf, size, "kworker/dying");
++	}
++}
++
+ /**
+  * create_worker - create a new workqueue worker
+  * @pool: pool the new worker will belong to
+@@ -2794,7 +2815,6 @@ static struct worker *create_worker(struct worker_pool *pool)
+ {
+ 	struct worker *worker;
+ 	int id;
+-	char id_buf[23];
+ 
+ 	/* ID is needed to determine kthread name */
+ 	id = ida_alloc(&pool->worker_ida, GFP_KERNEL);
+@@ -2813,17 +2833,14 @@ static struct worker *create_worker(struct worker_pool *pool)
+ 	worker->id = id;
+ 
+ 	if (!(pool->flags & POOL_BH)) {
+-		if (pool->cpu >= 0)
+-			snprintf(id_buf, sizeof(id_buf), "%d:%d%s", pool->cpu, id,
+-				 pool->attrs->nice < 0  ? "H" : "");
+-		else
+-			snprintf(id_buf, sizeof(id_buf), "u%d:%d", pool->id, id);
++		char id_buf[WORKER_ID_LEN];
+ 
++		format_worker_id(id_buf, sizeof(id_buf), worker, pool);
+ 		worker->task = kthread_create_on_node(worker_thread, worker,
+-					pool->node, "kworker/%s", id_buf);
++						      pool->node, "%s", id_buf);
+ 		if (IS_ERR(worker->task)) {
+ 			if (PTR_ERR(worker->task) == -EINTR) {
+-				pr_err("workqueue: Interrupted when creating a worker thread \"kworker/%s\"\n",
++				pr_err("workqueue: Interrupted when creating a worker thread \"%s\"\n",
+ 				       id_buf);
+ 			} else {
+ 				pr_err_once("workqueue: Failed to create a worker thread: %pe",
+@@ -3386,7 +3403,6 @@ static int worker_thread(void *__worker)
+ 		raw_spin_unlock_irq(&pool->lock);
+ 		set_pf_worker(false);
+ 
+-		set_task_comm(worker->task, "kworker/dying");
+ 		ida_free(&pool->worker_ida, worker->id);
+ 		worker_detach_from_pool(worker);
+ 		WARN_ON_ONCE(!list_empty(&worker->entry));
+@@ -5430,6 +5446,7 @@ static int wq_clamp_max_active(int max_active, unsigned int flags,
+ static int init_rescuer(struct workqueue_struct *wq)
+ {
+ 	struct worker *rescuer;
++	char id_buf[WORKER_ID_LEN];
+ 	int ret;
+ 
+ 	if (!(wq->flags & WQ_MEM_RECLAIM))
+@@ -5443,7 +5460,9 @@ static int init_rescuer(struct workqueue_struct *wq)
+ 	}
+ 
+ 	rescuer->rescue_wq = wq;
+-	rescuer->task = kthread_create(rescuer_thread, rescuer, "kworker/R-%s", wq->name);
++	format_worker_id(id_buf, sizeof(id_buf), rescuer, NULL);
++
++	rescuer->task = kthread_create(rescuer_thread, rescuer, "%s", id_buf);
+ 	if (IS_ERR(rescuer->task)) {
+ 		ret = PTR_ERR(rescuer->task);
+ 		pr_err("workqueue: Failed to create a rescuer kthread for wq \"%s\": %pe",
+@@ -6272,19 +6291,15 @@ void show_freezable_workqueues(void)
+ /* used to show worker information through /proc/PID/{comm,stat,status} */
+ void wq_worker_comm(char *buf, size_t size, struct task_struct *task)
+ {
+-	int off;
+-
+-	/* always show the actual comm */
+-	off = strscpy(buf, task->comm, size);
+-	if (off < 0)
+-		return;
+-
+ 	/* stabilize PF_WQ_WORKER and worker pool association */
+ 	mutex_lock(&wq_pool_attach_mutex);
+ 
+ 	if (task->flags & PF_WQ_WORKER) {
+ 		struct worker *worker = kthread_data(task);
+ 		struct worker_pool *pool = worker->pool;
++		int off;
++
++		off = format_worker_id(buf, size, worker, pool);
+ 
+ 		if (pool) {
+ 			raw_spin_lock_irq(&pool->lock);
+@@ -6303,6 +6318,8 @@ void wq_worker_comm(char *buf, size_t size, struct task_struct *task)
+ 			}
+ 			raw_spin_unlock_irq(&pool->lock);
+ 		}
++	} else {
++		strscpy(buf, task->comm, size);
+ 	}
+ 
+ 	mutex_unlock(&wq_pool_attach_mutex);
 -- 
-Best regards
-George
+2.43.0
+
 
