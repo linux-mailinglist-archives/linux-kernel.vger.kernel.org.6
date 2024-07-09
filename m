@@ -1,151 +1,102 @@
-Return-Path: <linux-kernel+bounces-245881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D912492BAD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:17:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 132CE92BAD4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 623BEB264A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:17:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 447F81C21A9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83FD15B980;
-	Tue,  9 Jul 2024 13:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FVh3KBPz"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B9115B97E;
+	Tue,  9 Jul 2024 13:18:30 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD71382;
-	Tue,  9 Jul 2024 13:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82AC382;
+	Tue,  9 Jul 2024 13:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720531050; cv=none; b=cuo4nOa1jrf7vwXtaIksG1/Mw+La8TkOoEgl0g3Qe15P5R/yrgm/F5J9k1mx8OZaGjNjrhD4qqcsJBy5eB1u3xxpDtmXe/oLBXf46XHmIT03GbNc2ceHc0M5r2s/iKM5m9iRNIi8heOpH1w2TSmp5+p5L+es1hrRM5GMuvmCcPM=
+	t=1720531110; cv=none; b=QkNGfolJGrunn7hf7XaRUYXorZBGhuGKDylAvGZ7Xnm5Ors1SAoVlVH+ZO86zb5Yk4AfEW66FVaWV4lmTuixPaoOe0ULWsZqG1efU1IyKssYAlXOojrwhxVH04kAekBO0P3vTi5/BoshrByOShCf3ftm3R7cK33H+FKchWwq2F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720531050; c=relaxed/simple;
-	bh=bUasv2JxQEdoW/7obI9YLQN6EJqdmQUyrJKHy8YBHSI=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Es6mBgoP/8oexYg6ZULn/Sf6Cp2LsAiEO/gi5luChh/opaodYneQVSg2GpFHfDb7E4qoukbmp+QaXdZtCigkCyyGbYLswiB6J+tN73t8otAA8/JnxznBCGjidnNmVfJm6tcw+rDMRkZLQpEirhaTjJ4weMPaHIOr+xRv5rK14AI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FVh3KBPz; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52ea33671ffso4721172e87.3;
-        Tue, 09 Jul 2024 06:17:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720531047; x=1721135847; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/bRZAx19wkUN/1TE8HsbNELZo7CPgBIzr84+50jfPNA=;
-        b=FVh3KBPz5FCjVv1fasjKaEFZShppK9Og5droPzlKi2oTs9NISHiBoweQ2ZvbYMNv6D
-         XeM538Y2MJhLy7+RElegWimxqt9sdk9pJ/TT3fCJ3rwukYMz9sruv5ubx8DQduoc8s2x
-         kgnWVajppjc1KOuwfIX0BHqxXTviPIMhFLgL3YHmLXnSqWzWlz7Ay5kkGr/ga/drI8no
-         CfTOD70Vic+WQrfGEy9OWdHNU55LmdhtkESbPkZ0H1xWsy5fCNBneBp6fWJTSZrf4zqT
-         UXMFGhs0T2KtrVMspHAB4ZG4J2hcd4zjVb4xcoJm6nJ0ALaksonkKTHkuDO+/4gGzpF6
-         j29A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720531047; x=1721135847;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/bRZAx19wkUN/1TE8HsbNELZo7CPgBIzr84+50jfPNA=;
-        b=nKy3wSHAape1b/ABZqjP4R5WFWcAH2xkLodgrzQk0tPrwwjZN97iAOrF0G/V3xu/YK
-         LfpovB7rPYvGLN2224IPHBKxi9lj0/3RbNiZOE7q+3FM2evhPbwYTw3DLCRFCjZ3pg/U
-         SWidMWo8qbAm7hq/jPZKvgGRFuQM0AEXebZLZYsWTJc17kN39JwaqcJ6Fy8cDPgncANV
-         6GoTKz8p3WyhFEdJpTuF6xZVTD+zJtUrhjaQuJbfrU7zG9buUHYn3Cs2wYfiYl3b5Sok
-         N/BQEaadzZKYxjDoSQp4+H4sztpajHFvfXlrUCGV8EhojxzYp4Us9sLCT+lmeOFxgZw1
-         xRGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVymclfbugQGOrCKVAJoUNxIQIehnoLXAO5OfUsLKJwpfeSTtd1rumZj0BnUWQE20xLq1RJljLq2vw6If/t78+LqcU7ikfpubhkILG5lwfhP7hNd+gUeeUYzAsb0mwacY1q22fI0ZjOaA==
-X-Gm-Message-State: AOJu0YyI4Zv448UeshJysiCoThsg96jMkROMH76q8aGxNe7UuGURjzfm
-	pWBcQA1mGpicGGVyBrZQIo67zGhgt7x3poAhJRctMsik+xVZZkN+
-X-Google-Smtp-Source: AGHT+IG0vA3o76Tj/MYYVYrGxWYlgqni9G++/BYbvwvvUZf8HSo1CG+D/d/zELuUsVQ6V+WW+OUKKA==
-X-Received: by 2002:a05:6512:6cf:b0:52e:9ac6:a20f with SMTP id 2adb3069b0e04-52eb99a33bfmr1600244e87.37.1720531047127;
-        Tue, 09 Jul 2024 06:17:27 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bb9604easm1061398a12.4.2024.07.09.06.17.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 06:17:26 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 9 Jul 2024 15:17:25 +0200
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>,
-	Christian Brauner <brauner@kernel.org>,
-	Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-next <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the vfs-brauner tree with the
- asm-generic tree
-Message-ID: <Zo04ZYIEyayrvBYz@krava>
-References: <20240709105709.18ce785d@canb.auug.org.au>
- <20240709200851.4d921e43@canb.auug.org.au>
- <784a34e5-4654-44c9-9c07-f9f4ffd952a0@app.fastmail.com>
- <Zo0kzIR_ZueaEjTa@krava>
- <c25a32c6-8ed0-4ef9-a13e-cb16a89edb73@app.fastmail.com>
- <Zo0wG8e7BwudENQI@krava>
- <736fde6a-7b2a-4920-af1e-1ad2358db785@app.fastmail.com>
+	s=arc-20240116; t=1720531110; c=relaxed/simple;
+	bh=uRqSv2EgEs82nXjT4mnoIzvAPWG9RwZrzwafVBscE1A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WAkNfFRqtuVw5iU/uQ4/ASl6Lem9U2be2K+Yr4B492djNSlWXE6do7vLQD0/mQPKIofiJLSBqPGQ8z9HmT1i8FGzRKGi6Pk8k7achvCgwvcqsHJrWRdWdA4WLUeyvSogDKcMYD24setPAhuSJHkka7XFZjtGy3Xmk9Bnybcrtpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowADHz+eEOI1m3nhgAg--.39722S2;
+	Tue, 09 Jul 2024 21:18:05 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: fbarrat@linux.ibm.com,
+	ajd@linux.ibm.com,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	manoj@linux.vnet.ibm.com,
+	mpe@ellerman.id.au,
+	clombard@linux.vnet.ibm.com,
+	imunsie@au1.ibm.com
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] cxl: Fix possible null pointer dereference in read_handle()
+Date: Tue,  9 Jul 2024 21:17:54 +0800
+Message-Id: <20240709131754.855144-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <736fde6a-7b2a-4920-af1e-1ad2358db785@app.fastmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowADHz+eEOI1m3nhgAg--.39722S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKFWDGrWDAw4xAr4UWry8Krg_yoW3Awc_CF
+	4UZr1xXryjgr9rGr1Y9r47Zr92yrW8uF95Zr4ftFW7K3y5CF1aqr1I9rs3ZrnrWr4DXFyD
+	Aw1qy3sY9r42gjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
+	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7VUbHa0DUUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On Tue, Jul 09, 2024 at 02:58:06PM +0200, Arnd Bergmann wrote:
-> On Tue, Jul 9, 2024, at 14:42, Jiri Olsa wrote:
-> > On Tue, Jul 09, 2024 at 02:20:26PM +0200, Arnd Bergmann wrote:
-> >> On Tue, Jul 9, 2024, at 13:53, Jiri Olsa wrote:
-> >> > On Tue, Jul 09, 2024 at 01:44:34PM +0200, Arnd Bergmann wrote:
-> >> >
-> >> >> Though I'm still not sure what uretprobe is only added
-> >> >> to half the architectures at the moment. There is a chance
-> >> >> we need a different conditional for it than '64'.
-> >> >
-> >> > uretprobe is defined only for x86_64, not sure what that means
-> >> > for scripts/syscall.tbl though
-> >> 
-> >> I meant you hooked it up unconditionally for all architectures
-> >> using the old method, i.e. arc, arm64, csky, hexagon, loongarch64,
-> >> nios2, openrisc, riscv32, riscv64, and xtensa in addition
-> >> to x86-64, but not for the other ABIs: alpha, arm32, m68k,
-> >> microblaze, mips-o32, mips-n32, mips64, nios2, parisc32, parisc64,
-> >> powerpc32, powerpc64, powerpc-spu, s390-31, s390-64, sh,
-> >> sparc32, sparc64, x86-32 and x86-x32.
-> >> 
-> >> If that is not the list you had intended, do you have a list
-> >> of which architectures actually have the required hardware
-> >> to hook it up? It would be good to do this correctly from
-> >> the start so we don't rely on architecture maintainers assigning
-> >> the numbers individually.
-> >
-> > hum, so it's hooked in:
-> >   190fec72df4a uprobe: Wire up uretprobe system call
-> >
-> > and the intention is to have it ONLY for x86_64 (as stated above),
-> > if that's not what happened I need to fix it, please let me know
-> > what's the problem
-> 
-> If this cannot be used on any other architectures, I would
-> suggest adding it to the architecture specific list instead,
-> probably number #335, which is unused on x86-64.
-> 
-> I was under the assumption that this would theoretically be
-> useful for non-x86 architectures in the future, in which
+In read_handle() of_get_address() may return NULL which is later
+dereferenced. Fix this bug by adding NULL check.
 
-yes, at the moment uretprobe is implemented on x86_64 only,
-but it could be perhaps implemented on other archs in future
+Cc: stable@vger.kernel.org
+Fixes: 14baf4d9c739 ("cxl: Add guest-specific code")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/misc/cxl/of.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> case you should reserve the same syscall number everywhere
+diff --git a/drivers/misc/cxl/of.c b/drivers/misc/cxl/of.c
+index bcc005dff1c0..d8dbb3723951 100644
+--- a/drivers/misc/cxl/of.c
++++ b/drivers/misc/cxl/of.c
+@@ -58,7 +58,7 @@ static int read_handle(struct device_node *np, u64 *handle)
+ 
+ 	/* Get address and size of the node */
+ 	prop = of_get_address(np, 0, &size, NULL);
+-	if (size)
++	if (!prop || size)
+ 		return -EINVAL;
+ 
+ 	/* Helper to read a big number; size is in cells (not bytes) */
+-- 
+2.25.1
 
-hum, is that necessary? I don't mind, but I don't see why it
-should be the same number on another archs?
-
-> now and rely the stub in kernel/sys_ni.c for those that are
-> missing the implementation.
-
-thanks,
-jirka
 
