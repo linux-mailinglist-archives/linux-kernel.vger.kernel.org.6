@@ -1,168 +1,203 @@
-Return-Path: <linux-kernel+bounces-245627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D897E92B524
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:23:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C38D92B553
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D380281B15
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:23:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF9E2283AD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2496157470;
-	Tue,  9 Jul 2024 10:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C93156997;
+	Tue,  9 Jul 2024 10:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="IdPRZXHo"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gxvCoAmG"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6270156997
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EA820DE8;
+	Tue,  9 Jul 2024 10:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720520584; cv=none; b=HVGrCfxWxBaLGiSTo/TDTU5OyadqSNZjPFKFqeco4nVRZpAfnNjKx51Pouap4e+i8pDk+ZO8gW+MVorSmtwHbyKJjbmVeOqGs37rhPY8ZXYRWzU+p+05bZuusOSuuetzQ9UUzwwtU5wdrNu2VpcH692P8jYNMEj0E86dkUaFHtw=
+	t=1720521029; cv=none; b=N8+eK3Yw3qUPOgvyQ1s2dz3D8js2EDnKQfJAurKi/7KOXnJ0bftzIJqa61cKeiYbtxXNHd21Ef4CclqWffCltVKvg1HP2Rvkw5DAZu+K8xHWi0G/h4rTB8gf3HmDeMk568TXqXa32OPcGcKaTo6jG3ORqx5aaTTYPpTSssIsInM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720520584; c=relaxed/simple;
-	bh=shZBn9O6tDZqsTAj9UATwUocjlYxEwemiZOAFeghCdY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=tmFZyVLZw/7KHUlr6eCDcfjYVi04tDPWV4SfHbVl+2y7IXisUIZIDhDVTxBVQVzL5cYQi/4cCZUho6s/l3IUWelfE3pB3ksq5hN57Q2KMpQ/LBRldYevpD/0WQBCoAmawxDqLsC1CTi4v/t/VYlNzOXBxqQ9h2QfQAo6OQn+bQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=IdPRZXHo; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-1f4c7b022f8so34545965ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 03:23:02 -0700 (PDT)
+	s=arc-20240116; t=1720521029; c=relaxed/simple;
+	bh=Bo+8vwjDQLHQRyezkFe8wTzncFjjp4ATpNyKNZ97028=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=LF89nMLtEQ+jujbof6eGH3rocKlarUu6sVhhGx7EcWqt5ePlixugYQd5Yjt7L4r5jD3J2oaXEqX050yNHdWB8L05+3O9Gbds5Cd3ssWoNF+vacsLrkpxcqWvsU980NpGGfa7yzlr/rkZntjKg1qNMIPWp7HXZJDDS9klf27hKdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gxvCoAmG; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-59559ea9cfdso401736a12.0;
+        Tue, 09 Jul 2024 03:30:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1720520582; x=1721125382; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=TjUlVhcBSrZG9pW+ab6mrCPR/9xRt4gi/qaCx2Wysw8=;
-        b=IdPRZXHo0HryBOkipJ8My5DrG7sYuMS/KnPFkCQckWQrh2ljnCG3JP+tWZeq0pt5Wl
-         cjuNPPhrIKc3cpI5sFBW771MSmB0J++RjKEoCmdHHEn8EkYrqSAmbdwV8/9qRPSs5Cd6
-         yKjlRZhFgYk74h6b2iVVCgZkRTWO8/jZIXFnc=
+        d=gmail.com; s=20230601; t=1720521026; x=1721125826; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yOYoImCISLmjV4V0lw2Fa8ZU/fZdwVwBDAKgyU4Yn7g=;
+        b=gxvCoAmGyumV+hjpafS0MOZLjAZWptAxMokINX/joBLA/GLHWwZbTQvDgg1yaXExZR
+         7jX+gmKAbv9uEDT853D57b6wjWW6T/AFGRE48NUaewkiZ8ivnO6/onklFe+UbWKjFyi/
+         kMp1cMuMvRTb2aC44uv/1BvLNnT52yupkLUnKQMbKnIJmMxb1L++BJJ84XbdUivX5dBW
+         x0OcE8DNLaxxqdtkhbefN0akr4rD4NuKGy1NNjBEACGhcqyqr3ymNTUZF7XVP0qn4PNq
+         jKRj01EChiNX91vehX4SCdV6yEiLbkdVz1bcQ9YTcR44Gzoz6YxhyTYevXCFoBfjBrNV
+         gyuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720520582; x=1721125382;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TjUlVhcBSrZG9pW+ab6mrCPR/9xRt4gi/qaCx2Wysw8=;
-        b=f9aayd5boCnBbRvk7YPQU2YEKvfQixIHUYJbQWxd942C+wRYXdRiNgl7dJAwZ5eQW0
-         5I6N1t03PLK2HVDR/cUGqfB0DX/Tcv5g9AvfV6VPhRz/7tOXICWq7Q7YoqRCS7JxxtAt
-         vZo85EinsbV677HyoV/07uxjvIyxgOePkgk+NZY3pU/6MVnsaoCCEP/YvT4XjQWi4rlD
-         CzHjTYXCltnDqQvbEvBJBWlSTl2dHvikksvnUgTJpeHRtj4ciT+m71rGTCa0PgnsHDiv
-         dbW4UjJtadkO+qA2RWh0earIB3itNOyBVTiEUeJq6zVMd7j5AKWP6ubnaP6uvm4HdelS
-         zzng==
-X-Gm-Message-State: AOJu0YwW0bddnRvRRTXi8K5lz/73pkm/n6k3laHx673pigJTr6fJnl6v
-	IsqfHc9/nSEJ4FZ3kifpmah5+HwW6l/71rBJ4KiQ1oOmR/ewvq0N5F3f5Mw5irD4PvR+ZO3SU2s
-	TSMG2wq0xfzy4aWdEuLC65O15ST4Fo/1mmh/wK0TM5YDD3ZU6SG4B6obU+TaIkSqibES/J78JY1
-	lXD0M6OkEkxgHl5Viu21auuD3gKHk6gZBmtkh4ZAasJ6HhCjJSOYPSOSwz
-X-Google-Smtp-Source: AGHT+IHHhfYP/usTymLr9Nc0xnCzRg4Vr9DrYxFrPK0z+o/YRUvUx7r46S2Nxb/v+kszqDPCfjsdjw==
-X-Received: by 2002:a17:903:984:b0:1fb:72ea:376 with SMTP id d9443c01a7336-1fbb6e87fc5mr17619895ad.65.1720520581773;
-        Tue, 09 Jul 2024 03:23:01 -0700 (PDT)
-Received: from kashwindayan-virtual-machine.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a11757sm12832525ad.35.2024.07.09.03.23.00
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Jul 2024 03:23:01 -0700 (PDT)
-From: Ashwin Kamat <ashwin.kamat@broadcom.com>
-To: linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org,
-	davem@davemloft.net,
-	yoshfuji@linux-ipv6.org,
-	dsahern@kernel.org,
-	kuba@kernel.org,
-	netdev@vger.kernel.org,
-	florian.fainelli@broadcom.com,
-	ajay.kaher@broadcom.com,
-	vasavi.sirnapalli@broadcom.com,
-	tapas.kundu@broadcom.com,
-	ashwin.kamat@broadcom.com,
-	Eric Dumazet <edumazet@google.com>
-Subject: [PATCH v5.10 2/2] net/ipv6: prevent NULL dereference in ip6_output()
-Date: Tue,  9 Jul 2024 15:52:50 +0530
-Message-Id: <1720520570-9904-3-git-send-email-ashwin.kamat@broadcom.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1720520570-9904-1-git-send-email-ashwin.kamat@broadcom.com>
-References: <1720520570-9904-1-git-send-email-ashwin.kamat@broadcom.com>
+        d=1e100.net; s=20230601; t=1720521026; x=1721125826;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yOYoImCISLmjV4V0lw2Fa8ZU/fZdwVwBDAKgyU4Yn7g=;
+        b=NPXP+qxhvCG22+dDiMkTLdNP5b1+zi3RihEvYLRjkFq7CiGIGDygMb3cBE3JTqIHY1
+         EzRbcqXSrnaGWQ9RZgURVa2gyxLY3qOCSiGsT+JscRYufXmH7eqDa/wvxrtOkIp3HUi8
+         2xJ95scI9FqwKbQKlecWN70A8yymQZoO4ylUm9Jp+ZzhlUMmsc+j6Zm7SADcP0nXo+E3
+         5T170DjieCNH7zZ7zOO3P81I3PMIwDO1VymYQMNd3dD8EaxihBZQ3hHSqTbQVSgu5N0n
+         y5EuKWRPsP0A77OxfRXqz2oKyHw0vdQjnZcROIp/ni7OC+wAwdKGo1fosCfHBCcNuxOJ
+         DDtA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyWqJ8VjOSeHeqz9o2odatdIBFhyG0q0uDoZQnVcFeNZtH7da1MV4sMZ2zKZL0KLMV8d4VHUsSd5YgPX11kmvcEmvF1neKbMn4aHO22PevJnoM6akhm3KbfOdPRQhNpR9d2OzSillk4mxtAa/cSlMd3rMyl9qv6vLOdPc7TYR5mvfBIs5c/d4k1ISYWivWCTtHSSDreHmKPntOiJ38owX0Fw==
+X-Gm-Message-State: AOJu0YxjPUvX5eqFu7BwvlR1AwbKvFCV7IJVuDalFBCveLU6IieyiLCK
+	fkQ4ocqy6pNU1GRLt1IInbLWVwelONk6jGJX9kkQKaIIq38AmtERm0cS3g==
+X-Google-Smtp-Source: AGHT+IFAVbp5Xhz+Qd9F332Ru+KEdrPyFW17706lzfARFQr/oCIyYBmSzobiJdVge44rwdBy/74mhg==
+X-Received: by 2002:a17:907:10c2:b0:a75:2495:a6a3 with SMTP id a640c23a62f3a-a780b89d121mr167496666b.67.1720521026276;
+        Tue, 09 Jul 2024 03:30:26 -0700 (PDT)
+Received: from localhost.localdomain (bza125.neoplus.adsl.tpnet.pl. [83.30.46.125])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6bcc21sm66528166b.16.2024.07.09.03.30.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 03:30:25 -0700 (PDT)
+From: Adam Skladowski <a39.skl@gmail.com>
+To: 
+Cc: phone-devel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	Adam Skladowski <a39.skl@gmail.com>,
+	Georgi Djakov <djakov@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Vladimir Lypak <vladimir.lypak@gmail.com>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Rohit Agarwal <quic_rohiagar@quicinc.com>,
+	Danila Tikhonov <danila@jiaxyga.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
+	Andrew Halaney <ahalaney@redhat.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Barnabas Czeman <barnabas.czeman@mainlining.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abel Vesa <abel.vesa@linaro.org>
+Subject: [PATCH v3 6/9] interconnect: qcom: qcs404: Add regmaps and more bus descriptions
+Date: Tue,  9 Jul 2024 12:22:51 +0200
+Message-ID: <20240709102728.15349-7-a39.skl@gmail.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240709102728.15349-1-a39.skl@gmail.com>
+References: <20240709102728.15349-1-a39.skl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-From: Eric Dumazet <edumazet@google.com>
+Currently we are lacking descriptions of regmaps, bus clocks
+and types of busses, provide them.
 
-[Upstream commit 4db783d68b9b39a411a96096c10828ff5dfada7a]
-
-According to syzbot, there is a chance that ip6_dst_idev()
-returns NULL in ip6_output(). Most places in IPv6 stack
-deal with a NULL idev just fine, but not here.
-
-syzbot reported:
-
-general protection fault, probably for non-canonical address 0xdffffc00000000bc: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x00000000000005e0-0x00000000000005e7]
-CPU: 0 PID: 9775 Comm: syz-executor.4 Not tainted 6.9.0-rc5-syzkaller-00157-g6a30653b604a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
- RIP: 0010:ip6_output+0x231/0x3f0 net/ipv6/ip6_output.c:237
-Code: 3c 1e 00 49 89 df 74 08 4c 89 ef e8 19 58 db f7 48 8b 44 24 20 49 89 45 00 49 89 c5 48 8d 9d e0 05 00 00 48 89 d8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 4c 8b 74 24 28 0f 85 61 01 00 00 8b 1b 31 ff                                              RSP: 0018:ffffc9000927f0d8 EFLAGS: 00010202
-RAX: 00000000000000bc RBX: 00000000000005e0 RCX: 0000000000040000
-RDX: ffffc900131f9000 RSI: 0000000000004f47 RDI: 0000000000004f48
-RBP: 0000000000000000 R08: ffffffff8a1f0b9a R09: 1ffffffff1f51fad
-R10: dffffc0000000000 R11: fffffbfff1f51fae R12: ffff8880293ec8c0
-R13: ffff88805d7fc000 R14: 1ffff1100527d91a R15: dffffc0000000000
-FS:  00007f135c6856c0(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000080 CR3: 0000000064096000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
-  NF_HOOK include/linux/netfilter.h:314 [inline]
-  ip6_xmit+0xefe/0x17f0 net/ipv6/ip6_output.c:358
-  sctp_v6_xmit+0x9f2/0x13f0 net/sctp/ipv6.c:248
-  sctp_packet_transmit+0x26ad/0x2ca0 net/sctp/output.c:653
-  sctp_packet_singleton+0x22c/0x320 net/sctp/outqueue.c:783
-  sctp_outq_flush_ctrl net/sctp/outqueue.c:914 [inline]
-  sctp_outq_flush+0x6d5/0x3e20 net/sctp/outqueue.c:1212
-  sctp_side_effects net/sctp/sm_sideeffect.c:1198 [inline]
-  sctp_do_sm+0x59cc/0x60c0 net/sctp/sm_sideeffect.c:1169
-  sctp_primitive_ASSOCIATE+0x95/0xc0 net/sctp/primitive.c:73
-  __sctp_connect+0x9cd/0xe30 net/sctp/socket.c:1234
-  sctp_connect net/sctp/socket.c:4819 [inline]
-  sctp_inet_connect+0x149/0x1f0 net/sctp/socket.c:4834
-  __sys_connect_file net/socket.c:2048 [inline]
-  __sys_connect+0x2df/0x310 net/socket.c:2065
-  __do_sys_connect net/socket.c:2075 [inline]
-  __se_sys_connect net/socket.c:2072 [inline]
-  __x64_sys_connect+0x7a/0x90 net/socket.c:2072
-  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-  do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Fixes: 778d80be5269 ("ipv6: Add disable_ipv6 sysctl to disable IPv6 operaion on specific interface.")
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reviewed-by: Larysa Zaremba <larysa.zaremba@intel.com>
-Link: https://lore.kernel.org/r/20240507161842.773961-1-edumazet@google.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-[Ashwin: Regenerated the Patch for v5.10]
-Signed-off-by: Ashwin Dayanand Kamat <ashwin.kamat@broadcom.com>
+Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
 ---
- net/ipv6/ip6_output.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/interconnect/qcom/qcs404.c | 42 +++++++++++++++++++++++++++---
+ 1 file changed, 39 insertions(+), 3 deletions(-)
 
-diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
-index 2b55bf0d3..32512b8ca 100644
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -240,7 +240,7 @@ int ip6_output(struct net *net, struct sock *sk, struct sk_buff *skb)
- 	skb->protocol = htons(ETH_P_IPV6);
- 	skb->dev = dev;
+diff --git a/drivers/interconnect/qcom/qcs404.c b/drivers/interconnect/qcom/qcs404.c
+index 91b2ccc56a33..63e9ff223ac4 100644
+--- a/drivers/interconnect/qcom/qcs404.c
++++ b/drivers/interconnect/qcom/qcs404.c
+@@ -10,6 +10,7 @@
+ #include <linux/module.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/platform_device.h>
++#include <linux/regmap.h>
  
--	if (unlikely(READ_ONCE(idev->cnf.disable_ipv6))) {
-+	if (unlikely(!idev || READ_ONCE(idev->cnf.disable_ipv6))) {
- 		IP6_INC_STATS(net, idev, IPSTATS_MIB_OUTDISCARDS);
- 		kfree_skb(skb);
- 		return 0;
+ 
+ #include "icc-rpm.h"
+@@ -1067,10 +1068,22 @@ static struct qcom_icc_node * const qcs404_bimc_nodes[] = {
+ 	[SLAVE_BIMC_SNOC] = &slv_bimc_snoc,
+ };
+ 
++static const struct regmap_config qcs404_bimc_regmap_config = {
++	.reg_bits = 32,
++	.reg_stride = 4,
++	.val_bits = 32,
++	.max_register = 0x80000,
++	.fast_io = true,
++};
++
+ static const struct qcom_icc_desc qcs404_bimc = {
+-	.bus_clk_desc = &bimc_clk,
++	.type = QCOM_ICC_BIMC,
+ 	.nodes = qcs404_bimc_nodes,
+ 	.num_nodes = ARRAY_SIZE(qcs404_bimc_nodes),
++	.bus_clk_desc = &bimc_clk,
++	.regmap_cfg = &qcs404_bimc_regmap_config,
++	.qos_offset = 0x8000,
++	.ab_coeff = 153,
+ };
+ 
+ static struct qcom_icc_node * const qcs404_pcnoc_nodes[] = {
+@@ -1122,10 +1135,22 @@ static struct qcom_icc_node * const qcs404_pcnoc_nodes[] = {
+ 	[SLAVE_PCNOC_SNOC] = &slv_pcnoc_snoc,
+ };
+ 
++static const struct regmap_config qcs404_pcnoc_regmap_config = {
++	.reg_bits = 32,
++	.reg_stride = 4,
++	.val_bits = 32,
++	.max_register = 0x15080,
++	.fast_io = true,
++};
++
+ static const struct qcom_icc_desc qcs404_pcnoc = {
+-	.bus_clk_desc = &bus_0_clk,
++	.type = QCOM_ICC_NOC,
+ 	.nodes = qcs404_pcnoc_nodes,
+ 	.num_nodes = ARRAY_SIZE(qcs404_pcnoc_nodes),
++	.bus_clk_desc = &bus_0_clk,
++	.qos_offset = 0x7000,
++	.keep_alive = true,
++	.regmap_cfg = &qcs404_pcnoc_regmap_config,
+ };
+ 
+ static struct qcom_icc_node * const qcs404_snoc_nodes[] = {
+@@ -1151,10 +1176,21 @@ static struct qcom_icc_node * const qcs404_snoc_nodes[] = {
+ 	[SLAVE_LPASS] = &slv_lpass,
+ };
+ 
++static const struct regmap_config qcs404_snoc_regmap_config = {
++	.reg_bits = 32,
++	.reg_stride = 4,
++	.val_bits = 32,
++	.max_register = 0x23080,
++	.fast_io = true,
++};
++
+ static const struct qcom_icc_desc qcs404_snoc = {
+-	.bus_clk_desc = &bus_1_clk,
++	.type = QCOM_ICC_NOC,
+ 	.nodes = qcs404_snoc_nodes,
+ 	.num_nodes = ARRAY_SIZE(qcs404_snoc_nodes),
++	.bus_clk_desc = &bus_1_clk,
++	.qos_offset = 0x11000,
++	.regmap_cfg = &qcs404_snoc_regmap_config,
+ };
+ 
+ 
 -- 
-2.45.1
+2.45.2
 
 
