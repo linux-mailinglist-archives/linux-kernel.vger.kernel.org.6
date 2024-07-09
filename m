@@ -1,131 +1,171 @@
-Return-Path: <linux-kernel+bounces-246767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C2192C65F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:57:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A51592C66A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E13A628340B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:57:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 067B0283986
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD18018786D;
-	Tue,  9 Jul 2024 22:57:29 +0000 (UTC)
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDB818563E;
+	Tue,  9 Jul 2024 23:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BSRMP6E6"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E51614D439;
-	Tue,  9 Jul 2024 22:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BA415575E
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 23:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720565849; cv=none; b=sIOP7nGGPVYnAwiYPFDgodWEDSRbwtZCO473yJheiXU9ZGxN01O1wm1f/ZFTHUGtP7lI3dWXNFzvOJuqp90Rx+sflqYDGfse8oBsHD+ASThtAE+ZBYB/JgzthG+LfMvvMfZLrH3WGXiYpORwbOpocyp2tFksYZnhPlbLHwSJsN4=
+	t=1720566537; cv=none; b=oC/u6aj4P6sOzO3mvUQnEBdzLcoc6EZ+hxRt9weO/6qYxAUzg2rm0C4Q8kNuAK5psgKjGW4lheUTBsiRFblnRzCwIjuEkRBHIldH2TXRyOQAsYcR2mJJliVu3dDJtZI7S7PxYyR+8Jm6mn2QsB/iKP16dP+3xCpgcjNxhKlIo7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720565849; c=relaxed/simple;
-	bh=ZlVvkF4rShHH25Jo+Nn0Lq8nfyYZGma7UWocSs9ssrk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SIPJEW0BIynRHIJcYuMgT9QR8YIHY+iUfljVLbdGyf95CC0GhhlDhLA/3k7gIAxHfp3AoLpLsYNjC9an8x5jdsXwQeeKb7/d4R66KdbVxEvHgI1HBzVDKxjWY8wTYvvwrJ5P3fxzUyhxQ7eh+LQA7iVNXaLb12nFw0F5UDmE77g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=ovn.org; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ovn.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E510840005;
-	Tue,  9 Jul 2024 22:57:15 +0000 (UTC)
-Message-ID: <28d092ae-96c8-4145-b679-399d2f71bf8e@ovn.org>
-Date: Wed, 10 Jul 2024 00:57:14 +0200
+	s=arc-20240116; t=1720566537; c=relaxed/simple;
+	bh=JAx13Yx4FuH8zaqppvgqU36j7ddAll0MFvqrs8dQRcU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eSMi1MeGXZueCrnZa2/AET0xXtrCZy8EzulReqZF9rdi2TAGesBnF3i9co6YuiBjlLFK+P2fiU2SLTyw+2nSCwx4fFLokHWzTid5tvBg+ipfokA+s7kbcPVwSpvxXebvu9TDfUdEWpWf/LeYoJOd9U2mTyhXG4UUzq2tXGwFNzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BSRMP6E6; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: longman@redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1720566532;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MD0XyRXyrCI5R7Aouw/gjTkcZ0SkfaGKil28sfjN/f0=;
+	b=BSRMP6E6hqPofTxCwm+B9hyM/zQz6AJuXzGSqTl7eP4q+m0o+4Zt97H1/tsF20iWFmUKQd
+	u4Qemv4iLh21yJBrPnNKrpL68KIsyP3TWoLzwFA8aFFUAMs8GDWsyBupxlA59TA/Y653GH
+	V2PahlBzTYNwO1KBxVhuQ/NxT8pnozQ=
+X-Envelope-To: tj@kernel.org
+X-Envelope-To: lizefan.x@bytedance.com
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: corbet@lwn.net
+X-Envelope-To: cgroups@vger.kernel.org
+X-Envelope-To: linux-doc@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Date: Tue, 9 Jul 2024 23:08:43 +0000
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH-cgroup v2] cgroup: Show # of subsystem CSSes in root
+ cgroup.stat
+Message-ID: <Zo3C-77TnViiOi6d@google.com>
+References: <20240709132814.2198740-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: psample: fix flag being set in wrong skb
-To: Adrian Moreno <amorenoz@redhat.com>, netdev@vger.kernel.org
-Cc: Yotam Gigi <yotam.gi@gmail.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Ido Schimmel <idosch@nvidia.com>,
- Eelco Chaudron <echaudro@redhat.com>, Aaron Conole <aconole@redhat.com>,
- linux-kernel@vger.kernel.org, i.maximets@ovn.org
-References: <20240709203437.1257952-1-amorenoz@redhat.com>
-Content-Language: en-US
-From: Ilya Maximets <i.maximets@ovn.org>
-Autocrypt: addr=i.maximets@ovn.org; keydata=
- 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
-In-Reply-To: <20240709203437.1257952-1-amorenoz@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: i.maximets@ovn.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709132814.2198740-1-longman@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 7/9/24 22:34, Adrian Moreno wrote:
-> A typo makes PSAMPLE_ATTR_SAMPLE_RATE netlink flag be added to the wrong
-> sk_buff.
+On Tue, Jul 09, 2024 at 09:28:14AM -0400, Waiman Long wrote:
+> The /proc/cgroups file shows the number of cgroups for each of the
+> subsystems.  With cgroup v1, the number of CSSes is the same as the
+> number of cgroups. That is not the case anymore with cgroup v2. The
+> /proc/cgroups file cannot show the actual number of CSSes for the
+> subsystems that are bound to cgroup v2.
 > 
-> Fixes: 7b1b2b60c63f ("net: psample: allow using rate as probability")
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+> So if a v2 cgroup subsystem is leaking cgroups (usually memory cgroup),
+> we can't tell by looking at /proc/cgroups which cgroup subsystems may be
+> responsible.  This patch adds CSS counts in the cgroup_subsys structure
+> to keep track of the number of CSSes for each of the cgroup subsystems.
+> 
+> As cgroup v2 had deprecated the use of /proc/cgroups, the root
+> cgroup.stat file is extended to show the number of outstanding CSSes
+> associated with all the non-inhibited cgroup subsystems that have been
+> bound to cgroup v2.  This will help us pinpoint which subsystems may be
+> responsible for the increasing number of dying (nr_dying_descendants)
+> cgroups.
+> 
+> The cgroup-v2.rst file is updated to discuss this new behavior.
+> 
+> With this patch applied, a sample output from root cgroup.stat file
+> was shown below.
+> 
+> 	nr_descendants 53
+> 	nr_dying_descendants 34
+> 	nr_cpuset 1
+> 	nr_cpu 40
+> 	nr_io 40
+> 	nr_memory 87
+> 	nr_perf_event 54
+> 	nr_hugetlb 1
+> 	nr_pids 53
+> 	nr_rdma 1
+> 	nr_misc 1
+> 
+> In this particular case, it can be seen that memory cgroup is the most
+> likely culprit for causing the 34 dying cgroups.
+> 
+> Signed-off-by: Waiman Long <longman@redhat.com>
 > ---
->  net/psample/psample.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  Documentation/admin-guide/cgroup-v2.rst | 10 ++++++++--
+>  include/linux/cgroup-defs.h             |  3 +++
+>  kernel/cgroup/cgroup.c                  | 19 +++++++++++++++++++
+>  3 files changed, 30 insertions(+), 2 deletions(-)
 > 
-> diff --git a/net/psample/psample.c b/net/psample/psample.c
-> index f48b5b9cd409..11b7533067b8 100644
-> --- a/net/psample/psample.c
-> +++ b/net/psample/psample.c
-> @@ -498,7 +498,7 @@ void psample_sample_packet(struct psample_group *group, struct sk_buff *skb,
->  		goto error;
+> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+> index 52763d6b2919..65af2f30196f 100644
+> --- a/Documentation/admin-guide/cgroup-v2.rst
+> +++ b/Documentation/admin-guide/cgroup-v2.rst
+> @@ -981,6 +981,12 @@ All cgroup core files are prefixed with "cgroup."
+>  		A dying cgroup can consume system resources not exceeding
+>  		limits, which were active at the moment of cgroup deletion.
 >  
->  	if (md->rate_as_probability)
-> -		nla_put_flag(skb, PSAMPLE_ATTR_SAMPLE_PROBABILITY);
-> +		nla_put_flag(nl_skb, PSAMPLE_ATTR_SAMPLE_PROBABILITY);
+> +	  nr_<cgroup_subsys>
+> +		Total number of cgroups associated with that cgroup
+> +		subsystem, e.g. cpuset or memory.  These cgroup counts
+> +		will only be shown in the root cgroup and for subsystems
+> +		bound to cgroup v2.
+> +
+>    cgroup.freeze
+>  	A read-write single value file which exists on non-root cgroups.
+>  	Allowed values are "0" and "1". The default is "0".
+> @@ -2930,8 +2936,8 @@ Deprecated v1 Core Features
 >  
->  	genlmsg_end(nl_skb, data);
->  	genlmsg_multicast_netns(&psample_nl_family, group->net, nl_skb, 0,
+>  - "cgroup.clone_children" is removed.
+>  
+> -- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" file
+> -  at the root instead.
+> +- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" or
+> +  "cgroup.stat" files at the root instead.
+>  
+>  
+>  Issues with v1 and Rationales for v2
+> diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+> index b36690ca0d3f..522ab77f0406 100644
+> --- a/include/linux/cgroup-defs.h
+> +++ b/include/linux/cgroup-defs.h
+> @@ -776,6 +776,9 @@ struct cgroup_subsys {
+>  	 * specifies the mask of subsystems that this one depends on.
+>  	 */
+>  	unsigned int depends_on;
+> +
+> +	/* Number of CSSes, used only for /proc/cgroups */
+> +	atomic_t nr_csses;
 
-Uff.  Nasty.
+I believe it should be doable without atomics because most of css
+operations are already synchronized using the cgroup mutex.
 
-I'd say we should change the function argument to 'const' to avoid such
-issues in the future.  There is no reason for this function to modify
-the original packet.  What do you think?
+Other than that, I believe that this information is useful. Maybe
+it can be retrieved using drgn/bpf iterator, but adding this functionality
+to the kernel makes it easier to retrieve and the overhead is modest.
 
-Best regards, Ilya Maximets.
+Also, if you add it to the cgroupfs, why not make it fully hierarchical
+as existing entries in cgroup.stat. And if not, I'd agree with Johannes
+that it looks like the debugfs material.
+
+Thanks!
 
