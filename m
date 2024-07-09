@@ -1,133 +1,122 @@
-Return-Path: <linux-kernel+bounces-246003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E92B92BC8B
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE82A92BC8C
 	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:13:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 235A81F22C13
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98A381F22696
 	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5689819046B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408BA18FDDC;
 	Tue,  9 Jul 2024 14:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="N0n0Yu/w"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D100E1591F1;
-	Tue,  9 Jul 2024 14:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	dkim=pass (1024-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b="elFsQjvD"
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [20.231.56.155])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A7B257D;
+	Tue,  9 Jul 2024 14:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=20.231.56.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720534382; cv=none; b=AcnI/supfoGv97qvlvuK2fpZmHt4kMba/cmdLxRU1m5TLGFB38pYNnOmcwuekN1C7Juodx6T84b0IrZFq+qoCClAcjMlBOTgsILLEZLySXnTpej1fAJTU1KPdiya+nKkbonoJwmQ/umBqDEtMkr6A8bVIyOOR1DdbGJR/YjBg7M=
+	t=1720534382; cv=none; b=fonzTF7mLb+vrnLBrjVwb06oWJsp7anuaB4g5AYcWzCcxMB3Zv8uq+6mN/TTTKDV6aoD40N4mMa9kyFEmElu1yyu8CDIaci5a/CHfmRSFACM7H0EJ1sQGsX7BY/B/lqlFBR9ASZWEk1mKZintxKH+YqzSEJktlA9j5mhdvOBFzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720534382; c=relaxed/simple;
-	bh=GxCbFSpRXr64YpzKYWZI94Ttfcr28x+E1SDBHeAOR+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rrjpxLkRzUktOR7aSQMJBDsPfJDKZlXz0XmEe+/tf6UGn+TR3j8dXsVhOXQKBrdTfoOk30ThPPd4bGBnfQFaQ6KLjxSvg+orkv9ZkphyRRmVUIN6a+EdI7mI9mxMgVHKT+GGc4fPp7IK2NXV+pmyxApyEj29OniPNsKCYFVt8j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=N0n0Yu/w; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D601340E019D;
-	Tue,  9 Jul 2024 14:12:58 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id RmGZsl2mVGvi; Tue,  9 Jul 2024 14:12:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1720534370; bh=d6Y0klRaJpMwWQ/ZJWm/uK8e91UNmkVpoE3tOQ0KROI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N0n0Yu/wx44luhZ60gTCJ9YsMWqFT8zATOMCpfYpDGpuTXM9s2/gKSSDFPzxEHOoJ
-	 TZ7Wq0ONcVgET4UY0ClKYaQBdRMOzr3ISeuXpczYpFtwsEUX9pP0JNRQCLI/1bc0fl
-	 m2Zpaxrj2TL4YrVnkKDLY8TsAIS2TBHBLjwlAcPcS/xfEWjBuVUy9Zk94RYPNQ97Qb
-	 2J0Kp89kol2NQpEE/Qpf91g2TDrugnnCYhThZ+pxq5XLdj0uvlRdSE2/Cddds0A+Zb
-	 EaS2aVD7+vAWZBIn7g9PPQMS1esvsaT6OjwUFg3eqxWJPVZa0tbL92mQ1QTmcwPXdI
-	 wwOoFAGlLOA6w9IZeRxQO7AqbRHy04QQeHNT7291BayJRbr+yJghZWxSnwZ/lMgV4Z
-	 hw+VRBFP4EVhbogH3kD/aekZJQfMjeucfDb7zd0P6YU5BWUncTu+QYGLdDvwiA+WIg
-	 fH33fJFBMoJCDhxCgTSAdE8Ufe6z+/lERMza0op64D9F27/Cd1dMxfy04ze1NiOVF1
-	 dIKw/p2THA2GIKfvu7JcYVC2hoM1At5anFU2TjBYQL7Omr5hWPE4L36VEnyBgtl0Bs
-	 wL1CBRBJ8CrL5F5d3FCNsKgNGyMPRwcx0W/NPiu1vBRZgz4KDon7ApIhZDcistYNfV
-	 LiLcNcxhYMJNldaV1aBLgNHE=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 79DFE40E0185;
-	Tue,  9 Jul 2024 14:12:43 +0000 (UTC)
-Date: Tue, 9 Jul 2024 16:12:38 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jim Mattson <jmattson@google.com>, Ingo Molnar <mingo@kernel.org>,
-	x86@kernel.org, linux-kernel@vger.kernel.org,
-	Greg Thelen <gthelen@google.com>, stable@vger.kernel.org
-Subject: [PATCH 6.1] x86/retpoline: Move a NOENDBR annotation to the SRSO
- dummy return thunk
-Message-ID: <20240709141238.GJZo1FVpZU0jRganFu@fat_crate.local>
-References: <20240709132058.227930-1-jmattson@google.com>
- <2024070930-monument-cola-a36e@gregkh>
- <20240709135545.GIZo1BYUeDD6UrvZNd@fat_crate.local>
+	bh=REUN238YloUXsB58VaHbrHn7J9PWVHNTx9d72CTCeCA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NinLdiIfc0Nk6fozII/sTZYfeHZXO4yWYIE14iZpJKSPN/UqhqDA5S47AWhNXVre/R3H+TNcg+EtsZLCIDd1qkhk6/kauS0drlU/zXy+C0U5sYrAF9+F2WVzwSGYRUOIWLl1XX8k8RvotxYBhZ4WDyer2IvcMF85YBsoy2E7Vt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn; spf=pass smtp.mailfrom=buaa.edu.cn; dkim=pass (1024-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b=elFsQjvD; arc=none smtp.client-ip=20.231.56.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buaa.edu.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=buaa.edu.cn; s=buaa; h=Received:From:To:Cc:Subject:Date:
+	Message-ID:In-Reply-To:References:MIME-Version:
+	Content-Transfer-Encoding; bh=fY/ybTvHed6MNaKpWv3DmQPhPOmMZSa+Cv
+	/Avwj2tGQ=; b=elFsQjvD50wAQ07Ua4n2XyiNmqvn6htCrVw/GzU31aS8hCtzUR
+	yA3KgA0Izj8mB3FYP2c+DcQDNFTv2L/+7JXIFwMK/6Y02mCwMsq8xHokgIrCgKsF
+	tqo+U8TROFhX2H+xkbDnBrLZNDM3yNZ6HkuEWIharia99Amghzwq/eVME=
+Received: from gp-VMware-Virtual-Platform.localdomain (unknown [139.227.253.190])
+	by coremail-app2 (Coremail) with SMTP id Nyz+CgBHovVZRY1m2YGkAA--.53442S2;
+	Tue, 09 Jul 2024 22:12:42 +0800 (CST)
+From: peng guo <engguopeng@buaa.edu.cn>
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	wyguopeng@163.com,
+	peng guo <engguopeng@buaa.edu.cn>
+Subject: [PATCH v2] cxl/core: Fix the UUID of CXL vendor debug Log identifier
+Date: Tue,  9 Jul 2024 22:12:39 +0800
+Message-ID: <20240709141239.10737-1-engguopeng@buaa.edu.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <045fb08e-6d18-4558-b7b2-b83c412307da@intel.com>
+References: <045fb08e-6d18-4558-b7b2-b83c412307da@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240709135545.GIZo1BYUeDD6UrvZNd@fat_crate.local>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Nyz+CgBHovVZRY1m2YGkAA--.53442S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Xr1UtrW7JryUXrWUXryxKrg_yoW8JF4UpF
+	WrKFy0yFZ5Wa47twn2q348WFWruasakryUC3ZF9w48Za93Z3W0qry5KayUJF90vr95J3Wj
+	qr4vkr15Ga10kw7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvq1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AE
+	w4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2
+	IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2
+	jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52
+	x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWU
+	GwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI4
+	8JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY
+	0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26F1DJr1UJwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+	wI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+	v20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
+	ZFpf9x0JUdHUDUUUUU=
+X-CM-SenderInfo: d2isijirrujqpexdthxhgxhubq/
 
-From: Jim Mattson <jmattson@google.com>
-Subject: [PATCH] x86/retpoline: Move a NOENDBR annotation to the SRSO dummy return thunk
+Fix the definition value of DEFINE_CXL_VENDOR_DEBUG_UUID to match the
+CXL r3.1 specification, although this value is not currently used.
 
-The linux-6.1-y backport of commit b377c66ae350 ("x86/retpoline: Add
-NOENDBR annotation to the SRSO dummy return thunk") misplaced the new
-NOENDBR annotation, repeating the annotation on __x86_return_thunk,
-rather than adding the annotation to the !CONFIG_CPU_SRSO version of
-srso_alias_untrain_ret, as intended.
+All CXL devices that support a debug log shall support the Vendor Debug
+Log to allow the log to be accessed through a common host driver, for any
+device, all versions of the CXL specification define the same value with
+Log Identifier of: 5e1819d9-11a9-400c-811f-d60719403d86
 
-Move the annotation to the right place.
+refer to:
+CXL spec r2.0 Table 169
+CXL spec r3.0 Table 8-62
+CXL spec r3.1 Table 8-71
 
-Fixes: 0bdc64e9e716 ("x86/retpoline: Add NOENDBR annotation to the SRSO dummy return thunk")
-Reported-by: Greg Thelen <gthelen@google.com>
-Signed-off-by: Jim Mattson <jmattson@google.com>
-Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Cc: stable@vger.kernel.org
+Fixes: 49be6dd80751 ("cxl/mbox: Move command definitions to common location")
+Signed-off-by: peng guo <engguopeng@buaa.edu.cn>
 ---
- arch/x86/lib/retpoline.S | 2 +-
+ v1 -> v2: update commit message  and addressed review comments
+
+ drivers/cxl/cxlmem.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/lib/retpoline.S b/arch/x86/lib/retpoline.S
-index 055955c9bfcb..7880e2a7ec6a 100644
---- a/arch/x86/lib/retpoline.S
-+++ b/arch/x86/lib/retpoline.S
-@@ -107,6 +107,7 @@ __EXPORT_THUNK(srso_alias_untrain_ret)
- /* dummy definition for alternatives */
- SYM_START(srso_alias_untrain_ret, SYM_L_GLOBAL, SYM_A_NONE)
- 	ANNOTATE_UNRET_SAFE
-+	ANNOTATE_NOENDBR
- 	ret
- 	int3
- SYM_FUNC_END(srso_alias_untrain_ret)
-@@ -261,7 +262,6 @@ SYM_CODE_START(__x86_return_thunk)
- 	UNWIND_HINT_FUNC
- 	ANNOTATE_NOENDBR
- 	ANNOTATE_UNRET_SAFE
--	ANNOTATE_NOENDBR
- 	ret
- 	int3
- SYM_CODE_END(__x86_return_thunk)
+diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
+index af8169ccdbc0..feb1106559d2 100644
+--- a/drivers/cxl/cxlmem.h
++++ b/drivers/cxl/cxlmem.h
+@@ -563,7 +563,7 @@ enum cxl_opcode {
+ 		  0x3b, 0x3f, 0x17)
+ 
+ #define DEFINE_CXL_VENDOR_DEBUG_UUID                                           \
+-	UUID_INIT(0xe1819d9, 0x11a9, 0x400c, 0x81, 0x1f, 0xd6, 0x07, 0x19,     \
++	UUID_INIT(0x5e1819d9, 0x11a9, 0x400c, 0x81, 0x1f, 0xd6, 0x07, 0x19,     \
+ 		  0x40, 0x3d, 0x86)
+ 
+ struct cxl_mbox_get_supported_logs {
 -- 
 2.43.0
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
