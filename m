@@ -1,117 +1,80 @@
-Return-Path: <linux-kernel+bounces-246071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9053192BD49
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:43:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF97292BD4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1A011C23B0F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:43:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A34951F2572F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:43:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF9B19CD17;
-	Tue,  9 Jul 2024 14:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KT/26fxX"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C7F19CCF4;
+	Tue,  9 Jul 2024 14:43:47 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A001194A74;
-	Tue,  9 Jul 2024 14:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089361684AE;
+	Tue,  9 Jul 2024 14:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720536191; cv=none; b=hGg2nSKSIW96U0KqYUD1N2O1PRAENywxi3SW0H/QpMjhikJipy+pKEnCP5YA6sMRgft3qUtQu+aUgpfTJXNgFo4kg0ZLk0Sb1r0obh6HkZ8RC5zYXuD4oWSbcjluVS1h0iDYIGFhtfzHIgCDxbNSgAFF2dTiX4VsXU/bsArKJ/Q=
+	t=1720536227; cv=none; b=LtagQp0AOkwCwKgIRK3xO2qIb4z7upACuoRE9Nj05nk7YSIvZW606dj9oeH/noAuK+By/7Kt7nAEIQlaCNA0kyMNgnHh8HmITXflAb1WBpxWNh7rNYjKSdQYTmAEPTw+rgZRDQrJIfmDXf+V4z5q9J8jLfRfVaWoCdIDxX7PkRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720536191; c=relaxed/simple;
-	bh=rJ2+lUEOswuFCrLD0pg6XwtIjRFdILBWXAuQwrljs7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HZ699Te8A468GRH3hUCMcbkWopBJQsnbT3dZsf5ktZDRqTmM1NhhE+qsNYm+onfTV6JEsSqDMS1yu85EU5eSfdRT5un+/VJ2FYQZaXqAhPZr1WGG17l3rOTN9Gsp752cwrznBTKnUemx5Aju1sZA+kHJ7Fb1rckcJWKU10XMnZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KT/26fxX; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 85F65E0003;
-	Tue,  9 Jul 2024 14:43:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720536187;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8MkRcBwn38nsygCZVcXZUXgAB2EIe1wI/9nnc9kwKc8=;
-	b=KT/26fxXreMgrKrtQYXtHlY7+qRyZ1wWaHa3NXWegWTO/5X8Q1zXzCPG+dIkpmQhugU86K
-	bZ0SQaMdbBLpAYYG6HECjb6+0ag78ZBp2/5ajqzGk3Phzo26+DS7sBQLPXHxTg3K+gyDdm
-	smQmYQHlsc7ElnLFMKV5APXAkYAuX3+XYO/cxa2Y+LKyA1sLv23YgzQKH2sMPHJFt0KBQw
-	FP0szFhUI33jYPfbyWiX1ENjo/fFdGFa3lQ9RTvN5CfBcQ0FDgmwk4pjmYVLJub++HLnSl
-	p9HL6qc8xHekc4+d5yGOzxPZ8fA2zLdYvjp6Lpfx/XNo45lTmDtC2yPBShrcNw==
-Date: Tue, 9 Jul 2024 16:43:05 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>,
- thomas.petazzoni@bootlin.com, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH net] net: ethtool: pse-pd: Fix possible null-deref
-Message-ID: <20240709164305.695e5612@kmaincent-XPS-13-7390>
-In-Reply-To: <20240709071846.7b113db7@kernel.org>
-References: <20240709131201.166421-1-kory.maincent@bootlin.com>
-	<20240709071846.7b113db7@kernel.org>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720536227; c=relaxed/simple;
+	bh=Q4gomzJZEK3pCgfpImtcuC3mWhWXMlklkAv65B90irk=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GGAmwfqDKdri6CFepygtIVERQRpXbC4ZPLYTu2XbMGBGpWBgAUolRZGDu6F7lekWUiG9WvvkUnegpFer2fkWw64WnxGLUEyQ7CgkzjGqAumGue96TJ773QhhisF+V9bV4tp6vbdqz7azgFndFGw4EhmcYfbkrMVAiDKmLyg0R5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WJNwg4t9Sz6K8bw;
+	Tue,  9 Jul 2024 22:41:39 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3C999140D27;
+	Tue,  9 Jul 2024 22:43:42 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 9 Jul
+ 2024 15:43:28 +0100
+Date: Tue, 9 Jul 2024 15:43:28 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+CC: Xiaowei Song <songxiaowei@hisilicon.com>, Binghui Wang
+	<wangbinghui@hisilicon.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring
+	<robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] PCI: kirin: use dev_err_probe() in probe error
+ paths
+Message-ID: <20240709154328.000042e0@Huawei.com>
+In-Reply-To: <20240707-pcie-kirin-dev_err_probe-v2-1-2fa94951d84d@gmail.com>
+References: <20240707-pcie-kirin-dev_err_probe-v2-0-2fa94951d84d@gmail.com>
+	<20240707-pcie-kirin-dev_err_probe-v2-1-2fa94951d84d@gmail.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Tue, 9 Jul 2024 07:18:46 -0700
-Jakub Kicinski <kuba@kernel.org> wrote:
+On Sun, 07 Jul 2024 15:54:01 +0200
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-> > -	if (pse_has_podl(phydev->psec))
-> > +	if (tb[ETHTOOL_A_PODL_PSE_ADMIN_CONTROL])
-> >  		config.podl_admin_control =3D
-> > nla_get_u32(tb[ETHTOOL_A_PODL_PSE_ADMIN_CONTROL]);
-> > -	if (pse_has_c33(phydev->psec))
-> > +	if (tb[ETHTOOL_A_C33_PSE_ADMIN_CONTROL])
-> >  		config.c33_admin_control =3D
-> > nla_get_u32(tb[ETHTOOL_A_C33_PSE_ADMIN_CONTROL]);=20
-> >  	/* Return errno directly - PSE has no notification */ =20
->=20
-> At a glance this doesn't follow usual ethtool flow.
-> If user doesn't specify a value the previous configuration should be
-> kept. We init config to 0. Is 0 a special value for both those params
-> which tells drivers "don't change" ?
+> dev_err_probe() is used in some probe error paths, yet the
+> "dev_err() + return" pattern is used in some others.
+> 
+> Use dev_err_probe() in all error paths with that construction.
+> 
+> Suggested-by: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-Mmh in case of a PSE controller supporting PoE or PoDL on its ports, a 0 co=
-nfig
-value will return a ENOTSUPP error from the PSE core. We might have an issu=
-e in
-that case which doesn't exist for now as there is no such controller.
-
-As a PSE port can't be PoE and PoDL maybe the PSE type should be related to=
- the
-PSE port and not the full PSE driver.
-
-> Normal ethtool flow is to first fill in the data with a ->get() then
-> modify what user wants to change.
->=20
-> Either we need:
->  - an explanation in the commit message how this keeps old config; or
->  - a ->get() to keep the previous values; or
->  - just reject setting one value but not the other in
->    ethnl_set_pse_validate() (assuming it never worked, anyway).
-
-In fact it is the contrary we can't set both value at the same time because=
- a
-PSE port can't be a PoE and a PoDL power interface at the same time.
-
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
 
