@@ -1,168 +1,149 @@
-Return-Path: <linux-kernel+bounces-245621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35BA692B50F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:21:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC5E992B518
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:22:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 581D71C22E29
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:21:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8843C284C80
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CAE415664C;
-	Tue,  9 Jul 2024 10:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B845156862;
+	Tue,  9 Jul 2024 10:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="azewGR1F"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="jmtMqa7a"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B14F154C04
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15917154C04;
+	Tue,  9 Jul 2024 10:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720520466; cv=none; b=gLI5xsJTnJMxsfIvQEjRY9XTScqXkKQ80RRwhw0hgLEfAwZX0SbBYwg+JCFzKcMMxDiSDjb1RibESry28IW+/9jeBQKtRUTkh80KQ0km4cnpZR9gvJcWSS+PBPiBD7WDrFG3JnWQvdKwb8zwgPHbswXYBAK0bltH4P8/MT4iJZo=
+	t=1720520529; cv=none; b=icsC4eqpkYJ5vvXw0I/g0o3EawELDodX+kcPts8HUse338YDFWmZJoA8mdRPA59VJn5pQ8KpkK6dLW1d/8EXvYMTA4Wjkk0GlsyFkODwS6rhRODWxoYSyTgAfOO/dRASuul0VED/Fl8qS3FIdK0ps/ViZk8t1FEAPvBzqCTs+PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720520466; c=relaxed/simple;
-	bh=FI8Ai9at4PJrxIU/sJac80olr10NbpFwsfq+R3rThC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hXyLMWwfqjH3bjaxPHwAnI/txI3r55zLQOFmfm/0Hj1hQRs+sd8jROnuHC28OIsNts3swRuftfvR7WbGCmdblS+yE6Prc9PS5Mxe68ssHqh4U5AcyIAnC5DZeVuqFlJTg2RHOrpZkLam8tLyoy/mXuAcrJ9gWu/mAUwrYJE7pic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=azewGR1F; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-58b3fee65d8so5482376a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 03:21:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720520463; x=1721125263; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=G+hQCp/WCknSoDGq7wdhhIY0ZHD5OUQb2BcFzfGm0fg=;
-        b=azewGR1FQjTS2Khk+Mq7A0axycscNFRmF53K04vavVdeygYO0pr+XHAxCqfYg0y/AS
-         Gxx+rPdQmi3pokdGcroj2Z83BWGUUmnS9wRAoS2+dCMyPbVbkKkQD1zqYXZM8h0p3OZT
-         LXsu4WNKHkD61rPrF+yqecFskRmP4OWMAQwFcZYkdyR6lrGBNglan7Y31ERQy4QWvXbn
-         ErVXJhBPljDyaeGDuHlSIu9tvhuYjNBmdP6yVPRwQ9l/qNolvGJloE9zf8nNTRZJqCW1
-         G2v8RnJkudpOcv9Xd8qyWTHgIbBMj17o0otQu4AhNCssog8f0mJW04BqlLse7lDzUbYA
-         Muag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720520463; x=1721125263;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G+hQCp/WCknSoDGq7wdhhIY0ZHD5OUQb2BcFzfGm0fg=;
-        b=Wtfj7D+SeNifHC7h6KM/2fuRvXkzh2SfHnYV5rAAWQTFcaZP++3O7EtuOcdH2j95SP
-         A8peSHjRp09ObMEonmS4Zcb8YvC7dXq6tPafmhjvGO+opyJIwGvTHzHpEgOyIVU6ZfXZ
-         dEgGLroCChxMliYcAVWAeBlgMWTGlAQY1WvVVqz3cGzIB69hO81N8c3gc9+eQM0SdHdb
-         HK0wTlTj4HQWKs46zQS8GvJ/P0UCE3QizzS0i3eUJ+OHQUyAGt5BKwFv0xiBJT5AYYah
-         QohvVP2cOEHCXniA5CEKBd4cHHL4UTUZQB2yKhmLFOG21HUoLJjnH7sVSsgEQDQTCvhd
-         TuKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXElrV/CVjdklEzVytCvbG8Y6zCNQnv2i47ydcDwMXTuPkkDha82ZyF2BUdKxTQ9Ee1h4XwWoYvp5gTIQO4Jfd06YDJv5e3seEZOMJ
-X-Gm-Message-State: AOJu0YwAfEG1Tu5zZH76bfYy9wHKt/BFIjMfulDWJfdobCW0nO/DUgjO
-	Sz1h/2jhHYMZZgpFM7yODPzYLQd61en5feDhu2wIkGmMM1EtLzqcVkGtwJK/lNg=
-X-Google-Smtp-Source: AGHT+IE8wRZVW5baYXcFgEod6huJCvs7buDOLjTRsbZJLUCRnhrR5H9aEISZRauj8dj9XbSi2DU2Sg==
-X-Received: by 2002:a05:6402:2742:b0:57c:610a:6e7f with SMTP id 4fb4d7f45d1cf-594baf8719fmr1848926a12.11.1720520462835;
-        Tue, 09 Jul 2024 03:21:02 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bb9605c2sm893973a12.13.2024.07.09.03.21.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 03:21:02 -0700 (PDT)
-Message-ID: <6c79bb76-d865-4b77-b877-f7dbae6ce362@linaro.org>
-Date: Tue, 9 Jul 2024 12:20:59 +0200
+	s=arc-20240116; t=1720520529; c=relaxed/simple;
+	bh=EEZI0oOKHSccww6P7hFSmluieVKgyeacOxph00ecItI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u9vqpMrYrMw2FKdsJ5As0uopxKEo8Mec/H2IaBdhJRsiU62sZDg79GMRWBrFDNNsnqrIywzBmQVCZXiB5o2T8UJqCEk8O0mv4XQKQOofP70RkolJxzv0Tqobm17bINdbMF65gGVCDep+vHsE98eOs1YjJ+/0xQOsukI/X1zc3Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=jmtMqa7a; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4698S9mv031021;
+	Tue, 9 Jul 2024 12:22:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=selector1; bh=61h9FpLIz7qYk5YX7xxf1ILI
+	zrao7vVFXIrWakkeQ0Q=; b=jmtMqa7aV7kvPEsVQHMliovwTWRYqgWJxojYA2dZ
+	gHue4FKVuhBDlfUQspGZd7k4PAVdHsYjtwY6gitiwcPcuGvOO7j2nn1GZu44cs1I
+	w3lNJFedBRTJpiY3si1WJ4oQ1diK40h7pfAtJ7XDSWFyVi9BpLBGoanminP+xqUz
+	1Rt/3OJwSJcilYdUtdBmsKj/V2GyaDJfYa0o+NHkuwhB8hwvE4uhKWGLdIWu5nRb
+	E7VZ5Mpai5KMSzWToSUWYFN8cNGhzTTB9f5GIaJSsJT6s2nuhm/86kPTUHTVQuwY
+	9bBle0QtdHvHXT7spft7p/XHmSbyigUo4yoy/04Xi/Qwhw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 406whhk8jw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 12:22:00 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 83D8440044;
+	Tue,  9 Jul 2024 12:21:55 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B4A1F21B531;
+	Tue,  9 Jul 2024 12:21:39 +0200 (CEST)
+Received: from gnbcxd0016.gnb.st.com (10.129.178.213) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 9 Jul
+ 2024 12:21:39 +0200
+Date: Tue, 9 Jul 2024 12:21:34 +0200
+From: Alain Volmat <alain.volmat@foss.st.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+CC: <linux-i2c@vger.kernel.org>,
+        Patrice Chotard
+	<patrice.chotard@foss.st.com>,
+        Andi Shyti <andi.shyti@kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 60/60] i2c: st: reword according to newest
+ specification
+Message-ID: <20240709102134.GA55503@gnbcxd0016.gnb.st.com>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-i2c@vger.kernel.org,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-kernel@vger.kernel.org
+References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
+ <20240706112116.24543-61-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/5] drm/msm/adreno: Redo the speedbin assignment
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240625-topic-smem_speedbin-v4-0-f6f8493ab814@linaro.org>
- <20240625-topic-smem_speedbin-v4-4-f6f8493ab814@linaro.org>
- <20240630102955.uencakbjiugszphw@hu-akhilpo-hyd.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240630102955.uencakbjiugszphw@hu-akhilpo-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240706112116.24543-61-wsa+renesas@sang-engineering.com>
+X-Disclaimer: ce message est personnel / this message is private
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_01,2024-07-08_01,2024-05-17_01
 
-On 30.06.2024 12:29 PM, Akhil P Oommen wrote:
-> On Tue, Jun 25, 2024 at 08:28:09PM +0200, Konrad Dybcio wrote:
->> There is no need to reinvent the wheel for simple read-match-set logic.
->>
->> Make speedbin discovery and assignment generation independent.
->>
->> This implicitly removes the bogus 0x80 / BIT(7) speed bin on A5xx,
->> which has no representation in hardware whatshowever.
->>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->> ---
+Hi,
 
-[...]
-
->> +
->> +	/* Traverse the known speedbins */
->> +	for (int i = 0; info->speedbins[i].fuse != SHRT_MAX; i++) {
->> +		if (info->speedbins[i].fuse == fuse) {
->> +			supp_hw = BIT(info->speedbins[i].speedbin);
->> +			return devm_pm_opp_set_supported_hw(dev, &supp_hw, 1);
+On Sat, Jul 06, 2024 at 01:21:00PM +0200, Wolfram Sang wrote:
+> Change the wording of this driver wrt. the newest I2C v7 and SMBus 3.2
+> specifications and replace "master/slave" with more appropriate terms.
 > 
-> Can we do this if supp_hw property is not present in opp table?
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-No, but this is also the case without this patchset (a.k.a. no change in behavior).
+Reviewed-by: Alain Volmat <alain.volmat@foss.st.com>
 
-We shouldn't add code complexity to support that case, as having speedbin data
-in the driver and not the dt means the DT is incomplete, which is not a case we
-should care about
-
-I can however try and add a clearer error path that would perhaps not crash the
-kernel in this situation.. in a separate patchset
-
-Konrad
+> ---
+>  drivers/i2c/busses/i2c-st.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-st.c b/drivers/i2c/busses/i2c-st.c
+> index 5e01fe3dbb63..05b19ede65a0 100644
+> --- a/drivers/i2c/busses/i2c-st.c
+> +++ b/drivers/i2c/busses/i2c-st.c
+> @@ -2,7 +2,7 @@
+>  /*
+>   * Copyright (C) 2013 STMicroelectronics
+>   *
+> - * I2C master mode controller driver, used in STMicroelectronics devices.
+> + * I2C controller driver, used in STMicroelectronics devices.
+>   *
+>   * Author: Maxime Coquelin <maxime.coquelin@st.com>
+>   */
+> @@ -150,7 +150,7 @@ struct st_i2c_timings {
+>  
+>  /**
+>   * struct st_i2c_client - client specific data
+> - * @addr: 8-bit slave addr, including r/w bit
+> + * @addr: 8-bit target addr, including r/w bit
+>   * @count: number of bytes to be transfered
+>   * @xfered: number of bytes already transferred
+>   * @buf: data buffer
+> @@ -667,7 +667,7 @@ static int st_i2c_xfer_msg(struct st_i2c_dev *i2c_dev, struct i2c_msg *msg,
+>  		i2c |= SSC_I2C_ACKG;
+>  	st_i2c_set_bits(i2c_dev->base + SSC_I2C, i2c);
+>  
+> -	/* Write slave address */
+> +	/* Write target address */
+>  	st_i2c_write_tx_fifo(i2c_dev, c->addr);
+>  
+>  	/* Pre-fill Tx fifo with data in case of write */
+> @@ -766,7 +766,7 @@ static u32 st_i2c_func(struct i2c_adapter *adap)
+>  }
+>  
+>  static const struct i2c_algorithm st_i2c_algo = {
+> -	.master_xfer = st_i2c_xfer,
+> +	.xfer = st_i2c_xfer,
+>  	.functionality = st_i2c_func,
+>  };
+>  
+> -- 
+> 2.43.0
+> 
+> 
 
