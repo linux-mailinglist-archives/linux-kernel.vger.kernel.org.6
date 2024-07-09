@@ -1,167 +1,161 @@
-Return-Path: <linux-kernel+bounces-245054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 239E792ADBC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:21:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C21192ADBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:21:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91CCA1F22054
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:21:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 220411F223D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9852837D;
-	Tue,  9 Jul 2024 01:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBDE2837D;
+	Tue,  9 Jul 2024 01:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RrvrBk7B"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nTtkA4At"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E9D110A
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 01:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FA539ADD
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 01:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720488084; cv=none; b=jOON638zOCFLxrC7QSb//t2LTvTb/fmaK2N4temRIdXFGjn2zasDiynOxo2drmLDRJBpb5CWtX7lgtc9RYfTrOnWOjMux1YNqCJdBFDuKBedAl1xHAeDmYBfOplTj56n/ACnxAmEftdUTEFjMq0h0c47G1usAJb0iIirut1iYAs=
+	t=1720488099; cv=none; b=FWrUs3h1Phh3S7VWbC69HKKNGhsmMy+qaFzRWEc/di/oJ7X/g71fBhmjQriu3gitWBoTd20Ir69CfhWGu7j3zuOEB93H60lt6D46ZGwGWLhK1coqGHwRqvegLMenUMtkKul7afBSbR4dYeX/ZWXh383FuPHEA6Sh3dLuKo3jzrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720488084; c=relaxed/simple;
-	bh=zn5i67Ufx0f9aoLiCcd6mWfTOyw3oXWnnNBBd/B+wPY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q6aU3Mq/0NzlpreDN+SQBE3DEVFnE4Z/1cdb1iMO5ZXcvHW7Hw6y+1WpFQoQwpNzRogoASAkPjC6wi0VG14nPl5RvBfSr/F9pwG6q70ilUu48+X+Y0Rm/XpTB0vgNIMcRdZ8OrynPsvnlgqn7Oy8XjqHrxmx/GdhAc+MFvba8xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RrvrBk7B; arc=none smtp.client-ip=209.85.208.174
+	s=arc-20240116; t=1720488099; c=relaxed/simple;
+	bh=tw5e/ii7kOtznxLNCArpOb56vtv6Tfwb9ywQ8YS0q4s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=i1Gw57XWMMQ0qqgLAGTRmkF3gj1VJNAQpQfF9HYQUfylGpxtNX1QaqFEH34lNkiOpkYe/2yBrEPEDR8c0pSenk+5EDdIi1iMLJaD/uN/r8a512qke6crdddb4EWomzt1np+oea/Ni+CgUNxDbVWd6wK3U34BEs8xBqex6or8BJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nTtkA4At; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ebed33cb65so57355101fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 18:21:22 -0700 (PDT)
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fb3cf78ff3so29027005ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 18:21:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720488081; x=1721092881; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zn5i67Ufx0f9aoLiCcd6mWfTOyw3oXWnnNBBd/B+wPY=;
-        b=RrvrBk7BOcAL+sQfBO0YNFiWug7uOFAGUIlwcw7x1e/7pfyozf760rdIkorC7FIOvM
-         dPDesMpHGfzt30/sjUq4bMWSPpyngw9ELJaEu4J9EqFZrhWG16g5fbKfiRtyAqM0RdeG
-         hccftvWZS+KVmKINQYA7CMp8UH6jEPUtSwEqcdMfMfuUgdxG54oP6sZAuxdJi20ujYlZ
-         oOy0v2Q1VSEHMvxSFZAPo9b1gFCtvTiAtlt1W5hle5Rks6C49m3XSI4t2N01FzFif2+S
-         lTejajAd/mE2oJXei4gX2QioqwfbePDE4BTH9F3pKDYejxNdF7qZ+jb8fDPUyKqxfSJV
-         S7Zg==
+        d=gmail.com; s=20230601; t=1720488098; x=1721092898; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rp5LIY/csjN1lG+GtCfJFxmKq047kymV7T1r6/i6YSU=;
+        b=nTtkA4AtDe6EdxkZgOqb+aIpOwI5Y74ex+33sj2AkY/nePNsylKp7FSj4JsL39gPPB
+         EtyYUIS1cAHUOYWuYT+xH9DBxUsoi7YhK1QxU6fcFJ4hU2+uEfN/8gS+WViuruubhq+3
+         kzbPb0RCI+7E6F5OnTJXQvVuL4pIJMeUlmSIccxZ+b2OUBXBad2o3SDgNP7p0u7RckJb
+         JkW7Bl8ws+NNEHMcsrNtwEcp7Y98NReCxlb7OcDE9ekbg+FyeeGpCxZ8BlZuM5I8tj/t
+         /j95ULp53vqu8XyZjGygiIM2GhaesMypzNxFESbSBR3U0liEYy6UEqDfNNWPONPWfDxc
+         391w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720488081; x=1721092881;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zn5i67Ufx0f9aoLiCcd6mWfTOyw3oXWnnNBBd/B+wPY=;
-        b=huJxw0cglT/fggcx1q1LE07gNjH3aV+pxtDmpITxQUDiFKGkuoHWNkewwBncrT0NMC
-         BVegq4Me7iEZGlbzIlSIhgHbkfjxS2B4Nc+/13+T6uOZrCtYrz4f2i/aoXcMow5wg8sb
-         mTdapWdyqL+s+4qHHjfjl7CUPqGlhYVutKdOaaBdEK4UcG+jJoPPBsJP1ggLAzYnkeSL
-         gUcZToMQ8CQPg/JESK68eacIADso7KHbyKko/Hxbk3d/Lq9d5CSePs+QRhTc4+p2VZlv
-         Ov6AlnbSpImV4YBkZY0DSn7RNUkUq9T8eygXhZJtxTWtWVZb3yApOOvaGhRiTcgWQwmN
-         iNHg==
-X-Forwarded-Encrypted: i=1; AJvYcCX9LvxGqiaaCy4eFVa0cwHpbr34vvCfxd44FsHOK72hDYKZGFHCUeCI2MwU6ANbxItEbuqCN021Ks5TtycD7imp2H4S62Yd1fMUz0eg
-X-Gm-Message-State: AOJu0YwG9Pr77AfjbgIjYL9TmC4J2ChKo1ytEz3z5SXa3P3PAppRBEJ8
-	lkoqn9AJ8GZQvaTySvjI9SV7B2I6xo83mhrYYkX0bOWzLmjwpz5gnMn0NsY5k4sUmqC6lUKNgym
-	VVg4N3b16fpQTXzNI+x5qFI5Ktcw=
-X-Google-Smtp-Source: AGHT+IFedpKhq134nNvLT4sO6zKdxlPyIoaZtg7bLZUk9g1uZZywwu5F6Od9jvClVSGV9cN6c49MSz9eoMfyzxDU+v8=
-X-Received: by 2002:a2e:9b57:0:b0:2ec:5518:9550 with SMTP id
- 38308e7fff4ca-2eeb30b4d43mr7584761fa.10.1720488080818; Mon, 08 Jul 2024
- 18:21:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720488098; x=1721092898;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rp5LIY/csjN1lG+GtCfJFxmKq047kymV7T1r6/i6YSU=;
+        b=opvJJy0wlyyxGblVRx6+8SoyAcqpMget3wZ8zdJQWRPm4eqQyeXadyou7/HgZwdZwz
+         jhz4iKDKxr7D/6p80XNjScxO/YRZqL0MYbGvJ9PGe/iVodmVm+OgCM455UiGqJ+4B1ie
+         BPh1BroByjSvE6FWl8DjoyLbM+Vvd7F96/cEE7tpy4TpQsXU77kCHRZXBZzCQf5ie3mX
+         xbImkYwpS3rn5VfMwXWsuxj8KtjJvPFzLbCZGwgxpDDvQjLw8Pi3ca4bq54U5rJS41tm
+         V2c4grrUKN8NgNFqM2byiptNjEeJhaqKGLJ/zDWiywBKjiX0G6gobdolxdiQoYsLzKoO
+         l4Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSi7UvfJYy1qH2OsodKFvTZ5VGAWgbuo94qWqKPXJ3HVsKqFfDbDIJi3cAD6EryQaZWEgxd6Rzii4YN9ZhsgEhplQ3cC8wJHkxVhNR
+X-Gm-Message-State: AOJu0YyOL2j+xYSGjWbYBYvx77P//OamY130fPeTlIf2p3s4XqmISgFQ
+	/t6e60Faf0CPjKytm9kL5lGaM70XAsqztXzaIoHkQ7puEm49K7NJ
+X-Google-Smtp-Source: AGHT+IFwt7lbvTqeTvAwSBA7I39AeW+RkqFofI4QK5RRnNC/qFaLuMwKyyKjN4ysz3LU5RPkMqmueg==
+X-Received: by 2002:a17:902:e549:b0:1fb:46a7:dbda with SMTP id d9443c01a7336-1fbb6d89a46mr9779605ad.47.1720488097664;
+        Mon, 08 Jul 2024 18:21:37 -0700 (PDT)
+Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a2a72csm4792395ad.77.2024.07.08.18.21.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 18:21:37 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Cc: chrisl@kernel.org,
+	david@redhat.com,
+	hanchuanhua@oppo.com,
+	kasong@tencent.com,
+	linux-kernel@vger.kernel.org,
+	ryan.roberts@arm.com,
+	v-songbaohua@oppo.com,
+	ying.huang@intel.com
+Subject: [PATCH v2] mm: Extend 'usage' parameter so that cluster_swap_free_nr() can be reused
+Date: Tue,  9 Jul 2024 13:21:22 +1200
+Message-Id: <20240709012122.16994-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708112445.2690631-1-ryan.roberts@arm.com>
- <CAGsJ_4zH72FyLq5gJm215oiWrtd6uf40L_F1UO6cFZ4sy7qt0A@mail.gmail.com>
- <744749c3-4506-40d9-ac48-0dbc59689f92@arm.com> <10b201b1-53d3-4f62-be8e-996aa95d2b99@redhat.com>
-In-Reply-To: <10b201b1-53d3-4f62-be8e-996aa95d2b99@redhat.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Tue, 9 Jul 2024 09:21:09 +0800
-Message-ID: <CAK1f24mjcukbjBnrrO3TLZb1KdVhSxqL4_jsob5E_FAjGD4mdQ@mail.gmail.com>
-Subject: Re: [PATCH v1] mm: shmem: Rename mTHP shmem counters
-To: David Hildenbrand <david@redhat.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, Barry Song <baohua@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Matthew Wilcox <willy@infradead.org>, Zi Yan <ziy@nvidia.com>, 
-	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 9, 2024 at 4:50=E2=80=AFAM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 08.07.24 14:29, Ryan Roberts wrote:
-> > On 08/07/2024 12:36, Barry Song wrote:
-> >> On Mon, Jul 8, 2024 at 11:24=E2=80=AFPM Ryan Roberts <ryan.roberts@arm=
-.com> wrote:
-> >>>
-> >>> The legacy PMD-sized THP counters at /proc/vmstat include
-> >>> thp_file_alloc, thp_file_fallback and thp_file_fallback_charge, which
-> >>> rather confusingly refer to shmem THP and do not include any other ty=
-pes
-> >>> of file pages. This is inconsistent since in most other places in the
-> >>> kernel, THP counters are explicitly separated for anon, shmem and fil=
-e
-> >>> flavours. However, we are stuck with it since it constitutes a user A=
-BI.
-> >>>
-> >>> Recently, commit 66f44583f9b6 ("mm: shmem: add mTHP counters for
-> >>> anonymous shmem") added equivalent mTHP stats for shmem, keeping the
-> >>> same "file_" prefix in the names. But in future, we may want to add
-> >>> extra stats to cover actual file pages, at which point, it would all
-> >>> become very confusing.
-> >>>
-> >>> So let's take the opportunity to rename these new counters "shmem_"
-> >>> before the change makes it upstream and the ABI becomes immutable.
-> >>
-> >> Personally, I think this approach is much clearer. However, I recall
-> >> we discussed this
-> >> before [1], and it seems that inconsistency is a concern?
-> >
-> > Embarrassingly, I don't recall that converstation at all :-| but at lea=
-st what I
-> > said then is consistent with what I've done in this patch.
-> >
-> > I think David's conclusion from that thread was to call them FILE_, and=
- add both
-> > shmem and pagecache counts to those counters, meaning we can keep the s=
-ame name
-> > as legacy THP counters. But those legacy THP counters only count shmem,=
- and I
-> > don't think we would get away with adding pagecache counts to those at =
-this
-> > point? (argument: they have been around for long time and there is a ri=
-sk that
-> > user space relies on them and if they were to dramatically increase due=
- to
-> > pagecache addition now that could break things). In that case, there is=
- still
-> > inconsistency, but its worse; the names are consistent but the semantic=
-s are
-> > inconsistent.
-> >
-> > So my vote is to change to SHMEM_ as per this patch :)
->
-> I also forgot most of the discussion, but these 3 legacy counters are
-> really only (currently) incremented for shmem. I think my idea was to
-> keep everything as FILE_ for now, maybe at some point make the pagecache
-> also use them, and then maybe have separate FILE_ + SHMEM_.
->
-> But yeah, likely it's best to only have "shmem" here for now, because
-> who knows what we can actually change about the legacy counters. But
-> it's always though messing with legacy stuff that is clearly suboptimal .=
-..
+From: Barry Song <v-songbaohua@oppo.com>
 
-Couldn't agree more! It's never an easy task to handle such matters :)
-Perhaps, the time has come for us to separate FILE_ and SHMEM_.
+Extend a usage parameter so that cluster_swap_free_nr() can be reused by
+both swapcache_clear() and swap_free().
+__swap_entry_free() is quite similar but more tricky as it requires the
+return value of __swap_entry_free_locked() which cluster_swap_free_nr()
+doesn't support.
 
-Thanks,
-Lance
+Cc: "Huang, Ying" <ying.huang@intel.com>
+Cc: Chris Li <chrisl@kernel.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Kairui Song <kasong@tencent.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Chuanhua Han <hanchuanhua@oppo.com>
+Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+---
+ mm/swapfile.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index f7224bc1320c..c097c513db02 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -1352,7 +1352,8 @@ static void swap_entry_free(struct swap_info_struct *p, swp_entry_t entry)
+ }
+ 
+ static void cluster_swap_free_nr(struct swap_info_struct *sis,
+-		unsigned long offset, int nr_pages)
++		unsigned long offset, int nr_pages,
++		unsigned char usage)
+ {
+ 	struct swap_cluster_info *ci;
+ 	DECLARE_BITMAP(to_free, BITS_PER_LONG) = { 0 };
+@@ -1362,7 +1363,7 @@ static void cluster_swap_free_nr(struct swap_info_struct *sis,
+ 	while (nr_pages) {
+ 		nr = min(BITS_PER_LONG, nr_pages);
+ 		for (i = 0; i < nr; i++) {
+-			if (!__swap_entry_free_locked(sis, offset + i, 1))
++			if (!__swap_entry_free_locked(sis, offset + i, usage))
+ 				bitmap_set(to_free, i, 1);
+ 		}
+ 		if (!bitmap_empty(to_free, BITS_PER_LONG)) {
+@@ -1396,7 +1397,7 @@ void swap_free_nr(swp_entry_t entry, int nr_pages)
+ 
+ 	while (nr_pages) {
+ 		nr = min_t(int, nr_pages, SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
+-		cluster_swap_free_nr(sis, offset, nr);
++		cluster_swap_free_nr(sis, offset, nr, 1);
+ 		offset += nr;
+ 		nr_pages -= nr;
+ 	}
+@@ -3492,15 +3493,9 @@ int swapcache_prepare(swp_entry_t entry)
+ 
+ void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry)
+ {
+-	struct swap_cluster_info *ci;
+ 	unsigned long offset = swp_offset(entry);
+-	unsigned char usage;
+ 
+-	ci = lock_cluster_or_swap_info(si, offset);
+-	usage = __swap_entry_free_locked(si, offset, SWAP_HAS_CACHE);
+-	unlock_cluster_or_swap_info(si, ci);
+-	if (!usage)
+-		free_swap_slot(entry);
++	cluster_swap_free_nr(si, offset, 1, SWAP_HAS_CACHE);
+ }
+ 
+ struct swap_info_struct *swp_swap_info(swp_entry_t entry)
+-- 
+2.34.1
+
 
