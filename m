@@ -1,88 +1,84 @@
-Return-Path: <linux-kernel+bounces-246246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 204EF92BF88
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:18:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 583E792BFAD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0EA82889D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:18:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E2762818BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD7819DF4F;
-	Tue,  9 Jul 2024 16:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C381A0724;
+	Tue,  9 Jul 2024 16:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KPjq8vya"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PRIbztU0"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E2C158A36;
-	Tue,  9 Jul 2024 16:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE671A01A5
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 16:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720541873; cv=none; b=cDYfY+pY6zwNZDDUWRJCS9HfWrP3Eg77tugm/by2tv1VeoFrA2S5nILTAgF1Z8xBrj7X68+hQ51+a7kEAMrszMaq+vCtY3GYrkAmPN985BvTcOe9Cpv60MgG/2EQzI5ARIPi0FBJPs90DanGWcRqRZ9r50JR69upKT8XK6NINco=
+	t=1720542035; cv=none; b=TdFEl8kUeYk53orS4T/yvAMu12Eadd8o2fgm3uAefP8DKlBJo86A/gJ69LFAgPW8lhawn5K4Cwl6aYZ3ALiCyx7FyQEXKXu9lnoZvdSV8N1HHT00oNO3Qqd7wguAttPPpEyQJCmqluzfUPJ1VeDYb4vmhFlWMTMPLFRdxvPatD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720541873; c=relaxed/simple;
-	bh=TamJKovQUEkt3niIxAxyUtA7ak5N59S2pM5XNNELtW8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tHqRsN0cskmWwd/Lu2jbciK8WwDZuJ85DXVUouWiJO3G/1yT39z0GJ2pjvDm1JmrcjwenBco7HbtOEaI0/TMhJhhWHjdCCnwHpR2bjiLwA3tC2umlUsAS8pU8P5+7qfz0jy64IttDyRWDgWZNRoDjZgx0uWCuUSMCkOFmtvoeDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KPjq8vya; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720541872; x=1752077872;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=TamJKovQUEkt3niIxAxyUtA7ak5N59S2pM5XNNELtW8=;
-  b=KPjq8vyaTKXoIS7MrmvYA9UikQxWxSq+DVsB1SWkNnVjYZK/prthVYCp
-   zYkvOaQw8Q1Kuck5Zjp9rTz48FM9f6yEO99NG4c3USwb1o1cqtZOIE0xf
-   hmMwsvrK7u20AMR0EVDNcRYOmItW6KbAl8hmOrXc2FyILEI3GTd3pMfPo
-   Tx54mS1U2CI/5Q5eOnauztnERWOWNArfSoQa3gspiHLxdRl4+5nr+LA8h
-   BZRaA5SVH6yyyC7RVn6MKfabeUWTdYGnX9b9NlpnS7lbNSD5tB7mdoaBp
-   j9V/ofoidRKioQCQ9/QG6Wh2TdOG/tXJFSW236aLJS3QABMqetFdFO3jp
-   Q==;
-X-CSE-ConnectionGUID: sJ6lhNzcTbOZuT1BurEX3g==
-X-CSE-MsgGUID: DKdo2jo7Stat8JOLIN9NtA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11128"; a="28971255"
-X-IronPort-AV: E=Sophos;i="6.09,195,1716274800"; 
-   d="scan'208";a="28971255"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 09:17:51 -0700
-X-CSE-ConnectionGUID: 4BkvPTidQY6Z03JB80wrOQ==
-X-CSE-MsgGUID: X5teJpiRSRKh9Pg/QDXp0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,195,1716274800"; 
-   d="scan'208";a="47989294"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 09:17:49 -0700
-Received: from punajuuri.localdomain (punajuuri.localdomain [192.168.240.130])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 2293711F811;
-	Tue,  9 Jul 2024 19:17:45 +0300 (EEST)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.96)
-	(envelope-from <sakari.ailus@linux.intel.com>)
-	id 1sRDXF-00Fd1R-0A;
-	Tue, 09 Jul 2024 19:17:45 +0300
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: linux-media@vger.kernel.org
-Cc: Greg KH <greg@kroah.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	David Plowman <david.plowman@raspberrypi.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Naushir Patuck <naush@raspberrypi.com>,
-	Nick Hollinghurst <nick.hollinghurst@raspberrypi.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: [PATCH 1/1] media: raspberrypi: Switch to remove_new
-Date: Tue,  9 Jul 2024 19:17:35 +0300
-Message-Id: <20240709161735.3724913-1-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240709163715.3bcd6ab3@canb.auug.org.au>
-References: <20240709163715.3bcd6ab3@canb.auug.org.au>
+	s=arc-20240116; t=1720542035; c=relaxed/simple;
+	bh=5st73kOX6niI7dZR/91fmwwqnxTqrZu6i3fehCAZ5zc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OUL2fhrZg9lWzNZFoP/ii3tN9UDmV5GEFFskzcA4LwM5MwfidLqN3n9gTEkYoH5AlKMMYpr/9Lr80c4k6iUOWgpC+2dDss+j27heSk3U4bOWQ6PMhBdkOKzehtkfassq1JqariMmWoWYloL4LKn/wsVTyeKNBhTlv5mLbYcJCV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PRIbztU0; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-426526d30aaso29715875e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 09:20:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720542031; x=1721146831; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=z9DRYaK086JGmwgg9/og5NAl7NqfChxitmX14BDZNew=;
+        b=PRIbztU0tbMxRl0zaoaTw4hCPAio8NOqfA4bAJSk+TyP85VQ8AO2syit4mQ+qQ5O/C
+         Ddq1NPYlvt83LODkPD5PpJB1+w1477Ql9nwQIV28Dj+DHvDi3yMA3BuJ6Tnj1rgXRVWx
+         gTNKSaF/seXjYPNrQrBcFqL8it8TPMoMEK/EPzBSfHmU3tS6SbBVHg1DB+Ez+EQioKXC
+         Sb13pzknsUGJMqGYH4p8Neo1PzNYU8QcxbKFZR0qYYKHvKxYgUYiB72PsuqezrbYyTnd
+         3DXThzKXRjo0sNWM7JLfN3sk+RiNjRfrQRXyloK8paif8fEI7lhNndHIG6GOp7/XO8+x
+         YKzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720542031; x=1721146831;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z9DRYaK086JGmwgg9/og5NAl7NqfChxitmX14BDZNew=;
+        b=fYfeb4BOAApgPhphZ6SZBHxZRwnVMQ6Fhh4umeWoNeF2hRiIKXGkeYdPKPkm5xzrQY
+         RDL7UHnFbpGxiXjDsFyyCFC9GO0Ak6sJx92MBHPtwkFdTTCKzbRw/NBRr41sVoKVA0SA
+         CrG1SwT6SbAeMWSAhw8mhm0YY3HaNuJ3c0NKr7B/1RRXFu5xOPHd5dIs8B8tIQJZneyu
+         3GLegEj+8/IYnPb/L3qiD/D81H5sQQk0wLRFR545uPi2tIXdi9Pmhb08Rj18D4Xgzu0p
+         BM8BzHIaK3FmaTGfsuUjhD7uOBLbQ8UiBI+nl7XVptZAhtt2DpvGjpz2WBnjhYf6RG0r
+         ju6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVUSwPiI+3n6CH2Dq6IVCIcHL71lJgRskdshvSEoG3rS50QCSHkzoAIJSaUtzpaJsys9XRitG9u8eMV1RbbFLr9iqzS+fnb1Y5aZf7E
+X-Gm-Message-State: AOJu0YxL0GTBDb8+V3ZWjFgvYEShM3PcHzLM9UUVqzx1ge/5lGUz9U1T
+	WjPefg4fFa9KZgF3FvJmGq2eRqEmRIheETX8meBz7yQyjkWJj0KX6U8oj1/6aqw=
+X-Google-Smtp-Source: AGHT+IH20yAq+roBl8gRs1fFr53+7Ufp7oIBFU8tJB9uf/asNe3YYKfGca9kCcuwlS3kQ8aidhWhUg==
+X-Received: by 2002:a5d:51d2:0:b0:367:8f29:f7ae with SMTP id ffacd0b85a97d-367ceacb46amr1892463f8f.49.1720542031527;
+        Tue, 09 Jul 2024 09:20:31 -0700 (PDT)
+Received: from rayyan-pc.broadband ([2a0a:ef40:ee7:2401:197d:e048:a80f:bc44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde7e07fsm2966955f8f.17.2024.07.09.09.20.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 09:20:31 -0700 (PDT)
+From: Rayyan Ansari <rayyan.ansari@linaro.org>
+To: devicetree@vger.kernel.org
+Cc: Rayyan Ansari <rayyan.ansari@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>
+Subject: [PATCH 0/4] dt-bindings: pinctrl: convert remaining qcom bindings to yaml
+Date: Tue,  9 Jul 2024 17:17:52 +0100
+Message-ID: <20240709162009.5166-1-rayyan.ansari@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,60 +87,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+Hi,
+The following patches convert all remaining old text bindings for
+Qualcomm pinctrl to yaml, so device trees can be validated against the
+schema.
 
-The remove callback's return value is about to change from int to void,
-this is done by commit 0edb555a65d1 ("platform: Make
-platform_driver::remove() return void"). Prepare for merging the patch by
-switching the PiSP driver from remove to remove_new callback.
+Thanks,
+Rayyan
 
-Fixes: 12187bd5d4f8 ("media: raspberrypi: Add support for PiSP BE")
-Co-developed-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Acked-by: Naushir Patuck <naush@raspberrypi.com>
-Acked-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
----
-Hi folks,
+Rayyan Ansari (4):
+  dt-bindings: pinctrl: qcom,apq8064-pinctrl: convert to dtschema
+  dt-bindings: pinctrl: qcom,ipq8064-pinctrl: convert to dtschema
+  dt-bindings: pinctrl: qcom,ipq4019-pinctrl: convert to dtschema
+  dt-bindings: pinctrl: qcom,apq8084-pinctrl: convert to dtschema
 
-This patch improves the original 'linux-next: build failure after merge of
-the driver-core tree' patch. I kept the acks, hopefully that's fine.
+ .../bindings/pinctrl/qcom,apq8064-pinctrl.txt |  95 ---------
+ .../pinctrl/qcom,apq8064-pinctrl.yaml         | 110 ++++++++++
+ .../bindings/pinctrl/qcom,apq8084-pinctrl.txt | 188 ------------------
+ .../pinctrl/qcom,apq8084-pinctrl.yaml         | 129 ++++++++++++
+ .../bindings/pinctrl/qcom,ipq4019-pinctrl.txt |  85 --------
+ .../pinctrl/qcom,ipq4019-pinctrl.yaml         | 102 ++++++++++
+ .../bindings/pinctrl/qcom,ipq8064-pinctrl.txt | 101 ----------
+ .../pinctrl/qcom,ipq8064-pinctrl.yaml         | 108 ++++++++++
+ 8 files changed, 449 insertions(+), 469 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,apq8064-pinctrl.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,apq8084-pinctrl.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq4019-pinctrl.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq8064-pinctrl.yaml
 
- drivers/media/platform/raspberrypi/pisp_be/pisp_be.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c b/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
-index e74df5b116dc..65ff2382cffe 100644
---- a/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
-+++ b/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
-@@ -1756,7 +1756,7 @@ static int pispbe_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
--static int pispbe_remove(struct platform_device *pdev)
-+static void pispbe_remove(struct platform_device *pdev)
- {
- 	struct pispbe_dev *pispbe = platform_get_drvdata(pdev);
- 
-@@ -1765,8 +1765,6 @@ static int pispbe_remove(struct platform_device *pdev)
- 	pispbe_runtime_suspend(pispbe->dev);
- 	pm_runtime_dont_use_autosuspend(pispbe->dev);
- 	pm_runtime_disable(pispbe->dev);
--
--	return 0;
- }
- 
- static const struct dev_pm_ops pispbe_pm_ops = {
-@@ -1783,7 +1781,7 @@ MODULE_DEVICE_TABLE(of, pispbe_of_match);
- 
- static struct platform_driver pispbe_pdrv = {
- 	.probe		= pispbe_probe,
--	.remove		= pispbe_remove,
-+	.remove_new	= pispbe_remove,
- 	.driver		= {
- 		.name	= PISPBE_NAME,
- 		.of_match_table = pispbe_of_match,
 -- 
-2.39.2
+2.45.2
 
 
