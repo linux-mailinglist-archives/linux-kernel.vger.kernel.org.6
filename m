@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-245370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2235F92B1BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:03:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D8CF92B1BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0F9C1C214BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:03:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E242DB222AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F3415357F;
-	Tue,  9 Jul 2024 08:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A337E152526;
+	Tue,  9 Jul 2024 08:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YhK8TBv/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aedTrZt4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9022F152789
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5605715216A
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720512167; cv=none; b=CH+hQWDraZHhGGI7Ai28O99mvZxQXhEPH2ktDKTaxM/iRE7a+OSg84UNLTYxwlQA1kRJcQIUMhoek5oIxH5hr0uFNZGs10nNqI+JjHWwx2mHyPVqORDeezkynK/ovqd/BiZb2UvNmnAsH7JcuKDvlLGZ4qFp9MQmcmOUPQ1kYfk=
+	t=1720512177; cv=none; b=UVnBS+CzMjTBW7ElhGiHfOxkLMf3IQzaWP6s4Le73Wg3LuDTNLNn602c69coJYob3UFHcUF+LR6mb8HIeqWYmyTepu/xfQOibzmBtEwFj6FpVK5vERGdl4oyBE5daFP9Uw9uRVUJg5p6Gu4Hnn4QruReiWSoTRubctBq0vDfJI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720512167; c=relaxed/simple;
-	bh=doJuD6Ad6+WLmrSoHdYJY3eqzbQod0yKfr5czeLyavM=;
+	s=arc-20240116; t=1720512177; c=relaxed/simple;
+	bh=DsrKoN1WZi6Obw7rOLPd2tvZyunyxpyVe2d4CjqYiag=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VpPmc42vQHEe25WGwcd1MGVthCdAso7f9nRLFY9mAn5LVEdaE8opc4RBLt3qNCF8LihrQ/GmYBjdyEmVoc1YcrD8nof/3HIgKIELqigt0FXfR5K6rwG9u/hrBuy+DlDud1pwXrHxOGIvTIAVEX8Vjp8wp0mMR8WdXN0BYLid4jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YhK8TBv/; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=clBfAfI6aBX8n0LNgsO3WcMLKDOCTk40bh3SjIuvYrFm2X4CRC8//dG0xXwl6M2rwPRbCUJ0hJfeGTz9Cp0Z8nUCcSXIsdz0Hnn8L1kV/YKVGq5RYxo0Y/W37ktvKsZfflQEZx8irHGUN675uCW6R/pwBsj2XA2qUip2/+dETfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aedTrZt4; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720512164;
+	s=mimecast20190719; t=1720512175;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dHCaS+jY2Jg8S88jwIg+mBIv5Lor8XLl5Lwa81p6b8w=;
-	b=YhK8TBv/AXKFUC8vGNSP0sO6k/+ssQkwEYTYZPzOxaYBCw000+y7o3n3zHnd6/GGsiEhvJ
-	KeQ3DwIDzBQUoOTxy8gw9yYvKKmM3Bsn5GY+pwXboEz1SkZwNrp6IwE79EK8osXIJd4tSJ
-	tF3XvVNTiEpa6P2Mpo0yR2K7GOp2p+M=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+	bh=FGA/3PS1XFY7Rh8YVbIU/85xe2LD8/jH4SJZgsPBNrM=;
+	b=aedTrZt4MR1QpJHwkPhByWexbtcSskHi09myy7T8+EhN5pCMWgR7SFNqcaUPf2LQfnHYom
+	/05xWcsY79IeHP6KETfzxkfAcFlCEPedApryDGZp2/imm81dzUXQQ6n8v/BZhO1nEoTD2h
+	Olw0DMkrh6ALZD1JxCUgcMvxU6/pqpk=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-201-nT-aBU6PO7epmALKVrmakw-1; Tue,
- 09 Jul 2024 04:02:41 -0400
-X-MC-Unique: nT-aBU6PO7epmALKVrmakw-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-614-FrQOoc54MbGdRBZ2MchZIw-1; Tue,
+ 09 Jul 2024 04:02:48 -0400
+X-MC-Unique: FrQOoc54MbGdRBZ2MchZIw-1
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B70B11977338;
-	Tue,  9 Jul 2024 08:02:39 +0000 (UTC)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E07451955F0D;
+	Tue,  9 Jul 2024 08:02:46 +0000 (UTC)
 Received: from localhost.localdomain (unknown [10.72.112.184])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 08B863000181;
-	Tue,  9 Jul 2024 08:02:32 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6C24A3000184;
+	Tue,  9 Jul 2024 08:02:40 +0000 (UTC)
 From: Jason Wang <jasowang@redhat.com>
 To: mst@redhat.com,
 	jasowang@redhat.com,
@@ -69,9 +69,9 @@ Cc: virtualization@lists.linux.dev,
 	netdev@vger.kernel.org,
 	Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>,
 	Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
-Subject: [PATCH net-next v3 1/3] virtio: rename virtio_config_enabled to virtio_config_core_enabled
-Date: Tue,  9 Jul 2024 16:02:12 +0800
-Message-ID: <20240709080214.9790-2-jasowang@redhat.com>
+Subject: [PATCH net-next v3 2/3] virtio: allow driver to disable the configure change notification
+Date: Tue,  9 Jul 2024 16:02:13 +0800
+Message-ID: <20240709080214.9790-3-jasowang@redhat.com>
 In-Reply-To: <20240709080214.9790-1-jasowang@redhat.com>
 References: <20240709080214.9790-1-jasowang@redhat.com>
 Precedence: bulk
@@ -83,129 +83,121 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Following patch will allow the config interrupt to be disabled by a
-specific driver via another boolean. So this patch renames
-virtio_config_enabled and relevant helpers to
-virtio_config_core_enabled.
+Sometime, it would be useful to disable the configure change
+notification from the driver. So this patch allows this by introducing
+a variable config_change_driver_disabled and only allow the configure
+change notification callback to be triggered when it is allowed by
+both the virtio core and the driver. It is set to false by default to
+hold the current semantic so we don't need to change any drivers.
+
+The first user for this would be virtio-net.
 
 Cc: Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>
 Cc: Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
 Signed-off-by: Jason Wang <jasowang@redhat.com>
 ---
- drivers/virtio/virtio.c | 22 +++++++++++-----------
- include/linux/virtio.h  |  4 ++--
- 2 files changed, 13 insertions(+), 13 deletions(-)
+ drivers/virtio/virtio.c | 39 ++++++++++++++++++++++++++++++++++++---
+ include/linux/virtio.h  |  7 +++++++
+ 2 files changed, 43 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
-index b968b2aa5f4d..73bab89b5326 100644
+index 73bab89b5326..23a96fbc2810 100644
 --- a/drivers/virtio/virtio.c
 +++ b/drivers/virtio/virtio.c
-@@ -127,7 +127,7 @@ static void __virtio_config_changed(struct virtio_device *dev)
+@@ -127,10 +127,12 @@ static void __virtio_config_changed(struct virtio_device *dev)
  {
  	struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
  
--	if (!dev->config_enabled)
-+	if (!dev->config_core_enabled)
+-	if (!dev->config_core_enabled)
++	if (!dev->config_core_enabled || dev->config_driver_disabled)
  		dev->config_change_pending = true;
- 	else if (drv && drv->config_changed)
+-	else if (drv && drv->config_changed)
++	else if (drv && drv->config_changed) {
  		drv->config_changed(dev);
-@@ -143,17 +143,17 @@ void virtio_config_changed(struct virtio_device *dev)
++		dev->config_change_pending = false;
++	}
+ }
+ 
+ void virtio_config_changed(struct virtio_device *dev)
+@@ -143,6 +145,38 @@ void virtio_config_changed(struct virtio_device *dev)
  }
  EXPORT_SYMBOL_GPL(virtio_config_changed);
  
--static void virtio_config_disable(struct virtio_device *dev)
-+static void virtio_config_core_disable(struct virtio_device *dev)
++/**
++ * virtio_config_driver_disable - disable config change reporting by drivers
++ * @dev: the device to reset
++ *
++ * This is only allowed to be called by a driver and disalbing can't
++ * be nested.
++ */
++void virtio_config_driver_disable(struct virtio_device *dev)
++{
++	spin_lock_irq(&dev->config_lock);
++	dev->config_driver_disabled = true;
++	spin_unlock_irq(&dev->config_lock);
++}
++EXPORT_SYMBOL_GPL(virtio_config_driver_disable);
++
++/**
++ * virtio_config_driver_enable - enable config change reporting by drivers
++ * @dev: the device to reset
++ *
++ * This is only allowed to be called by a driver and enabling can't
++ * be nested.
++ */
++void virtio_config_driver_enable(struct virtio_device *dev)
++{
++	spin_lock_irq(&dev->config_lock);
++	dev->config_driver_disabled = false;
++	if (dev->config_change_pending)
++		__virtio_config_changed(dev);
++	spin_unlock_irq(&dev->config_lock);
++}
++EXPORT_SYMBOL_GPL(virtio_config_driver_enable);
++
+ static void virtio_config_core_disable(struct virtio_device *dev)
  {
  	spin_lock_irq(&dev->config_lock);
--	dev->config_enabled = false;
-+	dev->config_core_enabled = false;
+@@ -156,7 +190,6 @@ static void virtio_config_core_enable(struct virtio_device *dev)
+ 	dev->config_core_enabled = true;
+ 	if (dev->config_change_pending)
+ 		__virtio_config_changed(dev);
+-	dev->config_change_pending = false;
  	spin_unlock_irq(&dev->config_lock);
  }
  
--static void virtio_config_enable(struct virtio_device *dev)
-+static void virtio_config_core_enable(struct virtio_device *dev)
- {
- 	spin_lock_irq(&dev->config_lock);
--	dev->config_enabled = true;
-+	dev->config_core_enabled = true;
- 	if (dev->config_change_pending)
- 		__virtio_config_changed(dev);
- 	dev->config_change_pending = false;
-@@ -322,7 +322,7 @@ static int virtio_dev_probe(struct device *_d)
- 	if (drv->scan)
- 		drv->scan(dev);
- 
--	virtio_config_enable(dev);
-+	virtio_config_core_enable(dev);
- 
- 	return 0;
- 
-@@ -340,7 +340,7 @@ static void virtio_dev_remove(struct device *_d)
- 	struct virtio_device *dev = dev_to_virtio(_d);
- 	struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
- 
--	virtio_config_disable(dev);
-+	virtio_config_core_disable(dev);
- 
- 	drv->remove(dev);
- 
-@@ -455,7 +455,7 @@ int register_virtio_device(struct virtio_device *dev)
- 		goto out_ida_remove;
- 
- 	spin_lock_init(&dev->config_lock);
--	dev->config_enabled = false;
-+	dev->config_core_enabled = false;
- 	dev->config_change_pending = false;
- 
- 	INIT_LIST_HEAD(&dev->vqs);
-@@ -512,14 +512,14 @@ int virtio_device_freeze(struct virtio_device *dev)
- 	struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
- 	int ret;
- 
--	virtio_config_disable(dev);
-+	virtio_config_core_disable(dev);
- 
- 	dev->failed = dev->config->get_status(dev) & VIRTIO_CONFIG_S_FAILED;
- 
- 	if (drv && drv->freeze) {
- 		ret = drv->freeze(dev);
- 		if (ret) {
--			virtio_config_enable(dev);
-+			virtio_config_core_enable(dev);
- 			return ret;
- 		}
- 	}
-@@ -578,7 +578,7 @@ int virtio_device_restore(struct virtio_device *dev)
- 	if (!(dev->config->get_status(dev) & VIRTIO_CONFIG_S_DRIVER_OK))
- 		virtio_device_ready(dev);
- 
--	virtio_config_enable(dev);
-+	virtio_config_core_enable(dev);
- 
- 	return 0;
- 
 diff --git a/include/linux/virtio.h b/include/linux/virtio.h
-index 96fea920873b..a6f6df72f01a 100644
+index a6f6df72f01a..2be73de6f1f3 100644
 --- a/include/linux/virtio.h
 +++ b/include/linux/virtio.h
-@@ -115,7 +115,7 @@ struct virtio_admin_cmd {
-  * struct virtio_device - representation of a device using virtio
+@@ -116,6 +116,8 @@ struct virtio_admin_cmd {
   * @index: unique position on the virtio bus
   * @failed: saved value for VIRTIO_CONFIG_S_FAILED bit (for restore)
-- * @config_enabled: configuration change reporting enabled
-+ * @config_core_enabled: configuration change reporting enabled by core
+  * @config_core_enabled: configuration change reporting enabled by core
++ * @config_driver_disabled: configuration change reporting disabled by
++ *                          a driver
   * @config_change_pending: configuration change reported while disabled
   * @config_lock: protects configuration change reporting
   * @vqs_list_lock: protects @vqs.
-@@ -132,7 +132,7 @@ struct virtio_admin_cmd {
- struct virtio_device {
+@@ -133,6 +135,7 @@ struct virtio_device {
  	int index;
  	bool failed;
--	bool config_enabled;
-+	bool config_core_enabled;
+ 	bool config_core_enabled;
++	bool config_driver_disabled;
  	bool config_change_pending;
  	spinlock_t config_lock;
  	spinlock_t vqs_list_lock;
+@@ -163,6 +166,10 @@ void __virtqueue_break(struct virtqueue *_vq);
+ void __virtqueue_unbreak(struct virtqueue *_vq);
+ 
+ void virtio_config_changed(struct virtio_device *dev);
++
++void virtio_config_driver_disable(struct virtio_device *dev);
++void virtio_config_driver_enable(struct virtio_device *dev);
++
+ #ifdef CONFIG_PM_SLEEP
+ int virtio_device_freeze(struct virtio_device *dev);
+ int virtio_device_restore(struct virtio_device *dev);
 -- 
 2.31.1
 
