@@ -1,85 +1,58 @@
-Return-Path: <linux-kernel+bounces-246673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2551592C50A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:58:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 041F092C50D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:59:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4B14282814
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:57:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 853821F21CDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A800317B027;
-	Tue,  9 Jul 2024 20:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C418182A6C;
+	Tue,  9 Jul 2024 20:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="ZoSuk6lv"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mn+8JYl2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85661B86DD
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 20:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD491B86DD;
+	Tue,  9 Jul 2024 20:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720558672; cv=none; b=KbBNiF+Uv0pECapxYI+iXpanb2JFoJ2MoHv/+3cHCBL+eJWQmsBw+bD/CAOYQIgm7gGVWBILSwv9/CmVGU+w99nbmUrjKF5VdCNK2+5LRTXe5nA35A5yI6jkBPdoaZLilBCqXd6HiTih74GKcoxM4OlLDLCaPIVy7A4joh7GMI8=
+	t=1720558781; cv=none; b=k+0LNy7A67aUSi3pJsWJVZ9UUyGWJt/ohfcwOOusSStNSozC6nY0/s6ji8FKUrZ8Cnr/5ZlTW+YtrxafB44wVU1LXgD9rwS7Lq6Zc25E55m/EJT5oqfIpqlStArJtYiKff28Msgf1cc8IDMRkwvQfOZzw50BMzT8YfvFUFuI8sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720558672; c=relaxed/simple;
-	bh=9HcRm9CCFeUbO+tgsv/WnNg17iWdStnDoYqPky1rEDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QSv4Mk7G7f0dFZ7oGzPWftfsWzrgsnoKt2suSl/MPatY+1iKeKAPZo+ybHRCKYiPIltfQh/keUnUTN5F9kErDAf9s4sAIF8L0MaKstMiIhJsQx+IRUidCfpIXbq4wo4cPMt4uqCjujl6PZ3HYV6dSPGcnVS7OL9rCYhHptYna7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=ZoSuk6lv; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-25e076f79d5so2697646fac.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 13:57:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1720558670; x=1721163470; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7JFkFgEMwAFqLLgQ8q+9F2STswPj9iSERKoMxl+rv1I=;
-        b=ZoSuk6lvI9ogRj2a5Q6tFojnAI61+NTvaSyFkeLqfAVLCiHsUZLs/YE6NBekeFaDL1
-         VAyD0nmtjn36lKAxSbw6oZNnJEI8GI58XhSt1CPTxaTUf1NpfobpzAHQQDXa9sDeit0e
-         W/5VwP+M6RYk9BkoFVPvDBZMJXNWMgyeogUn9YgqTkfZFIB+u6+18hbcK2LTrGGMVOVQ
-         NxmSXniVgBphoMEGp6UOTgwxJUoGByKFOWG6MrKevDOsA7U2CY7T6q3h48D2LFyTCE6P
-         oWxeiVtilLzwXLjPFEQrfhubdkh2izoGcqMarzTHo2m8VaosuzAYyVN/dhM3j1TuJ/7G
-         PDaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720558670; x=1721163470;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7JFkFgEMwAFqLLgQ8q+9F2STswPj9iSERKoMxl+rv1I=;
-        b=bpo08aD9AN+XmI7DFt2b5oC4nMdb2Mxm1H56h18T3OdDlzvov78FEbysPfH/XodtnS
-         GDlh4+0EX/OwKeMVAwGL8ZIivrQtaa2nV0CWi2nklAUnVtAGbN7sslz1WPsE1wUD8sg+
-         trB7fPnbCO0Tm7IPrIpX7f/2G79gBGTUpU5U9Fj1TVFyMTgEhP8whq/6ZMxS4B5NBpKm
-         iGROqSwp7biHUfGbhl0/AumSya/UMD3kopWZIlcTjoySKCilDNofFQ9X99bRjLX8tSNI
-         BPZbLNeX0QpcL/bU6F6T+QpKBErH1je/T+PKz3fdWRUSMtvdGUnJkpjs7+CMCJryHG8I
-         ZTsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdVdxkW859VZKarst1uc92wb6tdmxAi0yifbltQMqaqbvSLXRVUjuwkpWuSrcRo47jOrSIjtNgSQNJYWi3zj3U+bY+eb80xQ3rkb2W
-X-Gm-Message-State: AOJu0Yx6jL4CGMWf6bGtoAbGxOjGhScTmdFTgWoeE9ddKV1EhRgkdR05
-	N+S/imSOZaFs8rCMSSam89cZthDfEVnNEwIRrd2yVnUG9H6Nfufu7uTyy0vgrfYR+mUtSF8yrBk
-	v
-X-Google-Smtp-Source: AGHT+IFM6JPO00EDOYIlswbIOR4HoV/jvewcxyTuZsslE/z05OqIkhaPvLWDkjiK4Ps+QOGApj1kFQ==
-X-Received: by 2002:a05:6871:2887:b0:25c:b3c9:ecda with SMTP id 586e51a60fabf-25eaebdb520mr2914029fac.38.1720558669887;
-        Tue, 09 Jul 2024 13:57:49 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4398039csm2269167b3a.154.2024.07.09.13.57.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 13:57:49 -0700 (PDT)
-Date: Tue, 9 Jul 2024 13:57:47 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Xiao Wang <xiao.w.wang@intel.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, atishp@atishpatra.org,
-	anup@brainfault.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers/perf: riscv: Remove redundant macro check
-Message-ID: <Zo2kSxsJkdkBdBEW@ghost>
-References: <20240708121224.1148154-1-xiao.w.wang@intel.com>
- <20240708-wildcard-denim-12de7fae795b@spud>
- <Zo2dtuv0quQ7FwtK@ghost>
- <20240709-unengaged-handgrip-56a5c7b3e1d1@spud>
+	s=arc-20240116; t=1720558781; c=relaxed/simple;
+	bh=HNdKvXLI7TM6d3cSHLxTHT3u4cUef/wDMLp/LvR/pSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=EnnMcoHz1zR62eALS+XHsFiJ8CucGN+zIVgvK9gwzE/ukZDcx83ga29rx1M97YpkA56IwGOvwVLalufElE6khBxsv2+IgrEBS+5mHg+0dwMP7BWvIzIApngmFN0Yz/pCygZNT8lnHpL8ndFmjbr2TkysTciqqAe0ia2nI9A3sD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mn+8JYl2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEBD0C3277B;
+	Tue,  9 Jul 2024 20:59:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720558781;
+	bh=HNdKvXLI7TM6d3cSHLxTHT3u4cUef/wDMLp/LvR/pSI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=mn+8JYl2FfrXayOEfIf4H1W0qJyAEYOJonZj2sptzGs8meU6UBBR0Qoj8Gt71Z0lE
+	 q+JS2ps8nvCppTzRrpxnOb3VvVIN8rRdO/iZSX1rhTEJB6nhkauxc6tMqDMJCgmLpc
+	 zDELXtiLhsDq6UN8QtpHaJGjY8Kjl7mtKFpLiT6fHmnz7AZzOb4bAQ6j9x7t9JXBqo
+	 p1kwmhQhuONOx878EZp79wrgGhfzfZScv8xEsSPn3uzz77p7B1iFKcVKTjium6U03t
+	 2h7K5Rm0za1PH1NjGqpfrDGk1BfabuqfbU6Ev6RVZ/ztGJS8fqPJM7V7l2oB/zCDZ8
+	 4/IAAVb20HvzQ==
+Date: Tue, 9 Jul 2024 15:59:38 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jiwei Sun <sjiwei@163.com>
+Cc: nirmal.patel@linux.intel.com, jonathan.derrick@linux.dev,
+	paul.m.stillwell.jr@intel.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, sunjw10@lenovo.com,
+	ahuang12@lenovo.com, Pawel Baldysiak <pawel.baldysiak@intel.com>,
+	Alexey Obitotskiy <aleksey.obitotskiy@intel.com>,
+	Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+Subject: Re: [PATCH v3] PCI: vmd: Create domain symlink before
+ pci_bus_add_devices()
+Message-ID: <20240709205938.GA194355@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,85 +61,139 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240709-unengaged-handgrip-56a5c7b3e1d1@spud>
+In-Reply-To: <20240605124844.24293-1-sjiwei@163.com>
 
-On Tue, Jul 09, 2024 at 09:44:17PM +0100, Conor Dooley wrote:
-> On Tue, Jul 09, 2024 at 01:29:42PM -0700, Charlie Jenkins wrote:
-> > On Mon, Jul 08, 2024 at 01:22:11PM +0100, Conor Dooley wrote:
-> > > On Mon, Jul 08, 2024 at 08:12:24PM +0800, Xiao Wang wrote:
-> > > > The macro CONFIG_RISCV_PMU must have been defined when riscv_pmu.c gets
-> > > > compiled, so this patch removes the redundant check.
-> > > 
-> > > Did you investigate why this define was added? Why do you think that it
-> > > is redundant, rather than checking the incorrect config option?
-> > 
-> > This file is only compiled with CONFIG_RISCV_PMU:
+[+cc Pawel, Alexey, Tomasz for mdadm history]
+
+On Wed, Jun 05, 2024 at 08:48:44PM +0800, Jiwei Sun wrote:
+> From: Jiwei Sun <sunjw10@lenovo.com>
 > 
-> I might be ill, but I can still read. I was not disagreeing with Xiao
-> that the condition is redundant as written - I want to know whether they
-> made sure that this check was intentionally using CONFIG_RISCV_PMU in the
-> first place, or if another option should have been here instead.
-
-Makes sense! Looking through the lists I see this RFC from Atish where
-he introduced a different config option for this
-"CONFIG_RISCV_PMU_COMMON"[1]. I wonder if something got confused in the
-development of these two patches.
-
-Link:
-https://lore.kernel.org/lkml/20240217005738.3744121-12-atishp@rivosinc.com/
-[1]
-
-- Charlie
-
+> During booting into the kernel, the following error message appears:
 > 
-> > 
-> > # drivers/perf/Makefile
-> > obj-$(CONFIG_RISCV_PMU) += riscv_pmu.o
-> > 
-> > So having this check does seem redundant. I am copying Alex as it looks
-> > like he wrote this.
-> > 
-> > - Charlie
-> > 
-> > > 
-> > > Cheers,
-> > > Conor.
-> > > 
-> > > > 
-> > > > Signed-off-by: Xiao Wang <xiao.w.wang@intel.com>
-> > > > ---
-> > > >  drivers/perf/riscv_pmu.c | 2 --
-> > > >  1 file changed, 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/perf/riscv_pmu.c b/drivers/perf/riscv_pmu.c
-> > > > index 0a02e85a8951..7644147d50b4 100644
-> > > > --- a/drivers/perf/riscv_pmu.c
-> > > > +++ b/drivers/perf/riscv_pmu.c
-> > > > @@ -39,7 +39,6 @@ void arch_perf_update_userpage(struct perf_event *event,
-> > > >  	userpg->cap_user_time_short = 0;
-> > > >  	userpg->cap_user_rdpmc = riscv_perf_user_access(event);
-> > > >  
-> > > > -#ifdef CONFIG_RISCV_PMU
-> > > >  	/*
-> > > >  	 * The counters are 64-bit but the priv spec doesn't mandate all the
-> > > >  	 * bits to be implemented: that's why, counter width can vary based on
-> > > > @@ -47,7 +46,6 @@ void arch_perf_update_userpage(struct perf_event *event,
-> > > >  	 */
-> > > >  	if (userpg->cap_user_rdpmc)
-> > > >  		userpg->pmc_width = to_riscv_pmu(event->pmu)->ctr_get_width(event->hw.idx) + 1;
-> > > > -#endif
-> > > >  
-> > > >  	do {
-> > > >  		rd = sched_clock_read_begin(&seq);
-> > > > -- 
-> > > > 2.25.1
-> > > > 
-> > > > 
-> > > > _______________________________________________
-> > > > linux-riscv mailing list
-> > > > linux-riscv@lists.infradead.org
-> > > > http://lists.infradead.org/mailman/listinfo/linux-riscv
-> > 
+>   (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: Unable to get real path for '/sys/bus/pci/drivers/vmd/0000:c7:00.5/domain/device''
+>   (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: /dev/nvme1n1 is not attached to Intel(R) RAID controller.'
+>   (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: No OROM/EFI properties for /dev/nvme1n1'
+>   (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: no RAID superblock on /dev/nvme1n1.'
+>   (udev-worker)[2149]: nvme1n1: Process '/sbin/mdadm -I /dev/nvme1n1' failed with exit code 1.
+> 
+> This symptom prevents the OS from booting successfully.
 
+I guess the root filesystem must be on a RAID device, and it's the
+failure to assemble that RAID device that prevents OS boot?  The
+messages are just details about why the assembly failed?
 
+> After a NVMe disk is probed/added by the nvme driver, the udevd executes
+> some rule scripts by invoking mdadm command to detect if there is a
+> mdraid associated with this NVMe disk. The mdadm determines if one
+> NVMe devce is connected to a particular VMD domain by checking the
+> domain symlink. Here is the root cause:
+
+Can you tell us something about what makes this a vmd-specific issue?
+
+I guess vmd is the only driver that creates a "domain" symlink, so
+*that* part is vmd-specific.  But I guess there's something in mdadm
+or its configuration that looks for that symlink?
+
+I suppose it has to do with the mdadm code at [1] and the commit at
+[2]?
+
+[1] https://github.com/md-raid-utilities/mdadm/blob/96b8035a09b6449ea99f2eb91f9ba4f6912e5bd6/platform-intel.c#L199
+[2] https://github.com/md-raid-utilities/mdadm/commit/60f0f54d6f5227f229e7131d34f93f76688b085f
+
+I assume this is a race between vmd_enable_domain() and mdadm?  And
+vmd_enable_domain() only loses the race sometimes?  Trying to figure
+out why this hasn't been reported before or on non-VMD configurations.
+Now that I found [2], the non-VMD part is obvious, but I'm still
+curious about why we haven't seen it before.
+
+The VMD device is sort of like another host bridge, and I wouldn't
+think mdadm would normally care about a host bridge, but it looks like
+mdadm does need to know about VMD for some reason.
+
+> Thread A                   Thread B             Thread mdadm
+> vmd_enable_domain
+>   pci_bus_add_devices
+>     __driver_probe_device
+>      ...
+>      work_on_cpu
+>        schedule_work_on
+>        : wakeup Thread B
+>                            nvme_probe
+>                            : wakeup scan_work
+>                              to scan nvme disk
+>                              and add nvme disk
+>                              then wakeup udevd
+>                                                 : udevd executes
+>                                                   mdadm command
+>        flush_work                               main
+>        : wait for nvme_probe done                ...
+>     __driver_probe_device                        find_driver_devices
+>     : probe next nvme device                     : 1) Detect the domain
+>     ...                                            symlink; 2) Find the
+>     ...                                            domain symlink from
+>     ...                                            vmd sysfs; 3) The
+>     ...                                            domain symlink is not
+>     ...                                            created yet, failed
+>   sysfs_create_link
+>   : create domain symlink
+> 
+> sysfs_create_link() is invoked at the end of vmd_enable_domain().
+> However, this implementation introduces a timing issue, where mdadm
+> might fail to retrieve the vmd symlink path because the symlink has not
+> been created yet.
+> 
+> Fix the issue by creating VMD domain symlinks before invoking
+> pci_bus_add_devices().
+> 
+> Signed-off-by: Jiwei Sun <sunjw10@lenovo.com>
+> Suggested-by: Adrian Huang <ahuang12@lenovo.com>
+> ---
+> v3 changes:
+>  - Per Paul's comment, move sysfs_remove_link() after
+>    pci_stop_root_bus()
+> 
+> v2 changes:
+>  - Add "()" after function names in subject and commit log
+>  - Move sysfs_create_link() after vmd_attach_resources()
+> 
+>  drivers/pci/controller/vmd.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+> index 87b7856f375a..4e7fe2e13cac 100644
+> --- a/drivers/pci/controller/vmd.c
+> +++ b/drivers/pci/controller/vmd.c
+> @@ -925,6 +925,9 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
+>  		dev_set_msi_domain(&vmd->bus->dev,
+>  				   dev_get_msi_domain(&vmd->dev->dev));
+>  
+> +	WARN(sysfs_create_link(&vmd->dev->dev.kobj, &vmd->bus->dev.kobj,
+> +			       "domain"), "Can't create symlink to domain\n");
+> +
+>  	vmd_acpi_begin();
+>  
+>  	pci_scan_child_bus(vmd->bus);
+> @@ -964,9 +967,6 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
+>  	pci_bus_add_devices(vmd->bus);
+>  
+>  	vmd_acpi_end();
+> -
+> -	WARN(sysfs_create_link(&vmd->dev->dev.kobj, &vmd->bus->dev.kobj,
+> -			       "domain"), "Can't create symlink to domain\n");
+>  	return 0;
+>  }
+>  
+> @@ -1042,8 +1042,8 @@ static void vmd_remove(struct pci_dev *dev)
+>  {
+>  	struct vmd_dev *vmd = pci_get_drvdata(dev);
+>  
+> -	sysfs_remove_link(&vmd->dev->dev.kobj, "domain");
+>  	pci_stop_root_bus(vmd->bus);
+> +	sysfs_remove_link(&vmd->dev->dev.kobj, "domain");
+>  	pci_remove_root_bus(vmd->bus);
+>  	vmd_cleanup_srcu(vmd);
+>  	vmd_detach_resources(vmd);
+> -- 
+> 2.27.0
+> 
 
