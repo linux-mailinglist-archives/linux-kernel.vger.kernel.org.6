@@ -1,95 +1,194 @@
-Return-Path: <linux-kernel+bounces-245404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AB9892B220
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:27:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C4C592B221
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E38FA1F23220
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:27:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80221282DDB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE2B152E04;
-	Tue,  9 Jul 2024 08:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MKs58uMT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575B6143752;
-	Tue,  9 Jul 2024 08:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983651527A9;
+	Tue,  9 Jul 2024 08:28:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70B581745
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720513633; cv=none; b=fO632M2+WLcaP0tvzzqCbgi0NVuFbJ0KneRAbfL0jKhnIMQUBJqDR5zcrX38rW1nIyzASBwI1EQy02x2DcREE2U495T05AttI4OujEM6re9oBEuKj93ols1LdtQ5mKLGoOvEedFAuApTEZ7UogyAN4ulHzEcHmNqA4RGzdymYzM=
+	t=1720513736; cv=none; b=EqoRyzkbUA/TlKH+irUkqYNU5AtM6m+yKuMr+GF+kevikhfefZ5bDC2cwxmThEURiOg+EudgchX8M8YP7GQeETJSiBCSX7yVXgcrDTKuyibfRLOYsBGhcBq/74y0Xj9LZbzww3gNo2EfHsoNnntnyrTTsEJqAC2saZJux8Yedas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720513633; c=relaxed/simple;
-	bh=8swVpidJ5ergHaUtyYa0T5Ao4WQQVKO8d3kfW7RqCAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A3s2vjr3rZ7Wu5ZRo73htv0rlbO53yc6gu13WVYr69La6uTBpxtF07/cRi6qlrM0FjJ+ruozZzZ52+XxOZcb+eyZXGPh9b6kNqC/AB641oF1Nj1src84bHX8FBZE8N3EGLFLj2BLVmO+iflgiG9nO+ZR+uSI9DPUvliE1uEKPw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MKs58uMT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7963CC3277B;
-	Tue,  9 Jul 2024 08:27:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720513632;
-	bh=8swVpidJ5ergHaUtyYa0T5Ao4WQQVKO8d3kfW7RqCAw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MKs58uMTimJSNukbLWZVm36D1otxy9BBGzP/Gob20xKl25WDcspRBnkP4N2py/S2S
-	 X7NY9l4aN4axsk2IoB5jvqmW4SXmP3lcd5b+oyvO3NjG659aBjUBnv/eiZE98rxHHY
-	 YOsSyPUoaa/ItFlU+AIle/K1xTdXgvs23G2qEWDw=
-Date: Tue, 9 Jul 2024 10:27:09 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: nmi <nmi@metaspace.dk>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Adam Bratschi-Kaye <ark.email@gmail.com>,
-	Sami Tolvanen <samitolvanen@google.com>
-Subject: Re: [PATCH] rust: add `module_params` macro
-Message-ID: <2024070924-darkening-knee-bfef@gregkh>
-References: <20240705111455.142790-1-nmi@metaspace.dk>
- <ZoxdRjpy2hRndqmc@bombadil.infradead.org>
- <LHGWBNSEDaOsx4BbADR1pZYqPV0KKhVaJ1Qvwe9h4UPeERRAA4s1DTIsnFR5rpHBGa6uIG1tU_4hTBXgjAc5BNwNqo0Rg_kOx2W_y0EUy_I=@metaspace.dk>
+	s=arc-20240116; t=1720513736; c=relaxed/simple;
+	bh=mIfGA3E/9k3NFi1S87fJxL84SR6lyTPXWI++NBvOgyE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aND/8KyDj2Dn/okUgGmsR4Iv+UMB0PGQUhhHGixRfLugjjP6d2ZgocoLUSiIUkUG7gz47Ib2130BxjvzC8pIuOuPdLOrRpaPHBhipxfR49IwdH9XDeKHkaLNNR4OidoEFDXh8dGMi7PA4XwbafioHjwgClsNlcKOnnev6HVIgJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 151381042;
+	Tue,  9 Jul 2024 01:29:18 -0700 (PDT)
+Received: from [10.57.76.194] (unknown [10.57.76.194])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F89C3F762;
+	Tue,  9 Jul 2024 01:28:50 -0700 (PDT)
+Message-ID: <e83e1687-3e3c-40d0-bf0e-225871647092@arm.com>
+Date: Tue, 9 Jul 2024 09:28:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <LHGWBNSEDaOsx4BbADR1pZYqPV0KKhVaJ1Qvwe9h4UPeERRAA4s1DTIsnFR5rpHBGa6uIG1tU_4hTBXgjAc5BNwNqo0Rg_kOx2W_y0EUy_I=@metaspace.dk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/6] add mTHP support for anonymous shmem
+Content-Language: en-GB
+To: Daniel Gomez <da.gomez@samsung.com>, David Hildenbrand <david@redhat.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "hughd@google.com" <hughd@google.com>,
+ "wangkefeng.wang@huawei.com" <wangkefeng.wang@huawei.com>,
+ "ying.huang@intel.com" <ying.huang@intel.com>,
+ "21cnbao@gmail.com" <21cnbao@gmail.com>,
+ "shy828301@gmail.com" <shy828301@gmail.com>, "ziy@nvidia.com"
+ <ziy@nvidia.com>, "ioworker0@gmail.com" <ioworker0@gmail.com>,
+ Pankaj Raghav <p.raghav@samsung.com>, "linux-mm@kvack.org"
+ <linux-mm@kvack.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <cover.1718090413.git.baolin.wang@linux.alibaba.com>
+ <ZobtTmzj0AmNXcav@casper.infradead.org>
+ <27beaa0e-697e-4e30-9ac6-5de22228aec1@redhat.com>
+ <6d4c0191-18a9-4c8f-8814-d4775557383e@redhat.com>
+ <Zob8xI-LWe9H_iJs@casper.infradead.org>
+ <e08b8245-bc8c-4a18-a1e0-53a139258826@linux.alibaba.com>
+ <e826368d-499a-483b-8991-8c25aff88f00@arm.com>
+ <CGME20240705085911eucas1p17f1e79c871c6290b426737ca1738e529@eucas1p1.samsung.com>
+ <32f04739-0cd0-4a9e-9419-c5a13c333c28@redhat.com>
+ <ihgsmfaqgpjcewxpjnpoo3ibdhm72s2balhpedkgr2aou5l355@ps7vb3l5j54n>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <ihgsmfaqgpjcewxpjnpoo3ibdhm72s2balhpedkgr2aou5l355@ps7vb3l5j54n>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 09, 2024 at 06:00:46AM +0000, nmi wrote:
-> Hi Luis,
+On 07/07/2024 17:39, Daniel Gomez wrote:
+> On Fri, Jul 05, 2024 at 10:59:02AM GMT, David Hildenbrand wrote:
+>> On 05.07.24 10:45, Ryan Roberts wrote:
+>>> On 05/07/2024 06:47, Baolin Wang wrote:
+>>>>
+>>>>
+>>>> On 2024/7/5 03:49, Matthew Wilcox wrote:
+>>>>> On Thu, Jul 04, 2024 at 09:19:10PM +0200, David Hildenbrand wrote:
+>>>>>> On 04.07.24 21:03, David Hildenbrand wrote:
+>>>>>>>> shmem has two uses:
+>>>>>>>>
+>>>>>>>>      - MAP_ANONYMOUS | MAP_SHARED (this patch set)
+>>>>>>>>      - tmpfs
+>>>>>>>>
+>>>>>>>> For the second use case we don't want controls *at all*, we want the
+>>>>>>>> same heiristics used for all other filesystems to apply to tmpfs.
+>>>>>>>
+>>>>>>> As discussed in the MM meeting, Hugh had a different opinion on that.
+>>>>>>
+>>>>>> FWIW, I just recalled that I wrote a quick summary:
+>>>>>>
+>>>>>> https://lkml.kernel.org/r/f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com
+>>>>>>
+>>>>>> I believe the meetings are recorded as well, but never looked at recordings.
+>>>>>
+>>>>> That's not what I understood Hugh to mean.  To me, it seemed that Hugh
+>>>>> was expressing an opinion on using shmem as shmem, not as using it as
+>>>>> tmpfs.
+>>>>>
+>>>>> If I misunderstood Hugh, well, I still disagree.  We should not have
+>>>>> separate controls for this.  tmpfs is just not that special.
+>>>
+>>> I wasn't at the meeting that's being referred to, but I thought we previously
+>>> agreed that tmpfs *is* special because in some configurations its not backed by
+>>> swap so is locked in ram?
+>>
+>> There are multiple things to that, like:
+>>
+>> * Machines only having limited/no swap configured
+>> * tmpfs can be configured to never go to swap
+>> * memfd/tmpfs files getting used purely for mmap(): there is no real
+>>   difference to MAP_ANON|MAP_SHARE besides the processes we share that
+>>   memory with.
+>>
+>> Especially when it comes to memory waste concerns and access behavior in
+>> some cases, tmpfs behaved much more like anonymous memory. But there are for
+>> sure other use cases where tmpfs is not that special.
 > 
-> On Monday, July 8th, 2024 at 23:42, Luis Chamberlain <mcgrof@kernel.org> wrote:
+> Having controls to select the allowable folio order allocations for
+> tmpfs does not address any of these issues. The suggested filesystem
+> approach [1] involves allocating orders in larger chunks, but always
+> the same size you would allocate when using order-0 folios. 
+
+Well you can't know that you will never allocate more. If you allocate a 2M
+block, you probably have some good readahead data that tells you you are likely
+to keep reading sequentially, but you don't know for sure that the application
+won't stop after just 4K.
+
+> So,
+> it's a conservative approach. Using mTHP knobs in tmpfs would cause:
+> * Over allocation when using mTHP and/ord THP under the 'always' flag.
+> * Allocate in bigger chunks in a non optimal way, when
+> not all mTHP and THP orders are enabled.
+> * Operate in a similar manner as in [1] when all mTHP and THP orders
+> are enabled and 'within_size' flag is used (assuming we use patch 11
+> from [1]).
+
+Large folios may still be considered scarce resources even if the amount of
+memory allocated is still the same. And if shmem isn't backed by swap then once
+you have allocated a large folio for shmem, it is stuck in shmem, even if it
+would be better used somewhere else.
+
+And it's possible (likely even, in my opinion) that allocating lots of different
+folio sizes will exacerbate memory fragmentation, leading to more order-0
+fallbacks, which would hurt the overall system performance in the long run, vs
+restricting to a couple of folio sizes.
+
+I'm starting some work to actually measure how limiting the folio sizes
+allocated for page cache memory can help reduce large folio allocation failure
+overall. My hypothesis is that the data will show us that in an environment like
+Android, where memory pressure is high, limiting everything to order-0 and
+order-4 will significantly improve the allocation success rate of order-4. Let's
+see.
+
 > 
-> > I'm starting to feel the same way about modules, but modules requires
-> > more work than the firmware loader. And since I also know Andreas has
-> > already a lot on his plate, I'm at a cross roads. My above request for
-> > the firmware loader made sense to the person working on the firmware
-> > loader changes, but who would help on the modules side of things? And
-> > does this request make sense to help scale?
-> >
-> > The rationale here is that a rust binding means commitment then also
-> > from fresh blood to help co-maintain review C / Rust for exising code
-> > when there is will / desire to collaborate from an existing C maintainer.
-> >
-> > I realize this may be a lot to ask, but I think this is one of the
-> > responsible ways to ask to scale here.
+> [1] Last 3 patches of these series:
+> https://lore.kernel.org/all/20240515055719.32577-1-da.gomez@samsung.com/
 > 
-> I am not sure I am the right person for the task, because as you say,
-> I have a lot on my plate. But perhaps lets schedule a call so I can
-> get a sense of the required effort. 
+> My understanding of why mTHP was preferred is to raise awareness in
+> user space and allow tmpfs mounts used at boot time to operate in
+> 'safe' mode (no large folios). Does it make more sense to have a large
+> folios enable flag to control order allocation as in [1], instead of
+> every single order possible?
 
-Kernel development is done through emails, not calls :)
+My intuition is towards every order possible, as per above. Let's see what the
+data tells us.
 
-If a submitter isn't willing to maintain the code they submit, then it
-should be rejected as maintance is the most important part.
+> 
+>>
+>> My opinion is that we need to let people configure orders (if you feel like
+>> it, configure all), but *select* the order to allocate based on readahead
+>> information -- in contrast to anonymous memory where we start at the highest
+>> order and don't have readahead information available.
+>>
+>> Maybe we need different "order allcoation" logic for read/write vs. fault,
+>> not sure.
+> 
+> I would suggest [1] the file size of the write for the write
+> and fallocate paths. But when does make sense to use readahead
+> information? Maybe when swap is involved?
+> 
+>>
+>> But I don't maintain that code, so I can only give stupid suggestions and
+>> repeat what I understood from the meeting with Hugh and Kirill :)
+>>
+>> -- 
+>> Cheers,
+>>
+>> David / dhildenb
 
-Sorry,
-
-greg k-h
 
