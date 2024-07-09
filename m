@@ -1,156 +1,144 @@
-Return-Path: <linux-kernel+bounces-245086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFEBE92AE0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:11:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67A6492AE18
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:14:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6656B1F21E84
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:11:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 119751F2331B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7063A267;
-	Tue,  9 Jul 2024 02:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38123F8F7;
+	Tue,  9 Jul 2024 02:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="App89Qju"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GPfEtZMy"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BF34084D
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 02:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE614374D1;
+	Tue,  9 Jul 2024 02:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720491103; cv=none; b=FHX1CsBeNjkcZrJStn2JMzQ03BP8xpeb+nUYXBEGFV+q57W9WLEEn1tKq0ZDjus9ANYp0AZ3JIvCXmk+fMT7yD0QgE1RkrobyS5KqitK1fq6q2pVq8AM0QhwbmRgmMlK+wZ0v460PFdJxahcelXQgVNJJLcLub/KA/5yoY1WaBM=
+	t=1720491262; cv=none; b=O+3pZintubGxfSXMRM70NbeBQnLKHsXLwfG/4AiGc7fmZdR1oTijCqHQ/ocmRwzFseXXWu5Ny0Mk9qiQiqE6Z6cUMQGjQam6qdOjqT3TX9wueVm45Wqurt1ANOJGHKupRpLryk1vdhrM9IMgLyi9tKR3unYcUWfJQIBDIu+Dnh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720491103; c=relaxed/simple;
-	bh=lOI/ee5qe03AFUKQUpqLcXd/DvpW5d4Oz7RRoR9bTKw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U/P+YF07feEMHded9NFCVawp+iE0tIT5uq133CZVxJiZtBEkSpAR8wTce+kKwoBrs+C9rjLCA49cGsyI3IqK+i5zjGUP3miGQntgAygcE5P5i0UW6NX1343+aICI7xX884m7RX1gT+h0oEbgtVt7cUilU2ocvpkAGB9WHSpQGpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=App89Qju; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: lihongbo22@huawei.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1720491099;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4HjyNf7GxbR4lp5E+Hv52DxdeqK/OeMCXoQUH5A/KOQ=;
-	b=App89Qju1287CgL+h0UMyqsy3BmS2uD36v0zqfcUmo/dJiUslc1GQF3P3yWkqOl9WMICL8
-	Sf74ktxHMyL1vnNmfbNfe37NsoFseLSzNxs9zIloCvsBuPZA0ky3/Ccm7EPjLgIOaA6V5p
-	mGzaQV3MNpZtLS0ZGPP5nEcTjSKqDTA=
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: kent.overstreet@linux.dev
-Message-ID: <c3471af6-0df7-44a9-8272-ab211f0f1b1b@linux.dev>
-Date: Tue, 9 Jul 2024 10:11:17 +0800
+	s=arc-20240116; t=1720491262; c=relaxed/simple;
+	bh=FdXTK0THHsvhpjXs9r6YyhUW9uJJx01iIJW/9WrgvwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GVOIGyS+UYDBUeB2rjGJ7/Bd4KUL5bDnEkutL5H0QNLAS9G3jEUzwaRrHoRC7oiPhpZXo1xekRgwKXCCDGRrX7l8cPwo2eBR4GAFKaAM0EGAGQhSysqmMMntB7/Wn7jbSK8Mu+nBddBEH0hvQUNnYI3SqDvTvF8d2qkznGqXu7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GPfEtZMy; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fa55dbf2e7so22497835ad.2;
+        Mon, 08 Jul 2024 19:14:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720491260; x=1721096060; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tUJk5cdd3SYgBT6mXktVY0iylI5j6aUAHw71DNobdU8=;
+        b=GPfEtZMyeneS3RX0u90pcPuT7If+3xB44c8AaFDh3LWpsVKCm2zandhVRnq2Bu1xrN
+         DinEHfV2r8DuGm1yG2j8GKnq/KkVtISHnRs/zZW2JK+tPH3l9ZlMgTdBQbAEjLJnKYAw
+         BUnb+o+lBNHwuD7fR2F1n0S/90LcuwbISD9QLCZ85QuDxdHj0AEV9+LuK7VYkzhj+gRA
+         K+xNjqHI0bYYUM8mC1XvDsxWUC+gz8OyYqOo5sUaAUgYtrBbWsCYXR7h14nSTRLbIr4z
+         SbZ68134/BhBFgRTB9ytdGxRZZ+mHrq4djdE5KZ1Fsg3eAjJHySHn8VJmy/1+Ft6UL/O
+         8v/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720491260; x=1721096060;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tUJk5cdd3SYgBT6mXktVY0iylI5j6aUAHw71DNobdU8=;
+        b=oqfkRbcV50mr5AvUq17yey72oxTAGiFb5dd9mcVHbFLfU224SZMDqCAP8GUsWZho8Y
+         kafI5L1wJPVA3IdxVFB2SmG2avqN2q2lOa0uZHFZ521+IiG9vQasRTGrG/+yeKwQPc7j
+         kDN07PJNrx2GXoMAqmYEzcevgMEao3xdS8+UPtXL6rUjUzZU+G4kHHu5dYuVIZd2aVGJ
+         4KGolcZvTfwOIAHn3B3dH5fMy3frFa6NrJcS7WZg2v+I+266UUE4B4y0xnzxsA5Nsecq
+         YM00SXzYO0/TUm5q4swmBqOoGSIjYPqwSYlt8GSCK5vxwBfXQBYNZQUPL4YSru4TPdmB
+         ojoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYvp0fHZ0IaOhTG0coRP8Ct7qaeM7gVhxoP0U/DAl0JN20ZFnVQ822m7XMS0wAyPmREO+bpgqbwwAnxCCpherNmYhOjpk0yeRjPzsW0jNzF32bcMVfEp/9FTyE/3sM2tAYEM6I
+X-Gm-Message-State: AOJu0YwXdwr3Wq5x2+cl5UQD/2CfYik4gIjM1506jh1Qti8X7OLnIjia
+	1DDrLfcei/H2RPiC3qSGEALBv80onJ689ZbjiHHLfC/6RbFAh9Gi
+X-Google-Smtp-Source: AGHT+IGifYCUjDlpdABP2FmVQ9Uu47bpzw+e6ONUof7UeA6cbyy75OUBvdWUMp43MfpzKyh1ULJeBQ==
+X-Received: by 2002:a17:903:2308:b0:1fb:8c35:6036 with SMTP id d9443c01a7336-1fbb6cda8e5mr9793955ad.5.1720491259723;
+        Mon, 08 Jul 2024 19:14:19 -0700 (PDT)
+Received: from localhost ([129.146.253.192])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a28f8esm5179775ad.64.2024.07.08.19.14.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 19:14:19 -0700 (PDT)
+Date: Tue, 9 Jul 2024 10:14:07 +0800
+From: Furong Xu <0x1207@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: "David S. Miller" <davem@davemloft.net>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ xfr@outlook.com, rock.xu@nio.com
+Subject: Re: [PATCH net-next v1] net: stmmac: Refactor Frame Preemption(FPE)
+ implementation
+Message-ID: <20240709101407.00005199@gmail.com>
+In-Reply-To: <7cde7743-2a8c-4d12-aecb-d1e50d5099ea@lunn.ch>
+References: <20240708082220.877141-1-0x1207@gmail.com>
+	<7cde7743-2a8c-4d12-aecb-d1e50d5099ea@lunn.ch>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 2/2] bcachefs: Add support for FS_IOC_GETFSSYSFSPATH
-To: Hongbo Li <lihongbo22@huawei.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kent Overstreet <kent.overstreet@linux.dev>
-References: <20240709011134.79954-1-youling.tang@linux.dev>
- <20240709011134.79954-2-youling.tang@linux.dev>
- <8a1b37b5-450c-4f12-978e-25d691fbf21b@huawei.com>
-Content-Language: en-US, en-AU
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-In-Reply-To: <8a1b37b5-450c-4f12-978e-25d691fbf21b@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 09/07/2024 10:04, Hongbo Li wrote:
->
->
-> On 2024/7/9 9:11, Youling Tang wrote:
->> From: Kent Overstreet <kent.overstreet@linux.dev>
->>
->> [TEST]:
->> ```
->> $ cat ioctl_getsysfspath.c
->>   #include <stdio.h>
->>   #include <stdlib.h>
->>   #include <fcntl.h>
->>   #include <sys/ioctl.h>
->>   #include <linux/fs.h>
->>   #include <unistd.h>
->>
->>   int main(int argc, char *argv[]) {
->>       int fd;
->>       struct fs_sysfs_path sysfs_path = {};
->>
->>       if (argc != 2) {
->>           fprintf(stderr, "Usage: %s <path_to_file_or_directory>\n", 
->> argv[0]);
->>           exit(EXIT_FAILURE);
->>       }
->>
->>       fd = open(argv[1], O_RDONLY);
->>       if (fd == -1) {
->>           perror("open");
->>           exit(EXIT_FAILURE);
->>       }
->>
->>       if (ioctl(fd, FS_IOC_GETFSSYSFSPATH, &sysfs_path) == -1) {
->>           perror("ioctl FS_IOC_GETFSSYSFSPATH");
->>           close(fd);
->>           exit(EXIT_FAILURE);
->>       }
->>
->>       printf("FS_IOC_GETFSSYSFSPATH: %s\n", sysfs_path.name);
->>       close(fd);
->>       return 0;
->>   }
->>
->> $ gcc ioctl_getsysfspath.c
->> $ sudo bcachefs format /dev/sda
->> $ sudo mount.bcachefs /dev/sda /mnt
->> $ sudo ./a.out /mnt
->>    FS_IOC_GETFSSYSFSPATH: bcachefs/c380b4ab-fbb6-41d2-b805-7a89cae9cadb
->> ```
->>
->> Original patch link:
->> [1]: 
->> https://lore.kernel.org/all/20240207025624.1019754-8-kent.overstreet@linux.dev/
->>
->> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
->> Signed-off-by: Youling Tang <youling.tang@linux.dev>
->> ---
->>   fs/bcachefs/fs.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
->> index 011ee5075a52..8699770398d1 100644
->> --- a/fs/bcachefs/fs.c
->> +++ b/fs/bcachefs/fs.c
->> @@ -1978,6 +1978,7 @@ static int bch2_fs_get_tree(struct fs_context *fc)
->>       sb->s_time_min        = div_s64(S64_MIN, 
->> c->sb.time_units_per_sec) + 1;
->>       sb->s_time_max        = div_s64(S64_MAX, 
->> c->sb.time_units_per_sec);
->>       super_set_uuid(sb, c->sb.user_uuid.b, sizeof(c->sb.user_uuid));
->> +    super_set_sysfs_name_uuid(sb);
->
-> Reviewed-by: Hongbo Li <lihongbo22@huawei.com>
->
-> It's quite strange that other commits have been merged, but the ones 
-> for bcachefs have not been merged.
-Because bcachefs was not upstream at the time, [1] described the following:
-   Note, I dropped the bcachefs changes because they're not upstream yet.
-   But once this is a stable branch you can just pull in vfs.uuid and rely
-   on that.
+On Mon, 8 Jul 2024 20:44:31 +0200
+Andrew Lunn <andrew@lunn.ch> wrote:
 
-[1]: 
-https://lore.kernel.org/all/20240208-wecken-nutzen-3df1102a39b2@brauner/
+> > +static void fpe_configure(struct stmmac_priv *priv, struct stmmac_fpe_cfg *cfg,
+> > +			  u32 num_txq, u32 num_rxq, bool enable)
+> > +{
+> > +	u32 value;
+> > +
+> > +	if (enable) {
+> > +		cfg->fpe_csr = FPE_CTRL_STS_EFPE;
+> > +		if (priv->plat->has_xgmac) {
+> > +			value = readl(priv->ioaddr + XGMAC_RXQ_CTRL1);
+> > +			value &= ~XGMAC_FPRQ;
+> > +			value |= (num_rxq - 1) << XGMAC_FPRQ_SHIFT;
+> > +			writel(value, priv->ioaddr + XGMAC_RXQ_CTRL1);
+> > +		} else if (priv->plat->has_gmac4) {
+> > +			value = readl(priv->ioaddr + GMAC_RXQ_CTRL1);
+> > +			value &= ~GMAC_RXQCTRL_FPRQ;
+> > +			value |= (num_rxq - 1) << GMAC_RXQCTRL_FPRQ_SHIFT;
+> > +			writel(value, priv->ioaddr + GMAC_RXQ_CTRL1);
+> > +		}  
+> 
+> Since you are using a structure of function pointers, it would seem
+> more logical to have a fpe_xgmac_configure() and a
+> fpe_gmac4_configure(), and then xgmac_fpe_ops and gmac4_fpe_ops.
+> 
+> > --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > @@ -974,8 +974,7 @@ static void stmmac_fpe_link_state_handle(struct stmmac_priv *priv, bool is_up)
+> >  	bool *hs_enable = &fpe_cfg->hs_enable;
+> >  
+> >  	if (is_up && *hs_enable) {
+> > -		stmmac_fpe_send_mpacket(priv, priv->ioaddr, fpe_cfg,
+> > -					MPACKET_VERIFY);
+> > +		stmmac_fpe_send_mpacket(priv, priv, fpe_cfg, MPACKET_VERIFY);  
+> 
+> passing priv twice looks very odd! It makes me think the API is
+> designed wrong. This could be because of the refactoring changes you
+> made? Maybe add another patch cleaning this up?
 
-Thanks,
-Youling.
+Hi Andrew
+
+Thanks for your comments.
+This patch is almost a clone of "net: stmmac: Refactor EST implementation"
+https://github.com/torvalds/linux/commit/c3f3b97238f6fd87b9d90b9a995ee5e69f751a74
+Many decisions were made based on that patch.
+
+I will submit a new patchset with splited patches and make function callbacks more logical.
 
