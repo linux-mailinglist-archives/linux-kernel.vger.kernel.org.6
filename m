@@ -1,114 +1,89 @@
-Return-Path: <linux-kernel+bounces-246419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D826592C186
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:01:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16CB992C189
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92339287509
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:01:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4A8B288179
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9ACE1A01A6;
-	Tue,  9 Jul 2024 16:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDD31AD9CC;
+	Tue,  9 Jul 2024 16:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="fmV5Xyag"
-Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZaR7Ei/e"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2671019DF94
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 16:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8769F19E82B;
+	Tue,  9 Jul 2024 16:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720542593; cv=none; b=EnUFQXHWp+06VWjPkGDhRk8mN/naAN7dWbIsMMp8H4qGUE9GQbDg/I6mLSZ3hznCAgnee5+MxRMm7uF0mb6x+ldreAGpi6bcl0duXG8BlGgp4Wj2IlahRCJFExkYuc58kw9fBaU5FAbPQSgme8X62HE1Zne9gtJTzIKbKhVMnbc=
+	t=1720542643; cv=none; b=ChjcYcIdLVwbdSSPwxQn74jXJfaXoDLyp7jIondEBCYFx5y0BnQjXhrDCEO1o6T5IMB+7K7hdcnmK4KoW9nEcYMKgC5pRefRNZ7raU8uMHpdsezgQcAPhynKJ1MYcRcXDCggH7sQdoMFHCUxAaK+87QJ8MGfWYhlwsBQqL8ootY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720542593; c=relaxed/simple;
-	bh=IM6QmybZepBTV4M87U3hzs2YeN+T6D14TFCsMzcbKQI=;
-	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
-	 Date:Cc:References:To; b=eCQO3it/lZzEW10uA7S1OdT0apKQLvZA/bNRr7qfAD2OBfWiSk1q8+lw/TZmEdhyXQFdJrF16hVzBrmcSJuEINTaRL+KeysEmtOb3jNxhNA3XzFmIP9Zy0mka+ZgAsnntvjPDTXIjGseRDcL/UnFsmPPTSJHVcOFBM1LuJ7CQcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=fmV5Xyag; arc=none smtp.client-ip=203.205.221.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1720542587; bh=IM6QmybZepBTV4M87U3hzs2YeN+T6D14TFCsMzcbKQI=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=fmV5Xyag0HrbfA2BECFD3tQs5acq/pf82D2PUYux4hl9R+oprcGGMsFN4UW41AbXC
-	 CbtUYQAeNphzz8y2xWGKiDdaEJp0f/mikvf2c0zZHFGIIY+8XcH14PBzNpP4tKGsFH
-	 TCU1dphi+SKyFZlN9GbMH+TV0fDOwAXQ3jXNwMgI=
-Received: from smtpclient.apple ([2408:8207:18a1:c8b0:118:fc2:1adb:e03d])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 76DA60CC; Wed, 10 Jul 2024 00:29:45 +0800
-X-QQ-mid: xmsmtpt1720542585t6qpb6cno
-Message-ID: <tencent_9CE4ABB18A4F4490459BC3111B5726262905@qq.com>
-X-QQ-XMAILINFO: NBOcPERDMH3AZhswaHj/Ct8I/ngCFLeZb6M2dR61l4SAnoiBcwyIru8lnhyAtu
-	 MpuJkMSfRgUD70tI33RtgrHtUZrdqrDnkJL20+m/c9+nphmn5YrYZFsnMbP1DJs193Zm6gjmXgRX
-	 4HDpVZXuchh8+oCcQhR2y6b4tOhMsi+qItAk+anUGptxsKmyRjRDD2M1Obospr3ZueRyZK+3RRHi
-	 SzKwaABCrUrNQEQBmCkDqvaf3FLEXDmQUTuUGHabtMvaY5KaH1s9mMowhjp524R9CEC0FKTGrpoZ
-	 kyCDNsLRxR+IbsqCoouPB+MavRXwXMaeqWP7HAQy06lqtM22b4UJY60eS2Sk62+LE4DL8Y5GJjNG
-	 5gAi+5BjiOh79UrV0dyJCWdtz5zgumPV/5GEvVVHIy5mrHCzey5+1CnGMTiHM8cc1E0PFn9+4Lep
-	 CF75gi8OiTWav/PMf6KrE4NxYTiPFyfoVKdzaKYBExgZ4gP+FjPTY1zQDfa6csa0vvyo9/sSd9je
-	 YNPcBQxTJsbRuan7+e/Gv+ZTGB611L1iJJeZxrslo0yKUCqwRoaofWWGp+x1+jtPtVgmcJzymm80
-	 htS+vIZAZVyl8APJpsmxuX83B2cdHpmFy5DRJH6kIZL2+jCGQnAalJqx56y+dniDTpC3VylSw4A/
-	 Cr3M9MOo5poR8HCsvsuycoLP/nJ597ZzfsJLhc/Kt7ohBqxE/DuWnuoXKjk2Udr+XcIw7mdjQlP3
-	 HWJ31cR6ebyINxqNcSRyom6vaO/dQjKynOOouZEDhmnK0+D4m3CjAm3JbjWWMBYnEqI0Iipb6NkL
-	 5SJfelX78FoBCgMDU2J17pkuPy/W/T4CEyiAZEu6jbmA6p2jLKNwR8nNLJRpW55ylGh+bUGCMhQS
-	 +eofu/xRbOWvPzlU5QzOXR8d4exCu6jfMUI0CNxfeppvGzRty9fsg9rMZFu182lA06hXnHMAOzE+
-	 dsbuY7SVrr7lsPaOg0nuOwGCEZildveVG9ryVKeEvqjShbhx8YEIpULbPr3wrP9WsxiENbCOE=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1720542643; c=relaxed/simple;
+	bh=+J135aSrqRX9xE08EI2dz/9gEk4k8tD5i2S4SEz08/A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ji4hpgc66DfvS6th9f9PQNIB4Plt1EEjNyYj4v58uVaWGPu4Sehwv+3Q9NU+0QZam1QlhqajH+7BDCmnDh4mlLho6LsoaTWoqntkm6W7gj3f0vlCJmIqmEupceu/0FWQxToWq3qPhIN1zVbn64hKR+WQNu5WR6NcLYQBkFIIwdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZaR7Ei/e; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=7XRXfrB2fmvhSy87pLmluWUrfWrZdc4sO1XIVyso348=; b=ZaR7Ei/ex4FOsarOP4tLl94nhr
+	e1cacMyPF3N9oJdwpcqL2UaDdrA9n6fy53iEtvxvEI7BvwDLHDNwMQlSYkn13tosWrD09EvYRooub
+	qm/knWfWhIaQ5ZqqPUpCROJfAmN2pKzRJbRDj6ykEoPro5AGzXkQT98enA5+VnfrEE0/GONxKkhMM
+	B5sJLa+mAC/FS5nW81j9UtlF4WKn9H7MLTtz+u8+9naiT7T3rtVjvHcBnz5PPPudrPYvx6XJ09SRl
+	lFZEqd+QMLcSn+RRmZF8flLzN0TJv1KLh4v3B1w1i1xVSv1NaCp8hfUYFANFfNgweNN6uc9ObyPT4
+	MxVFMG6A==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRDji-0000000845p-0jEz;
+	Tue, 09 Jul 2024 16:30:38 +0000
+Date: Tue, 9 Jul 2024 17:30:38 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org,
+	andrii@kernel.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org,
+	clm@meta.com, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+Message-ID: <Zo1lrpO3suceheVj@casper.infradead.org>
+References: <20240708091241.544262971@infradead.org>
+ <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
+ <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
+ <20240709090153.GF27299@noisy.programming.kicks-ass.net>
+ <91d37ad3-137b-4feb-8154-4deaa4b11dc3@paulmck-laptop>
+ <20240709142943.GL27299@noisy.programming.kicks-ass.net>
+ <Zo1hBFS7c_J-Yx-7@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH -fixes] dma-mapping: add default implementation to
- arch_dma_{set|clear}_uncached
-From: Yangyu Chen <cyy@cyyself.name>
-In-Reply-To: <42552be3-df90-4f8f-a27b-abd08e350fc4@arm.com>
-Date: Wed, 10 Jul 2024 00:29:33 +0800
-Cc: Christoph Hellwig <hch@lst.de>,
- iommu@lists.linux.dev,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Transfer-Encoding: quoted-printable
-X-OQ-MSGID: <7FB35339-3F19-472A-8E66-31C608410600@cyyself.name>
-References: <tencent_A5ED71472ADCAF18F59085464CBE23C12A07@qq.com>
- <20240709111901.GC4421@lst.de>
- <tencent_651BC4D11C9730062064ACB186AF4A904005@qq.com>
- <20240709114629.GB6959@lst.de>
- <tencent_30E109FE684F391AE15AC6F4854034C2F00A@qq.com>
- <42552be3-df90-4f8f-a27b-abd08e350fc4@arm.com>
-To: Robin Murphy <robin.murphy@arm.com>
-X-Mailer: Apple Mail (2.3774.600.62)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zo1hBFS7c_J-Yx-7@casper.infradead.org>
 
+On Tue, Jul 09, 2024 at 05:10:45PM +0100, Matthew Wilcox wrote:
+> > So I fundamentally do not believe in per-VMA locking. Specifically for
+> > this case that would be trading one hot line for another. I tried
+> > telling people that, but it doesn't seem to stick :/
+> 
+> SRCU also had its own performance problems, so we've got problems one
+> way or the other.  The per-VMA lock probably doesn't work quite the way
+> you think it does, but it absoutely can be a hot cacheline.
+> 
+> I did propose a store-free variant at LSFMM 2022 and again at 2023,
+> but was voted down.  https://lwn.net/Articles/932298/
 
-
-> On Jul 9, 2024, at 23:52, Robin Murphy <robin.murphy@arm.com> wrote:
-> On 09/07/2024 1:22 pm, Yangyu Chen wrote:
->> The only failed symbol on the kernel with `ARCH=3Driscv defconfig`
->> is `arch_dma_set_uncached` since the compiler requires all possible
->> values to be known. I think a pattern like in kernel/dma/direct.c:349
->> for symbol `arch_dma_clear_uncached`, which uses `if
->> (IS_ENABLE(CONFIG_ARCH_HAS_xxx)) xxx` is acceptable. But for the
->> symbol `arch_dma_set_uncached`, a complex analysis is needed for a
->> value set in a block of branches. I think we should not rely on such
->> compiler optimization in such a complex pattern.
-> I'm not a compiler guy, but is it really that complex when the =
-variable is only ever written with the same compile-time-constant value =
-that it's already initialised with? If the optimisation pass is so =
-focused on being able to use a conditional store instruction that it =
-would rather emit one which has no effect either way than elide it =
-entirely, that doesn't strike me as a particularly good optimisation :/
-
-I confirm this is a regression for the compiler. However, I think
-both the compiler and the kernel should be fixed, as I mentioned
-the complexity of this pattern in the last email. Also, here is the
-only failed symbol in the kernel with RISC-V defconfig.
-
-Thanks,
-Yangyu Chen
+Actually, the 2022 version has a bit more of the flavour of the
+argument: https://lwn.net/Articles/893906/
 
 
