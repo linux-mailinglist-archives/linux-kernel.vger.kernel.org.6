@@ -1,177 +1,174 @@
-Return-Path: <linux-kernel+bounces-246594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D20592C40A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:47:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A3F192C40F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 897E01F23676
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:47:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DE82282144
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B054018560E;
-	Tue,  9 Jul 2024 19:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SbKS2YAU"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E53A18003D;
+	Tue,  9 Jul 2024 19:48:31 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763FB146D74
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 19:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5911B86DB
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 19:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720554405; cv=none; b=OlnOvArRDsZXP9GSXzuEMYFo7FwT5aTc/UCVOq01Cfsz1sKzYzTQVccx4MtNXi/rs9tY62N8mOZlFHxhrHb5TV4t+WccwmueopvD1/+kNdtf2bPQgpgWO7kWotKJbnzkW6F2uzpkIfLBBdeh+8SAKxPxsfvOSH9+UJbBbQnybFg=
+	t=1720554511; cv=none; b=FJ4Vakgx2ulj+QzR1qRokDeP1/VdlsgjK/x6bKBtzu25eWuaz8zIgMXs1kQAU9Un/s+RIHFc/herrCpgG2sW4kxjduefpKMNUjbMzDQ4o03HZ0fDtagVlVB9LArhwpR7QcqFwhOh56PsPLXBAAAmjAFHK2SRz7+DcDs8vXnxruY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720554405; c=relaxed/simple;
-	bh=ne5k5IWTYEPHPIcxlepI4S0hYR5ZyVirYxXdf72NEEo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eZXthg2mFFi1avI20mTvPSJS1HlI/AyZhm8fmPv2hGAzKRtYYXkLdJLq51rWzqynSL32HBx61UBN7q2VT3iVF9ADxQzzE4mcMCpdUV/tMlwNMEhahOY12FDJtXbK2KbeiFmxBXXExWCxTThEQM4urp0X5G96e6aVOJ+qu1y9Pw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SbKS2YAU; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-71b1231febdso3268190a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 12:46:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720554403; x=1721159203; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2D+exINq6dEkuW5ga7MfRBD1PNzA9YFyAu9E64c8E30=;
-        b=SbKS2YAUC8KYvTr5ucITkaGjfIMJu0/Y3Sb42dih/1/mJ+/v6a6+6kRRxeGIPjHtZq
-         LfRPG1sz2/0x9KhyfyLzsTC1t1R6lZCZzB5+LyJskP97W0RzLLsWxFcfqGAJ4kx3kFGG
-         Qxauca/8imHNrx7SRqzanRCUBtDnLe4zkJaymP0+6P8Irle2wmRuFMKwv97pBt0MeNF6
-         IoFROhTI861JNKoY2RyWm8HkkPIHV8GcTTow2zaTKyL4FlPVe7UIawyhCWsYjBtZEP9x
-         09niExbl6n+y/6xDcLCTxQv2cIneS+lS4A7US4aQCOFHd/WT3Z1wIG6HcxHIaLenhE8h
-         OGeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720554403; x=1721159203;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2D+exINq6dEkuW5ga7MfRBD1PNzA9YFyAu9E64c8E30=;
-        b=b49u/0LsAnmA3BFwDgqxzjVM9e6+fvc0w88vzNERACMVyO6LxAXcPLOTfcc1FlmDaa
-         solv/Pm44CslL1WLnMIj8+BBg8UhmtBVYh2zjW0pj1xdA15EOfydFWra4u59qhPvvTwi
-         B89LhhGtEyVg2qSPxb2CJqmYMvOH1uGbYlnBg7U8i2UTZqVdfLwd+HR6ZrVc3mON2pLG
-         sPdf3ZPcs5FgiefY5ZsSXrVDT7byJuGJdA38GOh0YBWJvWFPEIoWRQ3qvCA9hAuPseBC
-         xdH0XG/S5sZwwxBFvFUng/C6zwrF/MB74A22FnEIgdw+OZwEiGZMkMzmm2ycE+D0GykC
-         I0dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXowD9MdzAj5Ed9w5h2tjVHyFOtAE/PWVIKbiFPyfbsZK/AToNo14DAFI0mGR7TOyF5bzGYBXZoDgiTIB1og2Cc/3t3aB+hQkUI8iSC
-X-Gm-Message-State: AOJu0YyzM6zNoVr0c572H44c/qxS99Aw/nD2F2pdSMje8QsTE/ukJTon
-	McjixN5Ds7UAUnLin31CW3giB4vfyNRBCuMSvLszXayVeEf9HLDhHL3fpR/pi2txERDF5F6Wb2x
-	YTw==
-X-Google-Smtp-Source: AGHT+IGBJf5WBWt4IHrAGPKRiMh3ofvI/6h+DV7zdYHHjMJyXDX32j5hzFz8OLBnyQvSVnYqMejlq6Ru6Pk=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a02:495:b0:6c4:5b35:c986 with SMTP id
- 41be03b00d2f7-77dbda555b5mr6766a12.8.1720554402695; Tue, 09 Jul 2024 12:46:42
- -0700 (PDT)
-Date: Tue, 9 Jul 2024 12:46:41 -0700
-In-Reply-To: <d5ef3d7082f28fcad58b3f55a99c9cae17c4de5a.camel@redhat.com>
+	s=arc-20240116; t=1720554511; c=relaxed/simple;
+	bh=WYZbynAxn0GnCdrts1qUKkW8U9GcBxK1qFe2mSggAYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vBfBn57bjUojWiLK3+zUVLTlOk9dQWvgLfPz1+DPcrEwzwAqLV/XUffR1559vRBqACHzWFYE83BqjbuSUZLUufqrLMPj4qWFrTkzJDxFMZTddurHA9uPlCUPZ8sUIfyN/wVj5BwpFftG/ikylhlI6xKirkZGYLjlgPIbquGhO3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WJWkg1HkPz9sSr;
+	Tue,  9 Jul 2024 21:48:27 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id xf_IeGqSmWKy; Tue,  9 Jul 2024 21:48:27 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WJWkg01nkz9sSq;
+	Tue,  9 Jul 2024 21:48:26 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id A3C098B778;
+	Tue,  9 Jul 2024 21:48:26 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id NiN-SJ2v4SUl; Tue,  9 Jul 2024 21:48:26 +0200 (CEST)
+Received: from [192.168.233.17] (unknown [192.168.233.17])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4FBE08B773;
+	Tue,  9 Jul 2024 21:48:26 +0200 (CEST)
+Message-ID: <56a0340a-2534-4d2e-92e4-cf27a6358b23@csgroup.eu>
+Date: Tue, 9 Jul 2024 21:48:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-3-seanjc@google.com>
- <d5ef3d7082f28fcad58b3f55a99c9cae17c4de5a.camel@redhat.com>
-Message-ID: <Zo2ToWi3CDOQHF7A@google.com>
-Subject: Re: [PATCH v2 02/49] KVM: x86: Explicitly do runtime CPUID updates
- "after" initial setup
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] mm: Add p{g/4}d_leaf() in
+ asm-generic/pgtable-nop{4/u}d.h
+To: Peter Xu <peterx@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+ linux-riscv@lists.infradead.org, Oscar Salvador <osalvador@suse.de>
+References: <b601e1a88e3a5d4d93b130fa20184b555e2a2bea.1720074307.git.christophe.leroy@csgroup.eu>
+ <c8cb83b709740f7ac835997b88c5ddda610f66ab.1720074307.git.christophe.leroy@csgroup.eu>
+ <Zoa2Qnpzl97hmpHC@x1n>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <Zoa2Qnpzl97hmpHC@x1n>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 04, 2024, Maxim Levitsky wrote:
-> On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrote:
-> >  	/*
-> >  	 * KVM does not correctly handle changing guest CPUID after KVM_RUN, as
-> >  	 * MAXPHYADDR, GBPAGES support, AMD reserved bit behavior, etc.. aren't
-> > @@ -440,6 +440,15 @@ static int kvm_set_cpuid(struct kvm_vcpu *vcpu, struct kvm_cpuid_entry2 *e2,
-> >  	 * whether the supplied CPUID data is equal to what's already set.
-> >  	 */
-> >  	if (kvm_vcpu_has_run(vcpu)) {
-> > +		/*
-> > +		 * Note, runtime CPUID updates may consume other CPUID-driven
-> > +		 * vCPU state, e.g. KVM or Xen CPUID bases.  Updating runtime
-> > +		 * state before full CPUID processing is functionally correct
-> > +		 * only because any change in CPUID is disallowed, i.e. using
-> > +		 * stale data is ok because KVM will reject the change.
-> > +		 */
-> 
-> If I understand correctly the sole reason for the below
-> __kvm_update_cpuid_runtime is to ensure that kvm_cpuid_check_equal doesn't
-> fail because current cpuid also was post-processed with runtime updates.
 
-Yep.
 
-> Can we have a comment stating this? Or even better how about moving the
-> call to __kvm_update_cpuid_runtime into the kvm_cpuid_check_equal,
-> to emphasize this?
+Le 04/07/2024 à 16:48, Peter Xu a écrit :
+> On Thu, Jul 04, 2024 at 08:30:05AM +0200, Christophe Leroy wrote:
+>> Commit 2c8a81dc0cc5 ("riscv/mm: fix two page table check related
+>> issues") added pud_leaf() in include/asm-generic/pgtable-nopmd.h
+>>
+>> Do the same for p4d_leaf() and pgd_leaf() to avoid getting them
+>> erroneously defined by architectures that do not implement the
+>> related page level.
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+>> ---
+>>   include/asm-generic/pgtable-nop4d.h | 1 +
+>>   include/asm-generic/pgtable-nopud.h | 1 +
+>>   include/linux/pgtable.h             | 6 +++---
+>>   3 files changed, 5 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/include/asm-generic/pgtable-nop4d.h b/include/asm-generic/pgtable-nop4d.h
+>> index 03b7dae47dd4..75c96bbc5a96 100644
+>> --- a/include/asm-generic/pgtable-nop4d.h
+>> +++ b/include/asm-generic/pgtable-nop4d.h
+>> @@ -21,6 +21,7 @@ typedef struct { pgd_t pgd; } p4d_t;
+>>   static inline int pgd_none(pgd_t pgd)		{ return 0; }
+>>   static inline int pgd_bad(pgd_t pgd)		{ return 0; }
+>>   static inline int pgd_present(pgd_t pgd)	{ return 1; }
+>> +static inline int pgd_leaf(pgd_t pgd)		{ return 0; }
+>>   static inline void pgd_clear(pgd_t *pgd)	{ }
+>>   #define p4d_ERROR(p4d)				(pgd_ERROR((p4d).pgd))
+>>   
+>> diff --git a/include/asm-generic/pgtable-nopud.h b/include/asm-generic/pgtable-nopud.h
+>> index eb70c6d7ceff..14aeb8ef2d8a 100644
+>> --- a/include/asm-generic/pgtable-nopud.h
+>> +++ b/include/asm-generic/pgtable-nopud.h
+>> @@ -28,6 +28,7 @@ typedef struct { p4d_t p4d; } pud_t;
+>>   static inline int p4d_none(p4d_t p4d)		{ return 0; }
+>>   static inline int p4d_bad(p4d_t p4d)		{ return 0; }
+>>   static inline int p4d_present(p4d_t p4d)	{ return 1; }
+>> +static inline int p4d_leaf(p4d_t p4d)		{ return 0; }
+>>   static inline void p4d_clear(p4d_t *p4d)	{ }
+>>   #define pud_ERROR(pud)				(p4d_ERROR((pud).p4d))
+>>   
+>> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+>> index 2a6a3cccfc36..b27e66f542d6 100644
+>> --- a/include/linux/pgtable.h
+>> +++ b/include/linux/pgtable.h
+>> @@ -1882,13 +1882,13 @@ typedef unsigned int pgtbl_mod_mask;
+>>    * - It should cover all kinds of huge mappings (e.g., pXd_trans_huge(),
+>>    *   pXd_devmap(), or hugetlb mappings).
+>>    */
+>> -#ifndef pgd_leaf
+>> +#if !defined(__PAGETABLE_P4D_FOLDED) && !defined(pgd_leaf)
+>>   #define pgd_leaf(x)	false
+>>   #endif
+>> -#ifndef p4d_leaf
+>> +#if !defined(__PAGETABLE_PUD_FOLDED) && !defined(p4d_leaf)
+>>   #define p4d_leaf(x)	false
+>>   #endif
+>> -#ifndef pud_leaf
+>> +#if !defined(__PAGETABLE_PMD_FOLDED) && !defined(pud_leaf)
+>>   #define pud_leaf(x)	false
+>>   #endif
+>>   #ifndef pmd_leaf
+> 
+> Is it possible to do it the other way round, so that we can still rely on
+> "ifdef pxx_leaf" to decide whether to provide a fallback, and define them
+> properly when needed?
 
-Ya, I'll do both.
+What do you mean by the "other way round" ? Did I do a mistake ? I can't 
+see it.
 
-> > +		__kvm_update_cpuid_runtime(vcpu, e2, nent);
-> > +
-> >  		r = kvm_cpuid_check_equal(vcpu, e2, nent);
-> >  		if (r)
-> >  			return r;
-> 
-> 
-> 
-> Overall I am not 100% sure what is better:
-> 
-> Before the patch it was roughly like this:
-> 
-> 1. Post process the user given cpuid with bits of KVM runtime state (like xcr0)
-> At that point the vcpu->arch.cpuid_entries is stale but consistent, it is just old CPUID.
-> 
-> 2. kvm_hv_vcpu_init call (IMHO this call can be moved to kvm_vcpu_after_set_cpuid)
-> 
-> 3. kvm_check_cpuid on the user provided cpuid
-> 
-> 4. Update the vcpu->arch.cpuid_entries with new and post processed cpuid
-> 
-> 5. kvm_get_hypervisor_cpuid - I think this also can be cosmetically moved to kvm_vcpu_after_set_cpuid
-> 
-> 6. kvm_vcpu_after_set_cpuid itself.
-> 
-> 
-> After this change it works like that:
-> 
-> 1. kvm_hv_vcpu_init (again this belongs more to kvm_vcpu_after_set_cpuid)
-> 2. kvm_check_cpuid on the user cpuid without post processing - in theory this can cause bugs
-> 3. Update the vcpu->arch.cpuid_entries with new cpuid but without post-processing
-> 4. kvm_get_hypervisor_cpuid
-> 5. kvm_update_cpuid_runtime
-> 6. The old kvm_vcpu_after_set_cpuid
-> 
-> I'm honestly not sure what is better but IMHO moving the kvm_hv_vcpu_init and
-> kvm_get_hypervisor_cpuid into kvm_vcpu_after_set_cpuid would clean up this
-> mess a bit regardless of this patch.
+The purpose here is:
+- If the architecture has the said level and implements pXd_leaf(), 
+that's fine
+- If the architecture has the said level and doesn't implement 
+pXd_leaf(), that's also fine, a fallback is provided.
+- If the architecture doesn't have the said level but implements 
+pXd_leaf(), it will conflict with the definition in 
+include/asm-generic/pgtable-nopXd.h and the build will fail.
 
-It takes many more patches, but doing the swap() allows for the removal of several
-APIs that poke into a "raw" kvm_cpuid_entry2 array, and by the end of the series
-(with your above feedback addressed) the code gets to (sans comments):
+The purpose is to make sure architectures don't implement pXd_leaf() at 
+the wrong level, for instance:
+- an architecture without PMDs shall not implement anything else than 
+pmd_leaf()
+- an architecture without P4Ds shall not implement pgd_leaf().
 
-	swap(vcpu->arch.cpuid_entries, e2);
-	swap(vcpu->arch.cpuid_nent, nent);
 
-	memcpy(vcpu_caps, vcpu->arch.cpu_caps, sizeof(vcpu_caps));
-	BUILD_BUG_ON(sizeof(vcpu_caps) != sizeof(vcpu->arch.cpu_caps));
+> 
+> IMHO it was a neat way to avoid worrying on any macro defined; it'll be as
+> simple as "if function xxx not defined, let's define a fallback for xxx".
+> Per my limited experience it helped a lot on avoid compile issues here and
+> there..
 
-	if (kvm_vcpu_has_run(vcpu)) {
-		r = kvm_cpuid_check_equal(vcpu, e2, nent);
-		if (r)
-			goto err;
-		goto success;
-	}
+That will still be the case.
 
-Those are really just bonuses though, the main goal is to prevent recurrences of
-bugs where KVM consumes stale vCPU state[*], which is what prompted this change.
+This patch adds: "if function xxx is defined for wrong level, break the 
+build"
 
-[*] https://lore.kernel.org/all/20240228101837.93642-1-vkuznets@redhat.com
+Christophe
 
