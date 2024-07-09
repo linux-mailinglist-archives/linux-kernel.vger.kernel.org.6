@@ -1,113 +1,304 @@
-Return-Path: <linux-kernel+bounces-246750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA6392C62E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:17:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8074F92C630
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 228DC1F237A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:17:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D74A3B2210F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67277187841;
-	Tue,  9 Jul 2024 22:16:54 +0000 (UTC)
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368F3189F25;
+	Tue,  9 Jul 2024 22:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cN8s7vlH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6955317B05D
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 22:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B2A149C79;
+	Tue,  9 Jul 2024 22:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720563414; cv=none; b=A0NTVx4Z5tro2DhMLUeHRMAHDEUjOvWIlxf284WV6Pw+Y2BOJ0hfvvo9TcQeZ84SnDZOyIhzSPvOKA2Ap7d7oCKRmTOOtSbson5MdeAJUMmzw17UwHPohxQjh0HQL/PVonrCLcwjGeUudALIBjA2AtJHQcSyND/fouM6BczXCP0=
+	t=1720563449; cv=none; b=M3d5xMqUyCDZuou3nbYoqxkbJl5Pxt7NUmcHMDi9yX5UhVcQCRiYlujMIOA+DpjYUncOmkW5bE4UTgcci8GYrMuUZBW0odcecP1GpPNvswScsr1zahJvg6sd6eObS5qcxntkFr7H8SXZ3UGi2BUqEqSydhuQEz+72hQgRT8Pid0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720563414; c=relaxed/simple;
-	bh=EmiXJ5IBlBooNbQ0wcBUYah6KEo57w1Tp450sV6yMtc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YU8ifb7VgbX3z+oOBtnJP8Fvli8VhGhsI+kLYZD+g8RESC00lgH+uXu9wmM38xoxrbhfT2OImGOXgh/qw+bvc+9b5WIL/s7CNfvPAMAzL6VB8qMRL0Y3tfcVpuCU/chPVSNeQqsqSc/msYz6Pc0ZJz9jWFhD0rXP3R66JiiOfEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-79f02fe11aeso246523485a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 15:16:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720563411; x=1721168211;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EmiXJ5IBlBooNbQ0wcBUYah6KEo57w1Tp450sV6yMtc=;
-        b=e0TPwgYB5rIXSKGlU8Lj5j8zbx5QS+zDH9XFhMpftZBLQ9B9m3Dlql3z4Sr55Eesrz
-         zgEaIWwkydZWRmXGOvJ+xO7Il8dwcIrg5NTMgGGPknggO5hkH8QzjvfxIcY/dRZZHG5x
-         AGO3TmHPcS953WAlDsOL4BRmPAgWe22B4/VFkf4yssBMI/wUDBiQa69YWt4hKm+CqTV9
-         c7MjQc3A31DFIHUY2iMVvoX1AcQIqR8z84ZpDK88tDOpauB5yxX2GxhyWzqk56lkOy5U
-         IjlGdu3IbeDof1e0/jGbJ4Fk3VTRgXhP30qqpmlYPN+ZBlmkyxmLZX3h8AIbsvoJC9r/
-         Iw9A==
-X-Gm-Message-State: AOJu0YwS6D38cEg0imvUJx9mPDPfLgiUQcmKgLeS3b7HAaFEsPEUU8xx
-	dKYB3EKLEtiXR/BoTXMJC2IOaZKKd9+EBDpcLDUZ8kLRTJyV41FM
-X-Google-Smtp-Source: AGHT+IFVMdZcYWkIwMI85LKonIa8Hb6LsxkmKE7eJ8XMMy3l/cyA0P42JwbmTid9N85cDWsZvmYpQQ==
-X-Received: by 2002:a05:620a:10a8:b0:79f:1783:55a0 with SMTP id af79cd13be357-79f19c0a4d6mr376462885a.78.1720563411260;
-        Tue, 09 Jul 2024 15:16:51 -0700 (PDT)
-Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f1902b956sm137209385a.68.2024.07.09.15.16.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 15:16:50 -0700 (PDT)
-Date: Tue, 9 Jul 2024 17:16:48 -0500
-From: David Vernet <void@manifault.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	schatzberg.dan@gmail.com
-Subject: Re: [PATCH 2/2] sched_ext: Make scx_bpf_reenqueue_local() skip tasks
- that are being migrated
-Message-ID: <20240709221648.GB248762@maniforge>
-References: <20240709211001.1198145-1-tj@kernel.org>
- <20240709211001.1198145-3-tj@kernel.org>
+	s=arc-20240116; t=1720563449; c=relaxed/simple;
+	bh=M7bxLOB6w9LZKOrld68ER7p3bT8mFFNBNOJZa41XOQ8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=OUfx4DTYFVjr/hM9xGj6jzJ99m2zkkrzVQkz8vgUcljhEqCVxPMocqE+qeAGUjC+/Yrgs8mL39RylSL7U2JId58VLMciwld0beM7u2DnzTTrH0YkqC3aBK8gPbYId7wcZoketEgK9hhW5cF46t6VCS81887p87VMLK6S7CYFOlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cN8s7vlH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C47A3C3277B;
+	Tue,  9 Jul 2024 22:17:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720563448;
+	bh=M7bxLOB6w9LZKOrld68ER7p3bT8mFFNBNOJZa41XOQ8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cN8s7vlHZ/NUwEkX/YeMELj0IjzweDvMEzSnKucKfWzvectpvljp+IE0dOA+ZRW84
+	 u2hRM/VYz9XqQnQpPPYAjY0f3dcuDQ97B1GAOd9CCf41ZAuVBgmlu5iZ+/jtEXdhBN
+	 nPSJCM+3xBsDAAVWKUKC53M6pIXTm24VvMLA/appTqXbQTwMo8PTYqaItMzpfVSbow
+	 ZwtQUn78L+UnmQ3c7k5MSOKkONMzQ33dTTZB2XETp8jl3b7BnMa2Rl0oEO7f8tsG3W
+	 iSoBNIwvh6e+Kw+4jzXD5Aq/c+FTHq4aK7klQd8AefdHuPs316Q5Rxs3YphJDacLuE
+	 XJvM6i6VVaKpA==
+Date: Wed, 10 Jul 2024 07:17:24 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Andrii Nakryiko <andrii@kernel.org>, Francis Laniel
+ <flaniel@linux.microsoft.com>, Nikolay Kuratov <kniv@yandex-team.ru>,
+ bpf@vger.kernel.org
+Subject: Re: [PATCH for-next v4] tracing/kprobes: Add symbol counting check
+ when module loads
+Message-Id: <20240710071724.dada783db147d4aab6980041@kernel.org>
+In-Reply-To: <172048347679.185217.9457864992619792356.stgit@devnote2>
+References: <172048347679.185217.9457864992619792356.stgit@devnote2>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ATaVd2TTD277T/j+"
-Content-Disposition: inline
-In-Reply-To: <20240709211001.1198145-3-tj@kernel.org>
-User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+On Tue,  9 Jul 2024 09:04:36 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> Currently, kprobe event checks whether the target symbol name is unique
+> or not, so that it does not put a probe on an unexpected place. But this
+> skips the check if the target is on a module because the module may not
+> be loaded.
+> 
+> To fix this issue, this patch checks the number of probe target symbols
+> in a target module when the module is loaded. If the probe is not on the
+> unique name symbols in the module, it will be rejected at that point.
+> 
+> Note that the symbol which has a unique name in the target module,
+> it will be accepted even if there are same-name symbols in the
+> kernel or other modules,
+> 
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Instead of version up, let me send a fix.
+
+Thanks,
+
+> ---
+>  Changes in v4:
+>   - Hide find_module() in try_module_get_by_name().
+>   - Add bpf ML.
+>  Changes in v3:
+>   - Update the patch description.
+>   - Update for latest probe/for-next
+>  Updated from last October post, which was dropped by test failure:
+>     https://lore.kernel.org/linux-trace-kernel/169854904604.132316.12500381416261460174.stgit@devnote2/
+>  Changes in v2:
+>   - Fix to skip checking uniqueness if the target module is not loaded.
+>   - Fix register_module_trace_kprobe() to pass correct symbol name.
+>   - Fix to call __register_trace_kprobe() from module callback.
+> ---
+>  kernel/trace/trace_kprobe.c |  138 +++++++++++++++++++++++++++++--------------
+>  1 file changed, 94 insertions(+), 44 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+> index 7fd0f8576e4c..61a6da808203 100644
+> --- a/kernel/trace/trace_kprobe.c
+> +++ b/kernel/trace/trace_kprobe.c
+> @@ -678,6 +678,21 @@ static int register_trace_kprobe(struct trace_kprobe *tk)
+>  }
+>  
+>  #ifdef CONFIG_MODULES
+> +static int validate_module_probe_symbol(const char *modname, const char *symbol);
+> +
+> +static int register_module_trace_kprobe(struct module *mod, struct trace_kprobe *tk)
+> +{
+> +	const char *p;
+> +	int ret = 0;
+> +
+> +	p = strchr(trace_kprobe_symbol(tk), ':');
+> +	if (p)
+> +		ret = validate_module_probe_symbol(module_name(mod), p + 1);
+> +	if (!ret)
+> +		ret = __register_trace_kprobe(tk);
+> +	return ret;
+> +}
+> +
+>  /* Module notifier call back, checking event on the module */
+>  static int trace_kprobe_module_callback(struct notifier_block *nb,
+>  				       unsigned long val, void *data)
+> @@ -696,7 +711,7 @@ static int trace_kprobe_module_callback(struct notifier_block *nb,
+>  		if (trace_kprobe_within_module(tk, mod)) {
+>  			/* Don't need to check busy - this should have gone. */
+>  			__unregister_trace_kprobe(tk);
+> -			ret = __register_trace_kprobe(tk);
+> +			ret = register_module_trace_kprobe(mod, tk);
+>  			if (ret)
+>  				pr_warn("Failed to re-register probe %s on %s: %d\n",
+>  					trace_probe_name(&tk->tp),
+> @@ -747,17 +762,81 @@ static int count_mod_symbols(void *data, const char *name, unsigned long unused)
+>  	return 0;
+>  }
+>  
+> -static unsigned int number_of_same_symbols(char *func_name)
+> +static unsigned int number_of_same_symbols(const char *mod, const char *func_name)
+>  {
+>  	struct sym_count_ctx ctx = { .count = 0, .name = func_name };
+>  
+> -	kallsyms_on_each_match_symbol(count_symbols, func_name, &ctx.count);
+> +	if (!mod)
+> +		kallsyms_on_each_match_symbol(count_symbols, func_name, &ctx.count);
+>  
+> -	module_kallsyms_on_each_symbol(NULL, count_mod_symbols, &ctx);
+> +	module_kallsyms_on_each_symbol(mod, count_mod_symbols, &ctx);
+>  
+>  	return ctx.count;
+>  }
+>  
+> +static int validate_module_probe_symbol(const char *modname, const char *symbol)
+> +{
+> +	unsigned int count = number_of_same_symbols(modname, symbol);
+> +
+> +	if (count > 1) {
+> +		/*
+> +		 * Users should use ADDR to remove the ambiguity of
+> +		 * using KSYM only.
+> +		 */
+> +		return -EADDRNOTAVAIL;
+> +	} else if (count == 0) {
+> +		/*
+> +		 * We can return ENOENT earlier than when register the
+> +		 * kprobe.
+> +		 */
+> +		return -ENOENT;
+> +	}
+> +	return 0;
+> +}
+> +
+> +#ifdef CONFIG_MODULES
+> +/* Return NULL if the module is not loaded or under unloading. */
+> +static struct module *try_module_get_by_name(const char *name)
+> +{
+> +	struct module *mod;
+> +
+> +	rcu_read_lock_sched();
+> +	mod = find_module(name);
+> +	if (mod && !try_module_get(mod))
+> +		mod = NULL;
+> +	rcu_read_unlock_sched();
+> +
+> +	return mod;
+> +}
+> +#else
+> +#define try_module_get_by_name(name)	(NULL)
+> +#endif
+> +
+> +static int validate_probe_symbol(char *symbol)
+> +{
+> +	struct module *mod = NULL;
+> +	char *modname = NULL, *p;
+> +	int ret = 0;
+> +
+> +	p = strchr(symbol, ':');
+> +	if (p) {
+> +		modname = symbol;
+> +		symbol = p + 1;
+> +		*p = '\0';
+> +		mod = try_module_get_by_name(modname);
+> +		if (!mod)
+> +			goto out;
+> +	}
+> +
+> +	ret = validate_module_probe_symbol(modname, symbol);
+> +out:
+> +	if (p)
+> +		*p = ':';
+> +	if (mod)
+> +		module_put(mod);
+> +	return ret;
+> +}
+> +
+>  static int trace_kprobe_entry_handler(struct kretprobe_instance *ri,
+>  				      struct pt_regs *regs);
+>  
+> @@ -881,6 +960,14 @@ static int __trace_kprobe_create(int argc, const char *argv[])
+>  			trace_probe_log_err(0, BAD_PROBE_ADDR);
+>  			goto parse_error;
+>  		}
+> +		ret = validate_probe_symbol(symbol);
+> +		if (ret) {
+> +			if (ret == -EADDRNOTAVAIL)
+> +				trace_probe_log_err(0, NON_UNIQ_SYMBOL);
+> +			else
+> +				trace_probe_log_err(0, BAD_PROBE_ADDR);
+> +			goto parse_error;
+> +		}
+>  		if (is_return)
+>  			ctx.flags |= TPARG_FL_RETURN;
+>  		ret = kprobe_on_func_entry(NULL, symbol, offset);
+> @@ -893,31 +980,6 @@ static int __trace_kprobe_create(int argc, const char *argv[])
+>  		}
+>  	}
+>  
+> -	if (symbol && !strchr(symbol, ':')) {
+> -		unsigned int count;
+> -
+> -		count = number_of_same_symbols(symbol);
+> -		if (count > 1) {
+> -			/*
+> -			 * Users should use ADDR to remove the ambiguity of
+> -			 * using KSYM only.
+> -			 */
+> -			trace_probe_log_err(0, NON_UNIQ_SYMBOL);
+> -			ret = -EADDRNOTAVAIL;
+> -
+> -			goto error;
+> -		} else if (count == 0) {
+> -			/*
+> -			 * We can return ENOENT earlier than when register the
+> -			 * kprobe.
+> -			 */
+> -			trace_probe_log_err(0, BAD_PROBE_ADDR);
+> -			ret = -ENOENT;
+> -
+> -			goto error;
+> -		}
+> -	}
+> -
+>  	trace_probe_log_set_index(0);
+>  	if (event) {
+>  		ret = traceprobe_parse_event_name(&event, &group, gbuf,
+> @@ -1835,21 +1897,9 @@ create_local_trace_kprobe(char *func, void *addr, unsigned long offs,
+>  	char *event;
+>  
+>  	if (func) {
+> -		unsigned int count;
+> -
+> -		count = number_of_same_symbols(func);
+> -		if (count > 1)
+> -			/*
+> -			 * Users should use addr to remove the ambiguity of
+> -			 * using func only.
+> -			 */
+> -			return ERR_PTR(-EADDRNOTAVAIL);
+> -		else if (count == 0)
+> -			/*
+> -			 * We can return ENOENT earlier than when register the
+> -			 * kprobe.
+> -			 */
+> -			return ERR_PTR(-ENOENT);
+> +		ret = validate_probe_symbol(func);
+> +		if (ret)
+> +			return ERR_PTR(ret);
+>  	}
+>  
+>  	/*
+> 
 
 
---ATaVd2TTD277T/j+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jul 09, 2024 at 11:09:43AM -1000, Tejun Heo wrote:
-> When a running task is migrated to another CPU, the stop_task is used to
-> preempt the running task and migrate it. This, expectedly, invokes
-> ops.cpu_release(). If the BPF scheduler then calls
-> scx_bpf_reenqueue_local(), it re-enqueues all tasks on the local DSQ
-> including the task which is being migrated.
->=20
-> This creates an unnecessary re-enqueue of a task which is about to be
-> deactivated and re-activated for migration anyway. It can also cause
-> confusion for the BPF scheduler as scx_bpf_task_cpu() of the task and its
-> allowed CPUs may not agree while migration is pending.
->=20
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Fixes: 245254f7081d ("sched_ext: Implement sched_ext_ops.cpu_acquire/rele=
-ase()")
-> Cc: David Vernet <void@manifault.com>
-
-Acked-by: David Vernet <void@manifault.com>
-
---ATaVd2TTD277T/j+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZo220AAKCRBZ5LhpZcTz
-ZA/9AQCV7nyWj+eDlsH8gb+UONdpXXWRh846xIsxXNyIuU/X6QD+OVMKjFTUf7cO
-27LZhWu2Ds7FyCe3PplVxDMP57MZ7g0=
-=AEnq
------END PGP SIGNATURE-----
-
---ATaVd2TTD277T/j+--
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
