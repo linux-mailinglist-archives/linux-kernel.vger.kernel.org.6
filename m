@@ -1,82 +1,106 @@
-Return-Path: <linux-kernel+bounces-246559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C35F792C384
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:52:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DD3D92C3A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F0EC282879
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:52:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 420001C22953
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BBB1180057;
-	Tue,  9 Jul 2024 18:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8A5182A62;
+	Tue,  9 Jul 2024 19:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TLO852cq"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="A6g2pnoa"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB4C80BEC;
-	Tue,  9 Jul 2024 18:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113D313210D
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 19:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720551149; cv=none; b=u5ZCvTNiYqNdjM5jycEOEsNxdVNkQwMhBu83BWg5eZ/i8cVk0rNF8hkOjl6ebP5Hq/MZJxfJShkhIeNzX23mtIHVEE6dexvW3RKMMvlltGUe4kYxNHGbGybfofgK/QuA595iwtTXzTdc7rIIk0wESPcKEZ81Vn/I2oxxrrY8djg=
+	t=1720551798; cv=none; b=fuUwfLFytJJ23hyGI7tFIhU2o4yNCBDlSEQa2jRpcBB7F76dbghOXXnDKmspyWvpFVkLTvu0hTNeC5Puu6tvjmjyOZHo7VuuCkttL4Hw8EKCtbhIrJG/j/9IqmPdaEWR4zKohsp2UEWGpgn7STbbi4B8UchkYBfkRcFwjdBcDjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720551149; c=relaxed/simple;
-	bh=8ieHrXVeYYJBD+wAMu25xGbS8xjwW/N04pPu6ObI7mc=;
+	s=arc-20240116; t=1720551798; c=relaxed/simple;
+	bh=UmMx48wnc0FnxjTp1WjNlbVccTNxzM4x83j7igXR7TU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s30ZeHkiZvmxjbZqP/oLhoUsj7Tp2miGf8eZ7iyRT9gY4AfYtyTpMGXpm9IiwQit3gdaOua0uf73c66ypHwVe4SRUJAmQDUFDLAsBg3bTs0vjkCYwSEv1Gkwe2YhC79QkW17kBQhiP586x/m9Z3CuQyOUwh8V1Jhi4Uc71Xekic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TLO852cq; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-656d8b346d2so3093884a12.2;
-        Tue, 09 Jul 2024 11:52:28 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=P3Y0xZF6bX7oc5oAvCJ9VRPB8tdoO62T1D/uywbCBldHgMrAN5HjbqBcZGIxCKn2nKGqrzKr5JZimtpnrZWTdvAdzqLYNeP+CgXZ6HSu2n+LiOOaLXcZ95PrJcrPEzsVqNcTjfSFWak/vtmXuCIJ6ppQFe5US7xvs/eiYoMrySE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=A6g2pnoa; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b5eb69e04cso33242496d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 12:03:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720551148; x=1721155948; darn=vger.kernel.org;
+        d=ziepe.ca; s=google; t=1720551796; x=1721156596; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9XkRhpaVRdgchhtWjJLj6BGbUn4he7TT4pklzFSgHlQ=;
-        b=TLO852cqbaNRqHI//u2aICPGV6EGOQWA+ZeDnqVRWKIOmJ39wk1ImvU/PZYTHuSd5K
-         IYOPWdnIxiSSAADe2cGCS/e9qs0mjinXlrSgy/yG8TEj3dL7BVWjLDvjJp0nx2qEURoK
-         EjPDSzhnmzbFkP4hLcKbAy6DACB6f9EFXJxmmWn45QM6fRapMIsxr5KSQeXZ1nC8d+cT
-         rKciCD+SAaYkY9lXPkG5MKy3oS7Up802xDSTTL9LUNomDE47PcHyaggzJc5RmRuCjF0n
-         dgSiGLpuMWZuXv4TUTqNwOnMTTZ3baZ/6UwAxei+RWQtRFrgTtjePEGqN8g7j5WyXRRW
-         ROEA==
+        bh=tz4SKanGT0p7B5kijsG/hyAEtWawoOPO2+O2oyG1KXg=;
+        b=A6g2pnoaWkIIc0CimeecaG6mN13v3n+vMZWH1a2eisPl7oElZ5j8RpC7cpUSns7z7E
+         SaXhh3hjwvo58JADJ4Lw0s/jnqxlC0BzTQIPpK7tnTw3bVo/e3D+fRbRqyUbjlLnjChe
+         VcL/iF5vlClZpPkk1kOVxFIVZXTJH4WsBu1HbMB3pT8UgIlpcPiRTcjlKhpPxR7637Fk
+         DRUQkMUNORI+3EPdhjl+QzUQN9nItiNZ6HEzDLm0u+TDbYIPjlW+C8lfjk3FVZ8v7AWW
+         V8oJikbmctWxcgEg3nIGGAnSdH/wLtsUGiM83M8YX4/0gceq+z/kwqBSB9Rw6gHC0ZcK
+         NqLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720551148; x=1721155948;
+        d=1e100.net; s=20230601; t=1720551796; x=1721156596;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9XkRhpaVRdgchhtWjJLj6BGbUn4he7TT4pklzFSgHlQ=;
-        b=a6F6+1IjcA8zeOFswBJih6OKcZwGo4zuEbZaewzM7UipYVgrgJavrL4xqw83kmkMNw
-         DtvCUb0lGuvFzr+8CnIUOHZarTq8dE2++qYisd45a045InSFohpQv5FIlj3nfWlqbeOj
-         HCW/Y/Pl9DFPNs78At7xAbUd81vnzXtLXpO4c93E89vSFwRDhG3LDDj8MpbBXpNu3EfZ
-         Ew0gUxuG/0ZlBfZfR6eewOTpYM8dAsKFcc1524+66VDRpr7UbMtJBRPATiN3bLb0o5xF
-         3shlK3Angzf+YTjmyaRukjcGqLFB4M6P0p91lx/sZ01XcxMkiF430irZyc1yXVavOSh9
-         C0cg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLyg3lS62whnhlSZt/sKcRRkRy0hVXG7GAij6KqfSCyKMsSh9hgbPOxhX5hkRdQYJ7DyE4RL4bG01Pcb9ezIcc7PRTvCqzoizMq4Z3
-X-Gm-Message-State: AOJu0YzICL5aHG8AwMMjTmhEBdTf4yGzQ9zHm1j3m0v84hWFT/6dBJ78
-	4iAdjRVPffMtwJr8GP9t9sPZdT4H/z40N4yJn0Wfmb8DWpsJwNZt
-X-Google-Smtp-Source: AGHT+IEHNE+fsRFsGTVFWTYrX6xSNJ38pTMIyukS0nKbIttJkZLibhW6cPZ72l6OsP0ZhoRsRPDy+A==
-X-Received: by 2002:a05:6a20:244e:b0:1c0:bf35:ef42 with SMTP id adf61e73a8af0-1c2981fbfdemr3890267637.3.1720551147703;
-        Tue, 09 Jul 2024 11:52:27 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:922a:af36:b3d9:2eac])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b439b54fesm2237478b3a.173.2024.07.09.11.52.27
+        bh=tz4SKanGT0p7B5kijsG/hyAEtWawoOPO2+O2oyG1KXg=;
+        b=H0Wm5feZjdqxFv9ax1DhailSyRSU+SBmn6/AQWqK9bjgHH4nSocjsI6w0kBnP/cm8z
+         6BKIEWlOLVPeyfbI94sE6kwGQ3Asbz0iSbNa/8mBIeeFfYeb4qGI8x47j8e7md0NYmGZ
+         R5xecZRP5d2f0Epv65P+7xHk+BgVepFTo1Gm0jYEjUjaB3ck9YmjZ7T4qE5smGnTX5z7
+         cEVgtgW2sJpYO1P+myvfuoPQjx11sZOLHT2Ir/Lsai8YLDQllzowCybhf4XkJL0Y6rsT
+         wNYUA5uAzDuT2Cc/3LOUBMW0BQ5vRyyw6N5CqoFDDKbZCmRrJ48Wds9y6SJa3TxlwG0k
+         H9zw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSqv4it5hp04T1l7AXfUMyqysuwt7QYxoLAjaTOJYnkZL1ygXfFmPibz8BGm7HtK72EDiUbnteG2mbMX2pyaYLNIp/YpZP7Mp8ZUSD
+X-Gm-Message-State: AOJu0YzHE0WFlC9l7AFoljTx67HGZTs68nVrFHXpwNKJOOYqAiVPe1RP
+	jeHTA2Vj6jklN5hFN+mjf+ARwBbB5gC9v4he6AdSGuKhEjowP+MOQ3xXZXpgmGc=
+X-Google-Smtp-Source: AGHT+IFhetxp9iNMwbY2wmkBlgDvT9+MA6GFJVeq9xE0noHusNzmV7TqInccd4H71Z7ysufi1Iri/Q==
+X-Received: by 2002:a05:6214:1cc2:b0:6b5:52da:46f2 with SMTP id 6a1803df08f44-6b61bc80504mr38822486d6.6.1720551795800;
+        Tue, 09 Jul 2024 12:03:15 -0700 (PDT)
+Received: from ziepe.ca ([128.77.69.90])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b61ba797c0sm11232896d6.91.2024.07.09.12.03.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 11:52:27 -0700 (PDT)
-Date: Tue, 9 Jul 2024 11:52:24 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Mirsad Todorovac <mtodorovac69@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Felipe Balbi <me@felipebalbi.com>,
-	Peter De Schrijver <peter.de-schrijver@nokia.com>
-Subject: Re: [PROBLEM linux-next] drivers/input/misc/twl4030-pwrbutton.c:33:
- warning: expecting prototype for twl4030().
-Message-ID: <Zo2G6P-hFER6EqgQ@google.com>
-References: <51a4022c-e5a7-48c2-8c87-0e26a1b7b406@gmail.com>
- <ZowbMn8BNJm_oufN@google.com>
- <2594cc44-5fd7-4aeb-9f35-da3d8b8210a3@gmail.com>
+        Tue, 09 Jul 2024 12:03:15 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sRFxj-002sHI-8S;
+	Tue, 09 Jul 2024 15:53:15 -0300
+Date: Tue, 9 Jul 2024 15:53:15 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Leon Romanovsky <leon@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Keith Busch <kbusch@kernel.org>,
+	"Zeng, Oak" <oak.zeng@intel.com>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v1 00/18] Provide a new two step DMA API mapping API
+Message-ID: <20240709185315.GM14050@ziepe.ca>
+References: <cover.1719909395.git.leon@kernel.org>
+ <20240703054238.GA25366@lst.de>
+ <20240703105253.GA95824@unreal>
+ <20240703143530.GA30857@lst.de>
+ <20240703155114.GB95824@unreal>
+ <20240704074855.GA26913@lst.de>
+ <20240708165238.GE14050@ziepe.ca>
+ <20240709061721.GA16180@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,43 +109,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2594cc44-5fd7-4aeb-9f35-da3d8b8210a3@gmail.com>
+In-Reply-To: <20240709061721.GA16180@lst.de>
 
-On Mon, Jul 08, 2024 at 08:04:37PM +0200, Mirsad Todorovac wrote:
-> On 7/8/24 19:00, Dmitry Torokhov wrote:
-> > Hi Mirsad,
+On Tue, Jul 09, 2024 at 08:17:21AM +0200, Christoph Hellwig wrote:
+> On Mon, Jul 08, 2024 at 01:52:38PM -0300, Jason Gunthorpe wrote:
+> > Ideally we'd have some template code that consolidates these loops to
+> > common code with driver provided hooks - there are a few ways to get
+> > that efficiently in C.
 > > 
-> > On Sun, Jul 07, 2024 at 01:54:12AM +0200, Mirsad Todorovac wrote:
-> >> Hi,
-> >>
-> >> This is the result of testing randconfig with KCONFIG_SEED=0xEE7AB52F in next-20240703 vanilla tree on
-> >> Ubuntu 22.04 LTS. GCC used is gcc (Ubuntu 12.3.0-1ubuntu1~22.04) 12.3.0.
-> > 
-> > Have you saved the .config for the failed run by any chance?
-> > 
-> > Thanks.
-> > 
+> > I think it will be clearer when we get to RDMA and there we have the
+> > same SGL/PRP kind of split up and we can see what is sharable.
 > 
-> Hi Dmitry,
-> 
-> Please find it attached to this message.
+> I really would not want to build common code for PRPs - this is a concept
+> very specific to RDMA and NVMe.  
 
-Thanks. LOL, here's the fix:
+I think DRM has it too. If you are populating a GPU page table then it
+is basically a convoluted PRP. Probably requires different splitting
+logic than what RDMA does, but I've never looked.
 
-diff --git a/drivers/input/misc/twl4030-pwrbutton.c b/drivers/input/misc/twl4030-pwrbutton.c
-index e3ee0638ffba..ade6685e5ce9 100644
---- a/drivers/input/misc/twl4030-pwrbutton.c
-+++ b/drivers/input/misc/twl4030-pwrbutton.c
-@@ -1,4 +1,4 @@
--/**
-+/*
-  * twl4030-pwrbutton.c - TWL4030 Power Button Input Driver
-  *
-  * Copyright (C) 2008-2009 Nokia Corporation
+> OTOH more common code SGLs would be nice.  If you look at e.g. SCSI
+> drivers most of them have a simpe loop of mapping the SG table and
+> then copying the fields into the hardware SGL.  This would be a very
+> common case for a helper.
 
+Yes, I belive this is very common.
 
-Thanks.
+> That whole thing of course opens the question if we want a pure
+> in-memory version of the dma_addr_t/len tuple.  IMHO that is the best
+> way to migrate and allows to share code easily.  We can look into ways
+> to avoiding that more for drivers that care, but most drivers are
+> probably best serve with it to keep the code simple and make the
+> conversion easier.
 
--- 
-Dmitry
+My feeling has been that this RFC is the low level interface and we
+can bring our own data structure on top.
+
+It would probably make sense to build a scatterlist v2 on top of this
+that has an in-memory dma_addr_t/len list close to today. Yes it costs
+a memory allocation, or a larger initial allocation, but many places
+may not really care. Block drivers have always allocated a SGL, for
+instance.
+
+Then the verbosity of this API is less important as we may only use it
+in a few places.
+
+My main take away was that we should make the dma_ops interface
+simpler and more general so we can have this choice instead of welding
+a single datastructure through everything.
+
+> > I'm also cooking something that should let us build a way to iommu map
+> > a bio_vec very efficiently, which should transform this into a single
+> > indirect call into the iommu driver per bio_vec, and a single radix
+> > walk/etc.
+>
+> I assume you mean array of bio_vecs here.  That would indeed nice.
+> We'd still potentially need a few calls for block drivers as
+> requests can have multiple bios and thus bio_vec arrays, but it would
+> still be a nice reduction of calls.
+
+Yes. iommufd has performance needs here, not sure what it will turn
+into but bio_vec[] direct to optimized radix manipuilation is
+something I'd be keen to see.
+
+Jason
 
