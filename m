@@ -1,145 +1,187 @@
-Return-Path: <linux-kernel+bounces-245030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F5792AD39
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:44:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF10D92ACF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 895AC281FDB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:44:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C40C281371
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC2A29422;
-	Tue,  9 Jul 2024 00:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25F1631;
+	Tue,  9 Jul 2024 00:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toshiba.co.jp header.i=yuji2.ishikawa@toshiba.co.jp header.b="mnQId6Xx"
-Received: from mo-csw-fb.securemx.jp (mo-csw-fb1122.securemx.jp [210.130.202.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xmqwU+ro"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9724A05;
-	Tue,  9 Jul 2024 00:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.130.202.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07BA4A02
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 00:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720485887; cv=none; b=ma6iUziaqHKZYICrpMZ/7nKtxtNR6bZjLVNUb2aY5nD7w3HLUKmArMyiDrqAgggBVxAUHpxMzS7ysq3xACLXRoAt/B6OQxcWPK1gyVWpVNh0baC6nBeMBlf7zhJMOAUtbhTPLrlHspf50a3YchItE7csgG99J2I5eQErcvNKqHU=
+	t=1720483813; cv=none; b=mqDD+83xpeH/mzWZ72hbGn204kDKq5ZQtiNm8uIYjQhE3x/i4ZAey6q2zKmChGBuF79AnzEWo1UTZp3fNCM3u5WvLAum/OS2HYt1uxp2dRSEVx+1d6KFUV0mrQTExNL0Y6F43b2Ph4K+3/P+ExgOBKcRLMyYNnu9UYafqaOv51A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720485887; c=relaxed/simple;
-	bh=e1dzAiBXQhbVLezx3qDYjhlathF5T/E1TJvwyCTSHl8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=d1F698p9flQRDCiJI8mh3yLISYHr7TX8o7OkRzElHZyewVFo826o4nZ/3LTAX2C70hfxmX4K8kHFfkCD+gnPkD5si4bgWRsql7TXP3WTH3TP5fQ6UPQcU0tnbyIOoVOrS9JKRqgJWQdDQy9am/ht83neZJGVQSsSioySvpFb3sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=toshiba.co.jp; spf=pass smtp.mailfrom=toshiba.co.jp; dkim=pass (2048-bit key) header.d=toshiba.co.jp header.i=yuji2.ishikawa@toshiba.co.jp header.b=mnQId6Xx; arc=none smtp.client-ip=210.130.202.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=toshiba.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toshiba.co.jp
-Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1122) id 4690FGhA2337246; Tue, 9 Jul 2024 09:15:16 +0900
-DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:Cc
-	:Subject:Date:Message-Id:In-Reply-To:References:MIME-Version:
-	Content-Transfer-Encoding;i=yuji2.ishikawa@toshiba.co.jp;s=key2.smx;t=
-	1720484084;x=1721693684;bh=e1dzAiBXQhbVLezx3qDYjhlathF5T/E1TJvwyCTSHl8=;b=mnQ
-	Id6XxWHtvudM4ICe1B99n9nk/F/zlkvsjZ2hxIVIsvf0HvQa4mFKKd78ukwTqttz9w7cHvG7B2U72
-	QEUWLcNwaZXon8tt5bJ6QxGIsvee8Gqt+sJ5HObQ5Q9EsEdw8LcLIYb3dSvIEZ7znRMBZxA/NZOgp
-	BhhvDUEevO7HulaF4r+aopVwrZeLKBP31VmetqyieB4iiq5xtvIpbkBdQhmVl97ci0fW/TYPnfZDV
-	NZUY0XT2yeGQx6O6JL9b+GvsnTLqvVQs5Pio9EgC24ho/1q92LToJZWktEfsWU0+xESEh7Rhc1Mvv
-	2XWPkbIFqEXq4hZRzlXz5ycyV3Ep32w==;
-Received: by mo-csw.securemx.jp (mx-mo-csw1122) id 4690Eigc3581316; Tue, 9 Jul 2024 09:14:44 +0900
-X-Iguazu-Qid: 2rWgcwEFXkFHW1EwRr
-X-Iguazu-QSIG: v=2; s=0; t=1720484083; q=2rWgcwEFXkFHW1EwRr; m=RC9L+gHFs2stttK5pKGR6z1upsS3B/TWlkYHLZqw76M=
-Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
-	by relay.securemx.jp (mx-mr1121) id 4690EgBh130368
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Tue, 9 Jul 2024 09:14:43 +0900
-X-SA-MID: 26358990
-From: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
-To: Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v11 6/6] MAINTAINERS: Add entries for Toshiba Visconti Video Input Interface
-Date: Tue,  9 Jul 2024 09:08:48 +0900
-X-TSB-HOP2: ON
-Message-Id: <20240709000848.1108788-7-yuji2.ishikawa@toshiba.co.jp>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240709000848.1108788-1-yuji2.ishikawa@toshiba.co.jp>
-References: <20240709000848.1108788-1-yuji2.ishikawa@toshiba.co.jp>
+	s=arc-20240116; t=1720483813; c=relaxed/simple;
+	bh=u1YhRWYwhZwdoRcIhg3U0o0satceY/8ehPA4ZGJZ+OA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=b5z+jeODXpIBZ3YO34uxivjuRyILF1Xvae5tVbmHsiyq9eclrkayGQxLUGO0sTp8ycvl3ahzKqtE6IvuWk55WIScdI8ZiLHjhC2AnPkKZIi4LbTEiRYPnfmP94RpIeMKKxrR4YE481bHWZogxsOkRHKEhdASExUXdT8XQV7hWiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xmqwU+ro; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70af0dff5c5so2629235b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 17:10:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720483811; x=1721088611; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dpCSyQ48xZMBu3JWSxSWQAlxvGTkpYpPpBTugKDLStA=;
+        b=xmqwU+rofJ/GbwxcDXffaGCAnTv6w69BEJlCjhnxgGUZGtX5hki+0ywNF1xNSo844c
+         We82ZmOom3Hpk8wn8mfhU3lIcjEAwGT/gfpJ3jk+ZkmwhaZs7q5NPl+qIdE3dmw1jWgQ
+         rZ6rTeEEHo75wd/jg5ONTCzHuEU/WSI3PxZJCyls1UBoOXKhb8xzr+dhzuc1dhPHng/e
+         Ah727Al44w6eXY7yThs7o0HCYyaVCzkfirY8IEWegqctboD4jLgAlw8Jm6GKo1ICuJOc
+         lD3EGwbmIoeW0KPnf1SGN4f2/7PubE2OdNPw5JgNzcNQyWFZGCww+QP7TxYT5nckbdU0
+         Pdog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720483811; x=1721088611;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dpCSyQ48xZMBu3JWSxSWQAlxvGTkpYpPpBTugKDLStA=;
+        b=SDtUfuXp4JC4PVVLk5CCmrXm2MpTDzHgr3sPjI9jp56OPIL5EoiyEbYKxp8T4hnxbd
+         unPZVIGIGaboNfKhnA2XfJ8YOHdlumg4qVAXUJv0MC+wNFY+K76MxB0WAsLan+hK7D1J
+         qDXtJXpqvxo2tYPzjNe33r8xWDa38alOYpkPWPmVQRyzT36aVeYVDTeZnKuYLsPG1+cW
+         Xa7mgfOxKb/M/Z5EON3ZOY8t27Xtjz4eMK0yN752AFe3snvjhozjwsMZQArAoofMluxr
+         0voFCira2cOApmMVJujxDouViinZUmTrrkgdkHgFbR5VqdHbhI7IeJ7cEh6pMbldewXn
+         HZyw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1I6SGkoxd+nrS0txG1u0rQqu6CYOErdzS1TbvzoIEYIfy0MFWDhzLjV58KHXov001k3dI74zWizd2cLR7aLH+wyb8wI04JmKqkiee
+X-Gm-Message-State: AOJu0YxlaDVWVGHvySWwNd2wYV51AkWXBGjLKrWjekXA8YEStD+1Ef5J
+	keUDOGkQAUp024C4CAR9hjzF9s3agoJ9XNersXKw7l8rVQZ9yTCRZur/rrB3JUROpCGE1Rnt1/0
+	Deg==
+X-Google-Smtp-Source: AGHT+IE8Sc6LQTLRePG8g/rnbxnP4tA1RmQTE1krI+cbmi9biNwvhd17jHYMiXVZhIfvuCRmpmWcyv3nEb0=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:aa7:9f10:0:b0:704:3610:9354 with SMTP id
+ d2e1a72fcca58-70b4367c139mr40520b3a.4.1720483810067; Mon, 08 Jul 2024
+ 17:10:10 -0700 (PDT)
+Date: Mon, 8 Jul 2024 17:10:08 -0700
+In-Reply-To: <030c973172dcf3a24256ddc8ddc5e9ef57ecabcb.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-41-seanjc@google.com>
+ <030c973172dcf3a24256ddc8ddc5e9ef57ecabcb.camel@redhat.com>
+Message-ID: <Zox_4OoDmGDHOaSA@google.com>
+Subject: Re: [PATCH v2 40/49] KVM: x86: Initialize guest cpu_caps based on KVM support
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
+	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
+	Robert Hoo <robert.hoo.linux@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Added entries for visconti Video Input Interface driver, including;
-* device tree bindings
-* source files
-* documentation files
+On Thu, Jul 04, 2024, Maxim Levitsky wrote:
+> On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
+> > @@ -421,6 +423,7 @@ void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
+> >  	 */
+> >  	for (i = 0; i < NR_KVM_CPU_CAPS; i++) {
+> >  		const struct cpuid_reg cpuid = reverse_cpuid[i];
+> > +		struct kvm_cpuid_entry2 emulated;
+> >  
+> >  		if (!cpuid.function)
+> >  			continue;
+> > @@ -429,7 +432,16 @@ void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
+> >  		if (!entry)
+> >  			continue;
+> >  
+> > -		vcpu->arch.cpu_caps[i] = cpuid_get_reg_unsafe(entry, cpuid.reg);
+> > +		cpuid_func_emulated(&emulated, cpuid.function);
+> > +
+> > +		/*
+> > +		 * A vCPU has a feature if it's supported by KVM and is enabled
+> > +		 * in guest CPUID.  Note, this includes features that are
+> > +		 * supported by KVM but aren't advertised to userspace!
+> > +		 */
+> > +		vcpu->arch.cpu_caps[i] = kvm_cpu_caps[i] | kvm_vmm_cpu_caps[i] |
+> > +					 cpuid_get_reg_unsafe(&emulated, cpuid.reg);
+> > +		vcpu->arch.cpu_caps[i] &= cpuid_get_reg_unsafe(entry, cpuid.reg);
+> 
+> Hi,
+> 
+> I have an idea. What if we get rid of kvm_vmm_cpu_caps, and instead advertise the
+> MWAIT in KVM_GET_EMULATED_CPUID?
+> 
+> MWAIT is sort of emulated as NOP after all, plus features in KVM_GET_EMULATED_CPUID are
+> sort of 'emulated inefficiently' and you can say that NOP is an inefficient emulation
+> of MWAIT sort of.
 
-Signed-off-by: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
-Reviewed-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
----
-Changelog v2:
-- no change
+Heh, sort of indeed.  I really don't want to advertise MWAIT to userspace in any
+capacity beyond KVM_CAP_X86_DISABLE_EXITS, because advertising MWAIT to VMs when
+MONITOR/MWAIT exiting is enabled is actively harmful, to both host and guest.
 
-Changelog v3:
-- added entry for driver API documentation
+KVM also doesn't emulate them on #UD, unlike MOVBE, which would make the API even
+more confusing than it already is.
 
-Changelog v4:
-- added entry for header file
+> It just feels to me that kvm_vmm_cpu_caps, is somewhat an overkill, and its name is
+> somewhat confusing.
 
-Changelog v5:
-- no change
+Yeah, I don't love it either, but trying to handle MWAIT as a one-off was even
+uglier.  One option would be to piggyback cpuid_func_emulated(), but add a param
+to have it fill MWAIT only for KVM's internal purposes.  That'd essentially be
+the same as a one-off in kvm_vcpu_after_set_cpuid(), but less ugly.
 
-Changelog v6:
-- update path to VIIF driver source files
+I'd say it comes down to whether or not we expect to have more features that KVM
+"supports", but doesn't advertise to userspace.  If we do, then I think adding
+VMM_F() is the way to go.  If we expect MWAIT to be the only feature that gets
+this treatment, then I'm ok if we bastardize cpuid_func_emulated().
 
-Changelog v7:
-- no change
+And I think/hope that MWAIT will be a one-off.  Emulating it as a nop was a
+mistake and has since been quirked, and I like to think we (eventually) learn
+from our mistakes.
 
-Changelog v8:
-- rename bindings description file
-
-Changelog v9:
-- no change
-
-Changelog v10:
-- add a separate entry of VIIF driver
-
-Changelog v11:
-- no change
-
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3c4fdf74a3..f051f4ab34 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22734,6 +22734,17 @@ F:	Documentation/devicetree/bindings/media/i2c/tc358743.txt
- F:	drivers/media/i2c/tc358743*
- F:	include/media/i2c/tc358743.h
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index 0e64a6332052..dbc3f6ce9203 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -448,7 +448,7 @@ void kvm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
+                if (!entry)
+                        continue;
  
-+TOSHIBA VISCONTI VIIF DRIVER
-+M:	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-+M:	Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
-+L:	linux-media@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/admin-guide/media/visconti-viif.*
-+F:	Documentation/devicetree/bindings/media/toshiba,visconti5-viif.yaml
-+F:	Documentation/userspace-api/media/v4l/metafmt-visconti-viif.rst
-+F:	drivers/media/platform/toshiba/visconti/
-+F:	include/uapi/linux/visconti_viif.h
-+
- TOSHIBA WMI HOTKEYS DRIVER
- M:	Azael Avalos <coproscefalo@gmail.com>
- L:	platform-driver-x86@vger.kernel.org
--- 
-2.25.1
-
-
+-               cpuid_func_emulated(&emulated, cpuid.function);
++               cpuid_func_emulated(&emulated, cpuid.function, false);
+ 
+                /*
+                 * A vCPU has a feature if it's supported by KVM and is enabled
+@@ -1034,7 +1034,8 @@ static struct kvm_cpuid_entry2 *do_host_cpuid(struct kvm_cpuid_array *array,
+        return entry;
+ }
+ 
+-static int cpuid_func_emulated(struct kvm_cpuid_entry2 *entry, u32 func)
++static int cpuid_func_emulated(struct kvm_cpuid_entry2 *entry, u32 func,
++                              bool only_advertised)
+ {
+        memset(entry, 0, sizeof(*entry));
+ 
+@@ -1048,6 +1049,9 @@ static int cpuid_func_emulated(struct kvm_cpuid_entry2 *entry, u32 func)
+                return 1;
+        case 1:
+                entry->ecx = F(MOVBE);
++               /* comment goes here. */
++               if (!only_advertised)
++                       entry->ecx |= F(MWAIT);
+                return 1;
+        case 7:
+                entry->flags |= KVM_CPUID_FLAG_SIGNIFCANT_INDEX;
+@@ -1065,7 +1069,7 @@ static int __do_cpuid_func_emulated(struct kvm_cpuid_array *array, u32 func)
+        if (array->nent >= array->maxnent)
+                return -E2BIG;
+ 
+-       array->nent += cpuid_func_emulated(&array->entries[array->nent], func);
++       array->nent += cpuid_func_emulated(&array->entries[array->nent], func, true);
+        return 0;
+ }
 
