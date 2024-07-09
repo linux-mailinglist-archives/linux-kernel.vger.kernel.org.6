@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-246159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E7C192BE5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:29:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED6FC92BE5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00FDC1F260F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:29:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8ACF28840C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A050F19DF65;
-	Tue,  9 Jul 2024 15:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9916419DF8E;
+	Tue,  9 Jul 2024 15:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yLtiPau6"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OQWNW96i"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E14618C34F
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566A719D8AC
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720538928; cv=none; b=SsmT675xO9uq6b82ixgM7PCou4PIgwggCzxCt6zA25tA+oXC26qyBVFNyLI1qOb5hwK7i5U6gXVW+GyVt0QZC0Z3I/vysvFreqgJj1pew9Am8YfTLC4oxJGu0kBMC7gmc5cSODuGltE0EL4Ol4FnmEMi/5nHuvqkSOL+4ZuymqU=
+	t=1720538929; cv=none; b=qDiEc+urPSRK8pHeelKXnvyYvjGV5ku5MS21zqtR05PD39hIHdP8bTYxprA/+DdR7lz5Q1PM8M8FTszGcpp5eiPPgBicIAYCDHCBzHOsvYqsFNQ01Fyggvn8vy9NYoG+AGanrPAFPWUOAr7JFZCYRLqpBcUpsBamPJ9LL80FbFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720538928; c=relaxed/simple;
-	bh=4ztXr0pYL5TO1gtMd+rtNuWMHPlgOlNGjjPwwANhHVw=;
+	s=arc-20240116; t=1720538929; c=relaxed/simple;
+	bh=PmtUUH5+SRaJORBxLu1SBDDmzPciiIl86iKpCyiu9SI=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=OpdL0Go1F4iLpQ6zOkQlGKnRhe3gjqccFS2+fcZ3gUaMBYfSk9wDT/GTpHWXoY02XVYf2jYTytnjMT0MR8YEzUh2cU1w4XwskeWcaJ4gz1aeshDgRR+/tUEdJmsKdMME+vl14ngsqgXPzOZ5BnLja5/lfskybItYihzTUJ7Dvso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yLtiPau6; arc=none smtp.client-ip=209.85.128.42
+	 MIME-Version:Content-Type; b=XRXbaJ9aMpZB1tFEonMYQ13VBGQPQa3/8L7sOo6WwOa9w59MWJgYcZS2Jf+JsTIcn0nMXGaYYGgg4kTXaChG/E7P+sNFyS50tnnnkuWviaKu3hs9rYX1pNnoDbXGCiXyNt4zd+qy3OtOiJullCs6ELzyhU6TtNprJDhsGCCgq/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OQWNW96i; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4266fd39527so9098005e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 08:28:46 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52e99060b41so5704712e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 08:28:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720538925; x=1721143725; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720538926; x=1721143726; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qggsgys4NITMh2ghLGb9NlRQPBQp9UFrf0DAdDJLM1A=;
-        b=yLtiPau6x9Yc0W00g2VSls+WVNo0WbQDGPiuZaWLoM9zWnLbu5WM0SBClnpmMLHZIn
-         hQ+Gko8o6Y4Ffx2HYt/VN+eR3u4qjwtcQacPH5C/MSQ3fuW4SU4C/EGl48L3fS+psppY
-         fObZFmgEGEAvwwtKuq5eUtiEeM0GzYvTt0os/CfTbDhVMNL+mIWGTYZpUjXTmyItXPPN
-         V7zRsP+VD2/tWx8Xn7X/QPT2HEHJfmfG2zqF2smWtOLbrcJ4UfdpiV00aNsTSViiczmo
-         9P02uGuoC7HxhB9bjquz7lMW6mWDybaqPEYuCN6G22pnJT7wRj9QioyXNxHqUhg7Rize
-         2f1Q==
+        bh=4NePdy+sqgvYcgq7vKT1dOt3fvbuIs0FsUv1Bhxyjpo=;
+        b=OQWNW96ilkySUbMUCMEDluJhCsYeTMX44fzoH9QSC+Pnwsxg+M2T+/EJ5UGnjvveos
+         H7SjOzuE75l/4fwsNqBGS/uOLw/smZ7ig2h+voa6ZCxHKoSAeB/cBCKzuACqoKkFzusw
+         0JbOcIUasp3iT2oUlnz0qiyWukVveraIYFnLhLWL4MtvE10naQ6MY9QDdZ9dAQgoIdG3
+         URAlsNUexw9sgtvzeMTO1qVFN14Rce+BXIQyQdgkCJ1FtWlAvn1Vt9Uhzjda6X1MbX66
+         /XtKVibIW1Iq1UIdZ9wb6H9z91bBebtrXwiaTjDRUbm4DEg9z7zft5+AF1qCmCgGX2mn
+         HLsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720538925; x=1721143725;
+        d=1e100.net; s=20230601; t=1720538926; x=1721143726;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qggsgys4NITMh2ghLGb9NlRQPBQp9UFrf0DAdDJLM1A=;
-        b=T+g3kT3/1LstiZDawjk5Bi1fGAOWUZEb5Y7MeSKUkX7vY/8r+zeSKs4jG95WDBsPLE
-         UmLqtY9qVmekQXIyZkl95aykDneqJDkO6jVRN4ivh+EYO4t/iAs95/nNd3K+pzdCzDTs
-         4jwWVihSMk547m2dWRUGx512sK9Rs4Wh5kGEwF2kupuPnWor2JoO7JS2BpmmLIhOArKf
-         nCI5fOPzPW2w4bdH8cO4XUr5kUqGeUNDnZ3zx4NZGI4LeTKLFA6NIYBfovX+li+hyA6M
-         mmDDJkJ16mcO+Qu3eSAYf6xLlBAIJW4hYaI+ltTCsg61v7/WoxiHiiycfoLSlt80y8O5
-         DRpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOXypmoG8BnNMU+yCHOQzP+XA22XLGBy2yt2gxez045grGhh/cdp4pp5Hz7T4qdRnEcfXqx2SAXLlzNhiCoab3TmV49KRWDmTbIPyA
-X-Gm-Message-State: AOJu0YxFhf5OSKPZ4QeONGGSykjUUc+CpinzPSK3hWLe/GS81nLgf3Cx
-	dlxQfswtstqg8ZPZUez3aSqQYk9PIMwy0SOtrYEcAaytaoteUO8toAgGqYkRR2w=
-X-Google-Smtp-Source: AGHT+IEVPnUlGz4qBOpMvn0Cp+wRKUUvSpZGFqyVY/8mj8sAm5oAs73VACcPAdVUmONzXpqsQCIfmQ==
-X-Received: by 2002:adf:e412:0:b0:367:9bc8:8c0a with SMTP id ffacd0b85a97d-367cead844bmr1967042f8f.64.1720538925370;
-        Tue, 09 Jul 2024 08:28:45 -0700 (PDT)
+        bh=4NePdy+sqgvYcgq7vKT1dOt3fvbuIs0FsUv1Bhxyjpo=;
+        b=VWxClshuNk59NvCGFyD1Z3BzfgrElfQZnVEuQ9unUueY/UaOw7WwDGWh2brbu6et3n
+         qN1iJ7755VIyRu0MHbpAvxZu6xUlSODRweqrmGmSp/30lzH8RS+7Lxe+XSufIUe796pW
+         NbhFBuuh7XFg/DcF2yCrxtoIAsR7bnHUIxbGAVic61dvyw0Tl2yHn0Cad1F2N+xfRNGH
+         DcMj+Oxdcgg6l/EtjuqFKLDUuy4vSAJz9DwsDD8CVdCmPxnEz2PozrZZNh/lCW85JfjA
+         ZZRLScuo1pMdgOV46J4E+/aHhpJywNok43OTdN0Fd9a5+a+0g80cVhTMXhokRReZn0IH
+         R+0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWPj0BUxOOmrmUNIIC7ifiRKCYnjomwLQ33ohAAKlLH0s4yMv7d/B3gLpR15LH/ma6dpcN7IRDN+fZ57DQ1+X/e6Zn9OJZEASqe/4U3
+X-Gm-Message-State: AOJu0YxUEF3s6uNPbEg0bni/bSXWHoaggwwx75R18ei1nH5AS1To7rIh
+	dLsJ01iv3/fR62et6GOAWelsip+ALjbUwDLfsB63E0UfDpq+vmG1F7GhtbwVRNs=
+X-Google-Smtp-Source: AGHT+IFP2dwZSg+oxisyaGCs/E6PHJKfQeB46et4kmXu8bV/igVFqGZpfvG8esLFZnNZsAe6qemJxA==
+X-Received: by 2002:a05:6512:3e0c:b0:52e:9c0a:3522 with SMTP id 2adb3069b0e04-52eb99d1694mr2058719e87.44.1720538926338;
+        Tue, 09 Jul 2024 08:28:46 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfab748sm2849119f8f.111.2024.07.09.08.28.44
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfab748sm2849119f8f.111.2024.07.09.08.28.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 09 Jul 2024 08:28:45 -0700 (PDT)
 From: Neil Armstrong <neil.armstrong@linaro.org>
@@ -71,16 +71,15 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
  Jerome Brunet <jbrunet@baylibre.com>, 
  Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Jianxin Pan <jianxin.pan@amlogic.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
  Xianwei Zhao <xianwei.zhao@amlogic.com>
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, Hongyu Chen <hongyu.chen1@amlogic.com>
-In-Reply-To: <20240627-a5_secpower-v1-0-1f47dde1270c@amlogic.com>
-References: <20240627-a5_secpower-v1-0-1f47dde1270c@amlogic.com>
-Subject: Re: (subset) [PATCH 0/3] Power: A5: add power domain driver
-Message-Id: <172053892457.1166789.8670207814900707876.b4-ty@linaro.org>
-Date: Tue, 09 Jul 2024 17:28:44 +0200
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240709-s4_node-v2-1-b9a218603c31@amlogic.com>
+References: <20240709-s4_node-v2-1-b9a218603c31@amlogic.com>
+Subject: Re: [PATCH v2] arm64: dts: amlogic: enable some device nodes for
+ S4
+Message-Id: <172053892547.1166789.11882834446987648780.b4-ty@linaro.org>
+Date: Tue, 09 Jul 2024 17:28:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,15 +92,16 @@ X-Mailer: b4 0.13.0
 
 Hi,
 
-On Thu, 27 Jun 2024 19:47:50 +0800, Xianwei Zhao wrote:
-> Add power controller driver support for Amlogic A5 SoC.
+On Tue, 09 Jul 2024 17:32:03 +0800, Xianwei Zhao wrote:
+> Enable more device nodes for AQ222 base S4, including
+> SD, regulator and ethnernet node.
 > 
 > 
 
 Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.11/arm64-dt)
 
-[3/3] arm64: dts: amlogic: a5: add power domain controller node
-      https://git.kernel.org/amlogic/c/c087cd0ef1b0c2adfabd216e28dfed242b5f4f07
+[1/1] arm64: dts: amlogic: enable some device nodes for S4
+      https://git.kernel.org/amlogic/c/d3cc1daf38aaa0dd6546dd915ce5d536c250f3eb
 
 These changes has been applied on the intermediate git tree [1].
 
