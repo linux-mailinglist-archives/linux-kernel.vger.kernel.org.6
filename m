@@ -1,162 +1,84 @@
-Return-Path: <linux-kernel+bounces-245774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E560892B90A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:08:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1622A92B90D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9915B1F2179B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:08:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5955280DAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D7915539D;
-	Tue,  9 Jul 2024 12:07:56 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76401586C4;
-	Tue,  9 Jul 2024 12:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BDF158A32;
+	Tue,  9 Jul 2024 12:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LIKGE4tF"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A802A15886A;
+	Tue,  9 Jul 2024 12:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720526876; cv=none; b=BwPZjEnvaS934DqADXfCIU/HLYax3Ls/A4PNzayHAEM3ooKC3C42tzbPgBXmk2u97ViWJB6V4s2bjTtV1txM88Vei1L293+1Hb8NglvIDnCs4n9da8UCpQFhzEVwJtUNMvn7BSKSt13CHEglbjXvLYl2ImcIPRojYb2s7LhTpVM=
+	t=1720526899; cv=none; b=BQojMKzRYOcEgraj4PbFjw0XATABMUGfdGJTHnqqE+TWpsZW6sODseWTWseqvwT2jkr85lPMicuVi2ESni5O78FU6uoEzmjiP6u4o+E1FwtWqs2Yoex3lOTOtrVblQ7LjnfA/XXfdCRLbHRvJIQh7fNf27LsQIb7hODQmT6/3ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720526876; c=relaxed/simple;
-	bh=HiqaSbumntvKz5Emuwn+N3bSrB5MzpJVcl7+vGk/JNw=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=uyj8Ss1IdGojRRh8yqLYK0QGTDeguWTBbQRNhaaRJ8tWTmBvdk59SpeVbEk+0Z4rvZU9wCBJDwwVQL8MxjK37tsawB98f5wQwJfxwmZG2gTdm+CApLrmb1ChX43LY/wUorvQXHeNnquXHYz5yJ/y7FuQwHip8yoqmqViYEQ1Kzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8BxL_EYKI1mrGsCAA--.7825S3;
-	Tue, 09 Jul 2024 20:07:52 +0800 (CST)
-Received: from [10.130.0.149] (unknown [113.200.148.30])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8AxhsUWKI1mcwNBAA--.7813S3;
-	Tue, 09 Jul 2024 20:07:51 +0800 (CST)
-Subject: Re: [PATCH v3 3/3] arm64: hw_breakpoint: Save privilege of access
- control via ptrace
-To: Will Deacon <will@kernel.org>
-References: <20240709095506.9691-1-yangtiezhu@loongson.cn>
- <20240709095506.9691-4-yangtiezhu@loongson.cn>
- <20240709100515.GB12978@willie-the-truck>
-Cc: Mark Rutland <mark.rutland@arm.com>, Russell King
- <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
- Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <d72a04f5-7894-af6c-dd4a-c6728e936f73@loongson.cn>
-Date: Tue, 9 Jul 2024 20:07:50 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+	s=arc-20240116; t=1720526899; c=relaxed/simple;
+	bh=oxaphqpgEx9AmGOodXCHMkOcJSPdgXWVzjz6l3l9tcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iBusICvFKsy5iRfTkT7Kik0rATC6QZ3EHqzNcGWm4K04muiQUsNZnqxWq+TMSSetBmaJfjxvXh4xHHr4W5gznBqrtUwJWAKrCvtPqH2SnU9UNEDvkFKzW1jH1KqGXMm20kFZ3RNzYEitTdBvGIl5GTbFn41cH0yqUocteTevs/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LIKGE4tF; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 21C93FF803;
+	Tue,  9 Jul 2024 12:08:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720526894;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hU+BySU2VB/ceKlWYx7QcuT5snlHgAgUbCdsH9jfQXA=;
+	b=LIKGE4tFCBLpGZFuJnG9SZHpxcY2VyUxAmSjRaxuWpyZxLLRb5lzGUGWOPTjACenUNov4N
+	OT8mGKNyDt3ozTojD4oDC0944/lYnknVhI+kI6CLBb8vhKM71MrNTyvBbZMLNpZ2VZE8j1
+	JsjMWnIu3hSTDIP1TYfzdgrVR4k8ufbW80ScMT+6x3nfsVNmkd/gvJYtkuRbRcHNTDtzZk
+	yYwCdgNZcnJ2Ie6322eWFVQwzJ+dzS/64KWSLKMzJPmNFnmaNczg1dOb0c6xAooYIJ7NWm
+	YjfgXiQW+HucBfF1NGQMhEmSQI5uygOkqFBjxzkPvKScfzajhDu/3fvc9rXzPw==
+Date: Tue, 9 Jul 2024 14:08:13 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] net: pse-pd: pd692x0: Fix spelling mistake
+ "availables" -> "available"
+Message-ID: <20240709140813.684beb28@kmaincent-XPS-13-7390>
+In-Reply-To: <20240709105222.168306-1-colin.i.king@gmail.com>
+References: <20240709105222.168306-1-colin.i.king@gmail.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240709100515.GB12978@willie-the-truck>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:AQAAf8AxhsUWKI1mcwNBAA--.7813S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxuFy8Ww4rGry3CF4kXw48KrX_yoW5Aw4Dpr
-	W3C3WkKw4DJa1jkasIqws3Zan8WwsIg34UWryvk34Skr13Zrn3CrykGry5urZxAry0q3y0
-	krWqvr1rWa1UZ3XCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPSb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVWxJr0_GcWln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
-	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q
-	6rW5McIj6I8E87Iv67AKxVWxJVW8Jr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWxJVW8
-	Jr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8nNVD
-	UUUUU==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On 07/09/2024 06:05 PM, Will Deacon wrote:
-> On Tue, Jul 09, 2024 at 05:55:06PM +0800, Tiezhu Yang wrote:
->> In the current code, decode_ctrl_reg() saves the privilege of access
->> control passed by the ptrace user data, but it is not used anymore,
->> arch_build_bp_info() checks whether bp virtual address is in kernel
->> space to construct hw->ctrl.privilege, it seems not reasonable.
->>
->> The value of ctrl->privilege saved in decode_ctrl_reg() can be used
->> in arch_build_bp_info(), there is no need to check bp virtual address
->> to assign value for hw->ctrl.privilege, just make use of "bp_priv" in
->> the struct perf_event_attr to save the privilege of access control via
->> ptrace for hardware breakpoint.
->>
->> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
->> ---
->>  arch/arm64/kernel/hw_breakpoint.c | 11 ++---------
->>  arch/arm64/kernel/ptrace.c        |  2 ++
->>  2 files changed, 4 insertions(+), 9 deletions(-)
->>
->> diff --git a/arch/arm64/kernel/hw_breakpoint.c b/arch/arm64/kernel/hw_breakpoint.c
->> index 722ac45f9f7b..06e34bcdcf92 100644
->> --- a/arch/arm64/kernel/hw_breakpoint.c
->> +++ b/arch/arm64/kernel/hw_breakpoint.c
->> @@ -486,15 +486,8 @@ static int arch_build_bp_info(struct perf_event *bp,
->>  	/* Address */
->>  	hw->address = attr->bp_addr;
->>
->> -	/*
->> -	 * Privilege
->> -	 * Note that we disallow combined EL0/EL1 breakpoints because
->> -	 * that would complicate the stepping code.
->> -	 */
->
-> Just because you remove the comment doesn't mean that constraint no
-> longer applies.
+On Tue,  9 Jul 2024 11:52:22 +0100
+Colin Ian King <colin.i.king@gmail.com> wrote:
 
-Yes, please see the following answer.
+> There is a spelling mistake in a dev_err message. Fix it.
+>=20
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
->
->> -	if (arch_check_bp_in_kernelspace(hw))
->> -		hw->ctrl.privilege = AARCH64_BREAKPOINT_EL1;
->> -	else
->> -		hw->ctrl.privilege = AARCH64_BREAKPOINT_EL0;
->> +	/* Privilege */
->> +	hw->ctrl.privilege = attr->bp_priv;
->>
->>  	/* Enabled? */
->>  	hw->ctrl.enabled = !attr->disabled;
->> diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
->> index 0d022599eb61..3b37c4a2e0d4 100644
->> --- a/arch/arm64/kernel/ptrace.c
->> +++ b/arch/arm64/kernel/ptrace.c
->> @@ -309,6 +309,7 @@ static struct perf_event *ptrace_hbp_create(unsigned int note_type,
->>  	attr.bp_addr	= 0;
->>  	attr.bp_len	= HW_BREAKPOINT_LEN_4;
->>  	attr.bp_type	= type;
->> +	attr.bp_priv	= AARCH64_BREAKPOINT_EL0;
->>  	attr.disabled	= 1;
->>
->>  	bp = register_user_hw_breakpoint(&attr, ptrace_hbptriggered, NULL, tsk);
->> @@ -352,6 +353,7 @@ static int ptrace_hbp_fill_attr_ctrl(unsigned int note_type,
->>  	attr->bp_len	= len;
->>  	attr->bp_type	= type;
->>  	attr->bp_addr	+= offset;
->> +	attr->bp_priv	= ctrl.privilege;
->
-> Wait, so ptrace can now set breakpoints with arbitrary privileges?
+Acked-by: Kory Maincent <Kory.maincent@bootlin.com>
 
-The ptrace user should make sure the privilege is correct.
-For example, the privilege is set as el0
-in aarch64_point_encode_ctrl_reg() of GDB:
-
-   /* enabled at el0 */
-   ctrl |= (2 << 1) | 1;
-
-https://sourceware.org/git/?p=binutils-gdb.git;a=blob;f=gdb/nat/aarch64-hw-point.c#l135
-
-Thanks,
-Tiezhu
-
+--
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
