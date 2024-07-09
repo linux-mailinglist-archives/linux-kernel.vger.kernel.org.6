@@ -1,210 +1,284 @@
-Return-Path: <linux-kernel+bounces-245160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA5B92AF18
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:35:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2D3D92AF17
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:35:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 321C4282D80
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:35:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA97D1C21B30
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DF08286A;
-	Tue,  9 Jul 2024 04:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UcVQebIa"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C064D8286A;
+	Tue,  9 Jul 2024 04:35:01 +0000 (UTC)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C7C374CC
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 04:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64879374CC
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 04:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720499728; cv=none; b=H44ctw6Cqr/EshsLpsrEsKcCg56Lzhtqohd0SSTob4aZAPgckqtNKjvozBZ3GkHt2r+oVCggDViDe7YOBofR1FirEsPQLRStO9MuzqvEw6OBhlW19NuJiKYoImO2qeOMZLsU7Yg0t+ep3CUUFUD6m/QCnj6Fy7HM9sQlEMGDFd8=
+	t=1720499701; cv=none; b=Zz9aegAX2F0t64Sha1dl4NYct+zIgGusR5L4+Ju8kHQmh0gdkwvTFUgncw2hQYYI0J7gybi7vCObBvKKNqULcgip0VPcwhOR4w77Z4ccPaKyn7VAFsyc7grJ11FVeoNHZ7jJT6g8+EpQrHzqDHWP/SvDfzyENiK5n32kyEs5Gx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720499728; c=relaxed/simple;
-	bh=NNWrZYQ3fSfkc+brE6dmTFyc6IawVJMriepRcHnfDl8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iWIfWftkO9I0ZwTUswtpw/D+bcD+s9ehcXa4K1IHP456I/vi0wbEmUbNH+Ev/7l7x4VFafmo7wERFg9M4AkGo4C3bAwBH/7oTuT0XsKaWShcqiGXClyPQkD5z+mmCyIb0oAGWln3O+HPQ/2qPFZj6Oe5kgINys4s0LLWD31QczM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UcVQebIa; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4694XxKl120595;
-	Mon, 8 Jul 2024 23:33:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1720499639;
-	bh=107XmrpJyCeilJ0uuF3WC/bbSNyntHG9X4j9WS9Mjfo=;
-	h=From:To:CC:Subject:Date;
-	b=UcVQebIaKT2GwemNDdVA6cLgF3UrxeImgQlUSEG0/pue1JN1qgTUjyhAOdPmSSYd2
-	 g9Cc11qgbg3VtnXTnTZs689aR0BtwtFlSmuoTHW7a7b/deFQfVq1K1yVf/oI+Y6JhY
-	 ycZZ8gqNVzscFy2wf1Um35IUXm66e5aY3jPiHJjI=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4694XxI3050213
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 8 Jul 2024 23:33:59 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 8
- Jul 2024 23:33:58 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 8 Jul 2024 23:33:58 -0500
-Received: from LT5CG31242FY.dhcp.ti.com (lt5cg31242fy.dhcp.ti.com [10.85.14.70])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4694XnFh104367;
-	Mon, 8 Jul 2024 23:33:50 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <broonie@kernel.org>
-CC: <andriy.shevchenko@linux.intel.com>, <lgirdwood@gmail.com>,
-        <perex@perex.cz>, <pierre-louis.bossart@linux.intel.com>,
-        <13916275206@139.com>, <zhourui@huaqin.com>,
-        <alsa-devel@alsa-project.org>, <i-salazar@ti.com>,
-        <linux-kernel@vger.kernel.org>, <j-chadha@ti.com>,
-        <liam.r.girdwood@intel.com>, <jaden-yue@ti.com>,
-        <yung-chuan.liao@linux.intel.com>, <dipa@ti.com>, <yuhsuan@google.com>,
-        <henry.lo@ti.com>, <tiwai@suse.de>, <baojun.xu@ti.com>, <soyer@irl.hu>,
-        <Baojun.Xu@fpt.com>, <judyhsiao@google.com>, <navada@ti.com>,
-        <cujomalainey@google.com>, <aanya@ti.com>, <nayeem.mahmud@ti.com>,
-        <savyasanchi.shukla@netradyne.com>, <flaviopr@microsoft.com>,
-        <jesse-ji@ti.com>, <darren.ye@mediatek.com>,
-        Shenghao Ding
-	<shenghao-ding@ti.com>
-Subject: [PATCH v1] ASoc: TAS2781: rename the tas2781_reset as tasdevice_reset
-Date: Tue, 9 Jul 2024 12:33:40 +0800
-Message-ID: <20240709043342.946-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1720499701; c=relaxed/simple;
+	bh=6KMc4L2Jb340nsr2fxBwiWhxwgx3wkExkREWO74fMsY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ASJVqa5c8dLOm++nr4zqqxr41Kksmj/irna4f0tjXzbn54KDYL7pwSMRNJ1IM+dzdnbdchq6Ct1BLJM+UFpxKO44ZkNuPJSHtmShhmYX9DfFtKjOBi/ZpiLIxUggpirR7uWGSb4xY5XuSstPQbN4KVllzkVbxJI/gcMmgIyOIKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-81013580bd5so1161809241.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 21:34:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720499698; x=1721104498;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q9pKSLhwlTEm+8wiCWId5W4uZXshj+1+rGTAOZQjYl0=;
+        b=KWCrm3UzNUEMUtK1KDBGeEX6ug3G3JwwLt8Aq59anq1/ZsbCPHfsMJmSrXGFaXdwyM
+         57oqsf+zP1uXJiF2uB3KV2xUrbBH9Yb3BpbLQ7xpK2KEBiWtmEEDBYD3iFvsbiN2Ykj9
+         TyHSfjDeT2ZBo5QU3gPRtN2YG0fh7zGEJI+KSCYsec+l0ma0jdghjZj+lQG0TKxU+UV/
+         ao3jGvLbIWcQ9zFMnhKnjhS1glqBWubLEOGgu7MuLP9nyJfX3w00+UAIqQzsSgxl8cVd
+         Tm30k3cVc5lhMfgztjS76HfBLpIdgfzB2kEAwLegTWMHAXLOqI9uBkqiRTsZs6TsDwHq
+         +0tA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwnIfexsmDIOGL/WqbotkZuY7TIFIE8m70vWKojVaynGgMmOaUc/pnOWQaPe3/E/eakOnaHdXcTCB5ZnHPALOs7MVqsf73EHhNsXCd
+X-Gm-Message-State: AOJu0YyPypJccGfDfhb3zi/ZtRiVypaHLhB8/QhGz0kiKWCeVU3RrCNK
+	o4iDQbELfRflA6kh8kj+QbzqavETN9HxmQBfhRxImPw4g2/3YRTQoKWVywouyy8ur4/hoEfUTwT
+	smS/4JvQufeosp/S/qrXS1EhXiSS+/g==
+X-Google-Smtp-Source: AGHT+IEGtuOs0WLNLxu0K/QwvOYqRoh8N0xrp3vaAAukrFFlb0qHmxF8wtp61DH/zYlXayLImn3mR4XCZg1LzJ+Nf3I=
+X-Received: by 2002:a05:6102:f88:b0:48f:e7f7:6fe2 with SMTP id
+ ada2fe7eead31-490321d32bfmr1258001137.35.1720499698102; Mon, 08 Jul 2024
+ 21:34:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240709042122.631-1-justinjiang@vivo.com>
+In-Reply-To: <20240709042122.631-1-justinjiang@vivo.com>
+From: Barry Song <baohua@kernel.org>
+Date: Tue, 9 Jul 2024 16:34:46 +1200
+Message-ID: <CAGsJ_4xOpdruUK5EGLM31nCfgnvb5CLEiDqVYoJ2nN48mMwDAg@mail.gmail.com>
+Subject: Re: [PATCH v6] mm: shrink skip folio mapped by an exiting process
+To: Zhiguo Jiang <justinjiang@vivo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
+	Matthew Wilcox <willy@infradead.org>, opensource.kernel@vivo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Rename the tas2781_reset as tasdevice_reset in case of misunderstanding.
-RESET register for both tas2563 and tas2781 is same and the use of reset
-pin is also same.
+On Tue, Jul 9, 2024 at 4:21=E2=80=AFPM Zhiguo Jiang <justinjiang@vivo.com> =
+wrote:
+>
+> The releasing process of the non-shared anonymous folio mapped solely by
+> an exiting process may go through two flows: 1) the anonymous folio is
+> firstly is swaped-out into swapspace and transformed into a swp_entry
+> in shrink_folio_list; 2) then the swp_entry is released in the process
+> exiting flow. This will result in the high cpu load of releasing a
+> non-shared anonymous folio mapped solely by an exiting process.
+>
+> When the low system memory and the exiting process exist at the same
+> time, it will be likely to happen, because the non-shared anonymous
+> folio mapped solely by an exiting process may be reclaimed by
+> shrink_folio_list.
+>
+> This patch is that shrink skips the non-shared anonymous folio solely
+> mapped by an exting process and this folio is only released directly in
+> the process exiting flow, which will save swap-out time and alleviate
+> the load of the process exiting.
+>
+> Signed-off-by: Zhiguo Jiang <justinjiang@vivo.com>
 
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+LGTM,
 
----
-v1:
- - Rename tas2781_reset as tasdevice_reset
- - Changed the copyright year to 2024 in tas2781.h.
- - Rename TAS2781_REG_SWRESET_XXX as TASDEVICE_REG_SWRESET_XXX
- - Add tasdevice_reset into tasdevice_i2c_probe.
----
- include/sound/tas2781.h           | 8 ++++----
- sound/pci/hda/tas2781_hda_i2c.c   | 4 ++--
- sound/soc/codecs/tas2781-comlib.c | 8 ++++----
- sound/soc/codecs/tas2781-i2c.c    | 2 ++
- 4 files changed, 12 insertions(+), 10 deletions(-)
+Acked-by: Barry Song <baohua@kernel.org>
 
-diff --git a/include/sound/tas2781.h b/include/sound/tas2781.h
-index cd8ce522b78e..a43ad6dcb7c7 100644
---- a/include/sound/tas2781.h
-+++ b/include/sound/tas2781.h
-@@ -2,7 +2,7 @@
- //
- // ALSA SoC Texas Instruments TAS2563/TAS2781 Audio Smart Amplifier
- //
--// Copyright (C) 2022 - 2023 Texas Instruments Incorporated
-+// Copyright (C) 2022 - 2024 Texas Instruments Incorporated
- // https://www.ti.com
- //
- // The TAS2563/TAS2781 driver implements a flexible and configurable
-@@ -43,8 +43,8 @@
- 					(page * 128)) + reg)
- 
- /*Software Reset */
--#define TAS2781_REG_SWRESET		TASDEVICE_REG(0x0, 0X0, 0x01)
--#define TAS2781_REG_SWRESET_RESET	BIT(0)
-+#define TASDEVICE_REG_SWRESET		TASDEVICE_REG(0x0, 0X0, 0x01)
-+#define TASDEVICE_REG_SWRESET_RESET	BIT(0)
- 
- /*I2C Checksum */
- #define TASDEVICE_I2CChecksum		TASDEVICE_REG(0x0, 0x0, 0x7E)
-@@ -140,7 +140,7 @@ struct tasdevice_priv {
- 	void (*apply_calibration)(struct tasdevice_priv *tas_priv);
- };
- 
--void tas2781_reset(struct tasdevice_priv *tas_dev);
-+void tasdevice_reset(struct tasdevice_priv *tas_dev);
- int tascodec_init(struct tasdevice_priv *tas_priv, void *codec,
- 	struct module *module,
- 	void (*cont)(const struct firmware *fw, void *context));
-diff --git a/sound/pci/hda/tas2781_hda_i2c.c b/sound/pci/hda/tas2781_hda_i2c.c
-index 75f7674c66ee..10420360b214 100644
---- a/sound/pci/hda/tas2781_hda_i2c.c
-+++ b/sound/pci/hda/tas2781_hda_i2c.c
-@@ -834,7 +834,7 @@ static int tas2781_hda_i2c_probe(struct i2c_client *clt)
- 	pm_runtime_set_active(tas_hda->dev);
- 	pm_runtime_enable(tas_hda->dev);
- 
--	tas2781_reset(tas_hda->priv);
-+	tasdevice_reset(tas_hda->priv);
- 
- 	ret = component_add(tas_hda->dev, &tas2781_hda_comp_ops);
- 	if (ret) {
-@@ -929,7 +929,7 @@ static int tas2781_system_resume(struct device *dev)
- 		tas_hda->priv->tasdevice[i].cur_prog = -1;
- 		tas_hda->priv->tasdevice[i].cur_conf = -1;
- 	}
--	tas2781_reset(tas_hda->priv);
-+	tasdevice_reset(tas_hda->priv);
- 	tasdevice_prmg_load(tas_hda->priv, tas_hda->priv->cur_prog);
- 
- 	/* If calibrated data occurs error, dsp will still work with default
-diff --git a/sound/soc/codecs/tas2781-comlib.c b/sound/soc/codecs/tas2781-comlib.c
-index 6db1a260da82..1fbf4560f5cc 100644
---- a/sound/soc/codecs/tas2781-comlib.c
-+++ b/sound/soc/codecs/tas2781-comlib.c
-@@ -243,7 +243,7 @@ struct tasdevice_priv *tasdevice_kzalloc(struct i2c_client *i2c)
- }
- EXPORT_SYMBOL_GPL(tasdevice_kzalloc);
- 
--void tas2781_reset(struct tasdevice_priv *tas_dev)
-+void tasdevice_reset(struct tasdevice_priv *tas_dev)
- {
- 	int ret, i;
- 
-@@ -254,8 +254,8 @@ void tas2781_reset(struct tasdevice_priv *tas_dev)
- 	} else {
- 		for (i = 0; i < tas_dev->ndev; i++) {
- 			ret = tasdevice_dev_write(tas_dev, i,
--				TAS2781_REG_SWRESET,
--				TAS2781_REG_SWRESET_RESET);
-+				TASDEVICE_REG_SWRESET,
-+				TASDEVICE_REG_SWRESET_RESET);
- 			if (ret < 0)
- 				dev_err(tas_dev->dev,
- 					"dev %d swreset fail, %d\n",
-@@ -264,7 +264,7 @@ void tas2781_reset(struct tasdevice_priv *tas_dev)
- 	}
- 	usleep_range(1000, 1050);
- }
--EXPORT_SYMBOL_GPL(tas2781_reset);
-+EXPORT_SYMBOL_GPL(tasdevice_reset);
- 
- int tascodec_init(struct tasdevice_priv *tas_priv, void *codec,
- 	struct module *module,
-diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
-index b412f8f2e5d5..d5d95ae57c73 100644
---- a/sound/soc/codecs/tas2781-i2c.c
-+++ b/sound/soc/codecs/tas2781-i2c.c
-@@ -742,6 +742,8 @@ static int tasdevice_i2c_probe(struct i2c_client *i2c)
- 	if (ret)
- 		goto err;
- 
-+	tasdevice_reset(tas_priv);
-+
- 	ret = devm_snd_soc_register_component(tas_priv->dev,
- 		&soc_codec_driver_tasdevice,
- 		tasdevice_dai_driver, ARRAY_SIZE(tasdevice_dai_driver));
--- 
-2.34.1
-
+> ---
+>
+> Change log:
+> v5->v6:
+> 1.Move folio_likely_mapped_shared() under the PTL.
+> 2.Add check_stable_address_space() to replace MMF_OOM_SKIP.
+> 3.Remove folio_test_anon(folio).
+> v4->v5:
+> 1.Further modify to skip non-shared anonymous folio only.
+> 2.Update comments for pra->referenced =3D -1.
+> v3->v4:
+> 1.Modify to skip only the non-shared anonymous folio mapped solely
+> by an exiting process.
+> v2->v3:
+> Nothing.
+> v1->v2:
+> 1.The VM_EXITING added in v1 patch is removed, because it will fail
+> to compile in 32-bit system.
+>
+>
+> Comments from participants and my responses:
+> [v5->v6]:
+> 1.David Hildenbrand <david@redhat.com>
+> I'm currently working on moving all folio_likely_mapped_shared() under
+> the PTL, where we are then sure that the folio is actually mapped by
+> this process (e.g., no concurrent unmapping poisslbe). Can we do the
+> same here directly?
+> -->
+> You are right. we might use page_vma_mapped_walk_done() to bail out.
+> (Barry Song)
+>
+> 2.Barry Song <baohua@kernel.org>
+> By the way, I am not convinced that using test_bit(MMF_OOM_SKIP,
+> &vma->vm_mm->flags) is correct (I think it is wrong). And exit_mmap()
+> automatically has MMF_OOM_SKIP. What is the purpose of this check?
+> Is there a better way to determine if a process is an OOM target?
+> What about check_stable_address_space() ?
+> -->
+> Sorry, I overlook the situation with if (is_global_init(p)),
+> MMF_OOM_SKIP is indeed not suitable. It seems feasible for
+> check_stable_address_space() replacing MMF_OOM_SKIP.
+> check_stable_address_space() can indicate oom kill, and
+> !atomic_read(&vma->vm_mm->mm_users) can indicate the normal
+> process exiting.
+>
+> I also think we actually can remove "folio_test_anon(folio)".
+> -->
+> Yes, update in patch v6.
+>
+> [v4->v5]:
+> 1.Barry Song <baohua@kernel.org>
+> I don't think this is correct. folio_likely_mapped_shared() is almost
+> "correct" but not always.
+> Please explain why you set  pra->referenced =3D  -1. Please address all
+> comments before you send a new version.
+> -->
+> Update in patch v5.
+>
+> 2.Matthew Wilcox <willy@infradead.org>
+> How is the file folio similar?  File folios are never written to swap,
+> and they'll be written back from the page cache whenever the filesystem
+> decides it's a good time to do so.
+> -->
+> What do you mean is that the file folio will not have any relevant
+> identifier left in memory after it is reclamed in the shrink flow,
+> and it will not be released again during an exiting process? If that's
+> the case, I think we only need the anon folio is skipped here.
+>
+> [v3->v4]:
+> 1.Barry Song <baohua@kernel.org>
+> This is clearly version 3, as you previously sent version 2, correct?
+> -->
+> Yes.
+>
+> Could you please describe the specific impact on users, including user
+> experience and power consumption? How serious is this problem?
+> -->
+> At present, I do not have a suitable method to accurately measure the
+> optimization benefit datas of this modifications, but I believe it
+> theoretically has some benefits.
+> Launching large memory app (for example, starting the camera) in multiple
+> backend scenes may result in the high cpu load of the exiting processes.
+>
+> Applications?
+> -->
+> Yes, when system is low memory, it more likely to occur.
+>
+> I'm not completely convinced this patch is correct, but it appears to be
+> heading in the right direction. Therefore, I expect to see new versions
+> rather than it being dead.
+> You changed the file mode to 755, which is incorrect.
+> -->
+> Solved.
+>
+> Why use -1? Is this meant to simulate lock contention to keep the folio
+> without activating it? Please do have some comments to explain why.
+> I'm not convinced this change is appropriate for shared folios. It seems
+> more suitable for exclusive folios used solely by the exiting process.
+> -->
+> The skiped folios are FOLIOREF_KEEP and added into inactive lru, beacase
+> the folios will be freed soon in the exiting process flow.
+> Yes, the shared folios can not be simply skipped. I have made relevant
+> modifications in patch v4 and please help to further review.
+> https://lore.kernel.org/linux-mm/20240708031517.856-1-justinjiang@vivo.co=
+m/
+>
+> 2.David Hildenbrand <david@redhat.com>
+> but what if it is shared among multiple processes and only one of them
+> is exiting?
+> -->
+> Modify to skip only the non-shared anonymous folio mapped solely
+> by an exiting process in next version v4.
+>
+> [v2->v3:]
+> Nothing.
+>
+> [v1->v2]:
+> 1.Matthew Wilcox <willy@infradead.org>
+> What testing have you done of this patch?  How often does it happen?
+> Are there particular workloads that benefit from this?  (I'm not sure
+> what "mutil backed-applications" are?)
+> And I do mean specifically of this patch, because to my eyes it
+> shouldn't even compile. Except on 32-bit where it'll say "warning:
+> integer constant out of range".
+> -->
+> Yes, I have tested. When the low system memory and the exiting process
+> exist at the same time, it will happen. This modification can alleviate
+> the load of the exiting process.
+> "mutil backed-applications" means that there are a large number of
+> the backend applications in the system.
+> The VM_EXITING added in v1 patch is removed, because it will fail
+> to compile in 32-bit system.
+>
+>  mm/rmap.c   | 14 ++++++++++++++
+>  mm/vmscan.c |  7 ++++++-
+>  2 files changed, 20 insertions(+), 1 deletion(-)
+>
+> diff --git a/mm/rmap.c b/mm/rmap.c
+> index 88156deb46a6..d8ecb918e59e 100644
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -877,6 +877,20 @@ static bool folio_referenced_one(struct folio *folio=
+,
+>                         continue;
+>                 }
+>
+> +               /*
+> +                * Skip the non-shared swapbacked folio mapped solely by
+> +                * the exiting or OOM-reaped process. This avoids redunda=
+nt
+> +                * swap-out followed by an immediate unmap.
+> +                */
+> +               if ((!atomic_read(&vma->vm_mm->mm_users) ||
+> +                       check_stable_address_space(vma->vm_mm)) &&
+> +                       folio_test_swapbacked(folio) &&
+> +                       !folio_likely_mapped_shared(folio)) {
+> +                       pra->referenced =3D -1;
+> +                       page_vma_mapped_walk_done(&pvmw);
+> +                       return false;
+> +               }
+> +
+>                 if (pvmw.pte) {
+>                         if (lru_gen_enabled() &&
+>                             pte_young(ptep_get(pvmw.pte))) {
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 80f9a486cf27..1d5f78a3dbeb 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -863,7 +863,12 @@ static enum folio_references folio_check_references(=
+struct folio *folio,
+>         if (vm_flags & VM_LOCKED)
+>                 return FOLIOREF_ACTIVATE;
+>
+> -       /* rmap lock contention: rotate */
+> +       /*
+> +        * There are two cases to consider.
+> +        * 1) Rmap lock contention: rotate.
+> +        * 2) Skip the non-shared swapbacked folio mapped solely by
+> +        *    the exiting or OOM-reaped process.
+> +        */
+>         if (referenced_ptes =3D=3D -1)
+>                 return FOLIOREF_KEEP;
+>
+> --
+> 2.39.0
+>
 
