@@ -1,123 +1,186 @@
-Return-Path: <linux-kernel+bounces-245019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 177AF92AD15
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:24:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA5B92AD1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:25:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B52B51F22132
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:24:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BE301F221C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3219A2746F;
-	Tue,  9 Jul 2024 00:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D247726AD0;
+	Tue,  9 Jul 2024 00:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="prgNSuxX"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IOPlcMdC"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33827186A
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 00:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A471C2D;
+	Tue,  9 Jul 2024 00:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720484687; cv=none; b=N7UWM39DZymiGQDz5nlMmtRUn1mNP14NoFxkVx2tIoW5dw7UkHUzFkLoX9sW7yCQGxxOosmnDqba4Siu+ViQinDNXA5AHxdYAZXMcLKvu7TkB/R9bSwU+3Mbtm/k4bsZB6V/JiusSCufXj279HQal8ScS7QJf3DaUZgdabxNGNQ=
+	t=1720484729; cv=none; b=Sg+2KZ2mzT95exKt5g/v7D5OOham8AUvIGMO/Kt0b5XyoU/BvSIG6/lcaMPMZZPS6kEJlBPi1bhdTOQC9I08BFwEq/52NLyyQ2zd7sUxb61tTUM2KDs8BS4HjckIjmaAjmTocF/Zmo7PQvkj4d8ywU6q9lVOnq5xz18s+1DOqf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720484687; c=relaxed/simple;
-	bh=ikX1ysqZqoOXa5cAnw2HENW09LRgovdR8HIOFlmOUy4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SEwCDvkho51Jbsl77DpLnXzzQ2CfolN/s6G09zo6AGn4XxLkZ+HbJhRGYOudOtLmgo0xVM88wM1+Cva1mfzQZvXAEOcpeLXxnUtJUDbZXHe8v942vX20MSREgU+5ev0Vd6wF0II2jb0fCxXtzdBm96Vfg+m17YjVGHh8W2CftzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=prgNSuxX; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-77f37c59abdso43989a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 17:24:46 -0700 (PDT)
+	s=arc-20240116; t=1720484729; c=relaxed/simple;
+	bh=/w9tbX3xljfsiXg0sOCh5xFvwzwHBerMyxEMGTbPdxw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E8f8nJjKv0bTxlD0nQ6ehPwhHNedCkEu1QJDPTrfE3Iz/BlsuyZbQwp8ckSuPWTAt2sICuKrXPYAm6GKh3CM+AarU1iWXCggLoqNYNH15KBx4RIyAEex0vzOAUWPCcRuyNsW4NXIDEPu342Jk+K+uXVFgDcrIPeRN2Wyz4VfNNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IOPlcMdC; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70af81e8439so3708518b3a.0;
+        Mon, 08 Jul 2024 17:25:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720484685; x=1721089485; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1pBGGRes1mrWQeMbELTNS4P0PcSj+YnzufefkUsBhwY=;
-        b=prgNSuxX+fDiA0nm/oPLk3RBE/Iu2X5SQLOfcK2YXMB30FRq/A9CpGAYYCzVV6+c8w
-         s4XXb2qgehEtQ+Mf9S1DepoAhGgM3702yRySLZxGbWGzgeRxCeGVtW15oqQny1gZKp77
-         j1TCDVJKAYNp/zRBatOZe18KHUwvPiqcUxm+MGRR7KOuwvmuLqe9sncmLzyGv5cqdjwp
-         5J92Z7zEycXrieSMSoMXM3cZu/y6iSnb0xh5eiL9UUdEgemOVcrucCts7M1D+JZg53O4
-         8vgPXvARvFEMIam5Yoc4J8nf6Gs9eKCT2woLlQanT3UhnFeYolG5VpVBsVcTirlbxm7p
-         4tdA==
+        d=gmail.com; s=20230601; t=1720484727; x=1721089527; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1S+BWUnAFai2npYo3jiP5TP26p/iKKf1Ssh+uMz9V24=;
+        b=IOPlcMdC5dNvAYPwDsnnIIwYXH8dmNnH6D5TQf46sZ3D6K/kOgTveIW78BUVDdLMzl
+         zbFlyVtXvdxTeg3WYrEmbNdm8WZDpyJcAnXJpTT7IECl+RiRsMkJ1IYW+0FQlE4TZe+I
+         i/OKdFk4OpBIVG6XKtjgiKKboIw2S6ouPDdNgxSfdLCJIm3Y8XpImAm5cTsD/u/1WKD9
+         tJrf+2ze3PTy64kl3UAyAh43cSKN2o72TkpcMZjRzA2xKjcKrL9U9nGC8nDtb4yS5pgq
+         NPFAHDc6T3BBV0yYmciGzu4P/MqM/A7ch/edKHl2f+iettpbkd42zWhkD8djV+bUnoKn
+         u90A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720484685; x=1721089485;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1pBGGRes1mrWQeMbELTNS4P0PcSj+YnzufefkUsBhwY=;
-        b=R0n6Wy24uy8rZlKcfOJ5ZQVt70G3g40vSTbWSJlWXJNzmQE66UzTS4pkDJLuYwR/XZ
-         zXRbMH6+QhB2R5nHkMMeGg213bN+Stwbi88YrnFuILiH+jRe/mWnw371yQiZ4uLbP4ji
-         lsM7ieHduoEEjWrwIirEpt/3KLk3g3S4489pSK5Ul1WHj52weBFACT9+i0qzfOyk6uxk
-         IbepD97I39KfgTJw5C0L/YhZp2QX/86T4A8unv6UzAIcP7KFQ4GD1DnEFpfqGGcsG8Zn
-         b6maDMjlfPzpaL+1nv3+E2m40Z7F4+wmCPKnGfSQrJDXsm8rvm5+yx3JSmWrzRY2QKs7
-         F+9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVjnx0eXm98H++ApAgVLDD3o5RFgQj6cQCnGIBwImA6MCqj3hXB3LX/0PAerTwPutyG1Lau2Wd4KsiQnhCpY6x4X0yO0iDED/5Yzwyu
-X-Gm-Message-State: AOJu0YxsoCZWo9wD1/j/xCWrSYg/9Mk8eW0EUV6KZHbcpsWYETNuG2L9
-	tZjFlThMwZXVW5oe1Ua75fNW2p+p9jzmvhgHO54KvKytGehVzUUK8fvT0ZHe26VoIIaYfSyfJkj
-	Ynw==
-X-Google-Smtp-Source: AGHT+IG+bGGkXKt/uhQFrXoIpC76RCFXg0XPeUZS5sLfx0YBtAuW/9UGDeUxjHBA2PYP+j+znBiRzqsiqU8=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a65:68c2:0:b0:680:1416:e803 with SMTP id
- 41be03b00d2f7-77dbe51498dmr2241a12.10.1720484685505; Mon, 08 Jul 2024
- 17:24:45 -0700 (PDT)
-Date: Mon, 8 Jul 2024 17:24:44 -0700
-In-Reply-To: <2d554577722d30605ecd0f920f4777129fff3951.camel@redhat.com>
+        d=1e100.net; s=20230601; t=1720484727; x=1721089527;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1S+BWUnAFai2npYo3jiP5TP26p/iKKf1Ssh+uMz9V24=;
+        b=Uuk/u+WjIVO+4VbqbbTVV/zQi3Aim5Qq9u43x31F13rlOPBdnqf2k3jgS9ozlrRtao
+         hNnBM8c/aUl2KeCKgUxt2GiES5D5s38E/+Pp/ulfBMi89VMdVXB5LavtTxGR0M/AvCVr
+         2p3FrlfauEhu3HNjvsqqY3OzFSHK+QnMaHsLaOINWV0WX1018dzO0qlpJM5I9UtosoWN
+         U5bmlBZRCFMlyRhPqYi95dGCU7Vy9tPBdkP6pkoIvoyQ7mf3g6gKMjA/wusX0fSJ7JA6
+         6EuiplfGsRwKrQohoF86NUs+eGabixRfH1FOM/qp3BLTXfwMx0IjaYsXj5NkGI7Zekd9
+         /Hlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDzpU/e+OsOiZ/zlcsbTTkm7o5s6on1xOZ7HPI+kSZRzXMfgAcMdJRQLCQXGwsgv2FNVbqLEIIXLUhYop7LaVjWQloDVK+sgRmoExn+bdrCSZuwiUesKiVfpGaC0isSQtt
+X-Gm-Message-State: AOJu0YyRWriPwzfgczc1r+2FFEftSBC98xBJUCym5Li5za2SdSd65U91
+	h6CiHat7LSyPGO3hk3be64XRFz4NYN2hM+9oVDP21ZL/QdziGVAq1jkw3XL067ZfEQTdrYdZ29U
+	6oEM21wb0MpXdaWucmW2mtHSUspw=
+X-Google-Smtp-Source: AGHT+IFFcbTqw48GIuHul+dRzjWWo1YZrwwJPPawo9H3fjGF/xWVeOusidpaVx1DgJUy0eqnbcPCDOfyDKWygfn/CQE=
+X-Received: by 2002:a05:6a00:10d5:b0:706:a931:20da with SMTP id
+ d2e1a72fcca58-70b434f6439mr1472457b3a.3.1720484726890; Mon, 08 Jul 2024
+ 17:25:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-45-seanjc@google.com>
- <2d554577722d30605ecd0f920f4777129fff3951.camel@redhat.com>
-Message-ID: <ZoyDTJ3nb_MQ38nW@google.com>
-Subject: Re: [PATCH v2 44/49] KVM: x86: Update guest cpu_caps at runtime for
- dynamic CPUID-based features
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20240708091241.544262971@infradead.org> <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
+In-Reply-To: <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 8 Jul 2024 17:25:14 -0700
+Message-ID: <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+To: Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org, 
+	rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org, clm@meta.com, 
+	paulmck@kernel.org, bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 04, 2024, Maxim Levitsky wrote:
-> On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
-> > -		cpuid_entry_change(best, X86_FEATURE_OSPKE,
-> > -				   kvm_is_cr4_bit_set(vcpu, X86_CR4_PKE));
-> > +		kvm_update_feature_runtime(vcpu, best, X86_FEATURE_OSPKE,
-> > +					   kvm_is_cr4_bit_set(vcpu, X86_CR4_PKE));
-> > +
-> >  
-> >  	best = kvm_find_cpuid_entry_index(vcpu, 0xD, 0);
-> >  	if (best)
-> 
-> 
-> I am not 100% sure that we need to do this.
-> 
-> Runtime cpuid changes are a hack that Intel did back then, due to various
-> reasons, These changes don't really change the feature set that CPU supports,
-> but merly as you like to say 'massage' the output of the CPUID instruction to
-> make the unmodified OS happy usually.
-> 
-> Thus it feels to me that CPU caps should not include the dynamic features,
-> and neither KVM should use the value of these as a source for truth, but
-> rather the underlying source of the truth (e.g CR4).
-> 
-> But if you insist, I don't really have a very strong reason to object this.
+On Mon, Jul 8, 2024 at 3:56=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.or=
+g> wrote:
+>
+> On Mon, 08 Jul 2024 11:12:41 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> > Hi!
+> >
+> > These patches implement the (S)RCU based proposal to optimize uprobes.
+> >
+> > On my c^Htrusty old IVB-EP -- where each (of the 40) CPU calls 'func' i=
+n a
+> > tight loop:
+> >
+> >   perf probe -x ./uprobes test=3Dfunc
+> >   perf stat -ae probe_uprobe:test  -- sleep 1
+> >
+> >   perf probe -x ./uprobes test=3Dfunc%return
+> >   perf stat -ae probe_uprobe:test__return -- sleep 1
+> >
+> > PRE:
+> >
+> >   4,038,804      probe_uprobe:test
+> >   2,356,275      probe_uprobe:test__return
+> >
+> > POST:
+> >
+> >   7,216,579      probe_uprobe:test
+> >   6,744,786      probe_uprobe:test__return
+> >
+>
+> Good results! So this is another series of Andrii's batch register?
+> (but maybe it becomes simpler)
 
-FWIW, I think I agree that CR4 should be the source of truth, but it's largely a
-moot point because KVM doesn't actually check OSXSAVE or OSPKE, as KVM never
-emulates the relevant instructions.  So for those, it's indeed not strictly
-necessary.
+yes, this would be an alternative to my patches
 
-Unfortunately, KVM has established ABI for checking X86_FEATURE_MWAIT when
-"emulating" MONITOR and MWAIT, i.e. KVM can't use vcpu->arch.ia32_misc_enable_msr
-as the source of truth.  So for MWAIT, KVM does need to update CPU caps (or carry
-even more awful MWAIT code), at which point extending the behavior to the CR4
-features (and to X86_FEATURE_APIC) is practically free.
+
+Peter,
+
+I didn't have time to look at the patches just yet, but I managed to
+run a quick benchmark (using bench tool we have as part of BPF
+selftests) to see both single-threaded performance and how the
+performance scales with CPUs (now that we are not bottlenecked on
+register_rwsem). Here are some results:
+
+[root@kerneltest003.10.atn6 ~]# for num_threads in {1..20}; do ./bench \
+-a -d10 -p $num_threads trig-uprobe-nop | grep Summary; done
+Summary: hits    3.278 =C2=B1 0.021M/s (  3.278M/prod)
+Summary: hits    4.364 =C2=B1 0.005M/s (  2.182M/prod)
+Summary: hits    6.517 =C2=B1 0.011M/s (  2.172M/prod)
+Summary: hits    8.203 =C2=B1 0.004M/s (  2.051M/prod)
+Summary: hits    9.520 =C2=B1 0.012M/s (  1.904M/prod)
+Summary: hits    8.316 =C2=B1 0.007M/s (  1.386M/prod)
+Summary: hits    7.893 =C2=B1 0.037M/s (  1.128M/prod)
+Summary: hits    8.490 =C2=B1 0.014M/s (  1.061M/prod)
+Summary: hits    8.022 =C2=B1 0.005M/s (  0.891M/prod)
+Summary: hits    8.471 =C2=B1 0.019M/s (  0.847M/prod)
+Summary: hits    8.156 =C2=B1 0.021M/s (  0.741M/prod)
+...
+
+
+(numbers in the first column is total throughput, and xxx/prod is
+per-thread throughput). Single-threaded performance (about 3.3 mln/s)
+is on part with what I had with my patches. And clearly it scales
+better with more thread now that register_rwsem is gone, though,
+unfortunately, it doesn't really scale linearly.
+
+Quick profiling for the 8-threaded benchmark shows that we spend >20%
+in mmap_read_lock/mmap_read_unlock in find_active_uprobe. I think
+that's what would prevent uprobes from scaling linearly. If you have
+some good ideas on how to get rid of that, I think it would be
+extremely beneficial. We also spend about 14% of the time in
+srcu_read_lock(). The rest is in interrupt handling overhead, actual
+user-space function overhead, and in uprobe_dispatcher() calls.
+
+Ramping this up to 16 threads shows that mmap_rwsem is getting more
+costly, up to 45% of CPU. SRCU is also growing a bit slower to 19% of
+CPU. Is this expected? (I'm not familiar with the implementation
+details)
+
+P.S. Would you be able to rebase your patches on top of latest
+probes/for-next, which include Jiri's sys_uretprobe changes. Right now
+uretprobe benchmarks are quite unrepresentative because of that.
+Thanks!
+
+
+>
+> Thank you,
+>
+> >
+> > Patches also available here:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git perf/u=
+probes
+> >
+> >
+>
+>
+> --
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
