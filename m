@@ -1,652 +1,335 @@
-Return-Path: <linux-kernel+bounces-245200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A8B92AF87
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:44:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2346392AF89
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D5C72826D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:44:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A0791F22678
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C711012C484;
-	Tue,  9 Jul 2024 05:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280001304A3;
+	Tue,  9 Jul 2024 05:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="cki3cwq/"
-Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazolkn19010010.outbound.protection.outlook.com [52.103.66.10])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="k9p8pifM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IxK2FCUs"
+Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527173F9FB;
-	Tue,  9 Jul 2024 05:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.66.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720503851; cv=fail; b=P6L0jPrnJtzZaftZV6ckQ1EYSs4LeRaWIbojaP9riaolZhZ6jokL+WfItNGHBY6pwacQiJ3DMnovrMG+OIJxFq5ZVFLkQXBYYcRUIbNsyQIHxSwyBkUMHb/L1tXdWP9+al5o4PJihwvpnmcPJnZLK7vWTmolnvuYI8BDP7cGrl8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720503851; c=relaxed/simple;
-	bh=6krgi0ASFIHC9dWQap1iren8NY3gh5K/zifNUdPoor0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=WLrqnfVVkFNw9BTtPHTiUah8VDv/wBiGw+JEUD2M0OjhbQlUDGgEvsNtnrGquIW4955FLhRpetFQoCRXuc48chnfuDH7M0bvRCk4b9AYLRHxHdkq7a4aogmM+rzkfFl+KKCc5qzMwrNIez8rCrTPOsoqV8QLQ+2kGaE8c1iDIgo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=cki3cwq/; arc=fail smtp.client-ip=52.103.66.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mJJU5PvEGC/iYdeN48g3ObmGoVil7RQa3x/5T5yNUN9PPLMFJob1ltAFxYzGl7JUn60cq5AbYc0ANFTfvZqhc0jnXNP82+52Q7l+CVq0mWnJG560dUpNcodhFxSal/IlEkVxiQklWEuhLCTcqk+QGGjk8tF/BqACWLABShzZxl86HSBirffsKtQRKXM499Oe4X7tdgihSoAcB5DEr65kOWHNoEskdi9TLHI3DN1ufLjn7e9RkCOGxHEQEFTGrD1zg/Z2b7Qk6qTepDIV/HRv+gs7sTffjQ+H2awgkE2x3fncxk9O21cc+R09kDbQTrGwrQwY6qo9d//k6eOUWi2e9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yugKaiwwl33BPO5KP/6HbWkLAhJsn+A6PkRF2An9uQg=;
- b=VqJbBiP3NKCEzOX9hf7B4dZy1QBfaqKmqy4GKlNFcng6I24fiGgUv/s/9LY4CZ2ZaSO4oiwh3n5w+fxod040kFV6mVKLrBHdv9IzoULZERkAWB5uaiXopLsTi+DOOu6S1A5rgalTPuW/CsT7ww6ukRUGeuIbF3Jjj2GAOccBhiqzAjD0UjelIq8eQahnKgTpA6MdTdE8obuB8ppz6Wn8JmlW5RqhISvnwXXdn14gby0figjIBVcPcTo7v3F1h4yZcaD+ToCH120xM8VO6w9W1Sv6qFFFl7KZ9R0fV5Iu+5YfHqSHP5z82tXF9+b79iZ4V5Ka4lgB55UFgiZmE5LfHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yugKaiwwl33BPO5KP/6HbWkLAhJsn+A6PkRF2An9uQg=;
- b=cki3cwq/755ABMNwKMAxwAWUPPG/IXb9N1L4MLFjv1gmT4pCoD9cdtXipqMFZi2SDhY+2MCufWjK3qwNBRdi3EjYjlM4+U732bOmGJPh7EtAj4l0Ej2cad/7ycEJM5TYHqryupVozMGtmmdEXvvksU7KEevq9V4yl3mTGGUN1bLRSSfWKKyOWH7S0rN7QegZNwMymfImlFkrOXV9+PNT5Hm9g78vU3Wi8rRNzL04mYi7ZO6294gxnyVLvRAHJAKiWbXBZKvuQLBXjzvhT/zwC2LHk04izrOaDRa1YtqMRKyHm3o6XTv4krKvYMNQjik5YTsPz65eXM+bVH2rWjKgnw==
-Received: from TYCP286MB2958.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:309::12)
- by TYCP286MB2912.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:308::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Tue, 9 Jul
- 2024 05:44:01 +0000
-Received: from TYCP286MB2958.JPNP286.PROD.OUTLOOK.COM
- ([fe80::f0b6:6e81:a20f:154]) by TYCP286MB2958.JPNP286.PROD.OUTLOOK.COM
- ([fe80::f0b6:6e81:a20f:154%7]) with mapi id 15.20.7741.033; Tue, 9 Jul 2024
- 05:44:01 +0000
-Message-ID:
- <TYCP286MB29585D37F5B530A08B886592A7DB2@TYCP286MB2958.JPNP286.PROD.OUTLOOK.COM>
-Date: Tue, 9 Jul 2024 13:43:53 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/10] riscv: dts: add initial SpacemiT K1 SoC device
- tree
-To: Yixun Lan <dlan@gentoo.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Samuel Holland <samuel.holland@sifive.com>, Anup Patel
- <anup@brainfault.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-serial@vger.kernel.org,
- Jesse Taube <jesse@rivosinc.com>, Jisheng Zhang <jszhang@kernel.org>,
- Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>,
- Meng Zhang <zhangmeng.kevin@spacemit.com>, Yangyu Chen <cyy@cyyself.name>
-References: <20240709-k1-01-basic-dt-v4-0-ae5bb5e56aaf@gentoo.org>
- <20240709-k1-01-basic-dt-v4-8-ae5bb5e56aaf@gentoo.org>
-From: zhang meng <kevin.z.m@hotmail.com>
-In-Reply-To: <20240709-k1-01-basic-dt-v4-8-ae5bb5e56aaf@gentoo.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TMN: [qyxR12lBBEUhibq9suFKce80X7cx7jz2]
-X-ClientProxiedBy: SI1PR02CA0054.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::13) To TYCP286MB2958.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:309::12)
-X-Microsoft-Original-Message-ID:
- <24e14134-40fa-4e82-9df1-3a644502fde1@hotmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B4512F375
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 05:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720503893; cv=none; b=uAocoGGCKJ1NgbCwihztdG8Rpcz87ZxN2lwp9qVfppm7iKoUMz7BvgVzUqIV28hIFgs6rot9J1cnk33bppuakm7YUGjtdIy4YRERD41+edKokysPtZmgUTWiiUWUU3KXr6tIEzWRV2XVqnIdmujNwp+QTZPF6m63xKBgcO2xgZw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720503893; c=relaxed/simple;
+	bh=6kbcFmvB4vT4HOqvjhXKZwm9yQK9Wy1SXszIn/juJvA=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=ShDVuyvx7+tug5mgSynQ6lGZws6Tf3Hcx1YyoGjDp6+yJFgppOxq0MpU1eA8cwl+zWeU903DLlgC2ZqqriTWVR+4NNiTijcFw9zpppin50jf4REyBPdtGwQL9bD/CoTi16m7Qg316uI5B3p4LtvhtwDvt1NbQY8P5cZI+SMhecI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=k9p8pifM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IxK2FCUs; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 4F1F41141F45;
+	Tue,  9 Jul 2024 01:44:50 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 09 Jul 2024 01:44:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1720503890; x=1720590290; bh=EQg+heZbs2
+	EC/+pnCCFYU3qmOYvuWSX7hGE78f/KJ+U=; b=k9p8pifMnsy9TRykfAmacOI1JJ
+	5L1z4Z3Q3PGCysLJRtSjO0ImV11WmaMekkc0byRibOTxkX1qW3F4t0/smPC5zwI5
+	rCuP/aNytAd/Ls4TS48vBokAjLZnCge6gqR5CEFeLzAeI4Jmyf37H7BJqkMo3JTF
+	7jjTJnlRdYGER7PF1E1KZZEJuC+KvvOnHrmiOlF4FjyvsInt2kYYpe1SOdWBAGc4
+	JBdfyRKIoCPq7TnsLLRMnN/L/h5XMFYukyAbztQ8Q9S2WicUfkzA3D/dC5QaBJ4y
+	uoUhvgknW6imHEN7OJlZ20ASQ+ESh468HXCW2DLWJme1E31FAJp4EaGBcacA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1720503890; x=1720590290; bh=EQg+heZbs2EC/+pnCCFYU3qmOYvu
+	WSX7hGE78f/KJ+U=; b=IxK2FCUsv3okkVDB69gIdNGachdklt9gETgx58SBJj10
+	oLaLSr2ryLTU2wFBn0dGtrnXHpE6Mwj91UX8zfhFQ3TAv44PjE6C27clCGBlhUBk
+	M38dJ0Msz37kDJAD6nlNojkSz/5mggk8FcjgH4DLIAioiRBp6k3aVfjii5zfr/yS
+	GMtV65B150fcEzK1dAF5pENrBzP9Xsa59GtfcUni5J3ue6OxLyjpwBRtK0y6OF8W
+	MCN1/51uld3dW4Xig75Owsjcb9LeptPWfdIvUyjvv3VwgFyKecIYr2jEyjdSVE2B
+	KVccPsUR7A8mMPY3nQszIVyggf0Ql+/03PmSr/f+vg==
+X-ME-Sender: <xms:Uc6MZkcmPvGdaV1tKK-h9hWrswjbcNr8l9zV--dsnI7BPN2Pq5AAZA>
+    <xme:Uc6MZmMyRLEqQSMkjBRoZXWwxW-XOF2A5la-Ql6oLEhhpBTY0P6-jlhoMa1EahO7D
+    5Qmu1CB9ZAb5yC_h5A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekgdellecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeegteeihfejvdfhfeffhfdvvddvfffgtedvteeigfehhfehudffleejueduvdel
+    gfenucffohhmrghinhepphgrshhtvggsihhnrdgtohhmnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:Uc6MZli-8gPvFepooNBluxa6xExXDcrxHtii-K4bD9FX4cVN8NKSuQ>
+    <xmx:Uc6MZp-HYdOQymONY2UFA_jcGWWAO19d7KwCuDNBam53IAHld3aYDg>
+    <xmx:Uc6MZgtdN8UGUM0oizJWz6n9MZcFubvEk9v9TeOIpUN-RZhcaIYwEg>
+    <xmx:Uc6MZgEcNYcDZjVud32ciNUKyfZ1Y0dnUCYLRq7NKK-NEl1S2qQMIg>
+    <xmx:Us6MZsKgCvtMvK8TI7h1arObqxvvaBq6UC17dpeRhJeFxkh8UX9oejM7>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 03F4AB6008F; Tue,  9 Jul 2024 01:44:49 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCP286MB2958:EE_|TYCP286MB2912:EE_
-X-MS-Office365-Filtering-Correlation-Id: 38063e6f-2e56-4ff7-64d0-08dc9fda22a7
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|8060799006|19110799003|461199028|3430499032|3412199025|440099028|4302099013|1602099012;
-X-Microsoft-Antispam-Message-Info:
-	yNseHrGsPytCZpXQ79EDAv60iVCFmwO1AkV8dLsRBZgFqiUC+ZEr3NkqvP1YGtnYBrJFlOyN+g+OeyuEAAMbh+q5nuAgF3RaKl2o7g/IX7cNj5jnEvnkBGyLd77H/22/Gg3daGW/Wov8LsHLGEhL82fpgyU3PIA2YOeMcshMIKC2792XsSxIvZ00tbtEjs157d5RF2IoT+RaahTgx9qy/sDYLwDCdac4oYmFdpDQGnlxTGbV6kl8SujLkR2QxF13+hUxcdsMGyoMdajwlsAKMvpKCvJEsXDgE5CDc2PTWIAlU9u8iw4FLF1IEfGBTwnkjvKeQvU6LxhIjJgAyBYrw7J6T0gvJf7SBRt2cSNUwv2WbjZbTcXVEoxude4V/IKqZCW9LrM3uvi1XnGTPY8NeCgmjSD0Od14ZbISPw5FuIAfUi0DB64rexG97ws2+U+Jk4XCzD2Nqe0gU4SZhLqagZMtw7mQD0Sz/QllNTX74JozxVvTWS1KMG3uuYtvBL0r81IKQfd3T3QodfrqCk9zyhM0aiOw+eJE6v4YWK+hD4HLFoI1USn1saU2AMwSm+FRdQ5DHZoAWI6yVsEwY5S1elPyJ9rby2S27coFXwTc11JNEIwiDMlX+ab9BkTVRUb5jODmdgIKG1U96I3HKooafxgcymHjOicIgIR8iLzEyXFqb74N1zlBM/pPLT0286D4d8hufSEmk9NQ4HQoH0+oAspoTBozztCg9zKJM07f3115peETCq4m123kpgb/Dg4Y
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YmJzRXZ1Z2FPVldSa0VrcjQxNnFOdmhtTUg4MGNxaWVtNEV5dTUxRzVWcWVM?=
- =?utf-8?B?eS9SRHZFTW9hOXN5RnBPZ1hIclBaUmpNdVRJU0puSHErOWc0T052WkZMYU1t?=
- =?utf-8?B?bjhpYVQ1L2hBZXREUFZMTHk1KzFDLy9EbXYwUjhMZ0pOdU0rQnNPd2lieFds?=
- =?utf-8?B?YmFLV1FmUTdiWEp1YjMvUkpIQS9GdmsrT1h0WWFNRkZYbzVDODF4NU81V0pG?=
- =?utf-8?B?bTJUeXdnUDFnYUNNQzhVT1k2VVZFTi95VFVjSStnZlRad3NKZTAxdGVhU2ZD?=
- =?utf-8?B?S3lYTy9uQTQ2Q0d3clNUN0JGMVFIMDRYdmxyRzRtZlJjZ2xRcENqSXRjZ0F3?=
- =?utf-8?B?M3JCNkhkTUtTdUY2Sjh3d0Nkb0F5VzNDV0M5SW9qc0p4ZzREeG9hMkNKU2dv?=
- =?utf-8?B?dkVNQmh1NW5uV0M3Q2ZhbUlOdi82SVZ2VlZqWlRpUTlqZ1NURU1DRXFXbXhs?=
- =?utf-8?B?azlqRFVWd1JVbEtvaHJyV3pzQTBVZ21QNjNqNm5Qc3psSjJWNXpKbm9UcHZu?=
- =?utf-8?B?d3dkUDhzUmQ3dUZuNG9jQlNaVUgzWjJrNUxaSjVqVFN3aWk1S0lER1dXVEFR?=
- =?utf-8?B?c004cFpjeHdBUjMvSjUyZ1Y5d0lpYWNScmFjb1FUeCsvRlN2Nzh1T3liaTFy?=
- =?utf-8?B?b2xMRjZKQVpFUW9MclBRU1NjbEpwYW1KYXJWU1l5L3pHVEpoL3g4aS8xVlF1?=
- =?utf-8?B?VmNvOG9TY1IzN05LOE5lRVhIcVBSMzFQNnN6NklEZEZHMDdQWjVab1RNVHdI?=
- =?utf-8?B?VndNcEg3Q3N3SUl4bWNQYnljM2tXZi93ekVUZG5zUTZMMFMrQmVPMURMV1Ir?=
- =?utf-8?B?Zy9ZbnNFZUpiZlJBTDdtQXhoNWVNbHRPT0NrUGJuUzZkbWFYQlBEOUlTVGdm?=
- =?utf-8?B?VEtET1plQnovVVh4ZklON2lqeWtJL3AwdHJsQ3cxVVhBV2N4MGkzOGdzL3Za?=
- =?utf-8?B?QWRUZlNhNENRNGQxcFB3QXhDN2NqdTVIMjV0UXp0QUY2Q2kyM1p1WFh1REhh?=
- =?utf-8?B?Qy9jeXpTQlQ0NDdtU1V6ZmdVV2lQSk9mUjRrSEhQRkZvNk9EeFhYMWZHTU5H?=
- =?utf-8?B?WllzUjd0QmxidGV0cWZTQnJ3cGZQb3l4bERsNGRjTDYwNytPZlh3WDRaWk9B?=
- =?utf-8?B?b2dReERVUzkvSlpnckp1RHhia2JvOEI0cXhtMmRLQ1pzWXRVN2krVDRuODhM?=
- =?utf-8?B?NDFBalNBemZlTjg2a1ROSHNqZDl4WWVHS3hROHI0aU1xa0liODZ5MHVsTCtR?=
- =?utf-8?B?TldJU3Fsc2o5TlhUTkdYQnBpTUQyY3hLc244dGZRS3hLQ0hRRVZzbStjT3FV?=
- =?utf-8?B?NkFiYzQ5M1RnUE9rVHZHUk9mSytWOUxxdGxjQkJIRFV1U1FieDdSVlVNK2Zz?=
- =?utf-8?B?YWV6T3RxdDkwVnFHTlNVZ2ZhSk10Uyt2T2hCQklOZUtqWTRmNUEyVkNxbGFD?=
- =?utf-8?B?b09iYStrcmk3am1ON2djY09abFZVNHl5SjRvL1BNa3FBOFFtMXRSem9VaHpl?=
- =?utf-8?B?eGFZQVR2YS9oSnVSQUJrOXd2dVdxZmRHelptQ3NzOXNsNExlZ3RjUUxXRDls?=
- =?utf-8?B?ZWFxUklXRzZ5bU55cnZJaGNjbkxQL0VzQnNjYXpEMGxSNlNYRk5WMWREVlZU?=
- =?utf-8?Q?gnf68V2vZwUgR70D8xUYryUxHLb5sMMbj9+ZLI90LHtw=3D?=
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-6efd8.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 38063e6f-2e56-4ff7-64d0-08dc9fda22a7
-X-MS-Exchange-CrossTenant-AuthSource: TYCP286MB2958.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2024 05:44:01.5341
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCP286MB2912
+Message-Id: <c9b23ee3-6790-404d-80a3-4ca196327546@app.fastmail.com>
+In-Reply-To: <837cd2e4-d231-411a-8af4-64b950c4066a@quicinc.com>
+References: <87y16bbvgb.fsf@kernel.org>
+ <917565ee-732a-4df0-a717-a71fbb34fd79@quicinc.com>
+ <837cd2e4-d231-411a-8af4-64b950c4066a@quicinc.com>
+Date: Tue, 09 Jul 2024 07:44:27 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jeff Johnson" <quic_jjohnson@quicinc.com>,
+ "Kalle Valo" <kvalo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, ath12k@lists.infradead.org
+Subject: Re: crosstool: x86 kernel compiled with GCC 14.1 fails to boot
+Content-Type: text/plain
 
+On Tue, Jul 9, 2024, at 05:55, Jeff Johnson wrote:
+> On 7/8/2024 6:57 PM, Jeff Johnson wrote:
+>> We tend to enable a lot of debug config options, so I'm wondering if one of
+>> them is contributing to the issue? Guess I'll turn off a bunch of those
+>> options and try again.
+>
+> OK, with a bunch of debug turned off my image boots.
+>
+> Now to find the culprit.
+>
+> Current diff between original config and working config:
 
-在 2024/7/9 11:18, Yixun Lan 写道:
-> From: Yangyu Chen <cyy@cyyself.name>
->
-> Banana Pi BPI-F3 motherboard is powered by SpacemiT K1[1].
->
-> Key features:
-> - 4 cores per cluster, 2 clusters on chip
-> - UART IP is Intel XScale UART
->
-> Some key considerations:
-> - ISA string is inferred from vendor documentation[2]
-> - Cluster topology is inferred from datasheet[1] and L2 in vendor dts[3]
-> - No coherent DMA on this board
->      Inferred by taking vendor ethernet and MMC drivers to the mainline
->      kernel. Without dma-noncoherent in soc node, the driver fails.
-> - No cache nodes now
->      The parameters from vendor dts are likely to be wrong. It has 512
->      sets for a 32KiB L1 Cache. In this case, each set is 64B in size.
-Sets of 32 KiB L1 Cahce should be 128.
->      When the size of the cache line is 64B, it is a directly mapped
->      cache rather than a set-associative cache, the latter is commonly
->      used. Thus, I didn't use the parameters from vendor dts.
->
-> Currently only support booting into console with only uart, other
-> features will be added soon later.
->
-> Link: https://docs.banana-pi.org/en/BPI-F3/SpacemiT_K1_datasheet [1]
-> Link: https://developer.spacemit.com/#/documentation?token=BWbGwbx7liGW21kq9lucSA6Vnpb [2]
-> Link: https://gitee.com/bianbu-linux/linux-6.1/blob/bl-v1.0.y/arch/riscv/boot/dts/spacemit/k1-x.dtsi [3]
-> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
->
-> ---
-> Changes in v4:
->   - add i/d-cache, l2-cache info
->   - Link to v3: https://lore.kernel.org/all/20240703-k1-01-basic-dt-v3-8-12f73b47461e@gentoo.org/
-> ---
->   arch/riscv/boot/dts/spacemit/k1.dtsi | 459 +++++++++++++++++++++++++++++++++++
->   1 file changed, 459 insertions(+)
->
-> diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> new file mode 100644
-> index 0000000000000..22735fc83c843
-> --- /dev/null
-> +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> @@ -0,0 +1,459 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> +/*
-> + * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
-> + */
-> +
-> +/dts-v1/;
-> +/ {
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +	model = "SpacemiT K1";
-> +	compatible = "spacemit,k1";
-> +
-> +	aliases {
-> +		serial0 = &uart0;
-> +		serial1 = &uart2;
-> +		serial2 = &uart3;
-> +		serial3 = &uart4;
-> +		serial4 = &uart5;
-> +		serial5 = &uart6;
-> +		serial6 = &uart7;
-> +		serial7 = &uart8;
-> +		serial8 = &uart9;
-> +	};
-> +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		timebase-frequency = <24000000>;
-> +
-> +		cpu-map {
-> +			cluster0 {
-> +				core0 {
-> +					cpu = <&cpu_0>;
-> +				};
-> +				core1 {
-> +					cpu = <&cpu_1>;
-> +				};
-> +				core2 {
-> +					cpu = <&cpu_2>;
-> +				};
-> +				core3 {
-> +					cpu = <&cpu_3>;
-> +				};
-> +			};
-> +
-> +			cluster1 {
-> +				core0 {
-> +					cpu = <&cpu_4>;
-> +				};
-> +				core1 {
-> +					cpu = <&cpu_5>;
-> +				};
-> +				core2 {
-> +					cpu = <&cpu_6>;
-> +				};
-> +				core3 {
-> +					cpu = <&cpu_7>;
-> +				};
-> +			};
-> +		};
-> +
-> +		cpu_0: cpu@0 {
-> +			compatible = "spacemit,x60", "riscv";
-> +			device_type = "cpu";
-> +			reg = <0>;
-> +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
-> +			riscv,isa-base = "rv64i";
-> +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
-> +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
-> +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
-> +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
-> +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
-> +			riscv,cbom-block-size = <64>;
-> +			riscv,cbop-block-size = <64>;
-> +			riscv,cboz-block-size = <64>;
-> +			i-cache-block-size = <64>;
-> +			i-cache-size = <32768>;
-> +			i-cache-sets = <512>;
-> +			d-cache-block-size = <64>;
-> +			d-cache-size = <32768>;
-> +			d-cache-sets = <512>;
-> +			next-level-cache = <&cluster0_l2_cache>;
-> +			mmu-type = "riscv,sv39";
-> +
-> +			cpu0_intc: interrupt-controller {
-> +				compatible = "riscv,cpu-intc";
-> +				interrupt-controller;
-> +				#interrupt-cells = <1>;
-> +			};
-> +		};
-> +
-> +		cpu_1: cpu@1 {
-> +			compatible = "spacemit,x60", "riscv";
-> +			device_type = "cpu";
-> +			reg = <1>;
-> +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
-> +			riscv,isa-base = "rv64i";
-> +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
-> +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
-> +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
-> +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
-> +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
-> +			riscv,cbom-block-size = <64>;
-> +			riscv,cbop-block-size = <64>;
-> +			riscv,cboz-block-size = <64>;
-> +			i-cache-block-size = <64>;
-> +			i-cache-size = <32768>;
-> +			i-cache-sets = <512>;
-> +			d-cache-block-size = <64>;
-> +			d-cache-size = <32768>;
-> +			d-cache-sets = <512>;
-> +			next-level-cache = <&cluster0_l2_cache>;
-> +			mmu-type = "riscv,sv39";
-> +
-> +			cpu1_intc: interrupt-controller {
-> +				compatible = "riscv,cpu-intc";
-> +				interrupt-controller;
-> +				#interrupt-cells = <1>;
-> +			};
-> +		};
-> +
-> +		cpu_2: cpu@2 {
-> +			compatible = "spacemit,x60", "riscv";
-> +			device_type = "cpu";
-> +			reg = <2>;
-> +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
-> +			riscv,isa-base = "rv64i";
-> +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
-> +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
-> +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
-> +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
-> +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
-> +			riscv,cbom-block-size = <64>;
-> +			riscv,cbop-block-size = <64>;
-> +			riscv,cboz-block-size = <64>;
-> +			i-cache-block-size = <64>;
-> +			i-cache-size = <32768>;
-> +			i-cache-sets = <512>;
-> +			d-cache-block-size = <64>;
-> +			d-cache-size = <32768>;
-> +			d-cache-sets = <512>;
-> +			next-level-cache = <&cluster0_l2_cache>;
-> +			mmu-type = "riscv,sv39";
-> +
-> +			cpu2_intc: interrupt-controller {
-> +				compatible = "riscv,cpu-intc";
-> +				interrupt-controller;
-> +				#interrupt-cells = <1>;
-> +			};
-> +		};
-> +
-> +		cpu_3: cpu@3 {
-> +			compatible = "spacemit,x60", "riscv";
-> +			device_type = "cpu";
-> +			reg = <3>;
-> +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
-> +			riscv,isa-base = "rv64i";
-> +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
-> +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
-> +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
-> +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
-> +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
-> +			riscv,cbom-block-size = <64>;
-> +			riscv,cbop-block-size = <64>;
-> +			riscv,cboz-block-size = <64>;
-> +			i-cache-block-size = <64>;
-> +			i-cache-size = <32768>;
-> +			i-cache-sets = <512>;
-> +			d-cache-block-size = <64>;
-> +			d-cache-size = <32768>;
-> +			d-cache-sets = <512>;
-> +			next-level-cache = <&cluster0_l2_cache>;
-> +			mmu-type = "riscv,sv39";
-> +
-> +			cpu3_intc: interrupt-controller {
-> +				compatible = "riscv,cpu-intc";
-> +				interrupt-controller;
-> +				#interrupt-cells = <1>;
-> +			};
-> +		};
-> +
-> +		cpu_4: cpu@4 {
-> +			compatible = "spacemit,x60", "riscv";
-> +			device_type = "cpu";
-> +			reg = <4>;
-> +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
-> +			riscv,isa-base = "rv64i";
-> +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
-> +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
-> +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
-> +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
-> +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
-> +			riscv,cbom-block-size = <64>;
-> +			riscv,cbop-block-size = <64>;
-> +			riscv,cboz-block-size = <64>;
-> +			i-cache-block-size = <64>;
-> +			i-cache-size = <32768>;
-> +			i-cache-sets = <512>;
-> +			d-cache-block-size = <64>;
-> +			d-cache-size = <32768>;
-> +			d-cache-sets = <512>;
-> +			next-level-cache = <&cluster1_l2_cache>;
-> +			mmu-type = "riscv,sv39";
-> +
-> +			cpu4_intc: interrupt-controller {
-> +				compatible = "riscv,cpu-intc";
-> +				interrupt-controller;
-> +				#interrupt-cells = <1>;
-> +			};
-> +		};
-> +
-> +		cpu_5: cpu@5 {
-> +			compatible = "spacemit,x60", "riscv";
-> +			device_type = "cpu";
-> +			reg = <5>;
-> +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
-> +			riscv,isa-base = "rv64i";
-> +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
-> +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
-> +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
-> +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
-> +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
-> +			riscv,cbom-block-size = <64>;
-> +			riscv,cbop-block-size = <64>;
-> +			riscv,cboz-block-size = <64>;
-> +			i-cache-block-size = <64>;
-> +			i-cache-size = <32768>;
-> +			i-cache-sets = <512>;
-> +			d-cache-block-size = <64>;
-> +			d-cache-size = <32768>;
-> +			d-cache-sets = <512>;
-> +			next-level-cache = <&cluster1_l2_cache>;
-> +			mmu-type = "riscv,sv39";
-> +
-> +			cpu5_intc: interrupt-controller {
-> +				compatible = "riscv,cpu-intc";
-> +				interrupt-controller;
-> +				#interrupt-cells = <1>;
-> +			};
-> +		};
-> +
-> +		cpu_6: cpu@6 {
-> +			compatible = "spacemit,x60", "riscv";
-> +			device_type = "cpu";
-> +			reg = <6>;
-> +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
-> +			riscv,isa-base = "rv64i";
-> +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
-> +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
-> +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
-> +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
-> +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
-> +			riscv,cbom-block-size = <64>;
-> +			riscv,cbop-block-size = <64>;
-> +			riscv,cboz-block-size = <64>;
-> +			i-cache-block-size = <64>;
-> +			i-cache-size = <32768>;
-> +			i-cache-sets = <512>;
-> +			d-cache-block-size = <64>;
-> +			d-cache-size = <32768>;
-> +			d-cache-sets = <512>;
-> +			next-level-cache = <&cluster1_l2_cache>;
-> +			mmu-type = "riscv,sv39";
-> +
-> +			cpu6_intc: interrupt-controller {
-> +				compatible = "riscv,cpu-intc";
-> +				interrupt-controller;
-> +				#interrupt-cells = <1>;
-> +			};
-> +		};
-> +
-> +		cpu_7: cpu@7 {
-> +			compatible = "spacemit,x60", "riscv";
-> +			device_type = "cpu";
-> +			reg = <7>;
-> +			riscv,isa = "rv64imafdcv_zicbom_zicbop_zicboz_zicntr_zicond_zicsr_zifencei_zihintpause_zihpm_zfh_zba_zbb_zbc_zbs_zkt_zvfh_zvkt_sscofpmf_sstc_svinval_svnapot_svpbmt";
-> +			riscv,isa-base = "rv64i";
-> +			riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v", "zicbom",
-> +					       "zicbop", "zicboz", "zicntr", "zicond", "zicsr",
-> +					       "zifencei", "zihintpause", "zihpm", "zfh", "zba",
-> +					       "zbb", "zbc", "zbs", "zkt", "zvfh", "zvkt",
-> +					       "sscofpmf", "sstc", "svinval", "svnapot", "svpbmt";
-> +			riscv,cbom-block-size = <64>;
-> +			riscv,cbop-block-size = <64>;
-> +			riscv,cboz-block-size = <64>;
-> +			i-cache-block-size = <64>;
-> +			i-cache-size = <32768>;
-> +			i-cache-sets = <512>;
-> +			d-cache-block-size = <64>;
-> +			d-cache-size = <32768>;
-> +			d-cache-sets = <512>;
-> +			next-level-cache = <&cluster1_l2_cache>;
-> +			mmu-type = "riscv,sv39";
-> +
-> +			cpu7_intc: interrupt-controller {
-> +				compatible = "riscv,cpu-intc";
-> +				interrupt-controller;
-> +				#interrupt-cells = <1>;
-> +			};
-> +		};
-> +
-> +		cluster0_l2_cache: l2-cache0 {
-> +			compatible = "cache";
-> +			cache-block-size = <64>;
-> +			cache-level = <2>;
-> +			cache-size = <524288>;
-> +			cache-sets = <1024>;
-> +			cache-unified;
-> +		};
-> +
-> +		cluster1_l2_cache: l2-cache1 {
-> +			compatible = "cache";
-> +			cache-block-size = <64>;
-> +			cache-level = <2>;
-> +			cache-size = <524288>;
-> +			cache-sets = <1024>;
-> +			cache-unified;
-> +		};
-> +	};
-> +
-> +	soc {
-> +		compatible = "simple-bus";
-> +		interrupt-parent = <&plic>;
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		dma-noncoherent;
-> +		ranges;
-> +
-> +		uart0: serial@d4017000 {
-> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
-> +			reg = <0x0 0xd4017000 0x0 0x100>;
-> +			interrupts = <42>;
-> +			clock-frequency = <14857000>;
-> +			reg-shift = <2>;
-> +			reg-io-width = <4>;
-> +			status = "disabled";
-> +		};
-> +
-> +		uart2: serial@d4017100 {
-> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
-> +			reg = <0x0 0xd4017100 0x0 0x100>;
-> +			interrupts = <44>;
-> +			clock-frequency = <14857000>;
-> +			reg-shift = <2>;
-> +			reg-io-width = <4>;
-> +			status = "disabled";
-> +		};
-> +
-> +		uart3: serial@d4017200 {
-> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
-> +			reg = <0x0 0xd4017200 0x0 0x100>;
-> +			interrupts = <45>;
-> +			clock-frequency = <14857000>;
-> +			reg-shift = <2>;
-> +			reg-io-width = <4>;
-> +			status = "disabled";
-> +		};
-> +
-> +		uart4: serial@d4017300 {
-> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
-> +			reg = <0x0 0xd4017300 0x0 0x100>;
-> +			interrupts = <46>;
-> +			clock-frequency = <14857000>;
-> +			reg-shift = <2>;
-> +			reg-io-width = <4>;
-> +			status = "disabled";
-> +		};
-> +
-> +		uart5: serial@d4017400 {
-> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
-> +			reg = <0x0 0xd4017400 0x0 0x100>;
-> +			interrupts = <47>;
-> +			clock-frequency = <14857000>;
-> +			reg-shift = <2>;
-> +			reg-io-width = <4>;
-> +			status = "disabled";
-> +		};
-> +
-> +		uart6: serial@d4017500 {
-> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
-> +			reg = <0x0 0xd4017500 0x0 0x100>;
-> +			interrupts = <48>;
-> +			clock-frequency = <14857000>;
-> +			reg-shift = <2>;
-> +			reg-io-width = <4>;
-> +			status = "disabled";
-> +		};
-> +
-> +		uart7: serial@d4017600 {
-> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
-> +			reg = <0x0 0xd4017600 0x0 0x100>;
-> +			interrupts = <49>;
-> +			clock-frequency = <14857000>;
-> +			reg-shift = <2>;
-> +			reg-io-width = <4>;
-> +			status = "disabled";
-> +		};
-> +
-> +		uart8: serial@d4017700 {
-> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
-> +			reg = <0x0 0xd4017700 0x0 0x100>;
-> +			interrupts = <50>;
-> +			clock-frequency = <14857000>;
-> +			reg-shift = <2>;
-> +			reg-io-width = <4>;
-> +			status = "disabled";
-> +		};
-> +
-> +		uart9: serial@d4017800 {
-> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
-> +			reg = <0x0 0xd4017800 0x0 0x100>;
-> +			interrupts = <51>;
-> +			clock-frequency = <14857000>;
-> +			reg-shift = <2>;
-> +			reg-io-width = <4>;
-> +			status = "disabled";
-> +		};
-> +
-> +		plic: interrupt-controller@e0000000 {
-> +			compatible = "spacemit,k1-plic", "sifive,plic-1.0.0";
-> +			reg = <0x0 0xe0000000 0x0 0x4000000>;
-> +			interrupts-extended = <&cpu0_intc 11>, <&cpu0_intc 9>,
-> +					      <&cpu1_intc 11>, <&cpu1_intc 9>,
-> +					      <&cpu2_intc 11>, <&cpu2_intc 9>,
-> +					      <&cpu3_intc 11>, <&cpu3_intc 9>,
-> +					      <&cpu4_intc 11>, <&cpu4_intc 9>,
-> +					      <&cpu5_intc 11>, <&cpu5_intc 9>,
-> +					      <&cpu6_intc 11>, <&cpu6_intc 9>,
-> +					      <&cpu7_intc 11>, <&cpu7_intc 9>;
-> +			interrupt-controller;
-> +			#address-cells = <0>;
-> +			#interrupt-cells = <1>;
-> +			riscv,ndev = <159>;
-> +		};
-> +
-> +		clint: timer@e4000000 {
-> +			compatible = "spacemit,k1-clint", "sifive,clint0";
-> +			reg = <0x0 0xe4000000 0x0 0x10000>;
-> +			interrupts-extended = <&cpu0_intc 3>, <&cpu0_intc 7>,
-> +					      <&cpu1_intc 3>, <&cpu1_intc 7>,
-> +					      <&cpu2_intc 3>, <&cpu2_intc 7>,
-> +					      <&cpu3_intc 3>, <&cpu3_intc 7>,
-> +					      <&cpu4_intc 3>, <&cpu4_intc 7>,
-> +					      <&cpu5_intc 3>, <&cpu5_intc 7>,
-> +					      <&cpu6_intc 3>, <&cpu6_intc 7>,
-> +					      <&cpu7_intc 3>, <&cpu7_intc 7>;
-> +		};
-> +
-> +		sec_uart1: serial@f0612000 {
-> +			compatible = "spacemit,k1-uart", "intel,xscale-uart";
-> +			reg = <0x0 0xf0612000 0x0 0x100>;
-> +			interrupts = <43>;
-> +			clock-frequency = <14857000>;
-> +			reg-shift = <2>;
-> +			reg-io-width = <4>;
-> +			status = "reserved"; /* for TEE usage */
-> +		};
-> +	};
-> +};
->
+Nice! I've tried the reverse now, turning on the options
+you have turned off on top of my defconfig. This version
+still works for me, booting with a plain
+'qemu-system-x86_64 -kernel arch/x86_64/boot/bzImage'
+and building with my arm64-to-x86 cross compiler.
+
+I have turned off most drivers here to get faster builds,
+but it's enough to get console output.
+See https://pastebin.com/p2GFjAc3 for the full .config
+
+     Arnd
+
+19a20
+> CONFIG_CONSTRUCTORS=y
+290a292
+> CONFIG_GENERIC_CSUM=y
+298a301
+> CONFIG_KASAN_SHADOW_OFFSET=0xdffffc0000000000
+394a398
+> # CONFIG_ARCH_MEMORY_PROBE is not set
+441c445
+< CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING=0x0
+---
+> CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING=0xa
+537a542
+> # CONFIG_ACPI_HOTPLUG_MEMORY is not set
+748d752
+< CONFIG_HAVE_RELIABLE_STACKTRACE=y
+903a908,909
+> CONFIG_NUMA_KEEP_MEMINFO=y
+> CONFIG_MEMORY_ISOLATION=y
+906c912,916
+< # CONFIG_MEMORY_HOTPLUG is not set
+---
+> CONFIG_ARCH_ENABLE_MEMORY_HOTREMOVE=y
+> CONFIG_MEMORY_HOTPLUG=y
+> # CONFIG_MEMORY_HOTPLUG_DEFAULT_ONLINE is not set
+> # CONFIG_MEMORY_HOTREMOVE is not set
+> CONFIG_MHP_MEMMAP_ON_MEMORY=y
+914a925
+> CONFIG_CONTIG_ALLOC=y
+1238a1250,1251
+> # CONFIG_MOUSE_APPLETOUCH is not set
+> # CONFIG_MOUSE_BCM5974 is not set
+1242a1256
+> # CONFIG_MOUSE_SYNAPTICS_USB is not set
+1264a1279,1280
+> # CONFIG_JOYSTICK_XPAD is not set
+> # CONFIG_JOYSTICK_PXRC is not set
+1269a1286,1290
+> # CONFIG_TABLET_USB_ACECAD is not set
+> # CONFIG_TABLET_USB_AIPTEK is not set
+> # CONFIG_TABLET_USB_HANWANG is not set
+> # CONFIG_TABLET_USB_KBTAB is not set
+> # CONFIG_TABLET_USB_PEGASUS is not set
+1313a1335
+> # CONFIG_TOUCHSCREEN_USB_COMPOSITE is not set
+1336a1359,1360
+> # CONFIG_INPUT_ATI_REMOTE2 is not set
+> # CONFIG_INPUT_KEYSPAN_REMOTE is not set
+1337a1362,1364
+> # CONFIG_INPUT_POWERMATE is not set
+> # CONFIG_INPUT_YEALINK is not set
+> # CONFIG_INPUT_CM109 is not set
+1922c1949,1970
+< # CONFIG_USB_SUPPORT is not set
+---
+> CONFIG_USB_SUPPORT=y
+> # CONFIG_USB_ULPI_BUS is not set
+> CONFIG_USB_ARCH_HAS_HCD=y
+> # CONFIG_USB is not set
+> 
+> #
+> # USB dual-mode controller drivers
+> #
+> 
+> #
+> # USB port drivers
+> #
+> 
+> #
+> # USB Physical Layer drivers
+> #
+> # CONFIG_NOP_USB_XCEIV is not set
+> # end of USB Physical Layer drivers
+> 
+> # CONFIG_USB_GADGET is not set
+> # CONFIG_TYPEC is not set
+> # CONFIG_USB_ROLE_SWITCH is not set
+2243a2292
+> # CONFIG_USB_LGM_PHY is not set
+2829a2879
+> CONFIG_STACKDEPOT_ALWAYS_INIT=y
+2873a2924,2925
+> CONFIG_ARCH_WANT_FRAME_POINTERS=y
+> CONFIG_FRAME_POINTER=y
+2874a2927
+> # CONFIG_STACK_VALIDATION is not set
+2896d2948
+< # CONFIG_KCSAN is not set
+2922c2974,2977
+< # CONFIG_DEBUG_KMEMLEAK is not set
+---
+> CONFIG_DEBUG_KMEMLEAK=y
+> CONFIG_DEBUG_KMEMLEAK_MEM_POOL_SIZE=16000
+> # CONFIG_DEBUG_KMEMLEAK_DEFAULT_OFF is not set
+> CONFIG_DEBUG_KMEMLEAK_AUTO_SCAN=y
+2924c2979,2986
+< # CONFIG_DEBUG_OBJECTS is not set
+---
+> CONFIG_DEBUG_OBJECTS=y
+> # CONFIG_DEBUG_OBJECTS_SELFTEST is not set
+> # CONFIG_DEBUG_OBJECTS_FREE is not set
+> CONFIG_DEBUG_OBJECTS_TIMERS=y
+> CONFIG_DEBUG_OBJECTS_WORK=y
+> CONFIG_DEBUG_OBJECTS_RCU_HEAD=y
+> CONFIG_DEBUG_OBJECTS_PERCPU_COUNTER=y
+> CONFIG_DEBUG_OBJECTS_ENABLE_DEFAULT=1
+2927c2989
+< # CONFIG_SCHED_STACK_END_CHECK is not set
+---
+> CONFIG_SCHED_STACK_END_CHECK=y
+2933a2996
+> # CONFIG_MEMORY_NOTIFIER_ERROR_INJECT is not set
+2943c3006,3014
+< # CONFIG_KASAN is not set
+---
+> CONFIG_KASAN=y
+> CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX=y
+> CONFIG_KASAN_GENERIC=y
+> # CONFIG_KASAN_OUTLINE is not set
+> CONFIG_KASAN_INLINE=y
+> CONFIG_KASAN_STACK=y
+> CONFIG_KASAN_VMALLOC=y
+> # CONFIG_KASAN_MODULE_TEST is not set
+> # CONFIG_KASAN_EXTRA_INFO is not set
+2945c3016,3020
+< # CONFIG_KFENCE is not set
+---
+> CONFIG_KFENCE=y
+> CONFIG_KFENCE_SAMPLE_INTERVAL=0
+> CONFIG_KFENCE_NUM_OBJECTS=255
+> # CONFIG_KFENCE_DEFERRABLE is not set
+> CONFIG_KFENCE_STRESS_TEST_FAULTS=0
+2957c3032,3034
+< # CONFIG_SOFTLOCKUP_DETECTOR is not set
+---
+> CONFIG_LOCKUP_DETECTOR=y
+> CONFIG_SOFTLOCKUP_DETECTOR=y
+> # CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC is not set
+2959c3036,3041
+< # CONFIG_HARDLOCKUP_DETECTOR is not set
+---
+> CONFIG_HARDLOCKUP_DETECTOR=y
+> # CONFIG_HARDLOCKUP_DETECTOR_PREFER_BUDDY is not set
+> CONFIG_HARDLOCKUP_DETECTOR_PERF=y
+> # CONFIG_HARDLOCKUP_DETECTOR_BUDDY is not set
+> # CONFIG_HARDLOCKUP_DETECTOR_ARCH is not set
+> CONFIG_HARDLOCKUP_DETECTOR_COUNTS_HRTIMER=y
+2961c3043,3046
+< # CONFIG_DETECT_HUNG_TASK is not set
+---
+> # CONFIG_BOOTPARAM_HARDLOCKUP_PANIC is not set
+> CONFIG_DETECT_HUNG_TASK=y
+> CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=120
+> # CONFIG_BOOTPARAM_HUNG_TASK_PANIC is not set
+2970c3055
+< # CONFIG_SCHED_DEBUG is not set
+---
+> CONFIG_SCHED_DEBUG=y
+2982c3067,3068
+< # CONFIG_PROVE_LOCKING is not set
+---
+> CONFIG_PROVE_LOCKING=y
+> # CONFIG_PROVE_RAW_LOCK_NESTING is not set
+2984,2989c3070,3082
+< # CONFIG_DEBUG_RT_MUTEXES is not set
+< # CONFIG_DEBUG_SPINLOCK is not set
+< # CONFIG_DEBUG_MUTEXES is not set
+< # CONFIG_DEBUG_WW_MUTEX_SLOWPATH is not set
+< # CONFIG_DEBUG_RWSEMS is not set
+< # CONFIG_DEBUG_LOCK_ALLOC is not set
+---
+> CONFIG_DEBUG_RT_MUTEXES=y
+> CONFIG_DEBUG_SPINLOCK=y
+> CONFIG_DEBUG_MUTEXES=y
+> CONFIG_DEBUG_WW_MUTEX_SLOWPATH=y
+> CONFIG_DEBUG_RWSEMS=y
+> CONFIG_DEBUG_LOCK_ALLOC=y
+> CONFIG_LOCKDEP=y
+> CONFIG_LOCKDEP_BITS=15
+> CONFIG_LOCKDEP_CHAINS_BITS=16
+> CONFIG_LOCKDEP_STACK_TRACE_BITS=19
+> CONFIG_LOCKDEP_STACK_TRACE_HASH_BITS=14
+> CONFIG_LOCKDEP_CIRCULAR_QUEUE_BITS=12
+> # CONFIG_DEBUG_LOCKDEP is not set
+2997a3091,3092
+> CONFIG_TRACE_IRQFLAGS=y
+> CONFIG_TRACE_IRQFLAGS_NMI=y
+3002a3098
+> # CONFIG_DEBUG_KOBJECT_RELEASE is not set
+3016a3113
+> CONFIG_PROVE_RCU=y
+3051a3149
+> CONFIG_PREEMPTIRQ_TRACEPOINTS=y
+3104,3105c3202,3203
+< CONFIG_IO_DELAY_0X80=y
+< # CONFIG_IO_DELAY_0XED is not set
+---
+> # CONFIG_IO_DELAY_0X80 is not set
+> CONFIG_IO_DELAY_0XED=y
+3113,3114c3211,3212
+< CONFIG_UNWINDER_ORC=y
+< # CONFIG_UNWINDER_FRAME_POINTER is not set
+---
+> # CONFIG_UNWINDER_ORC is not set
+> CONFIG_UNWINDER_FRAME_POINTER=y
+3121c3219,3220
+< # CONFIG_NOTIFIER_ERROR_INJECTION is not set
+---
+> CONFIG_NOTIFIER_ERROR_INJECTION=m
+> CONFIG_PM_NOTIFIER_ERROR_INJECT=m
 
