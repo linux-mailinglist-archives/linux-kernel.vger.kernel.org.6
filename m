@@ -1,127 +1,163 @@
-Return-Path: <linux-kernel+bounces-246670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB13592C505
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:55:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 112FA92C508
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F8D1B21208
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:55:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 424341C218B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA644180056;
-	Tue,  9 Jul 2024 20:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C763182A45;
+	Tue,  9 Jul 2024 20:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bNiLcKjE"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lEjqlnqc"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAEA61B86DD
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 20:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACFA1B86DD
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 20:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720558514; cv=none; b=CVdOYYeI4tdUmpAYfNT33/6j/UYJTpZUoWh5Bm15aTTmQpSW6nOspA1YRceP+p7f6Ct9nhXAhBaI+K/bQghm6lWd2Di46nbWKJCKgmlRFBMW4o5ShfrP4ieg6+j4ci1VS/ljRqlP/z9P+kxvL+VSMbMIPna1XoYZ96vcJBDwyGE=
+	t=1720558564; cv=none; b=WtGzhhUxzFuoELDF/sTRXwXoe2HubFUsq1J5900m63PJi+ndsIosc1clHMhLC2GN6x9sfhklZoa0dt3xySgL+JSxTDVntevRUBC598vCNC3l81SVKgyApdfpVw6n+3G1Hp/HSWQeApZ8BQpVoRWT92m2kDm1gLFd6PkI1XnivG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720558514; c=relaxed/simple;
-	bh=o+kjmggQJg9k2C51wKggJKaDqzA0Rap7ZoYOuaO1xOo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vDS95/Jmp+3ZmtujUiHvGv4mOxHrEmovg0nJDeilvVnyc0r6yfDTIGi0AIR1xr7nwImIhecTOCw/Gi/PddG0vpWedfsvmDa6EeHjgO593GiO5vA7BiYa7JEXDvUGbh+3/Tq0f7qGEUPyUFoOFG7ZjK/eKHuBRtN5Cyiuc+vqlcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bNiLcKjE; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-7f95c28f2a7so9849239f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 13:55:12 -0700 (PDT)
+	s=arc-20240116; t=1720558564; c=relaxed/simple;
+	bh=yQ07NWu3L9gs1HGAsznqrvuxn2QYU1ZDcFMikrA7yco=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YwYUBtuxeFaA47RoJSnbUInvHNJg1c9Mi6xmy2Vj5oBYUdPWXJiVYlOydEi9TOEOTY6uvAGskJpVh1v5I+yqaBfRRPAoNY2zJYbnJ88TkdFZjWmp4b1aW+cKmX0ww10aCDTLakfgaS0D+qt7kbAQ6MlrC9AYdA7oj1x9Jxur1eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lEjqlnqc; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3d932f991f6so1515230b6e.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 13:56:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1720558512; x=1721163312; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ojllmUSpZm6yrskg60MuCouRkTNtpmyHnalLRc4XlN0=;
-        b=bNiLcKjEiUicPQpwDjybJj6Lon+olKxM1ydDuvjC7guaewUnyn5aZUS05xgkjKczZN
-         Ej6O5Xona0klOgQ+NW6G47+pdn45/caQt8deL0U6PXNPKwuIKTp5g+lcNkZP8mRu9r9H
-         5b6XikVbGlz8OYIhyObqanUOlMIcEbNdjq/gY=
+        d=chromium.org; s=google; t=1720558559; x=1721163359; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cVh6W36UPU19XxDEtUe4/W7t7i/b/SampjURjZZcQD8=;
+        b=lEjqlnqcGSoVYfrLtH7RrfftTUadkRnuk9RYxiLCY4Xd2Ha/8uraFLlh3afTP/7OUt
+         Vb4p13fQvqeZaDuAmegTH57yL8TZGCW3RhpQFqcRKTP4DkrK8WBQ4noNTwNV967i5Pj+
+         kCXDEjltv3LvcOHClLmd2pkRz7TF+EIVuHd1w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720558512; x=1721163312;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ojllmUSpZm6yrskg60MuCouRkTNtpmyHnalLRc4XlN0=;
-        b=J0LBVBMM4dlw7xYh6kR3wyIcaf3URQ9oxTqjEX751gKc3PQJZrOZLpaOA3D6XClFZ/
-         lx0SiEEkv0S6m00u7CWsj/+LCmLZhjfB9Yt7cuobAPDtXFxw26j/D1cW0pjsobXpGFIJ
-         75P8OR2zaIB1ClWWeu+ArKS5JGpX6uJXeqlBDmQ1OoaGNhAvCgRkEhcQTHmFGgRCyaeo
-         +7NxXTx7qiqUsF5t8+9v7O11TzOSSDT04VmasvWeIVS0wYt9CdsmsSSvhpKCwL9Ulm9J
-         aDnIevW2DQCkiAceOF+EM8ukMCf0jhWdqzJfiYM8ZTthyafyCzZ4gejcIyc1BNKtTa2o
-         ZkdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZqZzYlhKUJgjL8T/ePJGaZ1dVe0cMcodsNYJqPtaym6ECv9IN4xSkRP4gPNtgXeP4zN/ZAoyndq5GYOt8mlummW+SkKezJM9WLnAr
-X-Gm-Message-State: AOJu0Yw/fdPxs7BhCqvETzfyvFATQoiD7lBEmXj+ctdPOldYlj6tejC6
-	uDTYXbxzVjkvPUXIJ9xHASoyl4CaWT/GmV33lk+thc4fE4g/G9w+VAfhrWPzO8k=
-X-Google-Smtp-Source: AGHT+IGsTMwpROjo3tzdIGl+v6KmheqJ1Zkqq2lQFdbmodzrdfcJ5ZovcBQXKo9Hg/rrSAQ8WBlnZg==
-X-Received: by 2002:a05:6602:6103:b0:7f6:85d1:f81a with SMTP id ca18e2360f4ac-80004dea088mr421983139f.2.1720558511891;
-        Tue, 09 Jul 2024 13:55:11 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c0b1b5c55fsm687026173.77.2024.07.09.13.55.11
+        d=1e100.net; s=20230601; t=1720558559; x=1721163359;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cVh6W36UPU19XxDEtUe4/W7t7i/b/SampjURjZZcQD8=;
+        b=wokETTusFi+y3xN/SOh52iXGniRRBhIIkA00YUxtPWJ+zS2/3b01kQDS+Wr/XhT6k/
+         0rUqjVQK5qIavQhuGO40FzN2KKQIdtLyVNX4dphHBFtw2X7qa9v+zp68d1TS+yVlHKOA
+         cbz50oXYDrP+Vt8ZGDyRZ7wZ1PPlqEAuGJo1iua2Qt5R8n5zHT+7levYGGO6gj0PBUzK
+         FW16CxlWiYrjn3jbJMW+EfmQlDp19cMCmIhPURI3Skno0pYxElGIMUz8qec3qjdoVvJa
+         eaIvf8dChe1vkxgyI+JwJDrDh66G1TGr5m0Jez/ZKS/S7zyiwSMlVBWjHK8hWP5nl8pZ
+         kexQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVaVZoEjCw8GBHCalkerfLwLRgEaY9I/YBwQbKdnQjWLeLu6+iWz3OPyvvjM1w8x1GvxaEq31eeusauzo9lO9B+M2MBKYXy/cSj2sQ
+X-Gm-Message-State: AOJu0YyBIQ1y7qQuNmouksEqD/WpPmT0W84ybsIO2J6DLqb5jnpoIo3B
+	3eZZ4SoESkL4HN0iObZsN1yoiZjG22CG0PgF/+RHv9VeRwsmjUKsTxWu8iZVO2Naa0ulelpLkYQ
+	7VoVl
+X-Google-Smtp-Source: AGHT+IEZSGr0cgXK373fjGEoUpQKkvHdKIdAqcFL8lmQb+V5w0Tl6lPaJ3VfEu+skCw5eEaBnnIMAw==
+X-Received: by 2002:a05:6808:1451:b0:3d9:1f4b:558a with SMTP id 5614622812f47-3d93c00f3c1mr4971579b6e.19.1720558558080;
+        Tue, 09 Jul 2024 13:55:58 -0700 (PDT)
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com. [209.85.160.170])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f190b2f93sm132072285a.125.2024.07.09.13.55.56
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 13:55:11 -0700 (PDT)
-Message-ID: <0ce444f4-8d49-472f-a687-34804347296e@linuxfoundation.org>
-Date: Tue, 9 Jul 2024 14:55:10 -0600
+        Tue, 09 Jul 2024 13:55:56 -0700 (PDT)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-44664ad946eso20941cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 13:55:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWbnjTo28g4LMKhVZ96Gk5PmGSv/Wzsmyozhm4ozgqxQnxB9FjLLEjQ341XLvdAVnu9b4PFgDIZn9zJmEWsgdT+oXpP7GLpUJxCoPOK
+X-Received: by 2002:a05:622a:7604:b0:447:f5de:bd18 with SMTP id
+ d75a77b69052e-44b191f6ac5mr194891cf.9.1720558556064; Tue, 09 Jul 2024
+ 13:55:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/7] selftests/x86: fix build errors and warnings found
- via clang
-To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
-Cc: angquan yu <angquan21@gmail.com>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- Ingo Molnar <mingo@kernel.org>, Binbin Wu <binbin.wu@linux.intel.com>,
- Alexey Dobriyan <adobriyan@gmail.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Sohil Mehta <sohil.mehta@intel.com>, Yu-cheng Yu <yu-cheng.yu@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev, x86@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240704072431.111640-1-jhubbard@nvidia.com>
- <a08e6846-2f9e-4fb4-910f-b33fe779fa01@linuxfoundation.org>
- <49c14f8f-0c08-41e0-b987-7c4253edf6de@nvidia.com>
- <78c3ed1e-32b2-43aa-9979-0479fa524018@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <78c3ed1e-32b2-43aa-9979-0479fa524018@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240628182428.171031-1-tejasvipin76@gmail.com>
+ <20240628182428.171031-2-tejasvipin76@gmail.com> <CAD=FV=VKiEjDfeK8pCqAk8+YWBD2U4ESLik8kiDbvgrZz7o1NA@mail.gmail.com>
+ <36aa6067-fa6b-4957-ae33-58a28e32c8fd@gmail.com>
+In-Reply-To: <36aa6067-fa6b-4957-ae33-58a28e32c8fd@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 9 Jul 2024 13:55:39 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=U6WdxD4g-4rA2Kz0nbs3fZUA+NRzivg_tJMup0652MxQ@mail.gmail.com>
+Message-ID: <CAD=FV=U6WdxD4g-4rA2Kz0nbs3fZUA+NRzivg_tJMup0652MxQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drm/mipi-dsi: add more multi functions for better
+ error handling
+To: Tejas Vipin <tejasvipin76@gmail.com>
+Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, LinusW <linus.walleij@linaro.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/9/24 14:51, Shuah Khan wrote:
-> On 7/9/24 14:40, John Hubbard wrote:
->> On 7/9/24 1:34 PM, Shuah Khan wrote:
->>> On 7/4/24 01:24, John Hubbard wrote:
->> ...>> Muhammad Usama Anjum (1):
->>>>    selftests: x86: test_FISTTP: use fisttps instead of ambiguous fisttp
->>>
->>>
->>> Usama and John,
->>>
->>> I am seeing checkpatch warnings in this series.
->>>
->>> v4-3-7
->>> WARNING: externs should be avoided in .c files
->>> #210: FILE: tools/testing/selftests/x86/fsgsbase_restore.c:46:
->>> +unsigned int dereference_seg_base(void);
-> 
-> This one looked new though.
-> 
+Hi,
 
-Never mind. Looks like there are a few existing warns - pulling
-these now for Linux 6.11-rc1.
+On Tue, Jul 9, 2024 at 4:18=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail.com>=
+ wrote:
+>
+> On 7/9/24 5:50 AM, Doug Anderson wrote:
+> > Hi,
+> >
+> > On Fri, Jun 28, 2024 at 11:25=E2=80=AFAM Tejas Vipin <tejasvipin76@gmai=
+l.com> wrote:
+> >>
+> >> +/**
+> >> + * mipi_dsi_dcs_set_page_address_multi() - define the column extent o=
+f the
+> >> + *     frame memory accessed by the host processor
+> >> + * @ctx: Context for multiple DSI transactions
+> >> + * @start: first column of frame memory
+> >> + * @end: last column of frame memory
+> >
+> > nit: "start" and "end" comments should say "first page" and "last
+> > page", not "first column" and "last column". The previous function was
+> > the one about columns.
+> >
+> >> + *
+> >> + * Like mipi_dsi_dcs_set_page_address() but deals with errors in a wa=
+y that
+> >> + * makes it convenient to make several calls in a row.
+> >> + */
+> >> +void mipi_dsi_dcs_set_page_address_multi(struct mipi_dsi_multi_contex=
+t *ctx,
+> >> +                                          u16 start, u16 end)
+> >
+> > nit: indentation of the above line isn't _quite_ right.
+> >
+> >
+> > Other than the two nits, this looks fine to me, but I'd prefer if
+> > someone else provides an "Ack" in addition to me that they're OK
+> > adding these extra "multi" functions. Both Dmitry and Linus W were
+> > involved in the original "multi" functions, so maybe they'd be willing
+> > to offer their opinions?
+>
+> I think a better way to go forward with multi style functions is to
+> use macros. All the multi style functions are basically exactly the
+> same with the only difference being the function called internally
+> and the dev_err. This can be represented in the form of a macro, and
+> would save on a ton of otherwise redundant code, while also allowing
+> us to "convert" any function to multi style as and when we please.
+>
+> We would ideally have 2 macros, one for the main functions where we
+> desire to modify accum_err on an error arising, and another macro that
+> just checks accum_err to see if the function should be a no op.
+>
+> If you guys think this is a good idea, I'll work on the macros and
+> do the multi conversions in this new way.
 
-Thank you both for fixing these.
+I had a similar thought but I wasn't sure how easy it would be. If you
+want to prototype it out and send out patches if they look good then
+that'd be nice. We'd want to make sure that we actually generate
+functions for the "multi" variants since we don't want all that inline
+code on every caller, but generating those functions with a macro does
+seem like it would work. I guess you'd also need to include some sort
+of string for use in the error messages.
 
-thanks,
--- Shuah
-
+-Doug
 
