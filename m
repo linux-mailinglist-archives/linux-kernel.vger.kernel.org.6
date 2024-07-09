@@ -1,108 +1,149 @@
-Return-Path: <linux-kernel+bounces-245456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A2792B2BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:56:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1CCE92B2A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9EF61C20FC1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:56:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65F981F22521
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A31815380B;
-	Tue,  9 Jul 2024 08:56:17 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E62C153585;
-	Tue,  9 Jul 2024 08:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6161615382C;
+	Tue,  9 Jul 2024 08:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wHRIHcyM"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B6613DB9B
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720515376; cv=none; b=LsLayn/gDHVqeb/rOqukY+EtJCsHhFNftOfh27jVn5LOBzC/RASSOnQ4NPVE4zqKEm638RojYQBi3D79UzQClFC/qEhLwaJz9ycdW7c+G1FlUDCfmvUYMbe3FJKmvjGQXLfdEBwunTsTCBhlOtZVY2RzDrGyyS1LE4dnKJTDQP0=
+	t=1720515224; cv=none; b=ZFFWMo7cISW0vvbul8ph6u94saj9AIcuC5JLt1qxQyDuvHS1H2emBO7o5Zn7NpGqwRzzPdug8DPPzO413Npogkzg4opEcQVShFOsp44ZTqfcxlUp5ps800nTTfx+W6J5Z4dC1yDN+T8TwCdSn7G6Fp0Opj0cilCOtZDIORljG/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720515376; c=relaxed/simple;
-	bh=3LfxXvuO6VNppBlnfF96IlTpz9hK+UQ+Wy7rNs6Lxm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jrdHL5PXQmFHTxnhpd4rb9o4BDAyGvH5T1jaM3OvJXWpJLjG3fmS1DfOEvoFauD6B3857+Vp2fDEcFr3tdySJ2Yfzjdo3rKSm+g6Q0kGaHVAxdVB+daQxfw+CxG+MKrVnQ1Y+sadW7BtOPHGZ4gCSHBYow+MPwhiCTOt8nVARUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sR6dK-0000Po-00; Tue, 09 Jul 2024 10:55:34 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 281E9C0411; Tue,  9 Jul 2024 10:53:38 +0200 (CEST)
+	s=arc-20240116; t=1720515224; c=relaxed/simple;
+	bh=cd79zXbx+N5vL7P7T5X50BfnGu+fuRaCuSWUDwLHr4E=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=r1jCdNhyrNDcjEhb+PlQTrJKB0XvXZjMz4WipEoaN+Trrs0k1NX/N4SnQimSYaMDxQ77ZivAach4Y31QNbH4r/xigb4NZD7zXdoh9nund3oOJdURIFKcuyOlTX+kzKOI6FJhoYWxRbftn7t28Jk2jimuJ9C4xZ9EN6Li+wWdG3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wHRIHcyM; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-36798779d75so4289925f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 01:53:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720515221; x=1721120021; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SA4aYgkuEJQ+2zt3ir0pQgoFJui8snze/b5Z9Ceeoqw=;
+        b=wHRIHcyMlXzYlbMt90M/WZqByG20ElKqxAluGsfVWgsQ7nOnBaQpqATQCqOXaCIYdx
+         MBsrtBVad9S9+iorF95revQHv7VwrMXfLYbcOqU3pStNWqy/84lTDRZOM/mgf7jRItrC
+         rlW8DXzQEIMXYl/G/EouPZBX+3qJe3AiV5AkTBrXsjrGk5vmoH36P4SmPW8CCpJ0NGrq
+         I2bNWLq6q4eyItfSQmO4aD/f4ziHxPPZjbYlGRXL1SMajfyMfWNp+igzrIKvf8YkaAsg
+         JOwpruZ9Y+KNK0qb9SGMqXGCkyBPc/jZPALtMS31NQCuCHcMmmqAAzAfkZMxM927R5Nk
+         rmhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720515221; x=1721120021;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SA4aYgkuEJQ+2zt3ir0pQgoFJui8snze/b5Z9Ceeoqw=;
+        b=iLWQKksYvXZ2jh0oHy+NyC7Dq3WosvXkXsdPwE6X6oQlpp8ViQCXGJ4riePowBcgUc
+         d5UqLgKRTeEJwAAkFcnne8XYe6yRYX46nHlwa4O1TRIBpuLuD0QM8KsE/zANDM28/AoD
+         iVP3ekdGLzEBGOb0ypCh8BC3VnnD2IiKxEdy5t+xvN+Zt6Omavau6VmZN0sr/tGRyycB
+         Bzqpsv+mh+b2S+6+QppA1v068CKj0N7ayIJN0qpybMhqVKBsa5ZUYbvadmfGKYKfYTSX
+         tclrJlTBPSAILYtGI6DiC8rgMwzbEP2IAq2t6tAZ+3kcFJVfRZqSMRLKEA0fwAr7vbF4
+         E7Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCVvpzwkfyl0jvc4++DeWkxMP61eaPoTLFP8s5Qj78qFpgy8L1kq7fp/YEUmIRXTNRdM3KzaNDzf3hnU8qgW37a8l/F/BN//SS2Pwgfp
+X-Gm-Message-State: AOJu0YwdvpywDAsocNqC+2IDjEzHEPkyFDZrhuett3sWzYVekzC167Ns
+	LhDbw7ffrpnvTaeQcPJkfAtG2g5Hi3QHT7GxL2cXdpb4/3nQAlnPVd1HrD58k/M=
+X-Google-Smtp-Source: AGHT+IGqB81NuLSnCUMTBHrJCIu396Gu/1DlJmDXwuPVOZxJWI5XPrLUGFSWhEfO8pch8PKu4xYm1Q==
+X-Received: by 2002:adf:f30b:0:b0:366:eba0:8d8c with SMTP id ffacd0b85a97d-367cead19b5mr1656003f8f.54.1720515221137;
+        Tue, 09 Jul 2024 01:53:41 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:cad:2140:b12a:8461:5e2a:dfe? ([2a01:e0a:cad:2140:b12a:8461:5e2a:dfe])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6e09fcsm31353055e9.4.2024.07.09.01.53.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 01:53:40 -0700 (PDT)
+Message-ID: <a75ae0d7-9945-4e97-a4f9-706b253a161e@linaro.org>
 Date: Tue, 9 Jul 2024 10:53:38 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Aleksandar Rikalo <aleksandar.rikalo@syrmia.com>,
-	Aleksandar Rikalo <arikalo@gmail.com>,
-	Chao-ying Fu <cfu@wavecomp.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Greg Ungerer <gerg@kernel.org>, Hauke Mehrtens <hauke@hauke-m.de>,
-	Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
-	"paulburton@kernel.org" <paulburton@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: Re: [PATCH v4 07/14] clocksource: mips-gic-timer: Always use cluster
- 0 counter as clocksource
-Message-ID: <Zoz6kvcio/wl/015@alpha.franken.de>
-References: <20240511104341.151550-1-aleksandar.rikalo@syrmia.com>
- <20240511104341.151550-8-aleksandar.rikalo@syrmia.com>
- <bf4a45e9-4ed3-4d3b-bb96-add20a71b04c@linaro.org>
- <8b133053-247f-414b-9c01-e0e5291e347d@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8b133053-247f-414b-9c01-e0e5291e347d@app.fastmail.com>
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 4/4] arm64: dts: meson: a1: bind power domain to
+ temperature sensor
+To: George Stark <gnstark@salutedevices.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, khilman@baylibre.com,
+ jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
+ hkallweit1@gmail.com, broonie@kernel.org, glaroque@baylibre.com,
+ rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com,
+ lukasz.luba@arm.com, b.galvani@gmail.com, mmkurbanov@sberdevices.ru
+Cc: linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kernel@salutedevices.com
+References: <20240708194808.1819185-1-gnstark@salutedevices.com>
+ <20240708194808.1819185-5-gnstark@salutedevices.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240708194808.1819185-5-gnstark@salutedevices.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 09, 2024 at 09:47:52AM +0800, Jiaxun Yang wrote:
+On 08/07/2024 21:48, George Stark wrote:
+> Meson A1 temperature sensor has dedicated power domain so bind it
+> to the device node.
 > 
+> Signed-off-by: George Stark <gnstark@salutedevices.com>
+> ---
+>   arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-> 在2024年7月9日七月 上午12:36，Daniel Lezcano写道：
-> > On 11/05/2024 12:43, Aleksandar Rikalo wrote:
-> >> From: Paul Burton <paulburton@kernel.org>
-> >> 
-> >> In a multi-cluster MIPS system we have multiple GICs - one in each
-> >> cluster - each of which has its own independent counter. The counters in
-> >> each GIC are not synchronised in any way, so they can drift relative to
-> >> one another through the lifetime of the system. This is problematic for
-> >> a clocksource which ought to be global.
-> >> 
-> >> Avoid problems by always accessing cluster 0's counter, using
-> >> cross-cluster register access. This adds overhead so we only do so on
-> >> systems where we actually have CPUs present in multiple clusters.
-> >> For now, be extra conservative and don't use gic counter for vdso or
-> >> sched_clock in this case.
-> >> 
-> >> Signed-off-by: Paul Burton <paulburton@kernel.org>
-> >> Signed-off-by: Chao-ying Fu <cfu@wavecomp.com>
-> >> Signed-off-by: Dragan Mladjenovic <dragan.mladjenovic@syrmia.com>
-> >> Signed-off-by: Aleksandar Rikalo <aleksandar.rikalo@syrmia.com>
-> >> ---
-> >
-> > Applied patch 7 and 8
-> 
-> I think it won't compile without patch 1 being applid.
-> 
-> Thomas, do you mind to apply patch 1 for now? Given that it's just some extra
-> function definitions.
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+> index dd5695963caa..86d77f51c25c 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+> @@ -919,6 +919,7 @@ cpu_temp: temperature-sensor@4c00 {
+>   				assigned-clock-rates = <500000>;
+>   				#thermal-sensor-cells = <0>;
+>   				amlogic,ao-secure = <&sec_AO>;
+> +				power-domains = <&pwrc PWRC_I2C_ID>;
+>   			};
+>   
+>   			hwrng: rng@5118 {
 
-no problem, I've applied patch 1 und 2 to mips-next.
-
-Thomas.
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
