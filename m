@@ -1,128 +1,108 @@
-Return-Path: <linux-kernel+bounces-244999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 219BC92ACDB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:02:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9A3F92ACDD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B79928148E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:02:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88E531F21DF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10CDE4A08;
-	Tue,  9 Jul 2024 00:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464932CCC2;
+	Tue,  9 Jul 2024 00:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sxdU6Zx+"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RgIZe6Vy"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CA31EA8D;
-	Tue,  9 Jul 2024 00:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515262AF12
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 00:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720483325; cv=none; b=PDqG1dUVDXGPY5glwxZFRpBjImLdNqmF5bbQhakTi3sOMsI05MqUceyWWkH0gJFmuxKjzeu1NBSFgqtmCfBqPCeayTUDH10eI0Oh6P85YJlmJG8rI6yBbMe/2FQk5OIhCMft+LMNYip8UoDTXcA9/2cbVETKzy2+QD337aMRLxg=
+	t=1720483341; cv=none; b=i5/AEjSx7OR5TkeJlPXUL0A6tUOsoslSXqtaoRZVnhCYF2crpyNYeX/7zMiYAZp+sWMjVaWlJ2jKWycyCRidVOR3tqrQAcnFzJgwiPwdVFp8jSiMDVCjWCoQyAuMxcj+AU/lSNc7jHvW+/mc6aZc4sHHhkpe8VsmcYt+WpF74x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720483325; c=relaxed/simple;
-	bh=dG5OzQrTSYuIs0p8atRovs65L6NW2KZUERwrJIgA6Iw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Ak9ngQ9VeefRAYHTV4VgjUyAgAJZd2QQgk3PKUvpjwmcO/njeDnnTiG6AVD5XAZD663HE5eGoT2qE0+megkuHeEHPC8WsH4fjzX5ttoC4pp4pYGQ9PrgIRLzm+6jBYTzpPih8pFAp9BEOUDRvWsBb2zco+9MN6IXnAeA2PC++JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=sxdU6Zx+; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720483316;
-	bh=4EoW3en1poDjQhqoBNR+zdRfgk6JnNl8SyN18lpiRhE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=sxdU6Zx+gSyN/qVKJ5tzIRVi/Wcg1sPYtOGTQ49WIC1Nlqz2QKFVGGjP0tsIAHDSt
-	 j+mVwNumBJwLlEMSBJ82Q9xW2CLYGm9ZNiS8hrdSY80UHGyfoBcVmijgnqzYaZW8Tw
-	 dZsBtgx26ubmw7bHkI4Zn2jJRmU5vhPoWia3U/uZ3+1IKKH1kSdzz1ubp6rnizMnnq
-	 TuGDMePxVUTvCqmgvI/UHtppuyj/i3aU2SzsYT9atGgcBEFFm/zKRy8a3FKRmjtg7A
-	 cHIJGTVpsrrRvc0HDMpUS/bz0akgFnbSYYSYUVsXDNmc1qHVwukpoDTpZifcXOnAqP
-	 ovgNGRgkHhVpg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJ1Pb5GGNz4w2R;
-	Tue,  9 Jul 2024 10:01:55 +1000 (AEST)
-Date: Tue, 9 Jul 2024 10:01:54 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Huacai Chen <chenhuacai@loongson.cn>, Arnd Bergmann <arnd@arndb.de>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the loongarch tree with the asm-generic
- tree
-Message-ID: <20240709100154.0b4b1372@canb.auug.org.au>
+	s=arc-20240116; t=1720483341; c=relaxed/simple;
+	bh=OOauX8tq2LJz+KMSULP5WUiwetg9GKJNvyK1/MOOyiE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=j1U6taEOgkTDCHw/jVqYwfwAtokP83NgiQwTPMRPOBJoAnTEOEaFwmpILIB1V6KOfV9pboRUQqgAQZce0I3Wy+OxZH+JbO5Aqxbq5lwhyzIcKWRjWKBvea53oCxMZWVhLDBLxW2PI4wvoHQK4/cE5RZE6zmdJEK+76JHBbTnoNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RgIZe6Vy; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70b07f27788so2513544b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 17:02:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720483338; x=1721088138; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=66ouBKm2rZ2nJ5Sc0zmB/YSS21NPLdbFjaetOeyS1N4=;
+        b=RgIZe6VyJLHPwt1HskGIQnxkni1xYTvfmxg/r7pvBdxC//MReA2GxJry+tT1Tr5ylE
+         6m1lPzzRa1lZs1TV3Ifp2CvhbqqCthsOd5LztyCE8dDZE6OvJHfEC+1764ij9rrUmSdV
+         PiWW5E8zwmAUrdo372CEoD4lJ2BpliQuhmwpuqyN3zwOB7f+IUiPy9xNBwR3i++uV11v
+         23gkl+icvAqiUHgEhbOLXb1qaaOvWG4xX4CzGS+gpCdvqbtUDjc/WDK9/8uuqvuwEVUe
+         CqqTOM3FgBf/zbXSLHmfD6fVek/8EtWvEwxMuUHGIiByq0eKgYwjJuaFA0IDDJAorXqX
+         C+7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720483338; x=1721088138;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=66ouBKm2rZ2nJ5Sc0zmB/YSS21NPLdbFjaetOeyS1N4=;
+        b=BmnWzrecqxWCXGadmJRwt6jPa3bJPLkf21urGi9qRHkw9rNmr7IKUwjpTDxWJpAiDK
+         6/zNFX7vatECMdqYRKju+la1aDg7BeSBSrJ3mLAeF4OCKC3N/rZrAXCaezNgnfO7qVzQ
+         FOXjkmbN1D0f+HZUsNAWe0mYASmSJmVsPHMbw38kdB9Sswi+QNB4awiIteQFiSYknbAI
+         K9FTpeyyOTUAB5PgDIOWE/wPC1cK1r9I0vKRIJi0Nk2rXAa8iojeC7aJPymHDMzPN4EL
+         nZAs77xzPrgesVpdMKaIoaKybdNGFzyatnq9j7uAyVHXQAySgPV4jlYBGcM3R8AL8Ecs
+         zR2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWtNEUvw1HGfbx5/Ko2HJ0D+1MIS0aAlh0JruiSfaZ6LCds0rqiHU9E+iJ38v5neFd0bBtT6eOdpaGJ4ePscG7mDe3umKHAk064MZPr
+X-Gm-Message-State: AOJu0YyQxCiNk9yiMPMANh0BprGUllM/9cLQHXv2cZJZezJeq1SaBIVB
+	579UzoEk3oOFmTv8WZOP0crMYxbA1EZeYs1pMfu7WWbjmBhj0SYT9HAiG2CVng4=
+X-Google-Smtp-Source: AGHT+IFjcGACTbhEzv4aX+l5h42wAbm2LCP++X9EO0tatMq6aE+gkzj6i9f/Lah+vuXUnXGwGdjlUw==
+X-Received: by 2002:a05:6a00:2292:b0:705:972a:53f with SMTP id d2e1a72fcca58-70b4357e344mr1278976b3a.18.1720483338536;
+        Mon, 08 Jul 2024 17:02:18 -0700 (PDT)
+Received: from localhost (97-126-77-189.tukw.qwest.net. [97.126.77.189])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4396791bsm462246b3a.136.2024.07.08.17.02.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 17:02:18 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: aaro.koskinen@iki.fi, linux@treblig.org
+Cc: tony@atomide.com, linux-omap@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240505202214.623612-1-linux@treblig.org>
+References: <20240505202214.623612-1-linux@treblig.org>
+Subject: Re: [PATCH] ARM: omap1: Remove unused struct 'dma_link_info'
+Message-Id: <172048333767.3996294.3904790480633343445.b4-ty@baylibre.com>
+Date: Mon, 08 Jul 2024 17:02:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/tyAqR0/17fp8Oix9WjZuroh";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
 
---Sig_/tyAqR0/17fp8Oix9WjZuroh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Sun, 05 May 2024 21:22:14 +0100, linux@treblig.org wrote:
+> I think the last use of this was removed somewhere
+> around the two:
+> Commit 755cbfd8cf89 ("ARM: OMAP2+: Drop sdma interrupt handling for
+> mach-omap2")
+> and
+> Commit 16630718ee46 ("ARM: omap1: move plat/dma.c to mach/omap-dma.c")
+> 
+> [...]
 
-Today's linux-next merge of the loongarch tree got a conflict in:
+Applied, thanks!
 
-  arch/loongarch/include/uapi/asm/unistd.h
+[1/1] ARM: omap1: Remove unused struct 'dma_link_info'
+      commit: f6e6e2e8f6440ca2f91685f57b5bcd3dbac1f135
 
-between commits:
+Best regards,
+-- 
+Kevin Hilman <khilman@baylibre.com>
 
-  13aa27ce8de0 ("clone3: drop __ARCH_WANT_SYS_CLONE3 macro")
-  1d7b98ec5d78 ("loongarch: convert to generic syscall table")
-
-from the asm-generic tree and commit:
-
-  a5d43e6d87c0 ("LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h")
-
-from the loongarch tree.
-
-I fixed it up (I think - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/loongarch/include/uapi/asm/unistd.h
-index 1f01980f9c94,b344b1f91715..000000000000
---- a/arch/loongarch/include/uapi/asm/unistd.h
-+++ b/arch/loongarch/include/uapi/asm/unistd.h
-@@@ -1,3 -1,6 +1,4 @@@
-  /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+ #define __ARCH_WANT_NEW_STAT
- -#define __ARCH_WANT_SYS_CLONE
- -#define __ARCH_WANT_SYS_CLONE3
- =20
- -#include <asm-generic/unistd.h>
- +#include <asm/unistd_64.h>
-
---Sig_/tyAqR0/17fp8Oix9WjZuroh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaMffIACgkQAVBC80lX
-0Gw58wf/ej1lSWnuM4/KpOYRyf7AFxFIGuHEe3PWI66JhSRbE4GQXRwD2ob5i5gx
-QilnVWse31u809LAQLnnjCTMwuws65cHsOLGP/NRbO9yNIMTUMV+7xV41Uhspf7g
-zYCI/pxPkvP3v+SMqUGCST/oPHgTCNdsATn9VxjPQQEM7gqCnilsNY3sG79oCkgZ
-MyXo2aWTglCQr65gOIPzWhue8DthOGT389Kz/rDoANBG4X6MOcFGkG/8tzib/M7U
-cQ48LBYdgmfQycwV5qWc/H1p9B0Xwnbo4uHAApLQgdXVGxnpa954X6SmcG/ybATs
-URUTtryewsP0NgceZFCSFuG3IiLnVg==
-=OLR0
------END PGP SIGNATURE-----
-
---Sig_/tyAqR0/17fp8Oix9WjZuroh--
 
