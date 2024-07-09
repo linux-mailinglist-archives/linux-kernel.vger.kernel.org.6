@@ -1,148 +1,194 @@
-Return-Path: <linux-kernel+bounces-245459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 259A492B2C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:57:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C49C492B2CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EDAF1C22336
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:57:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9B628194C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4CEA15534D;
-	Tue,  9 Jul 2024 08:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4682415573A;
+	Tue,  9 Jul 2024 08:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jb1n7ZGx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A/8c7ZnS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B80155305;
-	Tue,  9 Jul 2024 08:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4C815383C
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720515379; cv=none; b=a+0bKMWulmF1bmC5n/XRL9Z2hRZxo0iWMblrDVgCA/xKKSW5w+++KIedPCl82YYonl4cF/ZmKA1H4g7h2ko7EuEupyq5HP968hjcc5OYiCLqWqMeBAvlGB5V3xrULWN00f+tMRgbspRGklkemaMKlQIwlQ3AzVHjYf6EJXPyqBk=
+	t=1720515394; cv=none; b=qV81rlaKifsIgb1awq3qYznxEX+m0kcNqbkMaUjxJ0kbNRMBCvte0/03ljVMWLp2VuFT4XQtaNzB3ic9qPwRgC4lFQMUuMMhDJAC+FzAeh+BaboHLMW1Hqtr8xl3vREywLO0ZXyF3cU/iXBOaLcuNL+DvtVU286s1di6zBbhDaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720515379; c=relaxed/simple;
-	bh=gHc9RSH+e3j/WwdDodJDVWQCYpvtbgRfjF/TXwAZgEg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WT1l2ETpxpQDRonCXvYf6xSgY9Tib6drIMFgqF8zhADOSy/lWdB9yaY3VMFoppY0WJPoexFf/SnoS6PhIKE8v/nfpw1wNvGUn8vsPW9Z+BkMBKhHM4uvoVtrWGZ6uj1FPr0FVW/K69hMfwX+k2LaN+sOcT8NJTGVooPXc0brlHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jb1n7ZGx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89DDBC3277B;
-	Tue,  9 Jul 2024 08:56:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720515379;
-	bh=gHc9RSH+e3j/WwdDodJDVWQCYpvtbgRfjF/TXwAZgEg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jb1n7ZGxpv9+KrBXhgQXw5fcbHJQpIIFgYDRLb5ElDunWbiKLlmIp8N/t6vDHwvjk
-	 cGs+wNWsVKFbaOGibSu+Zid5xTiz7FwP5wyJG3eXtGIne8BLjAV5efIR9+AhIzBOjP
-	 uSoFfm+WPygeeubJawbQcm/M3ey2acAc/gyVvA89sh9fiUqQ2QLOJ2T8GS/FF/pFwB
-	 fr5E9NAvYGgmqnxyIAUjwEs52Pgltz6hGmuXCYZP6xphvdsamLiXBOZiSkFTXxrcNz
-	 1FI0j8xfvw5wvn6Xj75rplujAVSa3Qz4XNnxKUNp1OLq2pq1pQBrcF9pj47mO1CeNJ
-	 6ROYMpiGKrMKA==
-Message-ID: <3ba8bcde-496c-4084-8941-397b4dd7f55f@kernel.org>
-Date: Tue, 9 Jul 2024 10:56:10 +0200
+	s=arc-20240116; t=1720515394; c=relaxed/simple;
+	bh=ZjleyqreNzd5N6niM8JfYISv9RvH3ugjN68S6yfTxpM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CvWGNvMIMxFyVhYfEa1w6QRrdqjyf+ul/R2QC2u0hSuOb4clTKZoutY+kSrlkL8Fr8l39nUNFLGqqd0WYz+/1LB9d6aNOXL8N5pt3F3i3hO9/aW2MDjQk/GF88VfZu18xDJSfacN9mqYXD/GFTmQd8gsRuVlrqluRPaeQt0wISE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A/8c7ZnS; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720515391;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mZo3i4FrLDziFrzuVJBLT1zQ9UdyZZW5nDEeprPuspY=;
+	b=A/8c7ZnSyClGgmVZO6pefIL+cDKIHqkgZEpykFISNPy2BeoRpNJ+usyevLuQQLa9shwujs
+	rurpoCS3XOdzoyuRWSjiZ57UheV3y2+hKsm904roSZCI1whV2xRQx6e6FzqQfk5L12YAMV
+	0e1WM7OGeF91pKcLMp+BHh/gS43PIV8=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-67-Ss3VSe__NV63Gf7sz7i1qg-1; Tue, 09 Jul 2024 04:56:29 -0400
+X-MC-Unique: Ss3VSe__NV63Gf7sz7i1qg-1
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52e9df289b4so744505e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 01:56:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720515388; x=1721120188;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mZo3i4FrLDziFrzuVJBLT1zQ9UdyZZW5nDEeprPuspY=;
+        b=i2uNBViwZG4PuwCOToOwN95n3dKviijq7uqq5JzoRncTk5uLQ/4pxzXafnCwi/FlNY
+         8C4upFdRSbT7Yedkk9RNxmlqYZTnwK8zXpJKubO6XjHAUfwLgschOmYMHaJBE6HxLLWp
+         yM9eq86YCIRTvv0Rt9JTEw3+budl7ryTmo5mAyjs3Fb5U07OenNGrlaeGWlCmneWHUsk
+         sV8iSy7VMhFvST5W4O5TZt3qhNL+vqgrcAScGPndSb8ET/5UnXHqQrMBDzn7EZbfiKTK
+         mDQZidbyeylua4QHxbJC4jpFRwbQzdH/18FEd6QxbwwuM+H0la/3fYI3rNcadHpKWSkW
+         /Q8w==
+X-Forwarded-Encrypted: i=1; AJvYcCVr5Qzh93Zt2vpEUobcmkWActmSeLTk0f1HASMsD7fJtMFxNVL0A1DcZEzGO511xxwXyu8TAJlX5pSW46anbQ/UTKWFg12BdPQr7a/b
+X-Gm-Message-State: AOJu0YwlG/eUq+oxOM2dqwo8EASWforXQn7G5N75w426SpWbJLLLGevi
+	h7JAU0c9NR0p7H3NVt2EGv2bvcFFS2NyYrLvQSuWZ5ZjO3oFtdbiMhyk9bhRCD3Fug8STOj0yGe
+	67FnazwwcxAwWkPGtr/aUZgM0WE8fwHkeynjA+0VpTuHRMtZ9Bm+xON0v3xgT1w==
+X-Received: by 2002:a2e:a594:0:b0:2ec:4287:26ac with SMTP id 38308e7fff4ca-2eeb3191af2mr13488351fa.4.1720515388427;
+        Tue, 09 Jul 2024 01:56:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGJFO85FdSpN/tGtIniVZthBrr5afzWmwuyHHpTqaBS39B1vWHCFm7f/iojSiOOVOD1vzLidg==
+X-Received: by 2002:a2e:a594:0:b0:2ec:4287:26ac with SMTP id 38308e7fff4ca-2eeb3191af2mr13488161fa.4.1720515387987;
+        Tue, 09 Jul 2024 01:56:27 -0700 (PDT)
+Received: from pstanner-thinkpadt14sgen1.remote.csb (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f741624sm29991115e9.41.2024.07.09.01.56.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 01:56:27 -0700 (PDT)
+Message-ID: <426645d40776198e0fcc942f4a6cac4433c7a9aa.camel@redhat.com>
+Subject: Re: [PATCH v9 10/13] PCI: Give pci_intx() its own devres callback
+From: Philipp Stanner <pstanner@redhat.com>
+To: Ashish Kalra <Ashish.Kalra@amd.com>
+Cc: airlied@gmail.com, bhelgaas@google.com, dakr@redhat.com,
+ daniel@ffwll.ch,  dri-devel@lists.freedesktop.org, hdegoede@redhat.com, 
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, sam@ravnborg.org, 
+ tzimmermann@suse.de, thomas.lendacky@amd.com, mario.limonciello@amd.com
+Date: Tue, 09 Jul 2024 10:56:26 +0200
+In-Reply-To: <20240708214656.4721-1-Ashish.Kalra@amd.com>
+References: <20240613115032.29098-11-pstanner@redhat.com>
+	 <20240708214656.4721-1-Ashish.Kalra@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: net: qcom: ethernet: Add interconnect
- properties
-To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>,
- Vinod Koul <vkoul@kernel.org>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Russell King <linux@armlinux.org.uk>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Bhupesh Sharma <bhupesh.sharma@linaro.org>
-Cc: kernel@quicinc.com, Andrew Halaney <ahalaney@redhat.com>,
- Andrew Lunn <andrew@lunn.ch>, linux-arm-msm@vger.kernel.org,
- netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240708-icc_bw_voting_from_ethqos-v4-0-c6bc3db86071@quicinc.com>
- <20240708-icc_bw_voting_from_ethqos-v4-1-c6bc3db86071@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240708-icc_bw_voting_from_ethqos-v4-1-c6bc3db86071@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 08/07/2024 23:30, Sagar Cheluvegowda wrote:
-> Add documentation for the interconnect and interconnect-names
-> properties required when voting for AHB and AXI buses.
-> 
-> Suggested-by: Andrew Halaney <ahalaney@redhat.com>
-> Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+From c24bd5b66e798a341caf183fb7cdbdf235502d90 Mon Sep 17 00:00:00 2001
+From: Philipp Stanner <pstanner@redhat.com>
+Date: Tue, 9 Jul 2024 09:45:48 +0200
+Subject: [PATCH] PCI: Fix pcim_intx() recursive calls
 
-<form letter>
-This is a friendly reminder during the review process.
+pci_intx() calls into pcim_intx() in managed mode, i.e., when
+pcim_enable_device() had been called. This recursive call causes a bug
+by re-registering the device resource in the release callback.
 
-It looks like you received a tag and forgot to add it.
+This is the same phenomenon that made it necessary to implement some
+functionality a second time, see __pcim_request_region().
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
+Implement __pcim_intx() to bypass the hybrid nature of pci_intx() on
+driver detach.
 
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+Fixes: https://lore.kernel.org/all/20240708214656.4721-1-Ashish.Kalra@amd.c=
+om/
+Reported-by: Ashish Kalra <Ashish.Kalra@amd.com>
+Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+---
+Hi Ashish,
+I hacked down this fix that should be applyable on top.
+Could you maybe have a first quick look whether this fixes the issue?
+---
+ drivers/pci/devres.c | 33 +++++++++++++++++++++------------
+ 1 file changed, 21 insertions(+), 12 deletions(-)
 
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
-
-Best regards,
-Krzysztof
+diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
+index 2f0379a4e58f..dcef049b72fe 100644
+--- a/drivers/pci/devres.c
++++ b/drivers/pci/devres.c
+@@ -408,12 +408,31 @@ static inline bool mask_contains_bar(int mask, int ba=
+r)
+ 	return mask & BIT(bar);
+ }
+=20
++/*
++ * This is a copy of pci_intx() used to bypass the problem of occuring
++ * recursive function calls due to the hybrid nature of pci_intx().
++ */
++static void __pcim_intx(struct pci_dev *pdev, int enable)
++{
++	u16 pci_command, new;
++
++	pci_read_config_word(pdev, PCI_COMMAND, &pci_command);
++
++	if (enable)
++		new =3D pci_command & ~PCI_COMMAND_INTX_DISABLE;
++	else
++		new =3D pci_command | PCI_COMMAND_INTX_DISABLE;
++
++	if (new !=3D pci_command)
++		pci_write_config_word(pdev, PCI_COMMAND, new);
++}
++
+ static void pcim_intx_restore(struct device *dev, void *data)
+ {
+ 	struct pci_dev *pdev =3D to_pci_dev(dev);
+ 	struct pcim_intx_devres *res =3D data;
+=20
+-	pci_intx(pdev, res->orig_intx);
++	__pcim_intx(pdev, res->orig_intx);
+ }
+=20
+ static struct pcim_intx_devres *get_or_create_intx_devres(struct device *d=
+ev)
+@@ -443,7 +462,6 @@ static struct pcim_intx_devres *get_or_create_intx_devr=
+es(struct device *dev)
+  */
+ int pcim_intx(struct pci_dev *pdev, int enable)
+ {
+-	u16 pci_command, new;
+ 	struct pcim_intx_devres *res;
+=20
+ 	res =3D get_or_create_intx_devres(&pdev->dev);
+@@ -451,16 +469,7 @@ int pcim_intx(struct pci_dev *pdev, int enable)
+ 		return -ENOMEM;
+=20
+ 	res->orig_intx =3D !enable;
+-
+-	pci_read_config_word(pdev, PCI_COMMAND, &pci_command);
+-
+-	if (enable)
+-		new =3D pci_command & ~PCI_COMMAND_INTX_DISABLE;
+-	else
+-		new =3D pci_command | PCI_COMMAND_INTX_DISABLE;
+-
+-	if (new !=3D pci_command)
+-		pci_write_config_word(pdev, PCI_COMMAND, new);
++	__pcim_intx(pdev, enable);
+=20
+ 	return 0;
+ }
+--=20
+2.45.0
 
 
