@@ -1,154 +1,128 @@
-Return-Path: <linux-kernel+bounces-246542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4AE192C353
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:33:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1D3A92C354
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE22C1C2244A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:33:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 730AFB2303F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A1A180058;
-	Tue,  9 Jul 2024 18:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B288A180050;
+	Tue,  9 Jul 2024 18:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f3wgpTzP"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bd2zQhz8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BA81B86E4;
-	Tue,  9 Jul 2024 18:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0545B1B86E4;
+	Tue,  9 Jul 2024 18:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720549988; cv=none; b=pATITgVXjyjWwX7Xl0/xeJW/wXV1Nzqqml3slJRleJY7mO9TaYU8o68gO/77pkBNHPPTdMCa7+nUK/kqBUyrUxWc0WQr46H8AhTlmuH6FJKh3emJEC7ezqEI7VGkOnYsWWis08XiK87BAq4PJTWVNMjGCfAF4QJNsx9/3SvGzFc=
+	t=1720550034; cv=none; b=fzH7s3Gd/lfoRVhYg079qEp9Pb46ow0D8urTXJ1yo7nrdUMJ4lZitbGUfbLajB6FsHFztbg8A1kI/PlMzjxa97Ct3R8d5qUZXoh0Hiw9Jp8KrF3Tn/yIcashp6rNXRbZe7X7uJ4QcCsQEit3fy0n9MWyKZaww7OTKMMKzCKO7es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720549988; c=relaxed/simple;
-	bh=o7KezNssQ10KvpArozHaQDe0vjPmXwq+WBOthEhLB8s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jZZ6ldreUDJRgX+7ndyk9olQOUup7JevHeY9A8zLcNN9Qa0lXRSSVg1ff4u5rkFktyp3e2z3ifzR1wH5gG0+B/aXgI4tWJ/iysPL3nGwQc2/gjYjtPraagMln3j1l+k7W5ylNJn6S+wJcyDR0sb4ofIC1BV83epyDKlNKoPLs6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f3wgpTzP; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52e99060b41so5924461e87.2;
-        Tue, 09 Jul 2024 11:33:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720549985; x=1721154785; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qQvoh/iNTo3TxS26T9ik+xylt2WEP99UjL3OjvGhQKQ=;
-        b=f3wgpTzPyG4pT78beBhwK1NyaNHB2V1VGH51bkdGguBUnoV/T5p076l+p3r7+LdCn1
-         aaglEda3dqHXakXAR2OlZ9FI3N0m18w4nQTo3R2MI7xq7+hf35SImzjZ6lrl3w9r+UoH
-         BMFoprQ8Ss0IKe/tEW/URD+Y71FZcq0Df27NdS95Zg/wkwZgWgxhwoHWNdVcNYWEjece
-         0d1Y4/puLW+rIVSr5hDPNLVszkXSbq0DTdiOvGPvZM9PSpYbQZzSrtBsf9eQACti9QKl
-         1l8HXKK3cMZNIKILz5rplrfIlkqSqOtJAj/n69+U3LOU676dUE6xphd45ZalBCK6el9l
-         lpBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720549985; x=1721154785;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qQvoh/iNTo3TxS26T9ik+xylt2WEP99UjL3OjvGhQKQ=;
-        b=ZVhMhD74UOTuQE8pM797rUARTJkpAnY7+6eB7pJfH+IhgIq4Rj4REP4LqVCmKCj22j
-         v7etGYBm2X8v7kRMCiI31oQGxEgObBs2/FXc+FiiQ/alXvJ8OVr731PaGX+0TodGpXUT
-         tpEZCGH+v3dP5PKVdEbZgXWeIyoou8gpgHT+LLFzk5uchFcFdgw+a226t34CVfvc+f6d
-         lhu/Nc/uQDsiWPwUGnRC9xTnRCNXTbITtbkouZQ3SRHYjM6pgaOehA2mOZ21fVR0295k
-         8JwQqzL4RHbwO/miMQOgYcG6pOKiPiiOjl3aFHZxTMOuJ0Ku1ED2hxY3onYbm5kTlD06
-         qZPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXgHS16Ijt86oohdMiGAWHiYcxtRjH4o074QXOTDdfJzaUg66VZpk+TyP7+qZJY9L2F28y6uJCa75AXD2HYpn8DpfQJd+AY68AMOBXzPTxAuiesQHCn+k0lQQF/502ypBewaTiidkVmtyMAo6cfe6KwgeR1yYvHIK11IIDtj2blV8B8bg==
-X-Gm-Message-State: AOJu0YzBatt1r7zQ8ECVcBjc7pFy0mxh8mshslvUzT4VVcTuJpllMM0V
-	MLhyVdpZOSrA67YsxuzhBcqbmgQ9qnnhvFz1OND/2pPSmiyfEpCf
-X-Google-Smtp-Source: AGHT+IGdA6qBs/h5ifQa1NLYmmqBaEPCm7bXVlEOtK8ASpi7E8t7wW94TgDIp5nw4qBgiqUe1GdzHw==
-X-Received: by 2002:ac2:5605:0:b0:52e:97b3:42a1 with SMTP id 2adb3069b0e04-52eb9995536mr1796703e87.24.1720549984595;
-        Tue, 09 Jul 2024 11:33:04 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52eb8e493cdsm313069e87.85.2024.07.09.11.33.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 11:33:03 -0700 (PDT)
-Message-ID: <2b66ea94-dd77-4e86-b09b-c00523bdbf75@gmail.com>
-Date: Tue, 9 Jul 2024 21:33:02 +0300
+	s=arc-20240116; t=1720550034; c=relaxed/simple;
+	bh=tmVX/C4yIEx1ethLXgaPRHHJAs0JD4bW3hQ7K8czov0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=djrvYJ89v5IocSBjemZ8aKW5TGTXxxjhFiYE42VgqrzwQlLaxmV5pfxh4nBfMuipdNHMhXb6974Jz9XVQpul97dkL71z/jftU/lhbOFipR0Yc1BWHp8kfI4qeqKRtohBzz2qmZ7XsyE9qR841e3x1SuPGaVYl6UniEDWSJ9bwS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bd2zQhz8; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720550032; x=1752086032;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tmVX/C4yIEx1ethLXgaPRHHJAs0JD4bW3hQ7K8czov0=;
+  b=Bd2zQhz8ntfPPtbKP/23n/31QXcVDVmK+2FtplcH5XgFFMbZYyVqmDH2
+   aR35sQA7JmZiU7p1Kgvx9fCmgQn4CqRUdY0nhwlxMNoYpugYcBhi2bg4t
+   OYSpcD6W3GubYncMVCDszsXhR3RNpCb1iueZaRWbDHTfcj6/W4LPCYYkT
+   NKQM73MyT386tPkWTFQnMhlGBAP+gplXtqQEslyPPyBm4aB6FUTo71lqk
+   zoQ8lgk6wOilKWR1HQGGsIbWbBbgFYyP4rsYdF1co3274/cl9II6p2Tjx
+   DojxoNttWnXQ3ErZUEAx5Q0bYMiPp0SPuGO91H4wncQ5yV/m0r5tDtvaS
+   Q==;
+X-CSE-ConnectionGUID: uputb14AQwyp9SEZl9TQSg==
+X-CSE-MsgGUID: x2jJAH1/SiSt5ADV9igsFA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11128"; a="21593993"
+X-IronPort-AV: E=Sophos;i="6.09,195,1716274800"; 
+   d="scan'208";a="21593993"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 11:33:52 -0700
+X-CSE-ConnectionGUID: qszBf9+aR+635AihjfUasA==
+X-CSE-MsgGUID: 3uJ0Z4XMSq2Val5ybod/zw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,195,1716274800"; 
+   d="scan'208";a="52746275"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.105.195])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 11:33:52 -0700
+Date: Tue, 9 Jul 2024 11:33:49 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: peng guo <engguopeng@buaa.edu.cn>
+Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com,
+	dan.j.williams@intel.com, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, wyguopeng@163.com
+Subject: Re: [PATCH v2] cxl/core: Fix the UUID of CXL vendor debug Log
+ identifier
+Message-ID: <Zo2CjTCSnPmn6t8R@aschofie-mobl2>
+References: <045fb08e-6d18-4558-b7b2-b83c412307da@intel.com>
+ <20240709141239.10737-1-engguopeng@buaa.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] dt-bindings: iio: rename bu27034 file
-To: Conor Dooley <conor@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1720176341.git.mazziesaccount@gmail.com>
- <f83cf0d6f5b0ed391703ea3908ebd65b3f6e5c87.1720176341.git.mazziesaccount@gmail.com>
- <20240708-eloquent-overdrive-092c7678f913@spud>
-Content-Language: en-US, en-GB
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20240708-eloquent-overdrive-092c7678f913@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709141239.10737-1-engguopeng@buaa.edu.cn>
 
-On 7/8/24 20:05, Conor Dooley wrote:
-> On Fri, Jul 05, 2024 at 01:54:26PM +0300, Matti Vaittinen wrote:
->> The BU27034NUC was cancelled before it entered mass production. It was
->> replaced by a new variant BU27034ANUC (note, added 'A'). The new
->> variant gained a few significant changes, like removal of the 3.rd data
->> channel and dropping some of the gain settings. This means that, from
->> software point of view these ICs are incompatible. Lux calculation based
->> on the data from the sensors needs to be done differently, and on the
->> BU27034ANUC the channel 3 data is missing. Also, the gain setting
->> differencies matter.
->>
->> The old sensor should not be out there so the compatible was dropped and
->> a new compatible was added for the bu27034anuc. Move the yaml file so
->> the file name matches the binding and change the $id.
->>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->> ---
->> Revision history:
->> v1 => v2:
->> - New patch
->> ---
->>   .../iio/light/{rohm,bu27034.yaml => rohm,bu27034anuc.yaml}      | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>   rename Documentation/devicetree/bindings/iio/light/{rohm,bu27034.yaml => rohm,bu27034anuc.yaml} (92%)
->>
->> diff --git a/Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml b/Documentation/devicetree/bindings/iio/light/rohm,bu27034anuc.yaml
->> similarity index 92%
->> rename from Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml
->> rename to Documentation/devicetree/bindings/iio/light/rohm,bu27034anuc.yaml
->> index 535bd18348ac..fc3d826ed8ba 100644
->> --- a/Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml
->> +++ b/Documentation/devicetree/bindings/iio/light/rohm,bu27034anuc.yaml
->> @@ -1,7 +1,7 @@
->>   # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>   %YAML 1.2
->>   ---
->> -$id: http://devicetree.org/schemas/iio/light/rohm,bu27034.yaml#
->> +$id: http://devicetree.org/schemas/iio/light/rohm,bu27034anuc.yaml#
->>   $schema: http://devicetree.org/meta-schemas/core.yaml#
+On Tue, Jul 09, 2024 at 10:12:39PM +0800, peng guo wrote:
+> Fix the definition value of DEFINE_CXL_VENDOR_DEBUG_UUID to match the
+> CXL r3.1 specification, although this value is not currently used.
+
+I thought the value was actually used.
+Please help me understand by responding to v1 review:
+https://lore.kernel.org/Zow0Aw+vrXShXv+n@aschofie-mobl2/
+
+--Alison
+
+
 > 
-> IMO this should be squashed.
-
-I've no objections to squashing this. The main motivation of having it 
-as a separate patch was to point out the file rename for reviewers and 
-ask if it is Ok. Furthermore, if there was a reason not to do the 
-rename, then this patch could've been just dropped while the rest of the 
-series could've been applied.
-
-Thanks for the review!
-
-Yours,
-	-- Matti
-
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
-
+> All CXL devices that support a debug log shall support the Vendor Debug
+> Log to allow the log to be accessed through a common host driver, for any
+> device, all versions of the CXL specification define the same value with
+> Log Identifier of: 5e1819d9-11a9-400c-811f-d60719403d86
+> 
+> refer to:
+> CXL spec r2.0 Table 169
+> CXL spec r3.0 Table 8-62
+> CXL spec r3.1 Table 8-71
+> 
+> Fixes: 49be6dd80751 ("cxl/mbox: Move command definitions to common location")
+> Signed-off-by: peng guo <engguopeng@buaa.edu.cn>
+> ---
+>  v1 -> v2: update commit message  and addressed review comments
+> 
+>  drivers/cxl/cxlmem.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
+> index af8169ccdbc0..feb1106559d2 100644
+> --- a/drivers/cxl/cxlmem.h
+> +++ b/drivers/cxl/cxlmem.h
+> @@ -563,7 +563,7 @@ enum cxl_opcode {
+>  		  0x3b, 0x3f, 0x17)
+>  
+>  #define DEFINE_CXL_VENDOR_DEBUG_UUID                                           \
+> -	UUID_INIT(0xe1819d9, 0x11a9, 0x400c, 0x81, 0x1f, 0xd6, 0x07, 0x19,     \
+> +	UUID_INIT(0x5e1819d9, 0x11a9, 0x400c, 0x81, 0x1f, 0xd6, 0x07, 0x19,     \
+>  		  0x40, 0x3d, 0x86)
+>  
+>  struct cxl_mbox_get_supported_logs {
+> -- 
+> 2.43.0
+> 
 
