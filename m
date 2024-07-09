@@ -1,85 +1,55 @@
-Return-Path: <linux-kernel+bounces-245108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C3DA92AE72
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:08:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C600B92AE79
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0FD4282AB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:08:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F25491C2122B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2672243AB4;
-	Tue,  9 Jul 2024 03:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ts+N4i2g"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3038F4501A;
+	Tue,  9 Jul 2024 03:12:51 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AB34084C;
-	Tue,  9 Jul 2024 03:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6EB4A15;
+	Tue,  9 Jul 2024 03:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720494489; cv=none; b=oqtARfPD2fjB5lvvgvSP8WprJX+k6i034KAMSra+reDdtWMdJ4PcDsgl9Ysv4rF8q3/QUjU8QJnyRqXCiCLa85VpwUhN4Sy4/+yElxs3DjotBfhS/511Y5+TS2Bb2M9hbvZYAmFN42+iRILgXSdx30bCsDKDGJAA6myqweLW1qE=
+	t=1720494770; cv=none; b=Q4svF/l0JZ8O/d4Ph4DVIlplQNbAD75bP43ZOyjWg2zjU9/E8+w9KgtatNK3A+omwXGxwafI4q5JaLDT+yNIoQgpj9GxFp4Yf6tGxZkwe04nCu5E2v6TKxnBgFtj6D3on6DdOrZ4iA2GQcILPeVEudyfRLycoy86PHBCKpFtwcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720494489; c=relaxed/simple;
-	bh=HuIO3QXNrsFEjYOkx/nY84ANjiP1hdQ5WeQN+NW30Vw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=vFQYvAPm2j1l/p/8KCl3PmNhIcRMoFZhsW5ChmdEwi20aj076aIcQ8eJkG0S/P856mBnBHIpJXuPS94SvnWemKJBcTfhjj/GDtLP54e22Q6Q7kkTayLLC4cZA36ghL8urd5df/KowOSmWUCFooE5FHFo3re8oV0DWKp/Ue2O3vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ooseel.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ts+N4i2g; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ooseel.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-6f8d0a00a35so4483949a34.2;
-        Mon, 08 Jul 2024 20:08:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720494486; x=1721099286; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=PwwuYSXB90fKktmKvx7XHMxW0xqHEFFAvhcbieHh5ZM=;
-        b=Ts+N4i2gslCfThP9RDjUs0bXfDTENt7Bk0oQEwVztvwYwP/rLzTRwYnqszMehgHl4g
-         zmbCylD0hgGasvBBPyjOkObec+mDLtDBHux0z6ol18lxBBLINXILMkgqYNQp8Q2zqIWW
-         HNSNz0/5OKuHkZx45278qseZ0t1hQTHk1JiXUSWznbuQ/isTVjAhHLarBNtI35obDrnf
-         B/KfdSlsdc47seaDPZ82/KSQ5Nt8Vpo7FtSXo6NNSxG8ePTIFvQ6Bm89pQ7xyUrxPWXr
-         pFYhoQudXWyTJ+0FcAU++at+6TcYxOW1AW/ohSpg+6lSHaowqZmp8fRTSNpfhpMN8xWj
-         HmTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720494486; x=1721099286;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PwwuYSXB90fKktmKvx7XHMxW0xqHEFFAvhcbieHh5ZM=;
-        b=CVgS8KytQ3HcAM+DxxRk1ArHIsMw/LRokNLz7W6/5yqeo/apQLg3hlOsxSb+5fWhxE
-         OJ0mVCW1Ov371WU9jiSI5cW5goJCAbY+gZ6MwFQazXHbwN6Ye4Ei+F4PKTSG1H51yxEg
-         PxpdB1n1Kj/u74E1L0aLGfKU+Mtm+Z4DjLvtn9H9H1R0Xeuj/y+rVKQK42IM9UC6Lznn
-         wNhABe2/qiF6FSbFfGTn2J814pHjSHPjlA9sB1u+6szMmoflCLIlRcIazFhznFx+IRyk
-         QsxFSUyxylOckKq/ZnnCd+j7bXgV4sUX0WPmWfagnuBNM1PIbmDv83cPwyAGXiIiUR/+
-         0n5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUJBcDtGtE6AcdotEqhZzl1QLAvrg/p6TaEriJeNA8OA2zAHNuOMWrtxxyRpQLhpT/dmTi7Lbgy7yzy0mR95d1AzceH/ZPtfmrNry43u3+ajYx1rnlC5dMxwQw2nYxx0CsRrwJcBrXe2EXTB58KLAjTgdUe
-X-Gm-Message-State: AOJu0Yx4DhN63Fw1OTjjFCGo4hO2Ev3xWu8rUm1IvV1NhRm6UXmb7Ky3
-	VmhBKf7u2+6Uj4kIW6OKMF+mVbL7UKjBETs654ORdgXalJ4OZdVy
-X-Google-Smtp-Source: AGHT+IG4PZquzeh4SNLSzENKHm6x9p4wfSaWPtdDgVG+sfwxGbHHf4Ew64OpCozvb5F3dAFFjN23vQ==
-X-Received: by 2002:a05:6358:6f97:b0:1a6:2c4d:c902 with SMTP id e5c5f4694b2df-1aade29aa01mr131953155d.19.1720494486049;
-        Mon, 08 Jul 2024 20:08:06 -0700 (PDT)
-Received: from SYSOS.. ([115.178.65.130])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a97c275sm8962088a91.25.2024.07.08.20.08.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 20:08:05 -0700 (PDT)
-Sender: Leesoo Ahn <yisooan.dev@gmail.com>
-From: Leesoo Ahn <lsahn@ooseel.net>
-X-Google-Original-From: Leesoo Ahn <lsahn@wewakecorp.com>
-To: lsahn@ooseel.net
-Cc: Leesoo Ahn <lsahn@wewakecorp.com>,
-	John Johansen <john.johansen@canonical.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] apparmor: domain: clean up duplicated parts of handle_onexec()
-Date: Tue,  9 Jul 2024 12:07:51 +0900
-Message-Id: <20240709030751.3825748-1-lsahn@wewakecorp.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720494770; c=relaxed/simple;
+	bh=gG7VPVdC1NgmfJ9wBm/I1DUwm9R5dW8xyB+Gsar80dg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pmX4Ae/ruCJjDZuZts0kQ9E5JgzX9FitYv6eavHWUkGP2FArhcleCxAzDT23wnA/RQuZT6VEqNtbuFeLhehJAACByEw00w4DHFXv5Hbr7DR1B8nSqa650J8p421nDoh66dib8qiEnHnwipD4b8IeDdrkCgHJWTOI/Kcg0qAd8Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowADnx0ydqoxmqBVcAg--.237S2;
+	Tue, 09 Jul 2024 11:12:29 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: cezary.rojewski@intel.com,
+	pierre-louis.bossart@linux.intel.com,
+	liam.r.girdwood@linux.intel.com,
+	peter.ujfalusi@linux.intel.com,
+	yung-chuan.liao@linux.intel.com,
+	ranjani.sridharan@linux.intel.com,
+	kai.vehmanen@linux.intel.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	ckeepax@opensource.cirrus.com
+Cc: alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] ASoC: Intel: sof_sdw: Convert comma to semicolon
+Date: Tue,  9 Jul 2024 11:09:21 +0800
+Message-Id: <20240709030921.585740-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,76 +57,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowADnx0ydqoxmqBVcAg--.237S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF15Zr4rKw4DKF4UArb_yoW3KrbEy3
+	Z3Ga4kuryUXr4Ivr15J3yavF4qgFZ2vF1UW3Z0gr4qyr9rJrWfX3Z3Jrs3urn5XrW8uFy2
+	yFykZw4qv3y0qjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb38FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+	0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWxJVW8Jr1lOx8S6xCaFVCjc4AY6r
+	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
+	628vn2kIc2xKxwCY02Avz4vE14v_Gr4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
+	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
+	evJa73UjIFyTuYvjfUYdgADUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Regression test of AppArmor finished without any failures.
+Replace a comma between expression statements by a semicolon.
 
-PASSED: aa_exec access attach_disconnected at_secure introspect capabilities
-changeprofile onexec changehat changehat_fork changehat_misc chdir clone
-coredump deleted e2e environ exec exec_qual fchdir fd_inheritance fork i18n
-link link_subset mkdir mmap mount mult_mount named_pipe namespaces net_raw
-open openat pipe pivot_root posix_ipc ptrace pwrite query_label regex rename
-readdir rw socketpair swap sd_flags setattr symlink syscall sysv_ipc tcp
-unix_fd_server unix_socket_pathname unix_socket_abstract unix_socket_unnamed
-unix_socket_autobind unlink userns xattrs xattrs_profile longpath nfs
-exec_stack aa_policy_cache nnp stackonexec stackprofile
-FAILED:
-make: Leaving directory '/apparmor/tests/regression/apparmor'
-
-Signed-off-by: Leesoo Ahn <lsahn@ooseel.net>
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 ---
- security/apparmor/domain.c | 37 +++++++++++--------------------------
- 1 file changed, 11 insertions(+), 26 deletions(-)
+ sound/soc/intel/boards/sof_sdw.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index 571158ec6188..b73e01b512c2 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -822,33 +822,18 @@ static struct aa_label *handle_onexec(const struct cred *subj_cred,
- 	AA_BUG(!bprm);
- 	AA_BUG(!buffer);
+diff --git a/sound/soc/intel/boards/sof_sdw.c b/sound/soc/intel/boards/sof_sdw.c
+index e94849b84a6b..e5feaef669d1 100644
+--- a/sound/soc/intel/boards/sof_sdw.c
++++ b/sound/soc/intel/boards/sof_sdw.c
+@@ -2136,9 +2136,9 @@ static int mc_probe(struct platform_device *pdev)
  
--	if (!stack) {
--		error = fn_for_each_in_ns(label, profile,
--				profile_onexec(subj_cred, profile, onexec, stack,
--					       bprm, buffer, cond, unsafe));
--		if (error)
--			return ERR_PTR(error);
--		new = fn_label_build_in_ns(label, profile, GFP_KERNEL,
--				aa_get_newest_label(onexec),
--				profile_transition(subj_cred, profile, bprm,
--						   buffer,
--						   cond, unsafe));
--
--	} else {
--		/* TODO: determine how much we want to loosen this */
--		error = fn_for_each_in_ns(label, profile,
--				profile_onexec(subj_cred, profile, onexec, stack, bprm,
--					       buffer, cond, unsafe));
--		if (error)
--			return ERR_PTR(error);
--		new = fn_label_build_in_ns(label, profile, GFP_KERNEL,
--				aa_label_merge(&profile->label, onexec,
--					       GFP_KERNEL),
--				profile_transition(subj_cred, profile, bprm,
--						   buffer,
--						   cond, unsafe));
--	}
-+	/* TODO: determine how much we want to loosen this */
-+	error = fn_for_each_in_ns(label, profile,
-+			profile_onexec(subj_cred, profile, onexec, stack,
-+				       bprm, buffer, cond, unsafe));
-+	if (error)
-+		return ERR_PTR(error);
+ 	card = &ctx->card;
+ 	card->dev = &pdev->dev;
+-	card->name = "soundwire",
+-	card->owner = THIS_MODULE,
+-	card->late_probe = sof_sdw_card_late_probe,
++	card->name = "soundwire";
++	card->owner = THIS_MODULE;
++	card->late_probe = sof_sdw_card_late_probe;
  
-+	new = fn_label_build_in_ns(label, profile, GFP_KERNEL,
-+			stack ? aa_label_merge(&profile->label, onexec, GFP_KERNEL)
-+			      : aa_get_newest_label(onexec),
-+			profile_transition(subj_cred, profile, bprm,
-+					   buffer, cond, unsafe));
- 	if (new)
- 		return new;
+ 	snd_soc_card_set_drvdata(card, ctx);
  
 -- 
-2.34.1
+2.25.1
 
 
