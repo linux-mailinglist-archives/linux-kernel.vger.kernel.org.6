@@ -1,107 +1,103 @@
-Return-Path: <linux-kernel+bounces-246476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D87792C264
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:27:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA7392C269
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D58F228424C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:27:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFFFE1C22F35
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B934417B031;
-	Tue,  9 Jul 2024 17:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B145D17B029;
+	Tue,  9 Jul 2024 17:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m9wSRZF8"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="SE72vTa0"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07EE7F476;
-	Tue,  9 Jul 2024 17:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7BD7F7C7;
+	Tue,  9 Jul 2024 17:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720546019; cv=none; b=KJmW2ASHJIoY4AFZGClICjgmUzn7aYuy9dyJNtFp4hLtvUJWwFKAhxizz7W1Zmrjh5F6w1X0MBdcqC/ImZ1Q6IyPvaobxr2DwQEG7FTfSGW85wj+IPitMb/8tuzaHytp//mnKNT6YXVYKlNOQUJvMCvAGP45fDgs8Lbl+Jihgzk=
+	t=1720546040; cv=none; b=ll9tvZTSKrEUgykpen6sfpIvZhjKbYgNVDM5MjYs5Ek33Ak2NUk9G3akHgMwFRAq0lJ5q/Vn2O6ve78Ai4Z8yDPgJMr7YxYCh6gk6oqbjplD9sV2RpwXO/YZGHl1mTS5BDa9Kbwk6YzDv0btPaS073dzQTAKHv9wrD+IQ6f/QoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720546019; c=relaxed/simple;
-	bh=xEGa7zkjzsiIbiqcbCacwWsNu1ijTpLI6cSiJFBTmDM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QAbmC1l3HSqFxAZ5HubdtmLL6cWzrlhVnaMwGGOX+YIAciP2vqb+SzPY9Adq/X4en5T2yxMA8cbsD2O6a6tomNjgZ7hWbeH81ecmJUMoP9EbbfIocbuTnClWaM6gI6fy2pMQRs1nI+10pW/QORIPs9Gg4Y5lnCx5xOIJ6Z/fed0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m9wSRZF8; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70b3c0a00f2so1307316b3a.3;
-        Tue, 09 Jul 2024 10:26:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720546017; x=1721150817; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xEGa7zkjzsiIbiqcbCacwWsNu1ijTpLI6cSiJFBTmDM=;
-        b=m9wSRZF84Orp8AU3K8K9lOF1qMOMy6uLszId+2xYH0K2T/y/mBW7f+URi+oRYGfiv9
-         KQWYx9zwOj4uDPpGIWHhXycmuwzT3R2tA9plq/03FJ09wNdNXEFooM5zoB0qY3IywYBV
-         QKt20Y7T8s92+Tkgc5ZacSPqMokmaBEwv7Bo9g19KLjrRTTpIBW43riq1Zd/uJKDKmir
-         kGULSWBMfp/hwClJRmZlePCDYBkyRlq6fYFibFOPeHqSn/BxtYVwpCyRff8YNWB0ko04
-         45oXcnJb656xiKUxhCD9RPYXvSKcVEG3frS8rxeomHfWLE/fDGZoy/Q7dcuuG0WtdR5k
-         Ewog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720546017; x=1721150817;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xEGa7zkjzsiIbiqcbCacwWsNu1ijTpLI6cSiJFBTmDM=;
-        b=EOITeq4nTdNI5bN4YVL0oAijXkTRC2a7HzJmCQkNlCGBpKgFcNNXtfJrNjivJdygMX
-         AYxfYTTb5qXH6kFhShfjrGKeJIhntZCkv+ZlaGctAK7WMQ0HBTk4cG+Ojpa8XcyOJ3sI
-         Z5+LU/9tqMqEm6YMc/XFiFuZ8YcnDb8Tv6qk9CFIwNZe8DNu2bBJZjRROyvKVLMjkyX6
-         EjnjM/DnPt43iI/hE/fpnTfDpiZWg7kBMG4VNN3SAM0Yzk2UOYecWZpXtVjIzL2fob+d
-         3QWC3P9WQKP4pMjoOo2qx9l0Y186jz4/3u8Vfbxw27HdtZRnoT/flMYLO1KTN5TehJ1A
-         YkBw==
-X-Forwarded-Encrypted: i=1; AJvYcCW57OkHNYYI70buTh8uEeXnoolci+msHcbjQwFSlXv3usGbsViguSgFPSgpZRSkoJncX5IZLWujg2gSGDvNHQqS3iOpWvVbB0sxBIQResN4hO/8ptDLu6Nwix8J8FRg614MpLgVNDSlNzFjybccZdkC5fYNGdPIiZlQSWWjsR3fIZa8zLTaX2cMF4k=
-X-Gm-Message-State: AOJu0Yxl39kXNOJPTHdKaGffaWmWWYGCBiYVqjnE62BTQQFMSy/ht10K
-	GJ34meUB368iQReShnbYcEDtbwovLseRbheowr2IpzmNo4heumGUIxjI08ksUjxCawRYaafapa8
-	PJkeHbN0FmIIwMu2zIiH79T8hlG8C416q/NY=
-X-Google-Smtp-Source: AGHT+IFD/VyEdp6BX4ESg9u5UEPG6dtbbRDyeOinfTVoM+xlvEchxrjSSX7hROo3qyMmwbS5fz9U9VEDbFyQRuqBE/k=
-X-Received: by 2002:a05:6a21:194:b0:1c2:9d88:f2a7 with SMTP id
- adf61e73a8af0-1c29d88f3f1mr2016849637.52.1720546016963; Tue, 09 Jul 2024
- 10:26:56 -0700 (PDT)
+	s=arc-20240116; t=1720546040; c=relaxed/simple;
+	bh=jJqzLWpuJU6fN5IlXtyGHL0m8ooFcYD//JixsujqzLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hAEajE+3monEhbuPpfykhG6YDpzg5AUskYaxgH7uhQzMeVgqjYXAmaqEoPlALJWoLsZlE/yZh7u9uEGFhbmzGuISqJmqM0GzK/2Dxb+v0vlAQUG+tYLGGsHLsx6f97HH9TcYU2yzqygvf3qucjEi9eSXMBD0EK4PgLgz1wJ4kgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=SE72vTa0; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
+	t=1720546024; bh=jJqzLWpuJU6fN5IlXtyGHL0m8ooFcYD//JixsujqzLQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SE72vTa0mM+H5gpV/YUGYJ3MgaVPMfSYRfmJ6KDLgtACScl69njov3cWP2odrzTVb
+	 pQbHaDumHObLlwu/+dbEVv3JiFmGj3NzD5RPMjyeKhKmzAcWq8YASC5H/qyvCBR81X
+	 FEf7gTi3FayfG0YCq2b7hiiX4S37Zgr4uFhOqvMI=
+Date: Tue, 9 Jul 2024 19:27:03 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Heiner Kallweit <hkallweit1@gmail.com>
+Subject: Re: [PATCH v2 1/4] i2c: smbus: only limit max banks to eight
+Message-ID: <ee0b2612-afb4-4ccb-9afd-b0cfd7e26a6f@t-8ch.de>
+References: <20240627-piix4-spd-v2-0-617ce47b8ff4@weissschuh.net>
+ <20240627-piix4-spd-v2-1-617ce47b8ff4@weissschuh.net>
+ <2mtehll54bpuozsjswynp2xron3dfxknsixnouovby2nxlnrun@3sxdqqbvfr22>
+ <7a70c707-6a57-4f0b-a068-7efefd679088@t-8ch.de>
+ <ibxkewtaxywpabogm776h7ty3grjquravsuwhtjbe2k4j7vlw6@enzxsfkk326z>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240709160615.998336-1-ojeda@kernel.org> <20240709160615.998336-12-ojeda@kernel.org>
-In-Reply-To: <20240709160615.998336-12-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 9 Jul 2024 19:26:45 +0200
-Message-ID: <CANiq72=kCJB-g03s6fHtSYBWTG_MT3yMW0YvehnAhHP_edHPcw@mail.gmail.com>
-Subject: Re: [PATCH v2 11/13] kbuild: rust: add `rustc-version` support
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
-	Finn Behrens <me@kloenk.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ibxkewtaxywpabogm776h7ty3grjquravsuwhtjbe2k4j7vlw6@enzxsfkk326z>
 
-On Tue, Jul 9, 2024 at 6:07=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
-e:
->
-> +$(error-if,$(success,test -z "$(rustc-info)"),Sorry$(comma) this Rust co=
-mpiler is not supported.)
+Hi Andi,
 
-Bah, this is broken, I just noticed in my CI that I didn't handle the
-"Rust not installed" case.
+On 2024-07-05 13:56:24+0000, Andi Shyti wrote:
+> On Fri, Jul 05, 2024 at 07:55:21AM GMT, Thomas Weißschuh  wrote:
+> > Jul 4, 2024 23:57:36 Andi Shyti <andi.shyti@kernel.org>:
+> > > On Thu, Jun 27, 2024 at 07:48:11PM GMT, Thomas Weißschuh wrote:
+> > >> If there are less than eight slots in total,
+> > >> only probe those.
+> > >> Now the code matches the comment "..., then limit slots to 8".
+> > >>
+> > >> Fixes: 8821c8376993 ("i2c: smbus: Prepare i2c_register_spd for usage on muxed segments")
+> > >> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> > >
+> > > I don't see the need for the Fixes here... was there a bug that
+> > > has been fixed?
+> > 
+> > More addresses are probed than are possible.
+> > Which is a change from the old behavior and also
+> > contradicts the comment.
+> > IMO it's a bug. Probably not a big one and I'm not sure if user-observable.
+> > Surely nothing for stable.
+> 
+> The Fixes tag means that you want the patch to be backported to
+> stable kernels. Someone will take the effort of taking all the
+> new "Fixes:" and port them to older kernels.
 
-Anyway, this patch (and the next one) are not important for the
-series, I will just drop them and send them independently next cycle
-to Kbuild instead. I should have done that anyway, even if they were
-correct.
+It's my understanding that a Fixes tag itself is not enough for the
+stable process. For that it also needs a "Cc: stable@vger.kernel.org" in
+the patch or explicit notification of the stable team.
+(Or being picked up by Autosel)
 
-Cheers,
-Miguel
+Anyways, I'll squash the commits and drop the Fixes tat, as there was no
+bug as pointed out by Heiner.
+
+> We want this when patches fix crashes, deadlocks, memory leaks,
+> security holes, misbehaviours, earthquakes and floodings.
+> 
+> Andi
+> 
+> > But I'm not hung up on it and will drop that tag in the next revision.
 
