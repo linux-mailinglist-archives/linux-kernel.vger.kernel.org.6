@@ -1,98 +1,123 @@
-Return-Path: <linux-kernel+bounces-245793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3D792B959
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:24:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A6E392B95B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:25:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 256DC1F25DA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:24:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C6AF1C21E88
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430E0158A33;
-	Tue,  9 Jul 2024 12:23:56 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385D8158D6A;
+	Tue,  9 Jul 2024 12:25:00 +0000 (UTC)
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645EE13C687
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 12:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C40813C687;
+	Tue,  9 Jul 2024 12:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720527835; cv=none; b=E6qr/P68BcG3OMOc4Ru7Y0yR018trXWZ7KDHYLNrHQApxY3l0YX2TsIvSmbCLNvziNWAl+aOFO6ctALEMKJk8oCvHCBMFftbfzMRsJ+LhRSzrQqMbvyIgS20nmEPjxrZOW2t+Rn/xSVjMFk8t2j6Kz5XNay99m1h/6HXGZ+/Kuc=
+	t=1720527899; cv=none; b=gHYtNjC/u22JV/wAa5LBra7JfDdwXv5oxtNSAjQJHeB1VsELUPAuJME/sGJ/QU08eYscn/OiJrbIxGjCaPaCOxwBSMD3audSR+Llr0k3yTBGnj5xcaPLxkhf9gX8v9ZlqpnI2hyec/KwptfQ0QRo7Eo224sbJv98mhhaXEIXlbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720527835; c=relaxed/simple;
-	bh=2uIdGNthO8fCtFFjFrKsg/sGLVUFtY4fWkTdM/n0HaY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dN3dk/EDF9wak5z8vGTH0hIsXIcglv5eTjsQzN6nRreOyzcrqySx6TjWKyxwyDuxCulLI/pA4+YOPAalRyArOqsVqxFMbxFF8vg2mzUDyX2OMpqqLa4RbEhYvgtinyP/qjsgwJ7JKd9ulgVg0ThHPRhocXtQsU6XrKTGk8hePq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1sR9se-0002hP-Jl; Tue, 09 Jul 2024 14:23:36 +0200
-Message-ID: <f9aab3f2-47d5-4c1b-ad0b-53c711701577@pengutronix.de>
-Date: Tue, 9 Jul 2024 14:23:34 +0200
+	s=arc-20240116; t=1720527899; c=relaxed/simple;
+	bh=0BprKiHiOWC22yvJ3wRNAeIBcxMcrBZZnNjbrviQupM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fzVHxKw3EWjUAGuQ0JX/u64H5Ohr4sIiKJuSXe04RlthEaQt1O259f8QgL9joSKDF7PeDa4PU/qV+ZTQ7LJcY2+GE2WMOQ+9QQ/2dzrItUHcu7EkV8fagenEs4JbLnOH+HiJQhn1swnJkCTvl+sla5Tfj5cdZeDXbAGNET0LxEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-79f0c08aa45so167812185a.0;
+        Tue, 09 Jul 2024 05:24:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720527897; x=1721132697;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0BprKiHiOWC22yvJ3wRNAeIBcxMcrBZZnNjbrviQupM=;
+        b=sva3M4qMzzBo8WNVh7qWn/eeTudmk07b6JSfpAlhvDVvcTq+IdPuxb0i5IC+Tj/+Mr
+         0/3fDxjlovAukRaGENCLJ2e3pGE2XG2ZtqyRuPGBmYZ49KLvCebaPtjkmTDECeITKgvg
+         sjJTZzWH6mWYjfuCkZf7NWF0SM9SU3T6fubED85hy/UvHQ2udRYdB58ecuQqSjZkiX4b
+         nzd77VYrkbwXjlc77V/eZIETtoq00lW9yr/uWK98iYMlibZATpIpQfd25s2RFkXe7LuV
+         XK0D6sxwupPm3pQwAthanz2apKWAqHUNLKL7JDl1mUYM/C8GhimZmCn8QflH611Gq1dv
+         27Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJTtE/7jxC+yHqMvXbSm9rV5Kh9FDVdUtbsg7QeGOmoB3md4USkQq5ja2EfRdbnFE7wKLbvsRuQNXvtpWtsLRMudU9r+syJvyRrkjO87F+MvzhGmR3JJTAEuJoh0sqKbs8
+X-Gm-Message-State: AOJu0YyitNecSoVqi/orZ+E9+wigByJnqvX88njTwMGkZeQuBXfZB+6A
+	LRfaJeomiEBobcfpNKN5oicvM6gBJqlu7I63y36AeVdqYRiiFcV/
+X-Google-Smtp-Source: AGHT+IF4iZo/ng39n2Gm1San+WSh3mtbiXDnjxac3lRN6m5C0ZhOPX6XbxrfQiqgW4VHL6M8wo8GMQ==
+X-Received: by 2002:a05:620a:2093:b0:79e:f8e6:aff with SMTP id af79cd13be357-79f19a64ed7mr243543785a.22.1720527897045;
+        Tue, 09 Jul 2024 05:24:57 -0700 (PDT)
+Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f190a15f6sm91386685a.104.2024.07.09.05.24.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 05:24:56 -0700 (PDT)
+Date: Tue, 9 Jul 2024 07:24:54 -0500
+From: David Vernet <void@manifault.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: ast@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH 1/3] sched_ext: Take out ->priq and ->flags from
+ scx_dsq_node
+Message-ID: <20240709122454.GA16568@maniforge>
+References: <20240709004041.1111039-1-tj@kernel.org>
+ <20240709004041.1111039-2-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: stm32: Add missing gpio options for
- sdmmc2_d47_pins_d
-To: Sean Nyekjaer <sean@geanix.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Marcin Sloniewski <marcin.sloniewski@gmail.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240709121619.1588520-1-sean@geanix.com>
-Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <20240709121619.1588520-1-sean@geanix.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="to9lHaoK6ET5xWOD"
+Content-Disposition: inline
+In-Reply-To: <20240709004041.1111039-2-tj@kernel.org>
+User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
 
-On 09.07.24 14:16, Sean Nyekjaer wrote:
-> This enables DDR50 mode for the eMMC on Octavo OSD32MP1-RED board.
-> 
-> Fixes: be78ab4f632c ("ARM: dts: stm32: add initial support for stm32mp157-odyssey board")
-> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
 
-Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+--to9lHaoK6ET5xWOD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ---
->  arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi b/arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi
-> index ae83e7b10232..70e132dc6147 100644
-> --- a/arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi
-> +++ b/arch/arm/boot/dts/st/stm32mp15-pinctrl.dtsi
-> @@ -2229,6 +2229,9 @@ pins {
->  				 <STM32_PINMUX('A', 9, AF10)>, /* SDMMC2_D5 */
->  				 <STM32_PINMUX('E', 5, AF9)>, /* SDMMC2_D6 */
->  				 <STM32_PINMUX('C', 7, AF10)>; /* SDMMC2_D7 */
-> +			slew-rate = <1>;
-> +			drive-push-pull;
-> +			bias-pull-up;
->  		};
->  	};
->  
+On Mon, Jul 08, 2024 at 02:40:22PM -1000, Tejun Heo wrote:
+> struct scx_dsq_node contains two data structure nodes to link the contain=
+ing
+> task to a DSQ and a flags field that is protected by the lock of the
+> associated DSQ. One reason why they are grouped into a struct is to use t=
+he
+> type independently as a cursor node when iterating tasks on a DSQ. Howeve=
+r,
+> when iterating, the cursor only needs to be linked on the FIFO list and t=
+he
+> rb_node part ends up inflating the size of the iterator data structure
+> unnecessarily making it potentially too expensive to place it on stack.
+>=20
+> Take ->priq and ->flags out of scx_dsq_node and put them in sched_ext_ent=
+ity
+> as ->dsq_priq and ->dsq_flags, respectively. scx_dsq_node is renamed to
+> scx_dsq_list_node and the field names are renamed accordingly. This will
+> help implementing DSQ task iterator that can be allocated on stack.
+>=20
+> No functional change intended.
+>=20
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Suggested-by: Alexei Starovoitov <ast@kernel.org>
+> Acked-by: Alexei Starovoitov <ast@kernel.org>
+> Cc: David Vernet <void@manifault.com>
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Reviewed-by: David Vernet <void@manifault.com>
 
+--to9lHaoK6ET5xWOD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZo0sFgAKCRBZ5LhpZcTz
+ZInPAQCHXEDdTB19SaGIR8E01mQazAHHBxC3efncnS5zXW4UjQEAjOSIVKTSDRFo
+E/4Twumza/K39/Bja+9ifI5oSYzvigw=
+=rIF1
+-----END PGP SIGNATURE-----
+
+--to9lHaoK6ET5xWOD--
 
