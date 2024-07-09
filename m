@@ -1,64 +1,54 @@
-Return-Path: <linux-kernel+bounces-245921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD1692BB6B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:35:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2075B92BB6D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B76287901
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:35:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D05C42883A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF15517CA02;
-	Tue,  9 Jul 2024 13:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B2015ECF2;
+	Tue,  9 Jul 2024 13:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2f+Eujxf"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PtsalJxW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6931817C7DB;
-	Tue,  9 Jul 2024 13:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370E715445E;
+	Tue,  9 Jul 2024 13:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720531900; cv=none; b=NfaCEztK65MyaJOzy2EIYemObm6DyLSi+TN8zv4rjp2hkpiei76jbr5ddR3ArYMks+K4YNFEsG+d72BWRKs+eQ5CH3n8UL3s8SA1vhruGVxY+urMN3jcbhbE6otZwKuFodcJ3u4L7d2q6sPtcCiCls3OkKc6RWCNkjG98VySqNU=
+	t=1720531973; cv=none; b=Ns6iQnZ0bRFJ2umMWCobVro7y1PQYYgA30Ms7aGVnHVhuXjddf5pjKDM7kXwZXWTS5gRwL+FtSOptnC3sbpA2TYRRY4zodTiUlu7Rg+hq3PIlGc4/vxHSix56suuQzC9BajMferToBqGFrTVUX0d3+lPi2lqkQk3DbZeyIbASgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720531900; c=relaxed/simple;
-	bh=4WP+WQ9nQvGm3F9qQzb3JcVtkEtMk1y8Lok9QkQkdaA=;
+	s=arc-20240116; t=1720531973; c=relaxed/simple;
+	bh=mOE+ryN8qxxEVONxkiQngqNrCkNEB9WBTPuTNVncMOs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SqufbVOOumHFYxEHgZZ5oT7z8GV2mYlB3rIdiWcr+RkzF/ggvXJC7luBmUvLafZjOxxRwM5pJ7TbTXi+K7oYzOUZOEPGo3dQObRFMhNufe0H9ApOtnmbkOo7zafvEwv9kA3qFrlToYJABOAlDohjb/DZhtH8Jw4NV9Cz5fU1mtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=2f+Eujxf; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Zre5YSHteeLdEYtuTx/X+RGnWx775ASLQOdTxRDdE1M=; b=2f+Eujxf0jG9ADlgV4JEjThm70
-	ijEtLEUs5PC2z37RnVaF0M08Hvl0ZPDHZ7WYUK7azsyd9E/0uohZwhiEnMtmvjay5hIurMagJv5ZG
-	BcvftJrTYNWO2BWi3y5juufyiUQ/mBqiSNv4FVLHqS/qv0gY5OurErVfDUE9+ixx5QjY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sRAwD-002945-K6; Tue, 09 Jul 2024 15:31:21 +0200
-Date: Tue, 9 Jul 2024 15:31:21 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Furong Xu <0x1207@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	xfr@outlook.com, rock.xu@nio.com
-Subject: Re: [PATCH net-next v1 7/7] net: stmmac: xgmac: enable Frame
- Preemption Interrupt by default
-Message-ID: <28ddf3e2-be4e-437a-b872-5ba07659e40e@lunn.ch>
-References: <cover.1720512888.git.0x1207@gmail.com>
- <fc69b94aad4bbe568dcf9ef7aa73f9bac685142c.1720512888.git.0x1207@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=shs+FC9SgHM+JBLrw0ixdHiGr9LZVOCBxdM9nG/ZQjTTQ0ieehw115AzxY/YLWBg8UnGRmFzTO8/yMfKjWCeRlkhbzjs3rbg/QyPT6VpVv+CF/5XgjDe/vYptH0wzToSXy4dmnOBOxH/A25AwAxja5l46LMcOCK9TfsNsfbsXH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PtsalJxW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7155FC32786;
+	Tue,  9 Jul 2024 13:32:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720531972;
+	bh=mOE+ryN8qxxEVONxkiQngqNrCkNEB9WBTPuTNVncMOs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PtsalJxWGaXFB9T7jLMLh7Ih886MrFqgDPdz3jcM2NG0VRU6tQC3lLBTvDWW5x/NY
+	 BxtT4eqc40FFMIAsSBC2zbYanf4pJuIwqNj/lDGe9vHNPUIxRkXqqr+45S+8DlVZ8a
+	 DNjoLE4uvKgLBaDhpz6dtKbrYdChnBdNf8T6Nlac=
+Date: Tue, 9 Jul 2024 15:32:50 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: fbarrat@linux.ibm.com, ajd@linux.ibm.com, arnd@arndb.de,
+	manoj@linux.vnet.ibm.com, mpe@ellerman.id.au,
+	clombard@linux.vnet.ibm.com, imunsie@au1.ibm.com,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] cxl: Fix possible null pointer dereference in
+ read_handle()
+Message-ID: <2024070940-customize-sturdily-fc81@gregkh>
+References: <20240709131754.855144-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,23 +57,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fc69b94aad4bbe568dcf9ef7aa73f9bac685142c.1720512888.git.0x1207@gmail.com>
+In-Reply-To: <20240709131754.855144-1-make24@iscas.ac.cn>
 
-On Tue, Jul 09, 2024 at 04:21:25PM +0800, Furong Xu wrote:
-> Frame Preemption Interrupt is required to finish FPE handshake.
+On Tue, Jul 09, 2024 at 09:17:54PM +0800, Ma Ke wrote:
+> In read_handle() of_get_address() may return NULL which is later
+> dereferenced. Fix this bug by adding NULL check.
 > 
-> XGMAC_FPEIE is read-only reserved if FPE is not supported by HW.
-> There is no harm that we always set XGMAC_FPEIE bit.
+> Cc: stable@vger.kernel.org
+> Fixes: 14baf4d9c739 ("cxl: Add guest-specific code")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>  drivers/misc/cxl/of.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/misc/cxl/of.c b/drivers/misc/cxl/of.c
+> index bcc005dff1c0..d8dbb3723951 100644
+> --- a/drivers/misc/cxl/of.c
+> +++ b/drivers/misc/cxl/of.c
+> @@ -58,7 +58,7 @@ static int read_handle(struct device_node *np, u64 *handle)
+>  
+>  	/* Get address and size of the node */
+>  	prop = of_get_address(np, 0, &size, NULL);
+> -	if (size)
+> +	if (!prop || size)
+>  		return -EINVAL;
 
-This is better, it explains what is going on, why the change is being
-made. But when i see this, i think about the interrupt handler. You
-don't just enable a new interrupt, you also need to handle the
-interrupt. Where is that handler code?
+How was this issue found?
 
-The commit message is the place you try to answer the questions
-reviewers are going to ask. So if the interrupt handler already looks
-for this interrupt cause and handles it, add a statement to the commit
-message explaining it.
+thanks,
 
-	Andrew
+greg k-h
 
