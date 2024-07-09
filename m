@@ -1,308 +1,339 @@
-Return-Path: <linux-kernel+bounces-245090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21DDE92AE1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:16:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CB8C92AE1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 435DB1C20BD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:16:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 439A528368A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494433D388;
-	Tue,  9 Jul 2024 02:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BF73A1C9;
+	Tue,  9 Jul 2024 02:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="nxwnVCuy"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="A6pRYfH3"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2046.outbound.protection.outlook.com [40.107.215.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF852C1AC
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 02:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720491359; cv=none; b=lP//EvPrC8NegyWWDd6p+5b5TaFT7WjCVr3svDqYmh3k/rNTyENROZ4wF105s748sMz+81Qx7P7t4ZAKIS1aA3L4FchXUJdNTxbTLckyiLMIbYDbSl6Bcg4xa7N3CtXcj5aJ6KJfu00xieVWLxMydUbNU9T6Hz+MEEfZge+jWiI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720491359; c=relaxed/simple;
-	bh=nS/dkZX0QY1yvaexqPtL6mM5XRAJy6Bsn6llaERihDA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hvwhHVdzHQzI7kJGGHSgQy3oTQfdJXe3FyuLAJtXjjZB5E6IRMFsuvgIV2c/YI0IRsXu5Ln8pBpBM7tlC8td0XZRlm9LnI0PVY3d1AtXJ6SBD8MGvCx0wB/Jv+GGeEex+zLh/9/fznCJMcJKFN2PLZ/47gnqqO0Op20IqNHs/Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=nxwnVCuy; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70af22a9c19so3354388b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 19:15:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1720491356; x=1721096156; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Bnz9B6ig7Xz6h+rr6QHRC8DIXT9AMGxIguL2yfBRX9U=;
-        b=nxwnVCuy9Z/0dDhyNKNq35yBo4ndGqGVNR9ZnmlCjdK1b8fbbKd0ylElkMMD4i1CQk
-         u/2XZj+yIW2sSC10RU7TMrkUKdP4MeTToKwKhU/9TAGEM/2lDbWyySlSrMuLRx3qbWOQ
-         poreyBjnX6Wh2KW0BUqrfyIyOMN5sSdY4Z16jws7SK4KTIiHE07zbFVOII8nNB5y28Wv
-         FNZwXF/cRdrLB2sXCSpmFJTY2APqSH7Zh7LV5uJYuBESVLbKxWnMz8KX4k4EhHHb6AHK
-         EANoONP59GJJ6OT9BBlKdhKDkQpWAgvHHRxh8LfaAV4/oII96zvyepBNk5Jz2YZv3gTS
-         PQGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720491356; x=1721096156;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bnz9B6ig7Xz6h+rr6QHRC8DIXT9AMGxIguL2yfBRX9U=;
-        b=UOH5GdQCFN2IVTGTaiNlJtN9SUNpZ0MxJ+OF+MxiaNTgBNPOYoR/mQQtZ+I9q0Kkf+
-         HbzLud7bs402xTRrPtTypIsOXSvRhMJbKQirJhvH7rftIv48Vx8Ma1NPuNzPEDYHuMb9
-         kAGB0vUxE+q/ju2lIWqy+IJznrrtvQ0LKprIpl4zHbFuujMhqr+z53FAFoiQiJOKwGpK
-         +jGd4rTN5W0aLDvpPEgNuTzlfi7OfLi5tLhXXvUtBSOAuhhvRU0A43qfeUQlJ7kA/8MN
-         iui4MZcnhGxyk9d9es85oacnSXjXDFbULNXGoY4YxeN1LqIoJel5OGReGikgoKA8YFFS
-         aOVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRrUOiEdFEXVhaTvSFqgnsUrQIlQ3ZJ9YsBEZvJKKXKRuYijV6IXnoqAcXayNZdqC3v92FbLXkw+AeUJNiQTQnkFE+nRW2vPZWIxWF
-X-Gm-Message-State: AOJu0Yx0d0YbMjypkjMnNMeXxnjso6s4C37T6EkXaRg0IsIFHxWJMc/O
-	83mgXdB6Xyf20HhcdLq9qZ5UmfFWxmVBth3JMFGoSpn7CODwzUeF+v6D1gGueIk=
-X-Google-Smtp-Source: AGHT+IG6qJBw6KO7Qk5DzPxTWPK9eD4FdYm01SAL3rqN3QI07tYW+1qf5NcNtRGxEhzOKf+MdVmKxg==
-X-Received: by 2002:a05:6a00:3d08:b0:706:8e4:56a1 with SMTP id d2e1a72fcca58-70b4356c646mr1599075b3a.18.1720491356107;
-        Mon, 08 Jul 2024 19:15:56 -0700 (PDT)
-Received: from ghost ([2601:647:5700:6860:482b:e40f:a784:6039])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b43968688sm567555b3a.114.2024.07.08.19.15.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 19:15:55 -0700 (PDT)
-Date: Mon, 8 Jul 2024 19:15:51 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Anup Patel <anup@brainfault.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Samuel Holland <samuel@sholland.org>, devicetree@vger.kernel.org,
-	Saravana Kannan <saravanak@google.com>,
-	Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
-	Atish Patra <atishp@atishpatra.org>,
-	linux-riscv@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jones <ajones@ventanamicro.com>
-Subject: Re: [PATCH v14 01/18] irqchip/sifive-plic: Convert PLIC driver into
- a platform driver
-Message-ID: <ZoydV7vad5JWIcZb@ghost>
-References: <20240222094006.1030709-1-apatel@ventanamicro.com>
- <20240222094006.1030709-2-apatel@ventanamicro.com>
- <CAJM55Z9hGKo4784N3s3DhWw=nMRKZKcmvZ58x7uVBghExhoc9A@mail.gmail.com>
- <CAK9=C2WP2+gKScUFuoE9782gjSfnDtcLAw01eCwram3LMAStBg@mail.gmail.com>
- <CAJM55Z8ti-ePT0t714h1Za9X3Ns3=Fw0pCu3NZ=7eT76JU_p5g@mail.gmail.com>
- <CAAhSdy1pesbdTfWnFURMJRcy2ujjX+cXtt-cfLDj2CQf2Ua_gw@mail.gmail.com>
- <CAJM55Z_=94+aMv=ywhih44eF0pR2WXiyx3FcrwRaX6tZto4gpQ@mail.gmail.com>
- <CAK9=C2XWjtWtV1WbQrX4Cg8KyzjVevMjG18YTgQJbZxi61BFjg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDEE2837B
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 02:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720491398; cv=fail; b=Td78EQqY0dUFRcfBihq9GO71PtC8lm9cOpK/2XGRAmLJkX94GvemiTHdm1FGCnsQiYY9c1GG6BUGt5nhEUW1sAButtgMT9fG1GaeLJ1W7PWagjV5ki/X3R3VcGflOy1bJKXuU5NfF/QFAwuD9pBExTz3kOdkm9MzZLRzglTw8es=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720491398; c=relaxed/simple;
+	bh=yKZPcz1BxsDWXypo8rh7CQUqJPm/k/EodAPa44M6xt8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=W/3VxlTr/6Bvbdpb+3UxFF7gqUkEG0cyWnHimYvRqRCFx2QzmEMILiJKtdpkqlwZ5fnB8DLqCE87/vYdSp20Yisd+LJuW/shvMfFZ/WfS9hvmPRlX3GZKOqj3VIw6jjVyBJ7/2dSqc46RFYMm9MIG7yMghCvkEAATp5YiWWizzc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=A6pRYfH3; arc=fail smtp.client-ip=40.107.215.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MCw7EQn1zoF8yzewKlNt+jI55Va3XZUzNX2hoiz+XFO3FedkfQVwZhq26AL5mCqjQjoVm8SrghLdu4V1BuUfcTYe4HX4uImvXnPC91RUJ1t29FqG6A5mOPLcMtUcVqk5rpwu/rGHGuF6bd4ZMb6IGvykogW8+ma5rWf0SjDALcgg5ZJKQ8el6ISm7CbLeQV8L5KO4+pRyT7mVitsbspheeZwb1PlUAngya7cyv6/06ebNTIYo6Y9YsmFLM6dnR4ouT/Klr6sFWyr2/AGmvEKja9Yhhaudi22XXuZKjVQ+WwHZQ2rS9twhs5PaoduSxnTwT1cqJODLVn5z0Dl+6Epdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Uc4wXMSPo2NdCaepPWZOvKiN3OoCu6zXU2+XzzzF4GY=;
+ b=PK5lQSV7BtA4mzu+BFq/TIAw7SLbiOOcIAx+EebbptCgG/QUnOr17AgFOgHjDEKOopfEAkWGjM0GsVMmzJ+329QLsc4iFf7Fhv79hhUI70MbhlqLGFSCYGzUenglojHy3q6WYr+GHdL/59C86YJpR2Lv/pgBhZgVkZWC6jDKTIzzE3zwFX50fyLjwePrNWywOK+Gmk3j8ly7qtoHNowVIsf0nNbhBevZMXFLLNMPeSGdtzCCIFT0b4TQvRLkPtx61XaA+q8LVqWuAUKJbjGukUQegK3+R+JmgV0CxAoIkytOz5UO8RpS/Z5r6x10logiPz5WhPRvBdoF07dTDAs/Jg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Uc4wXMSPo2NdCaepPWZOvKiN3OoCu6zXU2+XzzzF4GY=;
+ b=A6pRYfH3gMz5Ym6i6D9Y47SNtLVcHc6Tnv0nmXoo5ivHMglkWw88nnx/B5nNiY1M9r0fEdqBR0u18XL+HSsqe1fHa60W4AlCWHS19POldp6nNiuiY0epgCpaKN7AqWUMMJ6Ok6c//Buubu65b3NwCieHfY0xoLRUlxidCuyF90Z9V5PSXfXaGEBb/XkghKLI5VU9+E5qcFlIqF/UaK5T6JOBkJ658m3LK3nk5NEh1qgukiMzN6uUuMNTNWiVk75GlLpXlGYlQzIWdu83kjCmnAy4x4jRKajnL1Qbk2nq9syBpNHxO5xY3gL3ghY4mCtN/NLoiHQfpfJnD1cPF0oKmg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by SEZPR06MB6609.apcprd06.prod.outlook.com (2603:1096:101:17e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Tue, 9 Jul
+ 2024 02:16:30 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%6]) with mapi id 15.20.7741.033; Tue, 9 Jul 2024
+ 02:16:30 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Cc: bo.wu@vivo.com,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH v3] f2fs:Add write priority option based on zone UFS
+Date: Tue,  9 Jul 2024 10:16:14 +0800
+Message-Id: <20240709021614.17044-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240702062952.28859-1-liaoyuanhong@vivo.com>
+References: <20240702062952.28859-1-liaoyuanhong@vivo.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2P153CA0036.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::23)
+ To SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK9=C2XWjtWtV1WbQrX4Cg8KyzjVevMjG18YTgQJbZxi61BFjg@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|SEZPR06MB6609:EE_
+X-MS-Office365-Filtering-Correlation-Id: 89c337b2-d783-4806-f605-08dc9fbd24ed
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?+7SMAckjYmQJuIFshxV+v8it1P+HHXvtDWTXlkO547W5sYnPkYTspnh9zT9L?=
+ =?us-ascii?Q?X/ShNUpebHAePqK5iIBEJejA08otcxEVdzmNFERiZc0Of0SwVQNg8CbjM+F0?=
+ =?us-ascii?Q?Pv+c0VxzgN98rjwPnJGqqFAnmxYTjZ7qqU9O8M3Hx4UoVwMeN4cM+YTwZO0R?=
+ =?us-ascii?Q?HUn6OC5Qamq6boUaOfZEB/O3aCRhhWY28bt8pvgVDBOCXoUkqtgnH940x3Hb?=
+ =?us-ascii?Q?awMu8auGj3Kd8Ou4nh0EtHKyJbdUkEaHC+W/hDT/A+pjuiEGZCIpNL+j0S+K?=
+ =?us-ascii?Q?6GfVQW9R758J/hbBvJSi8P1GmkB4bXULRNGRunwLeOK0EkZZ7dzy3i+8raV2?=
+ =?us-ascii?Q?wo/pLFNfP/V4GTDSCpGOwnSgWww9wGc13A63SR3TDglc1MvSZM0qanCVt/Y7?=
+ =?us-ascii?Q?2jRIN4VaD0NDTTE4RR2vqNDkHiWw0BHP8zZbWVeGCb5Xxwv9JRF/DBefI5G/?=
+ =?us-ascii?Q?1kxdBtq2+AZmFJv8P+NJsVZHUVu472ec5OMz7lMZggHRVDFvTwVasM0RJbHk?=
+ =?us-ascii?Q?RRTkCDcDH1bfq2ptVOUZbpy0/w3E5EhIIKgggP0EjIiZwCtlet7nJB67luGR?=
+ =?us-ascii?Q?7PaA8MXhai46MvbjmslAJagreknjo+ATK3IZZTLZbY8tAZ/kiFqUE6Y6qn+4?=
+ =?us-ascii?Q?MoEotn5MxIDiWttjKU9udHsI00GPsk8+CJ6iXXtfsX2OqrFkyA5nHXUrBCv+?=
+ =?us-ascii?Q?Z/s5uCG+h8B5upzbmM2BMkzgcFoNwAtEvTUuAXRchAs1/PCzgjRrVCapDmEx?=
+ =?us-ascii?Q?KV3F14ETSaaeWYp5w/TcyOPCS5aFpcpkjQJYB6RPNxk0OFa0IojXBxlS/6w3?=
+ =?us-ascii?Q?JjLtdkzkWfoTlT940rpObyCoA8qnXlT7Tgt4inndjHr8tEh83Ry53XOs9yj1?=
+ =?us-ascii?Q?VP1OnvHmXiExVTDWWm7isV/VccbUB7m3lVxYlwTvsIVdJbfarP6K9Gv+Z6N1?=
+ =?us-ascii?Q?TWd9WHDjr/Jz+y1K87OoJxdkzwmeI7PPKmlRI7TvL14yMEaTyezoKFBQMBAs?=
+ =?us-ascii?Q?37fO1vJC/cl4hAOTmpKCEB5/pC6NAfJLFXSS1V7e6u98Z8PB2dgBQfxi3L0o?=
+ =?us-ascii?Q?tEzhJmgZB8aVgoPyy0yQHq47s82XutZPb6cz+zrvy/PTHffkZczSUReyos9D?=
+ =?us-ascii?Q?wU5MGuGwls07ExEFFhutzNAFcNa2etiAPpo9e3pf3IbUkAl7OWQTlj01Z9+H?=
+ =?us-ascii?Q?p1WHOLMdaPcAIWqCuOzj3RCnqF1IaEhFtXVMX9XRbW7Z/QkXnO4pujZCA7dZ?=
+ =?us-ascii?Q?D9IEocsLNz5GoPbraHdOg4iAG8B+83ydbvcsOgZfzlN8UNCSCuaDwvw9tj1s?=
+ =?us-ascii?Q?g0Zz9bHYn98OIYcVoVQ2udyo9Uc3H2sSDF/3Pi5X7CXDsd6E/SAQLDi7MdPf?=
+ =?us-ascii?Q?MRGwHROrUu6iDNIYyzl6IHye0CapZRK5XcD6NNj9tmRoZ/WgpA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5C4l+nHoKtOxl2xfyCAVvc17jUDhrVxRD29AmFCRsAfy9uOOhrOykazx8UqS?=
+ =?us-ascii?Q?Ek7n7dA+4rqjUas8Hr6hiMBFcOhzQmwxX2yGKtLfKTwl/o1vn5YqpBKyp9Yc?=
+ =?us-ascii?Q?zNQao0sM9zoX5S7zy6Q8YFFud50baq73F8AyCcqhxQoupXiovj7DmABQbHzy?=
+ =?us-ascii?Q?nwrCleehGUMGdBE40+9JDb0Fqym9cCo9rfER92uHIRBVBrMwhtImzM7LaKxJ?=
+ =?us-ascii?Q?S7qBNuPYBgCqJjBTqSu2g2pIyH0ItGrzeWlYgleodUE1mKhkjWvghpj0VFAW?=
+ =?us-ascii?Q?Tq83O/ucTXs+BnZTeFc6GQ2LyhiWXlFzMGOkwcVsHGbsupZXmjXa4IHu3Hp6?=
+ =?us-ascii?Q?jVFJW6K9dUgVc8u7s8gzJwbqixDsKeH6sspGc/ZbGBuY5lRx2wWCX38Y3IZJ?=
+ =?us-ascii?Q?bPjk4f9FcbGQKnRtvhE9yA4jBR6qsAXGC7FaaKwa1EGAj+4nYHGnF+PUCot0?=
+ =?us-ascii?Q?bTnkDuoe/y+E+Zs68JVvBV20itDKX0VqQ+TJ3IA82AhV4N9XWdGhtBbeANtt?=
+ =?us-ascii?Q?G4Lk5+QZgG4Eq+hYM/xId5BIbDgDXi1rYgaGSW9JEy/dnOeWiUFzZvszk5wG?=
+ =?us-ascii?Q?mAzhfgVPVZ5IuG3lJ1NBbVITJAMnMZbfE5GFP0KKInNVeI13sEOIwvOjilWw?=
+ =?us-ascii?Q?LN1Kri0zzqIDLzV+xAmtLVMGH3K/ZmSfzr5l0SsyWPOApvvv+XLW8iyoqVuo?=
+ =?us-ascii?Q?w70f5kqzwau35dabJLasEMi5FoHHv1vZiKAYMxFysVlaQUJrWAFU80XQMOhi?=
+ =?us-ascii?Q?j1SrylYCc77M8MxNVPMLU3W8tytiCkCfl+WhoIjEk1I61VSSthm3LqnRJLRw?=
+ =?us-ascii?Q?WrWM3WKEwiWUjSetOxj3nfngcyzPSjSMvlgpTspIpDLqSNzxkWXT7uCAWuyB?=
+ =?us-ascii?Q?N8ALIMQxbKWeEjOISIYOnD/oPdOIsgfRiRTnJhle2O/HmAVsWPYvNDuNdc6m?=
+ =?us-ascii?Q?SUpCql/sb3XTnUeEPqlvZMpsti25//XPjakV4kJ1F/s1KkVMoU5fZTOMK0Cm?=
+ =?us-ascii?Q?GwkRzRLI+bfni/CntsksathxSedLy35uIV26ziGyUI3WkpfnguJyd5Fg3Qg5?=
+ =?us-ascii?Q?NMWvTVSvbNU/womaiVNNfdVScz7P8NsQwoumhTHflufth4tdvIStrQAdtAsZ?=
+ =?us-ascii?Q?2H4kxmHhc26tYM+Ah3qeCDw80kTqablb5JD1R87yKcWpcx5TuX8hXMzsfEU5?=
+ =?us-ascii?Q?6K8GwWCleL23l9UYNjI/8AkK+yLSvy0RnI3czcex8kRkvatOXaX2zTL3sBqS?=
+ =?us-ascii?Q?Gpf8GC28fWtDOGIiU08wtP2ZjqAIEUvDdEcGI20o09Jvfj/Ulajdz+pz4vPX?=
+ =?us-ascii?Q?5NWKWniKsP38UxExo5xmn30GSEBON8AfHJAJpoIVmms4Gefi/ZgwF30eYY/V?=
+ =?us-ascii?Q?KhsnhMzUVP3Z2257OWQ38pD9F0IvotKxImu0OegdQbUkdnTt64X1nX7+SLNC?=
+ =?us-ascii?Q?6NJ7QwM5Fzbsu4gv/d3aUV4M341O+igxI5SHhYsKn8XKPPiSLkGXVYhZ+a8J?=
+ =?us-ascii?Q?xCg/2vU4kHNKKnW3/JzGzTXvODINap9OQC6ZeqKWpxWzssU9/ULCVenR2aOK?=
+ =?us-ascii?Q?m659eKsbwGY6Hiq27Hnc5SawjFXc59w7f3X+4AsO?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89c337b2-d783-4806-f605-08dc9fbd24ed
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2024 02:16:30.2346
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: olvIhrewnrVyyKlp0LsxlYAGgkPfxNsfiRZoGxi68JEghafHMFrPcH90lSTuqTCLjvTFwr2XUYWqy2B+2gJFoQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6609
 
-On Thu, Jun 20, 2024 at 08:38:09PM +0530, Anup Patel wrote:
-> On Thu, Jun 20, 2024 at 6:40 PM Emil Renner Berthing
-> <emil.renner.berthing@canonical.com> wrote:
-> >
-> > Anup Patel wrote:
-> > > On Wed, Jun 19, 2024 at 11:16 PM Emil Renner Berthing
-> > > <emil.renner.berthing@canonical.com> wrote:
-> > > >
-> > > > Anup Patel wrote:
-> > > > > On Tue, Jun 18, 2024 at 7:00 PM Emil Renner Berthing
-> > > > > <emil.renner.berthing@canonical.com> wrote:
-> > > > > >
-> > > > > > Anup Patel wrote:
-> > > > > > > The PLIC driver does not require very early initialization so convert
-> > > > > > > it into a platform driver.
-> > > > > > >
-> > > > > > > After conversion, the PLIC driver is probed after CPUs are brought-up
-> > > > > > > so setup cpuhp state after context handler of all online CPUs are
-> > > > > > > initialized otherwise PLIC driver crashes for platforms with multiple
-> > > > > > > PLIC instances.
-> > > > > > >
-> > > > > > > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> > > > > >
-> > > > > > Hi Anup,
-> > > > > >
-> > > > > > Sorry for the late reply to the mailing list, but ever since 6.9 where this was
-> > > > > > applied my Allwinner D1 based boards no longer boot. This is the log of my
-> > > > > > LicheeRV Dock booting plain 6.10-rc4, locking up and then rebooting due to the
-> > > > > > the watchdog timing out:
-> > > > > >
-> > > > > > https://pastebin.com/raw/nsbzgEKW
-> > > > > >
-> > > > > > On 6.10-rc4 I can bring the same board to boot by reverting this patch and all
-> > > > > > patches building on it. Eg.:
-> > > > > >
-> > > > > >   git revert e306a894bd51 a7fb69ffd7ce abb720579490 \
-> > > > > >              956521064780 a15587277a24 6c725f33d67b \
-> > > > > >              b68d0ff529a9 25d862e183d4 8ec99b033147
-> > > > >
-> > > > > Does your board boot with only SBI timer driver enabled ?
-> > > >
-> > > > I'm not 100% sure this is what you mean, but with this change I can disable
-> > > > CONFIG_SUN4I_TIMER:
-> > > >
-> > > > diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-> > > > index f51bb24bc84c..0143545348eb 100644
-> > > > --- a/arch/riscv/Kconfig.socs
-> > > > +++ b/arch/riscv/Kconfig.socs
-> > > > @@ -39,7 +39,6 @@ config ARCH_SUNXI
-> > > >         bool "Allwinner sun20i SoCs"
-> > > >         depends on MMU && !XIP_KERNEL
-> > > >         select ERRATA_THEAD
-> > > > -       select SUN4I_TIMER
-> > > >         help
-> > > >           This enables support for Allwinner sun20i platform hardware,
-> > > >           including boards based on the D1 and D1s SoCs.
-> > > >
-> > > >
-> > > > But unfortunately the board still doesn't boot:
-> > > > https://pastebin.com/raw/AwRxcfeu
-> > >
-> > > I think we should enable debug prints in DD core and see
-> > > which device is not getting probed due to lack of a provider.
-> > >
-> > > Just add "#define DEBUG" at the top in drivers/base/core.c
-> > > and boot again with "loglevel=8" kernel parameter (along with
-> > > the above change).
-> >
-> > With the above changes this is what I get:
-> > https://pastebin.com/raw/JfRrEahT
-> 
-> You should see prints like below which show producer consumer
-> relation:
-> 
-> [    0.214589] /soc/rtc@101000 Linked as a fwnode consumer to /soc/plic@c000000
-> [    0.214966] /soc/serial@10000000 Linked as a fwnode consumer to
-> /soc/plic@c000000
-> [    0.215443] /soc/virtio_mmio@10008000 Linked as a fwnode consumer
-> to /soc/plic@c000000
-> [    0.216041] /soc/virtio_mmio@10007000 Linked as a fwnode consumer
-> to /soc/plic@c000000
-> [    0.216482] /soc/virtio_mmio@10006000 Linked as a fwnode consumer
-> to /soc/plic@c000000
-> [    0.216868] /soc/virtio_mmio@10005000 Linked as a fwnode consumer
-> to /soc/plic@c000000
-> [    0.217477] /soc/virtio_mmio@10004000 Linked as a fwnode consumer
-> to /soc/plic@c000000
-> [    0.217949] /soc/virtio_mmio@10003000 Linked as a fwnode consumer
-> to /soc/plic@c000000
-> [    0.218595] /soc/virtio_mmio@10002000 Linked as a fwnode consumer
-> to /soc/plic@c000000
-> [    0.219280] /soc/virtio_mmio@10001000 Linked as a fwnode consumer
-> to /soc/plic@c000000
-> [    0.219908] /soc/plic@c000000 Linked as a fwnode consumer to
-> /cpus/cpu@0/interrupt-controller
-> [    0.220800] /soc/plic@c000000 Linked as a fwnode consumer to
-> /cpus/cpu@1/interrupt-controller
-> [    0.221323] /soc/plic@c000000 Linked as a fwnode consumer to
-> /cpus/cpu@2/interrupt-controller
-> [    0.221838] /soc/plic@c000000 Linked as a fwnode consumer to
-> /cpus/cpu@3/interrupt-controller
-> [    0.222347] /soc/clint@2000000 Linked as a fwnode consumer to
-> /cpus/cpu@0/interrupt-controller
-> [    0.222769] /soc/clint@2000000 Linked as a fwnode consumer to
-> /cpus/cpu@1/interrupt-controller
-> [    0.223864] /soc/clint@2000000 Linked as a fwnode consumer to
-> /cpus/cpu@2/interrupt-controller
-> [    0.224370] /soc/clint@2000000 Linked as a fwnode consumer to
-> /cpus/cpu@3/interrupt-controller
-> [    0.225217] /soc/pci@30000000 Linked as a fwnode consumer to
-> /soc/plic@c000000
-> 
-> To get further prints, I suggest enabling SBI_HVC console and use
-> "console=hvc0" as kernel parameter.
-> 
-> Regards,
-> Anup
+Currently, we are using a mix of traditional UFS and zone UFS to support 
+some functionalities that cannot be achieved on zone UFS alone. However, 
+there are some issues with this approach. There exists a significant 
+performance difference between traditional UFS and zone UFS. Under normal 
+usage, we prioritize writes to zone UFS. However, in critical conditions 
+(such as when the entire UFS is almost full), we cannot determine whether 
+data will be written to traditional UFS or zone UFS. This can lead to 
+significant performance fluctuations, which is not conducive to 
+development and testing. To address this, we have added an option 
+zlu_io_enable under sys with the following three modes:
+1) zlu_io_enable == 0:Normal mode, prioritize writing to zone UFS;
+2) zlu_io_enable == 1:Zone UFS only mode, only allow writing to zone UFS;
+3) zlu_io_enable == 2:Traditional UFS priority mode, prioritize writing to 
+traditional UFS.
 
-I did some follow-up research into this. The hanging after "cpuidle:
-using governor menu" is due to being stuck inside of
-check_unaligned_access(). Specifically, there is a check that appears to
-be waiting for jiffies to start ticking, but they never do:
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+Signed-off-by: Wu Bo <bo.wu@vivo.com>
+---
+v3:
+	-Delete excess comments,
+	-Use enum instead of define,
+	-Modify some judgment criteria to make them more reasonable.
+---
+v2:
+	-Change name to blkzone_alloc_policy,
+	-Update manual of f2fs sysfs entry,
+	-Use macro instead of magic number,
+	-Initialize it w/ default policy in f2fs_scan_devices,
+	-Add validation check,
+	-Merged the ifdef PROFIG-BLK-DEV_ZONED area.
+---
+ Documentation/ABI/testing/sysfs-fs-f2fs | 14 ++++++++++++++
+ fs/f2fs/f2fs.h                          |  8 ++++++++
+ fs/f2fs/segment.c                       | 25 ++++++++++++++++++++++++-
+ fs/f2fs/super.c                         |  1 +
+ fs/f2fs/sysfs.c                         | 11 +++++++++++
+ 5 files changed, 58 insertions(+), 1 deletion(-)
 
-while ((now = jiffies) == start_jiffies)
-	cpu_relax();
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index cad6c3dc1f9c..3500920ab7ce 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -763,3 +763,17 @@ Date:		November 2023
+ Contact:	"Chao Yu" <chao@kernel.org>
+ Description:	It controls to enable/disable IO aware feature for background discard.
+ 		By default, the value is 1 which indicates IO aware is on.
++
++What:		/sys/fs/f2fs/<disk>/blkzone_alloc_policy
++Date:		July 2024
++Contact:	"Yuanhong Liao" <liaoyuanhong@vivo.com>
++Description:	The zone UFS we are currently using consists of two parts:
++		conventional zones and sequential zones. It can be used to control which part
++		to prioritize for writes, with a default value of 0.
++
++		========================  =========================================
++		value					  description
++		blkzone_alloc_policy = 0  Prioritize writing to sequential zones
++		blkzone_alloc_policy = 1  Only allow writing to sequential zones
++		blkzone_alloc_policy = 2  Prioritize writing to conventional zones
++		========================  =========================================
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f7ee6c5e371e..adefd19810ff 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -134,6 +134,12 @@ typedef u32 nid_t;
+ 
+ #define COMPRESS_EXT_NUM		16
+ 
++enum blkzone_allocation_policy {
++	BLKZONE_ALLOC_PRIOR_SEQ;	/* Prioritize writing to sequential zones */
++	BLKZONE_ALLOC_ONLY_SEQ;		/* Only allow writing to sequential zones */
++	BLKZONE_ALLOC_PRIOR_CONV;	/* Prioritize writing to conventional zones */
++};
++
+ /*
+  * An implementation of an rwsem that is explicitly unfair to readers. This
+  * prevents priority inversion when a low-priority reader acquires the read lock
+@@ -1555,6 +1561,8 @@ struct f2fs_sb_info {
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
+ 	unsigned int max_open_zones;		/* max open zone resources of the zoned device */
++	/* For adjust the priority writing position of data in zone UFS */
++	unsigned int blkzone_alloc_policy;
+ #endif
+ 
+ 	/* for node-related operations */
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 4db1add43e36..b38b92e08c6c 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2686,17 +2686,40 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+ 			goto got_it;
+ 	}
+ 
++#ifdef CONFIG_BLK_DEV_ZONED
+ 	/*
+ 	 * If we format f2fs on zoned storage, let's try to get pinned sections
+ 	 * from beginning of the storage, which should be a conventional one.
+ 	 */
+ 	if (f2fs_sb_has_blkzoned(sbi)) {
+-		segno = pinning ? 0 : max(first_zoned_segno(sbi), *newseg);
++		/* Prioritize writing to conventional zones */
++		if (sbi->blkzone_alloc_policy == PRIOR_CONVENTIONAL || pinning)
++			segno = 0;
++		else
++			segno = max(first_zoned_segno(sbi), *newseg);
+ 		hint = GET_SEC_FROM_SEG(sbi, segno);
+ 	}
++#endif
+ 
+ find_other_zone:
+ 	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
++
++#ifdef CONFIG_BLK_DEV_ZONED
++	if (secno >= MAIN_SECS(sbi) && f2fs_sb_has_blkzoned(sbi)) {
++		/* Write only to sequential zones */
++		if (sbi->blkzone_alloc_policy == ONLY_SEQUENTIAL) {
++			hint = GET_SEC_FROM_SEG(sbi, first_zoned_segno(sbi));
++			secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
++		} else
++			secno = find_first_zero_bit(free_i->free_secmap,
++								MAIN_SECS(sbi));
++		if (secno >= MAIN_SECS(sbi)) {
++			ret = -ENOSPC;
++			goto out_unlock;
++		}
++	}
++#endif
++
+ 	if (secno >= MAIN_SECS(sbi)) {
+ 		secno = find_first_zero_bit(free_i->free_secmap,
+ 							MAIN_SECS(sbi));
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 4a1bc8f40f9a..d5b0b7b141ce 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4229,6 +4229,7 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+ 	sbi->aligned_blksize = true;
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 	sbi->max_open_zones = UINT_MAX;
++	sbi->blkzone_alloc_policy = PRIOR_SEQUENTIAL;
+ #endif
+ 
+ 	for (i = 0; i < max_devices; i++) {
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index fee7ee45ceaa..359a12f84060 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -627,6 +627,15 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+ 	}
+ #endif
+ 
++#ifdef CONFIG_BLK_DEV_ZONED
++	if (!strcmp(a->attr.name, "blkzone_alloc_policy")) {
++		if (t < PRIOR_SEQUENTIAL || t > PRIOR_CONVENTIONAL)
++			return -EINVAL;
++		sbi->blkzone_alloc_policy = t;
++		return count;
++	}
++#endif
++
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 	if (!strcmp(a->attr.name, "compr_written_block") ||
+ 		!strcmp(a->attr.name, "compr_saved_block")) {
+@@ -1033,6 +1042,7 @@ F2FS_SBI_GENERAL_RW_ATTR(warm_data_age_threshold);
+ F2FS_SBI_GENERAL_RW_ATTR(last_age_weight);
+ #ifdef CONFIG_BLK_DEV_ZONED
+ F2FS_SBI_GENERAL_RO_ATTR(unusable_blocks_per_sec);
++F2FS_SBI_GENERAL_RW_ATTR(blkzone_alloc_policy);
+ #endif
+ 
+ /* STAT_INFO ATTR */
+@@ -1187,6 +1197,7 @@ static struct attribute *f2fs_attrs[] = {
+ #endif
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 	ATTR_LIST(unusable_blocks_per_sec),
++	ATTR_LIST(blkzone_alloc_policy),
+ #endif
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 	ATTR_LIST(compr_written_block),
+-- 
+2.25.1
 
-`jiffies` is fixed at 0xfffedb08, effectively making this a while(true)
-loop. This happens with and without SUN4I_TIMER.
-
-This hang unfortunately happens before the "Linked as a fwnode consumer"
-print statements start.
-
-After bypassing this with the configs
-
-CONFIG_NONPORTABLE=y
-CONFIG_RISCV_EFFICIENT_UNALIGNED_ACCESS=y
-
-A new warning is tripped:
-
-[    1.015134] No max_rate, ignoring min_rate of clock 9 - pll-video0
-[    1.021322] WARNING: CPU: 0 PID: 1 at drivers/clk/sunxi-ng/ccu_common.c:155 sunxi_ccu_probe+0x144/0x1a2
-[    1.021351] Modules linked in:
-[    1.021360] CPU: 0 PID: 1 Comm: swapper Tainted: G        W          6.10.0-rc6 #1
-[    1.021372] Hardware name: Allwinner D1 Nezha (changed) (DT)
-[    1.021377] epc : sunxi_ccu_probe+0x144/0x1a2
-[    1.021386]  ra : sunxi_ccu_probe+0x144/0x1a2
-[    1.021397] epc : ffffffff80405a50 ra : ffffffff80405a50 sp : ffffffc80000bb80
-[    1.021406]  gp : ffffffff815f69c8 tp : ffffffd801df8000 t0 : 6100000000000000
-[    1.021414]  t1 : 000000000000004e t2 : 61725f78616d206f s0 : ffffffc80000bbe0
-[    1.021422]  s1 : ffffffff81537498 a0 : 0000000000000036 a1 : 000000000000054b
-[    1.021430]  a2 : 00000000ffffefff a3 : 0000000000000000 a4 : ffffffff8141f628
-[    1.021438]  a5 : 0000000000000000 a6 : 0000000000000000 a7 : 000000004442434e
-[    1.021446]  s2 : 0000000000000009 s3 : 0000000000000000 s4 : ffffffd801dc9010
-[    1.021453]  s5 : ffffffd802428a00 s6 : ffffffd83ffdcf20 s7 : ffffffc800015000
-[    1.021462]  s8 : ffffffff80e55360 s9 : ffffffff81034598 s10: 0000000000000000
-[    1.021470]  s11: 0000000000000000 t3 : ffffffff8160a257 t4 : ffffffff8160a257
-[    1.021478]  t5 : ffffffff8160a258 t6 : ffffffc80000b990
-[    1.021485] status: 0000000200000120 badaddr: 0000000000000000 cause: 0000000000000003
-[    1.021493] [<ffffffff80405a50>] sunxi_ccu_probe+0x144/0x1a2
-[    1.021510] [<ffffffff80405af6>] devm_sunxi_ccu_probe+0x48/0x82
-[    1.021524] [<ffffffff80409020>] sun20i_d1_ccu_probe+0xba/0xfa
-[    1.021546] [<ffffffff804a8b40>] platform_probe+0x4e/0xa6
-[    1.021562] [<ffffffff808d81ee>] really_probe+0x10a/0x2dc
-[    1.021581] [<ffffffff808d8472>] __driver_probe_device.part.0+0xb2/0xe8
-[    1.021597] [<ffffffff804a67aa>] driver_probe_device+0x7a/0xca
-[    1.021621] [<ffffffff804a6912>] __driver_attach+0x52/0x164
-[    1.021638] [<ffffffff804a4c7a>] bus_for_each_dev+0x56/0x8c
-[    1.021656] [<ffffffff804a6382>] driver_attach+0x1a/0x22
-[    1.021673] [<ffffffff804a5c18>] bus_add_driver+0xea/0x1d8
-[    1.021690] [<ffffffff804a7852>] driver_register+0x3e/0xd8
-[    1.021709] [<ffffffff804a8826>] __platform_driver_register+0x1c/0x24
-Emil[    1.021725] [<ffffffff80a17488>] sun20i_d1_ccu_driver_init+0x1a/0x22
-[    1.021746] [<ffffffff800026ae>] do_one_initcall+0x46/0x1be
-[    1.021762] [<ffffffff80a00ef2>] kernel_init_freeable+0x1c6/0x220
-[    1.021791] [<ffffffff808e0b46>] kernel_init+0x1e/0x112
-Linked as a fwnode consumer[    1.021807] [<ffffffff808e7632>] ret_from_fork+0xe/0x1c
-
-The warning is not fatal, so execution continues until hanging at
-
-[    2.110919] printk: legacy console [ttyS0] disabled
-[    2.136911] 2500000.serial: ttyS0 at MMIO 0x2500000 (irq = 205, base_baud = 1500000) is a 16550A�[    2.145674] printk: legacy console [ttyS0] enabled
-[    2.145674] printk: legacy console [ttyS0] enabled
-[    2.155095] printk: legacy bootconsole [sbi0] disabled
-[    2.155095] printk: legacy bootconsole [sbi0] disabled
-
-I have not been able to discover why it hangs here.
-
-The clock is somehow relying on the previous behavior of this PLIC
-driver.
-
-- Charlie
-
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
