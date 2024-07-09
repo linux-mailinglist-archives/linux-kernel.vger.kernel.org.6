@@ -1,115 +1,173 @@
-Return-Path: <linux-kernel+bounces-245145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1439C92AEEF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:05:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F05992AEF2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93E90B215C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:05:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 627402824DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5BF12BD05;
-	Tue,  9 Jul 2024 04:05:22 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBAB80603;
+	Tue,  9 Jul 2024 04:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dg0rbrOp"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF52639
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 04:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DFD2BD05;
+	Tue,  9 Jul 2024 04:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720497922; cv=none; b=tWMfJyLPxvuloLi8C1pSUhoPkd7n7Uh/WrpjJtdl7dTKO0JjDl1DgW02X7sRFGqf5BxlIoYCSzO5qlbCuWe3neyv6N5n34qP/bBKH5Sguis8k502pmE8TV7qJ/QEdxjdj4UPtQ97qfs5ze1OK+K6ZkkVDD51XQVPf0WZrSqtw7I=
+	t=1720497969; cv=none; b=q1FfPA3ViVRrUeC8b0pcqwbDfbH+sd9xEg7JbuMbTkcTV4P6AIYdmD0jmJCv/PaG56UTsNnqK+c48/xJt8c2vWJE3bSoF7OWsATyCoNp43T7Lm75WcVk09cp4cgq/Br0KRP5EulGze5CnvI9dHPHUEFJN54P4zHKWjr3hXcu+qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720497922; c=relaxed/simple;
-	bh=/BDlfLFMCQnAdV+74SMFqZTVtoalJa9cAgO3E4koz18=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=i38yM5mW9PkGMeB5HW2cWupTF/MBgkESckutsBryRm1YszKXEb8j5y3zPJkxzbLX1dScDth+pHekYuykoKq85lCyHbyj04rdm+BtaHVLHsmL20y5RMJk42YDM5OmXJegpocV5VWwkYnImI/UcTvJT9N3ndMk2o7w7D4xjmhEnqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WJ6hc5FCVz1T5vW;
-	Tue,  9 Jul 2024 12:00:16 +0800 (CST)
-Received: from kwepemf500005.china.huawei.com (unknown [7.202.181.243])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8B58C1402E1;
-	Tue,  9 Jul 2024 12:04:57 +0800 (CST)
-Received: from [10.67.111.212] (10.67.111.212) by
- kwepemf500005.china.huawei.com (7.202.181.243) with Microsoft SMTP Server
+	s=arc-20240116; t=1720497969; c=relaxed/simple;
+	bh=NFDu3F7rDMNV4FUo0YDfu3JzkZQunh0B5Q61UPbhL5c=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B7726EdYxWq/sEkMwAxmuD5e/f2FrNTT2AqlzbX5p8teMEd7pFkMdtbplcKO7DDNaI3at7hNjWCa1txyNcM9eAUqiL/jgN/ni9g1nKqOGAJqkpcsoIX389pdrT6F7rLMi4twSg5++abRR48hijAhA+jDHllBkcqXcUQgjrczYiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dg0rbrOp; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4693QcTl019517;
+	Tue, 9 Jul 2024 04:05:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=cuu2bpuOvAkFqLc8LvHG+iaz
+	1VSGPDczMvb/f1B4aBk=; b=dg0rbrOpUHUdyRl+pBoNijqg8BIWiQ89yGaQzJB+
+	l6gz2MX6cllc7j8b90kEuKsLIg3kcrtURxzBoVjaXl3kQ4nc+R9Fr1hs6jT7XYG5
+	6Qrv7UwJn4J4p8QUJZXCWi3Cfy2MAztlqWMGqsIR8fXcVmJRK9Yx1AEhXAfsPWEG
+	gZOGBTI4i+40fEy8ZgjTWhNOjr+o1RkwVixshIG10++G/jYwh9BupdU0z/m9F0pZ
+	rW/OBc/KqRi8J/j93YvvyPpHeHqLwZSqiD2vfpO9e5jwiYCbrBNV2TN+M69MT2Dm
+	VDr8tBOgcCyOQjyxFZRG1nOs6qnCWB5WFUbyWWq2+6Yk5A==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wgwn94m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 04:05:54 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46945q4g009025
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 04:05:52 GMT
+Received: from jiegan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 9 Jul 2024 12:04:56 +0800
-Message-ID: <22653c39-93a5-4958-a6fc-e31885f49373@huawei.com>
-Date: Tue, 9 Jul 2024 12:04:56 +0800
+ 15.2.1544.9; Mon, 8 Jul 2024 21:05:47 -0700
+Date: Tue, 9 Jul 2024 12:05:43 +0800
+From: JieGan <quic_jiegan@quicinc.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+CC: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose
+	<suzuki.poulose@arm.com>,
+        Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>,
+        Mike Leach <mike.leach@linaro.org>, "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        James Clark <james.clark@arm.com>,
+        Jinlong Mao <quic_jinlmao@quicinc.com>, Leo Yan <leo.yan@linaro.org>,
+        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Tingwei Zhang
+	<quic_tingweiz@quicinc.com>,
+        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+        "Tao
+ Zhang" <quic_taozha@quicinc.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        "Song
+ Chai" <quic_songchai@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH v2 3/4] Coresight: Add Coresight Control Unit driver
+Message-ID: <Zoy3FwurfmQUhF0S@jiegan-gv.ap.qualcomm.com>
+References: <20240705090049.1656986-1-quic_jiegan@quicinc.com>
+ <20240705090049.1656986-4-quic_jiegan@quicinc.com>
+ <9b502ba5-7042-424e-b0a2-5659e4064462@linaro.org>
+ <ZotaBxRpv29crRHV@jiegan-gv.ap.qualcomm.com>
+ <afd3c7b3-9d12-4ece-a938-c99bf9c5bb7b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sched/fair: set burst to 0 when remove the restriction
- on cfs bandwidth
-To: Tejun Heo <tj@kernel.org>
-CC: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-	<bristot@redhat.com>, <vschneid@redhat.com>,
-	<changhuaixin@linux.alibaba.com>, <shanpeic@linux.alibaba.com>,
-	<dtcccc@linux.alibaba.com>, <vishalc@linux.ibm.com>,
-	<linux-kernel@vger.kernel.org>, <zhangqiao22@huawei.com>,
-	<judy.chenhui@huawei.com>, <yusongping@huawei.com>, <zhaowenhui8@huawei.com>
-References: <20240708120053.861037-1-serein.chengyu@huawei.com>
- <ZowrFHHXNds36Nsb@slm.duckdns.org>
-Content-Language: en-US
-From: Cheng Yu <serein.chengyu@huawei.com>
-In-Reply-To: <ZowrFHHXNds36Nsb@slm.duckdns.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemf500005.china.huawei.com (7.202.181.243)
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <afd3c7b3-9d12-4ece-a938-c99bf9c5bb7b@linaro.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: M18-D_-Qvg3WEgDOf71E8l-bUyNnTU2w
+X-Proofpoint-ORIG-GUID: M18-D_-Qvg3WEgDOf71E8l-bUyNnTU2w
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_15,2024-07-08_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=811 mlxscore=0
+ adultscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1015 priorityscore=1501 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090024
 
-Hi,
-
-On 2024/7/9 2:08, Tejun Heo wrote:
-> Hello,
+On Mon, Jul 08, 2024 at 12:44:43PM +0200, Krzysztof Kozlowski wrote:
+> On 08/07/2024 05:16, JieGan wrote:
+> > 
+> >>
+> >>> +
+> >>> +	drvdata->base = devm_ioremap(dev, res->start, resource_size(res));
+> >>
+> >> Use proper wrapper for this two.
+> > Replaced by:
+> > res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > drvdata->base = devm_ioremap_resource(dev, res);
 > 
-> On Mon, Jul 08, 2024 at 08:00:53PM +0800, Cheng Yu wrote:
->> From: Zhao Wenhui <zhaowenhui8@huawei.com>
->>
->> In the cpu subsystem of cgroup v1 and v2, we set the restriction on cfs
->> bandwidth by setting the quota and burst value. Later, when we remove
->> the restriction by setting the quota to the default value, the burst
->> value should also be forced to the its default value of zero.
+> Why?
 > 
-> Explaining a bit why burst value should become zero can be helpful - ie.
-> what happens when quota is not set but burst is limited?
+> Use the wrapper.
+Sorry, I misunderstood the "wrapper" before.
+Just wrapped drvdata->base by void __iomem *base;
 
-When the restriction on cfs bandwidth is removed, the purpose of setting
-burst value to zero is to avoid ambiguity.
-
+> 
 > 
 > ...
->> @@ -10840,6 +10840,12 @@ static int tg_set_cfs_bandwidth(struct task_group *tg, u64 period, u64 quota,
->>  				     burst + quota > max_cfs_runtime))
->>  		return -EINVAL;
->>  
->> +	/*
->> +	 * Ensure burst equals to zero when quota is -1.
->> +	 */
->> +	if (quota == RUNTIME_INF && burst)
->> +		return -EINVAL;
 > 
-> This happening would be a bug, right? Would it make more sense to use
-> WARN_ON_ONCE()?
+> >>> +
+> >>> +static struct platform_driver ccu_driver = {
+> >>> +	.probe          = ccu_probe,
+> >>> +	.remove         = ccu_remove,
+> >>> +	.driver         = {
+> >>> +		.name   = "coresight-ccu",
+> >>> +		.of_match_table = ccu_match,
+> >>> +		.suppress_bind_attrs = true,
+> >>
+> >> Why?
+> > Sorry, I dont get the point here.
+> 
+> You do not get the point why I am asking "why?"?
+> 
+> Why do you need it?
+> 
+> > We dont need automatic bind/unbind, so the suppress_bind_attrs sets to true.
+> 
+> But I need it...
+> 
+> > We need configure some settings before we register the device.
+> 
+> Hm, is this expected for coresight devices?
+The coresight device cannot be unbinded independently. As we known, 
+The coresight devices collaborate to form a path, from source, link, to sink.
+If an unexpected unbinding occurs for a coresight device that is part of the path,
+it will disrupt the entire path.
 
-As Vishal Chourasia mentioned, it can prevent setting excessively large
-burst value. Using WARN_ON_ONCE() does not have this effect.
+I think it's the reason why the coresight device driver does not need automatic bind/unbind.
+Here is the previous discussion for suppress_bind_attrs:
+https://lore.kernel.org/all/1453753248-1716-1-git-send-email-mathieu.poirier@linaro.org/#r
 
 > 
-> Thanks.
+> Best regards,
+> Krzysztof
 > 
 
-Thanks
---
-Cheng Yu
+Thanks,
+Jie
 
