@@ -1,124 +1,86 @@
-Return-Path: <linux-kernel+bounces-246747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F71892C623
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:16:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E97B92C628
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D17A6281F85
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:16:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CA33B2209B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA93B180020;
-	Tue,  9 Jul 2024 22:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA06189F57;
+	Tue,  9 Jul 2024 22:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="Dl8FhKVV"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJQvsMi4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B71713AD07
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 22:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3B1182A6B;
+	Tue,  9 Jul 2024 22:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720563274; cv=none; b=IOl+Mu+ETZwlhZBqOPKw2ayrDh74DNdsp19rE3IzcXQZz7+jrCvRqdPskkdKn6/oYIbZOQ66Vbd8Gg98BqMSyn9zP57JzPpHYY37dL49hWZkFBCzMYGcALKS8tA6UEB3LM4InYo5Edyawx/m4qqe7ZPavkkeXEIZRRv0YhIPzQ4=
+	t=1720563321; cv=none; b=YWDf6Zw8zzEPYMSz/ZQ5/HNig/1edewYwXdWdD7fbkSSDXd+kkfK8pARuHZfiUfsllCupnMQh0bqY8460ZfmJaIanzHPLtsva/+tD+8Y3AQlc8UCMutcglg+GtdK6UNrgwkbUHAgYLNzkGLS4aKa5cqCTH2K+IGX0aPGRkaOtsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720563274; c=relaxed/simple;
-	bh=ABFlDw8mq7mz9vzgQ050tvvLcuTkWW9SbiF3GyEzHTM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GdL4IVA9Dq251VNFVOmEnI1NQ1/oC2CqWSi7zFv7NpyHwJudfVXIw7OGtphemaroJ3onwLlpSpzD/eWwdtJ3W/83yr+g3a52Kwl2CPIjohLVfIP0P2rTFybO265fAe3WxR3hfHTDD2+AOjUdn82jPg31acWY744o2hLiRfXtGYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=Dl8FhKVV; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a77c349bb81so512143266b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 15:14:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1720563270; x=1721168070; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VOArJoxyilSSGPXrWTqG3U1GwRFgQOeHlN66KV6fzR0=;
-        b=Dl8FhKVVhSbC3wcPwyc5QCUs9821ax+ueEoAz1Mjg77TsJREFs2g+MFXRHYIALrLEr
-         R4BTKO9Z4Y37N+Gmjt+3y3icICXYhCe2RgFH+ZMM9mDUkpw9lS/2/7YZ611QnHJjEreV
-         YAnJBTgyTia7xhHK/DbIHgxBYYs2NWDmP6RVDUwCp/6w+jFyIqHh8qpfKQfJVN3hHoay
-         ZIKPXyeU61Vte9D7mldF9Qac+vqjNEdSf38L0Mgv3AHlVE23QSa0Iqq6UdgCwwxiqQtv
-         /w5z3y74dOSAJpI7KarjJ/84E8SiUgJvl20TNKE9x8skcqk8hhAZaNTLvQmMU02m5GlY
-         SDHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720563270; x=1721168070;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VOArJoxyilSSGPXrWTqG3U1GwRFgQOeHlN66KV6fzR0=;
-        b=a90NnwXFoz4UdRUQ9KJLoQmh/yPAgGH9jrKRTJESoZBR9IMPApb4QTVOkyWfu05Lj0
-         ZUWlGq+fh4DptiJy0rw0ELcs5Qh3gJBPtMicuH7vwfiLWr+1n1iDlNv+zPIWGcFdxXFa
-         PPnE/vgLrfFfJTsDg7tNJELyA+HSFfIeGl0N1q4+3MQaXrrmPMarOX3W6c842HvC0MrK
-         /VTwX25o5i2WVrlllJPHRb6wNcW5Juq9ndBrzZMsGqAYWvndeS9bGtvf/Q8MuNDwh2HA
-         Lj/9Eq6GFr0J6kdXnaGgfdrbEUmZSjMx/j31/eOqsZUFwdQW/WuCHL03nBapdos9b1nH
-         oNzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ3CWIdH8Jt+2Xaf1aK1zgkM+G9ufx8PI6UlZWvVJYcjPz41ZuEMIgODihwYHjXZ8dZ5OP+PXsbm+8aCccctN1rhKQP4AQk2bZukgZ
-X-Gm-Message-State: AOJu0YzzfoKUzdTW9Aixo6lRBuY2D89DklWoXP9zq2QBKM6oCRLQ7bfA
-	7EOZM9ApG5W3jLXbBJCNmJM0ALH74t8RLDo3KoGohhKDxdckIvHuO0z6gRCvYY0=
-X-Google-Smtp-Source: AGHT+IEhMAL/BeK0wEsG7YU7fKP6fiy2pWaYrVzNziHBWN4NIwYK04hTgd/KylGrRGQJQSml0I410Q==
-X-Received: by 2002:a17:906:81c5:b0:a77:b788:d760 with SMTP id a640c23a62f3a-a780b89f711mr220469166b.76.1720563270129;
-        Tue, 09 Jul 2024 15:14:30 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-82-135-80-224.dynamic.mnet-online.de. [82.135.80.224])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6bc7c9sm110342266b.42.2024.07.09.15.14.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 15:14:29 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: airlied@gmail.com,
-	daniel@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [RESEND PATCH] drm: Combine identical if/elif code blocks
-Date: Wed, 10 Jul 2024 00:14:02 +0200
-Message-ID: <20240709221401.322731-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1720563321; c=relaxed/simple;
+	bh=1SxciMdW/vlSt+GNZuhtzLOZVqUkHi0KwZHiJ6FVPw4=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cblbXlhTwX7RsaaYiM+w/84Yva9lbn9S3fKbVHcQ/zrJB7izi5k5CzBHIC8yr7YY3cOGeK5FlkzDzSxUd+4ycAFO6t8LcKHBq4ExI1fxq4nwrBFqNOTly5XOvLCx/J3+LfrWLpMFMedQB2flCI+CaXRYAfFTl9dp4P19QguoBh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJQvsMi4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68E07C3277B;
+	Tue,  9 Jul 2024 22:15:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720563320;
+	bh=1SxciMdW/vlSt+GNZuhtzLOZVqUkHi0KwZHiJ6FVPw4=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=nJQvsMi4B5Z31mNtCM47t7mr5rOw/oZ+vTBumUTbLkl5m13dJGhtHC6aL+kSCHOrd
+	 e7NiEtHgRDzhAajYW4A9Tob3X9HSlw4lJ5S4XIv6gzyo+PQxu9ZmCxPhjPXy5aO2+v
+	 Al/xT2A/pn8cakT5zy44Dybbv5y1UJ7smIYrrgP1sg93XmB/hfXQicvURcNYDmhlc6
+	 J9DPZdGuyKINIcYMCunUqdxhW1rj61vb6OK264sqzQ+ngJSwbg/ii/ehH/CFOeMLPz
+	 vMk3ommj4GPrivP59/MVvK7JMHI80yrw5e9bwDO4d80Q/5A+s1DCcs4ZpP29hsHr2+
+	 Sv23T9v/YrkHw==
+Date: Wed, 10 Jul 2024 00:15:17 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Bence =?utf-8?B?Q3PDs2vDoXM=?= <bence98@sch.bme.hu>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 09/60] i2c: cp2615: reword according to newest
+ specification
+Message-ID: <fihr4etj2t36nlg7zftjvmi24hv7z4oene5tfjzxt6eejponxq@ighv4j3xhrty>
+References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
+ <20240706112116.24543-10-wsa+renesas@sang-engineering.com>
+ <188d9071-01f5-4e81-9427-5b8397864211@sch.bme.hu>
+ <Zole1BYectz6k2rV@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zole1BYectz6k2rV@shikoro>
 
-Merge the identical if/elif code blocks and remove the following two
-warnings reported by make includecheck:
+Hi,
 
-  asm/ioctl.h is included more than once
-  linux/types.h is included more than once
+> > > -	.master_xfer	= cp2615_i2c_master_xfer,
+> > > -	.functionality	= cp2615_i2c_func,
+> > > +	.xfer = cp2615_i2c_xfer,
+> > > +	.functionality = cp2615_i2c_func,
+> > >   };
+> > >   /*
+> > 
+> > I don't understand the need for the whitespace changes.
+> 
+> If you have only one space in such struct initializations, you can
+> change later only the line you are interested in. If you have aligned
+> them with tabs, you sometimes change one line and need to realign the
+> whole block. This is annoying and spoils history a little.
 
-Reverts commit 00c9672606f7 ("drm: Untangle __KERNEL__ guards") because
-make headers_install seems to be able to handle this now.
+TBH looks also better. For just to fields in the struct I don't
+see it necessary to put the elements in columns.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- include/uapi/drm/drm.h | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
 
-diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
-index 16122819edfe..315af7b19c97 100644
---- a/include/uapi/drm/drm.h
-+++ b/include/uapi/drm/drm.h
-@@ -35,13 +35,7 @@
- #ifndef _DRM_H_
- #define _DRM_H_
- 
--#if defined(__KERNEL__)
--
--#include <linux/types.h>
--#include <asm/ioctl.h>
--typedef unsigned int drm_handle_t;
--
--#elif defined(__linux__)
-+#if defined(__KERNEL__) || defined(__linux__)
- 
- #include <linux/types.h>
- #include <asm/ioctl.h>
--- 
-2.45.2
-
+Andi
 
