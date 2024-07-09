@@ -1,106 +1,108 @@
-Return-Path: <linux-kernel+bounces-245451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2CCA92B2AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:55:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A2792B2BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D401D1C21922
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:55:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9EF61C20FC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CD7154BFF;
-	Tue,  9 Jul 2024 08:54:37 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027B7154BE4;
-	Tue,  9 Jul 2024 08:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A31815380B;
+	Tue,  9 Jul 2024 08:56:17 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E62C153585;
+	Tue,  9 Jul 2024 08:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720515276; cv=none; b=TQ6iCIMgvSc5K4iwmEYuRO2Ln2hCOK4EGyvaxaenYyTNeblXGQlYM54rPWizkN1AxFr+ZJnrLdCc5vlYeEsAWKlpeNJup9cojp8azVDzt4iIq45Ynz9iX8PXnnb3LXsbm5T2dQVIXp3U3YYl+advB7R6fddkTkJANUmBzb3McrQ=
+	t=1720515376; cv=none; b=LsLayn/gDHVqeb/rOqukY+EtJCsHhFNftOfh27jVn5LOBzC/RASSOnQ4NPVE4zqKEm638RojYQBi3D79UzQClFC/qEhLwaJz9ycdW7c+G1FlUDCfmvUYMbe3FJKmvjGQXLfdEBwunTsTCBhlOtZVY2RzDrGyyS1LE4dnKJTDQP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720515276; c=relaxed/simple;
-	bh=cIiVSr1iYUHf8WjtaedoJtges/tulpFdO61UlfbtPr0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=btLxcKnW/MbM/Fu2WLBCmGNDwGWKieAQ5tUyo6LDyP7ajLqDOKc6WDIOigSoQZIDmndPDhSzRioTLer+ZuCbYdDXBDgj2+Jm5fq70dzrthXhJlyJXhzm8KO/5/LJ6Z8iik0/kXRn8+lcJMgEXo8sfi2VorY9Y6EUulDFYN8GZNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowADX3cmr+oxmTj1oAg--.4166S2;
-	Tue, 09 Jul 2024 16:54:03 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	amergnat@baylibre.com,
-	kuninori.morimoto.gx@renesas.com,
-	jernej.skrabec@gmail.com,
-	nfraprado@collabora.com,
-	robh@kernel.org
-Cc: linux-sound@vger.kernel.org,
+	s=arc-20240116; t=1720515376; c=relaxed/simple;
+	bh=3LfxXvuO6VNppBlnfF96IlTpz9hK+UQ+Wy7rNs6Lxm8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jrdHL5PXQmFHTxnhpd4rb9o4BDAyGvH5T1jaM3OvJXWpJLjG3fmS1DfOEvoFauD6B3857+Vp2fDEcFr3tdySJ2Yfzjdo3rKSm+g6Q0kGaHVAxdVB+daQxfw+CxG+MKrVnQ1Y+sadW7BtOPHGZ4gCSHBYow+MPwhiCTOt8nVARUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1sR6dK-0000Po-00; Tue, 09 Jul 2024 10:55:34 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 281E9C0411; Tue,  9 Jul 2024 10:53:38 +0200 (CEST)
+Date: Tue, 9 Jul 2024 10:53:38 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Aleksandar Rikalo <aleksandar.rikalo@syrmia.com>,
+	Aleksandar Rikalo <arikalo@gmail.com>,
+	Chao-ying Fu <cfu@wavecomp.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Greg Ungerer <gerg@kernel.org>, Hauke Mehrtens <hauke@hauke-m.de>,
+	Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] ASoC: mediatek: mt8192: remove redundant null pointer check before of_node_put
-Date: Tue,  9 Jul 2024 16:51:31 +0800
-Message-Id: <20240709085131.1436128-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+	Marc Zyngier <maz@kernel.org>,
+	"paulburton@kernel.org" <paulburton@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>
+Subject: Re: [PATCH v4 07/14] clocksource: mips-gic-timer: Always use cluster
+ 0 counter as clocksource
+Message-ID: <Zoz6kvcio/wl/015@alpha.franken.de>
+References: <20240511104341.151550-1-aleksandar.rikalo@syrmia.com>
+ <20240511104341.151550-8-aleksandar.rikalo@syrmia.com>
+ <bf4a45e9-4ed3-4d3b-bb96-add20a71b04c@linaro.org>
+ <8b133053-247f-414b-9c01-e0e5291e347d@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowADX3cmr+oxmTj1oAg--.4166S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JFW3Kr15GF17uFyDXFW8WFg_yoWfurg_J3
-	WkK3Z7ur1UGr48Crsrtr98CFs7ZayakF1xZF1YqwnxGry7Gr15A3Z8trnrur45ZrWvy3W5
-	ArsxZwn2yFZYvjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8Jr0_Cr1UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc2xSY4AK67AK6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUbrcTPUUUUU==
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+In-Reply-To: <8b133053-247f-414b-9c01-e0e5291e347d@app.fastmail.com>
 
-of_node_put() has taken the null pointer check into account. So it is safe
-to remove the duplicated check before of_node_put().
+On Tue, Jul 09, 2024 at 09:47:52AM +0800, Jiaxun Yang wrote:
+> 
+> 
+> 在2024年7月9日七月 上午12:36，Daniel Lezcano写道：
+> > On 11/05/2024 12:43, Aleksandar Rikalo wrote:
+> >> From: Paul Burton <paulburton@kernel.org>
+> >> 
+> >> In a multi-cluster MIPS system we have multiple GICs - one in each
+> >> cluster - each of which has its own independent counter. The counters in
+> >> each GIC are not synchronised in any way, so they can drift relative to
+> >> one another through the lifetime of the system. This is problematic for
+> >> a clocksource which ought to be global.
+> >> 
+> >> Avoid problems by always accessing cluster 0's counter, using
+> >> cross-cluster register access. This adds overhead so we only do so on
+> >> systems where we actually have CPUs present in multiple clusters.
+> >> For now, be extra conservative and don't use gic counter for vdso or
+> >> sched_clock in this case.
+> >> 
+> >> Signed-off-by: Paul Burton <paulburton@kernel.org>
+> >> Signed-off-by: Chao-ying Fu <cfu@wavecomp.com>
+> >> Signed-off-by: Dragan Mladjenovic <dragan.mladjenovic@syrmia.com>
+> >> Signed-off-by: Aleksandar Rikalo <aleksandar.rikalo@syrmia.com>
+> >> ---
+> >
+> > Applied patch 7 and 8
+> 
+> I think it won't compile without patch 1 being applid.
+> 
+> Thomas, do you mind to apply patch 1 for now? Given that it's just some extra
+> function definitions.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- sound/soc/mediatek/mt8192/mt8192-mt6359-rt1015-rt5682.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+no problem, I've applied patch 1 und 2 to mips-next.
 
-diff --git a/sound/soc/mediatek/mt8192/mt8192-mt6359-rt1015-rt5682.c b/sound/soc/mediatek/mt8192/mt8192-mt6359-rt1015-rt5682.c
-index 8b323fb19925..db00704e206d 100644
---- a/sound/soc/mediatek/mt8192/mt8192-mt6359-rt1015-rt5682.c
-+++ b/sound/soc/mediatek/mt8192/mt8192-mt6359-rt1015-rt5682.c
-@@ -1108,9 +1108,7 @@ static int mt8192_mt6359_legacy_probe(struct mtk_soc_card_data *soc_card_data)
- err_headset_codec:
- 	of_node_put(speaker_codec);
- err_speaker_codec:
--	if (hdmi_codec)
--		of_node_put(hdmi_codec);
--
-+	of_node_put(hdmi_codec);
- 	return ret;
- }
- 
+Thomas.
+
 -- 
-2.25.1
-
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
