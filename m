@@ -1,202 +1,176 @@
-Return-Path: <linux-kernel+bounces-245730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1955C92B86A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:36:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4579092B863
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C40F0282CBE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:36:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97C8FB20BCE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C947158202;
-	Tue,  9 Jul 2024 11:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3213F155744;
+	Tue,  9 Jul 2024 11:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="d2loxx/h"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HGVygQy4"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07AF55E4C;
-	Tue,  9 Jul 2024 11:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D15255E4C
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 11:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720525001; cv=none; b=NK1iob4xMEvJRQOuzjm4S0l6b20e7m6611ZFQaej9GuEKbxRTpj+I/Vof4uCczp7C8VSHXh9CZO+sGn+muDH0mlpZwuZurZ844dj6Ac1VbYI1Bmsb7vx9LH8DZErAiCfE/lh/CRTrd0lurVdl++wAj5k5/Y17rylTQg1LUI8D7s=
+	t=1720524937; cv=none; b=gsBkypu7aCX2p7DWPuXo4watbMCzQgcHdZC0XFF6uj7q5q9eLS3wY+tPd0t8IaOubcl1NMXVii6yk1gjawj79X2xz+eHreAegAxrV3V+iuft4JeES9t5tXgsmd1/YS2UOMLOYheeT3pNLvajm8tPboAFgx0LZCnsd5+/NIKcGS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720525001; c=relaxed/simple;
-	bh=Pc/rqjlttqr+PCV9ImPrFTWhlgboE1tEVME5GA4Zrms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IJUrDQASAKsASHFKgzajX9Hb49ziRONjgdPLk+FmxmFO8xqjIoiDdLcM1kU2Z3uLNGVhOIvUuRDA7p2h7VvJ6nYo90psx1EFdCx0H7KApS/FsY6Btd0jUAD5Wi3x4EQvpzEmiKCdkcuY0xJYdmE+/pLUm4NimuEwwaHMrG+8iY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=d2loxx/h; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id 8AC3D100003;
-	Tue,  9 Jul 2024 14:36:16 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1720524976; bh=kEQAy2ywQE4RRBAZOINuz1m3hhrqeBwGx9IhcBaBH1I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=d2loxx/hJi5yUfkmk1Um/3sj8IpRQ+3HhAv7SB8YGgqMNf52Au1Qq9mGfmGdaabM/
-	 wZhAuIc7qrTo2TTvWKsPTgWz1Fpiee8i+XhvALG1xlxXhH+IJY2QR5QyBNHKsShZH0
-	 OJV/1m3xmYd2qP3lHVm0AQ/jv/qH/MXZ5a3Ya/H3uzCBP9nwre40n6Msh5PLL69Djp
-	 AycK53QVAGvfsxpciH2IgqS+YSZnHaip+zcKB+Ci6gi1uDh/z/BsZoRz0PUB8Z7eVJ
-	 R/zCmEirCjS+OPNDykw9hFQAJq9yObd8lNTA0Hjm8rL33+PRYj3HkK12CVJigTxmAo
-	 6M07fM61tyLpQ==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Tue,  9 Jul 2024 14:35:00 +0300 (MSK)
-Received: from [172.17.214.6] (172.17.214.6) by ta-mail-02 (172.17.13.212)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
- 14:34:40 +0300
-Message-ID: <99fcfba3-7cac-42c8-9113-2340d5a485f8@t-argos.ru>
-Date: Tue, 9 Jul 2024 14:35:29 +0300
+	s=arc-20240116; t=1720524937; c=relaxed/simple;
+	bh=MN8tQlU/WjfJAm5vJUB/k6Sbg2NBCUv0pDcfrVCj4T0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=rmPLlys+TszfdbtZYM7ngELtyCVd/D9BvItt+EeKVEKiJsDqeAG61YaYkuqRuFH27+flcgnwJBtIsJ1VKNPnGeiSw3Tt+pz/KV1V50q90rnLbYLapD1nk9SdJF3rs3AuIT0u3dgj05v06h2fpNAvhvtEU1keKZVLJDTxNy/GTL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HGVygQy4; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240709113532epoutp04113d442178dfa9672a231ffafdb97789~giE9gK4Cx1199611996epoutp04l
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 11:35:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240709113532epoutp04113d442178dfa9672a231ffafdb97789~giE9gK4Cx1199611996epoutp04l
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1720524932;
+	bh=1/vAaKQvg/yK38AxX7tzEigXwlhSdwGh+WKBfS50Va0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=HGVygQy4shpvOpMMxlQwY82C0LZ5854xzqS64pnx+dAEO8/3aconBI8FRsDRjvt9B
+	 Xx+zpMeTX1Uzh8InF7ZA4RzvQPm3XCFppptA9FGZ0XECx1/mcGfrNzYeveD0puQSAQ
+	 HOnF07gi3BO1ZMa2eGDOHDZ3TAL1ZiPV4a1/jzYY=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+	20240709113531epcas1p44ff51bb93c0ef9c60bddbb4c2a0272ac~giE9EbOps0486104861epcas1p45;
+	Tue,  9 Jul 2024 11:35:31 +0000 (GMT)
+Received: from epsmgec1p1.samsung.com (unknown [182.195.36.223]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4WJJnv1zSQz4x9Py; Tue,  9 Jul
+	2024 11:35:31 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	FC.78.09847.3802D866; Tue,  9 Jul 2024 20:35:31 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240709113530epcas1p493461714f6a520e29ba42d132c0b4af1~giE8H_ZWT0486104861epcas1p44;
+	Tue,  9 Jul 2024 11:35:30 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240709113530epsmtrp2aafe2cecd213d687aebf67bfb37ea3c8~giE8HQrJu2310623106epsmtrp2_;
+	Tue,  9 Jul 2024 11:35:30 +0000 (GMT)
+X-AuditID: b6c32a36-60dff70000002677-1e-668d20832a40
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	C8.44.29940.2802D866; Tue,  9 Jul 2024 20:35:30 +0900 (KST)
+Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240709113530epsmtip2bb740741224e63ca19c26fb3e3dbf6c9~giE76K2Fp3215932159epsmtip2g;
+	Tue,  9 Jul 2024 11:35:30 +0000 (GMT)
+From: "Sungjong Seo" <sj1557.seo@samsung.com>
+To: "'OGAWA Hirofumi'" <hirofumi@mail.parknet.co.jp>
+Cc: <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+	<sj1557.seo@samsung.com>
+In-Reply-To: <87bk37t3zl.fsf@mail.parknet.co.jp>
+Subject: RE: [PATCH] fat: print s_dev via fat_msg
+Date: Tue, 9 Jul 2024 20:35:30 +0900
+Message-ID: <0c5c01dad1f4$1a46bd80$4ed43880$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [PATCH net-next v3] ice: Adjust over allocation
- of memory in ice_sched_add_root_node() and ice_sched_add_node()
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>, Paul Menzel
-	<pmenzel@molgen.mpg.de>
-CC: <lvc-project@linuxtesting.org>, Tony Nguyen <anthony.l.nguyen@intel.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Eric Dumazet
-	<edumazet@google.com>, <intel-wired-lan@lists.osuosl.org>, Simon Horman
-	<horms@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>
-References: <20240708182736.8514-1-amishin@t-argos.ru>
- <033111e2-e743-4523-8c4f-7d5f1c801e65@molgen.mpg.de>
- <23d2e91c-4215-4ea5-8b3c-4dd58a1062af@molgen.mpg.de>
- <190d0cdc-d6de-4526-b235-91b25b50c905@intel.com>
- <56160e13-662d-4f7e-86d3-1a88716f01d9@molgen.mpg.de>
- <14683709-212b-43cb-a110-bb184fcff775@intel.com>
-Content-Language: ru
-From: Aleksandr Mishin <amishin@t-argos.ru>
-In-Reply-To: <14683709-212b-43cb-a110-bb184fcff775@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186390 [Jul 09 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 23 0.3.23 8881c50ebb08f9085352475be251cf18bb0fcfdd, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, lore.kernel.org:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;t-argos.ru:7.1.1;mx1.t-argos.ru.ru:7.1.1;docs.kernel.org:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/07/09 09:10:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/07/09 07:08:00 #25923556
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQHwcbNQtGVXTyWTefViKeJrDA01VgFnFHFwAi3Zi2MBwlUF6QGrmzuusYrholA=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGJsWRmVeSWpSXmKPExsWy7bCmnm6zQm+awd8eDos569ewWUyfu4HF
+	4vKuOWwWW/4dYXVg8Tgx4zeLx/23iR59W1YxenzeJBfAEtXAaJNYlJyRWZaqkJqXnJ+SmZdu
+	qxQa4qZroaSQkV9cYqsUbWhopGdoYK5nZGSkZ2oUa2VkqqSQl5ibaqtUoQvVq6RQlFwAVJtb
+	WQw0ICdVDyquV5yal+KQlV8KcqZecWJucWleul5yfq6SQlliTinQCCX9hG+MGVsOaRQ84KnY
+	P3sRawNjC1cXIyeHhICJRM+ClexdjFwcQgI7GCVuL2pkhnA+MUq0fumDynxjlNjTsJ6ti5ED
+	rKX3DBtEfC+jxOOp3YwQzktGiZl/v7CCzGUT0JV4cuMnM4gtAtTw8yLIDk4OZoFoiZ2LDrKB
+	2JwCBhLP/t1hArGFBQwlTvc1gdksAioS1yZ+BuvlFbCUuPLhGQuELShxcuYTFog58hLb385h
+	hvhBQWL3p6OsIMeJCPhJTGnIgCgRkZjd2Qb2jYTAV3aJzgN9UPUuEid3r2SDsIUlXh3fwg5h
+	S0l8freXDaKhm1Hi+Md3LBCJGYwSSzocIGx7iebWZnBIMAtoSqzfpQ+xjE/i3dceVogSQYnT
+	17qZIYHFK9HRJgQRVpH4/mEnC8yqKz+uMk1gVJqF5LNZSD6bheSFWQjLFjCyrGIUSy0ozk1P
+	LTYsMEKO7k2M4CSqZbaDcdLbD3qHGJk4GA8xSnAwK4nwzr/RnSbEm5JYWZValB9fVJqTWnyI
+	MRkY1hOZpUST84FpPK8k3tDMzNLC0sjE0NjM0JCwsImlgYmZkYmFsaWxmZI475krZalCAumJ
+	JanZqakFqUUwW5g4OKUamBSfpEmVxPP8Lrt0w77hE++FXs5muVeLnV7cK5149xx/YNmNV/JN
+	gfOaSu6vC1oSmstefG/6I8OOprbtx0+9S2J/sV1rkvJWOe3Wp8oMhZttf72ISDPp4N/2jGvf
+	DB6G5DuTTm66JPdif9ShO5HzHqilRZve/nk3c47TGSPJ6QpVLFc3B38Pb3/mclF8j1ukv6On
+	yVW+OLX8OUkHT3VsXeSW09sTVXt8ZtCVohf7dQ69P8O5sPT4pZ5DbiVbmOsOexf9m6VTJjRh
+	rtMusVmVxz2et+RZxT089PWYRf6ztZt635vJz3kyxf7V0t/sShK3DQ2rLk295tWbGPiiYQuP
+	1eXdXx2dnuc9uHsjbMGjb/OVWIozEg21mIuKEwEuvB5tWQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsWy7bCSvG6TQm+awfEuRYs569ewWUyfu4HF
+	4vKuOWwWW/4dYXVg8Tgx4zeLx/23iR59W1YxenzeJBfAEsVlk5Kak1mWWqRvl8CVseWQRsED
+	nor9sxexNjC2cHUxcnBICJhI9J5h62Lk4hAS2M0ose3RfFaIuJTEwX2aEKawxOHDxRAlzxkl
+	Fs1Yx97FyMnBJqAr8eTGT2YQWwRozM+LK8HizAKxEtv/voSa2cokcebOWlaQBKeAgcSzf3eY
+	QGxhAUOJ031NYDaLgIrEtYmfwQbxClhKXPnwjAXCFpQ4OfMJC8gRzAJ6Em0bGSHmy0tsfzsH
+	rFxCQEFi96ejYCeLCPhJTGnIgCgRkZjd2cY8gVF4FpJBsxAGzUIyaBaSjgWMLKsYJVMLinPT
+	c4sNCwzzUsv1ihNzi0vz0vWS83M3MYIjQ0tzB+P2VR/0DjEycTAeYpTgYFYS4Z1/oztNiDcl
+	sbIqtSg/vqg0J7X4EKM0B4uSOK/4i94UIYH0xJLU7NTUgtQimCwTB6dUA9OaeXfaxdvylJfn
+	x0pcOZsbMkHMa0tRqcIkO4V5R05ovxVkza97KZ9pkbY16VpDMZfpuwyXmZxmaoynwye4qglF
+	TFylHHAiorSp0P10st7mfbP/y8/6uue7unloZ/uF23u/TtcMW2/wZ33ocv9TqpNenlqh8SPA
+	6em5zfMnLpDd8Yq9bsG/npTiSf1Oyj++ceVy1EY87lZx2Cb7cX/sBb25dXzRNw6aPZkue7CA
+	+8Hnzf9b7v7VPTk92HYbN/ftab9ya7f9epunsXzXkhNXJ0my9Se7KP9tjprnGBTw/PuMV8I/
+	m27N3j9nydYLcvlB615z2zYfPNjRmH0n79u9lf/rYxdkTYz/KPO5N+1zkOVNJZbijERDLeai
+	4kQAC6Lv4PsCAAA=
+X-CMS-MailID: 20240709113530epcas1p493461714f6a520e29ba42d132c0b4af1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-ArchiveUser: EV
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240709041754epcas1p4ee6f7b1fd0dbf287e756b709aba321c8
+References: <CGME20240709041754epcas1p4ee6f7b1fd0dbf287e756b709aba321c8@epcas1p4.samsung.com>
+	<20240709041734.3719513-1-sj1557.seo@samsung.com>
+	<87frsjt9i2.fsf@mail.parknet.co.jp>
+	<000001dad1ca$6b61c720$42255560$@samsung.com>
+	<87bk37t3zl.fsf@mail.parknet.co.jp>
 
-
-
-On 09.07.2024 13:25, Przemek Kitszel wrote:
-> On 7/9/24 11:50, Paul Menzel wrote:
->> Dear Przemek,
->>
->>
->> Thank you for your quick reply.
->>
->>
->> Am 09.07.24 um 11:11 schrieb Przemek Kitszel:
->>> On 7/9/24 10:54, Paul Menzel wrote:
->>>> [Cc: -anirudh.venkataramanan@intel.com (Address rejected)]
->>>>
->>>> Am 09.07.24 um 10:49 schrieb Paul Menzel:
->>
->>>>> Am 08.07.24 um 20:27 schrieb Aleksandr Mishin:
->>>>>> In ice_sched_add_root_node() and ice_sched_add_node() there are 
->>>>>> calls to
->>>>>> devm_kcalloc() in order to allocate memory for array of pointers to
->>>>>> 'ice_sched_node' structure. But incorrect types are used as sizeof()
->>>>>> arguments in these calls (structures instead of pointers) which 
->>>>>> leads to
->>>>>> over allocation of memory.
->>>>>
->>>>> If you have the explicit size at hand, it’d be great if you added 
->>>>> those to the commit message.
-
-One pointer instance size is 8 bytes.
-One structure instance size is (approximately) 104 bytes. I'm not quite 
-sure for that number, because structure is complex and includes another 
-structure, which includes another etc. So I could make a mistake in 
-calculation.
-Memory allocation is performed for multiple instances, so this ~96 bytes 
-should be multiplied by a number of instances to get final memory 
-overhead size.
-
->>>>>
->>>>>> Adjust over allocation of memory by correcting types in 
->>>>>> devm_kcalloc()
->>>>>> sizeof() arguments.
->>>>>>
->>>>>> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->>>>>
->>>>> Maybe mention, that Coverity found that too, and the warning was 
->>>>> disabled, and use that commit in Fixes: tag? That’d be commit 
->>>>> b36c598c999c (ice: Updates to Tx scheduler code), different from 
->>>>> the one you used.
->>>
->>> this version does not have any SHA mentioned :)
->>
->> Sorry, I don’t understand your answer. What SHA do you mean?
+> "Sungjong Seo" <sj1557.seo@samsung.com> writes:
 > 
-> there is no commit cited by Aleksandr in v3, IIRC there was one in v1
+> >> Sungjong Seo <sj1557.seo@samsung.com> writes:
+> >>
+> >> > To clarify MAJOR/MINOR number of a mounted device, fat_msg prints
+> prefix
+> >> > that includes them.
+> >>
+> >> Hm, why do we need the major/minor (why can't use sysfs to resolve if
+> >> need), and why do you care only fat?
+> >> Thanks.
+> > You're right, if you can access to sysfs on a system, this might not
+> > be useful. However, when analyzing problems based on logs, s_dev can be
+> > very helpful for identifying devices. This is because, in systems like
+> > Android, a filesystem gets mounted on a device node with a nickname
+> > like public:179,1.
+> >
+> > I think it would be really useful if applied to representative
+> filesystems
+> > for removable storage devices such as fat and exfat. So I will send the
+> > similar PR to exfat as well.
 > 
-> I agree that mention would be valuable, and we still want v4 with my
-> Suggested-by dropped anyway :)
-
-I'm working on v4, but I must wait 24 hours from v3 according to netdev 
-rules: https://docs.kernel.org/process/maintainer-netdev.html.
-
-In v4 I'll drop "Suggested-by" :)
-
-But I'm a little confused whether to include "Fixes" tag into v4, 
-because this is not an issue for the users as Simon and Przemek wrote?
-
-I would be grateful if you could tell me what else to change to avoid 
-later v5 release :)
-
+> So this is for the naming policy like android?
+Yes, but I think it is just one of examples.
+>
+> And why don't you care the other places (like vfs) that using ->s_id?
+Because, I think it's enough to change fat-fs and exfat-fs.
 > 
->>
->>>>> `Documentation/process/submitting-patches.rst` says:
->>>>>
->>>>>> A Fixes: tag indicates that the patch fixes an issue in a previous
->>>>>> commit. It is used to make it easy to determine where a bug
->>>>>> originated, which can help review a bug fix. This tag also assists
->>>>>> the stable kernel team in determining which stable kernel versions
->>>>>> should receive your fix. This is the preferred method for indicating
->>>>>> a bug fixed by the patch.
->>>
->>> so, this is not a "fix" per definition of a fix: "your patch changes
->>> observable misbehavior"
->>> If the over-allocation would be counted in megabytes, then it will
->>> be a different case.
->>
->> The quoted text just talks about “an issue”. What definition do you 
->> refer to?
-> 
-> I mean that there is no issue (for the users), thus no fix.
-> Example of recently merged "not fix", with more links to other "non-
-> fixes":
-> https://lore.kernel.org/all/b836eb8ca8abf2f64478da48d250405bb1d90ad5.camel@sipsolutions.net/T/
-> 
->>
->>
->> Kind regards,
->>
->> Paul
-> 
+> Because I dislike to use the inconsitent stuff, some logs are "sda3" and
+> some logs are "sda3[8:3]".
+Do you mean consistency between all logs under Linux VFS?
+If so, I think it's meaningless. As mentioned above, this patch
+helps analyze removable storage devices, so it would be nice if it could
+be applied to both fat-fs and exfat-fs.
 
--- 
-Kind regards
-Aleksandr
+Anyway, this is just my opinion and I think you might have a different one.
+Thanks!
+> 
+> Thanks.
+> --
+> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+
 
