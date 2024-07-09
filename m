@@ -1,157 +1,166 @@
-Return-Path: <linux-kernel+bounces-246578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB82892C3CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:15:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE7992C3D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31F0B1C22870
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:15:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 107FCB21030
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D96182A69;
-	Tue,  9 Jul 2024 19:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF6A17B056;
+	Tue,  9 Jul 2024 19:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DmgJZp/W"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9Yn8EjW"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201D51B86EA
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 19:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199F417B027
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 19:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720552513; cv=none; b=Bvm7YhB06neF+klv9T2cXoLa4Mg+LdmQ5rY9IO1uYLKrlQ7Kxh/QebGEcv8Amn96yuOjuPO45SPl4e/+MSGE0LXCiuBs1SnnFG5W47KXxqiOPgGaIVHtvm8PVgGmfr5v3j15sNIulAzaY0sy69WNgSclN6Ic1VZldr5HtjaIAGk=
+	t=1720552531; cv=none; b=RsFbfdQxSMzuczQd3aGLpJBRMC/pVmBn8559392ep2dCRg48+Tuos+zY4Pe9Div+bklIFSBrsWx111RGIrnpHfazeH8SImnAs3qxLJbyINLprdvayXu/DhctWwU8qRKREEdCtIeGVYJyAckaSvb3/rKRlz/zTebnIHa+NppwXE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720552513; c=relaxed/simple;
-	bh=GL5HvXrhTnvH+rd/+8oEb5fbI99ZD4Bj2rNYIrD+RDM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Y/Jd7S5A/pLUjuG2rzN0+ltFgxZVFWLGPCgIyOjCwRbhMFofCeAnzC8K/MJgrhNOh2MiAF07tJ1CeJS4o7D+cO2QSni78UKhXPwuFdoI38PcG8nNXHYLBd1HwOH7hNBQIoHwZOwXOd9wdyeb4OZlhQs0QnqDGJcJ/48jbzFxjMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DmgJZp/W; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-767c010fe18so2677557a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 12:15:11 -0700 (PDT)
+	s=arc-20240116; t=1720552531; c=relaxed/simple;
+	bh=l9YKWHNugysqRnclia1mnLEFda0Foyt6pZ1B9ssZsmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=IwqBOq/N1qLkANQruFPnzRbBrIuO6mA+8gbSlB5o+neGToErllRcQZ2128sMHJt47onZ0UzKfMer1WRTpnzIUKY1y8NeU5XOV3W4ZlfSTdDmY1zE4bISOMU2LFQetXNJo+4ciHrKeWgPJt48isJ0OSKb88K3NR9pN+CAo/2V8Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9Yn8EjW; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7669d62b5bfso2690095a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 12:15:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720552511; x=1721157311; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FRa7ZGzc8RaHWEqAnxaXdSPq2q3+qsWc7fj1GOqpbLM=;
-        b=DmgJZp/WIsyxxVR+jIMi7TRv62HCHDfhWXPgxQtJhv1KuOMkNwchA3aSyVz3f6TEl6
-         TIAubrnwbQh2yxoh7IE10OW3aTkXinvnkPCqUMe8R0UfMUo3Tr9H7QB7c8KzOvShZOIB
-         1312BrOJz9/asS3I+10Z5rG1vIANJEfuPT1TurVKsPvjABKSX2+I/PHpqOq+wetW1lfd
-         OiJAMN+HjwVJj10OnlZi4If00GhwMGeoaIOVWAn2qSOHgFh+32Af39BsBNL8MLWXeRcW
-         OZzWCiMjfv2dY5tB8NifJTOBDECR6FUaICMhH8X5ijzNc3NGCeCsABsBpfR1cwI+iQ+w
-         z/vA==
+        d=gmail.com; s=20230601; t=1720552528; x=1721157328; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BVvD7435hpIemm43JrTkj0xQf9NKCpeT4z04Es1zZLk=;
+        b=X9Yn8EjW8Q1ugBmWfmGGTLNBpwlfLHGTpS2mqzdvVBTL+TFdU/lcYEfs3yn4/dyplv
+         /Hpsksgfb2wIE6HKwZbjB/VGpKROriEX2CwOWOE1Sj4tuGoUCj39JDtx6unIKOU7B7Aj
+         qIdjWV4mLNaSSAe0gx6PtFB6ECBaazrvISQvMIr64VaFGWNs31uPXJOFQAGELqPM6r0g
+         E/8g43RFDuPGQj6aAiSuFIU9UOD38LImFqtzmAUK8+u4iUGSPRsZOBVHxz7OlzyxQqFB
+         AfySXxNpP8swszxRE359/pOub3YqZ1MifHeF0KKCbZ6kjueuoDvUPtnM4KWs+OGP+BVn
+         aK/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720552511; x=1721157311;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FRa7ZGzc8RaHWEqAnxaXdSPq2q3+qsWc7fj1GOqpbLM=;
-        b=awjCCbubudmlWux6LyiAHCeWiDh/0hQqDDjY3NppBfTtQSnJ22tOmIvbCsEIA+24m1
-         EqMm7ovA4rGj/H3emhWPiv8if8w5WzPDD8kmfpxz3IpdMDzKsjLyNyar6YlmuawqHd0N
-         CxyT2hNcRibp/sZy6fXImB/DIpQRDqS6x0NcEpcCnz1nNduKj1agHojuLXRrfYK1Osim
-         5jGZzNdcnGhGw5iYRBrlWC3s0Vkc0qlvMYYzn7E4oYLSw3SGG/Mv2BFLRvmUXiJonJwK
-         DnttsVOYlAfnV6ZMvMRuxMuHr1hsJ2q3MiuZMyUqnXg+drs8Ps+w1tvY/a4vaNk+zNRM
-         FSOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUs8RiINkgd2kWiOl+ErwBwMenvJ6dCRauseQZqSVFVm1fHInFqWghMz+HRvotJV3hWNcfWmUEI2Ns8UH0L9ZiaaMTSgkwxzuqWU67h
-X-Gm-Message-State: AOJu0Yx6VYCUUBE8kdL8z5ImBMXOwI/TgYZ/kNjN0afnKMKA7Wx+qtT5
-	yqEDvX8LodA9llYdzkunfgnpjDwsj3+5B6y1vy21wWgkcZr/BZHGL8zVbgIKY1FOrGqT1kKl6+5
-	ysw==
-X-Google-Smtp-Source: AGHT+IEBlgoKo2SXuEYo/1nV2K0XpxZIpDEQZ5fuzNWKnNDIVX1Sc5c97+FM4pmyhIYhXb8m8qVsHhcobIk=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:4660:0:b0:75b:fd10:a196 with SMTP id
- 41be03b00d2f7-77db448a3b0mr17807a12.1.1720552511201; Tue, 09 Jul 2024
- 12:15:11 -0700 (PDT)
-Date: Tue, 9 Jul 2024 12:15:09 -0700
-In-Reply-To: <46361f0c834a25ad0a45ca2f1813ade603d29201.camel@redhat.com>
+        d=1e100.net; s=20230601; t=1720552528; x=1721157328;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BVvD7435hpIemm43JrTkj0xQf9NKCpeT4z04Es1zZLk=;
+        b=GZKSh+/MOmQyhWiymmSukv1oDD3pAxdEQVa4PaMDSvcQIyz8bVkZ0R77bmbQ8C6Nd8
+         r2fBdYnWamRstqy9Po1Cz2fAZaXrPYtxM/Qx+oxKaFUltWk0HqzQEEcfLcwNOcoYSBO0
+         RJCOHz7QIOqlPr0WYNbMZ6R2M4H1rcYrLrNoa5KzxBskA7sLsLoVPYiReLFZTHl0iLSx
+         8VW+zvkzElc/vanf3frU8VjO1lVTnvZ4Taccf2uvpdeQY3zvJhW+Pw/WAtcijVTEdox8
+         G7+X9BwB9Ft1XqzLI+LkfXeshdniip/65wYs2hpXXeZlDOkKRYaGSkfzBy7T8A+TizBp
+         vWrw==
+X-Gm-Message-State: AOJu0YyY3sPekHJix4MQsQl4ug1PsAwKmWIm1ZPjLU03bmKLxIDNwcfW
+	j8ymFm24ZAjiR6Zg1FbY1WfDwkSPOXdKwPLJ5rGLGDfoPi4Fbj3b6xWUGqCv
+X-Google-Smtp-Source: AGHT+IG/IkLwTpdYXOdTbDjXJysGuHHmuIQhCOFXnoI3QtXxIfRS9eyG5HH9ftXNI9ZKe6BDUeLbqQ==
+X-Received: by 2002:a05:6a20:7484:b0:1c2:8d0a:8e9d with SMTP id adf61e73a8af0-1c29820b872mr3856486637.7.1720552528256;
+        Tue, 09 Jul 2024 12:15:28 -0700 (PDT)
+Received: from localhost.localdomain ([50.39.170.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a2b6bcsm19658455ad.78.2024.07.09.12.15.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 12:15:27 -0700 (PDT)
+Date: Tue, 9 Jul 2024 12:15:26 -0700
+From: Tyler Taormina <taormina.dev@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: [PATCH] staging: vme_user: Remove redundant parentheses
+Message-ID: <Zo2MTjKCM_UaLIGx@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-48-seanjc@google.com>
- <46361f0c834a25ad0a45ca2f1813ade603d29201.camel@redhat.com>
-Message-ID: <Zo2MPSccg3AEz4qM@google.com>
-Subject: Re: [PATCH v2 47/49] KVM: x86: Drop superfluous host XSAVE check when
- adjusting guest XSAVES caps
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, Jul 04, 2024, Maxim Levitsky wrote:
-> On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
-> > Drop the manual boot_cpu_has() checks on XSAVE when adjusting the guest's
-> > XSAVES capabilities now that guest cpu_caps incorporates KVM's support.
-> > The guest's cpu_caps are initialized from kvm_cpu_caps, which are in turn
-> > initialized from boot_cpu_data, i.e. checking guest_cpu_cap_has() also
-> > checks host/KVM capabilities (which is the entire point of cpu_caps).
-> > 
-> > Cc: Maxim Levitsky <mlevitsk@redhat.com>
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >  arch/x86/kvm/svm/svm.c | 1 -
-> >  arch/x86/kvm/vmx/vmx.c | 3 +--
-> >  2 files changed, 1 insertion(+), 3 deletions(-)
-> > 
-> > diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> > index 06770b60c0ba..4aaffbf22531 100644
-> > --- a/arch/x86/kvm/svm/svm.c
-> > +++ b/arch/x86/kvm/svm/svm.c
-> > @@ -4340,7 +4340,6 @@ static void svm_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
-> >  	 * the guest read/write access to the host's XSS.
-> >  	 */
-> >  	guest_cpu_cap_change(vcpu, X86_FEATURE_XSAVES,
-> > -			     boot_cpu_has(X86_FEATURE_XSAVE) &&
-> >  			     boot_cpu_has(X86_FEATURE_XSAVES) &&
-> >  			     guest_cpu_cap_has(vcpu, X86_FEATURE_XSAVE));
-> 
-> >  
-> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > index 741961a1edcc..6fbdf520c58b 100644
-> > --- a/arch/x86/kvm/vmx/vmx.c
-> > +++ b/arch/x86/kvm/vmx/vmx.c
-> > @@ -7833,8 +7833,7 @@ void vmx_vcpu_after_set_cpuid(struct kvm_vcpu *vcpu)
-> >  	 * to the guest.  XSAVES depends on CR4.OSXSAVE, and CR4.OSXSAVE can be
-> >  	 * set if and only if XSAVE is supported.
-> >  	 */
-> 
-> 
-> > -	if (!boot_cpu_has(X86_FEATURE_XSAVE) ||
-> > -	    !guest_cpu_cap_has(vcpu, X86_FEATURE_XSAVE))
-> > +	if (!guest_cpu_cap_has(vcpu, X86_FEATURE_XSAVE))
-> >  		guest_cpu_cap_clear(vcpu, X86_FEATURE_XSAVES);
-> 
-> Hi,
-> 
-> I have a question about this code, even before the patch was applied:
-> 
-> While it is obviously correct to disable XSAVES when XSAVE not supported, I
-> wonder: There are a lot more cases like that and KVM explicitly doesn't
-> bother checking them, e.g all of the AVX family also depends on XSAVE due to
-> XCR0.
-> 
-> What makes XSAVES/XSAVE dependency special here? Maybe we can remove this
-> code to be consistent?
+Adhere to Linux kernel coding style.
 
-Because that would result in VMX and SVM behavior diverging with respect to
-whether guest_cpu_cap_has(X86_FEATURE_XSAVES).  E.g. for AMD it would be 100%
-accurate, but for Intel it would be accurate if and only if XSAVE is supported.
+Reported by checkpatch:
 
-In practice that isn't truly problematic, because checks on XSAVES from common
-code are gated on guest CR4.OSXSAVE=1, i.e. implicitly check XSAVE support.  But
-the potential danger of sublty divergent behavior between VMX and SVM isn't worth
-making AVX vs. XSAVES consistent within VMX, especially since VMX vs. SVM would
-still be inconsistent.
+CHECK: Unnecessary parentheses around (...)
 
-> AMD portion of this patch, on the other hand does makes sense, due to a lack
-> of a separate XSAVES intercept.
+Signed-off-by: Tyler Taormina <taormina.dev@gmail.com>
+---
+ drivers/staging/vme_user/vme.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-FWIW, AMD also needs precise tracking in order to passthrough XSS for SEV-ES.
+diff --git a/drivers/staging/vme_user/vme.c b/drivers/staging/vme_user/vme.c
+index 0cd370ab1008..5c1d1c9b7b70 100644
+--- a/drivers/staging/vme_user/vme.c
++++ b/drivers/staging/vme_user/vme.c
+@@ -274,7 +274,7 @@ struct vme_resource *vme_slave_request(struct vme_dev *vdev, u32 address,
+ 		mutex_lock(&slave_image->mtx);
+ 		if (((slave_image->address_attr & address) == address) &&
+ 		    ((slave_image->cycle_attr & cycle) == cycle) &&
+-		    (slave_image->locked == 0)) {
++		    slave_image->locked == 0) {
+ 			slave_image->locked = 1;
+ 			mutex_unlock(&slave_image->mtx);
+ 			allocated_image = slave_image;
+@@ -473,7 +473,7 @@ struct vme_resource *vme_master_request(struct vme_dev *vdev, u32 address,
+ 		if (((master_image->address_attr & address) == address) &&
+ 		    ((master_image->cycle_attr & cycle) == cycle) &&
+ 		    ((master_image->width_attr & dwidth) == dwidth) &&
+-		    (master_image->locked == 0)) {
++		    master_image->locked == 0) {
+ 			master_image->locked = 1;
+ 			spin_unlock(&master_image->lock);
+ 			allocated_image = master_image;
+@@ -849,7 +849,7 @@ struct vme_resource *vme_dma_request(struct vme_dev *vdev, u32 route)
+ 		/* Find an unlocked and compatible controller */
+ 		mutex_lock(&dma_ctrlr->mtx);
+ 		if (((dma_ctrlr->route_attr & route) == route) &&
+-		    (dma_ctrlr->locked == 0)) {
++		    dma_ctrlr->locked == 0) {
+ 			dma_ctrlr->locked = 1;
+ 			mutex_unlock(&dma_ctrlr->mtx);
+ 			allocated_ctrlr = dma_ctrlr;
+@@ -1218,9 +1218,9 @@ void vme_bus_error_handler(struct vme_bridge *bridge,
+ 	u32 aspace = vme_get_aspace(am);
+ 
+ 	list_for_each_entry(handler, &bridge->vme_error_handlers, list) {
+-		if ((aspace == handler->aspace) &&
+-		    (address >= handler->start) &&
+-		    (address < handler->end)) {
++		if (aspace == handler->aspace &&
++		    address >= handler->start &&
++		    address < handler->end) {
+ 			if (!handler->num_errors)
+ 				handler->first_error = address;
+ 			if (handler->num_errors != UINT_MAX)
+@@ -1307,7 +1307,7 @@ int vme_irq_request(struct vme_dev *vdev, int level, int statid,
+ 		return -EINVAL;
+ 	}
+ 
+-	if ((level < 1) || (level > 7)) {
++	if (level < 1 || level > 7) {
+ 		dev_err(bridge->parent, "Invalid interrupt level\n");
+ 		return -EINVAL;
+ 	}
+@@ -1357,7 +1357,7 @@ void vme_irq_free(struct vme_dev *vdev, int level, int statid)
+ 		return;
+ 	}
+ 
+-	if ((level < 1) || (level > 7)) {
++	if (level < 1 || level > 7) {
+ 		dev_err(bridge->parent, "Invalid interrupt level\n");
+ 		return;
+ 	}
+@@ -1405,7 +1405,7 @@ int vme_irq_generate(struct vme_dev *vdev, int level, int statid)
+ 		return -EINVAL;
+ 	}
+ 
+-	if ((level < 1) || (level > 7)) {
++	if (level < 1 || level > 7) {
+ 		dev_warn(bridge->parent, "Invalid interrupt level\n");
+ 		return -EINVAL;
+ 	}
+-- 
+2.39.2
+
 
