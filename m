@@ -1,149 +1,124 @@
-Return-Path: <linux-kernel+bounces-245024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23C2792AD28
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:36:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CA9492AD2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA0192826CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:36:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DE791C2107F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B8F29422;
-	Tue,  9 Jul 2024 00:36:24 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E522528DC1;
+	Tue,  9 Jul 2024 00:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="STOLTzNm"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6C83214
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 00:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3321C2D;
+	Tue,  9 Jul 2024 00:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720485383; cv=none; b=KUGSrKLcnmwtQQ1K/J+flrcinUWwYbxChcbR0Kj0mF9ihIfr5qusYCXFhLb02VuoAl7e/y0OGKXnTVVi1zGlsssv33HwrkB/6W4CwduCZoKpZhIKLPnLA0LI8x4Xsx520u7IgZZZe1c6jNkjKZVwua21EfWdJzoR6UtQBaMVewM=
+	t=1720485650; cv=none; b=Tg2u8eR/xjcyoezqcRfnTRp20BcYwaUa9ZtSoAOT6GaSnx2ZNaWbu/OklxmsQgSyiW2daDnXWwWQfUc+mF4w4Ruxwo2RB/6aBMf4x6gDMM02AV5xu11QCa5m5GLbypgXlJmR0WGBr37mn7lH5iftseu39RqSGfDcHBxH3yKi+X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720485383; c=relaxed/simple;
-	bh=8otHiJbE/VSdOupQC/73La9rg+QB5+G8BfHl1T3pUxg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=K6FoGKR70tsRbP2pjjM7c2a0OmaTNaX+gERYl41hoQrYCNgKs/5q/Ci7bfpdS7Pw9+/fuRAdoGonwuCNSFVMPIb6tDo0JpKFV8cWtU4LWk1oVuaKnAAlhk+TqUGoevZJpGVsHJAouYmsBP5gT+nlrw85RBQ4aj1tUXlqxfwQrBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-381c11633e9so49413385ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 17:36:22 -0700 (PDT)
+	s=arc-20240116; t=1720485650; c=relaxed/simple;
+	bh=iTy2Cq2yqwTi78Jdpj6ObOvuejO7RbgJgFLPjTaDa8A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kmkcMCuiHrDAnMQw1vULEMaEtE1ouKq8eSh09ItTKSslODKex11rNdyX1ALRRUyNc6wQxq1O/JVIwSg0/wpUVLwiKnxAN5+EK+6ykf5Z6KbL1gNyrx9db9eHmoOZkLkBEuv3hi8PP7UP9D6iuXXCzyhdqNYb4eh1pfmP5mHZUDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=STOLTzNm; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70afe18837cso2687431b3a.3;
+        Mon, 08 Jul 2024 17:40:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720485648; x=1721090448; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=TefAfK5dIgKaK+KnNKZuIKyjF1nQedbcnMOk0o6YRzU=;
+        b=STOLTzNmPJ+CTYCyls62m8c0aC48u6XzDKUHLhzriJVcOfLpsJ7WkRSmw8kvuFBia7
+         FQ6h2fdWDzmv3TErgXf096jKB66MdGMuS6QseNyDbfAM825Adf2S9x59J1kvNHn5K4Wo
+         aomXPdnk7TkQnYpHufYYmsxUH4XDwzOe792q+Jm6M08reTBi2qe7sOsIVkZ62dvomKhZ
+         /yP3suWXvXuUhxoptQxK8iqzDpe/I4UahXx/09JUSGkz/7Q8n3HprtYZRAHElyZYN/hJ
+         XpGXOeun5fsbiFr9tPMDqLsWiJ+27mY9lXIYf5qTfKAUreGGvlGWdHirDI3QCJ7V0FPO
+         Ok0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720485381; x=1721090181;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NQ38Bd0kst9MLbWT6jyPb0KQ10UtFUksZmt6kSW4+Lc=;
-        b=iCfTvcGl26Xw2JK5rAeglvNHa2lHbD0e7pqojNoutFNZmyuhlqorgYMgN3mw7tdcmt
-         5onjI68xAD4KDN4oUfFp2H5wnM0nmKMoLZYIXC3m/04dUQ73/kyWRYzKIDXwqoGdN92O
-         z5NYYO7Ae0lknh5d0oVOWrr37RUNO7qoDlRFRIR2EFcJzzx4kqktH03hXH9shx6H7kqa
-         5hdXiCbZBMhFOfhaWCcQcq1OjrC49QLWBEe35h+S0D69gkx7fO7P3qAe4c5S00dy3jqW
-         Uw+WD2j7VX/lPjVuumbB93tqnoqNXkdZTKjGc/d+wTdhC1Kfe2kCQ/a2Q6gvgkIU/nNs
-         lUWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMch0jkPlzHG/eOhR4Xh8Un93g0gwEEhKANUJkG48QrOUBfiDi+vuDAW260jw94gKVL1GOYBl8VqGCr3K3nls/JHbyNZDeP5Zm26Wc
-X-Gm-Message-State: AOJu0YxVrjf1NPpj1J8OMysAUeUmU4Ilzsm+ml9ea3WXXLG7W0I5Lp7h
-	SJIWSK+pNbjm4/Fivze/QhxoPhRax2N4WjV5GLp91CHU+4n8whHTkLipmcUuiyjZ9VjYtio6X9Q
-	mJbDQaLmeg086KplqqwzHECaL4zjCKjGQNobqPdvw2bZny1Y51KPehx0=
-X-Google-Smtp-Source: AGHT+IF3SCdXTva0hGfrZCvmsu/5C2j5yWo0gBbzwdfD++/P47knw+V10pjexYLsUjE8W9HmOuw485812n30qHjjvBMYpeQhicIh
+        d=1e100.net; s=20230601; t=1720485648; x=1721090448;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TefAfK5dIgKaK+KnNKZuIKyjF1nQedbcnMOk0o6YRzU=;
+        b=VBAQbPxamiR4rCkbd0l93mRWRDZ5+PIyoy5uKDFm2rgTwMSycakIL1poEmo5apr99d
+         4Pe5joiKe8p5f5ReFA5DOgRH7/bJEHnqIZO5dC1sn41v6UDGyXYV4qNvG3nJcMDrvbNU
+         08T+lL1HzyCBJOL+V3XIkrzShgclkpm1buMuB0hxj1Z17p+ZGXeDp1OGQ5w5NX7BSLHE
+         NfggAulQpRoZ9XnGFU/dUYzvn6KCArziwYknEBXY/zEd6dT6lSsuWd8vqtUQlxIhDHFO
+         Qr27rQ6Ri1MnXBh10aoaUdwA7N0jkR0CBnttq5eYRWkJnFCk7tTXQHOC+o27QtaIyblg
+         WaQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwwq1k0XRCwfbMht3xG5a9S0eTIUumT04k7ogQgDJAvfiyYshWOUDwsBYzBdau/VCArqZD0yI6P6IddAs8IucghRa+
+X-Gm-Message-State: AOJu0Yxto/tIQcAF76bik1TheqnLKUhCnn7Rb7VtkJhzT6xezLDwoGsl
+	nyD/D19x6Q6RAcFxMkSQfmvYNPW2nXXFJ084Aw3hcMqKxr2VciKbEXgh+g==
+X-Google-Smtp-Source: AGHT+IG+vkBtCHt5q4kVZ1+uFKDMNkZK4xSjLkrclGyLBCgE26ssAGuJmk8SHiUuR2hbzRqKEKmzMA==
+X-Received: by 2002:a05:6a00:2e87:b0:706:747c:76ba with SMTP id d2e1a72fcca58-70b434f6409mr1406362b3a.2.1720485647796;
+        Mon, 08 Jul 2024 17:40:47 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b439e3a45sm487632b3a.186.2024.07.08.17.40.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 17:40:47 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+From: Tejun Heo <tj@kernel.org>
+To: ast@kernel.org,
+	andrii@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	void@manifault.com,
+	kernel-team@meta.com
+Subject: [PATCHSET v5 sched_ext/for-6.11] sched_ext: Implement DSQ iterator
+Date: Mon,  8 Jul 2024 14:40:21 -1000
+Message-ID: <20240709004041.1111039-1-tj@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:d347:0:b0:381:7075:6911 with SMTP id
- e9e14a558f8ab-38a56e0e95dmr147685ab.1.1720485381618; Mon, 08 Jul 2024
- 17:36:21 -0700 (PDT)
-Date: Mon, 08 Jul 2024 17:36:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000346a6061cc5b897@google.com>
-Subject: [syzbot] [wireless?] WARNING in __cfg80211_bss_update (2)
-From: syzbot <syzbot+1a797e1c81be78a2ace7@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+DSQs are very opaque in the consumption path. The BPF scheduler has no way
+of knowing which tasks are being considered and which is picked. This
+patchset adds BPF DSQ iterator to allow BPF schedulers more flexibility in
+how DSQs are used. See the 0002 patch for more details.
 
-syzbot found the following issue on:
+Changes from v4 (https://lore.kernel.org/all/Zn9oEjsm_1aWb35J@slm.duckdns.org/):
 
-HEAD commit:    d270dd21bee0 Merge tag 'pci-v6.10-fixes-2' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=123cc8a5980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=864caee5f78cab51
-dashboard link: https://syzkaller.appspot.com/bug?extid=1a797e1c81be78a2ace7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+- Comment added to clarify use of naked list_empty(&dsq->list) test.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+- scx_qmap changes separated into its own patch (0003).
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/987e45087f46/disk-d270dd21.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/072b7b491dd1/vmlinux-d270dd21.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e0ddb6b56277/bzImage-d270dd21.xz
+There are no functional changes since v4. I'll apply these patches to
+sched_ext/for-6.11 with the outstanding acks.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1a797e1c81be78a2ace7@syzkaller.appspotmail.com
+This patchset contains the following three patches:
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 19045 at net/wireless/scan.c:1714 cfg80211_combine_bsses net/wireless/scan.c:1714 [inline]
-WARNING: CPU: 1 PID: 19045 at net/wireless/scan.c:1714 __cfg80211_bss_update+0x114a/0x20c0 net/wireless/scan.c:1954
-Modules linked in:
-CPU: 1 PID: 19045 Comm: kworker/u8:9 Not tainted 6.10.0-rc6-syzkaller-00210-gd270dd21bee0 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Workqueue: events_unbound cfg80211_wiphy_work
-RIP: 0010:cfg80211_combine_bsses net/wireless/scan.c:1714 [inline]
-RIP: 0010:__cfg80211_bss_update+0x114a/0x20c0 net/wireless/scan.c:1954
-Code: e1 07 fe c1 38 c1 0f 8c 49 fb ff ff 48 8b 7c 24 68 e8 aa fb 26 f7 e9 3a fb ff ff e8 e0 46 c1 f6 90 0f 0b 90 e9 c0 fb ff ff 90 <0f> 0b 90 48 89 ef e8 9b 99 e1 f9 84 c0 0f 84 9f 00 00 00 e8 be 46
-RSP: 0018:ffffc9000315ee98 EFLAGS: 00010206
-RAX: ffff88806d6fec10 RBX: ffff88802b936488 RCX: dffffc0000000000
-RDX: ffff88805e953c00 RSI: 0000000000000000 RDI: 0000000000000006
-RBP: ffff88802b936410 R08: ffffffff8ad4de30 R09: 00000010fffff448
-R10: 0000505050505050 R11: 0003000000000000 R12: ffff88802b936400
-R13: 0000000000000000 R14: dffffc0000000000 R15: ffff88805ca01800
-FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f00aee80836 CR3: 0000000021fd0000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- cfg80211_inform_single_bss_data+0xfd6/0x2360 net/wireless/scan.c:2289
- cfg80211_inform_bss_data+0x3dd/0x5a70 net/wireless/scan.c:3117
- cfg80211_inform_bss_frame_data+0x3bc/0x720 net/wireless/scan.c:3207
- ieee80211_bss_info_update+0x8a7/0xbc0 net/mac80211/scan.c:226
- ieee80211_rx_bss_info net/mac80211/ibss.c:1099 [inline]
- ieee80211_rx_mgmt_probe_beacon net/mac80211/ibss.c:1578 [inline]
- ieee80211_ibss_rx_queued_mgmt+0x1962/0x2d70 net/mac80211/ibss.c:1605
- ieee80211_iface_process_skb net/mac80211/iface.c:1603 [inline]
- ieee80211_iface_work+0x8a3/0xf10 net/mac80211/iface.c:1657
- cfg80211_wiphy_work+0x221/0x260 net/wireless/core.c:437
- process_one_work kernel/workqueue.c:3248 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3329
- worker_thread+0x86d/0xd50 kernel/workqueue.c:3409
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+ 0001-sched_ext-Take-out-priq-and-flags-from-scx_dsq_node.patch
+ 0002-sched_ext-Implement-DSQ-iterator.patch
+ 0003-sched_ext-scx_qmap-Add-an-example-usage-of-DSQ-itera.patch
 
+and is also availalbe in the following git branch:
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git scx-dsq-iter-v5
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diffstat follows. Thanks.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+ include/linux/sched/ext.h                |   13 +-
+ init/init_task.c                         |    2
+ kernel/sched/ext.c                       |  244 ++++++++++++++++++++++++++++++++++++++++++++++-------
+ tools/sched_ext/include/scx/common.bpf.h |    3
+ tools/sched_ext/scx_qmap.bpf.c           |   25 +++++
+ tools/sched_ext/scx_qmap.c               |    8 +
+ 6 files changed, 259 insertions(+), 36 deletions(-)
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+--
+tejun
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
