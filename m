@@ -1,153 +1,224 @@
-Return-Path: <linux-kernel+bounces-245501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AE6C92B35E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:14:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D04792B36C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:16:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 261212823CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:14:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6FCE282F14
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8252C15443B;
-	Tue,  9 Jul 2024 09:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD00C154BE0;
+	Tue,  9 Jul 2024 09:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X6xu6d/E"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="b5CS9d8E"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE016146016;
-	Tue,  9 Jul 2024 09:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CED81DA2F;
+	Tue,  9 Jul 2024 09:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720516429; cv=none; b=J/rraF1EbDwU4Rf7RRUS+winlwraPHRLxE/6Fm+7zoftAr83+lhJa/6JlsDJThJW/cSgRdno6wq4ZTZQjMEqxS2QkmHuFXPy1SbKmzeBThb1RtjMJg7lLU+5swClVBcgoS2AK4Sk+Rz5wlel2Eu4O2idxcp+UF/qMgiTsZrIgzI=
+	t=1720516560; cv=none; b=o46AuTjU/Oh2+A7B8xHMywvUTEh6lIxPcf6buc8eA1b+UWAgk3i94jb7bL0SvHuviHiq+q4yg2LTkw58Zrf4jOiEjgELNURKxioXlXegFK9Z/24bGlZXv7W3c2qx5YvvtqaFcWr3Qb+OwM5Hf8lCEjW/tfA+wyNSXd0kPEC9KxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720516429; c=relaxed/simple;
-	bh=x1XdS8sKH3KmEUOLFiabC/tDkWsyh/TjaOkJAyqIhoo=;
+	s=arc-20240116; t=1720516560; c=relaxed/simple;
+	bh=hK2QUQoSLsKZsz2jegmGiISGgACqpgV+13IffX5u+qA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=grTaOp3apTvch+czGA+gd18Gd0j0CqaPIh2skSiADwClsZIIU+FPQm4emsVUeLgIgSxgpUuTlJFugzS7YIe5mpN5e9mej7UF29i/Y+C9015JTQGnnuMOIJkI/9Bl7ZxdJDQfQfX+pswR/AaBf3lIP4gphM60Hv3weVePV2gN7gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X6xu6d/E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38D00C3277B;
-	Tue,  9 Jul 2024 09:13:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720516429;
-	bh=x1XdS8sKH3KmEUOLFiabC/tDkWsyh/TjaOkJAyqIhoo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hpmhwe9C7pKFype5pMQ3KhGNl+0+F0MqfREeyOD+KduE8idQ3v7UnEEBpGkJ/USUsh04/IenZrDxOqkXoPr6jB97EVzTP+1kG/SjO4XwoJMB6AqYUVIFhw/YflpcyOJ1qKZZrUZTlzAFBELz3L0fNJTaiN/L5CyzI8xVS1G/wk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=b5CS9d8E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E023C3277B;
+	Tue,  9 Jul 2024 09:15:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720516560;
+	bh=hK2QUQoSLsKZsz2jegmGiISGgACqpgV+13IffX5u+qA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X6xu6d/Ecbt8NTFXeHQHt3J9nvPLV1A3Gf4kg2p0zaScrAite9J269SEnxil95dHK
-	 C/mG/2nGWeSL4pmSia13hpy/XzR4DLke+XwP9xiPWWr96dJg3goQMS8wNBXQSbTT0Q
-	 z8WBJgS9EEs/dmAw7xSXxkTHQ+XkPZIp50pwemRBbc1zZJUSWRdsdcX0y0mTpaDejq
-	 6GOZB/o380b7TipD4IjkzhI3dqR9/4TPFx7bwZs8365fYFwUNvIFzjLhMnNXvvMED1
-	 niEL4bgzbRiXwdEyCC0KSOf6IhdiD3Vz+dlhQFZjz+QEVuVCzSTdkuXhIWftIAuoP7
-	 RqH5jSv9ZdsnQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sR6v4-0000000055L-158T;
-	Tue, 09 Jul 2024 11:13:55 +0200
-Date: Tue, 9 Jul 2024 11:13:54 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, andersson@kernel.org,
-	konrad.dybcio@linaro.org, jassisinghbrar@gmail.com,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com,
-	conor+dt@kernel.org, quic_nkela@quicinc.com,
-	quic_psodagud@quicinc.com, abel.vesa@linaro.org
-Subject: Re: [PATCH V6 5/5] arm64: dts: qcom: x1e80100: Enable cpufreq
-Message-ID: <Zoz_UmPBWKHA37Kq@hovoldconsulting.com>
-References: <20240612124056.39230-1-quic_sibis@quicinc.com>
- <20240612124056.39230-6-quic_sibis@quicinc.com>
- <ZoQjAWse2YxwyRJv@hovoldconsulting.com>
- <f53bc00f-8217-1dc8-5203-1a83c24d353d@quicinc.com>
+	b=b5CS9d8EmjYuSh4Oeec2RjoRUGGvRd0pLtlX6LmRJt4hCd5HbYeEb7JcMhMOETUiL
+	 nJGOijZI7omuHyu+1Qf35faihpB0P+eHXoiC/u41ezJKQHr3qA2gW9sxBtTIXizM63
+	 z1FgzWNtkl38ekbRw1GjxAc4UY7Jz4/WW8/AIhfs=
+Date: Tue, 9 Jul 2024 11:15:57 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
+Cc: WangYuli <wangyuli@uniontech.com>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"sashal@kernel.org" <sashal@kernel.org>,
+	"ast@kernel.org" <ast@kernel.org>,
+	"keescook@chromium.org" <keescook@chromium.org>,
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"song@kernel.org" <song@kernel.org>,
+	"puranjay12@gmail.com" <puranjay12@gmail.com>,
+	"daniel@iogearbox.net" <daniel@iogearbox.net>,
+	"andrii@kernel.org" <andrii@kernel.org>,
+	"martin.lau@linux.dev" <martin.lau@linux.dev>,
+	"yonghong.song@linux.dev" <yonghong.song@linux.dev>,
+	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+	"kpsingh@kernel.org" <kpsingh@kernel.org>,
+	"sdf@google.com" <sdf@google.com>,
+	"haoluo@google.com" <haoluo@google.com>,
+	"jolsa@kernel.org" <jolsa@kernel.org>,
+	"illusionist.neo@gmail.com" <illusionist.neo@gmail.com>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"chenhuacai@kernel.org" <chenhuacai@kernel.org>,
+	"kernel@xen0n.name" <kernel@xen0n.name>,
+	"loongarch@lists.linux.dev" <loongarch@lists.linux.dev>,
+	"johan.almbladh@anyfinetworks.com" <johan.almbladh@anyfinetworks.com>,
+	"paulburton@kernel.org" <paulburton@kernel.org>,
+	"tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>,
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+	"deller@gmx.de" <deller@gmx.de>,
+	"linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+	"iii@linux.ibm.com" <iii@linux.ibm.com>,
+	"hca@linux.ibm.com" <hca@linux.ibm.com>,
+	"gor@linux.ibm.com" <gor@linux.ibm.com>,
+	"agordeev@linux.ibm.com" <agordeev@linux.ibm.com>,
+	"borntraeger@linux.ibm.com" <borntraeger@linux.ibm.com>,
+	"svens@linux.ibm.com" <svens@linux.ibm.com>,
+	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"hawk@kernel.org" <hawk@kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"dsahern@kernel.org" <dsahern@kernel.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"guanwentao@uniontech.com" <guanwentao@uniontech.com>,
+	"baimingcong@uniontech.com" <baimingcong@uniontech.com>
+Subject: Re: [PATCH] Revert "bpf: Take return from set_memory_rox() into
+ account with bpf_jit_binary_lock_ro()" for linux-6.6.37
+Message-ID: <2024070908-glade-granny-1137@gregkh>
+References: <5A29E00D83AB84E3+20240706031101.637601-1-wangyuli@uniontech.com>
+ <2024070631-unrivaled-fever-8548@gregkh>
+ <B7E3B29557B78CB1+afadbaa6-987e-4db4-96b5-4e4d5465c37b@uniontech.com>
+ <2024070815-udder-charging-7f75@gregkh>
+ <a1dac525-4e6d-4d28-87ee-63723abbafad@cs-soprasteria.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <f53bc00f-8217-1dc8-5203-1a83c24d353d@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a1dac525-4e6d-4d28-87ee-63723abbafad@cs-soprasteria.com>
 
-Hi Sibi,
-
-On Wed, Jul 03, 2024 at 01:29:11AM +0530, Sibi Sankar wrote:
-> On 7/2/24 21:25, Johan Hovold wrote:
-> > On Wed, Jun 12, 2024 at 06:10:56PM +0530, Sibi Sankar wrote:
-> >> Enable cpufreq on X1E80100 SoCs through the SCMI perf protocol node.
-
-> > This series gives a nice performance boost on the x1e80100 CRD, but I'm
-> > seeing a bunch of warnings and errors that need to be addressed:
-> > 
-> > [    9.533053] arm-scmi firmware:scmi: Failed to get FC for protocol 13 [MSG_ID:6 / RES_ID:0] - ret:-95. Using regular messaging.
-> > [    9.549458] arm-scmi firmware:scmi: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > [    9.563925] arm-scmi firmware:scmi: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > [    9.572835] arm-scmi firmware:scmi: Failed to get FC for protocol 13 [MSG_ID:6 / RES_ID:1] - ret:-95. Using regular messaging.
-> > [    9.609471] arm-scmi firmware:scmi: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > [    9.633341] arm-scmi firmware:scmi: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> > [    9.650000] arm-scmi firmware:scmi: Failed to get FC for protocol 13 [MSG_ID:6 / RES_ID:2] - ret:-95. Using regular messaging.
+On Mon, Jul 08, 2024 at 03:12:55PM +0000, LEROY Christophe wrote:
 > 
-> X1E uses fast channels only for message-id: 7 (level set) and regular
-> channels for all the other messages. The spec doesn't mandate fast
-> channels for any of the supported message ids for the perf protocol.
-> So nothing to fix here.
-
-I didn't look at this in any detail, but if the firmware is spec
-compliant you should not be spamming the logs with warnings. Not sure
-how best to address that, but you could, for example, add a quirk for
-qcom fw or at a minimum demote this mess to info level.
-
-Also the failure to add oops_by_lvl appears to be a separate issue (e.g.
-related to the duplicate entries).
-
-> > [    9.727098] cpu cpu4: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq: 3417600000, volt: 0, enabled: 1
-> > [    9.737157] cpu cpu4: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq: 3417600000, volt: 0, enabled: 1
-> > [    9.875039] cpu cpu8: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq: 3417600000, volt: 0, enabled: 1
-> > [    9.888428] cpu cpu8: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq: 3417600000, volt: 0, enabled: 1
 > 
-> The duplicate entries reported by the perf protocol come directly from
-> the speed bins. I was told the duplicate entry with volt 0 is meant to
-> indicate a lower power way of achieving the said frequency at a lower
-> core count. We have no way of using it in the kernel and it gets safely
-> discarded. So again nothing to fix in the kernel.
-
-Again, you should not be spamming the logs with warnings for things are
-benign (e.g. as it may prevent people from noticing real issues).
-
-Also these duplicate entries do not seem to get safely discarded as they
-result in a bunch of operations failing loudly at boot (e.g. the
-oops_by_lvl warning above) and similarly at resume as I recently
-noticed:
-
-[   42.690569] CPU4: Booted secondary processor 0x0000010000 [0x511f0011]
-[   42.704360] cpu cpu4: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq: 3417600000, volt: 0, enabled: 1
-[   42.737865] cpu cpu4: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq: 3417600000, volt: 0, enabled: 1
-[   42.752943] debugfs: File 'cpu5' in directory 'opp' already present!
-[   42.759956] debugfs: File 'cpu6' in directory 'opp' already present!
-[   42.766641] debugfs: File 'cpu7' in directory 'opp' already present!
-...
-[   42.855520] CPU8: Booted secondary processor 0x0000020000 [0x511f0011]
-[   42.865188] cpu cpu8: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq: 3417600000, volt: 0, enabled: 1
-[   42.898494] cpu cpu8: _opp_is_duplicate: duplicate OPPs detected. Existing: freq: 3417600000, volt: 0, enabled: 1. New: freq: 3417600000, volt: 0, enabled: 1
-[   42.913559] debugfs: File 'cpu9' in directory 'opp' already present!
-[   42.920265] debugfs: File 'cpu10' in directory 'opp' already present!
-[   42.927029] debugfs: File 'cpu11' in directory 'opp' already present!
-
-Perhaps you can find some way to filter out the unused, duplicate
-entries for qualcomm fw so that all of these issues go away.
-
-> > [    9.913506] debugfs: Directory 'NCC' with parent 'pm_genpd' already present!
-> > [    9.922198] debugfs: Directory 'NCC' with parent 'pm_genpd' already present!
+> Le 08/07/2024 à 14:36, Greg KH a écrit :
+> > On Sun, Jul 07, 2024 at 03:34:15PM +0800, WangYuli wrote:
+> >>
+> >> On 2024/7/6 17:30, Greg KH wrote:
+> >>> This makes it sound like you are reverting this because of a build
+> >>> error, which is not the case here, right?  Isn't this because of the
+> >>> powerpc issue reported here:
+> >>>     https://lore.kernel.org/r/20240705203413.wbv2nw3747vjeibk@altlinux.org
+> >>> ?
+> >>
+> >> No, it only occurs on ARM64 architecture. The reason is that before being
+> >> modified, the function
+> >>
+> >> bpf_jit_binary_lock_ro() in arch/arm64/net/bpf_jit_comp.c +1651
+> >>
+> >> was introduced with __must_check, which is defined as
+> >> __attribute__((__warn_unused_result__)).
+> >>
+> >>
+> >> However, at this point, calling bpf_jit_binary_lock_ro(header)
+> >> coincidentally results in an unused-result
+> >>
+> >> warning.
+> >
+> > Ok, thanks, but why is no one else seeing this in their testing?
 > 
-> Yeah I did notice ^^ during dev, the series isn't the one introducing it
-> so it shouldn't block the series acceptance. Meanwhile I'll spend some
-> cycles to get this warn fixed.
+> Probably the configs used by robots do not activate BPF JIT ?
+> 
+> >
+> >>> If not, why not just backport the single missing arm64 commit,
+> >>
+> >> Upstream commit 1dad391daef1 ("bpf, arm64: use bpf_prog_pack for memory
+> >> management") is part of
+> >>
+> >> a larger change that involves multiple commits. It's not an isolated commit.
+> >>
+> >>
+> >> We could certainly backport all of them to solve this problem, buthas it's not
+> >> the simplest solution.
+> >
+> > reverting the change feels wrong in that you will still have the bug
+> > present that it was trying to solve, right?  If so, can you then provide
+> > a working version?
+> 
+> Indeed, by reverting the change you "punish" all architectures because
+> arm64 hasn't properly been backported, is it fair ?
+> 
+> In fact, when I implemented commit e60adf513275 ("bpf: Take return from
+> set_memory_rox() into account with bpf_jit_binary_lock_ro()"), we had
+> the following users for function bpf_jit_binary_lock_ro() :
+> 
+> $ git grep bpf_jit_binary_lock_ro e60adf513275~
+> e60adf513275~:arch/arm/net/bpf_jit_32.c:
+> bpf_jit_binary_lock_ro(header);
+> e60adf513275~:arch/loongarch/net/bpf_jit.c:
+> bpf_jit_binary_lock_ro(header);
+> e60adf513275~:arch/mips/net/bpf_jit_comp.c:
+> bpf_jit_binary_lock_ro(header);
+> e60adf513275~:arch/parisc/net/bpf_jit_core.c:
+> bpf_jit_binary_lock_ro(jit_data->header);
+> e60adf513275~:arch/s390/net/bpf_jit_comp.c:
+> bpf_jit_binary_lock_ro(header);
+> e60adf513275~:arch/sparc/net/bpf_jit_comp_64.c:
+> bpf_jit_binary_lock_ro(header);
+> e60adf513275~:arch/x86/net/bpf_jit_comp32.c:
+> bpf_jit_binary_lock_ro(header);
+> e60adf513275~:include/linux/filter.h:static inline void
+> bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
+> 
+> But when commit 08f6c05feb1d ("bpf: Take return from set_memory_rox()
+> into account with bpf_jit_binary_lock_ro()") was applied, we had one
+> more user which is arm64:
+> 
+> $ git grep bpf_jit_binary_lock_ro 08f6c05feb1d~
+> 08f6c05feb1d~:arch/arm/net/bpf_jit_32.c:
+> bpf_jit_binary_lock_ro(header);
+> 08f6c05feb1d~:arch/arm64/net/bpf_jit_comp.c:
+> bpf_jit_binary_lock_ro(header);
+> 08f6c05feb1d~:arch/loongarch/net/bpf_jit.c:
+> bpf_jit_binary_lock_ro(header);
+> 08f6c05feb1d~:arch/mips/net/bpf_jit_comp.c:
+> bpf_jit_binary_lock_ro(header);
+> 08f6c05feb1d~:arch/parisc/net/bpf_jit_core.c:
+> bpf_jit_binary_lock_ro(jit_data->header);
+> 08f6c05feb1d~:arch/s390/net/bpf_jit_comp.c:
+> bpf_jit_binary_lock_ro(header);
+> 08f6c05feb1d~:arch/sparc/net/bpf_jit_comp_64.c:
+> bpf_jit_binary_lock_ro(header);
+> 08f6c05feb1d~:arch/x86/net/bpf_jit_comp32.c:
+> bpf_jit_binary_lock_ro(header);
+> 08f6c05feb1d~:include/linux/filter.h:static inline void
+> bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
+> 
+> Therefore, commit 08f6c05feb1d should have included a backport for arm64.
+> 
+> So yes, I agree with Greg, the correct fix should be to backport to
+> ARM64 the changes done on other architectures in order to properly
+> handle return of set_memory_rox() in bpf_jit_binary_lock_ro().
 
-I didn't try to track down where this comes from, but figured it could
-be related to the duplicate entries. Either way, these are actually
-errors (not just warnings) that need to be addressed in some way.
+Ok, but it looks like due to this series, the powerpc tree is crashing
+at the first bpf load, so something went wrong.  Let me go revert these
+4 patches for now, and then I will be glad to queue them up if you can
+provide a working series for all arches.
 
-Johan
+thanks,
+
+greg k-h
 
