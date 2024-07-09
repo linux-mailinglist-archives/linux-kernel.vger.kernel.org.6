@@ -1,132 +1,160 @@
-Return-Path: <linux-kernel+bounces-245031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0877192AD3E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:46:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6137792AD40
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:51:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1F08282663
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:45:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7DF31F222C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70582BAF3;
-	Tue,  9 Jul 2024 00:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E7A29422;
+	Tue,  9 Jul 2024 00:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="erFUEDlK"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bwYc0puv"
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC5A10FA;
-	Tue,  9 Jul 2024 00:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57ED110FA;
+	Tue,  9 Jul 2024 00:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720485949; cv=none; b=YJs5O6oPQ0YrpEZWLNR4Q9FkYEWHyuFUqtYHtNFBfoPTNOC5dLW9zUPcO9SMdbbGNw84W5PmYswNEJSZZkAncf6++CkGgmn1VlcrK5CbSA6tVoOP2YEp/iqvhqSEFAgpcLP/jyde3ksGi2mQvhizPOIkyoZc/5eidMSXxBJ85lM=
+	t=1720486256; cv=none; b=lfzpIKwmcvmE9WXDqQVhDZ9ZLkVFnzpOjgoZ9Loe3d6M52/4Eiuy+QUQC1+fOXZqn68nh17XhFDbcMvsnQMWul/ofOaIE9c/enzaGRgK4uG28SigNjlDtgKoVFbUbDcWlKxQUurWGxQz+4rFmulWl8CEu5IaHr2FRFCRSc+bA/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720485949; c=relaxed/simple;
-	bh=yVpmdenWty9VmRTaqVs7JI1s/mmytLE9QKXnW4wz6IA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tl032WZYQ8VozQLJx+6S4kqadPloFpNFEihQ3Sxf6tmiHz68/CFssSaD/hMZ2tZZ/bk+ocdie3JJ/e8R+SzzESr+MjwmX3ew4mpL0FHLnucir2nD7xRs0eLyWbvnccgR/5cofq2GIy3LhAKozd+9UgXjRCtZYik/8wenaybeVvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=erFUEDlK; arc=none smtp.client-ip=209.85.210.41
+	s=arc-20240116; t=1720486256; c=relaxed/simple;
+	bh=BdXpEabngZDyg/iduns/YDXTEYzjjdakPHcMyl7lzlE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=amBmHJWKdI9ghFyF+23ZeWcr2NCkKfJCZlIGLB/PsGNSTf+NVhd3yCtdoLxut8CTBkeuReKeuIwMNQQH69KJg4tppMu+DXjcFyTIoXzEKSGaNC7ywi5dIceqL0JmA5wKBYwP/j9ovn452+EnwgLkl6luglBLYVq1+lnVeJ23Llg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bwYc0puv; arc=none smtp.client-ip=209.85.217.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7036b87752dso883810a34.2;
-        Mon, 08 Jul 2024 17:45:47 -0700 (PDT)
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-48fe76c0180so1523297137.1;
+        Mon, 08 Jul 2024 17:50:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720485947; x=1721090747; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1720486250; x=1721091050; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=q9iPtF9JSiTmGcnXmpNXmV6InuM1mMBUZC3N3YyhPMc=;
-        b=erFUEDlKhRpsK9XXmOaVLp6Tei7G20+S7eIMJg6+R9D4+vQhdGliQtWPyPVmx2a/gc
-         IGHiLcm4FmPxj0d3XzIGXh+zNGckPkHSVW6OScnBevLNs0PaTXML6+wjxj8EcC7etniu
-         JBY8u26g40qLFxgLiUu/CD/m1viKRcB9GtH5WpTGz0M2G3cH39FBQd0+r0OlPLYJkjfJ
-         W2s24etw84j6n0tVG68yoVVDA/klv/44coeB+Nib8lVY3YvU0U0y+9jlJaSWboCBSW+l
-         GCJW3tZqCzMUtgM6MsJe7LaTIPL9MvYxBEHmn/+qtJj7jcf1Eo+RoPcf6gAr5C9vcEPz
-         jvdQ==
+        bh=jGCm7ULkHrxj85VKoDXAjcmHZHESjN0FxE0aujX1liU=;
+        b=bwYc0puvP1MjnrwUV+NBpBYnizLM1WCMhkGAitm46e7O94TjgHCjqM9nOdPxxwLu73
+         OSlqAUpPnjh8uBaiLREcNXd/8lEd0xqPnnQJb1hs2BGAtGA/bPeVOVRzn9W3Lk68QUWT
+         GYB8wIc3sn4VOdUKiEjIF34OY0Xnl89ujY552l2oMJfE/wQyf/wLA+dAWOZjl2V8zopd
+         2+FQ21aPJpM4mGjacHfay7sRQh7eueQoEqgzwcywgvL7oVYZeFBtTCWTPKNZxEfF7Lyu
+         MrWt37oqlpxvljkT+awkl/CsYPFJJx6VEClPMIqLaz5M+KYJhxsnoYLtwiWnlm++WiqW
+         uH0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720485947; x=1721090747;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1720486250; x=1721091050;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=q9iPtF9JSiTmGcnXmpNXmV6InuM1mMBUZC3N3YyhPMc=;
-        b=ndDn9d32qrv5L+DTqOooSnGl+06AFeWfyDsRaSdtSHIwhUwPP+36Wf3DuYyUpJhqH/
-         SPoANTumAWxBteXlKAjKghI6K71hVv3GewHqldBVMYpU8XDEHjMcKzj5z//nn8pmv16D
-         f5ngio7xhXG3ZvpmyQ2c7LsyWECvuCww3MU3jOG2ML0sHgzixn/L8U6Q1v7rtSUVACvm
-         XCeNv2oUmaiLhY2xu9fOuWMDnO0SXsKqAM7MVB+8bdZtGHqWqy/jnm0F3yBl4sFE+43R
-         /WrjAJJPghvF9T4QwQ/zba+0ITOp0Hjke+ovrU5hPqQbkazz7sARhRkz2y8CuOgfOuHL
-         b6wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUs06d4MJDzpDesh4uuP/AOuJC9OkLtTAKjwEC3gaGsE+3LrvLmVZesihEd2pHmEvgatdSqqpy3n3whVNKNyw3Wd0tb2Imi/nseXgODShkW7aiIn+Y29Zmwq7RG4fdgWBzmJhJ6t1TuGYzllOI=
-X-Gm-Message-State: AOJu0YyHboU+yZ7iPe84AV6uE7jVosexjt72rB85ELuX+UggiTYvceT9
-	4HvDMY7nrIa9qiG8LgdBhU0DecyMkZp3G1EeHFdnCMaUAier4Goj
-X-Google-Smtp-Source: AGHT+IGG1Ld6V99SNEvuuuZYWfNfTXQ3dsVI4Y2qI2ZXJjfOBhOEzhq/DHbMG1KQ5AaHayz4uRoQDQ==
-X-Received: by 2002:a05:6830:1d7:b0:703:6496:b9ab with SMTP id 46e09a7af769-70375a06f35mr1332946a34.7.1720485946711;
-        Mon, 08 Jul 2024 17:45:46 -0700 (PDT)
-Received: from my-computer.. ([2600:1700:e42:d53f:19e4:45d8:10e5:471e])
-        by smtp.googlemail.com with ESMTPSA id 46e09a7af769-70374f6b5easm231026a34.14.2024.07.08.17.45.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 17:45:46 -0700 (PDT)
-From: Andrew Ballance <andrewjballance@gmail.com>
-To: miguel.ojeda.sandonis@gmail.com
-Cc: a.hindborg@samsung.com,
-	alex.gaynor@gmail.com,
-	aliceryhl@google.com,
-	andrewjballance@gmail.com,
-	benno.lossin@proton.me,
-	bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com,
-	dakr@redhat.com,
-	gary@garyguo.net,
-	gregkh@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	mcgrof@kernel.org,
-	ojeda@kernel.org,
-	russ.weight@linux.dev,
-	rust-for-linux@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	wedsonaf@gmail.com
-Subject: [PATCH v2] rust: firmware: fix invalid rustdoc link
-Date: Mon,  8 Jul 2024 19:44:26 -0500
-Message-ID: <20240709004426.44854-1-andrewjballance@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <CANiq72=6LSGwRsc+deE+U8H=mdgFisrKEPOYgVkZfHhGm8hwog@mail.gmail.com>
-References: <CANiq72=6LSGwRsc+deE+U8H=mdgFisrKEPOYgVkZfHhGm8hwog@mail.gmail.com>
+        bh=jGCm7ULkHrxj85VKoDXAjcmHZHESjN0FxE0aujX1liU=;
+        b=AmAPJ2P0xSYaaRfUfcCfnvFbCCOnvkKOVRCRkmP6d0/rQJXXa6EW2som1zH+Gtiz8Y
+         D0i0LEAhenqFveEeceTmZF5EBn9PUbe8TL4/xTlL1pyg1bgqLk7ZWP8fh9EMoUYm2/xu
+         kK0NjNecFCPUW4VU3Rxk+UlJghWdU7rV2kCGMnSc51ymTLS4z2uBxl9MNJnZJV8J8Wba
+         UrV7zS5ueRmjoyHNWQo7EMcXZ08gRpJGbHj9mI+8WVvPKVRkBijzZGT6QLIN7uMRZVwS
+         gECGd2FpHXUpYxRwYZWqDtvuMgAjodml1x+BjDZ3wmsHP3yiRSpNbZfMGenwNWUNC8vn
+         jqcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJfXN7pultl9S4ROlLlbSe0XwZkKR1xQsRlirq94OCItOlMNUf6o/QluiUK/9LHCMeppMm3T+NxHbsFRrF0Nv0r1EnlYiI7p9IQiuwoAoQ0NKYH9Mb61LqEtStrXOVRNlV9kNrvp+O
+X-Gm-Message-State: AOJu0YzEX7wzdZuNIjsQ49iXFfqYy3utqCNeEvUNhvdfO7LhgDSf6rFE
+	0NN2JRKYUTPS2aPRryYS0SSaOuat3c22gtsvHgBHkfXkjiRykvGTy3hOd5N9FvM7GDuW/J2bJlt
+	FF3CMDILjVKaQhkNDYa+K5NzyTP8=
+X-Google-Smtp-Source: AGHT+IFXBIwiAdVJ2BbfSrFesf65v19ToW/by4CvTTpI4KW4/C2pWNEGAbprVYqYhVYM+Wxo7ApbBEdYo7ePOAaMkBI=
+X-Received: by 2002:a05:6102:c13:b0:48f:e62f:8863 with SMTP id
+ ada2fe7eead31-49032153e82mr1287941137.2.1720486250168; Mon, 08 Jul 2024
+ 17:50:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240702060418.387500-1-alistair.francis@wdc.com>
+ <20240702060418.387500-3-alistair.francis@wdc.com> <20240702145806.0000669b@Huawei.com>
+ <CAKmqyKPEX632ywm5DiKvVZU=hr-yHNBJ=tcN2DasKpfWdykgZg@mail.gmail.com>
+ <20240705112953.00007303@Huawei.com> <20240708005533.GC586698@rocinante>
+In-Reply-To: <20240708005533.GC586698@rocinante>
+From: Alistair Francis <alistair23@gmail.com>
+Date: Tue, 9 Jul 2024 10:50:24 +1000
+Message-ID: <CAKmqyKOa2nf1yRuZ_zpkH422JRkoHi2cC0Yq8RnNap6Meu80Uw@mail.gmail.com>
+Subject: Re: [PATCH v13 3/4] PCI/DOE: Expose the DOE features via sysfs
+To: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, bhelgaas@google.com, 
+	linux-pci@vger.kernel.org, lukas@wunner.de, alex.williamson@redhat.com, 
+	christian.koenig@amd.com, kch@nvidia.com, gregkh@linuxfoundation.org, 
+	logang@deltatee.com, linux-kernel@vger.kernel.org, chaitanyak@nvidia.com, 
+	rdunlap@infradead.org, Alistair Francis <alistair.francis@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-remove an extra quote from the doc comment so that rustdoc
-no longer genertes a link to a nonexistent file.
+On Mon, Jul 8, 2024 at 10:55=E2=80=AFAM Krzysztof Wilczy=C5=84ski <kw@linux=
+.com> wrote:
+>
+> Hello,
+>
+> > > Any input from a PCI maintainer here?
+>
+> Something that I am curious about: can we make this a single file with a
+> bitmask inside that denotes what DOE features are enabled?  Would this be
+> approach be even feasible here?
 
-Signed-off-by: Andrew Ballance <andrewjballance@gmail.com>
-Reviewed-by: Danilo Krummrich <dakr@redhat.com>
-Acked-by: Miguel Ojeda <ojeda@kernel.org>
-Fixes: de6582833db0 ("rust: add firmware abstractions")
----
-v1 -> v2: updated commit message
+In theory there can be any vendor ID (16-bits but not 0xFFFF) and any
+feature (8-bits). So there is a huge possibility of values here.
 
- rust/kernel/firmware.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> Thoughts?  Or is it too late to think about this now?
 
-diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-index 386c8fb44785..763d7cbefab5 100644
---- a/rust/kernel/firmware.rs
-+++ b/rust/kernel/firmware.rs
-@@ -2,7 +2,7 @@
- 
- //! Firmware abstraction
- //!
--//! C header: [`include/linux/firmware.h`](srctree/include/linux/firmware.h")
-+//! C header: [`include/linux/firmware.h`](srctree/include/linux/firmware.h)
- 
- use crate::{bindings, device::Device, error::Error, error::Result, str::CStr};
- use core::ptr::NonNull;
--- 
-2.45.2
+It's just too many possible options to use a bitmask. I guess we could
+use a feature bit mask per vendor if people feel strongly
 
+>
+> > > There are basically two approaches.
+> > >
+> > >  1. We can have a pci_doe_sysfs_init() function that is called where
+> > > we dynamically add the entries, like in v12
+> > >  2. We can go down the dev->groups and device_add() path, like this
+> > > patch and discussed at
+> > > https://lore.kernel.org/all/20231019165829.GA1381099@bhelgaas/
+> > >
+> > > For the second we will have to create a global pci_doe_sysfs_group
+> > > that contains all possible DOE entries on the system and then have th=
+e
+> > > show functions determine if they should be displayed for that device.
+> > >
+> > > Everytime we call pci_doe_init() we can check for any missing entries
+> > > in pci_doe_sysfs_group.attrs and then realloc
+> > > pci_doe_sysfs_group.attrs to add them.
+> > > Untested, but that should work
+> > > even for hot-plugged devices. pci_doe_sysfs_group.attrs would just
+> > > grow forever though as I don't think we have an easy way to deallocat=
+e
+> > > anything as we aren't sure if we are the only entry.
+> >
+> > I think this needs to be per device, not global and you'll have to manu=
+ally
+> > do the group visibility magic rather than using the macros.
+>
+> Lukas proposes a very interesting feature of kernfs recently per:
+>
+>   https://lore.kernel.org/linux-pci/16490618cbde91b5aac04873c39c8fb7666ff=
+686.1719771133.git.lukas@wunner.de
+>
+> Would this help with DOE features?
+
+That was the previous approach used here:
+https://lore.kernel.org/linux-pci/20240626045926.680380-3-alistair.francis@=
+wdc.com/
+
+Bjorn wanted to try and avoid using a function pci_doe_sysfs_init()
+[1], which is what I tried here. It sounds like the v12 approach is
+the way to go then. I'll send a v14 based on v12 with the comments
+addressed
+
+1: https://lore.kernel.org/all/20231019165829.GA1381099@bhelgaas/
+
+Alistair
+
+>
+>         Krzysztof
 
