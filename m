@@ -1,153 +1,102 @@
-Return-Path: <linux-kernel+bounces-246396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47CC892C145
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:55:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6FDB92C119
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DFB31C22E5C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:55:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4832A2886E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C471A991E;
-	Tue,  9 Jul 2024 16:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DDF81AAE19;
+	Tue,  9 Jul 2024 16:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNobw29Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IDBLvmZB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44B21A98FD;
-	Tue,  9 Jul 2024 16:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13D01A4F07;
+	Tue,  9 Jul 2024 16:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720542404; cv=none; b=PJoXyYz9QUHoGG9cLJuQNI6PUam/r+yG4QqoZ0BURHWcmxl6Cxsx86nHBBjOIvDpGiP7wMWVI+VgzGfQ0Gd6VTIh4FvTyLB20Yvfb0NxAJy9dFt7R5zV4GfRDRiChl2pvkx+QcGpcXs1jX1d/rSn+zrNrxakfIqiy3OFTLbKhh4=
+	t=1720542378; cv=none; b=seG3k32gfkFOUR74rpVtH+w3Z/aEKkMJ/C7qmKMYVmXwpIOSx6iFT3kz7ocMrC+heoNt/i+Y7tf7MRcgBCvEPV4Nftas3QhQG9wPrmDpkgveg5WRPL6nFqV9JG8+kgMMgcfKqoGE/NSCyFbUKAELisY+BkdJwo6nRh5yw2dMayo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720542404; c=relaxed/simple;
-	bh=tYxgdCs+JhJBSfhOCTIidJysJEv+7QcuxrKVgWlopHY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fGrMzqk/Jmyfx6WKR4cHJF+nUzMCL9ZN2mAMycXMNisDxE8zxzJzqGbyWI60z/zBfXCa10AewtgvS0/NeDoeqxuyC609ttFL97HQJsXW8cq6EVWnGABGqtjad99/lRRS6c6zLcnrR863y9mex104oiJvmHvFLqRxm+JhZDGwqAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNobw29Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03362C32782;
-	Tue,  9 Jul 2024 16:26:42 +0000 (UTC)
+	s=arc-20240116; t=1720542378; c=relaxed/simple;
+	bh=+bZLGqWY1DDBcyTEH10hsAqp0+mebKEECO2I2Lb/wl8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=cKTYgS6+0y02D5Agn+k8Q3TCAyJX8LGBys+E+wOSZo2sb92ayoG9Unz9RARG+kCLu0C4iAa6RBiYDJVnhdwb9qXTKjU6UEAqq6f5C9YFB5tJ99/+ySwNMP0wShIA8+Q6ep/eTAq+Oi3jQ0Hbh4lwy3ycXHIQ/ZRdvWkLkJPFavI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IDBLvmZB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03FCBC3277B;
+	Tue,  9 Jul 2024 16:26:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720542404;
-	bh=tYxgdCs+JhJBSfhOCTIidJysJEv+7QcuxrKVgWlopHY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XNobw29ZUIZUtIKhvw4OktMR16Su5kNYluo5cR3uW7mooIPYGIOMzlUjfPMJICne5
-	 YgtOlvQ6Z8ozLUQIHLVOh+IIJCL7qMqWfC02SBW245JlC844h6Cv7jcmzREC6vB1MD
-	 mEqPk41qi3Tf1v2lSfRmQDV+DLNj5+0lDOuAasb8WrVq+ax6zslpx1cJBh6csKdogW
-	 zy9dfFjTqii/5uz8Qx9ZlQy0H9ZsUqleZVifO3gR2JUW7AhMNvJ0cUpXZVSitCAkjI
-	 gjlDCdq1WYymU6nqXt0hZKBLrG+TZRIK7Tf9HcM6i66HGr3BhmbBalIVKjc/d4R0aw
-	 LX9wqYsNn5PPw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Daniele Palmas <dnlplm@gmail.com>,
-	=?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 14/14] net: usb: qmi_wwan: add Telit FN912 compositions
-Date: Tue,  9 Jul 2024 12:25:58 -0400
-Message-ID: <20240709162612.32988-14-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240709162612.32988-1-sashal@kernel.org>
-References: <20240709162612.32988-1-sashal@kernel.org>
+	s=k20201202; t=1720542378;
+	bh=+bZLGqWY1DDBcyTEH10hsAqp0+mebKEECO2I2Lb/wl8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=IDBLvmZBCCFufsM+sPjL6bm0hoX51V5WbYI6jjJCmWNdXwhUXuEWUtbmUAVlSVtaY
+	 7VUq0dOWOd5vPkGKLT6vEIzv94XAWqZLNJ0yNkJYm9G7wTSvtjbe/j+RIa4fNLaHvQ
+	 eVe67BFLUV9sbdO/iuphzr8kwE/ZExgNxGeTcHa1LKQV0Ig+5Py1irT1nVCktdT/xt
+	 N7Gzb3U01PW2GVllWF9hXRL3FDHxBhuSbtnJ/BDkR6J0GhrLKlgbTEUzCh9k32nLVb
+	 90Ve4y/HS6L+EKvDda1dkV+pYt8E0xyUFicvcX9xixXBZ+tIDg/VWptNhM+M8k5Yl0
+	 /RqOzI/LgAMVQ==
+Date: Tue, 9 Jul 2024 11:26:16 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Tengfei Fan <quic_tengfan@quicinc.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	kernel@quicinc.com, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] PCI: qcom: Add support for QCS9100 SoC
+Message-ID: <20240709162616.GA175928@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.221
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709-add_qcs9100_pcie_compatible-v2-2-04f1e85c8a48@quicinc.com>
 
-From: Daniele Palmas <dnlplm@gmail.com>
+On Tue, Jul 09, 2024 at 10:59:30PM +0800, Tengfei Fan wrote:
+> Add support for QCS9100 SoC that uses controller version 5.90
+> reusing the 1.9.0 config.
 
-[ Upstream commit 77453e2b015b5ced5b3f45364dd5a72dfc3bdecb ]
+Add blank line here if this is a paragraph break.
 
-Add the following Telit FN912 compositions:
-
-0x3000: rmnet + tty (AT/NMEA) + tty (AT) + tty (diag)
-T:  Bus=03 Lev=01 Prnt=03 Port=07 Cnt=01 Dev#=  8 Spd=480  MxCh= 0
-D:  Ver= 2.01 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1bc7 ProdID=3000 Rev=05.15
-S:  Manufacturer=Telit Cinterion
-S:  Product=FN912
-S:  SerialNumber=92c4c4d8
-C:  #Ifs= 4 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=50 Driver=qmi_wwan
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=82(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=60 Driver=option
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-I:  If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-
-0x3001: rmnet + tty (AT) + tty (diag) + DPL (data packet logging) + adb
-T:  Bus=03 Lev=01 Prnt=03 Port=07 Cnt=01 Dev#=  7 Spd=480  MxCh= 0
-D:  Ver= 2.01 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1bc7 ProdID=3001 Rev=05.15
-S:  Manufacturer=Telit Cinterion
-S:  Product=FN912
-S:  SerialNumber=92c4c4d8
-C:  #Ifs= 5 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=50 Driver=qmi_wwan
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=82(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-I:  If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:  If#= 3 Alt= 0 #EPs= 1 Cls=ff(vend.) Sub=ff Prot=80 Driver=(none)
-E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:  If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=usbfs
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-
-Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
-Acked-by: Bjørn Mork <bjorn@mork.no>
-Link: https://patch.msgid.link/20240625102236.69539-1-dnlplm@gmail.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/usb/qmi_wwan.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-index 4dd1a9fb4c8a0..d2a8238e144a6 100644
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -1312,6 +1312,8 @@ static const struct usb_device_id products[] = {
- 	{QMI_QUIRK_SET_DTR(0x1bc7, 0x1260, 2)},	/* Telit LE910Cx */
- 	{QMI_QUIRK_SET_DTR(0x1bc7, 0x1261, 2)},	/* Telit LE910Cx */
- 	{QMI_QUIRK_SET_DTR(0x1bc7, 0x1900, 1)},	/* Telit LN940 series */
-+	{QMI_QUIRK_SET_DTR(0x1bc7, 0x3000, 0)},	/* Telit FN912 series */
-+	{QMI_QUIRK_SET_DTR(0x1bc7, 0x3001, 0)},	/* Telit FN912 series */
- 	{QMI_FIXED_INTF(0x1c9e, 0x9801, 3)},	/* Telewell TW-3G HSPA+ */
- 	{QMI_FIXED_INTF(0x1c9e, 0x9803, 4)},	/* Telewell TW-3G HSPA+ */
- 	{QMI_FIXED_INTF(0x1c9e, 0x9b01, 3)},	/* XS Stick W100-2 from 4G Systems */
--- 
-2.43.0
-
+> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+> platform use non-SCMI resource. In the future, the SA8775p platform will
+> move to use SCMI resources and it will have new sa8775p-related device
+> tree. Consequently, introduce "qcom,pcie-qcs9100" to the PCIe device
+> match table.
+> 
+> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 26405fcfa499..ea3fddc74498 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -1722,6 +1722,7 @@ static const struct of_device_id qcom_pcie_match[] = {
+>  	{ .compatible = "qcom,pcie-ipq8074-gen3", .data = &cfg_2_9_0 },
+>  	{ .compatible = "qcom,pcie-msm8996", .data = &cfg_2_3_2 },
+>  	{ .compatible = "qcom,pcie-qcs404", .data = &cfg_2_4_0 },
+> +	{ .compatible = "qcom,pcie-qcs9100", .data = &cfg_sc8280xp },
+>  	{ .compatible = "qcom,pcie-sa8540p", .data = &cfg_sc8280xp },
+>  	{ .compatible = "qcom,pcie-sa8775p", .data = &cfg_1_34_0},
+>  	{ .compatible = "qcom,pcie-sc7280", .data = &cfg_1_9_0 },
+> 
+> -- 
+> 2.25.1
+> 
 
