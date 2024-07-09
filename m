@@ -1,70 +1,73 @@
-Return-Path: <linux-kernel+bounces-246731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9234F92C5FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:12:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A55092C621
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 478512824F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:12:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC3751C21781
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC15189F35;
-	Tue,  9 Jul 2024 22:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7174E187873;
+	Tue,  9 Jul 2024 22:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="eeQNiwN/"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="tFqpqnJE"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B037717B05D;
-	Tue,  9 Jul 2024 22:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB5F187863;
+	Tue,  9 Jul 2024 22:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720563143; cv=none; b=ngwfoGOV9xcviatsORmjymYucEeGQxVcjNGPUsTALhHcOGKHYBfcJfKTMCESOpdZ4YvLYb+dlYet2fYgt5rlPH4ljXvuXzAJ4PWQkDcrVl46pwXelQvRxejZgQub48k9SVz+WHoUJyiThkGztJEa2T29dOF6RFNpSVn+YALmr2c=
+	t=1720563153; cv=none; b=AR0wmkBWTRWaviQNq9iYCIyoHj/s4rquEaTMBbBC7jeT4jYsNZLCDJCI2hq+gkHmsIL56tZGceCstpp6hGEEeb3VVaizt/xFsjL6EqwVPFFoz+xC7paTAHTI3nCUbKHFdWIGCZEVNiTobUC7Ct3tN4pkOCTQOw9XMn0ZSCogH/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720563143; c=relaxed/simple;
-	bh=muXHBhPz3CpmZlzgRxiV683ZZacXLrqG4BWt+dPe/Fg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BhWpYb9TYnek5OZGaosEctxaaP2q6pc4ROM2xzhmpdyoeoLZUgcL+dsAGXygWlDnUSx6SeqDmfHKBWYzRS3S+OGpcFK7NTDvPSRkKcxQY+PTTuPl9NTfexuCbtp5f9eRB9wj43g6U2EJ9VjJr5UwsQ1cuwXWCq+UB8/0WMCIZXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=eeQNiwN/; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469KH3Li020309;
-	Tue, 9 Jul 2024 15:12:15 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=ZwtohZT/dGEt6pKD0UeX4Ie
-	ypm55GaWGCGmHh5Aau9U=; b=eeQNiwN/z9ghutVERWUbJzIam8Kbw3ZywKLLUhD
-	033FGZ3xvKKE1C1yC/fbdewmY0cQ3wuq2fc0r+zn6bFzB8Tpiq0G+GOh9xKIYnQ5
-	DryLdNClgmr/BtgBv0AN7JxF2H5dMnoRgXbSuURucax0RD2Pzl//PX8c77aMS2q0
-	k4itmTKRXOIP6bNiupwPeb0C/f7tDqLSWjuHSS+syXE6FCyoX+hEbU+VIMU4rZZN
-	4bBWj9hbodQXM71SA+jQvjJK7o25LD9wCUxcU4GcFMCFJsTQUrkW2FFCIrmycJue
-	WS5v9LZUoCK9mfU8mSXaDCmfCLJxaxN4yD7Ojfgx1gEnvpg==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 408ntymyxg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 15:12:15 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+	s=arc-20240116; t=1720563153; c=relaxed/simple;
+	bh=aGjfcZSRbtI8QN/HI1o96TDS6DrI1SFU9tnlhotZ5Mw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eypThYI4K6PZZtEbhsghFKuF7yP9GHnRsvBmMVpTAVPzPV79rNLFjVySwNncQPsuOJeCyla8qpiPN8EbntFDoUA8kc0nGsqlA4av5t2FTuYTKKZnAXAlkK+QYFPxejRWRenElxevFE43R4zks5RdvqShGIvTimyf8I3b5h4XcLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=tFqpqnJE; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 95E30100029;
+	Wed, 10 Jul 2024 01:12:29 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 95E30100029
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1720563149;
+	bh=a0mgkvwIQaMLf7adfwhRHBhWUDEkZtje8g0LxN5vXwM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=tFqpqnJElq+n8gJUdpeNTtBh5n5JObmBlggCyebVrcIWEBRRuLozIhXfBgkdVDoAi
+	 vEQTpBfpvKA4FRvWl6pKtFMtSRsAPSwv9gyVaqDjw1SCfH79PkUlmYUvb2VAAfS8xd
+	 thNPoGL4ZvyYyqQsTy8Dw0TcsT3uf8JR3xafiREVh7sN/AS6ADj1YQp3qH3Hz0zVW3
+	 uifyjIlPQgpqzqGqKFT32pmLEty+JMFZDEnItR3fd9DM1AH3oZMww10ncbdniqbcin
+	 Gy4+FbDWH4pfFBtGDyttIaeLqxrhXbKgBVjtX4TFle+C3o9vIMAoJhDGqPJIfhF5kZ
+	 yAT/E4wrbINUA==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Wed, 10 Jul 2024 01:12:29 +0300 (MSK)
+Received: from localhost.localdomain (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 9 Jul 2024 15:12:14 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 9 Jul 2024 15:12:14 -0700
-Received: from Dell2s-9.sclab.marvell.com (unknown [10.110.150.250])
-	by maili.marvell.com (Postfix) with ESMTP id 807673F7073;
-	Tue,  9 Jul 2024 15:12:14 -0700 (PDT)
-From: Witold Sadowski <wsadowski@marvell.com>
-To: <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC: <broonie@kernel.org>, <robh@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <pthombar@cadence.com>, Witold Sadowski <wsadowski@marvell.com>
-Subject: [PATCH v10 0/9] Marvell HW overlay support for Cadence xSPI
-Date: Tue, 9 Jul 2024 15:12:02 -0700
-Message-ID: <20240709221211.2130456-1-wsadowski@marvell.com>
-X-Mailer: git-send-email 2.43.0
+ 15.2.1118.40; Wed, 10 Jul 2024 01:12:28 +0300
+From: Igor Prusov <ivprusov@salutedevices.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+	<tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>, Igor Prusov
+	<ivprusov@salutedevices.com>
+CC: <prusovigor@gmail.com>, <kernel@salutedevices.com>,
+	<linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 5/6] ASoC: dt-bindings: Add bindings for NeoFidelity NTP8835
+Date: Wed, 10 Jul 2024 01:12:02 +0300
+Message-ID: <20240709221203.92167-6-ivprusov@salutedevices.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240709221203.92167-1-ivprusov@salutedevices.com>
+References: <20240709221203.92167-1-ivprusov@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,176 +76,104 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: tFZpmLLU9_2HFlgitghP0Oje7_Ld_2vO
-X-Proofpoint-GUID: tFZpmLLU9_2HFlgitghP0Oje7_Ld_2vO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_10,2024-07-09_01,2024-05-17_01
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186406 [Jul 09 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: ivprusov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, devicetree.org:7.1.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/07/09 21:28:00
+X-KSMG-LinksScanning: Clean, bases: 2024/07/09 21:28:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/09 15:25:00 #25923573
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-This patch series adds support for the second version of the Marvell
-hardware overlay for the Cadence xSPI IP block. The overlay is a hardware
-change made around the original xSPI block. It extends xSPI features with
-clock configuration, interrupt masking, and full-duplex, variable-length SPI
-operations.
+Add dt-bindings for NeoFidelity NTP8835C/NTP8835C Amplifiers
 
-These functionalities allow the xSPI block to operate not only with memory
-devices but also with simple SPI devices and TPM devices.
+Signed-off-by: Igor Prusov <ivprusov@salutedevices.com>
+---
+ .../bindings/sound/neofidelity,ntp8835.yaml   | 64 +++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/neofidelity,ntp8835.yaml
 
-Example ACPI entry:
-      Device (SPI0) {
-        Name (_HID, "PRP0001")          // ACPI_DT_NAMESPACE_HID
-        Name (_UID, 0)
-        Name (_DDN, "SPI controller 0")
-        Name (_CCA, ONE)
-
-        Method (_STA) {Return (0xF)}
-
-        Name (_CRS, ResourceTemplate() {
-
-          QWordMemory ( ResourceConsumer,// ResourceUsage
-                        PosDecode,       // Decode
-                        MinFixed,        // MinType
-                        MaxFixed,        // MaxType
-                        NonCacheable,    // MemType
-                        ReadWrite,       // ReadWriteType
-                        0,               // AddressGranularity
-                        0x804000000000,  // MinAddress
-                        0x804000001037,  // MaxAddress
-                        0,               // AddressTranslation
-                        0x1038)          // AddressLength
-
-          QWordMemory ( ResourceConsumer,// ResourceUsage
-                        PosDecode,       // Decode
-                        MinFixed,        // MinType
-                        MaxFixed,        // MaxType
-                        NonCacheable,    // MemType
-                        ReadWrite,       // ReadWriteType
-                        0,               // AddressGranularity
-                        0x804010000000,  // MinAddress
-                        0x804010000007,  // MaxAddress
-                        0,               // AddressTranslation
-                        0x8)             // AddressLength
-
-          QWordMemory ( ResourceConsumer,// ResourceUsage
-                        PosDecode,       // Decode
-                        MinFixed,        // MinType
-                        MaxFixed,        // MaxType
-                        NonCacheable,    // MemType
-                        ReadWrite,       // ReadWriteType
-                        0,               // AddressGranularity
-                        0x804000002000,  // MinAddress
-                        0x804000004027,  // MaxAddress
-                        0,               // AddressTranslation
-                        0x2028)          // AddressLength
-
-          QWordMemory ( ResourceConsumer,// ResourceUsage
-            PosDecode,       // Decode
-            MinFixed,        // MinType
-            MaxFixed,        // MaxType
-            NonCacheable,    // MemType
-            ReadWrite,       // ReadWriteType
-            0,               // AddressGranularity
-            0x804000008000,  // MinAddress
-            0x804000008237,  // MaxAddress
-            0,               // AddressTranslation
-            0x238)           // AddressLength
-
-          Interrupt(ResourceConsumer, Edge, ActiveHigh, Exclusive) { 0x7A }
-        })
-
-        Name (_DSD, Package() {
-            ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
-            Package () {
-                Package () { "compatible", "marvell,cn10-xspi-nor"},
-                Package () { "reg", 0x8040},
-            }
-        })
-      } // SPI0
-
-Changes:
-v10:
-  Modify SDMA operation - Read as much data as possible using ioread64_rep, complete transfer with
-  memcpy. Ignore first step if buffer is not alligned
-  Clean unnecesary tennary operators
-  Add spi_transfer_delay_exec call
-  Rename "current_cycle_count" to "current_transfer_length"
-
-v9:
-  Split into smaller patches:
-    - Marvell overlay splitted into: PHY, Clock, Interrupt and SDMA ops
-    - ACPI support splitted into resource mapping, CS parameter reading and tx/rx bus length
-  Add separate ops and a few function pointers to distinguish between Cadence and Marvell:
-    - SDMA read handler.
-    - IRQ enable/disable handler
-    - Separate mem_ops for Marvell xSPI
-  Cleanup xfer code from magic numbers
-  Add more descriptive commit msg for xfer block
-  Use bitrev8 instead of custom bit reversal
-  Rework Marvell SDMA read operations
-  Add example ACPI entry
-
-v8:
-  Rename xferbase to xfer
-  Rework DLL reset, to return non inverted boolean value
-  Rework STIG and SDMA status check, to return non inverted boolean value
-
-v7:
-  Rebase patches to latest sources, changes in "Allow to read basic xSPI configuration
- from ACPI"
-  Removed bugfix, as it was integrated to next tree from v6
-
-v6:
-  Fix item order in cdns,xspi.yaml
-
-v5:
-  Rework cdns,xspi.yaml file
-  Reword commit messages
-  Move mamory mapping to ACPI patch
-  Use devm_platform_ioremap_resource instead of two step mapping
-
-v4:
-  Rename new Marvell registers to keep naming conventions
-  Rename mrvl,xspi-nor to marvell,cnxx,xspi-nor
-  Various fixed for cdns,xspi.yaml file:
-    - Remove unnecesary parameters
-    - Link register xferbase with marvell,cn10-xspi-nor
-    - Move default values to .c file from device-tree
-  Clock configuration optimization
-  ACPI fixes:
-    - Remove incorrect ACPI match table
-  Added .data field to device_id, fixes for matching in ACPI and dtb case
-  Minor style comment changes
-
-v3:
-  Removed all kconfig changes
-  Added device-tree mrvl,xspi-nor tag
-
-v2:
-  Support for second overlay iteration
-
-v1:
-  -
-
-v0:
-  Initial support for v1 overlay
-
-Witold Sadowski (9):
-  spi: dt-bindings: cadence: Add Marvell overlay bindings documentation
-    for Cadence XSPI
-  spi: cadence: Add static PHY configuration in Marvell overlay
-  spi: cadence: Add clock configuration for Marvell xSPI overlay
-  spi: cadence: Add Marvell SDMA operations
-  spi: cadence: Add Marvell xSPI interrupt changes
-  spi: cadence: Add Marvell xfer operation support
-  spi: cadence: Change resource mapping
-  spi: cadence: Change cs property reading.
-  spi: cadence: Try to read spi-tx/rx-bus width property using ACPI
-
- .../devicetree/bindings/spi/cdns,xspi.yaml    |  32 +-
- drivers/spi/spi-cadence-xspi.c                | 682 +++++++++++++++++-
- 2 files changed, 694 insertions(+), 20 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/sound/neofidelity,ntp8835.yaml b/Documentation/devicetree/bindings/sound/neofidelity,ntp8835.yaml
+new file mode 100644
+index 000000000000..cbd2254d4efa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/neofidelity,ntp8835.yaml
+@@ -0,0 +1,64 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/neofidelity,ntp8835.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NeoFidelity NTP8835/NTP8835C Amplifiers
++
++maintainers:
++  - Igor Prusov <ivprusov@salutedevices.com>
++
++description: |
++  The NTP8835 is a single chip full digital audio amplifier
++  including power stages for stereo amplifier systems.
++  NTP8835 is integrated with versatile digital audio signal
++  processing functions, high-performance, high-fidelity fully
++  digital PWM modulator and two high-power full-bridge MOSFET
++  power stages. NTP8835C has identical programming interface,
++  but has different output signal characteristics.
++
++allOf:
++  - $ref: dai-common.yaml#
++
++properties:
++  compatible:
++    enum:
++      - neofidelity,ntp8835
++      - neofidelity,ntp8835c
++
++  reg:
++    enum:
++      - 0x2a
++      - 0x2b
++      - 0x2c
++      - 0x2d
++    description: |
++      I2C address of the device.
++
++  reset-gpios:
++    maxItems: 1
++    description: GPIO used to control the state of the device.
++
++  '#sound-dai-cells':
++    enum: [0]
++
++required:
++  - compatible
++  - reg
++
++unevaluatedProperties: false
++
++examples:
++  - |
++   #include <dt-bindings/gpio/gpio.h>
++    i2c {
++      #address-cells = <1>;
++      #size-cells = <0>;
++      ntp8835@2b {
++        compatible = "neofidelity,ntp8835";
++        #sound-dai-cells = <0>;
++        reg = <0x2b>;
++        reset-gpios = <&gpio 5 GPIO_ACTIVE_LOW>;
++      };
++    };
 -- 
-2.43.0
+2.34.1
 
 
