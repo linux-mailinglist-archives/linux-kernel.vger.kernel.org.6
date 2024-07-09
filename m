@@ -1,377 +1,502 @@
-Return-Path: <linux-kernel+bounces-246717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B2392C5B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:47:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BE1092C5B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18626283275
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:47:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CB811C22082
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C4E18562D;
-	Tue,  9 Jul 2024 21:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6026918785B;
+	Tue,  9 Jul 2024 21:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ASHS3xps"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="TlFD/ngm"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013025.outbound.protection.outlook.com [52.101.67.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D479D14374C;
-	Tue,  9 Jul 2024 21:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720561646; cv=none; b=MP6+tdE2ccOXVPBGgyGPdEuzsrUK27ZBJ43XMbBTCbZsoS8YiBGQ0ca1X3qdysxi4wDR7/I6vyFkSLHnuGJsVkB7SfBVfzbNlT/QCTICtMfDp6zispZ4S+n6E7FqxMIIHdIJCEbL4Udp3zyL9pKz4cG8VHa20ypcmqVMd+u/GQY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720561646; c=relaxed/simple;
-	bh=fPatu1Bz2FnijqAMdrl6wmluKGQrJkMKcdMyFzSeEW0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fbNm8LWuv9NyxytRNL8FDbZ+W4iLo3BqiNh0h0ExRLbbxQE+Q3cPxFH2DnWAYUJhJgKf/hKFHdgY7an1kyqMKADZpeh0Qxvo3wrL/H6ju5Ton1/D/FMwIH9T/1zklxHl7+JB9UOVxacIV3kkdJL+piIJ9uO2jwFomhkYew+yu5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ASHS3xps; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-701b0b0be38so4356838b3a.0;
-        Tue, 09 Jul 2024 14:47:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720561644; x=1721166444; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xr1Aq6g6iHEMO2Vs4dczKy7eaazf0sBRWVh/L0WL6YA=;
-        b=ASHS3xpsPS6cIbotL63BvE3G9nu6DhrgPNlVWz7QGfGN0cX5HNEC4vjHq3oB/GIMhb
-         QHkXnatlPR/M71L7gMUWJtqFvQm0/vtr5KiOhqpjpuOjSWFg51jUF5OjpxdGvNhatG2x
-         u3i6WIzbd5I2lJDOkppNhVOrr6i02X9o+62xVIyAK8UFGqQUwkFUZ3lbTmuLllWqhlkq
-         gl1lXeXnWYXdbDusyK86puaD9ZxS01UriDSUc78sydNP7bHX/qL/g2KaLWTz+rHjVlZO
-         TWxiCXGtRLFV0VkL9u1jlUXelNR2N0vo2sea4Xpbi2t76qA8wf35SnWMY4IMIvTbTwcp
-         9/Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720561644; x=1721166444;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xr1Aq6g6iHEMO2Vs4dczKy7eaazf0sBRWVh/L0WL6YA=;
-        b=cSOe6vDWqK5KZCBjlQJUb97e/YtR6tT0Kh3MMOoyx8V0YG4oVMf4x3sFplrfYuARn3
-         gSAxvFmORgzztxVa84NJL4cjtHsUsG8Pmlafl4+oXSZsptoLmzFrm/p76BDmQWx0Xe4H
-         HPXz8y2Tl/O+SpEOl8gWEkzeRqRcdlUWgKSy65/ima4jr0gIJawG3BdtO+zxHUg8zabb
-         lRFhu8ZAL2hL8WEzGItUKDY1o1j10vIUOiCRWrrAnRwEO7L9Rk25zu50oxBw8s2Twd8j
-         Ntz5gR3yPSpk3+LCm/0+Hjr2fYK/7iIu0Gg+3SemBEo/VuMP+4ioaNBK3lbh3WwStujn
-         LD6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXNbAbYM0DQthUbeq+ZyqeEXUZC1qJYT11i9Z8fkrFfZicTszufAKyjb9CADbRnYKBQUZpI56UY9P/7LhzgXg8TxET73JYX7PvLQ0/jjMUbhMdcKNRRWsp7dnXI8ofgEros
-X-Gm-Message-State: AOJu0YxqgdOpAodvF9aYiGA1TsmcyA9Z8vg2yG9BQ45MMqZPuMPXbG5Q
-	9/7dJ+dvh+HgzJ/gBjJK5jAX59DG9Ij0rtLoTCveOTNRIEetRPOJ3tf+JBvRxGEZGRTEcDMHwCp
-	ciqU787+vnIp1C2vpn4mjyxxglNLuNLnu
-X-Google-Smtp-Source: AGHT+IFe4jvpKKU5USK2eE6dh8waF3zfs852Efj2hcn8/BvvnDxJh7Bw4q8khAPgSjcuLSwiCxSI9W6FlVtC8wmTizM=
-X-Received: by 2002:a05:6a00:21cd:b0:70a:f38c:74ba with SMTP id
- d2e1a72fcca58-70b435eaa3fmr4589499b3a.22.1720561643938; Tue, 09 Jul 2024
- 14:47:23 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719B614374C;
+	Tue,  9 Jul 2024 21:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720561746; cv=fail; b=ZqReI2S+8/m7pC02o+xXQbkVp5CWti3sMYunzSDFT1zBEqjRY+nmTHwNv+ypU+1c0738NJcQI7VuEScxnysqCgVH610nAu94Aa/W1vx6GyatOAmeHS19L7amiimwNlJd6WmQO+NvufES1kK57egOFHqovPGBvDSeh/SMNvi/mQE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720561746; c=relaxed/simple;
+	bh=E/XMdZWE9aJ+A27IUhYbLIkDpEgCB+yfa8KFaalHCTE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=sKYXTIU9XRWyjToxf4VyL3L8e8aIysvbSE3DWu5SULrWQtXjg0EdOmhx2Ean/oqjiEfqJIB+rem2W8J8N6YLhNahYBvnUBn4+Vr08mGCbk64P/hrfCWeirOEE1ZCVj9yea6wIk7H4xwPYk1OoBr00lLMjIF1D3/TnmhAAE1cm9M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=TlFD/ngm; arc=fail smtp.client-ip=52.101.67.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZRg0CCMxNfJ8KfNLckM70dey1OJe5/6iSfilAdc7IqRdd++ZBCuo70nX0GuRyJi6ngIwFh/gmdZtffZ0F2mFZCiRJsPLkNMc8Gkpuf4ItB1vja6otsoUaYnFzm+msRKqLCHO8PK0/fgBNWwgBCjq87PZSF4JnQzzAjaz6aHbQHC5zaVsjx5IYPGfab3kpV3jdDWMazbZXoD7MLLNqWw5o0TtWrOp0XDAm7GQyZI0xTeyMltDsMictzCZQ/n8crxJ1kEMtSMOT1uwT4diikT6kz5F35k4BgfiP65xMq7Eqt9YLSYfSf1IVleMzjeC0ojYwELT54piaCut2jsmNGHxWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ePr9Qg+GpTnLb5HwdTn/liJiQ+K/eMCpO/f7QPu9zfs=;
+ b=eB8xuM0URyTSAj+Rh9bL/+58AzVySRE4o/xBpew4bohFfsD8JqD0sjcHD3Qdyk+M2G2FfA30upqLCsKvpoCpkc6pob9SH7/BWzKN72AUpxZCgTWyVMZ6xG8Qx3wW3cB54ggDo79yNIxGPoZGUdjDbQZeJ4Cq/SmduheYi8HdJtJNSVHgC5DfQA+FQypolO6uvWMJdqaBuEFajUyVmysvInQDnFvguK6kkKel09+g/3XVrNtdndNouRtVQdSPeMI329XS017rPJbO0jfL1iJySDNUUujebJ0OLMkXSwIKS6RbnCVyLB8acQlxxqZggSiuQvR5d9UuTKKVf2e1xeoytA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ePr9Qg+GpTnLb5HwdTn/liJiQ+K/eMCpO/f7QPu9zfs=;
+ b=TlFD/ngmVNGTEfJt4crm8aT25CdBhRa4rj1XUDL1ubVPSpqsApyYKtWPmG5+XefsCnGv7VZKNutxskLJ20sw9c2ycwfgiTU7vS8bs5LYLnN+77DXIOVUeSUu/1WIRuxNEvG/DGHLZOSm1iemLdzXUlnumjVEh6G568EVzL3mJp0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VE1PR04MB7391.eurprd04.prod.outlook.com (2603:10a6:800:1b3::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Tue, 9 Jul
+ 2024 21:48:58 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7741.033; Tue, 9 Jul 2024
+ 21:48:58 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: robh@kernel.org
+Cc: Frank.li@nxp.com,
+	conor+dt@kernel.org,
+	davem@davemloft.net,
+	devicetree@vger.kernel.org,
+	edumazet@google.com,
+	imx@lists.linux.dev,
+	krzk+dt@kernel.org,
+	krzk@kernel.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com
+Subject: [PATCH v3 1/1] dt-bindings: net: convert enetc to yaml
+Date: Tue,  9 Jul 2024 17:48:41 -0400
+Message-Id: <20240709214841.570154-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR05CA0198.namprd05.prod.outlook.com
+ (2603:10b6:a03:330::23) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708091241.544262971@infradead.org> <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
- <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
-In-Reply-To: <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 9 Jul 2024 14:47:12 -0700
-Message-ID: <CAEf4BzZbjqoNw4jJkO3TOmPJSxyCAze56YeUQULPbK3oLmOvsA@mail.gmail.com>
-Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
-To: Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org, 
-	rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org, clm@meta.com, 
-	paulmck@kernel.org, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VE1PR04MB7391:EE_
+X-MS-Office365-Filtering-Correlation-Id: b3461e8e-7f98-4334-c83e-08dca060efe6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|7416014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?EFjQObO1L1WojZWNeHKq1rTU1mHPEyOJoFDCq3kWhWAL/dfgPutAeoRi79v4?=
+ =?us-ascii?Q?o0dl6iZm65l2KcUEukydDFvcFqTt6bR5Mdtv1mnKNrU+BT1ikSP4gmycOrUd?=
+ =?us-ascii?Q?x8aDEeeKLgzBBnCPm4Iho0pPJu7BzF3fWRAqquL6cfvXj7WsxzD7LLuapdUu?=
+ =?us-ascii?Q?QQrBY4De3UqyLrO0g918S11CKK8+OWXrXTKBVS1cZ8L8+XFnW+XFs6MnX4Uh?=
+ =?us-ascii?Q?PqXviZcQrhYb9JSO3a6j2PpAolfLdU1It680hN1Y3+rl3hvBP96i2oIQEICe?=
+ =?us-ascii?Q?Hmug8AqMLH4tQcJ9TBqn0KwPUISzeNtDYpnPQNyHiJwavlCGzlCgQnMikglp?=
+ =?us-ascii?Q?2InjXGYLvokT98h4JrJ6K0mlmb7cti2sKDQ9/RPxF4PfYTvN/MQtMl4vm5SL?=
+ =?us-ascii?Q?ZT++1UD4B0wcgB2GtqUjfadgc3UFjxX+NbVvqzSrYmVhkXa9QPaA/IlxWAzl?=
+ =?us-ascii?Q?cfCeyTbxlK6CVXzVdtw/X2CNAsDEIQwaWGDaI15kpzyDpz0H+S3AjwezkPaY?=
+ =?us-ascii?Q?DjUqTQ2jv9NVrH0G67SugImNTo4FZDxEizaVb+z+4hwZggIouQgkNXVmQBxT?=
+ =?us-ascii?Q?rV7v/L5hAF7uJyDvoW8u4OLn1u3Cl1Mg8ApzoJbHlln9c4KOHuRsR2e8Qjdl?=
+ =?us-ascii?Q?IKSx1oeV81KcK/NqISXjP2F91C+mRTcfnrsnTTu/DhqlX1fDlDD7bCOP0ejX?=
+ =?us-ascii?Q?GTpmbsLcZEaHziVNkgR6HDhD8Jvq6DlJuqttRfWmNT1q3W1aoDnhNYaxRxDq?=
+ =?us-ascii?Q?RVm9lEITHr/Hdxze8jBDtfd3PpCTTh4M1NHeMV/5VsA2kN2KdkuAsM9nFVlI?=
+ =?us-ascii?Q?OKC9lEHH5ZzYlGheKqmFrPzxk8FcZnIOZ2tujW7PdCAILf3YiKyOmj59z6cw?=
+ =?us-ascii?Q?3iCZFEI7TGHU/Y51QjtXoi7tkKjK3MgJA16FDilcHXU33BCkeNnUzusBj0J8?=
+ =?us-ascii?Q?Z20mXl9BpMq1JxDogA4Ub3e2zIxI8wtcaHjRGItFn8Ka52sJA4zHiyuB8pED?=
+ =?us-ascii?Q?55dgheNNe9DQ0BK/K7PSgiZZ9R6YT2yc95DNJglxnaW4UVxUKbk6ErSzk7rY?=
+ =?us-ascii?Q?qHRtudDe1ah/g4Py+H6F0x5iI7+nm8BJPGVsBbNbqxN51Gd5FHVqfWMUgkWk?=
+ =?us-ascii?Q?0PYHwxghc2P+Qc3RWohbIlUX+XP9jQ1U6l83e3NYWMKUn0mByXsDRCzAEQuB?=
+ =?us-ascii?Q?fr6jYtDv9k3XzyS+MY06CIA4dxqUaeciFBaDvY1nEgt9R0yvDotMRlXF+aaQ?=
+ =?us-ascii?Q?t45iDK8qd7F2VYfEHDA/C/GuYlyNu0kYKVtFcmFmlvhRYph/tBd7LIgpgBqC?=
+ =?us-ascii?Q?N4VAvX9K17FyNGJMDMAJi+n/SrK+iVz9I3+AxdQUsbO9qseIY3/tl0EQUkRz?=
+ =?us-ascii?Q?OX/gOQg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(7416014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Jk+dcqH0QloR7d8FzM5M04eXMUCbtRLyFmpX311MNgVWiQ/Wj/ba8WL5apvN?=
+ =?us-ascii?Q?DTmN/9znCsfdPgh4cPgykvJ8uIHPdBE9i2DHrLokTcnK/+FCUkABayP4QGw6?=
+ =?us-ascii?Q?KxNUv/5onU7LdyIN0QIOP/AJc+MDIqUfGNTi16Srp546ZT45aDrwC6ZV+sD8?=
+ =?us-ascii?Q?+Vm5odkNjOKBgODB/H3vO8rsKK7HH6MHLOSf1SwOn5lmJcVI3kFu3BKn0uuv?=
+ =?us-ascii?Q?hHlDwoy5aUw5RgnZKb3cdUrWXEWnsTZlB5/RvMbTPaLwYIpAtbv54SRI7/ET?=
+ =?us-ascii?Q?0IRodBTYW0UP790oCJbKOwxAZoWLPEDTxTzg1ndHecgxTnbxUDD62qvZEicV?=
+ =?us-ascii?Q?9wSNI/BZK/3YAih8c5L6mk9jYEWhLOQGRwQwABihDvk7gggj80MkEUCx53T/?=
+ =?us-ascii?Q?dYURGMq5z+5dH33bSvRReTVVfE0f0GpXJ3zhanq1240EQVqMC1cCeLC5Qp9c?=
+ =?us-ascii?Q?+2FF0BOb6FC8lwVVIgy48uPpDX/bkh22JoDIE1SW+whhhTeL13yNPTviw+Ph?=
+ =?us-ascii?Q?dKl56lshiFnBVdFrSc/WaU41crDxDh3jAGNCfcmrF/W6geNlLiL1JrN311be?=
+ =?us-ascii?Q?SFoxH0/wO1oDIWkdiLNgne59Wf6B0V2OMZdIJSAgEHfk4hI6/vLSFTMey0UT?=
+ =?us-ascii?Q?VS7E2pQKQCzzU/VR4J3OwlcrUpBGvSpB3ojSMDtkBkOv9O4s0E7FrPDIYGM6?=
+ =?us-ascii?Q?5Dc0SEYmFbaPsLyJ8Q34dZmczskBvdOY0+HaJFQUK7QpSJjjdgQXG1WCNhu2?=
+ =?us-ascii?Q?LCgGvU35xfSoE1VdLf+jQrt+eXvirCsIw3wa+fiB8N5vXlKdQKowh4nCIibv?=
+ =?us-ascii?Q?UazpftJqyzMoEX/oHyz3ISUhxZkZEeSGNhd/fh8JdKc0dYFWsMKcWr2TYFw8?=
+ =?us-ascii?Q?I5Wu3CdIufsiShcTx0hK4ebsg8bA2MTf0yWjVCwn6L1v1Zmf38DKDg8WYdlb?=
+ =?us-ascii?Q?ikpOoMvEaWh2JGuvn+C6jpej+GkXfY2BXMAy7mpccpwId5+4pMcfBN/e5V6n?=
+ =?us-ascii?Q?KnkkuIoatysqu29SQv1EIvFZMpl+txIyaxcMVnj+8NInAIrOifedVUey7RCW?=
+ =?us-ascii?Q?NTxBz5erE2nRHKyqsqIE6G7CIx5jUPolo5MZ9LFYPS5kmanIKZdmaR2Pq1+H?=
+ =?us-ascii?Q?/xFDeifPpZTwR61fr73VPNVy+2E6sEdeX15TeW+VbCZsauq8ZQtfkfGg0mko?=
+ =?us-ascii?Q?VUWOGV9ThIyCphNDYJvE9wpIyofbCD/r8JGHOwS3sSZEtokxyBJ5TNl9NYNg?=
+ =?us-ascii?Q?rCTe+iRZqcS/nNto9JQH4T3MHa3pJGkwOSA+mPJptQuYeScH/qbNRSbVkoD6?=
+ =?us-ascii?Q?oV+QpGHbJNUyuaez2hLBF78MQS4N1Du3Mlg/gjOAVPXshveEeQAjIbX4IJRd?=
+ =?us-ascii?Q?sDYStNZo0MbBb+1aMnhNMPnyIQIspc4XeHSjkOqGFLK9q+3RAQNp7u+Bep1q?=
+ =?us-ascii?Q?ZrihXP4Aw4h9bXQNVBPBK/EsxGhLRCBW9cbuTE6+8OXGPbug2tF+penXQorP?=
+ =?us-ascii?Q?3CNAzf+TUpP1QvGTtLw5l+jF3GAFuzj6C3p0Ewt7AUFt/dQ5hpf2ERt033YZ?=
+ =?us-ascii?Q?u77W0VPR1Elk/8TvzfJekiapkPeszpJnKuo79g9O?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3461e8e-7f98-4334-c83e-08dca060efe6
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2024 21:48:58.5244
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aWlXN/9NXx5/q4Fh2cJxR/i+vRkY3hlvnPEso/tjzw4mpp+05UgIQrxG5A142Szi2eiFJ939onTwQZ8M2sp5SQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7391
 
-On Mon, Jul 8, 2024 at 5:25=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Mon, Jul 8, 2024 at 3:56=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.=
-org> wrote:
-> >
-> > On Mon, 08 Jul 2024 11:12:41 +0200
-> > Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > > Hi!
-> > >
-> > > These patches implement the (S)RCU based proposal to optimize uprobes=
-.
-> > >
-> > > On my c^Htrusty old IVB-EP -- where each (of the 40) CPU calls 'func'=
- in a
-> > > tight loop:
-> > >
-> > >   perf probe -x ./uprobes test=3Dfunc
-> > >   perf stat -ae probe_uprobe:test  -- sleep 1
-> > >
-> > >   perf probe -x ./uprobes test=3Dfunc%return
-> > >   perf stat -ae probe_uprobe:test__return -- sleep 1
-> > >
-> > > PRE:
-> > >
-> > >   4,038,804      probe_uprobe:test
-> > >   2,356,275      probe_uprobe:test__return
-> > >
-> > > POST:
-> > >
-> > >   7,216,579      probe_uprobe:test
-> > >   6,744,786      probe_uprobe:test__return
-> > >
-> >
-> > Good results! So this is another series of Andrii's batch register?
-> > (but maybe it becomes simpler)
->
-> yes, this would be an alternative to my patches
->
->
-> Peter,
->
-> I didn't have time to look at the patches just yet, but I managed to
-> run a quick benchmark (using bench tool we have as part of BPF
-> selftests) to see both single-threaded performance and how the
-> performance scales with CPUs (now that we are not bottlenecked on
-> register_rwsem). Here are some results:
+Convert enetc device binding file to yaml. Split to 3 yaml files,
+'fsl,enetc.yaml', 'fsl,enetc-mdio.yaml', 'fsl,enetc-ierb.yaml'.
 
-Running in my local VM with debugging config, I'm getting the
-following. Please check if that's something new or it's just another
-symptom of the issues that Oleg pointed out already.
+Additional Changes:
+- Add pci<vendor id>,<production id> in compatible string.
+- Ref to common ethernet-controller.yaml and mdio.yaml.
+- Add Wei fang, Vladimir and Claudiu as maintainer.
+- Update ENETC description.
+- Remove fixed-link part.
 
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Change from v2 to v3
+- use endpoint-config as node name for fsl,enetc-ierb.yaml,
+- wrap to 80 in fsl,enetc-ierb.yaml.
+- fix unit address don't match
+- Remove reg/compatible string for pci
+- Add pci-device.yaml, which need absolute path.
+- Use example which have mdio sub node.
 
-[   11.213834] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-[   11.214225] WARNING: lock held when returning to user space!
-[   11.214603] 6.10.0-rc6-gd3f5cbffe86b #1263 Tainted: G           OE
-[   11.215040] ------------------------------------------------
-[   11.215426] urandom_read/2412 is leaving the kernel with locks still hel=
-d!
-[   11.215876] 1 lock held by urandom_read/2412:
-[   11.216175]  #0: ffffffff835ce8f0 (uretprobes_srcu){.+.+}-{0:0},
-at: srcu_read_lock+0x31/0x3f
-[   11.262797] ------------[ cut here ]------------
-[   11.263162] refcount_t: underflow; use-after-free.
-[   11.263474] WARNING: CPU: 1 PID: 2409 at lib/refcount.c:28
-refcount_warn_saturate+0x99/0xda
-[   11.263995] Modules linked in: bpf_testmod(OE) aesni_intel(E)
-crypto_simd(E) floppy(E) cryptd(E) i2c_piix4(E) crc32c_intel(E)
-button(E) i2c_core(E) i6300esb(E) pcspkr(E) serio_raw(E)
-[   11.265105] CPU: 1 PID: 2409 Comm: test_progs Tainted: G
-OE      6.10.0-rc6-gd3f5cbffe86b #1263
-[   11.265740] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
-[   11.266507] RIP: 0010:refcount_warn_saturate+0x99/0xda
-[   11.266862] Code: 05 ba 29 1d 02 01 e8 e2 c0 b4 ff 0f 0b c3 80 3d
-aa 29 1d 02 00 75 53 48 c7 c7 20 59 50 82 c6 05 9a 29 1d 02 01 e8 c3
-c0 b4 ff <0f> 0b c3 80 3d 8a 29 1d 02 00 75 34 a
-[   11.268099] RSP: 0018:ffffc90001fbbd60 EFLAGS: 00010282
-[   11.268451] RAX: 0000000000000026 RBX: ffff88810f333000 RCX: 00000000000=
-00027
-[   11.268931] RDX: 0000000000000000 RSI: ffffffff82580a45 RDI: 00000000fff=
-fffff
-[   11.269417] RBP: ffff888105937818 R08: 0000000000000000 R09: 00000000000=
-00000
-[   11.269910] R10: 00000000756f6366 R11: 0000000063666572 R12: ffff88810f3=
-33030
-[   11.270387] R13: ffffc90001fbbb80 R14: ffff888100535190 R15: dead0000000=
-00100
-[   11.270870] FS:  00007fc938bd2d00(0000) GS:ffff88881f680000(0000)
-knlGS:0000000000000000
-[   11.271363] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   11.271725] CR2: 000000000073a005 CR3: 00000001127d5004 CR4: 00000000003=
-70ef0
-[   11.272220] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
-00000
-[   11.272693] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
-00400
-[   11.273182] Call Trace:
-[   11.273370]  <TASK>
-[   11.273518]  ? __warn+0x8b/0x14d
-[   11.273753]  ? report_bug+0xdb/0x151
-[   11.273997]  ? refcount_warn_saturate+0x99/0xda
-[   11.274326]  ? handle_bug+0x3c/0x5b
-[   11.274564]  ? exc_invalid_op+0x13/0x5c
-[   11.274831]  ? asm_exc_invalid_op+0x16/0x20
-[   11.275119]  ? refcount_warn_saturate+0x99/0xda
-[   11.275428]  uprobe_unregister_nosync+0x61/0x7c
-[   11.275768]  __probe_event_disable+0x5d/0x7d
-[   11.276069]  probe_event_disable+0x50/0x58
-[   11.276350]  trace_uprobe_register+0x4f/0x1a7
-[   11.276667]  perf_trace_event_unreg.isra.0+0x1e/0x6b
-[   11.277031]  perf_uprobe_destroy+0x26/0x4b
-[   11.277312]  _free_event+0x2ad/0x311
-[   11.277558]  perf_event_release_kernel+0x210/0x221
-[   11.277887]  ? lock_acquire+0x8d/0x266
-[   11.278147]  perf_release+0x11/0x14
-[   11.278384]  __fput+0x133/0x1fb
-[   11.278604]  task_work_run+0x67/0x8b
-[   11.278858]  resume_user_mode_work+0x22/0x4a
-[   11.279153]  syscall_exit_to_user_mode+0x86/0xdd
-[   11.279465]  do_syscall_64+0xa1/0xfb
-[   11.279733]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
-[   11.280074] RIP: 0033:0x7fc938da5a94
-[   11.280322] Code: 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84
-00 00 00 00 00 90 f3 0f 1e fa 80 3d d5 18 0e 00 00 74 13 b8 03 00 00
-00 0f 05 <48> 3d 00 f0 ff ff 77 44 c3 0f 1f 00 3
-[   11.281538] RSP: 002b:00007ffd3553e6a8 EFLAGS: 00000202 ORIG_RAX:
-0000000000000003
-[   11.282003] RAX: 0000000000000000 RBX: 00007ffd3553eb58 RCX: 00007fc938d=
-a5a94
-[   11.282498] RDX: 0000000000000011 RSI: 0000000000002401 RDI: 00000000000=
-00012
-[   11.282981] RBP: 00007ffd3553e6e0 R08: 0000000004a90425 R09: 00000000000=
-00007
-[   11.283451] R10: 0000000004a95050 R11: 0000000000000202 R12: 00000000000=
-00000
-[   11.283894] R13: 00007ffd3553eb88 R14: 00007fc938f01000 R15: 0000000000f=
-fad90
-[   11.284387]  </TASK>
-[   11.284540] irq event stamp: 70926
-[   11.284779] hardirqs last  enabled at (70925): [<ffffffff81c93d2c>]
-_raw_spin_unlock_irqrestore+0x30/0x5f
-[   11.285404] hardirqs last disabled at (70926): [<ffffffff81c8e5bd>]
-__schedule+0x1ad/0xcab
-[   11.285943] softirqs last  enabled at (70898): [<ffffffff811f0992>]
-bpf_link_settle+0x2a/0x3b
-[   11.286506] softirqs last disabled at (70896): [<ffffffff811f097d>]
-bpf_link_settle+0x15/0x3b
-[   11.287071] ---[ end trace 0000000000000000 ]---
-[   11.400528] ------------[ cut here ]------------
-[   11.400877] refcount_t: saturated; leaking memory.
-[   11.401214] WARNING: CPU: 2 PID: 2409 at lib/refcount.c:22
-refcount_warn_saturate+0x5b/0xda
-[   11.401778] Modules linked in: bpf_testmod(OE) aesni_intel(E)
-crypto_simd(E) floppy(E) cryptd(E) i2c_piix4(E) crc32c_intel(E)
-button(E) i2c_core(E) i6300esb(E) pcspkr(E) serio_raw(E)
-[   11.402822] CPU: 2 PID: 2409 Comm: test_progs Tainted: G        W
-OE      6.10.0-rc6-gd3f5cbffe86b #1263
-[   11.403396] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
-[   11.404091] RIP: 0010:refcount_warn_saturate+0x5b/0xda
-[   11.404404] Code: 02 01 e8 24 c1 b4 ff 0f 0b c3 80 3d ee 29 1d 02
-00 0f 85 91 00 00 00 48 c7 c7 bd 58 50 82 c6 05 da 29 1d 02 01 e8 01
-c1 b4 ff <0f> 0b c3 80 3d ca 29 1d 02 00 75 72 a
-[   11.405578] RSP: 0018:ffffc90001fbbca0 EFLAGS: 00010286
-[   11.405906] RAX: 0000000000000026 RBX: ffff888103fb9400 RCX: 00000000000=
-00027
-[   11.406397] RDX: 0000000000000000 RSI: ffffffff82580a45 RDI: 00000000fff=
-fffff
-[   11.406875] RBP: ffff8881029b3400 R08: 0000000000000000 R09: 00000000000=
-00000
-[   11.407345] R10: 00000000756f6366 R11: 0000000063666572 R12: ffff8881015=
-ab5d8
-[   11.407827] R13: ffff888105d9b208 R14: 0000000000078060 R15: 00000000000=
-00000
-[   11.408311] FS:  00007fc938bd2d00(0000) GS:ffff88881f700000(0000)
-knlGS:0000000000000000
-[   11.408853] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   11.409254] CR2: 00007fffffffe080 CR3: 00000001127d5006 CR4: 00000000003=
-70ef0
-[   11.409688] Call Trace:
-[   11.409852]  <TASK>
-[   11.409988]  ? __warn+0x8b/0x14d
-[   11.410199]  ? report_bug+0xdb/0x151
-[   11.410422]  ? refcount_warn_saturate+0x5b/0xda
-[   11.410748]  ? handle_bug+0x3c/0x5b
-[   11.410987]  ? exc_invalid_op+0x13/0x5c
-[   11.411254]  ? asm_exc_invalid_op+0x16/0x20
-[   11.411538]  ? refcount_warn_saturate+0x5b/0xda
-[   11.411857]  __uprobe_register+0x185/0x2a2
-[   11.412140]  ? __uprobe_perf_filter+0x3f/0x3f
-[   11.412465]  probe_event_enable+0x265/0x2b8
-[   11.412753]  perf_trace_event_init+0x174/0x1fd
-[   11.413029]  perf_uprobe_init+0x8f/0xbc
-[   11.413268]  perf_uprobe_event_init+0x52/0x64
-[   11.413538]  perf_try_init_event+0x5c/0xe7
-[   11.413799]  perf_event_alloc+0x4e1/0xaf5
-[   11.414047]  ? _raw_spin_unlock+0x29/0x3a
-[   11.414299]  ? alloc_fd+0x190/0x1a3
-[   11.414520]  __do_sys_perf_event_open+0x28a/0x9c6
-[   11.414823]  do_syscall_64+0x85/0xfb
-[   11.415047]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
-[   11.415403] RIP: 0033:0x7fc938db573d
-[   11.415648] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e
-fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24
-08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 8
-[   11.417177] RSP: 002b:00007ffd3553c328 EFLAGS: 00000286 ORIG_RAX:
-000000000000012a
-[   11.417724] RAX: ffffffffffffffda RBX: 00007ffd3553eb58 RCX: 00007fc938d=
-b573d
-[   11.418233] RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 00007ffd355=
-3c3e0
-[   11.418726] RBP: 00007ffd3553c480 R08: 0000000000000008 R09: 00000000000=
-00000
-[   11.419202] R10: 00000000ffffffff R11: 0000000000000286 R12: 00000000000=
-00000
-[   11.419671] R13: 00007ffd3553eb88 R14: 00007fc938f01000 R15: 0000000000f=
-fad90
-[   11.420151]  </TASK>
-[   11.420291] irq event stamp: 70926
-[   11.420502] hardirqs last  enabled at (70925): [<ffffffff81c93d2c>]
-_raw_spin_unlock_irqrestore+0x30/0x5f
-[   11.421162] hardirqs last disabled at (70926): [<ffffffff81c8e5bd>]
-__schedule+0x1ad/0xcab
-[   11.421717] softirqs last  enabled at (70898): [<ffffffff811f0992>]
-bpf_link_settle+0x2a/0x3b
-[   11.422286] softirqs last disabled at (70896): [<ffffffff811f097d>]
-bpf_link_settle+0x15/0x3b
-[   11.422829] ---[ end trace 0000000000000000 ]---
+Change from v1 to v2
+- renamee file as fsl,enetc-mdio.yaml, fsl,enetc-ierb.yaml, fsl,enetc.yaml
+- example include pcie node
+---
+ .../bindings/net/fsl,enetc-ierb.yaml          |  38 ++++++
+ .../bindings/net/fsl,enetc-mdio.yaml          |  57 +++++++++
+ .../devicetree/bindings/net/fsl,enetc.yaml    |  66 ++++++++++
+ .../devicetree/bindings/net/fsl-enetc.txt     | 119 ------------------
+ 4 files changed, 161 insertions(+), 119 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/fsl,enetc-ierb.yaml
+ create mode 100644 Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml
+ create mode 100644 Documentation/devicetree/bindings/net/fsl,enetc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/net/fsl-enetc.txt
 
+diff --git a/Documentation/devicetree/bindings/net/fsl,enetc-ierb.yaml b/Documentation/devicetree/bindings/net/fsl,enetc-ierb.yaml
+new file mode 100644
+index 0000000000000..c8a654310b905
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/fsl,enetc-ierb.yaml
+@@ -0,0 +1,38 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/fsl,enetc-ierb.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Integrated Endpoint Register Block
++
++description:
++  The fsl_enetc driver can probe on the Integrated Endpoint Register Block,
++  which preconfigures the FIFO limits for the ENETC ports.
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++  - Vladimir Oltean <vladimir.oltean@nxp.com>
++  - Wei Fang <wei.fang@nxp.com>
++  - Claudiu Manoil <claudiu.manoil@nxp.com>
++
++properties:
++  compatible:
++    enum:
++      - fsl,ls1028a-enetc-ierb
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    endpoint-config@f0800000 {
++        compatible = "fsl,ls1028a-enetc-ierb";
++        reg = <0xf0800000 0x10000>;
++    };
+diff --git a/Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml b/Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml
+new file mode 100644
+index 0000000000000..c1dd6aa04321e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml
+@@ -0,0 +1,57 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/fsl,enetc-mdio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ENETC external MDIO PCIe endpoint device
++
++description:
++  NETC provides an external master MDIO interface (EMDIO) for managing external
++  devices (PHYs). EMDIO supports both Clause 22 and 45 protocols. And the EMDIO
++  provides a means for different software modules to share a single set of MDIO
++  signals to access their PHYs.
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++  - Vladimir Oltean <vladimir.oltean@nxp.com>
++  - Wei Fang <wei.fang@nxp.com>
++  - Claudiu Manoil <claudiu.manoil@nxp.com>
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - pci1957,ee01
++      - const: fsl,enetc-mdio
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++
++allOf:
++  - $ref: mdio.yaml
++  - $ref: /schemas/pci/pci-device.yaml
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    pcie{
++        #address-cells = <3>;
++        #size-cells = <2>;
++
++        mdio@0,3 {
++            compatible = "pci1957,ee01", "fsl,enetc-mdio";
++            reg = <0x000300 0 0 0 0>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            ethernet-phy@2 {
++                reg = <0x2>;
++            };
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/net/fsl,enetc.yaml b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+new file mode 100644
+index 0000000000000..e152c93998fe1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+@@ -0,0 +1,66 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/fsl,enetc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: The NIC functionality of NXP NETC
++
++description:
++  The NIC functionality in NETC is known as EtherNET Controller (ENETC). ENETC
++  supports virtualization/isolation based on PCIe Single Root IO Virtualization
++  (SR-IOV), advanced QoS with 8 traffic classes and 4 drop resilience levels,
++  and a full range of TSN standards and NIC offload capabilities
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++  - Vladimir Oltean <vladimir.oltean@nxp.com>
++  - Wei Fang <wei.fang@nxp.com>
++  - Claudiu Manoil <claudiu.manoil@nxp.com>
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - pci1957,e100
++      - const: fsl,enetc
++
++  reg:
++    maxItems: 1
++
++  mdio:
++    $ref: mdio.yaml
++    unevaluatedProperties: false
++    description: Optional child node for ENETC instance, otherwise use NETC EMDIO.
++
++required:
++  - compatible
++  - reg
++
++allOf:
++  - $ref: /schemas/pci/pci-device.yaml
++  - $ref: ethernet-controller.yaml
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    pcie {
++        #address-cells = <3>;
++        #size-cells = <2>;
++
++        ethernet@0,0 {
++            compatible = "pci1957,e100", "fsl,enetc";
++            reg = <0x000000 0 0 0 0>;
++            phy-handle = <&sgmii_phy0>;
++            phy-connection-type = "sgmii";
++
++            mdio {
++                #address-cells = <1>;
++                #size-cells = <0>;
++                phy@2 {
++                    reg = <0x2>;
++                };
++            };
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/net/fsl-enetc.txt b/Documentation/devicetree/bindings/net/fsl-enetc.txt
+deleted file mode 100644
+index 9b9a3f197e2d3..0000000000000
+--- a/Documentation/devicetree/bindings/net/fsl-enetc.txt
++++ /dev/null
+@@ -1,119 +0,0 @@
+-* ENETC ethernet device tree bindings
+-
+-Depending on board design and ENETC port type (internal or
+-external) there are two supported link modes specified by
+-below device tree bindings.
+-
+-Required properties:
+-
+-- reg		: Specifies PCIe Device Number and Function
+-		  Number of the ENETC endpoint device, according
+-		  to parent node bindings.
+-- compatible	: Should be "fsl,enetc".
+-
+-1. The ENETC external port is connected to a MDIO configurable phy
+-
+-1.1. Using the local ENETC Port MDIO interface
+-
+-In this case, the ENETC node should include a "mdio" sub-node
+-that in turn should contain the "ethernet-phy" node describing the
+-external phy.  Below properties are required, their bindings
+-already defined in Documentation/devicetree/bindings/net/ethernet.txt or
+-Documentation/devicetree/bindings/net/phy.txt.
+-
+-Required:
+-
+-- phy-handle		: Phandle to a PHY on the MDIO bus.
+-			  Defined in ethernet.txt.
+-
+-- phy-connection-type	: Defined in ethernet.txt.
+-
+-- mdio			: "mdio" node, defined in mdio.txt.
+-
+-- ethernet-phy		: "ethernet-phy" node, defined in phy.txt.
+-
+-Example:
+-
+-	ethernet@0,0 {
+-		compatible = "fsl,enetc";
+-		reg = <0x000000 0 0 0 0>;
+-		phy-handle = <&sgmii_phy0>;
+-		phy-connection-type = "sgmii";
+-
+-		mdio {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-			sgmii_phy0: ethernet-phy@2 {
+-				reg = <0x2>;
+-			};
+-		};
+-	};
+-
+-1.2. Using the central MDIO PCIe endpoint device
+-
+-In this case, the mdio node should be defined as another PCIe
+-endpoint node, at the same level with the ENETC port nodes.
+-
+-Required properties:
+-
+-- reg		: Specifies PCIe Device Number and Function
+-		  Number of the ENETC endpoint device, according
+-		  to parent node bindings.
+-- compatible	: Should be "fsl,enetc-mdio".
+-
+-The remaining required mdio bus properties are standard, their bindings
+-already defined in Documentation/devicetree/bindings/net/mdio.txt.
+-
+-Example:
+-
+-	ethernet@0,0 {
+-		compatible = "fsl,enetc";
+-		reg = <0x000000 0 0 0 0>;
+-		phy-handle = <&sgmii_phy0>;
+-		phy-connection-type = "sgmii";
+-	};
+-
+-	mdio@0,3 {
+-		compatible = "fsl,enetc-mdio";
+-		reg = <0x000300 0 0 0 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		sgmii_phy0: ethernet-phy@2 {
+-			reg = <0x2>;
+-		};
+-	};
+-
+-2. The ENETC port is an internal port or has a fixed-link external
+-connection
+-
+-In this case, the ENETC port node defines a fixed link connection,
+-as specified by Documentation/devicetree/bindings/net/fixed-link.txt.
+-
+-Required:
+-
+-- fixed-link	: "fixed-link" node, defined in "fixed-link.txt".
+-
+-Example:
+-	ethernet@0,2 {
+-		compatible = "fsl,enetc";
+-		reg = <0x000200 0 0 0 0>;
+-		fixed-link {
+-			speed = <1000>;
+-			full-duplex;
+-		};
+-	};
+-
+-* Integrated Endpoint Register Block bindings
+-
+-Optionally, the fsl_enetc driver can probe on the Integrated Endpoint Register
+-Block, which preconfigures the FIFO limits for the ENETC ports. This is a node
+-with the following properties:
+-
+-- reg		: Specifies the address in the SoC memory space.
+-- compatible	: Must be "fsl,ls1028a-enetc-ierb".
+-
+-Example:
+-	ierb@1f0800000 {
+-		compatible = "fsl,ls1028a-enetc-ierb";
+-		reg = <0x01 0xf0800000 0x0 0x10000>;
+-	};
+-- 
+2.34.1
 
->
-> [root@kerneltest003.10.atn6 ~]# for num_threads in {1..20}; do ./bench \
-> -a -d10 -p $num_threads trig-uprobe-nop | grep Summary; done
-> Summary: hits    3.278 =C2=B1 0.021M/s (  3.278M/prod)
-> Summary: hits    4.364 =C2=B1 0.005M/s (  2.182M/prod)
-> Summary: hits    6.517 =C2=B1 0.011M/s (  2.172M/prod)
-> Summary: hits    8.203 =C2=B1 0.004M/s (  2.051M/prod)
-> Summary: hits    9.520 =C2=B1 0.012M/s (  1.904M/prod)
-> Summary: hits    8.316 =C2=B1 0.007M/s (  1.386M/prod)
-> Summary: hits    7.893 =C2=B1 0.037M/s (  1.128M/prod)
-> Summary: hits    8.490 =C2=B1 0.014M/s (  1.061M/prod)
-> Summary: hits    8.022 =C2=B1 0.005M/s (  0.891M/prod)
-> Summary: hits    8.471 =C2=B1 0.019M/s (  0.847M/prod)
-> Summary: hits    8.156 =C2=B1 0.021M/s (  0.741M/prod)
-> ...
->
->
-> (numbers in the first column is total throughput, and xxx/prod is
-> per-thread throughput). Single-threaded performance (about 3.3 mln/s)
-> is on part with what I had with my patches. And clearly it scales
-> better with more thread now that register_rwsem is gone, though,
-> unfortunately, it doesn't really scale linearly.
->
-> Quick profiling for the 8-threaded benchmark shows that we spend >20%
-> in mmap_read_lock/mmap_read_unlock in find_active_uprobe. I think
-> that's what would prevent uprobes from scaling linearly. If you have
-> some good ideas on how to get rid of that, I think it would be
-> extremely beneficial. We also spend about 14% of the time in
-> srcu_read_lock(). The rest is in interrupt handling overhead, actual
-> user-space function overhead, and in uprobe_dispatcher() calls.
->
-> Ramping this up to 16 threads shows that mmap_rwsem is getting more
-> costly, up to 45% of CPU. SRCU is also growing a bit slower to 19% of
-> CPU. Is this expected? (I'm not familiar with the implementation
-> details)
->
-> P.S. Would you be able to rebase your patches on top of latest
-> probes/for-next, which include Jiri's sys_uretprobe changes. Right now
-> uretprobe benchmarks are quite unrepresentative because of that.
-> Thanks!
->
->
-> >
-> > Thank you,
-> >
-> > >
-> > > Patches also available here:
-> > >
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git perf=
-/uprobes
-> > >
-> > >
-> >
-> >
-> > --
-> > Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
