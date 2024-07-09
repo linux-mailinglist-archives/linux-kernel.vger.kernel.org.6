@@ -1,152 +1,102 @@
-Return-Path: <linux-kernel+bounces-245462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C15492B2D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:57:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2777F92B2D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:58:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D0791F2269E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:57:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D59FB281AE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1706154BFC;
-	Tue,  9 Jul 2024 08:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B09ED154C15;
+	Tue,  9 Jul 2024 08:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JCnNKGvG"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SlwNl2N9"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E86154BE5
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3679D15442A;
+	Tue,  9 Jul 2024 08:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720515406; cv=none; b=tpYkSjmVxHsAtcOa434Q80++ovPqGoOivxLfQj62XKEgCuwXsXMLRsJm/UUFgr50F45Fy3jh8n/KCdoHrrmiX/ZbLWIdqBHbuVFJkcFZyPWCYXthMpCCclvrCbxKcNq/nvBg5s/t20Z+7Cz/4jNN/VkBEmQa8msDUF5VYPyhJvs=
+	t=1720515461; cv=none; b=hhK+okO60Jg0x5R9mOfzIyOIv54bOqAZ7aaSaOdnWzoWF65F5k74jjWvUbcZL/A4zArZWtITDscwwyC+TR0m9my1eEBoX1kBJjuXojRa6annF8n8svlAGzLJG17AITxZUuVXgla9WngXqQxyVn94pRDhWdqaNWEwUvXt58QLmC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720515406; c=relaxed/simple;
-	bh=zeEnEM9kX9Y0nyF8n3K2wS1SB9H7giObmnlLh3K61RY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=H+O6YdxCvb7UKc3RSMNTFk9L+qHT2K4HcKO7fngrFn9U5JDnSsD94TQCdLPLX7c+MmNUODQpSTq6xmub1tlZocUkomAKmC+RNhJ/1ApxSE3JW1gjdG6OrvAzjn2WFCn7RX7by9OA3cLcdchrIDngfawKqQ7S7FLcnM4EJA0wcWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JCnNKGvG; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4266eda81c5so9640715e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 01:56:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720515402; x=1721120202; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N6JCs78VemHVLXAEu6lpNSjjhDkuEB/scHH4X5narOY=;
-        b=JCnNKGvG1oCSiGMnObEFAmLoqDR7WxrsIokRBQ0z8vv2O5Shd28+wQINpGzj70nNbl
-         Q/av9hS45kd+Pgj1UBYK6l6U+/BMCPh9YrIGqI93OBM+g/oE8bVhyQIC8sBMl/Fxo95n
-         rxlL9v3HiHggZvojtlROUkzPxgg4DGMbDniEA5GmO0xtxZI7JPsmpIywv29TO/uKcHmc
-         Y2XQSbCbWV2Aryf0gDgI8xxg+4aC3Ae6dBxHKFRLHzHs1eCrHT4TREF47Nr7Gw9DCSsC
-         eVktto3V3gGfnC/lhnt2ZkF6v4UzBUiiXnGrxBqKt8SSYT3lgh9hZj7dC2n87BEnuc+m
-         +zzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720515402; x=1721120202;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=N6JCs78VemHVLXAEu6lpNSjjhDkuEB/scHH4X5narOY=;
-        b=EhnR7CEyZZdJbNXFkGNKO4JDTz9aMPoSbxKC+f0eBAA9oIRGyMVfHKW3N2s2kRDEJB
-         ij8hfCnZFbCQAApKG886JP23GaR85OewSqkyE0R3QX9HvfgFNWc7IlfTWU5E7x1b84dc
-         oG3tEecrJWpkv8a60bW3tT+gWNdH8qrQB33kjtjzuvnZmMA8sbPAlSAHSeIDzEdWzzcX
-         eWp1xa9UyV6umqvEXEbTHNRKJVMz2ZBLSK3wBB2J5ejhdtUuQPt9Oh8UJOyUz/XBYIKZ
-         DgPFYyXO2BE4JrKZGywjARXLNbZwOp9t+8tmQI1ueUvgpujcD1cHavA9qOmKx1ddy5sg
-         kHmA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiSEGw2tFXF/VNUL6dZKy91PqOg/g/+FlAvBlfnmrmQfwXO8QGyL97Pe/aPqEAkEadbgIoj1NdGwMmwRoF+q2pQpwRoHqrHQjy+d78
-X-Gm-Message-State: AOJu0YxFBVKeUt9tcTHzcXyG49CtfvNRZocB5vuudEOtnp8/spdGt0jz
-	lJ6RIvbb3Dted2U7uFfXxbzlzu9mXyu+OGKPnhA1mHOpvNHQKwGwQ65SptUDDyc=
-X-Google-Smtp-Source: AGHT+IGl0QCPQ3RtBPhEJx9xP2Qga0g9dxUHEMpPlS8Y3PEVe0Ejn3U5/SxbK1zEVuMX9qiiIAaEow==
-X-Received: by 2002:a05:600c:2057:b0:426:52a5:1ca4 with SMTP id 5b1f17b1804b1-426707db724mr15635825e9.21.1720515402453;
-        Tue, 09 Jul 2024 01:56:42 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:cad:2140:b12a:8461:5e2a:dfe? ([2a01:e0a:cad:2140:b12a:8461:5e2a:dfe])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6f1138sm30698455e9.19.2024.07.09.01.56.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 01:56:42 -0700 (PDT)
-Message-ID: <9bb13c8a-1452-4a83-b4fa-04c17c8a0819@linaro.org>
-Date: Tue, 9 Jul 2024 10:56:40 +0200
+	s=arc-20240116; t=1720515461; c=relaxed/simple;
+	bh=ZBOwGP7RVFCc7foedD+ER6Tdv+jbAblKiI6tXyPVmB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=szWAtBt37gmtHu+MUXlW4xUDaZrZof55R2aYnnPNjTZljTOVgVUXSQ2vfCqD/uUdVpq+yJKRwyPc5SqbxS2pJdvA3d3H95AsMsRTgsdgqP9ZavzGUK2kBkctFJa+80//kEepyeL5+fyd9YyYPkPjnltgzsSXWlswon9sKGuAF0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=SlwNl2N9; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720515454;
+	bh=wM9X1L7zqsx7sqfqsxVMVnzH8u0zHqt08s8WTZw8nCg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=SlwNl2N9a2XVJgwC1P0N2J9n7kwAJOFxQ785yBgBSj5gOJRXAa6yRlN6FrOX/rbS7
+	 EEAJuax+CmC4bzGy7uL8TGLV3za0oc/kyoApbB/Gzr3mE7X/sus4P5ei/k4BxsSZ5M
+	 HMvewDSTU0MHhe3aMSAMGyIplCk/G0iXSuAACq2UTRtHVNBhaMx9Uv5OjXLHW9bIFk
+	 qqjhyxLx3HYE9CrvyGNgncZuOWM6QyXWHfdXa4yBH8e/jUrlHTV1jw6hF2HjuqedNX
+	 2LCU0ZoKoDgOcDea+r0+YwW9M5RlmZ8ocHypHlkwhTm6rWYfAExoeqsZHyp9Wr0Reo
+	 J5xdsG1yUwpaw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJFHf3xTPz4xNg;
+	Tue,  9 Jul 2024 18:57:34 +1000 (AEST)
+Date: Tue, 9 Jul 2024 18:57:33 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>
+Cc: Mikulas Patocka <mpatocka@redhat.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the device-mapper tree
+Message-ID: <20240709185733.4aac356a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 2/4] dt-bindings: i2c: amlogic,meson6-i2c: add optional
- power-domains
-To: George Stark <gnstark@salutedevices.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, khilman@baylibre.com,
- jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
- hkallweit1@gmail.com, broonie@kernel.org, glaroque@baylibre.com,
- rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com,
- lukasz.luba@arm.com, b.galvani@gmail.com, mmkurbanov@sberdevices.ru
-Cc: linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, kernel@salutedevices.com
-References: <20240708194808.1819185-1-gnstark@salutedevices.com>
- <20240708194808.1819185-3-gnstark@salutedevices.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240708194808.1819185-3-gnstark@salutedevices.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/D405Mat/UdkS.xjdaUH+mwk";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 08/07/2024 21:48, George Stark wrote:
-> On newer SoCs, the I2C hardware can require a power domain to operate.
-> Since the same compatible is used for older and newer SoCs make
-> power-domains property optional.
-> 
-> Signed-off-by: George Stark <gnstark@salutedevices.com>
-> ---
->   Documentation/devicetree/bindings/i2c/amlogic,meson6-i2c.yaml | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/i2c/amlogic,meson6-i2c.yaml b/Documentation/devicetree/bindings/i2c/amlogic,meson6-i2c.yaml
-> index 26bed558c6b8..c4cc8af18280 100644
-> --- a/Documentation/devicetree/bindings/i2c/amlogic,meson6-i2c.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/amlogic,meson6-i2c.yaml
-> @@ -30,6 +30,9 @@ properties:
->     clocks:
->       minItems: 1
->   
-> +  power-domains:
-> +    maxItems: 1
-> +
->   required:
->     - compatible
->     - reg
+--Sig_/D405Mat/UdkS.xjdaUH+mwk
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Hi all,
+
+After merging the device-mapper tree, today's linux-next build (htmldocs)
+produced this warning:
+
+Documentation/admin-guide/device-mapper/dm-crypt.rst:168: ERROR: Unexpected=
+ indentation.
+
+Introduced by commit
+
+  04a1020ad350 ("dm-crypt: limit the size of encryption requests")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/D405Mat/UdkS.xjdaUH+mwk
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaM+30ACgkQAVBC80lX
+0GwXWAf9GvpDZfiGkricFbGTVWIiIf2s2644aR9UeKiAiFkC4tNtFayP66pIPqRk
+t6JjCvoKMJEIsW7SBeABK27cAmsz84AkfdaeVt9ODqUKuaZkShGFnI3ZN/p9wKh9
+2hRcy5Xli9wCDdq3zbUiMQVTNM2/TrVJYmyZwEq61T6x7bSRYJqtKFri876Da9SR
+UI/L60WF/D8mw78m0HYlMMVvU6JtVh7z31onleCzVo9gh65AMakJRPXLMRRgBBTo
+5Zyf4ydhn2cR0U8ppqNDl5/JU93YRviEHxFsezp36vycqJrkFA9HduVo+IZUAK/O
+B+ZYhWRrEU3aygd23mPGBtb5KmW0eg==
+=1USZ
+-----END PGP SIGNATURE-----
+
+--Sig_/D405Mat/UdkS.xjdaUH+mwk--
 
