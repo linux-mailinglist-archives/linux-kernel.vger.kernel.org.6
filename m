@@ -1,117 +1,147 @@
-Return-Path: <linux-kernel+bounces-246135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BEBF92BDF8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:15:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD7F692BE00
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C74712834DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:15:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72BA0287499
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E284919D087;
-	Tue,  9 Jul 2024 15:15:30 +0000 (UTC)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1755819D091;
+	Tue,  9 Jul 2024 15:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O/KD56rS"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E431019CCE5;
-	Tue,  9 Jul 2024 15:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7956158856;
+	Tue,  9 Jul 2024 15:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720538130; cv=none; b=Sa3qYkswAr3G56O/G+Mt1X4vTqnrA4KTsSDyxy9YpghHxTrp3xAHzb5vkvCUuflD0QZEz1iNG/67xbMmkeTGAVxwIDFqI1q4fceqvXUK/tmGxWKAg/+trNPY7l9h0cP94YkpPIJcyVhsvdhKUmf9Sqv1hUuFF+5Slqnr1AI2wPQ=
+	t=1720538163; cv=none; b=C0DzB69whSqKuawEYDWonShjks9QcHAqAS1pYfb/7U1pU8ADoXCtI7/Lx1bOWfQXAWNqYRQJYZE/oNoUDJpldGO0mNejN3GlW7Eragbx3ic0G8kAieKA5NZ28CK8vj8aJpbCpu4YL/culwezKw0pmqFwUNJdA+l+fS0oxxocqGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720538130; c=relaxed/simple;
-	bh=NxYiReVyL7Qx3FKsMTdfYtPeRiBpPB4fnwq6SS2LE3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YZiDEvZSjOF3ltwpYN+y31QhzmH/s3uOxGmMoupxLb9kxK6/mgQp03xQvHoBUlMwnCZW8q8Qqk01Bw/73OOlfGMi202IjHmYqvdZOKBekToOvaySynblcqIe5HSIBeKA9jCHKei4bOFs+KCBwKd3faoQTlmgxWOinaW/cpCIndk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a77e7420697so406145366b.1;
-        Tue, 09 Jul 2024 08:15:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720538127; x=1721142927;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=udOmhMw6nVnLDB7CnXYCG2+/atZ0tO+NBuzOh1Ic4BU=;
-        b=u4SsqCstrN1IXnletBUTLCdkrjnj7Kl/kiD5DLEIeVv4XlXmbqfnJrT5RvAh67xPxP
-         slSLRZJ+tKAKdhTDD16vHjIIJrHj6WJvByGWq07BZlU/6GuJWIeaxWODnC3H2ciMWah6
-         N1P6D9WLC3yIAnlh5MJs46OawQwbbEEquKNu1bp1o/u/csvZafkXf0nTFrlf3rdjzpA+
-         H5v5x/f/WlZZ54feyagmCc0ejvQtaz/Hdewer/+hascGXzGIvAoQc5WIRpGc6zcYOOsf
-         vZHe3A1ehhdA15bwSL8+aBjJ+ootO5xSey9WJjcH4SZpVYvYOl2yXbWOQDZpeZE51n9O
-         8hWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX1LogXDBLbHIZRGTc+gXuqDolZVlhbA/YnGUjkJRNq/ejXDHMWs8QdqKCsGKBj4eb/FwKqs0KSVurnQkjOpnBWR+UBW/Lj3rFGoRcGU31s/J6+CCHmfyUV+5kIiMxMkpLe8E9Q
-X-Gm-Message-State: AOJu0YyEVhVWc0B6EcBT+wEp24Tbeyeg5ash5LN6nb11CjRHKXTV/qQM
-	DjQ8+i7UThgkriZgITHddaO8cQdsGqfvp3KJN34Mf9F89SlDAk7L
-X-Google-Smtp-Source: AGHT+IF35/Mch11jtk1xVIeWdVFdvciZZUw5TTShgdZrcKMKdHljQsWt+u2oBbViFk5ZTk6F/AOa7g==
-X-Received: by 2002:a17:906:c083:b0:a6f:49b1:dec5 with SMTP id a640c23a62f3a-a780b705231mr177181466b.46.1720538126122;
-        Tue, 09 Jul 2024 08:15:26 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-001.fbsv.net. [2a03:2880:30ff:1::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a853a62sm83568866b.157.2024.07.09.08.15.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 08:15:25 -0700 (PDT)
-Date: Tue, 9 Jul 2024 08:15:23 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: kernel test robot <lkp@intel.com>, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	kuba@kernel.org, horms@kernel.org, Roy.Pledge@nxp.com,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] soc: fsl: qbman: FSL_DPAA depends on COMPILE_TEST
-Message-ID: <Zo1UC/grXeIocGu5@gmail.com>
-References: <20240624162128.1665620-1-leitao@debian.org>
- <202406261920.l5pzM1rj-lkp@intel.com>
- <20240626140623.7ebsspddqwc24ne4@skbuf>
- <Zn2yGBuwiW/BYvQ7@gmail.com>
- <20240708133746.ea62kkeq2inzcos5@skbuf>
- <Zow5FUmOADrqUpM9@gmail.com>
- <20240709135811.c7tqh3ocfumg6ctt@skbuf>
+	s=arc-20240116; t=1720538163; c=relaxed/simple;
+	bh=78d/it+cRmmB/48I55KB/LarWlDuk5m5hs5mP+nlp0w=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=V9DiLuFmjfDo+PMF82igYXjKCpim77QohCZBYY8f6lc7ns+J2AYMmgXxHBBI6JRcfkAToIib0D+dHkJwBJfpx3Y+9krRe+HqFipGlo9q4F7+zzRJzn4dPIqc5mH6xoJXL5loLzxbsc3ggaDF7DoOEaHCmwHv/ar7MxmOH8Zs0Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O/KD56rS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469BLMI5021878;
+	Tue, 9 Jul 2024 15:15:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=nkEO7Wg76GVNlPj8euMDoi
+	du5eeZoz2/dzWlvug6oFQ=; b=O/KD56rSxoFCp7GGdHozz5g4JChburLkWLDh6q
+	iPOWKM9oaI0zxVoVPwlA4IfIxQfHvL3sBcJcBhqzt5HMs8DjTygnmzv/h/Q+OmaZ
+	t41oHv2tASNFB8SWXkTGi7eMVIC5fPQyFIpvUt9pfQNcvEuae5SP0MTnb+SVK6Mt
+	Fp7uR3Ztvb5kvdVf/vUsPDwMofOuoxyU7b1i0KBDm1rHMcAMu/YRD2QjiZS4Vqom
+	L4OlThgAxZrHuCUCdZ2DCuuWBgFcwTkQCGRr8gNVX3KtLJADBCpDK6MoUBTTYj/Z
+	k/4EqOt8FdFxLzLLQ5UfaV/Oll3jxKfTpC6OzYcgLpKI3YGA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x0t7279-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 15:15:54 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469FFrAh012936
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 15:15:53 GMT
+Received: from tengfan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 9 Jul 2024 08:15:47 -0700
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+Subject: [PATCH v2 0/2] phy: qcom: Add QCS9100 dwmac sgmii phy compatible
+Date: Tue, 9 Jul 2024 23:15:35 +0800
+Message-ID: <20240709-add_qcs9100_dwmac_sgmii_hpy_compatible-v2-0-5ffeb16252db@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240709135811.c7tqh3ocfumg6ctt@skbuf>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABhUjWYC/zXNSw6CMBSF4a2Qji25LSDgyH0Y0tTbAjeR8iiih
+ LB3C4nD/wzOtzFvJ7Ke3aKNTXYhT70LIS8Rw1a7xnIyoZkEmUIOJdfGqBF9KQCU+XQalW86ItU
+ Oq8K+G/RMz5fl6dUgiiTNtQYWzobJ1vQ9oUcVuiU/99N6uos41j+RgMyKDGIpcglQcMHHN6Gar
+ Wtq7e5HkMM4WKza9/0HM46bMMIAAAA=
+To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Tengfei Fan <quic_tengfan@quicinc.com>
+X-Mailer: b4 0.15-dev-a66ce
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720538147; l=1723;
+ i=quic_tengfan@quicinc.com; s=20240709; h=from:subject:message-id;
+ bh=78d/it+cRmmB/48I55KB/LarWlDuk5m5hs5mP+nlp0w=;
+ b=vRtPIhjOD8JOJBjSM5t7UbyPgWQo4DqpUEdD5NmN/d6EC9OFSiv3E/wteHzLJ4/J5hqziGmse
+ jHKJBPgwD0vBHagn7ZGU3Q1jYl4T7f2jZipFPzFI+E6/TAq/wRV7ABS
+X-Developer-Key: i=quic_tengfan@quicinc.com; a=ed25519;
+ pk=4VjoTogHXJhZUM9XlxbCAcZ4zmrLeuep4dfOeKqQD0c=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: bZrVnjKfZWi4-nFlqttkopPEhept4V9I
+X-Proofpoint-ORIG-GUID: bZrVnjKfZWi4-nFlqttkopPEhept4V9I
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_04,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=678 priorityscore=1501 malwarescore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090100
 
-Hello Vladimir,
+Introduce support for the QCS9100 SoC device tree (DTSI) and the
+QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+While the QCS9100 platform is still in the early design stage, the
+QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+mounts the QCS9100 SoC instead of the SA8775p SoC.
 
-On Tue, Jul 09, 2024 at 04:58:11PM +0300, Vladimir Oltean wrote:
+The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
+all the compatible strings will be updated from "SA8775p" to "QCS9100".
+The QCS9100 device tree patches will be pushed after all the device tree
+bindings and device driver patches are reviewed.
 
-> On Mon, Jul 08, 2024 at 12:08:05PM -0700, Breno Leitao wrote:
-> > I thought about a patch like the following (compile tested only). What
-> > do you think?
-> 
-> To be honest, there are several things I don't really like about this
-> patch.
-> 
-> - I really struggled with applying it in the current format. Could you
->   please post the output of git format-patch in the future?
+The final dtsi will like:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
 
-This is the output of `git format-patch` shifted right by a tab.
+The detailed cover letter reference:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
 
-> - You addressed dpaa_set_coalesce() but not also dpaa_fq_setup()
-> - You misrepresented the patch content by saying you only allocate size
->   for online CPUs in the commit message. But you allocate for all
->   possible CPUs.
-> - You only kfree(needs_revert) in the error (revert_values) case, but
->   not in the normal (return 0) case.
-> - The netdev coding style is to sort the lines with variable
->   declarations in reverse order of line length (they call this "reverse
->   Christmas tree"). Your patch broke that order.
-> - You should use kcalloc() instead of kmalloc_array() + memset()
-> 
-> I have prepared and tested the attached alternative patch on a board and
-> I am preparing to submit it myself, if you don't have any objection.
+Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+---
+Changes in v2:
+  - Split huge patch series into different patch series according to
+    subsytems
+  - Update patch commit message
 
-Sure, not a problem. You just asked how that would be possible, and I
-decided to craft patch to show what I had in mind. I am glad we have a
-way moving forward.
+prevous disscussion here:
+[1] v1: https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
 
-Thanks for solving it.
+---
+Tengfei Fan (2):
+      dt-bindings: phy: describe the Qualcomm SGMII PHY for QCS9100
+      phy: qcom: add the SGMII SerDes PHY driver support
+
+ .../devicetree/bindings/phy/qcom,sa8775p-dwmac-sgmii-phy.yaml        | 5 ++++-
+ drivers/phy/qualcomm/phy-qcom-sgmii-eth.c                            | 1 +
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240709-add_qcs9100_dwmac_sgmii_hpy_compatible-46dcc1347aa0
+
+Best regards,
+-- 
+Tengfei Fan <quic_tengfan@quicinc.com>
+
 
