@@ -1,113 +1,106 @@
-Return-Path: <linux-kernel+bounces-245531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EF9A92B3EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:33:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 628D692B41B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93DE3B22BCA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:33:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 922931C21EC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13F1155321;
-	Tue,  9 Jul 2024 09:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B1D15623A;
+	Tue,  9 Jul 2024 09:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5HEUZ47"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="G7F7WjWe"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFC7136657;
-	Tue,  9 Jul 2024 09:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC35156653;
+	Tue,  9 Jul 2024 09:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720517617; cv=none; b=Joj8vjtXj0UE0utQpqxDmxes1QYuJXpAf1ZPQ09yZUCp1WanOvt3DO+pCxnvD6WERdckNbPEE1x8DqnPQ5Q/tPjZEqvFToi3hH/Zpw2ZrRcr598trC3kz7eXI3qUGzEhzcD8S8qfCdymXPsss/her1zm0oZ741HliXXLl1YG0ZM=
+	t=1720518009; cv=none; b=Jg77rEiCLt0uZfBMNg3sWC2L+0KoO4mWT7cmvPthHYqhOgx4M+WtY8iKoUEPIMXTjN4RYfIrtb3CDvtMyIXXsqb4c0X6F2CMk0/uM/9yS8p4kKK6e8bT+7btpYGLRxvzB9l5AKD2fW4edMGp/loVUOA5KdeW4RKCEA+I/r6kmvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720517617; c=relaxed/simple;
-	bh=OG0iT8EGH218BuMSqUrA0G08/WrtG0mn2OrXecjDaeo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RissicrEHmiMyPGFS8b3NIwdn+HUBH+glZxxA5EDt1n/uQGt3Wqmh82jmCIgJ2SzRK1QLJvaFjnloKHVEgGV5PlmWA9H+68hMygdlnkzbNwFdlAXFpwjxXtZyP7QFV948D+dJxdyNO9XCC5k9gMqI3o0n3OvHujXJS3EGtp/ttY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P5HEUZ47; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 353DCC3277B;
-	Tue,  9 Jul 2024 09:33:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720517616;
-	bh=OG0iT8EGH218BuMSqUrA0G08/WrtG0mn2OrXecjDaeo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P5HEUZ47WK9+RACJAlO1OWT7ISoJlbNy252GiK2GUEP6dOlepkIPwbX+3JIc+hS4+
-	 OxRg1Qjid4tSWs4oR3SktBAYPvpCPiS6knMl3XXBiBMrcCQa8c3X+zGYfubdY2Krwk
-	 rseLLfmaVBu6s2lMZIjiVGjO7GlacPMrMn8wRzEhQHKeWhvok6EYnkUOaoNX5nPen5
-	 41aBoBnaax4uu/KlaonMIjuUw2GlkZgsTPCZKtvjfITyrmfXXIy7aAIZc4Rvuwu7vp
-	 8xe3FF0WctbzDHNxySE5E1t4uXDKRQEHecB/vU60O/BOxRPoHd64CIqen1JlZTJBBX
-	 5L3O8BED5x6iw==
-Date: Tue, 9 Jul 2024 10:33:32 +0100
-From: Lee Jones <lee@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-sh@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] mfd: tmio: simplify header and move to
- platform_data
-Message-ID: <20240709093332.GD501857@google.com>
-References: <20240213220221.2380-8-wsa+renesas@sang-engineering.com>
- <170870160052.1698319.4712751560931025638.b4-ty@kernel.org>
- <Zooqfe1sJQsvltwj@shikoro>
- <CAMuHMdU6OquhF_WRxD+YxRfJwASepOb-pJp3wT7bvcpb1PHLDQ@mail.gmail.com>
+	s=arc-20240116; t=1720518009; c=relaxed/simple;
+	bh=gQ7kC5SGovZDvSADjUTJZ6Fcw7+9Z/764TPVWo8xpwg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F/5HC1GEFgCxSYnEn1e8b1QNQDXPluWmtDbeL6OYmsaKX3ESNMgT4NQxt0sJnomZa1JIyi5A6Q9wrIik8IjxgRwKCLvKXyjZL0w8bLgxHA126rzD/yPVBnIVpXZlVE2H6SOKaluhKeilZ2LVF3f42yb0fXKAj60M9UAw0mwI9es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=G7F7WjWe; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1720517997; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=ze6TTXQFJsy3uKftoLUHbYsxNvRLtcLf0BpbQzfmY4s=;
+	b=G7F7WjWeM2JlDOSSBA4fkD0Uu9Y6S0wJlfIfwnNJN3r12/Ii77EY65FR+ZIPDZ+cFbZUxHWYMVH5ZYlt7gaplZ9oFKp23MZ6qeQHtsS6GSOOFc/dK9Cq7JO0j/8J1lYqDoNswRv/HsdLPeI/kaC8B1PEd0VOGVOWels5APqlhqI=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0WABZZFV_1720517989;
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WABZZFV_1720517989)
+          by smtp.aliyun-inc.com;
+          Tue, 09 Jul 2024 17:39:57 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: James.Bottomley@HansenPartnership.com
+Cc: martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	stable@vger.kernel.org,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next v3] scsi: sd: Fix an incorrect type in 'sd_spinup_disk()'
+Date: Tue,  9 Jul 2024 17:39:48 +0800
+Message-Id: <20240709093948.9617-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdU6OquhF_WRxD+YxRfJwASepOb-pJp3wT7bvcpb1PHLDQ@mail.gmail.com>
 
-On Sun, 07 Jul 2024, Geert Uytterhoeven wrote:
+The return value from the call to scsi_execute_cmd() is int. In the
+'else if' branch of the function scsi_execute_cmd, it will return -EINVAL.
+But the type of "the_result" is "unsigned int", causing the error code to
+reverse. Modify the type of "the_result" to solve this problem.
 
-> On Sun, Jul 7, 2024 at 7:41 AM Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
-> > On Fri, Feb 23, 2024 at 03:20:00PM +0000, Lee Jones wrote:
-> > > On Tue, 13 Feb 2024 23:02:19 +0100, Wolfram Sang wrote:
-> > > > Changes since v1:
-> > > >
-> > > > * rebased to rc4
-> > > > * collected all needed acks (Thanks!)
-> > > > * capitalized first letter in commit subject
-> > > >
-> > > > The MFD parts of the TMIO have been removed by Arnd, so that only the
-> > > > SD/MMC related functionality is left. Remove the outdated remains in the
-> > > > public header file and then move it to platform_data as the data is now
-> > > > specific for the SD/MMC part.
-> > > >
-> > > > [...]
-> > >
-> > > Applied, thanks!
-> > >
-> > > [1/6] mfd: tmio: Remove obsolete platform_data
-> > >       commit: 58d6d15662e4039fab7d786f0426843befa77ad4
-> > > [2/6] mfd: tmio: Remove obsolete io accessors
-> > >       commit: e927d7bac109d8ca1729dda47a8dbc220efdb50e
-> > > [3/6] mmc: tmio/sdhi: Fix includes
-> > >       commit: bed05c68aa8f078206143700cd37e42a0084155f
-> > > [4/6] mfd: tmio: Update include files
-> > >       commit: 3ef94c41db82573dc1e1dd6c259aec8ef6caaaf3
-> > > [5/6] mfd: tmio: Sanitize comments
-> > >       commit: 2d417dda59123b9523a19ce75fea3fd1056c3b4c
-> > > [6/6] mfd: tmio: Move header to platform_data
-> > >       commit: 858b29729c9d319b9cd1441646cc3af246d3c3f9
-> >
-> > This series is not upstream yet?
-> 
-> FTR, it entered linux-next in next-20240402, but disappeared after
-> next-20240510.
+The code featuring the_result as the return value of the function
+scsi_execute_cmd is as follows:
 
-That's very odd.  I cannot explain that.
+the_result = scsi_execute_cmd(sdkp->device, cmd, REQ_OP_DRV_IN, NULL, 0,
+			      SD_TIMEOUT, sdkp->max_retries, &exec_args);
+if (the_result > 0) {
+...
+}
 
-I'll go apply it again.  Sorry for this.
+./drivers/scsi/sd.c:2333:6-16: WARNING: Unsigned expression compared
+with zero: the_result > 0.
 
+Fixes: c1acf38cd11e ("scsi: sd: Have midlayer retry sd_spinup_disk() errors")
+Cc: stable@vger.kernel.org
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9463
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+Changes in v3:
+  -Amend the commit message, Add "Fixes:" and "Cc: stable" tags.
+
+ drivers/scsi/sd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 979795dad62b..ade8c6cca295 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -2396,7 +2396,7 @@ sd_spinup_disk(struct scsi_disk *sdkp)
+ 	static const u8 cmd[10] = { TEST_UNIT_READY };
+ 	unsigned long spintime_expire = 0;
+ 	int spintime, sense_valid = 0;
+-	unsigned int the_result;
++	int the_result;
+ 	struct scsi_sense_hdr sshdr;
+ 	struct scsi_failure failure_defs[] = {
+ 		/* Do not retry Medium Not Present */
 -- 
-Lee Jones [李琼斯]
+2.20.1.7.g153144c
+
 
