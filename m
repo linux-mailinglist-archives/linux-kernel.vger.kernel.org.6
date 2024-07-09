@@ -1,132 +1,163 @@
-Return-Path: <linux-kernel+bounces-245795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D0FE92B95F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:25:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23F7792B970
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBB0D2815E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:25:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D2C8B261F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4904158D74;
-	Tue,  9 Jul 2024 12:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86489158DB9;
+	Tue,  9 Jul 2024 12:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WJPu+V8j"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="iNEPb9BL"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB690155A25;
-	Tue,  9 Jul 2024 12:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F33155A25;
+	Tue,  9 Jul 2024 12:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720527940; cv=none; b=HSrW15xOT1oUZtGDu262awf0u2ySuJkujfdmy63h9I9VgE9CO90pQrUKZt+SfSiWSk7N9J+lvrWhjjIvH26eCSWMHPshTgCfjApzvovohCzs7+03hX4pBG+vc85BfsgaFsMJL9mZTTQCbpuGp+ad31c367BgpAHRmcJsiiOgwt0=
+	t=1720528071; cv=none; b=nD9bvEJAotJsFppV+EXyLLZVtM/ezDG22Vj9RbwAd2LU8pLwj07zDnenaIH9mVTqZ5xswRBCq/cMCIymQRcOS6bOtgyJjuZm/dgzSLA3Ofq2KGk/jp1vzIfnsuY4SbpQPaGBCMxcf2N+W9fS1tfuK5NjNyGNcfMZxYbU6MzPY6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720527940; c=relaxed/simple;
-	bh=gUKj+NjshzelXaKZ1J+KcA7wp9Ubf12um0LnUEOCHHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iha9+n2HrxfZm1X3uvo6AJDyHDoaNvuTgs+6KCY7wjiZplG+PsEETD/zOqiV9YilWyjNej6XSYe8RYqAfrzFFzk3LtT3jwF2idFRIrsT8Ai+I0sVMkhoQMVmjWRZa7NQndbc0DVm98RqlGBlZBVzOpnywip+GjZkCaAqOEE6Xjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WJPu+V8j; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469CDvi2011166;
-	Tue, 9 Jul 2024 12:25:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=C5bcJNbIOQWgGnln63ilWf7JC8l
-	xchQCYjIzUrQmc5Y=; b=WJPu+V8josYQs6NsSBKCwB2TWLdDwwIzdoMYBbaTF7T
-	tHpaLbooAKOB+aFUsRuELkRLd17JgDEX3/v0RCzzEIVD5gsUlovzpnaEHICYnSmf
-	i36dYQeEpvDepMcuItfNtk2oB5E/Ru3035AM5VaDkAkbbPYrDSmUjUVwKqQ004tM
-	a2zvA3buEQr01M1WPw1RkRqL7YJuxcEkn8CPrtS7qBw/M6ycg1lNDD9KolPyxaI/
-	i2tDLgWBY3bAGbyY/J6gODHP2O5elLRgu561dJLWMG62hKV3nLE0kZ88ErGO+8If
-	COiJ2IQAZlJ7kAYoPfTfWNMLbp99QeBBfTlWVGaSpHg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4093x9079p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 12:25:35 +0000 (GMT)
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 469CPZ6o030113;
-	Tue, 9 Jul 2024 12:25:35 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4093x9079m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 12:25:35 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 469BgtUV014020;
-	Tue, 9 Jul 2024 12:25:34 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 407h8pme0t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 12:25:33 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 469CPS3d50921856
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 9 Jul 2024 12:25:30 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 36BA320043;
-	Tue,  9 Jul 2024 12:25:28 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EF2C020040;
-	Tue,  9 Jul 2024 12:25:27 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue,  9 Jul 2024 12:25:27 +0000 (GMT)
-Date: Tue, 9 Jul 2024 14:25:26 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, svens@linux.ibm.com,
-        agordeev@linux.ibm.com, gor@linux.ibm.com, nrb@linux.ibm.com,
-        nsg@linux.ibm.com, seiden@linux.ibm.com, frankja@linux.ibm.com,
-        borntraeger@de.ibm.com, gerald.schaefer@linux.ibm.com,
-        david@redhat.com
-Subject: Re: [PATCH v1 0/2] s390: Two small fixes and improvements
-Message-ID: <20240709122526.7263-B-hca@linux.ibm.com>
-References: <20240703155900.103783-1-imbrenda@linux.ibm.com>
+	s=arc-20240116; t=1720528071; c=relaxed/simple;
+	bh=rddHFdPI15PpKIujuf5oEVmDeSmCYfLpJ11QyQ+fRY4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KjAKTB6HYRpKXoSsHgagJhAHjELkiG8BB2y0T9oZrWa/gH0SI5+fvRW4le8JL3BIawyl3te82GdzHxrhWvkvaLKXcsb6KO1GL1KYvUcUMQVedJDSIHgd9KHIJiGVr6lVGF4rAKFJYDyrzTBZKWAK36wApdKgFlGN17qvjeAagzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=iNEPb9BL; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1720527976; x=1721132776; i=wahrenst@gmx.net;
+	bh=cCtoGEQ65O0NQHMFrW3/EWkn5s4oTQM/d6IPIcz9pxI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=iNEPb9BLGGngXSVlaV2Y5yqu2HXBUZ6ee4wlyeD4jUnl2jxZ3ROfuIaToeyDEeaM
+	 ChamxzSRAioqbTQp8qQsUWRZx6LYO2U4TDkJ2WguyL4GeMnS/G2WPcVCWu60zPjyP
+	 Vh4/Emn2CN8ZA9ZeReLL81xDo9eDREYSO5sUWQ54kuTiOBFZDGu7jfGWwBGdQDeDh
+	 P0LxqK8Qz8LN6ipLHH2iWKLgibppHN4KyaWtS/AgeoRMD1HZazIRu9s+vhbCnSVFp
+	 ziqSVnQ3zw9fnW13Q/cp2MCcrQip9PwUViOvp5M446wjyEbd+U4sBFRiCJlvYbaYo
+	 HGiM5AnAtFWbi3GPFw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MVN6t-1sqlVn12E3-00Oj39; Tue, 09
+ Jul 2024 14:26:16 +0200
+Message-ID: <6b7cfe69-4f72-490f-8e86-5343bd244a2d@gmx.net>
+Date: Tue, 9 Jul 2024 14:26:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703155900.103783-1-imbrenda@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: wsd8-mZpTnnbG9AT6HS-y50vBHOSlmFg
-X-Proofpoint-ORIG-GUID: ebFbWw6DuboRLUMCw1eA8k78Ehn7ED5E
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_02,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- clxscore=1011 phishscore=0 spamscore=0 mlxlogscore=390 lowpriorityscore=0
- priorityscore=1501 adultscore=0 impostorscore=0 suspectscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407090080
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] arm: defconfig: drop RT_GROUP_SCHED=y from
+ bcm2855/tegra/omap2plus
+To: Kevin Hilman <khilman@kernel.org>, Celeste Liu
+ <coelacanthushex@gmail.com>,
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
+Cc: linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Lennart Poettering <lennart@poettering.net>,
+ Icenowy Zheng <uwu@icenowy.me>, =?UTF-8?Q?Th=C3=A9o_Lebrun?=
+ <theo.lebrun@bootlin.com>, Gregory CLEMENT <gregory.clement@bootlin.com>,
+ Michael Ellerman <mpe@ellerman.id.au>,
+ "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>, Sven Joachim
+ <svenjoac@gmx.de>, Huacai Chen <chenhuacai@kernel.org>,
+ Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
+ Anup Patel <anup@brainfault.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Rich Felker <dalias@libc.org>,
+ Russell King <linux@armlinux.org.uk>, Tony Lindgren <tony@atomide.com>,
+ Guo Ren <guoren@kernel.org>, linux-tegra@vger.kernel.org,
+ Thierry Reding <thierry.reding@gmail.com>, linux-riscv@lists.infradead.org,
+ Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
+ linux-omap@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
+ linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-mips@vger.kernel.org, loongarch@lists.linux.dev,
+ Mykola Lysenko <mykolal@fb.com>, Yoshinori Sato
+ <ysato@users.sourceforge.jp>, Paul Walmsley <paul.walmsley@sifive.com>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ linux-rpi-kernel@lists.infradead.org, WANG Xuerui <kernel@xen0n.name>
+References: <20240530111947.549474-8-CoelacanthusHex@gmail.com>
+ <20240530111947.549474-14-CoelacanthusHex@gmail.com>
+ <7hv81f78cy.fsf@baylibre.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <7hv81f78cy.fsf@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:Ej+PAwp/ZJkhkceEoIwv6AInmRQiACjrvJFoir5Nuj9E1MJRvQA
+ hCU1+y5KPH/WQUoUAj38tdnqg1TsI3WE3557l+L+5Zlw+pyx5u7oihbFKJ0II0kgo4eAkC9
+ Qtrhsw6GW7j6n1LaLGg2lE46GZtD/AMneN85Q7N1yqHtfnzmF3zlp8522hgdV6zM7JOCk4j
+ tUDmMBQyL0KKRh3tZUkgw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:CY3hoQ/VQPY=;5QGFpAHuDX4v0nW4bbrXMcvM2hK
+ vYnqvDsWKbcvHPlHjyAu1B7NjXCCKdEydnIkCb02e/O9SFu11zoROqN2443E6DETn+pRJ/ATw
+ uC75juahlmOdRef/GIWmgUOF89ZxlNpamUGSRJMbcc/7acV3tyktqOTmeJxlUGm/SM9VqT22Y
+ KZP+hHsXJbOD66Y88uvexJJ/bXGM6qzGenJ/FFefNIFQvSg81Mdj0TsYkE44jjuXFP6HOzvR7
+ sfK3tUSSa+VOVUCpuVLM/CT9tqP1ebBVbGW8i2F2iJ7ZCF+Abffzz7W0YklTXbVDGZYVtqr6B
+ wU4xb4LGpbV+YuwE/Z6CVBsgXktSUuccyUQNSue62AT4J9eibvy9Fg2PZvseBR0pFd8th3MdM
+ uAJzeRXqbTBGFlDwJkm836FDmGIeSgXZqToBqD7eb9BKLbEvtEApMusg+8DNNanWvdGfsZqB/
+ c/331otTYafTSC5+1UB2wPRsM9VvslvEU1EfZiIJBv2wiWFvAvSrsHoi5ueZYYmqPhfLTCaxF
+ IDCbOQZKrbP/vbwSNwJZjo5ew3oOyDqL/o6yn4+Zp6zOM7nXI1D3bvIrxJCrK5gBDnttyqe/E
+ bmiYbnssNvUEE7+bNEQ/MPt7xIsDe1kHCOeyFM5/vQeRHncgpuJ10i2uKdpGevOSohr3ghao6
+ 9oj5jIeHgymEcQEZGDQeesjnPjhwreNbaW2YOd8FW1J8+MQKDdmNUo+Lo/iNHgTBrMtuB3Qil
+ xzpqw3ifkOFSoOTrRRPfJ7EZGae7oJ7+jq0FHgCMSeUnAXDBRyAAVyYmc+ks93Us7II8klNBI
+ aa5PFxwJb0lP/7+bdAbJrFmCfqj7iq087cOKXyG81KDIw=
 
-On Wed, Jul 03, 2024 at 05:58:58PM +0200, Claudio Imbrenda wrote:
-> The main goal of this small series is to do some clean-up and remove some
-> paper cuts (or at least clear the way for papercuts to be removed in the
-> future).
-> 
-> Heiko: this can go through the s390 tree, as agreed.
-> 
-> Claudio Imbrenda (2):
->   s390/entry: Pass the asce as parameter to sie64a()
->   s390/kvm: Move bitfields for dat tables
-> 
->  arch/s390/include/asm/dat-bits.h   | 170 +++++++++++++++++++++++++++++
->  arch/s390/include/asm/kvm_host.h   |   7 +-
->  arch/s390/include/asm/stacktrace.h |   1 +
->  arch/s390/kernel/asm-offsets.c     |   1 +
->  arch/s390/kernel/entry.S           |   8 +-
->  arch/s390/kvm/gaccess.c            | 163 +--------------------------
->  arch/s390/kvm/kvm-s390.c           |   3 +-
->  arch/s390/kvm/vsie.c               |   2 +-
->  8 files changed, 185 insertions(+), 170 deletions(-)
->  create mode 100644 arch/s390/include/asm/dat-bits.h
+Hi Celeste,
 
-Applied, thanks!
+there is a typo in the subject line
+
+s/bcm2855/bcm2835
+
+Am 09.07.24 um 01:49 schrieb Kevin Hilman:
+> Celeste Liu <coelacanthushex@gmail.com> writes:
+>
+>> Commit 673ce00c5d6c ("ARM: omap2plus_defconfig: Add support for distros
+>> with systemd") said it's because of recommendation from systemd. But
+>> systemd changed their recommendation later.[1]
+>>
+>> For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierarchy it
+>> needs an RT budget assigned, otherwise the processes in it will not be able to
+>> get RT at all. The problem with RT group scheduling is that it requires the
+>> budget assigned but there's no way we could assign a default budget, since the
+>> values to assign are both upper and lower time limits, are absolute, and need to
+>> be sum up to < 1 for each individal cgroup. That means we cannot really come up
+>> with values that would work by default in the general case.[2]
+>>
+>> For cgroup v2, it's almost unusable as well. If it turned on, the cpu controller
+>> can only be enabled when all RT processes are in the root cgroup. But it will
+>> lose the benefits of cgroup v2 if all RT process were placed in the same cgroup.
+>>
+>> Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also doesn't
+>> support it.
+>>
+>> [1]: https://github.com/systemd/systemd/commit/f4e74be1856b3ac058acbf1be321c31d5299f69f
+>> [2]: https://bugzilla.redhat.com/show_bug.cgi?id=1229700
+>>
+>> Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
+>> ---
+>>   arch/arm/configs/bcm2835_defconfig   | 1 -
+>>   arch/arm/configs/omap2plus_defconfig | 1 -
+>>   arch/arm/configs/tegra_defconfig     | 1 -
+> For omap2plus_defconfig:
+>
+> Acked-by: Kevin Hilman <khilman@baylibre.com>
+>
+>
+For bcm2835_defconfig:
+
+Tested-by: Stefan Wahren <wahrenst@gmx.net>
 
