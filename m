@@ -1,135 +1,124 @@
-Return-Path: <linux-kernel+bounces-246783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17E1192C6A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:32:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77F2792C6A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:36:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B61971F232F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:32:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A943F1C223F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4691187865;
-	Tue,  9 Jul 2024 23:32:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5013189F34;
+	Tue,  9 Jul 2024 23:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="unopaghW"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JW+S/rZx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EEA2156C7B;
-	Tue,  9 Jul 2024 23:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B30B144D00;
+	Tue,  9 Jul 2024 23:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720567940; cv=none; b=bAKSUKKxjWY73on6A2hO+CwTBokq6z6bgnkea6Okm0VjVlf4jHgAbfyJyUns8DmXz7uY3wrn8T3rxpeBpArgElkzCwJG/YXBRT6yUW0YIEM1eY6TLpidW5cv4YctBo1Q5zi3cRSMXgJdU0OgLb5Q9NNS86k2kiTExY6Z8YsMb24=
+	t=1720568170; cv=none; b=YHuHivt8WehDGp8cZgA6wnXPa8hv89lmyIRgHVU0W5FzE6Uc7zpdkgY/QPIREdds7PH1MhSbzyKI2JoMhbiKEfk2Ypyn6nT7yK6VcyFrfvEHUAbgAy1EXL49WGD7et7U9IzzvxKiKWTDzmzXPulT91SkvPSDjALfrKGA18O8ynE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720567940; c=relaxed/simple;
-	bh=kg7pFIBfqX0AdcwcV9ETjjLMMMzxINEwviBbNgLHs9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gNqn5Z7kjOT0VAfUWVv/QPWKR166XcD7TliGdo3FBmK51f+RKFj7RhP9kdhgU1KFio1omNR6g4NBjrwLJutb2gnoyvsS4BwV8/gg49/KUnOCxjCiEnS0mWyMhzq1i46BxlBbFsDtmi46nn5uhEDojCzLoct+/ATkLmMyd0WSxt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=unopaghW; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720567934;
-	bh=bmMAoaLG7G0LxIsGv59B/bHX/ckRwcguFG+V7Q8Inm4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=unopaghWoJZbwFahmHKIPMk48YRSCdsfzAh05ebavH7mQgoXmsv5zoGC3yCQU5PKR
-	 xtXlOqqmJ52j4KoIr+p7FNpT32d90m9+bbjXt8VFHj24jEM5atA/MhiItPvHLXxmLr
-	 OWeMO+qkcYSBRAq5cL+5zeooPO15N5oHae215P3H9Ay89OGCGcqPTpBMOCMnwKPSMb
-	 FccEawBf7gsNT1Decquuirr7TmO7CP6c5Q8+SmuLOJJJKM/keSq3UjbRVwuE5QW/gE
-	 N6bgTvHpQMZw2HibVwQ3pOXliBCnjqJW+2XqAeixkribpYE+m/n605WigRfsQ1EV6m
-	 I1s5mN8a69l1g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJcht2XLMz4w2P;
-	Wed, 10 Jul 2024 09:32:14 +1000 (AEST)
-Date: Wed, 10 Jul 2024 09:32:13 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the mm tree
-Message-ID: <20240710093213.2aefb25f@canb.auug.org.au>
+	s=arc-20240116; t=1720568170; c=relaxed/simple;
+	bh=Rzz2X632DwEjauRQmmY8Am/FI63cuDBIHSurv0RdLhc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=fpYdXTMy6C3w/az2xnCznEA6GyPAZYFsfWjQbH/P6nS7p3LTaEabt4QBV8FBzTOu06/qgVPAEsdSV3C/ryNDIljgsWLu6fHcLg46AL+vlL3oinFI3qgj/kXDqQz0lGNavAnw5HgGeDcLxlZTOu1ZswnVk2GQiVi/KglrYeoqFLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JW+S/rZx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9FCCC3277B;
+	Tue,  9 Jul 2024 23:36:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720568169;
+	bh=Rzz2X632DwEjauRQmmY8Am/FI63cuDBIHSurv0RdLhc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JW+S/rZx4aOJpsB+shqmCv/5NYK6PjmISC3TT4wXUqTG+CIJ7qJl5UmBDCFUwR1Wh
+	 /oWjZ5g5tk4NvxZPBbx5eTeVGC/OF8Cl50IIcAJSISBXluUp078i62MFPng4ffImjS
+	 wkZyhZSaGM1TnwrQuk54bjrNuj77ajEbbB6wcFu04hRntBCqoAtsOiltYiLBkjChaJ
+	 iMqcSexsORGtD0RNydZQOqtCw3u8xvPJYiBqT26dpFAkcJaOfqVTO96fQuPYW73fAL
+	 xCAGq75rl7iy4a2FC8gTDLHI/z+KLVs/kfC+4H5vO1AZQoSNRQGEzwvSTO5duC+1qn
+	 L9ZZd5fSkOsYw==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>,
+	Linux trace kernel <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Francis Laniel <flaniel@linux.microsoft.com>,
+	Nikolay Kuratov <kniv@yandex-team.ru>,
+	bpf@vger.kernel.org
+Subject: [PATCH] tracing/kprobes: Fix build error when find_module() is not available
+Date: Wed, 10 Jul 2024 08:36:05 +0900
+Message-Id: <172056816536.201432.15815034738461167690.stgit@devnote2>
+X-Mailer: git-send-email 2.34.1
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/QL0jR5kHXbHceEfJJyQlPIi";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
---Sig_/QL0jR5kHXbHceEfJJyQlPIi
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Hi all,
+The kernel test robot reported that the find_module() is not available
+if CONFIG_MODULES=n.
+Fix this error by hiding find_modules() in #ifdef CONFIG_MODULES with
+related rcu locks as try_module_get_by_name().
 
-After merging the mm tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
-
-ld: cannot find MEM_KEEP: No such file or directory
-
-Caused by commit
-
-  78e70fd784bd ("init/modpost: conditionally check section mismatch to __me=
-minit*")
-
-from the mm-nonmm-unstable branch of the mm tree.
-
-grep is your friend :-)
-
-I have applied the following fix patch for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 10 Jul 2024 09:28:02 +1000
-Subject: [PATCH] fixup for "init/modpost: conditionally check section misma=
-tch to __meminit*"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202407070744.RcLkn8sq-lkp@intel.com/
+Closes: https://lore.kernel.org/oe-kbuild-all/202407070917.VVUCBlaS-lkp@intel.com/
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 ---
- arch/powerpc/kernel/vmlinux.lds.S | 2 --
- 1 file changed, 2 deletions(-)
+ kernel/trace/trace_kprobe.c |   25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
 
-diff --git a/arch/powerpc/kernel/vmlinux.lds.S b/arch/powerpc/kernel/vmlinu=
-x.lds.S
-index f420df7888a7..7ab4e2fb28b1 100644
---- a/arch/powerpc/kernel/vmlinux.lds.S
-+++ b/arch/powerpc/kernel/vmlinux.lds.S
-@@ -123,8 +123,6 @@ SECTIONS
- 		 */
- 		*(.sfpr);
- 		*(.text.asan.* .text.tsan.*)
--		MEM_KEEP(init.text)
--		MEM_KEEP(exit.text)
- 	} :text
-=20
- 	. =3D ALIGN(PAGE_SIZE);
---=20
-2.43.0
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 4cee3442bcce..61a6da808203 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -794,6 +794,24 @@ static int validate_module_probe_symbol(const char *modname, const char *symbol)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_MODULES
++/* Return NULL if the module is not loaded or under unloading. */
++static struct module *try_module_get_by_name(const char *name)
++{
++	struct module *mod;
++
++	rcu_read_lock_sched();
++	mod = find_module(name);
++	if (mod && !try_module_get(mod))
++		mod = NULL;
++	rcu_read_unlock_sched();
++
++	return mod;
++}
++#else
++#define try_module_get_by_name(name)	(NULL)
++#endif
++
+ static int validate_probe_symbol(char *symbol)
+ {
+ 	struct module *mod = NULL;
+@@ -805,12 +823,7 @@ static int validate_probe_symbol(char *symbol)
+ 		modname = symbol;
+ 		symbol = p + 1;
+ 		*p = '\0';
+-		/* Return 0 (defer) if the module does not exist yet. */
+-		rcu_read_lock_sched();
+-		mod = find_module(modname);
+-		if (mod && !try_module_get(mod))
+-			mod = NULL;
+-		rcu_read_unlock_sched();
++		mod = try_module_get_by_name(modname);
+ 		if (!mod)
+ 			goto out;
+ 	}
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/QL0jR5kHXbHceEfJJyQlPIi
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaNyH0ACgkQAVBC80lX
-0GwYWgf+OWghahGfNgnSkTLEA8l2bEK1ZifRQUO6s7V8eCEFy0g8A4X9w4W7A7yX
-tC/Q7PgAtQahZKd8p61Gg2ojHs1h5vaegsAuTe+GvWrJFeV/WGjg+TvpR6UW6vQj
-Is6rq8Pq0Dw209hE00MhN4H3xiSMGSyV6zERvuCdbG1VPIS9pvco/pPIhI2sZF4h
-rHgdY6deQq9YRCoAdze2bKOVzQUnInT0NC6B6GXCzVF0px2Nd9+eFyBGmtbM5Kzm
-hSadjPuGejrF08YWzzvIkx1yHmxsovOiy+UAf8F6nCbrk6IigeIgW8UBuPbGeX26
-PxGJLeAPoQvToN81hUyys96CFuUHUQ==
-=XLB8
------END PGP SIGNATURE-----
-
---Sig_/QL0jR5kHXbHceEfJJyQlPIi--
 
