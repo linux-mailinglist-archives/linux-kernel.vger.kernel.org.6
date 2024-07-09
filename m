@@ -1,94 +1,95 @@
-Return-Path: <linux-kernel+bounces-246464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5629E92C205
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:14:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D51892C247
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12018294065
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:14:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42372B26E93
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EE2189F58;
-	Tue,  9 Jul 2024 16:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8EFE189F3C;
+	Tue,  9 Jul 2024 16:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="VEYdgSfR"
-Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="U4ZV/f49"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782F0189F4C
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 16:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCDA17B056
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 16:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720544284; cv=none; b=akwb0CnjGQ9EiJlwEZkLM17EXtG44HYjjOxuZEJvyVHa3S7jArKDSW7Wsi8dYn1qRb76AZL9b8fkic7T0NHyy2pp/HpWTQ6UkNCEld6AWlih8cZcNwYPKVe2YN3CTUCUcCF/JLynlluud5NeqFAj7ZLpoUqJe7GiqBflapLbe0M=
+	t=1720544270; cv=none; b=IIRQkRnWwzjJOTp/pKi5HWIZFp7HEVVL2cX0x8hoz/Ke29kuQGmALKWpwYTXT5/eK872o0+y6NTE4GMg4A2REJkPwsoVkZmiUInIXJaVeEM99297ET0+QCplb0amSC1jED8dQ2J/btGw+q48sYWxa/pPC/xqzfn15TLhaXG0W3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720544284; c=relaxed/simple;
-	bh=nkTWMGfjEyh1vvy7M5TLEzkpGoCAbgKFsJFG64WstwE=;
+	s=arc-20240116; t=1720544270; c=relaxed/simple;
+	bh=wEKBU8ksX26NGMgDkDtz0+SJxnNlBBptXlaXFgW2Zz0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eVHcygSYN4tpf0LkB2PjqTFfgupRsSDaMu7G6F7G5R+cXt42qq6fV411eCc6EtivfHv7T1G1VMRqeKUf96kFHWx4Jl8P1tOX9dg51HbJ5MIFWgJI9aGP0z+WtNYncPaNgDsU6jflfSYftiax8B2M8xlurEPn5M93D+GJIUQNf7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=VEYdgSfR; arc=none smtp.client-ip=148.163.147.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0134422.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469G2xj0025294;
-	Tue, 9 Jul 2024 16:56:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pps0720; bh=xFASJwdgR+cb5+o7gVSxSuY
-	ML2SzklMlZnUynN7IJA0=; b=VEYdgSfROL6G5DJhp+vkx/g3ybkpPAEKlVCBuMJ
-	8neEVSdGBA1kL/h0fYGo9+bdNhL2u6394RHRgSQtIq6f67MF4vVHcXHdEmR1z4SF
-	PS0HEvUBmCf9VWW7qm3AjabEtNXLdI1vztE7BANHR8Nj1Dls/sALG+DR+Tf6Xoof
-	leOq2kWZ449pPZZIaAylae0s2CvLhNox948u6zf3VsP9et8KDmAIITP/dWa6wp5y
-	Q3EivPIRbzqjkvnCI3mZ1kelbGV8wh+UKmaUSPJBl5N6XHeNXXxK3lvrXNy/Cp59
-	oaVabVKy2LdNk2H0gY+J9DySXPhSKUm9lplq2aEbixUvSoA==
-Received: from p1lg14881.it.hpe.com ([16.230.97.202])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 408x1xnppp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 16:56:33 +0000 (GMT)
-Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id D12C88059E9;
-	Tue,  9 Jul 2024 16:56:32 +0000 (UTC)
-Received: from swahl-home.5wahls.com (unknown [16.231.227.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id 5BFD2801D88;
-	Tue,  9 Jul 2024 16:56:28 +0000 (UTC)
-Date: Tue, 9 Jul 2024 11:56:26 -0500
-From: Steve Wahl <steve.wahl@hpe.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Steve Wahl <steve.wahl@hpe.com>, Ard Biesheuvel <ardb@kernel.org>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org, Pavin Joseph <me@pavinjoseph.com>,
-        Eric Hagberg <ehagberg@gmail.com>, Simon Horman <horms@verge.net.au>,
-        Eric Biederman <ebiederm@xmission.com>, Dave Young <dyoung@redhat.com>,
-        Sarah Brofeldt <srhb@dbc.dk>, Russ Anderson <rja@hpe.com>,
-        Dimitri Sivanich <sivanich@hpe.com>,
-        Hou Wenlong <houwenlong.hwl@antgroup.com>,
-        Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
-        Yuntao Wang <ytcoode@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        Joerg Roedel <jroedel@suse.de>, Michael Roth <michael.roth@amd.com>
-Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
-Message-ID: <Zo1rugBl5WWy-1LJ@swahl-home.5wahls.com>
-References: <20240708190724.GIZow47G0J8vO6J3ee@fat_crate.local>
- <Zow-AXsLHjU6gfET@swahl-home.5wahls.com>
- <20240708195810.GKZoxE0pRWHEUljjnQ@fat_crate.local>
- <ZoxOt1_w7nblRQCv@swahl-home.5wahls.com>
- <CAMj1kXGA8zG95WutMgVgeb-M7oQKJrVO6QWNzLi1GMuj1wq=bg@mail.gmail.com>
- <ZoxX9mckeu046zed@swahl-home.5wahls.com>
- <CAMj1kXE5OYTxxBEO38dRyYt_J1FNpU-tdkaU8rxvrMLd_k_beg@mail.gmail.com>
- <20240709103742.GCZo0S9md7YyeevRN-@fat_crate.local>
- <Zo1SRIZEhveMwSPX@swahl-home.5wahls.com>
- <20240709164620.GLZo1pXPiG42JH4ylN@fat_crate.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XABQY/8mjcumZ86OqOKZpAViWrqtORRDj9+MYgmUSljrFt8uDQ96T0FZEz5f3Q/7dtGX98tklJdttpOJwpxbjg+pASL3yZGWcWmwTAS97ssYPfqebVCda4MiQfM8bVcQfy19/q4jLeeSkJyokxZxG2yxHd7SPFAXFN7uUviKMYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=U4ZV/f49; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: kees@kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1720544265;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bJmYjvyHHMwqRxruumXPBbFALlX9+6N9u8Skv9IQ5wA=;
+	b=U4ZV/f49pEThhYkusIyNy+pCsfUW4zQ+Y01qSj+aRMnxJPZdLa+rkywFl/u8vG+aA44TGd
+	HBBFvZh8uMGTfaTpHkAX/V2yYT+knbCvnoscVDbXsS0OgDv+PfplRl97j6k+D+ZzMs1Oc+
+	VFcFB+I6REYZmvLPXUM85bWMz4515ng=
+X-Envelope-To: vbabka@suse.cz
+X-Envelope-To: jannh@google.com
+X-Envelope-To: tony.luck@intel.com
+X-Envelope-To: ndesaulniers@google.com
+X-Envelope-To: ojeda@kernel.org
+X-Envelope-To: elver@google.com
+X-Envelope-To: nathan@kernel.org
+X-Envelope-To: haoluo@google.com
+X-Envelope-To: przemyslaw.kitszel@intel.com
+X-Envelope-To: cl@linux.com
+X-Envelope-To: penberg@kernel.org
+X-Envelope-To: rientjes@google.com
+X-Envelope-To: iamjoonsoo.kim@lge.com
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: 42.hyeyoo@gmail.com
+X-Envelope-To: gpiccoli@igalia.com
+X-Envelope-To: mark.rutland@arm.com
+X-Envelope-To: kuba@kernel.org
+X-Envelope-To: petr.pavlu@suse.com
+X-Envelope-To: aleksander.lobakin@intel.com
+X-Envelope-To: tony.ambardar@gmail.com
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-hardening@vger.kernel.org
+Date: Tue, 9 Jul 2024 16:57:38 +0000
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Kees Cook <kees@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Marco Elver <elver@google.com>,
+	Nathan Chancellor <nathan@kernel.org>, Hao Luo <haoluo@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jakub Kicinski <kuba@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Tony Ambardar <tony.ambardar@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [RFC][PATCH 0/4] slab: Allow for type introspection during
+ allocation
+Message-ID: <Zo1sAhEEN8ep7XZg@google.com>
+References: <20240708190924.work.846-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,68 +98,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240709164620.GLZo1pXPiG42JH4ylN@fat_crate.local>
-X-Proofpoint-ORIG-GUID: HoTSir1je7_bwYRIiP2vGIAvwwc_E7AM
-X-Proofpoint-GUID: HoTSir1je7_bwYRIiP2vGIAvwwc_E7AM
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_06,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- priorityscore=1501 bulkscore=0 malwarescore=0 mlxscore=0 phishscore=0
- clxscore=1015 suspectscore=0 lowpriorityscore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090112
+In-Reply-To: <20240708190924.work.846-kees@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 09, 2024 at 06:46:20PM +0200, Borislav Petkov wrote:
-> On Tue, Jul 09, 2024 at 10:07:48AM -0500, Steve Wahl wrote:
-> > I think perhaps the cover letter was also too verbose on the history
-> > and unintentionally hid the information necesary to understand the
-> > situation.  I will try to make it more concise.
+On Mon, Jul 08, 2024 at 12:18:34PM -0700, Kees Cook wrote:
+> Hi,
 > 
-> Thanks.
+> This is an RFC for some changes I'd like to make to the kernel's
+> allocators (starting with slab) that allow for type introspection, which
+> has been a long-time gap in potential analysis capabilities available
+> at compile-time. The changes here are just a "first step" example that
+> updates kmalloc() and kzalloc() to show what I'm thinking we can do,
+> and shows an example conversion within the fs/pstore tree.
 > 
-> And while we're at it, I think we should do this too.
+> Repeating patch 3's commit log here:
 > 
-> Which should actually fix your issue too.
+>     There is currently no way for the slab to know what type is being
+>     allocated, and this hampers the development of any logic that would need
+>     this information including basic type checking, alignment need analysis,
+>     etc.
+>     
+>     Allow the size argument to optionally be a variable, from which the
+>     type (and there by the size, alignment, or any other features) can be
+>     determined at compile-time. This allows for the incremental replacement
+>     of the classic code pattern:
+>     
+>             obj = kmalloc(sizeof(*obj), gfp);
+>     
+>     into:
+>     
+>             obj = kmalloc(obj, gfp);
+>     
+>     As an additional build-time safety feature, the return value of kmalloc()
+>     also becomes typed so that the assignment and first argument cannot drift,
+>     doing away with the other, more fragile, classic code pattern:
+>     
+>             obj = kmalloc(sizeof(struct the_object), gfp);
+>     
+>     into:
+>     
+>             obj = kmalloc(obj, gfp);
 
-Ok, that one is interesting.  I think you are right, it will fix the
-problem as we would bail before calling find_cc_blob(), which is where
-we get into trouble.  (That call happens just outside the context
-displayed by the diff below).
+I like the idea, however it's not as simple and straightforward because
+it's common for structures to have a variable part (usually at the end)
+and also allocate more than one structure at once.
 
-I will add it.
+There are many allocations which look like
+	kmalloc(sizeof(my_struct) * 2 + SOME_MAGIC_LENGTH, GFP_...)
+or something like this, which you can't easily convert to your scheme.
 
---> Steve
+The only option I see is to introduce the new set of functions/macros,
+something like kmalloc_obj() or kmalloc_struct(). Or maybe tmalloc()?
+(t for typed)
 
-> ---
-> diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
-> index cd44e120fe53..a838cad72532 100644
-> --- a/arch/x86/boot/compressed/sev.c
-> +++ b/arch/x86/boot/compressed/sev.c
-> @@ -484,6 +484,15 @@ static bool early_snp_init(struct boot_params *bp)
->  {
->  	struct cc_blob_sev_info *cc_info;
->  
-> +	/*
-> +	 * Bail out if not running on a hypervisor (HV). If the HV
-> +	 * doesn't set the bit, that's an easy SEV-* guest DOS but that
-> +	 * HV has then bigger problems: the SEV-* guest simply won't
-> +	 * start.
-> +	 */
-> +	if (!(native_cpuid_ecx(1) & BIT(31)))
-> +		return false;
-> +
->  	if (!bp)
->  		return false;
->  
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
-
--- 
-Steve Wahl, Hewlett Packard Enterprise
+Thanks!
 
