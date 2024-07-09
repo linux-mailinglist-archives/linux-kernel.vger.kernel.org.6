@@ -1,125 +1,175 @@
-Return-Path: <linux-kernel+bounces-245063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72FA092ADD4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:33:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E74CF92ADD5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:34:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDA5EB223D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:33:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 460F2B223A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B87CE30358;
-	Tue,  9 Jul 2024 01:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CpGPIJbd"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDF926AC9;
-	Tue,  9 Jul 2024 01:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4AD2CCC2;
+	Tue,  9 Jul 2024 01:34:26 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D5C631;
+	Tue,  9 Jul 2024 01:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720488821; cv=none; b=nmuiiZwq2IHgjkwtxcZbuYgcQl7kRxthvarz5P4QGXJDa8vClyRjSS5yHI1m8QiXLFfXG1kvAx7KqfRTj1+2AUZ5MYMIrwx2/TmL3w/ecgqEsANXwxWqNdSm1ERstis9fJZePl9oIq0nHZsCjBcbK2wJEOfjsoFqdZyPAyzE2mA=
+	t=1720488866; cv=none; b=jOVPjpha4V7VLWkvLneWKrncBKiv5dvpmGDf602a4GdBomfnfZWA1sOkSlnNI35HWRLl7oVFpePNdo/u6YaOtXy2+9QnBSB1ETrRZ5kWqMs/69cdCw0+T/EFn+cogq+cJ7kcAM5TH0uH5Ayyt/PlPyzRuDgD8ZNOW28pNTWKt4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720488821; c=relaxed/simple;
-	bh=OCq3tETqwMmCUBz5byIAyK9DCVEJ9QkYtNEN7Aazick=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Xc56zJHuJD5y1LhNAJ5UFvjjQpwIiuwtUZe3iTWEQXkHt2e3ZtKxtuJSPo3ufYzEsUCzv6wyu7wuiF0kFbArzqIXCvsEg0iJvPOo1dPbzkBQSxzI+vpUKgXD74La1CnEc+2VdEjDgtVF8J2/U3o8G2MTYK+2g2wskcC6pLveI8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CpGPIJbd; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 468CIglf016601;
-	Tue, 9 Jul 2024 01:33:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6TZ2gaa2Be+UXDU0zBE43v2WaClgrIHp6alI1YJXBT0=; b=CpGPIJbdtsEKr2N/
-	gp4nRw6gYD4sIFxZyUbmP/gmyGNfU9OdZYrXe/RswxHFnP65a/oCorSppbfwm6Ic
-	wwPBKTHurgZMR/w3fXZ8rlTnOdPLjw1HMFIwSEPNfFUWxjpxdUYOItCnnJLi36n6
-	AtXydUnGI0h2/TfzNzl8JHORnjU4AaqLbzh6MVS9qolYfMMn4azystOMUNAOWVR+
-	JhLBkweO//w0+Zpg9TzPndZvuX29S0QelPJXUHMBqXJ4RBeLYJ3LHJtfes8mQplZ
-	qqS2wYi+LVhvdiJri2tx/eowBCSDTaJCJiJNLv1h7fuYAj5mTIEnfdlY/uArLnNN
-	bHk5Lg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406xa6517m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 01:33:18 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4691XHbC011688
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 9 Jul 2024 01:33:17 GMT
-Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 8 Jul 2024
- 18:33:15 -0700
-Message-ID: <dec60af0-d439-4e72-ba07-358996532e9c@quicinc.com>
-Date: Tue, 9 Jul 2024 09:33:13 +0800
+	s=arc-20240116; t=1720488866; c=relaxed/simple;
+	bh=W3Hr9urCKXNBd2sjCuviYWy609nNtihMtfpVQeS4e4E=;
+	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=CkNaNnP7BJlXI5R956udTQ7yzKcpDd1WeMgMGT0BpXm/K+rfABdB1K7jFW+sP9oyoSI6kDRAwkHioX+be2VrwVgEdFvmvUMqIg2Q/PO+jqnlRUtOk+oLkWDL9gD3OWTTJ7T3Vt+JnEMOwiBonzGtXYq8m2tWnPKm+VccX+Cb3wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8BxXeuVk4xmZjoCAA--.6632S3;
+	Tue, 09 Jul 2024 09:34:13 +0800 (CST)
+Received: from [10.130.0.149] (unknown [113.200.148.30])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8CxbcePk4xmlmVAAA--.17534S3;
+	Tue, 09 Jul 2024 09:34:08 +0800 (CST)
+Subject: Re: [PATCH v2 1/3] perf: Add perf_event_attr::bp_priv
+To: Will Deacon <will@kernel.org>
+References: <20240621073910.8465-1-yangtiezhu@loongson.cn>
+ <20240621073910.8465-2-yangtiezhu@loongson.cn>
+ <20240705103413.GA8971@willie-the-truck>
+ <7522fc14-aacc-a8e3-3258-9064d7e2936f@loongson.cn>
+ <20240708111503.GA11567@willie-the-truck>
+Cc: Mark Rutland <mark.rutland@arm.com>, Russell King
+ <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>,
+ Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <49cc15a4-be21-f9d2-e8c3-b8fdad2c189f@loongson.cn>
+Date: Tue, 9 Jul 2024 09:34:07 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: invalid vht params rate 1920 100kbps nss 2 mcs 9
-To: Kalle Valo <kvalo@kernel.org>
-CC: Paul Menzel <pmenzel@molgen.mpg.de>, James Prestwood <prestwoj@gmail.com>,
-        <linux-wireless@vger.kernel.org>, <ath10k@lists.infradead.org>,
-        LKML
-	<linux-kernel@vger.kernel.org>,
-        Chun Wu <chunwu@qti.qualcomm.com>
-References: <fba24cd3-4a1e-4072-8585-8402272788ff@molgen.mpg.de>
- <1faa7eee-ed1e-477b-940d-a5cf4478cf73@gmail.com> <87iky7mvxt.fsf@kernel.org>
- <37ba6cb0-d887-4fcf-b7dc-c93a5fc5900f@gmail.com> <875xu6mtgh.fsf@kernel.org>
- <f7faff80-864a-4411-ad28-4f1151bc1e51@quicinc.com>
- <082024ce-fdd4-4fb1-8055-6d25f7d2e524@molgen.mpg.de>
- <462c97dc-f366-4f75-9327-04d9424b819a@quicinc.com>
- <b30307fd-4417-4220-a3ac-e3e80f23105e@molgen.mpg.de>
- <ceddb62b-61dd-44c9-babd-cd375c5a147d@quicinc.com>
- <87sewkcgwr.fsf@kernel.org>
-Content-Language: en-US
-From: Baochen Qiang <quic_bqiang@quicinc.com>
-In-Reply-To: <87sewkcgwr.fsf@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ABLAPEmiHLTZX01Anr7hRqQbp2PtLObw
-X-Proofpoint-ORIG-GUID: ABLAPEmiHLTZX01Anr7hRqQbp2PtLObw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-08_14,2024-07-08_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=636
- suspectscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0 spamscore=0
- clxscore=1015 adultscore=0 malwarescore=0 mlxscore=0 bulkscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090009
+In-Reply-To: <20240708111503.GA11567@willie-the-truck>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:AQAAf8CxbcePk4xmlmVAAA--.17534S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxWrWkGrW3WrWfXry5uF47WrX_yoWrJF1xpr
+	Z8CFnYkrWkJr15Xw1aqw17Ary3twsxtr4UW345G34UArsI93sagF40gF1a9Fn5Crn3AFyF
+	vw1qqF9ruayUZFXCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUP2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4j6r4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
+	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_
+	Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
+	CYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48J
+	MxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8svtJUUUU
+	U==
 
-
-
-On 7/8/2024 6:33 PM, Kalle Valo wrote:
-> Baochen Qiang <quic_bqiang@quicinc.com> writes:
-> 
->>>>> 2.  invalid vht params rate 960 100kbps nss 1 mcs 9
->>>>> 3.  invalid vht params rate 1730 100kbps nss 2 mcs 9
->>>>> 4.  invalid vht params rate 1920 100kbps nss 2 mcs 9
->>>>
->>>> OK, these are due to mismatch between host and QCA6174 firmware, we
->>>> can update host to fix them.
+On 07/08/2024 07:15 PM, Will Deacon wrote:
+> On Sat, Jul 06, 2024 at 01:31:03PM +0800, Tiezhu Yang wrote:
 >>
->> Kalle, the root cause to these three warnings are clear now and if you
->> agree I can submit patches to fix them. Or I can also wait until the
->> NSS 3 issue is clear.
-> 
-> I'm not sure why would we want to wait for the NSS 3 to be solved? Based
-> on my (limited) understanding I think it would be good to submit patches
-> for solved issues now.
-Sure, will do today.
+>>
+>> On 07/05/2024 06:34 PM, Will Deacon wrote:
+>>> On Fri, Jun 21, 2024 at 03:39:08PM +0800, Tiezhu Yang wrote:
+>>>> Add a member "bp_priv" at the end of the uapi struct perf_event_attr
+>>>> to make a bridge between ptrace and hardware breakpoint.
+>>>>
+>>>> This is preparation for later patch on some archs such as ARM, ARM64
+>>>> and LoongArch which have privilege level of breakpoint.
+>>>>
+>>>> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+>>>> ---
+>>>>  include/uapi/linux/perf_event.h | 3 +++
+>>>>  kernel/events/hw_breakpoint.c   | 1 +
+>>>>  2 files changed, 4 insertions(+)
+>>>>
+>>>> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+>>>> index 3a64499b0f5d..f9f917e854e6 100644
+>>>> --- a/include/uapi/linux/perf_event.h
+>>>> +++ b/include/uapi/linux/perf_event.h
+>>>> @@ -379,6 +379,7 @@ enum perf_event_read_format {
+>>>>  #define PERF_ATTR_SIZE_VER6	120	/* add: aux_sample_size */
+>>>>  #define PERF_ATTR_SIZE_VER7	128	/* add: sig_data */
+>>>>  #define PERF_ATTR_SIZE_VER8	136	/* add: config3 */
+>>>> +#define PERF_ATTR_SIZE_VER9	144	/* add: bp_priv */
+>>>>
+>>>>  /*
+>>>>   * Hardware event_id to monitor via a performance monitoring event:
+>>>> @@ -522,6 +523,8 @@ struct perf_event_attr {
+>>>>  	__u64	sig_data;
+>>>>
+>>>>  	__u64	config3; /* extension of config2 */
+>>>> +
+>>>> +	__u8	bp_priv; /* privilege level of breakpoint */
+>>>>  };
+>>>
+>>> Why are we extending the user ABI for this? Perf events already have the
+>>> privilege encoded (indirectly) by the exclude_{user,kernel,hv} fields in
+>>> 'struct perf_event_attr'.
+>>
+>> IMO, add bp_priv is to keep consistent with the other fields
+>> bp_type, bp_addr and bp_len
+>
+> I disagree, as these are properties specific to hw_breakpoint. Privilege
+> is not.
+>
+>> , the meaning of bp_priv field is
+>> explicit and different with exclude_{user,kernel,hv} fields.
+>
+> How? You're changing the user ABI here, it needs to be properly justified.
+>
+>> Additionally, there is only 1 bit for exclude_{user,kernel,hv},
+>> but bp_priv field has at least 2 bit according to the explanation
+>> of Arm Reference Manual. At last, the initial aim is to remove
+>> the check condition to assign the value of hw->ctrl.privilege.
+>
+> Why? What problem is hw->ctrl.privilege causing?
+>
+>> https://developer.arm.com/documentation/ddi0487/latest/
+>>
+>> 1. D23: AArch64 System Register Descriptions (Page 8562)
+>>    D23.3.11 DBGWCR<n>_EL1, Debug Watchpoint Control Registers, n = 0 - 63
+>>    PAC, bits [2:1]
+>>    Privilege of access control. Determines the Exception level or levels at
+>> which a Watchpoint debug
+>>    event for watchpoint n is generated.
+>>
+>> 2. G8: AArch32 System Register Descriptions (Page 12334)
+>>    G8.3.26 DBGWCR<n>, Debug Watchpoint Control Registers, n = 0 - 15
+>>    PAC, bits [2:1]
+>>    Privilege of access control. Determines the Exception level or levels at
+>> which a Watchpoint debug
+>>    event for watchpoint n is generated.
+>
+> You're just quoting bits of the Arm ARM. The architectural permission
+> checking is much more complicated and takes into account all of the PAC,
+> HMC, SSC and SSCE fields, but Linux doesn't need to care about most of
+> that because it's only managing user, kernel and possibly hypervisor.
+> These three can be expressed with the exclude_ options that we already
+> have.
+>
+> So I really don't understand the rationale here.
 
-> 
+Here is a reply to Peter Zijlstra, I hope that helps.
+
+https://lore.kernel.org/lkml/da0c95e7-c676-e0c0-8b90-b1ea5fc7b72f@loongson.cn/
+
+Thanks,
+Tiezhu
+
 
