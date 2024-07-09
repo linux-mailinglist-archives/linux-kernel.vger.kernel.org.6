@@ -1,79 +1,88 @@
-Return-Path: <linux-kernel+bounces-245573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFF3992B480
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:56:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B5E892B481
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73F42281C91
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:56:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D56D1C21D20
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC03B15575E;
-	Tue,  9 Jul 2024 09:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HXFMrbQM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C50826AC9
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EAA9155CB2;
+	Tue,  9 Jul 2024 09:55:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621E312E1F1;
+	Tue,  9 Jul 2024 09:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720518933; cv=none; b=qVloc8TFwdWZXfFLWqjunBlqYZTblSwN8sCMZdH3+lNDx2HJ8u/lF9oMd8KwocvESHDH4g4v3LAv3SBtJsS1/GmYs/FSWt36I7hx3FTBmzOof1QwjQv2KcZXAaNPJo5Ma6Do9Lspb1LLTAY9dBW515itkiZrCcgsDThP/dBemWQ=
+	t=1720518956; cv=none; b=rJj6JuA4JAW00hkYbOLKRx6ciWLKTaQqzWVDq6FHyWVgTBWgDKvGxAtG9BU7pKpsrjUTaOINpxbWNLGP/1ZcX7qkG69nVqnhLCNlx8/XgEH+pM3B+HuH9GTg+20ViNCWAFEcbSjyZKBG8vikRxhwrf6lWo+dfkL4sEkPTbiDCZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720518933; c=relaxed/simple;
-	bh=6zFI12ZFHNI1k59l/Qxr6MAqcx8KpDTNzZoQ3DvA3L8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jUcWsQ+IO1XMKLhQ8dG2nLMF83VqAOFe5mLDu6HybzA7HqOMfFbDGqWgnxC3PwrtOIgfJy9/Xt3c5R97xD5r+a/zMLcJLNpH19zgcnyne9GVgPeKc7m2pdgvNaGLBfIetXN2Fk/OV2z/XDMB6wLeCaI8Rxt/4tpEwF6dXTR5J3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HXFMrbQM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 374A5C3277B;
-	Tue,  9 Jul 2024 09:55:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720518932;
-	bh=6zFI12ZFHNI1k59l/Qxr6MAqcx8KpDTNzZoQ3DvA3L8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HXFMrbQMvn2pTvzhMP7+ADsx8/Fzk2aQeI51nHWF47ZVqQ86Qsd1aodMuIrx6ipI8
-	 JZJjgE4V5JNM5C1b34TxnzKT9MviAMYZcosINDU5R57OX2cAx/eCxKpbjTeNeXvIbO
-	 36L01RG1jZ8bvqjvwoMy4/e+D0LnaTX3P1QKVS96X86uJWJXaFTN7gva/3NoiJOiLp
-	 4x8uBa8ThtxtZpsuWFrFiwf1id025GQe3tGAqgNv27k4Ha+qpbsXemqxNR/UWCCRpl
-	 pR0lK5Ty4u9jeAZLvwR5z2UEqG5Wj7fhjk9m4U0Zk7vJvGRGGwOkNsN5iOBdgZjEi+
-	 QZNJcClechumQ==
-Message-ID: <37db0df5-c39c-4ddf-a0e2-207ad95857a5@kernel.org>
-Date: Tue, 9 Jul 2024 17:55:28 +0800
+	s=arc-20240116; t=1720518956; c=relaxed/simple;
+	bh=GCS1KUGFPktHLLRRHrFy8MVUE0CMFLsivV64i/DKgks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mZQ1aYmjztXi6HbFqG5n9fa2i7/U1mviS7H1S6y/zJ4UNpZqiEIO4XdOxUgY4YKjJnMpkD7Bvy+a9bstPmzlKJF9NLqBFvQ1Oig8fSPWMygUB4mTTs+RuhOAth0AJtthfgazLrwTYQPqH+AY+Ruh79D5YV1fzE/rFf4T2w30d14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C4FE91650;
+	Tue,  9 Jul 2024 02:56:18 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D54B03F762;
+	Tue,  9 Jul 2024 02:55:50 -0700 (PDT)
+Date: Tue, 9 Jul 2024 10:55:42 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
+	james.quinlan@broadcom.com, f.fainelli@gmail.com,
+	vincent.guittot@linaro.org, etienne.carriere@foss.st.com,
+	peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com,
+	quic_nkela@quicinc.com, ptosi@google.com,
+	souvik.chakravarty@arm.com
+Subject: Re: [PATCH 6/8] firmware: arm_scmi: Make OPTEE transport a
+ standalone driver
+Message-ID: <Zo0JHtuZo_tKEMzP@pluto>
+References: <20240707002055.1835121-1-cristian.marussi@arm.com>
+ <20240707002055.1835121-7-cristian.marussi@arm.com>
+ <e27dc456-33bc-450e-8e54-1cd5b7ae11ef@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [f2fs-dev] [PATCH v5] f2fs: reduce expensive checkpoint trigger
- frequency
-To: wangzijie <wangzijie1@honor.com>
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, zhiguo.niu@unisoc.com, bintian.wang@honor.com
-References: <20240626014727.4095350-1-chao@kernel.org>
- <20240709084026.3098260-1-wangzijie1@honor.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240709084026.3098260-1-wangzijie1@honor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e27dc456-33bc-450e-8e54-1cd5b7ae11ef@suswa.mountain>
 
-On 2024/7/9 16:40, wangzijie wrote:
-> Hi Chao,
-> I think that we should call f2fs_remove_ino_entry in f2fs_evict_inode to delete
-> ino_entry in CP_XATTR_DIR list.
+On Tue, Jul 09, 2024 at 04:21:46AM +0200, Dan Carpenter wrote:
+> On Sun, Jul 07, 2024 at 01:20:53AM +0100, Cristian Marussi wrote:
+> >  static int scmi_optee_service_probe(struct device *dev)
+> >  {
+> >  	struct scmi_optee_agent *agent;
+> > @@ -555,7 +553,7 @@ static int scmi_optee_service_probe(struct device *dev)
+> >  	smp_mb();
+> >  	scmi_optee_private = agent;
+> >  
+> > -	return 0;
+> > +	return platform_driver_register(&scmi_optee_driver);
 
-wangzijie,
+Hi Dan,
 
-For the case:
-- update parent's xattr
-- flush parent's metadata to disk
-- evict parent's inode
-- fsync child  --- we should trigger checkpoint to persist parent's
-xattr in checkpoint?
+thanks for having a look !
 
+> 
+> There needs to be some cleanup if platform_driver_register() fails.
+> 
+
+
+Yes, indeed....also smatch/sparse screamed a lot in some other
+places...I will rework in V2.
+
+Thanks,
+Cristian
 
