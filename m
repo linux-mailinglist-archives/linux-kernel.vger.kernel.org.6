@@ -1,157 +1,160 @@
-Return-Path: <linux-kernel+bounces-246503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8113292C2C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:45:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A69092C2C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 036D51F26DA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:45:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88D8728315A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255EC17DE1A;
-	Tue,  9 Jul 2024 17:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E7617B04B;
+	Tue,  9 Jul 2024 17:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="lnFuvy6e"
-Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UN6j+YN5"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE71115B116;
-	Tue,  9 Jul 2024 17:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C561B86ED;
+	Tue,  9 Jul 2024 17:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720547103; cv=none; b=ONtKzA+x3yHqlytlwAEDvCIRnrn/e8COO3TzlHqLqKtzG04Cqo2VH3H2A01RA9vO9fJHiIM6DcXDP1PlxVxer53eRjSGEKlO7+vz+vIypShQKARcSpStiKzWpMA/7U078qd/E8l8O6h49qI3Nn2R+yJzD1QJuXBAMh9sn74Hz3E=
+	t=1720547216; cv=none; b=eRmAwjj3alKcoGfSx3mLd+EDFeFq+rVa8mjinxnh+gqH0ogFVdE7iSk+FKvEx7k4qnNFGraxAvxwfDtuISL4OV3Rjh2Vf8U8cfNDc1Gak0GgzEE98kpaBl1HpcljcQudZUyrWDcU4iBNCOZS47RLHJc2rm5jXX+cUFXMQYN5XsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720547103; c=relaxed/simple;
-	bh=uW2pwfCD2YttDafcEflC65MfG5HeMeAMEQ9t4zeoL9I=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=fNRwlzJyCOJpbVTvALojZdezYOBkXN+7VUSUQo1ssfnirYPw0CqqME8N25DFoJohpOxlOwbpTnCCp/+nEDsMHRw+BpQ2CDfY8AULYiSxABXqAQ3GW8AUQrYX/21jGDT8xhXtsDlkDzg4A5+VZ023A/rkV1SgceF51HrmSM7iGA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=lnFuvy6e; arc=none smtp.client-ip=213.133.104.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=XpJVqSkqCMHi4vFYbD1YivXt6e6jHPNXwLAFd99ctoM=; b=lnFuvy6eh/8y4YIp8Auv5i2jaq
-	/qYPfypDxkTsOGeqDGbIYIn+mjD4n309whiAQ5575bRIk7tsSM9fimg52wvX0nbbiLKev/6rd34bM
-	4YN5TISe16+i+QDbocnmXcSdC3dPFqXwjek2FWo0HdIpSNGO2xa5X+d5mWQ4l5xySGynctHdvjSFR
-	QmbYFUUQ5u5LJkTEI6DWT3eI+17D9FslQun5k/JSbG2x031USQTkQgmswcb1h8/UhG5+krNXINB+r
-	1CS0gUj5b9WF9GJKSWQSEdh0TWoqGdOchbz3AEJ1C1S8is+dVeNzs4R7iQm77qozJ/8fMwwFsWFnH
-	ra3U89AQ==;
-Received: from sslproxy04.your-server.de ([78.46.152.42])
-	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1sREtL-000Do5-Bz; Tue, 09 Jul 2024 19:44:39 +0200
-Received: from [178.197.248.35] (helo=linux.home)
-	by sslproxy04.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <daniel@iogearbox.net>)
-	id 1sREtK-000H95-0B;
-	Tue, 09 Jul 2024 19:44:38 +0200
-Subject: Re: [PATCH bpf] selftests/bpf: DENYLIST.aarch64: Remove fexit_sleep
-To: KP Singh <kpsingh@kernel.org>
-Cc: Puranjay Mohan <puranjay@kernel.org>, Andrii Nakryiko
- <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
- Mykola Lysenko <mykolal@fb.com>, Alexei Starovoitov <ast@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Manu Bretelle <chantra@meta.com>,
- Florent Revest <revest@google.com>
-References: <20240705145009.32340-1-puranjay@kernel.org>
- <c0ef7ecf-595b-375a-7785-d7bf50040c6b@iogearbox.net>
- <mb61pjzhwvshc.fsf@kernel.org>
- <CACYkzJ7d_u=aRzbubBypSVhnUSjBQnbZjPuGXhqnMzbp0tJm_g@mail.gmail.com>
- <224eeadb-fc5f-baeb-0808-a4f9916afa3c@iogearbox.net>
- <mb61ped836gn7.fsf@kernel.org>
- <d36b0c2e-fdf2-d3b0-46a8-7936e0eda5a8@iogearbox.net>
- <CACYkzJ5E+3xYkNsH7JoVkjabzSwnZZCzzTz5B50qDB7bLYkmMA@mail.gmail.com>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <890d23f2-636e-12d1-31cc-eb6469f2a9ac@iogearbox.net>
-Date: Tue, 9 Jul 2024 19:44:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+	s=arc-20240116; t=1720547216; c=relaxed/simple;
+	bh=GsQFfaSRcL+AkT/EMBnuBAKgPaSMtsLA8LszxcoUHlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sioYIpWonEyxqM/+NLMxi9zWc62b3QGdCCaeLLiW3RYOr+mwYCMHV+ptlRNdnwGTw+1CQBiN3JBZn5fNcuAZDtzPAKt7cEOl5krfkkmVh/Q7XOqmpXWdt3pMxX1/YUN7fxNLYpuXXGShm3FRdHLRaN613e/1fvU+Y08OliFEbFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UN6j+YN5; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-447f2f5891cso12016371cf.2;
+        Tue, 09 Jul 2024 10:46:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720547214; x=1721152014; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c4EteS+g5P2KsWzL1nRT1ZGJ+E/RL4GUaEWIIDrIWAs=;
+        b=UN6j+YN5DG+o6tpBOr5qKSvMCwJ1HU7jOd5UitmWqFTDDHEH/tEV+KW5x9+JdT3HPT
+         CcXyvhiGL7v8uVd9eIe5Ix+5jAfMt0C/yM+Oua5GGZVBe/9R7EBD3DOeM+dI9FLnJdbS
+         KCXyDdVY+6CCel8SLV2B6uwgN1WGRS77a4jeF1xjyaTewCXyPqZbNU5BHwrud1+QG2Kg
+         g4fBAT2unsMl6ESmpfqkEWa3mmiwZQ9aBr8HUVchnc6wzNieNOLF0dVAWnJ1zlpIcFt6
+         5GspiQanJ+FbjGSowVRHJaGc1YNI4XJB+thiKFaPN/AgW/RN4nq0KVgZnYnZJN4Qs2aj
+         jsYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720547214; x=1721152014;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c4EteS+g5P2KsWzL1nRT1ZGJ+E/RL4GUaEWIIDrIWAs=;
+        b=CLgBhfDd1+5B84CwceEB7HRgoqXBliRare9JBcF/m5Ipj3WGmeJxuaBs9emWD4Pvr6
+         9a2TAbpN94KWsx3Gv+bs+x2E4Qf0b9mvA4vnOaaMraQxFUbnhH0nDgMHCSS6bGKpu6/i
+         iMJgchtXY94vdWQOURwnl3YQG97Rprbre6pRGCFM4Flpp8N4mATSsJE8wEWOC/k2Gyo3
+         i5OMtc8uzZUcAciCViB+Pc9Bxwxuv2QxV67DMGkV9dGEeBF6hczAVl5HQgIR5nSGGYV0
+         SV6VC7EvCyKB3VByLrWN/1JXMqX8H4ml0gUKTetYheBS2cVqzjUZvylkgtqTXH++K75O
+         BKnA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvI4VXLH8yybZNGWQTy34eoXYgdM1QX6Oc/wH9ocp/76OKXf9UQMpeChQ65L0atMnkhTXBPKIoAwBaRsIyBl/1oZyW1ucrzuGTdJ939DAza7HIMJxiXie3pZLACFI5J/jkD+9UrJJs3ffhWCasdGRh0qPfyNBby4TZ7JFcKzqTCANJfdPAeQ==
+X-Gm-Message-State: AOJu0YwCbffmIx+WKB4otqUiKRZyzrEF/wiamjVcHDNGyzKyHXYevwAe
+	mjvMNXr0H1IK14jSP+JFD5Z0KjCNZvutspxgOJfuArFNh285v0Lo
+X-Google-Smtp-Source: AGHT+IGHTIOszHjbB8Cp0KSLwVZ1wRZ12dUicem58K+FexjxdiJQ7n4mvkoksokc/zKZDjzkaEQv2g==
+X-Received: by 2002:ac8:7d0d:0:b0:440:b945:806b with SMTP id d75a77b69052e-447fa908400mr41380691cf.48.1720547214100;
+        Tue, 09 Jul 2024 10:46:54 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-447f9b26c83sm12561391cf.2.2024.07.09.10.46.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 10:46:53 -0700 (PDT)
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 937191200068;
+	Tue,  9 Jul 2024 13:46:52 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute7.internal (MEProxy); Tue, 09 Jul 2024 13:46:52 -0400
+X-ME-Sender: <xms:i3eNZlmuPLDFBmQ-a3D20M5MIKeVc1cz9GWakEn8N3WAg41jgXDJQA>
+    <xme:i3eNZg1OfL71es_n5b0zEHDtaL4dcjsoImggWDZWBPnRF0bSYmFhUgMbCqFuA9RiI
+    ufao4655ewmizlDfw>
+X-ME-Received: <xmr:i3eNZrpBafpDI-EJEiyvxnBkGckVGb1TUN8Fc4G_Psun2zFucMFRoUpO129vPg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdelgdduudejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueeviedu
+    ffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
+    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
+    igmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:i3eNZlmEOViz8umcOz4Y3a_z40dkmrZa1JeGshXwvUwTZHnYRm1DVA>
+    <xmx:i3eNZj0Utan8h4tuzDSefSS5fS33aVAcVs0Chnb4uU74jUnqgaKaoA>
+    <xmx:i3eNZksIawGJ2WnjzZuCfBHDnUFWiJQJ0Abe8p2BAQA-Ok5T1cW_AA>
+    <xmx:i3eNZnV7x-UbrBUsX-QituzNM2Xxq8odv6RXXb-5upL4nzas0tIzpA>
+    <xmx:jHeNZq17Z12Pz5lROR7eLFbaB2dwqaf5kIYDPzM55S2OaH6JNriXx6aC>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 9 Jul 2024 13:46:50 -0400 (EDT)
+Date: Tue, 9 Jul 2024 10:45:32 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+	rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH V3 1/8] rust: Add initial bindings for OPP framework
+Message-ID: <Zo13PB-fZ8B9WEYy@boqun-archlinux>
+References: <cover.1719990273.git.viresh.kumar@linaro.org>
+ <fe8e9a96b29122876346fc98a6a9ede7e4f28707.1719990273.git.viresh.kumar@linaro.org>
+ <ZoVvn0QCSR8y4HQJ@Boquns-Mac-mini.home>
+ <20240709110245.o73xnrj6jsvz2v2w@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CACYkzJ5E+3xYkNsH7JoVkjabzSwnZZCzzTz5B50qDB7bLYkmMA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27331/Tue Jul  9 10:38:11 2024)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709110245.o73xnrj6jsvz2v2w@vireshk-i7>
 
-On 7/8/24 6:42 PM, KP Singh wrote:
-> On Mon, Jul 8, 2024 at 6:09 PM Daniel Borkmann <daniel@iogearbox.net> wrote:
->> On 7/8/24 5:35 PM, Puranjay Mohan wrote:
->>> Daniel Borkmann <daniel@iogearbox.net> writes:
->>>> On 7/8/24 5:26 PM, KP Singh wrote:
->>>>> On Mon, Jul 8, 2024 at 5:00 PM Puranjay Mohan <puranjay@kernel.org> wrote:
->>>>>> Daniel Borkmann <daniel@iogearbox.net> writes:
->>>>>>> On 7/5/24 4:50 PM, Puranjay Mohan wrote:
->>>>>>>> fexit_sleep test runs successfully now on the CI so remove it from the
->>>>>>>> deny list.
->>>>>>>
->>>>>>> Do you happen to know which commit fixed it? If yes, might be nice to have it
->>>>>>> documented in the commit message.
->>>>>>
->>>>>> Actually, I never saw this test failing on my local setup and yesterday
->>>>>> I tried running it on the CI where it passed as well. So, I assumed that
->>>>>> this would be fixed by some commit. I am not sure which exact commit
->>>>>> might have fixed this.
->>>>>>
->>>>>> Manu, Martin
->>>>>>
->>>>>> When this was added to the deny list was this failing every time and did
->>>>>> you have some reproducer for this. If there is a reproducer, I can try
->>>>>> fixing it but when ran normally this test never fails for me.
->>>>>
->>>>> I think this never worked until
->>>>> https://lore.kernel.org/lkml/20230405180250.2046566-1-revest@chromium.org/
->>>>> was merged, FTrace direct calls was blocking tracing programs on ARM,
->>>>> since then it has always worked.
->>>>
->>>> Awesome, thanks! I'll add this to the commit desc then when applying.
->>>
->>> The commit that added this to the deny list said:
->>> 31f4f810d533 ("selftests/bpf: Add fexit_sleep to DENYLIST.aarch64")
->>>
->>> ```
->>> It is reported that the fexit_sleep never returns in aarch64.
->>> The remaining tests cannot start.
->>> ```
+On Tue, Jul 09, 2024 at 04:32:45PM +0530, Viresh Kumar wrote:
+> On 03-07-24, 08:34, Boqun Feng wrote:
+> > On Wed, Jul 03, 2024 at 12:44:26PM +0530, Viresh Kumar wrote:
+> > > +// SAFETY: `OPP` only holds a pointer to a C OPP, which is safe to be used from any thread.
+> > > +unsafe impl Send for OPP {}
+> > > +
+> > > +// SAFETY: `OPP` only holds a pointer to a C OPP, references to which are safe to be used from any
+> > > +// thread.
+> > > +unsafe impl Sync for OPP {}
+> > > +
+> > 
+> > Same for the above safety comments, as they are still based on the old
+> > implementation.
 > 
-> It may also have something to do with sleepable programs. But I think
-> it's generally in the category of "BPF tracing was catching up with
-> ARM", it has now.
+> Do I still need to change these ? Since we aren't always using ARef
+> now.
+> 
 
-Hm, the latest run actually hangs in fexit_sleep (which is the test right after
-fexit_bpf2bpf). So looks like this was too early. It seems some CI runs pass on
-arm64 but others fail:
+Correct, you will still need to change these. You're welcome to submit
+a draft version here and I can help take a look before you send out a
+whole new version, if you prefer that way.
 
-   https://github.com/kernel-patches/bpf/actions/runs/9859826851/job/27224868398 (fail)
-   https://github.com/kernel-patches/bpf/actions/runs/9859837213/job/27224955045 (pass)
+Regards,
+Boqun
 
-Puranjay, do you have a chance to look into this again?
-
->>> So, if the lack of Ftrace direct calls would be the reason then the
->>> failure would be due to fexit programs not being supported on arm64.
->>>
->>> But this says that the selftest never returns therefore is not related
->>> to ftrace direct call support but another bug?
->>
->> Fwiw, at least it is passing in the BPF CI now.
->>
->> https://github.com/kernel-patches/bpf/actions/runs/9841781347/job/27169610006
-
+> -- 
+> viresh
 
