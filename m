@@ -1,128 +1,88 @@
-Return-Path: <linux-kernel+bounces-246189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C559092BEC3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:50:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CECAD92BECD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:52:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 702E81F22CDB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:50:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C0341C22629
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F240E19D898;
-	Tue,  9 Jul 2024 15:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DCB19D89D;
+	Tue,  9 Jul 2024 15:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dFMPc4tZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ft/++sUM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0071DFCF;
-	Tue,  9 Jul 2024 15:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A97015C9;
+	Tue,  9 Jul 2024 15:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720540200; cv=none; b=O0YnjFh8b0NT7wf0/ISEaUBat0HHBA7moD8zybkUr4/Cy005V7zOahQanbXYn75qaJVN8ycTeXusdx6O8HPFLEuZUh3Qg3XYD/f5nEUdAqjj5H5ZJks4mQ3ThAJK37uSoS0qQ4Yuv4fu9KjDVqNots+jDwZEF3t6ALSBAXgtDI8=
+	t=1720540327; cv=none; b=Rpw5a7Nm5wLxMySvzthhwotHNPdoH3UmTqDA9ySo+WP8t3YfblRUGiIuC6NkGNS+aJ6luurXo9LdF9Z/SseuX7DVYk7UFuPcExAZjRpioHGWIR+nGVNIuXunlvxfID+5i7cb/Coihech2N3rn1Gk2W2BFuB5W0QnlYbdMUiXMjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720540200; c=relaxed/simple;
-	bh=9MrxDoNPhTi1XI4NxjDlhW/N0h70bpLtcvV0dqXfW+k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GsHifXNYwe080Wguno7OsWTWIh7z2rEQzSsgt96JyFIMK5NGSzNKjAfxwZ5H7X1AHNn62D3GPNC5YRdHQfoCZ373rJ76punm6LF2na/wVd3QqBkANNuF7X647Q/8V97yiFcqd52fsJUyHIh6f8XjpI/Uesbk9w98ma4Xzkgfueg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dFMPc4tZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6CDEC3277B;
-	Tue,  9 Jul 2024 15:49:59 +0000 (UTC)
+	s=arc-20240116; t=1720540327; c=relaxed/simple;
+	bh=PezZkk89/XVZldgPdH43PX9xhp3+ZRAaKkQqpa+Q9VY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=feo9fQiGqYijZE4ekulPkXk4OxBqqnf/VAvPedbSrOAvYAB8M3HuoJvNwQAZ8Vz4v14qdgZVtk+41mV+fn/K7f5LqkpricdQSwipZSyXxNQe2vrgzQvtjiXGdtD1lPrnLsRyn4WP82X9zeWlfM9Q6MHXBO2we22up25rJ0kD9DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ft/++sUM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BB90C4AF07;
+	Tue,  9 Jul 2024 15:52:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720540199;
-	bh=9MrxDoNPhTi1XI4NxjDlhW/N0h70bpLtcvV0dqXfW+k=;
-	h=From:To:Cc:Subject:Date:From;
-	b=dFMPc4tZijAFt5E7miIzqmOv8UaDJkyCdGLYa6AqapQq59vw/gnOgwDW51JpXKFHJ
-	 wTQCGVbsSuKjnU3nJ10yLuiawkAEhi4ytVmEVBVDO3LBfdfRAB1VLP89Kbd1rPYl0e
-	 IfN+pYZKEJ6URea3KQnZnNjMveukZDmqtqclk/0ooe5dBiajYogw0P7eescFCibcMt
-	 rhwaibker90/8Ec6ekigekJASKkOt4h1gfRk9s8BjvKn3rjE+c1Ifm2jQKD8ANCdmw
-	 oAdW+Tq0HxjaInXSKs8/Z72MFT8po5dC2sAiRyEnaW6/Fzoa+f/V/lMr+h6ESdPVVh
-	 V2fqZl/hoig8Q==
-From: Kees Cook <kees@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kees Cook <kees@kernel.org>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] usb: gadget: Use u16 types for 16-bit fields
-Date: Tue,  9 Jul 2024 08:49:56 -0700
-Message-Id: <20240709154953.work.953-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=k20201202; t=1720540327;
+	bh=PezZkk89/XVZldgPdH43PX9xhp3+ZRAaKkQqpa+Q9VY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ft/++sUMgRk/zE5Ct8La4GzHH0t9d/O5CNCvqSR3KmVj679Uxb7tb5r9D0TUaNgNR
+	 2Ce5R+Htivyp7lX0LFW1LwSD+0fi7Dns/4eGK6brxXKwsafPlf1YCf+agGTxJOwVwx
+	 Mu7GOcYm1tXX7FC+vDKXargibhH4qkRBjPOojAuAutn4u+5iiAsCtxroyg5CD12O9L
+	 y0MHxByXRN8lkzchYO0TVvvLQJGV23NaTigSyaOCoxqStrtAquHLM8lfHqq1wwcy58
+	 z1KZOCydKSysKhuCTvoO8emLxtRpvLdpF+WZWVzpNUec6loC7KdZ2jfc18YT/OVq8c
+	 tFMNHaUe3mPbw==
+Date: Tue, 9 Jul 2024 08:52:05 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>,
+ thomas.petazzoni@bootlin.com, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH net] net: ethtool: pse-pd: Fix possible null-deref
+Message-ID: <20240709085205.0fa41f8f@kernel.org>
+In-Reply-To: <20240709164305.695e5612@kmaincent-XPS-13-7390>
+References: <20240709131201.166421-1-kory.maincent@bootlin.com>
+	<20240709071846.7b113db7@kernel.org>
+	<20240709164305.695e5612@kmaincent-XPS-13-7390>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2309; i=kees@kernel.org; h=from:subject:message-id; bh=9MrxDoNPhTi1XI4NxjDlhW/N0h70bpLtcvV0dqXfW+k=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmjVwk0t22Uyu2+atEHAcV5lh9rZAh/DghXMDBf pwV37Mm4YiJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZo1cJAAKCRCJcvTf3G3A JtyZD/0TajsMXBzlOFR/SgJkyNP2VxbKrBJbj1cOvS9BZl6LZoJW9d3zSFPJTd9ccLSOyTGazbi z04/mOErf464BXNQrY79sXaqEOk4oywlGUBAK3LddjBOHJdQy/TzwX0rT98YiqHyA1nsmdt95yX T4QLXFOcYddr/5HRQ+3rm2otfvhDJGzVoQWY7xsiIgqdckIUhXfyMGXQ6wQB2OFih0YkF4Eu0xv iOespH+8oFjxk+/eujupsRs/QY+Oj7hYrx9kl9gj1eEBrlJwjiG2BJQSP/bt1rSV18PsfBpIi7l ffLfREQJ16+IG3oPKVBgCS9jFHBDmxL4V0g/919G/JdP96OZdrqOtuPpUVhChOgMkvP6iw0SFi+ PlFbBpfjaALF2SK+DS+3azXgCSjJsnWqNP25wX0jUHgGCxhOa+zJ0ezH5SJMS6cX+QT+trDkMbY nlLdqCWbP/6gDps2eLFKUM0ktJ0sBCEZEDhZ1mWhWwoqWZaDVz+23joFEC2YxrPt9JMMcgyghDx zc5xCJnwbuZ3yP23UaBY9bPnu41K/5HjIRePJdPm4uojCNyAVyhxlYtZbjVuwHiehHAlz2AbtZm FbC2YHSsOAtJ/bdHc97c58x/FCSijXh6Ka7YWQETFmRldbhkp/lau0mtN+83ccnY+2OzT3hR8n2 tH1JzXaYiMCzW
- vw==
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Since the beginning of time, struct usb_ep::maxpacket was a bitfield,
-and when new 16-bit members were added, the convention was followed:
+On Tue, 9 Jul 2024 16:43:05 +0200 Kory Maincent wrote:
+> > Normal ethtool flow is to first fill in the data with a ->get() then
+> > modify what user wants to change.
+> > 
+> > Either we need:
+> >  - an explanation in the commit message how this keeps old config; or
+> >  - a ->get() to keep the previous values; or
+> >  - just reject setting one value but not the other in
+> >    ethnl_set_pse_validate() (assuming it never worked, anyway).  
+> 
+> In fact it is the contrary we can't set both value at the same time because a
+> PSE port can't be a PoE and a PoDL power interface at the same time.
 
-1da177e4c3f41 (Linus Torvalds   2005-04-16 236) unsigned maxpacket:16;
-e117e742d3106 (Robert Baldyga   2013-12-13 237) unsigned maxpacket_limit:16;
-a59d6b91cbca5 (Tatyana Brokhman 2011-06-28 238) unsigned max_streams:16;
+In that case maybe we should have an inverse condition in validate, too?
+Something like:
 
-However, there is no need for this as a simple u16 can be used instead,
-simplifying the struct and the resulting compiler binary output. Switch
-to u16 for all three, and rearrange struct slightly to minimize holes.
-No change in the final size of the struct results; the 2 byte gap is
-just moved to the end, as seen with pahole:
+	if ((pse_has_podl(phydev->psec) &&
+	     GENL_REQ_ATTR_CHECK(info, ETHTOOL_A_PODL_PSE_ADMIN_CONTROL)) ||
+	    (pse_has_c33(phydev->psec) &&
+	     GENL_REQ_ATTR_CHECK(info, ETHTOOL_A_C33_PSE_ADMIN_CONTROL)))
+		return -EINVAL;
 
--       /* XXX 2 bytes hole, try to pack */
-        ...
-        /* size: 72, cachelines: 2, members: 15 */
-        ...
-+       /* padding: 2 */
-
-Changing this simplifies future introspection[1] of maxpacket's type during
-allocations:
-
-drivers/usb/gadget/function/f_tcm.c:330:24: error: 'typeof' applied to a bit-field
-     330 |  fu->cmd.buf = kmalloc(fu->ep_out->maxpacket, GFP_KERNEL);
-
-Link: https://lore.kernel.org/all/202407090928.6UaOAZAJ-lkp@intel.com [1]
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org
----
- include/linux/usb/gadget.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
-index 56dda8e1562d..df33333650a0 100644
---- a/include/linux/usb/gadget.h
-+++ b/include/linux/usb/gadget.h
-@@ -229,18 +229,18 @@ struct usb_ep {
- 
- 	const char		*name;
- 	const struct usb_ep_ops	*ops;
-+	const struct usb_endpoint_descriptor	*desc;
-+	const struct usb_ss_ep_comp_descriptor	*comp_desc;
- 	struct list_head	ep_list;
- 	struct usb_ep_caps	caps;
- 	bool			claimed;
- 	bool			enabled;
--	unsigned		maxpacket:16;
--	unsigned		maxpacket_limit:16;
--	unsigned		max_streams:16;
- 	unsigned		mult:2;
- 	unsigned		maxburst:5;
- 	u8			address;
--	const struct usb_endpoint_descriptor	*desc;
--	const struct usb_ss_ep_comp_descriptor	*comp_desc;
-+	u16			maxpacket;
-+	u16			maxpacket_limit;
-+	u16			max_streams;
- };
- 
- /*-------------------------------------------------------------------------*/
--- 
-2.34.1
-
+GENL_REQ_ATTR_CHECK will set the extack for us.
 
