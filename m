@@ -1,149 +1,196 @@
-Return-Path: <linux-kernel+bounces-245444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7AD692B290
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:49:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34AA92B295
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D7EB1F22CD5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:49:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03BFD1C21B19
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF594153585;
-	Tue,  9 Jul 2024 08:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF64914A4E2;
+	Tue,  9 Jul 2024 08:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pyxsdBDn"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ePh4RaZr"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7BD6138;
-	Tue,  9 Jul 2024 08:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CB014831C
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720514956; cv=none; b=tI02aDV01RTuUnUvApCwYpnGVDHLnUd9h8tTKDGm699HqpRr/gauTRxnD2Nu6DpWNXRD6+ytawlv0sxyYN7GZRk7Z1iAoKc4PhmGOCn2qrLntcCLQz/fXgaVcxYLxtDy5GH8yRxTxK1FFx0aA0DNvZCHwdiugNiK3OFP1SyXIQw=
+	t=1720514976; cv=none; b=TpdNHQJ8f2R8xAuinLpfCIZwvRnAYGox7Vyc5Jr/Er+0AENGyRBFEbLN/S6CuzUzd1C+4YwFT/i74V4YbN0A04n78vbFNYmhR8dTo9Sf4aesIcIVqsvEE27Wmyoq6u/agfX2MEPBMa+xnsJV2vnis7qabjHpBIW7UiBrLxjn4Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720514956; c=relaxed/simple;
-	bh=cP47i/7cJ4lkFges4Nl7itt3YRqAnpRsXN1/clKfjGY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J2CF0bBL1f3Vs5auA07+iwhqj/xlmNcOSbH/gyi39zXXTlOyH1EPhJWXS3FcHXL53X9Zw8ojWf1QdZvIEhlWl+oYZwndo6SJohW5ChyeYfHl0CWdZIBnRGR7gOTA5Jt2TIKSf60MJuMHJ2XQtvjY49YmmnyU2P9XftyD+yrVdJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=pyxsdBDn; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4698mwu3070460;
-	Tue, 9 Jul 2024 03:48:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1720514938;
-	bh=5WZkfsvmLamemn97uUc60YsRqdAwy+JB+ny9+g16q3I=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=pyxsdBDn1uvDNX9Z5rxqHK4FNIggT2azEx6j3TeV77Gdrsuv4jzOytz5vL8aRaVDR
-	 u0Gw47zSO7/SleQwSJLWgzC3pcKLHBCTu6dLMhiTwDAlYfCiF0ZLT0SGg/beJf1CsF
-	 DjvH86un1lsJTkBdbd/WAH+VDb/7T/xrXA5SVU+A=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4698mwts024085
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 9 Jul 2024 03:48:58 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 9
- Jul 2024 03:48:58 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 9 Jul 2024 03:48:58 -0500
-Received: from localhost (uda0497581.dhcp.ti.com [10.24.68.185])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4698mvpw110540;
-	Tue, 9 Jul 2024 03:48:58 -0500
-Date: Tue, 9 Jul 2024 14:18:57 +0530
-From: Manorit Chawdhry <m-chawdhry@ti.com>
-To: Vignesh Raghavendra <vigneshr@ti.com>
-CC: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Neha Malcom
- Francis <n-francis@ti.com>,
-        Aniket Limaye <a-limaye@ti.com>, Udit Kumar
-	<u-kumar1@ti.com>,
-        Beleswar Padhi <b-padhi@ti.com>
-Subject: Re: [PATCH v2 1/5] arm64: dts: ti: k3-j721s2*: Add bootph-*
- properties
-Message-ID: <20240709084857.nf7c57mi6miajeau@uda0497581>
-References: <20240705-b4-upstream-bootph-all-v2-0-9007681ed7d8@ti.com>
- <20240705-b4-upstream-bootph-all-v2-1-9007681ed7d8@ti.com>
- <da36d283-73f0-4110-a9fa-3964eae19689@ti.com>
+	s=arc-20240116; t=1720514976; c=relaxed/simple;
+	bh=Xi9Hc2ZM06NZV5MTdSkdFEk4jOGTqy4WkDBxSBpOuuo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UHk+x8CcuwQ+ZaPEk1mWi1aBvzR6nGEHdK7klVa5QfoxNCE7OgCuy0piXPl5zMiPiSgC0Putb7Jo5PGZl7LO96jyCdfEESTHP3eHp0T1/YO+IzNEKy/loOvA+SjxGq451KlDASrJ5uRtjwxThZMpFMFc++/wR8sh/6e3Qfepdw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ePh4RaZr; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-424ad289949so35256655e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 01:49:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1720514972; x=1721119772; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rK+GPVFZfJfDL1XCtaGpu7biKbYG6i3bP6BpmGcN1wY=;
+        b=ePh4RaZr6nnzeJBYN28HOm6mQlntRbkSuNUtIyS1g28tWi5skReXb5NswykY+RkC44
+         80WdJ0xCR+JyvjQH3LqV/nM54wpjwthkkoxlDepW/ZRMjfW5BeLlnRS29P1R/0Jx75/q
+         zx2SaIrihf/AN5EoTlL2yQxIzr/L/rcI8XvUVW8Ka2StnUZHF5I6CbTNdvy7fz8bPm0S
+         9PnQtuVk9XwF+2xl6dHntOqscbWEMgBqmD6+y+OfOucF/fBuam8qSZDEUhB8tqK70DXy
+         OdCAF1CEEyOX6CEuqoDF18PDq/RBBKTDpjok5+mGczdfqMpSDgfEICkvfrP80Pi/R5P3
+         zKEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720514972; x=1721119772;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rK+GPVFZfJfDL1XCtaGpu7biKbYG6i3bP6BpmGcN1wY=;
+        b=d3/svd6qz+J/jTk2AqMES2oedMPUPERc9Y5a02ympXWY2bgVfZVkXmrMNtkq6X2Jlq
+         1O18fa99yXkE9F3OyJpvXX1GMxgOC33kmYvt5MJSkN7y0a/lo+ZPF0UgHQLp/gM88Zf2
+         otkbPF2dmQO6IOMF/eSQ+DSijDFoA6gCWONYF3F6GZnXC4IOHuHLDa+f+fOj5qc5QqSy
+         eU6koHD1KFoXWBPUiWKB0wU1z1wq+ytWxHLALNgpVW6vOlIOP1HYPhneZQta10AIGH4v
+         ELnBHJoR6/RbqFuI20ou7tRKXxPNoKL2OJIJ7woGKgKQ7sPqeTvmDPWMhsk4W8YGOMAH
+         PrwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUr15gBjrBJRZZRCEujbWtBz4qOEZGnKvnfKwIgw490U5R/S1xUiVDrLiL1kuZbJgEPoRW4iwlXYWA41vyYmapLzec232OJVhz7qBN4
+X-Gm-Message-State: AOJu0YyP5qhSNhlp3jByxKP0UaZpuAtwZGonNxTrrt/LsFFh2RqXuBrl
+	lZx16tSl6rwVuqcQrLrCq/LrIbQ3ZR51uBTMv4ihfi8kU8GxGPjnrpGIhdMZPfk=
+X-Google-Smtp-Source: AGHT+IHZ7JsFeV2nR3nbcaQXDp3ha/ov+IGFOmMQthxprRK4ZQMIr9h8W5f6KLzyTlsRYSSC3k9D/A==
+X-Received: by 2002:a05:600c:49a8:b0:426:5dd0:a1fb with SMTP id 5b1f17b1804b1-426705ce9a3mr9784335e9.7.1720514972383;
+        Tue, 09 Jul 2024 01:49:32 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:757f:b03:3953:ffd3:86ef? ([2a10:bac0:b000:757f:b03:3953:ffd3:86ef])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f736304sm30415385e9.34.2024.07.09.01.49.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 01:49:32 -0700 (PDT)
+Message-ID: <4bf68f34-8a68-458f-9db2-c05b1b6bb711@suse.com>
+Date: Tue, 9 Jul 2024 11:49:29 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <da36d283-73f0-4110-a9fa-3964eae19689@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] math.h: Add macros for rounding to closest value
+To: Devarsh Thakkar <devarsht@ti.com>, mchehab@kernel.org,
+ hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, sebastian.fricke@collabora.com,
+ andriy.shevchenko@linux.intel.com, jani.nikula@intel.com,
+ jirislaby@kernel.org, corbet@lwn.net, broonie@kernel.org,
+ rdunlap@infradead.org, linux-doc@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com, praneeth@ti.com, nm@ti.com,
+ vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com, b-brnich@ti.com,
+ detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com,
+ andi.shyti@linux.intel.com, nicolas@ndufresne.ca, davidgow@google.com,
+ dlatypov@google.com
+References: <20240708155943.2314427-1-devarsht@ti.com>
+ <20240708155943.2314427-2-devarsht@ti.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <20240708155943.2314427-2-devarsht@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Vignesh,
 
-On 13:02-20240709, Vignesh Raghavendra wrote:
-> 
-> 
-> On 05/07/24 11:56, Manorit Chawdhry wrote:
-> > diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi
-> > index 8feb42c89e47..497e0dfa8011 100644
-> > --- a/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi
-> > +++ b/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi
-> > @@ -17,20 +17,24 @@ sms: system-controller@44083000 {
-> >  
-> >  		reg-names = "debug_messages";
-> >  		reg = <0x00 0x44083000 0x00 0x1000>;
-> > +		bootph-all;
-> 
-> Since [0] in U-Boot, bootph-* is automatically propagated to supernodes.
-> Please fix throughout the series
 
-In v1, Aniket posted a review comment and that corresponded to all the
-devices hence added that [0]. As you mentioned offline, this node might
-be getting called in U-boot proper prior to re-location and somehow the
-property is not getting passed on at that stage. Might need some furthur
-debugging as to why it's failing. Will see what can be done about it.
-Thanks.
+On 8.07.24 г. 18:59 ч., Devarsh Thakkar wrote:
+> Add below rounding related macros:
+> 
+> round_closest_up(x, y) : Rounds x to closest multiple of y where y is a
+> power of 2, with a preference to round up in case two nearest values are
+> possible.
+> 
+> round_closest_down(x, y) : Rounds x to closest multiple of y where y is a
+> power of 2, with a preference to round down in case two nearest values are
+> possible.
+> 
+> roundclosest(x, y) : Rounds x to closest multiple of y, this macro should
+> generally be used only when y is not multiple of 2 as otherwise
+> round_closest* macros should be used which are much faster.
+> 
+> Examples:
+>   * round_closest_up(17, 4) = 16
+>   * round_closest_up(15, 4) = 16
+>   * round_closest_up(14, 4) = 16
+>   * round_closest_down(17, 4) = 16
+>   * round_closest_down(15, 4) = 16
+>   * round_closest_down(14, 4) = 12
+>   * roundclosest(21, 5) = 20
+>   * roundclosest(19, 5) = 20
+>   * roundclosest(17, 5) = 15
+> 
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> NOTE: This patch is inspired from the Mentor Graphics IPU driver [1]
+> which uses similar macro locally and which is updated in further patch
+> in the series to use this generic macro instead along with other drivers
+> having similar requirements.
+> 
+> Link: https://elixir.bootlin.com/linux/v6.8.9/source/drivers/gpu/ipu-v3/ipu-image-convert.c#L480 [1]
+> ---
+>   include/linux/math.h | 63 ++++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 63 insertions(+)
+> 
+> diff --git a/include/linux/math.h b/include/linux/math.h
+> index dd4152711de7..79e3dfda77fc 100644
+> --- a/include/linux/math.h
+> +++ b/include/linux/math.h
+> @@ -34,6 +34,52 @@
+>    */
+>   #define round_down(x, y) ((x) & ~__round_mask(x, y))
+>   
+> +/**
+> + * round_closest_up - round closest to be multiple of specified value (which is
+> + *                    power of 2) with preference to rounding up
+> + * @x: the value to round
+> + * @y: multiple to round closest to (must be a power of 2)
+> + *
+> + * Rounds @x to closest multiple of @y (which must be a power of 2).
+> + * The value can be either rounded up or rounded down depending upon rounded
+> + * value's closeness to the specified value. If there are two closest possible
+> + * values, i.e. the difference between the specified value and it's rounded up
+> + * and rounded down values is same then preference is given to rounded up
+> + * value.
+> + *
+> + * To perform arbitrary rounding to closest value (not multiple of 2), use
+> + * roundclosest().
+> + *
+> + * Examples:
+> + * * round_closest_up(17, 4) = 16
+> + * * round_closest_up(15, 4) = 16
+> + * * round_closest_up(14, 4) = 16
+> + */
+> +#define round_closest_up(x, y) round_down((x) + (y) / 2, (y))
+> +
+> +/**
+> + * round_closest_down - round closest to be multiple of specified value (which
+> + *			is power of 2) with preference to rounding down
+> + * @x: the value to round
+> + * @y: multiple to round closest to (must be a power of 2)
+> + *
+> + * Rounds @x to closest multiple of @y (which must be a power of 2).
+> + * The value can be either rounded up or rounded down depending upon rounded
+> + * value's closeness to the specified value. If there are two closest possible
+> + * values, i.e. the difference between the specified value and it's rounded up
+> + * and rounded down values is same then preference is given to rounded up
+> + * value.
+> + *
+> + * To perform arbitrary rounding to closest value (not multiple of 2), use
+> + * roundclosest().
+> + *
+> + * Examples:
+> + * * round_closest_down(17, 4) = 16
+> + * * round_closest_down(15, 4) = 16
+> + * * round_closest_down(14, 4) = 12
+> + */
+> +#define round_closest_down(x, y) round_up((x) - (y) / 2, (y))
 
-[0]: https://lore.kernel.org/all/3e478ecc-33b8-4aa6-b984-67877864e900@ti.com/
+This is already identical to the existing round_down, no ?
 
-Regards,
-Manorit
-
-> 
-> >  
-> >  		k3_pds: power-controller {
-> >  			compatible = "ti,sci-pm-domain";
-> >  			#power-domain-cells = <2>;
-> > +			bootph-all;
-> >  		};
-> >  
-> >  		k3_clks: clock-controller {
-> >  			compatible = "ti,k2g-sci-clk";
-> >  			#clock-cells = <2>;
-> > +			bootph-all;
-> >  		};
-> >  
-> >  		k3_reset: reset-controller {
-> >  			compatible = "ti,sci-reset";
-> >  			#reset-cells = <2>;
-> > +			bootph-all;
-> >  		};
-> >  	};
-> 
-> 
-> [0]
-> 
-> -- 
-> Regards
-> Vignesh
+<snip>
 
