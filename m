@@ -1,115 +1,155 @@
-Return-Path: <linux-kernel+bounces-245362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61B5492B1AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:58:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D3AB92B1AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148DD281BB7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:58:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ADEE1C2202F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C46214B97B;
-	Tue,  9 Jul 2024 07:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZwZp9Dtf"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1B012C478;
-	Tue,  9 Jul 2024 07:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6183E14D452;
+	Tue,  9 Jul 2024 07:59:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5E312C478
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 07:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720511890; cv=none; b=ACU6jxwsQcFyfDekhRUfcy9F2HNWUltj4aXFu180PS1AL5z1lvyaEABRBrUzXVxMzLbGPdQ+dpDgnRvYs7zqW4DscSpGBd2HGaE8AGKUEUig2rXOV+JHZxFn+i4/Ytpplwbf9NZ0A8sqCgJDP6CpWbndw1akDwjHyl5lB0CEI6M=
+	t=1720511954; cv=none; b=KwhHHAeDG8+xn1ZOsP7uc9iYa/3FwE2XiqW7kCvr5zsTHOkPuPQM1SSzEV97NdzpS6U+O4CvfR+nAQCMKcgahtjd0xz/lCPBkmvEQnJ7+OWn/TKzUcGwswmv8R2Wp7LBC3OFerg8UWwJ4j49c46+TzFvUl74gSs0z3g2C2jcJis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720511890; c=relaxed/simple;
-	bh=9cW7sQX4Ee2PIL31X06vcKNfrh94ngJ4D74dp0beZSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SDDIuqcS2CfzHYm6Q7YWyPp5Wt/XOoVcyuGmBmOZMx6oBeFFQA7omz/6unnlF/twEnBhvBezjrQkzL59hXr/uLBb6EUrIGGu5o1MphII99FYAFLFf9SGslw/3rBysAWTUA1/PMep0p5bt9T12h83b6seDQqJcIrTCUJhvde9I54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ZwZp9Dtf; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720511884;
-	bh=WNy7ZuwZ2sUtmBRVrCqSKYtGy4m2BKgcdSiwYEATmpE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ZwZp9DtfHrHG29O0PwjIcoEnd0Q9tzL3pesAvWucV/O1HoFhrjigTSz9Lnp+dOAa0
-	 uHWZ8WHTMPxHcWtvj/5pAXHlOLctgg/I/P7xOREpjDSs1QH+O5jjCjokkrn4n2WnlF
-	 JGTObmwjiSQZBDZEf17/14TuDVZYvvkSVQe+wJkxB6FmUQ/HZwfgZNMcK20hAE81bP
-	 x0bDdyd/HV3kBKczYRjE99I4absy64RwZkVepEEm61GNHsGOZrP3DFL8l3yB/mDJRV
-	 gXO8q9ufq77q7067vw2yHjr+9cEtw2Tbq5AvqGMRnkgxex5nf1ADUlekGx1QpYCqAn
-	 572c8xx+OqrnA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJCyz4Y2Rz4w2K;
-	Tue,  9 Jul 2024 17:58:03 +1000 (AEST)
-Date: Tue, 9 Jul 2024 17:58:03 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kees Cook <kees@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, liujinlong <liujinlong@kylinos.cn>,
- liujinlong <mingliu6104@gmail.com>
-Subject: linux-next: manual merge of the kspp tree with Linus' tree
-Message-ID: <20240709175803.36f8bca6@canb.auug.org.au>
+	s=arc-20240116; t=1720511954; c=relaxed/simple;
+	bh=9irwQkh4vi1dlS+LpZhpZNNvCieh2dq9UKqtgxTEwLk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bTFLIMjyAKxQ5mhUvooM1jNivsX066WivP2CX0C+jo19NeW6y0/ARUql2NLcrEA/PIIJ+KSb8AQvCSndabcqSgJThteEaE5ek4sOknJV6ugQJNXTYJPFvUgincoo6H6P/VNOd7HUqm1XLhJIM1cAyp+15RSe9whG1UGtnTE99pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 747461042;
+	Tue,  9 Jul 2024 00:59:37 -0700 (PDT)
+Received: from [10.57.76.194] (unknown [10.57.76.194])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 278B13F762;
+	Tue,  9 Jul 2024 00:59:09 -0700 (PDT)
+Message-ID: <f72d1dce-fd9b-46c4-a473-a3834affc0a1@arm.com>
+Date: Tue, 9 Jul 2024 08:59:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/qcOr_DR=iMkXoT2OuDs2tZ3";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mm: shmem: Rename mTHP shmem counters
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
+ <hughd@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang
+ <ioworker0@gmail.com>, Matthew Wilcox <willy@infradead.org>,
+ Zi Yan <ziy@nvidia.com>, Daniel Gomez <da.gomez@samsung.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240708112445.2690631-1-ryan.roberts@arm.com>
+ <CAGsJ_4zH72FyLq5gJm215oiWrtd6uf40L_F1UO6cFZ4sy7qt0A@mail.gmail.com>
+ <744749c3-4506-40d9-ac48-0dbc59689f92@arm.com>
+ <10b201b1-53d3-4f62-be8e-996aa95d2b99@redhat.com>
+ <0240add9-4c56-4f66-b761-494cc2cf8fb5@arm.com>
+ <dcef4f35-565b-4b10-b3b1-ee1406fb5a88@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <dcef4f35-565b-4b10-b3b1-ee1406fb5a88@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---Sig_/qcOr_DR=iMkXoT2OuDs2tZ3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 09/07/2024 08:54, David Hildenbrand wrote:
+> On 09.07.24 09:47, Ryan Roberts wrote:
+>> On 08/07/2024 21:50, David Hildenbrand wrote:
+>>> On 08.07.24 14:29, Ryan Roberts wrote:
+>>>> On 08/07/2024 12:36, Barry Song wrote:
+>>>>> On Mon, Jul 8, 2024 at 11:24 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>>>>>
+>>>>>> The legacy PMD-sized THP counters at /proc/vmstat include
+>>>>>> thp_file_alloc, thp_file_fallback and thp_file_fallback_charge, which
+>>>>>> rather confusingly refer to shmem THP and do not include any other types
+>>>>>> of file pages. This is inconsistent since in most other places in the
+>>>>>> kernel, THP counters are explicitly separated for anon, shmem and file
+>>>>>> flavours. However, we are stuck with it since it constitutes a user ABI.
+>>>>>>
+>>>>>> Recently, commit 66f44583f9b6 ("mm: shmem: add mTHP counters for
+>>>>>> anonymous shmem") added equivalent mTHP stats for shmem, keeping the
+>>>>>> same "file_" prefix in the names. But in future, we may want to add
+>>>>>> extra stats to cover actual file pages, at which point, it would all
+>>>>>> become very confusing.
+>>>>>>
+>>>>>> So let's take the opportunity to rename these new counters "shmem_"
+>>>>>> before the change makes it upstream and the ABI becomes immutable.
+>>>>>
+>>>>> Personally, I think this approach is much clearer. However, I recall
+>>>>> we discussed this
+>>>>> before [1], and it seems that inconsistency is a concern?
+>>>>
+>>>> Embarrassingly, I don't recall that converstation at all :-| but at least
+>>>> what I
+>>>> said then is consistent with what I've done in this patch.
+>>>>
+>>>> I think David's conclusion from that thread was to call them FILE_, and add
+>>>> both
+>>>> shmem and pagecache counts to those counters, meaning we can keep the same name
+>>>> as legacy THP counters. But those legacy THP counters only count shmem, and I
+>>>> don't think we would get away with adding pagecache counts to those at this
+>>>> point? (argument: they have been around for long time and there is a risk that
+>>>> user space relies on them and if they were to dramatically increase due to
+>>>> pagecache addition now that could break things). In that case, there is still
+>>>> inconsistency, but its worse; the names are consistent but the semantics are
+>>>> inconsistent.
+>>>>
+>>>> So my vote is to change to SHMEM_ as per this patch :)
+>>>
+>>> I also forgot most of the discussion, but these 3 legacy counters are really
+>>> only (currently) incremented for shmem. I think my idea was to keep everything
+>>> as FILE_ for now, maybe at some point make the pagecache also use them, and then
+>>> maybe have separate FILE_ + SHMEM_.
+>>>
+>>> But yeah, likely it's best to only have "shmem" here for now, because who knows
+>>> what we can actually change about the legacy counters. But it's always though
+>>> messing with legacy stuff that is clearly suboptimal ...
+>>
+>> Sorry David, I've read your response a bunch of times and am still not
+>> completely sure what you are advocating for.
+>>
+>> To make my proposal crystal clear, I think we should leave the legacy counters
+>> alone - neither change their name nor what they count (which is _only_ shmem). I
+>> think we should rename the new mTHP counters to "shmem" and have them continue
+>> to only count shmem. Then additionally, I think we should introduce new "file"
+>> mTHP counters that count the page cache allocations (that's a future set of
+>> patches, which I'm working on together with user controls to determine which
+>> mTHP sizes can be used by page cache).
+>>
+>> As suggested by Barry, I propose to also improve the documentation for the
+>> legacy counters to make it clear that dispite their name being "file" they are
+>> actually counting "shmem". I'll do this for v2.
+> 
+> Yes, and please. Likely we should document for the legacy ones (if not already
+> done) that they only track PMD-sized THPs.
 
-Hi all,
+The PMD-ness is already documented for the legacy counters IIRC, but I'll double
+check.
 
-Today's linux-next merge of the kspp tree got a conflict in:
+> 
+>>
+>> David, would you support this approach? If so, I'd like to push this forwards
+>> asap so that it gets into v6.11 to avoid ever exposing the mthp counters with
+>> the "file" name.
+> 
+> Yes, sorry for not being clear.
 
-  kernel/kallsyms.c
+No worries, it sounds like at least Lance understood exectly what you were
+saying, so likely I'm just being obtuse.
 
-between commit:
+Anyway, I'll respin with the docs improvements and get v2 out shortly.
 
-  7e1f4eb9a60d ("kallsyms: rework symbol lookup return codes")
+Thanks,
+Ryan
 
-from Linus' tree and commit:
 
-  21b4564fedad ("sprint_symbol: Replace strcpy with memmove to handle poten=
-tial overlap")
-
-from the kspp tree.
-
-I fixed it up (the former removed the code modified by the latter, so I
-did that) and can carry the fix as necessary. This is now fixed as far as
-linux-next is concerned, but any non trivial conflicts should be mentioned
-to your upstream maintainer when your tree is submitted for merging.
-You may also want to consider cooperating with the maintainer of the
-conflicting tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/qcOr_DR=iMkXoT2OuDs2tZ3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaM7YsACgkQAVBC80lX
-0GwIvAf/eSokduLCFkiUm0VI3VjxQ5l6EOv5sWiuWd6e+ogG7Bx+H5IR4eW/ILuL
-lC6jIREbFxZvTSpX26NWoT9wz3XwWp5e0os4aWaHAfJIVFFtn3WV3qhyi1SldVtD
-WTDckClVNPaXO4mp8qqQb1r3JncXgKD7DdOWzhcOWJ8Y1FKJ3ejoqDPZalP1KEg6
-Qv8UryngT/Rgz3U+qvO6mUTmhbK4L0SXBR86pfXxJmX2GHP6uDMPBL2+uJS0jeZE
-pP798gknfYXGAT6vC5oGBuHrvIwpE1mStrPcEFAOhkUs19VZNZ3k7WlCgfeStyIs
-CISiihqs4gGmzdbxGo0Umvf3Rpk5rQ==
-=tKSh
------END PGP SIGNATURE-----
-
---Sig_/qcOr_DR=iMkXoT2OuDs2tZ3--
 
