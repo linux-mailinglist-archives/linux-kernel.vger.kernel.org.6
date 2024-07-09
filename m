@@ -1,111 +1,127 @@
-Return-Path: <linux-kernel+bounces-245354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3D392B19B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:52:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A1F192B19E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 066DA1C21D3E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:52:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E50628181A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E9F14F9E7;
-	Tue,  9 Jul 2024 07:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4AE14F108;
+	Tue,  9 Jul 2024 07:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OTsCVGJj"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dZ91Cye0"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676B814C582;
-	Tue,  9 Jul 2024 07:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38CE149C65;
+	Tue,  9 Jul 2024 07:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720511552; cv=none; b=GgQNBZH4raq1xCe4N8BWTvXL4BZhkckTbUOicgC557Lub6TRRIspk6v6KdrKKRgq1uNuHg0NqLCaJWVJ79p70p0MbeHtWeAtwhgSGN5mH7tQwROo7m+UHLtMzHAysHlh13GEaMaBXXBIQDT2hCPYrLa6XR0Pgv9zT3jg4T4+bTs=
+	t=1720511587; cv=none; b=AD6PcEF+4uD/45ijg/pJMCmBo6xYzUUG+qhVbeHy4Rfts2bjCnoAkrSXHbgZA7yHqerzOs8Q5IVi5aW3qysxtNGDLfNf5WIS5g9L0vQjZHMWmRRVzv/ANOnoqRuD0Gpg9BFasx0yE2uTiWk8iABDjmKToxgzuhy33JqtnRY9/e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720511552; c=relaxed/simple;
-	bh=4huwY83Cip/KiWjo4Fuer9HzRe1argLs9dYsNwYiwCk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SZ51QqCn7jtzKfcUTLgoDDmQtzM/sX+DtU751bd2GC4GBGvKLoeAbRMQO5EeStlO/HyJraj/FZrbyHWRZCxsrMjqcA88uAnVMT8OBF1EBTrLmsWrvVInHg2sKSZiZ+He1cyie2FoH738PhoWi+3bSDl1Ei/X1ylfJcdQyNMklHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OTsCVGJj; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fb3cf78fa6so26694475ad.1;
-        Tue, 09 Jul 2024 00:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720511551; x=1721116351; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4huwY83Cip/KiWjo4Fuer9HzRe1argLs9dYsNwYiwCk=;
-        b=OTsCVGJj8R7nQBFuypASYjXya3L+KwpY1Z5LowwHXA4LyMgekLrudzZheYulEgkjg7
-         b6la9qU0W78xkZpSonEMTtdW3Lo/dWhATnSNs+jPDX/ewRNt7vBd7ivvBYRs6FZQyQUw
-         Cpxb+FxXPCB2MnZCYnzr+d4A9jip3N/GatSX/aZ/N1VoJ+kEYj20dusFLXZAwIV7iF/h
-         vh9H4snDNo27XeHbq8i0fClPAKpzLZ+Yfc/qtMdOxwfJNktM7XXbbUYYNydCjOSaogYc
-         zHhC81W3KAEGDp0tp/Te8ITsysL0pDoPUIZDpGnmY904k8RCUARMKg93ktWgnwhCXNsq
-         orlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720511551; x=1721116351;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4huwY83Cip/KiWjo4Fuer9HzRe1argLs9dYsNwYiwCk=;
-        b=wQ/NNlSl5+IVLSWCwPjpVyEnK900HFANe6Eu7VuV2vnvuuraFxSM2VQYjIQKgiIY7z
-         AeYpNNuWmMrYUWPB6sgb3l1uCDB7s74Acil+S1ovIP4O6ByN/rLsqEoHNpxRzu0f4HVg
-         Emz6bzX0r9gpzwiT+8Z9X5hUuhV/KKK3mmhPlKKlTm/UnyYLFjx6m5oRazWvzFpDJYhW
-         +SGjY5OFl98r1LjkOZRXSNB8m/2Z9aTarrp7qhbeJYOUl7i0FMwU+NS8oW8qQ2rTuVI5
-         Atmrdp4F2K/3FNEq7tbmsxKkSQWEGAq9dMlNtCJWoj5slmiUA9hB0XUjgGq3oWI6QNLe
-         3chQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWFdw3w/uQI8B9If/fA3JILg1lwVP2r3tyHE8wfnrhCDRjTi2HcLug33QdONny03KdX5Dei7/j6wVIyPYGloEEcC9MJuEZaY3qUDn09dEBNPPsIUgyJtS8re9YheI55wC+gn49eAg7AS0Nen1+zyPxKGFBhpFeoCWOYxgs8VEqCZsx8JneYRIGzzo=
-X-Gm-Message-State: AOJu0YwN2zOJcRe6ZRdCwxSpsPcBUocxpPAl40pKoPSJYvu+fJB0gXpR
-	QE8U94FeR/4KMIuPc2fsaGPIA38p9QALOlnyIfFAiNixhkVvU7bjt+WWsUnTjUv/lBhrip9hYYo
-	qceN2oPBEhfhY+E9uzboiZdjWtNM=
-X-Google-Smtp-Source: AGHT+IEsiTEi2w47DuEz12pAyq/B0P5SMlLRpynlMjhW49xEuBs4PU0+67uU2G5y8PKx5VM+2zmkAZyJH+aqcKZ2NZA=
-X-Received: by 2002:a17:90b:5384:b0:2c9:6ccc:2fbb with SMTP id
- 98e67ed59e1d1-2ca35c6cad8mr1496604a91.24.1720511550658; Tue, 09 Jul 2024
- 00:52:30 -0700 (PDT)
+	s=arc-20240116; t=1720511587; c=relaxed/simple;
+	bh=hegsRFX7NQKjVGjCdz4KVwALImyN3hLPZGU3RhlrtAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=mLqQbOsKi5+qbtCq0lkof3AMY22ewSCREnCZ/+N2KK8iqN9S0OwtW/Gqn1GgYl4+1U9QA1368c53RN5r8BrsR+fKUlrprlz59mbRyjfOGYQ2W1mcOd7k6awLuIi3pqVHif+Dkz5JC0KzVLesFEbLCEI+tmJ3/XvnL4Oy3VaWRN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=dZ91Cye0; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720511577;
+	bh=C7lWI/s0awXmqQP7OIm2jZjarG4yH/o8pzRFe6Y/kp8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=dZ91Cye0aBF05LoxkaxNtoH8ddRpq7kROvi0KTIuFcepbXgvWr91xeEUXXZ1iOOyx
+	 E+FycZ4NCAaTqIe+iPxekeT8Ptr818NTW7mDQkCbQk+gm9UYjC95IlhceeROfhDGJg
+	 xi2VyNbd6d06eYQpqDCPnEMCrVvvXJ6xBtI5VtDeSlz62FJe1QJy6hwi8A27F+JCFr
+	 J4dSYCvmSFiag28McgfmTYnOjnYRrwHNdy5m8DPn9PcJpw7/cEsWypAfUpijV8uiIY
+	 CBZuZTy5kbwN3K8evZdDirqgq0yg9BIP4GB37Y/DrcPsVfJIXs7HsClHuBrhigKkIK
+	 GZ2ezLjqmnFxg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJCs45cLfz4xPc;
+	Tue,  9 Jul 2024 17:52:56 +1000 (AEST)
+Date: Tue, 9 Jul 2024 17:52:55 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miguel Ojeda <ojeda@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc: Alice Ryhl <aliceryhl@google.com>, Andreas Hindborg
+ <a.hindborg@samsung.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the rust tree with the block tree
+Message-ID: <20240709175255.71439654@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528163502.411600-1-ojeda@kernel.org>
-In-Reply-To: <20240528163502.411600-1-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 9 Jul 2024 09:52:18 +0200
-Message-ID: <CANiq72=FUyYgv0Ng__A4GYh=dxpDD7FF=Fr9_pdo_HRithuAFg@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: rust: remove now-unneeded `rusttest` custom
- sysroot handling
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, linux-kbuild@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/SQaM2+PQVQpHyl/GZVumm26";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/SQaM2+PQVQpHyl/GZVumm26
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 28, 2024 at 6:35=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> Since we dropped our custom `alloc` in commit 9d0441bab775 ("rust: alloc:
-> remove our fork of the `alloc` crate"), there is no need anymore to keep
-> the custom sysroot hack.
->
-> Thus delete it, which makes the target way simpler and faster too.
->
-> This also means we are not using Cargo for anything at the moment,
-> and that no download is required anymore, so update the main `Makefile`
-> and the documentation accordingly.
->
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+Hi all,
 
-Applied to `rust-next`.
+Today's linux-next merge of the rust tree got a conflict in:
 
+  rust/bindings/bindings_helper.h
+
+between commit:
+
+  5b026e341207 ("rust: block: fix generated bindings after refactoring of f=
+eatures")
+
+from the block tree and commit:
+
+  ab44079e2869 ("rust: alloc: add __GFP_HIGHMEM flag")
+
+from the rust tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
 Cheers,
-Miguel
+Stephen Rothwell
+
+diff --cc rust/bindings/bindings_helper.h
+index 53c996e4bedf,f2bafb10f181..000000000000
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@@ -30,4 -26,4 +30,5 @@@ const gfp_t RUST_CONST_HELPER_GFP_KERNE
+  const gfp_t RUST_CONST_HELPER_GFP_KERNEL_ACCOUNT =3D GFP_KERNEL_ACCOUNT;
+  const gfp_t RUST_CONST_HELPER_GFP_NOWAIT =3D GFP_NOWAIT;
+  const gfp_t RUST_CONST_HELPER___GFP_ZERO =3D __GFP_ZERO;
++ const gfp_t RUST_CONST_HELPER___GFP_HIGHMEM =3D ___GFP_HIGHMEM;
+ +const blk_features_t RUST_CONST_HELPER_BLK_FEAT_ROTATIONAL =3D BLK_FEAT_R=
+OTATIONAL;
+
+--Sig_/SQaM2+PQVQpHyl/GZVumm26
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaM7FcACgkQAVBC80lX
+0GxcWwf/TXx1Qn6sERh8dtnIHcUrY59B3lh6/VsRoba/j4nWIjjF4BJQbyIIWkfz
+RyC5pj382gQrw3elMEZcWZHCUsFWlJ0CtWXFrQPJm9Yg5S6LFDvW37K6DulV6O0H
+mf5KRUP+W9zQB04wzb5/Ku7Qv5RqmcLFYPt8npQiZl2q3ofkRBvs6JG1tyoX+YoA
+xq+JbM8BjmMUmHcQg/dNJIR3SgktYLKA6+4qDXwjOnrTXwLT585PBY2p5MpgVbsv
+xuQPwaVujxBSeKnB60h2K1sAE71zt62mLqxK+NN9d+fgf6E1HmeFbUA7QxFqKP0i
+qPMBhP/ngTGfcm55HID06VuRPU17DA==
+=H4xZ
+-----END PGP SIGNATURE-----
+
+--Sig_/SQaM2+PQVQpHyl/GZVumm26--
 
