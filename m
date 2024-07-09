@@ -1,256 +1,252 @@
-Return-Path: <linux-kernel+bounces-246519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 118D992C307
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:02:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E92E892C30A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:03:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CE79B24BD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:02:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17B991C229D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BC917B057;
-	Tue,  9 Jul 2024 18:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F70180046;
+	Tue,  9 Jul 2024 18:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Ykx7cDM2";
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="MTkOno1d"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="BQPV2tZE"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DBE1B86FE;
-	Tue,  9 Jul 2024 18:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.153.233
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720548156; cv=fail; b=f8mxUj9/V4wKeCLzFm0AEeUyb0C2/N9dqQg+2uGwFoNQQrr6sAPeNGrENzKneEaSsEMqN9KYwG+qTn9UCQTMb/gvdAtmh5ZU9jv/IR5FPF2PUYQlbJ3DrF+OhbhtJ9JZ77/SjjDsxUqAPhu1b5Ex8lM4N5G58WXnhLTXVdQiJtg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720548156; c=relaxed/simple;
-	bh=b6Ti2II4k6x/Yq7u81QSedV5Rlj9UTjZ0gtjB1JBJn4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=I79a/yhyA2At3UddLaoVpaR7wls8+8McNgBj2SFAtbpIk1O8GEvJgLsZubJjsEXislM5lxtE5wZ6nePQePeDNzSiErm22gU6t5dCY1TUI9qnIR2mnOyZknjiPd1MvJtrFVpuGVMwoeYnXDwQmaxw7cDQGQm+V9dCS6EPhA9R3Zc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Ykx7cDM2; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=MTkOno1d; arc=fail smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1720548153; x=1752084153;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=b6Ti2II4k6x/Yq7u81QSedV5Rlj9UTjZ0gtjB1JBJn4=;
-  b=Ykx7cDM2y22xAZ11+eiXOY+sF8ZEuHY7By2YTbVHbyJaOGoYuQ+X5JLb
-   nsNxoR/IftVeRNRo30zn9B5FHmDRAZK5zXJ6JrA0k8ZUnSNd5MBL3t5iA
-   pz/rrWd8NhxANZMy8lTRE0faT/GP98K9+W5v8bPRCAYCy9PpeB5aBTqxf
-   MSqHna7KmiC6oRJLNzBVyUhsBsAy6k2H+1wEXDZtqkMg74rCP968OlHeo
-   9QcZ1Vim3grAVXLng5S7DMPwco33f4CMh3m2dadc/s4S3ZLF2QMieYeq9
-   DTQNpRlzdZXH2YY4NC7vTI3EUxib47J3TLeJ5r58DP79l0/oQK2qxrrAB
-   w==;
-X-CSE-ConnectionGUID: UguOIc8ISwWnCuWcJTR0zw==
-X-CSE-MsgGUID: L/PP5HijQQGqXK/nqca1Ng==
-X-IronPort-AV: E=Sophos;i="6.09,195,1716274800"; 
-   d="scan'208";a="31676834"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Jul 2024 11:02:32 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 9 Jul 2024 11:02:25 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (10.10.215.250)
- by email.microchip.com (10.10.87.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Tue, 9 Jul 2024 11:02:24 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aRqKTnOAtK7lr8uIl0fJN+XIG+Elk0G9DMnfXrY2VMcvyIb77z6mlRvUV97T7vI8VCYJhwVXMUprl3ridW/dbH6R2bakvJjN/bDnX0+UUkSdxx9rp/RtBQsnetT0AMLoLmAjgFXPc9HTFq0xBTZA81vB8FJXq0AuqG6TDd1dNdRMQ8p9Ic5tb/eosl1d4kjzV9VWcHjy/NEQj3hPciQ/vSXZ0SHVzoIqYKTSLzvqQK85QL0ArHqS8QzCROA3it21a/0oQeJN6JKV2df+vMZh4Oat93t78lGuOPPjJceDEEeUxwgbjpJh5e5JWbkxGvsckTkE73krldOAq/u0XUrr5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=b6Ti2II4k6x/Yq7u81QSedV5Rlj9UTjZ0gtjB1JBJn4=;
- b=bDRvGRCt7hOLZV5QC+zRkeX9sfgh6eWt/0YfyNR53Qzil4zkV7T2Q/IuYX+7sY59NEowA/e3E9JBV6uf87VSr4Q0U8PRbD4HwjMeDWWL0U7dAgYOGidy2BDyBL1ET2NZrjD9xkWdUqruKLovFoYgeRLMECGaorerHCb5VGS07bcxuPK7Iq3sTFKMLc8Auo377qHBYgWLtRmbQI1wQAPodx6tXtDGYAYV2Hee+c99HF9wWRt4dm/nvJ/Y4ezJ1Nh+ZuptSCCLTZy5sg8sRPifxfD+z5QVjFFWCXRIGF/z/eby8sMiLTPd4fz/9fVPKy8opSn8oRFpnYDIhyWw/8mnmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b6Ti2II4k6x/Yq7u81QSedV5Rlj9UTjZ0gtjB1JBJn4=;
- b=MTkOno1dIzeFqt8Al98naccLmc0q75bmV0LT0WQkhR19WcmVQXjTFmKQnk/qXAcI5XQHtTtpV6gTzGRe4RDG6nsnX8cMyNxK+OL4Viwbf+6fxf+f1uzkE7HiHjqL3DbHizyh6Py6xl3Y1LANNb3v4ud5rJe65CuIfnbkuFA/bmong5Zb10yuzkXu5EZ5Wpqh4N1bWxTSW7sQ+GQWc42pUSNw2NZ73YS+3gHnB86x8knCMjFXHdeMsg2/0qfQJC4QUNJnsKRfHMnO8qKY9F+TZ+S4ygpfkVSY0zTrEehtheLO/1LcuL9ui1QGmyPW3c1gcrtFw+TFX8xyGbB6mxJI0A==
-Received: from BL0PR11MB2913.namprd11.prod.outlook.com (2603:10b6:208:79::29)
- by PH0PR11MB5094.namprd11.prod.outlook.com (2603:10b6:510:3f::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Tue, 9 Jul
- 2024 18:02:21 +0000
-Received: from BL0PR11MB2913.namprd11.prod.outlook.com
- ([fe80::3bc1:80d8:bfa5:e742]) by BL0PR11MB2913.namprd11.prod.outlook.com
- ([fe80::3bc1:80d8:bfa5:e742%3]) with mapi id 15.20.7698.025; Tue, 9 Jul 2024
- 18:02:20 +0000
-From: <Woojung.Huh@microchip.com>
-To: <o.rempel@pengutronix.de>
-CC: <mkubecek@suse.cz>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <jiri@resnulli.us>,
-	<vladimir.oltean@nxp.com>, <andrew@lunn.ch>, <Arun.Ramadoss@microchip.com>,
-	<kernel@pengutronix.de>, <netdev@vger.kernel.org>,
-	<UNGLinuxDriver@microchip.com>, <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net v2 1/1] ethtool: netlink: do not return SQI value if
- link is down
-Thread-Topic: [PATCH net v2 1/1] ethtool: netlink: do not return SQI value if
- link is down
-Thread-Index: AQHaz2hPBJHkRhkuYUSe5weabIoP1LHtB1JQgADhPwCAAMsOAA==
-Date: Tue, 9 Jul 2024 18:02:20 +0000
-Message-ID: <BL0PR11MB29132C0293B487EBEAFF4532E7DB2@BL0PR11MB2913.namprd11.prod.outlook.com>
-References: <20240706054900.1288111-1-o.rempel@pengutronix.de>
- <BL0PR11MB29139867F521F90347B6904EE7DA2@BL0PR11MB2913.namprd11.prod.outlook.com>
- <ZozPSl6opHYYdO-A@pengutronix.de>
-In-Reply-To: <ZozPSl6opHYYdO-A@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL0PR11MB2913:EE_|PH0PR11MB5094:EE_
-x-ms-office365-filtering-correlation-id: 022b83a7-f826-42d3-c61a-08dca0414725
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?TTBERWZqZmtBMlRiS0xMa0I1dHZhclFaS3VEMllDRVl1WkpMWVlQMXZ1VGty?=
- =?utf-8?B?c3JpUzFEYnNZY2E1YzB3bGZ3TFdzMGQzRTVTM0Vqek02cFhGcU4rV0RqbzRm?=
- =?utf-8?B?bTNzLzNWbEp6R3hpb3VzYmw5b290bkZ3UWVpQnErd3owUEUxVUpjZXNnY0sy?=
- =?utf-8?B?d0FrVHY3cXN5WUJYVFNUZ1ZGSmFpSU5ESlIwUW5UckpzZzdFNGFBUW9rMk5J?=
- =?utf-8?B?SXdkWVovRGhhUDc1ZXZzVjJCQVlaMmFMVmJvNG1NK05DQm9XcXVqYUhHeXJt?=
- =?utf-8?B?VWo4VkFYOWk1TWtUanpwSlpPRStoVlZ3VFV3OHVETVFSaEVNMnhPTHdrcWt3?=
- =?utf-8?B?UXlDRk9TVHV6YU5pTkR5TDBxN29PdS9zQnRMeDV5UmJic3JESXBXWUM1L2tT?=
- =?utf-8?B?Y2xldGprYnVqdWk5Y2hJK1RRTTVFTjViK1dXSHNOUVBwdXFJWUZ3aUZ2dDVw?=
- =?utf-8?B?VFdrVjAyQVZQcTdTbzA2dFltNzR3OXluY2xZSyszM0g2TDBNZVZ6QXFUanpD?=
- =?utf-8?B?KzJrZmlrdTdZWUU0TVpGdTVBT2o2NXowM2RXQm54UnBRRjB0UmtPeHY2NHJI?=
- =?utf-8?B?WWYxU2sybmhkSlJoa25ZQzhnUFF6Zk5pQU56QjB6V1JPNnE0MFRiMm4wbVhi?=
- =?utf-8?B?VjE0OVE5N2p2Um80L1MyQTFGVnIxNUlucDhoOExsMTRWZmZIN1BuYVY2Z3B0?=
- =?utf-8?B?dlo0azBpODRxWXU4RjQzbTd0OVhwZi9HNDliU1hVbnZaZFkxRHV3NVJ0bTQw?=
- =?utf-8?B?TEEyRFE4b0psR3ZVSE13ZkFiNDJPRVNSQW5WMGxGUk5rVWxvSTVSVXBMTzZ5?=
- =?utf-8?B?Z0pBTXJxK2hacHdoRnU3WGkyZU1OMFRuVUpEZ255Z0FsZlV3Wnk5bHc3L2hx?=
- =?utf-8?B?aWk5U2RuVWtnODJoaWVMeUw4MFJleG9LTXRTWDR4SWlNbkNSdVU4bE5HbEM1?=
- =?utf-8?B?VFFoVEFvK3BwL0JPL0pSYVRvOXZnSlRRNFhrS2VYb211TDJpL3BYSTdWMTZ1?=
- =?utf-8?B?dUhzNGEzRzNXTUNXaW9jVzRkWksxRGtvNlowSWphdFd2YndISzNnNE50REFh?=
- =?utf-8?B?dGdKeXhlQldmeFR3NDk3Y1RGWWdya3hDWUcxV0dUdG92RTZXbXQraUNwNGVG?=
- =?utf-8?B?Rk1LeEgwNHUrNEdrNFd1N3E3ZG5KN2JyNjNocGhaaHc4R1F3dzUvYWo2UFlO?=
- =?utf-8?B?L255Qy90Q1JJcVRCZ2UxWnVSUk1pcUtwbnIwc2FMMzY3emZDWHl0S1FCRlVM?=
- =?utf-8?B?UGQ0dWNBNmRLVXpYQTJ1S2J6eTVVUlZ0eXVOSjZhY2swRGV1MnRtQ0VPbmtt?=
- =?utf-8?B?aHJaU3BreFlkaXJCNFFHbkZ3eWJDYU84UFBVeVRxcE9MTEVUeXdxVGhObytL?=
- =?utf-8?B?cDhlYUExNDFiTjlXSDZ0SStoWU5lZDJmVVFlR0d4RU9icnA2WGkvZUVCYk92?=
- =?utf-8?B?S2hKMDRIU3Y3RUNIS1J1dnR2cFJuT3lITFNQeEh4T2dBeDZWU0lYN3VET3VE?=
- =?utf-8?B?OXZQNHEvWTd2MzdhNWdFRG8vMWpDRURDOHJXUnlHWERrNjRwWi9PM0Evd05U?=
- =?utf-8?B?VDRIcFAyVlBTZFRpZW8rZHhVdkVDeURxcU9BQ3JtaXdlaEI3Z3o2MUZPUnFU?=
- =?utf-8?B?bmJ5NXV4aGhEc2t4L3hYZWxmU05oWCtjNUhXNHB3RWhzbXVHMFNPaG96d1ND?=
- =?utf-8?B?LzhteVFhUmRmM3pudkFqbmhnRnhLRXZ3cktGVDMrWHNRaHpMSnpmVklsaFh2?=
- =?utf-8?B?NElMRTF0NG9WeFlUQjVGTkJYVmVDZmxtWXViN2c4UnlNL21IWnBMeVJQaE5v?=
- =?utf-8?B?dm1uOW1qdFJkTHlKL25mMVRIbkFrVTNWWWtJa1A3VUI3N1JQWFhVNkI5bkVP?=
- =?utf-8?B?a1YrR29mMFhLTFFkN2k5RStuSXZMN2VBbVMvYWZMR1BQOVE9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR11MB2913.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?TmFWQXlYcWxkQVhBaWNvNys1MDYzcjhGdDQwaE1neUdIYTc2WDMxZU5yOGxh?=
- =?utf-8?B?b0NqNThrS1B5N3NSbm13Y3dJeWNnR2VUazV4bXJ6Um9oeThhVSsydkJtMU5I?=
- =?utf-8?B?NWJ5UjJhZzhSdVBBd2NjSUw5S0I0WU01a3h1SG54NnNldGxXNDlleXVCeDBW?=
- =?utf-8?B?ZVBnMzE5b0J2bjZDdGJpanRnaTVKanJWc3hNSUFScVBPYnFvZ3ZUSGhXejVB?=
- =?utf-8?B?dUZoQ28wRVZYaUtUNDgzTGRHNUhzQmhYVWdEd3I2SkxVbTBsZlh3aGZ2UVJ4?=
- =?utf-8?B?Mk5LeFNZdzBUL0hHd2tnd1Rpd0RvVHhpVjVhbWdjb202bm56ZWJRSnIzUEE5?=
- =?utf-8?B?TjRWOFpkNTZRT0g2allJQkpKemR1Nis0ajFDVE85MVRoVjB0UjYwTmppYTNF?=
- =?utf-8?B?a2hlREdjQnhYYXAxV0NmNHpDa01nczAxcXNDOWxCWDlGVndrTlBWMSt6MDFj?=
- =?utf-8?B?cE52alhKZDd6bXRvTVdrZWFiNGl4aGRGanVhU29OQS9EOGxaNjFiTXpkYSsr?=
- =?utf-8?B?TzJjWWlKVldBSTdoZFhGWnkycXZZZVJadmlRY0JmY2tzZnZPWmdrd2hjRjN2?=
- =?utf-8?B?d2dacjdqZ2VDbWt4MmVGNjhPU3VKS1owMnpubHVIUkFGdUVRSkloNUtzdWdm?=
- =?utf-8?B?d3RPQ3huUFA3YTBUSnVLVC9yblp3RXNTQm9JWE9xTUI4TjJqM0xaQ0sxYzJ6?=
- =?utf-8?B?bVM2dVdKcEhRQkZKelBmQVpQTjhuM3p4QkRWcmtDVWxpdzd1QTRsaUJueGcr?=
- =?utf-8?B?TVFvMkRYVHdtZ0NjQmtLTHQwYmlCN081Q0JaaTYrTnRuWlYvSS91aUJqVWUx?=
- =?utf-8?B?OEJrUCs1NDIxOERJRS96UlE3THEvVjcweHNQc2R6NDNCclZET2lwQU9jMHo1?=
- =?utf-8?B?b0wzUGlmaC9TckJNeGFHM0ZFZnZlK1Z5M1RmeDZVNWlwQ3dHTEpBSkYzQ0kw?=
- =?utf-8?B?QnhsRWZHR2ZKUFR2VWVwZGovYTJReVZoQitGL0JCb0tMenBCanYzRFRtcHQ2?=
- =?utf-8?B?cmNNMEU4MTdtSUx0NVdwOTQ1Z3ZzcHdWTWhRcWEzV3RMdDFmWFIxKzdBaTEr?=
- =?utf-8?B?b2g5TmRsaEE3bmZXZUtmaGhDamdjNFpPZzY3WGRnSDI4bS9NOWVzRCtlUEZF?=
- =?utf-8?B?RjNOQ3pRNldCU1F0VzYyMUI5N0tGMVEwYmJhT0JORVFlTmJYdDBvKzFsRXpw?=
- =?utf-8?B?TlY5OUtucFlYQnpaVi9acjNLWmNTbXp0MG8xVTJFRU81MXRmaGxTNkRlR1d4?=
- =?utf-8?B?bmNkMXVQRjZ2RllTdDM0em5qc2VaNk1BWTRLN1N5cHFjVDJvYmdjZzdHTm9P?=
- =?utf-8?B?YmU2OVpieXBYbVlSOUpqcXBpSTlkaXVjck9UQnoxa2lyVkRZb1BWa0pOQ25r?=
- =?utf-8?B?c3M3b3grMm5UTGs2TlpKcThUbFBENmZITUJtc3E4MGZDWEFZRTVlUjBEV0ly?=
- =?utf-8?B?TWo4ck1FWXhvYXZzZE01Y0xTUVg2MVB0bjF0NHNiaWZxZTdlVTJPd3hCMnZB?=
- =?utf-8?B?MEt3RzVsejU1YlUycWd0ZDdxS0liQjBOdW5xeUtaQUlSQjVmREtnMkdWdVcy?=
- =?utf-8?B?MVY2VEpYSHZkdURjOFUxLzVlNVhFd3dXZmU5TlZ2SjJBZnBlWG9MOVpOcTcr?=
- =?utf-8?B?dVI3MmFWV05XNHJsNnlUTnQrQzVSSnhXU0xaWVdlNUo3UVZlaytnVlI0UVgx?=
- =?utf-8?B?eVlUYkIwbEVhbUhBZThHYkZzR04rOHd3eDU1MVpndEc1akxGMUQ0bUt0d0Fx?=
- =?utf-8?B?TkVUc0FGUDdhcUJnRnQxNzBxTWJRbUg5c2ExZURpNUxvL0R2bmlXMDVtMzlC?=
- =?utf-8?B?SFJPYnFiUCtqOGZhWlR5TDNrVTgvVGR5VnlqNi9RODZUaE5UU1k0ekxtK1p1?=
- =?utf-8?B?cmsyeFgrMCtLeUVlZ1lNTUxHcFZROStybUdZRHM3bjBMTzRJd3h6cnAzK3p5?=
- =?utf-8?B?MExiU2ZmTmEvUTJFNUN3MkVjWWVoNWc3aitDblVBeTd3R2dCdllTcUdEUXdr?=
- =?utf-8?B?TlJpSFR1SkdEWDdPdFo4N2tWNTk3aUFtSDQ5WFhGUkNOa05UenpvRjYzcFRS?=
- =?utf-8?B?UnovL0hNSmZ0RXA4TVlUSFdCUWJDelVtZDBLZ1N0am9CM2hJdGcyVWY0ZUZN?=
- =?utf-8?Q?OrJWj3UANnc7Icki6wFkWBxhc?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8682180048
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 18:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720548167; cv=none; b=gr6a0NxR9xeUFZeH+Zlkd0YKy1hCIQXw3aYHIU273YgNB7Z9x20lw6o9Lihvc8Wspro6fenDSGWDpZvG0x5QzndLROYu+3i/qBcbVLFy8PyKHjY5/+6Vt2XawVTsVOgAs3Oa+acoqZarFVLpUB2lu8u30KvHTSheADoxeZds/7M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720548167; c=relaxed/simple;
+	bh=n72nzCQmu7Uf9t8urKOZKRJUvWBcV42NC38GoXt79Mc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kmiQQGX6woOlCyWEOhZiqzlCbNbHbOZpw6wC38r8R/0s3iBzi4qHf937eXRoIt5rULCwyUeasfuQS4R/xsxXGacpMoqmLnnw4awe7qkhkz74zyjcsMapYBIDNMQNxfZ491s6B/INIxxLP62hWGzgV4wTg2A8pVrbLgeLQ9g/3qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=BQPV2tZE; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a05b4fa525so848185a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 11:02:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1720548161; x=1721152961; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Irxhv9yTruFv4uXuWqjPhdyo6pTZLnzFnR9Muo7KEoo=;
+        b=BQPV2tZEZICnLpb05Umv/Jzx7bSEub8Pdz99W9EsqZlYNpRyERr4JexRFYzJtrAoF3
+         uW3qZRze0Ot4qF1ndh76MS7kBKImwihiN1fResPiWt9qqwljl/b2VxGCrMYQKUg5bvH7
+         KVL4n7ij52DY4ADiXrEz9rR8VsKed9g2AuOtTG6epAq3AqIIJJwAgmJJOZSGBmCIgEw/
+         12goDYyEy2tXHc36zeysN1lljKVa7SJ3PHO9WbBnt4XmI7zuQSpmgeJdn8bnI4zkgG1R
+         EkcfgVtRl1rrQccdeHFv0kcFhjwu3ZrOL4pZbze9zCgLerq47O8/EhfPTzXpFOfiSRqX
+         9DUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720548161; x=1721152961;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Irxhv9yTruFv4uXuWqjPhdyo6pTZLnzFnR9Muo7KEoo=;
+        b=cg52URsT8QeQ+RTMesQ8ZtCt8RUszzy2BulIdWO8o3P3TLaE88ubrRAJJ4pEkUQh5V
+         IeZrRpWyOR2BSK3cH+CaVN+xwx69O6938Fz1ZUedLYyElMl1ZhdYOtnE0xSVwnd27WY5
+         wBJLnDxr8xUgeyH4MPSzspoB+AGOH/DinKw9mwtgZyYzh2MbC7pa8k4+GQNhq541X5jX
+         3vdOnkqQj9flgFOwmGSC0eFYti+TfR6AFuB3/y7FohkKlH12HQIq5CEpqMtJ9e7CldHJ
+         Ky6luWSS7ujJXDLvpEke2aWTEtX5n5eWWGieyHilfeS3HAlSR4CfViBs2Wpmh1bUa8aW
+         nhZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuV0kVK0pto4ksnyq5LuHEa1pgI03UN8hQSQntTHGeZO5LS5peJ2v4X3ACgKEuKbu6b5VQe+cEwYyp+Jb+nT6w2GhvJ8CkCVOpmGHI
+X-Gm-Message-State: AOJu0YyFrp5l8MbR5OEATYSar3pKLl/q39o5NHUIgD3ZO4gdiawsMJdx
+	yrFIXejMOUwYaykW2bw7VkHOYxzev0ROKFQx+3NsLohY9+HeSsWLHoCBByDoAr0=
+X-Google-Smtp-Source: AGHT+IFcexZAj7/r7NPrrKocvgmKcfvcVaFp6UYS7n+YHaDTdFeFG0AfnTvdUAPHWGgPEURuJSjIRA==
+X-Received: by 2002:a05:620a:46a4:b0:79d:554d:731f with SMTP id af79cd13be357-79f1b5bbce8mr505280485a.29.1720548161376;
+        Tue, 09 Jul 2024 11:02:41 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f18ff6756sm119458485a.2.2024.07.09.11.02.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 11:02:40 -0700 (PDT)
+Date: Tue, 9 Jul 2024 14:02:31 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Kamalesh Babulal <kamalesh.babulal@oracle.com>,
+	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+	Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH-cgroup v2] cgroup: Show # of subsystem CSSes in root
+ cgroup.stat
+Message-ID: <20240709180231.GA251628@cmpxchg.org>
+References: <20240709132814.2198740-1-longman@redhat.com>
+ <1c0d9ee1-e80a-46da-a48d-2ab23dd04673@oracle.com>
+ <4291c0ed-bc37-46de-b081-271e8b299b1d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL0PR11MB2913.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 022b83a7-f826-42d3-c61a-08dca0414725
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2024 18:02:20.6117
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: r8ly3AfToGrWNCVH776m/PcCpbXvbs9V4C+fDWH0rEm7X9mu8rqyD3yrKKv6RdsCV9ghSbTtdMCJndzy5hBHeDmDW4rmAC01eg/tdXqqxSY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5094
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4291c0ed-bc37-46de-b081-271e8b299b1d@redhat.com>
 
-SGkgT2xla3NpaiwNCg0KPiA+ID4gZGlmZiAtLWdpdCBhL25ldC9ldGh0b29sL2xpbmtzdGF0ZS5j
-IGIvbmV0L2V0aHRvb2wvbGlua3N0YXRlLmMNCj4gPiA+IGluZGV4IGIyZGUyMTA4YjM1NmEuLjRl
-ZmQzMjdiYTVkOTIgMTAwNjQ0DQo+ID4gPiAtLS0gYS9uZXQvZXRodG9vbC9saW5rc3RhdGUuYw0K
-PiA+ID4gKysrIGIvbmV0L2V0aHRvb2wvbGlua3N0YXRlLmMNCj4gPiA+IEBAIC0zNyw2ICszNyw4
-IEBAIHN0YXRpYyBpbnQgbGlua3N0YXRlX2dldF9zcWkoc3RydWN0IG5ldF9kZXZpY2UgKmRldikN
-Cj4gPiA+ICAgICAgICAgbXV0ZXhfbG9jaygmcGh5ZGV2LT5sb2NrKTsNCj4gPiA+ICAgICAgICAg
-aWYgKCFwaHlkZXYtPmRydiB8fCAhcGh5ZGV2LT5kcnYtPmdldF9zcWkpDQo+ID4gPiAgICAgICAg
-ICAgICAgICAgcmV0ID0gLUVPUE5PVFNVUFA7DQo+ID4gPiArICAgICAgIGVsc2UgaWYgKCFwaHlk
-ZXYtPmxpbmspDQo+ID4gPiArICAgICAgICAgICAgICAgcmV0ID0gLUVORVRET1dOOw0KPiA+ID4g
-ICAgICAgICBlbHNlDQo+ID4gPiAgICAgICAgICAgICAgICAgcmV0ID0gcGh5ZGV2LT5kcnYtPmdl
-dF9zcWkocGh5ZGV2KTsNCj4gPiA+ICAgICAgICAgbXV0ZXhfdW5sb2NrKCZwaHlkZXYtPmxvY2sp
-Ow0KPiA+ID4gQEAgLTU1LDYgKzU3LDggQEAgc3RhdGljIGludCBsaW5rc3RhdGVfZ2V0X3NxaV9t
-YXgoc3RydWN0IG5ldF9kZXZpY2UNCj4gKmRldikNCj4gPiA+ICAgICAgICAgbXV0ZXhfbG9jaygm
-cGh5ZGV2LT5sb2NrKTsNCj4gPiA+ICAgICAgICAgaWYgKCFwaHlkZXYtPmRydiB8fCAhcGh5ZGV2
-LT5kcnYtPmdldF9zcWlfbWF4KQ0KPiA+ID4gICAgICAgICAgICAgICAgIHJldCA9IC1FT1BOT1RT
-VVBQOw0KPiA+ID4gKyAgICAgICBlbHNlIGlmICghcGh5ZGV2LT5saW5rKQ0KPiA+ID4gKyAgICAg
-ICAgICAgICAgIHJldCA9IC1FTkVURE9XTjsNCj4gPiA+ICAgICAgICAgZWxzZQ0KPiA+ID4gICAg
-ICAgICAgICAgICAgIHJldCA9IHBoeWRldi0+ZHJ2LT5nZXRfc3FpX21heChwaHlkZXYpOw0KPiA+
-ID4gICAgICAgICBtdXRleF91bmxvY2soJnBoeWRldi0+bG9jayk7DQo+ID4gPiBAQCAtNjIsNiAr
-NjYsMTYgQEAgc3RhdGljIGludCBsaW5rc3RhdGVfZ2V0X3NxaV9tYXgoc3RydWN0IG5ldF9kZXZp
-Y2UNCj4gKmRldikNCj4gPiA+ICAgICAgICAgcmV0dXJuIHJldDsNCj4gPiA+ICB9Ow0KPiA+ID4N
-Cj4gPiA+ICtzdGF0aWMgYm9vbCBsaW5rc3RhdGVfc3FpX2NyaXRpY2FsX2Vycm9yKGludCBzcWkp
-DQo+ID4gPiArew0KPiA+ID4gKyAgICAgICByZXR1cm4gc3FpIDwgMCAmJiBzcWkgIT0gLUVPUE5P
-VFNVUFAgJiYgc3FpICE9IC1FTkVURE9XTjsNCj4gPiA+ICt9DQo+ID4gPiArDQo+ID4gPiArc3Rh
-dGljIGJvb2wgbGlua3N0YXRlX3NxaV92YWxpZChzdHJ1Y3QgbGlua3N0YXRlX3JlcGx5X2RhdGEg
-KmRhdGEpDQo+ID4gPiArew0KPiA+ID4gKyAgICAgICByZXR1cm4gZGF0YS0+c3FpID49IDAgJiYg
-ZGF0YS0+c3FpX21heCA+PSAwOw0KPiA+DQo+ID4gSWYgUEhZIGRyaXZlciBoYXMgZ2V0X3NxaSwg
-YnV0IG5vdCBnZXRfc3FpX21heCwgdGhlbiBkYXRhLT5zcWkgY291bGQgaGF2ZQ0KPiA+IGEgdmFs
-aWQgdmFsdWUsIGJ1dCBkYXRhLT5zcWlfbWF4IHdpbGwgaGF2ZSAtRU9QTk9UU1VQUC4NCj4gPiBJ
-biB0aGlzIGNhc2UsIGxpbmtzdGF0ZV9zcWlfdmFsaWQoKSB3aWxsIHJldHVybiBGQUxTRSBhbmQg
-bm90IGdldHRpbmcNCj4gPiBTUUkgdmFsdWUgYXQgYWxsLg0KPiANCj4gU1FJIHdpdGhvdXQgbWF4
-IHdpbGwgbm90IGFibGUgdG8gZGVzY3JpYmUgcXVhbGl0eSBvZiB0aGUgbGluaywgaXQgaXMNCj4g
-anVzdCB2YWx1ZSBzYXlpbmcgbm90aGluZyB0byB0aGUgdXNlci4NCj4gDQoNCkhvbmVzdGx5LCBJ
-J20gbm90IDEwMCUgY29uZmlkZW50IHRoYXQgbWF4IGlzIHJlYWxseSBuZWVkZWQgYmVjYXVzZQ0K
-U1FJIHJhbmdlIHNoYWxsIGJlIDAgKHdvcnN0KSBhbmQgNyAoYmVzdCkgcGVyIE9wZW5BbGxpYW5j
-ZSBzcGVjaWZpY2F0aW9uLg0KT24gdGhlIG90aGVyIHNpZGUsIHNvbWUgZGV2aWNlcyBjb3VsZCBu
-b3QgZ28gdXAgdG8gNyBhbmQgbGltaXQgYnkgbWF4Lg0KU28sIGFncmVlIHRoYXQgYm90aCBBUElz
-IGFyZSBuZWVkZWQgaGVyZS4NCg0KPiA+IElmIGJvdGggQVBJcyBhcmUgcmVxdWlyZWQsIHRoZW4g
-d2UgY291bGQgYWRkIGFub3RoZXIgY29uZGl0aW9uIG9mDQo+ID4gZGF0YS0+c3FpIDw9IGRhdGEt
-PnNxaV9tYXggaW4gbGlua3N0YXRlX3NxaV92YWxpZCgpDQo+IA0KPiBBY2suIEkgd2FzIHRoaW5r
-aW5nIGFib3V0IGl0LCBidXQgd2FzIG5vdCBzdXJlIGlmIGl0IGlzIGEgZ29vZCBpZGVhLiBUaGlz
-DQo+IHdpbGwgc2lsZW50bHkgZmlsZXIgb3VyIGEgYmFnLiBQYXNzaW5nIGEgYmFnZ3kgdmFsdWUg
-dG8gdGhlIHVzZXJzIHNwYWNlDQo+IGlzIG5vdCBnb29kIHRvby4gSSdsbCBmaXguDQo+IA0KDQpU
-aGFua3MuIFdpbGwgcmVwbHkgaW4gdjMuDQoNCj4gPiBBbmQsIGJlc2lkZSB0aGlzLCBjYWxsaW5n
-IGxpbmtzdGF0ZV9nZXRfc3FpIGFuZCBsaW5rc3RhdGVfZ2V0X3NxaV9tYXgNCj4gPiBjb3VsZCBi
-ZSBtb3ZlZCB1bmRlciAiaWYgKGRldi0+ZmxhZ3MgJiBJRkZfVVApIiB3aXRoIHNldHRpbmcgZGVm
-YXVsdA0KPiA+IHZhbHVlIHRvIGRhdGEtPnNxaSAmIGRhdGEtPnNxaV9tYXguDQo+IA0KPiBJRkZf
-VVAgaXMgYWRtaW5pc3RyYXRpdmUgdXAgc3RhdGUsIGl0IGlzIG5vdCB0aGUgbGluay9MMSB1cC4g
-c3FpX21heCBhbmQNCj4gc3FpIHNob3VsZCBiZSBpbml0aWFsaXplZCBhbnl3YXksIG90aGVyd2lz
-ZSB3ZSB3aWxsIHNob3cgMC8wIGlmDQo+IGludGVyZmFjZSBpcyBpbiBhZG1pbiBkb3duLg0KDQpU
-aGFua3MgZm9yIGNvcnJlY3RpbmcgbWUuDQoNCldvb2p1bmcNCg==
+On Tue, Jul 09, 2024 at 12:09:05PM -0400, Waiman Long wrote:
+> On 7/9/24 11:58, Kamalesh Babulal wrote:
+> >
+> > On 7/9/24 6:58 PM, Waiman Long wrote:
+> >> The /proc/cgroups file shows the number of cgroups for each of the
+> >> subsystems.  With cgroup v1, the number of CSSes is the same as the
+> >> number of cgroups. That is not the case anymore with cgroup v2. The
+> >> /proc/cgroups file cannot show the actual number of CSSes for the
+> >> subsystems that are bound to cgroup v2.
+> >>
+> >> So if a v2 cgroup subsystem is leaking cgroups (usually memory cgroup),
+> >> we can't tell by looking at /proc/cgroups which cgroup subsystems may be
+> >> responsible.  This patch adds CSS counts in the cgroup_subsys structure
+> >> to keep track of the number of CSSes for each of the cgroup subsystems.
+> >>
+> >> As cgroup v2 had deprecated the use of /proc/cgroups, the root
+> >> cgroup.stat file is extended to show the number of outstanding CSSes
+> >> associated with all the non-inhibited cgroup subsystems that have been
+> >> bound to cgroup v2.  This will help us pinpoint which subsystems may be
+> >> responsible for the increasing number of dying (nr_dying_descendants)
+> >> cgroups.
+> >>
+> >> The cgroup-v2.rst file is updated to discuss this new behavior.
+> >>
+> >> With this patch applied, a sample output from root cgroup.stat file
+> >> was shown below.
+> >>
+> >> 	nr_descendants 53
+> >> 	nr_dying_descendants 34
+> >> 	nr_cpuset 1
+> >> 	nr_cpu 40
+> >> 	nr_io 40
+> >> 	nr_memory 87
+> >> 	nr_perf_event 54
+> >> 	nr_hugetlb 1
+> >> 	nr_pids 53
+> >> 	nr_rdma 1
+> >> 	nr_misc 1
+> >>
+> >> In this particular case, it can be seen that memory cgroup is the most
+> >> likely culprit for causing the 34 dying cgroups.
+> >>
+> >> Signed-off-by: Waiman Long <longman@redhat.com>
+> >> ---
+> >>   Documentation/admin-guide/cgroup-v2.rst | 10 ++++++++--
+> >>   include/linux/cgroup-defs.h             |  3 +++
+> >>   kernel/cgroup/cgroup.c                  | 19 +++++++++++++++++++
+> >>   3 files changed, 30 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+> >> index 52763d6b2919..65af2f30196f 100644
+> >> --- a/Documentation/admin-guide/cgroup-v2.rst
+> >> +++ b/Documentation/admin-guide/cgroup-v2.rst
+> >> @@ -981,6 +981,12 @@ All cgroup core files are prefixed with "cgroup."
+> >>   		A dying cgroup can consume system resources not exceeding
+> >>   		limits, which were active at the moment of cgroup deletion.
+> >>   
+> >> +	  nr_<cgroup_subsys>
+> >> +		Total number of cgroups associated with that cgroup
+> >> +		subsystem, e.g. cpuset or memory.  These cgroup counts
+> >> +		will only be shown in the root cgroup and for subsystems
+> >> +		bound to cgroup v2.
+> >> +
+> >>     cgroup.freeze
+> >>   	A read-write single value file which exists on non-root cgroups.
+> >>   	Allowed values are "0" and "1". The default is "0".
+> >> @@ -2930,8 +2936,8 @@ Deprecated v1 Core Features
+> >>   
+> >>   - "cgroup.clone_children" is removed.
+> >>   
+> >> -- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" file
+> >> -  at the root instead.
+> >> +- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" or
+> >> +  "cgroup.stat" files at the root instead.
+> >>   
+> >>   
+> >>   Issues with v1 and Rationales for v2
+> >> diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+> >> index b36690ca0d3f..522ab77f0406 100644
+> >> --- a/include/linux/cgroup-defs.h
+> >> +++ b/include/linux/cgroup-defs.h
+> >> @@ -776,6 +776,9 @@ struct cgroup_subsys {
+> >>   	 * specifies the mask of subsystems that this one depends on.
+> >>   	 */
+> >>   	unsigned int depends_on;
+> >> +
+> >> +	/* Number of CSSes, used only for /proc/cgroups */
+> >> +	atomic_t nr_csses;
+> >>   };
+> >>   
+> >>   extern struct percpu_rw_semaphore cgroup_threadgroup_rwsem;
+> >> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+> >> index c8e4b62b436a..48eba2737b1a 100644
+> >> --- a/kernel/cgroup/cgroup.c
+> >> +++ b/kernel/cgroup/cgroup.c
+> >> @@ -3669,12 +3669,27 @@ static int cgroup_events_show(struct seq_file *seq, void *v)
+> >>   static int cgroup_stat_show(struct seq_file *seq, void *v)
+> >>   {
+> >>   	struct cgroup *cgroup = seq_css(seq)->cgroup;
+> >> +	struct cgroup_subsys *ss;
+> >> +	int i;
+> >>   
+> >>   	seq_printf(seq, "nr_descendants %d\n",
+> >>   		   cgroup->nr_descendants);
+> >>   	seq_printf(seq, "nr_dying_descendants %d\n",
+> >>   		   cgroup->nr_dying_descendants);
+> >>   
+> >> +	if (cgroup_parent(cgroup))
+> >> +		return 0;
+> >> +
+> >> +	/*
+> >> +	 * For the root cgroup, shows the number of csses associated
+> >> +	 * with each of non-inhibited cgroup subsystems bound to it.
+> >> +	 */
+> >> +	do_each_subsys_mask(ss, i, ~cgrp_dfl_inhibit_ss_mask) {
+> >> +		if (ss->root != &cgrp_dfl_root)
+> >> +			continue;
+> >> +		seq_printf(seq, "nr_%s %d\n", ss->name,
+> >> +			   atomic_read(&ss->nr_csses));
+> >> +	} while_each_subsys_mask();
+> >>   	return 0;
+> >>   }
+> >>   
+> > Thanks for adding nr_csses, the patch looks good to me. A preference comment,
+> > nr_<subsys>_css format, makes it easier to interpret the count.
+> >
+> > With or without the changes to the cgroup subsys format:
+> >
+> > Reviewed-by: Kamalesh Babulal <kamalesh.babulal@oracle.com>
+> 
+> Thanks for the review.
+> 
+> CSS is a kernel internal name for cgroup subsystem state. Non kernel 
+> developers or users may not know what CSS is and cgroup-v2.rst doesn't 
+> mention CSS at all. So I don't think it is a good idea to add the "_css" 
+> suffix. From the user point of view, the proper term to use here is the 
+> number of cgroups, just like what "nr_descendants" and 
+> "nr_dying_descendants" are referring to before this patch. The only 
+> issue that I didn't address is the use of the proper plural form which 
+> is hard for cgroup subsystem names that we have.
+
+It's not quite the same right? You could have 1 dying cgroup with
+multiple zombie subsys states. At least in theory. It could be
+confusing to add these counts without introducing the css concept.
+
+I also wonder if it would be better to just report the dying css
+instead of all of them. Live ones are 1) under user control and 2)
+easy to inspect in cgroupfs. I can see a scenario for the
+nr_descendants aggregation ("Oh, that's a lot of subgroups!"); and a
+scenario for dying css ("Oh, it's memory state pinning dead groups!").
+But not so much "Oh, that's a lot of live memory controlled groups!"
+
+I can't think of a good name for it though.
+
+nr_dying_memory_css is a mouthful
+
+nr_offline_memory?
+
+nr_zombie_memory?
+
+Should this be in debugfs?
 
