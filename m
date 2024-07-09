@@ -1,97 +1,366 @@
-Return-Path: <linux-kernel+bounces-246052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3655092BD0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:37:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6265792BD0D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7AACB25D81
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:37:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF5C7B25F2C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D705719D090;
-	Tue,  9 Jul 2024 14:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6C219D88D;
+	Tue,  9 Jul 2024 14:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PNUrmg7m"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fciBUmLW"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6FD19D076;
-	Tue,  9 Jul 2024 14:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCFDA19D076;
+	Tue,  9 Jul 2024 14:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720535695; cv=none; b=RAwuM+Yx5lR03mDuMI2qYBpS0mZU+1NxA0/1wxjKfH4vrVX6X3rL3nC1eTiN5clg6UsmzNjQW0nWsOg0eRHSgUePZ+Kmoxxp3SEm2Hx+60l6YHBmR3uzBmm89uXZlMDVw71HYvDyt8eR4lYzK/Z7unT5WgQwZm5MOcQjLRKTbmM=
+	t=1720535722; cv=none; b=W9/+OVovikxkRlz+f1bxGzuGVIklAaj+QgU2ddChTXyWZfxKvEdYaKxZPiwC43ershGX8HpoxNZ665+Ox1diNZZGZ3nZS7HxX7dTEZSyi7P0AiL+69Y87t3atnXETc/ihvfwx5gV/K4BQBwwEhchHOip1qEBsFFDrzRT+PkvAi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720535695; c=relaxed/simple;
-	bh=RBGNqoGZ83w+eqL0eQQIia9r9WEn3fSMYCGg19iJVpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a8Tzv/o61XKTG8qVITkBJdUQnf8CE6mlRgdwFk0EFIWcabsHAhz/DLOeEsJpfmCf3ttt6nN+MNYKlj2E0sRwpaFHYSHAj68n8EDV5zU0Nk5ayhYcEIa52HixdpeGb9jRCV47Bx1ndv51lTqwfB/qPGG3yRCoYh27e9US84khnWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PNUrmg7m; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ixPgUW2T4tXOs4aEeHspyZiL/y/SECkwdKfsz5YppK4=; b=PNUrmg7mTfVTPtsWmgtYB0RtCI
-	+0LDV8xLaeQqGA+Onn0WbeqUWiGg7uGpTH/ImPKzJTsINKGRYlZIx9HD0o44/VxeTB0j4Rs+orUbP
-	cB1qDdU2/yQXaeWbbAU38nphaqTuvUAKvbWg280ejLpZTi7CNmuJq3VzJJTYk3gUxkdjnvHe2Nhnh
-	tiVmqeesgVndidkl4CeZB3DCsIJhmZEJ8MjdO2fHos4KZOKsNEnf1sfJ1yMpsttUwZYrO+q+jK1RS
-	iVd1vzsx26M49iVtGAxosJFOR5k1iLNuQYOMUfO1lz//PqchV/ohqFWZQ+zi5qMow2ILOxaeV0OFJ
-	nfOWqBNA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sRBve-00000007yWA-0o2O;
-	Tue, 09 Jul 2024 14:34:50 +0000
-Date: Tue, 9 Jul 2024 15:34:50 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Martin Oliveira <martin.oliveira@eideticom.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-rdma@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Artemy Kovalyov <artemyko@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Shiraz Saleem <shiraz.saleem@intel.com>, Tejun Heo <tj@kernel.org>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	David Sloan <david.sloan@eideticom.com>
-Subject: Re: [PATCH v4 1/3] kernfs: remove page_mkwrite() from
- vm_operations_struct
-Message-ID: <Zo1Kig5y-ggl0g_e@casper.infradead.org>
-References: <20240708165714.3401377-1-martin.oliveira@eideticom.com>
- <20240708165714.3401377-2-martin.oliveira@eideticom.com>
+	s=arc-20240116; t=1720535722; c=relaxed/simple;
+	bh=JgDEnFt8RqK4LXup0WYHlgili2GXBkDCKWKpa9McN7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dCkA33ieswV9OIlMEpUVWNYenGe7iEuT7CI/V9wg8hDZj8PR2PrExEwp1qYhfFl28a6Lyta5A6qDGj0Z6It+WXedVOJ4rtMa+1MpiTHWu8Mi6YX2VsxXuDoWef0qBck+Dh13fUOssBcKQcpSTvq3YmUg6A4QcH3fQ0kkwivMLZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fciBUmLW; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469DvnJC024297;
+	Tue, 9 Jul 2024 14:35:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=i
+	PbDXvfPgD6q0soddCJjbSeVGFtOhxVtZok3llCgX0k=; b=fciBUmLWBKx0v2puv
+	nbMB8FEhppgsndiU7K+5S0vYRFs2klNuGrN3W+prtQI2n3FN5juFajbJl59eN3p7
+	l/aMBgMSVKMBYI8rbgt8NDp5ulhrhMXzRWhuAw1LdH9dBHVJO5eSt91fMm8SGJiz
+	UzZk8HGWolghbjcyVQpxWxSiFZlqKzr6HBxYGCF+gHVWnEKhbIft2MuaXs2giyO7
+	vbNkLCGrHfKuNZsszU9MhkR4acsAjG8Z+uvpS+j5YVE80rmLVN8Nt5s34TaJUrwo
+	DUfwgAgnQHMzGPmpmCayxAO/V6b2mRUygkbsvPWQdBsOEp/7+tevcsXD8xF4eBuU
+	qvbDQ==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4092ks8sj6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 14:35:08 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 469CMk3K024575;
+	Tue, 9 Jul 2024 14:35:07 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 407hrmmwc8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 14:35:07 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 469EZ4wP38076946
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 9 Jul 2024 14:35:07 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 99C9B58064;
+	Tue,  9 Jul 2024 14:35:04 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 450BF58056;
+	Tue,  9 Jul 2024 14:35:04 +0000 (GMT)
+Received: from [9.61.77.123] (unknown [9.61.77.123])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  9 Jul 2024 14:35:04 +0000 (GMT)
+Message-ID: <ccae0209-d48d-4c5f-964d-cb384e5fd9e8@linux.ibm.com>
+Date: Tue, 9 Jul 2024 09:35:03 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240708165714.3401377-2-martin.oliveira@eideticom.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 15/60] i2c: fsi: reword according to newest
+ specification
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org
+Cc: Andi Shyti <andi.shyti@kernel.org>, openbmc@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
+ <20240706112116.24543-16-wsa+renesas@sang-engineering.com>
+Content-Language: en-US
+From: Eddie James <eajames@linux.ibm.com>
+In-Reply-To: <20240706112116.24543-16-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: hCiKMkG92dDewDjYyLNMlv65ZRknNhOI
+X-Proofpoint-ORIG-GUID: hCiKMkG92dDewDjYyLNMlv65ZRknNhOI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_04,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ suspectscore=0 clxscore=1011 bulkscore=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=999 adultscore=0 impostorscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090093
 
-On Mon, Jul 08, 2024 at 10:57:12AM -0600, Martin Oliveira wrote:
-> -	/*
-> -	 * It is not possible to successfully wrap close.
-> -	 * So error if someone is trying to use close.
-> -	 */
-> -	if (vma->vm_ops && vma->vm_ops->close)
-> -		goto out_put;
-> +	if (vma->vm_ops) {
-> +		/*
-> +		 * It is not possible to successfully wrap close.
-> +		 * So error if someone is trying to use close.
-> +		 */
-> +		if (vma->vm_ops->close)
-> +			goto out_put;
-> +
-> +		if (WARN_ON_ONCE(vma->vm_ops->page_mkwrite))
-> +			goto out_put;
-> +	}
 
-This is stupid.  Warn for both or neither.
+On 7/6/24 06:20, Wolfram Sang wrote:
+> Change the wording of this driver wrt. the newest I2C v7 and SMBus 3.2
+> specifications and replace "master/slave" with more appropriate terms.
+
+
+Reviewed-by: Eddie James <eajames@linux.ibm.com>
+
+
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>   drivers/i2c/busses/i2c-fsi.c | 56 ++++++++++++++++++------------------
+>   1 file changed, 28 insertions(+), 28 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-fsi.c b/drivers/i2c/busses/i2c-fsi.c
+> index 10332693edf0..ae016a9431da 100644
+> --- a/drivers/i2c/busses/i2c-fsi.c
+> +++ b/drivers/i2c/busses/i2c-fsi.c
+> @@ -1,6 +1,6 @@
+>   // SPDX-License-Identifier: GPL-2.0+
+>   /*
+> - * FSI-attached I2C master algorithm
+> + * FSI-attached I2C controller algorithm
+>    *
+>    * Copyright 2018 IBM Corporation
+>    *
+> @@ -145,7 +145,7 @@
+>   /* choose timeout length from legacy driver; it's well tested */
+>   #define I2C_ABORT_TIMEOUT	msecs_to_jiffies(100)
+>   
+> -struct fsi_i2c_master {
+> +struct fsi_i2c_ctrl {
+>   	struct fsi_device	*fsi;
+>   	u8			fifo_size;
+>   	struct list_head	ports;
+> @@ -155,7 +155,7 @@ struct fsi_i2c_master {
+>   struct fsi_i2c_port {
+>   	struct list_head	list;
+>   	struct i2c_adapter	adapter;
+> -	struct fsi_i2c_master	*master;
+> +	struct fsi_i2c_ctrl	*ctrl;
+>   	u16			port;
+>   	u16			xfrd;
+>   };
+> @@ -183,7 +183,7 @@ static int fsi_i2c_write_reg(struct fsi_device *fsi, unsigned int reg,
+>   	return fsi_device_write(fsi, reg, &data_be, sizeof(data_be));
+>   }
+>   
+> -static int fsi_i2c_dev_init(struct fsi_i2c_master *i2c)
+> +static int fsi_i2c_dev_init(struct fsi_i2c_ctrl *i2c)
+>   {
+>   	int rc;
+>   	u32 mode = I2C_MODE_ENHANCED, extended_status, watermark;
+> @@ -214,7 +214,7 @@ static int fsi_i2c_dev_init(struct fsi_i2c_master *i2c)
+>   static int fsi_i2c_set_port(struct fsi_i2c_port *port)
+>   {
+>   	int rc;
+> -	struct fsi_device *fsi = port->master->fsi;
+> +	struct fsi_device *fsi = port->ctrl->fsi;
+>   	u32 mode, dummy = 0;
+>   
+>   	rc = fsi_i2c_read_reg(fsi, I2C_FSI_MODE, &mode);
+> @@ -236,7 +236,7 @@ static int fsi_i2c_set_port(struct fsi_i2c_port *port)
+>   static int fsi_i2c_start(struct fsi_i2c_port *port, struct i2c_msg *msg,
+>   			 bool stop)
+>   {
+> -	struct fsi_i2c_master *i2c = port->master;
+> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
+>   	u32 cmd = I2C_CMD_WITH_START | I2C_CMD_WITH_ADDR;
+>   
+>   	port->xfrd = 0;
+> @@ -268,7 +268,7 @@ static int fsi_i2c_write_fifo(struct fsi_i2c_port *port, struct i2c_msg *msg,
+>   {
+>   	int write;
+>   	int rc;
+> -	struct fsi_i2c_master *i2c = port->master;
+> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
+>   	int bytes_to_write = i2c->fifo_size - fifo_count;
+>   	int bytes_remaining = msg->len - port->xfrd;
+>   
+> @@ -294,7 +294,7 @@ static int fsi_i2c_read_fifo(struct fsi_i2c_port *port, struct i2c_msg *msg,
+>   {
+>   	int read;
+>   	int rc;
+> -	struct fsi_i2c_master *i2c = port->master;
+> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
+>   	int bytes_to_read;
+>   	int xfr_remaining = msg->len - port->xfrd;
+>   	u32 dummy;
+> @@ -330,7 +330,7 @@ static int fsi_i2c_get_scl(struct i2c_adapter *adap)
+>   {
+>   	u32 stat = 0;
+>   	struct fsi_i2c_port *port = adap->algo_data;
+> -	struct fsi_i2c_master *i2c = port->master;
+> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
+>   
+>   	fsi_i2c_read_reg(i2c->fsi, I2C_FSI_STAT, &stat);
+>   
+> @@ -341,7 +341,7 @@ static void fsi_i2c_set_scl(struct i2c_adapter *adap, int val)
+>   {
+>   	u32 dummy = 0;
+>   	struct fsi_i2c_port *port = adap->algo_data;
+> -	struct fsi_i2c_master *i2c = port->master;
+> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
+>   
+>   	if (val)
+>   		fsi_i2c_write_reg(i2c->fsi, I2C_FSI_SET_SCL, &dummy);
+> @@ -353,7 +353,7 @@ static int fsi_i2c_get_sda(struct i2c_adapter *adap)
+>   {
+>   	u32 stat = 0;
+>   	struct fsi_i2c_port *port = adap->algo_data;
+> -	struct fsi_i2c_master *i2c = port->master;
+> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
+>   
+>   	fsi_i2c_read_reg(i2c->fsi, I2C_FSI_STAT, &stat);
+>   
+> @@ -364,7 +364,7 @@ static void fsi_i2c_set_sda(struct i2c_adapter *adap, int val)
+>   {
+>   	u32 dummy = 0;
+>   	struct fsi_i2c_port *port = adap->algo_data;
+> -	struct fsi_i2c_master *i2c = port->master;
+> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
+>   
+>   	if (val)
+>   		fsi_i2c_write_reg(i2c->fsi, I2C_FSI_SET_SDA, &dummy);
+> @@ -377,7 +377,7 @@ static void fsi_i2c_prepare_recovery(struct i2c_adapter *adap)
+>   	int rc;
+>   	u32 mode;
+>   	struct fsi_i2c_port *port = adap->algo_data;
+> -	struct fsi_i2c_master *i2c = port->master;
+> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
+>   
+>   	rc = fsi_i2c_read_reg(i2c->fsi, I2C_FSI_MODE, &mode);
+>   	if (rc)
+> @@ -392,7 +392,7 @@ static void fsi_i2c_unprepare_recovery(struct i2c_adapter *adap)
+>   	int rc;
+>   	u32 mode;
+>   	struct fsi_i2c_port *port = adap->algo_data;
+> -	struct fsi_i2c_master *i2c = port->master;
+> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
+>   
+>   	rc = fsi_i2c_read_reg(i2c->fsi, I2C_FSI_MODE, &mode);
+>   	if (rc)
+> @@ -402,7 +402,7 @@ static void fsi_i2c_unprepare_recovery(struct i2c_adapter *adap)
+>   	fsi_i2c_write_reg(i2c->fsi, I2C_FSI_MODE, &mode);
+>   }
+>   
+> -static int fsi_i2c_reset_bus(struct fsi_i2c_master *i2c,
+> +static int fsi_i2c_reset_bus(struct fsi_i2c_ctrl *i2c,
+>   			     struct fsi_i2c_port *port)
+>   {
+>   	int rc;
+> @@ -435,7 +435,7 @@ static int fsi_i2c_reset_bus(struct fsi_i2c_master *i2c,
+>   	return fsi_i2c_dev_init(i2c);
+>   }
+>   
+> -static int fsi_i2c_reset_engine(struct fsi_i2c_master *i2c, u16 port)
+> +static int fsi_i2c_reset_engine(struct fsi_i2c_ctrl *i2c, u16 port)
+>   {
+>   	int rc;
+>   	u32 mode, dummy = 0;
+> @@ -478,7 +478,7 @@ static int fsi_i2c_abort(struct fsi_i2c_port *port, u32 status)
+>   	unsigned long start;
+>   	u32 cmd = I2C_CMD_WITH_STOP;
+>   	u32 stat;
+> -	struct fsi_i2c_master *i2c = port->master;
+> +	struct fsi_i2c_ctrl *i2c = port->ctrl;
+>   	struct fsi_device *fsi = i2c->fsi;
+>   
+>   	rc = fsi_i2c_reset_engine(i2c, port->port);
+> @@ -505,7 +505,7 @@ static int fsi_i2c_abort(struct fsi_i2c_port *port, u32 status)
+>   	if (rc)
+>   		return rc;
+>   
+> -	/* wait until we see command complete in the master */
+> +	/* wait until we see command complete in the controller */
+>   	start = jiffies;
+>   
+>   	do {
+> @@ -579,7 +579,7 @@ static int fsi_i2c_wait(struct fsi_i2c_port *port, struct i2c_msg *msg,
+>   	unsigned long start = jiffies;
+>   
+>   	do {
+> -		rc = fsi_i2c_read_reg(port->master->fsi, I2C_FSI_STAT,
+> +		rc = fsi_i2c_read_reg(port->ctrl->fsi, I2C_FSI_STAT,
+>   				      &status);
+>   		if (rc)
+>   			return rc;
+> @@ -609,10 +609,10 @@ static int fsi_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+>   	int i, rc;
+>   	unsigned long start_time;
+>   	struct fsi_i2c_port *port = adap->algo_data;
+> -	struct fsi_i2c_master *master = port->master;
+> +	struct fsi_i2c_ctrl *ctrl = port->ctrl;
+>   	struct i2c_msg *msg;
+>   
+> -	mutex_lock(&master->lock);
+> +	mutex_lock(&ctrl->lock);
+>   
+>   	rc = fsi_i2c_set_port(port);
+>   	if (rc)
+> @@ -633,7 +633,7 @@ static int fsi_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+>   	}
+>   
+>   unlock:
+> -	mutex_unlock(&master->lock);
+> +	mutex_unlock(&ctrl->lock);
+>   	return rc ? : num;
+>   }
+>   
+> @@ -654,7 +654,7 @@ static struct i2c_bus_recovery_info fsi_i2c_bus_recovery_info = {
+>   };
+>   
+>   static const struct i2c_algorithm fsi_i2c_algorithm = {
+> -	.master_xfer = fsi_i2c_xfer,
+> +	.xfer = fsi_i2c_xfer,
+>   	.functionality = fsi_i2c_functionality,
+>   };
+>   
+> @@ -676,7 +676,7 @@ static struct device_node *fsi_i2c_find_port_of_node(struct device_node *fsi,
+>   
+>   static int fsi_i2c_probe(struct device *dev)
+>   {
+> -	struct fsi_i2c_master *i2c;
+> +	struct fsi_i2c_ctrl *i2c;
+>   	struct fsi_i2c_port *port;
+>   	struct device_node *np;
+>   	u32 port_no, ports, stat;
+> @@ -699,7 +699,7 @@ static int fsi_i2c_probe(struct device *dev)
+>   		return rc;
+>   
+>   	ports = FIELD_GET(I2C_STAT_MAX_PORT, stat) + 1;
+> -	dev_dbg(dev, "I2C master has %d ports\n", ports);
+> +	dev_dbg(dev, "I2C controller has %d ports\n", ports);
+>   
+>   	for (port_no = 0; port_no < ports; port_no++) {
+>   		np = fsi_i2c_find_port_of_node(dev->of_node, port_no);
+> @@ -712,7 +712,7 @@ static int fsi_i2c_probe(struct device *dev)
+>   			break;
+>   		}
+>   
+> -		port->master = i2c;
+> +		port->ctrl = i2c;
+>   		port->port = port_no;
+>   
+>   		port->adapter.owner = THIS_MODULE;
+> @@ -742,7 +742,7 @@ static int fsi_i2c_probe(struct device *dev)
+>   
+>   static int fsi_i2c_remove(struct device *dev)
+>   {
+> -	struct fsi_i2c_master *i2c = dev_get_drvdata(dev);
+> +	struct fsi_i2c_ctrl *i2c = dev_get_drvdata(dev);
+>   	struct fsi_i2c_port *port, *tmp;
+>   
+>   	list_for_each_entry_safe(port, tmp, &i2c->ports, list) {
+> @@ -772,5 +772,5 @@ static struct fsi_driver fsi_i2c_driver = {
+>   module_fsi_driver(fsi_i2c_driver);
+>   
+>   MODULE_AUTHOR("Eddie James <eajames@us.ibm.com>");
+> -MODULE_DESCRIPTION("FSI attached I2C master");
+> +MODULE_DESCRIPTION("FSI attached I2C controller");
+>   MODULE_LICENSE("GPL");
 
