@@ -1,397 +1,236 @@
-Return-Path: <linux-kernel+bounces-245008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796A692ACF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:08:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCE5F92ADE8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:44:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1B33280C77
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:08:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E7EE1F22E52
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A178A34;
-	Tue,  9 Jul 2024 00:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819EE3A267;
+	Tue,  9 Jul 2024 01:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/oNas2D"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	dkim=pass (2048-bit key) header.d=toshiba.co.jp header.i=yuji2.ishikawa@toshiba.co.jp header.b="eSG2f345"
+Received: from mo-csw-fb.securemx.jp (mo-csw-fb1800.securemx.jp [210.130.202.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F88382;
-	Tue,  9 Jul 2024 00:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E90D30358;
+	Tue,  9 Jul 2024 01:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.130.202.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720483703; cv=none; b=Gn/T7CUTzL4iqPLsNbro5MF3gDbBHucoP5ie7MLIbns73VYifHVgbHXPTVBScmxuvH8q8ejbO4tHE4qqm8A2GzGzpiT/SXfNgl9ihDM+R9JCpz+pWFEslmYlmPcP3OvZ8ZwXcfLeiir0dtodqYj05iZayVQQAUHuSC0Kx8Z0MiM=
+	t=1720489475; cv=none; b=ix/GBJnrsEVS0REYj8nzjaCFwnVLbVNAm3QGLxI52Shb1tgY4yFR4gl4e7crQskJm/Me4ppa1lOo1FTE9fqfKYKI84C/8DeCPGvc2z0tqwOS0ZN4ymLSVLibifiTHI7vkENlbVns/wNyQoqXNhfO41GJqsirSFeRcQlqsBjiFz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720483703; c=relaxed/simple;
-	bh=gaVdvvGicT567vVFCczRy1l1kJqIdBBzeUuU5sLRwdc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kg4icUXfuVxf8gUzC1Drl4xhKTXGkaRZbE0uINtIiXYpa3g9Zvk5UNpqRN1xwlkz0u9IQeuK0GeMraYAL2aXAGbfBnHlhEg3nc6etEdMIhb3QEoIdihN+q19KnDsZRZ6jvc/NInFTg+46m9e468Q3kciXWAGQPqoYFDjir6Uvnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b/oNas2D; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3839d74a2abso15568665ab.1;
-        Mon, 08 Jul 2024 17:08:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720483701; x=1721088501; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PQyUTvav3geX5M69VveKYVAii5SPAUbkEumnvWX/cP8=;
-        b=b/oNas2DVJOBFSPnch6aKNzR2a2ha//oeQmV053kyc65mglrvHvY5BpF2nBN9U7qe6
-         Klnee6J5Jzz7UOumFYji8JcH16XxbXCDGJ/TfNrwOytJ5i7OluqroaZCte84QyISJc/6
-         LvqVUgUgk5pQy3VJ83lLRGZFPn1JyNi4sBsnr9se4YN2po30z1R8pXoVLbzygXsMjPPQ
-         JzC57xlLP4JM3qj/Ipzp0J1W/QcPuiOWd/7FhpshSCez8Ypod6geElAgn1g2MEAoKkCE
-         UJgCSRPsHNAk0FXTSUAvXBYx3fKEiqwHUp5cWkeYQF0JPd0BVfmBVq9v8Y8Df+pH5XVe
-         qbMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720483701; x=1721088501;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PQyUTvav3geX5M69VveKYVAii5SPAUbkEumnvWX/cP8=;
-        b=t2xnLp/Uvah1mgUsywVJS3nc8wF+/XFg0gjBTQUhaJUa40ZwMhkLw1295ihh+mpb6J
-         82tRfscDSKnlvl8PLN7Z4kuFsoVzSLKDzMZowCpUXNGbgRh8gOS7hjiL2KnSk/acdgm9
-         7W30OxmEUvK3hT/gTq66hSDX3uRH8Ce5WEpf1UmHklr66ylNA2GkLeA1sdm4VEzw1k91
-         4QNix8RD39xoeynsLd9V4Qo487HRqmgtRcq2y5kSAkMqi2pM0XTJf3oanGnCNRKQh1qk
-         xdTfppjpI8pCuawvJgWEiNx2cNnhg8fX3Fsds0cPb0CgQVYUiOkosFdfNkpYqcWu06NX
-         gj2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVGwdmCQHoTmiyw4tDmHpzwfYZEMCpR+xWfD5U8hY7AZga8R3C+HcLkPm/VeIrgmq0lwVKTyYBXpQ7rXgsSDJoSUGG36v50neTh9yQ4szpSWC+YcQjuxGE7smne3m4l9433bqj6AwzNRDmIpwTY+4EcKRgNb/niDqDGLMyrlxv+0ZtOA11F
-X-Gm-Message-State: AOJu0Yw20dQz3ciGnkRlbYYL+A/j9/EAOGVGcQuRNVJ2aaO5Cw2FiPW+
-	2Chesoi8HSwKM3ybP9BV1qmtr6Ta6j7D/SaT0Q0tv4vFjIMylvwG
-X-Google-Smtp-Source: AGHT+IFIc2Ri20+2OjJjk5qK4wEgUHT9NuZc8wPegHJyVXr0NxVgD1EFTld9Pwz7Waa7D2DKsJyo7Q==
-X-Received: by 2002:a92:c26d:0:b0:376:1fae:463a with SMTP id e9e14a558f8ab-38a5a360459mr10611895ab.32.1720483700528;
-        Mon, 08 Jul 2024 17:08:20 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:922a:af36:b3d9:2eac])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4397f3c6sm462938b3a.157.2024.07.08.17.08.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 17:08:20 -0700 (PDT)
-Date: Mon, 8 Jul 2024 17:08:17 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Javier Carrasco <javier.carrasco@wolfvision.net>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bastian Hecht <hechtb@gmail.com>,
-	Michael Riesch <michael.riesch@wolfvision.net>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jeff LaBundy <jeff@labundy.com>
-Subject: Re: [PATCH v10 2/4] Input: touch-overlay - Add touchscreen overlay
- handling
-Message-ID: <Zox_cVYsErrLu4Mq@google.com>
-References: <20240626-feature-ts_virtobj_patch-v10-0-873ad79bb2c9@wolfvision.net>
- <20240626-feature-ts_virtobj_patch-v10-2-873ad79bb2c9@wolfvision.net>
+	s=arc-20240116; t=1720489475; c=relaxed/simple;
+	bh=Q83xjEUL1NZQogk0y4QQ08YEUB6zaP79T5+pa0Z7kD4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=InfdFXO3++uKVyJHA2J8uM22Li0PmVlct/7y5CB77aygCPgVhzT5a1/OhBSP2X+OFAGvR4FyM+KwHvwPhJVVyCES07MpBTbpKdwbjev2m+/eFOLx0Z0VAqCp2KA/3OJcU9pbloJVGFz4aA+mTEonl45ZDF+i7dmNZdnr8Yw5YPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=toshiba.co.jp; spf=pass smtp.mailfrom=toshiba.co.jp; dkim=pass (2048-bit key) header.d=toshiba.co.jp header.i=yuji2.ishikawa@toshiba.co.jp header.b=eSG2f345; arc=none smtp.client-ip=210.130.202.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=toshiba.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toshiba.co.jp
+Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1800) id 4690FGEw742851; Tue, 9 Jul 2024 09:15:16 +0900
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:Cc
+	:Subject:Date:Message-Id:MIME-Version:Content-Transfer-Encoding;i=
+	yuji2.ishikawa@toshiba.co.jp;s=key2.smx;t=1720484072;x=1721693672;bh=Q83xjEUL
+	1NZQogk0y4QQ08YEUB6zaP79T5+pa0Z7kD4=;b=eSG2f345loBhjWhmXLwuUF6I3Yjh9Mifl06+mg
+	JBLHrfMbKxt6piXScXdncrXttgE8qEBgOCD7FKLvzmULYX3rx9jw4onnpGgPZTxxASkbezQQv4Cbl
+	jQkh0LsamyLf2Dt1KUbdeOsIegkIMzUDDJK7+J3Cb6MID8q1mb23PAuxU3HK0F9inkBH6/NbTbSv8
+	YTv5g5bwwh2ayJMsg4esq8bLSprG9ZLA+bpROMLuJMjO+bKsN2EqHAtLWQgD7goQ2DTLTBxAxnYdj
+	AWdaLOWm86cM/qlbzuftc8F2ezKk3bXk+EHjd+yV69TL5UdhKsAiMQhy4FgFwrNnFWv+rC0zQ==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 4690ETtW1605432; Tue, 9 Jul 2024 09:14:30 +0900
+X-Iguazu-Qid: 2yAaT64FYgJTTafAum
+X-Iguazu-QSIG: v=2; s=0; t=1720484069; q=2yAaT64FYgJTTafAum; m=jQG016lu/7vjGIW8QL8mHidGAmurOhAtj8fW3xeXfy4=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
+	by relay.securemx.jp (mx-mr1801) id 4690ERZY2534880
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 09:14:27 +0900
+X-SA-MID: 26358967
+From: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+        Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v11 0/6] Add Toshiba Visconti Video Input Interface driver
+Date: Tue,  9 Jul 2024 09:08:42 +0900
+X-TSB-HOP2: ON
+Message-Id: <20240709000848.1108788-1-yuji2.ishikawa@toshiba.co.jp>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626-feature-ts_virtobj_patch-v10-2-873ad79bb2c9@wolfvision.net>
+Content-Transfer-Encoding: 8bit
 
-Hi Javier,
+This series is the Video Input Interface driver
+for Toshiba's ARM SoC, Visconti.
+This provides DT binding documentation,
+device driver, documentation and MAINTAINER files.
 
-On Wed, Jun 26, 2024 at 11:56:14AM +0200, Javier Carrasco wrote:
-> Some touch devices provide mechanical overlays with different objects
-> like buttons or clipped touchscreen surfaces.
+A visconti VIIF driver instance exposes
+1 media control device file, 3 video device files for capture
+and 2 video device files for controlling image signal processor.
+Detailed HW/SW are described in documentation directory.
+The VIIF hardware has CSI2 receiver,
+image signal processor and DMAC inside.
+The subdevice for image signal processor provides
+vendor specific V4L2 controls.
 
-Thank you for your work. I think it is pretty much ready to be merged,
-just a few small comments:
+The device driver depends on two other drivers under development;
+clock framework driver and IOMMU driver.
+Corresponding features will be added later.
 
-> 
-> In order to support these objects, add a series of helper functions
-> to the input subsystem to transform them into overlay objects via
-> device tree nodes.
-> 
-> These overlay objects consume the raw touch events and report the
-> expected input events depending on the object properties.
+Best regards,
+Yuji
 
-So if we have overlays and also want to invert/swap axis then the
-overlays should be processed first and only then
-touchscreen_set_mt_pos() or touchscreen_report_pos() should be called?
+Changelog v2:
+- Resend v1 because a patch exceeds size limit.
 
-But then it will not work if we need help frm the input core to assign
-slots in cases when touch controller does not implement [reliable]
-contact tracing/identification.
+Changelog v3:
+- Add documentation to describe SW and HW
+- Adapted to media control framework
+- Introduced ISP subdevice, capture device
+- Remove private IOCTLs and add vendor specific V4L2 controls
+- Change function name avoiding camelcase and uppercase letters
 
-I think this all needs to be clarified.
+Changelog v4:
+- Split patches because a patch exceeds size limit
+- fix dt-bindings document
+- stop specifying ID numbers for driver instance explicitly at device tree
+- use pm_runtime to trigger initialization of HW
+  along with open/close of device files.
+- add a entry for a header file at MAINTAINERS file
 
-> 
-> Note that the current implementation allows for multiple definitions
-> of touchscreen areas (regions that report touch events), but only the
-> first one will be used for the touchscreen device that the consumers
-> typically provide.
-> Should the need for multiple touchscreen areas arise, additional
-> touchscreen devices would be required at the consumer side.
-> There is no limitation in the number of touch areas defined as buttons.
-> 
-> Reviewed-by: Jeff LaBundy <jeff@labundy.com>
-> Signed-off-by: Javier Carrasco <javier.carrasco@wolfvision.net>
+Changelog v5:
+- Fix coding style problem in viif.c (patch 2/6)
 
-> +int touch_overlay_map(struct list_head *list, struct input_dev *input)
-> +{
-> +	struct fwnode_handle *overlay, *fw_segment;
-> +	struct device *dev = input->dev.parent;
-> +	struct touch_overlay_segment *segment;
-> +	int error = 0;
-> +
-> +	overlay = device_get_named_child_node(dev, "touch-overlay");
+Changelog v6:
+- add register definition of BUS-IF and MPU in dt-bindings
+- add CSI2RX subdevice (separeted from ISP subdevice)
+- change directory layout (moved to media/platform/toshiba/visconti)
+- change source file layout (removed hwd_xxxx.c)
+- pointer to userland memory is removed from uAPI parameters
+- change register access (from struct style to macro style)
+- remove unused macros
 
-We can annotate this as
+Changelog v7:
+- remove redundant "bindings" from header and description text
+- fix multiline text of "description"
+- change "compatible" to "visconti5-viif"
+- explicitly define allowed properties for port::endpoint
+- remove unused variables
+- update kerneldoc comments
+- update references to headers
 
-	struct fwnode_handle *overlay __free(fwnode_handle) = 
-		device_get_named_child_node(dev, "touch-overlay");
+Changelog v8:
+- rename bindings description file
+- remove/simplify items in bindings
+- update operations around v4l2_async_notifier
+- use v4l2_async_connection instead of v4l2_async_subdev
+- use dev_err_probe()
+- better error handling at probe
+- remove redundant mutex
+- add V4L2_CTRL_TYPE_VISCONTI_ISP constant
 
-> +	if (!overlay)
-> +		return 0;
-> +
-> +	fwnode_for_each_available_child_node(overlay, fw_segment) {
-> +		segment = devm_kzalloc(dev, sizeof(*segment), GFP_KERNEL);
-> +		if (!segment) {
-> +			fwnode_handle_put(fw_segment);
-> +			error = -ENOMEM;
+Changelog v9:
+- dictionary ordering of dt-bindings properties
+- applied sparce checker
+- call div64_u64 for 64bit division
+- rebase to media_staging tree
+- fix warning for cast between ptr and dma_addr_t
 
-return -ENOMEM;
+Changelog v10:
+- add an independent entry in MAINTAINERS
+- add paddings to uAPI structs
+- use parameter buffer to control ISP (instead of vendor specific controls)
 
-> +			break;
-> +		}
-> +		error = touch_overlay_get_segment(fw_segment, segment, input);
-> +		if (error) {
-> +			fwnode_handle_put(fw_segment);
+Changelog v11:
+- stop merging sensor's controls and capture device's
+- fix strange indents at initializations
+- remove feature VB2_USERPTR from viif_params and viif_stats
+- fix usage in the document
 
-return error;
+Yuji Ishikawa (6):
+  dt-bindings: media: platform: visconti: Add Toshiba Visconti Video
+    Input Interface
+  media: videodev2.h: add visconti viif meta buffer format
+  media: platform: visconti: Add Toshiba Visconti Video Input Interface
+    driver
+  media: platform: visconti: add streaming interface for ISP parameters
+    and status
+  documentation: media: add documentation for Toshiba Visconti Video
+    Input Interface driver
+  MAINTAINERS: Add entries for Toshiba Visconti Video Input Interface
 
-> +			break;
-> +		}
-> +		list_add_tail(&segment->list, list);
-> +	}
-> +	fwnode_handle_put(overlay);
-
-Drop.
-
-> +
-> +	return error;
-
-return 0;
-
-> +}
-> +EXPORT_SYMBOL(touch_overlay_map);
-> +
-> +/**
-> + * touch_overlay_get_touchscreen_abs - get abs size from the touchscreen area.
-> + * @list: pointer to the list that holds the segments
-> + * @x: horizontal abs
-> + * @y: vertical abs
-> + */
-> +void touch_overlay_get_touchscreen_abs(struct list_head *list, u16 *x, u16 *y)
-> +{
-> +	struct touch_overlay_segment *segment;
-> +	struct list_head *ptr;
-> +
-> +	list_for_each(ptr, list) {
-> +		segment = list_entry(ptr, struct touch_overlay_segment, list);
-> +		if (!segment->key) {
-> +			*x = segment->x_size - 1;
-> +			*y = segment->y_size - 1;
-> +			break;
-> +		}
-> +	}
-> +}
-> +EXPORT_SYMBOL(touch_overlay_get_touchscreen_abs);
-> +
-> +static bool touch_overlay_segment_event(struct touch_overlay_segment *seg,
-> +					u32 x, u32 y)
-> +{
-> +	if (!seg)
-> +		return false;
-
-This is a static function in the module, we are not passing NULL
-segments to it ever. Such tests should be done on API boundary.
-
-> +
-> +	if (x >= seg->x_origin && x < (seg->x_origin + seg->x_size) &&
-> +	    y >= seg->y_origin && y < (seg->y_origin + seg->y_size))
-> +		return true;
-> +
-> +	return false;
-> +}
-> +
-> +/**
-> + * touch_overlay_mapped_touchscreen - check if a touchscreen area is mapped
-> + * @list: pointer to the list that holds the segments
-> + *
-> + * Returns true if a touchscreen area is mapped or false otherwise.
-> + */
-> +bool touch_overlay_mapped_touchscreen(struct list_head *list)
-> +{
-> +	struct touch_overlay_segment *segment;
-> +	struct list_head *ptr;
-> +
-> +	list_for_each(ptr, list) {
-> +		segment = list_entry(ptr, struct touch_overlay_segment, list);
-> +		if (!segment->key)
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +EXPORT_SYMBOL(touch_overlay_mapped_touchscreen);
-> +
-> +static bool touch_overlay_event_on_ts(struct list_head *list, u32 *x, u32 *y)
-> +{
-> +	struct touch_overlay_segment *segment;
-> +	struct list_head *ptr;
-> +	bool valid_touch = true;
-> +
-> +	if (!x || !y)
-> +		return false;
-> +
-> +	list_for_each(ptr, list) {
-> +		segment = list_entry(ptr, struct touch_overlay_segment, list);
-> +		if (segment->key)
-> +			continue;
-> +
-> +		if (touch_overlay_segment_event(segment, *x, *y)) {
-> +			*x -= segment->x_origin;
-> +			*y -= segment->y_origin;
-> +			return true;
-> +		}
-> +		/* ignore touch events outside the defined area */
-> +		valid_touch = false;
-> +	}
-> +
-> +	return valid_touch;
-> +}
-> +
-> +static bool touch_overlay_button_event(struct input_dev *input,
-> +				       struct touch_overlay_segment *segment,
-> +				       const u32 *x, const u32 *y, u32 slot)
-> +{
-> +	bool contact = x && y;
-> +
-> +	if (segment->slot == slot && segment->pressed) {
-> +		/* button release */
-> +		if (!contact) {
-> +			segment->pressed = false;
-> +			input_report_key(input, segment->key, false);
-> +			input_sync(input);
-
-Do we really need to emit sync here? Can we require/rely on the driver
-calling us to emit input_sync() once it's done processing current
-frame/packet?
-
-> +			return true;
-> +		}
-> +
-> +		/* sliding out of the button releases it */
-> +		if (!touch_overlay_segment_event(segment, *x, *y)) {
-> +			segment->pressed = false;
-> +			input_report_key(input, segment->key, false);
-> +			input_sync(input);
-> +			/* keep available for a possible touch event */
-> +			return false;
-> +		}
-> +		/* ignore sliding on the button while pressed */
-> +		return true;
-> +	} else if (contact && touch_overlay_segment_event(segment, *x, *y)) {
-> +		segment->pressed = true;
-> +		segment->slot = slot;
-> +		input_report_key(input, segment->key, true);
-> +		input_sync(input);
-> +		return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +/**
-> + * touch_overlay_process_event - process input events according to the overlay
-> + * mapping. This function acts as a filter to release the calling driver from
-> + * the events that are either related to overlay buttons or out of the overlay
-> + * touchscreen area, if defined.
-> + * @list: pointer to the list that holds the segments
-> + * @input: pointer to the input device associated to the event
-> + * @x: pointer to the x coordinate (NULL if not available - no contact)
-> + * @y: pointer to the y coordinate (NULL if not available - no contact)
-
-Would it be better to have a separate argument communicating slot state
-(contact/no contact)?
-
-> + * @slot: slot associated to the event
-
-What if we are not dealing with an MT device? Can we say that they
-should use slot 0 or maybe -1?
-
-> + *
-> + * Returns true if the event was processed (reported for valid key events
-> + * and dropped for events outside the overlay touchscreen area) or false
-> + * if the event must be processed by the caller. In that case this function
-> + * shifts the (x,y) coordinates to the overlay touchscreen axis if required.
-> + */
-> +bool touch_overlay_process_event(struct list_head *list,
-> +				 struct input_dev *input,
-> +				 u32 *x, u32 *y, u32 slot)
-> +{
-> +	struct touch_overlay_segment *segment;
-> +	struct list_head *ptr;
-> +
-> +	/*
-> +	 * buttons must be prioritized over overlay touchscreens to account for
-> +	 * overlappings e.g. a button inside the touchscreen area.
-> +	 */
-> +	list_for_each(ptr, list) {
-> +		segment = list_entry(ptr, struct touch_overlay_segment, list);
-> +		if (segment->key &&
-> +		    touch_overlay_button_event(input, segment, x, y, slot))
-> +			return true;
-> +	}
-> +
-> +	/*
-> +	 * valid touch events on the overlay touchscreen are left for the client
-> +	 * to be processed/reported according to its (possibly) unique features.
-> +	 */
-> +	return !touch_overlay_event_on_ts(list, x, y);
-> +}
-> +EXPORT_SYMBOL(touch_overlay_process_event);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("Helper functions for overlay objects on touch devices");
-> diff --git a/include/linux/input/touch-overlay.h b/include/linux/input/touch-overlay.h
-> new file mode 100644
-> index 000000000000..cef05c46000d
-> --- /dev/null
-> +++ b/include/linux/input/touch-overlay.h
-> @@ -0,0 +1,22 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) 2023 Javier Carrasco <javier.carrasco@wolfvision.net>
-> + */
-> +
-> +#ifndef _TOUCH_OVERLAY
-> +#define _TOUCH_OVERLAY
-> +
-> +#include <linux/types.h>
-> +
-> +struct input_dev;
-> +
-> +int touch_overlay_map(struct list_head *list, struct input_dev *input);
-> +
-> +void touch_overlay_get_touchscreen_abs(struct list_head *list, u16 *x, u16 *y);
-> +
-> +bool touch_overlay_mapped_touchscreen(struct list_head *list);
-> +
-> +bool touch_overlay_process_event(struct list_head *list, struct input_dev *input,
-> +				 u32 *x, u32 *y, u32 slot);
-> +
-> +#endif
-> 
-> -- 
-> 2.40.1
-> 
-
-Thanks.
+ .../admin-guide/media/v4l-drivers.rst         |    1 +
+ .../admin-guide/media/visconti-viif.dot       |   18 +
+ .../admin-guide/media/visconti-viif.rst       |  255 +++
+ .../media/toshiba,visconti5-viif.yaml         |  105 +
+ .../userspace-api/media/v4l/meta-formats.rst  |    1 +
+ .../media/v4l/metafmt-visconti-viif.rst       |   48 +
+ MAINTAINERS                                   |   11 +
+ drivers/media/platform/Kconfig                |    1 +
+ drivers/media/platform/Makefile               |    1 +
+ drivers/media/platform/toshiba/Kconfig        |    6 +
+ drivers/media/platform/toshiba/Makefile       |    2 +
+ .../media/platform/toshiba/visconti/Kconfig   |   19 +
+ .../media/platform/toshiba/visconti/Makefile  |    8 +
+ .../media/platform/toshiba/visconti/viif.c    |  651 ++++++
+ .../media/platform/toshiba/visconti/viif.h    |  393 ++++
+ .../platform/toshiba/visconti/viif_capture.c  | 1431 ++++++++++++
+ .../platform/toshiba/visconti/viif_capture.h  |   21 +
+ .../platform/toshiba/visconti/viif_common.c   |  239 ++
+ .../platform/toshiba/visconti/viif_common.h   |   42 +
+ .../platform/toshiba/visconti/viif_csi2rx.c   |  657 ++++++
+ .../platform/toshiba/visconti/viif_csi2rx.h   |   24 +
+ .../toshiba/visconti/viif_csi2rx_regs.h       |  102 +
+ .../platform/toshiba/visconti/viif_isp.c      | 1190 ++++++++++
+ .../platform/toshiba/visconti/viif_isp.h      |   24 +
+ .../platform/toshiba/visconti/viif_params.c   | 2020 +++++++++++++++++
+ .../platform/toshiba/visconti/viif_params.h   |   19 +
+ .../platform/toshiba/visconti/viif_regs.h     |  721 ++++++
+ .../platform/toshiba/visconti/viif_stats.c    |  336 +++
+ .../platform/toshiba/visconti/viif_stats.h    |   14 +
+ include/uapi/linux/videodev2.h                |    4 +
+ include/uapi/linux/visconti_viif.h            | 1921 ++++++++++++++++
+ 31 files changed, 10285 insertions(+)
+ create mode 100644 Documentation/admin-guide/media/visconti-viif.dot
+ create mode 100644 Documentation/admin-guide/media/visconti-viif.rst
+ create mode 100644 Documentation/devicetree/bindings/media/toshiba,visconti5-viif.yaml
+ create mode 100644 Documentation/userspace-api/media/v4l/metafmt-visconti-viif.rst
+ create mode 100644 drivers/media/platform/toshiba/Kconfig
+ create mode 100644 drivers/media/platform/toshiba/Makefile
+ create mode 100644 drivers/media/platform/toshiba/visconti/Kconfig
+ create mode 100644 drivers/media/platform/toshiba/visconti/Makefile
+ create mode 100644 drivers/media/platform/toshiba/visconti/viif.c
+ create mode 100644 drivers/media/platform/toshiba/visconti/viif.h
+ create mode 100644 drivers/media/platform/toshiba/visconti/viif_capture.c
+ create mode 100644 drivers/media/platform/toshiba/visconti/viif_capture.h
+ create mode 100644 drivers/media/platform/toshiba/visconti/viif_common.c
+ create mode 100644 drivers/media/platform/toshiba/visconti/viif_common.h
+ create mode 100644 drivers/media/platform/toshiba/visconti/viif_csi2rx.c
+ create mode 100644 drivers/media/platform/toshiba/visconti/viif_csi2rx.h
+ create mode 100644 drivers/media/platform/toshiba/visconti/viif_csi2rx_regs.h
+ create mode 100644 drivers/media/platform/toshiba/visconti/viif_isp.c
+ create mode 100644 drivers/media/platform/toshiba/visconti/viif_isp.h
+ create mode 100644 drivers/media/platform/toshiba/visconti/viif_params.c
+ create mode 100644 drivers/media/platform/toshiba/visconti/viif_params.h
+ create mode 100644 drivers/media/platform/toshiba/visconti/viif_regs.h
+ create mode 100644 drivers/media/platform/toshiba/visconti/viif_stats.c
+ create mode 100644 drivers/media/platform/toshiba/visconti/viif_stats.h
+ create mode 100644 include/uapi/linux/visconti_viif.h
 
 -- 
-Dmitry
+2.25.1
+
+
 
