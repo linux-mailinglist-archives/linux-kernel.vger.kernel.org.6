@@ -1,149 +1,136 @@
-Return-Path: <linux-kernel+bounces-245554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F7EC92B44D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:46:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 433CE92B44E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C28A9B21E29
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:46:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7433A1C2090F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B9A1553AB;
-	Tue,  9 Jul 2024 09:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B33A14D705;
+	Tue,  9 Jul 2024 09:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mH9RaYcf"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q5TI4TJJ"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24A714D705
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5184F154BE2
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720518385; cv=none; b=ZyYU/mvsw/51VjbhhtM0LOzM974NtkQofrhugs6rw3M5jRDtmJJgKGtkJHARjpy5MFaFxyUHjZkORx0xU/+qT8dLgUD6NRCBLqEC1WiQdn7xVh27qU1agfrxkYjKKuh0sUWIP7fr3eN7wHPjetZsXfpNCBttLZM/BmPOwZApXLs=
+	t=1720518410; cv=none; b=KJwYz0TjmcXh1RmvmfKtlxIn0DfPDHwZ2V4OrzkjAZS2r40nUSHVkIIyDtV8xArAbtLZA74GInFKLzykOaoQG+DKYDj0Fx+9YtWy7H/4OgTJ1k8pEdd6LSUcLIxZRTEnV7TMUFQAqS/v4Lp3tHL1N8qUHtcogre9DrqWT1s/hZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720518385; c=relaxed/simple;
-	bh=xrX9189y3J6RTL9wsavIida+ycAnE1HLJ4O+uVBj2NA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a76uIgNIu8Z18NcSQ9Ovs7toXOqOZmvm/nFRzLfPCjZEYc7PomD9byn21k+ii+j1jljDXpqHHrHqYruUgFGIJSdSqcnOAhG+xDEpf98nsoJ8Zy64RuYeD0DZqBQYfkBYk9EdF0cdBkU41B9rzstVj55UMHcuPqFDo1RovgNcBJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mH9RaYcf; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-58bac81f3f9so6324080a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 02:46:23 -0700 (PDT)
+	s=arc-20240116; t=1720518410; c=relaxed/simple;
+	bh=eCQQDFY8hVymXwxKp1QUQeYKDxSsetFoWDv41bgZWKw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UEpXCqIOPIgYx18M2yMwVQSJIhMwCUdUx/pWZPx/hOyxny3QXOExEyWCaTkE4/V+K7kli/okg3JSflD5vqIAjuZfu+855HbkdKR3/jrANLnwOzHWeEdUtbNm0/5SXv6gMFfmFfCVRYJelQ6Rpw9IHvSG/xl4JQCQrPaPgzjVPJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q5TI4TJJ; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-356c4e926a3so3209708f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 02:46:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720518382; x=1721123182; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=xndzXPaOahAfjvRuCniO4KjfCO34NFKI528Yw+eLHAU=;
-        b=mH9RaYcfzGjv+AkSavGyyq2EBkJym+eyoFHZU8iXnMSi5qK+s4WHqYpPd9PuB94P4E
-         N1QfB/wRRNzec3h79GLkJth3H7h6g4uUKe/Y+TASj/BgcOQkrMOGSgk7Bz+AHnHm2L/k
-         N6r7kzElcbkazufjqCsP+m05qAWkAWuAa8sWmwTamW+gY45F1r6GmktW+UUopq/tF67x
-         mBH8s780ufKTN0JNL9DdttIqGYuZ6Gea10rrFGELAn3GcnXx/P15pJP6gZEUBNR5qAMV
-         H6klOF/3kmX6o+DiLR1EqM7oPpJlk2hYfOsd2Fj/iiGYGo+yNn7w8+MubK5LTUJjYt7S
-         dgCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720518382; x=1721123182;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1720518407; x=1721123207; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xndzXPaOahAfjvRuCniO4KjfCO34NFKI528Yw+eLHAU=;
-        b=DmNgMvW5TpSP+Q0KoEZgXorNMh87t616jb/1uGswfEqoPpB46WARwpRS2IVv1zizUY
-         24AG/uF3+xeShRwrJdrxMaXyys6v9IJ7RG/hY8tkVMiWLELIcqoOlGYM4/5i9/RRePrJ
-         2OrwfW2iDltVVOCZkPW0OMag9Un6T3wUnXrr0ipke+pvQmQPx9OpuPAcEUccKkDymKwK
-         MuHd+G39SIi/yuodAvdp0+vj8hLQGuCEoISJUutqTkMf/F3yFhB0OqDoZtcsb5itpA86
-         3pBnzr/9gCRZz8ibHeernidUnaWSgab+J0TZb8Fb1v1iTbxQ7S7A0muGmHh7wyJyHSE5
-         HJjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWl16JxgV8xWZVkuZQp4QKQbi+ioY8UOw+Sus5N1zWMyqOSTnsRzpimx1CROcdxmxTb1H7QmgY3JVJMOsgExmCPGmQZM+1rIYKhVODM
-X-Gm-Message-State: AOJu0Yzdi1cOteJqEz+bRBCs6lyxAyH9bCJZ/+oo4s1RQfh+gWltXsjB
-	nWIcB3FleTS8i9vu8IAQCdEMRHkopGcu41GliLzZizHJzvNzrz59AUahRGA0Ubc=
-X-Google-Smtp-Source: AGHT+IHjPy7oHxBkWuRW/Jl+7QaB0fxfudKtoUsrHhltTvPwL7lfVnDuCLwUMhpeiB4EqK+93Z30TQ==
-X-Received: by 2002:a05:6402:517a:b0:58a:e810:227d with SMTP id 4fb4d7f45d1cf-594ba59f8d6mr1113424a12.21.1720518382094;
-        Tue, 09 Jul 2024 02:46:22 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bd45a162sm849610a12.68.2024.07.09.02.46.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 02:46:21 -0700 (PDT)
-Message-ID: <ac53d26a-b2f8-4172-987d-b4fcbb7f6e51@linaro.org>
-Date: Tue, 9 Jul 2024 11:46:19 +0200
+        bh=kAl22PofvTioHWfNt+bF1Jl2BsmrDxNKveilF7T4GJg=;
+        b=Q5TI4TJJPfT9bqIXr+lPrwz7V5Za4GRxc4NhyGxzc5g9TwPpb+ne9WJn6PHu8U3tZL
+         H1obsd85mEaSLKu3Wsjgzjbf6WjTRdx4s71PjMfPWo0KFMy3a1sNbVt9ibuRkqWYaTE+
+         JBDFeb9CG2x5AUyS9jnPUBS9Kuq7KV+zHOXXhiGfJxLsxz6S1PhXYEQlgXE7q5I1mfOm
+         zp0U/HZai/8Xju4cV6cZSkqMYHzTaLPKnLjtDoSwx9EqX2AYqAj1Mnfc2OP3yPhakDfd
+         5obGbXT4uXXYFxUp3e3/P5eFkqL0Uv7e/95M1ksbNJI3YZljAUEJEB/Y7HfFTZeWKuqd
+         TOqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720518407; x=1721123207;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kAl22PofvTioHWfNt+bF1Jl2BsmrDxNKveilF7T4GJg=;
+        b=RLnQ+PTuW3plGralCDMc+9ec3nm2RsewyEACsf1qvHTmz6u/eZ+P99npHYVIIbootb
+         ENmsx3qDVhbaE5JmFCeJcHgUaaUFHr/WUEdiqxtQUFWXTtiBKb0sCVXDHGMCsWqNaBlD
+         C8tKJkdRhii3bkd3DUw2ZnnTq+L0s4WxGytYS1QMc5+jjbM+OKvTxgyU7oAieRyIK21/
+         ECPpxloACHcvfZ/oYSfDOOw1fOUhZQY1tK0IB/HC2ggO5i5SoJWE9x3Qg52/1kCGD1lI
+         C4pY6U5SXi8b56rESOqH2HmygB4apcHVFa/xBVgXHumiAZrSHzekQGcg+g3a/ksDWZss
+         5mQg==
+X-Forwarded-Encrypted: i=1; AJvYcCWaCoEBkrIIexZXtFOZJm1HVokvPcP5roXRLJdRzuLBeSdGkgHaaiVXUXpYVFv3+se+9Zjq0lpXWuhGh3mHYdH+AxFS1J8YI/Ml8NFt
+X-Gm-Message-State: AOJu0Yw4PLpkirtE2rr2tLCGSEThNkebqYCCCLVppM17jYNpqbH3QeTI
+	DYM3/Unt1GHBMAE4LEe8JEpxHuzaUGvN+4Sd+nFrgHRs9Cn5jNm5+/QJEyEnFhmgKb7C1RDcvZA
+	WXe5Zyt3NIIUhsDFlwsoSpBL5A0smerbhOXQx
+X-Google-Smtp-Source: AGHT+IFlHTSp/MVSEbMZitGmqh6j910gE+cVPG5i5gaBlx/eMJDN2xZthp+2hnjGAc7uIFJk4Z+rinA4ANAty8nqf8s=
+X-Received: by 2002:adf:fe4d:0:b0:360:7812:6abc with SMTP id
+ ffacd0b85a97d-367ceadb1edmr1187247f8f.60.1720518407332; Tue, 09 Jul 2024
+ 02:46:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/5] arm64: dts: qcom: sdx75: update reserved memory
- regions for mpss
-To: Naina Mehta <quic_nainmeht@quicinc.com>, andersson@kernel.org,
- mathieu.poirier@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, manivannan.sadhasivam@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240709064924.325478-1-quic_nainmeht@quicinc.com>
- <20240709064924.325478-4-quic_nainmeht@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240709064924.325478-4-quic_nainmeht@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240528-alice-mm-v7-0-78222c31b8f4@google.com> <CANiq72ka=tMDHq3S2N0dkzj0DBje+kdz0nFtaQZ9RHC0rbii0g@mail.gmail.com>
+In-Reply-To: <CANiq72ka=tMDHq3S2N0dkzj0DBje+kdz0nFtaQZ9RHC0rbii0g@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 9 Jul 2024 11:46:35 +0200
+Message-ID: <CAH5fLggUcj=qne9uO8O=OGZgcwbhKMAJKpPe_s6Nd2Bbd+45JQ@mail.gmail.com>
+Subject: Re: [PATCH v7 0/4] Memory management patches needed by Rust Binder
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, 
+	Kees Cook <keescook@chromium.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Arnd Bergmann <arnd@arndb.de>, Trevor Gross <tmgross@umich.edu>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9.07.2024 8:49 AM, Naina Mehta wrote:
-> Rename qdss@88800000 memory region as qlink_logging memory region
-> and add qdss_mem memory region at address of 0x88500000,
-> qlink_logging is being added at the memory region at the address
-> of 0x88800000 as the region is being used by modem firmware.
-> Since different DSM region size is required for different modem
-> firmware, split mpss_dsmharq_mem region into 2 separate regions.
-> This would provide the flexibility to remove the region which is
-> not required for a particular platform. Based on the modem firmware
-> either both the regions have to be used or only mpss_dsm_mem has
-> to be used. Also, reduce the size of mpssadsp_mem region.
-> 
-> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
-> ---
+On Tue, Jul 9, 2024 at 10:02=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Tue, May 28, 2024 at 4:58=E2=80=AFPM Alice Ryhl <aliceryhl@google.com>=
+ wrote:
+> >
+> > This patchset contains some abstractions needed by the Rust
+> > implementation of the Binder driver for passing data between userspace,
+> > kernelspace, and directly into other processes.
+> >
+> > These abstractions do not exactly match what was included in the Rust
+> > Binder RFC - I have made various improvements and simplifications since
+> > then. Nonetheless, please see the Rust Binder RFC [1] to get an
+> > understanding for how this will be used:
+> >
+> > Users of "rust: add userspace pointers"
+> >      and "rust: add typed accessors for userspace pointers":
+> >         rust_binder: add binderfs support to Rust binder
+> >         rust_binder: add threading support
+> >         rust_binder: add nodes and context managers
+> >         rust_binder: add oneway transactions
+> >         rust_binder: add death notifications
+> >         rust_binder: send nodes in transactions
+> >         rust_binder: add BINDER_TYPE_PTR support
+> >         rust_binder: add BINDER_TYPE_FDA support
+> >         rust_binder: add process freezing
+> >
+> > Users of "rust: add abstraction for `struct page`":
+> >         rust_binder: add oneway transactions
+> >         rust_binder: add vma shrinker
+> >
+> > Links: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0=
+-08ba9197f637@google.com/ [1]
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+>
+> Applied to `rust-next` -- thanks everyone!
+>
+> [ Wrapped docs to 100 and added a few intra-doc links. - Miguel ]
+> [ Fixed typos and added a few intra-doc links. - Miguel ]
 
-Thanks
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-
-Konrad
+Thanks, LGTM.
 
