@@ -1,131 +1,150 @@
-Return-Path: <linux-kernel+bounces-245579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBF3892B48C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:57:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8E3992B48F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECE5C1C227C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:57:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 015901C227B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62379155382;
-	Tue,  9 Jul 2024 09:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BED815575C;
+	Tue,  9 Jul 2024 09:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="X+yZjLrZ"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bmqg5BEZ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="udF14+mV";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="n6cdigFQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dVSUL5VV"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BA926AC9
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B3A26AC9;
+	Tue,  9 Jul 2024 09:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720519047; cv=none; b=XZxpjq65hOlD9zrv3g1O/rAKUGmeV/zlNH4/OWbisFuLEJVvUaur++fRVgdHPRkz1RebHKm0gFDiQNYaNF4EZDS64/+dZiUAV1aoJo1Qojkes/Wi0QMZjUS1OiVosddU4zacGvRZxclAtw425rOMfabXGCH6Jx48fAErCpmOShA=
+	t=1720519160; cv=none; b=gwMcCAxq2l7mU4aQo0XZapfD6zh45AwhsRwTQ98OJTwzGA2iKcouedRtadi+vsnLOU3xIAjbE5e4EzkGdKCzIxvTg756j4Z8WWG4s6g+T8qWhR56aPav21+o/hu+9iQcmkNUKQwr/hX/R7z53KmfohSua67nE1ZQU+Snvgw5y2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720519047; c=relaxed/simple;
-	bh=aEPWqt4EkE+1dZwNyihdiQTNmdiVdPEo/G9muf2rBrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OXv2rWk1oY2jlDZ3at0bOkIQgJ3hD29Gbe6q9N4g487TKqXTccKZ/u71KAXXhmaRZAmN1LYvtbtdFLRByeCW2qe02vdovNxmVd0iVDhO8kt4GTvCbpn7rKQCutM/1WJPuMk7VzDH45D5v5E32EJ2L6A+omiIpS/dVTRpDR+Jm6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=X+yZjLrZ; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-78135be2d46so64350a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 02:57:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1720519046; x=1721123846; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oOyqcxyb5IwP9Eq+BrWEYtwo3uCUMmyhSGduwVBkBvQ=;
-        b=X+yZjLrZuZAeWg27u4qroP5kWgGzhHjBF8gBIFzVldSEc2Kxae/Z8wQAK2xr9GKY31
-         6CHC0VinoYGpSJ8NGCWrtRBRh1XXS3Uzy3i6UgI+7kjD7oWZiSbbmy35cjnhvupGyE4T
-         sp0mp1yirmxg3T1IgK5QI5Gx38zUkbRZP+HXFmX+JP38XFJb/T/7DCuY1Ck7hrPUBF1R
-         fVnghyHdOfEQhi5exZFVgx0Xd9zsVWTk6Fm29jeepqCsvnPoEvsaeEk+rN3FU4Tnm9ND
-         6txOO7/rRJOGyTYoWsgasGhGq1h3af1A2txDkgXnCxsj0eq+kDdj/uEAElXduqOMVozP
-         V8QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720519046; x=1721123846;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oOyqcxyb5IwP9Eq+BrWEYtwo3uCUMmyhSGduwVBkBvQ=;
-        b=COx7tASQMixg/+TvwKSumF3XF9VdoGz2hSi2vLl8Ru8Jgcrjpc9pqMZbNrtZS3GjyM
-         XuqIt0Ywxo91WIRCKNRyDES36P0MXwViZcbV4oBnoOqkkuxBl+J4VZuuQQ+y2LcqGOPM
-         lNCotik/KjaL9W89gKADTWK/l5N9VnHhQhh6UUn7hWtN5+BeTG0Avd+O9d52edl6tD9W
-         TQ68pxIGto8AFUrdOKCCNC36CEn+HtcKUUovL3GMEA+P5aDda1TpWFAfrVCSB90+T9j+
-         sbyDZSX9lrqFCuRXXIiIXJsE4/HP8RQAJpXuUF9cKWG8MZqOFuG8fS4wwym1Ubl4FjyU
-         uU0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWyohAvkS/uRV4U/oX4Sih6dH4GbYUuK9RBtTuogMI+X1JVeaCEf7JB36B5q1sR47/JGvSmJtRdhpTgwNZuhWtvcXk7E+HDOOA8Oi80
-X-Gm-Message-State: AOJu0YzZkqpGtyAmvJSlV8Opx5/rqJJ8B4P048xcLl4nf5rYoInONc+E
-	eNRi4oNoKmv+SRAAk8KUIV0FGSq3vRkBzhbN4hM3ku0piYkWl/5jH7Ck4EJwtDs=
-X-Google-Smtp-Source: AGHT+IFMGvAPzINU+Gs4ZFgsoFRoQvo0clRLF0utSQEN97hfaP88j88mC5MzvN9RYzCJoVB3MRsbWg==
-X-Received: by 2002:a05:6a20:734c:b0:1c0:f6b7:a897 with SMTP id adf61e73a8af0-1c2982285f2mr2354821637.32.1720519045687;
-        Tue, 09 Jul 2024 02:57:25 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-32-121.pa.nsw.optusnet.com.au. [49.179.32.121])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-77d5f0aaf55sm1096674a12.11.2024.07.09.02.57.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 02:57:25 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sR7b8-009ZB3-2w;
-	Tue, 09 Jul 2024 19:57:22 +1000
-Date: Tue, 9 Jul 2024 19:57:22 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: John Garry <john.g.garry@oracle.com>, chandan.babu@oracle.com,
-	djwong@kernel.org, dchinner@redhat.com, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	catherine.hoang@oracle.com, martin.petersen@oracle.com
-Subject: Re: [PATCH v2 10/13] xfs: Unmap blocks according to forcealign
-Message-ID: <Zo0JghFEaqxBs41l@dread.disaster.area>
-References: <20240705162450.3481169-1-john.g.garry@oracle.com>
- <20240705162450.3481169-11-john.g.garry@oracle.com>
- <20240706075858.GC15212@lst.de>
+	s=arc-20240116; t=1720519160; c=relaxed/simple;
+	bh=0L8qZkIRswnVHIoZOL+QpI04Q8AqBRQSC0Xu+OGaZs8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XyUJx1L2bFsZJu6HPuKrKnb/DcaJudexpkBRJTINHZTQ0n2gNqH34clof5tkQ1S53jboizMiNsokfEG4lxbyqCCxsPiLZz+PixzluhZenfcj09vXvtGpC/Rbz64wfsoAEFxnm2zHHIis0j6ls8Wrh6ru+r5Mbd66cqsr6FhnZH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bmqg5BEZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=udF14+mV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=n6cdigFQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dVSUL5VV; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0E55221B9A;
+	Tue,  9 Jul 2024 09:59:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720519157; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eFGyhwLjwHvqnxzFNZDxqYKqmIP/aQi15p3X3ME9A3o=;
+	b=bmqg5BEZ5b48Xex84v8vIqjga9EzKe8xHztDHcnQyLQ4MMUPhEoGvK37VOaDnKVJ3hq7ib
+	Hg9iX8u1aZo3u8UPw4YXoQdfE5AVCe5GfCfa+gL0E4h4WIAaD7iTxkoQJ3uB6/jom5SalV
+	z9SNnHGlJQPPHLDYkqP6cG4dW8MkGa0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720519157;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eFGyhwLjwHvqnxzFNZDxqYKqmIP/aQi15p3X3ME9A3o=;
+	b=udF14+mVf4SnwpCqK7VBfc8N7pyRSORzth19dk9ss3c3jgYttrmeBhritgXd/Hl9lHCSsw
+	BMuxaGf0uAKFqKAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=n6cdigFQ;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=dVSUL5VV
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720519156; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eFGyhwLjwHvqnxzFNZDxqYKqmIP/aQi15p3X3ME9A3o=;
+	b=n6cdigFQhLcLLZEnHKZ2+8bjmo1bLYgVsne3zCW7t8hGjnwHfxN+QC4OrZY7kKAeBnPbvA
+	+ZVaIAaNYGWU/OY9LrZ0nDuUz2JrM+ESc/1X2ZSGdkWaMC5FzH/nHaebC8Ol1bCkaXCo8A
+	mjoxNlJQruCz/hR5ZWjnRS66171WkXY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720519156;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eFGyhwLjwHvqnxzFNZDxqYKqmIP/aQi15p3X3ME9A3o=;
+	b=dVSUL5VVE2wrfVPGBbq+3qAPxBGTkfblA/rcRQR6iajM1gaR81MuIQEpj6kCiisYdItrqt
+	7v474Mh2ESFeUvAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EBD051369A;
+	Tue,  9 Jul 2024 09:59:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 24cBOfMJjWY5RQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 09 Jul 2024 09:59:15 +0000
+Date: Tue, 09 Jul 2024 11:59:46 +0200
+Message-ID: <878qyadgx9.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Nazar Bilinskyi <nbilinskyi@gmail.com>
+Cc: tiwai@suse.com,
+	alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda/realtek: Enable Mute LED on HP 250 G7
+In-Reply-To: <20240709080546.18344-1-nbilinskyi@gmail.com>
+References: <20240709080546.18344-1-nbilinskyi@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240706075858.GC15212@lst.de>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: 0E55221B9A
+X-Spam-Score: -3.50
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.50 / 50.00];
+	BAYES_HAM(-2.99)[99.97%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-On Sat, Jul 06, 2024 at 09:58:58AM +0200, Christoph Hellwig wrote:
+On Tue, 09 Jul 2024 10:05:46 +0200,
+Nazar Bilinskyi wrote:
 > 
-> > +			if (isforcealign) {
-> > +				off = ip->i_extsize - mod;
-> > +			} else {
-> > +				ASSERT(isrt);
-> > +				off = mp->m_sb.sb_rextsize - mod;
-> > +			}
+> HP 250 G7 has a mute LED that can be made to work using quirk
+> ALC269_FIXUP_HP_LINE1_MIC1_LED. Enable already existing quirk.
 > 
-> And we'll really need proper helpers so that we don't have to
-> open code the i_extsize vs sb_rextsize logic all over.
+> Signed-off-by: Nazar Bilinskyi <nbilinskyi@gmail.com>
 
-We already have that: xfs_inode_alloc_unitsize().
+Thanks, applied now.
 
-Have the code get that value, then do all the alignment based on
-whether it is allocation unit size > mp->m_sb.sb_blocksize. Then all
-the calculations are generic and not dependent on forcealign or rt,
-but on whether the inode requires multi-block contiguous extent
-alignment....
 
-i.e.
-	alloc_size = xfs_inode_alloc_unitsize(ip);
-	if (alloc_size > mp->m_sb.sb_blocksize) {
-		/* do aligned allocation setup stuff */
-		.....
-	}
-	....
-
-No code should be doing "if (forcealign) ... else if (realtime) ..."
-branching for alignment purposes. All the code should all be
-generic based on the value xfs_inode_alloc_unitsize() returns.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Takashi
 
