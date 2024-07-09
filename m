@@ -1,104 +1,99 @@
-Return-Path: <linux-kernel+bounces-245387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5879892B1F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:18:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC7E92B1F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F01981F22531
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:18:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35A9B282E5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D56152524;
-	Tue,  9 Jul 2024 08:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Y48QhxU8"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731F315251B;
+	Tue,  9 Jul 2024 08:18:49 +0000 (UTC)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67431487C5;
-	Tue,  9 Jul 2024 08:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8A712E1C4;
+	Tue,  9 Jul 2024 08:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720513109; cv=none; b=m70DF70JpOSHi8kSLslfHK9jMOrKcPjs6418cHOiwnoXItnCD9gAva2gjlusGg7507CSh+sIe5R6aRaSIJUJovPgfusyGuaLAZzmJTesF0Gant9+fY702PS1XC/FPCi1+njuq/TgUxUxlQ5Mib/dgBfJx9MgNugV/6tTAGaAxiI=
+	t=1720513129; cv=none; b=fOm2eG8z7rzib21veN6+tcgQ1ebLD+bsfvoLMCnIfQrm3gpuK8l29B19ScLqnIrN3OBdkfCWbnpp3KuqzKVAZHZmRg+9Z0GCnKKnb7hyxST5iEZXJUhDlbLlBMe2bz2wr7rSZslPskNBU16sTwoq5dchaqRxgFWIqB2HIAUq7Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720513109; c=relaxed/simple;
-	bh=g6wffX0jQVpxanjymkqV2YgRffLk23pn0cJcQ4v9Qsk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZnqTJ/z8QXCSQjlv4EXNYkZJGq1fg2goh1w2Mo1nCX0r/B5FkimhkQrzwi+ya3D7IkcJoQJr8tndTQEJ0FOAoYRRORuHPbdxy0tVMBUI+56rq5uy2/w/iWo65uCkmRnLryHFP8WxcocpfnfDCgOiqc2rAHubkdkGYGGk4YuQ1iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Y48QhxU8; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D8844E0006;
-	Tue,  9 Jul 2024 08:18:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720513099;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=guBIG0yXjLQF/KGNGw9TE40/iUTMcO24dv9vfa9naio=;
-	b=Y48QhxU8LcqREPrmzfduRlZKoQ4PjfsJza17r49pwbtt5814DF043QS6TUdqB9k9LeV8L4
-	sBPhseCqHXXQqVH+4SSN9Bal8Omu6muNG2m6JlpkUZ7QVC469QQdeGsuqPA8n0NWouwimp
-	0UL+UxcyBY7DjxrLKtBPJm9xHqn+Q69x0eyBN+c8AQfU6zflixPTxv0nbIZuzq5pgBpJjY
-	4NEtXlXkmnRp+ywdqHPVJH0lvUqVsFvbY78Y2WThiH4TZ2+iEm3cSfC6gOoIIGeZyuezCV
-	4xiM+tb69TJOK8LKVAwDYT25lQ2QIG1cpEh78QfLx4urBVdVBp3nfwq0PXIxnw==
-Date: Tue, 9 Jul 2024 10:18:15 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Simon Horman <horms@kernel.org>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew@lunn.ch>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Richard
- Cochran <richardcochran@gmail.com>, Radu Pirea
- <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
- Gospodarek <andy@greyhouse.net>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
- UNGLinuxDriver@microchip.com, Vladimir Oltean <vladimir.oltean@nxp.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>
-Subject: Re: [PATCH net-next v16 13/14] net: ethtool: Add support for
- tsconfig command to get/set hwtstamp config
-Message-ID: <20240709101815.474eec3b@kmaincent-XPS-13-7390>
-In-Reply-To: <20240708134409.0418e44a@kernel.org>
-References: <20240705-feature_ptp_netnext-v16-0-5d7153914052@bootlin.com>
-	<20240705-feature_ptp_netnext-v16-13-5d7153914052@bootlin.com>
-	<20240707082408.GF1481495@kernel.org>
-	<20240707145523.37fdfeec@kmaincent-XPS-13-7390>
-	<20240708134409.0418e44a@kernel.org>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720513129; c=relaxed/simple;
+	bh=GLjoN43u6BL43gzHfZAxD1P+CdDDhdGm7Bj/z5i2x80=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y8SkYO48FmsJ54he2SNMU7SryqKJ4EqkkIZTBJatZF0Dznmp9KrDBqGw1AbWwQmdHj4N8reEFy+O7hAG1mlOKIwCwdwdnLSIaCa12nWSGSYLEPInKR9XXOD7vjbnAYM4RaOyq7e+CQK7lGjrn7v2Z3gsO/7pbpVkFsxDAiohnLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fa2ea1c443so36363605ad.0;
+        Tue, 09 Jul 2024 01:18:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720513127; x=1721117927;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l+4YWuk2eULLz9kdGrUhDrllF5AsObbzG9cT63SL70w=;
+        b=lmBdVKe/KIyVFsgLwB2MdaLEvyuCqak7R0JPoX4D8lqweeWhGtHzJEbrtWUHcPO3hd
+         Ptvo6F3mqf3Zhjmva5wbsCuLlEv9lMvyZOtk78Xb7qSm2cKiVMulbdeM7Cey0hx0I5Mw
+         UtVD2M///KvKJwGukjZXW9Fg2IR3wmK0COls6Ap6pzoVBA1sS1R3oQi1QIhqlrtHADH+
+         3vUrGOtiYJpW0j8qgExbDQrx0y1KORi/AqTmEXuoYqkERWhVKn5fbBBTCksYmoICKty4
+         fi2Vo5vFDp41DnvK1GF8E4DImsmjGzYIugbx0x7WFRD4LlwQ0IjK+pLSJ1VL8UNL3iwI
+         n9mg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMLkBVOFSVMUwU3bH0A6siUNnf/h52e9EHzEnbrlf+AZotFJQMZt5icT+qQp5b9ZKfV4qygyrqmdDar1yi3h0yUMwiUi4DF7Y6ZSX3+/VutSLw92rZsioANHgAjEcDgNDX6GEXCvcL9A==
+X-Gm-Message-State: AOJu0YzdRGLFJtY86/wmA6MqIE4oz6o14EX0IatyrssUjLVAeBMRdC8T
+	oy7I4DpMyqSIcve8DDzA3OJRHdCEbXiVU1ItRjxpSb6+4dKYXkuNb4bW2DjRC/Q=
+X-Google-Smtp-Source: AGHT+IF/ZSS7+RxnIz0Pi07SHjIULG35YCO0HBoh1qH3+hi4q4SppN+p24ICDmnDu2X4p3EsKpj73A==
+X-Received: by 2002:a17:902:cecc:b0:1fb:701b:7298 with SMTP id d9443c01a7336-1fbb6d2425fmr15152405ad.32.1720513126693;
+        Tue, 09 Jul 2024 01:18:46 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a3ca56sm10586095ad.118.2024.07.09.01.18.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 01:18:46 -0700 (PDT)
+Date: Tue, 9 Jul 2024 17:18:44 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Joerg Roedel <joro@8bytes.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the iommu tree
+Message-ID: <20240709081844.GA3611159@rocinante>
+References: <20240709163305.188b1182@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240709163305.188b1182@canb.auug.org.au>
 
-On Mon, 8 Jul 2024 13:44:09 -0700
-Jakub Kicinski <kuba@kernel.org> wrote:
+Hello,
 
-> On Sun, 7 Jul 2024 14:55:23 +0200 Kory Maincent wrote:
->  [...] =20
->  [...] =20
->=20
-> Looks like there's also a new driver to fix :(
+Thank you Stephen!
 
-Oh indeed sorry.
-I have to check if new MAC drivers appear between each version.
+I am really sorry you have to keep telling us we have dt-bindings
+duplicates so often.  I feel bad about this...
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Please, be patient with us!  You rock!
+
+> The following commit is also in the pci tree as a different commit
+> (but the same patch):
+> 
+>   40929e8e5449 ("dt-bindings: PCI: generic: Add ats-supported property")
+> 
+> This is commit
+> 
+>   631b2e7318d4 ("dt-bindings: PCI: generic: Add ats-supported property")
+> 
+> in the pci tree.
+
+I am happy to take it via the PCI tree.  Uless you want to keep it, Jörg?
+
+	Krzysztof
 
