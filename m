@@ -1,129 +1,122 @@
-Return-Path: <linux-kernel+bounces-246454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 057EA92C1DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:11:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1434292C1E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36B0E1C230FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:11:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 453BC1C23A29
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161B01BE230;
-	Tue,  9 Jul 2024 16:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC531A072B;
+	Tue,  9 Jul 2024 16:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FRtAbM+1"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="krsMThMX"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB7A1A0712;
-	Tue,  9 Jul 2024 16:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F0A19DF97;
+	Tue,  9 Jul 2024 16:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720543162; cv=none; b=IOSINtJ/tLOmWAOS53wiFgG/2nSkt0SN1YhdtulV1R2cgbfiuKqcEA8+A8FUcKZ38f4t9dL3PqLJhKgFn7ljZnikX0f8qOO8uMxP//M+22UOkUmujUqS8jYXuXNTdYK1cbdc43+rxxFHEO8G9WNuuZkUfjBqJPxv/QI7eg7hY0c=
+	t=1720543334; cv=none; b=tkl4oy/poVMfGHGhUI26LJvrX0tleDmqa2nu+ydmE5JKsemGV/CacoUA9mfEaMTH6DUG6Dn9/GUP89wPsflQ6j6MMtKm4OZRHtNjixFeqrZirwBUQ1MjaIFl2HIMK0SlxVP/bfW7vVvCA1z+kkZ/Tru7G4sccLAwgUQj1w4f+X4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720543162; c=relaxed/simple;
-	bh=pFucpG6/x+NwuUD2iPojwPSQ9j8dX3c32uVpYsm4J9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SZTzdXGZJAvKfkdITonLTj8UYcB20/MLtpLBoVAUxpCoQPWR/79u7tpopZZfpCnE0v807gxW7FbDm7J+oEzroXOMaZnScI2h3+E9HLqhQ7DG77vRbXv0pu/8xR6zxT3lA8pAWpRcfhfYsn0PNJE2fyRQnttBMD/VAXxT4PnyslY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FRtAbM+1; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1720543334; c=relaxed/simple;
+	bh=TOPEQCqKNtP+Zy4WyKXZJU6SqsZ0Lay1/kaf2uXX1Cg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P7oV+vJSgS1hoY+tllXn6k3E84g79AoEDWtynqM6WCyX42agh9fJblkYZgHV6A1178SdOv5Gx+BRQ+CwbgsnIDxRiQRkMshRLoxFQM5Zt5vf6w1kXmqQApqjTDmfKFVXgRkqDqODdhQTOZ7HGHSyj59RX/SN4l7LhIKx6sfFaxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=krsMThMX; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5c651c521f2so2411154eaf.1;
-        Tue, 09 Jul 2024 09:39:20 -0700 (PDT)
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c97ff39453so3675136a91.0;
+        Tue, 09 Jul 2024 09:42:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720543159; x=1721147959; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6+VdH11sjrAe3PqjcossyLdY+HXcfeSaQR7JuWELh04=;
-        b=FRtAbM+1vxiRc6tWy1MRgzYp1hGyqeKN8j5ckCySo00X2JNOqZcAjCv4JaMF4F/qAC
-         1YwVde84l7QdRlA/ywpZqFW9FlqtFIFkoFuF74o7cjoWee6ASMg01b8M3fb7FVdUsloT
-         uUlg3aBspIMYaUxNTNMT7R+jfPwiYrsGGCf3BVmuAl3smiNzHMGACAD4XQFUBWs0VSIK
-         Ou4m1mzNylkOQpykaL7nJc2iCzqwPzRZgi5AdTuFavxHV+w0/5/Yfkz9+3SAmKY9eLN0
-         ytA7/H6dAvoLMf3uiZhzej+GMMisERZKHVy2lt2WsOV/RSiNLVDWw2Y8RXSjm/s8nVUE
-         v+QQ==
+        d=gmail.com; s=20230601; t=1720543333; x=1721148133; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yn2AUZgJ/nLQYA7uztloOzDIbm4J/qB8cIe6P5OOgrM=;
+        b=krsMThMXUfpSeSydQvGKPUvLhzdssqvf50d6q/irzMGt0PeXvWI0wHJ8K6O4mHN8uI
+         dDcPtfAeI5bQBlJn2eW4SgD0HjNLoUtYfDaSyFcYrfqtMi1cmlP3+gm5h9raf65hwgeJ
+         lQRjbFJ3cOXj29KavOI8JpeCVX3zcAmIgHAWQiqWtrZ8vKKGAZS359+r0leITWmsAyU8
+         LUXK4MYpvsNeKiXDpD36+ua89Hn8pstNEHw0f79fVcyAUi24e3UTrj5zdqfMMexbDbpj
+         yivUkr4kcNDfM5M81pS097VOCU+w91nLdcOF/NTCH0vAV5DDusVC6YBGPoV+cRAs0z2l
+         946Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720543159; x=1721147959;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1720543333; x=1721148133;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6+VdH11sjrAe3PqjcossyLdY+HXcfeSaQR7JuWELh04=;
-        b=A84ma3Q9lnBKYulCfK9WLzLrt64kGvWln93SjyRpW7vDTxd9hBvXBAb87vJYep9RZk
-         VmlEsoNBSqBRU8xWsxSxkLW8AO+4EIHd8x3a1iYUmDNoXkYzgauxH9pUqouWmhPWu4NC
-         9mTQPS8fDQaOWmpYjEx8yYrU/gKVh2VOdJVbpUTy4AEQ/YaD0fTwl7417fF+d82D1FG6
-         ZsUYWnWPlrtVoKWFsxlw6dzZmixm7wAIwcx0jI60we+bK8mPylnxHDUCo8PIHiQo69rQ
-         xQJPqaZYn+AgndUZuBWHCvSyk+NXgqS5VJuuh/Yoq0cKrkAEOC1ebOfCBSyGSvvlwcDE
-         vRsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVX5sSoWcbokb53ue4V7zT9yf+JaPEeTiim+RgsvajqKRibfi2ZIZcV0htVfrf2xzQ2xU9+J+0A5E5fVag5x7+iz3a4UB3/Bgvd6sam8sAX9L2rXSSIix+p0kXTJ1zrOzLzgFNh3IQ=
-X-Gm-Message-State: AOJu0Yx784+2ToI3cz/Duz7OFwtUfTGHXZq9kJ1EBCcMMjRqUA+Mu/Ye
-	N6DLdK/9PHBbBdaO+xkw3hi0XY/eDoeaaXs6BL1LSSezYqN15VNn
-X-Google-Smtp-Source: AGHT+IHqTrPJAzaXMDwxPW5KDIKdNSC6MrO/Cz/uZYlxkl/ty7aAXwkC0mugN859XmW0ECu3IGWAXw==
-X-Received: by 2002:a05:6359:2f45:b0:1aa:c583:1650 with SMTP id e5c5f4694b2df-1aade1249c0mr227112555d.32.1720543159143;
-        Tue, 09 Jul 2024 09:39:19 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-77d667ec487sm1372281a12.75.2024.07.09.09.39.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 09:39:18 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 9 Jul 2024 06:39:17 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, io-uring@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Tycho Andersen <tandersen@netflix.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Julian Orth <ju.orth@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 2/2] kernel: rerun task_work while freezing in
- get_signal()
-Message-ID: <Zo1ntduTPiF8Gmfl@slm.duckdns.org>
-References: <cover.1720368770.git.asml.silence@gmail.com>
- <1d935e9d87fd8672ef3e8a9a0db340d355ea08b4.1720368770.git.asml.silence@gmail.com>
- <20240708104221.GA18761@redhat.com>
- <62c11b59-c909-4c60-8370-77729544ec0a@gmail.com>
- <20240709103617.GB28495@redhat.com>
- <658da3fe-fa02-423b-aff0-52f54e1332ee@gmail.com>
+        bh=yn2AUZgJ/nLQYA7uztloOzDIbm4J/qB8cIe6P5OOgrM=;
+        b=MHsjzM+q0T+pSLoCRSYPLOz09sppSf55Zk6SPdd/wJJq4ltD5JUL1I3NJBhT2t2pms
+         6BrOAYwjjUjiMhBrWZRUl2WRxL6Hh3gcHe3iJ8wZcdGWYsmLpstl5rhnbvMtsuWCXMts
+         QTyFWuWmYhvYp8IQH+EQi7sDPKqTKEhZGGZjKo4Zebkq33Ag14poNHfp9Q0hrrNT34B+
+         YbM1COd/+fu5g8Im+9KdbW5uSatXkc4s1BKQuzinrlTFIU0xtfbvPyoOwoIY+F9ZqUT4
+         Y2H/539Ms4GG6Qp5gLecgY6Zwi352VisPNCz5lNWDZcmtqjxOLjRzxSrQF0ukUbaLzpj
+         2Qag==
+X-Forwarded-Encrypted: i=1; AJvYcCU4eVkAmlzqALNLjKVGuCyhkbKCJHx8XHRL9sinqyLLmlWNLlNm247y+4dM9LdErkEpIJLzLMkpv98gu1BNLwPfxDoi2XkINRf0W4alHbs96FA+RofIZGcocUEb6OjeSn2h
+X-Gm-Message-State: AOJu0YzNtUDXPlvrL3mz52e5MFRtNr7Br4x//YAOJizczKAc8s0JHb/V
+	9XVlGuVD4XUb3IHvhd4ZLANFEA8QfyVj6ALYNgtIc/kHjOA2VYISW1b+ANvrTnrdbvIiZg7TsZe
+	SiFtKgqgHFiskEspDrzuBS0+w/7M=
+X-Google-Smtp-Source: AGHT+IGIeoUFFQZgHj4FUZ4jNJFai/RmD3uRoWIu0MLKJb6LuShRNp46411Onm2qUU3jxmaVfTH0cub44G0df0f2qlk=
+X-Received: by 2002:a17:90a:3001:b0:2c7:aba6:d32f with SMTP id
+ 98e67ed59e1d1-2ca35c69399mr2729893a91.22.1720543332573; Tue, 09 Jul 2024
+ 09:42:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <658da3fe-fa02-423b-aff0-52f54e1332ee@gmail.com>
+References: <20240708091241.544262971@infradead.org> <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
+ <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
+ <20240709090153.GF27299@noisy.programming.kicks-ass.net> <91d37ad3-137b-4feb-8154-4deaa4b11dc3@paulmck-laptop>
+In-Reply-To: <91d37ad3-137b-4feb-8154-4deaa4b11dc3@paulmck-laptop>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 9 Jul 2024 09:42:00 -0700
+Message-ID: <CAEf4BzZp31-skJQWcv_H+iTG52dAbX+YeXkZ4d+HMaXRyXhJQA@mail.gmail.com>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+To: paulmck@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org, 
+	andrii@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org, 
+	oleg@redhat.com, jolsa@kernel.org, clm@meta.com, bpf <bpf@vger.kernel.org>, 
+	willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Jul 9, 2024 at 7:11=E2=80=AFAM Paul E. McKenney <paulmck@kernel.org=
+> wrote:
+>
+> On Tue, Jul 09, 2024 at 11:01:53AM +0200, Peter Zijlstra wrote:
+> > On Mon, Jul 08, 2024 at 05:25:14PM -0700, Andrii Nakryiko wrote:
+> >
+> > > Quick profiling for the 8-threaded benchmark shows that we spend >20%
+> > > in mmap_read_lock/mmap_read_unlock in find_active_uprobe. I think
+> > > that's what would prevent uprobes from scaling linearly. If you have
+> > > some good ideas on how to get rid of that, I think it would be
+> > > extremely beneficial.
+> >
+> > That's find_vma() and friends. I started RCU-ifying that a *long* time
+> > ago when I started the speculative page fault patches. I sorta lost
+> > track of that effort, Willy where are we with that?
+> >
+> > Specifically, how feasible would it be to get a simple RCU based
+> > find_vma() version sorted these days?
+>
+> Liam's and Willy's Maple Tree work, combined with Suren's per-VMA locking
+> combined with some of Vlastimil's slab work is pushing in that direction.
+> I believe that things are getting pretty close.
 
-On Tue, Jul 09, 2024 at 03:05:21PM +0100, Pavel Begunkov wrote:
-> > -----------------------------------------------------------------------
-> > Either way I have no idea whether a cgroup_task_frozen() task should
-> > react to task_work_add(TWA_SIGNAL) or not.
-> > 
-> > Documentation/admin-guide/cgroup-v2.rst says
-> > 
-> > 	Writing "1" to the file causes freezing of the cgroup and all
-> > 	descendant cgroups. This means that all belonging processes will
-> > 	be stopped and will not run until the cgroup will be explicitly
-> > 	unfrozen.
-> > 
-> > AFAICS this is not accurate, they can run but can't return to user-mode.
-> > So I guess task_work_run() is fine.
-> 
-> IIUC it's a user facing doc, so maybe it's accurate enough from that
-> perspective. But I do agree that the semantics around task_work is
-> not exactly clear.
+Yep, I realized that this might be a solution right after asking the
+question :) I've been recently exposed to per-VMA locking, so I might
+take a look at this later.
 
-A good correctness test for cgroup freezer is whether it'd be safe to
-snapshot and restore the tasks in the cgroup while frozen. If that works,
-it's most likely fine.
-
-Thanks.
-
--- 
-tejun
+>
+> As with your work in 2010 and MIT guy's work in 2013, corner-case
+> correctness and corner-case performance regressions continue to provide
+> quite a bit of good clean fun.
+>
+>                                                         Thanx, Paul
 
