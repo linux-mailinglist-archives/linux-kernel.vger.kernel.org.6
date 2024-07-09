@@ -1,90 +1,145 @@
-Return-Path: <linux-kernel+bounces-245210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A1292AFAC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:01:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2383892AFAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:01:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93573B21D84
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:01:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C03C91F223BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816D112F5BF;
-	Tue,  9 Jul 2024 06:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB4712D1FC;
+	Tue,  9 Jul 2024 06:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metaspace.dk header.i=@metaspace.dk header.b="hYf6tc9x"
-Received: from mail-4018.proton.ch (mail-4018.proton.ch [185.70.40.18])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ptebY4f6";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kKrkkCAM"
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FAE97B3FE
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 06:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2399212E1F1;
+	Tue,  9 Jul 2024 06:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720504862; cv=none; b=gbLmk6B8E4xtYN/6HRphvOQMHMicOYi+oFFNjb90MZbS6tDfgjkhjSqtqwUEXaxi5CcueS6x3GLbA0037yFg7tqVmNtOqT7iPlGd449kWjLUT34TbkgifbTjLH95bSYLUqTLpGvqyoQQRJiOC+i8UBSXDNgdau7xpEu13jGZxhw=
+	t=1720504882; cv=none; b=Sj4UtCtNCtKs+X9oLVPe181dDNH00ADp+oihk6BCv0qPOguZzivS5LVcr7dPrpYwaWCfPNXX6rzNB50g0dXC/bMU0p+1QLbd8iTvbZ00PckXz02Fcz52x8YwP9P46Oh0gxJnpViKjrSMM7lK9VWmqcjUQEkAQ9q7LVXZWc+stKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720504862; c=relaxed/simple;
-	bh=cjVkguTcrkVE0w6ZweMJZaUA2qKicyJLz9aNAlqZy/s=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P2m/2SkMae2r2kGpvoOeyqqOFr+df+vTm6+2jVBnaQvPp1c7JyzUENVtcEgj6vh3vnhMYKVrNX2MruQPFofCXfOHnftRQBWoyPp6/6cVEb2Ozcm5WujvNo56Cpm1FBPCtQJubuRbx/Apf7zQgNax6ABxQUAHs2vj9uW8QddPKJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=metaspace.dk; spf=pass smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace.dk header.i=@metaspace.dk header.b=hYf6tc9x; arc=none smtp.client-ip=185.70.40.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=metaspace.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=metaspace.dk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=metaspace.dk;
-	s=protonmail; t=1720504850; x=1720764050;
-	bh=cjVkguTcrkVE0w6ZweMJZaUA2qKicyJLz9aNAlqZy/s=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=hYf6tc9xTv2o7Jcsj1oMmEWl8mDIoi/vtJFOlI4ahYFWAak1iIpw/krhldw7uqyy4
-	 l8bAxEDOyHIZQ5UJtQvI2BZFZjy2Om26+8gxljRYUb91y9D3nZ4XPPeaEM9y0wYje2
-	 dtR3nta8PXiIA0ATqkxDnMZKRn8LhoUBLhyUhzmzwgp+ZiyY7o71TWdW2i9tLKScm5
-	 cjeQnCnC8XYQh2lncb4X0QjpbBSrdpk3pGjqTl0Qev3xOgvMmT49UQpCBSMqH1CDmS
-	 cMoHel0ALnKZckHjzjYT3Eh+CL8tNNtm49QM4L/nLzUkq4FmKZG6H1Mt4O9f9C5TFI
-	 uE8teoa66jrXQ==
-Date: Tue, 09 Jul 2024 06:00:46 +0000
-To: Luis Chamberlain <mcgrof@kernel.org>
-From: nmi <nmi@metaspace.dk>
-Cc: Miguel Ojeda <ojeda@kernel.org>, rust-for-linux@vger.kernel.org, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@samsung.com>, Adam Bratschi-Kaye <ark.email@gmail.com>, Sami Tolvanen <samitolvanen@google.com>
-Subject: Re: [PATCH] rust: add `module_params` macro
-Message-ID: <LHGWBNSEDaOsx4BbADR1pZYqPV0KKhVaJ1Qvwe9h4UPeERRAA4s1DTIsnFR5rpHBGa6uIG1tU_4hTBXgjAc5BNwNqo0Rg_kOx2W_y0EUy_I=@metaspace.dk>
-In-Reply-To: <ZoxdRjpy2hRndqmc@bombadil.infradead.org>
-References: <20240705111455.142790-1-nmi@metaspace.dk> <ZoxdRjpy2hRndqmc@bombadil.infradead.org>
-Feedback-ID: 113830118:user:proton
-X-Pm-Message-ID: 27bf84e35fba8303395607499fdd21e54b7c4836
+	s=arc-20240116; t=1720504882; c=relaxed/simple;
+	bh=A7J2qxXkLo7vN//o83NXCxLk1MHOuua+i7z8zJNi0k4=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=TeRfP4fRSFeXMMdAlGPXfgNrEb0WhmkMUNCaqooVg5zhJs8XimdobTsfbbo6+bfAL+uxMu/RibP6HK1FT28RksPuNzmOhynSSkRIMr1mZVHCjxT6tiD47O1SSJX+vaf4Igd1wP/mHvVIrJiLb6CEyBewVX4VhZ8Bl7ERPOCsze4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ptebY4f6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kKrkkCAM; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 427EF13811CE;
+	Tue,  9 Jul 2024 02:01:19 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 09 Jul 2024 02:01:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1720504879; x=1720591279; bh=+33ACQQ76U
+	XJiJTz74tjd763vFFqkkEWpJ4vg2bCth4=; b=ptebY4f6dFVb1zM2ItwInSNz+O
+	Dz1Wzc0QxVwvsbQldyk2DfpidcPv53/gZnT4XVWmLMp6FzPEe7qzBInj97QqGQQp
+	/TBpgic1Yy5UQygAVj6qjK+Sttv+sQIFhmaQ96/VTLDW/lWA+xXkloLvbAWBwIdD
+	w3u9/Cvzcxstw1t+F8PoHE4BYZDWk7IZzM7E9x6FIx/KuY9OggzMSipBgGBZkSoJ
+	SFZq2UdOwWUvksxCaqof+hlKZlty2Gl2KKAz0e+08pO6ZFlCstLOsrnlAz0oYK5P
+	hDBSdbb8Ki8BAchzyLlZ1wyqruzNlluE0YKSDAmf9HmyluEwtvO/Z2ZBZJXQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1720504879; x=1720591279; bh=+33ACQQ76UXJiJTz74tjd763vFFq
+	kkEWpJ4vg2bCth4=; b=kKrkkCAMHH1PIEUYoggT7v9kc/umNKLG0WC77YZ/lyzs
+	g0tYNKgOkM8Pw+dM63s2xRcT3Iivyy0lLkic5QwlEKja1CxervcYCS7Ty/zhFtXV
+	7zv828DsriJr/PMXFJW2lPDco70unyYRGU9IQD6oh5ScBglfQaHeNrNqRBzhCuPI
+	yPSMw34of05/DA3HsaErFXswKhs3PWsNQo3lZ44LtetivK3cDA5/lYo2vJ8BdsVj
+	G28Jn4YrotbWlwJFhNYCs7tQcHMleoUteAMPZ26V+BKbxqfe9iue9tFfD0EJRh/b
+	0Mm2Mnnbj9DgR6U0UFK3jWVuUqb6tvKR818OA/StUw==
+X-ME-Sender: <xms:LdKMZuUHuqlA4-gOLopjymhf987bojm7aa193bAFEIeJbocHIGwRFQ>
+    <xme:LdKMZqk2X4xmCj2qRsL3xMrlaD5-K2ryZwzB2QCndz312OTyPZ5RyM7gKLEOdYYut
+    e6TXBA_QXRQyx4MkmU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekgddutddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:LdKMZiZ00jjKHlI5ineMH64teeUgd3F_tPiNPtMAjx_J0U8aKZXKbw>
+    <xmx:LdKMZlUE4ZEo2OZsoBtzv9k2KMyOOkt6A55NEI-dPVXR-8v3DxoPnQ>
+    <xmx:LdKMZon6Ujeso2runysfPZWi20E7KhtdYlhz6GUChRx05WlGEVAU9Q>
+    <xmx:LdKMZqdenmD2NTglKiQ2qbH8XGSAzgdoD9a0nPgQZAzzct57hMGNuQ>
+    <xmx:L9KMZpCK-W7sEJJaQdGaGr3TWPOODq-60BRYj6WCQbnIDdXpA-ns_FF9>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 8E235B6008D; Tue,  9 Jul 2024 02:01:17 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Message-Id: <9e756bbf-fca2-4ebc-bc04-538aded93747@app.fastmail.com>
+In-Reply-To: <20240709100154.0b4b1372@canb.auug.org.au>
+References: <20240709100154.0b4b1372@canb.auug.org.au>
+Date: Tue, 09 Jul 2024 08:00:56 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Stephen Rothwell" <sfr@canb.auug.org.au>,
+ "Huacai Chen" <chenhuacai@loongson.cn>
+Cc: "Huacai Chen" <chenhuacai@kernel.org>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ linux-next <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the loongarch tree with the asm-generic tree
+Content-Type: text/plain
 
-Hi Luis,
-
-On Monday, July 8th, 2024 at 23:42, Luis Chamberlain <mcgrof@kernel.org> wr=
-ote:
-
-> I'm starting to feel the same way about modules, but modules requires
-> more work than the firmware loader. And since I also know Andreas has
-> already a lot on his plate, I'm at a cross roads. My above request for
-> the firmware loader made sense to the person working on the firmware
-> loader changes, but who would help on the modules side of things? And
-> does this request make sense to help scale?
+On Tue, Jul 9, 2024, at 02:01, Stephen Rothwell wrote:
+> Hi all,
 >
-> The rationale here is that a rust binding means commitment then also
-> from fresh blood to help co-maintain review C / Rust for exising code
-> when there is will / desire to collaborate from an existing C maintainer.
+> Today's linux-next merge of the loongarch tree got a conflict in:
 >
-> I realize this may be a lot to ask, but I think this is one of the
-> responsible ways to ask to scale here.
+>   arch/loongarch/include/uapi/asm/unistd.h
+>
+> between commits:
+>
+>   13aa27ce8de0 ("clone3: drop __ARCH_WANT_SYS_CLONE3 macro")
+>   1d7b98ec5d78 ("loongarch: convert to generic syscall table")
+>
+> from the asm-generic tree and commit:
+>
+>   a5d43e6d87c0 ("LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h")
+>
+> from the loongarch tree.
+>
+> I fixed it up (I think - see below) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
 
-I am not sure I am the right person for the task, because as you say, I hav=
-e a lot on my plate. But perhaps lets schedule a call so I can get a sense =
-of the required effort.=20
+Thanks for taking care of it. There is a slightly better way
+to do it though:
 
-Best regards,
-Andreas
+> diff --cc arch/loongarch/include/uapi/asm/unistd.h
+> index 1f01980f9c94,b344b1f91715..000000000000
+> --- a/arch/loongarch/include/uapi/asm/unistd.h
+> +++ b/arch/loongarch/include/uapi/asm/unistd.h
+> @@@ -1,3 -1,6 +1,4 @@@
+>   /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> + #define __ARCH_WANT_NEW_STAT
+>  -#define __ARCH_WANT_SYS_CLONE
+>  -#define __ARCH_WANT_SYS_CLONE3
+>  
 
+The macro is no longer needed in the uapi header and
+should now be included in arch/loongarch/include/asm/unistd.h
+instead.
+
+      Arnd
 
