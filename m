@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-245786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D922A92B942
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:21:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 877B292B944
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6700D1F24C9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:21:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5933B24616
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07DB16630F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EADF9166314;
 	Tue,  9 Jul 2024 12:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="UGWkdo85"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="c4DzXZ4M"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9AA15F41F
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 12:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB5F15B968
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 12:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720527542; cv=none; b=dsSRgw2WN/999G/lz5HsVjwag2zkMAXj8d447cIfBXyiTOqjuKH5f2MjSdqCNNqGaiE6TqJ9kjxO/afbpXR/Ojrg0p2W8l1U9oSU3tb6E+8D7DcWGPNM9ZXStxf9t6j4zNcVdC6uEXSbjVtA8zhaVG9fQax0zOoIJ1/Gvl410XU=
+	t=1720527542; cv=none; b=IvvW9Ri3xKAn+XI2415YvAngqC11ox1o/DqUmcFLAGkurQhpmasJ6J+cbyOv0WBwjKDul6unUIWjaNCjXAZDqo0m/W8uuhFBuXnHsZxFCpVHP8jSk5e/fWSNtsUODSNsiSkXhvYdiHXIybT7S/aDlaz595Jn8zpdXNcxclQM0vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720527542; c=relaxed/simple;
-	bh=fKKLkr+JeqinumE1YtXHxd2euSzwPdFaYrOFYxNDGqw=;
+	bh=n8IBlhPoA/qgk+fNyg4rQ99SOZqrqxt6zskITPsCtAo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=d5xYaRyO5UKS38SyucbKtlFq9qyL7o/y88iNAO/uspENCY9SK0LAkw5XR/Kfe8RfhfljyiTguga+X9enVXZPwbdqyi/Zn5wwzE+cIQqqoIxd5jyFMGQrwXdaemjIlj+mWFtr0hFhF7v8N/VqlnKz0Xa+vThXSmL9NBv0p3+UQs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=UGWkdo85; arc=none smtp.client-ip=209.85.208.178
+	 In-Reply-To:To:Cc; b=SUdImppQI3++N3aRniC8NpVA3HIf1qkzJMoPKAGW6LyBHwQdyv7Q/uuqCVaut5yuVbsFdheAeAPoQqNMpnVb167W5ziYjGWquBFxnrH3wrxlTJALy/HcYbutE+GjW/tOiuhkkkWvKPxJFTFsjstJnxNs1Dj3CFD8pvpshiTrs5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=c4DzXZ4M; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ee90f56e02so50248341fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 05:18:59 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-36796aee597so3361245f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 05:19:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720527538; x=1721132338; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720527539; x=1721132339; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+ZVrjmNGGBCCMCXFviIdtIer4Cn8tsfjub2doZVrX+Y=;
-        b=UGWkdo85+0/Jeonj3B+o2l0wanLywgyLFn4sZWqptzqWfqEasuFOISpsl58MDkF/6N
-         deMBnSUDMa/cG+ireSYUJYhwSL+yTP0gYxLqZCA9hzaF9zUQno4sovM1IVWf0M17A1sf
-         cdNmf16ywgrvJXhLDcqXAd0UMBt8PbfMUnpoFsIqkSv5TCtlCYbm8kabldFuF10xM/le
-         tGQzz3nO5N+winCupgws6SdcT0j+PstuwO5MbraMbkGRBCwFqx4MJ0ZLsEvu1+3epBwh
-         FeM1moM0Fc//NBVsB68BFOwHPUbX8tRth0ZHUScE2ZW2EwF7OdNjdcbdBuaa7L2qph5r
-         nWzA==
+        bh=KBgx4nxMez8W2SjWNK7CrGe10S5aZxdnZ2lslTHcnEM=;
+        b=c4DzXZ4MAXww+Lcko7MebYNE9Yx6/2kVhpuEVg3PHG1DrXCq1Ae9R/ZAsJi7nh3fGG
+         ZZoBscRzi1238IY+yJUpoKqhpjIlIo6roo7Oqp8Fag8YKGbSBJ5a0XAMlgUZ5+HL3jjw
+         sfCHcnCcMkxEsp2Mxol8rSgdbutJS2JbCkyJbSLRMlAOKV4fRpYdljeLYlYhP1zXEhPK
+         na+iH9TJntJhQtSYpen8AIK4bW1IdgfqPT7r7ZW1904idWsBMYInEbvcikYGSH2ke5Nc
+         zp3JK/+bcxA8exgYGovfpQVaI2dod8e0dEhvwLHlGxedyKSo7j2GcMPODMbEgbGS41pb
+         4Lhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720527538; x=1721132338;
+        d=1e100.net; s=20230601; t=1720527539; x=1721132339;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+ZVrjmNGGBCCMCXFviIdtIer4Cn8tsfjub2doZVrX+Y=;
-        b=I+X/rctO5SGII4RBpEtmMG/vGwzdj5wMgHIRx7EVBnEIEUSxb2Q49CMNzobzKBXi6O
-         PC3AlNCa3wP42LNyZnNyr+LdfS+vO17f6+OKBtNhC4rDSlbwI4Cnkou+XGboxj53myb6
-         PYNHmwSTQsMxoRqsPF9QPC5gyOQkQD8KW93957Xcgq0CW+ulaQi7me6MX30qGyG3Z6NC
-         3jlmxSLxVKpbReSDDYZspfAO5s3oV5ZbPg5XAoTcuHKqn7FltPTmju8T1elD0NnRkepa
-         bMI2Zw+Rb2kdByLB8mter0iqfwa/jupP4BKRL6RCFeCdBjT4V1Lcx01jviWSCBZO60GA
-         MiNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVj+r+Ch2O3Ou8GqsYh/dDfrBksuwuAT5j4pjbV8q5NR69l9i35KrG4ZRQGy2z62GMJdV3t3UULLHavei1gaDl8hrgFuAg8qbGJTgnB
-X-Gm-Message-State: AOJu0Yw90kNR5xwRstfsTsca9yx9biitFJuBIQZj/Qoi7WZCCbWVWkk+
-	i2pdsvNU0Zlv2WDfC1pDA7OZvPavBHHeQg6ZTb/u7yvyx1gtQfMA073hnIzXM+8=
-X-Google-Smtp-Source: AGHT+IFOts3kO/kRl4Vg8ht7+BIzuGt0kiz+L5oGFHcPm8hSOHQB67arubWmmqViaIrpqwWbbETLmQ==
-X-Received: by 2002:a2e:9658:0:b0:2ec:53ad:464 with SMTP id 38308e7fff4ca-2eeb3188da9mr16193051fa.34.1720527537713;
-        Tue, 09 Jul 2024 05:18:57 -0700 (PDT)
+        bh=KBgx4nxMez8W2SjWNK7CrGe10S5aZxdnZ2lslTHcnEM=;
+        b=gKo3g/NQRqJFDAOZBzTN+NJwGuGNWejKHR4ViQrXDr+70W6QSLWL7piDpqbjfFZpnc
+         7M/F+05s+znVl4O4q4199NjdGIlfgO4yRq0wtgY6+jNzq71TmT0RNUWI15Tge3MqdNuj
+         DbaTIrCfCi4LZcDCbeEKUwqD4YamExxUtOD9BZ94nTzYsE5BvrQ8qhGO84jmHEeYrRH8
+         e1e8gFcc/NUtrj+HJ6W0/BxGEWSFRhq2NLaWmSRDFTrRLf8AL/0Oha/TbhVGCFcSYkJs
+         9Wrq6fYj18Z+6KWTB/6QL9/OaAWiZZB5AC1iHHT8+rLsjIE7bVNHDHS5LNoY4dlFxIYu
+         3Obg==
+X-Forwarded-Encrypted: i=1; AJvYcCW7WzdTMB39T47kMmQZQJi9zq8zBgA/ERTS4eKqZim6F6Z7BBnGaL/jLppz3jWy2uTRlTZPNNFTRVUYF93Mk1zbWdrx6TGMZKllFZIh
+X-Gm-Message-State: AOJu0YynhB8lLadbIianRzb7SUcblWmY+irPUraOYJ3lzKeL5Dr1Z8s0
+	HF4x1KI6CiJPpATpJMHJzxxv086WtGvyXRI7EdD89zCusItcwWZgnRoZmvuSIq0=
+X-Google-Smtp-Source: AGHT+IFnvGSyQk+JwuP1pJ1NJhpsMH0jooyRjnJvbTEQ0UsiMwwndrWdEVaXsrZzWiPykoSpg196CQ==
+X-Received: by 2002:a05:6000:178c:b0:366:eadc:6ca4 with SMTP id ffacd0b85a97d-367cea8f92bmr1809396f8f.29.1720527538916;
+        Tue, 09 Jul 2024 05:18:58 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:c270:70c:8581:7be])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfa06d3sm2390574f8f.75.2024.07.09.05.18.56
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfa06d3sm2390574f8f.75.2024.07.09.05.18.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 05:18:56 -0700 (PDT)
+        Tue, 09 Jul 2024 05:18:58 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 09 Jul 2024 14:18:35 +0200
-Subject: [PATCH v3 4/6] Bluetooth: hci_qca: make pwrseq calls the default
- if available
+Date: Tue, 09 Jul 2024 14:18:36 +0200
+Subject: [PATCH v3 5/6] Bluetooth: hci_qca: use the power sequencer for
+ wcn7850 and wcn6855
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240709-hci_qca_refactor-v3-4-5f48ca001fed@linaro.org>
+Message-Id: <20240709-hci_qca_refactor-v3-5-5f48ca001fed@linaro.org>
 References: <20240709-hci_qca_refactor-v3-0-5f48ca001fed@linaro.org>
 In-Reply-To: <20240709-hci_qca_refactor-v3-0-5f48ca001fed@linaro.org>
 To: Marcel Holtmann <marcel@holtmann.org>, 
@@ -96,98 +96,78 @@ Cc: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
  linux-arm-msm@vger.kernel.org, 
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2211;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1940;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=V3NY7NBJypJyF2JMEhpTMoPCP5bbgAiNu2TzfuDFAg8=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmjSqpcQ12F1TszzlZdwYLvTHfPdhTnAld6v4rc
- DN5tqUQ6YCJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZo0qqQAKCRARpy6gFHHX
- ckyED/wIybH6hpkzZFKbl0q3vxvZ3VnoAs96R0N4WIPUgLuvx/hnB1ox3Wii3PAe7KHPbljb7DF
- EXZjpMXFidPcnIcBWNpET7MuTeX5Ul4tn5znNUOfpQje59H3grwUz2AdVzUGM7gkFCWOpR7Mawt
- 2SpmA1O8GSJj/7O2489IYGnIHWaAqV4jomC/WwpLk3MJEZUT7HTw2d92OLGPSxud6E3LkhvaBfU
- 8Z9pZoWQg6bp5uRXGwtCNZdUGenZAdwP/ulFsMIhFw2rlZFTg2858VDRHAomFrtzw1TBiwKUYet
- tJXXZYhGNrkoGpOndZ/2mhEYT8AsQC169TPdgrVFtM0QB8j+3JL2JACzTkbX78Hku5aSfhOSKCp
- 9oy1vCKvXDKWI7EqnNjYQECgrHKrHFmzQQieggHGgimLZ/wBuUrkhrVz8DKV05e4iDjaH9aoq0B
- ullX1M/nvbJIudVKo9VhSFHqDjuefsmx+RK/mX49jvbCdMyw/BskVQXG5yh3EhSDEBbU5OasBWc
- qkVOGsYMyrxAARJuy09m6Dmh9+cEIDVf9AxVLZCzL9GXG7bx+9ajzkLSGo66t9gjGMfPKYw41J2
- PdFvKHLD4xEoz3T9j7vSj/C1qYlP9dM3A/qSKGOi7TaDvmfLrA+jVqidao14mqkzmwyUXo4S+Xn
- YePqrLq5XpCytVw==
+ bh=aMM3yb5DV2sqwmZi3WupHB7UhA28/Enh8+8N3IKgp+o=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBmjSqpN7GRC30B/SHjFyGW5VYELyVeElFf0sklh
+ /R0EWxhMSmJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZo0qqQAKCRARpy6gFHHX
+ cudiEADQlewK0sjcqdn9ajDRDxg8P9BDth8RsMC/BZlWszh3+aXaf4Lwm5RbDrCFWpMxHu0seWr
+ 1g6ebFYtgySiLKS/qW3XmSHWkvnsmYZ5aB1DI6Tc+26ZvRcax/97E/u53rX71qXmndeNBqSjOhT
+ /g5Ks016FHICaaZf0b5Qc9Xe6EyNB21fculjeUOvR0H0UDbal/+Y1TaoKlGk9/g0g5zsfv0bEsv
+ Eukc+paFTCvnkizHCnwRccaiQ7u7aez4XIDSggaOiPlB0fpgPEWBss9vgm3XJ/3/jv9O89xQWio
+ roOh9Guc4SkSFOfxxD2GUfkwNymsNoYMChCVke0ZFfc/R2GC8aYdoGi173S5aHYqxyo1ADxKUzs
+ xbfdyt7c+nQWItlZhXW+mj24l0o7KCBtgzMs13tUhJ8ePfIbZ/aCFZZrql+ikgv4w9k6DRgG7Jo
+ wBC0gtdaedHggxCzbplodpYTqhfi3xJOOZGeXZAKQqA8Iq8ZbXjvzDXrySI4pREyI2hLD/CCwqA
+ B0taUSyT3QhVGI5PLfVWvx26Y5C44pU1tSF6dxiCpS9YV2Rjoe5Jag0UxSRehUOcjSQXJhoQRas
+ DrgJ/klF0OPNk+jPzsqt1ch/L89aAdwg+42Xz81XtAGm15klggSrzszJnB1RHxtIyP70TnfyCKf
+ wxvc3L5FGtfy6GA==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-If the device has a power sequencing handle, use it first. Otherwise
-fall back to whatever code already exists.
+In preparation for using the power sequencing subsystem on sm8650 boards
+and X13s laptop let's make pwrseq the default for wcn7850 and wcn6855.
+
+Both these models require an enable GPIO so we can safely assume that if
+the property is not there, then we should try to get the power
+sequencer. Due to how the pwrseq lookup works - checking the provider at
+run-time - we cannot really do it the other way around as we'd get stuck
+forever on -EPROBE_DEFER.
+
+If the relevant OF node does have the 'enable-gpios' property, we
+fallback to the existing code for backward compatibility with older DTs.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/bluetooth/hci_qca.c | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+ drivers/bluetooth/hci_qca.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index 9d2b50c8fc93..49588072589e 100644
+index 49588072589e..030153d468bf 100644
 --- a/drivers/bluetooth/hci_qca.c
 +++ b/drivers/bluetooth/hci_qca.c
-@@ -1718,6 +1718,7 @@ static int qca_regulator_init(struct hci_uart *hu)
- 	 * off the voltage regulator.
- 	 */
- 	qcadev = serdev_device_get_drvdata(hu->serdev);
+@@ -2354,13 +2354,28 @@ static int qca_serdev_probe(struct serdev_device *serdev)
+ 	}
+ 
+ 	switch (qcadev->btsoc_type) {
++	case QCA_WCN6855:
++	case QCA_WCN7850:
++		if (!device_property_present(&serdev->dev, "enable-gpios")) {
++			/*
++			 * Backward compatibility with old DT sources. If the
++			 * node doesn't have the 'enable-gpios' property then
++			 * let's use the power sequencer. Otherwise, let's
++			 * drive everything outselves.
++			 */
++			qcadev->bt_power->pwrseq = devm_pwrseq_get(&serdev->dev,
++								   "bluetooth");
++			if (IS_ERR(qcadev->bt_power->pwrseq))
++				return PTR_ERR(qcadev->bt_power->pwrseq);
 +
- 	if (!qcadev->bt_power->vregs_on) {
- 		serdev_device_close(hu->serdev);
- 		ret = qca_regulator_enable(qcadev);
-@@ -1800,18 +1801,8 @@ static int qca_power_on(struct hci_dev *hdev)
- 	case QCA_WCN6750:
- 	case QCA_WCN6855:
- 	case QCA_WCN7850:
--		ret = qca_regulator_init(hu);
--		break;
--
- 	case QCA_QCA6390:
--		qcadev = serdev_device_get_drvdata(hu->serdev);
--		ret = pwrseq_power_on(qcadev->bt_power->pwrseq);
--		if (ret)
--			return ret;
--
--		ret = qca_port_reopen(hu);
--		if (ret)
--			return ret;
-+		ret = qca_regulator_init(hu);
- 		break;
- 
- 	default:
-@@ -2149,6 +2140,7 @@ static void qca_power_shutdown(struct hci_uart *hu)
- 	unsigned long flags;
- 	enum qca_btsoc_type soc_type = qca_soc_type(hu);
- 	bool sw_ctrl_state;
-+	struct qca_power *power;
- 
- 	/* From this point we go into power off state. But serial port is
- 	 * still open, stop queueing the IBS data and flush all the buffered
-@@ -2166,6 +2158,13 @@ static void qca_power_shutdown(struct hci_uart *hu)
- 		return;
- 
- 	qcadev = serdev_device_get_drvdata(hu->serdev);
-+	power = qcadev->bt_power;
-+
-+	if (power->pwrseq) {
-+		pwrseq_power_off(power->pwrseq);
-+		set_bit(QCA_BT_OFF, &qca->flags);
-+		return;
-+        }
- 
- 	switch (soc_type) {
++			break;
++		}
++		fallthrough;
  	case QCA_WCN3988:
-@@ -2227,6 +2226,9 @@ static int qca_regulator_enable(struct qca_serdev *qcadev)
- 	struct qca_power *power = qcadev->bt_power;
- 	int ret;
- 
-+	if (power->pwrseq)
-+		return pwrseq_power_on(power->pwrseq);
-+
- 	/* Already enabled */
- 	if (power->vregs_on)
- 		return 0;
+ 	case QCA_WCN3990:
+ 	case QCA_WCN3991:
+ 	case QCA_WCN3998:
+ 	case QCA_WCN6750:
+-	case QCA_WCN6855:
+-	case QCA_WCN7850:
+ 		qcadev->bt_power->dev = &serdev->dev;
+ 		err = qca_init_regulators(qcadev->bt_power, data->vregs,
+ 					  data->num_vregs);
 
 -- 
 2.43.0
