@@ -1,149 +1,139 @@
-Return-Path: <linux-kernel+bounces-245893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C31F792BAE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:23:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4EFB92BAD9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D35F288529
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:23:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89DE71F25F3A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F1F16D33D;
-	Tue,  9 Jul 2024 13:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C6915B98F;
+	Tue,  9 Jul 2024 13:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="CJ+Anwjz"
-Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eg0Cjm/T"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2CA15F33A;
-	Tue,  9 Jul 2024 13:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3956D2B9DA;
+	Tue,  9 Jul 2024 13:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720531286; cv=none; b=PNuLUJ7BxJElqCK+XQcirnsm27RyMp+nzq7s5eHAMB2bDxyCSblNxXNK2TMWC//4X74JYbySztLGn7258WaT6l6YZvw3LnBEgaYMUUYaG95FwclGrlSAF5NIunDgvYvb/76knlvsfnMvbdvO8GhnucR1A0QgiXisMigo1JcHiV0=
+	t=1720531248; cv=none; b=ilKh/6kXjR5RkA8aS1jvzMsq+5ask4ykaXt0aaHeo+PcjEzN8A2RW3Uf5rQYFCxFxBRAeHb5pVe+OmHR4k+9DVLriDJIju/pi/SaHBX83NmDcS1/Zxr2v2BxX00PVIAtuQoBovhz2fTQ7Y7+kvpnDkI8ZPOGGzX77OtUfwiFRIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720531286; c=relaxed/simple;
-	bh=hGiQdDYqbo2pnH+iABJVi6Yv+2CSx9CFiwRk70YCz60=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LE8OMo0PGseq1JmVFufXSrKi4bURMY4imqzCqvqoETqs/zy91W2g3uPJEOKpuRdJYCOK9E/SMqiylyq9yb5qPI1jzdE+6it9a4lyknAjgVE2+mQNEMMGnVA+bvAevSjQSajYiCyhene2qbhPd7AuzjFFGasBl1qz4GljIFk1Ah8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=CJ+Anwjz; arc=none smtp.client-ip=207.171.184.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1720531285; x=1752067285;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=OYFwwPMzkwoeUqGjPsHTCVZ/9U32HO+9FB3G59spnNM=;
-  b=CJ+AnwjzBwoA7XOYlde3nQzi7kdKSPWklNPOUP37LAJ2cyKi8VNma2nt
-   LevIY6ua4s+ARwd85vaHvxKA2rZNt/SbcQGbTwr5JjzEu6/un7x88i1il
-   TtjfMmrxV8Hz00TRiwqWo+dSZ9661XwUCpMexh1gKXXImoSqgjhVs7UYJ
-   8=;
-X-IronPort-AV: E=Sophos;i="6.09,195,1716249600"; 
-   d="scan'208";a="432897857"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 13:21:23 +0000
-Received: from EX19MTAUEB001.ant.amazon.com [10.0.0.204:11016]
- by smtpin.naws.us-east-1.prod.farcaster.email.amazon.dev [10.0.59.218:2525] with esmtp (Farcaster)
- id b525f254-64fd-4b54-ab1d-bef2d53e8187; Tue, 9 Jul 2024 13:21:21 +0000 (UTC)
-X-Farcaster-Flow-ID: b525f254-64fd-4b54-ab1d-bef2d53e8187
-Received: from EX19D008UEA004.ant.amazon.com (10.252.134.191) by
- EX19MTAUEB001.ant.amazon.com (10.252.135.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 9 Jul 2024 13:21:20 +0000
-Received: from EX19MTAUEC001.ant.amazon.com (10.252.135.222) by
- EX19D008UEA004.ant.amazon.com (10.252.134.191) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 9 Jul 2024 13:21:20 +0000
-Received: from ua2d7e1a6107c5b.ant.amazon.com (172.19.88.180) by
- mail-relay.amazon.com (10.252.135.200) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34
- via Frontend Transport; Tue, 9 Jul 2024 13:21:17 +0000
-From: Patrick Roy <roypat@amazon.co.uk>
-To: <seanjc@google.com>, <pbonzini@redhat.com>, <akpm@linux-foundation.org>,
-	<dwmw@amazon.co.uk>, <rppt@kernel.org>, <david@redhat.com>
-CC: Patrick Roy <roypat@amazon.co.uk>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, <hpa@zytor.com>, <willy@infradead.org>, <graf@amazon.com>,
-	<derekmn@amazon.com>, <kalyazin@amazon.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <dmatlack@google.com>,
-	<tabba@google.com>, <chao.p.peng@linux.intel.com>, <xmarcalx@amazon.co.uk>
-Subject: [RFC PATCH 8/8] kvm: gmem: Allow restricted userspace mappings
-Date: Tue, 9 Jul 2024 14:20:36 +0100
-Message-ID: <20240709132041.3625501-9-roypat@amazon.co.uk>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240709132041.3625501-1-roypat@amazon.co.uk>
-References: <20240709132041.3625501-1-roypat@amazon.co.uk>
+	s=arc-20240116; t=1720531248; c=relaxed/simple;
+	bh=IWo9o+BR5hri80OXw059McKLXefmWML8DKmyfp52TPE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KlCJeJaZQ8n7fpR2jWh8+ke2fRY1ZHY0YUeJ1LUvZzMrtvwkvevrMcFZdZMdivd3v78eyvTBYB1Ye7BUJviioEKBc6LjBrjsgL0hJ+JqJ47DXQjNqfM/pT51znU9hWj+rIPBnwt5SBPf8yga6wrNiVUlKVqDPyC0F1E0ruLVNZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eg0Cjm/T; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2B18E1BF20B;
+	Tue,  9 Jul 2024 13:20:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720531243;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jdgtcZmaR8+U0BJCpEZXKmWLsv2ubjnvbI1hvNLijts=;
+	b=eg0Cjm/TBMLMJTS1BOIpLtUkMz04COoBTpzrwORid+BpxEyX+kDNujFxtgVc2TKgi/6s+X
+	ZsQYZUVdQRO1F2olaO6cOrSqVISF8oPJdFlM0kXMx3QFu4eOENVEkOFMZBkDKg2LBTLBbK
+	OwhnizFilnKwzPZCCR2kKpnElseJBhkd0kVqq6NtQfUfzX/zAP/yBrcu9QzMVCGtkzXWAX
+	NJO0AQtf6fBqo7TgbU1q4WRitgzmkvmsqwmNhDZ9bBB7uMDIdwLtF1P4qAtmm6hB3qycjz
+	0qCzV/9RVb3Wa2i/uyJ4HNvffzu8LoVD6q7E5B+SYUfbyBAvJOSnoAP8m8UoJw==
+Date: Tue, 9 Jul 2024 15:20:41 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Donald Hunter
+ <donald.hunter@gmail.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ Jonathan Corbet <corbet@lwn.net>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Dent Project <dentproject@linuxfoundation.org>,
+ kernel@pengutronix.de, linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v6 5/7] net: ethtool: Add new power limit get
+ and set features
+Message-ID: <20240709152041.7493ffc5@kmaincent-XPS-13-7390>
+In-Reply-To: <20240708113300.3544d36d@kernel.org>
+References: <20240704-feature_poe_power_cap-v6-0-320003204264@bootlin.com>
+	<20240704-feature_poe_power_cap-v6-5-320003204264@bootlin.com>
+	<20240705184116.13d8235a@kernel.org>
+	<20240708113846.215a2fde@kmaincent-XPS-13-7390>
+	<20240708113300.3544d36d@kernel.org>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-Allow mapping guest_memfd into userspace. Since AS_INACCESSIBLE is set
-on the underlying address_space struct, no GUP of guest_memfd will be
-possible.
+On Mon, 8 Jul 2024 11:33:00 -0700
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
----
- virt/kvm/guest_memfd.c | 31 ++++++++++++++++++++++++++++++-
- 1 file changed, 30 insertions(+), 1 deletion(-)
+> On Mon, 8 Jul 2024 11:38:46 +0200 Kory Maincent wrote:
+>  [...] =20
+>  [...] =20
+>=20
+> Don't worry I understand the code well enough to resolve any conflicts
+> (famous last words?). And if we fix as part of ethnl_set_pse_validate()
+> then there's no conflict, AFAICT.
 
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index dc9b0c2d0b0e..101ec2b248bf 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -319,7 +319,37 @@ static inline struct file *kvm_gmem_get_file(struct kvm_memory_slot *slot)
- 	return get_file_active(&slot->gmem.file);
- }
- 
-+static vm_fault_t kvm_gmem_fault(struct vm_fault *vmf)
-+{
-+	struct folio *folio;
-+
-+	folio = kvm_gmem_get_folio(file_inode(vmf->vma->vm_file), vmf->pgoff, true);
-+
-+	if (!folio)
-+		return VM_FAULT_SIGBUS;
-+
-+	vmf->page = folio_file_page(folio, vmf->pgoff);
-+
-+	return VM_FAULT_LOCKED;
-+}
-+
-+static const struct vm_operations_struct kvm_gmem_vm_ops = {
-+	.fault = kvm_gmem_fault
-+};
-+
-+static int kvm_gmem_mmap(struct file *file, struct vm_area_struct *vma)
-+{
-+	if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
-+		return -EINVAL;
-+
-+	vm_flags_set(vma, VM_DONTDUMP);
-+	vma->vm_ops = &kvm_gmem_vm_ops;
-+
-+	return 0;
-+}
-+
- static struct file_operations kvm_gmem_fops = {
-+	.mmap           = kvm_gmem_mmap,
- 	.open		= generic_file_open,
- 	.release	= kvm_gmem_release,
- 	.fallocate	= kvm_gmem_fallocate,
-@@ -594,7 +624,6 @@ static int __kvm_gmem_get_pfn(struct file *file, struct kvm_memory_slot *slot,
- 		return -EFAULT;
- 	}
- 
--	gmem = file->private_data;
- 	if (xa_load(&gmem->bindings, index) != slot) {
- 		WARN_ON_ONCE(xa_load(&gmem->bindings, index));
- 		return -EIO;
--- 
-2.45.2
+As you can see in the patch I just sent
+https://lore.kernel.org/netdev/20240709131201.166421-1-kory.maincent@bootli=
+n.com/T/#u
+the fix is not in set_pse_validate() therefore you will have a merge confli=
+ct.
 
+You could do this to solve the merge conflict:
+--- a/net/ethtool/pse-pd.c
++++ b/net/ethtool/pse-pd.c
+@@ -256,6 +256,7 @@ static int
+ ethnl_set_pse(struct ethnl_req_info *req_info, struct genl_info *info)
+ {
+        struct net_device *dev =3D req_info->dev;
++       struct pse_control_config config =3D {};
+        struct nlattr **tb =3D info->attrs;
+        struct phy_device *phydev;
+        int ret =3D 0;
+@@ -273,15 +274,13 @@ ethnl_set_pse(struct ethnl_req_info *req_info, struct=
+ genl_info *info)
+        }
+=20
+        /* These values are already validated by the ethnl_pse_set_policy */
++       if (tb[ETHTOOL_A_PODL_PSE_ADMIN_CONTROL])
++               config.podl_admin_control =3D nla_get_u32(tb[ETHTOOL_A_PODL=
+_PSE_ADMIN_CONTROL]);
++       if (tb[ETHTOOL_A_C33_PSE_ADMIN_CONTROL])
++               config.c33_admin_control =3D nla_get_u32(tb[ETHTOOL_A_C33_P=
+SE_ADMIN_CONTROL]);
++
+        if (tb[ETHTOOL_A_PODL_PSE_ADMIN_CONTROL] ||
+            tb[ETHTOOL_A_C33_PSE_ADMIN_CONTROL]) {
+-               struct pse_control_config config =3D {};
+-
+-               if (pse_has_podl(phydev->psec))
+-                       config.podl_admin_control =3D nla_get_u32(tb[ETHTOO=
+L_A_PODL_PSE_ADMIN_CONTROL]);
+-               if (pse_has_c33(phydev->psec))
+-                       config.c33_admin_control =3D nla_get_u32(tb[ETHTOOL=
+_A_C33_PSE_ADMIN_CONTROL]);
+-
+                ret =3D pse_ethtool_set_config(phydev->psec, info->extack,
+                                             &config);
+                if (ret)
+
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
