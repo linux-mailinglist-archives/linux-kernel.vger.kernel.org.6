@@ -1,120 +1,202 @@
-Return-Path: <linux-kernel+bounces-245729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8836792B865
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:35:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1955C92B86A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4094A280577
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:35:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C40F0282CBE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB86157A6C;
-	Tue,  9 Jul 2024 11:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C947158202;
+	Tue,  9 Jul 2024 11:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="b1mg5cSm"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="d2loxx/h"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2D055E4C;
-	Tue,  9 Jul 2024 11:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07AF55E4C;
+	Tue,  9 Jul 2024 11:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720524953; cv=none; b=vCvz1rpSr3CBVFxnYmP/ups0fFDPJPC3BSCK+IfR1XI5zgx9opiQ5XFTFFflQ1soZqGi7iV0jzPNU1yttRJPG+OHkR1XcAU2o59XSlLu3uqJKsohUtBouJ7ywv+g5m7Uz59PLpeTh1h5m/EwtsJVvcWqLMxbwF+dSMCDuZ8zM+4=
+	t=1720525001; cv=none; b=NK1iob4xMEvJRQOuzjm4S0l6b20e7m6611ZFQaej9GuEKbxRTpj+I/Vof4uCczp7C8VSHXh9CZO+sGn+muDH0mlpZwuZurZ844dj6Ac1VbYI1Bmsb7vx9LH8DZErAiCfE/lh/CRTrd0lurVdl++wAj5k5/Y17rylTQg1LUI8D7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720524953; c=relaxed/simple;
-	bh=ChnJFEMjclci+NOxf8NZiKN7AY7P4+7hFR/22Rs3Mh8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hncaAJ0b8AgKOGZZlyzgjrwvVnyCCwU2MiU4l+lqEkWbt8A12YZQStEXSuwVGg8U8cjcZPoZvnWSiHVUsU/2O1K5QVQH0bqxjLdKpNoiV6PrVvNkdru1rR+1nSXHB8uXFRLIyw9Gbv4BPqzVF9UPe0zhDbiyL3IoQYLLCWuhJSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=b1mg5cSm; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4028240E0192;
-	Tue,  9 Jul 2024 11:35:49 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id VQrDMEj5bBPf; Tue,  9 Jul 2024 11:35:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1720524944; bh=jjf50ESvHnEK2z9lV8EITYgyBThg/spTlXOdeWwsvgw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b1mg5cSmDHgOzafwvedRIl52gqf+ZMalALTTzwCALau9QDX1Mzla6UQiLoM//w9b+
-	 Dg0Y2Es1cko0pUOUoTV+GJUxYwjVjv/JVm83w6f1byyDUkJxFofiNbKxUH2nwrI4sR
-	 ka5UANapE8wdXMb3wyHRLNHMd3TCOc0V4rroVcbWJvAj+C4L5KCO2H5iMFrFdFU6PG
-	 xGcvhB5LIYzJ9s29oQneU3d1RQbRZKInL+xq0xj9AGrdMaZNwDeX57c+8vq4owiN2+
-	 tSo+lUU2r3IysPvihkuQv0JFTskKoWvwkWIm8OVjmeFzmByKIeDAk35xAKQ8konMM6
-	 ocmWELzzHI2ndIwftSI0+L1f61hHnAqCnsPSvMIGzqg6sWpV10wFSX+QQEOQxC1P77
-	 b9xHoxeHnV7UcRXI4Rgj2b08yYtl7PMOImvzjHlqRW7SR22WVwGnhCxRuMOK6JOwBa
-	 b3YaSenmHxdfWRyM4ImahrWDfNhxahVKHKNr0Ic6Bq6Ghjy40EV64bOGgY5SqXeI5+
-	 vaHhxSpTka4fa+bzRZVsngXe8mObIX3PVQH/su/oxie4KmNBd4LMHbn4+5RGvxvbQL
-	 1p1+j2/pXl50xhbYTdZvk4wvrVej3qRvZ4Ot5/lf7eL7idCbzxX5Ld4dZt+Sdr4sDk
-	 ZDaEUmEKdb3IyAhOBWpWkOEM=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7477440E0185;
-	Tue,  9 Jul 2024 11:35:28 +0000 (UTC)
-Date: Tue, 9 Jul 2024 13:35:22 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: Michal Simek <michal.simek@amd.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	Punnaiah Choudary Kalluri <punnaiah.choudary.kalluri@xilinx.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>
-Subject: Re: [PATCH RESEND v6 02/18] EDAC/synopsys: Fix mci->scrub_cap field
- setting
-Message-ID: <20240709113522.GEZo0getHKGPD588S1@fat_crate.local>
-References: <20240627173251.25718-1-fancer.lancer@gmail.com>
- <20240627173251.25718-3-fancer.lancer@gmail.com>
+	s=arc-20240116; t=1720525001; c=relaxed/simple;
+	bh=Pc/rqjlttqr+PCV9ImPrFTWhlgboE1tEVME5GA4Zrms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IJUrDQASAKsASHFKgzajX9Hb49ziRONjgdPLk+FmxmFO8xqjIoiDdLcM1kU2Z3uLNGVhOIvUuRDA7p2h7VvJ6nYo90psx1EFdCx0H7KApS/FsY6Btd0jUAD5Wi3x4EQvpzEmiKCdkcuY0xJYdmE+/pLUm4NimuEwwaHMrG+8iY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=d2loxx/h; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id 8AC3D100003;
+	Tue,  9 Jul 2024 14:36:16 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1720524976; bh=kEQAy2ywQE4RRBAZOINuz1m3hhrqeBwGx9IhcBaBH1I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=d2loxx/hJi5yUfkmk1Um/3sj8IpRQ+3HhAv7SB8YGgqMNf52Au1Qq9mGfmGdaabM/
+	 wZhAuIc7qrTo2TTvWKsPTgWz1Fpiee8i+XhvALG1xlxXhH+IJY2QR5QyBNHKsShZH0
+	 OJV/1m3xmYd2qP3lHVm0AQ/jv/qH/MXZ5a3Ya/H3uzCBP9nwre40n6Msh5PLL69Djp
+	 AycK53QVAGvfsxpciH2IgqS+YSZnHaip+zcKB+Ci6gi1uDh/z/BsZoRz0PUB8Z7eVJ
+	 R/zCmEirCjS+OPNDykw9hFQAJq9yObd8lNTA0Hjm8rL33+PRYj3HkK12CVJigTxmAo
+	 6M07fM61tyLpQ==
+Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Tue,  9 Jul 2024 14:35:00 +0300 (MSK)
+Received: from [172.17.214.6] (172.17.214.6) by ta-mail-02 (172.17.13.212)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
+ 14:34:40 +0300
+Message-ID: <99fcfba3-7cac-42c8-9113-2340d5a485f8@t-argos.ru>
+Date: Tue, 9 Jul 2024 14:35:29 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240627173251.25718-3-fancer.lancer@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH net-next v3] ice: Adjust over allocation
+ of memory in ice_sched_add_root_node() and ice_sched_add_node()
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>, Paul Menzel
+	<pmenzel@molgen.mpg.de>
+CC: <lvc-project@linuxtesting.org>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Eric Dumazet
+	<edumazet@google.com>, <intel-wired-lan@lists.osuosl.org>, Simon Horman
+	<horms@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>
+References: <20240708182736.8514-1-amishin@t-argos.ru>
+ <033111e2-e743-4523-8c4f-7d5f1c801e65@molgen.mpg.de>
+ <23d2e91c-4215-4ea5-8b3c-4dd58a1062af@molgen.mpg.de>
+ <190d0cdc-d6de-4526-b235-91b25b50c905@intel.com>
+ <56160e13-662d-4f7e-86d3-1a88716f01d9@molgen.mpg.de>
+ <14683709-212b-43cb-a110-bb184fcff775@intel.com>
+Content-Language: ru
+From: Aleksandr Mishin <amishin@t-argos.ru>
+In-Reply-To: <14683709-212b-43cb-a110-bb184fcff775@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186390 [Jul 09 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 23 0.3.23 8881c50ebb08f9085352475be251cf18bb0fcfdd, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, lore.kernel.org:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;t-argos.ru:7.1.1;mx1.t-argos.ru.ru:7.1.1;docs.kernel.org:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/07/09 09:10:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/07/09 07:08:00 #25923556
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Thu, Jun 27, 2024 at 08:32:09PM +0300, Serge Semin wrote:
-> The mem_ctl_info.scrub_cap field is supposed to be set with the ECC
-> scrub-related flags. Instead the driver erroneously initializes it with
-> the SCRUB_HW_SRC flag ID. It's definitely wrong, but it hasn't caused any
-> problem so far since the structure field isn't used by the EDAC core. Fix
-> it anyway by using the SCRUB_FLAG_HW_SRC macro to initialize the field.
 
-This hasn't been used at least since it got added by
 
-commit da9bb1d27b21cb24cbb6a2efb5d3c464d357a01e
-Author: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Date:   Wed Jan 18 17:44:13 2006 -0800
+On 09.07.2024 13:25, Przemek Kitszel wrote:
+> On 7/9/24 11:50, Paul Menzel wrote:
+>> Dear Przemek,
+>>
+>>
+>> Thank you for your quick reply.
+>>
+>>
+>> Am 09.07.24 um 11:11 schrieb Przemek Kitszel:
+>>> On 7/9/24 10:54, Paul Menzel wrote:
+>>>> [Cc: -anirudh.venkataramanan@intel.com (Address rejected)]
+>>>>
+>>>> Am 09.07.24 um 10:49 schrieb Paul Menzel:
+>>
+>>>>> Am 08.07.24 um 20:27 schrieb Aleksandr Mishin:
+>>>>>> In ice_sched_add_root_node() and ice_sched_add_node() there are 
+>>>>>> calls to
+>>>>>> devm_kcalloc() in order to allocate memory for array of pointers to
+>>>>>> 'ice_sched_node' structure. But incorrect types are used as sizeof()
+>>>>>> arguments in these calls (structures instead of pointers) which 
+>>>>>> leads to
+>>>>>> over allocation of memory.
+>>>>>
+>>>>> If you have the explicit size at hand, it’d be great if you added 
+>>>>> those to the commit message.
 
-    [PATCH] EDAC: core EDAC support code
+One pointer instance size is 8 bytes.
+One structure instance size is (approximately) 104 bytes. I'm not quite 
+sure for that number, because structure is complex and includes another 
+structure, which includes another etc. So I could make a mistake in 
+calculation.
+Memory allocation is performed for multiple instances, so this ~96 bytes 
+should be multiplied by a number of instances to get final memory 
+overhead size.
 
-AFAICT.
+>>>>>
+>>>>>> Adjust over allocation of memory by correcting types in 
+>>>>>> devm_kcalloc()
+>>>>>> sizeof() arguments.
+>>>>>>
+>>>>>> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>>>>>
+>>>>> Maybe mention, that Coverity found that too, and the warning was 
+>>>>> disabled, and use that commit in Fixes: tag? That’d be commit 
+>>>>> b36c598c999c (ice: Updates to Tx scheduler code), different from 
+>>>>> the one you used.
+>>>
+>>> this version does not have any SHA mentioned :)
+>>
+>> Sorry, I don’t understand your answer. What SHA do you mean?
+> 
+> there is no commit cited by Aleksandr in v3, IIRC there was one in v1
+> 
+> I agree that mention would be valuable, and we still want v4 with my
+> Suggested-by dropped anyway :)
 
-Please remove ->scrub_cap along with enum scrub_type instead.
+I'm working on v4, but I must wait 24 hours from v3 according to netdev 
+rules: https://docs.kernel.org/process/maintainer-netdev.html.
 
-We can always resurrect it if needed.
+In v4 I'll drop "Suggested-by" :)
 
-Thx.
+But I'm a little confused whether to include "Fixes" tag into v4, 
+because this is not an issue for the users as Simon and Przemek wrote?
+
+I would be grateful if you could tell me what else to change to avoid 
+later v5 release :)
+
+> 
+>>
+>>>>> `Documentation/process/submitting-patches.rst` says:
+>>>>>
+>>>>>> A Fixes: tag indicates that the patch fixes an issue in a previous
+>>>>>> commit. It is used to make it easy to determine where a bug
+>>>>>> originated, which can help review a bug fix. This tag also assists
+>>>>>> the stable kernel team in determining which stable kernel versions
+>>>>>> should receive your fix. This is the preferred method for indicating
+>>>>>> a bug fixed by the patch.
+>>>
+>>> so, this is not a "fix" per definition of a fix: "your patch changes
+>>> observable misbehavior"
+>>> If the over-allocation would be counted in megabytes, then it will
+>>> be a different case.
+>>
+>> The quoted text just talks about “an issue”. What definition do you 
+>> refer to?
+> 
+> I mean that there is no issue (for the users), thus no fix.
+> Example of recently merged "not fix", with more links to other "non-
+> fixes":
+> https://lore.kernel.org/all/b836eb8ca8abf2f64478da48d250405bb1d90ad5.camel@sipsolutions.net/T/
+> 
+>>
+>>
+>> Kind regards,
+>>
+>> Paul
+> 
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Kind regards
+Aleksandr
 
