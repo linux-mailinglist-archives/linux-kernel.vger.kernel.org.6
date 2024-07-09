@@ -1,118 +1,166 @@
-Return-Path: <linux-kernel+bounces-245564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3240192B46B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:52:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21AFF92B471
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:53:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 641191C21BA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:52:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3A3E2845F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFFF15539D;
-	Tue,  9 Jul 2024 09:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8B4156864;
+	Tue,  9 Jul 2024 09:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ztAxLAxN"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z7BaNsTN"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3D7155398
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADEB15664C
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720518738; cv=none; b=NTkzmeVL9l/hJTKAKpmiVY8XNpHfGTODjr2ZdkvZUikFKLOwSAl0qjbFk5wMSSbAR0a55D7oF9MsKrsmlRo9bu8x+YJbGs4IwykGyrGxnPMTFEm4rxWiOrgLxlTObSWN2m59CENxuux+n8r3rgTThpYwhLPMWGZ4fMM2mSlO6lE=
+	t=1720518746; cv=none; b=BXjJI/vi+Sq9IawsPDHLzyl1TbGr1GLI5JAUC+3jPGJqpPJdvx6CnDMbHV3jQVTBxgXZgZtfv8BjT2gSnfr2sRLxAVOKvIB8PN7didWlpYhfcwIBtaCe/8IrYuJAWMG+WG1BYf6f09l7kCSEaU8ZnBI/MsEKCceaNp3M8qBFZss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720518738; c=relaxed/simple;
-	bh=i7LfNc6qq1+aDEVX+3WD/8s4yDV8gC7rFYVgqcVfLhg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=he4C6vNtiRBj4vUkZSQzIN8Hl/3QWc5kr3fw5HXl9OhSPegc8XhPdnS6R9bO3ueAy8V5G+WS1eOirz3QCpg/FybVYKn+D8EEcKP31Rh0URoVzfHZbXdMa7ABW8b42+pSSgtCbRu5uIoCStD0Nham2VErgERG2Ilxg4EfYR9MiDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ztAxLAxN; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3679e9bfb08so2864971f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 02:52:17 -0700 (PDT)
+	s=arc-20240116; t=1720518746; c=relaxed/simple;
+	bh=n5AvZ1ZDFjGi/4dq6GjWJJme1GYCQMnLOvMIhq0HJ4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DZvtMCaEL5lP+KM8BMyKocZugud1SawB4GnUIPg67gQc3GCIRnqRvXkYFG9B1KBhje2R6GvbNg5BM9n65rkXNM8f8Q4rsD+vyMO0rXdNrF9TnL90o66jLjQCvZkORFW3DdFS8toWMtj7J62lp72S4SUh2uqYLo0iicWq8m1TWKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z7BaNsTN; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7523f0870cso598726866b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 02:52:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720518736; x=1721123536; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i7LfNc6qq1+aDEVX+3WD/8s4yDV8gC7rFYVgqcVfLhg=;
-        b=ztAxLAxNlBzqlkn7Jjt0h/icaXPqSYMxgUBPinhXx0DifV8VImw8Ff8yH5/dIUzdk4
-         Dyk0Rh3hDq5urZnm9xhToYmomHFL7iqh+UboHGlKW64Rmw7tl+D8iidF/b/DHAyUt964
-         17RNWo8MmJokxTn84sfUZ8demr7q5E4AbRhOCJaVZs4FzgNzdeZhfsU/DlEkZF0eElu3
-         RjcZ9AE6gaGV7Klo0XoLKdWOvA9CKUmLSViqIm3OFzll8KESFT1LQ6C22Mi5GE1Sdl/0
-         D62Kq2xZs3A05mnayE7u/FOkFAFDL8/S2zCAb+cna7ptkMoHPqsPg/8CiRVVOmbQEA6k
-         bCIg==
+        d=linaro.org; s=google; t=1720518744; x=1721123544; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qm1fRwVMxfaZmMNjZt3K//vjMYOKWNcEdkADWSvwrZs=;
+        b=Z7BaNsTNfJXAllGr8ZAiG1BoDwUx1yCnl2yaq5Wip8kWlzWPhRnVinZuvUXnPTpdmx
+         7+yUj6Lo88mJk16a6Lu0a33iOBeUDLKwLTABoui+LqNPirIIS6UWmtE03TJGuj0dREtf
+         6T/2sHOmYKxUoESUqzz31d5T+jOmsYAzC0Inul1nDEB3UXDkqF0LpjpJzl1L9B8pZgaU
+         kp8EJqjdQOl4q2iEnFA9Z6MdIpHYMmW2+99LQT1MWYAxyGmg8sdFuhsLFlKEImC+5HY9
+         /6GY4QaIZ+4VZp8WsRfcOXWvNcVN8e7VCmwoOKAW19iMxbjA9pBmhK06Y1KIiQA8j/3A
+         dwQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720518736; x=1721123536;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i7LfNc6qq1+aDEVX+3WD/8s4yDV8gC7rFYVgqcVfLhg=;
-        b=SvaKs1J9COJzFNsp5kJn6zRV6GuAnjc1OM1XDjSsh/Cwkcow2n7P1hHQXdZG9opqeX
-         q8KHqaYkrP8DVwreC4coqjYgsU/5Y1+MX5kMfIeDb+q4HpuwwER7XHl8z46yElz2ck7/
-         ka+rtITgFNHQGAoP/nRR0NnbW72+96aRJXDxgO8V7iMtV5Q+kUjWBCCIZeWdRoIL100c
-         utDyFzwEyjKu8oZaKJ8dd5tBWPjtT9swHEZkAJGUehKqVvBUOwxlZQRl+NXAou+F8vSC
-         JABHVqXfKsPeDoyrjf36jI2NqBvR6TWXZqdMZYoGR/AF2N0mme1MdZmBv/+Jhpis3EFg
-         n3Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCWImZijAuxPHh+dUbjMLavhzyiNkC1uN5AKCLsZ0v3yARwmB9Q4rUnwkEnzg69GJRLyCXaSw+lJrETAkYR5S1+ftgZbbx63WKdlVodY
-X-Gm-Message-State: AOJu0YxCal5lmeRoZs3Za1MfYobzSdhDE0OzIxYleQuKIA9iSuXYfin1
-	t2WG32RdT1v2je72IaTQh0JqOomJzuUk85iTtBa5FU+QOvxP+8GEYapO5sLHiONSm9ViZYb0jXb
-	kKNhmMWnsEdWiifF1qQ2OwxR/3Ce5nV/8L5fg
-X-Google-Smtp-Source: AGHT+IEmN00CynNCsDDhXsM0XpdwEU/G9mbSqcBJsKaThKIblLct7tNNCUBwvT2H0N0PDa2zNXTh5YziYvGRh1xvDus=
-X-Received: by 2002:adf:ef43:0:b0:366:df3f:6f9c with SMTP id
- ffacd0b85a97d-367d29476bamr1590756f8f.3.1720518735880; Tue, 09 Jul 2024
- 02:52:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720518744; x=1721123544;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qm1fRwVMxfaZmMNjZt3K//vjMYOKWNcEdkADWSvwrZs=;
+        b=g4jkMV0MnwxMOolAVwNNWuveas9uEtSXv6dToWk7hDAVSKeJe9VcCsziTzXOgxnFr1
+         bEcNO8qAcbiZDHQh1BK/CGOqAgGjLwTaKQQ5FLgT0tOx6c+RIQBVEf1Xp0lC9V5pA3TI
+         m2q7Dk6p3JWwj0i/NLG/TVqKeJq7zHouuHp4uWf5/ux8UqGIdYLgeSD8m6INY3XxEQE1
+         jP52KHUps9huiKYL87LhcAfq7bAMaUQ9DMU+E2b5uuoboVIJWd3ym54mpKkRk12flZRZ
+         q8s2tcC+cYLBgJn0Z6aLDkIxeac/p0S38FMyHqnl7sXC4/zuqXNopWoM4FDH0wPQfo3t
+         EqiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUi1xV2lMOfBqoDuK9hQkAh3wzmzp7kI/t2PmLoAJPfBGaCPpciXPL3lG9RdtbrDTy9Wh/2vL2ByJdXT+XKnzSeUsXMPUwUuaPHqQeS
+X-Gm-Message-State: AOJu0YxGfL/GpE6qqthuljd03GzIaxP63c28b2t6mQDpPzsvi7vrCqye
+	HqiFhsSDbfu6nDA2GKWib4t5Hcj3mDeG+vp/Rlhe9Nzw49lolEYkanqTbgT4k/0=
+X-Google-Smtp-Source: AGHT+IHAklP0DIIRUgPGcAs7MD7V/1OUzHE3dRGjz84TSjvi++Vip0G/F0oWzUHqJqhEqljGGmQSXA==
+X-Received: by 2002:a17:906:390e:b0:a77:ddce:e9b1 with SMTP id a640c23a62f3a-a780b89d430mr122703366b.75.1720518743625;
+        Tue, 09 Jul 2024 02:52:23 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6e58e0sm63125666b.85.2024.07.09.02.52.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 02:52:23 -0700 (PDT)
+Message-ID: <57dadb35-5dde-4127-87aa-962613730336@linaro.org>
+Date: Tue, 9 Jul 2024 11:52:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704-shadow-call-stack-v3-0-d11c7a6ebe30@google.com>
- <20240704-shadow-call-stack-v3-2-d11c7a6ebe30@google.com> <20240704-unless-cache-8a971c244348@spud>
- <CABCJKufJz5Wu5ivbEuUFHJd8qk0M-W=WQDCOe-pR6w=4=YyEag@mail.gmail.com>
-In-Reply-To: <CABCJKufJz5Wu5ivbEuUFHJd8qk0M-W=WQDCOe-pR6w=4=YyEag@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 9 Jul 2024 11:52:04 +0200
-Message-ID: <CAH5fLgjNPAYHEsWS5zPtmCH+c33LFRcxBkOcp_camJFMXPVzXA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] rust: add flags for shadow call stack sanitizer
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Conor Dooley <conor@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Jamie Cunliffe <Jamie.Cunliffe@arm.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Kees Cook <keescook@chromium.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Valentin Obst <kernel@valentinobst.de>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 05/10] pmdomain: qcom: rpmpd: Add IPQ9574 power domains
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, vireshk@kernel.org,
+ nm@ti.com, sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, angelogioacchino.delregno@collabora.com,
+ andersson@kernel.org, mturquette@baylibre.com, ilia.lin@kernel.org,
+ rafael@kernel.org, ulf.hansson@linaro.org, quic_sibis@quicinc.com,
+ quic_rjendra@quicinc.com, quic_rohiagar@quicinc.com, abel.vesa@linaro.org,
+ otto.pflueger@abscue.de, danila@jiaxyga.com, quic_ipkumar@quicinc.com,
+ luca@z3ntu.xyz, stephan.gerhold@kernkonzept.com, nks@flawful.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <20240703091651.2820236-1-quic_varada@quicinc.com>
+ <20240703091651.2820236-6-quic_varada@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240703091651.2820236-6-quic_varada@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 9, 2024 at 2:10=E2=80=AFAM Sami Tolvanen <samitolvanen@google.c=
-om> wrote:
->
-> On Thu, Jul 4, 2024 at 10:17=E2=80=AFAM Conor Dooley <conor@kernel.org> w=
-rote:
-> >
-> > For these security related options, like CFI_CLANG or RANDSTRUCT, I'm
-> > inclined to say that RUST is actually what should grow the depends on.
-> > That way it'll be RUST that gets silently disabled in configs when patc=
-h
-> > 1 gets backported (where it is mostly useless anyway) rather than SCS
-> > nor will it disable SCS when someone enables RUST in their config,
-> > instead it'd be a conscious choice.
->
-> I agree, we shouldn't silently disable hardening features when Rust is en=
-abled.
+On 3.07.2024 11:16 AM, Varadarajan Narayanan wrote:
+> From: Praveenkumar I <quic_ipkumar@quicinc.com>
+> 
+> Add the APC power domain definitions used in IPQ9574.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+> v4: Add Reviewed-by: Dmitry Baryshkov
+> v3: Fix patch author
+> v2: Fix Signed-off-by order
+> ---
+>  drivers/pmdomain/qcom/rpmpd.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/drivers/pmdomain/qcom/rpmpd.c b/drivers/pmdomain/qcom/rpmpd.c
+> index 5e6280b4cf70..947d6a9c3897 100644
+> --- a/drivers/pmdomain/qcom/rpmpd.c
+> +++ b/drivers/pmdomain/qcom/rpmpd.c
+> @@ -38,6 +38,7 @@ static struct qcom_smd_rpm *rpmpd_smd_rpm;
+>  #define KEY_FLOOR_CORNER	0x636676   /* vfc */
+>  #define KEY_FLOOR_LEVEL		0x6c6676   /* vfl */
+>  #define KEY_LEVEL		0x6c766c76 /* vlvl */
+> +#define RPM_KEY_UV		0x00007675 /* "uv" */
 
-That definitely wasn't my intention. I'll update it for v4.
+The "uv" key is handled in qcom_smd-regulator.c.. I'm assuming on this
+platform, it accepts level idx instead of the regulator properties
+and this is intentional?
 
-Alice
+Konrad
 
