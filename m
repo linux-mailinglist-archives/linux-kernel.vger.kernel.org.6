@@ -1,267 +1,109 @@
-Return-Path: <linux-kernel+bounces-245251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B71D92B03C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:35:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C421292B03E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EC0F1C20F23
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:35:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 541B8B22732
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DBB156991;
-	Tue,  9 Jul 2024 06:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HOqKTsdV"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA62813DDCD;
+	Tue,  9 Jul 2024 06:32:22 +0000 (UTC)
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2FD155CA9;
-	Tue,  9 Jul 2024 06:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEC813C9A7;
+	Tue,  9 Jul 2024 06:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720506668; cv=none; b=UkZ/VhYVfF9RwcxgXp5M/a6yUICvRv+MD6epu+tqcx7NnsB75CgCF4bSGWORqMCk6azzyut7Pm3yw7hNlFlzLjZoXTRJs/qmo72kWLm658veTDmT6Ge9aHEvaTKaQ4i6GLe1xce+W1mCT0Uh1DUw5N6c8kUD5JAmc+QDtpNXJHg=
+	t=1720506742; cv=none; b=ndgLXiGTRrGMhKZA7UAIVVN9gAyMvB7K2h0AzZYdKKIGIRChftGuErhj9RHCoar1dwsSLRbF1Izw3dl/LaF35TiBB5vZreM8gCmXqHTA9CZXIeK0BfRDmikeP+vkEZsqum6CL6X9yKPVQnFgNSuIYNvDdlkLoXEl5NDQv5FAi8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720506668; c=relaxed/simple;
-	bh=xhS5/zRmDI/A1aV/sGTISRv98gl+ovzuBwnz8Nll2/Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pA2BVKEruxlQkj1dia3c/OlJCiNpp/RZgEhGbbCGxHjtTWCuQetmorif3J84MRwd+7QjmsttaPV3Z/ZmQLVd341U/x5RHR6SOP0Oa1eAvtgBKILIr4d1JXg9qUJxtf1ScSe5686HF9U3QxHpD1+DEKjsnKWMStmHnXSrIzLyf+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HOqKTsdV; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C24B21BF20C;
-	Tue,  9 Jul 2024 06:31:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720506665;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PxZwf90oSmqa2Y6+v9YbmDAgIqnXOP6V17TxdbG7UnA=;
-	b=HOqKTsdVp+CVwIodj8Nm0Uu5CBkYegxuHfgmkMLFzzY+k115hf8PgFePur61xpYnTdl8fK
-	L2q/HNdHOeCNufJuI95NGDu1TLU/19iHXhNILYabBjGv3VQS0XL6ZEumFkuY6PXBCeGF/4
-	hVN/G+lvx3WfZMFC2bMWEQXnLdIaK7zAafZeDSdBT6XFKxOB8Y5F8xzbk+wq5Lx+BiJLOr
-	IbgDl6O8mcU9aHTziOIiqVsGpT+/UWXmXZ8r3Gnt1Qz0JzKZdv3WKXdyozhhE8hGcf9yg8
-	oOEBCqokHkBuD/nK9MawrGO66BsrbvN66VsKwRz9TaQKL35qurn/sWW72XrPag==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
-	Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
-	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	=?UTF-8?q?Nicol=C3=B2=20Veronese?= <nicveronese@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	mwojtas@chromium.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Antoine Tenart <atenart@kernel.org>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Romain Gantois <romain.gantois@bootlin.com>
-Subject: [PATCH net-next v17 14/14] Documentation: networking: document phy_link_topology
-Date: Tue,  9 Jul 2024 08:30:37 +0200
-Message-ID: <20240709063039.2909536-15-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240709063039.2909536-1-maxime.chevallier@bootlin.com>
-References: <20240709063039.2909536-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1720506742; c=relaxed/simple;
+	bh=xz2KncUko0sCQZI6pAuZ/e5WQnudLxeSS664o5+yCGY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=er631P6/FQCstk3eMZUnV2eYoLzRqVQ/PhkRLC2yAXl7Pk45YR0vjsPNTaZ/Ys1mB5TQc9l4AW/dRfpGWNtqJW9ehxz10HB/u/u4jtjTMsbUYZc5dYy1VDzvOswqxleBnyV9JsqOcfVbAjQDPsWMKDu0A/AOgSe6Z2sIl6MtFoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3679f806223so2731985f8f.0;
+        Mon, 08 Jul 2024 23:32:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720506739; x=1721111539;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zXgKdxLj4SsZmogMZUkG2+3pOaQYb4KGAio883FVDNo=;
+        b=np/yzbBvA/Ul859wEA8E8X2mQR602lRheH37TFmYiOEro0lycB4fy76NXocypdWKW6
+         SgdmIOJoD7Qvfz8io4/4cibEofr8lVypN23s7ToWh7yhocqh6IBvgwfSTtfxsIOsQIyd
+         OV5cQkzydUZ0GhFxxPIH4DcFBfJOZI9SIM2v12YwYY2sYdAAuXxDg/tNvv2+75MCOIQT
+         sqTVLQxG5vfAcJDHKmIeP4X1FGIae8sn2V6XW4yB8PFSzcubCPCxdQGIXBwTFXhVSKPA
+         AxolVtTtGHOOaXW0f3dnzBFdN5sWfpbAud14dW389m+GB80QXyKT6SafxjheaD0SMNe1
+         Xs/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUQo09QcLNVf3HmoMpt187g4tDpdJQEeck9afzmwkn1+RZbmWq8Qmd3k5zUNUKPqDbFE6ceVWYV6eD6plOPwE6gt2KEpV8I3NfAVxXj
+X-Gm-Message-State: AOJu0Yx7ha3Vq3rrs9UszET+dkRQ++qsFqzXRM+VqiZN0FwE/Rm8+ZnA
+	u8m985VWwnZCY3ZHNpEJNHHNgyqI1uHoy4WlpnKE1AZc9TA1r+xl
+X-Google-Smtp-Source: AGHT+IFw+JkUwNa88ARsZyZofhStCHB/u/p9XPyORf8ch3XyH5GzfIehtfuTnimUxqSRWDNKq/oBDg==
+X-Received: by 2002:adf:fc4b:0:b0:367:3404:1c06 with SMTP id ffacd0b85a97d-367d2b591c4mr842718f8f.20.1720506738916;
+        Mon, 08 Jul 2024 23:32:18 -0700 (PDT)
+Received: from [127.0.0.1] (p200300f6f72f3200fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f72f:3200:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde89164sm1569239f8f.63.2024.07.08.23.32.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 23:32:18 -0700 (PDT)
+From: Johannes Thumshirn <jth@kernel.org>
+Subject: [PATCH 0/2] btrfs: more RAID stripe tree updates
+Date: Tue, 09 Jul 2024 08:32:11 +0200
+Message-Id: <20240709-b4-rst-updates-v1-0-200800dfe0fd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGvZjGYC/x3MQQqAIBBA0avErBswMcKuEi1Sp5qNiWMRRHdPW
+ r7F/w8IZSaBsXkg08XCR6zo2gb8vsSNkEM1aKWNGpRFZzBLwTOFpZCgc9YrMtaH3kGNUqaV738
+ 4ze/7AWXmFCJgAAAA
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+ David Sterba <dsterba@suse.com>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Qu Wenru <wqu@suse.com>, Filipe Manana <fdmanana@suse.com>, 
+ Johannes Thumshirn <johannes.thumshirn@wdc.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=832; i=jth@kernel.org;
+ h=from:subject:message-id; bh=xz2KncUko0sCQZI6pAuZ/e5WQnudLxeSS664o5+yCGY=;
+ b=owGbwMvMwCV2ad4npfVdsu8YT6slMaT13CxkmvxWPFjgEs/DN9KvGjhc9bqC7h9Y3H77eNLsV
+ ad6r5RFdpSyMIhxMciKKbIcD7XdL2F6hH3KoddmMHNYmUCGMHBxCsBE/GwY/rtvviqjF6YeeS57
+ aWJgL4dB073P/8qvCDLHiO7W3fScMYXhn5J/0LwcxpD/vwtDtLffNvy8XH5OkQ9L8kqjK0xHc2w
+ 28wMA
+X-Developer-Key: i=jth@kernel.org; a=openpgp;
+ fpr=EC389CABC2C4F25D8600D0D00393969D2D760850
 
-The newly introduced phy_link_topology tracks all ethernet PHYs that are
-attached to a netdevice. Document the base principle, internal and
-external APIs. As the phy_link_topology is expected to be extended, this
-documentation will hold any further improvements and additions made
-relative to topology handling.
+Two further RST updates targeted for 6.11 (hopefully).
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+The first one is a reworked version of the scrub vs dev-replace deadlock
+fix. It does have reviews from Josef and Qu but I'd love to head Filipe's
+take on it.
+
+The second one updates a stripe extent in case a write to a already
+present logical address happens.
+
 ---
- Documentation/networking/ethtool-netlink.rst  |   3 +
- Documentation/networking/index.rst            |   1 +
- .../networking/phy-link-topology.rst          | 121 ++++++++++++++++++
- 3 files changed, 125 insertions(+)
- create mode 100644 Documentation/networking/phy-link-topology.rst
+Johannes Thumshirn (2):
+      btrfs: don't hold dev_replace rwsem over whole of btrfs_map_block
+      btrfs: replace stripe extents
 
-diff --git a/Documentation/networking/ethtool-netlink.rst b/Documentation/networking/ethtool-netlink.rst
-index d9f0c0dba1e5..81ddb750c1f9 100644
---- a/Documentation/networking/ethtool-netlink.rst
-+++ b/Documentation/networking/ethtool-netlink.rst
-@@ -2189,10 +2189,13 @@ Retrieve information about a given Ethernet PHY sitting on the link. The DO
- operation returns all available information about dev->phydev. User can also
- specify a PHY_INDEX, in which case the DO request returns information about that
- specific PHY.
-+
- As there can be more than one PHY, the DUMP operation can be used to list the PHYs
- present on a given interface, by passing an interface index or name in
- the dump request.
- 
-+For more information, refer to :ref:`phy_link_topology`
-+
- Request contents:
- 
-   ====================================  ======  ==========================
-diff --git a/Documentation/networking/index.rst b/Documentation/networking/index.rst
-index d1af04b952f8..c71b87346178 100644
---- a/Documentation/networking/index.rst
-+++ b/Documentation/networking/index.rst
-@@ -91,6 +91,7 @@ Contents:
-    operstates
-    packet_mmap
-    phonet
-+   phy-link-topology
-    pktgen
-    plip
-    ppp_generic
-diff --git a/Documentation/networking/phy-link-topology.rst b/Documentation/networking/phy-link-topology.rst
-new file mode 100644
-index 000000000000..4dec5d7d6513
---- /dev/null
-+++ b/Documentation/networking/phy-link-topology.rst
-@@ -0,0 +1,121 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. _phy_link_topology:
-+
-+=================
-+PHY link topology
-+=================
-+
-+Overview
-+========
-+
-+The PHY link topology representation in the networking stack aims at representing
-+the hardware layout for any given Ethernet link.
-+
-+An Ethernet interface from userspace's point of view is nothing but a
-+:c:type:`struct net_device <net_device>`, which exposes configuration options
-+through the legacy ioctls and the ethtool netlink commands. The base assumption
-+when designing these configuration APIs were that the link looks something like ::
-+
-+  +-----------------------+        +----------+      +--------------+
-+  | Ethernet Controller / |        | Ethernet |      | Connector /  |
-+  |       MAC             | ------ |   PHY    | ---- |    Port      | ---... to LP
-+  +-----------------------+        +----------+      +--------------+
-+  struct net_device               struct phy_device
-+
-+Commands that needs to configure the PHY will go through the net_device.phydev
-+field to reach the PHY and perform the relevant configuration.
-+
-+This assumption falls apart in more complex topologies that can arise when,
-+for example, using SFP transceivers (although that's not the only specific case).
-+
-+Here, we have 2 basic scenarios. Either the MAC is able to output a serialized
-+interface, that can directly be fed to an SFP cage, such as SGMII, 1000BaseX,
-+10GBaseR, etc.
-+
-+The link topology then looks like this (when an SFP module is inserted) ::
-+
-+  +-----+  SGMII  +------------+
-+  | MAC | ------- | SFP Module |
-+  +-----+         +------------+
-+
-+Knowing that some modules embed a PHY, the actual link is more like ::
-+
-+  +-----+  SGMII   +--------------+
-+  | MAC | -------- | PHY (on SFP) |
-+  +-----+          +--------------+
-+
-+In this case, the SFP PHY is handled by phylib, and registered by phylink through
-+its SFP upstream ops.
-+
-+Now some Ethernet controllers aren't able to output a serialized interface, so
-+we can't directly connect them to an SFP cage. However, some PHYs can be used
-+as media-converters, to translate the non-serialized MAC MII interface to a
-+serialized MII interface fed to the SFP ::
-+
-+  +-----+  RGMII  +-----------------------+  SGMII  +--------------+
-+  | MAC | ------- | PHY (media converter) | ------- | PHY (on SFP) |
-+  +-----+         +-----------------------+         +--------------+
-+
-+This is where the model of having a single net_device.phydev pointer shows its
-+limitations, as we now have 2 PHYs on the link.
-+
-+The phy_link topology framework aims at providing a way to keep track of every
-+PHY on the link, for use by both kernel drivers and subsystems, but also to
-+report the topology to userspace, allowing to target individual PHYs in configuration
-+commands.
-+
-+API
-+===
-+
-+The :c:type:`struct phy_link_topology <phy_link_topology>` is a per-netdevice
-+resource, that gets initialized at netdevice creation. Once it's initialized,
-+it is then possible to register PHYs to the topology through :
-+
-+:c:func:`phy_link_topo_add_phy`
-+
-+Besides registering the PHY to the topology, this call will also assign a unique
-+index to the PHY, which can then be reported to userspace to refer to this PHY
-+(akin to the ifindex). This index is a u32, ranging from 1 to U32_MAX. The value
-+0 is reserved to indicate the PHY doesn't belong to any topology yet.
-+
-+The PHY can then be removed from the topology through
-+
-+:c:func:`phy_link_topo_del_phy`
-+
-+These function are already hooked into the phylib subsystem, so all PHYs that
-+are linked to a net_device through :c:func:`phy_attach_direct` will automatically
-+join the netdev's topology.
-+
-+PHYs that are on a SFP module will also be automatically registered IF the SFP
-+upstream is phylink (so, no media-converter).
-+
-+PHY drivers that can be used as SFP upstream need to call :c:func:`phy_sfp_attach_phy`
-+and :c:func:`phy_sfp_detach_phy`, which can be used as a
-+.attach_phy / .detach_phy implementation for the
-+:c:type:`struct sfp_upstream_ops <sfp_upstream_ops>`.
-+
-+UAPI
-+====
-+
-+There exist a set of netlink commands to query the link topology from userspace,
-+see ``Documentation/networking/ethtool-netlink.rst``.
-+
-+The whole point of having a topology representation is to assign the phyindex
-+field in :c:type:`struct phy_device <phy_device>`. This index is reported to
-+userspace using the ``ETHTOOL_MSG_PHY_GET`` ethtnl command. Performing a DUMP operation
-+will result in all PHYs from all net_device being listed. The DUMP command
-+accepts either a ``ETHTOOL_A_HEADER_DEV_INDEX`` or ``ETHTOOL_A_HEADER_DEV_NAME``
-+to be passed in the request to filter the DUMP to a single net_device.
-+
-+The retrieved index can then be passed as a request parameter using the
-+``ETHTOOL_A_HEADER_PHY_INDEX`` field in the following ethnl commands :
-+
-+* ``ETHTOOL_MSG_STRSET_GET`` to get the stats string set from a given PHY
-+* ``ETHTOOL_MSG_CABLE_TEST_ACT`` and ``ETHTOOL_MSG_CABLE_TEST_ACT``, to perform
-+  cable testing on a given PHY on the link (most likely the outermost PHY)
-+* ``ETHTOOL_MSG_PSE_SET`` and ``ETHTOOL_MSG_PSE_GET`` for PHY-controlled PoE and PSE settings
-+* ``ETHTOOL_MSG_PLCA_GET_CFG``, ``ETHTOOL_MSG_PLCA_SET_CFG`` and ``ETHTOOL_MSG_PLCA_GET_STATUS``
-+  to set the PLCA (Physical Layer Collision Avoidance) parameters
-+
-+Note that the PHY index can be passed to other requests, which will silently
-+ignore it if present and irrelevant.
+ fs/btrfs/raid-stripe-tree.c | 51 +++++++++++++++++++++++++++++++++++++++++++++
+ fs/btrfs/volumes.c          | 28 +++++++++++++++----------
+ 2 files changed, 68 insertions(+), 11 deletions(-)
+---
+base-commit: 584df860cac6e35e364ada101ccd13495b954644
+change-id: 20240709-b4-rst-updates-bb9c0e49cd5b
+
+Best regards,
 -- 
-2.45.1
+Johannes Thumshirn <jth@kernel.org>
 
 
