@@ -1,163 +1,114 @@
-Return-Path: <linux-kernel+bounces-245689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C90E992B61C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:05:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B4E92B628
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7F121C209EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:05:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB390284C3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56CE1586FE;
-	Tue,  9 Jul 2024 11:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="tWoCAcEX";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IFKbdE9U"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EEF158201;
+	Tue,  9 Jul 2024 11:06:18 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681B3155389;
-	Tue,  9 Jul 2024 11:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFD115746B
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 11:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720523082; cv=none; b=ukGDiFqsNbTBR2tS0pAlvYREGNrNHHHpymHEZFxvjxzhhpVipeev7OjWaSQig+VxfvsX+gF/sx1KB5yxSN8+TLb9vp/w7lEch7sAB+UmrRqnqmeCrFqOpYP2VGeU1c4Yhv44lsVPJuu0+mboq2jCSN/Rr2ZQ9wbU6AM8bfOsiSA=
+	t=1720523177; cv=none; b=etk53nQ0on3vcMekLkN/fn8/5qBEi9SqWLvaKg8Rp7RvJksgdxP+4QKoiA7AHaV9UHe+sh2LzV1LUXaF/xDdQCn+JF6B8Psu88k4/lWN0Rn61Cor1bQgGVl4PWl2sJnimT6kVoKMYqQkbc2Sjkpbs+nkec/eJf4deKc0lheVIzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720523082; c=relaxed/simple;
-	bh=B5t8FOU10IgnywCSaV+yV+n3OSAVnFv17h+gxNR0IWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WDFvn6T+RqI4tN49fivmQoYsLh3Ggg3IeHMPTU/A6DNtl7oVWOUvygAY6wJTd3Koucmdk4SxVb2+8Ie73Z5UCiqAdiVic3E8zElmyR3XkqVxE2wj91MJBgWPT/wo//vRzpbexwKSBsfV7MJ3gj1o2ylobHTIT2EA9R/dMSAZ7j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=tWoCAcEX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IFKbdE9U; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 659BD1381C57;
-	Tue,  9 Jul 2024 07:04:39 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Tue, 09 Jul 2024 07:04:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1720523079; x=1720609479; bh=H3tNaDdGY8
-	FKMr1+a9tMtjAdOC1ZrM5KtAJSOzs+ZOw=; b=tWoCAcEXUhgmVRM7YYbaJRQFb4
-	8xe1vf8DtSpoLrehhxx1oX7O+/LiJmAqG3f/953tKPCN3ZjrrjEC2K6Tlzb/gpqr
-	2+CaaXbBG8ExPtlLA+i01Yd1PbVklScLKa9wiQyP0FnSUAuJk8oOG0UyPFOoIry4
-	TlPX7gylKJkTer7Z2dhQ0iO78rm28NPsQGaQxXQf7cd/446Nlwor4HuzuEIaAtm7
-	MsYcxwRDM66nUzkI3D0Tzq0vWQxhRjiaqVhjfjjB4OZ23kcu3WYt1lDin3HTzSaF
-	GyvMORTrvXdN/Sj+KNncu97/Zg+jEiYdnacOdHVNI2Lw5zLU1lhzeJkv+jvQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1720523079; x=1720609479; bh=H3tNaDdGY8FKMr1+a9tMtjAdOC1Z
-	rM5KtAJSOzs+ZOw=; b=IFKbdE9UTprV5c9WDTgZ0NWmpbWjyk1dXzyhierjp0bH
-	xAicb2g+1XrzVsbdyP+W38XtjQxreWsDrLPXTLknM3RFBkOxdeMzONKdUUHmP6lX
-	RxlYr/9+NfDfDpp/p9nHre2b8uWX8CS5GGSa9BFHiYNTDCYalHkeOiWsQI1eKcNA
-	+L8GYCe+EwfqQ74/lP/EwLF8wIpfrwhqoR+OARQr7mCjoSMWX7hfrbGIluQbHFGs
-	vC4hH2PdunfxV8SLDXvxdCrvx6FwaGWWlYhLEeCJBkZeRxIndwJtDBl6uHcXCd/x
-	yx4DQbuHrCxiwHv4KFm/cR8GfcF2kQW6jcbF4TDy9A==
-X-ME-Sender: <xms:RRmNZjhVGZx3wrvJ41CUYe6B1n3-VMAfvbMYlHKV8OXy8QCJwdlNrA>
-    <xme:RRmNZgC176DTvYnkYF5OTXUDcJJRp2K4bgaoPS19BxME7zBlBttmgL2gyZQD66Tuy
-    xkkuad4y8MXjQ>
-X-ME-Received: <xmr:RRmNZjFpDraIqhjFx8LRY1A7eyuixl-epg8PLNflNY-JsaeIj-aVqo7IYdPmCp7vyhxj6I0eY1yiDFhaJUlPJKoqyztTAbP6jdFeGg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdelgdefiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehgedvve
-    dvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhh
-    drtghomh
-X-ME-Proxy: <xmx:RRmNZgQ8tDI68xKKzgJnWybVqMRKfc8tzUaLTbCxbLiCE25_0adN4w>
-    <xmx:RRmNZgzqnIx_olKyTaFBKDRz0ooh9mJ_q5e5--OouyJPb_WhoybQQw>
-    <xmx:RRmNZm4LDYUHOBrZ_aWELXe7O9Ha6dzJoCByJg4PZ_ijFckQVEvXvA>
-    <xmx:RRmNZlxD2L7BdUDtm3MHHupEAX3DKB9uQkVRg3zro6bRdrHXxIGdAA>
-    <xmx:RxmNZloXggv5w9oYddGP7Y4Z8NDYa395DC79F4i9BAxHPdsSz016d2Oo>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 9 Jul 2024 07:04:37 -0400 (EDT)
-Date: Tue, 9 Jul 2024 13:04:35 +0200
-From: Greg KH <greg@kroah.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: linux-next: manual merge of the tty tree with the tty.current
- tree
-Message-ID: <2024070925-area-cobbler-271f@gregkh>
-References: <20240709153747.07d7272c@canb.auug.org.au>
+	s=arc-20240116; t=1720523177; c=relaxed/simple;
+	bh=iin81viQ24XB3tAi7OE5LW9AH/E/YBNNetWrIcuUAfs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=L/6+tPwQhW6EWFPeyUzg/EVMaWHeENSnqFaKP6h+49eIdjbFXJdC5GnurGoUI1vXhny69EoyeTxKfsT9Vz7INErgZKyeMRLO9voqWK9HqhQ5i+MD0USdNDBHwGtwRUmQzUhBjv1InI8ndXIpl4S+aUG7nQsFCACNegtEtWAuuQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WJJ7Y6nVDzcpHh;
+	Tue,  9 Jul 2024 19:05:45 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id EA4E31400D1;
+	Tue,  9 Jul 2024 19:06:11 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 9 Jul 2024 19:06:10 +0800
+Message-ID: <01869981-b1de-32cb-bd25-d6ea09752b3d@huawei.com>
+Date: Tue, 9 Jul 2024 19:06:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240709153747.07d7272c@canb.auug.org.au>
-
-On Tue, Jul 09, 2024 at 03:37:47PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the tty tree got a conflict in:
-> 
->   drivers/tty/serial/imx.c
-> 
-> between commit:
-> 
->   9706fc87b4cf ("serial: imx: only set receiver level if it is zero")
-> 
-> from the tty.current tree and commit:
-> 
->   3093f180bc6e ("serial: imx: stop casting struct uart_port to struct imx_port")
-> 
-> from the tty tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc drivers/tty/serial/imx.c
-> index ff32cd2d2863,d96f0524f7fb..000000000000
-> --- a/drivers/tty/serial/imx.c
-> +++ b/drivers/tty/serial/imx.c
-> @@@ -1549,10 -1553,9 +1554,10 @@@ static int imx_uart_startup(struct uart
->   
->   static void imx_uart_shutdown(struct uart_port *port)
->   {
-> - 	struct imx_port *sport = (struct imx_port *)port;
-> + 	struct imx_port *sport = to_imx_port(port);
->   	unsigned long flags;
->   	u32 ucr1, ucr2, ucr4, uts;
->  +	int loops;
->   
->   	if (sport->dma_is_enabled) {
->   		dmaengine_terminate_sync(sport->dma_chan_tx);
-> @@@ -1984,8 -1937,8 +1989,8 @@@ static void imx_uart_poll_put_char(stru
->   static int imx_uart_rs485_config(struct uart_port *port, struct ktermios *termios,
->   				 struct serial_rs485 *rs485conf)
->   {
-> - 	struct imx_port *sport = (struct imx_port *)port;
-> + 	struct imx_port *sport = to_imx_port(port);
->  -	u32 ucr2;
->  +	u32 ucr2, ufcr;
->   
->   	if (rs485conf->flags & SER_RS485_ENABLED) {
->   		/* Enable receiver if low-active RTS signal is requested */
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH 0/3] ARM: Use generic interface to simplify crashkernel
+ reservation
+Content-Language: en-US
+To: Baoquan He <bhe@redhat.com>
+CC: <linux@armlinux.org.uk>, <vgoyal@redhat.com>, <dyoung@redhat.com>,
+	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
+	<arnd@arndb.de>, <afd@ti.com>, <akpm@linux-foundation.org>,
+	<rmk+kernel@armlinux.org.uk>, <linus.walleij@linaro.org>,
+	<eric.devolder@oracle.com>, <gregkh@linuxfoundation.org>, <deller@gmx.de>,
+	<javierm@redhat.com>, <robh@kernel.org>, <thunder.leizhen@huawei.com>,
+	<austindh.kim@gmail.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <kexec@lists.infradead.org>
+References: <20240708133348.3592667-1-ruanjinjie@huawei.com>
+ <Zo0DCVXvCryDr7WN@MiWiFi-R3L-srv>
+ <3157befe-431f-69ac-b9d3-7a8685ba3a4d@huawei.com>
+ <Zo0TbmSnHbiz5YQn@MiWiFi-R3L-srv>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <Zo0TbmSnHbiz5YQn@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
 
 
-Looks good, thanks!
+On 2024/7/9 18:39, Baoquan He wrote:
+> On 07/09/24 at 05:50pm, Jinjie Ruan wrote:
+>>
+>>
+>> On 2024/7/9 17:29, Baoquan He wrote:
+>>> On 07/08/24 at 09:33pm, Jinjie Ruan wrote:
+>>>> Currently, x86, arm64, riscv and loongarch has been switched to generic
+>>>> crashkernel reservation. Also use generic interface to simplify crashkernel
+>>>> reservation for arm32, and fix two bugs by the way.
+>>>
+>>> I am not sure if this is a good idea. I added the generic reservation
+>>> itnerfaces for ARCH which support crashkernel=,high|low and normal
+>>> crashkernel reservation, with this, the code can be simplified a lot.
+>>> However, arm32 doesn't support crashkernel=,high, I am not sure if it's
+>>> worth taking the change, most importantly, if it will cause
+>>> misunderstanding or misoperation.
+>>
+>> Yes, arm32 doesn't support crashkernel=,high.
+>>
+>> However, a little enhancement to the generic code (please see the first
+>> patch), the generic reservation interfaces can also be applicable to
+>> architectures that do not support "high" such as arm32, and it can also
+>> simplify the code (please see the third patch).
+> 
+> Yeah, I can see the code is simplified. When you specified
+> 'crashkernel=xM,high', do you think what should be warn out? Because
+> it's an unsupported syntax on arm32, we should do something to print out
+> appropriate message.
 
-greg k-h
+Yes, you are right! In this patch it will print "crashkernel high memory
+reservation failed." message and out for arm32 if you specify
+'crashkernel=xM,high because "CRASH_ADDR_LOW_MAX" and
+"CRASH_ADDR_HIGH_MAX" is identical for arm32. And it should also warn
+out for other similar architecture.
+
+
+> 
+> 
 
