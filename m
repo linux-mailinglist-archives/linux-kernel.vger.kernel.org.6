@@ -1,111 +1,124 @@
-Return-Path: <linux-kernel+bounces-245012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0C4E92ACFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:13:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D09192AD01
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:13:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AB28281498
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:13:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6F6B1F222DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039DE10F2;
-	Tue,  9 Jul 2024 00:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153A717C9;
+	Tue,  9 Jul 2024 00:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YWBlJ8nS"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XkOl4DHU"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDEE394
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 00:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178E7620
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 00:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720483976; cv=none; b=iXYginm+LNLaOKb+p6F7/RgrHpDJVfCbepO+RsDWbm5FyKZqyfXXK2/i4AsJq6b8FzdgEUQ+nugdovgKTKXAkz4GVIRpMzACw/5URJe5c1serU8ZjNTaGYsJ3CDM+rCCXwFGj3buUv9dfMpdA2EB/xW/i9CDSUJMtUvc7i1uWD8=
+	t=1720483990; cv=none; b=bEQKSPXBy/dE0/nekQEn5hYBoW0kTASf/ThnnQ9+GGgIlHKoPCjELZ/DHZK1BzETUl8IipBL97FDh8Jm1yJY/oWI8sR+ezjJpRctGklXTmV6E/1fYuKobGXSSvkakAIVPNvVDJ1fmCmd9RcSUvObcLrYrNKJe5cnJerPXuK8lRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720483976; c=relaxed/simple;
-	bh=2Gj8s9nZbYCDFARzegS1muqgRrgVAIxf+e0daMnpTIw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tRRXHCE6pdk+lyCJmWiLBw5G3sJr3hmlpuT5fmhq2EwhwLpXtH/6woVAOnI+Nh4E/2G0JOAHe0jJfiClpuOhYCeClRJPSRwEznpHR4jNoj0YE15OeV0TqDt/DlbscXlfuEmfW5USFQgjYwc5QG6V2y9q4m4IyWCnitXyg9vNQu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YWBlJ8nS; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: john.g.garry@oracle.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1720483972;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XMA7bkz8Stsxvv5DOjBv/YnA9fiCUhmgIbgMYPT3sPk=;
-	b=YWBlJ8nS3SGBDalkBYK3CSr+rpG+RSl/HX3Duq2y/sBCEc4iJ1xMgv4u/zfLGyMAZN0fBJ
-	V5Hvby+2JHz047wArUn9vnNY1YFM2axa8zLKOTNc5+LywU9Nbl98E5KhXhE3THG1q3v6Sn
-	dr4R8W9ax2fDazSebtfag0mtV5Ywni8=
-X-Envelope-To: axboe@kernel.dk
-X-Envelope-To: mst@redhat.com
-X-Envelope-To: jasowang@redhat.com
-X-Envelope-To: xuanzhuo@linux.alibaba.com
-X-Envelope-To: eperezma@redhat.com
-X-Envelope-To: pbonzini@redhat.com
-X-Envelope-To: stefanha@redhat.com
-X-Envelope-To: hare@suse.de
-X-Envelope-To: kbusch@kernel.org
-X-Envelope-To: hch@lst.de
-X-Envelope-To: linux-block@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: virtualization@lists.linux.dev
-Message-ID: <f92269eb-3664-42ae-83a7-8eb0a3af3f08@linux.dev>
-Date: Tue, 9 Jul 2024 02:12:50 +0200
+	s=arc-20240116; t=1720483990; c=relaxed/simple;
+	bh=o7s7kP3xWOe9f8MorpJlnvVKDIDiP9CLOJFSGGX5mMY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=SXVk6qOWXooYJUzUZmqt0j30T5PKK/NaSscwtDmhC+Cl5WzSGD7Zo2YsHD9jP3mkTvr070bFZISzKGfspOL9mUhYg5yEAZ6HznEc+HsqoptnDnOoYnQxa9YqdcK0fuf1gBi5N+ko/Du8F10MMuZ3zB0mVDT0pMh1EymB/cOkOlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XkOl4DHU; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-778702b9f8fso781991a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 17:13:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720483988; x=1721088788; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zG6ZMKR2ER5CEkjEXyhneSznu6s7Jkh317FrChhPZ4A=;
+        b=XkOl4DHUff0GorZQR3rR+qQ5ufi+8p6DIducAJJnGqltxaF07fG7pbyqyfQbOkAtTO
+         XRo4sYj+J0u93tjzlBTvrGskpFiE8yaBFJaKQoEmbJbN4da4e9nAjO0+9MqYLJOqf+nW
+         n7/AeR1XhsD05TdhirWCggu8dAsRnlDrnSKqa9w+UCag8DYkLX+EUm3grJGCozS/TiTu
+         6JbCxxcoRGTtkxTyaoYPh6mGdji/9X32cP2wXTRWraIipPBH2MI6WzAhNBYmvJYqa/vP
+         7cb8orZwvewTmSB0yeRiGn9gFko+X8F/pRIUFnVgYukxJWnKexSob36Ow0GL8zTVvngF
+         y0Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720483988; x=1721088788;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zG6ZMKR2ER5CEkjEXyhneSznu6s7Jkh317FrChhPZ4A=;
+        b=WzxnFIuBGKV7+xDxH2k36U0FDQpqPW8BO9sdFXb5C9QToLu59fz01qt8ymW7o1nWQi
+         Yg9yrJyeCv6Muk9Fy5zvjthLmt5ANDz57HEdsuDgy5cjnAeWzAMYKYF2dd8gJfpPCx9U
+         R707kHAO+gvbKBP0+zoHNe3In6d6t2uOBx3tWQge2Y0TYj4FZNvcQ9v39IzsnhPwZpEL
+         mIM494G2Xb1+FMPj3T2xKIg7B/eEpGQ65q6ahzk8E/gby+0tgL8pE29+ycN45SsaBoT9
+         TQwb55xbLxjwNb0x+0lPY7OygvBDHg8eDUJbSnvI8+Xd59sIv4gfwTKSyxWY9QxeBrl4
+         PIoA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ1Ms5685ojK5xol844KiFSUCHfDQb2EcOP32SmWD3gd8eLUCdjPy4HVF5m3PRnW9MmvQXchKn0UjwRBWhDVZhUlIPd9D5OBf3qKCr
+X-Gm-Message-State: AOJu0YzgZKUyOmlxEKE6BS3aNQu0RfDgFjFmTZni1Kfa35Ud+yN38BuE
+	SNpiJEC9kNbvG75aAtkgr4y5ztpIpHecNwITT+OGTF+QuGBDa3trBDJJJXuxHwh792ID6uesVly
+	DdA==
+X-Google-Smtp-Source: AGHT+IEFGzOwGtA+dJ46COa5sR263gqpyt4UCMdQAj79zHoXHLuF9ZNvWfUjxPfnnXwwjfAp9CjrFIzSkCo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a02:502:b0:6f6:1f2c:e339 with SMTP id
+ 41be03b00d2f7-77e004223b2mr2128a12.2.1720483988282; Mon, 08 Jul 2024 17:13:08
+ -0700 (PDT)
+Date: Mon, 8 Jul 2024 17:13:06 -0700
+In-Reply-To: <960ef7f670c264824fe43b87b8177a84640b8b5d.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH v2 3/5] null_blk: Don't bother validating blocksize
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, mst@redhat.com,
- jasowang@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
- pbonzini@redhat.com, stefanha@redhat.com, hare@suse.de, kbusch@kernel.org,
- hch@lst.de
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev
-References: <20240708091651.177447-1-john.g.garry@oracle.com>
- <20240708091651.177447-4-john.g.garry@oracle.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20240708091651.177447-4-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-40-seanjc@google.com>
+ <960ef7f670c264824fe43b87b8177a84640b8b5d.camel@redhat.com>
+Message-ID: <ZoyAkkZjnGmwlVCS@google.com>
+Subject: Re: [PATCH v2 39/49] KVM: x86: Extract code for generating per-entry
+ emulated CPUID information
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
+	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
+	Robert Hoo <robert.hoo.linux@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
 
-在 2024/7/8 11:16, John Garry 写道:
-> The block queue limits validation does this for us now.
+On Thu, Jul 04, 2024, Maxim Levitsky wrote:
+> On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
+> PS: I spoke with Paolo about the meaning of KVM_GET_EMULATED_CPUID, because
+> it is not clear from the documentation what it does, or what it supposed to
+> do because qemu doesn't use this IOCTL.
 > 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->   drivers/block/null_blk/main.c | 3 ---
->   1 file changed, 3 deletions(-)
+> So this ioctl is meant to return a static list of CPU features which *can* be
+> emulated by KVM, if the cpu doesn't support them, but there is a cost to it,
+> so they should not be enabled by default.
 > 
-> diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
-> index 9d0f6da77601..2f0431e42c49 100644
-> --- a/drivers/block/null_blk/main.c
-> +++ b/drivers/block/null_blk/main.c
-> @@ -1831,9 +1831,6 @@ static int null_validate_conf(struct nullb_device *dev)
->   		dev->queue_mode = NULL_Q_MQ;
->   	}
->   
-> -	if (blk_validate_block_size(dev->blocksize))
-> -		return -EINVAL;
+> This means that if you run 'qemu -cpu host', these features (like rdpid) will
+> only be enabled if supported by the host cpu, however if you explicitly ask
+> qemu for such a feature, like 'qemu -cpu host,+rdpid', qemu should not warn
+> if the feature is not supported on host cpu but can be emulated (because kvm
+> can emulate the feature, which is stated by KVM_GET_EMULATED_CPUID ioctl).
+> 
+> Qemu currently doesn't support this but the support can be added.
+> 
+> So I think that the two ioctls should be redefined as such:
+> 
+> KVM_GET_SUPPORTED_CPUID - returns all CPU features that are supported by KVM,
+> supported by host hardware, or that KVM can efficiently emulate.
+> 
+> 
+> KVM_GET_EMULATED_CPUID - returns all CPU features that KVM *can* emulate if
+> the host cpu lacks support, but emulation is not efficient and thus these
+> features should be used with care when not supported by the host (e.g only
+> when the user explicitly asks for them).
 
-Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
+Yep, that aligns with how I view the ioctls (I haven't read the documentaion,
+mainly because I have a terrible habit of never reading docs).
 
-Thanks,
-Zhu Yanjun
+> I can post a patch to fix this or you can add something like that to your
+> patch series if you prefer.
 
-> -
->   	if (dev->use_per_node_hctx) {
->   		if (dev->submit_queues != nr_online_nodes)
->   			dev->submit_queues = nr_online_nodes;
-
+Go ahead and post a patch, assuming it's just a documentation update.
 
