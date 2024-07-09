@@ -1,135 +1,141 @@
-Return-Path: <linux-kernel+bounces-246434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 525D792C231
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:17:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 179FE92C1AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC4D8B2B52D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:05:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B63581F22BFB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F781B47C4;
-	Tue,  9 Jul 2024 16:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EBA1B47AD;
+	Tue,  9 Jul 2024 16:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="QjCRkdR4"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="FxL1ChYQ"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD5F1B47AD
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 16:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593CC1A00FB;
+	Tue,  9 Jul 2024 16:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720542957; cv=none; b=sT7KhFNXctUZadDFjwwny4l1TmWrLA+51m9CYunBGtfNq+7t6xICMpWAK6CnRd9wMcK83/NKJtqcE+1UgPhMd6DTXgHIGbYIfSoLWAc9CAZTL4L4C0uHEwitHPa2L6wELvIyWw3I+MY1xcLh4pj/9KHChBIVIT3FhY85AK8ThHQ=
+	t=1720542969; cv=none; b=Y+T3Kn19bxaQDYmk9qHY/2vfhTU62k7DJ2nQylCXYQT78sVY28p147anuL0kWg+0qvCdZ4p47bXoMEuQtUXHPLjgeGpF5JMFSxyc95uJRYNXOZZamIMKdRswol/i1K6yrsUn3F1nlGssooHphTFmRnttIEPagJV/rrXkKC1nW1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720542957; c=relaxed/simple;
-	bh=PePAGbhMUNOE0V833DZkBuDOtd4qtBDONsf9+SAawk4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=szvURP1BUHYW2NnjRMTAOVehxjAKWUnAlAdSo0gNcWbKD2R0GLtnThELNz54UKuU6JwPrYE1n/rXW3FY3uTpiaF96OCXTL5x0EYzKK+02745G0N2TxqtpIDvlPCzlLNFFo4GQE+HmotAZpxq6rhEpgHEfnxPfZkbSVub6fElIWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=QjCRkdR4; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57cf8880f95so6896016a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 09:35:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720542953; x=1721147753; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PePAGbhMUNOE0V833DZkBuDOtd4qtBDONsf9+SAawk4=;
-        b=QjCRkdR4TsJQzTtTmrJhcAXyZJwxaxUyef6mviMOJZz/NN8dIYAEBxIawRAjGK6xQu
-         VNcFbOO+fN9L0obm9WDDv3dd3abogUHdYWRIg7ZVHQeXv2iKBCFySxVvyg82e1HT09f3
-         sHvkMECW4lCE9vRmp6tdxKPfeGlJNOLDF5vbfjb61ai3qBk39+8aZ22Et1alhQ+GmcK4
-         OSwVQ6Knnz1B70XbDp+DwM4HntGLeGqO1NFOdqutq7sQ75DqhZWJC9rG0Bf48L/Be/i1
-         rNZpRDh5EUv1czr8HXK3d+Uu+YK35Y+raMkhJxCS559Joy5/y/bepNbPGv0SfuWOp+tW
-         ecaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720542953; x=1721147753;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PePAGbhMUNOE0V833DZkBuDOtd4qtBDONsf9+SAawk4=;
-        b=V+6cYaMbyBTI9LfyW+kWu2fYQv73HIAYh4HXd6JuKw9vFGNPo43fBvm0VnNMEJXNgy
-         Zphhm1N9jPNrix73c1IJkxai7vP5KLxCVXk4Mt7S/dhn2T84Rwx6K61dv5EWZ4iX5Y6p
-         63hUVc8jSTd9wFNHyWKGaDbaZpLT3xc38fAd5RBZGKJP6CaBK392PMKy/uyYe89dFcXg
-         EbNvMoWznPX1TC/j9AjfqdI73VX/xQlJgLfeZ51bFezOmlkaAVN9KYG7UOedeDYKid6T
-         PjKla8k02d40rRtsNf9PPNsDdI37Ox6JVkhxI5Mt+iJ+Fbc/2I0tOJHH6ozsgi7vRbc4
-         xEuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdlyOherzTnOOeTRyNiauSR0q+IxtZu6UR3EYA1op0eE0iP0bUD+PcsPtmzab0XrkwcRzZmTCddXwl1zBhCAfR7c1SlIzafIy70BuG
-X-Gm-Message-State: AOJu0YyD0ROxzaG9CAZTzxas7kUovsuhKZLtHqRW3ng0Yvk4tOKXB6mI
-	2fTTd2Ep2hCRiOunP/RqZwFUJWFQN0dfZrP2ugjqEOwaBNNoOPnZ50MyqweuYts=
-X-Google-Smtp-Source: AGHT+IHG9sM381M4u9R6ru+Q2K7lC5oxBE2d7vRqLXAPPx0tdjk+KxL1mJvjO39ifs+Mw2YGUzrc6w==
-X-Received: by 2002:a17:906:9982:b0:a6f:b0d0:1beb with SMTP id a640c23a62f3a-a780b6b1c63mr238978966b.24.1720542953030;
-        Tue, 09 Jul 2024 09:35:53 -0700 (PDT)
-Received: from localhost (p200300f65f217d00930e0db224f9e8ed.dip0.t-ipconnect.de. [2003:f6:5f21:7d00:930e:db2:24f9:e8ed])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a855e24sm90830266b.177.2024.07.09.09.35.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 09:35:52 -0700 (PDT)
-Date: Tue, 9 Jul 2024 18:35:51 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, Greg KH <greg@kroah.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, David Plowman <david.plowman@raspberrypi.com>, 
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Naushir Patuck <naush@raspberrypi.com>, Nick Hollinghurst <nick.hollinghurst@raspberrypi.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: [PATCH 1/1] media: raspberrypi: Switch to remove_new
-Message-ID: <be4j2t3vjdgstmps4i5m47rcwgc7kkbqut4gzxs5wmdvl6qxiy@zhjub5ptwqm6>
-References: <20240709163715.3bcd6ab3@canb.auug.org.au>
- <20240709161735.3724913-1-sakari.ailus@linux.intel.com>
+	s=arc-20240116; t=1720542969; c=relaxed/simple;
+	bh=k3zBwtbLJ9hY5BBMbz1smXEp4I8217xTp4I3ha5Mv5E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u97bY8tBHVt0Q0CnXnYC0nqBUm4WBxnWwWHbWU8IJACx3DEj3f7DgBI2bm0SqB78UxzNnXkayAe8sr2fGLaEdld0f5aogSbk8Gbk/UcfqFkztTfxZrkUmq6gcopnDuR8YRc5rD4JKOTemJ0dUMTxfaa/RV0hnmXi16mhBCAXxjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=FxL1ChYQ; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1720542952; x=1721147752; i=w_armin@gmx.de;
+	bh=OOKOIpWhQxnQYbfkIYw8x0Tz+jDtP8c3HvQIOJBcTwA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=FxL1ChYQoAS7YK1ssNqqG7sqbJhYZcFg10wBxJ868vKpqjeEDpcVlNze7ApL58Sv
+	 nsYcV2loDNULKuk+1HBwKMoadycdvesdF7CMxtl4+LVzBErgU44GpiX1wWlhSKBy6
+	 5x8Y7DjD55H+01v2x7yoMtSHHcFdBrznguifcwKGoK+w5xfpz8UXBSPtYXm5LLCMK
+	 ANtFMeliwd3QvzjWQlGPq8xXmO4r7QlTYQbTFHvZZKyb9BsKKmuiNB3/JbB+K01bY
+	 DZ0f64T1y/dvW10mke08ILRuNoig1C4HaeJyJIW69pYXVJhr65C1271RIN3QQAUF5
+	 UYDPhefu5Y+PxvD5bA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mk0Ne-1ryjc82qrI-00eIfK; Tue, 09
+ Jul 2024 18:35:52 +0200
+Message-ID: <7cb80962-c1c5-4971-9283-d822a054cfc3@gmx.de>
+Date: Tue, 9 Jul 2024 18:35:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="taw6qsx5tso52cco"
-Content-Disposition: inline
-In-Reply-To: <20240709161735.3724913-1-sakari.ailus@linux.intel.com>
-
-
---taw6qsx5tso52cco
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH AUTOSEL 5.4 09/11] platform/x86: lg-laptop: Change ACPI
+ device id
+To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Cc: Agathe Boutmy <agathe@boutmy.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Hans de Goede <hdegoede@redhat.com>, matan@svgalib.org,
+ platform-driver-x86@vger.kernel.org
+References: <20240709162654.33343-1-sashal@kernel.org>
+ <20240709162654.33343-9-sashal@kernel.org>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20240709162654.33343-9-sashal@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:M4snPnEylnQexQn+fCwbKkg/S1qfCsZgG9j609yUM1bNgaOTFY1
+ kDE2t55tIxwoGhIe/30cxNJ+iOZ2WHTQqnv+11NIwsFFimgLYBeCsoPUY48JHCOhCpCjSHi
+ uDBCHzHF890yWkxV8G1abt3AT7gII9OrSdZgyRr4WmLqpob8f/JjpZehMGpWjy1sd70FxF9
+ KZLNc5MCWWFzuihWHkOWg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:UzAaiWb9quM=;fvE1nYvNh5R3KL+WbRqP39HsxO5
+ 4H0UcfMs9Wv2LymgfPx00/Rx2YVIDxFK/SXWRDY7panxpFv/Q6+Cqq9T1+gAnFYuXskkBga6S
+ /HHYj0ITyM+ytrKDo0+HxHzz2f8LjcJYyiFsQJTLHz9tQL4Y1KiE2auTvmR5j9Tyyba9Ix7Bn
+ hKgvhgLMKx4D4gLrKxq0S8UarD8H7Jdt9FD43R0J1q47Q2GKcVjl4JrpeV5EuO8NNdPvObwIK
+ v5bDG4AM79EkUeHx0qvIqye4DR0Xh6swT1RQY/dPloe2/x7GXODjUnyo2V0IrBFNyyb+/LQla
+ PFeVU8HV6kbFXoJ94RxmpJhrkJ/TEoZ2Duk+ylqcZIton2xohmWDOsU8JvpxQGZO26htvGCwN
+ 45WHoLpU2BCE8+QnvD7YYCDcsqH68JhmUHGoBTvWmArG3+4zDMcQCFBCungCY2z+NyPlHeOdw
+ MCf26Az8j4MemrhjbvmOa4SOYQ1TFTSbU7o0ol3JkBWV6jnhjZURW6Psn01xopJv8KCd0GPFN
+ GztMqzE6FJ+6NhtQfYxMhsunIvnF3cmquAKQRD9oafcemVnrzi3iPSSz31+Mb0Rnr8XDsIolT
+ R7oz36UThc26f+vMaWURopBhrV0PvC+hKHT4MO0uFHYgmh2Z+n84udNRZxLWBDzVShxuxivW6
+ sGXdDrPEe0exV0evHOmAGbORPeVGRurXFTUmX4D0pZt0mp0T7Bp9Y96/M7c+nVIsp9TfXvk60
+ gV8L2V8D7gLlnzNg5dV/P4aQxQiNzsiBxSVgnUNMNGoDlIjml2Fw5KZPHkjaA4FLkgWQybrG7
+ Wv9/VUziHRdgfbY0L7veDSbmXQr/GMTbJhtQBZH18BCcI=
 
-Hello,
+Am 09.07.24 um 18:26 schrieb Sasha Levin:
 
-On Tue, Jul 09, 2024 at 07:17:35PM +0300, Sakari Ailus wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
->=20
-> The remove callback's return value is about to change from int to void,
-> this is done by commit 0edb555a65d1 ("platform: Make
-> platform_driver::remove() return void"). Prepare for merging the patch by
-> switching the PiSP driver from remove to remove_new callback.
->=20
-> Fixes: 12187bd5d4f8 ("media: raspberrypi: Add support for PiSP BE")
-> Co-developed-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Acked-by: Naushir Patuck <naush@raspberrypi.com>
-> Acked-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> From: Armin Wolf <W_Armin@gmx.de>
+>
+> [ Upstream commit 58a54f27a0dac81f7fd3514be01012635219a53c ]
+>
+> The LGEX0815 ACPI device id is used for handling hotkey events, but
+> this functionality is already handled by the wireless-hotkey driver.
+>
+> The LGEX0820 ACPI device id however is used to manage various
+> platform features using the WMAB/WMBB ACPI methods. Use this ACPI
+> device id to avoid blocking the wireless-hotkey driver from probing.
 
-Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
+Hi,
 
-Thanks and best regards
-Uwe
+this depends on other patches not in kernel 5.4, please do not use this
+patch for kernel 5.4.
 
---taw6qsx5tso52cco
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Armin Wolf
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaNZuQACgkQj4D7WH0S
-/k73dQf+L8wl6JY3B32JKuxz5QOwwZFx824XGARH0QVZLQxQl0ieVxMi4VyHz5fU
-gl8E9vbjMcm3Hc1XHMBWLbgAKfKsx8+zfO8Op85WMj+XFZKnOwqEMztf3HUPrmTG
-xKEQxO281+LYAzRok3P2YNhQAKQlzBEINfIfnQF4228xiMsrUtvSrSa91pM3Z/hc
-2sBnFUJOFxgkNUl8Cf2VNp6HqD9vbShPuhgbKFPUqbs9aUoGxKIdDxii88aG+DSY
-27z1WwCva5AOpzwgl+rSxqRI82aFe7f5uZZtZBclgeJrtXXZwqF94clg4SDnOkxO
-5/f3KbxN/FvNGPQxglDIhMTFC7K34Q==
-=KSGa
------END PGP SIGNATURE-----
-
---taw6qsx5tso52cco--
+>
+> Tested-by: Agathe Boutmy <agathe@boutmy.com>
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> Link: https://lore.kernel.org/r/20240606233540.9774-4-W_Armin@gmx.de
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>   drivers/platform/x86/lg-laptop.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/platform/x86/lg-laptop.c b/drivers/platform/x86/lg-=
+laptop.c
+> index 27c456b517850..ff7ed8882aacb 100644
+> --- a/drivers/platform/x86/lg-laptop.c
+> +++ b/drivers/platform/x86/lg-laptop.c
+> @@ -653,7 +653,7 @@ static int acpi_remove(struct acpi_device *device)
+>   }
+>
+>   static const struct acpi_device_id device_ids[] =3D {
+> -	{"LGEX0815", 0},
+> +	{"LGEX0820", 0},
+>   	{"", 0}
+>   };
+>   MODULE_DEVICE_TABLE(acpi, device_ids);
 
