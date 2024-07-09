@@ -1,153 +1,112 @@
-Return-Path: <linux-kernel+bounces-246299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 007FB92C06D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:37:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 912CD92BF8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3263B2CB3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:32:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C26161C23664
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D821B6A5F;
-	Tue,  9 Jul 2024 16:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6ED19D896;
+	Tue,  9 Jul 2024 16:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldMCLG3b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GmtYy8OS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F8E1B5818;
-	Tue,  9 Jul 2024 16:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF1FA34;
+	Tue,  9 Jul 2024 16:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720542117; cv=none; b=pinS50DEznue6h0VIi+ngi0RQ9WWQwbOyoeWvvh7JSy+/7iFhD5fTOZV2ltrlM2DcuqJbrbLI22o3LmOYdVlqbTGf/vTJEk22R5DYVQ4Nex8x47wN56DHgUXugsb1eIeu3/vIPeSZWCxNuj6B80to6Fi246G3LpnICuu4Wm55U4=
+	t=1720541979; cv=none; b=ZipbGClmb+zJHCxq9qzr5EmRCa9xoQwYA5fncmNV6AIULepnzdVi1QZrYLkzasWODKD9wwiSITUCQlxc34tCa9V8mgH33k3JaBAiTKt1kcmI5uEadhOUIOr80pSWPU5FneLmWq3pEXhCjeEO/8lJumDfH7ndpnLFoW6ot8oc2eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720542117; c=relaxed/simple;
-	bh=TrGBeVNk1Ux+gY07gT8pEvFKBb4XYgPsQ7mcBnzDkYM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PNixylnkmFjPuRUUvkyI7W7wnk1cg6tmNdmNlpx8Uc3zuiKHalnkGy6/OZNN3boRYd8aPlKcAFTlHb/gcRbzC0idrRzF7K9RaaQapoGcCFDkdbrwdf5kASjGqYUu2MrSWwQO4zw07n5LVrcBXOGVXJPijwXGrtyyTLVe/XHUk5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldMCLG3b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23C98C3277B;
-	Tue,  9 Jul 2024 16:21:56 +0000 (UTC)
+	s=arc-20240116; t=1720541979; c=relaxed/simple;
+	bh=E2gODmvDj/noFSq0Ij194HBL9MaQfm0x0CDWqpYQLc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=diW8NDylNHYCiv7Pip/oLWxVtQ0sc+Hv7uO/+BMluGZTIxBhXzmkiMciDrZ0hvERgDX/36kUWp/RedllISFwPk79op+hTPrq/p8DiyNG4QkwrU3+vsfW2Fh6qog9s9KSOK/xPJ2Aj0XDJeo+PFtl3J7v/lgXpcUDL9zn+T05Y24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GmtYy8OS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0887C3277B;
+	Tue,  9 Jul 2024 16:19:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720542117;
-	bh=TrGBeVNk1Ux+gY07gT8pEvFKBb4XYgPsQ7mcBnzDkYM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ldMCLG3bes1X5Z/8mtEBeEqkCSKvj3wTQy5x5sZdp/byCbZ5epwEIK8e89EADyOY9
-	 Mka8MHHyXrrKqED3VLmZStpmUKTmbvoQzXvhP/KOqgUTwi1iAWuI/CMfm+km/a5ZFF
-	 w3bithMNyuOplbBV7UK0PhWn/Vd+a1UtgdcvJShNTdELsozAEnXtJg2gmqA0pt+x2J
-	 70Enwpj95i4zajQs5QWAnavhenIOEmIj1rlRWv4nQrCz3OsPO1Z5h1HAG7wolMMSey
-	 a6DtHIkCYxTMTVRY8bry18/Hp4bCYPC0XjjnKpPcxZrsRPG0tKCQLFOVqLlskpnxOO
-	 SrCbbqj3OlWCA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Daniele Palmas <dnlplm@gmail.com>,
-	=?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.9 40/40] net: usb: qmi_wwan: add Telit FN912 compositions
-Date: Tue,  9 Jul 2024 12:19:20 -0400
-Message-ID: <20240709162007.30160-40-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240709162007.30160-1-sashal@kernel.org>
-References: <20240709162007.30160-1-sashal@kernel.org>
+	s=k20201202; t=1720541978;
+	bh=E2gODmvDj/noFSq0Ij194HBL9MaQfm0x0CDWqpYQLc4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=GmtYy8OS3GPfUH6SjjcYrrTd2lYraSUOEC7ox0EuX2EP4K7JwXSsxdronJnaX8Tht
+	 ugziB5fDn6HtjuY45znqV2M7Dv0eYPxpMQyZWA3+rfMirdneeXumH7Wlm4MC/S9iYL
+	 g8zbpROvK++FSib7NbhgHaiUT1e5kPdxFBoE92Vr/VN6i/HBXTacC8cI5IcxpR50gE
+	 nw31O8ilLdHwT1Oe3K+Qhp+zVTnDncjJvOtxHGwtNH4HUky/uUhwCEkcXouimwmCJ9
+	 M56Zzmt5vA+7I0oPsRbINIhAdcMsoUGX2U3FIfKp6Y7H+6e/+YqAMlVM7UJUaJjNOB
+	 nBB36TIA0qscw==
+Date: Tue, 9 Jul 2024 11:19:36 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Stewart Hildebrand <stewart.hildebrand@amd.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 4/6] x86: PCI: preserve IORESOURCE_STARTALIGN
+ alignment
+Message-ID: <20240709161936.GA175713@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.9.8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709133610.1089420-5-stewart.hildebrand@amd.com>
 
-From: Daniele Palmas <dnlplm@gmail.com>
+On Tue, Jul 09, 2024 at 09:36:01AM -0400, Stewart Hildebrand wrote:
+> Currently, it's not possible to use the IORESOURCE_STARTALIGN flag on
+> x86 due to the alignment being overwritten in
+> pcibios_allocate_dev_resources(). Make one small change in arch/x86 to
+> make it work on x86.
 
-[ Upstream commit 77453e2b015b5ced5b3f45364dd5a72dfc3bdecb ]
+Is this a regression?  I didn't look up when IORESOURCE_STARTALIGN was
+added, but likely it was for some situation on x86, so presumably it
+worked at one time.  If something broke it in the meantime, it would
+be nice to identify the commit that broke it.
 
-Add the following Telit FN912 compositions:
+Nit: follow the subject line conventions for this and the other
+patches.  Learn them with "git log --oneline".  For this patch,
+"x86/PCI: <Capitalized text>" is appropriate.
 
-0x3000: rmnet + tty (AT/NMEA) + tty (AT) + tty (diag)
-T:  Bus=03 Lev=01 Prnt=03 Port=07 Cnt=01 Dev#=  8 Spd=480  MxCh= 0
-D:  Ver= 2.01 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1bc7 ProdID=3000 Rev=05.15
-S:  Manufacturer=Telit Cinterion
-S:  Product=FN912
-S:  SerialNumber=92c4c4d8
-C:  #Ifs= 4 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=50 Driver=qmi_wwan
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=82(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=60 Driver=option
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-I:  If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-
-0x3001: rmnet + tty (AT) + tty (diag) + DPL (data packet logging) + adb
-T:  Bus=03 Lev=01 Prnt=03 Port=07 Cnt=01 Dev#=  7 Spd=480  MxCh= 0
-D:  Ver= 2.01 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1bc7 ProdID=3001 Rev=05.15
-S:  Manufacturer=Telit Cinterion
-S:  Product=FN912
-S:  SerialNumber=92c4c4d8
-C:  #Ifs= 5 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=50 Driver=qmi_wwan
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=82(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-I:  If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:  If#= 3 Alt= 0 #EPs= 1 Cls=ff(vend.) Sub=ff Prot=80 Driver=(none)
-E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:  If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=usbfs
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-
-Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
-Acked-by: Bjørn Mork <bjorn@mork.no>
-Link: https://patch.msgid.link/20240625102236.69539-1-dnlplm@gmail.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/usb/qmi_wwan.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-index a5469cf5cf670..befbca01bfe37 100644
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -1380,6 +1380,8 @@ static const struct usb_device_id products[] = {
- 	{QMI_QUIRK_SET_DTR(0x1bc7, 0x1260, 2)},	/* Telit LE910Cx */
- 	{QMI_QUIRK_SET_DTR(0x1bc7, 0x1261, 2)},	/* Telit LE910Cx */
- 	{QMI_QUIRK_SET_DTR(0x1bc7, 0x1900, 1)},	/* Telit LN940 series */
-+	{QMI_QUIRK_SET_DTR(0x1bc7, 0x3000, 0)},	/* Telit FN912 series */
-+	{QMI_QUIRK_SET_DTR(0x1bc7, 0x3001, 0)},	/* Telit FN912 series */
- 	{QMI_FIXED_INTF(0x1c9e, 0x9801, 3)},	/* Telewell TW-3G HSPA+ */
- 	{QMI_FIXED_INTF(0x1c9e, 0x9803, 4)},	/* Telewell TW-3G HSPA+ */
- 	{QMI_FIXED_INTF(0x1c9e, 0x9b01, 3)},	/* XS Stick W100-2 from 4G Systems */
--- 
-2.43.0
-
+> Signed-off-by: Stewart Hildebrand <stewart.hildebrand@amd.com>
+> ---
+> RFC: We don't have enough info in this function to re-calculate the
+>      alignment value in case of IORESOURCE_STARTALIGN. Luckily our
+>      alignment value seems to be intact, so just don't touch it...
+>      Alternatively, we could call pci_reassigndev_resource_alignment()
+>      after the loop. Would that be preferable?
+> ---
+>  arch/x86/pci/i386.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/pci/i386.c b/arch/x86/pci/i386.c
+> index f2f4a5d50b27..ff6e61389ec7 100644
+> --- a/arch/x86/pci/i386.c
+> +++ b/arch/x86/pci/i386.c
+> @@ -283,8 +283,11 @@ static void pcibios_allocate_dev_resources(struct pci_dev *dev, int pass)
+>  						/* We'll assign a new address later */
+>  						pcibios_save_fw_addr(dev,
+>  								idx, r->start);
+> -						r->end -= r->start;
+> -						r->start = 0;
+> +						if (!(r->flags &
+> +						      IORESOURCE_STARTALIGN)) {
+> +							r->end -= r->start;
+> +							r->start = 0;
+> +						}
+>  					}
+>  				}
+>  			}
+> -- 
+> 2.45.2
+> 
 
