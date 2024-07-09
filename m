@@ -1,115 +1,131 @@
-Return-Path: <linux-kernel+bounces-245333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A0692B164
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:42:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F47392B169
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC6221F23B0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:42:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3486D1F229E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC750144D00;
-	Tue,  9 Jul 2024 07:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D5E14534C;
+	Tue,  9 Jul 2024 07:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Ydv5RTag"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lBZ5A5ed"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E3813211E
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 07:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C392527713
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 07:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720510926; cv=none; b=RqMyzM5mIEcidew/o4V+/NEd9bpwDdnp2Ia9tjcfpDAP9NN61rCbpBskvxK60pVcaFwvwbKZEtXyXs0Wy6QzErx0dtIirC0MsHSt749gw2ry8HybLC0E5Sccn36OEAh68iTBpUb/8AHNymjNFULUBVBIBcttsDRklmIicOBXd2U=
+	t=1720510996; cv=none; b=dOh/aLS3DgSQbTiJ2t99g5JA+vdmvC82xgeUv3lJradhaiAJnwF051evDzQ7NqPju0yp3Md4hC1fm16XX6kUtn6YaOeFX0EuUfi4InLan2YK/ZFcN/YlvBOmuEGWlWBhoGCqCOTSNzBVL9x++eHlPSd0SSYffaFEgU0onA3T068=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720510926; c=relaxed/simple;
-	bh=xJRLCzKoNDhkeYwYcPWKixASKx8FB9va7pEq5MrqI0U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tBcSXzTLQd+1agY7lSkEMeU5oZ4IZHInrkmA5woFYWiX3cR764r3nwSY6yLm04Gplq2JLxuSaZzJqzP+2giVXJsFuhhP+Xyd7dHLskXnSiqlyHjgOuVZJ5gfkwA6l63BT+ZPMBwRXkDasmT9XoP7ZYb5rDVUUMKIjdcji0BFID4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Ydv5RTag; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52eafec1e84so1687556e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 00:42:02 -0700 (PDT)
+	s=arc-20240116; t=1720510996; c=relaxed/simple;
+	bh=jAG3/aKaD/kqbIcJypKqQbgWvBndMAYJGXwk/ugv40Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=siEzsT6Vb9vsTHp2Bc8DijuYfr4wLVa+5RIT3Ks2LP4FJvEdA+x040YX+bxrx61sj70oGBHELz5ka8vXlVkW8RS2XwkuAJbItc2X/I7Ti+uVzr9odY/aReramcyXNEPI0v081t6Ndt0r4aOSWL3p25SXQc5V267mPfoZNxDpPa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lBZ5A5ed; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-36796d2e5a9so3262061f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 00:43:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720510921; x=1721115721; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JalcFjrpq0ahXu3HtCTQVi+o1I/12oWKnc8ukzoGtKY=;
-        b=Ydv5RTagbNhpnQsERG8J8pZnx9ZuFH5wXQHhmS0PpacOhVMFQmhuFx8emRIc8oQWNE
-         JkZ0Crwv0hJSFH2Fn2AgDb63jIOyESOD/p293DOWXZSOpOQmy4JWSuGcGMvMsRIL6k4p
-         XU1S28cUOiSuorKhkRiVqOga+8uPaTlFg4n1jlBOln3sYzcLELVJhGLV2zxGR7wTdmLB
-         pMAKPdvHOLpM2ozdA+xKkhS2LskIDTG0yNqvxxtygPyE3dk/Df9mSGuFpeO2XUDM42t9
-         6A6BOmLmKNiZ6+l8TazCWtOFNbKgfUDHllEVq3VXsEc69pM1fHjqD0KLIhMKWiuKlHpS
-         QrNA==
+        d=linaro.org; s=google; t=1720510993; x=1721115793; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h1CLW71m5KlFIfS4WtV1HBML6Ik9miyTvvoVtrTfgdI=;
+        b=lBZ5A5ed3jLJAWQDSBmi68plpWpHA+F4E8qQYgOtu46nHdf5NTFGetJK8IfEdMijzJ
+         Iu5o227LaIzKXnLgFFLA/67Psjwt8XdbAKrFlq53I29f/mgUsWPtKvfIuaXhLTTdwQWB
+         IobTTLpchBtFcQLB2uismdWU0vC4FrGdjnqhjaRap1unKlz2LoR/3VA47acWSEl5cSZq
+         PPUIPPmrOTemFKrwcjF8XMcccyzEj3TzBXKD+XeTBsgthA8KRlE8a1sZDI5rbrwXSDgz
+         CqO/kHqvOvynfJvpJD5QzEpvinpgCndptbxaPIvZVwEmNyg5R67oeb3LPIH8dJNq/zov
+         phDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720510921; x=1721115721;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JalcFjrpq0ahXu3HtCTQVi+o1I/12oWKnc8ukzoGtKY=;
-        b=aa2kNcU1OM86hMNdtNpzSzDu1JcunMYOR715XRfRjbD6y5rAbYRJlM0THcpta5fod1
-         G3nbJY/rWkZQSiwZn8Q9s9GdEeN+CS9yDiFiEDkduxkIM/esqEqQ0nZXWNlZ2Ef1mAEv
-         5RmeICHUuoUu05r4Y6mf9CiztyL/I1vdApAeghv2bHZPf8qWjFcH9iThK/+4X9JPv3Ak
-         FEgUT4ZNF/rr+PSbDRByjP7xFIV9sfZ57AQHQ67TRN/irBMTq9Y98vZA3FpBevL/Vper
-         vAcsFHGRf80U1LZdvImrfFcWGrGzQnI8YoQY08etKQaMnWbuhUxJm4UHIP8CUIwxOAwL
-         5wrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcya9R4+6NBaaPEM6n9KyqJN/FaVeyYEkqch7lEJdljeArUNc19SV7e91pEhpuBpsu5g1YTVucjS441i52yW5lacdp06SnnloSRfhr
-X-Gm-Message-State: AOJu0YwFBRLVhCZaCYW6RPYCVl34lgxl5fVw8mzmFLHMLt7WaVL03rpM
-	UVyincedD94Hd2Q8jEfNm3g/H0CvPnEYVcQlzfhHH4xuodlb9u5tWGAL8oE9yZxFpCIpHGghClr
-	9
-X-Google-Smtp-Source: AGHT+IFzgDVpkTFnErT06UxOVfkF7s4Xx81NBC6zg9ksoy0SIYXBWXCUEC3KtDW6Olt3ymjJu1TieA==
-X-Received: by 2002:a05:6512:3d01:b0:52b:88c3:b2bc with SMTP id 2adb3069b0e04-52eb99d151bmr1214588e87.48.1720510921137;
-        Tue, 09 Jul 2024 00:42:01 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:c270:70c:8581:7be])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42667720667sm83291675e9.33.2024.07.09.00.42.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 00:42:00 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Kent Gibson <warthog618@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10] gpio: virtuser: new virtual testing driver for the GPIO API
-Date: Tue,  9 Jul 2024 09:41:59 +0200
-Message-ID: <172051091644.6169.4337890998290511696.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240708142912.120570-1-brgl@bgdev.pl>
-References: <20240708142912.120570-1-brgl@bgdev.pl>
+        d=1e100.net; s=20230601; t=1720510993; x=1721115793;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h1CLW71m5KlFIfS4WtV1HBML6Ik9miyTvvoVtrTfgdI=;
+        b=h58oUJJG5Caigh+NQu1UauEFc2XAQCGxo0ePt4GigJFAylMxJvFvX+oFNWwxwGHgtz
+         KOWX+QrSamICjLvjk4d0JF4B3vhwVH+TJ0TLatCza8kLILorMzR3+929SY3OOjbsZ4nR
+         CXFn9V21cYN0NRIoP6Cz9WuU7WZvQVkf7+uVUUWCdHNwCLRSbBF/Sg4lGYEf5RNdGlAt
+         2LgKVmt0rSWMGmCRy3HDpR3GOxfZp5Y0OC5TaEJmt8Xh/aR7Lnu3UJ71dkRHdfmc6QIr
+         E7cnF3zKubVYVeLThJdVQ4zZxJ5HoyF4Hu2pM2xbWs5TwS8OzSVU8b242+OGwXK8YOgy
+         15Gg==
+X-Forwarded-Encrypted: i=1; AJvYcCVvcJG8yhpkRv0cWbhOnsiezJQm3MAJU/a/z9cYNJmb5XlEGGDNcU4TTb4Lcg5bGuItKNRNe/SAhbsoYq4eXr+YWWk2dMpf+iwHx/7d
+X-Gm-Message-State: AOJu0YyM3mFaYItIcsqaKfja5dbIJm/hmXsMtgEKp0fWjAH365R7RE19
+	jlZTVEgGwjaEGxe1QqizxZDN1XBiTz+reCdLYBRZRu9YuKD6HvfyoNqzosXt4jk=
+X-Google-Smtp-Source: AGHT+IFW+YP/WjH3mfocei0KWEyOnvOvhNRqjin5G0HJ1iruDzyBQrHEp0XoWZjyCQ5cCU6oLsl5Mw==
+X-Received: by 2002:a05:6000:18aa:b0:367:9073:3491 with SMTP id ffacd0b85a97d-367cea46301mr1400995f8f.5.1720510993204;
+        Tue, 09 Jul 2024 00:43:13 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:cf24:cce:17df:12ab? ([2a05:6e02:1041:c10:cf24:cce:17df:12ab])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-367cde7df48sm1746617f8f.1.2024.07.09.00.43.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 00:43:12 -0700 (PDT)
+Message-ID: <0fdbddfb-f25b-4d39-a80c-770fb8ed40f4@linaro.org>
+Date: Tue, 9 Jul 2024 09:43:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] dt-bindings: timer: renesas,tmu: Add more SoC
+ families
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+References: <cover.1716985096.git.geert+renesas@glider.be>
+ <CAMuHMdWP7y=8rA5jszCbzh_RnXnv4tFUpHv0qtbucHEYRFE9qw@mail.gmail.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <CAMuHMdWP7y=8rA5jszCbzh_RnXnv4tFUpHv0qtbucHEYRFE9qw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Mon, 08 Jul 2024 16:29:12 +0200, Bartosz Golaszewski wrote:
-> The GPIO subsystem used to have a serious problem with undefined behavior
-> and use-after-free bugs on hot-unplug of GPIO chips. This can be
-> considered a corner-case by some as most GPIO controllers are enabled
-> early in the boot process and live until the system goes down but most
-> GPIO drivers do allow unbind over sysfs, many are loadable modules that
-> can be (force) unloaded and there are also GPIO devices that can be
-> dynamically detached, for instance CP2112 which is a USB GPIO expender.
+On 09/07/2024 09:39, Geert Uytterhoeven wrote:
+> On Wed, May 29, 2024 at 2:22 PM Geert Uytterhoeven
+> <geert+renesas@glider.be> wrote:
+>> This patch series documents support for the Timer Unit (TMU) on the
+>> R-Mobile APE6 SoC, and on various SoCs from the RZ/G1 and R-Car Gen2
+>> families.
+>>
+>> Changes compared to v1:
+>>    - Add Acked-by, Reviewed-by.
+>>
+>> Thanks for your comments!
+>>
+>> Geert Uytterhoeven (3):
+>>    dt-bindings: timer: renesas,tmu: Add R-Mobile APE6 support
+>>    dt-bindings: timer: renesas,tmu: Add RZ/G1 support
+>>    dt-bindings: timer: renesas,tmu: Add R-Car Gen2 support
+>>
+>>   .../devicetree/bindings/timer/renesas,tmu.yaml       | 12 ++++++++++++
+>>   1 file changed, 12 insertions(+)
 > 
-> [...]
+> Gentle ping, as these are already in use in DTS since v6.10-rc1.
+> Thanks!
+> 
+> Gr{oetje,eeting}s,
+> 
+>                          Geert
 
-Applied, thanks!
+Applied, thanks
 
-[1/1] gpio: virtuser: new virtual testing driver for the GPIO API
-      commit: 91581c4b3f29e2e22aeb1a62e842d529ca638b2d
-
-Best regards,
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
 
