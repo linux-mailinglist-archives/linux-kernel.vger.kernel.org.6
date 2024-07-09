@@ -1,116 +1,149 @@
-Return-Path: <linux-kernel+bounces-245443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D9292B28E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:48:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7AD692B290
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD77C2822C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:48:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D7EB1F22CD5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3261153BC1;
-	Tue,  9 Jul 2024 08:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF594153585;
+	Tue,  9 Jul 2024 08:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ftdi3ct6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pyxsdBDn"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBC114A4E2;
-	Tue,  9 Jul 2024 08:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7BD6138;
+	Tue,  9 Jul 2024 08:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720514909; cv=none; b=edAHVV002yhMDVt6Gc5buv027jSYf+iOQC4eL3u7wPkngE0AgQ+PHCiuPsS/HT3jJE8QJy9WYvh+7CzwmLwx/rCHAtIKTuu93OwuQLYQRj/UL2XHDGWRsJG7mwQiR6pJme9dZACs8dPSVZ6z9LS9bOC+gZIVlrHKhh8vM06W8as=
+	t=1720514956; cv=none; b=tI02aDV01RTuUnUvApCwYpnGVDHLnUd9h8tTKDGm699HqpRr/gauTRxnD2Nu6DpWNXRD6+ytawlv0sxyYN7GZRk7Z1iAoKc4PhmGOCn2qrLntcCLQz/fXgaVcxYLxtDy5GH8yRxTxK1FFx0aA0DNvZCHwdiugNiK3OFP1SyXIQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720514909; c=relaxed/simple;
-	bh=ypxnfVb7P7V/FsyomfgbJUvYWlUFeNq86VhHvHpwm+g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=W9DwTiQjjtPDq/FtDeso6GdDKoJepC5yQXguPbwOR4vXXBMGZkh4WuLiB9WKzmKUbt+x1lef4p8XN4/tyswzJCrmqOaUVo5ItHmus6TFHxlbQth3ig5okJcqQXKTBBehujX0ZgDT7e8keRXxIDo8iVx6XwClxJg8fc1MxzmFH+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ftdi3ct6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 81CEEC4AF0B;
-	Tue,  9 Jul 2024 08:48:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720514908;
-	bh=ypxnfVb7P7V/FsyomfgbJUvYWlUFeNq86VhHvHpwm+g=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Ftdi3ct60Z2E00+8/BRUNyMKO/RV4dg4euUqGXrRzXuZU0i04NX3O7D5YotxotHeM
-	 jn2y/ToFNIwUHxz0t8M5IbzMWuzh85bu9kRig4+CxMWT7lE3JLVzSax6zEStjbP2+t
-	 w8pjux9TBOLhpfELuU+etls3RHzr+iPKiu3RNpJsWBxXkjYfhNil/yUPFt0XVTGo5O
-	 JOmE1kE3nKSbGMkk/Go8LK+IeBLXek8t8FfL0AG4yrXEOdrC5MLgmTpD9fDHPJsW67
-	 rbQHmJyfNeXzlvISrIDcb6dWbS/PCzUi7W4b8wu8LhD5SpP97us3EZcSbQhNbQvKZ9
-	 x0Po254Ztf5oA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FEEAC3DA49;
-	Tue,  9 Jul 2024 08:48:28 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Tue, 09 Jul 2024 16:48:26 +0800
-Subject: [PATCH 2/2] arm64: dts: amlogic: add watchdog node for A4 SoCs
+	s=arc-20240116; t=1720514956; c=relaxed/simple;
+	bh=cP47i/7cJ4lkFges4Nl7itt3YRqAnpRsXN1/clKfjGY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J2CF0bBL1f3Vs5auA07+iwhqj/xlmNcOSbH/gyi39zXXTlOyH1EPhJWXS3FcHXL53X9Zw8ojWf1QdZvIEhlWl+oYZwndo6SJohW5ChyeYfHl0CWdZIBnRGR7gOTA5Jt2TIKSf60MJuMHJ2XQtvjY49YmmnyU2P9XftyD+yrVdJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=pyxsdBDn; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4698mwu3070460;
+	Tue, 9 Jul 2024 03:48:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1720514938;
+	bh=5WZkfsvmLamemn97uUc60YsRqdAwy+JB+ny9+g16q3I=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=pyxsdBDn1uvDNX9Z5rxqHK4FNIggT2azEx6j3TeV77Gdrsuv4jzOytz5vL8aRaVDR
+	 u0Gw47zSO7/SleQwSJLWgzC3pcKLHBCTu6dLMhiTwDAlYfCiF0ZLT0SGg/beJf1CsF
+	 DjvH86un1lsJTkBdbd/WAH+VDb/7T/xrXA5SVU+A=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4698mwts024085
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 9 Jul 2024 03:48:58 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 9
+ Jul 2024 03:48:58 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 9 Jul 2024 03:48:58 -0500
+Received: from localhost (uda0497581.dhcp.ti.com [10.24.68.185])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4698mvpw110540;
+	Tue, 9 Jul 2024 03:48:58 -0500
+Date: Tue, 9 Jul 2024 14:18:57 +0530
+From: Manorit Chawdhry <m-chawdhry@ti.com>
+To: Vignesh Raghavendra <vigneshr@ti.com>
+CC: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Neha Malcom
+ Francis <n-francis@ti.com>,
+        Aniket Limaye <a-limaye@ti.com>, Udit Kumar
+	<u-kumar1@ti.com>,
+        Beleswar Padhi <b-padhi@ti.com>
+Subject: Re: [PATCH v2 1/5] arm64: dts: ti: k3-j721s2*: Add bootph-*
+ properties
+Message-ID: <20240709084857.nf7c57mi6miajeau@uda0497581>
+References: <20240705-b4-upstream-bootph-all-v2-0-9007681ed7d8@ti.com>
+ <20240705-b4-upstream-bootph-all-v2-1-9007681ed7d8@ti.com>
+ <da36d283-73f0-4110-a9fa-3964eae19689@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240709-a4-a5_watchdog-v1-2-2ae852e05ec2@amlogic.com>
-References: <20240709-a4-a5_watchdog-v1-0-2ae852e05ec2@amlogic.com>
-In-Reply-To: <20240709-a4-a5_watchdog-v1-0-2ae852e05ec2@amlogic.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Xianwei Zhao <xianwei.zhao@amlogic.com>, 
- Huqiang Qin <huqiang.qin@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720514906; l=898;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=nyw71UzO4OzW4LTj0eCc11shu2eqR6ZaJjbu/OQDEDw=;
- b=aWsB85jIFB9Rl+qfZ2QeulNuT3GyzoAIAwWkmfKJSU6pREfcaqDIpxneE0SWsaIe5hqCLoI4c
- ghCrFuV6L19D3mI+ykUXubGTygUq6G/+UPj0x0Knm417uxSwB/7xUJx
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <da36d283-73f0-4110-a9fa-3964eae19689@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Huqiang Qin <huqiang.qin@amlogic.com>
+Hi Vignesh,
 
-Add watchdog device.
+On 13:02-20240709, Vignesh Raghavendra wrote:
+> 
+> 
+> On 05/07/24 11:56, Manorit Chawdhry wrote:
+> > diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi
+> > index 8feb42c89e47..497e0dfa8011 100644
+> > --- a/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi
+> > +++ b/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi
+> > @@ -17,20 +17,24 @@ sms: system-controller@44083000 {
+> >  
+> >  		reg-names = "debug_messages";
+> >  		reg = <0x00 0x44083000 0x00 0x1000>;
+> > +		bootph-all;
+> 
+> Since [0] in U-Boot, bootph-* is automatically propagated to supernodes.
+> Please fix throughout the series
 
-Signed-off-by: Huqiang Qin <huqiang.qin@amlogic.com>
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+In v1, Aniket posted a review comment and that corresponded to all the
+devices hence added that [0]. As you mentioned offline, this node might
+be getting called in U-boot proper prior to re-location and somehow the
+property is not getting passed on at that stage. Might need some furthur
+debugging as to why it's failing. Will see what can be done about it.
+Thanks.
 
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi
-index b6106ad4a072..496c3a2bcf25 100644
---- a/arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi
-@@ -52,6 +52,12 @@ apb: bus@fe000000 {
- 			#size-cells = <2>;
- 			ranges = <0x0 0x0 0x0 0xfe000000 0x0 0x480000>;
- 
-+			watchdog@2100 {
-+				compatible = "amlogic,a4-wdt", "amlogic,t7-wdt";
-+				reg = <0x0 0x2100 0x0 0x10>;
-+				clocks = <&xtal>;
-+			};
-+
- 			uart_b: serial@7a000 {
- 				compatible = "amlogic,a4-uart",
- 					     "amlogic,meson-s4-uart";
+[0]: https://lore.kernel.org/all/3e478ecc-33b8-4aa6-b984-67877864e900@ti.com/
 
--- 
-2.37.1
+Regards,
+Manorit
 
-
+> 
+> >  
+> >  		k3_pds: power-controller {
+> >  			compatible = "ti,sci-pm-domain";
+> >  			#power-domain-cells = <2>;
+> > +			bootph-all;
+> >  		};
+> >  
+> >  		k3_clks: clock-controller {
+> >  			compatible = "ti,k2g-sci-clk";
+> >  			#clock-cells = <2>;
+> > +			bootph-all;
+> >  		};
+> >  
+> >  		k3_reset: reset-controller {
+> >  			compatible = "ti,sci-reset";
+> >  			#reset-cells = <2>;
+> > +			bootph-all;
+> >  		};
+> >  	};
+> 
+> 
+> [0]
+> 
+> -- 
+> Regards
+> Vignesh
 
