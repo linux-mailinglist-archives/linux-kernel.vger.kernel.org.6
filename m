@@ -1,87 +1,77 @@
-Return-Path: <linux-kernel+bounces-245148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7F7092AEFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:15:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A79292AEF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F27AB217E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:15:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C25571F224AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A157412C80F;
-	Tue,  9 Jul 2024 04:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363F25FB8A;
+	Tue,  9 Jul 2024 04:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Mzzeyy8a"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2052.outbound.protection.outlook.com [40.107.237.52])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="YaEyeLka"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2069.outbound.protection.outlook.com [40.107.117.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9CE620;
-	Tue,  9 Jul 2024 04:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D112BD05
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 04:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.69
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720498525; cv=fail; b=Y703WoVEGtzTBpZN8as+JLsEQ7RNi5GvSYfdR0O5YBOONEuG0mxsQwkOHg2pciM8BYyHll/VdjhU/WY+eNGTZTar9mVhYWqa+Xmc/Wh1Rzyd8oExgS5JlKEKVcziw1jmcUOhGu9GZMh6nQk1Xowm5i9eNJxkJsmzAvyh7Fch8NY=
+	t=1720498265; cv=fail; b=eWzqbvws8jlAW1zlIRdUPdPerIFdalkoIiupF+gbX2SvbOn3SKsjZCrPPLnCuPlR4pSnS9MLbX1viPTLB4Bho54Oc9HQyVAO3XswzGSplV0IjOO3vqqPqvpQTZa6ebQjpZBwLM9KU0r2UxgiEihAva99gTakK7HnL6ue/euph4U=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720498525; c=relaxed/simple;
-	bh=da3TXmrF2wT07A2m4rgRSH2vX2XMWuK8IbiA9iijIgs=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 Content-Type:MIME-Version; b=shSlBzMiVqdOy9ZRremHweawG+0caKFqYykeBKAqySM6Y0vIm1xydT/q27FkHBqGwx1nH8tNGa0cWUPjnrebhTawH4c33Xmqrtkjmqelc/lZCPmsWlUVAxyMoP+z4FU5XCLLFYLMiol5bNEq87n/ZgnHZR/DY3mJMeP8heYB+To=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Mzzeyy8a; arc=fail smtp.client-ip=40.107.237.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1720498265; c=relaxed/simple;
+	bh=SoIh3yoDnbcanEPfBGmH9f504x211vNkLxUnLhvsPYs=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=AlU71EjBCRURXZ8IDf8jOrR7vtH5mryD6ZZoAmEMfepGV3XjS7HThX3WVxPIYXM3zd+HcrJTFlO3KV/YOVFLVvUheJcV3brCMc8Anc/IIb5Yd1bxz+3lOYlM1DkWEdnl1rFP/1uonLi5Bdh4nA9UVizRUrqXvX5tjzETALQDELA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=YaEyeLka; arc=fail smtp.client-ip=40.107.117.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WI74JGf1uSwO1QGu+PAY+CRUy6LMQnAVi342cHknl67Zz2r6XJYFbPTg8YZbo9ZvBZ6l0Iz0aeKWjik8Rf/uzLmIdgBbsRicOGJycVqYdH3zjjlfYd0FtsVfD/1lyGYDsgeB4kSkxqSqaGiWzmhOp34H6GlHpk9pp6+T3Ie3CHSbC1GD6zF2W1KDtSSpVsQLn7f4jjwX5gNltMZS21NGi2Gnsb/3yGVgZspdBH2MjiYzyqmWAfvPVJvytgpePoI9JPFiZK05Iyzh+UuCYVjM66bia9nlSfO3h672vkcpBUE23w+01n91eyKRpZ+vYZFkJKYzPUPpyk85+jv5X2cTyw==
+ b=djLXL416JMi+dSwgB8gOyacLm3dB6UfNGAAN7ih9Mipi/RV16plw9a/URM8VvAEcV43BGEf6v9lZZO2HqLInDORugPpUMQ+LNUn1tG/aZ61VVaBS6xNcS4dE41rh2nhIDO0BbrehbPIebI324d8baNdjYxl7khSGbMXuZ8ZnFGrcaESxY+5sgJ16Ly4o4CwlRnqvjP6qA6x2o00oimbMnwQL3MxHB0jsMIzSx8S2ul4WYypDeqDkF1XQ37PfzVQh6G9VYyrcrxw5CP3yiLBDxXCVdAVefENdTIQ32uXDDWHDCriClLensU/JHWX0zFMO7JrFMtujMt8LcJ9S7aYAlA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EJpQ32FMFpHGLNZs2+50f1LMgw7Iy4rRhOXMk7E95dw=;
- b=b/4ClP6tnCGMh3nWhhoxB+ojWyfzLb+4FHgToEsBUluwLUuK5bN2saidqtj0xldVZUsWw85oTLEhqFaHEZaDy7RXG4i7J/rZjo7y3m/KDi8jGmk/MOp6L12pxjdQMeJvvwiJsuJhoOl76CGgRkWkg2J2vu+srfahHF971LC7tKOyA3fObHrQjXmD1PcELc3yjiAUv5mCbIhETr9Oe6yqxcCpAypp251DWFHRZPsE8wYkTlNlDaPI0kJMBBUb6At0QTxwxXwVUeQ3pFqW7nqr0q2ticL6BiiMdi+LTUPoXNhXc15St4hJ8140uMhhdocTp+NJFSISObADc8Pnoo6qCg==
+ bh=bSE+Z7snhemgJUCez7bCHzdJpkIGTdU+MGuPUJHhqqU=;
+ b=XnGh9a3tQnMGCcuYGHS/4RQCV4+rcq02En0xxBkbpSHdPb0QYY+11HtF87jlhukJXA7hEUR5czXiQyC/dwchtQ8+X8nU8iPv97TJdPIu4R6Rt5yFg/F+cbKEi428DY1EGUZ36FlvsegNT1XBMVHYEXBxCpj6E0oWdolQxICVeoTKX1VY4EuMfYlIVfgDCM5I4UpAxOlpjf3gjkOzihilDe4/yDZyJynx0wALYFCDa4NOe/967JS4ZmSI9iNdMJORalAwK85Fx/ass6IWrs26FUAj40LSdEHaEm3a3q5zaZKeYYilo72PURXYVF1uFCzaU7HBOtjsifD8nBtwVShnqA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EJpQ32FMFpHGLNZs2+50f1LMgw7Iy4rRhOXMk7E95dw=;
- b=Mzzeyy8a3R9tfvAmseeqSZAGMMGSUkPEDrOCk4apbks7Wig8ewBbg47O5rUoW3bgetawEsZRg1l6ViAE9FxE1vd+khMAW6WifxcY23hphZv+KOHOItspaL2wyFU8n/WLVYt09+s8ahIvAYHTAKr9YC4lgD5CAF9ACuhfJ7Dfy5ILv5bd1Hu6+OAtXEOgvtnpdVr9XgNrGl5gfKiZnJQGmHZOuHvx+srd4Cju7F9I+cY/Yds6iweAqgJcE7gFz9Ad57TF2oKfg9hegIZBx22ujuTL+i+2sQKsaPavBOcnLFyi2bz4fCw7zPfCpokJ0Ezs1Sl7dOLYgREyMn/pWkBtCA==
+ bh=bSE+Z7snhemgJUCez7bCHzdJpkIGTdU+MGuPUJHhqqU=;
+ b=YaEyeLka3wVKOJyqBFPbtOz03Og1D9gkw0huqMwsPkq+JksML/zApuJ/iAxBGuU7rSMwnWEq24wOBFvYMd1Xk/9GvvxFUQT/rGS3O6XFdNzy9ZX+BBtsoPgtwEyUGPukYOpJEdUxFk8mAhQDbIsq7lHzK0MWAlRX0+tBwX7t1RTNxSNL1IQb0RY10ACYZ+KJstIx8dSHOilTAc6uac0FxVx+7oM/9Xqs/fMQl0ldWktQ1DUzPLjc5hJOd3t7MKQdwFnADmbchyspIKL8a4ZRpv8nvHvPIG1taWo9OQhZbyNFbSkvlf4NzxVfxwxpdkWLDS0E9jYvsFrxmF7Kj3+T7g==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- CH2PR12MB4199.namprd12.prod.outlook.com (2603:10b6:610:a7::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7741.35; Tue, 9 Jul 2024 04:15:19 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%2]) with mapi id 15.20.7741.033; Tue, 9 Jul 2024
- 04:15:18 +0000
-References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
- <400a4584f6f628998a7093aee49d9f86c592754b.1719386613.git-series.apopple@nvidia.com>
- <ZogCDpfSyCcjVXWH@x1n>
-User-agent: mu4e 1.10.8; emacs 29.1
-From: Alistair Popple <apopple@nvidia.com>
-To: Peter Xu <peterx@redhat.com>
-Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
- dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
- jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com, will@kernel.org,
- mpe@ellerman.id.au, npiggin@gmail.com, dave.hansen@linux.intel.com,
- ira.weiny@intel.com, willy@infradead.org, djwong@kernel.org,
- tytso@mit.edu, linmiaohe@huawei.com, david@redhat.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
- jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com, Alex Williamson
- <alex.williamson@redhat.com>
-Subject: Re: [PATCH 11/13] huge_memory: Remove dead vmf_insert_pXd code
-Date: Tue, 09 Jul 2024 14:07:31 +1000
-In-reply-to: <ZogCDpfSyCcjVXWH@x1n>
-Message-ID: <87zfqrw69i.fsf@nvdebian.thelocal>
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from JH0PR06MB6849.apcprd06.prod.outlook.com (2603:1096:990:47::12)
+ by KL1PR06MB6942.apcprd06.prod.outlook.com (2603:1096:820:129::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Tue, 9 Jul
+ 2024 04:10:59 +0000
+Received: from JH0PR06MB6849.apcprd06.prod.outlook.com
+ ([fe80::ed24:a6cd:d489:c5ed]) by JH0PR06MB6849.apcprd06.prod.outlook.com
+ ([fe80::ed24:a6cd:d489:c5ed%3]) with mapi id 15.20.7741.033; Tue, 9 Jul 2024
+ 04:10:59 +0000
+From: Zhiguo Jiang <justinjiang@vivo.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Barry Song <baohua@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>
+Cc: opensource.kernel@vivo.com,
+	Zhiguo Jiang <justinjiang@vivo.com>
+Subject: [PATCH v6] mm: shrink skip folio mapped by an exiting process
+Date: Tue,  9 Jul 2024 12:10:50 +0800
+Message-ID: <20240709041050.619-1-justinjiang@vivo.com>
+X-Mailer: git-send-email 2.41.0.windows.3
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SY5P282CA0089.AUSP282.PROD.OUTLOOK.COM
- (2603:10c6:10:201::19) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+X-ClientProxiedBy: SI2PR02CA0026.apcprd02.prod.outlook.com
+ (2603:1096:4:195::19) To JH0PR06MB6849.apcprd06.prod.outlook.com
+ (2603:1096:990:47::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,128 +79,278 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|CH2PR12MB4199:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66c06f32-d845-4b64-e016-08dc9fcdbe14
+X-MS-TrafficTypeDiagnostic: JH0PR06MB6849:EE_|KL1PR06MB6942:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7d119cf9-33cc-4d7e-d249-08dc9fcd2356
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|1800799024|52116014|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/KqtXncNXswKq8dz6tZVC8OIZJdSdJNugY7sdJfgwAhPRNQihtqM6fx/7X2W?=
- =?us-ascii?Q?f2vneJSLYAZE4goVe2Wls9eNYrU/S9YpnZaSliMC6DgjzyTOBH7tK/CMXpXB?=
- =?us-ascii?Q?WnvCXPaczAB+BiRAoCASMiGKNCbt1nkQC3Hz84vKr/CAxuzSaE+Kkf1PNW4m?=
- =?us-ascii?Q?K2kNrfKfs9QtaY5rI0ftRbGzqwK8gfOI07hEL4fQmS+KaeSZVl8C+HFgzOgi?=
- =?us-ascii?Q?ldJ6+uZs+q7cFaqKkYgmzfZK82sucVKJhlel60up8jFi3Esp+wv5jDmxaNkz?=
- =?us-ascii?Q?ApzF+Dfa8uweZ++b0dOCxmJ8owWvfMHKuS068kcmqts57mKRsNCeGQmpiOPv?=
- =?us-ascii?Q?y4KoeAF3hfa++g8CyXTY324Il7zUBOTMQBJMFBtLqgAnLFtBVK+m6vXkKTON?=
- =?us-ascii?Q?ONyPWJwes/q5QvaDAisxUqUpu1Ms0vqzqdEwzXUAwHrdl4AGnVapMxSYYhNl?=
- =?us-ascii?Q?XGgau8VwCh+TQ6XvTaRiMaPJfDAC0l0aZO3NYeQQeQdMUB6RSB9mI50z5BYc?=
- =?us-ascii?Q?y0cIZR0ZTI05FhFfPRlXvbeUTUb4TXGmQb4g+4Oy+u3ruBNAOUbRPvSdSaf1?=
- =?us-ascii?Q?FMBMP0vKsdup1PruRU+GYd2IO9HKaxN+rpqxYqsDOac2gAyG4C3pGtkYksQS?=
- =?us-ascii?Q?skvo7jYHyNktJbIqHFX2FGAqjYl6+RdwYpyZBgAYIKWtLfqeJbWQfc0CA5B1?=
- =?us-ascii?Q?oyNUxG4zdunNJACPqDEasTvpZC9crq4GB99uUggiEX7RLDFnHWjAGdCz1bHC?=
- =?us-ascii?Q?yh/fhDnRd/uFV07aPj8gi3kC3Nwez0VhXv/SzqryXfELcLjpr9jQ5t7LiUMw?=
- =?us-ascii?Q?mCdkh+kXNVloUHLS9Mlo2i9C1FB37vL+Xl+rHBRsUkNFkOSlTPDxuq6SxkXI?=
- =?us-ascii?Q?ixXf87HwTx36j3q7jC5vUhzxW4pynOnB8UqyvWDXrs+oeTCJZJTTZigi3mJo?=
- =?us-ascii?Q?f78h/FZFoPp+O4NPK/edlLhBZbfqbFG00nJsMK+Zb8EWC4pWIfBU4Hy6YWrr?=
- =?us-ascii?Q?7Ln+0WKCfzI/NPrvhc/ynkJGklu4iTNaWyzJUoLCQn1/d/Q+2zeHBPvwL03k?=
- =?us-ascii?Q?zmTVmQF4Rk3gRsGe6NuUMY6LYxEr0XNsMC9D8QJsriBfnV1Ny2jPbo9Z4A4R?=
- =?us-ascii?Q?oMbo+gKcTVIIbscIZteRmMI1pEnXLdx6MwIrWmiVERzG4VMzAbjOX397iA7I?=
- =?us-ascii?Q?Z/SziTgqsDWaqXO6GXCaa52iGH6ITGu+R6nAyzFPF858pD23yl0g/x36JmL6?=
- =?us-ascii?Q?5dqT9jl1KMUQhAxNKW4cuhKSfGwDBUCoJNQszbcBBjOSwJ1vBK0NrHdn/qZN?=
- =?us-ascii?Q?aLUQdGSOsvkCsoCJxbWJadpj9hCMrJL7k81Dp3uYJ+yRcw=3D=3D?=
+	=?us-ascii?Q?3YeTQFzrYCciczpV0gk6ye2dherikCTKnr/gOOBgg1/OjtitsdvGCIcpUp9I?=
+ =?us-ascii?Q?E/TCfm+PYnnMP91DOpqVZXtjq8wXsEPjiwHhwRJGtqz+LKdDtabfKePGVD5x?=
+ =?us-ascii?Q?Fcyo5hzkiu3rbXNV6lZqhZHK6AShb8GzKPK2YuDkUESKPMRbzIttIxS0OUcW?=
+ =?us-ascii?Q?3fnZ0p9ZdQSqqcIzoLRrZksOCZ7z4UJ31l9uMPAonix24Amc13hqOYfdaOlJ?=
+ =?us-ascii?Q?jjhi33kMEYfFXy+nCO7Yp9M2QRBaTOmT1WIozkhKr6q+T2umnhoNN7NFoMhd?=
+ =?us-ascii?Q?q872AeQ8AJYHekpqQse08nORWFc1W4Hrqu9leCA/4LIdQpc55eYe2zBeaw6u?=
+ =?us-ascii?Q?OqZwiLyD0OUW/Z5oZS0hJunVARtlxiO9/b7K3ytTGdzKcpaQmk+WNWUGmrXA?=
+ =?us-ascii?Q?7Qh14UT4TNE0QJLHUbrspPtFWK+8vZmWSKGI1iwImBR8WOWVaFheAXQhJnfZ?=
+ =?us-ascii?Q?t+eH7wiX5r0dCzQtLiXs/xDkJySs8qT/bHlcoZN9Ny3lKHV5ShkpeTLMFUsK?=
+ =?us-ascii?Q?t9nbS6gFqFRMMmwFvWnUBV6+eVgWsKPxO3khUxFjlHUx06ck/r1AP7uFY8jJ?=
+ =?us-ascii?Q?OBGcat+1BXOQLgM4L9slfVxYhp97ENJ0Jsx0o8+qsfadImFTdQEOuD8UoEQy?=
+ =?us-ascii?Q?Jf6LiLmbqI49e9Bkdfpd3PECd8jjp0n76aC0mtH96l7sTahod/FXdcprWtiQ?=
+ =?us-ascii?Q?WCERkX0MPhpOf5bqqg/mvLFgTSdnXFGb/GTuqnsobTWP+eLvaG9XgkwTUrfS?=
+ =?us-ascii?Q?e8QM/CmdvQX+zNYx7QCUVT1rXgx2XguHJgRhTV3LocauqCOu5E7oLwBnpdbW?=
+ =?us-ascii?Q?noPJiu6dDgZ4frBYidxnvV+RdlIrGLdzK1FxRACGXfJFabHYvGAqKhCCfhqm?=
+ =?us-ascii?Q?llWSLgcWOfvMUwneXViejK/joCmJknuF9RpVgBD9DXYHmMdegEeXAyOIlslv?=
+ =?us-ascii?Q?KSUu8Y6dj1zP0lciQc3ajFElNN1HZXyAXyDSfalpWRmUjU+0+ChMUs/L7aMH?=
+ =?us-ascii?Q?+APQxIKQi5aYxqkZ4aUFT777s/76Onh8u4bJ4XGIvNcsd2A1wXUJbOTGmE/z?=
+ =?us-ascii?Q?lN6Od87uux/tthlrJegb9zHg7pjld7+8ZDMRZyycsqVBGDGzKjLe2NdyAA1I?=
+ =?us-ascii?Q?qyJ7nSk6GHPj8joZAAO1HYlujY5v/KLOe6h/n+8QhEsNdIgFJ1gdgHfsZb89?=
+ =?us-ascii?Q?fWGSWEcryAcE4d2HVTXVYdmaVmpggXwI5Ba1TBmkntC1jg9kn7cTrWAVfMsv?=
+ =?us-ascii?Q?DhXeTAFwe4CMAFdtghb9HBvuipp6Sp6K1+yYwk067EdaClh2L++rYJX+AT5J?=
+ =?us-ascii?Q?hvs+5n/AHRyWcn+vcPFsNZWDYApylUIBTfv4o0sVY3kJZaUyeJLK9gbZYQcC?=
+ =?us-ascii?Q?gjUfwBM=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR06MB6849.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RwhTnUQ3vfGPzBiv3UDrShAD9/YYzhxQJN52lVMLB84KOgdb74dRvL8I9KOU?=
- =?us-ascii?Q?SF5/JOaZMQ3Wfk3/6iI6v1C99MGaVFVteO83CFEat3NwUO22ihGh139P6Xc3?=
- =?us-ascii?Q?ANI9w/XifixVWYRbdJJsb6fzNEdN8uweQBjX/CHszh6NJ6Wb37Fu9jKJ4GhU?=
- =?us-ascii?Q?UK7cUmteMLEMu9Xd8K6/w7kw5sdm9KSSPzKtUxIuXv3hEW1iSvBpVBylLsVt?=
- =?us-ascii?Q?ETIZo+KxOP/jCL2PR0iTKpU3Uy2LO8ojE68BllKw9bvJa+BsMIPOJWY13N1D?=
- =?us-ascii?Q?JRdeiNkAI9ZOZqC/7iDTZUIPEEdiSMFg/lAKXf5fVUOS+TFDvInMQKdYthWn?=
- =?us-ascii?Q?x+kgPOzl43DQ+MXVdgCYN46MOB2xPlMNgncfihcs6StfHH36vLKd7EAqdLi8?=
- =?us-ascii?Q?rp2nKTpDOjrAGfD5dOLL3M8n0YmXpAjlDUPnetfmwXXqCOmXcrdBSlmZqBbd?=
- =?us-ascii?Q?s/w/ttcjUWtcrkQZd7R+OrZm9oVXiWNQ3JR0AdkacP4wHSlPTNb8FhrW3i2F?=
- =?us-ascii?Q?E2kkAQaqZd5sMmDeaoTR8199AJH9BAPzu7gODjrWfOYMFOy/iSvtfLVaX86i?=
- =?us-ascii?Q?avZMluPY0a0RnNq84w4rX1mLR86Z8VisjpmC58U99el2+D4XCv11Nigk079j?=
- =?us-ascii?Q?os5vg0sipHR5a7VFilJ7zFo4oLTvrkgFW87LJF3AEpAy5Hc6i5LoUGAfye+q?=
- =?us-ascii?Q?/7dSjOMVwkD5/a9Lf4pm+zLchr6L2ghl7/8nZE5kxINwOTYCcwgs0ZkT0HxJ?=
- =?us-ascii?Q?mg1lIBXX4Yw2MkhA9S7XtdT416y1nDMg74DL5b0D/Ssp8iIaW/4TyxbSwxS3?=
- =?us-ascii?Q?8DAf9+MVuAkDAIKLI+IKp9vH/fJTizEM8vvi2UWO5HmIyFvhFD4tUAaJ1Xyt?=
- =?us-ascii?Q?/FonYuomE2AgSsQM5XSN6zMgktMBKDxma2Wvgd83nZc7wJKT6iC9D6S0s0/c?=
- =?us-ascii?Q?Ic8w00bdgkl9wJUY36dnk0zugz/nlRW8X2iYZ3He60o/Uz1HxYK1tBcNHxVe?=
- =?us-ascii?Q?wI73sKWQN42m5QBPpWxtLBulgIoRJqndVOd8drUqrOLJBVeLA3etJdD//BTD?=
- =?us-ascii?Q?7V0D2+4iV5pDpapOLawRUI7NeZ2Qb32MpoLV6vNIHXw1ooC039FDvw3inTsb?=
- =?us-ascii?Q?DpTaId0LRQPD/HdRPRmsyzo6+blzJpnEhQZ5zxpU4YeDy+DldjklGjYBi7Y+?=
- =?us-ascii?Q?Ofkvpvf7XBgMJjdeALsPMpKEMG92yNvn2sRKBxTBBge0F3wggReKob4wowsT?=
- =?us-ascii?Q?MYUqVbNIz2gpLYHjUcJOOVX9KJUV8rim+34+A539XueK/WejDDzbZprYaVDi?=
- =?us-ascii?Q?7y0k/wo/hrxW9LiT1VXwsRXiH3v7FHzVfCsq8WY1aGE38T9alVJf0RIRk1EK?=
- =?us-ascii?Q?f73SJU4/rtO+5d8Mv+73s5JIqAmkd7LmiSjMwOHKD2/UCXewsKJ0JhOt1pf6?=
- =?us-ascii?Q?rQMQRnH4DoRnqxfxetS402q7HyAA9j/OeKcR59fKkQuueRuQdOZArL3nVD6b?=
- =?us-ascii?Q?nhUa5EuCkUtiVrCUsst3mamVgmmFb+XMU5DNAJxHNhluNIfLiZuJ4J8xrAGs?=
- =?us-ascii?Q?Xkgt2lZ5Kt4lWpSxIGM2l6WrmRJtqBm1bTrpjLPs?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66c06f32-d845-4b64-e016-08dc9fcdbe14
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+	=?us-ascii?Q?xdMRAXxtkykJxA+JBxym8ZF1cvfmYilYPK81cuxhO8jCX04xKLm9t4CcoonD?=
+ =?us-ascii?Q?JG+jSj+rxmnALkZWwgiEssA6BXnCDBH1wNqv7OkzgJdBwm1G544+1oPOHE2Q?=
+ =?us-ascii?Q?vP9tMIvBLtzpgnOi5iWRJVQVgD5SWwFfDVp5bS94lA3bcJT6KR3DUH4kLnnr?=
+ =?us-ascii?Q?hstYGdv1QWf1B2IvgbafGo2LRaH9H91d8BIGI+xeymGMofymQCS84RwP3OCj?=
+ =?us-ascii?Q?zf+zXr1OLVRkbq/9JWiV6kv3aLDMjDXuYn083V5uMxQOMZAW7/MH9wSVvWs9?=
+ =?us-ascii?Q?IAI03If7wSyykB2Na18Rx/pn71EAbPKNTiAIspDGut7zOiM+fiR6iC4ZlT69?=
+ =?us-ascii?Q?mGpBIke/FoM7acraN+q533gOAdksv9kfEOMIkH0+3Fg8FW0NzKQSXRqclwg5?=
+ =?us-ascii?Q?zLgFNoSnua7HILiPv80Z+Hl6zLXx6mGFr9+DGyr6vmtA8tKYZISfOYMG9Vlc?=
+ =?us-ascii?Q?f6EF1BKHOnoG+JpxrpxpoRZrgd2IjfeCmk3kFQwDqQ+srYCwZqyU+Dk9R9Ju?=
+ =?us-ascii?Q?Ij/qk6Rl5pW7M8KLG/cojyUZ192kXujh/KPnKUQ3hlEdu4D20MdqA1+Ux2bl?=
+ =?us-ascii?Q?ALMRRv1B87QYncub8Tu/ME0HhQ3bGJHVfzPSGy+kVeCpZiL53SXXfCBqSO5j?=
+ =?us-ascii?Q?hChdrQIbfcJ5CewykXf5QrsCuqEvZ2dVd0zO2rou2xCG5Te6I2eydw0pzf0z?=
+ =?us-ascii?Q?ZfeYDnYGJuNuYiUD1e84HY7g7bCk8/ToXy3GLtQUKxC6y1rvv8GT+NwJzzJN?=
+ =?us-ascii?Q?9rVtBRRl6FMj2vsmzSGK1sHJR2UJ9B3vkoq83hJ+2PKXwffjEGEfDVPfRYic?=
+ =?us-ascii?Q?EhKHK0G/mrXS0yIvWZwu5R/T5OydcRViBI66sCL+PucMWfSN8zNxB+wsIKoO?=
+ =?us-ascii?Q?V41boD+rRN88gAahEJf51mdixgjt12wWhXfn1XLiY1lXRT+nCrLyN280v+7X?=
+ =?us-ascii?Q?kzGS3Yzbs+e/xaDZWCanzJ2uqZxuWT2WWjt1+or6aqNqI2MNxTcAhP8gDrIk?=
+ =?us-ascii?Q?97+qPoV0Ta+HVUrNsw55aNbdkOeMH2Xw6w0RADzps6D3ITqIFu19xXrUkkq0?=
+ =?us-ascii?Q?HAq4bOTnPtpjLGa4QtRyOmV9+w+XbKoj31OJWR9iszyEoB8n9bDZ1qf+uGGF?=
+ =?us-ascii?Q?TNJOiMeNDxAWnBIXorOBcaH+g/La/yy40psvH9E3C6P/KElZWR7lM0V3ivkO?=
+ =?us-ascii?Q?6HiJFIHMhi2ifbIwDPLjaU5/gqC/CyOWBUNDLSIiVPML7fm/9iVHzDMaMMDD?=
+ =?us-ascii?Q?jeKsTs5upn84lhuq14cEXrPEoJzHlEIZ7Uz1xQF/YtfRR3e1ClNQcJ3aEJbr?=
+ =?us-ascii?Q?oBWx+JrNMZkYyxqn3YvxkehvYAhHEpRrsGo1LEuuoFV3cNkEsF/c/wd7JY7X?=
+ =?us-ascii?Q?YRJkSOtnWdialfhH5Bh0x8noPjRwRhZPrCgWd3jJGj6V6zib5FY+TWHgObEz?=
+ =?us-ascii?Q?YohKN/silXQre+ai3JMJzpTGROdo4CW3R4gybQWwerW7UE4udwPuqji8gw2B?=
+ =?us-ascii?Q?S9m6RrZo7/J/oty59Pe/ofn/sYFuvLVugbRotseeWybK3+kBY8YiKR+a+HKM?=
+ =?us-ascii?Q?UYnchNwxD9b2o45pcemShM8VG+1bg0g7MQjaRM1k?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d119cf9-33cc-4d7e-d249-08dc9fcd2356
+X-MS-Exchange-CrossTenant-AuthSource: JH0PR06MB6849.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2024 04:15:18.6781
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2024 04:10:59.1258
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bcjuqAtBP75ly7izmtSUD7FBHGJhXw9TRfoqIc1KQRttqJR7IN5tn5gCYrs00TH3duu9vdS6tsvK8/CPXS3NuQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4199
+X-MS-Exchange-CrossTenant-UserPrincipalName: +IkYUUvvfn2mLXOXSgd/tm01c8Obe2OjuHhy1jhOdz7K9n4q7ewjGzeNs0nXZHDF1uM1I3Dq2OJYOKAGPxdEnA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6942
+
+The releasing process of the non-shared anonymous folio mapped solely by
+an exiting process may go through two flows: 1) the anonymous folio is
+firstly is swaped-out into swapspace and transformed into a swp_entry
+in shrink_folio_list; 2) then the swp_entry is released in the process
+exiting flow. This will result in the high cpu load of releasing a
+non-shared anonymous folio mapped solely by an exiting process.
+
+When the low system memory and the exiting process exist at the same
+time, it will be likely to happen, because the non-shared anonymous
+folio mapped solely by an exiting process may be reclaimed by
+shrink_folio_list.
+
+This patch is that shrink skips the non-shared anonymous folio solely
+mapped by an exting process and this folio is only released directly in
+the process exiting flow, which will save swap-out time and alleviate
+the load of the process exiting. 
+
+Signed-off-by: Zhiguo Jiang <justinjiang@vivo.com>
+---
+
+Change log:
+v5->v6:
+1.Move folio_likely_mapped_shared() under the PTL.
+2.Add check_stable_address_space() to replace MMF_OOM_SKIP.
+3.Remove folio_test_anon(folio).
+v4->v5:
+1.Further modify to skip non-shared anonymous folio only.
+2.Update comments for pra->referenced = -1.
+v3->v4:
+1.Modify to skip only the non-shared anonymous folio mapped solely
+by an exiting process.
+v2->v3:
+Nothing.
+v1->v2:
+1.The VM_EXITING added in v1 patch is removed, because it will fail
+to compile in 32-bit system.
 
 
-Peter Xu <peterx@redhat.com> writes:
+Comments from participants and my responses:
+[v5->v6]:
+1.David Hildenbrand <david@redhat.com>
+I'm currently working on moving all folio_likely_mapped_shared() under
+the PTL, where we are then sure that the folio is actually mapped by
+this process (e.g., no concurrent unmapping poisslbe). Can we do the
+same here directly? 
+-->
+You are right. we might use page_vma_mapped_walk_done() to bail out.
+(Barry Song)
 
-> Hi, Alistair,
->
-> On Thu, Jun 27, 2024 at 10:54:26AM +1000, Alistair Popple wrote:
->> Now that DAX is managing page reference counts the same as normal
->> pages there are no callers for vmf_insert_pXd functions so remove
->> them.
->> 
->> Signed-off-by: Alistair Popple <apopple@nvidia.com>
->> ---
->>  include/linux/huge_mm.h |   2 +-
->>  mm/huge_memory.c        | 165 +-----------------------------------------
->>  2 files changed, 167 deletions(-)
->> 
->> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> index 9207d8e..0fb6bff 100644
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -37,8 +37,6 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
->>  		    pmd_t *pmd, unsigned long addr, pgprot_t newprot,
->>  		    unsigned long cp_flags);
->>  
->> -vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
->> -vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
->>  vm_fault_t dax_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
->>  vm_fault_t dax_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
->
-> There's a plan to support huge pfnmaps in VFIO, which may still make good
-> use of these functions.  I think it's fine to remove them but it may mean
-> we'll need to add them back when supporting pfnmaps with no memmap.
+2.Barry Song <baohua@kernel.org>
+By the way, I am not convinced that using test_bit(MMF_OOM_SKIP,
+&vma->vm_mm->flags) is correct (I think it is wrong). And exit_mmap()
+automatically has MMF_OOM_SKIP. What is the purpose of this check?
+Is there a better way to determine if a process is an OOM target?
+What about check_stable_address_space() ?
+-->
+Sorry, I overlook the situation with if (is_global_init(p)),
+MMF_OOM_SKIP is indeed not suitable. It seems feasible for
+check_stable_address_space() replacing MMF_OOM_SKIP.
+check_stable_address_space() can indicate oom kill, and
+!atomic_read(&vma->vm_mm->mm_users) can indicate the normal
+process exiting. 
 
-I'm ok with that. If we need them back in future it shouldn't be too
-hard to add them back again. I just couldn't find any callers of them
-once DAX stopped using them and the usual policy is to remove unused
-functions.
+I also think we actually can remove "folio_test_anon(folio)".
+-->
+Yes, update in patch v6.
 
-> Is it still possible to make the old API generic to both service the new
-> dax refcount plan, but at the meantime working for pfn injections when
-> there's no page struct?
+[v4->v5]:
+1.Barry Song <baohua@kernel.org>
+I don't think this is correct. folio_likely_mapped_shared() is almost
+"correct" but not always.
+Please explain why you set  pra->referenced =  -1. Please address all
+comments before you send a new version.
+-->
+Update in patch v5.
 
-I don't think so - this new dax refcount plan relies on having a struct
-page to take references on so I don't think it makes much sense to
-combine it with something that doesn't have a struct page. It sounds
-like the situation is the analogue of vm_insert_page()
-vs. vmf_insert_pfn() - it's possible for both to exist but there's not
-really anything that can be shared between the two APIs as one has a
-page and the other is just a raw PFN.
+2.Matthew Wilcox <willy@infradead.org>
+How is the file folio similar?  File folios are never written to swap,
+and they'll be written back from the page cache whenever the filesystem
+decides it's a good time to do so.
+-->
+What do you mean is that the file folio will not have any relevant
+identifier left in memory after it is reclamed in the shrink flow,
+and it will not be released again during an exiting process? If that's
+the case, I think we only need the anon folio is skipped here. 
 
-> Thanks,
+[v3->v4]:
+1.Barry Song <baohua@kernel.org>
+This is clearly version 3, as you previously sent version 2, correct?
+-->
+Yes.
+
+Could you please describe the specific impact on users, including user
+experience and power consumption? How serious is this problem?
+-->
+At present, I do not have a suitable method to accurately measure the
+optimization benefit datas of this modifications, but I believe it
+theoretically has some benefits.
+Launching large memory app (for example, starting the camera) in multiple
+backend scenes may result in the high cpu load of the exiting processes. 
+
+Applications?
+-->
+Yes, when system is low memory, it more likely to occur.
+
+I'm not completely convinced this patch is correct, but it appears to be
+heading in the right direction. Therefore, I expect to see new versions
+rather than it being dead.
+You changed the file mode to 755, which is incorrect.
+-->
+Solved.
+
+Why use -1? Is this meant to simulate lock contention to keep the folio
+without activating it? Please do have some comments to explain why.
+I'm not convinced this change is appropriate for shared folios. It seems
+more suitable for exclusive folios used solely by the exiting process.
+-->
+The skiped folios are FOLIOREF_KEEP and added into inactive lru, beacase
+the folios will be freed soon in the exiting process flow.
+Yes, the shared folios can not be simply skipped. I have made relevant
+modifications in patch v4 and please help to further review.
+https://lore.kernel.org/linux-mm/20240708031517.856-1-justinjiang@vivo.com/
+
+2.David Hildenbrand <david@redhat.com>
+but what if it is shared among multiple processes and only one of them
+is exiting?
+-->
+Modify to skip only the non-shared anonymous folio mapped solely
+by an exiting process in next version v4.
+
+[v2->v3:]
+Nothing.
+
+[v1->v2]:
+1.Matthew Wilcox <willy@infradead.org>
+What testing have you done of this patch?  How often does it happen?
+Are there particular workloads that benefit from this?  (I'm not sure
+what "mutil backed-applications" are?)
+And I do mean specifically of this patch, because to my eyes it
+shouldn't even compile. Except on 32-bit where it'll say "warning:
+integer constant out of range".
+-->
+Yes, I have tested. When the low system memory and the exiting process
+exist at the same time, it will happen. This modification can alleviate
+the load of the exiting process. 
+"mutil backed-applications" means that there are a large number of
+the backend applications in the system.
+The VM_EXITING added in v1 patch is removed, because it will fail
+to compile in 32-bit system.
+
+ mm/rmap.c   | 14 ++++++++++++++
+ mm/vmscan.c |  7 ++++++-
+ 2 files changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 88156deb46a6..55fd54c33582 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -877,6 +877,20 @@ static bool folio_referenced_one(struct folio *folio,
+ 			continue;
+ 		}
+ 
++		/*
++		 * Skip the non-shared anonymous folio mapped solely by
++		 * the single exiting process, and release it directly
++		 * in the process exiting.
++		 */
++		if ((!atomic_read(&vma->vm_mm->mm_users) ||
++			check_stable_address_space(vma->vm_mm)) &&
++			folio_test_swapbacked(folio) &&
++			!folio_likely_mapped_shared(folio)) {
++			pra->referenced = -1;
++			page_vma_mapped_walk_done(&pvmw);
++			return false;
++		}
++
+ 		if (pvmw.pte) {
+ 			if (lru_gen_enabled() &&
+ 			    pte_young(ptep_get(pvmw.pte))) {
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 80f9a486cf27..f31068f799fe 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -863,7 +863,12 @@ static enum folio_references folio_check_references(struct folio *folio,
+ 	if (vm_flags & VM_LOCKED)
+ 		return FOLIOREF_ACTIVATE;
+ 
+-	/* rmap lock contention: rotate */
++	/*
++	 * There are two cases to consider.
++	 * 1) Rmap lock contention: rotate.
++	 * 2) Skip the non-shared anonymous folio mapped solely by
++	 *    the single exiting process.
++	 */
+ 	if (referenced_ptes == -1)
+ 		return FOLIOREF_KEEP;
+ 
+-- 
+2.39.0
 
 
