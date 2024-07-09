@@ -1,130 +1,127 @@
-Return-Path: <linux-kernel+bounces-245791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C649892B953
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:22:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B57DE92B9B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E5ACB251A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:22:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7193E282521
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855A0158DB7;
-	Tue,  9 Jul 2024 12:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4C0158DB7;
+	Tue,  9 Jul 2024 12:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="t9cxp9wX";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IgzLWRJ9"
-Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="jT5qXmts"
+Received: from out203-205-221-149.mail.qq.com (out203-205-221-149.mail.qq.com [203.205.221.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7BB158211;
-	Tue,  9 Jul 2024 12:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E8D13A25F
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 12:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720527651; cv=none; b=buaqzzndW9f9DpRd1Ra8+r3Bd6CvwJHqjap3Ge+WJW9wYqWMpZoYhOPyrzHUlUrApFu4RXWBqsAQIG5OkRM9zGAdD2GBubOfht2NoZ10VZ1hK9RU1KHK3arrv8c0x6D8SpiYzcq78vu4X0IMlT5iAjDX470uCIgsrreK9u1cSmQ=
+	t=1720528807; cv=none; b=R9PDJOgl4z5l90Csqsq+rOknFRTonTFLmO6VBPxEgWmwhMUM1pLtC9Tc3QrePbISpusg9g0zOkf9FaG3/CweOA8jkbQGD+xlMs97xrSwnoGbq3htlbx0S1qBQGiV8jq7YRGp690OfCmxHbfkEhoKBC1jS9rNZStvxqJq5oMGPD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720527651; c=relaxed/simple;
-	bh=lg51kiG0bH2wha3CWkMu86WelvccUDFoYneT0UfT70k=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=FI9BKQ4r9WCYK8uV+V2I84c5953tWX6WNqVuxYBo2KUeLscMW+f0Lwp4eFYywWeMh5D1HtzwCk7XPrakwXkWlCSnHAYLXf+fAh0t8BIJawr2eDyu3+qDLNFFWO9ld8Sxt9wFcg6aqlFgfVez9NAaJQDKM8fF87xI+hFJWQ8aGq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=t9cxp9wX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IgzLWRJ9; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 0FDB71146E4E;
-	Tue,  9 Jul 2024 08:20:49 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 09 Jul 2024 08:20:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1720527649; x=1720614049; bh=NmuEqsdIBv
-	nTnkIAbmhsVQaDimK4bgjI7WetAoXyddc=; b=t9cxp9wX1dPUWsdEeL0ONvbgq/
-	Fu7IaKCBkNzagYz8/C/wqxCjVz4zcbyXmuDP2WyemyVZbvU5TEVM7StShWAqMB/T
-	D8m3QCBSOszLtYye+4B79Dq3t4VFpEccbHclQfMxieimqAYPjkuVMRMmDoe0YlR7
-	nZVQ2WnoMPvS2ui7Cf5S0m3XDBsa+s4j6Ql3+5oKpu6tvlhPShJrjN55uJ/keKFV
-	l424/nd+cJsxOe3beiCzeCQ3Uf48KUdzSqo1+4tjWdGmS0tj69LWKCvZ71CTrb21
-	4BZEoErYkaR735QHDuw8yc0LR9fTEOv+p5T0mJmAfOsb/PnSMcBikGwixhAQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1720527649; x=1720614049; bh=NmuEqsdIBvnTnkIAbmhsVQaDimK4
-	bgjI7WetAoXyddc=; b=IgzLWRJ9n2rfPUYmI6HYBl0E8phMdKY79qROe1vjYNkK
-	70d6fsKzf5Olo3ozgyXKrm0Msma+4JOcnECQpGKPYGfwdXToC1IW2/Hh7PsQEeYJ
-	2I9Wjplgx0aokatFfGEoliBeIyl8mt6PSfLWAj0cQjN3uhxaLjOIYACIoudM+C8n
-	HNJ/ub+dUGc2doqlNrgOV55SHiYHcQh9PjEXPv04+iqDKFPfyWqmLNwlN1TEzjQ+
-	XY6uZXCJgETEjbdPXYzY+BvOaIS8icjr7RhSxrj5GWt5aXoFwFu33jjOfwGlghsr
-	dQpFryoqW2a3BqMourNzwST+23TBP/l7MtL87DZTwQ==
-X-ME-Sender: <xms:HyuNZvO6Ae5VikP2ENomMZwoaaERatKELJss13Hnx6Cr2mlB6MEcmw>
-    <xme:HyuNZp8HrT7ye-1lTHxI130NaF7MGBhOhwu18EaZdI4xO-kWwJCGhItHOgozR-S59
-    8s04VvPYIk0CJchpgM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdelgdehudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:HyuNZuRweQSmrWo-xdnNfkQvYXgWc-4a5uMgodPt6FAb7iCqguiThg>
-    <xmx:HyuNZjtVNRLYS1AEdNEyThzvkaz1Z1aQEWXWKofxN1cZbNuUqO0HPA>
-    <xmx:HyuNZncQ8KN-A0uC-2lJcCpPUUYayFoFu4kfrOYPG6GsDRzkpuX5Gw>
-    <xmx:HyuNZv2InFx6qQ3cfYP-dlVYRukCGFdWxL8O08S8IGuZjDXzIEsrtQ>
-    <xmx:ISuNZoGx9FfH1GKo0jcoV0LaAf2xpuSjm4r3kRqEKcVShp9KmWBKGRgj>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 3B4D4B60092; Tue,  9 Jul 2024 08:20:47 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1720528807; c=relaxed/simple;
+	bh=aOnoJ9nz2Vw5f5WUg3rs+rnntjGfT9KmwDhTcul6V9g=;
+	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
+	 Date:Cc:References:To; b=EV4VZcypIrABrhkrNnCvvzyep0QPd6LDImS7tlUYb6YMlcn8tTsnVeALoXYI0hJssFDTPawLwDSDxSrbAbhSYjBtq1B9qCOXsDnAQrqo/zXsPlgPqwTRbPkvPnEIZiC3RPlUka0eNBUh2WJVMjHmUZv5c8jgFsysqaxZibRUz5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=jT5qXmts; arc=none smtp.client-ip=203.205.221.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1720528796; bh=aOnoJ9nz2Vw5f5WUg3rs+rnntjGfT9KmwDhTcul6V9g=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=jT5qXmtsYmdjN/LQVTiJAi2xCjJcQRqs0aQbJ9ZwtUF9DUWuCXhl4BhaOCr/irhVg
+	 M9eefv1v1TvTCYcY/cjiM+g95eqwk9a9X8z6p1J65BcbkGfFZ/GwEROir421/utqbn
+	 dfz5VnogBkikEwZFr0/e1+zJvJD7nc9zpslw39+A=
+Received: from smtpclient.apple ([223.104.41.144])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 872B6A35; Tue, 09 Jul 2024 20:33:50 +0800
+X-QQ-mid: xmsmtpt1720528430twbm52cni
+Message-ID: <tencent_30E109FE684F391AE15AC6F4854034C2F00A@qq.com>
+X-QQ-XMAILINFO: N7h1OCCDntujqOeQ4Dt7MYw7Pph1E0apGJ+7z2yDzbL0fhzdSHzR/YbDMALmZE
+	 7Ny6DM7LhGTjAIk91hknCE4eoJpjGvQ4sec50QFCtg1qs4asjVlWmXFnpoKF+tRqIHXYaWdCzNTs
+	 1NOaCp8IEm4/XxLWp5qDRxpTO1bwX+SEE+A5Fvy/c66U/guGTtlB1XxypgIG42ULgY6KtrCUS+1c
+	 kK/WZAMAruUTs58JSnhH3ZFBh1egYNB65hCgKCLJapdNsUd04/xgSBuxCCFqm+quAZvOoUBOjgjv
+	 4SJO/MZLKk6UvL6J+sJQnrbfUz8kDdCf+Us2Ql8MBm9h5gcKDepfbx4jim60SoVO5TnCn0TMhdvx
+	 vkFEbmFyIcoWAGSXiDSl5vZ/jiENwnhY9gOfCCp5gaJ585XZD+PWfoXaHvY0C4/UEoWOABYKnFGv
+	 1vGQYbA73r2yz7ip70cAaCLbo0zqFn9rodhOcy3l2e4Dokeg0Ed0KqvAdp+MRjgIusbiYB0nxdUH
+	 nIcCUNACMjNZYXxKiZ8WFBXR9tCbabZ0qLu6f0QeL1gBERNoCfuWkmSwEkKRVy8Ti1eW1cWt8fyf
+	 STay72S1/JkCRtpGzMJ5uCmbaiQQxokfE1OU3aRzm1GbXUFudbVBHDWhykkPq/iMM6mS5dJL6bVd
+	 X7a4dTPKMWlcPYw6iZfWvIaTc7lSko/Y8G7u++82ojLZVzp8Ne8lJWuJEapOAwoEqKJv/0tB+BCW
+	 iKdDyTJYXwhIDqLyVxR18Wjv+Hln85GZ4yvVp+/34WzjvW3YvvT3bwaz+OHAMRgR+eTD2/9zw/QX
+	 4dcpxZO0l6K/ck8ImXn2wxfiB9YJ0Zk2c395DXh9I+Ze1nQZEi41L+qR+AG7Cjt9myBGRLA1iks1
+	 UlA7wltDliVlVH1N32eOZFW9blImo6WFSJs08EB5HPRja+VXxYNcsKoYjuAFGMRO+Rr9kNA6rxZl
+	 PcMsDMReE9ZTzjhH1sJuO7IJTyshOnc7DTE8e3CGTjIggL8GydA3g5tnArOdW/zQ6NRjivZVmOvt
+	 TDRUYcCrJYJhle9I+kvSuNJmNw94Q=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-Id: <c25a32c6-8ed0-4ef9-a13e-cb16a89edb73@app.fastmail.com>
-In-Reply-To: <Zo0kzIR_ZueaEjTa@krava>
-References: <20240709105709.18ce785d@canb.auug.org.au>
- <20240709200851.4d921e43@canb.auug.org.au>
- <784a34e5-4654-44c9-9c07-f9f4ffd952a0@app.fastmail.com>
- <Zo0kzIR_ZueaEjTa@krava>
-Date: Tue, 09 Jul 2024 14:20:26 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Jiri Olsa" <olsajiri@gmail.com>
-Cc: "Stephen Rothwell" <sfr@canb.auug.org.au>,
- "Christian Brauner" <brauner@kernel.org>,
- =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- linux-next <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the vfs-brauner tree with the asm-generic tree
-Content-Type: text/plain
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH -fixes] dma-mapping: add default implementation to
+ arch_dma_{set|clear}_uncached
+From: Yangyu Chen <cyy@cyyself.name>
+In-Reply-To: <20240709114629.GB6959@lst.de>
+Date: Tue, 9 Jul 2024 20:22:35 +0800
+Cc: iommu@lists.linux.dev,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>
+Content-Transfer-Encoding: quoted-printable
+X-OQ-MSGID: <B81ACB86-A23B-4AC5-971A-25C7C6E3A1AB@cyyself.name>
+References: <tencent_A5ED71472ADCAF18F59085464CBE23C12A07@qq.com>
+ <20240709111901.GC4421@lst.de>
+ <tencent_651BC4D11C9730062064ACB186AF4A904005@qq.com>
+ <20240709114629.GB6959@lst.de>
+To: Christoph Hellwig <hch@lst.de>
+X-Mailer: Apple Mail (2.3774.600.62)
 
-On Tue, Jul 9, 2024, at 13:53, Jiri Olsa wrote:
-> On Tue, Jul 09, 2024 at 01:44:34PM +0200, Arnd Bergmann wrote:
->
->> Though I'm still not sure what uretprobe is only added
->> to half the architectures at the moment. There is a chance
->> we need a different conditional for it than '64'.
->
-> uretprobe is defined only for x86_64, not sure what that means
-> for scripts/syscall.tbl though
 
-I meant you hooked it up unconditionally for all architectures
-using the old method, i.e. arc, arm64, csky, hexagon, loongarch64,
-nios2, openrisc, riscv32, riscv64, and xtensa in addition
-to x86-64, but not for the other ABIs: alpha, arm32, m68k,
-microblaze, mips-o32, mips-n32, mips64, nios2, parisc32, parisc64,
-powerpc32, powerpc64, powerpc-spu, s390-31, s390-64, sh,
-sparc32, sparc64, x86-32 and x86-x32.
 
-If that is not the list you had intended, do you have a list
-of which architectures actually have the required hardware
-to hook it up? It would be good to do this correctly from
-the start so we don't rely on architecture maintainers assigning
-the numbers individually.
+> On Jul 9, 2024, at 19:46, Christoph Hellwig <hch@lst.de> wrote:
+>=20
+> On Tue, Jul 09, 2024 at 07:39:29PM +0800, Yangyu Chen wrote:
+>> The reason is that some optimizations failed to apply after adding
+>> some passes. I will fix the compiler later. Whatever, we should not
+>> rely on this optimization to get the code being successfully =
+compiled.
+>=20
+> The Linux kernel relies on constant propagation and dead code
+> eliminiation a lot to make code simpler and more readable.
 
-     ARnd
+Actually, the compiler is patched LLVM with -O2 optimization. I didn=E2=80=
+=99t
+turn off the optimization.
+
+You can see what we did for the compiler here[1] and compile the
+kernel with `-march=3Drv64imac_zicond_zicldst` added to KBUILD_CFLAGS.
+I added conditional load/store pass as Intel did for the x86 APX
+extension, which appeared last year (called hoist load/store in
+LLVM if you want to search the PR), and then LLVM failed to optimize
+this.
+
+The only failed symbol on the kernel with `ARCH=3Driscv defconfig`
+is `arch_dma_set_uncached` since the compiler requires all possible
+values to be known. I think a pattern like in kernel/dma/direct.c:349
+for symbol `arch_dma_clear_uncached`, which uses `if
+(IS_ENABLE(CONFIG_ARCH_HAS_xxx)) xxx` is acceptable. But for the
+symbol `arch_dma_set_uncached`, a complex analysis is needed for a
+value set in a block of branches. I think we should not rely on such
+compiler optimization in such a complex pattern.
+
+In addition, patching this way can also make this symbol safer to use.
+
+[1] =
+https://github.com/cyyself/llvm-project/tree/zicldst-support-bugless-v3
+
+Thanks,
+Yangyu Chen=
+
 
