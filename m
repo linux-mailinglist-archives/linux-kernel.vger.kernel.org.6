@@ -1,157 +1,148 @@
-Return-Path: <linux-kernel+bounces-246163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90E1292BE69
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:30:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE40592BE6F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C08F289CB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:30:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CFA91F257A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5417D19CCF1;
-	Tue,  9 Jul 2024 15:29:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FEC619D099;
+	Tue,  9 Jul 2024 15:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YVqycvS2"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i7AFXYQg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF6A19D08B
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7FD1514DE;
+	Tue,  9 Jul 2024 15:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720538975; cv=none; b=UisOQ3lF6DSRafKFJTSoLjlLKp6mjMGCC8vo3mK7Xw47NlsiR6HbbP6HnoGOJyLuYiV4XInaKnSEWWt1It9ZgJzrJ5Os8e9+Z/5vBEZn8hfN4QqNndawz+zb3Q4wqEroBYQcNpxva+1obH6NJSRAcGKhObYLvduQNEsshb3zwr4=
+	t=1720539011; cv=none; b=bNYgkjDc89EWYhy+KeB0G/L+CGVicYQS36JstB0+6ht9XtiR8oCeTQWkSubEtipDnNTiwKPC2L5WqqZN1KqzD/HVThYx99lVsJta/ccgJOQN+0jbX6vWs/LTxB+EPABp1YOhvF5W3QMBx5ep8rC8XCDSUA+3KpQTWA6BpIcb780=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720538975; c=relaxed/simple;
-	bh=Crrca+M6mzX4SnfPP1ItY7AFeCLgpMEhL4zuTxTaHoA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IbZ33wUnUeQi9OHsUJyKcYHJaqIy6w0XgaDlqceVneEWi02gHfbYZcbe7T4gCb4713nXyqSoGw485QevdlELNfQKi/9Rs27okhZaY9E5F8NqU4zaX9cP3aSI21qaZkbELIoREKz+ZzYK7eI8wfRSx66eceKWAjC+Fpv/Qame+DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YVqycvS2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469BQtI7013428;
-	Tue, 9 Jul 2024 15:29:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	h4WiPsIBrKbfAq1y/4pUmCzgG21sEIf+l6gOtFB40m4=; b=YVqycvS2KhXvN9Fd
-	KWCtCoM9TKmQrgF0/qxk3DysQUPg6uFQ4hi3nA8+53ARcN2+AMOXZuFHrpFuPxLg
-	iVzrgrrFMlH4kYiGguHD3mCc257MjTU8Oi5PAXntaN+hAw9PxIr8mrspC8uilKfd
-	PZ4a/w8S2yNT3GIToDiFxDjdZW8zk70euZqn/Zxw0Lzckl8E7aSlSvqnnRHugJi4
-	koBwABwQUWcKZwgfJCoZUFfqe4tZC4ZU3/52V8hCkWU7/XTI+moJKvddi1sz1kB5
-	ODfoY9RqUnkbDZdVGIZiT+h7TPhFzt72N/FmqMXgwCYRvnGn32psC9IIA5oApoA9
-	Ur7F5Q==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wmmpyrr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 15:29:27 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469FTQK4002573
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 9 Jul 2024 15:29:26 GMT
-Received: from [10.48.245.228] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
- 08:29:25 -0700
-Message-ID: <0e0150ca-fdfa-40cb-ad7f-6ac695b702e4@quicinc.com>
-Date: Tue, 9 Jul 2024 08:29:25 -0700
+	s=arc-20240116; t=1720539011; c=relaxed/simple;
+	bh=+ZQqls9Ki3eLB72qUlI4VM01dYMXVStw5ak0Hd2lE+M=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=ebpCBcAkMbcCs7UdROeGXfsp2aDa2IZV78zg3K4awIOsgIRqFmDswJmIWpZUpWoRwqTiX0PLCf/APcGH4e5AXr5BJvjPMm8BmtAD0IQrbWhXA2pRm5dEeQdkEhoP31x0WYSBzzMaqLwlqpm5ntt/v5N1S+mq2B9tTyTyNT/12SA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i7AFXYQg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE69AC3277B;
+	Tue,  9 Jul 2024 15:30:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720539011;
+	bh=+ZQqls9Ki3eLB72qUlI4VM01dYMXVStw5ak0Hd2lE+M=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=i7AFXYQguJeWjmOqz9Ncvilo/H7LDSdis3d86F0w4rZI+EeJPxk4CNR2fPFxI6DQt
+	 E6TVsVGY+Jg0ZbgkUWIxisxs3vxApiAKTu8tBZyJ4HQ1U57IkfHImWKsHkwPyIHnxY
+	 4eK4M0qupkxLG9e6jP1KoXwb9ezFoxNwj5aElhzELn4YN/Hc0bo++eKPg2XmNeL4dK
+	 DpU8XcM1iwRXblkDKcy5YP1EVgh0J/76imAX3vRGhpxGtHY7qdGHpuEGFna+Scve5D
+	 9p1B/fGT/cditH56ZHavrfxnyVKqLCGa9O0ZM/2GOog1lft1YcsR07sBeFL3Ljr6h0
+	 WtZwQD/ZPxy2g==
+Date: Tue, 09 Jul 2024 09:30:09 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: crosstool: x86 kernel compiled with GCC 14.1 fails to boot
-Content-Language: en-US
-To: Arnd Bergmann <arnd@arndb.de>, Kalle Valo <kvalo@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <ath12k@lists.infradead.org>
-References: <87y16bbvgb.fsf@kernel.org>
- <917565ee-732a-4df0-a717-a71fbb34fd79@quicinc.com>
- <837cd2e4-d231-411a-8af4-64b950c4066a@quicinc.com>
- <c9b23ee3-6790-404d-80a3-4ca196327546@app.fastmail.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <c9b23ee3-6790-404d-80a3-4ca196327546@app.fastmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: nkkXVyJJJxOzvMf2KM35TbI_eu5ePiEl
-X-Proofpoint-ORIG-GUID: nkkXVyJJJxOzvMf2KM35TbI_eu5ePiEl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_04,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 lowpriorityscore=0 spamscore=0 bulkscore=0 adultscore=0
- impostorscore=0 suspectscore=0 malwarescore=0 mlxscore=0 mlxlogscore=999
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090101
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Cc: Inochi Amaoto <inochiama@outlook.com>, 
+ Albert Ou <aou@eecs.berkeley.edu>, Thomas Gleixner <tglx@linutronix.de>, 
+ Chao Wei <chao.wei@sophgo.com>, Conor Dooley <conor.dooley@microchip.com>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Chen Wang <unicorn_wang@outlook.com>, 
+ Samuel Holland <samuel.holland@sifive.com>, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>, 
+ =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+In-Reply-To: <20240709-sg2002-v3-0-af779c3d139d@bootlin.com>
+References: <20240709-sg2002-v3-0-af779c3d139d@bootlin.com>
+Message-Id: <172053886159.3452537.17376675816752046144.robh@kernel.org>
+Subject: Re: [PATCH v3 0/5] Add board support for Sipeed LicheeRV Nano
 
-On 7/8/2024 10:44 PM, Arnd Bergmann wrote:
-> On Tue, Jul 9, 2024, at 05:55, Jeff Johnson wrote:
->> On 7/8/2024 6:57 PM, Jeff Johnson wrote:
->>> We tend to enable a lot of debug config options, so I'm wondering if one of
->>> them is contributing to the issue? Guess I'll turn off a bunch of those
->>> options and try again.
->>
->> OK, with a bunch of debug turned off my image boots.
->>
->> Now to find the culprit.
->>
->> Current diff between original config and working config:
+
+On Tue, 09 Jul 2024 12:07:15 +0200, Thomas Bonnefille wrote:
+> The LicheeRV Nano is a RISC-V SBC based on the Sophgo SG2002 chip. Adds
+> minimal device tree files for this board to make it boot to a basic
+> shell.
 > 
-> Nice! I've tried the reverse now, turning on the options
-> you have turned off on top of my defconfig. This version
-> still works for me, booting with a plain
-> 'qemu-system-x86_64 -kernel arch/x86_64/boot/bzImage'
-> and building with my arm64-to-x86 cross compiler.
+> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+> ---
+> Changes in v3:
+> - Remove /dts-v1/ directive from sg2002.dtsi file
+> - Add disable-wp property to sdhci node to avoid having a write
+>   protected SD card
+> - Drop changes in cv18xx.dtsi and cv1800b.dtsi
+> - Add fallback compatible to cv1800b in SDHCI node of sg2002.dtsi
+> - Link to v2: https://lore.kernel.org/r/20240612-sg2002-v2-0-19a585af6846@bootlin.com
+> 
+> Changes in v2:
+> - Add SDHCI support
+> - Change device tree name to match the Makefile
+> - Add oscillator frequency
+> - Add aliases to other UARTs
+> - Add aliases to GPIOs
+> - Move compatible for SDHCI from common DT to specific DT
+> - Link to v1: https://lore.kernel.org/r/20240527-sg2002-v1-0-1b6cb38ce8f4@bootlin.com
+> 
+> ---
+> Thomas Bonnefille (5):
+>       dt-bindings: interrupt-controller: Add SOPHGO SG2002 plic
+>       dt-bindings: timer: Add SOPHGO SG2002 clint
+>       dt-bindings: riscv: Add Sipeed LicheeRV Nano board compatibles
+>       riscv: dts: sophgo: Add initial SG2002 SoC device tree
+>       riscv: dts: sophgo: Add LicheeRV Nano board device tree
+> 
+>  .../interrupt-controller/sifive,plic-1.0.0.yaml    |  1 +
+>  .../devicetree/bindings/riscv/sophgo.yaml          |  5 ++
+>  .../devicetree/bindings/timer/sifive,clint.yaml    |  1 +
+>  arch/riscv/boot/dts/sophgo/Makefile                |  1 +
+>  .../boot/dts/sophgo/sg2002-licheerv-nano-b.dts     | 54 ++++++++++++++++++++++
+>  arch/riscv/boot/dts/sophgo/sg2002.dtsi             | 32 +++++++++++++
+>  6 files changed, 94 insertions(+)
+> ---
+> base-commit: d20f6b3d747c36889b7ce75ee369182af3decb6b
+> change-id: 20240515-sg2002-93dce1d263be
+> 
+> Best regards,
+> --
+> Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+> 
+> 
+> 
 
-I picked my favorite to begin with, enabling KASAN (which in turn enabled a
-few others). The resulting kernel did not boot for me (just saw a black screen
-after the GRUB menu). Diff between working and non-working config is below.
 
-I then downloaded and built the config you supplied. With that I have the same
-behavior as my original config, the display is frozen with:
-Loading initial ramdisk ...
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
 
 
-[jjohnson:laptop 1966] diff .config.old .config
-19a20
-> CONFIG_CONSTRUCTORS=y
-326a328
-> CONFIG_GENERIC_CSUM=y
-334a337
-> CONFIG_KASAN_SHADOW_OFFSET=0xdffffc0000000000
-856d858
-< CONFIG_VMAP_STACK=y
-10935a10938,10940
-> CONFIG_STACKDEPOT=y
-> CONFIG_STACKDEPOT_ALWAYS_INIT=y
-> CONFIG_STACKDEPOT_MAX_FRAMES=64
-11033d11037
-< # CONFIG_KCSAN is not set
-11049c11053,11054
-< # CONFIG_SLUB_DEBUG is not set
----
-> CONFIG_SLUB_DEBUG=y
-> # CONFIG_SLUB_DEBUG_ON is not set
-11080c11085,11093
-< # CONFIG_KASAN is not set
----
-> CONFIG_KASAN=y
-> CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX=y
-> CONFIG_KASAN_GENERIC=y
-> # CONFIG_KASAN_OUTLINE is not set
-> CONFIG_KASAN_INLINE=y
-> CONFIG_KASAN_STACK=y
-> # CONFIG_KASAN_VMALLOC is not set
-> # CONFIG_KASAN_MODULE_TEST is not set
-> # CONFIG_KASAN_EXTRA_INFO is not set
-11300d11312
-< # CONFIG_UNWINDER_GUESS is not set
+New warnings running 'make CHECK_DTBS=y sophgo/sg2002-licheerv-nano-b.dtb' for 20240709-sg2002-v3-0-af779c3d139d@bootlin.com:
+
+arch/riscv/boot/dts/sophgo/sg2002-licheerv-nano-b.dtb: mmc@4310000: compatible: ['sophgo,sg2002-dwcmshc', 'sophgo,cv1800b-dwcmshc'] is too long
+	from schema $id: http://devicetree.org/schemas/mmc/snps,dwcmshc-sdhci.yaml#
+arch/riscv/boot/dts/sophgo/sg2002-licheerv-nano-b.dtb: mmc@4310000: Unevaluated properties are not allowed ('compatible' was unexpected)
+	from schema $id: http://devicetree.org/schemas/mmc/snps,dwcmshc-sdhci.yaml#
+
+
+
+
 
 
