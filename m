@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-245861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14F3D92BA95
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:07:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C61992BA9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:08:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE2A728B55A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:07:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FF951C22589
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE2516DC19;
-	Tue,  9 Jul 2024 13:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4768F17625A;
+	Tue,  9 Jul 2024 13:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PM7nHEnU"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yiKJrjqz"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D05166319
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 13:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1520616848C
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 13:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720530357; cv=none; b=GDjdCG4SVwr+T6XZiW4RKA69UbHKdNcWjSamEZ2Ozznqdx3BdQ/v6AyXevQH2Jfp9dv39AVNFi4hy8jzN+FiREUy4x3IyaFaFvkZnrwdbVuq4r8U+WsKVGvRAFh9dVIym1tt9avXyYgM1N4SVOhdRVr4eiUW9gQP6fTH0544Ric=
+	t=1720530360; cv=none; b=Z2z8DuoKcKVTg3cF5raQ3NSyKsJrmIbsqno6oqZE+PwGavmvdNbgfY3ydOnLQrxO3Hmpm4IPJdU8G/6OE6aToggxWf9BN48JMfiiquQmHYU1lllsEbDytgt4Iax5OXXE+4EHy5hzRgyRd22WHvmYRVE2ItSd8FvNq1++lstyUIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720530357; c=relaxed/simple;
-	bh=mlSpbyM8SVEH5mQ9NXQsLdRRwy/Rr3F4/HZMYlmQL4g=;
+	s=arc-20240116; t=1720530360; c=relaxed/simple;
+	bh=ReMuaX4uArWaeUyztwmAnshtAS2bOcX5muB5QxhiUe0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tevGlE01N+yiYuPzja5VGMWWN1Bz7f6dZHso6T2Y5zg9cff7Ds+Ve06IwROsW8x94CrYJy5mhb4U8HqvKRfplVDcolzNwa+pNqHd74f8RFchuIKpTRRILyaDCw44MdBdDR2MIZcCrVjim0xJEExCLlqZZqLkL+ZSBxMktKjzlrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PM7nHEnU; arc=none smtp.client-ip=209.85.208.172
+	 In-Reply-To:To:Cc; b=PZqHQVY6M4topHv6Ql2UnI7SjpR8Begf8oXvk9tOz6+K9WxMdmnc+NVGalLoydKebMiL6juh+ziibCGtiHM//+PZKDD0b+B6B4sEwLW72l7OjP1RQnRrPo9MX/6LCJyIkI98wJgMseJOlo9N5p7YR4voDMB9GOdWFXBFG78gf6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yiKJrjqz; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2eaae2a6dc1so74309411fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 06:05:55 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4266fd39527so7938625e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 06:05:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720530354; x=1721135154; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720530355; x=1721135155; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jbNayVJr9rOaf+AdR4qLuePlMRMX+Lq4+sIWrvY2Hh8=;
-        b=PM7nHEnU6FYXYLzinboUHmDuYpwnpMIG3LwBQkn2e9x7SfazrSfIeET+jyKULzNsQD
-         +E4WPs6vY58uvZ2nxPaDRLYvWNgonydTg0BdIYFjmejCTjXzFBn26l3BBrIeqeACs7on
-         JsBzoMVLS3fT0cS5Tg3Q3naKdnaP0ReZU91Y3bTDHlnzdmdXgxXxhdPjATAgVKEGOTZK
-         P6ORtPl83hlahEz8dpB4hQ5fgFcgE/BgkQ+n6DNqLKrb0H1FbXk17eHQAwPIINE+zryN
-         a0aR7bDcVskeHhIhP8cBYeaqjG1WsXPmrkgqv93kQCn1J35BXCWwjDM++lJsSupULW4K
-         r6QQ==
+        bh=FamCi9Pn/8UxKaCIIx795x4jMS/Np2PJDK/Wh8hNKJs=;
+        b=yiKJrjqzq5GVhf3/ATUeAoVIJZkbrJK9pzI5RzMII//ktxBe2e/eNyIq7C8SiDvIzy
+         WbFd+Ws2e4lLnQq9O31ftNO1EBL6+FttK6RpCE2gWR6t2mYFmhxeHAhRCQQWjIA9pOqA
+         3YSHM3asv2i5ZIgELjFMhTQarI8Hbv1eN6uqfewuJ/gE/NmdlRDcQFFABMm62/k01eTx
+         1ZKlflrmDLpu9MpAhpmvMINXUUreyI3v0iB5B68M+ax+NS7vpmfjsT8iCVDhlXa++5zR
+         zN4zlml/vowgf6mYyJaQLDFLxk50z9Fq/Gn7c4p/Xv9AR5gPNIIAIimzIdI0vW7v5Emr
+         QUXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720530354; x=1721135154;
+        d=1e100.net; s=20230601; t=1720530355; x=1721135155;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jbNayVJr9rOaf+AdR4qLuePlMRMX+Lq4+sIWrvY2Hh8=;
-        b=TD9wsiq/W2+fKT0xDwoKNNiXUfg5oGZhaSwaGoq0N8S9biFhoohiXivhDIeWpTj33m
-         MO+iMG8K94zODGDsQa4XZ19AZ3kMgK08Ay6HwzYNQBXtfXNSKqAqJC9/El82zSNFqZwG
-         OyPgNHEr7paZZ1PWaH2++Mv2TnJJ1YnCVDk+UbclRsDidwN/RGfWSPrBK6vu/8EAjDhj
-         KHWT9qcFVD9Ttguc7NxERIEP1NXqNrLCVaU/ozapATjb1XMVzD1t068LyHFlghrizzI/
-         preuQxkgP1lFZknVMGXZLw5R9+1RqN78YzepRx4D1hCP1nDJrQe6qVXxUPysFBDpFwet
-         IOow==
-X-Forwarded-Encrypted: i=1; AJvYcCUhhJlceM07xCtejSkiD6uKGGWJrInLFbCz1NVQ6XLuvCzLmBq/MpzI4Hx7ZDrJP9VnsfMD0xLvmsOglp5bdl06DV/FFYNIPuoC1Xpn
-X-Gm-Message-State: AOJu0Yzdik6zX4CDFcu6L535FkfSHWdrhCQlI5/hQzavGMOrO6ALMUYz
-	iRNdFScVcKxIvBEPZ5uCu5mawIIp2pyvJvr0Bknns8Ho8sQbvi2t18DbuTTuCSU=
-X-Google-Smtp-Source: AGHT+IGl2YCvaMbWLiEcR1rhNPaQEVPyNfHiJ7ATMAjObGvX7mk/AYzSbc81HlfG8hyWR4Sowl7AFA==
-X-Received: by 2002:a2e:9695:0:b0:2ee:8817:422d with SMTP id 38308e7fff4ca-2eeb30bae90mr22063991fa.5.1720530353700;
-        Tue, 09 Jul 2024 06:05:53 -0700 (PDT)
+        bh=FamCi9Pn/8UxKaCIIx795x4jMS/Np2PJDK/Wh8hNKJs=;
+        b=OpjUJxj9gaJjCGlP2f740BF72vvoUykbrKiSYpQzf2Kh8qjhzQ6RmyZY/pxjAbq0PC
+         e8JlosDtgn8LBnnR2MehDarh+7cpZr55VGx8Z2W9cQkQ5vbMnzeJVYof2nkRaFTRgJ/Z
+         2qjmnr+IORTdgtxTz/Jl3/9V+SSIgtP/IEqPIEWpJJMK3Grvy46/ODp2X+A3ir+hn4rC
+         dV8O+Thfj0iG0DZtdvZ+G3gDiIw4KVFmkENepcFGo1fBGB3gaYAKfFbi/WAvu6IJoqB6
+         XMPp+/+zcNGDlLV+gTs5wFzxjaewHCsn1Bikrwy/1T8niGYi8FrG3rdHQ1HF4uAZpW0k
+         NyRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXcchzL2iTjlyBRRaSdnAtDG7SkIxQCgAEUtqinYDVksPBeJnuVo7fQ+KW0yEJon2e00m9OSTfrLVTMdxzD9kTfvzZDuVIxE4YDNko2
+X-Gm-Message-State: AOJu0YwXHiUrJ6rPPapJ1IaMjPa6aAYIaT4hFmHB28xt3NBObN8+FQ+2
+	njoda6Pt5US1n5AJ246vNRvOY2zi/A7ItZH32z31K3j/MmgVECDdXokAxF2njCcK9nvzfmUeCUx
+	XFSc=
+X-Google-Smtp-Source: AGHT+IEj5EFTvP70ZnuZfRWlri8XVAN9y5x9iWArJ1rXC2AKMPQ7/zmDJT43seeK59imyP7Q4+COJQ==
+X-Received: by 2002:a05:600c:6dd2:b0:426:640a:9dec with SMTP id 5b1f17b1804b1-426708f9e89mr14068935e9.41.1720530355306;
+        Tue, 09 Jul 2024 06:05:55 -0700 (PDT)
 Received: from [127.0.1.1] ([2a0d:e487:133f:fb1b:7fc5:f63a:ac6f:62c6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f736939sm40812395e9.37.2024.07.09.06.05.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f736939sm40812395e9.37.2024.07.09.06.05.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 06:05:53 -0700 (PDT)
+        Tue, 09 Jul 2024 06:05:54 -0700 (PDT)
 From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Tue, 09 Jul 2024 15:05:44 +0200
-Subject: [PATCH 1/2] dt-bindings: display: panel: document BOE TV101WUM-LL2
- DSI Display Panel
+Date: Tue, 09 Jul 2024 15:05:45 +0200
+Subject: [PATCH 2/2] drm/panel: add BOE tv101wum-ll2 panel driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240709-topic-sdm450-upstream-tbx605f-panel-v1-1-af473397835d@linaro.org>
+Message-Id: <20240709-topic-sdm450-upstream-tbx605f-panel-v1-2-af473397835d@linaro.org>
 References: <20240709-topic-sdm450-upstream-tbx605f-panel-v1-0-af473397835d@linaro.org>
 In-Reply-To: <20240709-topic-sdm450-upstream-tbx605f-panel-v1-0-af473397835d@linaro.org>
 To: Jessica Zhang <quic_jesszhan@quicinc.com>, 
@@ -90,101 +90,312 @@ To: Jessica Zhang <quic_jesszhan@quicinc.com>,
 Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1959;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9133;
  i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=mlSpbyM8SVEH5mQ9NXQsLdRRwy/Rr3F4/HZMYlmQL4g=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmjTWtERwPm9umBBymSswYDO0ZU3Se2jjiICMwZ
- oBmDJPp+QOJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZo01rQAKCRB33NvayMhJ
- 0VbiD/wL4P7XuyhVC555StSDLegTWEcPYp1foJY/0cbug6grY8ebtV69kBkENU6e5m5Aag0KsWZ
- sTIjD/25SyEnnIXxz8G3wvrdDouvaICgGdM7A00BXrA9tC39u/1Z2LBYsyY+x2JlG3/uxZK8hPs
- QTaWxgpoILJKvUNaswtKMgDnCrIDPuE8zirH9C8j1FmbsA8E5204T6WjyYHCNYuEkQ1PV9CjxMO
- Ge6ifcWVHDEsliLXaBf/394ue6yMZZVkkqMf3rXCz6emFJVYrkqGuhdKpMhWIFh9F4RPNoTBCGU
- hiRLYOspoMCRhEilJyag3M0KCFHztnR4A0Y362GAnZw1H79Dp/xJl6rtLAb/AmgYEthLiS4VY2k
- DX09yqhO7Wr6D1ecIiT6339I76IONN2fmXbPsb/ol3LxbA0qOWZxgZv25CkZjLoE99PeqeqbH3A
- RlNDN8q9oWUZWzith7Hu4Dn/OsJ5LJmbb1kDixiGcsox1Wunlrbva2MoOo2fW62lZHI91T3a8/d
- SCjXMH9kC9B7nO+DQgRVkzdd60acTSY4d6PuW9dUXmvP/FYsTwFzrVvCklUsmt1zOCteXtSsrIa
- hkdYidmXQpZlm7fA1B7RBrwv5HibyjMhKA+8PgHv6xsPLTMsMPMogZO9barw2R0EcWiM15R/NhZ
- LZmI7p2gtml3M2w==
+ bh=ReMuaX4uArWaeUyztwmAnshtAS2bOcX5muB5QxhiUe0=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmjTWuVwfQp9h9uhDQNK3Zivhw5goQ9K1VVxZ8a
+ wNvn1CWQG6JAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZo01rgAKCRB33NvayMhJ
+ 0WMYD/0VMrOeoHJSHnb4v4QCxts9qVC2omYTLR742cWbwoBAN7sW0lP0CEkke+z8BlP16bR4C48
+ V3gr7gBxodx68FxIEJMFaI1tZZ7aN4nGXenGcXeoUrvyCQRpBglSLHaMdr8ncBNY6ieI2piHVV4
+ eRQt0iguGXl5P99hnLCuLPJHRiWf3xijsAhhj0pLjX4T9a/4WiKsszP1vw81+6PXhIamkZhpnWN
+ TwQhtrADWapY4j6fWiuw3QN2eYfKaAmykMrHLfhy3VKsFbjf39dNCnfJM6OKG7hkDnZXUOEz2vo
+ zhUhUrQaJVWjUy5njYMxmqMHr4O6N0uYvXx6sC5VtMUyLhG9ZWpA48884yZnFpzZI8D4iE6q35E
+ 5DaFOxtZ9Q39GxLh5C9NYAAak167wxrJ9TrDgEByXyONvx8ugVFkZI5eOWXHfQ18ayC0ohzt9yh
+ 9X3g3lNsQapjq5VbgDNutf7oNpywCwhZN7vATlnRNqDg6V3F/mfn9AsIAmuy1jv3Cml9I2/T6V7
+ vRKbu/+ipUNMPAQ0w+zfy4jOp2fr9NnIcqhQBDlai57J41lz2kFMpu39uwNr8nbzFu+f7xzsvzR
+ HiqkAwiIZN4Dnz3CxsfRjqHOCdmuTmOQlhy2FHZ5JQ0VHNEK1WxB0PeQQ7rEa1sUnGH1U15RZOS
+ tgQIyBUPlmz3xGg==
 X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
  fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-Document the 1200x1920 BOE TV101WUM-LL2 DSI Display Panel found
+Add support for the 1200x1920 BOE TV101WUM-LL2 DSI Display Panel found
 in the Lenovo Smart Tab M10 tablet. The controller is unknown.
 
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- .../bindings/display/panel/boe,tv101wum-ll2.yaml   | 63 ++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+ drivers/gpu/drm/panel/Kconfig                  |   9 +
+ drivers/gpu/drm/panel/Makefile                 |   1 +
+ drivers/gpu/drm/panel/panel-boe-tv101wum-ll2.c | 240 +++++++++++++++++++++++++
+ 3 files changed, 250 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/panel/boe,tv101wum-ll2.yaml b/Documentation/devicetree/bindings/display/panel/boe,tv101wum-ll2.yaml
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index 9f49b0189d3b..b52d255f65e6 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -87,6 +87,15 @@ config DRM_PANEL_BOE_TV101WUM_NL6
+ 	  Say Y here if you want to support for BOE TV101WUM and AUO KD101N80
+ 	  45NA WUXGA PANEL DSI Video Mode panel
+ 
++config DRM_PANEL_BOE_TV101WUM_LL2
++	tristate "BOE TV101WUM LL2 1200x1920 panel"
++	depends on OF
++	depends on DRM_MIPI_DSI
++	depends on BACKLIGHT_CLASS_DEVICE
++	help
++	  Say Y here if you want to support for BOE TV101WUM-LL2
++	  WUXGA PANEL DSI Video Mode panel
++
+ config DRM_PANEL_EBBG_FT8719
+ 	tristate "EBBG FT8719 panel driver"
+ 	depends on OF
+diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+index 5581387707c6..79c90894b6a4 100644
+--- a/drivers/gpu/drm/panel/Makefile
++++ b/drivers/gpu/drm/panel/Makefile
+@@ -7,6 +7,7 @@ obj-$(CONFIG_DRM_PANEL_BOE_BF060Y8M_AJ0) += panel-boe-bf060y8m-aj0.o
+ obj-$(CONFIG_DRM_PANEL_BOE_HIMAX8279D) += panel-boe-himax8279d.o
+ obj-$(CONFIG_DRM_PANEL_BOE_TH101MB31UIG002_28A) += panel-boe-th101mb31ig002-28a.o
+ obj-$(CONFIG_DRM_PANEL_BOE_TV101WUM_NL6) += panel-boe-tv101wum-nl6.o
++obj-$(CONFIG_DRM_PANEL_BOE_TV101WUM_LL2) += panel-boe-tv101wum-ll2.o
+ obj-$(CONFIG_DRM_PANEL_DSI_CM) += panel-dsi-cm.o
+ obj-$(CONFIG_DRM_PANEL_LVDS) += panel-lvds.o
+ obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
+diff --git a/drivers/gpu/drm/panel/panel-boe-tv101wum-ll2.c b/drivers/gpu/drm/panel/panel-boe-tv101wum-ll2.c
 new file mode 100644
-index 000000000000..dced98e1c69a
+index 000000000000..5513cb48d949
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/boe,tv101wum-ll2.yaml
-@@ -0,0 +1,63 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/display/panel/boe,tv101wum-ll2.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/gpu/drm/panel/panel-boe-tv101wum-ll2.c
+@@ -0,0 +1,240 @@
++// SPDX-License-Identifier: GPL-2.0-only
++// Generated with linux-mdss-dsi-panel-driver-generator from vendor device tree:
++//   Copyright (c) 2013, The Linux Foundation. All rights reserved.
++//   Copyright (c) 2024, Neil Armstrong <neil.armstrong@linaro.org>
 +
-+title: BOE TV101WUM-LL2 DSI Display Panel
++#include <linux/delay.h>
++#include <linux/gpio/consumer.h>
++#include <linux/regulator/consumer.h>
++#include <linux/module.h>
++#include <linux/of.h>
 +
-+maintainers:
-+  - Neil Armstrong <neil.armstrong@linaro.org>
++#include <drm/drm_mipi_dsi.h>
++#include <drm/drm_modes.h>
++#include <drm/drm_panel.h>
++#include <drm/drm_probe_helper.h>
 +
-+allOf:
-+  - $ref: panel-common.yaml#
++struct boe_tv101wum_ll2 {
++	struct drm_panel panel;
++	struct mipi_dsi_device *dsi;
++	struct gpio_desc *reset_gpio;
++	struct regulator_bulk_data supplies[2];
++};
 +
-+properties:
-+  compatible:
-+    const: boe,tv101wum-ll2
++static inline struct boe_tv101wum_ll2 *to_boe_tv101wum_ll2(struct drm_panel *panel)
++{
++	return container_of(panel, struct boe_tv101wum_ll2, panel);
++}
 +
-+  reg:
-+    maxItems: 1
-+    description: DSI virtual channel
++static void boe_tv101wum_ll2_reset(struct boe_tv101wum_ll2 *ctx)
++{
++	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
++	usleep_range(5000, 6000);
++	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
++	usleep_range(5000, 6000);
++	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
 +
-+  backlight: true
-+  reset-gpios: true
-+  vsp-supply: true
-+  vsn-supply: true
-+  port: true
-+  rotation: true
++	msleep(120);
++}
 +
-+required:
-+  - compatible
-+  - reg
-+  - reset-gpios
-+  - vsp-supply
-+  - vsn-supply
-+  - port
++static int boe_tv101wum_ll2_on(struct boe_tv101wum_ll2 *ctx)
++{
++	struct mipi_dsi_device *dsi = ctx->dsi;
++	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
 +
-+additionalProperties: false
++	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
 +
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    dsi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        panel@0 {
-+            compatible = "boe,tv101wum-ll2";
-+            reg = <0>;
++	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
 +
-+            vsn-supply = <&vsn_lcd>;
-+            vsp-supply = <&vsp_lcd>;
++	mipi_dsi_msleep(&dsi_ctx, 120);
 +
-+            reset-gpios = <&pio 45 GPIO_ACTIVE_LOW>;
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x50, 0x5a, 0x0e);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x80, 0xff, 0x81, 0x68, 0x6c, 0x22,
++				     0x6d, 0x12, 0x00, 0x00, 0x00, 0x00, 0x00);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x50, 0x5a, 0x23);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x90, 0x00, 0x00);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x94, 0x2c, 0x00);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x50, 0x5a, 0x19);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xa2, 0x38);
 +
-+            port {
-+                panel_in: endpoint {
-+                    remote-endpoint = <&dsi_out>;
-+                };
-+            };
-+        };
-+    };
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0x50, 0x5a, 0x0c);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0x80, 0xfd);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0x50, 0x00);
 +
-+...
++	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
++
++	mipi_dsi_msleep(&dsi_ctx, 20);
++
++	return dsi_ctx.accum_err;
++}
++
++static int boe_tv101wum_ll2_off(struct boe_tv101wum_ll2 *ctx)
++{
++	struct mipi_dsi_device *dsi = ctx->dsi;
++	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
++
++	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
++
++	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
++
++	mipi_dsi_msleep(&dsi_ctx, 70);
++
++	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
++
++	mipi_dsi_msleep(&dsi_ctx, 20);
++
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x04, 0x5a);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x05, 0x5a);
++
++	mipi_dsi_msleep(&dsi_ctx, 150);
++
++	return dsi_ctx.accum_err;
++}
++
++static int boe_tv101wum_ll2_prepare(struct drm_panel *panel)
++{
++	struct boe_tv101wum_ll2 *ctx = to_boe_tv101wum_ll2(panel);
++	struct device *dev = &ctx->dsi->dev;
++	int ret;
++
++	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies),
++				    ctx->supplies);
++	if (ret < 0)
++		return ret;
++
++	boe_tv101wum_ll2_reset(ctx);
++
++	ret = boe_tv101wum_ll2_on(ctx);
++	if (ret < 0) {
++		dev_err(dev, "Failed to initialize panel: %d\n", ret);
++		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int boe_tv101wum_ll2_unprepare(struct drm_panel *panel)
++{
++	struct boe_tv101wum_ll2 *ctx = to_boe_tv101wum_ll2(panel);
++	struct device *dev = &ctx->dsi->dev;
++	int ret;
++
++	ret = boe_tv101wum_ll2_off(ctx);
++	if (ret < 0)
++		dev_err(dev, "Failed to un-initialize panel: %d\n", ret);
++
++	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
++
++	regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
++
++	return 0;
++}
++
++static const struct drm_display_mode boe_tv101wum_ll2_mode = {
++	.clock = (1200 + 27 + 8 + 12) * (1920 + 155 + 8 + 32) * 60 / 1000,
++	.hdisplay = 1200,
++	.hsync_start = 1200 + 27,
++	.hsync_end = 1200 + 27 + 8,
++	.htotal = 1200 + 27 + 8 + 12,
++	.vdisplay = 1920,
++	.vsync_start = 1920 + 155,
++	.vsync_end = 1920 + 155 + 8,
++	.vtotal = 1920 + 155 + 8 + 32,
++	.width_mm = 136,
++	.height_mm = 217,
++	.type = DRM_MODE_TYPE_DRIVER,
++};
++
++static int boe_tv101wum_ll2_get_modes(struct drm_panel *panel,
++				      struct drm_connector *connector)
++{
++	return drm_connector_helper_get_modes_fixed(connector, &boe_tv101wum_ll2_mode);
++}
++
++static const struct drm_panel_funcs boe_tv101wum_ll2_panel_funcs = {
++	.prepare = boe_tv101wum_ll2_prepare,
++	.unprepare = boe_tv101wum_ll2_unprepare,
++	.get_modes = boe_tv101wum_ll2_get_modes,
++};
++
++static int boe_tv101wum_ll2_probe(struct mipi_dsi_device *dsi)
++{
++	struct device *dev = &dsi->dev;
++	struct boe_tv101wum_ll2 *ctx;
++	int ret;
++
++	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
++
++	ctx->supplies[0].supply = "vsp";
++	ctx->supplies[1].supply = "vsn";
++
++	ret = devm_regulator_bulk_get(&dsi->dev, ARRAY_SIZE(ctx->supplies),
++				      ctx->supplies);
++	if (ret < 0)
++		return ret;
++
++	ctx->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
++	if (IS_ERR(ctx->reset_gpio))
++		return dev_err_probe(dev, PTR_ERR(ctx->reset_gpio),
++				     "Failed to get reset-gpios\n");
++
++	ctx->dsi = dsi;
++	mipi_dsi_set_drvdata(dsi, ctx);
++
++	dsi->lanes = 4;
++	dsi->format = MIPI_DSI_FMT_RGB888;
++	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
++			  MIPI_DSI_MODE_VIDEO_HSE;
++
++	drm_panel_init(&ctx->panel, dev, &boe_tv101wum_ll2_panel_funcs,
++		       DRM_MODE_CONNECTOR_DSI);
++	ctx->panel.prepare_prev_first = true;
++
++	ret = drm_panel_of_backlight(&ctx->panel);
++	if (ret)
++		return dev_err_probe(dev, ret, "Failed to get backlight\n");
++
++	drm_panel_add(&ctx->panel);
++
++	ret = mipi_dsi_attach(dsi);
++	if (ret < 0) {
++		drm_panel_remove(&ctx->panel);
++		return dev_err_probe(dev, ret, "Failed to attach to DSI host\n");
++	}
++
++	return 0;
++}
++
++static void boe_tv101wum_ll2_remove(struct mipi_dsi_device *dsi)
++{
++	struct boe_tv101wum_ll2 *ctx = mipi_dsi_get_drvdata(dsi);
++	int ret;
++
++	ret = mipi_dsi_detach(dsi);
++	if (ret < 0)
++		dev_err(&dsi->dev, "Failed to detach from DSI host: %d\n", ret);
++
++	drm_panel_remove(&ctx->panel);
++}
++
++static const struct of_device_id boe_tv101wum_ll2_of_match[] = {
++	{ .compatible = "boe,tv101wum-ll2" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, boe_tv101wum_ll2_of_match);
++
++static struct mipi_dsi_driver boe_tv101wum_ll2_driver = {
++	.probe = boe_tv101wum_ll2_probe,
++	.remove = boe_tv101wum_ll2_remove,
++	.driver = {
++		.name = "panel-boe-tv101wum_ll2",
++		.of_match_table = boe_tv101wum_ll2_of_match,
++	},
++};
++module_mipi_dsi_driver(boe_tv101wum_ll2_driver);
++
++MODULE_DESCRIPTION("DRM driver for Boe TV101WUM-LL2 Panel");
++MODULE_LICENSE("GPL");
 
 -- 
 2.34.1
