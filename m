@@ -1,329 +1,435 @@
-Return-Path: <linux-kernel+bounces-245071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F6B892ADE9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:44:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 678E092ADEB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92A1E1F22E93
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:44:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E05CE1F22F01
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957413CF6A;
-	Tue,  9 Jul 2024 01:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fz3xrphx"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE22D347A2
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 01:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084F73A1DB;
+	Tue,  9 Jul 2024 01:45:57 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0424411;
+	Tue,  9 Jul 2024 01:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720489476; cv=none; b=XU35fP+dLroX5zrV+6j1ZjRD7SeiaYGjQtnCEFaPY/smyLvrl63ZIUy+QFFx3Gp3Aj01V+ftDjmafJeiRiiWuJRvMYbLDRrwmIh9rpz1ig8KhsUTs//WkLexQv8REUynelG4wztV7JzfxtWr4NzmSIZPM0LMr6bfoW4YI5ZiaEM=
+	t=1720489556; cv=none; b=etn6NAIn8ZmqItnv9MeR0o1WaFnW+XC/Rsm3DVp6JReY5TmBRrOCMmQKBOGw2Wzok0RWY0xokbqwWnSD+SF96dbrMQpNFzKw9G7IUa0On+89dZL3EnuB9ibeTeNjKjNwUmervlo3JYCjUykKMccl8xKbSST/kubAC6TmGHGqF+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720489476; c=relaxed/simple;
-	bh=sdOJm9Z+Rrobjli2x5KtQupuJKfwPzoOOLPs6UXdhAc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b9p98o2mo1zrsDfLjxrshJX8Om8WbGT1j6x+uLK24sM7JyDz76DAM3TuroBJsOP+fXyiHoORW0BZsJz0i77m+AmrWsIq2p3JpEHhjXCEP7DysAu5vE1kWX1YGsmzloq9S7z6vj4xosyr1bTaiUn3voNLpVZJyRiMRESMS2mJPkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fz3xrphx; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f9fb3ca81bso26004065ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 18:44:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720489474; x=1721094274; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i7JwVPtkjnXuNlozYkqpZNw80t4p50gXWxEmF3epp84=;
-        b=Fz3xrphxr/ZORLU76gSmWpx/Dgf9XEOrv6Q2yxl4Fve09DmnShFRnAj+Fw95CHRxeN
-         xQxkPz/vqTVZ2oW3aItyJqNQHqKGj/I2pyzsyodpd9b4SJ3X376xPRiAwmNXIcG2dQJA
-         LleUJzjhTYdO6gSTi8cnEO10Ntb9X2rDR8wEO9zmvKz1tFiBswYWkqVhhNgI0w0MG787
-         Ma+9T8T3mmCy1NAsfvx5aDK/UoFFNw747GIJsVjnXg0h1pqQn18xBp9TzdCkcvP68FpZ
-         aRUqTzuY+r+2umZiM3dR7/8dXL3xmMEbXyLu3pIj28XB/RWDbkUPza7xIJ2mauji3ChO
-         Fuww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720489474; x=1721094274;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i7JwVPtkjnXuNlozYkqpZNw80t4p50gXWxEmF3epp84=;
-        b=gnZ0gWPAWcqI4ZJBxsTqSm0T5VZeB18BNjbohY1zHdZlfnSrcyUBWFY+Y2sxB45k0u
-         3nsb0hEwJBCubZBSBaGhvhIq/p/1RnDt248+9edDjlPwtytpPBP7h+v2BgKHURU060AF
-         B/k70ue1v4m6bbz3+HrfcqE7Z4hZhjvUrMCZLlWSmw9vKIhuz2K+LvOWsERmW1l5E5k6
-         b+NJCcyf+47wIrHVipwZs0WTNRXM2khDHiGKuVmfpJeiIw3wXpevzkiiqmL+dX3NrJ26
-         kk9U6YWkioEItSxZA9QJff+2jd+DJDdbsWdhsAZUjCOe5mVL95bIYs/zqZFUTMK7IEyG
-         /ykQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbQwYBNUL1BSSsVUuisw3M2Bftx88PNGO1KNVRPMv9KhJe96fJ0uk9ffQJFUe6lmM3NV8H8y1MxcJ6LpUwYr0TUd15I2pSVuU72KK3
-X-Gm-Message-State: AOJu0Yz2FTA7JaswXFWDcsl2g4jhwerfTFFmJTqcbSnevlrYvUAeCYze
-	0dlu+nJFOjAZseGZX4B+aJUykc7nK1DNmFH6IN/b1ch4MRIZQJUb
-X-Google-Smtp-Source: AGHT+IEGRgF6WH6W+fLpO2gg+v0EPIgumYh7bbxFBukp6w+Svkfg/57ie1z+Mr5bos7qmDXFjYhyog==
-X-Received: by 2002:a05:6a20:4388:b0:1c0:ee57:a9a5 with SMTP id adf61e73a8af0-1c2984ce6bemr962165637.42.1720489473967;
-        Mon, 08 Jul 2024 18:44:33 -0700 (PDT)
-Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ab6c53sm4910245ad.153.2024.07.08.18.44.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 18:44:33 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: ryan.roberts@arm.com
-Cc: akpm@linux-foundation.org,
-	baohua@kernel.org,
-	baolin.wang@linux.alibaba.com,
-	corbet@lwn.net,
-	da.gomez@samsung.com,
-	david@redhat.com,
-	hughd@google.com,
-	ioworker0@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	willy@infradead.org,
-	ziy@nvidia.com
-Subject: [PATCH v1] mm: shmem: Rename mTHP shmem counters
-Date: Tue,  9 Jul 2024 13:44:13 +1200
-Message-Id: <20240709014413.18044-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <744749c3-4506-40d9-ac48-0dbc59689f92@arm.com>
-References: <744749c3-4506-40d9-ac48-0dbc59689f92@arm.com>
+	s=arc-20240116; t=1720489556; c=relaxed/simple;
+	bh=zVNFpmjpleskP9S+uhbllSPbhV1AmXKtic2+cmcy85Q=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=jAg7mrFwP7wSFllKt8h7rFw4VwS9il/sYy5TXkMWUmLGiPzxUJeVvCTZdmgizZxZ8AT90385Wlx8lnQsWZkQZWZIBfOn1YI3aXJSTCa7A9FB8SW4aW+MScXS12o20NIsigNbW6K/Bv2O8Q0VNpZJX9WmAIlKdpnwv8J8LDIko5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8CxrutPloxmUjsCAA--.6645S3;
+	Tue, 09 Jul 2024 09:45:51 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8AxhsVMloxmRWhAAA--.6507S3;
+	Tue, 09 Jul 2024 09:45:50 +0800 (CST)
+Subject: Re: [PATCH v4 2/3] LoongArch: KVM: Add LBT feature detection function
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240626063239.3722175-1-maobibo@loongson.cn>
+ <CAAhV-H4O8QNb61xkErd9y_1tK_70=Y=LNqzy=9Ny5EQK1XZJaQ@mail.gmail.com>
+ <79dcf093-614f-2737-bb03-698b0b3abc57@loongson.cn>
+ <CAAhV-H5bQutcLcVaHn-amjF6_NDnCf2BFqqnGSRT_QQ_6q6REg@mail.gmail.com>
+ <9c7d242e-660b-8d39-b69e-201fd0a4bfbf@loongson.cn>
+ <CAAhV-H4wwrYyMYpL1u5Z3sFp6EeW4eWhGbBv0Jn9XYJGXgwLfg@mail.gmail.com>
+ <059d66e4-dd5d-0091-01d9-11aaba9297bd@loongson.cn>
+ <CAAhV-H41B3_dLgTQGwT-DRDbb=qt44A_M08-RcKfJuxOTfm3nw@mail.gmail.com>
+ <7e6a1dbc-779a-4669-4541-c5952c9bdf24@loongson.cn>
+ <CAAhV-H7jY8p8eY4rVLcMvVky9ZQTyZkA+0UsW2JkbKYtWvjmZg@mail.gmail.com>
+ <81dded06-ad03-9aed-3f07-cf19c5538723@loongson.cn>
+ <CAAhV-H520i-2N0DUPO=RJxtU8Sn+eofQAy7_e+rRsnNdgv8DTQ@mail.gmail.com>
+ <0e28596c-3fe9-b716-b193-200b9b1d5516@loongson.cn>
+ <CAAhV-H6vgb1D53zHoe=BJD1crB9jcdZy7RM-G0YY0UD+ubDi4g@mail.gmail.com>
+ <aac97476-0a3a-657d-9340-c129bc710791@loongson.cn>
+ <CAAhV-H7Pqf6_MLwhe8eC0XvspMnUvxB=HdLvPsAT6U=m5SozCg@mail.gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <686df603-d80b-2e0b-3699-02d574b302e3@loongson.cn>
+Date: Tue, 9 Jul 2024 09:45:48 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CAAhV-H7Pqf6_MLwhe8eC0XvspMnUvxB=HdLvPsAT6U=m5SozCg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8AxhsVMloxmRWhAAA--.6507S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj9fXoW3CF4ruF18Jr4kuFW7CF47ZFc_yoW8XrW8Jo
+	W5Jr17Jr18Jr1UAr1UJ34DJr1UJw1UJr1UJryUJr15Jr1Utw1UAr1UJr1UJF47Jr1UJr1U
+	JryUJr1UAF17Jr1Ul-sFpf9Il3svdjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8wcxFpf
+	9Il3svdxBIdaVrn0xqx4xG64xvF2IEw4CE5I8CrVC2j2Jv73VFW2AGmfu7bjvjm3AaLaJ3
+	UjIYCTnIWjp_UUUYx7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI
+	8IcIk0rVWrJVCq3wAFIxvE14AKwVWUGVWUXwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
+	Y2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14
+	v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
+	wI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI
+	0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280
+	aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2
+	xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
+	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r
+	1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF
+	7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
+	WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j1
+	LvtUUUUU=
 
-On Tue, Jul 9, 2024 at 12:30 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
->
-> On 08/07/2024 12:36, Barry Song wrote:
-> > On Mon, Jul 8, 2024 at 11:24 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
-> >>
-> >> The legacy PMD-sized THP counters at /proc/vmstat include
-> >> thp_file_alloc, thp_file_fallback and thp_file_fallback_charge, which
-> >> rather confusingly refer to shmem THP and do not include any other types
-> >> of file pages. This is inconsistent since in most other places in the
-> >> kernel, THP counters are explicitly separated for anon, shmem and file
-> >> flavours. However, we are stuck with it since it constitutes a user ABI.
-> >>
-> >> Recently, commit 66f44583f9b6 ("mm: shmem: add mTHP counters for
-> >> anonymous shmem") added equivalent mTHP stats for shmem, keeping the
-> >> same "file_" prefix in the names. But in future, we may want to add
-> >> extra stats to cover actual file pages, at which point, it would all
-> >> become very confusing.
-> >>
-> >> So let's take the opportunity to rename these new counters "shmem_"
-> >> before the change makes it upstream and the ABI becomes immutable.
-> >
-> > Personally, I think this approach is much clearer. However, I recall
-> > we discussed this
-> > before [1], and it seems that inconsistency is a concern?
->
-> Embarrassingly, I don't recall that converstation at all :-| but at least what I
-> said then is consistent with what I've done in this patch.
->
-> I think David's conclusion from that thread was to call them FILE_, and add both
-> shmem and pagecache counts to those counters, meaning we can keep the same name
-> as legacy THP counters. But those legacy THP counters only count shmem, and I
-> don't think we would get away with adding pagecache counts to those at this
-> point? (argument: they have been around for long time and there is a risk that
-> user space relies on them and if they were to dramatically increase due to
-> pagecache addition now that could break things). In that case, there is still
-> inconsistency, but its worse; the names are consistent but the semantics are
-> inconsistent.
->
-> So my vote is to change to SHMEM_ as per this patch :)
 
-I have no objections. However, I dislike the documentation for
-thp_file_*. Perhaps we can clean it all up together ?
 
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index 709fe10b60f4..65df48cb3bbb 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -417,21 +417,22 @@ thp_collapse_alloc_failed
- 	the allocation.
- 
- thp_file_alloc
--	is incremented every time a file huge page is successfully
--	allocated.
-+	is incremented every time a file (including shmem) huge page is
-+	successfully allocated.
- 
- thp_file_fallback
--	is incremented if a file huge page is attempted to be allocated
--	but fails and instead falls back to using small pages.
-+	is incremented if a file (including shmem) huge page is attempted
-+	to be allocated but fails and instead falls back to using small
-+	pages.
- 
- thp_file_fallback_charge
--	is incremented if a file huge page cannot be charged and instead
--	falls back to using small pages even though the allocation was
--	successful.
-+	is incremented if a file (including shmem) huge page cannot be
-+	charged and instead falls back to using small pages even though
-+	the allocation was successful.
- 
- thp_file_mapped
--	is incremented every time a file huge page is mapped into
--	user address space.
-+	is incremented every time a file (including shmem) huge page is
-+	mapped into user address space.
- 
- thp_split_page
- 	is incremented every time a huge page is split into base
- 	
->
-> >
-> > [1] https://lore.kernel.org/linux-mm/05d0096e4ec3e572d1d52d33a31a661321ac1551.1713755580.git.baolin.wang@linux.alibaba.com/
-> >
-> >
-> >>
-> >> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> >> ---
-> >>
-> >> Hi All,
-> >>
-> >> Applies on top of today's mm-unstable (2073cda629a4) and tested with mm
-> >> selftests; no regressions observed.
-> >>
-> >> The backstory here is that I'd like to introduce some counters for regular file
-> >> folio allocations to observe how often large folio allocation succeeds, but
-> >> these shmem counters are named "file" which is going to make things confusing.
-> >> So hoping to solve that before commit 66f44583f9b6 ("mm: shmem: add mTHP
-> >> counters for anonymous shmem") goes upstream (it is currently in mm-stable).
-> >>
-> >> Admittedly, this change means the mTHP stat names are not the same as the legacy
-> >> PMD-size THP names, but I think that's a smaller issue than having "file_" mTHP
-> >> stats that only count shmem, then having to introduce "file2_" or "pgcache_"
-> >> stats for the regular file memory, which is even more inconsistent IMHO. I guess
-> >> the alternative is to count both shmem and file in these mTHP stats (that's how
-> >> they were documented anyway) but I think it's better to be able to consider them
-> >> separately like we do for all the other counters.
-> >>
-> >> Thanks,
-> >> Ryan
-> >>
-> >>  Documentation/admin-guide/mm/transhuge.rst | 12 ++++++------
-> >>  include/linux/huge_mm.h                    |  6 +++---
-> >>  mm/huge_memory.c                           | 12 ++++++------
-> >>  mm/shmem.c                                 |  8 ++++----
-> >>  4 files changed, 19 insertions(+), 19 deletions(-)
-> >>
-> >> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-> >> index 747c811ee8f1..8b891689fc13 100644
-> >> --- a/Documentation/admin-guide/mm/transhuge.rst
-> >> +++ b/Documentation/admin-guide/mm/transhuge.rst
-> >> @@ -496,16 +496,16 @@ swpout_fallback
-> >>         Usually because failed to allocate some continuous swap space
-> >>         for the huge page.
-> >>
-> >> -file_alloc
-> >> -       is incremented every time a file huge page is successfully
-> >> +shmem_alloc
-> >> +       is incremented every time a shmem huge page is successfully
-> >>         allocated.
-> >>
-> >> -file_fallback
-> >> -       is incremented if a file huge page is attempted to be allocated
-> >> +shmem_fallback
-> >> +       is incremented if a shmem huge page is attempted to be allocated
-> >>         but fails and instead falls back to using small pages.
-> >>
-> >> -file_fallback_charge
-> >> -       is incremented if a file huge page cannot be charged and instead
-> >> +shmem_fallback_charge
-> >> +       is incremented if a shmem huge page cannot be charged and instead
-> >>         falls back to using small pages even though the allocation was
-> >>         successful.
-> >>
-> >> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> >> index acb6ac24a07e..cff002be83eb 100644
-> >> --- a/include/linux/huge_mm.h
-> >> +++ b/include/linux/huge_mm.h
-> >> @@ -269,9 +269,9 @@ enum mthp_stat_item {
-> >>         MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
-> >>         MTHP_STAT_SWPOUT,
-> >>         MTHP_STAT_SWPOUT_FALLBACK,
-> >> -       MTHP_STAT_FILE_ALLOC,
-> >> -       MTHP_STAT_FILE_FALLBACK,
-> >> -       MTHP_STAT_FILE_FALLBACK_CHARGE,
-> >> +       MTHP_STAT_SHMEM_ALLOC,
-> >> +       MTHP_STAT_SHMEM_FALLBACK,
-> >> +       MTHP_STAT_SHMEM_FALLBACK_CHARGE,
-> >>         MTHP_STAT_SPLIT,
-> >>         MTHP_STAT_SPLIT_FAILED,
-> >>         MTHP_STAT_SPLIT_DEFERRED,
-> >> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> >> index 9ec64aa2be94..f9696c94e211 100644
-> >> --- a/mm/huge_memory.c
-> >> +++ b/mm/huge_memory.c
-> >> @@ -568,9 +568,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
-> >>  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
-> >>  DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
-> >>  DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
-> >> -DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
-> >> -DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
-> >> -DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHARGE);
-> >> +DEFINE_MTHP_STAT_ATTR(shmem_alloc, MTHP_STAT_SHMEM_ALLOC);
-> >> +DEFINE_MTHP_STAT_ATTR(shmem_fallback, MTHP_STAT_SHMEM_FALLBACK);
-> >> +DEFINE_MTHP_STAT_ATTR(shmem_fallback_charge, MTHP_STAT_SHMEM_FALLBACK_CHARGE);
-> >>  DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
-> >>  DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
-> >>  DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
-> >> @@ -581,9 +581,9 @@ static struct attribute *stats_attrs[] = {
-> >>         &anon_fault_fallback_charge_attr.attr,
-> >>         &swpout_attr.attr,
-> >>         &swpout_fallback_attr.attr,
-> >> -       &file_alloc_attr.attr,
-> >> -       &file_fallback_attr.attr,
-> >> -       &file_fallback_charge_attr.attr,
-> >> +       &shmem_alloc_attr.attr,
-> >> +       &shmem_fallback_attr.attr,
-> >> +       &shmem_fallback_charge_attr.attr,
-> >>         &split_attr.attr,
-> >>         &split_failed_attr.attr,
-> >>         &split_deferred_attr.attr,
-> >> diff --git a/mm/shmem.c b/mm/shmem.c
-> >> index 921d59c3d669..f24dfbd387ba 100644
-> >> --- a/mm/shmem.c
-> >> +++ b/mm/shmem.c
-> >> @@ -1777,7 +1777,7 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
-> >>                         if (pages == HPAGE_PMD_NR)
-> >>                                 count_vm_event(THP_FILE_FALLBACK);
-> >>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> >> -                       count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
-> >> +                       count_mthp_stat(order, MTHP_STAT_SHMEM_FALLBACK);
-> >>  #endif
-> >>                         order = next_order(&suitable_orders, order);
-> >>                 }
-> >> @@ -1804,8 +1804,8 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
-> >>                                 count_vm_event(THP_FILE_FALLBACK_CHARGE);
-> >>                         }
-> >>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> >> -                       count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK);
-> >> -                       count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK_CHARGE);
-> >> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_FALLBACK);
-> >> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_FALLBACK_CHARGE);
-> >>  #endif
-> >>                 }
-> >>                 goto unlock;
-> >> @@ -2181,7 +2181,7 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
-> >>                         if (folio_test_pmd_mappable(folio))
-> >>                                 count_vm_event(THP_FILE_ALLOC);
-> >>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> >> -                       count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_ALLOC);
-> >> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_ALLOC);
-> >>  #endif
-> >>                         goto alloced;
-> >>                 }
-> >> --
-> >> 2.43.0
-> >>
-> >
+On 2024/7/8 下午5:51, Huacai Chen wrote:
+> On Thu, Jul 4, 2024 at 9:24 AM maobibo <maobibo@loongson.cn> wrote:
+>>
+>>
+>>
+>> On 2024/7/3 下午11:35, Huacai Chen wrote:
+>>> On Wed, Jul 3, 2024 at 11:15 AM maobibo <maobibo@loongson.cn> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 2024/7/2 下午11:43, Huacai Chen wrote:
+>>>>> On Tue, Jul 2, 2024 at 4:42 PM maobibo <maobibo@loongson.cn> wrote:
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> On 2024/7/2 下午3:28, Huacai Chen wrote:
+>>>>>>> On Tue, Jul 2, 2024 at 12:13 PM maobibo <maobibo@loongson.cn> wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> On 2024/7/2 上午10:34, Huacai Chen wrote:
+>>>>>>>>> On Tue, Jul 2, 2024 at 10:25 AM maobibo <maobibo@loongson.cn> wrote:
+>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> On 2024/7/2 上午9:59, Huacai Chen wrote:
+>>>>>>>>>>> On Tue, Jul 2, 2024 at 9:51 AM maobibo <maobibo@loongson.cn> wrote:
+>>>>>>>>>>>>
+>>>>>>>>>>>> Huacai,
+>>>>>>>>>>>>
+>>>>>>>>>>>> On 2024/7/1 下午6:26, Huacai Chen wrote:
+>>>>>>>>>>>>> On Mon, Jul 1, 2024 at 9:27 AM maobibo <maobibo@loongson.cn> wrote:
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Huacai,
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> On 2024/6/30 上午10:07, Huacai Chen wrote:
+>>>>>>>>>>>>>>> Hi, Bibo,
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> On Wed, Jun 26, 2024 at 2:32 PM Bibo Mao <maobibo@loongson.cn> wrote:
+>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> Two kinds of LBT feature detection are added here, one is VCPU
+>>>>>>>>>>>>>>>> feature, the other is VM feature. VCPU feature dection can only
+>>>>>>>>>>>>>>>> work with VCPU thread itself, and requires VCPU thread is created
+>>>>>>>>>>>>>>>> already. So LBT feature detection for VM is added also, it can
+>>>>>>>>>>>>>>>> be done even if VM is not created, and also can be done by any
+>>>>>>>>>>>>>>>> thread besides VCPU threads.
+>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> Loongson Binary Translation (LBT) feature is defined in register
+>>>>>>>>>>>>>>>> cpucfg2. Here LBT capability detection for VCPU is added.
+>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> Here ioctl command KVM_HAS_DEVICE_ATTR is added for VM, and macro
+>>>>>>>>>>>>>>>> KVM_LOONGARCH_VM_FEAT_CTRL is added to check supported feature. And
+>>>>>>>>>>>>>>>> three sub-features relative with LBT are added as following:
+>>>>>>>>>>>>>>>>          KVM_LOONGARCH_VM_FEAT_X86BT
+>>>>>>>>>>>>>>>>          KVM_LOONGARCH_VM_FEAT_ARMBT
+>>>>>>>>>>>>>>>>          KVM_LOONGARCH_VM_FEAT_MIPSBT
+>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>>>>>>>>>>>>>>>> ---
+>>>>>>>>>>>>>>>>          arch/loongarch/include/uapi/asm/kvm.h |  6 ++++
+>>>>>>>>>>>>>>>>          arch/loongarch/kvm/vcpu.c             |  6 ++++
+>>>>>>>>>>>>>>>>          arch/loongarch/kvm/vm.c               | 44 ++++++++++++++++++++++++++-
+>>>>>>>>>>>>>>>>          3 files changed, 55 insertions(+), 1 deletion(-)
+>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/include/uapi/asm/kvm.h
+>>>>>>>>>>>>>>>> index ddc5cab0ffd0..c40f7d9ffe13 100644
+>>>>>>>>>>>>>>>> --- a/arch/loongarch/include/uapi/asm/kvm.h
+>>>>>>>>>>>>>>>> +++ b/arch/loongarch/include/uapi/asm/kvm.h
+>>>>>>>>>>>>>>>> @@ -82,6 +82,12 @@ struct kvm_fpu {
+>>>>>>>>>>>>>>>>          #define KVM_IOC_CSRID(REG)             LOONGARCH_REG_64(KVM_REG_LOONGARCH_CSR, REG)
+>>>>>>>>>>>>>>>>          #define KVM_IOC_CPUCFG(REG)            LOONGARCH_REG_64(KVM_REG_LOONGARCH_CPUCFG, REG)
+>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> +/* Device Control API on vm fd */
+>>>>>>>>>>>>>>>> +#define KVM_LOONGARCH_VM_FEAT_CTRL     0
+>>>>>>>>>>>>>>>> +#define  KVM_LOONGARCH_VM_FEAT_X86BT   0
+>>>>>>>>>>>>>>>> +#define  KVM_LOONGARCH_VM_FEAT_ARMBT   1
+>>>>>>>>>>>>>>>> +#define  KVM_LOONGARCH_VM_FEAT_MIPSBT  2
+>>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>>          /* Device Control API on vcpu fd */
+>>>>>>>>>>>>>>>>          #define KVM_LOONGARCH_VCPU_CPUCFG      0
+>>>>>>>>>>>>>>>>          #define KVM_LOONGARCH_VCPU_PVTIME_CTRL 1
+>>>>>>>>>>>>>>> If you insist that LBT should be a vm feature, then I suggest the
+>>>>>>>>>>>>>>> above two also be vm features. Though this is an UAPI change, but
+>>>>>>>>>>>>>>> CPUCFG is upstream in 6.10-rc1 and 6.10-final hasn't been released. We
+>>>>>>>>>>>>>>> have a chance to change it now.
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> KVM_LOONGARCH_VCPU_PVTIME_CTRL need be attr percpu since every vcpu
+>>>>>>>>>>>>>> has is own different gpa address.
+>>>>>>>>>>>>> Then leave this as a vm feature.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> For KVM_LOONGARCH_VCPU_CPUCFG attr, it will not changed. We cannot break
+>>>>>>>>>>>>>> the API even if it is 6.10-rc1, VMM has already used this. Else there is
+>>>>>>>>>>>>>> uapi breaking now, still will be in future if we cannot control this.
+>>>>>>>>>>>>> UAPI changing before the first release is allowed, which means, we can
+>>>>>>>>>>>>> change this before the 6.10-final, but cannot change it after
+>>>>>>>>>>>>> 6.10-final.
+>>>>>>>>>>>> Now QEMU has already synced uapi to its own directory, also I never hear
+>>>>>>>>>>>> about this, with my experience with uapi change, there is only newly
+>>>>>>>>>>>> added or removed deprecated years ago.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Is there any documentation about UAPI change rules?
+>>>>>>>>>>> No document, but learn from my more than 10 years upstream experience.
+>>>>>>>>>> Can you show me an example about with your rich upstream experience?
+>>>>>>>>> A simple example,
+>>>>>>>>> e877d705704d7c8fe17b6b5ebdfdb14b84c revert
+>>>>>>>>> 1dccdba084897443d116508a8ed71e0ac8a0 and it changes UAPI.
+>>>>>>>>> 1dccdba084897443d116508a8ed71e0ac8a0 is upstream in 6.9-rc1, and
+>>>>>>>>> e877d705704d7c8fe17b6b5ebdfdb14b84c can revert the behavior before
+>>>>>>>>> 6.9-final, but not after that.
+>>>>>>>>>
+>>>>>>>>> Before the first release, the code status is treated as "unstable", so
+>>>>>>>>> revert, modify is allowed. But after the first release, even if an
+>>>>>>>>> "error" should also be treated as a "bad feature".
+>>>>>>>> Huacai,
+>>>>>>>>
+>>>>>>>> Thanks for showing the example.
+>>>>>>>>
+>>>>>>>> For this issue, Can we adding new uapi and mark the old as deprecated?
+>>>>>>>> so that it can be removed after years.
+>>>>>>> Unnecessary, just remove the old one. Deprecation is for the usage
+>>>>>>> after the first release.
+>>>>>>>
+>>>>>>>>
+>>>>>>>> For me, it is too frequent to revert the old uapi, it is not bug and
+>>>>>>>> only that we have better method now. Also QEMU has synchronized the uapi
+>>>>>>>> to its directory already.
+>>>>>>> QEMU also hasn't been released after synchronizing the uapi, so it is
+>>>>>>> OK to remove the old api now.
+>>>>>> No, I will not do such thing. It is just a joke to revert the uapi.
+>>>>>>
+>>>>>> So just create new world and old world on Loongarch system again?
+>>>>> Again, code status before the first release is *unstable*, that status
+>>>>> is not enough to be a "world".
+>>>>>
+>>>>> It's your responsibility to make a good design at the beginning, but
+>>>>> you fail to do that. Fortunately we are before the first release;
+>>>>> unfortunately you don't want to do that.
+>>>> Yes, this is flaw at the beginning, however it can works and new abi can
+>>>> be added.
+>>>>
+>>>> If there is no serious bug and it is synced to QEMU already, I am not
+>>>> willing to revert uabi. Different projects have its own schedule plan,
+>>>> that is one reason. The most important reason may be that different
+>>>> peoples have different ways handling these issues.
+>>> In another thread I found that Jiaxun said he has a solution to make
+>>> LBT be a vcpu feature and still works well. However, that may take
+>>> some time and is too late for 6.11.
+>>
+>> It is welcome if Jiaxun provide patch for host machine type, I have no
+>> time give any feedback with suggestion of Jianxun now.
+>>
+>>>
+>>> But we have another choice now: just remove the UAPI and vm.c parts in
+>>> this series, let the LBT main parts be upstream in 6.11, and then
+>>> solve other problems after 6.11. Even if Jiaxun's solution isn't
+>>> usable, we can still use this old vm feature solution then.
+>>
+>> There is not useul if only LBT main part goes upstream. VMM cannot use
+>> LBT if control part is not merged.
+> There is no control part UAPI for LSX/LASX, but it works.
+LSX/LASX feature probing comes from CPU feature detecting.
 
-Thanks
-Barry
+> If you insist that all should be merged together, there is probably
+> not enough time for the 6.11 merge window.
+It is not so hurry for LBT feature, only that PMU function uses the same 
+method, that will be delayed also. Almost all user visible features need 
+feature detection.
+
+Regards
+Bibo Mao
+
+> 
+> Huacai
+> 
+>>
+>>   From another side, what do you like to do? Reviewing patch of others
+>> and give comments whatever grammar spelling or useful suggestions, or
+>> Writing patch which needs much efforts rather than somethings like
+>> feature configuration, BSP drivers.
+>>
+>> Regards
+>> Bibo Mao
+>>
+>>>
+>>>
+>>> Huacai
+>>>>
+>>>> Regards
+>>>> Bibo, Mao
+>>>>>
+>>>>>
+>>>>> Huacai
+>>>>>
+>>>>>>
+>>>>>> Regards
+>>>>>> Bibo, Mao
+>>>>>>
+>>>>>>>
+>>>>>>> Huacai
+>>>>>>>
+>>>>>>>>
+>>>>>>>> Regards
+>>>>>>>> Bibo, Mao
+>>>>>>>>>
+>>>>>>>>> Huacai
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> How about adding new extra features capability for VM such as?
+>>>>>>>>>>>>>> +#define  KVM_LOONGARCH_VM_FEAT_LSX   3
+>>>>>>>>>>>>>> +#define  KVM_LOONGARCH_VM_FEAT_LASX  4
+>>>>>>>>>>>>> They should be similar as LBT, if LBT is vcpu feature, they should
+>>>>>>>>>>>>> also be vcpu features; if LBT is vm feature, they should also be vm
+>>>>>>>>>>>>> features.
+>>>>>>>>>>>> On other architectures, with function kvm_vm_ioctl_check_extension()
+>>>>>>>>>>>>           KVM_CAP_XSAVE2/KVM_CAP_PMU_CAPABILITY on x86
+>>>>>>>>>>>>           KVM_CAP_ARM_PMU_V3/KVM_CAP_ARM_SVE on arm64
+>>>>>>>>>>>> These features are all cpu features, at the same time they are VM features.
+>>>>>>>>>>>>
+>>>>>>>>>>>> If they are cpu features, how does VMM detect validity of these features
+>>>>>>>>>>>> passing from command line? After all VCPUs are created and send bootup
+>>>>>>>>>>>> command to these VCPUs? That is too late, VMM main thread is easy to
+>>>>>>>>>>>> detect feature validity if they are VM features also.
+>>>>>>>>>>>>
+>>>>>>>>>>>> To be honest, I am not familiar with KVM still, only get further
+>>>>>>>>>>>> understanding after actual problems solving. Welcome to give comments,
+>>>>>>>>>>>> however please read more backgroud if you insist on, else there will be
+>>>>>>>>>>>> endless argument again.
+>>>>>>>>>>> I just say CPUCFG/LSX/LASX and LBT should be in the same class, I
+>>>>>>>>>>> haven't insisted on whether they should be vcpu features or vm
+>>>>>>>>>>> features.
+>>>>>>>>>> It is reasonable if LSX/LASX/LBT should be in the same class, since
+>>>>>>>>>> there is feature options such as lsx=on/off,lasx=on/off,lbt=on/off.
+>>>>>>>>>>
+>>>>>>>>>> What is the usage about CPUCFG capability used for VM feature? It is not
+>>>>>>>>>> a detailed feature, it is only feature-set indicator like cpuid.
+>>>>>>>>>>
+>>>>>>>>>> Regards
+>>>>>>>>>> Bibo Mao
+>>>>>>>>>>>
+>>>>>>>>>>> Huacai
+>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>> Regards
+>>>>>>>>>>>> Bibo, Mao
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Huacai
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Regards
+>>>>>>>>>>>>>> Bibo Mao
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Huacai
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+>>>>>>>>>>>>>>>> index 233d28d0e928..9734b4d8db05 100644
+>>>>>>>>>>>>>>>> --- a/arch/loongarch/kvm/vcpu.c
+>>>>>>>>>>>>>>>> +++ b/arch/loongarch/kvm/vcpu.c
+>>>>>>>>>>>>>>>> @@ -565,6 +565,12 @@ static int _kvm_get_cpucfg_mask(int id, u64 *v)
+>>>>>>>>>>>>>>>>                                 *v |= CPUCFG2_LSX;
+>>>>>>>>>>>>>>>>                         if (cpu_has_lasx)
+>>>>>>>>>>>>>>>>                                 *v |= CPUCFG2_LASX;
+>>>>>>>>>>>>>>>> +               if (cpu_has_lbt_x86)
+>>>>>>>>>>>>>>>> +                       *v |= CPUCFG2_X86BT;
+>>>>>>>>>>>>>>>> +               if (cpu_has_lbt_arm)
+>>>>>>>>>>>>>>>> +                       *v |= CPUCFG2_ARMBT;
+>>>>>>>>>>>>>>>> +               if (cpu_has_lbt_mips)
+>>>>>>>>>>>>>>>> +                       *v |= CPUCFG2_MIPSBT;
+>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>                         return 0;
+>>>>>>>>>>>>>>>>                 case LOONGARCH_CPUCFG3:
+>>>>>>>>>>>>>>>> diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
+>>>>>>>>>>>>>>>> index 6b2e4f66ad26..09e05108c68b 100644
+>>>>>>>>>>>>>>>> --- a/arch/loongarch/kvm/vm.c
+>>>>>>>>>>>>>>>> +++ b/arch/loongarch/kvm/vm.c
+>>>>>>>>>>>>>>>> @@ -99,7 +99,49 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+>>>>>>>>>>>>>>>>                 return r;
+>>>>>>>>>>>>>>>>          }
+>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> +static int kvm_vm_feature_has_attr(struct kvm *kvm, struct kvm_device_attr *attr)
+>>>>>>>>>>>>>>>> +{
+>>>>>>>>>>>>>>>> +       switch (attr->attr) {
+>>>>>>>>>>>>>>>> +       case KVM_LOONGARCH_VM_FEAT_X86BT:
+>>>>>>>>>>>>>>>> +               if (cpu_has_lbt_x86)
+>>>>>>>>>>>>>>>> +                       return 0;
+>>>>>>>>>>>>>>>> +               return -ENXIO;
+>>>>>>>>>>>>>>>> +       case KVM_LOONGARCH_VM_FEAT_ARMBT:
+>>>>>>>>>>>>>>>> +               if (cpu_has_lbt_arm)
+>>>>>>>>>>>>>>>> +                       return 0;
+>>>>>>>>>>>>>>>> +               return -ENXIO;
+>>>>>>>>>>>>>>>> +       case KVM_LOONGARCH_VM_FEAT_MIPSBT:
+>>>>>>>>>>>>>>>> +               if (cpu_has_lbt_mips)
+>>>>>>>>>>>>>>>> +                       return 0;
+>>>>>>>>>>>>>>>> +               return -ENXIO;
+>>>>>>>>>>>>>>>> +       default:
+>>>>>>>>>>>>>>>> +               return -ENXIO;
+>>>>>>>>>>>>>>>> +       }
+>>>>>>>>>>>>>>>> +}
+>>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>> +static int kvm_vm_has_attr(struct kvm *kvm, struct kvm_device_attr *attr)
+>>>>>>>>>>>>>>>> +{
+>>>>>>>>>>>>>>>> +       switch (attr->group) {
+>>>>>>>>>>>>>>>> +       case KVM_LOONGARCH_VM_FEAT_CTRL:
+>>>>>>>>>>>>>>>> +               return kvm_vm_feature_has_attr(kvm, attr);
+>>>>>>>>>>>>>>>> +       default:
+>>>>>>>>>>>>>>>> +               return -ENXIO;
+>>>>>>>>>>>>>>>> +       }
+>>>>>>>>>>>>>>>> +}
+>>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>>          int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
+>>>>>>>>>>>>>>>>          {
+>>>>>>>>>>>>>>>> -       return -ENOIOCTLCMD;
+>>>>>>>>>>>>>>>> +       struct kvm *kvm = filp->private_data;
+>>>>>>>>>>>>>>>> +       void __user *argp = (void __user *)arg;
+>>>>>>>>>>>>>>>> +       struct kvm_device_attr attr;
+>>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>> +       switch (ioctl) {
+>>>>>>>>>>>>>>>> +       case KVM_HAS_DEVICE_ATTR:
+>>>>>>>>>>>>>>>> +               if (copy_from_user(&attr, argp, sizeof(attr)))
+>>>>>>>>>>>>>>>> +                       return -EFAULT;
+>>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>> +               return kvm_vm_has_attr(kvm, &attr);
+>>>>>>>>>>>>>>>> +       default:
+>>>>>>>>>>>>>>>> +               return -EINVAL;
+>>>>>>>>>>>>>>>> +       }
+>>>>>>>>>>>>>>>>          }
+>>>>>>>>>>>>>>>> --
+>>>>>>>>>>>>>>>> 2.39.3
+>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>
+>>>>>>
+>>>>
+>>>>
+>>
+>>
+
 
