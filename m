@@ -1,99 +1,154 @@
-Return-Path: <linux-kernel+bounces-246429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2670992C19C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:04:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A2D92C19D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D04311F21A7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:04:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 578231C23A33
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA3F19FA93;
-	Tue,  9 Jul 2024 16:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953051A00D0;
+	Tue,  9 Jul 2024 16:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bE3mYPur"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="TjHQtkTd"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B11C19E7E3;
-	Tue,  9 Jul 2024 16:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E58F1A00C2;
+	Tue,  9 Jul 2024 16:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720542866; cv=none; b=nu/+3FUzpiNe1gemeKvg0qaHgP186SZM5lUZRG8DrjG9Uor2CoVBw0Ohk6BpxkceOxiTEGluyV0ZkchGWLCD4F9YuLR8hmjgr0PywXU7jbygL78U1icBqb101A6xF7bBmGJYXbZC7xMkOpYfrZ6HnmOWmHzatTZeI4kf74WsReM=
+	t=1720542880; cv=none; b=b++YkZuB9RqQru2QCkM70zjv4vPXNUHnemYQCqXMvQ6hUPpRFaa3TW9WrDcv3p+puvE6n7t01tTCi1odqV0VE5/lHGHuQzzHkgNGw0izG1TEduvDX2Y/JqB2Otn+RxHxaLXiuj5Xlg7BWsvAHqzJuUI0XnASUdZbUeYoelFBD7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720542866; c=relaxed/simple;
-	bh=E2za/mh8ktg1bgavQy5omJcI/K13Hs0AayEZ5BBlLwk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c4lNhufg9Pij6Hjd/KcJ88HB91ba+MOdSMI99JiMA5NRFf19cVUhHpF1wTVK/D/CBafUxDgEqHGrhTylJwdj97sS2o/PKGJz+mSgC/FML4HxuE8RMGGQblMTdn7Q/snW5gDcFlSl8TKoWEh6pauWiR0GOyHYv353eqZWiBx6Ju0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bE3mYPur; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EE01C3277B;
-	Tue,  9 Jul 2024 16:34:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720542865;
-	bh=E2za/mh8ktg1bgavQy5omJcI/K13Hs0AayEZ5BBlLwk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bE3mYPurLZlXi269n7C4A8hA023tud0MrA3v63hXbQ3NFw2GC5hWWTa4aKb59TToz
-	 1xtJP/DTbBaanRoJVTOKJcytnOJS7ny2COOZ3x6VOzt9tSy9WZi9F2j14Lgyt6Sni6
-	 SX37n6gPcs9XC6DF8/FxfiJgibtz5X8XUqmIj83Cpqj5zFrKk7oMIqSpAG42IWYJ70
-	 xs5oQOjYW6ZBPyNLpIKAFxCgpdv8/HwMM7j22bUiSn5/j0zwmR2Ug46/3g+UnL0Y+e
-	 zOj1u7o0/KqQa6aClSyeqKM7HJzRKyaTMwzIzudP565hjVEsayf3nn3FNLGCwVA9y7
-	 sgtCwzSR0lMqA==
-Date: Tue, 9 Jul 2024 10:34:22 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: devicetree@vger.kernel.org, Jisheng Zhang <jszhang@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Anup Patel <anup@brainfault.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	linux-serial@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-	Jesse Taube <jesse@rivosinc.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Yangyu Chen <cyy@cyyself.name>,
-	Matthias Brugger <matthias.bgg@kernel.org>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Conor Dooley <conor@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Meng Zhang <zhangmeng.kevin@spacemit.com>,
-	linux-riscv@lists.infradead.org, Icenowy Zheng <uwu@icenowy.me>,
-	Meng Zhang <kevin.z.m@hotmail.com>
-Subject: Re: [PATCH v4 03/10] dt-bindings: riscv: add SpacemiT K1 bindings
-Message-ID: <172054286210.3798572.13513101197976115030.robh@kernel.org>
-References: <20240709-k1-01-basic-dt-v4-0-ae5bb5e56aaf@gentoo.org>
- <20240709-k1-01-basic-dt-v4-3-ae5bb5e56aaf@gentoo.org>
+	s=arc-20240116; t=1720542880; c=relaxed/simple;
+	bh=+RzgxylUarc5vlI8oLvFK/PXwVZbBNURZCdEttKfeYw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KYjtYGNQN5ajbi+/VZ4qzXVeb52F237Jb77LiCiRaK0YMU0WL1bm0hJN84q5ww6tDGvHDerV3fhdt/7/2I0/g2NuoMm4z3uT9GU6ZzdBbAFaBorEzPe7zbBv6VOnMsYpK93AsvkLY9n4tUAL+B0g8O8ascsP1vLjRkf4bQcG5QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=TjHQtkTd; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1720542863; x=1721147663; i=w_armin@gmx.de;
+	bh=ja0Lx4qUduId+7k9ukG8vnYpR0oyhaRyrRLQyiT2Y0A=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=TjHQtkTdXDdP1/C9KWnfezF/ssap+vB+ic+MnYVcSecA8+0YtJcv+b/C540xCffa
+	 PN3tJCQT2XbJLv/ZUCcbr/vMEk5nmh/u0gB/14OegXB5dmKyLvHP9pXNlJUQpE089
+	 XnEQ//EwBfYsYGgDB+/frMZAM3PUQMvG3xX8V4yzA/U9SEujNhGBSu43dKe13M2mD
+	 0V1ZE6+X7lRneVXBMar7x0bLHbWFsrJ3oUvoKzS9tlyeyBxCi3eRscd8e0DyRP2LB
+	 PH/tWgowxmSodKbm59ci59iv1sjRrrJH8sgiF+hnZFK6WvSg+uCFNB7/t28J6Nh7b
+	 ej7PmFyHJV2zOSU1CQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MryXH-1s3xsI29VV-00m7QA; Tue, 09
+ Jul 2024 18:34:23 +0200
+Message-ID: <4beb8370-9d69-4f88-a1d4-feb2a5aa4746@gmx.de>
+Date: Tue, 9 Jul 2024 18:34:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240709-k1-01-basic-dt-v4-3-ae5bb5e56aaf@gentoo.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH AUTOSEL 5.10 09/14] platform/x86: lg-laptop: Remove
+ LGEX0815 hotkey handling
+To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Cc: Agathe Boutmy <agathe@boutmy.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Hans de Goede <hdegoede@redhat.com>, matan@svgalib.org,
+ platform-driver-x86@vger.kernel.org
+References: <20240709162612.32988-1-sashal@kernel.org>
+ <20240709162612.32988-9-sashal@kernel.org>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20240709162612.32988-9-sashal@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:u+w9zpS0PcK5vTO0bazoBKe8TIHXbh3WFn2XQf3gZC0cHEyO0+n
+ QeRHSyDHJUgK+9PTHwmS2gFGvzuYPTtXnHAJ53TgbsJoV50B+IqQKIZdy+60L8srhIOzqQs
+ 1TlYCdsGyoo5OnDSJGyTlAkH9PYnqOIt7cfGZjFwczDqJFhsaxfxJF4E6vv6z3yAWcytQZz
+ Jetm6rtvWTpVRU/oXzw/A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Rw5zDI4YMvY=;aWHAQiAhdwprjxHEdm1kI31xeDh
+ cF03QF1HFaLZoemaqT2+Nwg7oi1GIfMLHtbRQatwK4qTkSLZ2RlcaXpCv54XGqv6JacHqtOtM
+ LlwmU6X0l6X8j1lcADXQzcyxNIa+xVoMwNJ2tpqdGMRKx9RBXNnrcoi4xmSAixXKfzuWyQIHi
+ Zxk1akBEWC5RpGH/7+bqAED5dDwUyc6vKPLiw/ynl6fyB8oYTpnUHw9BQZUsphxWXvPZqvO1j
+ wKKzmANGLytq5/SMCLNnrnkGbQ8jiytcKaQ7snyxpK5bfkhJVnZVdQwJfF02gGJf0XhLN7zu9
+ SMVh3fxbbcTkHnb9M2lsJPSIQZO4+8U8RNEQ4XmyZVF9S6rncAWUyNc+uQGLGCQv3VdFe6uD5
+ 4o5u3dGP7sYthZxFXnt5rsgGmmMSjIvAkBBN65iR/9NetY/Bs6OUikNHKWT6acvfBkofO4YyF
+ UhoBYEGxi+Eu6cFM/pCWy6QiNBPMSgK4V1JsTQOmiDUpxxOY8Zsf72ylJ8AiBWxBvTemfFv9B
+ z4xKbHuq5yOxGMTPXbY2TZSFZwlqmcHxyZK3dYv4pI4cnIpEuHts3TANRCgnK69Fq4Ny9kZ3E
+ k+rPheHixH3tE3fyTRdcbdElBGf/9foft79NltgRfBw4EIR7LDW7t4QFjelj/B+TZejDuvJ1k
+ G7QT3JYnyHvHa//pO6y7uBCVGO5ReKtUYHkj6Gr5WqLTEz/Jf2Lz69zyMNExYlnvWTJwI7qom
+ Xqi+glJg/tLf9Yk+oOFL5IgzxxxJsn1UGgVSpLPdmAQyXP+C3aVcpe618UE4vJCDzXtZ0gRIW
+ +16ijjwCdhRs3b1gxhurZXDsRsl4r/ddt8irsae7rplIU=
 
+Am 09.07.24 um 18:25 schrieb Sasha Levin:
 
-On Tue, 09 Jul 2024 03:18:46 +0000, Yixun Lan wrote:
-> From: Yangyu Chen <cyy@cyyself.name>
-> 
-> Add DT binding documentation for the SpacemiT K1 SoC[1] and the Banana
-> Pi BPi-F3 board[2] which used it.
-> 
-> Link: https://www.spacemit.com/en/spacemit-key-stone-2/ [1]
-> Link: https://docs.banana-pi.org/en/BPI-F3/BananaPi_BPI-F3 [2]
-> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
-> Reviewed-by: Matthias Brugger <matthias.bgg@kernel.org>
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> From: Armin Wolf <W_Armin@gmx.de>
+>
+> [ Upstream commit 413c204595ca98a4f33414a948c18d7314087342 ]
+>
+> The rfkill hotkey handling is already provided by the wireless-hotkey
+> driver. Remove the now unnecessary rfkill hotkey handling to avoid
+> duplicating functionality.
+>
+> The ACPI notify handler still prints debugging information when
+> receiving ACPI notifications to aid in reverse-engineering.
+
+Hi,
+
+this depends on other patches not in kernel 5.10, please do not use this
+patch for kernel 5.10.
+
+Thanks,
+Armin Wolf
+
+> Tested-by: Agathe Boutmy <agathe@boutmy.com>
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> Link: https://lore.kernel.org/r/20240606233540.9774-3-W_Armin@gmx.de
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 > ---
->  .../devicetree/bindings/riscv/spacemit.yaml        | 28 ++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-
+>   drivers/platform/x86/lg-laptop.c | 8 --------
+>   1 file changed, 8 deletions(-)
+>
+> diff --git a/drivers/platform/x86/lg-laptop.c b/drivers/platform/x86/lg-=
+laptop.c
+> index dd900a76d8de5..6b48e545775c0 100644
+> --- a/drivers/platform/x86/lg-laptop.c
+> +++ b/drivers/platform/x86/lg-laptop.c
+> @@ -77,7 +77,6 @@ static const struct key_entry wmi_keymap[] =3D {
+>   					  * this key both sends an event and
+>   					  * changes backlight level.
+>   					  */
+> -	{KE_KEY, 0x80, {KEY_RFKILL} },
+>   	{KE_END, 0}
+>   };
+>
+> @@ -259,14 +258,7 @@ static void wmi_input_setup(void)
+>
+>   static void acpi_notify(struct acpi_device *device, u32 event)
+>   {
+> -	struct key_entry *key;
+> -
+>   	acpi_handle_debug(device->handle, "notify: %d\n", event);
+> -	if (inited & INIT_SPARSE_KEYMAP) {
+> -		key =3D sparse_keymap_entry_from_scancode(wmi_input_dev, 0x80);
+> -		if (key && key->type =3D=3D KE_KEY)
+> -			sparse_keymap_report_entry(wmi_input_dev, key, 1, true);
+> -	}
+>   }
+>
+>   static ssize_t fan_mode_store(struct device *dev,
 
