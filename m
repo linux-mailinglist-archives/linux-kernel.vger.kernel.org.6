@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-245739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E8E92B890
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:42:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC95992B88E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D048282707
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:42:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A19AC1F21859
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAB3158D78;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52496158A3F;
 	Tue,  9 Jul 2024 11:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tL9hj3tQ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Txa1D+Yo"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zpSSZhSE";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WQJVZ+mj"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F4315821A;
-	Tue,  9 Jul 2024 11:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DF8158211;
+	Tue,  9 Jul 2024 11:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720525319; cv=none; b=KX0M0ovQzbv+gGpdJaiRS6/tuROiCv7KlY9a8ydDeQ6j6TiOzo2QjKUPCodJ9ZMZo76e9FotdVD0UzAIIBtiQcepYjPmkGwalhNX2DBADmkYL372CTwwunXcb2hwpkc5XUc6ViqLgWJGNm5oDaBLoSv6vK0g2kdb20EWC2MZssk=
+	t=1720525319; cv=none; b=WHNJxqujc3Ev/26WTUVPS3isV86f7hSzX26zsbEKeJflPATB/t4sv0Vt/8Q51geF3Qy5OUw/eShe2u0W4MUIH8aWxzz9HuxCfWvbkD9Zq4cpeLbgE+oTn2I2sevw1o7oLG9cGf040OGq9I3M3sBd/XCyhjopf6jtx6qV2ZEuKQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720525319; c=relaxed/simple;
-	bh=7SYB1kdDUn3buUg2wZEG8/LJQdwEAVKy+zXhYxhDN48=;
+	bh=YejHAEyfWwUy7ebTIwYX/yjo1ug4wKVxeyFPHo9Ufi8=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=XGZxiv0lRC++9cKU912oCxBrSUSn4whQPq7/VhpOD121NwNSHrmxFAu+7jDalwMD0jU1uX3GCSra8oNNbOeLem7dD1D2SIP3UmIwV/8rsVwv6ZCgEARjj5O/r7Mmwqeu71wCtv9W++rYHutTcpEE+/6qMyJeD1LyQCc/iONRQic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tL9hj3tQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Txa1D+Yo; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=LjGvYjr/cxE90LH2z/4PY819ped68tGjCP5Sf+YDgJLNJ+r2nNLR0XAgnMRmuaMjQLxpoBgs1VBQx/dnKxktISbAu/b4zs5Vf0keRQH+bCunpUaFkh+2umALYmrfds89Z+2oJPMcSV+bq61UjOlFsJJcqrvUxmjiYOlDUh4zPNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zpSSZhSE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WQJVZ+mj; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Tue, 09 Jul 2024 11:41:56 -0000
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hIk0SFb4FtA05uKIiO3ilIbf+6k/czv9BAvhUTUZ730=;
-	b=tL9hj3tQSeCJ/XTlwdBeJViZUe4bYoNSGSSBU84DNoq4p3si5TPmu2gYIcljs99f4JRika
-	FD7mb3nyCCSP4W9m2gzYPIP2ZiSP1J5nB3HcwKiEtwMUAkRw6KemPPaa4EFs5iaRHD409+
-	yHUte80BNJNI++4/VBxccu9pFo6etjBIz2/qII49xwWF2oeg8/WveV6MepVcoyDaCDPQgK
-	3XuhzM3oiNBF5Gvv/isn5/GzbPJD8KyvVk13kIhWEak2mpJhjImi5PtgTOC32d3SSL1E7k
-	+fjhWlQjRcj56wNmGVzai2GdXKBi4U49eVvbZSv++GuT3RZTFJHhTbGu+l4cRA==
+	bh=oTMRAP+SoR+F/a74sYNJVLyTjMu5zts1YDpvjCyCKo8=;
+	b=zpSSZhSE/vrm4xa8lArRhCdUxqBFUYhaZ8HB/oggvA3YAWl3gvoThQbf/SJUwgM78QPHlN
+	aS7t58h5DuF5WUVVNcZBuYKuP2yaHs8/WB87U+ECDEtr6Z1iV1/8M0phJedpIr+hVXwMJ6
+	yZ/7ptKL0Q4OP8FP6Jeq7PywvBffsVflmceDwCFyHEPW7gI7s3DSAf5qn79JoZ826/ty7P
+	/634ybQbce2Au4ZeTmuuP4lsV4VMKhqE0iKS9o6744yR8PSijRWBt+yF6//R4QsIKPnavW
+	zlblSSl4tq+Q0OyzFzzAjtAT5Nw54RwpY3FsoamsN4XispfoBlGtrcF34jCOcg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1720525316;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,130 +52,96 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hIk0SFb4FtA05uKIiO3ilIbf+6k/czv9BAvhUTUZ730=;
-	b=Txa1D+YocvruhTbMHHfzqInhLV80gWMFDC50PPjF4mspUAmmWsucyxDZuvOuuw8aWPZFtC
-	hCa0e5AAAU9JZMDQ==
+	bh=oTMRAP+SoR+F/a74sYNJVLyTjMu5zts1YDpvjCyCKo8=;
+	b=WQJVZ+mj4FmwU2zGTfyzOC9+x0EDjk9VImP+gsEGi81puEv2fIZR0dA3mYbvcBEWZ3ytOR
+	988929arUwb7j6Cw==
 From: "tip-bot2 for Kan Liang" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf/x86/intel: Hide Topdown metrics events if the
- feature is not enumerated
-Cc: Dongli Zhang <dongli.zhang@oracle.com>,
+Subject:
+ [tip: perf/core] perf/x86/intel/ds: Fix non 0 retire latency on Raptorlake
+Cc: "Bayduraev, Alexey V" <alexey.v.bayduraev@intel.com>,
  Kan Liang <kan.liang@linux.intel.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240708193336.1192217-2-kan.liang@linux.intel.com>
-References: <20240708193336.1192217-2-kan.liang@linux.intel.com>
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, stable@vger.kernel.org,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240708193336.1192217-4-kan.liang@linux.intel.com>
+References: <20240708193336.1192217-4-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172052531640.2215.2187640866774751729.tip-bot2@tip-bot2>
+Message-ID: <172052531604.2215.3507740369226432766.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
 Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     556a7c039a52c21da33eaae9269984a1ef59189b
-Gitweb:        https://git.kernel.org/tip/556a7c039a52c21da33eaae9269984a1ef59189b
+Commit-ID:     e5f32ad56b22ebe384a6e7ddad6e9520c5495563
+Gitweb:        https://git.kernel.org/tip/e5f32ad56b22ebe384a6e7ddad6e9520c54=
+95563
 Author:        Kan Liang <kan.liang@linux.intel.com>
-AuthorDate:    Mon, 08 Jul 2024 12:33:34 -07:00
+AuthorDate:    Mon, 08 Jul 2024 12:33:36 -07:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Tue, 09 Jul 2024 13:26:38 +02:00
+CommitterDate: Tue, 09 Jul 2024 13:26:39 +02:00
 
-perf/x86/intel: Hide Topdown metrics events if the feature is not enumerated
+perf/x86/intel/ds: Fix non 0 retire latency on Raptorlake
 
-The below error is observed on Ice Lake VM.
+A non-0 retire latency can be observed on a Raptorlake which doesn't
+support the retire latency feature.
+By design, the retire latency shares the PERF_SAMPLE_WEIGHT_STRUCT
+sample type with other types of latency. That could avoid adding too
+many different sample types to support all kinds of latency. For the
+machine which doesn't support some kind of latency, 0 should be
+returned.
 
-$ perf stat
-Error:
-The sys_perf_event_open() syscall returned with 22 (Invalid argument)
-for event (slots).
-/bin/dmesg | grep -i perf may provide additional information.
+Perf doesn=E2=80=99t clear/init all the fields of a sample data for the sake
+of performance. It expects the later perf_{prepare,output}_sample() to
+update the uninitialized field. However, the current implementation
+doesn't touch the field of the retire latency if the feature is not
+supported. The memory garbage is dumped into the perf data.
 
-In a virtualization env, the Topdown metrics and the slots event haven't
-been supported yet. The guest CPUID doesn't enumerate them. However, the
-current kernel unconditionally exposes the slots event and the Topdown
-metrics events to sysfs, which misleads the perf tool and triggers the
-error.
+Clear the retire latency if the feature is not supported.
 
-Hide the perf-metrics topdown events and the slots event if the
-perf-metrics feature is not enumerated.
-
-The big core of a hybrid platform can also supports the perf-metrics
-feature. Fix the hybrid platform as well.
-
-Closes: https://lore.kernel.org/lkml/CAM9d7cj8z+ryyzUHR+P1Dcpot2jjW+Qcc4CPQpfafTXN=LEU0Q@mail.gmail.com/
-Reported-by: Dongli Zhang <dongli.zhang@oracle.com>
+Fixes: c87a31093c70 ("perf/x86: Support Retire Latency")
+Reported-by: "Bayduraev, Alexey V" <alexey.v.bayduraev@intel.com>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Tested-by: Dongli Zhang <dongli.zhang@oracle.com>
-Link: https://lkml.kernel.org/r/20240708193336.1192217-2-kan.liang@linux.intel.com
+Tested-by: "Bayduraev, Alexey V" <alexey.v.bayduraev@intel.com>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20240708193336.1192217-4-kan.liang@linux.inte=
+l.com
 ---
- arch/x86/events/intel/core.c | 34 +++++++++++++++++++++++++++++++++-
- 1 file changed, 33 insertions(+), 1 deletion(-)
+ arch/x86/events/intel/ds.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index cd8f2db..b613679 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -5830,8 +5830,22 @@ exra_is_visible(struct kobject *kobj, struct attribute *attr, int i)
- 	return x86_pmu.version >= 2 ? attr->mode : 0;
- }
- 
-+static umode_t
-+td_is_visible(struct kobject *kobj, struct attribute *attr, int i)
-+{
-+	/*
-+	 * Hide the perf metrics topdown events
-+	 * if the feature is not enumerated.
-+	 */
-+	if (x86_pmu.num_topdown_events)
-+		return x86_pmu.intel_cap.perf_metrics ? attr->mode : 0;
-+
-+	return attr->mode;
-+}
-+
- static struct attribute_group group_events_td  = {
- 	.name = "events",
-+	.is_visible = td_is_visible,
- };
- 
- static struct attribute_group group_events_mem = {
-@@ -6057,9 +6071,27 @@ static umode_t hybrid_format_is_visible(struct kobject *kobj,
- 	return (cpu >= 0) && (pmu->pmu_type & pmu_attr->pmu_type) ? attr->mode : 0;
- }
- 
-+static umode_t hybrid_td_is_visible(struct kobject *kobj,
-+				    struct attribute *attr, int i)
-+{
-+	struct device *dev = kobj_to_dev(kobj);
-+	struct x86_hybrid_pmu *pmu =
-+		 container_of(dev_get_drvdata(dev), struct x86_hybrid_pmu, pmu);
-+
-+	if (!is_attr_for_this_pmu(kobj, attr))
-+		return 0;
-+
-+
-+	/* Only the big core supports perf metrics */
-+	if (pmu->pmu_type == hybrid_big)
-+		return pmu->intel_cap.perf_metrics ? attr->mode : 0;
-+
-+	return attr->mode;
-+}
-+
- static struct attribute_group hybrid_group_events_td  = {
- 	.name		= "events",
--	.is_visible	= hybrid_events_is_visible,
-+	.is_visible	= hybrid_td_is_visible,
- };
- 
- static struct attribute_group hybrid_group_events_mem = {
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index b9cc520..fa5ea65 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -1944,8 +1944,12 @@ static void setup_pebs_adaptive_sample_data(struct per=
+f_event *event,
+ 	set_linear_ip(regs, basic->ip);
+ 	regs->flags =3D PERF_EFLAGS_EXACT;
+=20
+-	if ((sample_type & PERF_SAMPLE_WEIGHT_STRUCT) && (x86_pmu.flags & PMU_FL_RE=
+TIRE_LATENCY))
+-		data->weight.var3_w =3D format_size >> PEBS_RETIRE_LATENCY_OFFSET & PEBS_L=
+ATENCY_MASK;
++	if (sample_type & PERF_SAMPLE_WEIGHT_STRUCT) {
++		if (x86_pmu.flags & PMU_FL_RETIRE_LATENCY)
++			data->weight.var3_w =3D format_size >> PEBS_RETIRE_LATENCY_OFFSET & PEBS_=
+LATENCY_MASK;
++		else
++			data->weight.var3_w =3D 0;
++	}
+=20
+ 	/*
+ 	 * The record for MEMINFO is in front of GP
 
