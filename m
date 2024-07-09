@@ -1,284 +1,405 @@
-Return-Path: <linux-kernel+bounces-245159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2D3D92AF17
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:35:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15CF092AF1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA97D1C21B30
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:35:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F557B21DCC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C064D8286A;
-	Tue,  9 Jul 2024 04:35:01 +0000 (UTC)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B6C12C48B;
+	Tue,  9 Jul 2024 04:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EusXa9Yu"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2082.outbound.protection.outlook.com [40.107.223.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64879374CC
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 04:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720499701; cv=none; b=Zz9aegAX2F0t64Sha1dl4NYct+zIgGusR5L4+Ju8kHQmh0gdkwvTFUgncw2hQYYI0J7gybi7vCObBvKKNqULcgip0VPcwhOR4w77Z4ccPaKyn7VAFsyc7grJ11FVeoNHZ7jJT6g8+EpQrHzqDHWP/SvDfzyENiK5n32kyEs5Gx8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720499701; c=relaxed/simple;
-	bh=6KMc4L2Jb340nsr2fxBwiWhxwgx3wkExkREWO74fMsY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ASJVqa5c8dLOm++nr4zqqxr41Kksmj/irna4f0tjXzbn54KDYL7pwSMRNJ1IM+dzdnbdchq6Ct1BLJM+UFpxKO44ZkNuPJSHtmShhmYX9DfFtKjOBi/ZpiLIxUggpirR7uWGSb4xY5XuSstPQbN4KVllzkVbxJI/gcMmgIyOIKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-81013580bd5so1161809241.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 21:34:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720499698; x=1721104498;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q9pKSLhwlTEm+8wiCWId5W4uZXshj+1+rGTAOZQjYl0=;
-        b=KWCrm3UzNUEMUtK1KDBGeEX6ug3G3JwwLt8Aq59anq1/ZsbCPHfsMJmSrXGFaXdwyM
-         57oqsf+zP1uXJiF2uB3KV2xUrbBH9Yb3BpbLQ7xpK2KEBiWtmEEDBYD3iFvsbiN2Ykj9
-         TyHSfjDeT2ZBo5QU3gPRtN2YG0fh7zGEJI+KSCYsec+l0ma0jdghjZj+lQG0TKxU+UV/
-         ao3jGvLbIWcQ9zFMnhKnjhS1glqBWubLEOGgu7MuLP9nyJfX3w00+UAIqQzsSgxl8cVd
-         Tm30k3cVc5lhMfgztjS76HfBLpIdgfzB2kEAwLegTWMHAXLOqI9uBkqiRTsZs6TsDwHq
-         +0tA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwnIfexsmDIOGL/WqbotkZuY7TIFIE8m70vWKojVaynGgMmOaUc/pnOWQaPe3/E/eakOnaHdXcTCB5ZnHPALOs7MVqsf73EHhNsXCd
-X-Gm-Message-State: AOJu0YyPypJccGfDfhb3zi/ZtRiVypaHLhB8/QhGz0kiKWCeVU3RrCNK
-	o4iDQbELfRflA6kh8kj+QbzqavETN9HxmQBfhRxImPw4g2/3YRTQoKWVywouyy8ur4/hoEfUTwT
-	smS/4JvQufeosp/S/qrXS1EhXiSS+/g==
-X-Google-Smtp-Source: AGHT+IEGtuOs0WLNLxu0K/QwvOYqRoh8N0xrp3vaAAukrFFlb0qHmxF8wtp61DH/zYlXayLImn3mR4XCZg1LzJ+Nf3I=
-X-Received: by 2002:a05:6102:f88:b0:48f:e7f7:6fe2 with SMTP id
- ada2fe7eead31-490321d32bfmr1258001137.35.1720499698102; Mon, 08 Jul 2024
- 21:34:58 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490FA374CC;
+	Tue,  9 Jul 2024 04:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720499993; cv=fail; b=APacMVRsJOIWXz8UXlnEfQe4+KWRFFTHd+MikwV98Gnu2E4q03rpizgx7HR6RY79K0q5APu4JNh8euJTj4k13by7oRQTvRSeh4vQaCwfhrP1tNsN6I6d+WoWwRjUUtwu9GQ1Qe7zrRizY7/EqjI3qRPIoQzpGNqC43NvkplG+1k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720499993; c=relaxed/simple;
+	bh=/Lp146YjN1WDXnec2PYVOuwXpBi33ElV7krim3zUpMA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FfCNn29uO/99ZxjIVWh4xFT423Mv2oAeI6V5VshetYAhDeI1MUBx5hLfPdPoIwS9pAKUB0xdjnWuOga0G62lSmQSu8bUC/II80uTYtsRjBcC4yxW9DaXJeZ6vyT43XGGbDojcR/AG2O/YdWuDiVztW6GTAzycPpc8sYKhRS3WDk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EusXa9Yu; arc=fail smtp.client-ip=40.107.223.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=not+LL6TCgrvgskZSjSP9cGXKnNFzXCdEmWKiQeaN0x+QWqoXr31rC4LtIWwhlqMNoIBzFmSlYnYI4CFnyj99xR1bRr8wha6S2yXTY/yRkCnYftV7R6C6Hz/EBg0mLQwUz1KqN4f1S86qz1tTVnCtxSuixi+vLiwSHM+FqHXrSBIrVp3feLrDOAwSO75lhDBO4NbEU50HYHEsbqo97KNXAiyy9zYu9sEg0qfkrEYAwKdhjshoz8o9TSXVw57e25PYlGIB572PdRoIO92gLGd7Yvm2NvtCEfSiXUZOA1gSOVDFGkNX+Mur0eo9O57hI27/qWXwdIL5NeMTCFy9O743g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3z2ZKZMn7QyPpa2/CzHxbW2MJklzLOsH88oooAibKog=;
+ b=a8g1uIadCNyyaU2iz/r2z0sdGdS7QEF9zsSdXzlvo8fFT2FzskWETjq9d5pZIFou+eiVHjAt4vApJd316duwh7BS0QA4mR0oe43ZyF0XPHuWi7WCL6iC7mWItWLTqoE1lT9NXLeI0/na+qCmrDRF7LW9Fo3x9Ew3k/py1qZbJTmNra0aLnf55rnL2r0DGEr6oYOJXe7DzM6xRpLNdQv8XZx82MnSg85kYh51kQAKlhBjOMsLoc2Wn87lvPziU51oxU9Dwgiu2do9MEYAuM2W5S4jMkBQQfOIQxAJMyOm2fhWo3rdHcZ2tO+JQ9mz2CmWHhk1AIlxSkeiJ+WLgcrXhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3z2ZKZMn7QyPpa2/CzHxbW2MJklzLOsH88oooAibKog=;
+ b=EusXa9YuxapLQLQ4GLLqLl4xRrDACv9zYSaZc94GlzU9Wc15ZMhBg8YHoqtjtLg47EmfTsIsALjPPFRFQijlpouO1K50bQPZ1IUN5gTmCz4jIsRXEViNij96Q2bwUdRXG4Pq9lwCcDsXLxF7BIeccmCw21/ViBBZQgCl0HTczmUwTEKjmE6dRfE07ygyY2kyBiZKnniNOWnBviMroOhJzn80oxxa9XUwzPmxGfnMw4JZV1+9jAIy6d7qYsjzOGWrQ4omghwqSKk5g1l4Vu8olfa5472uBM+qLJXI/UBp4gizeOHQDGr9FwlzxiH+Quto/0JQC58cJfw/FHF2W56Omw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB7426.namprd12.prod.outlook.com (2603:10b6:510:201::18)
+ by DM4PR12MB7527.namprd12.prod.outlook.com (2603:10b6:8:111::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Tue, 9 Jul
+ 2024 04:39:48 +0000
+Received: from PH7PR12MB7426.namprd12.prod.outlook.com
+ ([fe80::6fdd:1491:4d83:ac33]) by PH7PR12MB7426.namprd12.prod.outlook.com
+ ([fe80::6fdd:1491:4d83:ac33%4]) with mapi id 15.20.7741.033; Tue, 9 Jul 2024
+ 04:39:48 +0000
+Message-ID: <eaa4f128-40f2-4db0-be86-84ae1b652ab7@nvidia.com>
+Date: Tue, 9 Jul 2024 10:09:39 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] iommu: Optimize IOMMU UnMap
+To: Robin Murphy <robin.murphy@arm.com>, will@kernel.org, joro@8bytes.org,
+ linux-arm-kernel@lists.infradead.org, Rob Clark <robdclark@gmail.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>
+Cc: vdumpa@nvidia.com, linux-tegra@vger.kernel.org, treding@nvidia.com,
+ jonathanh@nvidia.com, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240523031935.90856-1-amhetre@nvidia.com>
+ <6b707eb4-5cf3-4b66-8152-5ba252f5df39@arm.com>
+ <2a349725-72cf-45e2-9ca2-5a8b153a6fae@nvidia.com>
+ <d854664c-ab56-46b6-81f9-9ef712c32b3a@nvidia.com>
+ <39d1635d-25b4-47ca-beb3-0baaae6252db@nvidia.com>
+ <cc69b154-ca4b-42eb-950a-9ea3c5a4e4ee@arm.com>
+Content-Language: en-US
+From: Ashish Mhetre <amhetre@nvidia.com>
+In-Reply-To: <cc69b154-ca4b-42eb-950a-9ea3c5a4e4ee@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN3PR01CA0098.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:9b::11) To PH7PR12MB7426.namprd12.prod.outlook.com
+ (2603:10b6:510:201::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240709042122.631-1-justinjiang@vivo.com>
-In-Reply-To: <20240709042122.631-1-justinjiang@vivo.com>
-From: Barry Song <baohua@kernel.org>
-Date: Tue, 9 Jul 2024 16:34:46 +1200
-Message-ID: <CAGsJ_4xOpdruUK5EGLM31nCfgnvb5CLEiDqVYoJ2nN48mMwDAg@mail.gmail.com>
-Subject: Re: [PATCH v6] mm: shrink skip folio mapped by an exiting process
-To: Zhiguo Jiang <justinjiang@vivo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB7426:EE_|DM4PR12MB7527:EE_
+X-MS-Office365-Filtering-Correlation-Id: 61f21001-6a0a-463f-48dd-08dc9fd129ab
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?c2hWbTMvem9FMjhCN3NMK0VrVldLRHljOGVETlhySUxSeDJtM2R1SlpvTE1s?=
+ =?utf-8?B?VE95cFdkNW9aSXZjZ256MXYwb1ZEcUw1UFFRZWZXMnFJYml5NitaZmZlelZ1?=
+ =?utf-8?B?L1pQQ1BQaXh3aGQrd0c4SEN5S2ZZVTVsdjBXbUxtQU9VWkE0MXJWeTc3VW10?=
+ =?utf-8?B?a3RnOXhVYzBuNE81YUtoajRqMWU4Mlc0bXI5OFl4RXdiQ0pzU0RZQTl1TDVy?=
+ =?utf-8?B?MDlRcWNrOEJTdVE3cWxmSnNrV1dMRXRGRFU2SWZ5V2tSWXhSTHJpQUdHc3li?=
+ =?utf-8?B?UGhuL3RkMllGYU9HSFgwQVY3cDh0SmVCdFcwczNsL1MxV0xRT3Nuc2Z3R250?=
+ =?utf-8?B?MVhUaVVSenQ1dGVnTU00bzh0L3lROU52a215dHdiYnlYNEYwa0k5b1VEN0p0?=
+ =?utf-8?B?bWhuM2RRV0FKSjhGaE5ndEhYVVFiK0s2M21GUEhUUnd1TjR2aTlScG9TZ2NJ?=
+ =?utf-8?B?YUp1T2kzVDJ2UVI3QUJyUFlqdXQ5Wnd4M3NaSHM4TmJkOWhFZzlNbUJkWk1E?=
+ =?utf-8?B?aURjc1M2YWxRZGM1dEVibk9JLzZsRlNOWERYRVMrWU11N2FKY1Fnb3dlSVI3?=
+ =?utf-8?B?bktzTVo5NU9HeEplblJEQ0pwU0NoSnphaEFwTGE1WDFMbmtCRGh0MG5KVy8w?=
+ =?utf-8?B?dkNzMjJIcklMY09HMnNMcnltRXdmczJWTlphWHM0MG9YS2h2NFRvTnRLckRK?=
+ =?utf-8?B?MWpqZ1FRR0lkdHgrOSs1cURRWE5rR1ZMd3piTzRCR2JCS3JQalVLVkdQZDgx?=
+ =?utf-8?B?QkdMZ3BkbkVMWXR2b3NEY1ZBblRUKy90MkVLZUhiendIUHVXdi9aT0MzUVhL?=
+ =?utf-8?B?NzZ3VXZDL3k1UUhPSkJZZWVxbFFVRXp6UUQ5c3FkNldBczdoZGNvTlNXaTVN?=
+ =?utf-8?B?TVkwNWxiaGJSUVJlWThBMmRqMzFyd2ZRZExNdnNsY0taRU41VU9paDJEeWRj?=
+ =?utf-8?B?eHYyc2IyMU5OOU1oRVFBT3JsUjZwRVpod3R5YlE1akVaVGtUVXo3d0N1Z2NF?=
+ =?utf-8?B?QnRnYzlHT2pzSFRoTWJobyswTWZIODVCWlNSSjIwY05VNHJTMlhSMFRDRlhv?=
+ =?utf-8?B?Z3RSREVxTHFOd1BDUVNBK0lMNTVwRk16YWpaVUd4YzBXZWtsZXVGNVNtQnd4?=
+ =?utf-8?B?YldCOC81cFFwcEFTOWU5MFdoZnM1VjJ0Nm5vOWd6clg3WEo5Y2p6SlplblVN?=
+ =?utf-8?B?cktQT0dmN1RXS2JTK3VmR2t3SGdQaDdxdjFmVzhweWNObGxYd3lGbmVuMTMz?=
+ =?utf-8?B?L2hxcU0yNTNwZTZMckFodTNjMzYzeXZSaE9FZVJvckRJZmtQdGdrcktlKy9h?=
+ =?utf-8?B?ZzNEYnFDeTExSUdWVmNGSGhhQlBzR0JQOTJac1lxb1pRU0RSRnFtY2VXNlZV?=
+ =?utf-8?B?ZWlZYWdyY2xveXZZQzJDejQ3SzVhNmhDK3h6a2thczQzVmM3bjBGYWNrUmVL?=
+ =?utf-8?B?bHVlc1JnR1ZpbDdLNjJPa0lGMDNwdmwvSHJ1RlhydlhDVE8rbFFpVXQ4MGJz?=
+ =?utf-8?B?MkFjYVhmQ1NkY3RxZnZWcGpwK3lVd1pEQlZzMnlVSjZGODdOQTErT0E3cnpP?=
+ =?utf-8?B?VFVCdk9NZldkZzRaZzYxUU01SWhPZ2thekoxRXNpMWduVnJFRjlFVUhmVHFy?=
+ =?utf-8?B?dTQyVmQ4WVRpL01qekFBZ1hVUlFzeGVXNTA2cUN4L2M2OE9uWjc1eVZHQjNk?=
+ =?utf-8?B?TWtSZVBmMGRnMGpyV1ZMdG43ZnhYbXR1Qkp4RVlmdllSNzF1WFJ0MjhtVmEx?=
+ =?utf-8?B?WHZMUDRlRjdLS2NSZVpwZzNML0lxcXlWSVEyVk9GdTJmMkp2OUpqN2ZYNS9L?=
+ =?utf-8?B?dGU0a1JINkI4SlhrMmo5UT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB7426.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UmNNTURvMmNCeVZUdE1OSnhkOFp3Z2VIelg2RXRoNTZRTlpLRG1PbSsyQm1p?=
+ =?utf-8?B?Q1l4STJCWlNONDRRTG1lR3Q1bmFvajZpb3VlRFVyUDFzbHRmcmZqd2NTYW1J?=
+ =?utf-8?B?ZHptdTdOZUhuMHlZbVhnSmJ6NWN0bjgvdzJhRFJTWHFMaXBZd3hPdGhUazJP?=
+ =?utf-8?B?bFM0V015Rzg2dml1L2tjWVpXdXZmY1JRV3hHL2drTisrTlVucG14NW9GSGlk?=
+ =?utf-8?B?R2ZCMmRaN3FRZTMvSS8zNFFtSUxFdVA1cHZDV0JYUDBpMlM5THhlWUtia09y?=
+ =?utf-8?B?TTNNRFRndXlXUklRcm5rMWlQODlILzZWN0JmTU1VY1k4VjZUZWJnRTZhcGw2?=
+ =?utf-8?B?aXJja24zMFIwWnFDTWJ6Z0MweDVFVUlSTDFJcXRBbXRoU3MyOWQwNVh5UUh2?=
+ =?utf-8?B?Tk5XWkptNlJJaGJLS1hkUHJhSElWazVKQWZ5dFF0amFyK21nNlRUbzJ1Z2Q4?=
+ =?utf-8?B?QTN3alZ4KzVCV2pXUkhYb09hYjc3dm5XQlVqN0Rjby9hN3JleWV6QzZKZ055?=
+ =?utf-8?B?WWU0ZzZVOUZFQWc0aVpRNkFJQ1dkZDdCL09zSHRYN21NSEQxdTRLYjJIaThO?=
+ =?utf-8?B?all2OWVlQ2RobURvYW5CV2FwYUw5RzBKL0lGeEdVWUtMQXRnbFJLcGpFS2Fh?=
+ =?utf-8?B?Ynd2NUdKY1R2WndCR1FOMVlnYlQwR2ZYenBkUW45dndUQ25wTlJSaS9BZXBi?=
+ =?utf-8?B?bzhLZHJycGlmOVNOQ2JuN3VvbWpUa3RXbWxuVVo4RWY1OE84RWlWTi9BQ3Nz?=
+ =?utf-8?B?ZHpEa0p5NWNrdmd3dnBVQThlVUx6ay9Ec011bWFwczJxRUNucmh4Y0ZYeTFo?=
+ =?utf-8?B?dVM4TFd1YzNQeVd2enpXN3c4aVI4WEZnZnpreDFVMlIzRHZ0Tkt2a2RQYmJF?=
+ =?utf-8?B?RVhvMGJiL25zOGFzUkpmOXBZdEx3U2thbkRjVEpkTGJndFBJektRZUFNVlZ6?=
+ =?utf-8?B?Y3JwNHJJWHU5NUc5QndwWHl2WlplMjJSWCtPY0E3Sk9pc0JneGxtc013ZHNX?=
+ =?utf-8?B?czM5WkZHODFURjd0QWJOd2krd29yNS9zS0daNkI3WWJuWElVZVdkaWlhVlBY?=
+ =?utf-8?B?U0crMTBadDMzVCtwMlFKNTRCWU5tanY2VTRZa3ZBeHFUYWJUU2hsdU9OQXRt?=
+ =?utf-8?B?MzdSdmhWRWRnenNSNW5KZXU4cTQyWi8wUjFpd0NsdnhKVjllWnZFa1RCa3hO?=
+ =?utf-8?B?cSsrNW90K044aGNMbktwM0pHVEpjYWhGSThqSHNCZEQxZmhWZVduenpPa2lX?=
+ =?utf-8?B?aXN6amlZTmVwdUVPUTZZeXBxdFJuMW5zTnZaM0M5ckJzOWNsS0VaRXlXWW82?=
+ =?utf-8?B?dFN1S3dQYmdxaWlGTG1xcnAwWmpQWmQ0ZS9vWHBzaFBiUUEwczUrb0x3aWF1?=
+ =?utf-8?B?empXdUZvczJtbzJ5ZGx0R3Ara01hd2IvM2hMUFFQdS9lU0NNYnBUbDlBRVVB?=
+ =?utf-8?B?K3k3V1kwb0pkUmlRbm1yQThyeDhiQWNCdTZ5bTgwY1A4V1lFdlFBMkwzeEh2?=
+ =?utf-8?B?aThWeENuT1lFQkFlcEZ0QVdhRHVoNnNqK3BmdUxBV2xMZFZ1N1piSmRHdHVw?=
+ =?utf-8?B?OWF0WEI5MEg0YVZSWUpnYWxJTFcyMCtGU3VuTlRDcEs5QjMvbVVmVEpxM2M5?=
+ =?utf-8?B?VGZsenFoNXhjdS92dkdjYkwra1FKOHlhNUxSaWsxcGpzZXNWemhMNmR2eXBm?=
+ =?utf-8?B?OTdPcUs0Qno5aHVSYnY3M3puY2t1eE10UFlubTM1MWtNT1VMWFRmYTFwZmNR?=
+ =?utf-8?B?ajMremprVnhGQlZuTUYzYnBEMVdCV0lYUGIrZWJpRlhyanV1aW5kMTlScFla?=
+ =?utf-8?B?bnM0NnB1bmlXK241R3VmZjJxY0NkcUtWNU5vVnhqTXhLOGdERzVBSXY5eUNY?=
+ =?utf-8?B?cFRNYy9iZ1duKzNBNURHQUJWclkrS3dRVXlBT1lsZ1BNdmJVa3dPY2lxMzkz?=
+ =?utf-8?B?RUFKYUxxclZUZjBQc00rd0xGOFhndXZ2WnRYcmJQNjNuMUlYeVRlbDJvc0Zr?=
+ =?utf-8?B?VjVHT01VSWhkQTVScERzTXVubHlYdTgwN1lrdDZWZXpBVFFSMWs5di84c3VV?=
+ =?utf-8?B?djBjRWJobTlDYnZQN3JlVE5OdWxGR0sxTTdpcDRncnVXUnppQUNSbFNXTE1J?=
+ =?utf-8?Q?CASAFKQYbP3L1QRoODKAR/UkQ?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61f21001-6a0a-463f-48dd-08dc9fd129ab
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB7426.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2024 04:39:47.9704
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rTqxKv4R498i0UGc5rGFqzBQDoxKk+Nr0cmLUeko6be3X3FrXt91ULpKegbNz1FWzAXIuV924F6Eca4sDra+/A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7527
 
-On Tue, Jul 9, 2024 at 4:21=E2=80=AFPM Zhiguo Jiang <justinjiang@vivo.com> =
-wrote:
->
-> The releasing process of the non-shared anonymous folio mapped solely by
-> an exiting process may go through two flows: 1) the anonymous folio is
-> firstly is swaped-out into swapspace and transformed into a swp_entry
-> in shrink_folio_list; 2) then the swp_entry is released in the process
-> exiting flow. This will result in the high cpu load of releasing a
-> non-shared anonymous folio mapped solely by an exiting process.
->
-> When the low system memory and the exiting process exist at the same
-> time, it will be likely to happen, because the non-shared anonymous
-> folio mapped solely by an exiting process may be reclaimed by
-> shrink_folio_list.
->
-> This patch is that shrink skips the non-shared anonymous folio solely
-> mapped by an exting process and this folio is only released directly in
-> the process exiting flow, which will save swap-out time and alleviate
-> the load of the process exiting.
->
-> Signed-off-by: Zhiguo Jiang <justinjiang@vivo.com>
 
-LGTM,
+On 7/3/2024 9:05 PM, Robin Murphy wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> On 2024-07-01 8:49 am, Ashish Mhetre wrote:
+>>
+>> On 5/31/2024 2:52 PM, Ashish Mhetre wrote:
+>>>
+>>> On 5/24/2024 6:09 PM, Ashish Mhetre wrote:
+>>>>
+>>>> On 5/23/2024 7:11 PM, Robin Murphy wrote:
+>>>>> External email: Use caution opening links or attachments
+>>>>>
+>>>>>
+>>>>> On 23/05/2024 4:19 am, Ashish Mhetre wrote:
+>>>>>> The current __arm_lpae_unmap() function calls dma_sync() on 
+>>>>>> individual
+>>>>>> PTEs after clearing them. By updating the __arm_lpae_unmap() to call
+>>>>>> dma_sync() once for all cleared PTEs, the overall performance can be
+>>>>>> improved 25% for large buffer sizes.
+>>>>>> Below is detailed analysis of average unmap latency(in us) with and
+>>>>>> without this optimization obtained by running dma_map_benchmark for
+>>>>>> different buffer sizes.
+>>>>>>
+>>>>>> Size  Time W/O        Time With       % Improvement
+>>>>>>       Optimization    Optimization
+>>>>>>       (us)            (us)
+>>>>>>
+>>>>>> 4KB   3.0             3.1             -3.33
+>>>>>> 1MB   250.3           187.9           24.93
+>>>>>
+>>>>> This seems highly suspect - the smallest possible block size is 2MB
+>>>>> so a
+>>>>> 1MB unmap should not be affected by this path at all.
+>>>>>
+>>>> It will be unmapped at 4KB block size, right? The 'size' passed to
+>>>> __arm_lpae_unmap will be 4KB and 'pgcount' will be 256 for 1MB
+>>>> buffer from iommu_pgsize() unless the IOVA and phys address met
+>>>> conditions for next bigger size i.e., 2MB.
+>>>>>> 2MB   493.7           368.7 25.32
+>>>>>> 4MB   974.7           723.4           25.78
+>>>>>
+>>>>> I'm guessing this is on Tegra with the workaround to force
+>>>>> everything to
+>>>>> PAGE_SIZE? In the normal case a 2MB unmap should be nominally 
+>>>>> *faster*
+>>>>> than 4KB, since it would also be a single PTE, but with one fewer 
+>>>>> level
+>>>>> of table to walk to reach it. The 25% figure is rather misleading if
+>>>>> it's only a mitigation of an existing erratum workaround, and the
+>>>>> actual
+>>>>> impact on the majority of non-broken systems is unmeasured.
+>>>>>
+>>>> Yes, I forgot about the workaround we have and agree that without the
+>>>> workaround, 2MB unmap will be faster without this optimization. But
+>>>> for any size between 4KB and 2MB, this optimization would help in
+>>>> improving the unmap latencies. To verify that, I reverted the 
+>>>> workaround
+>>>> and again got unmap latencies using dma_map_benchmark which are as
+>>>> mentioned below. We can see an improvement around 20% to 25%:
+>>>>
+>>>> Size          Time WO Opt(us)     Time With Opt(us)       % 
+>>>> improvement
+>>>> 4KB          3                                  3.1 -3.33
+>>>> 64KB        18.6                            15 19.36
+>>>> 128KB      35.2                            27.7 21.31
+>>>> 256KB      67.6                            52.6 22.19
+>>>> 512KB      128.4                          97.7 23.91
+>>>> 1MB         249.9                          188.1 24.72
+>>>> 2MB         67.4                             67.5 -0.15
+>>>> 4MB         121.3                          121.2 0.08
+>>>>
+>>>>> (As an aside, I think that workaround itself is a bit broken, 
+>>>>> since at
+>>>>> least on Tegra234 with Cortex-A78, PAGE_SIZE could be 16KB which
+>>>>> MMU-500
+>>>>> doesn't support.)
+>>>>>
+>>>> Yes, that's true. For 16KB PAGE_SIZE, we need to fall back to 4KB
+>>>> pgsize_bitmap.
+>>>>>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+>>>>>> ---
+>>>>>>   drivers/iommu/io-pgtable-arm.c | 34
+>>>>>> +++++++++++++++++++++++++---------
+>>>>>>   1 file changed, 25 insertions(+), 9 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/iommu/io-pgtable-arm.c
+>>>>>> b/drivers/iommu/io-pgtable-arm.c
+>>>>>> index 3d23b924cec1..94094b711cba 100644
+>>>>>> --- a/drivers/iommu/io-pgtable-arm.c
+>>>>>> +++ b/drivers/iommu/io-pgtable-arm.c
+>>>>>> @@ -256,13 +256,15 @@ static void
+>>>>>> __arm_lpae_sync_pte(arm_lpae_iopte *ptep, int num_entries,
+>>>>>>                                  sizeof(*ptep) * num_entries,
+>>>>>> DMA_TO_DEVICE);
+>>>>>>   }
+>>>>>>
+>>>>>> -static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct
+>>>>>> io_pgtable_cfg *cfg)
+>>>>>> +static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct
+>>>>>> io_pgtable_cfg *cfg, int num_entries)
+>>>>>>   {
+>>>>>> +     int i;
+>>>>>>
+>>>>>> -     *ptep = 0;
+>>>>>> +     for (i = 0; i < num_entries; i++)
+>>>>>> +             ptep[i] = 0;
+>>>>>>
+>>>>>>       if (!cfg->coherent_walk)
+>>>>>> -             __arm_lpae_sync_pte(ptep, 1, cfg);
+>>>>>> +             __arm_lpae_sync_pte(ptep, num_entries, cfg);
+>>>>>>   }
+>>>>>>
+>>>>>>   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+>>>>>> @@ -633,13 +635,25 @@ static size_t __arm_lpae_unmap(struct
+>>>>>> arm_lpae_io_pgtable *data,
+>>>>>>       if (size == ARM_LPAE_BLOCK_SIZE(lvl, data)) {
+>>>>>>               max_entries = ARM_LPAE_PTES_PER_TABLE(data) -
+>>>>>> unmap_idx_start;
+>>>>>>               num_entries = min_t(int, pgcount, max_entries);
+>>>>>> -
+>>>>>> -             while (i < num_entries) {
+>>>>>> -                     pte = READ_ONCE(*ptep);
+>>>>>> +             arm_lpae_iopte *pte_flush;
+>>>>>> +             int j = 0;
+>>>>>> +
+>>>>>> +             pte_flush = kvcalloc(num_entries, sizeof(*pte_flush),
+>>>>>> GFP_ATOMIC);
+>>>>>
+>>>>> kvmalloc() with GFP_ATOMIC isn't valid. However, I'm not sure if 
+>>>>> there
+>>>>> isn't a more fundamental problem here - Rob, Boris; was it just 
+>>>>> the map
+>>>>> path, or would any allocation on unmap risk the GPU reclaim deadlock
+>>>>> thing as well?
+>>>>>
+>>>> I am using kvmalloc() here to create an array which is used to store
+>>>> PTEs
+>>>> that are going to be flushed after clearing. If we don't store them 
+>>>> then
+>>>> those will be lost once cleared and we won't be able to flush them.
+>>>> I tried using GFP_KERNEL instead of GFP_ATOMIC but then I am getting
+>>>> warning from might_sleep().
+>>>> Is there any other alternative way we can use here to store the PTEs?
+>>>>> Thanks,
+>>>>> Robin.
+>>>>>
+>>>>>> +             if (pte_flush) {
+>>>>>> +                     for (j = 0; j < num_entries; j++) {
+>>>>>> +                             pte_flush[j] = READ_ONCE(ptep[j]);
+>>>>>> +                             if (WARN_ON(!pte_flush[j]))
+>>>>>> +                                     break;
+>>>>>> +                     }
+>>>>>> +                     __arm_lpae_clear_pte(ptep, &iop->cfg, j);
+>>>>>> +             }
+>>>>>> +             while (i < (pte_flush ? j : num_entries)) {
+>>>>>> +                     pte = pte_flush ? pte_flush[i] :
+>>>>>> READ_ONCE(*ptep);
+>>>>>>                       if (WARN_ON(!pte))
+>>>>>>                               break;
+>>>>>>
+>>>>>> -                     __arm_lpae_clear_pte(ptep, &iop->cfg);
+>>>>>> +                     if (!pte_flush)
+>>>>>> +                             __arm_lpae_clear_pte(ptep, &iop->cfg,
+>>>>>> 1);
+>>>>>>
+>>>>>>                       if (!iopte_leaf(pte, lvl, iop->fmt)) {
+>>>>>>                               /* Also flush any partial walks */
+>>>>>> @@ -649,10 +663,12 @@ static size_t __arm_lpae_unmap(struct
+>>>>>> arm_lpae_io_pgtable *data,
+>>>>>>                       } else if 
+>>>>>> (!iommu_iotlb_gather_queued(gather)) {
+>>>>>> io_pgtable_tlb_add_page(iop, gather,
+>>>>>> iova + i * size, size);
+>>>>>>                       }
+>>>>>> -
+>>>>>> -                     ptep++;
+>>>>>> +                     if (!pte_flush)
+>>>>>> +                             ptep++;
+>>>>>>                       i++;
+>>>>>>               }
+>>>>>> +             if (pte_flush)
+>>>>>> +                     kvfree(pte_flush);
+>>>>>>
+>>>>>>               return i * size;
+>>>>>>       } else if (iopte_leaf(pte, lvl, iop->fmt)) {
+>>> Hi all,
+>>>
+>>> Can you please provide feedback on this patch? Is this optimization
+>>> worth pursuing?
+>>>
+>>> Thanks,
+>>> Ashish Mhetre
+>> Hi Robin,
+>>
+>> Can you please share feedback on this? Is more testing required
+>> for this on non-Tegra platforms? Perhaps shall I send it as RFT ?
+>> I have used 'dma_map_benchmark' available in kernel to test this.
+>> Same can be used to test on other platforms.
+>
+> Apologies I was slightly mistaken before - I confess I was trying to
+> remember how the code worked from the patch context alone, and forgot
+> that this same path is actually used for clearing leaf entries all the
+> way down to L3 as well as freeing tables. So yes, indeed there should be
+> something to gain in general from combining the syncs for adjacent leaf
+> entries. However we still have the problem that we can't put an
+> unconditional allocation in here, so we'd have to do something like
+> combine up to the next non-leaf entry and keep the "inline" sync for
+> those. Or perhaps it might end up quite a neat compromise overall to do
+> your current idea on a smaller scale, with a fixed number of PTEs that's
+> reasonable to keep on the stack - even in the worst case, I'd expect to
+> still get a fair boost from doing, say, 32 syncs of 2 cachelines each
+> vs. 512 that touch each line multiple times.
+>
+> Thanks,
+> Robin.
 
-Acked-by: Barry Song <baohua@kernel.org>
+Thanks for the feedback Robin. I am thinking of going with "combining sync
+up to next non-leaf entry" approach. At this point there is a very less 
+chance
+of encountering a non-leaf entry as we are entering this part of code after
+matching size with BLOCK_SIZE.
+Shall I send a new version with this update?
 
-> ---
->
-> Change log:
-> v5->v6:
-> 1.Move folio_likely_mapped_shared() under the PTL.
-> 2.Add check_stable_address_space() to replace MMF_OOM_SKIP.
-> 3.Remove folio_test_anon(folio).
-> v4->v5:
-> 1.Further modify to skip non-shared anonymous folio only.
-> 2.Update comments for pra->referenced =3D -1.
-> v3->v4:
-> 1.Modify to skip only the non-shared anonymous folio mapped solely
-> by an exiting process.
-> v2->v3:
-> Nothing.
-> v1->v2:
-> 1.The VM_EXITING added in v1 patch is removed, because it will fail
-> to compile in 32-bit system.
->
->
-> Comments from participants and my responses:
-> [v5->v6]:
-> 1.David Hildenbrand <david@redhat.com>
-> I'm currently working on moving all folio_likely_mapped_shared() under
-> the PTL, where we are then sure that the folio is actually mapped by
-> this process (e.g., no concurrent unmapping poisslbe). Can we do the
-> same here directly?
-> -->
-> You are right. we might use page_vma_mapped_walk_done() to bail out.
-> (Barry Song)
->
-> 2.Barry Song <baohua@kernel.org>
-> By the way, I am not convinced that using test_bit(MMF_OOM_SKIP,
-> &vma->vm_mm->flags) is correct (I think it is wrong). And exit_mmap()
-> automatically has MMF_OOM_SKIP. What is the purpose of this check?
-> Is there a better way to determine if a process is an OOM target?
-> What about check_stable_address_space() ?
-> -->
-> Sorry, I overlook the situation with if (is_global_init(p)),
-> MMF_OOM_SKIP is indeed not suitable. It seems feasible for
-> check_stable_address_space() replacing MMF_OOM_SKIP.
-> check_stable_address_space() can indicate oom kill, and
-> !atomic_read(&vma->vm_mm->mm_users) can indicate the normal
-> process exiting.
->
-> I also think we actually can remove "folio_test_anon(folio)".
-> -->
-> Yes, update in patch v6.
->
-> [v4->v5]:
-> 1.Barry Song <baohua@kernel.org>
-> I don't think this is correct. folio_likely_mapped_shared() is almost
-> "correct" but not always.
-> Please explain why you set  pra->referenced =3D  -1. Please address all
-> comments before you send a new version.
-> -->
-> Update in patch v5.
->
-> 2.Matthew Wilcox <willy@infradead.org>
-> How is the file folio similar?  File folios are never written to swap,
-> and they'll be written back from the page cache whenever the filesystem
-> decides it's a good time to do so.
-> -->
-> What do you mean is that the file folio will not have any relevant
-> identifier left in memory after it is reclamed in the shrink flow,
-> and it will not be released again during an exiting process? If that's
-> the case, I think we only need the anon folio is skipped here.
->
-> [v3->v4]:
-> 1.Barry Song <baohua@kernel.org>
-> This is clearly version 3, as you previously sent version 2, correct?
-> -->
-> Yes.
->
-> Could you please describe the specific impact on users, including user
-> experience and power consumption? How serious is this problem?
-> -->
-> At present, I do not have a suitable method to accurately measure the
-> optimization benefit datas of this modifications, but I believe it
-> theoretically has some benefits.
-> Launching large memory app (for example, starting the camera) in multiple
-> backend scenes may result in the high cpu load of the exiting processes.
->
-> Applications?
-> -->
-> Yes, when system is low memory, it more likely to occur.
->
-> I'm not completely convinced this patch is correct, but it appears to be
-> heading in the right direction. Therefore, I expect to see new versions
-> rather than it being dead.
-> You changed the file mode to 755, which is incorrect.
-> -->
-> Solved.
->
-> Why use -1? Is this meant to simulate lock contention to keep the folio
-> without activating it? Please do have some comments to explain why.
-> I'm not convinced this change is appropriate for shared folios. It seems
-> more suitable for exclusive folios used solely by the exiting process.
-> -->
-> The skiped folios are FOLIOREF_KEEP and added into inactive lru, beacase
-> the folios will be freed soon in the exiting process flow.
-> Yes, the shared folios can not be simply skipped. I have made relevant
-> modifications in patch v4 and please help to further review.
-> https://lore.kernel.org/linux-mm/20240708031517.856-1-justinjiang@vivo.co=
-m/
->
-> 2.David Hildenbrand <david@redhat.com>
-> but what if it is shared among multiple processes and only one of them
-> is exiting?
-> -->
-> Modify to skip only the non-shared anonymous folio mapped solely
-> by an exiting process in next version v4.
->
-> [v2->v3:]
-> Nothing.
->
-> [v1->v2]:
-> 1.Matthew Wilcox <willy@infradead.org>
-> What testing have you done of this patch?  How often does it happen?
-> Are there particular workloads that benefit from this?  (I'm not sure
-> what "mutil backed-applications" are?)
-> And I do mean specifically of this patch, because to my eyes it
-> shouldn't even compile. Except on 32-bit where it'll say "warning:
-> integer constant out of range".
-> -->
-> Yes, I have tested. When the low system memory and the exiting process
-> exist at the same time, it will happen. This modification can alleviate
-> the load of the exiting process.
-> "mutil backed-applications" means that there are a large number of
-> the backend applications in the system.
-> The VM_EXITING added in v1 patch is removed, because it will fail
-> to compile in 32-bit system.
->
->  mm/rmap.c   | 14 ++++++++++++++
->  mm/vmscan.c |  7 ++++++-
->  2 files changed, 20 insertions(+), 1 deletion(-)
->
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 88156deb46a6..d8ecb918e59e 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -877,6 +877,20 @@ static bool folio_referenced_one(struct folio *folio=
-,
->                         continue;
->                 }
->
-> +               /*
-> +                * Skip the non-shared swapbacked folio mapped solely by
-> +                * the exiting or OOM-reaped process. This avoids redunda=
-nt
-> +                * swap-out followed by an immediate unmap.
-> +                */
-> +               if ((!atomic_read(&vma->vm_mm->mm_users) ||
-> +                       check_stable_address_space(vma->vm_mm)) &&
-> +                       folio_test_swapbacked(folio) &&
-> +                       !folio_likely_mapped_shared(folio)) {
-> +                       pra->referenced =3D -1;
-> +                       page_vma_mapped_walk_done(&pvmw);
-> +                       return false;
-> +               }
-> +
->                 if (pvmw.pte) {
->                         if (lru_gen_enabled() &&
->                             pte_young(ptep_get(pvmw.pte))) {
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 80f9a486cf27..1d5f78a3dbeb 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -863,7 +863,12 @@ static enum folio_references folio_check_references(=
-struct folio *folio,
->         if (vm_flags & VM_LOCKED)
->                 return FOLIOREF_ACTIVATE;
->
-> -       /* rmap lock contention: rotate */
-> +       /*
-> +        * There are two cases to consider.
-> +        * 1) Rmap lock contention: rotate.
-> +        * 2) Skip the non-shared swapbacked folio mapped solely by
-> +        *    the exiting or OOM-reaped process.
-> +        */
->         if (referenced_ptes =3D=3D -1)
->                 return FOLIOREF_KEEP;
->
-> --
-> 2.39.0
->
+Thanks,
+Ashish Mhetre
 
