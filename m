@@ -1,70 +1,132 @@
-Return-Path: <linux-kernel+bounces-245132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E4F92AECC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:33:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 017CE92AECE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D8F0282226
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:33:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 495ACB20C67
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE39770FB;
-	Tue,  9 Jul 2024 03:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66F96F31E;
+	Tue,  9 Jul 2024 03:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VdZRhDKz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bImM6c2H"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7A92772A;
-	Tue,  9 Jul 2024 03:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA9A4204B;
+	Tue,  9 Jul 2024 03:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720496019; cv=none; b=KYv5RQozy4+7guy1Y7FvbzffSFmB3TSG96xKOgBSmuS6yoxGxQp7sb17j8p37+RHVI/Oy3jBdME/AoWNP5W3RKK0c57EbCRqoyVHNFAJKng+TAhQArAWrariEXZwS9naJblv7F25DgYyME4JVXlrsQ+6iDfuf/0Qk5AxMR82/6o=
+	t=1720496069; cv=none; b=qGpLfsbZpr3MxVx1wEnlSh3DmIFJ0V/9l4grPPwRLTKuemzrAz4r3/Yld5ucMBVn2YotObf+XbAyk6LMq47T9CxdbxavL2fho+SE4YZHV+FFKGIVRZGwU//+AtVvmkdZ8YlP6W5ionbUnFL/N2lihvSgcrjqGD8AgEn+rxnLuGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720496019; c=relaxed/simple;
-	bh=7iwTvXHDzwgw8YBNkBLPDrFgP38NPzhCLm2zPjlIwH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c+0k+54aR+PnvtvQfZBSrJAqtG8HeBktOzTBhg70P5O3Mx/inRbQgXKwIomv59S5UitN3XROvlc6lZr45meGkNSNesGJz5tm+cHH3mpKLgXHuqgcN6Y6FHR7pvTNvdQoFyMPmm3a7h5eoieA5GtSJ0qVRraJovIt2dPkkmy4+P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VdZRhDKz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 076FAC4AF07;
-	Tue,  9 Jul 2024 03:33:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720496018;
-	bh=7iwTvXHDzwgw8YBNkBLPDrFgP38NPzhCLm2zPjlIwH0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VdZRhDKzwmvaHLAR5gfZQ1uc6ZTw3EN1TIl1WINSCHUspfmHky+i/thyrvTrXoaFd
-	 3IMJyFM5XSsy3LfCLQb3LhATu5NeVAQ86Nzf2Ord1X8kQtrZW9Pg5WjnGUqDQgRnjQ
-	 r+SLNYvydEBMZVF5k3THRP6PG6la0tI/DijcoevumZR+1b+lsetvZobQ4mYwIrKZwh
-	 ZKL1nrSOdtYZbfQCZWzj7W39kAicODz5WKkcMSE08d6ve05HOKVuFd1a1RHlAH62Q+
-	 oBLHVUaEZtTjOnZ3C52gAQUY/R93RpLwSeABtpXcNYx7ZC51vSSqkL7kczhC+GB7qX
-	 AuxSOclXTkiaw==
-Date: Mon, 8 Jul 2024 20:33:37 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Geetha sowjanya <gakula@marvell.com>
-Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <davem@davemloft.net>, <pabeni@redhat.com>, <edumazet@google.com>,
- <sgoutham@marvell.com>, <sbhatta@marvell.com>, <hkelam@marvell.com>
-Subject: Re: [net-next PATCH v8 03/11] octeontx2-pf: Create representor
- netdev
-Message-ID: <20240708203337.0e20c444@kernel.org>
-In-Reply-To: <20240705101618.18415-4-gakula@marvell.com>
-References: <20240705101618.18415-1-gakula@marvell.com>
-	<20240705101618.18415-4-gakula@marvell.com>
+	s=arc-20240116; t=1720496069; c=relaxed/simple;
+	bh=5EHUmpxUI1dLdS0rQa80kk8LUvYsdCpxUW4oijufWlg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=EsTIQeNaKZ/7eRMwUM/ycFinoZE4QXPgRJdvnA0ccZzyXLWRaXCgOVKAyM4OZ4wlA5KRZH/F3GtYNZ1h9/sH8XmPhnFcqgNf2w0IRyyvqkoXFC5lD+vDweI262xRRp3b099+mNvw5vSmkdmft3ojwTmnPTPzsYRGlmQD3GBmPYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=bImM6c2H; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720496062;
+	bh=K63CpnCf5frr4q/o5gMfiWUPRCph/tjK5mzVwMUVt28=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bImM6c2HJFYlVUMGqavQOjS23c2LB3DgfqME1K0NAeqparMcATHv6b1P5DO/nC8Xh
+	 zEwWDTyRwHJZtrj/Q5RT0pY+NNJ0J8XrxxLY32Y+N9zNrKxRQiImQwxj5Dd2ZBGE1I
+	 dOhBbQNwsLtC+RbtnZMVEarRfyLMh1NuifHNjREEFXaUeUrMLW+E/4lnG9zMbGkm+T
+	 BcibS+y2OeOXVeMPo92cZKoCbUeJRbRdYHdn0/QYXqlb5tEMwI54v037v6BMXy7E1b
+	 b9JP1fGCCAKOYCWlSwmFdbw+YugjWtF7FJFwTBykv5fgvgLUshtqzts13fp09PzJ4m
+	 QDLBVALW3UQ/A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJ66j4xGhz4w2S;
+	Tue,  9 Jul 2024 13:34:21 +1000 (AEST)
+Date: Tue, 9 Jul 2024 13:34:20 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?=
+ <linux@weissschuh.net>
+Subject: linux-next: manual merge of the battery tree with the leds-lj tree
+Message-ID: <20240709133420.55645c59@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/_v8u5kc2hc6W_g+2qeKHAQL";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/_v8u5kc2hc6W_g+2qeKHAQL
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 5 Jul 2024 15:46:10 +0530 Geetha sowjanya wrote:
->  .../ethernet/marvell/octeontx2.rst            |  49 ++++++
+Hi all,
 
-Your documentation is insufficient.
--- 
-pw-bot: cr
+Today's linux-next merge of the battery tree got a conflict in:
+
+  include/linux/leds.h
+
+between commit:
+
+  6b0d3355e5a5 ("leds: class: Add flag to avoid automatic renaming of LED d=
+evices")
+
+from the leds-lj tree and commit:
+
+  5607ca92e627 ("leds: core: Add led_mc_set_brightness() function")
+
+from the battery tree.
+
+I assume that the bit number valuse don;t actually matter, right?
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/linux/leds.h
+index 99f87587a132,517b6198df07..000000000000
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@@ -107,7 -107,7 +107,8 @@@ struct led_classdev=20
+  #define LED_BRIGHT_HW_CHANGED	BIT(21)
+  #define LED_RETAIN_AT_SHUTDOWN	BIT(22)
+  #define LED_INIT_DEFAULT_TRIGGER BIT(23)
+ -#define LED_MULTI_COLOR		BIT(24)
+ +#define LED_REJECT_NAME_CONFLICT BIT(24)
+++#define LED_MULTI_COLOR		BIT(25)
+ =20
+  	/* set_brightness_work / blink_timer flags, atomic, private. */
+  	unsigned long		work_flags;
+
+--Sig_/_v8u5kc2hc6W_g+2qeKHAQL
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaMr7wACgkQAVBC80lX
+0Gy0lwf+IWhCwyn95vuG7hTe6ViduwPCf0YLwW676tQaOuabhrUMHYQSyOccJoiu
+C+ktCzeO5xUZ/ZZX3RGnFhuulaicq/dVhFnisdqeQMTGQlspapaoIWmTeF1m2j3z
+AlhE99r6vOF66Zvp1mfjCBOTkeDwH1jL4mhW6newj7rU2bC30OPtNaoyxMhv0FEb
+E9rye/tJpzlb9zWRoAXnwsf2Lr7xKz9Z1tztBXKLHW79fsgX4YIvGIrJ1iCOFx0E
+KrMA8NFGDkm9l49xFOILdrk2TscO5nDSRqr+GiBQEOEngqllNktHfAF4RTLof3E8
+q606QJVtf3gEyYFrG2U8Z4GuttDmdQ==
+=jaF+
+-----END PGP SIGNATURE-----
+
+--Sig_/_v8u5kc2hc6W_g+2qeKHAQL--
 
