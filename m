@@ -1,105 +1,164 @@
-Return-Path: <linux-kernel+bounces-246016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92EF992BCB4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:18:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80B3A92BCBB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3698C2820EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:18:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9997B21B7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B729518FDC6;
-	Tue,  9 Jul 2024 14:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886EE198831;
+	Tue,  9 Jul 2024 14:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b0SipaOi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cKV2t6EO"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0566718E76F;
-	Tue,  9 Jul 2024 14:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE911591F1;
+	Tue,  9 Jul 2024 14:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720534728; cv=none; b=HLstgMHDAB25ykIysQJoQ2kU7bfXozVtEBGlcpDuF0wFN+RwOrqX9UNjhmKG1EctdQeEI9FCzkhfLRaFsQaU6EcbhwXd1ly4CSqplJF06DRuDgl5Zk1rFBfzurmKg2Ph9AIFkDsjQl/vxc3mpptxYBbbKIqEBDxT2YUVd5QhVpU=
+	t=1720534898; cv=none; b=cTZ8L71L8qjVuMSBy1WHp3CUqP5BwROT4yS6XOb9j+N4oDeGUCjdW5shIB6wnYAz1NMNYe/OO1hMq0rVlB9eUgC4JrQXbIY7AFPimsgUk2xo1X5XOCHxhsKc1AVOXm2kB73Yr4k5zMtRQNrPJd7CyKXsg6/impuujGnSS7dGYDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720534728; c=relaxed/simple;
-	bh=0i6utTeX8DsPV7/9WcDwrn3XMqTdMQ92uqBdyZ9F1mo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MJIID2jFdmEOTXln9al5OzOzekEkreZgESXc1PLmds47RnFKtWRoyF/NzKHB38RcmSvN67TWAIvQCUgfJHU1vtdzbZnSRTSpsnqN1MC1KDYzdeDbay2SYDOzYM0igg4n2TlKrU+9zQ8LHeR6lE3/VlDaHhj8fT/brzhE9nbVtWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b0SipaOi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3795CC4AF0D;
-	Tue,  9 Jul 2024 14:18:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720534727;
-	bh=0i6utTeX8DsPV7/9WcDwrn3XMqTdMQ92uqBdyZ9F1mo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=b0SipaOiY6nCFMPx/id9nUCE1pzdR0Redys/TlMqLvYNG9PWYb6mWLAqm2MzyxxRs
-	 w2Uimh+A1WonyA+XR+W4F0ihJtL75HhEb089xfFbkAwDi0tsV4DPBm4RUXC5RQaphi
-	 untPjtavermqv63+y44cHCDyR27fZTu6ikoPxzSi/AaK0GFVbQePO0JkDGVN4smzBS
-	 8ariXvfnPPi3Jh5Lq/a5Q50MXRccrpVDzgr5PcsmM6HR8X8Ft82L/dGE7y5hZO2B7+
-	 nmTTjs6QdxdWZvddeIJw4thNsjnEJ1cKOdkuxhZzzCejBd5kiiQx5Pr1FAK5Be9cAo
-	 bB9ugwNiEEfJQ==
-Date: Tue, 9 Jul 2024 07:18:46 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>,
- thomas.petazzoni@bootlin.com, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH net] net: ethtool: pse-pd: Fix possible null-deref
-Message-ID: <20240709071846.7b113db7@kernel.org>
-In-Reply-To: <20240709131201.166421-1-kory.maincent@bootlin.com>
-References: <20240709131201.166421-1-kory.maincent@bootlin.com>
+	s=arc-20240116; t=1720534898; c=relaxed/simple;
+	bh=4E1vxQgpgX3kemPC0EQy1ZCCU3UQ28R1B05CW+AMOn0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=jQnwD5ZE+ZM0Kl048q3O/dRxvGTsUSrIrcHLe9m61h8nmqbLM1c8ElqDc5ytEdBxac9tDP3UoNaHBSVJWI8kWL2w4RzYej+Pa4Gzgi+FDOSn7tTDowL7h7KmPO3Wb+xPw/R9vR0UONoJyqorcXHM3HXj8Cgp/0MJQ6IrSSnM9u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cKV2t6EO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469CwtaR004756;
+	Tue, 9 Jul 2024 14:21:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=cr5c/9QT2RyhMKr0m9AhQ2
+	SOiseSOKanTDp/1ZsMK/M=; b=cKV2t6EOzE9B+95KwTBUpKXNjgW9vBG81oKgG5
+	T6vYhXKlGBxTnX9m7ph4pifqHblVLGhZmHEG4pTKu0rdXnjd6oT3IaihhT2rEcP2
+	6HL2ik9Z904CB3kaoyyJLzMKUD5Uq7Q+uWSE3NGvuAEqSTRNdWjl2mPKfYbfMolb
+	yOdRRUVB9VpcIswjcH70H4vllNStu2PcF1x/I5SFQked35QUsA/P1aAxn/N+ljPD
+	cBq04EdJiH7g7uiDzt5U09llBAyvemXXvz24Se4KsXqIHDG4tC0w6BRptmr7N41M
+	8xtulRSsomKKR2yEE3sX5rz2Q8fuWOo31McgX7adlq+baVqA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 408w0r9hdm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 14:21:20 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469ELJ9M002163
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 14:21:19 GMT
+Received: from tengfan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 9 Jul 2024 07:21:14 -0700
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+Date: Tue, 9 Jul 2024 22:21:00 +0800
+Subject: [PATCH v2] dt-bindings: watchdog: qcom-wdt: document QCS9100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20240709-document_qcs9100_apss_wdt_compatible-v2-1-beeba6288c97@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAEtHjWYC/zXN0Q6CIBiG4VtpHIf7IQztqPtojhmi/luCAlrNe
+ e+hW4fvd/A9KwnGownkdlqJNwsGdDYFP5+I7mvbGYpNasKBC5BQ0sbpeTA2qkmHkgGoegxBvZu
+ otBvGOuLzZahkUggtriznkqSr0ZsWPwfzqFL3GKLz30Nd2L7+gQvwvMgh40xygIIyOs2oVTS2a
+ 2t73wOtzpJFqm3bfvYE8dnAAAAA
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck
+	<linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Rajendra Nayak
+	<quic_rjendra@quicinc.com>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Tengfei Fan <quic_tengfan@quicinc.com>
+X-Mailer: b4 0.15-dev-a66ce
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720534873; l=2433;
+ i=quic_tengfan@quicinc.com; s=20240709; h=from:subject:message-id;
+ bh=4E1vxQgpgX3kemPC0EQy1ZCCU3UQ28R1B05CW+AMOn0=;
+ b=zHIHHw1gtolQXeMOBJz4uSYgOcLoM/lRgHBXc24SFrKW82jh0Le/3zvQ6MZwvq8y/589oQm9L
+ s9JI7WQ2FVHAPFZT3uHY66Qlwqfko4J8tZDBytR6tFYjJCLQN+J99/r
+X-Developer-Key: i=quic_tengfan@quicinc.com; a=ed25519;
+ pk=4VjoTogHXJhZUM9XlxbCAcZ4zmrLeuep4dfOeKqQD0c=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: vIB4a5dQTvHyv8HiWA352rcW2I6tvhJP
+X-Proofpoint-GUID: vIB4a5dQTvHyv8HiWA352rcW2I6tvhJP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_04,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ impostorscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
+ phishscore=0 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090093
 
-On Tue,  9 Jul 2024 15:12:01 +0200 Kory Maincent wrote:
-> Fix a possible null dereference when a PSE supports both c33 and PoDL, but
-> only one of the netlink attributes is specified. The c33 or PoDL PSE
-> capabilities are already validated in the ethnl_set_pse_validate() call.
-> 
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-> Reported-by: Jakub Kicinski <kuba@kernel.org>
-> Closes: https://lore.kernel.org/netdev/20240705184116.13d8235a@kernel.org/
-> Fixes: 4d18e3ddf427 ("net: ethtool: pse-pd: Expand pse commands with the PSE PoE interface")
-> ---
->  net/ethtool/pse-pd.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/ethtool/pse-pd.c b/net/ethtool/pse-pd.c
-> index 2c981d443f27..9dc70eb50039 100644
-> --- a/net/ethtool/pse-pd.c
-> +++ b/net/ethtool/pse-pd.c
-> @@ -178,9 +178,9 @@ ethnl_set_pse(struct ethnl_req_info *req_info, struct genl_info *info)
->  
->  	phydev = dev->phydev;
->  	/* These values are already validated by the ethnl_pse_set_policy */
-> -	if (pse_has_podl(phydev->psec))
-> +	if (tb[ETHTOOL_A_PODL_PSE_ADMIN_CONTROL])
->  		config.podl_admin_control = nla_get_u32(tb[ETHTOOL_A_PODL_PSE_ADMIN_CONTROL]);
-> -	if (pse_has_c33(phydev->psec))
-> +	if (tb[ETHTOOL_A_C33_PSE_ADMIN_CONTROL])
->  		config.c33_admin_control = nla_get_u32(tb[ETHTOOL_A_C33_PSE_ADMIN_CONTROL]);
->  
->  	/* Return errno directly - PSE has no notification */
+Document the QCS9100 watchdog compatible.
+QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+platform use non-SCMI resource. In the future, the SA8775p platform will
+move to use SCMI resources and it will have new sa8775p-related device
+tree. Consequently, introduce "qcom,apss-wdt-qcs9100" to describe
+non-SCMI based watchdog.
 
-At a glance this doesn't follow usual ethtool flow.
-If user doesn't specify a value the previous configuration should be
-kept. We init config to 0. Is 0 a special value for both those params
-which tells drivers "don't change" ?
-Normal ethtool flow is to first fill in the data with a ->get() then
-modify what user wants to change.
+Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+---
+Introduce support for the QCS9100 SoC device tree (DTSI) and the
+QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+While the QCS9100 platform is still in the early design stage, the
+QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+mounts the QCS9100 SoC instead of the SA8775p SoC.
 
-Either we need:
- - an explanation in the commit message how this keeps old config; or
- - a ->get() to keep the previous values; or
- - just reject setting one value but not the other in
-   ethnl_set_pse_validate() (assuming it never worked, anyway).
+The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
+all the compatible strings will be updated from "SA8775p" to "QCS9100".
+The QCS9100 device tree patches will be pushed after all the device tree
+bindings and device driver patches are reviewed.
+
+The final dtsi will like:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
+
+The detailed cover letter reference:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+---
+Changes in v2:
+  - Split huge patch series into different patch series according to
+    subsytems
+  - Update patch commit message
+
+prevous disscussion here:
+[1] v1: https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+---
+ Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
+index 47587971fb0b..5a78816aeece 100644
+--- a/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml
+@@ -26,6 +26,7 @@ properties:
+               - qcom,apss-wdt-msm8994
+               - qcom,apss-wdt-qcm2290
+               - qcom,apss-wdt-qcs404
++              - qcom,apss-wdt-qcs9100
+               - qcom,apss-wdt-sa8775p
+               - qcom,apss-wdt-sc7180
+               - qcom,apss-wdt-sc7280
+
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240709-document_qcs9100_apss_wdt_compatible-71744c461527
+
+Best regards,
+-- 
+Tengfei Fan <quic_tengfan@quicinc.com>
+
 
