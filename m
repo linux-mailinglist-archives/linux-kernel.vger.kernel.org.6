@@ -1,127 +1,246 @@
-Return-Path: <linux-kernel+bounces-246202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE65F92BF0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:05:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8E2992BF14
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:06:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77B5F282EB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:05:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FC07286A1C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D77719D89F;
-	Tue,  9 Jul 2024 16:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D1819DF8B;
+	Tue,  9 Jul 2024 16:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="IWQ/Gd2o"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="dNxL2flB"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AB8192B6F
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 16:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF904A02;
+	Tue,  9 Jul 2024 16:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720541147; cv=none; b=EEuMg4j0dHNP4oxL5KNTQw2cuEE/RgRjJaMIUgOHxO8BskIY9tafHW0LNF8Z2WavohsoTlnhloFSs0bJgVO0G1M3UK/CamY8AaC2Hpg8h4+UisYdf7JFD95w5PvGFypJsISX2gWq0n0JH1b1Gvg9OKgLOJdC0gGhBxQCP1wCxV8=
+	t=1720541160; cv=none; b=hGa+6E2GshQ9ufnaGZ7Y9eyGAMSUUzliXELpjqPfSYXxSWLWklw8WUCzGWkiL4kSPWJdEA8734a4v9uPNlbT0K1NUICFGhGr06QcEeRbmVVukCMbm+1EkFMx0p7h6Y3wI4fhHpdbCHBtPL1jbkL+HkXvqG+KjOFolNB2J9QQgak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720541147; c=relaxed/simple;
-	bh=VF+yfPArG2Uya737SWlaNledFQMHHnudw306bPlIOaM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PIZIia5uRQtgbEA6807qk8Z3S1YiOw2vulRP7oEjfz1RhyvCsD939GRGqBiBV1uyMiRYdNpIAz9jEr2z0+tqkefLPAYOC7qCNLlMo3u+V0djjNfJAER5s6KhR+/48h7Ga3l78JldDxtSk6jUNSNaNPpSkq3o55/FTU21claDXBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=IWQ/Gd2o; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2eea8ea8c06so26869641fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 09:05:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720541143; x=1721145943; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cfXk3fTEqlZPEPFJitKkI9Zinf/x9z2xgvf/3brmGeY=;
-        b=IWQ/Gd2owi5B88xlvEg93GsAgKYsKQ6qna0P6SxS4VuwQUISFYR0JrK57mZAh237Aw
-         Su6lzjgu2ZkNTr2iI935vg6yHxVskP/XOQnybb1qohHWuERkM+grunj+lSJe11yJZEmY
-         6kv6EvKo9+Uu7ODpx1uGFvfFe4dOpahTacQ6NWMgtKYnG8UF9puS2rctXvUjeC2mtShR
-         7GCt2pc+9yU7Ee/3Blb51KVaXjuDMbw1blbFKxeJoO6rhEj6S73EfYLyteCG9x9vPuSY
-         cGg65Sc3seAUfXvs6cGRcAlebFAOxVNJmnMzu3FYXZfLZlaLlRLc2/AzNVdeAQr792Zx
-         tEhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720541143; x=1721145943;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cfXk3fTEqlZPEPFJitKkI9Zinf/x9z2xgvf/3brmGeY=;
-        b=cZHrUBnVbwmniSfDGkS0MnLXz+FfmciQyqwIm0sznewQZ7c8uSNa4oYDXhholIYrHl
-         FfdOmn+kp+LXA6zCLgsdXfsC5yZg3LqUeuksfMIlF89PdXVI8T/3H/d9frZUPiyye3O7
-         Iy+gubDro2Vtt1i+hBSgaDpm5rkI95ZV4JwLuVhkpNOMhGosw0UdLkmB+aC84UgwKPjG
-         /4A6ExXsMSbP4bVJjxE9y0/8WcAu/U3VgTaLS8MLGX1O0bPVKlf/02yNfR7z+hsy6O2L
-         zmdeG9xYwc6hhk3tey5KAcLNJm3AotP0kSJF3A7jWc2f9QYgG2xtT/OW8dS3bkYEKbz8
-         6U/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU0nj63H9l6ThYZrpyRz4yf4wz2WUOJ/MNijih/lu0rArF8I2/rfrOFl3DowXq5LDVnw7cp5X5EJfmu8LhSRFIXhPqRnUF+ddTaB3GV
-X-Gm-Message-State: AOJu0YwNpc3iEEMxjVavuyY+gS/R1LLxvvO8tNrm4fa/cy0z/RgIHEc8
-	Jcw9pc5E0x/g3r636WCnt8m3XSxbeLhVyOl6yDHpkZ5R3kPi4pK14GaotdfXGLS6LCi1EXJJgTu
-	E9rnOGmV80LNze2jXcVARztQe8m8s17mQfAozPA==
-X-Google-Smtp-Source: AGHT+IGKSJVfXAisUe6NcGYCOjmc/g6+k+gV6B29QgDU0qUyMmPFcYA13AfVsIS1mqs4poXl9Q2EMviFQ4lfCIG8kns=
-X-Received: by 2002:a2e:9097:0:b0:2ec:4fec:812c with SMTP id
- 38308e7fff4ca-2eeb3197a3dmr18848061fa.44.1720541143636; Tue, 09 Jul 2024
- 09:05:43 -0700 (PDT)
+	s=arc-20240116; t=1720541160; c=relaxed/simple;
+	bh=nWTLXY9HN+du1MWjpjzvNyHlVCQplXKA4/1rwWPWQ6Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sFdTSDMMwBGogYW8L7B7+WxhnHCfNTSuwIuwNg2MgfDwx5eGzisHYVZQdgrR/hBuRMICAws+FXHLt2MImgIlet+/clsEmm/pHD+Wv64T5k+cLLg80niVGyVYe0OE4UVDmxv+qrx24W8TtP1Kj4ysUpO5wYHoPH/x/W0ajjALzEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=dNxL2flB; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1720541153; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=Gef74ZFkoHmeg+9wnPO3M4CLYopK0Jl9u0mSEnTR2IY=;
+	b=dNxL2flBUz1RtKAZCaPQgwzk/6P+bCex9N/gPqcglcC9d/iLFBohF/rAFQ+drw1eokAfZjwGDWicWoxSveu8fdeS6vq60ijCoiL7qv2TibmFbGLn8WSTBwgqWPv8HJ+d4ySwbD+hmIEB9YFRs6BVd1hNA3gBLKQMt7yKXLrVUj4=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=guangguan.wang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0WACV18d_1720541151;
+Received: from 192.168.0.111(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0WACV18d_1720541151)
+          by smtp.aliyun-inc.com;
+          Wed, 10 Jul 2024 00:05:53 +0800
+From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+To: wenjia@linux.ibm.com,
+	jaka@linux.ibm.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: alibuda@linux.alibaba.com,
+	tonylu@linux.alibaba.com,
+	guwen@linux.alibaba.com,
+	linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net/smc: introduce autosplit for smc
+Date: Wed, 10 Jul 2024 00:05:51 +0800
+Message-Id: <20240709160551.40595-1-guangguan.wang@linux.alibaba.com>
+X-Mailer: git-send-email 2.24.3 (Apple Git-128)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240709092354.191643-1-manikandan.m@microchip.com>
- <20240709092354.191643-5-manikandan.m@microchip.com> <172052434347.27822.16864713604407945517.b4-ty@linaro.org>
- <20240709155410.GA3589336-robh@kernel.org>
-In-Reply-To: <20240709155410.GA3589336-robh@kernel.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 9 Jul 2024 18:05:32 +0200
-Message-ID: <CAMRc=McwTgOjQrNtSVORWFS92tJA_G=26x-8E6U+=4qW0d6OWQ@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] dt-bindings: gpio: convert Atmel GPIO to json-schema
-To: Rob Herring <robh@kernel.org>, linus.walleij@linaro.org
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, nicolas.ferre@microchip.com, 
-	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, arnd@arndb.de, 
-	durai.manickamkr@microchip.com, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, 
-	Manikandan Muralidharan <manikandan.m@microchip.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 9, 2024 at 5:54=E2=80=AFPM Rob Herring <robh@kernel.org> wrote:
->
-> On Tue, Jul 09, 2024 at 01:25:51PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> >
-> > On Tue, 09 Jul 2024 14:53:53 +0530, Manikandan Muralidharan wrote:
-> > > Convert the Atmel GPIO controller binding document to DT schema forma=
-t
-> > > using json-schema.
-> > > The at91 pinctrl driver uses "atmel,at91rm9200-gpio" compatible strin=
-g
-> > > to find the number of active GPIO banks and identify the pinmux nodes=
-.
-> > > "atmel,at91sam9x5-gpio" and "microchip,sam9x60-gpio" have additional
-> > > registers to handle drive-strength, slew-rate,  pull-down to drive th=
-e
-> > > pinmux configs.
-> > > The new compatible string "microchip,sam9x7-gpio" is added.
-> > >
-> > > [...]
-> >
-> > Applied, thanks!
-> >
-> > [4/5] dt-bindings: gpio: convert Atmel GPIO to json-schema
-> >       commit: 337049890b8cbbb4fb527c58976ea19f4dc747a0
->
-> Patch 5 depends on this one.
->
-> Rob
+When sending large size data in TCP, the data will be split into
+several segments(packets) to transfer due to MTU config. And in
+the receive side, application can be woken up to recv data every
+packet arrived, the data transmission and data recv copy are
+pipelined.
 
-Oops. Linus, I see you already acked it. Do you mind me taking it via
-the GPIO tree to avoid rebasing the tree?
+But for SMC-R, it will transmit as many data as possible in one
+RDMA WRITE and a CDC msg follows the RDMA WRITE, in the receive
+size, the application only be woken up to recv data when all RDMA
+WRITE data and the followed CDC msg arrived. The data transmission
+and data recv copy are sequential.
 
-Bart
+This patch introduce autosplit for SMC, which can automatic split
+data into several segments and every segment transmitted by one RDMA
+WRITE when sending large size data in SMC. Because of the split, the
+data transmission and data send copy can be pipelined in the send side,
+and the data transmission and data recv copy can be pipelined in the
+receive side. Thus autosplit helps improving latency performance when
+sending large size data. The autosplit also works for SMC-D.
+
+This patch also introduce a sysctl names autosplit_size for configure
+the max size of the split segment, whose default value is 128KiB
+(128KiB perform best in my environment).
+
+The sockperf benchmark shows 17%-28% latency improvement when msgsize
+>= 256KB for SMC-R, 15%-32% latency improvement when msgsize >= 256KB
+for SMC-D with smc-loopback.
+
+Test command:
+sockperf sr --tcp -m 1048575
+sockperf pp --tcp -i <server ip> -m <msgsize> -t 20
+
+Test config:
+sysctl -w net.smc.wmem=524288
+sysctl -w net.smc.rmem=524288
+
+Test results:
+SMC-R
+msgsize   noautosplit    autosplit
+128KB       55.546 us     55.763 us
+256KB       83.537 us     69.743 us (17% improve)
+512KB      138.306 us    100.313 us (28% improve)
+1MB        273.702 us    197.222 us (28% improve)
+
+SMC-D with smc-loopback
+msgsize   noautosplit    autosplit
+128KB       14.672 us     14.690 us
+256KB       28.277 us     23.958 us (15% improve)
+512KB       63.047 us     45.339 us (28% improve)
+1MB        129.306 us     87.278 us (32% improve)
+
+Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+---
+ Documentation/networking/smc-sysctl.rst | 11 +++++++++++
+ include/net/netns/smc.h                 |  1 +
+ net/smc/smc_sysctl.c                    | 12 ++++++++++++
+ net/smc/smc_tx.c                        | 19 ++++++++++++++++++-
+ 4 files changed, 42 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/networking/smc-sysctl.rst b/Documentation/networking/smc-sysctl.rst
+index a874d007f2db..81b5296d79f4 100644
+--- a/Documentation/networking/smc-sysctl.rst
++++ b/Documentation/networking/smc-sysctl.rst
+@@ -71,3 +71,14 @@ smcr_max_conns_per_lgr - INTEGER
+ 	acceptable value ranges from 16 to 255. Only for SMC-R v2.1 and later.
+ 
+ 	Default: 255
++
++autosplit_size - INTEGER
++	Setting SMC autosplit size. Autosplit is used to split sending data into
++	several segments when application sending data and the data size is larger
++	than autosplit size. Autosplit helps performing pipeline sending and pipeline
++	receiving for better latency performance when sending/receiving large size
++	data.
++	Autosplit_size ranges from 32KiB to 512MiB. Set autosplit_size to 512MiB means
++	disable autosplit.
++
++	Default: 128KiB
+diff --git a/include/net/netns/smc.h b/include/net/netns/smc.h
+index fc752a50f91b..26c7edeb71a3 100644
+--- a/include/net/netns/smc.h
++++ b/include/net/netns/smc.h
+@@ -24,5 +24,6 @@ struct netns_smc {
+ 	int				sysctl_rmem;
+ 	int				sysctl_max_links_per_lgr;
+ 	int				sysctl_max_conns_per_lgr;
++	unsigned int			sysctl_autosplit_size;
+ };
+ #endif
+diff --git a/net/smc/smc_sysctl.c b/net/smc/smc_sysctl.c
+index 13f2bc092db1..2aaf402acc11 100644
+--- a/net/smc/smc_sysctl.c
++++ b/net/smc/smc_sysctl.c
+@@ -29,6 +29,8 @@ static int links_per_lgr_min = SMC_LINKS_ADD_LNK_MIN;
+ static int links_per_lgr_max = SMC_LINKS_ADD_LNK_MAX;
+ static int conns_per_lgr_min = SMC_CONN_PER_LGR_MIN;
+ static int conns_per_lgr_max = SMC_CONN_PER_LGR_MAX;
++static unsigned int autosplit_size_min = SZ_32K;
++static unsigned int autosplit_size_max = SZ_512M; /* max size of snd/recv buffer */
+ 
+ static struct ctl_table smc_table[] = {
+ 	{
+@@ -90,6 +92,15 @@ static struct ctl_table smc_table[] = {
+ 		.extra1		= &conns_per_lgr_min,
+ 		.extra2		= &conns_per_lgr_max,
+ 	},
++	{
++		.procname	= "autosplit_size",
++		.data		= &init_net.smc.sysctl_autosplit_size,
++		.maxlen		= sizeof(unsigned int),
++		.mode		= 0644,
++		.proc_handler	= proc_douintvec_minmax,
++		.extra1		= &autosplit_size_min,
++		.extra2		= &autosplit_size_max,
++	},
+ };
+ 
+ int __net_init smc_sysctl_net_init(struct net *net)
+@@ -121,6 +132,7 @@ int __net_init smc_sysctl_net_init(struct net *net)
+ 	WRITE_ONCE(net->smc.sysctl_rmem, net_smc_rmem_init);
+ 	net->smc.sysctl_max_links_per_lgr = SMC_LINKS_PER_LGR_MAX_PREFER;
+ 	net->smc.sysctl_max_conns_per_lgr = SMC_CONN_PER_LGR_PREFER;
++	net->smc.sysctl_autosplit_size = SZ_128K;
+ 
+ 	return 0;
+ 
+diff --git a/net/smc/smc_tx.c b/net/smc/smc_tx.c
+index 214ac3cbcf9a..331ce4ff7c6e 100644
+--- a/net/smc/smc_tx.c
++++ b/net/smc/smc_tx.c
+@@ -175,6 +175,21 @@ static bool smc_tx_should_cork(struct smc_sock *smc, struct msghdr *msg)
+ 	return false;
+ }
+ 
++static inline bool smc_tx_should_split(struct smc_sock *smc, size_t *len)
++{
++	size_t split_size = sock_net(&smc->sk)->smc.sysctl_autosplit_size;
++
++	/* only split when len >= sysctl_autosplit_size * 1.3,
++	 * in case of a following tiny size xmit.
++	 */
++	if (*len >= (split_size * 4 / 3)) {
++		*len = split_size;
++		return true;
++	}
++
++	return false;
++}
++
+ /* sndbuf producer: main API called by socket layer.
+  * called under sock lock.
+  */
+@@ -185,6 +200,7 @@ int smc_tx_sendmsg(struct smc_sock *smc, struct msghdr *msg, size_t len)
+ 	struct smc_connection *conn = &smc->conn;
+ 	union smc_host_cursor prep;
+ 	struct sock *sk = &smc->sk;
++	bool is_split = false;
+ 	char *sndbuf_base;
+ 	int tx_cnt_prep;
+ 	int writespace;
+@@ -235,6 +251,7 @@ int smc_tx_sendmsg(struct smc_sock *smc, struct msghdr *msg, size_t len)
+ 		writespace = atomic_read(&conn->sndbuf_space);
+ 		/* not more than what user space asked for */
+ 		copylen = min_t(size_t, send_remaining, writespace);
++		is_split = smc_tx_should_split(smc, &copylen);
+ 		/* determine start of sndbuf */
+ 		sndbuf_base = conn->sndbuf_desc->cpu_addr;
+ 		smc_curs_copy(&prep, &conn->tx_curs_prep, conn);
+@@ -281,7 +298,7 @@ int smc_tx_sendmsg(struct smc_sock *smc, struct msghdr *msg, size_t len)
+ 		/* If we need to cork, do nothing and wait for the next
+ 		 * sendmsg() call or push on tx completion
+ 		 */
+-		if (!smc_tx_should_cork(smc, msg))
++		if (is_split || !smc_tx_should_cork(smc, msg))
+ 			smc_tx_sndbuf_nonempty(conn);
+ 
+ 		trace_smc_tx_sendmsg(smc, copylen);
+-- 
+2.24.3 (Apple Git-128)
+
 
