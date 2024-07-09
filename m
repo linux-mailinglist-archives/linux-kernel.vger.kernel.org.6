@@ -1,62 +1,73 @@
-Return-Path: <linux-kernel+bounces-246599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80A0F92C427
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:54:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CCA892C42B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:55:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A446283923
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:54:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A96581F23489
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364141836DC;
-	Tue,  9 Jul 2024 19:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54114182A76;
+	Tue,  9 Jul 2024 19:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="psGr9yHA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UYi8hbCM"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263691B86ED;
-	Tue,  9 Jul 2024 19:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C184182A74;
+	Tue,  9 Jul 2024 19:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720554879; cv=none; b=lP6E4w5ao+BwRXu/fQ2YZaWfNlWPOgT1CM2D5iCAnPz8pOQVuRFEdfwK52WO3MlY/5gvnRChz4KLrdr1Fd6fYXfsgtAMjSuJXnYBf/QtCIjr7kUKMXdaPk/rcngOAi+sXC3COKSfeM3LKXm0hlStaRbvXdvA1wJ7fInmw9tii0o=
+	t=1720554938; cv=none; b=U1yJRUWSU2ykYAbHk2sVq3lDMLaPzISkHCq/cb/eLjiHHoTSjmARHgy3WOFsISAcEsjITsXnPyt82KyyVa0UrZy+dCl44QqSznuUv4fNjm/2MvNwsJBEXkd3TC7gfW5P57/PtPuYrRbYjkbgS0daLDDxxFNV7yVYa+oB2b1BQ4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720554879; c=relaxed/simple;
-	bh=/lerPipFofMS16XG2NmAetlTrp37j/8H3xkX8//eLjk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=maXne0E3lVS9/CbCAqtzXToy2il7V/XOf3ZGfYrm7IXCEV4FLdobJJgJ0DtqeuRUS55xc2KyFegF3UCeFgHSk8AOhCv9zkog1xyoOOc2g/LtJfRF9KJnP6bzVyh7oLxhwuvReBe2QVUIbIBBolnZVDYagmV7UxO8McfxfCx7MHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=psGr9yHA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469BjsJs003751;
-	Tue, 9 Jul 2024 19:54:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/AFCoLS0ROkwyZbhoUTcFYBbGIrHJj7O3gfi+EWhZsY=; b=psGr9yHA5UHcxR+w
-	3kTt5evImTkq4xv7ebOdpi+cfwmafnfsZaE9aZufDVXboUpAqjDJMIrYh8Cqoa6P
-	8u31Y9sXd6VJn0O1qBAeeZyF0Tt8dAHb5gidPaYN2SpPIvwRqo6y9lgW1r05jgYp
-	8PZT71RkuU0H+uyO6Xk+9Z6C5OgN+LSlY4348G01i0hwSk/lar0cn/dToab0sYJ1
-	5j4b8XUpfxuUUK2dr2p2HETRP6R3mU4ivEx4KQPVKgSUvk7twXFLF7lbSQKp3xIF
-	JeyoO2eDpvMGKw4/5lkgXP1aXsTYchsq+zYzg3lz1EtExjGZoj48Xj45XSDz+8/I
-	bQjJaQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 408w0rabdc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 19:54:09 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469Jrm7p018290
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 9 Jul 2024 19:53:48 GMT
-Received: from [10.48.245.228] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
- 12:53:47 -0700
-Message-ID: <3808c973-1315-420c-900d-122a73a34f9e@quicinc.com>
-Date: Tue, 9 Jul 2024 12:53:47 -0700
+	s=arc-20240116; t=1720554938; c=relaxed/simple;
+	bh=fX/KQ+mAl0LS1uvwZ5S2iSk6vGVLpLkxqGmAAdu8FJg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gPGEHdiAoTPjmzCkUKh9VfQnM+4/V0duG1uJ5GrsjLkwNCOJxsdNSbcQrDA0mhX6KB9fzq2OvE8n/UY9ck4AqTns3svDtVtMZ2UYR7xLCnUGV3H1ujrzEjA55YhMu939ctaIZcB4eV43lN0Tqyd1r7Sj75pDujIL8KjC/huW4RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UYi8hbCM; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-36798779d75so4864006f8f.3;
+        Tue, 09 Jul 2024 12:55:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720554935; x=1721159735; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tj8SXQ2T3v0Iau1Rc6pv6fU6a86nQKAkdshKGb1RYAY=;
+        b=UYi8hbCMvA5lDAFSbgSv+0MRCPSuADFKiAw/0FR0bXVGG8LygoDrznTWlcAz9P7yzd
+         njuk3OG9R8zvHKbgI5m29CB5ULLxYAew7llAJaSnyAqZ82FJCvmvbAfo7dvsHBL1v6/f
+         PYx42onVwxrI/ZLhiNCwvE8tavbc05uHvKWXQO0f4Z+ueHUVhX64S2Tz49oIOJALdLqm
+         Pi1geTD55SFcOric3s8O8TsIdnDHJdcGE8J1Zwk+6z/VzItgFhME/nWhh5ZTUtKwVXUT
+         SQqndF1EgnPGxqe6FmPtF/XUe0p8p7xoMeM4lKNCiHRFuIRj+4JsNfCisz4VZ/U/ME9H
+         6b5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720554935; x=1721159735;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tj8SXQ2T3v0Iau1Rc6pv6fU6a86nQKAkdshKGb1RYAY=;
+        b=s1fp6nPLuh8ip9d//4ezzdMbCNXu2akOttel9k6WMDmypP2s5f/bXMMOFAQ8io/x4N
+         3jFqqNcAbB4SYxq3kAVu/FembDq9pjGqrmpcBHJFAYhrOdGdbBcEJsoQXQjoeBKaqJsz
+         leXH9mprg7lUAX5Aav8RmGostQyvT9FOgCObl4oVLEbiZXo6GF0SNLF76bkPylt9mXt/
+         6EWAnBeY3X4MPxuO1GdioGj9bwjqOSjpKTuGKqm1SWiCR1z2LxAyQk9ho1hFwnsBdGOI
+         3z+bebbKUMCcEt4q9ICQHA2hd5bS5vZBcIH+N6MpB879Gq3THqMHt0ww9bzl9tzEI/9O
+         Af9w==
+X-Forwarded-Encrypted: i=1; AJvYcCWwo3Q8ebEsdfW71R0rgU84DXJsgTRCUJrW4Ba4s0LPurNk8ywm4NrolSDCA22IVa1HX6T2WY/5J116G7dR2K85sJ1RzBKAefhqLWQfktcUOc9gARN2Ba2Fa/79Whf6RgHaEZfJbvA=
+X-Gm-Message-State: AOJu0YxmaOIe4ei/N6sbATqnGChyNZEv2ds0rjB+E0u6LVSqsQDjCZWE
+	SJIFaKiXS3IEYaAyGmsqsfWlyZuzCknQuVDGafUnwpxOBiYu+/GZSGzx6A==
+X-Google-Smtp-Source: AGHT+IGuTvXzsHmHxXkl4S3WCqh+kTVelQjxbW/kK1xkaXuhWYCJfRW9rmD5vFzeiqnd56AGP6+eKQ==
+X-Received: by 2002:a05:6000:a8f:b0:366:f74f:abf0 with SMTP id ffacd0b85a97d-367cea67d3cmr3007527f8f.16.1720554935214;
+        Tue, 09 Jul 2024 12:55:35 -0700 (PDT)
+Received: from [192.168.42.222] ([148.252.145.239])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde7e192sm3429120f8f.9.2024.07.09.12.55.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 12:55:34 -0700 (PDT)
+Message-ID: <d9c00f01-576c-46cd-a88c-76e244460dac@gmail.com>
+Date: Tue, 9 Jul 2024 20:55:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,60 +75,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm: kprobes: add missing MODULE_DESCRIPTION() macro
+Subject: Re: [PATCH 2/2] kernel: rerun task_work while freezing in
+ get_signal()
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, io-uring@vger.kernel.org,
+ Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
+ Christian Brauner <brauner@kernel.org>,
+ Tycho Andersen <tandersen@netflix.com>, Thomas Gleixner
+ <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+ Julian Orth <ju.orth@gmail.com>, Peter Zijlstra <peterz@infradead.org>
+References: <cover.1720368770.git.asml.silence@gmail.com>
+ <1d935e9d87fd8672ef3e8a9a0db340d355ea08b4.1720368770.git.asml.silence@gmail.com>
+ <20240708104221.GA18761@redhat.com>
+ <62c11b59-c909-4c60-8370-77729544ec0a@gmail.com>
+ <20240709103617.GB28495@redhat.com>
+ <658da3fe-fa02-423b-aff0-52f54e1332ee@gmail.com>
+ <Zo1ntduTPiF8Gmfl@slm.duckdns.org> <20240709190743.GB3892@redhat.com>
+ <d2667002-1631-4f42-8aad-a9ea56c0762b@gmail.com>
+ <20240709193828.GC3892@redhat.com>
 Content-Language: en-US
-To: Russell King <linux@armlinux.org.uk>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240622-md-arm-arch-arm-probes-kprobes-v1-1-0832bd6e45db@quicinc.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240622-md-arm-arch-arm-probes-kprobes-v1-1-0832bd6e45db@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20240709193828.GC3892@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 7PGJ1pyxWz4TcoXL8gV1ajE05RWow9uy
-X-Proofpoint-GUID: 7PGJ1pyxWz4TcoXL8gV1ajE05RWow9uy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_08,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- impostorscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
- phishscore=0 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090134
 
-On 6/22/2024 9:34 PM, Jeff Johnson wrote:
-> With ARCH=arm, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/probes/kprobes/test-kprobes.o
+On 7/9/24 20:38, Oleg Nesterov wrote:
+> On 07/09, Pavel Begunkov wrote:
+>>
+>> On 7/9/24 20:07, Oleg Nesterov wrote:
+>>> Hi Tejun,
+>>>
+>>> Thanks for looking at this, can you review this V2 patch from Pavel?
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> Just in case, I obviously meant our next (V2) patch
 > 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  arch/arm/probes/kprobes/test-core.c | 1 +
->  1 file changed, 1 insertion(+)
+> [PATCH v2 2/2] kernel: rerun task_work while freezing in get_signal()
+> https://lore.kernel.org/all/149ff5a762997c723880751e8a4019907a0b6457.1720534425.git.asml.silence@gmail.com/
 > 
-> diff --git a/arch/arm/probes/kprobes/test-core.c b/arch/arm/probes/kprobes/test-core.c
-> index 171c7076b89f..6e9041a76b8b 100644
-> --- a/arch/arm/probes/kprobes/test-core.c
-> +++ b/arch/arm/probes/kprobes/test-core.c
-> @@ -1664,6 +1664,7 @@ static void __exit kprobe_test_exit(void)
->  
->  module_init(run_all_tests)
->  module_exit(kprobe_test_exit)
-> +MODULE_DESCRIPTION("ARM kprobes test module");
->  MODULE_LICENSE("GPL");
->  
->  #else /* !MODULE */
+>>> Well, I don't really understand what can snapshot/restore actually mean...
+>>
+>> CRIU, I assume. I'll try it ...
 > 
-> ---
-> base-commit: 563a50672d8a86ec4b114a4a2f44d6e7ff855f5b
-> change-id: 20240622-md-arm-arch-arm-probes-kprobes-34037098a2c3
+> Than I think we can forget about task_works and this patch. CRIU dumps
+> the tasks in TASK_TRACED state.
 
-I don't see this in linux-next yet so following up to see if anything else is
-needed to get this merged.
+And would be hard to test, io_uring (the main source of task_work)
+is not supported
 
+(00.466022) Error (criu/proc_parse.c:477): Unknown shit 600 (anon_inode:[io_uring])
+...
+(00.467642) Unfreezing tasks into 1
+(00.467656)     Unseizing 15488 into 1
+(00.468149) Error (criu/cr-dump.c:2111): Dumping FAILED.
+
+
+>> ... but I'm inclined to think the patch makes sense regardless,
+>> we're replacing an infinite loop with wait-wake-execute-wait.
+> 
+> Agreed.
+
+-- 
+Pavel Begunkov
 
