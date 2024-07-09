@@ -1,403 +1,180 @@
-Return-Path: <linux-kernel+bounces-245863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C61992BA9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:08:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB1B792BA9D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FF951C22589
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:08:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E00D1F23D1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4768F17625A;
-	Tue,  9 Jul 2024 13:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47654176ABF;
+	Tue,  9 Jul 2024 13:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yiKJrjqz"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YS0ulNsT"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1520616848C
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 13:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18684176231
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 13:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720530360; cv=none; b=Z2z8DuoKcKVTg3cF5raQ3NSyKsJrmIbsqno6oqZE+PwGavmvdNbgfY3ydOnLQrxO3Hmpm4IPJdU8G/6OE6aToggxWf9BN48JMfiiquQmHYU1lllsEbDytgt4Iax5OXXE+4EHy5hzRgyRd22WHvmYRVE2ItSd8FvNq1++lstyUIQ=
+	t=1720530362; cv=none; b=rlx9hqWEGHAcmlaFueLMWDR9GOF8BKf0abVPQ76SOCxfeK6+y/aTxXfO4z2Y7ES8pTX56b405qxBLJMGZF03kFQTm5lzc7DXnPz2o/DgRftsIq2ANEqA99PoAuj9iHM861x/MVCWu9Y6TAKM6gMxLPvkOe4nNMeWbVYzQ38ueyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720530360; c=relaxed/simple;
-	bh=ReMuaX4uArWaeUyztwmAnshtAS2bOcX5muB5QxhiUe0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PZqHQVY6M4topHv6Ql2UnI7SjpR8Begf8oXvk9tOz6+K9WxMdmnc+NVGalLoydKebMiL6juh+ziibCGtiHM//+PZKDD0b+B6B4sEwLW72l7OjP1RQnRrPo9MX/6LCJyIkI98wJgMseJOlo9N5p7YR4voDMB9GOdWFXBFG78gf6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yiKJrjqz; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4266fd39527so7938625e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 06:05:56 -0700 (PDT)
+	s=arc-20240116; t=1720530362; c=relaxed/simple;
+	bh=EQVVYEOR5xlW6+YN0ZoEefcxKajPe32Jfjcy7Zu5DFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k3QMHZF1RRWaGJZdN7KHCL5uXrzfV+/5f9VOQMq9WYJCRGiud655lejM6aK4srtg3SXVuUCswOPn6uDRzAme22LoQNwpaSeehNz5f0FLa5uGLpaTs3P6X+WvLlW0Sg8TVZoWtWBSKZqDfkNqPos0nFgWhsxoU6LyRNmXIX8MBSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YS0ulNsT; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ee75ffce77so62138751fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 06:05:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720530355; x=1721135155; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FamCi9Pn/8UxKaCIIx795x4jMS/Np2PJDK/Wh8hNKJs=;
-        b=yiKJrjqzq5GVhf3/ATUeAoVIJZkbrJK9pzI5RzMII//ktxBe2e/eNyIq7C8SiDvIzy
-         WbFd+Ws2e4lLnQq9O31ftNO1EBL6+FttK6RpCE2gWR6t2mYFmhxeHAhRCQQWjIA9pOqA
-         3YSHM3asv2i5ZIgELjFMhTQarI8Hbv1eN6uqfewuJ/gE/NmdlRDcQFFABMm62/k01eTx
-         1ZKlflrmDLpu9MpAhpmvMINXUUreyI3v0iB5B68M+ax+NS7vpmfjsT8iCVDhlXa++5zR
-         zN4zlml/vowgf6mYyJaQLDFLxk50z9Fq/Gn7c4p/Xv9AR5gPNIIAIimzIdI0vW7v5Emr
-         QUXg==
+        d=suse.com; s=google; t=1720530358; x=1721135158; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LhBjgRzpL9sQaVK76pu/ld0xnGk1Z8E8uhy7X7mxsF4=;
+        b=YS0ulNsT2/R1NwZpPciwZ7CjoiZtk3raGzYkVP9+50os0AtSJw1WOFSnFvfyZ5Qld6
+         s1aJjSAiE0byD/FgIwXEvEBSo2kdQYZQSCDQi5fY0GxnEb43CFEbB9LcJb9Y6dZUDaAt
+         0aoJgWXIAKaDVqCKktKVecBPYbKZQ/7eath+RMOC1M9lqiX6wB0b4TDG6saMe29vAds/
+         DrvdQasKG7yphBGBGt/kscrZph5gVoGC1uVQsyerRtxdiFSxwhgxX23kI1cHayY2PWGi
+         kAGpzvdVJTHY0xhle4eznt/tsLvXJDXYZgKRq60DQOIBILsCnx3uaTPKAolqgYj2kQJ0
+         iNiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720530355; x=1721135155;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FamCi9Pn/8UxKaCIIx795x4jMS/Np2PJDK/Wh8hNKJs=;
-        b=OpjUJxj9gaJjCGlP2f740BF72vvoUykbrKiSYpQzf2Kh8qjhzQ6RmyZY/pxjAbq0PC
-         e8JlosDtgn8LBnnR2MehDarh+7cpZr55VGx8Z2W9cQkQ5vbMnzeJVYof2nkRaFTRgJ/Z
-         2qjmnr+IORTdgtxTz/Jl3/9V+SSIgtP/IEqPIEWpJJMK3Grvy46/ODp2X+A3ir+hn4rC
-         dV8O+Thfj0iG0DZtdvZ+G3gDiIw4KVFmkENepcFGo1fBGB3gaYAKfFbi/WAvu6IJoqB6
-         XMPp+/+zcNGDlLV+gTs5wFzxjaewHCsn1Bikrwy/1T8niGYi8FrG3rdHQ1HF4uAZpW0k
-         NyRA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcchzL2iTjlyBRRaSdnAtDG7SkIxQCgAEUtqinYDVksPBeJnuVo7fQ+KW0yEJon2e00m9OSTfrLVTMdxzD9kTfvzZDuVIxE4YDNko2
-X-Gm-Message-State: AOJu0YwXHiUrJ6rPPapJ1IaMjPa6aAYIaT4hFmHB28xt3NBObN8+FQ+2
-	njoda6Pt5US1n5AJ246vNRvOY2zi/A7ItZH32z31K3j/MmgVECDdXokAxF2njCcK9nvzfmUeCUx
-	XFSc=
-X-Google-Smtp-Source: AGHT+IEj5EFTvP70ZnuZfRWlri8XVAN9y5x9iWArJ1rXC2AKMPQ7/zmDJT43seeK59imyP7Q4+COJQ==
-X-Received: by 2002:a05:600c:6dd2:b0:426:640a:9dec with SMTP id 5b1f17b1804b1-426708f9e89mr14068935e9.41.1720530355306;
-        Tue, 09 Jul 2024 06:05:55 -0700 (PDT)
-Received: from [127.0.1.1] ([2a0d:e487:133f:fb1b:7fc5:f63a:ac6f:62c6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f736939sm40812395e9.37.2024.07.09.06.05.53
+        d=1e100.net; s=20230601; t=1720530358; x=1721135158;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LhBjgRzpL9sQaVK76pu/ld0xnGk1Z8E8uhy7X7mxsF4=;
+        b=ZaRKJucf7NxPKJ3iZEHyzVpwnf42qroLVKem2DgFyMjqHbRvCcU4Pane5oUw5O/+RA
+         GRj28HXHpELOPexUOtDm+f1mg7hiqiwhw4NRF6kclVPfYqM8Z2tE7EkHMljKD+pWnT0F
+         lJzIt3goOQ7qcMTfckJQnvmCH5McWny15GgZgkZD5mLkLjx3pWD3yCEvKkpRG8YFNJeq
+         j3pU6tFNjPWVZw7AwBh6MTrxY/LhiHIBNXxbSz/HGAi2hy/7XcLP75hqc+fQXFGwPpSi
+         XjbFuMItqqKx6u78vUSDrHWDl2r4Ry89czyTdNj6i0D/00a2ryX8Cqkv0phCtL1w5tYe
+         H6jg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4iv/dZFMOvAs2eMuI+iJkp2nsZBt17+d8zpC8gEMeUdOlX2Km72dyFu67zh33cmkJVG579uUivvrDGzP1nEYHp8gLCLBJ2MXMS6vW
+X-Gm-Message-State: AOJu0Yw1g4unkQEzMmrq6EhvwMH5iE9UFBJfHFQVKA6nk0FYfXlADKgn
+	SEcDGFph5mN6Iz5F9/fAFqQCCf1STB5Egbf5t2SKQgj15TmSJvTQyEQteo86svk=
+X-Google-Smtp-Source: AGHT+IHOTh69D3Wwh5wXN48yiquSobzGhHe+Le3Ut78ADxB5tyf8MU7GHpgjRa1MPh1vOGvXyEFoJw==
+X-Received: by 2002:a2e:9693:0:b0:2ec:165a:224d with SMTP id 38308e7fff4ca-2eeb3169f03mr20727561fa.38.1720530358111;
+        Tue, 09 Jul 2024 06:05:58 -0700 (PDT)
+Received: from localhost ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a871fe1sm76017166b.223.2024.07.09.06.05.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 06:05:54 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Tue, 09 Jul 2024 15:05:45 +0200
-Subject: [PATCH 2/2] drm/panel: add BOE tv101wum-ll2 panel driver
+        Tue, 09 Jul 2024 06:05:57 -0700 (PDT)
+Date: Tue, 9 Jul 2024 15:05:55 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: xiujianfeng <xiujianfeng@huawei.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, tj@kernel.org,
+	lizefan.x@bytedance.com, hannes@cmpxchg.org, corbet@lwn.net,
+	cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>
+Subject: Re: [PATCH -next] mm/hugetlb_cgroup: introduce peak and rsvd.peak to
+ v2
+Message-ID: <Zo01s6_PjdO9O9Nw@tiehlicka>
+References: <20240702125728.2743143-1-xiujianfeng@huawei.com>
+ <20240702185851.e85a742f3391857781368f6c@linux-foundation.org>
+ <6843023e-3e80-0c1c-6aab-b386ffebd668@huawei.com>
+ <20240703133804.1d8ddf90f738a7d546399b3b@linux-foundation.org>
+ <ZovgDfGFJdc6lVN3@tiehlicka>
+ <5ce7be39-ac42-98c9-65fc-589385b8f65b@huawei.com>
+ <ZowN8FvmdiEGr_rC@tiehlicka>
+ <a78f241f-9601-1033-0013-b9aa83bdeb9c@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240709-topic-sdm450-upstream-tbx605f-panel-v1-2-af473397835d@linaro.org>
-References: <20240709-topic-sdm450-upstream-tbx605f-panel-v1-0-af473397835d@linaro.org>
-In-Reply-To: <20240709-topic-sdm450-upstream-tbx605f-panel-v1-0-af473397835d@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9133;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=ReMuaX4uArWaeUyztwmAnshtAS2bOcX5muB5QxhiUe0=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmjTWuVwfQp9h9uhDQNK3Zivhw5goQ9K1VVxZ8a
- wNvn1CWQG6JAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZo01rgAKCRB33NvayMhJ
- 0WMYD/0VMrOeoHJSHnb4v4QCxts9qVC2omYTLR742cWbwoBAN7sW0lP0CEkke+z8BlP16bR4C48
- V3gr7gBxodx68FxIEJMFaI1tZZ7aN4nGXenGcXeoUrvyCQRpBglSLHaMdr8ncBNY6ieI2piHVV4
- eRQt0iguGXl5P99hnLCuLPJHRiWf3xijsAhhj0pLjX4T9a/4WiKsszP1vw81+6PXhIamkZhpnWN
- TwQhtrADWapY4j6fWiuw3QN2eYfKaAmykMrHLfhy3VKsFbjf39dNCnfJM6OKG7hkDnZXUOEz2vo
- zhUhUrQaJVWjUy5njYMxmqMHr4O6N0uYvXx6sC5VtMUyLhG9ZWpA48884yZnFpzZI8D4iE6q35E
- 5DaFOxtZ9Q39GxLh5C9NYAAak167wxrJ9TrDgEByXyONvx8ugVFkZI5eOWXHfQ18ayC0ohzt9yh
- 9X3g3lNsQapjq5VbgDNutf7oNpywCwhZN7vATlnRNqDg6V3F/mfn9AsIAmuy1jv3Cml9I2/T6V7
- vRKbu/+ipUNMPAQ0w+zfy4jOp2fr9NnIcqhQBDlai57J41lz2kFMpu39uwNr8nbzFu+f7xzsvzR
- HiqkAwiIZN4Dnz3CxsfRjqHOCdmuTmOQlhy2FHZ5JQ0VHNEK1WxB0PeQQ7rEa1sUnGH1U15RZOS
- tgQIyBUPlmz3xGg==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a78f241f-9601-1033-0013-b9aa83bdeb9c@huawei.com>
 
-Add support for the 1200x1920 BOE TV101WUM-LL2 DSI Display Panel found
-in the Lenovo Smart Tab M10 tablet. The controller is unknown.
+On Tue 09-07-24 20:47:30, xiujianfeng wrote:
+> 
+> 
+> On 2024/7/9 0:04, Michal Hocko wrote:
+> > On Mon 08-07-24 21:40:39, xiujianfeng wrote:
+> >>
+> >>
+> >> On 2024/7/8 20:48, Michal Hocko wrote:
+> >>> On Wed 03-07-24 13:38:04, Andrew Morton wrote:
+> >>>> On Wed, 3 Jul 2024 10:45:56 +0800 xiujianfeng <xiujianfeng@huawei.com> wrote:
+> >>>>
+> >>>>>
+> >>>>>
+> >>>>> On 2024/7/3 9:58, Andrew Morton wrote:
+> >>>>>> On Tue, 2 Jul 2024 12:57:28 +0000 Xiu Jianfeng <xiujianfeng@huawei.com> wrote:
+> >>>>>>
+> >>>>>>> Introduce peak and rsvd.peak to v2 to show the historical maximum
+> >>>>>>> usage of resources, as in some scenarios it is necessary to configure
+> >>>>>>> the value of max/rsvd.max based on the peak usage of resources.
+> >>>>>>
+> >>>>>> "in some scenarios it is necessary" is not a strong statement.  It
+> >>>>>> would be helpful to fully describe these scenarios so that others can
+> >>>>>> better understand the value of this change.
+> >>>>>>
+> >>>>>
+> >>>>> Hi Andrew,
+> >>>>>
+> >>>>> Is the following description acceptable for you?
+> >>>>>
+> >>>>>
+> >>>>> Since HugeTLB doesn't support page reclaim, enforcing the limit at
+> >>>>> page fault time implies that, the application will get SIGBUS signal
+> >>>>> if it tries to fault in HugeTLB pages beyond its limit. Therefore the
+> >>>>> application needs to know exactly how many HugeTLB pages it uses before
+> >>>>> hand, and the sysadmin needs to make sure that there are enough
+> >>>>> available on the machine for all the users to avoid processes getting
+> >>>>> SIGBUS.
+> >>>
+> >>> yes, this is pretty much a definition of hugetlb.
+> >>>
+> >>>>> When running some open-source software, it may not be possible to know
+> >>>>> the exact amount of hugetlb it consumes, so cannot correctly configure
+> >>>>> the max value. If there is a peak metric, we can run the open-source
+> >>>>> software first and then configure the max based on the peak value.
+> >>>
+> >>> I would push back on this. Hugetlb workloads pretty much require to know
+> >>> the number of hugetlb pages ahead of time. Because you need to
+> >>> preallocate them for the global hugetlb pool. What I am really missing
+> >>> in the above justification is an explanation of how come you know how to
+> >>> configure the global pool but you do not know that for a particular
+> >>> cgroup. How exactly do you configure the global pool then?
+> >>
+> >> Yes, in this scenario, it's indeed challenging to determine the
+> >> appropriate size for the global pool. Therefore, a feasible approach is
+> >> to initially configure a larger value. Once the software is running
+> >> within the container successfully, the maximum value for the container
+> >> and the size of the system's global pool can be determined based on the
+> >> peak value, otherwise, increase the size of the global pool and try
+> >> again. so I believe the peak metric is useful for this scenario.
+> > 
+> > This sounds really backwards to me. Not that I care much about peak
+> > value itself. It is not really anything disruptive to add nor maintain
+> > but this approach to configuring the system just feels completely wrong.
+> > You shouldn't be really using hugetlb cgroup controller if you do not
+> > have a very specific idea about expected and therefore allowed hugetlb
+> > pool consumption.
+> > 
+> 
+> Thanks for sharing your thoughts.
+> 
+> Since the peak metric exists in the legacy hugetlb controller, do you
+> have any idea what scenario it's used for? I found it was introduced by
+> commit abb8206cb077 ("hugetlb/cgroup: add hugetlb cgroup control
+> files"), however there is no any description about the scenario.
 
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- drivers/gpu/drm/panel/Kconfig                  |   9 +
- drivers/gpu/drm/panel/Makefile                 |   1 +
- drivers/gpu/drm/panel/panel-boe-tv101wum-ll2.c | 240 +++++++++++++++++++++++++
- 3 files changed, 250 insertions(+)
-
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index 9f49b0189d3b..b52d255f65e6 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -87,6 +87,15 @@ config DRM_PANEL_BOE_TV101WUM_NL6
- 	  Say Y here if you want to support for BOE TV101WUM and AUO KD101N80
- 	  45NA WUXGA PANEL DSI Video Mode panel
- 
-+config DRM_PANEL_BOE_TV101WUM_LL2
-+	tristate "BOE TV101WUM LL2 1200x1920 panel"
-+	depends on OF
-+	depends on DRM_MIPI_DSI
-+	depends on BACKLIGHT_CLASS_DEVICE
-+	help
-+	  Say Y here if you want to support for BOE TV101WUM-LL2
-+	  WUXGA PANEL DSI Video Mode panel
-+
- config DRM_PANEL_EBBG_FT8719
- 	tristate "EBBG FT8719 panel driver"
- 	depends on OF
-diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-index 5581387707c6..79c90894b6a4 100644
---- a/drivers/gpu/drm/panel/Makefile
-+++ b/drivers/gpu/drm/panel/Makefile
-@@ -7,6 +7,7 @@ obj-$(CONFIG_DRM_PANEL_BOE_BF060Y8M_AJ0) += panel-boe-bf060y8m-aj0.o
- obj-$(CONFIG_DRM_PANEL_BOE_HIMAX8279D) += panel-boe-himax8279d.o
- obj-$(CONFIG_DRM_PANEL_BOE_TH101MB31UIG002_28A) += panel-boe-th101mb31ig002-28a.o
- obj-$(CONFIG_DRM_PANEL_BOE_TV101WUM_NL6) += panel-boe-tv101wum-nl6.o
-+obj-$(CONFIG_DRM_PANEL_BOE_TV101WUM_LL2) += panel-boe-tv101wum-ll2.o
- obj-$(CONFIG_DRM_PANEL_DSI_CM) += panel-dsi-cm.o
- obj-$(CONFIG_DRM_PANEL_LVDS) += panel-lvds.o
- obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
-diff --git a/drivers/gpu/drm/panel/panel-boe-tv101wum-ll2.c b/drivers/gpu/drm/panel/panel-boe-tv101wum-ll2.c
-new file mode 100644
-index 000000000000..5513cb48d949
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-boe-tv101wum-ll2.c
-@@ -0,0 +1,240 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+// Generated with linux-mdss-dsi-panel-driver-generator from vendor device tree:
-+//   Copyright (c) 2013, The Linux Foundation. All rights reserved.
-+//   Copyright (c) 2024, Neil Armstrong <neil.armstrong@linaro.org>
-+
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+
-+#include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_modes.h>
-+#include <drm/drm_panel.h>
-+#include <drm/drm_probe_helper.h>
-+
-+struct boe_tv101wum_ll2 {
-+	struct drm_panel panel;
-+	struct mipi_dsi_device *dsi;
-+	struct gpio_desc *reset_gpio;
-+	struct regulator_bulk_data supplies[2];
-+};
-+
-+static inline struct boe_tv101wum_ll2 *to_boe_tv101wum_ll2(struct drm_panel *panel)
-+{
-+	return container_of(panel, struct boe_tv101wum_ll2, panel);
-+}
-+
-+static void boe_tv101wum_ll2_reset(struct boe_tv101wum_ll2 *ctx)
-+{
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
-+	usleep_range(5000, 6000);
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
-+	usleep_range(5000, 6000);
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
-+
-+	msleep(120);
-+}
-+
-+static int boe_tv101wum_ll2_on(struct boe_tv101wum_ll2 *ctx)
-+{
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
-+
-+	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
-+
-+	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-+
-+	mipi_dsi_msleep(&dsi_ctx, 120);
-+
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x50, 0x5a, 0x0e);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x80, 0xff, 0x81, 0x68, 0x6c, 0x22,
-+				     0x6d, 0x12, 0x00, 0x00, 0x00, 0x00, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x50, 0x5a, 0x23);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x90, 0x00, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x94, 0x2c, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x50, 0x5a, 0x19);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xa2, 0x38);
-+
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0x50, 0x5a, 0x0c);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0x80, 0xfd);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0x50, 0x00);
-+
-+	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-+
-+	mipi_dsi_msleep(&dsi_ctx, 20);
-+
-+	return dsi_ctx.accum_err;
-+}
-+
-+static int boe_tv101wum_ll2_off(struct boe_tv101wum_ll2 *ctx)
-+{
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
-+
-+	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
-+
-+	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
-+
-+	mipi_dsi_msleep(&dsi_ctx, 70);
-+
-+	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
-+
-+	mipi_dsi_msleep(&dsi_ctx, 20);
-+
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x04, 0x5a);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x05, 0x5a);
-+
-+	mipi_dsi_msleep(&dsi_ctx, 150);
-+
-+	return dsi_ctx.accum_err;
-+}
-+
-+static int boe_tv101wum_ll2_prepare(struct drm_panel *panel)
-+{
-+	struct boe_tv101wum_ll2 *ctx = to_boe_tv101wum_ll2(panel);
-+	struct device *dev = &ctx->dsi->dev;
-+	int ret;
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies),
-+				    ctx->supplies);
-+	if (ret < 0)
-+		return ret;
-+
-+	boe_tv101wum_ll2_reset(ctx);
-+
-+	ret = boe_tv101wum_ll2_on(ctx);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to initialize panel: %d\n", ret);
-+		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int boe_tv101wum_ll2_unprepare(struct drm_panel *panel)
-+{
-+	struct boe_tv101wum_ll2 *ctx = to_boe_tv101wum_ll2(panel);
-+	struct device *dev = &ctx->dsi->dev;
-+	int ret;
-+
-+	ret = boe_tv101wum_ll2_off(ctx);
-+	if (ret < 0)
-+		dev_err(dev, "Failed to un-initialize panel: %d\n", ret);
-+
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
-+
-+	regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-+
-+	return 0;
-+}
-+
-+static const struct drm_display_mode boe_tv101wum_ll2_mode = {
-+	.clock = (1200 + 27 + 8 + 12) * (1920 + 155 + 8 + 32) * 60 / 1000,
-+	.hdisplay = 1200,
-+	.hsync_start = 1200 + 27,
-+	.hsync_end = 1200 + 27 + 8,
-+	.htotal = 1200 + 27 + 8 + 12,
-+	.vdisplay = 1920,
-+	.vsync_start = 1920 + 155,
-+	.vsync_end = 1920 + 155 + 8,
-+	.vtotal = 1920 + 155 + 8 + 32,
-+	.width_mm = 136,
-+	.height_mm = 217,
-+	.type = DRM_MODE_TYPE_DRIVER,
-+};
-+
-+static int boe_tv101wum_ll2_get_modes(struct drm_panel *panel,
-+				      struct drm_connector *connector)
-+{
-+	return drm_connector_helper_get_modes_fixed(connector, &boe_tv101wum_ll2_mode);
-+}
-+
-+static const struct drm_panel_funcs boe_tv101wum_ll2_panel_funcs = {
-+	.prepare = boe_tv101wum_ll2_prepare,
-+	.unprepare = boe_tv101wum_ll2_unprepare,
-+	.get_modes = boe_tv101wum_ll2_get_modes,
-+};
-+
-+static int boe_tv101wum_ll2_probe(struct mipi_dsi_device *dsi)
-+{
-+	struct device *dev = &dsi->dev;
-+	struct boe_tv101wum_ll2 *ctx;
-+	int ret;
-+
-+	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	ctx->supplies[0].supply = "vsp";
-+	ctx->supplies[1].supply = "vsn";
-+
-+	ret = devm_regulator_bulk_get(&dsi->dev, ARRAY_SIZE(ctx->supplies),
-+				      ctx->supplies);
-+	if (ret < 0)
-+		return ret;
-+
-+	ctx->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
-+	if (IS_ERR(ctx->reset_gpio))
-+		return dev_err_probe(dev, PTR_ERR(ctx->reset_gpio),
-+				     "Failed to get reset-gpios\n");
-+
-+	ctx->dsi = dsi;
-+	mipi_dsi_set_drvdata(dsi, ctx);
-+
-+	dsi->lanes = 4;
-+	dsi->format = MIPI_DSI_FMT_RGB888;
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
-+			  MIPI_DSI_MODE_VIDEO_HSE;
-+
-+	drm_panel_init(&ctx->panel, dev, &boe_tv101wum_ll2_panel_funcs,
-+		       DRM_MODE_CONNECTOR_DSI);
-+	ctx->panel.prepare_prev_first = true;
-+
-+	ret = drm_panel_of_backlight(&ctx->panel);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to get backlight\n");
-+
-+	drm_panel_add(&ctx->panel);
-+
-+	ret = mipi_dsi_attach(dsi);
-+	if (ret < 0) {
-+		drm_panel_remove(&ctx->panel);
-+		return dev_err_probe(dev, ret, "Failed to attach to DSI host\n");
-+	}
-+
-+	return 0;
-+}
-+
-+static void boe_tv101wum_ll2_remove(struct mipi_dsi_device *dsi)
-+{
-+	struct boe_tv101wum_ll2 *ctx = mipi_dsi_get_drvdata(dsi);
-+	int ret;
-+
-+	ret = mipi_dsi_detach(dsi);
-+	if (ret < 0)
-+		dev_err(&dsi->dev, "Failed to detach from DSI host: %d\n", ret);
-+
-+	drm_panel_remove(&ctx->panel);
-+}
-+
-+static const struct of_device_id boe_tv101wum_ll2_of_match[] = {
-+	{ .compatible = "boe,tv101wum-ll2" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, boe_tv101wum_ll2_of_match);
-+
-+static struct mipi_dsi_driver boe_tv101wum_ll2_driver = {
-+	.probe = boe_tv101wum_ll2_probe,
-+	.remove = boe_tv101wum_ll2_remove,
-+	.driver = {
-+		.name = "panel-boe-tv101wum_ll2",
-+		.of_match_table = boe_tv101wum_ll2_of_match,
-+	},
-+};
-+module_mipi_dsi_driver(boe_tv101wum_ll2_driver);
-+
-+MODULE_DESCRIPTION("DRM driver for Boe TV101WUM-LL2 Panel");
-+MODULE_LICENSE("GPL");
+I do not remember but I suspect this is mimicts other cgroupv1
+interfaces.
 
 -- 
-2.34.1
-
+Michal Hocko
+SUSE Labs
 
