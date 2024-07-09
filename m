@@ -1,133 +1,141 @@
-Return-Path: <linux-kernel+bounces-246754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 908EB92C638
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:21:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E225F92C63C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51945281ADD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:21:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BC721F238A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53440187850;
-	Tue,  9 Jul 2024 22:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F64185600;
+	Tue,  9 Jul 2024 22:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WTWu2BrU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pjPsQixP"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEA21B86D6;
-	Tue,  9 Jul 2024 22:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D0518786A
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 22:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720563679; cv=none; b=STlCi+6NfyGEFKDJOcJhrOjEtdW52c97Lw9Rr4VgwY1/GzqgUo/vdeiMPoygbU6PBaNqZ4z078qfoUEBxqapWbTaCm8ao7sNtgSBsR84eEXJanIYh6094e7M0/LZVyY5jZi2Gk0YSX3/l+/pkEF2k1FP4R2huZcKoAY+v1OVJL4=
+	t=1720564114; cv=none; b=qDsntD58bqrUoWjni1vOOMehMuFviwJJ5Ob9n6uDh3flzONK2dTnBrHO0d8rYh7im2Um7K9MVtj9fmvZBRLOMu0nUNJYLhEyxrAoJVpPbkxdPWbPGsMQG1XYHKq6+P0TL5vWzY609J7tjwvI1yJeciK7JWS7uMMHfkXbgfmepGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720563679; c=relaxed/simple;
-	bh=9gaSeNUGH1VCLqShpXICFsXzHMbgGtzVUujwaEGJm0g=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=BH56Vtzr/EUF0IwgMReEjG9REAxc76ITooPQ4DeblVCeVbFlPtD1brP6J1r9yf5VqmQfQ6swIFafQBDfoLpIk3FjjMB9GmQBedentP9/ZhxWrizQSgCG1rQYWEesLl3qpnK7HdZGszgLswtvyZjZhfowyeHYV/XguCnP9LNmnuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WTWu2BrU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469BpAAL006130;
-	Tue, 9 Jul 2024 22:21:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7cXGCJaq7ngKE4UbVN3trEDyMU4pTQMGrKOzBhBaP6c=; b=WTWu2BrUpRDV5XwA
-	HIAEF8awhhdssUX4bLSdySDhUV/FoqVZ9fptWLsDDAHxMSjJt6UU8RK/zd8+cLlf
-	tg8Z8drUqdlAoOcgyXGpqYvydDfE/vS5x4SkJ5s6ZwSlmZdt40dfsWSWiH7YDoqm
-	Gf4PF0QqdZY/IORnieP16ovFPVJvx98BLrSDjJAaVcjdQf9CgrdHEILAyg5aN761
-	WvpK+jP+QUVfHiYtGl4jLsUl7POO2DAC7gbmulkeqp+npkKYUiD17SXUo/FEZde4
-	IXh5J8y48HT4JVyETT233EGXCdIlLVGrfBDf5muc93R9CSPGmtmLPOynLqhjOV7g
-	1sxJxQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406xa67k7m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 22:21:03 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469ML2BT003454
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 9 Jul 2024 22:21:02 GMT
-Received: from [10.48.245.228] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
- 15:21:00 -0700
-Message-ID: <04bd39d0-9ed7-4c09-9e21-a0a61a0fc6ea@quicinc.com>
-Date: Tue, 9 Jul 2024 15:20:56 -0700
+	s=arc-20240116; t=1720564114; c=relaxed/simple;
+	bh=ch4pEoajc1Hcg13db7SXOy/3RpPUdyRprv37vkUf5bY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IUTdDCXBIiBgRVp3Js7mnTDh+xb7SnruLC0MIOfONXWqIodMTH74BUum67bVE26Th4nL8Sv5d0k+V3bB5eLHpwxEypL1VtzSg2zljRoqOeJS+vjvgN/JeZZ0nYjg02UoSwzbgZWngTi/X0fP8L8mkyAKcvfqhYH/nZd6l1QDntA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pjPsQixP; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-44664ad946eso36391cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 15:28:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720564112; x=1721168912; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RhsBlu6qll24zUY2yKGJJYQBS72AqtpPAo9VnNpUeh0=;
+        b=pjPsQixPzDm3tD8BWMH8nL/mR8J3dENxRh28dzf+atS3EQPXF1+RSKv98NjirMX7za
+         T8U48gsoLeBx4Y83A+zvJkVl7cbXmU1BvEBnPTB4F2PilNOhwDdAdYPG0Pvg03sebz1N
+         fHsttDPqYORa0y2XhWEA2seWcnTkY8hFmE3+xD/YWXk8V9qhkdh7xt1x34QnUGT1gqLW
+         8pZ2WxwSz+2RbO+vZg8YC9lXXo3I3Y948hHr56PNbDnu6tITh8dkKAKq/+ck0qvFQrJ9
+         6CX7saya3FU3tDnuwYhA1gewYT62A+YP+WCtCxF8RWJajeqE4sXarnjrZqg1DS0RlmO6
+         H8/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720564112; x=1721168912;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RhsBlu6qll24zUY2yKGJJYQBS72AqtpPAo9VnNpUeh0=;
+        b=rlLtzqi2n6hai0kjT0zLiFuXTtF/GUBU2RmfPtEZvmWIVdv3Zve+WqxO1iZdwyjYOG
+         ErULdPlameGa3NYLvgI8qgwpbOOwlaEo42hQDwSW2aD0/a3+ZUCkWmrQQfmcXFd7B9Mu
+         4yt3y5+WJFSU02ythnt+O+efcTYcrFzr/9yfSuV3xYrYU3QtzacWAtioqW81oGjL5XEe
+         xYV3sq7yC2eS7BZd0Vdzyinf4qXAK1BaOh1tpyuOvnu8jbIlboBoQFlSXQc2qUe5Y/G2
+         hc3cJ5+q+kf/txC2fD7HuQdzJsBvJnIdlqLTLJmHuYqIU/UIyQY4mUXW55K5z9Lf5WXc
+         3A3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUfcd2k7eHuwLriDB2svKU1eqZP+ayOy1vavreN5RT9D0ItJTYnfD7B63jDPjn2BGWDsLrNgL2rXrI6mCP0AIG+8hpbbl3vMrbwePDY
+X-Gm-Message-State: AOJu0YzzysRzdr6SnkOqx3t6xMIxpLV7vSDyGPrV+8OSyW0XbaCxAdjj
+	CIYHNMcAwhckffCBfl3cmZwUOb2tO2hkwcUkkCfSba1nPtDJZBk9y9uSh2b9T2AGmw/mwBuBmgz
+	zFq3cLnA4OgKyvkDXxee8fwfTIbdExHD1vw7u
+X-Google-Smtp-Source: AGHT+IHeB9je+NxBzMGN6VzuBwrcm7niEoBEFnF9hemcs2GIYWQUqURUMjo2KvD1MmvJR2s2VXNPBW4xff4Hg23gm78=
+X-Received: by 2002:a05:622a:214:b0:444:e366:3fda with SMTP id
+ d75a77b69052e-44b1a8fb553mr589791cf.27.1720564111990; Tue, 09 Jul 2024
+ 15:28:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] samples: configfs: add missing MODULE_DESCRIPTION() macro
-Content-Language: en-US
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-To: Joel Becker <jlbec@evilplan.org>, Christoph Hellwig <hch@lst.de>,
-        Andrew
- Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240601-md-samples-configfs-v1-1-83ef2d3c0088@quicinc.com>
- <1d5dc2bb-773c-4877-9660-fff5517c2df3@quicinc.com>
-In-Reply-To: <1d5dc2bb-773c-4877-9660-fff5517c2df3@quicinc.com>
+References: <20240708212753.3120511-1-yuzhao@google.com> <20240708151619.dc738d16d3b2d56d6c4fe285@linux-foundation.org>
+In-Reply-To: <20240708151619.dc738d16d3b2d56d6c4fe285@linux-foundation.org>
+From: Yu Zhao <yuzhao@google.com>
+Date: Tue, 9 Jul 2024 16:27:54 -0600
+Message-ID: <CAOUHufZ42qn4vv+2w2MhFhqHib66s054YaXben28nddbZWRp5Q@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable v1] mm/truncate: batch-clear shadow entries
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Bharata B Rao <bharata@amd.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Mel Gorman <mgorman@techsingularity.net>, 
+	Johannes Weiner <hannes@cmpxchg.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: PcCgLvHyaGbEdl87YOYUVeuL5WgpbYoA
-X-Proofpoint-ORIG-GUID: PcCgLvHyaGbEdl87YOYUVeuL5WgpbYoA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_10,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- suspectscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0 spamscore=0
- clxscore=1011 adultscore=0 malwarescore=0 mlxscore=0 bulkscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090152
+Content-Transfer-Encoding: quoted-printable
 
-On 6/20/2024 9:46 AM, Jeff Johnson wrote:
-> On 6/1/2024 5:12 PM, Jeff Johnson wrote:
->> make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in samples/configfs/configfs_sample.o
->>
->> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->>  samples/configfs/configfs_sample.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/samples/configfs/configfs_sample.c b/samples/configfs/configfs_sample.c
->> index 37a657b25d58..fd5d163828c5 100644
->> --- a/samples/configfs/configfs_sample.c
->> +++ b/samples/configfs/configfs_sample.c
->> @@ -364,4 +364,5 @@ static void __exit configfs_example_exit(void)
->>  
->>  module_init(configfs_example_init);
->>  module_exit(configfs_example_exit);
->> +MODULE_DESCRIPTION("Sample configfs module");
->>  MODULE_LICENSE("GPL");
->>
->> ---
->> base-commit: b050496579632f86ee1ef7e7501906db579f3457
->> change-id: 20240601-md-samples-configfs-946b278a9d47
->>
-> 
-> I don't see this in linux-next yet so following up to see if anything else is
-> needed to get this merged.
+On Mon, Jul 8, 2024 at 4:16=E2=80=AFPM Andrew Morton <akpm@linux-foundation=
+.org> wrote:
+>
+> On Mon,  8 Jul 2024 15:27:53 -0600 Yu Zhao <yuzhao@google.com> wrote:
+>
+> > Make clear_shadow_entry() clear shadow entries in `struct folio_batch`
+> > so that it can reduce contention on i_lock and i_pages locks, e.g.,
+> >
+> >   watchdog: BUG: soft lockup - CPU#29 stuck for 11s! [fio:2701649]
+> >     clear_shadow_entry+0x3d/0x100
+> >     mapping_try_invalidate+0x117/0x1d0
+> >     invalidate_mapping_pages+0x10/0x20
+> >     invalidate_bdev+0x3c/0x50
+> >     blkdev_common_ioctl+0x5f7/0xa90
+> >     blkdev_ioctl+0x109/0x270
+>
+> This will clearly reduce lock traffic a lot, but does it truly fix the
+> issue?  Is it the case that sufficiently extreme loads will still run
+> into problems?
 
-I still don't see this in linux-next so adding Andrew & Greg to see if this
-should go through one of their misc trees. Hoping to have these cleaned up
-tree-wide in 6.11.
+I think Bharata was running extreme loads. So I'd say it's good enough
+for now, considering truncation doesn't happen that often.
 
-/jeff
+> > --- a/mm/truncate.c
+> > +++ b/mm/truncate.c
+> > @@ -39,12 +39,24 @@ static inline void __clear_shadow_entry(struct addr=
+ess_space *mapping,
+> >       xas_store(&xas, NULL);
+> >  }
+> >
+> > -static void clear_shadow_entry(struct address_space *mapping, pgoff_t =
+index,
+> > -                            void *entry)
+> > +static void clear_shadow_entry(struct address_space *mapping,
+> > +                            struct folio_batch *fbatch, pgoff_t *indic=
+es)
+> >  {
+> > +     int i;
+> > +
+> > +     if (shmem_mapping(mapping) || dax_mapping(mapping))
+> > +             return;
+>
+> We lost the comment which was in invalidate_exceptional_entry() and
+> elsewhere.  It wasn't a terribly good one but I do think a few words
+> which explain why we're testing for these things would be helpful.
 
+I'll put the original comment back. It seems to me it was stating the
+obvious, and I don't really know how to improve it since it's obvious
+;)
+
+> I expect we should backport this.  But identifying a Fixes: target
+> looks to be challenging.
+
+I wouldn't worry about backporting, nobody else has run into this
+scalability issue (not even a day-to-day performance problem).
 
