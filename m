@@ -1,117 +1,98 @@
-Return-Path: <linux-kernel+bounces-246629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DB8992C483
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:27:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D10F492C488
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FDE61C20ACE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:27:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 731191F2344D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A4D182A63;
-	Tue,  9 Jul 2024 20:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055F4185609;
+	Tue,  9 Jul 2024 20:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="XsDhBE9t"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EmTAyWIB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4E6182A59;
-	Tue,  9 Jul 2024 20:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A5D14F108;
+	Tue,  9 Jul 2024 20:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720556843; cv=none; b=My0aQkJhfPiCVfqS/CyxWMCNmrmH7Mwud+t3PvrTsxV+T5eYaL40r08DQcYnMiciGQoJOZbhQrHF7ja5OnrSkHjgb21OLrWJBsov7Q92K9yYNVlKh7SkJyAL+ZMMFMwWpy8mzEAmhgVsfrk1oNodALOSaLHKX01PxpeZcIJysDc=
+	t=1720556929; cv=none; b=u6ZkntjW3tns4kKUaIR4A9ArqRCB75mxEqMZ1kQzrvN5OUgL4atI/YgHuTPEPRay9+R/kp/50V9t1x+IeytI1wvDz5UiZG/HHPS9dAF5gDfyVs/STTgW2/Zd9aUmc8IVfH+SIoB3sDu08WDmzeUeji+RWwijKQrDjaPf/8XjziU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720556843; c=relaxed/simple;
-	bh=Kr4XmoNdiq1x+7Cu3wngyAMQNWraTKt0MquCs056Yzw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X0POYIpEZPqoYGiNUdNlfAv3UaKv1j0VAoz+YbOPNahJ8gzLkpb8oqV2kJNXnNaNJamWgPIZjh280mps+njDUr01+QVIUjQ/FJq9YPlj7ljNcmBtRRQfp6T8w+NdKwetB+OcvHd/UTQ5kMUeozayfqpQfUzrL81mt1ZmpBlDTas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=XsDhBE9t; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4266fd39527so10985725e9.1;
-        Tue, 09 Jul 2024 13:27:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1720556840; x=1721161640; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Go5tn3E+fiaOV5LrSumTLE44aCs4A5PSxIlDDqGg1vc=;
-        b=XsDhBE9t1iLhSMCCP7C/ciorUtnpZ4eEs1c5JvnH8X9gsaqZKDY8A0EWTWenk5NdZ7
-         +1l06f15ZdwMsVYahWvxmL1H36GZDWh1dklZg0lXkdyzKNefOrjmaD11eDfmDusFJ89A
-         FOjoiVYOW/BigTiG/jRFCwT0TiDRXWwd38nxWAnFMhqJl3ofi8HD8p2VsmGDsTtZSuaG
-         Fi7LEHsGrWbrnktf0dpe+uGkeCtnN/FBQE1/IINl25S6WPTX9yeqS6NhI3V+aXGgwGi1
-         Z7meUXuawkVj7eXAu/fMFYKNIMDQfWjERDSbz+mUZ8RsDEL/dCqKbt77oA2bKCh9S7yo
-         dB5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720556840; x=1721161640;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Go5tn3E+fiaOV5LrSumTLE44aCs4A5PSxIlDDqGg1vc=;
-        b=P7foU5Fp68nchgoqgVcRzFwBcdWZ05WtGt3+ngL3P9XZxruNh6QBq2OS673qIExoLp
-         4Cbk9BoG/FEsXLxWUBcjV10OGikotYo1W6eq6O50jV+dB7RICjXLUm8X3YLhbhvOVuHh
-         H3maO2C/9u8WAhPQI4KJ6bdID6AlhMTJMygYhCgNC/vQMLcOfx0qZLJbaL93ZSbd0xpM
-         6cjMn6dq5nlR3WoPzsIM8Er5s8DTUtpvf7l4s1IiRoKEMQjez97i8ffE7VhpTS4Pid5x
-         4p1R+Wradwno/AAFaaDcV54UHS1mlJN3kDOe9/CbL9qwPkdzS/x8PhogURr/roDUp/me
-         iJCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVkaY2Ir07XZRDcDJNZTluzREuwHz1L40Vyj0JzcYTtXZsOBFp33WUwfVMxPsp22iSdXZigxjD+sobDThuTrPZcRtHn9wkuhsTZTiV6niXEJAkaVYqLebpESoz2p5fLTOYctoLU
-X-Gm-Message-State: AOJu0Yz9NF9ewdbubWDT67X2MAT5Hi+PXD0ZR35UWsdHKg7Jk4EdGnR6
-	mB+z/w/s2Sgnkj2y1obxtN32u236p3Bk6kYv0SVFESXMj5KJA7o=
-X-Google-Smtp-Source: AGHT+IH7KbG3a8D4KEZUHKMnCt6K7piI2wcUDaPBqlwlWlA2VzZGH8hneeif7F8LPtb4Iuq2M/whlw==
-X-Received: by 2002:a05:600c:42d3:b0:426:5546:71a with SMTP id 5b1f17b1804b1-426705ce6f0mr23477575e9.2.1720556840270;
-        Tue, 09 Jul 2024 13:27:20 -0700 (PDT)
-Received: from [192.168.1.3] (p5b0577f1.dip0.t-ipconnect.de. [91.5.119.241])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42793dc2bcesm3020105e9.29.2024.07.09.13.27.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 13:27:19 -0700 (PDT)
-Message-ID: <89842487-8e2a-4958-87de-207068471a6a@googlemail.com>
-Date: Tue, 9 Jul 2024 22:27:18 +0200
+	s=arc-20240116; t=1720556929; c=relaxed/simple;
+	bh=/od/8NDo7YI4mcGiqROSpWSo0Vq0Svc7ugQRRWHIgmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BiN9AR/6oReREKTrbUAL9PNhj4sajiIB9XBgQpR+efn6FnvZQMrF58UKfEH5mAFceqXTC3hHcLRRGeK+jP1JHg/kZaIMeGnn/sUs24vzkLDu3/FGilxGXKkujQWqDtRRjkAtoo/68wjxeJJrGwaeor6Oei2O0YZOU3BAmrLLBG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EmTAyWIB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3159C3277B;
+	Tue,  9 Jul 2024 20:28:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720556928;
+	bh=/od/8NDo7YI4mcGiqROSpWSo0Vq0Svc7ugQRRWHIgmA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EmTAyWIBox6iTlNcpEjiozvHqqsaSQqmssiA3sRSEjudjhFFGUH0gF1m+YjkY2CtY
+	 DnGJk2CEvBT5c6skfOIQJWLXh7PMOn59Z9DucZ2qCfblOXYDhOWttvty4yVVgXun9C
+	 83539ZtY6woapgUb+Q3j2dnxwApt8TQa9hYehkmqHbC6p79ZnYv9wzQT4+XuN0eYWU
+	 FP1neFvEGOaNw5A0e0d0siPkwDYeNTj/8xxV3aGavRaE5m6o1gz95s3ZRP3pJUMthC
+	 Z+GvVb2J8T+GBT6MD8sAZvonOjYhPsd5ro0W4wIdcMnvesgHrjlbKYHgPBb6KHzuyf
+	 Mr+LX/keb3nuA==
+Date: Tue, 9 Jul 2024 13:28:48 -0700
+From: Kees Cook <kees@kernel.org>
+To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Marco Elver <elver@google.com>,
+	Nathan Chancellor <nathan@kernel.org>, Hao Luo <haoluo@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jakub Kicinski <kuba@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Tony Ambardar <tony.ambardar@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [RFC][PATCH 0/4] slab: Allow for type introspection during
+ allocation
+Message-ID: <202407091327.AEF6C020D@keescook>
+References: <20240708190924.work.846-kees@kernel.org>
+ <a1fd42b5-50b7-1360-4fd0-8f590dc08e02@gentwo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.1 000/102] 6.1.98-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240709110651.353707001@linuxfoundation.org>
-Content-Language: de-DE
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20240709110651.353707001@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a1fd42b5-50b7-1360-4fd0-8f590dc08e02@gentwo.org>
 
-Am 09.07.2024 um 13:09 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.1.98 release.
-> There are 102 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Jul 09, 2024 at 10:26:32AM -0700, Christoph Lameter (Ampere) wrote:
+> On Mon, 8 Jul 2024, Kees Cook wrote:
+> 
+> > 
+> >            obj = kmalloc(obj, gfp);
+> 
+> Could we avoid repeating "obj" in this pattern?
+> 
+> F.e.
+> 
+> 	KMALLOC(obj, gfp);
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found. It ran for an hour now, and I built 6.6.38 and 6.6.39-rc1 
-with it, which I will boot-test next.
-
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
-
-Beste Grüße,
-Peter Schneider
+This appears to be the common feedback, which is good! :) And we can
+still have it return "obj" as well, so it could still be used in
+"return" statements, etc. I will work up a new RFC...
 
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+Kees Cook
 
