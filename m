@@ -1,110 +1,153 @@
-Return-Path: <linux-kernel+bounces-246528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 741C592C322
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:11:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 194BC92C325
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:11:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29CD52842D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:11:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A2011C22A16
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048A9180035;
-	Tue,  9 Jul 2024 18:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD9B180050;
+	Tue,  9 Jul 2024 18:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iO0fOfTw"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vRCufdPb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5FE17B056
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 18:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E219C182A51;
+	Tue,  9 Jul 2024 18:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720548685; cv=none; b=YHvvKNDhwvBDg+8U9fuDJONlxn+BveoAnV+bg6xoe2WWYD5J1j+mtHBatsva9CqxUZOAN+aZ1JFLhyDqiaoWqewNNnnqdRwnh98J10QVBvXtzBDId5fhN39nIF1ml6iGm+79ZJEjXkfE5dQ1Z51MJ7RnFjxy6rPwdmOVcRwmWpY=
+	t=1720548695; cv=none; b=PUNGZykvMH86EN5exhaa0E3Llr7s3Ha3S1Wu3aucruWZknWrv7HIcz2lA3Kqu7cl2S6sgdNDp8dcVTYMgza3F5n9qoUlkMFqQ9kkuOI1tB68Wag1t0LhEGGhkzDLhnMewjBkBwYAi7yy3BZP6C4857n9BF+vTpoLtYsOrh1M2DU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720548685; c=relaxed/simple;
-	bh=TOXIuMclA2k8tL837RtgO8TyXXk0WPbBnMUF/2eUGz4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Jg5OyKzNkOWbmKZrsTaZ4j4vyUtA6pc/Lba66Sowlt3X0qwPM9ReCMIsaiYcwPTkZFmQIRQ3HncWXdDhe9z3p1TRhp0iriZVjJTOJGrxjMyiTcYJjdq9nzB/569qnstHhKAZZTneSUSG282pfkhK4NYx+17wI+wO/p4cDyBa0cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iO0fOfTw; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2c30144b103so19518a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 11:11:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720548683; x=1721153483; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kQ0zegn3XbPh6Zss1RAlAIrL9aW5oGVVSySJPUmQKpk=;
-        b=iO0fOfTw4jFhnTtQjVjGH20mJejK6VUFE77ZZI8gc2M2DPaFxI3l78DKNi2lbFfIy7
-         axvh+PCKNBkQQlPbcPXC49vQl8Xk7AtyshPUE3l903kgd3Gc0Shj5q3czEMUPVl9Qi54
-         gEwBLT271mqS57RYq5QsUfsYY0gXLG43p7SVKjaKw2tNbUn74V9h1fjkBfOVB8kB3OuU
-         HdT8WnrgjR5sE2VFHBlVnd0T7ed2MNzfOe8sc7ExRg/Lw9o8kVBdoiANlNrgVdh0XcuN
-         /LqBR7vvsgm7eB2oMDrzSisCqUDHDT37S+EQk26h8VnwRben0xJwwx0f4R+LkC0xrEs1
-         F06g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720548683; x=1721153483;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kQ0zegn3XbPh6Zss1RAlAIrL9aW5oGVVSySJPUmQKpk=;
-        b=irzqmfZINBu03Pk2Aof5NvoUMYhr2XSUWzMmTTivF7QNnnSkXnl71JiqfkW/QeWiHc
-         yQYEyNKs0lJx/dflhX2Xj6XDFmBpaM7OsQMHoyukbQ6xWOspWdd5D3XsUP1BYBgRw5GB
-         6DV+vxS8E4fWiZBapDuJYIGvtUcgSZponcPekBJDjgxCfiYZhqzC6u3nlLtQlhCC82gp
-         9xhTzzoYlQAeOIwRjaXEVHbjFxnpAe8CRI/CfslMHpJGg8PwNjtG27Tq24zZvXYNqy38
-         4TsgHejC9/NQhSHLengHOwEK6RrurWNQW4CRPtPmGq+1GMqiMvp9c45Q1VczIcW8tqvT
-         5kzg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4+dHhyZ1BWa4ZfAprqMjR01dEfVmI6C3kGeEJkOMLffBgt0tUBubwdtLK75GOmwNK37vJgb4NNc7Jqwmkz+3FIyh6uGl5ZpEiNMjq
-X-Gm-Message-State: AOJu0Yy+cq0TlNXWj3cUNJdzkWd9DROGH9DC5Uv50CGrd9kBXlvBaITJ
-	hgAbBvkaLzuBUHkzAarcEsqSCfKPMcLw8IhSGbrrsLtY6ES7kBQs781yemRXeIIhRZn9Cz/KKnU
-	QOw==
-X-Google-Smtp-Source: AGHT+IEW8j5jCCdLqxLGS0NLhCB6rditdfbyBmG5H0mUepDvlfiJzMj9BMgGvp0sNCjgOsWUe5fRfV6jTr4=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90b:1004:b0:2c9:5ca5:4d20 with SMTP id
- 98e67ed59e1d1-2ca3a708a4emr58889a91.0.1720548683215; Tue, 09 Jul 2024
- 11:11:23 -0700 (PDT)
-Date: Tue, 9 Jul 2024 11:11:21 -0700
-In-Reply-To: <7c072dac426f77953158b0c804d81c664c00d1e3.camel@redhat.com>
+	s=arc-20240116; t=1720548695; c=relaxed/simple;
+	bh=vmKXIZftIMmUvIjQn6H9m8+/Z4ol58D0xRGXk1f2Epw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S4B5EIvuK4wSIeQvieXeS39S6jqNK7D7b4ujzo6iX6am4jiGEVkq8BwRXlxOok9jKf9hiBCyw78YucPT/TIy9xYDYhZ16BCJoGEwuqGPI0C0RyGI5jnkNAt5AOuWtgORws7jykTBjMxU29koeXU90/2XyUldDJEgdQfWGvGAs1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vRCufdPb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA0F3C32782;
+	Tue,  9 Jul 2024 18:11:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720548694;
+	bh=vmKXIZftIMmUvIjQn6H9m8+/Z4ol58D0xRGXk1f2Epw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vRCufdPbcmGi6dtPoZXTY6MDS2cU/kITaI815vaF+sAxC7EnvMf5Kj30Bjin4x6Wc
+	 Ec2kPiJEump+XPpCPdLSYQEN7AAdrYbZ1PnDgH4Q5PRfi8aRbc9ewKMyCJMsT51Jh4
+	 BOZoGsU3jFL5lIWY6w3vY8QMWMaLYzi280XT4W/PEEY85Whb3tFzUFoHC7oEl4epQ8
+	 7nsInslcd25Gb24INbrOI04QbQEfl2Dtz3zZFtXu1vF+SZrRcrup1yQ9/k/tdAYafv
+	 z3PrgTJDGZp73cPJmERZZiDU9G6VQbxarjw843+LJR6v1ry4tnAX1XHapomSwWQA/c
+	 uhAoE2OXI2QuQ==
+Date: Tue, 9 Jul 2024 19:11:28 +0100
+From: Simon Horman <horms@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	keescook@chromium.org, nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+	linux-hardening@vger.kernel.org,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v2] netdevice: define and allocate &net_device
+ _properly_
+Message-ID: <20240709181128.GO346094@kernel.org>
+References: <20240709125433.4026177-1-leitao@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-26-seanjc@google.com>
- <7c072dac426f77953158b0c804d81c664c00d1e3.camel@redhat.com>
-Message-ID: <Zo19SWre5eJm8XTu@google.com>
-Subject: Re: [PATCH v2 25/49] KVM: x86: Harden CPU capabilities processing
- against out-of-scope features
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709125433.4026177-1-leitao@debian.org>
 
-On Thu, Jul 04, 2024, Maxim Levitsky wrote:
-> On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
-> > +/*
-> > + * For kernel-defined leafs, mask the boot CPU's pre-populated value.  For KVM-
-> > + * defined leafs, explicitly set the leaf, as KVM is the one and only authority.
-> > + */
-> > +#define kvm_cpu_cap_init(leaf, mask)					\
-> > +do {									\
-> > +	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);	\
-> > +	const u32 __maybe_unused kvm_cpu_cap_init_in_progress = leaf;	\
+On Tue, Jul 09, 2024 at 05:54:25AM -0700, Breno Leitao wrote:
+> From: Alexander Lobakin <aleksander.lobakin@intel.com>
 > 
-> Why not to #define the kvm_cpu_cap_init_in_progress as well instead of a variable?
+> In fact, this structure contains a flexible array at the end, but
+> historically its size, alignment etc., is calculated manually.
+> There are several instances of the structure embedded into other
+> structures, but also there's ongoing effort to remove them and we
+> could in the meantime declare &net_device properly.
+> Declare the array explicitly, use struct_size() and store the array
+> size inside the structure, so that __counted_by() can be applied.
+> Don't use PTR_ALIGN(), as SLUB itself tries its best to ensure the
+> allocated buffer is aligned to what the user expects.
+> Also, change its alignment from %NETDEV_ALIGN to the cacheline size
+> as per several suggestions on the netdev ML.
+> 
+> bloat-o-meter for vmlinux:
+> 
+> free_netdev                                  445     440      -5
+> netdev_freemem                                24       -     -24
+> alloc_netdev_mqs                            1481    1450     -31
+> 
+> On x86_64 with several NICs of different vendors, I was never able to
+> get a &net_device pointer not aligned to the cacheline size after the
+> change.
+> 
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
 
-Macros can't #define new macros.  A macro could be used, but it would require the
-caller to #define and #undef the macro, e.g.
+Hi Breno,
 
-	#define kvm_cpu_cap_init_in_progress CPUID_1_ECX
-	kvm_cpu_cap_init(CPUID_1_ECX, ...)
-	#undef kvm_cpu_cap_init_in_progress
+Some kernel doc warnings from my side.
 
-but, stating the obvious, that's ugly and is less robust than automatically
-"defining" the in-progress leaf in kvm_cpu_cap_init().
+Flagged by: kernel-doc -none
+
+> ---
+> Changelog:
+> 
+> v2:
+>  * Rebased Alexander's patch on top of f750dfe825b90 ("ethtool: provide
+>    customized dim profile management").
+>  * Removed the ALIGN() of SMP_CACHE_BYTES for sizeof_priv.
+> 
+> v1:
+>  * https://lore.kernel.org/netdev/90fd7cd7-72dc-4df6-88ec-fbc8b64735ad@intel.com
+> 
+>  include/linux/netdevice.h | 12 +++++++-----
+>  net/core/dev.c            | 30 ++++++------------------------
+>  net/core/net-sysfs.c      |  2 +-
+>  3 files changed, 14 insertions(+), 30 deletions(-)
+> 
+> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> index 93558645c6d0..f0dd499244d4 100644
+> --- a/include/linux/netdevice.h
+> +++ b/include/linux/netdevice.h
+> @@ -2199,10 +2199,10 @@ struct net_device {
+>  	unsigned short		neigh_priv_len;
+>  	unsigned short          dev_id;
+>  	unsigned short          dev_port;
+> -	unsigned short		padded;
+
+padded should also be removed from the Kernel doc for this structure.
+
+> +	int			irq;
+> +	u32			priv_len;
+
+And irq and priv_len should be added to the Kernel doc for this structure.
+
+>  
+>  	spinlock_t		addr_list_lock;
+> -	int			irq;
+>  
+>  	struct netdev_hw_addr_list	uc;
+>  	struct netdev_hw_addr_list	mc;
+
+...
 
