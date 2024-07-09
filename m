@@ -1,105 +1,195 @@
-Return-Path: <linux-kernel+bounces-245576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B291092B484
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:56:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 093B692B488
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3B801C21E3E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:56:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6574CB20CBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5A915575F;
-	Tue,  9 Jul 2024 09:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2853015575C;
+	Tue,  9 Jul 2024 09:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AYzguC7Q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WI3uKerU"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD1B15534D
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647501553A7;
+	Tue,  9 Jul 2024 09:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720518995; cv=none; b=c4IAZ9HBYO14wITSAqDytR8I4uo8DMEzMt9Ac9KiP/NYYTrBWu3pbLLtx76fzuTgdYvGRnJSlOmS2HvHL3lniuNoNHHHA/V7TYrDHxHUxF/DMsD5Lf4tUncOPIq2FE/uRjFFx1qeqR9rOhNZM01J1ce6yzsbATPNmf4gZQTSO+U=
+	t=1720519017; cv=none; b=f5qdqwxbx/p2hRZ4gfrFfYa6abPWxC3M3EU/cEKQuIf/1qSyEAAHAQEI19+GesoNwkKciIVIFdkv33qcs80x3UJ/s5FT7VCBD1rC+pk7H8xHF2xzEd4BzvmlYWnBB40/WZ1QevaAUmC0SkyOTc264861bPZKQ4cimCT+10Gfssg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720518995; c=relaxed/simple;
-	bh=Hc8mWwTsSqLiKssBhrXI+RSJ3hB0JGDAaECesXNRoKg=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=AOi6imkyqfeshT8Zbi8v6UAIbrNjq1TNjwwxnTE9ql67fWAB8ldvnSDPvEmcC0WiBQtDmQVVEG6kts6OpXLEWTE2i1xYZdBIwljdqQ11dkknoC4fwpcWfUm4s4ERd3m6C3z0LAx7utlfgalOIJEwhjYAVnp3wz9Unjy4uAFH2p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AYzguC7Q; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720518993;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LQm8VxvucuXhAHUDsU97RygdB8K+z8KC0PccTln5VKI=;
-	b=AYzguC7QDtPIpFBd2qIZgTj6Ies6YGxtwkoxXQm9CxzhcWVdZLPHCK0momFoEUXXnCjJAU
-	j9h8y0/qa3sOlym93SoQG5unj/tqQgWahHpQDXQZGrnlP8/JMV7KgLfjKcixxDCGZLgIW5
-	JAm8la9vVkHC4Sfpw8AMqCLH6uWQHQU=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-686-me0haLOVNvacykUi3jFQTg-1; Tue,
- 09 Jul 2024 05:56:30 -0400
-X-MC-Unique: me0haLOVNvacykUi3jFQTg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EE74F1955F45;
-	Tue,  9 Jul 2024 09:56:28 +0000 (UTC)
-Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BB8D219560AE;
-	Tue,  9 Jul 2024 09:56:28 +0000 (UTC)
-Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
-	id 2DD3130C1C1C; Tue,  9 Jul 2024 09:56:27 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id 2ACDA41970;
-	Tue,  9 Jul 2024 11:56:27 +0200 (CEST)
-Date: Tue, 9 Jul 2024 11:56:27 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-cc: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-    Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the device-mapper
- tree
-In-Reply-To: <20240709185733.4aac356a@canb.auug.org.au>
-Message-ID: <49ab648e-3c89-d4d-f2f7-3c1e2aa2cab@redhat.com>
-References: <20240709185733.4aac356a@canb.auug.org.au>
+	s=arc-20240116; t=1720519017; c=relaxed/simple;
+	bh=AryC27Iplz1ssVBjEWUzknmertonuyW96fY+K4ppFs0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LIDvxGRwsonWPIbYAQdCfoVTKKuJvMXKY4n5/GMgxma+c+ctTpt9t3lslT6FB6J/hg+EZ5XPVYAuqH482RHDeM2UUxHANDeqSwaFquC4EkmbFIeluUrun/c4PxfqYxuPjDlTlcjukozghTa9i0H7L/E14DrR7KWmknOidZkAgWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WI3uKerU; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=oOcvWdh89egIfpm66gTq/7OvE4snUwjTKuuUb76jk3c=; b=WI3uKerU0x4O7Gsyf2VsTxRuqN
+	kcTOoke5UWtf6FFmCRTI84u0slVP25Ds41D8Jm2lhULR6f98QrsZD2omXH669KL7JSVnw/a2331Jf
+	4ujle3odot4++n2oOOUdGXROSxMsd/1/Inq+W9hfeHzhUGRSxrbUNxMQrB4zZr8fBKodrFC2U3ngf
+	F5twmU0Y8U71keifCmqMZYVx7CUQBxSifIq5ljBx+lvnPEU/40B0XRpHfLdOkb54raiqLAyLi+miI
+	D2NNrdLB7oaUwI40fnlC1YbWM1W5eGuUpkW/178UCrHE+A57HEucODUuyab9NqY7MEcFwRi8b5noV
+	kHQ7dLTQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sR7aa-00000007lHE-26hK;
+	Tue, 09 Jul 2024 09:56:48 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B5B793006B7; Tue,  9 Jul 2024 11:56:47 +0200 (CEST)
+Date: Tue, 9 Jul 2024 11:56:47 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: kan.liang@linux.intel.com
+Cc: mingo@kernel.org, acme@kernel.org, namhyung@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+	ak@linux.intel.com, eranian@google.com,
+	Ahmad Yasin <ahmad.yasin@intel.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 2/3] perf/x86/intel: Add a distinct name for Granite
+ Rapids
+Message-ID: <20240709095647.GH27299@noisy.programming.kicks-ass.net>
+References: <20240708193336.1192217-1-kan.liang@linux.intel.com>
+ <20240708193336.1192217-3-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240708193336.1192217-3-kan.liang@linux.intel.com>
 
-
-
-On Tue, 9 Jul 2024, Stephen Rothwell wrote:
-
-> Hi all,
+On Mon, Jul 08, 2024 at 12:33:35PM -0700, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
 > 
-> After merging the device-mapper tree, today's linux-next build (htmldocs)
-> produced this warning:
+> Currently, the Sapphire Rapids and Granite Rapids share the same PMU
+> name, sapphire_rapids. Because from the kernel’s perspective, GNR is
+> similar to SPR. The only key difference is that they support different
+> extra MSRs. The code path and the PMU name are shared.
 > 
-> Documentation/admin-guide/device-mapper/dm-crypt.rst:168: ERROR: Unexpected indentation.
+> However, from end users' perspective, they are quite different. Besides
+> the extra MSRs, GNR has a newer PEBS format, supports Retire Latency,
+> supports new CPUID enumeration architecture, doesn't required the
+> load-latency AUX event, has additional TMA Level 1 Architectural Events,
+> etc. The differences can be enumerated by CPUID or the PERF_CAPABILITIES
+> MSR. They weren't reflected in the model-specific kernel setup.
+> But it is worth to have a distinct PMU name for GNR.
 > 
-> Introduced by commit
+> Fixes: a6742cb90b56 ("perf/x86/intel: Fix the FRONTEND encoding on GNR and MTL")
+> Suggested-by: Ahmad Yasin <ahmad.yasin@intel.com>
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> Cc: stable@vger.kernel.org
+> ---
+>  arch/x86/events/intel/core.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
 > 
->   04a1020ad350 ("dm-crypt: limit the size of encryption requests")
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+> index b61367991a16..7a9f931a1f48 100644
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -6943,12 +6943,17 @@ __init int intel_pmu_init(void)
+>  	case INTEL_EMERALDRAPIDS_X:
+>  		x86_pmu.flags |= PMU_FL_MEM_LOADS_AUX;
+>  		x86_pmu.extra_regs = intel_glc_extra_regs;
+> +		pr_cont("Sapphire Rapids events, ");
+> +		name = "sapphire_rapids";
+>  		fallthrough;
+>  	case INTEL_GRANITERAPIDS_X:
+>  	case INTEL_GRANITERAPIDS_D:
+>  		intel_pmu_init_glc(NULL);
+> -		if (!x86_pmu.extra_regs)
+> +		if (!x86_pmu.extra_regs) {
+>  			x86_pmu.extra_regs = intel_rwc_extra_regs;
+> +			pr_cont("Granite Rapids events, ");
+> +			name = "granite_rapids";
+> +		}
+>  		x86_pmu.pebs_ept = 1;
+>  		x86_pmu.hw_config = hsw_hw_config;
+>  		x86_pmu.get_event_constraints = glc_get_event_constraints;
+> @@ -6959,8 +6964,6 @@ __init int intel_pmu_init(void)
+>  		td_attr = glc_td_events_attrs;
+>  		tsx_attr = glc_tsx_events_attrs;
+>  		intel_pmu_pebs_data_source_skl(true);
+> -		pr_cont("Sapphire Rapids events, ");
+> -		name = "sapphire_rapids";
+>  		break;
 
-How should it be fixed? Delete the '-' character? Or some other change?
+For some reason this didn't want to apply cleanly (something trivial),
+but since I had to edit it, my fingers slipped and I ended up with the
+below. That ok?
 
-Mikulas
+---
+Subject: perf/x86/intel: Add a distinct name for Granite Rapids
+From: Kan Liang <kan.liang@linux.intel.com>
+Date: Mon, 8 Jul 2024 12:33:35 -0700
 
+From: Kan Liang <kan.liang@linux.intel.com>
+
+Currently, the Sapphire Rapids and Granite Rapids share the same PMU
+name, sapphire_rapids. Because from the kernel’s perspective, GNR is
+similar to SPR. The only key difference is that they support different
+extra MSRs. The code path and the PMU name are shared.
+
+However, from end users' perspective, they are quite different. Besides
+the extra MSRs, GNR has a newer PEBS format, supports Retire Latency,
+supports new CPUID enumeration architecture, doesn't required the
+load-latency AUX event, has additional TMA Level 1 Architectural Events,
+etc. The differences can be enumerated by CPUID or the PERF_CAPABILITIES
+MSR. They weren't reflected in the model-specific kernel setup.
+But it is worth to have a distinct PMU name for GNR.
+
+Fixes: a6742cb90b56 ("perf/x86/intel: Fix the FRONTEND encoding on GNR and MTL")
+Suggested-by: Ahmad Yasin <ahmad.yasin@intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20240708193336.1192217-3-kan.liang@linux.intel.com
+---
+ arch/x86/events/intel/core.c |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -6788,12 +6788,18 @@ __init int intel_pmu_init(void)
+ 	case INTEL_FAM6_EMERALDRAPIDS_X:
+ 		x86_pmu.flags |= PMU_FL_MEM_LOADS_AUX;
+ 		x86_pmu.extra_regs = intel_glc_extra_regs;
+-		fallthrough;
++		pr_cont("Sapphire Rapids events, ");
++		name = "sapphire_rapids";
++		goto glc_common;
++
+ 	case INTEL_FAM6_GRANITERAPIDS_X:
+ 	case INTEL_FAM6_GRANITERAPIDS_D:
++		x86_pmu.extra_regs = intel_rwc_extra_regs;
++		pr_cont("Granite Rapids events, ");
++		name = "granite_rapids";
++
++	glc_common:
+ 		intel_pmu_init_glc(NULL);
+-		if (!x86_pmu.extra_regs)
+-			x86_pmu.extra_regs = intel_rwc_extra_regs;
+ 		x86_pmu.pebs_ept = 1;
+ 		x86_pmu.hw_config = hsw_hw_config;
+ 		x86_pmu.get_event_constraints = glc_get_event_constraints;
+@@ -6804,8 +6810,6 @@ __init int intel_pmu_init(void)
+ 		td_attr = glc_td_events_attrs;
+ 		tsx_attr = glc_tsx_events_attrs;
+ 		intel_pmu_pebs_data_source_skl(true);
+-		pr_cont("Sapphire Rapids events, ");
+-		name = "sapphire_rapids";
+ 		break;
+ 
+ 	case INTEL_FAM6_ALDERLAKE:
 
