@@ -1,113 +1,117 @@
-Return-Path: <linux-kernel+bounces-246775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D5592C685
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:17:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF3192C689
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 111691F229FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:17:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89786B21B68
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9144A185627;
-	Tue,  9 Jul 2024 23:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B98187864;
+	Tue,  9 Jul 2024 23:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ChKpY3vx"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hZ+9jCis"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39DA7E765
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 23:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCD77E765
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 23:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720567068; cv=none; b=MckbTTiSu3yekuzBwHpxENf/vN6zWF/9rdiH/q9mk30JTA1VAoHS4ZdmfZ99dkX2RypYT/jFBnQtzIIB/2545UbvrhSOrNKc9lQkiyZJY+A0aeM+T9eLlbq2qkIewlkJyyJxZcyWvqNtIfWf2vtyK/V96/BJso+UhaXUljLl3/A=
+	t=1720567304; cv=none; b=f3LubHXVbvx/S7ZFAvSHJdXEP1GlHWbmqUcDmj4D7dS98TiEpsUohvsJazEVRvPn8f8DcZyyCXPpTyGmmtfxUdogW22w5pn5XWeyoBJANiv+hnN4TelQbSnSlsD/gKj6tCeIIEVRMXPy4Ne9H99ON/LJXeWkAknYYfSTvQ2XwcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720567068; c=relaxed/simple;
-	bh=hkJh2G245kK5yrln/5bUKqe0hGrf8KQTzgcYqUoCgGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gRg04boIyHWaziZZnC0H6iVyi0vdWCqGA8DLUD1GO6v1nfXYNQRJph7YbgCx8W9HkzIdPni8uuqHuXDqveZN7bqiC8qf8rcmaCaQP5N6MuEwgKVEt/OCdlAZ7wMucmj3J9SG0YNlXrZL8MeXHRTq/gpbxPwDaUlB01t5eshxXfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ChKpY3vx; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: hawk@kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1720567065;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RK9Y5z4esCl/0wptVyHMDsH+At4AHH/Nt2PZDk2eccU=;
-	b=ChKpY3vxx6hvZJVlnM5gYc5SXa7vsvbzJ9mPy/9wkA9eqerHdTd3W8vlsRFsZOgLyN+B37
-	ZbM5USYjUy55AzSJECEvXkyXSPb2f3+mJCD+k2s6HXGVVoB9b2wTXDZUFN9UpihF6L3mU2
-	P2JCIKziJIoO6+AUSBmK6j93sC/2Wdo=
-X-Envelope-To: tj@kernel.org
-X-Envelope-To: cgroups@vger.kernel.org
-X-Envelope-To: yosryahmed@google.com
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: lizefan.x@bytedance.com
-X-Envelope-To: longman@redhat.com
-X-Envelope-To: kernel-team@cloudflare.com
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Tue, 9 Jul 2024 16:17:31 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: tj@kernel.org, cgroups@vger.kernel.org, yosryahmed@google.com, 
-	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
-	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V6] cgroup/rstat: Avoid thundering herd problem by kswapd
- across NUMA nodes
-Message-ID: <3oyf3p3xyhxxugucwsuhtuais6547rvzob5fkz3yc7jgocow2n@odqb6l2oweto>
-References: <172052399087.2357901.4955042377343593447.stgit@firesoul>
+	s=arc-20240116; t=1720567304; c=relaxed/simple;
+	bh=wYSd1d6I8ZUz1jqN17N6LbvE0OS8wU2J93GAQX84iyY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ILVnBDXlH9H5fC9Erfibf5GgJPp3OnVV6sshTJsRAo4vErWpDwWAqFsfVPdyEuvlEPixEB82CLVZo60ZV4jbgHROGbxxLCuqvkW6Lre6s8rHCJ2xSMin/xUIDRO6TUCgTAnHnkk9QJqVy++OyohYDOoO1s3Rf6kAWnlqzUqNI0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hZ+9jCis; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7f7e24bac14so12375839f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 16:21:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1720567301; x=1721172101; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WG9j90n++Fvu60GxgS8Z+nCwGoQEOG5JEx2i5UYLsAc=;
+        b=hZ+9jCisKjPo5rs6JvECKguDurC/ctPsP+PZW0GsrWuaxvwJ0QfSOOXFOTHqFGJ8tf
+         Sl59Plf2V6YTYAzPR7S1fLndPzkvPvs+cmTXP4ES3e4DufIqOGrOOr+3sWHf9uqPPTgt
+         3edVvSwgZue7Pk+VH/AYzesM9Joo/txnX8jUA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720567301; x=1721172101;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WG9j90n++Fvu60GxgS8Z+nCwGoQEOG5JEx2i5UYLsAc=;
+        b=O+Erj9fgNTnhwP36lYz0P6vHnciIGpz2saE9eRY+R0VrQlU7oBgH2vaQTMglrtr1bi
+         zgLf27HYn9kUbNlRQGb4LfJQBFMa2o8F4+8FFuYhEsam43q4FebRxjccqJMCofQFoFBC
+         Gb9zD7MzAJLH1+MaayGVI1kH7Na+j/OfrEmib+vyrJsyMbti2V28O/T4SmjIMdP3OhHq
+         G8dJHiexJPMaZ5Y0vrye7swcw3rFZrK9u/Tn7+dNg0RIJUb6HL8Ehr+Vy0v5+kNX698N
+         hVbLd1UGLZfHJxj4IGJLnDAQaDOBkdxb6g09u2btb4BdWDbRNq1KcFvZ1A2gyZD32ZGK
+         fGSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWlnk/+XbdrGGcxoEcbKTbYkxGAgHsi4rDrO4JBtTzlzfDaRv19scClB37M4ADCryNioEOl/z9L0IwDbwvypni8jV6JaDXER+G8eAzX
+X-Gm-Message-State: AOJu0YzPAI60ldcFN95iaO2jDxOZOTXezcBUCtToMf1+8zhCpDvlv98P
+	5ogi/99ncNBLRg8C5p6KLelIL0YnCGiQegtnoAeuYU9SW7wa25lIhrs0R3b741w=
+X-Google-Smtp-Source: AGHT+IFtqYmZLPesp109Cd+MRvaqe5/TB2ZO/K0QeY0dpk5QpkVwCgb7Gfq3oMR24v7vXdmWrHhPZw==
+X-Received: by 2002:a05:6602:6103:b0:7f3:9dd3:15b2 with SMTP id ca18e2360f4ac-7fff92c5be4mr426238039f.0.1720567300930;
+        Tue, 09 Jul 2024 16:21:40 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c0b1bf8601sm764761173.105.2024.07.09.16.21.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 16:21:40 -0700 (PDT)
+Message-ID: <4fae91d2-5de8-4bf6-aa9b-25f4dc2c5553@linuxfoundation.org>
+Date: Tue, 9 Jul 2024 17:21:39 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <172052399087.2357901.4955042377343593447.stgit@firesoul>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.9 000/197] 6.9.9-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240709110708.903245467@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240709110708.903245467@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 09, 2024 at 01:20:48PM GMT, Jesper Dangaard Brouer wrote:
-> Avoid lock contention on the global cgroup rstat lock caused by kswapd
-> starting on all NUMA nodes simultaneously. At Cloudflare, we observed
-> massive issues due to kswapd and the specific mem_cgroup_flush_stats()
-> call inlined in shrink_node, which takes the rstat lock.
+On 7/9/24 05:07, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.9.9 release.
+> There are 197 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> On our 12 NUMA node machines, each with a kswapd kthread per NUMA node,
-> we noted severe lock contention on the rstat lock. This contention
-> causes 12 CPUs to waste cycles spinning every time kswapd runs.
-> Fleet-wide stats (/proc/N/schedstat) for kthreads revealed that we are
-> burning an average of 20,000 CPU cores fleet-wide on kswapd, primarily
-> due to spinning on the rstat lock.
+> Responses should be made by Thu, 11 Jul 2024 11:06:25 +0000.
+> Anything received after that time might be too late.
 > 
-> Help reviewers follow code: __alloc_pages_slowpath calls wake_all_kswapds
-> causing all kswapdN threads to wake up simultaneously. The kswapd thread
-> invokes shrink_node (via balance_pgdat) triggering the cgroup rstat flush
-> operation as part of its work. This results in kernel self-induced rstat
-> lock contention by waking up all kswapd threads simultaneously. Leveraging
-> this detail: balance_pgdat() have NULL value in target_mem_cgroup, this
-> cause mem_cgroup_flush_stats() to do flush with root_mem_cgroup.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.9-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
+> and the diffstat can be found below.
 > 
-> To avoid this kind of thundering herd problem, kernel previously had a
-> "stats_flush_ongoing" concept, but this was removed as part of commit
-> 7d7ef0a4686a ("mm: memcg: restore subtree stats flushing"). This patch
-> reintroduce and generalized the concept to apply to all users of cgroup
-> rstat, not just memcg.
+> thanks,
 > 
-> If there is an ongoing rstat flush, and current cgroup is a descendant,
-> then it is unnecessary to do the flush. For callers to still see updated
-> stats, wait for ongoing flusher to complete before returning, but add
-> timeout as stats are already inaccurate given updaters keeps running.
+> greg k-h
 > 
-> Fixes: 7d7ef0a4686a ("mm: memcg: restore subtree stats flushing").
-> Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
-> ---
-> V5: https://lore.kernel.org/all/171956951930.1897969.8709279863947931285.stgit@firesoul/
 
-Does this version fixes the contention you are observing in production
-for v5?
+Compiled and booted on my test system. No dmesg regressions.
+
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+
+thanks,
+-- Shuah
 
