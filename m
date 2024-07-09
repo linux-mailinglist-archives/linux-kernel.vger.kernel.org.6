@@ -1,96 +1,138 @@
-Return-Path: <linux-kernel+bounces-246565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC7A92C399
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:02:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BDE892C3A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F88C1C21F31
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:02:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9A75282778
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9A3182A6D;
-	Tue,  9 Jul 2024 19:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A8D1836DC;
+	Tue,  9 Jul 2024 19:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJFzDerB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="nbPJR1pi"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B35C182A4A;
-	Tue,  9 Jul 2024 19:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A44182A7D
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 19:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720551722; cv=none; b=W59UMZnwKsQnLT93A0g3MyzLCs6d/Ou2TmzluGQhbzDfzsYvBOiEoSFKCCZr4NKOhkU8eVg46NDEGgU6ir+3ny1wQg/4m2gAkekYB55pE1PIkB+7C7thG+zliblT0Fh9/OuMdEHjQC+e3O0LrJ2otkNIh0BK5MX2k6DRVvz0V+U=
+	t=1720551805; cv=none; b=fTdp+JRzk7aY5g2s1TRXvxTJ89sCKmASQd8OUh5aVAVn1HLwDHHfrq7xzRgdOhNA9c4oGn37cD4IjeUWxXENigTdbJtYDndDmfRL6eHTerxlHb57yb3BGT/Kcc/4Mt97ODrWeIodmwj3yGE7KC4d/Jh2LApeCZuDjcXZOpZ0YeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720551722; c=relaxed/simple;
-	bh=3ZZ7DQEKNnruhiUNY73zpvLr0deMx91HrqS4mL+RFKk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=nfdZK2K3mU39ysGsqIfshFW4hAfuQiFk3s6r2WFUEEM2rN1sbUfSJ0F/NaIxcW6A28t0cI1YGmPHMKhFqrGY7loq76hAQKKBor3Q7Zx0kbPYXCZd+hGl/MjLoV7bpVAnFF3x+463wsE4v98HOEi6po897VHdZz+fK745X33vqt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJFzDerB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DD1ACC4AF0A;
-	Tue,  9 Jul 2024 19:02:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720551721;
-	bh=3ZZ7DQEKNnruhiUNY73zpvLr0deMx91HrqS4mL+RFKk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=nJFzDerB7RWVTBoUS8duP83uuKUWvlPEaIPb/nanYborBpEDO0Hi7yQRxY8wb3Sv0
-	 yBRjMZiUTBQxEcJWfLL5Y5ui0Wcau9z7GQL3WKLEPnkstBaNkxFoOJw2iZI2H9iR3l
-	 QU8R0qBY9TsjmeAJIRfCGO64Pv802Hrcb5YT7waZ4XVl3T84k6DlUOtSAk2u9YgECu
-	 qCR6+VvyVCLA7hkHHhSWXVS+T8iP/JOb1ydKjRzjfMTa4oZqx+rj8mMKK6+bMZgJvx
-	 wEk0yzX9boaNNz2qypPRsZ0uvTIyAHA3MjeFtZf2pLYnygT8x7zDUH58bHVFjTOWDC
-	 HLURNEm6yiiVw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CE605C43468;
-	Tue,  9 Jul 2024 19:02:01 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720551805; c=relaxed/simple;
+	bh=sMyzaJ+W703AH//DDEwdvJyCCtm/s3ttll6zL+v1YV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PFgZsJ470l8w9e+c5VK6/PF9nbvtqr7izQ4bGjm04zLh3sU/iBSgO5yohCqW3ov1mzz5GG0aU7a/+SVemGj8itVf44uJpw43IgM2eYL4q8kpyQ0VbyVR8R/XV6Fa3AYPeYdQjVDxMEqBXHGfjy0bRZbzbR8NjGcxGbZaSNIF2pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=nbPJR1pi; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6ad86f3cc34so26108236d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 12:03:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1720551803; x=1721156603; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0eX7Wo0KTUJfWUHtxoHH+B23ObEinslGP6IJ1acrkRc=;
+        b=nbPJR1piOHWb7FIpilvYBLblbTE+7tpBZ90HzWrx2FMBne7q6hIDPrTrxFWa+UJxtZ
+         b5FFRpW4Te9SYc6xWn556udMsYqGutRxzSYR+XJuRsrgPiegPcMAbYv0a30c8dx43E/q
+         UcZHd9kVNYJGcLiVuWXLF9H3blFXgnAZwFEmg5UOXl3Z6gt5V1Fy4fDHLo/SejqN/kV1
+         uqaJf7SBWTj/J0TrZNmZlO9OlA5CZ7C/UeWL7iCZd0T2MdMrcqzPhCdUx5L7gMNEMa2H
+         dMD9ksL/XxscJeyC571fTvlLmLESo+KShU5zpHyra0BhCygdvoEflPqHeefx6fXLSt/H
+         GW/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720551803; x=1721156603;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0eX7Wo0KTUJfWUHtxoHH+B23ObEinslGP6IJ1acrkRc=;
+        b=bZhL27PxHQkvjfcfTqadPcjG9VFujpC0rvotTIL2yg7eqXvB+nGc9VSptKZHWtGRoM
+         H6Yxv+St2L+YPM7lFaNkE8E89HRBk7EZrPBO7S+7+rxiahmH1cP0Vg0htsJYxYk8fbqV
+         n9R8oIFHTq9AohMlrRjGDlMealTvL1ZF3ZpuEnIrambUxEjvVFvAOJxXodAugXKTeSdu
+         OYL6goBUKLe406p/6oYLTOR961vS1eZp9J3atQDBTSpMnqcb+v2KlPA3E5CG1pU6WJOP
+         6fTl0OW/4CJYih0YQoiKrF5CwmNV9RF+9DOw8AxXGqkQmMngilmE8GmTsIlZvG52d4aG
+         RkLw==
+X-Forwarded-Encrypted: i=1; AJvYcCVk2Y/uFNKLqjU84D4EeGyMdhb0gpH8bEoZpnddzMe6DfmX58Tj0Z9dxQ9xlAaHkggNVrwOhNWfqM2j07CIFQnKXpa9TLvVRW91mjuh
+X-Gm-Message-State: AOJu0Yybjj8srBrcMGxog+9g1A0gZk5rWqKEAs+1KsR3AdERuR8UJHcW
+	VaxOCHsFKSD7J16Huim1U0Pf2N0e/svTSAtDma7WJ/trKL7r1XlnW2M0cID/BG4=
+X-Google-Smtp-Source: AGHT+IE9wk6d6lAYU4tvyeORxb5NkdX/FMtkoFI0Rc5O+LsyZzi6JOQvD31sQUESKmTir4qJcqoy3Q==
+X-Received: by 2002:a05:6214:250d:b0:6b4:4470:81a5 with SMTP id 6a1803df08f44-6b61bc7f74bmr43617486d6.2.1720551802811;
+        Tue, 09 Jul 2024 12:03:22 -0700 (PDT)
+Received: from ziepe.ca ([128.77.69.90])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b61b9c4a1fsm11278546d6.12.2024.07.09.12.03.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 12:03:22 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sRG7U-002tXL-BB;
+	Tue, 09 Jul 2024 16:03:20 -0300
+Date: Tue, 9 Jul 2024 16:03:20 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Leon Romanovsky <leon@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Keith Busch <kbusch@kernel.org>,
+	"Zeng, Oak" <oak.zeng@intel.com>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v1 00/18] Provide a new two step DMA API mapping API
+Message-ID: <20240709190320.GN14050@ziepe.ca>
+References: <cover.1719909395.git.leon@kernel.org>
+ <20240705063910.GA12337@lst.de>
+ <20240708235721.GF14050@ziepe.ca>
+ <20240709062015.GB16180@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4 1/2] dt-bindings: net: fsl,fman: allow dma-coherent
- property
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172055172184.32169.14387199835490742511.git-patchwork-notify@kernel.org>
-Date: Tue, 09 Jul 2024 19:02:01 +0000
-References: <20240708180949.1898495-1-Frank.Li@nxp.com>
-In-Reply-To: <20240708180949.1898495-1-Frank.Li@nxp.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: robh@kernel.org, conor+dt@kernel.org, davem@davemloft.net,
- devicetree@vger.kernel.org, edumazet@google.com, imx@lists.linux.dev,
- krzk+dt@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
- madalin.bucur@nxp.com, netdev@vger.kernel.org, pabeni@redhat.com,
- sean.anderson@seco.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709062015.GB16180@lst.de>
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon,  8 Jul 2024 14:09:48 -0400 you wrote:
-> Add dma-coherent property to fix below warning.
-> arch/arm64/boot/dts/freescale/fsl-ls1046a-rdb.dtb: fman@1a00000: 'dma-coherent', 'ptimer-handle' do not match any of the regexes: '^ethernet@[a-f0-9]+$', '^mdio@[a-f0-9]+$', '^muram@[a-f0-9]+$', '^phc@[a-f0-9]+$', '^port@[a-f0-9]+$', 'pinctrl-[0-9]+'
-> 	from schema $id: http://devicetree.org/schemas/net/fsl,fman.yaml#
+On Tue, Jul 09, 2024 at 08:20:15AM +0200, Christoph Hellwig wrote:
+> On Mon, Jul 08, 2024 at 08:57:21PM -0300, Jason Gunthorpe wrote:
+> > I understand the block stack already does this using P2P and !P2P, but
+> > that isn't quite enough here as we want to split principally based on
+> > IOMMU or !IOMMU.
 > 
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> 
-> [...]
+> Except for the powerpc bypass IOMMU or not is a global decision,
+> and the bypass is per I/O.  So I'm not sure what else you want there?
 
-Here is the summary with links:
-  - [v4,1/2] dt-bindings: net: fsl,fman: allow dma-coherent property
-    https://git.kernel.org/netdev/net-next/c/dd84d831ef27
-  - [v4,2/2] dt-bindings: net: fsl,fman: add ptimer-handle property
-    https://git.kernel.org/netdev/net-next/c/5618ced01979
+For P2P we know if the DMA will go through the IOMMU or not based on
+the PCIe fabric path between the initiator (the one doing the DMA) and
+the target (the one providing the MMIO memory).
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Depending on PCIe topology and ACS flags this path may use the IOMMU
+or may skip the IOMMU.
 
+To put it in code, the 'enum pci_p2pdma_map_type' can only be
+determined once we know the initator and target struct device.
 
+PCI_P2PDMA_MAP_BUS_ADDR means we don't use the iommu.
+
+PCI_P2PDMA_MAP_THRU_HOST_BRIDGE means we do.
+
+With this API it is important that a single request always has the
+same PCI_P2PDMA_MAP_* outcome, and the simplest way to do that is to
+split requests if the MMIO memory changes target struct devices.
+
+Jason
 
