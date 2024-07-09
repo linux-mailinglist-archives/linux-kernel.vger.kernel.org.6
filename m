@@ -1,56 +1,62 @@
-Return-Path: <linux-kernel+bounces-246276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FBB792BFD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:27:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B6592BFE1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E86971F2198F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:27:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08B69282EF6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713F51AB911;
-	Tue,  9 Jul 2024 16:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E0E1AC237;
+	Tue,  9 Jul 2024 16:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dYvVF0cG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nYZDtCNt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A248A1ABC4F;
-	Tue,  9 Jul 2024 16:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F891ABCD0;
+	Tue,  9 Jul 2024 16:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720542053; cv=none; b=MLkMze576BjWrk0s4HFa3AfIlOeNBKJ3gWgpZqFdpRchkVB8eIhaqxKvoXihv6BdMXAxNmdfefgcWCa3U0y1LOI2OtBmzqqr0/CzWLbuiPkCeDrrclW1XPN643gF2Qa133SK+kH3DnWRxTwHxorR9jGXpazrdPUki2N8Pb9hhp4=
+	t=1720542057; cv=none; b=VJ8Ttw2SYGvOA7QLBmrOkaCrpwK4FC5Ihi/2Ni16XIjwq8B60RXTyg5XLxuUXl1ARG3mlKts5u9mrEmCRxJavWWMsXVs4wkw9/namiIuRXHzDSX5GP1AbYfG1kOZKE9f57BCzLqfU59bptSgHW8vLDSwzJ7nqdIt7mwkJz+RFhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720542053; c=relaxed/simple;
-	bh=DKBwWJOniIY2A2Y9VaFIIBbdLvz3p/Q5FsGMztwQ/G4=;
+	s=arc-20240116; t=1720542057; c=relaxed/simple;
+	bh=fk5F7PnfMsulDDYfiUSEEt6RSCFGW7ofRStQVDVNt1w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Jjb93+vzVjfq5bnuwkpdN+EjWkGIbxiBzFBsUQXA8pbwV5E43CKL9sxpXQaPC5Fz/Eq495OKnLzX+QMtCFvG5IGaQVUhZIWQc0noFmO0pwuqh5Kdojh8tjnbZy4xxVu8XRP5jnFwnKdi5rIQQM4tLslcsNboOwxAlRy7Hb3HYiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dYvVF0cG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD939C32782;
-	Tue,  9 Jul 2024 16:20:52 +0000 (UTC)
+	 MIME-Version; b=Mv8hKq0LcScmwFGQ2uy4gVM9kZTR8OZGNPSLT/J0PGJL2n7bc9GOTFSuX0jV/dXZR7KCb/9jQQFHGd7t5yJvY8PvLJjc2SJa7S+35rFCCtqYvVXnvJ0XhZFhG/r6+U+Cmz6q+7paAj5riDsUNiDa39K62Dk5iKD/oK/hq4DKayg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nYZDtCNt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA99DC32782;
+	Tue,  9 Jul 2024 16:20:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720542053;
-	bh=DKBwWJOniIY2A2Y9VaFIIBbdLvz3p/Q5FsGMztwQ/G4=;
+	s=k20201202; t=1720542057;
+	bh=fk5F7PnfMsulDDYfiUSEEt6RSCFGW7ofRStQVDVNt1w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dYvVF0cGpQFnaq9/7M59gvr7GA4T0eiqZTeausOjwGQ9sV/K5Cj0so5whXR7Xu7fG
-	 YouiMKX+M6WVQMkjUiIyitV2eF5YBLecAPUxi1J5V02qxPwOTuQisXyL1rxllIij5z
-	 BsazKUIpGnOgMc+MMQbF8cgKL06spCdQU2l+3tVEwrc71pwP/WPduuTUUaqZML3RWz
-	 vXzZBAnmeMkyfR9celqrnz0H+rL896tlPhh7R8m/i9XiwOe/zaufontt/DwEtQdKnM
-	 kiuO6udvihtco31DdxU7/WQIoJQvRvuhl80WLDrLsFB+MGtlMMt3Jo9RGacuOp0/yZ
-	 60WhxoB3yWeuA==
+	b=nYZDtCNtyGHh+x89dXmdb3cp14fE01oWZrojKTQEMlu7xs+ZUClmVmp3mlOQc+d0j
+	 LF7RznILIzy20P55KSWGDiUFT8qof+OXDKck+/JtfHGhTXWWzV4dEQIOp/UB6E7uJc
+	 Zg90BwK+e1Mx+NFGit/Uz5/DrSBfOMNqV2CfS/RvIIJ42zg0bOXiXpyGtey12P+MVz
+	 fb4O8DIqpbqLhXoBzTqOGe+6Tiy4vjrksn8eOdXZf5U+XSJDjAKluOYCLuTefMuPNZ
+	 pL+zRxwYhXih1LiVYTUqTGNrc1luuczUtF3bVrXd5ebSfxAYpZRh0a3QbPpKiET+ma
+	 1w1nMKxqZPsFg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+Cc: Chen Ni <nichen@iscas.ac.cn>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
 	Sasha Levin <sashal@kernel.org>,
-	gregkh@linuxfoundation.org,
-	linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.9 20/40] Input: ads7846 - use spi_device_id table
-Date: Tue,  9 Jul 2024 12:19:00 -0400
-Message-ID: <20240709162007.30160-20-sashal@kernel.org>
+	mailhol.vincent@wanadoo.fr,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	extja@kvaser.com,
+	linux-can@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.9 21/40] can: kvaser_usb: fix return value for hif_usb_send_regout
+Date: Tue,  9 Jul 2024 12:19:01 -0400
+Message-ID: <20240709162007.30160-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240709162007.30160-1-sashal@kernel.org>
 References: <20240709162007.30160-1-sashal@kernel.org>
@@ -65,61 +71,34 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.9.8
 Content-Transfer-Encoding: 8bit
 
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
+From: Chen Ni <nichen@iscas.ac.cn>
 
-[ Upstream commit 7c7b1be19b228b450c2945ec379d7fc6bfef9852 ]
+[ Upstream commit 0d34d8163fd87978a6abd792e2d8ad849f4c3d57 ]
 
-As the driver supports more devices over time the single MODULE_ALIAS
-is complete and raises several warnings:
-SPI driver ads7846 has no spi_device_id for ti,tsc2046
-SPI driver ads7846 has no spi_device_id for ti,ads7843
-SPI driver ads7846 has no spi_device_id for ti,ads7845
-SPI driver ads7846 has no spi_device_id for ti,ads7873
+As the potential failure of usb_submit_urb(), it should be better to
+return the err variable to catch the error.
 
-Fix this by adding a spi_device_id table and removing the manual
-MODULE_ALIAS.
-
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-Link: https://lore.kernel.org/r/20240619122703.2081476-1-alexander.stein@ew.tq-group.com
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+Link: https://lore.kernel.org/all/20240521041020.1519416-1-nichen@iscas.ac.cn
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/touchscreen/ads7846.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/input/touchscreen/ads7846.c b/drivers/input/touchscreen/ads7846.c
-index d2bbb436a77df..4d13db13b9e57 100644
---- a/drivers/input/touchscreen/ads7846.c
-+++ b/drivers/input/touchscreen/ads7846.c
-@@ -1111,6 +1111,16 @@ static const struct of_device_id ads7846_dt_ids[] = {
- };
- MODULE_DEVICE_TABLE(of, ads7846_dt_ids);
+diff --git a/drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c b/drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c
+index 8faf8a462c055..7292c81fc0cdc 100644
+--- a/drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c
++++ b/drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c
+@@ -294,7 +294,7 @@ int kvaser_usb_send_cmd_async(struct kvaser_usb_net_priv *priv, void *cmd,
+ 	}
+ 	usb_free_urb(urb);
  
-+static const struct spi_device_id ads7846_spi_ids[] = {
-+	{ "tsc2046", 7846 },
-+	{ "ads7843", 7843 },
-+	{ "ads7845", 7845 },
-+	{ "ads7846", 7846 },
-+	{ "ads7873", 7873 },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(spi, ads7846_spi_ids);
-+
- static const struct ads7846_platform_data *ads7846_get_props(struct device *dev)
- {
- 	struct ads7846_platform_data *pdata;
-@@ -1386,10 +1396,10 @@ static struct spi_driver ads7846_driver = {
- 	},
- 	.probe		= ads7846_probe,
- 	.remove		= ads7846_remove,
-+	.id_table	= ads7846_spi_ids,
- };
+-	return 0;
++	return err;
+ }
  
- module_spi_driver(ads7846_driver);
- 
- MODULE_DESCRIPTION("ADS7846 TouchScreen Driver");
- MODULE_LICENSE("GPL");
--MODULE_ALIAS("spi:ads7846");
+ int kvaser_usb_can_rx_over_error(struct net_device *netdev)
 -- 
 2.43.0
 
