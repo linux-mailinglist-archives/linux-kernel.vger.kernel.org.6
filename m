@@ -1,153 +1,186 @@
-Return-Path: <linux-kernel+bounces-246529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 194BC92C325
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:11:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B5C92C327
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A2011C22A16
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:11:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED6391F237BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD9B180050;
-	Tue,  9 Jul 2024 18:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D0E18002A;
+	Tue,  9 Jul 2024 18:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vRCufdPb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDd8v9c7"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E219C182A51;
-	Tue,  9 Jul 2024 18:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC60417B04B;
+	Tue,  9 Jul 2024 18:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720548695; cv=none; b=PUNGZykvMH86EN5exhaa0E3Llr7s3Ha3S1Wu3aucruWZknWrv7HIcz2lA3Kqu7cl2S6sgdNDp8dcVTYMgza3F5n9qoUlkMFqQ9kkuOI1tB68Wag1t0LhEGGhkzDLhnMewjBkBwYAi7yy3BZP6C4857n9BF+vTpoLtYsOrh1M2DU=
+	t=1720548734; cv=none; b=iAeYQZJ2d68IBmnpd2m07V6opB2cKCgIItIhiiX73S7jfzhRiy3F3r1+RWwRoTIhqW4y8N++Pr1miR6jh2lNzbWc+rP3Y+DtSVqpfaLAcIhkhvROrG3PjI8hqKz3/oDXMsJhYqHvwGENGdtObmu8zc6rpih/CM/6aM40q1yb+RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720548695; c=relaxed/simple;
-	bh=vmKXIZftIMmUvIjQn6H9m8+/Z4ol58D0xRGXk1f2Epw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S4B5EIvuK4wSIeQvieXeS39S6jqNK7D7b4ujzo6iX6am4jiGEVkq8BwRXlxOok9jKf9hiBCyw78YucPT/TIy9xYDYhZ16BCJoGEwuqGPI0C0RyGI5jnkNAt5AOuWtgORws7jykTBjMxU29koeXU90/2XyUldDJEgdQfWGvGAs1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vRCufdPb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA0F3C32782;
-	Tue,  9 Jul 2024 18:11:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720548694;
-	bh=vmKXIZftIMmUvIjQn6H9m8+/Z4ol58D0xRGXk1f2Epw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vRCufdPbcmGi6dtPoZXTY6MDS2cU/kITaI815vaF+sAxC7EnvMf5Kj30Bjin4x6Wc
-	 Ec2kPiJEump+XPpCPdLSYQEN7AAdrYbZ1PnDgH4Q5PRfi8aRbc9ewKMyCJMsT51Jh4
-	 BOZoGsU3jFL5lIWY6w3vY8QMWMaLYzi280XT4W/PEEY85Whb3tFzUFoHC7oEl4epQ8
-	 7nsInslcd25Gb24INbrOI04QbQEfl2Dtz3zZFtXu1vF+SZrRcrup1yQ9/k/tdAYafv
-	 z3PrgTJDGZp73cPJmERZZiDU9G6VQbxarjw843+LJR6v1ry4tnAX1XHapomSwWQA/c
-	 uhAoE2OXI2QuQ==
-Date: Tue, 9 Jul 2024 19:11:28 +0100
-From: Simon Horman <horms@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	keescook@chromium.org, nex.sw.ncis.osdt.itp.upstreaming@intel.com,
-	linux-hardening@vger.kernel.org,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v2] netdevice: define and allocate &net_device
- _properly_
-Message-ID: <20240709181128.GO346094@kernel.org>
-References: <20240709125433.4026177-1-leitao@debian.org>
+	s=arc-20240116; t=1720548734; c=relaxed/simple;
+	bh=158cZUlmlIr5dPwD52dAc3U5dHPzagtOg3XpKlSlH+E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gVoQXytFu45eYRXPYWnvLGOxbK/TpIMBQopN1GLgusfHqj0XYOUSJ8e/PJbjf4OVonOR988hvSLP564IxECGZUOXtVQeTmTwvBiEfYuHdmo4Ik/RkZdUFhGeopemflkanFSt590I2IDfm8HuGTUvnXurGvL73ac+94xsNdGUxo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EDd8v9c7; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3678aa359b7so7505f8f.1;
+        Tue, 09 Jul 2024 11:12:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720548730; x=1721153530; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=158cZUlmlIr5dPwD52dAc3U5dHPzagtOg3XpKlSlH+E=;
+        b=EDd8v9c7iYOYWW2o3atSssoL7UPxdE9qYxEWZojhN5P8WLAYpmUPuS9BxbsWAeU9Fo
+         wy9EDrDk8WiE9WpyG9B2FKyuDnn1Mn8zjsQzSpsbPoHokaxrMn5bGWMffI48spQ+7WDQ
+         0xMwSyDDlNkHsRnz2YFvIEBZnywsjmHMb4W7XQRev73CFNuq1O+07ucXqzO5acgaIdLy
+         6p03vhU/6AxrXatN2hqJgrz7uNCzMdb3yrZ1PxN71UJeZcp48aQc0FuouJ2IGBd52kG8
+         R06AaQY03LjZarsIAQceYl2Lt5SIDpL3NQeVBXJB+tPjuoY07t5Ia/5dkl48hRYwgfAz
+         0fBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720548730; x=1721153530;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=158cZUlmlIr5dPwD52dAc3U5dHPzagtOg3XpKlSlH+E=;
+        b=KaTPSCo6SdaUTWn5h+IX019XLlx+pMg8L2pu9OtLQ7VphdWW+0KpyP7x0Em4+RKZMR
+         eiSqXFX/ecwWQPoI1yieDY2IpCTdUOGVgamSssx8cXZm7yVvfgQR91ZNiifq74mxmjtq
+         LE/42Hvrqzx1EPIXiJOcOn4LgrltPnST1wRD5e1wwWEeIC/m2e3DqtWcUndfUvElCd+3
+         0QqMQZ2EZthpl4dbj+Z7plTEkBZ8dw0j9psiZdwUKl8lDQagi1Ei9u+EjzbeMzJDfeNX
+         6rBAsAqCd80yx6J443K7q9mOv864wLdkpmtJ/hbJxkumZrbF9rf93fFCjoqN9gfq3qNx
+         exlw==
+X-Forwarded-Encrypted: i=1; AJvYcCWTFy28xphfYBGJpAuApnpY7KBRG628PsjDQhohplYAstR9nO7T8qxfUEOvRY8fz3vbkVuVGUARfgB/hcYvhYvteujurjhxE02Wq7p9sL8lNtXZj+vfv2/uhJzdGnp6kLtd
+X-Gm-Message-State: AOJu0YzsDfR8hpBs78dixTMPaCE4bgWwHm65RSuQdDwrhwxcvRaJ5Wdu
+	9vGV0e/1SIhe5YVB1S+aAu2wiCf8ihYB7ZnAfpNMntgWZI1TTxxeqGPKRtDFXiGuu3mzKgePp3+
+	ICpyTy4PXQarzL/TbcDVzItig4uM=
+X-Google-Smtp-Source: AGHT+IGLVg2FRz2+w0XtmmxlRun9h4Ybp36gLJSCBUdlGaA1HiqJFnHDxXBSojzDhlUcoRgkZOmBeHW91MU0DR6KcDU=
+X-Received: by 2002:a5d:4490:0:b0:366:e308:f9a1 with SMTP id
+ ffacd0b85a97d-367d2d51899mr3022882f8f.23.1720548730208; Tue, 09 Jul 2024
+ 11:12:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240709125433.4026177-1-leitao@debian.org>
+References: <20240612-master-v1-1-a95f24339dab@gmail.com> <CAADnVQJLgo4zF5SVf-P5U_nOaiFW--mCe-zY6_Dec98z_QE24A@mail.gmail.com>
+ <270804d4-b751-4ac9-99b2-80e364288c37@leemhuis.info> <2c9089c9-4314-4e4a-a7e2-2dd09716962f@suse.cz>
+ <CAJuCfpFsKsA3vTZCPTCKL9-Xs9G+07b8vgr0PunqZzVSN1Lmmg@mail.gmail.com>
+In-Reply-To: <CAJuCfpFsKsA3vTZCPTCKL9-Xs9G+07b8vgr0PunqZzVSN1Lmmg@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 9 Jul 2024 11:11:59 -0700
+Message-ID: <CAADnVQK_ftwe5Dxtc0bopeDg2ku=GrFYrMOUWHLnXaK1bqoXXA@mail.gmail.com>
+Subject: Re: [PATCH RESEND] bpf: fix order of args in call to bpf_map_kvcalloc
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, 
+	Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Christian Kujau <lists@nerdbynature.de>, 
+	=?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@intel.com>, 
+	Lorenzo Stoakes <lstoakes@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 09, 2024 at 05:54:25AM -0700, Breno Leitao wrote:
-> From: Alexander Lobakin <aleksander.lobakin@intel.com>
-> 
-> In fact, this structure contains a flexible array at the end, but
-> historically its size, alignment etc., is calculated manually.
-> There are several instances of the structure embedded into other
-> structures, but also there's ongoing effort to remove them and we
-> could in the meantime declare &net_device properly.
-> Declare the array explicitly, use struct_size() and store the array
-> size inside the structure, so that __counted_by() can be applied.
-> Don't use PTR_ALIGN(), as SLUB itself tries its best to ensure the
-> allocated buffer is aligned to what the user expects.
-> Also, change its alignment from %NETDEV_ALIGN to the cacheline size
-> as per several suggestions on the netdev ML.
-> 
-> bloat-o-meter for vmlinux:
-> 
-> free_netdev                                  445     440      -5
-> netdev_freemem                                24       -     -24
-> alloc_netdev_mqs                            1481    1450     -31
-> 
-> On x86_64 with several NICs of different vendors, I was never able to
-> get a &net_device pointer not aligned to the cacheline size after the
-> change.
-> 
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+On Tue, Jul 9, 2024 at 8:39=E2=80=AFAM Suren Baghdasaryan <surenb@google.co=
+m> wrote:
+>
+> On Tue, Jul 9, 2024 at 8:14=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> w=
+rote:
+> >
+> > On 7/8/24 10:20 AM, Linux regression tracking (Thorsten Leemhuis) wrote=
+:
+> > > [CCing the regressions list and people mentioned below]
+> > >
+> > > On 12.06.24 16:53, Alexei Starovoitov wrote:
+> > >> On Wed, Jun 12, 2024 at 2:51=E2=80=AFAM Mohammad Shehar Yaar Tausif
+> > >> <sheharyaar48@gmail.com> wrote:
+> > >>>
+> > >>> The original function call passed size of smap->bucket before the n=
+umber of
+> > >>> buckets which raises the error 'calloc-transposed-args' on compilat=
+ion.
+> > >>>
+> > >>> Fixes: 62827d612ae5 ("bpf: Remove __bpf_local_storage_map_alloc")
+> > >>> Reviewed-by: Andrii Nakryiko <andrii@kernel.org>
+> > >>> Signed-off-by: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+> > >>> ---
+> > >>> - already merged in linux-next
+> > >>> - [1] suggested sending as a fix for 6.10 cycle
+> > >>
+> > >> No. It's not a fix.
+> > >
+> > > If you have a minute, could you please explain why that is? From what=
+ I
+> > > can see a quite a few people run into build problems with 6.10-rc
+> > > recently that are fixed by the patch:
+> > >
+> > > * P=C3=A9ter Ujfalusi
+> > > https://lore.kernel.org/bpf/363ad8d1-a2d2-4fca-b66a-3d838eb5def9@inte=
+l.com/
+> > >
+> > > * Christian Kujau
+> > > https://lore.kernel.org/bpf/48360912-b239-51f2-8f25-07a46516dc76@nerd=
+bynature.de/
+> > > https://lore.kernel.org/lkml/d0dd2457-ab58-1b08-caa4-93eaa2de221e@ner=
+dbynature.de/
+> > >
+> > > * Lorenzo Stoakes
+> > > https://fosstodon.org/@ljs@social.kernel.org/112734050799590482
+> > >
+> > > At the same time I see that the culprit mentioned above is from 6.4-r=
+c1,
+> >
+> > IIUC the order was wrong even before, but see below.
+> >
+> > > so I guess it there must be some other reason why a few people seem t=
+o
+> > > tun into this now. Did some other change expose this problem? Or are
+> > > updated compilers causing this?
+> >
+> > I think it's because of 2c321f3f70bc ("mm: change inlined allocation he=
+lpers
+> > to account at the call site"), which was added in 6.10-rc1 and thus mak=
+es
+> > this technically a 6.10 regression after all.
+>
+> IIUC the above mentioned change reveals a problem that was there
+> before the change. So, it's a build regression in 6.10 because the bug
+> got exposed but the bug was introduced much earlier. The fix should be
+> marked as:
+>
+> Fixes: ddef81b5fd1d ("bpf: use bpf_map_kvcalloc in bpf_local_storage")
 
-Hi Breno,
+Not really. The order was flipped before that patch.
 
-Some kernel doc warnings from my side.
+> > So what triggers the bug is
+> > AFAICS the following together:
+> >
+> > - gcc-14 (didn't see it with gcc-13)
+> > - commit 2c321f3f70bc that makes bpf_map_kvcalloc a macro that does
+> > kvcalloc() directly instead of static inline function wrapping it for
+> > !CONFIG_MEMCG
+> > - CONFIG_MEMCG=3Dn in .config
 
-Flagged by: kernel-doc -none
+Can somebody respin the patch with above details?
 
-> ---
-> Changelog:
-> 
-> v2:
->  * Rebased Alexander's patch on top of f750dfe825b90 ("ethtool: provide
->    customized dim profile management").
->  * Removed the ALIGN() of SMP_CACHE_BYTES for sizeof_priv.
-> 
-> v1:
->  * https://lore.kernel.org/netdev/90fd7cd7-72dc-4df6-88ec-fbc8b64735ad@intel.com
-> 
->  include/linux/netdevice.h | 12 +++++++-----
->  net/core/dev.c            | 30 ++++++------------------------
->  net/core/net-sysfs.c      |  2 +-
->  3 files changed, 14 insertions(+), 30 deletions(-)
-> 
-> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-> index 93558645c6d0..f0dd499244d4 100644
-> --- a/include/linux/netdevice.h
-> +++ b/include/linux/netdevice.h
-> @@ -2199,10 +2199,10 @@ struct net_device {
->  	unsigned short		neigh_priv_len;
->  	unsigned short          dev_id;
->  	unsigned short          dev_port;
-> -	unsigned short		padded;
+tbh I don't think it qualifies as a "bug".
+Plenty of code places mix up size/n arguments to calloc.
+Erroring the build in such cases is imo wrong.
+Not sure what makes gcc-14 produce such warn/error.
 
-padded should also be removed from the Kernel doc for this structure.
-
-> +	int			irq;
-> +	u32			priv_len;
-
-And irq and priv_len should be added to the Kernel doc for this structure.
-
->  
->  	spinlock_t		addr_list_lock;
-> -	int			irq;
->  
->  	struct netdev_hw_addr_list	uc;
->  	struct netdev_hw_addr_list	mc;
-
-...
+But since the patch is trivial we can get that in quickly.
+Pls respin with all details.
 
