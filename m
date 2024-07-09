@@ -1,174 +1,274 @@
-Return-Path: <linux-kernel+bounces-245207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A17E92AFA2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:59:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0761092AFA6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DB461C21CD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:59:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 842421F221B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA2512D20D;
-	Tue,  9 Jul 2024 05:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l20HNKBc"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A75B1304AD;
+	Tue,  9 Jul 2024 05:59:46 +0000 (UTC)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E56380604
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 05:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2741C1304A3;
+	Tue,  9 Jul 2024 05:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720504741; cv=none; b=l/hMJXdFDSzzXyN5alXMNl8DCIQzgkpJZgui00z/KCPbN7ARC1T9DS1eqKW9ewAGbQsIXKhqU8v7BzBkeJmV5fKd68JosCH5fQrrB/3O+dwK6GV+Dxox8Iv18Ovwbq0bxa/3ZWvG64b2GnLNYp4hKM6uhA31Y/yAd7vvL5MZF8c=
+	t=1720504785; cv=none; b=f0FrumRoNiJzOMS5KZ0Y3zZi6WOvtDBVMO8EoSYSFi3K5ayg1kK6ebRBAq0SAvLBzqrv/SsynWuPWEkmIRhT5hTH266bdTJkeg09WGYgzkeu+9abTe+YoH1CSOXK3KRUXbgVymWR4J7Tzs3++/fOiThYuZjQMpgJUzG04zKYlmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720504741; c=relaxed/simple;
-	bh=+Xm/T1AZE+960n3ewseut1wdgmY2bEHOQybZp6zwdWE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iMJBydDeJC2f3J87x764dtIHm84uCUGtVVMMlbCArVd171SXwW/lrOY9SjEhoNGDiBgBT8+aI0lXbXX1ZriC7c2j2n0cQd4QThYKgOB2XUZEl3bKKEBt7KmjuxQrPfEGtugw6nCsSrDCwKQcEMhRrnTJTTJ2Dn3AuOlc/+HULzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l20HNKBc; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-447df43324fso141951cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 22:59:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720504739; x=1721109539; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ybuXPGKJnTRCHaqveoOG9YYSY5DjRvZaZMYAdb94zUA=;
-        b=l20HNKBcUvocXQ45WO+JVM5PPonm5/euDdOQFGN/q3CN2YmleRv88Zwbkyy9r347is
-         OFekkBMLUlLzaIGtWX/MhAfG9h6lGVhQY29Ef1qMXY7/LGOzZk2uBnn7UKCmZYC6eSiX
-         QvjiWkKFJ/tUyXoaXOFfri+j+KcscpckoYIxFburJWh1dvve0Yx+KYsYSE/qjDPbnBLc
-         mxO17vnhTjXRzJm1phojfqXTPLMpMGP+Jhh6cfhBsS8APH9vRrJA2f2u9NY9LGd5z/d5
-         tssxMEMrZWU4IDkc2zFAGVBnz34vz2wF2kBKw091t/pru+nKYo/4LfPNBSQomg+JgZvP
-         QAng==
+	s=arc-20240116; t=1720504785; c=relaxed/simple;
+	bh=rV+4oAZg91tmW2GlW2fUqugFTjYvSHme2pjvx/QymmE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mry/lCaSMxS8Vz0uXtX3XWNk+CblzyVy7C47O9LpeICG8Udv15Vgc0LRsMh5WUHS9mgyqObQ2WSytbTJyRsfXe5H9AoEsgBiGx21/x17/WRJOCUMMlTiC6wuFqUGDJvJNuAffZ+LFCgcGB/gpff1k0eN3OPTEtbO7th5OUVnG5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42561c16ffeso33708545e9.3;
+        Mon, 08 Jul 2024 22:59:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720504739; x=1721109539;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ybuXPGKJnTRCHaqveoOG9YYSY5DjRvZaZMYAdb94zUA=;
-        b=NMt6phawUPBxEm6ThZzLFsJw+V9wNzHdnLFBMUNQTUtG864rNzXbXlVkB6NS4xF687
-         0//iaIYWSUbQ9UWCvWF0DRRqaKWbhsQx8IHQw7YmeZ5mnB7Q6v7BiihWW23y3OBVoEt3
-         DgIraMtpN8fqiJJQTK/0sYtwjw7qnJuXa3dqPBkgMVcrx0oRAPrdHu5syvVWKo1bRJ3b
-         ZhfJIP5ww6JyJqdTtY/IEnJCjGhBWI9k8G3hybtFq71KHU2RzlojI7g2RDaCGseP3hK3
-         LdMuDx13uUMhaEJboJcHkVGK3RDVtfijW2+Sa2Btc++rNLmmeRSfz9FYnW3CIgzdcUsA
-         1U5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUgnH7oM7bgteKGP9FSxudUsX9UKu38S/PH3i1B33BULwkr1m3D8DsixACCOtUgq4Oo0r2Ni51c3fCnEUriypMSMAO5zrRhz+4m9D9g
-X-Gm-Message-State: AOJu0YyPnK1QCvCWuEoRwnKegcRVY3e5BbsdK3QjOs76uHCbYgI/CHUE
-	jVu8PYVTqPjhNmMkE23JoH7+0NU91rN6CF0gcsfYH2ANvEhtNQOma6dCZoRauz/hN/G3GAdBFd5
-	pvzEk2u+RBey61vnx89qVSITQJVPx1abZDSH5
-X-Google-Smtp-Source: AGHT+IE9s6EeXXa5+5jH0FLBqqwcSIlaabORpUN/0MoGtzOnz56BqLqdzYocfeDKJEgc0y/IWf/mYDF4wkludJ0+4q8=
-X-Received: by 2002:ac8:4dcd:0:b0:447:ed5f:bca6 with SMTP id
- d75a77b69052e-447fcfe9339mr1355951cf.5.1720504738887; Mon, 08 Jul 2024
- 22:58:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720504782; x=1721109582;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PDntGN+T80+6QoF3T0bYQHIMVziDiAyD/iDwnXqy4eM=;
+        b=tcEmvEs2i/XrRIJy6oEjQNJ118WG3DnhuQaef1bT2du63Cj+lcFr3d+69Whu/hCwTk
+         JJPo3rWcmXrP1+78s2PsCeozCF7cpF1P9TLBdiXcW8sg2dKYfJG4ccZG0QKwTIQ9uxQo
+         0m/LS9c/RQyQ1gVOSQQhvXZBcPrMKimBmhNq2OQYzfY2m7OQo7rG+X7xdYOC7bN2eXBY
+         fQFtc0Q5IbxhKLPoj9BSo+sCD4ZswBH9e1aipTfTOmGXuABDEq05Rek4scgGdDu3nGBB
+         c8DLUsXwc3gY9phPexIyyqgay9MpWcIMLqJFoOzPVZLWM4qvfE4HCFQ2mTXWYsbwkCnd
+         8cDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUtpAjljwGcEHNaSS7gjBHhGhf6Olpm6xWS0xn29aINiPAfbI9hAsBM9tFZXD4gGrYBJvrX+6NxLKvSkXERKCENWabhYEr4K9KAUv+UbH2OH9jxePdLJykCquwx+xUx4CUrbD4yOK4zRwKquf57y0p+ON92mGl1/f4L27Uan/oyxcdRPA=
+X-Gm-Message-State: AOJu0Yw3ZwjdinMo+r1VrhWEx7ZQfSmdqY4Mb5m7uFu88Jpbnm3AU6kX
+	UK1o3VlH2ud5paQIHZtFBKyQ4ft740sughD78gt7r26XhuIxLx1Crf/6+ktScIQ=
+X-Google-Smtp-Source: AGHT+IHsfKqHKPgYYtKpHDE7FgVPSfYsXo90trFZ+VNdJQeq4PDmhDtmSLLmEcIKoXsDSwZq9AhSvA==
+X-Received: by 2002:a05:600c:1c9f:b0:426:591d:adb6 with SMTP id 5b1f17b1804b1-426708fa8efmr9375595e9.35.1720504782352;
+        Mon, 08 Jul 2024 22:59:42 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4265e90aa1dsm122404375e9.13.2024.07.08.22.59.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 22:59:41 -0700 (PDT)
+Message-ID: <a0e31542-e77b-4efa-959d-f7f5a8719616@kernel.org>
+Date: Tue, 9 Jul 2024 07:59:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d2841226-e27b-4d3d-a578-63587a3aa4f3@amd.com> <CAOUHufawNerxqLm7L9Yywp3HJFiYVrYO26ePUb1jH-qxNGWzyA@mail.gmail.com>
- <1998d479-eb1a-4bc8-a11e-59f8dd71aadb@amd.com> <CAOUHufYA-ZAHni1_aDQjjwB5UC9EFYPL_YqVN52DoL3J7SFziQ@mail.gmail.com>
- <7a06a14e-44d5-450a-bd56-1c348c2951b6@amd.com>
-In-Reply-To: <7a06a14e-44d5-450a-bd56-1c348c2951b6@amd.com>
-From: Yu Zhao <yuzhao@google.com>
-Date: Mon, 8 Jul 2024 23:58:21 -0600
-Message-ID: <CAOUHufa7OBtNHKMhfu8wOOE4f0w3b0_2KzzV7-hrc9rVL8e=iw@mail.gmail.com>
-Subject: Re: Hard and soft lockups with FIO and LTP runs on a large system
-To: Bharata B Rao <bharata@amd.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, nikunj@amd.com, 
-	"Upadhyay, Neeraj" <Neeraj.Upadhyay@amd.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, willy@infradead.org, vbabka@suse.cz, kinseyho@google.com, 
-	Mel Gorman <mgorman@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] math.h: Add macros for rounding to closest value
+To: Devarsh Thakkar <devarsht@ti.com>, mchehab@kernel.org,
+ hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, sebastian.fricke@collabora.com,
+ andriy.shevchenko@linux.intel.com, jani.nikula@intel.com, corbet@lwn.net,
+ broonie@kernel.org, rdunlap@infradead.org, linux-doc@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com, praneeth@ti.com, nm@ti.com,
+ vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com, b-brnich@ti.com,
+ detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com,
+ andi.shyti@linux.intel.com, nicolas@ndufresne.ca, davidgow@google.com,
+ dlatypov@google.com
+References: <20240708155943.2314427-1-devarsht@ti.com>
+ <20240708155943.2314427-2-devarsht@ti.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20240708155943.2314427-2-devarsht@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 8, 2024 at 10:31=E2=80=AFPM Bharata B Rao <bharata@amd.com> wro=
-te:
->
-> On 08-Jul-24 9:47 PM, Yu Zhao wrote:
-> > On Mon, Jul 8, 2024 at 8:34=E2=80=AFAM Bharata B Rao <bharata@amd.com> =
-wrote:
-> >>
-> >> Hi Yu Zhao,
-> >>
-> >> Thanks for your patches. See below...
-> >>
-> >> On 07-Jul-24 4:12 AM, Yu Zhao wrote:
-> >>> Hi Bharata,
-> >>>
-> >>> On Wed, Jul 3, 2024 at 9:11=E2=80=AFAM Bharata B Rao <bharata@amd.com=
-> wrote:
-> >>>>
-> >> <snip>
-> >>>>
-> >>>> Some experiments tried
-> >>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>>> 1) When MGLRU was enabled many soft lockups were observed, no hard
-> >>>> lockups were seen for 48 hours run. Below is once such soft lockup.
-> >>>
-> >>> This is not really an MGLRU issue -- can you please try one of the
-> >>> attached patches? It (truncate.patch) should help with or without
-> >>> MGLRU.
-> >>
-> >> With truncate.patch and default LRU scheme, a few hard lockups are see=
-n.
-> >
-> > Thanks.
-> >
-> > In your original report, you said:
-> >
-> >    Most of the times the two contended locks are lruvec and
-> >    inode->i_lock spinlocks.
-> >    ...
-> >    Often times, the perf output at the time of the problem shows
-> >    heavy contention on lruvec spin lock. Similar contention is
-> >    also observed with inode i_lock (in clear_shadow_entry path)
-> >
-> > Based on this new report, does it mean the i_lock is not as contended,
-> > for the same path (truncation) you tested? If so, I'll post
-> > truncate.patch and add reported-by and tested-by you, unless you have
-> > objections.
->
-> truncate.patch has been tested on two systems with default LRU scheme
-> and the lockup due to inode->i_lock hasn't been seen yet after 24 hours r=
-un.
+On 08. 07. 24, 17:59, Devarsh Thakkar wrote:
+> Add below rounding related macros:
+> 
+> round_closest_up(x, y) : Rounds x to closest multiple of y where y is a
+> power of 2, with a preference to round up in case two nearest values are
+> possible.
+> 
+> round_closest_down(x, y) : Rounds x to closest multiple of y where y is a
+> power of 2, with a preference to round down in case two nearest values are
+> possible.
+> 
+> roundclosest(x, y) : Rounds x to closest multiple of y, this macro should
+> generally be used only when y is not multiple of 2 as otherwise
+> round_closest* macros should be used which are much faster.
+> 
+> Examples:
+>   * round_closest_up(17, 4) = 16
+>   * round_closest_up(15, 4) = 16
+>   * round_closest_up(14, 4) = 16
+>   * round_closest_down(17, 4) = 16
+>   * round_closest_down(15, 4) = 16
+>   * round_closest_down(14, 4) = 12
+>   * roundclosest(21, 5) = 20
 
-Thanks.
+With consistency in mind, why is there no underscore?
 
-> >
-> > The two paths below were contended on the LRU lock, but they already
-> > batch their operations. So I don't know what else we can do surgically
-> > to improve them.
->
-> What has been seen with this workload is that the lruvec spinlock is
-> held for a long time from shrink_[active/inactive]_list path. In this
-> path, there is a case in isolate_lru_folios() where scanning of LRU
-> lists can become unbounded. To isolate a page from ZONE_DMA, sometimes
-> scanning/skipping of more than 150 million folios were seen. There is
-> already a comment in there which explains why nr_skipped shouldn't be
-> counted, but is there any possibility of re-looking at this condition?
+>   * roundclosest(19, 5) = 20
+>   * roundclosest(17, 5) = 15
+> 
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> NOTE: This patch is inspired from the Mentor Graphics IPU driver [1]
+> which uses similar macro locally and which is updated in further patch
+> in the series to use this generic macro instead along with other drivers
+> having similar requirements.
+> 
+> Link: https://elixir.bootlin.com/linux/v6.8.9/source/drivers/gpu/ipu-v3/ipu-image-convert.c#L480 [1]
+> ---
+>   include/linux/math.h | 63 ++++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 63 insertions(+)
+> 
+> diff --git a/include/linux/math.h b/include/linux/math.h
+> index dd4152711de7..79e3dfda77fc 100644
+> --- a/include/linux/math.h
+> +++ b/include/linux/math.h
+> @@ -34,6 +34,52 @@
+>    */
+>   #define round_down(x, y) ((x) & ~__round_mask(x, y))
+>   
+> +/**
+> + * round_closest_up - round closest to be multiple of specified value (which is
+> + *                    power of 2) with preference to rounding up
+> + * @x: the value to round
+> + * @y: multiple to round closest to (must be a power of 2)
+> + *
+> + * Rounds @x to closest multiple of @y (which must be a power of 2).
+> + * The value can be either rounded up or rounded down depending upon rounded
+> + * value's closeness to the specified value. If there are two closest possible
+> + * values, i.e. the difference between the specified value and it's rounded up
+> + * and rounded down values is same then preference is given to rounded up
+> + * value.
+> + *
+> + * To perform arbitrary rounding to closest value (not multiple of 2), use
+> + * roundclosest().
+> + *
+> + * Examples:
+> + * * round_closest_up(17, 4) = 16
+> + * * round_closest_up(15, 4) = 16
+> + * * round_closest_up(14, 4) = 16
+> + */
+> +#define round_closest_up(x, y) round_down((x) + (y) / 2, (y))
+> +
+> +/**
+> + * round_closest_down - round closest to be multiple of specified value (which
+> + *			is power of 2) with preference to rounding down
+> + * @x: the value to round
+> + * @y: multiple to round closest to (must be a power of 2)
+> + *
+> + * Rounds @x to closest multiple of @y (which must be a power of 2).
+> + * The value can be either rounded up or rounded down depending upon rounded
+> + * value's closeness to the specified value. If there are two closest possible
+> + * values, i.e. the difference between the specified value and it's rounded up
+> + * and rounded down values is same then preference is given to rounded up
+> + * value.
 
-For this specific case, probably this can help:
+Too heavy sentence. Did you mean "its" not "it's"?
 
-@@ -1659,8 +1659,15 @@ static unsigned long
-isolate_lru_folios(unsigned long nr_to_scan,
-                if (folio_zonenum(folio) > sc->reclaim_idx ||
-                                skip_cma(folio, sc)) {
-                        nr_skipped[folio_zonenum(folio)] +=3D nr_pages;
--                       move_to =3D &folios_skipped;
--                       goto move;
-+                       list_move(&folio->lru, &folios_skipped);
-+                       if (spin_is_contended(&lruvec->lru_lock)) {
-+                               if (!list_empty(dst))
-+                                       break;
-+                               spin_unlock_irq(&lruvec->lru_lock);
-+                               cond_resched();
-+                               spin_lock_irq(&lruvec->lru_lock);
-+                       }
-+                       continue;
-                }
+What about:
+There can be two closest values. I.e. the difference between the 
+specified value and its rounded up and down values is the same. In that 
+case, the rounded up value is preferred.
+?
+
+The same for round_closest_up().
+
+> + *
+> + * To perform arbitrary rounding to closest value (not multiple of 2), use
+> + * roundclosest().
+> + *
+> + * Examples:
+> + * * round_closest_down(17, 4) = 16
+> + * * round_closest_down(15, 4) = 16
+> + * * round_closest_down(14, 4) = 12
+> + */
+> +#define round_closest_down(x, y) round_up((x) - (y) / 2, (y))
+> +
+>   #define DIV_ROUND_UP __KERNEL_DIV_ROUND_UP
+>   
+>   #define DIV_ROUND_DOWN_ULL(ll, d) \
+> @@ -77,6 +123,23 @@
+>   }							\
+>   )
+>   
+> +/**
+> + * roundclosest - round to nearest multiple
+> + * @x: the value to round
+> + * @y: multiple to round nearest to
+> + *
+> + * Rounds @x to nearest multiple of @y.
+> + * The rounded value can be greater than or less than @x depending
+
+greater or less than
+
+> + * upon it's nearness to @x.
+
+"its"
+
+> If @y will always be a power of 2, consider
+
+If @y is always a power...
+
+> + * using the faster round_closest_up() or round_closest_down().
+> + *
+> + * Examples:
+> + * * roundclosest(21, 5) = 20
+> + * * roundclosest(19, 5) = 20
+> + * * roundclosest(17, 5) = 15
+> + */
+> +#define roundclosest(x, y) rounddown((x) + (y) / 2, (y))
+> +
+>   /*
+>    * Divide positive or negative dividend by positive or negative divisor
+>    * and round to closest integer. Result is undefined for negative
+
+-- 
+js
+
 
