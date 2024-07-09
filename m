@@ -1,188 +1,151 @@
-Return-Path: <linux-kernel+bounces-246583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ADE192C3E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:24:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD0592C3E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DB2B1C21F13
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:24:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB6461C21D34
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A30817B056;
-	Tue,  9 Jul 2024 19:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456E6182A5B;
+	Tue,  9 Jul 2024 19:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pyds89BP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="acmoILYP"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7A61B86C9
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 19:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4001B86C9;
+	Tue,  9 Jul 2024 19:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720553081; cv=none; b=tK4OZ4XvAJHVrrihw6/fPgmbUEaJcKhxoyK0SpTA/Zpe3w5SmGrCDwdfjIjW9YRcBL0IAkDm3mooPS1EynnXVOvlWughdk13p1e2T5id1nsuRCtZdH/xL9qwwNNZ45NV2AFouomnrxdmKJ5xJ9m7vZOiBGM30xsdHIg7n3ZKXwg=
+	t=1720553212; cv=none; b=ajKF8f+T2dHFLpm1df1pFsu0aTEkDSpNhu4Xcws/XEfr6pOi4y9sfhUU0WHAcjcb7a0u0M5YYUq+vBnZs1Reg0WzUKucgJ/Ao23mgOnFPJrCa3WuAgPQuhh92XzbHxi9W74ZeBtHDY5PxHjFynQBbiEBSssg9attQsgPVDQxxgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720553081; c=relaxed/simple;
-	bh=TM87fZir4AzOiwacUrIBN/pn/2Ab9eCt2fUU0JMqOzk=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MB66VRHS2SjEXBjN01SwHCj6veTPSlVjAW+20KJbgOwSQC6S0VYnfTYhDFBbI1yqcmkE+aK5roXr/aKZuy6cpA1BBCetv4IAufJLp24OXkHiY5YKtiAqeVdNFOMaWqD3j7GSH8838P6qNTDMZJLLUF2G9UDHMiJ+m6IF5FXwQ1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pyds89BP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9E63C3277B;
-	Tue,  9 Jul 2024 19:24:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720553080;
-	bh=TM87fZir4AzOiwacUrIBN/pn/2Ab9eCt2fUU0JMqOzk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pyds89BPMVT7ITYJF3R5oPiyTP7y3j4rmolEgF7cDgz1YNntcbegkU+f2llzUPlt2
-	 mX71aXeR6uwSt6zfhsXgjZrbBAL+sBCIadUsOYkkgiYiKyUKIn9Wc01MBrp3HOigh7
-	 0BdbMwR3DAbG9aI2RkBeRu0Z0nTvlGRQGSjfhm2SypG7WnKu/eJ4Un3nrbTNqyY2eD
-	 rGxZPTtaovl9U6G4d2MQL6mNxS2B1GBQDUXp7sruKUS8BKzvwuBjyqot7s/kEByizX
-	 FsO5j1Mz39K1WKYygtcoF9/r+r6bgwD+nBvtL11Nfj1L8exvlCt/A0cft+QWCWN0aU
-	 MC97aQJ0SNAzg==
-Received: from ip-185-104-136-29.ptr.icomera.net ([185.104.136.29] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sRGS6-00B1Er-Ic;
-	Tue, 09 Jul 2024 20:24:38 +0100
-Date: Tue, 09 Jul 2024 20:24:37 +0100
-Message-ID: <877cdupdvu.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: tglx@linutronix.de,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: MSIs not freed in GICv3 ITS driver
-In-Reply-To: <20240709173708.GA44420@thinkpad>
-References: <20240708153933.GC5745@thinkpad>
-	<865xtf4woi.wl-maz@kernel.org>
-	<20240709173708.GA44420@thinkpad>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1720553212; c=relaxed/simple;
+	bh=1Rep24U8JtuvtSnlbLq8XyraNP75pXoMYlPXmPJORgM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tpqNkEV2eKqCnnAr8Lu0yXZ5i/gEmorakUvRo935yI6Zg9FK3mMaI/CXaH2wjs9vZcpF1MFxpzPF+2Vc9JmmF3JtZZVB7TI6L69MGL1rLi4CjElazChTFhGGwtb29z6VWxHu5xtYPrPRXljPPXsJ4hytcvXVqdyu8geshTuBBYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=acmoILYP; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ee9b098bd5so49786711fa.0;
+        Tue, 09 Jul 2024 12:26:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720553209; x=1721158009; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VlzucciAEK5IyU0Y2LaBT/n/FoJVAJOkfoOJxJ3dyIM=;
+        b=acmoILYPhUhXA+D9UiTARqo2s1DAG3wvVhVfFVRsLarZ/e61ZG3Pu8KU/TQBOtvs5p
+         wo8DW2k48en1XLSk9dVmTJDJxWhgPkcDMHmHaf2XlPrMxDLgTgCG2sXlOy/MOarylSKc
+         ay55rfc3PNtDToALY8/NtIvw/0B8iFFjUJonVlxZbB/dvgS5yptTAvDWxrPDBBuDiJtp
+         9OOpqlHm+u1hEdeyPJe3PGRzhQWonQumO+Q+CumZxUy7u85ZiGjNYwhk3HGNmPDxxdjm
+         2RkAaZp2VvVzTowiDKsgvGYtzoRu6EniJbvEJnE6GW20PFrnXdl2U6TNaHbW1RuVyoMw
+         B4/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720553209; x=1721158009;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VlzucciAEK5IyU0Y2LaBT/n/FoJVAJOkfoOJxJ3dyIM=;
+        b=GJlJzFLnRagCdeiIEplwDQzsd/1qlB+A0y/ucQ7yGRuQZpSRCAIAF464n7lL2wnQXC
+         NPusnq1HzegpnS173YrKG6NVt8TZiJ4fbL9hcuot4Y1wbew8tPfjMhTlGmirqJmilfQ8
+         0Kvq9mxeF6NDO7eIW5pr5ie14eSQRI8d4We2pNHhlAG7OYvoCDgnwxDd8Ag1cZ2ypqpd
+         yAvGmDZ4KovA49B+pIZ/14BJxpcKNuPb9p8XM/FEj/LDhecLIz6CvPwshQ33VxaP9nk9
+         zCU4pYn8FOYSr91JcXEHx5ZtP4rl2MC4qZQi1lzQ3r+R8fef3qIZZBgsjo2wXF75cldh
+         6oqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ9WCsBOCJzy1DA5aorsjj8ti5GhWsCMGnv3DEaLa8lFQnQz3oU9Tfznm5UI1N+ygkEJCExfc4fPkyWswD6Nl8S6Le/iqGsi3F43rB
+X-Gm-Message-State: AOJu0YwxKPLA1vBhRH6rqOUU9IlHvqMwGYcGKu8Sbn4c0IBway/WgxBz
+	lJFNwIyWJGunzPsqMu7e2zYx9ilWNMAtQqxZksnjJDR5U6eTQH/a
+X-Google-Smtp-Source: AGHT+IHg783yiXF4Ft+iDt5WqfZaszG2oTjdUJQSGqgm5JMqAKbAIO1TqQqcbm5TBWz6Qs3M1S7qUg==
+X-Received: by 2002:a05:651c:201:b0:2ee:7a71:6e2d with SMTP id 38308e7fff4ca-2eeb30fee15mr27794691fa.28.1720553208709;
+        Tue, 09 Jul 2024 12:26:48 -0700 (PDT)
+Received: from [192.168.42.222] ([148.252.145.239])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6e09e5sm53289275e9.5.2024.07.09.12.26.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 12:26:48 -0700 (PDT)
+Message-ID: <d2667002-1631-4f42-8aad-a9ea56c0762b@gmail.com>
+Date: Tue, 9 Jul 2024 20:26:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.104.136.29
-X-SA-Exim-Rcpt-To: manivannan.sadhasivam@linaro.org, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] kernel: rerun task_work while freezing in
+ get_signal()
+To: Oleg Nesterov <oleg@redhat.com>, Tejun Heo <tj@kernel.org>
+Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Christian Brauner <brauner@kernel.org>,
+ Tycho Andersen <tandersen@netflix.com>, Thomas Gleixner
+ <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+ Julian Orth <ju.orth@gmail.com>, Peter Zijlstra <peterz@infradead.org>
+References: <cover.1720368770.git.asml.silence@gmail.com>
+ <1d935e9d87fd8672ef3e8a9a0db340d355ea08b4.1720368770.git.asml.silence@gmail.com>
+ <20240708104221.GA18761@redhat.com>
+ <62c11b59-c909-4c60-8370-77729544ec0a@gmail.com>
+ <20240709103617.GB28495@redhat.com>
+ <658da3fe-fa02-423b-aff0-52f54e1332ee@gmail.com>
+ <Zo1ntduTPiF8Gmfl@slm.duckdns.org> <20240709190743.GB3892@redhat.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20240709190743.GB3892@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 09 Jul 2024 18:37:08 +0100,
-Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
+On 7/9/24 20:07, Oleg Nesterov wrote:
+> Hi Tejun,
 > 
-> On Mon, Jul 08, 2024 at 06:31:57PM +0100, Marc Zyngier wrote:
-> > Mani,
-> > 
-> > On Mon, 08 Jul 2024 16:39:33 +0100,
-> > Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
-> > > 
-> > > Hi Marc, Thomas,
-> > > 
-> > > I'm seeing a weird behavior with GICv3 ITS driver while allocating MSIs from
-> > > PCIe devices. When the PCIe driver (I'm using virtio_pci_common.c) tries to
-> > > allocate non power of 2 MSIs (like 3), then the GICv3 MSI driver always rounds
-> > > the MSI count to power of 2 to find the order. In this case, the order becomes 2
-> > > in its_alloc_device_irq().
-> > 
-> > That's because we can only allocate EventIDs as a number of ID
-> > bits. So you can't have *1* MSI, nor 3. You can have 2, 4, 8, or
-> > 2^24. This is a power-of-two architecture.
-> > 
+> Thanks for looking at this, can you review this V2 patch from Pavel?
+> To me it makes sense even without 1/2 which I didn't even bother to
+> read. At least as a simple workaround for now.
+
+They are kind of separate but without 1/2 this patch creates
+another infinite loop, even though it's harder to hit and
+is io_uring specific.
+
+  
+> On 07/09, Tejun Heo wrote:
+>>
+>> Hello,
+>>
+>> On Tue, Jul 09, 2024 at 03:05:21PM +0100, Pavel Begunkov wrote:
+>>>> -----------------------------------------------------------------------
+>>>> Either way I have no idea whether a cgroup_task_frozen() task should
+>>>> react to task_work_add(TWA_SIGNAL) or not.
+>>>>
+>>>> Documentation/admin-guide/cgroup-v2.rst says
+>>>>
+>>>> 	Writing "1" to the file causes freezing of the cgroup and all
+>>>> 	descendant cgroups. This means that all belonging processes will
+>>>> 	be stopped and will not run until the cgroup will be explicitly
+>>>> 	unfrozen.
+>>>>
+>>>> AFAICS this is not accurate, they can run but can't return to user-mode.
+>>>> So I guess task_work_run() is fine.
+>>>
+>>> IIUC it's a user facing doc, so maybe it's accurate enough from that
+>>> perspective. But I do agree that the semantics around task_work is
+>>> not exactly clear.
+>>
+>> A good correctness test for cgroup freezer is whether it'd be safe to
+>> snapshot and restore the tasks in the cgroup while frozen.
 > 
-> Ah okay.
-> 
-> > > So 4 entries are allocated by bitmap_find_free_region().
-> > 
-> > Assuming you're calling about its_alloc_device_irq(), it looks like a
-> > bug. Or rather, some laziness on my part. The thing is, this bitmap is
-> > only dealing with sub-allocation in the pool that has been given to
-> > the endpoint. So the power-of-two crap doesn't really matter unless
-> > you are dealing with Multi-MSI, which has actual alignment
-> > requirements.
-> > 
-> 
-> Okay.
-> 
-> > >
-> > > But since the PCIe driver has only requested 3 MSIs, its_irq_domain_alloc()
-> > > will only allocate 3 MSIs, leaving one bitmap entry unused.
-> > > 
-> > > And when the driver frees the MSIs using pci_free_irq_vectors(), only 3
-> > > allocated MSIs were freed and their bitmap entries were also released. But the
-> > > entry for the additional bitmap was never released. Due to this,
-> > > its_free_device() was also never called, resulting in the ITS device not getting
-> > > freed.
-> > > 
-> > > So when the PCIe driver tries to request the MSIs again (PCIe device being
-> > > removed and inserted back), because the ITS device was not freed previously,
-> > > MSIs were again requested for the same ITS device. And due to the stale bitmap
-> > > entry, the ITS driver refuses to allocate 4 MSIs as only 3 bitmap entries were
-> > > available. This forces the PCIe driver to reduce the MSI count, which is sub
-> > > optimal.
-> > > 
-> > > This behavior might be applicable to other irqchip drivers handling MSI as well.
-> > > I want to know if this behavior is already known with MSI and irqchip drivers?
-> > > 
-> > > For fixing this issue, the PCIe drivers could always request MSIs of power of 2,
-> > > and use a dummy MSI handler for the extra number of MSIs allocated. This could
-> > > also be done in the generic MSI driver itself to avoid changes in the PCIe
-> > > drivers. But I wouldn't say it is the best possible fix.
-> > 
-> > No, that's terrible. This is just papering over a design mistake, and
-> > I refuse to go down that road.
-> > 
-> 
-> Agree. But what about other MSI drivers? And because of the MSI design, they
-> also round the requested MSI count to power of 2, leading to unused vectors and
-> those also wouldn't get freed.
+> Well, I don't really understand what can snapshot/restore actually mean...
 
-This has absolutely nothing to do with the "design" of MSIs. It has
-everything to do with not special-casing Multi-MSI.
+CRIU, I assume. I'll try it ...
 
-> I think this power of 2 limitation should be
-> imposed at the API level or in the MSI driver instead of silently keeping unused
-> vectors in irqchip drivers.
+> I forgot everything about cgroup freezer and I am already sleeping, but even
+> if we forget about task_work_add/TIF_NOTIFY_SIGNAL/etc, afaics ptrace can
+> change the state of cgroup_task_frozen() task between snapshot and restore ?
 
-You really have the wrong end of the stick. The MSi API has *zero*
-control over the payload allocation. How could it? The whole point of
-having an MSI driver is to insulate the core code from such stuff.
-
->
-> > > 
-> > > Is there any other way to address this issue? Or am I missing something
-> > > completely?
-> > 
-> > Well, since each endpoint handled by an ITS has its allocation tracked
-> > by a bitmap, it makes more sense to precisely track the allocation.
-> > 
-> > Here's a quick hack that managed to survive a VM boot. It may even
-> > work. The only problem with it is that it probably breaks a Multi-MSi
-> > device sitting behind a non-transparent bridge that would get its MSIs
-> > allocated after another device. In this case, we wouldn't honor the
-> > required alignment and things would break.
-> > 
-> > So take this as a proof of concept. If that works, I'll think of how
-> > to deal with this crap in a more suitable way...
-> > 
-> 
-> This works fine. Now the ITS driver allocates requested number of MSIs, thanks!
-
-Well, as I said, this breaks tons of other things so I'm not going to
-merge this any time soon. Certainly not before Thomas gets his MSI
-rework upstream. And then I need to work out how to deal with
-Multi-MSI in the correct way.
-
-So don't hold your breath.
-
-	M.
-
+... but I'm inclined to think the patch makes sense regardless,
+we're replacing an infinite loop with wait-wake-execute-wait.
 
 -- 
-Without deviation from the norm, progress is not possible.
+Pavel Begunkov
 
