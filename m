@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-245485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82DB92B330
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:06:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51E5792B333
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93269283D19
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:06:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9854283D53
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0825E156242;
-	Tue,  9 Jul 2024 09:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3870A155300;
+	Tue,  9 Jul 2024 09:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X93fsIjw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ajfdZbKZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308D4146016;
-	Tue,  9 Jul 2024 09:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A248146D45;
+	Tue,  9 Jul 2024 09:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720515903; cv=none; b=JCWqtGu91H5yqqA6z22ML5b4Gh+OolayrWXC+nqMgfdEQ2P+mBQirsS+ym9OnjwPuMrxTsXmHnbHRnOIxRynDRr1W7iAjk95LpNOIbHjLsvDWLV1QQGi7fJEniyy5TIBK6wgP4nK88IPZaMtlJN8DJHDemWMWSBrRP9MTT/0Wik=
+	t=1720515933; cv=none; b=QQvaksScrQIHQurHocZaBV0uiWoDSewy91qBENwrhZoo+sU81cLAoWo4xQg/0CIE6YslPlWmQXl6YRQ3X7zxv0sbvU2+ULvuN5HYHmf1iE3UxKMRKoVtoM6k59Cm+8swukWp1XVcunQokO5xvcRvvQu0XYYPElyOqxUsfipA5KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720515903; c=relaxed/simple;
-	bh=89XNTjD8VvzQueTdSLIVAzNuM+7Ti1HQSRC2JVCLW2Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=o55bPEtyjPDip3qyeUxM0lTUByUaoa/IsfQN1ojibTibOXV06E/17NOCXYIGv8kBou8ec2Yz+r+C6yp4xa99DwyE/HRqYtyrPq05bvQTPaRSyWuuD3oCn8ICbc9euwNKifXu0rD612Qri972EaXlKACrdl56nJbo5UkCPdtMQIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X93fsIjw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7777FC3277B;
-	Tue,  9 Jul 2024 09:04:54 +0000 (UTC)
+	s=arc-20240116; t=1720515933; c=relaxed/simple;
+	bh=PrdjmFA1thLas9ZDOKefTmumonuU0yXqJkdvKfcGDk0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AuboscN6P/18HiJjOdaCh9XjQvDMoQML3NX8kfhXO5Y27rqm0T88Yu9A9EUi4Q7IKqiNGBa9C6cQqKzUdd5GEMtf1bylHL+GXgSTyQt5MUeezm88z9PeTFJZWOlB3eE6OhHngRfkyMMSifi0S6BAL1d9ew3Qz2DA2MP8Iw9s1os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ajfdZbKZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65866C3277B;
+	Tue,  9 Jul 2024 09:05:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720515902;
-	bh=89XNTjD8VvzQueTdSLIVAzNuM+7Ti1HQSRC2JVCLW2Y=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=X93fsIjwVRnrDDB2GIoZnBy01lkEOlZIGve/z0YRyddSqfMSM/xvfQZ1BMcDbUdx1
-	 4DttWiRroPUjoMI696cKWbd0mf0WEz/C2L3taqySSgzsVgPMRlcT+s0FSl/RK0TfIZ
-	 2b+AtyrbRFRD3NAuZ5OWzd2H6g18h7sooOBfFC5OUl5pvpfsLcUeDxhSdAP3he3mia
-	 dp3JX9CR36Wi8V5/hb9+ZfZGvUzgC3O1gQ6kS69Czm6mKfoILQa0rFvl2RcUaj7BX6
-	 66RRPh2pbE9k0y4nAIP2PZ9P2ruQtGmxf1E8CyxVQNwhyPaZyReIBdCVgXelClPYVk
-	 f36RAmT5ij5ww==
-Message-ID: <94e9aea3-6231-4dbe-9a7d-07f79216e78b@kernel.org>
-Date: Tue, 9 Jul 2024 11:04:52 +0200
+	s=k20201202; t=1720515930;
+	bh=PrdjmFA1thLas9ZDOKefTmumonuU0yXqJkdvKfcGDk0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ajfdZbKZMTugClEzNs6nBvaSCewrvgKRodmtZO5yp9/rHqkSD33/yYBZ2nIvXpeWt
+	 qhfYw6ZCtXTmTmHedmOUt3opw+vYDbyU9sOoNuU3EgxrSQs8H8fRVpXn04cEpWsGer
+	 f8TZhtv3Ju/aphSO469I2t1bEW8h69ysr89TeRizxzjiah4elSX3JJr0TM7mi+PvDx
+	 P9a7uSl1ZGL4JbqGwPE2gSoAwp54ZxWJhcCaOaOL/YYVVrHO6TbCzACQkIKeIZewVA
+	 BXCTk1xWRDlFKPxeL+q2IvGpvH/HC9shK1mtXQh3UpIEVc5sc/YsPsW5keVNgXXu9s
+	 xeFjSR03bSncw==
+Message-ID: <98125070-28d4-4549-96e3-fa3414a21542@kernel.org>
+Date: Tue, 9 Jul 2024 11:05:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 9/9] dts: arm64: qcom: ipq9574: Enable CPR
-To: Varadarajan Narayanan <quic_varada@quicinc.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org,
- angelogioacchino.delregno@collabora.com, andersson@kernel.org,
- konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
- ilia.lin@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org,
- ulf.hansson@linaro.org, quic_sibis@quicinc.com, quic_rjendra@quicinc.com,
- otto.pflueger@abscue.de, luca@z3ntu.xyz, danila@jiaxyga.com,
- quic_ipkumar@quicinc.com, stephan.gerhold@kernkonzept.com,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20240709090132.117077-1-quic_varada@quicinc.com>
- <20240709090132.117077-10-quic_varada@quicinc.com>
+Subject: Re: [PATCH 1/2] dt-bindings: watchdog: add support for Amlogic A4
+ SoCs
+To: xianwei.zhao@amlogic.com, Wim Van Sebroeck <wim@linux-watchdog.org>,
+ Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Huqiang Qin <huqiang.qin@amlogic.com>
+References: <20240709-a4-a5_watchdog-v1-0-2ae852e05ec2@amlogic.com>
+ <20240709-a4-a5_watchdog-v1-1-2ae852e05ec2@amlogic.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,26 +107,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240709090132.117077-10-quic_varada@quicinc.com>
+In-Reply-To: <20240709-a4-a5_watchdog-v1-1-2ae852e05ec2@amlogic.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/07/2024 11:01, Varadarajan Narayanan wrote:
-> * Add CPR, RPMPD, OPP table nodes as applicable to IPQ9574 to
->   enable CPR functionality on IPQ9574.
+On 09/07/2024 10:48, Xianwei Zhao via B4 Relay wrote:
+> From: Huqiang Qin <huqiang.qin@amlogic.com>
 > 
-> * Bootloader set frequency 792MHz is added to the OPP table to
->   the avoid 'need at least 2 OPPs to use CPR' error
+> Update dt-binding document for watchdog of Amlogic A4 SoCs.
 > 
-> * Remove 1.2GHz as it is not supported in any of the IPQ9574 SKUs.
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> Signed-off-by: Huqiang Qin <huqiang.qin@amlogic.com>
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
