@@ -1,355 +1,278 @@
-Return-Path: <linux-kernel+bounces-245428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E198F92B268
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:43:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0148D92B1EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95FC52817E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:43:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9DD9282617
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9343E153808;
-	Tue,  9 Jul 2024 08:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23B4150989;
+	Tue,  9 Jul 2024 08:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="b2Pf43Oe"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="BX4of96H"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0CF15358A
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA73712E1C4
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720514557; cv=none; b=Tn2MIWAkMQBM+W5f4OKyEPnBHXeQVGiohrnW/PGg0lJpq6RSsHakTvnaCkxnjc6EEJwuaLc6+4U0yum2fDoyxym1wefXsn1KkU8CLM3iv245IjV58bhwOYu/Ta51jKqTG8icIBbLJ7O+c6trrXYS2tQG4pHqjVkaNW9Rc5BHzUA=
+	t=1720513040; cv=none; b=uJBYK2Fgm7VJ411bVRqFxHMST0RqvpOpsfZSrBP3vXBqN2Z+Q1Tyb7a9qSlkZxWjW75VhBpfp0igExguJNBP1TYOkLWqkoJb8h0jKpSC/Lsg0OYP4ZnJSmbMZC7LST/RclxQAYSPX5fIHzme2iRgbfR2f+WWHCuZDuwBqYJsRe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720514557; c=relaxed/simple;
-	bh=6mFIbIDQBlr+HpPKVY9P02FJpcGJ4jVepU8lmHx49Qg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=J6ZgHzrtAFPrWQor/+B7PehMAtFnTB3bKFGg1L9UbjWKvD916RXPbmnywRFyH/4WY+KvCP8xkjxKwFIEDN5vKb7LSQ05lMFpPeoxnjSB3ll9HkeS8mNrkX+wPyRajdRtdBnAkNsRgcR6RIwDOZRCMaNAy/UU03XMNJ9GxznDZ54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=b2Pf43Oe; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240709084231epoutp02865e5828c314db91dcf3cf4b77654082~gft6JcLDL0353503535epoutp02s
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:42:31 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240709084231epoutp02865e5828c314db91dcf3cf4b77654082~gft6JcLDL0353503535epoutp02s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1720514551;
-	bh=gWa4sX4367N7SDdiZRThtehT9+wu6QZN+lnJvmGJ73g=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=b2Pf43Oer8pQkK60rFL2UvfnpkIjg35YBH6jxgXVcbUc+at0jvzxXQDOLO1bUsrs9
-	 BhEeV4YMZliXl6kiPfpB6xdQJ442RGvt+M+kRrvqxX4Hi7vC9vHS+oSuEuS5ODhELa
-	 Doh7ggtDOfzIbhFLcO7JGciaygIFS6wA9TttbA3w=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240709084231epcas5p3ff11b6712821ca88c3020cf894ea5a20~gft55XoQh0827908279epcas5p3Y;
-	Tue,  9 Jul 2024 08:42:31 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4WJDyG29yfz4x9Q8; Tue,  9 Jul
-	2024 08:42:30 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	74.78.11095.5F7FC866; Tue,  9 Jul 2024 17:42:29 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240709081627epcas5p3033c01e4816310394f8efbbd4b43cfd0~gfXIvaH7z0568705687epcas5p3m;
-	Tue,  9 Jul 2024 08:16:27 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240709081627epsmtrp276c2c18632897965a144ab9d9c7bc31e~gfXIup_SQ0608406084epsmtrp2C;
-	Tue,  9 Jul 2024 08:16:27 +0000 (GMT)
-X-AuditID: b6c32a49-3c3ff70000012b57-3c-668cf7f5abba
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9B.88.07412.AD1FC866; Tue,  9 Jul 2024 17:16:26 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240709081625epsmtip1e2afe68191ca8c444baac2d6c5df3cec~gfXHt01KE3067830678epsmtip1e;
-	Tue,  9 Jul 2024 08:16:25 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: axboe@kernel.dk
-Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hexue <xue01.he@samsung.com>
-Subject: [PATCH v6] io_uring: releasing CPU resources when polling
-Date: Tue,  9 Jul 2024 16:16:19 +0800
-Message-Id: <20240709081619.3177418-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1720513040; c=relaxed/simple;
+	bh=CFl4FEO6onPfRjNmf17lDUrD96DZaB8ZQ4TmUyyNP5s=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=swcu7Uwu+x7tslETNvTfLqFdX/IrVl2AHEoLQu1bFpFrRRqjOAdwtv2zdL+vM6Mu8GP9mxRu6rCljkr0+cv3D2e4j5QCxFNfVTiGh96om7IUEu3ZKns6heL3vBTgkwTe2RAp6ZWIa2ri5mBh12SwV7thIvkdVZ37Jd1x5Iaxh64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=BX4of96H; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1720513027;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YAACi2NX/mGR0ktakok0JBId6ENllzY1DnYcf6uHrnY=;
+	b=BX4of96H0VvqDZS5x3Ajo3tTb3+fujHh5IDTmu0Z0FDYGHe4oO7JweaFpedsFxRfc7PHKi
+	VqgGCnhLZAQqryXWtuS3ubMSeba/xlwO0aTEQ0wcqKwYAUcsnepcfqW2q2IgrOS1k8/rNt
+	l9PpwLMDzFmOBlEoIV5S9Z3lAHgrPrzyQwe0oMHShqORIewlRrLtXWisjmW9RKS/n7z78o
+	lYqb+TJcLbXPvreBNOim5fjrGejliqZfrFotVXkWATrjHw2awW7FkfJB/moquFaMWUl0Ii
+	MJUE9KNXzVhfF82RpCHfyXgS9WsM2HyeunlNParYkiJz8231IyJCURkPGMl16g==
+Date: Tue, 09 Jul 2024 10:17:06 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Andy Yan <andyshrk@163.com>
+Cc: linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ heiko@sntech.de, hjc@rock-chips.com, andy.yan@rock-chips.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, daniel@ffwll.ch, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, javierm@redhat.com
+Subject: Re: [PATCH] drm/rockchip: cdn-dp: Remove redundant workarounds for
+ firmware loading
+In-Reply-To: <2fd3aabd.785b.190914ec1a6.Coremail.andyshrk@163.com>
+References: <9b7a9e9b88ad8c7489ee1b4c70b8751eeb5cf6f9.1720049413.git.dsimic@manjaro.org>
+ <109c6f19.2559.1907b817a99.Coremail.andyshrk@163.com>
+ <0bf4701d98833609b917983718c610aa@manjaro.org>
+ <2fd3aabd.785b.190914ec1a6.Coremail.andyshrk@163.com>
+Message-ID: <f0fb9feed2d9262bb4d7c8ade836af62@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDKsWRmVeSWpSXmKPExsWy7bCmlu7X7z1pBiveWlvMWbWN0WL13X42
-	i3et51gsfnXfZbS4vGsOm8XZCR9YLbounGJzYPfYOesuu8fls6UefVtWMXp83iQXwBKVbZOR
-	mpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdICSQlliTilQ
-	KCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1xMrQwMDIFKgwITtj8nmd
-	gtU2FQd2nmFpYJxi0MXIySEhYCJxbN41pi5GLg4hgd2MEsund7BCOJ8YJSbe7WWEcL4xShy7
-	/JcJpuX750dQVXsZJeZfWwZV9YNR4mL3AnaQKjYBJYn9Wz4wgtgiAsIS+ztaWUBsZoEiidcz
-	t7GC2MICThLfvuwHq2cRUJW43HwezOYVsJZ42TaNGWKbvMTNrv3MEHFBiZMzn0DNkZdo3jqb
-	GWSxhMA+dom/zVehGlwkJnROgTpVWOLV8S3sELaUxOd3e9kg7HyJyd/XM0LYNRLrNr9jgbCt
-	Jf5d2QNkcwAt0JRYv0sfIiwrMfXUOiaIvXwSvb+fQI3nldgxD8ZWklhyZAXUSAmJ3xMWsULY
-	HhInr05lBBkpJBAr8WW72QRG+VlIvpmF5JtZCIsXMDKvYpRMLSjOTU8tNi0wzEsth8drcn7u
-	JkZwMtTy3MF498EHvUOMTByMhxglOJiVRHjn3+hOE+JNSaysSi3Kjy8qzUktPsRoCgziicxS
-	osn5wHScVxJvaGJpYGJmZmZiaWxmqCTO+7p1boqQQHpiSWp2ampBahFMHxMHp1QDU+Wvt7c3
-	CDdxhp4r//uAL2GhxT/vaW+l3hxRXfNBI/b6qcfcyh847CMNetXmcLhx6zScE39RrnVqwtVs
-	TaU3h16tWnWmzyrF7e2jAw7hq+UF7icfnrzo5J+el22/jctv+T6eZHssfG/QM66s9S/CDfjt
-	H4YnVyzZosgR0Ci84ob9bYc+5sv+BXPfhVxb7F9cLli2Id303Odb6/Z+Dntm3CbttvLGhY3N
-	PiVhU9MaGNx27M9f2l3SENnfbqK6M1zQdP+MrStmiqjoOFwT3rOvSM5kQ6Wl28FXd1P2CEwJ
-	3pKS5mvclG3opld1Zc3x/8tm8X2bUctfItxa5jezz6qe+8Cui2r7l7s47Dgl06wgosRSnJFo
-	qMVcVJwIAIfPMFoPBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBLMWRmVeSWpSXmKPExsWy7bCSnO6tjz1pBjdfm1rMWbWN0WL13X42
-	i3et51gsfnXfZbS4vGsOm8XZCR9YLbounGJzYPfYOesuu8fls6UefVtWMXp83iQXwBLFZZOS
-	mpNZllqkb5fAlTH5vE7BapuKAzvPsDQwTjHoYuTkkBAwkfj++RFrFyMXh5DAbkaJN9NeMEIk
-	JCR2PPrDCmELS6z895wdougbo8TCDwvBEmwCShL7t3wAaxABKtrf0coCYjMLlEm8W7kerEZY
-	wEni25f97CA2i4CqxOXm82A2r4C1xMu2acwQC+QlbnbtZ4aIC0qcnPkEao68RPPW2cwTGPlm
-	IUnNQpJawMi0ilEytaA4Nz032bDAMC+1XK84Mbe4NC9dLzk/dxMjODC1NHYw3pv/T+8QIxMH
-	4yFGCQ5mJRHe+Te604R4UxIrq1KL8uOLSnNSiw8xSnOwKInzGs6YnSIkkJ5YkpqdmlqQWgST
-	ZeLglGpg8lFY/Om3k8Tq5KcF+yUEOiLXvpxdIbhxUQJTYHO99uXjd7cnexXNmcQpE1JmUWBf
-	8GDW5eZjPxPyPY4XXpljcnaHc7JYzxzhUxYClxIcmK7o7XGdtffexmbZxt8i+d/airn+zSpJ
-	DbnwQfjUd41sN921Bx5kmOvIrCuffXeKb/viXM3vWRtWGlTH7lidoBb/PmaD06t5tfuZA0S2
-	vN3xMKvg/ZmrvIbl3Pvm6mhJBm8WLv1+9ZXw1U1OS6/cPs21omNXcvn/T1PW8RxrmFjqFfGp
-	/+eGE/qGHZK/3Ft4a71msj+Z++mnSISHU6RxWs5+e9f/6799EbGXqbwiNWFGp31L+cbrmcW9
-	/7+yPahJU2Ipzkg01GIuKk4EABpcsAO7AgAA
-X-CMS-MailID: 20240709081627epcas5p3033c01e4816310394f8efbbd4b43cfd0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240709081627epcas5p3033c01e4816310394f8efbbd4b43cfd0
-References: <CGME20240709081627epcas5p3033c01e4816310394f8efbbd4b43cfd0@epcas5p3.samsung.com>
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-io_uring use polling mode could improve the IO performence, but it will
-spend 100% of CPU resources to do polling.
+Hello Andy,
 
-This set a signal "IORING_SETUP_HY_POLL" to application, aim to provide
-a interface for user to enable a new hybrid polling at io_uring level.
+On 2024-07-08 09:46, Andy Yan wrote:
+> At 2024-07-04 18:35:42, "Dragan Simic" <dsimic@manjaro.org> wrote:
+>> On 2024-07-04 04:10, Andy Yan wrote:
+>>> At 2024-07-04 07:32:02, "Dragan Simic" <dsimic@manjaro.org> wrote:
+>>>> After the additional firmware-related module information was
+>>>> introduced by
+>>>> the commit c0677e41a47f ("drm/rockchip: cdn-dp-core: add
+>>>> MODULE_FIRMWARE
+>>>> macro"), there's no longer need for the firmware-loading workarounds
+>>>> whose
+>>>> sole purpose was to prevent the missing firmware blob in an initial
+>>>> ramdisk
+>>>> from causing driver initialization to fail.  Thus, delete the
+>>>> workarounds,
+>>>> which removes a sizable chunk of redundant code.
+>>> 
+>>> What would happen if there was no ramdisk? And the firmware is in
+>>> rootfs ？
+>>> 
+>>> For example： A buildroot based tiny embedded system。
+>> 
+>> Good point, let me explain, please.
+>> 
+>> In general, if a driver is built into the kernel, there should also be
+>> an initial ramdisk that contains the related firmware blobs, because
+>> it's
+>> unknown is the root filesystem available when the driver is probed.  
+>> If
+>> a driver is built as a module and there's no initial ramdisk, having
+>> the related firmware blobs on the root filesystem should be fine,
+>> because
+>> the firmware blobs and the kernel module become available at the same
+>> time, through the root filesystem. [1]
+>> 
+>> Another option for a driver built statically into the kernel, when
+>> there's
+>> no initial ramdisk, is to build the required firmware blobs into the
+>> kernel
+>> image. [2]  Of course, that's feasible only when a kernel image is 
+>> built
+>> specificially for some device, because otherwise it would become too
+>> large
+>> because of too many drivers and their firmware blobs becoming 
+>> included,
+>> but that seems to fit the Buildroot-based example.
+>> 
+>> To sum it up, mechanisms already exist in the kernel for various
+>> scenarios
+>> when it comes to loading firmware blobs.  Even if the deleted 
+>> workaround
+>> attempts to solve some issue specific to some environment, that isn't
+>> the
+>> right place or the right way for solving any issues of that kind.
+>> 
+>> While preparing this patch, I even tried to find another kernel driver
+>> that
+>> also implements some similar workarounds for firmware loading, to
+>> justify
+>> the existence of such workarounds and to possibly move them into the
+>> kernel's
+>> firmware-loading interface.  Alas, I was unable to find such 
+>> workarounds
+>> in
+>> other drivers, which solidified my reasoning behind classifying the
+>> removed
+>> code as out-of-place and redundant.
+> 
+> For some tiny embedded system，there is no such ramdisk，for example：
+> a buildroot based rootfs，the buildroot only generate rootfs。
+> 
+> And FYI， there are mainline drivers try to fix such issue by
+> defer_probe，for example：
+> smc_abc[0]
+> There are also some other similar scenario in gpu driver{1}[2]
+> 
+> [0]https://elixir.bootlin.com/linux/latest/source/drivers/tee/optee/smc_abi.c#L1518
+> [1]https://patchwork.kernel.org/project/dri-devel/patch/20240109120604.603700-1-javierm@redhat.com/
+> [2]https://lore.kernel.org/dri-devel/87y1918psd.fsf@minerva.mail-host-address-is-not-set/T/
 
-A new hybrid poll is implemented on the io_uring layer. Once IO issued,
-it will not polling immediately, but block first and re-run before IO
-complete, then poll to reap IO. This poll function could be a suboptimal
-solution when running on a single thread, it offers the performance lower
-than regular polling but higher than IRQ, and CPU utilization is also lower
-than polling.
+Thanks for providing these examples.
 
-Test Result
-fio-3.35, Gen 4 device
--------------------------------------------------------------------------------------
-Performance
--------------------------------------------------------------------------------------
-                            write                      read                 randwrite          randread
-regular poll    BW=3939MiB/s    BW=6596MiB/s    IOPS=190K       IOPS=526K
-IRQ                 BW=3927MiB/s    BW=6567MiB/s    IOPS=181K       IOPS=216K
-hybrid poll     BW=3933MiB/s    BW=6600MiB/s    IOPS=190K       IOPS=390K(suboptimal)
--------------------------------------------------------------------------------------
-CPU Utilization
-------------------------------------------------------------------
-                        write   read    randwrite       randread
-regular poll    100%    100%    100%            100%
-IRQ                 38%       53%      100%            100%
-hybrid poll     76%       32%      70%              85%
-------------------------------------------------------------------
+Before I continue thinking about the possible systemic solution,
+could you please clarify the way Buildroot builds the kernel and
+prepares the root filesystem?  I'm not familiar with Buildroot,
+but it seems to me that it builds the drivers statically into the
+produced kernel image, while it places the related firmware blobs
+into the produced root filesystem.  Am I right there?
 
---
-changes since v5:
-- Remove cstime recorder
-- Use minimize sleep time in different drivers
-- Use the half of whole runtime to do schedule
-- Consider as a suboptimal solution between
-  regular poll and IRQ
+As I already wrote earlier, and as the above-linked discussions
+conclude, solving these issues doesn't belong to any specific driver.
+It should be resolved within the kernel's firmware loading mechanism
+instead, and no driver should be specific in that regard.
 
-changes since v4:
-- Rewrote the commit
-- Update the test results
-- Reorganized the code basd on 6.11
-
-changes since v3:
-- Simplified the commit
-- Add some comments on code
-
-changes since v2:
-- Modified some formatting errors
-- Move judgement to poll path
-
-changes since v1:
-- Extend hybrid poll to async polled io
-
-Signed-off-by: hexue <xue01.he@samsung.com>
----
- include/linux/io_uring_types.h |  6 +++
- include/uapi/linux/io_uring.h  |  1 +
- io_uring/io_uring.c            |  3 +-
- io_uring/rw.c                  | 74 +++++++++++++++++++++++++++++++++-
- 4 files changed, 82 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-index 91224bbcfa73..0897126fb2d7 100644
---- a/include/linux/io_uring_types.h
-+++ b/include/linux/io_uring_types.h
-@@ -428,6 +428,8 @@ struct io_ring_ctx {
- 	unsigned short			n_sqe_pages;
- 	struct page			**ring_pages;
- 	struct page			**sqe_pages;
-+	/* for hybrid poll*/
-+	u64			available_time;
- };
- 
- struct io_tw_state {
-@@ -665,6 +667,10 @@ struct io_kiocb {
- 		u64			extra1;
- 		u64			extra2;
- 	} big_cqe;
-+    /* for hybrid iopoll */
-+	bool		poll_state;
-+	u64			iopoll_start;
-+	u64			iopoll_end;
- };
- 
- struct io_overflow_cqe {
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 994bf7af0efe..ef32ec319d1f 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -199,6 +199,7 @@ enum io_uring_sqe_flags_bit {
-  * Removes indirection through the SQ index array.
-  */
- #define IORING_SETUP_NO_SQARRAY		(1U << 16)
-+#define IORING_SETUP_HY_POLL	(1U << 17)
- 
- enum io_uring_op {
- 	IORING_OP_NOP,
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index 816e93e7f949..b38f8af118c5 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -299,6 +299,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
- 		goto err;
- 
- 	ctx->flags = p->flags;
-+	ctx->available_time = LLONG_MAX;
- 	atomic_set(&ctx->cq_wait_nr, IO_CQ_WAKE_INIT);
- 	init_waitqueue_head(&ctx->sqo_sq_wait);
- 	INIT_LIST_HEAD(&ctx->sqd_list);
-@@ -3637,7 +3638,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- 			IORING_SETUP_SQE128 | IORING_SETUP_CQE32 |
- 			IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN |
- 			IORING_SETUP_NO_MMAP | IORING_SETUP_REGISTERED_FD_ONLY |
--			IORING_SETUP_NO_SQARRAY))
-+			IORING_SETUP_NO_SQARRAY | IORING_SETUP_HY_POLL))
- 		return -EINVAL;
- 
- 	return io_uring_create(entries, &p, params);
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 1a2128459cb4..5505f4292ce5 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -772,6 +772,13 @@ static bool need_complete_io(struct io_kiocb *req)
- 		S_ISBLK(file_inode(req->file)->i_mode);
- }
- 
-+static void init_hybrid_poll(struct io_ring_ctx *ctx, struct io_kiocb *req)
-+{
-+	/* make sure every req only block once*/
-+	req->poll_state = false;
-+	req->iopoll_start = ktime_get_ns();
-+}
-+
- static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
- {
- 	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
-@@ -809,6 +816,8 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
- 		kiocb->ki_flags |= IOCB_HIPRI;
- 		kiocb->ki_complete = io_complete_rw_iopoll;
- 		req->iopoll_completed = 0;
-+		if (ctx->flags & IORING_SETUP_HY_POLL)
-+			init_hybrid_poll(ctx, req);
- 	} else {
- 		if (kiocb->ki_flags & IOCB_HIPRI)
- 			return -EINVAL;
-@@ -1106,6 +1115,67 @@ void io_rw_fail(struct io_kiocb *req)
- 	io_req_set_res(req, res, req->cqe.flags);
- }
- 
-+static u64 io_delay(struct io_ring_ctx *ctx, struct io_kiocb *req)
-+{
-+	struct hrtimer_sleeper timer;
-+	enum hrtimer_mode mode;
-+	ktime_t kt;
-+	u64 sleep_time;
-+
-+	if (req->poll_state)
-+		return 0;
-+
-+	if (ctx->available_time == LLONG_MAX)
-+		return 0;
-+
-+	/* Using half running time to do schedul */
-+	sleep_time = ctx->available_time / 2;
-+
-+	kt = ktime_set(0, sleep_time);
-+	req->poll_state = true;
-+
-+	mode = HRTIMER_MODE_REL;
-+	hrtimer_init_sleeper_on_stack(&timer, CLOCK_MONOTONIC, mode);
-+	hrtimer_set_expires(&timer.timer, kt);
-+	set_current_state(TASK_INTERRUPTIBLE);
-+	hrtimer_sleeper_start_expires(&timer, mode);
-+
-+	if (timer.task)
-+		io_schedule();
-+
-+	hrtimer_cancel(&timer.timer);
-+	__set_current_state(TASK_RUNNING);
-+	destroy_hrtimer_on_stack(&timer.timer);
-+
-+	return sleep_time;
-+}
-+
-+static int io_uring_hybrid_poll(struct io_kiocb *req,
-+				struct io_comp_batch *iob, unsigned int poll_flags)
-+{
-+	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
-+	struct io_ring_ctx *ctx = req->ctx;
-+	int ret;
-+	u64 runtime, sleep_time;
-+
-+	sleep_time = io_delay(ctx, req);
-+
-+	/* it doesn't implement with io_uring passthrough now */
-+	ret = req->file->f_op->iopoll(&rw->kiocb, iob, poll_flags);
-+
-+	req->iopoll_end = ktime_get_ns();
-+	runtime = req->iopoll_end - req->iopoll_start - sleep_time;
-+	if (runtime < 0)
-+		return 0;
-+
-+	/* use minimize sleep time if there are different speed
-+	 * drivers, it could get more completions from fast one
-+	 */
-+	if (ctx->available_time > runtime)
-+		ctx->available_time = runtime;
-+	return ret;
-+}
-+
- int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
- {
- 	struct io_wq_work_node *pos, *start, *prev;
-@@ -1133,7 +1203,9 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
- 		if (READ_ONCE(req->iopoll_completed))
- 			break;
- 
--		if (req->opcode == IORING_OP_URING_CMD) {
-+		if (ctx->flags & IORING_SETUP_HY_POLL) {
-+			ret = io_uring_hybrid_poll(req, &iob, poll_flags);
-+		} else if (req->opcode == IORING_OP_URING_CMD) {
- 			struct io_uring_cmd *ioucmd;
- 
- 			ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
--- 
-2.40.1
-
+>> [1] 
+>> https://www.kernel.org/doc/Documentation/driver-api/firmware/direct-fs-lookup.rst
+>> [2] 
+>> https://www.kernel.org/doc/Documentation/driver-api/firmware/built-in-fw.rst
+>> 
+>>>> Various utilities used by Linux distributions to generate initial
+>>>> ramdisks
+>>>> need to obey the firmware-related module information, so we can rely
+>>>> on the
+>>>> firmware blob being present in the generated initial ramdisks.
+>>>> 
+>>>> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+>>>> ---
+>>>> drivers/gpu/drm/rockchip/cdn-dp-core.c | 53 
+>>>> +++++---------------------
+>>>> 1 file changed, 10 insertions(+), 43 deletions(-)
+>>>> 
+>>>> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c
+>>>> b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+>>>> index bd7aa891b839..e1a7c6a1172b 100644
+>>>> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
+>>>> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
+>>>> @@ -44,9 +44,9 @@ static inline struct cdn_dp_device
+>>>> *encoder_to_dp(struct drm_encoder *encoder)
+>>>> #define DPTX_HPD_DEL		(2 << 12)
+>>>> #define DPTX_HPD_SEL_MASK	(3 << 28)
+>>>> 
+>>>> -#define CDN_FW_TIMEOUT_MS	(64 * 1000)
+>>>> #define CDN_DPCD_TIMEOUT_MS	5000
+>>>> #define CDN_DP_FIRMWARE		"rockchip/dptx.bin"
+>>>> +
+>>>> MODULE_FIRMWARE(CDN_DP_FIRMWARE);
+>>>> 
+>>>> struct cdn_dp_data {
+>>>> @@ -909,61 +909,28 @@ static int cdn_dp_audio_codec_init(struct
+>>>> cdn_dp_device *dp,
+>>>> 	return PTR_ERR_OR_ZERO(dp->audio_pdev);
+>>>> }
+>>>> 
+>>>> -static int cdn_dp_request_firmware(struct cdn_dp_device *dp)
+>>>> -{
+>>>> -	int ret;
+>>>> -	unsigned long timeout = jiffies +
+>>>> msecs_to_jiffies(CDN_FW_TIMEOUT_MS);
+>>>> -	unsigned long sleep = 1000;
+>>>> -
+>>>> -	WARN_ON(!mutex_is_locked(&dp->lock));
+>>>> -
+>>>> -	if (dp->fw_loaded)
+>>>> -		return 0;
+>>>> -
+>>>> -	/* Drop the lock before getting the firmware to avoid blocking 
+>>>> boot
+>>>> */
+>>>> -	mutex_unlock(&dp->lock);
+>>>> -
+>>>> -	while (time_before(jiffies, timeout)) {
+>>>> -		ret = request_firmware(&dp->fw, CDN_DP_FIRMWARE, dp->dev);
+>>>> -		if (ret == -ENOENT) {
+>>>> -			msleep(sleep);
+>>>> -			sleep *= 2;
+>>>> -			continue;
+>>>> -		} else if (ret) {
+>>>> -			DRM_DEV_ERROR(dp->dev,
+>>>> -				      "failed to request firmware: %d\n", ret);
+>>>> -			goto out;
+>>>> -		}
+>>>> -
+>>>> -		dp->fw_loaded = true;
+>>>> -		ret = 0;
+>>>> -		goto out;
+>>>> -	}
+>>>> -
+>>>> -	DRM_DEV_ERROR(dp->dev, "Timed out trying to load firmware\n");
+>>>> -	ret = -ETIMEDOUT;
+>>>> -out:
+>>>> -	mutex_lock(&dp->lock);
+>>>> -	return ret;
+>>>> -}
+>>>> -
+>>>> static void cdn_dp_pd_event_work(struct work_struct *work)
+>>>> {
+>>>> 	struct cdn_dp_device *dp = container_of(work, struct cdn_dp_device,
+>>>> 						event_work);
+>>>> 	struct drm_connector *connector = &dp->connector;
+>>>> 	enum drm_connector_status old_status;
+>>>> -
+>>>> 	int ret;
+>>>> 
+>>>> 	mutex_lock(&dp->lock);
+>>>> 
+>>>> 	if (dp->suspended)
+>>>> 		goto out;
+>>>> 
+>>>> -	ret = cdn_dp_request_firmware(dp);
+>>>> -	if (ret)
+>>>> -		goto out;
+>>>> +	if (!dp->fw_loaded) {
+>>>> +		ret = request_firmware(&dp->fw, CDN_DP_FIRMWARE, dp->dev);
+>>>> +		if (ret) {
+>>>> +			DRM_DEV_ERROR(dp->dev, "Loading firmware failed: %d\n", ret);
+>>>> +			goto out;
+>>>> +		}
+>>>> +
+>>>> +		dp->fw_loaded = true;
+>>>> +	}
+>>>> 
+>>>> 	dp->connected = true;
+>>>> 
 
