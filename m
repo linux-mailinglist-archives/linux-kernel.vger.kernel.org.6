@@ -1,178 +1,165 @@
-Return-Path: <linux-kernel+bounces-245937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98BEA92BB94
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:40:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D576792BB96
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:41:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7B27B22934
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:40:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 042FA1C21F17
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90B315ECC0;
-	Tue,  9 Jul 2024 13:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F81615ECCD;
+	Tue,  9 Jul 2024 13:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dOVs2VD/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHnQ2z7W"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6E7257D;
-	Tue,  9 Jul 2024 13:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5441257D;
+	Tue,  9 Jul 2024 13:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720532399; cv=none; b=OrJqfFepwN33wAx8HcR67tP6i302Oh+851EmApIYVKdbyru5NXf9KjmoicZlgaHHwSLculA+y+pWu0UmLwvqP5Yoknrzy4aZxGuWyrcjvzU5jFwM/PM3bEnjaliTtqxkrDB2q3mB458WTPWpJdqcpfVOCJK8JrqMy/h12fzNeGY=
+	t=1720532499; cv=none; b=Z/7SmvdxVrKyALzM3dDpPVyrfyjxJq4NkZiuHpA7aCJ+Z7naWy1/XqxLDYKDPdbZnSxjcvy/NQWUkc9RIGWpbps3PoJ0Rmb3y/9rO0M1PrMBtU59PJoDQOvbJJV3kMmBwrBiOZzqepanv5IfZsDpMYpDlhMd04tD3ERo9E9/Zmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720532399; c=relaxed/simple;
-	bh=pEqZPA3brG0X1DeQ/hKoP5t8PhQXhaH4bJOO1sjrisE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ZfdUu7ydn68IHFK5gKUbig4JlRLf+IV80KuF9ZEriovyoKvUedSG7zQX6EZaxGf4bariCWmI43JUlNhy6IAIROsVxYPD0bV3nL2maCJII3tzRaiZbs3m9ljYZTaZZ4bMY0XQga3OiyZriILsAVs6QlFQ1pftgyw6AG2OxRz7j0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dOVs2VD/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469BjxWn002542;
-	Tue, 9 Jul 2024 13:39:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=UuAQd3i9NQXtfqcRgoA4dr
-	2GW+khV0gNyh9TparQ09w=; b=dOVs2VD/uVETPCgHBRpEZg5aMO1/2yQAisYBgY
-	uzzJpyvYjgaCVR0NQ2Zrbu+yXnYjqzKZHMETGaz0q6v/9zhCRVaZUkubgAcFZQvi
-	yA46/EtrpPXK1wPdxubvWuVTm9xQUpxWhbZzP5RvPQYgKWUzTCDaAeV8ZlhwVLiC
-	ueeoh4A8/fn2UI3uQsV97pDsXRBGtUiQSdSu4s6bOwY6+5sVgbm5Zn/ITP+JhmLe
-	5PL7yR2Piak00CheINC1yC6dWnvPP3U2IBJ3qXKWKdN78L2/qAhulYi0F5UehBlg
-	FOQX3232+huaBz+C0eP9Y/eK1QvJ1AOtSHIRMCA+nmS0gDnA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406we8xfwt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 13:39:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469DdjEq019159
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 9 Jul 2024 13:39:45 GMT
-Received: from tengfan-gv.ap.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 9 Jul 2024 06:39:39 -0700
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-Date: Tue, 9 Jul 2024 21:39:29 +0800
-Subject: [PATCH v2] dt-bindings: arm-smmu: Document QCS9100 SMMU
+	s=arc-20240116; t=1720532499; c=relaxed/simple;
+	bh=edKsd7lVU36DkC4pKlEVskQhPjFrWIAFUu2EbrmsWTU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CNtLD3s/1dgx2xjCN91Tda73JgUQyv58PLUh3JJbxR2Fg3/ESQQV+R0jk8kl2kCZkbqEtta3jR2GRAFyCj2b/h6Ej7PxMvN4Mm/mKxQ3SVlllgyqkwAQrhqAv7A3//2tOOnUZj7OIsZZgoEXW+R8Iuw5gqJhTeUEJ8frnl7L3TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHnQ2z7W; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4266b1f1b21so13383865e9.1;
+        Tue, 09 Jul 2024 06:41:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720532496; x=1721137296; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=knWPJfcPnK6qjC655MgiE/tsLpIcwsRamnwiOz/QKYg=;
+        b=RHnQ2z7W+NdR4+liJGEOrKFi3mWvLLpxdvbhTsIYR/s97mlRtkFwdBjFFScdcPyKcy
+         X+zC2XlWJOqQ1k3NwSJG2eDrjcWYktuG6Y5nx568PcgRIuH/t2AkN7dDiQ84RdrXPyu4
+         UheciTX5Wm/G1jV08EfkrPNR/OJnNJnCQtebXkhlRu9HZ1mqpnoVqTzEUctrqwxWUz1y
+         KVVfys0LXyPYtGKiufLEtKtRDiS1mM/fF2xqsYXYWv5HQQkwwpaxrwT1VSkTRdV74C42
+         RMi2wi5JZpuxBG4x3CO3rqQV24PLG8tyxDfRYITzcPE/IJaa2LS4nr+352Dytn8Rmxg5
+         c/TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720532496; x=1721137296;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=knWPJfcPnK6qjC655MgiE/tsLpIcwsRamnwiOz/QKYg=;
+        b=uX/mZcpHUyu3CLdZYMdiSBs0cdXXp+JGGq90kGNWobxMOu+WUJoX5kXEnlc7LsEmau
+         EWcy8wrTpqrtamP+eOROeLzZ41U/NcO+zsYBPqiRQR1ra2SEX+Ls92P+NiYRA8lcBN0v
+         Pjro9iioYrWUk1Kc1KPr37e2O56GHfhF6UCoSXMUFC9u/wTXMThROCYc1dMyvRG5g7ea
+         CvtDGCr6iAr7o0mEO8d0hVzfHBm5h0uFtjzICH7nLaOuNQSSJBp9AKAKJ83vEFOd0VNT
+         oSQOuDJOXvT7PyxqpnMB1z5coP9vhfPe4AAB392iT34TZHPTpnOUIH07xmuu4pWVYfBl
+         xHNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJFyNEB+wMlQL/adYrs3I7dm6bT+XVs86+qvalEbiSnLJzDN3D24BZCZeNeeXl7bQ7sgWbWeJCBqJfvn8weE2Rz3i8Q1NL0oqJkwJP0V4bBX43VYEQtbia2LhuZkDeNVZLEhrI
+X-Gm-Message-State: AOJu0YxqX2q9PSBqfZuJ8TEaX7hSDL3Uce2ZJdBqKRyKTebSC1/hNZd6
+	ulGXAGOq5iReODL0Mj21FxR7l73m8BdGXSseAGTsM3vPnskK4FDC9Ifs1mSubuWPJNUlDO/7xKL
+	CVJnuw3+pVrmDFiReqHf2/CxEOtnZBQ==
+X-Google-Smtp-Source: AGHT+IFmBVEwha1tc7CN+fLxQ0HlyLl7ulTFXUR8JuKEwrRVK3HqtTJSTw6UjD9BxhUhGU4c/0ZN+lgIEnyyqX/kAFU=
+X-Received: by 2002:a05:600c:2e0a:b0:426:6f15:2e4d with SMTP id
+ 5b1f17b1804b1-426707da1b5mr15586755e9.9.1720532495871; Tue, 09 Jul 2024
+ 06:41:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240709-document_qcs9100_smmu_compatible-v2-1-599161b7d5c8@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAJA9jWYC/zXNQQ6DIBRF0a0YxsV8sFbsqPtoDKGI+pMKCmjaG
- PdeNOnwvMG7GwnGownknm3EmxUDOpvALxnRg7K9odgmEw78ChXUtHV6GY2NctahZgAyjOMitRs
- nFfH1NlSU/FapVhcCapJuJm86/JyJZ5M8YIjOf8/iyo71f14AL0UJOWcVBxCU0XlBLaOxfafs4
- wBanacWafZ9/wGa9Y2RvAAAAA==
-To: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        "Joerg
- Roedel" <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux.dev>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Tengfei Fan <quic_tengfan@quicinc.com>
-X-Mailer: b4 0.15-dev-a66ce
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720532379; l=2893;
- i=quic_tengfan@quicinc.com; s=20240709; h=from:subject:message-id;
- bh=pEqZPA3brG0X1DeQ/hKoP5t8PhQXhaH4bJOO1sjrisE=;
- b=ojdpUaq84qQ4Nt8snyVyOEvJQ6I+ui21dEczpz0lfFvORhtIViE4VTJViQPG/FuD/Dz6OF5N+
- /N2ysU+YHcMAGcJk8mea2ggQxlNC6P1Q7F8UihpCW7myNBZDY5uKqBk
-X-Developer-Key: i=quic_tengfan@quicinc.com; a=ed25519;
- pk=4VjoTogHXJhZUM9XlxbCAcZ4zmrLeuep4dfOeKqQD0c=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: O_oSWRkSF8T_POK6t7yNNlWlNVMHVcgK
-X-Proofpoint-GUID: O_oSWRkSF8T_POK6t7yNNlWlNVMHVcgK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_03,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
- bulkscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
- priorityscore=1501 mlxlogscore=850 malwarescore=0 mlxscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407090087
+References: <20240625135216.47007-1-linyunsheng@huawei.com>
+ <20240625135216.47007-11-linyunsheng@huawei.com> <33c3c7fc00d2385e741dc6c9be0eade26c30bd12.camel@gmail.com>
+ <38da183b-92ba-ce9d-5472-def199854563@huawei.com> <CAKgT0Ueg1u2S5LJuo0Ecs9dAPPDujtJ0GLcm8BTsfDx9LpJZVg@mail.gmail.com>
+ <0a80e362-1eb7-40b0-b1b9-07ec5a6506ea@gmail.com> <CAKgT0UcRbpT6UFCSq0Wd9OHrCqOGR=BQ063-zNBZ4cVNmduZGw@mail.gmail.com>
+ <15623dac-9358-4597-b3ee-3694a5956920@gmail.com> <200ee8ff-557f-e17b-e71f-645267a49831@huawei.com>
+ <CAKgT0UcpLBtkX9qrngJAtpnnxT-YRqLFc+J4oMMVnTCPG5sMug@mail.gmail.com>
+ <83cf5a36-055a-f590-9d41-59c45f93e7c5@huawei.com> <CAKgT0UdH1yD=LSCXFJ=YM_aiA4OomD-2wXykO42bizaWMt_HOA@mail.gmail.com>
+ <2b7ecaca-9a17-e057-8897-d0684b31591d@huawei.com>
+In-Reply-To: <2b7ecaca-9a17-e057-8897-d0684b31591d@huawei.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Tue, 9 Jul 2024 06:40:59 -0700
+Message-ID: <CAKgT0UdBdDWrE_KDC8k=mM4gFuKrCSU1FmhwJwo8oaiHXnp+5w@mail.gmail.com>
+Subject: Re: [PATCH net-next v9 10/13] mm: page_frag: introduce
+ prepare/probe/commit API
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: Yunsheng Lin <yunshenglin0825@gmail.com>, davem@davemloft.net, kuba@kernel.org, 
+	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Document the SMMU on the QCS9100 platform.
-QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
-platform use non-SCMI resource. In the future, the SA8775p platform will
-move to use SCMI resources and it will have new sa8775p-related device
-tree. Consequently, introduce "qcom,qcs9100-smmu-500" to describe
-non-SCMI based SMMU.
+On Mon, Jul 8, 2024 at 11:58=E2=80=AFPM Yunsheng Lin <linyunsheng@huawei.co=
+m> wrote:
+>
+> On 2024/7/8 22:30, Alexander Duyck wrote:
+> > On Mon, Jul 8, 2024 at 3:58=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei=
+.com> wrote:
+> >>
+> >> On 2024/7/8 1:12, Alexander Duyck wrote:
+> >>
+> >> ...
+> >>
+> >>> The issue is the dependency mess that has been created with patch 11
+> >>> in the set. Again you are conflating patches which makes this really
+> >>> hard to debug or discuss as I make suggestions on one patch and you
+> >>> claim it breaks things that are really due to issues in another patch=
+.
+> >>> So the issue is you included this header into include/linux/sched.h
+> >>> which is included in linux/mm_types.h. So what happens then is that
+> >>> you have to include page_frag_cache.h *before* you can include the
+> >>> bits from mm_types.h
+> >>>
+> >>> What might make more sense to solve this is to look at just moving th=
+e
+> >>> page_frag_cache into mm_types_task.h and then having it replace the
+> >>> page_frag struct there since mm_types.h will pull that in anyway. Tha=
+t
+> >>> way sched.h can avoid having to pull in page_frag_cache.h.
+> >>
+> >> It seems the above didn't work either, as asm-offsets.c does depend on
+> >> mm_types_task.h too.
+> >>
+> >> In file included from ./include/linux/mm.h:16,
+> >>                  from ./include/linux/page_frag_cache.h:10,
+> >>                  from ./include/linux/mm_types_task.h:11,
+> >>                  from ./include/linux/mm_types.h:5,
+> >>                  from ./include/linux/mmzone.h:22,
+> >>                  from ./include/linux/gfp.h:7,
+> >>                  from ./include/linux/slab.h:16,
+> >>                  from ./include/linux/resource_ext.h:11,
+> >>                  from ./include/linux/acpi.h:13,
+> >>                  from ./include/acpi/apei.h:9,
+> >>                  from ./include/acpi/ghes.h:5,
+> >>                  from ./include/linux/arm_sdei.h:8,
+> >>                  from arch/arm64/kernel/asm-offsets.c:10:
+> >> ./include/linux/mmap_lock.h: In function =E2=80=98mmap_assert_locked=
+=E2=80=99:
+> >> ./include/linux/mmap_lock.h:65:23: error: invalid use of undefined typ=
+e =E2=80=98const struct mm_struct=E2=80=99
+> >>    65 |  rwsem_assert_held(&mm->mmap_lock);
+> >
+> > Do not include page_frag_cache.h in mm_types_task.h. Just move the
+> > struct page_frag_cache there to replace struct page_frag.
+>
+> The above does seem a clever idea, but doesn't doing above also seem to
+> defeat some purpose of patch 1? Anyway, it seems workable for trying
+> to avoid adding a new header for a single struct.
+>
+> About the 'replace' part, as mentioned in [1], the 'struct page_frag'
+> is still needed as this patchset is large enough that replacing is only
+> done for sk_page_frag(), there are still other places using page_frag
+> that can be replaced by page_frag_cache in the following patchset.
+>
+> 1. https://lore.kernel.org/all/b200a609-2f30-ec37-39b6-f37ed8092f41@huawe=
+i.com/
 
-Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
----
-Introduce support for the QCS9100 SoC device tree (DTSI) and the
-QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
-While the QCS9100 platform is still in the early design stage, the
-QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
-mounts the QCS9100 SoC instead of the SA8775p SoC.
-
-The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
-all the compatible strings will be updated from "SA8775p" to "QCS9100".
-The QCS9100 device tree patches will be pushed after all the device tree
-bindings and device driver patches are reviewed.
-
-The final dtsi will like:
-https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
-
-The detailed cover letter reference:
-https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
----
-Changes in v2:
-  - Split huge patch series into different patch series according to
-    subsytems
-  - Update patch commit message
-
-prevous disscussion here:
-[1] v1: https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
----
- Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-index 5c130cf06a21..82b7e1d40ce0 100644
---- a/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-+++ b/Documentation/devicetree/bindings/iommu/arm,smmu.yaml
-@@ -36,6 +36,7 @@ properties:
-         items:
-           - enum:
-               - qcom,qcm2290-smmu-500
-+              - qcom,qcs9100-smmu-500
-               - qcom,qdu1000-smmu-500
-               - qcom,sa8775p-smmu-500
-               - qcom,sc7180-smmu-500
-@@ -84,6 +85,7 @@ properties:
-         items:
-           - enum:
-               - qcom,qcm2290-smmu-500
-+              - qcom,qcs9100-smmu-500
-               - qcom,sa8775p-smmu-500
-               - qcom,sc7280-smmu-500
-               - qcom,sc8280xp-smmu-500
-@@ -385,6 +387,7 @@ allOf:
-         compatible:
-           contains:
-             enum:
-+              - qcom,qcs9100-smmu-500
-               - qcom,sa8775p-smmu-500
-               - qcom,sc7280-smmu-500
-               - qcom,sc8280xp-smmu-500
-
----
-base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
-change-id: 20240709-document_qcs9100_smmu_compatible-85267adc3809
-
-Best regards,
--- 
-Tengfei Fan <quic_tengfan@quicinc.com>
-
+The point is you need to avoid pulling mm.h into sched.h. To do that
+you have to pull the data structure out and place it in a different
+header file. So maybe instead of creating yet another header file you
+can just place the structure in mm_types_task.h and once you have
+dealt with all of the other users you can finally drop the page_frag
+structure.
 
