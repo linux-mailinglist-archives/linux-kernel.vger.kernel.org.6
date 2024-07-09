@@ -1,123 +1,184 @@
-Return-Path: <linux-kernel+bounces-246172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D777A92BE80
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:34:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F83792BE83
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92643282189
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:34:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B83A1F24969
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C1119B5BB;
-	Tue,  9 Jul 2024 15:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="IV16cnaW"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E38319D8A3;
+	Tue,  9 Jul 2024 15:34:40 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D9B7F487;
-	Tue,  9 Jul 2024 15:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC62319D06D;
+	Tue,  9 Jul 2024 15:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720539276; cv=none; b=RHTuGKWm9uey7fyuIducRZI6akPohnxpaYE/iGaKvbZh4roeyhDUCCd4HvqYbEHZSpeUN/vQnWsSikWB/my+0v77agAA6Q5R+uiBm/pQfUvrhSkfZle4XSY2mTwLi8Rv4kTv1jv2A6HuhWgQzHkCku+qMkZm7HVpvABFNT2bvNc=
+	t=1720539279; cv=none; b=nHIeL00xVhHv9pqv/EVJwZI558ND2gKBMBOdbJJlIGo41tH9IBPFMygQw/B9ld/kPuhuy6iTdsJSpLFtFaDZmTFHY3HH5qFyhBx7pI5QHjmaTdz+v0pYGi92FYXn7xwxT2EmYn5/tvGDdFhd6UzGC/lAGorLJKs9fUJXZqPGIAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720539276; c=relaxed/simple;
-	bh=FvWdonThAmJ/q75JTUddBwM9tvlSfcVWOIEazl2kr/I=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V4qsHE+6uC8QLXUq+8CDHkhwU8sbrOLNQdvQG1GyDN5BnNOJ6RdG4wrTWrMwO4UCUg0Z4z2GTP+3BTtdc1CsnnC85J60ewsPYkOfpzHW5raCIqIjTllCqo6nplH30hKVcp0V+2dkQdfMeRydwrj1HOdu8CVyRKQs4SAnpBbgeEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=IV16cnaW; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4699T296013261;
-	Tue, 9 Jul 2024 10:34:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=6Xe73+JU2eVQQ8xYXG
-	t1Vn3w9CgNx65jHpc54wpvgKw=; b=IV16cnaWsSggxGT2sPvUjQSCnusIo7kGAe
-	KmPur7U0780Xmq1vgMGMC8W2fQCWRqSkkoEd54VxA9lkyMUtw8FeyRSv5S9IEcEV
-	P7OXD2QnC6dl3a05WFjyQXBvtdvWddhNxwlpl2L9cnQKN2Lo0yPUV2ByaCmMdLbn
-	x8rkDgGD2SAGRdzo1UUUODr47n4+2PZSkFJ/GV49ILMvOXtQcFX3YdkDNXKQ630e
-	TGW2/QLE8Psbfm9qnOJEcomZX3ceWuFNJh0IgNKaDlPnBScQGn0Rh2VEyJ7jYeT6
-	rsAVzzH7K99CkuLyF59fCrj7YbIM9K/IUJ/48xjB873dc1C+8/XA==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 4072bjaumh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 10:34:16 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
- 16:33:57 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Tue, 9 Jul 2024 16:33:57 +0100
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 644CE820244;
-	Tue,  9 Jul 2024 15:33:57 +0000 (UTC)
-Date: Tue, 9 Jul 2024 16:33:56 +0100
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-CC: <broonie@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>, <alsa-devel@alsa-project.org>,
-        <linux-sound@vger.kernel.org>
-Subject: Re: [PATCH 3/4] firmware: cs_dsp: Merge wmfw format log message into
- INFO message
-Message-ID: <Zo1YZHiE6WK3d8rm@opensource.cirrus.com>
-References: <20240709145156.268074-1-rf@opensource.cirrus.com>
- <20240709145156.268074-4-rf@opensource.cirrus.com>
+	s=arc-20240116; t=1720539279; c=relaxed/simple;
+	bh=g2TeahJZO7npPyW42OA1MqX8NHOBTRgERAWE4Igw29M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bkWDrVD9/TfRA00xj5Y/nXeM8tPiDalCm3W77uBdkL2ONaoxRmEnksha1O0imDapAOnHrb+ZZ5KOW8x3QpJ6HAwnhLvlr4Sgtm+AA2r7o9hBAg+I2xMPZ6psSktSCBxsnIAuCaQ7nBj23Q43oXPD8HMlIMZk42iucXboVgBRl9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WJQ5f4LDqz9sSq;
+	Tue,  9 Jul 2024 17:34:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id ZmxSbZ-bi7i5; Tue,  9 Jul 2024 17:34:30 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WJQ5f3VCQz9sSp;
+	Tue,  9 Jul 2024 17:34:30 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 654A68B778;
+	Tue,  9 Jul 2024 17:34:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id gluke2XNulId; Tue,  9 Jul 2024 17:34:30 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.233.9])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3079C8B773;
+	Tue,  9 Jul 2024 17:34:30 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Documentation/powerpc: Remove retired CPUs from list of supported CPUs
+Date: Tue,  9 Jul 2024 17:34:27 +0200
+Message-ID: <e33ba7b242a104259fbcf1a4d4bdb0f1d1db6882.1720539170.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240709145156.268074-4-rf@opensource.cirrus.com>
-X-Proofpoint-ORIG-GUID: hRAaVAlz16HcPybssSt-C_PeHfg3_Xgs
-X-Proofpoint-GUID: hRAaVAlz16HcPybssSt-C_PeHfg3_Xgs
-X-Proofpoint-Spam-Reason: safe
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720539267; l=3729; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=g2TeahJZO7npPyW42OA1MqX8NHOBTRgERAWE4Igw29M=; b=5TIs567xNQZ7AzoBPcbZ9jugS2tqaQnuPfBfdj3T0d+pd1+P1cxAqe6KDqoXJrR3a5cXlTwWi avPRafFhOgLApUgIeYDoGkN7e/w9/yiASdMp2XCzTzLeWyHg2d+vVfb
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 09, 2024 at 03:51:55PM +0100, Richard Fitzgerald wrote:
-> Log the WMFW file format version with the INFO_TEST message.
-> 
-> The behaviour of firmware controls depends on the WMFW format version,
-> so this is useful information to log for debugging. But there's no
-> need to use a separate log line just for this value.
-> 
-> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-> ---
->  drivers/firmware/cirrus/cs_dsp.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/firmware/cirrus/cs_dsp.c b/drivers/firmware/cirrus/cs_dsp.c
-> index 1bc2e0b6d40b..141a6c9d6737 100644
-> --- a/drivers/firmware/cirrus/cs_dsp.c
-> +++ b/drivers/firmware/cirrus/cs_dsp.c
-> @@ -1502,7 +1502,6 @@ static int cs_dsp_load(struct cs_dsp *dsp, const struct firmware *firmware,
->  		goto out_fw;
->  	}
->  
-> -	cs_dsp_info(dsp, "Firmware version: %d\n", header->ver);
->  	dsp->fw_ver = header->ver;
->  
->  	if (header->core != dsp->type) {
-> @@ -1552,7 +1551,7 @@ static int cs_dsp_load(struct cs_dsp *dsp, const struct firmware *firmware,
->  		case WMFW_INFO_TEXT:
->  		case WMFW_NAME_TEXT:
->  			region_name = "Info/Name";
-> -			cs_dsp_info(dsp, "%s: %.*s\n", file,
-> +			cs_dsp_info(dsp, "%s (rev %d): %.*s\n", file, dsp->fw_ver,
->  				    min(le32_to_cpu(region->len), 100), region->data);
+601, power4, 401, 403, 405, e200 and IBM-A2 support was removed by
+by following commits:
+- Commit 8b14e1dff067 ("powerpc: Remove support for PowerPC 601")
+- Commit 471d7ff8b51b ("powerpc/64s: Remove POWER4 support")
+- Commit 1b5c0967ab8a ("powerpc/40x: Remove support for IBM 403GCX")
+- Commit 39c8bf2b3cc1 ("powerpc: Retire e200 core (mpc555x processor)")
+- Commit fb5a515704d7 ("powerpc: Remove platforms/wsp and associated
+pieces")
 
-Are we sure on this one? I don't think a WMFW is required to
-include an INFO/NAME block so it is now possible for this to not
-get printed. Granted I have not seen one that doesn't include
-at least one of these blocks but it isn't required. I think I
-would lean towards keening the separate print personally.
+Remove them from the list of supported CPUs.
 
-Thanks,
-Charles
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ Documentation/arch/powerpc/cpu_families.rst | 56 +++------------------
+ 1 file changed, 8 insertions(+), 48 deletions(-)
+
+diff --git a/Documentation/arch/powerpc/cpu_families.rst b/Documentation/arch/powerpc/cpu_families.rst
+index eb7e60649b43..713806eb14bd 100644
+--- a/Documentation/arch/powerpc/cpu_families.rst
++++ b/Documentation/arch/powerpc/cpu_families.rst
+@@ -20,10 +20,10 @@ Book3S (aka sPAPR)
+    +--------------+                 +----------------+
+           |
+           |
+-          v
+-   +--------------+                 +----------------+      +------+
+-   |     601      | --------------> |      603       | ---> | e300 |
+-   +--------------+                 +----------------+      +------+
++          |
++          |                         +----------------+      +------+
++          |-----------------------> |      603       | ---> | e300 |
++          |                         +----------------+      +------+
+           |                                 |
+           |                                 |
+           v                                 v
+@@ -50,10 +50,10 @@ Book3S (aka sPAPR)
+    +--------------+                 +----------------+
+           |                                 |
+           |                                 |
+-          v                                 v
+-   +--------------+                 +----------------+
+-   |    POWER4    |                 |      7455      |
+-   +--------------+                 +----------------+
++          |                                 v
++          |                         +----------------+
++          |                         |      7455      |
++          |                         +----------------+
+           |                                 |
+           |                                 |
+           v                                 v
+@@ -128,24 +128,6 @@ IBM BookE
+ - All 32 bit::
+ 
+    +--------------+
+-   |     401      |
+-   +--------------+
+-          |
+-          |
+-          v
+-   +--------------+
+-   |     403      |
+-   +--------------+
+-          |
+-          |
+-          v
+-   +--------------+
+-   |     405      |
+-   +--------------+
+-          |
+-          |
+-          v
+-   +--------------+
+    |     440      |
+    +--------------+
+           |
+@@ -186,11 +168,6 @@ Freescale BookE
+ - e6500 adds HW loaded indirect TLB entries.
+ - Mix of 32 & 64 bit::
+ 
+-   +--------------+
+-   |     e200     |
+-   +--------------+
+-
+-
+    +--------------------------------+
+    |              e500              |
+    +--------------------------------+
+@@ -218,20 +195,3 @@ Freescale BookE
+    +--------------------------------+
+    | e6500 (HW TLB) (Multithreaded) |
+    +--------------------------------+
+-
+-
+-IBM A2 core
+------------
+-
+-- Book3E, software loaded TLB + HW loaded indirect TLB entries.
+-- 64 bit::
+-
+-   +--------------+     +----------------+
+-   |   A2 core    | --> |      WSP       |
+-   +--------------+     +----------------+
+-           |
+-           |
+-           v
+-   +--------------+
+-   |     BG/Q     |
+-   +--------------+
+-- 
+2.44.0
+
 
