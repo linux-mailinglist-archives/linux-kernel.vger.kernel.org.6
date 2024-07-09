@@ -1,160 +1,212 @@
-Return-Path: <linux-kernel+bounces-245649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7BC092B57A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:38:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D70C92B57D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81B652851BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:38:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6C26281323
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABF115746B;
-	Tue,  9 Jul 2024 10:38:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C86156883;
-	Tue,  9 Jul 2024 10:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30BC156899;
+	Tue,  9 Jul 2024 10:39:50 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FD82E62D
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720521490; cv=none; b=YzroQ5znugVQaorXbsP4vMlvhMyVY5dwuWgLJa6gA7nziDoZxsOZ6OHrmgTfmnpLciBdtQgJNJwxRRTM7isDN+0GtiADI5+Lyi9Q0xleg/RA0OW1m6a8Tj0t6vVnCyhNzbFZdlh+7MOLRZtSzGPjc/j51uB9qnnjdFcln2oc874=
+	t=1720521590; cv=none; b=oPRoyA3Vz9fza5oljsAkbyer+Hl726QBP3lXXZEZEHKjDNHGIRw2LxGb6VaHNF55r6Sx49ovhHRnoNszFUbpM9d3jf5/94fQLlaSQHnx8ytyHtnc8GRC4KtFBMplk1RP/xHcFhvJvsStIyHioc5VOHSmXTUFdp2N/CmS3u/Or/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720521490; c=relaxed/simple;
-	bh=B9MLiWwhvjIVDmzpViCggJ8PFLNRpRaLQkP3nygbQXc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B76qVpN2lriruAVeb6P9zfAAJPDI5aM/4tn75EyK3Y/qNSVw16lOHzllA6hrOuRcuyWoxYPq8PVEBxf067hoaunTswSDWhajcp2qJ3pSCSuO4I7PCzN2rKGOmD13BeIMjjt0XzmR0C69kyNPs9bj5NaMxW/M8KtkbaFvoZuRR7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 246AF153B;
-	Tue,  9 Jul 2024 03:38:33 -0700 (PDT)
-Received: from [10.57.74.191] (unknown [10.57.74.191])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 839A23F762;
-	Tue,  9 Jul 2024 03:38:04 -0700 (PDT)
-Message-ID: <97bb37b0-d700-440e-bc21-f4fa338ee9f9@arm.com>
-Date: Tue, 9 Jul 2024 11:38:02 +0100
+	s=arc-20240116; t=1720521590; c=relaxed/simple;
+	bh=dkzS4Rt/F9bV/4+ZvTyk+sKdEfjnuTkeRQWt5y9Atx4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l8xgYtpXIFEDqXpU3XXVjlB3Ro2J+VdgZgblqZGMbQ+BFjle+4G2jEK6TIFMG+QKuRLTmjhLU1vigWCXPfjzIH823FVCZlQpl3Ownr5hUvbhMNolfc0EVh+Q7u5ivYseYKmg17+LwybArtfcuVv3NyytoQtFsT/cpCXYxnStx9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sR8FD-0003rR-B5; Tue, 09 Jul 2024 12:38:47 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sR8F7-008G9a-MD; Tue, 09 Jul 2024 12:38:41 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sR8F7-006Uv6-1k;
+	Tue, 09 Jul 2024 12:38:41 +0200
+Date: Tue, 9 Jul 2024 12:38:41 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Russell King <linux@armlinux.org.uk>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>, Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	imx@lists.linux.dev, linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+	openbmc@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org,
+	linux-mips@vger.kernel.org, loongarch@lists.linux.dev
+Subject: Re: [PATCH 4/9] mtd: devices: add AT24 eeprom support
+Message-ID: <20240709103841.7x7n4hdtqrunyoc3@pengutronix.de>
+References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
+ <20240701-b4-v6-10-topic-usbc-tcpci-v1-4-3fd5f4a193cc@pengutronix.de>
+ <07b701a9-7b52-45b7-8dba-1c25d77cbf15@linaro.org>
+ <mafs0ikxnykpr.fsf@kernel.org>
+ <20240702-congenial-vigilant-boar-aeae44@houat>
+ <mafs0ed8byj5z.fsf@kernel.org>
+ <20240702-mighty-brilliant-eel-b0d9fa@houat>
+ <20240708084440.70186564@xps-13>
+ <20240709092214.omr7ccphdzdk7z7j@pengutronix.de>
+ <20240709114302.3c604ef3@xps-13>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/3] dt-bindings: arm:
- qcom,coresight-static-replicator: Add property for source filtering
-Content-Language: en-GB
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Tao Zhang <quic_taozha@quicinc.com>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Mike Leach <mike.leach@linaro.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- James Clark <james.clark@arm.com>
-Cc: Jinlong Mao <quic_jinlmao@quicinc.com>, Leo Yan <leo.yan@linaro.org>,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Tingwei Zhang <quic_tingweiz@quicinc.com>,
- Yuanfang Zhang <quic_yuanfang@quicinc.com>,
- Trilok Soni <quic_tsoni@quicinc.com>, Song Chai <quic_songchai@quicinc.com>,
- linux-arm-msm@vger.kernel.org, Jie Gan <quic_jiegan@quicinc.com>
-References: <20240705085152.9063-1-quic_taozha@quicinc.com>
- <20240705085152.9063-2-quic_taozha@quicinc.com>
- <907ec6a8-da8b-4b9a-aac0-c650bab04905@linaro.org>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <907ec6a8-da8b-4b9a-aac0-c650bab04905@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240709114302.3c604ef3@xps-13>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-
-
-minor nit: Subject: 
-s/qcom,coresight-static-replicator/arm,coresight-static-replicator ? 
-There is no "qcom,coresight-static-replicator" compatible.
-
-On 05/07/2024 10:02, Krzysztof Kozlowski wrote:
-
-> On 05/07/2024 10:51, Tao Zhang wrote:
->> Add a new property "filter_src" to label the source corresponding
->> to the output connection for a static replicator. By combining
->> a funnel and a static replicator in devicetree, a new device that
->> supports multi-port input and multi-port output is implemented.
->> In order to match the output port with the input port and
->> successfully build the trace path, add this new property to
->> indicate the data source corresponding to this output port.
->>
->> Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
->> ---
->>   .../arm/arm,coresight-static-replicator.yaml   | 18 +++++++++++++++++-
->>   1 file changed, 17 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
->> index 1892a091ac35..d9538563f9c6 100644
->> --- a/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
->> +++ b/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
->> @@ -45,7 +45,21 @@ properties:
->>       patternProperties:
->>         '^port@[01]$':
->>           description: Output connections to CoreSight Trace bus
->> -        $ref: /schemas/graph.yaml#/properties/port
->> +        $ref: /schemas/graph.yaml#/$defs/port-base
->> +
->> +        properties:
->> +          endpoint:
->> +            $ref: /schemas/media/video-interfaces.yaml#
+On 24-07-09, Miquel Raynal wrote:
+> Hi Marco,
 > 
-> Ehm? How is this video interface?
+> > > > > >> I also found a thread from 2013 by Maxime Ripard (+Cc) suggesting adding
+> > > > > >> EEPROMs to MTD [1]. The main purpose would have been unifying the EEPROM
+> > > > > >> drivers under a single interface. I am not sure what came of it though,
+> > > > > >> since I can't find any patches that followed up with the proposal.    
+> > > > > >
+> > > > > > That discussion led to drivers/nvmem after I started to work on
+> > > > > > some early prototype, and Srinivas took over that work.    
+> > > > > 
+> > > > > So would you say it is better for EEPROM drivers to use nvmem instead of
+> > > > > moving under MTD?    
+> > > > 
+> > > > I thought so at the time, but that was more than 10y ago, and I have
+> > > > followed neither nvmem nor MTD since so I don't really have an opinion
+> > > > there.
+> > > > 
+> > > > It looks like drivers/misc/eeprom/at24.c has support for nvmem though,
+> > > > and MTD can be used as an nvmem provider too, so it's not clear to me
+> > > > why we would want to create yet another variant.
+> > > > 
+> > > > But again, you shouldn't really ask me in the first place :)
+> > > > 
+> > > > I'm sure Miquel, Srinivas, and surely others, are much more relevant to
+> > > > answer that question.  
+> > > 
+> > > More relevant, I doubt, but just a feeling: EEPROMs have their own
+> > > subsystem now, NVMEM, which, as Maxime said, was initially written for
+> > > that very specific case. EEPROMs don't have the complexity of MTD
+> > > devices, and thus pulling the whole MTD subsystem just for getting
+> > > partitions seems counter intuitive to me. You can definitely "split"
+> > > EEPROM devices with NVMEM as well anyway.  
+> > 
+> > I asked for feedback on my RFC [1] and all I got was to merge both
+> > drivers into one and make the driver backward compatible, which I did by
+> > this commit.
 > 
->> +
->> +            properties:
->> +              filter_src:
+> I'm sorry for not bringing this earlier.
+
+The purpose of the RFC was exactly to figure out the way to go therefore
+I'm a bit surprised now :/
+
+> > > Overall I think the idea of getting rid of these misc/ drivers is goes
+> > > into the right direction, but registering directly into NVMEM makes
+> > > more sense IMO.  
+> > 
+> > So you propose to have two places for the partition handling (one for
+> > MTD and one for NVMEM) instead of one and moving the code into NVMEM
+> > directly?
 > 
-> There are no properties with underscores...
+> Why two places for the partitions handling? Just one, in NVMEM. Also
+
+Without checking the details I think that converting the MTD
+partitioning code into NVMEM partitioning code is a bigger task. As you
+said below there are many legacy code paths you need to consider so they
+still work afterwards as well.
+
+> usually EEPROMs don't require very advanced partitioning schemes,
+> unlike flashes (which are the most common MTD devices today).
+
+As said in my cover letter EEPROMs can become quite large and MTD
+supports partitioning storage devices which is very handy for large
+EEPROMs as well.
+
+> > That doesn't sound right to me either. Also I don't get the
+> > point why EEPROMs can't be handled by the MTD layer?
 > 
->> +                $ref: /schemas/types.yaml#/definitions/phandle
->> +                description:
->> +                  defines a phandle reference to an associated CoreSight trace device.
->> +                  When the associated trace device is enabled, then the respective
->> +                  trace path will be built and enabled.
+> They can, but should they? Just compile the two layers and observe
+> the size difference. MTD is complex and old, carries a lot of history,
+> and the user interface is also not straightforward because you need to
+> handle pages, blocks, erases, bitflips, ECC stats, OOB bytes and
+> positions, two OTP areas... None of that exists in the EEPROM world. So
+> why would you want to register into MTD and pull a huge subsystem while
+> there is a much more recent, simpler and way lighter subsystem fitting
+> much better your device?
+
+Didn't checked the size but the honest, MTD provides many Kconfig
+switches to trim the size down. As of now the mtd.o is made of up to 5
+(6 if chipreg.o is counted -> should be an opt) files which is of course
+larger than the pure misc/eeprom/at24.c driver but not that large. 
+
+Regards,
+  Marco
+
+> > The layer already
+> > supports devices of type MTD_RAM which are very simple and don't require
+> > an erase-op at least I don't see one.
 > 
-> How does it differ from remote endpoint? What is "respective trace path"?
-
-Apparently, there is some "magic" hard coded filtering in the
-replicators, which only passes through trace from a particular "source"
-device. The documentation above doesn't explain this clearly.
-
-it could be:
-
-"phandle to the coresight trace source device matching the hard coded
-filtering for this port"
-
-This could be different from the "remote endpoint" as there could be
-intermediate components between the phandle "source" and the port.
-
-
-Suzuki
-
-
-
+> MTD_RAM has been there forever, probably for "bad" reasons. BTW there
+> has been an attempt at removing it which was reverted in _2006_ and then
+> felt into the cracks:
+> 21c8db9eff95 ("[MTD] Restore MTD_ROM and MTD_RAM types")
 > 
-> <form letter>
-> Please use scripts/get_maintainers.pl to get a list of necessary people
-> and lists to CC (and consider --no-git-fallback argument). It might
-> happen, that command when run on an older kernel, gives you outdated
-> entries. Therefore please be sure you base your patches on recent Linux
-> kernel.
+> Thanks,
+> Miquèl
 > 
-> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-> people, so fix your workflow. Tools might also fail if you work on some
-> ancient tree (don't, instead use mainline) or work on fork of kernel
-> (don't, instead use mainline). Just use b4 and everything should be
-> fine, although remember about `b4 prep --auto-to-cc` if you added new
-> patches to the patchset.
-> </form letter>
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
-
 
