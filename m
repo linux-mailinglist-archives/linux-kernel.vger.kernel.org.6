@@ -1,95 +1,162 @@
-Return-Path: <linux-kernel+bounces-245978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0407E92BC3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:58:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D5992BC41
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B445E28189E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:58:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C8591C21A15
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD4318A958;
-	Tue,  9 Jul 2024 13:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33F618F2CB;
+	Tue,  9 Jul 2024 13:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BqdpaCv3"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MWJNPbo/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387F816630A;
-	Tue,  9 Jul 2024 13:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9570E1850A2;
+	Tue,  9 Jul 2024 13:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720533367; cv=none; b=p7Y24+APou33s1h5CVY23ZkvOBPsTv/rbJKClXA1dUH/4cPj2bgCTqGTTdvRFrxdQNSmFwrOjDAYKKJRq1bl31oE4jdlcuIhjZ6nahfcrNjCMP4VQGVNlEUm5tM0dWub0K1AfEjhMAkc1OKoTgwSqTIQOARilt+oUiPIVPmXDI8=
+	t=1720533442; cv=none; b=qWHgOJ20lR+W/Nu4MQD8xeyTsRcMUwe6Pqcy8WlIFSXCTND830PJ7cAT9mSEFyZdRbi5S8Bn7LJVzPxzDmSdfQuwjXZyLEMh9PqehoJYW3OdWkkrGOl6Atb1iI0TmCshsaRh5VIzdxXjefZDEdx3XUpxwUu3LD4WK3mj71d/uwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720533367; c=relaxed/simple;
-	bh=nyxSs+bRjH/rdH8wAvp4e5QkrTLGG0SI8P31JfbyLaI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CZNLP9cqouJ7bUw+pUBAboRkGtnDTEd/YL/kPDCS/Svdi4cHlh0dRkP+dGPpzS0bKUvhLo9TJ4py/PiZ9+2tt1UXU7fiXUBxQnrtKK70j1TX78E/I6LBmqYqmq6FkMuI+TKtgWaBpRmKueXPL3sLKSLDMJzaLiauWuZvR4Ln8Ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BqdpaCv3; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 511E340E0185;
-	Tue,  9 Jul 2024 13:56:03 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id x7WZIQL15i_T; Tue,  9 Jul 2024 13:56:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1720533359; bh=pxEUpoax/p4niLJAJOZU+/xkgTtswD2UnZ23G4T/3pA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BqdpaCv3rbP/MH5Q34UhprLGjY2VkDQPkOG/Q+LhfZ9DXjIFxyBweKMESf+7Ju0jO
-	 xfHhd1rbuIaneTNtGrMUdcdBXpFdcYp0zJD+P6SX517UMZ34vA4SezG0hJDMFxzMzS
-	 sq/HnSEdpgkNYugSNxueED4drn65zCgn2aGrNRWkxlgFMuaFiXze2Uj2T2x8PJ008+
-	 Zdmhxjze1PKb5biuKVIz6JlTGrXhtRTuTfr3+TZs2LofSraDg3Vuk0hSbDHbdH/sRO
-	 t8o15PQ6PfiJt+M2lklz3DgGnLVYHBxYoKZtcdDNyO7PjJS+dKo3b+p7bOy7urgNxP
-	 SQ49gk2x2Jv+PFsd23QcOZo6z5XYM5FesG1FNpRAG6OmUIQ9Jm+UC3jI+bJoW121Y4
-	 SOZdzotnatCFAy+HgUKWbCa0h1NZ44om20L/ZZV6mk2bnQ/VkxmVkt3WfQxsEetAeF
-	 JQ69NzhBQ+qirM0dbNJu6dbnGqP1BpaZDTtLgUMF0ipqMDVFhdccObinhy5DAM5j9E
-	 sslYBAH3LMpJxCCxLqQqhq3plSop9iCVzA5PSSfeDXfOETL5WLmqbUDz1zd517A6VE
-	 keVIBB6SQ4IB7OKk3Fgg6LJRM1h7VCFmdiaSG/0+b5CBjL6hglXvnw4WUm4Vi07Qwm
-	 jsGz3h9wF6Amsr0bIfFAw+x0=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 37CE640E0219;
-	Tue,  9 Jul 2024 13:55:52 +0000 (UTC)
-Date: Tue, 9 Jul 2024 15:55:45 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jim Mattson <jmattson@google.com>, Ingo Molnar <mingo@kernel.org>,
-	x86@kernel.org, linux-kernel@vger.kernel.org,
-	Greg Thelen <gthelen@google.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 5.10 RESEND] x86/retpoline: Move a NOENDBR annotation to
- the SRSO dummy return thunk
-Message-ID: <20240709135545.GIZo1BYUeDD6UrvZNd@fat_crate.local>
-References: <20240709132058.227930-1-jmattson@google.com>
- <2024070930-monument-cola-a36e@gregkh>
+	s=arc-20240116; t=1720533442; c=relaxed/simple;
+	bh=HEr0HPxjelqJ3oX82GEVZTV5xdIMPqGPD+jcTVomdDY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=B9hGEmNGHzgqKigw6yBDudxH+dVxqlkN5H4ay8CfMSVYWeI5JE4QBrqlATwdeGQIYcAMezM9KKhdhs5NuNYaKYpig4dwrOcKWI0rt6sxgC/fZ0AAIXhvSvE7nMjXe0/MSXi6cRFv7mLXSkkfAWPDzGJkpg9Q8CfhQeft6jKgc6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MWJNPbo/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469Bm52g015976;
+	Tue, 9 Jul 2024 13:57:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=pSoKKJd+KGOwGbP1EvBI7g
+	R5LzyKw21ySidDByFY1eI=; b=MWJNPbo/1M6ihvrCOQlFu7uT6uCL6joPdH8l1Y
+	/83W4SvabTPz+xMY8HinRdFawXEi3YAxdzg9hTJtGOliXfT3G2O7PGChTAUdqPwy
+	Q85lVfrs1g3smu7KQnf7q6nKyklXLQTiG72QzuhQiWQ/45+GhSF3WrtSa+UOfC5h
+	rFmPC6rbMEn95sPbVO4F/ii141pp70ZYHSBymw4VWA1a1h/Y3yuh7Xt4Y/iEJ9Oe
+	3MnrrgQ5bvgdJEVrctS416roBZxVdRY56L9H/3HlJwTKmkZ42mncWxE0l0LCqyzY
+	zmBvEuZp1KaIXONNPGyOvFgVl8qTtb6FwzSdg/fsCXAsrZGg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406y3hebn5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 13:57:07 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469Dv6eL008307
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 13:57:06 GMT
+Received: from tengfan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 9 Jul 2024 06:57:01 -0700
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+Date: Tue, 9 Jul 2024 21:56:45 +0800
+Subject: [PATCH v2] dt-bindings: interrupt-controller: qcom,pdc: document
+ pdc on QCS9100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2024070930-monument-cola-a36e@gregkh>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240709-document_qcs9100_pdc_compatible-v2-1-83619dcd2658@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAJ1BjWYC/zWNWwqDMBQFtyL5buQm9dmv7qOIaLzqhZpoEqVF3
+ Huj0M85cGZ25tASOvaIdmZxI0dGB5C3iKmx0QNy6gIzCTKBHEreGbVOqH29KFcKgHruVK3MNDe
+ e2jfyLMUEsqwVuSxYsMwWe/pchVcVeCTnjf1ewU2c6999B5kWKcQyXAEKLviykqo96qFv9PME0
+ ioOLVYdx/EDjQQdWbsAAAA=
+To: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Tengfei Fan
+	<quic_tengfan@quicinc.com>
+X-Mailer: b4 0.15-dev-a66ce
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720533420; l=2372;
+ i=quic_tengfan@quicinc.com; s=20240709; h=from:subject:message-id;
+ bh=HEr0HPxjelqJ3oX82GEVZTV5xdIMPqGPD+jcTVomdDY=;
+ b=sZX0BRLqszm6V6A4pIeEj+L+LBXW9bIwgkLDp81HJiUBSXTCSUAzV2tYVgVnZIegsz4ANovZc
+ +DmrWB1Cj4GBolw6iPzR3Py0BTOPNkLCFpfAGdLeZBayyt6c+2J7pe9
+X-Developer-Key: i=quic_tengfan@quicinc.com; a=ed25519;
+ pk=4VjoTogHXJhZUM9XlxbCAcZ4zmrLeuep4dfOeKqQD0c=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 9wpC2PsmCgA261EYisKVb3HL2jBcoBie
+X-Proofpoint-GUID: 9wpC2PsmCgA261EYisKVb3HL2jBcoBie
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_04,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ spamscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0
+ clxscore=1015 mlxlogscore=835 impostorscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090090
 
-On Tue, Jul 09, 2024 at 03:33:54PM +0200, Greg Kroah-Hartman wrote:
-> And is this only needed in this one stable branch or in any others?
+The QCS9100 SoC includes a PDC, document it.
+QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+platform use non-SCMI resource. In the future, the SA8775p platform will
+move to use SCMI resources and it will have new sa8775p-related device
+tree. Consequently, introduce "qcom,qcs9100-pdc" to describe non-SCMI
+based pdc.
 
-Lemme take care of them.
+Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+---
+Introduce support for the QCS9100 SoC device tree (DTSI) and the
+QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+While the QCS9100 platform is still in the early design stage, the
+QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+mounts the QCS9100 SoC instead of the SA8775p SoC.
 
-Thx.
+The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
+all the compatible strings will be updated from "SA8775p" to "QCS9100".
+The QCS9100 device tree patches will be pushed after all the device tree
+bindings and device driver patches are reviewed.
 
+The final dtsi will like:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
+
+The detailed cover letter reference:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+---
+Changes in v2:
+  - Split huge patch series into different patch series according to
+    subsytems
+  - Update patch commit message
+
+prevous disscussion here:
+[1] v1: https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+---
+ Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+index 985fa10abb99..41fbfce838fa 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml
+@@ -26,6 +26,7 @@ properties:
+   compatible:
+     items:
+       - enum:
++          - qcom,qcs9100-pdc
+           - qcom,qdu1000-pdc
+           - qcom,sa8775p-pdc
+           - qcom,sc7180-pdc
+
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240709-document_qcs9100_pdc_compatible-65e4066b1728
+
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
+Tengfei Fan <quic_tengfan@quicinc.com>
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
