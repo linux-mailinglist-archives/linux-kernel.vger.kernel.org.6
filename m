@@ -1,173 +1,110 @@
-Return-Path: <linux-kernel+bounces-245320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C06892B12C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:34:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E603192B126
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:33:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E269B2180F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:34:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 845D2B21E63
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73380144D00;
-	Tue,  9 Jul 2024 07:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4122A14388F;
+	Tue,  9 Jul 2024 07:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WXpRiFTd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QByFoawW"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E84142E78
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 07:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6195113AA4D;
+	Tue,  9 Jul 2024 07:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720510447; cv=none; b=q3zZwnw1uIcFbf3VgFTkFeSIUdlYK7CzgAjlcpr4FMDTStO0JBzdC9gcX9IZQOQfXGtayr34wYAegG1SXOxyR3DQ6TJwmqkZqjqeVgkKQgDtZBTG70abo1Z4PYHmwhT0XqIXKbBg3vozEeESYDtGH38120ySOyoL5TCUQ3PYoZ4=
+	t=1720510421; cv=none; b=GL1I63qX2NxMNP2m0e+BFfZtKyw2cYv0bIU3cd6HcCcoaFPorAEr1oNkEYEwNT9nollhhcuTZ6SLa6kOVMrQarQ55TNfDxZQkF4jS/z8ifBz+SeKMAT8CijhI687Jk61YR2JgaBHVwN0U9naJGckkPqaVw1KlUzHWzpEvmyolPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720510447; c=relaxed/simple;
-	bh=LvqwmV+mNj/O+PlzBMrEoMU+zBOGk4FC9h2Eald0y+c=;
+	s=arc-20240116; t=1720510421; c=relaxed/simple;
+	bh=klDpcD1FMiSPwckMUv/XYdW7oQQyHXH58rQmFc+F2uc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P+6zOE+q7t6AOPVtJWmwN3XCxYCSsSVf+zTzMrjdIAtqo3V+rBMXXhahYVk7vSbGX9q0PVPuItbxUoc3MCd8PElMx5GmZ91+zQpx/zI/SeK8cewWaa7Munxo6tKa23my/pzYbMHD+h9mn9TeCRhrC2qsFDj7DOqYqYk1es7eFek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WXpRiFTd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720510444;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gyffXFQ4XqEgnJu8KLX3RdgOxyAi68j9TS2gHHyn3kA=;
-	b=WXpRiFTdl4p1XPdvphLTmy9y+3Fq3OWE0WbRh8Wed1WghrMnmaU25AcMdfxhNRQegQtzV6
-	cKs4zA/ZV0Bc6JVeI3LFRVZ2+4I+FHdOmwT4zqwidqCMcBi+FxhAH/N3TN/i8uO2JlHeRu
-	UBT8JCkOzTOFptCVd561Z7S/KODePZQ=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-9-rklG_CToOlGu9ns5na3Afg-1; Tue, 09 Jul 2024 03:34:03 -0400
-X-MC-Unique: rklG_CToOlGu9ns5na3Afg-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-58cdd86c091so3863279a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 00:34:03 -0700 (PDT)
+	 To:Cc:Content-Type; b=dLhEwgIJqG/xDueC/Je1GGe6nsMX05O+HeokW3azkTBeH/U7PHcRDjwXmULeM9BhBykJ1FXhzOkEM61Gy8dFnvQpARRBkZBSbuYwEvDAxI3YMd56xXdZSI+A5GczHuET9dezBVEuBr48mKhoDklWkVZP8Wkuet68ddQfyKP3iJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QByFoawW; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2c980b55741so2836941a91.2;
+        Tue, 09 Jul 2024 00:33:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720510419; x=1721115219; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=klDpcD1FMiSPwckMUv/XYdW7oQQyHXH58rQmFc+F2uc=;
+        b=QByFoawWgOZs91Bg6aof/kaehVCt+PWZ9WWywGgwG0q8RaAonxZBc4kyp+PUmm25E8
+         DMvBJJdSn8nOUC4Fa5wxP+njLpvE2TBtbuyjUqffPPs1etULBbTIsfQ/86VmK0nqZXjp
+         wcKMpfnbPQy7+dj6psJi8cFrH5ZJGfN9Z7mNcykNT9BT2A5pQGOhrue3ands1J4wHf0O
+         7mh3c4J4Jruf4eeien+P/WJcRily+5Pwwt774cnJO41Sn5LhMqPJbCeY31SKuXyitFv4
+         7nkeujoP8eAQO3dBUY1qa+AiXWHIJytyrE5W9PEejeRhWSEMVnqDvUjvjCgp9frsBsRE
+         Uh+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720510442; x=1721115242;
+        d=1e100.net; s=20230601; t=1720510419; x=1721115219;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gyffXFQ4XqEgnJu8KLX3RdgOxyAi68j9TS2gHHyn3kA=;
-        b=I8Zv9WGmCVQWokudBw5Ly8QIqP4j6yQ5knrXulW1MF7BI4TqkbTj/NvbyNYfmuWQuo
-         wLpFSVY46pRnHnSxwlVxXxq9amT6c4tDn54WETsYuMXb5PolnYIxmVdou2LMDchkpLYq
-         9g/iAc7OL2hGIAPutDZHzSiEulyK8x8ilFXhnvezRruYQPsUq87bYF9H23T+/jevHxmF
-         ubBjTgYTS+6US9Cbny6nuO6PdqbccxNGtJPUOhdPEoEVlVxZqPLXamaoXi+XuLNBdeVe
-         7wD1V26JsbR00Y3bz2LAtHtLsM6KvnQOSfr5tFyIACjTdlGB+CwEIaLWRn/pFZ+M47FY
-         i4Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQiwb3fTja8/ChjIyDOhRWusN1k3r9jCtMNKTu3tJyM1LdpYWKkUZVwLncMsXqW+nCf39be1Ku2IIJNUEJy3KDvF+OA4qlyRrji0SX
-X-Gm-Message-State: AOJu0Yx3nOSBO14PgNeyBGxAoGvZPaleK0BlJeB1IjveswztThNfPECL
-	2dcccmZ7Fagjmo5AKxTkFRZwaZan0I5iZFn3No6AsWusaKoBeI3LrggWiE5IKW0++goNFLmC3st
-	DSX0AJMrmjNESapjNOnT8YeRlpxp4eEzoC6r9FQQNgzi7ZhJHt5Ytda1Z3U/s7eDNPJ7J9B/C6s
-	cgc7H7097LSFoG/gXoiYslFqX186dgxoASbm7h
-X-Received: by 2002:a05:6402:651:b0:585:4048:129a with SMTP id 4fb4d7f45d1cf-594bc7c81camr942122a12.31.1720510442198;
-        Tue, 09 Jul 2024 00:34:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEjoc+fuN4z3jm6ivmOtDkLQnowZY0KxQCfvPi77uB0E9RhW33K2f9f+5Byd3P6tUmj0kBE7NSAeCnMjiI2G34=
-X-Received: by 2002:a05:6402:651:b0:585:4048:129a with SMTP id
- 4fb4d7f45d1cf-594bc7c81camr942110a12.31.1720510441792; Tue, 09 Jul 2024
- 00:34:01 -0700 (PDT)
+        bh=klDpcD1FMiSPwckMUv/XYdW7oQQyHXH58rQmFc+F2uc=;
+        b=MKeBfdzmnCicSc58Rd8/b16doEedoWqV0O1Xj0G019TS6T7h9b3/pVGp76u1HhD1my
+         4MHudIM8SUUwskfCcn9K+cVmFvZS+1x+MRJJuL88/rLD6gDVgpUoP+ySA7ioMlaWvdkP
+         iEQnbzRcuRFl2JAoCm+6VJdsynYsRZZ19KoHmdGUdh6Vwen4NCBxn2yUWXX3J9mBpiet
+         9jVswOc/df8upCG/F5mlxHcjbig5HybE3guKhxW3bORpAp40P9Qw4oCf/+j1oykhW1f9
+         dm5JsEwZEUl57tjuHyb5j3cyoedQH8Fwe9zMVjtyWRXBY9TRAAX73psumvfmpVsEGkMH
+         A9Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCUw7Rwvpp0mXhNx5oOvulHQ+kWloGOdrvr8RGuu8qhkSr60SBDvTwO/VKP1kFYVg8EXfkiiXxPm3OBubtJ0RfUAVSL3/pfpMWUiU0YlCgnszLtTYB7Fxim/9ZYK7T5ulzDn9u4jaagcCIJD1iZA3iae/1v12AyV7UWNcw81YcmcJXOMadE+FTE=
+X-Gm-Message-State: AOJu0YxdeevblBgax2wljZIqRX/HV7a3KNsYnHgMrQS8fbmqWQiD0458
+	zhknUBL2vmi0qzvts0m+7yzTjwwBxH4ESHWtHvUrM+vf+QKKwZqCj//C/37Q2tPxgbIUglaZvsJ
+	nrjClEaUSBwMVpLG4ZyCSQnCBfDc=
+X-Google-Smtp-Source: AGHT+IG6TEMVsFcPVSqBsELWwJyFpRuf/hY2SNbScRZLiS80tCn6X3wHejySkfVx75KATLP9w2HFi1CxI+Ms7haSFkU=
+X-Received: by 2002:a17:90b:3ccd:b0:2c9:887e:46de with SMTP id
+ 98e67ed59e1d1-2ca35c310f2mr1323804a91.12.1720510419506; Tue, 09 Jul 2024
+ 00:33:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708065549.89422-1-lulu@redhat.com> <CACGkMEtOP_Hz=SO+r5WQfWow3Pb-Sz552xnt0BqTgyGSuvJz_A@mail.gmail.com>
-In-Reply-To: <CACGkMEtOP_Hz=SO+r5WQfWow3Pb-Sz552xnt0BqTgyGSuvJz_A@mail.gmail.com>
-From: Cindy Lu <lulu@redhat.com>
-Date: Tue, 9 Jul 2024 15:33:23 +0800
-Message-ID: <CACLfguWqut4mf1=ad58Eb=HZCMnbgxzDk5DbFge-JU0beB1aFg@mail.gmail.com>
-Subject: Re: [PATCH] vdpa/mlx5: Add the support of set mac address
-To: Jason Wang <jasowang@redhat.com>
-Cc: dtatulea@nvidia.com, mst@redhat.com, parav@nvidia.com, sgarzare@redhat.com, 
-	netdev@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20240517170615.377786-1-ojeda@kernel.org>
+In-Reply-To: <20240517170615.377786-1-ojeda@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 9 Jul 2024 09:33:27 +0200
+Message-ID: <CANiq72kS3f0QA+p6dpkA79G3h57tDVS_oNiO9hm9xY-aJ+9jyg@mail.gmail.com>
+Subject: Re: [PATCH] docs: rust: introduce the new kernel.org LLVM+Rust toolchains
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, llvm@lists.linux.dev, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, 8 Jul 2024 at 15:03, Jason Wang <jasowang@redhat.com> wrote:
+On Fri, May 17, 2024 at 7:06=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
 >
-> On Mon, Jul 8, 2024 at 2:56=E2=80=AFPM Cindy Lu <lulu@redhat.com> wrote:
-> >
-> > Add the function to support setting the MAC address.
-> > For vdpa/mlx5, the function will use mlx5_mpfs_add_mac
-> > to set the mac address
-> >
-> > Tested in ConnectX-6 Dx device
+> From: Nathan Chancellor <nathan@kernel.org>
 >
-> Great.
+> These combined LLVM+Rust toolchains are now available, thanks to Nathan
+> Chancellor (ClangBuiltLinux).
 >
-> >
-> > Signed-off-by: Cindy Lu <lulu@redhat.com>
+> Thus introduce them in the Rust Quick Start guide.
 >
-> I guess this should be part of the series "vdpa: support set mac
-> address from vdpa tool" ?
->
-yes, Will add this in next version
-Thanks
-cindy
-> > ---
-> >  drivers/vdpa/mlx5/net/mlx5_vnet.c | 23 +++++++++++++++++++++++
-> >  1 file changed, 23 insertions(+)
-> >
-> > diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/=
-mlx5_vnet.c
-> > index 26ba7da6b410..f78701386690 100644
-> > --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> > +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> > @@ -3616,10 +3616,33 @@ static void mlx5_vdpa_dev_del(struct vdpa_mgmt_=
-dev *v_mdev, struct vdpa_device *
-> >         destroy_workqueue(wq);
-> >         mgtdev->ndev =3D NULL;
-> >  }
-> > +static int mlx5_vdpa_set_attr_mac(struct vdpa_mgmt_dev *v_mdev,
-> > +                                 struct vdpa_device *dev,
-> > +                                 const struct vdpa_dev_set_config *add=
-_config)
-> > +{
-> > +       struct mlx5_vdpa_dev *mvdev =3D to_mvdev(dev);
-> > +       struct mlx5_vdpa_net *ndev =3D to_mlx5_vdpa_ndev(mvdev);
-> > +       struct mlx5_core_dev *mdev =3D mvdev->mdev;
-> > +       struct virtio_net_config *config =3D &ndev->config;
-> > +       int err;
-> > +       struct mlx5_core_dev *pfmdev;
-> > +
-> > +       if (add_config->mask & (1 << VDPA_ATTR_DEV_NET_CFG_MACADDR)) {
-> > +               if (!is_zero_ether_addr(add_config->net.mac)) {
-> > +                       memcpy(config->mac, add_config->net.mac, ETH_AL=
-EN);
-> > +                       pfmdev =3D pci_get_drvdata(pci_physfn(mdev->pde=
-v));
-> > +                       err =3D mlx5_mpfs_add_mac(pfmdev, config->mac);
-> > +                       if (err)
-> > +                               return -1;
-> > +               }
-> > +       }
-> > +       return 0;
-> > +}
-> >
-> >  static const struct vdpa_mgmtdev_ops mdev_ops =3D {
-> >         .dev_add =3D mlx5_vdpa_dev_add,
-> >         .dev_del =3D mlx5_vdpa_dev_del,
-> > +       .dev_set_attr =3D mlx5_vdpa_set_attr_mac,
->
-> Let's rename this as we will add the support for mtu as well or not?
->
-sure ,will change this
-Thanks
-cindy
-> Thanks
->
-> >  };
-> >
-> >  static struct virtio_device_id id_table[] =3D {
-> > --
-> > 2.45.0
-> >
->
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> Co-developed-by: Miguel Ojeda <ojeda@kernel.org>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
+Applied to `rust-next` -- thanks!
+
+Cheers,
+Miguel
 
