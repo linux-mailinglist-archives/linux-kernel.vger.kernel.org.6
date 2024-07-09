@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-246692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2FB592C53B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:21:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7499F92C53C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DAC8282BD2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:21:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 219C4B21E35
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2D418563B;
-	Tue,  9 Jul 2024 21:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E84F187861;
+	Tue,  9 Jul 2024 21:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eiIMBd+J"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GmzIxRlM"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC83153505
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 21:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D03185633
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 21:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720560104; cv=none; b=HSoUNqEa9ag+sgok7r2hpDwoK8xcjdlmj/r9p2ucYQFj+qsijhCB5k3wYzTJbfpnJT9WpjJdkO3yRyrtR1kAOA8lxHKKqlc0VozuY2tgjiD79rMnljd530w2y9nHh0tR1u11WOY5yDW6QWe5ftdfe+pcZX1F7rDWMWYhUzPv1LA=
+	t=1720560106; cv=none; b=Lx71ot5NX4BdkTGtGap9Gz8mb3QxkmzOA+nkZ9pq+akclUOvQapTrgv6QMLXTDvQnu99fsDMP10t78UsbXgn+YKQ/QdQDRrDboLDo/aipdOsgm7YEg4kDtq3cIEfN0z4xxEkbx+K6i6pCJHpXwZoLr+LjG5vC5H32pmfUx4cJtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720560104; c=relaxed/simple;
-	bh=KQfK54Bg7KMGAfENXtcbbEG1E1YcGN7n7bX83wXkiv8=;
+	s=arc-20240116; t=1720560106; c=relaxed/simple;
+	bh=UjAS7xhj1kJlR2pC8MCrIipRDWswcycXLVCXW8j4a9k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=od3t5j+Sohn8qSxtIemKeeHY1xkYZtyy8FQfhykPi9U0v0mGMrgWAny6w+l9qbh9UU8UEWdubSJMHdXZHgcz/xY/3PcHceXpzzX2NmAqAnqLtuJnsSF3t96K8O+x2al1BPma4JghEWYJ0qLtVoaPPZXZkiOvuGZMz0c2XkJtMfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eiIMBd+J; arc=none smtp.client-ip=209.85.215.171
+	 MIME-Version; b=RMcQs08StyBgCcuQnjyJ3OQc404qLtZVjv44sul3xaQoJXHS+xGQx8f0uW3oVsoHOpd900RjXEEn9Z27dhrxUaQSaib2ME9FoTKPAvttetbkotlWUqFJ9/AZSzMsML868YOhBMFRIVIMdMBMp6mhEIBlRWZsEvD6f07ySgPNa2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GmzIxRlM; arc=none smtp.client-ip=209.85.215.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-70df2135426so2922091a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 14:21:43 -0700 (PDT)
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-75fe9e62048so3055058a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 14:21:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720560103; x=1721164903; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720560104; x=1721164904; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6p8+OUwz6P3bJPyRQdZ3BvD+pGPe37Xw3SqFN/IyBjo=;
-        b=eiIMBd+JDXXTahABgyZGk/CQXb5niATw21BujFui2T+yQ7dAl0jldCwNKkkVnoBCXM
-         M2Qq+SyQhfTTnzb9XLJcq7xgQ5RhR2wYlJNd6FctWnfChuRIhqztdRIpn8sIVyLqr25v
-         OIgvovXH5xxZKEsimV10KsoUEtP4u29bXCgckiOo/ssXLWWMG5TLcpu5Xidp9TQMjRRz
-         oEzNIQB1Att9XnlzAC1RmqDRrrFN3C06+3DfNy2ddwD5di7CQoCPNAbaSTTVrrTyCgDl
-         XgHa3suqosAOtMNNIgEWGfatpESR2E5gIfQzLEY/fKWRa14oPk1oq4FCkjq1NcScXiiG
-         EsvQ==
+        bh=UHZt8zYirHGzB6KZVQgqYt3EBA1b2bsAuxlpnVayEx4=;
+        b=GmzIxRlMe+xUIMc2nszZjiSDn2WbVW/u8Qv+kBeGkEpm9dKVKlBUiW1GDCRgcN3C8M
+         eUKLvUU3f/i/s50OaG9BGrHVxsYcZ41q1RpgqGeeYTs8r6O1HQFVRCBKmef5SrvLH1+H
+         w0nsBWTJvL8em6x+N1IO78Eu6QTuPlnpbvTIcOzV0o0uBXOOj3KD7rZnmFIKN0nV8Ifb
+         HiENKxiyFmItIzZnWKXDInTUkJ4uPm36xRm4ceeKdjrDun/r6Ii6Ir72dzQfEfMOzYv+
+         ENkXfTzI6DXv/OmjpknSAZC9eBJnptfYoGfIy/eXYIck7s2GjfbK7XccDuqrQV77uvJB
+         7bUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720560103; x=1721164903;
+        d=1e100.net; s=20230601; t=1720560104; x=1721164904;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=6p8+OUwz6P3bJPyRQdZ3BvD+pGPe37Xw3SqFN/IyBjo=;
-        b=e4PQcN0dqLYWFx2HLVAo9bo9LfLrLAXCMhQoCdtI8NkmkB9i9/KW1NjQiuv/mJ9jym
-         BjB6BLJR9SOwuyX3Yu35aqdOUZXTQXsgCoivfxTbKRhe9BBPgU7ZfURVEldC+ycjvlb2
-         HXoLkKQR52bC7wFvHEDELFcZAoZZVhQ3QszUO0Q9BA9KV3zrg9eeuqmgvuJMqZTGoFXS
-         6g37SOEd1izvsjccqew0V60Abzwjmu0nAVA3Vuc9yV1xv3wZHVi/LEsKXwMnTw+onoZ9
-         2zv+e2VLEAkHG2Gu2WGPokmjFJwyq9dzPWp3kkKnbdSceMi+2w5pyP6q2Tz9gN8tei18
-         frVQ==
-X-Gm-Message-State: AOJu0YxP6dxBt05jaclvUHayrp43N4RIMNL9aDWOacATLtBSD8PlXwVZ
-	OU0n+2qqZ6PI4rBbQy7jsLA8VLOgv19C1NTgI5nnKxE/m1S8zgKk
-X-Google-Smtp-Source: AGHT+IHmS38Jx3lgdcwpDEtkchRrYteHZrn8U0487NXcKkwsQNHItnHBjF/k9gE5ZWhryH84Qdzorw==
-X-Received: by 2002:a05:6a20:734b:b0:1be:caf6:66e5 with SMTP id adf61e73a8af0-1c29820d407mr4183360637.6.1720560102710;
-        Tue, 09 Jul 2024 14:21:42 -0700 (PDT)
+        bh=UHZt8zYirHGzB6KZVQgqYt3EBA1b2bsAuxlpnVayEx4=;
+        b=jS4691nOURfSnYahivdGq5fY7CV/m7/2lP6H8gZ0t1rKWlXdBZq5kwQOph/NghNJQD
+         iDWZCyCFvNIsQc5iM+DmlWc2fQgPBPdUSrQiCQrHUDK7oiz4YVUNT0aU/VFoxSVrnEG7
+         rELdixvfxe6rX9H1U9EioU0YMnoYVO8V/gPUTzO2pDJYIDCBYquyxQPrtfh/XZ3H62rW
+         ynCwutSyl4GMRjPttHOj67aB9SGdRMFNwq82RM+aWH/PPQaBZBjFL5qn6pc5EVenCHSx
+         aXzt92kZD3rl/lNsgje6GhL7Vhep82A8AMfjYV8dmNsGtwmxxmUWR8+B9NordvHw5Lre
+         FakQ==
+X-Gm-Message-State: AOJu0YxRrvHPzROnyB7Ycu5rmaMNsMnsk+m8svD5FRfvvJ/+7cR7au2J
+	12LCzyqfaXdJtHnrwHZpOWbJQwglMbuadY9btCK37PacAz/mH4oQ
+X-Google-Smtp-Source: AGHT+IEYvv130Yw62y+e4aZLEIST69k5sYUpXo5do/ZWvPb4jNsdqLrUepzgthgoBdctn+DcmrFiFg==
+X-Received: by 2002:a05:6a20:8402:b0:1bd:25a6:842f with SMTP id adf61e73a8af0-1c2984c8784mr4246981637.41.1720560104394;
+        Tue, 09 Jul 2024 14:21:44 -0700 (PDT)
 Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b438c6217sm2305763b3a.48.2024.07.09.14.21.42
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ac0fdcsm20483595ad.206.2024.07.09.14.21.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 14:21:42 -0700 (PDT)
+        Tue, 09 Jul 2024 14:21:44 -0700 (PDT)
 Sender: Tejun Heo <htejun@gmail.com>
 From: Tejun Heo <tj@kernel.org>
 To: void@manifault.com
@@ -76,9 +76,9 @@ Cc: linux-kernel@vger.kernel.org,
 	changwoo@igalia.com,
 	righi.andrea@gmail.com,
 	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 1/6] sched: Move struct balance_callback definition upward
-Date: Tue,  9 Jul 2024 11:21:07 -1000
-Message-ID: <20240709212137.1199269-2-tj@kernel.org>
+Subject: [PATCH 2/6] sched_ext: Open-code task_linked_on_dsq()
+Date: Tue,  9 Jul 2024 11:21:08 -1000
+Message-ID: <20240709212137.1199269-3-tj@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240709212137.1199269-1-tj@kernel.org>
 References: <20240709212137.1199269-1-tj@kernel.org>
@@ -90,48 +90,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move struct balance_callback definition upward so that it's visible to
-class-specific rq struct definitions. This will be used to embed a struct
-balance_callback in struct scx_rq.
-
-No functional changes.
+task_linked_on_dsq() exists as a helper becauase it used to test both the
+rbtree and list nodes. It now only tests the list node and the list node
+will soon be used for something else too. The helper doesn't improve
+anything materially and the naming will become confusing. Open-code the list
+node testing and remove task_linked_on_dsq()
 
 Signed-off-by: Tejun Heo <tj@kernel.org>
 Cc: David Vernet <void@manifault.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
 ---
- kernel/sched/sched.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ kernel/sched/ext.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 04184e87ba7c..86314a17f1c7 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -615,6 +615,11 @@ do {									\
- # define u64_u32_load(var)		u64_u32_load_copy(var, var##_copy)
- # define u64_u32_store(var, val)	u64_u32_store_copy(var, var##_copy, val)
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index f16d72d72635..52340ac8038f 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -1572,18 +1572,13 @@ static void task_unlink_from_dsq(struct task_struct *p,
+ 	list_del_init(&p->scx.dsq_list.node);
+ }
  
-+struct balance_callback {
-+	struct balance_callback *next;
-+	void (*func)(struct rq *rq);
-+};
-+
- /* CFS-related fields in a runqueue */
- struct cfs_rq {
- 	struct load_weight	load;
-@@ -1054,11 +1059,6 @@ struct uclamp_rq {
- DECLARE_STATIC_KEY_FALSE(sched_uclamp_used);
- #endif /* CONFIG_UCLAMP_TASK */
- 
--struct balance_callback {
--	struct balance_callback *next;
--	void (*func)(struct rq *rq);
--};
+-static bool task_linked_on_dsq(struct task_struct *p)
+-{
+-	return !list_empty(&p->scx.dsq_list.node);
+-}
 -
- /*
-  * This is the main, per-CPU runqueue data structure.
-  *
+ static void dispatch_dequeue(struct rq *rq, struct task_struct *p)
+ {
+ 	struct scx_dispatch_q *dsq = p->scx.dsq;
+ 	bool is_local = dsq == &rq->scx.local_dsq;
+ 
+ 	if (!dsq) {
+-		WARN_ON_ONCE(task_linked_on_dsq(p));
++		WARN_ON_ONCE(!list_empty(&p->scx.dsq_list.node));
+ 		/*
+ 		 * When dispatching directly from the BPF scheduler to a local
+ 		 * DSQ, the task isn't associated with any DSQ but
+@@ -1604,7 +1599,7 @@ static void dispatch_dequeue(struct rq *rq, struct task_struct *p)
+ 	*/
+ 	if (p->scx.holding_cpu < 0) {
+ 		/* @p must still be on @dsq, dequeue */
+-		WARN_ON_ONCE(!task_linked_on_dsq(p));
++		WARN_ON_ONCE(list_empty(&p->scx.dsq_list.node));
+ 		task_unlink_from_dsq(p, dsq);
+ 		dsq_mod_nr(dsq, -1);
+ 	} else {
+@@ -1614,7 +1609,7 @@ static void dispatch_dequeue(struct rq *rq, struct task_struct *p)
+ 		 * holding_cpu which tells dispatch_to_local_dsq() that it lost
+ 		 * the race.
+ 		 */
+-		WARN_ON_ONCE(task_linked_on_dsq(p));
++		WARN_ON_ONCE(!list_empty(&p->scx.dsq_list.node));
+ 		p->scx.holding_cpu = -1;
+ 	}
+ 	p->scx.dsq = NULL;
 -- 
 2.45.2
 
