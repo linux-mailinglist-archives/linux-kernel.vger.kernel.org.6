@@ -1,71 +1,90 @@
-Return-Path: <linux-kernel+bounces-245759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E1F92B8C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:51:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D4D292B8DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D81311C231EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:51:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E8D91C23232
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFB11534E4;
-	Tue,  9 Jul 2024 11:51:10 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873DF139563
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 11:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD82315884F;
+	Tue,  9 Jul 2024 11:53:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519C814EC71
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 11:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720525870; cv=none; b=ssZmrctkfhnGZptQh7YqMJeIMqDJOKqXdxXD6ieenYTQY0N/r6eA/hY0/38KzqAbOQDAllvjfSVLxa9/472TcY+xllolfvIp5HWug5G/sh4E6fDLv1ROatZPl5THkbTYC78carWZLWSBTEXd8NaEZCuJkN4EO23rNvR7TYSQv1M=
+	t=1720526035; cv=none; b=bbg3GxSGjJgzD59Q7Yiu8Zn+8NoaGtfPyN3L0a+PnRdbxByW9GZsdZk/SmY+jqy5HlWz/sV7IVBcGMdKY8wDrbFcVt86wc2K7/syA0IBUXG2nyXP2FH9syzBrjDyWIumcFtto5P2lNKu2/9XkFcGsRYl4GCcw6j0W+v79LP8CyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720525870; c=relaxed/simple;
-	bh=9J7/VvorApxZyEwc6503bE/xVbF4fVh6GpJw6bgEdEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HJrs0JXqXDVIK+ZsKTmur7TLf26KRq3dvfPjhbMdvpG/TkNAzl446fJ2QAc/IUFGy97biMMgbz49Bq7Dm/JWxK/aWRuWGhwEosLodJWVHn3XVxJ+W6UzufFQpCFloY1C7V0I+EzpZqS/S8MHDZLH4EqscxVtVTuPPdCqmdjXLrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id C293268BEB; Tue,  9 Jul 2024 13:51:03 +0200 (CEST)
-Date: Tue, 9 Jul 2024 13:51:03 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: Christoph Hellwig <hch@lst.de>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"will@kernel.org" <will@kernel.org>,
-	"jgross@suse.com" <jgross@suse.com>,
-	"sstabellini@kernel.org" <sstabellini@kernel.org>,
-	"oleksandr_tyshchenko@epam.com" <oleksandr_tyshchenko@epam.com>,
-	"m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-	"petr@tesarici.cz" <petr@tesarici.cz>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
-Subject: Re: [PATCH v3 1/1] swiotlb: Reduce swiotlb pool lookups
-Message-ID: <20240709115103.GA7662@lst.de>
-References: <20240708194100.1531-1-mhklinux@outlook.com> <20240709062555.GB16797@lst.de> <SN6PR02MB41571D61C2DE0D914D8B0923D4DB2@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1720526035; c=relaxed/simple;
+	bh=P1PAnlgaEusVCR67f/r6Ul7rj+Tvw+6FgY27sUFbFqw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AL/vJItgWdbaePi7N92A/EBgLyOvvI0IZXjsej8n0PfLsisM2LBEKXGbZjj1KDzXIHK0D+DqO0Ba6aXRJpqZmVnW+DlnrjOCu5nKGzIrSxh4XrL9lMa5xw8ImqEDhEXcgfXfpz8plfHvLUJ4Q/QXOgQiVGW3xLffbAYk8yTMx38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CDCA9153B;
+	Tue,  9 Jul 2024 04:54:17 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A9C843F762;
+	Tue,  9 Jul 2024 04:53:51 -0700 (PDT)
+Message-ID: <55b3b816-23f5-40ae-a1fb-5820cb8de0de@arm.com>
+Date: Tue, 9 Jul 2024 12:53:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB41571D61C2DE0D914D8B0923D4DB2@SN6PR02MB4157.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -fixes] dma-mapping: add default implementation to
+ arch_dma_{set|clear}_uncached
+To: Yangyu Chen <cyy@cyyself.name>
+Cc: iommu@lists.linux.dev,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Christoph Hellwig <hch@lst.de>
+References: <tencent_A5ED71472ADCAF18F59085464CBE23C12A07@qq.com>
+ <20240709111901.GC4421@lst.de>
+ <tencent_651BC4D11C9730062064ACB186AF4A904005@qq.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <tencent_651BC4D11C9730062064ACB186AF4A904005@qq.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 09, 2024 at 11:48:08AM +0000, Michael Kelley wrote:
-> Your tweaks look fine to me. Evidently I misunderstood your
-> preference in our previous exchange about #ifdef vs. IS_ENABLED()
-> in swiotlb_find_pool(), and the effect on dma_uses_io_tlb.
+On 09/07/2024 12:39 pm, Yangyu Chen wrote:
+> 
+> 
+>> On Jul 9, 2024, at 19:19, Christoph Hellwig <hch@lst.de> wrote:
+>>
+>> On Tue, Jul 09, 2024 at 05:25:29PM +0800, Yangyu Chen wrote:
+>>> Currently, we have some code in kernel/dma/direct.c which references
+>>> arch_dma_set_uncached and arch_dma_clear_uncached. However, many
+>>> architectures do not provide these symbols, and the code currently
+>>> relies on compiler optimization to cut the unnecessary code. When the
+>>> compiler fails to optimize it, the code will reference the symbol and
+>>> cause a link error. I found this bug when developing some new extensions
+>>> for RISC-V on LLVM. The error message is shown below:
+>>
+>> Same comment as for the last one.  I think your compiler misbehaves,
+>> and the typical reason for that would be if you disable all
+>> optimizations.
+>>
+> 
+> The reason is that some optimizations failed to apply after adding
+> some passes. I will fix the compiler later. Whatever, we should not
+> rely on this optimization to get the code being successfully compiled.
 
-Actually I actively mislead you.  Yes, I prefer the IS_ENABLED, but
-I missed that it would require make the field available unconditionally,
-which is not worth the tradeoff.  Sorry for that.
+We rely on unreachable code being optimised out *all over* the place - 
+it's kind of the main point of constructs like IS_ENABLED(), and why the 
+kernel as a whole does not and will not support being compiled with -O0. 
+Frankly I'm quite surprised that this one would be the only case you hit 
+if your compiler is not doing that properly.
 
+Thanks,
+Robin.
 
