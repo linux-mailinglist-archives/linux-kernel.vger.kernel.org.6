@@ -1,139 +1,160 @@
-Return-Path: <linux-kernel+bounces-245650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6049B92B57B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:38:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7BC092B57A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76ED41C22EC6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:38:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81B652851BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE445156968;
-	Tue,  9 Jul 2024 10:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="SJtfNySh"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34052E62D
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABF115746B;
+	Tue,  9 Jul 2024 10:38:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C86156883;
+	Tue,  9 Jul 2024 10:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720521497; cv=none; b=WNfL/z1Mo5BLssShI9R6Krxco0meMODfk3zGSYdW8ngmaLR0zKFRdSTaAffnxXDPoFUW+yTKL1tpXFq7Zw7+IMoPRsBmq43BDm+8Rzn2pB2ZVOMeJ4btj9pNMnRPAcsn8vVp83uXCJ2Ud0d1IX6kf5ygPvrksHF7d59hD76YyI8=
+	t=1720521490; cv=none; b=YzroQ5znugVQaorXbsP4vMlvhMyVY5dwuWgLJa6gA7nziDoZxsOZ6OHrmgTfmnpLciBdtQgJNJwxRRTM7isDN+0GtiADI5+Lyi9Q0xleg/RA0OW1m6a8Tj0t6vVnCyhNzbFZdlh+7MOLRZtSzGPjc/j51uB9qnnjdFcln2oc874=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720521497; c=relaxed/simple;
-	bh=hb7ypSaWD0r0znVQHRKLVtNi37VawD10KbVQbJWnXIc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QEB+I8qyX3HZow2pA1ZHx2NjYuDciyxNZh/OpPP2T43wBzrklzH59ltiCEZxCEdvZWwhCxyoNBO6AdHpm75+ItZwXkSF0PNojodv098Mg1t42N0iWHDdNGoG5j2zjxL7wwVnbMXcn4b159s+b+Z+9aA3ysV2WXF67XfOQLY94dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=SJtfNySh; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 66BD840E0185;
-	Tue,  9 Jul 2024 10:38:12 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id sWJM1MyZEvjd; Tue,  9 Jul 2024 10:38:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1720521489; bh=UNDneBSJbjM12Og34Gwp05M0THiPowrY/QmV7biK58s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SJtfNySho3hYEIIu6H7+fvYFIXi+HPu8gIsqf0FwJT3in4q0T0tDvedUq2iUhpMaI
-	 ovvXMyr1YLtqWCG0eAsz8O0nFKJ6bZFGsFB6dQS15MI+90hs6qNIhYfaPtCmqxrzkB
-	 7xhXJLm1mmNZcz/B16uWTqYT79HF8ckhphG3qB3kgdvivWaZzvIzFCZzKBaWWUFf9n
-	 CPt57VGRkU7wbYDyaLy3mfTuQASUoXZ6ZbZaMItJqX80zDa6dgzg5I+I7eAiYWuGhz
-	 PY27UMYXAyfhFs854RVWx/bwZBRSUYusmp+lHGtvGge78Jyvasnm8TuqtN55PZUiOe
-	 0tJ4WilE06a2KHUUHOE6pA8itQesg+xoJY055Mn8mmS9oMKF0VaQQ4ry5m7b/n2WwX
-	 GqV5SAmg4A+GJ09b1BKJ0EbbfAnRLqgYxdAGr7gJhrJ9eT5bs9iVInKsY9WJuaZwlu
-	 +TWcQOga0kkiS2NhbLU7tLls+LY0ADCQiJ24QOQADdmvcCSNp5hlTckae/HlbDnrbd
-	 c3wTu6S/A8wvWX18vTxJAsvHt1zCGF7pC+AhGeDVd0xdbG2YxHU5tPEIICNqKFhBbY
-	 knVncfPIa56EjWMBEbulhv0i9riM96U0qJDDp1mBPJJQKpAP+qF05cnbbDPHsevgF2
-	 1dREayApYAZZpWikqZFVsHGo=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 159FC40E0192;
-	Tue,  9 Jul 2024 10:37:43 +0000 (UTC)
-Date: Tue, 9 Jul 2024 12:37:42 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Steve Wahl <steve.wahl@hpe.com>, Ashish Kalra <ashish.kalra@amd.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	Pavin Joseph <me@pavinjoseph.com>,
-	Eric Hagberg <ehagberg@gmail.com>,
-	Simon Horman <horms@verge.net.au>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Dave Young <dyoung@redhat.com>, Sarah Brofeldt <srhb@dbc.dk>,
-	Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
-	Hou Wenlong <houwenlong.hwl@antgroup.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Yuntao Wang <ytcoode@gmail.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <jroedel@suse.de>,
-	Michael Roth <michael.roth@amd.com>
-Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
-Message-ID: <20240709103742.GCZo0S9md7YyeevRN-@fat_crate.local>
-References: <ZowI9w7huVfcKJ7I@swahl-home.5wahls.com>
- <20240708181133.GHZowr1eznPqgvdtRw@fat_crate.local>
- <CAMj1kXG8hZ86BFbar9S5mmvKMH4a0XF0oCm36WwZxYNqc0+pjQ@mail.gmail.com>
- <20240708190724.GIZow47G0J8vO6J3ee@fat_crate.local>
- <Zow-AXsLHjU6gfET@swahl-home.5wahls.com>
- <20240708195810.GKZoxE0pRWHEUljjnQ@fat_crate.local>
- <ZoxOt1_w7nblRQCv@swahl-home.5wahls.com>
- <CAMj1kXGA8zG95WutMgVgeb-M7oQKJrVO6QWNzLi1GMuj1wq=bg@mail.gmail.com>
- <ZoxX9mckeu046zed@swahl-home.5wahls.com>
- <CAMj1kXE5OYTxxBEO38dRyYt_J1FNpU-tdkaU8rxvrMLd_k_beg@mail.gmail.com>
+	s=arc-20240116; t=1720521490; c=relaxed/simple;
+	bh=B9MLiWwhvjIVDmzpViCggJ8PFLNRpRaLQkP3nygbQXc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B76qVpN2lriruAVeb6P9zfAAJPDI5aM/4tn75EyK3Y/qNSVw16lOHzllA6hrOuRcuyWoxYPq8PVEBxf067hoaunTswSDWhajcp2qJ3pSCSuO4I7PCzN2rKGOmD13BeIMjjt0XzmR0C69kyNPs9bj5NaMxW/M8KtkbaFvoZuRR7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 246AF153B;
+	Tue,  9 Jul 2024 03:38:33 -0700 (PDT)
+Received: from [10.57.74.191] (unknown [10.57.74.191])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 839A23F762;
+	Tue,  9 Jul 2024 03:38:04 -0700 (PDT)
+Message-ID: <97bb37b0-d700-440e-bc21-f4fa338ee9f9@arm.com>
+Date: Tue, 9 Jul 2024 11:38:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXE5OYTxxBEO38dRyYt_J1FNpU-tdkaU8rxvrMLd_k_beg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] dt-bindings: arm:
+ qcom,coresight-static-replicator: Add property for source filtering
+Content-Language: en-GB
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Tao Zhang <quic_taozha@quicinc.com>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Mike Leach <mike.leach@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ James Clark <james.clark@arm.com>
+Cc: Jinlong Mao <quic_jinlmao@quicinc.com>, Leo Yan <leo.yan@linaro.org>,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Tingwei Zhang <quic_tingweiz@quicinc.com>,
+ Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+ Trilok Soni <quic_tsoni@quicinc.com>, Song Chai <quic_songchai@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, Jie Gan <quic_jiegan@quicinc.com>
+References: <20240705085152.9063-1-quic_taozha@quicinc.com>
+ <20240705085152.9063-2-quic_taozha@quicinc.com>
+ <907ec6a8-da8b-4b9a-aac0-c650bab04905@linaro.org>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <907ec6a8-da8b-4b9a-aac0-c650bab04905@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 09, 2024 at 08:49:43AM +0200, Ard Biesheuvel wrote:
-> > Patch #2 adds the CC blob to the identity map as well, if present,
-> > since if present it is also dereferenced before the page fault handler
-> > can be put into place.  Given what's been discussed, this patch might
-> > not be necessary; I don't know enough to say whether kexec-ing a new
-> > kernel within a SEV guest makes sense.  I'm pretty certain it can
-> > cause no harm, though.
 
-No, keep it in the bag until it is really needed. No proactive "fixing".
 
-> I'd prefer it if that is addressed within the context of the SEV guest
-> work. The memory setup is quite intricate, and dealing with individual
-> types of EFI config tables is something we should avoid in general. I
-> still maintain that the best approach would be to map all of DRAM 1:1
-> instead of mapping patches left and right (as this is what EFI does),
-> but if we need to do so, let's keep it as generic as we possibly can.
+minor nit: Subject: 
+s/qcom,coresight-static-replicator/arm,coresight-static-replicator ? 
+There is no "qcom,coresight-static-replicator" compatible.
 
-Sure. There's the kink that coco guests need to accept memory first and
-mapping it all is the least performant one. But we can deal with that later.
+On 05/07/2024 10:02, Krzysztof Kozlowski wrote:
 
-> I wasn't cc'ed on any of the patches so I don't know exactly what was
-> discussed.
+> On 05/07/2024 10:51, Tao Zhang wrote:
+>> Add a new property "filter_src" to label the source corresponding
+>> to the output connection for a static replicator. By combining
+>> a funnel and a static replicator in devicetree, a new device that
+>> supports multi-port input and multi-port output is implemented.
+>> In order to match the output port with the input port and
+>> successfully build the trace path, add this new property to
+>> indicate the data source corresponding to this output port.
+>>
+>> Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
+>> ---
+>>   .../arm/arm,coresight-static-replicator.yaml   | 18 +++++++++++++++++-
+>>   1 file changed, 17 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
+>> index 1892a091ac35..d9538563f9c6 100644
+>> --- a/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
+>> @@ -45,7 +45,21 @@ properties:
+>>       patternProperties:
+>>         '^port@[01]$':
+>>           description: Output connections to CoreSight Trace bus
+>> -        $ref: /schemas/graph.yaml#/properties/port
+>> +        $ref: /schemas/graph.yaml#/$defs/port-base
+>> +
+>> +        properties:
+>> +          endpoint:
+>> +            $ref: /schemas/media/video-interfaces.yaml#
 > 
-> Please cc me and linux-efi@ on your next revision.
+> Ehm? How is this video interface?
+> 
+>> +
+>> +            properties:
+>> +              filter_src:
+> 
+> There are no properties with underscores...
+> 
+>> +                $ref: /schemas/types.yaml#/definitions/phandle
+>> +                description:
+>> +                  defines a phandle reference to an associated CoreSight trace device.
+>> +                  When the associated trace device is enabled, then the respective
+>> +                  trace path will be built and enabled.
+> 
+> How does it differ from remote endpoint? What is "respective trace path"?
 
-And please update your commit messages with what was discussed on this thread.
+Apparently, there is some "magic" hard coded filtering in the
+replicators, which only passes through trace from a particular "source"
+device. The documentation above doesn't explain this clearly.
 
-Thx.
+it could be:
 
--- 
-Regards/Gruss,
-    Boris.
+"phandle to the coresight trace source device matching the hard coded
+filtering for this port"
 
-https://people.kernel.org/tglx/notes-about-netiquette
+This could be different from the "remote endpoint" as there could be
+intermediate components between the phandle "source" and the port.
+
+
+Suzuki
+
+
+
+> 
+> <form letter>
+> Please use scripts/get_maintainers.pl to get a list of necessary people
+> and lists to CC (and consider --no-git-fallback argument). It might
+> happen, that command when run on an older kernel, gives you outdated
+> entries. Therefore please be sure you base your patches on recent Linux
+> kernel.
+> 
+> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+> people, so fix your workflow. Tools might also fail if you work on some
+> ancient tree (don't, instead use mainline) or work on fork of kernel
+> (don't, instead use mainline). Just use b4 and everything should be
+> fine, although remember about `b4 prep --auto-to-cc` if you added new
+> patches to the patchset.
+> </form letter>
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
+
 
