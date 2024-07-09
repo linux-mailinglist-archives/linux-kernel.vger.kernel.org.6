@@ -1,147 +1,179 @@
-Return-Path: <linux-kernel+bounces-246677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AAC392C51E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:05:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE73D92C51F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FC7FB2132D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:05:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4800282826
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F4118562B;
-	Tue,  9 Jul 2024 21:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449E0185607;
+	Tue,  9 Jul 2024 21:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="omruXFHX"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lWiYrgEs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D591813B7BE
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 21:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C97180046
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 21:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720559091; cv=none; b=lH1g3hQvpRlHqXHjzTRBDjVb9p8yEeGTm0hfjUTLPk1KRskVymwhcaWB/QEjdAo8qIosQY3qaTnxqH/v+QOQTIYJIjsJ312N+R4dWK6MXq7dUlUXv1Upkxvg+XhGu7fZ7q78U/yJEwna7K3wmgbvduuFfcm3m4unZgven8v6n8g=
+	t=1720559100; cv=none; b=TlU1TwDW9WQuvdD9Kw+wvy214gIzkUkh4eLnBH/pBZu/+kdQgSWLqTcwkseyETHyatySHhwhnLbLqtKZ5D5sfebNNUufZ1fVXDsKnLHLTdWsHY0mQWjvxZKmK3jK6D1ZVgRHfCJQF6uuYb8SEw/x8tgPyczhgqoR2GSiFhOVtXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720559091; c=relaxed/simple;
-	bh=pQuWpDrDEaCFl7ELhP2pM9jtryDd25mq43Dk6pVulGw=;
+	s=arc-20240116; t=1720559100; c=relaxed/simple;
+	bh=oKW7jVLQw1Mx3QcWZjh8kQiqVbV3Wyz4nG0qMVcpG2s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=frh2G7S5WG698vSDqN8MSJS8SXibDBWkMfnlLDMPPC7Mc6HVVGYaP064sWOu95adl22ZHNXIXNDSefyZ82OdxYPaRRWBsOk+gJmTr2bNli/EJWb5Dg3OCYSSY4UaIR0bba+Hrqy6n73nZY87TdB7Ms+GxnG9keJ9ClFwrGzH7n0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=omruXFHX; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fb10519ae3so19755ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 14:04:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720559089; x=1721163889; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yOZEUf/J6siPzygu395P3D/gjZTzmsga/ioXaj0U6JM=;
-        b=omruXFHXUBjKOYPm3rt8AQhwbj75vzdL377WHBGIif0PTZs4fLUSGT9AlbUjRc8Chu
-         2SNI9PSWAj93mB3WljCJjgcFvfw+Mh2AouEa3bh46rpERpP4JiRBqVD3ANcN5amxlTys
-         jGsRCrf21Ggnda7ziRQK6mUUcZ3eeR0sMalKZRJppAiR9MwVC8nOvCAjJS0xO07ngMd5
-         czA3bSveOHOWU35domkKi70Qslp4/29Qo1wntovCrGdT0ImkE0v/XMBRP8/nJ5dAHYDv
-         y8qVin6pN25B0tN3cmpyWy9lEPsqND+ovCg1O5MUvVpigSLAJzgtpP5QLGnj7Mlz3tN8
-         p0FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720559089; x=1721163889;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yOZEUf/J6siPzygu395P3D/gjZTzmsga/ioXaj0U6JM=;
-        b=WNq0zHpkxzMGMJ/wXU59APONZj7CtIL+78KxqOrnlzNcSEU6x1or0V7ogYx3Oc6OnK
-         pbLuKQVGBozgVqOiOiut5KP77y9SaLuNkjGhFIrZjxGPWeGzg17mEG5/PBpF6r9FKl60
-         MtgkL4/q0UbrNx3c3fIEK6n5T6v4LLWRDVKchgDnxR3CJVQVJPav6ZO2vwGjUU4srZ3N
-         tvHYQrualL6syZZa68alKzb/a+RtqqRZJSFv2+/XRdS571KQDl1fR5VtgYI56zMkzuU3
-         NN3U5i4LUH5N0cf7zgdZCcXbSl7OJZhhU2CCspMdbCTWuXK9D1COUhGWxtZWQVzX7722
-         xuOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUoCc/iwj7AbhSVUHiX5gFUEVb6Kivk060E+K9cCAk5Zl8cEPRJ8ofDIhHV3DHD1BlKxslJoT1in4rDORGruSkbodCWoNIiC6+1HYv
-X-Gm-Message-State: AOJu0Yy0TuUiJySlmiYUQEQGxOJy8PhShyKgWvYRTp99eXUU6ayJspLq
-	GSj9LvdjSFH7wO3B0SfvNVqaE50Hw+hna5NXzL+zThBqliXqgyHRuMV+7WZkLw==
-X-Google-Smtp-Source: AGHT+IGZUitn76mfCM9EnzN6heABLFA1iE9kZnxKb2TuoqafSIshuqFsZaMjvSrHhwGNWXnqfTBkog==
-X-Received: by 2002:a17:903:2003:b0:1f7:34e4:ebc1 with SMTP id d9443c01a7336-1fbce1391d4mr234535ad.5.1720559088778;
-        Tue, 09 Jul 2024 14:04:48 -0700 (PDT)
-Received: from google.com ([2620:15c:2d:3:e5ff:5d06:df02:cdba])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a122cfsm21086945ad.5.2024.07.09.14.04.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 14:04:48 -0700 (PDT)
-Date: Tue, 9 Jul 2024 14:04:43 -0700
-From: Isaac Manjarres <isaacmanjarres@google.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: tglx@linutronix.de, jstultz@google.com,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	saravanak@google.com, mjguzik@gmail.com,
-	Manish Varma <varmam@google.com>,
-	Kelly Rossmoyer <krossmo@google.com>, kernel-team@android.com,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6] fs: Improve eventpoll logging to stop indicting
- timerfd
-Message-ID: <Zo2l65cTwuSMDU-Z@google.com>
-References: <20240703214315.454407-1-isaacmanjarres@google.com>
- <20240704-umsatz-drollig-38db6b84da7b@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IsN0maN4Vq6L4wxzL/8WE9GUSRo+6j62vV2hduYRw0RpCxOtMO5SBRF2Z76h8UKW6N/Fz5pmqekekV4ZcAKHkYJSe9Cx4IXOUsWR6H6txIdnoJsG8uWdC1qjykW++nU5u3U9KxuNQuHjA7CJcVaVW6oLGTEWjTByD/41ZjqJdq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lWiYrgEs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19620C3277B;
+	Tue,  9 Jul 2024 21:04:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720559100;
+	bh=oKW7jVLQw1Mx3QcWZjh8kQiqVbV3Wyz4nG0qMVcpG2s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lWiYrgEscpQ/B3iJKc+gf31dfy+NhJlE2m4kBlHXVCu+AaWT/oQq7sDGqWf0wyqd4
+	 7uWNGpufMG/yRORpvf6jaXZ8o5tu4J0wXdxjN9rTz5OBlLrAxfMpDxHf2BGgobqsXg
+	 2pDJM7AnqbDA/iEp7hz2g4Pz0axMG8bCMgbqC0MOGF/bm4xTt6nK90VkOY8epPwU7I
+	 WD+f0VmgIDKeTbtJQ4tI/co+OMsbQ3Sn3x1boWQrmBA1Zv9kdHc10JMbqGqXu0Lx0C
+	 Sy3KZBI10/F0HDDUhDN7AOc7HQKPKliMmPjdwQaYSkaFR/Daeg54tNEHCRuyM/CCk0
+	 SvfEgBKT8dN3w==
+Date: Tue, 9 Jul 2024 22:04:55 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Xiao Wang <xiao.w.wang@intel.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, atishp@atishpatra.org,
+	anup@brainfault.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers/perf: riscv: Remove redundant macro check
+Message-ID: <20240709-fame-uptown-c936014cd66a@spud>
+References: <20240708121224.1148154-1-xiao.w.wang@intel.com>
+ <20240708-wildcard-denim-12de7fae795b@spud>
+ <Zo2dtuv0quQ7FwtK@ghost>
+ <20240709-unengaged-handgrip-56a5c7b3e1d1@spud>
+ <Zo2kSxsJkdkBdBEW@ghost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="aWsjKJVk6Ifn6ykO"
+Content-Disposition: inline
+In-Reply-To: <Zo2kSxsJkdkBdBEW@ghost>
+
+
+--aWsjKJVk6Ifn6ykO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240704-umsatz-drollig-38db6b84da7b@brauner>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 04, 2024 at 04:03:59PM +0200, Christian Brauner wrote:
-> On Wed, Jul 03, 2024 at 02:43:14PM GMT, Isaac J. Manjarres wrote:
-> > From: Manish Varma <varmam@google.com>
-> > 
-> > We'll often see aborted suspend operations that look like:
-> > 
-> >  PM: suspend entry 2024-07-03 15:55:15.372419634 UTC
-> >  PM: PM: Pending Wakeup Sources: [timerfd]
-> >  Abort: Pending Wakeup Sources: [timerfd]
-> >  PM: suspend exit 2024-07-03 15:55:15.445281857 UTC
-> > 
-> > From this, it seems a timerfd caused the abort, but that can be
-> > confusing, as timerfds don't create wakeup sources. However,
-> > eventpoll can, and when it does, it names them after the underlying
-> > file descriptor. Unfortunately, all the file descriptors are called
-> > "[timerfd]", and a system may have many timerfds, so this isn't very
-> > useful to debug what's going on to cause the suspend to abort.
-> > 
-> > To improve this, change the way eventpoll wakeup sources are named:
-> > 
-> > 1) The top-level per-process eventpoll wakeup source is now named
-> > "epollN:P" (instead of just "eventpoll"), where N is a unique ID token,
-> > and P is the PID of the creating process.
-> > 
-> > 2) Individual eventpoll item wakeup sources are now named
-> > "epollitemN:P.F", where N is a unique ID token, P is PID of the creating
-> > process, and F is the name of the underlying file descriptor.
-> 
-> Fyi, that PID is meaningless or even actively misleading in the face of
-> pid namespaces. And since such wakeups seem to be registered in sysfs
-> globally they are visible to all containers. That means a container will
-> now see some timerfd wakeup source with a PID that might just accidently
-> correspond to a process inside the container. Which in turn also means
-Thanks for your feedback on this, Christian. With regards to this
-scenario: would it be useful to use a namespace ID, along with the PID,
-to uniquely identify the process? If not, do you have a suggestion for
-this?
+On Tue, Jul 09, 2024 at 01:57:47PM -0700, Charlie Jenkins wrote:
+> On Tue, Jul 09, 2024 at 09:44:17PM +0100, Conor Dooley wrote:
+> > On Tue, Jul 09, 2024 at 01:29:42PM -0700, Charlie Jenkins wrote:
+> > > On Mon, Jul 08, 2024 at 01:22:11PM +0100, Conor Dooley wrote:
+> > > > On Mon, Jul 08, 2024 at 08:12:24PM +0800, Xiao Wang wrote:
+> > > > > The macro CONFIG_RISCV_PMU must have been defined when riscv_pmu.=
+c gets
+> > > > > compiled, so this patch removes the redundant check.
+> > > >=20
+> > > > Did you investigate why this define was added? Why do you think tha=
+t it
+> > > > is redundant, rather than checking the incorrect config option?
+> > >=20
+> > > This file is only compiled with CONFIG_RISCV_PMU:
+> >=20
+> > I might be ill, but I can still read. I was not disagreeing with Xiao
+> > that the condition is redundant as written - I want to know whether they
+> > made sure that this check was intentionally using CONFIG_RISCV_PMU in t=
+he
+> > first place, or if another option should have been here instead.
+>=20
+> Makes sense! Looking through the lists I see this RFC from Atish where
+> he introduced a different config option for this
+> "CONFIG_RISCV_PMU_COMMON"[1]. I wonder if something got confused in the
+> development of these two patches.
 
-I understand that the proposed naming scheme has a chance of causing
-collisions, however, it is still an improvement over the existing
-naming scheme in terms of being able to attribute wakeups to a
-particular application.
+Perhaps.. What I was worried about was the wrong option being here
+(maybe that it should have been RISCV_PMU_SBI or similar) and depending
+on how the kernel is configured, userspace would get the wrong info
+here. But maybe it is innocuous your theory would suggest, and there's
+nothing to worry about. But that's for someone with a functioning brain
+to figure out ;)
 
-> you're leaking the info about the creating process into the container.
-> IOW, if PID 1 ends up registering some wakeup source the container gets
-> to know about it.
-Is there a general security concern about this? If not, can you please
-elaborate why this is a problem?
+Cheers,
+Conor.
 
-Thanks,
-Isaac
+>=20
+> Link:
+> https://lore.kernel.org/lkml/20240217005738.3744121-12-atishp@rivosinc.co=
+m/
+> [1]
+>=20
+> > > # drivers/perf/Makefile
+> > > obj-$(CONFIG_RISCV_PMU) +=3D riscv_pmu.o
+> > >=20
+> > > So having this check does seem redundant. I am copying Alex as it loo=
+ks
+> > > like he wrote this.
+> > >=20
+> > > > >=20
+> > > > > Signed-off-by: Xiao Wang <xiao.w.wang@intel.com>
+> > > > > ---
+> > > > >  drivers/perf/riscv_pmu.c | 2 --
+> > > > >  1 file changed, 2 deletions(-)
+> > > > >=20
+> > > > > diff --git a/drivers/perf/riscv_pmu.c b/drivers/perf/riscv_pmu.c
+> > > > > index 0a02e85a8951..7644147d50b4 100644
+> > > > > --- a/drivers/perf/riscv_pmu.c
+> > > > > +++ b/drivers/perf/riscv_pmu.c
+> > > > > @@ -39,7 +39,6 @@ void arch_perf_update_userpage(struct perf_even=
+t *event,
+> > > > >  	userpg->cap_user_time_short =3D 0;
+> > > > >  	userpg->cap_user_rdpmc =3D riscv_perf_user_access(event);
+> > > > > =20
+> > > > > -#ifdef CONFIG_RISCV_PMU
+> > > > >  	/*
+> > > > >  	 * The counters are 64-bit but the priv spec doesn't mandate al=
+l the
+> > > > >  	 * bits to be implemented: that's why, counter width can vary b=
+ased on
+> > > > > @@ -47,7 +46,6 @@ void arch_perf_update_userpage(struct perf_even=
+t *event,
+> > > > >  	 */
+> > > > >  	if (userpg->cap_user_rdpmc)
+> > > > >  		userpg->pmc_width =3D to_riscv_pmu(event->pmu)->ctr_get_width(=
+event->hw.idx) + 1;
+> > > > > -#endif
+> > > > > =20
+> > > > >  	do {
+> > > > >  		rd =3D sched_clock_read_begin(&seq);
+> > > > > --=20
+> > > > > 2.25.1
+> > > > >=20
+> > > > >=20
+> > > > > _______________________________________________
+> > > > > linux-riscv mailing list
+> > > > > linux-riscv@lists.infradead.org
+> > > > > http://lists.infradead.org/mailman/listinfo/linux-riscv
+> > >=20
+>=20
+>=20
+
+--aWsjKJVk6Ifn6ykO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZo2l9wAKCRB4tDGHoIJi
+0gSWAP9oGcirJgLpENEcorthZsiWOHCqqBbqHc6wSFLTEchW2QD8DJ/ZX+McRfqK
+23R5kJYKiGo/e1DBdk8hkPKMMfcZEgM=
+=t8ej
+-----END PGP SIGNATURE-----
+
+--aWsjKJVk6Ifn6ykO--
 
