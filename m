@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-246182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA24D92BEA2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:41:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4EB292BEA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:42:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 838DE1F22BB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:41:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02ABD1C22022
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C383B19D893;
-	Tue,  9 Jul 2024 15:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8141719DF8B;
+	Tue,  9 Jul 2024 15:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=zytor.com header.i=@zytor.com header.b="B0v0cL+h"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="TKKM5aCs"
 Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1F319CD0C
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3777119D8A4
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720539693; cv=none; b=aAFTWwWL6e3Qp0vT98yB7pC7PkdDE/Q/so/oxYAtK+lbuEAn6ED4m+aVFsr8//r8ayeNf7mFDVAbat3DGJeuwXd6qH47wITi62iw9hY8wohl+8/iDF1Scwdi5Do39EQooPwZLj2LyTKfGUS7fIQId2Y39TzsKePe76owqucEfxs=
+	t=1720539695; cv=none; b=hNXTdBi9WNZa6F53CPu3kiVh2I3zSqrLJK7F5lJ3JQq6/cD03wCe2sQrRzQpENGjUZZGkcvI+suqpNnDRh3ZudH2JiXlEt7+mep12swvuFmBcypdzdlp7Sw5NfTgMgVYRUbs20s5u47IepNmvZwPpdnjBqiEu3KggerKYYgvqi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720539693; c=relaxed/simple;
-	bh=i6iI5igdpfgHFwkessxPLUb0pQclZbrgDsIDnR26y3U=;
+	s=arc-20240116; t=1720539695; c=relaxed/simple;
+	bh=O8ek/YwTIjQFtI7v9g9Gq5ZPtEmuNrIJkMOoJPqId2E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RGyg6MsWpAaa6EfqvEf692Nbta5TTzZ8ogP3b5YSXRDN3npGDHmUkjxM89pOYJZpWCH7x43y0bgFKvZYWsv8BEpW6V/6twkKLE2hFe5Sq18vuJwss5M1aLzZlkZIH44h67ClQV406WFemEXSGKvwqDW9ySi4R7sUVZ92PUJPQkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=B0v0cL+h; arc=none smtp.client-ip=198.137.202.136
+	 MIME-Version; b=S3rprksukCXY9jzURbcSlB1lkJEAwhvsHQ4dvXrZiimT/Pjdz9y1Xvhps3zwOfn8wz7MgpaLGJS8dRkweEu78yIGcyg84MdAaJ08ftze2pZRqxkvQtAeJ9GoGzF9t4G+Gr1msEjCaQyx2FLPh3XF2N32154zajfi0SZdAwuzqDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=TKKM5aCs; arc=none smtp.client-ip=198.137.202.136
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
 	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 469FemH23543378
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 469FemH33543378
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Tue, 9 Jul 2024 08:41:01 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 469FemH23543378
+	Tue, 9 Jul 2024 08:41:02 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 469FemH33543378
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024061501; t=1720539662;
-	bh=Y3T6o5mCEOAL/OthkgfETflzFrViYS0KVTQMPve51XI=;
+	s=2024061501; t=1720539663;
+	bh=qfun97Jg+BIQEJ3LYgyV2vxqbqRdLnKMxvQ2b7HT42I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=B0v0cL+hvAQnD4zPUvLZ98YLKgNf1DZ8n2VRW+LfuqQRALzztYh+Jb8yfTZ90m9Wu
-	 b9VGGcGLNUzxM4zRMt0S0WPBouDNxR0TEEvSEf8BNSGiEK3kAlimAwCYb8QzF0ub94
-	 jJkLsQ8hubfHDNWeLrLF2pMyJ4MpOgIHzMRd2t2cZjnw+kr9w6/BEsCVj/rd7p0sKz
-	 B/i0avsNezrE87vQ6X23k8sB3bog+9nbsqzamQ5UgK+UvgEqG0AM0XRxmnQEvgLc1K
-	 U9+D97YeXzwOmW5l/S9t3vjOPatseA8+evQHDLcpeLJKoS8GB22ynUuFE9oYcg7dqV
-	 szWetbbgjpbyA==
+	b=TKKM5aCs0rovstLABu+Hh7Y4R9pFBlfuWr7lfH4ZYBDA8YESDYVjdPXO89ne0bMP6
+	 koyDpyIbjmDsYyHxOAJHJv886LbfK4QWcrnL7ezBSZ1QzbWrOxTlfd76mu1jzLvbsY
+	 C/qUIhdxjPjIjZA+pLqsv9c+eAc04xWY5V2GN/J1gNDLuIvzlpZq6Kx5N/DQaXAqDi
+	 sIGdlnBL5ZA5OF9d9slUqH6xqObxaMXsdyJCsnQlZj5YFEhwVqQcubn422zhWG9Osy
+	 gUk5G0UF5+oGgMndoAXAKbJBR9k6rRG/r9GuUn2foMnN2qlC92nkd/EEoxawJU9+r9
+	 gu3uUdHe21rGg==
 From: "Xin Li (Intel)" <xin@zytor.com>
 To: linux-kernel@vger.kernel.org
 Cc: hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
         dave.hansen@linux.intel.com, x86@kernel.org, peterz@infradead.org,
         andrew.cooper3@citrix.com, nik.borisov@suse.com,
         houwenlong.hwl@antgroup.com
-Subject: [PATCH v2 2/3] x86/fred: Split FRED RSP initialization into a separate function
-Date: Tue,  9 Jul 2024 08:40:47 -0700
-Message-ID: <20240709154048.3543361-3-xin@zytor.com>
+Subject: [PATCH v2 3/3] x86/fred: Enable FRED right after init_mem_mapping()
+Date: Tue,  9 Jul 2024 08:40:48 -0700
+Message-ID: <20240709154048.3543361-4-xin@zytor.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240709154048.3543361-1-xin@zytor.com>
 References: <20240709154048.3543361-1-xin@zytor.com>
@@ -66,100 +66,107 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-To enable FRED earlier, split FRED RSP initialization into a separate
-function, as they are initialized with memory from CPU entry areas,
-thus their initialization has to be kept after setup_cpu_entry_areas().
+Enable FRED right after init_mem_mapping() to avoid #PF handler,
+exc_page_fault(), fetching its faulting address from the stack
+before FRED is enabled.
 
-No functional change intended.
-
+Fixes: 14619d912b65 ("x86/fred: FRED entry/exit and dispatch code")
+Reported-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Xin Li (Intel) <xin@zytor.com>
 ---
- arch/x86/include/asm/fred.h  |  2 ++
- arch/x86/kernel/cpu/common.c |  6 ++++--
- arch/x86/kernel/fred.c       | 28 +++++++++++++++++++---------
- 3 files changed, 25 insertions(+), 11 deletions(-)
+ arch/x86/kernel/cpu/common.c |  6 +-----
+ arch/x86/kernel/setup.c      | 11 ++++++++++-
+ arch/x86/kernel/smpboot.c    |  6 ++++++
+ arch/x86/kernel/traps.c      |  4 ++++
+ 4 files changed, 21 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/include/asm/fred.h b/arch/x86/include/asm/fred.h
-index e86c7ba32435..66d7dbe2d314 100644
---- a/arch/x86/include/asm/fred.h
-+++ b/arch/x86/include/asm/fred.h
-@@ -84,11 +84,13 @@ static __always_inline void fred_entry_from_kvm(unsigned int type, unsigned int
- }
- 
- void cpu_init_fred_exceptions(void);
-+void cpu_init_fred_rsps(void);
- void fred_complete_exception_setup(void);
- 
- #else /* CONFIG_X86_FRED */
- static __always_inline unsigned long fred_event_data(struct pt_regs *regs) { return 0; }
- static inline void cpu_init_fred_exceptions(void) { }
-+static inline void cpu_init_fred_rsps(void) { }
- static inline void fred_complete_exception_setup(void) { }
- static __always_inline void fred_entry_from_kvm(unsigned int type, unsigned int vector) { }
- #endif /* CONFIG_X86_FRED */
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 10a5402d8297..6de12b3c1b04 100644
+index 6de12b3c1b04..42d4136ed6ac 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -2195,10 +2195,12 @@ void cpu_init_exception_handling(void)
+@@ -2195,12 +2195,8 @@ void cpu_init_exception_handling(void)
  	/* GHCB needs to be setup to handle #VC. */
  	setup_ghcb();
  
--	if (cpu_feature_enabled(X86_FEATURE_FRED))
-+	if (cpu_feature_enabled(X86_FEATURE_FRED)) {
- 		cpu_init_fred_exceptions();
--	else
-+		cpu_init_fred_rsps();
-+	} else {
+-	if (cpu_feature_enabled(X86_FEATURE_FRED)) {
+-		cpu_init_fred_exceptions();
+-		cpu_init_fred_rsps();
+-	} else {
++	if (!cpu_feature_enabled(X86_FEATURE_FRED))
  		load_current_idt();
-+	}
+-	}
  }
  
  /*
-diff --git a/arch/x86/kernel/fred.c b/arch/x86/kernel/fred.c
-index 4bcd8791ad96..99a134fcd5bf 100644
---- a/arch/x86/kernel/fred.c
-+++ b/arch/x86/kernel/fred.c
-@@ -32,6 +32,25 @@ void cpu_init_fred_exceptions(void)
- 	       FRED_CONFIG_INT_STKLVL(0) |
- 	       FRED_CONFIG_ENTRYPOINT(asm_fred_entrypoint_user));
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 728927e4ba51..36403b901eb2 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -39,6 +39,7 @@
+ #include <asm/coco.h>
+ #include <asm/cpu.h>
+ #include <asm/efi.h>
++#include <asm/fred.h>
+ #include <asm/gart.h>
+ #include <asm/hypervisor.h>
+ #include <asm/io_apic.h>
+@@ -1040,7 +1041,15 @@ void __init setup_arch(char **cmdline_p)
  
-+	wrmsrl(MSR_IA32_FRED_STKLVLS, 0);
-+	wrmsrl(MSR_IA32_FRED_RSP0, 0);
-+	wrmsrl(MSR_IA32_FRED_RSP1, 0);
-+	wrmsrl(MSR_IA32_FRED_RSP2, 0);
-+	wrmsrl(MSR_IA32_FRED_RSP3, 0);
-+
-+	/* Enable FRED */
-+	cr4_set_bits(X86_CR4_FRED);
-+	/* Any further IDT use is a bug */
-+	idt_invalidate();
-+
-+	/* Use int $0x80 for 32-bit system calls in FRED mode */
-+	setup_clear_cpu_cap(X86_FEATURE_SYSENTER32);
-+	setup_clear_cpu_cap(X86_FEATURE_SYSCALL32);
-+}
-+
-+/* Must be called after setup_cpu_entry_areas() */
-+void cpu_init_fred_rsps(void)
-+{
+ 	init_mem_mapping();
+ 
+-	idt_setup_early_pf();
++	/*
++	 * init_mem_mapping() uses early IDT to setup memory mappings, thus FRED
++	 * can't be enabled earlier than that, unless FRED adds support to setup
++	 * memory mappings.
++	 */
++	if (cpu_feature_enabled(X86_FEATURE_FRED))
++		cpu_init_fred_exceptions();
++	else
++		idt_setup_early_pf();
+ 
  	/*
- 	 * The purpose of separate stacks for NMI, #DB and #MC *in the kernel*
- 	 * (remember that user space faults are always taken on stack level 0)
-@@ -47,13 +66,4 @@ void cpu_init_fred_exceptions(void)
- 	wrmsrl(MSR_IA32_FRED_RSP1, __this_cpu_ist_top_va(DB));
- 	wrmsrl(MSR_IA32_FRED_RSP2, __this_cpu_ist_top_va(NMI));
- 	wrmsrl(MSR_IA32_FRED_RSP3, __this_cpu_ist_top_va(DF));
--
--	/* Enable FRED */
--	cr4_set_bits(X86_CR4_FRED);
--	/* Any further IDT use is a bug */
--	idt_invalidate();
--
--	/* Use int $0x80 for 32-bit system calls in FRED mode */
--	setup_clear_cpu_cap(X86_FEATURE_SYSENTER32);
--	setup_clear_cpu_cap(X86_FEATURE_SYSCALL32);
- }
+ 	 * Update mmu_cr4_features (and, indirectly, trampoline_cr4_features)
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index 0c35207320cb..0d83377f9dcd 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -64,6 +64,7 @@
+ #include <asm/acpi.h>
+ #include <asm/cacheinfo.h>
+ #include <asm/desc.h>
++#include <asm/fred.h>
+ #include <asm/nmi.h>
+ #include <asm/irq.h>
+ #include <asm/realmode.h>
+@@ -248,6 +249,11 @@ static void notrace start_secondary(void *unused)
+ 
+ 	cpu_init_exception_handling();
+ 
++	if (cpu_feature_enabled(X86_FEATURE_FRED)) {
++		cpu_init_fred_exceptions();
++		cpu_init_fred_rsps();
++	}
++
+ 	/*
+ 	 * Load the microcode before reaching the AP alive synchronization
+ 	 * point below so it is not part of the full per CPU serialized
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 6afb41e6cbbb..81648bd07576 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -1407,6 +1407,10 @@ void __init trap_init(void)
+ 	/* Init cpu_entry_area before IST entries are set up */
+ 	setup_cpu_entry_areas();
+ 
++	/* FRED RSPs pointing to memory from CPU entry areas */
++	if (cpu_feature_enabled(X86_FEATURE_FRED))
++		cpu_init_fred_rsps();
++
+ 	/* Init GHCB memory pages when running as an SEV-ES guest */
+ 	sev_es_init_vc_handling();
+ 
 -- 
 2.45.2
 
