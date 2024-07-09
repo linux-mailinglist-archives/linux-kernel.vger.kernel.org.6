@@ -1,108 +1,105 @@
-Return-Path: <linux-kernel+bounces-245439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4448C92B284
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:47:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA4D92B28D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB55E28185A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:47:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC8581F225D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DD11553B3;
-	Tue,  9 Jul 2024 08:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5FF15383C;
+	Tue,  9 Jul 2024 08:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Cr2rJv7O"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fsw5n2+c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC67149E13;
-	Tue,  9 Jul 2024 08:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79852AF18;
+	Tue,  9 Jul 2024 08:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720514766; cv=none; b=HOeZfsBj2+Vuga7lesgEbn7Wn7OyjoTJ3WuSuOesya87owssvNetm01mGtunStbJdzZeVgkEh4Y71JpparkGnAaS2NwQdzOkIjd33xR2pm3vwHDIbuXSs09qE2OCdD8/ZQh6aSs0ArDF9UjJDd7pq5USgmX0OJXxwlcjKUzolQk=
+	t=1720514909; cv=none; b=FtYKz90ZF4tjpxVvG0EumdUr04xqCdRVtKgv+Rxv9LJvZeCj6wL6Vo6WQ5UpTJMOskFQ+ud1WrMk9uofE+/aaIkMTBGex5fKxYwSUrOAtJd8xzhfwYb6bb9512WQQZgntX4d7Y0vSvmmUeFL9N2X0RJnNbhVHRQTAdnnj5GqudY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720514766; c=relaxed/simple;
-	bh=BbPJ2Oh11tQ8R7WVf487c9dpDGz3HqjqdVRQkky4hyU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ivuwB/nKY7IpM+s2vcU3sYdKOIQVjm6Gf9X+rbYa6n/lyq8NjlhGDxqqfBvo426Gah7YpRlF3FJNkMtoyUV+74gUsTsHQN5Y780n7vumzXPeyL5WwzZoMLuPRGZJEKx9vnMB8L7+wVlbLH0IQkvGd9KlaG69OAoxAOq8Ti4DaZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Cr2rJv7O; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720514761;
-	bh=m5As5ibD0IsWbHKVWPgbOjU9rstZ/h/jYvVPgQR28uc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Cr2rJv7O2WIhrY69e++LJuHjpUdbVIq5QuojWfxzakCpdEk421FYyPDKvzJRZltgI
-	 UYUWaipSNhNMELJRdXvdIMpJbwZqnbYIDiMKj3WEkU2u69Y9EdKmmQrXw+dAC+gblz
-	 ISIPn39Lh5U06YS2eiK7XiFk2hYNz3DBj0W9qYYYsFf9YYVD2EcROreUvTFyPCyRqE
-	 rcqEERwhTRH7e+2HHbBMMk4A/gjKz2oT3RByX996xzRGo5r9i+3QWb+sFXPsRLDT/A
-	 fpeiS1RtPiQG+oXKrNuMtPevB+13d5I99J1EzaXe2j3EimuTNL8nXS0+E1/4t99gSF
-	 BHZ6901dObhmw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJF2K069Sz4w2M;
-	Tue,  9 Jul 2024 18:46:00 +1000 (AEST)
-Date: Tue, 9 Jul 2024 18:45:59 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Nicolas Pitre <npitre@baylibre.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the mm tree
-Message-ID: <20240709184559.676c476c@canb.auug.org.au>
-In-Reply-To: <20240709184004.60f94726@canb.auug.org.au>
-References: <20240709184004.60f94726@canb.auug.org.au>
+	s=arc-20240116; t=1720514909; c=relaxed/simple;
+	bh=7xFWmZqAPbwyctuy8n9YTTEtQ0XcaDLndPTpjsgRAmo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KojYcG9VPrcyADaJLn8wEjpjXJwakfmvOSh5NB64WPGy+L0UcT6PxpCRAWwU3376kIzlVLV7W5kwSeY7S+gtHgk62PgL7jZGIXbXSUoANxCIq46r7RYB7LJEOvCV4ZyxJXZhffwHOYhK4eL+hxVFUikvplVOR6CdL4P/xsxOg3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fsw5n2+c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 647AAC3277B;
+	Tue,  9 Jul 2024 08:48:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720514908;
+	bh=7xFWmZqAPbwyctuy8n9YTTEtQ0XcaDLndPTpjsgRAmo=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=fsw5n2+cgbOJwHCO9O0LChToWDSnmiexSSrfTlCowlnGCL/KCF88GSG6pkbmAsgsb
+	 DbUDtiVKARGWxWZ20DVgF/paxqI2L+JksDvsX7povhSoO0NS+QYvpAKS0gpwhiyYGA
+	 VszWkZO+sZhI7ZWavfiSJ800pH0XoSvMx5GKj8FXNmWUZtupwfObo/NVWw7BG1hMH7
+	 fs3D8lbwxV1gdTYzA+hmSYy5XnpMDkkp8bpM1Ikn24LWMpZaDHcKV4qStFirkRSJ65
+	 tyilWCcoIvVDG4jMYD0jZ7zGLftIMvjhmd2ovVSkRW74ZJkp06vmHfkreFzN1pnRU2
+	 6cTaPIjepLziA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D01C3DA41;
+	Tue,  9 Jul 2024 08:48:28 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Subject: [PATCH 0/2] Watchdog: support for Amlogic SoC A4/A5
+Date: Tue, 09 Jul 2024 16:48:24 +0800
+Message-Id: <20240709-a4-a5_watchdog-v1-0-2ae852e05ec2@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ez3TZETVsX7yJS9lVCymq3j";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFj5jGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDcwNL3UQT3UTT+PLEkuSMlPx0XeNkCxPDpKRU8yRDMyWgpoKi1LTMCrC
+ B0bG1tQCGKsOqYAAAAA==
+To: Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Xianwei Zhao <xianwei.zhao@amlogic.com>, 
+ Huqiang Qin <huqiang.qin@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720514906; l=641;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=7xFWmZqAPbwyctuy8n9YTTEtQ0XcaDLndPTpjsgRAmo=;
+ b=bGg4Jsddpfot2LQfW1JXBFEn1k0C3vVF6gJD+SLpLPT8OdvLjTJ1uEeHADGXVrplXYvbcQMaJ
+ 7+HMC6RuKKKBx+uBAp0e/2t85lsGv0ukBn6d25g+ug2ZhZy2D8WIg0X
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
---Sig_/ez3TZETVsX7yJS9lVCymq3j
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Add watchdog for Amlogic A4/A5 SoC. 
+A5's watchdog is the same as A4's.
 
-Hi all,
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+Huqiang Qin (2):
+      dt-bindings: watchdog: add support for Amlogic A4 SoCs
+      arm64: dts: amlogic: add watchdog node for A4 SoCs
 
-On Tue, 9 Jul 2024 18:40:04 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Caused by commit
->=20
->   7a3c42cc4fc3 ("mul_u64_u64_div_u64: make it precise always")
->=20
-> from the mm-nonmm-unstable branch of the mm tree.
->=20
-> I have reverted that commit for today.
+ .../devicetree/bindings/watchdog/amlogic,meson-gxbb-wdt.yaml        | 1 +
+ arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi                  | 6 ++++++
+ 2 files changed, 7 insertions(+)
+---
+base-commit: 338c92a5d1956f1841f84b86923087676d1d0cea
+change-id: 20240709-a4-a5_watchdog-3c841bbe7b16
 
-I reverted the following commit as well.
+Best regards,
+-- 
+Xianwei Zhao <xianwei.zhao@amlogic.com>
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/ez3TZETVsX7yJS9lVCymq3j
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaM+MgACgkQAVBC80lX
-0GwsZwf/UwlzuGwZNOMHlqxzu3UTbAXwBaRY5af9GGBeb2I78RAswjnt67uPPY4L
-oj0QUjNuD/DO18eiPNnG3JThTu8nGjk2wriqjNGwfX0JKYfhNbQa3jQSTP/g/8NU
-4bqwCR9JctTa8OXDRycE4dNI7Y2rhtu9yKj2JanUZ6Pe2KlFNRg8QxQniCVWRp+j
-tYF19WWxP7w+sgFfD79AdpXL/hcCBbu88x2qlo6vm/Ne7FRHL27+V+ruH0EseAbY
-ebm0aA5RmiANsffMa0kiepHVmZwLrMoQGXMGv82AoCiM2q2B50G3pCyso20Cnbcw
-jmT69fdA3DrTNiDPueN6YuUdHwoTyQ==
-=kQ42
------END PGP SIGNATURE-----
-
---Sig_/ez3TZETVsX7yJS9lVCymq3j--
 
