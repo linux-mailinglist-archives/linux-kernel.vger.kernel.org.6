@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-246516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0809792C2FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:00:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EF3192C305
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7BF5284B48
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:00:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ED1E1C2298A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC05D17B05D;
-	Tue,  9 Jul 2024 17:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F69C18003C;
+	Tue,  9 Jul 2024 18:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="asYNggQO"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gQ0g/0fx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2E91B86EF;
-	Tue,  9 Jul 2024 17:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0924C6F2E6;
+	Tue,  9 Jul 2024 18:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720547998; cv=none; b=VryJccrXX2nICWKvGxC8R0PtNVIcdtw3lVuOUuORLlyeIf0O4OGAQWovc1w4c6Pu6cLB2ohdDU7bGcndtNK/f9Z+QPJpidUbG7BMtaBtC4FgWf7b/i0l3iP4RsdKcpvqw63k3LN0+FLol3zsu5xU63wqHAkIBsbb+6YQyyUlUjA=
+	t=1720548094; cv=none; b=l1hlHR93KckT9o6elgfXFc//W2ytUA/9E7pZ+OZzU0T8VS5s1vih1ymwZoNH+JKoH90Gdl8Lyg1KtlMo9VCULk4a8G4kMO4uGsQRKilqRTe7TO8yVo6fqjknQTonHlP7fg2eUFljkBDUYDfngKSRMt/ICfB+iDLknMoeJBYSEQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720547998; c=relaxed/simple;
-	bh=kzPOectY0Lhz4s3POHrD5myXWQ+NDvyXbUOrB4dMHDE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=drOI/0iTGMUDDb6WJKG/SncOF1RuqxKTED2kRanuGyM6oAj+P1Bt2zFZeOsEKQSj6Q77QODC/ncAwszKMjjPKOah7vsac5ccJ55VZyO2+bcAkajhk8pLp0gAnunkO3hlJR+x0a5IVkEM6KRkv/6KNjw86T+r3lgTlrjTVV2yaYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=asYNggQO; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WJTKS0GV1zllBcn;
-	Tue,  9 Jul 2024 17:59:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1720547993; x=1723139994; bh=7s4OEXe8wodJEdOc9v/S5tUI
-	ZeURYyrHN4Qd5tto/uk=; b=asYNggQOdNHz4MQUeQF8xlTaRBIs1sJsPJ7cLiL7
-	2kRehbELd68/6PUmaB3hpxfEpwN51wnDoeImxz9JH5K5QxaSWJXXITJYHhLtFd3B
-	fS7VwGS1jUZXjPsnG8sC39pYAaZ0JV372Z3uL7/oxztTnTqV8FYhPSoNAlVLz62d
-	DQ65xoivAgKStdn6uRe75sEr4QvyL0gXYyXjMnoXTjstWh/QZhuZcXu482w4aPXo
-	PK+ZHY+blFqmMA8OPn6vEC8hoTB/IPipkSFNp4NrkKXg5lHg4ENf/rBmJqU6NuB8
-	XqGtE9zVN4ipNZE6u++OFYWYdDO+AMW3ivfmr0qnSOBsmw==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id JjGMN8IDE_9w; Tue,  9 Jul 2024 17:59:53 +0000 (UTC)
-Received: from [100.96.154.26] (unknown [104.132.0.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WJTKP0cYnzllCRp;
-	Tue,  9 Jul 2024 17:59:52 +0000 (UTC)
-Message-ID: <bd27804e-b7bc-4693-90ac-363591ac9467@acm.org>
-Date: Tue, 9 Jul 2024 10:59:52 -0700
+	s=arc-20240116; t=1720548094; c=relaxed/simple;
+	bh=Ie/cA6P/3uKrFYB6QT8wxFA2AMrE4qFcEz3hTHvYjAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ofB3LjTCUKwEWlv0a+adMdNICGrO8ekyGd18OU+OGj9Rj0giPT2UylPsaCghxpRoVYxsY8zxFdIWmECdU3fpDpxFh1JvTOzgfyhEnnSEqPU4n7ZAVOJEFdXniXswxrGy5JrE+3BJB1JPt4i4hVM7qeIs6c6F7nnojMkMy8so8YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gQ0g/0fx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469AClT8015045;
+	Tue, 9 Jul 2024 18:01:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ckbc1aApQyQvJVHtxNFftIi/hYatRS4haFz7C8Uy4PI=; b=gQ0g/0fxCV2ZsAez
+	+I6iPHngo+babc30b+t7QNxBDdq/a2Sb7IWonSJkLCpwhia0//vT8QQ3740y+Fq2
+	yrufpFv4lPl5t//0JepkJP9S73hPNC+yL+VCdDoP1q/jhhNxXl8yX0jzRpgdxNjK
+	CxacFfJGWJrLlHP4aA7//IHnQQWMfW4CRtt7sSPJkUBGrT0FVdEEJHMuygu0Ip6c
+	45+ynpYeCPBPTv7Aiwn52fCuVhFAODkENCfMEBCLBkv+iMqsd4498dELwN0W55yH
+	gyoK3PMoGYm1oWtSMgiQ+8GFKzgSienTQ08XwO4bdU50OgLi4rWBbZw42KJlEl/b
+	p7vsaw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x0t7fts-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 18:01:07 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469I15O5020027
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 18:01:05 GMT
+Received: from [10.110.47.59] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
+ 11:01:02 -0700
+Message-ID: <f8ea46eb-61dc-4869-843c-a7fe9a37881e@quicinc.com>
+Date: Tue, 9 Jul 2024 11:01:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,47 +64,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v3] scsi: sd: Fix an incorrect type in
- 'sd_spinup_disk()'
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
- James.Bottomley@HansenPartnership.com
-Cc: martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- Abaci Robot <abaci@linux.alibaba.com>
-References: <20240709093948.9617-1-jiapeng.chong@linux.alibaba.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: net: qcom: ethernet: Add interconnect
+ properties
+To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu
+	<joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "Russell
+ King" <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Bhupesh
+ Sharma" <bhupesh.sharma@linaro.org>
+CC: <kernel@quicinc.com>, Andrew Halaney <ahalaney@redhat.com>,
+        Andrew Lunn
+	<andrew@lunn.ch>, <linux-arm-msm@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20240708-icc_bw_voting_from_ethqos-v4-0-c6bc3db86071@quicinc.com>
+ <20240708-icc_bw_voting_from_ethqos-v4-1-c6bc3db86071@quicinc.com>
+ <3ba8bcde-496c-4084-8941-397b4dd7f55f@kernel.org>
 Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240709093948.9617-1-jiapeng.chong@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+In-Reply-To: <3ba8bcde-496c-4084-8941-397b4dd7f55f@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: yDvVNb0LXaXMTeKNf3sPdFREp4zrUFxu
+X-Proofpoint-ORIG-GUID: yDvVNb0LXaXMTeKNf3sPdFREp4zrUFxu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_07,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=999 priorityscore=1501 malwarescore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090121
 
-On 7/9/24 2:39 AM, Jiapeng Chong wrote:
-> The return value from the call to scsi_execute_cmd() is int. In the
-              ^^^^^
-               type
 
-> 'else if' branch of the function scsi_execute_cmd, it will return -EINVAL.
-> But the type of "the_result" is "unsigned int", causing the error code to
-> reverse. Modify the type of "the_result" to solve this problem.
-   ^^^^^^^
 
-What is "reversing an error code"? Did you perhaps mean that the return
-value is changed from a negative integer to a positive integer?
+On 7/9/2024 1:56 AM, Krzysztof Kozlowski wrote:
+> On 08/07/2024 23:30, Sagar Cheluvegowda wrote:
+>> Add documentation for the interconnect and interconnect-names
+>> properties required when voting for AHB and AXI buses.
+>>
+>> Suggested-by: Andrew Halaney <ahalaney@redhat.com>
+>> Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+> 
+> <form letter>
+> This is a friendly reminder during the review process.
+> 
+> It looks like you received a tag and forgot to add it.
+> 
+> If you do not know the process, here is a short explanation:
+> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+> versions, under or above your Signed-off-by tag. Tag is "received", when
+> provided in a message replied to you on the mailing list. Tools like b4
+> can help here. However, there's no need to repost patches *only* to add
+> the tags. The upstream maintainer will do that for tags received on the
+> version they apply.
+> 
+> https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+> 
+> If a tag was not added on purpose, please state why and what changed.
+> </form letter>
+> 
+> Best regards,
+> Krzysztof
+> 
 
-> ./drivers/scsi/sd.c:2333:6-16: WARNING: Unsigned expression compared
-> with zero: the_result > 0.
 
-Doesn't this patch fix reading uninitialized data? If so, shouldn't that
-be mentioned in the patch description?
-
-> Fixes: c1acf38cd11e ("scsi: sd: Have midlayer retry sd_spinup_disk() errors")
-
-Hmm ... that seems incorrect to me. Commit c1acf38cd11e changed the
-indentation of "the_result > 0" expressions but did not introduce these.
-Is this perhaps the commit that introduced the "the_result > 0"
-expressions: ced202f7bd78 ("scsi: core: Stop using DRIVER_ERROR")?
-
-Thanks,
-
-Bart.
+Thanks Krzysztof for the explanation, i will make a note of it.
 
