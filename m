@@ -1,429 +1,150 @@
-Return-Path: <linux-kernel+bounces-245854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B41792BA7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:06:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB28892BA86
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D537288272
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:06:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6698B2887F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E0A1684A4;
-	Tue,  9 Jul 2024 13:04:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF47A15F3E7;
+	Tue,  9 Jul 2024 13:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cujlNaFv"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pnu1tZev"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE71716848F
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 13:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864101581FC;
+	Tue,  9 Jul 2024 13:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720530273; cv=none; b=hgNwuXoGYy+UtAdmWd7l/sZXFwRtffHG/app+airiWsb5BL2zKON9SnQoaM/H9TG96RVIKR85P4d+zttuFP5Sqntdb/CQ3jU8nEOmc/qqem88VEopZmdGCDOsd+bBnFPTIWARfMnJi2fmbYt8dPpWEsrr+PgmUvY1rY2xQe4GEU=
+	t=1720530312; cv=none; b=u3RNjxtRMbpn84bRLLUAlv+WsvxUrt4HcQOghoUPtiIHjaoyeq920t46YKw8fFlX+B5OaFv6y0QQDbSraA58+8wBXVkZZGiqN0VAaMzX4BMXNisUzuRRy9dlVcaM0/KUlyIYFtAnvpbp+LoL8V7afK0DbM+8uGfKQXUuUYAXgrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720530273; c=relaxed/simple;
-	bh=ISZfsX1sdR8oYMUfg9cddXkliIBzshRgiXFd855cu5M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=m2rssFbVoJepPN3PFsPD+9t0LBI3hTD9jMFVnc66sU0U5Q7WXBy+HgRxEtNzjWgVGPZg7wwq3OhxHlXc2f8pX3J1bfKQ874eCtFb35KOeDnIP0MzWUG6WL3+cpjtipLMDyCzyBm/+F5cLtln7DlvQEI4SD7wjitNPcjeaGva/N8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cujlNaFv; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: axboe@kernel.dk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1720530270;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qIq//PVyAZav9RH/O/YvXvb4luJfe+YlS74Qx3jJG5g=;
-	b=cujlNaFvYcbREiHVbZGK1ZduR03z82mwda/PzKcqsUKu7Dl5kxKjxfPRM+ra28RllQqkZI
-	0QtnjXN3qefLz4VJ2ZtV+Pb6t0FBwkcF9nDZLlwJn4+lZMq9AE+lGluYM/sF4vzBb4sRPi
-	vzbu42IT2zfsxzHuRwlT4YwDafyYe0g=
-X-Envelope-To: dan.j.williams@intel.com
-X-Envelope-To: gregory.price@memverge.com
-X-Envelope-To: john@groves.net
-X-Envelope-To: jonathan.cameron@huawei.com
-X-Envelope-To: bbhushan2@marvell.com
-X-Envelope-To: chaitanyak@nvidia.com
-X-Envelope-To: rdunlap@infradead.org
-X-Envelope-To: linux-block@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-cxl@vger.kernel.org
-X-Envelope-To: dongsheng.yang@linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Dongsheng Yang <dongsheng.yang@linux.dev>
-To: axboe@kernel.dk,
-	dan.j.williams@intel.com,
-	gregory.price@memverge.com,
-	John@groves.net,
-	Jonathan.Cameron@Huawei.com,
-	bbhushan2@marvell.com,
-	chaitanyak@nvidia.com,
-	rdunlap@infradead.org
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	Dongsheng Yang <dongsheng.yang@linux.dev>
-Subject: [PATCH v1 7/7] block: Init for CBD(CXL Block Device) module
-Date: Tue,  9 Jul 2024 13:03:43 +0000
-Message-Id: <20240709130343.858363-8-dongsheng.yang@linux.dev>
-In-Reply-To: <20240709130343.858363-1-dongsheng.yang@linux.dev>
-References: <20240709130343.858363-1-dongsheng.yang@linux.dev>
+	s=arc-20240116; t=1720530312; c=relaxed/simple;
+	bh=9sNRl1MnVxLEfXaRwo0qrmSaRT68JK4pTrZhjdBgJDY=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=k4I7xwLPMWufj/MYSZtodloOX2AkPZAaUhJdEVxiMw3Zb1NBvYzezHyTvB7s4g4eVti8CaPsw8KvqHMCKy6dAI+GtVG02AS1aGo6FNFu3T76Ni4tLuuAp7QqW6w3Q6qP25xYL7GCP/gFgLFieYQxhtjficCmi78R8BPiylyRX7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pnu1tZev; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469ABP3u000592;
+	Tue, 9 Jul 2024 13:05:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=hB3QqxJUrMjWAQxogofR0D
+	eijDSTZhPh92oYebEyWxk=; b=pnu1tZevSVlpkaIaw6YrZNfr7EZ+2Jz5bT4rJJ
+	/CKlhJyLyEmLq1cC61lQYpW8g56uPCRj+oB+hqZtSZ4IGVIaJP5Qps0ONpKq0Gq6
+	k+yb55dWLxq2Nh767iGPN9VUWH22/r+mlK77l0xfrI7AcY/Sgt6QG1z/EDy+qKIs
+	bzupq+mWWT/lQGSe8QsCanvzeMEcyf0iHJjKj0STdWt/JbkcoXDdsCf2RVxZVUar
+	2iAnT5mOTn9U6IlcCIZK/PefkBQj+ayEZ9fWm0242iN33+IpurFB3SFXVbc/+f13
+	dkOrm+wE64zphzngeVkl591ZExgo3CbiCSojzJTivNy4rmGA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wjn6qjr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 13:05:06 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469D55wq007979
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 13:05:05 GMT
+Received: from tengfan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 9 Jul 2024 06:04:58 -0700
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+Subject: [PATCH v2 0/2] pinctrl: qcom: Add the QCS9100 tlmm compatible
+Date: Tue, 9 Jul 2024 21:04:40 +0800
+Message-ID: <20240709-add_qcs9100_tlmm_compatible-v2-0-d025b58ea196@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGg1jWYC/32OzQ6CMBCEX8X0bMl2ESmefA9jCC2LbALlp0g0h
+ He3mJjoxeM3yXwzi/A0Mnlx2i1ipJk9dy4A7nfC1oW7keQysEDAA6SQyaIs88H6TAHkU9O2ue3
+ avpjYNCRTyowmZapKxyIY+pEqfrztl2vgmv3Ujc/32Ky29OONAROdQIQqRQAtlRzubPOJ3K0q3
+ HkDdjYKW2ITzfhd/n9qRgnymNijUalCbcpf27quLwga1cAFAQAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Bartosz
+ Golaszewski" <bartosz.golaszewski@linaro.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Tengfei Fan <quic_tengfan@quicinc.com>
+X-Mailer: b4 0.15-dev-a66ce
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720530298; l=1705;
+ i=quic_tengfan@quicinc.com; s=20240709; h=from:subject:message-id;
+ bh=9sNRl1MnVxLEfXaRwo0qrmSaRT68JK4pTrZhjdBgJDY=;
+ b=SvIL2Bq9cRXBB7/FaKet4VOsbxFpjtccyo0vkcDL1uT/uzM+cITjU0mKjQOQXSSDamttdyVeJ
+ lVOs9riO109CxED3N2GwpVIe7eg+qAvxlp7K+6RvUX2X4gAKqRHVW6f
+X-Developer-Key: i=quic_tengfan@quicinc.com; a=ed25519;
+ pk=4VjoTogHXJhZUM9XlxbCAcZ4zmrLeuep4dfOeKqQD0c=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: mhjJOr82pfc_afyNvc0PUylwMflBt6FD
+X-Proofpoint-GUID: mhjJOr82pfc_afyNvc0PUylwMflBt6FD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_02,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=640 clxscore=1015
+ mlxscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 phishscore=0 malwarescore=0 bulkscore=0 impostorscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090083
 
-As shared memory is supported in CXL3.0 spec, we can transfer data
-via CXL shared memory. CBD means CXL block device, it use CXL shared memory
-to transfer command and data to access block device in different
-host, as shown below:
+Introduce support for the QCS9100 SoC device tree (DTSI) and the
+QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+While the QCS9100 platform is still in the early design stage, the
+QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+mounts the QCS9100 SoC instead of the SA8775p SoC.
 
-     +-------------------------------+                               +------------------------------------+
-     |          node-1               |                               |              node-2                |
-     +-------------------------------+                               +------------------------------------+
-     |                               |                               |                                    |
-     |                       +-------+                               +---------+                          |
-     |                       | cbd0  |                               | backend0+------------------+       |
-     |                       +-------+                               +---------+                  |       |
-     |                       | pmem0 |                               | pmem0   |                  v       |
-     |               +-------+-------+                               +---------+----+     +---------------+
-     |               |    cxl driver |                               | cxl driver   |     |   /dev/sda    |
-     +---------------+--------+------+                               +-----+--------+-----+---------------+
-                              |                                            |
-                              |                                            |
-                              |        CXL                         CXL     |
-                              +----------------+               +-----------+
-                                               |               |
-                                               |               |
-                                               |               |
-                                           +---+---------------+-----+
-                                           |   shared memory device  |
-                                           +-------------------------+
+The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
+all the compatible strings will be updated from "SA8775p" to "QCS9100".
+The QCS9100 device tree patches will be pushed after all the device tree
+bindings and device driver patches are reviewed.
 
-any read/write to cbd0 on node-1 will be transferred to node-2 /dev/sda. It works similar with
-nbd (network block device), but it transfer data via CXL shared memory rather than network.
+The final dtsi will like:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
 
-The "cbd_backend" is responsible for exposing a local block device (such
-as "/dev/sda") through the "cbd_transport" to other hosts.
+The detailed cover letter reference:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
 
-Any host that registers this transport can map this backend to a local
-"cbd device"(such as "/dev/cbd0"). All reads and writes to "cbd0" are transmitted
-through the channel inside the transport to the backend. The handler
-inside the backend is responsible for processing these read and write
-requests, converting them into read and write requests corresponding to "sda".
-
-Signed-off-by: Dongsheng Yang <dongsheng.yang@linux.dev>
+Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
 ---
- drivers/block/Kconfig        |   2 +
- drivers/block/Makefile       |   2 +
- drivers/block/cbd/Kconfig    |  23 ++++
- drivers/block/cbd/Makefile   |   3 +
- drivers/block/cbd/cbd_main.c | 224 +++++++++++++++++++++++++++++++++++
- 5 files changed, 254 insertions(+)
- create mode 100644 drivers/block/cbd/Kconfig
- create mode 100644 drivers/block/cbd/Makefile
- create mode 100644 drivers/block/cbd/cbd_main.c
+Changes in v2:
+  - Split huge patch series into different patch series according to
+    subsytems
+  - Update patch commit message
 
-diff --git a/drivers/block/Kconfig b/drivers/block/Kconfig
-index 5b9d4aaebb81..1f6376828af9 100644
---- a/drivers/block/Kconfig
-+++ b/drivers/block/Kconfig
-@@ -219,6 +219,8 @@ config BLK_DEV_NBD
- 
- 	  If unsure, say N.
- 
-+source "drivers/block/cbd/Kconfig"
-+
- config BLK_DEV_RAM
- 	tristate "RAM block device support"
- 	help
-diff --git a/drivers/block/Makefile b/drivers/block/Makefile
-index 101612cba303..8be2a39f5a7c 100644
---- a/drivers/block/Makefile
-+++ b/drivers/block/Makefile
-@@ -39,4 +39,6 @@ obj-$(CONFIG_BLK_DEV_NULL_BLK)	+= null_blk/
- 
- obj-$(CONFIG_BLK_DEV_UBLK)			+= ublk_drv.o
- 
-+obj-$(CONFIG_BLK_DEV_CBD)	+= cbd/
-+
- swim_mod-y	:= swim.o swim_asm.o
-diff --git a/drivers/block/cbd/Kconfig b/drivers/block/cbd/Kconfig
-new file mode 100644
-index 000000000000..5171ddd9eab8
---- /dev/null
-+++ b/drivers/block/cbd/Kconfig
-@@ -0,0 +1,23 @@
-+config BLK_DEV_CBD
-+	tristate "CXL Block Device"
-+	help
-+	  CBD allows you to register a CXL memory device as a CBD transport.
-+	  This enables you to expose any block device through this CBD
-+	  transport for access by others. Any machine that has registered
-+	  the same CXL memory device can see the block devices exposed
-+	  through this CBD transport and can map them locally, allowing
-+	  remote block devices to be accessed as if they were local block
-+	  devices.
-+
-+	  Select 'y' to build this module directly into the kernel.
-+	  Select 'm' to build this module as a loadable kernel module.
-+
-+	  If unsure say 'N'.
-+
-+config CBD_CRC
-+	bool "Enable CBD checksum"
-+	help
-+	  When CBD_CRC is enabled, all data sent by CBD will include
-+	  a checksum. This includes a data checksum, a submit entry checksum,
-+	  and a completion entry checksum. This ensures the integrity of the
-+	  data transmitted through the CXL memory device.
-diff --git a/drivers/block/cbd/Makefile b/drivers/block/cbd/Makefile
-new file mode 100644
-index 000000000000..646d087ae058
---- /dev/null
-+++ b/drivers/block/cbd/Makefile
-@@ -0,0 +1,3 @@
-+cbd-y := cbd_main.o cbd_transport.o cbd_channel.o cbd_host.o cbd_backend.o cbd_handler.o cbd_blkdev.o cbd_queue.o cbd_segment.o
-+
-+obj-$(CONFIG_BLK_DEV_CBD) += cbd.o
-diff --git a/drivers/block/cbd/cbd_main.c b/drivers/block/cbd/cbd_main.c
-new file mode 100644
-index 000000000000..bbc268676694
---- /dev/null
-+++ b/drivers/block/cbd/cbd_main.c
-@@ -0,0 +1,224 @@
-+/*
-+ * Copyright(C) 2024, Dongsheng Yang <dongsheng.yang@linux.dev>
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/io.h>
-+#include <linux/blk-mq.h>
-+#include <linux/blkdev.h>
-+#include <linux/kernel.h>
-+#include <linux/device.h>
-+#include <linux/bio.h>
-+#include <linux/module.h>
-+#include <linux/blk-mq.h>
-+#include <linux/fs.h>
-+#include <linux/blkdev.h>
-+#include <linux/slab.h>
-+#include <linux/idr.h>
-+#include <linux/workqueue.h>
-+#include <linux/delay.h>
-+#include <net/genetlink.h>
-+
-+#include <linux/types.h>
-+
-+#include "cbd_internal.h"
-+
-+struct workqueue_struct	*cbd_wq;
-+
-+enum {
-+	CBDT_REG_OPT_ERR		= 0,
-+	CBDT_REG_OPT_FORCE,
-+	CBDT_REG_OPT_FORMAT,
-+	CBDT_REG_OPT_PATH,
-+	CBDT_REG_OPT_HOSTNAME,
-+};
-+
-+static const match_table_t register_opt_tokens = {
-+	{ CBDT_REG_OPT_FORCE,		"force=%u" },
-+	{ CBDT_REG_OPT_FORMAT,		"format=%u" },
-+	{ CBDT_REG_OPT_PATH,		"path=%s" },
-+	{ CBDT_REG_OPT_HOSTNAME,	"hostname=%s" },
-+	{ CBDT_REG_OPT_ERR,		NULL	}
-+};
-+
-+static int parse_register_options(
-+		char *buf,
-+		struct cbdt_register_options *opts)
-+{
-+	substring_t args[MAX_OPT_ARGS];
-+	char *o, *p;
-+	int token, ret = 0;
-+
-+	o = buf;
-+
-+	while ((p = strsep(&o, ",\n")) != NULL) {
-+		if (!*p)
-+			continue;
-+
-+		token = match_token(p, register_opt_tokens, args);
-+		switch (token) {
-+		case CBDT_REG_OPT_PATH:
-+			if (match_strlcpy(opts->path, &args[0],
-+				CBD_PATH_LEN) == 0) {
-+				ret = -EINVAL;
-+				break;
-+			}
-+			break;
-+		case CBDT_REG_OPT_FORCE:
-+			if (match_uint(args, &token)) {
-+				ret = -EINVAL;
-+				goto out;
-+			}
-+			opts->force = (token != 0);
-+			break;
-+		case CBDT_REG_OPT_FORMAT:
-+			if (match_uint(args, &token)) {
-+				ret = -EINVAL;
-+				goto out;
-+			}
-+			opts->format = (token != 0);
-+			break;
-+		case CBDT_REG_OPT_HOSTNAME:
-+			if (match_strlcpy(opts->hostname, &args[0],
-+				CBD_NAME_LEN) == 0) {
-+				ret = -EINVAL;
-+				break;
-+			}
-+			break;
-+		default:
-+			pr_err("unknown parameter or missing value '%s'\n", p);
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+	}
-+
-+out:
-+	return ret;
-+}
-+
-+static ssize_t transport_unregister_store(const struct bus_type *bus, const char *ubuf,
-+				      size_t size)
-+{
-+	u32 transport_id;
-+	int ret;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (sscanf(ubuf, "transport_id=%u", &transport_id) != 1)
-+		return -EINVAL;
-+
-+	ret = cbdt_unregister(transport_id);
-+	if (ret < 0)
-+		return ret;
-+
-+	return size;
-+}
-+
-+static ssize_t transport_register_store(const struct bus_type *bus, const char *ubuf,
-+				      size_t size)
-+{
-+	struct cbdt_register_options opts = { 0 };
-+	char *buf;
-+	int ret;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	buf = kmemdup(ubuf, size + 1, GFP_KERNEL);
-+	if (IS_ERR(buf)) {
-+		pr_err("failed to dup buf for adm option: %d", (int)PTR_ERR(buf));
-+		return PTR_ERR(buf);
-+	}
-+	buf[size] = '\0';
-+
-+	ret = parse_register_options(buf, &opts);
-+	if (ret < 0) {
-+		kfree(buf);
-+		return ret;
-+	}
-+	kfree(buf);
-+
-+	ret = cbdt_register(&opts);
-+	if (ret < 0)
-+		return ret;
-+
-+	return size;
-+}
-+
-+static BUS_ATTR_WO(transport_unregister);
-+static BUS_ATTR_WO(transport_register);
-+
-+static struct attribute *cbd_bus_attrs[] = {
-+	&bus_attr_transport_unregister.attr,
-+	&bus_attr_transport_register.attr,
-+	NULL,
-+};
-+
-+static const struct attribute_group cbd_bus_group = {
-+	.attrs = cbd_bus_attrs,
-+};
-+__ATTRIBUTE_GROUPS(cbd_bus);
-+
-+const struct bus_type cbd_bus_type = {
-+	.name		= "cbd",
-+	.bus_groups	= cbd_bus_groups,
-+};
-+
-+static void cbd_root_dev_release(struct device *dev)
-+{
-+}
-+
-+struct device cbd_root_dev = {
-+	.init_name =    "cbd",
-+	.release =      cbd_root_dev_release,
-+};
-+
-+static int __init cbd_init(void)
-+{
-+	int ret;
-+
-+	cbd_wq = alloc_workqueue(CBD_DRV_NAME, WQ_MEM_RECLAIM, 0);
-+	if (!cbd_wq)
-+		return -ENOMEM;
-+
-+	ret = device_register(&cbd_root_dev);
-+	if (ret < 0) {
-+		put_device(&cbd_root_dev);
-+		goto destroy_wq;
-+	}
-+
-+	ret = bus_register(&cbd_bus_type);
-+	if (ret < 0)
-+		goto device_unregister;
-+
-+	ret = cbd_blkdev_init();
-+	if (ret < 0)
-+		goto bus_unregister;
-+
-+	return 0;
-+
-+bus_unregister:
-+	bus_unregister(&cbd_bus_type);
-+device_unregister:
-+	device_unregister(&cbd_root_dev);
-+destroy_wq:
-+	destroy_workqueue(cbd_wq);
-+
-+	return ret;
-+}
-+
-+static void cbd_exit(void)
-+{
-+	cbd_blkdev_exit();
-+	bus_unregister(&cbd_bus_type);
-+	device_unregister(&cbd_root_dev);
-+
-+	destroy_workqueue(cbd_wq);
-+}
-+
-+MODULE_AUTHOR("Dongsheng Yang <dongsheng.yang@linux.dev>");
-+MODULE_DESCRIPTION("CXL(Compute Express Link) Block Device");
-+MODULE_LICENSE("GPL v2");
-+module_init(cbd_init);
-+module_exit(cbd_exit);
+prevous disscussion here:
+[1] v1: https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+
+---
+Tengfei Fan (2):
+      dt-bindings: pinctrl: add qcs9100-tlmm compatible
+      pinctrl: qcom: add the tlmm driver support for qcs9100 platform
+
+ Documentation/devicetree/bindings/pinctrl/qcom,sa8775p-tlmm.yaml | 5 ++++-
+ drivers/pinctrl/qcom/pinctrl-sa8775p.c                           | 1 +
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240709-add_qcs9100_tlmm_compatible-7e9b8e1bff83
+
+Best regards,
 -- 
-2.34.1
+Tengfei Fan <quic_tengfan@quicinc.com>
 
 
