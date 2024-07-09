@@ -1,114 +1,82 @@
-Return-Path: <linux-kernel+bounces-245778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85E0292B918
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:11:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 943C692B91A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B50991C23472
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:11:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E4C4281D01
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74679158873;
-	Tue,  9 Jul 2024 12:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F353F15886D;
+	Tue,  9 Jul 2024 12:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="PtUSgGH/"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XunaiFWx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D39F1534FC;
-	Tue,  9 Jul 2024 12:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6C31586D0;
+	Tue,  9 Jul 2024 12:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720527085; cv=none; b=eoRwT8UIyk6M3Sf+4vXVLsHPzQpTWx2Pwft6uKK/zg53iFIjgXlBMun+8+s800BtI3gE/jxHcSjPvqaFf0tvWXVw73+2X0PRn09ULbekQ7h4Fdz5mFdan4w8+Lx7ktickhEy9cd/2PftRn9C3YGiCrJi60xn+ozYYO3vyGTms50=
+	t=1720527108; cv=none; b=VwdWMHC4p7aACeHrgVGNVfhlv4YiUVBXC2z4wvXIZ+rVs9x8CB4bgpk8iRf8y5ggGHQFVzbDbYxgi+rQXRP4YbKLAmrIxryFLC2mUf0ZEXLEetzVAXYE/cTKV8Pgi6386jPUGEfpDsCJSeVQxklyG8LOqfR8HZZToGC8cGPghFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720527085; c=relaxed/simple;
-	bh=07u+d8/VVabnzNsgDPxn1WvWRdYn18Z+KZmEgI742IA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=T8l3DwpcJF37jy5qgG/qO7NppOIJNxVK1yT07blBQ/Wcs4cBwB1/Iq491MSc8jfFYJHxm8Ynj43VIEkBnPEv5YqfHjSbBk+QO8uBEVu6rptPaN0nGg9+p24nrRjQWH0v5jaka03/afUhaU3vceRgNsXsTNc1d5Umzz27i/aLiOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=PtUSgGH/; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720527033; x=1721131833; i=markus.elfring@web.de;
-	bh=07u+d8/VVabnzNsgDPxn1WvWRdYn18Z+KZmEgI742IA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=PtUSgGH/zk1ZLSvEsUj1h7TmqoGPsawvcXuKyULGBvdgP+WcdjoKlcKN82t61B0X
-	 oDDIiirI53CUXCHi6uEPFMNSk42roQOATaaBMkgO55Vomvoh0QwzwDwOd9+jYjEyU
-	 sEQOOw/uL4DtvetB7R1R94lpqDvzycQF7cZITY+VgZpOiLKaJU0KHKuumeYDdkIMw
-	 1/Zgk0SqKwwRI7F/n7j+smTiLiFGwDFQra7cfde0Fz73vDvyMymrsfRYHqeBZ+iS4
-	 WGaj/Rhc9O+QRvVC0/OgTF8Fe9YYtr+cNHkVvymRAlXSTZFZLFMigUsQSQJLrRagF
-	 DQlpalzJzPOunqAsqg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MVJNd-1sqlpe2EcB-00LfaQ; Tue, 09
- Jul 2024 14:10:33 +0200
-Message-ID: <1fe42fac-b3b0-43fe-9270-79afed5fba6c@web.de>
-Date: Tue, 9 Jul 2024 14:10:20 +0200
+	s=arc-20240116; t=1720527108; c=relaxed/simple;
+	bh=6nXVBHxapGeNFY9Doi4AYcoTeU4i7m2iH7ympobUD+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GFVZc7WF/VVUk0Z91m+gXP9Db7hD3H+YNimh32l+5f+bYpcvOmb150pday/btgvgK2hNqLsq9gqTCSY+hNJZyUimjautyWuf34OS4/1G/ZljTyFK3WXFzzRw3Nr7EuPykDsV6y93vVwk2NziZX7jUXHEzhjFtBUkZ6Ai5Xeu6GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XunaiFWx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C104C3277B;
+	Tue,  9 Jul 2024 12:11:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720527107;
+	bh=6nXVBHxapGeNFY9Doi4AYcoTeU4i7m2iH7ympobUD+8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XunaiFWx6CoaAG36CDIBI6fhvQdURFF+NraJ27x73m/m/yWAzbBlEJ43TKd9Kp3Oq
+	 oy8tVGQFyq1eJ3bneAH4waurF2ftQF9wkxUhh1dqx9EupGUBsECJhKF6XDUjgteWjz
+	 3fokadd7SiaTWsYaSaAr8At3Mtyp1dMG+FSwAnKjLgR8xpBcy9obp3gqILnC2z6RBr
+	 vAAM04lvTodNZlHSCSKmqEXuU1qx68sCNJpjJaeQfEz1KrmI18q/glio9jUBOvRFji
+	 3PYdazWFgkk4KBosVCHGUyT4ZG83LxQQ64g7CFH2C3goAfckwi2bmii6IyReIcgZ1r
+	 cBcarOhJfmGvA==
+Date: Tue, 9 Jul 2024 13:11:43 +0100
+From: Simon Horman <horms@kernel.org>
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, andrew@lunn.ch, jiri@resnulli.us,
+	rkannoth@marvell.com, jdamato@fastly.com, pkshih@realtek.com,
+	larry.chiu@realtek.com
+Subject: Re: [PATCH net-next v22 00/13] Add Realtek automotive PCIe driver
+Message-ID: <20240709121143.GI346094@kernel.org>
+References: <20240701115403.7087-1-justinlai0215@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: make24@iscas.ac.cn, dri-devel@lists.freedesktop.org,
- kernel-janitors@vger.kernel.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, Wei Liu <wei.liu@kernel.org>
-References: <20240709113311.37168-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH v4] drm/gma500: fix null pointer dereference in
- cdv_intel_lvds_get_modes
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240709113311.37168-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:d1pJZ68qXVLC5hDwh5dRD6Gu4W2nu8B0JaP0M5KPoZ4RDYSO2li
- 54bTlvMJ+AgnnVabxrF789qHsFdBA8tafROZY+vtw2bjb4lDnngz8EweGuhNMimNbojDr91
- yY2StoZShqaVh+L+Pkju90eaafFKr1mdk/CX/fhqJE9q1m10cUIUIKLGuOhzEtJ1yMFYDqq
- AkbP11Bm8UZnaCwvJDMRA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:SB8L1Y85kb4=;IdtYRSGC0esrjCM//uktqOB6+Z7
- 8jcwx3fpx3XaQNYh5US3nMVLJcmk2q+Ijg6X23q0bGq+hNmP3dvTKf6mAu5ObhZ81s5AJ9c6y
- dmhBGa93Nwec2NACODNAFrNomMkpemPjqziDZV3o80TDYl//Q4S7i6b11ElDt/OUYZGHlg4/X
- GGC1pyUJUWoCivIaI9PHxSlgFZ1aQnJwmRwPtRU8KwDjFU/Kz7uVnvGspAsEMpvF/xCw9guOU
- bzonFA4hCKKFbsA5qCRKbiZysTC3kWxO9rhN/wkkQxNEzL6XW5utLELYrKMlDKdGIPXB26+LM
- YwmmBdazbZbCyYZRXHTjaLjmt0SqNipBf+WGdXXp68I+zJjz5hG228RxWJjM9CwML8Dw7uJyY
- BI15TCjUJvbD86mjVjXxPM8UwPv6QRS77F5PHNGlb4hjasqoNNZMZVCM/HoPzRCVaYhG/pXIx
- VqbxFMGv7hVLjh4vBg93Y01+CzcVC6DP/CSZmb1ExsZTP+HpU9QqwT6/sTW3rfv5q3DULch1S
- 1dgOgCBH9b0N6C7X3/9HW/Aw6quP1JBr2lwexuFAny3C3LuIS/CbAK2b/yr2E5cyJosTwoUIB
- Hn6neTn+1mfyHpp4L7BzoqfqYdbpsYNG2RDS+Z4fMcUk9x42XULh+NluKOmynfCnPAgn6iT3D
- AR5yNhlGPvbJBZ0B3ayDbEJPI9dWOd1dWSbuc/r0siTaxm0bRgNawhnlCa/vbkRyrhfKKsh3D
- jDh93qeAwIwM4DhryRAFT18CBg80askcrlNUwz8Z7RzUhvesZvH0KJCqz8X5pXjsKSOmxFn7J
- D5Acyn++A6C3j8ZMEccxNltpdYqVEGHJjUeoDnmnmRweU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240701115403.7087-1-justinlai0215@realtek.com>
 
-=E2=80=A6
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+On Mon, Jul 01, 2024 at 07:53:50PM +0800, Justin Lai wrote:
+> This series includes adding realtek automotive ethernet driver
+> and adding rtase ethernet driver entry in MAINTAINERS file.
+> 
+> This ethernet device driver for the PCIe interface of 
+> Realtek Automotive Ethernet Switch,applicable to 
+> RTL9054, RTL9068, RTL9072, RTL9075, RTL9068, RTL9071.
 
-Are you going to adjust this information anyhow?
+...
 
+Some clarification on my understanding of the next steps for this patchset:
 
-> ---
-> Changes in v4:
-> - revised the recipient email list, apologize for the inadvertent mistak=
-e.
-=E2=80=A6
+I see that this version of  patchset has been marked as "Changes Requested"
+in patchwork. So I think it would be best to post v23. And the only change
+I am aware of is the execute bit of the source file in patch 01/13.
 
-The usage of mailing list addresses is probably undesirable for
-the Developer's Certificate of Origin, isn't it?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc7#n398
-
-Regards,
-Markus
+When reposting please do include tags (Reviewed-by, etc...) from previous
+versions unless the patch has changed in a material way.
 
