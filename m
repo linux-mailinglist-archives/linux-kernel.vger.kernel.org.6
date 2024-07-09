@@ -1,306 +1,147 @@
-Return-Path: <linux-kernel+bounces-246466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3A2C92C20B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:14:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F07F92C20E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 029611C23079
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:14:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A04A11C22DAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C560C1B86E2;
-	Tue,  9 Jul 2024 17:01:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D931412C549;
-	Tue,  9 Jul 2024 17:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64ECD18B046;
+	Tue,  9 Jul 2024 17:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d00pFqlD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B4F639;
+	Tue,  9 Jul 2024 17:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720544481; cv=none; b=Oa75+Khw/s79+lnmvYGauuS4nqKGY+kR7XAjHMOwpXsf2rYoHZ3OyXwCn/+VnraD4L9vyMZzy/yNHXgxgHPAUyM6yysRR/QoJO2Gh1Yf1AMjpua2x2CQKR5YcwxN9RAcaQ2nZ8VCKU8x2uUL1jrqJQ0OUWhNgmrFpo3FY/korQs=
+	t=1720544570; cv=none; b=o7E8mtgXC+ZuzB2B3AU1jOs2Ptbk8K27X26wBYUE2XBi6XLu7s6MN5FeFo1oBuJsNr9pQBr//y96NYuLRSKz3zNwAYKKi930kG8m17s3q6hG+XhVl5x0iXpS0JE1UwA9Y6TVDvlzluwgfbvz9f+q4Zjdc4IRywFXg6pFxlZWqW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720544481; c=relaxed/simple;
-	bh=QU81g3USJXkoyfzApTaKOhMJ3FI+JFx3B2tVHMacAxc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hcrPRtp8omD8NdKWztVuhbguwpa1j+s/+2FkY0Szazoejub0Ot87wvGxm3GpQ61tirnL92xt/B/p8OpsoBOm/mOOP6QDbqF6K4AucR955LO/Mu+gMl7yE3KB8Rwyy3zofkiipw8ItDeg3yrW+lHbRciWI7OsuoqkfcDENGJfsUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11CF31063;
-	Tue,  9 Jul 2024 10:01:40 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 718563F766;
-	Tue,  9 Jul 2024 10:01:12 -0700 (PDT)
-Message-ID: <b337b93f-830b-4710-87b1-5b7fa4b7a1d2@arm.com>
-Date: Tue, 9 Jul 2024 18:01:10 +0100
+	s=arc-20240116; t=1720544570; c=relaxed/simple;
+	bh=UzBIt+FVpxgii3bYvT/TnaWmQi6iHbmvBKeb61lHb3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WVRA1QQV7krJc7w4DBNMoi3Zy0BMUBvur8cJySKERyzAhEGGXaoDi1fOCebjSo85GRvwEKgE15HtVI4KIM4yHUE64WSIe1jm/dGbQif6Q+M+asDxL1UVo3r6RP773y1NTu8foUosHmR4O87aazhiyXv384a5Q6gKXgchTSvKnRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d00pFqlD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E60E8C3277B;
+	Tue,  9 Jul 2024 17:02:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720544570;
+	bh=UzBIt+FVpxgii3bYvT/TnaWmQi6iHbmvBKeb61lHb3k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d00pFqlDVfdTFREfEUkJuxoLP5iXotpydIl8G2UUgF+TKjBxoc4MFjv8iKVgZ3Hj9
+	 o8l5blsRE3ApLwbyhrfTraoP3ntoI4lcGb3kZExgvOc7TH09ZdtoXfsPPSXVnjHWEO
+	 Fh5uz7qx0SDLAED79e/P/xRLPj/Oym5HtnlcekoqhihDU0uus6e6rzD4U51yqVXm3A
+	 De7E/+7ZAXGlQi0b+C1obR3cRkdlnsHXpqah0M4KygMrTOUcuBHykxMZQMXjbexgaI
+	 /lpKz8IU+m12M31xGzkEPhxCXL9T4u6kFm6SIIs1ZsIDjLXIbfFm8yW1i5VHJaraSZ
+	 Q0S02+Zj8Q9Pg==
+Date: Tue, 9 Jul 2024 11:02:48 -0600
+From: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Marek Vasut <marex@denx.de>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: Re: [PATCH] dt-bindings: non-dt-devices: document ltr,ltrf216a used
+ via ACPI PRP0001
+Message-ID: <20240709170248.GA3803124-robh@kernel.org>
+References: <20240709084401.21108-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] iommu: Optimize IOMMU UnMap
-To: Ashish Mhetre <amhetre@nvidia.com>, will@kernel.org, joro@8bytes.org,
- linux-arm-kernel@lists.infradead.org, Rob Clark <robdclark@gmail.com>,
- Boris Brezillon <boris.brezillon@collabora.com>
-Cc: vdumpa@nvidia.com, linux-tegra@vger.kernel.org, treding@nvidia.com,
- jonathanh@nvidia.com, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240523031935.90856-1-amhetre@nvidia.com>
- <6b707eb4-5cf3-4b66-8152-5ba252f5df39@arm.com>
- <2a349725-72cf-45e2-9ca2-5a8b153a6fae@nvidia.com>
- <d854664c-ab56-46b6-81f9-9ef712c32b3a@nvidia.com>
- <39d1635d-25b4-47ca-beb3-0baaae6252db@nvidia.com>
- <cc69b154-ca4b-42eb-950a-9ea3c5a4e4ee@arm.com>
- <eaa4f128-40f2-4db0-be86-84ae1b652ab7@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <eaa4f128-40f2-4db0-be86-84ae1b652ab7@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709084401.21108-1-krzysztof.kozlowski@linaro.org>
 
-On 09/07/2024 5:39 am, Ashish Mhetre wrote:
+On Tue, Jul 09, 2024 at 10:44:01AM +0200, Krzysztof Kozlowski wrote:
+> There is a device in the wild with non-updatable firmware coming with
+> ACPI tables with rejected "ltr,ltrf216a" compatible.  Linux kernel still
+> supports this device via ACPI PRP0001, however the compatible was never
+> accepted to bindings.  Lack of bindings causes checkpatch.pl warning
+> about undocumented compatible.
+
+Why do we care? For checkpatch.pl I really don't. That hack check I 
+wrote makes any string in binding docs a documented compatible. I have a 
+better check using the schema written, but that would make checkpatch 
+dependent on dtschema tools. So maybe just time to drop this check from 
+checkpatch as we have other ways to check and track this.
+
+However, I do care about 'make dt_compatible_check'. Besides these ACPI 
+cases, there's a bunch of cases that we'll never have schemas for. Like 
+everything from Sparc... Old PowerMac stuff... So I would like to 
+'document' them just to exclude from dt_compatible_check. So perhaps 
+this should be generalized.
+
 > 
-> On 7/3/2024 9:05 PM, Robin Murphy wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> On 2024-07-01 8:49 am, Ashish Mhetre wrote:
->>>
->>> On 5/31/2024 2:52 PM, Ashish Mhetre wrote:
->>>>
->>>> On 5/24/2024 6:09 PM, Ashish Mhetre wrote:
->>>>>
->>>>> On 5/23/2024 7:11 PM, Robin Murphy wrote:
->>>>>> External email: Use caution opening links or attachments
->>>>>>
->>>>>>
->>>>>> On 23/05/2024 4:19 am, Ashish Mhetre wrote:
->>>>>>> The current __arm_lpae_unmap() function calls dma_sync() on 
->>>>>>> individual
->>>>>>> PTEs after clearing them. By updating the __arm_lpae_unmap() to call
->>>>>>> dma_sync() once for all cleared PTEs, the overall performance can be
->>>>>>> improved 25% for large buffer sizes.
->>>>>>> Below is detailed analysis of average unmap latency(in us) with and
->>>>>>> without this optimization obtained by running dma_map_benchmark for
->>>>>>> different buffer sizes.
->>>>>>>
->>>>>>> Size  Time W/O        Time With       % Improvement
->>>>>>>       Optimization    Optimization
->>>>>>>       (us)            (us)
->>>>>>>
->>>>>>> 4KB   3.0             3.1             -3.33
->>>>>>> 1MB   250.3           187.9           24.93
->>>>>>
->>>>>> This seems highly suspect - the smallest possible block size is 2MB
->>>>>> so a
->>>>>> 1MB unmap should not be affected by this path at all.
->>>>>>
->>>>> It will be unmapped at 4KB block size, right? The 'size' passed to
->>>>> __arm_lpae_unmap will be 4KB and 'pgcount' will be 256 for 1MB
->>>>> buffer from iommu_pgsize() unless the IOVA and phys address met
->>>>> conditions for next bigger size i.e., 2MB.
->>>>>>> 2MB   493.7           368.7 25.32
->>>>>>> 4MB   974.7           723.4           25.78
->>>>>>
->>>>>> I'm guessing this is on Tegra with the workaround to force
->>>>>> everything to
->>>>>> PAGE_SIZE? In the normal case a 2MB unmap should be nominally 
->>>>>> *faster*
->>>>>> than 4KB, since it would also be a single PTE, but with one fewer 
->>>>>> level
->>>>>> of table to walk to reach it. The 25% figure is rather misleading if
->>>>>> it's only a mitigation of an existing erratum workaround, and the
->>>>>> actual
->>>>>> impact on the majority of non-broken systems is unmeasured.
->>>>>>
->>>>> Yes, I forgot about the workaround we have and agree that without the
->>>>> workaround, 2MB unmap will be faster without this optimization. But
->>>>> for any size between 4KB and 2MB, this optimization would help in
->>>>> improving the unmap latencies. To verify that, I reverted the 
->>>>> workaround
->>>>> and again got unmap latencies using dma_map_benchmark which are as
->>>>> mentioned below. We can see an improvement around 20% to 25%:
->>>>>
->>>>> Size          Time WO Opt(us)     Time With Opt(us)       % 
->>>>> improvement
->>>>> 4KB          3                                  3.1 -3.33
->>>>> 64KB        18.6                            15 19.36
->>>>> 128KB      35.2                            27.7 21.31
->>>>> 256KB      67.6                            52.6 22.19
->>>>> 512KB      128.4                          97.7 23.91
->>>>> 1MB         249.9                          188.1 24.72
->>>>> 2MB         67.4                             67.5 -0.15
->>>>> 4MB         121.3                          121.2 0.08
->>>>>
->>>>>> (As an aside, I think that workaround itself is a bit broken, 
->>>>>> since at
->>>>>> least on Tegra234 with Cortex-A78, PAGE_SIZE could be 16KB which
->>>>>> MMU-500
->>>>>> doesn't support.)
->>>>>>
->>>>> Yes, that's true. For 16KB PAGE_SIZE, we need to fall back to 4KB
->>>>> pgsize_bitmap.
->>>>>>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
->>>>>>> ---
->>>>>>>   drivers/iommu/io-pgtable-arm.c | 34
->>>>>>> +++++++++++++++++++++++++---------
->>>>>>>   1 file changed, 25 insertions(+), 9 deletions(-)
->>>>>>>
->>>>>>> diff --git a/drivers/iommu/io-pgtable-arm.c
->>>>>>> b/drivers/iommu/io-pgtable-arm.c
->>>>>>> index 3d23b924cec1..94094b711cba 100644
->>>>>>> --- a/drivers/iommu/io-pgtable-arm.c
->>>>>>> +++ b/drivers/iommu/io-pgtable-arm.c
->>>>>>> @@ -256,13 +256,15 @@ static void
->>>>>>> __arm_lpae_sync_pte(arm_lpae_iopte *ptep, int num_entries,
->>>>>>>                                  sizeof(*ptep) * num_entries,
->>>>>>> DMA_TO_DEVICE);
->>>>>>>   }
->>>>>>>
->>>>>>> -static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct
->>>>>>> io_pgtable_cfg *cfg)
->>>>>>> +static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct
->>>>>>> io_pgtable_cfg *cfg, int num_entries)
->>>>>>>   {
->>>>>>> +     int i;
->>>>>>>
->>>>>>> -     *ptep = 0;
->>>>>>> +     for (i = 0; i < num_entries; i++)
->>>>>>> +             ptep[i] = 0;
->>>>>>>
->>>>>>>       if (!cfg->coherent_walk)
->>>>>>> -             __arm_lpae_sync_pte(ptep, 1, cfg);
->>>>>>> +             __arm_lpae_sync_pte(ptep, num_entries, cfg);
->>>>>>>   }
->>>>>>>
->>>>>>>   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
->>>>>>> @@ -633,13 +635,25 @@ static size_t __arm_lpae_unmap(struct
->>>>>>> arm_lpae_io_pgtable *data,
->>>>>>>       if (size == ARM_LPAE_BLOCK_SIZE(lvl, data)) {
->>>>>>>               max_entries = ARM_LPAE_PTES_PER_TABLE(data) -
->>>>>>> unmap_idx_start;
->>>>>>>               num_entries = min_t(int, pgcount, max_entries);
->>>>>>> -
->>>>>>> -             while (i < num_entries) {
->>>>>>> -                     pte = READ_ONCE(*ptep);
->>>>>>> +             arm_lpae_iopte *pte_flush;
->>>>>>> +             int j = 0;
->>>>>>> +
->>>>>>> +             pte_flush = kvcalloc(num_entries, sizeof(*pte_flush),
->>>>>>> GFP_ATOMIC);
->>>>>>
->>>>>> kvmalloc() with GFP_ATOMIC isn't valid. However, I'm not sure if 
->>>>>> there
->>>>>> isn't a more fundamental problem here - Rob, Boris; was it just 
->>>>>> the map
->>>>>> path, or would any allocation on unmap risk the GPU reclaim deadlock
->>>>>> thing as well?
->>>>>>
->>>>> I am using kvmalloc() here to create an array which is used to store
->>>>> PTEs
->>>>> that are going to be flushed after clearing. If we don't store them 
->>>>> then
->>>>> those will be lost once cleared and we won't be able to flush them.
->>>>> I tried using GFP_KERNEL instead of GFP_ATOMIC but then I am getting
->>>>> warning from might_sleep().
->>>>> Is there any other alternative way we can use here to store the PTEs?
->>>>>> Thanks,
->>>>>> Robin.
->>>>>>
->>>>>>> +             if (pte_flush) {
->>>>>>> +                     for (j = 0; j < num_entries; j++) {
->>>>>>> +                             pte_flush[j] = READ_ONCE(ptep[j]);
->>>>>>> +                             if (WARN_ON(!pte_flush[j]))
->>>>>>> +                                     break;
->>>>>>> +                     }
->>>>>>> +                     __arm_lpae_clear_pte(ptep, &iop->cfg, j);
->>>>>>> +             }
->>>>>>> +             while (i < (pte_flush ? j : num_entries)) {
->>>>>>> +                     pte = pte_flush ? pte_flush[i] :
->>>>>>> READ_ONCE(*ptep);
->>>>>>>                       if (WARN_ON(!pte))
->>>>>>>                               break;
->>>>>>>
->>>>>>> -                     __arm_lpae_clear_pte(ptep, &iop->cfg);
->>>>>>> +                     if (!pte_flush)
->>>>>>> +                             __arm_lpae_clear_pte(ptep, &iop->cfg,
->>>>>>> 1);
->>>>>>>
->>>>>>>                       if (!iopte_leaf(pte, lvl, iop->fmt)) {
->>>>>>>                               /* Also flush any partial walks */
->>>>>>> @@ -649,10 +663,12 @@ static size_t __arm_lpae_unmap(struct
->>>>>>> arm_lpae_io_pgtable *data,
->>>>>>>                       } else if 
->>>>>>> (!iommu_iotlb_gather_queued(gather)) {
->>>>>>> io_pgtable_tlb_add_page(iop, gather,
->>>>>>> iova + i * size, size);
->>>>>>>                       }
->>>>>>> -
->>>>>>> -                     ptep++;
->>>>>>> +                     if (!pte_flush)
->>>>>>> +                             ptep++;
->>>>>>>                       i++;
->>>>>>>               }
->>>>>>> +             if (pte_flush)
->>>>>>> +                     kvfree(pte_flush);
->>>>>>>
->>>>>>>               return i * size;
->>>>>>>       } else if (iopte_leaf(pte, lvl, iop->fmt)) {
->>>> Hi all,
->>>>
->>>> Can you please provide feedback on this patch? Is this optimization
->>>> worth pursuing?
->>>>
->>>> Thanks,
->>>> Ashish Mhetre
->>> Hi Robin,
->>>
->>> Can you please share feedback on this? Is more testing required
->>> for this on non-Tegra platforms? Perhaps shall I send it as RFT ?
->>> I have used 'dma_map_benchmark' available in kernel to test this.
->>> Same can be used to test on other platforms.
->>
->> Apologies I was slightly mistaken before - I confess I was trying to
->> remember how the code worked from the patch context alone, and forgot
->> that this same path is actually used for clearing leaf entries all the
->> way down to L3 as well as freeing tables. So yes, indeed there should be
->> something to gain in general from combining the syncs for adjacent leaf
->> entries. However we still have the problem that we can't put an
->> unconditional allocation in here, so we'd have to do something like
->> combine up to the next non-leaf entry and keep the "inline" sync for
->> those. Or perhaps it might end up quite a neat compromise overall to do
->> your current idea on a smaller scale, with a fixed number of PTEs that's
->> reasonable to keep on the stack - even in the worst case, I'd expect to
->> still get a fair boost from doing, say, 32 syncs of 2 cachelines each
->> vs. 512 that touch each line multiple times.
->>
->> Thanks,
->> Robin.
+> Add a schema for such ACPI PRP0001 devices purely to satisfy
+> checkpatch.pl and document consensus: ltr,ltrf216a compatible is allowed
+> only via ACPI PRP0001, but not bindings.
 > 
-> Thanks for the feedback Robin. I am thinking of going with "combining sync
-> up to next non-leaf entry" approach. At this point there is a very less 
-> chance
-> of encountering a non-leaf entry as we are entering this part of code after
-> matching size with BLOCK_SIZE.
+> Link: https://lore.kernel.org/all/20240705095047.90558-1-marex@denx.de/
+> Link: https://lore.kernel.org/lkml/20220731173446.7400bfa8@jic23-huawei/T/#me55be502302d70424a85368c2645c89f860b7b40
+> Cc: Marek Vasut <marex@denx.de>
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Sebastian Reichel <sebastian.reichel@collabora.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../devicetree/bindings/non-dt-devices.yaml   | 35 +++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/non-dt-devices.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/non-dt-devices.yaml b/Documentation/devicetree/bindings/non-dt-devices.yaml
+> new file mode 100644
+> index 000000000000..206334693c7b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/non-dt-devices.yaml
+> @@ -0,0 +1,35 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/non-dt-devices.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Non-devicetree Devices - Exception List
+> +
+> +maintainers:
+> +  - Rob Herring <robh@kernel.org>
+> +
+> +description:
+> +  Some devices using ACPI with non-updatable firmware/ACPI tables use
+> +  incorrect Devicetree compatibles via ACPI PRP0001.  Developers want to
+> +  support these devices, thus use such compatibles in Linux drivers, however
+> +  usage of these within Devicetree sources was rejected.
+> +
+> +  Following list of devices is an incomplete schema with a goal to pass Linux
+> +  kernel scripts/checkpatch.pl checks about undocumented compatibles but also
+> +  reject any DTS file using such un-approved compatible.
+> +
+> +  Usage of any of following compatibles is not allowed in Devicetree sources,
+> +  even if they come from immutable firmware.  New entries can be added
+> +  only on the basis of non-updatable ACPI firmware on the device.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ltr,ltrf216a
+> +
+> +required:
+> +  - compatible
+> +  - broken-usage-of-incorrect-compatible
 
-Good point, that would only happen if a caller, say, maps 2MB + 1MB + 
-1MB then does a combined unmap of 4MB, which *could* technically happen 
-even in the DMA API, via one of the iommu_map_sg() paths, but in 
-practice I'd agree it's unlikely enough to not be worth worrying about 
-optimising for. Thus we could potentially even get away with doing this 
-more like __arm_lpae_map(), i.e. just find and take out any non-leaf 
-entries first, then blat the full range to take care of any remaining 
-leaves.
+That's a neat trick...
 
-> Shall I send a new version with this update?
-
-Sure, if you're happy to have a play around to see what works out 
-cleanest, I'd certainly be interested to see the result (no rush on my 
-behalf though, I'm about to take a couple of weeks off so won't be 
-looking at much until rc1 now anyway.)
-
-Cheers,
-Robin.
+> +
+> +additionalProperties: false
+> -- 
+> 2.43.0
+> 
 
