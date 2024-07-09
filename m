@@ -1,108 +1,148 @@
-Return-Path: <linux-kernel+bounces-245312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE0C92B10F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:30:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93DEE92B112
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7AD21F225E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:30:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1788EB2195C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1264145A08;
-	Tue,  9 Jul 2024 07:30:02 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B2414A615;
+	Tue,  9 Jul 2024 07:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BRE+d3Xl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D9E13A27D;
-	Tue,  9 Jul 2024 07:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384C712E1ED
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 07:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720510202; cv=none; b=gNFhbEx/8PNAokhaFtI7aEwJ4GfDSsNQKFhSQCI+Q2JvhOHaFXA1ohxKW6Z2nK94peTKXcMhD++TEz9+sL6CwoCNLXg59xok8A0wot4EfG8IJ+f0GCQoWH7mufzNZTpg05IehmZI4eZVanu5jZuQvROKwCk8uuMk8QJeDCk4FJA=
+	t=1720510207; cv=none; b=aUG6WLY8pSGVBbNR5uP4lIqEQUuTINBLIrulGkXT3Iws/PnOjUZAQBqBBcwqnuSroLrTxwc/ol64TVtwVht6OfeTwi5rwOATZLmpNJ073gYzZfYMP6gPRG9CvqfkmWG1vFMDjg0oMC4OPdrAbtnYfq9LJz0gRSCTriflfakwwRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720510202; c=relaxed/simple;
-	bh=gzc0c54BDDk/Q+GMrR87SF/g6DuMufpih9B/SrhZzxc=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ZxWKJoWN9Umr+GuzJKuB0kGDT8ILQpeb8fZjwYzpYPtzU7uCNq/cmuc9jg9emhi+iezBM4nRgQFvRPsDG/LV1hjjXKjH+0Vo8qYWVeeYBvx45pKtBN5C4PWS8V0x2zbn2uy7poKQobSBhNN8ZvXyl1nkEPBvGGmk06mdmSdLmJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WJCF73k6HzwWd4;
-	Tue,  9 Jul 2024 15:25:15 +0800 (CST)
-Received: from kwepemm600007.china.huawei.com (unknown [7.193.23.208])
-	by mail.maildlp.com (Postfix) with ESMTPS id B1012180AE5;
-	Tue,  9 Jul 2024 15:29:56 +0800 (CST)
-Received: from [10.174.185.179] (10.174.185.179) by
- kwepemm600007.china.huawei.com (7.193.23.208) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 9 Jul 2024 15:29:54 +0800
-Subject: Re: [PATCH 6/9] accel/rocket: Add a new driver for Rockchip's NPU
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-CC: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin
- Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, Tomeu Vizoso
-	<tomeu.vizoso@tomeuvizoso.net>, David Airlie <airlied@gmail.com>, Daniel
- Vetter <daniel@ffwll.ch>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-	<iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-media@vger.kernel.org>, <linaro-mm-sig@lists.linaro.org>
-References: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
- <20240612-6-10-rocket-v1-6-060e48eea250@tomeuvizoso.net>
-From: Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <ad2628b2-aab2-2c7a-d4df-5356c55fae39@huawei.com>
-Date: Tue, 9 Jul 2024 15:29:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+	s=arc-20240116; t=1720510207; c=relaxed/simple;
+	bh=rkGdISl1TzaGlVjcUH75AT1mx83zo4QoyWsZghmO6kI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=un8RVrtEOQUUtNxp+Kwm//XNVXuyj2y0g6ZAqKz2F0sbigktYKgR9cOf/tH2XprjsybZ6ePBH5pEbLIiBu9bQsb/TitQGFIyVmOrteZxEnR/vv+csFoLMO7RqoyybKWZeeN2oCy/FhXGsuDFcvmcCxoQWz5c/E1lzPGX8geHHgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BRE+d3Xl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720510204;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Qf1SJ2E+/uax9z6UEQf/5sMYVREavkk6eWR+f8aQSYQ=;
+	b=BRE+d3XlrkWWKJO1Hg/pDBHfnvKMZdk5REJ/Ugy9LNUXeyEikJSmPnnhPEl79lme9ovkp0
+	0nq29rnXlriL/Utw3kGGNn7t2k80vM/u+wZXYHovqXXhgwMc9s72PljF1Te+zJO91+ZDOZ
+	XroaBe/Gmflur/ocV8UmBRH8MjLbWLk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-148-PxbebiXXOoOkbkGujZZMJw-1; Tue, 09 Jul 2024 03:30:01 -0400
+X-MC-Unique: PxbebiXXOoOkbkGujZZMJw-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-426679bc120so14996195e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 00:30:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720510200; x=1721115000;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qf1SJ2E+/uax9z6UEQf/5sMYVREavkk6eWR+f8aQSYQ=;
+        b=TJF51RTe2y1veixndsten7/amFNo4ieyTbSDWRkbIv66xpGGCKhEFjX/1NPe5Poe5Z
+         EU+7Asovy+FpGVDq+FuFJrodvgOsGSg+OcCWEeKTeHNFvCCDWB2OrFprOW23nom/D5Tv
+         OicmtDcW05F6Tcs09XRiEgh4Z6Dzem867rpo0hG5+7ZzA01bTre0XXwHymgkj1+CexUw
+         S2bGq7V8s0S6HWeqJB+0UYigI8SkeXPLbCosE5MJD+yr7hl/VbbY3YMTukdIJ5yWxOmI
+         8DpX/9I0PG47sBQJc34mO9ObTeP22ullvYLmMGefpCnT6HondUHt6MYK0UYo316BFlRv
+         lYjg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0FD1mLcL9zBWt/mqjFkAuV34XihwfvEoodM780NcWJl41U7bwvAC+P1l/8ENoemWM8De9ySaVsPkAXaG6e0OGK6jXsXy1mQ+oFYXw
+X-Gm-Message-State: AOJu0YwncMbeggmXiWxgE365Rw71MIe4FbgJDTmo7BCtoZ0eqSXKKrR1
+	YReTh57MvurTiAaLbsgPcUR/z9d4ZWl5QEOc/QkruLI/DTxkePz5Y+3mPXW6M8fyBFxDDRPzRMs
+	gXF3bdfFUTGwX79wLDkYjSVloRpc4uS9AIimfHyf7JwM3tlozMv1lT+0QywFlpQ==
+X-Received: by 2002:a05:600c:2050:b0:426:67df:31e6 with SMTP id 5b1f17b1804b1-426707d7909mr10604415e9.17.1720510200737;
+        Tue, 09 Jul 2024 00:30:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFpJtl1o2CUuA4S9TQMHL2oQCj3OVqdwuS+zuGDVYd3GErt7tbo1ZmxdMnlHKCK0a6RkQCxyQ==
+X-Received: by 2002:a05:600c:2050:b0:426:67df:31e6 with SMTP id 5b1f17b1804b1-426707d7909mr10604285e9.17.1720510200358;
+        Tue, 09 Jul 2024 00:30:00 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.67.77])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde89133sm1712183f8f.54.2024.07.09.00.29.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 00:29:59 -0700 (PDT)
+Date: Tue, 9 Jul 2024 09:29:57 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>, Ingo Molnar <mingo@kernel.org>,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	tglx@linutronix.de
+Subject: Re: sched: Update MAINTAINERS
+Message-ID: <Zozm9Q7it5c_f6UC@jlelli-thinkpadt14gen4.remote.csb>
+References: <20240708075752.GF11386@noisy.programming.kicks-ass.net>
+ <alpine.DEB.2.21.2407081038350.38148@angie.orcam.me.uk>
+ <20240708095520.GI11386@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240612-6-10-rocket-v1-6-060e48eea250@tomeuvizoso.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm600007.china.huawei.com (7.193.23.208)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240708095520.GI11386@noisy.programming.kicks-ass.net>
 
-On 2024/6/12 21:52, Tomeu Vizoso wrote:
-> This initial version supports the NPU as shipped in the RK3588 SoC and
-> described in the first part of its TRM, in Chapter 36.
-> 
-> This NPU contains 3 independent cores that the driver can submit jobs
-> to.
-> 
-> This commit adds just hardware initialization and power management.
-> 
-> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Hi Peter,
 
-[...]
-
-> +void rocket_core_reset(struct rocket_core *core)
-> +{
-> +	reset_control_assert(core->a_reset);
-> +	reset_control_assert(core->h_reset);
+On 08/07/24 11:55, Peter Zijlstra wrote:
+> On Mon, Jul 08, 2024 at 10:47:18AM +0100, Maciej W. Rozycki wrote:
+> > On Mon, 8 Jul 2024, Peter Zijlstra wrote:
+> > 
+> > >   Thank you for having been our friend!
+> > > 
+> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > > ---
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -19929,7 +19929,6 @@ R:	Dietmar Eggemann <dietmar.eggemann@ar
+> > >  R:	Steven Rostedt <rostedt@goodmis.org> (SCHED_FIFO/SCHED_RR)
+> > >  R:	Ben Segall <bsegall@google.com> (CONFIG_CFS_BANDWIDTH)
+> > >  R:	Mel Gorman <mgorman@suse.de> (CONFIG_NUMA_BALANCING)
+> > > -R:	Daniel Bristot de Oliveira <bristot@redhat.com> (SCHED_DEADLINE)
+> > 
+> >  I think perhaps a CREDITS entry would be due rather than just dropping 
+> > from MAINTAINERS.
+> 
+> Ah, I was not aware of that file. Yes we can add a few lines there.
+> 
+> Thank you for the suggestion.
+> 
+> ---
+> diff --git a/CREDITS b/CREDITS
+> index 1a1a54555e11..a58066be6d73 100644
+> --- a/CREDITS
+> +++ b/CREDITS
+> @@ -271,6 +271,9 @@ D: Driver for WaveFront soundcards (Turtle Beach Maui, Tropez, Tropez+)
+>  D: Various bugfixes and changes to sound drivers
+>  S: USA
+>  
+> +N: Daniel Bristot de Oliveira
+> +D: Scheduler contributions, notably: SCHED_DEADLINE
 > +
-> +	udelay(10);
-> +
-> +	reset_control_deassert(core->a_reset);
-> +	reset_control_deassert(core->h_reset);
-> +}
+>  N: Carlos Henrique Bauer
+>  E: chbauer@acm.org
+>  E: bauer@atlas.unisinos.br
 
-Seems unused.
+For both, with great sadness,
 
-> +void rocket_core_reset(struct rocket_core *core);
+Acked-by: Juri Lelli <juri.lelli@redhat.com>
 
-> +void rocket_device_reset(struct rocket_device *rdev);
+Thank you Daniel for everything you have done and for just having been
+our friend, yes.
 
-Ditto.
+Best,
+Juri
+
 
