@@ -1,118 +1,147 @@
-Return-Path: <linux-kernel+bounces-246676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F21692C51A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:03:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AAC392C51E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39CB21F22D04
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:03:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FC7FB2132D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24D1185605;
-	Tue,  9 Jul 2024 21:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F4118562B;
+	Tue,  9 Jul 2024 21:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3x7Wwh3H"
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="omruXFHX"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B676713B7BE
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 21:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D591813B7BE
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 21:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720559017; cv=none; b=i1kbDBg8WFwNUloh3Mekt10Ft0quuGaNAyiyvhoA6s3fgOkI3OplY0oN/Sj7e8SK8kbNYUumwAvw6HJAYWmvCV6ePAw6cSWU68Z+mL+eym6LLx7klu2rPof+AbLuP1XHuZ5ZYAFoLABs3jh6t/DYqk8L97V8x1SJ9h4jCek5maY=
+	t=1720559091; cv=none; b=lH1g3hQvpRlHqXHjzTRBDjVb9p8yEeGTm0hfjUTLPk1KRskVymwhcaWB/QEjdAo8qIosQY3qaTnxqH/v+QOQTIYJIjsJ312N+R4dWK6MXq7dUlUXv1Upkxvg+XhGu7fZ7q78U/yJEwna7K3wmgbvduuFfcm3m4unZgven8v6n8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720559017; c=relaxed/simple;
-	bh=gaP6XG2rMSS5IJkfuqSil8ethRRMLbIOHXoShahWYwY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mf9jGHq6QajmIU+4jDh13zUi4u5RQiuNnoa5IyDhudVKKjm14/3M15Tm50MCD6rPDf5aUBATOY6OXddmCJd2u4ZWIUoOo2I1lcY8+U+6nlkt8Gf86mmN0p5sAEnTvFV6APQ4Pz+LU8njeBRhiK7QKTbCKzrUi6+sraAeVd7xd1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3x7Wwh3H; arc=none smtp.client-ip=209.85.221.170
+	s=arc-20240116; t=1720559091; c=relaxed/simple;
+	bh=pQuWpDrDEaCFl7ELhP2pM9jtryDd25mq43Dk6pVulGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=frh2G7S5WG698vSDqN8MSJS8SXibDBWkMfnlLDMPPC7Mc6HVVGYaP064sWOu95adl22ZHNXIXNDSefyZ82OdxYPaRRWBsOk+gJmTr2bNli/EJWb5Dg3OCYSSY4UaIR0bba+Hrqy6n73nZY87TdB7Ms+GxnG9keJ9ClFwrGzH7n0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=omruXFHX; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-4ef765e6dcaso1680379e0c.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 14:03:35 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fb10519ae3so19755ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 14:04:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720559015; x=1721163815; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uEEVtKYtkpBGMMntNLgt1VflFU8iMiYE2mInhS30FFw=;
-        b=3x7Wwh3HjGW8b7VMJt8SLWxc3vhpDb9wSGmnCuvG6eBlSCgfsTQTF0fg64JOfxk6sl
-         aC25f4Xw9tkDKwLI6eM/6UETceecVHhhsc3EZ2wXEm1qz18J17spg8q7nL7lNK21xUKH
-         EOBhk5B3R/GNBXjCexxIPSwMMMSWK8CrtvH+CbPmL1i+qyJOavtOReIgD3iNY8vUfka5
-         n7geqCAn4BMib5AqIKhdvOguSS+k5Ohd/H+Du2uzDaCloGzD5Ya1RAMjqJnmnlHOlv/f
-         a8fKLQOc7KW9PHt9p0ox6TDW7ghv/U725yEokQyamslf0u8LE1JoZvcVKqc/66kluu1k
-         9KSQ==
+        d=google.com; s=20230601; t=1720559089; x=1721163889; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yOZEUf/J6siPzygu395P3D/gjZTzmsga/ioXaj0U6JM=;
+        b=omruXFHXUBjKOYPm3rt8AQhwbj75vzdL377WHBGIif0PTZs4fLUSGT9AlbUjRc8Chu
+         2SNI9PSWAj93mB3WljCJjgcFvfw+Mh2AouEa3bh46rpERpP4JiRBqVD3ANcN5amxlTys
+         jGsRCrf21Ggnda7ziRQK6mUUcZ3eeR0sMalKZRJppAiR9MwVC8nOvCAjJS0xO07ngMd5
+         czA3bSveOHOWU35domkKi70Qslp4/29Qo1wntovCrGdT0ImkE0v/XMBRP8/nJ5dAHYDv
+         y8qVin6pN25B0tN3cmpyWy9lEPsqND+ovCg1O5MUvVpigSLAJzgtpP5QLGnj7Mlz3tN8
+         p0FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720559015; x=1721163815;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uEEVtKYtkpBGMMntNLgt1VflFU8iMiYE2mInhS30FFw=;
-        b=ARS/qK1VVifR+Dbp3SE9bNOWzh6AQ9B9RBFQRTnytyBnyBvaBYNZzGeHSgyb/+vHEK
-         8p1Hz1G/8Ak8NbJ6uGsCQX67B0wcJHLeE/hLXlthcy5iObuNUZyWkqZJhmlhn3B56Cfp
-         SZXdMBxwefnIT3cqQVGi7QiooCwYx/B4PDNzREDvyQKwJu1N+WbkgSZYnq/vZlPT9JJ9
-         IVngqPRsvzHB2+SeAYQ8DcC0f/OtuaKUnAqfoN+ar5b61JMwzCft6eLsXYTxjz9v2pTM
-         McRUtDfMroajZTfjb7zAquWS747n/NFxG32f79QqI7rdAP2oQYidtFN4rIuCweG50+zY
-         T/qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUp0tOCbBlUBaiXHoy7LjKMt6e34pHtlpIj1rshRAdtpT+oILVRwLw5bW65uwxL/mbWbPEfecgPFG8BukZnjYQ89PZveZBe4AmD42w0
-X-Gm-Message-State: AOJu0YzyLKDPJCc7l5uWeo60+neXzqbEdGfzMOvonXV4aCzz4rIQ3x/D
-	69Yd3D+DJb+UZZYQHZ0nL9/SmDduar3l2JnlDjFbUb640CD1NefFmXapB+k22oP4pdmzQpdtv+y
-	RuK0PTDhUl7/v5tEYzH5fR9zc6ivGNJ0PFE8S
-X-Google-Smtp-Source: AGHT+IHU1E8fzuJxDgkkRa8V51Zp91URQNvMI7d/QwIPp6TAjb2CXGR3nGBcdKh6trunZV3PhvoQJWHyJO0iWBgRnhg=
-X-Received: by 2002:a05:6122:d13:b0:4f2:ea44:fd2b with SMTP id
- 71dfb90a1353d-4f33ef758a0mr4208200e0c.0.1720559014412; Tue, 09 Jul 2024
- 14:03:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720559089; x=1721163889;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yOZEUf/J6siPzygu395P3D/gjZTzmsga/ioXaj0U6JM=;
+        b=WNq0zHpkxzMGMJ/wXU59APONZj7CtIL+78KxqOrnlzNcSEU6x1or0V7ogYx3Oc6OnK
+         pbLuKQVGBozgVqOiOiut5KP77y9SaLuNkjGhFIrZjxGPWeGzg17mEG5/PBpF6r9FKl60
+         MtgkL4/q0UbrNx3c3fIEK6n5T6v4LLWRDVKchgDnxR3CJVQVJPav6ZO2vwGjUU4srZ3N
+         tvHYQrualL6syZZa68alKzb/a+RtqqRZJSFv2+/XRdS571KQDl1fR5VtgYI56zMkzuU3
+         NN3U5i4LUH5N0cf7zgdZCcXbSl7OJZhhU2CCspMdbCTWuXK9D1COUhGWxtZWQVzX7722
+         xuOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUoCc/iwj7AbhSVUHiX5gFUEVb6Kivk060E+K9cCAk5Zl8cEPRJ8ofDIhHV3DHD1BlKxslJoT1in4rDORGruSkbodCWoNIiC6+1HYv
+X-Gm-Message-State: AOJu0Yy0TuUiJySlmiYUQEQGxOJy8PhShyKgWvYRTp99eXUU6ayJspLq
+	GSj9LvdjSFH7wO3B0SfvNVqaE50Hw+hna5NXzL+zThBqliXqgyHRuMV+7WZkLw==
+X-Google-Smtp-Source: AGHT+IGZUitn76mfCM9EnzN6heABLFA1iE9kZnxKb2TuoqafSIshuqFsZaMjvSrHhwGNWXnqfTBkog==
+X-Received: by 2002:a17:903:2003:b0:1f7:34e4:ebc1 with SMTP id d9443c01a7336-1fbce1391d4mr234535ad.5.1720559088778;
+        Tue, 09 Jul 2024 14:04:48 -0700 (PDT)
+Received: from google.com ([2620:15c:2d:3:e5ff:5d06:df02:cdba])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a122cfsm21086945ad.5.2024.07.09.14.04.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 14:04:48 -0700 (PDT)
+Date: Tue, 9 Jul 2024 14:04:43 -0700
+From: Isaac Manjarres <isaacmanjarres@google.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: tglx@linutronix.de, jstultz@google.com,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	saravanak@google.com, mjguzik@gmail.com,
+	Manish Varma <varmam@google.com>,
+	Kelly Rossmoyer <krossmo@google.com>, kernel-team@android.com,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6] fs: Improve eventpoll logging to stop indicting
+ timerfd
+Message-ID: <Zo2l65cTwuSMDU-Z@google.com>
+References: <20240703214315.454407-1-isaacmanjarres@google.com>
+ <20240704-umsatz-drollig-38db6b84da7b@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708190924.work.846-kees@kernel.org> <a1fd42b5-50b7-1360-4fd0-8f590dc08e02@gentwo.org>
- <202407091327.AEF6C020D@keescook>
-In-Reply-To: <202407091327.AEF6C020D@keescook>
-From: Marco Elver <elver@google.com>
-Date: Tue, 9 Jul 2024 23:02:55 +0200
-Message-ID: <CANpmjNP2BEYV5Yp80yS6+x90YFpdAUyYSR5mxoj9q7JZQWy3UA@mail.gmail.com>
-Subject: Re: [RFC][PATCH 0/4] slab: Allow for type introspection during allocation
-To: Kees Cook <kees@kernel.org>
-Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Tony Luck <tony.luck@intel.com>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Hao Luo <haoluo@google.com>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Pekka Enberg <penberg@kernel.org>, 
-	David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
-	Mark Rutland <mark.rutland@arm.com>, Jakub Kicinski <kuba@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, Tony Ambardar <tony.ambardar@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240704-umsatz-drollig-38db6b84da7b@brauner>
 
-On Tue, 9 Jul 2024 at 22:28, Kees Cook <kees@kernel.org> wrote:
->
-> On Tue, Jul 09, 2024 at 10:26:32AM -0700, Christoph Lameter (Ampere) wrote:
-> > On Mon, 8 Jul 2024, Kees Cook wrote:
-> >
-> > >
-> > >            obj = kmalloc(obj, gfp);
-> >
-> > Could we avoid repeating "obj" in this pattern?
-> >
-> > F.e.
-> >
-> >       KMALLOC(obj, gfp);
->
-> This appears to be the common feedback, which is good! :) And we can
-> still have it return "obj" as well, so it could still be used in
-> "return" statements, etc. I will work up a new RFC...
+On Thu, Jul 04, 2024 at 04:03:59PM +0200, Christian Brauner wrote:
+> On Wed, Jul 03, 2024 at 02:43:14PM GMT, Isaac J. Manjarres wrote:
+> > From: Manish Varma <varmam@google.com>
+> > 
+> > We'll often see aborted suspend operations that look like:
+> > 
+> >  PM: suspend entry 2024-07-03 15:55:15.372419634 UTC
+> >  PM: PM: Pending Wakeup Sources: [timerfd]
+> >  Abort: Pending Wakeup Sources: [timerfd]
+> >  PM: suspend exit 2024-07-03 15:55:15.445281857 UTC
+> > 
+> > From this, it seems a timerfd caused the abort, but that can be
+> > confusing, as timerfds don't create wakeup sources. However,
+> > eventpoll can, and when it does, it names them after the underlying
+> > file descriptor. Unfortunately, all the file descriptors are called
+> > "[timerfd]", and a system may have many timerfds, so this isn't very
+> > useful to debug what's going on to cause the suspend to abort.
+> > 
+> > To improve this, change the way eventpoll wakeup sources are named:
+> > 
+> > 1) The top-level per-process eventpoll wakeup source is now named
+> > "epollN:P" (instead of just "eventpoll"), where N is a unique ID token,
+> > and P is the PID of the creating process.
+> > 
+> > 2) Individual eventpoll item wakeup sources are now named
+> > "epollitemN:P.F", where N is a unique ID token, P is PID of the creating
+> > process, and F is the name of the underlying file descriptor.
+> 
+> Fyi, that PID is meaningless or even actively misleading in the face of
+> pid namespaces. And since such wakeups seem to be registered in sysfs
+> globally they are visible to all containers. That means a container will
+> now see some timerfd wakeup source with a PID that might just accidently
+> correspond to a process inside the container. Which in turn also means
+Thanks for your feedback on this, Christian. With regards to this
+scenario: would it be useful to use a namespace ID, along with the PID,
+to uniquely identify the process? If not, do you have a suggestion for
+this?
 
-More macros like this only obfuscate the code further. The name would
-become something that makes it really clear there's an assignment.
+I understand that the proposed naming scheme has a chance of causing
+collisions, however, it is still an improvement over the existing
+naming scheme in terms of being able to attribute wakeups to a
+particular application.
 
-  assign_kmalloc(obj, gfp)
+> you're leaking the info about the creating process into the container.
+> IOW, if PID 1 ends up registering some wakeup source the container gets
+> to know about it.
+Is there a general security concern about this? If not, can you please
+elaborate why this is a problem?
 
-There may be better options. Also ALLCAPS could be avoided here, as we
-have done with other language-like features (vs. pure constants).
+Thanks,
+Isaac
 
