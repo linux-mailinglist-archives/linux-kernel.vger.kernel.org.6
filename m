@@ -1,106 +1,59 @@
-Return-Path: <linux-kernel+bounces-246567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DD3D92C3A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:03:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA1292C386
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:54:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 420001C22953
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:03:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57A5A283667
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8A5182A62;
-	Tue,  9 Jul 2024 19:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE709180059;
+	Tue,  9 Jul 2024 18:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="A6g2pnoa"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nwM9AEfp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113D313210D
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 19:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD3C80BEC;
+	Tue,  9 Jul 2024 18:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720551798; cv=none; b=fuUwfLFytJJ23hyGI7tFIhU2o4yNCBDlSEQa2jRpcBB7F76dbghOXXnDKmspyWvpFVkLTvu0hTNeC5Puu6tvjmjyOZHo7VuuCkttL4Hw8EKCtbhIrJG/j/9IqmPdaEWR4zKohsp2UEWGpgn7STbbi4B8UchkYBfkRcFwjdBcDjc=
+	t=1720551254; cv=none; b=u6Bapj+yQADreTs13JpzY0L21I5TIMx/Y5EWbC4NpzC7z08EGzAKyBDh6O86NBXtsPJGU36UYVYcYcWNalR+Oe4MVOPhlG7aXZ/HjYoskzPMHEf+etVeYtjlernfFMRKj7CEi4wBYbUfzOAs8T40/3oTSd47Vn5xrVpzsBiA9qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720551798; c=relaxed/simple;
-	bh=UmMx48wnc0FnxjTp1WjNlbVccTNxzM4x83j7igXR7TU=;
+	s=arc-20240116; t=1720551254; c=relaxed/simple;
+	bh=zU+xsUl1UVFtkSW2uled6b4uFbPZZ9vJ+DA0uP6xOCE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P3Y0xZF6bX7oc5oAvCJ9VRPB8tdoO62T1D/uywbCBldHgMrAN5HjbqBcZGIxCKn2nKGqrzKr5JZimtpnrZWTdvAdzqLYNeP+CgXZ6HSu2n+LiOOaLXcZ95PrJcrPEzsVqNcTjfSFWak/vtmXuCIJ6ppQFe5US7xvs/eiYoMrySE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=A6g2pnoa; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b5eb69e04cso33242496d6.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 12:03:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1720551796; x=1721156596; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tz4SKanGT0p7B5kijsG/hyAEtWawoOPO2+O2oyG1KXg=;
-        b=A6g2pnoaWkIIc0CimeecaG6mN13v3n+vMZWH1a2eisPl7oElZ5j8RpC7cpUSns7z7E
-         SaXhh3hjwvo58JADJ4Lw0s/jnqxlC0BzTQIPpK7tnTw3bVo/e3D+fRbRqyUbjlLnjChe
-         VcL/iF5vlClZpPkk1kOVxFIVZXTJH4WsBu1HbMB3pT8UgIlpcPiRTcjlKhpPxR7637Fk
-         DRUQkMUNORI+3EPdhjl+QzUQN9nItiNZ6HEzDLm0u+TDbYIPjlW+C8lfjk3FVZ8v7AWW
-         V8oJikbmctWxcgEg3nIGGAnSdH/wLtsUGiM83M8YX4/0gceq+z/kwqBSB9Rw6gHC0ZcK
-         NqLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720551796; x=1721156596;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tz4SKanGT0p7B5kijsG/hyAEtWawoOPO2+O2oyG1KXg=;
-        b=H0Wm5feZjdqxFv9ax1DhailSyRSU+SBmn6/AQWqK9bjgHH4nSocjsI6w0kBnP/cm8z
-         6BKIEWlOLVPeyfbI94sE6kwGQ3Asbz0iSbNa/8mBIeeFfYeb4qGI8x47j8e7md0NYmGZ
-         R5xecZRP5d2f0Epv65P+7xHk+BgVepFTo1Gm0jYEjUjaB3ck9YmjZ7T4qE5smGnTX5z7
-         cEVgtgW2sJpYO1P+myvfuoPQjx11sZOLHT2Ir/Lsai8YLDQllzowCybhf4XkJL0Y6rsT
-         wNYUA5uAzDuT2Cc/3LOUBMW0BQ5vRyyw6N5CqoFDDKbZCmRrJ48Wds9y6SJa3TxlwG0k
-         H9zw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSqv4it5hp04T1l7AXfUMyqysuwt7QYxoLAjaTOJYnkZL1ygXfFmPibz8BGm7HtK72EDiUbnteG2mbMX2pyaYLNIp/YpZP7Mp8ZUSD
-X-Gm-Message-State: AOJu0YzHE0WFlC9l7AFoljTx67HGZTs68nVrFHXpwNKJOOYqAiVPe1RP
-	jeHTA2Vj6jklN5hFN+mjf+ARwBbB5gC9v4he6AdSGuKhEjowP+MOQ3xXZXpgmGc=
-X-Google-Smtp-Source: AGHT+IFhetxp9iNMwbY2wmkBlgDvT9+MA6GFJVeq9xE0noHusNzmV7TqInccd4H71Z7ysufi1Iri/Q==
-X-Received: by 2002:a05:6214:1cc2:b0:6b5:52da:46f2 with SMTP id 6a1803df08f44-6b61bc80504mr38822486d6.6.1720551795800;
-        Tue, 09 Jul 2024 12:03:15 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.90])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b61ba797c0sm11232896d6.91.2024.07.09.12.03.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 12:03:15 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sRFxj-002sHI-8S;
-	Tue, 09 Jul 2024 15:53:15 -0300
-Date: Tue, 9 Jul 2024 15:53:15 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Leon Romanovsky <leon@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Keith Busch <kbusch@kernel.org>,
-	"Zeng, Oak" <oak.zeng@intel.com>,
-	Chaitanya Kulkarni <kch@nvidia.com>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 00/18] Provide a new two step DMA API mapping API
-Message-ID: <20240709185315.GM14050@ziepe.ca>
-References: <cover.1719909395.git.leon@kernel.org>
- <20240703054238.GA25366@lst.de>
- <20240703105253.GA95824@unreal>
- <20240703143530.GA30857@lst.de>
- <20240703155114.GB95824@unreal>
- <20240704074855.GA26913@lst.de>
- <20240708165238.GE14050@ziepe.ca>
- <20240709061721.GA16180@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l4VLn7zFLtTdXCvgn6v68DqkuvkIcJUbKZdhBfDA8IY12PaOm/sQHXNl6iLlaPNRtxuRoZxGnXdpuGBTj3/kl0NwqEmWsOyZvzJla4mqkAbCPIxH2SeJvWMyfEqmL+TMDf/kFDFtjdzq4d03YWnQYW3aqAVWYU8a2GLtLb66/iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nwM9AEfp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FA10C3277B;
+	Tue,  9 Jul 2024 18:54:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720551253;
+	bh=zU+xsUl1UVFtkSW2uled6b4uFbPZZ9vJ+DA0uP6xOCE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nwM9AEfpO5XEeQhOCklbMmT6XTFAnaKLSY09IA9ClKZKULDLYX8FN1e3yiaFTGM8v
+	 rP6jg4cl4GIIaqjUdgjpHFMqtLZcEA0d1HhWa37RmzyUjehM8U+qxzag/NECxat39a
+	 hgqsyXQBkEYX8oSe/Lt4lL8DDrZ0zSgx6ng2+W5YFl0e2/2+LtDss5zpqvyhZLutpL
+	 JUXT8NvXU18lifBkmZ0/J3uMI8GIvlNWqwIsidQsK2EMyERtPC3/jKYaBkIicEd96G
+	 O5PBuIfi2V32zu1+F63tWXlq1Y9seml27I5he2c/ygFRl19LWxhrwn/aFcfQQ3dSt3
+	 RSiVUEco2qXsg==
+Date: Tue, 9 Jul 2024 13:54:02 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Prakash Gupta <quic_guptap@quicinc.com>
+Cc: Mukesh Ojha <quic_mojha@quicinc.com>, konrad.dybcio@linaro.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] firmware: qcom_scm: Add a padded page to ensure DMA
+ memory from lower 4GB
+Message-ID: <qputoki6kfvowm35ops5wytiezdixsgel3klaq2vj4ylpv44qy@r2khmqemg6jo>
+References: <1716564705-9929-1-git-send-email-quic_mojha@quicinc.com>
+ <h6omxqre7pod3ztn7x3sckjbgcg32u4btfmtxwn2rkjw7uwsgd@ncdmu5ed4gm3>
+ <d85bf913-b6dc-e9fd-7c54-fe52b79c2593@quicinc.com>
+ <jcvu2irnung4u6v6ticafrqze73kqenpqpy6le6du2q6ag734u@jeqxv5y7pumm>
+ <ZnmK7Nc50gM3HbVI@hu-mojha-hyd.qualcomm.com>
+ <b645a400-a932-f7e0-de03-e88833541538@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,67 +62,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240709061721.GA16180@lst.de>
+In-Reply-To: <b645a400-a932-f7e0-de03-e88833541538@quicinc.com>
 
-On Tue, Jul 09, 2024 at 08:17:21AM +0200, Christoph Hellwig wrote:
-> On Mon, Jul 08, 2024 at 01:52:38PM -0300, Jason Gunthorpe wrote:
-> > Ideally we'd have some template code that consolidates these loops to
-> > common code with driver provided hooks - there are a few ways to get
-> > that efficiently in C.
-> > 
-> > I think it will be clearer when we get to RDMA and there we have the
-> > same SGL/PRP kind of split up and we can see what is sharable.
+On Mon, Jul 08, 2024 at 03:33:57PM GMT, Prakash Gupta wrote:
 > 
-> I really would not want to build common code for PRPs - this is a concept
-> very specific to RDMA and NVMe.  
+> 
+> On 6/24/2024 8:34 PM, Mukesh Ojha wrote:
+> > On Sun, Jun 23, 2024 at 07:25:23PM -0500, Bjorn Andersson wrote:
+> >> On Wed, May 29, 2024 at 05:24:29PM GMT, Mukesh Ojha wrote:
+> >>>
+> >>>
+> >>> On 5/27/2024 2:16 AM, Bjorn Andersson wrote:
+> >>>> On Fri, May 24, 2024 at 09:01:45PM GMT, Mukesh Ojha wrote:
+> >>>>> For SCM protection, memory allocation should be physically contiguous,
+> >>>>> 4K aligned, and non-cacheable to avoid XPU violations. This granularity
+> >>>>> of protection applies from the secure world. Additionally, it's possible
+> >>>>> that a 32-bit secure peripheral will access memory in SoCs like
+> >>>>> sm8{4|5|6}50 for some remote processors. Therefore, memory allocation
+> >>>>> needs to be done in the lower 4 GB range. To achieve this, Linux's CMA
+> >>>>> pool can be used with dma_alloc APIs.
+> >>>>>
+> >>>>> However, dma_alloc APIs will fall back to the buddy pool if the requested
+> >>>>> size is less than or equal to PAGE_SIZE. It's also possible that the remote
+> >>>>> processor's metadata blob size is less than a PAGE_SIZE. Even though the
+> >>>>> DMA APIs align the requested memory size to PAGE_SIZE, they can still fall
+> >>>>> back to the buddy allocator, which may fail if `CONFIG_ZONE_{DMA|DMA32}`
+> >>>>> is disabled.
+> >>>>
+> >>>> Does "fail" here mean that the buddy heap returns a failure - in some
+> >>>> case where dma_alloc would have succeeded, or that it does give you
+> >>>> a PAGE_SIZE allocation which doesn't meeting your requirements?
+> >>>
+> >>> Yes, buddy will also try to allocate memory and may not get PAGE_SIZE memory
+> >>> in lower 4GB(for 32bit capable device) if CONFIG_ZONE_{DMA|DMA32} is
+> >>> disabled.
+> >>
+> >> Is that -ENOMEM or does "not get" mean that the buddy fallback will
+> >> provide an allocation above 4GB?
+> > 
+> > dma_alloc_coherent() returns NULL in that situation.
+> > 
+> > https://elixir.bootlin.com/linux/v6.10-rc5/source/kernel/dma/direct.c#L142
+> > 
+> > -Mukesh
+> > 
+> 
+> scm device is using DMA mask as 32b. With size <= PAGE_SIZE, call to 
+> dma_alloc_contiguous() at [1] will return NULL.
+> 
+> With DMA mask as 32b and CONFIG_ZONE_{DMA|DMA32} disabled, the allocation 
+> can't be guaranteed within 32b with buddy. Hence will return page as NULL.
+> 
+> Adding a padded page should allow allocation from CMA region.
+> 
 
-I think DRM has it too. If you are populating a GPU page table then it
-is basically a convoluted PRP. Probably requires different splitting
-logic than what RDMA does, but I've never looked.
+Thanks for the explanation, Prakash and Mukesh. It sounds wrong to me
+that one has to trick the DMA API this way.
 
-> OTOH more common code SGLs would be nice.  If you look at e.g. SCSI
-> drivers most of them have a simpe loop of mapping the SG table and
-> then copying the fields into the hardware SGL.  This would be a very
-> common case for a helper.
+I assume this comes from the check [a], could we perhaps propose
+modifying this? If nothing else it will give us the DMA maintainers'
+input regarding this being the appropriate workaround.
 
-Yes, I belive this is very common.
+[a] https://elixir.bootlin.com/linux/v6.10-rc5/source/kernel/dma/contiguous.c#L362
 
-> That whole thing of course opens the question if we want a pure
-> in-memory version of the dma_addr_t/len tuple.  IMHO that is the best
-> way to migrate and allows to share code easily.  We can look into ways
-> to avoiding that more for drivers that care, but most drivers are
-> probably best serve with it to keep the code simple and make the
-> conversion easier.
+Regards,
+Bjorn
 
-My feeling has been that this RFC is the low level interface and we
-can bring our own data structure on top.
-
-It would probably make sense to build a scatterlist v2 on top of this
-that has an in-memory dma_addr_t/len list close to today. Yes it costs
-a memory allocation, or a larger initial allocation, but many places
-may not really care. Block drivers have always allocated a SGL, for
-instance.
-
-Then the verbosity of this API is less important as we may only use it
-in a few places.
-
-My main take away was that we should make the dma_ops interface
-simpler and more general so we can have this choice instead of welding
-a single datastructure through everything.
-
-> > I'm also cooking something that should let us build a way to iommu map
-> > a bio_vec very efficiently, which should transform this into a single
-> > indirect call into the iommu driver per bio_vec, and a single radix
-> > walk/etc.
->
-> I assume you mean array of bio_vecs here.  That would indeed nice.
-> We'd still potentially need a few calls for block drivers as
-> requests can have multiple bios and thus bio_vec arrays, but it would
-> still be a nice reduction of calls.
-
-Yes. iommufd has performance needs here, not sure what it will turn
-into but bio_vec[] direct to optimized radix manipuilation is
-something I'd be keen to see.
-
-Jason
+> Thanks,
+> Prakash
+> 
+> [1] https://elixir.bootlin.com/linux/v6.10-rc5/source/kernel/dma/direct.c#L131
+> >>
+> >> Regards,
+> >> Bjorn
+> >>
+> >>> However, DMA memory would have successful such case if
+> >>> padding is added to size to cross > PAGE_SIZE.
+> >>>
+> >>>>
+> >>>>  From this I do find the behavior of dma_alloc unintuitive, do we know if
+> >>>> there's a reason for the "equal to PAGE_SIZE" case you describe here?
+> >>>
+> >>> I am not a memory expert but the reason i can think of could be, <=
+> >>> PAGE_SIZE can anyway possible to be requested outside DMA coherent api's
+> >>> with kmalloc and friends api and that could be the reason it is falling
+> >>> back to buddy pool in DMA api.
+> >>>
+> >>> -Mukesh
+> > 
+> 
+> > 
 
