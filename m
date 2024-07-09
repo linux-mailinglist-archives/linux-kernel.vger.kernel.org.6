@@ -1,105 +1,139 @@
-Return-Path: <linux-kernel+bounces-245647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1905B92B575
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:37:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6049B92B57B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:38:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB592285292
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:37:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76ED41C22EC6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7905515699E;
-	Tue,  9 Jul 2024 10:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE445156968;
+	Tue,  9 Jul 2024 10:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="L54uR2Tt"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="SJtfNySh"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B5A156885
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34052E62D
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720521458; cv=none; b=upJ0xnaNYmBawM7hWFxeYUFN0hFEiV2M2JqwOKJcwFCtB6FLd3qKkZ/JMchgakmoLw5wPVZN1re5v6ZBcYgz4zPrvQ6lQWrw3sRmZz8iaya8nmWo9S4BzGEnhjH/mJpouDPr/h86tbPXPz/Jj+SZHbMVEn0EksLDAvI2nnhJKbc=
+	t=1720521497; cv=none; b=WNfL/z1Mo5BLssShI9R6Krxco0meMODfk3zGSYdW8ngmaLR0zKFRdSTaAffnxXDPoFUW+yTKL1tpXFq7Zw7+IMoPRsBmq43BDm+8Rzn2pB2ZVOMeJ4btj9pNMnRPAcsn8vVp83uXCJ2Ud0d1IX6kf5ygPvrksHF7d59hD76YyI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720521458; c=relaxed/simple;
-	bh=c68Rl+i540qanf1DGJH9pTc6YgVH2lalM9vUm9e5H0s=;
+	s=arc-20240116; t=1720521497; c=relaxed/simple;
+	bh=hb7ypSaWD0r0znVQHRKLVtNi37VawD10KbVQbJWnXIc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n2meuSh6VNmxKZbFXhnXjzRvDN+CWLzLSlBQP7tNTBfOB2oCn0rwWayNj3vHcLuuuQMAujzBy60sZoqvtPrZjp9MFCLi62UH89JRcT7VKIW1hS4rhpf0ec2PJjD2orfaiEsS5h6WN4gYuE6UGodvFStKZCecEVHKYYhVdI7GtIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=L54uR2Tt; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=c68R
-	l+i540qanf1DGJH9pTc6YgVH2lalM9vUm9e5H0s=; b=L54uR2TtQY2tqLVRtMNO
-	011+lNvub/8tOV/GSicWb2sqJk3BtMFmcQIRg2N5XvtfvILaDfm5aLCeXnQI0gtu
-	mNsq48F7mEXs1GI+qD7/W7GDnt1Pt6ghAbjCsX6ELHta6qEun43/QJIgO8RPCYJG
-	hGUj/dA+PuYWa6b4xwBI65v5KcHMUbG4LBBK8aZ+Ke1JP6JGztGO0B0smK31xaJz
-	E/kfUnohNxwOTA9icBCcmnubhACqzkjan9jOvZuPF0k/0qzeUxruta+OvWMj9IAU
-	ts3yiMHcCag33ANiH9Nlaku3mAhFqpDCOSX8VIicS2tUJlLuFSHCfaLQ9sYMRhWB
-	4A==
-Received: (qmail 184676 invoked from network); 9 Jul 2024 12:37:25 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Jul 2024 12:37:25 +0200
-X-UD-Smtp-Session: l3s3148p1@eN6SHc4cxrMujnsa
-Date: Tue, 9 Jul 2024 12:37:24 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Lee Jones <lee@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-	linux-sh@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] mfd: tmio: simplify header and move to
- platform_data
-Message-ID: <Zo0S5DauR8MWRIyI@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Lee Jones <lee@kernel.org>, linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-sh@vger.kernel.org
-References: <20240213220221.2380-8-wsa+renesas@sang-engineering.com>
- <172051805084.1217090.8146208079593611090.b4-ty@kernel.org>
- <20240709094131.GE501857@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QEB+I8qyX3HZow2pA1ZHx2NjYuDciyxNZh/OpPP2T43wBzrklzH59ltiCEZxCEdvZWwhCxyoNBO6AdHpm75+ItZwXkSF0PNojodv098Mg1t42N0iWHDdNGoG5j2zjxL7wwVnbMXcn4b159s+b+Z+9aA3ysV2WXF67XfOQLY94dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=SJtfNySh; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 66BD840E0185;
+	Tue,  9 Jul 2024 10:38:12 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id sWJM1MyZEvjd; Tue,  9 Jul 2024 10:38:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1720521489; bh=UNDneBSJbjM12Og34Gwp05M0THiPowrY/QmV7biK58s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SJtfNySho3hYEIIu6H7+fvYFIXi+HPu8gIsqf0FwJT3in4q0T0tDvedUq2iUhpMaI
+	 ovvXMyr1YLtqWCG0eAsz8O0nFKJ6bZFGsFB6dQS15MI+90hs6qNIhYfaPtCmqxrzkB
+	 7xhXJLm1mmNZcz/B16uWTqYT79HF8ckhphG3qB3kgdvivWaZzvIzFCZzKBaWWUFf9n
+	 CPt57VGRkU7wbYDyaLy3mfTuQASUoXZ6ZbZaMItJqX80zDa6dgzg5I+I7eAiYWuGhz
+	 PY27UMYXAyfhFs854RVWx/bwZBRSUYusmp+lHGtvGge78Jyvasnm8TuqtN55PZUiOe
+	 0tJ4WilE06a2KHUUHOE6pA8itQesg+xoJY055Mn8mmS9oMKF0VaQQ4ry5m7b/n2WwX
+	 GqV5SAmg4A+GJ09b1BKJ0EbbfAnRLqgYxdAGr7gJhrJ9eT5bs9iVInKsY9WJuaZwlu
+	 +TWcQOga0kkiS2NhbLU7tLls+LY0ADCQiJ24QOQADdmvcCSNp5hlTckae/HlbDnrbd
+	 c3wTu6S/A8wvWX18vTxJAsvHt1zCGF7pC+AhGeDVd0xdbG2YxHU5tPEIICNqKFhBbY
+	 knVncfPIa56EjWMBEbulhv0i9riM96U0qJDDp1mBPJJQKpAP+qF05cnbbDPHsevgF2
+	 1dREayApYAZZpWikqZFVsHGo=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 159FC40E0192;
+	Tue,  9 Jul 2024 10:37:43 +0000 (UTC)
+Date: Tue, 9 Jul 2024 12:37:42 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Steve Wahl <steve.wahl@hpe.com>, Ashish Kalra <ashish.kalra@amd.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+	Pavin Joseph <me@pavinjoseph.com>,
+	Eric Hagberg <ehagberg@gmail.com>,
+	Simon Horman <horms@verge.net.au>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Dave Young <dyoung@redhat.com>, Sarah Brofeldt <srhb@dbc.dk>,
+	Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
+	Hou Wenlong <houwenlong.hwl@antgroup.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, Yuntao Wang <ytcoode@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Joerg Roedel <jroedel@suse.de>,
+	Michael Roth <michael.roth@amd.com>
+Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
+Message-ID: <20240709103742.GCZo0S9md7YyeevRN-@fat_crate.local>
+References: <ZowI9w7huVfcKJ7I@swahl-home.5wahls.com>
+ <20240708181133.GHZowr1eznPqgvdtRw@fat_crate.local>
+ <CAMj1kXG8hZ86BFbar9S5mmvKMH4a0XF0oCm36WwZxYNqc0+pjQ@mail.gmail.com>
+ <20240708190724.GIZow47G0J8vO6J3ee@fat_crate.local>
+ <Zow-AXsLHjU6gfET@swahl-home.5wahls.com>
+ <20240708195810.GKZoxE0pRWHEUljjnQ@fat_crate.local>
+ <ZoxOt1_w7nblRQCv@swahl-home.5wahls.com>
+ <CAMj1kXGA8zG95WutMgVgeb-M7oQKJrVO6QWNzLi1GMuj1wq=bg@mail.gmail.com>
+ <ZoxX9mckeu046zed@swahl-home.5wahls.com>
+ <CAMj1kXE5OYTxxBEO38dRyYt_J1FNpU-tdkaU8rxvrMLd_k_beg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3pBwgW7iImMiA0Ek"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240709094131.GE501857@google.com>
+In-Reply-To: <CAMj1kXE5OYTxxBEO38dRyYt_J1FNpU-tdkaU8rxvrMLd_k_beg@mail.gmail.com>
 
+On Tue, Jul 09, 2024 at 08:49:43AM +0200, Ard Biesheuvel wrote:
+> > Patch #2 adds the CC blob to the identity map as well, if present,
+> > since if present it is also dereferenced before the page fault handler
+> > can be put into place.  Given what's been discussed, this patch might
+> > not be necessary; I don't know enough to say whether kexec-ing a new
+> > kernel within a SEV guest makes sense.  I'm pretty certain it can
+> > cause no harm, though.
 
---3pBwgW7iImMiA0Ek
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+No, keep it in the bag until it is really needed. No proactive "fixing".
 
+> I'd prefer it if that is addressed within the context of the SEV guest
+> work. The memory setup is quite intricate, and dealing with individual
+> types of EFI config tables is something we should avoid in general. I
+> still maintain that the best approach would be to map all of DRAM 1:1
+> instead of mapping patches left and right (as this is what EFI does),
+> but if we need to do so, let's keep it as generic as we possibly can.
 
-> Applied and pushed - should be in tomorrow's -next.
+Sure. There's the kink that coco guests need to accept memory first and
+mapping it all is the least performant one. But we can deal with that later.
 
-Thank you!
+> I wasn't cc'ed on any of the patches so I don't know exactly what was
+> discussed.
+> 
+> Please cc me and linux-efi@ on your next revision.
 
+And please update your commit messages with what was discussed on this thread.
 
---3pBwgW7iImMiA0Ek
-Content-Type: application/pgp-signature; name="signature.asc"
+Thx.
 
------BEGIN PGP SIGNATURE-----
+-- 
+Regards/Gruss,
+    Boris.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaNEuEACgkQFA3kzBSg
-KbbIfw/9EzJwX1Jz+Or2CeqDXGA6QnI8fSj+9m3zQIjZiHG2L5g8GdcpqkrAMlYn
-z8S3MPgOd8WN+AuAQlF1MBxlfe+zfcJdegRVy7zonsF9GbizRyHgslstU0ELSf0k
-STufrWp+CuYdmMkLiaUcRK4lWBAUHGoq3BSb8DQFsHDqOlqO+RBQMpzTZHQN5NZr
-C+3WXaK8VfDxKzFg3F/n4Y7NQMOyHIfT0IjhY8LEeVDwQ/Dn+uqvb6dPEABqrGhY
-YznyfqmMViiv7dxXjBxTk05wNPFRin+rCjtxr882vgLCJvxL7Mv58EGcumQ3DW4R
-2AlZlsKLCBz6XgdqSx65zeY2rG9dNsmbo9uMfS/zOz6yL5Wi7ZObBPT57K4MTgJQ
-bLZRt2TOwF5GKTbLGCahcWwLMzLs7dVlMbVTemVIpnqXu3kdK42socgq8bE12xVh
-VlmTzcophR4vN6VpFTtkZd6xTt6faOQID7bD1iOiAxtLNgaY7iLxn8v3ak3dCkvA
-U+iKb2+M3i540GTPIP62blN9MslUo9VHg7WZaaTVQBym5NG0jAhyEM7t20IWLcZz
-qrlKiQh2ccPJapZ37ktfonROBHt+TSZOKWURUIYl8QIzkIVfRwGROVqpF2lSHFy0
-KzB49ZgI2wLHQktQCfdR/tqli4rgDNDveMUDrXCGfjjPp2NJIf4=
-=E8bx
------END PGP SIGNATURE-----
-
---3pBwgW7iImMiA0Ek--
+https://people.kernel.org/tglx/notes-about-netiquette
 
