@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-245697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0D5C92B64E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:12:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6917492B802
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FA861C22A8F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:12:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CA511C2363D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C87A1586C4;
-	Tue,  9 Jul 2024 11:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1EF827713;
+	Tue,  9 Jul 2024 11:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cYKeaRhY"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DKEcb0jd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8071581E3;
-	Tue,  9 Jul 2024 11:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1561586C0;
+	Tue,  9 Jul 2024 11:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720523520; cv=none; b=AAXOX0cvqtQzt/tu0gNIISjZuMVIqn9km/vBf+yv/hsYHBfuvMS7xTZIJAp4xp88mq/Gqlp0A7/c7ZG7efgWJkzMt9RZjUmvbO5O2qPDeDupBzxskiTZCDTB/eCVi5eN4ZNwOfFCOm5CGECdc+vl7HCvkHmFYdRJ5ZGtDg+MAa0=
+	t=1720524565; cv=none; b=GufTo5NNy+wlGNIt/9TahOJZd1eCH8Yz9BwIYXzSne4nCccpaaaB80+VJtb3kI4Erhh+1NUqZL0B5bzN+CBNzmNiMfFhbAv6CYdPO6Sz8ohTD4KmumbOTDrwZp3RRbw3lWNBGK0o/FF3nxppBhkp6ThtFYsiRaMSAF9xl3Cm+1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720523520; c=relaxed/simple;
-	bh=Ufk0w9DMvt6BUwJvcynYeVHl0iIQvmWEo+90hsxhP1E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M1FWOcBePxunQ8qpuuGrXFn5ji4X/nOx6QqQthJVO1epaDHKY4xumxCv7jhG5AyhSRO7UxN7YaFTVZPSjOrlXFA9l4O/ADQUGv45N0bsypsLZ8QIoBN6dIeLt0Z5POvbyCLCioPGlgPHj+xnLx1aX3DXL2BBR6ERqsJuJG4nUvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cYKeaRhY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B025C3277B;
-	Tue,  9 Jul 2024 11:11:59 +0000 (UTC)
+	s=arc-20240116; t=1720524565; c=relaxed/simple;
+	bh=HOT03tjps7yJWKHhTQVcwQhiv0ML7l+TfpjNn1+7k4U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Sx2qEAedks1xY/Ttq1Cfk/nK3PVtR/GkJIiK0ZFMslEHO5VOvGskplrFTzLe2NN52a6KfeH5ddrQBA4zzDRdXKP+7EJZrtCsMyhERFP6Oj/tkFlsSORnoV3GemQadvrPQT6viB56KibWz5y43W7vw2czJRjv/zf78njssmR+Ht4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DKEcb0jd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0727C3277B;
+	Tue,  9 Jul 2024 11:29:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720523520;
-	bh=Ufk0w9DMvt6BUwJvcynYeVHl0iIQvmWEo+90hsxhP1E=;
+	s=korg; t=1720524565;
+	bh=HOT03tjps7yJWKHhTQVcwQhiv0ML7l+TfpjNn1+7k4U=;
 	h=From:To:Cc:Subject:Date:From;
-	b=cYKeaRhYHd6KfFn7mB1ZHQPfVI9viPvSG6YONOVVukKyT/OASGwgd69YFkYbmD99e
-	 Rj5cVPhhL6XLqWIj4b5f5e1dqAhUFdiRD0e+i0hGXcT6b4TOUSjIQXIr1fLn/id5ED
-	 UoNPDwQTtzPUd5Aa3VHkoEj/ETvNGLr9PHVDtF+w=
+	b=DKEcb0jdTF9e2gSMt6Q9mYcURMeS3ckLhUeWNsNAhqN15X7yDWFk4fvN499OiyQKU
+	 xXBTm/lSOOZRucuD62BkF/NB4erIaA9DFHfVNvJH4e/Zj6wVTd4WsRZ1hqpljFWd8J
+	 4yP+950du/HTG7/yRS4xVLbKmstB9JBhURY8WyPI=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -56,9 +56,9 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	conor@kernel.org,
 	allen.lkml@gmail.com,
 	broonie@kernel.org
-Subject: [PATCH 6.6 000/139] 6.6.39-rc1 review
-Date: Tue,  9 Jul 2024 13:08:20 +0200
-Message-ID: <20240709110658.146853929@linuxfoundation.org>
+Subject: [PATCH 6.1 000/102] 6.1.98-rc1 review
+Date: Tue,  9 Jul 2024 13:09:23 +0200
+Message-ID: <20240709110651.353707001@linuxfoundation.org>
 X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -69,17 +69,17 @@ MIME-Version: 1.0
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.39-rc1.gz
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.98-rc1.gz
 X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.6.y
+X-KernelTest-Branch: linux-6.1.y
 X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.6.39-rc1
-X-KernelTest-Deadline: 2024-07-11T11:07+00:00
+X-KernelTest-Version: 6.1.98-rc1
+X-KernelTest-Deadline: 2024-07-11T11:06+00:00
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This is the start of the stable review cycle for the 6.6.39 release.
-There are 139 patches in this series, all will be posted as a response
+This is the start of the stable review cycle for the 6.1.98 release.
+There are 102 patches in this series, all will be posted as a response
 to this one.  If anyone has any issues with these being applied, please
 let me know.
 
@@ -87,9 +87,9 @@ Responses should be made by Thu, 11 Jul 2024 11:06:25 +0000.
 Anything received after that time might be too late.
 
 The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.39-rc1.gz
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.98-rc1.gz
 or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
 and the diffstat can be found below.
 
 thanks,
@@ -100,19 +100,13 @@ greg k-h
 Pseudo-Shortlog of commits:
 
 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.6.39-rc1
+    Linux 6.1.98-rc1
 
 Ryusuke Konishi <konishi.ryusuke@gmail.com>
     nilfs2: fix incorrect inode allocation from reserved inodes
 
 Damien Le Moal <dlemoal@kernel.org>
     null_blk: Do not allow runt zone with zone capacity smaller then zone size
-
-Alex Deucher <alexander.deucher@amd.com>
-    drm/amdgpu: silence UBSAN warning
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: ump: Set default protocol when not given explicitly
 
 Witold Sadowski <wsadowski@marvell.com>
     spi: cadence: Ensure data lines set to low during dummy-cycle period
@@ -138,17 +132,11 @@ Jim Wylder <jwylder@google.com>
 Kundan Kumar <kundan.kumar@samsung.com>
     nvme: adjust multiples of NVME_CTRL_PAGE_SIZE in offset
 
-Matt Jan <zoo868e@gmail.com>
-    connector: Fix invalid conversion in cn_proc.h
-
 Fedor Pchelkin <pchelkin@ispras.ru>
     dma-mapping: benchmark: avoid needless copy_to_user if benchmark fails
 
 Nilay Shroff <nilay@linux.ibm.com>
     nvme-multipath: find NUMA path only for online numa-node
-
-Mike Christie <michael.christie@oracle.com>
-    vhost-scsi: Handle vhost_vq_work_queue failures for events
 
 Jian-Hong Pan <jhp@endlessos.org>
     ALSA: hda/realtek: Enable headset mic of JP-IK LEAP W502 with ALC897
@@ -162,8 +150,8 @@ Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
 Pin-yen Lin <treapking@chromium.org>
     clk: mediatek: mt8183: Only enable runtime PM on mt8183-mfgcfg
 
-Gabor Juhos <j4g8y7@gmail.com>
-    clk: qcom: clk-alpha-pll: set ALPHA_EN bit for Stromer Plus PLLs
+AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+    clk: mediatek: clk-mtk: Register MFG notifier in mtk_clk_simple_probe()
 
 Luca Weiss <luca.weiss@fairphone.com>
     clk: qcom: gcc-sm6350: Fix gpll6* & gpll7 parents
@@ -180,9 +168,6 @@ Dragan Simic <dsimic@manjaro.org>
 Ghadi Elie Rahme <ghadi.rahme@canonical.com>
     bnx2x: Fix multiple UBSAN array-index-out-of-bounds
 
-Yijie Yang <quic_yijiyang@quicinc.com>
-    net: stmmac: dwmac-qcom-ethqos: fix error array size
-
 Val Packett <val@packett.cool>
     mtd: rawnand: rockchip: ensure NVDDR timings are rejected
 
@@ -190,22 +175,10 @@ Miquel Raynal <miquel.raynal@bootlin.com>
     mtd: rawnand: Bypass a couple of sanity checks during NAND identification
 
 Miquel Raynal <miquel.raynal@bootlin.com>
-    mtd: rawnand: Fix the nand_read_data_op() early check
-
-Miquel Raynal <miquel.raynal@bootlin.com>
     mtd: rawnand: Ensure ECC configuration is propagated to upper layers
-
-Jinglin Wen <jinglin.wen@shingroup.cn>
-    powerpc/64s: Fix unnecessary copy to 0 when kernel is booted at address 0
 
 Nicholas Piggin <npiggin@gmail.com>
     powerpc/pseries: Fix scv instruction crash with kexec
-
-Frank Oltmanns <frank@oltmanns.dev>
-    clk: sunxi-ng: common: Don't call hw_to_ccu_common on hw without common
-
-Md Sadre Alam <quic_mdalam@quicinc.com>
-    clk: qcom: gcc-ipq9574: Add BRANCH_HALT_VOTED flag
 
 John Schoenick <johns@valvesoftware.com>
     drm: panel-orientation-quirks: Add quirk for Valve Galileo
@@ -227,9 +200,6 @@ Jimmy Assarsson <extja@kvaser.com>
 
 Zijun Hu <quic_zijuhu@quicinc.com>
     Bluetooth: qca: Fix BT enable failure again for QCA6390 after warm reboot
-
-Hector Martin <marcan@marcan.st>
-    Bluetooth: hci_bcm4377: Fix msgid release
 
 Nathan Chancellor <nathan@kernel.org>
     scsi: mpi3mr: Use proper format specifier in mpi3mr_sas_port_add()
@@ -258,12 +228,6 @@ Sasha Neftin <sasha.neftin@intel.com>
 Armin Wolf <W_Armin@gmx.de>
     platform/x86: toshiba_acpi: Fix quickstart quirk handling
 
-Huacai Chen <chenhuacai@kernel.org>
-    cpu: Fix broken cmdline "nosmp" and "maxcpus=0"
-
-Dmitry Torokhov <dmitry.torokhov@gmail.com>
-    gpiolib: of: add polarity quirk for TSC2005
-
 Aleksandr Mishin <amishin@t-argos.ru>
     mlxsw: core_linecards: Fix double memory deallocation in case of invalid INI file
 
@@ -288,20 +252,11 @@ Song Shuai <songshuaishuai@tinylab.org>
 Jozef Hopko <jozef.hopko@altana.com>
     wifi: wilc1000: fix ies_len type in connect path
 
-Shiji Yang <yangshiji66@outlook.com>
-    gpio: mmio: do not calculate bgpio_bits via "ngpios"
-
 Dave Jiang <dave.jiang@intel.com>
     net: ntb_netdev: Move ntb_netdev_rx_handler() to call netif_rx() from __netif_rx()
 
-Jiawen Wu <jiawenwu@trustnetic.com>
-    net: txgbe: initialize num_q_vectors for MSI/INTx interrupts
-
 Sagi Grimberg <sagi@grimberg.me>
     net: allow skb_datagram_iter to be called from any context
-
-Dmitry Torokhov <dmitry.torokhov@gmail.com>
-    gpiolib: of: fix lookup quirk for MIPS Lantiq
 
 Dima Ruinskiy <dima.ruinskiy@intel.com>
     e1000e: Fix S0ix residency on corporate systems
@@ -312,18 +267,6 @@ Christian Borntraeger <borntraeger@linux.ibm.com>
 Jakub Kicinski <kuba@kernel.org>
     tcp_metrics: validate source addr length
 
-Pavel Skripkin <paskripkin@gmail.com>
-    bluetooth/hci: disallow setting handle bigger than HCI_CONN_HANDLE_MAX
-
-Iulia Tanasescu <iulia.tanasescu@nxp.com>
-    Bluetooth: ISO: Check socket flag instead of hcon
-
-Edward Adam Davis <eadavis@qq.com>
-    Bluetooth: Ignore too large handle values in BIG
-
-Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-    Bluetooth: hci_event: Fix setting of unicast qos interval
-
 Jianbo Liu <jianbol@nvidia.com>
     net/mlx5e: Add mqprio_rl cleanup and free in mlx5e_priv_cleanup()
 
@@ -333,20 +276,8 @@ Chris Mi <cmi@nvidia.com>
 Neal Cardwell <ncardwell@google.com>
     UPSTREAM: tcp: fix DSACK undo in fast recovery to call tcp_try_to_open()
 
-Marek Vasut <marex@denx.de>
-    net: phy: phy_device: Fix PHY LED blinking code comment
-
 Dmitry Antipov <dmantipov@yandex.ru>
     mac802154: fix time calculation in ieee802154_configure_durations()
-
-Mike Christie <michael.christie@oracle.com>
-    vhost_task: Handle SIGKILL by flushing work and exiting
-
-Mike Christie <michael.christie@oracle.com>
-    vhost: Release worker mutex during flushes
-
-Mike Christie <michael.christie@oracle.com>
-    vhost: Use virtqueue mutex for swapping worker
 
 Len Brown <len.brown@intel.com>
     tools/power turbostat: Remember global max_die_id
@@ -381,9 +312,6 @@ Jose E. Marchesi <jose.marchesi@oracle.com>
 Corinna Vinschen <vinschen@redhat.com>
     igc: fix a log entry using uninitialized netdev
 
-John Hubbard <jhubbard@nvidia.com>
-    selftests/net: fix uninitialized variables
-
 Greg Kurz <groug@kaod.org>
     powerpc/xmon: Check cpu id in commands "c#", "dp#" and "dx#"
 
@@ -402,9 +330,6 @@ Michael Ellerman <mpe@ellerman.id.au>
 Heiner Kallweit <hkallweit1@gmail.com>
     i2c: i801: Annotate apanel_addr as __ro_after_init
 
-Benjamin Gray <bgray@linux.ibm.com>
-    powerpc/dexcr: Track the DEXCR per-process
-
 Ricardo Ribalda <ribalda@chromium.org>
     media: dvb-frontends: tda10048: Fix integer overflow
 
@@ -416,12 +341,6 @@ Ricardo Ribalda <ribalda@chromium.org>
 
 Simon Horman <horms@kernel.org>
     net: dsa: mv88e6xxx: Correct check for empty list
-
-Julien Panis <jpanis@baylibre.com>
-    thermal/drivers/mediatek/lvts_thermal: Check NULL ptr on lvts_data
-
-StanleyYP Wang <StanleyYP.Wang@mediatek.com>
-    wifi: mt76: mt7996: add sanity checks for background radar trigger
 
 Felix Fietkau <nbd@nbd.name>
     wifi: mt76: replace skb_put with skb_put_zero
@@ -438,20 +357,11 @@ Jean Delvare <jdelvare@suse.de>
 Erick Archer <erick.archer@outlook.com>
     sctp: prefer struct_size over open coded arithmetic
 
-Samuel Holland <samuel.holland@sifive.com>
-    riscv: Apply SiFive CIP-1200 workaround to single-ASID sfence.vma
-
 Michael Bunk <micha@freedict.org>
     media: dw2102: Don't translate i2c read into write
 
-Jesse Zhang <jesse.zhang@amd.com>
-    drm/amdgpu: fix the warning about the expression (int)size - len
-
 Tim Huang <Tim.Huang@amd.com>
     drm/amdgpu: fix uninitialized scalar variable warning
-
-Alex Hung <alex.hung@amd.com>
-    drm/amd/display: Fix uninitialized variables in DM
 
 Alex Hung <alex.hung@amd.com>
     drm/amd/display: Skip finding free audio for unknown engine_id
@@ -465,29 +375,11 @@ Alex Hung <alex.hung@amd.com>
 Ma Jun <Jun.Ma2@amd.com>
     drm/amdgpu: Initialize timestamp for some legacy SOCs
 
-Jesse Zhang <jesse.zhang@amd.com>
-    drm/amdgpu: Using uninitialized value *size when calling amdgpu_vce_cs_reloc
-
 Ma Jun <Jun.Ma2@amd.com>
     drm/amdgpu: Fix uninitialized variable warnings
 
-Fei Shao <fshao@chromium.org>
-    media: mediatek: vcodec: Only free buffer VA that is not NULL
-
 Hailey Mothershead <hailmo@amazon.com>
     crypto: aead,cipher - zeroize key buffer after use
-
-Atish Patra <atishp@rivosinc.com>
-    RISC-V: KVM: Fix the initial sample period value
-
-Eduard Zingerman <eddyz87@gmail.com>
-    selftests/bpf: dummy_st_ops should reject 0 for non-nullable params
-
-Eduard Zingerman <eddyz87@gmail.com>
-    selftests/bpf: do not pass NULL for non-nullable params in dummy_st_ops
-
-Eduard Zingerman <eddyz87@gmail.com>
-    selftests/bpf: adjust dummy_st_ops_success to detect additional error
 
 Guanrui Huang <guanrui.huang@linux.alibaba.com>
     irqchip/gic-v3-its: Remove BUG_ON in its_vpe_irq_domain_alloc
@@ -514,9 +406,6 @@ Chenghai Huang <huangchenghai2@huawei.com>
     crypto: hisilicon/debugfs - Fix debugfs uninit process issue
 
 George Stark <gnstark@salutedevices.com>
-    leds: an30259a: Use devm_mutex_init() for mutex initialization
-
-George Stark <gnstark@salutedevices.com>
     locking/mutex: Introduce devm_mutex_init()
 
 
@@ -529,21 +418,13 @@ Diffstat:
  arch/powerpc/include/asm/interrupt.h               |  10 ++
  arch/powerpc/include/asm/io.h                      |   2 +-
  arch/powerpc/include/asm/percpu.h                  |  10 ++
- arch/powerpc/include/asm/processor.h               |   1 +
- arch/powerpc/kernel/head_64.S                      |   5 +-
- arch/powerpc/kernel/process.c                      |  10 ++
- arch/powerpc/kernel/ptrace/ptrace-view.c           |   7 +-
  arch/powerpc/kernel/setup_64.c                     |   2 +
  arch/powerpc/kexec/core_64.c                       |  11 ++
  arch/powerpc/platforms/pseries/kexec.c             |   8 --
  arch/powerpc/platforms/pseries/pseries.h           |   1 -
  arch/powerpc/platforms/pseries/setup.c             |   1 -
  arch/powerpc/xmon/xmon.c                           |   6 +-
- arch/riscv/include/asm/errata_list.h               |  12 +-
- arch/riscv/include/asm/tlbflush.h                  |  19 ++-
  arch/riscv/kernel/machine_kexec.c                  |  10 +-
- arch/riscv/kvm/vcpu_pmu.c                          |   2 +-
- arch/riscv/mm/tlbflush.c                           |  23 ----
  arch/s390/include/asm/kvm_host.h                   |   1 +
  arch/s390/include/asm/processor.h                  |   2 +-
  arch/s390/kvm/kvm-s390.c                           |   1 +
@@ -553,32 +434,22 @@ Diffstat:
  crypto/cipher.c                                    |   3 +-
  drivers/base/regmap/regmap-i2c.c                   |   3 +-
  drivers/block/null_blk/zoned.c                     |  11 ++
- drivers/bluetooth/hci_bcm4377.c                    |   2 +-
  drivers/bluetooth/hci_qca.c                        |  18 ++-
  drivers/cdrom/cdrom.c                              |   2 +-
  drivers/clk/mediatek/clk-mt8183-mfgcfg.c           |   1 +
- drivers/clk/mediatek/clk-mtk.c                     |  24 ++--
- drivers/clk/mediatek/clk-mtk.h                     |   2 +
- drivers/clk/qcom/clk-alpha-pll.c                   |   3 +
- drivers/clk/qcom/gcc-ipq9574.c                     |  10 +-
+ drivers/clk/mediatek/clk-mtk.c                     |  32 +++--
+ drivers/clk/mediatek/clk-mtk.h                     |   5 +
  drivers/clk/qcom/gcc-sm6350.c                      |  10 +-
- drivers/clk/sunxi-ng/ccu_common.c                  |  18 ++-
  drivers/crypto/hisilicon/debugfs.c                 |  21 +++-
  drivers/firmware/dmi_scan.c                        |  11 ++
- drivers/gpio/gpio-mmio.c                           |   2 -
- drivers/gpio/gpiolib-of.c                          |  22 +++-
  drivers/gpu/drm/amd/amdgpu/aldebaran.c             |   2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c        |   5 +-
  drivers/gpu/drm/amd/amdgpu/amdgpu_gfx.c            |   3 +-
  drivers/gpu/drm/amd/amdgpu/amdgpu_irq.c            |   8 ++
- drivers/gpu/drm/amd/amdgpu/amdgpu_vce.c            |   3 +-
  drivers/gpu/drm/amd/amdgpu/sienna_cichlid.c        |   2 +-
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |   8 +-
- .../drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c  |   4 +-
  drivers/gpu/drm/amd/display/dc/core/dc_resource.c  |   3 +
  .../amd/display/dc/irq/dce110/irq_service_dce110.c |   8 +-
  .../gpu/drm/amd/display/modules/hdcp/hdcp_ddc.c    |   8 ++
- drivers/gpu/drm/amd/include/atomfirmware.h         |   4 +-
+ drivers/gpu/drm/amd/include/atomfirmware.h         |   2 +-
  drivers/gpu/drm/drm_panel_orientation_quirks.c     |   7 ++
  drivers/gpu/drm/lima/lima_gp.c                     |   2 +
  drivers/gpu/drm/lima/lima_mmu.c                    |   5 +
@@ -589,16 +460,13 @@ Diffstat:
  drivers/infiniband/core/user_mad.c                 |  21 +++-
  drivers/input/ff-core.c                            |   7 +-
  drivers/irqchip/irq-gic-v3-its.c                   |   2 -
- drivers/leds/leds-an30259a.c                       |  14 +--
  drivers/media/dvb-frontends/as102_fe_types.h       |   2 +-
  drivers/media/dvb-frontends/tda10048.c             |   9 +-
  drivers/media/dvb-frontends/tda18271c2dd.c         |   4 +-
- .../vcodec/decoder/vdec/vdec_av1_req_lat_if.c      |  22 ++--
- .../mediatek/vcodec/encoder/venc/venc_h264_if.c    |   5 +-
  drivers/media/usb/dvb-usb/dib0700_devices.c        |  18 ++-
  drivers/media/usb/dvb-usb/dw2102.c                 | 120 +++++++++++--------
  drivers/media/usb/s2255/s2255drv.c                 |  20 ++--
- drivers/mtd/nand/raw/nand_base.c                   |  68 ++++++-----
+ drivers/mtd/nand/raw/nand_base.c                   |  66 +++++++----
  drivers/mtd/nand/raw/rockchip-nand-controller.c    |   6 +-
  drivers/net/bonding/bond_options.c                 |   6 +-
  drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c   |   1 +
@@ -608,13 +476,9 @@ Diffstat:
  drivers/net/ethernet/mellanox/mlx5/core/en_main.c  |   5 +
  .../mellanox/mlx5/core/esw/acl/ingress_ofld.c      |  37 ++++--
  .../net/ethernet/mellanox/mlxsw/core_linecards.c   |   1 +
- .../ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c    |   2 +-
- drivers/net/ethernet/wangxun/libwx/wx_lib.c        |   1 +
  drivers/net/ntb_netdev.c                           |   2 +-
  .../net/wireless/mediatek/mt76/mt76_connac_mcu.c   |  10 +-
  drivers/net/wireless/mediatek/mt76/mt7915/mcu.c    |   2 +-
- .../net/wireless/mediatek/mt76/mt7996/debugfs.c    |   5 +
- drivers/net/wireless/mediatek/mt76/mt7996/mcu.c    |   5 +-
  drivers/net/wireless/microchip/wilc1000/hif.c      |   3 +-
  drivers/nfc/virtual_ncidev.c                       |   4 +
  drivers/nvme/host/multipath.c                      |   2 +-
@@ -626,12 +490,8 @@ Diffstat:
  drivers/scsi/mpi3mr/mpi3mr_transport.c             |  10 ++
  drivers/scsi/qedf/qedf_io.c                        |   6 +-
  drivers/spi/spi-cadence-xspi.c                     |  20 +++-
- drivers/thermal/mediatek/lvts_thermal.c            |   2 +
  drivers/tty/serial/imx.c                           |   2 +-
  drivers/usb/host/xhci-ring.c                       |   5 +-
- drivers/vhost/scsi.c                               |  17 ++-
- drivers/vhost/vhost.c                              | 118 ++++++++++++++----
- drivers/vhost/vhost.h                              |   2 +
  fs/btrfs/block-group.c                             |  13 +-
  fs/btrfs/scrub.c                                   |   2 +-
  fs/f2fs/f2fs.h                                     |  12 +-
@@ -652,22 +512,14 @@ Diffstat:
  include/linux/fsnotify.h                           |   8 +-
  include/linux/lsm_hook_defs.h                      |   2 +-
  include/linux/mutex.h                              |  27 +++++
- include/linux/phy.h                                |   2 +-
- include/linux/sched/vhost_task.h                   |   3 +-
  include/linux/security.h                           |   5 +-
- include/uapi/linux/cn_proc.h                       |   3 +-
  kernel/auditfilter.c                               |   5 +-
- kernel/cpu.c                                       |   3 +
  kernel/dma/map_benchmark.c                         |   3 +
  kernel/exit.c                                      |   2 +
  kernel/kthread.c                                   |   1 +
  kernel/locking/mutex-debug.c                       |  12 ++
- kernel/vhost_task.c                                |  53 ++++++---
  lib/kunit/try-catch.c                              |  22 ++--
  mm/page-writeback.c                                |  32 ++++-
- net/bluetooth/hci_conn.c                           |  15 ++-
- net/bluetooth/hci_event.c                          |  26 +++-
- net/bluetooth/iso.c                                |   3 +-
  net/core/datagram.c                                |  19 ++-
  net/ipv4/inet_diag.c                               |   2 +
  net/ipv4/tcp_input.c                               |   2 +-
@@ -684,17 +536,11 @@ Diffstat:
  security/selinux/include/audit.h                   |   4 +-
  security/selinux/ss/services.c                     |   5 +-
  security/smack/smack_lsm.c                         |   4 +-
- sound/core/ump.c                                   |   8 ++
  sound/pci/hda/patch_realtek.c                      |   9 ++
  tools/lib/bpf/bpf_core_read.h                      |   1 +
  tools/power/x86/turbostat/turbostat.c              |  10 +-
- .../selftests/bpf/prog_tests/dummy_st_ops.c        |  34 +++++-
- .../selftests/bpf/progs/dummy_st_ops_success.c     |  15 ++-
- tools/testing/selftests/net/gro.c                  |   3 +
- tools/testing/selftests/net/ip_local_port_range.c  |   2 +-
- tools/testing/selftests/net/mptcp/pm_nl_ctl.c      |   2 +-
  tools/testing/selftests/net/msg_zerocopy.c         |  14 ++-
- 170 files changed, 1283 insertions(+), 570 deletions(-)
+ 127 files changed, 918 insertions(+), 421 deletions(-)
 
 
 
