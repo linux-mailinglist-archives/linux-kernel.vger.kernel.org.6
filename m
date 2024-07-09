@@ -1,73 +1,76 @@
-Return-Path: <linux-kernel+bounces-246745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A55092C621
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:15:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E183C92C5FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC3751C21781
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:15:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77973B21ED8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7174E187873;
-	Tue,  9 Jul 2024 22:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E14189F21;
+	Tue,  9 Jul 2024 22:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="tFqpqnJE"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="hmFWTncu"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB5F187863;
-	Tue,  9 Jul 2024 22:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB3413AD07;
+	Tue,  9 Jul 2024 22:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720563153; cv=none; b=AR0wmkBWTRWaviQNq9iYCIyoHj/s4rquEaTMBbBC7jeT4jYsNZLCDJCI2hq+gkHmsIL56tZGceCstpp6hGEEeb3VVaizt/xFsjL6EqwVPFFoz+xC7paTAHTI3nCUbKHFdWIGCZEVNiTobUC7Ct3tN4pkOCTQOw9XMn0ZSCogH/A=
+	t=1720563142; cv=none; b=BeSa8tXAJWIUeDab6ZqbmuPWw/CYOd0UitfZ2XYz2LWuB9lz2VzeJNFMfHfYVsa/eGrG+ofp8CEFQFdQ1IYm4zb9VJwA+YyZOFdc4wzRTF1rrYs5lzsb3Xil+QQrEyUSnKG0mBLuhBg1UXjZyL+J66Pwge77H6qsa53Re48RYgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720563153; c=relaxed/simple;
-	bh=aGjfcZSRbtI8QN/HI1o96TDS6DrI1SFU9tnlhotZ5Mw=;
+	s=arc-20240116; t=1720563142; c=relaxed/simple;
+	bh=cHicvuNsB6FBsP+p24Oei7cf3LE105dI1jDELbVa/L8=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eypThYI4K6PZZtEbhsghFKuF7yP9GHnRsvBmMVpTAVPzPV79rNLFjVySwNncQPsuOJeCyla8qpiPN8EbntFDoUA8kc0nGsqlA4av5t2FTuYTKKZnAXAlkK+QYFPxejRWRenElxevFE43R4zks5RdvqShGIvTimyf8I3b5h4XcLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=tFqpqnJE; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 95E30100029;
-	Wed, 10 Jul 2024 01:12:29 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 95E30100029
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1720563149;
-	bh=a0mgkvwIQaMLf7adfwhRHBhWUDEkZtje8g0LxN5vXwM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=tFqpqnJElq+n8gJUdpeNTtBh5n5JObmBlggCyebVrcIWEBRRuLozIhXfBgkdVDoAi
-	 vEQTpBfpvKA4FRvWl6pKtFMtSRsAPSwv9gyVaqDjw1SCfH79PkUlmYUvb2VAAfS8xd
-	 thNPoGL4ZvyYyqQsTy8Dw0TcsT3uf8JR3xafiREVh7sN/AS6ADj1YQp3qH3Hz0zVW3
-	 uifyjIlPQgpqzqGqKFT32pmLEty+JMFZDEnItR3fd9DM1AH3oZMww10ncbdniqbcin
-	 Gy4+FbDWH4pfFBtGDyttIaeLqxrhXbKgBVjtX4TFle+C3o9vIMAoJhDGqPJIfhF5kZ
-	 yAT/E4wrbINUA==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed, 10 Jul 2024 01:12:29 +0300 (MSK)
-Received: from localhost.localdomain (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+	 MIME-Version:Content-Type; b=sOExJkTaDiQ/s8XVjjpoRlrqIp+DbKo07k3x08fXSHzepUs0yKDTTdtzF95blgYh8fNDt0VH7sU3yPPd27OaNWnHPXWi35mK9DoGrEAvRdWwo7FHKH3xi/12TNifwqWQXRXSxMHNSTBcIorBWcRAR8C3CttIQYISCHFPZsopltw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=hmFWTncu; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469KH3Lj020309;
+	Tue, 9 Jul 2024 15:12:16 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=q
+	HWv3FV88gHLyPrpIGGB1AAf2zkoSjgvgaCyZbzsiAY=; b=hmFWTncuJVn/Cs0Qc
+	7gIoryzsn59r5wEBbATyWh6PQBJlyIvczkuZp8p4Ug4cj0qTWV+8j7c83a5J39QL
+	rICG7Nmz53fK/FYyG7uuuUYdzZGEHJuqV1pWfP/xk6J49xzf3WiXex3LbxcA7O7n
+	GiDFNBJoS8lL44ghjrO8sxi9rIzn3oHHu7DNg06Y9XK9WySU4mcuzVgXWyf9Hhvl
+	slCi0YYoT2yIbkjkeRZ7b3UCCeTlc7GDbK+HBgQSr5A+t2m8KrXZy5flVfxnoKie
+	K/T+OU60OTLxGba6aGnbVXoHsoP8dAMIR7ZyVzDeSrsc0Sj0SaiLTJx6ZZL4zExW
+	8BQ/g==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 408ntymyxg-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 15:12:15 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Wed, 10 Jul 2024 01:12:28 +0300
-From: Igor Prusov <ivprusov@salutedevices.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>, Igor Prusov
-	<ivprusov@salutedevices.com>
-CC: <prusovigor@gmail.com>, <kernel@salutedevices.com>,
-	<linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 5/6] ASoC: dt-bindings: Add bindings for NeoFidelity NTP8835
-Date: Wed, 10 Jul 2024 01:12:02 +0300
-Message-ID: <20240709221203.92167-6-ivprusov@salutedevices.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240709221203.92167-1-ivprusov@salutedevices.com>
-References: <20240709221203.92167-1-ivprusov@salutedevices.com>
+ 15.2.1544.4; Tue, 9 Jul 2024 15:12:15 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 9 Jul 2024 15:12:15 -0700
+Received: from Dell2s-9.sclab.marvell.com (unknown [10.110.150.250])
+	by maili.marvell.com (Postfix) with ESMTP id B31BF3F707B;
+	Tue,  9 Jul 2024 15:12:14 -0700 (PDT)
+From: Witold Sadowski <wsadowski@marvell.com>
+To: <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: <broonie@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <pthombar@cadence.com>, Witold Sadowski <wsadowski@marvell.com>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v10 1/9] spi: dt-bindings: cadence: Add Marvell overlay bindings documentation for Cadence XSPI
+Date: Tue, 9 Jul 2024 15:12:03 -0700
+Message-ID: <20240709221211.2130456-2-wsadowski@marvell.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240709221211.2130456-1-wsadowski@marvell.com>
+References: <20240709221211.2130456-1-wsadowski@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,104 +79,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186406 [Jul 09 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ivprusov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, devicetree.org:7.1.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/07/09 21:28:00
-X-KSMG-LinksScanning: Clean, bases: 2024/07/09 21:28:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/09 15:25:00 #25923573
-X-KSMG-AntiVirus-Status: Clean, skipped
+X-Proofpoint-ORIG-GUID: pR9al3PkR-DLThtypChtTIF6XtP_XBi7
+X-Proofpoint-GUID: pR9al3PkR-DLThtypChtTIF6XtP_XBi7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_10,2024-07-09_01,2024-05-17_01
 
-Add dt-bindings for NeoFidelity NTP8835C/NTP8835C Amplifiers
+Add new bindings for the v2 Marvell xSPI overlay: marvell,cn10-xspi-nor
+compatible string. This new compatible string distinguishes between the
+original and modified xSPI block.
 
-Signed-off-by: Igor Prusov <ivprusov@salutedevices.com>
+Also add an optional base for the xfer register set with an additional
+reg field to allocate the xSPI Marvell overlay XFER block.
+
+Signed-off-by: Witold Sadowski <wsadowski@marvell.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../bindings/sound/neofidelity,ntp8835.yaml   | 64 +++++++++++++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/neofidelity,ntp8835.yaml
+ .../devicetree/bindings/spi/cdns,xspi.yaml    | 32 ++++++++++++++++---
+ 1 file changed, 28 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/neofidelity,ntp8835.yaml b/Documentation/devicetree/bindings/sound/neofidelity,ntp8835.yaml
-new file mode 100644
-index 000000000000..cbd2254d4efa
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/neofidelity,ntp8835.yaml
-@@ -0,0 +1,64 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/neofidelity,ntp8835.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NeoFidelity NTP8835/NTP8835C Amplifiers
-+
-+maintainers:
-+  - Igor Prusov <ivprusov@salutedevices.com>
-+
-+description: |
-+  The NTP8835 is a single chip full digital audio amplifier
-+  including power stages for stereo amplifier systems.
-+  NTP8835 is integrated with versatile digital audio signal
-+  processing functions, high-performance, high-fidelity fully
-+  digital PWM modulator and two high-power full-bridge MOSFET
-+  power stages. NTP8835C has identical programming interface,
-+  but has different output signal characteristics.
-+
+diff --git a/Documentation/devicetree/bindings/spi/cdns,xspi.yaml b/Documentation/devicetree/bindings/spi/cdns,xspi.yaml
+index eb0f92468185..38a5795589de 100644
+--- a/Documentation/devicetree/bindings/spi/cdns,xspi.yaml
++++ b/Documentation/devicetree/bindings/spi/cdns,xspi.yaml
+@@ -15,24 +15,27 @@ description: |
+   single, dual, quad or octal wire transmission modes for
+   read/write access to slaves such as SPI-NOR flash.
+ 
+-allOf:
+-  - $ref: spi-controller.yaml#
+-
+ properties:
+   compatible:
+-    const: cdns,xspi-nor
++    enum:
++      - cdns,xspi-nor
++      - marvell,cn10-xspi-nor
+ 
+   reg:
+     items:
+       - description: address and length of the controller register set
+       - description: address and length of the Slave DMA data port
+       - description: address and length of the auxiliary registers
++      - description: address and length of the xfer registers
++    minItems: 3
+ 
+   reg-names:
+     items:
+       - const: io
+       - const: sdma
+       - const: aux
++      - const: xfer
++    minItems: 3
+ 
+   interrupts:
+     maxItems: 1
+@@ -42,6 +45,27 @@ required:
+   - reg
+   - interrupts
+ 
 +allOf:
-+  - $ref: dai-common.yaml#
++  - $ref: spi-controller.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - marvell,cn10-xspi-nor
++    then:
++      properties:
++        reg:
++          minItems: 4
++        reg-names:
++          minItems: 4
++    else:
++      properties:
++        reg:
++          maxItems: 3
++        reg-names:
++          maxItems: 3
 +
-+properties:
-+  compatible:
-+    enum:
-+      - neofidelity,ntp8835
-+      - neofidelity,ntp8835c
-+
-+  reg:
-+    enum:
-+      - 0x2a
-+      - 0x2b
-+      - 0x2c
-+      - 0x2d
-+    description: |
-+      I2C address of the device.
-+
-+  reset-gpios:
-+    maxItems: 1
-+    description: GPIO used to control the state of the device.
-+
-+  '#sound-dai-cells':
-+    enum: [0]
-+
-+required:
-+  - compatible
-+  - reg
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+   #include <dt-bindings/gpio/gpio.h>
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+      ntp8835@2b {
-+        compatible = "neofidelity,ntp8835";
-+        #sound-dai-cells = <0>;
-+        reg = <0x2b>;
-+        reset-gpios = <&gpio 5 GPIO_ACTIVE_LOW>;
-+      };
-+    };
+ unevaluatedProperties: false
+ 
+ examples:
 -- 
-2.34.1
+2.43.0
 
 
