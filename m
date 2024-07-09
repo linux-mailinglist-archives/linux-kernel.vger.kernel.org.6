@@ -1,92 +1,139 @@
-Return-Path: <linux-kernel+bounces-246373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B00492C146
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:55:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE19992C113
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 420FAB2958E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:49:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B5901C222E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB2618FA3C;
-	Tue,  9 Jul 2024 16:25:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EB01959E6;
+	Tue,  9 Jul 2024 16:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iHUIDBE4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YZrAZ8IL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8B118FA22;
-	Tue,  9 Jul 2024 16:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32F0193457;
+	Tue,  9 Jul 2024 16:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720542343; cv=none; b=Sm2QiOio7opCXkbAdlsxVRyEFXNfbEWheoNQq1mmIcT+6rzd84yTI0Fp2JyuKK0NX4XUyl//3XwiNtz3LL+NrYA1CgTTPjWbfCHbvaaMqna/vZ8ver2pj46ARXCKFPfyLe5syH5yhJrIg1PatloNSVfnh8h6vpK7Me2dFVKp2mo=
+	t=1720542374; cv=none; b=tGDjjbuR1FZ0pa4N0VDooxSw/IaqJbOCy45J/S1h25RKXiGId4Jq4n6ltUsN2oWxiIxW/meGSMuIiUQU69qB1vtpZ0hILJQTjsSLxey56zfcTsBgBanu959iZsf+3DffS3HSPi7pm9fiQA7lbw/18ZAK+Jnjgl8WxrIh128Uge4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720542343; c=relaxed/simple;
-	bh=HNZERyax7YfeQp01st75pcXuzHJEbSApRID1V7p3OuE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xs4C5RQl702yJqqx7vZsGDgqKtoh8Jy8vL80tGXYm21VMZIoDYLsuHj0pm3lE29VXDr4dBBmFqhLGodm6xLQGKvVsZ+qtbPL67Or4hdQTp/fsNiQFl9oCuXyYJMgmejlVxlMTky6ebtdCyvNe4AAtlNfi4VdO0+DZjSH5f3dy8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iHUIDBE4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 051B3C4AF0A;
-	Tue,  9 Jul 2024 16:25:42 +0000 (UTC)
+	s=arc-20240116; t=1720542374; c=relaxed/simple;
+	bh=j/xpxN9ieLiUkBfCvAyU5ZQEvyka3gQP1DJZ+4maHP4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c9JkjfvhQCo8VsVKzJd+/bu1nf+c9vu81bfej6jRtDGT4d2DIy9+jtUCOy1l972GwjfoOwAHATqYfIQjCo88DIgM21p4TeXHqF8S5w+cce8uA7HhU4jSWnSGZ+tVxSo1gMGKJAHxRmVzDkpH+JhXkzQSuUS8NsNl8z+cAxnflAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YZrAZ8IL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CF12C32786;
+	Tue,  9 Jul 2024 16:26:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720542343;
-	bh=HNZERyax7YfeQp01st75pcXuzHJEbSApRID1V7p3OuE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iHUIDBE4GwDL2TuhKWi3TEIqXmzbP/vCD/CeAe6EkVKb3NC3tMP1dYiGFzXlNqoxh
-	 BjBnQU3sGIt9PcajkS1QI8Ufz4/VCk1QNGm3Bd8hdCstWib+384X2BIMDknG6Y8BK2
-	 kcsaTJBMSJFfi8XQ9R0gyIaMsrXHCHGyR6mXSTUn6E0Z4m4hXk90PeQ12cOwEx/0CZ
-	 xp3vliteT2PpbjprrlX75KtrY7aLPxLCWhiRIpNrd+6cRdQmg6Rx06hXOpKyTmMrWU
-	 zUWWx3FM2x38dHdKoVuzF8qIj8t+GYlNkWyiuTDhd+Fvh0uPWIoTRbXJATS/vujvzi
-	 k8lfXH8F9Hg0w==
-Date: Tue, 9 Jul 2024 10:25:41 -0600
-From: Rob Herring <robh@kernel.org>
-To: George Liu <liuxiwei1013@gmail.com>
-Cc: linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org
-Subject: Re: [PATCH v2] dt-bindings: arm: aspeed: add IEIT x86 platform BMC
- boards
-Message-ID: <20240709162541.GA3680692-robh@kernel.org>
-References: <20240708034848.100930-1-liuxiwei@ieisystem.com>
+	s=k20201202; t=1720542374;
+	bh=j/xpxN9ieLiUkBfCvAyU5ZQEvyka3gQP1DJZ+4maHP4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YZrAZ8ILPYyw01koigP6vD7f+sAFPIjEVp6ClhvAWHrdIyBk1Ib3Q3IgNYO3ou0s5
+	 WQnWFfdRIZpIBgcHr4tZsL+uzMc1zmBHS5oNl2KSYEv567o1GjAsRGXAZAu6MvUWl1
+	 4R6u+98I0+8hIj9Rb58FkL0TY7Ft1kHOVpTaL9UydvK8T1ydq/LVLbunSXZJP0qeWl
+	 kgn2UDe/t2kNH50PNqMxz6J18Kg8CcDYeBPEbH/6ivYBQtf6aOcNRQMCeVM547+JZR
+	 WaZgJhcmx7+s3gNiLqkuRVlkJHXnU7jhTFCdDFJzRm3ngCy9CQGJGZW5f3/NeC1yKS
+	 6ghLwkYoWxucA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Jonathan Denose <jdenose@google.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Sasha Levin <sashal@kernel.org>,
+	jefferymiller@google.com,
+	linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 01/14] Input: elantech - fix touchpad state on resume for Lenovo N24
+Date: Tue,  9 Jul 2024 12:25:45 -0400
+Message-ID: <20240709162612.32988-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240708034848.100930-1-liuxiwei@ieisystem.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.10.221
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 08, 2024 at 11:48:48AM +0800, George Liu wrote:
-> Document the new compatibles used on the ieisystems
-> 
-> Signed-off-by: George Liu <liuxiwei@ieisystem.com>
+From: Jonathan Denose <jdenose@google.com>
 
-Still confused with the 3 names: ieisystems, ieisystem, and ieit
+[ Upstream commit a69ce592cbe0417664bc5a075205aa75c2ec1273 ]
 
-The preference for vendor prefixes is domain names, but if ieit is a 
-better identifier please explain why (in the commit msg).
+The Lenovo N24 on resume becomes stuck in a state where it
+sends incorrect packets, causing elantech_packet_check_v4 to fail.
+The only way for the device to resume sending the correct packets is for
+it to be disabled and then re-enabled.
 
-> ---
->  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> index e386d0ebfb14..818fbe9c45fc 100644
-> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> @@ -92,6 +92,7 @@ properties:
->                - ibm,rainier-bmc
->                - ibm,system1-bmc
->                - ibm,tacoma-bmc
-> +              - ieit,nf5280m7-bmc
->                - inventec,starscream-bmc
->                - inventec,transformer-bmc
->                - jabil,rbp-bmc
-> -- 
-> 2.34.1
-> 
+This change adds a dmi check to trigger this behavior on resume.
+
+Signed-off-by: Jonathan Denose <jdenose@google.com>
+Link: https://lore.kernel.org/r/20240503155020.v2.1.Ifa0e25ebf968d8f307f58d678036944141ab17e6@changeid
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/input/mouse/elantech.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/drivers/input/mouse/elantech.c b/drivers/input/mouse/elantech.c
+index 400281feb4e8d..8246662fa60b7 100644
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -1476,16 +1476,47 @@ static void elantech_disconnect(struct psmouse *psmouse)
+ 	psmouse->private = NULL;
+ }
+ 
++/*
++ * Some hw_version 4 models fail to properly activate absolute mode on
++ * resume without going through disable/enable cycle.
++ */
++static const struct dmi_system_id elantech_needs_reenable[] = {
++#if defined(CONFIG_DMI) && defined(CONFIG_X86)
++	{
++		/* Lenovo N24 */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "81AF"),
++		},
++	},
++#endif
++	{ }
++};
++
+ /*
+  * Put the touchpad back into absolute mode when reconnecting
+  */
+ static int elantech_reconnect(struct psmouse *psmouse)
+ {
++	int err;
++
+ 	psmouse_reset(psmouse);
+ 
+ 	if (elantech_detect(psmouse, 0))
+ 		return -1;
+ 
++	if (dmi_check_system(elantech_needs_reenable)) {
++		err = ps2_command(&psmouse->ps2dev, NULL, PSMOUSE_CMD_DISABLE);
++		if (err)
++			psmouse_warn(psmouse, "failed to deactivate mouse on %s: %d\n",
++				     psmouse->ps2dev.serio->phys, err);
++
++		err = ps2_command(&psmouse->ps2dev, NULL, PSMOUSE_CMD_ENABLE);
++		if (err)
++			psmouse_warn(psmouse, "failed to reactivate mouse on %s: %d\n",
++				     psmouse->ps2dev.serio->phys, err);
++	}
++
+ 	if (elantech_set_absolute_mode(psmouse)) {
+ 		psmouse_err(psmouse,
+ 			    "failed to put touchpad back into absolute mode.\n");
+-- 
+2.43.0
+
 
