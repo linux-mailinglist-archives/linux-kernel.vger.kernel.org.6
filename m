@@ -1,117 +1,154 @@
-Return-Path: <linux-kernel+bounces-246541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8634D92C34A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:31:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4AE192C353
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:33:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 411C52844B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:31:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE22C1C2244A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEA918005E;
-	Tue,  9 Jul 2024 18:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A1A180058;
+	Tue,  9 Jul 2024 18:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fW3bsjdC"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f3wgpTzP"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC4917B038
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 18:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BA81B86E4;
+	Tue,  9 Jul 2024 18:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720549851; cv=none; b=ALanFa/jYEgv8xUlHGtAXVElkgF3xxd1o7lllY6UeRi95QDBhFvQAuHRKtRHWrOZkqFIdft4kOXNpXuI/sa4W5uzUsrzN43XMKRRnJG4XjknGVeBYw3Q3/EketDQVtBpuC9QAp8tTZNKKhfW5/WT/GKqQ8JNxonCdlHGxzKND+U=
+	t=1720549988; cv=none; b=pATITgVXjyjWwX7Xl0/xeJW/wXV1Nzqqml3slJRleJY7mO9TaYU8o68gO/77pkBNHPPTdMCa7+nUK/kqBUyrUxWc0WQr46H8AhTlmuH6FJKh3emJEC7ezqEI7VGkOnYsWWis08XiK87BAq4PJTWVNMjGCfAF4QJNsx9/3SvGzFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720549851; c=relaxed/simple;
-	bh=N4+viih2gma9QcmquIKlbRwl7nIzoZsM5L48/0q2Cpg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=T4iOg1CF9yNIyrf6SIpr6XJx+SV/UaUDjdSOCstle1Jg/5N5CzWd9ZctemCi9mXQfzc8UpQTgimYTcmlxuh7bRb3X3L3rBhtygKvLxIZIKQWFdc7/KzQA9m9NaG1CQp2gXS8qNCDvuJckpmMe52Uru8vBBIuxx1Bryhdg26Z/84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fW3bsjdC; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2c9d510f670so2686160a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 11:30:49 -0700 (PDT)
+	s=arc-20240116; t=1720549988; c=relaxed/simple;
+	bh=o7KezNssQ10KvpArozHaQDe0vjPmXwq+WBOthEhLB8s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jZZ6ldreUDJRgX+7ndyk9olQOUup7JevHeY9A8zLcNN9Qa0lXRSSVg1ff4u5rkFktyp3e2z3ifzR1wH5gG0+B/aXgI4tWJ/iysPL3nGwQc2/gjYjtPraagMln3j1l+k7W5ylNJn6S+wJcyDR0sb4ofIC1BV83epyDKlNKoPLs6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f3wgpTzP; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52e99060b41so5924461e87.2;
+        Tue, 09 Jul 2024 11:33:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720549848; x=1721154648; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FAqEpWZEgwuYrU89utPks/w7kr7U7FSan9CR+x/bpmM=;
-        b=fW3bsjdChHV/TH3nr5VH+Bsi6cC19yxG2/wfgH5wxbjwTN6SjZtblk4u9nXU5zzGDE
-         3kCGWHXweU2BOQ01fmfxRyrmDr/tjW1BXduf4JXL1jzN7Zb14PN90ixqIq0t1UZ2bGRd
-         5ap6g4NB8myFTlTP/DKjG1Xdzeo2zxV6SCg48Fs+jAt9+aZuoTxWGm2daKz8kWVMgwXq
-         Mp8R0OpDugDwa4kFAKd5OavmgTkRjoP20OG9dB0dwVH3gwrRATBLuXNJzlvlfO6gilyU
-         4DmRE3wOQHvG0NxEEDAN0KfiHGVvq6iM8Bp2aiIDmrJUBwe20NE3vnXgfRa/bK7P614+
-         I/QQ==
+        d=gmail.com; s=20230601; t=1720549985; x=1721154785; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qQvoh/iNTo3TxS26T9ik+xylt2WEP99UjL3OjvGhQKQ=;
+        b=f3wgpTzPyG4pT78beBhwK1NyaNHB2V1VGH51bkdGguBUnoV/T5p076l+p3r7+LdCn1
+         aaglEda3dqHXakXAR2OlZ9FI3N0m18w4nQTo3R2MI7xq7+hf35SImzjZ6lrl3w9r+UoH
+         BMFoprQ8Ss0IKe/tEW/URD+Y71FZcq0Df27NdS95Zg/wkwZgWgxhwoHWNdVcNYWEjece
+         0d1Y4/puLW+rIVSr5hDPNLVszkXSbq0DTdiOvGPvZM9PSpYbQZzSrtBsf9eQACti9QKl
+         1l8HXKK3cMZNIKILz5rplrfIlkqSqOtJAj/n69+U3LOU676dUE6xphd45ZalBCK6el9l
+         lpBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720549848; x=1721154648;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FAqEpWZEgwuYrU89utPks/w7kr7U7FSan9CR+x/bpmM=;
-        b=p7/cepsI9FbxqyamN1xdi6Q7l5lgw3DW4V1XJzRPCW/2yTokD9hybZcvCc4dpf3xew
-         BSakiokwur23jUc6hm+4tKfmFUl4pTu7tNTypxSYHocuoI71+spmUmzmItXJH6NqZ1YK
-         VNnFk5EEDfRKsAaN15genPJKSI6HdZOvTQXcJeQP79NMKFReCLWP4yS2/nNDuTB9M6RO
-         8bKnbe4iSSiLEXa1e6XzctaDR1X/HJGWvu3uXt43Ta+VirsmCp6snoUdiNG3Xcr+1/09
-         jeDlmSPBfxfBBzPe820gGXbW06vWl42p7KQBWa6UHA8eJAJWHQKfeelyC7gP5nVc18vb
-         /HAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8RXYDSuWG3c1bINjT9iFMnU2oLkIV7ng4dfNJ9P9tlJgQ54yY2EDbo7SrR/six1xXEppdgoUC1iYC4GODmw6+dwPC88EIypGZ85Oo
-X-Gm-Message-State: AOJu0Yy+7MHC7PPFOy/fAW7mrj74XLDH8e5bTF2wD26FBqGtEEAEMqVZ
-	uw1p9pJMSXoLlzTIagBlJfK0AWhZZ5zpYlj9JXDZzrXJ5r5HO50hL5ZsWvuTinNmBjSMVG+9nSW
-	/aw==
-X-Google-Smtp-Source: AGHT+IHdTEkU/YN0RkgCbuOH3sRmHxgFkvoSBnHbktYi5EH1tE+yrdrqGPbDR7Q+CN9Q6JhSoNiOJDFalgQ=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90b:4c88:b0:2c9:9b67:9c41 with SMTP id
- 98e67ed59e1d1-2ca35d8b869mr9260a91.8.1720549848435; Tue, 09 Jul 2024 11:30:48
- -0700 (PDT)
-Date: Tue, 9 Jul 2024 11:30:42 -0700
-In-Reply-To: <34d209d318111677c1cd47ff321cc361bf06bd60.camel@redhat.com>
+        d=1e100.net; s=20230601; t=1720549985; x=1721154785;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qQvoh/iNTo3TxS26T9ik+xylt2WEP99UjL3OjvGhQKQ=;
+        b=ZVhMhD74UOTuQE8pM797rUARTJkpAnY7+6eB7pJfH+IhgIq4Rj4REP4LqVCmKCj22j
+         v7etGYBm2X8v7kRMCiI31oQGxEgObBs2/FXc+FiiQ/alXvJ8OVr731PaGX+0TodGpXUT
+         tpEZCGH+v3dP5PKVdEbZgXWeIyoou8gpgHT+LLFzk5uchFcFdgw+a226t34CVfvc+f6d
+         lhu/Nc/uQDsiWPwUGnRC9xTnRCNXTbITtbkouZQ3SRHYjM6pgaOehA2mOZ21fVR0295k
+         8JwQqzL4RHbwO/miMQOgYcG6pOKiPiiOjl3aFHZxTMOuJ0Ku1ED2hxY3onYbm5kTlD06
+         qZPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXgHS16Ijt86oohdMiGAWHiYcxtRjH4o074QXOTDdfJzaUg66VZpk+TyP7+qZJY9L2F28y6uJCa75AXD2HYpn8DpfQJd+AY68AMOBXzPTxAuiesQHCn+k0lQQF/502ypBewaTiidkVmtyMAo6cfe6KwgeR1yYvHIK11IIDtj2blV8B8bg==
+X-Gm-Message-State: AOJu0YzBatt1r7zQ8ECVcBjc7pFy0mxh8mshslvUzT4VVcTuJpllMM0V
+	MLhyVdpZOSrA67YsxuzhBcqbmgQ9qnnhvFz1OND/2pPSmiyfEpCf
+X-Google-Smtp-Source: AGHT+IGdA6qBs/h5ifQa1NLYmmqBaEPCm7bXVlEOtK8ASpi7E8t7wW94TgDIp5nw4qBgiqUe1GdzHw==
+X-Received: by 2002:ac2:5605:0:b0:52e:97b3:42a1 with SMTP id 2adb3069b0e04-52eb9995536mr1796703e87.24.1720549984595;
+        Tue, 09 Jul 2024 11:33:04 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52eb8e493cdsm313069e87.85.2024.07.09.11.33.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 11:33:03 -0700 (PDT)
+Message-ID: <2b66ea94-dd77-4e86-b09b-c00523bdbf75@gmail.com>
+Date: Tue, 9 Jul 2024 21:33:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-38-seanjc@google.com>
- <34d209d318111677c1cd47ff321cc361bf06bd60.camel@redhat.com>
-Message-ID: <Zo2B0jDjufR4EdTx@google.com>
-Subject: Re: [PATCH v2 37/49] KVM: x86: Replace guts of "governed" features
- with comprehensive cpu_caps
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/7] dt-bindings: iio: rename bu27034 file
+To: Conor Dooley <conor@kernel.org>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1720176341.git.mazziesaccount@gmail.com>
+ <f83cf0d6f5b0ed391703ea3908ebd65b3f6e5c87.1720176341.git.mazziesaccount@gmail.com>
+ <20240708-eloquent-overdrive-092c7678f913@spud>
+Content-Language: en-US, en-GB
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20240708-eloquent-overdrive-092c7678f913@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 04, 2024, Maxim Levitsky wrote:
-> On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
-> > @@ -861,23 +877,20 @@ struct kvm_vcpu_arch {
-> >  	bool is_amd_compatible;
-> >  
-> >  	/*
-> > -	 * FIXME: Drop this macro and use KVM_NR_GOVERNED_FEATURES directly
-> > -	 * when "struct kvm_vcpu_arch" is no longer defined in an
-> > -	 * arch/x86/include/asm header.  The max is mostly arbitrary, i.e.
-> > -	 * can be increased as necessary.
-> > +	 * cpu_caps holds the effective guest capabilities, i.e. the features
-> > +	 * the vCPU is allowed to use.  Typically, but not always, features can
-> > +	 * be used by the guest if and only if both KVM and userspace want to
-> > +	 * expose the feature to the guest.
+On 7/8/24 20:05, Conor Dooley wrote:
+> On Fri, Jul 05, 2024 at 01:54:26PM +0300, Matti Vaittinen wrote:
+>> The BU27034NUC was cancelled before it entered mass production. It was
+>> replaced by a new variant BU27034ANUC (note, added 'A'). The new
+>> variant gained a few significant changes, like removal of the 3.rd data
+>> channel and dropping some of the gain settings. This means that, from
+>> software point of view these ICs are incompatible. Lux calculation based
+>> on the data from the sensors needs to be done differently, and on the
+>> BU27034ANUC the channel 3 data is missing. Also, the gain setting
+>> differencies matter.
+>>
+>> The old sensor should not be out there so the compatible was dropped and
+>> a new compatible was added for the bu27034anuc. Move the yaml file so
+>> the file name matches the binding and change the $id.
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>> ---
+>> Revision history:
+>> v1 => v2:
+>> - New patch
+>> ---
+>>   .../iio/light/{rohm,bu27034.yaml => rohm,bu27034anuc.yaml}      | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>   rename Documentation/devicetree/bindings/iio/light/{rohm,bu27034.yaml => rohm,bu27034anuc.yaml} (92%)
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml b/Documentation/devicetree/bindings/iio/light/rohm,bu27034anuc.yaml
+>> similarity index 92%
+>> rename from Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml
+>> rename to Documentation/devicetree/bindings/iio/light/rohm,bu27034anuc.yaml
+>> index 535bd18348ac..fc3d826ed8ba 100644
+>> --- a/Documentation/devicetree/bindings/iio/light/rohm,bu27034.yaml
+>> +++ b/Documentation/devicetree/bindings/iio/light/rohm,bu27034anuc.yaml
+>> @@ -1,7 +1,7 @@
+>>   # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>   %YAML 1.2
+>>   ---
+>> -$id: http://devicetree.org/schemas/iio/light/rohm,bu27034.yaml#
+>> +$id: http://devicetree.org/schemas/iio/light/rohm,bu27034anuc.yaml#
+>>   $schema: http://devicetree.org/meta-schemas/core.yaml#
 > 
-> Nitpick: Since even the comment mentions this, wouldn't it be better to call this
-> cpu_effective_caps? or at least cpu_eff_caps, to emphasize that these are indeed
-> effective capabilities, e.g these that both kvm and userspace support?
+> IMO this should be squashed.
 
-I strongly prefer cpu_caps, in part to match kvm_cpu_caps, but also because adding
-"effective" to the name incorrectly suggests that there are other guest capabilities
-that aren't effective.  These are the _only_ per-vCPU capabilities as far as KVM
-is concerned, i.e. they are the single source of truth.  kvm_cpu_caps holds KVM's
-capabilities, boot_cpu_data holds kernel capabilities, and bare metal holds its
-capabilities somewhere in silicion.
+I've no objections to squashing this. The main motivation of having it 
+as a separate patch was to point out the file rename for reviewers and 
+ask if it is Ok. Furthermore, if there was a reason not to do the 
+rename, then this patch could've been just dropped while the rest of the 
+series could've been applied.
 
-E.g. being pedantic, kvm_cpu_caps are also KVM's effective capabilities, as they
-are a reflection of KVM-the-module's capabilities, module params, kernel capabilities,
-and CPU capabilities.
+Thanks for the review!
+
+Yours,
+	-- Matti
+
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
+
 
