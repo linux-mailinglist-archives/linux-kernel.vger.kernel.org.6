@@ -1,138 +1,117 @@
-Return-Path: <linux-kernel+bounces-246702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A749E92C552
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:30:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B01B092C55A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26E91B217E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:30:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B22B283334
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7BF187857;
-	Tue,  9 Jul 2024 21:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0497B185606;
+	Tue,  9 Jul 2024 21:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R0hnsDq7"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="IpEKGhbS"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1620C17B05F;
-	Tue,  9 Jul 2024 21:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B6F1B86D4;
+	Tue,  9 Jul 2024 21:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720560603; cv=none; b=anp6mkBMYVGuvSKh0yCHbDB89/HovgvfZCmYZ1jG7YEskVtWgDrVUCzh1YUTvymxkZGUUdF0OI8Z/qPVKlMxQDrxwPqV0Xb0d1gSnxtAAIK0/OpUU9tsDdky0J3hxBwTPuo+R1h9was+TVox63SWwWVNv/3g9LP3ytXTRwL69G8=
+	t=1720560920; cv=none; b=c9WAZ3GCXEp3xhwNBZOmKKmzy5Qk5+qHFjfwQRQof8j2Th4+AwG9qwuR1UcWbX0nrAQAuMy95DuI3oQ0Fv1TzQ62TXHsG/NGqgjIuZV6F8Xdy7yDs5zdKqHMCWt7q6+UzdsCtuWbAqRccgYum+EHRZ51WJK7R8cMjhdF667KtTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720560603; c=relaxed/simple;
-	bh=NwcHMJbDrE9soGYhklNbRSR1jDwfxWXbqa6zKAsFC2o=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=baOyjCg25qydGzPjATyLdlv8RwEEn5Gb8fG/uiQiHvZsux8UzSRk6IkdqxD5mGzfKaQSqhWWNW/SveagjfIn3epURnTk7JpRzQCuRcTW3SJrH+yqSFPJVsbRgKCQZI7oKjg7rj8dt4DGO9yfpXudTFbQJJSji5g4nYOfgx3Gq9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R0hnsDq7; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-64f4fb6ce65so48133477b3.2;
-        Tue, 09 Jul 2024 14:30:01 -0700 (PDT)
+	s=arc-20240116; t=1720560920; c=relaxed/simple;
+	bh=ZetbC7TE4JO9QBtAGo9CeTU1BeEzOd/4ss6yzko0CUQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JxpA8rtHs839LL6VCr8CjXJsE7CszkEIumUqywagG2qQacm34Uy/HV1DLeqzMw1d3B6HLjpJq7pshB8iYJx1fGQ3BOmqBI6pgxBANofgWCRhDPO1HrTGPYLnvkn16ZtAVRu4eWOr+Dsg5O/Ish9qnNhm1bQTFIUvNTcl6ne5vQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=IpEKGhbS; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42579b60af1so39075915e9.2;
+        Tue, 09 Jul 2024 14:35:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720560601; x=1721165401; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mKz3aaHbTh5s5ue20BmsZpd/R0LLlhTOaVxDAJ/1Gog=;
-        b=R0hnsDq7O85DB6i2JOC6YPfvi3Hlqbd55STv3C2tYzxtF+5BE0HifScY6X5MBzx6CH
-         XMFLWDZwYlLbVaGFg+kDSntpyBH/X1eJHELANCI6fBpAkFFtkSQDSi6k0VPIGBR9TiPU
-         Dj0yYgACe0Zh3Y2AL87qFxIoeR/cXQn/lVKCoZARxeg2+vCAjW6G61+YsbT8zzaOUCUU
-         NCbw95HXk9dvv5y1Bb/xNf3uYF+bwRZ7GTqW6IzoowrVeZaaWUqZQSivlpyVhvN6tIhE
-         LhYuwcDifKyfy62a7QXxSR3oD69VvXSa7Zr5lgeSsKx33iYzT+n6TNEmyjiweBQfkGqi
-         9dng==
+        d=googlemail.com; s=20230601; t=1720560917; x=1721165717; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3M5Fvu/U+spfWTBwhlOd4QQV8BmMooOznPRXHtmfW+s=;
+        b=IpEKGhbS+3kiU/tnoHydH9iK/n3H5CZUnKkGnLe7s10RD8i1gbUKqcJs3Cg6q8Sqx0
+         a6N8kVY8H/dAwcUkxXOeWy7puyUYvNkpYNjlM05xFtCH8quc2eKdV4TH6crEyxQaxxRs
+         vOuB3THOJiRK6FWuNaLs5e4wD4jx7OxAoz6m0ptT2QQEN+6YynRQUwAesi3wkBgaQIZC
+         jQyvIP24oaK8F2/G66J0Gm7HhTAxF4hDdDaxBW5LmZk68HMroI1W5459ep391K1EVCF9
+         JqpB4Ru4mlarPzXRFXFE/ztPH/NJGTQ9vvkwdrrPgKQsJu9rltZQt8HaMMw4rSy1jGme
+         tqFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720560601; x=1721165401;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mKz3aaHbTh5s5ue20BmsZpd/R0LLlhTOaVxDAJ/1Gog=;
-        b=Mgoer/gSSTBS908J51vhErNBjg5he/HWdNRX3iVWIyBhtvz68RGry7/WSoYk3YhUV9
-         JCwb4XfY5UzSaEtT6Rrb/HXEAx3aUyn1NoGv322W9ZQcJuYfdd2ebY4sDXRXqPPWJkb3
-         MI5klNHKYIv72s18caiKzZiULahkVufAcLVZzZ5CLjp9TMU5tbRx3eeTku1GwFSWkGsy
-         OZ6uo5HcWC4c/CnXuok6gvr5nXsbLI365st3DfGRgLza3zVoNPFQwB+qHmg2B+yi+20a
-         vxaYvJpUF8vIvjUIWEN1JvsQJO5GIkdS2WsML8aMlE/bF+EeqpP11nsfpsO9cG1MUlWd
-         TD2g==
-X-Forwarded-Encrypted: i=1; AJvYcCXvIs1AsnqtbIdvAYxNlyvCgKvSZ25BmY8tQbLB9RbnJTgV4rm14dbIqFhedIbleeVcCLr0cwpoxaD4jPvyHx9ji2MaELTVLP3n/y9LkE+rn/7DkuK6Q+Rr215t/xhw7xtRHPTZ9qQKUlJCIhrvxcPqoREqgdEYtp84
-X-Gm-Message-State: AOJu0YzXf7hHwTAe4BCDAH6GUPnJ9QPhPgKRHNe8N6aBu4k2z8eYamRC
-	/Y1IKj6ZcoqgYgIZ00SLwb9uqsCcQIZegattdg5BxZMRha0y0DVq
-X-Google-Smtp-Source: AGHT+IHPgmrIrWc+akDsVCRw/o70dfEXyctNlGAFU6XNW8HLCynReHCIx9+9XFyceGpSaMFMYRXL+g==
-X-Received: by 2002:a81:770a:0:b0:62c:fcba:cfeb with SMTP id 00721157ae682-658f02f5e93mr42238597b3.34.1720560600845;
-        Tue, 09 Jul 2024 14:30:00 -0700 (PDT)
-Received: from localhost (240.157.150.34.bc.googleusercontent.com. [34.150.157.240])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f1908ae8csm134094785a.88.2024.07.09.14.30.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 14:30:00 -0700 (PDT)
-Date: Tue, 09 Jul 2024 17:29:59 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: Fred Li <dracodingfly@gmail.com>, 
- aleksander.lobakin@intel.com, 
- andrii@kernel.org, 
- ast@kernel.org, 
- bpf@vger.kernel.org, 
- daniel@iogearbox.net, 
- davem@davemloft.net, 
- edumazet@google.com, 
- haoluo@google.com, 
- hawk@kernel.org, 
- john.fastabend@gmail.com, 
- jolsa@kernel.org, 
- kpsingh@kernel.org, 
- kuba@kernel.org, 
- linux-kernel@vger.kernel.org, 
- linux@weissschuh.net, 
- martin.lau@linux.dev, 
- mkhalfella@purestorage.com, 
- nbd@nbd.name, 
- netdev@vger.kernel.org, 
- pabeni@redhat.com, 
- sashal@kernel.org, 
- sdf@google.com, 
- song@kernel.org, 
- yonghong.song@linux.dev
-Message-ID: <668dabd7e7066_1ce27f29435@willemb.c.googlers.com.notmuch>
-In-Reply-To: <Zo2auA2r/hkJWWcs@gondor.apana.org.au>
-References: <6689541517901_12869e29412@willemb.c.googlers.com.notmuch>
- <20240708143128.49949-1-dracodingfly@gmail.com>
- <668d5cf1ec330_1c18c32947@willemb.c.googlers.com.notmuch>
- <Zo2auA2r/hkJWWcs@gondor.apana.org.au>
-Subject: Re: [PATCH] net: linearizing skb when downgrade gso_size
+        d=1e100.net; s=20230601; t=1720560917; x=1721165717;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3M5Fvu/U+spfWTBwhlOd4QQV8BmMooOznPRXHtmfW+s=;
+        b=QHZvegiqoFDyn2Olf97E3MgZXbja4uLv0yoU8w5x8DuMcntHXaDw9qCRmlDW8sifWI
+         xnH1TeUiLuSs076KHWuoI+idftFmhkUXlBRt2zJPQHpFnX0Muh5nYi02W7fgqN1BoC4S
+         v9+KRd/IQabCUd/u4JIJTb2x0MaXLfoGcHp83YrZpSM9VMmuX6e7EjHZa74AeeiZC9cQ
+         kFZ9nARf1/G8wjzEaP/aJhmBA+45+THuqxRf3ui6byjlKJDW7yfamIqv9MyeKGX9+yR3
+         2e+5TrtM8tFzL2E0WWfl2uRQywoTqYEhn9MdSsSyc9PZ0Cl0fayyi4AJm5217M8+Mawu
+         1rwA==
+X-Forwarded-Encrypted: i=1; AJvYcCW8/v+BcFLAcRiFvowoMeqznMFOC1/mB++vqbXR11RYpltVo03xjP3OPmnPcSq1doxvQB4LvaMrgMR2D6sTLQVxz/5pkNJkHgnvazYRT+7SwNOGJC5AD0EyyPFJYhchb73vWifv
+X-Gm-Message-State: AOJu0Yw+F3hMs47Mk9UGf0+aWYAg+0lgbei3oJVnKNWcI/Tbw2YSR+7r
+	xac5cps+AUSR79HtLehod3h9ElGpL5YiPQ0/hUaoPx7Xy9/+VDU=
+X-Google-Smtp-Source: AGHT+IG1hi5P+S1pSgVCL9mWAifazaPt5ItydrKvszdcF+cs4/YQ4T1bNJv67r/1jRKKNpKhwuhk/w==
+X-Received: by 2002:a7b:ca4b:0:b0:426:6c7a:3a61 with SMTP id 5b1f17b1804b1-426707cf194mr22888825e9.3.1720560916890;
+        Tue, 09 Jul 2024 14:35:16 -0700 (PDT)
+Received: from [192.168.1.3] (p5b0577f1.dip0.t-ipconnect.de. [91.5.119.241])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a1d165bsm223537125e9.4.2024.07.09.14.35.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 14:35:16 -0700 (PDT)
+Message-ID: <07de625c-c504-4e12-830e-1f68e923aacc@googlemail.com>
+Date: Tue, 9 Jul 2024 23:35:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.6 000/139] 6.6.39-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240709110658.146853929@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20240709110658.146853929@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Herbert Xu wrote:
-> On Tue, Jul 09, 2024 at 11:53:21AM -0400, Willem de Bruijn wrote:
-> >
-> > > +		/* Due to header grow, MSS needs to be downgraded.
-> > > +		 * There is BUG_ON When segment the frag_list with
-> > > +		 * head_frag true so linearize skb after downgrade
-> > > +		 * the MSS.
-> > > +		 */
-> 
-> This sounds completely wrong.  You should never grow the TCP header
-> by changing gso_size.  What is the usage-scenario for this?
-> 
-> Think about it, if a router forwards a TCP packet, and ends up
-> growing its TCP header and then splits the packet into two, then
-> this router is brain-dead.
+Am 09.07.2024 um 13:08 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.6.39 release.
+> There are 139 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-This is an unfortunate feature, but already exists.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found. It ran for an hour now, and I built 6.9.9-rc1 
+with it, which I will boot-test next.
 
-It decreases gso_size to account for tunnel headers.
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-For USO, we added BPF_F_ADJ_ROOM_FIXED_GSO to avoid this in better,
-newer users.
+Beste Grüße,
+Peter Schneider
 
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
