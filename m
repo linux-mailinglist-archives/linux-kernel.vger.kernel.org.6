@@ -1,184 +1,163 @@
-Return-Path: <linux-kernel+bounces-245562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD4A92B466
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:51:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B8E892B469
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06155284A35
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:51:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AADA6B21B57
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BCC155739;
-	Tue,  9 Jul 2024 09:51:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D5C155398;
+	Tue,  9 Jul 2024 09:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3oZYSxh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yyb5N2ir"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47682152E03;
-	Tue,  9 Jul 2024 09:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA52715575C
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720518694; cv=none; b=dU0t80ZEGkBJdy3nNgULMUxV4GpHUMXa5xqbV9WA4ycunLCnZ6L87/1mrf5MGchp7mhEK3tbJhAQHv3ghhAYzsY6ZZVOl/dV7Gl2LSuvq59zD3LCBcv1W7ylpQhInqnd4KMGHrGk8ctOxkq735eQJfeuhMgYk3WOA7IICAG+7+g=
+	t=1720518704; cv=none; b=CAnSy+Y1TZQtHbaFaft5PZCLq+oPVGLL46DczrjsdtNuWFgXoAW97rOavhM59fohUtzDtQCooiqfJ6C0Eg5/x6qLBxor0UWiYMj3Eux4KWtqZif3zOTmHNmzuT06NR0BRZOE/9dQtMGnPNfODXJshuzv1rFAEW7wwKClPmGcmdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720518694; c=relaxed/simple;
-	bh=bL4qqpnXgSeE002tT5hkhdq/LTVBpp3383J8u7fQ4bc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K1G9BqznIxbSu0szRjFLMXK+lFU0hLkw4bSMLnriHpf1zY3vaxnwrzrYoNOa4SvWdtfOBXKHpA502XfE2M1l1pZSRex5j53o6NWwP7x7BpWQiVi5QEA1UzxuO7IqRlHcnckdjRfxxuK9MIDWfxo7Hi5vn/rzfVWNKDcH9zwrJkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j3oZYSxh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0883C3277B;
-	Tue,  9 Jul 2024 09:51:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720518693;
-	bh=bL4qqpnXgSeE002tT5hkhdq/LTVBpp3383J8u7fQ4bc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j3oZYSxhrUHeBC7D3++kc3VMMIROXNpVTp/zPdT90QqvPQgNm5XI2F6MBXPM/+UA3
-	 UH9RuK2MShKrBmUTslqSXwP3Vk6xC9PEhP727zHiCfE1dR9NNi04itTL2M4g2JPGca
-	 DYbyB6fhgfRRpxw2TSGozYaH9fBkaZqsPy7wqUTf/Em/9DzIDZtwFFcgksMprYZaEr
-	 aZMcxEFFAdQ80JKr95+yYz7gtnWdrvetTEsvaLEIzp8rQlJK8hzi7OlJIcFemoHGE/
-	 v0rnx/MlMCVg9pE9T6LJmQXapizmm4+K4joqB3CEAt9ivGtpfDOMHt/a2HbXmnnjPB
-	 mBMeYRnBPpOlQ==
-Date: Tue, 9 Jul 2024 10:51:27 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Anup Patel <apatel@ventanamicro.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Anup Patel <anup@brainfault.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Frank Rowand <frowand.list@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Samuel Holland <samuel@sholland.org>, devicetree@vger.kernel.org,
-	Saravana Kannan <saravanak@google.com>,
-	Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>,
-	Atish Patra <atishp@atishpatra.org>,
-	linux-riscv@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Andrew Jones <ajones@ventanamicro.com>
-Subject: Re: [PATCH v14 01/18] irqchip/sifive-plic: Convert PLIC driver into
- a platform driver
-Message-ID: <20240709-mutt-truffle-3ac954bc00ba@spud>
-References: <20240222094006.1030709-1-apatel@ventanamicro.com>
- <20240222094006.1030709-2-apatel@ventanamicro.com>
- <CAJM55Z9hGKo4784N3s3DhWw=nMRKZKcmvZ58x7uVBghExhoc9A@mail.gmail.com>
- <CAK9=C2WP2+gKScUFuoE9782gjSfnDtcLAw01eCwram3LMAStBg@mail.gmail.com>
- <CAJM55Z8ti-ePT0t714h1Za9X3Ns3=Fw0pCu3NZ=7eT76JU_p5g@mail.gmail.com>
- <CAAhSdy1pesbdTfWnFURMJRcy2ujjX+cXtt-cfLDj2CQf2Ua_gw@mail.gmail.com>
- <CAJM55Z_=94+aMv=ywhih44eF0pR2WXiyx3FcrwRaX6tZto4gpQ@mail.gmail.com>
- <CAK9=C2XWjtWtV1WbQrX4Cg8KyzjVevMjG18YTgQJbZxi61BFjg@mail.gmail.com>
- <ZoydV7vad5JWIcZb@ghost>
+	s=arc-20240116; t=1720518704; c=relaxed/simple;
+	bh=4XuEKNFSFuGP1kN6L/yXHwpYHIvQcGA6Ng+fKkoMgZQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IL1AzIUKgInXNfStbz4iDaK7Hps3so7piQjnH+dgH797pfW8PAg4ROrWDqyzIj+EjM8T6kXXTzBB9Nxgn+2XkRNqmQJCFPvB9rycwgO+Sfi3vaxjEE1f1YBQD/dANaUFOqVY9+8gJVYLw97DszVBmTLv4HTTcYO4Ic+h8q+fcPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yyb5N2ir; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-35f06861ae6so3202126f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 02:51:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720518701; x=1721123501; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WX06ye1J6PdkCSj3zoT0ZMNvrT9EtWcEE/YdxpESa/0=;
+        b=yyb5N2irZdWL3EoE/fIxaNNT+g4AhZsV/eqyI6APYMd0IowCK/M66I8riz3A8WhD+M
+         4UrQuId8DH2+iFO8yDPIVbtMD8HPuL0CsssOgj5xTGDZv622hrZ+s/PmVakOChIK2Akc
+         wOf/6KACM1FexWKMRxBZoWgJ6zewOf6IbW8GFuJLAuKtKK/7c2xF7sENofscC8/REOQ7
+         uqgNF8OiX5qaTxkqYWIQZDFQVxJFSXQuccBiBtNK2lLnr4nDz25Vhc1tTyXOm/RbwSfL
+         /rbphmMJqNuFa01G+LYr2QntPPTB66B8p5SI/hrKFindXOXoxNqIJsouQP4/IInMd0Yl
+         7eAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720518701; x=1721123501;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WX06ye1J6PdkCSj3zoT0ZMNvrT9EtWcEE/YdxpESa/0=;
+        b=F+I9j/QAQfI+sixg5AFu22aPglIWIiCUGLAsrEtaaaEw4n4s+yugzty258cLEn58It
+         zr3nwSQJbvLn/ZyDvNyynvrNtnY6EC9ROQG9e0tJD8UEfqY0HbjggWJGJbzG4E5nLLI2
+         bUVpJziPu4COggPVh3VNC6qVgOS7hU5L+aKJ4z/MEwA2zWaIG54qQ5CAssx1MhBrw5oK
+         kn/Iz/pFWl3c5xXbcAiPDv4Ogp8NhGxA0WOzA6dmbeX2m+0zPBqdtcIuc8omq/8Lnn/a
+         KHrEZjcmlz7XRrOqJiz0hzYGLxm0o+AeGV2srIliPwpHWcbO4hyvGWQAtty4rfIuR/ky
+         i3LA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOkC7LhjEBY5BHQ3dbCsaj81HgfDLxFRv8RgDVm21br8k04wSppnpYd9NeaFTNT1Fn3b4Fo3kczyOd0WmMBllZhbB5rr6z9xW2U2Qv
+X-Gm-Message-State: AOJu0YwMpTcZLTtaRNgxqlNiMbXqHDT9xIjEy4lhOenNYaOcNcYDo26P
+	YkPU0Lk7OlufqIhANPVY8sMYdPQGapEHHi51E362G8eTE52bDlCMb/g+41n2f632SJH+JjrWg5G
+	8m6ys77oznt/zUhnM8RDxPoPERN6iMXV4aFJS
+X-Google-Smtp-Source: AGHT+IEEa+ZOMuIVJB/R8kPUjfwxKMD1OHTTc3Vy0AHpNhSOsKMUU0Dz5ToEd38VyMlsqy8uUowwm6nPboz2Ks1ZR7c=
+X-Received: by 2002:a5d:6da9:0:b0:367:88c2:bcfc with SMTP id
+ ffacd0b85a97d-367cea46beamr1873409f8f.1.1720518701008; Tue, 09 Jul 2024
+ 02:51:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="bSqWFTNZ10MZH6YN"
-Content-Disposition: inline
-In-Reply-To: <ZoydV7vad5JWIcZb@ghost>
-
-
---bSqWFTNZ10MZH6YN
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20240704-shadow-call-stack-v3-0-d11c7a6ebe30@google.com>
+ <20240704-shadow-call-stack-v3-2-d11c7a6ebe30@google.com> <20240704-unless-cache-8a971c244348@spud>
+In-Reply-To: <20240704-unless-cache-8a971c244348@spud>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 9 Jul 2024 11:51:28 +0200
+Message-ID: <CAH5fLgh850oUinnGS=1A47Es11qc9OL+Kw_6d-_Lvx7jcQmj=A@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] rust: add flags for shadow call stack sanitizer
+To: Conor Dooley <conor@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Jamie Cunliffe <Jamie.Cunliffe@arm.com>, Sami Tolvanen <samitolvanen@google.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Kees Cook <keescook@chromium.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Valentin Obst <kernel@valentinobst.de>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 08, 2024 at 07:15:51PM -0700, Charlie Jenkins wrote:
-> CONFIG_NONPORTABLE=3Dy
-> CONFIG_RISCV_EFFICIENT_UNALIGNED_ACCESS=3Dy
->=20
-> A new warning is tripped:
->=20
-> [    1.015134] No max_rate, ignoring min_rate of clock 9 - pll-video0
-> [    1.021322] WARNING: CPU: 0 PID: 1 at drivers/clk/sunxi-ng/ccu_common.=
-c:155 sunxi_ccu_probe+0x144/0x1a2
-> [    1.021351] Modules linked in:
-> [    1.021360] CPU: 0 PID: 1 Comm: swapper Tainted: G        W          6=
-=2E10.0-rc6 #1
-> [    1.021372] Hardware name: Allwinner D1 Nezha (changed) (DT)
-> [    1.021377] epc : sunxi_ccu_probe+0x144/0x1a2
-> [    1.021386]  ra : sunxi_ccu_probe+0x144/0x1a2
-> [    1.021397] epc : ffffffff80405a50 ra : ffffffff80405a50 sp : ffffffc8=
-0000bb80
-> [    1.021406]  gp : ffffffff815f69c8 tp : ffffffd801df8000 t0 : 61000000=
-00000000
-> [    1.021414]  t1 : 000000000000004e t2 : 61725f78616d206f s0 : ffffffc8=
-0000bbe0
-> [    1.021422]  s1 : ffffffff81537498 a0 : 0000000000000036 a1 : 00000000=
-0000054b
-> [    1.021430]  a2 : 00000000ffffefff a3 : 0000000000000000 a4 : ffffffff=
-8141f628
-> [    1.021438]  a5 : 0000000000000000 a6 : 0000000000000000 a7 : 00000000=
-4442434e
-> [    1.021446]  s2 : 0000000000000009 s3 : 0000000000000000 s4 : ffffffd8=
-01dc9010
-> [    1.021453]  s5 : ffffffd802428a00 s6 : ffffffd83ffdcf20 s7 : ffffffc8=
-00015000
-> [    1.021462]  s8 : ffffffff80e55360 s9 : ffffffff81034598 s10: 00000000=
-00000000
-> [    1.021470]  s11: 0000000000000000 t3 : ffffffff8160a257 t4 : ffffffff=
-8160a257
-> [    1.021478]  t5 : ffffffff8160a258 t6 : ffffffc80000b990
-> [    1.021485] status: 0000000200000120 badaddr: 0000000000000000 cause: =
-0000000000000003
-> [    1.021493] [<ffffffff80405a50>] sunxi_ccu_probe+0x144/0x1a2
-> [    1.021510] [<ffffffff80405af6>] devm_sunxi_ccu_probe+0x48/0x82
-> [    1.021524] [<ffffffff80409020>] sun20i_d1_ccu_probe+0xba/0xfa
-> [    1.021546] [<ffffffff804a8b40>] platform_probe+0x4e/0xa6
-> [    1.021562] [<ffffffff808d81ee>] really_probe+0x10a/0x2dc
-> [    1.021581] [<ffffffff808d8472>] __driver_probe_device.part.0+0xb2/0xe8
-> [    1.021597] [<ffffffff804a67aa>] driver_probe_device+0x7a/0xca
-> [    1.021621] [<ffffffff804a6912>] __driver_attach+0x52/0x164
-> [    1.021638] [<ffffffff804a4c7a>] bus_for_each_dev+0x56/0x8c
-> [    1.021656] [<ffffffff804a6382>] driver_attach+0x1a/0x22
-> [    1.021673] [<ffffffff804a5c18>] bus_add_driver+0xea/0x1d8
-> [    1.021690] [<ffffffff804a7852>] driver_register+0x3e/0xd8
-> [    1.021709] [<ffffffff804a8826>] __platform_driver_register+0x1c/0x24
-> Emil[    1.021725] [<ffffffff80a17488>] sun20i_d1_ccu_driver_init+0x1a/0x=
-22
-> [    1.021746] [<ffffffff800026ae>] do_one_initcall+0x46/0x1be
-> [    1.021762] [<ffffffff80a00ef2>] kernel_init_freeable+0x1c6/0x220
-> [    1.021791] [<ffffffff808e0b46>] kernel_init+0x1e/0x112
-> Linked as a fwnode consumer[    1.021807] [<ffffffff808e7632>] ret_from_f=
-ork+0xe/0x1c
->=20
-> The warning is not fatal, so execution continues until hanging at
->=20
-> [    2.110919] printk: legacy console [ttyS0] disabled
-> [    2.136911] 2500000.serial: ttyS0 at MMIO 0x2500000 (irq =3D 205, base=
-_baud =3D 1500000) is a 16550A=EF=BF=BD[    2.145674] printk: legacy consol=
-e [ttyS0] enabled
-> [    2.145674] printk: legacy console [ttyS0] enabled
-> [    2.155095] printk: legacy bootconsole [sbi0] disabled
-> [    2.155095] printk: legacy bootconsole [sbi0] disabled
->=20
-> I have not been able to discover why it hangs here.
+On Thu, Jul 4, 2024 at 7:17=E2=80=AFPM Conor Dooley <conor@kernel.org> wrot=
+e:
+>
+> On Thu, Jul 04, 2024 at 03:07:58PM +0000, Alice Ryhl wrote:
+> > As of rustc 1.80.0, the Rust compiler supports the -Zfixed-x18 flag, so
+> > we can now use Rust with the shadow call stack sanitizer.
+> >
+> > On older versions of Rust, it is possible to use shadow call stack by
+> > passing -Ctarget-feature=3D+reserve-x18 instead of -Zfixed-x18. However=
+,
+> > this flag emits a warning, so this patch does not add support for that.
+> >
+> > Currently, the compiler thinks that the aarch64-unknown-none target
+> > doesn't support -Zsanitizer=3Dshadow-call-stack, so the build will fail=
+ if
+> > you enable shadow call stack in non-dynamic mode. See [2] for the
+> > feature request to add this. Kconfig is not configured to reject this
+> > configuration because that leads to cyclic Kconfig rules.
+> >
+> > Link: https://github.com/rust-lang/rust/issues/121972 [1]
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+> >  Makefile            | 1 +
+> >  arch/Kconfig        | 2 +-
+> >  arch/arm64/Makefile | 3 +++
+> >  3 files changed, 5 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Makefile b/Makefile
+> > index c11a10c8e710..4ae741601a1c 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -945,6 +945,7 @@ ifdef CONFIG_SHADOW_CALL_STACK
+> >  ifndef CONFIG_DYNAMIC_SCS
+> >  CC_FLAGS_SCS :=3D -fsanitize=3Dshadow-call-stack
+> >  KBUILD_CFLAGS        +=3D $(CC_FLAGS_SCS)
+> > +KBUILD_RUSTFLAGS +=3D -Zsanitizer=3Dshadow-call-stack
+> >  endif
+> >  export CC_FLAGS_SCS
+> >  endif
+> > diff --git a/arch/Kconfig b/arch/Kconfig
+> > index 238448a9cb71..5a6e296df5e6 100644
+> > --- a/arch/Kconfig
+> > +++ b/arch/Kconfig
+> > @@ -690,7 +690,7 @@ config SHADOW_CALL_STACK
+> >       bool "Shadow Call Stack"
+> >       depends on ARCH_SUPPORTS_SHADOW_CALL_STACK
+> >       depends on DYNAMIC_FTRACE_WITH_ARGS || DYNAMIC_FTRACE_WITH_REGS |=
+| !FUNCTION_GRAPH_TRACER
+> > -     depends on !RUST
+> > +     depends on !RUST || RUSTC_VERSION >=3D 108000
+> >       depends on MMU
+> >       help
+> >         This option enables the compiler's Shadow Call Stack, which
+>
+> For these security related options, like CFI_CLANG or RANDSTRUCT, I'm
+> inclined to say that RUST is actually what should grow the depends on.
+> That way it'll be RUST that gets silently disabled in configs when patch
+> 1 gets backported (where it is mostly useless anyway) rather than SCS
+> nor will it disable SCS when someone enables RUST in their config,
+> instead it'd be a conscious choice.
 
-FWIW, that's probably because the CCU is the clock driver providing the
-clock for the uart, so when the sbi console goes away you lose output
-cos the uart driver cannot get the right rate for its input.
-You'd probably get further if you set keep_bootcon in your cmdline - but
-realistically the clock driver failing to probe is gonna have a load of
-knock on effects that it's probably enough to just have the failure you
-link here.
+Okay, I'll make that change. I suspect this will also break the
+Kconfig cycle mentioned in the commit message. Thanks for the
+suggestion!
 
---bSqWFTNZ10MZH6YN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZo0IHwAKCRB4tDGHoIJi
-0vRfAP9bUI5Q8gO+0jDxlcnbZTpLWQkYqx7dZemPzbLJwoQxWgD/bpGeA4LqYj1+
-AREvEnMKmNas6haB0YYEh9d10Wx65g4=
-=hcxv
------END PGP SIGNATURE-----
-
---bSqWFTNZ10MZH6YN--
+Alice
 
