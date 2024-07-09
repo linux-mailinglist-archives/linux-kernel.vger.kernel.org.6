@@ -1,152 +1,263 @@
-Return-Path: <linux-kernel+bounces-245077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC7292ADF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:58:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1F192ADF6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4A801F21DA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:58:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C6191F22117
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38B939FD9;
-	Tue,  9 Jul 2024 01:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF2B4204B;
+	Tue,  9 Jul 2024 01:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bw/1shH5"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8672A8FE;
-	Tue,  9 Jul 2024 01:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j6k1Hk3l"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0513C6A6;
+	Tue,  9 Jul 2024 01:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720490327; cv=none; b=Gcc7u0Y5rlnTvHVRKkMIXRFBuNZh4X6eOcJF7Uqg4h6udGSw1M/PknzUbaITGgBRmU9XQoQwJhP/OrfM20M8uJs7H00w9QBwiUAtYHmCVzusOuv2GylpAUuxgnef2S7S26ekOT4mBNPs5baeb/5Im8kiqatcCisNo657KEVffBg=
+	t=1720490330; cv=none; b=Xu60iB3BAApmIbz+6ZYi/DhQjksl6eXsI/fVWJ3rs6FoNNSreFOocnJfnDdvRE7cXa+DQ/y+U6cYcni+jbz6He47eZFZMP03zPJe9dJiflGS2y5lUpt59GfJzOmOxYeNBpJCodl7saY7IHYYBgkndCCI4lnW2unGUl+J7Ab9HII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720490327; c=relaxed/simple;
-	bh=SbITn/NJ0ImuVnQwIG27scr/uaOrxyWh6qpM8UCbrgo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FDoMPabs4kj4zDhoy89xl1j1brsbRjOiLteEj1pFxU4df8XosVd+Qh93eswYr1hNZD9PMOE6Dx9xgyL1kjSgGDPY7aezF2GsJfazoTie4mLimu6NJIJF//8OH+pMJRirv/TofFLNu/B421FdPgnjUYvYt6+TVnaLWjvorICfIuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bw/1shH5; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=NyHkN
-	eqq5bZSo8OxYkVnYsj99xGwfUPsdu6iemJRJaY=; b=bw/1shH5OUfAeXTxmM7Bh
-	Nrzr/7d103g4b2GZPFCz5KiIC+6ot8GfbuIc5JU9Dz2EWmNwx/l5HJsRTXmI4Z6P
-	0UCGF3qYFhl6T8AhVnADjpAtzKvT4iCOkzG/L/uOBMJcd9P+1Cf2Wgl1QCkPiVIC
-	fbx2+i5jes1EJGLnw8i6w4=
-Received: from localhost.localdomain (unknown [223.104.68.188])
-	by gzga-smtp-mta-g2-2 (Coremail) with SMTP id _____wD3n_k9mYxmjur5Ag--.7452S2;
-	Tue, 09 Jul 2024 09:58:22 +0800 (CST)
-From: Slark Xiao <slark_xiao@163.com>
-To: manivannan.sadhasivam@linaro.org
-Cc: mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Slark Xiao <slark_xiao@163.com>
-Subject: [PATCH] bus: mhi: host: Add firehose support for Foxconn SDX24/SDX55/SDX65
-Date: Tue,  9 Jul 2024 09:58:18 +0800
-Message-Id: <20240709015818.110384-1-slark_xiao@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720490330; c=relaxed/simple;
+	bh=Zc+BFdezUEGq50mDu4EXD/nLArIEc+7EWIsIbNsSghw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fRHqgcgm6lhnJ6VNmaVpsu29SlFmbz5l9CZRaS4Zrab8SRA1co8T3WvTLvzECKR1RUM/mnctYs2RPDMuiFjYxvQe8/d8zaLes5B1POxKetPJs9qKx98plcIVi6HJ2G8J3HGXZ2Jefi0g6kx4kxDdsYE5Exo3nykm5tM3Faeg5gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j6k1Hk3l; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720490328; x=1752026328;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Zc+BFdezUEGq50mDu4EXD/nLArIEc+7EWIsIbNsSghw=;
+  b=j6k1Hk3lf+zwhMXkDG1tYXptbf++BIXqWub0C1f7YbhtkbBu8IDUmflD
+   9GBtHCFPaaVEbgF640q0tUWzRwP5aTW0a5I4hJaI5zXeEJyDxfXL/GINQ
+   hozdS+3cO0B7eDZjwhKC+AQbJlI9q+If630ZotyTJenhY3H7PKc0HjkOg
+   MNhq8m76OTU1zdNt5wwIoM/QsdhjP+O38yx7MNhtoH9duc0nxh1M6sZHN
+   w0TCnsEjpIguqbLr4vx57CLrTSZBKo48LYHzuqThxtFRztu9tfKWhGlmv
+   fIkY3jJbO7ZMCnmNuHPSM77ZRi2c+dNFummqnkcfC+zU0dbb8pRgijs/1
+   A==;
+X-CSE-ConnectionGUID: WpXPXL8fRROZaWleEiYRmQ==
+X-CSE-MsgGUID: oBpXhuNdTVmvris9ONIg6g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="28388792"
+X-IronPort-AV: E=Sophos;i="6.09,193,1716274800"; 
+   d="scan'208";a="28388792"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 18:58:47 -0700
+X-CSE-ConnectionGUID: BI29zawvT+6x6vsfXqrhEA==
+X-CSE-MsgGUID: hsuL/474TBi6VJ013cxzXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,193,1716274800"; 
+   d="scan'208";a="52873582"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.225.1]) ([10.124.225.1])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 18:58:44 -0700
+Message-ID: <751d5d08-c3b3-42eb-840b-259dbf83fc11@linux.intel.com>
+Date: Tue, 9 Jul 2024 09:58:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3n_k9mYxmjur5Ag--.7452S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZF4UAr4rKr18Aw18GFWxJFb_yoW5KFWDpF
-	na9r4rJw4ktFWfKrs7Aw1kCwn3Crs09ryxt3ZxG342yr15A3yqqF4DG3W29w45Z3s7Jr1I
-	vF98WFWDC3Z7JF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0picyCdUUUUU=
-X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiRwEXZGV4KMAVPgAAsr
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v2 1/5] perf x86/topdown: Complete topdown slots/metrics
+ events check
+To: "Liang, Kan" <kan.liang@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Yongwei Ma <yongwei.ma@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20240708144204.839486-1-dapeng1.mi@linux.intel.com>
+ <20240708144204.839486-2-dapeng1.mi@linux.intel.com>
+ <821ea427-aeef-4269-9af8-4cdb8cf32ca8@linux.intel.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <821ea427-aeef-4269-9af8-4cdb8cf32ca8@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Since we implement the FIREHOSE channel support in foxconn mhi
-channels, that means each product which use this channel config
-would support FIREHOSE. But according to the trigger_edl feature,
-we need to enable it by adding '.edl_trigger = true' in device
-info struct.
-Also, we update all edl image path from 'qcom' to 'fox' in case of
-conflicting with other vendors.
 
-Signed-off-by: Slark Xiao <slark_xiao@163.com>
----
- drivers/bus/mhi/host/pci_generic.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+On 7/8/2024 9:28 PM, Liang, Kan wrote:
+>
+> On 2024-07-08 10:42 a.m., Dapeng Mi wrote:
+>> It's not complete to check whether an event is a topdown slots or
+>> topdown metrics event by only comparing the event name since user
+>> may assign the event by RAW format, e.g.
+>>
+>> perf stat -e '{instructions,cpu/r400/,cpu/r8300/}' sleep 1
+>>
+>>  Performance counter stats for 'sleep 1':
+>>
+>>      <not counted>      instructions
+>>      <not counted>      cpu/r400/
+>>    <not supported>      cpu/r8300/
+>>
+>>        1.002917796 seconds time elapsed
+>>
+>>        0.002955000 seconds user
+>>        0.000000000 seconds sys
+>>
+>> The RAW format slots and topdown-be-bound events are not recognized and
+>> not regroup the events, and eventually cause error.
+>>
+>> Thus add two helpers arch_is_topdown_slots()/arch_is_topdown_metrics()
+>> to detect whether an event is topdown slots/metrics event by comparing
+>> the event config directly, and use these two helpers to replace the
+>> original event name comparisons.
+>>
+>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>> ---
+>>  tools/perf/arch/x86/util/evlist.c  |  8 +++---
+>>  tools/perf/arch/x86/util/evsel.c   |  3 ++-
+>>  tools/perf/arch/x86/util/topdown.c | 43 +++++++++++++++++++++++++++++-
+>>  tools/perf/arch/x86/util/topdown.h |  2 ++
+>>  4 files changed, 50 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util/evlist.c
+>> index b1ce0c52d88d..332e8907f43e 100644
+>> --- a/tools/perf/arch/x86/util/evlist.c
+>> +++ b/tools/perf/arch/x86/util/evlist.c
+>> @@ -78,14 +78,14 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
+>>  	if (topdown_sys_has_perf_metrics() &&
+>>  	    (arch_evsel__must_be_in_group(lhs) || arch_evsel__must_be_in_group(rhs))) {
+>>  		/* Ensure the topdown slots comes first. */
+>> -		if (strcasestr(lhs->name, "slots") && !strcasestr(lhs->name, "uops_retired.slots"))
+>> +		if (arch_is_topdown_slots(lhs))
+>>  			return -1;
+>> -		if (strcasestr(rhs->name, "slots") && !strcasestr(rhs->name, "uops_retired.slots"))
+>> +		if (arch_is_topdown_slots(rhs))
+>>  			return 1;
+>>  		/* Followed by topdown events. */
+>> -		if (strcasestr(lhs->name, "topdown") && !strcasestr(rhs->name, "topdown"))
+>> +		if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
+>>  			return -1;
+>> -		if (!strcasestr(lhs->name, "topdown") && strcasestr(rhs->name, "topdown"))
+>> +		if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs))
+>>  			return 1;
+>>  	}
+>>  
+>> diff --git a/tools/perf/arch/x86/util/evsel.c b/tools/perf/arch/x86/util/evsel.c
+>> index 090d0f371891..181f2ba0bb2a 100644
+>> --- a/tools/perf/arch/x86/util/evsel.c
+>> +++ b/tools/perf/arch/x86/util/evsel.c
+>> @@ -6,6 +6,7 @@
+>>  #include "util/pmu.h"
+>>  #include "util/pmus.h"
+>>  #include "linux/string.h"
+>> +#include "topdown.h"
+>>  #include "evsel.h"
+>>  #include "util/debug.h"
+>>  #include "env.h"
+>> @@ -44,7 +45,7 @@ bool arch_evsel__must_be_in_group(const struct evsel *evsel)
+>>  	    strcasestr(evsel->name, "uops_retired.slots"))
+>>  		return false;
+>>  
+>> -	return strcasestr(evsel->name, "topdown") || strcasestr(evsel->name, "slots");
+>> +	return arch_is_topdown_metrics(evsel) || arch_is_topdown_slots(evsel);
+>>  }
+>>  
+>>  int arch_evsel__hw_name(struct evsel *evsel, char *bf, size_t size)
+>> diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/util/topdown.c
+>> index 3f9a267d4501..e805065bb7e1 100644
+>> --- a/tools/perf/arch/x86/util/topdown.c
+>> +++ b/tools/perf/arch/x86/util/topdown.c
+>> @@ -32,6 +32,47 @@ bool topdown_sys_has_perf_metrics(void)
+>>  }
+>>  
+>>  #define TOPDOWN_SLOTS		0x0400
+>> +bool arch_is_topdown_slots(const struct evsel *evsel)
+>> +{
+>> +	if (evsel->core.attr.config == TOPDOWN_SLOTS)
+>> +		return true;
+>> +
+>> +	return false;
+>> +}
+>> +
+>> +static int compare_topdown_event(void *vstate, struct pmu_event_info *info)
+>> +{
+>> +	int *config = vstate;
+>> +	int event = 0;
+>> +	int umask = 0;
+>> +	char *str;
+>> +
+> The compare is only needed for the "topdown" event.
+> Check the name first before the sscanf and compare.
+>
+> 	if (!strcasestr(info->name, "topdown"))
+> 		return 0;
 
-diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-index 14a11880bcea..440609b81e57 100644
---- a/drivers/bus/mhi/host/pci_generic.c
-+++ b/drivers/bus/mhi/host/pci_generic.c
-@@ -433,8 +433,8 @@ static const struct mhi_controller_config modem_foxconn_sdx72_config = {
- 
- static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
- 	.name = "foxconn-sdx55",
--	.fw = "qcom/sdx55m/sbl1.mbn",
--	.edl = "qcom/sdx55m/edl.mbn",
-+	.edl = "fox/sdx55m/prog_firehose_sdx55.mbn",
-+	.edl_trigger = true,
- 	.config = &modem_foxconn_sdx55_config,
- 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
- 	.dma_data_width = 32,
-@@ -444,8 +444,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
- 
- static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
- 	.name = "foxconn-t99w175",
--	.fw = "qcom/sdx55m/sbl1.mbn",
--	.edl = "qcom/sdx55m/edl.mbn",
-+	.edl = "fox/sdx55m/prog_firehose_sdx55.mbn",
-+	.edl_trigger = true,
- 	.config = &modem_foxconn_sdx55_config,
- 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
- 	.dma_data_width = 32,
-@@ -455,8 +455,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
- 
- static const struct mhi_pci_dev_info mhi_foxconn_dw5930e_info = {
- 	.name = "foxconn-dw5930e",
--	.fw = "qcom/sdx55m/sbl1.mbn",
--	.edl = "qcom/sdx55m/edl.mbn",
-+	.edl = "fox/sdx55m/prog_firehose_sdx55.mbn",
-+	.edl_trigger = true,
- 	.config = &modem_foxconn_sdx55_config,
- 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
- 	.dma_data_width = 32,
-@@ -466,6 +466,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_dw5930e_info = {
- 
- static const struct mhi_pci_dev_info mhi_foxconn_t99w368_info = {
- 	.name = "foxconn-t99w368",
-+	.edl = "fox/sdx65m/prog_firehose_lite.elf",
-+	.edl_trigger = true,
- 	.config = &modem_foxconn_sdx55_config,
- 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
- 	.dma_data_width = 32,
-@@ -475,6 +477,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w368_info = {
- 
- static const struct mhi_pci_dev_info mhi_foxconn_t99w373_info = {
- 	.name = "foxconn-t99w373",
-+	.edl = "fox/sdx65m/prog_firehose_lite.elf",
-+	.edl_trigger = true,
- 	.config = &modem_foxconn_sdx55_config,
- 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
- 	.dma_data_width = 32,
-@@ -484,6 +488,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w373_info = {
- 
- static const struct mhi_pci_dev_info mhi_foxconn_t99w510_info = {
- 	.name = "foxconn-t99w510",
-+	.edl = "fox/sdx24m/prog_firehose_sdx24.mbn",
-+	.edl_trigger = true,
- 	.config = &modem_foxconn_sdx55_config,
- 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
- 	.dma_data_width = 32,
-@@ -493,6 +499,8 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w510_info = {
- 
- static const struct mhi_pci_dev_info mhi_foxconn_dw5932e_info = {
- 	.name = "foxconn-dw5932e",
-+	.edl = "fox/sdx65m/prog_firehose_lite.elf",
-+	.edl_trigger = true,
- 	.config = &modem_foxconn_sdx55_config,
- 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
- 	.dma_data_width = 32,
--- 
-2.25.1
+Yes, thanks.
 
+
+>> +	str = strcasestr(info->str, "event=");
+>> +	if (str)
+>> +		sscanf(str, "event=%x", &event);
+>> +
+>> +	str = strcasestr(info->str, "umask=");
+>> +	if (str)
+>> +		sscanf(str, "umask=%x", &umask);
+>> +
+>> +	if (strcasestr(info->name, "topdown") && event == 0 &&
+>> +	    *config == (event | umask << 8))
+>> +		return 1;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +bool arch_is_topdown_metrics(const struct evsel *evsel)
+>> +{
+>> +	struct perf_pmu *pmu = evsel__find_pmu(evsel);
+>> +	int config = evsel->core.attr.config;
+>> +
+> The topdown events are only available for the core PMU.
+> You may want to return earlier for the !core PMUs.
+>
+> 	if (!pmu || !pmu->is_core)
+> 		return false;
+
+Sure. Thanks.
+
+
+>
+> Thanks,
+> Kan
+>> +	if (pmu && perf_pmu__for_each_event(pmu, false, &config,
+>> +					    compare_topdown_event))
+>> +		return true;
+>> +
+>> +	return false;
+>> +}
+>>  
+>>  /*
+>>   * Check whether a topdown group supports sample-read.
+>> @@ -44,7 +85,7 @@ bool arch_topdown_sample_read(struct evsel *leader)
+>>  	if (!evsel__sys_has_perf_metrics(leader))
+>>  		return false;
+>>  
+>> -	if (leader->core.attr.config == TOPDOWN_SLOTS)
+>> +	if (arch_is_topdown_slots(leader))
+>>  		return true;
+>>  
+>>  	return false;
+>> diff --git a/tools/perf/arch/x86/util/topdown.h b/tools/perf/arch/x86/util/topdown.h
+>> index 46bf9273e572..1bae9b1822d7 100644
+>> --- a/tools/perf/arch/x86/util/topdown.h
+>> +++ b/tools/perf/arch/x86/util/topdown.h
+>> @@ -3,5 +3,7 @@
+>>  #define _TOPDOWN_H 1
+>>  
+>>  bool topdown_sys_has_perf_metrics(void);
+>> +bool arch_is_topdown_slots(const struct evsel *evsel);
+>> +bool arch_is_topdown_metrics(const struct evsel *evsel);
+>>  
+>>  #endif
 
