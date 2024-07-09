@@ -1,231 +1,134 @@
-Return-Path: <linux-kernel+bounces-245372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46EA892B1C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:04:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8582092B1BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:03:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1BD42817B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:04:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B844B222C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C72152DED;
-	Tue,  9 Jul 2024 08:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAA4152E0F;
+	Tue,  9 Jul 2024 08:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GPQHtC0c"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N8XqFns4"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F04C1527A5
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A657152515;
+	Tue,  9 Jul 2024 08:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720512189; cv=none; b=mPPLFs0FZGxbIZcJdXtCzZ7dha8L7EVLAKx5PEbkpHtoBtJouG66/AK3p7Xdfhr35Pwe4ujTPnNf7iRlEVhKjA2E4KxFB5QtKp7x39Uue+9/KNq4amy1K6sf4oAfwwr1QL+T4hTSxp6KdTHH//xxzfSJk82CyZ3Ukle27pvBB40=
+	t=1720512165; cv=none; b=JLdN3yjcmCnURbiHuMp+X2qEP4SQuH65Vc7EgjTsoyYuWKmuMQpIXxA3CJtOQlhBCOtXPgpjce2KwfRcMlSGxOh1GVlpfuO5rjA36EPA966Zy9RaHKbi0niLUArFyN5n9MpYkao+WebyRybviv2QAOEI679mAprpdfHr2sx9qzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720512189; c=relaxed/simple;
-	bh=ItSrSIZhMmKVBhL6QhqgNEBVHBV9MNji+zbTW7wRCZU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RqEO3VgtYFnx/r6ItNmZLH1cOh1io6ayd5talQ/lu6lxanK8DEoiZUuG3tXsq0V/N3M1jEHldtT0ZO9owwWwGa7bBBFKIl1t3uk2ar4swGpDVmzI1F0A0W9wMAUZ6yIkcJn2aIVCNpiIQ2nPisalAO+aDMEMHW2PLY0Dn4wiuaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GPQHtC0c; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720512186;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YltytAobm35KcA9WCi/WWsmTKpYn/PUplt1/do/Zw1c=;
-	b=GPQHtC0cZBNZ/afFq7KeE6mm9udzGftPrk3ym9KKxmG5F7G34dxzMTvmqqrLR9KNX1mk6/
-	PbJ0ZwJIgzvXHKPXrmPYo2yrFUXLLaBhK8lAEylFaNk+0sGkgY1UM+QjdhKLDYGcRyN4Ql
-	vaELlqsJ9/xyVjX8JiuFeKYnpTRm+sg=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-231-etSNNHcXP1SMaDHgVlctrw-1; Tue,
- 09 Jul 2024 04:02:56 -0400
-X-MC-Unique: etSNNHcXP1SMaDHgVlctrw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8599F1955F65;
-	Tue,  9 Jul 2024 08:02:54 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.72.112.184])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F3FE23000185;
-	Tue,  9 Jul 2024 08:02:47 +0000 (UTC)
-From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com,
-	jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com,
-	eperezma@redhat.com
-Cc: virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>,
-	Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
-Subject: [PATCH net-next v3 3/3] virtio-net: synchronize operstate with admin state on up/down
-Date: Tue,  9 Jul 2024 16:02:14 +0800
-Message-ID: <20240709080214.9790-4-jasowang@redhat.com>
-In-Reply-To: <20240709080214.9790-1-jasowang@redhat.com>
-References: <20240709080214.9790-1-jasowang@redhat.com>
+	s=arc-20240116; t=1720512165; c=relaxed/simple;
+	bh=+vBaRI03edLB5xWMveAjscYshlkoOpIt+pkMK8Ze/QI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U82mshogCHHqav5OeTXjUHO3cPxtY1tsErMbM5WIqP9vBCKXzt+JUVqW9zJdFBp9cWllUQFrkWnSR/zS73EcDQi5y0BQOktI6C34hjXW3RW06QbZAr6I7Mkm5owxd30NhOoONnsKU6CqGUAM7QINkQ5YAdMScPpMd4PcSubftW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N8XqFns4; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7611b6a617cso2924282a12.3;
+        Tue, 09 Jul 2024 01:02:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720512164; x=1721116964; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=saVEdMntiEIairw273nwNBQX/lPMGFlUAdIrJqbTXIM=;
+        b=N8XqFns4WVOAxPvPHsOWOaftWP+4LDZqd+EmfZ5ERGmrtpfm42fJ25rcqY/UWpZlvT
+         Ze30UC8G6+HPIQt64+H0vM8Ueb4w+2hDpFzRCvb0vQGww3q9vcjfHrqa5+q6uwWektTY
+         AeKzXqXr7mn+opCYWZ5SKkbHtqmnGzcVnIdQxRahUQ8VKgVywKZ/dneHKN96VTE44Mr2
+         4l00M8/pb0u2O9/zhIhUFVLQKRY/JbcLtUp9S8DIEkEJTIJLtnQ9/a0SepHShh6ddrCG
+         zjS+2njiquFjoNN+roFrNnVqmuUQfk5UULeYjEYkYiQngKyjL5f2sppTm56jvvUMr5L0
+         GKRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720512164; x=1721116964;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=saVEdMntiEIairw273nwNBQX/lPMGFlUAdIrJqbTXIM=;
+        b=sH8tWn+37ML7x9HGUtJric7Cv1HVrO4bppmVb2Zk+leDFYGv1xr1ZIAaG8J2vvohlD
+         bruGpeSi/aFsI0WOXpCz+x8uhAhtTVsBe4L2/jyUdgTXbjDA+eQRLy+hxoVrxLoX08UC
+         jG4DRQlbhcG91MNqwpJlPgP902eB+ULM4GAeAuVyhXvRjjlWr2wFspyg8qQmESW4AFUf
+         PIsTM5aqTYIS6TqNA00dKVExr/9psEEN/LKq23oo7k4Weo9mJQyuZ2eWwFc1VqcZ7IRO
+         tZJW7OLEDln87AOQhiDhwVQDJ31HBA2RSL83ummVSnOZtMciJNVrOLc6xJ5JWhUUFvpt
+         K/vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUsmDvwbRi6nffM4TgRqwN7AIoGJwO4M2utI4a5h12YM8VasbniqdaoxPSnscS1dPSOO5LtBJkhDjnEZWKWyMjCzQOscqaJ4wj453CLXY5tookibyCICTg2oc/YmG0jDKaqoZFjyhdlV1uQtE=
+X-Gm-Message-State: AOJu0Yw83jf/IO43/awIVc/dUVkAZsESaNZxjjGeaMnoP7a5ce234ajP
+	FrtOW4rW1JUjpw4bvpsCQUGjdtblTft4X7aQwWCK9pKKqWwaxDAHOwYIBigJfCIJndTXrOCXnaY
+	+VyyAKgJ45e+0Ep+q9wskB3NY+UU=
+X-Google-Smtp-Source: AGHT+IEPaWXpA6bmFKESHiOBiuFGzYAxm69W6WWM8L1uIfwQ+XFOV2DF++TdJgb0DyDbfC7rvCdAhc7gcrok6IqEFcA=
+X-Received: by 2002:a05:6a20:e609:b0:1c2:8e3f:a5c with SMTP id
+ adf61e73a8af0-1c29825044emr1612336637.35.1720512163784; Tue, 09 Jul 2024
+ 01:02:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20240528-alice-mm-v7-0-78222c31b8f4@google.com>
+In-Reply-To: <20240528-alice-mm-v7-0-78222c31b8f4@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 9 Jul 2024 10:02:32 +0200
+Message-ID: <CANiq72ka=tMDHq3S2N0dkzj0DBje+kdz0nFtaQZ9RHC0rbii0g@mail.gmail.com>
+Subject: Re: [PATCH v7 0/4] Memory management patches needed by Rust Binder
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, 
+	Kees Cook <keescook@chromium.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Arnd Bergmann <arnd@arndb.de>, Trevor Gross <tmgross@umich.edu>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch synchronize operstate with admin state per RFC2863.
+On Tue, May 28, 2024 at 4:58=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> This patchset contains some abstractions needed by the Rust
+> implementation of the Binder driver for passing data between userspace,
+> kernelspace, and directly into other processes.
+>
+> These abstractions do not exactly match what was included in the Rust
+> Binder RFC - I have made various improvements and simplifications since
+> then. Nonetheless, please see the Rust Binder RFC [1] to get an
+> understanding for how this will be used:
+>
+> Users of "rust: add userspace pointers"
+>      and "rust: add typed accessors for userspace pointers":
+>         rust_binder: add binderfs support to Rust binder
+>         rust_binder: add threading support
+>         rust_binder: add nodes and context managers
+>         rust_binder: add oneway transactions
+>         rust_binder: add death notifications
+>         rust_binder: send nodes in transactions
+>         rust_binder: add BINDER_TYPE_PTR support
+>         rust_binder: add BINDER_TYPE_FDA support
+>         rust_binder: add process freezing
+>
+> Users of "rust: add abstraction for `struct page`":
+>         rust_binder: add oneway transactions
+>         rust_binder: add vma shrinker
+>
+> Links: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-0=
+8ba9197f637@google.com/ [1]
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-This is done by trying to toggle the carrier upon open/close and
-synchronize with the config change work. This allows propagate status
-correctly to stacked devices like:
+Applied to `rust-next` -- thanks everyone!
 
-ip link add link enp0s3 macvlan0 type macvlan
-ip link set link enp0s3 down
-ip link show
+[ Wrapped docs to 100 and added a few intra-doc links. - Miguel ]
+[ Fixed typos and added a few intra-doc links. - Miguel ]
 
-Before this patch:
-
-3: enp0s3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000
-    link/ether 00:00:05:00:00:09 brd ff:ff:ff:ff:ff:ff
-......
-5: macvlan0@enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
-    link/ether b2:a9:c5:04:da:53 brd ff:ff:ff:ff:ff:ff
-
-After this patch:
-
-3: enp0s3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000
-    link/ether 00:00:05:00:00:09 brd ff:ff:ff:ff:ff:ff
-...
-5: macvlan0@enp0s3: <NO-CARRIER,BROADCAST,MULTICAST,UP,M-DOWN> mtu 1500 qdisc noqueue state LOWERLAYERDOWN mode DEFAULT group default qlen 1000
-    link/ether b2:a9:c5:04:da:53 brd ff:ff:ff:ff:ff:ff
-
-Cc: Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>
-Cc: Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/net/virtio_net.c | 64 ++++++++++++++++++++++++----------------
- 1 file changed, 38 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 0b4747e81464..e6626ba25b29 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -2476,6 +2476,25 @@ static void virtnet_cancel_dim(struct virtnet_info *vi, struct dim *dim)
- 	net_dim_work_cancel(dim);
- }
- 
-+static void virtnet_update_settings(struct virtnet_info *vi)
-+{
-+	u32 speed;
-+	u8 duplex;
-+
-+	if (!virtio_has_feature(vi->vdev, VIRTIO_NET_F_SPEED_DUPLEX))
-+		return;
-+
-+	virtio_cread_le(vi->vdev, struct virtio_net_config, speed, &speed);
-+
-+	if (ethtool_validate_speed(speed))
-+		vi->speed = speed;
-+
-+	virtio_cread_le(vi->vdev, struct virtio_net_config, duplex, &duplex);
-+
-+	if (ethtool_validate_duplex(duplex))
-+		vi->duplex = duplex;
-+}
-+
- static int virtnet_open(struct net_device *dev)
- {
- 	struct virtnet_info *vi = netdev_priv(dev);
-@@ -2494,6 +2513,18 @@ static int virtnet_open(struct net_device *dev)
- 			goto err_enable_qp;
- 	}
- 
-+	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
-+		virtio_config_driver_enable(vi->vdev);
-+		/* Do not schedule the config change work as the
-+		 * config change notification might have been disabled
-+		 * by the virtio core. */
-+		virtio_config_changed(vi->vdev);
-+	} else {
-+		vi->status = VIRTIO_NET_S_LINK_UP;
-+		virtnet_update_settings(vi);
-+		netif_carrier_on(dev);
-+	}
-+
- 	return 0;
- 
- err_enable_qp:
-@@ -2936,12 +2967,19 @@ static int virtnet_close(struct net_device *dev)
- 	disable_delayed_refill(vi);
- 	/* Make sure refill_work doesn't re-enable napi! */
- 	cancel_delayed_work_sync(&vi->refill);
-+	/* Make sure config notification doesn't schedule config work */
-+	virtio_config_driver_disable(vi->vdev);
-+	/* Make sure status updating is cancelled */
-+	cancel_work_sync(&vi->config_work);
- 
- 	for (i = 0; i < vi->max_queue_pairs; i++) {
- 		virtnet_disable_queue_pair(vi, i);
- 		virtnet_cancel_dim(vi, &vi->rq[i].dim);
- 	}
- 
-+	vi->status &= ~VIRTIO_NET_S_LINK_UP;
-+	netif_carrier_off(dev);
-+
- 	return 0;
- }
- 
-@@ -4640,25 +4678,6 @@ static void virtnet_init_settings(struct net_device *dev)
- 	vi->duplex = DUPLEX_UNKNOWN;
- }
- 
--static void virtnet_update_settings(struct virtnet_info *vi)
--{
--	u32 speed;
--	u8 duplex;
--
--	if (!virtio_has_feature(vi->vdev, VIRTIO_NET_F_SPEED_DUPLEX))
--		return;
--
--	virtio_cread_le(vi->vdev, struct virtio_net_config, speed, &speed);
--
--	if (ethtool_validate_speed(speed))
--		vi->speed = speed;
--
--	virtio_cread_le(vi->vdev, struct virtio_net_config, duplex, &duplex);
--
--	if (ethtool_validate_duplex(duplex))
--		vi->duplex = duplex;
--}
--
- static u32 virtnet_get_rxfh_key_size(struct net_device *dev)
- {
- 	return ((struct virtnet_info *)netdev_priv(dev))->rss_key_size;
-@@ -6000,13 +6019,6 @@ static int virtnet_probe(struct virtio_device *vdev)
- 	/* Assume link up if device can't report link status,
- 	   otherwise get link status from config. */
- 	netif_carrier_off(dev);
--	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
--		schedule_work(&vi->config_work);
--	} else {
--		vi->status = VIRTIO_NET_S_LINK_UP;
--		virtnet_update_settings(vi);
--		netif_carrier_on(dev);
--	}
- 
- 	for (i = 0; i < ARRAY_SIZE(guest_offloads); i++)
- 		if (virtio_has_feature(vi->vdev, guest_offloads[i]))
--- 
-2.31.1
-
+Cheers,
+Miguel
 
