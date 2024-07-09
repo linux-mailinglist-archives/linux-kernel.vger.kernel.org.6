@@ -1,167 +1,104 @@
-Return-Path: <linux-kernel+bounces-245254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 357DC92B041
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:36:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F32BB92B049
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66A281C211B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:36:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F75CB21BC0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0782114B97B;
-	Tue,  9 Jul 2024 06:32:25 +0000 (UTC)
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709B31527AF;
+	Tue,  9 Jul 2024 06:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="nBjQqJa9"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCF713E02E;
-	Tue,  9 Jul 2024 06:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55B114EC48;
+	Tue,  9 Jul 2024 06:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720506744; cv=none; b=iO267MwpmfTmcHDMaXarLzjOS5womYzd3YgJHDf18qy6/EpRyVt0TKcwzW+VlBcSIkFlcueBdA6NDDia6xEMNRr+e1Scw8RLUU2AndWRRZX76GNjvZwd0/tH4qkgc/FWVCeYKfuPty5jeyusLHoslfOlWy6Czx6NGoeGce4jEys=
+	t=1720506793; cv=none; b=A+IcQC3NPni9cFxDdKf0/xX0AvlXWBnd1kOqr9uD6h+lq0bGPXOOirv5ovm1tR5WBay7ReBrGIPtYXLivIxdPDQJRZD+o1xRqPPJDsDppA237XwY9iMdEs7kdWKQllhB6iw8LVe5mmmtxpMLjO5Gto7wLK4ZCFwqJzbG/UtQa34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720506744; c=relaxed/simple;
-	bh=q9gFy/XwEKiI9CjlaUGuum1Ne2kcm65R/YqRco6dkY4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cBLePhY6DBhYmSFLLxA0jRKHTYuOopox+ELEsrU8yzeSVxHsrEm01l+MPxjNgUA8eyqKnqEwDvMggjkMwbGAxOASTZNa0mwwV9OsC7lvegk2LFnLRimjP8tGoLUO6OypPXvagTcU5uuJIhT6DTHRXoPuaWpji4tagaUtBr5cA1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-36798779d75so4160493f8f.3;
-        Mon, 08 Jul 2024 23:32:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720506741; x=1721111541;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E2X7qWagYo2b5UXuhyFICzIjSWa2F0fefrD2a+vdHpI=;
-        b=dRBwxWuQeT8HkWRl78NkxE9FtGZ7HAuirD2hcjNGmvm9eAFOpPppx/30vaNRbK32oS
-         gAIM7B8eGF8gNYRw342uVFSdpXpjn4qnHXMtuuCsMDIvRWUhY6STg2PluZLB4rg7ex5Q
-         m2zkBmOa5y+tfmc9aRoeKnF3k2+V4mFXHDgForGtcXfkTSnsXgMIlRUidc2vGImUmxP4
-         xSKlho8ZLc3dzGnLSOy4ocoWyvZ1BEqHPPMpjL+xVy0FaQ/CDZUd1NyHrEyW8SaBr29C
-         izU2DrG5DXpnzp3VAROls52CxoqdEZl1KnSSiIu38eDsDJqdhLiqVt75BapFmwKxKKoR
-         nE9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWvsxw4FJRj4FVvE+HzOkerMDbEEgkkrmgFz1yLAKjbUreLZrrv5a124/NfLWofDcC7cdezgozsY0hj3yHy0sMdLb3Z/Wq+J58A8xIB
-X-Gm-Message-State: AOJu0YwcOXY98sCGBwW3M7AOGiXlUJSV0/QLcDDLPxqmYpsKrpwju0J0
-	uOEh7wsUUhe6qGIk8t3m9QJfMvu+b6RPdKuXXvOfyHI1PIIAxeYegxV/dLvP
-X-Google-Smtp-Source: AGHT+IEY+aKZvLdXvDRAvZXq8Vz2VLMJ0vCPYoa0f629ac+wJiniJWbPFnvS4zbEWWn7B1ePNOw0tQ==
-X-Received: by 2002:a5d:6981:0:b0:367:9903:a91 with SMTP id ffacd0b85a97d-367cea45c68mr1414724f8f.11.1720506741224;
-        Mon, 08 Jul 2024 23:32:21 -0700 (PDT)
-Received: from [127.0.0.1] (p200300f6f72f3200fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f72f:3200:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde89164sm1569239f8f.63.2024.07.08.23.32.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 23:32:20 -0700 (PDT)
-From: Johannes Thumshirn <jth@kernel.org>
-Date: Tue, 09 Jul 2024 08:32:13 +0200
-Subject: [PATCH 2/2] btrfs: replace stripe extents
+	s=arc-20240116; t=1720506793; c=relaxed/simple;
+	bh=aVTOGskcX5zuXlcc7YYXIvjdZm6YDK1kIiwe+ajhYow=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MGjRx/A4iyaJTouywQ6Yr+pBMjnSLbYXxP0WTj51c6HO26Q54paViVlDzVoRti7BritLi/2mNx09R2t5sDsqDMKh6nDSycgf3PWlniPtnfJKmoJF5DI3QedmO91yE8Pq8QiuWOjv+kCo++Ay9kiX5Ot1gkFlVWmtMWrOvk2H7CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=nBjQqJa9; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720506787;
+	bh=Yt9q8ymMGMBokVBn/AcKjaIpM6e2bOr9t6+KylFaEd4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nBjQqJa9+B0SjFVsmfxlEqKA6YgWD9MPrysn54qHIw6XLIckD7otR7EAazbF9oUGL
+	 7KEjiKNqy5VeB3wHeqEx4u9KW77inbsNEFwtoApRPSHa1MsppXOnJgBGL/Sjvu7gU8
+	 QnSf88YoaXsNRl1EuNqO0el/L8sMCWuzjcKvpemOdPHKUw7TlaW12gTozTYBQfc8RJ
+	 xq6W750H9s3oghApfy1q9W+7BgJsvs7y/8UIwjHXRIewUtt4D1RDs+SJmD3GUIcJBr
+	 OvuVOFJ1VWtNn7avSPYnxWytInJj/70D9YvRAoh5fa8+PTt5MRKa/+qqCDT70To2cT
+	 hDumRPQf00n5g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJB4z1WYVz4wZx;
+	Tue,  9 Jul 2024 16:33:06 +1000 (AEST)
+Date: Tue, 9 Jul 2024 16:33:05 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Joerg Roedel <joro@8bytes.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?UTF-8?B?V2lsY3p5?=
+ =?UTF-8?B?xYRza2k=?= <kw@linux.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the iommu tree
+Message-ID: <20240709163305.188b1182@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240709-b4-rst-updates-v1-2-200800dfe0fd@kernel.org>
-References: <20240709-b4-rst-updates-v1-0-200800dfe0fd@kernel.org>
-In-Reply-To: <20240709-b4-rst-updates-v1-0-200800dfe0fd@kernel.org>
-To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
- David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Qu Wenru <wqu@suse.com>, Filipe Manana <fdmanana@suse.com>, 
- Johannes Thumshirn <johannes.thumshirn@wdc.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2363; i=jth@kernel.org;
- h=from:subject:message-id; bh=iXS0EqJj2fo7X0N8Hop1tMZDVNOW43TMkN/0GZKub28=;
- b=owGbwMvMwCV2ad4npfVdsu8YT6slMaT13CwsZk7/q5y3VSrrV8daQ5m3CzZN9fS1+WBuuSZPX
- TPojUZLRykLgxgXg6yYIsvxUNv9EqZH2Kccem0GM4eVCWQIAxenAEzE153hr8jGx2adVyJXTDNP
- 7bQVrIp7trL7K7OxjW1M7/H/TOUM3xkZGoS0lHoubA7jkY/gPjTH+eJ6Voue1R8smWrmX9yk9MC
- SBwA=
-X-Developer-Key: i=jth@kernel.org; a=openpgp;
- fpr=EC389CABC2C4F25D8600D0D00393969D2D760850
+Content-Type: multipart/signed; boundary="Sig_/b3VQaRT5EBDDwIjA+IZt6xB";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+--Sig_/b3VQaRT5EBDDwIjA+IZt6xB
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Update stripe extents in case a write to an already existing address
-incoming.
+Hi all,
 
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
- fs/btrfs/raid-stripe-tree.c | 51 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+The following commit is also in the pci tree as a different commit
+(but the same patch):
 
-diff --git a/fs/btrfs/raid-stripe-tree.c b/fs/btrfs/raid-stripe-tree.c
-index e6f7a234b8f6..fd56535b2289 100644
---- a/fs/btrfs/raid-stripe-tree.c
-+++ b/fs/btrfs/raid-stripe-tree.c
-@@ -73,6 +73,55 @@ int btrfs_delete_raid_extent(struct btrfs_trans_handle *trans, u64 start, u64 le
- 	return ret;
- }
- 
-+static int update_raid_extent_item(struct btrfs_trans_handle *trans,
-+				   struct btrfs_key *key,
-+				   struct btrfs_io_context *bioc)
-+{
-+	struct btrfs_path *path;
-+	struct extent_buffer *leaf;
-+	struct btrfs_stripe_extent *stripe_extent;
-+	int num_stripes;
-+	int ret;
-+	int slot;
-+
-+	path = btrfs_alloc_path();
-+	if (!path)
-+		return -ENOMEM;
-+
-+	ret = btrfs_search_slot(trans, trans->fs_info->stripe_root, key, path,
-+				0, 1);
-+	if (ret)
-+		return ret == 1 ? ret : -EINVAL;
-+
-+	leaf = path->nodes[0];
-+	slot = path->slots[0];
-+
-+	btrfs_item_key_to_cpu(leaf, key, slot);
-+	num_stripes = btrfs_num_raid_stripes(btrfs_item_size(leaf, slot));
-+	stripe_extent = btrfs_item_ptr(leaf, slot, struct btrfs_stripe_extent);
-+
-+	ASSERT(key->offset == bioc->size);
-+
-+	for (int i = 0; i < num_stripes; i++) {
-+		u64 devid = bioc->stripes[i].dev->devid;
-+		u64 physical = bioc->stripes[i].physical;
-+		u64 length = bioc->stripes[i].length;
-+		struct btrfs_raid_stride *raid_stride =
-+			&stripe_extent->strides[i];
-+
-+		if (length == 0)
-+			length = bioc->size;
-+
-+		btrfs_set_raid_stride_devid(leaf, raid_stride, devid);
-+		btrfs_set_raid_stride_physical(leaf, raid_stride, physical);
-+	}
-+
-+	btrfs_mark_buffer_dirty(trans, leaf);
-+	btrfs_free_path(path);
-+
-+	return ret;
-+}
-+
- static int btrfs_insert_one_raid_extent(struct btrfs_trans_handle *trans,
- 					struct btrfs_io_context *bioc)
- {
-@@ -112,6 +161,8 @@ static int btrfs_insert_one_raid_extent(struct btrfs_trans_handle *trans,
- 
- 	ret = btrfs_insert_item(trans, stripe_root, &stripe_key, stripe_extent,
- 				item_size);
-+	if (ret == -EEXIST)
-+		ret = update_raid_extent_item(trans, &stripe_key, bioc);
- 	if (ret)
- 		btrfs_abort_transaction(trans, ret);
- 
+  40929e8e5449 ("dt-bindings: PCI: generic: Add ats-supported property")
 
--- 
-2.43.0
+This is commit
 
+  631b2e7318d4 ("dt-bindings: PCI: generic: Add ats-supported property")
+
+in the pci tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/b3VQaRT5EBDDwIjA+IZt6xB
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaM2aEACgkQAVBC80lX
+0GyGSAf+Kb1z8rJJsmT9B3/6CyrDBJEr9XNP5Xrz7DYxYV1ApGejCpBouFVMOL1d
+QR5YnmNYMWIhINmmKgGpWwx3sWLXB00GvmpyXpMw5vZpM7mBsUkRf27ySbYZlWx0
+R0IwdT3a2FdmtUQ1ZgLCCM8sgBPfhWVdZyJvgMMrtJueIwwAh4TeKkoHnzCGo+lM
+HsCm5pfqj4Djhb+SmHqHhGlT2c+e09RD2wFat71QPMDx6k8MxFa/v5L5TyOPXoMr
+TyWY1NQBzz6txX8mGfdYK0splWEmZu+yFeBn6V/a8jmKDgOGFC7BMGD2qjlxje4A
+VGVAd1Rs6BbOsQuR3u3GYm5v9yCBRg==
+=RGWI
+-----END PGP SIGNATURE-----
+
+--Sig_/b3VQaRT5EBDDwIjA+IZt6xB--
 
