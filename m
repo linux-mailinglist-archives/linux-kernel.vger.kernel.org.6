@@ -1,119 +1,206 @@
-Return-Path: <linux-kernel+bounces-246178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6066E92BE9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:39:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C27192BE9E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8315A1C213EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:39:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14C511C203D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF2A19D889;
-	Tue,  9 Jul 2024 15:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794A319D889;
+	Tue,  9 Jul 2024 15:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KjNJ1Gz/"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pPlQ+8tl"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85DE15FA78
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AD115FA78
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720539556; cv=none; b=Ulhs5GgiAAmQJxZddEEx/nWT54AqWdFfTgzu+SdxDIrTis5s5ONapHVtz1UjmD8tK5nQWhDExLvSkfjFtTHW2bsk5+wQY/ULc5xf7DF8gIG2iJteJq5B/1LfNrQhTFej5FnDcIeQ5P76t3FupMvtmMp8veuuPJLz6eGeONdL+Es=
+	t=1720539600; cv=none; b=Tn4dGRA3OcordZ8wKN6HRXBBXoggkvKFWIvtBkefb7oWrcZvxqab2wPKKuUmjJjXdmeVcUf0jaMJJLgBakLh9EnnuEZyjBW0ROZWlyGS2NYj5uwVS/5IrQvPqW0aiMIQT1VpuPtrBAcAX+YFaKbNvyKoZ2j34ciVeh8Q3ukwdOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720539556; c=relaxed/simple;
-	bh=iM7dP4+UBWQBZxTzBsXQgEJRsca+txEglysSJ98yCAs=;
+	s=arc-20240116; t=1720539600; c=relaxed/simple;
+	bh=lO0EXZ8u0doWqiDCNT6UGt6hepafHZ/DVaQMdYvBbhQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yja1IsI4K/KthRmknqY6Yx3iMFMIzKcOzqeCEfbTial5i3lX01RJbPY3p20ixCsrqIfun0XxDQW5LPXhwKuDfuqZ7ixh3OHZgAb2S/SR+ff40o47qSKIf1uzVQCjWE7KXiKbnEc9kwbM9EoWX7cXzeEuDZaCfPlFRzXluxZi72w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KjNJ1Gz/; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-655fa53c64cso30267497b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 08:39:13 -0700 (PDT)
+	 To:Cc:Content-Type; b=ORNVWYmsE2wbAFuqfl1yS/n7jZ11i3LSlS261ItZoET9wqlBB/FUFDMjpEHpmgpkH6mSMxiYj6j2W4HTbZc6rqgAKOJx6iQzWkwd7GbDr6OhvcKm7VIn+94np74ug85kzfkSC1bvB6Q8JBxzlZ8eQbBjkD0hr411+W0OSNXLDA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pPlQ+8tl; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-367a081d1cdso3023575f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 08:39:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720539553; x=1721144353; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yf9OSDzYDVAe/q1Sw42NKjpmTZk3nIkNTh+ppL03zVc=;
-        b=KjNJ1Gz/Wgbxl6/8xucIIB1ZotHtguC6thJahNV3n4IupooYfrg2/HIrRd2jgdIhtp
-         zolPDQD08zsbQu4/rJ+a+Mg+/kcauSQGw1WN5uaFw2h+9Xt++v6zd+oGcLI4BkxG/QQP
-         8fSibLSzgPW6y0kS/NXAEhibTb1bj2+Xou4WLZwUnd7oDIwWE3wd56Jhvv2lsAF4RlFg
-         ArQiDTvZc7oNSYb+buDoLY7mgKAjrgAswYWU6iR7VpXjdmrc+mioEg+4vnuA4p+AzgLN
-         DdnKQPW+iNBc2zyvKCKfbx471FPwGveQmaKOgBpXJcr29G3pehl70CbEMbuJ+9F+xKa6
-         v77w==
+        d=google.com; s=20230601; t=1720539596; x=1721144396; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ij3mKo3zmTBAVQWjsn142BPPHP7peJhFQ7Yp10RsABY=;
+        b=pPlQ+8tlOjFLL40ZRvQ9Ui76twcKq3CGmR//OYtTb/S2suPZjGQWnyCodSQJw4gxoS
+         g/v1dsllw82nQMqnxVDDFYnt1lbb4buDsL9fdWGvAlStBEGbPpm/mAqcSckv77fL1pGs
+         wN8bquWOlIJ/NQffU8DugFp3v8123VClW7rGz0WH1rbYhbSQEzVUlNLHwDoPyU+44vlD
+         icAZvmugQMgLc5ja9BVcUbsA72Wztr4MGsmDXzcfIynbvMxTp7a1RYjesl0QtWZQ+/xl
+         TX/mZ1g2b1uyJCrJyaqC0ME/ZdGDHxIag1lhMkauIoMGIkIh05g14jHtloPvydnU6rRe
+         iU2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720539553; x=1721144353;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Yf9OSDzYDVAe/q1Sw42NKjpmTZk3nIkNTh+ppL03zVc=;
-        b=dX7y+50ERLWioPTxL4OFe2Psg90Kdn9L3fDJ1j3/hGMYwD8pcVHyZzDPFz/DxilIn7
-         PUOUWVYHfIZAULa8QodMp4EkWYKqgITe9Dx/Um6KbNk9zAfjgsP+I3ZXCz1bClHRiyaH
-         Lv0vEdlHG0l7/cToIh0wcAVlsOUxACUSJHWJlRzjsji2wbFdp7bmj6SQz5eU6Orp8D0J
-         TvebkRrN+NlumguhRD1B5JedXbtFSWejthR8fwvxYTfxV1mgt21+Gn8dWNHWS10vXhr0
-         0blY7madMJwEIflTDAeSWr2eyO/i0TglpVVASpJcchMdNZihtXAFeTKhQwyD/nHkQJtt
-         p5KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2jQ6F0bwFoF4kJpFj0DpOHSoJoxy0mWcAyUs6f64696Hx4UnLpEPhlZH0909hO6WhNx7XrgFGDvr6zevKXbimGBM9oV7ia9W/E/RW
-X-Gm-Message-State: AOJu0YwEs6suRPL0c4y9/Qug5Yt92Efe7Y/rWUmft7j+l64ygFD3p9yx
-	hjwWPBiFrKhm0eJaY7YUgQKpvDP61snVY6M9/WIuxk6wHegBL3RDdG55o7IKDpKVLI84y3zefbt
-	VLfCjKeRN8Cpn9C1IViz3MTscyeqrJ6QUD97uMw==
-X-Google-Smtp-Source: AGHT+IELN6BrB1l1a+7hxJEdA4r49wyMBZ63w0/xGG40B6OA89/EbeiJJj84Igc7BT/S0i6zEg+VHQ94rm+Er6yb3lk=
-X-Received: by 2002:a05:690c:6681:b0:64a:4728:ef1 with SMTP id
- 00721157ae682-658f02f5ea0mr39620207b3.39.1720539552828; Tue, 09 Jul 2024
- 08:39:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720539596; x=1721144396;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ij3mKo3zmTBAVQWjsn142BPPHP7peJhFQ7Yp10RsABY=;
+        b=d9DyU5VydHwsULfLm2YoXnmdR2M4bLodj8vIvfq21EXOhlML7YxknxIwM1fjEXmYgc
+         CBTWnnkKdIU8Je/blHrH/LfTCt8Lq/38maNm7iXkdQ9uCeq/et8HEZZC+17Gxv6wBDpZ
+         rpv8TBWHXZdIHuolPNgF4EpYC7pFzI57aA4beZYzJtjjgZu58zqzAhHXqbB5/BUeWt6o
+         k8fjYBV5YfL/q0021Ugk6nKZVdmCe6FprG+kSIeikWi7WqK+CVzSefvA9O9M5e2LEbdB
+         SJGWphGh2WK7wbsAs7a9GATEX+aHgR+S3qnOQONjGlMvod2blMYYX/Spst9EVqx2u2ah
+         nEBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVq27sr2I4A6DGspYbeC06+f6RFACXptxQ9ChahQcBhAz+x4GbirOuWWJJmoKrJ3BEry2w5K/10Mocuy/wfTjN40HL7Oy/ITNyQYBfD
+X-Gm-Message-State: AOJu0YyNxUSXmYQ6m5y4soRmE3ZC8M9nmlRjYk/imUTFOOKXMAzkz+rd
+	+f1pKx09DXWaE0Qz5hvsWCQirjq3+PtbxjsvYLvc3u9cmpShe9yN9vzsPdegMwYnKAwWK/Zu7qA
+	HRFbIfuVo1UQQtxVPsyO5PJG97BHbRLHIlfp/
+X-Google-Smtp-Source: AGHT+IHSk95HdHi4c6PzxIf8LwZMhKckgawRZD8wEYRhn3wS21A6Qc/ITn2wPdNvMmb0d6hzatZvDLV43Jg0B8ADrLQ=
+X-Received: by 2002:adf:f6cc:0:b0:367:9571:ceee with SMTP id
+ ffacd0b85a97d-367cea8fa2emr2321977f8f.37.1720539595631; Tue, 09 Jul 2024
+ 08:39:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240709-add_qcs9100_tlmm_compatible-v2-0-d025b58ea196@quicinc.com>
- <20240709-add_qcs9100_tlmm_compatible-v2-2-d025b58ea196@quicinc.com>
-In-Reply-To: <20240709-add_qcs9100_tlmm_compatible-v2-2-d025b58ea196@quicinc.com>
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Date: Tue, 9 Jul 2024 17:39:02 +0200
-Message-ID: <CACMJSevpinkT+jFTK6ijpRF2ULEeAFiWLkWEmQ6bJfJdofyO8g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] pinctrl: qcom: add the tlmm driver support for
- qcs9100 platform
-To: Tengfei Fan <quic_tengfan@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	kernel@quicinc.com, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240612-master-v1-1-a95f24339dab@gmail.com> <CAADnVQJLgo4zF5SVf-P5U_nOaiFW--mCe-zY6_Dec98z_QE24A@mail.gmail.com>
+ <270804d4-b751-4ac9-99b2-80e364288c37@leemhuis.info> <2c9089c9-4314-4e4a-a7e2-2dd09716962f@suse.cz>
+In-Reply-To: <2c9089c9-4314-4e4a-a7e2-2dd09716962f@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 9 Jul 2024 08:39:40 -0700
+Message-ID: <CAJuCfpFsKsA3vTZCPTCKL9-Xs9G+07b8vgr0PunqZzVSN1Lmmg@mail.gmail.com>
+Subject: Re: [PATCH RESEND] bpf: fix order of args in call to bpf_map_kvcalloc
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>, 
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
+	Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Christian Kujau <lists@nerdbynature.de>, 
+	=?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@intel.com>, 
+	Lorenzo Stoakes <lstoakes@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 9 Jul 2024 at 15:05, Tengfei Fan <quic_tengfan@quicinc.com> wrote:
+On Tue, Jul 9, 2024 at 8:14=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wro=
+te:
 >
-> Add the tlmm driver support for QCS9100 platform.
-> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
-> platform use non-SCMI resource. In the future, the SA8775p platform will
-> move to use SCMI resources and it will have new sa8775p-related device
-> tree. Consequently, introduce "qcom,qcs9100-tlmm" to the pinctrl device
-> match table.
+> On 7/8/24 10:20 AM, Linux regression tracking (Thorsten Leemhuis) wrote:
+> > [CCing the regressions list and people mentioned below]
+> >
+> > On 12.06.24 16:53, Alexei Starovoitov wrote:
+> >> On Wed, Jun 12, 2024 at 2:51=E2=80=AFAM Mohammad Shehar Yaar Tausif
+> >> <sheharyaar48@gmail.com> wrote:
+> >>>
+> >>> The original function call passed size of smap->bucket before the num=
+ber of
+> >>> buckets which raises the error 'calloc-transposed-args' on compilatio=
+n.
+> >>>
+> >>> Fixes: 62827d612ae5 ("bpf: Remove __bpf_local_storage_map_alloc")
+> >>> Reviewed-by: Andrii Nakryiko <andrii@kernel.org>
+> >>> Signed-off-by: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+> >>> ---
+> >>> - already merged in linux-next
+> >>> - [1] suggested sending as a fix for 6.10 cycle
+> >>
+> >> No. It's not a fix.
+> >
+> > If you have a minute, could you please explain why that is? From what I
+> > can see a quite a few people run into build problems with 6.10-rc
+> > recently that are fixed by the patch:
+> >
+> > * P=C3=A9ter Ujfalusi
+> > https://lore.kernel.org/bpf/363ad8d1-a2d2-4fca-b66a-3d838eb5def9@intel.=
+com/
+> >
+> > * Christian Kujau
+> > https://lore.kernel.org/bpf/48360912-b239-51f2-8f25-07a46516dc76@nerdby=
+nature.de/
+> > https://lore.kernel.org/lkml/d0dd2457-ab58-1b08-caa4-93eaa2de221e@nerdb=
+ynature.de/
+> >
+> > * Lorenzo Stoakes
+> > https://fosstodon.org/@ljs@social.kernel.org/112734050799590482
+> >
+> > At the same time I see that the culprit mentioned above is from 6.4-rc1=
+,
 >
-> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
-> ---
->  drivers/pinctrl/qcom/pinctrl-sa8775p.c | 1 +
->  1 file changed, 1 insertion(+)
+> IIUC the order was wrong even before, but see below.
 >
-> diff --git a/drivers/pinctrl/qcom/pinctrl-sa8775p.c b/drivers/pinctrl/qcom/pinctrl-sa8775p.c
-> index 5459c0c681a2..4687e11dfe75 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-sa8775p.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-sa8775p.c
-> @@ -1519,6 +1519,7 @@ static int sa8775p_pinctrl_probe(struct platform_device *pdev)
->  }
+> > so I guess it there must be some other reason why a few people seem to
+> > tun into this now. Did some other change expose this problem? Or are
+> > updated compilers causing this?
 >
->  static const struct of_device_id sa8775p_pinctrl_of_match[] = {
-> +       { .compatible = "qcom,qcs9100-tlmm", },
->         { .compatible = "qcom,sa8775p-tlmm", },
->         { },
->  };
->
-> --
-> 2.25.1
->
+> I think it's because of 2c321f3f70bc ("mm: change inlined allocation help=
+ers
+> to account at the call site"), which was added in 6.10-rc1 and thus makes
+> this technically a 6.10 regression after all.
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+IIUC the above mentioned change reveals a problem that was there
+before the change. So, it's a build regression in 6.10 because the bug
+got exposed but the bug was introduced much earlier. The fix should be
+marked as:
+
+Fixes: ddef81b5fd1d ("bpf: use bpf_map_kvcalloc in bpf_local_storage")
+
+> So what triggers the bug is
+> AFAICS the following together:
+>
+> - gcc-14 (didn't see it with gcc-13)
+> - commit 2c321f3f70bc that makes bpf_map_kvcalloc a macro that does
+> kvcalloc() directly instead of static inline function wrapping it for
+> !CONFIG_MEMCG
+> - CONFIG_MEMCG=3Dn in .config
+>
+> The fix is so trivial, it's better to include it in 6.10 even this late.
+>
+> > Ciao, Thorsten
+> >
+> >>> [1] https://lore.kernel.org/all/363ad8d1-a2d2-4fca-b66a-3d838eb5def9@=
+intel.com/
+> >>> ---
+> >>>  kernel/bpf/bpf_local_storage.c | 4 ++--
+> >>>  1 file changed, 2 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/kernel/bpf/bpf_local_storage.c b/kernel/bpf/bpf_local_st=
+orage.c
+> >>> index 976cb258a0ed..c938dea5ddbf 100644
+> >>> --- a/kernel/bpf/bpf_local_storage.c
+> >>> +++ b/kernel/bpf/bpf_local_storage.c
+> >>> @@ -782,8 +782,8 @@ bpf_local_storage_map_alloc(union bpf_attr *attr,
+> >>>         nbuckets =3D max_t(u32, 2, nbuckets);
+> >>>         smap->bucket_log =3D ilog2(nbuckets);
+> >>>
+> >>> -       smap->buckets =3D bpf_map_kvcalloc(&smap->map, sizeof(*smap->=
+buckets),
+> >>> -                                        nbuckets, GFP_USER | __GFP_N=
+OWARN);
+> >>> +       smap->buckets =3D bpf_map_kvcalloc(&smap->map, nbuckets,
+> >>> +                                        sizeof(*smap->buckets), GFP_=
+USER | __GFP_NOWARN);
+> >>>         if (!smap->buckets) {
+> >>>                 err =3D -ENOMEM;
+> >>>                 goto free_smap;
+> >>>
+> >>> ---
+> >>> base-commit: 2ef5971ff345d3c000873725db555085e0131961
+> >>> change-id: 20240612-master-fe9e63ab5c95
+> >>>
+> >>> Best regards,
+> >>> --
+> >>> Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+> >>>
+>
 
