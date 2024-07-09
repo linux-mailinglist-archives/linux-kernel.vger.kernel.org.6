@@ -1,117 +1,105 @@
-Return-Path: <linux-kernel+bounces-246298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C07892C025
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:32:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2076692C0BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40B511F21EFD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:32:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1349B26B5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401301B5807;
-	Tue,  9 Jul 2024 16:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244921CFD44;
+	Tue,  9 Jul 2024 16:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fsryhlAU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQIpwOXr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812581B47C6;
-	Tue,  9 Jul 2024 16:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666071CF3F4;
+	Tue,  9 Jul 2024 16:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720542116; cv=none; b=JcCSnbuIBtXg16cPl/3Cz6gtzif6amXLlXX25MQ1tHA/WKRiILvsuXET5/RMU+jteF3vGaFTZlU+0ozVPDACHhedEB+g1wIziQxoiQ+NbaKcdjDE5rYlNF7UNc90vPKMxanO0LiDZ2aVtPbCC/ArUq+KidRfttziuvVyYcJQ2iw=
+	t=1720542209; cv=none; b=q6LBDreLTSMUW7DzzmunkZES+oI7KfDmwIp/z/A6Wy3ZP0tgTRctdiDF/Pc/xxeA/z2tm296pFNijP41iIxuL5i4J7Qk9JrnkvkrzuvDlI5VeLrHNi8fFdXF+PT9vj2A+5Vj8IGbTDF8rTvZJU9wp2BklvDhI1JX3KnuaQ+ef30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720542116; c=relaxed/simple;
-	bh=9Gcw21XytUn5kvBs9uu7DBexRcY56exFFjtUr3t699k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=LR2eBEqBvjNk0c+dC1+Kz12ijmRw0e4QItTij5nmZNmA8nsob2qlav+itKPXV3gMeroxHpcDSP2U1CY3s+kLEBxHsNr95aAOQ8PDeoGPvCRNuta8M40uSRMj9C9egWrN1g8IpTq2/v6uF/8s1EkNZ6m1sf9kSF6pkAS9D6bhyjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fsryhlAU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38363C32782;
-	Tue,  9 Jul 2024 16:21:56 +0000 (UTC)
+	s=arc-20240116; t=1720542209; c=relaxed/simple;
+	bh=BZrw/hwd0bMBFWcXEOZS+wLhJna+wTE8HSYcOFMjG7I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=at4h8A0MpR3xtsELx8oPsaZueKqydsbiHEhH0p8jkQA/oSKbVVdxV9ds1KyBTBPhP0ejU6fF8ZIXiX/r3Kmb8TGuMlC4Tm9o8f0Om3mPNCB2k/vdZ7OGJ7r26ZUNN5q3XUkcKz4STArfv3hnP36hpxOvhDqipi3teD7Z++mrIUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FQIpwOXr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF91FC32782;
+	Tue,  9 Jul 2024 16:23:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720542116;
-	bh=9Gcw21XytUn5kvBs9uu7DBexRcY56exFFjtUr3t699k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=fsryhlAU8McMtVI0ObeJxYWgTWf3CZ+c3jtBxSQ0lvW4w31TM72q1Vra5slo085y6
-	 HyuwO6rW9GvZ+Qj9IDGSjAM7prFMNbVFZnN1vmYgtQZpKF501gayYCHQJ2Nbhi77C7
-	 rX1gOlqqiV4yzP6/WYRisT/NQGr2aWjBfM1/W8U6iTkPnbTI8wpZgA5A8eQjY++G31
-	 4AmqRBd3vEHOejCeHFBP66VWvPeF0jVFHuZrIELtYhp586/Txg3HgwDx6gDq4tAvl1
-	 dGdpvJ7nJoYWHoxcEuGmGfci23P6hXShiQHEwCWO33yXWK8LJ5aJ8R0MGJPdy5xTbE
-	 E4RrqgZ/8JGog==
-Date: Tue, 9 Jul 2024 11:21:54 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Stewart Hildebrand <stewart.hildebrand@amd.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] PCI: align small (<4k) BARs
-Message-ID: <20240709162154.GA175839@bhelgaas>
+	s=k20201202; t=1720542209;
+	bh=BZrw/hwd0bMBFWcXEOZS+wLhJna+wTE8HSYcOFMjG7I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=FQIpwOXrPajoPDDskJDGylqNxZprS78nc+l1uY8O9SZAM2qPkqjx16Jhp96Jcp3nD
+	 Mf5WP+f1HDT1gCdxe3lHXVG53A/pZf5CPzzMRRA+wjzS3aQhmo7Bj1bKotOYvgOcIg
+	 +gWYIzG0kdxvn+XqbRUN1zPszc24XbAT2yBG0EW2Yj5lB5AK6uiTw1TFRzVYTzXnZm
+	 eseqY+2ZQB1y923j69N/rJ9MxV7GMQstztdvvAeOQdGt+0m3l4+NpA7qwRDbLnMyNZ
+	 YkjPGIRX54XkL7pq1uRIWdQloHFhXjuTidwH7iMutYIMgTMqoR2PzOMBwI/Z3Dj45l
+	 LUeP6gfDltzgg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Aivaz Latypov <reichaivaz@gmail.com>,
+	Takashi Iwai <tiwai@suse.de>,
+	Sasha Levin <sashal@kernel.org>,
+	perex@perex.cz,
+	tiwai@suse.com,
+	kailang@realtek.com,
+	sbinding@opensource.cirrus.com,
+	shenghao-ding@ti.com,
+	simont@opensource.cirrus.com,
+	foss@athaariq.my.id,
+	rf@opensource.cirrus.com,
+	linux-sound@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 29/33] ALSA: hda/relatek: Enable Mute LED on HP Laptop 15-gw0xxx
+Date: Tue,  9 Jul 2024 12:21:55 -0400
+Message-ID: <20240709162224.31148-29-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240709162224.31148-1-sashal@kernel.org>
+References: <20240709162224.31148-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240709133610.1089420-7-stewart.hildebrand@amd.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.38
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 09, 2024 at 09:36:03AM -0400, Stewart Hildebrand wrote:
-> Issues observed when small (<4k) BARs are not 4k aligned are:
-> 
-> 1. Devices to be passed through (to e.g. a Xen HVM guest) with small
-> (<4k) BARs require each memory BAR to be page aligned. Currently, the
-> only way to guarantee this alignment from a user perspective is to fake
-> the size of the BARs using the pci=resource_alignment= option. This is a
-> bad user experience, and faking the BAR size is not always desirable.
-> See the comment in drivers/pci/pci.c:pci_request_resource_alignment()
-> for further discussion.
+From: Aivaz Latypov <reichaivaz@gmail.com>
 
-Include the relevant part of this discussion directly here so this log
-is self-contained.  Someday that function will change, which will make
-this commit log less useful.
+[ Upstream commit 1d091a98c399c17d0571fa1d91a7123a698446e4 ]
 
-> 2. Devices with multiple small (<4k) BARs could have the MSI-X tables
-> located in one of its small (<4k) BARs. This may lead to the MSI-X
-> tables being mapped in the same 4k region as other data. The PCIe 6.1
-> specification (section 7.7.2 MSI-X Capability and Table Structure) says
-> we probably shouldn't do that.
-> 
-> To improve the user experience, and increase conformance to PCIe spec,
-> set the default minimum resource alignment of memory BARs to 4k. Choose
-> 4k (rather than PAGE_SIZE) for the alignment value in the common code,
-> since that is the value called out in the PCIe 6.1 spec, section 7.7.2.
-> The new default alignment may be overridden by arches by implementing
-> pcibios_default_alignment(), or by the user with the
-> pci=resource_alignment= option.
-> 
-> Signed-off-by: Stewart Hildebrand <stewart.hildebrand@amd.com>
-> ---
-> Preparatory patches in this series are prerequisites to this patch.
-> ---
->  drivers/pci/pci.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 9f7894538334..e7b648304383 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -6453,7 +6453,12 @@ struct pci_dev __weak *pci_real_dma_dev(struct pci_dev *dev)
->  
->  resource_size_t __weak pcibios_default_alignment(void)
->  {
-> -	return 0;
-> +	/*
-> +	 * Avoid MSI-X tables being mapped in the same 4k region as other data
-> +	 * according to PCIe 6.1 specification section 7.7.2 MSI-X Capability
-> +	 * and Table Structure.
-> +	 */
-> +	return 4 * 1024;
->  }
->  
->  /*
-> -- 
-> 2.45.2
-> 
+This HP Laptop uses ALC236 codec with COEF 0x07 controlling
+the mute LED. Enable existing quirk for this device.
+
+Signed-off-by: Aivaz Latypov <reichaivaz@gmail.com>
+Link: https://patch.msgid.link/20240625081217.1049-1-reichaivaz@gmail.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/pci/hda/patch_realtek.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index af70e764ea4bc..404c6080a6538 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -9852,6 +9852,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x8788, "HP OMEN 15", ALC285_FIXUP_HP_MUTE_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x87b7, "HP Laptop 14-fq0xxx", ALC236_FIXUP_HP_MUTE_LED_COEFBIT2),
+ 	SND_PCI_QUIRK(0x103c, 0x87c8, "HP", ALC287_FIXUP_HP_GPIO_LED),
++	SND_PCI_QUIRK(0x103c, 0x87d3, "HP Laptop 15-gw0xxx", ALC236_FIXUP_HP_MUTE_LED_COEFBIT2),
+ 	SND_PCI_QUIRK(0x103c, 0x87e5, "HP ProBook 440 G8 Notebook PC", ALC236_FIXUP_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x87e7, "HP ProBook 450 G8 Notebook PC", ALC236_FIXUP_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x87f1, "HP ProBook 630 G8 Notebook PC", ALC236_FIXUP_HP_GPIO_LED),
+-- 
+2.43.0
+
 
