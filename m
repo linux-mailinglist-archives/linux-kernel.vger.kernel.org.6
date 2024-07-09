@@ -1,144 +1,121 @@
-Return-Path: <linux-kernel+bounces-245075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E352792ADF2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:50:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3406892ADF3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 361F7B20F69
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:50:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6158A1C2180B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D0939FD4;
-	Tue,  9 Jul 2024 01:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D7237703;
+	Tue,  9 Jul 2024 01:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hVxJrf06"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RFDYdqU6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37094A05;
-	Tue,  9 Jul 2024 01:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579B7286A6
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 01:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720489830; cv=none; b=MSuA0lSgRWJ60IyUl9zEFM8WIOe3Eubh+Q9A6p70iUeGQBzvUTvx31T/LFKn6G6g3x9n8gsQT44C5ntEFHSFVnVz6ikQNktrXVBxJITmJ/X71XjBnJxT6U8It/2Dn40wXGynZnHb/UxKLleel0wmsEgg7GOee3oBP7SAS2EyIHQ=
+	t=1720490248; cv=none; b=SW7lnVsQwcxj6i/n8HRMP8QPYZgDJFh8ajAuI5+zYiajeC0Eh3VZW+sNtLRHg1aI8nUI7/f0lf0NXHqy+VK/vLEsl/hGYQsNdYaYKAw0+2fIJ4lGBya+BVdDN6c3eTPx/HrJZWb3YMynREEmGE84HE+B81iqEfFlk7qHV5w0oHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720489830; c=relaxed/simple;
-	bh=M6cS16QMz6Hrvgl7rAQaNBeEcshb0kw/FrzzIecUx7I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=srKhl87r1FqfXFIxxsWHMAdF3Jz+BhmrtobKw6INR2V6+NvXk7pfL/Et750L6UEULss09i5aFxIhDk82bYx3Rqhudi6kWLOLwJtFAIt1Un1PqckLpnbVy/2re8isCAuYLoBTdHqbs056DQAtBYqX8Gz3W3iANuDSWZmnK7QB+34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hVxJrf06; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-367a2c2e41aso2267750f8f.2;
-        Mon, 08 Jul 2024 18:50:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720489827; x=1721094627; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KoRxfxZC2umnUAdRXzYjlBWMFWTXr82v6KUXXwyLie0=;
-        b=hVxJrf06d4UMs3NETms1iXopOFNl9iYxsCB9fNdlp/Zwtt0ew/ahp0I/9sMdNxn7Pj
-         hBQieDYkX6Gli9XFmP/UlO3guu6HHclblbpNUC9xcksR7t4TuHsg65XGpEVCsCjwZNOI
-         7hONA6lDP7sPN8Ut2eZkYxqWMZqIwPqrdKV9gG4tw7LuKloOnUXWMygDc2N4gGT95FWQ
-         1wMLZ/uyBUEKk8l8GP3SOjPAdIKTDzuCOZeFBAhS0+2gzbznZfJWQ7DCS2kDGHCsEDER
-         I0Y6kHibAXCwdHCGbFsVoguOz6rC/3hZRkZqw/1ojGG8XL+8pNTLMIoXIAAv7DX1lLjN
-         vCGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720489827; x=1721094627;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KoRxfxZC2umnUAdRXzYjlBWMFWTXr82v6KUXXwyLie0=;
-        b=nBXr5Wq+2NCkqJ6+XMXBPaz3phK2ehIdcX+UVK0ylq3xX9ngBph7NN02p+x+SUFox4
-         4cAAkLvx1YNKzQNR3FOQWFKwe042m6HLkZ4Tu6N8zSAu0AQ1w9SsvJtVRMljDbk/9v5E
-         3T25gsjhDRRbhXHKSYoQ7JWfQMxNzkL6OxQTH9NE2SA5wmyhqssLm5vGsUwK2NB/DLb0
-         T/srI+V5vw2ADWH8wh7ek6mYnm3Fy/1vfAUJj4a4HhdhsO8uFBOgFnDDHCKZQN431BWV
-         V1Fj9tk8qkIy6AB99WMQTNwV0NjG4PpN5K8ywfK5XfZhE45pQPBge2YSoVhhA322OoYR
-         bL2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUjrMdpnX4KasZFKpxGgg7qwaibG9AR5Zll53mW/sJyGbOw2/+A4fGYk8jHxKdrsBHJDWAgIxJcZBUyBNBtziFolNvPCDgHx7p2bZhlwF5AWlDmk0RKmIJiR7XPPxT8CHCl
-X-Gm-Message-State: AOJu0YyBn7RPL6VcPqoOksaxlWeD2HF2GI+AkkusAVR0ynsZEgwQ3C0B
-	TWV+5X6+6RJMaTfWky7Z1gM+l0//gZY5Bqu4+isk4zEG60Yl70VOexfsA/nGfO4uVpt3NiuhRel
-	KSwfY5PaDp3yiiWei9JS82grhVpyFu5t7
-X-Google-Smtp-Source: AGHT+IEw8tlzxgkgYOkRQ5jGNoH5QqZ/HHxJWiORnI8zGpiNcp12hk0rKj326WdMMNdpHAMboUswblJgVPN6t7l1Hlk=
-X-Received: by 2002:a5d:4848:0:b0:367:94ff:6835 with SMTP id
- ffacd0b85a97d-367cea67ecemr772662f8f.18.1720489826753; Mon, 08 Jul 2024
- 18:50:26 -0700 (PDT)
+	s=arc-20240116; t=1720490248; c=relaxed/simple;
+	bh=+ZETN51KvxwDa2mJA9MKuC7g9p6FrUL9Ivm/ArhtBfA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OCJZ0jocrJkToVlFsuGc3bsBSRRwh3SIw9buytVX3B/mAoI+vK+19eGDirJVVDAedHuxEfDx7LnZgsy9ZQ3hl2H5EUVBkr6CXPx2dR/rwsWqaJVpkeBXt24G+AmOMz59IRxk2ChNWxBCztdCj/mYqPpOtIWNI9zJS1R+DQjQvE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RFDYdqU6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4690iABb030806;
+	Tue, 9 Jul 2024 01:57:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	an0sXTMVA9jWXrLpMESC85lYfvi/ou6DPhEplUkKcG0=; b=RFDYdqU6MWYOfkaP
+	BnJgYhUO2eJpBcOwERkE6aqoWqkHlC/N4wxn/9GWn+PhJoEIHXmsFqzT4BDyPC8t
+	Gr4fuV4C8W7tL/jwQ+GJKlm/mL348zkuOvAg4TMwi7iWNUhptSi5OhICSRWppn5I
+	u/+7rZ0UDWZYukQyygTuDuEJbgtmCJB/BnhZtxUKG1SRqgHaSms+woss6C5SAaBJ
+	uHVs2CBZDk7bjVxGekrpNtuWgjQaT4txfKatJ7UkWlF2I3MLCIaxvBXKISXztRT/
+	2x7WCDhJkjqiw9hQTuwLpvcuagLfW2NxkV6vmrRC0VQhQRA/ZvgCeCp45tsh1GCN
+	Qd9MUQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wmmn63f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 01:57:20 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4691vJTm008843
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 01:57:19 GMT
+Received: from [10.48.245.228] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 8 Jul 2024
+ 18:57:18 -0700
+Message-ID: <917565ee-732a-4df0-a717-a71fbb34fd79@quicinc.com>
+Date: Mon, 8 Jul 2024 18:57:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zn9oEjsm_1aWb35J@slm.duckdns.org> <Zoh4kp7-jAFZXhe6@slm.duckdns.org>
- <CAADnVQJ6o-ikfnHiatbNwS8+MKi44kcBfVtnDQkYLdDUZ80Rtg@mail.gmail.com> <Zox4_MHR9HiwmtHt@slm.duckdns.org>
-In-Reply-To: <Zox4_MHR9HiwmtHt@slm.duckdns.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 8 Jul 2024 18:50:15 -0700
-Message-ID: <CAADnVQ+e6xE-KNVfe2mDrg2y4FmXkKnpFG-Z-S2nwt=4gQwsyA@mail.gmail.com>
-Subject: Re: [PATCH v4 sched_ext/for-6.11 2/2] sched_ext: Implement DSQ iterator
-To: Tejun Heo <tj@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	David Vernet <void@manifault.com>, Kernel Team <kernel-team@meta.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: crosstool: x86 kernel compiled with GCC 14.1 fails to boot
+Content-Language: en-US
+To: Kalle Valo <kvalo@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+CC: <linux-kernel@vger.kernel.org>, <ath12k@lists.infradead.org>
+References: <87y16bbvgb.fsf@kernel.org>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <87y16bbvgb.fsf@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QPvxc6PF47SfpOq1tB-Xl-63uvr-1YP0
+X-Proofpoint-ORIG-GUID: QPvxc6PF47SfpOq1tB-Xl-63uvr-1YP0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_15,2024-07-08_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 lowpriorityscore=0 spamscore=0 bulkscore=0 adultscore=0
+ impostorscore=0 suspectscore=0 malwarescore=0 mlxscore=0 mlxlogscore=999
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090012
 
-On Mon, Jul 8, 2024 at 4:40=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
->
->
-> > > @@ -1415,7 +1487,7 @@ static void dispatch_enqueue(struct scx_
-> > >                  * tested easily when adding the first task.
-> > >                  */
-> > >                 if (unlikely(RB_EMPTY_ROOT(&dsq->priq) &&
-> > > -                            !list_empty(&dsq->list)))
-> > > +                            nldsq_next_task(dsq, NULL, false)))
-> >
-> > There is also consume_dispatch_q() that is doing
-> > list_empty(&dsq->list) check.
-> > Does it need to be updated as well?
->
-> The one in consume_dispatch_q() is an opportunistic unlocked test as by t=
-he
-> time consume_dispatch_q() is called list head update should be visible
-> without locking. The test should fail if there's anythingn on the list an=
-d
-> then the code locks the dsq and does proper nldsq_for_each_task(). So, ye=
-ah,
-> that should be a naked list_empty() test. I'll add a comment explaining
-> what's going on there.
+On 7/8/2024 11:16 AM, Kalle Valo wrote:
+> Hi Arnd,
+> 
+> I installed GCC 14.1 from:
+> 
+> https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/14.1.0/
+> 
+> But I have a problem that a kernel compiled with that compiler fails to
+> boot on my x86 NUC test box. I don't see any errors, just black screen
+> and I assume after that the kernel either crashes or reboots and goes to
+> back to the GRUB menu. This loop seems to continue forever. GCC 13.2 and
+> older from crosstool work just fine.
 
-I see. Thanks for adding a comment.
+I had held off moving to 14.1 due to Kalle's issue as well as one other
+internally-reported issue, but since a few others said they didn't have
+issues, I thought I'd try it out for my laptop build in case it is just a
+NUC-related issue.
 
-> > > --- a/tools/sched_ext/scx_qmap.bpf.c
-> > > +++ b/tools/sched_ext/scx_qmap.bpf.c
-> >
-> > We typically split kernel changes vs bpf prog and selftests changes
-> > into separate patches.
->
-> Let me think about that. I kinda like putting them into the same patch as
-> long as they're small as it makes the patch more self-contained but yeah
-> separating out does have its benefits (e.g. for backporting).
+And what I'm seeing after reboot and selecting the new image from GRUB is:
+Loading Linux 6.10-rc6-wt-ath+ ...
+Loading initial ramdisk ...
 
-We split kernel vs libbpf vs selftest patches, because libbpf patches
-get synced into github and it's released from there, while
-kernel patches get backported, and selftests don't have to be backported.
+and that's it. It sits there with that on the display.
 
-> > > +"  -P            Print out DSQ content to trace_pipe every second, u=
-se with -b\n"
-> >
-> > tbh the demo of the iterator is so-so. Could have done something more
-> > interesting :)
->
-> Yeah, it's difficult to do something actually interesting with scx_qmap.
-> Once the scx_bpf_consume_task() part lands, the example can become more
-> interesting. scx_lavd is already using the iterator. Its usage is a lot m=
-ore
-> interesting and actually useful (note that the syntax is a bit different
-> right now, will be synced soon):
->
->   https://github.com/sched-ext/scx/blob/main/scheds/rust/scx_lavd/src/bpf=
-/main.bpf.c#L2041
+We tend to enable a lot of debug config options, so I'm wondering if one of
+them is contributing to the issue? Guess I'll turn off a bunch of those
+options and try again.
 
-Thanks for the extra context.
+/jeff
+
 
