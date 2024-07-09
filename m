@@ -1,216 +1,232 @@
-Return-Path: <linux-kernel+bounces-245385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FFB92B1EB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:15:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABFF292B1FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E67741C2221C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:15:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62CDA28106E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36311527A5;
-	Tue,  9 Jul 2024 08:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0C015252E;
+	Tue,  9 Jul 2024 08:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="p/xjTwNw"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="aU7JabxT"
+Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9951615218F;
-	Tue,  9 Jul 2024 08:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A21412CD96;
+	Tue,  9 Jul 2024 08:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720512887; cv=none; b=tZIxIZLNpnG48NmjR7UgGCFS8tk8mm23vsXuROfZtTr0XecxLxmY7VcqHYUJjDrC8Xmlta2gwAFsKvjqh5D8HG8SS7kT9RZBfPwZYdS80Hi4BJjG70XS/CYk02uyG0/VnXvi/az01Z5rZM+nVFU1oXDfWmnKTqY2UCHpFlhheAs=
+	t=1720513347; cv=none; b=LTFT4sW1bl184HcKFhPjjfd1l3jO1kAXsQmN8cEpWYZZsZfA3w+/55g/GHDz945Ir1qz+Tefg2cJpeAS2xYbeMRXUI4PcPaFau3IugAf3Bg/XkBP6PrMVX9KnE/qoMcCliXO3plE5CfTJDUnkVaWuHpb6A0Z4I/C2frBQy9M9BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720512887; c=relaxed/simple;
-	bh=AZugvt/CV1mGMz/1Cwy0FeNpwjzJM1Le5fb7OlI0U+4=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=dd3pDET6q+BDISxfUzAmuo/SpvXGWexVzJDx6L3PTVkODY9/JCCCIoyQNUhcb57B7lWPBOcspE591dkQobTIjmSltLwH8HVw7y4XvZDUZGy3MlqaMtiuJv9QoumErMe9kd7z0n76Wb2zBjy5YqUoR/PgNp2TlIO1IebWB+CDplI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=p/xjTwNw; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1720512883; h=Message-ID:Subject:Date:From:To;
-	bh=gEc0rnc+xdlfvbkmIvh5AehIyDe+JQmaAWvXgvewDuk=;
-	b=p/xjTwNw0xYYhKj5/NE5RLUZqDMGZDPaEyzJ88biBa/JNG60fQX28KpYG7QbZXhQbC9+ppnxPsapP5qX4bxK+eYOgdH00p7wLo4cgMAq2e0d+yUSCnj1CFsu2olDgIcz9ZVjnn5AVxXSBwkkVqHGxea78qzp4fanS1YY/kAWkeA=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R931e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0WABApq9_1720512882;
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WABApq9_1720512882)
-          by smtp.aliyun-inc.com;
-          Tue, 09 Jul 2024 16:14:42 +0800
-Message-ID: <1720512872.4839034-5-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH net-next v3 3/3] virtio-net: synchronize operstate with admin state on up/down
-Date: Tue, 9 Jul 2024 16:14:32 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- davem@davemloft.net,
- edumazet@google.com,
- kuba@kernel.org,
- pabeni@redhat.com,
- netdev@vger.kernel.org,
- Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>,
- "Gia-Khanh Nguyen" <gia-khanh.nguyen@oracle.com>,
- mst@redhat.com,
- jasowang@redhat.com,
- eperezma@redhat.com
-References: <20240709080214.9790-1-jasowang@redhat.com>
- <20240709080214.9790-4-jasowang@redhat.com>
-In-Reply-To: <20240709080214.9790-4-jasowang@redhat.com>
+	s=arc-20240116; t=1720513347; c=relaxed/simple;
+	bh=/gYVJD15xFaui6T9JocnKA1r2ooEEcIgwDZnejMpIlc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DOMl9yIgwtYFLRjLNmsJ6FIjMQNkX8TFS18EhE4X/tP3wFonyUJe0KFS931dLSZecXbTqiTJ9kDhSPM+cyx89G8NUEbkMv8m+mzlBHLEJP9IxS6e4o2HaWSV0Sh5HsATXJHaOPP1r//JILRys2bq48ZvefZhpHQjni7atBS4Ams=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=aU7JabxT; arc=none smtp.client-ip=134.0.28.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+Received: from mxbox2.masterlogin.de (unknown [192.168.10.89])
+	by mxout2.routing.net (Postfix) with ESMTP id 0C6E55FD4B;
+	Tue,  9 Jul 2024 08:16:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=20200217; t=1720512985;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MDMf7DvFYCdwJ6yYWc6ATDV2rtt8qlGbjIkB3P1prUA=;
+	b=aU7JabxTsf1aK/77OmIldWo1GPgTLA5vNZ2v32VbWnnegBjJxybkGe9FceGO9HlAj28g4w
+	Eb7b0Y8qwAYrzEfsX7GRXJyIQ+7C6CBG62hDSFd2fWvGkcl6v+8eJM2OHAoi8dOT3cgKov
+	mTn9L82xGi7m+N7npAFIKYaHOnhQNl8=
+Received: from frank-u24.. (fttx-pool-217.61.149.221.bambit.de [217.61.149.221])
+	by mxbox2.masterlogin.de (Postfix) with ESMTPSA id 082581006CA;
+	Tue,  9 Jul 2024 08:16:23 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	Daniel Golle <daniel@makrotopia.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v1] arm64: dts: mediatek: mt7988: add labels for different nodes
+Date: Tue,  9 Jul 2024 10:16:13 +0200
+Message-ID: <20240709081614.19993-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Mail-ID: 86a6b8d6-7d26-42ab-aaf3-d045996a5733
 
-On Tue,  9 Jul 2024 16:02:14 +0800, Jason Wang <jasowang@redhat.com> wrote:
-> This patch synchronize operstate with admin state per RFC2863.
->
-> This is done by trying to toggle the carrier upon open/close and
-> synchronize with the config change work. This allows propagate status
-> correctly to stacked devices like:
->
-> ip link add link enp0s3 macvlan0 type macvlan
-> ip link set link enp0s3 down
-> ip link show
->
-> Before this patch:
->
-> 3: enp0s3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000
->     link/ether 00:00:05:00:00:09 brd ff:ff:ff:ff:ff:ff
-> ......
-> 5: macvlan0@enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
->     link/ether b2:a9:c5:04:da:53 brd ff:ff:ff:ff:ff:ff
->
-> After this patch:
->
-> 3: enp0s3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000
->     link/ether 00:00:05:00:00:09 brd ff:ff:ff:ff:ff:ff
-> ...
-> 5: macvlan0@enp0s3: <NO-CARRIER,BROADCAST,MULTICAST,UP,M-DOWN> mtu 1500 qdisc noqueue state LOWERLAYERDOWN mode DEFAULT group default qlen 1000
->     link/ether b2:a9:c5:04:da:53 brd ff:ff:ff:ff:ff:ff
->
-> Cc: Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>
-> Cc: Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+From: Frank Wunderlich <frank-w@public-files.de>
 
-Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Current devicetree-nodes missing a label which allows to add aproperties
+or phandles to them, so add them.
 
-> ---
->  drivers/net/virtio_net.c | 64 ++++++++++++++++++++++++----------------
->  1 file changed, 38 insertions(+), 26 deletions(-)
->
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index 0b4747e81464..e6626ba25b29 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -2476,6 +2476,25 @@ static void virtnet_cancel_dim(struct virtnet_info *vi, struct dim *dim)
->  	net_dim_work_cancel(dim);
->  }
->
-> +static void virtnet_update_settings(struct virtnet_info *vi)
-> +{
-> +	u32 speed;
-> +	u8 duplex;
-> +
-> +	if (!virtio_has_feature(vi->vdev, VIRTIO_NET_F_SPEED_DUPLEX))
-> +		return;
-> +
-> +	virtio_cread_le(vi->vdev, struct virtio_net_config, speed, &speed);
-> +
-> +	if (ethtool_validate_speed(speed))
-> +		vi->speed = speed;
-> +
-> +	virtio_cread_le(vi->vdev, struct virtio_net_config, duplex, &duplex);
-> +
-> +	if (ethtool_validate_duplex(duplex))
-> +		vi->duplex = duplex;
-> +}
-> +
->  static int virtnet_open(struct net_device *dev)
->  {
->  	struct virtnet_info *vi = netdev_priv(dev);
-> @@ -2494,6 +2513,18 @@ static int virtnet_open(struct net_device *dev)
->  			goto err_enable_qp;
->  	}
->
-> +	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
-> +		virtio_config_driver_enable(vi->vdev);
-> +		/* Do not schedule the config change work as the
-> +		 * config change notification might have been disabled
-> +		 * by the virtio core. */
-> +		virtio_config_changed(vi->vdev);
-> +	} else {
-> +		vi->status = VIRTIO_NET_S_LINK_UP;
-> +		virtnet_update_settings(vi);
-> +		netif_carrier_on(dev);
-> +	}
-> +
->  	return 0;
->
->  err_enable_qp:
-> @@ -2936,12 +2967,19 @@ static int virtnet_close(struct net_device *dev)
->  	disable_delayed_refill(vi);
->  	/* Make sure refill_work doesn't re-enable napi! */
->  	cancel_delayed_work_sync(&vi->refill);
-> +	/* Make sure config notification doesn't schedule config work */
-> +	virtio_config_driver_disable(vi->vdev);
-> +	/* Make sure status updating is cancelled */
-> +	cancel_work_sync(&vi->config_work);
->
->  	for (i = 0; i < vi->max_queue_pairs; i++) {
->  		virtnet_disable_queue_pair(vi, i);
->  		virtnet_cancel_dim(vi, &vi->rq[i].dim);
->  	}
->
-> +	vi->status &= ~VIRTIO_NET_S_LINK_UP;
-> +	netif_carrier_off(dev);
-> +
->  	return 0;
->  }
->
-> @@ -4640,25 +4678,6 @@ static void virtnet_init_settings(struct net_device *dev)
->  	vi->duplex = DUPLEX_UNKNOWN;
->  }
->
-> -static void virtnet_update_settings(struct virtnet_info *vi)
-> -{
-> -	u32 speed;
-> -	u8 duplex;
-> -
-> -	if (!virtio_has_feature(vi->vdev, VIRTIO_NET_F_SPEED_DUPLEX))
-> -		return;
-> -
-> -	virtio_cread_le(vi->vdev, struct virtio_net_config, speed, &speed);
-> -
-> -	if (ethtool_validate_speed(speed))
-> -		vi->speed = speed;
-> -
-> -	virtio_cread_le(vi->vdev, struct virtio_net_config, duplex, &duplex);
-> -
-> -	if (ethtool_validate_duplex(duplex))
-> -		vi->duplex = duplex;
-> -}
-> -
->  static u32 virtnet_get_rxfh_key_size(struct net_device *dev)
->  {
->  	return ((struct virtnet_info *)netdev_priv(dev))->rss_key_size;
-> @@ -6000,13 +6019,6 @@ static int virtnet_probe(struct virtio_device *vdev)
->  	/* Assume link up if device can't report link status,
->  	   otherwise get link status from config. */
->  	netif_carrier_off(dev);
-> -	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
-> -		schedule_work(&vi->config_work);
-> -	} else {
-> -		vi->status = VIRTIO_NET_S_LINK_UP;
-> -		virtnet_update_settings(vi);
-> -		netif_carrier_on(dev);
-> -	}
->
->  	for (i = 0; i < ARRAY_SIZE(guest_offloads); i++)
->  		if (virtio_has_feature(vi->vdev, guest_offloads[i]))
-> --
-> 2.31.1
->
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+Fixes: 660c230bf302 ("arm64: dts: mediatek: mt7988: add I2C controllers")
+Fixes: 09ff2216a035 ("arm64: dts: mediatek: mt7988: add PWM controller")
+Fixes: 09346afaba0a ("arm64: dts: mediatek: mt7988: add XHCI controllers")
+Fixes: b616b403cbff ("arm64: dts: mediatek: mt7988: add clock controllers")
+Fixes: 6c1d134a103f ("arm64: dts: mediatek: Add initial MT7988A and BPI-R4")
+---
+ arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 32 +++++++++++------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
+index aa728331e876..9ced005b1595 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
+@@ -14,28 +14,28 @@ cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		cpu@0 {
++		cpu0: cpu@0 {
+ 			compatible = "arm,cortex-a73";
+ 			reg = <0x0>;
+ 			device_type = "cpu";
+ 			enable-method = "psci";
+ 		};
+ 
+-		cpu@1 {
++		cpu1: cpu@1 {
+ 			compatible = "arm,cortex-a73";
+ 			reg = <0x1>;
+ 			device_type = "cpu";
+ 			enable-method = "psci";
+ 		};
+ 
+-		cpu@2 {
++		cpu2: cpu@2 {
+ 			compatible = "arm,cortex-a73";
+ 			reg = <0x2>;
+ 			device_type = "cpu";
+ 			enable-method = "psci";
+ 		};
+ 
+-		cpu@3 {
++		cpu3: cpu@3 {
+ 			compatible = "arm,cortex-a73";
+ 			reg = <0x3>;
+ 			device_type = "cpu";
+@@ -43,7 +43,7 @@ cpu@3 {
+ 		};
+ 	};
+ 
+-	oscillator-40m {
++	system_clk: oscillator-40m {
+ 		compatible = "fixed-clock";
+ 		clock-frequency = <40000000>;
+ 		#clock-cells = <0>;
+@@ -86,7 +86,7 @@ infracfg: clock-controller@10001000 {
+ 			#clock-cells = <1>;
+ 		};
+ 
+-		clock-controller@1001b000 {
++		topckgen: clock-controller@1001b000 {
+ 			compatible = "mediatek,mt7988-topckgen", "syscon";
+ 			reg = <0 0x1001b000 0 0x1000>;
+ 			#clock-cells = <1>;
+@@ -99,13 +99,13 @@ watchdog: watchdog@1001c000 {
+ 			#reset-cells = <1>;
+ 		};
+ 
+-		clock-controller@1001e000 {
++		apmixedsys: clock-controller@1001e000 {
+ 			compatible = "mediatek,mt7988-apmixedsys";
+ 			reg = <0 0x1001e000 0 0x1000>;
+ 			#clock-cells = <1>;
+ 		};
+ 
+-		pwm@10048000 {
++		pwm: pwm@10048000 {
+ 			compatible = "mediatek,mt7988-pwm";
+ 			reg = <0 0x10048000 0 0x1000>;
+ 			clocks = <&infracfg CLK_INFRA_66M_PWM_BCK>,
+@@ -124,7 +124,7 @@ pwm@10048000 {
+ 			status = "disabled";
+ 		};
+ 
+-		i2c@11003000 {
++		i2c0: i2c@11003000 {
+ 			compatible = "mediatek,mt7981-i2c";
+ 			reg = <0 0x11003000 0 0x1000>,
+ 			      <0 0x10217080 0 0x80>;
+@@ -137,7 +137,7 @@ i2c@11003000 {
+ 			status = "disabled";
+ 		};
+ 
+-		i2c@11004000 {
++		i2c1: i2c@11004000 {
+ 			compatible = "mediatek,mt7981-i2c";
+ 			reg = <0 0x11004000 0 0x1000>,
+ 			      <0 0x10217100 0 0x80>;
+@@ -150,7 +150,7 @@ i2c@11004000 {
+ 			status = "disabled";
+ 		};
+ 
+-		i2c@11005000 {
++		i2c2: i2c@11005000 {
+ 			compatible = "mediatek,mt7981-i2c";
+ 			reg = <0 0x11005000 0 0x1000>,
+ 			      <0 0x10217180 0 0x80>;
+@@ -163,7 +163,7 @@ i2c@11005000 {
+ 			status = "disabled";
+ 		};
+ 
+-		usb@11190000 {
++		ssusb0: usb@11190000 {
+ 			compatible = "mediatek,mt7988-xhci", "mediatek,mtk-xhci";
+ 			reg = <0 0x11190000 0 0x2e00>,
+ 			      <0 0x11193e00 0 0x0100>;
+@@ -177,7 +177,7 @@ usb@11190000 {
+ 			clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck", "xhci_ck";
+ 		};
+ 
+-		usb@11200000 {
++		ssusb1: usb@11200000 {
+ 			compatible = "mediatek,mt7988-xhci", "mediatek,mtk-xhci";
+ 			reg = <0 0x11200000 0 0x2e00>,
+ 			      <0 0x11203e00 0 0x0100>;
+@@ -191,21 +191,21 @@ usb@11200000 {
+ 			clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck", "xhci_ck";
+ 		};
+ 
+-		clock-controller@11f40000 {
++		xfi_pll: clock-controller@11f40000 {
+ 			compatible = "mediatek,mt7988-xfi-pll";
+ 			reg = <0 0x11f40000 0 0x1000>;
+ 			resets = <&watchdog 16>;
+ 			#clock-cells = <1>;
+ 		};
+ 
+-		clock-controller@15000000 {
++		ethsys: clock-controller@15000000 {
+ 			compatible = "mediatek,mt7988-ethsys", "syscon";
+ 			reg = <0 0x15000000 0 0x1000>;
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+ 		};
+ 
+-		clock-controller@15031000 {
++		ethwarp: clock-controller@15031000 {
+ 			compatible = "mediatek,mt7988-ethwarp";
+ 			reg = <0 0x15031000 0 0x1000>;
+ 			#clock-cells = <1>;
+-- 
+2.43.0
+
 
