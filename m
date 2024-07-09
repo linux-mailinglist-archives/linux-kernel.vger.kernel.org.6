@@ -1,331 +1,219 @@
-Return-Path: <linux-kernel+bounces-245411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AC2A92B236
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:35:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0385C92B237
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48440B2198C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:35:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 270A31C21838
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACDD153585;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C9027462;
 	Tue,  9 Jul 2024 08:35:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBBA152796
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720514139; cv=none; b=O8h3dbkw2v/xEo4wbzuFFrOPY0sCngunH4D7Etnrpnd3ZXbKH2nCEW52qqYV4j8OHUQ0yFyokzbE0T2ezVno87SgHwX7IJD7FhNwSrk8lSuT9mx5loBr8kozUDIwSH7SlGtYhmQSD48OT0AgpoYNfArAPtSlphoAUeBOxNvNoJM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="pj3egXIn"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2076.outbound.protection.outlook.com [40.107.21.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B281527AF;
+	Tue,  9 Jul 2024 08:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720514139; cv=fail; b=fM3qeig6uK3eE/q73sKRz4nIsYFbHGmlzqpWUEWdWFrzrAUTXBohu9oWFjdImYqFHoJYLYjroLcDDo38ExDOrpPbAJWUFn5p8JaSVAzTy6ebsdbZFzqbs8IamzG6EpEM/R+zfUqfNbK6/8ZjlYS8Ed0983VCYLPHmO2EKTiUqk8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720514139; c=relaxed/simple;
-	bh=u5kukLhqVySNwkMxmecPpCT3gAfvp268c2GIQYWpB7c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dyQvdY7rlCRw2lILY08iBesxQK7f7noxoQtwjO8c3qX4YiDAdlmfyN6rjMlG6oylvAaTR+zlNiMUC68Pv40hPLyJOA9v3SfztXJlFgCqBIGyBaTT77R7x//EL9evthUQXw9g6dFbEaSizR2iVmAi/o/nEVSJ714JAQVAfA3FzqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B9441042;
-	Tue,  9 Jul 2024 01:36:01 -0700 (PDT)
-Received: from [10.57.76.194] (unknown [10.57.76.194])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF6CF3F762;
-	Tue,  9 Jul 2024 01:35:33 -0700 (PDT)
-Message-ID: <ca200353-da41-4f2e-b036-f22ab4bbf1b6@arm.com>
-Date: Tue, 9 Jul 2024 09:35:31 +0100
+	bh=H0i3NfYIyMFPNV6tvBbgE7jt6ZVMX0KevmXigq0pgOo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=e014H/SzdwyBaE7FSyYMXF1ROsB72T9YI3qErUOy+OPWF7FKcbF88WdcmwBzjum1v+Pqg00A17LbD9AyEL7eHgnM8F1irdl88wqCPGYcgdNUPcRifJDRcGC0rERF17BlpoHI1lOk8w+9Yi5mS7mWOgBArR0yhuvB4LKGWvopdrI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=pj3egXIn; arc=fail smtp.client-ip=40.107.21.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=V/XB62hwT/WRUBZXIVcqC4lrY801hK1hggWhMBinypWxH6ANAsp+OB3SXji5Dy7Zbirl8CffVYUxaoTIyhLTJ3kmt773MtFxqbvi6BKuAF3xy0k/v2qTPnEGF/XtazLBQkOcfy7mQlR47a+tOoy6dV/3vYBtoqixW9mksCCCreehktKjs0AMHFbuDnZjPDdokRJwtGz4KSnobnBWs5FH68a4R6Jtv5Lxkubi6TESTx+3t7A7d2Lmh0Rj1ltEXBu/uvHLnMpJRDgYwvmPywkbklUjdO9/nzR2FgVD6eKqjfykJ7ZKblE7KipK/aL3Iu8gQnOtO8Xr0byDMFKcd5TzYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=H0i3NfYIyMFPNV6tvBbgE7jt6ZVMX0KevmXigq0pgOo=;
+ b=RX4xPkEqmGqryBnY5iiUv1Tkaj4Y08vyO2dqG40nVmINEgUs3XVUwq+KXmle+oZ3c7HtIwQx4nA6esMXCKjFMV1jS8rWurKyszu2wuFats0KeZzXFnn5c9vxvxsZHRxaNrX4Wd7VUp+tysl4e0VstKlXcpU/P2Vrf9IXHLclejuqf5sXvIR9DlpHk2KDk2yklFjAAa8Pc9EW0fKvF9gj20aqc/K0u//K207dDUsQHtWj2J7DgYQlzpV1QvF9JHQ8eZnD7cX3nxRpuH6vhW3BZtAgERnbkA+67K0RdjolkO84p8DLyrhW2iugUBOzACsDg+ciibdnD5ktJu2m1NBf2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=H0i3NfYIyMFPNV6tvBbgE7jt6ZVMX0KevmXigq0pgOo=;
+ b=pj3egXIn8Ns4B7QRVEdvpXKdIlKqX4w/o65ruKHxDtqW2HRB4gJuYnIuo4HwO7bZG+fvhUdaNxv2LUWFhDoOkScq4ZODIbUHXsAaVKWvVLGiG309oX/2ob6o/kGrzkJb38KT6UARmzrDTCBVSGULZe1g6PtjRT3W5HDI1odpPfs=
+Received: from DU0PR04MB9299.eurprd04.prod.outlook.com (2603:10a6:10:356::7)
+ by AM9PR04MB7490.eurprd04.prod.outlook.com (2603:10a6:20b:2d9::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Tue, 9 Jul
+ 2024 08:35:34 +0000
+Received: from DU0PR04MB9299.eurprd04.prod.outlook.com
+ ([fe80::9271:bc93:9fc9:d427]) by DU0PR04MB9299.eurprd04.prod.outlook.com
+ ([fe80::9271:bc93:9fc9:d427%5]) with mapi id 15.20.7741.033; Tue, 9 Jul 2024
+ 08:35:34 +0000
+From: Aisheng Dong <aisheng.dong@nxp.com>
+To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>, "robh@kernel.org"
+	<robh@kernel.org>, "saravanak@google.com" <saravanak@google.com>,
+	"klarasmodin@gmail.com" <klarasmodin@gmail.com>
+CC: "hch@lst.de" <hch@lst.de>, "m.szyprowski@samsung.com"
+	<m.szyprowski@samsung.com>, "robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "will@kernel.org"
+	<will@kernel.org>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"kernel@quicinc.com" <kernel@quicinc.com>, Jason Liu <jason.hui.liu@nxp.com>
+Subject: RE: [PATCH 0/4] Revert use of Unflatten_devicetree APIs from
+ reserved_mem
+Thread-Topic: [PATCH 0/4] Revert use of Unflatten_devicetree APIs from
+ reserved_mem
+Thread-Index: AQHa0YuKHSsOCKnp1kOO88mCBsOnQLHuEdXw
+Date: Tue, 9 Jul 2024 08:35:34 +0000
+Message-ID:
+ <DU0PR04MB92990AF6A62D43CCF73D7D1480DB2@DU0PR04MB9299.eurprd04.prod.outlook.com>
+References: <20240708230613.448846-1-quic_obabatun@quicinc.com>
+In-Reply-To: <20240708230613.448846-1-quic_obabatun@quicinc.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR04MB9299:EE_|AM9PR04MB7490:EE_
+x-ms-office365-filtering-correlation-id: c61ca758-62d3-4ec1-651a-08dc9ff219ea
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?gb2312?B?ZWJDNjluNkkvSU94Sk43MVhGOXFBN0tFWHlheWdDUng3ZG1ZM2ppLzlweTJD?=
+ =?gb2312?B?TGlFOGRDQU84ajlvb0Z4dWlNUTJ3OU03TkJiSW53V3l3QmYwM2drWXE1STFR?=
+ =?gb2312?B?MURHRGZVanpmd2hYZVYrcDlPWHN5TGRrV0IrTUk4enpkbnU2a2NySkd6cUpt?=
+ =?gb2312?B?dE9BaDlzSXNEbFZSWTBFeFIwdmpKVDllaGFXYXlrT2VQamhTUjFxTmJLOGZL?=
+ =?gb2312?B?NGdkbjJ4bzBJQzVHU3dSUXE1SEJOTlo5MmRGVlAvL296cXpRT0JiRzNRQUVu?=
+ =?gb2312?B?cHcvSUk4K3Q1ald1WktHWXVKVFZyaEpaU2N4TTcrV1paSUFaQU1nUHZiSEY1?=
+ =?gb2312?B?MmRhWUdFVGRqdG80aWNuYjVWVnJtb0dLaUlybFl3M0JLYnR4TFhURzlLQVo3?=
+ =?gb2312?B?d0szT2ZKSkpteHJnNjE3aiswOGxJbUcyZ0tFdWpXc0lqVys5WHFBSkFDVW1k?=
+ =?gb2312?B?V2J1bVF1NWJaUko0NFU1azlGQ1BsT3AwYTY4NWNFOEtNSjFFSzV0V05pbCs0?=
+ =?gb2312?B?d3ZlNW9VcnAvcGlVYnBuYlBNOSt6eFh1UFZ1bU1DaWNOdzBkM1F6RytGZ295?=
+ =?gb2312?B?Yk4zakxiZkM5VWZuVVpYUDJJNG9Yd3FpbkYwSXNOdXkyV3pEWmwrM0VZWTRv?=
+ =?gb2312?B?c2tvUEYzMW8rK2t5VW8yRDBLZzFTTmtUdW1LNFBjMGg2dllRY2JOWGxkbXJh?=
+ =?gb2312?B?L1lKUldLNmtFNGduVlNCcTZyUk02Q1hFMFVocXVNeGd1K3BHamUzU0pZR2VU?=
+ =?gb2312?B?elZnSDUxbW9WSXdoYTZYRi9CczZ5dG1yeThQZHZqcG5Sc1pHRVRWa0dZN0F0?=
+ =?gb2312?B?MTRvTW9ENm4rK3Y2T1Ivano4bGJ1dW5GdGg5ejlDL3EzS1pDUFFYcDdxTHF6?=
+ =?gb2312?B?WmNOYVd0WXpheDFxRHptQzRNZy8yTjhSbmxLS3N4TkovN1RqU04zdDZVNVlt?=
+ =?gb2312?B?eGlNMGZySlc2ZEt0cVZIUjR2b01iWmFYbWh1cGorMVczSjJNQVR0UG5EbDVu?=
+ =?gb2312?B?eUlKQXhTaHdTa09pQjNWTnR0M3FmSHBrNUpBeHh0UGFRYXBIdkxrZlFtWEpC?=
+ =?gb2312?B?VHZucFpYNVFEeGdSUXJPZEJ2YWNKYjhONGVlVHdFTXU1ZjBYWWlkc0pCNjFS?=
+ =?gb2312?B?U3BINE11QUlOczRLS3kzQ1dHd3NteXg5UGEzekVidDB3c245REZkdXBQQWMy?=
+ =?gb2312?B?Ym4yREQ0bnE1R3RYVDdqTU10aEFxNnhEVzgxdFo3OFBnZi9wSTIweWJwMXNj?=
+ =?gb2312?B?dk4rODFVS3FXZUU3K1NCL21YY0RFRDlYU3BWZzFzSjEvRGZvN2NYd1E5QmhZ?=
+ =?gb2312?B?Z3ZWUGtIaGFXS3BRTkoyQi9mZXQrTnp5b3BXZTlRa0ZVWHVpMVJqNXBvVFRY?=
+ =?gb2312?B?amVjQ09QTmRUQkdSLysyZ05kTTZXSWdUSTA3cXdLZ1ZNWk41ZFhMcGdCVjJE?=
+ =?gb2312?B?TUZZSk53OTlXWmNHNUwyZ21SSmd6ZGthZkNwR25RUGo1eTBvVTMwUDh0SkxR?=
+ =?gb2312?B?Z0I4WjMyRVVaaHJJQm1nLzJIOGZ1RFNvNjcxZmJia2VsdTVxdks1aXlPYnJ1?=
+ =?gb2312?B?dEtZY0N5aDU5RktKUzkvcVZYVU1BZ1NCZWVJRDFSb21VQ0VGeG9NMnZRd01y?=
+ =?gb2312?B?c0lIdFREU0IwV1VjWmlPakxIa25IZzd1Y1VtUTdVankydnRlb1kvNG9scGho?=
+ =?gb2312?B?SzRxSWpac3JUc1lmVkVlWFFLWmlTSWF5RUtHdEFhbjVsa3pFK0xrVzJaT0xi?=
+ =?gb2312?B?ZG8zd3lHaVFYWkF1ZmF0TkRSN2Y2SU1QTVBVWkNqOXNhcCtUdWg1Q3pWK1d4?=
+ =?gb2312?Q?OYHPXJEEINmtqmsTqBUWQzTQmP2ADICjsZER0=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9299.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?gb2312?B?SmFQWk1yWmVDdnY4NUN2VUFNWFpTQnBSUTljNitKSTgvTHNIWS9FUlNtb3kr?=
+ =?gb2312?B?dGJjZTVTelBCYUM3MThPbUQxWXIvMWZlcXdtNjVkb2RGRDZKc3BaOVlodDBM?=
+ =?gb2312?B?MG9KRVRvQ2c4REFZZVRKMzdKS0txeGV4eisxL3VaYVU2aXUzd1lZbUdRT0Z4?=
+ =?gb2312?B?ckdLdHNqRkxiZUs5a0VyZTFhbVZHQmYxL0YwaG1IQjJtUjNpQnRFQ0JFOHRQ?=
+ =?gb2312?B?cXFjRHpPVG5IQjZxRkxYd0RHbEtLQVBVeEVaQWtVMUcvcjlEOFU2ZzVudnE5?=
+ =?gb2312?B?VS90eWM3MHg0VDV5Z3BRRHJ5c2QzR1AvWnNLbm50NHRjYXNwdjNzVjhsTFMx?=
+ =?gb2312?B?WHl5Sk9lZXVuZTRJOTRadE5KRXQvNnBINEdnYXdGcTVPT3BTRExVa2JYeGlE?=
+ =?gb2312?B?TmdRQU1hNisxQno0NnVEb3hhWHh2YjNxU1VBOG94TndoN25zbFpqdy9ia1gw?=
+ =?gb2312?B?QmwzVDBUb1dOMVptMUtwTHJXbmY3QUdvbEY4dlNKZm1YYkJkZ2pCZ2JnOTZv?=
+ =?gb2312?B?dy9zMzlJRjJMUDk4Z2tzaXNBS1pRdmRMLzhEbW15ckloQ0FuQjlMZXZkaUxM?=
+ =?gb2312?B?UVp1N1lkOXF4RU5NUWs1WXpMd05PSlpxOUFGdXF0VmNULzNpWTFBZFYwODY0?=
+ =?gb2312?B?b0ZVYzFYOEpIMjdIZTVHdXN1NUkyMzVXNVl2MlVtdHVRNFY2TWl3WmZSdU5M?=
+ =?gb2312?B?Vkszd1ZpRlFURjJVekttLzNLRWFsUitVcmlrV3RFc3haOExvNUdma3NnSWxN?=
+ =?gb2312?B?VndrZ2VqaWQwRU5xbXdqRkFURitZVERUdkpDVW1ESVV0YzNOWm1FaWoxTkRm?=
+ =?gb2312?B?ajl1c3ZPRFJ0TUNYNGUvVWxKSUEzSDJwazRyWFBVd0kyU0d5a0Uwa01yNFlo?=
+ =?gb2312?B?dTY2aml0eGJ3S2tyRG96bVRtb2NQbHZreE9TcWRyblVEdE1WUlRpT01kT2JW?=
+ =?gb2312?B?M1Y0ckthSWJrZEYxbnd4bitwNW53RTgvbUxsWDBRUUxDeGxTb0FBN3E4bEly?=
+ =?gb2312?B?VmhuZzJOamZXbUlxSVFJZDNFOExpMUtnVXI1MlE0WjhNV2YzUjZtaTA3MGVl?=
+ =?gb2312?B?Yk90V05LbmFPS2xjYldTSHo4Z3UyM0VmQURsM1JJcGFHOVpyeFpwaVJHdHdK?=
+ =?gb2312?B?Y2MxMVhhQ0NpSGlDd2J6Tm9sTWFvRDBYeEErTkFuQklrbjk3dS95N3hUYXVN?=
+ =?gb2312?B?djNzUGpBZlU4b0FpdVo1NEdObjBMa00rbDNLOC9adlhHVUdkeXFkYnVGL2dT?=
+ =?gb2312?B?bS9jZlNQdDV2NmNLdUtWMFJMY3RiaWtLMk1OUWF2aFQ5Ui9ka3NDMmpDSlFx?=
+ =?gb2312?B?TTlXQnFaUFU3WlA5bElIaGx6b2x1MUhsdDYrRWFLVWhpOE8wdmxjN3NSUlRy?=
+ =?gb2312?B?ZWtWSTZscytGTHoyaVBYV1VxaitwNWs3Z2IxT0JHNFY0Y3lMNW1vNkdrRjJT?=
+ =?gb2312?B?dmxKaXZjbW9TU1M4a0M2VWNpZmY2WUtzQmtjVE1zbnR5SU9MMVhZcm1pMTdZ?=
+ =?gb2312?B?enpoSVhyWDhLYVlxdEs2RGd3dTB0S1ZGYTdsZSt2aXFIRWZzemNwRWhmY2tM?=
+ =?gb2312?B?TDY5VkJNcDFLYkpMUXRFbk9OWktkY29ZMStWcmRUdm8wUCtGd0lzbHFmbGxv?=
+ =?gb2312?B?SWFGeGVQeEE5YzVlMlpEM0ovdXFYRWpjdmdkczhpTU8zdGJ5N1F5R1hGVzh1?=
+ =?gb2312?B?aHBNb2dEelZzdTZsdEdzMUdoRzJjekYxKzZ2d1lsQnorcGJyaDdRVE9zRjEw?=
+ =?gb2312?B?Sm16YU9HOEpFTExldXV5SFN2WnVmb0hCQStObmc3MDRSV0JocklTV3QzbG5B?=
+ =?gb2312?B?SlhDNHdrck9mc1ppVDhOQ0pDOFM5enJqOEFYamgwb3VsQ3BTb1FRUHRSN0dQ?=
+ =?gb2312?B?OHFxU1RJdlBZKzU4MFZOMmd5bE5TTnIvVlhQWFJmVFZrb1gzbmV1Y0FPa2gz?=
+ =?gb2312?B?bVNLcjdMaXdkTXk5YkVMQjZqTys2ZEVsSWFhQ0R2cjdKb2pWbWliaXZIV0Jv?=
+ =?gb2312?B?bElhV1Bna1EyeGNKcWNidWNrZmNlMTVPN09tTWhvUXZLZEo2eFFoMFFIa3cz?=
+ =?gb2312?B?ekRtSCtQbG1pbXEwdnZ6ZUlmNHBWTThjVUQvYTV5alNIallmcldpU0QzaXdw?=
+ =?gb2312?Q?274LHacHzArXU2HMBWWjU8b5D?=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mm: shmem: Rename mTHP shmem counters
-Content-Language: en-GB
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, baolin.wang@linux.alibaba.com, corbet@lwn.net,
- da.gomez@samsung.com, david@redhat.com, hughd@google.com,
- ioworker0@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- willy@infradead.org, ziy@nvidia.com
-References: <744749c3-4506-40d9-ac48-0dbc59689f92@arm.com>
- <20240709014413.18044-1-21cnbao@gmail.com>
- <70ac8a5d-f6cf-41e6-b295-cd40b81fa85e@arm.com>
- <CAGsJ_4xy+ADGF2te4Xh=DMABDGEAAp-7QGPgJF6MstOYXVNYtA@mail.gmail.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <CAGsJ_4xy+ADGF2te4Xh=DMABDGEAAp-7QGPgJF6MstOYXVNYtA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9299.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c61ca758-62d3-4ec1-651a-08dc9ff219ea
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2024 08:35:34.5047
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7yxAWYsnvrj6jq2aQlTRMnaUPsnk9EhrkXrEIRH66wP8af1YOPJAJqGKEujWf+NoiA0ysSg+tKGnajj8BiUXug==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7490
 
-On 09/07/2024 09:13, Barry Song wrote:
-> On Tue, Jul 9, 2024 at 7:55 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>
->> On 09/07/2024 02:44, Barry Song wrote:
->>> On Tue, Jul 9, 2024 at 12:30 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>>>
->>>> On 08/07/2024 12:36, Barry Song wrote:
->>>>> On Mon, Jul 8, 2024 at 11:24 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>>>>>
->>>>>> The legacy PMD-sized THP counters at /proc/vmstat include
->>>>>> thp_file_alloc, thp_file_fallback and thp_file_fallback_charge, which
->>>>>> rather confusingly refer to shmem THP and do not include any other types
->>>>>> of file pages. This is inconsistent since in most other places in the
->>>>>> kernel, THP counters are explicitly separated for anon, shmem and file
->>>>>> flavours. However, we are stuck with it since it constitutes a user ABI.
->>>>>>
->>>>>> Recently, commit 66f44583f9b6 ("mm: shmem: add mTHP counters for
->>>>>> anonymous shmem") added equivalent mTHP stats for shmem, keeping the
->>>>>> same "file_" prefix in the names. But in future, we may want to add
->>>>>> extra stats to cover actual file pages, at which point, it would all
->>>>>> become very confusing.
->>>>>>
->>>>>> So let's take the opportunity to rename these new counters "shmem_"
->>>>>> before the change makes it upstream and the ABI becomes immutable.
->>>>>
->>>>> Personally, I think this approach is much clearer. However, I recall
->>>>> we discussed this
->>>>> before [1], and it seems that inconsistency is a concern?
->>>>
->>>> Embarrassingly, I don't recall that converstation at all :-| but at least what I
->>>> said then is consistent with what I've done in this patch.
->>>>
->>>> I think David's conclusion from that thread was to call them FILE_, and add both
->>>> shmem and pagecache counts to those counters, meaning we can keep the same name
->>>> as legacy THP counters. But those legacy THP counters only count shmem, and I
->>>> don't think we would get away with adding pagecache counts to those at this
->>>> point? (argument: they have been around for long time and there is a risk that
->>>> user space relies on them and if they were to dramatically increase due to
->>>> pagecache addition now that could break things). In that case, there is still
->>>> inconsistency, but its worse; the names are consistent but the semantics are
->>>> inconsistent.
->>>>
->>>> So my vote is to change to SHMEM_ as per this patch :)
->>>
->>> I have no objections. However, I dislike the documentation for
->>> thp_file_*. Perhaps we can clean it all up together ?
->>
->> I agree that we should clean this documentation up and I'm happy to roll it into
->> v2. However, I don't think what you have suggested is quite right.
->>
->> thp_file_alloc, thp_file_fallback and thp_file_fallback_charge *only* count
->> shmem. They don't count pagecache. So perhaps the change should be "...every
->> time a shmem huge page (dispite being named after "file", the counter measures
->> only shmem) is..."?
-> 
-> I understand what you are saying, and I know that thp_file_* has only
-> included shmem so far. My question is whether it will include regular
-> files in the future? If not, I am perfectly fine with your approach.
-
-My whole reasoning for this patch is based on the assertion that since
-THP_FILE_ALLOC has been there for 8 years and in all that time has only counted
-shmem, then its highly likely that someone is depending on that semantic and we
-can't change it. I don't have any actual evidence of code that relies on it though.
-
-I propose I change the docs to reflect what's actually happening today (i.e.
-shmem *only*). If we later decide we want to also report page cache numbers
-through that same counter, then we can change the docs at that point. But if I
-get my way, we'll soon have mTHP counters for FILE, which is solely for page
-cache. So You'll be able to get all the fine-grained info out of those and there
-will be no need to mess with the legacy counters.
-
-> 
-> READ_ONLY_THP_FOR_FS isn't applicable in this path as it is created
-> by khugepaged collapse.
-> 
->>
->> thp_file_mapped includes both file and shmem, so agree with your change there.
->>
->> What do you think?
->>
->>
->>>
->>> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
->>> index 709fe10b60f4..65df48cb3bbb 100644
->>> --- a/Documentation/admin-guide/mm/transhuge.rst
->>> +++ b/Documentation/admin-guide/mm/transhuge.rst
->>> @@ -417,21 +417,22 @@ thp_collapse_alloc_failed
->>>       the allocation.
->>>
->>>  thp_file_alloc
->>> -     is incremented every time a file huge page is successfully
->>> -     allocated.
->>> +     is incremented every time a file (including shmem) huge page is
->>> +     successfully allocated.
->>>
->>>  thp_file_fallback
->>> -     is incremented if a file huge page is attempted to be allocated
->>> -     but fails and instead falls back to using small pages.
->>> +     is incremented if a file (including shmem) huge page is attempted
->>> +     to be allocated but fails and instead falls back to using small
->>> +     pages.
->>>
->>>  thp_file_fallback_charge
->>> -     is incremented if a file huge page cannot be charged and instead
->>> -     falls back to using small pages even though the allocation was
->>> -     successful.
->>> +     is incremented if a file (including shmem) huge page cannot be
->>> +     charged and instead falls back to using small pages even though
->>> +     the allocation was successful.
->>>
->>>  thp_file_mapped
->>> -     is incremented every time a file huge page is mapped into
->>> -     user address space.
->>> +     is incremented every time a file (including shmem) huge page is
->>> +     mapped into user address space.
->>>
->>>  thp_split_page
->>>       is incremented every time a huge page is split into base
->>>
->>>>
->>>>>
->>>>> [1] https://lore.kernel.org/linux-mm/05d0096e4ec3e572d1d52d33a31a661321ac1551.1713755580.git.baolin.wang@linux.alibaba.com/
->>>>>
->>>>>
->>>>>>
->>>>>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->>>>>> ---
->>>>>>
->>>>>> Hi All,
->>>>>>
->>>>>> Applies on top of today's mm-unstable (2073cda629a4) and tested with mm
->>>>>> selftests; no regressions observed.
->>>>>>
->>>>>> The backstory here is that I'd like to introduce some counters for regular file
->>>>>> folio allocations to observe how often large folio allocation succeeds, but
->>>>>> these shmem counters are named "file" which is going to make things confusing.
->>>>>> So hoping to solve that before commit 66f44583f9b6 ("mm: shmem: add mTHP
->>>>>> counters for anonymous shmem") goes upstream (it is currently in mm-stable).
->>>>>>
->>>>>> Admittedly, this change means the mTHP stat names are not the same as the legacy
->>>>>> PMD-size THP names, but I think that's a smaller issue than having "file_" mTHP
->>>>>> stats that only count shmem, then having to introduce "file2_" or "pgcache_"
->>>>>> stats for the regular file memory, which is even more inconsistent IMHO. I guess
->>>>>> the alternative is to count both shmem and file in these mTHP stats (that's how
->>>>>> they were documented anyway) but I think it's better to be able to consider them
->>>>>> separately like we do for all the other counters.
->>>>>>
->>>>>> Thanks,
->>>>>> Ryan
->>>>>>
->>>>>>  Documentation/admin-guide/mm/transhuge.rst | 12 ++++++------
->>>>>>  include/linux/huge_mm.h                    |  6 +++---
->>>>>>  mm/huge_memory.c                           | 12 ++++++------
->>>>>>  mm/shmem.c                                 |  8 ++++----
->>>>>>  4 files changed, 19 insertions(+), 19 deletions(-)
->>>>>>
->>>>>> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
->>>>>> index 747c811ee8f1..8b891689fc13 100644
->>>>>> --- a/Documentation/admin-guide/mm/transhuge.rst
->>>>>> +++ b/Documentation/admin-guide/mm/transhuge.rst
->>>>>> @@ -496,16 +496,16 @@ swpout_fallback
->>>>>>         Usually because failed to allocate some continuous swap space
->>>>>>         for the huge page.
->>>>>>
->>>>>> -file_alloc
->>>>>> -       is incremented every time a file huge page is successfully
->>>>>> +shmem_alloc
->>>>>> +       is incremented every time a shmem huge page is successfully
->>>>>>         allocated.
->>>>>>
->>>>>> -file_fallback
->>>>>> -       is incremented if a file huge page is attempted to be allocated
->>>>>> +shmem_fallback
->>>>>> +       is incremented if a shmem huge page is attempted to be allocated
->>>>>>         but fails and instead falls back to using small pages.
->>>>>>
->>>>>> -file_fallback_charge
->>>>>> -       is incremented if a file huge page cannot be charged and instead
->>>>>> +shmem_fallback_charge
->>>>>> +       is incremented if a shmem huge page cannot be charged and instead
->>>>>>         falls back to using small pages even though the allocation was
->>>>>>         successful.
->>>>>>
->>>>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->>>>>> index acb6ac24a07e..cff002be83eb 100644
->>>>>> --- a/include/linux/huge_mm.h
->>>>>> +++ b/include/linux/huge_mm.h
->>>>>> @@ -269,9 +269,9 @@ enum mthp_stat_item {
->>>>>>         MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
->>>>>>         MTHP_STAT_SWPOUT,
->>>>>>         MTHP_STAT_SWPOUT_FALLBACK,
->>>>>> -       MTHP_STAT_FILE_ALLOC,
->>>>>> -       MTHP_STAT_FILE_FALLBACK,
->>>>>> -       MTHP_STAT_FILE_FALLBACK_CHARGE,
->>>>>> +       MTHP_STAT_SHMEM_ALLOC,
->>>>>> +       MTHP_STAT_SHMEM_FALLBACK,
->>>>>> +       MTHP_STAT_SHMEM_FALLBACK_CHARGE,
->>>>>>         MTHP_STAT_SPLIT,
->>>>>>         MTHP_STAT_SPLIT_FAILED,
->>>>>>         MTHP_STAT_SPLIT_DEFERRED,
->>>>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>>>>> index 9ec64aa2be94..f9696c94e211 100644
->>>>>> --- a/mm/huge_memory.c
->>>>>> +++ b/mm/huge_memory.c
->>>>>> @@ -568,9 +568,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
->>>>>>  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
->>>>>>  DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
->>>>>>  DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
->>>>>> -DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
->>>>>> -DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
->>>>>> -DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHARGE);
->>>>>> +DEFINE_MTHP_STAT_ATTR(shmem_alloc, MTHP_STAT_SHMEM_ALLOC);
->>>>>> +DEFINE_MTHP_STAT_ATTR(shmem_fallback, MTHP_STAT_SHMEM_FALLBACK);
->>>>>> +DEFINE_MTHP_STAT_ATTR(shmem_fallback_charge, MTHP_STAT_SHMEM_FALLBACK_CHARGE);
->>>>>>  DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
->>>>>>  DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
->>>>>>  DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
->>>>>> @@ -581,9 +581,9 @@ static struct attribute *stats_attrs[] = {
->>>>>>         &anon_fault_fallback_charge_attr.attr,
->>>>>>         &swpout_attr.attr,
->>>>>>         &swpout_fallback_attr.attr,
->>>>>> -       &file_alloc_attr.attr,
->>>>>> -       &file_fallback_attr.attr,
->>>>>> -       &file_fallback_charge_attr.attr,
->>>>>> +       &shmem_alloc_attr.attr,
->>>>>> +       &shmem_fallback_attr.attr,
->>>>>> +       &shmem_fallback_charge_attr.attr,
->>>>>>         &split_attr.attr,
->>>>>>         &split_failed_attr.attr,
->>>>>>         &split_deferred_attr.attr,
->>>>>> diff --git a/mm/shmem.c b/mm/shmem.c
->>>>>> index 921d59c3d669..f24dfbd387ba 100644
->>>>>> --- a/mm/shmem.c
->>>>>> +++ b/mm/shmem.c
->>>>>> @@ -1777,7 +1777,7 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
->>>>>>                         if (pages == HPAGE_PMD_NR)
->>>>>>                                 count_vm_event(THP_FILE_FALLBACK);
->>>>>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>>>>> -                       count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
->>>>>> +                       count_mthp_stat(order, MTHP_STAT_SHMEM_FALLBACK);
->>>>>>  #endif
->>>>>>                         order = next_order(&suitable_orders, order);
->>>>>>                 }
->>>>>> @@ -1804,8 +1804,8 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
->>>>>>                                 count_vm_event(THP_FILE_FALLBACK_CHARGE);
->>>>>>                         }
->>>>>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>>>>> -                       count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK);
->>>>>> -                       count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK_CHARGE);
->>>>>> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_FALLBACK);
->>>>>> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_FALLBACK_CHARGE);
->>>>>>  #endif
->>>>>>                 }
->>>>>>                 goto unlock;
->>>>>> @@ -2181,7 +2181,7 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
->>>>>>                         if (folio_test_pmd_mappable(folio))
->>>>>>                                 count_vm_event(THP_FILE_ALLOC);
->>>>>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>>>>> -                       count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_ALLOC);
->>>>>> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_ALLOC);
->>>>>>  #endif
->>>>>>                         goto alloced;
->>>>>>                 }
->>>>>> --
->>>>>> 2.43.0
->>>>>>
->>>>>
-> 
-> Thanks
-> Barry
-
+PiBGcm9tOiBPcmVvbHV3YSBCYWJhdHVuZGUgPHF1aWNfb2JhYmF0dW5AcXVpY2luYy5jb20+DQo+
+IFNlbnQ6IDIwMjTE6jfUwjnI1SA3OjA2DQo+IA0KPiBXaXRoIHJlY2VudCBjaGFuZ2VzIG1hZGUg
+dG8gaW5pdGlhbGl6ZSB0aGUgY21hIHJlZ2lvbnMgYmVmb3JlIHRoZSBwYWdlIHRhYmxlcw0KPiBh
+cmUgc2V0dXAsIGNvbW1pdCBmMmE1MjRkOWVmNWIgKCJvZjogcmVzZXJ2ZWRfbWVtOiBSZXN0cnVj
+dHVyZSBjb2RlIHRvIGNhbGwNCj4gcmVzZXJ2ZWQgbWVtIGluaXQgZnVuY3Rpb25zIGVhcmxpZXIi
+KSwgYW4gaXNzdWUgd2FzIGludHJvZHVjZWQgd2hlcmUgdGhlDQo+IGluaXRpYWxpemF0aW9uIG9m
+IHRoZSBjbWEgcmVnaW9ucyBmYWlsIGFuZCBhcmUgaW5pdGlhbGl6ZWQgYXMgIm5vbi1yZXVzYWJs
+ZSINCj4gcmVnaW9ucyBpbnN0ZWFkIG9mICJyZXVzYWJsZSIuIFsxXSwgWzJdDQo+IA0KPiBUaGlz
+IGlzc3VlIG9jY3VycyBiZWNhdXNlIHRoZSBkZXZpY2Vfbm9kZSBvZiB0aGUgcmVnaW9ucyBhcmUg
+bm90IHlldCBjcmVhdGVkDQo+IGJ5IHRoZSB0aW1lIHRoZSBjbWEgcmVnaW9ucyBhcmUgYmVpbmcg
+aW5pdGlhbGl6ZWQuDQo+IA0KPiBUaGUgY21hIHJlZ2lvbnMgbmVlZCB0byBiZSBpbml0aWFsaXpl
+ZCBiZWZvcmUgdGhlIHBhZ2UgdGFibGVzIGFyZSBzZXR1cCBmb3INCj4gdGhlbSB0byBiZSBjb25m
+aWd1cmVkIGNvcnJlY3RseSBhcyB3YXMgcmVhbGl6ZWQgaW4gWzNdLg0KPiANCj4gSGVuY2UsIHNp
+bmNlIHRoZSB1bmZsYXR0ZW5fZGV2aWNldHJlZSBBUElzIGFyZSBub3QgYXZhaWxhYmxlIHVudGls
+IGFmdGVyIHRoZQ0KPiBwYWdlIHRhYmxlcyBoYXZlIGJlZW4gc2V0dXAsIHJldmVydCBiYWNrIHRv
+IHVzaW5nIHRoZSBmZHQgQVBJcy4gVGhpcyBtYWtlcyBpdA0KPiBwb3NzaWJsZSB0byBzdG9yZSBh
+IHJlZmVyZW5jZSB0byBlYWNoIGNtYSBub2RlIGluIHRoZSByZXNlcnZlZF9tZW0gYXJyYXkgYnkN
+Cj4gdGhlIHRpbWUgaXQgaXMgbmVlZGVkIGluIHRoZSBpbml0IGZ1bmN0aW9uLg0KPiANCj4gWzFd
+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC9EVTBQUjA0TUI5Mjk5QzNFQzI0N0UxRkUyQzM3
+MzQ0MEY4MERFMkBEVTBQUjA0TUI5Mjk5LmV1cnByZDA0LnByb2Qub3V0bG9vay5jb20vDQoNCkZv
+ciBDTUEgcmVncmVzc2lvbnMgaXNzdWUsIHRlc3RlZCBpdCB3b3JrZWQuDQpUZXN0ZWQtYnk6IERv
+bmcgQWlzaGVuZyA8YWlzaGVuZy5kb25nQG54cC5jb20+DQoNClJlZ2FyZHMNCkFpc2hlbmcNCg0K
+PiANCj4gT3Jlb2x1d2EgQmFiYXR1bmRlICg0KToNCj4gICBSZXZlcnQgIm9mOiByZXNlcnZlZF9t
+ZW06IFJlc3RydWN0dXJlIGNvZGUgdG8gY2FsbCByZXNlcnZlZCBtZW0gaW5pdA0KPiAgICAgZnVu
+Y3Rpb25zIGVhcmxpZXIiDQo+ICAgUmV2ZXJ0ICJvZjogcmVzZXJ2ZWRfbWVtOiBSZW5hbWUgZmR0
+XyogZnVuY3Rpb25zIHRvIHJlZmVsY3QgdGhlIGNoYW5nZQ0KPiAgICAgZnJvbSB1c2luZyBmZHQg
+QVBJcyINCj4gICBSZXZlcnQgIm9mOiByZXNlcnZlZF9tZW06IFVzZSB1bmZsYXR0ZW5fZGV2aWNl
+dHJlZSBBUElzIHRvIHNjYW4NCj4gICAgIHJlc2VydmVkIG1lbW9yeSBub2RlcyINCj4gICBvZjog
+cmVzZXJ2ZWRfbWVtOiBSZXN0cnVjdHVyZSBjb2RlIHRvIGNhbGwgcm1lbSBpbml0IGZ1bmN0aW9u
+cyBlYXJsaWVyDQo+IA0KPiAgZHJpdmVycy9vZi9mZHQuYyAgICAgICAgICAgICAgICB8ICAgMiAr
+LQ0KPiAgZHJpdmVycy9vZi9vZl9wcml2YXRlLmggICAgICAgICB8ICAgMiArLQ0KPiAgZHJpdmVy
+cy9vZi9vZl9yZXNlcnZlZF9tZW0uYyAgICB8IDEwMyArKysrKysrKysrKysrKysrKy0tLS0tLS0t
+LS0tLS0tLQ0KPiAgaW5jbHVkZS9saW51eC9vZl9yZXNlcnZlZF9tZW0uaCB8ICAgMiArLQ0KPiAg
+a2VybmVsL2RtYS9jb2hlcmVudC5jICAgICAgICAgICB8ICAxMCArKy0tDQo+ICBrZXJuZWwvZG1h
+L2NvbnRpZ3VvdXMuYyAgICAgICAgIHwgICA4ICstLQ0KPiAga2VybmVsL2RtYS9zd2lvdGxiLmMg
+ICAgICAgICAgICB8ICAxMCArKy0tDQo+ICA3IGZpbGVzIGNoYW5nZWQsIDcyIGluc2VydGlvbnMo
+KyksIDY1IGRlbGV0aW9ucygtKQ0KPiANCj4gLS0NCj4gMi4zNC4xDQoNCg==
 
