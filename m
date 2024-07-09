@@ -1,139 +1,110 @@
-Return-Path: <linux-kernel+bounces-246524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E276392C317
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:07:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8645C92C31A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E13E1C2260F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:07:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B5401F239C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F9A17B056;
-	Tue,  9 Jul 2024 18:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164C317B056;
+	Tue,  9 Jul 2024 18:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOHjujHV"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TN8H2bbZ"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59F817B037;
-	Tue,  9 Jul 2024 18:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC486BFB0
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 18:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720548423; cv=none; b=lWfMPmJKgguiJw+zX/OE/VkuAAJOxIv7WIfs9EHLHg0Az7vYRoW6gCEKWVIcyLSjoOyV1eIGKvDFXZKeP74jwwcfG26EVGUljxiPIWhke7MZmbZqvHhdYJEROEy2e9FD1gpdsDMKmvrLnWedAcV54LkM4N9rwPXmFsFQrxEwLms=
+	t=1720548559; cv=none; b=bYYTys+BaMcIhuAo4s7xGFhRc8ZEB5ze1YlKkd3/lencgLcDmIKJBrQsA5Wb3eVy+Z9ysOsVTwDlIAr61BmB6kexukFtUtuMu0Oo36/Lm5L3yMsrEjLZ+3UK6/QVm6kedhV0vorg3OGlPD6z9E4Nj6ebjfOKyh+7b3T1tU7TyMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720548423; c=relaxed/simple;
-	bh=mgk7SHyvf9lK5WrJ5K20qNHaJDi/wOzPgiiLyGmhF3E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bEzrKxB9jOZpOS33ShP15xbStHoAOXzFEtdcXGAeFl2R+1eqTyUC8Z9tKtXsSJ4LO9oAo/YnXEzXtykG8Mzm79zAT3SauAWRCSjEJIM2ofPE1fT33i+oNVWVE+QWAXucC+yLSDiD/vesq4fpg3ptTPiR04ahWL1H6rgIqoy5HNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MOHjujHV; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7036e383089so1332913a34.2;
-        Tue, 09 Jul 2024 11:07:01 -0700 (PDT)
+	s=arc-20240116; t=1720548559; c=relaxed/simple;
+	bh=Nedr5O72MMaCJZHo0lSW5X91GqQNSfgbP3hdBOw9eC4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xnv9UH4JuNjn10HRTqiEPQEwybPX8Ep1bPjr53htgm5v1Wa7ZSw5if2V7DzZu6WIP6/uxLcHLoREbsOOUJ4apKVQ/GzfGtHRuDWt0C6JqyQ3qAnRMTcYBl4QXZDWxvL7/Z339Gz8tTkhmfQLMszhCq69raOrlaZbQpr25CYyHZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TN8H2bbZ; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7fb3529622dso9534239f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 11:09:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720548421; x=1721153221; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EJAo1DXs8ooE0RW3APFpiuREqVJox962WsbSK7msjLw=;
-        b=MOHjujHVsdgBm7HDOr2zt0DydTVIURCoWVpt2srYMUAPPL8pAkr0e7lA3Ux77pc+57
-         fkdQe31Z+ikiviXXyMK1gtZCLwQEdGgU2jYdydY3DMCd5K5/zjXp27tFpFtuqzQMhoJj
-         WY5zDQPSj+i6REzGSN8ZQPvIULTh4YLK/I9ZSvnyBVYX5l/6fdY6oW9iS6Qf0Nwme3v1
-         swNVAxhuDp8/EvsH/OHwbADvzQ9LWenkDs7NHNBNr4Amc4qppHqsphUVT/a8zr3gpFMq
-         FyAj19w41jES4xESt8VQG8bVud1lrQjZz5T4D9UdklyInLLZpvorKQSCMh8DZGTh9Y5B
-         SKPA==
+        d=linuxfoundation.org; s=google; t=1720548556; x=1721153356; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1E/FOgz2bzLAk7czsspwJRssUwyfo69Q4JV8FZsYC/0=;
+        b=TN8H2bbZ7ibYoNF1/DHVfQSYP5qoFtQyexlE/dzeUFZbgg/QELjX7t0j2ngDxcA+iZ
+         bHmZqjljGlnX/rOe2rfEGkxU0NO6qyvXOQFq7Fo77WzXMEIPjTHJY9QzeqIj/2qcp0kB
+         T1QuH14XYCiZr20E2bLg/GX180keEh6mnqYZk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720548421; x=1721153221;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EJAo1DXs8ooE0RW3APFpiuREqVJox962WsbSK7msjLw=;
-        b=qIiVWn0Yhwlkg+FdPi6C/VbQmYAoxmqS+V6Y1nXQwv//ontnDjKO2XJzezqjb1sAbn
-         TbXZzQZwTHxXMt0ZM2Kc7Lt+WNeeUtRZhH9shVd1e2TSROjONIi4AjkiDAJg1IKVmDYC
-         ZgXf299jMoGKJSvYS5KVbX1ePE/LfvBnIp7YD0IBy3ehlAEfJBludvcLv2JvVzqxNwTh
-         nyg3aHBKI4650U++F4Y25F2EMGkbkYw+9SgZ7h0teE/rHqzO9FXfNl/FT0TrgykrRPO+
-         Ucf8aNY5kGqdYeBoV2Ga+tyFErFh+pHCcgt0y36zBW2V48MaYgP5bDTZPQp12LjeMV8p
-         leIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU64zAKEVrFVjs+h5PqK1/0Vi4Q6z9V35UPMD0I4AP5D37y7lLdKl/Gve3xNBuMi7I100gVs4PwNVG0+3527/73j336V5SRhOIbDWY6IZ881afGvwFImI5zJ0PiNdn/GEHObHYL
-X-Gm-Message-State: AOJu0Yz4nckYPhJL1i0DHliCVIm+GuCun7PvpXU3Pj03xk6uN4ZH0ovT
-	dK25O2wRb5x6gUGyKxohXfsrco/DCpZzzIQJydqnv3636qN8puCczD/P6j45+3tdTSSt319hDYS
-	/5dR0Y4qcDxZRP6plgdegI8rUsKo=
-X-Google-Smtp-Source: AGHT+IEK/h7YRFNQ2S7300KC0byBo5gQdt7zCpjTXA4dfoiohxCrmTmLBf7UZXh0AakpB+NhqkARZiuhDFtcgob1/K0=
-X-Received: by 2002:a05:6870:c03:b0:25e:1a0f:522d with SMTP id
- 586e51a60fabf-25eae8a49b7mr2821143fac.35.1720548420892; Tue, 09 Jul 2024
- 11:07:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720548556; x=1721153356;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1E/FOgz2bzLAk7czsspwJRssUwyfo69Q4JV8FZsYC/0=;
+        b=B4/cEUbLd50fzow9jwxfYXKwZjzrpgfKmqanaMBQ9nrsAowULDj3Yt3I3u3M1u87rX
+         zLUPBcx5/SW2NrFx7BMvtOi290GVSK0m6veYypotiCzCgKAqiTp/Okc65Mp6dtdb85D6
+         9gliKqU31as3MRz+Fir01B8EuC0H6znGpj7eXdvol6NKjX+7khgUfexAK6ntCrsQtHe6
+         v65YHQdksnCxExdP3dpSsD/00IEzV3gGXbAAZAJtS/TUf9KxXyIcSY1vTnaiN+zM4w2Z
+         MFk9m5O3XzLJM8TnytJtmI57v2RNrWZzc2FdwBKo+ClpTH2xZvbXq0DWF1vnKZi0EHX+
+         VUfA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ0R9F6IAdNNB5U2iooZ8cirRaTD0kgCXDkoOuxu0QpJ3AQKk5GlBXWx2XM/k9Ap+pcvIYsAdH13TfQNGgrCXLJFsxMGO51tw+Xg9M
+X-Gm-Message-State: AOJu0Yzq3nwz/ELVItKbxfAWcyDhoWdkjengVegPCCTXGvh3Yehskhba
+	N7lfH4kwdKXrJF7PtaSDI+ClwO73IwtNdGcHNIV/K1jqlngVCubSRQvhguIYK04L+wd9Ru1RlbF
+	I
+X-Google-Smtp-Source: AGHT+IHeHnBu5isyAddwI1V9QJx7d99P47RZ/yrGAW+PJhY/k0T9TJ/9xtTL5eHYe0IzkmsubRMkRg==
+X-Received: by 2002:a05:6602:3413:b0:7f8:bfcd:db53 with SMTP id ca18e2360f4ac-8000269672bmr385534639f.1.1720548556008;
+        Tue, 09 Jul 2024 11:09:16 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c0b1b0d41csm612367173.38.2024.07.09.11.09.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 11:09:15 -0700 (PDT)
+Message-ID: <bb8602f1-71f9-438d-91b9-6793250648ea@linuxfoundation.org>
+Date: Tue, 9 Jul 2024 12:09:14 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240709113311.37168-1-make24@iscas.ac.cn>
-In-Reply-To: <20240709113311.37168-1-make24@iscas.ac.cn>
-From: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Date: Tue, 9 Jul 2024 20:06:49 +0200
-Message-ID: <CAMeQTsZojC24Hs_zy0UX0Zjq42zLH21yn_hZhkcSKbL5X1jiSA@mail.gmail.com>
-Subject: Re: [PATCH v4] drm/gma500: fix null pointer dereference in cdv_intel_lvds_get_modes
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, daniel@ffwll.ch, daniel.vetter@ffwll.ch, 
-	alan@linux.intel.com, airlied@redhat.com, akpm@linux-foundation.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: duplicate patches in the random tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Theodore Ts'o <tytso@mit.edu>,
+ "Jason A. Donenfeld" <Jason@zx2c4.com>, Shuah Khan <shuah@kernel.org>
+Cc: John Hubbard <jhubbard@nvidia.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240709180829.65e8967d@canb.auug.org.au>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240709180829.65e8967d@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 9, 2024 at 1:33=E2=80=AFPM Ma Ke <make24@iscas.ac.cn> wrote:
->
-> In cdv_intel_lvds_get_modes(), the return value of drm_mode_duplicate()
-> is assigned to mode, which will lead to a NULL pointer dereference on
-> failure of drm_mode_duplicate(). Add a check to avoid npd.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 6a227d5fd6c4 ("gma500: Add support for Cedarview")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+On 7/9/24 02:08, Stephen Rothwell wrote:
+> Hi all,
+> 
+> The following commits are also in the kselftest-fixes tree as different
+> commits (but the same patches):
+> 
+>    868680ffba11 ("selftests/vDSO: remove duplicate compiler invocations from Makefile")
+>    7bb79ef48b9d ("selftests/vDSO: remove partially duplicated "all:" target in Makefile")
+>    14cd1a877fc6 ("selftests/vDSO: fix clang build errors and warnings")
+> 
+> These are already causing an unnecessary conflict
+> :-( Maybe you could just merge the kselftest-fixes tree
+> (git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git#fixes),
+> but first make sure that it won't be rebased.
+> 
 
-Thanks for the patch!
-Pushed to drm-misc-fixes
+They are now in Linus's mainline. :)
 
--Patrik
-
-> ---
-> Changes in v4:
-> - revised the recipient email list, apologize for the inadvertent mistake=
-.
-> Changes in v3:
-> - added the recipient's email address, due to the prolonged absence of a
-> response from the recipients.
-> Changes in v2:
-> - modified the patch according to suggestions from other patchs;
-> - added Fixes line;
-> - added Cc stable;
-> - Link: https://lore.kernel.org/lkml/20240622072514.1867582-1-make24@isca=
-s.ac.cn/T/
-> ---
->  drivers/gpu/drm/gma500/cdv_intel_lvds.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/gpu/drm/gma500/cdv_intel_lvds.c b/drivers/gpu/drm/gm=
-a500/cdv_intel_lvds.c
-> index f08a6803dc18..3adc2c9ab72d 100644
-> --- a/drivers/gpu/drm/gma500/cdv_intel_lvds.c
-> +++ b/drivers/gpu/drm/gma500/cdv_intel_lvds.c
-> @@ -311,6 +311,9 @@ static int cdv_intel_lvds_get_modes(struct drm_connec=
-tor *connector)
->         if (mode_dev->panel_fixed_mode !=3D NULL) {
->                 struct drm_display_mode *mode =3D
->                     drm_mode_duplicate(dev, mode_dev->panel_fixed_mode);
-> +               if (!mode)
-> +                       return 0;
-> +
->                 drm_mode_probed_add(connector, mode);
->                 return 1;
->         }
-> --
-> 2.25.1
->
+thanks,
+-- Shuah
 
