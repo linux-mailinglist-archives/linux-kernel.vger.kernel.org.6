@@ -1,212 +1,141 @@
-Return-Path: <linux-kernel+bounces-245723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1807892B7FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:29:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8580392B81E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C12FF28588B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:29:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FA0A285D2A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC8F158A09;
-	Tue,  9 Jul 2024 11:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C63156C61;
+	Tue,  9 Jul 2024 11:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FQ0W2jYC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7XlBXlwm";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FQ0W2jYC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7XlBXlwm"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="REHOlr9y"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC7F146D53;
-	Tue,  9 Jul 2024 11:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C3312CDB6;
+	Tue,  9 Jul 2024 11:30:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720524550; cv=none; b=kkb6yTwWODOxPAqTvg2Ja9aq9AfpLQcdMVX9I+He++reQxOTFzeI36cxTDZbE8LtSS74Bk/q2NNkeyqX2gd6mFjwcl5/2Rp/sV8/5MLGA93/uqMacWX2eng2B0aR1B7SKdHSMMUP4RySWaTUO+Z6SHAn+CojUJip6s40X7hFpJg=
+	t=1720524640; cv=none; b=sHNBp2U2ZjuETUFEvqH704YabaPKsiq0sfGUpi4LEytonml6Omdd+lsMxvtmAAjAHDj7wtLT1eEn90Oh6qSROoLy9JqyAm8LAMOAfImYOjOkFw0gn3DCK+ztByvrDKO0kpy6En3L20MSUPD93oULWEmpF8iFX9BQIkz5tsJp+hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720524550; c=relaxed/simple;
-	bh=Zhj/lJ3MUeFfU2BUkGbrf6/vZzMrEC3tefgggFH8HCs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jKq5PS/ke2+CieaHk2Z5ur1sILEYYPEJswq/kOUnVpMVDhlALkgvdZ0crdPhPhPx/S3fFXK9qZ19gz1WWARmyBSTjjbnGfy9LnctVyr8DCpOxEdR9wzRIfzlT0AtT3baF4IVBn6Txh0GMmTyr/IxEF2m3VhnJH0RFrfFdIoWAsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FQ0W2jYC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7XlBXlwm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FQ0W2jYC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7XlBXlwm; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 25C17219FD;
-	Tue,  9 Jul 2024 11:29:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1720524547; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xDi/jZPknRaL9naBmnmsmtwJ7MKW926V1tU5aealilI=;
-	b=FQ0W2jYCmDzL1e7UpSl9CzXxBDbmhkjZEo8gVWS8aajqq8wGRKxxwnMWc90CwO1Gzackc8
-	ckfx24vHjLfJVDu706Tx8vGhXTMEeSNO6ihVAfAuGtYoemjfZsSAv+1iRlMiK6ZM/CKpTD
-	9Z74cgwBddGiaxWUxC63zBc24O6DMBs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1720524547;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xDi/jZPknRaL9naBmnmsmtwJ7MKW926V1tU5aealilI=;
-	b=7XlBXlwmhmn/4ZxCYS6hJaTtdWCt6F/0H4e5B1C5d+pzPlYo9GZckroosfOYAVnInBoKvN
-	YNnhuWgfVXm+z6BQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=FQ0W2jYC;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=7XlBXlwm
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1720524547; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xDi/jZPknRaL9naBmnmsmtwJ7MKW926V1tU5aealilI=;
-	b=FQ0W2jYCmDzL1e7UpSl9CzXxBDbmhkjZEo8gVWS8aajqq8wGRKxxwnMWc90CwO1Gzackc8
-	ckfx24vHjLfJVDu706Tx8vGhXTMEeSNO6ihVAfAuGtYoemjfZsSAv+1iRlMiK6ZM/CKpTD
-	9Z74cgwBddGiaxWUxC63zBc24O6DMBs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1720524547;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xDi/jZPknRaL9naBmnmsmtwJ7MKW926V1tU5aealilI=;
-	b=7XlBXlwmhmn/4ZxCYS6hJaTtdWCt6F/0H4e5B1C5d+pzPlYo9GZckroosfOYAVnInBoKvN
-	YNnhuWgfVXm+z6BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F2D441396E;
-	Tue,  9 Jul 2024 11:29:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DKzwOgIfjWZAYgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 09 Jul 2024 11:29:06 +0000
-Message-ID: <7700f316-9632-46be-a58c-2a0bc9ef4154@suse.cz>
-Date: Tue, 9 Jul 2024 13:29:06 +0200
+	s=arc-20240116; t=1720524640; c=relaxed/simple;
+	bh=fIX6ixrAYdf6dI/dZkfwDgBUu1sXkxgK8sJ2KThkAKY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LJHQbyaWzZpCPEdpyIQjrPTAo/IF3ridL39bSJYvsvDexf24kMg5ynwvDaxjBTaht45YTJlaXpJ0pTBtffky1Q2AygbcyyZ6ptgnuQB4NZQfbyOvPqro52051LC34zrCV6gcKB36DX69HuHUfN2nX93DjvZRd7HCMNRB5yvTx1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=REHOlr9y; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-38b1ce72526so1021715ab.0;
+        Tue, 09 Jul 2024 04:30:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720524638; x=1721129438; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OybDJgpz6EY+j/3mJEj8sCqVPmrO9HMmhiXf8ikWJtY=;
+        b=REHOlr9yLph/zHi5D2ehMTTwZ48soxeCJaFIWes9SIj9qw3lQP8EUONC4UhHj/SdNH
+         HcPNwQZfNBoyFojIzFDqgSKKN/wY7gFTWbnL5lG8zUk1TxPZ1yREOUuL5joEYhLmWQl3
+         WTHSMk410jvEshtEOUGzfnPeGXq1Dekt6oUSnr4Y2utcZCaiHXxoQWUKD/93Gfx6QnrS
+         xjyJS0WDyTkkk69vs9DyXA2H6wBzU7Ls7PW+WfrK/bbzemes69BDPWEcRzjXCZ9Z14ZP
+         W9PQ9UBI7juiavZzSV2Veo6r3MEOh1jAxhhNWKgLnVuMAMp6w8rPUVMFjaUrUltJQeZI
+         94sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720524638; x=1721129438;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OybDJgpz6EY+j/3mJEj8sCqVPmrO9HMmhiXf8ikWJtY=;
+        b=J8jeIVeW788kHTus4SVaX3xnGBP8nHvs3qbC64OnzF+F17mqbsAkoELKYflWl4FeWj
+         g2lQaxt2OwTAeN0wSoll5ekR0MJSISh9EISCuK5MXsEJ7usgxEQnqkiqwslt+QBfGtR1
+         Nsv05FDpHPVh5nFYzRq5lYPimpsW92JCqLaDGcyzpfd1Zu8s5tvSLtPK6yhKw+Mj5c8F
+         4/cEZTD4EN2jp62n2BUKS3xs3pmmlCo2NS3iNMMdM5IIPZPWQl8+73yN3ElnHtUQBgtP
+         e+CU6JMm45sYCOkhg4vT1k3Ct7uNl/EmtnzwaO+0pYvAYITMaW5zsT5wHUgdIF8QMmpu
+         D6xA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyp/SlzUvAz1wCtFTTOY5InhjZsSABiLT5DWKGNqCglIy8P8jrNa8Bpjj84FIOWMObkiuwxpFku/wIkIjxuoGQ1R16N/l++imVfFaFgTOBY76YyDjX+FdKx7VaJ7Nd+84xhdcyxOAIIQ==
+X-Gm-Message-State: AOJu0YwOL63wzWFdCYEnVTXY7Ghlb2Xu7kPSR2GVngdd0A6NbGtng+aa
+	amJi/cXJaAt0dzQAJY1vc4btuhXag3g6oD0PM0DwOFJVAaFJXkk+VK2URUt2cZ6SEdwlSdjiQKT
+	RRAio4LRGg1wVmoDh0UIvmk13XHo=
+X-Google-Smtp-Source: AGHT+IFPPY70EF131mrWS92AdxahsTxcIjvT/UMQ5GCEha7X5m+AdeBkpVaMR0Kgsk0JXGV9ftk+CsXREEzIyZTvwPw=
+X-Received: by 2002:a05:6e02:1c03:b0:382:7825:fe4e with SMTP id
+ e9e14a558f8ab-38a585851d4mr26758075ab.16.1720524637800; Tue, 09 Jul 2024
+ 04:30:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/7] tools: add skeleton code for userland testing of
- VMA logic
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Matthew Wilcox <willy@infradead.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, SeongJae Park <sj@kernel.org>,
- Shuah Khan <shuah@kernel.org>, Brendan Higgins <brendanhiggins@google.com>,
- David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
-References: <cover.1720121068.git.lorenzo.stoakes@oracle.com>
- <7989012e4f17074d3b94803dcebb8c3d1365ca1d.1720121068.git.lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <7989012e4f17074d3b94803dcebb8c3d1365ca1d.1720121068.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.50 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,suse.cz:email,suse.cz:dkim];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 25C17219FD
-X-Spam-Flag: NO
-X-Spam-Score: -4.50
-X-Spam-Level: 
+References: <20240708230613.448846-1-quic_obabatun@quicinc.com>
+In-Reply-To: <20240708230613.448846-1-quic_obabatun@quicinc.com>
+From: Klara Modin <klarasmodin@gmail.com>
+Date: Tue, 9 Jul 2024 13:30:27 +0200
+Message-ID: <CABq1_vjvPeF-h19-H99q5D1u7wvtbRPoKKqroMJFaMb+yUFLgg@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Revert use of Unflatten_devicetree APIs from reserved_mem
+To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+Cc: robh@kernel.org, saravanak@google.com, aisheng.dong@nxp.com, hch@lst.de, 
+	m.szyprowski@samsung.com, robin.murphy@arm.com, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, will@kernel.org, 
+	catalin.marinas@arm.com, kernel@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/4/24 9:28 PM, Lorenzo Stoakes wrote:
-> Establish a new userland VMA unit testing implementation under
-> tools/testing which utilises existing logic providing maple tree support in
-> userland utilising the now-shared code previously exclusive to radix tree
-> testing.
-> 
-> This provides fundamental VMA operations whose API is defined in mm/vma.h,
-> while stubbing out superfluous functionality.
-> 
-> This exists as a proof-of-concept, with the test implementation functional
-> and sufficient to allow userland compilation of vma.c, but containing only
-> cursory tests to demonstrate basic functionality.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Hi,
 
-Wonder how fragile will this turn out to be wrt changes to the kernel side.
-But if we can get the bots to run it regularly, should be feasible. And we
-need to add tests for everything that broke rpm in the past :)
+Den tis 9 juli 2024 kl 01:06 skrev Oreoluwa Babatunde
+<quic_obabatun@quicinc.com>:
+>
+> With recent changes made to initialize the cma regions before the page
+> tables are setup, commit f2a524d9ef5b ("of: reserved_mem: Restructure
+> code to call reserved mem init functions earlier"), an issue was
+> introduced where the initialization of the cma regions fail and are
+> initialized as "non-reusable" regions instead of "reusable". [1], [2]
+>
+> This issue occurs because the device_node of the regions are not yet
+> created by the time the cma regions are being initialized.
+>
+> The cma regions need to be initialized before the page tables are setup
+> for them to be configured correctly as was realized in [3].
+>
+> Hence, since the unflatten_devicetree APIs are not available until after
+> the page tables have been setup, revert back to using the fdt APIs. This
+> makes it possible to store a reference to each cma node in the
+> reserved_mem array by the time it is needed in the init function.
+>
+> [1] https://lore.kernel.org/all/DU0PR04MB9299C3EC247E1FE2C373440F80DE2@DU0PR04MB9299.eurprd04.prod.outlook.com/
+>
+> [2] https://lore.kernel.org/all/986361f4-f000-4129-8214-39f2fb4a90da@gmail.com/
+>
+> [3] https://lore.kernel.org/all/20240610213403.GA1697364@thelio-3990X/
+>
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+These reverts also fixes the issue for me. Feel free to CC me when you
+decide to send the next version if you want and I can retest it.
 
+Regards,
+Tested-by: Klara Modin <klarasmodin@gmail.com>
+
+> Oreoluwa Babatunde (4):
+>   Revert "of: reserved_mem: Restructure code to call reserved mem init
+>     functions earlier"
+>   Revert "of: reserved_mem: Rename fdt_* functions to refelct the change
+>     from using fdt APIs"
+>   Revert "of: reserved_mem: Use unflatten_devicetree APIs to scan
+>     reserved memory nodes"
+>   of: reserved_mem: Restructure code to call rmem init functions earlier
+>
+>  drivers/of/fdt.c                |   2 +-
+>  drivers/of/of_private.h         |   2 +-
+>  drivers/of/of_reserved_mem.c    | 103 +++++++++++++++++---------------
+>  include/linux/of_reserved_mem.h |   2 +-
+>  kernel/dma/coherent.c           |  10 ++--
+>  kernel/dma/contiguous.c         |   8 +--
+>  kernel/dma/swiotlb.c            |  10 ++--
+>  7 files changed, 72 insertions(+), 65 deletions(-)
+>
+> --
+> 2.34.1
+>
 
