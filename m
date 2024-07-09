@@ -1,278 +1,104 @@
-Return-Path: <linux-kernel+bounces-245386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0148D92B1EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:17:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5879892B1F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9DD9282617
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:17:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F01981F22531
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23B4150989;
-	Tue,  9 Jul 2024 08:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D56152524;
+	Tue,  9 Jul 2024 08:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="BX4of96H"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Y48QhxU8"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA73712E1C4
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67431487C5;
+	Tue,  9 Jul 2024 08:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720513040; cv=none; b=uJBYK2Fgm7VJ411bVRqFxHMST0RqvpOpsfZSrBP3vXBqN2Z+Q1Tyb7a9qSlkZxWjW75VhBpfp0igExguJNBP1TYOkLWqkoJb8h0jKpSC/Lsg0OYP4ZnJSmbMZC7LST/RclxQAYSPX5fIHzme2iRgbfR2f+WWHCuZDuwBqYJsRe0=
+	t=1720513109; cv=none; b=m70DF70JpOSHi8kSLslfHK9jMOrKcPjs6418cHOiwnoXItnCD9gAva2gjlusGg7507CSh+sIe5R6aRaSIJUJovPgfusyGuaLAZzmJTesF0Gant9+fY702PS1XC/FPCi1+njuq/TgUxUxlQ5Mib/dgBfJx9MgNugV/6tTAGaAxiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720513040; c=relaxed/simple;
-	bh=CFl4FEO6onPfRjNmf17lDUrD96DZaB8ZQ4TmUyyNP5s=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=swcu7Uwu+x7tslETNvTfLqFdX/IrVl2AHEoLQu1bFpFrRRqjOAdwtv2zdL+vM6Mu8GP9mxRu6rCljkr0+cv3D2e4j5QCxFNfVTiGh96om7IUEu3ZKns6heL3vBTgkwTe2RAp6ZWIa2ri5mBh12SwV7thIvkdVZ37Jd1x5Iaxh64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=BX4of96H; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1720513109; c=relaxed/simple;
+	bh=g6wffX0jQVpxanjymkqV2YgRffLk23pn0cJcQ4v9Qsk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZnqTJ/z8QXCSQjlv4EXNYkZJGq1fg2goh1w2Mo1nCX0r/B5FkimhkQrzwi+ya3D7IkcJoQJr8tndTQEJ0FOAoYRRORuHPbdxy0tVMBUI+56rq5uy2/w/iWo65uCkmRnLryHFP8WxcocpfnfDCgOiqc2rAHubkdkGYGGk4YuQ1iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Y48QhxU8; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D8844E0006;
+	Tue,  9 Jul 2024 08:18:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720513099;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=guBIG0yXjLQF/KGNGw9TE40/iUTMcO24dv9vfa9naio=;
+	b=Y48QhxU8LcqREPrmzfduRlZKoQ4PjfsJza17r49pwbtt5814DF043QS6TUdqB9k9LeV8L4
+	sBPhseCqHXXQqVH+4SSN9Bal8Omu6muNG2m6JlpkUZ7QVC469QQdeGsuqPA8n0NWouwimp
+	0UL+UxcyBY7DjxrLKtBPJm9xHqn+Q69x0eyBN+c8AQfU6zflixPTxv0nbIZuzq5pgBpJjY
+	4NEtXlXkmnRp+ywdqHPVJH0lvUqVsFvbY78Y2WThiH4TZ2+iEm3cSfC6gOoIIGeZyuezCV
+	4xiM+tb69TJOK8LKVAwDYT25lQ2QIG1cpEh78QfLx4urBVdVBp3nfwq0PXIxnw==
+Date: Tue, 9 Jul 2024 10:18:15 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Simon Horman <horms@kernel.org>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew@lunn.ch>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Richard
+ Cochran <richardcochran@gmail.com>, Radu Pirea
+ <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
+ Gospodarek <andy@greyhouse.net>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
+ <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
+ UNGLinuxDriver@microchip.com, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>
+Subject: Re: [PATCH net-next v16 13/14] net: ethtool: Add support for
+ tsconfig command to get/set hwtstamp config
+Message-ID: <20240709101815.474eec3b@kmaincent-XPS-13-7390>
+In-Reply-To: <20240708134409.0418e44a@kernel.org>
+References: <20240705-feature_ptp_netnext-v16-0-5d7153914052@bootlin.com>
+	<20240705-feature_ptp_netnext-v16-13-5d7153914052@bootlin.com>
+	<20240707082408.GF1481495@kernel.org>
+	<20240707145523.37fdfeec@kmaincent-XPS-13-7390>
+	<20240708134409.0418e44a@kernel.org>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1720513027;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YAACi2NX/mGR0ktakok0JBId6ENllzY1DnYcf6uHrnY=;
-	b=BX4of96H0VvqDZS5x3Ajo3tTb3+fujHh5IDTmu0Z0FDYGHe4oO7JweaFpedsFxRfc7PHKi
-	VqgGCnhLZAQqryXWtuS3ubMSeba/xlwO0aTEQ0wcqKwYAUcsnepcfqW2q2IgrOS1k8/rNt
-	l9PpwLMDzFmOBlEoIV5S9Z3lAHgrPrzyQwe0oMHShqORIewlRrLtXWisjmW9RKS/n7z78o
-	lYqb+TJcLbXPvreBNOim5fjrGejliqZfrFotVXkWATrjHw2awW7FkfJB/moquFaMWUl0Ii
-	MJUE9KNXzVhfF82RpCHfyXgS9WsM2HyeunlNParYkiJz8231IyJCURkPGMl16g==
-Date: Tue, 09 Jul 2024 10:17:06 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Andy Yan <andyshrk@163.com>
-Cc: linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org,
- heiko@sntech.de, hjc@rock-chips.com, andy.yan@rock-chips.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, daniel@ffwll.ch, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, javierm@redhat.com
-Subject: Re: [PATCH] drm/rockchip: cdn-dp: Remove redundant workarounds for
- firmware loading
-In-Reply-To: <2fd3aabd.785b.190914ec1a6.Coremail.andyshrk@163.com>
-References: <9b7a9e9b88ad8c7489ee1b4c70b8751eeb5cf6f9.1720049413.git.dsimic@manjaro.org>
- <109c6f19.2559.1907b817a99.Coremail.andyshrk@163.com>
- <0bf4701d98833609b917983718c610aa@manjaro.org>
- <2fd3aabd.785b.190914ec1a6.Coremail.andyshrk@163.com>
-Message-ID: <f0fb9feed2d9262bb4d7c8ade836af62@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-Hello Andy,
+On Mon, 8 Jul 2024 13:44:09 -0700
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-On 2024-07-08 09:46, Andy Yan wrote:
-> At 2024-07-04 18:35:42, "Dragan Simic" <dsimic@manjaro.org> wrote:
->> On 2024-07-04 04:10, Andy Yan wrote:
->>> At 2024-07-04 07:32:02, "Dragan Simic" <dsimic@manjaro.org> wrote:
->>>> After the additional firmware-related module information was
->>>> introduced by
->>>> the commit c0677e41a47f ("drm/rockchip: cdn-dp-core: add
->>>> MODULE_FIRMWARE
->>>> macro"), there's no longer need for the firmware-loading workarounds
->>>> whose
->>>> sole purpose was to prevent the missing firmware blob in an initial
->>>> ramdisk
->>>> from causing driver initialization to fail.  Thus, delete the
->>>> workarounds,
->>>> which removes a sizable chunk of redundant code.
->>> 
->>> What would happen if there was no ramdisk? And the firmware is in
->>> rootfs ？
->>> 
->>> For example： A buildroot based tiny embedded system。
->> 
->> Good point, let me explain, please.
->> 
->> In general, if a driver is built into the kernel, there should also be
->> an initial ramdisk that contains the related firmware blobs, because
->> it's
->> unknown is the root filesystem available when the driver is probed.  
->> If
->> a driver is built as a module and there's no initial ramdisk, having
->> the related firmware blobs on the root filesystem should be fine,
->> because
->> the firmware blobs and the kernel module become available at the same
->> time, through the root filesystem. [1]
->> 
->> Another option for a driver built statically into the kernel, when
->> there's
->> no initial ramdisk, is to build the required firmware blobs into the
->> kernel
->> image. [2]  Of course, that's feasible only when a kernel image is 
->> built
->> specificially for some device, because otherwise it would become too
->> large
->> because of too many drivers and their firmware blobs becoming 
->> included,
->> but that seems to fit the Buildroot-based example.
->> 
->> To sum it up, mechanisms already exist in the kernel for various
->> scenarios
->> when it comes to loading firmware blobs.  Even if the deleted 
->> workaround
->> attempts to solve some issue specific to some environment, that isn't
->> the
->> right place or the right way for solving any issues of that kind.
->> 
->> While preparing this patch, I even tried to find another kernel driver
->> that
->> also implements some similar workarounds for firmware loading, to
->> justify
->> the existence of such workarounds and to possibly move them into the
->> kernel's
->> firmware-loading interface.  Alas, I was unable to find such 
->> workarounds
->> in
->> other drivers, which solidified my reasoning behind classifying the
->> removed
->> code as out-of-place and redundant.
-> 
-> For some tiny embedded system，there is no such ramdisk，for example：
-> a buildroot based rootfs，the buildroot only generate rootfs。
-> 
-> And FYI， there are mainline drivers try to fix such issue by
-> defer_probe，for example：
-> smc_abc[0]
-> There are also some other similar scenario in gpu driver{1}[2]
-> 
-> [0]https://elixir.bootlin.com/linux/latest/source/drivers/tee/optee/smc_abi.c#L1518
-> [1]https://patchwork.kernel.org/project/dri-devel/patch/20240109120604.603700-1-javierm@redhat.com/
-> [2]https://lore.kernel.org/dri-devel/87y1918psd.fsf@minerva.mail-host-address-is-not-set/T/
+> On Sun, 7 Jul 2024 14:55:23 +0200 Kory Maincent wrote:
+>  [...] =20
+>  [...] =20
+>=20
+> Looks like there's also a new driver to fix :(
 
-Thanks for providing these examples.
+Oh indeed sorry.
+I have to check if new MAC drivers appear between each version.
 
-Before I continue thinking about the possible systemic solution,
-could you please clarify the way Buildroot builds the kernel and
-prepares the root filesystem?  I'm not familiar with Buildroot,
-but it seems to me that it builds the drivers statically into the
-produced kernel image, while it places the related firmware blobs
-into the produced root filesystem.  Am I right there?
-
-As I already wrote earlier, and as the above-linked discussions
-conclude, solving these issues doesn't belong to any specific driver.
-It should be resolved within the kernel's firmware loading mechanism
-instead, and no driver should be specific in that regard.
-
->> [1] 
->> https://www.kernel.org/doc/Documentation/driver-api/firmware/direct-fs-lookup.rst
->> [2] 
->> https://www.kernel.org/doc/Documentation/driver-api/firmware/built-in-fw.rst
->> 
->>>> Various utilities used by Linux distributions to generate initial
->>>> ramdisks
->>>> need to obey the firmware-related module information, so we can rely
->>>> on the
->>>> firmware blob being present in the generated initial ramdisks.
->>>> 
->>>> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
->>>> ---
->>>> drivers/gpu/drm/rockchip/cdn-dp-core.c | 53 
->>>> +++++---------------------
->>>> 1 file changed, 10 insertions(+), 43 deletions(-)
->>>> 
->>>> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c
->>>> b/drivers/gpu/drm/rockchip/cdn-dp-core.c
->>>> index bd7aa891b839..e1a7c6a1172b 100644
->>>> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
->>>> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
->>>> @@ -44,9 +44,9 @@ static inline struct cdn_dp_device
->>>> *encoder_to_dp(struct drm_encoder *encoder)
->>>> #define DPTX_HPD_DEL		(2 << 12)
->>>> #define DPTX_HPD_SEL_MASK	(3 << 28)
->>>> 
->>>> -#define CDN_FW_TIMEOUT_MS	(64 * 1000)
->>>> #define CDN_DPCD_TIMEOUT_MS	5000
->>>> #define CDN_DP_FIRMWARE		"rockchip/dptx.bin"
->>>> +
->>>> MODULE_FIRMWARE(CDN_DP_FIRMWARE);
->>>> 
->>>> struct cdn_dp_data {
->>>> @@ -909,61 +909,28 @@ static int cdn_dp_audio_codec_init(struct
->>>> cdn_dp_device *dp,
->>>> 	return PTR_ERR_OR_ZERO(dp->audio_pdev);
->>>> }
->>>> 
->>>> -static int cdn_dp_request_firmware(struct cdn_dp_device *dp)
->>>> -{
->>>> -	int ret;
->>>> -	unsigned long timeout = jiffies +
->>>> msecs_to_jiffies(CDN_FW_TIMEOUT_MS);
->>>> -	unsigned long sleep = 1000;
->>>> -
->>>> -	WARN_ON(!mutex_is_locked(&dp->lock));
->>>> -
->>>> -	if (dp->fw_loaded)
->>>> -		return 0;
->>>> -
->>>> -	/* Drop the lock before getting the firmware to avoid blocking 
->>>> boot
->>>> */
->>>> -	mutex_unlock(&dp->lock);
->>>> -
->>>> -	while (time_before(jiffies, timeout)) {
->>>> -		ret = request_firmware(&dp->fw, CDN_DP_FIRMWARE, dp->dev);
->>>> -		if (ret == -ENOENT) {
->>>> -			msleep(sleep);
->>>> -			sleep *= 2;
->>>> -			continue;
->>>> -		} else if (ret) {
->>>> -			DRM_DEV_ERROR(dp->dev,
->>>> -				      "failed to request firmware: %d\n", ret);
->>>> -			goto out;
->>>> -		}
->>>> -
->>>> -		dp->fw_loaded = true;
->>>> -		ret = 0;
->>>> -		goto out;
->>>> -	}
->>>> -
->>>> -	DRM_DEV_ERROR(dp->dev, "Timed out trying to load firmware\n");
->>>> -	ret = -ETIMEDOUT;
->>>> -out:
->>>> -	mutex_lock(&dp->lock);
->>>> -	return ret;
->>>> -}
->>>> -
->>>> static void cdn_dp_pd_event_work(struct work_struct *work)
->>>> {
->>>> 	struct cdn_dp_device *dp = container_of(work, struct cdn_dp_device,
->>>> 						event_work);
->>>> 	struct drm_connector *connector = &dp->connector;
->>>> 	enum drm_connector_status old_status;
->>>> -
->>>> 	int ret;
->>>> 
->>>> 	mutex_lock(&dp->lock);
->>>> 
->>>> 	if (dp->suspended)
->>>> 		goto out;
->>>> 
->>>> -	ret = cdn_dp_request_firmware(dp);
->>>> -	if (ret)
->>>> -		goto out;
->>>> +	if (!dp->fw_loaded) {
->>>> +		ret = request_firmware(&dp->fw, CDN_DP_FIRMWARE, dp->dev);
->>>> +		if (ret) {
->>>> +			DRM_DEV_ERROR(dp->dev, "Loading firmware failed: %d\n", ret);
->>>> +			goto out;
->>>> +		}
->>>> +
->>>> +		dp->fw_loaded = true;
->>>> +	}
->>>> 
->>>> 	dp->connected = true;
->>>> 
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
