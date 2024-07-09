@@ -1,185 +1,95 @@
-Return-Path: <linux-kernel+bounces-246000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D08492BC86
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:11:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA92792BC88
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:11:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09A1B1F2292E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:11:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8574B281BA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D874818FC60;
-	Tue,  9 Jul 2024 14:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C842518FC8D;
+	Tue,  9 Jul 2024 14:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0WxFHkw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShyYfvpX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1123538DD8;
-	Tue,  9 Jul 2024 14:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A3A15699E;
+	Tue,  9 Jul 2024 14:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720534256; cv=none; b=XgHe8WqgugBz6LU10A03p/muF0AX76vYyFJl3cpVYQwnIa8M02Pkm+zoz8krTjau6fbXSgRbPVLq1BDbA9b2mxqBZlCM6i4gop95gt/zPzkHtX2KyOKm6YcFQ6w5oIESVbS9yVfL2R7tYpWvO/msJWGu2U4yS/OBZEwSIL6HRQs=
+	t=1720534284; cv=none; b=urinkBLDff3nFaSNJU/2M4Xe9loxo9fi5jpSxCpLyzNdwxtmltRl9cyp2/2ajQNlcQQ+wfgygO0jJKep7D5ZMeAcUif3XpgetfGr87LHwZpgfd3vT9LwgUfltNcQR26KC/56kQosHHP/JgTbn/iUhpz7bupFdHU4E7fhs5B2GnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720534256; c=relaxed/simple;
-	bh=jrwgOSqLnDVXE3Ir5Kqt1EGFwtQZ92EcQiFwkAGb7Ig=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MoDh6c74U+XonkBpc8AqN86JU0O3cvisB2FPNMN0q7RT9nGwEOshNX7kJ7bBbCgMbV0iha6of7c8HS9ln+HBBQiCU1SGixvkkFfkvNWFv3ljl5+faHknWqpAKanSkrswdkI91Dp+LBbjSPnuq0S5GxeTwPdpHHOlm3+5k3HRAVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E0WxFHkw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FD25C3277B;
-	Tue,  9 Jul 2024 14:10:55 +0000 (UTC)
+	s=arc-20240116; t=1720534284; c=relaxed/simple;
+	bh=PCnMnXirJqSJMZG4xB6vc8i/BajoHnEezI7p3NPAu7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VQ8k4MPs/a5gzRq81apIPsO3rxLnWT6/LwBMX3GA9zcWO5m79V7DkAnR96QWmaV/rnq5scCTJgEQ835FGCJ76sbnbdSxKtuo1qIgCB7dm8aja9gRYDAZZc84rsAHLmP9/TcBLMWf3LQ/nXT7pts/IqHOviv263VFQMFq7rxe/zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShyYfvpX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82F8EC32782;
+	Tue,  9 Jul 2024 14:11:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720534255;
-	bh=jrwgOSqLnDVXE3Ir5Kqt1EGFwtQZ92EcQiFwkAGb7Ig=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=E0WxFHkwNCoOYL12JtMm5dm1ewNJPL1fF4A6uE073OEbk+NfiXWC9XhhxKgcwdw4K
-	 WOhoUXzBtRGPgsoNKi9plDP7xi/6htrNPgqRx9EJdtLTVGsPnA73le/4NWbMjvVhM3
-	 fSIIXSZYBy9eHAuQrwBoe4VNhMNUTLMEr9cBMCjous/B7eNMauXn7gDPu6hreRG9sU
-	 KHXtp0u9MQ5mzhRBTQO95FMpfPKto/EAIE/5rQsIrHFhtbHViDPg5CdaqqEFtZpBT6
-	 Ffq4PLu+qyxQGau/9sQ1XSQrsbxokDQW0LPo2418bWKcVnFnMG5cPpggRxmWYdzPAi
-	 i54Bl+11v4AEw==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52ea5dc3c66so7155926e87.3;
-        Tue, 09 Jul 2024 07:10:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVcZ0RjwyJToU5Qsl5FjyArmmFgmuVL7K3Vnu9wvkijLcrwYEMHfBhRlDjKAhv2UQTKNCaej5H/9zizjkMAmV+f8e9f7T9QU2ZonoXUJDU0PLWZu89wDbnMJhMI3dcM3PAoUlgzFUYJTXJaKM5Utf/+32tknZ87Uya6zTr/N9SQEw==
-X-Gm-Message-State: AOJu0YyrA9ZX2X9zCsifUTk+4zoeizE4d9laddbBr6KP+IBSznvD7A/1
-	1sLKCQQYbxikcvBxWd2xiJDrcZt1iwvgAUNHQh7Kfm5Gjc47X6qfd4ea9y25+TIo931pUXIsYUq
-	CmWGcz4kwa3J79EbIliJ7Z1p6rw==
-X-Google-Smtp-Source: AGHT+IEQmv0+WiicMvKYnKq41lc5Tr8jd8opmyylh2uppeRiuhPL2X8bz0Bic+Ci/n4FuePRj8iO7NcnOVzDh6HBDow=
-X-Received: by 2002:a05:6512:3b9d:b0:52b:be6b:d16a with SMTP id
- 2adb3069b0e04-52eb99a3526mr2633731e87.31.1720534254056; Tue, 09 Jul 2024
- 07:10:54 -0700 (PDT)
+	s=k20201202; t=1720534283;
+	bh=PCnMnXirJqSJMZG4xB6vc8i/BajoHnEezI7p3NPAu7E=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=ShyYfvpXIFXG/TEJCH6AD5pggW+nn/4afDRuoxSwc0LNjxjA3yjDJKYDRt5BQjgpv
+	 voVtz+ewLOwTsHPCGGpJVOQsBR8/GGncNHs4L29f6vFuUGdt3AiBdXNrtpQhFhuJcz
+	 NeBTnIJTQyuLCBK1ey64t8hZQgYO1f2U6N7BS75hdLcvtI8zj+GauYowYV0ehAu6yM
+	 JIKlK/w1m9/zeewqlun79JpSDFUUwLw+J1XfzCdi2Rc0vlU+wy/vMW/ank81bhnT4b
+	 FnhxhqO7+EIi38rv4BYMqU2XHMpKesASUPbcVpv3rzaaF6o/xgEowwe7xCdp8e9YS/
+	 JFiB56wdTFyIg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 26FE3CE09F8; Tue,  9 Jul 2024 07:11:23 -0700 (PDT)
+Date: Tue, 9 Jul 2024 07:11:23 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org,
+	andrii@kernel.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org,
+	clm@meta.com, bpf <bpf@vger.kernel.org>, willy@infradead.org
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+Message-ID: <91d37ad3-137b-4feb-8154-4deaa4b11dc3@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240708091241.544262971@infradead.org>
+ <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
+ <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
+ <20240709090153.GF27299@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240626162307.1748759-1-Frank.Li@nxp.com> <PAXPR04MB85101FF8C01B57F87DF1B04A88DA2@PAXPR04MB8510.eurprd04.prod.outlook.com>
-In-Reply-To: <PAXPR04MB85101FF8C01B57F87DF1B04A88DA2@PAXPR04MB8510.eurprd04.prod.outlook.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 9 Jul 2024 08:10:40 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJt+6_YrUaapxd+u7GjQffFi=okirkq+cotTUE43Knwqw@mail.gmail.com>
-Message-ID: <CAL_JsqJt+6_YrUaapxd+u7GjQffFi=okirkq+cotTUE43Knwqw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] dt-bindings: net: convert enetc to yaml
-To: Wei Fang <wei.fang@nxp.com>
-Cc: Frank Li <frank.li@nxp.com>, "krzk@kernel.org" <krzk@kernel.org>, 
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "edumazet@google.com" <edumazet@google.com>, 
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
-	"kuba@kernel.org" <kuba@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, 
-	Vladimir Oltean <vladimir.oltean@nxp.com>, Claudiu Manoil <claudiu.manoil@nxp.com>, 
-	Clark Wang <xiaoning.wang@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709090153.GF27299@noisy.programming.kicks-ass.net>
 
-On Mon, Jul 8, 2024 at 4:07=E2=80=AFAM Wei Fang <wei.fang@nxp.com> wrote:
->
-> > -----Original Message-----
-> > From: Frank Li <Frank.Li@nxp.com>
-> > Sent: 2024=E5=B9=B46=E6=9C=8827=E6=97=A5 0:23
-> > To: krzk@kernel.org
-> > Cc: Frank Li <frank.li@nxp.com>; conor+dt@kernel.org;
-> > davem@davemloft.net; devicetree@vger.kernel.org; edumazet@google.com;
-> > imx@lists.linux.dev; krzk+dt@kernel.org; kuba@kernel.org;
-> > linux-kernel@vger.kernel.org; netdev@vger.kernel.org; pabeni@redhat.com=
-;
-> > robh@kernel.org
-> > Subject: [PATCH v2 1/1] dt-bindings: net: convert enetc to yaml
-> >
-> > Convert enetc device binding file to yaml. Split to 3 yaml files, 'fsl,=
-enetc.yaml',
-> > 'fsl,enetc-mdio.yaml', 'fsl,enetc-ierb.yaml'.
-> >
->
-> Sorry I didn't see this patch until now, I was planning to make this conv=
-ersion
-> but didn't realize you had started it first. It's very nice, thanks!
->
-> > Additional Changes:
-> > - Add pci<vendor id>,<production id> in compatible string.
-> > - Ref to common ethernet-controller.yaml and mdio.yaml.
-> > - Remove fixed-link part.
-> >
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> > Change from v1 to v2
-> > - renamee file as fsl,enetc-mdio.yaml, fsl,enetc-ierb.yaml, fsl,enetc.y=
-aml
-> > - example include pcie node
-> > ---
-> >  .../bindings/net/fsl,enetc-ierb.yaml          |  35 ++++++
-> >  .../bindings/net/fsl,enetc-mdio.yaml          |  53 ++++++++
-> >  .../devicetree/bindings/net/fsl,enetc.yaml    |  50 ++++++++
-> >  .../devicetree/bindings/net/fsl-enetc.txt     | 119 ------------------
-> >  4 files changed, 138 insertions(+), 119 deletions(-)  create mode 1006=
-44
-> > Documentation/devicetree/bindings/net/fsl,enetc-ierb.yaml
-> >  create mode 100644
-> > Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/net/fsl,enetc.yam=
-l
-> >  delete mode 100644 Documentation/devicetree/bindings/net/fsl-enetc.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml
-> > b/Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml
-> > new file mode 100644
-> > index 0000000000000..60740ea56cb08
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml
->
-> I suggest changing the file name to nxp,netc-emdio.yaml. "fsl" is a very =
-outdated
-> prefix. For new files, I think "nxp" is a better prefix.
+On Tue, Jul 09, 2024 at 11:01:53AM +0200, Peter Zijlstra wrote:
+> On Mon, Jul 08, 2024 at 05:25:14PM -0700, Andrii Nakryiko wrote:
+> 
+> > Quick profiling for the 8-threaded benchmark shows that we spend >20%
+> > in mmap_read_lock/mmap_read_unlock in find_active_uprobe. I think
+> > that's what would prevent uprobes from scaling linearly. If you have
+> > some good ideas on how to get rid of that, I think it would be
+> > extremely beneficial. 
+> 
+> That's find_vma() and friends. I started RCU-ifying that a *long* time
+> ago when I started the speculative page fault patches. I sorta lost
+> track of that effort, Willy where are we with that?
+> 
+> Specifically, how feasible would it be to get a simple RCU based
+> find_vma() version sorted these days?
 
-Convention is filenames use the compatible string. So no.
+Liam's and Willy's Maple Tree work, combined with Suren's per-VMA locking
+combined with some of Vlastimil's slab work is pushing in that direction.
+I believe that things are getting pretty close.
 
-> > @@ -0,0 +1,53 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
-> > +---
-> > +
-> > +title: ENETC the central MDIO PCIe endpoint device
-> external is better, that is why we call it EMDIO.
->
-> > +
-> > +description:
-> > +  In this case, the mdio node should be defined as another PCIe
-> > +  endpoint node, at the same level with the ENETC port nodes
-> > +
-> This my local description, excerpted from NETC's block guide, FYI.
-> description: |
->   NETC provides an external master MDIO interface (EMDIO) for managing ex=
-ternal
->   devices (PHYs). EMDIO supports both Clause 22 and 45 protocols. And the=
- EMDIO
->   provides a means for different software modules to share a single set o=
-f MDIO
->   signals to access their PHYs.
->
-> > +maintainers:
-> > +  - Frank Li <Frank.Li@nxp.com>.
-> Vladimir and Claudiu as the driver maintainer, it is best to add them
-> to this list
->
-> > +
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +      - enum:
-> > +          - pci1957,ee01
-> > +      - const: fsl,enetc-mdio
->
-> " fsl,enetc-mdio" is meaningless, we did not use it ever.
+As with your work in 2010 and MIT guy's work in 2013, corner-case
+correctness and corner-case performance regressions continue to provide
+quite a bit of good clean fun.
 
-arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi:
- compatible =3D "pci1957,ee01", "fsl,enetc-mdio";
-
-In fact, until I recently added the standard PCI compatibles, these
-were the only compatible strings used.
-
-
-Rob
+							Thanx, Paul
 
