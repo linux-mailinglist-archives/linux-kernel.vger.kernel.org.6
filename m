@@ -1,227 +1,253 @@
-Return-Path: <linux-kernel+bounces-246235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B961592BF72
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:15:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D21792BF75
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:15:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D62681C23617
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:15:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DDB61F25035
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E96619DF71;
-	Tue,  9 Jul 2024 16:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECE519E7E0;
+	Tue,  9 Jul 2024 16:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ldo0q05F"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="P1gfdL9j";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="tMocRIcw"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08CE19DF6C
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 16:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720541356; cv=none; b=Q1pKsNWh2lUp1ISLYzR7HUWxKHkez+LM29sEPDpaxQjR8yGrT1R5746MMNYmqg4gn+dzKEhpvSQLy4qr6dPdTkB9SY6qWTJ0ZMCYj5AcHQQDZ00fokuiQH6tDTOwmcv6cz/DEbpMycYGLK6o4LiJyw4tL+UWpE1sR39idO9kQHw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720541356; c=relaxed/simple;
-	bh=FGRnS6HrOy8B60pAUYJYvZ43kcQMTlUlioArToOkYZA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LroJSrmNGbhTjF3WJL7ICQsmFzB1h2zpznXUKjzCgYaDgSZr0mfcdlYTr2WVbddntVt8oavs1r8RnDgKIfXa3fHYx8wZiwcr/srO9kQBLMkZLFhlpdySuZAncE24YfpNNmgMnUcTNZ3E4pxlRedOLxeWmoxu/zjtuD3zm+5kGP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ldo0q05F; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720541353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zsIWbJCIxtXdUtyfcJ/HuCRS5/rhV3Z8dkkrqoWXNu8=;
-	b=Ldo0q05F8PW/QjPLAM848yySfL5SECgOAgll6rkSWdLe5Th42kLMCpPTX9NiA5mJZ55uQl
-	OpZj76kGs81kbGnMQ8u+VabQ+sDWrM/h6kGODZrqLmSVHQwK2EscH5cR79h9VcJjYUAt/M
-	C9w79xgB3TXnx57f5RS3X3EjY8XYvtk=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-15-PxWcNCzsPEK7IR4Uy1xlTg-1; Tue,
- 09 Jul 2024 12:09:10 -0400
-X-MC-Unique: PxWcNCzsPEK7IR4Uy1xlTg-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 40AFE1955F67;
-	Tue,  9 Jul 2024 16:09:08 +0000 (UTC)
-Received: from [10.22.34.7] (unknown [10.22.34.7])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 29E8C3000181;
-	Tue,  9 Jul 2024 16:09:05 +0000 (UTC)
-Message-ID: <4291c0ed-bc37-46de-b081-271e8b299b1d@redhat.com>
-Date: Tue, 9 Jul 2024 12:09:05 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446BB19DF79;
+	Tue,  9 Jul 2024 16:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720541400; cv=fail; b=NHsJ0a+XU5KbSWCh7R5LZGjsvSJ+X/zoh+FPzRx7FXXNauVEWUGqe77QNp0q1516bnMiSXolFiOBrV+bGyDQ7CoI3mSPTinTuuw+jXYBIwfJ5W0yYCQKl/K/3pqzli40Art3DbkwNFj81Q+2lU+avzLESQ3OLql6ckGCGSg4yh4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720541400; c=relaxed/simple;
+	bh=UZxuE/DGmvRGqZwW684/LhiO9n6C81vXKpnyq90HZpE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kmUvrwh6B/T+FuYKQgePMLyUpkiNj4zsQymHidyohHwKObfyUvAtxmp7u3nbWUc47qQU1kf42LFlYzwR25wKL9LSXRL2izD5MqQrl1Wetg92RrR72BAGlIT3gQwwMFMEmCpAsFNCSpKcshJmAF8yAn7StS9v0vMEMWvA41m5qzs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=P1gfdL9j; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=tMocRIcw; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469FtUDR031774;
+	Tue, 9 Jul 2024 16:09:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=SbAUcVk408baA+XFVzjM0P94HC4eFAp5meqS+p2s/Is=; b=
+	P1gfdL9jkm0q56O6Gu4WH/uK4TAdNhnRRfgd3aiG1aiWAslxnVtTmjhDR7Kqqz+3
+	ysnIt2eFZBS3kHXsV3ESLIX3MLasTxZze5k2xLiPdRgjMhVccOMLiepctdWsz7Hh
+	GndHNML2/6KrxhqPoaIIVLilGfzRrw/SSbPZScRil+2NxwZHhqQg78PDy7IYC4di
+	+CdAZgojTCVGlKn1cT8/izrCtrcDp5hHZwFqQlLB5u3Nnayx+PABChx92tPw/Tv0
+	5a7341tlwiGrxdw7tK/LfowEvE3PBkNSB6eNNyU7WtEZ9ONw+Woz+ZZExdoQCfo0
+	tpumTmx1HXgAdwlVoiKVMA==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 406wybndgv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 09 Jul 2024 16:09:52 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 469Es76r005700;
+	Tue, 9 Jul 2024 16:09:50 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 407tx2xxvk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 09 Jul 2024 16:09:50 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=oKuxNrD1KKb6/fWEREkrdB3l/Hwh1UXObGL/VYVd0TjkABoN6sS0dtJx/53Z03bwXttU6JixpRAUQubjeMBuiNzZ5gV4TXajG8EPsW9Ob4eTuFWEfCzKoOg0D/WAPRb0nx/rUdiEJ6BAXaLFSOdmueG+MJHWJ9TDe04ZZCiPlGVl6zVTm04mLQ2aChl4iyfe91WHaC6zZLpgltsipjJm+KTVTRAf0vfEMmyNe7DczNIxyAij3nN2ce6lsvL1you1T1Rm4qqwoYR7c3smqdqw8xwshrJL6XvjdZHfYLDuTSD1JO19vj+6hjg9MyyX20U6s2CwZWVqRqYuXEdi6dtZUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SbAUcVk408baA+XFVzjM0P94HC4eFAp5meqS+p2s/Is=;
+ b=N6JopSwW+mEw+RwoOccYZmp+MGDK8O/xW8fkl3QeevxPX3oZqLTewjDyBAN3x1S4n38CUzZ4GKhGHaTrfXeZ/oygO95Tqo6Bnuffgvz4fTiN8YzD4AoDmHb3w0SlgjodWSJ4Lmi4DLG1IocA/8L7uc74MQXd/w6IsF62D0tvom/7L+dJYGO1q3rDU0JS2YkcOOCsZBOkEBzp8MP98UB+9OXiMT+LOtPRIHFesBRd/cUoZtGf/iP7HjzjV8ltymNP8SErpP2IJ1V8LdkI4o5OZJWx2v5L+GG+V/YsQEr0PdJbPlhhpWHk0d2KIMXlKGPVwG9duCqd5jM8CH92mO84Vg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SbAUcVk408baA+XFVzjM0P94HC4eFAp5meqS+p2s/Is=;
+ b=tMocRIcwGIMfY4wssnhegF4gN3+us8qlhOsuOxXg8vpIRCsSkCYbTrsPooqDs+3fwUc5MzpNTXIof556dqslVCQQn6rcdn/oe5AB8dFRsdpbTHhsQygRB8zy+R0DPDjO9ZA7nnEFxW00u/ek3ELMiREYuHgxF/Mw6fPgCoc+atM=
+Received: from CH2PR10MB4312.namprd10.prod.outlook.com (2603:10b6:610:7b::9)
+ by PH7PR10MB7804.namprd10.prod.outlook.com (2603:10b6:510:2fe::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Tue, 9 Jul
+ 2024 16:09:48 +0000
+Received: from CH2PR10MB4312.namprd10.prod.outlook.com
+ ([fe80::fd5e:682a:f1ac:d0a2]) by CH2PR10MB4312.namprd10.prod.outlook.com
+ ([fe80::fd5e:682a:f1ac:d0a2%4]) with mapi id 15.20.7741.033; Tue, 9 Jul 2024
+ 16:09:48 +0000
+Message-ID: <784f6b4a-7c43-4484-988e-73fad594c99d@oracle.com>
+Date: Tue, 9 Jul 2024 17:09:38 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: pm80xx: Remove msleep() loop from
+ pm8001_dev_gone_notify()
+To: TJ Adams <tadamsjr@google.com>, Jack Wang <jinpu.wang@cloud.ionos.com>,
+        "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Igor Pylypiv <ipylypiv@google.com>
+References: <20240709160013.634308-1-tadamsjr@google.com>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20240709160013.634308-1-tadamsjr@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG3P274CA0020.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::32)
+ To CH2PR10MB4312.namprd10.prod.outlook.com (2603:10b6:610:7b::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH-cgroup v2] cgroup: Show # of subsystem CSSes in root
- cgroup.stat
-To: Kamalesh Babulal <kamalesh.babulal@oracle.com>, Tejun Heo
- <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240709132814.2198740-1-longman@redhat.com>
- <1c0d9ee1-e80a-46da-a48d-2ab23dd04673@oracle.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <1c0d9ee1-e80a-46da-a48d-2ab23dd04673@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR10MB4312:EE_|PH7PR10MB7804:EE_
+X-MS-Office365-Filtering-Correlation-Id: 56651c56-c234-454e-6574-08dca0318dde
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?VjlvdzVScUc3V0VwUlE3OVQ3bzIwY2ZiSUhRaWExdDNMSE0ySSswdnp1MFRQ?=
+ =?utf-8?B?WS9PemdWNGpGSVNRbDU3T29IUUEycFdac3JOZHV3ZGl3T21ZODhVb2ROTVRk?=
+ =?utf-8?B?OVdWWEFaVklnOFBrQjFTWWZlci8xVjBYekZ4dWViSlVxU0RFTzk1bFVFa1h3?=
+ =?utf-8?B?eFJ1QnovZEM5cGtTQUNlS1lZNXFLK21SUXdzVm9WTXV6akk4elhsd1RsbmM2?=
+ =?utf-8?B?elZFTVRYM1JUUEhnZk1IR2Vua2RnWS9ueWpYUnJablpjYXlsR3FTTmt4K3V5?=
+ =?utf-8?B?aStETWNTc3lJcU1VeXZib2RUeVBTcERxOVVxK0NOT1htd2k5WDMwdVFPbHNQ?=
+ =?utf-8?B?UFRML1RXcnhScHNHakxMOVhRM1JQb3hSNElnT1JScFQ0d3ArZlhBVzd3clRX?=
+ =?utf-8?B?VXF3Y3d3Q2NaZ013QnRnK0FlQ1RUYk56aE9XQkRTTjhCSTNOTndMRjlSRkg5?=
+ =?utf-8?B?eDJESDlNWEVjRlVkWmxLWEZ3b0hLOXI0czh5RUpCc1RDeFc4UnVXTmxNakwr?=
+ =?utf-8?B?WE9oZjUycnN6eFRHazhNQkFSKzZUZTBJMVNrRUQvakhVVkdXS0hqV1o5QUhk?=
+ =?utf-8?B?eEpyLytwVVJxZTQzWUdTekh3VFgxQXlCZGxjQlBPSm4vbDRPNURnQjVpSER2?=
+ =?utf-8?B?cmVmUkVrY3BodEMwbFk2eGVFWGdMWm8ydnVVNFI2ZXg0TzdBMEMrMXlMY29T?=
+ =?utf-8?B?cmpYb2o0a2s4S2pDQzlRZ1AwVDFLUGphdjMrWEpzMmJMMk9XaE1kK29qSTdE?=
+ =?utf-8?B?N2lwOUhwaVo3allsKzhnWTRLQTNiTFZSUDdVdTBjc08xTG5ZUmVXVWZ3NzF1?=
+ =?utf-8?B?WVdJcTRRSFlwOHdJOUZHOUUxVU5qV1JIYW5hY2ZJNS9zaGJSeU1pNURqM0FR?=
+ =?utf-8?B?S1FnUEJwNEYwN1BWQnV5STZiY3lPbnFhQ01NeVY0VlhrN3B0UUhROGcwMnlG?=
+ =?utf-8?B?bFZLVjlpdVQwVFMxY1BzaWlRMzdOQVp2cSthMGJNSzJoRW5vYTZYeURuZVdC?=
+ =?utf-8?B?b2IzSk05UVptUW5pTTlrN3h5NU1WNDk2a0M0Y2xuMlVqKzlMSzI5UVVHdlpv?=
+ =?utf-8?B?ZG44ajN3aWd0OWx2S1kvcGJUenV0S3pobGx5Uzg3Z0d1ZVhVeEI2d0JhYS9p?=
+ =?utf-8?B?dlhqYk14bDF4K2wzMFdGR0RzWHJrRXc1Y3pUZEVzbkc3RXc3VjVFbFgxaHVl?=
+ =?utf-8?B?bG91T3N6NXMyS0RSV1c0dlNsc3AxSnhnYWw5amFRWnNBZnZQN01HbDBZcHl1?=
+ =?utf-8?B?TUhsSmcvaUNLditiQTNqWTZuUm4wVmUrUkt1cnVFbUp3aFpuZWxLWktEbnh3?=
+ =?utf-8?B?TU1SOWh5VlcrZ3FGVG9IbjJhcE9DQURBNzZWSmpaeUc0bzZXVys4TXBpdjBz?=
+ =?utf-8?B?RFcvUUhaSlBGdkhqbWVoZmZwRmtFZjVjaTNORy9qSVppOEF4U0Z4TmVoa1dM?=
+ =?utf-8?B?cDhqYlVxMWRsbVN1OGlhNm9uVzBwY1NveE1KVkNQZVlmaHJVVlV4a0pOdHgw?=
+ =?utf-8?B?V1hiRGRzdWJtWTYrS285ZTJKOW5UQmlZRXNTa0dMNUU2QVFDTEsxcTJENnFQ?=
+ =?utf-8?B?SWFWazBZbDd0cGJMZWd4ZlJlOG9qdU9PMENGUTN3V3FLV3cvcW9CS1pEblkr?=
+ =?utf-8?B?emtuUTdhZnNjZml6VDRVZ0Z4amlkU2M5L3N0cm5YZ09yQTl6TDgwc2pialRl?=
+ =?utf-8?B?d1M1TGNyOU94UkF2TER2K1ZBbmFaWGJqcjQxNUFQRUlNaTQ4QUlNakNub3hu?=
+ =?utf-8?B?U2ZxUm56dllndENCaSsxTDU3ZXc5dHVjNFU3V1huUDZicWNUTEtSR0xtSUIz?=
+ =?utf-8?B?L3kwSWtRa0tPTS90MkI1UT09?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4312.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?MzRhVWRZY1lSdW5vT2lDU3laeFlRc3FSV0N5Q0JEK3JKa0xRRkpQUDZIb21x?=
+ =?utf-8?B?dkNwc2o5Z0hOQnFKRGpRUUZiT0Z0amxzRXdMelBoUkJCMFl5K2N6ZjRTdjFo?=
+ =?utf-8?B?NGU0Y1JUb1ZRVjRWSThvNktQWnBncG9ybE8yUnJzZ0JyVzIzTTVPeEpjMzR1?=
+ =?utf-8?B?ZUViVUU5bWhCdytQVUFyNG5jbmhvWDd4cFhsTWhXNGRQK2RTZ2t1YVoyalJT?=
+ =?utf-8?B?aVlGcHl4eVpWb0cwME9SKzNlYUoxOHp1ZG1ncFJWeEJjaTFIQmNRKzlvU0Fk?=
+ =?utf-8?B?WmVXNWNXLzVyRnRpczVxdWlETTlCUGJFQ0hMWWl3aWQ2NGdzV2VZbE9FU2xE?=
+ =?utf-8?B?dy9Va2xFeHl6cU5SMTY1YVdmT0pCSThCTlgwUGNSbnA5TnlVNmkyQUhYa0tT?=
+ =?utf-8?B?ZXptTGsxeHhTdTVsWnQxVlRzK1ZYeW1KdXl4ak5UZUxmRXo0WXNTZU9DMzkx?=
+ =?utf-8?B?eC83ZEl2YStkZExZMUVsTGpZanRoeTVrbHJqcGEzWGlqdE1LcDdPUWxCb2NH?=
+ =?utf-8?B?dkw5SWl0UFNNcHVyak42NmZJa2FZMUNqeDExcjJkSzNSU1lCallDM3lqNTJF?=
+ =?utf-8?B?SlVpZmtDY3hjaHNNT1Ztck01VDVibWhBMVJFSTF1Zk9kSjNxZklnUHo2UmtW?=
+ =?utf-8?B?NE0wVGZuUDRnOU85Y1Q2UVk2UFFCTHQxcUU4Vis5KzBWYnVpMUNZbkNIbUh6?=
+ =?utf-8?B?cVFuSWRIQjU0MzZzUklsSTIvSEVVa3ZMa0J6TzFLaURxNFcwU2liQjRreDhJ?=
+ =?utf-8?B?YlF0UG1DbUI0Q2Z4REFEOUVrby9kaHd4dGF3aE85eTE0ejg0V3ZtZ0dGZXBw?=
+ =?utf-8?B?bXdRelZvS1NzS3REWTJJaThOTFErcWkvWktVeVNrL2RQUGJ4QlRRcktQYWZw?=
+ =?utf-8?B?U051Q3kvcUIwM0xhUUpkSzNFR3krK3NydWlweTJqRGM1REtZbitxWHFtc1pY?=
+ =?utf-8?B?RVdHRkt2VnFLa0lxbXgvSkNCZmJyV0RDM2lHSG9XaVhpL2xkdDJyeTlMbEw2?=
+ =?utf-8?B?VU9zSXdKa0hIVmlEMGd4TFg2MHVJZlpKMThQbk0reG9oWng2UW83aDJITWpl?=
+ =?utf-8?B?MTBQTjRrRmdyeGNyK2NPL2pqME1XcG1uUlhCTU81T0l2czBjVFBKNGlOTVhM?=
+ =?utf-8?B?ZlJILzdOaU5zTEt4RWU4TmlrTjd5b3orZTdLQzg1OE50OE5hYm14YlZ2cHRN?=
+ =?utf-8?B?SER6WmJXZHhNbzVKT0pmVDNmdWhhMitMZDlZUElFMWdjT1RjV2UwWnFheDZa?=
+ =?utf-8?B?ODI5aE5leGZlL2dOL0IwSjhRdDNreWJ0YW9IL0RHQjV5NUFUMzhyYlV6ZDhC?=
+ =?utf-8?B?YnVidEFHeXVVZWs0cmpRTm1BeFNnaUVMWDdsQ3BoditPNVRlZXJ4c2JrVjgy?=
+ =?utf-8?B?SEttbmowVE90TU5pY2VKamFBYnB2djlLOVdVRit4N3RwZ3A3ZDVKWlBtRmov?=
+ =?utf-8?B?N3JWb05yejdHbWlMOGtMUmVRRTA1QTNqSE01c1NtVEUxV0dCWGlWbk91R2g4?=
+ =?utf-8?B?eXdRRjFsWkU5bVNWVXpITEN0N0ZUOG01SlZmYSsySEpOYUQxem1WenpZLzVi?=
+ =?utf-8?B?K04rdXJjbitLcVB4NFh0QzBmbmxTeXJXN2tPVms2NTFTaWJFSHRQK0prT05k?=
+ =?utf-8?B?dHZ1b2NHOTYrNFZHUnh3Q1RYOHIyYUt6WWorU1duSk5GVDlhdWpYM24yNWhE?=
+ =?utf-8?B?OUFPekxGN1FXQ3A4QVlrbHRSV2ZRMExucmtXRkF3SWQ4aGdFaURSMlFLWlVH?=
+ =?utf-8?B?M3k2aEJkbEp0WVBpQnJ3Sk16cXEva21YVDRVM2NTUzBOWWcyYmVROHBTSlc5?=
+ =?utf-8?B?dGsvQm1zaVZORmtjZjRUTHdCTlloUmVVTzBXL2RINFg3WVlVSmF4R2Z3R3c2?=
+ =?utf-8?B?V1Z3dGNsOTd1MmlxWi9TZDUwQlhxNVZQTUFsM1NkeTdXRVdkcU0reE9sWVZD?=
+ =?utf-8?B?MlI0dmQyejEvUW5zLzFpMEU4LzVFSjA4aVRxRzVDVWVBYlVVRFV3Z2hPc1Br?=
+ =?utf-8?B?TkYyVmJwZWhtdnBRajBEUmhEL01hc2REL0xqMTR6clJzVjBIU202SlYwUGxx?=
+ =?utf-8?B?SEMwMTBZbG5EOW94UFYyeERCRjVCMFdVVklDNGFUL3ZrV0lxRC9VQ3Y4RjRG?=
+ =?utf-8?B?aXNBU2U2QW5GWXNtT00wb0FCUFNuRys5Q09BZll6dk5IY3F5OFh3K1hVVVZW?=
+ =?utf-8?B?NFE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	FZWTmgnN4TE6hrhZ0IRPqGjHUnapJHeQld5pl1Xn6cmjIHa+phEb97w7B3C5dA/Uog/imz66/biHzJkvGuaJxDPVVHRqKSZgnz1TZuBlIaE8N7c+fMgbiXWTEaY6OB548RrZvveH+8gdcTKV/ZdFN2Gvg5l4UTQsmhRaAhQD+z5KFeK3iw0cSp+53FR9NCXjsm+WDvdGTJbfDEDR8u4xD64qph2xzykcLnvduQY6nvRANQC6Ie7v2/EqQAc59UnVhnmf/BvaqwK9QPS8sOk4zIRGcA2n9fVXHSUocMm3N6bERJ8UDLdYIV5llMEbbHa0MblktirP1+FpMlAlbtC8WAzI8cNkQPKrJ2NLLd1hpnoMAuaxPje9tbntlmEvo0+67PYD/7SfUBNHGTE5avK+VdUzMNnr9eUEkPYNkTPFvuICD/pCyOMushQu5iSVZym9epL+SogrSuHsMPrkR0pRpZ9Sv7ThFRv4Ba9jGJi2i0OZRb0mZbJI4xVXdnYSnfleL/giu6faUuMGFlYXLlV5hQiOpRm2ieAyrl5oO43avZQ9b96sfVI41deo/384/YeyJyoxG/ZFz5TIJUtPFhnlFZ+3+a+SAUab2gm/xMQ5eGg=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 56651c56-c234-454e-6574-08dca0318dde
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4312.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2024 16:09:47.9496
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 14X61/Op4ctvUrW1UvaQrbEbv2JHMXub9/iP+sWiuP6UwQtsoyTNeUGopxPCHhSNx8Boo64hxgrRmqRMqAmoiQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB7804
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_05,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 malwarescore=0
+ mlxlogscore=907 mlxscore=0 adultscore=0 bulkscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2406180000
+ definitions=main-2407090106
+X-Proofpoint-GUID: dTsEzizSxO46s0GMNa9nWS8eeG2_bnA7
+X-Proofpoint-ORIG-GUID: dTsEzizSxO46s0GMNa9nWS8eeG2_bnA7
 
-On 7/9/24 11:58, Kamalesh Babulal wrote:
->
-> On 7/9/24 6:58 PM, Waiman Long wrote:
->> The /proc/cgroups file shows the number of cgroups for each of the
->> subsystems.  With cgroup v1, the number of CSSes is the same as the
->> number of cgroups. That is not the case anymore with cgroup v2. The
->> /proc/cgroups file cannot show the actual number of CSSes for the
->> subsystems that are bound to cgroup v2.
->>
->> So if a v2 cgroup subsystem is leaking cgroups (usually memory cgroup),
->> we can't tell by looking at /proc/cgroups which cgroup subsystems may be
->> responsible.  This patch adds CSS counts in the cgroup_subsys structure
->> to keep track of the number of CSSes for each of the cgroup subsystems.
->>
->> As cgroup v2 had deprecated the use of /proc/cgroups, the root
->> cgroup.stat file is extended to show the number of outstanding CSSes
->> associated with all the non-inhibited cgroup subsystems that have been
->> bound to cgroup v2.  This will help us pinpoint which subsystems may be
->> responsible for the increasing number of dying (nr_dying_descendants)
->> cgroups.
->>
->> The cgroup-v2.rst file is updated to discuss this new behavior.
->>
->> With this patch applied, a sample output from root cgroup.stat file
->> was shown below.
->>
->> 	nr_descendants 53
->> 	nr_dying_descendants 34
->> 	nr_cpuset 1
->> 	nr_cpu 40
->> 	nr_io 40
->> 	nr_memory 87
->> 	nr_perf_event 54
->> 	nr_hugetlb 1
->> 	nr_pids 53
->> 	nr_rdma 1
->> 	nr_misc 1
->>
->> In this particular case, it can be seen that memory cgroup is the most
->> likely culprit for causing the 34 dying cgroups.
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
->> ---
->>   Documentation/admin-guide/cgroup-v2.rst | 10 ++++++++--
->>   include/linux/cgroup-defs.h             |  3 +++
->>   kernel/cgroup/cgroup.c                  | 19 +++++++++++++++++++
->>   3 files changed, 30 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
->> index 52763d6b2919..65af2f30196f 100644
->> --- a/Documentation/admin-guide/cgroup-v2.rst
->> +++ b/Documentation/admin-guide/cgroup-v2.rst
->> @@ -981,6 +981,12 @@ All cgroup core files are prefixed with "cgroup."
->>   		A dying cgroup can consume system resources not exceeding
->>   		limits, which were active at the moment of cgroup deletion.
->>   
->> +	  nr_<cgroup_subsys>
->> +		Total number of cgroups associated with that cgroup
->> +		subsystem, e.g. cpuset or memory.  These cgroup counts
->> +		will only be shown in the root cgroup and for subsystems
->> +		bound to cgroup v2.
->> +
->>     cgroup.freeze
->>   	A read-write single value file which exists on non-root cgroups.
->>   	Allowed values are "0" and "1". The default is "0".
->> @@ -2930,8 +2936,8 @@ Deprecated v1 Core Features
->>   
->>   - "cgroup.clone_children" is removed.
->>   
->> -- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" file
->> -  at the root instead.
->> +- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" or
->> +  "cgroup.stat" files at the root instead.
->>   
->>   
->>   Issues with v1 and Rationales for v2
->> diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
->> index b36690ca0d3f..522ab77f0406 100644
->> --- a/include/linux/cgroup-defs.h
->> +++ b/include/linux/cgroup-defs.h
->> @@ -776,6 +776,9 @@ struct cgroup_subsys {
->>   	 * specifies the mask of subsystems that this one depends on.
->>   	 */
->>   	unsigned int depends_on;
->> +
->> +	/* Number of CSSes, used only for /proc/cgroups */
->> +	atomic_t nr_csses;
->>   };
->>   
->>   extern struct percpu_rw_semaphore cgroup_threadgroup_rwsem;
->> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
->> index c8e4b62b436a..48eba2737b1a 100644
->> --- a/kernel/cgroup/cgroup.c
->> +++ b/kernel/cgroup/cgroup.c
->> @@ -3669,12 +3669,27 @@ static int cgroup_events_show(struct seq_file *seq, void *v)
->>   static int cgroup_stat_show(struct seq_file *seq, void *v)
->>   {
->>   	struct cgroup *cgroup = seq_css(seq)->cgroup;
->> +	struct cgroup_subsys *ss;
->> +	int i;
->>   
->>   	seq_printf(seq, "nr_descendants %d\n",
->>   		   cgroup->nr_descendants);
->>   	seq_printf(seq, "nr_dying_descendants %d\n",
->>   		   cgroup->nr_dying_descendants);
->>   
->> +	if (cgroup_parent(cgroup))
->> +		return 0;
->> +
->> +	/*
->> +	 * For the root cgroup, shows the number of csses associated
->> +	 * with each of non-inhibited cgroup subsystems bound to it.
->> +	 */
->> +	do_each_subsys_mask(ss, i, ~cgrp_dfl_inhibit_ss_mask) {
->> +		if (ss->root != &cgrp_dfl_root)
->> +			continue;
->> +		seq_printf(seq, "nr_%s %d\n", ss->name,
->> +			   atomic_read(&ss->nr_csses));
->> +	} while_each_subsys_mask();
->>   	return 0;
->>   }
->>   
-> Thanks for adding nr_csses, the patch looks good to me. A preference comment,
-> nr_<subsys>_css format, makes it easier to interpret the count.
->
-> With or without the changes to the cgroup subsys format:
->
-> Reviewed-by: Kamalesh Babulal <kamalesh.babulal@oracle.com>
+On 09/07/2024 17:00, TJ Adams wrote:
+> From: Igor Pylypiv <ipylypiv@google.com>
+> 
+> It's possible to end up in a state where pm8001_dev->running_req never
+> reaches zero.
 
-Thanks for the review.
+Is that a driver bug then?
 
-CSS is a kernel internal name for cgroup subsystem state. Non kernel 
-developers or users may not know what CSS is and cgroup-v2.rst doesn't 
-mention CSS at all. So I don't think it is a good idea to add the "_css" 
-suffix. From the user point of view, the proper term to use here is the 
-number of cgroups, just like what "nr_descendants" and 
-"nr_dying_descendants" are referring to before this patch. The only 
-issue that I didn't address is the use of the proper plural form which 
-is hard for cgroup subsystem names that we have.
+> In that state we will be sleeping forever.
+> 
+> sas_execute_internal_abort_dev() can wait for a response for
+> up to 60 seconds (3 retries x 20 seconds). 60 seconds should be enough
+> for pm8001_dev->running_req to get to zero.
 
-Cheers,
-Longman
+May I suggest you drop running_req at some stage, and use other methods 
+to find how many IOs are active?
 
+> 
+> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+> Signed-off-by: TJ Adams <tadamsjr@google.com>
+> ---
+>   drivers/scsi/pm8001/pm8001_sas.c | 7 +++++--
+>   1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/scsi/pm8001/pm8001_sas.c b/drivers/scsi/pm8001/pm8001_sas.c
+> index a5a31dfa4512..513e9a49838c 100644
+> --- a/drivers/scsi/pm8001/pm8001_sas.c
+> +++ b/drivers/scsi/pm8001/pm8001_sas.c
+> @@ -712,8 +712,11 @@ static void pm8001_dev_gone_notify(struct domain_device *dev)
+>   		if (atomic_read(&pm8001_dev->running_req)) {
+>   			spin_unlock_irqrestore(&pm8001_ha->lock, flags);
+>   			sas_execute_internal_abort_dev(dev, 0, NULL);
+> -			while (atomic_read(&pm8001_dev->running_req))
+> -				msleep(20);
+> +			if (atomic_read(&pm8001_dev->running_req)) {
+> +				pm8001_dbg(pm8001_ha, FAIL,
+> +					   "device_id: %u: Failed to abort %d requests!\n",
+> +					   device_id, atomic_read(&pm8001_dev->running_req));
+> +			}
+>   			spin_lock_irqsave(&pm8001_ha->lock, flags);
+>   		}
+>   		PM8001_CHIP_DISP->dereg_dev_req(pm8001_ha, device_id);
 
 
