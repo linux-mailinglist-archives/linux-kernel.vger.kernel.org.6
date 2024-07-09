@@ -1,124 +1,105 @@
-Return-Path: <linux-kernel+bounces-245013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D09192AD01
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:13:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A454892AD03
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6F6B1F222DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:13:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA1611C216F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153A717C9;
-	Tue,  9 Jul 2024 00:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD9817C9;
+	Tue,  9 Jul 2024 00:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XkOl4DHU"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="I4ezVadx"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178E7620
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 00:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A3FA21
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 00:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720483990; cv=none; b=bEQKSPXBy/dE0/nekQEn5hYBoW0kTASf/ThnnQ9+GGgIlHKoPCjELZ/DHZK1BzETUl8IipBL97FDh8Jm1yJY/oWI8sR+ezjJpRctGklXTmV6E/1fYuKobGXSSvkakAIVPNvVDJ1fmCmd9RcSUvObcLrYrNKJe5cnJerPXuK8lRQ=
+	t=1720484032; cv=none; b=RED9CC8QkGoVko+QY3pWp+/iP8oFt6uZJ+ameaEaP9/kXNZsqjcbIsL4t969RVb0cLpjVt4+an9Qoqi2v4joNWH/VuBADs3eYxozLIXYYYbJgSeJO5I1dfBV9kqPkcHM3IWkRVbkqdrFmi9hcVbVacQWLvTG+ypUfFgTBMUC+dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720483990; c=relaxed/simple;
-	bh=o7s7kP3xWOe9f8MorpJlnvVKDIDiP9CLOJFSGGX5mMY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SXVk6qOWXooYJUzUZmqt0j30T5PKK/NaSscwtDmhC+Cl5WzSGD7Zo2YsHD9jP3mkTvr070bFZISzKGfspOL9mUhYg5yEAZ6HznEc+HsqoptnDnOoYnQxa9YqdcK0fuf1gBi5N+ko/Du8F10MMuZ3zB0mVDT0pMh1EymB/cOkOlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XkOl4DHU; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-778702b9f8fso781991a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 17:13:08 -0700 (PDT)
+	s=arc-20240116; t=1720484032; c=relaxed/simple;
+	bh=jCEm882SQslRgIBXsQn1kxrkykzNfCqulLb5W/QPZOs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=UMIUEv/+mOvXfSBG+/Zlb38c3HY5C0AW3p3/0isHPGT1tNFE8p6d4R31GuBa7jkGXg0yeENnUMoHgD0NaZEqNSsPKBHMIj4L0N6s84Emv1A8EY0xhPZZ3MaXE4RgmDiVFJLCAmnOvYiofLILhP9KzoT34Z/8hfr3rsRyD1DTVHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=I4ezVadx; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-77d3f00778cso357695a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 17:13:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720483988; x=1721088788; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zG6ZMKR2ER5CEkjEXyhneSznu6s7Jkh317FrChhPZ4A=;
-        b=XkOl4DHUff0GorZQR3rR+qQ5ufi+8p6DIducAJJnGqltxaF07fG7pbyqyfQbOkAtTO
-         XRo4sYj+J0u93tjzlBTvrGskpFiE8yaBFJaKQoEmbJbN4da4e9nAjO0+9MqYLJOqf+nW
-         n7/AeR1XhsD05TdhirWCggu8dAsRnlDrnSKqa9w+UCag8DYkLX+EUm3grJGCozS/TiTu
-         6JbCxxcoRGTtkxTyaoYPh6mGdji/9X32cP2wXTRWraIipPBH2MI6WzAhNBYmvJYqa/vP
-         7cb8orZwvewTmSB0yeRiGn9gFko+X8F/pRIUFnVgYukxJWnKexSob36Ow0GL8zTVvngF
-         y0Mg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720484029; x=1721088829; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Ht8VsBOkepq5zsjawGUoItW8opG98EOdGF+KrcqtpU=;
+        b=I4ezVadxpOmDhCZWDWhmniYXfjHBYdtWnRLkEMpMBZU7IMAMPWuQcYwNK+uhbxM7rM
+         J8gyLdlDcsdTnle06RNJntcsg86+zLG9eqhErO/ASNpVBXmYwkO111w8xDJy8zGnOtlU
+         EiZL/XaltPd8sLZbpxCy1MBQ4ZnH+rv/pvLJTQYOcXuDgP/+q+MzFEz5Ebd5ANgCEkFt
+         IsSgXyGYd1YQCNdtuJ+16FvMpetzNWIYZcL2EYD3EOYwNxq9v+u1BdQGRn4CFzeLbcxt
+         pLBWbgtR8u4VvBaJSG6IcwqX/6t4pfI+JLHCgDnDkkR3Y8m7LhzT0CUollzZlSHFgkCD
+         P6yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720483988; x=1721088788;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zG6ZMKR2ER5CEkjEXyhneSznu6s7Jkh317FrChhPZ4A=;
-        b=WzxnFIuBGKV7+xDxH2k36U0FDQpqPW8BO9sdFXb5C9QToLu59fz01qt8ymW7o1nWQi
-         Yg9yrJyeCv6Muk9Fy5zvjthLmt5ANDz57HEdsuDgy5cjnAeWzAMYKYF2dd8gJfpPCx9U
-         R707kHAO+gvbKBP0+zoHNe3In6d6t2uOBx3tWQge2Y0TYj4FZNvcQ9v39IzsnhPwZpEL
-         mIM494G2Xb1+FMPj3T2xKIg7B/eEpGQ65q6ahzk8E/gby+0tgL8pE29+ycN45SsaBoT9
-         TQwb55xbLxjwNb0x+0lPY7OygvBDHg8eDUJbSnvI8+Xd59sIv4gfwTKSyxWY9QxeBrl4
-         PIoA==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ1Ms5685ojK5xol844KiFSUCHfDQb2EcOP32SmWD3gd8eLUCdjPy4HVF5m3PRnW9MmvQXchKn0UjwRBWhDVZhUlIPd9D5OBf3qKCr
-X-Gm-Message-State: AOJu0YzgZKUyOmlxEKE6BS3aNQu0RfDgFjFmTZni1Kfa35Ud+yN38BuE
-	SNpiJEC9kNbvG75aAtkgr4y5ztpIpHecNwITT+OGTF+QuGBDa3trBDJJJXuxHwh792ID6uesVly
-	DdA==
-X-Google-Smtp-Source: AGHT+IEFGzOwGtA+dJ46COa5sR263gqpyt4UCMdQAj79zHoXHLuF9ZNvWfUjxPfnnXwwjfAp9CjrFIzSkCo=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a02:502:b0:6f6:1f2c:e339 with SMTP id
- 41be03b00d2f7-77e004223b2mr2128a12.2.1720483988282; Mon, 08 Jul 2024 17:13:08
- -0700 (PDT)
-Date: Mon, 8 Jul 2024 17:13:06 -0700
-In-Reply-To: <960ef7f670c264824fe43b87b8177a84640b8b5d.camel@redhat.com>
+        d=1e100.net; s=20230601; t=1720484029; x=1721088829;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3Ht8VsBOkepq5zsjawGUoItW8opG98EOdGF+KrcqtpU=;
+        b=RlZAv+JCtBKXF3C83j34CuHbHJBKMgeI3OVC2BBwk4+IU94IeUd4W8qzFIodUK8GnO
+         EzWS3nw0bXLrsB7n3bMhfgrtpaHeZrdlEGtQw7ymreZAyXc2ozjNJbab3qX4RWnvndEO
+         JTi7PBWLgPBHxeUDtgMUnkROdUilWxdDgz0zTux9ifYd8auNb4Ri1Vv1b9G5zNDp938n
+         DhM4pqqKsbGP1P+KeLNzyfNm8Ww7D3opZOAb0atn1UBcFR752XgJsXKztCUJZ27Mt+9o
+         VpvpUWxB4fzYVX2jq2YJaapDuETK/RI6Zhw8RBHJguHOCG/8A+gU3U80PfEt8YuE1Q9L
+         TsJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpCH2g771f1E+vEKQrvZTOOdbWArUixj70jffIyBJ42YWMfXWsPDkY6uwG7s8gXNFEsyyx/bHjh/6POz1M5vfpdw+EksxotfegHbEj
+X-Gm-Message-State: AOJu0YxgUW3p6ADAAFKBSDduUlzE4ZR1oqWCnuACy/LiWu5XYHEyXiD5
+	EOkw1/seZqRRmLQTBpf9+AdX/zNEN9+d/Lf8m54dAqqusaQCzlRl69fem6wZsbM=
+X-Google-Smtp-Source: AGHT+IGkWCCkWN2IpjJSaXA3XjI+bvmXyOSILAUhGaY1m2ht96DWj5nBOIO/mZVcokj6IO0IX3nQwA==
+X-Received: by 2002:a05:6a21:78a9:b0:1bd:a048:7fcc with SMTP id adf61e73a8af0-1c2984c9eb4mr1004308637.46.1720484029558;
+        Mon, 08 Jul 2024 17:13:49 -0700 (PDT)
+Received: from localhost (97-126-77-189.tukw.qwest.net. [97.126.77.189])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ad3837sm4238665ad.300.2024.07.08.17.13.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 17:13:49 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>
+In-Reply-To: <20240606165104.3031737-1-andriy.shevchenko@linux.intel.com>
+References: <20240606165104.3031737-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] ARM: omap2: Switch to use kmemdup_array()
+Message-Id: <172048402893.4046096.641938212436686822.b4-ty@baylibre.com>
+Date: Mon, 08 Jul 2024 17:13:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-40-seanjc@google.com>
- <960ef7f670c264824fe43b87b8177a84640b8b5d.camel@redhat.com>
-Message-ID: <ZoyAkkZjnGmwlVCS@google.com>
-Subject: Re: [PATCH v2 39/49] KVM: x86: Extract code for generating per-entry
- emulated CPUID information
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
 
-On Thu, Jul 04, 2024, Maxim Levitsky wrote:
-> On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
-> PS: I spoke with Paolo about the meaning of KVM_GET_EMULATED_CPUID, because
-> it is not clear from the documentation what it does, or what it supposed to
-> do because qemu doesn't use this IOCTL.
-> 
-> So this ioctl is meant to return a static list of CPU features which *can* be
-> emulated by KVM, if the cpu doesn't support them, but there is a cost to it,
-> so they should not be enabled by default.
-> 
-> This means that if you run 'qemu -cpu host', these features (like rdpid) will
-> only be enabled if supported by the host cpu, however if you explicitly ask
-> qemu for such a feature, like 'qemu -cpu host,+rdpid', qemu should not warn
-> if the feature is not supported on host cpu but can be emulated (because kvm
-> can emulate the feature, which is stated by KVM_GET_EMULATED_CPUID ioctl).
-> 
-> Qemu currently doesn't support this but the support can be added.
-> 
-> So I think that the two ioctls should be redefined as such:
-> 
-> KVM_GET_SUPPORTED_CPUID - returns all CPU features that are supported by KVM,
-> supported by host hardware, or that KVM can efficiently emulate.
-> 
-> 
-> KVM_GET_EMULATED_CPUID - returns all CPU features that KVM *can* emulate if
-> the host cpu lacks support, but emulation is not efficient and thus these
-> features should be used with care when not supported by the host (e.g only
-> when the user explicitly asks for them).
 
-Yep, that aligns with how I view the ioctls (I haven't read the documentaion,
-mainly because I have a terrible habit of never reading docs).
+On Thu, 06 Jun 2024 19:51:04 +0300, Andy Shevchenko wrote:
+> Let the kememdup_array() take care about multiplication and possible
+> overflows.
+> 
+> 
 
-> I can post a patch to fix this or you can add something like that to your
-> patch series if you prefer.
+Applied, thanks!
 
-Go ahead and post a patch, assuming it's just a documentation update.
+[1/1] ARM: omap2: Switch to use kmemdup_array()
+      commit: ea77ad3d2dccaf223c556886b067c5e2657b40aa
+
+Best regards,
+-- 
+Kevin Hilman <khilman@baylibre.com>
+
 
