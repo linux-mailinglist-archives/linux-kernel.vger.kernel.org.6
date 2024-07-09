@@ -1,319 +1,211 @@
-Return-Path: <linux-kernel+bounces-245343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78DBE92B182
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:49:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7E2792B185
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:49:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A9601C216C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:49:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 397E1B20F4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D5B14D2AB;
-	Tue,  9 Jul 2024 07:49:35 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC7C1514C3;
+	Tue,  9 Jul 2024 07:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IwZgr6ze"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C26C148;
-	Tue,  9 Jul 2024 07:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80697145A08
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 07:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720511375; cv=none; b=E0njekvXV8Rc4gWol0i6iLqtC7lVSikCi2R8DUT1CHtzLKifQzMDkPQGJjq1KvYbxF5zVfOlSpnsQSYA8jrBFtT/uz5GUpRXl3JUWvzxWUvS5ht4IFHLJ+6D5R6nE2MiUvohQBdB5nXcVUlP/FopEcw14MqCemEqt6y0T84Jr/I=
+	t=1720511382; cv=none; b=PZVlMt6LRamSpzFIF7EEAjDl6jVo2N4N3iIgPU8fWbVuGTj39O/4OR4sgxKNx1gFwU967gF/nMk9o3ULNjgiHfrqLyyxQGKB9VAvbPLQVczN6NL33PjBN3ijvaaHZj4R/I7z+nIGiLGASDUlRWWxTWQu02/u3n3qOYewYBab1jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720511375; c=relaxed/simple;
-	bh=QOA9P/hX3/L1HSZjaMT+kMTYQ84x2txVmaCQHHidneU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TwZ+7AlqIyeanqixpp9rYevZjTBPHXKUKPXo7Vpt4fpBSDAdMKMT4+X4YitiE7a92VkmOzLGyz76aOF6lyD/Lmzp+8xEu48znQWTavT69ywwSLEQfJqbDcjPpbSQU2KEaE6xfWmtUeqitD+JSbyjoApNoE6ShgYZXxEdixG+mP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WJCgp745tzxSCl;
-	Tue,  9 Jul 2024 15:44:54 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id E84D718007E;
-	Tue,  9 Jul 2024 15:49:28 +0800 (CST)
-Received: from [10.67.120.168] (10.67.120.168) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 9 Jul 2024 15:49:28 +0800
-Message-ID: <86c1136a-b81f-fb3d-824d-efb61f50f899@hisilicon.com>
-Date: Tue, 9 Jul 2024 15:49:27 +0800
+	s=arc-20240116; t=1720511382; c=relaxed/simple;
+	bh=ORIDWCZW+nLVv0yi5atZdPkxAx4F0xQ2MBKeSXLwc1U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lkifZvBQVXhD1/IR5MfQqLiwb38PzL94bKKY4kdilFUDKVWxoBaG8PYdLCttVRXtQL/7ySGKs/YU816VPW6e0gSdG/FyRoVUvF5tRZ917Xd06UsSba9AEe1pDj6AHTtfZP9XkTffmK7RvlmApbp/8+jMnDm6Hs3PWXNYb2CpsLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IwZgr6ze; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2c9a1ea8cc3so3046213a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 00:49:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720511380; x=1721116180; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=S7gQvlQ7nmc33EZc3TAmGWy4QTOZnTUv37897hEicL4=;
+        b=IwZgr6zeHIvBlBqaOL0cZP9tohiV3nrsP4Lkj32mDAN3ZvDN/ougRmM2EevlAzlrcs
+         NpPVjm2WXorkaOVZ+Qd+Y4Inq/yIdFTatl60rlNsCJGUcbjAbhNY4K2nY8PkN+zwoJ8W
+         QoLPpGxfoXn9kcJQrGf6g914J6OspIUGUHzz7X4fhNJzbMwMuWSkqYoRFIn4qOEk+0UW
+         7oD07TTk4a6ckV0lWqkyv+BVqeZujhdJawI6C9BUZbZLFljKU2m/xAuRuGHibCSDJA9D
+         x5zfmLtgvp9dLq7/NHuoNrgQ1eKJO0yKmvqNHRcRPP/vCWrUIrk2EJenDMngmn+1nNE/
+         GoDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720511380; x=1721116180;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S7gQvlQ7nmc33EZc3TAmGWy4QTOZnTUv37897hEicL4=;
+        b=Wu0cbRlNOHE4ogKOTcAY3ZoFXazQCZdcxf8N9Ajvs6ngOpH8VZvgAldtpVJ6gQCzQw
+         0u44WtQ0AyWE7x4ZnUy62iyh3+Dmkxf/QxjVkNfvc92uQIOp1TSXcuGCqL1lMirDgbeV
+         rtgRAiPjjzrHkN+IexzhNRexcAchEMG80Dwb37uZZK+PhLPcnBW2xf2NG/48r+EkycHM
+         orlWq+07MFWBeF6fz0rodOTasrnLl6xvOHu9qolNda0scyuAbJLyt7u8ObYCfw5y6rWb
+         6yf6K0zKAr2o1nJezu1W1ykFJVqWLIqkk88ZMGJtvCQmGojtppUP+aKxpLYrJqX6lPTu
+         Zgww==
+X-Forwarded-Encrypted: i=1; AJvYcCWX6G5y3fhlRddhD54NDNVSX2t2AI0j/5VHZZI63/B4A6peIa61e412SwqNH+/U/Q4RGv921XvGc62VkI9xWYJgHC5+wYGjoQTQa3CL
+X-Gm-Message-State: AOJu0YyONoYeuGlSYYbF71ejlJuANs4kZIGQBcG417mqVpkAElw8Qkj/
+	8zLqnaCifPd4JdkUyG2yJFKABNavCkFohs5TtGOESWnhaY9YzWYs+SxxqjmS6hXvlUnUvaz3XsX
+	WYNaIH73ITrSVkoWSY9yjRSt4S6kmDtMIl2Zp3Q==
+X-Google-Smtp-Source: AGHT+IFWbqCvJuj1LIc7RqlWDt4HZWrqbAM52x3de0fwb24xn3/Ksr8TOgjeS8qKRlF+fONP9MjMW4/IF6nKIgQmPPs=
+X-Received: by 2002:a17:90a:b313:b0:2c8:f3b5:7dd1 with SMTP id
+ 98e67ed59e1d1-2ca3a7e6762mr2250952a91.16.1720511379662; Tue, 09 Jul 2024
+ 00:49:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.0
-Subject: Re: [PATCH for-rc 2/9] RDMA/hns: Fix a long wait for cmdq event
- during reset
-Content-Language: en-US
-To: Leon Romanovsky <leon@kernel.org>
-CC: <jgg@ziepe.ca>, <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>
-References: <20240708053850.GA6788@unreal>
- <7cae577b-e469-9357-8375-d14746a7787b@hisilicon.com>
- <20240708073315.GC6788@unreal>
- <0bac285b-c8ae-8c9f-7c42-ee345f8682d1@hisilicon.com>
- <20240708082755.GD6788@unreal>
- <26c02b2b-4232-2049-5c9f-f757fef759a0@hisilicon.com>
- <20240708085902.GF6788@unreal>
- <188e9f5d-b66c-9318-601c-ed3aab96115d@hisilicon.com>
- <20240708111626.GG6788@unreal>
- <0d877e06-a4af-d3af-7dbb-98135219367f@hisilicon.com>
- <20240709072225.GB6668@unreal>
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-In-Reply-To: <20240709072225.GB6668@unreal>
+References: <20240619201409.2071728-1-qyousef@layalina.io> <f281ba07-d54a-460a-8f78-f7eb6bd8ed88@arm.com>
+ <20240628015200.vw75huo53redgkzf@airbuntu> <d510f41a-1225-46d9-a2d7-ff9e6ff599d2@arm.com>
+ <20240705002205.nnrgq7savzvsoqgl@airbuntu> <2e988929-142c-4e69-8e2e-2f3e64c9f08c@arm.com>
+In-Reply-To: <2e988929-142c-4e69-8e2e-2f3e64c9f08c@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 9 Jul 2024 09:49:28 +0200
+Message-ID: <CAKfTPtD4og8CDZzVd-=o7agcchQe8Q6GMWgiz5bDfdAepnX9Wg@mail.gmail.com>
+Subject: Re: [PATCH v6] sched: Consolidate cpufreq updates
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Qais Yousef <qyousef@layalina.io>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, 
+	Christian Loehle <christian.loehle@arm.com>, Hongyan Xia <hongyan.xia2@arm.com>, 
+	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemf100018.china.huawei.com (7.202.181.17)
 
+On Fri, 5 Jul 2024 at 13:50, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>
+> On 05/07/2024 02:22, Qais Yousef wrote:
+> > On 07/04/24 12:12, Dietmar Eggemann wrote:
+> >> On 28/06/2024 03:52, Qais Yousef wrote:
+> >>> On 06/25/24 14:58, Dietmar Eggemann wrote:
+> >>>
+> >>>>> @@ -4917,6 +4927,84 @@ static inline void __balance_callbacks(struct rq *rq)
+> >>>>>
+> >>>>>  #endif
+> >>>>>
+> >>>>> +static __always_inline void
+> >>>>> +__update_cpufreq_ctx_switch(struct rq *rq, struct task_struct *prev)
+> >>>>> +{
+> >>>>> +#ifdef CONFIG_CPU_FREQ
+> >>>>> + if (prev && prev->dl.flags & SCHED_FLAG_SUGOV) {
+> >>>>> +         /* Sugov just did an update, don't be too aggressive */
+> >>>>> +         return;
+> >>>>> + }
+> >>>>> +
+> >>>>> + /*
+> >>>>> +  * RT and DL should always send a freq update. But we can do some
+> >>>>> +  * simple checks to avoid it when we know it's not necessary.
+> >>>>> +  *
+> >>>>> +  * iowait_boost will always trigger a freq update too.
+> >>>>> +  *
+> >>>>> +  * Fair tasks will only trigger an update if the root cfs_rq has
+> >>>>> +  * decayed.
+> >>>>> +  *
+> >>>>> +  * Everything else should do nothing.
+> >>>>> +  */
+> >>>>> + switch (current->policy) {
+> >>>>> + case SCHED_NORMAL:
+> >>>>> + case SCHED_BATCH:
+> >>>>
+> >>>> What about SCHED_IDLE tasks?
+> >>>
+> >>> I didn't think they matter from cpufreq perspective. These tasks will just run
+> >>> at whatever the idle system is happen to be at and have no specific perf
+> >>> requirement since they should only run when the system is idle which a recipe
+> >>> for starvation anyway?
+> >>
+> >> Not sure we talk about the same thing here? idle_sched_class vs.
+> >> SCHED_IDLE policy (FAIR task with a tiny weight of WEIGHT_IDLEPRIO).
+> >
+> > Yes I am referring to SCHED_IDLE policy too. What is your expectation? AFAIK
+> > the goal of this policy to run when there's nothing else needs running.
+>
+> IMHO, SCHED_IDLE tasks fight with all the other FAIR task over the
+> resource rq. I would include SCHED_IDLE into this switch statement next
+> to SCHED_NORMAL and SCHED_BATCH.
+> What do you do if only SCHED_IDLE FAIR tasks are runnable? They probably
+> also want to have their CPU frequency needs adjusted.
 
+I agree SCHED_IDLE means do not preempt SCHED_NORMAL and SCHED_BATCH
+but not do run at a random frequency
 
-On 2024/7/9 15:22, Leon Romanovsky wrote:
-> On Tue, Jul 09, 2024 at 02:21:31PM +0800, Junxian Huang wrote:
->>
->>
->> On 2024/7/8 19:16, Leon Romanovsky wrote:
->>> On Mon, Jul 08, 2024 at 05:30:58PM +0800, Junxian Huang wrote:
->>>>
->>>>
->>>> On 2024/7/8 16:59, Leon Romanovsky wrote:
->>>>> On Mon, Jul 08, 2024 at 04:45:34PM +0800, Junxian Huang wrote:
->>>>>>
->>>>>>
->>>>>> On 2024/7/8 16:27, Leon Romanovsky wrote:
->>>>>>> On Mon, Jul 08, 2024 at 03:46:26PM +0800, Junxian Huang wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>> On 2024/7/8 15:33, Leon Romanovsky wrote:
->>>>>>>>> On Mon, Jul 08, 2024 at 02:50:50PM +0800, Junxian Huang wrote:
->>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> On 2024/7/8 13:38, Leon Romanovsky wrote:
->>>>>>>>>>> On Mon, Jul 08, 2024 at 10:29:54AM +0800, Junxian Huang wrote:
->>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> On 2024/7/7 16:30, Leon Romanovsky wrote:
->>>>>>>>>>>>> On Fri, Jul 05, 2024 at 04:59:30PM +0800, Junxian Huang wrote:
->>>>>>>>>>>>>> From: wenglianfa <wenglianfa@huawei.com>
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> During reset, cmdq events won't be reported, leading to a long and
->>>>>>>>>>>>>> unnecessary wait. Notify all the cmdqs to stop waiting at the beginning
->>>>>>>>>>>>>> of reset.
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> Fixes: 9a4435375cd1 ("IB/hns: Add driver files for hns RoCE driver")
->>>>>>>>>>>>>> Signed-off-by: wenglianfa <wenglianfa@huawei.com>
->>>>>>>>>>>>>> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
->>>>>>>>>>>>>> ---
->>>>>>>>>>>>>>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 18 ++++++++++++++++++
->>>>>>>>>>>>>>  1 file changed, 18 insertions(+)
->>>>>>>>>>>>>>
->>>>>>>>>>>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->>>>>>>>>>>>>> index a5d746a5cc68..ff135df1a761 100644
->>>>>>>>>>>>>> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->>>>>>>>>>>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->>>>>>>>>>>>>> @@ -6977,6 +6977,21 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
->>>>>>>>>>>>>>  
->>>>>>>>>>>>>>  	handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
->>>>>>>>>>>>>>  }
->>>>>>>>>>>>>> +
->>>>>>>>>>>>>> +static void hns_roce_v2_reset_notify_cmd(struct hns_roce_dev *hr_dev)
->>>>>>>>>>>>>> +{
->>>>>>>>>>>>>> +	struct hns_roce_cmdq *hr_cmd = &hr_dev->cmd;
->>>>>>>>>>>>>> +	int i;
->>>>>>>>>>>>>> +
->>>>>>>>>>>>>> +	if (!hr_dev->cmd_mod)
->>>>>>>>>>>>>
->>>>>>>>>>>>> What prevents cmd_mod from being changed?
->>>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> It's set when the device is being initialized, and won't be changed after that.
->>>>>>>>>>>
->>>>>>>>>>> This is exactly the point, you are assuming that the device is already
->>>>>>>>>>> ininitialized or not initialized at all. What prevents hns_roce_v2_reset_notify_cmd()
->>>>>>>>>>> from being called in the middle of initialization?
->>>>>>>>>>>
->>>>>>>>>>> Thanks
->>>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> This is ensured by hns3 NIC driver.
->>>>>>>>>>
->>>>>>>>>> Initialization and reset of hns RoCE are both called by hns3. It will check the state
->>>>>>>>>> of RoCE device (see line 3798), and notify RoCE device to reset (hns_roce_v2_reset_notify_cmd()
->>>>>>>>>> is called) only if the RoCE device has been already initialized:
->>>>>>>>>
->>>>>>>>> So why do you have "if (!hr_dev->cmd_mod)" check in the code?
->>>>>>>>>
->>>>>>>>> Thanks
->>>>>>>>>
->>>>>>>>
->>>>>>>> cmd_mod indicates the mode of cmdq (0: poll mode, 1: event mode).
->>>>>>>> This patch only affects event mode because HW won't report events during reset.
->>>>>>>
->>>>>>> You set cmd_mod to 1 in hns_roce_hw_v2_init_instance() without any
->>>>>>> condition, I don't see when hns v2 IB device is created and continue
->>>>>>> to operate in polling mode. 
->>>>>>>
->>>>>>> Thanks
->>>>>>>
->>>>>>
->>>>>> Event mode is the default. In hns_roce_cmd_use_events(), if kcalloc() fails
->>>>>> then it'll be set to polling mode instead.
->>>>>
->>>>> 1. Awesome, and we are returning back to the question. What prevents
->>>>>    hns_roce_v2_reset_notify_cmd() from being called in the middle of
->>>>>    changing cmd_mod from 1 to 0 and from 0 to 1?
->>>>
->>>> The changing of cmd_mod is during the initialization of a device. The call
->>>> of hns_roce_v2_reset_notify_cmd() is during reset. As I said previously,
->>>> the hns3 NIC driver ensures that there will be no concurrency between
->>>> initialization and reset, and therefore hns_roce_v2_reset_notify_cmd() won't
->>>> be called in the middle of changing cmd_mod.
->>>>
->>>>> 2. This cmd_mode swtich from 1 to 0 should be removed. Failure to
->>>>>    allocate memory is not a reason to switch to polling mode. The reason
->>>>>    can be HW limitation, but not OS limitation.
->>>>>
->>>>
->>>> But event mode relies on the allocated resource. If the allocation fails and
->>>> we don't switch to polling mode, the driver won't work any more. Are you suggesting
->>>> we should return an error and fail the initialization in this case?
->>>
->>> Yes, please.
->>
->> The reason of switching cmd_mod is that we try to keep the driver available,
->> even if the allocation of event mode resources fails. We don't consider this
->> as a critical error that should lead to an initialization failure. The driver
->> can still post mailbox and provide normal functionality in this case.
-> 
-> Driver that failed to allocate memory in the middle of initialization
-> can't be considered as "normal".
-> 
->>
->> Our discussion seems to have strayed a bit away？This patch doesn't involve
->> polling mode.
-> 
-> As long as patch has this line "if (!hr_dev->cmd_mod)", this discussion
-> is related to polling mode.
-> 
-> Thanks
-> 
-
-Okay, I'll drop this patch from this patchset in v2 and fix the cmd_mod issues
-in another patchset later.
-
-Thanks,
-Junxian
-
->>
->> Junxian
->>
->>>
->>> Thanks
->>>
->>>>
->>>> Junxian
->>>>
->>>>> Thanks
->>>>>
->>>>>>
->>>>>> Junxian
->>>>>>
->>>>>>>>
->>>>>>>> Junxian
->>>>>>>>
->>>>>>>>>>
->>>>>>>>>>  3791 static int hclge_notify_roce_client(struct hclge_dev *hdev,
->>>>>>>>>>  3792                                     enum hnae3_reset_notify_type type)
->>>>>>>>>>  3793 {
->>>>>>>>>>  3794         struct hnae3_handle *handle = &hdev->vport[0].roce;
->>>>>>>>>>  3795         struct hnae3_client *client = hdev->roce_client;
->>>>>>>>>>  3796         int ret;
->>>>>>>>>>  3797
->>>>>>>>>>  3798         if (!test_bit(HCLGE_STATE_ROCE_REGISTERED, &hdev->state) || !client)
->>>>>>>>>>  3799                 return 0;
->>>>>>>>>>  3800
->>>>>>>>>>  3801         if (!client->ops->reset_notify)
->>>>>>>>>>  3802                 return -EOPNOTSUPP;
->>>>>>>>>>  3803
->>>>>>>>>>  3804         ret = client->ops->reset_notify(handle, type);
->>>>>>>>>>  3805         if (ret)
->>>>>>>>>>  3806                 dev_err(&hdev->pdev->dev, "notify roce client failed %d(%d)",
->>>>>>>>>>  3807                         type, ret);
->>>>>>>>>>  3808
->>>>>>>>>>  3809         return ret;
->>>>>>>>>>  3810 }
->>>>>>>>>>
->>>>>>>>>> And the bit is set (see line 11246) after the initialization has been done (line 11242):
->>>>>>>>>>
->>>>>>>>>> 11224 static int hclge_init_roce_client_instance(struct hnae3_ae_dev *ae_dev,
->>>>>>>>>> 11225                                            struct hclge_vport *vport)
->>>>>>>>>> 11226 {
->>>>>>>>>> 11227         struct hclge_dev *hdev = ae_dev->priv;
->>>>>>>>>> 11228         struct hnae3_client *client;
->>>>>>>>>> 11229         int rst_cnt;
->>>>>>>>>> 11230         int ret;
->>>>>>>>>> 11231
->>>>>>>>>> 11232         if (!hnae3_dev_roce_supported(hdev) || !hdev->roce_client ||
->>>>>>>>>> 11233             !hdev->nic_client)
->>>>>>>>>> 11234                 return 0;
->>>>>>>>>> 11235
->>>>>>>>>> 11236         client = hdev->roce_client;
->>>>>>>>>> 11237         ret = hclge_init_roce_base_info(vport);
->>>>>>>>>> 11238         if (ret)
->>>>>>>>>> 11239                 return ret;
->>>>>>>>>> 11240
->>>>>>>>>> 11241         rst_cnt = hdev->rst_stats.reset_cnt;
->>>>>>>>>> 11242         ret = client->ops->init_instance(&vport->roce);
->>>>>>>>>> 11243         if (ret)
->>>>>>>>>> 11244                 return ret;
->>>>>>>>>> 11245
->>>>>>>>>> 11246         set_bit(HCLGE_STATE_ROCE_REGISTERED, &hdev->state);
->>>>>>>>>> 11247         if (test_bit(HCLGE_STATE_RST_HANDLING, &hdev->state) ||
->>>>>>>>>> 11248             rst_cnt != hdev->rst_stats.reset_cnt) {
->>>>>>>>>> 11249                 ret = -EBUSY;
->>>>>>>>>> 11250                 goto init_roce_err;
->>>>>>>>>> 11251         }
->>>>>>>>>>
->>>>>>>>>> Junxian
->>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>> Junxian
->>>>>>>>>>>>
->>>>>>>>>>>>>> +		return;
->>>>>>>>>>>>>> +
->>>>>>>>>>>>>> +	for (i = 0; i < hr_cmd->max_cmds; i++) {
->>>>>>>>>>>>>> +		hr_cmd->context[i].result = -EBUSY;
->>>>>>>>>>>>>> +		complete(&hr_cmd->context[i].done);
->>>>>>>>>>>>>> +	}
->>>>>>>>>>>>>> +}
->>>>>>>>>>>>>> +
->>>>>>>>>>>>>>  static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
->>>>>>>>>>>>>>  {
->>>>>>>>>>>>>>  	struct hns_roce_dev *hr_dev;
->>>>>>>>>>>>>> @@ -6997,6 +7012,9 @@ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
->>>>>>>>>>>>>>  	hr_dev->dis_db = true;
->>>>>>>>>>>>>>  	hr_dev->state = HNS_ROCE_DEVICE_STATE_RST_DOWN;
->>>>>>>>>>>>>>  
->>>>>>>>>>>>>> +	/* Complete the CMDQ event in advance during the reset. */
->>>>>>>>>>>>>> +	hns_roce_v2_reset_notify_cmd(hr_dev);
->>>>>>>>>>>>>> +
->>>>>>>>>>>>>>  	return 0;
->>>>>>>>>>>>>>  }
->>>>>>>>>>>>>>  
->>>>>>>>>>>>>> -- 
->>>>>>>>>>>>>> 2.33.0
->>>>>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>
->>>>>>
->>>>>
->>>>
->>>
-> 
+>
+> [...]
+>
+> >>>>> @@ -4766,11 +4738,8 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+> >>>>>            */
+> >>>>>           detach_entity_load_avg(cfs_rq, se);
+> >>>>>           update_tg_load_avg(cfs_rq);
+> >>>>> - } else if (decayed) {
+> >>>>> -         cfs_rq_util_change(cfs_rq, 0);
+> >>>>> -
+> >>>>> -         if (flags & UPDATE_TG)
+> >>>>> -                 update_tg_load_avg(cfs_rq);
+> >>>>> + } else if (cfs_rq->decayed && (flags & UPDATE_TG)) {
+> >>>>> +         update_tg_load_avg(cfs_rq);
+> >>>>>   }
+> >>>>>  }
+> >>>>
+> >>>> You set cfs_rq->decayed for each taskgroup level but you only reset it
+> >>>> for the root cfs_rq in __update_cpufreq_ctx_switch() and task_tick_fair()?
+> >>>
+> >>> Yes. We only care about using it for root level. Tracking the information at
+> >>> cfs_rq level is the most natural way to do it as this is what update_load_avg()
+> >>> is acting on.
+> >>
+> >> But IMHO this creates an issue with those non-root cfs_rq's within
+> >
+> > I am not seeing the issue, could you expand on what is it?
+>
+> I tried to explained it in the 4 lines below. With a local 'decayed'
+> update_cfs_rq_load_avg() and propagate_entity_load_avg() set it every
+> time update_load_avg() gets called. And this then determines whether
+> update_tg_load_avg() is called on this cfs_rq later in update_load_avg().
+>
+> The new code:
+>
+>   cfs_rq->decayed |= update_cfs_rq_load_avg() (*)
+>   cfs_rq->decayed |= propagate_entity_load_avg()
+>
+> will not reset 'cfs_rq->decayed' for non-root cfs_rq's.
+>
+> (*) You changed this in v3 from:
+>
+>   cfs_rq->decayed  = update_cfs_rq_load_avg()
+>
+>
+> >> update_load_avg() itself. They will stay decayed after cfs_rq->decayed
+> >> has been set to 1 once and will never be reset to 0. So with UPDATE_TG
+> >> update_tg_load_avg() will then always be called on those non-root
+> >> cfs_rq's all the time.
+> >
+> > We could add a check to update only the root cfs_rq. But what do we gain? Or
+> > IOW, what is the harm of unconditionally updating cfs_rq->decayed given that we
+> > only care about the root cfs_rq? I see more if conditions and branches which
+> > I am trying to avoid.
+>
+> Yes, keep 'decayed' local and add a:
+>
+>     if (cfs_rq == &rq_of(cfs_rq)->cfs)
+>         cfs_rq->decayed = decayed
+>
+>
+>
+>
+>
 
