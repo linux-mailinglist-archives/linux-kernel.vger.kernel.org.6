@@ -1,105 +1,114 @@
-Return-Path: <linux-kernel+bounces-246642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90EC892C49C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:35:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DDAB92C49B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:35:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 384E3B217E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:35:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF0151C21327
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E0518004A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CE7152515;
 	Tue,  9 Jul 2024 20:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IKawx/X2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HajKmWjw"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B0E1B86FB
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E82A4D8D0
 	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 20:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720557324; cv=none; b=OVvGlatvegB/bCLNXVtnzuskDTNcUkzRgQBTUTheLrVblXvfoU9KzJl6Gc3hdgMIqoXzw7HLvjvkvDgZPXkfM/7ESy8vCGgPpEDsGX3dpaSk9HbAdiw4Sd7PMGXWB68UGiKGCfB1/MFO9HnAPlwnDGKH02pHns57vZaGlpAdoBI=
+	t=1720557323; cv=none; b=fChACDd9dpOSX6ptotPrWrZWde+zZWRP6HYDT6dNRVMjF9I+e0O+/hKV3AXueLTJfkmr4iC5j4JvPn/OZyccuQXYgupoFyiDoEkCOe872mOsubF+xFgSFCNyU+ld0eNMY7kp4ByuS6xgTA+dIZ6Tjs9a+Nie8V4KNrVqloDS0Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720557324; c=relaxed/simple;
-	bh=eKUKhI2YBw/Ad6+G7vSsx7UPtabwPEA29W5Ci9CXXpQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y2B1LA30fiWp2DT6BZUh8mhdS8bE9mpRq0eh85Emm5nKWYoADQwCBlf7E02EyPCgX2U6n2wrL6I75jHDlAumz0kqMht6YDFIz8fAdi8SranRsaxoyPU3DC5OO2+UGX6Jr7mCkG3n7G/7PEj2JQWspz7vgYWxMbT+u/Y0AFRcokE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IKawx/X2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720557321;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=bQGIDaP1t/pBYsaGFONgFaSDOJQEw7gzA1HsrUDl/TE=;
-	b=IKawx/X2oGPw371uw+Kc/18x9xAQleL2JHoq7UsuA5AcCXe5ApltR4+bM/kmJe00kUAncE
-	FlL/Cf3kmCqWKVrccsVFqUewJEgKkRRdu1ApylT0BDZEvmOT70u865+AK2YmeqTklcGJSl
-	asIrng8f6AJIXzOrJBkrCTimh5zAhGI=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-241-3aRxG6oTO369D0qNUyAT1Q-1; Tue,
- 09 Jul 2024 16:35:17 -0400
-X-MC-Unique: 3aRxG6oTO369D0qNUyAT1Q-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 987461944B3E;
-	Tue,  9 Jul 2024 20:35:14 +0000 (UTC)
-Received: from antares.redhat.com (unknown [10.39.192.91])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 55D231955DA1;
-	Tue,  9 Jul 2024 20:35:06 +0000 (UTC)
-From: Adrian Moreno <amorenoz@redhat.com>
-To: netdev@vger.kernel.org
-Cc: Adrian Moreno <amorenoz@redhat.com>,
-	Yotam Gigi <yotam.gi@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Ido Schimmel <idosch@nvidia.com>,
-	Eelco Chaudron <echaudro@redhat.com>,
-	Aaron Conole <aconole@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] net: psample: fix flag being set in wrong skb
-Date: Tue,  9 Jul 2024 22:34:36 +0200
-Message-ID: <20240709203437.1257952-1-amorenoz@redhat.com>
+	s=arc-20240116; t=1720557323; c=relaxed/simple;
+	bh=B6TBOvniiIY4yBsFeLV75HI56BIl5JHOPJ2OBmxRZh4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bkayyXBBEypFQGq34Nz2fBi7WEUBi0U6gjqtavkRfHHSK1QsYaD3i84K0Y4c9snI/pXUEXDIto0ADGsw42MdGt+dLtf50BlLK2l4gTpgBvvp1/w39M3AmZARr4FdRos/nGDMgyycZ68pbI69Tr/UK72wy4hDkW2ggnCPHRouCT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HajKmWjw; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7eb41831704so19914639f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 13:35:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1720557321; x=1721162121; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/Uw/sa6sLips5jCn0SIjbZbXatTX5nFO4bBzPwrcrqQ=;
+        b=HajKmWjw/ch4Vae4Cl7xxoiIcrya9ygDqxUisu2DoBZ1oWrle6OQluls/Lemt22Kbt
+         8xoy4LYiIeYrA73Nx6vQlU2SA1uf2uPh10mpz7pli8WZKE3rtke6qC+bQavtNnCf1Lsi
+         8OPUYa9kAHLULJyd6elfQCGjp6aXigMBNLg/Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720557321; x=1721162121;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Uw/sa6sLips5jCn0SIjbZbXatTX5nFO4bBzPwrcrqQ=;
+        b=FjnKLRXCz41kz30ih+kPpzktbrGZCm+xZYNv6FHcx5+BXeuxRcyKjl3z7nMrWp4bjr
+         VpXT+XwwEqmUtsIeTWgPaWGhzKRxHI8+gCczQAfFGBlC4x3ZB4Wmmkx3uT+lQaGHTBxU
+         ro/O8UYfEigtzzQqsK+AV5NuHUSiW4Gb0SOLSufYeKAqKGfEUzzQEFn68uKkzc4xdQPx
+         LC8F1iNWp1Z5VcbnM803WeuRciK+gRI2dU3iAl9vbHI5SLY6vrtEp7pqvV4c+0Cm2C+/
+         Iv5I7fEA3aC/ZFjL4/3wKAiw0vN2JJHXRhA8Oe6aJu1VT/rko6QL+2sZhsspkVF0UbMj
+         7viw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDv/qBmi7dXjHQux8luKUNb4lkR7Amx0yvLvH2BnhPJUoF/EL+F146iuOkbPHYPAF7gQNOm7xza1lE1lCBaSWrH9WYyAma1w+dv6kQ
+X-Gm-Message-State: AOJu0Yy9w0zgsuEhYfnQQ5miNq1Zbc9nztsxOBQdXWVgCZUQ68ZzMSI/
+	ucxOT50yseeRbBR9MVkQlJJ/EcxrVksVgmBWdnjgbQT+zvOtnAS0aWYoWhepPB0=
+X-Google-Smtp-Source: AGHT+IFSFdPJDDf6UfJgdzx9C/1pJLpTxO/0uyjQPpSaIATfc7XdSOsrOKq9Ub2TUBKnYOM2bXdgxA==
+X-Received: by 2002:a05:6602:6103:b0:7f3:9dd3:15b2 with SMTP id ca18e2360f4ac-7fff92c5be4mr394599039f.0.1720557321484;
+        Tue, 09 Jul 2024 13:35:21 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c0b1c138eesm683371173.151.2024.07.09.13.35.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 13:35:21 -0700 (PDT)
+Message-ID: <b8af74c6-1489-421b-8495-0056ecf144d8@linuxfoundation.org>
+Date: Tue, 9 Jul 2024 14:35:20 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] selftest/timerns: fix clang build failures for abs()
+ calls
+To: Andrei Vagin <avagin@gmail.com>, John Hubbard <jhubbard@nvidia.com>
+Cc: Shuah Khan <shuah@kernel.org>, Dmitry Safonov <dima@arista.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Valentin Obst
+ <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240704025247.86418-1-jhubbard@nvidia.com>
+ <CANaxB-zk-j2E8D0_4x04WL5Jbe08SD39jqBLbehBYWedFg+mMw@mail.gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <CANaxB-zk-j2E8D0_4x04WL5Jbe08SD39jqBLbehBYWedFg+mMw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-A typo makes PSAMPLE_ATTR_SAMPLE_RATE netlink flag be added to the wrong
-sk_buff.
+On 7/3/24 21:44, Andrei Vagin wrote:
+> On Wed, Jul 3, 2024 at 7:52 PM John Hubbard <jhubbard@nvidia.com> wrote:
+>>
+>> When building with clang, via:
+>>
+>>      make LLVM=1 -C tools/testing/selftests
+>>
+>> ...clang warns about mismatches between the expected and required
+>> integer length being supplied to abs(3).
+>>
+>> Fix this by using the correct variant of abs(3): labs(3) or llabs(3), in
+>> these cases.
+>>
+> 
+> Acked-by: Andrei Vagin <avagin@google.com>
+> 
 
-Fixes: 7b1b2b60c63f ("net: psample: allow using rate as probability")
-Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
----
- net/psample/psample.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sent in for Linux 6.10 fixes update.
 
-diff --git a/net/psample/psample.c b/net/psample/psample.c
-index f48b5b9cd409..11b7533067b8 100644
---- a/net/psample/psample.c
-+++ b/net/psample/psample.c
-@@ -498,7 +498,7 @@ void psample_sample_packet(struct psample_group *group, struct sk_buff *skb,
- 		goto error;
- 
- 	if (md->rate_as_probability)
--		nla_put_flag(skb, PSAMPLE_ATTR_SAMPLE_PROBABILITY);
-+		nla_put_flag(nl_skb, PSAMPLE_ATTR_SAMPLE_PROBABILITY);
- 
- 	genlmsg_end(nl_skb, data);
- 	genlmsg_multicast_netns(&psample_nl_family, group->net, nl_skb, 0,
--- 
-2.45.2
+thanks,
+-- Shuah
 
 
