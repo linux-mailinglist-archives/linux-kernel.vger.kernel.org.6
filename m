@@ -1,144 +1,208 @@
-Return-Path: <linux-kernel+bounces-245671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC6D92B5D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:49:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E39D892B5D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 729FF1F214B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:49:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99832282283
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6DA156F5E;
-	Tue,  9 Jul 2024 10:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32092157461;
+	Tue,  9 Jul 2024 10:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YH2oSUoS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oV559RVW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VIAGM8cv";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oV559RVW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VIAGM8cv"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92D614290;
-	Tue,  9 Jul 2024 10:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E2A14290;
+	Tue,  9 Jul 2024 10:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720522138; cv=none; b=ulXAOx7Y8OAambgd83XwxT59I1rv2I9FXl0bGxBo5ZnDpvAMPZ7MggIIaydObJw9HSdFlfkhSWjV8VEhCfWhB27NFbZrRoZe4QAJXDaxzA82I7CK+TMOrbKtxYgMhf/7of497SZzjwOqoUXNgjJYOyH/0S9J8EkgKay70+4ixGw=
+	t=1720522193; cv=none; b=SFqX9ko062b5abt15PwQHJmOr4uLkWfNzM+UHp5rbBjk0d0WXulORJIRzACoGQ/5DLgIRwhllv8fxruviDTdocaoz9cgTuLmJuDRhmngtkW/78ylyKnZECCwr84hqb2NzGE1UkNf+3AGvXohofUH8sIkh8yVlKjtL39yI2Lcr5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720522138; c=relaxed/simple;
-	bh=+0UCCKX9eTmUCtlh6j65FUsSAck/OtEeFegBRXqawoA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c9SapNBiHMa5QFDTJOipdci4jrOVm099kJLfEEFGOy+JUEoAfg7zXJQgahyTMNuBjPa7F3/XJxS/GdmQLGqU7zmLPc00HEceVeuEJSXNa9OfMgkajcTLHBh1dxwrzQlxbwkFm9tFPw0Ve33DHOG5HXLpa5/FmFdcCx+pSy41byM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YH2oSUoS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CBF3C3277B;
-	Tue,  9 Jul 2024 10:48:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720522138;
-	bh=+0UCCKX9eTmUCtlh6j65FUsSAck/OtEeFegBRXqawoA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YH2oSUoS8Mrw383mytbFplGa9CwGgWmEBAuIXD1eNNWw4D8cmmis+Ey6BXCcyhJu4
-	 dSUSlQqkWVZoqbU2ratz0Ul7+lyCNt8lJmeFy+hEl8RgcBWlLTxKHSkr6x7QHTphsi
-	 FSpKjRepjzSseN2lHHu+UXddVEyNrKX+oyyOvdT5sSgG23FKJT44aYcNBQ+1kOxtU6
-	 8RG+CQVCSWZpUzpAq3baaIm+lD/O8GT/+BLZLh3rjX8XEdk3tw/Wo+tGOAG8+zdZrS
-	 yCZF/uUk165W3pxsBTnS4IU8KwSwKto9ja749I67GhEjcYLGBg/bgNzUq4NMSLOLbD
-	 WW7gvGuz4JwiQ==
-Date: Tue, 9 Jul 2024 11:48:51 +0100
-From: Will Deacon <will@kernel.org>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Subject: Re: [PATCH v4 02/15] firmware/psci: Add psci_early_test_conduit()
-Message-ID: <20240709104851.GE12978@willie-the-truck>
-References: <20240701095505.165383-1-steven.price@arm.com>
- <20240701095505.165383-3-steven.price@arm.com>
+	s=arc-20240116; t=1720522193; c=relaxed/simple;
+	bh=gDFysj+VsxKuDPsB7v0YAM1c9V/RobqKMoF3NjI7oek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BXjs8XVBECvRKXAreeQqUIBHvObhZt+FLBvommc/OaY0t+bT7VvCcQyLwL0c4hTm4lvAd+JoGEa1XIiSHmi9ZeWvDuQ/iCRBlBw2crxIpzQL3uotLEqy3ARZC5ECOVqSGhbp4IniHWMX1RdLpnjTf7sm8QBDAV1aoPc2UMJWUT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oV559RVW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VIAGM8cv; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oV559RVW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VIAGM8cv; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A3FF6219A9;
+	Tue,  9 Jul 2024 10:49:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1720522189; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KNET36NYtbI0sQiYMIP2mAavdQmVJO4sIajw2H3DKko=;
+	b=oV559RVWg1N9Fk3NfBYx2Xu++jLgj3wY08ZunWYF/JJIceyR/8m0XnLOFPXmeOtUB8sa37
+	vzAhARSCY+5SLY4xpuBuzylV6950S/kdv8VkFGQMp6UmrhkF2wE+gQo/0jDrSWPGVHMVjQ
+	iZ7ErkP1X8SaMbZeymxaxAlbXw0jpqM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1720522189;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KNET36NYtbI0sQiYMIP2mAavdQmVJO4sIajw2H3DKko=;
+	b=VIAGM8cvbCGYUN+Ej8+weVNuLAGAH0+nWI6TfBY1Bo1wxX9TAsbWMDpnKefWNkQK47Fttr
+	hxs04HzV+8S+GeAg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=oV559RVW;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=VIAGM8cv
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1720522189; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KNET36NYtbI0sQiYMIP2mAavdQmVJO4sIajw2H3DKko=;
+	b=oV559RVWg1N9Fk3NfBYx2Xu++jLgj3wY08ZunWYF/JJIceyR/8m0XnLOFPXmeOtUB8sa37
+	vzAhARSCY+5SLY4xpuBuzylV6950S/kdv8VkFGQMp6UmrhkF2wE+gQo/0jDrSWPGVHMVjQ
+	iZ7ErkP1X8SaMbZeymxaxAlbXw0jpqM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1720522189;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KNET36NYtbI0sQiYMIP2mAavdQmVJO4sIajw2H3DKko=;
+	b=VIAGM8cvbCGYUN+Ej8+weVNuLAGAH0+nWI6TfBY1Bo1wxX9TAsbWMDpnKefWNkQK47Fttr
+	hxs04HzV+8S+GeAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7AC111369A;
+	Tue,  9 Jul 2024 10:49:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id hd+WHc0VjWatVQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 09 Jul 2024 10:49:49 +0000
+Message-ID: <c163cdb3-a950-4a61-b125-2f9086ca95ec@suse.cz>
+Date: Tue, 9 Jul 2024 12:49:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240701095505.165383-3-steven.price@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/7] mm: move vma_shrink(), vma_expand() to internal
+ header
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, SeongJae Park <sj@kernel.org>,
+ Shuah Khan <shuah@kernel.org>, Brendan Higgins <brendanhiggins@google.com>,
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
+References: <cover.1720121068.git.lorenzo.stoakes@oracle.com>
+ <2182710009e222ee0a57ad975ed560edf965f5ee.1720121068.git.lorenzo.stoakes@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <2182710009e222ee0a57ad975ed560edf965f5ee.1720121068.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: A3FF6219A9
+X-Spam-Score: -4.50
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.50 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-On Mon, Jul 01, 2024 at 10:54:52AM +0100, Steven Price wrote:
-> From: Jean-Philippe Brucker <jean-philippe@linaro.org>
+On 7/4/24 9:27 PM, Lorenzo Stoakes wrote:
+> The vma_shrink() and vma_expand() functions are internal VMA manipulation
+> functions which we ought to abstract for use outside of memory management
+> code.
 > 
-> Add a function to test early if PSCI is present and what conduit it
-> uses. Because the PSCI conduit corresponds to the SMCCC one, this will
-> let the kernel know whether it can use SMC instructions to discuss with
-> the Realm Management Monitor (RMM), early enough to enable RAM and
-> serial access when running in a Realm.
+> To achieve this, we replace shift_arg_pages() in fs/exec.c with an
+> invocation of a new relocate_vma_down() function implemented in mm/mmap.c,
+> which enables us to also move move_page_tables() and vma_iter_prev_range()
+> to internal.h.
 > 
-> Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> v4: New patch
-> ---
->  drivers/firmware/psci/psci.c | 25 +++++++++++++++++++++++++
->  include/linux/psci.h         |  5 +++++
->  2 files changed, 30 insertions(+)
+> The purpose of doing this is to isolate key VMA manipulation functions in
+> order that we can both abstract them and later render them easily testable.
 > 
-> diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-> index d9629ff87861..a40dcaf17822 100644
-> --- a/drivers/firmware/psci/psci.c
-> +++ b/drivers/firmware/psci/psci.c
-> @@ -13,6 +13,7 @@
->  #include <linux/errno.h>
->  #include <linux/linkage.h>
->  #include <linux/of.h>
-> +#include <linux/of_fdt.h>
->  #include <linux/pm.h>
->  #include <linux/printk.h>
->  #include <linux/psci.h>
-> @@ -767,6 +768,30 @@ int __init psci_dt_init(void)
->  	return ret;
->  }
->  
-> +/*
-> + * Test early if PSCI is supported, and if its conduit matches @conduit
-> + */
-> +bool __init psci_early_test_conduit(enum arm_smccc_conduit conduit)
-> +{
-> +	int len;
-> +	int psci_node;
-> +	const char *method;
-> +	unsigned long dt_root;
-> +
-> +	/* DT hasn't been unflattened yet, we have to work with the flat blob */
-> +	dt_root = of_get_flat_dt_root();
-> +	psci_node = of_get_flat_dt_subnode_by_name(dt_root, "psci");
-> +	if (psci_node <= 0)
-> +		return false;
-> +
-> +	method = of_get_flat_dt_prop(psci_node, "method", &len);
-> +	if (!method)
-> +		return false;
-> +
-> +	return  (conduit == SMCCC_CONDUIT_SMC && strncmp(method, "smc", len) == 0) ||
-> +		(conduit == SMCCC_CONDUIT_HVC && strncmp(method, "hvc", len) == 0);
-> +}
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Hmm, I don't think this is sufficient to check for SMCCC reliably.
-Instead, I think you need to do something more involved:
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
-1. Check for PSCI in the DT
-2. Check that the PSCI major version is >= 1
-3. Use PSCI_FEATURES to check that you have SMCCC
-4. Use SMCCC_VERSION to find out which version of SMCCC you have
+Same nits about some "extern"s that could be removed in the process.
 
-That's roughly what the PSCI driver does, so we should avoid duplicating
-that logic.
-
-Will
 
