@@ -1,155 +1,153 @@
-Return-Path: <linux-kernel+bounces-245321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE8C92B132
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:34:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA2C92B13A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:35:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35CFC282388
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:34:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25E032809AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6FA145A08;
-	Tue,  9 Jul 2024 07:34:25 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AB6148FFC;
+	Tue,  9 Jul 2024 07:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GAF8CV5F"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA31F143752
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 07:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E787F13FD86
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 07:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720510465; cv=none; b=rsRKw5L4cOP4rGcaqXPp0cfNwNvuxW5LH+mz4C9tuztReGUThDDVdv448YtR8/t59PH0pZR6LxvY1PduBxbERaY2mtqW5GHl+7P85vZ8TQFgzpQwt3H4TUZSnw5XsU2I1QsfmNWMHAMCykUk+TuC03XA1sxZjhyN7gHEDE4WeVY=
+	t=1720510513; cv=none; b=LftqolBkn/VwNdDAkrVsY1pCuWZFoINnRJPdV5zGdRIXMViBzGOMm5wCpw3DI7w08nTbjJxTD4ENjRPhtY8KWYbcnqbkGMG15WtynixhXwgv4FMQsn5BGFtZYO/DypKsZPb6IDBDNsxuf2j4ggRr3EhsQlhoL3vPVJfCO16eXf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720510465; c=relaxed/simple;
-	bh=4hxmwXyCUESMlQ9wT1HjK4hk6LZ5RJQq4cZCuIXAh48=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OfEap8+gs54uC2HEDYbPg8UR7RIx9tRrBkgyZTEr+VCL6heN16Za3VyGphaDt3tFZxW9Nsd2hRC3tGD4Y9QHuepo0pnPpgbbdrJHfvu7c/H79Im9VPcEgWTQJXNn/TDN5Wl+IvxgU6LMtjrdhfTOM3KwEUmjotbFjg3mGf/oJfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-37613924eefso58521975ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 00:34:23 -0700 (PDT)
+	s=arc-20240116; t=1720510513; c=relaxed/simple;
+	bh=DdRhbICaef9j8HkGlMP5Bgg0eQtDwpCDC9yQaq+5/6o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mHRHOESlyd5hDATLYEQ5mupw6JxPP1HDJWTFg28jJ32kRa/fOHpJ2zOnnqPbnBc0IIxHCp5Xo4e5PMcryr+oP2jffCp6luWu1z2z5nA+snDICa4aSCE8HenSdC5RtXzspdoK/0RxrRcaq/bKcfVro0z73uSGyvRzH5WwiUGVO34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GAF8CV5F; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720510510;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EIqC2mqFe9C8xKJMg5ba5cK9RsFhYLPxtTQe6Ed06hU=;
+	b=GAF8CV5FywvHX7Y9YtNYpnuN/kvRklUKXX1AG4MrUW7Kh4OZ2FakWrr39/d4xknlo4FE8o
+	zDXL3wZfFPiLccE1L3tkW5Q2SYUoEjqRcsn+eXrOOBJRn6QWaeB5pj7P0C4vG5ndKGBMug
+	xIwD9XeR3VQWUlaP1LajN1v/zPrlS9o=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-654-jUrUdf6KN_G3LtLUxHC24A-1; Tue, 09 Jul 2024 03:35:07 -0400
+X-MC-Unique: jUrUdf6KN_G3LtLUxHC24A-1
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-58c4f94b57cso3543260a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 00:35:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720510463; x=1721115263;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ALjQGdbNHVaPJ1ynC8GfH+CoSsrbpmUoa8b0ZipILqc=;
-        b=CQWxFOQh086lh0NucrAhZ4B+HtfxK7WlokhghTyJRN++we+7Ogd1Keos6IkAfjFZZM
-         QFxUb3p7HF1LDIhtB33yL5XTr1lI2+501EtDXZW8n2YpHp26s4rsyykxNCjFCVQ2xYsg
-         uhiuXOrD3//HIftmEQiM6tBEGxSSDkQfgJqdJBg6womcnuMjsEw9rK9TvvoSwzAMb7Jt
-         AhWT7Fc+XtwVy8FzGTtVmL7OC3p+6Tc1U06jK4mZK0K+5F4CiNbAUMu+WgAjoNQNhGb0
-         Q6CZwLe4FnjMBaCdtRj2r9EVADCV6CIjwHs41SI+VBpvjLK2ibL31f8wcaicRXy6GrU0
-         ziHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfNai51SeZxVwJPRSqzjEq37IqWpzr8pOxzsqw+nT1EoXjw1TTRZi2KE+7OHMuk5KeIlb9gwW3AunwRs1CgYLGk1uD9VmN5pMVAxR2
-X-Gm-Message-State: AOJu0Yyect7s+KtlZMKjMvXCOCyaXfryFmOtjBEMQS/ksSsgaZ96vYBB
-	zzhiiaPWWUywgWDVjDuxUqJxY6D+T/odFazdXMyaTFgIM7zE9i6tp03nEyuekcRak1+UBLOKVe6
-	tLwRoqjxSLMRfqJte/EBhHZZSnFb/YuMiyb+qXgYoLigbsEBmxTvBN/A=
-X-Google-Smtp-Source: AGHT+IFOzh4mDnzJn5EChuu9V2MaOZcz7A43/i/YlVSgfTsAD4DOI//cfxhgTWGsLI1puc/9Ewy/ntfDUmsqfvol+A2sz/7nYFgZ
+        d=1e100.net; s=20230601; t=1720510506; x=1721115306;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EIqC2mqFe9C8xKJMg5ba5cK9RsFhYLPxtTQe6Ed06hU=;
+        b=JgHgKvE0JCq3XONN8UNQj6OaVK6P243soAVi32TuZoT6PNWomOkuEsOwXp0yG5byEu
+         u94fabjUpcBoPwGI5wk7znmkUWzK23kGk/6FoIvul0tpvXF2OIAbCDMWMf0D93ei5RdU
+         vN7FNZyxO02kZE3OqQfeV6w3+3ELqMw7eEizaiptZ5BOKMJjZ8lnUSm1f1F2I8vTZgWK
+         xUo2O82RvcFO9bCPLN90dN1n6wln1uE90KXH02HYIfiTynvr18WGPjSKbv5Kl1q2ftdE
+         IGuevb730/ZK4BDIVt3mD89Enrd9tUVd3/ScJvQh80iHtNcRZxwRq86UOQ9MkuFCYQfn
+         HeVw==
+X-Forwarded-Encrypted: i=1; AJvYcCWNIY/U1k3aJRjgDAkz7TbfGT7nyup8UjPUOGWOCweDkvro9XuwZK4XuNNe2TO7TMtVyM57Vc5ZVE1eXVq2xNmv6JofnKdsz0gB/7SU
+X-Gm-Message-State: AOJu0YxJeG7hNMw7Yzqnvy7yI/JhEnwfytLEHo43H0x9LZ5z5fuGjgmJ
+	RgEQLxMl/Ekf/aXjbSrtA5F1FLZm3RSS/T02whgHMVFeklyAg94y26IJVC9WMWQA5LX/npuOccf
+	VuP2G98LWotHxdAYuYgzr2C4/LnGz/XEMyygGP29uxY+LOMxRRHGbn60JnHUuFB/mro1wNMCfY0
+	FT4tt5aew/ISoBC1MB0w3wt6Tj6M6kEI+dnKM8
+X-Received: by 2002:a05:6402:2742:b0:57c:610a:6e7f with SMTP id 4fb4d7f45d1cf-594baf8719fmr1467717a12.11.1720510506319;
+        Tue, 09 Jul 2024 00:35:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEprGNtKtwZjWwZDrHR9spCqEFHlNDxGO/hw7rYsSyBxth5QJJ9oylIOl12jUvsQu4A55DuFRtIjAqAaxCAus8=
+X-Received: by 2002:a05:6402:2742:b0:57c:610a:6e7f with SMTP id
+ 4fb4d7f45d1cf-594baf8719fmr1467693a12.11.1720510505896; Tue, 09 Jul 2024
+ 00:35:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:da4a:0:b0:382:6a83:f4fc with SMTP id
- e9e14a558f8ab-38a59aaf125mr208645ab.5.1720510462971; Tue, 09 Jul 2024
- 00:34:22 -0700 (PDT)
-Date: Tue, 09 Jul 2024 00:34:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fa6583061ccb8e3d@google.com>
-Subject: [syzbot] [bluetooth?] WARNING in __hci_cmd_sync_sk
-From: syzbot <syzbot+f52b6db1fe57bfb08d49@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240708065549.89422-1-lulu@redhat.com> <20240708072603-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20240708072603-mutt-send-email-mst@kernel.org>
+From: Cindy Lu <lulu@redhat.com>
+Date: Tue, 9 Jul 2024 15:34:28 +0800
+Message-ID: <CACLfguU2OakNJPO6pR6V7D4SV0-VvC=okqDcwutMPztTUweMZA@mail.gmail.com>
+Subject: Re: [PATCH] vdpa/mlx5: Add the support of set mac address
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: dtatulea@nvidia.com, jasowang@redhat.com, parav@nvidia.com, 
+	sgarzare@redhat.com, netdev@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Mon, 8 Jul 2024 at 19:26, Michael S. Tsirkin <mst@redhat.com> wrote:
+>
+> On Mon, Jul 08, 2024 at 02:55:49PM +0800, Cindy Lu wrote:
+> > Add the function to support setting the MAC address.
+> > For vdpa/mlx5, the function will use mlx5_mpfs_add_mac
+> > to set the mac address
+> >
+> > Tested in ConnectX-6 Dx device
+> >
+> > Signed-off-by: Cindy Lu <lulu@redhat.com>
+>
+> Is this on top of your other patchset?
+>
+yes, Will send a new version of these patch
+Thanks
+cindy
+> > ---
+> >  drivers/vdpa/mlx5/net/mlx5_vnet.c | 23 +++++++++++++++++++++++
+> >  1 file changed, 23 insertions(+)
+> >
+> > diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > index 26ba7da6b410..f78701386690 100644
+> > --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > @@ -3616,10 +3616,33 @@ static void mlx5_vdpa_dev_del(struct vdpa_mgmt_dev *v_mdev, struct vdpa_device *
+> >       destroy_workqueue(wq);
+> >       mgtdev->ndev = NULL;
+> >  }
+> > +static int mlx5_vdpa_set_attr_mac(struct vdpa_mgmt_dev *v_mdev,
+> > +                               struct vdpa_device *dev,
+> > +                               const struct vdpa_dev_set_config *add_config)
+> > +{
+> > +     struct mlx5_vdpa_dev *mvdev = to_mvdev(dev);
+> > +     struct mlx5_vdpa_net *ndev = to_mlx5_vdpa_ndev(mvdev);
+> > +     struct mlx5_core_dev *mdev = mvdev->mdev;
+> > +     struct virtio_net_config *config = &ndev->config;
+> > +     int err;
+> > +     struct mlx5_core_dev *pfmdev;
+> > +
+> > +     if (add_config->mask & (1 << VDPA_ATTR_DEV_NET_CFG_MACADDR)) {
+> > +             if (!is_zero_ether_addr(add_config->net.mac)) {
+> > +                     memcpy(config->mac, add_config->net.mac, ETH_ALEN);
+> > +                     pfmdev = pci_get_drvdata(pci_physfn(mdev->pdev));
+> > +                     err = mlx5_mpfs_add_mac(pfmdev, config->mac);
+> > +                     if (err)
+> > +                             return -1;
+> > +             }
+> > +     }
+> > +     return 0;
+> > +}
+> >
+> >  static const struct vdpa_mgmtdev_ops mdev_ops = {
+> >       .dev_add = mlx5_vdpa_dev_add,
+> >       .dev_del = mlx5_vdpa_dev_del,
+> > +     .dev_set_attr = mlx5_vdpa_set_attr_mac,
+> >  };
+> >
+> >  static struct virtio_device_id id_table[] = {
+> > --
+> > 2.45.0
+>
 
-syzbot found the following issue on:
-
-HEAD commit:    256abd8e550c Linux 6.10-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14e81031980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=42a432cfd0e579e0
-dashboard link: https://syzkaller.appspot.com/bug?extid=f52b6db1fe57bfb08d49
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/4b52809e32ca/disk-256abd8e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6c71e8f0eab4/vmlinux-256abd8e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/fdcc77cd0018/bzImage-256abd8e.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f52b6db1fe57bfb08d49@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 16659 at kernel/workqueue.c:2282 __queue_work+0xc5e/0xee0 kernel/workqueue.c:2281
-Modules linked in:
-CPU: 0 PID: 16659 Comm: syz-executor Not tainted 6.10.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:__queue_work+0xc5e/0xee0 kernel/workqueue.c:2281
-Code: ff e8 76 83 36 00 90 0f 0b 90 e9 20 fd ff ff e8 68 83 36 00 eb 13 e8 61 83 36 00 eb 0c e8 5a 83 36 00 eb 05 e8 53 83 36 00 90 <0f> 0b 90 48 83 c4 58 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc
-RSP: 0018:ffffc9000ecef810 EFLAGS: 00010093
-RAX: ffffffff815fa35f RBX: ffff888061d45a00 RCX: ffff888061d45a00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff815f9833 R09: 0000000000000000
-R10: ffffc9000ecef8e0 R11: fffff52001d9df1d R12: ffff8880648631c0
-R13: dffffc0000000000 R14: ffff888064863000 R15: 0000000000000008
-FS:  000055555f45a500(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f755bb04030 CR3: 0000000052a18000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- queue_work_on+0x1c2/0x380 kernel/workqueue.c:2411
- queue_work include/linux/workqueue.h:621 [inline]
- hci_cmd_sync_run net/bluetooth/hci_sync.c:145 [inline]
- __hci_cmd_sync_sk+0x7b1/0x1130 net/bluetooth/hci_sync.c:167
- __hci_cmd_sync_status_sk net/bluetooth/hci_sync.c:252 [inline]
- __hci_cmd_sync_status+0x37/0x130 net/bluetooth/hci_sync.c:278
- hci_dev_cmd+0x51c/0xa50 net/bluetooth/hci_core.c:747
- sock_do_ioctl+0x158/0x460 net/socket.c:1222
- sock_ioctl+0x629/0x8e0 net/socket.c:1341
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3a54b757db
-Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
-RSP: 002b:00007ffee9a9ba60 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f3a54b757db
-RDX: 00007ffee9a9bad8 RSI: 00000000400448dd RDI: 0000000000000003
-RBP: 000055555f45a4a8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 0000000000000001 R14: 0000000000000005 R15: 0000000000000009
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
