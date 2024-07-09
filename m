@@ -1,169 +1,168 @@
-Return-Path: <linux-kernel+bounces-245620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D170192B509
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:20:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35BA692B50F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C5A0B22F7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:20:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 581D71C22E29
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B0B156F44;
-	Tue,  9 Jul 2024 10:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CAE415664C;
+	Tue,  9 Jul 2024 10:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GFbjvMbn"
-Received: from mail-io1-f67.google.com (mail-io1-f67.google.com [209.85.166.67])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="azewGR1F"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E745156862
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B14F154C04
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720520400; cv=none; b=abephzQuVNb9WzKmUWZ7sKP69LKsEu7ikdzmP6rNRJvUqEUJsvTTdRNbHZtv4Zaqxqe8FLnGwbdYiXTpYmiZ7oUxFgIo9HtEVEB5T0wseyjq8p8aDTsPGRNMmhWZB1flVpe5rXC3qb7d7rfXweCISoh5DGd+t3BWlZzsAgYVsDM=
+	t=1720520466; cv=none; b=gLI5xsJTnJMxsfIvQEjRY9XTScqXkKQ80RRwhw0hgLEfAwZX0SbBYwg+JCFzKcMMxDiSDjb1RibESry28IW+/9jeBQKtRUTkh80KQ0km4cnpZR9gvJcWSS+PBPiBD7WDrFG3JnWQvdKwb8zwgPHbswXYBAK0bltH4P8/MT4iJZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720520400; c=relaxed/simple;
-	bh=1hlpKuB9Bhnf6iyh2qDuWQVcWhNS4D+IdvrMXKwBarM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=EVa+Hbn8nso5WmB2U+RbXdOh+H6wTNiaQ2Bof2SK+Cwlsg24hVDhC7X6pnGVU+F8qeT6R/4CKNd0ypwHxd45vCR0ZGybHjwuRks7F5AC6g44pwOwPQr4bKYl/yNBSrPqCEulm5w1W2/avt73dCGs5zdpTE8GZkA4Lv+8OyaMWiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=GFbjvMbn; arc=none smtp.client-ip=209.85.166.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-io1-f67.google.com with SMTP id ca18e2360f4ac-8036ce66108so864239f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 03:19:59 -0700 (PDT)
+	s=arc-20240116; t=1720520466; c=relaxed/simple;
+	bh=FI8Ai9at4PJrxIU/sJac80olr10NbpFwsfq+R3rThC8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hXyLMWwfqjH3bjaxPHwAnI/txI3r55zLQOFmfm/0Hj1hQRs+sd8jROnuHC28OIsNts3swRuftfvR7WbGCmdblS+yE6Prc9PS5Mxe68ssHqh4U5AcyIAnC5DZeVuqFlJTg2RHOrpZkLam8tLyoy/mXuAcrJ9gWu/mAUwrYJE7pic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=azewGR1F; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-58b3fee65d8so5482376a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 03:21:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1720520398; x=1721125198; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6eo/T2MDeFuTGwCTeEol3bq4AUNqiYv36Kk27s7zY+0=;
-        b=GFbjvMbnTq2ORe9ArcUxZDk/q5SZQW9UQ9994rZwsHsa4wY/hYsvtRSXGvMlH7iI89
-         jycGwD+H3Ve/SXFbbAhjMHOLifaZRBQQXY8eAvgigRS884FmHNTbv7rrZAVCm/zfhP/q
-         DwlG4Iu9XhVBaF/0llnjqyWp/e79sSR0ud5bA=
+        d=linaro.org; s=google; t=1720520463; x=1721125263; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=G+hQCp/WCknSoDGq7wdhhIY0ZHD5OUQb2BcFzfGm0fg=;
+        b=azewGR1FQjTS2Khk+Mq7A0axycscNFRmF53K04vavVdeygYO0pr+XHAxCqfYg0y/AS
+         Gxx+rPdQmi3pokdGcroj2Z83BWGUUmnS9wRAoS2+dCMyPbVbkKkQD1zqYXZM8h0p3OZT
+         LXsu4WNKHkD61rPrF+yqecFskRmP4OWMAQwFcZYkdyR6lrGBNglan7Y31ERQy4QWvXbn
+         ErVXJhBPljDyaeGDuHlSIu9tvhuYjNBmdP6yVPRwQ9l/qNolvGJloE9zf8nNTRZJqCW1
+         G2v8RnJkudpOcv9Xd8qyWTHgIbBMj17o0otQu4AhNCssog8f0mJW04BqlLse7lDzUbYA
+         Muag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720520398; x=1721125198;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6eo/T2MDeFuTGwCTeEol3bq4AUNqiYv36Kk27s7zY+0=;
-        b=PDmLtB4Je4U+i687+4Sy6KrTTO5P6KHwR6tF3HvbBZKEWeyYqzQkPelwINY+BG1wXN
-         RiIPCC22VmJrDePyKtfm3p0X2w9KJTQC3F+YfwqXnSVIeAS6EORgN/oTrqDLrKM0j8VA
-         Zfi1T9Q5nWniNxG8N+hRI1G3UszqnXIUsvvC4xBjebW9GQJvg+/Z6lDSB1pif2i9KpAF
-         9nizlcL8CbxEHTF2eD0U/PFWVnDPZKmeUK9UgbhYkT/6HBZu2AuljR66bKqREKcBpDLW
-         GoAMXVHNzdLHzM2vobPhQChxfVcipn6EnktCxBlGWR6SozdoAQRtSEAQ5cuVu8jed63S
-         QAFw==
-X-Gm-Message-State: AOJu0YzEr1c9oIj0nCCe7KdZTq+AzwioeFRKg0NDPW4iR4Kxo1b/WAi7
-	V8F1534tR+e7WG6+G3FcLO14ox3IE0SV/0DmrBZh7SkhsA+CpH9zvZ36Hc7FLzTrquR7Pw4aeW0
-	WBJUaxz8WTLI10MkiGT+v3tn0/QkU+sdOB5e/Bl4MQ7MnFiWACf3rjirnvs4B/PY5gzBSDL06mk
-	NnW+TG24A7E1pYtyCYUm7uVMRG6lenKprtnkbEh3w/xT8wtbDdZLrwfR81cGc=
-X-Google-Smtp-Source: AGHT+IGVeRx4E+l9eXcBpFewtCojZ3GAL+3nL22Gtq5ScRBbs8/g0Vz6xgC5/Q/KF+PA5BI7nJl6eQ==
-X-Received: by 2002:a05:6602:164b:b0:7f3:cd10:40b3 with SMTP id ca18e2360f4ac-7ffffe21e74mr312552739f.1.1720520398192;
-        Tue, 09 Jul 2024 03:19:58 -0700 (PDT)
-Received: from kashwindayan-virtual-machine.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b43967345sm1426016b3a.112.2024.07.09.03.19.56
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Jul 2024 03:19:58 -0700 (PDT)
-From: Ashwin Kamat <ashwin.kamat@broadcom.com>
-To: linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org,
-	davem@davemloft.net,
-	yoshfuji@linux-ipv6.org,
-	dsahern@kernel.org,
-	kuba@kernel.org,
-	netdev@vger.kernel.org,
-	florian.fainelli@broadcom.com,
-	ajay.kaher@broadcom.com,
-	vasavi.sirnapalli@broadcom.com,
-	tapas.kundu@broadcom.com,
-	ashwin.kamat@broadcom.com,
-	Eric Dumazet <edumazet@google.com>
-Subject: [PATCH v5.15 2/2] net/ipv6: prevent NULL dereference in ip6_output()
-Date: Tue,  9 Jul 2024 15:49:44 +0530
-Message-Id: <1720520384-9690-3-git-send-email-ashwin.kamat@broadcom.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1720520384-9690-1-git-send-email-ashwin.kamat@broadcom.com>
-References: <1720520384-9690-1-git-send-email-ashwin.kamat@broadcom.com>
+        d=1e100.net; s=20230601; t=1720520463; x=1721125263;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G+hQCp/WCknSoDGq7wdhhIY0ZHD5OUQb2BcFzfGm0fg=;
+        b=Wtfj7D+SeNifHC7h6KM/2fuRvXkzh2SfHnYV5rAAWQTFcaZP++3O7EtuOcdH2j95SP
+         A8peSHjRp09ObMEonmS4Zcb8YvC7dXq6tPafmhjvGO+opyJIwGvTHzHpEgOyIVU6ZfXZ
+         dEgGLroCChxMliYcAVWAeBlgMWTGlAQY1WvVVqz3cGzIB69hO81N8c3gc9+eQM0SdHdb
+         HK0wTlTj4HQWKs46zQS8GvJ/P0UCE3QizzS0i3eUJ+OHQUyAGt5BKwFv0xiBJT5AYYah
+         QohvVP2cOEHCXniA5CEKBd4cHHL4UTUZQB2yKhmLFOG21HUoLJjnH7sVSsgEQDQTCvhd
+         TuKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXElrV/CVjdklEzVytCvbG8Y6zCNQnv2i47ydcDwMXTuPkkDha82ZyF2BUdKxTQ9Ee1h4XwWoYvp5gTIQO4Jfd06YDJv5e3seEZOMJ
+X-Gm-Message-State: AOJu0YwAfEG1Tu5zZH76bfYy9wHKt/BFIjMfulDWJfdobCW0nO/DUgjO
+	Sz1h/2jhHYMZZgpFM7yODPzYLQd61en5feDhu2wIkGmMM1EtLzqcVkGtwJK/lNg=
+X-Google-Smtp-Source: AGHT+IE8wRZVW5baYXcFgEod6huJCvs7buDOLjTRsbZJLUCRnhrR5H9aEISZRauj8dj9XbSi2DU2Sg==
+X-Received: by 2002:a05:6402:2742:b0:57c:610a:6e7f with SMTP id 4fb4d7f45d1cf-594baf8719fmr1848926a12.11.1720520462835;
+        Tue, 09 Jul 2024 03:21:02 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bb9605c2sm893973a12.13.2024.07.09.03.21.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 03:21:02 -0700 (PDT)
+Message-ID: <6c79bb76-d865-4b77-b877-f7dbae6ce362@linaro.org>
+Date: Tue, 9 Jul 2024 12:20:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/5] drm/msm/adreno: Redo the speedbin assignment
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240625-topic-smem_speedbin-v4-0-f6f8493ab814@linaro.org>
+ <20240625-topic-smem_speedbin-v4-4-f6f8493ab814@linaro.org>
+ <20240630102955.uencakbjiugszphw@hu-akhilpo-hyd.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240630102955.uencakbjiugszphw@hu-akhilpo-hyd.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Eric Dumazet <edumazet@google.com>
+On 30.06.2024 12:29 PM, Akhil P Oommen wrote:
+> On Tue, Jun 25, 2024 at 08:28:09PM +0200, Konrad Dybcio wrote:
+>> There is no need to reinvent the wheel for simple read-match-set logic.
+>>
+>> Make speedbin discovery and assignment generation independent.
+>>
+>> This implicitly removes the bogus 0x80 / BIT(7) speed bin on A5xx,
+>> which has no representation in hardware whatshowever.
+>>
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> ---
 
-[Upstream commit 4db783d68b9b39a411a96096c10828ff5dfada7a]
+[...]
 
-According to syzbot, there is a chance that ip6_dst_idev()
-returns NULL in ip6_output(). Most places in IPv6 stack
-deal with a NULL idev just fine, but not here.
+>> +
+>> +	/* Traverse the known speedbins */
+>> +	for (int i = 0; info->speedbins[i].fuse != SHRT_MAX; i++) {
+>> +		if (info->speedbins[i].fuse == fuse) {
+>> +			supp_hw = BIT(info->speedbins[i].speedbin);
+>> +			return devm_pm_opp_set_supported_hw(dev, &supp_hw, 1);
+> 
+> Can we do this if supp_hw property is not present in opp table?
 
-syzbot reported:
+No, but this is also the case without this patchset (a.k.a. no change in behavior).
 
-general protection fault, probably for non-canonical address 0xdffffc00000000bc: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x00000000000005e0-0x00000000000005e7]
-CPU: 0 PID: 9775 Comm: syz-executor.4 Not tainted 6.9.0-rc5-syzkaller-00157-g6a30653b604a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
- RIP: 0010:ip6_output+0x231/0x3f0 net/ipv6/ip6_output.c:237
-Code: 3c 1e 00 49 89 df 74 08 4c 89 ef e8 19 58 db f7 48 8b 44 24 20 49 89 45 00 49 89 c5 48 8d 9d e0 05 00 00 48 89 d8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 4c 8b 74 24 28 0f 85 61 01 00 00 8b 1b 31 ff
-RSP: 0018:ffffc9000927f0d8 EFLAGS: 00010202
-RAX: 00000000000000bc RBX: 00000000000005e0 RCX: 0000000000040000
-RDX: ffffc900131f9000 RSI: 0000000000004f47 RDI: 0000000000004f48
-RBP: 0000000000000000 R08: ffffffff8a1f0b9a R09: 1ffffffff1f51fad
-R10: dffffc0000000000 R11: fffffbfff1f51fae R12: ffff8880293ec8c0
-R13: ffff88805d7fc000 R14: 1ffff1100527d91a R15: dffffc0000000000
-FS:  00007f135c6856c0(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000080 CR3: 0000000064096000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
-  NF_HOOK include/linux/netfilter.h:314 [inline]
-  ip6_xmit+0xefe/0x17f0 net/ipv6/ip6_output.c:358
-  sctp_v6_xmit+0x9f2/0x13f0 net/sctp/ipv6.c:248
-  sctp_packet_transmit+0x26ad/0x2ca0 net/sctp/output.c:653
-  sctp_packet_singleton+0x22c/0x320 net/sctp/outqueue.c:783
-  sctp_outq_flush_ctrl net/sctp/outqueue.c:914 [inline]
-  sctp_outq_flush+0x6d5/0x3e20 net/sctp/outqueue.c:1212
-  sctp_side_effects net/sctp/sm_sideeffect.c:1198 [inline]
-  sctp_do_sm+0x59cc/0x60c0 net/sctp/sm_sideeffect.c:1169
-  sctp_primitive_ASSOCIATE+0x95/0xc0 net/sctp/primitive.c:73
-  __sctp_connect+0x9cd/0xe30 net/sctp/socket.c:1234
-  sctp_connect net/sctp/socket.c:4819 [inline]
-  sctp_inet_connect+0x149/0x1f0 net/sctp/socket.c:4834
-  __sys_connect_file net/socket.c:2048 [inline]
-  __sys_connect+0x2df/0x310 net/socket.c:2065
-  __do_sys_connect net/socket.c:2075 [inline]
-  __se_sys_connect net/socket.c:2072 [inline]
-  __x64_sys_connect+0x7a/0x90 net/socket.c:2072
-  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-  do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+We shouldn't add code complexity to support that case, as having speedbin data
+in the driver and not the dt means the DT is incomplete, which is not a case we
+should care about
 
-Fixes: 778d80be5269 ("ipv6: Add disable_ipv6 sysctl to disable IPv6 operaion on specific interface.")
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reviewed-by: Larysa Zaremba <larysa.zaremba@intel.com>
-Link: https://lore.kernel.org/r/20240507161842.773961-1-edumazet@google.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-[Ashwin: Regenerated the Patch for v5.15]
-Signed-off-by: Ashwin Dayanand Kamat <ashwin.kamat@broadcom.com>
----
- net/ipv6/ip6_output.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I can however try and add a clearer error path that would perhaps not crash the
+kernel in this situation.. in a separate patchset
 
-diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
-index 770ee7ffb0d5..ce37c8345579 100644
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -221,7 +221,7 @@ int ip6_output(struct net *net, struct sock *sk, struct sk_buff *skb)
- 	skb->protocol = htons(ETH_P_IPV6);
- 	skb->dev = dev;
- 
--	if (unlikely(READ_ONCE(idev->cnf.disable_ipv6))) {
-+	if (unlikely(!idev || READ_ONCE(idev->cnf.disable_ipv6))) {
- 		IP6_INC_STATS(net, idev, IPSTATS_MIB_OUTDISCARDS);
- 		kfree_skb(skb);
- 		return 0;
--- 
-2.45.1
-
+Konrad
 
