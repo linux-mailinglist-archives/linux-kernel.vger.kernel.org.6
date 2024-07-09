@@ -1,80 +1,105 @@
-Return-Path: <linux-kernel+bounces-246072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF97292BD4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:43:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0417792BD4E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A34951F2572F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:43:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8059DB285DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C7F19CCF4;
-	Tue,  9 Jul 2024 14:43:47 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A78119CCFE;
+	Tue,  9 Jul 2024 14:44:16 +0000 (UTC)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089361684AE;
-	Tue,  9 Jul 2024 14:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073511586F2;
+	Tue,  9 Jul 2024 14:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720536227; cv=none; b=LtagQp0AOkwCwKgIRK3xO2qIb4z7upACuoRE9Nj05nk7YSIvZW606dj9oeH/noAuK+By/7Kt7nAEIQlaCNA0kyMNgnHh8HmITXflAb1WBpxWNh7rNYjKSdQYTmAEPTw+rgZRDQrJIfmDXf+V4z5q9J8jLfRfVaWoCdIDxX7PkRs=
+	t=1720536255; cv=none; b=m20QthHAy7yoz/pm9vHUzoYr1LSwKv8vZ4yUbm8TVq2oxaJkntAnYOlywcHRF8qsFVCNQ51MKcIoDJsSCCISqEDjQ2rFUPT6b8az1dLfT5R4s6mremOYZ31XB7+ddt2j4AhJHRknj/dNBU/GHJM937SecpYk8VQJnut7fh3c+/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720536227; c=relaxed/simple;
-	bh=Q4gomzJZEK3pCgfpImtcuC3mWhWXMlklkAv65B90irk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GGAmwfqDKdri6CFepygtIVERQRpXbC4ZPLYTu2XbMGBGpWBgAUolRZGDu6F7lekWUiG9WvvkUnegpFer2fkWw64WnxGLUEyQ7CgkzjGqAumGue96TJ773QhhisF+V9bV4tp6vbdqz7azgFndFGw4EhmcYfbkrMVAiDKmLyg0R5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WJNwg4t9Sz6K8bw;
-	Tue,  9 Jul 2024 22:41:39 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3C999140D27;
-	Tue,  9 Jul 2024 22:43:42 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 9 Jul
- 2024 15:43:28 +0100
-Date: Tue, 9 Jul 2024 15:43:28 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-CC: Xiaowei Song <songxiaowei@hisilicon.com>, Binghui Wang
-	<wangbinghui@hisilicon.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring
-	<robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] PCI: kirin: use dev_err_probe() in probe error
- paths
-Message-ID: <20240709154328.000042e0@Huawei.com>
-In-Reply-To: <20240707-pcie-kirin-dev_err_probe-v2-1-2fa94951d84d@gmail.com>
-References: <20240707-pcie-kirin-dev_err_probe-v2-0-2fa94951d84d@gmail.com>
-	<20240707-pcie-kirin-dev_err_probe-v2-1-2fa94951d84d@gmail.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1720536255; c=relaxed/simple;
+	bh=4nymYfpCEH3VOG5rTBF3JeJSijHLIZCPgT+Tzq0RvH8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KW/O+Fpal+7KSJ1VR4n4Ti46xHsfqgSP5bHDqruTemg/VeBu5qTnsZeFQzUwt4YK2Tge7ZXTHC8RTTkSNu6+o1sMP5wZQMDDE/kuC3eFGRJn5yhFVYT6ybILo51SIcfWhuThHkFEbkIjk+Aqmkdy+WEvtlS/911AuyXezeXWryE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a77bf336171so825158066b.1;
+        Tue, 09 Jul 2024 07:44:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720536252; x=1721141052;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cDkcHpsjalb3kFOBZY0JVFCIARpGdSbE/KpMQJNy3ns=;
+        b=do403gMQKPBDttgsJJrwDyCZPPNUkUv0NpL0KKHd3Gd3zVDxlm9fTu20vjnLhxF9Gw
+         VDDSG4pGKgziSSUt4DKpqFnaZiur1bFVfMKI/VSPYvZ0+bmSYy4sc4VPbftpiaEAUna0
+         YTebXXjVE4TPUzdVrG4ClNUaWXMwVIsrPnaEBeo2cHyL1x+XAjUEoTTLWpShVVkM9Vx9
+         tlUjTBLeeO3OByzxv5gEEnvIaLjAqE4NI+n5p5Jqn14ZcG7PR7hER2hq1aLJsraj4p9N
+         pwvYGskvtHu0b83agfSApmylPwDJVgwwymUIv9Hc71U9dBovtRr4f1LYS1kMu8mvEBWJ
+         acrA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLv3jlOuARB/bITYxHl196wxvVBWWSXePiAxyJ2TnG5CR0vEooOJ12fx0shTuMQvCzG/V8dmYWmk7Gh4OMLKAQprWIF3MoblzG4S9k5etZn2PXtEg4hX/h8WJugSfq5TSmhvvF
+X-Gm-Message-State: AOJu0YwMGznu2torGCaGQK6GJeyRZKnON6Uq7LiKso8hnt+RA5sBaadI
+	N+uUovuWL/mPekcBiTJ0Hz7Qfc37SvaaoOslH4k2fJnAH646xgSB
+X-Google-Smtp-Source: AGHT+IEqMTgaS69QPQLyYI0G6nv2Ttr7MWPOepxNFYRWKJ872BwwkR4gXjbjhSfRdKiCM3pcmIqH1Q==
+X-Received: by 2002:a17:906:2e93:b0:a77:db39:cc04 with SMTP id a640c23a62f3a-a780d2189a0mr173938966b.11.1720536252124;
+        Tue, 09 Jul 2024 07:44:12 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-002.fbsv.net. [2a03:2880:30ff:2::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6bc86bsm83092966b.31.2024.07.09.07.44.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 07:44:11 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com
+Cc: thepacketgeek@gmail.com,
+	riel@surriel.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 0/3] netconsole: Fix potential race condition and improve code clarity
+Date: Tue,  9 Jul 2024 07:43:58 -0700
+Message-ID: <20240709144403.544099-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Transfer-Encoding: 8bit
 
-On Sun, 07 Jul 2024 15:54:01 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+This patchset addresses a potential bug in netconsole where the netconsole
+target is cleaned up before it is disabled. This sequence could lead to a
+situation where an enabled target has an uninitialized netpoll structure,
+potentially causing undefined behavior.
 
-> dev_err_probe() is used in some probe error paths, yet the
-> "dev_err() + return" pattern is used in some others.
-> 
-> Use dev_err_probe() in all error paths with that construction.
-> 
-> Suggested-by: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+The main goals of this patchset are:
+
+1. Correct the order of operations:
+   - First, disable the netconsole target
+   - Then, clean up the netpoll structure
+
+2. Improve code readability:
+   - Remove unnecessary casts
+   - Eliminate redundant operations
+
+These changes aim to enhance the reliability of netconsole by
+eliminating the potential race condition and improve maintainability by
+making the code more straightforward to understand and modify.
+
+Breno Leitao (3):
+  net: netconsole: Remove unnecessary cast from bool
+  net: netconsole: Eliminate redundant setting of enabled field
+  net: netconsole: Disable target before netpoll cleanup
+
+ drivers/net/netconsole.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+-- 
+2.43.0
 
 
