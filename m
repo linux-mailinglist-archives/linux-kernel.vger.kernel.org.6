@@ -1,384 +1,168 @@
-Return-Path: <linux-kernel+bounces-245638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8ED92B54F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:30:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D897E92B524
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 561892859E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:30:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D380281B15
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9EE5156997;
-	Tue,  9 Jul 2024 10:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2496157470;
+	Tue,  9 Jul 2024 10:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SJ9oW5BD"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="IdPRZXHo"
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FE3156863;
-	Tue,  9 Jul 2024 10:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6270156997
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720521003; cv=none; b=kOFFib9GxnfSrbCqB62+wPnbWc4MRjoPWuUzqX/P4N7GEw66dsjP/E56gso/WHIO5J2boxApZzqihbeldqSCqFkcNSjYjB6v8RdDfkz51ypkYLsiQRyUro+KjVolg3JKfM+IrK0tUYxN/PTC7FTU+Oa9vX4gegXBcE4uIjZT6dw=
+	t=1720520584; cv=none; b=HVGrCfxWxBaLGiSTo/TDTU5OyadqSNZjPFKFqeco4nVRZpAfnNjKx51Pouap4e+i8pDk+ZO8gW+MVorSmtwHbyKJjbmVeOqGs37rhPY8ZXYRWzU+p+05bZuusOSuuetzQ9UUzwwtU5wdrNu2VpcH692P8jYNMEj0E86dkUaFHtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720521003; c=relaxed/simple;
-	bh=SnUV0K6qDtAT+Y6HCNIjj11XaFFz3qH7FTJvFlmmeX0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BQg2uU9CUBVGqBHxCp7JbtiNpfRK8t7m/Sv1x9K9PWgd1EzPAP/IKU97cLSl15plzwanhb1OmFt1bewHStCuZ44bdHySjizpS49Li6RTFVD4p8EkZu6RbFGuMm0zqM/JbelYjp/J8d2QBtvkzksaMOGplfM8dlQQKQ1ukNgJG4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SJ9oW5BD; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a77c080b521so548144266b.3;
-        Tue, 09 Jul 2024 03:30:01 -0700 (PDT)
+	s=arc-20240116; t=1720520584; c=relaxed/simple;
+	bh=shZBn9O6tDZqsTAj9UATwUocjlYxEwemiZOAFeghCdY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=tmFZyVLZw/7KHUlr6eCDcfjYVi04tDPWV4SfHbVl+2y7IXisUIZIDhDVTxBVQVzL5cYQi/4cCZUho6s/l3IUWelfE3pB3ksq5hN57Q2KMpQ/LBRldYevpD/0WQBCoAmawxDqLsC1CTi4v/t/VYlNzOXBxqQ9h2QfQAo6OQn+bQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=IdPRZXHo; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-1f4c7b022f8so34545965ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 03:23:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720521000; x=1721125800; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hp7Zij3IvEhV+gNM9kJxQcnJkETPmzFIqYEJgaLeYcI=;
-        b=SJ9oW5BD/4LMYnl2m2M6WQY3ibV9WnC6gFva0Fy4Yy/uL+EHbrkfHPcfbYezk8An+l
-         0ihrjjTtGXqaQItGf46V20os6Vr5raMAnwDANly80M6SNeMl6s2EmirRfk3/epfVScRu
-         ip7kLRCpAi8MC6pmSsiALV5HmCJjeW8YLep27XAAaZ3jWnveGHCSwqMXV9/zhz6nI2JA
-         WiuYBRnUJbPHHhMyKTv3NrLBH2W2txxe+ejsK+TGGEk62vkED7qvC18W6OOnthE52nu2
-         sfEuTEQFXK2Css6yXhAwAuJ2L5Bqx48alfN+f2pnjsniMqvSlVvnhuCWxkiAkj1KXnvI
-         2XyA==
+        d=broadcom.com; s=google; t=1720520582; x=1721125382; darn=vger.kernel.org;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=TjUlVhcBSrZG9pW+ab6mrCPR/9xRt4gi/qaCx2Wysw8=;
+        b=IdPRZXHo0HryBOkipJ8My5DrG7sYuMS/KnPFkCQckWQrh2ljnCG3JP+tWZeq0pt5Wl
+         cjuNPPhrIKc3cpI5sFBW771MSmB0J++RjKEoCmdHHEn8EkYrqSAmbdwV8/9qRPSs5Cd6
+         yKjlRZhFgYk74h6b2iVVCgZkRTWO8/jZIXFnc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720521000; x=1721125800;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hp7Zij3IvEhV+gNM9kJxQcnJkETPmzFIqYEJgaLeYcI=;
-        b=DHV3N8aRgBUw38qa/L0uy1EZ3ykECq9cBhEbd7kCda6oTFsTaHmynbmWzYBHPuzuBO
-         WiJ3iy2Wb2ng4CS5mSfVYYJBQyyEomgjfsQflIuU47561Aw88qb35meRoNfZkSz/pPQp
-         i0744nm1kmdlqH3NNFnJAarTNm5Ju6rZ95uATf9Sg17Cr1FeRVu+JVxzvQ63xK1MrM9R
-         DWEmttJMNFTxqbsFBdEuoYIe3Hlmcrj7iCIxEkOZelbgnHfZnYmvjLEUCaly12OMZ7BN
-         gx5GHzZ7qVrhArq30sq0hsKBC6VUWZWfZi1CbUP7VpfhqHcVQix0kg5AGTU0TwAkRsvX
-         BGeg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQpqRo5/d+4vBDmyF+Qh4uD2jwdI0hTsJntSgXOvp8YL9pGkPCD/onSNwyK8IR2tomG6AqzxfbpmJPi5/PoDbeXbEbFIxUFLlYO1Mf6FT35YslW6uP2MVJOwjFYelENYPiAXUNlp2tRSl0QMrrQ4LO5/abUiqjfULYKOdMQEuSNdIpTg1yvciSqmQQhJD7lQCXiGLtODcqPSeS2UIe8mRlWA==
-X-Gm-Message-State: AOJu0Yxafg1J9+u1RX78rYOBsXH/hF3KLyQ0aFoTyzoRhJZ3joOEdOup
-	Azjcsg0JsJwN6wbLaioTUwMkpR/R7Lx0B1vZeiLwJirHmHEX6hdRAir2kg==
-X-Google-Smtp-Source: AGHT+IGExf5ltcLYaIvktGYoQaXzZgQd73gQX5QwAQYi/NLgmmjLSw6ZNDpH8rtbEnfMK02c/KiuOw==
-X-Received: by 2002:a17:906:b0d:b0:a77:d85c:86fa with SMTP id a640c23a62f3a-a780b6889c0mr128804866b.13.1720520999765;
-        Tue, 09 Jul 2024 03:29:59 -0700 (PDT)
-Received: from localhost.localdomain (bza125.neoplus.adsl.tpnet.pl. [83.30.46.125])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6bcc21sm66528166b.16.2024.07.09.03.29.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 03:29:59 -0700 (PDT)
-From: Adam Skladowski <a39.skl@gmail.com>
-To: 
-Cc: phone-devel@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht,
-	Adam Skladowski <a39.skl@gmail.com>,
-	Georgi Djakov <djakov@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Vladimir Lypak <vladimir.lypak@gmail.com>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Rohit Agarwal <quic_rohiagar@quicinc.com>,
-	Danila Tikhonov <danila@jiaxyga.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
-	Andrew Halaney <ahalaney@redhat.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Barnabas Czeman <barnabas.czeman@mainlining.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abel Vesa <abel.vesa@linaro.org>
-Subject: [PATCH v3 5/9] interconnect: qcom: qcs404: Mark AP-owned nodes as such
-Date: Tue,  9 Jul 2024 12:22:50 +0200
-Message-ID: <20240709102728.15349-6-a39.skl@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240709102728.15349-1-a39.skl@gmail.com>
-References: <20240709102728.15349-1-a39.skl@gmail.com>
+        d=1e100.net; s=20230601; t=1720520582; x=1721125382;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TjUlVhcBSrZG9pW+ab6mrCPR/9xRt4gi/qaCx2Wysw8=;
+        b=f9aayd5boCnBbRvk7YPQU2YEKvfQixIHUYJbQWxd942C+wRYXdRiNgl7dJAwZ5eQW0
+         5I6N1t03PLK2HVDR/cUGqfB0DX/Tcv5g9AvfV6VPhRz/7tOXICWq7Q7YoqRCS7JxxtAt
+         vZo85EinsbV677HyoV/07uxjvIyxgOePkgk+NZY3pU/6MVnsaoCCEP/YvT4XjQWi4rlD
+         CzHjTYXCltnDqQvbEvBJBWlSTl2dHvikksvnUgTJpeHRtj4ciT+m71rGTCa0PgnsHDiv
+         dbW4UjJtadkO+qA2RWh0earIB3itNOyBVTiEUeJq6zVMd7j5AKWP6ubnaP6uvm4HdelS
+         zzng==
+X-Gm-Message-State: AOJu0YwW0bddnRvRRTXi8K5lz/73pkm/n6k3laHx673pigJTr6fJnl6v
+	IsqfHc9/nSEJ4FZ3kifpmah5+HwW6l/71rBJ4KiQ1oOmR/ewvq0N5F3f5Mw5irD4PvR+ZO3SU2s
+	TSMG2wq0xfzy4aWdEuLC65O15ST4Fo/1mmh/wK0TM5YDD3ZU6SG4B6obU+TaIkSqibES/J78JY1
+	lXD0M6OkEkxgHl5Viu21auuD3gKHk6gZBmtkh4ZAasJ6HhCjJSOYPSOSwz
+X-Google-Smtp-Source: AGHT+IHHhfYP/usTymLr9Nc0xnCzRg4Vr9DrYxFrPK0z+o/YRUvUx7r46S2Nxb/v+kszqDPCfjsdjw==
+X-Received: by 2002:a17:903:984:b0:1fb:72ea:376 with SMTP id d9443c01a7336-1fbb6e87fc5mr17619895ad.65.1720520581773;
+        Tue, 09 Jul 2024 03:23:01 -0700 (PDT)
+Received: from kashwindayan-virtual-machine.eng.vmware.com ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a11757sm12832525ad.35.2024.07.09.03.23.00
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Jul 2024 03:23:01 -0700 (PDT)
+From: Ashwin Kamat <ashwin.kamat@broadcom.com>
+To: linux-kernel@vger.kernel.org
+Cc: gregkh@linuxfoundation.org,
+	davem@davemloft.net,
+	yoshfuji@linux-ipv6.org,
+	dsahern@kernel.org,
+	kuba@kernel.org,
+	netdev@vger.kernel.org,
+	florian.fainelli@broadcom.com,
+	ajay.kaher@broadcom.com,
+	vasavi.sirnapalli@broadcom.com,
+	tapas.kundu@broadcom.com,
+	ashwin.kamat@broadcom.com,
+	Eric Dumazet <edumazet@google.com>
+Subject: [PATCH v5.10 2/2] net/ipv6: prevent NULL dereference in ip6_output()
+Date: Tue,  9 Jul 2024 15:52:50 +0530
+Message-Id: <1720520570-9904-3-git-send-email-ashwin.kamat@broadcom.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1720520570-9904-1-git-send-email-ashwin.kamat@broadcom.com>
+References: <1720520570-9904-1-git-send-email-ashwin.kamat@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-When driver was upstreamed it seems ap_owned nodes were not available,
-bring them now.
+From: Eric Dumazet <edumazet@google.com>
 
-Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+[Upstream commit 4db783d68b9b39a411a96096c10828ff5dfada7a]
+
+According to syzbot, there is a chance that ip6_dst_idev()
+returns NULL in ip6_output(). Most places in IPv6 stack
+deal with a NULL idev just fine, but not here.
+
+syzbot reported:
+
+general protection fault, probably for non-canonical address 0xdffffc00000000bc: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x00000000000005e0-0x00000000000005e7]
+CPU: 0 PID: 9775 Comm: syz-executor.4 Not tainted 6.9.0-rc5-syzkaller-00157-g6a30653b604a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+ RIP: 0010:ip6_output+0x231/0x3f0 net/ipv6/ip6_output.c:237
+Code: 3c 1e 00 49 89 df 74 08 4c 89 ef e8 19 58 db f7 48 8b 44 24 20 49 89 45 00 49 89 c5 48 8d 9d e0 05 00 00 48 89 d8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 4c 8b 74 24 28 0f 85 61 01 00 00 8b 1b 31 ff                                              RSP: 0018:ffffc9000927f0d8 EFLAGS: 00010202
+RAX: 00000000000000bc RBX: 00000000000005e0 RCX: 0000000000040000
+RDX: ffffc900131f9000 RSI: 0000000000004f47 RDI: 0000000000004f48
+RBP: 0000000000000000 R08: ffffffff8a1f0b9a R09: 1ffffffff1f51fad
+R10: dffffc0000000000 R11: fffffbfff1f51fae R12: ffff8880293ec8c0
+R13: ffff88805d7fc000 R14: 1ffff1100527d91a R15: dffffc0000000000
+FS:  00007f135c6856c0(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000080 CR3: 0000000064096000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+  NF_HOOK include/linux/netfilter.h:314 [inline]
+  ip6_xmit+0xefe/0x17f0 net/ipv6/ip6_output.c:358
+  sctp_v6_xmit+0x9f2/0x13f0 net/sctp/ipv6.c:248
+  sctp_packet_transmit+0x26ad/0x2ca0 net/sctp/output.c:653
+  sctp_packet_singleton+0x22c/0x320 net/sctp/outqueue.c:783
+  sctp_outq_flush_ctrl net/sctp/outqueue.c:914 [inline]
+  sctp_outq_flush+0x6d5/0x3e20 net/sctp/outqueue.c:1212
+  sctp_side_effects net/sctp/sm_sideeffect.c:1198 [inline]
+  sctp_do_sm+0x59cc/0x60c0 net/sctp/sm_sideeffect.c:1169
+  sctp_primitive_ASSOCIATE+0x95/0xc0 net/sctp/primitive.c:73
+  __sctp_connect+0x9cd/0xe30 net/sctp/socket.c:1234
+  sctp_connect net/sctp/socket.c:4819 [inline]
+  sctp_inet_connect+0x149/0x1f0 net/sctp/socket.c:4834
+  __sys_connect_file net/socket.c:2048 [inline]
+  __sys_connect+0x2df/0x310 net/socket.c:2065
+  __do_sys_connect net/socket.c:2075 [inline]
+  __se_sys_connect net/socket.c:2072 [inline]
+  __x64_sys_connect+0x7a/0x90 net/socket.c:2072
+  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+  do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Fixes: 778d80be5269 ("ipv6: Add disable_ipv6 sysctl to disable IPv6 operaion on specific interface.")
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reviewed-by: Larysa Zaremba <larysa.zaremba@intel.com>
+Link: https://lore.kernel.org/r/20240507161842.773961-1-edumazet@google.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+[Ashwin: Regenerated the Patch for v5.10]
+Signed-off-by: Ashwin Dayanand Kamat <ashwin.kamat@broadcom.com>
 ---
- drivers/interconnect/qcom/qcs404.c | 85 ++++++++++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
+ net/ipv6/ip6_output.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/interconnect/qcom/qcs404.c b/drivers/interconnect/qcom/qcs404.c
-index 11b49a89c03d..91b2ccc56a33 100644
---- a/drivers/interconnect/qcom/qcs404.c
-+++ b/drivers/interconnect/qcom/qcs404.c
-@@ -101,6 +101,11 @@ static struct qcom_icc_node mas_apps_proc = {
- 	.buswidth = 8,
- 	.mas_rpm_id = 0,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 0,
- 	.num_links = ARRAY_SIZE(mas_apps_proc_links),
- 	.links = mas_apps_proc_links,
- };
-@@ -116,6 +121,11 @@ static struct qcom_icc_node mas_oxili = {
- 	.buswidth = 8,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 2,
- 	.num_links = ARRAY_SIZE(mas_oxili_links),
- 	.links = mas_oxili_links,
- };
-@@ -131,6 +141,11 @@ static struct qcom_icc_node mas_mdp = {
- 	.buswidth = 8,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 1,
-+	.qos.qos_port = 4,
- 	.num_links = ARRAY_SIZE(mas_mdp_links),
- 	.links = mas_mdp_links,
- };
-@@ -145,6 +160,10 @@ static struct qcom_icc_node mas_snoc_bimc_1 = {
- 	.buswidth = 8,
- 	.mas_rpm_id = 76,
- 	.slv_rpm_id = -1,
-+	.qos.qos_mode = NOC_QOS_MODE_BYPASS,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 0,
-+	.qos.qos_port = 5,
- 	.num_links = ARRAY_SIZE(mas_snoc_bimc_1_links),
- 	.links = mas_snoc_bimc_1_links,
- };
-@@ -160,6 +179,11 @@ static struct qcom_icc_node mas_tcu_0 = {
- 	.buswidth = 8,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 0,
-+	.qos.prio_level = 2,
-+	.qos.qos_port = 6,
- 	.num_links = ARRAY_SIZE(mas_tcu_0_links),
- 	.links = mas_tcu_0_links,
- };
-@@ -174,6 +198,8 @@ static struct qcom_icc_node mas_spdm = {
- 	.buswidth = 4,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
- 	.num_links = ARRAY_SIZE(mas_spdm_links),
- 	.links = mas_spdm_links,
- };
-@@ -231,6 +257,11 @@ static struct qcom_icc_node mas_crypto = {
- 	.buswidth = 8,
- 	.mas_rpm_id = 23,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 1,
-+	.qos.prio_level = 1,
-+	.qos.qos_port = 0,
- 	.num_links = ARRAY_SIZE(mas_crypto_links),
- 	.links = mas_crypto_links,
- };
-@@ -287,6 +318,11 @@ static struct qcom_icc_node mas_qpic = {
- 	.buswidth = 4,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 1,
-+	.qos.prio_level = 1,
-+	.qos.qos_port = 14,
- 	.num_links = ARRAY_SIZE(mas_qpic_links),
- 	.links = mas_qpic_links,
- };
-@@ -301,6 +337,11 @@ static struct qcom_icc_node mas_qdss_bam = {
- 	.buswidth = 4,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 1,
-+	.qos.prio_level = 1,
-+	.qos.qos_port = 1,
- 	.num_links = ARRAY_SIZE(mas_qdss_bam_links),
- 	.links = mas_qdss_bam_links,
- };
-@@ -348,6 +389,11 @@ static struct qcom_icc_node mas_qdss_etr = {
- 	.buswidth = 8,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 1,
-+	.qos.prio_level = 1,
-+	.qos.qos_port = 0,
- 	.num_links = ARRAY_SIZE(mas_qdss_etr_links),
- 	.links = mas_qdss_etr_links,
- };
-@@ -363,6 +409,11 @@ static struct qcom_icc_node mas_emac = {
- 	.buswidth = 8,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 1,
-+	.qos.prio_level = 1,
-+	.qos.qos_port = 17,
- 	.num_links = ARRAY_SIZE(mas_emac_links),
- 	.links = mas_emac_links,
- };
-@@ -378,6 +429,11 @@ static struct qcom_icc_node mas_pcie = {
- 	.buswidth = 8,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 1,
-+	.qos.prio_level = 1,
-+	.qos.qos_port = 8,
- 	.num_links = ARRAY_SIZE(mas_pcie_links),
- 	.links = mas_pcie_links,
- };
-@@ -393,6 +449,11 @@ static struct qcom_icc_node mas_usb3 = {
- 	.buswidth = 8,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_FIXED,
-+	.qos.areq_prio = 1,
-+	.qos.prio_level = 1,
-+	.qos.qos_port = 16,
- 	.num_links = ARRAY_SIZE(mas_usb3_links),
- 	.links = mas_usb3_links,
- };
-@@ -491,6 +552,8 @@ static struct qcom_icc_node pcnoc_s_2 = {
- 	.buswidth = 4,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
- 	.num_links = ARRAY_SIZE(pcnoc_s_2_links),
- 	.links = pcnoc_s_2_links,
- };
-@@ -626,6 +689,8 @@ static struct qcom_icc_node qdss_int = {
- 	.buswidth = 8,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
- 	.num_links = ARRAY_SIZE(qdss_int_links),
- 	.links = qdss_int_links,
- };
-@@ -704,6 +769,8 @@ static struct qcom_icc_node slv_spdm = {
- 	.buswidth = 4,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
- };
+diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
+index 2b55bf0d3..32512b8ca 100644
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -240,7 +240,7 @@ int ip6_output(struct net *net, struct sock *sk, struct sk_buff *skb)
+ 	skb->protocol = htons(ETH_P_IPV6);
+ 	skb->dev = dev;
  
- static struct qcom_icc_node slv_pdm = {
-@@ -752,6 +819,8 @@ static struct qcom_icc_node slv_disp_ss_cfg = {
- 	.buswidth = 4,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
- };
- 
- static struct qcom_icc_node slv_gpu_cfg = {
-@@ -760,6 +829,8 @@ static struct qcom_icc_node slv_gpu_cfg = {
- 	.buswidth = 4,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
- };
- 
- static struct qcom_icc_node slv_blsp_1 = {
-@@ -784,6 +855,8 @@ static struct qcom_icc_node slv_pcie = {
- 	.buswidth = 4,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
- };
- 
- static struct qcom_icc_node slv_ethernet = {
-@@ -792,6 +865,8 @@ static struct qcom_icc_node slv_ethernet = {
- 	.buswidth = 4,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
- };
- 
- static struct qcom_icc_node slv_blsp_2 = {
-@@ -816,6 +891,8 @@ static struct qcom_icc_node slv_tcu = {
- 	.buswidth = 8,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
- };
- 
- static struct qcom_icc_node slv_pmic_arb = {
-@@ -894,6 +971,8 @@ static struct qcom_icc_node slv_kpss_ahb = {
- 	.buswidth = 4,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
- };
- 
- static struct qcom_icc_node slv_wcss = {
-@@ -954,6 +1033,8 @@ static struct qcom_icc_node slv_cats_0 = {
- 	.buswidth = 16,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
- };
- 
- static struct qcom_icc_node slv_cats_1 = {
-@@ -962,6 +1043,8 @@ static struct qcom_icc_node slv_cats_1 = {
- 	.buswidth = 8,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
- };
- 
- static struct qcom_icc_node slv_lpass = {
-@@ -970,6 +1053,8 @@ static struct qcom_icc_node slv_lpass = {
- 	.buswidth = 4,
- 	.mas_rpm_id = -1,
- 	.slv_rpm_id = -1,
-+	.qos.ap_owned = true,
-+	.qos.qos_mode = NOC_QOS_MODE_INVALID,
- };
- 
- static struct qcom_icc_node * const qcs404_bimc_nodes[] = {
+-	if (unlikely(READ_ONCE(idev->cnf.disable_ipv6))) {
++	if (unlikely(!idev || READ_ONCE(idev->cnf.disable_ipv6))) {
+ 		IP6_INC_STATS(net, idev, IPSTATS_MIB_OUTDISCARDS);
+ 		kfree_skb(skb);
+ 		return 0;
 -- 
-2.45.2
+2.45.1
 
 
