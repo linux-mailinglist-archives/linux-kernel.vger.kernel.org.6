@@ -1,192 +1,306 @@
-Return-Path: <linux-kernel+bounces-245992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B978092BC74
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:05:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A6F92BC77
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D142281F83
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:05:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F26AB24F5D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24ED519CCE6;
-	Tue,  9 Jul 2024 14:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F194158D84;
+	Tue,  9 Jul 2024 14:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i/p/WvO/"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="IdxzND+z"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2069.outbound.protection.outlook.com [40.107.22.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5E5154BF0;
-	Tue,  9 Jul 2024 14:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720533916; cv=none; b=TgVvIGwf1D4aKRonnsivVrV/jXkKQJNO7xgSoxsifNMVZ2jpIeMo2xOeADr0bclnLFJNZF/d1wXzsU27NFqBLIm6I/lH/ayUw86g5O0gNaLm2TECF6jgd5yvHY2T/Blu0IHlLi3o64Jb99t3TwqQrwN7nqimdWz4W9uONIZOURU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720533916; c=relaxed/simple;
-	bh=oqvO4keAigILRKoADfBFYu3hAGj3/wdIa/oLCwjA/9s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ge/9MyV0m+4gR5o0fi+YCVM6P6B74D2nvGIhe7n540l3sdGIa9sChh1mGbmA6o8V/naeEpOX8tw+ZWQtG9zTmTbkJjijMpBW1Let7xU9pimqs+a3DhWZo4Aq+o2sdGNBiw6dcby5fZTXHInCGIBPXWc32NPCjzg8fObde57rgPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i/p/WvO/; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58b447c511eso6467947a12.2;
-        Tue, 09 Jul 2024 07:05:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720533913; x=1721138713; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kMRvSct0lY9z/NoSUo1v54IeShU8S8Pa37iemae3ynQ=;
-        b=i/p/WvO/sLgHTiX9nXKQth9O9Y8NQPWTGctNOqvWf2+3LQ6rJCr3ySaV+NLbHkTghc
-         OHk9/VOzSvg4wdOwBcXGHX5HyRLz6OlTz7zBtekCFLJPmMxpHISBjKGFIA86e9KQkNfE
-         qEr8C8bNsIuqdDpELoyzQx6WenNvuf15VZWr1RttMHEphZEqcHgMZBm/dhG4d2ucuwU8
-         a0iN7CIJLddLSLm9QZmZkssH+kqyXAjsF8YI572kIJWQBN1RmBLYSB4u00+JNSpxr/RB
-         ZTNWMuAAi/hE/KvO/drHS6j1vH2rJ740YQ7Q96k0eltbrzje+S1yrB0nv+yM/7aWCPrJ
-         DkbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720533913; x=1721138713;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kMRvSct0lY9z/NoSUo1v54IeShU8S8Pa37iemae3ynQ=;
-        b=SG5UGmCiMAwUkFYygNAbvu9gB4TgLtra/radwzFD588v6Fw5Qg7e20uwAvGCI1xV1G
-         LlZbRhXMR44VM0bpZh85/z1ipGFrXjGcf3wzQD/5ASHtp72i7hpKkrOYVE3C5YSOuxrq
-         tpS5R4uMJLpvXLjUECrczH4jYdnPvFIWf0JuP8N5Up7HP+O68MdqAeEsLuDrGWcBO+nC
-         6mRhaCT0WXSVGBIResnfi8+B2La0G5U1fJfgPCA2MxqRsJklxbIFCCAjL7h8j0Wtj0tD
-         MONoxPZVqvBOuOMxwJ3wWDVgkAHOY7YHoJzxMepQsWjahkqhpfywP1OtFwjYsRpQ4RMO
-         bJAw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbpSWxD7TNEp8Q2E8PB3DtliUV8C1EjQ/AYZSPPOZGe36nvIk3LTYXnoD4dDQw8TC22E8swyKWn3HGya4iYhg0avsXB+gXSGdNt4b2
-X-Gm-Message-State: AOJu0YyAab/0O7Hr6/4TStD/e4Oz4rvdSlVNfg3jYPZeBRKwfSN/F/dg
-	ZmDbeCKa+JxreL93pO6vVFl0lM4tXwgXYm6ryz42GCQSswau3kOD
-X-Google-Smtp-Source: AGHT+IG3BjNIVmMYpuvl3fYCgUGix6nCBcluBpFeqb72PFJUpbosIet4/3KiWZHgriXRnsmdz6d0Mg==
-X-Received: by 2002:a17:906:68c9:b0:a77:e48d:bb2 with SMTP id a640c23a62f3a-a780b6b17cfmr211654866b.17.1720533912844;
-        Tue, 09 Jul 2024 07:05:12 -0700 (PDT)
-Received: from [192.168.42.197] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff7c7sm79796666b.100.2024.07.09.07.05.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 07:05:12 -0700 (PDT)
-Message-ID: <658da3fe-fa02-423b-aff0-52f54e1332ee@gmail.com>
-Date: Tue, 9 Jul 2024 15:05:21 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04F4198831;
+	Tue,  9 Jul 2024 14:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720533954; cv=fail; b=kjiwlrNOZgyMo44O/07nnRhhDEUaW83enLIwZ4vB9sA2z4sdWEEJZUBIiTiN5o9H6dEzOEieyHptR8TUvGwN7PP2aNbaIMCoz0+DHpE/QAFHA0AYZB4fqk1q47hqBsepGc2WH7luKus0dQRlE1v2LII06uLley+i8dRZ0ih8tvM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720533954; c=relaxed/simple;
+	bh=sVsAXqoeiUcci00etpqMp0Na+XOKEUtmfqkBTJ/F5mM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=JPyEoGsw6VwQKyb7bwEBSBE/1FIDnpVYD1duw7nWZfGo0phCcr1m7wJHc70XPWiAEVtsFC1P9gaBkiWsurG8MBWwFzhdJGFJBqXum2eh52sIB+4qJ+mY4JipKbdfejAiBA3TazbEBejGvqWhoFylLUTpFxWIOSJaIraddUH2STA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=IdxzND+z; arc=fail smtp.client-ip=40.107.22.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XGgTp9BbkeKsAc/j1qqTBO3vDBcVIhxeLt2WZOfGQg0DzVFPAoVToG9bf3hFIsZlXMdLoje9InPvak+cy0KrPkXKOxCPSaKG4neMuegtnsXP9jUhjXW+yCONTXpBHzku4c3tMPchCPTUgyG2x6DipEFVb9VvH/Br6ccVxyZ1vTJM6srF+szojBJr2JB+3N/xShZNjUNEKCplJkT9XMX42v471SWma0t3tNDwSzwuGyPCLJWpr9GmCY7jt+4TD85BKgimmK5ZqKtH6iaqEyOrZDdNW30MOyTiqX7TAC/agGM7CM887eKv1DRgvOKGjyQuK7cMLgR5Cvnj1B9QbY+h/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=86LrIviUEq9x99808cq/hAGFER849GvQ8XLDjrrA77k=;
+ b=PgMlAQCpOciGmDPo9qiRpVPyeT0ZEEGoMpYe7uqhakidG10XugBaun0+xXzY26OSDF3c7Fy9tndoz4u2csCkMVW/ipK6O2Bcz5LcUaChJXecOUv/r3cUOruJPy5+3FIAZXpLHUlFJbDFSl/szPsf7Y2MZKseTGO+RBSeh2Dcfatf9cZgrrqylmfHsL+4Ynu79xqA+oOK5zeYCI0O9WGCdtrXoOZfJ8lbAKT834/o0AHQqGRH1ILHjnAg0q9fw38w/ULUtsvcLreZ6rZasCvK1raPiZ5rzDCsMp+za3UPy4t3mUNe3ByKlhZA3TPGSE+3831oV4U0GbUfUqFBPkOB8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=86LrIviUEq9x99808cq/hAGFER849GvQ8XLDjrrA77k=;
+ b=IdxzND+zP5OoRachyCaykD/0/MeDqLoT1n0oYiJdGToKSb+OaY/2pfa6aDpjnG9XxhCQ7pR18qDGlRs/npYZLJ/Dss0U+IBWyZXM5RViQG4ZsLY4vCqfNUi/m1TOV+a518VBcTniMEKNU+iWHhkVlWX4iImGIjcJ+6CCQSdHkqY=
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AM8PR04MB7986.eurprd04.prod.outlook.com (2603:10a6:20b:245::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Tue, 9 Jul
+ 2024 14:05:49 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.7741.033; Tue, 9 Jul 2024
+ 14:05:49 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Cristian Marussi <cristian.marussi@arm.com>
+CC: Sudeep Holla <sudeep.holla@arm.com>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "arm-scmi@vger.kernel.org"
+	<arm-scmi@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+Subject: RE: [PATCH V2 1/2] dt-bindings: firmware: arm,scmi: introduce
+ property mbox-rx-timeout-ms
+Thread-Topic: [PATCH V2 1/2] dt-bindings: firmware: arm,scmi: introduce
+ property mbox-rx-timeout-ms
+Thread-Index:
+ AQHazPZCUnP/ehpH2Em9HKMSjtmmz7HmYioAgAAAeBCAAAFAgIAAHstggAAa2gCAAKEogIAFtSQAgAGDmfA=
+Date: Tue, 9 Jul 2024 14:05:49 +0000
+Message-ID:
+ <PAXPR04MB8459F6F0F9530F2138C4E00688DB2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20240703031715.379815-1-peng.fan@oss.nxp.com>
+ <ZoZ7NCSaG0YRK-60@bogus>
+ <AM6PR04MB5941A61736496B9850A3B52C88DE2@AM6PR04MB5941.eurprd04.prod.outlook.com>
+ <ZoZ8pfi5KZZGY1wd@bogus>
+ <AM6PR04MB5941F61DFB15AFDA384C153A88DE2@AM6PR04MB5941.eurprd04.prod.outlook.com>
+ <ZoatADKjBfpRCeLz@pluto>
+ <AM6PR04MB594199822CE1944DCE3F86D888DE2@AM6PR04MB5941.eurprd04.prod.outlook.com>
+ <Zov94i6FVShbVFee@pluto>
+In-Reply-To: <Zov94i6FVShbVFee@pluto>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AM8PR04MB7986:EE_
+x-ms-office365-filtering-correlation-id: a564f032-314a-4ecd-920f-08dca0203c94
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?3VZWlJhDDYcYgCssh4EFY/liHBKWNmMa8Ee9S1dWW7d5k7ABN1qSBvuJuesn?=
+ =?us-ascii?Q?8YY6HDeY8VK06Otmp9yXvM2nqirIBq8xPRZ49sqNRYyIS2ZtqfrSS0BeSu+v?=
+ =?us-ascii?Q?jPDlSHlPmTibVMdHCsPCohnOdRRecVCWCNYXJgqMmYiP1CjshdOFtpVM4Ass?=
+ =?us-ascii?Q?zaechj/JiEVW2LqmwZ6AJcQnMKCFCWawXsJF2lIaDB2T2PpNSvwxE8c9Q3IK?=
+ =?us-ascii?Q?Wa3cCmmRVykxht+YGbf/ltg+nm08STp6CvwF6MjmbnRtpKkR2tlqY2trr139?=
+ =?us-ascii?Q?9wcB/tFULQVY0FT9tGl4FVFXweWp09el1EdkWT486TOa+a473CQPmWNJ0F4c?=
+ =?us-ascii?Q?dWxBoaPiRnWbkrm2SXcNChDR1xcImQBvkhmP9ZW7DitVmqwQBOWdYFFM+Vgz?=
+ =?us-ascii?Q?NijlhRBO3heASqPd8LwyIqqI68W3fQzuFTssKibEdKTIrNZ7/Q6QZF/FO+Ha?=
+ =?us-ascii?Q?VNibryoUoozi1//qtxB45EPIB49G8qxNuD/j+q5n4OcVpBpsrr3sjH3xl69k?=
+ =?us-ascii?Q?rjUFP1AHSONX6/89c4b7N20iV+1Xr3lu1V+GBlgp8u4V+X36C8L070n9g8K8?=
+ =?us-ascii?Q?IB+dvywOo7PJgC642Rapn8EjP/2Y2qBAzxvKeoeWgd+HvA1cEHqJVunQ0OWV?=
+ =?us-ascii?Q?JvrwZqpPvwFE9cC17/gRo/D94yQQ6XCAVrbWchcRW7rl+UNuZNvr3wZJmvfu?=
+ =?us-ascii?Q?k5XmphScSmvjhw96MCb2oUhj+mXRtCY/c2SO9yqflAssEcg/FRiYZocPrfz+?=
+ =?us-ascii?Q?MXFeHK9oGlXlLrRpJKSP9pYFIZXf9MA0HtIn9wsFo57MXuZergS66uScQMmf?=
+ =?us-ascii?Q?KNwZUN7HLY5IITDpd8ltQq5jUwSNar8l3tkxQTk856mxNNxbvoJelfatolbq?=
+ =?us-ascii?Q?7JlV3bSr4LkEnJ+30/TgJ2TUD+EoG5OrFWcrTyjrlZNuYAceNjOBpXh4PGVy?=
+ =?us-ascii?Q?vPu5MsPkEItova45xouVeViaAcx94IeRTC9wo8P+rq/DSGZXszNUu7E6emcr?=
+ =?us-ascii?Q?crc7MznyNTentaD1x4vuwhtvIS9HykZqSn9FaFPHDbpyhHKrXucoqc6AjLYQ?=
+ =?us-ascii?Q?dRlxp6JlZlJu0WhFMjCi10DoWwposi0oA0baIDAPkj3gTxYKRDvfPxtLsUKg?=
+ =?us-ascii?Q?DSVmUEQhpfnT2g/Tv72wstBdxJTImFHpH8djvKtuVKmmTc36ZqNs7Pv2muoS?=
+ =?us-ascii?Q?YVBxxcv+ooYL9LeET9+jRmyZoOGk4OezQYVYtw9oSQEkjSuzwCgBKtBvLUTK?=
+ =?us-ascii?Q?f+rnv8mpKAiS7J4i51kh9O2dDck10/gwfBPAumHjFp8I0ofne2dUnFFS1UFw?=
+ =?us-ascii?Q?/xX1Cyrb/GxXUu9Z1CQrOEfSG+1mxdmtZBnZ1Uzbsnvp8cOT/uhDuhdaIh+h?=
+ =?us-ascii?Q?7QXzOm4=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?x/sZV0aVLRj8S28DnFFFNXJQl0liW0s2ByVixeZrnlaJ33AlvWiMw7eioc0+?=
+ =?us-ascii?Q?WIcbkdqoIqIhWuaIM+7yPa/PgyHRsUt0HoVC9cabSBO24btWBHVOr8OD/m9v?=
+ =?us-ascii?Q?qE3db7uvJ7wEh3sfF35HsEg6SXGqTIMz2EGeSD9UINCa7LnyIY4cScHEm0nq?=
+ =?us-ascii?Q?tKm0uYKpWFMtPccvg+ZHcHSnKd1MWfvAr2J9tVcbIk9feOZr7Z9hsyPKaxFL?=
+ =?us-ascii?Q?0ShgjKrUDuMRrS4ibSd8BxCkV3Ttjlk6Csoldjr0nemk+/uGpdEwb5QbpqqY?=
+ =?us-ascii?Q?7pBqyGK9sCYBP73nQnyjO2poEWg8JSuED9nerCEBpeKBgkNV3uw+i5/BpqUu?=
+ =?us-ascii?Q?J3CUWaxe8pV6NILG9S4yEaRJx0/QPvbhYaN2AgpYFTIw1jZO4IAyM8DzPEJ4?=
+ =?us-ascii?Q?1v1ILwLRQz2NkMOL8zU9UKCoppKW52sSy212nX3NUimNcrr+bYXE5tZ9f83E?=
+ =?us-ascii?Q?Ik91/NYY+2CQBvNROQR5n4PC6RsIWTag/2XnW7pTrm13+KNu3LXnpFD6x1TB?=
+ =?us-ascii?Q?yXL+z3bxFTOTcbp41MWYmG88PpFI6sjd0QTNbzPITOQ+QfjPkxXVFDSlYZQw?=
+ =?us-ascii?Q?H0KlPL2OhaUsbM8fByxWezd1fcavppeMUNW5PZtdpxc22WmpyKRsI1ED04l/?=
+ =?us-ascii?Q?6k2pRdetubJ2FzWyrnKeF7eu1KZc+gBE43F3eMdnsLH5lBC8MEm1yYl0MwW6?=
+ =?us-ascii?Q?azT+9zsYqQAMb4oZISo8tzzI8ijkR+J2WAobaeshA9Gl20zf76ziz9QMfIgu?=
+ =?us-ascii?Q?VX3l2KmNCsOeRT/Ebf6mkoMdFbGHQDntAovEIU3wrGhaUwoqVZc0D7mEk7tX?=
+ =?us-ascii?Q?EXSnMBppr7vbyEITU17QZAgSsGmPX8r14KGTeovE6yDffhrDVdvEhZAH+BWP?=
+ =?us-ascii?Q?5iGe4JBwp8daHKIXUS57WE5X8fiCbIEztlvrA3IAsLRXySt9nQrvQwel/i3Q?=
+ =?us-ascii?Q?jZAndm3tuQ9dKoNq0QdJXsDP448dI/M55tQyidYlWFnPMkMXXJHrycWElKbt?=
+ =?us-ascii?Q?/A+5zxBkS6hcEYigXWTB5fz2akXfcJwjhaAZPQwPJvxUfr5+8F/VoDrCiW5Y?=
+ =?us-ascii?Q?YJLlffqcGrPWtlbW4LU0V4aF09XV1g8Hy34X1SfMyo3EJctFSvrfUwFXHRwv?=
+ =?us-ascii?Q?GF8if/EhddWN6Ds03r8xoQQ4eVXYukwPpyXn62tC30HrpQ5KaHlEPXtPkDHA?=
+ =?us-ascii?Q?Dhi+VwjA/L7bVF/bWLmiyBgotnP3rUg0wLZrjbwwYsNa0/L0Ipuam2diapS9?=
+ =?us-ascii?Q?qbcg0CzwHkFH4NjwTcRyx0/36l27a6OK2dZOHeySgM2yxsC0nnMg1Oddwgcb?=
+ =?us-ascii?Q?RUGRMjGf5p/CPHc3FrSujg7AIJeCK3BPMhq0JJEjSvFAhaqcc1Eq9xzGVd2C?=
+ =?us-ascii?Q?/ze6hSQqSNs1rboEaociKaN2pTUsuQnqVDqTgHUVjlQTHovca7RrxyiV2uNH?=
+ =?us-ascii?Q?sFCsWl2fDen62d7fTPDyl+Pqkz55Mo5miXBFId+DA4eqiZzSBafBpjNPpcxa?=
+ =?us-ascii?Q?fPo2iEDucSO6fA0rTi08oqFliyqeAcIaB+bP1fz1COyRNRiefRpLNyJ2wOJB?=
+ =?us-ascii?Q?cm/Y6ZtuGw04kBAp88M=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] kernel: rerun task_work while freezing in
- get_signal()
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- Andrew Morton <akpm@linux-foundation.org>,
- Christian Brauner <brauner@kernel.org>,
- Tycho Andersen <tandersen@netflix.com>, Thomas Gleixner
- <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
- Julian Orth <ju.orth@gmail.com>, Tejun Heo <tj@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>
-References: <cover.1720368770.git.asml.silence@gmail.com>
- <1d935e9d87fd8672ef3e8a9a0db340d355ea08b4.1720368770.git.asml.silence@gmail.com>
- <20240708104221.GA18761@redhat.com>
- <62c11b59-c909-4c60-8370-77729544ec0a@gmail.com>
- <20240709103617.GB28495@redhat.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240709103617.GB28495@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a564f032-314a-4ecd-920f-08dca0203c94
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2024 14:05:49.4920
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: UwJV0V6PU82dejMZ2t51XMy5sct+F8C4ZUmaVNlQJtj34b7xvmtSDqQoxOQmyYr7WNLSeWnYviY4/sHZaUmtMQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7986
 
-On 7/9/24 11:36, Oleg Nesterov wrote:
-> On 07/08, Pavel Begunkov wrote:
->>
->> On 7/8/24 11:42, Oleg Nesterov wrote:
->>> I don't think we should blame io_uring even if so far it is the only user
->>> of TWA_SIGNAL.
->>
->> And it's not entirely correct even for backporting purposes,
->> I'll pin it to when freezing was introduced then.
-> 
-> This is another problem introduced by 12db8b690010 ("entry: Add support for
-> TIF_NOTIFY_SIGNAL")
+> Subject: Re: [PATCH V2 1/2] dt-bindings: firmware: arm,scmi: introduce
+> property mbox-rx-timeout-ms
+>=20
+> On Thu, Jul 04, 2024 at 11:48:31PM +0000, Peng Fan wrote:
+> > > Subject: Re: [PATCH V2 1/2] dt-bindings: firmware: arm,scmi:
+> > > introduce property mbox-rx-timeout-ms
+> > >
+> > > On Thu, Jul 04, 2024 at 12:33:09PM +0000, Peng Fan wrote:
+> > > > > Subject: Re: [PATCH V2 1/2] dt-bindings: firmware: arm,scmi:
+> > > > > introduce property mbox-rx-timeout-ms
+> > > > >
+> > > > > On Thu, Jul 04, 2024 at 10:39:53AM +0000, Peng Fan wrote:
+> > > > > > > Subject: Re: [PATCH V2 1/2] dt-bindings: firmware: arm,scmi:
+> > > > > > > introduce property mbox-rx-timeout-ms
+> > > > > > >
+> > > > > > > On Wed, Jul 03, 2024 at 11:17:14AM +0800, Peng Fan (OSS)
+> > > wrote:
+> > > > > > > > From: Peng Fan <peng.fan@nxp.com>
+> > > > > > > >
+> > > > > > > > System Controller Management Interface(SCMI) firmwares
+> > > might
+> > > > > > > have
+> > > > > > > > different designs by SCMI firmware developers. So the
+> > > maximum
+> > > > > > > receive
+> > > > > > > > channel timeout value might also varies in the various
+> designs.
+> > > > > > > >
+> > > > > > > > So introduce property mbox-rx-timeout-ms to let each
+> > > platform
+> > > > > > > > could set its own timeout value in device tree.
+> > > > > > > >
+> > > > > > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > > > > > > ---
+> > > > > > > >
+> > > > > > > > V2:
+> > > > > > > >  Drop defaults, update description.
+> > > > > > > >
+> > > > > > > >
+> Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> > > | 6
+> > > > > > > ++++++
+> > > > > > > >  1 file changed, 6 insertions(+)
+> > > > > > > >
+> > > > > > > > diff --git
+> > > > > > >
+> a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> > > > > > > >
+> > > b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> > > > > > > > index ebf384e76df1..dcac0b36c76f 100644
+> > > > > > > > ---
+> > > > > a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> > > > > > > > +++
+> > > > > b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> > > > > > > > @@ -121,6 +121,12 @@ properties:
+> > > > > > > >        atomic mode of operation, even if requested.
+> > > > > > > >      default: 0
+> > > > > > > >
+> > > > > > > > +  max-rx-timeout-ms:
+> > > > > > > > +    description:
+> > > > > > > > +      An optional time value, expressed in milliseconds,
+> > > > > > > > + representing
+> > > > > > > the
+> > > > > > > > +      mailbox maximum timeout value for receive channel.
+> > > > > > > > + The value
+> > > > > > > should
+> > > > > > > > +      be a non-zero value if set.
+> > > > > > > > +
+> > > > > > >
+> > > > > > > IIRC, you had the min and max constraint in the earlier
+> response.
+> > > > > > > You need to have rushed and posted another version before
+> I
+> > > > > > > could respond with my preference.
+> > > > > > >
+> > > > > > > So there is no rush, these are v6.12 material. Take time for
+> > > > > > > respining and give some time for the review.
+> > > > > >
+> > > > > > Sure. I just not sure what the maximum should be set, so I
+> > > > > > drop the minimum and maximum from my previous email.
+> > > > > >
+> > > > >
+> > > > > Worst case we can just have min constraint to indicate it must
+> > > > > be
+> > > > > non- zero value as you have mentioned above and drop that
+> > > statement
+> > > > > as it becomes explicit with the constraint.
+> > > >
+> > > > I'll use below in v3:
+> > > >   max-rx-timeout-ms:
+> > > >     description:
+> > > >       An optional time value, expressed in milliseconds,
+> > > > representing
+> > > the
+> > > >       mailbox maximum timeout value for receive channel. The
+> value
+> > > should
+> > > >       be a non-zero value if set.
+> > > >     minimum: 1
+> > > >
+> > > > Put the binding away, when you have time, please check whether
+> the
+> > > > driver changes are good or not.
+> > > > BTW, since our Android team is waiting for this patchset got R-b
+> > > > or A-b, then the patches could be accepted by Google common
+> > > > kernel,
+> > > we
+> > > > could support GKI in our release which is soon in near days. So I
+> > > > am being pushed :)
+> > >
+> > > Hi Peng,
+> > >
+> > > once the bindings are accepted I wanted to fold also this series of
+> > > yours in my transport rework series.
+> >
+> > No problem, feel free to take it into your series, I will post out V3
+> > later(wait if Sudeep is ok with I add minimum 1 or not), but v3 2/2
+> > should be same as v2 2/2.
+> >
+>=20
+> Still not taken in transport rework V1, but not forgotten :D=09
 
-Ah, yes, I forgot NOTIFY_SIGNAL was split out of SIGPENDING
+No problem. just posted out v3. Only binding change to add minimum,
+no more changes.
 
-> We need much more changes. Say, zap_threads() does the same and assumes
-> that only SIGKILL or freezeing can make dump_interrupted() true.
-> 
-> There are more similar problems. I'll try to think, so far I do not see
-> a simple solution...
+https://lore.kernel.org/all/20240709140957.3171255-1-peng.fan@oss.nxp.com/#=
+t
 
-Thanks. And there was some patching done before against dumping
-being interrupted by task_work, indeed a reoccurring issue.
+Regards,
+Peng.
 
-
-> As for this particular problem, I agree it needs a simple/backportable fix.
-> 
->>>>   relock:
->>>> +	clear_notify_signal();
->>>> +	if (unlikely(task_work_pending(current)))
->>>> +		task_work_run();
->>>> +
->>>>   	spin_lock_irq(&sighand->siglock);
->>>
->>> Well, but can't we kill the same code at the start of get_signal() then?
->>> Of course, in this case get_signal() should check signal_pending(), not
->>> task_sigpending().
->>
->> Should be fine,
-> 
-> Well, not really at least performance-wise... get_signal() should return
-> asap if TIF_NOTIFY_SIGNAL was the only reason to call get_signal().
-> 
->> but I didn't want to change the
->> try_to_freeze() -> __refrigerator() path, which also reschedules.
-> 
-> Could you spell please?
-
-Let's say it calls get_signal() for freezing with a task_work pending.
-Currently, it executes task_work and calls try_to_freeze(), which
-puts the task to sleep. If we remove that task_work_run() before
-try_to_freeze(), it would not be able to sleep. Sounds like it should
-be fine, it races anyway, but I'm trying to avoid side effect for fixes.
-
->>> Or perhaps something like the patch below makes more sense? I dunno...
->>
->> It needs a far backporting, I'd really prefer to keep it
->> lean and without more side effects if possible, unless
->> there is a strong opinion on that.
-> 
-> Well, I don't think my patch is really worse in this sense. Just it
-> is buggy ;) it needs another recalc_sigpending() before goto start,
-> so lets forget it.
-> 
-> So I am starting to agree with your change as a workaround until we
-> find a clean solution (if ever ;).
-> 
-> But can I ask you to add this additional clear_notify_signal() +
-> task_work_run() to the end of do_freezer_trap() ? get_signal() is
-> already a mess...
-
-Will change
-
-> -----------------------------------------------------------------------
-> Either way I have no idea whether a cgroup_task_frozen() task should
-> react to task_work_add(TWA_SIGNAL) or not.
-> 
-> Documentation/admin-guide/cgroup-v2.rst says
-> 
-> 	Writing "1" to the file causes freezing of the cgroup and all
-> 	descendant cgroups. This means that all belonging processes will
-> 	be stopped and will not run until the cgroup will be explicitly
-> 	unfrozen.
-> 
-> AFAICS this is not accurate, they can run but can't return to user-mode.
-> So I guess task_work_run() is fine.
-
-IIUC it's a user facing doc, so maybe it's accurate enough from that
-perspective. But I do agree that the semantics around task_work is
-not exactly clear.
-
--- 
-Pavel Begunkov
+>=20
+> Thanks,
+> Cristian
 
