@@ -1,242 +1,211 @@
-Return-Path: <linux-kernel+bounces-245693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42A5292B630
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:09:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C5C792B632
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C08292836E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:09:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 274921F2331C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B881157E61;
-	Tue,  9 Jul 2024 11:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F860158203;
+	Tue,  9 Jul 2024 11:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzsbke4/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mXUT3SqW";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DieAd5o6";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zFUF/L94";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RViQhDkZ"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D808156F45
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 11:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32E4155389;
+	Tue,  9 Jul 2024 11:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720523373; cv=none; b=ca+7KNvD7XSQcyButQXQzPvA/VBgTHeFRfuujUy255q4vaItCgTeVAyw0tztYox0oKcgMyC35CXTXXQySUwSj5Rf6UcNFxY8PFCCSql/ure73G92Qx5daGp983vJ/MY7Ln5J0y7AUNzmwxuJp/8PEG4AH8QinTNVWvxoqZSQ5PQ=
+	t=1720523394; cv=none; b=RQA2ePOxlebrCzpzjROYlfqq2n9L/7vlFgcpmLrlTRO51td0ga/gdNb5DUGDvvqwf4aO+JjcZVTD2morT9oB7FbIF7WeVEKBNGO8c/Ch5eR2z4TfhFSvc1bzOzT3d/mTqftDE/Q3Qjq0j3A/N2CzuVllQAVvwwyNx4719Pzspb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720523373; c=relaxed/simple;
-	bh=FXUkXbQUEspDSkw/HVpFFZAVrtoTx09LZKNLAG6JZuU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RpJVUDdjRY9fEC0VfZ3XJ7tI2/l4STXUbEuJuauQRrwuQ0IewAEXmGy7/OJ20HFGZWUnKJfhLq6/SRdS7MeImdc/IKGevSkMjIEDNsD7WOKp2o2S37x9skNFvGn+28v8XFAvXHx3pghV0CzWp210vyX1FlsA53LmudT3gRQt6UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzsbke4/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF727C3277B;
-	Tue,  9 Jul 2024 11:09:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720523373;
-	bh=FXUkXbQUEspDSkw/HVpFFZAVrtoTx09LZKNLAG6JZuU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lzsbke4/exLO4Xl4SqTLG6hiifRc34fVQtWOddtnZ+EUJgKmI7p9pwohDxy+ni4FZ
-	 R9sOC46KJBzU1KRFruWYGkpDgVBs8BqW2FuKFwR4pnF8HQzDCVZnkDzD3y0pJKZ00p
-	 qq0SxVQp+NXk7QeR6KToscr5lFlpkfDHcAbU2YvE4B9vE9n73gDov2XKtHYoaeb04+
-	 J9URmF7sjiuuvE3+JgSLdzPaBb/9CuUMu1V4wmjH4Rr2BVROuE6A4X2Oquo5bAb5Jj
-	 PHiDdCO7T5r4MSWjOVIaiQY+6jbh563cQW8dJu/2DGuMUfSHLdPetKCXA2GoKIvwMQ
-	 ElEkddqarH3aQ==
-Date: Tue, 9 Jul 2024 13:09:30 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Andy Yan <andyshrk@163.com>, linux-rockchip@lists.infradead.org, 
-	dri-devel@lists.freedesktop.org, heiko@sntech.de, hjc@rock-chips.com, andy.yan@rock-chips.com, 
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, javierm@redhat.com
-Subject: Re: [PATCH] drm/rockchip: cdn-dp: Remove redundant workarounds for
- firmware loading
-Message-ID: <20240709-exuberant-tentacled-oxpecker-bd1ea0@houat>
-References: <9b7a9e9b88ad8c7489ee1b4c70b8751eeb5cf6f9.1720049413.git.dsimic@manjaro.org>
- <109c6f19.2559.1907b817a99.Coremail.andyshrk@163.com>
- <0bf4701d98833609b917983718c610aa@manjaro.org>
- <2fd3aabd.785b.190914ec1a6.Coremail.andyshrk@163.com>
- <f0fb9feed2d9262bb4d7c8ade836af62@manjaro.org>
- <909d072.9028.19096c2429a.Coremail.andyshrk@163.com>
- <31062b80d3f9e11c339c400a70464f43@manjaro.org>
+	s=arc-20240116; t=1720523394; c=relaxed/simple;
+	bh=HEn7mmZVm+HCz9hHhvLDAzTFnNjUkJlPrQ3AF2GKGW4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K6Hhpb10xkFvuvLl7khOXkBo+8s84ExxCWVOcd2dtegs9PNHGXqdhFWaM1J+kICyEldQBJGjMJMa8Yk5asrpQ9K07kJGmKP1x64XQOwr2f0aKfhf9Igcz/LFD8hJdUMlAmATDnpGdjHePgfMwBbG3JNs2Vx3ELED9ffiGqNVB8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mXUT3SqW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DieAd5o6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zFUF/L94; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RViQhDkZ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E900521111;
+	Tue,  9 Jul 2024 11:09:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1720523391; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8fJE3nCOXYNp2LxWcHSy59jmf7yc5spRvIy/bBKZFmQ=;
+	b=mXUT3SqWiCGk/kl3JoKNy1rGiRyLBgazptOYhdBWfoAiFa1voA1kX3GUJE+M3P5jdO8dR4
+	BAsvgfNJd3RVMMk0Of0MmShR3suc3b2a0IBXwtAk/qocZ2Q4rYZ66q/lCnQUsOcGP5/iAC
+	XVU5IxIBCyl2zuu546MMiS+32UP9uME=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1720523391;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8fJE3nCOXYNp2LxWcHSy59jmf7yc5spRvIy/bBKZFmQ=;
+	b=DieAd5o6HbiAyA+NZxLMPKAKoO3/S/kZ57fBudyRsSx6B7kvCQgwmXUkbQ6HeVGqbQz68+
+	5wpGttewTOJUasBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="zFUF/L94";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=RViQhDkZ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1720523390; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8fJE3nCOXYNp2LxWcHSy59jmf7yc5spRvIy/bBKZFmQ=;
+	b=zFUF/L94Eb7cp+IqsLKl/5cAA6kj0p1S1bdOJR+AqRqTMVY7X6PsLBEuF+TCAP05YX0L8g
+	S9P6cuGQfzd/ongojic6egAL89qO6bPLUvuV64iEj5Ugdw/oBzGaamw991z34J5zo2Wcim
+	QR0M3O3zoekapbTjtxCkyf6nsxCLIXk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1720523390;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8fJE3nCOXYNp2LxWcHSy59jmf7yc5spRvIy/bBKZFmQ=;
+	b=RViQhDkZlUO/SPA1uYl536OGdx4ZtwgFgoOD4VjGwlk28MTzWn4EtTrv22EcmUlH7SaIRC
+	lck4NHCWpqAh93CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C345C1396E;
+	Tue,  9 Jul 2024 11:09:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id djQkL34ajWYSXAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 09 Jul 2024 11:09:50 +0000
+Message-ID: <a38486a3-9b25-440b-af32-c9d4728fda85@suse.cz>
+Date: Tue, 9 Jul 2024 13:09:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="mrun7l74cyv4hvms"
-Content-Disposition: inline
-In-Reply-To: <31062b80d3f9e11c339c400a70464f43@manjaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/7] mm: move internal core VMA manipulation functions
+ to own file
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, SeongJae Park <sj@kernel.org>,
+ Shuah Khan <shuah@kernel.org>, Brendan Higgins <brendanhiggins@google.com>,
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
+References: <cover.1720121068.git.lorenzo.stoakes@oracle.com>
+ <8622e12013139411ad44eca5813839c34574974e.1720121068.git.lorenzo.stoakes@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <8622e12013139411ad44eca5813839c34574974e.1720121068.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.50 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: E900521111
+X-Spam-Flag: NO
+X-Spam-Score: -4.50
+X-Spam-Level: 
 
+On 7/4/24 9:27 PM, Lorenzo Stoakes wrote:
+> This patch introduces vma.c and moves internal core VMA manipulation
+> functions to this file from mmap.c.
+> 
+> This allows us to isolate VMA functionality in a single place such that we
+> can create userspace testing code that invokes this functionality in an
+> environment where we can implement simple unit tests of core functionality.
+> 
+> This patch ensures that core VMA functionality is explicitly marked as such
+> by its presence in mm/vma.h.
+> 
+> It also places the header includes required by vma.c in vma_internal.h,
+> which is simply imported by vma.c. This makes the VMA functionality
+> testable, as userland testing code can simply stub out functionality
+> as required.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
---mrun7l74cyv4hvms
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
-On Tue, Jul 09, 2024 at 12:10:51PM GMT, Dragan Simic wrote:
-> On 2024-07-09 11:10, Andy Yan wrote:
-> > At 2024-07-09 16:17:06, "Dragan Simic" <dsimic@manjaro.org> wrote:
-> > > On 2024-07-08 09:46, Andy Yan wrote:
-> > > > At 2024-07-04 18:35:42, "Dragan Simic" <dsimic@manjaro.org> wrote:
-> > > > > On 2024-07-04 04:10, Andy Yan wrote:
-> > > > > > At 2024-07-04 07:32:02, "Dragan Simic" <dsimic@manjaro.org> wro=
-te:
-> > > > > > > After the additional firmware-related module information was
-> > > > > > > introduced by
-> > > > > > > the commit c0677e41a47f ("drm/rockchip: cdn-dp-core: add
-> > > > > > > MODULE_FIRMWARE
-> > > > > > > macro"), there's no longer need for the
-> > > > > > > firmware-loading workarounds
-> > > > > > > whose
-> > > > > > > sole purpose was to prevent the missing firmware
-> > > > > > > blob in an initial
-> > > > > > > ramdisk
-> > > > > > > from causing driver initialization to fail.  Thus, delete the
-> > > > > > > workarounds,
-> > > > > > > which removes a sizable chunk of redundant code.
-> > > > > >=20
-> > > > > > What would happen if there was no ramdisk? And the firmware is =
-in
-> > > > > > rootfs =EF=BC=9F
-> > > > > >=20
-> > > > > > For example=EF=BC=9A A buildroot based tiny embedded system=E3=
-=80=82
-> > > > >=20
-> > > > > Good point, let me explain, please.
-> > > > >=20
-> > > > > In general, if a driver is built into the kernel, there
-> > > > > should also be
-> > > > > an initial ramdisk that contains the related firmware blobs, beca=
-use
-> > > > > it's
-> > > > > unknown is the root filesystem available when the driver is probe=
-d.
-> > > > > If
-> > > > > a driver is built as a module and there's no initial ramdisk, hav=
-ing
-> > > > > the related firmware blobs on the root filesystem should be fine,
-> > > > > because
-> > > > > the firmware blobs and the kernel module become available at
-> > > > > the same
-> > > > > time, through the root filesystem. [1]
-> > > > >=20
-> > > > > Another option for a driver built statically into the kernel, when
-> > > > > there's
-> > > > > no initial ramdisk, is to build the required firmware blobs into =
-the
-> > > > > kernel
-> > > > > image. [2]  Of course, that's feasible only when a kernel image is
-> > > > > built
-> > > > > specificially for some device, because otherwise it would become =
-too
-> > > > > large
-> > > > > because of too many drivers and their firmware blobs becoming
-> > > > > included,
-> > > > > but that seems to fit the Buildroot-based example.
-> > > > >=20
-> > > > > To sum it up, mechanisms already exist in the kernel for various
-> > > > > scenarios
-> > > > > when it comes to loading firmware blobs.  Even if the deleted
-> > > > > workaround
-> > > > > attempts to solve some issue specific to some environment,
-> > > > > that isn't
-> > > > > the
-> > > > > right place or the right way for solving any issues of that kind.
-> > > > >=20
-> > > > > While preparing this patch, I even tried to find another
-> > > > > kernel driver
-> > > > > that
-> > > > > also implements some similar workarounds for firmware loading, to
-> > > > > justify
-> > > > > the existence of such workarounds and to possibly move them into =
-the
-> > > > > kernel's
-> > > > > firmware-loading interface.  Alas, I was unable to find such
-> > > > > workarounds
-> > > > > in
-> > > > > other drivers, which solidified my reasoning behind classifying t=
-he
-> > > > > removed
-> > > > > code as out-of-place and redundant.
-> > > >=20
-> > > > For some tiny embedded system=EF=BC=8Cthere is no such ramdisk=EF=
-=BC=8Cfor example=EF=BC=9A
-> > > > a buildroot based rootfs=EF=BC=8Cthe buildroot only generate rootfs=
-=E3=80=82
-> > > >=20
-> > > > And FYI=EF=BC=8C there are mainline drivers try to fix such issue by
-> > > > defer_probe=EF=BC=8Cfor example=EF=BC=9A
-> > > > smc_abc[0]
-> > > > There are also some other similar scenario in gpu driver{1}[2]
-> > > >=20
-> > > > [0]https://elixir.bootlin.com/linux/latest/source/drivers/tee/optee=
-/smc_abi.c#L1518
-> > > > [1]https://patchwork.kernel.org/project/dri-devel/patch/20240109120=
-604.603700-1-javierm@redhat.com/
-> > > > [2]https://lore.kernel.org/dri-devel/87y1918psd.fsf@minerva.mail-ho=
-st-address-is-not-set/T/
-> > >=20
-> > > Thanks for providing these examples.
-> > >=20
-> > > Before I continue thinking about the possible systemic solution,
-> > > could you please clarify the way Buildroot builds the kernel and
-> > > prepares the root filesystem?  I'm not familiar with Buildroot,
-> > > but it seems to me that it builds the drivers statically into the
-> > > produced kernel image, while it places the related firmware blobs
-> > > into the produced root filesystem.  Am I right there?
-> >=20
-> > in practice we can chose build the drivers statically into the kernel=
-=EF=BC=8C
-> > we can also build it as a module=E3=80=82
-> > And in both case=EF=BC=8C the firmware blobs are put in rootfs=E3=80=82
-> > If the drivers is built as a module=EF=BC=8C the module will also put in
-> > rootfs=EF=BC=8C
-> > so its fine=E3=80=82
-> > But if a drivers is built into the kernel =EF=BC=8Cit maybe can't acces=
-s the
-> > firmware blob
-> > before the rootfs is mounted.
-> > So we can see some drivers try to use  DEFER_PROBE to fix this issue.
->=20
-> When Buildroot builds the drivers statically into the kernel image,
-> can it also be told to build the required firmware blobs into the
-> kernel image, for which there's already support in the kernel?
->=20
-> Of course, that would be feasible if only a small number of firmware
-> blobs would end up built into the kernel image, i.e. if the Buildroot
-> build would be tailored for a specific board.
+blessed be git show --color-moved=dimmed-zebra
 
-IIRC, it can, but it's not really convenient from a legal point of view.
-
-> Otherwise...
->=20
-> > > As I already wrote earlier, and as the above-linked discussions
-> > > conclude, solving these issues doesn't belong to any specific driver.
-> > > It should be resolved within the kernel's firmware loading mechanism
-> > > instead, and no driver should be specific in that regard.
-> >=20
-> > IT would be good if it can be resolved within the kernel's  firmware
-> > loading mechanism.
->=20
-> ... we'll need this as a systemic solution.
-
-The general policy has been to put drivers that need a firmware as a
-module, and just never build them statically.
-
-Maxime
-
---mrun7l74cyv4hvms
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZo0aZQAKCRAnX84Zoj2+
-duQXAX9Ms7O+/0tW/78X0hREfX//aho/GXBlOL08FaPaawYipsYuGwkuSK4xC+TQ
-3SVdsKIBgMufiC9PXKOysm7HIFZiDuMPBNPHv80tBJqv56TzkdtGbOh1EsHigFIM
-nMK0oN9Ezw==
-=Grb7
------END PGP SIGNATURE-----
-
---mrun7l74cyv4hvms--
 
