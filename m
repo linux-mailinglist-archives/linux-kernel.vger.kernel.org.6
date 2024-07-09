@@ -1,73 +1,64 @@
-Return-Path: <linux-kernel+bounces-245085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E22F92AE0C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:10:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC2B92AE11
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:13:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83CAA2827BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:10:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11D22282C48
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBCD3EA64;
-	Tue,  9 Jul 2024 02:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7CF3A267;
+	Tue,  9 Jul 2024 02:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TzX1LsO1"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QW6bfgDJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7569738DF2;
-	Tue,  9 Jul 2024 02:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FB643AB4
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 02:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720491045; cv=none; b=ZoOowlUd+qnwzNiLzUeLa3EK6X/9Cm3kg7Fvz0BnbjECuuOHrGHR0mm+t3XQlu1dLThYJQrkp81/1k2H4B8g2ZSW2zxLJkkaWBh//ZoHKfQ6mAJAxIWyA9c+yITed+kOzlMYOKpM6fDh7pUJlIpyCIEIMkQkdoz1jVGmLWJM6mE=
+	t=1720491225; cv=none; b=UyJoz3Q/fj1YpH951mFX1Ik8dM1t39oKoN9/8mcqlb3I9nfHkgEkh4NN3q8Nm9+OPSfp0HtbGLwOCw4fP8bqd5KOxtRGZxdOThp30MdnONUYdTw4/dtvlW1AsRI/i1uEjzbaEmbfpDFG3ga4gQmtmbIKOVgaUQIV2/tRd40p2So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720491045; c=relaxed/simple;
-	bh=hOVZibqrFcfdl+i0HpDeBdhCF+yLKx8BFsrHlp13YmY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ri9MT1E77EM9ilDtnzjcxVDawjlN5ojjDJuXK/FcuH+CNDiaYdPgiZS8MfRrvEKv/jSZl4yesXmhaa9PIxduidSg6OnFccv3h9OE1o0qdzrmrYInAWaqcQjHwzoVShW0KDVFdTmKh3YpC7JSegPQEZXQmzMGRCSc1unccdmnJp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TzX1LsO1; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3d9318a005eso723140b6e.1;
-        Mon, 08 Jul 2024 19:10:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720491043; x=1721095843; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jtH7OPMrirvI7ENGdelUQ1QKZy+EaAME7OT8wpfozBA=;
-        b=TzX1LsO1973epEKAeeNjO0lZSA5OiLWTl315QuUgd0IwIFgTrRp75p3p92kF2cTP31
-         7wZBEw/nenEnHryqnxT0GrqhzOSWSaoaij5cIgeLq0W2h3+F1Sgn0V8KmL2Xa9RKaF1t
-         nnQ4PVuUuz0S1aBv1aFNDxv/S1rzwMMjk8Ae3828pRn3lYVOIu3qpzYUoEXBnv4FlDpm
-         24Klqsdmf0HUQpLKf/yrtuxb53YCS8ceWzeDzM3DPZEvW3cO06OKKJxObwJOQKmpnVN0
-         0rFmHm5VhZaD0S5sMDJFPCJ2DXc+dbrvaYiKAkRjePORIBSWnjbn1+OMsGENQVxHsZg/
-         oo9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720491043; x=1721095843;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jtH7OPMrirvI7ENGdelUQ1QKZy+EaAME7OT8wpfozBA=;
-        b=Rlz7KQc3ivGEYBzmdOOfwZ5+2hJgxnE1JnESV+vqDFYsx7g+3RDDUitYh17UWeNaKc
-         h+zdZE3F71cDdYaE6/T3fipL1eMJrXyTG1tgI5PppMSEhg21m16QbH2LraXLIuIGo3on
-         cw6XW18nrgykEkSs8ZMrqfFTVTnzXpHZZI9Aw7eAZmPUIyrvU6c7+MvZAqpBIDC4wRy+
-         6NnNBKOKr8VhHH+7SLgiLB4Urr6yuUUKEBrnwhad7FL/RObevsKWd9nZQ4G2lFA7hUKD
-         X/4/i7B4jTT6j5IRHx2OoaxMsCbQeS5We99bPSLkJOgsZu5fQVXzEHqUMow94Yy7X7aQ
-         R8zA==
-X-Forwarded-Encrypted: i=1; AJvYcCVv4Mt7SKXvORa1caUFzkZlP3aHRrPuPZ9P0WKobqIW93GaTNQbcu4jAjpVE3qc/dGLjQJi9GaDzpA6t4T/3e9ltwnfhTM60k6WQsJnrLUlItfRxHLQSk5Mn5ZF1NE4HxHJLAaeNCRxlzuSVaOQddbWszDmr01mvZRg5UwkQy0bnHRxgQ==
-X-Gm-Message-State: AOJu0Yx1h1lBBIlvJsVybLZE5RuDIvS+nxqGuyt2qa1+udjIfsjF2Di2
-	lUheHONcEmb+ckPpI2P5cCiIvC1zMZz/nPH5eaDfFzLYLOiNw66U
-X-Google-Smtp-Source: AGHT+IFge5Or486qU3fsqK7rfLez5SQ73WcKfauMIlXxu9FtbdydQ4vUXacBQgadwkO4rfqutytpBQ==
-X-Received: by 2002:a05:6808:2126:b0:3d9:33c1:29cd with SMTP id 5614622812f47-3d93c07b12emr1018035b6e.45.1720491043284;
-        Mon, 08 Jul 2024 19:10:43 -0700 (PDT)
-Received: from [172.19.1.51] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-77d61df022esm497370a12.48.2024.07.08.19.10.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 19:10:42 -0700 (PDT)
-Message-ID: <f1053686-1eaf-4a84-af57-4d25dc5896f2@gmail.com>
-Date: Tue, 9 Jul 2024 10:10:36 +0800
+	s=arc-20240116; t=1720491225; c=relaxed/simple;
+	bh=qmfe73rj7uPFO7PgvLZEQThh1iERDsTRnG6XRTqML+c=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XniVQ0zT582l17HUiKC++l32d4SFciGf+RJ9ANb/EQaCSurc+Q39EQ9qE3bz0y5xnlIY7rYSVaVj2x9KRwhLuO+eaLewgykNBexMMpg7CV7l5iwVjJ+0jdqMm4v8RjmZZbXS8Wt5aZYCOEWX7cH27dlJHF4KpqTfCZ/JarycuIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QW6bfgDJ; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720491224; x=1752027224;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=qmfe73rj7uPFO7PgvLZEQThh1iERDsTRnG6XRTqML+c=;
+  b=QW6bfgDJ9zu1GSu/Vhjq8NDRjN2OmjJTqgHF3lknRZAGaCwVvXxln4ND
+   4a1BtjTK9O9s4809LzuunswiY6fF+ckgPsjZaReGwL7ypVBoR4+LWnf7z
+   SgJ/7Ttmi5l5Nbg8tSTBvfuEDWwe0dpJjoeyfQRlD2LT7E+H7m/LQnjv8
+   pOlfBiyjIPEacnP3Hyyi2GmkQ8PMByb+ZUYOO6jxegKRgAc/m7Vbp2ukg
+   ecNP/bFHm7Qc9qz729wLJrvbpfzQ6DWtFK569T5NRQYrCFjZIQtmeoe6U
+   wqX7KIa5fDhUn+WH4gtK0132vKSItklb1JtAN5mbqA6TMhwzPVsU/Q0d3
+   w==;
+X-CSE-ConnectionGUID: CmBAvXmCQZqY14jy0DFBgQ==
+X-CSE-MsgGUID: OwI1PYMhTZSsF9eXko5lEw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="17824232"
+X-IronPort-AV: E=Sophos;i="6.09,193,1716274800"; 
+   d="scan'208";a="17824232"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 19:13:42 -0700
+X-CSE-ConnectionGUID: d5zKqABkTUWp4MS7DXpD4g==
+X-CSE-MsgGUID: AnVNl0FXQyWJ4eCG+5lDGg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,193,1716274800"; 
+   d="scan'208";a="52100309"
+Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
+  by fmviesa005.fm.intel.com with ESMTP; 08 Jul 2024 19:13:33 -0700
+Message-ID: <56911ed6-d819-4882-9c7e-bfe4ba5826c2@linux.intel.com>
+Date: Tue, 9 Jul 2024 10:10:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,71 +66,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: mmc: nuvoton,ma35d1-sdhci: Document
- MA35D1 SDHCI controller
-To: Krzysztof Kozlowski <krzk@kernel.org>, ulf.hansson@linaro.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- adrian.hunter@intel.com, p.zabel@pengutronix.de, pbrobinson@gmail.com,
- serghox@gmail.com, mcgrof@kernel.org,
- prabhakar.mahadev-lad.rj@bp.renesas.com, forbidden405@outlook.com,
- tmaimon77@gmail.com, andy.shevchenko@gmail.com,
- linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: ychuang3@nuvoton.com, schung@nuvoton.com
-References: <20240704062623.1480062-1-shanchun1218@gmail.com>
- <20240704062623.1480062-2-shanchun1218@gmail.com>
- <d1422b93-b111-41f6-8537-a837a48e5743@kernel.org>
+Cc: baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+ Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
+ catalin.marinas@arm.com, kernel-team@android.com, Yi Liu
+ <yi.l.liu@intel.com>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Kalle Valo <kvalo@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Alex Williamson <alex.williamson@redhat.com>, mst@redhat.com,
+ Jason Wang <jasowang@redhat.com>, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Jeff Johnson <quic_jjohnson@quicinc.com>, ath10k@lists.infradead.org,
+ ath11k@lists.infradead.org, iommu@lists.linux.dev,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 00/21] iommu: Refactoring domain allocation interface
+To: Jason Gunthorpe <jgg@ziepe.ca>, Will Deacon <will@kernel.org>
+References: <20240610085555.88197-1-baolu.lu@linux.intel.com>
+ <172009858593.2049787.5200500337719932334.b4-ty@kernel.org>
+ <20240708163407.GC14050@ziepe.ca>
 Content-Language: en-US
-From: Shan-Chun Hung <shanchun1218@gmail.com>
-In-Reply-To: <d1422b93-b111-41f6-8537-a837a48e5743@kernel.org>
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240708163407.GC14050@ziepe.ca>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Dear Krzysztof,
-
-Thank you for your review.
-
-I will make sure to keep the same order as in the list of properties.
-
-I'm sorry if I missed your comments before.
-
-I will do my best to address them in the future.
-
-Thanks for your understanding.
-
-
-Best Regards
-
-Shan-Chun
-
-
-On 2024/7/8 下午 10:19, Krzysztof Kozlowski wrote:
-> On 04/07/2024 08:26, Shan-Chun Hung wrote:
->> Add binding for Nuvoton MA35D1 SDHCI controller.
+On 7/9/24 12:34 AM, Jason Gunthorpe wrote:
+> On Thu, Jul 04, 2024 at 03:18:56PM +0100, Will Deacon wrote:
+>> On Mon, 10 Jun 2024 16:55:34 +0800, Lu Baolu wrote:
+>>> The IOMMU subsystem has undergone some changes, including the removal
+>>> of iommu_ops from the bus structure. Consequently, the existing domain
+>>> allocation interface, which relies on a bus type argument, is no longer
+>>> relevant:
+>>>
+>>>      struct iommu_domain *iommu_domain_alloc(struct bus_type *bus)
+>>>
+>>> [...]
+>> Applied a few of these to iommu (iommufd/paging-domain-alloc), thanks!
 >>
->> Signed-off-by: Shan-Chun Hung <shanchun1218@gmail.com>
->> ---
->
->> +
->> +  nuvoton,sys:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description: phandle to access GCR (Global Control Register) registers.
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - clocks
->> +  - pinctrl-names
->> +  - pinctrl-0
->> +  - resets
->> +  - nuvoton,sys
-> Keep the same order as in list of properties.
->
-> Normally I would give conditional review tag, but not that case because
-> in the past you kept ignoring review comments.
->
-> Best regards,
-> Krzysztof
->
+>> [01/21] iommu: Add iommu_paging_domain_alloc() interface
+>>          https://git.kernel.org/iommu/c/a27bf2743cb8
+>> [02/21] iommufd: Use iommu_paging_domain_alloc()
+>>          https://git.kernel.org/iommu/c/26a581606fab
+>> [03/21] vfio/type1: Use iommu_paging_domain_alloc()
+>>          https://git.kernel.org/iommu/c/60ffc4501722
+>> [04/21] vhost-vdpa: Use iommu_paging_domain_alloc()
+>>          https://git.kernel.org/iommu/c/9c159f6de1ae
+>> [05/21] drm/msm: Use iommu_paging_domain_alloc()
+>>          https://git.kernel.org/iommu/c/45acf35af200
+>>
+>> [10/21] wifi: ath10k: Use iommu_paging_domain_alloc()
+>>          https://git.kernel.org/iommu/c/d5b7485588df
+>> [11/21] wifi: ath11k: Use iommu_paging_domain_alloc()
+>>          https://git.kernel.org/iommu/c/ef50d41fbf1c
+>>
+>> [14/21] RDMA/usnic: Use iommu_paging_domain_alloc()
+>>          https://git.kernel.org/iommu/c/3b10f25704be
+>> [15/21] iommu/vt-d: Add helper to allocate paging domain
+>>          https://git.kernel.org/iommu/c/9e9ba576c259
+> Great, Lu can you please split the remaining by subsystem and try to
+> get them to go through subsystem trees? Joerg can take the leftovers
+> at rc6/7 or something like that so we can finish this.
+
+Yes, sure. I guess I need to wait until 6.11-rc1 is out. It's a bit late
+in the cycle for the subsystem trees to accept brand new changes.
+
+> I think this is enough that Intel and AMD could now assert that dev is
+> non-null?
+
+Yes.
+
+Thanks,
+baolu
 
