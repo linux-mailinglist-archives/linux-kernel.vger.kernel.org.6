@@ -1,133 +1,176 @@
-Return-Path: <linux-kernel+bounces-246120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 991CD92BDD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:07:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4978292BDD0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16820B2F135
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:06:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F35491F27178
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D56E19D8A0;
-	Tue,  9 Jul 2024 15:05:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CF119D09C;
+	Tue,  9 Jul 2024 15:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EIfVYaPp"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qr1CqDCp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0EC18FDBD;
-	Tue,  9 Jul 2024 15:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63A319CCE1
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720537541; cv=none; b=JOvvrObDOy2cxYrGxx1s+zrxyFZnR6BZvvYkrNAt3+jNsv1C5tQScjEVdYNbAQ07Qrt5y3nHHzVQaIbTciK7Mp0XgTtl7OY4oKPidsK/99Y0DBkTsTFlOhqw8r+/xAQjstYKM6GCKjUfbwI+O9hyOfUCiOMP928nihLhrfQ/j8g=
+	t=1720537614; cv=none; b=XsG4BJsrAqwgTfHnPRNVoFqxzKik0JpUafV98OjtkvSW3ak9sPJXeRzi+GzoqGBr+Vw60pAjQGGz6iLwzZdAC1xVbNoJ5+eLROylOorTWdqzqwN93R0GLm6aXj12cfgLGVTop+gjQmpi8QoAzCDKs1CPzt10T7EDbsFcO5yiQZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720537541; c=relaxed/simple;
-	bh=F7sxwx+VbFdafr+eirCkMpLzGIBjUnNrqnnfwl+MUlw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=M4dfPty2IBUvwjuk9OgRW0yK3oIp3uSmDJ2wTBrO3jC/LhYQC9IPJjBcWzJBd+FeNnVll7/yGAPCvaldUERVS6nYE4ut4z/JtriuU9byES+yto+ze9nKSa1JSTyFlzkXgiTJfDk3nDbASATaF8RzWQ26nd/sLE1vuF4ZGMSVJxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EIfVYaPp; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469Bk8sN005080;
-	Tue, 9 Jul 2024 15:05:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	V/SAfd1LwJ9PzmDluPlX5KX7UfHQx2JxVE4o3Ws1Vnc=; b=EIfVYaPpRWi39smp
-	8YMpUU7mUmgdWyJEbyHek+oW7FCJXMIgAHXjDfZXR1QZoLJVOKDvGkovTKGaF+8A
-	9Q1VwXzpfUs65uNsYlr11xYe0GDrd2LIGiLsyiDYEWnINqdHQNuTtPz4QypQWHj+
-	FWnmpqorQ7zz7351b0tL1t9/MavGjz2m0F0Ko37b2ByewnyAvOxGyO9DYj8BElMW
-	gH0u6A5VEtdNGzAATb5dzXvGM9BVZ0Zhgb9MST81U4g5IMgedfVz4SLZ+Nd/JpT1
-	pQSi8CGndAw7Kj5VLc4D8YJlT/LSnkiy5Z3633+WS9Z23RwgR1HSmzyqM5axmvnY
-	07P/Aw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 408w0r9n5a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 15:05:34 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469F5CZT030170
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 9 Jul 2024 15:05:12 GMT
-Received: from tengfan-gv.ap.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 9 Jul 2024 08:05:06 -0700
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-Date: Tue, 9 Jul 2024 23:04:45 +0800
-Subject: [PATCH v2 2/2] soc: qcom: llcc: Add llcc configuration support for
- the QCS9100 platform
+	s=arc-20240116; t=1720537614; c=relaxed/simple;
+	bh=51kUKee66GC78kVNFb48z+4FmZxQlPv3lIlopAqxUSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XAaPveCLPz1sO+/vUx+cTYIutnKMfL0FfSMUxyZtYRyb09bvmSk//yDDErFXe19jUwl/Q5KPYQXAsqtQML5EwB3ANd4GCjgeo3EHTS5o7CyhreZ/+NEhAC5l8pwukldsFNpHmG96T4knsgrIc0x1WXQ6XxZWtzXpnRIkVGYWyjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qr1CqDCp; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720537611;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9g5A7SXqltxpQ8rMmUVgyuk85viXZ5bqucOss47RPM4=;
+	b=Qr1CqDCpRuxnb+RxljFI+DXszMvjpZaBMYDBnP0+zTP4BbgKmDFX0HaWv6dQ3+zuTW/YxP
+	BqvP9bwRpj9qbtZ/NmKavLshwqHZNdIHCh6o7pc5LvEZbDJbJD4bx4noGURWPZZbVnjcme
+	A+NCA5u8eFEMKwUGIVQ4/1ou1atpD8Y=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-605-cOYatm8PN1Sd9vhHauD-7g-1; Tue,
+ 09 Jul 2024 11:06:48 -0400
+X-MC-Unique: cOYatm8PN1Sd9vhHauD-7g-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 060C21955F3D;
+	Tue,  9 Jul 2024 15:06:45 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.34])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 983BE3000183;
+	Tue,  9 Jul 2024 15:06:41 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue,  9 Jul 2024 17:05:08 +0200 (CEST)
+Date: Tue, 9 Jul 2024 17:05:04 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org,
+	clm@meta.com, paulmck@kernel.org
+Subject: Re: [PATCH 05/10] perf/uprobe: SRCU-ify uprobe->consumer list
+Message-ID: <20240709150504.GF28495@redhat.com>
+References: <20240708091241.544262971@infradead.org>
+ <20240708092415.695619684@infradead.org>
+ <20240709120551.GK27299@noisy.programming.kicks-ass.net>
+ <20240709133349.GC28495@redhat.com>
+ <20240709143218.GM27299@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240709-add_qcs9100_llcc_compatible-v2-2-99d203616eed@quicinc.com>
-References: <20240709-add_qcs9100_llcc_compatible-v2-0-99d203616eed@quicinc.com>
-In-Reply-To: <20240709-add_qcs9100_llcc_compatible-v2-0-99d203616eed@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Conor Dooley <conor@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Tengfei Fan <quic_tengfan@quicinc.com>
-X-Mailer: b4 0.15-dev-a66ce
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720537501; l=1101;
- i=quic_tengfan@quicinc.com; s=20240709; h=from:subject:message-id;
- bh=F7sxwx+VbFdafr+eirCkMpLzGIBjUnNrqnnfwl+MUlw=;
- b=VbOMk71zWa4A5dy0gP0+xr6jl/YL8QQJyZWia12JWKItAeISKmWoC8izC7GVWc0U2P8Mo8QKx
- 0tHocRZyUYYC7bWz/8W6XSJpVLMhmrgZOfc9CRnxXAWDxbxEH1k5/Mz
-X-Developer-Key: i=quic_tengfan@quicinc.com; a=ed25519;
- pk=4VjoTogHXJhZUM9XlxbCAcZ4zmrLeuep4dfOeKqQD0c=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1ZDeGA46qikxSDNWBcJ6RW_TcFCdQRSA
-X-Proofpoint-GUID: 1ZDeGA46qikxSDNWBcJ6RW_TcFCdQRSA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_04,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- impostorscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
- phishscore=0 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090099
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709143218.GM27299@noisy.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Add llcc configuration support for the QCS9100 platform.
-QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
-platform use non-SCMI resource. In the future, the SA8775p platform will
-move to use SCMI resources and it will have new sa8775p-related device
-tree. Consequently, introduce "qcom,qcs9100-llcc" to the LLCC device
-match table.
+On 07/09, Peter Zijlstra wrote:
+>
+> On Tue, Jul 09, 2024 at 03:33:49PM +0200, Oleg Nesterov wrote:
+> > On 07/09, Peter Zijlstra wrote:
+> > >
+> > > > +	guard(srcu)(&uprobes_srcu);
+> > > > +
+> > > > +	for_each_consumer_rcu(uc, uprobe->consumers) {
+> > > >  		int rc = 0;
+> > > >
+> > > >  		if (uc->handler) {
+> > > > @@ -2116,7 +2126,6 @@ static void handler_chain(struct uprobe
+> > > >  		WARN_ON(!uprobe_is_active(uprobe));
+> > > >  		unapply_uprobe(uprobe, current->mm);
+> > >
+> > >    ^^^ this remove case needs more thought.
+> >
+> > Yeah... that is why the current code doesn't use ->consumer_rwsem, iirc.
+>
+> AFAICT something like the below should work. Concurrent
+> remove_breakpoint() should already be possible today and doesn't appear
+> to be a problem.
 
-Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
----
- drivers/soc/qcom/llcc-qcom.c | 1 +
- 1 file changed, 1 insertion(+)
+Sorry, I don't understand how can this patch help. Yes, it removes the
+uprobe->consumers != NULL check, but this is minor.
 
-diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
-index 110b1f89aa59..5a0840df4ba8 100644
---- a/drivers/soc/qcom/llcc-qcom.c
-+++ b/drivers/soc/qcom/llcc-qcom.c
-@@ -1379,6 +1379,7 @@ static int qcom_llcc_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id qcom_llcc_of_match[] = {
-+	{ .compatible = "qcom,qcs9100-llcc", .data = &sa8775p_cfgs },
- 	{ .compatible = "qcom,qdu1000-llcc", .data = &qdu1000_cfgs},
- 	{ .compatible = "qcom,sa8775p-llcc", .data = &sa8775p_cfgs },
- 	{ .compatible = "qcom,sc7180-llcc", .data = &sc7180_cfgs },
+To simplify, suppose we have a single consumer which is not interested
+in this task/mm, it returns UPROBE_HANDLER_REMOVE.
 
--- 
-2.25.1
+For example, event->hw.target != NULL and the current task is the forked
+child which hits the breakpoint copied by dup_mmap().
+
+Now. We need to ensure that another (say system-wide) consumer can't come
+and call register_for_each_vma() before unapply_uprobe().
+
+But perhaps I missed your point...
+
+Oleg.
+
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -1260,6 +1260,10 @@ int uprobe_apply(struct inode *inode, lo
+>  	return ret;
+>  }
+>
+> +/*
+> + * Can race against uprobe_unregister() / register_for_each_vma(), and relies
+> + * on duplicate remove_breakpoint() being a no-op.
+> + */
+>  static int unapply_uprobe(struct uprobe *uprobe, struct mm_struct *mm)
+>  {
+>  	VMA_ITERATOR(vmi, mm, 0);
+> @@ -2101,6 +2105,7 @@ static void handler_chain(struct uprobe
+>  	struct uprobe_consumer *uc;
+>  	int remove = UPROBE_HANDLER_REMOVE;
+>  	bool need_prep = false; /* prepare return uprobe, when needed */
+> +	bool had_handler = false;
+>
+>  	down_read(&uprobe->register_rwsem);
+>  	for (uc = uprobe->consumers; uc; uc = uc->next) {
+> @@ -2115,16 +2120,26 @@ static void handler_chain(struct uprobe
+>  		if (uc->ret_handler)
+>  			need_prep = true;
+>
+> +		/*
+> +		 * A single handler that does not mask out REMOVE, means the
+> +		 * probe stays.
+> +		 */
+> +		had_handler = true;
+>  		remove &= rc;
+>  	}
+>
+> +	/*
+> +	 * If there were no handlers called, nobody asked for it to be removed
+> +	 * but also nobody got to mask the value. Fix it up.
+> +	 */
+> +	if (!had_handler)
+> +		remove = 0;
+> +
+>  	if (need_prep && !remove)
+>  		prepare_uretprobe(uprobe, regs); /* put bp at return */
+>
+> -	if (remove && uprobe->consumers) {
+> -		WARN_ON(!uprobe_is_active(uprobe));
+> +	if (remove)
+>  		unapply_uprobe(uprobe, current->mm);
+> -	}
+>  	up_read(&uprobe->register_rwsem);
+>  }
+>
+>
 
 
