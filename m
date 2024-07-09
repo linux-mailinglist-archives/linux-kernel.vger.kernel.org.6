@@ -1,135 +1,158 @@
-Return-Path: <linux-kernel+bounces-245287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9869592B0B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:58:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7017692B0B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F470B21903
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:58:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93FAB1C20E53
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E881422BC;
-	Tue,  9 Jul 2024 06:58:13 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72DE213EFF3;
+	Tue,  9 Jul 2024 06:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ObEg95Os"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932A613DBA2;
-	Tue,  9 Jul 2024 06:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C270413DB92
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 06:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720508292; cv=none; b=jkmtHcbTe5mQK3P6oKaC6UTeOKFxS+a7GbIhtf4+GH1BGSRR2OrFX9i6JY0vfd4klZsapH60784o/yW6WEpP4YY9o3YQIUF4iDx8wMmnCrFMZzPdPAGl+cZVIA5hAp5hnIHXDvio7G6MF+XA9K0Wi5ORqn11YDHTnh92bSHDfWg=
+	t=1720508321; cv=none; b=jXd0LrhwMunX3m7/mFBahaLX48ZzYKkOiQQSn8DXTx5DalxlQiAwp+qDpDpS+JYGipZJZGgvyZnEt1xultQDBLTbvMZ6TAbcfqMXBZIogtozbK5Khi3kD8aST5y/styPSPOnVuzRATPvRMkE3OAR3xvebWcRO0xio0lNBlqb1Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720508292; c=relaxed/simple;
-	bh=dB5OLaUU1vnf+HXn6ajIikCkxqoPen39u8scohwcq/0=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=T/a97RZX0oDTCGq623frSgGD+c/Y9Hxep4M9yPc4PmC1aSq9mpCukShvV4hFRH7vH5HVJTsjWePTcFDBvxIGNdKve3mqJZzWTVcvpXhpqpPivhRJbTgJx2BGbyRstfUcLDxSZFsPh9Veh/8gU0lVdX7HhOqWet/VBmW+0jKVjLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WJBXH2YMszwWYR;
-	Tue,  9 Jul 2024 14:53:19 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 85476180064;
-	Tue,  9 Jul 2024 14:58:00 +0800 (CST)
-Received: from [10.69.30.204] (10.69.30.204) by dggpemf200006.china.huawei.com
- (7.185.36.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 9 Jul
- 2024 14:58:00 +0800
-Subject: Re: [PATCH net-next v9 10/13] mm: page_frag: introduce
- prepare/probe/commit API
-To: Alexander Duyck <alexander.duyck@gmail.com>
-CC: Yunsheng Lin <yunshenglin0825@gmail.com>, <davem@davemloft.net>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
-	<linux-mm@kvack.org>
-References: <20240625135216.47007-1-linyunsheng@huawei.com>
- <20240625135216.47007-11-linyunsheng@huawei.com>
- <33c3c7fc00d2385e741dc6c9be0eade26c30bd12.camel@gmail.com>
- <38da183b-92ba-ce9d-5472-def199854563@huawei.com>
- <CAKgT0Ueg1u2S5LJuo0Ecs9dAPPDujtJ0GLcm8BTsfDx9LpJZVg@mail.gmail.com>
- <0a80e362-1eb7-40b0-b1b9-07ec5a6506ea@gmail.com>
- <CAKgT0UcRbpT6UFCSq0Wd9OHrCqOGR=BQ063-zNBZ4cVNmduZGw@mail.gmail.com>
- <15623dac-9358-4597-b3ee-3694a5956920@gmail.com>
- <200ee8ff-557f-e17b-e71f-645267a49831@huawei.com>
- <CAKgT0UcpLBtkX9qrngJAtpnnxT-YRqLFc+J4oMMVnTCPG5sMug@mail.gmail.com>
- <83cf5a36-055a-f590-9d41-59c45f93e7c5@huawei.com>
- <CAKgT0UdH1yD=LSCXFJ=YM_aiA4OomD-2wXykO42bizaWMt_HOA@mail.gmail.com>
-From: Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <2b7ecaca-9a17-e057-8897-d0684b31591d@huawei.com>
-Date: Tue, 9 Jul 2024 14:57:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+	s=arc-20240116; t=1720508321; c=relaxed/simple;
+	bh=6cpbzmjkMj/+KT7yjNAf9Um11QZ/lIiDyJuGkRGSK4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uzzTkC9vCctLfakRZudGOw70eiYdFvBLqHF7UTlwWTlkjseXTiS+yqguYGCHumP1lsPaQgNp425hoEd3IPoNbdYtd9p4W6BWIGYTXt0Fvq4BwbBRVGpcYqWowFx7YUxWuIpHZqkHDrT510B8zaeE4WtIO7huuWc0yencOkUsDB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ObEg95Os; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52ea2ce7abaso6343534e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 23:58:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720508318; x=1721113118; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KBZlTb8Eof6R20qrr/sRa7dwLCzeq9PnMFLS9YGLiLI=;
+        b=ObEg95Os97KgpPs/h1OXDRzNAM9ww9DynKyYBVlYWVOE1P7pFcutMx5kSywOvDbf/A
+         dYacJUKOP6Q5zfTrNXdVlib3sYoTBgZnqBGDdsEknCISXskkJ0ieVsr3HMZVpkqC/OZO
+         y6VZfIyEhuqqPVoaw1i+k8ycOJkLn0yEJUcArddN0/T68Ph9aP9363sQmPM7rHtYdmy8
+         EwLBourqUhwUC6C2q83nGi188q2Icv6aKtGrluHb4gwnVBaNxONtgBBXbZ+VSrUAKqvO
+         fQwm61A4t0pvmD6ykx5wdwsukSf0kYx9z1QuIEVlvV8iocLFnOwY4jV6d3l/S0FzSt1d
+         QBKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720508318; x=1721113118;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KBZlTb8Eof6R20qrr/sRa7dwLCzeq9PnMFLS9YGLiLI=;
+        b=UIsJd6veYxHPiHP+WNUH3+zSmCikYtfSbmmsULL0pNtH3eF7FkeygrY39jRS11rKfZ
+         y1qg/JyHEZOlidoSSzKQsF0KAUl25zvfg8PgrIthqiZCIqgoIfUV1kp4+utMnPc3wRCk
+         YSW9d9wnXtnt0FilgbfesgzttYgsYfCMOSEVDcza/j3V5oJ8FNcyTT+pyOHru+6dvsH0
+         v3Po9AUakQnXJ15Nw0fuQctHQLGZr1dQYTAYsN9WqDQCBlLeeGzGqx64dEz3XpiBS+KF
+         0gYqggny554bhRjPN7wyuEdA3DQcsuXzppnkY7N9K7IYr+6Ywy4vPmYf9Q3dfTpMM1UA
+         DfVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmIWkrcNntGVhDJLvArNBVmVkMrnZVHdQSqjhSFU+xW9sAQM3neV0X0SNvWqzsdrKz3F/sKl2Ww0hygaTH4MKTjRfUwqSz32OF/oa9
+X-Gm-Message-State: AOJu0Yx2PxeujNDwmZOXH/Vl1+Cu0xvd20iowwHmj1+Vwch95cfvpn3i
+	N18zW3zhnS5WQiMUNzrthO47Q0ARA0HOcsbJ/7g/t2m/Cu2VIx7U9DIkuyOCI6o=
+X-Google-Smtp-Source: AGHT+IGObn48yczLVOSPPn2MgOHMOxVpueStKydNv/bOLPNKAJELBv0hX605oHaZX1AC9SAjpv4s/Q==
+X-Received: by 2002:a05:6512:3142:b0:52d:215b:9028 with SMTP id 2adb3069b0e04-52eb99d5d76mr931572e87.60.1720508317663;
+        Mon, 08 Jul 2024 23:58:37 -0700 (PDT)
+Received: from localhost (p50915e7b.dip0.t-ipconnect.de. [80.145.94.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bba548fesm706835a12.11.2024.07.08.23.58.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 23:58:37 -0700 (PDT)
+Date: Tue, 9 Jul 2024 08:58:36 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: 
+	=?utf-8?Q?=C3=81gatha?= Isabelle Chris Moreira Guedes <code@agatha.dev>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>, patch-reply@agatha.dev
+Subject: Re: [PATCH v3] init: staging: Fix missing warning/taint on builtin
+ code
+Message-ID: <yttxdeeg6uxosoiom3jf6h5wfkgk7ths6qnqf5s3sr2nikftgh@dvexcjeznxpp>
+References: <zsk54zosv6tht4j4nma4ix7lq2knxi3ylqadd2foznc72nkaa3@xbc7gpozx6ai>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAKgT0UdH1yD=LSCXFJ=YM_aiA4OomD-2wXykO42bizaWMt_HOA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3knqfckw67jieu3n"
+Content-Disposition: inline
+In-Reply-To: <zsk54zosv6tht4j4nma4ix7lq2knxi3ylqadd2foznc72nkaa3@xbc7gpozx6ai>
 
-On 2024/7/8 22:30, Alexander Duyck wrote:
-> On Mon, Jul 8, 2024 at 3:58 AM Yunsheng Lin <linyunsheng@huawei.com> wrote:
->>
->> On 2024/7/8 1:12, Alexander Duyck wrote:
->>
->> ...
->>
->>> The issue is the dependency mess that has been created with patch 11
->>> in the set. Again you are conflating patches which makes this really
->>> hard to debug or discuss as I make suggestions on one patch and you
->>> claim it breaks things that are really due to issues in another patch.
->>> So the issue is you included this header into include/linux/sched.h
->>> which is included in linux/mm_types.h. So what happens then is that
->>> you have to include page_frag_cache.h *before* you can include the
->>> bits from mm_types.h
->>>
->>> What might make more sense to solve this is to look at just moving the
->>> page_frag_cache into mm_types_task.h and then having it replace the
->>> page_frag struct there since mm_types.h will pull that in anyway. That
->>> way sched.h can avoid having to pull in page_frag_cache.h.
->>
->> It seems the above didn't work either, as asm-offsets.c does depend on
->> mm_types_task.h too.
->>
->> In file included from ./include/linux/mm.h:16,
->>                  from ./include/linux/page_frag_cache.h:10,
->>                  from ./include/linux/mm_types_task.h:11,
->>                  from ./include/linux/mm_types.h:5,
->>                  from ./include/linux/mmzone.h:22,
->>                  from ./include/linux/gfp.h:7,
->>                  from ./include/linux/slab.h:16,
->>                  from ./include/linux/resource_ext.h:11,
->>                  from ./include/linux/acpi.h:13,
->>                  from ./include/acpi/apei.h:9,
->>                  from ./include/acpi/ghes.h:5,
->>                  from ./include/linux/arm_sdei.h:8,
->>                  from arch/arm64/kernel/asm-offsets.c:10:
->> ./include/linux/mmap_lock.h: In function ‘mmap_assert_locked’:
->> ./include/linux/mmap_lock.h:65:23: error: invalid use of undefined type ‘const struct mm_struct’
->>    65 |  rwsem_assert_held(&mm->mmap_lock);
-> 
-> Do not include page_frag_cache.h in mm_types_task.h. Just move the
-> struct page_frag_cache there to replace struct page_frag.
 
-The above does seem a clever idea, but doesn't doing above also seem to
-defeat some purpose of patch 1? Anyway, it seems workable for trying
-to avoid adding a new header for a single struct.
+--3knqfckw67jieu3n
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-About the 'replace' part, as mentioned in [1], the 'struct page_frag'
-is still needed as this patchset is large enough that replacing is only
-done for sk_page_frag(), there are still other places using page_frag
-that can be replaced by page_frag_cache in the following patchset.
+Hello,
 
-1. https://lore.kernel.org/all/b200a609-2f30-ec37-39b6-f37ed8092f41@huawei.com/
+On Sat, Jul 06, 2024 at 12:15:01AM -0300, =C1gatha Isabelle Chris Moreira G=
+uedes wrote:
+> Fix the absence of warning message and kernel tainting when initializing
+> drivers from the `drivers/staging` subtree from initcalls (when
+> configured as built-in).
+>=20
+> When such a driver is built as module and the module is loaded, the
+> `load_module()` function taints the kernel to signal code of unknown
+> quality is loaded, and produces a warning like this:
+>=20
+> [    8.076352] rts5208: module is from the staging directory, the
+> quality is unknown, you have been warned.
+>=20
+> The same behaviour is absent, however, when a staging driver is compiled
+> as built-in on the kernel image, since loading it happens through
+> initcalls and not through load_module().
+>=20
+> This might prevent relevant information of being available on a bug
+> report (i.e. on a panic log) among other possible problems.
+>=20
+> NOTES:
+> - The patch is written in such a way that all non-staging drivers are
+>   kept the way they were, except for staging drivers built with
+>   `-DSTAGING_CODE`.
+> - Since it changes some macros related to clang LTO as well, I tested it
+>   and it works properly in kernels compiled with both clang and gcc.
+> - Some `checkpatch.pl` errors, warnings and checks (with `--strict`) are
+>   present. Some were already there, some I introduced but I think
+>   they're unavoidable. Some IMHO don=B4t make sense at all, I think they
+>   would apply for most regular macros but initcall macros are just way
+>   different.
+>=20
+> Fixes: 061b1bd394ca ("Staging: add TAINT_CRAP for all drivers/staging cod=
+e")
+> Signed-off-by: =C1gatha Isabelle Chris Moreira Guedes <code@agatha.dev>
 
-> .
-> 
+I didn't grok the complete patch, the but intention is good.
+
+Thanks
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
+
+Best regards
+Uwe
+
+--3knqfckw67jieu3n
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaM35kACgkQj4D7WH0S
+/k53Wgf/S2QsAUpX9rVxaP4UXEN1jtI8O5t43BTPfB4g7rEmwB4vhT3ntuPY/VqU
+nuebxMkdmMp7tiEb99uCfp2W9WDtZxsc6bf5BXuFyp1opwsvZqZXQBMVMndPTRf/
+0xPF4vpb4ypXwI/XYXjRSnh7mRdF9UP309w87TGpqxde1/CZ4Q0QMldBpOUyfVZr
+BrikXOzKfp4psA0fB1y7NLWXJeZHsaN+zGkzATc8w8ZfN1A67aPHsQf/Xj4cX9RA
+Hd4aHHo2wp1DASkaevPXPna/kSVCxBpEbrBKqschrC1NiE4wexB1r79XbWnLOujZ
+y6oCH3XDle5EvxxLWHHTpek8sWNbrg==
+=Y6sb
+-----END PGP SIGNATURE-----
+
+--3knqfckw67jieu3n--
 
