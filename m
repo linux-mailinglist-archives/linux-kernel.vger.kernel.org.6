@@ -1,92 +1,97 @@
-Return-Path: <linux-kernel+bounces-246142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 445FA92BE13
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:19:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7DD192BE14
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F243F283DE6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:19:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F1C11F267C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5422619D89F;
-	Tue,  9 Jul 2024 15:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D1519D070;
+	Tue,  9 Jul 2024 15:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="Y2RGSdut"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rHwlgYt6"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5632919CCFE;
-	Tue,  9 Jul 2024 15:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7B1158856
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720538344; cv=none; b=DWyPl6162Ytkj98PdJJ4vPGPrjncH6V3zNZz1vMYarL3lLEJh9amYRmosw58ECbzD/oz4U9xDQhehWTiMjSj6sUMAUEpfogeR2oDjCNlK93M6Sjw4J00t+RR6sqOUiZxo8Jnu/bILcNaIq3/pYGcJcag0UUjR4ctIzAsHXfKIPE=
+	t=1720538381; cv=none; b=Qy1B08gQqW5VbTEaAMFz+Z19Y+Qy3xlnuRxVzy4PFjTKFg00t7Y3xgWCjihK5fNNv3JSlEMrgISW9LaBULartA0wRAQ+4lSGEB13aszNIy0alfizZgKYNFdKtlU6cOCT0iIG/hspIm4vJvrreYn8GpoHAVkJQYnHSoRvgnTdsqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720538344; c=relaxed/simple;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=iPxpWS1Jj4wSZSWEl7tJFTsGjCE+kUY1M37DpiYLMnNrEY5iVfzUH8j5JVD5qf6hjxaDS7OppSIijfvMtTYEZc/afDAS3CdC/2FsNjvXM/TQaKMUqygRs8Wvzs6ndxWunGEdMfiiy3EFj3f8BsgZsMiPulIsH1fBvXl7vBFEGTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=Y2RGSdut; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1720538339; x=1721143139; i=rwarsow@gmx.de;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Y2RGSdutiUPcHwWt+lTq9NdFFAUX3PjVTRZefHmwnpucOK+uCPhOg/YShrv7YesK
-	 AdXnjU2sWRZcoFwfk/UHXALaiheMCZJmfnJnwhCCmQQixK4P1uPMP3/oV+X+YUY7h
-	 KevQ6rEZN2N1Aawws30AglFlnlZSVw+ssaRmOOvp23XEGu2QfyVln43BMTxv+U82h
-	 dE11AYawb/49su9/RQxAzNRN8odQCtxvar5QWlng+Dq+UuJUN9M+a7u0+RMkwnwHO
-	 QkLtLG1c9/an1a0vHSl7jrysmEYwCdyWITA7qQzBYFz1zQtdRfxuvgZ5DSLtvnmdq
-	 8NrFuU7L+SLf3gkLBA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.100.20] ([92.116.253.144]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MuUnK-1sADvl1MYs-017Nqb; Tue, 09
- Jul 2024 17:18:59 +0200
-Message-ID: <268b039f-b810-496a-8c9f-a9db1f833e74@gmx.de>
-Date: Tue, 9 Jul 2024 17:18:58 +0200
+	s=arc-20240116; t=1720538381; c=relaxed/simple;
+	bh=Za0iYoDZtXrhZkU6J0y11DQ0mZSHEd0squM3u4ZrClI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T7j8Rtfm2nYC8sdigzPptj5cUknHaon/LkiDieHhJ2EoJ2GHyCxq7QfJNdfHMSi+63JKgavXBcmbEiYmYBnOLWok1c9XZK5pC0d9ihLUM09BFmUdBDN6b4u+yITkB+NtLDMeYQqOIPF6xiGTU9E43T1KqNHGaOqwrLzwVGsvvi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rHwlgYt6; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=vF850aqi5YOSbmlMGrkIhXYLdwCC0shPhL7R27Z0uxc=; b=rHwlgYt6u7CtB0due23iaApxNz
+	JZFU5w9FsirOIRopgpNk5RiH6e2uvaxNHhaOqczSYR8pf7uDRlFLJfNTnhJF+Zo5UrW1p6c//OjVs
+	vYEC/Qe6uqs90AOz4fG3YZhLafp2srML3T4AWVBrPKB2mQH1x7e8Fe0q+8RxYRfWoGTndMqxQlU3h
+	cCIA3v1SrHTLJ54qNtOvWamRsLMGSiPc+G+utPGXQZ4aj4CiNi9W7uuuwXxLj1w1ioMEeKyVIJoRp
+	GRIzv4NGU6YXJ5yq93lP5FvsGn1teewmRRj8eV3zy7fsavAI4IanfiESToPvAdqZE4o2kdjjHcXAy
+	w1FGQD+g==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRCct-00000000lPs-1Uiy;
+	Tue, 09 Jul 2024 15:19:33 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5FB113006B7; Tue,  9 Jul 2024 17:19:30 +0200 (CEST)
+Date: Tue, 9 Jul 2024 17:19:30 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: mingo@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org,
+	clm@meta.com, paulmck@kernel.org
+Subject: Re: [PATCH 05/10] perf/uprobe: SRCU-ify uprobe->consumer list
+Message-ID: <20240709151930.GP27299@noisy.programming.kicks-ass.net>
+References: <20240708091241.544262971@infradead.org>
+ <20240708092415.695619684@infradead.org>
+ <20240709120551.GK27299@noisy.programming.kicks-ass.net>
+ <20240709133349.GC28495@redhat.com>
+ <20240709143218.GM27299@noisy.programming.kicks-ass.net>
+ <20240709150504.GF28495@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Ronald Warsow <rwarsow@gmx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Language: de-DE, en-US
-Subject: Re: [PATCH 6.9 000/197] 6.9.9-rc1 review
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:ZsCCciyRw7X8jqtGN97V3oAJdeXwjjym+NpSKqqoBDgrzpinzAR
- SlysNkVEX0ZZrdtQJ5cVdTQC+UMXuXfDQOcFzAHdgPeRDyWfDa7yMg5t7lU8MDeNCfGJwCB
- WSC0xTgo1McPAoUyT08J2uYpBIjZLEany6BroLo34ob2aCc1iJFQqNUP83ZAVlAk8AtO7bI
- ZwrmhsWDIMS9X/yJxA4wg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:/9AxidmAcGw=;QG2AUrJjt83Oq9cYeVHBCT5zW8q
- ZHsDkDp0XEuVG04LfueEvu+ufKRlGYXhoQzfDL19bWgg4jc6VuBFKih0G9jThiTUM3sI+X/7E
- gAOkB2cAQPIaH7kazfC3K83n/dwqZO68nHHJiL6z91OOXqR2u22NPfUOdnvONrZSkrXim21f8
- Zem/ngO2sG3dprW6KXAwaXwLp8QuIhOP1jDvKOOy/qBvN4eQGzA/5hopYz8KUAZlFomNuquHb
- EDYAh4FADRJ8hhJnbUEUUsx6uJf4D9R+7CElKQCrBytoA4zPhgGGyqASe01BcBpmxclsG0zEE
- HxDUqIVz2mwonZ9jAHicEGj8nOiIo/UdEI4BdNyZpeJeIkQENnw2cCpq+6rv40VejSHtWLZf3
- 01M3e2oOFfHTVwhm1wN/LCy29bfqLPuKt+q0xB+HpfMClkYCpIhqxArAHab0Z9I9PqXFZDgXF
- /N410iur8L9Hz4bVRHRqFBahQWl0LXjSlyxb3is67/bTyoaoDHKKQB87zedHb34Qr+5YHwQNI
- 5Iuz7xZCNkMHmoQfbZTd8du9pVYsSATNOZabz6axOvBnUk/ErFp5l9N1T9fR4Qiv7D7c1KB16
- /iTU7ehqTdd8iCbIM9gqAYD4gnzL2crDlqOwFB/LKmfs2rbhdmYFQQ9eW1afDP3OVkbdn1/Gb
- N5N7a/0HuAfMmnnhF6H2UGUU1Rjnb4dmrW6wB6o21uN976Xw+dFoYjHi71k0zs5Zw0EcxiBhi
- 8SqeaCIr3Byi1kZ6WXvWZnABSMN8txPCxE6n/UUJo+FkfSixwLZOZBgZIPlud9IJzob3qNEyQ
- Fz3kNw+aZUzcS9f1Th6R2Pmg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709150504.GF28495@redhat.com>
 
-Hi Greg
+On Tue, Jul 09, 2024 at 05:05:04PM +0200, Oleg Nesterov wrote:
 
-no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-Thanks
+> To simplify, suppose we have a single consumer which is not interested
+> in this task/mm, it returns UPROBE_HANDLER_REMOVE.
+> 
+> For example, event->hw.target != NULL and the current task is the forked
+> child which hits the breakpoint copied by dup_mmap().
+> 
+> Now. We need to ensure that another (say system-wide) consumer can't come
+> and call register_for_each_vma() before unapply_uprobe().
+> 
+> But perhaps I missed your point...
 
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
+Ooh, I see. I failed to consider that particular case. This is
+interleaving uprobe_register() and handler_chain(). Silly me only looked
+at uprobe_unregister() and handler_chain().
 
+Hmm, easiest would be to add a seqcount to register_mutex and simply
+skip the remove case when odd.
+
+Then the handler might get a few extra (unwanted) calls, but it should
+be able to handle them, they're fundamentally not different from the
+first one where it says REMOVE. Right?
 
