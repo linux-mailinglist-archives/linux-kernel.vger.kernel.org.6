@@ -1,110 +1,157 @@
-Return-Path: <linux-kernel+bounces-246461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A15D92C1F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:13:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BAA392C217
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:15:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AABC61C22314
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:13:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 517101C230E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417FC18562A;
-	Tue,  9 Jul 2024 16:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LOcVpurC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0ED18D4A5;
+	Tue,  9 Jul 2024 17:07:33 +0000 (UTC)
+Received: from relay161.nicmail.ru (relay161.nicmail.ru [91.189.117.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B23418561F
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 16:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1029818C198;
+	Tue,  9 Jul 2024 17:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.189.117.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720543986; cv=none; b=fHdtFAWA70K1FcckF2qD0evWP1AG4nr1blYl1DmuDIw0iJ5H350mkTT6ihWVlnUMGql7+ppFrz4kz1qjrxNV8sqqmCkJocQNv6hsX7oFcI8oBXpPkekP7WfVrwzT26HX8WkegWnbl69mMN89Co8oN3UbUdLEMIRf6oKWFAXZsFA=
+	t=1720544853; cv=none; b=BhCrBRlj8YqHp/VqTRdRTUTHXN4YORfsRw0iMt4MFjgnk1pXAvkWW1MAg2wnxpbPR7r4VCzAKJ0KKLHw3P8qRC5xpN/kCRVZhM0naFkF481YECaZvxdRXyYxQ91Mkt/5CABz3YBwFmvNF83Q7Ubq+iUE1mAkVHAVVmuh3NDcZmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720543986; c=relaxed/simple;
-	bh=asVho6LyvrHD7BTUGcDSPeAn6LcjJzG6EHzs9v+6tKA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ph0+oO2pHrzwnsw8hmaHfVstCZkrUFsGo0cYic7S0o/k+BM6UFv3F/6+z9m5cvfB5zts6HwKKI+us7D5mqBRxMP/mSgixgUBkr/q6LKD1vJ56c/Mw+YndhgwB6O81Vc1RYctxpmq1zOz3G8YkE77s9v84ObHEyflWCywk09+7hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LOcVpurC; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720543984;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=asVho6LyvrHD7BTUGcDSPeAn6LcjJzG6EHzs9v+6tKA=;
-	b=LOcVpurC1zrLanLTEHZK46AS1P3C8zPdH85I8CGFUBgBTh2RL5oBh88Chvf0fUoBGl1TeQ
-	d7WY1WLQx1S+uYqEWBlw/w8NJIF45I0I9A+yAKHi7UcgXrdAIe+AgkwG2NlIvOcembXk+8
-	7X3cQMKZVfaqedtZeoJ+MrEqEe4nsaE=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-678-xlEVB0OQM064LTgOD-NA7w-1; Tue, 09 Jul 2024 12:53:02 -0400
-X-MC-Unique: xlEVB0OQM064LTgOD-NA7w-1
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1faf91cbe19so31629885ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 09:53:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720543981; x=1721148781;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=asVho6LyvrHD7BTUGcDSPeAn6LcjJzG6EHzs9v+6tKA=;
-        b=RMKkkcnrNYFeRBb0e85qMdeh2nA2hymlcyL/SQ6o8tpblLkgmqZKhKqPiyNJBny9k1
-         BYkeWxZTIWudJuxjBwzhN8Wx36lNxMq6HsL/7C5F3XjQpOZ6xf/e05O0ftNEiK9tC29L
-         OQqJlKVXjCgGkaDpOEuLrhXzj7uViV/EojKvKBx8bwykEuweDgms0RCHwppfdV8g9LDr
-         vpgvxKbZpAZ7T+X7XaMfsl7hn5EJ17QWzO3SDLEa4hIvMlyjZDhXG2BZBCAYe7ntTqkR
-         Fp8gY6WmUJMEnRK7Xy21am8sctjgbU5ndjgAeRWESVEzhiinwlmCFQrxCvHnLwea/9eB
-         B7+w==
-X-Forwarded-Encrypted: i=1; AJvYcCW8iZQ/SZJAXKadCmO+5mA0sxGBKIO1zgA1e1yD1psf7KxyBVKjAduuT7vxJDFO9qH2QOvS1S9v8vlOU/R+TH4b4aGZK9TlaWX3G5Wu
-X-Gm-Message-State: AOJu0YzpIhx7rAPhvwXnXIikafwcuVsf8pJMBGtTO0wbhkrc/HHKxmVW
-	RIVfrCAdruhdkrXmEqFI9IPVEoqxACCDQ56IgD2Jacn7QdgoThvEaPThDN+kLm0D6QUxlO+OpTk
-	/BVRJ3KsECEuSmQhQ52fH50XVEOte15zeWdPSpuRK3O58smbiEN9U24nY9wKJdSGBnSwertSNv3
-	glnh4i1RFdGyu+iY4QM7O0tslKmI5iF+107tAu
-X-Received: by 2002:a17:903:186:b0:1fb:58e3:7195 with SMTP id d9443c01a7336-1fbb6cd186bmr25609485ad.11.1720543981614;
-        Tue, 09 Jul 2024 09:53:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHjlrmhgUpUlN7BW+PcaWbKq+/s4BVAK6LBnpJZZch5y3gF9SSouA8oyK/R0rkaxMPreuHVQIjkrp2zUEC5VX4=
-X-Received: by 2002:a17:903:186:b0:1fb:58e3:7195 with SMTP id
- d9443c01a7336-1fbb6cd186bmr25609195ad.11.1720543981178; Tue, 09 Jul 2024
- 09:53:01 -0700 (PDT)
+	s=arc-20240116; t=1720544853; c=relaxed/simple;
+	bh=wGUjfacfqZIc4tuQ1brrCye1gLHVU1GVgMpl3ErvS40=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jS/cCs52c3QyqtjnDT11BAFephXlLIGHMS/Qe5dw27Hpal51QPJgeHv3JS6Iyuq/S0xqjoijOvOEhj+YdrsbvA7+MOkwq7hPJjq46808ma+TZCNrwz7Ce8vGKvE4mTVNfkgAr0PaiSwS/JPW9EQOnlIP37oubLxAuKuo5sKRKG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ancud.ru; spf=pass smtp.mailfrom=ancud.ru; arc=none smtp.client-ip=91.189.117.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ancud.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ancud.ru
+Received: from [10.28.136.255] (port=24526 helo=mitx-gfx..)
+	by relay.hosting.mail.nic.ru with esmtp (Exim 5.55)
+	(envelope-from <kiryushin@ancud.ru>)
+	id 1sRE6q-0000HJ-6P;
+	Tue, 09 Jul 2024 19:54:33 +0300
+Received: from [87.245.155.195] (account kiryushin@ancud.ru HELO mitx-gfx..)
+	by incarp1105.mail.hosting.nic.ru (Exim 5.55)
+	with id 1sRE6q-00FmHT-2q;
+	Tue, 09 Jul 2024 19:54:32 +0300
+From: Nikita Kiryushin <kiryushin@ancud.ru>
+To: Michael Chan <mchan@broadcom.com>
+Cc: Nikita Kiryushin <kiryushin@ancud.ru>,
+	Pavan Chebbi <pavan.chebbi@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Michael Chan <michael.chan@broadcom.com>
+Subject: [PATCH net-next v3] tg3: Remove residual error handling in tg3_suspend
+Date: Tue,  9 Jul 2024 19:54:10 +0300
+Message-Id: <20240709165410.11507-1-kiryushin@ancud.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240709163825.1210046-1-ast@fiberby.net>
-In-Reply-To: <20240709163825.1210046-1-ast@fiberby.net>
-From: Davide Caratti <dcaratti@redhat.com>
-Date: Tue, 9 Jul 2024 18:52:50 +0200
-Message-ID: <CAKa-r6uyEz650x+TVZEsj3WiZ-OnMYycexEuiYf=HmgtiDx7iA@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 00/10] flower: rework TCA_FLOWER_KEY_ENC_FLAGS usage
-To: =?UTF-8?B?QXNiasO4cm4gU2xvdGggVMO4bm5lc2Vu?= <ast@fiberby.net>
-Cc: netdev@vger.kernel.org, Ilya Maximets <i.maximets@ovn.org>, 
-	Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, 
-	Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	David Ahern <dsahern@kernel.org>, Simon Horman <horms@kernel.org>, 
-	Ratheesh Kannoth <rkannoth@marvell.com>, Florian Westphal <fw@strlen.de>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-MS-Exchange-Organization-SCL: -1
 
-hello,
+As of now, tg3_power_down_prepare always ends with success, but
+the error handling code from former tg3_set_power_state call is still here.
 
-On Tue, Jul 9, 2024 at 6:38=E2=80=AFPM Asbj=C3=B8rn Sloth T=C3=B8nnesen <as=
-t@fiberby.net> wrote:
->
-> This series reworks the recently added TCA_FLOWER_KEY_ENC_FLAGS
-> attribute, to be more like TCA_FLOWER_KEY_FLAGS, and use the unused
-> u32 flags field in FLOW_DISSECTOR_KEY_ENC_CONTROL, instead of adding
-> a new flags field as FLOW_DISSECTOR_KEY_ENC_FLAGS.
+This code became unreachable in commit c866b7eac073 ("tg3: Do not use
+legacy PCI power management").
 
-for the series:
+Remove (now unreachable) error handling code for simplification and change
+tg3_power_down_prepare to a void function as its result is no more checked.
 
-Reviewed-by: Davide Caratti <dcaratti@redhat.com>
+Signed-off-by: Nikita Kiryushin <kiryushin@ancud.ru>
+Reviewed-by: Michael Chan <michael.chan@broadcom.com>
+---
+Resubmitted tha patch as it was applied to wrong tree and then
+reverted in commit 72076fc9fe60
+v3:
+  - Change commit message wording as
+    Jakub Kicinski <kuba@kernel.org> requested
+v2: https://lore.kernel.org/netdev/a6f3f931-17eb-4e53-9220-f81e7b311a8c@ancud.ru/
+  - Change tg3_power_down_prepare() to a void function as
+    Michael Chan <michael.chan@broadcom.com> suggested
+v1: https://lore.kernel.org/netdev/4e7e11f8-03b5-4289-9475-d3b4e105d40a@ancud.ru/
+ drivers/net/ethernet/broadcom/tg3.c | 30 ++++-------------------------
+ 1 file changed, 4 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
+index 04964bbe08cf..bc36926a57cf 100644
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -4019,7 +4019,7 @@ static int tg3_power_up(struct tg3 *tp)
+ 
+ static int tg3_setup_phy(struct tg3 *, bool);
+ 
+-static int tg3_power_down_prepare(struct tg3 *tp)
++static void tg3_power_down_prepare(struct tg3 *tp)
+ {
+ 	u32 misc_host_ctrl;
+ 	bool device_should_wake, do_low_power;
+@@ -4263,7 +4263,7 @@ static int tg3_power_down_prepare(struct tg3 *tp)
+ 
+ 	tg3_ape_driver_state_change(tp, RESET_KIND_SHUTDOWN);
+ 
+-	return 0;
++	return;
+ }
+ 
+ static void tg3_power_down(struct tg3 *tp)
+@@ -18090,7 +18090,6 @@ static int tg3_suspend(struct device *device)
+ {
+ 	struct net_device *dev = dev_get_drvdata(device);
+ 	struct tg3 *tp = netdev_priv(dev);
+-	int err = 0;
+ 
+ 	rtnl_lock();
+ 
+@@ -18114,32 +18113,11 @@ static int tg3_suspend(struct device *device)
+ 	tg3_flag_clear(tp, INIT_COMPLETE);
+ 	tg3_full_unlock(tp);
+ 
+-	err = tg3_power_down_prepare(tp);
+-	if (err) {
+-		int err2;
+-
+-		tg3_full_lock(tp, 0);
+-
+-		tg3_flag_set(tp, INIT_COMPLETE);
+-		err2 = tg3_restart_hw(tp, true);
+-		if (err2)
+-			goto out;
+-
+-		tg3_timer_start(tp);
+-
+-		netif_device_attach(dev);
+-		tg3_netif_start(tp);
+-
+-out:
+-		tg3_full_unlock(tp);
+-
+-		if (!err2)
+-			tg3_phy_start(tp);
+-	}
++	tg3_power_down_prepare(tp);
+ 
+ unlock:
+ 	rtnl_unlock();
+-	return err;
++	return 0;
+ }
+ 
+ static int tg3_resume(struct device *device)
+-- 
+2.34.1
 
 
