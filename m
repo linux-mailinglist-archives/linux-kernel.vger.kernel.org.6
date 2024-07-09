@@ -1,184 +1,140 @@
-Return-Path: <linux-kernel+bounces-245751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E30AD92B8B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:44:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C29892B8B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 719611F22D0D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:44:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 552BA284E77
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430AF16A399;
-	Tue,  9 Jul 2024 11:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86821158A06;
+	Tue,  9 Jul 2024 11:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Hs1S2Lot";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9dS7BaTD"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pfiQXz0H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0603215E5AE;
-	Tue,  9 Jul 2024 11:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0BF158202;
+	Tue,  9 Jul 2024 11:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720525325; cv=none; b=loZIPrkFp2Iy0xO6oBXUuxdwA8Ec3R+LzD3sf5a+OdeG4o8XtxdBBp1aoT+wq54CUk/V53UpsVvp5T97MWJrxkwGvXwFrl6IXtIbT/8obXRCWJxI+gR/znTrHnLE2ScDRXywahHV89fZ4Q0dHoEuDwZDt32sKRt5XHRHa7vk9m4=
+	t=1720525424; cv=none; b=c4u019JqlZEoxbNxaH/WGVMXWrFKQ++EojKUBkttzO2+MQ7kwQxK+K8bVrbkH5mYZZrkYQYLv2YaXhQmr05HpP+6fNPwM1XvL37+XXMas0O2sRS90hOERHoCo+QR7yfr0Pr7K+h+Dw0yihYhjY+aup9Y9bLrzqFVy0wmNbxejmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720525325; c=relaxed/simple;
-	bh=mAuv51EdZ4x10AGFyzQfUsBgS1aRE0aRnqdZSA59MVQ=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=QZE7M/tWR8/fgicKcnzIHow2pnq8ZXQ9qJFz6gh4P0+tKxa3DHKBcNXBRUlWCez5Ylg83wrofwS2HzIxvzfjkMxJNZwr7vFqkz4gL5v5K+JPu4Oq0C7O0P2K9MJwAkEYay0/ZmtRZDxNghVRNzmb5vR/diKD707SGaNg/3ITolI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Hs1S2Lot; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9dS7BaTD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 09 Jul 2024 11:42:01 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1720525321;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fup+0ds+SZktOpgb+1kYRRNpUXazryrF/Hu0Ht1LGtM=;
-	b=Hs1S2LotZbYO+nT7M4lz9aMSL3jDEX0QR2g1AHbLKav4jLPueSEfIWgP/h/I05LYUB67Ut
-	K3bSLST/Ts9IQix6wuZyjQKrnKojt9KWFgHNXcFqWKQWHAqbwYonGXbErp7O9U1y2wNIGz
-	oUanbY5qS5uxJ7VMnWP8WpIiDI6x+sqDlQuialSbBbtNnSgp8EKweziae8nAERJIz3fsG4
-	i6YKuaKD8UdqDdN5R+/tpbRAvwnxi6YTNY0sK30KJO8oLewFuuWiKZ18G3d6PUxUIRDdDk
-	DYuPyYIhac/5gi02tH5FomQsnPnxUYftdbMa1maVaggo1mCjXqrFC9m6M7/WpA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1720525321;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fup+0ds+SZktOpgb+1kYRRNpUXazryrF/Hu0Ht1LGtM=;
-	b=9dS7BaTDiHtoQj9bRzeArNBC/TUYSvhuiQgAet5+m+qJ2OVXYtIZKUm77s05mcBEQ4Z9n4
-	cf7+LQHGWbbnNIAA==
-From: "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: perf/core] task_work: s/task_work_cancel()/task_work_cancel_func()/
-Cc: Frederic Weisbecker <frederic@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, stable@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240621091601.18227-2-frederic@kernel.org>
-References: <20240621091601.18227-2-frederic@kernel.org>
+	s=arc-20240116; t=1720525424; c=relaxed/simple;
+	bh=ZxDFrvOXfuTsNU7JuLaaGFFmPfePvQEPeXe9Hb2BLpw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OmKXbRniSm2W6a62dh0NsHcKODA/ulv1gznrFtfEltCQfICkOYeZOaymHzFezPYORDWmRB/KjdJu95N4r64iFS2e/ucvNiUGUr+EoZN2cDnrWWGLt0I/2UsYOKEG1ONU8AOxdYC4UkGtmHEyE4ZW06hzV4zQwTXlrxQWlR2Vrx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pfiQXz0H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46B6AC3277B;
+	Tue,  9 Jul 2024 11:43:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720525424;
+	bh=ZxDFrvOXfuTsNU7JuLaaGFFmPfePvQEPeXe9Hb2BLpw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pfiQXz0HFMM9t00fsyyKZHGaMb0ABmeWo1Y+pnEGEWD6IPKk9GYURbBtRZHZ7iA5Y
+	 TFb+w0EeWTqNUX/JtuOKew9N6CWub0ExXvj3k3kAvbgS5E+irplYxueRIjyzWjdX2Q
+	 9NyVdbgodDmzh9uhuBNs7zLEQCZyXR7OXdNBKxtstQXjOMWpE//Zm0DTCQ4LQ21eEO
+	 djApqAZFnVdxXz7gS5A4S/qokGiu8LGSiC9rnwIBqt6CWxlEDXu7tMVO2dQeDmFYP1
+	 N9UjuFKHdl4vBUcOR0PdwwKGklSzQeGivvZLza1SesMljrzWi1rYZ5XqYkr7GqW5Q5
+	 HygwMTdFZBGKA==
+Date: Tue, 9 Jul 2024 12:43:37 +0100
+From: Will Deacon <will@kernel.org>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Subject: Re: [PATCH v4 06/15] arm64: Make the PHYS_MASK_SHIFT dynamic
+Message-ID: <20240709114337.GB13242@willie-the-truck>
+References: <20240701095505.165383-1-steven.price@arm.com>
+ <20240701095505.165383-7-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172052532100.2215.4983382735479784974.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240701095505.165383-7-steven.price@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-The following commit has been merged into the perf/core branch of tip:
+On Mon, Jul 01, 2024 at 10:54:56AM +0100, Steven Price wrote:
+> Make the PHYS_MASK_SHIFT dynamic for Realms. This is only is required
+> for masking the PFN from a pte entry. For a realm phys_mask_shift is
+> reduced if the RMM reports a smaller configured size for the guest.
+> 
+> The realm configuration splits the address space into two with the top
+> half being memory shared with the host, and the bottom half being
+> protected memory. We treat the bit which controls this split as an
+> attribute bit and hence exclude it (and any higher bits) from the mask.
+> 
+> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> 
+> ---
+> v3: Drop the MAX_PHYS_MASK{,_SHIFT} definitions as they are no longer
+> needed.
+> ---
+>  arch/arm64/include/asm/pgtable-hwdef.h | 6 ------
+>  arch/arm64/include/asm/pgtable.h       | 5 +++++
+>  arch/arm64/kernel/rsi.c                | 5 +++++
+>  3 files changed, 10 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+> index 9943ff0af4c9..2e3af0693bd8 100644
+> --- a/arch/arm64/include/asm/pgtable-hwdef.h
+> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
+> @@ -203,12 +203,6 @@
+>   */
+>  #define PTE_S2_MEMATTR(t)	(_AT(pteval_t, (t)) << 2)
+>  
+> -/*
+> - * Highest possible physical address supported.
+> - */
+> -#define PHYS_MASK_SHIFT		(CONFIG_ARM64_PA_BITS)
+> -#define PHYS_MASK		((UL(1) << PHYS_MASK_SHIFT) - 1)
+> -
+>  #define TTBR_CNP_BIT		(UL(1) << 0)
+>  
+>  /*
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index f8efbc128446..11d614d83317 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -39,6 +39,11 @@
+>  #include <linux/sched.h>
+>  #include <linux/page_table_check.h>
+>  
+> +extern unsigned int phys_mask_shift;
+> +
+> +#define PHYS_MASK_SHIFT		(phys_mask_shift)
+> +#define PHYS_MASK		((1UL << PHYS_MASK_SHIFT) - 1)
 
-Commit-ID:     68cbd415dd4b9c5b9df69f0f091879e56bf5907a
-Gitweb:        https://git.kernel.org/tip/68cbd415dd4b9c5b9df69f0f091879e56bf5907a
-Author:        Frederic Weisbecker <frederic@kernel.org>
-AuthorDate:    Fri, 21 Jun 2024 11:15:58 +02:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Tue, 09 Jul 2024 13:26:31 +02:00
+I tried to figure out where this is actually used so I could understand
+your comment in the commit message:
 
-task_work: s/task_work_cancel()/task_work_cancel_func()/
+ > This is only is required for masking the PFN from a pte entry
 
-A proper task_work_cancel() API that actually cancels a callback and not
-*any* callback pointing to a given function is going to be needed for
-perf events event freeing. Do the appropriate rename to prepare for
-that.
+The closest thing I could find is in arch/arm64/mm/mmap.c, where the
+mask is used as part of valid_mmap_phys_addr_range() which exists purely
+to filter accesses to /dev/mem. That's pretty niche, so why not just
+inline the RSI-specific stuff in there behind a static key instead of
+changing these definitions?
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20240621091601.18227-2-frederic@kernel.org
----
- include/linux/task_work.h |  2 +-
- kernel/irq/manage.c       |  2 +-
- kernel/task_work.c        | 10 +++++-----
- security/keys/keyctl.c    |  2 +-
- 4 files changed, 8 insertions(+), 8 deletions(-)
+Or did I miss a subtle user somewhere else?
 
-diff --git a/include/linux/task_work.h b/include/linux/task_work.h
-index 795ef5a..23ab01a 100644
---- a/include/linux/task_work.h
-+++ b/include/linux/task_work.h
-@@ -30,7 +30,7 @@ int task_work_add(struct task_struct *task, struct callback_head *twork,
- 
- struct callback_head *task_work_cancel_match(struct task_struct *task,
- 	bool (*match)(struct callback_head *, void *data), void *data);
--struct callback_head *task_work_cancel(struct task_struct *, task_work_func_t);
-+struct callback_head *task_work_cancel_func(struct task_struct *, task_work_func_t);
- void task_work_run(void);
- 
- static inline void exit_task_work(struct task_struct *task)
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 71b0fc2..dd53298 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1337,7 +1337,7 @@ static int irq_thread(void *data)
- 	 * synchronize_hardirq(). So neither IRQTF_RUNTHREAD nor the
- 	 * oneshot mask bit can be set.
- 	 */
--	task_work_cancel(current, irq_thread_dtor);
-+	task_work_cancel_func(current, irq_thread_dtor);
- 	return 0;
- }
- 
-diff --git a/kernel/task_work.c b/kernel/task_work.c
-index 95a7e1b..54ac240 100644
---- a/kernel/task_work.c
-+++ b/kernel/task_work.c
-@@ -120,9 +120,9 @@ static bool task_work_func_match(struct callback_head *cb, void *data)
- }
- 
- /**
-- * task_work_cancel - cancel a pending work added by task_work_add()
-- * @task: the task which should execute the work
-- * @func: identifies the work to remove
-+ * task_work_cancel_func - cancel a pending work matching a function added by task_work_add()
-+ * @task: the task which should execute the func's work
-+ * @func: identifies the func to match with a work to remove
-  *
-  * Find the last queued pending work with ->func == @func and remove
-  * it from queue.
-@@ -131,7 +131,7 @@ static bool task_work_func_match(struct callback_head *cb, void *data)
-  * The found work or NULL if not found.
-  */
- struct callback_head *
--task_work_cancel(struct task_struct *task, task_work_func_t func)
-+task_work_cancel_func(struct task_struct *task, task_work_func_t func)
- {
- 	return task_work_cancel_match(task, task_work_func_match, func);
- }
-@@ -168,7 +168,7 @@ void task_work_run(void)
- 		if (!work)
- 			break;
- 		/*
--		 * Synchronize with task_work_cancel(). It can not remove
-+		 * Synchronize with task_work_cancel_match(). It can not remove
- 		 * the first entry == work, cmpxchg(task_works) must fail.
- 		 * But it can remove another entry from the ->next list.
- 		 */
-diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
-index 4bc3e93..ab927a1 100644
---- a/security/keys/keyctl.c
-+++ b/security/keys/keyctl.c
-@@ -1694,7 +1694,7 @@ long keyctl_session_to_parent(void)
- 		goto unlock;
- 
- 	/* cancel an already pending keyring replacement */
--	oldwork = task_work_cancel(parent, key_change_session_keyring);
-+	oldwork = task_work_cancel_func(parent, key_change_session_keyring);
- 
- 	/* the replacement session keyring is applied just prior to userspace
- 	 * restarting */
+Will
 
