@@ -1,149 +1,179 @@
-Return-Path: <linux-kernel+bounces-246013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6B7592BCAC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:17:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CBC492BCB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:17:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81210281041
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:17:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52A50281A69
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F7F18FC6E;
-	Tue,  9 Jul 2024 14:17:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9277119B5B5;
+	Tue,  9 Jul 2024 14:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="c0diSghb";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jaHTw5Cm"
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OhbneQZ+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BDA14B092;
-	Tue,  9 Jul 2024 14:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6177F15B980;
+	Tue,  9 Jul 2024 14:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720534622; cv=none; b=AMs7mxtb/GIn5Pusymjy8qknqC2aQrzdzYyUuOX6XkNuQnNOUqFG8+vdpxefkrIb8QHaYJEvzCs9PyD4IZ/lheHC5mu8TmYtiNy39weYJN3GnUvePeomYAAXcztYi3qGe7xAo3XQq5t9pSygK4mOGLE0GmAkLL03cr+SpJK7lzI=
+	t=1720534650; cv=none; b=SsujSP7mV3yduTa9E51DSebRoI34QZIZqUphduxBN5TFsZF8vVf8XJG0sAy9C2u8kzjBWxzLy4ZZLawqOxgSCdxNzC2KVSifV++oS28CKaVg6EwgTpz2zxxrZxeTaJdYLVDJLK7PmJ7bH7w05LLGib6hHJAG7r87UuSXd/06T88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720534622; c=relaxed/simple;
-	bh=a1//xVVk/p+X87Fx+350qQgEPBj2+So1siWWSQlf/qI=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=KP43DBo5ps06hEu47MWOgqCqUYJUfAkvQCe84yVoZX4li1iUOl8j5rcG5BnV3EnEp4sUG2gJ/BDPFYvTHZhNnVMYz1OuPlFPL3jqVWtEc1Y13HV5BVAqhaxFGEx20IFWCQfWZq12Cz6HVqpnzu58iXDO47vMnix8LKVFsmGq10U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=c0diSghb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jaHTw5Cm; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id D70F3114157F;
-	Tue,  9 Jul 2024 10:16:59 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 09 Jul 2024 10:16:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1720534619;
-	 x=1720621019; bh=ke9rb34FJJV4rF+MkKIiP0p8Y0EQuq37lQsJeEBjSeQ=; b=
-	c0diSghbFlSVyS0R4qPlm97JqWt/eHeSU07qcmYe8WabLBgr2UcwFI5WmVZi80Fk
-	Nd0/hAgAhIyZnC0YANT+DDi8be9vvjOJ72rGEWiPoqzrnU4JTQFWWFGxCGZZV753
-	ahiMnpdP5xcEyrFKnTH+Z7+SevcYwSsXLRURT6FU8FqcH82f9ckTT+VaEpOBnPUQ
-	bTeBV/Ei/6qfjLddTPeIUVY5Nyk0GyUhMRgyRuvpJmwX++28bK79bHSDREEg2cTv
-	8a/esi4WwveO7GBZg9KH6ntT1ufyJgkM5hYU/7dQWz6cDYbnUGyZfNiIdZr/Mu8z
-	PW0A/VzbaaraVWMN1z+Ahw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720534619; x=
-	1720621019; bh=ke9rb34FJJV4rF+MkKIiP0p8Y0EQuq37lQsJeEBjSeQ=; b=j
-	aHTw5CmK8/5xqJqz5b8lxqcYMBOBD30p1lvSj7U3qpHd6mKe8JVbN7TEeZ/0MrF5
-	Th2DccGXcWN5w95/F7M2f6FIipYAVmPjmX6hrqEDJ5Y4dYKPJvHhBs3kMvhSl/1n
-	acGzv55+wLrtD7c1HGEEfLqrGupiZOPUrCr1nIah6pRS06CRiJ7eTAEfBzqE7bCS
-	1rOfxw/paDP6FJB+DNqGyqY3tfaRwREqpF4mBi5kF1E+Yrl+E8aZf0gpW2T5zbxx
-	tcgb/aV4VWOKEXO8XtxHqVQYVrDMMOBZUMz800qwLa1o2woWZawtrDfD00KOmq36
-	t36VB65PatlpizNx4AhOA==
-X-ME-Sender: <xms:WkaNZlZr-ZQkULrvzFP9m46jgGqOi0l4aO3hLjKEy_IUPiJHKAE8wQ>
-    <xme:WkaNZsYT4FNYbgTKtJzD6NZ1jVl5QulGwfi-FZDr7nyOes8Lvubswp7Bl_t1uDIbc
-    8-7wtE6BK6fRn0yhW4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdelgdejgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffeigedtuddtkeevuedvueeuhefhhedvueekvdekkeekuefhtedthfetveej
-    feetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnuges
-    rghrnhgusgdruggv
-X-ME-Proxy: <xmx:WkaNZn-nFO6hRIfj_HoTc-3dyjdmtQ5tuxU2mKEvJvoZbGMVIQtnAA>
-    <xmx:WkaNZjrXPr1tt6kFy17V90KPTKev9nlf3AYVcyeAlfLsGz6LuQUF9Q>
-    <xmx:WkaNZgqE2_orJFt-Yci95RJXAVGSDdn1UKTNeQzPpoZQUf_xl8Y8Dw>
-    <xmx:WkaNZpTQNu5fSzN72wbHXC3dreOmpolit72_XiXZQJ9acBJpMMEvWg>
-    <xmx:W0aNZpmu1Z0-eiLc8-dbr28l-81QR--OKBsmeif5mOq1ivdfPej592bO>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 67875B6008F; Tue,  9 Jul 2024 10:16:58 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1720534650; c=relaxed/simple;
+	bh=tjILeo76FHcfSaOIMoDBHiWlSrPwZ2Isv+c/sTP1zMQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=GNCC2dliKu+X/ie5wxIbF6Wg7F34bP/x9kqO8bMfpuRSRO06z1WTbjy+dyL2RZ5nuvTWEAhSVSoJQPpfHl5oqcvjzNRn1KDk1k/gFwrjs1HYszzxo2+jcUhbMApo4jUNpJ1oEBte+ZHFDqXULPAw/qKZUFG+HqNrkNuStsNRBEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OhbneQZ+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469AIKD9016998;
+	Tue, 9 Jul 2024 14:17:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=lBOWCVqQmDJo0O/MI5XdKb
+	EslB7uhsU2+0kvIMfOXfw=; b=OhbneQZ+PmEAqr8H3YxqdgIN0+afLh1K+VthAU
+	q4Zhp7gBGNjiSvs+EgR/gt+SK33o4LGmUILkTB3zoQgQ8E2DDNOj33zbgC9HyGle
+	8wbE8dHYf9Y2nTcRNi3nZjnl26UDBaIzagXmfqHO9Pz3JTJ4zm3qe0XhbE+S/ehf
+	hpNl6bfTxJR7AKUyI5TF1NmKUEE0XtS8akS5uttN8b/oYQYkjc55H/ViTg+U+HcG
+	IQvpBOQtNLNKjU0cEvVbgegvP2wAu3FY11RFJcs7Xh0xlTBEB69tyHTs2EPu3oke
+	oWNsgv5evwH4x3sgXU+PbfP1qsBjGhiyrwCg5PQKPKpOwVaA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406xa66kqr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 14:17:25 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469EHO5B029487
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 14:17:24 GMT
+Received: from tengfan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 9 Jul 2024 07:17:19 -0700
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+Date: Tue, 9 Jul 2024 22:17:09 +0800
+Subject: [PATCH v2] dt-bindings: usb: dwc3: Add QCS9100 compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <c4df5f73-2687-4160-801c-5011193c9046@app.fastmail.com>
-In-Reply-To: 
- <CAMuHMdVsDSBdz2axqTqrV4XP8UVTsN5pPS4ny9QXMUoxrTOU3w@mail.gmail.com>
-References: <202407091931.mztaeJHw-lkp@intel.com>
- <c1d4fcee3098a58625bb03c8461b92af02d93d15.camel@kernel.org>
- <CAMuHMdVsDSBdz2axqTqrV4XP8UVTsN5pPS4ny9QXMUoxrTOU3w@mail.gmail.com>
-Date: Tue, 09 Jul 2024 16:16:37 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Jeff Layton" <jlayton@kernel.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [jlayton:mgtime 5/13] inode.c:undefined reference to
- `__invalid_cmpxchg_size'
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240709-document_qcs9100_dwc3_compatible-v2-1-ed543ae02117@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAGRGjWYC/zXNQQ6CMBCF4auYri2ZFrHgynsY0tQywCTSAgXUE
+ O5uIXH5vcX7VxZwJAzsdlrZiAsF8i5Cnk/MtsY1yKmKZhLkBRQUvPJ27tBNerChEAC6ettUW9/
+ 1ZqLnC7lRV6XSHEVqCxZv+hFr+hyJRxndUpj8+D2Ki9jX/3kKMsszSKRQEiDngg8zWT2ha2rj7
+ jvI2SS2WLlt2w8o06YJvAAAAA==
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Wesley Cheng <quic_wcheng@quicinc.com>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Tengfei Fan <quic_tengfan@quicinc.com>
+X-Mailer: b4 0.15-dev-a66ce
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720534639; l=2902;
+ i=quic_tengfan@quicinc.com; s=20240709; h=from:subject:message-id;
+ bh=tjILeo76FHcfSaOIMoDBHiWlSrPwZ2Isv+c/sTP1zMQ=;
+ b=h8EJVfXo6dhkJHfLMfvOyyWtwE4y40GOuuB742DhRXomjmBJSdksplsEaa0P+/SrtlkxrHsOw
+ jDq2dVxMR8IDt2Eh+lgLSptcer7/56I2KtKckz8wUWWlHtayBIVChvk
+X-Developer-Key: i=quic_tengfan@quicinc.com; a=ed25519;
+ pk=4VjoTogHXJhZUM9XlxbCAcZ4zmrLeuep4dfOeKqQD0c=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: OFGKl6FiqQLFYiosgGonJBRtvy6dyBvU
+X-Proofpoint-ORIG-GUID: OFGKl6FiqQLFYiosgGonJBRtvy6dyBvU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_04,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=617
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0 spamscore=0
+ clxscore=1015 adultscore=0 malwarescore=0 mlxscore=0 bulkscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090092
 
-On Tue, Jul 9, 2024, at 15:45, Geert Uytterhoeven wrote:
-> On Tue, Jul 9, 2024 at 1:58=E2=80=AFPM Jeff Layton <jlayton@kernel.org=
-> wrote:
->> I've been getting some of these warning emails from the KTR. I think
->> this is in reference to this patch, which adds a 64-bit try_cmpxchg in
->> the timestamp handling code:
->>
->>     https://lore.kernel.org/linux-fsdevel/20240708-mgtime-v4-0-a0f3c6=
-fb57f3@kernel.org/
->>
->> On m68k, there is a prototype for __invalid_cmpxchg_size, but no actu=
-al
->> function, AFAICT. Should that be defined somewhere, or is this a
->> deliberate way to force a build break in this case?
->
-> It's a deliberate way to break the build.
->
->> More to the point though: do I need to do anything special for m86k
->> here (or for other arches that can't do a native 64-bit cmpxchg)?
->
-> 64-bit cmpxchg() is only guaranteed to exist on 64-bit platforms.
-> See also
-> https://elixir.bootlin.com/linux/latest/source/include/asm-generic/cmp=
-xchg.h#L62
->
-> I think you can use arch_cmpxchg64(), though.
+Document the QCS9100 dwc3 compatible.
+QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+platform use non-SCMI resource. In the future, the SA8775p platform will
+move to use SCMI resources and it will have new sa8775p-related device
+tree. Consequently, introduce "qcom,qcs9100-dwc3" to describe non-SCMI
+based DWC3.
 
-arch_cmpxchg64() is an internal helper provided by some
-architectures. Driver code should use cmpxchg64() for
-the explicitly 64-bit sized atomic operation.
+Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+---
+Introduce support for the QCS9100 SoC device tree (DTSI) and the
+QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+While the QCS9100 platform is still in the early design stage, the
+QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+mounts the QCS9100 SoC instead of the SA8775p SoC.
 
-I'm fairly sure we still don't provide this across all
-32-bit architectures though: on architectures that have
-64-bit atomics (i686, armv6k, ...) these can be provided
-architecture specific code, and on non-SMP kernels they
-can use the generic fallback through
-generic_cmpxchg64_local(), but on SMP architectures without
-native atomics you need a Kconfig dependency to turn off
-the particular code.
+The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
+all the compatible strings will be updated from "SA8775p" to "QCS9100".
+The QCS9100 device tree patches will be pushed after all the device tree
+bindings and device driver patches are reviewed.
 
-     Arnd
+The final dtsi will like:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
+
+The detailed cover letter reference:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+---
+Changes in v2:
+  - Split huge patch series into different patch series according to
+    subsytems
+  - Update patch commit message
+
+prevous disscussion here:
+[1] v1: https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+---
+ Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+index efde47a5b145..07b0b6530b78 100644
+--- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
++++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+@@ -26,6 +26,7 @@ properties:
+           - qcom,msm8998-dwc3
+           - qcom,qcm2290-dwc3
+           - qcom,qcs404-dwc3
++          - qcom,qcs9100-dwc3
+           - qcom,qdu1000-dwc3
+           - qcom,sa8775p-dwc3
+           - qcom,sc7180-dwc3
+@@ -199,6 +200,7 @@ allOf:
+               - qcom,msm8953-dwc3
+               - qcom,msm8996-dwc3
+               - qcom,msm8998-dwc3
++              - qcom,qcs9100-dwc3
+               - qcom,sa8775p-dwc3
+               - qcom,sc7180-dwc3
+               - qcom,sc7280-dwc3
+@@ -448,6 +450,7 @@ allOf:
+               - qcom,ipq4019-dwc3
+               - qcom,ipq8064-dwc3
+               - qcom,msm8994-dwc3
++              - qcom,qcs9100-dwc3
+               - qcom,qdu1000-dwc3
+               - qcom,sa8775p-dwc3
+               - qcom,sc7180-dwc3
+
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240709-document_qcs9100_dwc3_compatible-a767738e13c9
+
+Best regards,
+-- 
+Tengfei Fan <quic_tengfan@quicinc.com>
+
 
