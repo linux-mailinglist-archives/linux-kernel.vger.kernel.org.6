@@ -1,241 +1,168 @@
-Return-Path: <linux-kernel+bounces-246020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F6D92BCCD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:23:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E1992BCC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6453E1F22476
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:23:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EB85281F9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A788A18FC6E;
-	Tue,  9 Jul 2024 14:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5DB18FDA5;
+	Tue,  9 Jul 2024 14:22:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n7E+zSZi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CAR/3/9i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F164319CCF9
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 14:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1541591F1;
+	Tue,  9 Jul 2024 14:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720535017; cv=none; b=Fl4a9HjyPpLsGefs2JnsTfsvDB6ZaPvFFfIvYN+wmmTe2E/vfozhppnr1Snc9o9BIEirQaPoHEHCFctHQlvJC36fw7RNWpcXfybsKnzAA/sWlHlR+ibd+prJ6vlCoIQi+ZWrl5OxChx2f2axX97Ad3Ii0URcZW1k/0vCu4qznms=
+	t=1720534966; cv=none; b=urWj6Mwon/bXGazqoJmGcL8/N1sV1VtJdZeFCroTKkku9KLU1+nBMaZwHh6qUumeGwktqUL8Qb6rw4jnzxjML5eOdBmxvFFjWc87G6tU9XrsQt1IzWkuiSdXrNLToAHmlg+hcjQIuKqgYH81uLJMRb1oGyXNfAP4S9HxCPTzMso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720535017; c=relaxed/simple;
-	bh=HYIV1H/v6DQJZTvip56yb3vKIj+Qv5j9yMJj36L5xSw=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=RAzQJ6/x6wOttm0l+by53RwuP0nOlBs6IwyYbhgWpVDCNOGUVA/4kXYXFu0hOBbYwWVYr1a4bK/cduzYJ25yb4J7BEBkUq/sGVGpC235xzq/uP+7WLs1XN7DH2CK9xEpwZgyTB2tSmspfclTmrAfYHEVgLC0unnLvr0c8wih3Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n7E+zSZi; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720535016; x=1752071016;
-  h=date:from:to:cc:subject:message-id;
-  bh=HYIV1H/v6DQJZTvip56yb3vKIj+Qv5j9yMJj36L5xSw=;
-  b=n7E+zSZi2yI0YKHshrJniFZtQ5OOSLGZSaz0Imbw/DQPce/ENMvxImHX
-   +6adZwpvfGTZKR+Ff8Kss6bwwmQl+PAemUBiinPvT7zvKYKEKftAH2uXt
-   7LUHwYbg5ecT63c6hJX1kFXrM23cF8XLH2YR+vG1d+6ISaYKvX184FGwa
-   c94fo64Q17CCotDILxhR5ff+ZL+EDnBUTWW5HWzxgE3goruyVcFWpwCOc
-   +l9UllTg26GsEcbyAFsMdSH67PzP6lydOHCMxPxa0q65LiorvmTFldT6/
-   fGFRqPvI3hg0xNhbNlwsNRHKt0vPT4uOR0H2ZRF8fl3jqHrBGDajNcQsx
-   A==;
-X-CSE-ConnectionGUID: 3KIi9+6LQF6aJLIaaOsEqA==
-X-CSE-MsgGUID: HQJju4TdQVC6x40lLDpTwQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11128"; a="28397479"
-X-IronPort-AV: E=Sophos;i="6.09,195,1716274800"; 
-   d="scan'208";a="28397479"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 07:23:35 -0700
-X-CSE-ConnectionGUID: rmL3mKxhSOiPTyxSw2/eJA==
-X-CSE-MsgGUID: 7otL323kRU2xBFCBz9Hfzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,195,1716274800"; 
-   d="scan'208";a="47797851"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 09 Jul 2024 07:23:32 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sRBkf-000Wkd-2E;
-	Tue, 09 Jul 2024 14:23:29 +0000
-Date: Tue, 09 Jul 2024 22:22:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- aa9d8caba6e40b0b02a6f2b5f2bd9177cd76cacf
-Message-ID: <202407092238.NDktlUKA-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1720534966; c=relaxed/simple;
+	bh=FWTGpT0uE1WJVBkIi/BrIbSsTltp36GvoROONoB2Dpc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lKwMS2SHqE6Pgnf8MZNQdT5utLV9Ufb6VnmrW0XxHgjjyuAluptqJ6JOvBGOSwVV203AX0o4Fp1gbzHR7a/PldpcbEfJFXLEbGuCdGQQWX4GR5IEzsKl+ytRzedHRaYYLSiGipZLc7K63Rc6KW6ETx8icwQckPq2eNDhexVExQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CAR/3/9i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B1ACC32782;
+	Tue,  9 Jul 2024 14:22:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720534966;
+	bh=FWTGpT0uE1WJVBkIi/BrIbSsTltp36GvoROONoB2Dpc=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=CAR/3/9iQ6zIplQ/QpFyPIrSdLTZS157UiymInXvhe2THRdF8hNEYC913LfnbuDLY
+	 7Sypc7AxKf4AsjdJofn4STT4RvGnn2z907DoH3T0sNlALEoD3pWhgB1N8an4OQBvKN
+	 f8VQ6uCG0OIjUUXPb2aaPUnemhrz7QDLNWVdTDD6KgduvMAp7ZSrJ3EcTHh09o2358
+	 oT005qae+YYwDmY6EXBMdEmR92mmYv5/BZ7VNA1BzT0M+xICVLFyYxondCDOPJKSoW
+	 PJ1aRRbsI/bHzsWIAy1E+x51qh4NGwIGUO64+kKJWllbE5PKJrJi5j06TuwZo+w2o7
+	 C+NRYZI57TOsw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id D9D27CE09F8; Tue,  9 Jul 2024 07:22:45 -0700 (PDT)
+Date: Tue, 9 Jul 2024 07:22:45 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: takakura@valinux.co.jp
+Cc: boqun.feng@gmail.com, bristot@redhat.com, bsegall@google.com,
+	dietmar.eggemann@arm.com, frederic@kernel.org,
+	jiangshanlai@gmail.com, joel@joelfernandes.org,
+	josh@joshtriplett.org, juri.lelli@redhat.com,
+	linux-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com,
+	mgorman@suse.de, mingo@redhat.com, neeraj.upadhyay@kernel.org,
+	peterz@infradead.org, qiang.zhang1211@gmail.com,
+	rcu@vger.kernel.org, rostedt@goodmis.org,
+	vincent.guittot@linaro.org, vschneid@redhat.com
+Subject: Re: [PATCH] rcu: Let rcu_dump_task() be used without preemption
+ disabled
+Message-ID: <83446d9b-f6fe-4786-8f84-c2716d03637c@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <5528fb77-9249-4223-96fb-8f5e9c3dac7f@paulmck-laptop>
+ <20240709053426.94526-1-takakura@valinux.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709053426.94526-1-takakura@valinux.co.jp>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: aa9d8caba6e40b0b02a6f2b5f2bd9177cd76cacf  Merge timers/core into tip/master
+On Tue, Jul 09, 2024 at 02:34:26PM +0900, takakura@valinux.co.jp wrote:
+> Hi Paul,
+> 
+> On Mon, 8 July 2024, Paul E. McKenney wrote:
+> >On Fri, Jun 28, 2024 at 01:18:26PM +0900, takakura@valinux.co.jp wrote:
+> >> From: Ryo Takakura <takakura@valinux.co.jp>
+> >> 
+> >> The commit 2d7f00b2f0130 ("rcu: Suppress smp_processor_id() complaint
+> >> in synchronize_rcu_expedited_wait()") disabled preemption around
+> >> dump_cpu_task() to suppress warning on its usage within preemtible context.
+> >> 
+> >> Calling dump_cpu_task() doesn't required to be in non-preemptible context
+> >> except for suppressing the smp_processor_id() warning.
+> >> As the smp_processor_id() is evaluated along with in_hardirq()
+> >> to check if it's in interrupt context, this patch removes the need
+> >> for its preemtion disablement by reordering the condition so that
+> >> smp_processor_id() only gets evaluated when it's in interrupt context.
+> >> 
+> >> Signed-off-by: Ryo Takakura <takakura@valinux.co.jp>
+> >
+> >Hearing no objections, I pulled this in for further review and testing.
+> >
+> >I had to hand-apply this due to a recent conflicting change in the
+> >-rcu tree, so could you please check the version below in case I messed
+> >something up?
+> >
+> >							Thanx, Paul
+> 
+> Thanks for preparing the patch!
+> I checked it on the rcu tree and looks good to me.
+> 
+> If possible, could you replace the title with s/rcu_dump_task()/dump_cpu_task()/ 
+> when applying?
+> I made a mistake with the title where dump_cpu_task() is the one being modified, 
+> not rcu_dump_task(). I'm sorry for the confusion.
 
-elapsed time: 1278m
+Thank you for calling my attention to this.
 
-configs tested: 149
-configs skipped: 2
+Done locally, and it will show up on my next rebase.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+								Thanx, Paul
 
-tested configs:
-alpha                            alldefconfig   gcc-13.2.0
-alpha                             allnoconfig   gcc-13.2.0
-alpha                            allyesconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                   randconfig-001-20240709   gcc-13.2.0
-arc                   randconfig-002-20240709   gcc-13.2.0
-arc                           tb10x_defconfig   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                               allnoconfig   clang-19
-arm                              allyesconfig   gcc-13.2.0
-arm                      integrator_defconfig   clang-19
-arm                   randconfig-001-20240709   gcc-13.2.0
-arm                   randconfig-002-20240709   clang-19
-arm                   randconfig-003-20240709   clang-19
-arm                   randconfig-004-20240709   gcc-13.2.0
-arm64                            allmodconfig   clang-19
-arm64                             allnoconfig   gcc-13.2.0
-arm64                 randconfig-001-20240709   clang-19
-arm64                 randconfig-002-20240709   clang-17
-arm64                 randconfig-003-20240709   clang-19
-arm64                 randconfig-004-20240709   clang-19
-csky                              allnoconfig   gcc-13.2.0
-csky                  randconfig-001-20240709   gcc-13.2.0
-csky                  randconfig-002-20240709   gcc-13.2.0
-hexagon                           allnoconfig   clang-19
-hexagon                          allyesconfig   clang-19
-hexagon               randconfig-001-20240709   clang-19
-hexagon               randconfig-002-20240709   clang-19
-i386                             allmodconfig   gcc-13
-i386                              allnoconfig   gcc-13
-i386                             allyesconfig   gcc-13
-i386         buildonly-randconfig-001-20240709   gcc-11
-i386         buildonly-randconfig-002-20240709   gcc-13
-i386         buildonly-randconfig-003-20240709   clang-18
-i386         buildonly-randconfig-004-20240709   clang-18
-i386         buildonly-randconfig-005-20240709   clang-18
-i386         buildonly-randconfig-006-20240709   clang-18
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240709   gcc-13
-i386                  randconfig-002-20240709   clang-18
-i386                  randconfig-003-20240709   gcc-11
-i386                  randconfig-004-20240709   gcc-13
-i386                  randconfig-005-20240709   gcc-13
-i386                  randconfig-006-20240709   gcc-13
-i386                  randconfig-011-20240709   clang-18
-i386                  randconfig-012-20240709   gcc-13
-i386                  randconfig-013-20240709   gcc-12
-i386                  randconfig-014-20240709   clang-18
-i386                  randconfig-015-20240709   clang-18
-i386                  randconfig-016-20240709   gcc-10
-loongarch                        allmodconfig   gcc-13.2.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch             randconfig-001-20240709   gcc-13.2.0
-loongarch             randconfig-002-20240709   gcc-13.2.0
-m68k                             allmodconfig   gcc-13.2.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                             allyesconfig   gcc-13.2.0
-m68k                       bvme6000_defconfig   gcc-13.2.0
-microblaze                       allmodconfig   gcc-13.2.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                       allyesconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-mips                         cobalt_defconfig   gcc-13.2.0
-mips                           jazz_defconfig   clang-19
-nios2                             allnoconfig   gcc-13.2.0
-nios2                 randconfig-001-20240709   gcc-13.2.0
-nios2                 randconfig-002-20240709   gcc-13.2.0
-openrisc                          allnoconfig   gcc-13.2.0
-openrisc                         allyesconfig   gcc-13.2.0
-openrisc                    or1ksim_defconfig   gcc-13.2.0
-parisc                           allmodconfig   gcc-13.2.0
-parisc                            allnoconfig   gcc-13.2.0
-parisc                           allyesconfig   gcc-13.2.0
-parisc                randconfig-001-20240709   gcc-13.2.0
-parisc                randconfig-002-20240709   gcc-13.2.0
-powerpc                          allmodconfig   gcc-13.2.0
-powerpc                           allnoconfig   gcc-13.2.0
-powerpc                          allyesconfig   clang-19
-powerpc                     kilauea_defconfig   clang-19
-powerpc                      mgcoge_defconfig   clang-19
-powerpc                      ppc44x_defconfig   clang-16
-powerpc               randconfig-001-20240709   clang-19
-powerpc               randconfig-002-20240709   gcc-13.2.0
-powerpc               randconfig-003-20240709   clang-15
-powerpc64             randconfig-001-20240709   gcc-13.2.0
-powerpc64             randconfig-002-20240709   gcc-13.2.0
-powerpc64             randconfig-003-20240709   clang-19
-riscv                            allmodconfig   clang-19
-riscv                             allnoconfig   gcc-13.2.0
-riscv                            allyesconfig   clang-19
-riscv                 randconfig-001-20240709   clang-17
-riscv                 randconfig-002-20240709   gcc-13.2.0
-s390                             allmodconfig   clang-19
-s390                              allnoconfig   clang-19
-s390                             allyesconfig   gcc-13.2.0
-s390                  randconfig-001-20240709   gcc-13.2.0
-s390                  randconfig-002-20240709   clang-19
-sh                               allmodconfig   gcc-13.2.0
-sh                                allnoconfig   gcc-13.2.0
-sh                               allyesconfig   gcc-13.2.0
-sh                        dreamcast_defconfig   gcc-13.2.0
-sh                        edosk7760_defconfig   gcc-13.2.0
-sh                            hp6xx_defconfig   gcc-13.2.0
-sh                    randconfig-001-20240709   gcc-13.2.0
-sh                    randconfig-002-20240709   gcc-13.2.0
-sh                          rsk7203_defconfig   gcc-13.2.0
-sh                          rsk7269_defconfig   gcc-13.2.0
-sh                             shx3_defconfig   gcc-13.2.0
-sparc                            allmodconfig   gcc-13.2.0
-sparc64               randconfig-001-20240709   gcc-13.2.0
-sparc64               randconfig-002-20240709   gcc-13.2.0
-um                               allmodconfig   clang-19
-um                                allnoconfig   clang-17
-um                               allyesconfig   gcc-13
-um                    randconfig-001-20240709   gcc-13
-um                    randconfig-002-20240709   gcc-11
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240709   gcc-11
-x86_64       buildonly-randconfig-002-20240709   clang-18
-x86_64       buildonly-randconfig-003-20240709   clang-18
-x86_64       buildonly-randconfig-004-20240709   gcc-9
-x86_64       buildonly-randconfig-005-20240709   gcc-13
-x86_64       buildonly-randconfig-006-20240709   clang-18
-x86_64                              defconfig   gcc-13
-x86_64                randconfig-001-20240709   clang-18
-x86_64                randconfig-002-20240709   gcc-10
-x86_64                randconfig-003-20240709   clang-18
-x86_64                randconfig-004-20240709   gcc-12
-x86_64                randconfig-005-20240709   gcc-13
-x86_64                randconfig-006-20240709   gcc-8
-x86_64                randconfig-011-20240709   clang-18
-x86_64                randconfig-012-20240709   clang-18
-x86_64                randconfig-013-20240709   clang-18
-x86_64                randconfig-014-20240709   clang-18
-x86_64                randconfig-015-20240709   clang-18
-x86_64                randconfig-016-20240709   clang-18
-x86_64                randconfig-071-20240709   gcc-7
-x86_64                randconfig-072-20240709   clang-18
-x86_64                randconfig-073-20240709   gcc-13
-x86_64                randconfig-074-20240709   gcc-13
-x86_64                randconfig-075-20240709   gcc-11
-x86_64                randconfig-076-20240709   gcc-13
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                randconfig-001-20240709   gcc-13.2.0
-xtensa                randconfig-002-20240709   gcc-13.2.0
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> Sincerely,
+> Ryo Takakura
+> 
+> >
+> >------------------------------------------------------------------------
+> >
+> >commit ad6647a70f239aa9f2741b2f5a828a4483122a26
+> >Author: Ryo Takakura <takakura@valinux.co.jp>
+> >Date:   Fri Jun 28 13:18:26 2024 +0900
+> >
+> >    rcu: Let rcu_dump_task() be used without preemption disabled
+> >    
+> >    The commit 2d7f00b2f0130 ("rcu: Suppress smp_processor_id() complaint
+> >    in synchronize_rcu_expedited_wait()") disabled preemption around
+> >    dump_cpu_task() to suppress warning on its usage within preemtible context.
+> >    
+> >    Calling dump_cpu_task() doesn't required to be in non-preemptible context
+> >    except for suppressing the smp_processor_id() warning.
+> >    As the smp_processor_id() is evaluated along with in_hardirq()
+> >    to check if it's in interrupt context, this patch removes the need
+> >    for its preemtion disablement by reordering the condition so that
+> >    smp_processor_id() only gets evaluated when it's in interrupt context.
+> >    
+> >    Signed-off-by: Ryo Takakura <takakura@valinux.co.jp>
+> >    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> >
+> >diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+> >index d4be644afb50..c5d9a7eb0803 100644
+> >--- a/kernel/rcu/tree_exp.h
+> >+++ b/kernel/rcu/tree_exp.h
+> >@@ -597,9 +597,7 @@ static void synchronize_rcu_expedited_stall(unsigned long jiffies_start, unsigne
+> > 			mask = leaf_node_cpu_bit(rnp, cpu);
+> > 			if (!(READ_ONCE(rnp->expmask) & mask))
+> > 				continue;
+> >-			preempt_disable(); // For smp_processor_id() in dump_cpu_task().
+> > 			dump_cpu_task(cpu);
+> >-			preempt_enable();
+> > 		}
+> > 		rcu_exp_print_detail_task_stall_rnp(rnp);
+> > 	}
+> >diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> >index 05afa2932b5e..bdb0e0328f6a 100644
+> >--- a/kernel/sched/core.c
+> >+++ b/kernel/sched/core.c
+> >@@ -11485,7 +11485,7 @@ struct cgroup_subsys cpu_cgrp_subsys = {
+> > 
+> > void dump_cpu_task(int cpu)
+> > {
+> >-	if (cpu == smp_processor_id() && in_hardirq()) {
+> >+	if (in_hardirq() && cpu == smp_processor_id()) {
+> > 		struct pt_regs *regs;
+> > 
+> > 		regs = get_irq_regs();
 
