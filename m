@@ -1,130 +1,89 @@
-Return-Path: <linux-kernel+bounces-245162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A4B092AF1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:44:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E32AC92AF24
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2BF5282CCC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:44:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69A2DB21DE6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9C612CD89;
-	Tue,  9 Jul 2024 04:44:06 +0000 (UTC)
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE45B12CD89;
+	Tue,  9 Jul 2024 04:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LduwMObD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C821440861;
-	Tue,  9 Jul 2024 04:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1834F29CEA
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 04:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720500246; cv=none; b=hpZdAPutvnZTJhheSK8LSKYb5ZGLGpGeHBXPAkFp5ZJvXwGvuA5s7vyRKvCkXcTR4VEktTFYZetJ6tiwxM/5Z1ouA3ZnUVfJ54trSWwWF7aG6gTAFYC8s4vJQq9LIMiC5FiMKGg5pdi8iL7niEwx/W7s7cM4jt79KV5cO2YIx6Q=
+	t=1720500546; cv=none; b=Mfs38BbChZOmllXN+xmp/E3zOgL4U3rlHozPB8ptNscJ8Ch4oaDgWvNrBIfqOzC+oSVOXsqQ4Ks+CLa4qmhtqxkIPv2NXzZJatcmuPv9ajnPsb0pFA1kxlm/piDeB1e39dLkX9No2xpzLDFr9kaoOhE4yYyUrVZt9n4T0FVC+uY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720500246; c=relaxed/simple;
-	bh=uVd3/+hZmwtOcRjfTLqueuyazv4xkNu8knI1pzVhYcA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nQNmNC7UH4XKHVUl9rMuFTwDUKHBL4WMTr4ebgbm8b64yY3wdHN22zNhxOx58N4yn5C2TOzEaFqDpVILY3wV0irnP1Z1lszs8zUP/xBMMrxZg7RCKG7+N++yHezVCsfacYXWCu0UDlEZEfPShAW0P4AVOv231BV4XO1BQpGSisU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2c9785517c0so2771866a91.0;
-        Mon, 08 Jul 2024 21:44:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720500244; x=1721105044;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VqMMZdHbLQLK0gY06sGdThaDPsXAGjfdIECfbylM8Ps=;
-        b=F6UWs+Rzen1w7Yg3BgWnbctq+S8ZyHHAHzL4ACzTS4RFYmV33imKxtlgAKi4Xk5j+I
-         8ZcokNQ42+O4UZ1eHhujY4c0ENtBldSOq6/AfHCND58PU31pv+tTM2oolU4UrSjCIFZx
-         fQiKwjsi5N3reiDEvetetoZnvsuiV4KNlMv7pjfHbeB/8ZKtqiQdMdWJiMxKkDdW8gRk
-         FeGRnEm/Eoh2lD0nzqIbtmwDL9XLMaOPatsfs1uETn/Fs/uyKKmIAOx2YY/JXI9G/JLh
-         Xm80nvgxaiA5p3rfI7xt3ra4hhZA1Bk216jRS20sP71bUfnIonNEjMjxhDLgIMcEykRX
-         GMqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUA6yA1mtjrzJaPiu7/Gc0wA/P8DsuQx7Z8Iqn3SkqAlOUEw4S+9qWuv+xtn3siZuJB8Rx3CC/BZ3Sf0PQYeb2CKg+6uZx78qZuYf3fkg7dtpRghrRWouFSHOLpTFXPs0KuNPZPNYlCRZbGBrIikQ==
-X-Gm-Message-State: AOJu0YzHVsw8arekRTb4CvuwN54duPogRgbRuEZuDPo6L/EY+6GumrOh
-	wX0C6kAgAgJrdApgHaQYQJ/IU9ZBa0xHLk5tjqZ/c29KUqKtNjs2O02CnUhEqM2bp7thFiAnjUE
-	mYIeGsDhUQwLnmJqYreyGcF2emAk=
-X-Google-Smtp-Source: AGHT+IGkL1XkIndrUWgyyGsQnjdjaDCeqa9y6dsZQ+3CLzvnvKQ8G1exyOPYGl2py2WNElzth1WR5C+EP+v1VZ3SmI8=
-X-Received: by 2002:a17:90b:1c0e:b0:2c9:57a4:a8c4 with SMTP id
- 98e67ed59e1d1-2ca35d5c8dcmr1275315a91.42.1720500243934; Mon, 08 Jul 2024
- 21:44:03 -0700 (PDT)
+	s=arc-20240116; t=1720500546; c=relaxed/simple;
+	bh=ivLuqXEefH7TTXXO9crz1NwH+cfs5yLI0OGmlJ5dzko=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pzcO5OfdHH4MokC40q5lUNuohN60hMLmgJ4UbPfQ3aKEgwWlcc/13Quh26wq/8axhTnFC57oAJtSrbWfuKE7oN3D1zVjQZ116dkt9+Cwe17LL78Bw3mgTdcQIQPOTlQUFG4mNPSw406NGz3Ew5gIcX30mIdVWdgHZ0u6IsErWbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LduwMObD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AD42C4AF07;
+	Tue,  9 Jul 2024 04:49:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720500545;
+	bh=ivLuqXEefH7TTXXO9crz1NwH+cfs5yLI0OGmlJ5dzko=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=LduwMObDP68pChZmH3p7IbxApKlQBN8hd6RrihQvQH6yljth5m4UV2okR7czB8iRS
+	 UdHAO3dfLVZW6CAqknWpiMUl+wrrkDq8IIKy/FcZ/3ywT6/T0uZEb5OsLTbhc1eZv1
+	 U1c4D/1FGz6oh8arkbxWBqM1X2HdFL6lsf/+HMKEaindoqJzlbLO+tiyFg9R8PbOhS
+	 SRrthF8eW4/zISHZqd3yNIe45fL0syp19+doHyL16rEq7vmPME+Cch2a38DgJU1d6y
+	 1RKI7Rj8263nXUHfWN7xslhzTEjezuojZl0OlmpCS/lIQvZNcpbCQcpcBCgQHylkTR
+	 Nb80kpTa6cepw==
+From: Christian Brauner <brauner@kernel.org>
+To: jlayton@kernel.org,
+	jack@suse.cz,
+	Chen Ni <nichen@iscas.ac.cn>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ipc: mqueue: remove assignment from IS_ERR argument
+Date: Tue,  9 Jul 2024 06:48:56 +0200
+Message-ID: <20240709-einige-geblasen-f28d67cb5b00@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240708080404.3859094-1-nichen@iscas.ac.cn>
+References: <20240708080404.3859094-1-nichen@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240706232956.304944-1-weilin.wang@intel.com> <20240706232956.304944-9-weilin.wang@intel.com>
-In-Reply-To: <20240706232956.304944-9-weilin.wang@intel.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Mon, 8 Jul 2024 21:43:52 -0700
-Message-ID: <CAM9d7chhVAG9wpWdQM4DRriM_kp9vjFj=_ak1+0qyO-sRdXs4w@mail.gmail.com>
-Subject: Re: [RFC PATCH v16 8/8] perf test: Add test for Intel TPEBS counting mode
-To: weilin.wang@intel.com
-Cc: Ian Rogers <irogers@google.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Perry Taylor <perry.taylor@intel.com>, Samantha Alt <samantha.alt@intel.com>, 
-	Caleb Biggers <caleb.biggers@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=903; i=brauner@kernel.org; h=from:subject:message-id; bh=ivLuqXEefH7TTXXO9crz1NwH+cfs5yLI0OGmlJ5dzko=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT1HLTsYjoQZRHll+/1yVVv5h6hvW5Zvs53HDdqi1/UW dsemuTXUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMBGFFYwMW+bcczDlC+ov6XDn L9z5slm6b9pqq/r9P3K0t0zOfPgjkJHhqNOnt3tTQvtfbDDtXTv/hXHLp9+imQKXJ0xfUe2wW8O VHQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hello Weilin,
+On Mon, 08 Jul 2024 16:04:04 +0800, Chen Ni wrote:
+> Remove assignment from IS_ERR() argument.
+> This is detected by coccinelle.
+> 
+> 
 
-On Sat, Jul 6, 2024 at 4:30=E2=80=AFPM <weilin.wang@intel.com> wrote:
->
-> From: Weilin Wang <weilin.wang@intel.com>
->
-> Intel TPEBS sampling mode is supported through perf record. The counting =
-mode
-> code uses perf record to capture retire_latency value and use it in metri=
-c
-> calculation. This test checks the counting mode code.
->
-> Signed-off-by: Weilin Wang <weilin.wang@intel.com>
-> ---
->  .../perf/tests/shell/test_stat_intel_tpebs.sh  | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
->  create mode 100755 tools/perf/tests/shell/test_stat_intel_tpebs.sh
->
-> diff --git a/tools/perf/tests/shell/test_stat_intel_tpebs.sh b/tools/perf=
-/tests/shell/test_stat_intel_tpebs.sh
-> new file mode 100755
-> index 000000000000..fea8cb1b8367
-> --- /dev/null
-> +++ b/tools/perf/tests/shell/test_stat_intel_tpebs.sh
-> @@ -0,0 +1,18 @@
-> +#!/bin/bash
-> +# test Intel TPEBS counting mode
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +set -e
-> +
-> +# Use this event for testing because it should exist in all platforms
-> +event=3Dcache-misses:R
-> +
-> +# Without this cmd option, default value or zero is returned
-> +echo "Testing without --record-tpebs"
-> +result=3D$(perf stat -e "$event" true 2>&1)
-> +[[ "$result" =3D~ $event ]] || exit 1
-> +
-> +# In platforms that do not support TPEBS, it should execute without erro=
-r.
-> +echo "Testing with --record-tpebs"
-> +result=3D$(perf stat -e "$event" --record-tpebs -a sleep 0.01 2>&1)
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-It never finishes on my AMD machine.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Thanks,
-Namhyung
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-> +[[ "$result" =3D~ "perf record" && "$result" =3D~ $event ]] || exit 1
-> --
-> 2.43.0
->
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] ipc: mqueue: remove assignment from IS_ERR argument
+      https://git.kernel.org/vfs/vfs/c/b80cc4df1124
 
