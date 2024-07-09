@@ -1,78 +1,211 @@
-Return-Path: <linux-kernel+bounces-246036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B5292BCF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:33:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2401B92BCF9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:33:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 875391F2223A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:33:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC84D2844FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19D71822F2;
-	Tue,  9 Jul 2024 14:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F3719CCEB;
+	Tue,  9 Jul 2024 14:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EEv4BSxZ"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K33RZZwr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9328815749F
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 14:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397A815749F;
+	Tue,  9 Jul 2024 14:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720535586; cv=none; b=V1/ZsabCov5BPYEQkQVNz0LXGq0oW2jR6+WtNwORUWxJ8MHleGWe3JrNkyoM2ayb7qvgs7ydioZg16PXoBU6uez81kz2KUbyNLalgd+/N1GLAi7NEkXq0emMckFyuRGW2uRkG9Q+W0+Riefgvh9OQ18/eqSo6P201c/UPu5OhnA=
+	t=1720535601; cv=none; b=HRWU2Q89A2GJ7CuDtTCnUkkxLIL7QOzTD0gPcOw/8Kp/jTXXYG41ApRa/HhG3QwJNQAdtXWv3uke2fHudJfyjqlqmm7tNhErDAePxmiS0agGy7PpJZOPQXpFr4xkaQ3Lge5X50Abi+yFvgxP3BS63cyVy/13yqBFgGRVPmmiM80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720535586; c=relaxed/simple;
-	bh=q7HaL6LCzoItRgWZPIc7Gjpy0NRfbZAULjtZvkD+Loo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PnoWHBUzxosMM1DuHtqnoBNKqNU84YZrmNetJUDQAC2fntgF4pqLgR7MDIrRcCexrkBETgOKJLhR7k9+W4PKOmZpLx0Jiq5JHVw1UKuj0U8ZEi/4GZwccBZr8VYIwDtrdsaQdh7Ut3yk+JUWxKEuGC3VY1BvzCuFFoDczLLjT8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EEv4BSxZ; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=hOEpXl53j/Y8uQ0/ovA2xWauV1OMvEzVII097Uf47YQ=; b=EEv4BSxZeD8zdBD9KXI3EY+2sZ
-	4BWKN1nXntov7f5lZCY7CkEaqakfykmi/kGmJPjePBkfZ73d23zVDnizhwDUh1GBIRPDhmexfem8g
-	V5Mcioh6vYtFWipbjPUmSDOFiMnC+bsCW4WckLrLLjTNQPzIZczGcXBRPZL5pSDM+zbxC8iY+MDsQ
-	DHh5iSE5BwTbNvmA85yPz+HOoC5QJbPP0RtgoReEDIBedqTzqw+5OeC3QtJQ5bYVgY84EOokiUYJl
-	LZYth76d7y74h6RxCBKo1SD8t2n4vThT0uaWTlHvB5OLlxQNDxZ+qoCLnECnDKVY1Bfaoi0afa2mV
-	L265+0YQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sRBtp-00000000kyc-1ory;
-	Tue, 09 Jul 2024 14:32:58 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 808ED3006B7; Tue,  9 Jul 2024 16:32:56 +0200 (CEST)
-Date: Tue, 9 Jul 2024 16:32:56 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: mingo@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
-	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org,
-	clm@meta.com, paulmck@kernel.org
-Subject: Re: [PATCH 05/10] perf/uprobe: SRCU-ify uprobe->consumer list
-Message-ID: <20240709143256.GN27299@noisy.programming.kicks-ass.net>
-References: <20240708091241.544262971@infradead.org>
- <20240708092415.695619684@infradead.org>
- <20240709120551.GK27299@noisy.programming.kicks-ass.net>
- <20240709133349.GC28495@redhat.com>
+	s=arc-20240116; t=1720535601; c=relaxed/simple;
+	bh=c7Ar22kn+at+eqcwFycf/zfSHhunW56S94dCSCyjaJ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y92NsCdZo5Vp5l2JnsfJi4fLr3ccC6KI+qcLz62X+JeC4CWbaVNposdyK7wM8ZL3vA5ioK3WiI/jGdyEO8qsopRIhRwKao9lPzY7T4NtFSl1owEcTXCEvgU7TzVWHMFtS9hW7FTR0UHBdRrfPnESddb4XjdcTIa+Jy3YaMw4ySo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K33RZZwr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4CE2C32782;
+	Tue,  9 Jul 2024 14:33:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720535600;
+	bh=c7Ar22kn+at+eqcwFycf/zfSHhunW56S94dCSCyjaJ8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=K33RZZwrIpUbBdqo7Z0bZ0UNxpvIMKQZt4pdbi/gCOCPEcoNLX6rNFUsZ1DFd4M7O
+	 yggCG+ox4iNEJSKX0prT/mbxk2dY3huNv8o73dZWecdt+PrcTUjFx3vATkU4KjAsUx
+	 iChkLE+smovoP3mmihg7rAtau4WFMLoeQg0r47CxYsTP4Y1eu9NlZOz1PWqO3iBLug
+	 jRx0pA8IBcEVrTer5bzAxJ2MD6hTjYE1DrRC82IKAmh65U6aVFOkViZivCEY+7wVov
+	 wXbvvISIQFdEcao/f1j38gg67ju2R9+fRRgNIki/wiwORyq73R6ramXhMXAWcTKOWw
+	 ezfP2G43gpeQg==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52ea16b429dso4055439e87.1;
+        Tue, 09 Jul 2024 07:33:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWgI/oNYuJxiPYKwbzqmJe4eNZS0vOv/wwjm33Ij0pEcMptXFQ94yT5q2Of/GEpe6T0PvfXqrdp2FUK8dAuZaWkxkPcxAYQbIa7Kcm6nu17WSv1OuD5IBwjs/zezgHFMYAYh4vmO/7t8paM3XxcokJrc2kBvR+BnUYEQfw6awW8Fw==
+X-Gm-Message-State: AOJu0Yy+moW0F33NYdsp5ZHUfrXVtyDlNhEH0ooEUuwXncRJhlXcfQep
+	psNylR5wsImfgTRE5chs62DgIxQ7MBwITrEVYV+WH6xNqLreLHw3YlFx6ySaGqAb9td2vHka2RH
+	rDvw9aRlNlJ/sBt7HMkyFXLDe0w==
+X-Google-Smtp-Source: AGHT+IHTmviUiixvQG/Xt8fJzFE5DpLTA8M/XoeZDNsC+xg+0GZ0cSOKZpaaZL0C4DtVVM7mEY2q8hFIA8LCOKLUw3A=
+X-Received: by 2002:a05:6512:3088:b0:52c:81ba:aeba with SMTP id
+ 2adb3069b0e04-52eb9d44f6dmr819413e87.14.1720535599235; Tue, 09 Jul 2024
+ 07:33:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240709133349.GC28495@redhat.com>
+References: <20240626162307.1748759-1-Frank.Li@nxp.com> <20240627155547.GB3480309-robh@kernel.org>
+ <ZoMn0Pc/agPGKeTS@lizhi-Precision-Tower-5810>
+In-Reply-To: <ZoMn0Pc/agPGKeTS@lizhi-Precision-Tower-5810>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 9 Jul 2024 08:33:05 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJE69akg0WnmaNHYBupSNrktDkOxWHPdQ7h2ZWB8fWGZQ@mail.gmail.com>
+Message-ID: <CAL_JsqJE69akg0WnmaNHYBupSNrktDkOxWHPdQ7h2ZWB8fWGZQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] dt-bindings: net: convert enetc to yaml
+To: Frank Li <Frank.li@nxp.com>
+Cc: krzk@kernel.org, conor+dt@kernel.org, davem@davemloft.net, 
+	devicetree@vger.kernel.org, edumazet@google.com, imx@lists.linux.dev, 
+	krzk+dt@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 09, 2024 at 03:33:49PM +0200, Oleg Nesterov wrote:
-> I guess it should do
-> 
-> 	WRITE_ONCE(uc->next, uprobe->consumers);
-> 	rcu_assign_pointer(uprobe->consumers, uc);
+On Mon, Jul 1, 2024 at 4:04=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
+>
+> On Thu, Jun 27, 2024 at 09:55:47AM -0600, Rob Herring wrote:
+> > On Wed, Jun 26, 2024 at 12:23:07PM -0400, Frank Li wrote:
+> > > Convert enetc device binding file to yaml. Split to 3 yaml files,
+> > > 'fsl,enetc.yaml', 'fsl,enetc-mdio.yaml', 'fsl,enetc-ierb.yaml'.
+> > >
+> > > Additional Changes:
+> > > - Add pci<vendor id>,<production id> in compatible string.
+> > > - Ref to common ethernet-controller.yaml and mdio.yaml.
+> > > - Remove fixed-link part.
+> > >
+> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > ---
+> > > Change from v1 to v2
+> > > - renamee file as fsl,enetc-mdio.yaml, fsl,enetc-ierb.yaml, fsl,enetc=
+.yaml
+> > > - example include pcie node
+> > > ---
+> > >  .../bindings/net/fsl,enetc-ierb.yaml          |  35 ++++++
+> > >  .../bindings/net/fsl,enetc-mdio.yaml          |  53 ++++++++
+> > >  .../devicetree/bindings/net/fsl,enetc.yaml    |  50 ++++++++
+> > >  .../devicetree/bindings/net/fsl-enetc.txt     | 119 ----------------=
+--
+> > >  4 files changed, 138 insertions(+), 119 deletions(-)
+> > >  create mode 100644 Documentation/devicetree/bindings/net/fsl,enetc-i=
+erb.yaml
+> > >  create mode 100644 Documentation/devicetree/bindings/net/fsl,enetc-m=
+dio.yaml
+> > >  create mode 100644 Documentation/devicetree/bindings/net/fsl,enetc.y=
+aml
+> > >  delete mode 100644 Documentation/devicetree/bindings/net/fsl-enetc.t=
+xt
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/net/fsl,enetc-ierb.yam=
+l b/Documentation/devicetree/bindings/net/fsl,enetc-ierb.yaml
+> > > new file mode 100644
+> > > index 0000000000000..ce88d7ce07a5e
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/net/fsl,enetc-ierb.yaml
+> > > @@ -0,0 +1,35 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/net/fsl,enetc-ierb.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Integrated Endpoint Register Block
+> > > +
+> > > +description:
+> > > +  The fsl_enetc driver can probe on the Integrated Endpoint Register
+> > > +  Block, which preconfigures the FIFO limits for the ENETC ports.
+> >
+> > Wrap at 80 chars
+> >
+> > > +
+> > > +maintainers:
+> > > +  - Frank Li <Frank.Li@nxp.com>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - fsl,ls1028a-enetc-ierb
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +
+> > > +additionalProperties: false
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    ierb@1f0800000 {
+> >
+> > unit-address doesn't match
+> >
+> > > +        compatible =3D "fsl,ls1028a-enetc-ierb";
+> > > +        reg =3D <0xf0800000 0x10000>;
+> > > +    };
+> > > diff --git a/Documentation/devicetree/bindings/net/fsl,enetc-mdio.yam=
+l b/Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml
+> > > new file mode 100644
+> > > index 0000000000000..60740ea56cb08
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml
+> > > @@ -0,0 +1,53 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/net/fsl,enetc-mdio.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: ENETC the central MDIO PCIe endpoint device
+> > > +
+> > > +description:
+> > > +  In this case, the mdio node should be defined as another PCIe
+> > > +  endpoint node, at the same level with the ENETC port nodes
+> > > +
+> > > +maintainers:
+> > > +  - Frank Li <Frank.Li@nxp.com>.
+> >
+> > stray '.'                         ^
+> >
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    items:
+> > > +      - enum:
+> > > +          - pci1957,ee01
+> > > +      - const: fsl,enetc-mdio
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +
+> > > +allOf:
+> > > +  - $ref: mdio.yaml
+> >
+> > As a PCI device, also needs pci-device.yaml.
+>
+> After I add pci-devices.yaml, I get
+> Documentation/devicetree/bindings/net/fsl,enetc.example.dtb: ethernet@0,0=
+: False schema does not allow {'compatible': ['pci1957,e100', 'fsl,enetc'],=
+ 'reg': [[0, 0, 0, 0, 0]], 'phy-handle': [[4294967295]], 'phy-connection-ty=
+pe': ['sgmii'], '$nodename': ['ethernet@0,0']}
 
-Yes... 
+Perhaps use pci-device.yaml, not pci-devices.yaml which doesn't exist.
+The latter gives me this error, the former works fine for me.
+
+Rob
 
