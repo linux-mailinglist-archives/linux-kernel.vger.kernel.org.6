@@ -1,277 +1,179 @@
-Return-Path: <linux-kernel+bounces-246219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B206392BF32
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:10:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A7E092BF3A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65D3B28693A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:10:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5810287B35
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829DB1A08A6;
-	Tue,  9 Jul 2024 16:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE2E1A2543;
+	Tue,  9 Jul 2024 16:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uytXYJoJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hR291SzQ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D38119E7EA;
-	Tue,  9 Jul 2024 16:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535A019E802;
+	Tue,  9 Jul 2024 16:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720541247; cv=none; b=tiY/ZzkzA8rNnQrDjNWmdANZFF+G+BFreLrAKumJJCMKdEXUx7n/X5gb98dyhWFWD+znxk2aGchf3KLa+l0aGkioHPjiF2FAhuNBHr5cpfrQGxX0tAZQWN6JQ9Hz1AW59+4Z5Pae4WQs1rdO2p1U0iZvF00gsLpqpVjZxiDglD0=
+	t=1720541252; cv=none; b=GnaxLg4D/DDvnFifVKKjBVWxZ8NiVWlGCoHErk0C11k1KcUNs1yk5Ze9LXfw0JMaCCE08c9SdFNCJ7/K+CmrUb90H7J7eO2gdR8rUbXPXHxKknUPSZ1qUIpLfBzflPo51/ZRCelWFpWUFVf8aI+gCLWzFDF/HrlWQSbljnSowLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720541247; c=relaxed/simple;
-	bh=BxoAN4lmNQraAC4bAp0pAC8a0CH5i0ji8ZhUUmuXkBo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fRPy8VP/Vj7lz2gEZiHBFhE2YKz8REDEvluU9zS+tCYvAW3Lbm+iCD8TVjIDmazTNxKW3g/2HMShDcPI4C+OZ00XFG/xt5UtFIwgkZCoBxqraJPu5cayK93oflt+rBLrm48yCjUTaQycaly+bP79jeJ4m3MpkNNucKF1iZe8q30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uytXYJoJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BF19C32782;
-	Tue,  9 Jul 2024 16:07:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720541247;
-	bh=BxoAN4lmNQraAC4bAp0pAC8a0CH5i0ji8ZhUUmuXkBo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uytXYJoJ4AIiXMWikKweXsRNX704B1h4UhYGtfh68aQTJJgiwVgH+8E+3xJhOa68c
-	 WnHu6YdoPBgmOzoKnmbRpHjplfcw5/J0zbyyKYg3CXe5Pzka+v/cPsa+5lIVEi3Tq/
-	 imjD4RGTJqomWV904le3VnL4I5FD02f68dwrFnM4WQtrkxkvp8SjATwpoplj9Un+8K
-	 FYBnaHZAL2llssw1Gi3i+VadZTvC7MmGunR5ksMexCfHv94ventKGNUuMGRpM2lvtM
-	 QWeBV2eLmXzhgxGOh+Ah2iNdCaeGIPl4k6OttyiiRTJnu2hULKpGIk2ois1QrML5H6
-	 yuBPHDigsyrwg==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Jan Alexander Steffens <heftig@archlinux.org>,
-	=?UTF-8?q?Johannes=20L=C3=B6thberg?= <johannes@kyriasis.com>,
-	=?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <debian@fabian.gruenbichler.email>,
-	Josh Stone <jistone@redhat.com>,
-	Randy Barlow <randy@electronsweatshop.com>,
-	Anna Figueiredo Gomes <navi@vlhl.dev>,
-	Matoro Mahri <matoro_gentoo@matoro.tk>,
-	Ryan Scheel <ryan.havvy@gmail.com>,
-	figsoda <figsoda@pm.me>,
-	=?UTF-8?q?J=C3=B6rg=20Thalheim?= <joerg@thalheim.io>,
-	Theodore Ni <43ngvg@masqt.com>,
-	Winter <nixos@winter.cafe>,
-	William Brown <wbrown@suse.de>,
-	Xiaoguang Wang <xiaoguang.wang@suse.com>,
-	Andrea Righi <andrea.righi@canonical.com>,
-	Zixing Liu <zixing.liu@canonical.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: [PATCH v2 13/13] docs: rust: quick-start: add section on Linux distributions
-Date: Tue,  9 Jul 2024 18:06:08 +0200
-Message-ID: <20240709160615.998336-14-ojeda@kernel.org>
-In-Reply-To: <20240709160615.998336-1-ojeda@kernel.org>
-References: <20240709160615.998336-1-ojeda@kernel.org>
+	s=arc-20240116; t=1720541252; c=relaxed/simple;
+	bh=3wgHZ2WganwYBTQ+En/Dim9I90oCjZ8PSSzNBYwR2OQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=O1VZvIyL1ki/njOmXca4F2Qza3vyDMmIzuO/Uc/cH6VAXL4tcStoC+T4njr+zICDADjzYTg/gx/UencyNl3C4HpIS8Uz8rjP84xMa/w/QMEHOBk2HWO0hucaLtfobFoi3ihsX/Uq7G37POev51IJNaCwdQvWYkuvQGKKDM1glcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hR291SzQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469AcgbS020395;
+	Tue, 9 Jul 2024 16:07:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=TPhRObdMPAjgaa6WNe+bBMwLZ3xrhyAoY77kR+qZhb0=; b=hR
+	291SzQBes6xFJf6595bIxXse0ukhX/xLkGjQwmg8SYOdwGZAD232YmPJ0svW6Okt
+	5sV2nTSBanOSok4bzkSA6LIslRgIcRCesC9xQAKXqEypwGuGUaFTxNnRZXZqTx5K
+	mrC0xtfEA1URpRgQOSFPpY1h9W1NRn5ABjjoLK7EHNuV+VyJWSaOF7oy5jj9p+Ee
+	YJ1oKhRM+XuGtH/iXCw1xTXrqBrJfCIo33EnoDUOoEAQ6QYOBeH0/i5p5Vo9so5N
+	az61arsBmObQkkSnkeZJeig8T4bM+OGdMC7BhWZJHZLk7t3hNz6HLAvGzaNL7kWb
+	EASOtYCfzZuLWz+zyJgg==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x0t7638-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 16:07:22 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469G7KVf011827
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 16:07:20 GMT
+Received: from hu-depengs-sha.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 9 Jul 2024 09:07:13 -0700
+From: Depeng Shao <quic_depengs@quicinc.com>
+To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <quic_eberman@quicinc.com>, <quic_depengs@quicinc.com>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>
+Subject: [PATCH V3 00/13] media: qcom: camss: Add sm8550 support
+Date: Tue, 9 Jul 2024 21:36:43 +0530
+Message-ID: <20240709160656.31146-1-quic_depengs@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: eCeOHZGQ2nmcSarzIQddmM-RFZWkMVRd
+X-Proofpoint-ORIG-GUID: eCeOHZGQ2nmcSarzIQddmM-RFZWkMVRd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_05,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=999 priorityscore=1501 malwarescore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090106
 
-Now that we are starting to support several Rust compiler and `bindgen`
-versions, there is a good chance some Linux distributions work out of
-the box.
+V3:
+- Rebased the change based on below change which will be merged firstly.
+  "Move camss version related defs in to resources"
+Link: https://lore.kernel.org/all/20240522154659.510-1-quic_grosikop@quicinc.com/
+- Rebased the change based on Bryan's csiphy optimization change and add
+these changes into this series, so that the new csiphy-3ph driver don't
+need to add duplicate code. This has got Bryan's permission to add his
+patches into this series.
+- Refactor some changes based on the comments to move the random code to
+patches where they are used.
+- Remove the vfe780 irq function since it isn't doing the actual work.
+- Add dt-binding for sm8550 camss driver.
+Link to V2: https://lore.kernel.org/all/20240320141136.26827-1-quic_depengs@quicinc.com/
 
-Thus, provide some instructions on how to set the toolchain up for a
-few major Linux distributions. This simplifies the setup users need to
-build the kernel.
+V2:
+- Update some commit messages
+Link to V1: https://lore.kernel.org/all/20240320134227.16587-1-quic_depengs@quicinc.com/
 
-In addition, add an introduction to the document so that it is easier
-to understand its structure and move the LLVM+Rust kernel.org toolchains
-paragraph there (removing "depending on the Linux version"). We may want
-to reorganize the document or split it in the future, but I wanted to
-focus this commit on the new information added about each particular
-distribution.
+V1:
+SM8550 is a Qualcomm flagship SoC. This series adds support to
+bring up the CSIPHY, CSID, VFE/RDI interfaces in SM8550.
 
-Finally, remove the `rustup`'s components mention in `changes.rst` since
-users do not need it if they install the toolchain via the distributions
-(and anyway it was too detailed for that main document).
+SM8550 provides
 
-Cc: Jan Alexander Steffens <heftig@archlinux.org>
-Cc: Johannes Löthberg <johannes@kyriasis.com>
-Cc: Fabian Grünbichler <debian@fabian.gruenbichler.email>
-Cc: Josh Stone <jistone@redhat.com>
-Cc: Randy Barlow <randy@electronsweatshop.com>
-Cc: Anna (navi) Figueiredo Gomes <navi@vlhl.dev>
-Cc: Matoro Mahri <matoro_gentoo@matoro.tk>
-Cc: Ryan Scheel <ryan.havvy@gmail.com>
-Cc: figsoda <figsoda@pm.me>
-Cc: Jörg Thalheim <joerg@thalheim.io>
-Cc: Theodore Ni <43ngvg@masqt.com>
-Cc: Winter <nixos@winter.cafe>
-Cc: William Brown <wbrown@suse.de>
-Cc: Xiaoguang Wang <xiaoguang.wang@suse.com>
-Cc: Andrea Righi <andrea.righi@canonical.com>
-Cc: Zixing Liu <zixing.liu@canonical.com>
-Cc: Nathan Chancellor <nathan@kernel.org>
-Tested-by: Benno Lossin <benno.lossin@proton.me>
-Tested-by: Andreas Hindborg <a.hindborg@samsung.com>
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
-v2:
-  - Add openSUSE Slowroll.
-  - Update openSUSE docs: both Slowroll and Tumbleweed now provide
-    `rustfmt`, Clippy and the Rust standard library sources, so the
-    comment about those can be dropped. (William)
-  - I ended up leaving the Debian/Ubuntu docs as-is for the time being.
-    Happy to get a patch for that later. We should definitely add them
-    if they start working for the current kernel (currently: Ubuntu's
-    latest versioned package is 1.76, and Debian's `web` one is 1.70).
-    (Andrea, Fabian)
-  - Move the LLVM+Rust kernel.org toolchains paragraph to the
-    introduction that this commit adds, now that we have access to that
-    paragraph since the series is rebased on top of `rust-next`.
-  - Use plural for "release".
+- 3 x VFE, 3 RDI per VFE
+- 2 x VFE Lite, 4 RDI per VFE
+- 3 x CSID
+- 2 x CSID Lite
+- 8 x CSI PHY
 
- Documentation/process/changes.rst  |  5 --
- Documentation/rust/quick-start.rst | 93 ++++++++++++++++++++++++++----
- 2 files changed, 81 insertions(+), 17 deletions(-)
+This series is rebased based on: "Move camss version related defs in to resources"
+Link: https://lore.kernel.org/all/20240522154659.510-1-quic_grosikop@quicinc.com/
 
-diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-index 0d0b7120792b..0ce96ae2588c 100644
---- a/Documentation/process/changes.rst
-+++ b/Documentation/process/changes.rst
-@@ -90,11 +90,6 @@ Rust (optional)
+Bryan O'Donoghue (6):
+  media: qcom: camss: csiphy-3ph: Fix trivial indentation fault in
+    defines
+  media: qcom: camss: csiphy-3ph: Remove redundant PHY init sequence
+    control loop
+  media: qcom: camss: csiphy-3ph: Rename struct
+  media: qcom: camss: csiphy: Add an init callback to CSI PHY devices
+  media: qcom: camss: csiphy-3ph: Move CSIPHY variables to data field
+    inside csiphy struct
+  media: qcom: camss: csiphy-3ph: Use an offset variable to find common
+    control regs
 
- A recent version of the Rust compiler is required.
+Depeng Shao (7):
+  dt-bindings: media: camss: Add qcom,sm8550-camss binding
+  media: qcom: camss: csiphy-3ph: Add Gen2 v1.2 two-phase MIPI CSI-2
+    DPHY init
+  media: qcom: camss: Add CSID Gen3 support for SM8550
+  media: qcom: camss: Add support for VFE hardware version Titan 780
+  media: qcom: camss: Add notify interface in camss driver
+  media: qcom: camss: Add sm8550 support
+  media: qcom: camss: Add sm8550 resources
 
--Each Rust toolchain comes with several "components", some of which are required
--(like ``rustc``) and some that are optional. The ``rust-src`` component (which
--is optional) needs to be installed to build the kernel. Other components are
--useful for developing.
--
- Please see Documentation/rust/quick-start.rst for instructions on how to
- satisfy the build requirements of Rust support. In particular, the ``Makefile``
- target ``rustavailable`` is useful to check why the Rust toolchain may not
-diff --git a/Documentation/rust/quick-start.rst b/Documentation/rust/quick-start.rst
-index 66cefbab8f9a..d06a36106cd4 100644
---- a/Documentation/rust/quick-start.rst
-+++ b/Documentation/rust/quick-start.rst
-@@ -5,24 +5,93 @@ Quick Start
+ .../bindings/media/qcom,sm8550-camss.yaml     | 545 ++++++++++++
+ drivers/media/platform/qcom/camss/Makefile    |   2 +
+ .../platform/qcom/camss/camss-csid-gen3.c     | 483 +++++++++++
+ .../platform/qcom/camss/camss-csid-gen3.h     |  26 +
+ .../media/platform/qcom/camss/camss-csid.c    |  21 +
+ .../media/platform/qcom/camss/camss-csid.h    |  11 +
+ .../qcom/camss/camss-csiphy-2ph-1-0.c         |   6 +
+ .../qcom/camss/camss-csiphy-3ph-1-0.c         | 796 ++++++++++--------
+ .../media/platform/qcom/camss/camss-csiphy.c  |   4 +
+ .../media/platform/qcom/camss/camss-csiphy.h  |   2 +
+ .../media/platform/qcom/camss/camss-vfe-780.c | 429 ++++++++++
+ drivers/media/platform/qcom/camss/camss-vfe.c |   6 +
+ drivers/media/platform/qcom/camss/camss-vfe.h |   2 +
+ drivers/media/platform/qcom/camss/camss.c     | 462 ++++++++++
+ drivers/media/platform/qcom/camss/camss.h     |  10 +
+ 15 files changed, 2467 insertions(+), 338 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/qcom,sm8550-camss.yaml
+ create mode 100644 drivers/media/platform/qcom/camss/camss-csid-gen3.c
+ create mode 100644 drivers/media/platform/qcom/camss/camss-csid-gen3.h
+ create mode 100644 drivers/media/platform/qcom/camss/camss-vfe-780.c
 
- This document describes how to get started with kernel development in Rust.
 
-+There are a few ways to install a Rust toolchain needed for kernel development.
-+A simple way is to use the packages from your Linux distribution if they are
-+suitable -- the first section below explains this approach. An advantage of this
-+approach is that, typically, the distribution will match the LLVM used by Rust
-+and Clang.
-+
-+Another way is using the prebuilt stable versions of LLVM+Rust provided on
-+`kernel.org <https://kernel.org/pub/tools/llvm/rust/>`_. These are the same slim
-+and fast LLVM toolchains from :ref:`Getting LLVM <getting_llvm>` with versions
-+of Rust added to them that Rust for Linux supports. Two sets are provided: the
-+"latest LLVM" and "matching LLVM" (please see the link for more information).
-+
-+Alternatively, the next two "Requirements" sections explain each component and
-+how to install them through ``rustup``, the standalone installers from Rust
-+and/or building them.
-+
-+The rest of the document explains other aspects on how to get started.
-+
-+
-+Distributions
-+-------------
-+
-+Arch Linux
-+**********
-+
-+Arch Linux provides recent Rust releases and thus it should generally work out
-+of the box, e.g.::
-+
-+	pacman -S rust rust-src rust-bindgen
-+
-+
-+Debian
-+******
-+
-+Debian Unstable (Sid), outside of the freeze period, provides recent Rust
-+releases and thus it should generally work out of the box, e.g.::
-+
-+	apt install rustc rust-src bindgen rustfmt rust-clippy
-+
-+
-+Fedora Linux
-+************
-+
-+Fedora Linux provides recent Rust releases and thus it should generally work out
-+of the box, e.g.::
-+
-+	dnf install rust rust-src bindgen-cli rustfmt clippy
-+
-+
-+Gentoo Linux
-+************
-+
-+Gentoo Linux (and especially the testing branch) provides recent Rust releases
-+and thus it should generally work out of the box, e.g.::
-+
-+	USE='rust-src rustfmt clippy' emerge dev-lang/rust dev-util/bindgen
-+
-+``LIBCLANG_PATH`` may need to be set.
-+
-+
-+Nix
-+***
-+
-+Nix (unstable channel) provides recent Rust releases and thus it should
-+generally work out of the box, e.g.::
-+
-+	{ pkgs ? import <nixpkgs> {} }:
-+	pkgs.mkShell {
-+	  nativeBuildInputs = with pkgs; [ rustc rust-bindgen rustfmt clippy ];
-+	  RUST_LIB_SRC = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
-+	}
-+
-+
-+openSUSE
-+********
-+
-+openSUSE Slowroll and openSUSE Tumbleweed provide recent Rust releases and thus
-+they should generally work out of the box, e.g.::
-+
-+	zypper install rust rust1.79-src rust-bindgen clang
-+
+base-commit: 0c52056d9f77508cb6d4d68d3fc91c6c08ec71af
+prerequisite-patch-id: 74fabfbf51d650af74a1dc9f7e09fe03a1d85d93
+prerequisite-patch-id: 3833c5eed2690679e5eca3551053e08350d2b070
+prerequisite-patch-id: 0e433e0c5a9d2402da97c1a01194b1a9f6f7e6cb
+prerequisite-patch-id: f876f5ed5605fcfebea7f1584888f494bfecd102
+prerequisite-patch-id: 8bcb15b208a319a6e88ff4f9e5023097af92cc90
+prerequisite-patch-id: dc4b5ddbbedd8773159694b3becad5c7dcbfcf77
+prerequisite-patch-id: 75c1b00f4476ee6006041046ad5194b086db3358
+prerequisite-patch-id: 0efc004cb8a844291ebe1f16ce192567f44218c7
+-- 
+2.34.1
 
- Requirements: Building
- ----------------------
-
- This section explains how to fetch the tools needed for building.
-
--Some of these requirements might be available from Linux distributions
--under names like ``rustc``, ``rust-src``, ``rust-bindgen``, etc. However,
--at the time of writing, they are likely not to be recent enough unless
--the distribution tracks the latest releases.
--
--Prebuilt stable versions of LLVM+Rust are provided on `kernel.org
--<https://kernel.org/pub/tools/llvm/rust/>`_. These are the same slim and fast
--LLVM toolchains from :ref:`Getting LLVM <getting_llvm>` with versions of Rust
--added to them that Rust for Linux supports, depending on the Linux version. Two
--sets are provided: the "latest LLVM" and "matching LLVM" (please see the link
--for more information).
--
- To easily check whether the requirements are met, the following target
- can be used::
-
---
-2.45.2
 
