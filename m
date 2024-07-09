@@ -1,148 +1,226 @@
-Return-Path: <linux-kernel+bounces-246490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A9BE92C29C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:36:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BD4F92C29F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEFED1F23743
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:36:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6C43281BE2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8007815B116;
-	Tue,  9 Jul 2024 17:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29E31B86F8;
+	Tue,  9 Jul 2024 17:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="dOjzDEUf"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="on28x9a3"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5A11B86F4
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 17:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FA91B86CC
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 17:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720546607; cv=none; b=uYaYoT1CTIA/UeQ22xUZRd63U6IthPBZJWidtNpj+6I45kPkdzK4r4kHpG4P7po7Giesd76l+i48Fy/ShSGkljIOPmHZ/cQIOGDa61rnkG2RTKsgCG9cv30NocpMnpwT9sCdxWgR4oVK7wxfcdtF21T+UuPKJklQatAselyoxzY=
+	t=1720546637; cv=none; b=ou2/JY++ZEbmrzjABYD3UALwcKWQXmsdJMU25lvGPipysbOLWaaCHZ2ZcyjTcyGayfqPNngVd5SJgTMuEz7TFZQs772GfpmtUabHmUl8dbYgfso2ahVrySTqIaYy2K98zTisBWGG1aoZ2zsQu6qU1c2Cc0D7uTIdFcj6TQqGISI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720546607; c=relaxed/simple;
-	bh=ybUpRykbhepziN9syApY4S0KNYPzhQzyVpqfFsxbFkQ=;
+	s=arc-20240116; t=1720546637; c=relaxed/simple;
+	bh=ogMRUdIc4ADrzG/PEEr6kl01MPyEFM24XNmW5f60p9c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ToebmOkyrWa8T5z74ae4QrUEjOkXFw/UHn/6XEjhI7ocKGom8yeg5coUhjFmrFCBTt845dGNbhc2KnoHGJ1uqpvCoNHOoY+CpZ2NmruGHFSTLpfQjO7w+Nz88iEputofV1HZ2lxU22Qjc8awLJV9yuYrmC4f621VtkyPTvx1pF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=dOjzDEUf; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-447f0d20592so13015671cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 10:36:45 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fprztUfAQSjMSXAqSSb0Vm7n2VbDtyAVDzPEG3pvDQxCX9zdVSWHEb38Y02M7ofa6duK5mUWHU1PBHgQOFEajqoKWiiunu275gnGUehNLjOx+41Z/bdpEVnEQpvYiYPIXJNQ6/dNkI5aq8OqMWCzhHwRJrpaR3q6dsLvR6TPnK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=on28x9a3; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70b0e9ee7bcso3285292b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 10:37:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1720546605; x=1721151405; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3ktxBVI1f7SCZNiJbmLEe3WqbtU8UsAv3DUj8UortQs=;
-        b=dOjzDEUfHei7tFOTN2iDhLFIsxQfSKBU7YN++x09ZoFprzt0bwVqduq9O4tIn7lEtx
-         rte38R+Es2e6nB8QlZ1BjI4fNLtIBZiinnjZTupxko8qX4LW69K+B4YSk8msiDu4ROkI
-         D2vOJXIfRiylG7OXdTEshrYn9/8bLS1p2+HOM5CotimFeaNcW8L7TDLD+N7QSLQR1ktL
-         bFr3RC5vNXvcNxvOiGl95LcZPdBdQhfKmVh2yFHmLYW1DN1gaKdMfv1Ds/xHmw0rgqx1
-         tSsH0y8aJI0CpjjXkRYJ6LRdorChX4zwgORo2glzKbc9M9/96FtEgGNU04KTSjXUccqt
-         tqqA==
+        d=linaro.org; s=google; t=1720546635; x=1721151435; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=B0urqfDNvv1tv+Q+hpyHqmS7MWBKqnamW85qTWzSce8=;
+        b=on28x9a3N4i3NdZSQgRHUAubInbTs6Ltqt46Lrv/xpuGU+SZD5VGrHoTIRN8KUbx9d
+         krTxQA60pO5F7Vc5P1KtDt9tBjpyzkYCxCodZnfEoeC6rzfZcCMI2FGBRdUMDLd++YhD
+         L0JDbA/+EVngL5NQ4UHMp/4OS2v79li4LFw2locJUDn678BscN0xHNtCz0/2W73RZlY4
+         0XbNgkd+4FKKkS2k7J8qS4SHhYTLG07EkYQFHaYLr/yVO0uhEkEc2GY4ZqeqstzeZC8T
+         5auv+bB013EjTYApTtDRCgFCVYm4b0bXQKgdv7FbrbWyUhXOQl/gX3T1Rtal1iye4FLF
+         2JOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720546605; x=1721151405;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3ktxBVI1f7SCZNiJbmLEe3WqbtU8UsAv3DUj8UortQs=;
-        b=wMiWcXlssNmav/NEkkcpA/8+37leyF0zVPdCMM7CV05m2XZ2vI9j5ZyBvztkTWpzNj
-         TeuETbS20+lTFfvnLyeCzBR4g/3BI32zt/qNeLN/NbB9kw+BL+xS651OD7oiaNGET1CF
-         IE2Fh8RfIqgieUzsnW6Cu42djWDcbHxmaLXb3Ac0sz58lY4ClwfDfoV/qDxGHp8VLbJI
-         r4Qko9ouAebVXT0gpwvpDDdMjOcafkX90wBiHHcTpmTkFaeHpGQaiQOTh2Is9gdQJkO3
-         oguZgOCzRnOgw7eNNRZ46iTFeLSaXvA1RZ8mUqDxA9zM+XxszgDGvSMtHO+QLnJFtYAp
-         8l/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWR7ITS/DkVDTj5k+ROViaVXwBbG1W/uTBNl4ag8c0njpsIFwaSqPgEE6Gy/bTpC056vjO9EfWENbIQzbKYlX32ASZc3G+SPmj5KOta
-X-Gm-Message-State: AOJu0YwwN0sgwPL3R/TEHDJsIb8aQkXJjFzi+DyVPxJcDKdjk+75zznq
-	y8SrWOdOOIejRNa9IUKx62AHS2tXUMeHoSjY5w0EDaZCoSbkppVURPfZjWaU0pc=
-X-Google-Smtp-Source: AGHT+IEey3aVdoUnVEY9s9+wQwMkPK21WmHGPGMn7kqGKdsDHciJdWQY/uQZYPc75ra9uDqujYUDpg==
-X-Received: by 2002:ad4:5d6e:0:b0:6b5:7ee:1d79 with SMTP id 6a1803df08f44-6b61bce1891mr38703216d6.26.1720546604791;
-        Tue, 09 Jul 2024 10:36:44 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b61c40e5e7sm10084406d6.72.2024.07.09.10.36.43
+        d=1e100.net; s=20230601; t=1720546635; x=1721151435;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B0urqfDNvv1tv+Q+hpyHqmS7MWBKqnamW85qTWzSce8=;
+        b=PTV65wYXkVcumMcYUmCQlYMcmg96KhJf1i8gmSJnjwEmKTNQBAzDuZNf63IBvliPTQ
+         gl8+o+AVK7JihXeyG5jfIPIH/xJHOUSiRQG8+dj25/ZyqXAnw8pJOycKe7DveWqwx1qC
+         p4Dgzi1KtWtcxHU74btv17AMy8StCmGke1nrTmqnLWC0RaYbnR07F8LIz2B4JArpaJOO
+         XJtr+606ePkc5L3IJk/67roGvkDbSGvrEQiZWe3LmDyB6JwNq1oFobAxFy09k+f+Cvq6
+         u1/hsPjjgS1+fbBCm1IbEoJpaMmopQEwhC3NqVju8h1zBrA/KHxKvWqqAdqwvafwMLBX
+         mQlg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDwKcMX2AVHFyTMMwEWV5cTeNlTaODawE4091Bn+d6NhuHQPP+YnSCYVYyeuLjH1izZSVak1Tnacl8a50kwOpppHeb48xR9+rSIl+T
+X-Gm-Message-State: AOJu0YyOxI2woS9M+TNToBCo0Mnuj8M1iJg3UZNbnhqvHFqAOAub/rGs
+	/bcDNMQRQuP3RvOt4uxtnazn7DLBvatH/iJ3iHnL30e0BUtE66pv6c0pXBE4nLTo+LKl3RGRdeY
+	=
+X-Google-Smtp-Source: AGHT+IHx+1Lqq1O27WMTXLu9Z/BR76ZVx0k0WA7fdp656XoslrBJOBGT82uo7q3bzXESr0Htjqsi3A==
+X-Received: by 2002:a05:6a20:7283:b0:1c2:74b4:a05d with SMTP id adf61e73a8af0-1c29821d04bmr4059026637.23.1720546634720;
+        Tue, 09 Jul 2024 10:37:14 -0700 (PDT)
+Received: from thinkpad ([117.193.213.131])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ad52d1sm18734885ad.305.2024.07.09.10.37.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 10:36:43 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sRElf-002kZ7-8R;
-	Tue, 09 Jul 2024 14:36:43 -0300
-Date: Tue, 9 Jul 2024 14:36:43 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
-	Jacob Pan <jacob.jun.pan@linux.intel.com>,
-	Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
-	virtualization@lists.linux-foundation.org,
+        Tue, 09 Jul 2024 10:37:13 -0700 (PDT)
+Date: Tue, 9 Jul 2024 23:07:08 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: tglx@linutronix.de, linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 07/10] iommufd: Fault-capable hwpt
- attach/detach/replace
-Message-ID: <20240709173643.GI14050@ziepe.ca>
-References: <20240616061155.169343-1-baolu.lu@linux.intel.com>
- <20240616061155.169343-8-baolu.lu@linux.intel.com>
- <Zn8oZ80p0p1bHgBC@ziepe.ca>
- <7421b923-0bd6-4c9d-81e6-07d954085171@linux.intel.com>
+Subject: Re: MSIs not freed in GICv3 ITS driver
+Message-ID: <20240709173708.GA44420@thinkpad>
+References: <20240708153933.GC5745@thinkpad>
+ <865xtf4woi.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7421b923-0bd6-4c9d-81e6-07d954085171@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <865xtf4woi.wl-maz@kernel.org>
 
-On Mon, Jul 01, 2024 at 01:55:12PM +0800, Baolu Lu wrote:
-> On 2024/6/29 5:17, Jason Gunthorpe wrote:
-> > On Sun, Jun 16, 2024 at 02:11:52PM +0800, Lu Baolu wrote:
-> > > +static int iommufd_fault_iopf_enable(struct iommufd_device *idev)
-> > > +{
-> > > +	struct device *dev = idev->dev;
-> > > +	int ret;
-> > > +
-> > > +	/*
-> > > +	 * Once we turn on PCI/PRI support for VF, the response failure code
-> > > +	 * should not be forwarded to the hardware due to PRI being a shared
-> > > +	 * resource between PF and VFs. There is no coordination for this
-> > > +	 * shared capability. This waits for a vPRI reset to recover.
-> > > +	 */
-> > > +	if (dev_is_pci(dev) && to_pci_dev(dev)->is_virtfn)
-> > > +		return -EINVAL;
-> > I don't quite get this remark, isn't not supporting PRI on VFs kind of
-> > useless? What is the story here?
+On Mon, Jul 08, 2024 at 06:31:57PM +0100, Marc Zyngier wrote:
+> Mani,
 > 
-> This remark is trying to explain why attaching an iopf-capable hwpt to a
-> VF is not supported for now. The PCI sepc (section 10.4.2.1) states that
-> a response failure will disable the PRI on the function. But for PF/VF
-> case, the PRI is a shared resource, therefore a response failure on a VF
-> might cause iopf on other VFs to malfunction. So, we start from simple
-> by not allowing it.
+> On Mon, 08 Jul 2024 16:39:33 +0100,
+> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
+> > 
+> > Hi Marc, Thomas,
+> > 
+> > I'm seeing a weird behavior with GICv3 ITS driver while allocating MSIs from
+> > PCIe devices. When the PCIe driver (I'm using virtio_pci_common.c) tries to
+> > allocate non power of 2 MSIs (like 3), then the GICv3 MSI driver always rounds
+> > the MSI count to power of 2 to find the order. In this case, the order becomes 2
+> > in its_alloc_device_irq().
+> 
+> That's because we can only allocate EventIDs as a number of ID
+> bits. So you can't have *1* MSI, nor 3. You can have 2, 4, 8, or
+> 2^24. This is a power-of-two architecture.
+> 
 
-You are talking about IOMMU_PAGE_RESP_FAILURE ?
+Ah okay.
 
-But this is bad already, something like SVA could trigger
-IOMMU_PAGE_RESP_FAILURE on a VF without iommufd today. Due to memory
-allocation failure in iommu_report_device_fault()
+> > So 4 entries are allocated by bitmap_find_free_region().
+> 
+> Assuming you're calling about its_alloc_device_irq(), it looks like a
+> bug. Or rather, some laziness on my part. The thing is, this bitmap is
+> only dealing with sub-allocation in the pool that has been given to
+> the endpoint. So the power-of-two crap doesn't really matter unless
+> you are dealing with Multi-MSI, which has actual alignment
+> requirements.
+> 
 
-And then we pass in code from userspace and blindly cast it to
-enum iommu_page_response_code ?
+Okay.
 
-Probably we should just only support IOMMU_PAGE_RESP_SUCCESS/INVALID
-from userspace and block FAILURE entirely. Probably the VMM should
-emulate FAILURE by disabling PRI on by changing to a non PRI domain.
+> >
+> > But since the PCIe driver has only requested 3 MSIs, its_irq_domain_alloc()
+> > will only allocate 3 MSIs, leaving one bitmap entry unused.
+> > 
+> > And when the driver frees the MSIs using pci_free_irq_vectors(), only 3
+> > allocated MSIs were freed and their bitmap entries were also released. But the
+> > entry for the additional bitmap was never released. Due to this,
+> > its_free_device() was also never called, resulting in the ITS device not getting
+> > freed.
+> > 
+> > So when the PCIe driver tries to request the MSIs again (PCIe device being
+> > removed and inserted back), because the ITS device was not freed previously,
+> > MSIs were again requested for the same ITS device. And due to the stale bitmap
+> > entry, the ITS driver refuses to allocate 4 MSIs as only 3 bitmap entries were
+> > available. This forces the PCIe driver to reduce the MSI count, which is sub
+> > optimal.
+> > 
+> > This behavior might be applicable to other irqchip drivers handling MSI as well.
+> > I want to know if this behavior is already known with MSI and irqchip drivers?
+> > 
+> > For fixing this issue, the PCIe drivers could always request MSIs of power of 2,
+> > and use a dummy MSI handler for the extra number of MSIs allocated. This could
+> > also be done in the generic MSI driver itself to avoid changes in the PCIe
+> > drivers. But I wouldn't say it is the best possible fix.
+> 
+> No, that's terrible. This is just papering over a design mistake, and
+> I refuse to go down that road.
+> 
 
-And this subtle uABI leak needs a fix:
+Agree. But what about other MSI drivers? And because of the MSI design, they
+also round the requested MSI count to power of 2, leading to unused vectors and
+those also wouldn't get freed. I think this power of 2 limitation should be
+imposed at the API level or in the MSI driver instead of silently keeping unused
+vectors in irqchip drivers.
 
-		iopf_group_response(group, response.code);
+> > 
+> > Is there any other way to address this issue? Or am I missing something
+> > completely?
+> 
+> Well, since each endpoint handled by an ITS has its allocation tracked
+> by a bitmap, it makes more sense to precisely track the allocation.
+> 
+> Here's a quick hack that managed to survive a VM boot. It may even
+> work. The only problem with it is that it probably breaks a Multi-MSi
+> device sitting behind a non-transparent bridge that would get its MSIs
+> allocated after another device. In this case, we wouldn't honor the
+> required alignment and things would break.
+> 
+> So take this as a proof of concept. If that works, I'll think of how
+> to deal with this crap in a more suitable way...
+> 
 
-response.code and enum iommu_page_response_code are different
-enums, and there is no range check. Need a static assert at least and
-a range check. Send a followup patch please
+This works fine. Now the ITS driver allocates requested number of MSIs, thanks!
 
-Jason
+- Mani
+
+> 	M.
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+> index 3c755d5dad6e6..43479c9e7f8d2 100644
+> --- a/drivers/irqchip/irq-gic-v3-its.c
+> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> @@ -3475,15 +3475,16 @@ static void its_free_device(struct its_device *its_dev)
+>  
+>  static int its_alloc_device_irq(struct its_device *dev, int nvecs, irq_hw_number_t *hwirq)
+>  {
+> -	int idx;
+> +	unsigned long idx;
+>  
+>  	/* Find a free LPI region in lpi_map and allocate them. */
+> -	idx = bitmap_find_free_region(dev->event_map.lpi_map,
+> -				      dev->event_map.nr_lpis,
+> -				      get_count_order(nvecs));
+> -	if (idx < 0)
+> +	idx = bitmap_find_next_zero_area(dev->event_map.lpi_map,
+> +					 dev->event_map.nr_lpis, 0, nvecs, 0);
+> +	if (idx >= dev->event_map.nr_lpis)
+>  		return -ENOSPC;
+>  
+> +	bitmap_set(dev->event_map.lpi_map, idx, nvecs);
+> +
+>  	*hwirq = dev->event_map.lpi_base + idx;
+>  
+>  	return 0;
+> @@ -3653,9 +3654,9 @@ static void its_irq_domain_free(struct irq_domain *domain, unsigned int virq,
+>  	struct its_node *its = its_dev->its;
+>  	int i;
+>  
+> -	bitmap_release_region(its_dev->event_map.lpi_map,
+> -			      its_get_event_id(irq_domain_get_irq_data(domain, virq)),
+> -			      get_count_order(nr_irqs));
+> +	bitmap_clear(its_dev->event_map.lpi_map,
+> +		     its_get_event_id(irq_domain_get_irq_data(domain, virq)),
+> +		     nr_irqs);
+>  
+>  	for (i = 0; i < nr_irqs; i++) {
+>  		struct irq_data *data = irq_domain_get_irq_data(domain,
+> 
+> -- 
+> Without deviation from the norm, progress is not possible.
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
