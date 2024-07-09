@@ -1,177 +1,123 @@
-Return-Path: <linux-kernel+bounces-246606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DE7C92C435
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:58:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C566992C43A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F5CF1F231CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:58:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CAA41F231D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96F918561F;
-	Tue,  9 Jul 2024 19:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE908187846;
+	Tue,  9 Jul 2024 19:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zq6ZKeZE"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hLC54aVa"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A003F185601
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 19:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19B0185607;
+	Tue,  9 Jul 2024 19:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720555120; cv=none; b=TepLlOUzWl3ELVtXD0PNW7VLK9H2p6opL2hJgCin4CigQiDtIsOwJMfR82pbjJooLGr0yCq1UcssWOb7E+76kQdcuBmA5OSTn+1un0S1yC92rEmy5m78J/ySds1Sx552zB26bdogxEoGCxSkvFaEyz1//PWBA5MnXjfdUrd+o5U=
+	t=1720555130; cv=none; b=BP7Dg/UKrDVz5wZD+d8b6I7Uw6VciGfBc7wuKiEhIfTxcb9+n5WEFyZO9chS0lJcJEs7uD/J4wlThdzoe0BldM9j8KnrnInUkSS4KJdrt8Ftw+dYXLCAe90cqjhyikI2dnlnf07V/J510bMcDnU1ZGB7rUAAfRdfK7P2aa7E2lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720555120; c=relaxed/simple;
-	bh=BufCoQvPcrMLdZydelzJEkWvQqMULRiWl+BErt3I6lA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UdfBD1M1wAtaM6tOxKscvk4/33rp3drL9/I309Vo38IOtPM/+FGPMgR1rA5/D2JZTqyrmGR2iGqAYWmXDQcAojQKGNQdGaHACuTGGlRPHYEF7ch2LRci0976589XiePV1MhFZQASnzm67opqZsaiaQEtQbJodh35moEYDe+JXJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zq6ZKeZE; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-654c14abdcfso1137597b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 12:58:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720555117; x=1721159917; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OH4mJgHtAMjKpYrLchkY0/kYwpApwxh1WzFZLLQJUK4=;
-        b=zq6ZKeZERlsTg9o2IihuLZAW9AppUg6GZGU1bfpZkca7IJVRl3OUtYVvyNS2Y2IKLI
-         7NnlMGn/0403KHRcYne18sX8iRKbiFEdLYHbnvNFI0CHLpkWne6HljOBnSeVWuCnDJo3
-         pfivL0YIaAS3i7ZWLvtal2uPEFlyTrbUzcKWLtATbM/SGm/vpt7Wa7pRMe8E3lH3CWv+
-         dMdyFvFfJy0QVchaXwXV4t23ImKiIuIv3pt01rtNzs5ecikpqmIQhTce40tfAaGOmltz
-         QUduyjbixqyVK0/nRkznw9M/KJm9d9sbwgygigWv9AHbbYTOojhjOINpNyuJbXsN3DBo
-         bTkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720555117; x=1721159917;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OH4mJgHtAMjKpYrLchkY0/kYwpApwxh1WzFZLLQJUK4=;
-        b=kGlTSW9jzs0z5G7/nrci23NfhaPgLNnBgL/rJ1XZkvzu9naPCJLRNA+k1qKEOBgSYz
-         TCLiK3teSE9I/7qxFLI1Nt10qHyMgyAFv6h0W3N8e+3E66UaEwe+Uoh3PL3SJBQNiuZs
-         P1taVm3ZNyqXkA6M+FsFrPwSoURFwBavtqiotKpLULBauAFFzrynUcYrP4V7mj70wvxX
-         lDj0nyYxFk9KsVFpGjJJ98SSb65I7JqAfqIIZoLJJgr+qQ+GG5TDUUIcF7OniD0kPDlr
-         jLUvQhsyRkf4iPosKcql84brGFKc6pd5HNMkZ+QDXI0qwa0/i3g+d04ThjAdOsZ3EfDw
-         8f4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVYLdWMzf0BPmp29XO/+pWZZFrS6wcfZy+BOiJ6fJqwFg/NZoqecIPu9hEkMQuW7n/sQSKkqSYx93GDp+7cwXVB3Q1sa7GW9F1WQSSe
-X-Gm-Message-State: AOJu0YzMsT6urQdJnrtWBHRdFP59ebBJCIEERf7tYyGLd3X5wN7jb1RZ
-	tUDeHiwbitkKUpdGF/1xvhH1uk40YwsSjiUyH+gQJXV6Rr6bTr2Gkk43z0y6acYmYaBWaRFQUxC
-	ZvQ==
-X-Google-Smtp-Source: AGHT+IFPRc0GUmnw3tx5z0WM631Lp7VCqKEfr6zvcufCRCt0z7N+TzzPpJWrOmKAgFEWRWTwRbf3RhDOBAI=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:340a:b0:64b:a38:31d0 with SMTP id
- 00721157ae682-65919f6157bmr98987b3.4.1720555117531; Tue, 09 Jul 2024 12:58:37
- -0700 (PDT)
-Date: Tue, 9 Jul 2024 12:58:36 -0700
-In-Reply-To: <2c8a398c9899a50c9d8f06fa916eb8eb13b6fbc5.camel@redhat.com>
+	s=arc-20240116; t=1720555130; c=relaxed/simple;
+	bh=Rvlo3aS2QiBWc1I0xHE7+GAHax3YRlgY/uQSsLbxeUg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=O/LVODliXXtGbNsBRpZ+3NEJ/E4HZyPRHB68Jm/w3R6lokgs/mCmn3ySxMQ0Sjarxt2NnOnhatIu/Xt0sWHlQKc8MGCLBIszyQLRRtd1xttLdBNRzv1PyoQk9pbPjEAtX5dt9UMWuKk7W2JGK+DVdhaSezZ9rIltpBldn5f8sXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hLC54aVa; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469Crv3H019517;
+	Tue, 9 Jul 2024 19:58:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GRkQX0d772lMiO+BzCwxVeVSpy06O9LgQ64lCdx+Ar0=; b=hLC54aVaRjU7r6A4
+	RGL2fhiyQ6kXcwyzAAwHZfiVbj/s1WLuH235HkyT9kSyB/TBnOnKqQVN6yytf2XZ
+	exrew11j/OF102z5I81x4KF+HdZrkfx8ar73iHbIllVw5BwtOT+2Aff943fxBUaM
+	mujA1k/AQomPcFfn7TpBSYgWdLSk3P336B6KScCTVPer3KW/8FSHQu4Fz2t0cwyn
+	FoQ0gBG4x23NnnhCPKYV4co5ZcMhZsoF9ycswNZ7X0/AsH5eBo7XJlOuXma2rTu1
+	zY3HMhrTAf3AtvjJk3We+QqjWirqGf/1K6Xqm4v3j/Tm8F2tT/y14Um093VwiwSR
+	79Nm1g==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wgwqf24-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 19:58:47 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469Jwj3e024988
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 19:58:45 GMT
+Received: from [10.48.245.228] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
+ 12:58:45 -0700
+Message-ID: <ef5e039a-4279-4c03-9d98-a31ba88cd26f@quicinc.com>
+Date: Tue, 9 Jul 2024 12:58:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-4-seanjc@google.com>
- <2c8a398c9899a50c9d8f06fa916eb8eb13b6fbc5.camel@redhat.com>
-Message-ID: <Zo2WbN5m6eI03AW8@google.com>
-Subject: Re: [PATCH v2 03/49] KVM: x86: Account for KVM-reserved CR4 bits when
- passing through CR4 on VMX
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] loop: add missing MODULE_DESCRIPTION() macro
+Content-Language: en-US
+To: Jens Axboe <axboe@kernel.dk>
+CC: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240602-md-block-loop-v1-1-b9b7e2603e72@quicinc.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240602-md-block-loop-v1-1-b9b7e2603e72@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7dd1E6VD0RU6ZwdV15zEoCxGQmXR62w-
+X-Proofpoint-ORIG-GUID: 7dd1E6VD0RU6ZwdV15zEoCxGQmXR62w-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_08,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ adultscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1015 priorityscore=1501 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090134
 
-On Thu, Jul 04, 2024, Maxim Levitsky wrote:
-> On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrote:
-> > Drop x86.c's local pre-computed cr4_reserved bits and instead fold KVM's
-> > reserved bits into the guest's reserved bits.  This fixes a bug where VMX's
-> > set_cr4_guest_host_mask() fails to account for KVM-reserved bits when
-> > deciding which bits can be passed through to the guest.  In most cases,
-> > letting the guest directly write reserved CR4 bits is ok, i.e. attempting
-> > to set the bit(s) will still #GP, but not if a feature is available in
-> > hardware but explicitly disabled by the host, e.g. if FSGSBASE support is
-> > disabled via "nofsgsbase".
-> > 
-> > Note, the extra overhead of computing host reserved bits every time
-> > userspace sets guest CPUID is negligible.  The feature bits that are
-> > queried are packed nicely into a handful of words, and so checking and
-> > setting each reserved bit costs in the neighborhood of ~5 cycles, i.e. the
-> > total cost will be in the noise even if the number of checked CR4 bits
-> > doubles over the next few years.  In other words, x86 will run out of CR4
-> > bits long before the overhead becomes problematic.
+On 6/2/2024 5:15 PM, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/loop.o
 > 
-> It might be just me, but IMHO this justification is confusing, leading me to
-> belive that maybe the code is on the hot-path instead.
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
 > 
-> The right justification should be just that this code is in
-> kvm_vcpu_after_set_cpuid is usually (*) only called once per vCPU (twice
-> after your patch #1)
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/block/loop.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index 93780f41646b..9455c82451aa 100644
+> --- a/drivers/block/loop.c
+> +++ b/drivers/block/loop.c
+> @@ -1830,6 +1830,7 @@ static const struct kernel_param_ops loop_hw_qdepth_param_ops = {
+>  device_param_cb(hw_queue_depth, &loop_hw_qdepth_param_ops, &hw_queue_depth, 0444);
+>  MODULE_PARM_DESC(hw_queue_depth, "Queue depth for each hardware queue. Default: " __stringify(LOOP_DEFAULT_HW_Q_DEPTH));
+>  
+> +MODULE_DESCRIPTION("Loopback device support");
+>  MODULE_LICENSE("GPL");
+>  MODULE_ALIAS_BLOCKDEV_MAJOR(LOOP_MAJOR);
+>  
+> 
+> ---
+> base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+> change-id: 20240602-md-block-loop-756a95ba7841
 
-Ya.  I was trying to capture that even if that weren't true, i.e. even if userspace
-was doing something odd, that the extra cost is irrelevant.  I'll expand and reword
-the paragraph to make it clear this isn't a hot path for any sane userspace.
+I don't see this in linux-next yet so following up to see if anything else is
+needed to get this merged.
 
-> (*) Qemu also calls it, each time vCPU is hotplugged but this doesn't change
-> anything performance wise.
-
-...
-
-> > @@ -9831,10 +9826,6 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
-> >  	if (!kvm_cpu_cap_has(X86_FEATURE_XSAVES))
-> >  		kvm_caps.supported_xss = 0;
-> >  
-> > -#define __kvm_cpu_cap_has(UNUSED_, f) kvm_cpu_cap_has(f)
-> > -	cr4_reserved_bits = __cr4_reserved_bits(__kvm_cpu_cap_has, UNUSED_);
-> > -#undef __kvm_cpu_cap_has
-> > -
-> >  	if (kvm_caps.has_tsc_control) {
-> >  		/*
-> >  		 * Make sure the user can only configure tsc_khz values that
-> 
-> 
-> I mostly agree with this patch - caching always carries risks and when it doesn't
-> value performance wise, it should always be removed.
-> 
-> 
-> However I don't think that this patch fixes a bug as it claims:
-> 
-> This is the code prior to this patch:
-> 
-> kvm_x86_vendor_init ->
-> 
-> 	r = ops->hardware_setup();
-> 		svm_hardware_setup
-> 			svm_set_cpu_caps + kvm_set_cpu_caps
-> 
-> 		-- or --
-> 
-> 		vmx_hardware_setup ->
-> 			vmx_set_cpu_caps + + kvm_set_cpu_caps
-> 
-> 
-> 	# read from 'kvm_cpu_caps'
-> 	cr4_reserved_bits = __cr4_reserved_bits(__kvm_cpu_cap_has, UNUSED_);
-> 
-> 
-> AFAIK kvm cpu caps are never touched outside of svm_set_cpu_caps/vmx_hardware_setup
-> (they don't depend on some later post-processing, cpuid, etc).
-> 
-> In fact a good refactoring would to make kvm_cpu_caps const after this point,
-> using cast, assert or something like that.
-> 
-> This leads me to believe that cr4_reserved_bits is computed correctly.
-
-cr4_reserved_bits is computed correctly.  The bug is that cr4_reserved_bits isn't
-consulted by set_cr4_guest_host_mask(), which is what I meant by "KVM-reserved
-bits" in the changelog.
-
-> I could be wrong, but then IMHO it is a very good idea to provide an explanation
-> on how this bug can happen.
-
-The first paragraph of the changelog tries to do that, and I'm struggling to come
-up with different wording that makes it more clear what's wrong.  Any ideas/suggestions?
 
