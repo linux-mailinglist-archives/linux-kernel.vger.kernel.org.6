@@ -1,119 +1,355 @@
-Return-Path: <linux-kernel+bounces-245525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B60092B3D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:29:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C3892B3D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47EC01C21EA3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:29:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 361BF1F23550
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2B6155303;
-	Tue,  9 Jul 2024 09:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35CF155316;
+	Tue,  9 Jul 2024 09:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="q0rztVPm"
-Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2985613C687;
-	Tue,  9 Jul 2024 09:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gG0USvMX"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6309155359
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720517359; cv=none; b=HjPWxSFiy2yoK3t0ME7I+iqYTdxGCjn+cGz21Ew7Gkd+qo3FD4F2ORotX0np5/9+g7LZuxTZCjo3+PC5zX15mGOoAk4JtsW1URx88LsTpxanESGm8kPIlPGj3IqqeMQZysglHovjUcqtrmZQ8f1rRPvMYhyFdnVJG8jq1Xgusws=
+	t=1720517416; cv=none; b=VbP2JusAIanxCeh2Xfa3xtwi6JuDEuF4lFhOAW1Qd0vUaGLQ4BG6aPxvkIBtrEwSfjkAbxFzo8J9azBwkSG7gRMY9UxujHAv8PyNIm9pd+CnuIJOwx0etZtYnozopA9cNVsLMrzSjAbrI8tx/QQJDU0OymYIhrXRpWW1ulSIX8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720517359; c=relaxed/simple;
-	bh=7DWs8NlGzB6ngfSoSC5rIQPo0j9eV+sZdzaBHoXrKkY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
-	 In-Reply-To:Content-Type; b=AmHYhCK9JfpJMp15YX+jW3agnMLqps/QLotOUuUTDhG1XHTBIgKCiTk6D9l47GMTlHSk2N/mF22lJGL9Mf6dVKQk1oBAwYKSozqrZp2lI6n0uG+7+b0vPAqtLeJIPujtsnHp0KpxLA0YInOERPdf+z+yFWwsP83KajfrB8Io8/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=q0rztVPm; arc=none smtp.client-ip=3.9.82.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
-Received: from [IPV6:2a02:8010:6359:2:e181:9992:7c46:d034] (unknown [IPv6:2a02:8010:6359:2:e181:9992:7c46:d034])
-	(Authenticated sender: james)
-	by mail.katalix.com (Postfix) with ESMTPSA id 1DEAE7DA8A;
-	Tue,  9 Jul 2024 10:29:17 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
-	t=1720517357; bh=7DWs8NlGzB6ngfSoSC5rIQPo0j9eV+sZdzaBHoXrKkY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
-	 In-Reply-To:From;
-	z=Message-ID:=20<9d86ddab-5177-b534-11be-6609065a2ab9@katalix.com>|
-	 Date:=20Tue,=209=20Jul=202024=2010:29:16=20+0100|MIME-Version:=201
-	 .0|To:=20Paolo=20Abeni=20<pabeni@redhat.com>,=20Hillf=20Danton=20<
-	 hdanton@sina.com>|Cc:=20netdev@vger.kernel.org,=20linux-kernel@vge
-	 r.kernel.org,=0D=0A=20syzkaller-bugs@googlegroups.com,=20tparkin@k
-	 atalix.com,=0D=0A=20syzbot+b471b7c936301a59745b@syzkaller.appspotm
-	 ail.com,=0D=0A=20syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail
-	 .com|References:=20<20240708115940.892-1-hdanton@sina.com>=0D=0A=2
-	 0<a65127e4-544b-27e6-a1e1-e20e5fb4d480@katalix.com>=0D=0A=20<ce597
-	 3fe2017177e6f4c1f577fa8309fe7258612.camel@redhat.com>|From:=20Jame
-	 s=20Chapman=20<jchapman@katalix.com>|Subject:=20Re:=20[PATCH=20net
-	 -next=20v2]=20l2tp:=20fix=20possible=20UAF=20when=20cleaning=20up=
-	 0D=0A=20tunnels|In-Reply-To:=20<ce5973fe2017177e6f4c1f577fa8309fe7
-	 258612.camel@redhat.com>;
-	b=q0rztVPmBNQ7tseS/E/mEEQyOg8aSo9qWeCgAnkKKbYuJHrRLakQBf2rYEg5H3XrR
-	 Dj5jvhcMlo5nCVkT99w/uO7BPfb+v6T+TFeVOrvXKxQnDOLdjNqGbwfpHWy4CupooA
-	 oZRDyOsscIoTlhovQGnIlndVJmgMYb+ljmWMOIwFqzXMkncew3VOYe935N89JDvhh/
-	 SKdzwRJWHC3a9IOjdOVmgsLeHGTfo7iXveo2mjdUuU52alQR519+1FFMc77iiDUrHc
-	 QY/Mf1oZNlxo4erhMX1FKv5l0JkidtRtYPRqaTapBhnCWoiwwMFqxO6geuJ62nZMlW
-	 sW2NoRerWBzzQ==
-Message-ID: <9d86ddab-5177-b534-11be-6609065a2ab9@katalix.com>
-Date: Tue, 9 Jul 2024 10:29:16 +0100
+	s=arc-20240116; t=1720517416; c=relaxed/simple;
+	bh=IME8rCB7fAt9u3OMchcky2jiuiqkjWjQijSuJ80AbgI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=PbIuf7117oK991/JV5fzALRFzfWVjaJvyFCfDzmAm2/eGr+ul43uYpcu+VesMXiFq9m9OUMamr4PfDq7+8HE5YS9a3PFVQ6MS8vRIMGtouw34d2YmG7LqpPRh5nenkaVR/qg5PqImmii8Y75ObwOl+niTYn1oSGcTvGCOHz8DGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=gG0USvMX; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240709093010epoutp02511c4f208675bd51497b32d5dc9afa97~ggXgwIBNg1463914639epoutp02-
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:30:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240709093010epoutp02511c4f208675bd51497b32d5dc9afa97~ggXgwIBNg1463914639epoutp02-
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1720517410;
+	bh=tyY0FHvDKzaeY0VE76aQeCLX5GFhktpWQTUjKu+w1AU=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=gG0USvMXJgeRKxuhFBBoJHpJFHqiKj3SSvCAvgddGxDMMTVe/oXJlNziUD/xs+65A
+	 AlhDolVPGfYHKRIHl5POY8K2SQXN3cyUm9+6Se53gFF2q9O5jdp3RhE/I7iW8LF8sv
+	 VKEbD4xxMxDF246zYTqtupuZeMP3u9fnZUgKvLV4=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240709093010epcas5p311e4703dbd7fd32f152af5bce94ddffe~ggXgTK3ub0830008300epcas5p3o;
+	Tue,  9 Jul 2024 09:30:10 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.179]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WJG1F0rYfz4x9Q3; Tue,  9 Jul
+	2024 09:30:09 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	DA.63.11095.F130D866; Tue,  9 Jul 2024 18:30:07 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240709092951epcas5p24783c3bb5c23277cf23a72a6e1855751~ggXOeidZb2755427554epcas5p2A;
+	Tue,  9 Jul 2024 09:29:51 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240709092951epsmtrp2b1caac7ca39e0ec522e6c310da05cdfa~ggXOd31bz1559415594epsmtrp20;
+	Tue,  9 Jul 2024 09:29:51 +0000 (GMT)
+X-AuditID: b6c32a49-3c3ff70000012b57-f2-668d031f564e
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	4A.0A.19057.F030D866; Tue,  9 Jul 2024 18:29:51 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240709092950epsmtip1f834d0e8ae3365473ef66a2cc0370072~ggXNmB8JQ0898508985epsmtip1O;
+	Tue,  9 Jul 2024 09:29:50 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: axboe@kernel.dk
+Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hexue <xue01.he@samsung.com>
+Subject: [PATCH v6 RESEND] io_uring: releasing CPU resources when polling
+Date: Tue,  9 Jul 2024 17:29:44 +0800
+Message-Id: <20240709092944.3208051-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-To: Paolo Abeni <pabeni@redhat.com>, Hillf Danton <hdanton@sina.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, tparkin@katalix.com,
- syzbot+b471b7c936301a59745b@syzkaller.appspotmail.com,
- syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com
-References: <20240708115940.892-1-hdanton@sina.com>
- <a65127e4-544b-27e6-a1e1-e20e5fb4d480@katalix.com>
- <ce5973fe2017177e6f4c1f577fa8309fe7258612.camel@redhat.com>
-Content-Language: en-US
-From: James Chapman <jchapman@katalix.com>
-Organization: Katalix Systems Ltd
-Subject: Re: [PATCH net-next v2] l2tp: fix possible UAF when cleaning up
- tunnels
-In-Reply-To: <ce5973fe2017177e6f4c1f577fa8309fe7258612.camel@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFKsWRmVeSWpSXmKPExsWy7bCmhq48c2+awbctZhZzVm1jtFh9t5/N
+	4l3rORaLX913GS0u75rDZnF2wgdWi64Lp9gc2D12zrrL7nH5bKlH35ZVjB6fN8kFsERl22Sk
+	JqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYAHaCkUJaYUwoU
+	CkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKTAp0CtOzC0uzUvXy0stsTI0MDAyBSpMyM74taSb
+	sWCOTcWXaz+ZGxh3GXQxcnJICJhI3N35mBnEFhLYzSixaadMFyMXkP2JUaJl/R0WCOcbo8SF
+	5SfZYDq+HpnIBpHYyyjxdPNjJgjnB6PEwTmnGUGq2ASUJPZv+QBmiwgIS+zvaGUBsZkFiiRe
+	z9zGCmILC3hKnPq0H2w3i4CqxOdvR4HiHBy8AtYSN7aGQiyTl7jZBVHCKyAocXLmE6gx8hLN
+	W2czQ9QcY5fYPMERwnaR2LFwAdShwhKvjm9hh7ClJD6/2wsVz5eY/H09I4RdI7Fu8zsWCNta
+	4t+VPSwgJzALaEqs36UPEZaVmHpqHRPEWj6J3t9PmCDivBI75sHYShJLjqyAGikh8XvCIrBP
+	JAQ8JOYv94YEbqzE8i3r2CYwys9C8swsJM/MQli8gJF5FaNkakFxbnpqsWmBYV5qOTxWk/Nz
+	NzGCE6GW5w7Guw8+6B1iZOJgPMQowcGsJMI7/0Z3mhBvSmJlVWpRfnxRaU5q8SFGU2AAT2SW
+	Ek3OB6bivJJ4QxNLAxMzMzMTS2MzQyVx3tetc1OEBNITS1KzU1MLUotg+pg4OKUamOZVtT/i
+	2+EQERF1iv/jmkDfqv9xnm7y7e9+7OYJnbSSifO+h1t5Udz8yeYnDl6v9nnAUO/n7XeiZxFf
+	0Jv4ebcPH/a6Gxf25nKShUpq4OK1eXKnJhczVk09FHhMLb90gvbFF84d/S49NcuPyRWkrt22
+	yzVHdGmDhtif17YfF3f5BwW9cb/JcK5hn078PPYVlr+8DSs7LT6IBe498Fj/dHF0f0xzyo9i
+	1yL2Hzx9e+uepa56av/v+4vzcx68Kr14/F1jxOLyL/s/Hepxfm5hwMIWaJAQMs80SPV+usBD
+	5qQ8h89L+Z9tsRXj0v2Zu6dt+o3m1vOve2+2Tt5e6/9y1pWVJ6+5LI+dfDJJcmn3GiWW4oxE
+	Qy3mouJEAA+zfh8NBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBLMWRmVeSWpSXmKPExsWy7bCSnC4/c2+awed+Tos5q7YxWqy+289m
+	8a71HIvFr+67jBaXd81hszg74QOrRdeFU2wO7B47Z91l97h8ttSjb8sqRo/Pm+QCWKK4bFJS
+	czLLUov07RK4Mn4t6WYsmGNT8eXaT+YGxl0GXYycHBICJhJfj0xk62Lk4hAS2M0o0Tx/LzNE
+	QkJix6M/rBC2sMTKf8/ZIYq+MUosWPEerIhNQEli/5YPjCC2CFDR/o5WFhCbWaBM4t3K9WDN
+	wgKeEqc+7QerZxFQlfj87ShQnIODV8Ba4sbWUIj58hI3uyBKeAUEJU7OfAI1Rl6ieets5gmM
+	fLOQpGYhSS1gZFrFKJlaUJybnltsWGCUl1quV5yYW1yal66XnJ+7iREcmFpaOxj3rPqgd4iR
+	iYPxEKMEB7OSCO/8G91pQrwpiZVVqUX58UWlOanFhxilOViUxHm/ve5NERJITyxJzU5NLUgt
+	gskycXBKNTAJF9/5cXnFMeXDK9PnxQeu+XL/1WWZ3GWzyidJv3yw7KuQ+uSlayZ1CfedWjfl
+	ZtS//DTJBmuuz9depjucftrXLOC79Pr8/H9MjMY3e2a2bTP5a/bg2O+JM+yN7cyPPFxx4+Hf
+	sl0rPwpuWTpXc9ll19hvLSKPVa9+uJo/cW6OaJH0wdTHO86KHJEN/t3uU8aqfIl1eYzlnji3
+	1inXLkztvriWMWqiZ03/7Tvzz5yfyRM0Odroh+nvSQ8jbvZGv9iV/HGa97e368OmzNy9ctLp
+	yoehU7h2RVfxyWQ8C7D+/OCc452YKc8kbLW37J91THGttH3gi73Z7S/amOu2Pvu1tz2L/35p
+	3YeoSUaC9pEluRVKLMUZiYZazEXFiQDGVpJ4uwIAAA==
+X-CMS-MailID: 20240709092951epcas5p24783c3bb5c23277cf23a72a6e1855751
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240709092951epcas5p24783c3bb5c23277cf23a72a6e1855751
+References: <CGME20240709092951epcas5p24783c3bb5c23277cf23a72a6e1855751@epcas5p2.samsung.com>
 
-On 09/07/2024 10:03, Paolo Abeni wrote:
-[snip]
-> AFAICS this patch is safe, as the session refcount can't be 0 at
-> l2tp_session_inc_refcount() time and will drop to 0 after
-> l2tp_session_dec_refcount() only if no other entity/thread is owning
-> any reference to the session.
-> 
-> @James: the patch has a formal issue, you should avoid any empty line
-> in the tag area, specifically between the 'Fixes' and SoB tags.
-> 
-> I'll exceptionally fix this while applying the patch, but please run
-> checkpatch before your next submission.
+io_uring use polling mode could improve the IO performence, but it will
+spend 100% of CPU resources to do polling.
 
-Thanks Paolo. Will do. I'll be more careful next time.
+This set a signal "IORING_SETUP_HY_POLL" to application, aim to provide
+a interface for user to enable a new hybrid polling at io_uring level.
 
-> Also somewhat related, I think there is still a race condition in
-> l2tp_tunnel_get_session():
-> 
-> 	rcu_read_lock_bh();
->          hlist_for_each_entry_rcu(session, session_list, hlist)
->                  if (session->session_id == session_id) {
->                          l2tp_session_inc_refcount(session);
-> 
-> I think that at l2tp_session_inc_refcount(), the session refcount could
-> be 0 due to a concurrent tunnel cleanup. l2tp_session_inc_refcount()
-> should likely be refcount_inc_not_zero() and the caller should check
-> the return value.
-> 
-> In any case the latter is a separate issue.
+A new hybrid poll is implemented on the io_uring layer. Once IO issued,
+it will not polling immediately, but block first and re-run before IO
+complete, then poll to reap IO. This poll function could be a suboptimal
+solution when running on a single thread, it offers the performance lower
+than regular polling but higher than IRQ, and CPU utilization is also lower
+than polling.
 
-I'm currently working on another series which will address this along 
-with more l2tp cleanup improvements.
+Test Result
+fio-3.35, Gen 4 device
+-------------------------------------------------------------------------------------
+Performance
+-------------------------------------------------------------------------------------
+                  write          read           randwrite       randread
+regular poll    BW=3939MiB/s    BW=6596MiB/s    IOPS=190K       IOPS=526K
+IRQ             BW=3927MiB/s    BW=6567MiB/s    IOPS=181K       IOPS=216K
+hybrid poll     BW=3933MiB/s    BW=6600MiB/s    IOPS=190K       IOPS=390K(suboptimal)
+-------------------------------------------------------------------------------------
+CPU Utilization
+-------------------------------------------------------------------------------------
+                write   read    randwrite       randread
+regular poll    100%    100%    100%            100%
+IRQ             38%     53%     100%            100%
+hybrid poll     76%     32%     70%              85%
+-------------------------------------------------------------------------------------
+
+--
+changes since v5:
+- Remove cstime recorder
+- Use minimize sleep time in different drivers
+- Use the half of whole runtime to do schedule
+- Consider as a suboptimal solution between
+  regular poll and IRQ
+
+changes since v4:
+- Rewrote the commit
+- Update the test results
+- Reorganized the code basd on 6.11
+
+changes since v3:
+- Simplified the commit
+- Add some comments on code
+
+changes since v2:
+- Modified some formatting errors
+- Move judgement to poll path
+
+changes since v1:
+- Extend hybrid poll to async polled io
+
+Signed-off-by: hexue <xue01.he@samsung.com>
+---
+ include/linux/io_uring_types.h |  6 +++
+ include/uapi/linux/io_uring.h  |  1 +
+ io_uring/io_uring.c            |  3 +-
+ io_uring/rw.c                  | 74 +++++++++++++++++++++++++++++++++-
+ 4 files changed, 82 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 91224bbcfa73..0897126fb2d7 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -428,6 +428,8 @@ struct io_ring_ctx {
+ 	unsigned short			n_sqe_pages;
+ 	struct page			**ring_pages;
+ 	struct page			**sqe_pages;
++	/* for hybrid poll*/
++	u64			available_time;
+ };
+ 
+ struct io_tw_state {
+@@ -665,6 +667,10 @@ struct io_kiocb {
+ 		u64			extra1;
+ 		u64			extra2;
+ 	} big_cqe;
++    /* for hybrid iopoll */
++	bool		poll_state;
++	u64			iopoll_start;
++	u64			iopoll_end;
+ };
+ 
+ struct io_overflow_cqe {
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 994bf7af0efe..ef32ec319d1f 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -199,6 +199,7 @@ enum io_uring_sqe_flags_bit {
+  * Removes indirection through the SQ index array.
+  */
+ #define IORING_SETUP_NO_SQARRAY		(1U << 16)
++#define IORING_SETUP_HY_POLL	(1U << 17)
+ 
+ enum io_uring_op {
+ 	IORING_OP_NOP,
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 816e93e7f949..b38f8af118c5 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -299,6 +299,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 		goto err;
+ 
+ 	ctx->flags = p->flags;
++	ctx->available_time = LLONG_MAX;
+ 	atomic_set(&ctx->cq_wait_nr, IO_CQ_WAKE_INIT);
+ 	init_waitqueue_head(&ctx->sqo_sq_wait);
+ 	INIT_LIST_HEAD(&ctx->sqd_list);
+@@ -3637,7 +3638,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
+ 			IORING_SETUP_SQE128 | IORING_SETUP_CQE32 |
+ 			IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN |
+ 			IORING_SETUP_NO_MMAP | IORING_SETUP_REGISTERED_FD_ONLY |
+-			IORING_SETUP_NO_SQARRAY))
++			IORING_SETUP_NO_SQARRAY | IORING_SETUP_HY_POLL))
+ 		return -EINVAL;
+ 
+ 	return io_uring_create(entries, &p, params);
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 1a2128459cb4..5505f4292ce5 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -772,6 +772,13 @@ static bool need_complete_io(struct io_kiocb *req)
+ 		S_ISBLK(file_inode(req->file)->i_mode);
+ }
+ 
++static void init_hybrid_poll(struct io_ring_ctx *ctx, struct io_kiocb *req)
++{
++	/* make sure every req only block once*/
++	req->poll_state = false;
++	req->iopoll_start = ktime_get_ns();
++}
++
+ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
+ {
+ 	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
+@@ -809,6 +816,8 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
+ 		kiocb->ki_flags |= IOCB_HIPRI;
+ 		kiocb->ki_complete = io_complete_rw_iopoll;
+ 		req->iopoll_completed = 0;
++		if (ctx->flags & IORING_SETUP_HY_POLL)
++			init_hybrid_poll(ctx, req);
+ 	} else {
+ 		if (kiocb->ki_flags & IOCB_HIPRI)
+ 			return -EINVAL;
+@@ -1106,6 +1115,67 @@ void io_rw_fail(struct io_kiocb *req)
+ 	io_req_set_res(req, res, req->cqe.flags);
+ }
+ 
++static u64 io_delay(struct io_ring_ctx *ctx, struct io_kiocb *req)
++{
++	struct hrtimer_sleeper timer;
++	enum hrtimer_mode mode;
++	ktime_t kt;
++	u64 sleep_time;
++
++	if (req->poll_state)
++		return 0;
++
++	if (ctx->available_time == LLONG_MAX)
++		return 0;
++
++	/* Using half running time to do schedul */
++	sleep_time = ctx->available_time / 2;
++
++	kt = ktime_set(0, sleep_time);
++	req->poll_state = true;
++
++	mode = HRTIMER_MODE_REL;
++	hrtimer_init_sleeper_on_stack(&timer, CLOCK_MONOTONIC, mode);
++	hrtimer_set_expires(&timer.timer, kt);
++	set_current_state(TASK_INTERRUPTIBLE);
++	hrtimer_sleeper_start_expires(&timer, mode);
++
++	if (timer.task)
++		io_schedule();
++
++	hrtimer_cancel(&timer.timer);
++	__set_current_state(TASK_RUNNING);
++	destroy_hrtimer_on_stack(&timer.timer);
++
++	return sleep_time;
++}
++
++static int io_uring_hybrid_poll(struct io_kiocb *req,
++				struct io_comp_batch *iob, unsigned int poll_flags)
++{
++	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
++	struct io_ring_ctx *ctx = req->ctx;
++	int ret;
++	u64 runtime, sleep_time;
++
++	sleep_time = io_delay(ctx, req);
++
++	/* it doesn't implement with io_uring passthrough now */
++	ret = req->file->f_op->iopoll(&rw->kiocb, iob, poll_flags);
++
++	req->iopoll_end = ktime_get_ns();
++	runtime = req->iopoll_end - req->iopoll_start - sleep_time;
++	if (runtime < 0)
++		return 0;
++
++	/* use minimize sleep time if there are different speed
++	 * drivers, it could get more completions from fast one
++	 */
++	if (ctx->available_time > runtime)
++		ctx->available_time = runtime;
++	return ret;
++}
++
+ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ {
+ 	struct io_wq_work_node *pos, *start, *prev;
+@@ -1133,7 +1203,9 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ 		if (READ_ONCE(req->iopoll_completed))
+ 			break;
+ 
+-		if (req->opcode == IORING_OP_URING_CMD) {
++		if (ctx->flags & IORING_SETUP_HY_POLL) {
++			ret = io_uring_hybrid_poll(req, &iob, poll_flags);
++		} else if (req->opcode == IORING_OP_URING_CMD) {
+ 			struct io_uring_cmd *ioucmd;
+ 
+ 			ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
+-- 
+2.40.1
 
 
