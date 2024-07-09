@@ -1,118 +1,227 @@
-Return-Path: <linux-kernel+bounces-246187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1115092BEB6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:47:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 460AB92BD97
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEE3B2857DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:47:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 691AF1C223BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF1419CD19;
-	Tue,  9 Jul 2024 15:47:00 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10FE1DFCF;
-	Tue,  9 Jul 2024 15:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720540020; cv=none; b=p7WeIL/kw8p6HzwCEKcXKWFtXW0pW8bqsMAb4ivU8B9xCYfKgzs6NTVy6WWZFIbdiA8rMwba8n4zmaLZr/NjxhCTcAK5q3oU3lBfqHizBxmSDDYHT18XtxTEIUKAT8223WaI8Wk2ZAZZj+eDmpPevTJujV6yHHcVEjbWF9B1Q+Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720540020; c=relaxed/simple;
-	bh=ioyj1azS+m2JjFteISlU9nXpPYH9cFxRj4zDAHSRCwg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mgyzvKohA6ApTMCGxiehjkVL4cBo1bhTmnm9XugoscMWDC3d533x9uUU3S/jFxPD+tNmZ35je+eB3HyvO9Xh/301dk/qqepAplZQb508eBo4IVTNZZo6SIauBhvbXh+1GGk+NEKDulvd2h39RD8VqUIV/k3kQqkiN5rHMiSwST8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sRD2h-0004Dh-00; Tue, 09 Jul 2024 17:46:11 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 42C22C031A; Tue,  9 Jul 2024 16:56:50 +0200 (CEST)
-Date: Tue, 9 Jul 2024 16:56:50 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Aleksandar Rikalo <aleksandar.rikalo@syrmia.com>,
-	Aleksandar Rikalo <arikalo@gmail.com>,
-	Chao-ying Fu <cfu@wavecomp.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Greg Ungerer <gerg@kernel.org>, Hauke Mehrtens <hauke@hauke-m.de>,
-	Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
-	"paulburton@kernel.org" <paulburton@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: Re: [PATCH v4 07/14] clocksource: mips-gic-timer: Always use cluster
- 0 counter as clocksource
-Message-ID: <Zo1Psqq9VUvW3D96@alpha.franken.de>
-References: <20240511104341.151550-1-aleksandar.rikalo@syrmia.com>
- <20240511104341.151550-8-aleksandar.rikalo@syrmia.com>
- <bf4a45e9-4ed3-4d3b-bb96-add20a71b04c@linaro.org>
- <8b133053-247f-414b-9c01-e0e5291e347d@app.fastmail.com>
- <Zoz6kvcio/wl/015@alpha.franken.de>
- <4729a8ba-655d-4127-9f14-33b4521b4442@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7009F19D067;
+	Tue,  9 Jul 2024 14:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LR86TvGD"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2047.outbound.protection.outlook.com [40.107.101.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A4119CCE8
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 14:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720537048; cv=fail; b=q+wI/BXQpTQqMefYXqF2SGuMBz80HBsqNgZQf0vF5vu+V5OGUJNmrP/ByrmRHDDueYTiIUb6/IV1yI7dot39f6YtIq/IcWMO/Aj4+cCbKB9cji228GlNl2gWOBUMmWm6UxGSztgrKKxIcEfE28sGDPzhkrwvFiCx+dzLXUFd6WY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720537048; c=relaxed/simple;
+	bh=NXT4BV9dwGGfGY/9jm1d5huU03DQmADuydmgv7fyhkE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=LKSLnJX9f3Lhl9Q0KHEE0N1MODLjh8ifqsWB9MX/tr258NP7XMFs0JQ4VcF+8TxutGv6+xJLffmHvxPT8dOqwoQ2ziN6cqO3jIkXE87yb+PVuUBNKKMb1YRkWquVzYJek3iR0D8xa8T3OR+M7cirNE0Rh+fNwNQVJ9/r03CaMLc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LR86TvGD; arc=fail smtp.client-ip=40.107.101.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=d7/DgevdnoYH8BKH6R2i7cqeC4ChGB05i1mRzVCXI6hnVbY/JJZ8GaD1CsC8rgcm/ySq5OClinufK9E5kyHZZFLgjY9/GaGRiqGnGr1sY+d2LPsCZM0UTslFS8Arb0F9bm/qEmbIChseJNiwX+4wWb8zx13QetlZzWtXlTHc9RY/48FRiocIZqfrnvsoqaCJ1cRIu0grqD3/FJYyN2meyuUdwEk4lN30+TNSbkcKk9pn5jBXnOS27T5O5rQsoErGNyLMxKytOjxqjBkzKoXDw7YE1kZEMjV3nXfKZR578fLUwqUt3WB5MtpUzryOP6WBxOF65rSFlTR3XtzRf0+NlA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ja2cXDJLvu/O8Y3olXVXteDDXq9mvtrMptGFV3Ye7bo=;
+ b=meJT3dIFaqY2HOpgPlR/1VvcJA55PsiaaXjYoBzJCWQFci1NJ6OKNWOGUCU2CNEm7uCwV8QPg3IGFVpM/pAD5rypVOe8NbmSM/owA2NZDkq3XRS7Yy98cue0G3P9VvtnHlefUNw4+oKZ0wTLtOjyPB3aX5AwwJ6hVyxyLEW5ms3+nZdwrhqwUWDsIsuTzXX5JeCUL8cUWj6+fDiu9RxNBqmalvlRKd7TfHR/3qMCNtOnemsvkbzQwVKr6RgPsw8ohraSCWMSiQoyq38JZocmqEpSOdZkB5tkmDWtJY5Uz6EH5SPVbJKM7DgMOak1PyA9m5LLv/jqOULJslPEzsxCdw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ja2cXDJLvu/O8Y3olXVXteDDXq9mvtrMptGFV3Ye7bo=;
+ b=LR86TvGDEgMHuysbPCy/lU9lHN0jSMZ+k6wGOu+sjrecwEpxlqpEFacgiMIzaUiKX+2Fi60H7i5k40VETnXzOoUSzwGkiMRzBMdmR6c/hCDrIlsGf9UfZBPWHvD25aiWPDzWCu7t0L8DTIQWyvftQs3oHrdLsgRukqCK0RB7gyc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MW6PR12MB8733.namprd12.prod.outlook.com (2603:10b6:303:24c::8)
+ by DS7PR12MB6214.namprd12.prod.outlook.com (2603:10b6:8:96::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Tue, 9 Jul
+ 2024 14:57:23 +0000
+Received: from MW6PR12MB8733.namprd12.prod.outlook.com
+ ([fe80::71a6:a9da:c464:fa2e]) by MW6PR12MB8733.namprd12.prod.outlook.com
+ ([fe80::71a6:a9da:c464:fa2e%5]) with mapi id 15.20.7741.033; Tue, 9 Jul 2024
+ 14:57:22 +0000
+Message-ID: <f2c15b94-5b94-4e58-959f-4912047eec47@amd.com>
+Date: Tue, 9 Jul 2024 08:57:18 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: 6.10/bisected/regression - commits bc87d666c05 and 6d4279cb99ac
+ cause appearing green flashing bar on top of screen on Radeon 6900XT and
+ 120Hz
+Content-Language: en-US
+To: Linux regressions mailing list <regressions@lists.linux.dev>,
+ Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+ Alex Deucher <alexdeucher@gmail.com>
+Cc: "Mahfooz, Hamza" <Hamza.Mahfooz@amd.com>,
+ "Deucher, Alexander" <alexander.deucher@amd.com>,
+ amd-gfx list <amd-gfx@lists.freedesktop.org>,
+ dri-devel <dri-devel@lists.freedesktop.org>,
+ Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+References: <CABXGCsNptxsQO=5=qi-JYiFX=rX8Ok5inK80Gn0qrUFWbtBGng@mail.gmail.com>
+ <CADnq5_PDxJ8O1JUQ9RBYRFB9G1WZJos05ZAM4jUKuPBwPxjNkA@mail.gmail.com>
+ <CABXGCsNN9LwHc2x2AAEH=5UNwpvkWkBqRYz3OP8MZ6Woy+HDXA@mail.gmail.com>
+ <b6c440ca-e63e-429b-af41-5f27d4b8b2a2@leemhuis.info>
+ <CABXGCsNoFfMn7LaqqFgEPg-ECyUPN=f=SXVrFi=GZk6c69-Gqw@mail.gmail.com>
+ <CADnq5_PDSkr4hOHJmb1J30UC0a7sXsm5-TPkEmjzffMK_A+7ug@mail.gmail.com>
+ <ea465a40-f673-42b1-8b1c-a2efb20cd562@amd.com>
+ <CABXGCsPyrUEqDq2gbr4VLw5ncd9cKoCZ9nOr2SRfg8Lh=9H5Kg@mail.gmail.com>
+ <af91ef9c-5050-4f16-898a-f0c02a293d3f@leemhuis.info>
+From: Rodrigo Siqueira Jordao <Rodrigo.Siqueira@amd.com>
+In-Reply-To: <af91ef9c-5050-4f16-898a-f0c02a293d3f@leemhuis.info>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BN9PR03CA0317.namprd03.prod.outlook.com
+ (2603:10b6:408:112::22) To MW6PR12MB8733.namprd12.prod.outlook.com
+ (2603:10b6:303:24c::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4729a8ba-655d-4127-9f14-33b4521b4442@linaro.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW6PR12MB8733:EE_|DS7PR12MB6214:EE_
+X-MS-Office365-Filtering-Correlation-Id: 32973ca4-67b4-450c-9def-08dca027703f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TnhtMVh5V2JvaEQ1V0I2SnlLb05WMHYwODI5UUxvZk91bzdRckxjVmEwamM0?=
+ =?utf-8?B?RFUrNWE5ZGpwcHhDVlkramEwTDlhSkhYZ2VpWjlNa0g3Q2dZb1JSZktzZzVM?=
+ =?utf-8?B?MVpJL1Roc1JPTmExMTlOY0h5VlNJRjcvM3djRTlzS1hBSC9IZm5xY3I2d1d5?=
+ =?utf-8?B?S3hOVTZIencyM1dQTUZlV3J0R2M4a2hVMm5WT09Vc2xMZVc1NjZsREtJK2pJ?=
+ =?utf-8?B?S3R5Nm5ENXdWMzNSR3BlT3UyOWhkTFVCSHBzcXd6YzhuZVFRTHlqeTU0ZDlL?=
+ =?utf-8?B?MGNLcHViTEU3N29FcWhrY1doWEN6NWxIR29reEpBdmhqaWtZbFRJNHVBYm5W?=
+ =?utf-8?B?S0U1c2tkN2ZzR2NOWllaOVFSbDB4Y056TEFFUUhnUFVvZEw4R0RFbUNSSmtC?=
+ =?utf-8?B?ZnEyS1Q2d0U1U2ZNbWlreHBmc0lrK2VvcXAxcUtxcUc0MFhGT21sejhpUWRl?=
+ =?utf-8?B?YkhzYlN2SWh1TlVlSjM0c2c0M21vQXovNy8yaXB2VThIMlRtOFVFSThBZWdm?=
+ =?utf-8?B?VVlqL0pnTHVzRmR3QUpJZGVMMHNYWVFta0k5ZHByZ1pUczh2U2N3U0xrRDFY?=
+ =?utf-8?B?UHpObVdkSVhjL281UEErNkFwd3dJT3hleWRsVFVZVDJ4MHc0RjVYNDBsQmZh?=
+ =?utf-8?B?RHQrRlc5OU9QWENTV0VGT2ZtKzJEckVDaURoWkhmelNzcGl5TE5zdEdnc1JR?=
+ =?utf-8?B?OXk3dG5uTmo2NHYwYVpjUmkzQUIwN1NtV0dEeXUzbHFaQjQvbzlLYTErZy9o?=
+ =?utf-8?B?Skc3clpQS3l1REx5Zjl2bVVmRlZoeVZiVDFFQ3FSOUhOaVozeDgxR3RMR0Zy?=
+ =?utf-8?B?bWZ6a2wrVU0rSUUwWjJmMDVVb0ZmUWZkQVEvRFQvVis0aUs2L25zNTFIUWc1?=
+ =?utf-8?B?MC9Nenp5Tk04NkVCdjJjbUkwMUtSZU9NN3dqaCt1NDdyMUMvMVQwYmtrRUlD?=
+ =?utf-8?B?ZEszNkt0MlZrWksyRWQwWDRVcUtZNmtUU0RoOFJYQnI4K0F0ZjhYem42Rkxs?=
+ =?utf-8?B?Q0NVV2QvN2RsK28wNU83UVJjUkZJK3IxOXFZVjNkNWQ0ZjVlcDBwOExFMzIr?=
+ =?utf-8?B?YkM3M3hjRnU0MHo5UmVIcVJaZUtmZlB2WHFHdmpQcU9lZmRmMzBzTUl5Y1do?=
+ =?utf-8?B?TUFMZ1RYWlRyTVdIdkM5a1JiMDdqbE4raVVpZDJpWGZJYk9MN2Y4N3UxeUpH?=
+ =?utf-8?B?VExyVUk1ZmFXMHA0ZmhhYnYvUDRwa094VW9NZkp3Uyt3ckhPM0JQK2xlUTky?=
+ =?utf-8?B?dTE2b1BmN2MxdzVMdWVnWGxmd09GbExhbXFoaEFmTFRyK1dSRVo2ckFMc1pa?=
+ =?utf-8?B?WjFDUkloNk5SaFBsSDI1MVJ0UmxmSGFKSjd1eUdwWjRtQXNpTVkwSmd5MFVi?=
+ =?utf-8?B?VGNTUERrc1BVNFpUMmFRVzRmTmpKZEJsenJDQkx6RHorNWNOd0Znbi9VRzNt?=
+ =?utf-8?B?ZzVqMzBkbWsrM0lQU01TZnlYZmdMbTF0Tkk4dUV2OE9JNjlxby9PbktOTDlm?=
+ =?utf-8?B?YTVIM3RVaTVkKzZUcE9HdEtxU0lzMXhVL29QVjBBWExsdWVTTnJZa1VFb1R5?=
+ =?utf-8?B?M1BuK2Y5ckVSY2dwaFZxVk1yZG9yYjcvbmJTeXVOQnFhMzRsd0VPQUwyMWJa?=
+ =?utf-8?B?Sy8wejVpY05zYVAvZzdxTjBsbk9RWlg0NUFtVGM5dXE1ajhtZDlkUFNQU1pL?=
+ =?utf-8?B?c1k2TjMzZ1hHcHlYWE12ampUTjdpTEtRbGdkMTU5ZURuUmxQY24rTE9XZ3U0?=
+ =?utf-8?Q?ukIbGtNmzNtmyz9uKE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR12MB8733.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ODlLb0k3MkpEdHc4TkpjL1hqa2ZaQWN4Y0JKeVVWNUZWR3d1Z2RHcDhJOXN0?=
+ =?utf-8?B?K1FaVlhQTmRIdDlCWHVycHNBZjdIOUNPb1hFaUlGV2xyYmhld0FpdERteXFP?=
+ =?utf-8?B?clVXQkh0MFl0NWsza1p1WExQUlVIMGJWWmIwRXdoWVFPZGI0ZXVoMGhwenJj?=
+ =?utf-8?B?RkFTSEVGdVJEYlgySW1VZlJtdVJtWWk0eW8yZDlra09uWElBcWpkVGhadWJs?=
+ =?utf-8?B?OVV1UmhMMGROUVBPZGZ1YTF5ZVFDY2Y0OUdJa2hsdGJtSis1bFQrbGpnT3o2?=
+ =?utf-8?B?Ynl6eTBXbzNnN0dlUi9TT3pFM0M2czdvV280VnBJL3Vuck5ZTnBHZllEcUI0?=
+ =?utf-8?B?dEN3eUVkR2cvVnhZSTB2N3YweEVEcFN6bnE5U1RRL1BaWjRHZEpKY3laeEpE?=
+ =?utf-8?B?anZHdnhSSWFzRkNJYTZYbmFTWEFHclhIUGRYZU5qMEtzaExGaEl1aldwZjl2?=
+ =?utf-8?B?QUxUTW9ELzZXM2ZlY2pQNzFwQWhBczFjN096d2RhcVVYWEg3bEpNTHRON1hR?=
+ =?utf-8?B?MUR2ZHNSaGxyQk1mNVVnRU5LWUJzRisrZ3JwV1gwV3dwRnFHUjZsVk5kaktZ?=
+ =?utf-8?B?K3g5dUhNQTNiVHZ0Uk1hZ1RSSW93SzZFM0tpdCtaaHFkQndFRXpjTjhGN1lH?=
+ =?utf-8?B?ejNXTnBEWVhESVkvOUt4WHV6bzNoSUhNWjhSa1RJZjFpc0tZSXlLUDk3anVp?=
+ =?utf-8?B?Vzk3YUwrM2QreWo1SUU2SFlBeDZmbzNmZVM2UFpjU1hldTF0SFpuL2pwMzlN?=
+ =?utf-8?B?YzdZcm1QaGhPV1NkS29aNVE2UHd4OXcvUCtNam9hYkNqenZ2SElSMWdnZVA3?=
+ =?utf-8?B?RUFrSkZuSEtGMHZTZnFiZlNTekt6NHVibHplWWwzM1hsZmltUGswTmN6UEtC?=
+ =?utf-8?B?bkZ1dVZ1YWp5SjRvNnExSldFR0tzdENwMTEwSlo1WFlsOW9pamhBbXZMUmo3?=
+ =?utf-8?B?Y3cyZ2l5Uk1jZXZnT3VMaUdpVjdIMnpsb1VuWlFHR0haN3VkSm5IRHlWeHdR?=
+ =?utf-8?B?ZUt5QkNLZmhsdEl5ZlZqdTd1REtTaVhTeXA3STA3UUFCdFlFVUxQWGE5NVpZ?=
+ =?utf-8?B?MUc1bU5hNmd6eEtRZkwzcStibkw3YzlrcURueWlRREREYmVhMTdIRng2RW1n?=
+ =?utf-8?B?aTkxRGloQS9QdW94b0xWZ1lqTUdDR3lZSmc5MlRLQjRBRDUvaDRLaDgrc3I1?=
+ =?utf-8?B?bEsvUUxXZkxTaDUwR3pneUExeGc5ZlcvVHRVWU9FM05hZW91aEZUVlltRWx2?=
+ =?utf-8?B?NmYyQ3BwdU9sUWQ1ZHlVVWk2K1FZZGV5TkFKb3dsK1AxZEpESTdoLzZwSVJL?=
+ =?utf-8?B?cTYwN2JQcjJKenM5Mm96bXJUNTM0R0tOVm1UblozNEp0MEZPVGR0VUZtVnZm?=
+ =?utf-8?B?cUxGbGFwdkhBeGk5WXQ3enBlSzFiWGNyalMvVFJUSnhUdVJqZUYzUVh0Y3lo?=
+ =?utf-8?B?WlRBTkg3NE9yZ1ZlOGkxWlFkcjB1ZGpVb1ByWmNwcy83enZRaXQ5UlBvQ3pB?=
+ =?utf-8?B?cTh0VTRLV05teUc4WFdVQWJucUlNSnlpN2ZrMkJZZ3pXejREcklLd09mL2E4?=
+ =?utf-8?B?ays1TDhIanFJTW9TYWJUQ1ZCellUTmRya0ZKRlhGRVhiSjRjUkpTeGc2bjBQ?=
+ =?utf-8?B?MTcwOVV0L1dHNTRINTJ2aytpNU9nL1ZnQ0hkWGVQZStaZlY5WVZtdWJ6ZUlm?=
+ =?utf-8?B?ZDZUWW5odzdndmJacXg3RFR2S3BHdDBzNld4b3Rjdlowd1Y0eEdlZnBJMExs?=
+ =?utf-8?B?NWdXMEZaZjdQQjIwMW02eFJrQlB4VWJCdWVuajlmUjZJM1ZIVUdzU2Jwamk1?=
+ =?utf-8?B?a091YWhWZFFNS3B2S200elZmMjdKMk9iaG5tYi9QS3oyOWZZQ0NrMW9wZlQ5?=
+ =?utf-8?B?UGFRQVBscXU0M29FMjFjQkFzbmxKQ2NmcDY2VUIwM0NvSmxnK2l0U3JaeUwr?=
+ =?utf-8?B?Wnh2RFRVMVFvanl2OXBkZTF2ZU9XUFF5V0wwcnVwVkxDZE1qZlp2NDkvNlhZ?=
+ =?utf-8?B?TFMvMkc1VFlWMnJKS1hPRUNXMDZUZWowZW5mTWZ1Q1lkdzFHb1QybitVa1kx?=
+ =?utf-8?B?R1hpMGVCUHNFMHQrVGtidkxjT0pwVDJQWEdGcDI3ZUpBZ2JnWnUySDkvcGRD?=
+ =?utf-8?Q?6cBksRy5KoLBWN4Kvq8Xf8LRE?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32973ca4-67b4-450c-9def-08dca027703f
+X-MS-Exchange-CrossTenant-AuthSource: MW6PR12MB8733.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2024 14:57:22.8628
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: y3mLKCFDhkAmKN8uPPjIk3DVU0xZor7+WRv+sA1gW4Rk2Iu/ZOPjb2zZK+I5UkV53VfQSL7N/IiIt+kD92G8SQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6214
 
-On Tue, Jul 09, 2024 at 04:44:30PM +0200, Daniel Lezcano wrote:
-> On 09/07/2024 10:53, Thomas Bogendoerfer wrote:
-> > On Tue, Jul 09, 2024 at 09:47:52AM +0800, Jiaxun Yang wrote:
-> > > 
-> > > 
-> > > 在2024年7月9日七月 上午12:36，Daniel Lezcano写道：
-> > > > On 11/05/2024 12:43, Aleksandar Rikalo wrote:
-> > > > > From: Paul Burton <paulburton@kernel.org>
-> > > > > 
-> > > > > In a multi-cluster MIPS system we have multiple GICs - one in each
-> > > > > cluster - each of which has its own independent counter. The counters in
-> > > > > each GIC are not synchronised in any way, so they can drift relative to
-> > > > > one another through the lifetime of the system. This is problematic for
-> > > > > a clocksource which ought to be global.
-> > > > > 
-> > > > > Avoid problems by always accessing cluster 0's counter, using
-> > > > > cross-cluster register access. This adds overhead so we only do so on
-> > > > > systems where we actually have CPUs present in multiple clusters.
-> > > > > For now, be extra conservative and don't use gic counter for vdso or
-> > > > > sched_clock in this case.
-> > > > > 
-> > > > > Signed-off-by: Paul Burton <paulburton@kernel.org>
-> > > > > Signed-off-by: Chao-ying Fu <cfu@wavecomp.com>
-> > > > > Signed-off-by: Dragan Mladjenovic <dragan.mladjenovic@syrmia.com>
-> > > > > Signed-off-by: Aleksandar Rikalo <aleksandar.rikalo@syrmia.com>
-> > > > > ---
-> > > > 
-> > > > Applied patch 7 and 8
-> > > 
-> > > I think it won't compile without patch 1 being applid.
-> > > 
-> > > Thomas, do you mind to apply patch 1 for now? Given that it's just some extra
-> > > function definitions.
-> > 
-> > no problem, I've applied patch 1 und 2 to mips-next.
+
+
+On 7/9/24 6:41 AM, Linux regression tracking (Thorsten Leemhuis) wrote:
+> On 30.06.24 01:18, Mikhail Gavrilov wrote:
+>> On Sat, Jun 29, 2024 at 9:46 PM Rodrigo Siqueira Jordao
+>> <Rodrigo.Siqueira@amd.com> wrote:
+>>>
+>>> I'm trying to reproduce this issue, but until now, I've been unable to
+>>> reproduce it. I tried some different scenarios with the following
+>>> components:
+>>>
+>>> 1. Displays: I tried with one and two displays
+>>>    - 4k@120 - DP && 4k@60 - HDMI
+>>>    - 4k@244 Oled - DP
+>>> 2. GPU: 7900XTX
+>>
+>> The issue only reproduced with RDNA2 (6900XT)
+>> RDNA3 (7900XTX) is not affected.
 > 
-> Usually we create a shared immutable branch, but as we are close to the PR,
-> I propose I ack these two patches and let them go through the mips tree this
-> time
+> Hmmm, again this looks stalled -- and the regression report is 6 weeks
+> old by now. :-/ Or was a solution found in between?
 
-works for me, as well.
+I'm okay with reverting the patch, but I want to see the requested data 
+and tests first. I could not reproduce this issue on my side, and others 
+did not see it either. I suspect this is something related to firmware 
+or it is a display-specific issue, that's why the data/test that I 
+requested would be useful.
 
-Thomas.
+Thanks
+Siqueira
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+> 
+> So I assume no solution will be ready in time for the 6.10 final? I also
+> assume a "simple" temporary revert is not a option or bears big risks?
+> 
+> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+> --
+> Everything you wanna know about Linux kernel regression tracking:
+> https://linux-regtracking.leemhuis.info/about/#tldr
+> If I did something stupid, please tell me, as explained on that page.
+> 
+> #regzbot poke
+
 
