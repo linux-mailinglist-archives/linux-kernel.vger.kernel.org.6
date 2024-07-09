@@ -1,67 +1,94 @@
-Return-Path: <linux-kernel+bounces-245688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A10E92B61A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:04:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C90E992B61C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BD8A1C217E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:04:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7F121C209EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A88D1581EB;
-	Tue,  9 Jul 2024 11:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56CE1586FE;
+	Tue,  9 Jul 2024 11:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="dTFTeER9"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="tWoCAcEX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IFKbdE9U"
+Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91798155303;
-	Tue,  9 Jul 2024 11:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681B3155389;
+	Tue,  9 Jul 2024 11:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720523080; cv=none; b=b6yUlT2IfmyTWca4DNpLZHTIoWRskEtn8WxhAgVnjSn4u4lrerZm4KX9mXharfMFFqOL0a0LKKpYgajUTSs1av0UtlGVKpXQFmMXFqr8Ae+uEF3+8cZf+SX4MeWPauFDVzSTVHHujOyYjSMEVx19qeSSbXTTpsKuTNPV/7sDIE0=
+	t=1720523082; cv=none; b=ukGDiFqsNbTBR2tS0pAlvYREGNrNHHHpymHEZFxvjxzhhpVipeev7OjWaSQig+VxfvsX+gF/sx1KB5yxSN8+TLb9vp/w7lEch7sAB+UmrRqnqmeCrFqOpYP2VGeU1c4Yhv44lsVPJuu0+mboq2jCSN/Rr2ZQ9wbU6AM8bfOsiSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720523080; c=relaxed/simple;
-	bh=cmO6uIAvQ2Sq3nmcAqsTEzeL4AhO0S7xyhI8XsAuWjE=;
+	s=arc-20240116; t=1720523082; c=relaxed/simple;
+	bh=B5t8FOU10IgnywCSaV+yV+n3OSAVnFv17h+gxNR0IWA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bCErzp7F1JoBPsg+2L6HFXs3vr5faR4eSNHkRIjPeeX05KzNqa8tCy+7SmiIFKTU7Apa632WIqrjEw/335IB/MF2LKxc12OzH43YtjxI3KuldRkv6h/o4UXAekJLGQhycXnWRam/0yjDHCeo+nsYmABRpxaeCaxxufz0nLnkqdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=dTFTeER9; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4WJJ6512cMz9sSR;
-	Tue,  9 Jul 2024 13:04:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1720523069;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2YMROL98ACsOZCbRP94pX8oI7L1VGneWeIslewdStiI=;
-	b=dTFTeER9w1KiAWkewX1ODbkftF6ZHwV8ad2JP5xNGR+iy2JGrpfxqmdNhgVgqrtvjijb9J
-	h5VJ4RU/9Klt1lI/rMOjn2DLibhblgzmojwoV8Lcml49hXbcmbJwt48TP8KfkT6sG3JbmY
-	TjBJVZeNw+y5zamFqscYZ0U04kX2i94Q/EfpM+2GPg9ENXUryRj8znydhKV6BNAr+KKXNg
-	T8PcGTtiIBfCrpE83jb4hJ6V2O6o9hmHGCHsrqh0foW1HZt3S7YrPuhNJOqVjm5f7XZTl5
-	B0ND5YGqJiKpE5kqQ26urle6qM8b1Hy8sL992+1mM1yJ5aYiovOG/1MZAAHdqQ==
-Date: Tue, 9 Jul 2024 11:04:23 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: david@fromorbit.com, willy@infradead.org, chandan.babu@oracle.com,
-	djwong@kernel.org, brauner@kernel.org, akpm@linux-foundation.org,
-	yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, hch@lst.de
-Subject: Re: [PATCH v9 04/10] mm: split a folio in minimum folio order chunks
-Message-ID: <20240709110423.wdteahoeufrt22jk@quentin>
-References: <20240704112320.82104-1-kernel@pankajraghav.com>
- <20240704112320.82104-5-kernel@pankajraghav.com>
- <D2K7HHAVJDR9.8PR2HQZ00FXA@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WDFvn6T+RqI4tN49fivmQoYsLh3Ggg3IeHMPTU/A6DNtl7oVWOUvygAY6wJTd3Koucmdk4SxVb2+8Ie73Z5UCiqAdiVic3E8zElmyR3XkqVxE2wj91MJBgWPT/wo//vRzpbexwKSBsfV7MJ3gj1o2ylobHTIT2EA9R/dMSAZ7j4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=tWoCAcEX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IFKbdE9U; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 659BD1381C57;
+	Tue,  9 Jul 2024 07:04:39 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Tue, 09 Jul 2024 07:04:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1720523079; x=1720609479; bh=H3tNaDdGY8
+	FKMr1+a9tMtjAdOC1ZrM5KtAJSOzs+ZOw=; b=tWoCAcEXUhgmVRM7YYbaJRQFb4
+	8xe1vf8DtSpoLrehhxx1oX7O+/LiJmAqG3f/953tKPCN3ZjrrjEC2K6Tlzb/gpqr
+	2+CaaXbBG8ExPtlLA+i01Yd1PbVklScLKa9wiQyP0FnSUAuJk8oOG0UyPFOoIry4
+	TlPX7gylKJkTer7Z2dhQ0iO78rm28NPsQGaQxXQf7cd/446Nlwor4HuzuEIaAtm7
+	MsYcxwRDM66nUzkI3D0Tzq0vWQxhRjiaqVhjfjjB4OZ23kcu3WYt1lDin3HTzSaF
+	GyvMORTrvXdN/Sj+KNncu97/Zg+jEiYdnacOdHVNI2Lw5zLU1lhzeJkv+jvQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1720523079; x=1720609479; bh=H3tNaDdGY8FKMr1+a9tMtjAdOC1Z
+	rM5KtAJSOzs+ZOw=; b=IFKbdE9UTprV5c9WDTgZ0NWmpbWjyk1dXzyhierjp0bH
+	xAicb2g+1XrzVsbdyP+W38XtjQxreWsDrLPXTLknM3RFBkOxdeMzONKdUUHmP6lX
+	RxlYr/9+NfDfDpp/p9nHre2b8uWX8CS5GGSa9BFHiYNTDCYalHkeOiWsQI1eKcNA
+	+L8GYCe+EwfqQ74/lP/EwLF8wIpfrwhqoR+OARQr7mCjoSMWX7hfrbGIluQbHFGs
+	vC4hH2PdunfxV8SLDXvxdCrvx6FwaGWWlYhLEeCJBkZeRxIndwJtDBl6uHcXCd/x
+	yx4DQbuHrCxiwHv4KFm/cR8GfcF2kQW6jcbF4TDy9A==
+X-ME-Sender: <xms:RRmNZjhVGZx3wrvJ41CUYe6B1n3-VMAfvbMYlHKV8OXy8QCJwdlNrA>
+    <xme:RRmNZgC176DTvYnkYF5OTXUDcJJRp2K4bgaoPS19BxME7zBlBttmgL2gyZQD66Tuy
+    xkkuad4y8MXjQ>
+X-ME-Received: <xmr:RRmNZjFpDraIqhjFx8LRY1A7eyuixl-epg8PLNflNY-JsaeIj-aVqo7IYdPmCp7vyhxj6I0eY1yiDFhaJUlPJKoqyztTAbP6jdFeGg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdelgdefiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
+    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehgedvve
+    dvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhushht
+    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhh
+    drtghomh
+X-ME-Proxy: <xmx:RRmNZgQ8tDI68xKKzgJnWybVqMRKfc8tzUaLTbCxbLiCE25_0adN4w>
+    <xmx:RRmNZgzqnIx_olKyTaFBKDRz0ooh9mJ_q5e5--OouyJPb_WhoybQQw>
+    <xmx:RRmNZm4LDYUHOBrZ_aWELXe7O9Ha6dzJoCByJg4PZ_ijFckQVEvXvA>
+    <xmx:RRmNZlxD2L7BdUDtm3MHHupEAX3DKB9uQkVRg3zro6bRdrHXxIGdAA>
+    <xmx:RxmNZloXggv5w9oYddGP7Y4Z8NDYa395DC79F4i9BAxHPdsSz016d2Oo>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 9 Jul 2024 07:04:37 -0400 (EDT)
+Date: Tue, 9 Jul 2024 13:04:35 +0200
+From: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: linux-next: manual merge of the tty tree with the tty.current
+ tree
+Message-ID: <2024070925-area-cobbler-271f@gregkh>
+References: <20240709153747.07d7272c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,60 +97,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <D2K7HHAVJDR9.8PR2HQZ00FXA@nvidia.com>
+In-Reply-To: <20240709153747.07d7272c@canb.auug.org.au>
 
+On Tue, Jul 09, 2024 at 03:37:47PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> This should be
+> Today's linux-next merge of the tty tree got a conflict in:
 > 
-> 		if (!folio->mapping) {
-> 			if (folio_test_pmd_mappable(folio))
-> 				count_vm_event(THP_SPLIT_PAGE_FAILED);
-> 			return -EBUSY;
-> 		}
+>   drivers/tty/serial/imx.c
 > 
-> Otherwise, a non PMD mappable folio with no mapping will fall through
-> and cause NULL pointer dereference in mapping_min_folio_order().
-
-Ah, of course. I thought I was being "smart" here to avoid another
-nesting. Instead of triple nested ifs, I guess this is better:
-
-int split_folio_to_list(struct folio *folio, struct list_head *list)
-{
-       unsigned int min_order = 0;
-
-       if (folio_test_anon(folio))
-               goto out;
-
-       if (!folio->mapping) {
-               if (folio_test_pmd_mappable(folio))
-                       count_vm_event(THP_SPLIT_PAGE_FAILED);
-               return -EBUSY;
-       }
-
-       min_order = mapping_min_folio_order(folio->mapping);
-out:
-       return split_huge_page_to_list_to_order(&folio->page, list,
-                                                       min_order);
-}
-
-Let me know what you think!
-
+> between commit:
 > 
-> > +		min_order = mapping_min_folio_order(folio->mapping);
-> > +	}
-> > +
-> > +	return split_huge_page_to_list_to_order(&folio->page, list, min_order);
-> > +}
-> > +
-> >  void __folio_undo_large_rmappable(struct folio *folio)
-> >  {
-> >  	struct deferred_split *ds_queue;
+>   9706fc87b4cf ("serial: imx: only set receiver level if it is zero")
 > 
+> from the tty.current tree and commit:
+> 
+>   3093f180bc6e ("serial: imx: stop casting struct uart_port to struct imx_port")
+> 
+> from the tty tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 > 
 > -- 
-> Best Regards,
-> Yan, Zi
+> Cheers,
+> Stephen Rothwell
 > 
+> diff --cc drivers/tty/serial/imx.c
+> index ff32cd2d2863,d96f0524f7fb..000000000000
+> --- a/drivers/tty/serial/imx.c
+> +++ b/drivers/tty/serial/imx.c
+> @@@ -1549,10 -1553,9 +1554,10 @@@ static int imx_uart_startup(struct uart
+>   
+>   static void imx_uart_shutdown(struct uart_port *port)
+>   {
+> - 	struct imx_port *sport = (struct imx_port *)port;
+> + 	struct imx_port *sport = to_imx_port(port);
+>   	unsigned long flags;
+>   	u32 ucr1, ucr2, ucr4, uts;
+>  +	int loops;
+>   
+>   	if (sport->dma_is_enabled) {
+>   		dmaengine_terminate_sync(sport->dma_chan_tx);
+> @@@ -1984,8 -1937,8 +1989,8 @@@ static void imx_uart_poll_put_char(stru
+>   static int imx_uart_rs485_config(struct uart_port *port, struct ktermios *termios,
+>   				 struct serial_rs485 *rs485conf)
+>   {
+> - 	struct imx_port *sport = (struct imx_port *)port;
+> + 	struct imx_port *sport = to_imx_port(port);
+>  -	u32 ucr2;
+>  +	u32 ucr2, ufcr;
+>   
+>   	if (rs485conf->flags & SER_RS485_ENABLED) {
+>   		/* Enable receiver if low-active RTS signal is requested */
 
 
+
+Looks good, thanks!
+
+greg k-h
 
