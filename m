@@ -1,134 +1,153 @@
-Return-Path: <linux-kernel+bounces-245985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDABD92BC5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:00:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07BF992BC62
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AC0C1C22810
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:00:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EC25B20F0F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E223018A956;
-	Tue,  9 Jul 2024 13:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161A8195B28;
+	Tue,  9 Jul 2024 14:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HimCvSTo"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x7oRqSVX"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D8E156238
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 13:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A631953AD
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 14:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720533566; cv=none; b=AAU/LSmkcyUske8cyBVLX2FsjlzbH2P7z7EOUnSfyjFh+36+NQGbVSiMX9CqlUAV3G+V7lyoEZZV45Xvnt2e6RNeSJs9pKE/5YbwmDidWQo2w/N+kOZnU/C5ZvrpDtfZTcXg1HjWo8jqq+jMJ/4oV9G4fo3iKQYXAybhh8kj0jY=
+	t=1720533686; cv=none; b=ADhWwUGcr+RKxPOUhR0mlMtp3SNyCeLa8WZut6ovczpOGxHfS/+rhjAJeojTqV/gdIoUzmYyjB/MdJngupAue9Jytq9zgrSimQvjpwTKLkuNt8vnTSFtqqnhUYhIQ4NeDM02RTZZwG93dseVldE9qghAgaKTCbL0ePWpvvUOkeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720533566; c=relaxed/simple;
-	bh=4ZY3sgg/UcXc1lHmildNgyCCyNnIQNIHYrRURZgokIA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GlRS7z1ltHH4wRRHedbrjtjhhmyVAn3Q+4xp7cUqS0ps3RF1kFOos6nWPfY0zLXOMJ0vw+afpYXCJiQnjp/JPs4hTtQ+WTmSU9l5Nv9lMEijKXtEyQ+QdCWfoqUmpmCHpOlIdv0slb1BJOvLbjjEF/FykrZxiDaaopO5052FKas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=fail (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HimCvSTo reason="signature verification failed"; arc=none smtp.client-ip=209.85.167.177; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; arc=none smtp.client-ip=209.85.167.48
+	s=arc-20240116; t=1720533686; c=relaxed/simple;
+	bh=cWksfE0mDrPHGGfr0A1PJv1/l3GTs6C4rc8XVUn8CsM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=unv+aCvh6rAtgUNuQDiaREwgsTrW9riS7/yXz2zeH7Q1Xn3bnFVVU1psVOQwHBlfQIMiZpp0tJKwZvoujiqJTiTR66BKKe9XOnXaQ2w1FKAceC4aKeZNhVvRYdPlVuyIJ20vFkP6qZQ2dx3XWwYu5rqVZrmFqRJPwL8qN9zXt3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x7oRqSVX; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52e9fe05354so7600428e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 06:59:23 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42679f33fefso4409425e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 07:01:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720533683; x=1721138483; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=odNb0yTiM26VkEoxH1kb0dmkgcjAaMfcLxg2VgA0xjA=;
+        b=x7oRqSVXYZ7hiAIq5OIovVu9mQFng0u0iZgGIFPGs4l15dAaQlKt40WeqdgtpEulJH
+         J9Hb2d8XHqRQ1eUFrRIGUnqqmW4PtUcsxAIB4ehTfZfa/ABHoosUjjBcOeah1sYlQS+d
+         qo6nEaMUGs78z0FuGOFPgueT0cofeVxfv0ifISmSI4gZKfZbmSu5LTQ9sFbnJvzpY8f4
+         R75A4qiiu9HomVN8OR2h9j3wOAy1Hcd+X/8V8a9bIedJ9VBUVqliZUh53inDXvcft1tm
+         dT/aCnkEX/VhKTaBKHLpgfEHkdZYihwAhPfratfYN9hOZfIyzCMFjcHuVIiMSOLDqruO
+         mKVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720533562; x=1721138362;
-        h=content-transfer-encoding:mime-version:list-unsubscribe
-         :list-subscribe:list-id:precedence:dkim-signature:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oBVMyiTluWvB+cspxCg8zTmg6u43rmW8xruXcjUcEz0=;
-        b=pei0YhBP0XEvvH3Gef/BvCtTnrMZtV5oS82nO77U2ySy+4hkrKwFyvpfBc2zs5iAuv
-         4rd3EnSdX5Dj4I1oov4q/y/ozE9RGuzPLU2vZp04TEM6aSiBsl8bkTsCuRdAcep0kD7J
-         JThHx33x3S1p1tS0wM50E+cdBUSOHACRTAnL5ff6h201Yg4iB3lPTA3O+qnrNhKXzvfz
-         8iG0azvntIRnDvbbQSpa+/t13iFZkBx8BQxMsMI045jxn2dZb7bK5F+crZ5L9lkvTVE2
-         wiB4SXJ5TxfBNp7mbE1JD9WYMqI78gmrGhcHsamlKe43NcZ6xWpB2rmkecPg4Umxfi+C
-         U6Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCV4o02gYvvyqkfVVQUiy1Z6rv/ZP/iVMlge01kT2EPuwE8rd6JLoWdWErKQqERuJJicuPHd5BGUG64BuzMzjV9jkBiwin9HVxqZlzn8
-X-Gm-Message-State: AOJu0YxGpXOPIiEVAPAR51RUcI0kUgaHywo6RWoJtx8FCr7IJN3vwJdM
-	MAp10RBvl0xjQVBgH9PVqAS8Xi4bAjreq8VCIqpW+rathTNrU6YQlfoBvg1QMJg=
-X-Google-Smtp-Source: AGHT+IG/rFtXKbzfzIclsUAgMeGPHLkGwdyOR4dLpOuhjgwOVsd7Rde9H5nBfdSfvRYOMEmvNTFStA==
-X-Received: by 2002:a19:5f03:0:b0:52e:934c:8e76 with SMTP id 2adb3069b0e04-52eb99a324amr1552711e87.41.1720533561657;
-        Tue, 09 Jul 2024 06:59:21 -0700 (PDT)
-Received: from localhost (c-9b0ee555.07-21-73746f28.bbcust.telenor.se. [85.229.14.155])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52eb8e3473asm252107e87.36.2024.07.09.06.59.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 06:59:21 -0700 (PDT)
-From: Anders Roxell <anders.roxell@linaro.org>
-To: dan.carpenter@linaro.org,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: bhelgaas@google.com,
-	kw@linux.com,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org,
-	robh@kernel.org,
-	Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH 2/3] PCI: qcom: Prevent potential error pointer dereference
-Date: Tue,  9 Jul 2024 15:59:18 +0200
-Message-ID: <20240708180539.1447307-3-dan.carpenter@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240708180539.1447307-1-dan.carpenter@linaro.org>
-References: <20240708180539.1447307-1-dan.carpenter@linaro.org>
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177]) (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits)) (No client certificate requested) by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48AB148FED for <linux-pci@vger.kernel.org>; Mon,  8 Jul 2024 18:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3d92aa6b62bso1204955b6e.2 for <linux-pci@vger.kernel.org>; Mon, 08 Jul 2024 11:05:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linaro.org; s=google; t=1720461948; x=1721066748; darn=vger.kernel.org; h=content-transfer-encoding:mime-version:references:in-reply-to :message-id:date:subject:cc:to:from:from:to:cc:subject:date :message-id:reply-to; bh=hxcirFeeuu0bt0rjz0tmui1G8RYDC+/JunVt8zPPRlg=; b=HimCvSToBRd0wyTWybX3iK/ljx9N7x5Kf6z/EztaEn00F9+Rc/ww6NWSERNxX9I4Dq u+UtQxi3iXxQNkDgvdHx1UcsqntPliN62vvsQ/GpcQJ4E0ypmkDJXAOVxHxd6mlNy6dc MOICnrtX6KhNXfaca8UTv6HI554B4n+jJx1IDSv4xX9gJeaJZsWWfunwwb1hcmouE2YD iqs1oXW97dkfpIPtsOx6NQSWjGMcvUbOxSUqfi+dLduw0+Nc6ghLHJvkcSnMMnX55gsI aQsIJitQOMgWfJpL9DFN3ZhRmfzZGNEIPU3akNE9B06+1casa95QtMuz3eJfAtGvIH6X Y7rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwkqYAK6ZlIVETdJ8PeCCcKNQFBLOYM+DRSFLgaiM1ECxyPZiHVwhel4bQLtJujradn601FDr1Yh33VRIJ/DMVc9/kp/BwodUj
-X-Received: by 2002:a05:6808:10d5:b0:3d9:3802:3855 with SMTP id 5614622812f47-3d93c02038bmr176901b6e.23.1720461947976; Mon, 08 Jul 2024 11:05:47 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:cdd0:d497:b7b2:fe]) by smtp.gmail.com with ESMTPSA id 5614622812f47-3d93acff184sm76287b6e.10.2024.07.08.11.05.47 (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256); Mon, 08 Jul 2024 11:05:47 -0700 (PDT)
-X-Mailer: git-send-email 2.43.0
-Precedence: bulk
+        d=1e100.net; s=20230601; t=1720533683; x=1721138483;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=odNb0yTiM26VkEoxH1kb0dmkgcjAaMfcLxg2VgA0xjA=;
+        b=Dvc6sisHueZSY8nV0cb9/mmo1nCkLmLzT3rFQXB2vzRIKB6vvnaNz9cBKRNgHYNLjU
+         virfZMcH0WY56Ua5KmnJ4k02/qaPhnx6XVUrSLl5zi4tZslg5yLXNPMBCLaCNKZ1g/JJ
+         ExQi7AIYapuiwS/H5gezcCiAMGv5NM9KuEVYvw5GVX05Pds/+ttOHW+y4Qew5lHSIWuB
+         cAtaQCnWfncRs9blcL4Pq5G5csRdIPf3r5urbD9iqhjR5Q81D1C4/wnp9WGpA6N0f6DL
+         ddmIQ8ab/nnWvf5Wy8IfRFhe7yTVxiVyk+DON1zQRGC81Mr3LXr3GvW7hfaiqenrGa5s
+         bQJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnGEkmOHoqEeybqAwadZpjc0AcbPiew+mpsLOh1bXYWItbFvH+r4Uy/TKymBmho4YgPRfPCFgQF7x6e7xBLqeBz09NLRX1kbN9Tn8k
+X-Gm-Message-State: AOJu0Ywh66p0VuVCbBT9nVhohppatGwt2Sm2mFsZfjIU1C81Y/vFuAFt
+	iZYLvHnYrU8c4V1CjXhdSj5zSfKDCvnespKmBw1DfaEhTHkeShd+lkfvWzhE1Hk=
+X-Google-Smtp-Source: AGHT+IH6C9QFWooOG++C3SeWw1jtlVbKwFW/ns0gKbnvV6nNPBXO3ivbl5NS5izygL+PQjq9pWMBmw==
+X-Received: by 2002:a05:600c:1592:b0:426:60d7:d299 with SMTP id 5b1f17b1804b1-426707cf5ecmr15020845e9.7.1720533682768;
+        Tue, 09 Jul 2024 07:01:22 -0700 (PDT)
+Received: from ?IPV6:2a0d:e487:133f:fb1b:7fc5:f63a:ac6f:62c6? ([2a0d:e487:133f:fb1b:7fc5:f63a:ac6f:62c6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfab80asm2655664f8f.109.2024.07.09.07.01.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 07:01:22 -0700 (PDT)
+Message-ID: <79774d32-f891-462f-b7b1-2a47c33463b6@linaro.org>
+Date: Tue, 9 Jul 2024 16:01:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v6 2/5] drm/panel: boe-th101mb31ig002: switch to
+ devm_gpiod_get_optional() for reset_gpio
+To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>,
+ robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ airlied@gmail.com, mripard@kernel.org, dianders@google.com,
+ hsinyi@google.com, awarnecke002@hotmail.com, quic_jesszhan@quicinc.com,
+ dmitry.baryshkov@linaro.org
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240709134754.28013-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+ <20240709134754.28013-3-lvzhaoxiong@huaqin.corp-partner.google.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240709134754.28013-3-lvzhaoxiong@huaqin.corp-partner.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Dan Carpenter <dan.carpenter@linaro.org>
-
-> Only call dev_pm_opp_put() if dev_pm_opp_find_freq_exact() succeeds.
-> Otherwise it leads to an error pointer dereference.
+On 09/07/2024 15:47, Zhaoxiong Lv wrote:
+> Switch the driver to use devm_gpiod_get_optional() on reset_gpio to avoid
+> driver probe issues when reset line is not specified.
 > 
-> Fixes: 78b5f6f8855e ("PCI: qcom: Add OPP support to scale performance")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Tested-by: Anders Roxell <anders.roxell@linaro.org>
-
-Applied this patch ontop of linux-next tag, next-20240709.
-
-Booted fine on dragonboard-845c HW.
-
-Cheers,
-Anders
-
+> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
 > ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Changes between V6 and V5:
+> -  1. No changes.
+> v5: https://lore.kernel.org/all/20240704072958.27876-3-lvzhaoxiong@huaqin.corp-partner.google.com/
+> ---
+>   drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index 1d36311f9adb..e06c4ad3a72a 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -1443,8 +1443,8 @@ static void qcom_pcie_icc_opp_update(struct qcom_pcie *pcie)
->  			if (ret)
->  				dev_err(pci->dev, "Failed to set OPP for freq (%lu): %d\n",
->  					freq_kbps * width, ret);
-> +			dev_pm_opp_put(opp);
->  		}
-> -		dev_pm_opp_put(opp);
->  	}
->  }
->  
-> -- 
-> 2.43.0
+> diff --git a/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c b/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
+> index 8f03920e3503..b92082bfc932 100644
+> --- a/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
+> +++ b/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
+> @@ -286,7 +286,7 @@ static int boe_th101mb31ig002_dsi_probe(struct mipi_dsi_device *dsi)
+>   		return dev_err_probe(&dsi->dev, PTR_ERR(ctx->enable),
+>   				     "Failed to get enable GPIO\n");
+>   
+> -	ctx->reset = devm_gpiod_get(&dsi->dev, "reset", GPIOD_OUT_HIGH);
+> +	ctx->reset = devm_gpiod_get_optional(&dsi->dev, "reset", GPIOD_OUT_HIGH);
+>   	if (IS_ERR(ctx->reset))
+>   		return dev_err_probe(&dsi->dev, PTR_ERR(ctx->reset),
+>   				     "Failed to get reset GPIO\n");
 
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
+Neil
 
