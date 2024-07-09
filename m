@@ -1,570 +1,256 @@
-Return-Path: <linux-kernel+bounces-246517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 750DD92C301
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:01:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 118D992C307
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:02:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 975081C223FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:01:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CE79B24BD3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAD5155389;
-	Tue,  9 Jul 2024 18:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BC917B057;
+	Tue,  9 Jul 2024 18:02:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SkR9RbrW"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Ykx7cDM2";
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="MTkOno1d"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464941B86E8
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 18:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720548092; cv=none; b=KxmpT46O1mUGpnLJjVRERsFVSAonw8R0aV5Y1hxMay4JUmq6UFy9uXjY1GvfOluGtj/CXmCf4zg3KG4tonrzwUhGd+M089nPWXiE+c4tnDptwITIATfnEgcxQABLpfsf2nqLMw0kqWKJwMFdavFux29gZ2bH7cYtA0ihH3ZC1NY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720548092; c=relaxed/simple;
-	bh=VkI9rA1lJsDWEKZW7lvbqWyq2552AVimk9MYPHylWiM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=RV1RTPtB+9LpOV8JWQell7xEzZNL9UM73VYAGipEuD0KU/PERmlXb8RHhuCcc1o0UvVM3ZuHpRM09Rwdvg8C7VEWi2onx9UU+a69U7ajFJ0HH9YBe6VDpGlxVArJpAd7rFRiR92HHUZSEYlG2gLRrqBZdtlLCB940OJvLEpEGZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SkR9RbrW; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a77c080b521so610844266b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 11:01:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720548089; x=1721152889; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lHcM64Au+uukg6AKO5/ac3ojku0QylaKpSDeXCzgSS0=;
-        b=SkR9RbrWrjxNLjPlHHGFeN3lEMob/gqGR5o06AdvfU6W/pLHkFWDf6YOEddPCf6ByU
-         YpjCjrF16I7PQmYdQRlwVBGKIa4FDkciOicZG4DKYBvfxu/lthTZQepNr8cc7M1OVy3c
-         S733n4HEcvjukOEZTxV7/kRsihQ6KQuk60Bh5FqXiEbuy/BjTd9gD/Xi3QyraWE26gYA
-         0IeKfiBoDExjmGGaF4Aic4SY9VwMDjZOIWoy46wfFD4/erPEj4a4SmNFoaYSFppH27qx
-         7hpbKDqyINazY3yYKLHlk3Tnx1SQowABrrVqC2Wzaoq+1Wm9nfRvbf5NRDRycm4Jw+sD
-         jvFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720548089; x=1721152889;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=lHcM64Au+uukg6AKO5/ac3ojku0QylaKpSDeXCzgSS0=;
-        b=RRd5BCQf3K52c0eOPzZG/AmpSPrF+asFFv28SRmhfhv6Wxisn2klQFdNdVaLMfKVwP
-         vA4s56nikWSEmleO6DTKNgTLP5xoTYW2PLjV1j1y0b9AAI/hM1wCvuKPS3LO0K3/dTXO
-         vw1XY70nVMR0k5AyzrPvDYRtsxYj/deQs100sRAep0SG6UF6b/qyVhnD8Cf80Gyugj0s
-         cbT393/Tgsv1W8js0s9p6QkB9/etZ5nUfELESyNzmRehhlfUjdDc/3oHjPYKTXSNvXgt
-         TeDBBuV86ui8zZx9I7hca9ZvmMwvV1D+JT2PTHnCGBNJxMRgqKkwfPU/jG0I7NXBtA3l
-         3f/w==
-X-Forwarded-Encrypted: i=1; AJvYcCW33g7rbYt6VABT9n7PzTcpYI6kO4DCnC8ShpgxhlmGe32St1Cqs1rtoxVsnp+BYvqTsK+dxVFDjWKPSynjCVBrxwFFBxZofjvoRcfA
-X-Gm-Message-State: AOJu0YwHb2hdTep3ROkXUFdeuOaJuMQW3efdCmvzWdznMxZdw2y9n5d6
-	4Z/JCt/wtAhJar51c6Q+QCzD9sJUWlnfcSEhkSjilZ2qRhQkxVIo
-X-Google-Smtp-Source: AGHT+IGHnxUIy3UqvjM1PIAFlH6BhOsBrwOgYKayKYOWy9A1UhFCbK+GgVdUKoX1SN0bbqF8JK0xwA==
-X-Received: by 2002:a17:906:3497:b0:a72:7b86:5bfc with SMTP id a640c23a62f3a-a780b89c98amr203946766b.64.1720548088145;
-        Tue, 09 Jul 2024 11:01:28 -0700 (PDT)
-Received: from ?IPV6:2a02:a449:4071:1:32d0:42ff:fe10:6983? (2a02-a449-4071-1-32d0-42ff-fe10-6983.fixed6.kpn.net. [2a02:a449:4071:1:32d0:42ff:fe10:6983])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7fefaasm96509666b.140.2024.07.09.11.01.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 11:01:27 -0700 (PDT)
-Message-ID: <08fc2878-722e-4884-94f3-19ec4717cccd@gmail.com>
-Date: Tue, 9 Jul 2024 20:01:26 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DBE1B86FE;
+	Tue,  9 Jul 2024 18:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.153.233
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720548156; cv=fail; b=f8mxUj9/V4wKeCLzFm0AEeUyb0C2/N9dqQg+2uGwFoNQQrr6sAPeNGrENzKneEaSsEMqN9KYwG+qTn9UCQTMb/gvdAtmh5ZU9jv/IR5FPF2PUYQlbJ3DrF+OhbhtJ9JZ77/SjjDsxUqAPhu1b5Ex8lM4N5G58WXnhLTXVdQiJtg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720548156; c=relaxed/simple;
+	bh=b6Ti2II4k6x/Yq7u81QSedV5Rlj9UTjZ0gtjB1JBJn4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=I79a/yhyA2At3UddLaoVpaR7wls8+8McNgBj2SFAtbpIk1O8GEvJgLsZubJjsEXislM5lxtE5wZ6nePQePeDNzSiErm22gU6t5dCY1TUI9qnIR2mnOyZknjiPd1MvJtrFVpuGVMwoeYnXDwQmaxw7cDQGQm+V9dCS6EPhA9R3Zc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Ykx7cDM2; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=MTkOno1d; arc=fail smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1720548153; x=1752084153;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=b6Ti2II4k6x/Yq7u81QSedV5Rlj9UTjZ0gtjB1JBJn4=;
+  b=Ykx7cDM2y22xAZ11+eiXOY+sF8ZEuHY7By2YTbVHbyJaOGoYuQ+X5JLb
+   nsNxoR/IftVeRNRo30zn9B5FHmDRAZK5zXJ6JrA0k8ZUnSNd5MBL3t5iA
+   pz/rrWd8NhxANZMy8lTRE0faT/GP98K9+W5v8bPRCAYCy9PpeB5aBTqxf
+   MSqHna7KmiC6oRJLNzBVyUhsBsAy6k2H+1wEXDZtqkMg74rCP968OlHeo
+   9QcZ1Vim3grAVXLng5S7DMPwco33f4CMh3m2dadc/s4S3ZLF2QMieYeq9
+   DTQNpRlzdZXH2YY4NC7vTI3EUxib47J3TLeJ5r58DP79l0/oQK2qxrrAB
+   w==;
+X-CSE-ConnectionGUID: UguOIc8ISwWnCuWcJTR0zw==
+X-CSE-MsgGUID: L/PP5HijQQGqXK/nqca1Ng==
+X-IronPort-AV: E=Sophos;i="6.09,195,1716274800"; 
+   d="scan'208";a="31676834"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Jul 2024 11:02:32 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 9 Jul 2024 11:02:25 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (10.10.215.250)
+ by email.microchip.com (10.10.87.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Tue, 9 Jul 2024 11:02:24 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aRqKTnOAtK7lr8uIl0fJN+XIG+Elk0G9DMnfXrY2VMcvyIb77z6mlRvUV97T7vI8VCYJhwVXMUprl3ridW/dbH6R2bakvJjN/bDnX0+UUkSdxx9rp/RtBQsnetT0AMLoLmAjgFXPc9HTFq0xBTZA81vB8FJXq0AuqG6TDd1dNdRMQ8p9Ic5tb/eosl1d4kjzV9VWcHjy/NEQj3hPciQ/vSXZ0SHVzoIqYKTSLzvqQK85QL0ArHqS8QzCROA3it21a/0oQeJN6JKV2df+vMZh4Oat93t78lGuOPPjJceDEEeUxwgbjpJh5e5JWbkxGvsckTkE73krldOAq/u0XUrr5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b6Ti2II4k6x/Yq7u81QSedV5Rlj9UTjZ0gtjB1JBJn4=;
+ b=bDRvGRCt7hOLZV5QC+zRkeX9sfgh6eWt/0YfyNR53Qzil4zkV7T2Q/IuYX+7sY59NEowA/e3E9JBV6uf87VSr4Q0U8PRbD4HwjMeDWWL0U7dAgYOGidy2BDyBL1ET2NZrjD9xkWdUqruKLovFoYgeRLMECGaorerHCb5VGS07bcxuPK7Iq3sTFKMLc8Auo377qHBYgWLtRmbQI1wQAPodx6tXtDGYAYV2Hee+c99HF9wWRt4dm/nvJ/Y4ezJ1Nh+ZuptSCCLTZy5sg8sRPifxfD+z5QVjFFWCXRIGF/z/eby8sMiLTPd4fz/9fVPKy8opSn8oRFpnYDIhyWw/8mnmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b6Ti2II4k6x/Yq7u81QSedV5Rlj9UTjZ0gtjB1JBJn4=;
+ b=MTkOno1dIzeFqt8Al98naccLmc0q75bmV0LT0WQkhR19WcmVQXjTFmKQnk/qXAcI5XQHtTtpV6gTzGRe4RDG6nsnX8cMyNxK+OL4Viwbf+6fxf+f1uzkE7HiHjqL3DbHizyh6Py6xl3Y1LANNb3v4ud5rJe65CuIfnbkuFA/bmong5Zb10yuzkXu5EZ5Wpqh4N1bWxTSW7sQ+GQWc42pUSNw2NZ73YS+3gHnB86x8knCMjFXHdeMsg2/0qfQJC4QUNJnsKRfHMnO8qKY9F+TZ+S4ygpfkVSY0zTrEehtheLO/1LcuL9ui1QGmyPW3c1gcrtFw+TFX8xyGbB6mxJI0A==
+Received: from BL0PR11MB2913.namprd11.prod.outlook.com (2603:10b6:208:79::29)
+ by PH0PR11MB5094.namprd11.prod.outlook.com (2603:10b6:510:3f::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Tue, 9 Jul
+ 2024 18:02:21 +0000
+Received: from BL0PR11MB2913.namprd11.prod.outlook.com
+ ([fe80::3bc1:80d8:bfa5:e742]) by BL0PR11MB2913.namprd11.prod.outlook.com
+ ([fe80::3bc1:80d8:bfa5:e742%3]) with mapi id 15.20.7698.025; Tue, 9 Jul 2024
+ 18:02:20 +0000
+From: <Woojung.Huh@microchip.com>
+To: <o.rempel@pengutronix.de>
+CC: <mkubecek@suse.cz>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <jiri@resnulli.us>,
+	<vladimir.oltean@nxp.com>, <andrew@lunn.ch>, <Arun.Ramadoss@microchip.com>,
+	<kernel@pengutronix.de>, <netdev@vger.kernel.org>,
+	<UNGLinuxDriver@microchip.com>, <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net v2 1/1] ethtool: netlink: do not return SQI value if
+ link is down
+Thread-Topic: [PATCH net v2 1/1] ethtool: netlink: do not return SQI value if
+ link is down
+Thread-Index: AQHaz2hPBJHkRhkuYUSe5weabIoP1LHtB1JQgADhPwCAAMsOAA==
+Date: Tue, 9 Jul 2024 18:02:20 +0000
+Message-ID: <BL0PR11MB29132C0293B487EBEAFF4532E7DB2@BL0PR11MB2913.namprd11.prod.outlook.com>
+References: <20240706054900.1288111-1-o.rempel@pengutronix.de>
+ <BL0PR11MB29139867F521F90347B6904EE7DA2@BL0PR11MB2913.namprd11.prod.outlook.com>
+ <ZozPSl6opHYYdO-A@pengutronix.de>
+In-Reply-To: <ZozPSl6opHYYdO-A@pengutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL0PR11MB2913:EE_|PH0PR11MB5094:EE_
+x-ms-office365-filtering-correlation-id: 022b83a7-f826-42d3-c61a-08dca0414725
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?TTBERWZqZmtBMlRiS0xMa0I1dHZhclFaS3VEMllDRVl1WkpMWVlQMXZ1VGty?=
+ =?utf-8?B?c3JpUzFEYnNZY2E1YzB3bGZ3TFdzMGQzRTVTM0Vqek02cFhGcU4rV0RqbzRm?=
+ =?utf-8?B?bTNzLzNWbEp6R3hpb3VzYmw5b290bkZ3UWVpQnErd3owUEUxVUpjZXNnY0sy?=
+ =?utf-8?B?d0FrVHY3cXN5WUJYVFNUZ1ZGSmFpSU5ESlIwUW5UckpzZzdFNGFBUW9rMk5J?=
+ =?utf-8?B?SXdkWVovRGhhUDc1ZXZzVjJCQVlaMmFMVmJvNG1NK05DQm9XcXVqYUhHeXJt?=
+ =?utf-8?B?VWo4VkFYOWk1TWtUanpwSlpPRStoVlZ3VFV3OHVETVFSaEVNMnhPTHdrcWt3?=
+ =?utf-8?B?UXlDRk9TVHV6YU5pTkR5TDBxN29PdS9zQnRMeDV5UmJic3JESXBXWUM1L2tT?=
+ =?utf-8?B?Y2xldGprYnVqdWk5Y2hJK1RRTTVFTjViK1dXSHNOUVBwdXFJWUZ3aUZ2dDVw?=
+ =?utf-8?B?VFdrVjAyQVZQcTdTbzA2dFltNzR3OXluY2xZSyszM0g2TDBNZVZ6QXFUanpD?=
+ =?utf-8?B?KzJrZmlrdTdZWUU0TVpGdTVBT2o2NXowM2RXQm54UnBRRjB0UmtPeHY2NHJI?=
+ =?utf-8?B?WWYxU2sybmhkSlJoa25ZQzhnUFF6Zk5pQU56QjB6V1JPNnE0MFRiMm4wbVhi?=
+ =?utf-8?B?VjE0OVE5N2p2Um80L1MyQTFGVnIxNUlucDhoOExsMTRWZmZIN1BuYVY2Z3B0?=
+ =?utf-8?B?dlo0azBpODRxWXU4RjQzbTd0OVhwZi9HNDliU1hVbnZaZFkxRHV3NVJ0bTQw?=
+ =?utf-8?B?TEEyRFE4b0psR3ZVSE13ZkFiNDJPRVNSQW5WMGxGUk5rVWxvSTVSVXBMTzZ5?=
+ =?utf-8?B?Z0pBTXJxK2hacHdoRnU3WGkyZU1OMFRuVUpEZ255Z0FsZlV3Wnk5bHc3L2hx?=
+ =?utf-8?B?aWk5U2RuVWtnODJoaWVMeUw4MFJleG9LTXRTWDR4SWlNbkNSdVU4bE5HbEM1?=
+ =?utf-8?B?VFFoVEFvK3BwL0JPL0pSYVRvOXZnSlRRNFhrS2VYb211TDJpL3BYSTdWMTZ1?=
+ =?utf-8?B?dUhzNGEzRzNXTUNXaW9jVzRkWksxRGtvNlowSWphdFd2YndISzNnNE50REFh?=
+ =?utf-8?B?dGdKeXhlQldmeFR3NDk3Y1RGWWdya3hDWUcxV0dUdG92RTZXbXQraUNwNGVG?=
+ =?utf-8?B?Rk1LeEgwNHUrNEdrNFd1N3E3ZG5KN2JyNjNocGhaaHc4R1F3dzUvYWo2UFlO?=
+ =?utf-8?B?L255Qy90Q1JJcVRCZ2UxWnVSUk1pcUtwbnIwc2FMMzY3emZDWHl0S1FCRlVM?=
+ =?utf-8?B?UGQ0dWNBNmRLVXpYQTJ1S2J6eTVVUlZ0eXVOSjZhY2swRGV1MnRtQ0VPbmtt?=
+ =?utf-8?B?aHJaU3BreFlkaXJCNFFHbkZ3eWJDYU84UFBVeVRxcE9MTEVUeXdxVGhObytL?=
+ =?utf-8?B?cDhlYUExNDFiTjlXSDZ0SStoWU5lZDJmVVFlR0d4RU9icnA2WGkvZUVCYk92?=
+ =?utf-8?B?S2hKMDRIU3Y3RUNIS1J1dnR2cFJuT3lITFNQeEh4T2dBeDZWU0lYN3VET3VE?=
+ =?utf-8?B?OXZQNHEvWTd2MzdhNWdFRG8vMWpDRURDOHJXUnlHWERrNjRwWi9PM0Evd05U?=
+ =?utf-8?B?VDRIcFAyVlBTZFRpZW8rZHhVdkVDeURxcU9BQ3JtaXdlaEI3Z3o2MUZPUnFU?=
+ =?utf-8?B?bmJ5NXV4aGhEc2t4L3hYZWxmU05oWCtjNUhXNHB3RWhzbXVHMFNPaG96d1ND?=
+ =?utf-8?B?LzhteVFhUmRmM3pudkFqbmhnRnhLRXZ3cktGVDMrWHNRaHpMSnpmVklsaFh2?=
+ =?utf-8?B?NElMRTF0NG9WeFlUQjVGTkJYVmVDZmxtWXViN2c4UnlNL21IWnBMeVJQaE5v?=
+ =?utf-8?B?dm1uOW1qdFJkTHlKL25mMVRIbkFrVTNWWWtJa1A3VUI3N1JQWFhVNkI5bkVP?=
+ =?utf-8?B?a1YrR29mMFhLTFFkN2k5RStuSXZMN2VBbVMvYWZMR1BQOVE9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR11MB2913.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?TmFWQXlYcWxkQVhBaWNvNys1MDYzcjhGdDQwaE1neUdIYTc2WDMxZU5yOGxh?=
+ =?utf-8?B?b0NqNThrS1B5N3NSbm13Y3dJeWNnR2VUazV4bXJ6Um9oeThhVSsydkJtMU5I?=
+ =?utf-8?B?NWJ5UjJhZzhSdVBBd2NjSUw5S0I0WU01a3h1SG54NnNldGxXNDlleXVCeDBW?=
+ =?utf-8?B?ZVBnMzE5b0J2bjZDdGJpanRnaTVKanJWc3hNSUFScVBPYnFvZ3ZUSGhXejVB?=
+ =?utf-8?B?dUZoQ28wRVZYaUtUNDgzTGRHNUhzQmhYVWdEd3I2SkxVbTBsZlh3aGZ2UVJ4?=
+ =?utf-8?B?Mk5LeFNZdzBUL0hHd2tnd1Rpd0RvVHhpVjVhbWdjb202bm56ZWJRSnIzUEE5?=
+ =?utf-8?B?TjRWOFpkNTZRT0g2allJQkpKemR1Nis0ajFDVE85MVRoVjB0UjYwTmppYTNF?=
+ =?utf-8?B?a2hlREdjQnhYYXAxV0NmNHpDa01nczAxcXNDOWxCWDlGVndrTlBWMSt6MDFj?=
+ =?utf-8?B?cE52alhKZDd6bXRvTVdrZWFiNGl4aGRGanVhU29OQS9EOGxaNjFiTXpkYSsr?=
+ =?utf-8?B?TzJjWWlKVldBSTdoZFhGWnkycXZZZVJadmlRY0JmY2tzZnZPWmdrd2hjRjN2?=
+ =?utf-8?B?d2dacjdqZ2VDbWt4MmVGNjhPU3VKS1owMnpubHVIUkFGdUVRSkloNUtzdWdm?=
+ =?utf-8?B?d3RPQ3huUFA3YTBUSnVLVC9yblp3RXNTQm9JWE9xTUI4TjJqM0xaQ0sxYzJ6?=
+ =?utf-8?B?bVM2dVdKcEhRQkZKelBmQVpQTjhuM3p4QkRWcmtDVWxpdzd1QTRsaUJueGcr?=
+ =?utf-8?B?TVFvMkRYVHdtZ0NjQmtLTHQwYmlCN081Q0JaaTYrTnRuWlYvSS91aUJqVWUx?=
+ =?utf-8?B?OEJrUCs1NDIxOERJRS96UlE3THEvVjcweHNQc2R6NDNCclZET2lwQU9jMHo1?=
+ =?utf-8?B?b0wzUGlmaC9TckJNeGFHM0ZFZnZlK1Z5M1RmeDZVNWlwQ3dHTEpBSkYzQ0kw?=
+ =?utf-8?B?QnhsRWZHR2ZKUFR2VWVwZGovYTJReVZoQitGL0JCb0tMenBCanYzRFRtcHQ2?=
+ =?utf-8?B?cmNNMEU4MTdtSUx0NVdwOTQ1Z3ZzcHdWTWhRcWEzV3RMdDFmWFIxKzdBaTEr?=
+ =?utf-8?B?b2g5TmRsaEE3bmZXZUtmaGhDamdjNFpPZzY3WGRnSDI4bS9NOWVzRCtlUEZF?=
+ =?utf-8?B?RjNOQ3pRNldCU1F0VzYyMUI5N0tGMVEwYmJhT0JORVFlTmJYdDBvKzFsRXpw?=
+ =?utf-8?B?TlY5OUtucFlYQnpaVi9acjNLWmNTbXp0MG8xVTJFRU81MXRmaGxTNkRlR1d4?=
+ =?utf-8?B?bmNkMXVQRjZ2RllTdDM0em5qc2VaNk1BWTRLN1N5cHFjVDJvYmdjZzdHTm9P?=
+ =?utf-8?B?YmU2OVpieXBYbVlSOUpqcXBpSTlkaXVjck9UQnoxa2lyVkRZb1BWa0pOQ25r?=
+ =?utf-8?B?c3M3b3grMm5UTGs2TlpKcThUbFBENmZITUJtc3E4MGZDWEFZRTVlUjBEV0ly?=
+ =?utf-8?B?TWo4ck1FWXhvYXZzZE01Y0xTUVg2MVB0bjF0NHNiaWZxZTdlVTJPd3hCMnZB?=
+ =?utf-8?B?MEt3RzVsejU1YlUycWd0ZDdxS0liQjBOdW5xeUtaQUlSQjVmREtnMkdWdVcy?=
+ =?utf-8?B?MVY2VEpYSHZkdURjOFUxLzVlNVhFd3dXZmU5TlZ2SjJBZnBlWG9MOVpOcTcr?=
+ =?utf-8?B?dVI3MmFWV05XNHJsNnlUTnQrQzVSSnhXU0xaWVdlNUo3UVZlaytnVlI0UVgx?=
+ =?utf-8?B?eVlUYkIwbEVhbUhBZThHYkZzR04rOHd3eDU1MVpndEc1akxGMUQ0bUt0d0Fx?=
+ =?utf-8?B?TkVUc0FGUDdhcUJnRnQxNzBxTWJRbUg5c2ExZURpNUxvL0R2bmlXMDVtMzlC?=
+ =?utf-8?B?SFJPYnFiUCtqOGZhWlR5TDNrVTgvVGR5VnlqNi9RODZUaE5UU1k0ekxtK1p1?=
+ =?utf-8?B?cmsyeFgrMCtLeUVlZ1lNTUxHcFZROStybUdZRHM3bjBMTzRJd3h6cnAzK3p5?=
+ =?utf-8?B?MExiU2ZmTmEvUTJFNUN3MkVjWWVoNWc3aitDblVBeTd3R2dCdllTcUdEUXdr?=
+ =?utf-8?B?TlJpSFR1SkdEWDdPdFo4N2tWNTk3aUFtSDQ5WFhGUkNOa05UenpvRjYzcFRS?=
+ =?utf-8?B?UnovL0hNSmZ0RXA4TVlUSFdCUWJDelVtZDBLZ1N0am9CM2hJdGcyVWY0ZUZN?=
+ =?utf-8?Q?OrJWj3UANnc7Icki6wFkWBxhc?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Johan Jonker <jbx6244@gmail.com>
-Subject: [PATCH v1] drm/rockchip: rk3066_hdmi: change to bridge driver mode
-To: Andy Yan <andy.yan@rock-chips.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, hjc@rock-chips.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL0PR11MB2913.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 022b83a7-f826-42d3-c61a-08dca0414725
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2024 18:02:20.6117
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: r8ly3AfToGrWNCVH776m/PcCpbXvbs9V4C+fDWH0rEm7X9mu8rqyD3yrKKv6RdsCV9ghSbTtdMCJndzy5hBHeDmDW4rmAC01eg/tdXqqxSY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5094
 
-Change rk3066_hdmi.c to bridge driver mode.
-
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
-
-Apply after:
-[PATCH v10] drm/rockchip: rk3066_hdmi: add sound support
----
- drivers/gpu/drm/rockchip/rk3066_hdmi.c | 293 ++++++++++++++-----------
- 1 file changed, 161 insertions(+), 132 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/rk3066_hdmi.c b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
-index e3b8faf89ae2..905610a10549 100644
---- a/drivers/gpu/drm/rockchip/rk3066_hdmi.c
-+++ b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
-@@ -5,12 +5,15 @@
-  */
-
- #include <drm/drm_atomic.h>
-+#include <drm/drm_bridge.h>
-+#include <drm/drm_bridge_connector.h>
- #include <drm/drm_edid.h>
- #include <drm/drm_of.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/drm_simple_kms_helper.h>
-
- #include <linux/clk.h>
-+#include <linux/media-bus-format.h>
- #include <linux/mfd/syscon.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-@@ -53,7 +56,8 @@ struct rk3066_hdmi {
- 	struct clk *hclk;
- 	void __iomem *regs;
-
--	struct drm_connector connector;
-+	struct drm_bridge bridge;
-+	struct drm_connector *connector;
- 	struct rockchip_encoder encoder;
-
- 	struct rk3066_hdmi_i2c *i2c;
-@@ -75,11 +79,6 @@ static struct rk3066_hdmi *encoder_to_rk3066_hdmi(struct drm_encoder *encoder)
- 	return container_of(rkencoder, struct rk3066_hdmi, encoder);
- }
-
--static struct rk3066_hdmi *connector_to_rk3066_hdmi(struct drm_connector *connector)
--{
--	return container_of(connector, struct rk3066_hdmi, connector);
--}
--
- static inline u8 hdmi_readb(struct rk3066_hdmi *hdmi, u16 offset)
- {
- 	return readl_relaxed(hdmi->regs + offset);
-@@ -208,8 +207,7 @@ static int rk3066_hdmi_config_avi(struct rk3066_hdmi *hdmi,
- 	union hdmi_infoframe frame;
- 	int rc;
-
--	rc = drm_hdmi_avi_infoframe_from_display_mode(&frame.avi,
--						      &hdmi->connector, mode);
-+	rc = drm_hdmi_avi_infoframe_from_display_mode(&frame.avi, hdmi->connector, mode);
-
- 	if (hdmi->hdmi_data.enc_out_format == HDMI_COLORSPACE_YUV444)
- 		frame.avi.colorspace = HDMI_COLORSPACE_YUV444;
-@@ -347,7 +345,7 @@ static int rk3066_hdmi_audio_hw_params(struct device *dev, void *d,
- 				       struct hdmi_codec_params *params)
- {
- 	struct rk3066_hdmi *hdmi = dev_get_drvdata(dev);
--	struct drm_display_info *display = &hdmi->connector.display_info;
-+	struct drm_display_info *display = &hdmi->connector->display_info;
-
- 	if (!display->has_audio) {
- 		DRM_DEV_ERROR(hdmi->dev, "no audio support\n");
-@@ -380,7 +378,7 @@ static void rk3066_hdmi_audio_shutdown(struct device *dev, void *d)
- static int rk3066_hdmi_audio_mute_stream(struct device *dev, void *d, bool mute, int direction)
- {
- 	struct rk3066_hdmi *hdmi = dev_get_drvdata(dev);
--	struct drm_display_info *display = &hdmi->connector.display_info;
-+	struct drm_display_info *display = &hdmi->connector->display_info;
-
- 	if (!display->has_audio) {
- 		DRM_DEV_ERROR(hdmi->dev, "no audio support\n");
-@@ -515,8 +513,7 @@ static int rk3066_hdmi_config_video_timing(struct rk3066_hdmi *hdmi,
- 	return 0;
- }
-
--static void
--rk3066_hdmi_phy_write(struct rk3066_hdmi *hdmi, u16 offset, u8 value)
-+static void rk3066_hdmi_phy_write(struct rk3066_hdmi *hdmi, u16 offset, u8 value)
- {
- 	hdmi_writeb(hdmi, offset, value);
- 	hdmi_modb(hdmi, HDMI_SYS_CTRL,
-@@ -572,7 +569,7 @@ static void rk3066_hdmi_config_phy(struct rk3066_hdmi *hdmi)
- static int rk3066_hdmi_setup(struct rk3066_hdmi *hdmi,
- 			     struct drm_display_mode *mode)
- {
--	struct drm_display_info *display = &hdmi->connector.display_info;
-+	struct drm_display_info *display = &hdmi->connector->display_info;
-
- 	hdmi->hdmi_data.vic = drm_match_cea_mode(mode);
- 	hdmi->hdmi_data.enc_out_format = HDMI_COLORSPACE_RGB;
-@@ -644,15 +641,16 @@ static int rk3066_hdmi_setup(struct rk3066_hdmi *hdmi,
- 	return 0;
- }
-
--static void rk3066_hdmi_encoder_enable(struct drm_encoder *encoder,
--				       struct drm_atomic_state *state)
-+static void rk3066_hdmi_bridge_atomic_enable(struct drm_bridge *bridge,
-+					     struct drm_bridge_state *bridge_state)
- {
--	struct rk3066_hdmi *hdmi = encoder_to_rk3066_hdmi(encoder);
-+	struct drm_atomic_state *state = bridge_state->base.state;
-+	struct rk3066_hdmi *hdmi = bridge->driver_private;
- 	struct drm_connector_state *conn_state;
- 	struct drm_crtc_state *crtc_state;
- 	int mux, val;
-
--	conn_state = drm_atomic_get_new_connector_state(state, &hdmi->connector);
-+	conn_state = drm_atomic_get_new_connector_state(state, hdmi->connector);
- 	if (WARN_ON(!conn_state))
- 		return;
-
-@@ -660,7 +658,7 @@ static void rk3066_hdmi_encoder_enable(struct drm_encoder *encoder,
- 	if (WARN_ON(!crtc_state))
- 		return;
-
--	mux = drm_of_encoder_active_endpoint_id(hdmi->dev->of_node, encoder);
-+	mux = drm_of_encoder_active_endpoint_id(hdmi->dev->of_node, bridge->encoder);
- 	if (mux)
- 		val = (HDMI_VIDEO_SEL << 16) | HDMI_VIDEO_SEL;
- 	else
-@@ -674,10 +672,10 @@ static void rk3066_hdmi_encoder_enable(struct drm_encoder *encoder,
- 	rk3066_hdmi_setup(hdmi, &crtc_state->adjusted_mode);
- }
-
--static void rk3066_hdmi_encoder_disable(struct drm_encoder *encoder,
--					struct drm_atomic_state *state)
-+static void rk3066_hdmi_bridge_atomic_disable(struct drm_bridge *bridge,
-+					      struct drm_bridge_state *bridge_state)
- {
--	struct rk3066_hdmi *hdmi = encoder_to_rk3066_hdmi(encoder);
-+	struct rk3066_hdmi *hdmi = bridge->driver_private;
-
- 	DRM_DEV_DEBUG(hdmi->dev, "hdmi encoder disable\n");
-
-@@ -693,148 +691,146 @@ static void rk3066_hdmi_encoder_disable(struct drm_encoder *encoder,
- 	rk3066_hdmi_set_power_mode(hdmi, HDMI_SYS_POWER_MODE_A);
- }
-
--static int
--rk3066_hdmi_encoder_atomic_check(struct drm_encoder *encoder,
--				 struct drm_crtc_state *crtc_state,
--				 struct drm_connector_state *conn_state)
-+static enum drm_connector_status rk3066_hdmi_bridge_detect(struct drm_bridge *bridge)
- {
--	struct rockchip_crtc_state *s = to_rockchip_crtc_state(crtc_state);
--
--	s->output_mode = ROCKCHIP_OUT_MODE_P888;
--	s->output_type = DRM_MODE_CONNECTOR_HDMIA;
-+	struct rk3066_hdmi *hdmi = bridge->driver_private;
-
--	return 0;
-+	return (hdmi_readb(hdmi, HDMI_HPG_MENS_STA) & HDMI_HPG_IN_STATUS_HIGH) ?
-+		connector_status_connected : connector_status_disconnected;
- }
-
--static int rk3066_hdmi_encoder_late_register(struct drm_encoder *encoder)
-+static enum drm_mode_status rk3066_hdmi_bridge_mode_valid(struct drm_bridge *bridge,
-+							  const struct drm_display_info *info,
-+							  const struct drm_display_mode *mode)
- {
--	struct rk3066_hdmi *hdmi = encoder_to_rk3066_hdmi(encoder);
-+	if ((mode->flags & DRM_MODE_FLAG_DBLCLK) ||
-+	    (mode->flags & DRM_MODE_FLAG_INTERLACE))
-+		return MODE_BAD;
-
--	return rk3066_hdmi_audio_codec_init(hdmi);
--}
-+	if (mode->clock < 25000)
-+		return MODE_CLOCK_LOW;
-
--static void rk3066_hdmi_encoder_early_unregister(struct drm_encoder *encoder)
--{
--	struct rk3066_hdmi *hdmi = encoder_to_rk3066_hdmi(encoder);
-+	if (mode->clock > 148500)
-+		return MODE_CLOCK_HIGH;
-
--	platform_device_unregister(hdmi->audio_pdev);
-+	return MODE_OK;
- }
-
--static const struct drm_encoder_funcs rk3066_hdmi_encoder_funcs = {
--	.destroy          = drm_encoder_cleanup,
--	.late_register    = rk3066_hdmi_encoder_late_register,
--	.early_unregister = rk3066_hdmi_encoder_early_unregister,
--};
--
--static const
--struct drm_encoder_helper_funcs rk3066_hdmi_encoder_helper_funcs = {
--	.atomic_check   = rk3066_hdmi_encoder_atomic_check,
--	.atomic_enable  = rk3066_hdmi_encoder_enable,
--	.atomic_disable = rk3066_hdmi_encoder_disable,
--};
--
--static enum drm_connector_status
--rk3066_hdmi_connector_detect(struct drm_connector *connector, bool force)
-+static int rk3066_hdmi_bridge_atomic_check(struct drm_bridge *bridge,
-+					   struct drm_bridge_state *bridge_state,
-+					   struct drm_crtc_state *crtc_state,
-+					   struct drm_connector_state *conn_state)
- {
--	struct rk3066_hdmi *hdmi = connector_to_rk3066_hdmi(connector);
-+	struct rockchip_crtc_state *s = to_rockchip_crtc_state(crtc_state);
-+	struct rk3066_hdmi *hdmi = bridge->driver_private;
-+	struct drm_display_info *display = &hdmi->connector->display_info;
-
--	return (hdmi_readb(hdmi, HDMI_HPG_MENS_STA) & HDMI_HPG_IN_STATUS_HIGH) ?
--		connector_status_connected : connector_status_disconnected;
-+	s->output_mode = ROCKCHIP_OUT_MODE_P888;
-+	s->output_type = DRM_MODE_CONNECTOR_HDMIA;
-+
-+	return  rk3066_hdmi_bridge_mode_valid(bridge, display,
-+				&crtc_state->adjusted_mode) == MODE_OK ? 0 : -EINVAL;
- }
-
--static int rk3066_hdmi_connector_get_modes(struct drm_connector *connector)
-+static const struct drm_edid *rk3066_hdmi_bridge_edid_read(struct drm_bridge *bridge,
-+							   struct drm_connector *connector)
- {
--	struct rk3066_hdmi *hdmi = connector_to_rk3066_hdmi(connector);
-+	struct rk3066_hdmi *hdmi = bridge->driver_private;
- 	const struct drm_edid *drm_edid;
--	int ret = 0;
-
- 	if (!hdmi->ddc)
--		return 0;
-+		return NULL;
-
- 	drm_edid = drm_edid_read_ddc(connector, hdmi->ddc);
--	drm_edid_connector_update(connector, drm_edid);
--	ret = drm_edid_connector_add_modes(connector);
--	drm_edid_free(drm_edid);
-+	if (!drm_edid) {
-+		dev_dbg(hdmi->dev, "failed to get edid\n");
-+		return NULL;
-+	}
-
--	return ret;
-+	return drm_edid;
- }
-
--static enum drm_mode_status
--rk3066_hdmi_connector_mode_valid(struct drm_connector *connector,
--				 struct drm_display_mode *mode)
-+#define MAX_INPUT_SEL_FORMATS	1
-+
-+static u32 *rk3066_hdmi_bridge_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
-+							 struct drm_bridge_state *bridge_state,
-+							 struct drm_crtc_state *crtc_state,
-+							 struct drm_connector_state *conn_state,
-+							 u32 output_fmt,
-+							 unsigned int *num_input_fmts)
- {
--	u32 vic = drm_match_cea_mode(mode);
-+	u32 *input_fmts;
-
--	if (vic > 1)
--		return MODE_OK;
--	else
--		return MODE_BAD;
--}
-+	*num_input_fmts = 0;
-
--static struct drm_encoder *
--rk3066_hdmi_connector_best_encoder(struct drm_connector *connector)
--{
--	struct rk3066_hdmi *hdmi = connector_to_rk3066_hdmi(connector);
-+	input_fmts = kcalloc(MAX_INPUT_SEL_FORMATS, sizeof(*input_fmts),
-+			     GFP_KERNEL);
-+	if (!input_fmts)
-+		return NULL;
-+
-+	input_fmts[0] = MEDIA_BUS_FMT_RGB888_1X24;
-+	*num_input_fmts = 1;
-
--	return &hdmi->encoder.encoder;
-+	return input_fmts;
- }
-
--static int
--rk3066_hdmi_probe_single_connector_modes(struct drm_connector *connector,
--					 uint32_t maxX, uint32_t maxY)
-+#define MAX_OUTPUT_SEL_FORMATS	1
-+
-+static u32 *rk3066_hdmi_bridge_atomic_get_output_bus_fmts(struct drm_bridge *bridge,
-+							  struct drm_bridge_state *bridge_state,
-+							  struct drm_crtc_state *crtc_state,
-+							  struct drm_connector_state *conn_state,
-+							  unsigned int *num_output_fmts)
- {
--	if (maxX > 1920)
--		maxX = 1920;
--	if (maxY > 1080)
--		maxY = 1080;
-+	u32 *output_fmts;
-
--	return drm_helper_probe_single_connector_modes(connector, maxX, maxY);
--}
-+	*num_output_fmts = 0;
-
--static void rk3066_hdmi_connector_destroy(struct drm_connector *connector)
--{
--	drm_connector_unregister(connector);
--	drm_connector_cleanup(connector);
--}
-+	output_fmts = kcalloc(MAX_OUTPUT_SEL_FORMATS, sizeof(*output_fmts),
-+			      GFP_KERNEL);
-+	if (!output_fmts)
-+		return NULL;
-
--static const struct drm_connector_funcs rk3066_hdmi_connector_funcs = {
--	.fill_modes             = rk3066_hdmi_probe_single_connector_modes,
--	.detect                 = rk3066_hdmi_connector_detect,
--	.destroy                = rk3066_hdmi_connector_destroy,
--	.reset                  = drm_atomic_helper_connector_reset,
--	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
--	.atomic_destroy_state   = drm_atomic_helper_connector_destroy_state,
--};
-+	output_fmts[0] = MEDIA_BUS_FMT_FIXED;
-+	*num_output_fmts = 1;
-+
-+	return output_fmts;
-+}
-
--static const
--struct drm_connector_helper_funcs rk3066_hdmi_connector_helper_funcs = {
--	.get_modes    = rk3066_hdmi_connector_get_modes,
--	.mode_valid   = rk3066_hdmi_connector_mode_valid,
--	.best_encoder = rk3066_hdmi_connector_best_encoder,
-+static const struct drm_bridge_funcs rk3066_hdmi_bridge_funcs = {
-+	.atomic_duplicate_state     = drm_atomic_helper_bridge_duplicate_state,
-+	.atomic_destroy_state       = drm_atomic_helper_bridge_destroy_state,
-+	.atomic_reset               = drm_atomic_helper_bridge_reset,
-+	.atomic_check               = rk3066_hdmi_bridge_atomic_check,
-+	.atomic_enable              = rk3066_hdmi_bridge_atomic_enable,
-+	.atomic_disable             = rk3066_hdmi_bridge_atomic_disable,
-+	.atomic_get_input_bus_fmts  = rk3066_hdmi_bridge_atomic_get_input_bus_fmts,
-+	.atomic_get_output_bus_fmts = rk3066_hdmi_bridge_atomic_get_output_bus_fmts,
-+	.mode_valid                 = rk3066_hdmi_bridge_mode_valid,
-+	.detect                     = rk3066_hdmi_bridge_detect,
-+	.edid_read                  = rk3066_hdmi_bridge_edid_read,
- };
-
--static int rk3066_hdmi_register(struct drm_device *drm, struct rk3066_hdmi *hdmi)
-+static int rk3066_hdmi_encoder_late_register(struct drm_encoder *encoder)
- {
--	struct drm_encoder *encoder = &hdmi->encoder.encoder;
--
--	drm_encoder_helper_add(encoder, &rk3066_hdmi_encoder_helper_funcs);
--	drm_encoder_init(drm, encoder, &rk3066_hdmi_encoder_funcs,
--			 DRM_MODE_ENCODER_TMDS, NULL);
--
--	hdmi->connector.polled = DRM_CONNECTOR_POLL_HPD;
-+	struct rk3066_hdmi *hdmi = encoder_to_rk3066_hdmi(encoder);
-
--	drm_connector_helper_add(&hdmi->connector,
--				 &rk3066_hdmi_connector_helper_funcs);
--	drm_connector_init_with_ddc(drm, &hdmi->connector,
--				    &rk3066_hdmi_connector_funcs,
--				    DRM_MODE_CONNECTOR_HDMIA,
--				    hdmi->ddc);
-+	return rk3066_hdmi_audio_codec_init(hdmi);
-+}
-
--	drm_connector_attach_encoder(&hdmi->connector, encoder);
-+static void rk3066_hdmi_encoder_early_unregister(struct drm_encoder *encoder)
-+{
-+	struct rk3066_hdmi *hdmi = encoder_to_rk3066_hdmi(encoder);
-
--	return 0;
-+	platform_device_unregister(hdmi->audio_pdev);
- }
-
-+static const struct drm_encoder_funcs rk3066_hdmi_encoder_funcs = {
-+	.destroy          = drm_encoder_cleanup,
-+	.late_register    = rk3066_hdmi_encoder_late_register,
-+	.early_unregister = rk3066_hdmi_encoder_early_unregister,
-+};
-+
- static irqreturn_t rk3066_hdmi_hardirq(int irq, void *dev_id)
- {
- 	struct rk3066_hdmi *hdmi = dev_id;
-@@ -863,7 +859,8 @@ static irqreturn_t rk3066_hdmi_irq(int irq, void *dev_id)
- {
- 	struct rk3066_hdmi *hdmi = dev_id;
-
--	drm_helper_hpd_irq_event(hdmi->connector.dev);
-+	if (hdmi->bridge.dev)
-+		drm_helper_hpd_irq_event(hdmi->bridge.dev);
-
- 	return IRQ_HANDLED;
- }
-@@ -1074,9 +1071,8 @@ static int rk3066_hdmi_bind(struct device *dev, struct device *master,
- 	hdmi_writeb(hdmi, HDMI_INTR_MASK4, 0);
- 	rk3066_hdmi_set_power_mode(hdmi, HDMI_SYS_POWER_MODE_A);
-
--	ret = rk3066_hdmi_register(drm, hdmi);
--	if (ret)
--		goto err_disable_i2c;
-+	drm_encoder_init(drm, encoder, &rk3066_hdmi_encoder_funcs,
-+			 DRM_MODE_ENCODER_TMDS, NULL);
-
- 	dev_set_drvdata(dev, hdmi);
-
-@@ -1085,15 +1081,47 @@ static int rk3066_hdmi_bind(struct device *dev, struct device *master,
- 					dev_name(dev), hdmi);
- 	if (ret) {
- 		DRM_DEV_ERROR(dev, "failed to request hdmi irq: %d\n", ret);
--		goto err_cleanup_hdmi;
-+		goto err_free_encoder;
-+	}
-+
-+	hdmi->bridge.driver_private = hdmi;
-+	hdmi->bridge.funcs = &rk3066_hdmi_bridge_funcs;
-+	hdmi->bridge.ops = DRM_BRIDGE_OP_DETECT | DRM_BRIDGE_OP_EDID
-+			 | DRM_BRIDGE_OP_HPD;
-+	hdmi->bridge.interlace_allowed = false;
-+	hdmi->bridge.ddc = hdmi->ddc;
-+	hdmi->bridge.of_node = pdev->dev.of_node;
-+	hdmi->bridge.type = DRM_MODE_CONNECTOR_HDMIA;
-+
-+	drm_bridge_add(&hdmi->bridge);
-+
-+	ret = drm_bridge_attach(encoder, &hdmi->bridge, NULL, DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-+	if (ret) {
-+		DRM_DEV_ERROR(dev, "failed to attach bridge: %d\n", ret);
-+		goto err_remove_bridge;
-+	}
-+
-+	hdmi->connector = drm_bridge_connector_init(drm, encoder);
-+	if (IS_ERR(hdmi->connector)) {
-+		DRM_DEV_ERROR(dev, "failed to initialize bridge connector: %pe\n", hdmi->connector);
-+		ret = PTR_ERR(hdmi->connector);
-+		goto err_remove_bridge;
-+	}
-+
-+	ret = drm_connector_attach_encoder(hdmi->connector, encoder);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(dev, "failed to attach connector: %d\n", ret);
-+		goto err_free_connector;
- 	}
-
- 	return 0;
-
--err_cleanup_hdmi:
--	hdmi->connector.funcs->destroy(&hdmi->connector);
--	hdmi->encoder.encoder.funcs->destroy(&hdmi->encoder.encoder);
--err_disable_i2c:
-+err_free_connector:
-+	drm_connector_cleanup(hdmi->connector);
-+err_remove_bridge:
-+	drm_bridge_remove(&hdmi->bridge);
-+err_free_encoder:
-+	drm_encoder_cleanup(encoder);
- 	i2c_put_adapter(hdmi->ddc);
- err_disable_hclk:
- 	clk_disable_unprepare(hdmi->hclk);
-@@ -1106,8 +1134,9 @@ static void rk3066_hdmi_unbind(struct device *dev, struct device *master,
- {
- 	struct rk3066_hdmi *hdmi = dev_get_drvdata(dev);
-
--	hdmi->connector.funcs->destroy(&hdmi->connector);
--	hdmi->encoder.encoder.funcs->destroy(&hdmi->encoder.encoder);
-+	drm_connector_cleanup(hdmi->connector);
-+	drm_bridge_remove(&hdmi->bridge);
-+	drm_encoder_cleanup(&hdmi->encoder.encoder);
-
- 	i2c_put_adapter(hdmi->ddc);
- 	clk_disable_unprepare(hdmi->hclk);
---
-2.39.2
-
+SGkgT2xla3NpaiwNCg0KPiA+ID4gZGlmZiAtLWdpdCBhL25ldC9ldGh0b29sL2xpbmtzdGF0ZS5j
+IGIvbmV0L2V0aHRvb2wvbGlua3N0YXRlLmMNCj4gPiA+IGluZGV4IGIyZGUyMTA4YjM1NmEuLjRl
+ZmQzMjdiYTVkOTIgMTAwNjQ0DQo+ID4gPiAtLS0gYS9uZXQvZXRodG9vbC9saW5rc3RhdGUuYw0K
+PiA+ID4gKysrIGIvbmV0L2V0aHRvb2wvbGlua3N0YXRlLmMNCj4gPiA+IEBAIC0zNyw2ICszNyw4
+IEBAIHN0YXRpYyBpbnQgbGlua3N0YXRlX2dldF9zcWkoc3RydWN0IG5ldF9kZXZpY2UgKmRldikN
+Cj4gPiA+ICAgICAgICAgbXV0ZXhfbG9jaygmcGh5ZGV2LT5sb2NrKTsNCj4gPiA+ICAgICAgICAg
+aWYgKCFwaHlkZXYtPmRydiB8fCAhcGh5ZGV2LT5kcnYtPmdldF9zcWkpDQo+ID4gPiAgICAgICAg
+ICAgICAgICAgcmV0ID0gLUVPUE5PVFNVUFA7DQo+ID4gPiArICAgICAgIGVsc2UgaWYgKCFwaHlk
+ZXYtPmxpbmspDQo+ID4gPiArICAgICAgICAgICAgICAgcmV0ID0gLUVORVRET1dOOw0KPiA+ID4g
+ICAgICAgICBlbHNlDQo+ID4gPiAgICAgICAgICAgICAgICAgcmV0ID0gcGh5ZGV2LT5kcnYtPmdl
+dF9zcWkocGh5ZGV2KTsNCj4gPiA+ICAgICAgICAgbXV0ZXhfdW5sb2NrKCZwaHlkZXYtPmxvY2sp
+Ow0KPiA+ID4gQEAgLTU1LDYgKzU3LDggQEAgc3RhdGljIGludCBsaW5rc3RhdGVfZ2V0X3NxaV9t
+YXgoc3RydWN0IG5ldF9kZXZpY2UNCj4gKmRldikNCj4gPiA+ICAgICAgICAgbXV0ZXhfbG9jaygm
+cGh5ZGV2LT5sb2NrKTsNCj4gPiA+ICAgICAgICAgaWYgKCFwaHlkZXYtPmRydiB8fCAhcGh5ZGV2
+LT5kcnYtPmdldF9zcWlfbWF4KQ0KPiA+ID4gICAgICAgICAgICAgICAgIHJldCA9IC1FT1BOT1RT
+VVBQOw0KPiA+ID4gKyAgICAgICBlbHNlIGlmICghcGh5ZGV2LT5saW5rKQ0KPiA+ID4gKyAgICAg
+ICAgICAgICAgIHJldCA9IC1FTkVURE9XTjsNCj4gPiA+ICAgICAgICAgZWxzZQ0KPiA+ID4gICAg
+ICAgICAgICAgICAgIHJldCA9IHBoeWRldi0+ZHJ2LT5nZXRfc3FpX21heChwaHlkZXYpOw0KPiA+
+ID4gICAgICAgICBtdXRleF91bmxvY2soJnBoeWRldi0+bG9jayk7DQo+ID4gPiBAQCAtNjIsNiAr
+NjYsMTYgQEAgc3RhdGljIGludCBsaW5rc3RhdGVfZ2V0X3NxaV9tYXgoc3RydWN0IG5ldF9kZXZp
+Y2UNCj4gKmRldikNCj4gPiA+ICAgICAgICAgcmV0dXJuIHJldDsNCj4gPiA+ICB9Ow0KPiA+ID4N
+Cj4gPiA+ICtzdGF0aWMgYm9vbCBsaW5rc3RhdGVfc3FpX2NyaXRpY2FsX2Vycm9yKGludCBzcWkp
+DQo+ID4gPiArew0KPiA+ID4gKyAgICAgICByZXR1cm4gc3FpIDwgMCAmJiBzcWkgIT0gLUVPUE5P
+VFNVUFAgJiYgc3FpICE9IC1FTkVURE9XTjsNCj4gPiA+ICt9DQo+ID4gPiArDQo+ID4gPiArc3Rh
+dGljIGJvb2wgbGlua3N0YXRlX3NxaV92YWxpZChzdHJ1Y3QgbGlua3N0YXRlX3JlcGx5X2RhdGEg
+KmRhdGEpDQo+ID4gPiArew0KPiA+ID4gKyAgICAgICByZXR1cm4gZGF0YS0+c3FpID49IDAgJiYg
+ZGF0YS0+c3FpX21heCA+PSAwOw0KPiA+DQo+ID4gSWYgUEhZIGRyaXZlciBoYXMgZ2V0X3NxaSwg
+YnV0IG5vdCBnZXRfc3FpX21heCwgdGhlbiBkYXRhLT5zcWkgY291bGQgaGF2ZQ0KPiA+IGEgdmFs
+aWQgdmFsdWUsIGJ1dCBkYXRhLT5zcWlfbWF4IHdpbGwgaGF2ZSAtRU9QTk9UU1VQUC4NCj4gPiBJ
+biB0aGlzIGNhc2UsIGxpbmtzdGF0ZV9zcWlfdmFsaWQoKSB3aWxsIHJldHVybiBGQUxTRSBhbmQg
+bm90IGdldHRpbmcNCj4gPiBTUUkgdmFsdWUgYXQgYWxsLg0KPiANCj4gU1FJIHdpdGhvdXQgbWF4
+IHdpbGwgbm90IGFibGUgdG8gZGVzY3JpYmUgcXVhbGl0eSBvZiB0aGUgbGluaywgaXQgaXMNCj4g
+anVzdCB2YWx1ZSBzYXlpbmcgbm90aGluZyB0byB0aGUgdXNlci4NCj4gDQoNCkhvbmVzdGx5LCBJ
+J20gbm90IDEwMCUgY29uZmlkZW50IHRoYXQgbWF4IGlzIHJlYWxseSBuZWVkZWQgYmVjYXVzZQ0K
+U1FJIHJhbmdlIHNoYWxsIGJlIDAgKHdvcnN0KSBhbmQgNyAoYmVzdCkgcGVyIE9wZW5BbGxpYW5j
+ZSBzcGVjaWZpY2F0aW9uLg0KT24gdGhlIG90aGVyIHNpZGUsIHNvbWUgZGV2aWNlcyBjb3VsZCBu
+b3QgZ28gdXAgdG8gNyBhbmQgbGltaXQgYnkgbWF4Lg0KU28sIGFncmVlIHRoYXQgYm90aCBBUElz
+IGFyZSBuZWVkZWQgaGVyZS4NCg0KPiA+IElmIGJvdGggQVBJcyBhcmUgcmVxdWlyZWQsIHRoZW4g
+d2UgY291bGQgYWRkIGFub3RoZXIgY29uZGl0aW9uIG9mDQo+ID4gZGF0YS0+c3FpIDw9IGRhdGEt
+PnNxaV9tYXggaW4gbGlua3N0YXRlX3NxaV92YWxpZCgpDQo+IA0KPiBBY2suIEkgd2FzIHRoaW5r
+aW5nIGFib3V0IGl0LCBidXQgd2FzIG5vdCBzdXJlIGlmIGl0IGlzIGEgZ29vZCBpZGVhLiBUaGlz
+DQo+IHdpbGwgc2lsZW50bHkgZmlsZXIgb3VyIGEgYmFnLiBQYXNzaW5nIGEgYmFnZ3kgdmFsdWUg
+dG8gdGhlIHVzZXJzIHNwYWNlDQo+IGlzIG5vdCBnb29kIHRvby4gSSdsbCBmaXguDQo+IA0KDQpU
+aGFua3MuIFdpbGwgcmVwbHkgaW4gdjMuDQoNCj4gPiBBbmQsIGJlc2lkZSB0aGlzLCBjYWxsaW5n
+IGxpbmtzdGF0ZV9nZXRfc3FpIGFuZCBsaW5rc3RhdGVfZ2V0X3NxaV9tYXgNCj4gPiBjb3VsZCBi
+ZSBtb3ZlZCB1bmRlciAiaWYgKGRldi0+ZmxhZ3MgJiBJRkZfVVApIiB3aXRoIHNldHRpbmcgZGVm
+YXVsdA0KPiA+IHZhbHVlIHRvIGRhdGEtPnNxaSAmIGRhdGEtPnNxaV9tYXguDQo+IA0KPiBJRkZf
+VVAgaXMgYWRtaW5pc3RyYXRpdmUgdXAgc3RhdGUsIGl0IGlzIG5vdCB0aGUgbGluay9MMSB1cC4g
+c3FpX21heCBhbmQNCj4gc3FpIHNob3VsZCBiZSBpbml0aWFsaXplZCBhbnl3YXksIG90aGVyd2lz
+ZSB3ZSB3aWxsIHNob3cgMC8wIGlmDQo+IGludGVyZmFjZSBpcyBpbiBhZG1pbiBkb3duLg0KDQpU
+aGFua3MgZm9yIGNvcnJlY3RpbmcgbWUuDQoNCldvb2p1bmcNCg==
 
