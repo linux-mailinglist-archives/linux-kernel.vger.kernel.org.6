@@ -1,156 +1,107 @@
-Return-Path: <linux-kernel+bounces-245952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF8B92BBC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:49:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 301A792BBDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8943B1C21F0F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:49:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D91381F2224B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA49618629A;
-	Tue,  9 Jul 2024 13:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F7F188CB7;
+	Tue,  9 Jul 2024 13:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tUJ3vxGF"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="WkltUh1i"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD151802A3
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 13:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5033218E76F;
+	Tue,  9 Jul 2024 13:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720532919; cv=none; b=AfAAgT1cZSSEh7ioPfao4yg+Y6VbOzXVwfFCSDc4UmIu68UoWLr3YdNEUVfiS0P+klqHNpga4c4Dujqs2rub5wiJzzRH5oalC3JnNGdvhVaDF+liNAbfQPf5O5HRwdqZ6CG2ERjbtJQ+UbS5jAWna/vpgIYMX0PW/uOf8RmZEUA=
+	t=1720532977; cv=none; b=Tt04o8b7UWF0G3AXlU0AW2PJZZyR0S4itcOKgPzuN154iOvdI/ad5oGB5N7U7dHUVn7ERQswRqvkVVV9CJAa+teZWOE4lvhx4g3fcHwDGnclt+Dx4CpVetmov9z5gZuzkD2tG1XpduqA9eWc6GgbpaH4gVXcjJ7Sm93GAWG6Pus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720532919; c=relaxed/simple;
-	bh=5MmuIH9/ptcSX8goq+NiIFoXU3SW2qDd+IHPfO869oE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=phhJi4LFnlPcQ9BUdnZ2vbjPYt8NbPurosaxST0P7cazprQoF5nS+8cDVNhMuHbpLgUdKF9jkrPFX1ZtlCkMEeeovXrTl3/bvh7bc3m11kVZ1ArQYLuucu0AziS2bqPS2PS+DtRMKRe32+upIF5DBU3rNULvOCA4TmM2oFtEtjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tUJ3vxGF; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52ea34ffcdaso4924788e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 06:48:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720532909; x=1721137709; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IVsuhaP11rLzifuOYfoCT/JsmgFit3NDN+KhNk6m6Fg=;
-        b=tUJ3vxGF8nqPp/D6WnGgxgUEuPqBcGajpXV14TNFcT4Mh1+JZKEgTISIBeKGxY86Iv
-         pj2ns1uVG3xe/BKmQw0Njvt8+Qp/Nq+hcBY0xrTIxd0GqelgX3X/S7UMcBnWhyTk0nv0
-         vjNYxdmUgfc5LAz15N0qbxguMcQwIod8xNIKk+RIqefobvfTXPCO10rYtDaLPuZqNkhd
-         OvBk97ZW8VwGF6ivLIoIJ7fAR9uny5oqr1HS2yoaUXf7jldAXvNmpjAo7mrbfF/No1TV
-         e+9JeB1C1unMW5Uq1RMp4QmvG/pq8rD+QRSFPmVFxZokI2Atd1mU2B3ncQFunO4yGe4g
-         dcsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720532909; x=1721137709;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IVsuhaP11rLzifuOYfoCT/JsmgFit3NDN+KhNk6m6Fg=;
-        b=CPF5J1qtOW7E+PaSCPo/y04MFCNbTuCtZR6mmrJXbr9jfL/e5wqafqqg4R3fjvJwRw
-         gbSLOCj4SnMJdsGAtgR7iZIE3T0p+ONISwNndqnhdOwbzdASHVNlztvuLLnyHTfdggKq
-         q5b1gwzWvb3M6t2lg+6qcIy5HJ9gC0aQpqZwbUKdBePW26PaGLwII8k3O6p9cXMn8UvA
-         dkNht0fyaR8L62wLY81FurwEK4/RxSDaQ0DH2zgAU4dQ1nP66B548FI8USO9suJZ/SUk
-         E18zRwd+NV70zQm7Hrn98BEYbCcMZUMir6ipjcCN2aKOjkxGRL8uqdZxY+uO8MQNf9vL
-         JQ8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV5WXkG2Xp6SSrIB3l6p7sieNSO9kM8XvKUoaFtzIJW7wKAnrN3Lqvra0yUspqCfz0d1j6wx3oLd62E1QgZGHuOl2+8E4UY7NElnzsB
-X-Gm-Message-State: AOJu0YzzDmoJYOTWmCJCr1MH+p3TzRwHIKA/3UQF5NTzht5d/Mwadgjg
-	1IWAxg2KS35y7XSJtUfoC/QulaqtKynOH4fDDMVL4TH4C+8uwuXBsy5nLaw8Ng0=
-X-Google-Smtp-Source: AGHT+IEaDUQIyebHpQsxc8nw3fDHAFZgaEz1nXPH9SPNxdY+OR16Je0rKup8mDiVn9/F2IwT3VnrBg==
-X-Received: by 2002:a05:6512:752:b0:52e:95dd:a8ed with SMTP id 2adb3069b0e04-52eb99a199fmr1263558e87.35.1720532909315;
-        Tue, 09 Jul 2024 06:48:29 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52eb8e4959csm250297e87.82.2024.07.09.06.48.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 06:48:28 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 09 Jul 2024 16:48:23 +0300
-Subject: [PATCH 2/2] drm/msm/dpu: don't play tricks with debug macros
+	s=arc-20240116; t=1720532977; c=relaxed/simple;
+	bh=a015ZC5r03ehNw73sIJe/WiI2A13WN9tv5vZoYkZ0RU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=rT+GtkKarEdc07u6yIeahtKKiIr1ktAhnAMoLqDRaMRKrfKVG9m3C/gjy+0ww/SaI39aTMUxb81eLXgNOPgJFfkl+iUCLkL758ZTddtMfZsp4G6wsG7QRVcei72o999FTqOPIegYypteT4478q9PfI8THu6UoWvd8TPKFJULki0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=WkltUh1i; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720532947; x=1721137747; i=markus.elfring@web.de;
+	bh=a015ZC5r03ehNw73sIJe/WiI2A13WN9tv5vZoYkZ0RU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=WkltUh1iEhfoZNCT8KIZzUNg0zksVJFjJ//b7xvaMKPZYWZzqaql+V44Zp7pOk5I
+	 2QZqvsbiNHMN9zmFympsFgqukqxmprSUZk2LSLxIJNzsZU9jWLefhYUyn9ppEUNTM
+	 nvJmckHQmcuwW13RKU7MUWzx7rdnzu7pdcjOGKxFXtCkHC3Zl8geeA9jqnQjawtpZ
+	 i4iCh67n2gH7f8kPpMXd3vbELVHT5EHgYgmqSXdullP+YqkB2uopSLdPi7Ekkqa03
+	 cux55NxZK0qaSInTsYavVTpxt57EAFMFB9cVdI8l+DZ2sNmPLKtZhOlyAgvavZj4R
+	 ykjxJpkJIoVN0ZwzLQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MOm0r-1skBlk0bNv-00Lgme; Tue, 09
+ Jul 2024 15:49:07 +0200
+Message-ID: <a10b0d71-2e1c-47d6-9c7a-4086035fc6ec@web.de>
+Date: Tue, 9 Jul 2024 15:48:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240709-dpu-fix-wb-v1-2-448348bfd4cb@linaro.org>
-References: <20240709-dpu-fix-wb-v1-0-448348bfd4cb@linaro.org>
-In-Reply-To: <20240709-dpu-fix-wb-v1-0-448348bfd4cb@linaro.org>
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Jordan Crouse <jordan@cosmicpenguin.net>, 
- Chandan Uddaraju <chandanu@codeaurora.org>, 
- Rajesh Yadav <ryadav@codeaurora.org>, 
- Sravanthi Kollukuduru <skolluku@codeaurora.org>, 
- Archit Taneja <architt@codeaurora.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Jeykumar Sankaran <jsanka@codeaurora.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2037;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=5MmuIH9/ptcSX8goq+NiIFoXU3SW2qDd+IHPfO869oE=;
- b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ1qv/Qof//Jj7Pw+y0yYutVkmev9z8YY/z7xmP0Fk3LWV
- ffpgZ6djMYsDIxcDLJiiiw+BS1TYzYlh33YMbUeZhArE8gUBi5OAZjI+V3s/wzDDrWdCnywurzf
- +9I25rTUQxqHj591S21Ikv/lmOR4tLmB85VMXOFJHeea6mWCTKmbunc7rTqW6HTPcNcfqefx/1w
- sPsV0ZNm/ce7XP3MriNPsowT7rrr49z6Mkzp4Xmu84t04572XTU7tgdb3rxY2Hltx+66hzoxLzS
- 1PJpcci9xg0b7YN6MoZveaKX4eR3d+ddk8e7vG5ucL590X3HFkfXShVu5RSQ8P4SzzAJbg7T3sA
- ho8zOv5XpY9qwtaOddC8yBXaCh/Cscp3shKzbLAxc4zw+Rc1wgnca3mT2iIT1pdL6ni7nO7Zcv3
- F+qfI5lus5j7xG5a8PuYtMEZ7rO207veRnHd+Pth3SdNAA==
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+User-Agent: Mozilla Thunderbird
+To: make24@iscas.ac.cn, linuxppc-dev@lists.ozlabs.org,
+ kernel-janitors@vger.kernel.org
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
+ Christophe Lombard <clombard@linux.vnet.ibm.com>,
+ Frederic Barrat <fbarrat@linux.ibm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Ian Munsie <imunsie@au1.ibm.com>, "Manoj N. Kumar" <manoj@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Wei Liu <wei.liu@kernel.org>
+References: <20240709131754.855144-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH] cxl: Fix possible null pointer dereference in
+ read_handle()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240709131754.855144-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:wD8tpFNoCW581VFsOPGKJF66fFjx15l+bwepghLJM6uHTOaEEIV
+ S+CYjNw6rH2wZ4TwvNgnSQP8vBlD/7iuiRLjicS9hxBOLD8V1kU2vdnDrofiv4uP6k9Fh63
+ tqjoNqMkBduPCI8cZMTSYsHsjI2ttQfQTSuaquQ1HtekCs1jJFF+FNrDUy0EF/ZT3bBSY5l
+ XIyBXWpEoWS9T6Vfr42qw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:MqjwUJAwWmA=;d33iWjaAIjULA24pEscPLGP8YoJ
+ nnxs35QjcOFAwZUZOS/fchXGW2rVCJTqaBwzJC3otBl2Nku7qfiw0wV6Xvlf8W+rr2JpjG7oW
+ Ax0SjwWa5i85kIiemtwn+/qUrpNio9Wltl1QXbrFRSLOgFmTW+6m3RT25od+kA4JTuGJJrhE1
+ +V72jE+WfgmWe8buVOkeJQzlA6witivjXSsni+spk7rD9X2QkMB2uQe9oEyW4pT48zsAEkpLT
+ l+n7kL9Ju8MPN/aPKOaeD2naiXWuTVVbdJomjnS45Eyu+dT1hi1zyLwBO0+FeiP/uwGOe/v3W
+ WdnK72SAHW1OcK0pfs9EpWk/OBk6rUSXDzH9lG3ADFodCCmeRHNm6pxyAVdvtUz827ZOahdCd
+ T47sLWT3wNR19SCzdd6PrLkFWJQpmfgmBRkj16Zam7hl1JacP2KwMmFZKgz0FFvEVauFWB524
+ HMqyJobNi4lnigHkg7pJ+VZxtMpdAPI9i3gsivCR+VGYueYpbjQq2N1Gz3gWSkj6OUp+dkV9v
+ KOL6OHmzv2b/ntdMOaxRMo7DyqK+rvZku2hJgxYXpNlqsb86S3qfaeTpms4gnW7NpfFoFvEoB
+ pP1MAyVx1cegla6iWuJpFte1lg1SLidWLzXp8u7tfK1bpfk66Xohy9JZNjScdTsGERdqiG5KT
+ cbBUs/wiXNzkl9AbNVsJxDBF2sGWkEqxlstxPnpdxGZFKrZRE11RZ73T5vYSbzDFffSLHq5kQ
+ BZi2xY6kJksgnRBYPyzNtbDHWj6BdSWycz1xAFr6ShVATEdztfpHEhAkODEpsA+atYGhMG5Ol
+ ux7Myq0mUUuINiM7gvwKns6m8TXTYbqM4bfj1DdUbAxWY=
 
-DPU debugging macros need to be converted to a proper drm_debug_*
-macros, however this is a going an intrusive patch, not suitable for a
-fix. Wire DPU_DEBUG and DPU_DEBUG_DRIVER to always use DRM_DEBUG_DRIVER
-to make sure that DPU debugging messages always end up in the drm debug
-messages and are controlled via the usual drm.debug mask.
+=E2=80=A6
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 
-Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+Under which circumstances will this information be corrected anyhow?
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
-index e2adc937ea63..935ff6fd172c 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
-@@ -31,24 +31,14 @@
-  * @fmt: Pointer to format string
-  */
- #define DPU_DEBUG(fmt, ...)                                                \
--	do {                                                               \
--		if (drm_debug_enabled(DRM_UT_KMS))                         \
--			DRM_DEBUG(fmt, ##__VA_ARGS__); \
--		else                                                       \
--			pr_debug(fmt, ##__VA_ARGS__);                      \
--	} while (0)
-+	DRM_DEBUG_DRIVER(fmt, ##__VA_ARGS__)
- 
- /**
-  * DPU_DEBUG_DRIVER - macro for hardware driver logging
-  * @fmt: Pointer to format string
-  */
- #define DPU_DEBUG_DRIVER(fmt, ...)                                         \
--	do {                                                               \
--		if (drm_debug_enabled(DRM_UT_DRIVER))                      \
--			DRM_ERROR(fmt, ##__VA_ARGS__); \
--		else                                                       \
--			pr_debug(fmt, ##__VA_ARGS__);                      \
--	} while (0)
-+	DRM_DEBUG_DRIVER(fmt, ##__VA_ARGS__)
- 
- #define DPU_ERROR(fmt, ...) pr_err("[dpu error]" fmt, ##__VA_ARGS__)
- #define DPU_ERROR_RATELIMITED(fmt, ...) pr_err_ratelimited("[dpu error]" fmt, ##__VA_ARGS__)
+The usage of mailing list addresses is probably undesirable for
+the Developer's Certificate of Origin, isn't it?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc7#n398
 
--- 
-2.39.2
-
+Regards,
+Markus
 
