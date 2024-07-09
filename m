@@ -1,106 +1,131 @@
-Return-Path: <linux-kernel+bounces-246766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8970192C65B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:54:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30C2192C65F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:57:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA6021C2244A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:54:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E13A628340B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0105185603;
-	Tue,  9 Jul 2024 22:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="u9TA7pLC"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD18018786D;
+	Tue,  9 Jul 2024 22:57:29 +0000 (UTC)
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34A414D439;
-	Tue,  9 Jul 2024 22:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E51614D439;
+	Tue,  9 Jul 2024 22:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720565681; cv=none; b=cqf/nnRoMxW8YPN+aLpPZIY1ad7AWfcn5xWzVzrSbrOhqTTpst4DFvW0FLTdyDF6CwQWy1EMWALDwAbrNtgRZnx5ACudX2hWGIOd603dJTrgfsOxS3aiMrL+VknESoZmLsAOzM8AySfCQ4TAZmNuXIXpIT5hzKGYivCE4J9zWoo=
+	t=1720565849; cv=none; b=sIOP7nGGPVYnAwiYPFDgodWEDSRbwtZCO473yJheiXU9ZGxN01O1wm1f/ZFTHUGtP7lI3dWXNFzvOJuqp90Rx+sflqYDGfse8oBsHD+ASThtAE+ZBYB/JgzthG+LfMvvMfZLrH3WGXiYpORwbOpocyp2tFksYZnhPlbLHwSJsN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720565681; c=relaxed/simple;
-	bh=SEIggbco2C94QGi/EqYhGApHskCOMgkmArjKbWCC92c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=VfiH24hpBiWbz0nyyGTjJMBre7SprEHEM208TKSNKFaxpiFON6aVha0thzIYY75t8aGa2rV6lqiFLtzczXYcVY7fAB2/mKJ8vfeLmRy2QUIggeLXVDjxEy6lOAYIqL9LZbUqCrNqhkOq+eWwaW6dAkwdDoctW0pUY3W1s5wqmU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=u9TA7pLC; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720565675;
-	bh=iCj6ETBJ95kpMQ6CVYsleTAB7KgY44Be5efURowdjlc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=u9TA7pLCwYsWivjr4Q20VpdZBtZmOrjs4nFuEnE9+tOkuYY6qkwq58ho6ujUY/f4Q
-	 B8Ok9Q0oPzkYlDIXXpib3QQZeKj+SgIocOwTxPoh5GPJX8STA7ub8BaHPDSeAKpM9l
-	 awGR+2MbNdF7XYeIzfvXjKZGwXYpkMHbnnPvGKlhv3cbUDEbp3n4nbKg/XpDeAC8wT
-	 vxWS7sNFsOQmjFL66Rw8za/6Mx8A/i/nvBYauJaihKjK7MuDBZxKW2FPE19I5lm2yx
-	 N0NxUq7aNhk9ZNc7dVCUafey/iGegtDzzwztV0Qx7kklmBh91hm2hHHbVdQfPakqqu
-	 KQdIolAEheFag==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJbsR31XDz4wcl;
-	Wed, 10 Jul 2024 08:54:35 +1000 (AEST)
-Date: Wed, 10 Jul 2024 08:54:34 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the mm tree
-Message-ID: <20240710085434.3c21eafc@canb.auug.org.au>
+	s=arc-20240116; t=1720565849; c=relaxed/simple;
+	bh=ZlVvkF4rShHH25Jo+Nn0Lq8nfyYZGma7UWocSs9ssrk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SIPJEW0BIynRHIJcYuMgT9QR8YIHY+iUfljVLbdGyf95CC0GhhlDhLA/3k7gIAxHfp3AoLpLsYNjC9an8x5jdsXwQeeKb7/d4R66KdbVxEvHgI1HBzVDKxjWY8wTYvvwrJ5P3fxzUyhxQ7eh+LQA7iVNXaLb12nFw0F5UDmE77g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=ovn.org; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ovn.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E510840005;
+	Tue,  9 Jul 2024 22:57:15 +0000 (UTC)
+Message-ID: <28d092ae-96c8-4145-b679-399d2f71bf8e@ovn.org>
+Date: Wed, 10 Jul 2024 00:57:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/JA6JgCL0BK1L7OfZIEU3S8q";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: psample: fix flag being set in wrong skb
+To: Adrian Moreno <amorenoz@redhat.com>, netdev@vger.kernel.org
+Cc: Yotam Gigi <yotam.gi@gmail.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Ido Schimmel <idosch@nvidia.com>,
+ Eelco Chaudron <echaudro@redhat.com>, Aaron Conole <aconole@redhat.com>,
+ linux-kernel@vger.kernel.org, i.maximets@ovn.org
+References: <20240709203437.1257952-1-amorenoz@redhat.com>
+Content-Language: en-US
+From: Ilya Maximets <i.maximets@ovn.org>
+Autocrypt: addr=i.maximets@ovn.org; keydata=
+ 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
+In-Reply-To: <20240709203437.1257952-1-amorenoz@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: i.maximets@ovn.org
 
---Sig_/JA6JgCL0BK1L7OfZIEU3S8q
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 7/9/24 22:34, Adrian Moreno wrote:
+> A typo makes PSAMPLE_ATTR_SAMPLE_RATE netlink flag be added to the wrong
+> sk_buff.
+> 
+> Fixes: 7b1b2b60c63f ("net: psample: allow using rate as probability")
+> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+> ---
+>  net/psample/psample.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/net/psample/psample.c b/net/psample/psample.c
+> index f48b5b9cd409..11b7533067b8 100644
+> --- a/net/psample/psample.c
+> +++ b/net/psample/psample.c
+> @@ -498,7 +498,7 @@ void psample_sample_packet(struct psample_group *group, struct sk_buff *skb,
+>  		goto error;
+>  
+>  	if (md->rate_as_probability)
+> -		nla_put_flag(skb, PSAMPLE_ATTR_SAMPLE_PROBABILITY);
+> +		nla_put_flag(nl_skb, PSAMPLE_ATTR_SAMPLE_PROBABILITY);
+>  
+>  	genlmsg_end(nl_skb, data);
+>  	genlmsg_multicast_netns(&psample_nl_family, group->net, nl_skb, 0,
 
-Hi all,
+Uff.  Nasty.
 
-In commit
+I'd say we should change the function argument to 'const' to avoid such
+issues in the future.  There is no reason for this function to modify
+the original packet.  What do you think?
 
-  33955c6f4d58 ("udmabuf: add CONFIG_MMU dependency")
-
-Fixes tag
-
-  Fixes: d1d00dd1fd2f ("udmabuf: use vmf_insert_pfn and VM_PFNMAP for handl=
-ing mmap")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-I cannot find a match with the summary in the Fixes tag.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/JA6JgCL0BK1L7OfZIEU3S8q
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaNv6oACgkQAVBC80lX
-0GzwXQf/QFI3Wkd2OuBmrdywSKF0I3nCJ86WL6t/EWnKL5FaI+1BMIFCvqbSUDti
-X8wW7jH1Z/BJzVZMRFuOKbaT1lhd5B+oTHj9yC8Zoo1fq0rWJzDipVQUBd/QJTdL
-hp+BRP7UaVFKfdVUImkeCsvZszVCgQ05+wam1IP4BPokxcdIB7RzU7XovuSpwO5n
-lw1ztSE3qxSdSJG+MphBRnRykk9Qb+8w/CKnjAOwEDA/nGc7fpMaFFgGcCqTtqku
-vv93JVmWe5OGaCozwvJuOx05kiCdGL1hFvK7UQ2RiN9eMKpWuTG5af8pOeSWMQMy
-K6uXRxJuFoqiZXA+Jz6onvO2EBcVMA==
-=EUfu
------END PGP SIGNATURE-----
-
---Sig_/JA6JgCL0BK1L7OfZIEU3S8q--
+Best regards, Ilya Maximets.
 
