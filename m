@@ -1,335 +1,196 @@
-Return-Path: <linux-kernel+bounces-245201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2346392AF89
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:45:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E428492AF8B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A0791F22678
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:45:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99E52282898
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280001304A3;
-	Tue,  9 Jul 2024 05:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="k9p8pifM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IxK2FCUs"
-Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70B212D20D;
+	Tue,  9 Jul 2024 05:46:01 +0000 (UTC)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B4512F375
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 05:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B51139F;
+	Tue,  9 Jul 2024 05:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720503893; cv=none; b=uAocoGGCKJ1NgbCwihztdG8Rpcz87ZxN2lwp9qVfppm7iKoUMz7BvgVzUqIV28hIFgs6rot9J1cnk33bppuakm7YUGjtdIy4YRERD41+edKokysPtZmgUTWiiUWUU3KXr6tIEzWRV2XVqnIdmujNwp+QTZPF6m63xKBgcO2xgZw=
+	t=1720503961; cv=none; b=i2Zn1kg1ib1Oc4IdQd5qMUJq0HNAzBnhpxFSSpW3vsetHTRkV/lbyLYq2sDo8y5FrBjkpaIed/75Yf6nHRg3t0UHE7ekyVsX3+u16G7EJZCnpjRBkOHfZnTu9FUcSWBttDBCfP3RzXPlr5Y42v6O65E1d2AEcT6ccs6TE43n5Mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720503893; c=relaxed/simple;
-	bh=6kbcFmvB4vT4HOqvjhXKZwm9yQK9Wy1SXszIn/juJvA=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=ShDVuyvx7+tug5mgSynQ6lGZws6Tf3Hcx1YyoGjDp6+yJFgppOxq0MpU1eA8cwl+zWeU903DLlgC2ZqqriTWVR+4NNiTijcFw9zpppin50jf4REyBPdtGwQL9bD/CoTi16m7Qg316uI5B3p4LtvhtwDvt1NbQY8P5cZI+SMhecI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=k9p8pifM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IxK2FCUs; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 4F1F41141F45;
-	Tue,  9 Jul 2024 01:44:50 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 09 Jul 2024 01:44:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1720503890; x=1720590290; bh=EQg+heZbs2
-	EC/+pnCCFYU3qmOYvuWSX7hGE78f/KJ+U=; b=k9p8pifMnsy9TRykfAmacOI1JJ
-	5L1z4Z3Q3PGCysLJRtSjO0ImV11WmaMekkc0byRibOTxkX1qW3F4t0/smPC5zwI5
-	rCuP/aNytAd/Ls4TS48vBokAjLZnCge6gqR5CEFeLzAeI4Jmyf37H7BJqkMo3JTF
-	7jjTJnlRdYGER7PF1E1KZZEJuC+KvvOnHrmiOlF4FjyvsInt2kYYpe1SOdWBAGc4
-	JBdfyRKIoCPq7TnsLLRMnN/L/h5XMFYukyAbztQ8Q9S2WicUfkzA3D/dC5QaBJ4y
-	uoUhvgknW6imHEN7OJlZ20ASQ+ESh468HXCW2DLWJme1E31FAJp4EaGBcacA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1720503890; x=1720590290; bh=EQg+heZbs2EC/+pnCCFYU3qmOYvu
-	WSX7hGE78f/KJ+U=; b=IxK2FCUsv3okkVDB69gIdNGachdklt9gETgx58SBJj10
-	oLaLSr2ryLTU2wFBn0dGtrnXHpE6Mwj91UX8zfhFQ3TAv44PjE6C27clCGBlhUBk
-	M38dJ0Msz37kDJAD6nlNojkSz/5mggk8FcjgH4DLIAioiRBp6k3aVfjii5zfr/yS
-	GMtV65B150fcEzK1dAF5pENrBzP9Xsa59GtfcUni5J3ue6OxLyjpwBRtK0y6OF8W
-	MCN1/51uld3dW4Xig75Owsjcb9LeptPWfdIvUyjvv3VwgFyKecIYr2jEyjdSVE2B
-	KVccPsUR7A8mMPY3nQszIVyggf0Ql+/03PmSr/f+vg==
-X-ME-Sender: <xms:Uc6MZkcmPvGdaV1tKK-h9hWrswjbcNr8l9zV--dsnI7BPN2Pq5AAZA>
-    <xme:Uc6MZmMyRLEqQSMkjBRoZXWwxW-XOF2A5la-Ql6oLEhhpBTY0P6-jlhoMa1EahO7D
-    5Qmu1CB9ZAb5yC_h5A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekgdellecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeegteeihfejvdfhfeffhfdvvddvfffgtedvteeigfehhfehudffleejueduvdel
-    gfenucffohhmrghinhepphgrshhtvggsihhnrdgtohhmnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:Uc6MZli-8gPvFepooNBluxa6xExXDcrxHtii-K4bD9FX4cVN8NKSuQ>
-    <xmx:Uc6MZp-HYdOQymONY2UFA_jcGWWAO19d7KwCuDNBam53IAHld3aYDg>
-    <xmx:Uc6MZgtdN8UGUM0oizJWz6n9MZcFubvEk9v9TeOIpUN-RZhcaIYwEg>
-    <xmx:Uc6MZgEcNYcDZjVud32ciNUKyfZ1Y0dnUCYLRq7NKK-NEl1S2qQMIg>
-    <xmx:Us6MZsKgCvtMvK8TI7h1arObqxvvaBq6UC17dpeRhJeFxkh8UX9oejM7>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 03F4AB6008F; Tue,  9 Jul 2024 01:44:49 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1720503961; c=relaxed/simple;
+	bh=lc2/zIBSSJtP5Kv8nXf7skUOjFUMaCCwG5nwhtNkPgo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PRGsxFtEZZ7xSg40PtZrf0060LW6S4w7OJrIzsuB21wXm014GZd67k6PbAOG//jZD6SU67mpvUj2uCpAs/GpYo1F5OqmqfOimshOX0xnzzBO9CL8yEAUPAaX8PbwJuQ91t7l8VHE1TtvYjwTIwN3brSQneI1WW3hJ354wMAAZl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-425809eef0eso32157335e9.3;
+        Mon, 08 Jul 2024 22:45:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720503958; x=1721108758;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XW9hJ1QTEF4SJp8RFEawLqJV+PssPZCmRu3montUhds=;
+        b=Pa40uOlro64h/pHgUedYS5w5/RpiRQgh7/dAcEfbHnITJM2nVgl6bWI1/jrir89yR5
+         tzCTt67ED7mgs8mBHXjjRDx3XsUdhxq0gGZV240AHXj+25aiVgRKZFQ8GzfkBwYQfMd3
+         lV5vt0WMeZ/sKVCf1HcGwhQUG3fSTwXuaK86tYloFgFNf8KR8AER6SwDJQsE4ZRn9X2p
+         5ROhPH64yRNVeFNaOZBxguIn4vqjdNytq+yBMpUeQURXM1kJv2NPOiqz/kPY0eUdZBa2
+         RMHt+2ZLYkWh8jtG4IS/juB1cdQ36XQta5KQhjGroNBARSVyTyO58gp660i3N+drc2s8
+         wvzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVERgg9x6ODwfFv2rDItWR5hk8sheteBGQI5F5Nu7ULPnMCejYfw5hIl2qA3lACBVO6xmBIKWJKdcgOcsklsBOU8e+xKoU7WNX6coXj6UF2mwTw4Lpe2+K0YrZ29YB/Uzf35VQS
+X-Gm-Message-State: AOJu0YwccBEUZUgKnTJSxz3hfViijBSUFO6aQiLZLQQclAkiAyBS/MwM
+	TuZKqCfg0Q3r3kudIX5qrarx61cfW/VTRxXRvBG9vqnJLZ/C0vjjnu8z70I9fck=
+X-Google-Smtp-Source: AGHT+IFTAAGKJeePUcWerlrV7PFrPAlfTU8VX3mFGNu/CWKoxoi0yi5ICUut9/0yzrNWsdFcFuma9Q==
+X-Received: by 2002:a05:6000:1046:b0:367:9088:fecc with SMTP id ffacd0b85a97d-367cea467b2mr1079336f8f.7.1720503957549;
+        Mon, 08 Jul 2024 22:45:57 -0700 (PDT)
+Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde89198sm1449039f8f.60.2024.07.08.22.45.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 22:45:57 -0700 (PDT)
+Message-ID: <cabc0b75-6536-4aee-9d6b-57712bb2e1a8@kernel.org>
+Date: Tue, 9 Jul 2024 07:45:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <c9b23ee3-6790-404d-80a3-4ca196327546@app.fastmail.com>
-In-Reply-To: <837cd2e4-d231-411a-8af4-64b950c4066a@quicinc.com>
-References: <87y16bbvgb.fsf@kernel.org>
- <917565ee-732a-4df0-a717-a71fbb34fd79@quicinc.com>
- <837cd2e4-d231-411a-8af4-64b950c4066a@quicinc.com>
-Date: Tue, 09 Jul 2024 07:44:27 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Jeff Johnson" <quic_jjohnson@quicinc.com>,
- "Kalle Valo" <kvalo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, ath12k@lists.infradead.org
-Subject: Re: crosstool: x86 kernel compiled with GCC 14.1 fails to boot
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/tdx: Support vmalloc() for tdx_enc_status_changed()
+To: Dexuan Cui <decui@microsoft.com>, Borislav Petkov <bp@alien8.de>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "open list:X86 TRUST DOMAIN EXTENSIONS (TDX)" <linux-coco@lists.linux.dev>,
+ "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+ <linux-kernel@vger.kernel.org>, Michael Kelley <mikelley@microsoft.com>,
+ Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, Kai Huang
+ <kai.huang@intel.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <20240708183946.3991-1-decui@microsoft.com>
+ <20240708191703.GJZow7L9DBNZVBXE95@fat_crate.local>
+ <SA1PR21MB1317816DFCE6EF38A92CF254BFDA2@SA1PR21MB1317.namprd21.prod.outlook.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <SA1PR21MB1317816DFCE6EF38A92CF254BFDA2@SA1PR21MB1317.namprd21.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 9, 2024, at 05:55, Jeff Johnson wrote:
-> On 7/8/2024 6:57 PM, Jeff Johnson wrote:
->> We tend to enable a lot of debug config options, so I'm wondering if one of
->> them is contributing to the issue? Guess I'll turn off a bunch of those
->> options and try again.
->
-> OK, with a bunch of debug turned off my image boots.
->
-> Now to find the culprit.
->
-> Current diff between original config and working config:
-
-Nice! I've tried the reverse now, turning on the options
-you have turned off on top of my defconfig. This version
-still works for me, booting with a plain
-'qemu-system-x86_64 -kernel arch/x86_64/boot/bzImage'
-and building with my arm64-to-x86 cross compiler.
-
-I have turned off most drivers here to get faster builds,
-but it's enough to get console output.
-See https://pastebin.com/p2GFjAc3 for the full .config
-
-     Arnd
-
-19a20
-> CONFIG_CONSTRUCTORS=y
-290a292
-> CONFIG_GENERIC_CSUM=y
-298a301
-> CONFIG_KASAN_SHADOW_OFFSET=0xdffffc0000000000
-394a398
-> # CONFIG_ARCH_MEMORY_PROBE is not set
-441c445
-< CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING=0x0
----
-> CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING=0xa
-537a542
-> # CONFIG_ACPI_HOTPLUG_MEMORY is not set
-748d752
-< CONFIG_HAVE_RELIABLE_STACKTRACE=y
-903a908,909
-> CONFIG_NUMA_KEEP_MEMINFO=y
-> CONFIG_MEMORY_ISOLATION=y
-906c912,916
-< # CONFIG_MEMORY_HOTPLUG is not set
----
-> CONFIG_ARCH_ENABLE_MEMORY_HOTREMOVE=y
-> CONFIG_MEMORY_HOTPLUG=y
-> # CONFIG_MEMORY_HOTPLUG_DEFAULT_ONLINE is not set
-> # CONFIG_MEMORY_HOTREMOVE is not set
-> CONFIG_MHP_MEMMAP_ON_MEMORY=y
-914a925
-> CONFIG_CONTIG_ALLOC=y
-1238a1250,1251
-> # CONFIG_MOUSE_APPLETOUCH is not set
-> # CONFIG_MOUSE_BCM5974 is not set
-1242a1256
-> # CONFIG_MOUSE_SYNAPTICS_USB is not set
-1264a1279,1280
-> # CONFIG_JOYSTICK_XPAD is not set
-> # CONFIG_JOYSTICK_PXRC is not set
-1269a1286,1290
-> # CONFIG_TABLET_USB_ACECAD is not set
-> # CONFIG_TABLET_USB_AIPTEK is not set
-> # CONFIG_TABLET_USB_HANWANG is not set
-> # CONFIG_TABLET_USB_KBTAB is not set
-> # CONFIG_TABLET_USB_PEGASUS is not set
-1313a1335
-> # CONFIG_TOUCHSCREEN_USB_COMPOSITE is not set
-1336a1359,1360
-> # CONFIG_INPUT_ATI_REMOTE2 is not set
-> # CONFIG_INPUT_KEYSPAN_REMOTE is not set
-1337a1362,1364
-> # CONFIG_INPUT_POWERMATE is not set
-> # CONFIG_INPUT_YEALINK is not set
-> # CONFIG_INPUT_CM109 is not set
-1922c1949,1970
-< # CONFIG_USB_SUPPORT is not set
----
-> CONFIG_USB_SUPPORT=y
-> # CONFIG_USB_ULPI_BUS is not set
-> CONFIG_USB_ARCH_HAS_HCD=y
-> # CONFIG_USB is not set
+On 08. 07. 24, 23:45, Dexuan Cui wrote:
+>> From: Borislav Petkov <bp@alien8.de>
+>>> Cc: stable@vger.kernel.org
+>>
+>> Why?
+>>
+>> Fixes: what?
 > 
-> #
-> # USB dual-mode controller drivers
-> #
+> Please refer to my reply above.
 > 
-> #
-> # USB port drivers
-> #
+> This is not to fix a buggy commit. The described scenario never worked before,
+> so I suppose a "Fixes:" tag is not needed.
+
+If you cc stable, fixes *is* actually needed. So again, why to cc stable 
+when this is a feature? I suppose you will receive a Greg-bot reply 
+anyway ;).
+
+>>  From reading this, it seems to me you need to brush up on
+>> https://kernel.org/doc/html/latest/process/submitting-patches.html
+> Thanks for the link! I read it and did learn something.
 > 
-> #
-> # USB Physical Layer drivers
-> #
-> # CONFIG_NOP_USB_XCEIV is not set
-> # end of USB Physical Layer drivers
+>> while waiting.
+...> I hope I have provided a satisfactory reply above.
 > 
-> # CONFIG_USB_GADGET is not set
-> # CONFIG_TYPEC is not set
-> # CONFIG_USB_ROLE_SWITCH is not set
-2243a2292
-> # CONFIG_USB_LGM_PHY is not set
-2829a2879
-> CONFIG_STACKDEPOT_ALWAYS_INIT=y
-2873a2924,2925
-> CONFIG_ARCH_WANT_FRAME_POINTERS=y
-> CONFIG_FRAME_POINTER=y
-2874a2927
-> # CONFIG_STACK_VALIDATION is not set
-2896d2948
-< # CONFIG_KCSAN is not set
-2922c2974,2977
-< # CONFIG_DEBUG_KMEMLEAK is not set
----
-> CONFIG_DEBUG_KMEMLEAK=y
-> CONFIG_DEBUG_KMEMLEAK_MEM_POOL_SIZE=16000
-> # CONFIG_DEBUG_KMEMLEAK_DEFAULT_OFF is not set
-> CONFIG_DEBUG_KMEMLEAK_AUTO_SCAN=y
-2924c2979,2986
-< # CONFIG_DEBUG_OBJECTS is not set
----
-> CONFIG_DEBUG_OBJECTS=y
-> # CONFIG_DEBUG_OBJECTS_SELFTEST is not set
-> # CONFIG_DEBUG_OBJECTS_FREE is not set
-> CONFIG_DEBUG_OBJECTS_TIMERS=y
-> CONFIG_DEBUG_OBJECTS_WORK=y
-> CONFIG_DEBUG_OBJECTS_RCU_HEAD=y
-> CONFIG_DEBUG_OBJECTS_PERCPU_COUNTER=y
-> CONFIG_DEBUG_OBJECTS_ENABLE_DEFAULT=1
-2927c2989
-< # CONFIG_SCHED_STACK_END_CHECK is not set
----
-> CONFIG_SCHED_STACK_END_CHECK=y
-2933a2996
-> # CONFIG_MEMORY_NOTIFIER_ERROR_INJECT is not set
-2943c3006,3014
-< # CONFIG_KASAN is not set
----
-> CONFIG_KASAN=y
-> CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX=y
-> CONFIG_KASAN_GENERIC=y
-> # CONFIG_KASAN_OUTLINE is not set
-> CONFIG_KASAN_INLINE=y
-> CONFIG_KASAN_STACK=y
-> CONFIG_KASAN_VMALLOC=y
-> # CONFIG_KASAN_MODULE_TEST is not set
-> # CONFIG_KASAN_EXTRA_INFO is not set
-2945c3016,3020
-< # CONFIG_KFENCE is not set
----
-> CONFIG_KFENCE=y
-> CONFIG_KFENCE_SAMPLE_INTERVAL=0
-> CONFIG_KFENCE_NUM_OBJECTS=255
-> # CONFIG_KFENCE_DEFERRABLE is not set
-> CONFIG_KFENCE_STRESS_TEST_FAULTS=0
-2957c3032,3034
-< # CONFIG_SOFTLOCKUP_DETECTOR is not set
----
-> CONFIG_LOCKUP_DETECTOR=y
-> CONFIG_SOFTLOCKUP_DETECTOR=y
-> # CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC is not set
-2959c3036,3041
-< # CONFIG_HARDLOCKUP_DETECTOR is not set
----
-> CONFIG_HARDLOCKUP_DETECTOR=y
-> # CONFIG_HARDLOCKUP_DETECTOR_PREFER_BUDDY is not set
-> CONFIG_HARDLOCKUP_DETECTOR_PERF=y
-> # CONFIG_HARDLOCKUP_DETECTOR_BUDDY is not set
-> # CONFIG_HARDLOCKUP_DETECTOR_ARCH is not set
-> CONFIG_HARDLOCKUP_DETECTOR_COUNTS_HRTIMER=y
-2961c3043,3046
-< # CONFIG_DETECT_HUNG_TASK is not set
----
-> # CONFIG_BOOTPARAM_HARDLOCKUP_PANIC is not set
-> CONFIG_DETECT_HUNG_TASK=y
-> CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=120
-> # CONFIG_BOOTPARAM_HUNG_TASK_PANIC is not set
-2970c3055
-< # CONFIG_SCHED_DEBUG is not set
----
-> CONFIG_SCHED_DEBUG=y
-2982c3067,3068
-< # CONFIG_PROVE_LOCKING is not set
----
-> CONFIG_PROVE_LOCKING=y
-> # CONFIG_PROVE_RAW_LOCK_NESTING is not set
-2984,2989c3070,3082
-< # CONFIG_DEBUG_RT_MUTEXES is not set
-< # CONFIG_DEBUG_SPINLOCK is not set
-< # CONFIG_DEBUG_MUTEXES is not set
-< # CONFIG_DEBUG_WW_MUTEX_SLOWPATH is not set
-< # CONFIG_DEBUG_RWSEMS is not set
-< # CONFIG_DEBUG_LOCK_ALLOC is not set
----
-> CONFIG_DEBUG_RT_MUTEXES=y
-> CONFIG_DEBUG_SPINLOCK=y
-> CONFIG_DEBUG_MUTEXES=y
-> CONFIG_DEBUG_WW_MUTEX_SLOWPATH=y
-> CONFIG_DEBUG_RWSEMS=y
-> CONFIG_DEBUG_LOCK_ALLOC=y
-> CONFIG_LOCKDEP=y
-> CONFIG_LOCKDEP_BITS=15
-> CONFIG_LOCKDEP_CHAINS_BITS=16
-> CONFIG_LOCKDEP_STACK_TRACE_BITS=19
-> CONFIG_LOCKDEP_STACK_TRACE_HASH_BITS=14
-> CONFIG_LOCKDEP_CIRCULAR_QUEUE_BITS=12
-> # CONFIG_DEBUG_LOCKDEP is not set
-2997a3091,3092
-> CONFIG_TRACE_IRQFLAGS=y
-> CONFIG_TRACE_IRQFLAGS_NMI=y
-3002a3098
-> # CONFIG_DEBUG_KOBJECT_RELEASE is not set
-3016a3113
-> CONFIG_PROVE_RCU=y
-3051a3149
-> CONFIG_PREEMPTIRQ_TRACEPOINTS=y
-3104,3105c3202,3203
-< CONFIG_IO_DELAY_0X80=y
-< # CONFIG_IO_DELAY_0XED is not set
----
-> # CONFIG_IO_DELAY_0X80 is not set
-> CONFIG_IO_DELAY_0XED=y
-3113,3114c3211,3212
-< CONFIG_UNWINDER_ORC=y
-< # CONFIG_UNWINDER_FRAME_POINTER is not set
----
-> # CONFIG_UNWINDER_ORC is not set
-> CONFIG_UNWINDER_FRAME_POINTER=y
-3121c3219,3220
-< # CONFIG_NOTIFIER_ERROR_INJECTION is not set
----
-> CONFIG_NOTIFIER_ERROR_INJECTION=m
-> CONFIG_PM_NOTIFIER_ERROR_INJECT=m
+> How do you like the v12 below? It's also attached.
+> If this looks good to you, I can post it today or tomorrow.
+
+Then you need to enumerate what changed in v1..v12. In every single 
+revision. Do it under the "---" line below. And add v12 to the subject 
+as you did below (but not above).
+
+>  From 132f656fdbf3b4f00752140aac10f3674b598b5a Mon Sep 17 00:00:00 2001
+> From: Dexuan Cui <decui@microsoft.com>
+> Date: Mon, 20 May 2024 19:12:38 -0700
+> Subject: [PATCH v12] x86/tdx: Fix set_memory_decrypted() for vmalloc() buffers
+> 
+...
+> 
+> hv_netvsc is the first user of vmalloc() + set_memory_decrypted(), which
+> is why nobody noticed this until now.
+> 
+> Co-developed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Signed-off-by: Dexuan Cui <decui@microsoft.com>
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Acked-by: Kai Huang <kai.huang@intel.com>
+> Cc: stable@vger.kernel.org # 6.6+
+> ---
+
+The revision log belongs here. I believe you had to meet that 
+requirement in the submittingpatches document.
+
+And to avoid future confusion, I would list the links to received 
+"Signed-off-by"/"Reviewed-by"s here too. The links you listed earlier.
+
+>   arch/x86/coco/tdx/tdx.c | 43 ++++++++++++++++++++++++++++++++++-------
+>   1 file changed, 36 insertions(+), 7 deletions(-)
+
+regards,
+-- 
+js
+suse labs
+
 
