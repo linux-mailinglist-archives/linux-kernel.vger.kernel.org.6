@@ -1,243 +1,492 @@
-Return-Path: <linux-kernel+bounces-245303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6B1192B0E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:14:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0B4292B0E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D96FF1C216A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:14:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 001F01C21D0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C6113EFF3;
-	Tue,  9 Jul 2024 07:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D2F13BC35;
+	Tue,  9 Jul 2024 07:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="dPSYwuXI"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11021089.outbound.protection.outlook.com [40.93.194.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MrH+wXCJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="R4rzsbtR";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MrH+wXCJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="R4rzsbtR"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9943813A24B;
-	Tue,  9 Jul 2024 07:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720509247; cv=fail; b=ql/EjoePkddLl1SbC2pNEcwx0XRAb9eRgrsn6bZvbyLmmjoOKt1VQG/MTaYkJ9tfqXZX3WKOSI+0hMY4V7v+mMGXP2pwGIxDvcpLeZcF+fO7LNxysof+KLtoD+apzfOYrSsGyay4g0H4rtvxeJGriQD+Uuq6pxB1z720NN5Zhaw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720509247; c=relaxed/simple;
-	bh=PBHqVFImpCAtpHDIEIjYCNyCwH0/3WdUKW+IJ8+IWAw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ooU1jntfK5JM7f5Khmb3tWAFZNzgS5uxezsBjl1IOZbI9BEekZQTWbALPWGHo6x9vBD+/GUMG/pQFNWGHbA/yIzzn4rLISLxFzTMar7Co2tsLU5UGMlZDIfmvGtm8coRvMnyuA9RmIo3CIiqCGedInhu06zxEk4tvVHLlSW7Y8U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=dPSYwuXI; arc=fail smtp.client-ip=40.93.194.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hQVlEabl5Wf+Cv1KEjRof32Ad34W9kn4WRKHidApdesckBqcwXsBa+QpxuXrn+vXXO9vrCpO8OXA9gA+z31Dt3VAroe/2KYRMDCUrNyIb1qfEpIfdAJKPw05qRi3OwHkeirKHGPB4KVMGD1FXfn9IQq7kwNQyYwtZKS88/GTQsjlony00lXUYRldlY8i5sZWn/N8hKpZ9eisvH4d024Msm/KIMY/v7/AISI0ER5KiFqjUJ/rCPSzoBthZ0gYNIRAs/ffDN9gsfiokrdhURYhoJDuS+QWpUUgjnClaVOmWNjayWB/XF/THQG4PV4EoXNSr9GZizqXckCKZVZazdC+ZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Se+556Hl6FNv5IUNjmYlUyHvxdvBF7bmRQv6rVOlXyU=;
- b=FcxH+9z+I7Mc3BwHAOvXW1LGlwJPblmyDxl9veLwoXSHFPlUlYejfkeSRnJ7QvnBEqBKZLbL+5II/UiUZIj1N6CNAbSlPHLCqPxx/oYxzemMej42LM13kAEEFzecD2Xq6Ae2KA2vxKA1gnoGFqcNQbsCzqEGOyJ22bOKBCa6QG+WaSdGsZKE4F7fELpAmgsyt1ZhC4yoMWQYGmwvBZKm8sB8pgwpX4R33tU69+422DFyV2zXt1DlWDI9ezXFCwjTNu96RthQT/SZZHY/av4VSpGoDGy04KJMsXLI8fW9yhCpkafkjPPSrGfrkyMqOU/EA92m5kLh/kG307SQQVVAfg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Se+556Hl6FNv5IUNjmYlUyHvxdvBF7bmRQv6rVOlXyU=;
- b=dPSYwuXI8pZja8vPkBEi5IJMq2DnMVfAMVorMHaGPEEq7Lc5+MUPgwI+wtHH+ymTySZMMIrkxXZBmbLmMz9/sJT1aCwRHbH1HFagrScAbdnKpk0mUNKet0qLsk9dJxX60wTyVj6muyze5iWrjnPpRs1dxJma79v0VmkF2Wmkgs0=
-Received: from SA1PR21MB1317.namprd21.prod.outlook.com (2603:10b6:806:1f0::9)
- by SN6PR2101MB1344.namprd21.prod.outlook.com (2603:10b6:805:107::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.4; Tue, 9 Jul
- 2024 07:14:02 +0000
-Received: from SA1PR21MB1317.namprd21.prod.outlook.com
- ([fe80::67ed:774d:42d4:f6ef]) by SA1PR21MB1317.namprd21.prod.outlook.com
- ([fe80::67ed:774d:42d4:f6ef%6]) with mapi id 15.20.7784.001; Tue, 9 Jul 2024
- 07:13:56 +0000
-From: Dexuan Cui <decui@microsoft.com>
-To: Jiri Slaby <jirislaby@kernel.org>, Borislav Petkov <bp@alien8.de>
-CC: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
-	<x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "open list:X86 TRUST
- DOMAIN EXTENSIONS (TDX)" <linux-coco@lists.linux.dev>, "open list:X86
- ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>, Michael
- Kelley <mikelley@microsoft.com>, Kuppuswamy Sathyanarayanan
-	<sathyanarayanan.kuppuswamy@linux.intel.com>, Rick Edgecombe
-	<rick.p.edgecombe@intel.com>, Kai Huang <kai.huang@intel.com>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH] x86/tdx: Support vmalloc() for tdx_enc_status_changed()
-Thread-Topic: [PATCH] x86/tdx: Support vmalloc() for tdx_enc_status_changed()
-Thread-Index: AQHa0Wtpz0U6bwgC9Ee4DSiEch1K2bHtOg4AgACpo4CAAAJcQA==
-Date: Tue, 9 Jul 2024 07:13:56 +0000
-Message-ID:
- <SA1PR21MB131747711B9BC5F293139FA1BFDB2@SA1PR21MB1317.namprd21.prod.outlook.com>
-References: <20240708183946.3991-1-decui@microsoft.com>
- <20240708191703.GJZow7L9DBNZVBXE95@fat_crate.local>
- <SA1PR21MB1317816DFCE6EF38A92CF254BFDA2@SA1PR21MB1317.namprd21.prod.outlook.com>
- <cabc0b75-6536-4aee-9d6b-57712bb2e1a8@kernel.org>
-In-Reply-To: <cabc0b75-6536-4aee-9d6b-57712bb2e1a8@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=14203d24-972b-4830-b801-c39555669721;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-07-09T05:54:21Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR21MB1317:EE_|SN6PR2101MB1344:EE_
-x-ms-office365-filtering-correlation-id: 9b296ff4-bfbe-4996-9a97-08dc9fe6b27a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?tHy67VBJedNqfciQgXP94aKjmZ521hdMNGRiFZrDGCaXq5ji0gVTlXGI1NiP?=
- =?us-ascii?Q?CVFyjQjLOGF3Sj62HoVl+cUxAct1rWXqrGmUDzzQOysy9knVSm/h49Vmhqwa?=
- =?us-ascii?Q?ZnA1PLN7oV3E+c5s7mDkWJRY8Wwma/+A0ICNv1GWbLYRBgdT2jIsy/Kexpzm?=
- =?us-ascii?Q?u44Sp8sC5QYQ5tXujEqdxNDb5GEezeWXgwhqxzVQOlOLm5ursZ0Drxyq3WM7?=
- =?us-ascii?Q?uG5DvuP4eT5ZsVWE/94AJZ5Zz5WvPijP0Od60q9XIox0rkgN5NdTTeoagufj?=
- =?us-ascii?Q?xQwrbwIIo2lx3SnABUox9EeflUlDj68jipzLdA2jm/us/ly+d6VWzDCWl3vf?=
- =?us-ascii?Q?ELGqHv8N5ZGZ86xd+IHlo47RihTVzTlYHTBTRZhJVJy+bifgfHFlc6JqnK9t?=
- =?us-ascii?Q?0VMGicmMF8yfc8hp6lBYxyO7fwQxu1lCi8UiT6sAPPn2pl28ndfW3lbumU/U?=
- =?us-ascii?Q?Je7wLwnbX0iB9McknKzcqozOTp9zIwPrEhV848sLZuN0PSRZrTe12le2/LVo?=
- =?us-ascii?Q?SxaN6Ny+gkmlxn4GYZPoRTeTPYpL3JP5x7LgYzRcusi0mXfI4NEJATx1o5di?=
- =?us-ascii?Q?BlPYgIWEHdIJszCVNp1AoXVXxUcTPJAMUB2K8DsKK/l3rLuRNIgglI40rmlx?=
- =?us-ascii?Q?UN+zFaRWXezSlc5MppvHRcVhbf8Vax33VTHGC6I8vjIby1glFrz4PmHFEplA?=
- =?us-ascii?Q?INWZQ3GKZJ1Ai4dJCtRWCJ2HJ3fTzISL5h2vn5ZaOOJ6HaM3XpJOU0YFJ/6C?=
- =?us-ascii?Q?0MkJrMIRgN0Sz3zITXL89Ii32OKoGobWusrFfPs1MCi5O6g1YHEwEZbV6C7Q?=
- =?us-ascii?Q?8li3U8hqLCWgBmfXlKkjvu4GL3D3MoOPuYDsd4KF74zqzqKo/imrFmt10fI2?=
- =?us-ascii?Q?cTiMPOLfVsSORT6A71yZ2TIpAVilMSXA4HBmwenTWaEWwI5hrPqsiN86emrw?=
- =?us-ascii?Q?jiU+9J1kYyumFFP8fzFUGx5wYf3Dz36gaE8DRh3l0EqeHJpvP4DK4fF25X2A?=
- =?us-ascii?Q?8cEa4Hm0eMTK630dUj+BIg8sjWnZkcsTYHDn8FYwBSPfvgNYUoZ805DMRNt7?=
- =?us-ascii?Q?gtzmtqkE/7fI0o2K030hRU8jJM4BAjdUxZjryDSBTIfVWszG3CDqB8qLeKoe?=
- =?us-ascii?Q?h5qWKd/1nozGap8k7/b6zX3Lp2wRl5JhigImvNQ9gnDCpLTKuWRCNnt8FuFh?=
- =?us-ascii?Q?7PmEdeq7FfNXMwHcx+Ain+yoyyHP9Y5I1RdQ58Zw+OgIon0LjIsp+QmpuDs1?=
- =?us-ascii?Q?LUuOWzyBxg1oSv2hwwva30UxqLz2jy8kHmKUh6V5JEtGwsu4Ugb4fvDX7yrX?=
- =?us-ascii?Q?6kyQJHEHOzfgQwFqI3ygJ8A6fhdf/gCgEJg0PFm+QsCkeVGJ+n0ju8Epz9X0?=
- =?us-ascii?Q?NNzsbE8kAZFSAuWQC6c1Su0RiNfGBYK5QhI7yiQD+1yTh4Icgg=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR21MB1317.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?GOmJgPt2L9lMH7gpUSHkv568aGSv4KZTK3q5wdxpKYIzrbQrmPW3Vyjw6/GA?=
- =?us-ascii?Q?jE16wZ7f9hBDYs9e8WteF4E5El9qjJXq9jsw8c+HEDoxVj5Q49X2Lt/yshaE?=
- =?us-ascii?Q?j2TISuwimIVilU1nqYXzRiXYmmMazRzBlj0sHv4ixMEFU1FWMLe7LCIwzsp6?=
- =?us-ascii?Q?kiHFW0qoCGrbuO5rI+ZjOPTDw+4IrRoPMwwJShy80MQ47NDKsCsne8Jv2Aot?=
- =?us-ascii?Q?BS46cRtzIWYPRSKJayF4YWtqTSFgGEV3s3FkInAANanwcB2XKYsmXI8NOqY2?=
- =?us-ascii?Q?o62SSGrk9KVxMXff80Jr2E8Hb6tU4s4apyFTOtR3NjecuMls2grWyNeIoddj?=
- =?us-ascii?Q?bqfELUtVK/1kebnXtRkJnnRxxq9L2AthPztS5JWf94H9Cp/BvIIH7nKFEtu9?=
- =?us-ascii?Q?cMn70j3eqgncFbVWjiRJNz74VMVP3W6n+dEFWc+LO3JX4TujbBePV+ewu2Pl?=
- =?us-ascii?Q?O9mGm7bllDQjZLVjKTUBNl6DI4llPGOb0OBZ7ws1gKptzXTUo8FnPdGn/oPW?=
- =?us-ascii?Q?OT7U65rV/+e/nHYmp7hBuDIK+CKWBBtMChrMXEty+Z1kAfmULc+qKYIHJB1F?=
- =?us-ascii?Q?6B3YEWZmMUVjVGA1TKVvGD9UYJ64CUkP8F2Qno7LSAE6X5ePE400YyzdhI2C?=
- =?us-ascii?Q?yNWdyMQ2fN+qpTttseZGD0uu+FYfVnVo4rR/6joUdyIQuCW1Q+N8NkxBRUar?=
- =?us-ascii?Q?fS5u+Hnf6aPIttMdkOtWz9V5dhlfRIWa/VZE2/dT1t8bwCuHHmVKVHMajcs0?=
- =?us-ascii?Q?/dStI6S8wMgMD2Rd2sYNOBNvEUo69vsJkHBNeP+Av+W7GTUD7pVcG9xu4Aok?=
- =?us-ascii?Q?W3j56T7jeQhIaqF8FHp4qvNqseDGqOQndcmTw2haTvKvyfdRYKgsa3NsmrSs?=
- =?us-ascii?Q?wRHur3UC34+A8XXX24qOocmNiOS/LMNdBbQHF2dzU5xmLGSOkVVPGGf595GO?=
- =?us-ascii?Q?jhyGGEH5Yo0C+E7z+YcHs55C6aYZ6UGySXPuyipBV2L9KsEpd7wxV95dLJhs?=
- =?us-ascii?Q?vro21sDASyYnXLng1B55LWr9YhNuCxiUUUu6S0Yd0ThIyL9fkxKsGHp+SCXR?=
- =?us-ascii?Q?7+LOUpufzhHwXSLIEjLJXpYFPtbHmxmEjTod6yB6MvHwGzEjb8rjJbs5dmIl?=
- =?us-ascii?Q?+AcenjErdCboQNY8qwEwAGNgccjxPZOFEC0LT5RFu2eP/VRbkUaJ+oZRXKf+?=
- =?us-ascii?Q?85PlrOD45nc4NUS6yibsnPSmtaTpsevkVomTgiMFipyeloW4TYURr3j+HRSg?=
- =?us-ascii?Q?Tbhab3yWxutLFhrB+Jo7+7q0mXHLlD1xG9WU4m8/49SfVUrIpR50wsgCTqR4?=
- =?us-ascii?Q?3JMg2OtC7gxFqBQt/5WJAMc7DomzianeDV6+Bh0OsxnGOtTRJkHURYAE5Fky?=
- =?us-ascii?Q?XlzrA9G4lcGCuOKo8p+qlXm3PuEr3Kbi1gBaPlyqUfGqPqctUshC4l4EI6jd?=
- =?us-ascii?Q?E5gD5cdzmQQiKkVu9k84zR8+sHHZlmyafDi6Cu+kGJxE2+KBfAtT+fLuQ439?=
- =?us-ascii?Q?eOSkreoN/iVB7ujS/P8gWqThvSURMAGdPlw9Ez4+lAJwgNnMZXRKLZN0hkJD?=
- =?us-ascii?Q?gWdhbUANNRiUxrw3Zi5PXG0WcAlgbtg6s7a3z36T?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217F813BC30
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 07:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720509292; cv=none; b=gKpiD2SaUwtlw5GLqefXRg/QGGIRaD9UYW2lce2uDbuQURx8QWQmXENADsV72ja+9Wwv5Etmg6JIkL0bfe0ZEyeXinPpG4h/DEKPROxg1zEEBpOVNrVeFjmTnd6I+3DbNLI68smbPmL7A8JcsBI8apyajfONLBdYnuY46w6W2cQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720509292; c=relaxed/simple;
+	bh=Kiy7Hnjm+HTtYP1F0HXGp+99AO62Wi7IR23FTVu6Q58=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oHiE78T61iDUBfx4APH7l65rXDU7ETC/t5PDQrU8vWHPQ7huXDBvWSh1eNeKNPVJVkICGy6bpc5TfMrnQ+o+Ip656IUYn7gydnL+oAr7130ZRgeFgT4C9BOK7trtr+t5cLp9YKTCIiKzLwrFIjHQWNgQl7/XFF9JKs6qA3n/LwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MrH+wXCJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=R4rzsbtR; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MrH+wXCJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=R4rzsbtR; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 238EA21B8B;
+	Tue,  9 Jul 2024 07:14:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720509288; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/AleoyyoKXqA93MBg6urXoyOknwxwnFWdPcvrSR4WQQ=;
+	b=MrH+wXCJSdmjNQ3lwLSGV9d5fFPBLu3HBhJlOuPxfYBBaios4pHp6EB2IA+sFtheZ2j14S
+	Ruk/XyL2bBDPFG41XHkckEtuzWfpemNnK+bp5Q4htMLC9PbCqreV5/SXdmXyAeYggBjOGf
+	yPof8YRkfGC0BeYPXL1LJWJZtlhz/dY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720509288;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/AleoyyoKXqA93MBg6urXoyOknwxwnFWdPcvrSR4WQQ=;
+	b=R4rzsbtRiSeEbNCfxbqZYfoAgApugqo8WfJBOiYh4affJW1CfFJicVXZL26K64orO8p+L2
+	EkP0Ubpaz7ceA6Bg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=MrH+wXCJ;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=R4rzsbtR
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720509288; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/AleoyyoKXqA93MBg6urXoyOknwxwnFWdPcvrSR4WQQ=;
+	b=MrH+wXCJSdmjNQ3lwLSGV9d5fFPBLu3HBhJlOuPxfYBBaios4pHp6EB2IA+sFtheZ2j14S
+	Ruk/XyL2bBDPFG41XHkckEtuzWfpemNnK+bp5Q4htMLC9PbCqreV5/SXdmXyAeYggBjOGf
+	yPof8YRkfGC0BeYPXL1LJWJZtlhz/dY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720509288;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/AleoyyoKXqA93MBg6urXoyOknwxwnFWdPcvrSR4WQQ=;
+	b=R4rzsbtRiSeEbNCfxbqZYfoAgApugqo8WfJBOiYh4affJW1CfFJicVXZL26K64orO8p+L2
+	EkP0Ubpaz7ceA6Bg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CB0521396E;
+	Tue,  9 Jul 2024 07:14:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id e05EMGfjjGYtEQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 09 Jul 2024 07:14:47 +0000
+Message-ID: <0236d6a0-a8c5-47bb-a3f2-c4022b49b09d@suse.de>
+Date: Tue, 9 Jul 2024 09:14:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR21MB1317.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b296ff4-bfbe-4996-9a97-08dc9fe6b27a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2024 07:13:56.5002
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nXf4mhA7ea7GD/W/NZoOCFhN3zg4Kwp923oKbDuL/1CUfRU6BFXPjf/uvs9uutAeDuvcBJEoh9dLUGgoiKIUCg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR2101MB1344
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/format-helper: Add conversion from XRGB8888 to BGR888
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch"
+ <daniel@ffwll.ch>, Orlando Chamberlain <orlandoch.dev@gmail.com>,
+ Kerem Karabay <kekrby@gmail.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <4C98332B-4E56-4314-8BDA-709AD3974899@live.com>
+ <37c0df72-498b-44ad-9a47-d69f0515edd7@suse.de>
+ <6D311D35-6F8F-4E14-9A3F-EEEBE5490ACD@live.com>
+ <bf43c9de-32fe-4abc-9045-043c16687cca@suse.de>
+ <4365B424-E585-43ED-BDA9-F722B3E6CD56@live.com>
+ <abbb7883-6b57-4261-9fc1-9c9eac1665e3@suse.de>
+ <MA0P287MB021775E5A6E676498F3A975DB8DA2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <MA0P287MB021775E5A6E676498F3A975DB8DA2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[live.com];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
+	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	TAGGED_RCPT(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,live.com:email]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 238EA21B8B
+X-Spam-Flag: NO
+X-Spam-Score: -3.00
+X-Spam-Level: 
 
-> From: Jiri Slaby <jirislaby@kernel.org>
->  [...]
-> If you cc stable, fixes *is* actually needed. So again, why to cc stable
-Ok, I can add a tag to next version, i.e., v12:
-Fixes: 68f2f2bc163d ("Drivers: hv: vmbus: Support fully enlightened TDX gue=
-sts")
+Hi
 
-68f2f2bc163d is already in v6.6.
-A v6.6 kernel works for a Linux TD-Mode TDX VM on Hyper-V, if the VM
-doesn't have a virtual NIC device; if the VM has a vNIC, the hv_netvsc driv=
-er
-fails to load and the VM gets stuck in the network init script. This patch =
-fixes
-the issue.
+Am 08.07.24 um 10:37 schrieb Aditya Garg:
+>
+>> On 8 Jul 2024, at 1:59 PM, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+>>
+>> ﻿Hi
+>>
+>>> Am 08.07.24 um 10:10 schrieb Aditya Garg:
+>>> Hi
+>>>> I see. Best would be to submit this patch together with the driver for review.
+>>>>
+>>> Although it’s your take, but I really doubt whether the driver would make it upstream. It shall most likely be provided as a DKMS module.
+>> What's wrong with upstreaming the driver?
+> 1. The author of the driver seems to have abandoned the driver.
+> 2. It currently supports only T2 Macs. T1 Mac support is uncertain.
+> 3. It only handles the DRM part. 2 additional HID drivers are also needed for the touch bar to work, which again work only for T2 Macs.
+> 4. Although I can legally submit it since the author signed the commit and it's GPL2, I would prefer getting consent from the author for a bigger patch like adding the driver.
+>
+> Do you still think it will be able to make upstream?
 
-> when this is a feature? I suppose you will receive a Greg-bot reply
-> anyway ;).
-As explained above, my understanding is that this is more of a bug fix rath=
-er
-than a feature, though the described NIC driver issue is specific to Hyper-=
-V.
-In the future, there might be new users of vmalloc() + set_memory_decrypted=
-().
+It's up to you. But you'd effectively sign up for maintainership.
 
-> > How do you like the v12 below? It's also attached.
-> > If this looks good to you, I can post it today or tomorrow.
->=20
-> Then you need to enumerate what changed in v1..v12. In every single
-> revision. Do it under the "---" line below. And add v12 to the subject
-> as you did below (but not above).
-Ok, I'll post v12 tomorrow with changes enumerated from v1..v12.
-=20
-> >  From 132f656fdbf3b4f00752140aac10f3674b598b5a Mon Sep 17
-> 00:00:00 2001
-> > From: Dexuan Cui <decui@microsoft.com>
-> > Date: Mon, 20 May 2024 19:12:38 -0700
-> > Subject: [PATCH v12] x86/tdx: Fix set_memory_decrypted() for vmalloc()
-> buffers
-> >
-> ...
-> >
-> > hv_netvsc is the first user of vmalloc() + set_memory_decrypted(), whic=
-h
-> > is why nobody noticed this until now.
-> >
-> > Co-developed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > Signed-off-by: Dexuan Cui <decui@microsoft.com>
-> > Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-> > Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-> > Reviewed-by: Kuppuswamy Sathyanarayanan
-> <sathyanarayanan.kuppuswamy@linux.intel.com>
-> > Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> > Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
-> > Acked-by: Kai Huang <kai.huang@intel.com>
-> > Cc: stable@vger.kernel.org # 6.6+
-> > ---
->=20
-> The revision log belongs here. I believe you had to meet that
-> requirement in the submittingpatches document.
-Ok, will do.
+Best regards
+Thomas
 
-> And to avoid future confusion, I would list the links to received
-> "Signed-off-by"/"Reviewed-by"s here too. The links you listed earlier.
-Ok, will do.
+>
+>>> What should be the best case scenario then?
+>> We only add helpers that have callers. So the conversion routine would have to remain in the driver module. If we have have an upstream user of that helper, we can pick up your patch later.
+>>
+> Makes sense. Thanks for clarifying!
+>
+>> Best regards
+>> Thomas
+>>
+>>
+>>
+>>>> Best regards
+>>>> Thomas
+>>>>
+>>>>>> Best regards
+>>>>>> Thomas
+>>>>>>
+>>>>>>> Signed-off-by: Kerem Karabay <kekrby@gmail.com>
+>>>>>>> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+>>>>>>> ---
+>>>>>>>   drivers/gpu/drm/drm_format_helper.c           | 54 +++++++++++++
+>>>>>>>   .../gpu/drm/tests/drm_format_helper_test.c    | 81 +++++++++++++++++++
+>>>>>>>   include/drm/drm_format_helper.h               |  3 +
+>>>>>>>   3 files changed, 138 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/drivers/gpu/drm/drm_format_helper.c b/drivers/gpu/drm/drm_format_helper.c
+>>>>>>> index b1be458ed..28c0e76a1 100644
+>>>>>>> --- a/drivers/gpu/drm/drm_format_helper.c
+>>>>>>> +++ b/drivers/gpu/drm/drm_format_helper.c
+>>>>>>> @@ -702,6 +702,57 @@ void drm_fb_xrgb8888_to_rgb888(struct iosys_map *dst, const unsigned int *dst_pi
+>>>>>>>   }
+>>>>>>>   EXPORT_SYMBOL(drm_fb_xrgb8888_to_rgb888);
+>>>>>>>   +static void drm_fb_xrgb8888_to_bgr888_line(void *dbuf, const void *sbuf, unsigned int pixels)
+>>>>>>> +{
+>>>>>>> + u8 *dbuf8 = dbuf;
+>>>>>>> + const __le32 *sbuf32 = sbuf;
+>>>>>>> + unsigned int x;
+>>>>>>> + u32 pix;
+>>>>>>> +
+>>>>>>> + for (x = 0; x < pixels; x++) {
+>>>>>>> + pix = le32_to_cpu(sbuf32[x]);
+>>>>>>> + /* write red-green-blue to output in little endianness */
+>>>>>>> + *dbuf8++ = (pix & 0x00FF0000) >> 16;
+>>>>>>> + *dbuf8++ = (pix & 0x0000FF00) >> 8;
+>>>>>>> + *dbuf8++ = (pix & 0x000000FF) >> 0;
+>>>>>>> + }
+>>>>>>> +}
+>>>>>>> +
+>>>>>>> +/**
+>>>>>>> + * drm_fb_xrgb8888_to_bgr888 - Convert XRGB8888 to BGR888 clip buffer
+>>>>>>> + * @dst: Array of BGR888 destination buffers
+>>>>>>> + * @dst_pitch: Array of numbers of bytes between the start of two consecutive scanlines
+>>>>>>> + *             within @dst; can be NULL if scanlines are stored next to each other.
+>>>>>>> + * @src: Array of XRGB8888 source buffers
+>>>>>>> + * @fb: DRM framebuffer
+>>>>>>> + * @clip: Clip rectangle area to copy
+>>>>>>> + * @state: Transform and conversion state
+>>>>>>> + *
+>>>>>>> + * This function copies parts of a framebuffer to display memory and converts the
+>>>>>>> + * color format during the process. Destination and framebuffer formats must match. The
+>>>>>>> + * parameters @dst, @dst_pitch and @src refer to arrays. Each array must have at
+>>>>>>> + * least as many entries as there are planes in @fb's format. Each entry stores the
+>>>>>>> + * value for the format's respective color plane at the same index.
+>>>>>>> + *
+>>>>>>> + * This function does not apply clipping on @dst (i.e. the destination is at the
+>>>>>>> + * top-left corner).
+>>>>>>> + *
+>>>>>>> + * Drivers can use this function for BGR888 devices that don't natively
+>>>>>>> + * support XRGB8888.
+>>>>>>> + */
+>>>>>>> +void drm_fb_xrgb8888_to_bgr888(struct iosys_map *dst, const unsigned int *dst_pitch,
+>>>>>>> +        const struct iosys_map *src, const struct drm_framebuffer *fb,
+>>>>>>> +        const struct drm_rect *clip, struct drm_format_conv_state *state)
+>>>>>>> +{
+>>>>>>> + static const u8 dst_pixsize[DRM_FORMAT_MAX_PLANES] = {
+>>>>>>> + 3,
+>>>>>>> + };
+>>>>>>> +
+>>>>>>> + drm_fb_xfrm(dst, dst_pitch, dst_pixsize, src, fb, clip, false, state,
+>>>>>>> +     drm_fb_xrgb8888_to_bgr888_line);
+>>>>>>> +}
+>>>>>>> +EXPORT_SYMBOL(drm_fb_xrgb8888_to_bgr888);
+>>>>>>> +
+>>>>>>>   static void drm_fb_xrgb8888_to_argb8888_line(void *dbuf, const void *sbuf, unsigned int pixels)
+>>>>>>>   {
+>>>>>>>    __le32 *dbuf32 = dbuf;
+>>>>>>> @@ -1035,6 +1086,9 @@ int drm_fb_blit(struct iosys_map *dst, const unsigned int *dst_pitch, uint32_t d
+>>>>>>>    } else if (dst_format == DRM_FORMAT_RGB888) {
+>>>>>>>    drm_fb_xrgb8888_to_rgb888(dst, dst_pitch, src, fb, clip, state);
+>>>>>>>    return 0;
+>>>>>>> + } else if (dst_format == DRM_FORMAT_BGR888) {
+>>>>>>> + drm_fb_xrgb8888_to_bgr888(dst, dst_pitch, src, fb, clip, state);
+>>>>>>> + return 0;
+>>>>>>>    } else if (dst_format == DRM_FORMAT_ARGB8888) {
+>>>>>>>    drm_fb_xrgb8888_to_argb8888(dst, dst_pitch, src, fb, clip, state);
+>>>>>>>    return 0;
+>>>>>>> diff --git a/drivers/gpu/drm/tests/drm_format_helper_test.c b/drivers/gpu/drm/tests/drm_format_helper_test.c
+>>>>>>> index 08992636e..e54f0f6e7 100644
+>>>>>>> --- a/drivers/gpu/drm/tests/drm_format_helper_test.c
+>>>>>>> +++ b/drivers/gpu/drm/tests/drm_format_helper_test.c
+>>>>>>> @@ -60,6 +60,11 @@ struct convert_to_rgb888_result {
+>>>>>>>    const u8 expected[TEST_BUF_SIZE];
+>>>>>>>   };
+>>>>>>>   +struct convert_to_bgr888_result {
+>>>>>>> + unsigned int dst_pitch;
+>>>>>>> + const u8 expected[TEST_BUF_SIZE];
+>>>>>>> +};
+>>>>>>> +
+>>>>>>>   struct convert_to_argb8888_result {
+>>>>>>>    unsigned int dst_pitch;
+>>>>>>>    const u32 expected[TEST_BUF_SIZE];
+>>>>>>> @@ -107,6 +112,7 @@ struct convert_xrgb8888_case {
+>>>>>>>    struct convert_to_argb1555_result argb1555_result;
+>>>>>>>    struct convert_to_rgba5551_result rgba5551_result;
+>>>>>>>    struct convert_to_rgb888_result rgb888_result;
+>>>>>>> + struct convert_to_bgr888_result bgr888_result;
+>>>>>>>    struct convert_to_argb8888_result argb8888_result;
+>>>>>>>    struct convert_to_xrgb2101010_result xrgb2101010_result;
+>>>>>>>    struct convert_to_argb2101010_result argb2101010_result;
+>>>>>>> @@ -151,6 +157,10 @@ static struct convert_xrgb8888_case convert_xrgb8888_cases[] = {
+>>>>>>>    .dst_pitch = TEST_USE_DEFAULT_PITCH,
+>>>>>>>    .expected = { 0x00, 0x00, 0xFF },
+>>>>>>>    },
+>>>>>>> + .bgr888_result = {
+>>>>>>> + .dst_pitch = TEST_USE_DEFAULT_PITCH,
+>>>>>>> + .expected = { 0xFF, 0x00, 0x00 },
+>>>>>>> + },
+>>>>>>>    .argb8888_result = {
+>>>>>>>    .dst_pitch = TEST_USE_DEFAULT_PITCH,
+>>>>>>>    .expected = { 0xFFFF0000 },
+>>>>>>> @@ -217,6 +227,10 @@ static struct convert_xrgb8888_case convert_xrgb8888_cases[] = {
+>>>>>>>    .dst_pitch = TEST_USE_DEFAULT_PITCH,
+>>>>>>>    .expected = { 0x00, 0x00, 0xFF },
+>>>>>>>    },
+>>>>>>> + .bgr888_result = {
+>>>>>>> + .dst_pitch = TEST_USE_DEFAULT_PITCH,
+>>>>>>> + .expected = { 0xFF, 0x00, 0x00 },
+>>>>>>> + },
+>>>>>>>    .argb8888_result = {
+>>>>>>>    .dst_pitch = TEST_USE_DEFAULT_PITCH,
+>>>>>>>    .expected = { 0xFFFF0000 },
+>>>>>>> @@ -330,6 +344,15 @@ static struct convert_xrgb8888_case convert_xrgb8888_cases[] = {
+>>>>>>>    0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x00,
+>>>>>>>    },
+>>>>>>>    },
+>>>>>>> + .bgr888_result = {
+>>>>>>> + .dst_pitch = TEST_USE_DEFAULT_PITCH,
+>>>>>>> + .expected = {
+>>>>>>> + 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00,
+>>>>>>> + 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00,
+>>>>>>> + 0x00, 0x00, 0xFF, 0xFF, 0x00, 0xFF,
+>>>>>>> + 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF,
+>>>>>>> + },
+>>>>>>> + },
+>>>>>>>    .argb8888_result = {
+>>>>>>>    .dst_pitch = TEST_USE_DEFAULT_PITCH,
+>>>>>>>    .expected = {
+>>>>>>> @@ -468,6 +491,17 @@ static struct convert_xrgb8888_case convert_xrgb8888_cases[] = {
+>>>>>>>    0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+>>>>>>>    },
+>>>>>>>    },
+>>>>>>> + .bgr888_result = {
+>>>>>>> + .dst_pitch = 15,
+>>>>>>> + .expected = {
+>>>>>>> + 0x0E, 0x44, 0x9C, 0x11, 0x4D, 0x05, 0xA8, 0xF3, 0x03,
+>>>>>>> + 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+>>>>>>> + 0x6C, 0xF0, 0x73, 0x0E, 0x44, 0x9C, 0x11, 0x4D, 0x05,
+>>>>>>> + 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+>>>>>>> + 0xA8, 0x03, 0x03, 0x6C, 0xF0, 0x73, 0x0E, 0x44, 0x9C,
+>>>>>>> + 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+>>>>>>> + },
+>>>>>>> + },
+>>>>>>>    .argb8888_result = {
+>>>>>>>    .dst_pitch = 20,
+>>>>>>>    .expected = {
+>>>>>>> @@ -914,6 +948,52 @@ static void drm_test_fb_xrgb8888_to_rgb888(struct kunit *test)
+>>>>>>>    KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
+>>>>>>>   }
+>>>>>>>   +static void drm_test_fb_xrgb8888_to_bgr888(struct kunit *test)
+>>>>>>> +{
+>>>>>>> + const struct convert_xrgb8888_case *params = test->param_value;
+>>>>>>> + const struct convert_to_bgr888_result *result = &params->bgr888_result;
+>>>>>>> + size_t dst_size;
+>>>>>>> + u8 *buf = NULL;
+>>>>>>> + __le32 *xrgb8888 = NULL;
+>>>>>>> + struct iosys_map dst, src;
+>>>>>>> +
+>>>>>>> + struct drm_framebuffer fb = {
+>>>>>>> + .format = drm_format_info(DRM_FORMAT_XRGB8888),
+>>>>>>> + .pitches = { params->pitch, 0, 0 },
+>>>>>>> + };
+>>>>>>> +
+>>>>>>> + dst_size = conversion_buf_size(DRM_FORMAT_BGR888, result->dst_pitch,
+>>>>>>> +        &params->clip, 0);
+>>>>>>> + KUNIT_ASSERT_GT(test, dst_size, 0);
+>>>>>>> +
+>>>>>>> + buf = kunit_kzalloc(test, dst_size, GFP_KERNEL);
+>>>>>>> + KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buf);
+>>>>>>> + iosys_map_set_vaddr(&dst, buf);
+>>>>>>> +
+>>>>>>> + xrgb8888 = cpubuf_to_le32(test, params->xrgb8888, TEST_BUF_SIZE);
+>>>>>>> + KUNIT_ASSERT_NOT_ERR_OR_NULL(test, xrgb8888);
+>>>>>>> + iosys_map_set_vaddr(&src, xrgb8888);
+>>>>>>> +
+>>>>>>> + /*
+>>>>>>> +  * BGR888 expected results are already in little-endian
+>>>>>>> +  * order, so there's no need to convert the test output.
+>>>>>>> +  */
+>>>>>>> + drm_fb_xrgb8888_to_bgr888(&dst, &result->dst_pitch, &src, &fb, &params->clip,
+>>>>>>> +   &fmtcnv_state);
+>>>>>>> + KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
+>>>>>>> +
+>>>>>>> + buf = dst.vaddr; /* restore original value of buf */
+>>>>>>> + memset(buf, 0, dst_size);
+>>>>>>> +
+>>>>>>> + int blit_result = 0;
+>>>>>>> +
+>>>>>>> + blit_result = drm_fb_blit(&dst, &result->dst_pitch, DRM_FORMAT_BGR888, &src, &fb, &params->clip,
+>>>>>>> +   &fmtcnv_state);
+>>>>>>> +
+>>>>>>> + KUNIT_EXPECT_FALSE(test, blit_result);
+>>>>>>> + KUNIT_EXPECT_MEMEQ(test, buf, result->expected, dst_size);
+>>>>>>> +}
+>>>>>>> +
+>>>>>>>   static void drm_test_fb_xrgb8888_to_argb8888(struct kunit *test)
+>>>>>>>   {
+>>>>>>>    const struct convert_xrgb8888_case *params = test->param_value;
+>>>>>>> @@ -1851,6 +1931,7 @@ static struct kunit_case drm_format_helper_test_cases[] = {
+>>>>>>>    KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb1555, convert_xrgb8888_gen_params),
+>>>>>>>    KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_rgba5551, convert_xrgb8888_gen_params),
+>>>>>>>    KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_rgb888, convert_xrgb8888_gen_params),
+>>>>>>> + KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_bgr888, convert_xrgb8888_gen_params),
+>>>>>>>    KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb8888, convert_xrgb8888_gen_params),
+>>>>>>>    KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_xrgb2101010, convert_xrgb8888_gen_params),
+>>>>>>>    KUNIT_CASE_PARAM(drm_test_fb_xrgb8888_to_argb2101010, convert_xrgb8888_gen_params),
+>>>>>>> diff --git a/include/drm/drm_format_helper.h b/include/drm/drm_format_helper.h
+>>>>>>> index f13b34e0b..b53cf85ca 100644
+>>>>>>> --- a/include/drm/drm_format_helper.h
+>>>>>>> +++ b/include/drm/drm_format_helper.h
+>>>>>>> @@ -95,6 +95,9 @@ void drm_fb_xrgb8888_to_rgba5551(struct iosys_map *dst, const unsigned int *dst_
+>>>>>>>   void drm_fb_xrgb8888_to_rgb888(struct iosys_map *dst, const unsigned int *dst_pitch,
+>>>>>>>           const struct iosys_map *src, const struct drm_framebuffer *fb,
+>>>>>>>           const struct drm_rect *clip, struct drm_format_conv_state *state);
+>>>>>>> +void drm_fb_xrgb8888_to_bgr888(struct iosys_map *dst, const unsigned int *dst_pitch,
+>>>>>>> +        const struct iosys_map *src, const struct drm_framebuffer *fb,
+>>>>>>> +        const struct drm_rect *clip, struct drm_format_conv_state *state);
+>>>>>>>   void drm_fb_xrgb8888_to_argb8888(struct iosys_map *dst, const unsigned int *dst_pitch,
+>>>>>>>     const struct iosys_map *src, const struct drm_framebuffer *fb,
+>>>>>>>     const struct drm_rect *clip, struct drm_format_conv_state *state);
+>>>>>> --
+>>>>>> --
+>>>>>> Thomas Zimmermann
+>>>>>> Graphics Driver Developer
+>>>>>> SUSE Software Solutions Germany GmbH
+>>>>>> Frankenstrasse 146, 90461 Nuernberg, Germany
+>>>>>> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+>>>>>> HRB 36809 (AG Nuernberg)
+>>>> --
+>>>> --
+>>>> Thomas Zimmermann
+>>>> Graphics Driver Developer
+>>>> SUSE Software Solutions Germany GmbH
+>>>> Frankenstrasse 146, 90461 Nuernberg, Germany
+>>>> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+>>>> HRB 36809 (AG Nuernberg)
+>> --
+>> --
+>> Thomas Zimmermann
+>> Graphics Driver Developer
+>> SUSE Software Solutions Germany GmbH
+>> Frankenstrasse 146, 90461 Nuernberg, Germany
+>> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+>> HRB 36809 (AG Nuernberg)
+>>
 
-> regards,
-> --
-> js
-> suse labs
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-Thanks for your comments!
 
