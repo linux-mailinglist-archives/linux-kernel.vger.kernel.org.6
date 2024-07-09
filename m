@@ -1,136 +1,117 @@
-Return-Path: <linux-kernel+bounces-245996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A202592BC7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:07:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A71F692BC81
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C4A4280E9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:07:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B8A72819D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B79018C325;
-	Tue,  9 Jul 2024 14:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6147218FDA5;
+	Tue,  9 Jul 2024 14:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CpaOzP05"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GKSydfxv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A857257D
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 14:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CEF257D;
+	Tue,  9 Jul 2024 14:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720534027; cv=none; b=omRePOiJftqVXJYwhAtubE05wuQBESfY6lWOqXSQCz+4F+qXD9AefbjlULRhNGa94JoSKoBI7sxazP0pKJc8Wt9rRkt2Fj6P1uO91lHz7rsMErMPaC+5duNW7JaKGP5tS/oqfJLD4KoRxMqilHKk5ZTExzZMQwtYgKcRNHDeaiI=
+	t=1720534223; cv=none; b=ivE+WXWP1e9F0NWlORA+y498WYeVkudwBoFY7/Jm4QeIdGlkHpdDKiyuU0O+EK2C2T40zzbH+VgC036aOdq0cDdO5+ap9EYNSz8nUJ6IWXDajv7m9o6vw6lwupEAOaGz7c5fZe5oFEgiEdSKgEJ/3j7hZ2Prdjirt0cMTP8V4zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720534027; c=relaxed/simple;
-	bh=t6JT6FrSnzv8XklnrYODeF0tSvh6kmlSctN4+IJkZHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BIAXZL/VSlaiAZXHVAY1d6PAVtyP8k2smOBytoFMpFIJVHYGSu6nfaYn2G3k2LzZU+JtjoGLfSifcQn6p6/yOrtf1maIvUZ1dkmdNdvdxAmTH0Hoj+JUr9lhBhOVXZ9GFj/1CsL7XA1zxFR4YAZi79uF3TGqZt8FWLiWNKAko3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CpaOzP05; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720534025;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1OvITzQjJfVx93jTak0ogpbPRj+PPTTq5u2++xH/IGU=;
-	b=CpaOzP05Gyj27lzMyQPHi8xoM/Z+rBcRxKs19/OHvfMQ77B0LHVk5n0XD2mrUD982NKDNz
-	gfm0dugSX0ooLKufWhHkYD/bQFv6ize0C4t/VMgX9glVrcvWkORogL8aPODhCpdMr9j/6t
-	+H5dcq+uN4P4WV60qo9lb7LqdB+7aBI=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-274-vAVNTGRxNn6VOLqt5XrmoQ-1; Tue,
- 09 Jul 2024 10:06:59 -0400
-X-MC-Unique: vAVNTGRxNn6VOLqt5XrmoQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EEAF81958B3D;
-	Tue,  9 Jul 2024 14:06:52 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.15])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 810AF1955E70;
-	Tue,  9 Jul 2024 14:06:50 +0000 (UTC)
-Date: Tue, 9 Jul 2024 22:06:46 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: linux@armlinux.org.uk, vgoyal@redhat.com, dyoung@redhat.com,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	arnd@arndb.de, afd@ti.com, akpm@linux-foundation.org,
-	rmk+kernel@armlinux.org.uk, linus.walleij@linaro.org,
-	eric.devolder@oracle.com, gregkh@linuxfoundation.org, deller@gmx.de,
-	javierm@redhat.com, robh@kernel.org, thunder.leizhen@huawei.com,
-	austindh.kim@gmail.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kexec@lists.infradead.org
-Subject: Re: [PATCH 0/3] ARM: Use generic interface to simplify crashkernel
- reservation
-Message-ID: <Zo1D9sB0UTOIrApP@MiWiFi-R3L-srv>
-References: <20240708133348.3592667-1-ruanjinjie@huawei.com>
- <Zo0DCVXvCryDr7WN@MiWiFi-R3L-srv>
- <3157befe-431f-69ac-b9d3-7a8685ba3a4d@huawei.com>
- <Zo0TbmSnHbiz5YQn@MiWiFi-R3L-srv>
- <01869981-b1de-32cb-bd25-d6ea09752b3d@huawei.com>
+	s=arc-20240116; t=1720534223; c=relaxed/simple;
+	bh=Vrb8yjdL/D92mOVV8Vty0L+ciGQXDNHk1wnDb0gv6fQ=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=bFdXSInDbPb6R1XSdVTulY2np1+K40tIZUmsfl4BZuuABj6s5yK2hVUlOu+J6gSi9YcsIRGg4XPtJ1WPyCpoKBDOS43EQCjTW01+pYuMLPDV5xvRUgtgG1Y1VdPo88IYdYheIJ5ObTGUijDWf31sN8yqffICQWNNOZP+ep4NJNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GKSydfxv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39F9DC3277B;
+	Tue,  9 Jul 2024 14:10:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720534223;
+	bh=Vrb8yjdL/D92mOVV8Vty0L+ciGQXDNHk1wnDb0gv6fQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GKSydfxvBgIArCp9fJE4FC22QF8thVQloQ0WFAdJs+Sw+nw4EXHZI2btEIU7KcMhg
+	 dcdN03E4/v/xk2SI6gvVWgDo0SEuylJehPw/IDyxXFmkE0gY0p+FpoKe/td3ououOa
+	 ETECJhplc5lDtTXQcuRkh5GqEUVA77JC54uUdMtZZUEsNvIial20jv1FN1qdNwc7oW
+	 SSqucLYfoPbE30S6xcV1LB2DGmp//uml0ewnCGQhEkepv09rns+ADLOp5Vfnozwln7
+	 ZjlsQycSX7SFqjqSIfs4AsG2zQ3vUOVT0Fe11zHOgCbteBvw7FjOytfxuUuMyTcqNW
+	 YxDZ3ZXYbVnmg==
+Date: Tue, 9 Jul 2024 23:10:17 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
+ rostedt@goodmis.org, mhiramat@kernel.org, x86@kernel.org, mingo@redhat.com,
+ tglx@linutronix.de, jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, rihams@fb.com, linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v4] perf,x86: avoid missing caller address in stack
+ traces captured in uprobe
+Message-Id: <20240709231017.e8d5a37c96d126d1f7591a0e@kernel.org>
+In-Reply-To: <20240709101133.GI27299@noisy.programming.kicks-ass.net>
+References: <20240708231127.1055083-1-andrii@kernel.org>
+	<20240709101133.GI27299@noisy.programming.kicks-ass.net>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01869981-b1de-32cb-bd25-d6ea09752b3d@huawei.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 07/09/24 at 07:06pm, Jinjie Ruan wrote:
-> 
-> 
-> On 2024/7/9 18:39, Baoquan He wrote:
-> > On 07/09/24 at 05:50pm, Jinjie Ruan wrote:
-> >>
-> >>
-> >> On 2024/7/9 17:29, Baoquan He wrote:
-> >>> On 07/08/24 at 09:33pm, Jinjie Ruan wrote:
-> >>>> Currently, x86, arm64, riscv and loongarch has been switched to generic
-> >>>> crashkernel reservation. Also use generic interface to simplify crashkernel
-> >>>> reservation for arm32, and fix two bugs by the way.
-> >>>
-> >>> I am not sure if this is a good idea. I added the generic reservation
-> >>> itnerfaces for ARCH which support crashkernel=,high|low and normal
-> >>> crashkernel reservation, with this, the code can be simplified a lot.
-> >>> However, arm32 doesn't support crashkernel=,high, I am not sure if it's
-> >>> worth taking the change, most importantly, if it will cause
-> >>> misunderstanding or misoperation.
-> >>
-> >> Yes, arm32 doesn't support crashkernel=,high.
-> >>
-> >> However, a little enhancement to the generic code (please see the first
-> >> patch), the generic reservation interfaces can also be applicable to
-> >> architectures that do not support "high" such as arm32, and it can also
-> >> simplify the code (please see the third patch).
-> > 
-> > Yeah, I can see the code is simplified. When you specified
-> > 'crashkernel=xM,high', do you think what should be warn out? Because
-> > it's an unsupported syntax on arm32, we should do something to print out
-> > appropriate message.
-> 
-> Yes, you are right! In this patch it will print "crashkernel high memory
-> reservation failed." message and out for arm32 if you specify
+On Tue, 9 Jul 2024 12:11:33 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-That message may mislead people to believe crashkernel=,high is
-supported but reservation is failed, then a bug need be filed for this?
-We may expect a message telling this syntax is not supported on this
-ARCH.
+> On Mon, Jul 08, 2024 at 04:11:27PM -0700, Andrii Nakryiko wrote:
+> > +#ifdef CONFIG_UPROBES
+> > +/*
+> > + * Heuristic-based check if uprobe is installed at the function entry.
+> > + *
+> > + * Under assumption of user code being compiled with frame pointers,
+> > + * `push %rbp/%ebp` is a good indicator that we indeed are.
+> > + *
+> > + * Similarly, `endbr64` (assuming 64-bit mode) is also a common pattern.
+> > + * If we get this wrong, captured stack trace might have one extra bogus
+> > + * entry, but the rest of stack trace will still be meaningful.
+> > + */
+> > +static bool is_uprobe_at_func_entry(struct pt_regs *regs)
+> > +{
+> > +	struct arch_uprobe *auprobe;
+> > +
+> > +	if (!current->utask)
+> > +		return false;
+> > +
+> > +	auprobe = current->utask->auprobe;
+> > +	if (!auprobe)
+> > +		return false;
+> > +
+> > +	/* push %rbp/%ebp */
+> > +	if (auprobe->insn[0] == 0x55)
+> > +		return true;
+> > +
+> > +	/* endbr64 (64-bit only) */
+> > +	if (user_64bit_mode(regs) && *(u32 *)auprobe->insn == 0xfa1e0ff3)
+> > +		return true;
+> 
+> I meant to reply to Josh suggesting this, but... how can this be? If you
+> scribble the ENDBR with an INT3 things will #CP and we'll never get to
+> the #BP.
 
-> 'crashkernel=xM,high because "CRASH_ADDR_LOW_MAX" and
-> "CRASH_ADDR_HIGH_MAX" is identical for arm32. And it should also warn
-> out for other similar architecture.
-> 
-> 
-> > 
-> > 
-> 
+Hmm, kprobes checks the instruction and reject if it is ENDBR.
+Shouldn't uprobe also skip the ENDBR too?
 
+Thank you,
+
+> 
+> Also, we tried very hard to not have a literal encode ENDBR (I really
+> should teach objtool about this one :/). If it somehow makes sense to
+> keep this clause, please use: gen_endbr()
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
