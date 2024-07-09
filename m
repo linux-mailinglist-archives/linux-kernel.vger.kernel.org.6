@@ -1,172 +1,201 @@
-Return-Path: <linux-kernel+bounces-246195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 562AF92BEE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:56:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E80F92BEF0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:56:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1234E281539
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:56:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC83A1F21FEB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8E419D8A2;
-	Tue,  9 Jul 2024 15:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D563C19DF48;
+	Tue,  9 Jul 2024 15:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MM4sPECc"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MBKMxmxG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E70019D072
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FAE19D8AC
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720540562; cv=none; b=G92VdQgO+3mhD+BtvkkNRVwtEvdC/IOXtgSMrEErvBoL6D/uUOVQC4gJ6RfXw3t2Pvke3ocjqsvPQZEvyobalAl9ZAq3z8+mUiarTJ4ToHVlbCw0Khl6Q/9nCECUP0eVnGhHdYkEKZNEq0nfdvQ5otMRq7MWhUl7OVS0QV7lA+4=
+	t=1720540600; cv=none; b=psnWD6UNW9xjKQKm9/2DhB1tuT/2nyOsATkmYwAZLTGMymnwIUptOt7BdoFBzx73iHbtuUCWwhW9RQAXAoQ+tPny2hDUOrFWp0lsWENGXaVQH/O4eWYaNieJVkgSR3KuGi5foqK/DxE7kvNjvSecBA9Vo9TuHPcxF5CSoUbHFeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720540562; c=relaxed/simple;
-	bh=XEnjqKzZBzYWAQR9CwjdJSaL+DHE3+UQikxNM+smtTQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PXKzHMXmcrs5xSMYaEkmTEBV1EiyiuvtvweOXfcso4oxa1PXczSoqp1HUQKGkRtCPMiDl/x/ZEXZaRhOIw+yHEqnc5l/T9uAwjwEv265z83JtHeW+nY3/6669nY6uSmGUob6XhGPdgVxu+9darIzvtcNTamqKgz6niP08DbgwRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MM4sPECc; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52e94eaf5efso6376668e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 08:55:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720540558; x=1721145358; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Kb8hNs2hghjQ2m4soHqnNroceNfOKpKVZ1P76gG8ZLw=;
-        b=MM4sPECc3Q/+kbq8qNTfJVV2w4OGZ5DgKEB48s9rK/QLvtZwiyqUhWfZa+oKRdjWJ8
-         GJqNI67GZxu/aamk/CfDIbAm+lcl5Sv3FZybtdqmH9iUC18kQhnJAtXvhUJrAy103Z7L
-         pN5LxqtMx/LXj/haAEAe2tH5j9PoOD43SQ/2JCymqX9bMDZkVBEnm/dCMdwmS3AMDacM
-         Qsi2MKZlvrhvpj08A+9OUllvjf9VRjlJK4hxipDI1qhv6K2OjYvhllIIE0WNQxesjZg5
-         IENLkZ9pRDz2PyVkumS+nLUF3xtyNkSqyWHzfaKJDQ8ir2QUjVzpbMYrxFFkr7ttYEZL
-         xERw==
+	s=arc-20240116; t=1720540600; c=relaxed/simple;
+	bh=YsGddLcuzluGh1Z2I/0xBj1FmM9qYjQTWUTyhEnA6/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NJ0Hi2BgjlKSIJysEqUmaTG0lpG8B/z8JKkPcE8VR+R0Id1mV5f277PkY3OgdBiqLwtFfO+fM17pZ0GyUX9a0cMev5uxutG0cGWFY4CrWmowNi4GvR6MNaLwx+MDnRKbI54VF4B+m7pXh7tXrObzDZc68aUozav9jcnhwFX3QBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MBKMxmxG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720540596;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Xk2zHQ/YE20jgxtFEdO755E5YwPG0ZQdb2j69TcOV+0=;
+	b=MBKMxmxGiyL4wC850D84JB8n2Xy+PR7hfg4orZ5xGOKAa2VZ9UTshDo7qZoYSI7z+g59Or
+	1/zQL/ZVXzvB9Sg2qv4SFiHLIhQFvYmByY6girdeEZkOWiBYU/3DsS1f94i/XkJABSYqcI
+	Tzeb8Sk0pA3U31MF41aaom09GuEVycE=
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
+ [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-218-gLrNrvvCPxmPRk50a_LViA-1; Tue, 09 Jul 2024 11:56:32 -0400
+X-MC-Unique: gLrNrvvCPxmPRk50a_LViA-1
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3d8476cb195so287874b6e.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 08:56:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720540558; x=1721145358;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kb8hNs2hghjQ2m4soHqnNroceNfOKpKVZ1P76gG8ZLw=;
-        b=Kp9RG6OUp+YY9Qxvz02duP34Hm1eXY3kKi3BXcnHkk3TxGBhOhEBTpUW1RxA9qNIW8
-         mSLzVtkYU7yszqLizKpnDV+NiN1G6d6Ws3cJwS+MQu8AsXcjwMu9bZCYEV4eF6Xrai6S
-         bEjtEukOq/fsJDbhAnp3wRpT6GAbGdxqdxXJSpUd6sIKWP67r2MJ3riF6pzsuUh31mGf
-         PwZkz5Joey0UVnpJRE9w46mV66FBG/v9UAr1u7Eekyt76E3tE/anhFvd7XKrK7rJvYO+
-         vQpDKH2fVm0+H4poK9q+9VUDPxOkmvUW98JeFN8QDNB8Mu+FEXIsiXsSvUnWzLmqeY0L
-         /k8A==
-X-Gm-Message-State: AOJu0YzRXSTQGITgt39T1L3GeWxWW0H+HTuxXT3d5gce48IGXFlH7zvP
-	Iy7C9JfqdVsLo5udOrNJjVPqHaom3qmTbuHUl2rKaPRhI5y+R3z3wsmylo5w/BBunrTGNNbrCMv
-	K
-X-Google-Smtp-Source: AGHT+IG4bemecMAsKEDijoZ6HieHROjC0kyQfAlSqxupPftR6S/IFNAB3A7X4FibcRnKEA197tCEBQ==
-X-Received: by 2002:a05:6512:1051:b0:52b:c0b1:ab9e with SMTP id 2adb3069b0e04-52eb999124fmr1787618e87.5.1720540558327;
-        Tue, 09 Jul 2024 08:55:58 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:cf24:cce:17df:12ab? ([2a05:6e02:1041:c10:cf24:cce:17df:12ab])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4266f6f5a32sm46822925e9.24.2024.07.09.08.55.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 08:55:57 -0700 (PDT)
-Message-ID: <6806bceb-33c9-4417-aa99-f34dd325d24f@linaro.org>
-Date: Tue, 9 Jul 2024 17:55:57 +0200
+        d=1e100.net; s=20230601; t=1720540591; x=1721145391;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xk2zHQ/YE20jgxtFEdO755E5YwPG0ZQdb2j69TcOV+0=;
+        b=wBscV50nb/05At7ri8nANXoIR7HpzTfh+pC15lXAohMr1wZRdmx/WWWLIjXwOEr4D/
+         pL1qhHYU3MOdkSfSm4fr5iHNoPwv6bpWCye6rAnmlzGxgedjBFtqcIyl9rDF8GYfAG8p
+         bD7N9Z0PFjYLSOgeKg6YyCuXn01R+gUu0yvz4VFW6sb2SWzaOriSoJGrdrbLccuIqbCr
+         593Tiv52sRsLNe2filcuz8qg2LZew8n4YQ68srhDMhKIgwfquTuYuq0XbancMQN4+nkt
+         16MfZGq/Ucr5UykwPDt+a4leNbHHdlsnkJcowPttccHUr7sWkpsnZgBXGkFBZvEh+7SU
+         vtXg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8EZl98HU4OyMDzuv7yc9LfqQucp9xF/s+bCC0gPAw60mvlG8Jz5yz16JD51zRpmJjGDFTkbKTZuPK05ga59asn42DL3CCudRmF2UQ
+X-Gm-Message-State: AOJu0YxhYA0tbRPB0CR0mugnKwdQWJzYRiuY//9v3sw70twyqDqcBXPp
+	Zh6lFpk/3zAqO9wjgjkCM3rcTDFFE5ykCpURs5W5dE75oZihPxDHGkzmJvm/GzO2n0POHFnPB/5
+	qYe/UEPu6jRoDNgYcppwB1D49YiPvShgC+A1c/gajIGHOYPOkwo0UyQDub3huBw==
+X-Received: by 2002:a05:6808:148b:b0:3d9:2e1d:2543 with SMTP id 5614622812f47-3d93c0fe45amr2848525b6e.5.1720540590679;
+        Tue, 09 Jul 2024 08:56:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE1Ma1rQrmj4Xg5pyldsO8p97ImEEKrUWOUqeogODHc73Oz0DxK2TC+nXJTsvBMv1FTSng1jg==
+X-Received: by 2002:a05:6808:148b:b0:3d9:2e1d:2543 with SMTP id 5614622812f47-3d93c0fe45amr2848435b6e.5.1720540589482;
+        Tue, 09 Jul 2024 08:56:29 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-447f9b26f7bsm11708091cf.6.2024.07.09.08.56.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 08:56:29 -0700 (PDT)
+Date: Tue, 9 Jul 2024 11:56:25 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
+	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
+	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
+	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
+	dave.hansen@linux.intel.com, ira.weiny@intel.com,
+	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
+	linmiaohe@huawei.com, david@redhat.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev,
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+	david@fromorbit.com, Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: [PATCH 11/13] huge_memory: Remove dead vmf_insert_pXd code
+Message-ID: <Zo1dqTPLn_gosrSO@x1n>
+References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
+ <400a4584f6f628998a7093aee49d9f86c592754b.1719386613.git-series.apopple@nvidia.com>
+ <ZogCDpfSyCcjVXWH@x1n>
+ <87zfqrw69i.fsf@nvdebian.thelocal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/9] clocksource: realtek: Add timer driver for
- rtl-otto platforms
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, tglx@linutronix.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- tsbogend@alpha.franken.de, paulburton@kernel.org, peterz@infradead.org,
- mail@birger-koblitz.de, bert@biot.com, john@phrozen.org, sander@svanheule.net
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-mips@vger.kernel.org, kabel@kernel.org, ericwouds@gmail.com,
- Markus Stockhausen <markus.stockhausen@gmx.de>
-References: <20240705021520.2737568-1-chris.packham@alliedtelesis.co.nz>
- <20240705021520.2737568-8-chris.packham@alliedtelesis.co.nz>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20240705021520.2737568-8-chris.packham@alliedtelesis.co.nz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87zfqrw69i.fsf@nvdebian.thelocal>
 
-On 05/07/2024 04:15, Chris Packham wrote:
-> The timer/counter block on the Realtek SoCs provides up to 5 timers. It
-> also includes a watchdog timer which is handled by the
-> realtek_otto_wdt.c driver.
+On Tue, Jul 09, 2024 at 02:07:31PM +1000, Alistair Popple wrote:
 > 
-> One timer will be used per CPU as a local clock event generator. An
-> additional timer will be used as an overal stable clocksource.
+> Peter Xu <peterx@redhat.com> writes:
 > 
-> Signed-off-by: Markus Stockhausen <markus.stockhausen@gmx.de>
-> Signed-off-by: Sander Vanheule <sander@svanheule.net>
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
+> > Hi, Alistair,
+> >
+> > On Thu, Jun 27, 2024 at 10:54:26AM +1000, Alistair Popple wrote:
+> >> Now that DAX is managing page reference counts the same as normal
+> >> pages there are no callers for vmf_insert_pXd functions so remove
+> >> them.
+> >> 
+> >> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> >> ---
+> >>  include/linux/huge_mm.h |   2 +-
+> >>  mm/huge_memory.c        | 165 +-----------------------------------------
+> >>  2 files changed, 167 deletions(-)
+> >> 
+> >> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> >> index 9207d8e..0fb6bff 100644
+> >> --- a/include/linux/huge_mm.h
+> >> +++ b/include/linux/huge_mm.h
+> >> @@ -37,8 +37,6 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
+> >>  		    pmd_t *pmd, unsigned long addr, pgprot_t newprot,
+> >>  		    unsigned long cp_flags);
+> >>  
+> >> -vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
+> >> -vm_fault_t vmf_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
+> >>  vm_fault_t dax_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write);
+> >>  vm_fault_t dax_insert_pfn_pud(struct vm_fault *vmf, pfn_t pfn, bool write);
+> >
+> > There's a plan to support huge pfnmaps in VFIO, which may still make good
+> > use of these functions.  I think it's fine to remove them but it may mean
+> > we'll need to add them back when supporting pfnmaps with no memmap.
 > 
-> Notes:
->      This is derrived from openwrt[1],[2]. I've retained the original signoff
->      and added my own.
->      
->      [1] https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob_plain;f=target/linux/realtek/files-5.15/drivers/clocksource/timer-rtl-otto.c;hb=HEAD
->      [2] https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob_plain;f=target/linux/realtek/patches-5.15/302-clocksource-add-otto-driver.patch;hb=HEAD
->      
->      Changes in v4:
->      - Reword comment about watchdog timer
->      - Add includes for cpumask.h, io.h, jiffies.h and printk.h
->      - Remove unnecessary casts
->      Changes in v3:
->      - Remove unnecessary select COMMON_CLK
->      - Use %p when printing pointer
->      Changes in v2
->      - None
+> I'm ok with that. If we need them back in future it shouldn't be too
+> hard to add them back again. I just couldn't find any callers of them
+> once DAX stopped using them and the usual policy is to remove unused
+> functions.
+
+True.  Currently the pmd/pud helpers are only used in dax.
+
 > 
->   drivers/clocksource/Kconfig          |  10 +
->   drivers/clocksource/Makefile         |   1 +
->   drivers/clocksource/timer-rtl-otto.c | 291 +++++++++++++++++++++++++++
->   include/linux/cpuhotplug.h           |   1 +
->   4 files changed, 303 insertions(+)
->   create mode 100644 drivers/clocksource/timer-rtl-otto.c
+> > Is it still possible to make the old API generic to both service the new
+> > dax refcount plan, but at the meantime working for pfn injections when
+> > there's no page struct?
 > 
-> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-> index 34faa0320ece..70ba57210862 100644
-> --- a/drivers/clocksource/Kconfig
-> +++ b/drivers/clocksource/Kconfig
-> @@ -134,6 +134,16 @@ config RDA_TIMER
->   	help
->   	  Enables the support for the RDA Micro timer driver.
->   
-> +config REALTEK_OTTO_TIMER
-> +	bool "Clocksource/timer for the Realtek Otto platform"
-> +	select TIMER_OF
-> +	help
-> +	  This driver adds support for the timers found in the Realtek RTL83xx
-> +	  and RTL93xx SoCs series. This includes chips such as RTL8380, RTL8381
-> +	  and RTL832, as well as chips from the RTL839x series, such as RTL8390
-> +	  RT8391, RTL8392, RTL8393 and RTL8396 and chips of the RTL930x series
-> +	  such as RTL9301, RTL9302 or RTL9303.
+> I don't think so - this new dax refcount plan relies on having a struct
+> page to take references on so I don't think it makes much sense to
+> combine it with something that doesn't have a struct page. It sounds
+> like the situation is the analogue of vm_insert_page()
+> vs. vmf_insert_pfn() - it's possible for both to exist but there's not
+> really anything that can be shared between the two APIs as one has a
+> page and the other is just a raw PFN.
 
-Please make this option silent and selected by the platform. You can 
-refer to the different options in the Kconfig.
+I still think most of the codes should be shared on e.g. most of sanity
+checks, pgtable injections, pgtable deposits (for pmd) and so on.
 
-eg.
+To be explicit, I wonder whether something like below diff would be
+applicable on top of the patch "huge_memory: Allow mappings of PMD sized
+pages" in this series, which introduced dax_insert_pfn_pmd() for dax:
 
-config REALTEK_OTTO_TIMER
-	bool "Clocksource/timer for the Realtek Otto platform" if COMPILE_TEST
+$ diff origin new
+1c1
+< vm_fault_t dax_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
+---
+> vm_fault_t vmf_insert_pfn_pmd(struct vm_fault *vmf, pfn_t pfn, bool write)
+55,58c55,60
+<       folio = page_folio(page);
+<       folio_get(folio);
+<       folio_add_file_rmap_pmd(folio, page, vma);
+<       add_mm_counter(mm, mm_counter_file(folio), HPAGE_PMD_NR);
+---
+>         if (page) {
+>                 folio = page_folio(page);
+>                 folio_get(folio);
+>                 folio_add_file_rmap_pmd(folio, page, vma);
+>                 add_mm_counter(mm, mm_counter_file(folio), HPAGE_PMD_NR);
+>         }
 
-...
+As most of the rest look very similar to what pfn injections would need..
+and in the PoC of ours we're using vmf_insert_pfn_pmd/pud().
 
-The rest of the code looks fine to me. Thanks for commenting your code.
+That also reminds me on whether it'll be easier to implement the new dax
+support for page struct on top of vmf_insert_pfn_pmd/pud, rather than
+removing the 1st then adding the new one.  Maybe it'll reduce code churns,
+and would that also make reviews easier?
 
-   -- Daniel
+It's also possible I missed something important so the old function must be
+removed.
 
+Thanks,
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Peter Xu
 
 
