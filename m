@@ -1,111 +1,209 @@
-Return-Path: <linux-kernel+bounces-246103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747C092BD99
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:58:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55F6792BD9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87B52283335
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:58:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C93061F21557
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6149519CCFA;
-	Tue,  9 Jul 2024 14:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jz8VA2l8"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7297819D07E;
+	Tue,  9 Jul 2024 14:58:27 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9A919B5BB;
-	Tue,  9 Jul 2024 14:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0DB19D06F
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 14:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720537094; cv=none; b=g3K++pAB5CEHZ9C7dFULjDMQzKpRN8DAMJIK/tls1S0kSwOMde26KjWWPzhhaBg1w3Qrz/7NJuqkzybQ5CKhDAXehO7hNOptdM1Yr6o/YW9abryY1A/qfUswt3R592RvXo+jYZzMJt29x7g7HZhClvMrhti7Yx5e5T1P5cw+WVs=
+	t=1720537106; cv=none; b=bXfiAG8FTY3I9X2PUEosMvNyAdiwvUFiKnloo9fyTx/AbaNW5QQWhb5gjX3hYrfEr8eR8yZyIR9EhN9KrW3T1oW4qL5zuk6HaRZf32fWYO4898xZm7GKVzKhMgRrXaIEbEtQ5vj8Ay/uTmBxB9hJPBtb5KHM8c1wrhL8A31lh04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720537094; c=relaxed/simple;
-	bh=nY8+xvmsInEI3IOA7nCHv3bo7hczGHl37Q5vkMLMWsk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=up3xQSQX43oI+lY7/NLd6txLMWmBfPthQOXg1lG9md9krdO/vqh8Q9C+yyMp3w6qKovnbcdZfGkWS8S5z4D8kf5zsr+6+pmYcd9s2YpMw2XVBVYn4m+4v1FCYUs+oJZYgU6eCFyrC7FLu+NuUFgk7W1kfM+wB+6SJFwpGoIIKoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jz8VA2l8; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52ea2b6a9f5so5519564e87.0;
-        Tue, 09 Jul 2024 07:58:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720537091; x=1721141891; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aEpWpbi2vCRpaJ2fwVAL3KSelE0/RbdGtq3ZazN7orE=;
-        b=jz8VA2l8xuuUvqBlKbv5FJkGHrtOF4DkYAD6LdeiRqSDYUGOTCLer1WFD3cpt4V1n7
-         RRhANEFB03A5jBTnSsWUn6RIXcyztUakxF08VfPzuvH4K4zvdseDE7hMU1MT4f8bhyMo
-         R9de/hIqlu6nEtjrXRLQzeuIeqmV5xXOhHOpjd/kP/1SQ5Y/qV6tzozCJfTP9hDwDcWN
-         13/19I/63LK24fDOzbpJWZFFDx1VnVUibD0sfx3iyKA42o+6uSqYMejXqEpN166crpUw
-         zCbqqLHmJ4qUq4hJTAKHWhKu1NS39MxVHvE59nRY8Hkex7MNA9LMo/bo8sBoqmm/LyhW
-         PGwA==
+	s=arc-20240116; t=1720537106; c=relaxed/simple;
+	bh=vSTCHLGuCHe7D6rcZRmdQJaq8ydwYCjHHy2ZWljf0tc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ROaeJfZCaoPml8gexy3KQAAaxJQacNZRa4jRADIhpG16A3Zh0tndz6rD6RVYel2nkKy7VXf6/vJLxWCfFaO20o3NPyu5pzM1C7dxfrtTLflmq+0z/8veYLGfxKYo7aLTOlDvZgDevW5UGbE3ggS8lCl+vujWsY5E2ZFcM2FUpKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f61da4d7beso645927439f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 07:58:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720537091; x=1721141891;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+        d=1e100.net; s=20230601; t=1720537104; x=1721141904;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=aEpWpbi2vCRpaJ2fwVAL3KSelE0/RbdGtq3ZazN7orE=;
-        b=Gz7na8lfC02d5MX19BETWSeZnxljUb0mSH8SbjBl6gtImzmzNT1h8Hn+zTkvxZtCTX
-         AgAWyqA6BhwYAC8HD5SNTBUFhAFmlfKFltK4o4TRVLbE1dSBzGwBgWIiKChgjY2tk0ty
-         kTPJ/XWV11yRVS0xXWzPYPS72Jya75Pblyq+A9U2Mu54K6sobxOWjYCpkWqcEhHYClPC
-         DE4eScZPKmQJQliFOp5bjso4w5My9+GenUayQMbgc7XJY1rbiGbbtEPA5yTeViGKazub
-         3JwcGK8WGsxc+GIjAJuSAXhFFnFNudqveaC0G+XEUTbBTFh4Ga/Q5xu5hB5QjGkLMc7t
-         ocUg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5I6LDhAWBWRm0D4YHFDjFPs9MxcBluxge8c6mpH5e1LmVUh+RyJ1UtsrRtGuPYRnsKLFadYqPp4c+/0x7rvzzCNF5mr7lsj5kcjuB
-X-Gm-Message-State: AOJu0YxBO+3RgY3ZThdODMo+2oZodF5Z8Po8BGQ39n25nU6TuANGXlfh
-	LsHILNlaI+qiA4z0B1LgprSvMFCx4+xnKX34HG+fisknX6nIacVi5YJXpyRw/Cvrxq8d1yaX86x
-	UPrmK6mLE25U88n+I61OmSiiQpKx23IUP
-X-Google-Smtp-Source: AGHT+IFQb5SlNR9pHKWIvFEDZGC0KZxsb2G2iUidk5UD4i3BtnKn0YfMLNprw1FkLUDu12/neBNAT8HLSAnQogQ2qOs=
-X-Received: by 2002:a05:6512:1319:b0:52c:dbc6:8eb0 with SMTP id
- 2adb3069b0e04-52eb999783emr2097613e87.21.1720537091137; Tue, 09 Jul 2024
- 07:58:11 -0700 (PDT)
+        bh=WPJjJcj7VngdiZf+A4w3M17sKSvfb6WSVtNSm/hzGtE=;
+        b=wzmRPpVNH4ONdeJLyo0WyDVViUXgij925BNHaAQE48hLnfDRji4uLOzngtQeSC9Wfj
+         ru/hbDbNV+fcs18UipSL1l9W8sh2GgurcequEBr495ekLxa1ASpi35Wq8xeuglf+blv5
+         HVS0D6+6SOeOyk/xVfM1ILrWkmcSvMjRXSyk0LyYxKTUrOVsjLaIIbe0BGTySt9zZ1JU
+         9fmmWI+sLXYhFk9gVB2UnAHXAmGWfuDJ9beFpfGGa1YxL47ezByj6afu6Cip4Jcl1x3U
+         gyAu/hGLIrYNo6WrHiKRQRjgi9jreuimRcy10DtVqC4VN0masSbNTT0wR7XKARAVPpEj
+         bBwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnpbUpz8GtUT/4ZR+ZGniFMtnKm8EL5nvEZjXELbGzwI4S3/Ttm19vYhxDVeWAaP9K4ODyq3tkeI5NSn+xYzYAKx3aWytFGweMukue
+X-Gm-Message-State: AOJu0Yy8LgSiSoCP16WoEZCC2YfbCKbKrAx/XqOFhd+p6oYrM2pncvD0
+	1YJmEo1w7dutCKuupVRsmmsl8r6H9JVIViIy+005/DqjYFRymNPBNvlkz9BUGGkxNZILsuwQH+7
+	x7KDqYKJH9GR84UuINBRSJyimVNART88X1es54Bh3XMgUDXWHQ0q6vmA=
+X-Google-Smtp-Source: AGHT+IHgzNjjFUCHR2VKWP0iH+rBAa6ZiouYheTep8sADKHdHdLaYG7dZZ/eCb+N6aWWs1wtvYcvY8EPzMdLJ+expSBOcjBrIxrF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 9 Jul 2024 09:57:59 -0500
-Message-ID: <CAH2r5msc+xJSJcGhf+bV3++0M8g1C8f+oLLwA2R2G_cf_6S_8g@mail.gmail.com>
-Subject: [GIT PULL] ksmbd server fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Namjae Jeon <linkinjeon@kernel.org>
+X-Received: by 2002:a05:6638:710a:b0:4b9:def5:3dcb with SMTP id
+ 8926c6da1cb9f-4c0b29ba495mr248148173.2.1720537104398; Tue, 09 Jul 2024
+ 07:58:24 -0700 (PDT)
+Date: Tue, 09 Jul 2024 07:58:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ee4d7c061cd1c21f@google.com>
+Subject: [syzbot] [bcachefs?] WARNING: suspicious RCU usage in bch2_bucket_ref_update
+From: syzbot <syzbot+e74fea078710bbca6f4b@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Please pull the following changes since commit
-22a40d14b572deb80c0648557f4bd502d7e83826:
+Hello,
 
-  Linux 6.10-rc6 (2024-06-30 14:40:44 -0700)
+syzbot found the following issue on:
 
-are available in the Git repository at:
+HEAD commit:    256abd8e550c Linux 6.10-rc7
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1606fe6e980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=42a432cfd0e579e0
+dashboard link: https://syzkaller.appspot.com/bug?extid=e74fea078710bbca6f4b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=119422a5980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15869b76980000
 
-  git://git.samba.org/ksmbd.git tags/6.10-rc6-smb3-server-fixes
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/49b114b276ef/disk-256abd8e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ef1a6b8836ca/vmlinux-256abd8e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4c81ede104a4/bzImage-256abd8e.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/99b2b0c25d67/mount_0.gz
 
-for you to fetch changes up to e2e33caa5dc2eae7bddf88b22ce11ec3d760e5cd:
+The issue was bisected to:
 
-  ksmbd: discard write access to the directory open (2024-07-05 09:56:13 -0500)
+commit f7643bc9749f270d487c32dc35b578575bf1adb0
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Wed Apr 17 05:26:02 2024 +0000
 
-----------------------------------------------------------------
-Two ksmbd server fixes
-- fix access flags to address fuse incompatibility
-- fix device type returned by get filesystem info
-----------------------------------------------------------------
-Hobin Woo (1):
-      ksmbd: discard write access to the directory open
+    bcachefs: make btree read errors silent during scan
 
-Namjae Jeon (1):
-      ksmbd: return FILE_DEVICE_DISK instead of super magic
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12c7687e980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=11c7687e980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16c7687e980000
 
- fs/smb/common/smb2pdu.h | 34 ++++++++++++++++++++++++++++++++++
- fs/smb/server/smb2pdu.c | 22 ++++++++++++++++++----
- 2 files changed, 52 insertions(+), 4 deletions(-)
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e74fea078710bbca6f4b@syzkaller.appspotmail.com
+Fixes: f7643bc9749f ("bcachefs: make btree read errors silent during scan")
 
--- 
-Thanks,
+bcachefs (loop0): done starting filesystem
+=============================
+WARNING: suspicious RCU usage
+6.10.0-rc7-syzkaller #0 Not tainted
+-----------------------------
+fs/bcachefs/buckets.h:107 suspicious rcu_dereference_check() usage!
 
-Steve
+other info that might help us debug this:
+
+
+rcu_scheduler_active = 2, debug_locks = 1
+9 locks held by syz-executor107/5084:
+ #0: ffff88807441c420 (sb_writers#9){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:409
+ #1: ffff88807441c730 (&type->s_vfs_rename_key){+.+.}-{3:3}, at: lock_rename fs/namei.c:3078 [inline]
+ #1: ffff88807441c730 (&type->s_vfs_rename_key){+.+.}-{3:3}, at: do_renameat2+0x5cf/0x13f0 fs/namei.c:4985
+ #2: ffff88807a278150 (&type->i_mutex_dir_key#6/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:826 [inline]
+ #2: ffff88807a278150 (&type->i_mutex_dir_key#6/1){+.+.}-{3:3}, at: lock_two_directories+0x145/0x220 fs/namei.c:3044
+ #3: ffff88807a2788b8 (&type->i_mutex_dir_key#6/5){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:826 [inline]
+ #3: ffff88807a2788b8 (&type->i_mutex_dir_key#6/5){+.+.}-{3:3}, at: lock_two_directories+0x16f/0x220 fs/namei.c:3045
+ #4: ffff888077f842d8 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:116 [inline]
+ #4: ffff888077f842d8 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:215 [inline]
+ #4: ffff888077f842d8 (&c->btree_trans_barrier){.+.+}-{0:0}, at: __bch2_trans_get+0x840/0xce0 fs/bcachefs/btree_iter.c:3193
+ #5: ffff88802fc93070 (&dev->mutex){....}-{3:3}, at: six_relock_type fs/bcachefs/six.h:289 [inline]
+ #5: ffff88802fc93070 (&dev->mutex){....}-{3:3}, at: __bch2_btree_node_relock+0x142/0x9c0 fs/bcachefs/btree_locking.c:507
+ #6: ffff88802fc93070 (&dev->mutex){....}-{3:3}, at: btree_node_lock_increment fs/bcachefs/btree_locking.h:248 [inline]
+ #6: ffff88802fc93070 (&dev->mutex){....}-{3:3}, at: __bch2_btree_node_relock+0x675/0x9c0 fs/bcachefs/btree_locking.c:509
+ #7: ffff88807a0db340 (&dev->mutex){....}-{3:3}, at: six_relock_type fs/bcachefs/six.h:289 [inline]
+ #7: ffff88807a0db340 (&dev->mutex){....}-{3:3}, at: __bch2_btree_node_relock+0x142/0x9c0 fs/bcachefs/btree_locking.c:507
+ #8: ffff88802b279870 (&dev->mutex){....}-{3:3}, at: six_relock_type fs/bcachefs/six.h:289 [inline]
+ #8: ffff88802b279870 (&dev->mutex){....}-{3:3}, at: __bch2_btree_node_relock+0x142/0x9c0 fs/bcachefs/btree_locking.c:507
+
+stack backtrace:
+CPU: 0 PID: 5084 Comm: syz-executor107 Not tainted 6.10.0-rc7-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ lockdep_rcu_suspicious+0x221/0x340 kernel/locking/lockdep.c:6712
+ bucket_gens fs/bcachefs/buckets.h:103 [inline]
+ bucket_gen fs/bcachefs/buckets.h:112 [inline]
+ bch2_bucket_ref_update+0xbe1/0x1100 fs/bcachefs/buckets.c:808
+ __mark_pointer fs/bcachefs/buckets.c:1000 [inline]
+ bch2_trigger_pointer fs/bcachefs/buckets.c:1037 [inline]
+ __trigger_extent+0x1524/0x6260 fs/bcachefs/buckets.c:1176
+ bch2_trigger_extent+0x636/0x920 fs/bcachefs/buckets.c:1261
+ bch2_key_trigger fs/bcachefs/bkey_methods.h:88 [inline]
+ bch2_key_trigger_old fs/bcachefs/bkey_methods.h:102 [inline]
+ run_one_trans_trigger fs/bcachefs/btree_trans_commit.c:514 [inline]
+ run_btree_triggers+0xadb/0x11d0 fs/bcachefs/btree_trans_commit.c:544
+ bch2_trans_commit_run_triggers fs/bcachefs/btree_trans_commit.c:576 [inline]
+ __bch2_trans_commit+0x3a6/0x88e0 fs/bcachefs/btree_trans_commit.c:1022
+ bch2_trans_commit fs/bcachefs/btree_update.h:170 [inline]
+ bch2_inode_delete_keys+0xae8/0x1440 fs/bcachefs/inode.c:845
+ bch2_inode_rm+0x165/0xd40 fs/bcachefs/inode.c:874
+ bch2_evict_inode+0x21c/0x3c0 fs/bcachefs/fs.c:1588
+ evict+0x2a8/0x630 fs/inode.c:667
+ __dentry_kill+0x20d/0x630 fs/dcache.c:603
+ dput+0x19f/0x2b0 fs/dcache.c:845
+ do_renameat2+0xda1/0x13f0 fs/namei.c:5052
+ __do_sys_renameat2 fs/namei.c:5084 [inline]
+ __se_sys_renameat2 fs/namei.c:5081 [inline]
+ __x64_sys_renameat2+0xd2/0xf0 fs/namei.c:5081
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f491fe4ad59
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff84583f28 EFLAGS: 00000246 ORIG_RAX: 000000000000013c
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f491fe4ad59
+RDX: 0000000000000004 RSI: 0000000020000080 RDI: 00000000ffffff9c
+RBP: 00007f491fec45f0 R08: 0000000000000000 R09: 000055555e2ff4c0
+R10: 0000000020000980 R11: 0000000000000246 R12: 00007fff84583f50
+R13: 00007fff84584178 R14: 431bde82d7b634db R15: 00007f491fe9403b
+ </TASK>
+bucket 0:34 gen 7 (mem gen 0) data type user: stale dirty ptr (gen 0)
+while marking u64s 7 type extent 536870913:8:U32_MAX len 8 ver 0: durability: 1 crc: c_size 8 size 8 offset 0 nonce 0 csum crc32c compress incompressible ptr: 0:34:0 gen 0, shutting down
+bcachefs (loop0): inconsistency detected - emergency read only at journal seq 11
+syz-executor107 (5084) used greatest stack depth: 18488 bytes left
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
