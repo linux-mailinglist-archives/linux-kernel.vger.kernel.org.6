@@ -1,169 +1,163 @@
-Return-Path: <linux-kernel+bounces-245818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE5192B9D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:46:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B59892B9DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC90FB25EB1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:46:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63F21B240FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B105B15B562;
-	Tue,  9 Jul 2024 12:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D75915B968;
+	Tue,  9 Jul 2024 12:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IIikM0H5"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="j/Sed078"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A67615A842;
-	Tue,  9 Jul 2024 12:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4D815ADB2;
+	Tue,  9 Jul 2024 12:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720529152; cv=none; b=hc1V7wj7aoDtnm+yplgp3MoOWu+sBRsDDcuqKUOn31QBj5moQXosPUOt0mQTtDyxTC3Hkn4WDADH7vWDynK/ky44VJTUXKGM3zo2IGxO7LXy5ERY6WCabBposX1KX2MuJcZXjxMQ0gRz7P1lb/wN9tmmNmxNrzVhe1VWU5hbJ9s=
+	t=1720529205; cv=none; b=TqEYy3FXgifDBfJpxRPqlcWoq8C5eKSS6BRs92zMqu1iF6POsx6HYk2dsS1x8y0zUxKKC6by2LpZOgiwyVTOH7L0GQEoEYNeVYES8uRl5Jic8DyqhycESmxxiPzK7VjeVrxUFr2kO9H5iB1d/daY8ZOzJSbPlK0qHTM5p0NqEYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720529152; c=relaxed/simple;
-	bh=O9QjD7xyf7LdxqfElfMDNMZgFewgPFqt+hOvv1SP8XI=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=OtY/plGUApt6O/OeZFvTDUJHmHgx2Navn5u8nhPYzfYCoZaSOGfyPP/D4SQ3v8hYi//OZvdtMiU2PgYxVJQiSDEddfS7ltEWKVlLApEq+j3OyLMdpBptNDXThZComdjiFhBCa3l9j/ilOoKB1t53D66NH8O5f+yUzMR+Jjvs8FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IIikM0H5; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-1fbc3a9d23bso1289325ad.1;
-        Tue, 09 Jul 2024 05:45:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720529151; x=1721133951; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PTkMABYzGdhSQd9C4loTDYzycJLf8ODZaPM06fmE3pI=;
-        b=IIikM0H5UrtnuFPA57JXL9YMX2Bnr2fr/uNixCz7mgKWxo4c3iJagAhzt/gKN57Eqs
-         6haXH8/2RRmAUA9n8rMSBZO/c8rlXiW7vQOkfd3AwVGgf+xg04xRjfc5PFyj51GvefET
-         7bog2suMhMQdpkZzFW/fvsznuqSonGboPW6gRidgIHfbBQQ+ibfM/zZ+AIm5xNtaBIHG
-         sL+F1wIF7qVmLxKCAWYNfG8khXcYWdaEE2HCk/+OszhjJonOUJ+Cp2LWMYMv0ANgkRAY
-         Yh87bKeiawkMVnhAYaBOHgGbFMtj6Fj83OXeKkzeHYsN1NY/qJAl+q6byVKkQkUPjsaX
-         yAZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720529151; x=1721133951;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PTkMABYzGdhSQd9C4loTDYzycJLf8ODZaPM06fmE3pI=;
-        b=N9kFDzpzym0l9lrm1o33e/GJCxpTFlFk3RA0e6h85iik7C6wPJw4+ExvfbTiFQLZvC
-         JKiTZUYwxDMYrE6tWgKWmrDy8AjH36COoVw6EFwKD1d4ghnOHXnDrNItIzTEA7XyXId3
-         nX/GsiJFmXP9kdLij0/OZWzt8Zvo0c9Fa5wpDTmIw+0qxKkk4cWw56Xk4M9fxXvXXu+J
-         SzojyJRzrURqHrv7F/I4BI9y1ehe1G4Zba2zNWoJ1vErt4RKLZkINZkmlMW7E0VwSVR+
-         oQb4+FN/B2NWSS3pA1UIs8mBRPQ0Y31P5TpIGExFy4RVKyn7vDVa1Hfzoef2ERMnCLHb
-         Fcnw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2ip2Y0EKRmjMFirZE+AoAc17O6qOZYuqmLjctwPNhDYj0OswSwbAGkHRwQcEG2wOkoyKLTrKq9+yR62jMEjbQhKnxfUT/1So0ge77qnupeW1R8wfrBe56BgR4iiILOXjr8Y+PuHnHcZPasp9C1/4b/5Vz3J+tokG+h/GLJqvOrl4q3WVNnJDUhcBasfwft15XSMK0FZDwFD1ZCzlzkePpVin8mPL6YuV/ZHnq0neQRt30F/gXy2bM9vbku7k60dRHfBlMySA7zY489ghHP45u
-X-Gm-Message-State: AOJu0YzkXgpFE1ya4w+TRtgsyJtaDYqaKHq9sFmd3nY7CH9aYS4jlHpI
-	rQepCXr68VpiZkK8vHEjratWhBucyviYngOyphhEogdQ0DS1hhXh
-X-Google-Smtp-Source: AGHT+IFOaJNRaCw0x5duAR8ySF29N2zLhsw5jMvf8ySrYnWHRx3vmy5Ah54KY0oG4A60mrkmNodEQw==
-X-Received: by 2002:a05:6a20:734b:b0:1be:caf6:66e5 with SMTP id adf61e73a8af0-1c29820d407mr2618980637.6.1720529150564;
-        Tue, 09 Jul 2024 05:45:50 -0700 (PDT)
-Received: from [127.0.0.1] ([103.156.242.195])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6acf9a3sm15241475ad.255.2024.07.09.05.45.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 05:45:49 -0700 (PDT)
-From: Celeste Liu <coelacanthushex@gmail.com>
-X-Google-Original-From: Celeste Liu <CoelacanthusHex@gmail.com>
-Message-ID: <44535d2d-c95d-4673-b845-032669cf7abf@gmail.com>
-Date: Tue, 9 Jul 2024 20:45:38 +0800
+	s=arc-20240116; t=1720529205; c=relaxed/simple;
+	bh=JGyPpjmrhsfqcLhBLrd1A38OzaoCKd0tq/wkHGWp57M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=J3/ECn+RjwobtQAlObR2iPb3YV3nzKwNseBWMNVrdxsgcgSvi+V2s2P5fkH81qc0SQWqmsbh8TBw5cA6Fo4h2Xxq4Z+L43UwV3+jZt18AgDeH4HmTgz0JOC44Ch4WrmPNJ7qtmx2ZTTtYprE88tryRfz1DEbtXshiOgdr0JjRIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=j/Sed078; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469C1Sb8016208;
+	Tue, 9 Jul 2024 12:46:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=B75fg+7MGETPksCZcZVLPi
+	Vl5b+K7TaIT1sCh9FBYPo=; b=j/Sed078igS0+u1pqnRyuB5mDS3DIIw/kDhzd7
+	LFU42yDurpcDzc3YIdxWBQkr3s6Qh4EJmdFO/mCs5F/znWfzGq7nNwxlVtY/0Ijk
+	F7Kqfd3yDjbp2UGS7HoITcej+KhQlmnJyRspKgMyTqaOR4UNRNENXioOWdPfgnsX
+	Qx/17uIj8IdddjZAE7SeVuLNUH0HV4Ad4tE0321IXJpatZgCHb6eDv7Ciz1vSbac
+	yaCa9DFEL8IZGPx4Y8HnnYHVs6hhu3LcaDKt+uQBQG7tVvpmMzgb56iZJYgPGzgV
+	MmRnqIGQteOekh2CGggFF3Bp1gmus/QP7fMAiF3V1y9hA59A==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x516kn9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 12:46:39 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469CkdZg011255
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 12:46:39 GMT
+Received: from tengfan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 9 Jul 2024 05:46:33 -0700
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+Date: Tue, 9 Jul 2024 20:46:19 +0800
+Subject: [PATCH v2] dt-bindings: phy: qcom,usb-snps-femto-v2: Add bindings
+ for QCS9100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] arm: defconfig: drop RT_GROUP_SCHED=y from
- bcm2855/tegra/omap2plus
-To: Stefan Wahren <wahrenst@gmx.net>, Kevin Hilman <khilman@kernel.org>,
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
-Cc: linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lennart Poettering <lennart@poettering.net>,
- Icenowy Zheng <uwu@icenowy.me>, =?UTF-8?Q?Th=C3=A9o_Lebrun?=
- <theo.lebrun@bootlin.com>, Gregory CLEMENT <gregory.clement@bootlin.com>,
- Michael Ellerman <mpe@ellerman.id.au>,
- "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>, Sven Joachim
- <svenjoac@gmx.de>, Huacai Chen <chenhuacai@kernel.org>,
- Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
- Anup Patel <anup@brainfault.org>, Nicholas Piggin <npiggin@gmail.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Rich Felker <dalias@libc.org>,
- Russell King <linux@armlinux.org.uk>, Tony Lindgren <tony@atomide.com>,
- Guo Ren <guoren@kernel.org>, linux-tegra@vger.kernel.org,
- Thierry Reding <thierry.reding@gmail.com>, linux-riscv@lists.infradead.org,
- Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
- linux-omap@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
- linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-mips@vger.kernel.org, loongarch@lists.linux.dev,
- Mykola Lysenko <mykolal@fb.com>, Yoshinori Sato
- <ysato@users.sourceforge.jp>, Paul Walmsley <paul.walmsley@sifive.com>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- linux-rpi-kernel@lists.infradead.org, WANG Xuerui <kernel@xen0n.name>
-References: <20240530111947.549474-8-CoelacanthusHex@gmail.com>
- <20240530111947.549474-14-CoelacanthusHex@gmail.com>
- <7hv81f78cy.fsf@baylibre.com> <6b7cfe69-4f72-490f-8e86-5343bd244a2d@gmx.net>
-Content-Language: en-GB-large
-In-Reply-To: <6b7cfe69-4f72-490f-8e86-5343bd244a2d@gmx.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240709-document_qcs9100_usb_hs_phy_compatible-v2-1-c84fbbafa9d6@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIABoxjWYC/5WOQQ6CMBBFr2K6tmQ6UAVX3sOYhpZRJtGCFIiEc
+ HcLiQuXLt9fvPdnEahjCuK0m0VHIwdufATc74SrS38nyVVkgYAZHKGQVeOGJ/nevFwoFIAZgjV
+ 1MG09Gdc827Jn+yCZ29QWzh50mpOIsrajG7+30OUauebQN920dUdc128iBdS5hgTVEQFyqeRrY
+ Gd68vdb6c8rsHdJbK3ef3+NGIUOldapzgpU8CO8LsvyAWCRRdETAQAA
+To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Wesley Cheng <quic_wcheng@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, Tengfei Fan <quic_tengfan@quicinc.com>
+X-Mailer: b4 0.15-dev-a66ce
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720529193; l=2460;
+ i=quic_tengfan@quicinc.com; s=20240709; h=from:subject:message-id;
+ bh=JGyPpjmrhsfqcLhBLrd1A38OzaoCKd0tq/wkHGWp57M=;
+ b=7qjR3zuvGxwujGiBpy2UQ1NPZVX7GQG+Feb3Fouh9sZrsQTIjt6N3VxUam51jyDohkno6Tz1W
+ 6U3fwqwUCgXAzYFMYWPK/k0qIBw112eh02MYkYC587FWTaDVnbCA2Gy
+X-Developer-Key: i=quic_tengfan@quicinc.com; a=ed25519;
+ pk=4VjoTogHXJhZUM9XlxbCAcZ4zmrLeuep4dfOeKqQD0c=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 1RErOJMKbgO4QvJLX4zq1LZ7NA1vRNMu
+X-Proofpoint-ORIG-GUID: 1RErOJMKbgO4QvJLX4zq1LZ7NA1vRNMu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_02,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ suspectscore=0 impostorscore=0 mlxlogscore=837 mlxscore=0 bulkscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090081
 
+Document the compatible string for USB phy found in Qualcomm QCS9100
+SoC.
+QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+platform use non-SCMI resource. In the future, the SA8775p platform will
+move to use SCMI resources and it will have new sa8775p-related device
+tree. Consequently, introduce "qcom,qcs9100-usb-hs-phy" to describe
+non-SCMI based USB phy.
 
-On 2024-07-09 20:26, Stefan Wahren wrote:
-> Hi Celeste,
-> 
-> there is a typo in the subject line
-> 
-> s/bcm2855/bcm2835
+Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+---
+Introduce support for the QCS9100 SoC device tree (DTSI) and the
+QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+While the QCS9100 platform is still in the early design stage, the
+QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+mounts the QCS9100 SoC instead of the SA8775p SoC.
 
-Will be included in next version.
+The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
+all the compatible strings will be updated from "SA8775p" to "QCS9100".
+The QCS9100 device tree patches will be pushed after all the device tree
+bindings and device driver patches are reviewed.
 
-> 
-> Am 09.07.24 um 01:49 schrieb Kevin Hilman:
->> Celeste Liu <coelacanthushex@gmail.com> writes:
->>
->>> Commit 673ce00c5d6c ("ARM: omap2plus_defconfig: Add support for distros
->>> with systemd") said it's because of recommendation from systemd. But
->>> systemd changed their recommendation later.[1]
->>>
->>> For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierarchy it
->>> needs an RT budget assigned, otherwise the processes in it will not be able to
->>> get RT at all. The problem with RT group scheduling is that it requires the
->>> budget assigned but there's no way we could assign a default budget, since the
->>> values to assign are both upper and lower time limits, are absolute, and need to
->>> be sum up to < 1 for each individal cgroup. That means we cannot really come up
->>> with values that would work by default in the general case.[2]
->>>
->>> For cgroup v2, it's almost unusable as well. If it turned on, the cpu controller
->>> can only be enabled when all RT processes are in the root cgroup. But it will
->>> lose the benefits of cgroup v2 if all RT process were placed in the same cgroup.
->>>
->>> Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also doesn't
->>> support it.
->>>
->>> [1]: https://github.com/systemd/systemd/commit/f4e74be1856b3ac058acbf1be321c31d5299f69f
->>> [2]: https://bugzilla.redhat.com/show_bug.cgi?id=1229700
->>>
->>> Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
->>> ---
->>>   arch/arm/configs/bcm2835_defconfig   | 1 -
->>>   arch/arm/configs/omap2plus_defconfig | 1 -
->>>   arch/arm/configs/tegra_defconfig     | 1 -
->> For omap2plus_defconfig:
->>
->> Acked-by: Kevin Hilman <khilman@baylibre.com>
->>
->>
-> For bcm2835_defconfig:
-> 
-> Tested-by: Stefan Wahren <wahrenst@gmx.net>
+The final dtsi will like:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
+
+The detailed cover letter reference:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+---
+Changes in v2:
+  - Split huge patch series into different patch series according to
+    subsytems
+  - Update patch commit message
+
+prevous disscussion here:
+[1] v1: https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+---
+ Documentation/devicetree/bindings/phy/qcom,usb-snps-femto-v2.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/phy/qcom,usb-snps-femto-v2.yaml b/Documentation/devicetree/bindings/phy/qcom,usb-snps-femto-v2.yaml
+index 519c2b403f66..cd0a723590f0 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,usb-snps-femto-v2.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,usb-snps-femto-v2.yaml
+@@ -17,6 +17,7 @@ properties:
+     oneOf:
+       - items:
+           - enum:
++              - qcom,qcs9100-usb-hs-phy
+               - qcom,sa8775p-usb-hs-phy
+               - qcom,sc8280xp-usb-hs-phy
+           - const: qcom,usb-snps-hs-5nm-phy
+
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240709-document_qcs9100_usb_hs_phy_compatible-8b3b9cb6538e
+
+Best regards,
+-- 
+Tengfei Fan <quic_tengfan@quicinc.com>
 
 
