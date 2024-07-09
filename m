@@ -1,101 +1,129 @@
-Return-Path: <linux-kernel+bounces-245141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EFAF92AEE2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:55:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C070C92AEE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A07031C210FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:55:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7463B1F224E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E7380604;
-	Tue,  9 Jul 2024 03:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937C212D76F;
+	Tue,  9 Jul 2024 03:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="O2qtJHuO"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="GHGMGzBJ"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F175442078;
-	Tue,  9 Jul 2024 03:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADCE12D210
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 03:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720497331; cv=none; b=u9GbNpak0DrHfV1CR95xCnieBJqA2Drq30nh8b44i5IHEDwamQC8DEiFksJ77QXqa85O+6zoZTRrwbAutmqUrrAe1LLOBBMdv6CoaDDbH7PTAgm7XuYUDT7ocyes9q5D7EhWTEutqq1p+eqWYK7Gur+955WI0r3OilRUFSgg/x8=
+	t=1720497582; cv=none; b=Y50LtLPMBd6knpmC93Z63ZgTuj3KVTJENLbqcfHiMDa81rq+EPGo8WkEWWCPIrs/VeVE/WbmBN3srA9HCanJXGeyOY9CM8/d77SAVM0q9hDVOFG9Y/+6bXI0hftVHALW/3dL/YhdPGSNyxqhlk0jCajb31S1hUAUlrq5qBSvVYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720497331; c=relaxed/simple;
-	bh=mPbd4CzRRhIaPy7kOQuC6wG9OxlGMG+Gm18ZXI9RaQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=KmFCH3sECKBds2AaVn4mW6ifOicEp3mmsOt5SJjU1UbsvBTKpGD2rbLpr6Y6b+ai8em1m0LAuhUH/vrfY3XeYwkgQZgADKj8V4ZxsjD/f5rzbv71lXgwtEDr3uToJfCfF9JjFFVYsmb0p9wwPEcKjw6blLEQkPCrjatsM30cn14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=O2qtJHuO; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720497325;
-	bh=J67GnzhImmRUw3myv3nMmNcQaeYDRROyP4CftbTPBbA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=O2qtJHuOkD1j15+H1aRyBM5bEUqaWJXmPegdJYRUI9NAbqdwSz/Bk27XAxZu8LCBD
-	 VIGIMQ9C3021lHBZySU6ZXzoPQt5TtsdMxw4v1T2ndo0NgSdALh9NnXNt1o6NiFN6b
-	 TwVlEN7ja6wv6bBM2ge3FF1Ig9pBKlYgSm9pK5C/yvGIjpaoMLdslZqhwIldOF0WwD
-	 SPdgj2suGmt9wsGp+iFeftV0DwSndiO4vpGh+DjMiWj0c+7oSPVtHlLkQafvfhk6gx
-	 qnGjqAg5+VSRiibZUUMxtShy1gLcI3nIjGqATeX69uAOTrj4KQd9F0gWgidHkfX8gR
-	 i2e/ebMzHfq8A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJ6b137TMz4w2S;
-	Tue,  9 Jul 2024 13:55:25 +1000 (AEST)
-Date: Tue, 9 Jul 2024 13:55:23 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Theodore Ts'o <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the random tree
-Message-ID: <20240709135523.29112dba@canb.auug.org.au>
+	s=arc-20240116; t=1720497582; c=relaxed/simple;
+	bh=pnt5oZTDim6QNiBcwnKkDGjfbsrvkshPUAFtfjidKxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SeInxtDG5Q0FyXz5lRto6TV1TIrt/WoaPeEqJlrCGrhpbOPDOof9XWPPQK39/+nPd/SL/9cGyd7ELoslRX3wU0KWyhFJV3dhW/+UPhGNbfNCnpXadJX9O/RbMYuS9dOokU0YUsZ8j0ZUhUT5w08ly5UJF9e/AAzvaXUTgZX3X8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=GHGMGzBJ; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-117-31.bstnma.fios.verizon.net [173.48.117.31])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4693xBWq015651
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 8 Jul 2024 23:59:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1720497553; bh=YDdYgrCa/y4KZDI/Yq+oNBPBBOfuf/072z7GMgWJcz4=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=GHGMGzBJ8gi2p2HoewF3QKyABGS3T85hvhugt6RmwznTmn9OnCXxiLWzFPDDh+pAT
+	 pSHV80bZG0c4JM8Ama6jB71EaAg5Rn5aaR8mV912hnzDEFsPIXP13Sjk34Z1zIuq+P
+	 jhYGHFqmCh28Yhkoo2n09HPxiRVj9SgvPr8UeZJSsGmRZAQVCxV2B6tzsFuIyLDcY6
+	 Jx9dFqCNSWfaPk804sjR0GWuj9iGmalQA1DjzBuxhqVMIjxDCG1hcojKI6v6MRPtRJ
+	 Y5UscseVfqeaEAj3PRyKOmCp7AI9WHw4wBsSx2R0nGe6LKCeWu09Sm0REWGVzKn9fl
+	 w9tRMX0g4OJFw==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 1FD7C15C026C; Mon, 08 Jul 2024 23:59:11 -0400 (EDT)
+Date: Mon, 8 Jul 2024 23:59:11 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
+Cc: Andreas Dilger <adilger@dilger.ca>, Jan Kara <jack@suse.cz>,
+        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] ext4: fix fast commit inode enqueueing during a
+ full journal commit
+Message-ID: <20240709035911.GB10452@mit.edu>
+References: <20240529092030.9557-1-luis.henriques@linux.dev>
+ <20240529092030.9557-2-luis.henriques@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/NgulIbg9v7KAUMEI9qBs7nr";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240529092030.9557-2-luis.henriques@linux.dev>
 
---Sig_/NgulIbg9v7KAUMEI9qBs7nr
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, May 29, 2024 at 10:20:29AM +0100, Luis Henriques (SUSE) wrote:
+> When a full journal commit is on-going, any fast commit has to be enqueued
+> into a different queue: FC_Q_STAGING instead of FC_Q_MAIN.  This enqueueing
+> is done only once, i.e. if an inode is already queued in a previous fast
+> commit entry it won't be enqueued again.  However, if a full commit starts
+> _after_ the inode is enqueued into FC_Q_MAIN, the next fast commit needs to
+> be done into FC_Q_STAGING.  And this is not being done in function
+> ext4_fc_track_template().
+> 
+> This patch fixes the issue by re-enqueuing an inode into the STAGING queue
+> during the fast commit clean-up callback if it has a tid (i_sync_tid)
+> greater than the one being handled.  The STAGING queue will then be spliced
+> back into MAIN.
+> 
+> This bug was found using fstest generic/047.  This test creates several 32k
+> bytes files, sync'ing each of them after it's creation, and then shutting
+> down the filesystem.  Some data may be loss in this operation; for example a
+> file may have it's size truncated to zero.
+> 
+> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
 
-Hi all,
+This patch is causing a regression for the test generic/472
+generic/496 generic/643 if fast_commit is enabled.  So using the
+ext4/adv or ext4/fast_commit configuration, e.g:
 
-Commits
+% kvm-xfstests  -c ext4/fast_commit  generic/472 generic/496 generic/643
 
-  868680ffba11 ("selftests/vDSO: remove duplicate compiler invocations from=
- Makefile")
-  7bb79ef48b9d ("selftests/vDSO: remove partially duplicated "all:" target =
-in Makefile")
-  14cd1a877fc6 ("selftests/vDSO: fix clang build errors and warnings")
+For all of these test, the failures seem to involve the swapon command
+erroring out:
 
-are missing a Signed-off-by from their committer.
+    --- tests/generic/496.out   2024-06-13 18:57:39.000000000 -0400
+    +++ /results/ext4/results-fast_commit/generic/496.out.bad   2024-07-08 23:46:39.720
+    @@ -1,3 +1,4 @@
+     QA output created by 496
+     fallocate swap
+     mixed swap
+    +swapon: Invalid argument
+    ...
 
---=20
-Cheers,
-Stephen Rothwell
+but it's unclear why this patch would affect swapon.
 
---Sig_/NgulIbg9v7KAUMEI9qBs7nr
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+I've never been able to see generic/047 failure in any of my ext4/dev
+testing, nor in any of my daily fs-next CI testing.  So for that
+reason, I'm going to drop this patch from my tree.
 
------BEGIN PGP SIGNATURE-----
+The second patch in this series appears to be independent at least
+from a logical perspective --- although a minor change is needed to
+resolve a merge conflict after dropping this change.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaMtKsACgkQAVBC80lX
-0GwLUwf7BQYUsuAtXbnXjy3p97mMwcREp31LB57m0oqar7mClszXFCFuuLARRngf
-iqj+TD7DflD42VrVlL0NstTFYtsen+QbOfKlNlbX/kC2fpfCryKF40EaTAlWWThC
-rnuDA58Bkfm3LtIXIBPOT1xnCgm36OE8Z0ESLqVa09zbvoa9988CtUUi9h3EdM64
-6HtNSD5m2CMmBBAgZnshBxm9Vb4lAlgS+7w6nLRsSlXEMHpPB72HM5ZdsuVfb/dt
-CtR528vPu2UIJmb8rA6ke8L5NejRiT4l5lFg9MG9cD0cXA3RD0kXJYtUHlG38ilI
-l8wPcO8TtNDfYWW7ux5WsScF5uGBXg==
-=c1MV
------END PGP SIGNATURE-----
+Luis, Harshad, could you look in this failure and then resubmit once
+it's been fixed?  Thanks!!  Also, Luis, can you give more details
+about the generic/047 failure that you had seen?  Is it one of those
+flaky tests where you need to run the test dozens or hundreds of time
+to see the failure?
 
---Sig_/NgulIbg9v7KAUMEI9qBs7nr--
+Many thanks!!
+
+					- Ted
 
