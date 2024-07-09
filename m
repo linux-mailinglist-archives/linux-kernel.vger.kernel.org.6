@@ -1,183 +1,236 @@
-Return-Path: <linux-kernel+bounces-245511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7272492B3A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:24:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96D4E92B39D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3ADF1F202A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:24:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 205721F234F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111D91552E2;
-	Tue,  9 Jul 2024 09:24:26 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95EB14C5A7
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A8E01552FF;
+	Tue,  9 Jul 2024 09:23:06 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0B4154BE8;
+	Tue,  9 Jul 2024 09:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720517065; cv=none; b=pxkBnY9qCFAgMZJG9qLEsrmIJn1e50JoTaKHwWY1F6ixXpOZa+8P59/3rgVoA2JXTyNkNRvVYM/buTn0iHZnDqbhqBlPPcDfGFIpwKDfs4786IIAuO0HtpjrqHlppxvkji7OmxS2rSpMQLWL66J3WdZWop5v6JPAhUwBLX5T5Qc=
+	t=1720516986; cv=none; b=bDx+n1+f0ueWM5N4EkJgeJFMjRqHuHDq6QCFl4YEo8C0JSP2HbEuZZnNnuXlc/HSIMjl3jPeo/yg85mXi3tyh6v5PMlg74v4dsTq7rsuipv+nqNYRybL1gIxfDF0VnB+aDPQBwgQJLiiYHFMHxl7m2EqdoLgvxItcvRsnDgr4Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720517065; c=relaxed/simple;
-	bh=hPWdIQzrDIKsdWWedF3zVBgednRjpKR88jLhX5flbm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=huO+ZHsqEcMTJBR/c0EfAGbGqwDMyY866soQGeOgTqmGStGsR0upBk961GUm8c/NuT2SPQUKlh0mTPA7SrX80GV6UvqMUFdvcVxfd1D08TZXwplIPNuMuroQHxZC3LIytpYVT4+KKlLRMIlrGCVSoYof3NSZNt2LRaIONZK02kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sR73F-0004Yx-KQ; Tue, 09 Jul 2024 11:22:21 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sR739-008FMs-2o; Tue, 09 Jul 2024 11:22:15 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sR738-006U3J-31;
-	Tue, 09 Jul 2024 11:22:14 +0200
-Date: Tue, 9 Jul 2024 11:22:14 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Maxime Ripard <mripard@kernel.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Russell King <linux@armlinux.org.uk>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Vladimir Zapolskiy <vz@mleia.com>, Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	imx@lists.linux.dev, linux-omap@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-	openbmc@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org,
-	linux-mips@vger.kernel.org, loongarch@lists.linux.dev
-Subject: Re: [PATCH 4/9] mtd: devices: add AT24 eeprom support
-Message-ID: <20240709092214.omr7ccphdzdk7z7j@pengutronix.de>
-References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
- <20240701-b4-v6-10-topic-usbc-tcpci-v1-4-3fd5f4a193cc@pengutronix.de>
- <07b701a9-7b52-45b7-8dba-1c25d77cbf15@linaro.org>
- <mafs0ikxnykpr.fsf@kernel.org>
- <20240702-congenial-vigilant-boar-aeae44@houat>
- <mafs0ed8byj5z.fsf@kernel.org>
- <20240702-mighty-brilliant-eel-b0d9fa@houat>
- <20240708084440.70186564@xps-13>
+	s=arc-20240116; t=1720516986; c=relaxed/simple;
+	bh=Mg/A831yLmDsApgW71u2EDNhhGRIX5UWXSlgAY7Jyvo=;
+	h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=kH9CY4PAZcXKVMCZOv9smnyE1cqVu/lnIP6/NNN61Nv1+NJih1lKnplm26b3toqwhBqhUEaEZ2JjbvaQDTnW9RspHMQMqyuRD5WvZazPdDPTs4jb5LMWAcSy3+rIOK6dNItOFf8sVKnTxSdHclIzdI9Bk+OY68Ck9ObqsDnibrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8Cx7+tyAY1msFwCAA--.7080S3;
+	Tue, 09 Jul 2024 17:22:58 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8DxusZwAY1mitJAAA--.18510S3;
+	Tue, 09 Jul 2024 17:22:58 +0800 (CST)
+Subject: Re: [PATCH v2] LoongArch: KVM: Implement feature passing from user
+ space
+From: maobibo <maobibo@loongson.cn>
+To: Tianrui Zhao <zhaotianrui@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>
+Cc: kvm@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240611123655.4169939-1-maobibo@loongson.cn>
+Message-ID: <5b568152-7912-c613-588e-7b2bf1491ee5@loongson.cn>
+Date: Tue, 9 Jul 2024 17:22:56 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20240611123655.4169939-1-maobibo@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240708084440.70186564@xps-13>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-CM-TRANSID:AQAAf8DxusZwAY1mitJAAA--.18510S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW3Aw1UGrWfKw4rWry3ArykXrc_yoW7Cr4kpF
+	y7AFn5Gr4rKryfCw1ktws8ur47XFs7Gr129Fy2g3y5AF4j9r18Jr1kKrZrXFy5Jw48Z3WI
+	qF1Fkwn0va1qvwbCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv
+	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
+	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
+	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j8
+	yCJUUUUU=
 
-Hi Miquel,
+Gently ping.
 
-On 24-07-08, Miquel Raynal wrote:
-> Hi,
+On 2024/6/11 下午8:36, Bibo Mao wrote:
+> Currently features defined in cpucfg CPUCFG_KVM_FEATURE come from
+> kvm kernel mode only. However KVM is not aware of user-space VMM
+> features which makes it hard to employ optimizations. Here interface
+> is added to update register CPUCFG_KVM_FEATURE from user space,
+> only bit 24 - 31 is valid, so that VM can detect features implemented
+> in user-space VMM.
 > 
-> > > >> >> Port the current misc/eeprom/at24.c driver to the MTD framework since
-> > > >> >> EEPROMs are memory-technology devices and the framework already supports  
-> > > >> >
-> > > >> > I was under the impression that MTD devices are tightly coupled by erase
-> > > >> > blocks. But then we see MTD_NO_ERASE, so what are MTD devices after all?  
-> > > >> 
-> > > >> I was curious as well so I did some digging.
-> > > >>   
-> > > [...]  
-> > > >> 
-> > > >> I also found a thread from 2013 by Maxime Ripard (+Cc) suggesting adding
-> > > >> EEPROMs to MTD [1]. The main purpose would have been unifying the EEPROM
-> > > >> drivers under a single interface. I am not sure what came of it though,
-> > > >> since I can't find any patches that followed up with the proposal.  
-> > > >
-> > > > That discussion led to drivers/nvmem after I started to work on
-> > > > some early prototype, and Srinivas took over that work.  
-> > > 
-> > > So would you say it is better for EEPROM drivers to use nvmem instead of
-> > > moving under MTD?  
-> > 
-> > I thought so at the time, but that was more than 10y ago, and I have
-> > followed neither nvmem nor MTD since so I don't really have an opinion
-> > there.
-> > 
-> > It looks like drivers/misc/eeprom/at24.c has support for nvmem though,
-> > and MTD can be used as an nvmem provider too, so it's not clear to me
-> > why we would want to create yet another variant.
-> > 
-> > But again, you shouldn't really ask me in the first place :)
-> > 
-> > I'm sure Miquel, Srinivas, and surely others, are much more relevant to
-> > answer that question.
+> A new feature bit KVM_LOONGARCH_VCPU_FEAT_VIRT_EXTIOI is added which
+> can be set from user space. This feature indicates that the virt EXTIOI
+> can route interrupts to 256 vCPUs, rather than 4 vCPUs like with real HW.
 > 
-> More relevant, I doubt, but just a feeling: EEPROMs have their own
-> subsystem now, NVMEM, which, as Maxime said, was initially written for
-> that very specific case. EEPROMs don't have the complexity of MTD
-> devices, and thus pulling the whole MTD subsystem just for getting
-> partitions seems counter intuitive to me. You can definitely "split"
-> EEPROM devices with NVMEM as well anyway.
-
-I asked for feedback on my RFC [1] and all I got was to merge both
-drivers into one and make the driver backward compatible, which I did by
-this commit.
-
-> Overall I think the idea of getting rid of these misc/ drivers is goes
-> into the right direction, but registering directly into NVMEM makes
-> more sense IMO.
-
-So you propose to have two places for the partition handling (one for
-MTD and one for NVMEM) instead of one and moving the code into NVMEM
-directly? That doesn't sound right to me either. Also I don't get the
-point why EEPROMs can't be handled by the MTD layer? The layer already
-supports devices of type MTD_RAM which are very simple and don't require
-an erase-op at least I don't see one.
-
-[1] https://lore.kernel.org/all/20231127164623.1008176-1-m.felsch@pengutronix.de
-
-Regards,
-  Marco
-
+> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> ---
+> v1 ... v2:
+>    1. Update changelog suggested by WangXuerui.
+>    2. Fix typo issue in function kvm_loongarch_cpucfg_set_attr(), usr_features
+> should be assigned directly, also suggested by WangXueRui.
+> ---
+>   arch/loongarch/include/asm/kvm_host.h  |  4 +++
+>   arch/loongarch/include/asm/loongarch.h |  5 ++++
+>   arch/loongarch/include/uapi/asm/kvm.h  |  2 ++
+>   arch/loongarch/kvm/exit.c              |  1 +
+>   arch/loongarch/kvm/vcpu.c              | 36 +++++++++++++++++++++++---
+>   5 files changed, 44 insertions(+), 4 deletions(-)
 > 
-> Thanks,
-> Miqu�l
+> diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
+> index 88023ab59486..8fa50d757247 100644
+> --- a/arch/loongarch/include/asm/kvm_host.h
+> +++ b/arch/loongarch/include/asm/kvm_host.h
+> @@ -135,6 +135,9 @@ enum emulation_result {
+>   #define KVM_LARCH_HWCSR_USABLE	(0x1 << 4)
+>   #define KVM_LARCH_LBT		(0x1 << 5)
+>   
+> +#define KVM_LOONGARCH_USR_FEAT_MASK			\
+> +	BIT(KVM_LOONGARCH_VCPU_FEAT_VIRT_EXTIOI)
+> +
+>   struct kvm_vcpu_arch {
+>   	/*
+>   	 * Switch pointer-to-function type to unsigned long
+> @@ -210,6 +213,7 @@ struct kvm_vcpu_arch {
+>   		u64 last_steal;
+>   		struct gfn_to_hva_cache cache;
+>   	} st;
+> +	unsigned int usr_features;
+>   };
+>   
+>   static inline unsigned long readl_sw_gcsr(struct loongarch_csrs *csr, int reg)
+> diff --git a/arch/loongarch/include/asm/loongarch.h b/arch/loongarch/include/asm/loongarch.h
+> index 7a4633ef284b..4d9837512c19 100644
+> --- a/arch/loongarch/include/asm/loongarch.h
+> +++ b/arch/loongarch/include/asm/loongarch.h
+> @@ -167,9 +167,14 @@
+>   
+>   #define CPUCFG_KVM_SIG			(CPUCFG_KVM_BASE + 0)
+>   #define  KVM_SIGNATURE			"KVM\0"
+> +/*
+> + * BIT 24 - 31 is features configurable by user space vmm
+> + */
+>   #define CPUCFG_KVM_FEATURE		(CPUCFG_KVM_BASE + 4)
+>   #define  KVM_FEATURE_IPI		BIT(1)
+>   #define  KVM_FEATURE_STEAL_TIME		BIT(2)
+> +/* With VIRT_EXTIOI feature, interrupt can route to 256 VCPUs */
+> +#define  KVM_FEATURE_VIRT_EXTIOI	BIT(24)
+>   
+>   #ifndef __ASSEMBLY__
+>   
+> diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/include/uapi/asm/kvm.h
+> index ed12e509815c..dd141259de48 100644
+> --- a/arch/loongarch/include/uapi/asm/kvm.h
+> +++ b/arch/loongarch/include/uapi/asm/kvm.h
+> @@ -99,6 +99,8 @@ struct kvm_fpu {
+>   
+>   /* Device Control API on vcpu fd */
+>   #define KVM_LOONGARCH_VCPU_CPUCFG	0
+> +/* For CPUCFG_KVM_FEATURE register */
+> +#define  KVM_LOONGARCH_VCPU_FEAT_VIRT_EXTIOI	24
+>   #define KVM_LOONGARCH_VCPU_PVTIME_CTRL	1
+>   #define  KVM_LOONGARCH_VCPU_PVTIME_GPA	0
+>   
+> diff --git a/arch/loongarch/kvm/exit.c b/arch/loongarch/kvm/exit.c
+> index e1bd81d27fd8..ab2dcc76784a 100644
+> --- a/arch/loongarch/kvm/exit.c
+> +++ b/arch/loongarch/kvm/exit.c
+> @@ -53,6 +53,7 @@ static int kvm_emu_cpucfg(struct kvm_vcpu *vcpu, larch_inst inst)
+>   		ret = KVM_FEATURE_IPI;
+>   		if (sched_info_on())
+>   			ret |= KVM_FEATURE_STEAL_TIME;
+> +		ret |= vcpu->arch.usr_features;
+>   		vcpu->arch.gprs[rd] = ret;
+>   		break;
+>   	default:
+> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+> index 3783151fde32..4a06a9e96e4e 100644
+> --- a/arch/loongarch/kvm/vcpu.c
+> +++ b/arch/loongarch/kvm/vcpu.c
+> @@ -832,6 +832,8 @@ static int kvm_loongarch_cpucfg_has_attr(struct kvm_vcpu *vcpu,
+>   	switch (attr->attr) {
+>   	case 2:
+>   		return 0;
+> +	case CPUCFG_KVM_FEATURE:
+> +		return 0;
+>   	default:
+>   		return -ENXIO;
+>   	}
+> @@ -865,9 +867,18 @@ static int kvm_loongarch_get_cpucfg_attr(struct kvm_vcpu *vcpu,
+>   	uint64_t val;
+>   	uint64_t __user *uaddr = (uint64_t __user *)attr->addr;
+>   
+> -	ret = _kvm_get_cpucfg_mask(attr->attr, &val);
+> -	if (ret)
+> -		return ret;
+> +	switch (attr->attr) {
+> +	case 0 ... (KVM_MAX_CPUCFG_REGS - 1):
+> +		ret = _kvm_get_cpucfg_mask(attr->attr, &val);
+> +		if (ret)
+> +			return ret;
+> +		break;
+> +	case CPUCFG_KVM_FEATURE:
+> +		val = vcpu->arch.usr_features & KVM_LOONGARCH_USR_FEAT_MASK;
+> +		break;
+> +	default:
+> +		return -ENXIO;
+> +	}
+>   
+>   	put_user(val, uaddr);
+>   
+> @@ -896,7 +907,24 @@ static int kvm_loongarch_vcpu_get_attr(struct kvm_vcpu *vcpu,
+>   static int kvm_loongarch_cpucfg_set_attr(struct kvm_vcpu *vcpu,
+>   					 struct kvm_device_attr *attr)
+>   {
+> -	return -ENXIO;
+> +	u64 __user *user = (u64 __user *)attr->addr;
+> +	u64 val, valid_flags;
+> +
+> +	switch (attr->attr) {
+> +	case CPUCFG_KVM_FEATURE:
+> +		if (get_user(val, user))
+> +			return -EFAULT;
+> +
+> +		valid_flags = KVM_LOONGARCH_USR_FEAT_MASK;
+> +		if (val & ~valid_flags)
+> +			return -EINVAL;
+> +
+> +		vcpu->arch.usr_features = val;
+> +		return 0;
+> +
+> +	default:
+> +		return -ENXIO;
+> +	}
+>   }
+>   
+>   static int kvm_loongarch_vcpu_set_attr(struct kvm_vcpu *vcpu,
 > 
+> base-commit: 2df0193e62cf887f373995fb8a91068562784adc
+> 
+
 
