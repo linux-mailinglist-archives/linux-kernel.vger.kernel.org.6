@@ -1,97 +1,108 @@
-Return-Path: <linux-kernel+bounces-245314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D38A092B114
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:30:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CE0C92B10F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 108DA1C22451
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:30:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7AD21F225E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E7B14831C;
-	Tue,  9 Jul 2024 07:30:14 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1264145A08;
+	Tue,  9 Jul 2024 07:30:02 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD27140E30;
-	Tue,  9 Jul 2024 07:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D9E13A27D;
+	Tue,  9 Jul 2024 07:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720510214; cv=none; b=k/9YMNzwisbcZoNNeNrUyf6hcKA1/rCX1GclwdabvatJvZyrZEKcO1F9sfbDOGuvz8WJx0G86s+nW6pZKrekkMpheVNXn1hGLK7OLim3uajnWA+ImXRWm6BfnFVEGOJTXEUd6jTDf+ablnux/8NemvVLKQP60xbDWPiPwRtLPkg=
+	t=1720510202; cv=none; b=gNFhbEx/8PNAokhaFtI7aEwJ4GfDSsNQKFhSQCI+Q2JvhOHaFXA1ohxKW6Z2nK94peTKXcMhD++TEz9+sL6CwoCNLXg59xok8A0wot4EfG8IJ+f0GCQoWH7mufzNZTpg05IehmZI4eZVanu5jZuQvROKwCk8uuMk8QJeDCk4FJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720510214; c=relaxed/simple;
-	bh=T38RomaN6IVvN1u99Rxq68WUG0h/IzMUegAp2pExboQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ehdkDgBNPQja0eweL51mNQbJWztN+eObflhhRP/rVCI14aa++aKKLb90buO4+4uwUw5+J+4iTSl1T/2r0EsMAapt1wNKMX8+DeaZTtLK09Dk8F0o4AmB1Jhc0eZAqbLgJxOVBl7PpoG9kFuvpfSoy6rGHkp077mOvbdJ65HJenc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowABHTs7y5oxmx7fMFA--.39776S2;
-	Tue, 09 Jul 2024 15:29:55 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: jhs@mojatatu.com,
-	xiyou.wangcong@gmail.com,
-	jiri@resnulli.us,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH net-next] net/sched: act_skbmod: convert comma to semicolon
-Date: Tue,  9 Jul 2024 15:28:38 +0800
-Message-Id: <20240709072838.1152880-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720510202; c=relaxed/simple;
+	bh=gzc0c54BDDk/Q+GMrR87SF/g6DuMufpih9B/SrhZzxc=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ZxWKJoWN9Umr+GuzJKuB0kGDT8ILQpeb8fZjwYzpYPtzU7uCNq/cmuc9jg9emhi+iezBM4nRgQFvRPsDG/LV1hjjXKjH+0Vo8qYWVeeYBvx45pKtBN5C4PWS8V0x2zbn2uy7poKQobSBhNN8ZvXyl1nkEPBvGGmk06mdmSdLmJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WJCF73k6HzwWd4;
+	Tue,  9 Jul 2024 15:25:15 +0800 (CST)
+Received: from kwepemm600007.china.huawei.com (unknown [7.193.23.208])
+	by mail.maildlp.com (Postfix) with ESMTPS id B1012180AE5;
+	Tue,  9 Jul 2024 15:29:56 +0800 (CST)
+Received: from [10.174.185.179] (10.174.185.179) by
+ kwepemm600007.china.huawei.com (7.193.23.208) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 9 Jul 2024 15:29:54 +0800
+Subject: Re: [PATCH 6/9] accel/rocket: Add a new driver for Rockchip's NPU
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+CC: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin
+ Murphy <robin.murphy@arm.com>, Heiko Stuebner <heiko@sntech.de>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, Tomeu Vizoso
+	<tomeu.vizoso@tomeuvizoso.net>, David Airlie <airlied@gmail.com>, Daniel
+ Vetter <daniel@ffwll.ch>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Sumit Semwal <sumit.semwal@linaro.org>,
+	=?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+	<iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-media@vger.kernel.org>, <linaro-mm-sig@lists.linaro.org>
+References: <20240612-6-10-rocket-v1-0-060e48eea250@tomeuvizoso.net>
+ <20240612-6-10-rocket-v1-6-060e48eea250@tomeuvizoso.net>
+From: Zenghui Yu <yuzenghui@huawei.com>
+Message-ID: <ad2628b2-aab2-2c7a-d4df-5356c55fae39@huawei.com>
+Date: Tue, 9 Jul 2024 15:29:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowABHTs7y5oxmx7fMFA--.39776S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF15Zr47JryfCFyUKFg_yoW3WFb_Zw
-	15KF4kJFy8tr1vyw4xZw4Yvr4fK3yxuF48Wr1j9FyYy3WkJryDZr1vkrn7GFy5urW7uF13
-	Gwn3XFy8Ca17ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
-	8cxan2IY04v7MxkIecxEwVAFwVW8CwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUd5rcUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+In-Reply-To: <20240612-6-10-rocket-v1-6-060e48eea250@tomeuvizoso.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm600007.china.huawei.com (7.193.23.208)
 
-Replace a comma between expression statements by a semicolon.
+On 2024/6/12 21:52, Tomeu Vizoso wrote:
+> This initial version supports the NPU as shipped in the RK3588 SoC and
+> described in the first part of its TRM, in Chapter 36.
+> 
+> This NPU contains 3 independent cores that the driver can submit jobs
+> to.
+> 
+> This commit adds just hardware initialization and power management.
+> 
+> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- net/sched/act_skbmod.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[...]
 
-diff --git a/net/sched/act_skbmod.c b/net/sched/act_skbmod.c
-index cd0accaf844a..dc0229693461 100644
---- a/net/sched/act_skbmod.c
-+++ b/net/sched/act_skbmod.c
-@@ -246,7 +246,7 @@ static int tcf_skbmod_dump(struct sk_buff *skb, struct tc_action *a,
- 
- 	memset(&opt, 0, sizeof(opt));
- 	opt.index   = d->tcf_index;
--	opt.refcnt  = refcount_read(&d->tcf_refcnt) - ref,
-+	opt.refcnt  = refcount_read(&d->tcf_refcnt) - ref;
- 	opt.bindcnt = atomic_read(&d->tcf_bindcnt) - bind;
- 	spin_lock_bh(&d->tcf_lock);
- 	opt.action = d->tcf_action;
--- 
-2.25.1
+> +void rocket_core_reset(struct rocket_core *core)
+> +{
+> +	reset_control_assert(core->a_reset);
+> +	reset_control_assert(core->h_reset);
+> +
+> +	udelay(10);
+> +
+> +	reset_control_deassert(core->a_reset);
+> +	reset_control_deassert(core->h_reset);
+> +}
 
+Seems unused.
+
+> +void rocket_core_reset(struct rocket_core *core);
+
+> +void rocket_device_reset(struct rocket_device *rdev);
+
+Ditto.
 
