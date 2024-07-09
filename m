@@ -1,89 +1,160 @@
-Return-Path: <linux-kernel+bounces-245163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E32AC92AF24
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:49:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57A3192AF25
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:50:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69A2DB21DE6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:49:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11E102824DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE45B12CD89;
-	Tue,  9 Jul 2024 04:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A9012C80F;
+	Tue,  9 Jul 2024 04:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LduwMObD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="DyESMjq+"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1834F29CEA
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 04:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDEC29CEA
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 04:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720500546; cv=none; b=Mfs38BbChZOmllXN+xmp/E3zOgL4U3rlHozPB8ptNscJ8Ch4oaDgWvNrBIfqOzC+oSVOXsqQ4Ks+CLa4qmhtqxkIPv2NXzZJatcmuPv9ajnPsb0pFA1kxlm/piDeB1e39dLkX9No2xpzLDFr9kaoOhE4yYyUrVZt9n4T0FVC+uY=
+	t=1720500602; cv=none; b=McZFPFAJK2mCF62HbDuuGk74yHZ+7roEN2i2UE5IbDJUj0DEGeyBZeSXDF940VdtUVhpiUbTY/UzxyFr9iC8Ffz66ci+f+7AjrcCVzfQk4eWoX1aC2LN6sPLbmOng5iyVObawpRsLHJ1jE8Q7XxvvXe6KHvgXIVHirTjqPEzLlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720500546; c=relaxed/simple;
-	bh=ivLuqXEefH7TTXXO9crz1NwH+cfs5yLI0OGmlJ5dzko=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pzcO5OfdHH4MokC40q5lUNuohN60hMLmgJ4UbPfQ3aKEgwWlcc/13Quh26wq/8axhTnFC57oAJtSrbWfuKE7oN3D1zVjQZ116dkt9+Cwe17LL78Bw3mgTdcQIQPOTlQUFG4mNPSw406NGz3Ew5gIcX30mIdVWdgHZ0u6IsErWbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LduwMObD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AD42C4AF07;
-	Tue,  9 Jul 2024 04:49:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720500545;
-	bh=ivLuqXEefH7TTXXO9crz1NwH+cfs5yLI0OGmlJ5dzko=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LduwMObDP68pChZmH3p7IbxApKlQBN8hd6RrihQvQH6yljth5m4UV2okR7czB8iRS
-	 UdHAO3dfLVZW6CAqknWpiMUl+wrrkDq8IIKy/FcZ/3ywT6/T0uZEb5OsLTbhc1eZv1
-	 U1c4D/1FGz6oh8arkbxWBqM1X2HdFL6lsf/+HMKEaindoqJzlbLO+tiyFg9R8PbOhS
-	 SRrthF8eW4/zISHZqd3yNIe45fL0syp19+doHyL16rEq7vmPME+Cch2a38DgJU1d6y
-	 1RKI7Rj8263nXUHfWN7xslhzTEjezuojZl0OlmpCS/lIQvZNcpbCQcpcBCgQHylkTR
-	 Nb80kpTa6cepw==
-From: Christian Brauner <brauner@kernel.org>
-To: jlayton@kernel.org,
-	jack@suse.cz,
-	Chen Ni <nichen@iscas.ac.cn>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ipc: mqueue: remove assignment from IS_ERR argument
-Date: Tue,  9 Jul 2024 06:48:56 +0200
-Message-ID: <20240709-einige-geblasen-f28d67cb5b00@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240708080404.3859094-1-nichen@iscas.ac.cn>
-References: <20240708080404.3859094-1-nichen@iscas.ac.cn>
+	s=arc-20240116; t=1720500602; c=relaxed/simple;
+	bh=RKZ8riPKBOMmnRu0Y0V//mjlAySDsObIvoqoBrnxGdE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XIAKXRW7d8eeH3zU/gdO+H1WN0ZAegMI4UqJvpbjkhg/Wabi/QQuPciBebQclj4+JyZcQDIE06GN+1yPVQvYGphC2oOmgpOIseAbY7xeMH7HZtujNoFXxZXh0Tn3dWvE3fT2ApYdFlXqb56EOnx64SVstQ842Q4Mrv6viZmRrAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=DyESMjq+; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-70362cae7e1so1331962a34.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 21:50:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1720500600; x=1721105400; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ycv9RhTx/iOnhQoNsrsfVpohBzhfYYYI7kq2z4uFvQM=;
+        b=DyESMjq+ca6rcIDY3obrSDqDCb/4Rm3KvqfVG/+gk9U9WvKqYYr+4WzJ7dy5oxg5Zv
+         ZyqxNo0uVYFjvgZaczRc9gAVs4HG8WkCuDrQBKXJoPiAHbtSLxa8PQcVAcchbjZ6f++s
+         xqcL8R+ydTtvw4YFeCzHuAHiJ5cmVUdZ424VYl8bf/TWIgffiGo8H1+qdKhiGpLRf2oc
+         TuUKQrFi+3X9MI/us5eLXHF47wKhkGTaMxh1tSrWkV+qheS1SaaNK+x7u4Q7IvzY1DYF
+         rVRW65RZGpfEURGoRplyi4CtIzAmqwcYjxcQ6q5Hz/dxR6n9OPPqTl6tUbsrzEujSB5v
+         yC+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720500600; x=1721105400;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ycv9RhTx/iOnhQoNsrsfVpohBzhfYYYI7kq2z4uFvQM=;
+        b=PHvN3I7Xyix6XDg+uyL1TjsXFyGW5cUQ9qFfSdfIrF7PhLBIrqkQOQ2AZ32l4NvBAz
+         fp5wAzOOIWFy1XS4WMmlJ74/8zqkgFXe5P8ADqsE+R1eYwy80VkVLJySFfNbJ8gQX31p
+         Dw82zBERmOGs5/xBoCLwA7eoKHgzXZd7Ad4tjN6E0ZQOyO7no4E68vmtKDXHwDcx98Y5
+         XQVeduLsiF0/gYZWkdhzfIhWrnwrmgysf9+RCjSY7XMIQIdjxGUgE5DS9iC14F33Lg8r
+         R+WF3zagnydgpNe+NelUPegT9cRbGYLvhNbwC+ofYR+0izCsD10Q9QeN3rsYO88DfBa2
+         UXKA==
+X-Gm-Message-State: AOJu0YykAQLue1kCh8I3U8nCkYcyr0LzFFh6yooIcSHCxJtZ880x4IwS
+	bJDkiCGDQC0jKQyqe17jQ2C4cfuFao4EKggR9rhEdD4BQRu/hTa4sufeMLAwKEg=
+X-Google-Smtp-Source: AGHT+IEUrIMXwNj2TxtgtdUBPo5hBWRpqg2MgnyY1yttQtF1VzkezDbpHzFV8pIGCqU1nGPoUfx/1w==
+X-Received: by 2002:a05:6830:22fb:b0:703:6dce:3ad5 with SMTP id 46e09a7af769-70375a17ad6mr1607568a34.22.1720500599721;
+        Mon, 08 Jul 2024 21:49:59 -0700 (PDT)
+Received: from sunil-laptop ([106.51.187.237])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70374f6b5easm302098a34.14.2024.07.08.21.49.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 21:49:59 -0700 (PDT)
+Date: Tue, 9 Jul 2024 10:19:50 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: Sia Jee Heng <jeeheng.sia@starfivetech.com>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	rafael.j.wysocki@intel.com, ajones@ventanamicro.com,
+	conor.dooley@microchip.com, aou@eecs.berkeley.edu,
+	palmer@dabbelt.com, paul.walmsley@sifive.com
+Subject: Re: [PATCH v2 1/1] RISC-V: ACPI: Enable SPCR table for console
+ output on RISC-V
+Message-ID: <ZozBbibw+CyYsqeR@sunil-laptop>
+References: <20240502073751.102093-1-jeeheng.sia@starfivetech.com>
+ <20240502073751.102093-2-jeeheng.sia@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=903; i=brauner@kernel.org; h=from:subject:message-id; bh=ivLuqXEefH7TTXXO9crz1NwH+cfs5yLI0OGmlJ5dzko=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT1HLTsYjoQZRHll+/1yVVv5h6hvW5Zvs53HDdqi1/UW dsemuTXUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMBGFFYwMW+bcczDlC+ov6XDn L9z5slm6b9pqq/r9P3K0t0zOfPgjkJHhqNOnt3tTQvtfbDDtXTv/hXHLp9+imQKXJ0xfUe2wW8O VHQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240502073751.102093-2-jeeheng.sia@starfivetech.com>
 
-On Mon, 08 Jul 2024 16:04:04 +0800, Chen Ni wrote:
-> Remove assignment from IS_ERR() argument.
-> This is detected by coccinelle.
+On Thu, May 02, 2024 at 12:37:51AM -0700, Sia Jee Heng wrote:
+> The ACPI SPCR code has been used to enable console output for ARM64 and
+> X86. The same code can be reused for RISC-V. Furthermore, SPCR table is
+> mandated for headless system as outlined in the RISC-V BRS
+> Specification, chapter 6.
 > 
+> Signed-off-by: Sia Jee Heng <jeeheng.sia@starfivetech.com>
+> ---
+>  arch/riscv/Kconfig       |  1 +
+>  arch/riscv/kernel/acpi.c | 12 +++++++++++-
+>  2 files changed, 12 insertions(+), 1 deletion(-)
 > 
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index be09c8836d56..ff2e270bbe01 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -14,6 +14,7 @@ config RISCV
+>  	def_bool y
+>  	select ACPI_GENERIC_GSI if ACPI
+>  	select ACPI_REDUCED_HARDWARE_ONLY if ACPI
+> +	select ACPI_SPCR_TABLE if ACPI
+>  	select ARCH_DMA_DEFAULT_COHERENT
+>  	select ARCH_ENABLE_HUGEPAGE_MIGRATION if HUGETLB_PAGE && MIGRATION
+>  	select ARCH_ENABLE_SPLIT_PMD_PTLOCK if PGTABLE_LEVELS > 2
+> diff --git a/arch/riscv/kernel/acpi.c b/arch/riscv/kernel/acpi.c
+> index e619edc8b0cc..43a12c00ae8b 100644
+> --- a/arch/riscv/kernel/acpi.c
+> +++ b/arch/riscv/kernel/acpi.c
+> @@ -17,7 +17,9 @@
+>  #include <linux/efi.h>
+>  #include <linux/io.h>
+>  #include <linux/memblock.h>
+> +#include <linux/of_fdt.h>
+>  #include <linux/pci.h>
+> +#include <linux/serial_core.h>
+>  
+>  int acpi_noirq = 1;		/* skip ACPI IRQ initialization */
+>  int acpi_disabled = 1;
+> @@ -131,7 +133,7 @@ void __init acpi_boot_table_init(void)
+>  	if (param_acpi_off ||
+>  	    (!param_acpi_on && !param_acpi_force &&
+>  	     efi.acpi20 == EFI_INVALID_TABLE_ADDR))
+> -		return;
+> +		goto done;
+>  
+>  	/*
+>  	 * ACPI is disabled at this point. Enable it in order to parse
+> @@ -151,6 +153,14 @@ void __init acpi_boot_table_init(void)
+>  		if (!param_acpi_force)
+>  			disable_acpi();
+>  	}
+> +
+> +done:
+> +	if (acpi_disabled) {
+> +		if (earlycon_acpi_spcr_enable)
+> +			early_init_dt_scan_chosen_stdout();
+> +	} else {
+> +		acpi_parse_spcr(earlycon_acpi_spcr_enable, true);
+> +	}
+LGTM.
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] ipc: mqueue: remove assignment from IS_ERR argument
-      https://git.kernel.org/vfs/vfs/c/b80cc4df1124
+Thanks,
+Sunil
+>  }
+>  
+>  static int acpi_parse_madt_rintc(union acpi_subtable_headers *header, const unsigned long end)
+> -- 
+> 2.34.1
+> 
 
