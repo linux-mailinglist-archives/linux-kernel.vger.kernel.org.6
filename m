@@ -1,96 +1,103 @@
-Return-Path: <linux-kernel+bounces-245600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 126AC92B4CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:09:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3969592B4CF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:10:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A19BB218E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:09:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A2FF1C21B10
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A29155C94;
-	Tue,  9 Jul 2024 10:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1BA155C98;
+	Tue,  9 Jul 2024 10:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ecGsXWdo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l4/4mWOI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFB2155756
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8E838FB0
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720519786; cv=none; b=HfCU3SGggCRDRgNRaskL2WtHL9DW60GUsvpdn6tKTNbZ0cmgADHW8vOj/6BnoASvtELm/zVUWHCuVpBgw7QgnjXhftry2kQMyssIq7U4baGMlJl+Qb6uYFz/Ydkf6feM7TgL1JqUIQmTbI+9qOhiXXGonveq/U2S07l2aI+t+rQ=
+	t=1720519815; cv=none; b=ZIkRDEBrHTV21CSGpkh/IvC12VozUSfEmqq3vC0h8LxMBd26VdW/uNMA/J+zAQVREL6kWWeA2x35x0jTjkUDRC33RxSurOyjAKxZ831VG1oqpCPBvmefaHyTyAXfOjTNTgjBWYlbTrMN9v17Qu4kVLqFw6apvzPHNqIXCC8Lo2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720519786; c=relaxed/simple;
-	bh=vJL/+yzEoTupBGM+KNAhCBR3IrKs9In5pHA6AJeTSjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XCASpxsc8fEdCpuJws5N/WBvqEoEk1+aoDpmf2/zKM+mKxqOTnhCeXJPYlm/2q8XHWCXdvEzYnRUUHkCB58K1xGAM7Ju5+HLbhhFtWJ0Btxqi5mfMVW7mHrZKlywhOqA2c37z3IL6GxToYPfOLQX2zqUZax0KXrBuy3/gSHi4BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ecGsXWdo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D01FC3277B;
-	Tue,  9 Jul 2024 10:09:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720519785;
-	bh=vJL/+yzEoTupBGM+KNAhCBR3IrKs9In5pHA6AJeTSjs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ecGsXWdoKF4btEiervHhtxp23tWleIXRPxuGMLVbvzIUFjxLJQG80HNLsMRSSiFwz
-	 fbSaa8EKOZYy09gNol/Q8oiCdyxVFC8WUuqi/rXPwvtbXv0fHm7OZLoGIXGMlvnL08
-	 FUNSiyBgG2rpSIMsS9Uh7mP1XPN3xSNwq/HCF6Zs=
-Date: Tue, 9 Jul 2024 12:09:43 +0200
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: Siddh Raman Pant <siddh.raman.pant@oracle.com>
-Cc: "cve@kernel.org" <cve@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [External] : Re: CVE-2023-52628: netfilter: nftables: exthdr:
- fix 4-byte stack OOB write
-Message-ID: <2024070948-helpful-departure-a468@gregkh>
-References: <2024032850-CVE-2023-52628-14fb@gregkh>
- <b8b8f6113ac1e7f1fa07659c32d34b033f775a84.camel@oracle.com>
- <2024070926-removing-chewer-2426@gregkh>
- <18f16d08f3946fbee0917f759a855cb070aadf44.camel@oracle.com>
+	s=arc-20240116; t=1720519815; c=relaxed/simple;
+	bh=aJOfIDatk3vEMdHF2A2FfLbUH1bI23Rmm2FvHwmD1J8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AYUGgS/Yz8Cxi4LM2qMKylIpq470RRp0bUk1TLYfndvtb0g2ZhlVQbG02N3vFMb1OtlRshXCXqSFsM+x2j0ExGG/JOTmyvpHrQtTR0VUKjB/TBF5Ygh9oGTs/pze2JXxkrqt0Ogo1S9MZoOYgYOpMJZcIXELrzSl8e5BK0+UveM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l4/4mWOI; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720519815; x=1752055815;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=aJOfIDatk3vEMdHF2A2FfLbUH1bI23Rmm2FvHwmD1J8=;
+  b=l4/4mWOIhfcs5uOwE0pB9j8onYJ4yyuS71G0l8ozkGT28rQlOF79POl1
+   9zqia4lCsyqRdAUlxVXAtOsOmC6xz/X4MbuUDmUwMRI4ZucHDTVPCOlxT
+   mRbnUCrVmI3ro5eoDwlFQVwxXm2LXW2qKef61tYYyjIIDAYTWMlEbLlhC
+   aGQLobAsh2k4RBC+lepggekYttEqfNapbCf5KR7vriOIvp/9C06sMCmL9
+   Hix/sc69LkrHn5RzrVVWiodQxLjm1DqoOw08QpVz4E9L3XFJXw6KPj7OB
+   KZ0/QlD/yMQeQOUjHEi58l7x8ydXPku82jGygw/gBkyCLnUs1zCnxJO4A
+   g==;
+X-CSE-ConnectionGUID: iHkzgnHLQrKhHqMsams1PA==
+X-CSE-MsgGUID: ebf9DHu8RQSyVPetPq72Nw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="17581040"
+X-IronPort-AV: E=Sophos;i="6.09,194,1716274800"; 
+   d="scan'208";a="17581040"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 03:10:10 -0700
+X-CSE-ConnectionGUID: fG2qZg3TRm+mflpFiR6edA==
+X-CSE-MsgGUID: uiux1DIKTHmbdKxyz9w0dg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,194,1716274800"; 
+   d="scan'208";a="78538860"
+Received: from jlawryno-mobl.ger.corp.intel.com (HELO [10.246.19.58]) ([10.246.19.58])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 03:10:06 -0700
+Message-ID: <73a245d2-2e12-476a-b22a-cc11bdcecef0@linux.intel.com>
+Date: Tue, 9 Jul 2024 12:10:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <18f16d08f3946fbee0917f759a855cb070aadf44.camel@oracle.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] accel/ivpu: Add missing MODULE_FIRMWARE metadata
+To: "Alexander F. Lent" <lx@xanderlent.com>,
+ Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+ Oded Gabbay <ogabbay@kernel.org>, Jeffrey Hugo <quic_jhugo@quicinc.com>,
+ Daniel Vetter <daniel.vetter@ffwll.ch>,
+ Andrzej Kacprowski <andrzej.kacprowski@linux.intel.com>,
+ Krystian Pradzynski <krystian.pradzynski@linux.intel.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240708-fix-ivpu-firmware-metadata-v2-1-78b953172026@xanderlent.com>
+Content-Language: en-US
+From: Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>
+Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
+ Gdansk - KRS 101882 - NIP 957-07-52-316
+In-Reply-To: <20240708-fix-ivpu-firmware-metadata-v2-1-78b953172026@xanderlent.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 09, 2024 at 05:27:15AM +0000, Siddh Raman Pant wrote:
-> On Tue, Jul 09 2024 at 10:49:59 +0530, gregkh@linuxfoundation.org
-> wrote:
-> > On Tue, Jul 09, 2024 at 03:48:29AM +0000, Siddh Raman Pant wrote:
-> > > Is this a duplicate of CVE-2023-4881? It was rejected with the reason:
-> > > 
-> > > > https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-4881
-> > > > 
-> > > > ** REJECT ** CVE-2023-4881 was wrongly assigned to a bug that was
-> > > > deemed to be a non-security issue by the Linux kernel security team.
-> > 
-> > I don't know, where is the information about that older rejected issue?
-> > If this isn't an issue, we will be glad to reject it.
-> 
-> https://nvd.nist.gov/vuln/detail/CVE-2023-4881 (see analysis
-> description where it just describes the issue).
-> 
-> Or just https://bugzilla.redhat.com/show_bug.cgi?id=2238312
-> 
-> I'm unable to find a rejection reason though, maybe that's on a private
-> mailing list.
+Hi,
 
-Looks like Red Hat created it and then rejected it, you will have to
-talk about this with them.  But then later ZDI asked me to assign a CVE
-for it, and I did assuming that they knew what they were talking about.
-I shouldn't have assumed that :(
+Just two more comments and we are good to go.
 
-I don't know what to do here, sorry.  If you don't think this is an
-issue, great, I'll be glad to reject it but we should say at least why
-we don't think so here in this thread, right?
+On 09.07.2024 02:25, Alexander F. Lent wrote:
+> +/* Add module metadata for the production firmware paths.
+> + * This needs to be kept in sync with fw_names above.
+> + */
+I would prefer: 
+/* Production fw_names from the table above */
 
-thanks,
+> +MODULE_FIRMWARE("intel/vpu/vpu_37xx_v0.0.bin");
+> +MODULE_FIRMWARE("intel/vpu/vpu_37xx_v0.0.bin");
+You probably meant *40xx*.
 
-greg k-h
+Regards,
+Jacek
 
