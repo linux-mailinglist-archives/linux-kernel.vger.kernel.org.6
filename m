@@ -1,118 +1,131 @@
-Return-Path: <linux-kernel+bounces-245336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 230AB92B16C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:44:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07CC592B16B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 540301C21CA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:44:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B899B283EFA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEC8144D11;
-	Tue,  9 Jul 2024 07:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CCA14532C;
+	Tue,  9 Jul 2024 07:43:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ee/pwKj/"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="s42YhSu2"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9662027713
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 07:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223FB143752;
+	Tue,  9 Jul 2024 07:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720511036; cv=none; b=EE66QKTCIslKum9ptflA97AuQbQ8rQSQZT6dwVMxbjb9jhYV0Lxg0ObeqIO8aQZQz3KLEOuLICtV8xSfIcyGg5flq36+7ZqRBH1XIBZycdWf38CqYe/KIZPJz/9hrzJXPkjoc0syi/5gafddpxZsT2hTFoGJFJKSf8Dd2dl0mkg=
+	t=1720511025; cv=none; b=p7hI4nnQJAOjKbdjKYt8fTPe4TfxHqSwaeBMu4spn3Bw/VdQY/nNp0zAms3J/UEkegPxjld/ZLKS4+vfdNY4QZ70Ke2TOVxe7c9teipT/c8V7sm9yl+6Dw09N0VKEdsr+SO1K7B2w8I9THq/z8lAHRYBtBRvd/sUfEIAvKoWv9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720511036; c=relaxed/simple;
-	bh=20D5O3BjA9Qecn6pydHndjEQujH+ywE+VJHs0En/u64=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O/N/rl+Gn4SM+fSs2iKMLacJ2XEbrgnMN+VJykjZlRFnQNedznXMv44p/Wa8Bg8V/SCC8zYEbWY6yZOzTgFTLP/az2uVMr5933D+UeLm1SQU1arNjVGLgFJBOyvZ9aQD2EEICEJg8i+IjGyytTdJl3oDvGOIUrxFzaj9a06jrpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ee/pwKj/; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a77cb7c106dso455676366b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 00:43:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720511033; x=1721115833; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=20D5O3BjA9Qecn6pydHndjEQujH+ywE+VJHs0En/u64=;
-        b=ee/pwKj/fTJMtTyOvHUq+l+U8dzF/tUcL8ysLM9dP64zqXFh6jD4wX9z+Y5WRWevLx
-         tw7J2ze7F++M6FDvCeuUHdfQof/09WKR44hYJO504EP9/oQnUZc+AjwOTNIZYtaH9thR
-         rv2z1k8m0bQugPWbPsFUIkeSATU+C0jqijOwq57kipmSJuEEXHaAVb2P0xBUlk4HCywi
-         1FPmxhOfy2NfFYxv8UMKrCou+M9dyLlwfxOjX/lTzJnSEzg8m3e+asKoKR+DCJMkKnOZ
-         QKXrdYqTmWfs2rebF53nQ3PgYMsmdlIZKSB/SHdThlNUIVSe0MD32sdE9tUI8vlb/+ZR
-         CP4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720511033; x=1721115833;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=20D5O3BjA9Qecn6pydHndjEQujH+ywE+VJHs0En/u64=;
-        b=cK+6dhhh/5dBvgZk4uhh32/no5xFw/r6jHcShpoJUErmcgWEQUXRGVRQIRaRr5Jczr
-         fh8tuCGVnJoyFeHh9VN2Ug+UfsnKFjHER/xXEPUZ4tm3oy/Nf6Ng/yE22EVFJwuh8bI3
-         AADab2SXa277b13u4cRqcVAhK96GTTI15KLYonycOnmz5eJJgbfSHzxic2crRFMA6P+l
-         2uPL1uPdbcAD2WlXrCLwyW/kgOhMfg//tnziJiiDdT7eQxds0G8Cgx6aHbKUCOnzUiMs
-         M6ofxDovV2Q8B6w3wjadaxV1wKISaBt0BOB87tCf5YEg/Y1MsVbGxkQ9kPozcmfEo1Nr
-         umCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBOcQW39jAeJ3mgbt83Xkna7YSPd5cvZ0UAQMAGMqXPt4RPDbKPPMu+tJNg070qOirBpWYdqnsPDKpMdeCVglwtL36pRrzM7pSt/sa
-X-Gm-Message-State: AOJu0YzQcEWFEmaapvP6HYvK6gZGx+bNh45WjhfXlJhi+ZUPUJWh8ghx
-	8ROQrixqmLXbSsIw1fPg63KP+TRGSZNv7FLtOUThH4gslZ8XJZe5
-X-Google-Smtp-Source: AGHT+IGhQSfrd+amaKpnM5/PJQRIykf6Kxt0jaCjBol+EWAP88HS2ZqRo89aelEp8OMD2IpxIzYPcA==
-X-Received: by 2002:a17:906:c8c6:b0:a77:d85c:86f5 with SMTP id a640c23a62f3a-a780b884b5dmr100763666b.53.1720511032657;
-        Tue, 09 Jul 2024 00:43:52 -0700 (PDT)
-Received: from LPPLJK6X5M3.. (178-37-38-123.dynamic.inetia.pl. [178.37.38.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff7aesm54674966b.102.2024.07.09.00.43.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 00:43:52 -0700 (PDT)
-From: Radoslaw Zielonek <radoslaw.zielonek@gmail.com>
-To: peterz@infradead.org
-Cc: akpm@linux-foundation.org,
-	ardb@kernel.org,
-	bigeasy@linutronix.de,
-	brauner@kernel.org,
-	bristot@redhat.com,
-	bsegall@google.com,
-	dietmar.eggemann@arm.com,
-	juri.lelli@redhat.com,
-	kunyu@nfschina.com,
-	liam.howlett@oracle.com,
-	linux-kernel@vger.kernel.org,
-	mgorman@suse.de,
-	mingo@redhat.com,
-	oleg@redhat.com,
-	radoslaw.zielonek@gmail.com,
-	rostedt@goodmis.org,
-	syzbot+a941018a091f1a1f9546@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com,
-	tandersen@netflix.com,
-	vincent.guittot@linaro.org,
-	vincent.whitchurch@axis.com,
-	vschneid@redhat.com
-Subject: Re: [RFC] Signaling overhead on RT tasks is causing RCU stall
-Date: Tue,  9 Jul 2024 09:43:34 +0200
-Message-ID: <20240709074333.2799005-2-radoslaw.zielonek@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240705081052.GA11386@noisy.programming.kicks-ass.net>
-References: <20240705081052.GA11386@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1720511025; c=relaxed/simple;
+	bh=dr7l3t+GjKMDnDuiYasmDuc9Qrrjr+5nnYrK+/4137Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qhs0RuOMu1sVtDofVClrkrqcTkI2LpAe0GjzGzLHvjVoU8jZ1ftRxt0dLiLNTXm3gpPyy4BfkZjKmuEfkqyhu1gZZzU0ILeJ1OCuld04H6fiPf/m5KmXWFGy3mci9EygvBfzZA98XBHcGoJjf5cBV1GG3e5Yi8iD4FSQQX62CSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=s42YhSu2; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720511021;
+	bh=o9VUrZTwSxcIukPrWAGUJ9E0ASY1OK2NhB+cQqKDHHM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=s42YhSu2BtzzHurrB0fD3leQYO5KzNFamh/v7Tnpe3T0wppC2gLPV9+wkM7NQyMGz
+	 KvbJhqrZb1o9OCURLKSzKEFBlUOJgsJpfqi6Fuwy1yPM+isz2a1OlBgiMev/hne1H1
+	 87j4YsPGok0YeOQIu4noQeTl/1vm/HhVYvrCy5PvgG/iBV9OYfzuJe1nt1wGyqV2b9
+	 1G9lg5CdAPqiX39YwGmgSi0iPpnBqWwoj48Mrs7gWpinq8sZdbGJLZtAw4I//xsfbS
+	 P0HYoPUAEl+UYwqcCeKEn4gAx5tXBjcuCjikxGVW/1BXPLDkb8U6y3I+Dfl66vyEu+
+	 kPYZ+b9Df4xxQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJCfP39Q7z4w2R;
+	Tue,  9 Jul 2024 17:43:41 +1000 (AEST)
+Date: Tue, 9 Jul 2024 17:43:40 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Theodore Ts'o <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Donet Tom <donettom@linux.ibm.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, "Ritesh Harjani (IBM)"
+ <ritesh.list@gmail.com>
+Subject: linux-next: manual merge of the random tree with the mm-stable tree
+Message-ID: <20240709174340.5c03c2b9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/MmvR/cmc7U=7=PRedTMJjZb";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-> I'm having trouble parsing this. What overhead becomes high? Is the task
-> spending time in-kernel? Because if the task is spending time in-user
-> handling all its signals, it should accumulate runtime just fine.
+--Sig_/MmvR/cmc7U=7=PRedTMJjZb
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The overhead is in kernel. The RT task is preempted over and over by SIGRETURN.
+Hi all,
 
-In my case userspace set posix timer interval to 8ns.
-The posix_timer_fn enqueues signal (send_sigqueue).
-Then when the signal is dequeued (dequeue_signal) the posix timer is rearmed.
+Today's linux-next merge of the random tree got a conflict in:
 
-Radoslaw
+  tools/testing/selftests/mm/Makefile
+
+between commit:
+
+  3a103b5315b7 ("selftest: mm: Test if hugepage does not get leaked during =
+__bio_release_pages()")
+
+from the mm-stable tree and commit:
+
+  94beef29e110 ("mm: add MAP_DROPPABLE for designating always lazily freeab=
+le mappings")
+
+from the random tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc tools/testing/selftests/mm/Makefile
+index e1aa09ddaa3d,e3e5740e13e1..000000000000
+--- a/tools/testing/selftests/mm/Makefile
++++ b/tools/testing/selftests/mm/Makefile
+@@@ -75,7 -73,7 +75,8 @@@ TEST_GEN_FILES +=3D ksm_functional_test
+  TEST_GEN_FILES +=3D mdwe_test
+  TEST_GEN_FILES +=3D hugetlb_fault_after_madv
+  TEST_GEN_FILES +=3D hugetlb_madv_vs_map
+ +TEST_GEN_FILES +=3D hugetlb_dio
++ TEST_GEN_FILES +=3D droppable
+ =20
+  ifneq ($(ARCH),arm64)
+  TEST_GEN_FILES +=3D soft-dirty
+
+--Sig_/MmvR/cmc7U=7=PRedTMJjZb
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaM6iwACgkQAVBC80lX
+0GzQ0Qf8D5iZvMUXOim4h+wk5dm9lHbdnosCIMex9sPYFogb+B8L5JFi8rNQ3R+N
+RJrVWK8G/gcEh3dtx7/VV1FpURnjs0AKDvJbYHVTSRbrfbKhAcoeZEvzf3eXNv6i
+9Gf/hrOznL+Fs0ZIkt1UwgIgCHHctZNura+Tt80LlSa3fRe1ybGeQ5eMP68AsMnV
+siS9me/dpizAbMnJluRxwWLbhT86tXBehR6UNI2F+5x4Q/AUSclEuh/aSQGtDSzp
+19v7cJXh50Ggx8ANyDtdJWlxktpQ7B4wrZOoMT3Sya8+9yhSOcvdxGCiuhiKBQ6W
+1mR1+GF/nNUtOxwe72xMb5OFvNWC9w==
+=Ea6t
+-----END PGP SIGNATURE-----
+
+--Sig_/MmvR/cmc7U=7=PRedTMJjZb--
 
