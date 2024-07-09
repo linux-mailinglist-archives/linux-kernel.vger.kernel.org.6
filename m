@@ -1,212 +1,113 @@
-Return-Path: <linux-kernel+bounces-245651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D70C92B57D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:39:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E7E792B584
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:40:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6C26281323
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:39:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC955281DFA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30BC156899;
-	Tue,  9 Jul 2024 10:39:50 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8613156968;
+	Tue,  9 Jul 2024 10:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YOmHiaJn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FD82E62D
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C05C152DF7
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720521590; cv=none; b=oPRoyA3Vz9fza5oljsAkbyer+Hl726QBP3lXXZEZEHKjDNHGIRw2LxGb6VaHNF55r6Sx49ovhHRnoNszFUbpM9d3jf5/94fQLlaSQHnx8ytyHtnc8GRC4KtFBMplk1RP/xHcFhvJvsStIyHioc5VOHSmXTUFdp2N/CmS3u/Or/8=
+	t=1720521600; cv=none; b=TdX+Q3jSoCinp7+TXHMw4yo/Yh65vNQQDp0n+Ug6SOFNKWP2WIK6wsG27tItGgkIozCF76J66ZD7U+HYsKcRfAjkUZbp1Lj1UPIhnmFSRAMvLfgAouVv3rXJ87PXwGrCfcpT7cT/3DfpfZJNiHpJSAFBtxWQA7oT5CjjEowQAMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720521590; c=relaxed/simple;
-	bh=dkzS4Rt/F9bV/4+ZvTyk+sKdEfjnuTkeRQWt5y9Atx4=;
+	s=arc-20240116; t=1720521600; c=relaxed/simple;
+	bh=csn1WnP3P9ry6Da6c8Oi4/nJEjnW05ZV6n0W+BOOSWk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l8xgYtpXIFEDqXpU3XXVjlB3Ro2J+VdgZgblqZGMbQ+BFjle+4G2jEK6TIFMG+QKuRLTmjhLU1vigWCXPfjzIH823FVCZlQpl3Ownr5hUvbhMNolfc0EVh+Q7u5ivYseYKmg17+LwybArtfcuVv3NyytoQtFsT/cpCXYxnStx9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sR8FD-0003rR-B5; Tue, 09 Jul 2024 12:38:47 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sR8F7-008G9a-MD; Tue, 09 Jul 2024 12:38:41 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sR8F7-006Uv6-1k;
-	Tue, 09 Jul 2024 12:38:41 +0200
-Date: Tue, 9 Jul 2024 12:38:41 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Maxime Ripard <mripard@kernel.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Russell King <linux@armlinux.org.uk>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Vladimir Zapolskiy <vz@mleia.com>, Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	imx@lists.linux.dev, linux-omap@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-	openbmc@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org,
-	linux-mips@vger.kernel.org, loongarch@lists.linux.dev
-Subject: Re: [PATCH 4/9] mtd: devices: add AT24 eeprom support
-Message-ID: <20240709103841.7x7n4hdtqrunyoc3@pengutronix.de>
-References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
- <20240701-b4-v6-10-topic-usbc-tcpci-v1-4-3fd5f4a193cc@pengutronix.de>
- <07b701a9-7b52-45b7-8dba-1c25d77cbf15@linaro.org>
- <mafs0ikxnykpr.fsf@kernel.org>
- <20240702-congenial-vigilant-boar-aeae44@houat>
- <mafs0ed8byj5z.fsf@kernel.org>
- <20240702-mighty-brilliant-eel-b0d9fa@houat>
- <20240708084440.70186564@xps-13>
- <20240709092214.omr7ccphdzdk7z7j@pengutronix.de>
- <20240709114302.3c604ef3@xps-13>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jRP7ewgvCcBvSRlZHfJZ/C7C0W+0NHoof50wncyz3/1+jiSyYbK2GTXCr2C1S2Xr8xyeanvAbj4NCCSKijdy0wjighbmBFTipAEOQ3aHiZa0udLWpTV7ywoQaYZwn+yVHXJt0z2bXWDj5zUaMt260o2WHTbrTdIGs+B8rA3RGOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YOmHiaJn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720521597;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1HsxreEQuhm/cJ8pO1jF0rT+KIGY8ZQkAVruIP3CKhg=;
+	b=YOmHiaJnzyV4xQmWlFud+jy/nC8Ze01IAqitP3bYyto9+S6XnJPmv4U83OMPYUT3PjsWFm
+	FYGEN/T2cZTL2mdEy4RZencj/NwH/2yyCujFivgSIFgAfIlpCMP+c2wItZNq2c7mQs5mvt
+	FSADuMokppmHjTb8fRYSMY/L1Z0X6NE=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-249-Ry-MDm3LNnernJl-EEleOQ-1; Tue,
+ 09 Jul 2024 06:39:53 -0400
+X-MC-Unique: Ry-MDm3LNnernJl-EEleOQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 445EB1955F0B;
+	Tue,  9 Jul 2024 10:39:50 +0000 (UTC)
+Received: from localhost (unknown [10.72.116.15])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BE6F019560AA;
+	Tue,  9 Jul 2024 10:39:46 +0000 (UTC)
+Date: Tue, 9 Jul 2024 18:39:42 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: linux@armlinux.org.uk, vgoyal@redhat.com, dyoung@redhat.com,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	arnd@arndb.de, afd@ti.com, akpm@linux-foundation.org,
+	rmk+kernel@armlinux.org.uk, linus.walleij@linaro.org,
+	eric.devolder@oracle.com, gregkh@linuxfoundation.org, deller@gmx.de,
+	javierm@redhat.com, robh@kernel.org, thunder.leizhen@huawei.com,
+	austindh.kim@gmail.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kexec@lists.infradead.org
+Subject: Re: [PATCH 0/3] ARM: Use generic interface to simplify crashkernel
+ reservation
+Message-ID: <Zo0TbmSnHbiz5YQn@MiWiFi-R3L-srv>
+References: <20240708133348.3592667-1-ruanjinjie@huawei.com>
+ <Zo0DCVXvCryDr7WN@MiWiFi-R3L-srv>
+ <3157befe-431f-69ac-b9d3-7a8685ba3a4d@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240709114302.3c604ef3@xps-13>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <3157befe-431f-69ac-b9d3-7a8685ba3a4d@huawei.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 24-07-09, Miquel Raynal wrote:
-> Hi Marco,
+On 07/09/24 at 05:50pm, Jinjie Ruan wrote:
 > 
-> > > > > >> I also found a thread from 2013 by Maxime Ripard (+Cc) suggesting adding
-> > > > > >> EEPROMs to MTD [1]. The main purpose would have been unifying the EEPROM
-> > > > > >> drivers under a single interface. I am not sure what came of it though,
-> > > > > >> since I can't find any patches that followed up with the proposal.    
-> > > > > >
-> > > > > > That discussion led to drivers/nvmem after I started to work on
-> > > > > > some early prototype, and Srinivas took over that work.    
-> > > > > 
-> > > > > So would you say it is better for EEPROM drivers to use nvmem instead of
-> > > > > moving under MTD?    
-> > > > 
-> > > > I thought so at the time, but that was more than 10y ago, and I have
-> > > > followed neither nvmem nor MTD since so I don't really have an opinion
-> > > > there.
-> > > > 
-> > > > It looks like drivers/misc/eeprom/at24.c has support for nvmem though,
-> > > > and MTD can be used as an nvmem provider too, so it's not clear to me
-> > > > why we would want to create yet another variant.
-> > > > 
-> > > > But again, you shouldn't really ask me in the first place :)
-> > > > 
-> > > > I'm sure Miquel, Srinivas, and surely others, are much more relevant to
-> > > > answer that question.  
-> > > 
-> > > More relevant, I doubt, but just a feeling: EEPROMs have their own
-> > > subsystem now, NVMEM, which, as Maxime said, was initially written for
-> > > that very specific case. EEPROMs don't have the complexity of MTD
-> > > devices, and thus pulling the whole MTD subsystem just for getting
-> > > partitions seems counter intuitive to me. You can definitely "split"
-> > > EEPROM devices with NVMEM as well anyway.  
+> 
+> On 2024/7/9 17:29, Baoquan He wrote:
+> > On 07/08/24 at 09:33pm, Jinjie Ruan wrote:
+> >> Currently, x86, arm64, riscv and loongarch has been switched to generic
+> >> crashkernel reservation. Also use generic interface to simplify crashkernel
+> >> reservation for arm32, and fix two bugs by the way.
 > > 
-> > I asked for feedback on my RFC [1] and all I got was to merge both
-> > drivers into one and make the driver backward compatible, which I did by
-> > this commit.
+> > I am not sure if this is a good idea. I added the generic reservation
+> > itnerfaces for ARCH which support crashkernel=,high|low and normal
+> > crashkernel reservation, with this, the code can be simplified a lot.
+> > However, arm32 doesn't support crashkernel=,high, I am not sure if it's
+> > worth taking the change, most importantly, if it will cause
+> > misunderstanding or misoperation.
 > 
-> I'm sorry for not bringing this earlier.
-
-The purpose of the RFC was exactly to figure out the way to go therefore
-I'm a bit surprised now :/
-
-> > > Overall I think the idea of getting rid of these misc/ drivers is goes
-> > > into the right direction, but registering directly into NVMEM makes
-> > > more sense IMO.  
-> > 
-> > So you propose to have two places for the partition handling (one for
-> > MTD and one for NVMEM) instead of one and moving the code into NVMEM
-> > directly?
+> Yes, arm32 doesn't support crashkernel=,high.
 > 
-> Why two places for the partitions handling? Just one, in NVMEM. Also
+> However, a little enhancement to the generic code (please see the first
+> patch), the generic reservation interfaces can also be applicable to
+> architectures that do not support "high" such as arm32, and it can also
+> simplify the code (please see the third patch).
 
-Without checking the details I think that converting the MTD
-partitioning code into NVMEM partitioning code is a bigger task. As you
-said below there are many legacy code paths you need to consider so they
-still work afterwards as well.
+Yeah, I can see the code is simplified. When you specified
+'crashkernel=xM,high', do you think what should be warn out? Because
+it's an unsupported syntax on arm32, we should do something to print out
+appropriate message.
 
-> usually EEPROMs don't require very advanced partitioning schemes,
-> unlike flashes (which are the most common MTD devices today).
-
-As said in my cover letter EEPROMs can become quite large and MTD
-supports partitioning storage devices which is very handy for large
-EEPROMs as well.
-
-> > That doesn't sound right to me either. Also I don't get the
-> > point why EEPROMs can't be handled by the MTD layer?
-> 
-> They can, but should they? Just compile the two layers and observe
-> the size difference. MTD is complex and old, carries a lot of history,
-> and the user interface is also not straightforward because you need to
-> handle pages, blocks, erases, bitflips, ECC stats, OOB bytes and
-> positions, two OTP areas... None of that exists in the EEPROM world. So
-> why would you want to register into MTD and pull a huge subsystem while
-> there is a much more recent, simpler and way lighter subsystem fitting
-> much better your device?
-
-Didn't checked the size but the honest, MTD provides many Kconfig
-switches to trim the size down. As of now the mtd.o is made of up to 5
-(6 if chipreg.o is counted -> should be an opt) files which is of course
-larger than the pure misc/eeprom/at24.c driver but not that large. 
-
-Regards,
-  Marco
-
-> > The layer already
-> > supports devices of type MTD_RAM which are very simple and don't require
-> > an erase-op at least I don't see one.
-> 
-> MTD_RAM has been there forever, probably for "bad" reasons. BTW there
-> has been an attempt at removing it which was reverted in _2006_ and then
-> felt into the cracks:
-> 21c8db9eff95 ("[MTD] Restore MTD_ROM and MTD_RAM types")
-> 
-> Thanks,
-> Miquèl
-> 
 
