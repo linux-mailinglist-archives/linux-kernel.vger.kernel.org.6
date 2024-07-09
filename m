@@ -1,210 +1,192 @@
-Return-Path: <linux-kernel+bounces-245228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 731B392B001
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:21:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 946E492AFF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26E6028292B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:21:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A083282482
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9271369AA;
-	Tue,  9 Jul 2024 06:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ci09Fy4P"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E47E13D532;
+	Tue,  9 Jul 2024 06:20:04 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5BD12C475;
-	Tue,  9 Jul 2024 06:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C6F12F5BF
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 06:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720506090; cv=none; b=YAqyDKtDrKMEzIEwT07mo4scHxwpMoAPdxjOUNrkz+j1AOgxu6VBzXhx9GoA0q2RhiLft4TL6VhhPYra/ie2aB/9mj5myQsG+rnU/gaBnNMw9ShLn0beJXbQ/KzenZ0HOZgrZkVGVNCJt6Q95xm4VqMksotoOcPIVJ9zHNGXRM0=
+	t=1720506004; cv=none; b=MdlMCr9jVez1/drSEpJujrE/MF6BaCuzur7ZOI7VVFr95D8bhsN7d+HMLVStbUaRZQ0iddrwcSUO6LTSIJMj13zXj4Ju9j4od9huh7KZ55cQ+GASnYF0vBhQ2fkBZGJQOA7WaaLMf9CYBi7DQ/LtoMZlQh3YAQPXCe9eyFUVWEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720506090; c=relaxed/simple;
-	bh=GR3LjQQcsOfDijR4d6rjFBNH45bQPCCpzk+BKwaObsc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qVERcAeD5S5fwPvo71t1u+qZI5tespsJRkNnReE1Y/s+Jo4o4bULqcXzY40gfW3+WYCxGcntkEIAhHmkHyGg4HDqzYcCrV0IkLMlRS+Jn/6czXztKzgqcQ9JB0lv/uokVqJ4Jjt9IzhM81yO8L5ODE8kEwZhANRZ9hjXTVL7Cdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ci09Fy4P; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720506087; x=1752042087;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=GR3LjQQcsOfDijR4d6rjFBNH45bQPCCpzk+BKwaObsc=;
-  b=Ci09Fy4P8O9QqdqNVUEmQoDB+zFQdTCrGZ+3j4IZEj5FZGbMm9+NrCIn
-   ZryFPWBPa53Fg5VDC13WosuWveODxwy0sA04jYa2ib8lNqvf7gN94p0bj
-   0ttEAP7FFAoGMODcRzW/17/h7ENfLlMpyWgF4C+jLLgIjIdT4198ZynY3
-   pVXNMmaflt7xJxclHUc0ack1n1pLNbL07Kvq0JGHHSDrBpBb1CNTUxZt/
-   iQqDuSgYLJh+W8tjsrsSS+iVrWB0/56f2zV6EpwSKGynfyEldOT8FQCb4
-   2D54qy6smmfZiRlHwrAAIRAwcO5jojfSxIid5OKHZT4PItO1HyQ4/803f
-   g==;
-X-CSE-ConnectionGUID: GgT9SpFsQUuRN04vsjgj4Q==
-X-CSE-MsgGUID: vyLEBw0MTUyD5hQag9ZW0w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="28339678"
-X-IronPort-AV: E=Sophos;i="6.09,194,1716274800"; 
-   d="scan'208";a="28339678"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 23:21:25 -0700
-X-CSE-ConnectionGUID: v1qVtX4QRTGO3OSeC7LAcw==
-X-CSE-MsgGUID: LWlTtEBXQgy55AgPWu0piw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,194,1716274800"; 
-   d="scan'208";a="52146100"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 23:21:21 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Tvrtko Ursulin <tursulin@igalia.com>
-Cc: linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  kernel-dev@igalia.com,  Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,  Mel
- Gorman <mgorman@suse.de>,  Peter Zijlstra <peterz@infradead.org>,  Ingo
- Molnar <mingo@redhat.com>,  Rik van Riel <riel@surriel.com>,  Johannes
- Weiner <hannes@cmpxchg.org>,  "Matthew Wilcox (Oracle)"
- <willy@infradead.org>,  Dave Hansen <dave.hansen@intel.com>,  Andi Kleen
- <ak@linux.intel.com>,  Michal Hocko <mhocko@suse.com>,  David Rientjes
- <rientjes@google.com>,  stable@vger.kernel.org
-Subject: Re: [PATCH v4] mm/numa_balancing: Teach mpol_to_str about the
- balancing mode
-In-Reply-To: <20240708075632.95857-1-tursulin@igalia.com> (Tvrtko Ursulin's
-	message of "Mon, 8 Jul 2024 08:56:32 +0100")
-References: <20240708075632.95857-1-tursulin@igalia.com>
-Date: Tue, 09 Jul 2024 14:19:29 +0800
-Message-ID: <87ttgzaxzi.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1720506004; c=relaxed/simple;
+	bh=RYzQiIfqhBK+es5lDuGcYKm5r/ystp+Nb9ADELRLNjw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mFKuNTZMCOLNggzuYD8aQYMPHajrmfZ/ZWWVFxmsVVZc/6D28yh8z0zJnM3/Q1nW2THf7T85dnWw3qBruuPMj8g3MsKJFYmwbiF9shiO2jQozUVOUS9e45/xuUx67cZO13MVdmIh1EDAQbj89GGFOCvHKCcEetUxcZCviE3nLFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sR4CZ-0004xy-KT; Tue, 09 Jul 2024 08:19:47 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sR4CW-008DX5-La; Tue, 09 Jul 2024 08:19:44 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sR4CW-0033kY-1w;
+	Tue, 09 Jul 2024 08:19:44 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Michal Kubecek <mkubecek@suse.cz>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>,
+	Woojung.Huh@microchip.com
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net v3 1/1] ethtool: netlink: do not return SQI value if link is down
+Date: Tue,  9 Jul 2024 08:19:43 +0200
+Message-Id: <20240709061943.729381-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Tvrtko Ursulin <tursulin@igalia.com> writes:
+Do not attach SQI value if link is down. "SQI values are only valid if
+link-up condition is present" per OpenAlliance specification of
+100Base-T1 Interoperability Test suite [1]. The same rule would apply
+for other link types.
 
-> From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
->
-> Since balancing mode was added in
-> bda420b98505 ("numa balancing: migrate on fault among multiple bound nodes"),
-> it was possible to set this mode but it wouldn't be shown in
-> /proc/<pid>/numa_maps since there was no support for it in the
-> mpol_to_str() helper.
->
-> Furthermore, because the balancing mode sets the MPOL_F_MORON flag, it
-> would be displayed as 'default' due a workaround introduced a few years
-> earlier in
-> 8790c71a18e5 ("mm/mempolicy.c: fix mempolicy printing in numa_maps").
->
-> To tidy this up we implement two changes:
->
-> Replace the MPOL_F_MORON check by pointer comparison against the
-> preferred_node_policy array. By doing this we generalise the current
-> special casing and replace the incorrect 'default' with the correct
-> 'bind' for the mode.
->
-> Secondly, we add a string representation and corresponding handling for
-> the MPOL_F_NUMA_BALANCING flag.
->
-> With the two changes together we start showing the balancing flag when it
-> is set and therefore complete the fix.
->
-> Representation format chosen is to separate multiple flags with vertical
-> bars, following what existed long time ago in kernel 2.6.25. But as
-> between then and now there wasn't a way to display multiple flags, this
-> patch does not change the format in practice.
->
-> Some /proc/<pid>/numa_maps output examples:
->
->  555559580000 bind=balancing:0-1,3 file=...
->  555585800000 bind=balancing|static:0,2 file=...
->  555635240000 prefer=relative:0 file=
->
-> v2:
->  * Fully fix by introducing MPOL_F_KERNEL.
->
-> v3:
->  * Abandoned the MPOL_F_KERNEL approach in favour of pointer comparisons.
->  * Removed lookup generalisation for easier backporting.
->  * Replaced commas as separator with vertical bars.
->  * Added a few more words about the string format in the commit message.
->
-> v4:
->  * Use is_power_of_2.
->  * Use ARRAY_SIZE and update recommended buffer size for two flags.
->
-> Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-> Fixes: bda420b98505 ("numa balancing: migrate on fault among multiple bound nodes")
-> References: 8790c71a18e5 ("mm/mempolicy.c: fix mempolicy printing in numa_maps")
-> Cc: Huang Ying <ying.huang@intel.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Rik van Riel <riel@surriel.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Andi Kleen <ak@linux.intel.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: <stable@vger.kernel.org> # v5.12+
+[1] https://opensig.org/automotive-ethernet-specifications/#
 
-LGTM, Thanks!
+Fixes: 806602191592 ("ethtool: provide UAPI for PHY Signal Quality Index (SQI)")
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+---
+changes v3:
+- add (data->sqi <= data->sqi_max) validation
+changes v2:
+- add and reuse helper functions linkstate_sqi_critical_error() and
+  linkstate_sqi_valid()
+- make sure we set sqi and sqi_max vals only if both are valid
+---
+ net/ethtool/linkstate.c | 41 ++++++++++++++++++++++++++++-------------
+ 1 file changed, 28 insertions(+), 13 deletions(-)
 
-Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
+diff --git a/net/ethtool/linkstate.c b/net/ethtool/linkstate.c
+index b2de2108b356a..34d76e87847d0 100644
+--- a/net/ethtool/linkstate.c
++++ b/net/ethtool/linkstate.c
+@@ -37,6 +37,8 @@ static int linkstate_get_sqi(struct net_device *dev)
+ 	mutex_lock(&phydev->lock);
+ 	if (!phydev->drv || !phydev->drv->get_sqi)
+ 		ret = -EOPNOTSUPP;
++	else if (!phydev->link)
++		ret = -ENETDOWN;
+ 	else
+ 		ret = phydev->drv->get_sqi(phydev);
+ 	mutex_unlock(&phydev->lock);
+@@ -55,6 +57,8 @@ static int linkstate_get_sqi_max(struct net_device *dev)
+ 	mutex_lock(&phydev->lock);
+ 	if (!phydev->drv || !phydev->drv->get_sqi_max)
+ 		ret = -EOPNOTSUPP;
++	else if (!phydev->link)
++		ret = -ENETDOWN;
+ 	else
+ 		ret = phydev->drv->get_sqi_max(phydev);
+ 	mutex_unlock(&phydev->lock);
+@@ -62,6 +66,17 @@ static int linkstate_get_sqi_max(struct net_device *dev)
+ 	return ret;
+ };
+ 
++static bool linkstate_sqi_critical_error(int sqi)
++{
++	return sqi < 0 && sqi != -EOPNOTSUPP && sqi != -ENETDOWN;
++}
++
++static bool linkstate_sqi_valid(struct linkstate_reply_data *data)
++{
++	return data->sqi >= 0 && data->sqi_max >= 0 &&
++	       data->sqi <= data->sqi_max;
++}
++
+ static int linkstate_get_link_ext_state(struct net_device *dev,
+ 					struct linkstate_reply_data *data)
+ {
+@@ -93,12 +108,12 @@ static int linkstate_prepare_data(const struct ethnl_req_info *req_base,
+ 	data->link = __ethtool_get_link(dev);
+ 
+ 	ret = linkstate_get_sqi(dev);
+-	if (ret < 0 && ret != -EOPNOTSUPP)
++	if (linkstate_sqi_critical_error(ret))
+ 		goto out;
+ 	data->sqi = ret;
+ 
+ 	ret = linkstate_get_sqi_max(dev);
+-	if (ret < 0 && ret != -EOPNOTSUPP)
++	if (linkstate_sqi_critical_error(ret))
+ 		goto out;
+ 	data->sqi_max = ret;
+ 
+@@ -136,11 +151,10 @@ static int linkstate_reply_size(const struct ethnl_req_info *req_base,
+ 	len = nla_total_size(sizeof(u8)) /* LINKSTATE_LINK */
+ 		+ 0;
+ 
+-	if (data->sqi != -EOPNOTSUPP)
+-		len += nla_total_size(sizeof(u32));
+-
+-	if (data->sqi_max != -EOPNOTSUPP)
+-		len += nla_total_size(sizeof(u32));
++	if (linkstate_sqi_valid(data)) {
++		len += nla_total_size(sizeof(u32)); /* LINKSTATE_SQI */
++		len += nla_total_size(sizeof(u32)); /* LINKSTATE_SQI_MAX */
++	}
+ 
+ 	if (data->link_ext_state_provided)
+ 		len += nla_total_size(sizeof(u8)); /* LINKSTATE_EXT_STATE */
+@@ -164,13 +178,14 @@ static int linkstate_fill_reply(struct sk_buff *skb,
+ 	    nla_put_u8(skb, ETHTOOL_A_LINKSTATE_LINK, !!data->link))
+ 		return -EMSGSIZE;
+ 
+-	if (data->sqi != -EOPNOTSUPP &&
+-	    nla_put_u32(skb, ETHTOOL_A_LINKSTATE_SQI, data->sqi))
+-		return -EMSGSIZE;
++	if (linkstate_sqi_valid(data)) {
++		if (nla_put_u32(skb, ETHTOOL_A_LINKSTATE_SQI, data->sqi))
++			return -EMSGSIZE;
+ 
+-	if (data->sqi_max != -EOPNOTSUPP &&
+-	    nla_put_u32(skb, ETHTOOL_A_LINKSTATE_SQI_MAX, data->sqi_max))
+-		return -EMSGSIZE;
++		if (nla_put_u32(skb, ETHTOOL_A_LINKSTATE_SQI_MAX,
++				data->sqi_max))
++			return -EMSGSIZE;
++	}
+ 
+ 	if (data->link_ext_state_provided) {
+ 		if (nla_put_u8(skb, ETHTOOL_A_LINKSTATE_EXT_STATE,
+-- 
+2.39.2
 
-> ---
->  mm/mempolicy.c | 18 ++++++++++++++----
->  1 file changed, 14 insertions(+), 4 deletions(-)
->
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> index aec756ae5637..a1bf9aa15c33 100644
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -3293,8 +3293,9 @@ int mpol_parse_str(char *str, struct mempolicy **mpol)
->   * @pol:  pointer to mempolicy to be formatted
->   *
->   * Convert @pol into a string.  If @buffer is too short, truncate the string.
-> - * Recommend a @maxlen of at least 32 for the longest mode, "interleave", the
-> - * longest flag, "relative", and to display at least a few node ids.
-> + * Recommend a @maxlen of at least 51 for the longest mode, "weighted
-> + * interleave", plus the longest flag flags, "relative|balancing", and to
-> + * display at least a few node ids.
->   */
->  void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
->  {
-> @@ -3303,7 +3304,10 @@ void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
->  	unsigned short mode = MPOL_DEFAULT;
->  	unsigned short flags = 0;
->  
-> -	if (pol && pol != &default_policy && !(pol->flags & MPOL_F_MORON)) {
-> +	if (pol &&
-> +	    pol != &default_policy &&
-> +	    !(pol >= &preferred_node_policy[0] &&
-> +	      pol <= &preferred_node_policy[ARRAY_SIZE(preferred_node_policy) - 1])) {
->  		mode = pol->mode;
->  		flags = pol->flags;
->  	}
-> @@ -3331,12 +3335,18 @@ void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
->  		p += snprintf(p, buffer + maxlen - p, "=");
->  
->  		/*
-> -		 * Currently, the only defined flags are mutually exclusive
-> +		 * Static and relative are mutually exclusive.
->  		 */
->  		if (flags & MPOL_F_STATIC_NODES)
->  			p += snprintf(p, buffer + maxlen - p, "static");
->  		else if (flags & MPOL_F_RELATIVE_NODES)
->  			p += snprintf(p, buffer + maxlen - p, "relative");
-> +
-> +		if (flags & MPOL_F_NUMA_BALANCING) {
-> +			if (!is_power_of_2(flags & MPOL_MODE_FLAGS))
-> +				p += snprintf(p, buffer + maxlen - p, "|");
-> +			p += snprintf(p, buffer + maxlen - p, "balancing");
-> +		}
->  	}
->  
->  	if (!nodes_empty(nodes))
 
