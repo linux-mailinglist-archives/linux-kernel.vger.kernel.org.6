@@ -1,91 +1,166 @@
-Return-Path: <linux-kernel+bounces-245325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A67992B147
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:37:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F2992B14E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44BD82823C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:37:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 225871C21DDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BA514374C;
-	Tue,  9 Jul 2024 07:36:57 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C877914F9E7;
+	Tue,  9 Jul 2024 07:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FE05boOJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFF027713;
-	Tue,  9 Jul 2024 07:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E1D149C6C
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 07:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720510617; cv=none; b=Yl4ZGAHWD9H3YlJdaZmpTzChtK3VKjWc8SFh49RxLIQVjDSM9udw8nY8qBWjqQNZjJ3KIM5lSZNeVlp4vkidEXTLE0wbisX2QuywAeebW1P6UlgPHeB4N5VtK3qqsfblfsPZUOHOJA3qHC4GYc9mPDAKtsqoCo6MayTOQJE3qsk=
+	t=1720510653; cv=none; b=PnEoNdgcWvawPlf1CUEcs+3bZ/w/VRMqy4sWeEfaB958iYvF9rpp8QjwNQzfgIBdvE8vvvh0BF0qGqK1pDBlBLzP5hZmCW0ERxVTpjlpJoEKWyqIhGX1Jm8INhaq57GZk51ET3bKYjqbnyfXg67j9Lo6IzgZ8Jb0KqWmvBcHaac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720510617; c=relaxed/simple;
-	bh=kJVEraRI21h/N6nGEGKFv74pdsh0FUQihuPipEu8lKQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JZtH7gMNWWGPQLHyK0dlTk/87khwwFQeqO/QrodHXWdiwX7F3ihUOnOR1fT3rEc+lX7AaFMZy/V3VrJAve0ZrPk2NRYv1fEErEDiYlfQl95aDfna0TgCVuR4ThWm200lz8QZe6HoDbR85wbGuqW+djlQRDiZZNXVbWG1w3Doe6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowAD3_lqR6IxmUgrNFA--.40028S2;
-	Tue, 09 Jul 2024 15:36:49 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: chandan.babu@oracle.com,
-	djwong@kernel.org
-Cc: linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] xfs: convert comma to semicolon
-Date: Tue,  9 Jul 2024 15:36:32 +0800
-Message-Id: <20240709073632.1152995-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720510653; c=relaxed/simple;
+	bh=R6uhElAMm4FTpUU4vkd99nDcZrma70iZDg9k9g3ocDQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jY4es1jBNHdJFYKquTeeUJTb3lmDH3iIhczObIzOj/YI3U6eN3Zavw9BdVfwjLnUeaCmQHmAbyjqelgEhhoSZqgek5lHE3Z49A0IVDpwmLnagtbRDiXXSGwBlcupAXrgP27k8HOu4jpZYE5e750wfNx1Q1FPn8P+ElldMNuXWQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FE05boOJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720510649;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A49qXoXkEsMzgDh5I6lFSA4XYzFZMk+NCFiOV4UimaA=;
+	b=FE05boOJX/W6NVlx6Ba2TZp/l1l44trpUiLIMVTLY80MRDQPyA4wiTb8lYSyP1A2JRaUdS
+	V52DtDDJICmY3/MiDm2Mkx9LLOioC+kfC22UfoczJFHsfwPij8cYresJdS/VIPhxMkvxei
+	XO291EiXPTnDtoMVaecYPVm56EVlC80=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-352-pqG2AY7UO_amZgbGFygacg-1; Tue, 09 Jul 2024 03:37:28 -0400
+X-MC-Unique: pqG2AY7UO_amZgbGFygacg-1
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-594fe8844cfso217130a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 00:37:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720510646; x=1721115446;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A49qXoXkEsMzgDh5I6lFSA4XYzFZMk+NCFiOV4UimaA=;
+        b=vh2Cgj/SQPObwxAQ2lWyyCZ+DaC7RcTwLTxn6TPkEqjelJLZlbTerptJCyF2B+uJIs
+         bS5tMbe/MAswu2ukF+PblUO9Hkt24a3vw2LW1Sh5xpVAmbWgIJu8yCGo2IhZZkFjA+0f
+         b18+2VdcTIr2pUsTKHnWoy9m86MtCl7Ns8dwBsRW8QN2VPMMEH9g87sSLg/tBdDHhzMu
+         sReIDKAyUGC7LXxAuKATsKXm05Hi7jEVbPg6jce7APX00el37EhNIcvX/B6qEXciEDnq
+         k9FVD6mztmu2p+DWsmp6AA0e3hWYjGiQMA8+8vyCzgXnro+AieUpBz+d9AFBb0nBKzcB
+         cj7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXFhIE+PWxPWIVtMhWYHAE+Lgx4VgOuaC6OsLhf0nR+ARPG44hxkXh8tM/pW5WPhvfV6UN2XGcNHTvt2NLbafAJs7Cgc620+cHt6mae
+X-Gm-Message-State: AOJu0YzczfmUSIzAIqSo3tfKoNEdH1RNysL48jGn6vTOsD+uGhIaPlgx
+	5ZlYv8x5MT8YVgBozCr66ddVOFIM1zqorE7TNN8MyrcB+pt8ue1n3TLneFpxdIKytjFJv1wwkz4
+	Pcy3QKNaHwcXKMo4T8TvODRsyb1naRAmwcLEEDbYeypzSmK4KvsyztYYTwvwGdw40hs6umAVCXQ
+	cQTUmUvbhPxSkU0r49HlcDGGDfyMUmob6EbPyvhreqSwVf
+X-Received: by 2002:a05:6402:430b:b0:58c:3252:3ab8 with SMTP id 4fb4d7f45d1cf-594bcba83fcmr1671353a12.37.1720510645973;
+        Tue, 09 Jul 2024 00:37:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHvA5gcFgFWqNy3DfNk26q33q8PtgffuDdwkGspZQpCkB6LI+Z1lBCXYRy9/d//O/OXiMfXxo5/urdnIEt4WlE=
+X-Received: by 2002:a05:6402:430b:b0:58c:3252:3ab8 with SMTP id
+ 4fb4d7f45d1cf-594bcba83fcmr1671317a12.37.1720510645548; Tue, 09 Jul 2024
+ 00:37:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAD3_lqR6IxmUgrNFA--.40028S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF15Zr47JF17Ww45KFg_yoW3WFc_ua
-	98tF1kG3W5Jr17K3ZrAryFya1rX397ArnrX392yFnIy3s0qF4UXws0gr4UtFnxWr15A3ZY
-	93Z0gFWYkF9I9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbcAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r4UJVWxJr1lOx8S6xCaFVCjc4AY6r
-	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_
-	GF4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
-	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI
-	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
-	4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI
-	42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU5HUDDUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+References: <20240708065549.89422-1-lulu@redhat.com> <34818d378285d011d0e7d73d497ef8d710861adc.camel@nvidia.com>
+In-Reply-To: <34818d378285d011d0e7d73d497ef8d710861adc.camel@nvidia.com>
+From: Cindy Lu <lulu@redhat.com>
+Date: Tue, 9 Jul 2024 15:36:48 +0800
+Message-ID: <CACLfguV5CXMs9AdWrN9a=st5PjUnT4B1bt2Uua=AYjuC0NwfNg@mail.gmail.com>
+Subject: Re: [PATCH] vdpa/mlx5: Add the support of set mac address
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: Parav Pandit <parav@nvidia.com>, "sgarzare@redhat.com" <sgarzare@redhat.com>, 
+	"virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, "mst@redhat.com" <mst@redhat.com>, 
+	"jasowang@redhat.com" <jasowang@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Replace a comma between expression statements by a semicolon.
-
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- fs/xfs/xfs_attr_list.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/xfs/xfs_attr_list.c b/fs/xfs/xfs_attr_list.c
-index 5c947e5ce8b8..7db386304875 100644
---- a/fs/xfs/xfs_attr_list.c
-+++ b/fs/xfs/xfs_attr_list.c
-@@ -139,7 +139,7 @@ xfs_attr_shortform_list(
- 		sbp->name = sfe->nameval;
- 		sbp->namelen = sfe->namelen;
- 		/* These are bytes, and both on-disk, don't endian-flip */
--		sbp->value = &sfe->nameval[sfe->namelen],
-+		sbp->value = &sfe->nameval[sfe->namelen];
- 		sbp->valuelen = sfe->valuelen;
- 		sbp->flags = sfe->flags;
- 		sbp->hash = xfs_attr_hashval(dp->i_mount, sfe->flags,
--- 
-2.25.1
+On Mon, 8 Jul 2024 at 15:27, Dragos Tatulea <dtatulea@nvidia.com> wrote:
+>
+> On Mon, 2024-07-08 at 14:55 +0800, Cindy Lu wrote:
+> > Add the function to support setting the MAC address.
+> > For vdpa/mlx5, the function will use mlx5_mpfs_add_mac
+> > to set the mac address
+> >
+> > Tested in ConnectX-6 Dx device
+> >
+> > Signed-off-by: Cindy Lu <lulu@redhat.com>
+> > ---
+> >  drivers/vdpa/mlx5/net/mlx5_vnet.c | 23 +++++++++++++++++++++++
+> >  1 file changed, 23 insertions(+)
+> >
+> > diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/=
+mlx5_vnet.c
+> > index 26ba7da6b410..f78701386690 100644
+> > --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > @@ -3616,10 +3616,33 @@ static void mlx5_vdpa_dev_del(struct vdpa_mgmt_=
+dev *v_mdev, struct vdpa_device *
+> >       destroy_workqueue(wq);
+> >       mgtdev->ndev =3D NULL;
+> >  }
+> > +static int mlx5_vdpa_set_attr_mac(struct vdpa_mgmt_dev *v_mdev,
+> > +                               struct vdpa_device *dev,
+> > +                               const struct vdpa_dev_set_config *add_c=
+onfig)
+> > +{
+> > +     struct mlx5_vdpa_dev *mvdev =3D to_mvdev(dev);
+> > +     struct mlx5_vdpa_net *ndev =3D to_mlx5_vdpa_ndev(mvdev);
+> > +     struct mlx5_core_dev *mdev =3D mvdev->mdev;
+> > +     struct virtio_net_config *config =3D &ndev->config;
+> > +     int err;
+> > +     struct mlx5_core_dev *pfmdev;
+> > +
+> You need to take the ndev->reslock.
+>
+thanks will change this
+> > +     if (add_config->mask & (1 << VDPA_ATTR_DEV_NET_CFG_MACADDR)) {
+> > +             if (!is_zero_ether_addr(add_config->net.mac)) {
+> > +                     memcpy(config->mac, add_config->net.mac, ETH_ALEN=
+);
+> I would do the memcpy after mlx5_mpfs_add_mac() was called successfully. =
+This
+> way the config gets changed only on success.
+>
+thanks Dragos=EF=BC=8C Will fix this
+thanks
+cindy
+> > +                     pfmdev =3D pci_get_drvdata(pci_physfn(mdev->pdev)=
+);
+> > +                     err =3D mlx5_mpfs_add_mac(pfmdev, config->mac);
+> > +                     if (err)
+> > +                             return -1;
+> > +             }
+> > +     }
+> > +     return 0;
+> > +}
+> >
+> >  static const struct vdpa_mgmtdev_ops mdev_ops =3D {
+> >       .dev_add =3D mlx5_vdpa_dev_add,
+> >       .dev_del =3D mlx5_vdpa_dev_del,
+> > +     .dev_set_attr =3D mlx5_vdpa_set_attr_mac,
+> >  };
+> >
+> >  static struct virtio_device_id id_table[] =3D {
+>
+> Thanks,
+> Dragos
+>
 
 
