@@ -1,122 +1,131 @@
-Return-Path: <linux-kernel+bounces-245015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DAC492AD06
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:14:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3509592AD09
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 055E2B21515
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:14:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 965B9B21EBB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBDD64A;
-	Tue,  9 Jul 2024 00:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FFE72594;
+	Tue,  9 Jul 2024 00:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NgY057Ui"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jTi6hdUf"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4AF15BB;
-	Tue,  9 Jul 2024 00:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14B1EA4
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 00:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720484035; cv=none; b=VEledYNWd/E3B5u16ofd5j1tnT1jPxcKlGkLFBaRKgP71IP/WlEuhNZ69QPfUcjWBpbgaCaeGZA4a1a4cRU7NxU9i8OB3D2UHPcBAM/hqysaxjuiRVXhe8FK5E3u8k5euyBnQADZgo97ygv8tt52Q5YY3cmZYz+JsXdpLLdRNr4=
+	t=1720484463; cv=none; b=nTACDb976VqBTVrx3uLUhUwz2G3OaDTn0vHrAGjIg9vdB4/WaW2Vp3UYEX9jPzrkwqX2x063fvY6NmtY/cNUIbbUorIAo+SLpzTJRiAUY8NVP4gagirKsMYo8cnFDxy1YXLrBdfHaHXLladjhkaLnoirQVDGqe7wuN8LWNLNORw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720484035; c=relaxed/simple;
-	bh=Mb12xR5lEqoTMdGbNLeG53ZBvDW6qJOOXoCH23ARxoM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jmn/VngnrQLqBsOftv8Hkh2hTb/Y1cCpRVOQtINURev6f7eG+5JdWJ9McFReRxtmWyFm1RGLaQEBzK0HAk+4mID3HltxyzNk7XX7XZk2PQFnAo1apDpGBvgkMu6xAZJIWpsIA7GBfuPC7tPTQNnTjPHBAgWpBt270IXNdVkt+yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NgY057Ui; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720484030;
-	bh=7TKJvcglB4/AWtYt0knLNN92+nI3DFG8+djJVoRKvoU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=NgY057UiMtcLGYfEK7wD+s0Kafvc0rlJw9ck8d4rM98pqcxXaaRS/ri2XDka7GqBb
-	 O94zHpPIT9Sywt9RViP3odc/BaAzleyK77HTjfhj0Gj4ui4AQhGAdTIy0K78w7Ot+s
-	 MDN0erNY+6Ri4ia/IuvD5YPBLtn+C9s+yyrfxrd7tiDyIhEjf1VAKr0my2OW6ao/E4
-	 nSMuGbWqn5EuXX/HpHUFMpMUezuvo1KiM6GWuJ3D5vsvCZgxD7vc8nASXyLFCc+mCH
-	 ud9puw9p5eCxclm+VZvYQzdJnXoJJzVKuTN3kJXfGPSSXYlO//Imk7g6e8zJV7dYlV
-	 3nZu5GMR70Sjg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJ1gL2hLjz4wb2;
-	Tue,  9 Jul 2024 10:13:50 +1000 (AEST)
-Date: Tue, 9 Jul 2024 10:13:49 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Alexandre Torgue <alexandre.torgue@st.com>, Olof Johansson
- <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-Cc: ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the stm32 tree
-Message-ID: <20240709101349.02040caa@canb.auug.org.au>
+	s=arc-20240116; t=1720484463; c=relaxed/simple;
+	bh=JPryGkeVnQXZKoT8E8gFpCO6dUz1mD9ov58PKxpQgSg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EGGOoELy5MDL/1EUuu+tSVMC1Kh4W1lw3QIQx/vFOO4EYepmJZ2CepSEWHR1dbVcbJ6GHFIOlRD55RM404j31DfN+leiGFFJy1ysl8IUvlCmBKKfwT3nM5FWoksmgxzfe1bW/QEe4NPRNns9fI7ectwCc/ZnNTF7V/LS9GOuYtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jTi6hdUf; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-79efb4a46b6so188956685a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 17:21:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1720484457; x=1721089257; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RKGxru8jlEhy9VDpu0M8oQtUNp25i0UIEibzxizl6pU=;
+        b=jTi6hdUfqVwWpPGsAKAqfL8ZKCUHq+ySpYd5cZIf0f0YrDXyc3l6rLtRp90oRcc3QC
+         ARcJwZJgWsItkhdGCyoMT0cNhHLtF9uCG6FJR3nKAQXqAhLCvE5BKhM9IdrndpFDRMA+
+         Ral1NCMM7djdQuAvHgb/KwGC+BHD9iUNrkoDE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720484457; x=1721089257;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RKGxru8jlEhy9VDpu0M8oQtUNp25i0UIEibzxizl6pU=;
+        b=R91fxNc1XOQZn1jO2ySbrtXXavTHZayPfb063QMTivuf+DO3UKgkArFV1Co91GdIRY
+         ZgqdMav2UDoXAidrXIv2Q7XVQkJRZ8stMflzzrG+M5TxB21zTriWhv5s7CqZIJwCYGSD
+         RdIw5q7tuqFwva+TpZiUGnAfoHv0qaMKcokZSCVK7M47fUxPZ89Dy19TSe89oVyWV1FB
+         v0zQ+6x0awczmWcqquUiRk58DSdfnMY08Fa58D53OtDa95zdi617ScqOdndym/7c/pls
+         otsSpowKCQUjDo7mbGabXEFpL79jC6277jFohdh4Yb2K48F6u94TXnFwaG8y7HR22ziM
+         D+PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWBHqRorlr8T6AjluhnwdEsp1DnzHxD26RHCayZANOMxSwFF05r4za3kO5FiQh95oiJZlTMK8cd1yOL4kXtEW/o4tZtOahU3Wxo75Ac
+X-Gm-Message-State: AOJu0YwNvjmPpYtLQ7MILLxAOVq/gvr5ZDfsEyhRuyhP8ee2jKjsIi2i
+	Fdany52IkXunDxKKicxOjKQYn/Ahu12YheEYEspVI1o03pcMkB2Glh5+HJqlLeCVbYMIEJP/OcR
+	y7YZ3
+X-Google-Smtp-Source: AGHT+IEuLjxZ1dII0DOZGpI1fm2FQ6fnD25n6UaG6Y5k1Zt+AWSLaZo5QDCEgJBXPmWWAWphleT+wA==
+X-Received: by 2002:a05:620a:14b6:b0:79f:1873:5463 with SMTP id af79cd13be357-79f19a0fd43mr116888185a.6.1720484457434;
+        Mon, 08 Jul 2024 17:20:57 -0700 (PDT)
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com. [209.85.160.181])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f190890e4sm41734985a.95.2024.07.08.17.20.56
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 17:20:56 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-447f8aa87bfso176581cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 17:20:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUP1cO7Wpuec4z/639EHHlUMb9piieS67DpZidVSt+e4o5pAd3NreCfr9nmujTbmxhOQ91rEkGh/CXUeCJx0UznLaBF6fSeVlVBrpoC
+X-Received: by 2002:ac8:6b85:0:b0:447:e393:fed1 with SMTP id
+ d75a77b69052e-447fd03dedemr883021cf.7.1720484455811; Mon, 08 Jul 2024
+ 17:20:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/5=S9=Ywkr+c1nEVexhs0zK_";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/5=S9=Ywkr+c1nEVexhs0zK_
-Content-Type: text/plain; charset=US-ASCII
+References: <20240628182428.171031-1-tejasvipin76@gmail.com> <20240628182428.171031-2-tejasvipin76@gmail.com>
+In-Reply-To: <20240628182428.171031-2-tejasvipin76@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 8 Jul 2024 17:20:44 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VKiEjDfeK8pCqAk8+YWBD2U4ESLik8kiDbvgrZz7o1NA@mail.gmail.com>
+Message-ID: <CAD=FV=VKiEjDfeK8pCqAk8+YWBD2U4ESLik8kiDbvgrZz7o1NA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drm/mipi-dsi: add more multi functions for better
+ error handling
+To: Tejas Vipin <tejasvipin76@gmail.com>
+Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, LinusW <linus.walleij@linaro.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi,
 
-The following commits are also in the arm-soc tree as different
-commits (but the same patches):
+On Fri, Jun 28, 2024 at 11:25=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail.co=
+m> wrote:
+>
+> +/**
+> + * mipi_dsi_dcs_set_page_address_multi() - define the column extent of t=
+he
+> + *     frame memory accessed by the host processor
+> + * @ctx: Context for multiple DSI transactions
+> + * @start: first column of frame memory
+> + * @end: last column of frame memory
 
-  1245911be805 ("ARM: multi_v7_defconfig: Add MCP23S08 pinctrl support")
-  2599b1f071f4 ("ARM: dts: stm32: Document output pins for PWMs on stm32mp1=
-35f-dk")
-  32bc9d195039 ("ARM: dts: stm32: Add ethernet support for DH STM32MP13xx D=
-HCOR DHSBC board")
-  3389697affa5 ("arm64: dts: st: add HPDMA nodes on stm32mp251")
-  55dc557485c7 ("arm64: dts: st: add ethernet1 and ethernet2 support on stm=
-32mp25")
-  5d6c1cef82a0 ("arm64: dts: st: describe power supplies for stm32mp257f-ev=
-1 board")
-  9bcaeb10520a ("ARM: dts: stm32: add ethernet1 for STM32MP135F-DK board")
-  a11b40677a34 ("regulator: Add STM32MP25 regulator bindings")
-  a29ad03d8393 ("arm64: dts: st: add scmi regulators on stm32mp25")
-  a43179fe3f09 ("arm64: dts: st: add eth2 pinctrl entries in stm32mp25-pinc=
-trl.dtsi")
-  a4a0254811cc ("ARM: dts: stm32: omit unused pinctrl groups from stm32mp13=
- dtb files")
-  a80ce2d743fb ("ARM: dts: stm32: add ethernet1 and ethernet2 support on st=
-m32mp13")
-  ba3e48a76df3 ("ARM: dts: stm32: OP-TEE async notif interrupt for ST STM32=
-MP15x boards")
-  c62c13b4efe4 ("ARM: dts: stm32: add ethernet1/2 RMII pins for STM32MP13F-=
-DK board")
-  d41b45f29bc3 ("ARM: dts: stm32: order stm32mp13-pinctrl nodes")
-  de2997982cf9 ("arm64: dts: st: enable Ethernet2 on stm32mp257f-ev1 board")
+nit: "start" and "end" comments should say "first page" and "last
+page", not "first column" and "last column". The previous function was
+the one about columns.
 
---=20
-Cheers,
-Stephen Rothwell
+> + *
+> + * Like mipi_dsi_dcs_set_page_address() but deals with errors in a way t=
+hat
+> + * makes it convenient to make several calls in a row.
+> + */
+> +void mipi_dsi_dcs_set_page_address_multi(struct mipi_dsi_multi_context *=
+ctx,
+> +                                          u16 start, u16 end)
 
---Sig_/5=S9=Ywkr+c1nEVexhs0zK_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+nit: indentation of the above line isn't _quite_ right.
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaMgL0ACgkQAVBC80lX
-0GylIggAiKlBZwD5EOyhWhidAbirpGT7nGVIDwk1ruUtICoUcPX/Yyg7t9E9nb2R
-Dqbs8MY3KMrCtwczbuFKl6xZoqeuFxjou28cuGuDUuCGG0fwdtvDoLnNqlqE9dIo
-AmQuvIXMEPNHmDGS+RVaZVmP5j2lZWULNc6PZEuDOZQTk7KWaMygqR3sznT3izit
-85+CF6AzEMIKtr/WzGCADK0sIiJt764PVnKdMYPblypbEZMbdIGCCWisvOyPC//x
-nZNLCk5qpLmO29LZlCu22Swbx3nHSjbtmbJBHoL5IPra6NVQZPRF4MvhtfxHCFs1
-WCBsVzhhJVN3ff2oTsvkGJgybYFr2A==
-=1vuG
------END PGP SIGNATURE-----
-
---Sig_/5=S9=Ywkr+c1nEVexhs0zK_--
+Other than the two nits, this looks fine to me, but I'd prefer if
+someone else provides an "Ack" in addition to me that they're OK
+adding these extra "multi" functions. Both Dmitry and Linus W were
+involved in the original "multi" functions, so maybe they'd be willing
+to offer their opinions?
 
