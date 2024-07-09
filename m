@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-246743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528CA92C61D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:15:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E0992C61B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E75D0281D4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:15:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF1331F22610
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4885119344A;
-	Tue,  9 Jul 2024 22:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC734192491;
+	Tue,  9 Jul 2024 22:12:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="NhtBC1Hr"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="E95RW92j"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A9117B05D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F105618FA26;
 	Tue,  9 Jul 2024 22:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720563152; cv=none; b=c4hwLztHZzZ3bAJ9LlB82v9K5RIE7Hl8oofd0W19vym1a6fud4yg4LuouiTReT76JSUSFnUp63mAjUzzxDNRzj2HihsloQMimjhxeXw1vy7pNEUlzLVrvpy/n2bRB+YQI+yoghuKFKtvAEC/RxC6nr9BVikHjEBlBGSrsSu0YbU=
+	t=1720563151; cv=none; b=sXuTy+/D0F8XlFA7BbjJvpL1ph/Cy5m/GKqYAr4X6SP+imEFaWW2GXALSHsJqQyJLNMpqDdFkqh/U5+7F/ftavWtOt8rACeTbk8dVpvckyYkgm1k/DVB77kV9oY1JLdCEadRTaGALZTfTts0WzNs4GgSiEY173ezMWW9EAvQq7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720563152; c=relaxed/simple;
-	bh=GqZmqBLONxKd8q6GzK3gmJtCbpC4wYdk7CfTKnHO7c0=;
+	s=arc-20240116; t=1720563151; c=relaxed/simple;
+	bh=AyjKp9jOrytuX4TOhKxkfSiIpbdbNbKYJTc5eEHa38I=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XtoWrFcKlyXN1stcb1VvPfDeNrPSWLX09DzZTBCSTJft0hhzMuXaRYLjFnUi29yYlgTDa+fyA/BJk5ohKqXzZ1GPWkSN4wu7iN2VgDG9gPZWf/TuanzB7K5zYLNAUWSKeauQIY7BVQOu9esePY37oMgT8rJuQBAmYWRCRLf7Tto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=NhtBC1Hr; arc=none smtp.client-ip=45.89.224.132
+	 MIME-Version:Content-Type; b=N7S6LG4oPFjoliGxWHSJ01Gw7slVr5ma0vn3d+4XUXWt1Uf0UKANAW2aJmAvNzmCw1es9i8lW4J3yx97ANllUR0IoySr/dhWGPbrsDXrY90MKWM4ylZLGZT7YOUzcGxglUFqmk31vhHlbo/Xtv4b0dVhuRcviKaqUb2ENlUxEtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=E95RW92j; arc=none smtp.client-ip=37.18.73.165
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 2F6F412000A;
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id DDEC6100028;
 	Wed, 10 Jul 2024 01:12:27 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 2F6F412000A
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru DDEC6100028
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
 	s=mail; t=1720563147;
-	bh=PyZxBMx6R0uymcM3TuF4TKEKQfa239EroB6vf32t1Nw=;
+	bh=oiN0AIhlv/Yj1OiMsbHytdbfV88YB2DnrBagNdpzmwQ=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=NhtBC1HrDDtJpe1cWHCoAjqkTzc9UIb3TdhwkQiwg+LHR28EqnsL68mzUeMMEWAS4
-	 nlxFHt6lNyZfMOqS4uF5KwHdEcnJfipYPo9bcPdcTh9YUGEj/6hJSO6hWpN5NhJ83I
-	 xeCkK6t4mcwBizJtogQtW495DziX4jVNaI1+iN8HYtsrGVjG5IymIXn+wiEdnFjBVH
-	 HkxoxJ+K5ZLGMWcBO92DHh2QCdZl97RXIy1UpA5V4tzpIyvH5LHe+ty7SDcBzQ78oB
-	 8N7rzrNQ7A948ePSx+/aN9ZXjyUfu/Kvyv9UzoEHSxkaNO+donNwH5JOjVrxx0vsMP
-	 vjHvIRb1YAO6A==
+	b=E95RW92jmfllUJZQ9oZ9JZjCVjAkjbhmzVyKIeiBmliTo+f7VG7OidvXiB+YM3Rsq
+	 xO803A3msYMwuHYMwwPirCsb8Xr2kA0uK4pYEpBttuC9fSm+YiwEpj7+l5LOAminkN
+	 xAKXg3djMXG1B6DR+fKugiTAHi3/PjzIoUm5ZAQRWpy7wjV/FuVoupuwSoNUFgW2Qz
+	 U4jQHIlAJaqPombuhGyuWPRVj3a6KwYSL5UWFUdJsAliuZqS5t/dPW6Gp8nuI8J3DF
+	 Qc/9UjLQEohV8yV9m1VZpUvlZC7zM3rEqmtaRHoNrSFhvQNgsm+6TzOeIqKzKOoC3f
+	 H+zzndHqv/3Xg==
 Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
@@ -52,7 +52,7 @@ Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.1
 Received: from localhost.localdomain (100.64.160.123) by
  p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Wed, 10 Jul 2024 01:12:26 +0300
+ 15.2.1118.40; Wed, 10 Jul 2024 01:12:27 +0300
 From: Igor Prusov <ivprusov@salutedevices.com>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob
  Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
@@ -62,9 +62,9 @@ To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob
 CC: <prusovigor@gmail.com>, <kernel@salutedevices.com>,
 	<linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 2/6] ASoC: codecs: Add NeoFidelity Firmware helpers
-Date: Wed, 10 Jul 2024 01:11:59 +0300
-Message-ID: <20240709221203.92167-3-ivprusov@salutedevices.com>
+Subject: [PATCH v2 3/6] ASoC: dt-bindings: Add bindings for NeoFidelity NTP8918
+Date: Wed, 10 Jul 2024 01:12:00 +0300
+Message-ID: <20240709221203.92167-4-ivprusov@salutedevices.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240709221203.92167-1-ivprusov@salutedevices.com>
 References: <20240709221203.92167-1-ivprusov@salutedevices.com>
@@ -87,232 +87,90 @@ X-KSMG-AntiSpam-Rate: 0
 X-KSMG-AntiSpam-Status: not_detected
 X-KSMG-AntiSpam-Method: none
 X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, devicetree.org:7.1.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
 X-MS-Exchange-Organization-SCL: -1
 X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/09 21:28:00 #25931284
+X-KSMG-AntiPhishing: Clean, bases: 2024/07/09 21:28:00
+X-KSMG-LinksScanning: Clean, bases: 2024/07/09 21:28:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/09 15:25:00 #25923573
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-Add support for loading firmware for NeoFidelity amplifiers.
+Add dt-bindings for NeoFidelity NTP8918 Amplifier
 
 Signed-off-by: Igor Prusov <ivprusov@salutedevices.com>
 ---
- sound/soc/codecs/Kconfig  |   3 +
- sound/soc/codecs/Makefile |   2 +
- sound/soc/codecs/ntpfw.c  | 137 ++++++++++++++++++++++++++++++++++++++
- sound/soc/codecs/ntpfw.h  |  23 +++++++
- 4 files changed, 165 insertions(+)
- create mode 100644 sound/soc/codecs/ntpfw.c
- create mode 100644 sound/soc/codecs/ntpfw.h
+ .../bindings/sound/neofidelity,ntp8918.yaml   | 62 +++++++++++++++++++
+ 1 file changed, 62 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/neofidelity,ntp8918.yaml
 
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index 4afc43d3f71f..9583243f1966 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -2492,6 +2492,9 @@ config SND_SOC_NAU8825
- 	tristate
- 	depends on I2C
- 
-+config SND_SOC_NTPFW
-+	tristate
-+
- config SND_SOC_TPA6130A2
- 	tristate "Texas Instruments TPA6130A2 headphone amplifier"
- 	depends on I2C
-diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
-index b4df22186e25..eae4ab047c72 100644
---- a/sound/soc/codecs/Makefile
-+++ b/sound/soc/codecs/Makefile
-@@ -183,6 +183,7 @@ snd-soc-nau8821-y := nau8821.o
- snd-soc-nau8822-y := nau8822.o
- snd-soc-nau8824-y := nau8824.o
- snd-soc-nau8825-y := nau8825.o
-+snd-soc-ntpfw-y := ntpfw.o
- snd-soc-hdmi-codec-y := hdmi-codec.o
- snd-soc-pcm1681-y := pcm1681.o
- snd-soc-pcm1789-codec-y := pcm1789.o
-@@ -575,6 +576,7 @@ obj-$(CONFIG_SND_SOC_NAU8821)   += snd-soc-nau8821.o
- obj-$(CONFIG_SND_SOC_NAU8822)   += snd-soc-nau8822.o
- obj-$(CONFIG_SND_SOC_NAU8824)   += snd-soc-nau8824.o
- obj-$(CONFIG_SND_SOC_NAU8825)   += snd-soc-nau8825.o
-+obj-$(CONFIG_SND_SOC_NTPFW)	+= snd-soc-ntpfw.o
- obj-$(CONFIG_SND_SOC_HDMI_CODEC)	+= snd-soc-hdmi-codec.o
- obj-$(CONFIG_SND_SOC_PCM1681)	+= snd-soc-pcm1681.o
- obj-$(CONFIG_SND_SOC_PCM179X)	+= snd-soc-pcm179x-codec.o
-diff --git a/sound/soc/codecs/ntpfw.c b/sound/soc/codecs/ntpfw.c
+diff --git a/Documentation/devicetree/bindings/sound/neofidelity,ntp8918.yaml b/Documentation/devicetree/bindings/sound/neofidelity,ntp8918.yaml
 new file mode 100644
-index 000000000000..beaf300fe59c
+index 000000000000..506b1e4b8e39
 --- /dev/null
-+++ b/sound/soc/codecs/ntpfw.c
-@@ -0,0 +1,137 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/**
-+ * ntpfw.c - Firmware helper functions for Neofidelity codecs
-+ *
-+ * Copyright (c) 2024, SaluteDevices. All Rights Reserved.
-+ */
++++ b/Documentation/devicetree/bindings/sound/neofidelity,ntp8918.yaml
+@@ -0,0 +1,62 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/neofidelity,ntp8918.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+#include <linux/i2c.h>
-+#include <linux/firmware.h>
-+#include <linux/module.h>
++title: NeoFidelity NTP8918 Amplifier
 +
-+#include "ntpfw.h"
++maintainers:
++  - Igor Prusov <ivprusov@salutedevices.com>
 +
-+struct ntpfw_chunk {
-+	__be16 length;
-+	u8 step;
-+	u8 data[];
-+} __packed;
++description: |
++  The NTP8918 is a single chip full digital audio amplifier
++  including power stage for stereo amplifier system.
++  The NTP8918 is integrated with versatile digital audio signal
++  processing functions, high-performance, high-fidelity fully
++  digital PWM modulator and two high-power full-bridge MOSFET
++  power stages.
 +
-+struct ntpfw_header {
-+	__be32 magic;
-+} __packed;
++allOf:
++  - $ref: dai-common.yaml#
 +
-+static bool ntpfw_verify(struct device *dev, const u8 *buf, size_t buf_size, u32 magic)
-+{
-+	const struct ntpfw_header *header = (struct ntpfw_header *)buf;
-+	u32 buf_magic;
++properties:
++  compatible:
++    enum:
++      - neofidelity,ntp8918
 +
-+	if (buf_size <= sizeof(*header)) {
-+		dev_err(dev, "Failed to load firmware: image too small\n");
-+		return false;
-+	}
++  reg:
++    enum:
++      - 0x2a
++      - 0x2b
++      - 0x2c
++      - 0x2d
++    description: |
++      I2C address of the device.
 +
-+	buf_magic = be32_to_cpu(header->magic);
-+	if (buf_magic != magic) {
-+		dev_err(dev, "Failed to load firmware: invalid magic 0x%x:\n", buf_magic);
-+		return false;
-+	}
++  reset-gpios:
++    maxItems: 1
++    description: GPIO used to control the state of the device.
 +
-+	return true;
-+}
++  '#sound-dai-cells':
++    enum: [0]
 +
-+static bool ntpfw_verify_chunk(struct device *dev, const struct ntpfw_chunk *chunk, size_t buf_size)
-+{
-+	size_t chunk_size;
++required:
++  - compatible
++  - reg
 +
-+	if (buf_size <= sizeof(*chunk)) {
-+		dev_err(dev, "Failed to load firmware: chunk size too big\n");
-+		return false;
-+	}
++unevaluatedProperties: false
 +
-+	if (chunk->step != 2 && chunk->step != 5) {
-+		dev_err(dev, "Failed to load firmware: invalid chunk step: %d\n", chunk->step);
-+		return false;
-+	}
-+
-+	chunk_size = be16_to_cpu(chunk->length);
-+	if (chunk_size > buf_size) {
-+		dev_err(dev, "Failed to load firmware: invalid chunk length\n");
-+		return false;
-+	}
-+
-+	if (chunk_size % chunk->step) {
-+		dev_err(dev, "Failed to load firmware: chunk length and step mismatch\n");
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
-+static int ntpfw_send_chunk(struct i2c_client *i2c, const struct ntpfw_chunk *chunk)
-+{
-+	int ret;
-+	size_t i;
-+	size_t length = be16_to_cpu(chunk->length);
-+
-+	for (i = 0; i < length; i += chunk->step) {
-+		ret = i2c_master_send(i2c, &chunk->data[i], chunk->step);
-+		if (ret != chunk->step) {
-+			dev_err(&i2c->dev, "I2C send failed: %d\n", ret);
-+			return ret < 0 ? ret : -EIO;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+int ntpfw_load(struct i2c_client *i2c, const char *name, u32 magic)
-+{
-+	struct device *dev = &i2c->dev;
-+	const struct ntpfw_chunk *chunk;
-+	const struct firmware *fw;
-+	const u8 *data;
-+	size_t leftover;
-+	int ret;
-+
-+	ret = request_firmware(&fw, name, dev);
-+	if (ret) {
-+		dev_warn(dev, "request_firmware '%s' failed with %d\n",
-+			 name, ret);
-+		return ret;
-+	}
-+
-+	if (!ntpfw_verify(dev, fw->data, fw->size, magic)) {
-+		ret = -EINVAL;
-+		goto done;
-+	}
-+
-+	data = fw->data + sizeof(struct ntpfw_header);
-+	leftover = fw->size - sizeof(struct ntpfw_header);
-+
-+	while (leftover) {
-+		chunk = (struct ntpfw_chunk *)data;
-+
-+		if (!ntpfw_verify_chunk(dev, chunk, leftover)) {
-+			ret = -EINVAL;
-+			goto done;
-+		}
-+
-+		ret = ntpfw_send_chunk(i2c, chunk);
-+		if (ret)
-+			goto done;
-+
-+		data += be16_to_cpu(chunk->length) + sizeof(*chunk);
-+		leftover -= be16_to_cpu(chunk->length) + sizeof(*chunk);
-+	}
-+
-+done:
-+	release_firmware(fw);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(ntpfw_load);
-+
-+MODULE_AUTHOR("Igor Prusov <ivprusov@salutedevices.com>");
-+MODULE_DESCRIPTION("Helper for loading Neofidelity amplifiers firmware");
-+MODULE_LICENSE("GPL");
-diff --git a/sound/soc/codecs/ntpfw.h b/sound/soc/codecs/ntpfw.h
-new file mode 100644
-index 000000000000..1cf10d5480ee
---- /dev/null
-+++ b/sound/soc/codecs/ntpfw.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/**
-+ * ntpfw.h - Firmware helper functions for Neofidelity codecs
-+ *
-+ * Copyright (c) 2024, SaluteDevices. All Rights Reserved.
-+ */
-+
-+#ifndef __NTPFW_H__
-+#define __NTPFW_H__
-+#include <linux/i2c.h>
-+#include <linux/firmware.h>
-+
-+/**
-+ * ntpfw_load - load firmware to amplifier over i2c interface.
-+ *
-+ * @i2c		Pointer to amplifier's I2C client.
-+ * @name	Firmware file name.
-+ * @magic	Magic number to validate firmware.
-+ * @return	0 or error code upon error.
-+ */
-+int ntpfw_load(struct i2c_client *i2c, const char *name, const u32 magic);
-+
-+#endif /* __NTPFW_H__ */
++examples:
++  - |
++   #include <dt-bindings/gpio/gpio.h>
++   i2c {
++     #address-cells = <1>;
++     #size-cells = <0>;
++     ntp8918@2a {
++       compatible = "neofidelity,ntp8918";
++       #sound-dai-cells = <0>;
++       reg = <0x2a>;
++       reset-gpios = <&gpio 5 GPIO_ACTIVE_LOW>;
++    };
++   };
 -- 
 2.34.1
 
