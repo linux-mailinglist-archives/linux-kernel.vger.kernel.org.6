@@ -1,152 +1,101 @@
-Return-Path: <linux-kernel+bounces-245453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FBC692B2B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:55:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B58792B2AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580C61F22847
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:55:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE4BC280F24
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE8E154426;
-	Tue,  9 Jul 2024 08:55:32 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9ACB15382F;
+	Tue,  9 Jul 2024 08:55:12 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8D8152E06;
-	Tue,  9 Jul 2024 08:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0F415358A
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720515332; cv=none; b=rMLUamts+lAi6p9YXQwJJ6UwSSOefahd0gnvZgx0IByqkeOeaRxyqxSR+hMPzR1614QUqEEln6Gg+Y0dtDJS/kkSDawUCdvOjHWGxA/BoajTyDOijCP2PJwh13iVdw81PoSDgoXyUShz+iFx9jb4cz2Meyptznrfbz3bWiqSe0A=
+	t=1720515312; cv=none; b=JAQ948i0q0lEMQegDoSEuvWtQAKj5J5utDXQMA3E+gUjjVYhID6Lz1lZDOAkviyEGRTR3NNLO9MhnSfpjB+uNkgtzWhN10O0e8GOXMk5zUZlTwvVNgba8MFqRqEeshfyBxLYiAZQz8n86XrV40H6HttM4a0AOUCocaFRgLgvYX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720515332; c=relaxed/simple;
-	bh=TokFenMbMA9GY5HveERurGCJio7AvHRpXYngC1+kJKg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GxQME5Cx2K62THWu3i0F58mWzZ0C5NxIslE2C0LhCeBZtaQ6TyXvL2LjqCtqwapEU6WkX4FU5I1RmvIkMnJmtm+O6M9VjhIx+u1N5v2oKdaU3sua3TlXNcKYja2gA/fIEhJIqzrR50N67c64j5r9uKsvFMknNL9UfezyGhNvQAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id CF0AF61E40617;
-	Tue,  9 Jul 2024 10:54:25 +0200 (CEST)
-Message-ID: <23d2e91c-4215-4ea5-8b3c-4dd58a1062af@molgen.mpg.de>
-Date: Tue, 9 Jul 2024 10:54:25 +0200
+	s=arc-20240116; t=1720515312; c=relaxed/simple;
+	bh=2FYVMtmDzIZUKIJ+dabrFKImBJRSm71ljP7ZDyoecE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BGOx9e3AYyKHc65Oa8k6gVKcDql1tMXEIXG6uGrSzfol5zpFcy7dcTrm2y/7E3addwy+yDYZW1HGpZp7am7d5og6WrEFtmtx/abY+z2y2Bxf75y0OcDvVhGdiMgrdjPtjex6x4HqASdjyJWdL8xxCE7/X96pIqvt0Ls8ZkHGSck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sR6cj-0001sa-Fu; Tue, 09 Jul 2024 10:54:57 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sR6cg-008F2O-FK; Tue, 09 Jul 2024 10:54:54 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sR6cg-006TZB-1F;
+	Tue, 09 Jul 2024 10:54:54 +0200
+Date: Tue, 9 Jul 2024 10:54:54 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Horia Geanta <horia.geanta@nxp.com>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>,
+	Gaurav Jain <gaurav.jain@nxp.com>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] crypto: caam - enable hash api only on ARM platforms per
+ default
+Message-ID: <20240709085454.you3b3ueb3xbtrv6@pengutronix.de>
+References: <20240626155724.4045056-1-m.felsch@pengutronix.de>
+ <258feb43-382d-4ea0-9164-357924350dec@nxp.com>
+ <ZofSbH2Fu/xLnzif@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [PATCH net-next v3] ice: Adjust over allocation
- of memory in ice_sched_add_root_node() and ice_sched_add_node()
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-To: Aleksandr Mishin <amishin@t-argos.ru>
-Cc: lvc-project@linuxtesting.org,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Eric Dumazet <edumazet@google.com>, linux-kernel@vger.kernel.org,
- Jakub Kicinski <kuba@kernel.org>, intel-wired-lan@lists.osuosl.org,
- Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
- Tony Nguyen <anthony.l.nguyen@intel.com>, Paolo Abeni <pabeni@redhat.com>,
- "David S. Miller" <davem@davemloft.net>
-References: <20240708182736.8514-1-amishin@t-argos.ru>
- <033111e2-e743-4523-8c4f-7d5f1c801e65@molgen.mpg.de>
-Content-Language: en-US
-In-Reply-To: <033111e2-e743-4523-8c4f-7d5f1c801e65@molgen.mpg.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZofSbH2Fu/xLnzif@gondor.apana.org.au>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-[Cc: -anirudh.venkataramanan@intel.com (Address rejected)]
+On 24-07-05, Herbert Xu wrote:
+> On Fri, Jul 05, 2024 at 09:39:19AM +0000, Horia Geanta wrote:
+> >
+> > I disagree with compiling out the hash support.
 
-Am 09.07.24 um 10:49 schrieb Paul Menzel:
-> Dear Aleksandr,
+We don't compile it out, we just don't set the default=y since on ARMv8
+it's not required.
+
+> > If needed, algorithm priority could be changed - even at runtime,
+> > using NETLINK_CRYPTO messages (needs CONFIG_CRYPTO_USER=y/m).
 > 
+> We should change the default priority.
+
+We had an patch exactly doing this but depending on the SoC the default
+prio may valid since the CAAM is used on ARMv7 and ARMv8 NXP SoCs. To
+not cause any regression we went this way.
+
+Regards,
+  Marco
+
 > 
-> Thank you for your patch.
+> Thanks,
+> -- 
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 > 
-> 
-> Am 08.07.24 um 20:27 schrieb Aleksandr Mishin:
->> In ice_sched_add_root_node() and ice_sched_add_node() there are calls to
->> devm_kcalloc() in order to allocate memory for array of pointers to
->> 'ice_sched_node' structure. But incorrect types are used as sizeof()
->> arguments in these calls (structures instead of pointers) which leads to
->> over allocation of memory.
-> 
-> If you have the explicit size at hand, it’d be great if you added those 
-> to the commit message.
-> 
->> Adjust over allocation of memory by correcting types in devm_kcalloc()
->> sizeof() arguments.
->>
->> Found by Linux Verification Center (linuxtesting.org) with SVACE.
-> 
-> Maybe mention, that Coverity found that too, and the warning was 
-> disabled, and use that commit in Fixes: tag? That’d be commit 
-> b36c598c999c (ice: Updates to Tx scheduler code), different from the one 
-> you used.
-> 
-> `Documentation/process/submitting-patches.rst` says:
-> 
->> A Fixes: tag indicates that the patch fixes an issue in a previous
->> commit. It is used to make it easy to determine where a bug
->> originated, which can help review a bug fix. This tag also assists
->> the stable kernel team in determining which stable kernel versions
->> should receive your fix. This is the preferred method for indicating
->> a bug fixed by the patch.
-> 
-> 
->> Suggested-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
->> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
->> ---
->> v3:
->>    - Update comment and use the correct entities as suggested by Przemek
->> v2: https://lore.kernel.org/all/20240706140518.9214-1-amishin@t-argos.ru/
->>    - Update comment, remove 'Fixes' tag and change the tree from 'net' to
->>      'net-next' as suggested by Simon
->>      (https://lore.kernel.org/all/20240706095258.GB1481495@kernel.org/)
->> v1: 
->> https://lore.kernel.org/all/20240705163620.12429-1-amishin@t-argos.ru/
->>
->>   drivers/net/ethernet/intel/ice/ice_sched.c | 6 ++----
->>   1 file changed, 2 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/intel/ice/ice_sched.c 
->> b/drivers/net/ethernet/intel/ice/ice_sched.c
->> index ecf8f5d60292..6ca13c5dcb14 100644
->> --- a/drivers/net/ethernet/intel/ice/ice_sched.c
->> +++ b/drivers/net/ethernet/intel/ice/ice_sched.c
->> @@ -28,9 +28,8 @@ ice_sched_add_root_node(struct ice_port_info *pi,
->>       if (!root)
->>           return -ENOMEM;
->> -    /* coverity[suspicious_sizeof] */
->>       root->children = devm_kcalloc(ice_hw_to_dev(hw), hw->max_children[0],
->> -                      sizeof(*root), GFP_KERNEL);
->> +                      sizeof(*root->children), GFP_KERNEL);
->>       if (!root->children) {
->>           devm_kfree(ice_hw_to_dev(hw), root);
->>           return -ENOMEM;
->> @@ -186,10 +185,9 @@ ice_sched_add_node(struct ice_port_info *pi, u8 
->> layer,
->>       if (!node)
->>           return -ENOMEM;
->>       if (hw->max_children[layer]) {
->> -        /* coverity[suspicious_sizeof] */
->>           node->children = devm_kcalloc(ice_hw_to_dev(hw),
->>                             hw->max_children[layer],
->> -                          sizeof(*node), GFP_KERNEL);
->> +                          sizeof(*node->children), GFP_KERNEL);
->>           if (!node->children) {
->>               devm_kfree(ice_hw_to_dev(hw), node);
->>               return -ENOMEM;
-> 
-> 
-> Kind regards,
-> 
-> Paul
 
