@@ -1,163 +1,79 @@
-Return-Path: <linux-kernel+bounces-246562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A45F92C390
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:58:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D42B92C3A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD1AB1C229A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:58:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C95B41F218AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26140182A54;
-	Tue,  9 Jul 2024 18:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE253180059;
+	Tue,  9 Jul 2024 19:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sa5BsQzN"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b="qgvw2HF8"
+Received: from mail.antaris-organics.com (mail.antaris-organics.com [91.227.220.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2AB7180057
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 18:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E791DFCF;
+	Tue,  9 Jul 2024 19:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.227.220.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720551488; cv=none; b=LHNTo4Bgxw2e55TwLzYnWeMtwE1lz7tvfShVXMMTCw+JAGlFp+k2h1c3ntOYXJXTKoiAd5T2vIu/xbHWjHSPmpjJcLLDPFn4y4VSWC2o890OetP/lrnhBAKx/J89gVoe+r180GFIuLikRdInBQyu0v680l1CKdn4vgWu4WInSrE=
+	t=1720551865; cv=none; b=mbMQ7YpDqyQky4g7Mr5ORCmQmj4EgharbQGcGXMl+xcf7sXAn38+uEK0o0Mkv2WXUulk3qcRrNrZOD1wRfv0pmYdyUu/BzGbWlP+tHHtmJlbSyYOzkApqll29OcHmpgXDz3ySPtJm0h1d/udCbczl2I+ZWdv+Udt9JewTPXS/lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720551488; c=relaxed/simple;
-	bh=vgV3NNlzFKCiU3pBnrqOOxg16OSb3pUQ2G39Zbsbj1Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HFhEgNQwgJhNx8bJl5QMomKvBxjJSiNMYvipVgQLisb+nDInPgHILIo19EUGwMfjFQiqTBffLFNEIWL1tnHjvCRuju4cTH3LM/dxLV5nhdg4BmxW/Qm29OKb4dK61V4zpPvJyj1p9ynvlH7NDWHCDG9m1cq7LKMttmDdf4SGXUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sa5BsQzN; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso2301a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 11:58:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720551485; x=1721156285; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zAoQUSx9bhpcdjQTt+qmhPqP+zZAnIGtZqlOI0lzq4w=;
-        b=sa5BsQzNzOOcSPF9OfoPAP207D5WndvlKepdTyJgMU8ybS4vX3ZOPl+9Hv9bzFYd/O
-         XhaQdi6jl9KabAjFmVJT8ItjVBtHJhFYGNkFIJZAQTWcyc5lxNQ7lzhHoEgbuK4Le8Kn
-         LSnYsZf0vlgpQjnhSd+7pwu3h0XC9zqEL3yh91FGpwDnsCCrlx/5AyS9jPRaavA2mdr7
-         Bs5ySs7DjRQh+5GI+qbRdsHbr9bLvoDiG04oRQtVA+5Jj+WPw2rOBgoDQfdT4C+vJvP2
-         dHDu3dewG3VaQZ06i/8DQUpQSAJOPqWpMXqneQjVwK8KmQJdt8sOpr1BKZYaJafXcPQ8
-         HSJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720551485; x=1721156285;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zAoQUSx9bhpcdjQTt+qmhPqP+zZAnIGtZqlOI0lzq4w=;
-        b=eL62Rtmgusd5vYqywBuji6sTx9mYxOYBJsBSUTEN0WLSH8FyoY8yqOXBg94SQgsdoz
-         +K/bxUpBTNwgL457Kjw2r/6Iurks3HCTmT+PEF6+xUl+fDeWdlOoN/oA4yoWtFCem1uR
-         f0lquDWYJkHnraimBkI3ZcrwxGzdYmGqHor7xBPV38ufGnmBYWDGWuaRyrtHVB5GmGwO
-         BipNsK1COm3oYE3fEf+8F7rAQyiBiLvMyTlyLx5A4YMKbjWgHyyiVxGiRYL9prBc0cbq
-         F7C5pgqYMcNVmaWR7azeFE+uChsUK2FxJDjBbZSHNWsR+YpZAscrQYSvMcM0F6IxFFxO
-         rjlw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLX46MzDPUci/6eVVrvKMi/tLHWOWv4Gu15KgGgDOBUoEHgIfpOLCIvWKnfZYpHOltl96SCkf/uZQJnlsND0s3pWRghhP7b+2Aq7S4
-X-Gm-Message-State: AOJu0Yw2VgfJMhEW22lx3iogvgh5A6Cfbfx6wNfYxk1gxnOE9qi+OPDR
-	V8aGT1cqjypt02qybVqQu86E9f73lyg0UIDEqvdEqqoJxHWm5piIXJ3jTsniTMFJth0nxPnEn9k
-	CsE6KWCGCilxMTpyd3Tkb//IG04osVEf0orAK
-X-Google-Smtp-Source: AGHT+IECwTUCWfNd/m0r/4U5ddqq9szdLi7Tw8glyBT6PX7+eYxwo4Ic0ZuXywbnuTJaGnFDZBWSOOJzFKOrzR9sUWE=
-X-Received: by 2002:a50:9f84:0:b0:58b:dfaa:a5ca with SMTP id
- 4fb4d7f45d1cf-596d4daf533mr28844a12.6.1720551484754; Tue, 09 Jul 2024
- 11:58:04 -0700 (PDT)
+	s=arc-20240116; t=1720551865; c=relaxed/simple;
+	bh=HF0/7o5KU2/pP2+2T1ocFVX77ZJpeIK7POsT/4QwOKg=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CdxJibSy48DpVLNs6ZN4fDJoJtc0bCyP8jvPttmUX9z2V9ilQm2hAcRMtKCNsVn4v6KQijD4IMBF9maTwfioV9/UlGSvsdzZhs+zchPU/G2BvnFXYBZ0uXf7h+RAbE+ji2d21OtePwZIooE7ZrIE8FHXTv7oSgqHBgvMyJFGO2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com; spf=pass smtp.mailfrom=mareichelt.com; dkim=pass (2048-bit key) header.d=mareichelt.com header.i=@mareichelt.com header.b=qgvw2HF8; arc=none smtp.client-ip=91.227.220.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mareichelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mareichelt.com
+Date: Tue, 9 Jul 2024 20:58:50 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mareichelt.com;
+	s=202107; t=1720551531;
+	bh=HF0/7o5KU2/pP2+2T1ocFVX77ZJpeIK7POsT/4QwOKg=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To:Cc:Cc:content-type:content-type:date:date:
+	 From:from:in-reply-to:in-reply-to:message-id:mime-version:
+	 references:reply-to:Sender:Subject:Subject:To:To;
+	b=qgvw2HF84pTyXd3NuO2iOgRTxyQT2IoKuD1kR5i7udEhZhDKH14JRRl0hlrci0M31
+	 tNRYNNCrvdxFACPbgHgXlxuAsP4qheO3hiRGuuNtGgIraGOE6lUr4TOT03NIRI1IWw
+	 UDdODgfi99wVEM76vw74ygpIJ1IeWwmS/iV7W6Kq2t6vgAFTXPpvo7CQwxvkABLSiO
+	 B2nTi7ArmP0LXJyp5nHIy00dORrS9OwfjLCC9Vvno948OkXWze+fCl9RkYYqQY1/qa
+	 NYajxlXfQiIY3j+0EvFyATN5nAKp05+LHSkGY8xVCtCd6aYKMq5eqe4XAh8ywQI3w5
+	 gkIWHLlFGQjBw==
+From: Markus Reichelt <lkt+2023@mareichelt.com>
+To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6.9 000/197] 6.9.9-rc1 review
+Message-ID: <20240709185850.GA2524@pc21.mareichelt.com>
+Mail-Followup-To: stable@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240709110708.903245467@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704190137.696169-1-mic@digikod.net> <20240704190137.696169-2-mic@digikod.net>
- <87bk3bvhr1.fsf@oldenburg.str.redhat.com> <CALmYWFu_JFyuwYhDtEDWxEob8JHFSoyx_SCcsRVKqSYyyw30Rg@mail.gmail.com>
- <87ed83etpk.fsf@oldenburg.str.redhat.com> <CALmYWFvkUnevm=npBeaZVkK_PXm=A8MjgxFXkASnERxoMyhYBg@mail.gmail.com>
- <87r0c3dc1c.fsf@oldenburg.str.redhat.com> <CALmYWFvA7VPz06Tg8E-R_Jqn2cxMiWPPC6Vhy+vgqnofT0GELg@mail.gmail.com>
- <20240709.gae4cu4Aiv6s@digikod.net>
-In-Reply-To: <20240709.gae4cu4Aiv6s@digikod.net>
-From: Jeff Xu <jeffxu@google.com>
-Date: Tue, 9 Jul 2024 11:57:27 -0700
-Message-ID: <CALmYWFsvKq+yN4qHhBamxyjtcy9myg8_t3Nc=5KErG=DDaDAEA@mail.gmail.com>
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Florian Weimer <fweimer@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, 
-	"Theodore Ts'o" <tytso@mit.edu>, Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
-	Fan Wu <wufan@linux.microsoft.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
-	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709110708.903245467@linuxfoundation.org>
 
-On Tue, Jul 9, 2024 at 2:18=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
-d.net> wrote:
->
-> On Mon, Jul 08, 2024 at 10:52:36AM -0700, Jeff Xu wrote:
-> > On Mon, Jul 8, 2024 at 10:33=E2=80=AFAM Florian Weimer <fweimer@redhat.=
-com> wrote:
-> > >
-> > > * Jeff Xu:
-> > >
-> > > > On Mon, Jul 8, 2024 at 9:26=E2=80=AFAM Florian Weimer <fweimer@redh=
-at.com> wrote:
-> > > >>
-> > > >> * Jeff Xu:
-> > > >>
-> > > >> > Will dynamic linkers use the execveat(AT_CHECK) to check shared
-> > > >> > libraries too ?  or just the main executable itself.
-> > > >>
-> > > >> I expect that dynamic linkers will have to do this for everything =
-they
-> > > >> map.
-> > > > Then all the objects (.so, .sh, etc.) will go through  the check fr=
-om
-> > > > execveat's main  to security_bprm_creds_for_exec(), some of them mi=
-ght
-> > > > be specific for the main executable ?
->
-> Yes, we should check every executable code (including seccomp filters)
-> to get a consistent policy.
->
-> What do you mean by "specific for the main executable"?
->
-I meant:
+* Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-The check is for the exe itself, not .so, etc.
+> This is the start of the stable review cycle for the 6.9.9 release.
+> There are 197 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 11 Jul 2024 11:06:25 +0000.
+> Anything received after that time might be too late.
 
-For example:  /usr/bin/touch is checked.
-not the shared objects:
-ldd /usr/bin/touch
-linux-vdso.so.1 (0x00007ffdc988f000)
-libc.so.6 =3D> /lib/x86_64-linux-gnu/libc.so.6 (0x00007f59b6757000)
-/lib64/ld-linux-x86-64.so.2 (0x00007f59b6986000)
+Hi Greg
 
-Basically, I asked if the check can be extended to shared-objects,
-seccomp filters, etc, without modifying existing LSMs.
-you pointed out "LSM should not need to be updated with this patch
-series.", which already answered my question.
+6.9.9-rc1 compiles, boots and runs here on x86_64
+(AMD Ryzen 5 PRO 4650G, Slackware64-15.0)
 
-Thanks.
--Jeff
-
--Jeff
+Tested-by: Markus Reichelt <lkt+2023@mareichelt.com>
 
