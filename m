@@ -1,246 +1,95 @@
-Return-Path: <linux-kernel+bounces-246192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7F592BEDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:53:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C2F392BEDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E8D31F235C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:53:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC2CC1F22E55
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:54:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C4A19D8AD;
-	Tue,  9 Jul 2024 15:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25A619D8A2;
+	Tue,  9 Jul 2024 15:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B9iv6GQE"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eu0EpuVH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F9D19CCEF;
-	Tue,  9 Jul 2024 15:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A24315C9;
+	Tue,  9 Jul 2024 15:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720540405; cv=none; b=eZL19t8cxxcU4XcW7CvhXzse4tr6KrZ9x3kFcbpQtMklSmlzqBBbyBdaO/0/eHs0SjR6vb5J2jYzljrTE+Y8w4HWsuZLGRViHonTKutbjTe/6vooC3aDJ1djkOYzRDFDdyVpEm0afBGwRcCetuQtitUwwPHw4ioUzjpszvyaHmg=
+	t=1720540452; cv=none; b=R/1SgvH/Nbz1xRQr5SqcgPAK0WZq2Eu4iVEY70Y6bcs55T1NMKIglG+0mHaC90KIU9hcsFx8Uu82BYoGIyYvW7aJMx7s9gVMIXQ+9MxGq07i1meIMEaq4zX02AO31fifuduL81i4XkVMXLDFS9EO7vKPZwIXoMSAJPJPU5u5UCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720540405; c=relaxed/simple;
-	bh=SKSlJoE4caZrBNWB9BQBC1IdudklWV8ccmjKdXCVS+g=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=pFqeMIMa36Sw3VEXJabik4JZ7MedNmEyCMzhE9j4iOxIsJsPjPOovUP45xzLzz79ZIbUw9K05aN/MNQbQRkkBpDG70zfKpcyrScttrufKCVorja440uXRYlllSXMy+LEFA5ozdiS5Gqt2TaW7FBeHKD9UHnzBiqRmKPgO3zq2+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B9iv6GQE; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6b5f3348f05so23303566d6.0;
-        Tue, 09 Jul 2024 08:53:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720540403; x=1721145203; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qWnAKMwNVbrEF4g9KJLYzg7AqLAcv1Oom2u6uWGj45M=;
-        b=B9iv6GQEBQEn4BqiAGkb4X5dg5C8a9lyuLuC3DXpbJIKPw0nGMNOVKIvMv+lKukQUA
-         xVUrEY0MZ9pP+eLENlaoQmH4wlFfG8l3f1kLXcq3ZIDM7SYfuFtIrUHNLkyuRzKhhdHw
-         zJgn8gPe1iYuusbouMxqo41+RrrkT6KcYrDXw6yXupW5ycNReTtAP8WLWN6aeTQTBCej
-         gOn2x/r/x1+Ku3RYsHLdTntCsF21yWrHYmc6qKerKcjGVX/6Rzm8ucoYnZeodsTWomNS
-         YiotUVhbYII85vmFvXkWp05rG/8+WIgIR2g+gW66ZTf4T+PhEnTgec6/wxWSMXt9UQEh
-         9Plw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720540403; x=1721145203;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qWnAKMwNVbrEF4g9KJLYzg7AqLAcv1Oom2u6uWGj45M=;
-        b=vE+qDIrRH/xnMpOgKk0c2vJ/Cvvn/xCLSbnxAfpP4feJh95cCCEeo1eHKIfQmatejH
-         +6yJS9zaRaYyxUe+Ywwi+iw+jZ7A+coq+0P6ZSE78ntUthdAeMqSJBJjBsIRdWru/4J8
-         x4Vtm8n/oC6FefobCE7muO8hCbhj41H4TwaVMtOdnC4XCqIlb3bG4pHo6yEIt3EYQTR0
-         WdnTrwHncitNFyVOb1FwAylVddBBScnzAY+an6DYtdqE+9wGqdItQ5WwqrEQHf7pYza2
-         75dU4fKis7WKDeUt6mv/HCr80IG4cjUHMgCbGr8E6wAb9RQgW1yXR6GB01jYHs1r/cOD
-         gWOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOmueW46cK27QCyBIqYfskSsl437PXg+A2h/+GN64BRVgZ5fXXZK+rIleDkp9UAwo8MrgnrxWR1mzde1YPkPQK6J/Gu39YC6ZVZF0QWocwaXNHfrCiMeX9oXJTcE7Z7Zt66brQ8Yd/bkH+Xr77i1FMiXhiQsgqQZRF
-X-Gm-Message-State: AOJu0YxBUmrXskJkoVVNmxc3XCgySwuqII5HW3bS1T3NEc6tCYzkL7y4
-	2x6QXkOhi0TLOts5f8J1u5ykLARgBJ0/ulwJP559T69rOoHJLAvm
-X-Google-Smtp-Source: AGHT+IFWBPefgvh3ow4GfzEOH9QSIJyF1g+c0ssiefWaA/3s0uMkYOmWOYkqHCVrpMuylMX7YlGrAw==
-X-Received: by 2002:a05:6214:f6c:b0:6b5:d94f:cf53 with SMTP id 6a1803df08f44-6b61bca398emr39121116d6.22.1720540402978;
-        Tue, 09 Jul 2024 08:53:22 -0700 (PDT)
-Received: from localhost (240.157.150.34.bc.googleusercontent.com. [34.150.157.240])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b61b9c4f67sm9830846d6.10.2024.07.09.08.53.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 08:53:22 -0700 (PDT)
-Date: Tue, 09 Jul 2024 11:53:21 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Fred Li <dracodingfly@gmail.com>, 
- willemdebruijn.kernel@gmail.com
-Cc: aleksander.lobakin@intel.com, 
- andrii@kernel.org, 
- ast@kernel.org, 
- bpf@vger.kernel.org, 
- daniel@iogearbox.net, 
- davem@davemloft.net, 
- dracodingfly@gmail.com, 
- edumazet@google.com, 
- haoluo@google.com, 
- hawk@kernel.org, 
- herbert@gondor.apana.org.au, 
- john.fastabend@gmail.com, 
- jolsa@kernel.org, 
- kpsingh@kernel.org, 
- kuba@kernel.org, 
- linux-kernel@vger.kernel.org, 
- linux@weissschuh.net, 
- martin.lau@linux.dev, 
- mkhalfella@purestorage.com, 
- nbd@nbd.name, 
- netdev@vger.kernel.org, 
- pabeni@redhat.com, 
- sashal@kernel.org, 
- sdf@google.com, 
- song@kernel.org, 
- yonghong.song@linux.dev
-Message-ID: <668d5cf1ec330_1c18c32947@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20240708143128.49949-1-dracodingfly@gmail.com>
-References: <6689541517901_12869e29412@willemb.c.googlers.com.notmuch>
- <20240708143128.49949-1-dracodingfly@gmail.com>
-Subject: Re: [PATCH] net: linearizing skb when downgrade gso_size
+	s=arc-20240116; t=1720540452; c=relaxed/simple;
+	bh=EoM5whDwCCG8XGdwUwCMcCTzrzGxwu8TOBiSd0x7Zrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FM0ZwuIea2vURt6EdAgF3v6LugD2RenBMN3Q0Cr1B/rSHOlp3mSSRPbltNtqmj9vvWuG+LKlspMRlqLnBwvKWRtZrRdhzbwT0ttb9UjK3/oVFr6LCZdkxLo4vNBbWS5vqKrD/xtGqHn6icAg15Hj6bkuuzBRYVFledt2ORV8J1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eu0EpuVH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69E2EC3277B;
+	Tue,  9 Jul 2024 15:54:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720540451;
+	bh=EoM5whDwCCG8XGdwUwCMcCTzrzGxwu8TOBiSd0x7Zrs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eu0EpuVHa6HsPSiQ4C8rdDW92k1PUfh0er0dDuQtrSfnSdY2fUTnUuQPWcs9x93ry
+	 aBBEsbSk+svTm6PNvNjFgX2IOdzlz567dhoL/dTZu/Y0jAI+geeNoV9Q//ErYKycuO
+	 M+kRcavvkXU2ORaixkcR9QXMNMZo/peGrmo6Ka40UpjBF5oduSQ/40c2oXgBBPGPsH
+	 gussLIlZ7gagNc9ndyr87LoaS/5KtFkR13RSIt/bl8qSrTVfInvWCp/iIytYUhRTWf
+	 64fnHSNzhk2fGog0twJ2zs2KsUltmgcNkA6dflF8SPxRb4bJwSZL058bXCJA7WMiyK
+	 uCHr20sNR90SA==
+Date: Tue, 9 Jul 2024 09:54:10 -0600
+From: Rob Herring <robh@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linus.walleij@linaro.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev, arnd@arndb.de,
+	durai.manickamkr@microchip.com, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Manikandan Muralidharan <manikandan.m@microchip.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v3 4/5] dt-bindings: gpio: convert Atmel GPIO to
+ json-schema
+Message-ID: <20240709155410.GA3589336-robh@kernel.org>
+References: <20240709092354.191643-1-manikandan.m@microchip.com>
+ <20240709092354.191643-5-manikandan.m@microchip.com>
+ <172052434347.27822.16864713604407945517.b4-ty@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <172052434347.27822.16864713604407945517.b4-ty@linaro.org>
 
-Fred Li wrote:
-> Here is a patch that linearizing skb when downgrade
-> gso_size and sg should disabled, If there are no issues,
-> I will submit a formal patch shortly.
-
-Target bpf.
-
-Probably does not need quite as many direct CCs. 
- 
-> Signed-off-by: Fred Li <dracodingfly@gmail.com>
-> ---
->  include/linux/skbuff.h | 22 ++++++++++++++++++++++
->  net/core/filter.c      | 16 ++++++++++++----
->  net/core/skbuff.c      | 19 ++-----------------
->  3 files changed, 36 insertions(+), 21 deletions(-)
+On Tue, Jul 09, 2024 at 01:25:51PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-> index 5f11f9873341..99b7fc1e826a 100644
-> --- a/include/linux/skbuff.h
-> +++ b/include/linux/skbuff.h
-> @@ -2400,6 +2400,28 @@ static inline unsigned int skb_headlen(const struct sk_buff *skb)
->  	return skb->len - skb->data_len;
->  }
->  
-> +static inline bool skb_is_nonsg(const struct sk_buff *skb)
-> +{
-
-is_nonsg does not cover the functionality, which is fairly subtle.
-But maybe we don't need this function at all, see below..
-
-> +	struct sk_buff *list_skb = skb_shinfo(skb)->frag_list;
-> +	struct sk_buff *check_skb;
-
-No need for separate check_skb
-
-> +	for (check_skb = list_skb; check_skb; check_skb = check_skb->next) {
-> +		if (skb_headlen(check_skb) && !check_skb->head_frag) {
-> +			/* gso_size is untrusted, and we have a frag_list with
-> +                         * a linear non head_frag item.
-> +                         *
-> +                         * If head_skb's headlen does not fit requested gso_size,
-> +                         * it means that the frag_list members do NOT terminate
-> +                         * on exact gso_size boundaries. Hence we cannot perform
-> +                         * skb_frag_t page sharing. Therefore we must fallback to
-> +                         * copying the frag_list skbs; we do so by disabling SG.
-> +                         */
-> +			return true;
-> +		}
-> +	}
-> +
-> +	return false;
-> +}
-> +
->  static inline unsigned int __skb_pagelen(const struct sk_buff *skb)
->  {
->  	unsigned int i, len = 0;
-> diff --git a/net/core/filter.c b/net/core/filter.c
-> index df4578219e82..c0e6e7f28635 100644
-> --- a/net/core/filter.c
-> +++ b/net/core/filter.c
-> @@ -3525,13 +3525,21 @@ static int bpf_skb_net_grow(struct sk_buff *skb, u32 off, u32 len_diff,
->  	if (skb_is_gso(skb)) {
->  		struct skb_shared_info *shinfo = skb_shinfo(skb);
->  
-> -		/* Due to header grow, MSS needs to be downgraded. */
-> -		if (!(flags & BPF_F_ADJ_ROOM_FIXED_GSO))
-> -			skb_decrease_gso_size(shinfo, len_diff);
-> -
->  		/* Header must be checked, and gso_segs recomputed. */
->  		shinfo->gso_type |= gso_type;
->  		shinfo->gso_segs = 0;
-> +
-> +		/* Due to header grow, MSS needs to be downgraded.
-> +		 * There is BUG_ON When segment the frag_list with
-> +		 * head_frag true so linearize skb after downgrade
-> +		 * the MSS.
-> +		 */
-> +		if (!(flags & BPF_F_ADJ_ROOM_FIXED_GSO)) {
-> +			skb_decrease_gso_size(shinfo, len_diff);
-> +			if (skb_is_nonsg(skb))
-> +				return skb_linearize(skb) ? : 0;
-> +		}
-> +
-
-No need for ternary statement.
-
-Instead of the complex test in skb_is_nonsg, can we just assume that
-alignment will be off if having frag_list and changing gso_size.
-
-The same will apply to bpf_skb_net_shrink too.
-
-Not sure that it is okay to linearize inside a BPF helper function.
-Hopefully bpf experts can chime in on that.
-
->  	}
->  
->  	return 0;
-> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-> index b1dab1b071fc..81e018185527 100644
-> --- a/net/core/skbuff.c
-> +++ b/net/core/skbuff.c
-> @@ -4458,23 +4458,8 @@ struct sk_buff *skb_segment(struct sk_buff *head_skb,
->  
->  	if ((skb_shinfo(head_skb)->gso_type & SKB_GSO_DODGY) &&
->  	    mss != GSO_BY_FRAGS && mss != skb_headlen(head_skb)) {
-> -		struct sk_buff *check_skb;
-> -
-> -		for (check_skb = list_skb; check_skb; check_skb = check_skb->next) {
-> -			if (skb_headlen(check_skb) && !check_skb->head_frag) {
-> -				/* gso_size is untrusted, and we have a frag_list with
-> -				 * a linear non head_frag item.
-> -				 *
-> -				 * If head_skb's headlen does not fit requested gso_size,
-> -				 * it means that the frag_list members do NOT terminate
-> -				 * on exact gso_size boundaries. Hence we cannot perform
-> -				 * skb_frag_t page sharing. Therefore we must fallback to
-> -				 * copying the frag_list skbs; we do so by disabling SG.
-> -				 */
-> -				features &= ~NETIF_F_SG;
-> -				break;
-> -			}
-> -		}
-> +		if (skb_is_nonsg(head_skb))
-> +			features &= ~NETIF_F_SG;
->  	}
->  
->  	__skb_push(head_skb, doffset);
-> -- 
-> 2.33.0
 > 
+> On Tue, 09 Jul 2024 14:53:53 +0530, Manikandan Muralidharan wrote:
+> > Convert the Atmel GPIO controller binding document to DT schema format
+> > using json-schema.
+> > The at91 pinctrl driver uses "atmel,at91rm9200-gpio" compatible string
+> > to find the number of active GPIO banks and identify the pinmux nodes.
+> > "atmel,at91sam9x5-gpio" and "microchip,sam9x60-gpio" have additional
+> > registers to handle drive-strength, slew-rate,  pull-down to drive the
+> > pinmux configs.
+> > The new compatible string "microchip,sam9x7-gpio" is added.
+> > 
+> > [...]
+> 
+> Applied, thanks!
+> 
+> [4/5] dt-bindings: gpio: convert Atmel GPIO to json-schema
+>       commit: 337049890b8cbbb4fb527c58976ea19f4dc747a0
 
+Patch 5 depends on this one.
 
+Rob
 
