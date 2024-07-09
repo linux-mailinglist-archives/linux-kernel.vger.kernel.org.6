@@ -1,95 +1,67 @@
-Return-Path: <linux-kernel+bounces-246463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D51892C247
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:22:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 109B392C256
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42372B26E93
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:14:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2DA9B2CBBF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8EFE189F3C;
-	Tue,  9 Jul 2024 16:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E10218787D;
+	Tue,  9 Jul 2024 16:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="U4ZV/f49"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZm42W9N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCDA17B056
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 16:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F57D17B056;
+	Tue,  9 Jul 2024 16:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720544270; cv=none; b=IIRQkRnWwzjJOTp/pKi5HWIZFp7HEVVL2cX0x8hoz/Ke29kuQGmALKWpwYTXT5/eK872o0+y6NTE4GMg4A2REJkPwsoVkZmiUInIXJaVeEM99297ET0+QCplb0amSC1jED8dQ2J/btGw+q48sYWxa/pPC/xqzfn15TLhaXG0W3Q=
+	t=1720544260; cv=none; b=QT+kfJAQX5DiETmnCm51JOZ5qG1Nnh2F7pgYssnx41MLEYJ+ZDi6modeK6iYbsNZkDcmj1UQaQT8ekuBirm76980n7RkAiwwu6y1qI4wgc3PlcQgEYAlWb/nzQCf5fp5ZoXMow+h/6AwooXR7qjhbVWa2ZAYMC3FSUll+2v9mnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720544270; c=relaxed/simple;
-	bh=wEKBU8ksX26NGMgDkDtz0+SJxnNlBBptXlaXFgW2Zz0=;
+	s=arc-20240116; t=1720544260; c=relaxed/simple;
+	bh=qj+Iu/SvAEvk+IBCByZw2lxCopI8NWpoNUohCnMb9sQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XABQY/8mjcumZ86OqOKZpAViWrqtORRDj9+MYgmUSljrFt8uDQ96T0FZEz5f3Q/7dtGX98tklJdttpOJwpxbjg+pASL3yZGWcWmwTAS97ssYPfqebVCda4MiQfM8bVcQfy19/q4jLeeSkJyokxZxG2yxHd7SPFAXFN7uUviKMYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=U4ZV/f49; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: kees@kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1720544265;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bJmYjvyHHMwqRxruumXPBbFALlX9+6N9u8Skv9IQ5wA=;
-	b=U4ZV/f49pEThhYkusIyNy+pCsfUW4zQ+Y01qSj+aRMnxJPZdLa+rkywFl/u8vG+aA44TGd
-	HBBFvZh8uMGTfaTpHkAX/V2yYT+knbCvnoscVDbXsS0OgDv+PfplRl97j6k+D+ZzMs1Oc+
-	VFcFB+I6REYZmvLPXUM85bWMz4515ng=
-X-Envelope-To: vbabka@suse.cz
-X-Envelope-To: jannh@google.com
-X-Envelope-To: tony.luck@intel.com
-X-Envelope-To: ndesaulniers@google.com
-X-Envelope-To: ojeda@kernel.org
-X-Envelope-To: elver@google.com
-X-Envelope-To: nathan@kernel.org
-X-Envelope-To: haoluo@google.com
-X-Envelope-To: przemyslaw.kitszel@intel.com
-X-Envelope-To: cl@linux.com
-X-Envelope-To: penberg@kernel.org
-X-Envelope-To: rientjes@google.com
-X-Envelope-To: iamjoonsoo.kim@lge.com
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: 42.hyeyoo@gmail.com
-X-Envelope-To: gpiccoli@igalia.com
-X-Envelope-To: mark.rutland@arm.com
-X-Envelope-To: kuba@kernel.org
-X-Envelope-To: petr.pavlu@suse.com
-X-Envelope-To: aleksander.lobakin@intel.com
-X-Envelope-To: tony.ambardar@gmail.com
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-hardening@vger.kernel.org
-Date: Tue, 9 Jul 2024 16:57:38 +0000
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Kees Cook <kees@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Tony Luck <tony.luck@intel.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Marco Elver <elver@google.com>,
-	Nathan Chancellor <nathan@kernel.org>, Hao Luo <haoluo@google.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jakub Kicinski <kuba@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Tony Ambardar <tony.ambardar@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [RFC][PATCH 0/4] slab: Allow for type introspection during
- allocation
-Message-ID: <Zo1sAhEEN8ep7XZg@google.com>
-References: <20240708190924.work.846-kees@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dtTBBpDkArFQGxOb+hIl1crE7s0uElmicxP5/HHQ1BMbKBARCmIo/0OUoobbbjMRQ/B8IwQUN4HjlOyO2l2aOgzBtt331InvMi02r1xhrd+1JWv2LzXX1/bi8x46AIg6vsLQqBiK29QYTNOdVJ5xm/1+KZpVi3bSsRkiJAqfOmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZm42W9N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12D6CC3277B;
+	Tue,  9 Jul 2024 16:57:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720544260;
+	bh=qj+Iu/SvAEvk+IBCByZw2lxCopI8NWpoNUohCnMb9sQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=cZm42W9NZsXilNjZOcSQ0Ci9KD/cY2kSyXXTb+WCxgbiOgq0X2mqHg/2P36AoLZYX
+	 No2mGb3ze5gHGLNGjUuj2HRHMq0fXUTLE/o9QGwPFdaan+Wi5ouPtmj/TCI22Tod7q
+	 tDRc/eolJX07Rg3Svf70bx4k9KOGNJ9Vmi+HHO7UHB96shldUeR8uARtKEYLWEoOW2
+	 beFssf6r1qtCvaJNw3bYMCm5DluHsuIz2ntvH+CNunt2CcTvoiVa11AaZ3XUo5YQWe
+	 ZefYIgnRmSLzrpdmYwrI6qS5FunYOR+RX4F3WNr+upQx9VtbZkA/nJwE3/WsETJqTx
+	 vOeaKIYV47FyA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id A25FBCE0A45; Tue,  9 Jul 2024 09:57:39 -0700 (PDT)
+Date: Tue, 9 Jul 2024 09:57:39 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org,
+	andrii@kernel.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org,
+	clm@meta.com, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+Message-ID: <f4e0675e-caad-4a1f-85b4-6b651d8565cd@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240708091241.544262971@infradead.org>
+ <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
+ <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
+ <20240709090153.GF27299@noisy.programming.kicks-ass.net>
+ <91d37ad3-137b-4feb-8154-4deaa4b11dc3@paulmck-laptop>
+ <20240709142943.GL27299@noisy.programming.kicks-ass.net>
+ <Zo1hBFS7c_J-Yx-7@casper.infradead.org>
+ <Zo1lrpO3suceheVj@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,58 +70,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240708190924.work.846-kees@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <Zo1lrpO3suceheVj@casper.infradead.org>
 
-On Mon, Jul 08, 2024 at 12:18:34PM -0700, Kees Cook wrote:
-> Hi,
+On Tue, Jul 09, 2024 at 05:30:38PM +0100, Matthew Wilcox wrote:
+> On Tue, Jul 09, 2024 at 05:10:45PM +0100, Matthew Wilcox wrote:
+> > > So I fundamentally do not believe in per-VMA locking. Specifically for
+> > > this case that would be trading one hot line for another. I tried
+> > > telling people that, but it doesn't seem to stick :/
+> > 
+> > SRCU also had its own performance problems, so we've got problems one
+> > way or the other.  The per-VMA lock probably doesn't work quite the way
+> > you think it does, but it absoutely can be a hot cacheline.
+> > 
+> > I did propose a store-free variant at LSFMM 2022 and again at 2023,
+> > but was voted down.  https://lwn.net/Articles/932298/
 > 
-> This is an RFC for some changes I'd like to make to the kernel's
-> allocators (starting with slab) that allow for type introspection, which
-> has been a long-time gap in potential analysis capabilities available
-> at compile-time. The changes here are just a "first step" example that
-> updates kmalloc() and kzalloc() to show what I'm thinking we can do,
-> and shows an example conversion within the fs/pstore tree.
-> 
-> Repeating patch 3's commit log here:
-> 
->     There is currently no way for the slab to know what type is being
->     allocated, and this hampers the development of any logic that would need
->     this information including basic type checking, alignment need analysis,
->     etc.
->     
->     Allow the size argument to optionally be a variable, from which the
->     type (and there by the size, alignment, or any other features) can be
->     determined at compile-time. This allows for the incremental replacement
->     of the classic code pattern:
->     
->             obj = kmalloc(sizeof(*obj), gfp);
->     
->     into:
->     
->             obj = kmalloc(obj, gfp);
->     
->     As an additional build-time safety feature, the return value of kmalloc()
->     also becomes typed so that the assignment and first argument cannot drift,
->     doing away with the other, more fragile, classic code pattern:
->     
->             obj = kmalloc(sizeof(struct the_object), gfp);
->     
->     into:
->     
->             obj = kmalloc(obj, gfp);
+> Actually, the 2022 version has a bit more of the flavour of the
+> argument: https://lwn.net/Articles/893906/
 
-I like the idea, however it's not as simple and straightforward because
-it's common for structures to have a variable part (usually at the end)
-and also allocate more than one structure at once.
+Thank you for the citations!
 
-There are many allocations which look like
-	kmalloc(sizeof(my_struct) * 2 + SOME_MAGIC_LENGTH, GFP_...)
-or something like this, which you can't easily convert to your scheme.
+From what I can see, part of the problem is that applications commonly
+running on Linux have worked around many of these limitations one way or
+another, which makes it harder to find a real-world use case for which
+the store-free lookup gives substantial benefits.  Perhaps this uprobes
+case will be helpful in that regard.  (Hey, I can dream, can't I?)
 
-The only option I see is to introduce the new set of functions/macros,
-something like kmalloc_obj() or kmalloc_struct(). Or maybe tmalloc()?
-(t for typed)
-
-Thanks!
+							Thanx, Paul
 
