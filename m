@@ -1,196 +1,168 @@
-Return-Path: <linux-kernel+bounces-245034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7230A92AD45
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:54:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0D7B92AD6D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14E3E2829A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:54:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 752491F22320
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6462B9DA;
-	Tue,  9 Jul 2024 00:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92B4286A6;
+	Tue,  9 Jul 2024 00:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GA81R3od"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2073.outbound.protection.outlook.com [40.107.237.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mXYe7yad"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15E21EA80;
-	Tue,  9 Jul 2024 00:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720486484; cv=fail; b=bBRw52XDJ1CQKDxq5NVPAd2UC5ExijvmRG0KKT9TXhvrEegDJZwKcgWMZ6BKKvjqbweNuTdDTM9RhS+9jtJQXSVL3iJBgSSkE4E3US+dxFMR74mfaZnnwEIVbPiivoSgo9d4r8IYSbaEJCs2hBt2kRcz/nt2YRKejI81nXnF4Qc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720486484; c=relaxed/simple;
-	bh=IVAEc/U5J+0hMc7a/RpHwtjfFlB6q+S4F2VOLD1IRZE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BCtMYKLME4tZdDR1mEZiWGjw4PYw4zQnVbW76mFRWUgvfDNeRueFvK+mLe1o/yZp2+Ztp0MJIDtfwZvQ2GZnnbrl9rDrUn5qHObjPQbpHS4D0SwPfzxBW0VyQuGaHcoxFjxCzwqCp435/ta4V7MPLo7tiy0b3rLH0OKo1x9eX3w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GA81R3od; arc=fail smtp.client-ip=40.107.237.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RvOIdcU4F6SsiBdIKRI682zR5wIyz4x8smxtzgHt3Sca7ujaSI7+qeo7zkDM5B+in0FiB2QIGz41qQQ6Ka90MhXec9BxECpR2JXiHTbG77vjjCbBiIoFIykJkUQ9DMESdmxAYn0YsWnKYBLNrVXOaDOIp5GVvwiMafpW8Jt9ZUPoMJBPJjA+WScYUhGsxAoyHAP4264XuwMz4ZQEs4+Zalz2Dok7wc88g26PgkyjpMteuuUKcDNTl12Yp0wYClHRiADijICYSjRKOtkmRVddt3qWP4RtqC64s3hISUxNzBAFv5q7WIcDhEYrDi9VnnTNJ1rfE9GKXVLULE129NKYBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IVAEc/U5J+0hMc7a/RpHwtjfFlB6q+S4F2VOLD1IRZE=;
- b=jMhPYf3M/Kv/dcSzqeFpqGBz3UUs3Rx7rBDB3kzssOZDfFlnqxTkq2gkTp5FiOrC8g6lf3PJj/eKi7jgq2GPM+ftvexqtr67XCVuAvslI4EaIm16XPBvC4HYB/L5bkfOqapRyoa3pDzZG9//FP+FHKGDIYgyVg4PzGZJx9JBX2K6Zf6wWSapNXScQP3XQHOBVS0Maf0+k1QVqAUKWaPWUvFKIurmN41Gk+UK9dEa48EM2HHxBvcXbyjQt5CkW3EQ4Se/GLLbzn7IziIdsAZxmy6DFV4ZGi1i3hy3RrLkC0DHUp9hxU5ttrI/dU4jtZU9dA/ldl2DD287fHjP3BOWeA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IVAEc/U5J+0hMc7a/RpHwtjfFlB6q+S4F2VOLD1IRZE=;
- b=GA81R3odMntOCBhJlDlfDAsS2ZdGkY5g8mhFApodX2XOTApKduQ3FLTvuozlWBsx++zOrfXV7pz5Xkf0SvWtEOAa3DTPI/8UIx05EZ5Z+nZ0WnPA88W7sZu8xVQUfZmiC756Qiq1gEEQenQyHJS6RR0ZlniRVp1/KhjTN31TmhLaW1z3OYd7kxP76Tlg1S3/voon+ibyUdaB9ch1aCmRCk2ex/6QUOJLgd/lXqNZ6++rNmNdQAmRNszQbXNfE/jNyEcmBUWRAnRfTD2DlrzsP58bICW3gojoq4wUPR74evo+v0VWOVkt+F6m0XHpwGAsDZYhgAvJjPcZM5lkiRDM+g==
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
- by CH3PR12MB8753.namprd12.prod.outlook.com (2603:10b6:610:178::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Tue, 9 Jul
- 2024 00:54:39 +0000
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b%5]) with mapi id 15.20.7741.033; Tue, 9 Jul 2024
- 00:54:39 +0000
-From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, "Md. Haris Iqbal"
-	<haris.iqbal@ionos.com>, Jack Wang <jinpu.wang@ionos.com>, Jens Axboe
-	<axboe@kernel.dk>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: [PATCH] block/rnbd: Constify struct kobj_type
-Thread-Topic: [PATCH] block/rnbd: Constify struct kobj_type
-Thread-Index: AQHa0Wcu6kuiHL7hm0C79mwCTRBsFbHtkliA
-Date: Tue, 9 Jul 2024 00:54:39 +0000
-Message-ID: <22818675-77dd-4a51-93b5-dd9f61265211@nvidia.com>
-References:
- <e3d454173ffad30726c9351810d3aa7b75122711.1720462252.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To:
- <e3d454173ffad30726c9351810d3aa7b75122711.1720462252.git.christophe.jaillet@wanadoo.fr>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|CH3PR12MB8753:EE_
-x-ms-office365-filtering-correlation-id: 4fb68a3a-142e-4422-d285-08dc9fb1b647
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?cXF6TGd1a2xJajN3RGQ2TEl6UGR2U3J2bWFQZkVpRFVjRXRVeXllbVdWL25j?=
- =?utf-8?B?NnFMVTdrNXJEcXRRTVF4Q01ERzZaZmk3bzFuVHRRcEdXS25EanpRWTA2ZmZD?=
- =?utf-8?B?SEV1NDB5bHoyVG1RUCtFaG9ldlhFRFBFLyszS2ZTQVkwQkUrL2hjdnIrM3dN?=
- =?utf-8?B?NHlGejU0UGsyVTJCOERDSG9xSHdWcnVLanZXZjc2eWovaXArRnlrTDBkOFhS?=
- =?utf-8?B?VXA1bkZQTFhpWVZWOGU4SnJ0aWVJWWM0b0dhSkRuWjE5Q3ZzK3o1YWt6OWRL?=
- =?utf-8?B?Znd3NVhIUVNzY1hIMXJkU0owaWRIbXFlUVFacllQelk3bmhvWHBIbTYvZHBX?=
- =?utf-8?B?VytkQThmVVJ5MWMwUU1JU0VJNldwTzJvRXAzWFptZ1NWUk41dFlIZTAyYlhy?=
- =?utf-8?B?Rmt2Ukp3cWpqWmV1UlEwMk9PK1RINDdCQXpoUkVIbXNLVzEvS0E3Nk51UVNQ?=
- =?utf-8?B?bVJIZUwvWEhCQUROUmFxQzRHeGNGdE5wdEdTUGhUam5veFVFZTZTbUZCV0Zj?=
- =?utf-8?B?dEI4SXZhYmFUNDVnNW42MnF1TXlnWjhrVUo5NmFMRWg5Ynl1dDZFSUM5Y1hy?=
- =?utf-8?B?eVRKUlNvQzFnUEFscEU2NGFmQlUzczluaGZJYjNCNHJVb085UWdQL3h1c1A0?=
- =?utf-8?B?UVozR1M2bVVVSTd6Q0JTYjJlNHRSUEMyQ0trcXptNVJYclk2OGNxWERtZFN6?=
- =?utf-8?B?cStEbFZDQXhxT3JUU0QrUElLalVXcmFjWGoyODBQUlc3MDFXSWNWZGJaODE4?=
- =?utf-8?B?MWpBeU41Mm12ODJ1em5OSGRmQW83ajNubGhzUU5nM041MFJLaHNNRkNTejc2?=
- =?utf-8?B?SEdubGhnWlhYK1NXRzRGMUtyeEduYW9ZaWp2UGxwZnpwNUN4bU5QMEVGSnp4?=
- =?utf-8?B?Ky8zK0VRUjZXRGdtbTR0Q1MxUjRuekpHL3BHN3JzN0lHcXV1ZG9jMXFvZ3py?=
- =?utf-8?B?cC9mTGduZlVYRVQ5bE5JNThCcHJadEVQaFVtZ0EzbXUvaktRVGIyMTJkNFpS?=
- =?utf-8?B?VkJxQkFjNmtzSVI3L0NOVWg3RkxFYXZOS0RyWlY3MGdzQzV6VEJSamVjZ0dq?=
- =?utf-8?B?UmRKQVVpTUNsQndHUHRLZjh5SVVVcXdvc2RPTlNzMXJNa1ZGVnNaekNZbkIv?=
- =?utf-8?B?ZW40VERtejNnWHR0OUora21ONGZFVW4vM05xTWJ4TVFFYkQxUitGTXppcWFV?=
- =?utf-8?B?eS9uSFUzNlkvajNVRDdEVjQzMm15eldab0llNHFsQXpjdHBrVGlsMGR2ZGVY?=
- =?utf-8?B?RGdpaHFGdnJlNXJpUDNadnNrQVB3ZUozdDFjd255ajdSWGNIOWZuVHhaaVhJ?=
- =?utf-8?B?VFBJSUV5eG1HK0RpanBmSjc2a3RlUmV5V2xTdjBGRFR5SERFZXdyWXQ4L2Ns?=
- =?utf-8?B?T01pSkZUYWlnSHo1SlNMNDYyRUExZ2xHZlNXK3RVNzJGVGluZzZNWVFnc2dD?=
- =?utf-8?B?QzVLUmxQOEcrdE5qZFM0eHlSckdTb05ENHV2Z25Daks4VkI3REVCZ3RuakFI?=
- =?utf-8?B?QnE3cGpsRGkzcDNvblZXMzJkVEgvdnpYTHNQcVhEWU8rSTBURUlsRGl3WEVh?=
- =?utf-8?B?R21scmMvdk93M01xM2NKbzBTbFlPYnNiaWRaNktvSW84aDdOTFRVRVhqeWEz?=
- =?utf-8?B?a0VhUEI0M1loWThuWkZIL0ppK3dWSnMzZkJlWkZwbTl2VXgrUUN2dFFwM2NI?=
- =?utf-8?B?WHdYdkJjR3lONlFKZEFVMjJUY0hRMC8vcS80SGlkZVl6VUo5WUJ3YVpsYXE5?=
- =?utf-8?B?SCtoeWhhZkQxVnJTb2ZZdlRHdTB4YjdFR2NWSTM3L0Z3UGU4anJYTVZRQzBL?=
- =?utf-8?B?amt4VlRHK3JjVTN4TW1ZbEY5UEpVOUh3RVB2WVdDZGJoVmo1eTFlUmV5MUJq?=
- =?utf-8?B?QjZORnFEYWRsSXNMa1NhYkhhN2lHOFdSNlNqMFh2SkliMkE9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?MVUzQXNJejltQkFlQUlkMUZiVEQ3bWY3TTJ3UGxBVnQ3bU5FRUlrK3BKV1l3?=
- =?utf-8?B?TUt5UmNoZTlRSUk3K1QvM1hUSGhlYTZJVXFlUy9ueXZlODZYRDVpQm0zOFpu?=
- =?utf-8?B?THF5RGs5b0VGclIrTFRXZUxkZE8zQXR2aE1uZXVkUVZ4QkplQW1qYTQzSm1J?=
- =?utf-8?B?RmkrbHN1bGphbjhuYndVUmpPcmhZeWpHbnhzZUg0RlB6YU9LbWtZMzlMTFNQ?=
- =?utf-8?B?d3hQQ3lzMDJrdUl6ZnpxNitHamNBUlhuYUZ1Wk8vcFZrM1h4OE1yV0xiZ2VF?=
- =?utf-8?B?bEZmcGFuYnlJWXpZZTNiOVg5MnhqS2ZGa0NYaHI0c0dnbnhNaUxEWXJwcFlU?=
- =?utf-8?B?c05KMjRpMWJuSGE5di9EbXV2R0tHNkR6VDN4K0ZqQldrTEVwM2hBUE9zS0pF?=
- =?utf-8?B?eklyS3diSHB2cXFRcXFlbVA1S3FUYkRvMk1pcjR3OXdFSGthUEtQalFibHFH?=
- =?utf-8?B?QUFFT0ZCRlFZTVhqSnpuWXozUEFrc1ZvZlhXMGxubkg1WVZLMm82N1JaRUU2?=
- =?utf-8?B?MTBaNWVMTzN3LzliUjllckdSU1lTUUFJajlHR210TTRHZm92cFhqZWIvZWVu?=
- =?utf-8?B?OFNWVnlqZWdPUncrczNPNUhORDU0OXF4R3pZamxRdmtkbjBCWnJLMnhnRHJt?=
- =?utf-8?B?Zm16RlByUVViaUt3V0lodnBqd2dCZFU4UExJaU9URVR4cTZuWG9rMFpqSEZ3?=
- =?utf-8?B?QlBLaGk2eTk2Z2ExVEpwbDdDRGx1WmdiN1g1QWdBdmF5eVQ0V0hpSUFoLzdv?=
- =?utf-8?B?VnUxd3dJTDdOYTlQY1dOUnVGNFl2ank4Tm9JbjhoRCtsWVlmcGVVZUVzQ1ZE?=
- =?utf-8?B?V1I1bGUrNzgvNGZPY0tldkFRWlBzcUJCemxKekttbWRBY2xaRGxyTk9PdGU0?=
- =?utf-8?B?cGNLZHYxcHlLd213UUllRlVzcHJLNEJSYmQxRi92SjNBRTc1dTB5K2ZEUlV3?=
- =?utf-8?B?dFJHY1pSaUxDSWdnZ1FpTHhXQjdJb2U2QWkrZ3JFTFFsNmJmejQrdkNFdkRD?=
- =?utf-8?B?WGh4ZnB5MFN2Z0Fua1ZhUWQ3bThLMmdvcFRxUTZJNG84ZE1kYkVNNGVWMnFI?=
- =?utf-8?B?UGZqeDlvSStJOGprZ0t1eWlRZ3JWMlB0SFQwYm5TRkpJTUdjdk9ESmZiejFN?=
- =?utf-8?B?MTFIR1NJR0RHTzc0dExPRXUxNVlJREhzZGFjNDdoNjhQajl5bW4xYitpK05q?=
- =?utf-8?B?RXAzVktFUktTRWJuTE1rK2ZZSGNZS1ZlelRmVnRRaVRDc1JTTXhlSXFmNW9s?=
- =?utf-8?B?U2dRTUFpSy90UkJhYWIyMGNLMzRIRW1lQ00zQzVGL3NWdXZJZDh6T1ZnSUor?=
- =?utf-8?B?S1hRbEFzTUlzOEh1Mjg3a1JBcVplYUJWYmZ1N3NJbFZFZW5nOWhVVUFheUtT?=
- =?utf-8?B?OHVCMnZMaE5XNWM5U1BEc295QkNpbldPQkNxeEUwVC9lMHdNcHB4S3FtWmxn?=
- =?utf-8?B?VXJzampmdVRONDBDb2xaM0tRcXMzSk16RFNnYXQxMDBEUnV0a3VWazd5Nm5B?=
- =?utf-8?B?eTBSanVaUHU3MnpYUFRZWFU1RUx1Uzh3eVJBVzd0eXRwR1c5NSthVUtyL1h5?=
- =?utf-8?B?ZkRQenV6WG5rVGVYNVVWMUVvR0lmajRTUTN3OHZ1VDVadFpBWmJpbTQ4alg2?=
- =?utf-8?B?TDNaTkV0SVppTU1tMFR4cGxmYldUOWpPSHpQbkJhbDJ2OFc5bzRzcEw3bS8y?=
- =?utf-8?B?emhBR0dJeEU3WkZNbXJwVWthOGYzK3pOT3pDeEtTN2JMK3AxbE9xMW9abUlU?=
- =?utf-8?B?VW42TTA3YW85bUp0Y091Z0NOTksyV2hwT1ZKcVczNHRYMk5hdEJPSkZ2Tkt0?=
- =?utf-8?B?TkNobGh0Z29tK1MyajV6VUdVYjFXN1EzNVM2eld1djJNZEhnczQ1VDJvUkxx?=
- =?utf-8?B?ZFdnb3hsMi9yQzJ3cVkwM3gzalJybitiUkZMcXJ0WEVyenBQdnd6U1pUenQ4?=
- =?utf-8?B?dnZnMFFadlNJNERYdDNUZFBIc09EQTBuSUd2KzM3QVlDZnVRYnlzY3ZuY0pH?=
- =?utf-8?B?bHN2ZjIzZmJ6dHVLVUpCV0VqR3dMMWN5dTlDMjAra3JyTDNFNFFZM3lqU1pJ?=
- =?utf-8?B?WlJuZ2dVU013SFJ1K1V2Vk9oRmdoWEx3alVzOVYwTWtRYXQ5ZnVNWmFuTnp6?=
- =?utf-8?B?elYrTmI4ajI4NFpxNkZjYWJtODBMZWlzK3pTTHRZQys2QytTZ0doSGMvWmVu?=
- =?utf-8?Q?/JmQAf0s5sdgByCN3u8NgyLSOgrfJXSXySmdDxsz7HUr?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <57C674064CC469468BF1B2C6E64CB4C4@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5940E1EA80
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 00:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720486583; cv=none; b=U0IHTAyLVUeZyFbWrPgSskeizobeHGY5YG3bETDw1NgSnthYNrxOk5+jPoDoKn6hQZldV9GDyyv3O1dMB9HuA70bRGbMu6H/IH/lRDf5E6qNHykqfj3w5bahMkjdCQJlM+DZWhRZgql8iV3juxgcfPfXJPOmpGCpQz1Z5LD6zeY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720486583; c=relaxed/simple;
+	bh=iH4XkXh2lpYUuCPClm2R6l5GXTXOIFlp+/I6YQb8XCA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eWXmiCbVVpFSggqQ7wJj8+rHADtNn8wx0zCNldo9BxGgdkTiYbxb+62i7KhOMkow93mHCLXZV7CNPB5neRW2q1ut+gWoEjnZLt495FCNGq+8Q0UKnenpLB5/arbptsNV3ZtS67ounTk6cfzEl5zOacsNkv5cv0bN1z7ZMTY1bnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mXYe7yad; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-58b447c519eso5524904a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 17:56:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720486580; x=1721091380; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iFO55uxdi8FRVhzNa7rRusXHfIz8daUjQUpq0icE1SY=;
+        b=mXYe7yadr8I74FR6NUdcLsHrrLIqPQ9IQ7AyEQZyq7coBLsQm9uUBLkWLuhtepBrF0
+         JxK6TurOIFxjNcv3C1kfO0jR61a9NT0KdE/rSzWJNMcvGPyuTBv5OR2zh+Kt5PMJXe9f
+         puGedI3W2oQL5qsOrtPfMluyV9gwxY5+nPgFHyX765DFADZBnyUEf/7R241fCVkR8GjR
+         /ZdYO3HRG4zx/HAWKqXMuZcTqSD0lyqa3Z26vwcbdd21YRT/e8X6/4QfHofyt7RrEYWJ
+         0ROFk4Ns9FlHYtxHI6u4pxtFCgI8sDKiXFrdqg7DeZsZ9pCpFGzjonbdYdasJmDxC9Li
+         8lyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720486580; x=1721091380;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=iFO55uxdi8FRVhzNa7rRusXHfIz8daUjQUpq0icE1SY=;
+        b=OkpPf41Xp+J4Kn22cjBMOJpdqjQoOGIWxQgFpFW6M1rP7ojT+M5huPwuVPIUb/nFoE
+         AL2bU6gMGW1AOJx1JcIyFitX8N/HiEu9duxon9XGsau0F/2qxnmYxkXQlbik1ZceSxXt
+         tutd5E4HtCWDEV7Hk++HJITbcXsO2+zKTgpDVOtFNHHRQ+ujxmcHQNODmil8mzhhQmFd
+         Q2HUZIMwC3FBZeIMkuhpenhaSucIl7TQh8EOXoAmWmGucfCloqhNZzDNXjHd07HPl0uO
+         pCSKspCNCvi0ntFXBEceg/XfQ+5VpE7TTS8aIHC17rCK1UctOUhw0fhBoePcWB2E4Dpk
+         ysJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVrmAS44L2aIljnybuGwbBeUb2FRfZco8phYWm/uJYQ7XL81FPw4SwhcrJW42DVRcWk4MVuRlbrLHH8lHUM+8pnFmnVmysjRHIsNu7
+X-Gm-Message-State: AOJu0YxMteSh6TWxX2oWm0Mf3N/Ba+sIzwqdd2iGMoWfUnzAXBR0A4tX
+	1zaPTsH3XijsJ5mrqAA7OHo0gWOY41slYT/Z0Jgt7rkmYsq4ck0y
+X-Google-Smtp-Source: AGHT+IGfSsAqjNtOUpM4VVF5QwRLL78xs/D2lW+2NQL//NMV7n0myPbPXpX+umYlGfSbQ5qvxqe3wA==
+X-Received: by 2002:a50:ee0b:0:b0:58d:836e:5d83 with SMTP id 4fb4d7f45d1cf-594ba59f8eamr535289a12.22.1720486579362;
+        Mon, 08 Jul 2024 17:56:19 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bda30f0csm416259a12.88.2024.07.08.17.56.18
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 08 Jul 2024 17:56:18 -0700 (PDT)
+Date: Tue, 9 Jul 2024 00:56:18 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>, rppt@kernel.org,
+	akpm@linux-foundation.org, brauner@kernel.org, oleg@redhat.com,
+	mjguzik@gmail.com, tandersen@netflix.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] mm/memblock: introduce a new helper
+ memblock_estimated_nr_free_pages()
+Message-ID: <20240709005618.a4uvufvnledd4vb5@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20240708010010.32347-1-richard.weiyang@gmail.com>
+ <e84fcec1-31bc-4397-851a-da70dd754b19@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4fb68a3a-142e-4422-d285-08dc9fb1b647
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2024 00:54:39.5561
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: iZjIc735U1WJb4Eu73cSmNgqZo4UC0vy+r9O/QH9UapArP1PgEIfJM0sBHVUuoliHYsmSuHSWIwhJqCQwmZ4CQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8753
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e84fcec1-31bc-4397-851a-da70dd754b19@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-T24gNy84LzIwMjQgMTE6MTEgQU0sIENocmlzdG9waGUgSkFJTExFVCB3cm90ZToNCj4gJ3N0cnVj
-dCBrb2JqX3R5cGUnIGlzIG5vdCBtb2RpZmllZCBpbiB0aGlzIGRyaXZlci4gSXQgaXMgb25seSB1
-c2VkIHdpdGgNCj4ga29iamVjdF9pbml0X2FuZF9hZGQoKSB3aGljaCB0YWtlcyBhICJjb25zdCBz
-dHJ1Y3Qga29ial90eXBlICoiIHBhcmFtZXRlci4NCj4gDQo+IENvbnN0aWZ5aW5nIHRoaXMgc3Ry
-dWN0dXJlIG1vdmVzIHNvbWUgZGF0YSB0byBhIHJlYWQtb25seSBzZWN0aW9uLCBzbw0KPiBpbmNy
-ZWFzZSBvdmVyYWxsIHNlY3VyaXR5Lg0KPiANCj4gT24gYSB4ODZfNjQsIHdpdGggYWxsbW9kY29u
-ZmlnLCBhcyBhbiBleGFtcGxlOg0KPiBCZWZvcmU6DQo+ID09PT09PQ0KPiAgICAgdGV4dAkgICBk
-YXRhCSAgICBic3MJICAgIGRlYwkgICAgaGV4CWZpbGVuYW1lDQo+ICAgICA0MDgyCSAgICA3OTIJ
-ICAgICAgOAkgICA0ODgyCSAgIDEzMTIJZHJpdmVycy9ibG9jay9ybmJkL3JuYmQtc3J2LXN5c2Zz
-Lm8NCj4gDQo+IEFmdGVyOg0KPiA9PT09PQ0KPiAgICAgdGV4dAkgICBkYXRhCSAgICBic3MJICAg
-IGRlYwkgICAgaGV4CWZpbGVuYW1lDQo+ICAgICA0MjEwCSAgICA2NzIJICAgICAgOAkgICA0ODkw
-CSAgIDEzMWEJZHJpdmVycy9ibG9jay9ybmJkL3JuYmQtc3J2LXN5c2ZzLm8NCj4gDQo+IFNpZ25l
-ZC1vZmYtYnk6IENocmlzdG9waGUgSkFJTExFVDxjaHJpc3RvcGhlLmphaWxsZXRAd2FuYWRvby5m
-cj4NCg0KTG9va3MgZ29vZC4NCg0KUmV2aWV3ZWQtYnk6IENoYWl0YW55YSBLdWxrYXJuaSA8a2No
-QG52aWRpYS5jb20+DQoNCi1jaw0KDQoNCg==
+On Mon, Jul 08, 2024 at 09:56:21AM +0200, David Hildenbrand wrote:
+>On 08.07.24 03:00, Wei Yang wrote:
+>> During bootup, system may need the number of free pages in the whole system
+>> to do some calculation before all pages are freed to buddy system. Usually
+>> this number is get from totalram_pages(). Since we plan to move the free
+>> pages accounting in __free_pages_core(), this value may not represent
+>> total free pages at the early stage, especially when
+>> CONFIG_DEFERRED_STRUCT_PAGE_INIT is enabled.
+>> 
+>> Instead of using raw memblock api, let's introduce a new helper for user
+>> to get the estimated number of free pages from memblock point of view.
+>> 
+>> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+>> CC: David Hildenbrand <david@redhat.com>
+>> Reviewed-by: David Hildenbrand <david@redhat.com>
+>> 
+>> ---
+>> v4: adjust comment per david's suggestion
+>> ---
+>>   include/linux/memblock.h |  1 +
+>>   mm/memblock.c            | 20 ++++++++++++++++++++
+>>   2 files changed, 21 insertions(+)
+>> 
+>> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+>> index 40c62aca36ec..7d1c32b3dc12 100644
+>> --- a/include/linux/memblock.h
+>> +++ b/include/linux/memblock.h
+>> @@ -486,6 +486,7 @@ static inline __init_memblock bool memblock_bottom_up(void)
+>>   phys_addr_t memblock_phys_mem_size(void);
+>>   phys_addr_t memblock_reserved_size(void);
+>> +unsigned long memblock_estimated_nr_pages(void);
+>
+>^ stale name
+
+My bad.
+
+>
+>>   phys_addr_t memblock_start_of_DRAM(void);
+>>   phys_addr_t memblock_end_of_DRAM(void);
+>>   void memblock_enforce_memory_limit(phys_addr_t memory_limit);
+>> diff --git a/mm/memblock.c b/mm/memblock.c
+>> index e81fb68f7f88..26162902789f 100644
+>> --- a/mm/memblock.c
+>> +++ b/mm/memblock.c
+>> @@ -1729,6 +1729,26 @@ phys_addr_t __init_memblock memblock_reserved_size(void)
+>>   	return memblock.reserved.total_size;
+>>   }
+>> +/**
+>> + * memblock_estimated_nr_free_pages - return estimated number of free pages
+>> + * from memblock point of view
+>> + *
+>> + * During bootup, subsystems might need a rough estimate of the number of free
+>> + * pages in the whole system, before precise numbers are available from the
+>> + * buddy. Especially with CONFIG_DEFERRED_STRUCT_PAGE_INIT, the numbers
+>> + * obtained from the buddy might be very imprecise during bootup.
+>> + *
+>> + * While we can get the estimated number of free pages from memblock, which is
+>> + * good enough for estimation.
+>
+>I'd drop that sentence.
+>
+
+Will update it.
+
+>
+>Apart form that LGTM
+>
+>-- 
+>Cheers,
+>
+>David / dhildenb
+
+-- 
+Wei Yang
+Help you, Help me
 
