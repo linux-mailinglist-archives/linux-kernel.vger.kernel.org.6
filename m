@@ -1,130 +1,105 @@
-Return-Path: <linux-kernel+bounces-245397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BE6C92B211
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:24:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CDB692B21B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 987CA1F2292C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:24:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D24FB2230B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A182154BE5;
-	Tue,  9 Jul 2024 08:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA88A1527A9;
+	Tue,  9 Jul 2024 08:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Ps7cKKMW"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="X3V5/5ke"
+Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528F21527AF
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CE5143752;
+	Tue,  9 Jul 2024 08:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720513392; cv=none; b=pNMdvxyCE6OfjxrlhSS0zTyQz6bZ3WLhcE07KfRSGeG4WloeqdxhNpMhyRlOA1oXJXgQ4/M00eGYlSyYKL8lJERLslIk+bJXLY3v7+0E8W1+lCg2E4N2EJ/UZMTlE531YxLVZxaRFi3SkU3UhiyT0RV7Ro8K/7jeKM/v0qAoKZI=
+	t=1720513566; cv=none; b=qWMgY+uQ8KpEKADjyzVHSM3kxaOScnMG3WHDiG60VqM3qZNtpwj3ZIwgnVmKH3n6kVSzDsLf38XybMywy3U7z60PaTBLp+z9s5tSjTmfs9b2Vnm5nUw4EXauAbjdanTGdbpomBQtJVHIxu5X4w6B53Rbk5f0A24t5tgRlY5x5ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720513392; c=relaxed/simple;
-	bh=7Z6us27qIuTlxBXAFyHcsMvVHOHakLdFL2jtnKejVHs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MJD+ibtFECDABtLuqql0L31Jh2hkQltz8wlFqe+u0gRSB9Xaid0zMdgweK1OYNoXYSmdOkl3zam9uDXAF4IWejhwBy8OTHTFJqKrdoacyoIks9OV8p4HGAh7Ih0L4xqZ1jHuSdq/KPolfFMj96ZpVRVtIY2iZZ3mNMWTfeVVKEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Ps7cKKMW; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ee77db6f97so66372581fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 01:23:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720513389; x=1721118189; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5HGUof91eotwEdfihh0OBz6TKkOSwGergxDj8SELw6I=;
-        b=Ps7cKKMWaMTKxEmOaxW2SSN1nAfCJPz6BUI9yUb5R+1Hm2jZP6T8nfYP/vZjlowFcW
-         hIBH7U7vvLaGuaIEM1P4QKmFqkOe8Oc1X8cenBPAM1GSzTUMn/y46cDEu4F0dYX0UZoy
-         riRBiN9OIjZ5RGna8dNQ1pZwK2uVKWZyVoBOykaEiahCfzw+qfhcYizaHC0icIsGlaDE
-         V08bdSUHK+r3Dl7wvZoe7i5/3wj3+J9MglilMO5HVGLXv+Oeg+4KcDw7nG5Y1Hrlehag
-         qNEOkyMYEVCnfaFOKxbC/QXQWBMCyK12gSnHRRpW2h2HfbYOiXmRumYVjBsru+v6w+L9
-         JtBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720513389; x=1721118189;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5HGUof91eotwEdfihh0OBz6TKkOSwGergxDj8SELw6I=;
-        b=J38HLsgobfjPZdb9wrB5JUTq1WETt4MC+3guScC+3Kjz9W9kKcY65G+uUY4cHn1L3n
-         R9Ni+H5Y+k4t4sIw/16oRZIfnAeGUm5i9TM3796ngcC/gAgWtfKRedIXKK5qgJgnJL8I
-         R+dPJQ/l5EWwZtMhBsvubY6LIplp9zO3obMdw/uT/OJ6l1HKM34f478mE6+yILdCz2Qc
-         UcUg1lrGrvIS5xIVgeJ6EmpyEtMRqQwOaGOhzbjOimIeKVs4qfUqpwJJHfcUCAsd8uWW
-         WW5nx+XMrJvKgDnrnwJVjq6S5nvmLVa5yjVDoLf39zwcbbBYA1XCcRWc9trhzLzqCz1y
-         CQ3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVeKjRVI5R3tmAfc43gGBAQfSENbfHYoNwwNEjrbqGDXSNtX5zah9BW58eKgw2d8S/oZ4/jd2B0b8rI0tE64YaFJw0J2Kiyxzd53+LO
-X-Gm-Message-State: AOJu0YxmRG5Yh2WHmb55kSZxPXDTo6cbHXx5p6FTD3WuKh+UUhQfWP0m
-	Cvv0EekkQsHfT+0dpdfEpB+OBKI7Dz8EvYdqntHDGAVDUKgyWtw23eLCkzA6i2yRo96bXcqvZ/Y
-	TMT8eo2qJixbkOEBUxHs2PEXXkru81++hxzNvew==
-X-Google-Smtp-Source: AGHT+IEjr783ZzbCEinWzyI7wDmtA25dbr46RPbhoYwSLTpW27laIhd76XiAAgguwAZROdppDcw7BBgS+Ujd64hgPcs=
-X-Received: by 2002:a2e:a316:0:b0:2ec:5945:62e9 with SMTP id
- 38308e7fff4ca-2eeb316b47bmr13784661fa.32.1720513389359; Tue, 09 Jul 2024
- 01:23:09 -0700 (PDT)
+	s=arc-20240116; t=1720513566; c=relaxed/simple;
+	bh=pr8wIDCD45d8QCeilQNKwD30DShDaMx2RWVNvlk+yUQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kSXByL3Q36jxBF29LnHZOXbk/IJMJB4PhEZjTUzDn0DhC/2+Id08fJFBNKP/g3fKswX995iy/0UkU1YvVYtK9KE3sOIlaU1QazwHnj8ASkbo/pOuVSBRXJ0TBDRcuRGsD88CgIDN0iU8QLeMRT5XIe2E7mKA6sxKox3oVtu42+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=X3V5/5ke; arc=none smtp.client-ip=49.12.199.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BD213DACBD;
+	Tue,  9 Jul 2024 10:25:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
+	t=1720513561; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=WTbFZ3lBM56CMIGthDXFvscF17IJD9BkmdHCFHHDPU0=;
+	b=X3V5/5keksxKnRdiFmrloVTE0jsZOA96OsJyrjOgrmP0lRnDQUovBj+hQUBo9OiGSFlc3W
+	b05u0/zKAwaEjs0+k5wGsV4AwO/yYgXNMVLiv16nhWS0Ce2DUFoIyzns3aZ1x+yO+Irkrv
+	sXFzO2nebvttmT7J35d/qam1kVuSYefBs0CHem9tJzOLR5VPhop+tWQKbJkN9CognP4va7
+	4SKfOfjplGLibRD5kSzxPecEaGESWGEUloo3t1yKY2wiIjZtcGwUruCWGlNh9pN0TrWf35
+	hC3FZFlYL1MBl+TA3e/jxXT+HVrJHyjmXe+LqM1cvsc0rhyQmEyHj4hOkSt5VQ==
+From: Daniel Wagner <wagi@monom.org>
+To: LKML <linux-kernel@vger.kernel.org>,
+	 <linux-rt-users@vger.kernel.org>,
+	 <stable-rt@vger.kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Tom Zanussi <tom.zanussi@linux.intel.com>,
+	Clark Williams <williams@redhat.com>
+Cc: Daniel Wagner <wagi@monom.org>
+Subject: [PATCH RT 0/1] Linux v4.19.317-rt137-rc1
+Date: Tue,  9 Jul 2024 10:25:57 +0200
+Message-ID: <20240709082558.11012-1-wagi@monom.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240703181500.28491-1-brgl@bgdev.pl> <172049643096.15240.14162761125981219295.git-patchwork-notify@kernel.org>
-In-Reply-To: <172049643096.15240.14162761125981219295.git-patchwork-notify@kernel.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 9 Jul 2024 10:22:58 +0200
-Message-ID: <CAMRc=McHFoVEJrMM6UpOZY2Ct7PvuQd-yPeWquUPNYHfDYkSww@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 0/2] net: stmmac: qcom-ethqos: enable 2.5G
- ethernet on sa8775p-ride
-To: kuba@kernel.org
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk, 
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bartosz.golaszewski@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Jul 9, 2024 at 5:40=E2=80=AFAM <patchwork-bot+netdevbpf@kernel.org>=
- wrote:
->
-> Hello:
->
-> This series was applied to netdev/net-next.git (main)
-> by Jakub Kicinski <kuba@kernel.org>:
->
-> On Wed,  3 Jul 2024 20:14:57 +0200 you wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Here are the changes required to enable 2.5G ethernet on sa8775p-ride.
-> > As advised by Andrew Lunn and Russell King, I am reusing the existing
-> > stmmac infrastructure to enable the SGMII loopback and so I dropped the
-> > patches adding new callbacks to the driver core. I also added more
-> > details to the commit message and made sure the workaround is only
-> > enabled on Rev 3 of the board (with AQR115C PHY). Also: dropped any
-> > mentions of the OCSGMII mode.
-> >
-> > [...]
->
-> Here is the summary with links:
->   - [net-next,v3,1/2] net: stmmac: qcom-ethqos: add support for 2.5G BASE=
-X mode
->     https://git.kernel.org/netdev/net-next/c/61e9be0efbe8
->   - [net-next,v3,2/2] net: stmmac: qcom-ethqos: enable SGMII loopback dur=
-ing DMA reset on sa8775p-ride-r3
->     https://git.kernel.org/netdev/net-next/c/3c466d6537b9
->
+Dear RT Folks,
 
-Hi Jakub,
+This is the RT stable review cycle of patch 4.19.317-rt137-rc1.
 
-Does picking these patches up now mean they will still make the v6.11
-merge window? If so: could you also consider picking up the associated
-PHY changes[1] as - with the DT changes already in next - this is the
-last missing bit allowing enabling the 2.5G ethernet on the
-sa8775p-ride-r3 board?
+Please scream at me if I messed something up. Please test the patches
+too.
 
-Best Regards,
-Bartosz
+The -rc release is also available on kernel.org
 
-[1] https://lore.kernel.org/netdev/20240708075023.14893-1-brgl@bgdev.pl/
+  https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+
+on the v4.19-rt-next branch.
+
+If all goes well, this patch will be converted to the next main
+release on 2024-07-16.
+
+Signing key fingerprint:
+
+  5BF6 7BC5 0826 72CA BB45  ACAE 587C 5ECA 5D0A 306C
+
+All keys used for the above files and repositories can be found on the
+following git repository:
+
+   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
+
+Enjoy!
+Daniel
+
+Changes from v4.19.316-rt136:
+
+
+Daniel Wagner (1):
+  Linux 4.19.317-rt137
+
+ localversion-rt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+-- 
+2.45.2
+
 
