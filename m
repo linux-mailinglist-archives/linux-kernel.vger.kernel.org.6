@@ -1,98 +1,90 @@
-Return-Path: <linux-kernel+bounces-245526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5201492B3D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:30:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1BB192B3F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2A6DB237C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:30:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BBDD1F21753
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BB7155306;
-	Tue,  9 Jul 2024 09:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46B1155316;
+	Tue,  9 Jul 2024 09:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lq2p6VLJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="eHyu9g6R"
+Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2CC155329
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DEEE4502E
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720517405; cv=none; b=kND96wBEnaGAzVhCoovw+AMofmayJZpMSWxfNIOTS83gOpG9pJdmgQ5QMU2XOnevMt6B35aCCncYxfPv7aoTLrmx2yBPpLZDlqPC8LXhyYViIFVFAq2FSrf8m6umRKNdSBWd7IzWoGbhhtJHs2qH3rwL5XR3qDZvSed02sGe2uU=
+	t=1720517782; cv=none; b=R1/4XcHEy/8mRz0HXwBcu2FMmWNFyghO3DyzDDdn25rsLGR17HZZyXwd2d5Vc8jVvJWe2pM9AV70Cy7GG1g5nJyTPU3EvkWEqfsN+R4fFn1pTwRXooIScjpYExZvmyc03L1BThnbeLZav1uFWFGzuLGqzNt2yHFSaFAIw4H+AYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720517405; c=relaxed/simple;
-	bh=3UrNehCdEOz3kmpljIH4fi/GT8Naw2VAyq67V1zlRwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zg1Fhiip4nunFoqQ8Phb8BYVaqsWEwWIBwespNeFCJP9i6CF545jjmRgVqFajWckycOU7RVc4aqochzJ9nKiRpuvs9j7ec9E9utA4iUJR2d7DY95nkmCmBbAs8RzimnU4wUFZUt5Ol7yzw/v1gpPQD5GVzDts+QaHCtJXKGU6oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lq2p6VLJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720517402;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3UrNehCdEOz3kmpljIH4fi/GT8Naw2VAyq67V1zlRwE=;
-	b=Lq2p6VLJBQDn/gOad5KoPl6+CmbA8qrE38CAr1BwyRHJBexv19zhrqxpBAMkBon5M+lbIK
-	UbWYIXIbx119xygnqe7+pt1NVLgoXTiIMegZurzYHyIxKmCmC2zyNV8gkNHOZYVYha9tyf
-	7byt+Y76sTAM3+W8CSm6nX62GI6yWiQ=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-454-M8UPmP1PMDilwb-uNonikA-1; Tue,
- 09 Jul 2024 05:29:57 -0400
-X-MC-Unique: M8UPmP1PMDilwb-uNonikA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3CC6B1936187;
-	Tue,  9 Jul 2024 09:29:53 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.15])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D0D441955F40;
-	Tue,  9 Jul 2024 09:29:49 +0000 (UTC)
-Date: Tue, 9 Jul 2024 17:29:45 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: linux@armlinux.org.uk, vgoyal@redhat.com, dyoung@redhat.com,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	arnd@arndb.de, afd@ti.com, akpm@linux-foundation.org,
-	rmk+kernel@armlinux.org.uk, linus.walleij@linaro.org,
-	eric.devolder@oracle.com, gregkh@linuxfoundation.org, deller@gmx.de,
-	javierm@redhat.com, robh@kernel.org, thunder.leizhen@huawei.com,
-	austindh.kim@gmail.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kexec@lists.infradead.org
-Subject: Re: [PATCH 0/3] ARM: Use generic interface to simplify crashkernel
- reservation
-Message-ID: <Zo0DCVXvCryDr7WN@MiWiFi-R3L-srv>
-References: <20240708133348.3592667-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1720517782; c=relaxed/simple;
+	bh=oqJ+mJ6dM5EbmUcUW5tcynAuL3T4tVBHkDNXFnlAU2M=;
+	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
+	 Date:Cc:References:To; b=YnZDu7quAWPdfvc1oSWAaCeEGBgC9+9tMLkXgHyMzexDi++CH7e5tNmmAnBkhigHhWQ12/jm88HZHug6EGpfXaEuhu9gzgpCIBl3pFMIOKXPNQ2EH9s6y6UYrbvu6iuNwNBX5X1KDf1UBvLOFEPkLl+b0j1nnlz1sX5PN212CE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=eHyu9g6R; arc=none smtp.client-ip=203.205.221.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1720517771; bh=oqJ+mJ6dM5EbmUcUW5tcynAuL3T4tVBHkDNXFnlAU2M=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=eHyu9g6RjxNsivAn+L+TL44+cz0djr+CGiApYeXv9E+LbaZ2s1idRamPhrI2XlZIH
+	 4rHTqbxWPTUhDUorXWlIFXdMs5gruwqU/Z55sLExARPr+ST/RzhXFuEP+VXxMELB2H
+	 QyShsyFGnzmi8T/CmJ0v+ywNPu0StCjCd9+qVgCg=
+Received: from smtpclient.apple ([2408:8207:18a1:c8bf:34:94bd:a685:19f9])
+	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
+	id 77A306FB; Tue, 09 Jul 2024 17:29:58 +0800
+X-QQ-mid: xmsmtpt1720517398t0xp3eojx
+Message-ID: <tencent_F870B162CE439C1B8BF87E0511B4071CF909@qq.com>
+X-QQ-XMAILINFO: MB5+LsFw85Nob845YVBRs6nw06NN5zgus+jzrRiDE3NY8ArzR3nzwmQqCRaCzs
+	 350oLiWVdy1XkLiCP+3Q+sEtRgpwkixUu2T4EoGevgqC8/DFP1XgFsb5Fg5i8XBwot8BnttvKRVo
+	 jPgAG0gLgwQteJ8VHK2KEQ5nWT/WxbEYVorDQvnhI5SDkFNpF+BEV+X+iV1bEN4mBQcrKzP5d0lh
+	 x7APRPP94sH6Z1o2ezT2eInMavqIMZ8wUaMVJe3Ej8BG6bZvyPoe+WbKwEuWDpYk82t3bd8Pvdjh
+	 9EZMn1BOZCwbflwWG+m1Vf0Odr4GhXgqgytXAlwVxI7OOZhQhuqOsMGGHsTO2SR3webomOeN3TcU
+	 Hc2+eGQBSllytU0SAUpJ/kCucaR1ptuK4srwHpp5cgQlZc5F7C8e6w4hI7kSi6/QW6YYA4Tc1zRR
+	 LIeglbMRsRB30qyCWHBR9X2bMMnDqH5yESi8JTW3kaouaHEv14T35qXCKHV1rstAW3Jy5T4tiUSb
+	 DTdi+uaa1HFketSiPNt+IKvnci4xB6rDAKsgh4tj7BvUPudIN8uN3IDhyWPxhjLQSjqqrqGz+t/V
+	 OFoWU0lTbzd04BqTJty61Kce+l4Tl6eE0l9ZoGOVTdzH2dj5jfV3NNyFWp2t3RY7DVfG6gTc1TrI
+	 fETVh52XNKN5l96Oy18G58z9p2SdvwJ5RjE3+48YRHU2+P4wnf5WSBxrz34/1MiBrWtFQC+ZJZhZ
+	 eOg5RJJ9pX5sTEBy10OgX2hlXYXpIqLLnafU0/aHMUK4HOdsyc9T/Gv3/v4vMUtqiOVrrYYuP5lu
+	 n9cuv75l2C3a4GDt5XDxpKL1ZVOSsATwzhlOy3kS/7WBU/Y52dREynJSh6tr5R5Q1PTC/PDwq5t+
+	 UPTOVefFLq/jSod3lUMW0Tbcwu+FvbdEWwQniVp7T/V/ZFDqvqTMM8lM7Hs6BgsyICzdkGiM2uJX
+	 WwW5F1DTo5J9+lMzx+DskqpjXKr55wsF0rk9G5kW9ZIAyFK1ndIQ0oTzaQHpf1p/SnvEMxLU4=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240708133348.3592667-1-ruanjinjie@huawei.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH -fixes] dma-direct: only reference arch_dma_set_uncached
+ symbol when usable
+From: Yangyu Chen <cyy@cyyself.name>
+In-Reply-To: <tencent_5E4637BE7BC1256D39C73ADCA118BD908507@qq.com>
+Date: Tue, 9 Jul 2024 17:29:46 +0800
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>
+Content-Transfer-Encoding: quoted-printable
+X-OQ-MSGID: <317289C5-F247-4C00-B889-E93A1101D1B1@cyyself.name>
+References: <tencent_5E4637BE7BC1256D39C73ADCA118BD908507@qq.com>
+To: iommu@lists.linux.dev
+X-Mailer: Apple Mail (2.3774.600.62)
 
-On 07/08/24 at 09:33pm, Jinjie Ruan wrote:
-> Currently, x86, arm64, riscv and loongarch has been switched to generic
-> crashkernel reservation. Also use generic interface to simplify crashkernel
-> reservation for arm32, and fix two bugs by the way.
+Now, I think fixing in another patch [1] might be better. If that gets =
+merged, I think we can ignore this.
 
-I am not sure if this is a good idea. I added the generic reservation
-itnerfaces for ARCH which support crashkernel=,high|low and normal
-crashkernel reservation, with this, the code can be simplified a lot.
-However, arm32 doesn't support crashkernel=,high, I am not sure if it's
-worth taking the change, most importantly, if it will cause
-misunderstanding or misoperation.
+[1] =
+https://lore.kernel.org/linux-iommu/tencent_A5ED71472ADCAF18F59085464CBE23=
+C12A07@qq.com/
 
-Thanks
-Baoquan
 
 
