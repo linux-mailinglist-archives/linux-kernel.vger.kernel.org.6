@@ -1,85 +1,112 @@
-Return-Path: <linux-kernel+bounces-246615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892EE92C459
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:12:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E17792C45C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 295E8B2181A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:12:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C83A1C223AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC02185612;
-	Tue,  9 Jul 2024 20:12:02 +0000 (UTC)
-Received: from norbury.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B64146D7D;
+	Tue,  9 Jul 2024 20:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yq2Gq3BT"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF0917B02B;
-	Tue,  9 Jul 2024 20:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A764A1B86DC
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 20:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720555921; cv=none; b=IX1O6NdDZSAO7d9F0HJVTy7H1Peei9aknnIwXRajeETWtNAbbSOpK/9l/FHhrAEQn42xb7pW1U3xMQ7PvaKbrkWU48V9VAE15pImnN2M1FX4s9RRjDq5ZmKXYlYFu2rE4FY6ELa5oS7V22Jqx5yw56vfNsDNKAVNKucsQ0DaES8=
+	t=1720556241; cv=none; b=JYqGKsaqV5p3/TJagdKyJHUPfE2MlFMmtea8bHkm1DLF788lLTOsOTmOHSiH4ulKaeHij1rQYppgjuX9GxmxdL18N+TTdjU8GCg8RctYbX/YAUR8/AjU+O/8zJxsbfVxaOsygRH7jH/GtAjsKdM8AQcNy1TTHMoAmKl/o84y70k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720555921; c=relaxed/simple;
-	bh=IBK+DGO9zAxTZrcZNfXAdczs0w6cSJE55I/WCXZ0AQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UdezDHApR+2uGDL18Fwdm49tliaPeWhHIFZqEKRjpKgVQo/NOVq7Z0Uil9daWI/VkPnZsSlmmbfS3VOsiUCgmg219BTlqH8Sb5n5pdYyCNITIgqVur+TXK0e0ChT48qJFls6//nagqF5TzBZu/ZFDt9NqJ7PprU6wj7J4yCinTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
-	by norbury.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sRHBR-000cJ0-36;
-	Wed, 10 Jul 2024 06:11:31 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Wed, 10 Jul 2024 06:11:30 +1000
-Date: Wed, 10 Jul 2024 06:11:30 +1000
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: Horia Geanta <horia.geanta@nxp.com>,
-	Pankaj Gupta <pankaj.gupta@nxp.com>,
-	Gaurav Jain <gaurav.jain@nxp.com>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] crypto: caam - enable hash api only on ARM platforms per
- default
-Message-ID: <Zo2ZcqP5zSLB0mf+@gondor.apana.org.au>
-References: <20240626155724.4045056-1-m.felsch@pengutronix.de>
- <258feb43-382d-4ea0-9164-357924350dec@nxp.com>
- <ZofSbH2Fu/xLnzif@gondor.apana.org.au>
- <20240709085454.you3b3ueb3xbtrv6@pengutronix.de>
+	s=arc-20240116; t=1720556241; c=relaxed/simple;
+	bh=XdTm0EPaEhKmbAuEtfLmVqPMsTMOrR8EVu/el1RU2Yo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UemdkjkeWWfC16sxYeC0FOIQSO1b+ZSGXkiuIlzUlwRMKBYJ1vxZEd8vc8jr4lsEiuFi4EYNnPE0/U7uixRLER83iw2fYFDAxTei8NqTfRzt3/brAPH6FlzOt7io8qARji8eY5ei6N3g96RLTjY+2IiNVnzNoHQpRmjDv2ot320=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yq2Gq3BT; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4266fd39527so10954115e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 13:17:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720556238; x=1721161038; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EXHxrC/luHFKOt8/7OLM5HjDIKDd5blPn0cUkiIy97M=;
+        b=Yq2Gq3BTpODz5TtMihBJhBWWBiOkgaWTwrKUNuOzqKgSnemCf5u9mTvrnCVbd31ff7
+         ptsjwVmDyUJ33qA1mIefgNSQATqUN39MwC+vYgP4/v87pTE9rj08Gek2lu7LDxRejP3M
+         1l0Gv+Ra3hyYtpKBN0632PTQ3m4dwhWAEIKZg3fuNkOjiaxdBJpSnHIQeWNk1nDH7FCn
+         QO1cV7CbIac0ymfJNJx3aoszDEBUo81UthhvLiBbZiq47e74OCnnYT2SN+TAort03Tdb
+         +QV3t3nPMA+qEmYyH5v7oyT+ynxbGe4CNNFFpBj1+2OWRY8LY2mVfSCywINQ1SVknNdn
+         v2sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720556238; x=1721161038;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EXHxrC/luHFKOt8/7OLM5HjDIKDd5blPn0cUkiIy97M=;
+        b=rrYrlG7sDDvngTARQFHO+Ws/zUL67etglcaA+c65QCcu66gXZMVhZ3AoU/y6vdrVWg
+         tYttM7ht6hugpgMJrH2zsi7TXEs4PU0uC5vhMDLZphIbjR4xCNbskRKx8x2vsce9NRuJ
+         GgIYTGZIrKxBVUw6Ru0HE+aAK10coHorlhHjPj8lNT9+m5Ib2Toa1gTgvIhqiFwC6Vaa
+         TTAS+XNbc1TaryrUUkm90pR6bV+cylrQ3UjlQiqKbUrrwKg7/zn97xYXh1qcDHEPAPIw
+         ZZG2eV/JPGpAYemsVvQhAfAGuVhLPVDJyrXSVEntD7RYrKu1h5OW/UIPwepYHOPSsNDH
+         xx+A==
+X-Gm-Message-State: AOJu0YwITdGfpbIcfRAVsGL4nHGxtV1EwQZqkDqTczK3qw8YArQs8SsA
+	WrYVnP9pXdakA5dNBpFjxOMDS/0tuYqLkpz7KlKlwkhshSbZ9aLs
+X-Google-Smtp-Source: AGHT+IHOb1az36jkAJmIB78p3YoPZuizKhT18QzcHxzqAQfDXBCqRFxIMk/L1NU6CA+UPO2yENzLUg==
+X-Received: by 2002:a05:600c:6a17:b0:425:5eec:d261 with SMTP id 5b1f17b1804b1-426708f1999mr26644295e9.34.1720556237509;
+        Tue, 09 Jul 2024 13:17:17 -0700 (PDT)
+Received: from localhost ([2001:861:3385:e20:6384:4cf:52c5:3194])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f737b1bsm54058325e9.32.2024.07.09.13.17.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 13:17:17 -0700 (PDT)
+From: Raphael Gallais-Pou <rgallaispou@gmail.com>
+To: David Airlie <airlied@gmail.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH] MAINTAINERS: add myself to DRM/STi maintainers
+Date: Tue,  9 Jul 2024 22:14:28 +0200
+Message-ID: <20240709201428.132612-1-rgallaispou@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240709085454.you3b3ueb3xbtrv6@pengutronix.de>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 09, 2024 at 10:54:54AM +0200, Marco Felsch wrote:
->
-> We had an patch exactly doing this but depending on the SoC the default
-> prio may valid since the CAAM is used on ARMv7 and ARMv8 NXP SoCs. To
-> not cause any regression we went this way.
+In lights of recent events and my will to participate in the Linux
+kernel development I see this opportunity to add myself, and help Alain
+as maintainer for the DRM/STi drivers.
 
-I don't understand.  Why not just set the priority depending on
-IS_ENABLED(CONFIG_ARM)? That way it's strictly better than the
-Kconfig patch:
+Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-1) If the driver is indeed slower then you'd have achieved the same
-result of preferring the non-driver algorithm.
-
-2) If the driver ends up being faster then at least the admin can
-adjust the priorities.
-
-Or perhaps your Kconfig option should set the priority.
-
-Cheers,
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 71b739b40921..0e583aae590a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7477,6 +7477,7 @@ F:	drivers/gpu/drm/rockchip/
+ 
+ DRM DRIVERS FOR STI
+ M:	Alain Volmat <alain.volmat@foss.st.com>
++M:	Raphael Gallais-Pou <rgallaispou@gmail.com>
+ L:	dri-devel@lists.freedesktop.org
+ S:	Maintained
+ T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.45.2
+
 
