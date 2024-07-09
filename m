@@ -1,39 +1,70 @@
-Return-Path: <linux-kernel+bounces-245829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E101292BA06
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:55:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCFCF92BA0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:57:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88F801F22A6D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:55:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48F882856AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E358A15B117;
-	Tue,  9 Jul 2024 12:55:45 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A34815A853;
-	Tue,  9 Jul 2024 12:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4A315B10D;
+	Tue,  9 Jul 2024 12:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Acd2gVpd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2EB14884D;
+	Tue,  9 Jul 2024 12:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720529745; cv=none; b=F9cDi3PpHgJfZMQ3IDR36tBuyiYov3JG3kFM6iyw/co2suf0ZAKzxsIDEmxxW+yPXZf6eiXIZoEnlp9YKoG/6l2KOLr40qa2Qp188HghlavWYPvl8tnHlgBUM+ZxYBMZ8BfArc2tQPdX3J9o8xqsp1dQB2QorZuKddp/gnwuX/0=
+	t=1720529815; cv=none; b=Db18yoVya0KS8saYiXsASXYzrSIWuEdBag8qokvVXDrohi/jXCQO4ezkaRwKYZq/urcSmMGo281rmyuSYRgciZ3OUtaGtBJHt4jjIShe1zvK2wlKAv6IoNsxg3OlE85wCk8YdGWj86HJuEcDRZFmh6iIggSeSiFG60tejL9rGyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720529745; c=relaxed/simple;
-	bh=1ib2rI8TcyevmjxG6XPjGlEk7kHNo3stbGZC8yibLFw=;
+	s=arc-20240116; t=1720529815; c=relaxed/simple;
+	bh=BpaddSE7W7ZzNVLV1QawEuJbNjvJO6UyBjC9xbreOb0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=scWsyEcdxjOkvo0rWMSdBKZQly5UmfMilsJJuVh+3H3MzcdARh4qpamDR/o6DmJMmN1wt5WOHOjk+J51hgnuRhBSkgQMbhgBn/Arb3AxKcVbj+KPUxk0nyisxys3QgGxTR2oJK1cTnslLPOHpzLNFBdHBzKQcxp8TEmp3KXfi54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4B1E6153B;
-	Tue,  9 Jul 2024 05:56:08 -0700 (PDT)
-Received: from [10.57.74.191] (unknown [10.57.74.191])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30AFF3F766;
-	Tue,  9 Jul 2024 05:55:40 -0700 (PDT)
-Message-ID: <1ce456b5-0652-4522-98ea-b32d96c1adf4@arm.com>
-Date: Tue, 9 Jul 2024 13:55:38 +0100
+	 In-Reply-To:Content-Type; b=KuwQGyLr+KCIzBaS7UtaJeX07mITH1DY4nmKd1AantSg4+OOWjHpZAICyrQgwzT3pfnN+yKnDHoMSoKQA7uyOk94KK1w6KvPoFFQQuU/sPLz12dBavLfbSnvvHspVJvDbyae2HpASiCiIzzmWla6NIl1S/jf7pf1EbLOVeIyBdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Acd2gVpd; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720529813; x=1752065813;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=BpaddSE7W7ZzNVLV1QawEuJbNjvJO6UyBjC9xbreOb0=;
+  b=Acd2gVpdmWFGWrjoU94PezBIBE0rfi6bK0APH6hmH6YWF/Z6PRm9+pFE
+   UBnNfIQCCw+U90jMprrlQrhBsdEYWW1G1XJkKNy0Sbxvc/8AcpiIk6cG2
+   NxfqtKZyTcWijJAHVoYTnSGK5u9nOrxD1vPNUs9HX4qzhRT42Hnn9k84y
+   cEhPracu/tjdS/ap+aiHaYjg1QGAfETr+JqZd6hoM2yS/9TK/GbaG+we6
+   bI/6qJWM3iDKIBa1YjnVzMoAYtcY9iXaOpmfDsDJErp3RqYe4dUC4r6xc
+   hQn2DLB2MUMhYrhaxiM8lrFfj+K+ZKkzuqKlrdjVqiF6tn5pVfx9oAeKp
+   w==;
+X-CSE-ConnectionGUID: pXnWLL1lR5SGEeNUzlEKpw==
+X-CSE-MsgGUID: q9wRkvUdRvCTuM9F6sxDhQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="43203626"
+X-IronPort-AV: E=Sophos;i="6.09,195,1716274800"; 
+   d="scan'208";a="43203626"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 05:56:52 -0700
+X-CSE-ConnectionGUID: hvPG8PXASlyDLgBfPEcc5A==
+X-CSE-MsgGUID: GKklDMvuRdyarvnRH25HbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,195,1716274800"; 
+   d="scan'208";a="52446798"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 05:56:52 -0700
+Received: from [10.212.46.239] (unknown [10.212.46.239])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 7CF2120B8CFF;
+	Tue,  9 Jul 2024 05:56:50 -0700 (PDT)
+Message-ID: <7b6f3d35-02fc-46cc-9627-7ce748af5dac@linux.intel.com>
+Date: Tue, 9 Jul 2024 08:56:49 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,98 +72,152 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/15] arm64: Make the PHYS_MASK_SHIFT dynamic
-Content-Language: en-GB
-To: Will Deacon <will@kernel.org>, Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
- Zenghui Yu <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-References: <20240701095505.165383-1-steven.price@arm.com>
- <20240701095505.165383-7-steven.price@arm.com>
- <20240709114337.GB13242@willie-the-truck>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20240709114337.GB13242@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 2/3] perf/x86/intel: Add a distinct name for Granite
+ Rapids
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@kernel.org, acme@kernel.org, namhyung@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com,
+ alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+ ak@linux.intel.com, eranian@google.com, Ahmad Yasin <ahmad.yasin@intel.com>,
+ stable@vger.kernel.org
+References: <20240708193336.1192217-1-kan.liang@linux.intel.com>
+ <20240708193336.1192217-3-kan.liang@linux.intel.com>
+ <20240709095647.GH27299@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240709095647.GH27299@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 09/07/2024 12:43, Will Deacon wrote:
-> On Mon, Jul 01, 2024 at 10:54:56AM +0100, Steven Price wrote:
->> Make the PHYS_MASK_SHIFT dynamic for Realms. This is only is required
->> for masking the PFN from a pte entry. For a realm phys_mask_shift is
->> reduced if the RMM reports a smaller configured size for the guest.
+
+
+On 2024-07-09 5:56 a.m., Peter Zijlstra wrote:
+> On Mon, Jul 08, 2024 at 12:33:35PM -0700, kan.liang@linux.intel.com wrote:
+>> From: Kan Liang <kan.liang@linux.intel.com>
 >>
->> The realm configuration splits the address space into two with the top
->> half being memory shared with the host, and the bottom half being
->> protected memory. We treat the bit which controls this split as an
->> attribute bit and hence exclude it (and any higher bits) from the mask.
+>> Currently, the Sapphire Rapids and Granite Rapids share the same PMU
+>> name, sapphire_rapids. Because from the kernel’s perspective, GNR is
+>> similar to SPR. The only key difference is that they support different
+>> extra MSRs. The code path and the PMU name are shared.
 >>
->> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Signed-off-by: Steven Price <steven.price@arm.com>
+>> However, from end users' perspective, they are quite different. Besides
+>> the extra MSRs, GNR has a newer PEBS format, supports Retire Latency,
+>> supports new CPUID enumeration architecture, doesn't required the
+>> load-latency AUX event, has additional TMA Level 1 Architectural Events,
+>> etc. The differences can be enumerated by CPUID or the PERF_CAPABILITIES
+>> MSR. They weren't reflected in the model-specific kernel setup.
+>> But it is worth to have a distinct PMU name for GNR.
 >>
+>> Fixes: a6742cb90b56 ("perf/x86/intel: Fix the FRONTEND encoding on GNR and MTL")
+>> Suggested-by: Ahmad Yasin <ahmad.yasin@intel.com>
+>> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+>> Cc: stable@vger.kernel.org
 >> ---
->> v3: Drop the MAX_PHYS_MASK{,_SHIFT} definitions as they are no longer
->> needed.
->> ---
->>   arch/arm64/include/asm/pgtable-hwdef.h | 6 ------
->>   arch/arm64/include/asm/pgtable.h       | 5 +++++
->>   arch/arm64/kernel/rsi.c                | 5 +++++
->>   3 files changed, 10 insertions(+), 6 deletions(-)
+>>  arch/x86/events/intel/core.c | 9 ++++++---
+>>  1 file changed, 6 insertions(+), 3 deletions(-)
 >>
->> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
->> index 9943ff0af4c9..2e3af0693bd8 100644
->> --- a/arch/arm64/include/asm/pgtable-hwdef.h
->> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
->> @@ -203,12 +203,6 @@
->>    */
->>   #define PTE_S2_MEMATTR(t)	(_AT(pteval_t, (t)) << 2)
->>   
->> -/*
->> - * Highest possible physical address supported.
->> - */
->> -#define PHYS_MASK_SHIFT		(CONFIG_ARM64_PA_BITS)
->> -#define PHYS_MASK		((UL(1) << PHYS_MASK_SHIFT) - 1)
->> -
->>   #define TTBR_CNP_BIT		(UL(1) << 0)
->>   
->>   /*
->> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
->> index f8efbc128446..11d614d83317 100644
->> --- a/arch/arm64/include/asm/pgtable.h
->> +++ b/arch/arm64/include/asm/pgtable.h
->> @@ -39,6 +39,11 @@
->>   #include <linux/sched.h>
->>   #include <linux/page_table_check.h>
->>   
->> +extern unsigned int phys_mask_shift;
->> +
->> +#define PHYS_MASK_SHIFT		(phys_mask_shift)
->> +#define PHYS_MASK		((1UL << PHYS_MASK_SHIFT) - 1)
+>> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+>> index b61367991a16..7a9f931a1f48 100644
+>> --- a/arch/x86/events/intel/core.c
+>> +++ b/arch/x86/events/intel/core.c
+>> @@ -6943,12 +6943,17 @@ __init int intel_pmu_init(void)
+>>  	case INTEL_EMERALDRAPIDS_X:
+>>  		x86_pmu.flags |= PMU_FL_MEM_LOADS_AUX;
+>>  		x86_pmu.extra_regs = intel_glc_extra_regs;
+>> +		pr_cont("Sapphire Rapids events, ");
+>> +		name = "sapphire_rapids";
+>>  		fallthrough;
+>>  	case INTEL_GRANITERAPIDS_X:
+>>  	case INTEL_GRANITERAPIDS_D:
+>>  		intel_pmu_init_glc(NULL);
+>> -		if (!x86_pmu.extra_regs)
+>> +		if (!x86_pmu.extra_regs) {
+>>  			x86_pmu.extra_regs = intel_rwc_extra_regs;
+>> +			pr_cont("Granite Rapids events, ");
+>> +			name = "granite_rapids";
+>> +		}
+>>  		x86_pmu.pebs_ept = 1;
+>>  		x86_pmu.hw_config = hsw_hw_config;
+>>  		x86_pmu.get_event_constraints = glc_get_event_constraints;
+>> @@ -6959,8 +6964,6 @@ __init int intel_pmu_init(void)
+>>  		td_attr = glc_td_events_attrs;
+>>  		tsx_attr = glc_tsx_events_attrs;
+>>  		intel_pmu_pebs_data_source_skl(true);
+>> -		pr_cont("Sapphire Rapids events, ");
+>> -		name = "sapphire_rapids";
+>>  		break;
 > 
-> I tried to figure out where this is actually used so I could understand
-> your comment in the commit message:
-> 
->   > This is only is required for masking the PFN from a pte entry
-> 
-> The closest thing I could find is in arch/arm64/mm/mmap.c, where the
-> mask is used as part of valid_mmap_phys_addr_range() which exists purely
-> to filter accesses to /dev/mem. That's pretty niche, so why not just
-> inline the RSI-specific stuff in there behind a static key instead of
-> changing these definitions?
-> 
-> Or did I miss a subtle user somewhere else?
+> For some reason this didn't want to apply cleanly (something trivial),
+> but since I had to edit it, my fingers slipped and I ended up with the
+> below. That ok?
 
-We need to prevent ioremap() of addresses beyond that limit too.
+Yes, the patch looks good. Thanks!
 
-Suzuki
-
+Thanks,
+Kan
 > 
-> Will
-
+> ---
+> Subject: perf/x86/intel: Add a distinct name for Granite Rapids
+> From: Kan Liang <kan.liang@linux.intel.com>
+> Date: Mon, 8 Jul 2024 12:33:35 -0700
+> 
+> From: Kan Liang <kan.liang@linux.intel.com>
+> 
+> Currently, the Sapphire Rapids and Granite Rapids share the same PMU
+> name, sapphire_rapids. Because from the kernel’s perspective, GNR is
+> similar to SPR. The only key difference is that they support different
+> extra MSRs. The code path and the PMU name are shared.
+> 
+> However, from end users' perspective, they are quite different. Besides
+> the extra MSRs, GNR has a newer PEBS format, supports Retire Latency,
+> supports new CPUID enumeration architecture, doesn't required the
+> load-latency AUX event, has additional TMA Level 1 Architectural Events,
+> etc. The differences can be enumerated by CPUID or the PERF_CAPABILITIES
+> MSR. They weren't reflected in the model-specific kernel setup.
+> But it is worth to have a distinct PMU name for GNR.
+> 
+> Fixes: a6742cb90b56 ("perf/x86/intel: Fix the FRONTEND encoding on GNR and MTL")
+> Suggested-by: Ahmad Yasin <ahmad.yasin@intel.com>
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Cc: stable@vger.kernel.org
+> Link: https://lkml.kernel.org/r/20240708193336.1192217-3-kan.liang@linux.intel.com
+> ---
+>  arch/x86/events/intel/core.c |   14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+> 
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -6788,12 +6788,18 @@ __init int intel_pmu_init(void)
+>  	case INTEL_FAM6_EMERALDRAPIDS_X:
+>  		x86_pmu.flags |= PMU_FL_MEM_LOADS_AUX;
+>  		x86_pmu.extra_regs = intel_glc_extra_regs;
+> -		fallthrough;
+> +		pr_cont("Sapphire Rapids events, ");
+> +		name = "sapphire_rapids";
+> +		goto glc_common;
+> +
+>  	case INTEL_FAM6_GRANITERAPIDS_X:
+>  	case INTEL_FAM6_GRANITERAPIDS_D:
+> +		x86_pmu.extra_regs = intel_rwc_extra_regs;
+> +		pr_cont("Granite Rapids events, ");
+> +		name = "granite_rapids";
+> +
+> +	glc_common:
+>  		intel_pmu_init_glc(NULL);
+> -		if (!x86_pmu.extra_regs)
+> -			x86_pmu.extra_regs = intel_rwc_extra_regs;
+>  		x86_pmu.pebs_ept = 1;
+>  		x86_pmu.hw_config = hsw_hw_config;
+>  		x86_pmu.get_event_constraints = glc_get_event_constraints;
+> @@ -6804,8 +6810,6 @@ __init int intel_pmu_init(void)
+>  		td_attr = glc_td_events_attrs;
+>  		tsx_attr = glc_tsx_events_attrs;
+>  		intel_pmu_pebs_data_source_skl(true);
+> -		pr_cont("Sapphire Rapids events, ");
+> -		name = "sapphire_rapids";
+>  		break;
+>  
+>  	case INTEL_FAM6_ALDERLAKE:
+> 
 
