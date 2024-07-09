@@ -1,60 +1,197 @@
-Return-Path: <linux-kernel+bounces-245718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6423792B757
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:22:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72FCE92B78C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7481B24423
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:22:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E368F1F20F23
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29ED0158A19;
-	Tue,  9 Jul 2024 11:22:02 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25D5158201;
+	Tue,  9 Jul 2024 11:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="lmehysXV"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F63714E2F4;
-	Tue,  9 Jul 2024 11:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EB515749B
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 11:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720524121; cv=none; b=Za42ipddkEJwPUq7s6eU5iDTRenqNN7jU6h3sVUn7S7xb5sW4L4GMvdHc/FzoWLi2neRNb2HF9HtA2awRkx4g2v1QE9XUTnLxX65wZISAZkXn1li7SfTgDaDtVh9xTheU+OQBgB3dHv+SZNX+TmbNfMiBpdTYAl0ovQG/itdGm8=
+	t=1720524253; cv=none; b=jqEUiFdNd1jAMj5CSfwY8V1UfOSxKjLNgfl/mWuKU4UimDUWqNmTILjG8KvFV4wzJSIjhE9W9TVCsi1JZp/lMu3KilG2OCS6F6/sA+0boTUuR6IlWv/QWtHbXx7avCxO13w1T8t4O/FFoqa4iwJDrEQ+VZs8vYAiGtY521YO6s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720524121; c=relaxed/simple;
-	bh=11Ws7j9YCcvj3i9pyOgfNbD+v9u81gyoh05llGlfvws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gW8SBOVnwbs7uAj7RTskzKaUWVzRTZ3gQBkguLlB+5SLovuZw6usQ4KfZIR6y8J/Hig1KV/EDu0FVDnyGIhOj00uEcDTv658fARTUE+c2m0qqup5hftI+WgWvZlm95Wr36+f7yjixc5WuAY8i4sb6AVGNguF0J4mAbJYj4tBvDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 7E3AB68CFE; Tue,  9 Jul 2024 13:21:57 +0200 (CEST)
-Date: Tue, 9 Jul 2024 13:21:57 +0200
-From: "hch@lst.de" <hch@lst.de>
-To: Gulam Mohamed <gulam.mohamed@oracle.com>
-Cc: "hch@lst.de" <hch@lst.de>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"yukuai1@huaweicloud.com" <yukuai1@huaweicloud.com>,
-	"axboe@kernel.dk" <axboe@kernel.dk>
-Subject: Re: [PATCH V6 for-6.11/block] loop: Fix a race between loop detach
- and loop open
-Message-ID: <20240709112157.GA5266@lst.de>
-References: <20240618164042.343777-1-gulam.mohamed@oracle.com> <202406281350.b7298127-oliver.sang@intel.com> <IA1PR10MB7240DE46976A3B027DE5484998D22@IA1PR10MB7240.namprd10.prod.outlook.com> <20240702155020.GB1037@lst.de> <IA1PR10MB7240AE0551BCF41FB1A69FD198DF2@IA1PR10MB7240.namprd10.prod.outlook.com> <IA1PR10MB7240AC320F4DBC43E73E758898DB2@IA1PR10MB7240.namprd10.prod.outlook.com>
+	s=arc-20240116; t=1720524253; c=relaxed/simple;
+	bh=1MDJFZmhN4cjLdwbHrVgqeEpMRkRNvMhwuIEZxPSukM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S8y05ZXco6DZcOIs76Lnf3UdVgLpATvnEZKiREIloTQAiB4zxU6w3uMmz6KkkMGdr92gbSPUaIOumsOOgMPWQ87fUO8PIjGq/eUKhlHGHdmLEsIuL66ysRKaa/dIcTl0tbia2V6srxh3Hwrog8EEd2uA0JKKXeh98SNqdhUiUXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=lmehysXV; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eea7e2b073so27701381fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 04:24:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720524250; x=1721129050; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FaZ65vMVctoeY1+JoopMmTUB0GH0nO8ULrnOSO2EWao=;
+        b=lmehysXV5H2V3wq4JTIzDzYSpcm8YA03p+YirIWEs4QkhTWZrtPlI1YYgU2e2ErcLA
+         ftRVyTBWymuC3R64d9Ect9GHmGu5S6kVIoXLcuO+kE1Gy6OVORpDWHyGaPw7fVQsffuJ
+         qF6Jb8vDFVMeDlY6P2a8DzH8EpP+SRuIw7kJlxZKVPot1GfjlTWBq3y2G9Y8BO9nzeGk
+         OS+Bu9zL7nkUaZ9qGlyaQVGy0jJ2VH+zz/XkiW5Mtvyij41C3Y/eQFvaCrFsdGKhKolh
+         MmgUYdTlhEGn9ncx9R38+Nn3DETAfmfu4J2pCRuznqYhmNnb9xntDXCzblcYm8bVstFM
+         2TgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720524250; x=1721129050;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FaZ65vMVctoeY1+JoopMmTUB0GH0nO8ULrnOSO2EWao=;
+        b=vywKXQQbl737RgP5DcZEQiEU9RoZcoLlnak+hFu6R2f46zgos7Jxy3U5e+CYeLDMeE
+         qfNtpdh7wdjHKU+pDEJVedBdSlF1wVS0L9RrXIskVIn6cgJeaJBVagPp4V1At4PAJE+A
+         3fAXhdfm15elfdN9B4O7PalscFN1D6uEWhaj6AYfWRKkcN789jvZvdv6oe+/0HLUAqIO
+         RIpHYSZvj95YVgOHHTPRD23BD20+85MqOs4epwckIyPzRg+ZxHpCA5IAbxLva2lpMAuM
+         5maomfRGgl/jbbE2Iyd+J+548rjH/qm/0VODicvBO1CCdDI2S8Io/3f5EnnlAW/N4xrL
+         /ssw==
+X-Forwarded-Encrypted: i=1; AJvYcCXI01tGfjjdnBp+MGwYJ1AD31u4WzRqKyUL/20oHPmsUM67UtzQf8GoUZWisBc26C/8uTF3VuBkwA1BVrIzSwFioqNM9/Vrm4+o9+ZB
+X-Gm-Message-State: AOJu0YwwZFkvOd3ohmwHhUWQx3FvIKm1iioa4MeXPhpTb+SI+PFnNx8Q
+	DoLflvCSdfs9gOi2tb7wt33/VxDGYnd0GrzJNEDCew4nuHcItRc8k/EQE/3RIXpp5W9njb8aTFR
+	geZi5KGm738hW9v9D5DCtzXGNBxx4JoL2gbyPXA==
+X-Google-Smtp-Source: AGHT+IGkGJ9ZbQ1uEPkn0q2nvbsxFja022IJ3dsvF/JlzuYh1rz8b0N6+PqWWMO4jqeQxNHabQImzrsDTEoQcO0OoA4=
+X-Received: by 2002:a2e:8784:0:b0:2ec:51fc:2f5a with SMTP id
+ 38308e7fff4ca-2eeb30ba00dmr14698871fa.4.1720524249967; Tue, 09 Jul 2024
+ 04:24:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <IA1PR10MB7240AC320F4DBC43E73E758898DB2@IA1PR10MB7240.namprd10.prod.outlook.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20240708-hci_qca_refactor-v2-2-b6e83b3d1ca5@linaro.org> <202407091813.9IlBCkUP-lkp@intel.com>
+In-Reply-To: <202407091813.9IlBCkUP-lkp@intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 9 Jul 2024 13:23:58 +0200
+Message-ID: <CAMRc=Mf9OVsEfe7AZwJa2v1Srjn=3bM6roXvgfF3ALahREY6XA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] Bluetooth: hci_qca: schedule a devm action for
+ disabling the clock
+To: kernel test robot <lkp@intel.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, llvm@lists.linux.dev, 
+	oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Gulam,
+On Tue, Jul 9, 2024 at 12:34=E2=80=AFPM kernel test robot <lkp@intel.com> w=
+rote:
+>
+> Hi Bartosz,
+>
+> kernel test robot noticed the following build warnings:
+>
+> [auto build test WARNING on 0b58e108042b0ed28a71cd7edf5175999955b233]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Bartosz-Golaszewsk=
+i/dt-bindings-bluetooth-qualcomm-describe-the-inputs-from-PMU-for-wcn7850/2=
+0240708-175040
+> base:   0b58e108042b0ed28a71cd7edf5175999955b233
+> patch link:    https://lore.kernel.org/r/20240708-hci_qca_refactor-v2-2-b=
+6e83b3d1ca5%40linaro.org
+> patch subject: [PATCH v2 2/6] Bluetooth: hci_qca: schedule a devm action =
+for disabling the clock
+> config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/2024=
+0709/202407091813.9IlBCkUP-lkp@intel.com/config)
+> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a=
+15a9eac96088ae5e9134248d8236e34b91b1)
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20240709/202407091813.9IlBCkUP-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202407091813.9IlBCkUP-lkp=
+@intel.com/
+>
+> All warnings (new ones prefixed by >>):
+>
+>    drivers/bluetooth/hci_qca.c:2495:2: warning: label at end of compound =
+statement is a C23 extension [-Wc23-extensions]
+>     2495 |         }
+>          |         ^
+> >> drivers/bluetooth/hci_qca.c:2494:2: warning: unannotated fall-through =
+between switch labels [-Wimplicit-fallthrough]
+>     2494 |         default:
+>          |         ^
+>    drivers/bluetooth/hci_qca.c:2494:2: note: insert '__attribute__((fallt=
+hrough));' to silence this warning
+>     2494 |         default:
+>          |         ^
+>          |         __attribute__((fallthrough));
+>    drivers/bluetooth/hci_qca.c:2494:2: note: insert 'break;' to avoid fal=
+l-through
+>     2494 |         default:
+>          |         ^
+>          |         break;
+>    2 warnings generated.
+>
+>
+> vim +2494 drivers/bluetooth/hci_qca.c
+>
+> 05ba533c5c1155 Thierry Escande                2018-03-29  2478
+> 05ba533c5c1155 Thierry Escande                2018-03-29  2479  static vo=
+id qca_serdev_remove(struct serdev_device *serdev)
+> 05ba533c5c1155 Thierry Escande                2018-03-29  2480  {
+> 05ba533c5c1155 Thierry Escande                2018-03-29  2481          s=
+truct qca_serdev *qcadev =3D serdev_device_get_drvdata(serdev);
+> 054ec5e94a46b0 Venkata Lakshmi Narayana Gubba 2020-09-10  2482          s=
+truct qca_power *power =3D qcadev->bt_power;
+> 05ba533c5c1155 Thierry Escande                2018-03-29  2483
+> 691d54d0f7cb14 Neil Armstrong                 2023-08-16  2484          s=
+witch (qcadev->btsoc_type) {
+> 691d54d0f7cb14 Neil Armstrong                 2023-08-16  2485          c=
+ase QCA_WCN3988:
+> 691d54d0f7cb14 Neil Armstrong                 2023-08-16  2486          c=
+ase QCA_WCN3990:
+> 691d54d0f7cb14 Neil Armstrong                 2023-08-16  2487          c=
+ase QCA_WCN3991:
+> 691d54d0f7cb14 Neil Armstrong                 2023-08-16  2488          c=
+ase QCA_WCN3998:
+> 691d54d0f7cb14 Neil Armstrong                 2023-08-16  2489          c=
+ase QCA_WCN6750:
+> 691d54d0f7cb14 Neil Armstrong                 2023-08-16  2490          c=
+ase QCA_WCN6855:
+> e0c1278ac89b03 Neil Armstrong                 2023-08-16  2491          c=
+ase QCA_WCN7850:
+> d12f113a15e826 Bartosz Golaszewski            2024-07-08  2492           =
+       if (power->vregs_on)
+> c2d7827338618a Balakrishna Godavarthi         2018-08-22  2493           =
+               qca_power_shutdown(&qcadev->serdev_hu);
+> 691d54d0f7cb14 Neil Armstrong                 2023-08-16 @2494          d=
+efault:
+> 691d54d0f7cb14 Neil Armstrong                 2023-08-16 @2495          }
+> fa9ad876b8e0eb Balakrishna Godavarthi         2018-08-03  2496
+> fa9ad876b8e0eb Balakrishna Godavarthi         2018-08-03  2497          h=
+ci_uart_unregister_device(&qcadev->serdev_hu);
+> 05ba533c5c1155 Thierry Escande                2018-03-29  2498  }
+> 05ba533c5c1155 Thierry Escande                2018-03-29  2499
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
-the patch has been queue up by the block maintainers for Linux 6.11.
+Ah, cr*p.
 
+Third time's the charm, I guess...
+
+Bart
 
