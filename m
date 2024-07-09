@@ -1,60 +1,64 @@
-Return-Path: <linux-kernel+bounces-245763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A2E092B8E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:56:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D78A792B8E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:57:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E59E6B21B28
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:56:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1593B1C2359A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8A41534F8;
-	Tue,  9 Jul 2024 11:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49487157E7D;
+	Tue,  9 Jul 2024 11:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O+qQlcWk"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tIuUXdIE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45AB1EA74
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 11:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C041EA74;
+	Tue,  9 Jul 2024 11:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720526191; cv=none; b=eKdysVzF2NJ3Rl0nKadGzDhfvMkK8gjv/+HfZVt0w3jLRzV8JxlGMsMcUln8agQWOKKnSUjTbrul2Wwa8GAS7VGv9O6UhFy+U6lPRzMYKTsO3qM1vS2w+TwoSvkvtaFWYBZ8Pn+NIShV1I59KnNO6td+vGoJ3DiCSskIPGgUefg=
+	t=1720526216; cv=none; b=BB0cKEBCdxrfMYYyRpYSLHSS244GPLjxrZSJ3KKCewk0T0ujrEZS8ZlFp4e3RAIuXxnZLr019Xa0PaJI4hW4Mg89eUiLyiH7qdAqJi+EBpLK5P5z9qsVbom07agKBHFBQTzJggJpiue/0Wor6GTv+HgzCj4+di9QasW8WFLrOyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720526191; c=relaxed/simple;
-	bh=iwOwn57p2wyL6NB52eUH/DDhMOsbR+xMK/mqYL7ckSc=;
+	s=arc-20240116; t=1720526216; c=relaxed/simple;
+	bh=5OKUcERZ+OB7w2fsg5OZfeoNeBp6M5cEsUpFjM1iasI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=orXC6X3FtlEsSmxVmckIOTathiWDV9f+8bH0m0sMbwICNIBfFVa1h12WmqS1vDIbxWbQr5ZNN9h5sbfUsfp+zR/0yaxOaN6ahuX8DiuhLcM2XQYJLp7am5XFIHS7yK06d3i9dF9qkqOeUdaRAY1V70Efs8asBn8Ul5HEWXIoPRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O+qQlcWk; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=DM2BJZhMwpSGyN9OWrMu8sRkPGKjHUKKFKcsWq3B1IM=; b=O+qQlcWkHhpdiCu28MICATUe9d
-	bQ6RT7qME0tQ4icGRjZFmadItFADo2d3G2To8jmyU/GZaKopzm4Lyq9zjrI2zNxacc8tIC66ezz8e
-	9Mmn2VQw18elmoAbXO+Mpp+4tt5IY9yS64WBWv5FbsGLLQXkGoYuogi8mYipFkpOEpSHBDZiKnTHL
-	jjUkHzFsSsgDUBTJfFxZZa4rIv4wmJeA6ZQPIVE/Ki/DGsR1Gucmr1bPuS5fscCcD9T4CWuf8FsHt
-	OENGz0EH2qi56BjWNnAJ1Toh7s07y2Cz4J7UBdsGnZypUju9GaFTE6hU5mCmseM8i6wzXOPLAxXwR
-	K0f4GYbQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sR9SK-00000007rBZ-2Ipo;
-	Tue, 09 Jul 2024 11:56:24 +0000
-Date: Tue, 9 Jul 2024 12:56:24 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: zhangchun <zhang.chuna@h3c.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, jiaoxupo@h3c.com,
-	zhang.zhengming@h3c.com, zhang.zhansheng@h3c.com,
-	shaohaojize@126.com
-Subject: Re: [PATCH] mm: Give kmap_lock =?utf-8?Q?b?=
- =?utf-8?Q?efore_call_flush=5Ftlb=5Fkernel=5Frang=EF=BC=8Cavoi?=
- =?utf-8?Q?d?= kmap_high deadlock.
-Message-ID: <Zo0laCcWwAoL0bFu@casper.infradead.org>
-References: <1720516658-50434-1-git-send-email-zhang.chuna@h3c.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MKTcZ6RWR27bUQH6wACZcp5OljvE0YAZnJUVIaQVM/Lx1yJsURrEDnsr92/xXNx1hFuQdRuaRoiK72S0Bz1aUEHiXqVfL29hgWmGJGV+hHvbL0/QI8RWJVTuJmqOPVfsisHNxjZHkI5WgBsd/kFpDvIFvdHwG7wT2wpydX7JkLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tIuUXdIE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17BE5C3277B;
+	Tue,  9 Jul 2024 11:56:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720526216;
+	bh=5OKUcERZ+OB7w2fsg5OZfeoNeBp6M5cEsUpFjM1iasI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tIuUXdIENMxaroq3m2mVDb7neMRWANWVEV0bFst05qT4IhLcy4CTageQJ45gpvtkO
+	 tP1ojeUACfySZrJvOEiSItR40CHekwZc0QLkM3bkGBM2hP6BjGFidEoT/16HhuKxAi
+	 Tr7NuVsDA4FwpHRq85M3AbA8cIFKOJw5oR3jVsxyUeAlEZBPhjCTnt8nwbFJ1srT1D
+	 IWBWywSnuoFPco6Men0OXv/5t8nHTW6khJV7nr6zz0B1VMG8O9LSsnmiqFy8TF6qhG
+	 lt6G1RdsI0iCvyAFNHr+cHbT30FUG6MdHtw2+nkE9HnOAYdMojX2I+Y3bSZthHLn27
+	 iT4nipBF+7Nvw==
+Date: Tue, 9 Jul 2024 12:56:49 +0100
+From: Will Deacon <will@kernel.org>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Subject: Re: [PATCH v4 07/15] arm64: Enforce bounce buffers for realm DMA
+Message-ID: <20240709115649.GC13242@willie-the-truck>
+References: <20240701095505.165383-1-steven.price@arm.com>
+ <20240701095505.165383-8-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,30 +67,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1720516658-50434-1-git-send-email-zhang.chuna@h3c.com>
+In-Reply-To: <20240701095505.165383-8-steven.price@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Tue, Jul 09, 2024 at 05:17:38PM +0800, zhangchun wrote:
-> +++ b/mm/highmem.c
-> @@ -220,8 +220,11 @@ static void flush_all_zero_pkmaps(void)
->  		set_page_address(page, NULL);
->  		need_flush = 1;
->  	}
-> -	if (need_flush)
-> +	if (need_flush) {
-> +		spin_unlock(&kmap_lock);
-
-should this be a raw spin_unlock(), or should it be unlock_kmap()?
-ie when ARCH_NEEDS_KMAP_HIGH_GET is set, do we also need to re-enable
-interrupts here?
-
->  		flush_tlb_kernel_range(PKMAP_ADDR(0), PKMAP_ADDR(LAST_PKMAP));
-> +		spin_lock(&kmap_lock);
-> +	}
->  }
+On Mon, Jul 01, 2024 at 10:54:57AM +0100, Steven Price wrote:
+> Within a realm guest it's not possible for a device emulated by the VMM
+> to access arbitrary guest memory. So force the use of bounce buffers to
+> ensure that the memory the emulated devices are accessing is in memory
+> which is explicitly shared with the host.
+> 
+> This adds a call to swiotlb_update_mem_attributes() which calls
+> set_memory_decrypted() to ensure the bounce buffer memory is shared with
+> the host. For non-realm guests or hosts this is a no-op.
+> 
+> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> v3: Simplify mem_init() by using a 'flags' variable.
+> ---
+>  arch/arm64/kernel/rsi.c |  2 ++
+>  arch/arm64/mm/init.c    | 10 +++++++++-
+>  2 files changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
+> index 7ac5fc4a27d0..918db258cd4a 100644
+> --- a/arch/arm64/kernel/rsi.c
+> +++ b/arch/arm64/kernel/rsi.c
+> @@ -6,6 +6,8 @@
+>  #include <linux/jump_label.h>
+>  #include <linux/memblock.h>
+>  #include <linux/psci.h>
+> +#include <linux/swiotlb.h>
+> +
+>  #include <asm/rsi.h>
 >  
->  void __kmap_flush_unused(void)
-> -- 
-> 1.8.3.1
-> 
-> 
+>  struct realm_config config;
+> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> index 9b5ab6818f7f..1d595b63da71 100644
+> --- a/arch/arm64/mm/init.c
+> +++ b/arch/arm64/mm/init.c
+> @@ -41,6 +41,7 @@
+>  #include <asm/kvm_host.h>
+>  #include <asm/memory.h>
+>  #include <asm/numa.h>
+> +#include <asm/rsi.h>
+>  #include <asm/sections.h>
+>  #include <asm/setup.h>
+>  #include <linux/sizes.h>
+> @@ -369,8 +370,14 @@ void __init bootmem_init(void)
+>   */
+>  void __init mem_init(void)
+>  {
+> +	unsigned int flags = SWIOTLB_VERBOSE;
+>  	bool swiotlb = max_pfn > PFN_DOWN(arm64_dma_phys_limit);
+>  
+> +	if (is_realm_world()) {
+> +		swiotlb = true;
+> +		flags |= SWIOTLB_FORCE;
+> +	}
+> +
+>  	if (IS_ENABLED(CONFIG_DMA_BOUNCE_UNALIGNED_KMALLOC) && !swiotlb) {
+>  		/*
+>  		 * If no bouncing needed for ZONE_DMA, reduce the swiotlb
+> @@ -382,7 +389,8 @@ void __init mem_init(void)
+>  		swiotlb = true;
+>  	}
+>  
+> -	swiotlb_init(swiotlb, SWIOTLB_VERBOSE);
+> +	swiotlb_init(swiotlb, flags);
+> +	swiotlb_update_mem_attributes();
+
+Why do we have to call this so early? Certainly, we won't have probed
+the hypercalls under pKVM yet and I think it would be a lot cleaner if
+you could defer your RSI discovery too.
+
+Looking forward to the possibility of device assignment in future, how
+do you see DMA_BOUNCE_UNALIGNED_KMALLOC interacting with a decrypted
+SWIOTLB buffer? I'm struggling to wrap my head around how to fix that
+properly.
+
+Will
 
