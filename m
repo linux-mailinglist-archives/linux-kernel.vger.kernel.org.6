@@ -1,88 +1,137 @@
-Return-Path: <linux-kernel+bounces-246442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 704EF92C1C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:07:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8D8392C1D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DECD28A9B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:07:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8249D1F22C7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBE41BF30D;
-	Tue,  9 Jul 2024 16:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72FC1C68A0;
+	Tue,  9 Jul 2024 16:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WpytXus4"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="GUUpNUV4"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F289119FA9C;
-	Tue,  9 Jul 2024 16:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7596B1C0944;
+	Tue,  9 Jul 2024 16:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720543103; cv=none; b=XBEh8ExeCFgC3Et3/9kiJGh2DBc1vSIo9tl60qISrSsx4icrwCYHsgd0MtNKPOOrfG77c+z3QHrXxj52ZysZhSa0lD8B3qordk1xEyOb1KCw6v0SxqeCuWM5DDSaxttp53kx5bqTsKfsXNToYU+ssmUfJFk+CQ79NIKMNkWVBPo=
+	t=1720543126; cv=none; b=gdcLjZJb9ojKKoWQ1Ma5AePYAbQ7Hn3mza3HmBulIUfjJofy5A7ZLtFRlBmkj/WG1sIwTKJVuTvi4Wjhlgh3bPMJ/bs9W7zAypddUJeEBQ8tC+/q3URMvJteoZ3H/DEKSunyFwI+FmFS27fxaTohTKTBrCJkX7SXB80rw/PoJOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720543103; c=relaxed/simple;
-	bh=akLVWA7pf4SRs2gLWJwI/mYO+UhiI591Xoaqs/UbXro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gaoxd27SlDsKAce9ou2bgxhSIyRILnTDB59tWSrI0GZVVwRU0ELDSILrwrKh/EAjK524pf+zQfQXWH8BuPrMyboUZFdHfjeFLnGY3yVYMtuI1PQ4qZcb7JkvWQnu/EwbuE+hIZ6qa2XD7vJKivEbUzjTnF0ulwvi2GJS6KAHwPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WpytXus4; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=u4kPF+jVZYaqYv+3DJpB7H4K1qcZD5HFQiZJHlOGeGY=; b=WpytXus4/67LYHQxKyVq8IgmMj
-	vwWPyhQhfVWQl5R2oXGMEWzXoGz7UdJZIxulJAGqCcXKPw1r/YJCy+y36vi8dKPYs7oDljCZ3ZfSc
-	UvWnO8qpOKMhEO3WAlesMn1ai2HgM8hQCQ+zBGjIAwPm08pwsXsP8HI4vcDylx3MFCwsmBMVFA0b0
-	q9el4xa9mBvtiTt0+g9qUPaNyP66OD09LVC+5bSOVufROy/PCMVzRNHYH4CpYWY+uXLxKc3yfQmFb
-	uKJAIJ1NMAxISmUhq1IbkZMfagOzmD7KFAH7Og7GP1fnizOKJilzcIQA4J+D/qF7M2r0izlNS2UzP
-	hBKtDr+A==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sRDr6-000000084d9-3wYB;
-	Tue, 09 Jul 2024 16:38:16 +0000
-Date: Tue, 9 Jul 2024 17:38:16 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: david@fromorbit.com, ryan.roberts@arm.com, djwong@kernel.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>,
-	akpm@linux-foundation.org, chandan.babu@oracle.com
-Subject: Re: [PATCH v8 01/10] fs: Allow fine-grained control of folio sizes
-Message-ID: <Zo1neJYABzuMEvTO@casper.infradead.org>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-2-kernel@pankajraghav.com>
- <20240709162907.gsd5nf33teoss5ir@quentin>
+	s=arc-20240116; t=1720543126; c=relaxed/simple;
+	bh=LOODhtsR95I0F9IFBdCOwy9wo67VLpNk6PUcw7BPFec=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IHfpEd+ue6mEdWT7RgrgzgU3iMl2XKjCeJFdgj7dJWqDJ4Z0K6I2m5JAMeAtkndezYoUKx/9fFicvmrTeCX7c+vUqoxMum6JdNZHjo93hbUnGNrI7GkM6lBz5C+sOTaF4YFa4TcGlvS6wkLlmsy4cbKGpcZX/KJcUUMZGshhJq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=GUUpNUV4; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1720543112;
+	bh=LOODhtsR95I0F9IFBdCOwy9wo67VLpNk6PUcw7BPFec=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GUUpNUV4ShaBuqFgQBidpVALwVNWRKk2fJcqzIIo3CIfpkUKfcHZAGVDZcWf8gfUC
+	 gKxElQ3sw+kldM9W4xamYHG5o4NnP5zdbcnOtXEUDkexzff4LVjeMzpE0N9I8879QT
+	 u+olokv98Eg2Rv0khwGZJ2y6HqhAEMFyHI5VkmEa4jR6D8qEQc1aupyvAeFskxDiu9
+	 N8R3NbdtFtYvXoh7pRdNRznIg6a5+yvfsQh4qp3D42xNClT2WfRsmAfBA/EN1BVix+
+	 2mBhnShtV6wPCzdttx7u2KgIFzh+p1NWy56buJmu9xh781GwdwJZ5AZgEsIAFh+h8p
+	 SiRbVQJiLomxQ==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id 06D076008B;
+	Tue,  9 Jul 2024 16:38:32 +0000 (UTC)
+Received: by x201s (Postfix, from userid 1000)
+	id 244972047B1; Tue, 09 Jul 2024 16:38:26 +0000 (UTC)
+From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
+To: netdev@vger.kernel.org
+Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
+	Davide Caratti <dcaratti@redhat.com>,
+	Ilya Maximets <i.maximets@ovn.org>,
+	Jamal Hadi Salim <jhs@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	David Ahern <dsahern@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Ratheesh Kannoth <rkannoth@marvell.com>,
+	Florian Westphal <fw@strlen.de>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v3 02/10] net/sched: flower: define new tunnel flags
+Date: Tue,  9 Jul 2024 16:38:16 +0000
+Message-ID: <20240709163825.1210046-3-ast@fiberby.net>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240709163825.1210046-1-ast@fiberby.net>
+References: <20240709163825.1210046-1-ast@fiberby.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240709162907.gsd5nf33teoss5ir@quentin>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 09, 2024 at 04:29:07PM +0000, Pankaj Raghav (Samsung) wrote:
-> +++ b/include/linux/pagemap.h
-> @@ -394,13 +394,24 @@ static inline void mapping_set_folio_order_range(struct address_space *mapping,
->                                                  unsigned int min,
->                                                  unsigned int max)
->  {
-> -       if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-> +       if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
-> +               VM_WARN_ONCE(1, 
-> +       "THP needs to be enabled to support mapping folio order range");
->                 return;
-> +       }
+Define new TCA_FLOWER_KEY_FLAGS_* flags for use in struct
+flow_dissector_key_control, covering the same flags as
+currently exposed through TCA_FLOWER_KEY_ENC_FLAGS.
 
-No.  Filesystems call mapping_set_folio_order_range() without it being
-conditional on CONFIG_TRANSPARENT_HUGEPAGE.  Usually that takes the
-form of an unconditional call to mapping_set_large_folios().
+Put the new flags under FLOW_DIS_F_*. The idea is that we can
+later, move the existing flags under FLOW_DIS_F_* as well.
+
+Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
+---
+ include/net/flow_dissector.h | 7 ++++++-
+ include/uapi/linux/pkt_cls.h | 4 ++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/include/net/flow_dissector.h b/include/net/flow_dissector.h
+index c3fce070b9129..460ea65b9e592 100644
+--- a/include/net/flow_dissector.h
++++ b/include/net/flow_dissector.h
+@@ -17,7 +17,8 @@ struct sk_buff;
+  * struct flow_dissector_key_control:
+  * @thoff:     Transport header offset
+  * @addr_type: Type of key. One of FLOW_DISSECTOR_KEY_*
+- * @flags:     Key flags. Any of FLOW_DIS_(IS_FRAGMENT|FIRST_FRAGENCAPSULATION)
++ * @flags:     Key flags.
++ *             Any of FLOW_DIS_(IS_FRAGMENT|FIRST_FRAG|ENCAPSULATION|F_*)
+  */
+ struct flow_dissector_key_control {
+ 	u16	thoff;
+@@ -31,6 +32,10 @@ struct flow_dissector_key_control {
+ enum flow_dissector_ctrl_flags {
+ 	FLOW_DIS_IS_FRAGMENT		= TCA_FLOWER_KEY_FLAGS_IS_FRAGMENT,
+ 	FLOW_DIS_FIRST_FRAG		= TCA_FLOWER_KEY_FLAGS_FRAG_IS_FIRST,
++	FLOW_DIS_F_TUNNEL_CSUM		= TCA_FLOWER_KEY_FLAGS_TUNNEL_CSUM,
++	FLOW_DIS_F_TUNNEL_DONT_FRAGMENT	= TCA_FLOWER_KEY_FLAGS_TUNNEL_DONT_FRAGMENT,
++	FLOW_DIS_F_TUNNEL_OAM		= TCA_FLOWER_KEY_FLAGS_TUNNEL_OAM,
++	FLOW_DIS_F_TUNNEL_CRIT_OPT	= TCA_FLOWER_KEY_FLAGS_TUNNEL_CRIT_OPT,
+ 
+ 	/* These flags are internal to the kernel */
+ 	FLOW_DIS_ENCAPSULATION		= (TCA_FLOWER_KEY_FLAGS_MAX << 1),
+diff --git a/include/uapi/linux/pkt_cls.h b/include/uapi/linux/pkt_cls.h
+index 12db276f0c11e..3dc4388e944cb 100644
+--- a/include/uapi/linux/pkt_cls.h
++++ b/include/uapi/linux/pkt_cls.h
+@@ -677,6 +677,10 @@ enum {
+ enum {
+ 	TCA_FLOWER_KEY_FLAGS_IS_FRAGMENT = (1 << 0),
+ 	TCA_FLOWER_KEY_FLAGS_FRAG_IS_FIRST = (1 << 1),
++	TCA_FLOWER_KEY_FLAGS_TUNNEL_CSUM = (1 << 2),
++	TCA_FLOWER_KEY_FLAGS_TUNNEL_DONT_FRAGMENT = (1 << 3),
++	TCA_FLOWER_KEY_FLAGS_TUNNEL_OAM = (1 << 4),
++	TCA_FLOWER_KEY_FLAGS_TUNNEL_CRIT_OPT = (1 << 5),
+ 	__TCA_FLOWER_KEY_FLAGS_MAX,
+ };
+ 
+-- 
+2.45.2
 
 
