@@ -1,139 +1,126 @@
-Return-Path: <linux-kernel+bounces-245590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8335F92B4B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:06:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 561D792B4B9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A3421C20C3B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:06:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFE4FB21D05
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55637156243;
-	Tue,  9 Jul 2024 10:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB4C156243;
+	Tue,  9 Jul 2024 10:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HhfugQju"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZZBkraPr"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43982155C80
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E1260275;
+	Tue,  9 Jul 2024 10:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720519591; cv=none; b=MMTndtdbRAZqwyxt+OukwZ8Cc/O8QFKnGqEMOblpRdi4M446eZgKt+lXiOtfwzJl3vYPlDgMC4LmheO88K4AriM0z+9oWC2GaT0Y/b0AcaA80l4uxTonSKLKFrsB2jGCar+XN9e6w5eFMdEdI9lQKc1ZUE5SdA2k2rL8GzqcRyY=
+	t=1720519646; cv=none; b=HQL3sYfodoTTvQ6NwEFMlsyC+a3sIdob0p4siaWDXuUiekblQWUdX6CxuQrPuDjRfC+4p2FMGc+eIDNc9N6I+N1XpNTHufPJ59cZgY+owdBHLzolS9qcQBs2o9WQNz8vy2O2WgarPhNVbZsIjYpMQlpn2qs75p6UQd5Hj9Nricc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720519591; c=relaxed/simple;
-	bh=/KRfE1rWf1wyqso3Vkt58rj1kXw2cVDyjzWknY+bgYk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=D8S2BJ5gn/W/kKGjifmojDjNxkceAu3h8pHRpM9dbtUd8bEu2bbBSKgZI9XVH6FwjHVt96j7d68JbgknS7veOJyMqLw+rgdlXHkkK/yhpf3IupVQKZRBfdyxf0kQHvDi0Ubdg9wEeLnljQLY8w9NBjYHWEKbHaQcGv49yPZ5xsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HhfugQju; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720519589;
+	s=arc-20240116; t=1720519646; c=relaxed/simple;
+	bh=9/G/GqAyndEEPYXXqhml/xWHy6WN18ZRU0cozK1HbQE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YdIa3X1g+hRNt93HcdAD+eivzFu2+QvSW2NGKqqiIQpjlzxSVNe07zbwQcxNZPgSxWVvHjt25Amj+n8OtF0yUmv/T6E2T0fxNkm6bzc+vea1R2D/bH406O9ixb11jmcsEkx5QogA7ksL4QWiFcIK2lmS9iO7kfMjV8ZcAkp4mGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZZBkraPr; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9BCBF40002;
+	Tue,  9 Jul 2024 10:07:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720519642;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tjTUnc7IhcTY8yXbQZCHDpYRmcDVvOi7wtfkPwMCZy4=;
-	b=HhfugQjuT9gbVl2dei405Jao41wjRhX+4NkWgMwIMVFwXV8R8kx7/2imv3X2BYjgtL735B
-	NRGl5RsINsJbHkBmCryhpcGEwlAkJ3yWK7DTuXogJjW1rQJdXD9nYpoH4HcWKn3MHQsABq
-	5Werms5Tx/p1umiuSFkoKyKOPrf8IDU=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-361-UiV9XaiFPlaMJoCqgi_zcA-1; Tue,
- 09 Jul 2024 06:06:20 -0400
-X-MC-Unique: UiV9XaiFPlaMJoCqgi_zcA-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4F23819560A1;
-	Tue,  9 Jul 2024 10:06:12 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.45.224.64])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ED1F13000181;
-	Tue,  9 Jul 2024 10:05:53 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: Jeff Xu <jeffxu@google.com>,  Al Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Kees Cook
- <keescook@chromium.org>,  Linus Torvalds <torvalds@linux-foundation.org>,
-  Paul Moore <paul@paul-moore.com>,  Theodore Ts'o <tytso@mit.edu>,
-  Alejandro Colomar <alx@kernel.org>,  Aleksa Sarai <cyphar@cyphar.com>,
-  Andrew Morton <akpm@linux-foundation.org>,  Andy Lutomirski
- <luto@kernel.org>,  Arnd Bergmann <arnd@arndb.de>,  Casey Schaufler
- <casey@schaufler-ca.com>,  Christian Heimes <christian@python.org>,
-  Dmitry Vyukov <dvyukov@google.com>,  Eric Biggers <ebiggers@kernel.org>,
-  Eric Chiang <ericchiang@google.com>,  Fan Wu <wufan@linux.microsoft.com>,
-  Geert Uytterhoeven <geert@linux-m68k.org>,  James Morris
- <jamorris@linux.microsoft.com>,  Jan Kara <jack@suse.cz>,  Jann Horn
- <jannh@google.com>,  Jonathan Corbet <corbet@lwn.net>,  Jordan R Abrahams
- <ajordanr@google.com>,  Lakshmi Ramasubramanian
- <nramas@linux.microsoft.com>,  Luca Boccassi <bluca@debian.org>,  Luis
- Chamberlain <mcgrof@kernel.org>,  "Madhavan T . Venkataraman"
- <madvenka@linux.microsoft.com>,  Matt Bobrowski
- <mattbobrowski@google.com>,  Matthew Garrett <mjg59@srcf.ucam.org>,
-  Matthew Wilcox <willy@infradead.org>,  Miklos Szeredi
- <mszeredi@redhat.com>,  Mimi Zohar <zohar@linux.ibm.com>,  Nicolas
- Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,  Scott Shell
- <scottsh@microsoft.com>,  Shuah Khan <shuah@kernel.org>,  Stephen Rothwell
- <sfr@canb.auug.org.au>,  Steve Dower <steve.dower@python.org>,  Steve
- Grubb <sgrubb@redhat.com>,  Thibaut Sautereau
- <thibaut.sautereau@ssi.gouv.fr>,  Vincent Strubel
- <vincent.strubel@ssi.gouv.fr>,  Xiaoming Ni <nixiaoming@huawei.com>,  Yin
- Fengwei <fengwei.yin@intel.com>,  kernel-hardening@lists.openwall.com,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
-In-Reply-To: <20240709.gae4cu4Aiv6s@digikod.net> (=?utf-8?Q?=22Micka=C3=AB?=
- =?utf-8?Q?l_Sala=C3=BCn=22's?= message
-	of "Tue, 9 Jul 2024 11:18:00 +0200")
-References: <20240704190137.696169-1-mic@digikod.net>
-	<20240704190137.696169-2-mic@digikod.net>
-	<87bk3bvhr1.fsf@oldenburg.str.redhat.com>
-	<CALmYWFu_JFyuwYhDtEDWxEob8JHFSoyx_SCcsRVKqSYyyw30Rg@mail.gmail.com>
-	<87ed83etpk.fsf@oldenburg.str.redhat.com>
-	<CALmYWFvkUnevm=npBeaZVkK_PXm=A8MjgxFXkASnERxoMyhYBg@mail.gmail.com>
-	<87r0c3dc1c.fsf@oldenburg.str.redhat.com>
-	<CALmYWFvA7VPz06Tg8E-R_Jqn2cxMiWPPC6Vhy+vgqnofT0GELg@mail.gmail.com>
-	<20240709.gae4cu4Aiv6s@digikod.net>
-Date: Tue, 09 Jul 2024 12:05:50 +0200
-Message-ID: <87ed82283l.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2H1eC2RhJwRtaKrShLbPvmd+hHIztSofnjas5VApbIo=;
+	b=ZZBkraPryArJgdBEYWibidjRIUA2Haa7axtM61ab9XvXK+bi2mo9eMh/mjuuceIq9byUQT
+	lCPzB396TuLB4G62YakjC9No/kQilc6VN0D66qV0cD1ce1qAQauiw/q/8FYAVygcPieb4E
+	V2xy8SwmSl6cjQA+17tCRWXut60YizQFE/JrRqkjbQuudxrYJxC1kjBHbkRvfLA98Kyttq
+	RaUmiZQGfbo4D2ThOqyMvynm+Vv2e/JTGUTJdfmUCiOaXTtJOkOuMyh+8fKEmib/jNEjgx
+	wk9G46mdSz5sTX5p5fGCWblknqNlXdAnlRGepAMeJLD48ToIEML6fWYtmMD8WQ==
+From: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Subject: [PATCH v3 0/5] Add board support for Sipeed LicheeRV Nano
+Date: Tue, 09 Jul 2024 12:07:15 +0200
+Message-Id: <20240709-sg2002-v3-0-af779c3d139d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANMLjWYC/3WO3WoDIRCFXyV4XYMzuq72Ku8ReuHPmAjtWtawJ
+ IR997opNEjbyzPM951zZ5XmTJW97u5spiXXXKYW5MuOhbObTsRzbJmhQCUGGHg9oRDIrYyBIKK
+ Wnlh7/pwp5etDdHxr+Zzrpcy3h3eB7fpLsQAXXMY0GnBGKAMHX8rlPU/7UD425zeAsgOsB+UtG
+ Guc+wcYOwC8Dl6aQCapDthmLvicpkH8gNhAQumjTDpKMf7ZpAE7AKwbzOCSNkr3Teu6fgEAZU7
+ qagEAAA==
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>, 
+ Chao Wei <chao.wei@sophgo.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, 
+ Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.0
+X-GND-Sasl: thomas.bonnefille@bootlin.com
 
-* Micka=C3=ABl Sala=C3=BCn:
+The LicheeRV Nano is a RISC-V SBC based on the Sophgo SG2002 chip. Adds
+minimal device tree files for this board to make it boot to a basic
+shell.
 
->> > If we want to avoid that, we could have an agreed-upon error code which
->> > the LSM can signal that it'll never fail AT_CHECK checks, so we only
->> > have to perform the extra system call once.
->
-> I'm not sure to follow.  Either we check executable code or we don't,
-> but it doesn't make sense to only check some parts (except for migration
-> of user space code in a system, which is one purpose of the securebits
-> added with the next patch).
->
-> The idea with AT_CHECK is to unconditionnaly check executable right the
-> same way it is checked when a file is executed.  User space can decide
-> to check that or not according to its policy (i.e. securebits).
+Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+---
+Changes in v3:
+- Remove /dts-v1/ directive from sg2002.dtsi file
+- Add disable-wp property to sdhci node to avoid having a write
+  protected SD card
+- Drop changes in cv18xx.dtsi and cv1800b.dtsi
+- Add fallback compatible to cv1800b in SDHCI node of sg2002.dtsi
+- Link to v2: https://lore.kernel.org/r/20240612-sg2002-v2-0-19a585af6846@bootlin.com
 
-I meant it purely as a performance optimization, to skip future system
-calls if we know they won't provide any useful information for this
-process.  In the grand scheme of things, the extra system call probably
-does not matter because we already have to do costly things like mmap.
+Changes in v2:
+- Add SDHCI support
+- Change device tree name to match the Makefile
+- Add oscillator frequency
+- Add aliases to other UARTs
+- Add aliases to GPIOs
+- Move compatible for SDHCI from common DT to specific DT 
+- Link to v1: https://lore.kernel.org/r/20240527-sg2002-v1-0-1b6cb38ce8f4@bootlin.com
 
-Thanks,
-Florian
+---
+Thomas Bonnefille (5):
+      dt-bindings: interrupt-controller: Add SOPHGO SG2002 plic
+      dt-bindings: timer: Add SOPHGO SG2002 clint
+      dt-bindings: riscv: Add Sipeed LicheeRV Nano board compatibles
+      riscv: dts: sophgo: Add initial SG2002 SoC device tree
+      riscv: dts: sophgo: Add LicheeRV Nano board device tree
+
+ .../interrupt-controller/sifive,plic-1.0.0.yaml    |  1 +
+ .../devicetree/bindings/riscv/sophgo.yaml          |  5 ++
+ .../devicetree/bindings/timer/sifive,clint.yaml    |  1 +
+ arch/riscv/boot/dts/sophgo/Makefile                |  1 +
+ .../boot/dts/sophgo/sg2002-licheerv-nano-b.dts     | 54 ++++++++++++++++++++++
+ arch/riscv/boot/dts/sophgo/sg2002.dtsi             | 32 +++++++++++++
+ 6 files changed, 94 insertions(+)
+---
+base-commit: d20f6b3d747c36889b7ce75ee369182af3decb6b
+change-id: 20240515-sg2002-93dce1d263be
+
+Best regards,
+-- 
+Thomas Bonnefille <thomas.bonnefille@bootlin.com>
 
 
