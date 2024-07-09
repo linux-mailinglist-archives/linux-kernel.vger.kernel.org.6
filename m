@@ -1,129 +1,121 @@
-Return-Path: <linux-kernel+bounces-245179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69B8792AF59
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:15:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E19692AF5A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 168F11F2202F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:15:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 664EF282375
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A0A12D75A;
-	Tue,  9 Jul 2024 05:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11CA4D8BB;
+	Tue,  9 Jul 2024 05:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NiZY5C6O"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Frgybxd0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50DE12DD90
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 05:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13140394
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 05:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720502106; cv=none; b=A4St1GdjQJ9xtaMe39+CKmoDNAPjQ0aeQDJ6zUdxtv5I9HgoFb/qyLmRoF1AYOJ0K3LGPPQND6sD9iE39xfqVjA3sCyQ7s5JUp3KdkfLvob/HR8VkhU8ZqdgaLHLdcNUuT3qRCtNp7fQmlZeaq9rlqM2QSiqRZJqjxO+icMHOYc=
+	t=1720502141; cv=none; b=toN6lItv1VP9eQKmFKaDW+faDFknBzulU+hp/4RvxQd8HNYr268eEKTjS7Kl0LqZKGADqo/2wZJowf0CSbbNIwG6GcIpx9FBd8vfnlscUd4IOukua9zcionshG7w8eLwkwojB3B4NONswJxO2M18zaHPQt1QvNhVnH8G5ykMVhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720502106; c=relaxed/simple;
-	bh=t7jsp+2AhCj4302LaXnCltCJorzxGApkgadG8T3SGZA=;
+	s=arc-20240116; t=1720502141; c=relaxed/simple;
+	bh=xXqh1hV/4Uj1TIrRLd1FPZZpSpZUs6aVKukJQDZw/Jc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KFERtkb8kzcd5rNUUcPuUEMZrMimnTa3XkZG4bvoDi25EcJjbfOrBbgOHVTpnP+Jkk2AUIUBafk/rZMNR/TzaJe3mOMA38133liYGYhRftleia5IRXEd9Hzd9avAIPDnr8mNFk5t7WrmVaqYQXL7ZeauvZg6lgfGL+3Z5Hb3YFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NiZY5C6O; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2c97ff39453so3218402a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 22:15:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720502104; x=1721106904; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=sOxAsVn43J6UpGnYmdp9+zQbgWtHk77XaVfxeI89xW0=;
-        b=NiZY5C6OQMuNb6zxCZb5x+IUbLlJdeKErjVXzpvJTpQ/Kfh76XiQZrvdWGEE82BQXh
-         Bw10gJFSU78rGF5Wtpku0BPNlHBYje6RS2WuOphrZOm1ZYbs853jvDKS+xjDEMO7rhwI
-         BC+Qg+rm92zwu4ZRMv9xa7RM6GFuNylSHphPqCMK3y5PnMR20YjO0iGhdgC2TF8Gzji9
-         Oix9A0vGmVS5YJ8W8wxaKswsO1m9ThCnepfl+0E4+adAVeC3klT1b26fvrGWlmEovbfm
-         s4tJR8kmrV/Wvu2ne3cx2WXbX0wkKp1bjXoL8vd9cC0lo50hYiL/UdNf/iasRBW0Iylp
-         MAwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720502104; x=1721106904;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sOxAsVn43J6UpGnYmdp9+zQbgWtHk77XaVfxeI89xW0=;
-        b=ZKNWE2GAChtXL2jt7as1x84/cP6V2zQ2ekA2X4pwWtk/Eg8Iqt0OXm3HPH9XItW7+P
-         cNxPs9hi0CgxaIV7JR4I50bnaXKIuED/jqjhp4YpdHt0akDJtumiikeftEyG8Z7wbdHH
-         yQaU+2yvof4Y2ILM3hRF0XWA52B2rsr3U+DFredIrlOhmwfg9rQwPRYaZnkHMBCgv+Fn
-         gE2XAMb0/nxP83grXoI4+YI1FLS4+5ebaMkMj6lQySV+6zOEMiaXkfWDj3/dCvxae/IK
-         OE7NNY17lmbUw/IIqg8vrhS/JKwzyAfTtO/2T0EZ0/1dmejcZBOJXzq2/Sn34EcAWVFM
-         ouNg==
-X-Forwarded-Encrypted: i=1; AJvYcCXyD9LLvaEdOX6QKnzQ5anKPdHLw89O3RJx263xbfbn++g6hAZDRc5WIN9WhMRTmd6uf+YFKjHrID77w7zpNQmNcLw0CHu5twtnnI3T
-X-Gm-Message-State: AOJu0YzGMmfsl/fN9oF2XBXPcGgsDXEOQmTaS+wC3q1oE/vBhdgrQqOv
-	YKnLYf27mtjqhZnLEd4GAZE81i/QMJ0M7Gq+fYIIoLD6v6IGA8jRbBUSJ5PUCA==
-X-Google-Smtp-Source: AGHT+IFMPt2WcyXDbYXxbpB1uFGYlWS51hUTnzsaIrD7vrfdxxoFcZTdu7U1ZXRjpWQLeduAHLq8ig==
-X-Received: by 2002:a17:90b:1049:b0:2c9:649c:5e10 with SMTP id 98e67ed59e1d1-2ca35bca181mr1425092a91.10.1720502104337;
-        Mon, 08 Jul 2024 22:15:04 -0700 (PDT)
-Received: from thinkpad ([117.193.209.237])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ca352c5bd2sm912487a91.40.2024.07.08.22.15.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 22:15:04 -0700 (PDT)
-Date: Tue, 9 Jul 2024 10:44:55 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] PCI: qcom: Prevent potential error pointer
- dereference
-Message-ID: <20240709051455.GH3820@thinkpad>
-References: <20240708180539.1447307-1-dan.carpenter@linaro.org>
- <20240708180539.1447307-3-dan.carpenter@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HMREe4B6rhaxJ3F6PCeQMSgOuf+QBzK1cyx/YivXMnrVU4R14Ysg/GL1YJbycJRLLayyyFQTVcADXQVPWYL0Cbq67T1giH/1T7ZgeTHP8rWBR0MQmHsy2l74pwtMIdCHYcyH2s4MkwseLsVamKgycLR0KgpiPU0+2+V/hfQ1uFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Frgybxd0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1955FC32782;
+	Tue,  9 Jul 2024 05:15:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720502140;
+	bh=xXqh1hV/4Uj1TIrRLd1FPZZpSpZUs6aVKukJQDZw/Jc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Frgybxd0MSjkW+yDK9Dvnc/unxAzUIHQqfbWAgWT/2zqyZ1K+kHoHY/DKFolPu8dh
+	 WXcbUlJt0G1feqmDv5xnb3VuGX8E6wKZXlnW81Y5k9Kx1aG6T80rkkwDUtglBauZFj
+	 ZUjTZ/bkstCMlTZFlDX/KkmXCOlhlXOk6NwmA7JE=
+Date: Tue, 9 Jul 2024 07:15:37 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Jim Mattson <jmattson@google.com>, Ingo Molnar <mingo@kernel.org>,
+	x86@kernel.org, linux-kernel@vger.kernel.org,
+	Greg Thelen <gthelen@google.com>
+Subject: Re: [PATCH 5.10] x86/retpoline: Move a NOENDBR annotation to the
+ SRSO dummy return thunk
+Message-ID: <2024070949-blame-emperor-a764@gregkh>
+References: <20240708164319.3801778-1-jmattson@google.com>
+ <20240708170541.GGZowcZZ0tZmt7znYA@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240708180539.1447307-3-dan.carpenter@linaro.org>
+In-Reply-To: <20240708170541.GGZowcZZ0tZmt7znYA@fat_crate.local>
 
-On Mon, Jul 08, 2024 at 01:05:37PM -0500, Dan Carpenter wrote:
-> Only call dev_pm_opp_put() if dev_pm_opp_find_freq_exact() succeeds.
-> Otherwise it leads to an error pointer dereference.
+On Mon, Jul 08, 2024 at 07:05:41PM +0200, Borislav Petkov wrote:
+> On Mon, Jul 08, 2024 at 09:43:05AM -0700, Jim Mattson wrote:
+> > The linux-5.10-y backport of commit b377c66ae350 ("x86/retpoline: Add
+> > NOENDBR annotation to the SRSO dummy return thunk") misplaced the new
+> > NOENDBR annotation, repeating the annotation on __x86_return_thunk,
+> > rather than adding the annotation to the !CONFIG_CPU_SRSO version of
+> > srso_alias_untrain_ret, as intended.
+> > 
+> > Move the annotation to the right place.
+> > 
+> > Fixes: 0bdc64e9e716 ("x86/retpoline: Add NOENDBR annotation to the SRSO dummy return thunk")
+> > Reported-by: Greg Thelen <gthelen@google.com>
+> > Signed-off-by: Jim Mattson <jmattson@google.com>
+> > ---
+> >  arch/x86/lib/retpoline.S | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/lib/retpoline.S b/arch/x86/lib/retpoline.S
+> > index ab9b047790dd..d1902213a0d6 100644
+> > --- a/arch/x86/lib/retpoline.S
+> > +++ b/arch/x86/lib/retpoline.S
+> > @@ -105,6 +105,7 @@ __EXPORT_THUNK(srso_alias_untrain_ret)
+> >  /* dummy definition for alternatives */
+> >  SYM_START(srso_alias_untrain_ret, SYM_L_GLOBAL, SYM_A_NONE)
+> >  	ANNOTATE_UNRET_SAFE
+> > +	ANNOTATE_NOENDBR
+> >  	ret
+> >  	int3
+> >  SYM_FUNC_END(srso_alias_untrain_ret)
+> > @@ -258,7 +259,6 @@ SYM_CODE_START(__x86_return_thunk)
+> >  	UNWIND_HINT_FUNC
+> >  	ANNOTATE_NOENDBR
+> >  	ANNOTATE_UNRET_SAFE
+> > -	ANNOTATE_NOENDBR
 > 
-> Fixes: 78b5f6f8855e ("PCI: qcom: Add OPP support to scale performance")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
-> ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Whoops, those two here didn't look right, thanks for catching this.
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index 1d36311f9adb..e06c4ad3a72a 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -1443,8 +1443,8 @@ static void qcom_pcie_icc_opp_update(struct qcom_pcie *pcie)
->  			if (ret)
->  				dev_err(pci->dev, "Failed to set OPP for freq (%lu): %d\n",
->  					freq_kbps * width, ret);
-> +			dev_pm_opp_put(opp);
->  		}
-> -		dev_pm_opp_put(opp);
->  	}
->  }
->  
-> -- 
-> 2.43.0
+> Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
 > 
+> And looking at 6.1, it is wrong there too. :-\
+> 
+> commit 7ef6a7f9b32fdfc8bec0a10e6d5ac5374d4f02e7
+> Author: Borislav Petkov (AMD) <bp@alien8.de>
+> Date:   Fri Apr 5 16:46:37 2024 +0200
+> 
+>     x86/retpoline: Add NOENDBR annotation to the SRSO dummy return thunk
+>     
+>     commit b377c66ae3509ccea596512d6afb4777711c4870 upstream.
+> 
+> Greg (KH - there's another Greg on CC too :-)), do you prefer such stable-only
+> fixes like that or should we revert the wrong backports and redo them?
 
--- 
-மணிவண்ணன் சதாசிவம்
+Sending fixups like this, for things that are already committed are
+fine.  But note, someone needs to at least send them to the right place
+(i.e. no one cc:ed stable@vger.kernel.org...) if they wish to see them
+applied to a stable kernel...
+
+thanks,
+
+greg k-h
 
