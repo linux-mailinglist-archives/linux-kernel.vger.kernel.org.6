@@ -1,119 +1,114 @@
-Return-Path: <linux-kernel+bounces-245047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E991992AD87
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:06:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 306D192AD8E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:07:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 777651F22309
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:06:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42CC11C21424
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4265742AA9;
-	Tue,  9 Jul 2024 01:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CAD2AEE1;
+	Tue,  9 Jul 2024 01:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="W6CI5h3l"
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="QsVWUxHq"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47E0376EC
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 01:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760312C1AC
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 01:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720487152; cv=none; b=OmXxhn4nhFKsBzCCDgCWD5GQqFlMdwG0gSbfoW6b+xg6ooqJtq/y5GMJg0Fo5iczmsHDbhLtzHH1KVEnw0zzv+K+/TBPBbKyGh7Uqq0YfT/9M1mc7bKmREuNeDXdvZ7XftSbDKlnHkDkqrBEYz8p3nlXVdjw38ZOM8XFb6kBbEQ=
+	t=1720487257; cv=none; b=OFLDX6nS0gCNZ6andUOeqaoQxq6ofzkd5/tJe6to8uq+UE/9NtXrE9Q12QEj1u7DH5jiGvh3VvxOYmeMFz+rIu1KGXctW28KtYOJQzyiEy+YlpsyBsnkfvGH6LSCnTSvj/4qcMzW70AIHxPyEYiuWntU6p9QY7u0pOq6DcRlx6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720487152; c=relaxed/simple;
-	bh=zhXUxg9EOpmx0CiXmSG794sId4TJVZklA0dfYHPw/DM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=U7xD+rcK21wFJ5Ak9eCq0RxrDoGFvznPFkuzrpnF81bPLVI9IQhf4ZBO6sKeoZI3FnSLJNioDSVH9UgTS4/P6f+PRScyDkYJ0RHvpF2aNrjzraaanPajJO66AKgzSkY5hjlW/GfW4flNPWXXZhe9g2vXE9GPRJQyLv4ffnSjCmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=W6CI5h3l; arc=none smtp.client-ip=209.85.167.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3c9cc681ee7so1918528b6e.1
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 18:05:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720487149; x=1721091949; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bxt6sRBunEAJdmr/SMQIrLMhyKmCuiWg3A5plz8J5+8=;
-        b=W6CI5h3lC1KoLwMAZA9GskkbrMCdqI1bj+tEUVGG+jD4QocknpFzHYI8+SxnES9CCz
-         FjgsILHtjKy2eYJBdUSeBM9voUQ5oW2W7V1XKYtvzmsaFuP4SJIyW/11lo8gQer8zPuw
-         QY0+ntxDME93cMyG3zezbJ/eUL8JPqYRjioEFlQbtJagPlYOAcTF3J6j6nfGsempqHmK
-         R0Ac8kWDhZNe5BQQO0vNX43umzSzxYuqlUdSAkhkZm7i/vT/Vm5zwhPUG54KEpQWA1PN
-         XvB06ARd/L/fhjuh1kB7tm6UBJ2ABuwrVKEn9HD9DrygdE7JCXUiAgqbzE525KIJIHZ/
-         DdBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720487149; x=1721091949;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bxt6sRBunEAJdmr/SMQIrLMhyKmCuiWg3A5plz8J5+8=;
-        b=Rlm2K3O8/14BkCq+pVRARr1ByzccdPsNe6vPgJThI0M28LRDEbEa1s/KLCTzCgil9t
-         M/cbYsGPY4krZLioiDeM2ml4qkpI28jwEZGLTXtZ71WsMDvUXtbFKn4KJybQ7Fb0wGGM
-         P8Bko3su8oNR5OkvNyVL8axioHZYdQlimxN01ViXfZUNDClFbbcHxvcejL4dEOkXQTFg
-         RKOWRepMRg3Mps9ldMx3ve5B0xM9F0hF5mK2l0qcfbudXmGqHSp4SP++Af1HaJoxakHy
-         2fEf6UdoJ4KxbY75dtPfYc/pU8vCoeHoMR87VNj1hqqzlZrgPY7fMjNjUKFF0CR9AvDF
-         uzGg==
-X-Forwarded-Encrypted: i=1; AJvYcCViZW+aXc9TVqWKUCeyPtBrg44BP9c9E1VVyjYT8FzgAeExKXXq28fx7rd5EzwXw1SULRPL0yXsYlFh7rfNQ80xpeaXn0guqrOBgsyg
-X-Gm-Message-State: AOJu0YzHEI4hTRDpeo6BFJbaWu6+uubt8q4U6uXLPowEySTbdXt6fbcH
-	+MSHQ7Kh2Q9TFjgi00cTTu0ja25uCRKU2Tvrr+UXZAJvrBhZL44egdSZT4w3/ZghCO+aQS6pofx
-	p
-X-Google-Smtp-Source: AGHT+IFZVZrSxg89uP9Je/FmpgZThlv+Nr0TXf60j4XST0/pMpypzFZ30CE5rmjYzzIiFHdN2u8Dcg==
-X-Received: by 2002:a05:6808:144f:b0:3d2:95f:da8c with SMTP id 5614622812f47-3d93c4931b3mr371575b6e.18.1720487148945;
-        Mon, 08 Jul 2024 18:05:48 -0700 (PDT)
-Received: from localhost.localdomain (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d93acff694sm215442b6e.3.2024.07.08.18.05.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 18:05:48 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-To: Mark Brown <broonie@kernel.org>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] spi: mux: set ctlr->bits_per_word_mask
-Date: Mon,  8 Jul 2024 20:05:30 -0500
-Message-ID: <20240708-spi-mux-fix-v1-3-6c8845193128@baylibre.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240708-spi-mux-fix-v1-0-6c8845193128@baylibre.com>
-References: <20240708-spi-mux-fix-v1-0-6c8845193128@baylibre.com>
+	s=arc-20240116; t=1720487257; c=relaxed/simple;
+	bh=vJEZgvhJlVfzSmPe4+aP0V+d+0pf77ffDYj2CwhdXUc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XAWspZSRbqyZXhgX9XDQVkvabY3u305Ea9TxCVATwv4BH1DUPlE48NIFPwUypRwtorGLXHu3x4+gf937KOPpGO6TMT1FESnLnVag8SoE1Zh7XGAAN9MADvKx1HVylDIvbAMyYnYshUm69QtxWz+TKmbCkyRAs7KXD00IsEnI4fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=QsVWUxHq; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1720487253; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=mECnJeehZNBoxiLQRn/E4jwV446jfFeTcaKLoHUc6Zg=;
+	b=QsVWUxHqzPrsSRZFtCmnsSIGID+B9p1t/K8/ngloj4fAbvzupibE/UJxPfikC0XGMrxNZuXeMk4WOPHeeM63DTxl99p42rIj3HDuTeAaF1i5cen7XesAo3WzffJlBnF0qKz+xWbj//qcu3u1WH81uqHLnIdEPshDCMJhj6Yk8Qc=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R581e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045220184;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0WA9bRN5_1720487250;
+Received: from 30.97.56.68(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WA9bRN5_1720487250)
+          by smtp.aliyun-inc.com;
+          Tue, 09 Jul 2024 09:07:31 +0800
+Message-ID: <2672552a-b252-42ba-964b-db25413a418c@linux.alibaba.com>
+Date: Tue, 9 Jul 2024 09:07:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.14.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mm: shmem: Rename mTHP shmem counters
+To: Ryan Roberts <ryan.roberts@arm.com>, Barry Song <baohua@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
+ <hughd@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ David Hildenbrand <david@redhat.com>, Lance Yang <ioworker0@gmail.com>,
+ Matthew Wilcox <willy@infradead.org>, Zi Yan <ziy@nvidia.com>,
+ Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20240708112445.2690631-1-ryan.roberts@arm.com>
+ <CAGsJ_4zH72FyLq5gJm215oiWrtd6uf40L_F1UO6cFZ4sy7qt0A@mail.gmail.com>
+ <744749c3-4506-40d9-ac48-0dbc59689f92@arm.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <744749c3-4506-40d9-ac48-0dbc59689f92@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Like other SPI controller flags, bits_per_word_mask may be used by a
-peripheral driver, so it needs to reflect the capabilities of the
-underlying controller.
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/spi/spi-mux.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/spi/spi-mux.c b/drivers/spi/spi-mux.c
-index f4b619cc2657..c02c4204442f 100644
---- a/drivers/spi/spi-mux.c
-+++ b/drivers/spi/spi-mux.c
-@@ -158,6 +158,7 @@ static int spi_mux_probe(struct spi_device *spi)
- 	/* supported modes are the same as our parent's */
- 	ctlr->mode_bits = spi->controller->mode_bits;
- 	ctlr->flags = spi->controller->flags;
-+	ctlr->bits_per_word_mask = spi->controller->bits_per_word_mask;
- 	ctlr->transfer_one_message = spi_mux_transfer_one_message;
- 	ctlr->setup = spi_mux_setup;
- 	ctlr->num_chipselect = mux_control_states(priv->mux);
+On 2024/7/8 20:29, Ryan Roberts wrote:
+> On 08/07/2024 12:36, Barry Song wrote:
+>> On Mon, Jul 8, 2024 at 11:24 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>>
+>>> The legacy PMD-sized THP counters at /proc/vmstat include
+>>> thp_file_alloc, thp_file_fallback and thp_file_fallback_charge, which
+>>> rather confusingly refer to shmem THP and do not include any other types
+>>> of file pages. This is inconsistent since in most other places in the
+>>> kernel, THP counters are explicitly separated for anon, shmem and file
+>>> flavours. However, we are stuck with it since it constitutes a user ABI.
+>>>
+>>> Recently, commit 66f44583f9b6 ("mm: shmem: add mTHP counters for
+>>> anonymous shmem") added equivalent mTHP stats for shmem, keeping the
+>>> same "file_" prefix in the names. But in future, we may want to add
+>>> extra stats to cover actual file pages, at which point, it would all
+>>> become very confusing.
+>>>
+>>> So let's take the opportunity to rename these new counters "shmem_"
+>>> before the change makes it upstream and the ABI becomes immutable.
+>>
+>> Personally, I think this approach is much clearer. However, I recall
+>> we discussed this
+>> before [1], and it seems that inconsistency is a concern?
+> 
+> Embarrassingly, I don't recall that converstation at all :-| but at least what I
+> said then is consistent with what I've done in this patch.
+> 
+> I think David's conclusion from that thread was to call them FILE_, and add both
+> shmem and pagecache counts to those counters, meaning we can keep the same name
+> as legacy THP counters. But those legacy THP counters only count shmem, and I
+> don't think we would get away with adding pagecache counts to those at this
+> point? (argument: they have been around for long time and there is a risk that
+> user space relies on them and if they were to dramatically increase due to
+> pagecache addition now that could break things). In that case, there is still
+> inconsistency, but its worse; the names are consistent but the semantics are
+> inconsistent.
+> 
+> So my vote is to change to SHMEM_ as per this patch :)
+> 
+>>
+>> [1] https://lore.kernel.org/linux-mm/05d0096e4ec3e572d1d52d33a31a661321ac1551.1713755580.git.baolin.wang@linux.alibaba.com/
 
--- 
-2.43.0
-
+My original preference was also for SHMEM-specific counters :)
+So feel free to add:
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
