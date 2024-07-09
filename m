@@ -1,86 +1,70 @@
-Return-Path: <linux-kernel+bounces-245131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53F9392AEC8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:31:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1E4F92AECC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:33:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84D601C20D41
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:31:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D8F0282226
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741F152F9B;
-	Tue,  9 Jul 2024 03:31:45 +0000 (UTC)
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE39770FB;
+	Tue,  9 Jul 2024 03:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VdZRhDKz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF45664A;
-	Tue,  9 Jul 2024 03:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7A92772A;
+	Tue,  9 Jul 2024 03:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720495905; cv=none; b=HnzZz5XkD3fzwUzN7CJGoBBF8hEiPtpSTL64UzNOvvnx7eI5gzQ+5+m2IaGNIYqJLgBoZAKgBxGETB6FHSq5di+gKApr0jiH38Cmzs9zmC9yPOzdzBRKi9+fF5gImmcuNRc2AniySwier9Tbfav3wPi0CmZvnbB5n9T5rBEzVLs=
+	t=1720496019; cv=none; b=KYv5RQozy4+7guy1Y7FvbzffSFmB3TSG96xKOgBSmuS6yoxGxQp7sb17j8p37+RHVI/Oy3jBdME/AoWNP5W3RKK0c57EbCRqoyVHNFAJKng+TAhQArAWrariEXZwS9naJblv7F25DgYyME4JVXlrsQ+6iDfuf/0Qk5AxMR82/6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720495905; c=relaxed/simple;
-	bh=reDBoHM4FmpBLKApE4BRXy3nadP7Vf26p0GIlJBPv4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LcsJ6waF0v6byXykUfKwVq/+kpebGXCL4u0+ezHW+YV83y+pPt8r2OWERtvmnZDjssKqAeoPJBJ4KZADwzSZXCp2LRdzq+rKAsPDxPlzJacg1zx/MUGbxE4whgh23zHxzpUhT57MnE4xK5DdSlYGN5rGaI2dgpenoGj5rv3fsDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70af5fbf0d5so2900358b3a.1;
-        Mon, 08 Jul 2024 20:31:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720495903; x=1721100703;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ar4dhfjUe2YqQB1ma5/z2JYsatI/fICi2DYsiJcXzhQ=;
-        b=d04Gd+/+w/v7lUuPSJtVcUyfa1twfpwySNOjLKcJ6YCIuR6Qo3Yk7o1/jMtIMGJsV/
-         LELYNC0mrWHyqLQavpHpMjENOyMtKmvOQXL3W76jHx+HTjwJocstn845n7bX1YLG8HPn
-         jvXrd0661ialAl4kG6kz175iOO/cQ/W1L1vKg/CTssTkSfsuFqnvqHz6zkNrXfxswhh4
-         cOfk1LrkwcfhmtS7RJpEe4aY1/zyPgM79So59mykygkYZCykkvHH15ZDJCUsBl9jaWca
-         pagls2YF2YhcsQb/Nc901cVkWI0YKHNM9vJy2Ffr1oH7CKOAeAkXPIhbZdOlXItZ4nN7
-         UtYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCCDMi91VMr+45Kyq4k4k/Z6g8f8izABn/+FVZwdLfhJMA7SDDDOajgJDaZf1r7316RTNxIlEFpaHFDEY2YpAXlYgRru+p0uae2DF7yPCfnOxU8lFqHKEaUFPF5KnhrHdM5R3KbKjmug==
-X-Gm-Message-State: AOJu0YwMSf4iVrQsl5LUSDZznHLk8kHczGVR21l0HapLQQy7x/mub7go
-	LDjPTwScEDsoOMbaTQZi0yFdtG49vEN5VcBBF+EdD/7zXrd4nu6C
-X-Google-Smtp-Source: AGHT+IH/83wMwWG9Rj6rD03TbTr2U8FgYQTShrKVdvAtOd/8vABJgzbbrQy009PzSTh9LAJz57Cytw==
-X-Received: by 2002:a05:6a00:c8c:b0:70b:a46:7dfd with SMTP id d2e1a72fcca58-70b44dd8bb1mr1531152b3a.17.1720495902864;
-        Mon, 08 Jul 2024 20:31:42 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4389ba28sm657650b3a.9.2024.07.08.20.31.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 20:31:42 -0700 (PDT)
-Date: Tue, 9 Jul 2024 12:31:41 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the pci tree
-Message-ID: <20240709033141.GA2897846@rocinante>
-References: <20240708181559.3920edf6@canb.auug.org.au>
+	s=arc-20240116; t=1720496019; c=relaxed/simple;
+	bh=7iwTvXHDzwgw8YBNkBLPDrFgP38NPzhCLm2zPjlIwH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c+0k+54aR+PnvtvQfZBSrJAqtG8HeBktOzTBhg70P5O3Mx/inRbQgXKwIomv59S5UitN3XROvlc6lZr45meGkNSNesGJz5tm+cHH3mpKLgXHuqgcN6Y6FHR7pvTNvdQoFyMPmm3a7h5eoieA5GtSJ0qVRraJovIt2dPkkmy4+P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VdZRhDKz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 076FAC4AF07;
+	Tue,  9 Jul 2024 03:33:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720496018;
+	bh=7iwTvXHDzwgw8YBNkBLPDrFgP38NPzhCLm2zPjlIwH0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VdZRhDKzwmvaHLAR5gfZQ1uc6ZTw3EN1TIl1WINSCHUspfmHky+i/thyrvTrXoaFd
+	 3IMJyFM5XSsy3LfCLQb3LhATu5NeVAQ86Nzf2Ord1X8kQtrZW9Pg5WjnGUqDQgRnjQ
+	 r+SLNYvydEBMZVF5k3THRP6PG6la0tI/DijcoevumZR+1b+lsetvZobQ4mYwIrKZwh
+	 ZKL1nrSOdtYZbfQCZWzj7W39kAicODz5WKkcMSE08d6ve05HOKVuFd1a1RHlAH62Q+
+	 oBLHVUaEZtTjOnZ3C52gAQUY/R93RpLwSeABtpXcNYx7ZC51vSSqkL7kczhC+GB7qX
+	 AuxSOclXTkiaw==
+Date: Mon, 8 Jul 2024 20:33:37 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Geetha sowjanya <gakula@marvell.com>
+Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <davem@davemloft.net>, <pabeni@redhat.com>, <edumazet@google.com>,
+ <sgoutham@marvell.com>, <sbhatta@marvell.com>, <hkelam@marvell.com>
+Subject: Re: [net-next PATCH v8 03/11] octeontx2-pf: Create representor
+ netdev
+Message-ID: <20240708203337.0e20c444@kernel.org>
+In-Reply-To: <20240705101618.18415-4-gakula@marvell.com>
+References: <20240705101618.18415-1-gakula@marvell.com>
+	<20240705101618.18415-4-gakula@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240708181559.3920edf6@canb.auug.org.au>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Fri, 5 Jul 2024 15:46:10 +0530 Geetha sowjanya wrote:
+>  .../ethernet/marvell/octeontx2.rst            |  49 ++++++
 
-> Commit
-> 
->   5f5817e68ef8 ("PCI: Add missing MODULE_DESCRIPTION() macros")
-> 
-> is missing a Signed-off-by from its committer.
-
-Should be fixed now.  Thank you!
-
-	Krzysztof
+Your documentation is insufficient.
+-- 
+pw-bot: cr
 
