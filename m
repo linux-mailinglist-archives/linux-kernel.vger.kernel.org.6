@@ -1,104 +1,123 @@
-Return-Path: <linux-kernel+bounces-246248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37D2992BF8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:19:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2A8D92BFAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2A751F26509
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:19:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BCD7280D31
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF75A34;
-	Tue,  9 Jul 2024 16:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CEF1A08AD;
+	Tue,  9 Jul 2024 16:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dhXmN2A3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tnwq6Khq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C767182494
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 16:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11531A01D1;
+	Tue,  9 Jul 2024 16:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720541933; cv=none; b=hsa23jUkmQpbBmGWt6JU/U7YNyjMDl1My8hWthEUmgqNr3OJU1URPMtG4/i619Ggd7EwAm1SgC/sSt5NmTXhpnjDMghYYMUfPCeckW/AWaciWOPF4Ov8m0auXZZeCc/OpFnsPcGYLh8JFr+iPqDIePIjIcG+T2n+FdjWZztHNY8=
+	t=1720542037; cv=none; b=jl/nywi/VVx3qEJM1GqZ6jOO1K3cturJeSQ+aOJ1es4ZtTm9dtKRTn+IxWZ89wzdLcOXrEk4K6xNXbR2/YIiIJRfhPvUHpVR6cN5BiK7XGmqJYNsKjrFy8Juh6MX4/y0rnaCVV4IZbk+jJWxHBOIZqzh9WQpPpC8CBQLM18e8H0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720541933; c=relaxed/simple;
-	bh=6CxWOEITHjIhWLXILz9JbgNImfhmSiAYeuju8IvNgdY=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=fGKf6I7wWcDlhrJv5mtmQlAuS9bLPeUmj0pJ7YJpxBR6A/6TzdPL7WxwnxdUCuWDqr6baxfG18KUPpdtdqZ+keAVNTlYRllbXaUHi68sdXgOwp/T7++5WUih2Ff2/+xXxCaPeFnUsw7IU8z7rNSTnS0MOkON5hlr3JjoXrUMMv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dhXmN2A3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67BC9C3277B;
-	Tue,  9 Jul 2024 16:18:52 +0000 (UTC)
+	s=arc-20240116; t=1720542037; c=relaxed/simple;
+	bh=9xPoarv9U0RMmmwGjz2KH5mcE2cMmo3OmRe08XZCiqw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=i38ZQHeGjTUnTyQHStQ5vL7HnPkvYebMucyrHCwxOSZXV2vXsAcnS5InmZFc3aqmp3BOUx3ZkjCS1m3SKqKaXTRryTfzTiHAWJ7J0pPQk+U6PbbcWtqdiTmsmOrn/xV4HDXVbjUAXrsQJvabvc8Cwiakz26uG2EwTyggXkmr99w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tnwq6Khq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 539B8C32786;
+	Tue,  9 Jul 2024 16:20:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720541933;
-	bh=6CxWOEITHjIhWLXILz9JbgNImfhmSiAYeuju8IvNgdY=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=dhXmN2A3Wvh0y2X9vbMZiyQeSdcg1nqJe6GWH3VlzbevWZqh6yyqznzdwXptak8W2
-	 OKOhijmjiyHw+BKcffio4QTHn1aZx+UuKa0TIxoRP8EAu/L+yZLSug+XAXHss+RA4B
-	 b9IHLQYSUv8uTf8eTX0Jx4qd0chTbdp7iefVrtnXNmsbBaXcHyYqow5cOLUKeeRwZx
-	 RdRVWDGHfBrGUio9Q8fZwbN/sFNADfrJtGNXn662ovDKDCHwE/7hCqJEqLn4OnSs3U
-	 b1XeExMVPSdRSoZDZbGMU4Q8GomsQG32dwQK5LVr3HJlq7h+15UEucAcWzjG1kSkBH
-	 tZ97xTsfv0zqQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,  <linux-kernel@vger.kernel.org>,
-  <ath12k@lists.infradead.org>
-Subject: Re: crosstool: x86 kernel compiled with GCC 14.1 fails to boot
-References: <87y16bbvgb.fsf@kernel.org>
-	<917565ee-732a-4df0-a717-a71fbb34fd79@quicinc.com>
-	<837cd2e4-d231-411a-8af4-64b950c4066a@quicinc.com>
-	<c9b23ee3-6790-404d-80a3-4ca196327546@app.fastmail.com>
-	<0e0150ca-fdfa-40cb-ad7f-6ac695b702e4@quicinc.com>
-Date: Tue, 09 Jul 2024 19:18:50 +0300
-In-Reply-To: <0e0150ca-fdfa-40cb-ad7f-6ac695b702e4@quicinc.com> (Jeff
-	Johnson's message of "Tue, 9 Jul 2024 08:29:25 -0700")
-Message-ID: <87le2abkt1.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=k20201202; t=1720542036;
+	bh=9xPoarv9U0RMmmwGjz2KH5mcE2cMmo3OmRe08XZCiqw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Tnwq6KhqE1lels9ZIRLjFmP2A3enBPsQkzkb2I/6rnWx02TSeZm7/AO4ahOALwNgZ
+	 Ya7qzmWVXFn8ajZvtYl8PCplX2KmucRDeh+1mdyuiNH9M61UPD34mBV9El2s7Kbf4C
+	 WBy1CpoTAmAAz47fsG34ZiKL2i0Jm/H2mBON0ZEp6JXs1ZGtCSpS2nly2BDPMq0Lsl
+	 CJtJX8qdY2baRYVWD6Ow/5+5tQOm7LkqYwcUxoY54+1ue0lpYVfc4qJgdq/lLYWv11
+	 ZtkcH4FizPchU/TghrzEHFSbJqLC/Fi0amNwONc5ld9aXlQAJhSy1aFbJwlMNDthTG
+	 GvF9UmWAz+6uQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Thomas GENTY <tomlohave@gmail.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Mark Brown <broonie@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	cezary.rojewski@intel.com,
+	liam.r.girdwood@linux.intel.com,
+	peter.ujfalusi@linux.intel.com,
+	yung-chuan.liao@linux.intel.com,
+	ranjani.sridharan@linux.intel.com,
+	kai.vehmanen@linux.intel.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	kuninori.morimoto.gx@renesas.com,
+	alban.boye@protonmail.com,
+	alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.9 11/40] bytcr_rt5640 : inverse jack detect for Archos 101 cesium
+Date: Tue,  9 Jul 2024 12:18:51 -0400
+Message-ID: <20240709162007.30160-11-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240709162007.30160-1-sashal@kernel.org>
+References: <20240709162007.30160-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.9.8
+Content-Transfer-Encoding: 8bit
 
-Jeff Johnson <quic_jjohnson@quicinc.com> writes:
+From: Thomas GENTY <tomlohave@gmail.com>
 
-> On 7/8/2024 10:44 PM, Arnd Bergmann wrote:
->> On Tue, Jul 9, 2024, at 05:55, Jeff Johnson wrote:
->>> On 7/8/2024 6:57 PM, Jeff Johnson wrote:
->>>> We tend to enable a lot of debug config options, so I'm wondering if one of
->>>> them is contributing to the issue? Guess I'll turn off a bunch of those
->>>> options and try again.
->>>
->>> OK, with a bunch of debug turned off my image boots.
->>>
->>> Now to find the culprit.
->>>
->>> Current diff between original config and working config:
->> 
->> Nice! I've tried the reverse now, turning on the options
->> you have turned off on top of my defconfig. This version
->> still works for me, booting with a plain
->> 'qemu-system-x86_64 -kernel arch/x86_64/boot/bzImage'
->> and building with my arm64-to-x86 cross compiler.
->
-> I picked my favorite to begin with, enabling KASAN (which in turn enabled a
-> few others). The resulting kernel did not boot for me (just saw a black screen
-> after the GRUB menu). Diff between working and non-working config is below.
->
-> I then downloaded and built the config you supplied. With that I have the same
-> behavior as my original config, the display is frozen with:
-> Loading initial ramdisk ...
->
->
-> [jjohnson:laptop 1966] diff .config.old .config
+[ Upstream commit e3209a1827646daaab744aa6a5767b1f57fb5385 ]
 
-BTW there's also scripts/diffconfig which provides a prettier diff.
+When headphones are plugged in, they appear absent; when they are removed,
+they appear present.
+Add a specific entry in bytcr_rt5640 for this device
 
+Signed-off-by: Thomas GENTY <tomlohave@gmail.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Link: https://lore.kernel.org/r/20240608170251.99936-1-tomlohave@gmail.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/soc/intel/boards/bytcr_rt5640.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/sound/soc/intel/boards/bytcr_rt5640.c b/sound/soc/intel/boards/bytcr_rt5640.c
+index b41a1147f1c34..a64d1989e28a5 100644
+--- a/sound/soc/intel/boards/bytcr_rt5640.c
++++ b/sound/soc/intel/boards/bytcr_rt5640.c
+@@ -610,6 +610,17 @@ static const struct dmi_system_id byt_rt5640_quirk_table[] = {
+ 					BYT_RT5640_SSP0_AIF1 |
+ 					BYT_RT5640_MCLK_EN),
+ 	},
++	{
++		.matches = {
++			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "ARCHOS"),
++			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "ARCHOS 101 CESIUM"),
++		},
++		.driver_data = (void *)(BYTCR_INPUT_DEFAULTS |
++					BYT_RT5640_JD_NOT_INV |
++					BYT_RT5640_DIFF_MIC |
++					BYT_RT5640_SSP0_AIF1 |
++					BYT_RT5640_MCLK_EN),
++	},
+ 	{
+ 		.matches = {
+ 			DMI_EXACT_MATCH(DMI_SYS_VENDOR, "ARCHOS"),
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+2.43.0
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
