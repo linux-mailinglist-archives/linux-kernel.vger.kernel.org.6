@@ -1,138 +1,114 @@
-Return-Path: <linux-kernel+bounces-245777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5CA392B912
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:09:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E0292B918
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DD3B1F2145C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:09:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B50991C23472
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD278158872;
-	Tue,  9 Jul 2024 12:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74679158873;
+	Tue,  9 Jul 2024 12:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XAxFPG1u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="PtUSgGH/"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0661B15698B;
-	Tue,  9 Jul 2024 12:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D39F1534FC;
+	Tue,  9 Jul 2024 12:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720526966; cv=none; b=uwtP6Z5Hdi7TbhlFAjL7lsgYX4bZdCD65w4lmnzs7j8aEopPEC1/CB9CDK8919joINe9oDgVCx+k5Jz3Ifykb4XV703qdVksQVuTbUWKXgO/5Tibuxm2Ak67hv9N0qM6f9NH1NEvgbqWJw/F9jA23kX8uJrrfFfeVeN6KVirBo8=
+	t=1720527085; cv=none; b=eoRwT8UIyk6M3Sf+4vXVLsHPzQpTWx2Pwft6uKK/zg53iFIjgXlBMun+8+s800BtI3gE/jxHcSjPvqaFf0tvWXVw73+2X0PRn09ULbekQ7h4Fdz5mFdan4w8+Lx7ktickhEy9cd/2PftRn9C3YGiCrJi60xn+ozYYO3vyGTms50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720526966; c=relaxed/simple;
-	bh=N6uJbMj7JJjxIBnZJqgZ4bxBOAheygBP8PcnbYWljHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vFl9JE6jQ78L3+YtrvfSXKvJexLBDM6yHB/15t8GXzeCL50Mpikqj5KhNpp/X2UsnLOHDLQXepfdkRl40NHFfg5t2nqXgN4J6B5ie4zru4faTu1RlIBqMUMoEPyE1U2nkklGDPx6ZSrMDF1/y52tE8sdiBtMldjomqM6EkPUUik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XAxFPG1u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E326C3277B;
-	Tue,  9 Jul 2024 12:09:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720526965;
-	bh=N6uJbMj7JJjxIBnZJqgZ4bxBOAheygBP8PcnbYWljHo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XAxFPG1u+x8bpLlJeh+GxukTqN3VlDLEGHNXlwnrZjdKxNuDZZGGFHkwVR2ulFTch
-	 j7NWrHcFK1+nwnSk35Tv9WaZP4AapCjvTGul0bGppaJ+/Qmf9T1Pbd3zuFCUyzm2wZ
-	 0Z+8/qgBs5WTpk9ptT/xr1EGTvHwgo9Bk7MiibA/Cm1NY1ZsBVQ5NC90HxvcF1PLKV
-	 s9forepR80W0KAZO1gc6cqM1GD79uOlFigMQ0zboQw1o73fS7lO/JE8FdJGDjhLn1F
-	 ops3Fb6h0wr31uS1qhcXJpLb6A1wLuDadLapuv81+FbiJexfb+XcUhPXYMtb2ayaBP
-	 Wv9MqGf0QYP3g==
-Date: Tue, 9 Jul 2024 13:09:19 +0100
-From: Simon Horman <horms@kernel.org>
-To: Richard Gobert <richardbgobert@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, idosch@nvidia.com, amcohen@nvidia.com,
-	petrm@nvidia.com, gnault@redhat.com, jbenc@redhat.com,
-	b.galvani@gmail.com, martin.lau@kernel.org, daniel@iogearbox.net,
-	aahila@google.com, liuhangbin@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 1/2] net: vxlan: enable local address bind
- for vxlan sockets
-Message-ID: <20240709120919.GH346094@kernel.org>
-References: <20240708111103.9742-1-richardbgobert@gmail.com>
- <20240708111103.9742-2-richardbgobert@gmail.com>
+	s=arc-20240116; t=1720527085; c=relaxed/simple;
+	bh=07u+d8/VVabnzNsgDPxn1WvWRdYn18Z+KZmEgI742IA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=T8l3DwpcJF37jy5qgG/qO7NppOIJNxVK1yT07blBQ/Wcs4cBwB1/Iq491MSc8jfFYJHxm8Ynj43VIEkBnPEv5YqfHjSbBk+QO8uBEVu6rptPaN0nGg9+p24nrRjQWH0v5jaka03/afUhaU3vceRgNsXsTNc1d5Umzz27i/aLiOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=PtUSgGH/; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720527033; x=1721131833; i=markus.elfring@web.de;
+	bh=07u+d8/VVabnzNsgDPxn1WvWRdYn18Z+KZmEgI742IA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=PtUSgGH/zk1ZLSvEsUj1h7TmqoGPsawvcXuKyULGBvdgP+WcdjoKlcKN82t61B0X
+	 oDDIiirI53CUXCHi6uEPFMNSk42roQOATaaBMkgO55Vomvoh0QwzwDwOd9+jYjEyU
+	 sEQOOw/uL4DtvetB7R1R94lpqDvzycQF7cZITY+VgZpOiLKaJU0KHKuumeYDdkIMw
+	 1/Zgk0SqKwwRI7F/n7j+smTiLiFGwDFQra7cfde0Fz73vDvyMymrsfRYHqeBZ+iS4
+	 WGaj/Rhc9O+QRvVC0/OgTF8Fe9YYtr+cNHkVvymRAlXSTZFZLFMigUsQSQJLrRagF
+	 DQlpalzJzPOunqAsqg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MVJNd-1sqlpe2EcB-00LfaQ; Tue, 09
+ Jul 2024 14:10:33 +0200
+Message-ID: <1fe42fac-b3b0-43fe-9270-79afed5fba6c@web.de>
+Date: Tue, 9 Jul 2024 14:10:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240708111103.9742-2-richardbgobert@gmail.com>
+User-Agent: Mozilla Thunderbird
+To: make24@iscas.ac.cn, dri-devel@lists.freedesktop.org,
+ kernel-janitors@vger.kernel.org
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Daniel Vetter <daniel.vetter@ffwll.ch>, David Airlie <airlied@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Wei Liu <wei.liu@kernel.org>
+References: <20240709113311.37168-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH v4] drm/gma500: fix null pointer dereference in
+ cdv_intel_lvds_get_modes
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240709113311.37168-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:d1pJZ68qXVLC5hDwh5dRD6Gu4W2nu8B0JaP0M5KPoZ4RDYSO2li
+ 54bTlvMJ+AgnnVabxrF789qHsFdBA8tafROZY+vtw2bjb4lDnngz8EweGuhNMimNbojDr91
+ yY2StoZShqaVh+L+Pkju90eaafFKr1mdk/CX/fhqJE9q1m10cUIUIKLGuOhzEtJ1yMFYDqq
+ AkbP11Bm8UZnaCwvJDMRA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:SB8L1Y85kb4=;IdtYRSGC0esrjCM//uktqOB6+Z7
+ 8jcwx3fpx3XaQNYh5US3nMVLJcmk2q+Ijg6X23q0bGq+hNmP3dvTKf6mAu5ObhZ81s5AJ9c6y
+ dmhBGa93Nwec2NACODNAFrNomMkpemPjqziDZV3o80TDYl//Q4S7i6b11ElDt/OUYZGHlg4/X
+ GGC1pyUJUWoCivIaI9PHxSlgFZ1aQnJwmRwPtRU8KwDjFU/Kz7uVnvGspAsEMpvF/xCw9guOU
+ bzonFA4hCKKFbsA5qCRKbiZysTC3kWxO9rhN/wkkQxNEzL6XW5utLELYrKMlDKdGIPXB26+LM
+ YwmmBdazbZbCyYZRXHTjaLjmt0SqNipBf+WGdXXp68I+zJjz5hG228RxWJjM9CwML8Dw7uJyY
+ BI15TCjUJvbD86mjVjXxPM8UwPv6QRS77F5PHNGlb4hjasqoNNZMZVCM/HoPzRCVaYhG/pXIx
+ VqbxFMGv7hVLjh4vBg93Y01+CzcVC6DP/CSZmb1ExsZTP+HpU9QqwT6/sTW3rfv5q3DULch1S
+ 1dgOgCBH9b0N6C7X3/9HW/Aw6quP1JBr2lwexuFAny3C3LuIS/CbAK2b/yr2E5cyJosTwoUIB
+ Hn6neTn+1mfyHpp4L7BzoqfqYdbpsYNG2RDS+Z4fMcUk9x42XULh+NluKOmynfCnPAgn6iT3D
+ AR5yNhlGPvbJBZ0B3ayDbEJPI9dWOd1dWSbuc/r0siTaxm0bRgNawhnlCa/vbkRyrhfKKsh3D
+ jDh93qeAwIwM4DhryRAFT18CBg80askcrlNUwz8Z7RzUhvesZvH0KJCqz8X5pXjsKSOmxFn7J
+ D5Acyn++A6C3j8ZMEccxNltpdYqVEGHJjUeoDnmnmRweU=
 
-On Mon, Jul 08, 2024 at 01:11:02PM +0200, Richard Gobert wrote:
-> This patch adds support for binding to a local address in vxlan sockets.
-> It achieves this by using vxlan_addr union to represent a local address
-> to bind to, and copying it to udp_port_cfg in vxlan_create_sock.
-> 
-> Also change vxlan_find_sock to search the socket based on the listening address.
-> 
-> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
+=E2=80=A6
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+
+Are you going to adjust this information anyhow?
+
+
 > ---
->  drivers/net/vxlan/vxlan_core.c | 53 ++++++++++++++++++++++++----------
->  1 file changed, 38 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
-> index ba59e92ab941..9a797147beb7 100644
-> --- a/drivers/net/vxlan/vxlan_core.c
-> +++ b/drivers/net/vxlan/vxlan_core.c
-> @@ -72,22 +72,34 @@ static inline bool vxlan_collect_metadata(struct vxlan_sock *vs)
->  }
->  
->  /* Find VXLAN socket based on network namespace, address family, UDP port,
-> - * enabled unshareable flags and socket device binding (see l3mdev with
-> - * non-default VRF).
-> + * bounded address, enabled unshareable flags and socket device binding
-> + * (see l3mdev with non-default VRF).
->   */
->  static struct vxlan_sock *vxlan_find_sock(struct net *net, sa_family_t family,
-> -					  __be16 port, u32 flags, int ifindex)
-> +					  __be16 port, u32 flags, int ifindex, union vxlan_addr *saddr)
+> Changes in v4:
+> - revised the recipient email list, apologize for the inadvertent mistak=
+e.
+=E2=80=A6
 
-nit: Where it can trivially be achieved, please limit lines to 80 columns
-     wide as is still preferred in Networking code.
+The usage of mailing list addresses is probably undesirable for
+the Developer's Certificate of Origin, isn't it?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc7#n398
 
-     Flagged by ./scripts/checkpatch.pl --max-line-length=80
-
->  {
->  	struct vxlan_sock *vs;
->  
->  	flags &= VXLAN_F_RCV_FLAGS;
->  
->  	hlist_for_each_entry_rcu(vs, vs_head(net, port), hlist) {
-> -		if (inet_sk(vs->sock->sk)->inet_sport == port &&
-> +		struct sock *sk = vs->sock->sk;
-> +		struct inet_sock *inet = inet_sk(sk);
-> +
-> +		if (inet->inet_sport == port &&
->  		    vxlan_get_sk_family(vs) == family &&
->  		    vs->flags == flags &&
-> -		    vs->sock->sk->sk_bound_dev_if == ifindex)
-> -			return vs;
-> +		    vs->sock->sk->sk_bound_dev_if == ifindex) {
-> +			if (family == AF_INET && inet->inet_rcv_saddr == saddr->sin.sin_addr.s_addr) {
-> +				return vs;
-> +			}
-> +#if IS_ENABLED(CONFIG_IPV6)
-> +			else if (ipv6_addr_cmp(&sk->sk_v6_rcv_saddr, &saddr->sin6.sin6_addr) == 0)
-
-1. There is a '{' missing form the line above, so this doesn't compile
-   (if IPV6 is configured).
-2. Probably the '{}' can be dropped from this if / else if conditional.
-
-> +				return vs;
-> +			}
-> +#endif
-> +		}
-> +
->  	}
->  	return NULL;
->  }
-
--- 
-pw-bot: changes-requested
+Regards,
+Markus
 
