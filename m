@@ -1,109 +1,192 @@
-Return-Path: <linux-kernel+bounces-245993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F1A192BC75
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:05:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B978092BC74
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:05:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 926631C203E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:05:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D142281F83
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:05:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D20B198831;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24ED519CCE6;
 	Tue,  9 Jul 2024 14:05:17 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i/p/WvO/"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D0C19B5B6;
-	Tue,  9 Jul 2024 14:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5E5154BF0;
+	Tue,  9 Jul 2024 14:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720533916; cv=none; b=aG0q9RMTuYrPNYYSk+vJGyshXr1uT0zqPdB4fzlD44hOaLlgp8BRYzsiG/zXCc1dDpzMMSAGO73KyQx5wSVJi0AX5Sju2a66cniM5LYT97YwEDL4BA/CScXIoP4/JLmbQSrPYWcSx8DIcPAxH8qTnKvOZEdGytjc+0BQJrF3l0w=
+	t=1720533916; cv=none; b=TgVvIGwf1D4aKRonnsivVrV/jXkKQJNO7xgSoxsifNMVZ2jpIeMo2xOeADr0bclnLFJNZF/d1wXzsU27NFqBLIm6I/lH/ayUw86g5O0gNaLm2TECF6jgd5yvHY2T/Blu0IHlLi3o64Jb99t3TwqQrwN7nqimdWz4W9uONIZOURU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720533916; c=relaxed/simple;
-	bh=aT9KxpR/5yygMSydYfDfbgl0RR3g7jLPoGITwLJc9FE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ErsosmRmOkAfF52SrmemOmAV8wg0f2Xitgey25NnomFYBvCs7yU3euSBkndbEX4c3CFpkVPE35++5vNE8sMS+ZEZwi3fwLtmoKtmFtaHTzY3fZIzdOh4qfg6rwBW6uPOAywTaiPaAxM2yY5FQx2DmWJ+Ls+dxkdsEjuw9ftw/rM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowACnr+eHQ41mXppiAg--.14867S2;
-	Tue, 09 Jul 2024 22:05:03 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: kristo@kernel.org,
-	bp@alien8.de,
-	tony.luck@intel.com,
-	james.morse@arm.com,
-	mchehab@kernel.org,
-	rric@kernel.org
-Cc: linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>
-Subject: [PATCH] EDAC/ti: Fix possible null pointer dereference in _emif_get_id()
-Date: Tue,  9 Jul 2024 22:04:54 +0800
-Message-Id: <20240709140454.1222094-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	bh=oqvO4keAigILRKoADfBFYu3hAGj3/wdIa/oLCwjA/9s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ge/9MyV0m+4gR5o0fi+YCVM6P6B74D2nvGIhe7n540l3sdGIa9sChh1mGbmA6o8V/naeEpOX8tw+ZWQtG9zTmTbkJjijMpBW1Let7xU9pimqs+a3DhWZo4Aq+o2sdGNBiw6dcby5fZTXHInCGIBPXWc32NPCjzg8fObde57rgPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i/p/WvO/; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58b447c511eso6467947a12.2;
+        Tue, 09 Jul 2024 07:05:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720533913; x=1721138713; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kMRvSct0lY9z/NoSUo1v54IeShU8S8Pa37iemae3ynQ=;
+        b=i/p/WvO/sLgHTiX9nXKQth9O9Y8NQPWTGctNOqvWf2+3LQ6rJCr3ySaV+NLbHkTghc
+         OHk9/VOzSvg4wdOwBcXGHX5HyRLz6OlTz7zBtekCFLJPmMxpHISBjKGFIA86e9KQkNfE
+         qEr8C8bNsIuqdDpELoyzQx6WenNvuf15VZWr1RttMHEphZEqcHgMZBm/dhG4d2ucuwU8
+         a0iN7CIJLddLSLm9QZmZkssH+kqyXAjsF8YI572kIJWQBN1RmBLYSB4u00+JNSpxr/RB
+         ZTNWMuAAi/hE/KvO/drHS6j1vH2rJ740YQ7Q96k0eltbrzje+S1yrB0nv+yM/7aWCPrJ
+         DkbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720533913; x=1721138713;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kMRvSct0lY9z/NoSUo1v54IeShU8S8Pa37iemae3ynQ=;
+        b=SG5UGmCiMAwUkFYygNAbvu9gB4TgLtra/radwzFD588v6Fw5Qg7e20uwAvGCI1xV1G
+         LlZbRhXMR44VM0bpZh85/z1ipGFrXjGcf3wzQD/5ASHtp72i7hpKkrOYVE3C5YSOuxrq
+         tpS5R4uMJLpvXLjUECrczH4jYdnPvFIWf0JuP8N5Up7HP+O68MdqAeEsLuDrGWcBO+nC
+         6mRhaCT0WXSVGBIResnfi8+B2La0G5U1fJfgPCA2MxqRsJklxbIFCCAjL7h8j0Wtj0tD
+         MONoxPZVqvBOuOMxwJ3wWDVgkAHOY7YHoJzxMepQsWjahkqhpfywP1OtFwjYsRpQ4RMO
+         bJAw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbpSWxD7TNEp8Q2E8PB3DtliUV8C1EjQ/AYZSPPOZGe36nvIk3LTYXnoD4dDQw8TC22E8swyKWn3HGya4iYhg0avsXB+gXSGdNt4b2
+X-Gm-Message-State: AOJu0YyAab/0O7Hr6/4TStD/e4Oz4rvdSlVNfg3jYPZeBRKwfSN/F/dg
+	ZmDbeCKa+JxreL93pO6vVFl0lM4tXwgXYm6ryz42GCQSswau3kOD
+X-Google-Smtp-Source: AGHT+IG3BjNIVmMYpuvl3fYCgUGix6nCBcluBpFeqb72PFJUpbosIet4/3KiWZHgriXRnsmdz6d0Mg==
+X-Received: by 2002:a17:906:68c9:b0:a77:e48d:bb2 with SMTP id a640c23a62f3a-a780b6b17cfmr211654866b.17.1720533912844;
+        Tue, 09 Jul 2024 07:05:12 -0700 (PDT)
+Received: from [192.168.42.197] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff7c7sm79796666b.100.2024.07.09.07.05.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 07:05:12 -0700 (PDT)
+Message-ID: <658da3fe-fa02-423b-aff0-52f54e1332ee@gmail.com>
+Date: Tue, 9 Jul 2024 15:05:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowACnr+eHQ41mXppiAg--.14867S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZrWxAw45Gr4DJF17JFy5urg_yoWDCwb_KF
-	1rWFy7Xr1vgF97GwsIqw13Z34Iy3yj9w1qgrs2g39aqry5Xa43XrsaqF1DZrZrWrW09Fy5
-	KrWqk34rAr1UujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
-	IxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUAkucUUU
-	UU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] kernel: rerun task_work while freezing in
+ get_signal()
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Christian Brauner <brauner@kernel.org>,
+ Tycho Andersen <tandersen@netflix.com>, Thomas Gleixner
+ <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+ Julian Orth <ju.orth@gmail.com>, Tejun Heo <tj@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>
+References: <cover.1720368770.git.asml.silence@gmail.com>
+ <1d935e9d87fd8672ef3e8a9a0db340d355ea08b4.1720368770.git.asml.silence@gmail.com>
+ <20240708104221.GA18761@redhat.com>
+ <62c11b59-c909-4c60-8370-77729544ec0a@gmail.com>
+ <20240709103617.GB28495@redhat.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20240709103617.GB28495@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In _emif_get_id(), of_get_address() may return NULL which is later
-dereferenced. Fix this bug by adding NULL check.
+On 7/9/24 11:36, Oleg Nesterov wrote:
+> On 07/08, Pavel Begunkov wrote:
+>>
+>> On 7/8/24 11:42, Oleg Nesterov wrote:
+>>> I don't think we should blame io_uring even if so far it is the only user
+>>> of TWA_SIGNAL.
+>>
+>> And it's not entirely correct even for backporting purposes,
+>> I'll pin it to when freezing was introduced then.
+> 
+> This is another problem introduced by 12db8b690010 ("entry: Add support for
+> TIF_NOTIFY_SIGNAL")
 
-Fixes: 86a18ee21e5e ("EDAC, ti: Add support for TI keystone and DRA7xx EDAC")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/edac/ti_edac.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Ah, yes, I forgot NOTIFY_SIGNAL was split out of SIGPENDING
 
-diff --git a/drivers/edac/ti_edac.c b/drivers/edac/ti_edac.c
-index 29723c9592f7..6f3da8d99eab 100644
---- a/drivers/edac/ti_edac.c
-+++ b/drivers/edac/ti_edac.c
-@@ -207,6 +207,9 @@ static int _emif_get_id(struct device_node *node)
- 	int my_id = 0;
- 
- 	addrp = of_get_address(node, 0, NULL, NULL);
-+	if (!addrp)
-+		return -EINVAL;
-+
- 	my_addr = (u32)of_translate_address(node, addrp);
- 
- 	for_each_matching_node(np, ti_edac_of_match) {
-@@ -214,6 +217,9 @@ static int _emif_get_id(struct device_node *node)
- 			continue;
- 
- 		addrp = of_get_address(np, 0, NULL, NULL);
-+		if (!addrp)
-+			return -EINVAL;
-+
- 		addr = (u32)of_translate_address(np, addrp);
- 
- 		edac_printk(KERN_INFO, EDAC_MOD_NAME,
+> We need much more changes. Say, zap_threads() does the same and assumes
+> that only SIGKILL or freezeing can make dump_interrupted() true.
+> 
+> There are more similar problems. I'll try to think, so far I do not see
+> a simple solution...
+
+Thanks. And there was some patching done before against dumping
+being interrupted by task_work, indeed a reoccurring issue.
+
+
+> As for this particular problem, I agree it needs a simple/backportable fix.
+> 
+>>>>   relock:
+>>>> +	clear_notify_signal();
+>>>> +	if (unlikely(task_work_pending(current)))
+>>>> +		task_work_run();
+>>>> +
+>>>>   	spin_lock_irq(&sighand->siglock);
+>>>
+>>> Well, but can't we kill the same code at the start of get_signal() then?
+>>> Of course, in this case get_signal() should check signal_pending(), not
+>>> task_sigpending().
+>>
+>> Should be fine,
+> 
+> Well, not really at least performance-wise... get_signal() should return
+> asap if TIF_NOTIFY_SIGNAL was the only reason to call get_signal().
+> 
+>> but I didn't want to change the
+>> try_to_freeze() -> __refrigerator() path, which also reschedules.
+> 
+> Could you spell please?
+
+Let's say it calls get_signal() for freezing with a task_work pending.
+Currently, it executes task_work and calls try_to_freeze(), which
+puts the task to sleep. If we remove that task_work_run() before
+try_to_freeze(), it would not be able to sleep. Sounds like it should
+be fine, it races anyway, but I'm trying to avoid side effect for fixes.
+
+>>> Or perhaps something like the patch below makes more sense? I dunno...
+>>
+>> It needs a far backporting, I'd really prefer to keep it
+>> lean and without more side effects if possible, unless
+>> there is a strong opinion on that.
+> 
+> Well, I don't think my patch is really worse in this sense. Just it
+> is buggy ;) it needs another recalc_sigpending() before goto start,
+> so lets forget it.
+> 
+> So I am starting to agree with your change as a workaround until we
+> find a clean solution (if ever ;).
+> 
+> But can I ask you to add this additional clear_notify_signal() +
+> task_work_run() to the end of do_freezer_trap() ? get_signal() is
+> already a mess...
+
+Will change
+
+> -----------------------------------------------------------------------
+> Either way I have no idea whether a cgroup_task_frozen() task should
+> react to task_work_add(TWA_SIGNAL) or not.
+> 
+> Documentation/admin-guide/cgroup-v2.rst says
+> 
+> 	Writing "1" to the file causes freezing of the cgroup and all
+> 	descendant cgroups. This means that all belonging processes will
+> 	be stopped and will not run until the cgroup will be explicitly
+> 	unfrozen.
+> 
+> AFAICS this is not accurate, they can run but can't return to user-mode.
+> So I guess task_work_run() is fine.
+
+IIUC it's a user facing doc, so maybe it's accurate enough from that
+perspective. But I do agree that the semantics around task_work is
+not exactly clear.
+
 -- 
-2.25.1
-
+Pavel Begunkov
 
