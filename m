@@ -1,107 +1,258 @@
-Return-Path: <linux-kernel+bounces-245625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4CD492B520
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:23:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49CCB92B546
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5D1B1C22F90
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:23:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBDCA284B72
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9DF156863;
-	Tue,  9 Jul 2024 10:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1111474A2;
+	Tue,  9 Jul 2024 10:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="fiCVGxzJ"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mY2/W6m0"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6714815624B
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C283415624B;
+	Tue,  9 Jul 2024 10:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720520580; cv=none; b=gq4eOAf84nFLuPdByqE4cHt+4V+78NlcLLuBUgS8eBvkGo002QByROJvwVgRKp10np+XvSyQzK0aS4Ly+V08PAsrSKZkwjvdcIEuLIbVYNXP2zLTBMsUyGAzX+VoFwO52PFj0PkOUU4FvAGMvWVd8vqoLIw+Hsdg/zbHIiLQSDU=
+	t=1720520949; cv=none; b=m2XJmAf9j/MhIxjm33Cbd0xHWVyy7wVU26Cg9/Rvq+MmzA2dhajJHQZ1d4UX0W1xCftLYAptZgqTQvgbn2roSodPBh5ogNPyBZdX65j48ii+ohylW+RaceI0UzcqVqHQMRyBnOvaDrpV+AVNo7JJiT0kR4dYb2IMLPWSL97aVU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720520580; c=relaxed/simple;
-	bh=/Popa0pu2ve+BT+70iPGnXxHfASirswI1GoEfm2LmEI=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=MHzIvbP7IGQB1poxuolEhsNAF1SKi2BVQ6KXm+71XfZ0FfuHDx3jtqxtiLjCQOMaLySKFAyHWK3ar4m7f9wWgHuLTC8UghxylV5kqrDK61II1r5UQwIRBvuOrqzhGAcHaTMt/1usOG5rRp2M4V/I0+rZS5eIvwBe7vFfNa/8FiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=fiCVGxzJ; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70af8062039so3003085b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 03:22:59 -0700 (PDT)
+	s=arc-20240116; t=1720520949; c=relaxed/simple;
+	bh=QSdGoGxgST5IbUcXXcxtRM29lfygDtK+9ZN8/SAELfs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YF4h4hmrSXUsDQYYW8ZS+mYCdF2bop+cY96NdOmUp2V/q/7j+h8QDHEiCzBo1e/UKGvdezdZfBXFbyks/REeGMAAar/qMcqNdoCG7xvy8stF2JptTFwiiaD2+w9jZObs8fJTqsGZgXPC2yfNdvMrbwv3JDeOBhwC5pQ8wHlHku4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mY2/W6m0; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a77ec5d3b0dso291485666b.0;
+        Tue, 09 Jul 2024 03:29:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1720520578; x=1721125378; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1720520945; x=1721125745; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=11ioL6MkBuE1i6Mzb5KKuPr/JiRiwhzn3IC3btu4k64=;
-        b=fiCVGxzJHc+khc8ysRoN/L1zd+q0CWhIlnsTQHRBhfqgmt8Q/S8C4D+m9edIQQljX+
-         PjO8hjiOhcudRhBLRTUlLzdXiWAp9MaIJjNCojOABe0xS6JQTKXwt9SvnMTcivBqyxOk
-         jVm++HadCeavB5xgU0cqyiiSz5Q69MXhqjSJA=
+        bh=GW0tO3JCgHvVvoIbWBwE33L5GqOxknWhpxOsaqnzF40=;
+        b=mY2/W6m0KhQYp3AM9ikcKg37Xj9ItFWrPiPbVzxKo3fq+qzv4fxuT1GAY1i6I1TYQw
+         d6B6Hz/ViiKpS0Si8PCeje10eoFaB1tlm3nj6IcEHTR9ku73ahAMVrnvjnqqRbtjxo9O
+         ed+TzZ6rFmDdfo4GlUr1rfLrO1D0lAQfONtM6UYoLCAF62gDFvkkM9TTxqWfQEuTPuY1
+         n58VVa7+NcwxvzrYnKNEqEHgRWnPJQNIyvJLXKv0NzbZ/2ynj1CGRvW5MkhuWU1mo6o7
+         FbujrehxSEsOsJKMMRe+iGPaFHBcCI/2PJAS3t0lTmlfa9DhicqsUk8qLbISmGi683qJ
+         kdHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720520578; x=1721125378;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1720520945; x=1721125745;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=11ioL6MkBuE1i6Mzb5KKuPr/JiRiwhzn3IC3btu4k64=;
-        b=m/7FqXLp3T2R8PE5ra/q7zUHfQJLnnHmLc8pMr6GMoX4sYc5s0R3pX9zPUZBHtdhM4
-         xlRfyPG/YAr7cQtuOf5p1bh3QfIgegMZjQUx/ecdoaHAc3fbOEvqXR1g4rznlIvqCA9L
-         zuTRmGfRV6NftUQ0MNc3VedEljU6ivnRlWcYlLDPk33EsKWgpYYT35SSprpZzCG7DUH2
-         LHi8wl/eDpdgw1tex/hd4DLIu+jzGIoY4lvVtjTMF4XrCO3NdpZkcEM+xif8wNgqgMKC
-         jBmKZBcxHIDlT3yzIPJb93bvZWEakLB03Tl2v6np9ecneAbDbb89JkPcmhYYU0b6XhH5
-         gtyw==
-X-Gm-Message-State: AOJu0YxuPhezS6P7nJfHZFPv9WUGfO3l+qRxUWscXwa3dGRzusB2ADaN
-	qRAQnOxtQ+pwP/5O6VZwJY9+6Zt0fVFRDIji0sb/8/LCCQl04gMDhi34KIO4L+z7qcLA8HqIKqi
-	U4PwIy+z1e2dkvKTzrgW14ks9PccOXY5fyAcI6MtEf8/Wdv+5JX1dhKP1S/zyXAU5JcvpAor2pA
-	cH2jFkA8aM3JF8jSaqNUQTxNnXoroD5NH+8wxnOIZBvNgujMYelIElRw==
-X-Google-Smtp-Source: AGHT+IEImvkD6z0gexkfENnSZaUDX8nym2t3SgyFN4Ccwymmm1btyXlvMii3wyggYiErqQf98g/ruw==
-X-Received: by 2002:a05:6a21:a342:b0:1c2:8a69:3391 with SMTP id adf61e73a8af0-1c298242021mr2265566637.30.1720520578368;
-        Tue, 09 Jul 2024 03:22:58 -0700 (PDT)
-Received: from kashwindayan-virtual-machine.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a11757sm12832525ad.35.2024.07.09.03.22.56
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 09 Jul 2024 03:22:58 -0700 (PDT)
-From: Ashwin Kamat <ashwin.kamat@broadcom.com>
-To: linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org,
-	davem@davemloft.net,
-	yoshfuji@linux-ipv6.org,
-	dsahern@kernel.org,
-	kuba@kernel.org,
-	netdev@vger.kernel.org,
-	florian.fainelli@broadcom.com,
-	ajay.kaher@broadcom.com,
-	vasavi.sirnapalli@broadcom.com,
-	tapas.kundu@broadcom.com,
-	ashwin.kamat@broadcom.com
-Subject: [PATCH v5.10 0/2] Fix for CVE-2024-36901
-Date: Tue,  9 Jul 2024 15:52:48 +0530
-Message-Id: <1720520570-9904-1-git-send-email-ashwin.kamat@broadcom.com>
-X-Mailer: git-send-email 2.7.4
+        bh=GW0tO3JCgHvVvoIbWBwE33L5GqOxknWhpxOsaqnzF40=;
+        b=dTKT3fTzuv/HBCAjgqIBao7T86omKeT26UrFILI0UMZ/PVFHwffqQXxK4zEOXtMArX
+         nDq0/yiDii42wTDzey9sGdAr8NGbGXtY5E3CCAOc4N4N/dQP03h74BFU39toFi/pINuX
+         wq8UPs7Jm2s3hVJNoe2OI4zrqD8C6yAfLRdOb5c/jYJTcXcRME69BZhypLDuvAfJkTz7
+         DUh7lRyxuiI7zikDGkJS0GFcqVYfPzjPdgx2JyOiJpAHYaEJL9DhNzDCbBm6tjTpYGwv
+         8F9SDxt9AMAA2xaCPsdSX1Yv8abQ7j2AJI2XHOhYnbRsPucBi4L8/nZ3DShVwYVvXrmZ
+         jonw==
+X-Forwarded-Encrypted: i=1; AJvYcCVlCSdYczQjTC06jWTqpQhmYTEyL+yCIs7Zh7cifUeLI7A3b0qA+6XUsqyCnZq7DbJingVh+yl5qQ8250+PPpHpPZKUW9Ci0AP0ldhA7GKVGrgvCeq1YWsIaW82gXDiqchA0Cao3BzueZ/SY7e8qs+PxwwEw0YoqrNm3R4R4FJ2rrUq27zTmLMLvAT5SP8bVRJ/etGuL2JYwQlTl1Jfwy90SA==
+X-Gm-Message-State: AOJu0Yxf6Yo8Ip6byU+Th/nFjImmaw+UZksqNL2PL9lfs5h6kcFVBIZ1
+	L8YXYCm717FEowQTRG9l2auJuIkLlAxNdFUtZDHot479qafYoo0YWN2oWA==
+X-Google-Smtp-Source: AGHT+IHH0z8oVeE/hFya4d9qN2oDo8UiC7jVPknkC4w4LOUzz4NmGTTVlb6Jsiu2fE7Cupt70YTQ/A==
+X-Received: by 2002:a17:907:7284:b0:a77:d1ea:ab36 with SMTP id a640c23a62f3a-a780b68a2d7mr172606866b.6.1720520945122;
+        Tue, 09 Jul 2024 03:29:05 -0700 (PDT)
+Received: from localhost.localdomain (bza125.neoplus.adsl.tpnet.pl. [83.30.46.125])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6bcc21sm66528166b.16.2024.07.09.03.29.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 03:29:04 -0700 (PDT)
+From: Adam Skladowski <a39.skl@gmail.com>
+To: 
+Cc: phone-devel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	Adam Skladowski <a39.skl@gmail.com>,
+	Georgi Djakov <djakov@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Vladimir Lypak <vladimir.lypak@gmail.com>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Rohit Agarwal <quic_rohiagar@quicinc.com>,
+	Danila Tikhonov <danila@jiaxyga.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
+	Andrew Halaney <ahalaney@redhat.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Barnabas Czeman <barnabas.czeman@mainlining.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abel Vesa <abel.vesa@linaro.org>
+Subject: [PATCH v3 3/9] dt-bindings: interconnect: qcom: Add Qualcomm MSM8937 NoC
+Date: Tue,  9 Jul 2024 12:22:48 +0200
+Message-ID: <20240709102728.15349-4-a39.skl@gmail.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240709102728.15349-1-a39.skl@gmail.com>
+References: <20240709102728.15349-1-a39.skl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-From: Ashwin Dayanand Kamat <ashwin.kamat@broadcom.com>
+Add bindings for Qualcomm MSM8937 Network-On-Chip interconnect devices.
 
-net/ipv6: annotate data-races around cnf.disable_ipv6
-       disable_ipv6 is read locklessly, add appropriate READ_ONCE() and WRITE_ONCE() annotations.
+Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+---
+ .../bindings/interconnect/qcom,msm8939.yaml   |  8 +-
+ .../dt-bindings/interconnect/qcom,msm8937.h   | 93 +++++++++++++++++++
+ 2 files changed, 99 insertions(+), 2 deletions(-)
+ create mode 100644 include/dt-bindings/interconnect/qcom,msm8937.h
 
-net/ipv6: prevent NULL dereference in ip6_output()
-       Fix for CVE-2024-36901
-
-Ashwin Dayanand Kamat (2):
-       net/ipv6: annotate data-races around cnf.disable_ipv6
-       net/ipv6: prevent NULL dereference in ip6_output()
-
- net/ipv6/addrconf.c   | 9 +++++----
- net/ipv6/ip6_input.c  | 2 +-
- net/ipv6/ip6_output.c | 2 +-
- 3 files changed, 7 insertions(+), 6 deletions(-)
-
---
-2.7.4
+diff --git a/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml b/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
+index 0641a3c992a5..d19e20247df8 100644
+--- a/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
++++ b/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
+@@ -4,13 +4,13 @@
+ $id: http://devicetree.org/schemas/interconnect/qcom,msm8939.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: Qualcomm MSM8939/MSM8976 Network-On-Chip interconnect
++title: Qualcomm MSM8937/MSM8939/MSM8976 Network-On-Chip interconnect
+ 
+ maintainers:
+   - Konrad Dybcio <konradybcio@kernel.org>
+ 
+ description:
+-  The Qualcomm MSM8939/MSM8976 interconnect providers support
++  The Qualcomm MSM8937/MSM8939/MSM8976 interconnect providers support
+   adjusting the bandwidth requirements between the various NoC fabrics.
+ 
+ allOf:
+@@ -19,6 +19,9 @@ allOf:
+ properties:
+   compatible:
+     enum:
++      - qcom,msm8937-bimc
++      - qcom,msm8937-pcnoc
++      - qcom,msm8937-snoc
+       - qcom,msm8939-bimc
+       - qcom,msm8939-pcnoc
+       - qcom,msm8939-snoc
+@@ -43,6 +46,7 @@ patternProperties:
+     properties:
+       compatible:
+         enum:
++          - qcom,msm8937-snoc-mm
+           - qcom,msm8939-snoc-mm
+           - qcom,msm8976-snoc-mm
+ 
+diff --git a/include/dt-bindings/interconnect/qcom,msm8937.h b/include/dt-bindings/interconnect/qcom,msm8937.h
+new file mode 100644
+index 000000000000..98b8a4637aab
+--- /dev/null
++++ b/include/dt-bindings/interconnect/qcom,msm8937.h
+@@ -0,0 +1,93 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Qualcomm MSM8937 interconnect IDs
++ */
++
++#ifndef __DT_BINDINGS_INTERCONNECT_QCOM_MSM8937_H
++#define __DT_BINDINGS_INTERCONNECT_QCOM_MSM8937_H
++
++/* BIMC fabric */
++#define MAS_APPS_PROC		0
++#define MAS_OXILI		1
++#define MAS_SNOC_BIMC_0		2
++#define MAS_SNOC_BIMC_2		3
++#define MAS_SNOC_BIMC_1		4
++#define MAS_TCU_0		5
++#define SLV_EBI			6
++#define SLV_BIMC_SNOC		7
++
++/* PCNOC fabric */
++#define MAS_SPDM		0
++#define MAS_BLSP_1		1
++#define MAS_BLSP_2		2
++#define MAS_USB_HS1		3
++#define MAS_XI_USB_HS1		4
++#define MAS_CRYPTO		5
++#define MAS_SDCC_1		6
++#define MAS_SDCC_2		7
++#define MAS_SNOC_PCNOC		8
++#define PCNOC_M_0		9
++#define PCNOC_M_1		10
++#define PCNOC_INT_0		11
++#define PCNOC_INT_1		12
++#define PCNOC_INT_2		13
++#define PCNOC_INT_3		14
++#define PCNOC_S_0		15
++#define PCNOC_S_1		16
++#define PCNOC_S_2		17
++#define PCNOC_S_3		18
++#define PCNOC_S_4		19
++#define PCNOC_S_6		20
++#define PCNOC_S_7		21
++#define PCNOC_S_8		22
++#define SLV_SDCC_2		23
++#define SLV_SPDM		24
++#define SLV_PDM			25
++#define SLV_PRNG		26
++#define SLV_TCSR		27
++#define SLV_SNOC_CFG		28
++#define SLV_MESSAGE_RAM		29
++#define SLV_CAMERA_SS_CFG	30
++#define SLV_DISP_SS_CFG		31
++#define SLV_VENUS_CFG		32
++#define SLV_GPU_CFG		33
++#define SLV_TLMM		34
++#define SLV_BLSP_1		35
++#define SLV_BLSP_2		36
++#define SLV_PMIC_ARB		37
++#define SLV_SDCC_1		38
++#define SLV_CRYPTO_0_CFG	39
++#define SLV_USB_HS		40
++#define SLV_TCU			41
++#define SLV_PCNOC_SNOC		42
++
++/* SNOC fabric */
++#define MAS_QDSS_BAM		0
++#define MAS_BIMC_SNOC		1
++#define MAS_PCNOC_SNOC		2
++#define MAS_QDSS_ETR		3
++#define QDSS_INT		4
++#define SNOC_INT_0		5
++#define SNOC_INT_1		6
++#define SNOC_INT_2		7
++#define SLV_KPSS_AHB		8
++#define SLV_WCSS		9
++#define SLV_SNOC_BIMC_1		10
++#define SLV_IMEM		11
++#define SLV_SNOC_PCNOC		12
++#define SLV_QDSS_STM		13
++#define SLV_CATS_1		14
++#define SLV_LPASS		15
++
++/* SNOC-MM fabric */
++#define MAS_JPEG		0
++#define MAS_MDP			1
++#define MAS_VENUS		2
++#define MAS_VFE0		3
++#define MAS_VFE1		4
++#define MAS_CPP			5
++#define SLV_SNOC_BIMC_0		6
++#define SLV_SNOC_BIMC_2		7
++#define SLV_CATS_0		8
++
++#endif /* __DT_BINDINGS_INTERCONNECT_QCOM_MSM8937_H */
+-- 
+2.45.2
 
 
