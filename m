@@ -1,114 +1,142 @@
-Return-Path: <linux-kernel+bounces-245414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47BBB92B247
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:40:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CB9492B234
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F413E282540
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:40:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5C2EB219ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A00C153509;
-	Tue,  9 Jul 2024 08:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C042153569;
+	Tue,  9 Jul 2024 08:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ATU46Bb7"
-Received: from out203-205-251-73.mail.qq.com (out203-205-251-73.mail.qq.com [203.205.251.73])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dNIGnZgA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5BA6138
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.251.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDAE12D75A
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720514396; cv=none; b=Kmvvo+l8OvYodhuASvTRs1X4oogWsMaIQHWwkAW/c61/dzT8EbxgOFgiv2QwrhrVkxb00lL/2XcW2drcJn9/7yLWDQHGrUJhWUEqogXKf0J1D+waqlHT8Ya2+NESqvB/WX81mlL5HTPc+C5l93YxCwJ0PrZuKXKu2wRZbV3h1bE=
+	t=1720514105; cv=none; b=jx5pkYnXxj9x6fGaek7ctS4MkoGG2N0K4HZPH/X60J914JWothQKo2sqd9n95IZdON5Dlo9dp3cSgA6hDfZnrVuj94szEi+uMxYsA6rOiXPfDljqB1xx4okkXfs0NuHhF6VhfZZpjfDaz9WH85knXLL7/rFNTmAwKVbh08hqXMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720514396; c=relaxed/simple;
-	bh=vkjIMBQ2d7r635VRmVXqQ1KG74/KSKzpfKZVLwEMNEk=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=lwVrfXfE0ENajuSOUYdejgnj27isnodp3s6lKfuE44vilwYh3HtGNIE9laUPumqxLDRp9ClKgtowHAEAvecgD4A99k8iVD+o7/S0JI5LfSuDJ8dPP6VshlZVlTD2TeP2pUhuciXr+gAqj1S9JLnX1gdVV8YYnSsgeCcm5R1AxiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=none smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ATU46Bb7; arc=none smtp.client-ip=203.205.251.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cyyself.name
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1720514382; bh=U/0YlKC/F7rGuTvsRqHI6wsPqQee5vosvz17TaKzvFc=;
-	h=From:To:Cc:Subject:Date;
-	b=ATU46Bb7yiARbn4oZqwPTA7mHhlyIlL7feklLKkN/nqDPMlrSwqJNdKwR8nnZ20Tv
-	 ZSZLVecGxXIHWu/2+lT1q3bM5x6p4Hjc6qcxrsNfukq3gF/DIYHIZ0o5Jz04WEgDEC
-	 RE4s5V0ubp1/3CJK9pr4Vh2EIMBQRrLdovSkEl7A=
-Received: from cyy-pc.lan ([240e:379:225e:9b00:b588:778:1f25:bdbe])
-	by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
-	id 84F1CCF2; Tue, 09 Jul 2024 16:33:15 +0800
-X-QQ-mid: xmsmtpt1720513995tljfulh3y
-Message-ID: <tencent_5E4637BE7BC1256D39C73ADCA118BD908507@qq.com>
-X-QQ-XMAILINFO: NkHKfw09D6j8uL2HVuJBhrc2zAVCXYqfSPwHYj62qWb+qslMUIDbV9iV10zUPH
-	 95MtuFCze5+eXMx1sO3Slave2zPHVzzR4DPgdm56wJgIrzfS3mvm/4Y6/iUYW3LJdK49RS9koOa+
-	 QSLcFhE6449nsojnTLk/fdvm7DMryjNZJfbdCvqsM6s7So8ACXdj7SXTkhyPVrjMUw4Tc52z+fmK
-	 iafwUNfni0U6ovzhQsurnRIpZEzZqjucSF6XveP1mXgiXPLfPcw89XeHHTbq2Ig79mxQkaBYkPFP
-	 8z9fj8KdVFfaGk1y2qTvtvvhwauW0/QZv6t39TG37aR2Mze4FjeyfZgYknLwkXUY5jEudjYIEFNA
-	 aNFuMi9bmubSvzSm/IxoFJNKWINDNQ4AeGIFJE/UzuYe5vc7sJZSolC+X2rQq4cAT92BMiIKdXxt
-	 jKXLrixsCo8+xjfQjUSYb5s5Hu1xdo9nfVGzlMhyV0d+7HUuYd/9mkjQVN8rieLwfwH+pWhSTC5A
-	 2OicUuySMPreplf6LdFHhTBDqi5aRh4ZWx2z/mExGq/ZEQIfpsSMHPKtVSs56L0uUcFBeVbhUXHS
-	 yvpS/RxQlACyvtnPm9sL1AHTQ1wOYccjE9Tt8+0jh4koVHW5xYjUguDKXhkVP62nACPVVxoyFfjc
-	 /Da3f8jOfJ9KjsdPz63BeeUBKxV0HXrm8Paif9qe+9koOpKJcGqr3Pew6Qb9RWIVfMgKyYZtjQnZ
-	 MhlNE4zzg9iWY/3/ygFTESXmnfqHNvlEevQrR9dLo4f3CfoTniDKskOg7IDfZWe6GyUhS4K5LVfO
-	 d75oOtc53EmZmVAwIh/5DPrfOutk4NBHUBoLGWS6ZiGRjepxXOnC09X4jnlrEdzUt+MhpORNISNQ
-	 tQjbPHZ4OaCKyIfnJ3mGBynadzt3OjrV2I0zSAhVll7nVIlf6E3W57vw/u2tgAT5lQ1QI01rBUJf
-	 0YGJToFxSc1oA1AIG5R0nCn15KPorsHomUxPo0cjNLaiC3HwYx8ziIyPjgatabu3hoL2bzt+k=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Yangyu Chen <cyy@cyyself.name>
-To: iommu@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Yangyu Chen <cyy@cyyself.name>
-Subject: [PATCH -fixes] dma-direct: only reference arch_dma_set_uncached symbol when usable
-Date: Tue,  9 Jul 2024 16:32:48 +0800
-X-OQ-MSGID: <20240709083248.3945303-1-cyy@cyyself.name>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1720514105; c=relaxed/simple;
+	bh=DG9rCxhCwbStHk+MslBqrJkCywgdt6JqcE6YhliXnHA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TpR3vXztTwo+8XBKu2eJ0rdrZiChGnGaqKvm9Fr5vkrkzjJuTVIzFOIsEDEniEEZ5OHixVMq2K1PKbrIEMzNUeMxFFKgfz6lo0274+NtHVuOy1ZG8F9QJed2/d6QLfUuV0Qj77aXGhndBAQ0O04nn50O2fyIic0RYr+GSbUK4o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dNIGnZgA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720514102;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=DG9rCxhCwbStHk+MslBqrJkCywgdt6JqcE6YhliXnHA=;
+	b=dNIGnZgA4lAHmK79v08GyTqHhtacCsqKxBz8BGHCVyA21PzuhzSfGkJKM0eUXkJIlwcTh2
+	I7dHDON1RtBgTUdkMPXZdoTspP1tMjtfgWKoi/yZKT66Sw20O0wSXgSRBWcHFo0MhBBScZ
+	6QTGhb6eAQLFip4x1qdRiHzGvw15Ot8=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-413-iWSajMYUNQuCZgZ7_tIZbQ-1; Tue, 09 Jul 2024 04:35:00 -0400
+X-MC-Unique: iWSajMYUNQuCZgZ7_tIZbQ-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-367b6e63573so114574f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 01:35:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720514099; x=1721118899;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DG9rCxhCwbStHk+MslBqrJkCywgdt6JqcE6YhliXnHA=;
+        b=s1kOhO+4yT1FeIRcfAH7gpmI1qNtl0hEI4UIu32AIzUTRmp1v4vCeuPKuvGIIWAWUO
+         INOZO5gmpYBLXVHTn0w6FqxSh2QFrcdUELVnAe0zEBzhLyaxVCvXwkU+E8gatq8Ijdk4
+         f/asqz2Ay0MxwUISoUF6KrYPXNqi9ZnNECyPrurhWvZgnNAqV/cCj6HAGA/mKq9TpTnZ
+         Ex2jcxizaePKcRW9hD0cfDmIcLQyiXR+8fDreNH4TcUV7SynLBZ94qQi+jcKn3siKSrF
+         5Kz2Fv5NxPEdqRMPS+nxlcc09cvB/PyzZojARFmIVdNRSadcLRvyzB1yWCYzJlgTmSpx
+         lq1A==
+X-Forwarded-Encrypted: i=1; AJvYcCX33s+NElTVR1iWS+68oLeM744Anp3MqoDr0FRnAoJzvb4m/G8nQ+x9Lz7XMMvAxDNJ1r8kDh1JObLG5CF4FabjP5lyZikUJ7BbHtsp
+X-Gm-Message-State: AOJu0YyDpOsbigafKQ+YFUMij3WTfOxooRmtxmCQzlxD+6jCWlG5PH7/
+	q6w2oxpll0NWSXMmwnHRAzJ4xEkpiShIdJ+NRIBZnAVP/M6hbB0Z75dILCtVxGZobcv0GF4DIqS
+	rB4IJVZC8LEj4vJ35Gy06pkJzzuiukfb28fYj1oK0Lk/tMYv60eiYemUJKgQ8PQ==
+X-Received: by 2002:a05:600c:35c8:b0:425:7ac6:96f9 with SMTP id 5b1f17b1804b1-42670081862mr12037265e9.0.1720514099664;
+        Tue, 09 Jul 2024 01:34:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGbHUFShpWDqVC/iXoaB83+FNJ0Ugkyu72KYIYZxA0budzUHM+msC/YYqBXCo9/2uaMWdZ8WQ==
+X-Received: by 2002:a05:600c:35c8:b0:425:7ac6:96f9 with SMTP id 5b1f17b1804b1-42670081862mr12037145e9.0.1720514099268;
+        Tue, 09 Jul 2024 01:34:59 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3344:1710:e810:1180:8096:5705:abe])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2fc49fsm196127595e9.39.2024.07.09.01.34.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 01:34:58 -0700 (PDT)
+Message-ID: <6124782dffadef83707edc7fd4d87a327d5cba1b.camel@redhat.com>
+Subject: Re: [net-next,v1] net: phy: phy_device: fix PHY WOL enabled, PM
+ failed to suspend
+From: Paolo Abeni <pabeni@redhat.com>
+To: Youwan Wang <youwan@nfschina.com>, andrew@lunn.ch
+Cc: hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 09 Jul 2024 10:34:57 +0200
+In-Reply-To: <20240704123200.603654-1-youwan@nfschina.com>
+References: <20240704123200.603654-1-youwan@nfschina.com>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The arch_dma_set_uncached symbol is only used when the architecture
-provides it. However, many architectures do not provide it, and the
-code currently relies on compiler optimization to cut the unnecessary
-code. When the compiler fails to optimize it, the code will reference
-the symbol and cause a link error. I found this bug when developing
-some new extensions for RISC-V on LLVM.
+Hi,
 
-This patch adds a check to avoid the reference to the symbol when it is
-not provided.
+On Thu, 2024-07-04 at 20:32 +0800, Youwan Wang wrote:
+> If the PHY of the mido bus is enabled with Wake-on-LAN (WOL),
+> we cannot suspend the PHY. Although the WOL status has been
+> checked in phy_suspend(), returning -EBUSY(-16) would cause
+> the Power Management (PM) to fail to suspend. Since
+> phy_suspend() is an exported symbol (EXPORT_SYMBOL),
+> timely error reporting is needed. Therefore, an additional
+> check is performed here. If the PHY of the mido bus is enabled
+> with WOL, we skip calling phy_suspend() to avoid PM failure.
+>=20
+> Thank you all for your analysis.
 
-Signed-off-by: Yangyu Chen <cyy@cyyself.name>
----
- kernel/dma/direct.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Please, use an incremental version number (in this case: 'v2') when
+sending a new revision of this patch, it will make easier to track the
+previous discussion. Even when the changes affect only the
+changelog/commit message.
 
-diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-index 4d543b1e9d57..cdf3616a6def 100644
---- a/kernel/dma/direct.c
-+++ b/kernel/dma/direct.c
-@@ -293,9 +293,14 @@ void *dma_direct_alloc(struct device *dev, size_t size,
- 
- 	if (set_uncached) {
- 		arch_dma_prep_coherent(page, size);
-+#ifdef CONFIG_ARCH_HAS_DMA_SET_UNCACHED
- 		ret = arch_dma_set_uncached(ret, size);
- 		if (IS_ERR(ret))
- 			goto out_encrypt_pages;
-+#else
-+		dev_err_once(dev, "BUG: set_uncached set but arch doesn't have dma_set_uncached\n");
-+		goto out_encrypt_pages;
-+#endif
- 	}
- 
- 	*dma_handle = phys_to_dma_direct(dev, page_to_phys(page));
--- 
-2.45.2
+> I am using the Linux kernel version 6.6, the current system is
+> utilizing ACPI firmware. However, in terms of configuration,
+> the system only includes MAC layer configuration while lacking
+> PHY configuration. Furthermore, it has been observed that the
+> phydev->attached_dev is NULL, phydev is "stmmac-0:01", it not
+> attached, but it will affect suspend and resume. The actually
+> attached "stmmac-0:00" will not dpm_run_callback():
+> mdio_bus_phy_suspend().
+
+It looks like the underlying issue is still under investigation.
+As noted by Andrew, the NULL attached_dev hints at some other root
+cause issue, possibly elsewhere. Please reply to Andrew's questions:
+
+https://lore.kernel.org/netdev/b61cae2b-6b94-465e-b4e4-6c220c6c66d9@lunn.ch=
+/
+
+before posting a new revision. At very least the replies should be
+reflected in some additional info in the commit message.
+
+Thanks,
+
+Paolo
 
 
