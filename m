@@ -1,190 +1,105 @@
-Return-Path: <linux-kernel+bounces-246640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A156092C49A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:34:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90EC892C49C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 223CC1F2358E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:34:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 384E3B217E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E8B15216C;
-	Tue,  9 Jul 2024 20:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E0518004A;
+	Tue,  9 Jul 2024 20:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gyGOcKJI"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IKawx/X2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7911413F43B
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 20:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B0E1B86FB
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 20:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720557256; cv=none; b=ixysSUd6TsmsP6pnPCu4sYogd009nQQJ+XILJS0Bum2oM3rsZNtWLPKBYiWn6SpDmDAxk3C8M/+LBFgeIgMLuM5pzrZy3xPvjhbRZtWpx2gE7WkbjV1CxxSiv1ifABgKdERgJ4koVt7rbPZ10pZNgrwbzIYtjOQWHs3hlc13Gus=
+	t=1720557324; cv=none; b=OVvGlatvegB/bCLNXVtnzuskDTNcUkzRgQBTUTheLrVblXvfoU9KzJl6Gc3hdgMIqoXzw7HLvjvkvDgZPXkfM/7ESy8vCGgPpEDsGX3dpaSk9HbAdiw4Sd7PMGXWB68UGiKGCfB1/MFO9HnAPlwnDGKH02pHns57vZaGlpAdoBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720557256; c=relaxed/simple;
-	bh=oSSLuaVvZNJdsTu9BmDGZM0FU3LhjFv/rnMNrZfHTas=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rtHmkgAyzZ0VwtoPZVsl/znKKFUWIxPEopyn8pRfViwWSgqLJvOBUul0ST261UuGAuRC0vImXISgU81yrPsh/85FNkXvb1N6gXPKLEptHxI6nezDl+M9p8XpdQf7gVR/XMPrq92t7KGFCbM5Qki9N1sEsYW0U1sW/uJL6saDweo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gyGOcKJI; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7eedf4ae265so18759439f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 13:34:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1720557254; x=1721162054; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QUXBhOV5n1K5bTAMQXFOdx48Z9Kt3voOMhmISQHx+NE=;
-        b=gyGOcKJIgwxnJRP9XUJp4z/xr2FTd6IktdqgRjJc6oWnxUyNns+o46KoAt3GGg7EG8
-         Iy6KsfARosW2G1CosWCBKNxT5nn7gRtj0bMSmxfpNOb766uF9X9OJddgiq+wJK619rpB
-         FVXznVx+XrKqEJTuEPzVu2rj3YBkUlZdpOryA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720557254; x=1721162054;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QUXBhOV5n1K5bTAMQXFOdx48Z9Kt3voOMhmISQHx+NE=;
-        b=sDze0f6KHXQZfmC7itx1rWZyWzbtLAtW6IzgqZagQwrGDQkzV0lIDdcN+dRm8s7eWM
-         yuSIJCRe4m0uVRqym3ssy7XrPKChnx2HNBUEr1wMAW0h01K9hcdlRmbInoOIPAk0iiky
-         //OHRmu9fubzchYgALbNhzO4M1I+yXfht8P0DxBemxt+o/dmYY5RS0HMVziZIoqhNv7d
-         lZ1o4CQm+YcHkOIY2GAsYD0St4gUbBB3XuFr+K1EpYMqWzEYBjrosh+iy2Kjp+Lv/Sbe
-         bwVGzStKz04mCWMEx2aCtlbM7bWuowfQ4khyZDzDWuakxu7VQxf8y3g7JXD08+HaU20J
-         qM0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Vwm/El/Ft/0DbczV9ocRaHI93qL9FGaXjX3EsdvRP/OAABN4VkBfJnTRiQTeocyEboM8AetpzukafG5IJLx438nHl+lrWSd9c+Sj
-X-Gm-Message-State: AOJu0YwobqjmGs2YWS8jysDlQxEN9fwatTV/UsAwwJzuaaqyr/HN4rsk
-	OMQdwcQwm22DONLmtRczc6kv4gkUpNnsbomvVONzR3j5ugGkK40+mENbNF/YH6s=
-X-Google-Smtp-Source: AGHT+IFnaltfqT9pdcjmDKQ5RL1R7ZLBWzlQHgI3b93HGvP83oo06ef5k6SFp1k0XTHt6xuyuG6s7w==
-X-Received: by 2002:a92:cf41:0:b0:381:c5f0:20d5 with SMTP id e9e14a558f8ab-38a53e8fc76mr36039665ab.0.1720557254426;
-        Tue, 09 Jul 2024 13:34:14 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-38a49c21c42sm5740615ab.48.2024.07.09.13.34.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 13:34:14 -0700 (PDT)
-Message-ID: <a08e6846-2f9e-4fb4-910f-b33fe779fa01@linuxfoundation.org>
-Date: Tue, 9 Jul 2024 14:34:13 -0600
+	s=arc-20240116; t=1720557324; c=relaxed/simple;
+	bh=eKUKhI2YBw/Ad6+G7vSsx7UPtabwPEA29W5Ci9CXXpQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y2B1LA30fiWp2DT6BZUh8mhdS8bE9mpRq0eh85Emm5nKWYoADQwCBlf7E02EyPCgX2U6n2wrL6I75jHDlAumz0kqMht6YDFIz8fAdi8SranRsaxoyPU3DC5OO2+UGX6Jr7mCkG3n7G/7PEj2JQWspz7vgYWxMbT+u/Y0AFRcokE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IKawx/X2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720557321;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bQGIDaP1t/pBYsaGFONgFaSDOJQEw7gzA1HsrUDl/TE=;
+	b=IKawx/X2oGPw371uw+Kc/18x9xAQleL2JHoq7UsuA5AcCXe5ApltR4+bM/kmJe00kUAncE
+	FlL/Cf3kmCqWKVrccsVFqUewJEgKkRRdu1ApylT0BDZEvmOT70u865+AK2YmeqTklcGJSl
+	asIrng8f6AJIXzOrJBkrCTimh5zAhGI=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-241-3aRxG6oTO369D0qNUyAT1Q-1; Tue,
+ 09 Jul 2024 16:35:17 -0400
+X-MC-Unique: 3aRxG6oTO369D0qNUyAT1Q-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 987461944B3E;
+	Tue,  9 Jul 2024 20:35:14 +0000 (UTC)
+Received: from antares.redhat.com (unknown [10.39.192.91])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 55D231955DA1;
+	Tue,  9 Jul 2024 20:35:06 +0000 (UTC)
+From: Adrian Moreno <amorenoz@redhat.com>
+To: netdev@vger.kernel.org
+Cc: Adrian Moreno <amorenoz@redhat.com>,
+	Yotam Gigi <yotam.gi@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Ido Schimmel <idosch@nvidia.com>,
+	Eelco Chaudron <echaudro@redhat.com>,
+	Aaron Conole <aconole@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: psample: fix flag being set in wrong skb
+Date: Tue,  9 Jul 2024 22:34:36 +0200
+Message-ID: <20240709203437.1257952-1-amorenoz@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/7] selftests/x86: fix build errors and warnings found
- via clang
-To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
-Cc: angquan yu <angquan21@gmail.com>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- Ingo Molnar <mingo@kernel.org>, Binbin Wu <binbin.wu@linux.intel.com>,
- Alexey Dobriyan <adobriyan@gmail.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Sohil Mehta <sohil.mehta@intel.com>, Yu-cheng Yu <yu-cheng.yu@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev, x86@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240704072431.111640-1-jhubbard@nvidia.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240704072431.111640-1-jhubbard@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 7/4/24 01:24, John Hubbard wrote:
-> Changes since v3:
-> 
-> 1) Rebased onto Linux 6.10-rc6+.
-> 
-> 2) Added Muhammad's acks for the series.
-> 
-> Cover letter for v3:
-> 
-> Hi,
-> 
-> Dave Hansen, Muhammad Usama Anjum, here is the combined series that we
-> discussed yesterday [1].
-> 
-> As I mentioned then, this is a bit intrusive--but no more than
-> necessary, IMHO. Specifically, it moves some clang-un-inlineable things
-> out to "pure" assembly code files.
-> 
-> I've tested this by building with clang, then running each binary on my
-> x86_64 test system with today's 6.10-rc1, and comparing the console and
-> dmesg output to a gcc-based build without these patches applied. Aside
-> from timestamps and virtual addresses, it looks identical.
-> 
-> Earlier cover letter:
-> 
-> Just a bunch of build and warnings fixes that show up when building with
-> clang. Some of these depend on each other, so I'm sending them as a
-> series.
-> 
-> Changes since v2:
-> 
-> 1) Dropped my test_FISTTP.c patch, and picked up Muhammad's fix instead,
->     seeing as how that was posted first.
-> 
-> 2) Updated patch descriptions to reflect that Valentin Obst's build fix
->     for LLVM [1] has already been merged into Linux main.
-> 
-> 3) Minor wording and typo corrections in the commit logs throughout.
-> 
-> Changes since the first version:
-> 1) Rebased onto Linux 6.10-rc1
-> 
-> Enjoy!
-> 
-> [1] https://lore.kernel.org/44428518-4d21-4de7-8587-04eceefb330d@nvidia.com
-> 
-> thanks,
-> John Hubbard
-> 
-> John Hubbard (6):
->    selftests/x86: fix Makefile dependencies to work with clang
->    selftests/x86: build fsgsbase_restore.c with clang
->    selftests/x86: build sysret_rip.c with clang
->    selftests/x86: avoid -no-pie warnings from clang during compilation
->    selftests/x86: remove (or use) unused variables and functions
->    selftests/x86: fix printk warnings reported by clang
-> 
+A typo makes PSAMPLE_ATTR_SAMPLE_RATE netlink flag be added to the wrong
+sk_buff.
 
-> Muhammad Usama Anjum (1):
->    selftests: x86: test_FISTTP: use fisttps instead of ambiguous fisttp
+Fixes: 7b1b2b60c63f ("net: psample: allow using rate as probability")
+Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+---
+ net/psample/psample.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/net/psample/psample.c b/net/psample/psample.c
+index f48b5b9cd409..11b7533067b8 100644
+--- a/net/psample/psample.c
++++ b/net/psample/psample.c
+@@ -498,7 +498,7 @@ void psample_sample_packet(struct psample_group *group, struct sk_buff *skb,
+ 		goto error;
+ 
+ 	if (md->rate_as_probability)
+-		nla_put_flag(skb, PSAMPLE_ATTR_SAMPLE_PROBABILITY);
++		nla_put_flag(nl_skb, PSAMPLE_ATTR_SAMPLE_PROBABILITY);
+ 
+ 	genlmsg_end(nl_skb, data);
+ 	genlmsg_multicast_netns(&psample_nl_family, group->net, nl_skb, 0,
+-- 
+2.45.2
 
-Usama and John,
-
-I am seeing checkpatch warnings in this series.
-
-v4-3-7
-WARNING: externs should be avoided in .c files
-#210: FILE: tools/testing/selftests/x86/fsgsbase_restore.c:46:
-+unsigned int dereference_seg_base(void);
-
-ARNING: Consecutive strings are generally better as a single string
-#156: FILE: tools/testing/selftests/x86/test_FISTTP.c:28:
-+	"	fisttps	res16""\n"
-
-WARNING: Consecutive strings are generally better as a single string
-#165: FILE: tools/testing/selftests/x86/test_FISTTP.c:48:
-+	"	fisttps	res16""\n"
-
-WARNING: Consecutive strings are generally better as a single string
-#174: FILE: tools/testing/selftests/x86/test_FISTTP.c:69:
-+	"	fisttps	res16""\n"
-
-WARNING: Consecutive strings are generally better as a single string
-#183: FILE: tools/testing/selftests/x86/test_FISTTP.c:91:
-+	"	fisttps	res16""\n"
-
-total: 0 errors, 5 warnings, 32 lines checked
-
-Can you take a look at these and see if they can be fixed. Send me
-v5 with these fixed - I will pull these in for 6.11-rc1
-
-thanks,
--- Shuah
 
