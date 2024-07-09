@@ -1,244 +1,113 @@
-Return-Path: <linux-kernel+bounces-245678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 785FC92B5EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:52:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A702592B5ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:53:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC6941F210B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:52:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44715B219A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC141581FC;
-	Tue,  9 Jul 2024 10:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E9915884A;
+	Tue,  9 Jul 2024 10:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cbZmbl0b"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hEej11Kv"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C89155329;
-	Tue,  9 Jul 2024 10:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABA4155329;
+	Tue,  9 Jul 2024 10:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720522339; cv=none; b=JhNigAN3amIjBCzZahnPjNxHO6rBkmGvl+N8e9KKhhGt2Ae3nGSSi/lnYKwbB6H10kejTmQlQ8bgdn8EyLpyhqdIEoTGxTY2XDZ0mFJwuhmU35jEZJOHk9m+qddr3qBTJjvsgn60WeJ33STtGiywebRTeJiyfF3wBdmccMNkrHg=
+	t=1720522347; cv=none; b=CLeN6eI93M0OZLaUmEIhqBaHmWiKD3WXxJiO1NtMUxlu3pI0q0KitgTpS0bZu8A78wQ7CYVtYc0ynOKvy8tcZaFz+o7hE0e/dHZoXGr8Gd9kPIS55Wvgd+g92oZq67+zAbXoLa7JoQGykJnx4tlF4ITADF+LL/8b/9CLE7rddsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720522339; c=relaxed/simple;
-	bh=FRgjCLcJ6MXfKDSYddl5jo5cz8bvhM5ilxUGSXDAteA=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=fy8ocqqH+/wWzOA+m1Uygm/OMNlWzK01M+1GMT1kukoz610K7yOsnp3VbpG7dvkbhSFTtZIu1KA0Oal7pizxq89oLoybAQRIPH0SO/6XKPNiGJ7Qhv/RDbJJPfKI9TNAUppMG79TWtrExxoeXw2uGtjX7cgOihwFD3imF9IOFZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cbZmbl0b; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720522338; x=1752058338;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=FRgjCLcJ6MXfKDSYddl5jo5cz8bvhM5ilxUGSXDAteA=;
-  b=cbZmbl0brGS1ZuUutOydvwB2jZXKFJxFLGQZvwunGX5AewA7+qw9Jg29
-   4TKZhtguygXiO61XOCQ1W/TsdB1qWbo34AgiO2ai3Wq/63mmDQj+pSRQH
-   cuAG2L9tRM7IdhcU2NSmOJEnIZIh8V5/RzInEEkWCsvquXhBCydfV6hti
-   DTtepvjkPNWQuO+OgBu0E25YPQHy5ROSfOeebXmjhIhpmlq9BK5DsyZzn
-   R+ZcMvL/Tq6AGqdyltrbvPkRlqK+vKE2/rEOtM/s0Hen+jx89px/pMnph
-   t/DDQLlIJv30zVtocSxaG+c23zncsYqxL8sTKaATOen5AHVAZUrI4z8Ea
-   A==;
-X-CSE-ConnectionGUID: 2p52lraDRoSMEA11uU3gYQ==
-X-CSE-MsgGUID: PCuxifZtTl++tye+Neh+Rw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="28366708"
-X-IronPort-AV: E=Sophos;i="6.09,194,1716274800"; 
-   d="scan'208";a="28366708"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 03:52:17 -0700
-X-CSE-ConnectionGUID: WWaLn5PnTiaOMvwna+yrPQ==
-X-CSE-MsgGUID: KrKTrYGrREyTb4p/oMmiRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,194,1716274800"; 
-   d="scan'208";a="47708644"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.123])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 03:52:14 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 9 Jul 2024 13:52:07 +0300 (EEST)
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-cc: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <helgaas@kernel.org>, 
-    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
-    Yazen Ghannam <yazen.ghannam@amd.com>, Bowman Terry <terry.bowman@amd.com>, 
-    Hagan Billy <billy.hagan@amd.com>, Simon Guinot <simon.guinot@seagate.com>, 
-    "Maciej W . Rozycki" <macro@orcam.me.uk>, 
-    Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Subject: Re: [PATCH v2] PCI: pciehp: Clear LBMS on hot-remove to prevent link
- speed reduction
-In-Reply-To: <73fd7b2d-9256-9eba-70be-d69ea336fd67@amd.com>
-Message-ID: <6014882f-0936-ec31-d641-112a70eb2749@linux.intel.com>
-References: <20240617231841.GA1232294@bhelgaas> <27be113e-3e33-b969-c1e3-c5e82d1b8b7f@amd.com> <cf5f3b03-4c70-7a35-056e-5d94fc26f697@amd.com> <ZnKNJxJwdtWRphgX@wunner.de> <73fd7b2d-9256-9eba-70be-d69ea336fd67@amd.com>
+	s=arc-20240116; t=1720522347; c=relaxed/simple;
+	bh=vQYiMZyY4wCIinORfN1CaFqtYJUd5P93b1oJl47srJQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=pMfC/O6uR0VEfLMIDMeWc3yZToTd+jX0I7ehXAMZMFCQWKE1BhISpPBKGf6iKm33yez3Wx8vXnD050d+Ph29c6EthXw8J1OsnMKqTD2vQA8QtEGxmevt30P1g0b5c9cw2KQpvJWwkaf3i+LmCdNj/r/rEaQxIuwnSNKQYQk8BVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hEej11Kv; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-367b8a60b60so1959392f8f.2;
+        Tue, 09 Jul 2024 03:52:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720522344; x=1721127144; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7mRrmwMm1DmJw1xSNDgxQWCnqRc/CmvO9uv+arr7hQ0=;
+        b=hEej11KvDNh3gNeehY36vuFOchXMpovKQjVkXI277qnLfCVmqL4/0VmdElMRbRzrPD
+         JwwiU8HJOmpuihvE5DcczUItR/eoWzYt3uMAMFkCyMr/JK1fLE3WQAtp82iqCi8WyGEl
+         jUy4wV6As/e6lBn+GyquYl6XQkMXl0KJ4gf5RpGEPLBYp/P3b4MB8y5xmGLyFBr0Nolh
+         1Li12Q0GyaimMrx/W8JQBXx28wwMIdpevYXkDCV3fZhk+I6dFTCy8T1Zl+C4Bwx4cc3+
+         EPYmYXGD/FvREN5hC5jLZ4IdlOMxkrW7SST/82XeuQ2+U/sZaKRr7VNw2BZys9CzwOdb
+         Ucwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720522344; x=1721127144;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7mRrmwMm1DmJw1xSNDgxQWCnqRc/CmvO9uv+arr7hQ0=;
+        b=u0hKTyrulvM5e6HhvQFuqvroYp2itT9OaQUgRcyHxuQViunD8x91X4x5jbTHjEVCKm
+         KvppEIJUyVHUXgjAahxXcF3Vx5f1Dl4aFyWw1Ahg3VuT4pRFOMdjRFgNkjDxBHUyruVg
+         6LFs5Rt19wE/+veN0YeGbCZIGaE2tphpByZ8PlspceVH6jfHXA61pPXQd8CQaycMHXe3
+         XtKsC4KnkiEwY9TANY8XV7439CC6qbsrZNjN1mc9c1Iyg+lDEOmW7eGA/J9H8Uk9ujoz
+         5na8/P/yiSmCYqhoKd90oVaZ7wMnfkf32pB7B2IS5ADGgOAREHiGAmTYQfH/ee/rm2eW
+         h5+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVnbTNqUGP607mtGA7oY6D9jdF4WcfAnfWf0xF7LP4ymF5H76tnM+v7IrnMXVfnIFnRk+O8/imI8jiEPyPxhuxzlT9stUIWaj0Jl7nuKONNbAYzpDaJObpXb45Mh4H7ZbEGW5oT
+X-Gm-Message-State: AOJu0YzYNJbLdav/eEAtXAv2iTkFBlpd7uzTnHdUPX5XV3v+gA3UbY7W
+	iyhJGWewm4iOOuX7/JBCGHU4msjb4Iuj9Bqx+d9GeewZp91rqifu+/4WWg0K
+X-Google-Smtp-Source: AGHT+IGvTztA3LGIiuYsN8gV0etV5BgW0nqdXMyjLBSWtHQbBPY48hOhZy9U/wY6scIClzpl2Ij9Cg==
+X-Received: by 2002:a05:6000:e41:b0:367:992e:acc with SMTP id ffacd0b85a97d-367cea67df8mr1505425f8f.18.1720522343590;
+        Tue, 09 Jul 2024 03:52:23 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfab106sm2186078f8f.103.2024.07.09.03.52.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 03:52:23 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] net: pse-pd: pd692x0: Fix spelling mistake "availables" -> "available"
+Date: Tue,  9 Jul 2024 11:52:22 +0100
+Message-Id: <20240709105222.168306-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 25 Jun 2024, Smita Koralahalli wrote:
+There is a spelling mistake in a dev_err message. Fix it.
 
-> Sorry for the delay here. Took some time to find a system to run experiments.
-> Comments inline.
->
-> On 6/19/2024 12:47 AM, Lukas Wunner wrote:
-> > On Tue, Jun 18, 2024 at 02:23:21PM -0700, Smita Koralahalli wrote:
-> > > On 6/18/2024 11:51 AM, Smita Koralahalli wrote:
-> > > > > > > But IIUC LBMS is set by hardware but never cleared by hardware, so
-> > > > > > > if
-> > > > > > > we remove a device and power off the slot, it doesn't seem like
-> > > > > > > LBMS
-> > > > > > > could be telling us anything useful (what could we do in response
-> > > > > > > to
-> > > > > > > LBMS when the slot is empty?), so it makes sense to me to clear
-> > > > > > > it.
-> > > > > > > 
-> > > > > > > It seems like pciehp_unconfigure_device() does sort of PCI core
-> > > > > > > and
-> > > > > > > driver-related things and possibly could be something shared by
-> > > > > > > all
-> > > > > > > hotplug drivers, while remove_board() does things more specific to
-> > > > > > > the
-> > > > > > > hotplug model (pciehp, shpchp, etc).
-> > > > > > > 
-> > > > > > >  From that perspective, clearing LBMS might fit better in
-> > > > > > > remove_board(). In that case, I wonder whether it should be done
-> > > > > > > after turning off slot power? This patch clears is *before*
-> > > > > > > turning
-> > > > > > > off the power, so I wonder if hardware could possibly set it again
-> > > > > > > before the poweroff?
-> > > 
-> > > While clearing LBMS in remove_board() here:
-> > > 
-> > > if (POWER_CTRL(ctrl)) {
-> > > 	pciehp_power_off_slot(ctrl);
-> > > +	pcie_capability_write_word(ctrl->pcie->port, PCI_EXP_LNKSTA,
-> > > 				   PCI_EXP_LNKSTA_LBMS);
-> > > 
-> > > 	/*
-> > > 	 * After turning power off, we must wait for at least 1 second
-> > > 	 * before taking any action that relies on power having been
-> > > 	 * removed from the slot/adapter.
-> > > 	 */
-> > > 	msleep(1000);
-> > > 
-> > > 	/* Ignore link or presence changes caused by power off */
-> > > 	atomic_and(~(PCI_EXP_SLTSTA_DLLSC | PCI_EXP_SLTSTA_PDC),
-> > > 		   &ctrl->pending_events);
-> > > }
-> > > 
-> > > This can happen too right? I.e Just after the slot poweroff and before
-> > > LBMS
-> > > clearing the PDC/PDSC could be fired. Then
-> > > pciehp_handle_presence_or_link_change() would hit case "OFF_STATE" and
-> > > proceed with pciehp_enable_slot() ....pcie_failed_link_retrain() and
-> > > ultimately link speed drops..
-> > > 
-> > > So, I added clearing just before turning off the slot.. Let me know if I'm
-> > > thinking it right.
-> 
-> I guess I should have experimented before putting this comment out.
-> 
-> After talking to the HW/FW teams, I understood that, none of our CRBs support
-> power controller for NVMe devices, which means the "Power Controller Present"
-> in Slot_Cap is always false. That's what makes it a "surprise removal." If the
-> OS was notified beforehand and there was a power controller attached, the OS
-> would turn off the power with SLOT_CNTL. That's an "orderly" removal. So
-> essentially, the entire block from "if (POWER_CTRL(ctrl))" will never be
-> executed for surprise removal for us.
-> 
-> There could be board designs outside of us, with power controllers for the
-> NVME devices, which I'm not aware of.
-> > 
-> > This was added by 3943af9d01e9 ("PCI: pciehp: Ignore Link State Changes
-> > after powering off a slot").  You can try reproducing it by writing "0"
-> > to the slot's "power" file in sysfs, but your hardware needs to support
-> > slot power.
-> > 
-> > Basically the idea is that after waiting for 1 sec, chances are very low
-> > that any DLLSC or PDSC events caused by removing slot power may still
-> > occur.
-> 
-> PDSC events occurring in our case aren't by removing slot power. It
-> should/will always happen on a surprise removal along with DLLSC for us. But
-> this PDSC is been delayed and happens after DLLSC is invoked and ctrl->state =
-> OFF_STATE in pciehp_disable_slot(). So the PDSC is mistook to enable slot in
-> pciehp_enable_slot() inside pciehp_handle_presence_or_link_change().
-> > 
-> > Arguably the same applies to LBMS changes, so I'd recommend to likewise
-> > clear stale LBMS after the msleep(1000).
-> > 
-> > pciehp_ctrl.c only contains the state machine and higher-level logic of
-> > the hotplug controller and all the actual register accesses are in helpers
-> > in pciehp_hpc.c.  So if you want to do it picture-perfectly, add a helper
-> > in pciehp_hpc.c to clear LBMS and call that from remove_board().
-> > 
-> > That all being said, I'm wondering how this plays together with Ilpo's
-> > bandwidth control driver?
-> > 
-> > https://lore.kernel.org/all/20240516093222.1684-1-ilpo.jarvinen@linux.intel.com/
-> 
-> I need to yet do a thorough reading of Ilpo's bandwidth control driver. Ilpo
-> please correct me if I misspeak something as I don't have a thorough
-> understanding.
-> 
-> Ilpo's bandwidth controller also checks for lbms count to be greater than zero
-> to bring down link speeds if CONFIG_PCIE_BWCTRL is true. If false, it follows
-> the default path to check LBMS bit in link status register. So if,
-> CONFIG_PCIE_BWCTRL is disabled by default we continue to see link speed drops.
-> Even, if BWCTRL is enabled, LBMS count is incremented to 1 in
-> pcie_bwnotif_enable() so likely pcie_lbms_seen() might return true thereby
-> bringing down speeds here as well if DLLLA is clear?
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/pse-pd/pd692x0.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I did add code to clear the LBMS count in pciehp_unconfigure_device() in 
-part thanks to this patch of yours. Do you think it wouldn't work?
-
-But I agree there would still be problem if BWCTRL is not enabled. I 
-already have to keep part of it enabled due to the Target Speed quirk
-and now this is another case where just having it always on would be
-beneficial.
-
-> > IIUC, the bandwidth control driver will be in charge of handling LBMS
-> > changes.  So clearing LBMS behind the bandwidth control driver's back
-> > might be problematic.  Ilpo?
-
-Yes, BW controller will take control of LBMS and other code should not 
-touch it directly (and LBMS will be kept cleared by the BW controller). 
-However, in this case I'll just need to adapt the code to replace the 
-LBMS clearing with resetting the LBMS count (if this patch is accepted 
-before BW controller), the resetting is already there anyway.
-
-> > Also, since you've confirmed that this issue is fallout from
-> > a89c82249c37 ("PCI: Work around PCIe link training failures"),
-> > I'm wondering if the logic introduced by that commit can be
-> > changed so that the quirk is applied more narrowly, i.e. *not*
-> > applied to unaffected hardware, such as AMD's hotplug ports.
-> > That would avoid the need to undo the effect of the quirk and
-> > work around the downtraining you're seeing.
-> > 
-> > Maciej, any ideas?
-> 
-> Yeah I'm okay to go down to that approach as well. Any ideas would be helpful
-> here.
-
-One thing I don't like in the Target Speed quirk is that it leaves the 
-Link Speed into the lower value if the quirk fails to bring the link up, 
-the quirk could restore the original Link Speed on failure to avoid these 
-problems. I even suggested that earlier, however, the downside of 
-restoring the original Link Speed is that it will require triggering yet 
-another retraining (perhaps we could avoid waiting for its completion 
-though since we expect it to fail).
-
-It might be possible to eventually trigger the Target Speed quirk from the 
-BW controller but it would require writing some state machine so that the 
-quirk is not repeatedly attempted. It seemed to complicate things too much 
-to add such a state machine at this point.
-
+diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
+index 29cc76a66c13..0af7db80b2f8 100644
+--- a/drivers/net/pse-pd/pd692x0.c
++++ b/drivers/net/pse-pd/pd692x0.c
+@@ -589,7 +589,7 @@ static int pd692x0_pi_set_pw_from_table(struct device *dev,
+ 
+ 		if (pw < pw_table->class_pw) {
+ 			dev_err(dev,
+-				"Power limit %dmW not supported. Ranges availables: [%d-%d] or [%d-%d]\n",
++				"Power limit %dmW not supported. Ranges available: [%d-%d] or [%d-%d]\n",
+ 				pw,
+ 				(pw_table - 1)->class_pw,
+ 				(pw_table - 1)->class_pw + (pw_table - 1)->max_added_class_pw,
 -- 
- i.
+2.39.2
 
 
