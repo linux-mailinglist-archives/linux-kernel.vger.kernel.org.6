@@ -1,108 +1,83 @@
-Return-Path: <linux-kernel+bounces-245375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0778992B1CB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:08:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F2492B1CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC7DC1F218C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:08:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6ABD282686
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E553215218F;
-	Tue,  9 Jul 2024 08:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5E2152176;
+	Tue,  9 Jul 2024 08:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="T0SPcyAN"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVjSrTvA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED28513D501;
-	Tue,  9 Jul 2024 08:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A412E149C77
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720512514; cv=none; b=T8HzwgtmBWqe33uhvWb9KuchXGg2pFnxzoGF/tOzl4CpDN3Mp+li2OcSDVRfNpJUEdtUmrmI2O6WttKhAAGCdP8fUlUn+V8YU9AV8JqSRj71AHY+gSxTBaj9Ez8yFqyboG6KbX9FMIJ5JV8pdkBs4Rd871ZwDxYWxPPkVIyj4ak=
+	t=1720512704; cv=none; b=sdiM2x21qMvBcaR1kOLu6yZLAddz593+XMg8ZEFIFu/f31W7mcvUsS6MkjaOXKY38w56YvSS3HlTsX70GI1BeZ/emUijcMftn1SS8uzr++HzqaJD4Iohwogl7cinbz4rE9qRAq0TcjWn72yRUFnRdXH+nqWUF4r8Uu/VQVLCvgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720512514; c=relaxed/simple;
-	bh=UZlejRrdXWSKCvdCkD+apWrboPEKqEQC7Gw30Zx7A6w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=lP4AdV4OeCxCGGVk5iHOoXfoZh6UGuDcjs4kixFijtDkDM7QNnIEI6efWwgbNrv/7dFGneqfhWYLMli1mhoNfE9TgdLSqC7TDZXJnyw6+03bP4j+nIcSmgcqT5rapbz+Dhtab02JK2Ku8029JhqNivyTEjJqdnH/yTlwj0eWgfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=T0SPcyAN; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720512509;
-	bh=pV03s57qObEPnYB+DPR/mVbiz4K5c5MGpJv9NRUTkNw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=T0SPcyANZe3Tt2ziLQ9ifs7OgXpmkFjt+n2LUh8h/Fg361YoTzK4MOezOaJ1JH7DR
-	 qQfA61Fg8plQzM3m2WN2BUA8pBMdauQsaodLTvladbqBgN7WbH2fmnf3+SL13fobk2
-	 kmbOcMhHLJtbng/x+dY54r3mOrGp04rgIeOA37Go0Rki3L8+WX0urawKV3FAgSj3o9
-	 5QkYQhWl5A6q4Obo5z90XxzVc2cJ+Z9LuaOl2q+4OpwwOMRxuLlx9yvgpgoBo1aHjS
-	 G6lz+dXR/ChJE+DRSWAzImQ88L3EqBe41ch5buDihPEavASwpyGfV4lOxCjEQGW8F4
-	 Ue3eOrpPP8Bdg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJDC15qP7z4xPc;
-	Tue,  9 Jul 2024 18:08:29 +1000 (AEST)
-Date: Tue, 9 Jul 2024 18:08:29 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Theodore Ts'o <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
- Shuah Khan <shuah@kernel.org>
-Cc: John Hubbard <jhubbard@nvidia.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the random tree
-Message-ID: <20240709180829.65e8967d@canb.auug.org.au>
+	s=arc-20240116; t=1720512704; c=relaxed/simple;
+	bh=gNoHnlGde32LHrAOGcjhcjPV0cFHv6TjFdHQRtUc0ko=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MJhqcBddde4QLohMHrYo+SDxnBxklBG0qh3R1pOaRI54QGyf72nik87icQPWgmRvr8Q9wg5EvAsRyZ2ig7e//5zSDcsurKfe/LUb34QqV6rN1NY5Gute8VEIPaDW/fouQ8qg/g53PHUk7OZM4++wcr1qIhMC6WAw/ORxk0Q/GJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVjSrTvA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF56CC3277B;
+	Tue,  9 Jul 2024 08:11:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720512704;
+	bh=gNoHnlGde32LHrAOGcjhcjPV0cFHv6TjFdHQRtUc0ko=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=SVjSrTvAZP5rtVFuL1LZ3S9nNOdyF21742VJk9t+t6eSeZ1dI6haojEx2hwaQFzUL
+	 B/NI5iZ8Y3gNwVnRwt+fBu83NqaYioHVNNI96+glVuMWqXlwlaof8rDqn1J0krweCC
+	 udboAD4K8Vnrzg0NGtvM84Ssd6HraNQcgF4x3s6tIpGsoLoUosdawtyKCu4jRsay2z
+	 klQIBfAUq3RsHh7YU/fvYKE60+TiIaRMU+JPYlEYog641kvqfgpwjpU0KQidjmiSJR
+	 C6JZ8cKLLoaxfqFYcnUJuGTIyrR/Gkbo6Z4L2mVistJHgrxtSAiJ1bQJS8D8er6tqZ
+	 tV9zp0xAJJHbg==
+From: Maxime Ripard <mripard@kernel.org>
+To: dri-devel@lists.freedesktop.org,
+	Sebastian Wick <sebastian.wick@redhat.com>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	linux-kernel@vger.kernel.org,
+	Pekka Paalanen <pekka.paalanen@collabora.com>
+Subject: Re: (subset) [PATCH v2] drm/drm_connector: Document Colorspace property variants
+Date: Tue,  9 Jul 2024 10:11:39 +0200
+Message-ID: <172051269761.180041.16742785029859589902.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240702143017.2429975-1-sebastian.wick@redhat.com>
+References: <20240702143017.2429975-1-sebastian.wick@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/0GB.kt9fq8KwD/z07AtL0gY";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
---Sig_/0GB.kt9fq8KwD/z07AtL0gY
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, 02 Jul 2024 16:30:16 +0200, Sebastian Wick wrote:
+> The initial idea of the Colorspace prop was that this maps 1:1 to
+> InfoFrames/SDP but KMS does not give user space enough information nor
+> control over the output format to figure out which variants can be used
+> for a given KMS commit. At the same time, properties like Broadcast RGB
+> expect full range quantization range being produced by user space from
+> the CRTC and drivers to convert to the range expected by the sink for
+> the chosen output format, mode, InfoFrames, etc.
+> 
+> [...]
 
-Hi all,
+Applied to misc/kernel.git (drm-misc-next).
 
-The following commits are also in the kselftest-fixes tree as different
-commits (but the same patches):
-
-  868680ffba11 ("selftests/vDSO: remove duplicate compiler invocations from=
- Makefile")
-  7bb79ef48b9d ("selftests/vDSO: remove partially duplicated "all:" target =
-in Makefile")
-  14cd1a877fc6 ("selftests/vDSO: fix clang build errors and warnings")
-
-These are already causing an unnecessary conflict
-:-( Maybe you could just merge the kselftest-fixes tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git#fi=
-xes),
-but first make sure that it won't be rebased.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/0GB.kt9fq8KwD/z07AtL0gY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaM7/0ACgkQAVBC80lX
-0Gw8hAf/UQnJJh+08sSLt89DvlFahc3R/Bj9A21CjSdQNk2lz9JDcpz9NBsYmkif
-qPiMQA396LxTqa3A/f7S3LV3OtoOCS7keei4rxkaDMHBdu+X1TPNLMpALZYVxnHr
-DOQ55cQMyLNsHqtc4MQl4Kco3TbAKvPx+6K/ahF83pA62f4e9mjxV/bNwNlZPTvU
-CPM0crEthjdpDQe2yjArub0Pexab1vxPWOXL0maClOn6EimbKlnotrSf6UC4g62F
-9mqA4kf00IlgSOfytAPOATHFd8w9UZd1VbuOwQUcKJT+hUkJAsPCss18/QIjc7wR
-t/WiOR6iaJr56/fYHkBX0msJQqPbVA==
-=O8I8
------END PGP SIGNATURE-----
-
---Sig_/0GB.kt9fq8KwD/z07AtL0gY--
+Thanks!
+Maxime
 
