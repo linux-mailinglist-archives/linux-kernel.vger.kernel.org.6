@@ -1,145 +1,168 @@
-Return-Path: <linux-kernel+bounces-246152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A7EC92BE3E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:26:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2334A92BE41
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:26:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05336286417
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:26:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE5CF1F23E85
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4782619D08B;
-	Tue,  9 Jul 2024 15:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D66819D089;
+	Tue,  9 Jul 2024 15:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YBlnyEja"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZzqcsqIU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E432619D089
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE70743147;
+	Tue,  9 Jul 2024 15:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720538788; cv=none; b=tblAXa/KlNoBGsZiA28Za6LBRyOhTVgtzHFmwamHBN91mjBIURZJYPyFlDxj5NtV/yf2TWjqTbUJqEqpYwRJ3iPoBp01b+eV+5z445AaokAarW12TtQfeYd/ptzIg8xugIRu/ml/Uuol4JqABr3YFUjoPzl4oYT1CI68kP6WZts=
+	t=1720538804; cv=none; b=YCbUuT7WxoEEDf3hT5Me1HVJh+d28LebTsgHMT8n7JA/oo1fuvLthzJ4tVk91kWzaVuxOPWFBsVPuImgBmdkyVqyW9nC0d20uNDhRkaEX5cqB1RrCq5l2pyBvJUgZrGZOXzvDYY6dObKZuH8Eub9UbGx9JS/1+pLZuvkV04zrHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720538788; c=relaxed/simple;
-	bh=mLzMudHN5SfC0yQJnGMuYVoiWhCV05Wi3/ccfdbygPk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nl1h4j0RZ80sJHPg321cnoy3zu2HCCJIe7gzmos8UwSdJA1VuJzMeoUsM5iSBj8F4Cqu6/5p3898H0DT9UEXpQ8gCU1/mMhNWCGXn5L0ccW+ymAPbx+8otmDKwAhTU2/xCUavUElk1Bayec6Gp3olPsuPrsCFAfC3eQ/pHi0CEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YBlnyEja; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6b5da2730efso31342486d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 08:26:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1720538783; x=1721143583; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aj2kSla0vBt0/GLSIO8CQ/A6D734l7WrZXmLB07NQmU=;
-        b=YBlnyEja2oNYdKdJTFFXJt3qAwcu76nVjzt/hGjz6e9J4gq7FIDkaqNqlvSTQFeOjf
-         OKqUaQPDYtWDIuPDgkeJcsK0M2yo38c/G9KaC/9TM7TLKag0PASJpEI26pLkZE0tJRJ0
-         urFn860KDg7zEpnoH9vS2q3CorAavojrazIbk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720538783; x=1721143583;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aj2kSla0vBt0/GLSIO8CQ/A6D734l7WrZXmLB07NQmU=;
-        b=gJXoUL3Klf3AU98IXGoJwRFp5O3j4RzdIO4H7nmYEoUp4bx+Ppd2WhU0bhL7UXs2xh
-         3KrsV0TautoVrKrEwPHY8yfArpkFbQ3JArzg7NOqoxzq51szvAHbN/ljF7F90XJpweQ6
-         jk4HGJJt+qGXN5yIToZJtCFM3QKQ7P5k2yRkwb0sYgRobtTmc7tGQr9QfxUQKzXfZn27
-         ZMvByQuOxTzJJqIf+4lkOgtXvlX/QouW+K7p4z2kvW/NfoCj7IYQkuxdUoyAfmWbR+C4
-         MnxkaI01WV+whJ//DVCQOF7mTBA1IrT6KIcJFFktjfyE+bY7rpedivNdRfuGOZJWBa4N
-         qnkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSuqsKSJ5Z6axoZsq58SjrmwEw9ii1Ofcm4MX6WojbVgJI6C/bgPTQRN2QJiNvecvHuCoUoOXHhZl2bP8T8KtldKSXwSidesOQ2gfp
-X-Gm-Message-State: AOJu0Yx12Bny1/guFbzmo53BU7vBbAqzYEiQmmfFHxa8Wybm0DzB1wZW
-	entxi67W/cdn8UhB81ah9IxYDahMyNjTF0/A4hXxF82s1YDrZKYiy8rMvRI89ghAh22QV59Arka
-	NzvGg
-X-Google-Smtp-Source: AGHT+IF0nY+tse8OpMKMGex3FI9FRNPNixA3o7UuH63p8kjIzHgH+vhN4VIefrnAQs//N23j/sXtfQ==
-X-Received: by 2002:a05:6214:29ce:b0:6b5:e6b3:72f9 with SMTP id 6a1803df08f44-6b61bc7f03dmr33801666d6.9.1720538783494;
-        Tue, 09 Jul 2024 08:26:23 -0700 (PDT)
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com. [209.85.160.171])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b61b9efb8dsm9665176d6.47.2024.07.09.08.26.22
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 08:26:22 -0700 (PDT)
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-447f8aa87bfso470301cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 08:26:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWT4cgnh7mrLJM615W1mf2LwdwCxOclWnZeC5WG/uau2NIRbpVM6Cf3Otr+V/aAmATYo4BalIczPL+tuAaGY4OiP+ZcthNGIhtfg0Aw
-X-Received: by 2002:ac8:45ce:0:b0:447:cebf:705 with SMTP id
- d75a77b69052e-447faede198mr3930761cf.0.1720538781555; Tue, 09 Jul 2024
- 08:26:21 -0700 (PDT)
+	s=arc-20240116; t=1720538804; c=relaxed/simple;
+	bh=0iOSYuZ06gPqnu9DLFKt9TUyS7HzPq7eik1t5fjAP54=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y8WA/f7nGvjqolDUzwuEmW8U9gNQp51Vqq/aZk3ozhCpbOqVwUgDHFOKILmeaaTXyBiELmzz0KiKjE9TbgUR5c2zOI6Y5qKHl+fgzbSDDjUDuKgxr7+Ha2Ox3JfYUFlAMXClRznhaZdQdbPe1zns1JUruONJqWFNGVxQLDbg2Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZzqcsqIU; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720538803; x=1752074803;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0iOSYuZ06gPqnu9DLFKt9TUyS7HzPq7eik1t5fjAP54=;
+  b=ZzqcsqIUwO68XloXoGOLd5g0eEEfsD60YB+dThOb7m9psKxTCuV2nlwT
+   WhaGn2tZYV0TsuKpGmvmoTVgp340VQyKY77GdRBL/MAYWKdIDPa1qGjK6
+   ebQ6YDhgYU64zFRWjlhSn/5qt7c/tEdJMMnmYnkTbPa4NHf3BO9uhYUH+
+   f9u7afCpRtDCfDu10jlGlb/ZrPrQqPOeWbt8PrH55XK6fMGpQwqIru8o1
+   sHM+9GQQEGgaBTxkRpjnqA1gzUfSPVbE1OCqn/CBCjwi1wbhRMuiv3/TL
+   UYUOyMsWiHN1bnzSkNV7p/9t9X9uKs6JIz3aQMCrBBDlq5BCnKB4DmEV5
+   Q==;
+X-CSE-ConnectionGUID: m7mL+v5pQuuaSSrFAzAZpQ==
+X-CSE-MsgGUID: 1eEHvo06R56fpxYojPdzDA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11128"; a="28963519"
+X-IronPort-AV: E=Sophos;i="6.09,195,1716274800"; 
+   d="scan'208";a="28963519"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 08:26:42 -0700
+X-CSE-ConnectionGUID: d16CEwxwRampy1lisffegg==
+X-CSE-MsgGUID: UIX/+oVTQLKDZRM9BA4edQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,195,1716274800"; 
+   d="scan'208";a="48333094"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 08:26:40 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id A439211F811;
+	Tue,  9 Jul 2024 18:26:36 +0300 (EEST)
+Date: Tue, 9 Jul 2024 15:26:36 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+	David Plowman <david.plowman@raspberrypi.com>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Naushir Patuck <naush@raspberrypi.com>,
+	Nick Hollinghurst <nick.hollinghurst@raspberrypi.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Message-ID: <Zo1WrGAL2mJejdeS@kekkonen.localdomain>
+References: <20240709163715.3bcd6ab3@canb.auug.org.au>
+ <Zo1SrABWB-axGibI@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708105221.1.I576751c661c7edb6b804dda405d10e2e71153e32@changeid>
- <ba539524-d0bf-4a22-9872-7c8347d88abd@linaro.org>
-In-Reply-To: <ba539524-d0bf-4a22-9872-7c8347d88abd@linaro.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 9 Jul 2024 08:26:06 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=UU00oJ0Gi5fhOOk4gCFp1Cg55cA7Gy_GPpVgj95BNNbA@mail.gmail.com>
-Message-ID: <CAD=FV=UU00oJ0Gi5fhOOk4gCFp1Cg55cA7Gy_GPpVgj95BNNbA@mail.gmail.com>
-Subject: Re: [PATCH] drm/panel: sharp-lq101r1sx01: Fixed reversed "if" in remove
-To: neil.armstrong@linaro.org
-Cc: dri-devel@lists.freedesktop.org, Linus Walleij <linus.walleij@linaro.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Maxime Ripard <mripard@kernel.org>, 
-	Thierry Reding <treding@nvidia.com>, kernel test robot <lkp@intel.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	David Airlie <airlied@gmail.com>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zo1SrABWB-axGibI@kekkonen.localdomain>
 
-Hi,
-
-On Tue, Jul 9, 2024 at 12:53=E2=80=AFAM Neil Armstrong
-<neil.armstrong@linaro.org> wrote:
->
-> On 08/07/2024 19:52, Douglas Anderson wrote:
-> > Commit d7d473d8464e ("drm/panel: sharp-lq101r1sx01: Don't call disable
-> > at shutdown/remove") had a subtle bug. We should be calling
-> > sharp_panel_del() when the "sharp" variable is non-NULL, not when it's
-> > NULL. Fix.
-> >
-> > Fixes: d7d473d8464e ("drm/panel: sharp-lq101r1sx01: Don't call disable =
-at shutdown/remove")
-> > Cc: Thierry Reding <treding@nvidia.com>
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > Closes: https://lore.kernel.org/r/202406261525.SkhtM3ZV-lkp@intel.com/
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+On Tue, Jul 09, 2024 at 03:09:34PM +0000, Sakari Ailus wrote:
+> Hi Stephen,
+> 
+> Thanks for the patch.
+> 
+> On Tue, Jul 09, 2024 at 04:37:15PM +1000, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > After merging the driver-core tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > drivers/media/platform/raspberrypi/pisp_be/pisp_be.c:1786:27: error: initialization of 'void (*)(struct platform_device *)' from incompatible pointer type 'int (*)(struct platform_device *)' [-Werror=incompatible-pointer-types]
+> >  1786 |         .remove         = pispbe_remove,
+> >       |                           ^~~~~~~~~~~~~
+> > drivers/media/platform/raspberrypi/pisp_be/pisp_be.c:1786:27: note: (near initialization for 'pispbe_pdrv.<anonymous>.remove')
+> > cc1: all warnings being treated as errors
+> > 
+> > Caused by commit
+> > 
+> >   0edb555a65d1 ("platform: Make platform_driver::remove() return void")
+> > 
+> > interacting withc commit
+> > 
+> >   12187bd5d4f8 ("media: raspberrypi: Add support for PiSP BE")
+> > 
+> > from the vl4-dvb-next tree.
+> > 
+> > I have applied the following fix up patch.
+> > 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Tue, 9 Jul 2024 16:03:05 +1000
+> > Subject: [PATCH] fix up for "platform: Make platform_driver::remove() return void"
+> > 
+> > interacting with commit
+> > 
+> >   12187bd5d4f8 ("media: raspberrypi: Add support for PiSP BE")
+> > 
+> > from the v4l-dvb-next tree.
+> > 
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > > ---
-> >
-> >   drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c b/drivers/=
-gpu/drm/panel/panel-sharp-lq101r1sx01.c
-> > index edc9425bb143..a0d76d588da1 100644
-> > --- a/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c
-> > +++ b/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c
-> > @@ -362,7 +362,7 @@ static void sharp_panel_remove(struct mipi_dsi_devi=
-ce *dsi)
-> >               dev_err(&dsi->dev, "failed to detach from DSI host: %d\n"=
-, err);
-> >
-> >       /* only detach from host for the DSI-LINK2 interface */
-> > -     if (!sharp)
-> > +     if (sharp)
-> >               sharp_panel_del(sharp);
-> >   }
-> >
->
-> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+> >  drivers/media/platform/raspberrypi/pisp_be/pisp_be.c | 4 +---
+> >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c b/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
+> > index e74df5b116dc..7596ae1f7de6 100644
+> > --- a/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
+> > +++ b/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
+> > @@ -1756,7 +1756,7 @@ static int pispbe_probe(struct platform_device *pdev)
+> >  	return ret;
+> >  }
+> >  
+> > -static int pispbe_remove(struct platform_device *pdev)
+> > +static void pispbe_remove(struct platform_device *pdev)
+> 
+> While this approach works when the patch is squashed to commit
+> 0edb555a65d1, it's better to also use the remove_new op as its return type
+> won't be changed. That can be merged independently of commit 0edb555a65d1.
+> 
+> Feel free to submit v2, I can post a modified patch as well.
 
-Thanks! I've pushed to "drm-misc-next-fixes" since it's after -rc6 and
-the problematic patch is in drm-next.
+IOW, I'll add this and post v2:
 
-[1/1] drm/panel: sharp-lq101r1sx01: Fixed reversed "if" in remove
-      commit: ec85147a3529fded4bba12b48623f3a2587af83f
+diff --git a/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c b/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
+index 7596ae1f7de6..65ff2382cffe 100644
+--- a/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
++++ b/drivers/media/platform/raspberrypi/pisp_be/pisp_be.c
+@@ -1781,7 +1781,7 @@ MODULE_DEVICE_TABLE(of, pispbe_of_match);
+ 
+ static struct platform_driver pispbe_pdrv = {
+        .probe          = pispbe_probe,
+-       .remove         = pispbe_remove,
++       .remove_new     = pispbe_remove,
+        .driver         = {
+                .name   = PISPBE_NAME,
+                .of_match_table = pispbe_of_match,
+
+-- 
+Sakari Ailus
 
