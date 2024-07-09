@@ -1,117 +1,118 @@
-Return-Path: <linux-kernel+bounces-246180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1872892BEA0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:41:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61FF992BEA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:41:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7AE728188F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:41:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06AA01F22E9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C29619D099;
-	Tue,  9 Jul 2024 15:40:56 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3523819D8A3;
+	Tue,  9 Jul 2024 15:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="ceNCeZpf"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C88C3612D;
-	Tue,  9 Jul 2024 15:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEA53612D
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720539656; cv=none; b=ce47gKZ0RtDAO9WKnzA4r1pA+6A1ieEwmnlqiTWXgakkp7sk2HcOgdvTyqzXMpJpXQNdo4NrNY+zjhfiDGzUL0W9stvrwC+rzgsWpXb4Pd6UcU+YqC34Opqb1Vz83Ga65bSee5ShPPvZbv/SQ11dPYEI0J1t6o/GcHR4EVMsbt0=
+	t=1720539693; cv=none; b=V3/4dg3VXlbgWLQ0Af1n8xqwG3iGkVkr2+kC+dpb0rFxYuqJ6XeJzZnioq1I3E86hBYkrSOdaIIK35XMKhw8aN0STgeAe/JbUCssmdyrjJWR9ppnz5sVeQ1HK+gLIoj1DXTqf+fT7ZIBC0npy75WOv+D7LiLjK4ifeAIYOKLYrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720539656; c=relaxed/simple;
-	bh=yLujh+quyCP5qinagyJXHAIxWyF9PCjlaNWetj7c5k0=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lu1kTpeNLgi1heq3i8x3GRyJy1CD8z0AASSfM1dfbTFkyjC50/2tWt2vRh4MT50DmzeEZkF4MDG79IL6V2IJRDD5ITO5M3t0nRcsXyysxzDdKsU/MLXfO1vUWUfXnDTQNVUs2kQqdx5pcRb1gZVF/IEf0aoRsYl+JmOq8Oy88og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WJQCF3wqcz6H7nx;
-	Tue,  9 Jul 2024 23:39:21 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 62213140C72;
-	Tue,  9 Jul 2024 23:40:44 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 9 Jul
- 2024 16:40:43 +0100
-Date: Tue, 9 Jul 2024 16:40:43 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-CC: Xiaowei Song <songxiaowei@hisilicon.com>, Binghui Wang
-	<wangbinghui@hisilicon.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring
-	<robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] PCI: kirin: use
- for_each_available_child_of_node_scoped()
-Message-ID: <20240709164043.0000184e@Huawei.com>
-In-Reply-To: <20240707-pcie-kirin-dev_err_probe-v2-2-2fa94951d84d@gmail.com>
-References: <20240707-pcie-kirin-dev_err_probe-v2-0-2fa94951d84d@gmail.com>
-	<20240707-pcie-kirin-dev_err_probe-v2-2-2fa94951d84d@gmail.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1720539693; c=relaxed/simple;
+	bh=L/YLyuFVpcalfodXh6iSUAseC5/BrLWhVSI8KkE2tkc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h9ayunt3eNaqq8nQdKgUhZDePO55IYYvdUfjoeR1tFVihsRpEkAnoZW/KDqKVPZfgK/7KbW9LAEhxPVlA8u+jvh21OcQ94nl3WD97EBTZY5agDPm/lsOLZMpFRKR5R+G60iDJuucSAko/sCbZ046MYO1yspDcyeJPcS1ThtDO6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=ceNCeZpf; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 469FemH03543378
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Tue, 9 Jul 2024 08:40:59 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 469FemH03543378
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024061501; t=1720539660;
+	bh=4u6YpzKMMp/pyOORgFJw/J79spsRWRinGVyURWEku1Q=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ceNCeZpfiJR6aBz2gLM89MmpT0RD5PdMLC7LUWHrYdGV4vqpAE2cljfGFJhGKAyJG
+	 of77CiEQUpXox+nhl4KR2le1YRFItW/zutZ5AOOkyAb9kr51enpf3OsrZaPQfATGrU
+	 AN6v1pAamgRzQUantMvKLNelp6749l2Xl5H/iNk7UEZvsMc+7dlT8TegnJPv+POL5f
+	 qzD+fwAE9Fz7asHFQ38INr0pKFcgFMKID3IkaQlOHcFR1TwAJA0D/NdIyb6QQpB8uY
+	 ZAHcKQVKIhwaTFGLj0FZnbpMqu/JjF51vP4ptdYQVEXMBCZCJveRQUc61XBqvX43vL
+	 drNWjPQ6DQhwQ==
+From: "Xin Li (Intel)" <xin@zytor.com>
+To: linux-kernel@vger.kernel.org
+Cc: hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, peterz@infradead.org,
+        andrew.cooper3@citrix.com, nik.borisov@suse.com,
+        houwenlong.hwl@antgroup.com
+Subject: [PATCH v2 0/3] Enable FRED earlier
+Date: Tue,  9 Jul 2024 08:40:45 -0700
+Message-ID: <20240709154048.3543361-1-xin@zytor.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Transfer-Encoding: 8bit
 
-On Sun, 07 Jul 2024 15:54:02 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+Wenlong Hou from Ant group reported two problems during the FRED
+initialization:
+https://lore.kernel.org/lkml/cover.1718972598.git.houwenlong.hwl@antgroup.com/
 
-> The scoped version of the macro automatically decrements the child node
-> refcount on early exits, removing the need for the `goto` and
-> `of_node_put()`.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+The first problem is that spurious_interrupt() gets called on the
+HYPERVISOR_CALLBACK_VECTOR vector.  Because kvm_guest_init(), being
+executed way before trap_init() in which it is decided that whether
+FRED will be enabled or not, calls sysvec_install() to install
+HYPERVISOR_CALLBACK_VECTOR's interrupt handler into FRED system
+vector dispatch table or IDT depending on whether FRED is enabled.
 
-> ---
->  drivers/pci/controller/dwc/pcie-kirin.c | 10 +++-------
->  1 file changed, 3 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
-> index e00152b1ee99..7c591f50d0b2 100644
-> --- a/drivers/pci/controller/dwc/pcie-kirin.c
-> +++ b/drivers/pci/controller/dwc/pcie-kirin.c
-> @@ -446,7 +446,7 @@ static long kirin_pcie_get_resource(struct kirin_pcie *kirin_pcie,
->  				    struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> -	struct device_node *child, *node = dev->of_node;
-> +	struct device_node *node = dev->of_node;
->  	void __iomem *apb_base;
->  	int ret;
->  
-> @@ -471,17 +471,13 @@ static long kirin_pcie_get_resource(struct kirin_pcie *kirin_pcie,
->  		return ret;
->  
->  	/* Parse OF children */
-> -	for_each_available_child_of_node(node, child) {
-> +	for_each_available_child_of_node_scoped(node, child) {
->  		ret = kirin_pcie_parse_port(kirin_pcie, pdev, child);
->  		if (ret)
-> -			goto put_node;
-> +			return ret;
->  	}
->  
->  	return 0;
-> -
-> -put_node:
-> -	of_node_put(child);
-> -	return ret;
->  }
->  
->  static void kirin_pcie_sideband_dbi_w_mode(struct kirin_pcie *kirin_pcie,
-> 
+The other problem is that the #PF handler gets a wrong faulting
+address from the stack instead of CR2 before FRED is enabled.
+Because the #PF handler fetches its faulting addresss from the
+stack or CR2 based on whether FRED is available rather than active.
+
+This patchset fixes the 2 problems with suggestions from tglx:
+
+  1) Parse cmdline param "fred=" in cpu_parse_early_param() to
+     minimize the gap mentioned above, before kvm_guest_init().
+
+  2) Enable FRED right after init_mem_mapping() to switch to FRED
+     from early IDT ASAP, avoid intermediately using the IDT #PF
+     handler.
+
+
+Link to v1:
+https://lore.kernel.org/lkml/20240703085426.274801-1-xin@zytor.com/
+
+Changes since v1:
+* Drop the patch that changes wrmsrl() to wrmsrns().
+* Use strncmp() instead of strcmp().
+
+
+Xin Li (Intel) (3):
+  x86/fred: Parse cmdline param "fred=" in cpu_parse_early_param()
+  x86/fred: Split FRED RSP initialization into a separate function
+  x86/fred: Enable FRED right after init_mem_mapping()
+
+ arch/x86/include/asm/fred.h  |  2 ++
+ arch/x86/kernel/cpu/common.c |  9 ++++++---
+ arch/x86/kernel/fred.c       | 28 +++++++++++++++++++---------
+ arch/x86/kernel/setup.c      | 11 ++++++++++-
+ arch/x86/kernel/smpboot.c    |  6 ++++++
+ arch/x86/kernel/traps.c      | 30 ++++--------------------------
+ 6 files changed, 47 insertions(+), 39 deletions(-)
+
+
+base-commit: aa9d8caba6e40b0b02a6f2b5f2bd9177cd76cacf
+-- 
+2.45.2
 
 
