@@ -1,164 +1,119 @@
-Return-Path: <linux-kernel+bounces-245925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A429692BB76
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:36:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FFA792BB71
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31F191F2822B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:36:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEB1B1F27FF2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6781A16190B;
-	Tue,  9 Jul 2024 13:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1456167DB9;
+	Tue,  9 Jul 2024 13:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FqOumSBJ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="um2fjJ4W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2615015749F;
-	Tue,  9 Jul 2024 13:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1035215FCE5;
+	Tue,  9 Jul 2024 13:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720532126; cv=none; b=IjARprZifN/92K1J6HzdmBmm2ATK74LelhDFSZkQ6cFeEsyWADdUpZB9JXOxsZCyqp6DZxht+tP1xAyUEud4i9uyYDarBQShd/rlJ3+iOhJe10x6DQ2iRSMVpcDuAYtbwCZ7v1vD/BioyHPdwtXCEuOS1bS3+Jp6Qg3Yq46GJjQ=
+	t=1720532071; cv=none; b=Wb97CjOq079Loe+NyPFJnRHDaGcfdbW80uIpNjKUgYoMzNJ+0tFEbbNG1GC4p59ASLr8k/OBhp+Gid8m+7MMscriEeiIyiMab5mLYrFwR0uXS/ggkLchP8si7kW5Q1zjswssoVKBy1bRta+WTdnYR/XCxkSIfNeGBySzwOcNj8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720532126; c=relaxed/simple;
-	bh=DU3VRQnrYNqDNAW1kRz+FjafMjZRpBs2Xr3aTHym4Rw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=uP5ydGjWAj6lXqR+pSzlafOTP/hexgUGtEbu01noNs5xPmKEneVPytj2Tn7+wquH3Wk1FS4mraWDCD2nYrAwQfCdoQSnvWjdPBlS2PeUJX8VFuCGzjHTrSzOobX0InjeN2+Wj5Cnj/zkufGhHxTEZMlh69xWwxfVIRSJbgg81k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FqOumSBJ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469AF32V003367;
-	Tue, 9 Jul 2024 13:34:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=rJHuFR7kdC5Bjk0We68ws0
-	8urMZfuY363j5+cZKIEJc=; b=FqOumSBJUMv7GICTS7iSidR1uNIsCJj0i25PZz
-	DgZE2qiGDwvuQjvCWuun/3v8bSLTeCkXp34kJXMJNe2Yt3hGgbFKNxLW5TpqNIPg
-	8wglncJ/T+Ly4SaBc1J+oNU4mnX/VWUJ7BTAAp1wQM7c0w1ou/CjjOE8Kr+p06kS
-	JIPoekePTdEYCsbIjrow2RSWo3e4FgVqbz8FoMrL+Mkd3a7sztLVUbvs3tFhhZHk
-	azbhXyOaMT5Mkfx/TOH6dZqsQjUY1lPT23ZbSdU4qpGdu3SZbcyWhZ/sFCEfTM+x
-	Fy9joXulxgsnhEIEEl0rVwqyhIIilZ6hzh3oSKUCxcCCo21Q==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wjn6t2h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 13:34:16 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469DYFd1015308
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 9 Jul 2024 13:34:15 GMT
-Received: from tengfan-gv.ap.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 9 Jul 2024 06:34:10 -0700
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-Date: Tue, 9 Jul 2024 21:34:00 +0800
-Subject: [PATCH v2] dt-bindings: crypto: qcom,prng: document QCS9100
+	s=arc-20240116; t=1720532071; c=relaxed/simple;
+	bh=Gh96kZoSu4qPl4qjbYnI8f6b5V2rgNt42/D6al+sp0I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nanz6tJU+VE7mohvjWpaLPd+rlqcfThkd4EYs8SxF5T8ZZpFO6A69/xKIoHqOATj3Go14x/IO3u4o3l8mYkB2ViC+8CyjcE+pTV+CqUfXMK76ST2fYR7S3ENi+4iahC84kYrgE+gYxx6hu8fY5fUqMJ0TgsJki9bIb/BoxKWnvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=um2fjJ4W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89BE4C4AF18;
+	Tue,  9 Jul 2024 13:34:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720532070;
+	bh=Gh96kZoSu4qPl4qjbYnI8f6b5V2rgNt42/D6al+sp0I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=um2fjJ4W0tMdw1qTEefEGHwsoPIinl8Azwam2dvwPebUUX4JUss5ftzuuN3tC3xmj
+	 yX4ZS/24VpkBq4lgojA78+Z9CYY+jaXKaFrhdVtkHCja8tC2WgNaAwExnBTiE8JsXR
+	 Q1XGHaUedGR7XDWx8qH2LUzB7ILBnVKvH8aLt7IuIB859C4F8EeXiwVaqi0qssHUcX
+	 Up0fNkhrYyYttsqDT0BZ3qVhsswDXvf0UIwU4ROh+59691qENsflhd3sH0SCYz5dlg
+	 sBxO+iKkADL0SmnPD23jMuWnY9+79o7Y0vqzQ9JiHL3AIQBxMR0MVlA34eFxvuyPFD
+	 2eB5sXpuMghbA==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52ea5dc3c66so7071773e87.3;
+        Tue, 09 Jul 2024 06:34:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVvuz8hjpabodKCPf6W4w4edkoWTq2k+uK1nHE2h+/d9pOx1gF354GSQwkATQl7KHl5RhRdVt337ItFGzVVcfoD2Z+W7cPUJZ8bOlX64sonWgsuX0xAET8tPZzVd6MvnIomVZT53YIEzA==
+X-Gm-Message-State: AOJu0Yzfpvsf+4fq4eXWoeiASqMqshzVnOKIxfQyggXzhTN+XunYFRxi
+	4akm/MdFCbEUTYAL8Bl0UFfRXMUgbD4Ia6573nTc9oXT+F2CZFuZ0rmH5O92pbfebNgz5FMO4ia
+	t3wQyfyUWl1Q28pGCKM06A3/aTg==
+X-Google-Smtp-Source: AGHT+IEWCZmwb7bqWfeSc24koi5vl4aX6yZQat4xM5ztZzsP7RJPqi/BX7TS1eBsMl67Usjfu//6soofUXW18r5bfeQ=
+X-Received: by 2002:a05:6512:3b9d:b0:52b:be6b:d16a with SMTP id
+ 2adb3069b0e04-52eb99a3526mr2523301e87.31.1720532068799; Tue, 09 Jul 2024
+ 06:34:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240709-document_qcs9100_trng_compatible-v2-1-3a924ee68511@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAEc8jWYC/zXNQQqDMBCF4atI1o2MMVbtqvcoIhpHHaiJJlFax
- Ls3Cl1+b/H+nTm0hI49op1Z3MiR0QHiFjE1NnpATl0wEyAk5FDyzqh1Qu3rRbkyAai91UOtzDQ
- 3nto38hblvUtB5rKQLNzMFnv6XIlXFTyS88Z+r+KWnOv/PAWRFRnEIskFQMETvqykao966Bv9P
- EFaxaHFquM4fkURvSG8AAAA
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Vinod Koul
-	<vkoul@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Tengfei Fan <quic_tengfan@quicinc.com>
-X-Mailer: b4 0.15-dev-a66ce
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720532049; l=2396;
- i=quic_tengfan@quicinc.com; s=20240709; h=from:subject:message-id;
- bh=DU3VRQnrYNqDNAW1kRz+FjafMjZRpBs2Xr3aTHym4Rw=;
- b=eoYm9hAAGEpoD5+EdVl0NLpFh5UQ/n9pGZscfw4+/7b8zEkDKOrIFM3LZHAULQ8+yfd6SM1an
- sqzO0T/RdBCBLVvQVXgBLWoJfLkG8dzo8UmhfzTJXWX05Vd+aMIYvxS
-X-Developer-Key: i=quic_tengfan@quicinc.com; a=ed25519;
- pk=4VjoTogHXJhZUM9XlxbCAcZ4zmrLeuep4dfOeKqQD0c=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 8ZF87UzU--WJ7Fkvlj1LdnXKuL7cHp0o
-X-Proofpoint-GUID: 8ZF87UzU--WJ7Fkvlj1LdnXKuL7cHp0o
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_03,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=946 clxscore=1015
- mlxscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0
- priorityscore=1501 phishscore=0 malwarescore=0 bulkscore=0 impostorscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090087
+References: <20240709164618.69cfcfad@canb.auug.org.au> <CAL_JsqLmm6Da=4G9cJfAtKJB5j_dfbTywRRwHMKZyf3J7SAxfg@mail.gmail.com>
+ <f2ceee62-2612-42d1-b727-2f087acc6785@app.fastmail.com>
+In-Reply-To: <f2ceee62-2612-42d1-b727-2f087acc6785@app.fastmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 9 Jul 2024 07:34:16 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJU5Ak9-wXai-q9E6btKOnoFDD5X17tighmzVPFUpAgdA@mail.gmail.com>
+Message-ID: <CAL_JsqJU5Ak9-wXai-q9E6btKOnoFDD5X17tighmzVPFUpAgdA@mail.gmail.com>
+Subject: Re: linux-next: duplicate patches in the devicetree tree
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul@pwsan.com>, 
+	ARM <linux-arm-kernel@lists.infradead.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Document QCS9100 compatible for the True Random Number Generator.
-QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
-platform use non-SCMI resource. In the future, the SA8775p platform will
-move to use SCMI resources and it will have new sa8775p-related device
-tree. Consequently, introduce "qcom,qcs9100-trng" to describe non-SCMI
-based TRNG.
+On Tue, Jul 9, 2024 at 7:16=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Tue, Jul 9, 2024, at 14:42, Rob Herring wrote:
+> > On Tue, Jul 9, 2024 at 12:46=E2=80=AFAM Stephen Rothwell <sfr@canb.auug=
+.org.au> wrote:
+> >>
+> >> Hi all,
+> >>
+> >> The following commits are also in the arm-soc and risc-v trees as
+> >> different commits (but the same patches):
+> >>
+> >>   0620bce64afa ("dt-bindings: riscv: cpus: add ref to interrupt-contro=
+ller")
+> >>   877097a2fab0 ("dt-bindings: interrupt-controller: convert marvell,mp=
+ic binding to YAML")
+> >>   c7ce06684bf5 ("dt-bindings: interrupt-controller: riscv,cpu-intc: co=
+nvert to dtschema")
+> >
+> > I had to rebase my tree yesterday to drop a bunch of reserved-memory
+> > restructuring that seems broken beyond repair. Maybe I'm going to have
+> > to just do reverts instead. I had no knowledge that anyone had pulled
+> > in my tree and how is it just these 3 commits? It should be at least
+> > these:
+>
+> I picked up
+>
+> b1a4e71d4fc4 arm: dts: arm: Drop redundant fixed-factor clocks
+> f7e642bcd622 dt-bindings: interrupt-controller: convert marvell,mpic bind=
+ing to YAML
+> 2af8d8a583a4 ARM: dts: armada-{370-xp,375,38x,39x}: Drop #size-cells from=
+ mpic node
+>
+> from patchwork when they were sent to soc@kernel.org. I don't
+> see the other ones in the arm-soc tree though, maybe they
+> are merged elsewhere?
 
-Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
----
-Introduce support for the QCS9100 SoC device tree (DTSI) and the
-QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
-While the QCS9100 platform is still in the early design stage, the
-QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
-mounts the QCS9100 SoC instead of the SA8775p SoC.
+Looks like it is just these 3 and my rebase was just a coincidence.
+The duplicates have been there for some time. The risc-v patches were
+applied by both Palmer and me on 6/24, but not pushed out by Palmer
+until 6/27.
 
-The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
-all the compatible strings will be updated from "SA8775p" to "QCS9100".
-The QCS9100 device tree patches will be pushed after all the device tree
-bindings and device driver patches are reviewed.
+I guess since I rebased already, I can again and will drop these 3 commits.
 
-The final dtsi will like:
-https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
-
-The detailed cover letter reference:
-https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
----
-Changes in v2:
-  - Split huge patch series into different patch series according to
-    subsytems
-  - Update patch commit message
-
-prevous disscussion here:
-[1] v1: https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
----
- Documentation/devicetree/bindings/crypto/qcom,prng.yaml | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/crypto/qcom,prng.yaml b/Documentation/devicetree/bindings/crypto/qcom,prng.yaml
-index 89c88004b41b..e97226eb7a50 100644
---- a/Documentation/devicetree/bindings/crypto/qcom,prng.yaml
-+++ b/Documentation/devicetree/bindings/crypto/qcom,prng.yaml
-@@ -17,6 +17,7 @@ properties:
-           - qcom,prng-ee  # 8996 and later using EE
-       - items:
-           - enum:
-+              - qcom,qcs9100-trng
-               - qcom,sa8775p-trng
-               - qcom,sc7280-trng
-               - qcom,sm8450-trng
-
----
-base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
-change-id: 20240709-document_qcs9100_trng_compatible-be46d3047484
-
-Best regards,
--- 
-Tengfei Fan <quic_tengfan@quicinc.com>
-
+Rob
 
