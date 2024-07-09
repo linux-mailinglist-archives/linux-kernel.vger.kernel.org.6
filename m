@@ -1,149 +1,263 @@
-Return-Path: <linux-kernel+bounces-245826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D96DF92B9FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:54:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1805292BA04
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61DD5B26991
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:54:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BFA01C21F42
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC4C15B115;
-	Tue,  9 Jul 2024 12:54:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7112E14884D;
-	Tue,  9 Jul 2024 12:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C4C15ECCD;
+	Tue,  9 Jul 2024 12:55:01 +0000 (UTC)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47BE815B115;
+	Tue,  9 Jul 2024 12:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720529662; cv=none; b=uMIl8+bXz4/JQp56xPvi2beb9Z8RBXbnm01q/7w0cGSKEX9xDVQw+Go4Q99t0t5RMamT0+djKnF/OUwh1oPqYpO71zeFzY8TISsfE5Le+i1TaOpKWiWuwI2n0p/juSLEi62jodXKDTh0szN88feUPOv7ps/KoddZ9OwE6vFY9Ys=
+	t=1720529701; cv=none; b=b65CEOlzISOOun3831uGhAy3SvCufjWlpjDxU/o9oRdFiq/hNM+EC+5YCCPvQrVmieqD5ohjX5fYQ1DcTpZGRFzVYUDj7vQ0rXKRXG8BrHbrybeynCJHmz+ubUCOrUIO/R1ldvhWNR+EOhah/Swvw0jPJjL9xySgO+oqV5iIjXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720529662; c=relaxed/simple;
-	bh=p7zs1IS07rD+Ld+gadpw7nC9GeBWJcNEHZrW9TdYU6A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PZh0NYnKUvy0DlFHLh06yApt8HDFM0WuzkcPzwE/GIaXxHPExcazXk7efqctdqFnyuiDcdJPsmAvFxVSPndT4wL9Oe9nzxNU9x8I2esNRlOL4VUE9JXt0dibwCYNR93muDYSWvwEQ09KusSkL3dr4X6VAXqLWMC8+cfVzmSXVwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC626153B;
-	Tue,  9 Jul 2024 05:54:44 -0700 (PDT)
-Received: from [10.57.74.191] (unknown [10.57.74.191])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 817EB3F766;
-	Tue,  9 Jul 2024 05:54:16 -0700 (PDT)
-Message-ID: <f8dca28c-e5d6-4a1b-8bd3-6a711dae7078@arm.com>
-Date: Tue, 9 Jul 2024 13:54:14 +0100
+	s=arc-20240116; t=1720529701; c=relaxed/simple;
+	bh=9PO3TWvq+waQ74u3npd7fq5+Cw0Zco4GaDHQdeBV0Ec=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uZXTBwyYq6RJfn64S7H+DmFfjS0buwOu3zDbharMRRksmSfhmkjEyU76r+oU367RSqjzlMhBlUNYRJZXgyWSIvHWmay9p3uH8gYwTro3E5qa/pYxxQL3bmVJcA4JmCPPUAIqJUCOTegX8nbmT0ISKJFOAfxOnjB5q2fFAfbuWa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ee77db6f97so70411001fa.2;
+        Tue, 09 Jul 2024 05:54:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720529697; x=1721134497;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bYRK+lWxc+A6Zv3ZqTk81Q6ZiXhb7j50T+TrH+WeHaE=;
+        b=d4NzGO6xS4ApRQmhMJwCCCQpKGpI8ObQnMflBkpdCM0NwoCAJAgdK9cZXZG2cuOcYv
+         XtCbxygYCahQq8Ai/S57OahdH4bcCMlqvXFmS692uh8PomighMgssJupzfGbuD5HZ9Dv
+         sZgDxfgW3KjbN0Mej70VZntdBBObmHMR7T9wjYX6X1ggww1MN7fX+HZfiR+7gr2KUK1G
+         Eg5dW/iZoxkRx1Ul36oUSJbflk5tVP5FsnPK7d1yytIdCWmwkfFhdHffvt4MHz+TRwWA
+         JpDyLE93rjJXhCZdi2wtsdswbvUvBX5L5Iy0B7ZncVW7Rcyh2poyftY2M+lyHdsHUQrz
+         w9TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX157WklpbOVIwGwZ5qJRWehoUfPH3R4fkCLxL7gkBLfZYhSo6Y55STsoqHiZvCtkELjUut978IoxTycYmffoQFuIce2fJa4VYX3SwUBAiNDWKkPoH/n4nm2oPT/VtB+MuQcGGLdH6A5/G/lFjL3x5MtrNl4Pm9pkndFzPUCqZh/3YqbIoB
+X-Gm-Message-State: AOJu0YyFYRoZ++CcKP+nQSMCkx2KZVb+ZZZBp/l8CTdhyUOt3HaM6L5b
+	LxuF09H71Y2uDTQByo72LqkHk4hKRleMRrmmx3qhC9XFFg7GBKcr
+X-Google-Smtp-Source: AGHT+IGUIUE8izYvb7NUGi91NFWWGNLL6W16JszYvLUzOoMkkOlxPTldAWE3Wghrd/STmPVD3c0d0g==
+X-Received: by 2002:a2e:9b0f:0:b0:2ee:8dce:2f92 with SMTP id 38308e7fff4ca-2eeb30ba7acmr21073781fa.1.1720529697040;
+        Tue, 09 Jul 2024 05:54:57 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6e157bsm76326766b.80.2024.07.09.05.54.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 05:54:56 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: keescook@chromium.org,
+	horms@kernel.org,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+	linux-hardening@vger.kernel.org,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	netdev@vger.kernel.org (open list:NETWORKING [GENERAL]),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next v2] netdevice: define and allocate &net_device _properly_
+Date: Tue,  9 Jul 2024 05:54:25 -0700
+Message-ID: <20240709125433.4026177-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 05/15] arm64: Mark all I/O as non-secure shared
-Content-Language: en-GB
-To: Will Deacon <will@kernel.org>, Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
- Zenghui Yu <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-References: <20240701095505.165383-1-steven.price@arm.com>
- <20240701095505.165383-6-steven.price@arm.com>
- <20240709113925.GA13242@willie-the-truck>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20240709113925.GA13242@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Will
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
 
-On 09/07/2024 12:39, Will Deacon wrote:
-> On Mon, Jul 01, 2024 at 10:54:55AM +0100, Steven Price wrote:
->> All I/O is by default considered non-secure for realms. As such
->> mark them as shared with the host.
->>
->> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->> Changes since v3:
->>   * Add PROT_NS_SHARED to FIXMAP_PAGE_IO rather than overriding
->>     set_fixmap_io() with a custom function.
->>   * Modify ioreamp_cache() to specify PROT_NS_SHARED too.
->> ---
->>   arch/arm64/include/asm/fixmap.h | 2 +-
->>   arch/arm64/include/asm/io.h     | 8 ++++----
->>   2 files changed, 5 insertions(+), 5 deletions(-)
->>
->> diff --git a/arch/arm64/include/asm/fixmap.h b/arch/arm64/include/asm/fixmap.h
->> index 87e307804b99..f2c5e653562e 100644
->> --- a/arch/arm64/include/asm/fixmap.h
->> +++ b/arch/arm64/include/asm/fixmap.h
->> @@ -98,7 +98,7 @@ enum fixed_addresses {
->>   #define FIXADDR_TOT_SIZE	(__end_of_fixed_addresses << PAGE_SHIFT)
->>   #define FIXADDR_TOT_START	(FIXADDR_TOP - FIXADDR_TOT_SIZE)
->>   
->> -#define FIXMAP_PAGE_IO     __pgprot(PROT_DEVICE_nGnRE)
->> +#define FIXMAP_PAGE_IO     __pgprot(PROT_DEVICE_nGnRE | PROT_NS_SHARED)
->>   
->>   void __init early_fixmap_init(void);
->>   
->> diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
->> index 4ff0ae3f6d66..07fc1801c6ad 100644
->> --- a/arch/arm64/include/asm/io.h
->> +++ b/arch/arm64/include/asm/io.h
->> @@ -277,12 +277,12 @@ static inline void __const_iowrite64_copy(void __iomem *to, const void *from,
->>   
->>   #define ioremap_prot ioremap_prot
->>   
->> -#define _PAGE_IOREMAP PROT_DEVICE_nGnRE
->> +#define _PAGE_IOREMAP (PROT_DEVICE_nGnRE | PROT_NS_SHARED)
->>   
->>   #define ioremap_wc(addr, size)	\
->> -	ioremap_prot((addr), (size), PROT_NORMAL_NC)
->> +	ioremap_prot((addr), (size), (PROT_NORMAL_NC | PROT_NS_SHARED))
->>   #define ioremap_np(addr, size)	\
->> -	ioremap_prot((addr), (size), PROT_DEVICE_nGnRnE)
->> +	ioremap_prot((addr), (size), (PROT_DEVICE_nGnRnE | PROT_NS_SHARED))
-> 
-> Hmm. I do wonder whether you've pushed the PROT_NS_SHARED too far here.
-> 
-> There's nothing _architecturally_ special about the top address bit.
-> Even if the RSI divides the IPA space in half, the CPU doesn't give two
-> hoots about it in the hardware. In which case, it feels wrong to bake
-> PROT_NS_SHARED into ioremap_prot -- it feels much better to me if the
-> ioremap() code OR'd that into the physical address when passing it down
+In fact, this structure contains a flexible array at the end, but
+historically its size, alignment etc., is calculated manually.
+There are several instances of the structure embedded into other
+structures, but also there's ongoing effort to remove them and we
+could in the meantime declare &net_device properly.
+Declare the array explicitly, use struct_size() and store the array
+size inside the structure, so that __counted_by() can be applied.
+Don't use PTR_ALIGN(), as SLUB itself tries its best to ensure the
+allocated buffer is aligned to what the user expects.
+Also, change its alignment from %NETDEV_ALIGN to the cacheline size
+as per several suggestions on the netdev ML.
 
-Actually we would like to push the decision of applying the 
-"pgprot_decrypted" vs pgprot_encrypted into ioremap_prot(), rather
-than sprinkling every user of ioremap_prot().
+bloat-o-meter for vmlinux:
 
-This could be made depending on the address that is passed on to the
-ioremap_prot(). I guess we would need explicit requests from the callers
-to add "encrypted vs decrypted". Is that what you guys are looking at ?
+free_netdev                                  445     440      -5
+netdev_freemem                                24       -     -24
+alloc_netdev_mqs                            1481    1450     -31
 
-> 
-> There's a selfish side of that argument, in that we need to hook
-> ioremap() for pKVM protected guests, but I do genuinely feel that
-> treating address bits as protection bits is arbitrary and doesn't belong
-> in these low-level definitions. In a similar vein, AMD has its
-> sme_{set,clr}() macros that operate on the PA (e.g. via dma_to_phys()),
-> which feels like a more accurate abstraction to me.
+On x86_64 with several NICs of different vendors, I was never able to
+get a &net_device pointer not aligned to the cacheline size after the
+change.
 
-I believe that doesn't solve all the problems. They do have a hook in
-__ioremap_caller() that implicitly applies pgprot_{en,de}crypted
-depending on other info.
+Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+---
+Changelog:
 
-Cheers
-Suzuki
+v2:
+ * Rebased Alexander's patch on top of f750dfe825b90 ("ethtool: provide
+   customized dim profile management").
+ * Removed the ALIGN() of SMP_CACHE_BYTES for sizeof_priv.
 
-> 
-> Will
+v1:
+ * https://lore.kernel.org/netdev/90fd7cd7-72dc-4df6-88ec-fbc8b64735ad@intel.com
+
+ include/linux/netdevice.h | 12 +++++++-----
+ net/core/dev.c            | 30 ++++++------------------------
+ net/core/net-sysfs.c      |  2 +-
+ 3 files changed, 14 insertions(+), 30 deletions(-)
+
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index 93558645c6d0..f0dd499244d4 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -2199,10 +2199,10 @@ struct net_device {
+ 	unsigned short		neigh_priv_len;
+ 	unsigned short          dev_id;
+ 	unsigned short          dev_port;
+-	unsigned short		padded;
++	int			irq;
++	u32			priv_len;
+ 
+ 	spinlock_t		addr_list_lock;
+-	int			irq;
+ 
+ 	struct netdev_hw_addr_list	uc;
+ 	struct netdev_hw_addr_list	mc;
+@@ -2406,7 +2406,10 @@ struct net_device {
+ 
+ 	/** @irq_moder: dim parameters used if IS_ENABLED(CONFIG_DIMLIB). */
+ 	struct dim_irq_moder	*irq_moder;
+-};
++
++	u8			priv[] ____cacheline_aligned
++				       __counted_by(priv_len);
++} ____cacheline_aligned;
+ #define to_net_dev(d) container_of(d, struct net_device, dev)
+ 
+ /*
+@@ -2596,7 +2599,7 @@ void dev_net_set(struct net_device *dev, struct net *net)
+  */
+ static inline void *netdev_priv(const struct net_device *dev)
+ {
+-	return (char *)dev + ALIGN(sizeof(struct net_device), NETDEV_ALIGN);
++	return (void *)dev->priv;
+ }
+ 
+ /* Set the sysfs physical device reference for the network logical device
+@@ -3127,7 +3130,6 @@ static inline void unregister_netdevice(struct net_device *dev)
+ 
+ int netdev_refcnt_read(const struct net_device *dev);
+ void free_netdev(struct net_device *dev);
+-void netdev_freemem(struct net_device *dev);
+ void init_dummy_netdev(struct net_device *dev);
+ 
+ struct net_device *netdev_get_xmit_slave(struct net_device *dev,
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 73e5af6943c3..6ea1d20676fb 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -11006,13 +11006,6 @@ void netdev_sw_irq_coalesce_default_on(struct net_device *dev)
+ }
+ EXPORT_SYMBOL_GPL(netdev_sw_irq_coalesce_default_on);
+ 
+-void netdev_freemem(struct net_device *dev)
+-{
+-	char *addr = (char *)dev - dev->padded;
+-
+-	kvfree(addr);
+-}
+-
+ /**
+  * alloc_netdev_mqs - allocate network device
+  * @sizeof_priv: size of private data to allocate space for
+@@ -11032,8 +11025,6 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
+ 		unsigned int txqs, unsigned int rxqs)
+ {
+ 	struct net_device *dev;
+-	unsigned int alloc_size;
+-	struct net_device *p;
+ 
+ 	BUG_ON(strlen(name) >= sizeof(dev->name));
+ 
+@@ -11047,21 +11038,12 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
+ 		return NULL;
+ 	}
+ 
+-	alloc_size = sizeof(struct net_device);
+-	if (sizeof_priv) {
+-		/* ensure 32-byte alignment of private area */
+-		alloc_size = ALIGN(alloc_size, NETDEV_ALIGN);
+-		alloc_size += sizeof_priv;
+-	}
+-	/* ensure 32-byte alignment of whole construct */
+-	alloc_size += NETDEV_ALIGN - 1;
+-
+-	p = kvzalloc(alloc_size, GFP_KERNEL_ACCOUNT | __GFP_RETRY_MAYFAIL);
+-	if (!p)
++	dev = kvzalloc(struct_size(dev, priv, sizeof_priv),
++		       GFP_KERNEL_ACCOUNT | __GFP_RETRY_MAYFAIL);
++	if (!dev)
+ 		return NULL;
+ 
+-	dev = PTR_ALIGN(p, NETDEV_ALIGN);
+-	dev->padded = (char *)dev - (char *)p;
++	dev->priv_len = sizeof_priv;
+ 
+ 	ref_tracker_dir_init(&dev->refcnt_tracker, 128, name);
+ #ifdef CONFIG_PCPU_DEV_REFCNT
+@@ -11148,7 +11130,7 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
+ 	free_percpu(dev->pcpu_refcnt);
+ free_dev:
+ #endif
+-	netdev_freemem(dev);
++	kvfree(dev);
+ 	return NULL;
+ }
+ EXPORT_SYMBOL(alloc_netdev_mqs);
+@@ -11203,7 +11185,7 @@ void free_netdev(struct net_device *dev)
+ 	/*  Compatibility with error handling in drivers */
+ 	if (dev->reg_state == NETREG_UNINITIALIZED ||
+ 	    dev->reg_state == NETREG_DUMMY) {
+-		netdev_freemem(dev);
++		kvfree(dev);
+ 		return;
+ 	}
+ 
+diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
+index 4c27a360c294..0e2084ce7b75 100644
+--- a/net/core/net-sysfs.c
++++ b/net/core/net-sysfs.c
+@@ -2028,7 +2028,7 @@ static void netdev_release(struct device *d)
+ 	 * device is dead and about to be freed.
+ 	 */
+ 	kfree(rcu_access_pointer(dev->ifalias));
+-	netdev_freemem(dev);
++	kvfree(dev);
+ }
+ 
+ static const void *net_namespace(const struct device *d)
+-- 
+2.43.0
 
 
