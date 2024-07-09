@@ -1,49 +1,56 @@
-Return-Path: <linux-kernel+bounces-245136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C909092AED9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:40:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CC1F92AEDB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:45:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42723B2180A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:40:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4CAD1F22E3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4BA12C474;
-	Tue,  9 Jul 2024 03:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VLJuUeUV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D614412C474;
+	Tue,  9 Jul 2024 03:45:05 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA5D537FF;
-	Tue,  9 Jul 2024 03:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C17487BF;
+	Tue,  9 Jul 2024 03:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720496431; cv=none; b=isY5RYVj3SHCPaP/7PL9dr2v2fa4fpiNosNdYu1/5zdhT8jR2ZFvn2NneEMlyq40QhVvnHHankti1KCVuME5WEylUvtuqZLz6i90h0/15zD+2IrY0lbtpTPNHYuk6tLEIPFJ2ljFJ8LM3s9jZfFgXbv0wGy6Mxl9R5FT0LHZL4M=
+	t=1720496705; cv=none; b=qdT6NOA2qd2X2dlMMma+ytK6XjdpAawUnUj9nOFB8uMt0DbX6aeysV9+nVU8d+0E9pYMay74Zw3SjwPI+oU53mV/2xc2LvPuZN44uU14n9PzUobQW3jQ4KYVxcnzMLgw1H8ockPG2/mW8w4zSY3a2FCkOdEcnswYnrozi6Og5AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720496431; c=relaxed/simple;
-	bh=sgw7LUC/0Mxq3RnwehNtFpg+TR172S5GMG1Pe2+FLo0=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=hkY6zeJWB2VM7at9Li+UDoZk6sq4HwNlNf/MZAC3TIgNOxe/qYJqfRPFhNDCDp9lc0h+LmGe5NCOBax5//xTlWKltk3PJdAA3iTvs5lOi2e3eRcYqTF7+p+HWHgewXPkxGJmmNflcibIO4am6n6r3krHexXb8gdtiiZYaAhIkGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VLJuUeUV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 04285C4AF0A;
-	Tue,  9 Jul 2024 03:40:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720496431;
-	bh=sgw7LUC/0Mxq3RnwehNtFpg+TR172S5GMG1Pe2+FLo0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=VLJuUeUVA9HpD5ORd0TEgvl5N9ijMO8/lQvlJOZ2yfHpqLkBKKbhqVGsLdTwL90PK
-	 /vs6eAPZNSru2rHL6grba98JMtZUQBugmIe+ODWgeYAmc2WzhicCjh17pj9OrZN+kg
-	 ITQ7dCJFD/BzsSsAf4n8HVhuEab9u4DXjQDck7mIHpSY2r0pDRt5r0VWoMbFRklKXr
-	 BJGl6edeYCczzQiSBaf1RNwARxvfPRVpI6QF5Jj+xCZVWd3OPa4qZ2ESGByIF1uCmT
-	 KDke5WP88Yqs81Wo0K+fPkb2T0z1Z1PBCyjDGIE+0OW/VUA2HX+fHyD896in9ZAzAn
-	 mxi/luSb2WOpw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id ECB55DF3714;
-	Tue,  9 Jul 2024 03:40:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720496705; c=relaxed/simple;
+	bh=Pw4p8/KcbKYCtsHR85RU59eLYetIK69UMFr3IQeUTms=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FdChqc5gR+u3jSLEFOgD/GJE3kuPuWLmzMyg0bSDcr3yXsxKS5rJrditqwPj1xNXJeDmRKlgl7C148Cn418q4k5HqzBfrH4nKU0AQTpcsKCQ7ZoK4gAxiqNCGN938Bw85L+CsvHq8kNiU3FzOFzV9PTcCPfH1PmU7rnvqkqyOps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowABnbckxsoxmXAFdAg--.261S2;
+	Tue, 09 Jul 2024 11:44:49 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: akpm@linux-foundation.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] test_bpf: Convert comma to semicolon
+Date: Tue,  9 Jul 2024 11:43:23 +0800
+Message-Id: <20240709034323.586185-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,48 +58,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3 0/2] net: stmmac: qcom-ethqos: enable 2.5G
- ethernet on sa8775p-ride
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172049643096.15240.14162761125981219295.git-patchwork-notify@kernel.org>
-Date: Tue, 09 Jul 2024 03:40:30 +0000
-References: <20240703181500.28491-1-brgl@bgdev.pl>
-In-Reply-To: <20240703181500.28491-1-brgl@bgdev.pl>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- bartosz.golaszewski@linaro.org
+X-CM-TRANSID:qwCowABnbckxsoxmXAFdAg--.261S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZFy5WF4DZr48GrWfJF47urg_yoW8JFykpF
+	n8GayDCr4UXr43tay5JrW2vw48uFW2y3sFgr9FyrW7Aay3AF15JayrK3yYyrn3ZayrWa1S
+	vr17ur13Z3ZrJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2Wl
+	Yx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26F4j6r4UJwAm72CE4IkC6x0Yz7
+	v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF
+	7I0E8cxan2IY04v7MxkIecxEwVAFwVW8GwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JU9XocUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Hello:
+Replace a comma between expression statements by a semicolon.
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ lib/test_bpf.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Wed,  3 Jul 2024 20:14:57 +0200 you wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Here are the changes required to enable 2.5G ethernet on sa8775p-ride.
-> As advised by Andrew Lunn and Russell King, I am reusing the existing
-> stmmac infrastructure to enable the SGMII loopback and so I dropped the
-> patches adding new callbacks to the driver core. I also added more
-> details to the commit message and made sure the workaround is only
-> enabled on Rev 3 of the board (with AQR115C PHY). Also: dropped any
-> mentions of the OCSGMII mode.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v3,1/2] net: stmmac: qcom-ethqos: add support for 2.5G BASEX mode
-    https://git.kernel.org/netdev/net-next/c/61e9be0efbe8
-  - [net-next,v3,2/2] net: stmmac: qcom-ethqos: enable SGMII loopback during DMA reset on sa8775p-ride-r3
-    https://git.kernel.org/netdev/net-next/c/3c466d6537b9
-
-You are awesome, thank you!
+diff --git a/lib/test_bpf.c b/lib/test_bpf.c
+index b7acc29bcc3b..ca4b0eea81a2 100644
+--- a/lib/test_bpf.c
++++ b/lib/test_bpf.c
+@@ -1740,7 +1740,7 @@ static int __bpf_emit_cmpxchg32(struct bpf_test *self, void *arg,
+ 	/* Result unsuccessful */
+ 	insns[i++] = BPF_STX_MEM(BPF_W, R10, R1, -4);
+ 	insns[i++] = BPF_ATOMIC_OP(BPF_W, BPF_CMPXCHG, R10, R2, -4);
+-	insns[i++] = BPF_ZEXT_REG(R0), /* Zext always inserted by verifier */
++	insns[i++] = BPF_ZEXT_REG(R0); /* Zext always inserted by verifier */
+ 	insns[i++] = BPF_LDX_MEM(BPF_W, R3, R10, -4);
+ 
+ 	insns[i++] = BPF_JMP32_REG(BPF_JEQ, R1, R3, 2);
+@@ -1754,7 +1754,7 @@ static int __bpf_emit_cmpxchg32(struct bpf_test *self, void *arg,
+ 	/* Result successful */
+ 	i += __bpf_ld_imm64(&insns[i], R0, dst);
+ 	insns[i++] = BPF_ATOMIC_OP(BPF_W, BPF_CMPXCHG, R10, R2, -4);
+-	insns[i++] = BPF_ZEXT_REG(R0), /* Zext always inserted by verifier */
++	insns[i++] = BPF_ZEXT_REG(R0); /* Zext always inserted by verifier */
+ 	insns[i++] = BPF_LDX_MEM(BPF_W, R3, R10, -4);
+ 
+ 	insns[i++] = BPF_JMP32_REG(BPF_JEQ, R2, R3, 2);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.25.1
 
 
