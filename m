@@ -1,109 +1,173 @@
-Return-Path: <linux-kernel+bounces-246588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2C3C92C3F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:33:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C8892C3FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EB4A1C22321
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:33:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6446CB220AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E4917B04B;
-	Tue,  9 Jul 2024 19:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7651182A6A;
+	Tue,  9 Jul 2024 19:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b="YRtqXuq9"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jpo4jrcM"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68051B86DE
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 19:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AA8839E4;
+	Tue,  9 Jul 2024 19:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720553620; cv=none; b=pNQWiuJjyK4UlmItuw0DOdzgBNvUd5sUsphzf3PPCH8wWypOZ3zAHHG3ElVGLeGstNtn3V/z/sB9Q0C6CidvZeBhDVAdrlm9L5xPpJhzBrUhIMFJ1Vs98BJSdWw+UYS3cvt7FrkXg8znFQnglHj9ehjGEsMUY01tJsFPOYWc1Ag=
+	t=1720553967; cv=none; b=us9qxiqRAHtUsH/4XJbtS40Bfgl/NkrqOoLwQ9/78imEjEw8f6w3iwagKjdw49woJSov08e4FYAXLlUyGzyzGk8dGt1JsUi042xd96j4Gc4n1W1tzp1dNzr0avg1sqhQBEiPWhWRo5b7rcDlTBe42CXM23PHt6ec59VlHCS2cp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720553620; c=relaxed/simple;
-	bh=v6AKfXnHeVu2/UfI+aqXZHef/Z7EGDNibYawF/VOrSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=syqS986oaArO1IzrhzeeeNUBWrXxtg9MqZcSsgnH0o9t14ZRpBHBfAXqCfalKxuqX982Du9AU7lRvtWKchLIsTqJ6ej5X/hyR6RR4ZNGnZK4TIO2uRJ10to+P+IdkrALAuEJZKP2VUojoqTI3WrmuzBD3g1BqdBz1eHhFumauz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=j.neuschaefer@gmx.net header.b=YRtqXuq9; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1720553598; x=1721158398; i=j.neuschaefer@gmx.net;
-	bh=v6AKfXnHeVu2/UfI+aqXZHef/Z7EGDNibYawF/VOrSU=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=YRtqXuq92I4Ig30V05hzCVn4AE8yuwEib6KHaAco4+6u6YS/+xY8ExScIrH1dm+v
-	 wb+2UgQw0GFWR1btnjp1pk0RoCB0PAUNHAnVQLMTsQXRs/twQUb82969flP4Cjo0f
-	 blHToKy2NtQPy25Si+uG1DfJjHXaLmUbtfou05nVMOj9T+0AhXXGaLg0Ykor3bH1m
-	 x33x73Nd2dOCWJpCx/ylwMlejBEhyIVwymua3Yo0C59QAutHZ+Trufz2K1dZbOW59
-	 1DVbjiNMUS0kUTTdOMHN0NhN5jjtZH9u1zVExdFwz89wlZ9uZkkTNBkj4yvpGeHyh
-	 UbVzI5Z+1sz5+BEmkw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from probook ([5.145.135.151]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mirna-1rvDcQ0A5s-00m2f8; Tue, 09
- Jul 2024 21:33:18 +0200
-Date: Tue, 9 Jul 2024 21:33:15 +0200
-From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Russell King <linux@armlinux.org.uk>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: bcm2835_defconfig: Enable SMP support
-Message-ID: <Zo2Qexs-J5_Lzbjm@probook>
-References: <20240707-raspi-config-v1-0-3e122f2122e9@gmx.net>
- <20240707-raspi-config-v1-2-3e122f2122e9@gmx.net>
- <a5c69147-c0fe-4cda-8996-e46698c5e9e8@gmx.net>
+	s=arc-20240116; t=1720553967; c=relaxed/simple;
+	bh=Tuc3Josad+Eb8/QMMfhE4ENri/1snAxANRMNkQgGwRQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=UwVQ6IeEzNVQqHyo9bWePwlsBXpVvCmZhWUYsNCXg4OmKrkUnHu2hHGCAXguoXI/OdPYvZgDGl6DUeCDI8acIQ484VILjuPX6m4vcYcZJgGy4USuYBG3XpeDytj3XC1xmuq9luYjz15K/lAlwHurPHaTnTr5s+JfVmk8qARjoX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jpo4jrcM; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469GgFDc025652;
+	Tue, 9 Jul 2024 19:38:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ay5oBrHSb2YL73YTY5mpyQMrO+3FJd7t8ZkpRjje6dM=; b=jpo4jrcMa1PYT1Hz
+	B/H88h/SwhPzHsKpo9u2/cDjbXHLWhtNHbLqoH9IkuCiFwsIBT4nG08RjVDRypnw
+	kqmwcI31votZ4naM/I5cx9rIfhLQU4pD+rMpkjaF56gIhqUNB/DayPmS//91zpiL
+	BDfN9bmxcO7raEaG748rv35YEZ9K9OURJC9lHxj/kQr9H89BjOsdx3mUE+ETsPem
+	lgo0EDOjEJ7CmzE9XaYnjl6KrMpYbV8FEET9TuiGbc8L3Rl6OZdxISwPRn89pJAb
+	KaiYhKXrFGYqhHhdQFb+vQsu2YSva/M5sRmZiHnWh9uqVPYzoyzRrxZrp3fW7vd/
+	I3l6Yw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4091jdhqs0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 19:38:16 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469JcFsE032048
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 19:38:15 GMT
+Received: from [10.71.110.34] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
+ 12:38:13 -0700
+Message-ID: <46487222-6818-b0bf-e5cc-2310d62b5fe6@quicinc.com>
+Date: Tue, 9 Jul 2024 12:38:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <a5c69147-c0fe-4cda-8996-e46698c5e9e8@gmx.net>
-X-Provags-ID: V03:K1:ecQu54LuUbrIznY3FBeizi8y57eJR4/zdKqFyRuwNcTETv/ihf3
- sSGW3oIwz8F4RmkwlggQvyjQZ6lokMeJ6Kw+dmC3I6Jzv2iCcvmNDZy59FlO//AejCBHbHm
- nuNjnecfMNh6KmWR9O0ak5sefsaX/oqSI9tyKwkXYqBabXZqslYZV7R4AyVpXBALJDM9FjX
- j/tkyUg0h8slJTeTU56TA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:NXQ3fA64Z30=;FdvoWY+TEk+6K0dWKXAdFotOfZv
- iQwSpvhNpy4qjjbY3FT42c9DNS+0tPJCy1BtcxQew3VAedI2fmW6GxDW33MfsXgavPLFSYnuo
- LSSKQVfB0w+M/5WBxHsRfPNkJF2kXyDIGqvqp6SPegvyj5TvmhXqS0HBzz3x3L/ChKg4/OSNk
- mRY9uzWtFI58+3DnrL1W5tYCq8bTm5aCKhpbASESJImlt12WS8L/fN3u7Ibd7d7tLKlaWRo3x
- PsCJNOI4LPCdEbnNQyQqC6g+IAzPYRwSm7xaAK+G+Ps25snj+b19BefnwbgpZ+44faT+yZBT0
- pwCJPu3rUvXJCh2R2F5THoo4uaJM8dB/uEwbY2xjmF6B+Hc6iwrE5YUg5SHnuyFUEEsruz7gD
- LpMlfT4hnp3Gira+WLMt9x6nwaCqvkvqOQiiahoixD+kby6F7thhKAmLAMFwP+LkDAZRF0kKg
- Gh5t0YdoOcs6xyVFJm311K4xVemvOTM4LgGEEb6asq/AbTDRiEkOGdj5xO50S0WBgSDWaDC0r
- 2rV8IHocxG/pGgvT+eD04iuvgH+EcKRpElbWK4RKHhUBsyTnVe+w3dOmf/fZc4YpdFUZt6xEP
- 48buwmo+1XujjsSMXGU1kTBdDOBSY9hlyMayPIwOuhmmKmujk5IvG8kq12WC+w6oZLYv4HUVs
- M6b2wZiPa40oxWmPEnTdaQBUvZwJUkn5P3OAqSA46Qb2vme/VcvOvWhmBesivT/aOQ9PZKQPE
- jD337oT9RVH8MN8k8naka8UYv2WhKv1gc/JpSQOWvl0iRRnK6I1sao+jrJDFc/FP3vmm7hfto
- SDrma/BgfpTl5SWcOOIYcA1IviSgWeCTelTvJW0dvdghU=
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Subject: Re: [PATCH 2/2] drm/msm/dpu: don't play tricks with debug macros
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Daniel
+ Vetter <daniel@ffwll.ch>,
+        Jordan Crouse <jordan@cosmicpenguin.net>,
+        Chandan
+ Uddaraju <chandanu@codeaurora.org>,
+        Rajesh Yadav <ryadav@codeaurora.org>,
+        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
+        Archit Taneja
+	<architt@codeaurora.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Jeykumar
+ Sankaran <jsanka@codeaurora.org>
+References: <20240709-dpu-fix-wb-v1-0-448348bfd4cb@linaro.org>
+ <20240709-dpu-fix-wb-v1-2-448348bfd4cb@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20240709-dpu-fix-wb-v1-2-448348bfd4cb@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nwCNJHvQJK8e2IG-3esDB5ADKXGgn6BK
+X-Proofpoint-ORIG-GUID: nwCNJHvQJK8e2IG-3esDB5ADKXGgn6BK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_08,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 malwarescore=0 mlxlogscore=999
+ mlxscore=0 priorityscore=1501 phishscore=0 clxscore=1015 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407090132
 
-On Mon, Jul 08, 2024 at 05:54:25PM +0200, Stefan Wahren wrote:
-> Hi Jonathan,
->
-> Am 07.07.24 um 23:48 schrieb Jonathan Neusch=C3=A4fer:
-> > Since there is only one Raspberry Pi related defconfig in the mainline
-> > kernel, it's useful to have to work well on all 32-bit Raspberry Pis.
-> this wasn't intention of bcm2835_defconfig. It's more focused on BCM2835
-> SOC and kernel-ci (both non-SMP). If you want to use the BCM2836 &
-> BCM2837 (incl. SMP), please use multi_v7_defconfig instead. Applying
-> this change would decrease the test coverage.
-
-Ah, fair enough.
 
 
-Jonathan
+On 7/9/2024 6:48 AM, Dmitry Baryshkov wrote:
+> DPU debugging macros need to be converted to a proper drm_debug_*
+> macros, however this is a going an intrusive patch, not suitable for a
+> fix. Wire DPU_DEBUG and DPU_DEBUG_DRIVER to always use DRM_DEBUG_DRIVER
+> to make sure that DPU debugging messages always end up in the drm debug
+> messages and are controlled via the usual drm.debug mask.
+> 
+
+These macros have been deprecated, is this waht you meant by the 
+conversion to proper drm_debug_*?
+
+/* NOTE: this is deprecated in favor of drm_dbg(NULL, ...). */
+#define DRM_DEBUG_DRIVER(fmt, ...)                                      \
+         __drm_dbg(DRM_UT_DRIVER, fmt, ##__VA_ARGS__)
+
+I think all that this macro was doing was to have appropriate DRM_UT_* 
+macros enabled before calling the corresponding DRM_DEBUG_* macros. But 
+I think what was incorrect here is for DPU_DEBUG, we could have used 
+DRM_UT_CORE instead of DRM_UT_KMS.
+
+And DRM_DEBUG_DRIVER should have been used instead of DRM_ERROR.
+
+Was this causing the issue of the prints not getting enabled?
+
+> Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h | 14 ++------------
+>   1 file changed, 2 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
+> index e2adc937ea63..935ff6fd172c 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
+> @@ -31,24 +31,14 @@
+>    * @fmt: Pointer to format string
+>    */
+>   #define DPU_DEBUG(fmt, ...)                                                \
+> -	do {                                                               \
+> -		if (drm_debug_enabled(DRM_UT_KMS))                         \
+> -			DRM_DEBUG(fmt, ##__VA_ARGS__); \
+> -		else                                                       \
+> -			pr_debug(fmt, ##__VA_ARGS__);                      \
+> -	} while (0)
+> +	DRM_DEBUG_DRIVER(fmt, ##__VA_ARGS__)
+>   
+>   /**
+>    * DPU_DEBUG_DRIVER - macro for hardware driver logging
+>    * @fmt: Pointer to format string
+>    */
+>   #define DPU_DEBUG_DRIVER(fmt, ...)                                         \
+> -	do {                                                               \
+> -		if (drm_debug_enabled(DRM_UT_DRIVER))                      \
+> -			DRM_ERROR(fmt, ##__VA_ARGS__); \
+> -		else                                                       \
+> -			pr_debug(fmt, ##__VA_ARGS__);                      \
+> -	} while (0)
+> +	DRM_DEBUG_DRIVER(fmt, ##__VA_ARGS__)
+>   
+>   #define DPU_ERROR(fmt, ...) pr_err("[dpu error]" fmt, ##__VA_ARGS__)
+>   #define DPU_ERROR_RATELIMITED(fmt, ...) pr_err_ratelimited("[dpu error]" fmt, ##__VA_ARGS__)
+> 
 
