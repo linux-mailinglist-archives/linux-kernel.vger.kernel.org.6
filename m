@@ -1,305 +1,277 @@
-Return-Path: <linux-kernel+bounces-245309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A1F92B101
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:22:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A51EB92B104
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA6B11F220BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:22:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F00EFB224AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4AB13D880;
-	Tue,  9 Jul 2024 07:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8137413D880;
+	Tue,  9 Jul 2024 07:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bjhv1vXY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FHE5Qyz0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D589C1DA303;
-	Tue,  9 Jul 2024 07:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720509751; cv=none; b=QpQw1p9pzcdF4EIrPSfw7zg6pUnp8xzKW/6emD3Z31Wxnqa84nzE/34ikMMn2kPCVFYG9VBxlOw6bZytIT0ne9PGukzcpuRykE3zRfkMYB+bJIxTdBBaX1w0+0SOey0TxEO/5rjsXeF5ALYCbYNuLK1gqu5itgPduPnRCHLdHUQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720509751; c=relaxed/simple;
-	bh=hFGvVfzUFPveqWKRcTjwWVpmsODco/K1glsUw2LX9H0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZJITClXPMz7GiZ6IfLtLp0FHhVms13mKcWIbmWLSYCEc2Yq+YgZNrgkZAOy4thBzMHYpgynPrvNyvw6r87da0xEvkC95Es/ap5R8ZH0EwztrlBvZmTnBoP1q6IbK39r4QUdhWQ0o6TfspTGbzeaFo1SyIFCpdyBdA7lgCf33kek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bjhv1vXY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5993EC3277B;
-	Tue,  9 Jul 2024 07:22:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720509751;
-	bh=hFGvVfzUFPveqWKRcTjwWVpmsODco/K1glsUw2LX9H0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bjhv1vXYCYbUIZiA4lcEU1/VVcq4ob6CNTRAjNpGfG88heA6Yth3jlzloEINYR+0s
-	 HZIRgOD2OT2dH91ZaCSWEU6hh5eZDeR/cfLFhM6hulFsxdcE5O8Me9GEsGunlkspM5
-	 0kUycHJR34oLQWLYNDh3GZ7dR4wBHU2gf309ZtkPzRpKPINOfQ5iJ/89AxGJy0X35e
-	 umjsmL+n8YoxdzezpUOhkrSAV1gEb8SiRvsa4OOrdtBsO5y0V5cfaLVsExvYzA3Eg0
-	 UisF3wXX/H+zTGg3FZYQhuzZEIfJDuMXZUQdGUQgi63idft4TtCDT0n52mj2U2+cAU
-	 SE/hqXudQ+2lw==
-Date: Tue, 9 Jul 2024 10:22:25 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Junxian Huang <huangjunxian6@hisilicon.com>
-Cc: jgg@ziepe.ca, linux-rdma@vger.kernel.org, linuxarm@huawei.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH for-rc 2/9] RDMA/hns: Fix a long wait for cmdq event
- during reset
-Message-ID: <20240709072225.GB6668@unreal>
-References: <20240708053850.GA6788@unreal>
- <7cae577b-e469-9357-8375-d14746a7787b@hisilicon.com>
- <20240708073315.GC6788@unreal>
- <0bac285b-c8ae-8c9f-7c42-ee345f8682d1@hisilicon.com>
- <20240708082755.GD6788@unreal>
- <26c02b2b-4232-2049-5c9f-f757fef759a0@hisilicon.com>
- <20240708085902.GF6788@unreal>
- <188e9f5d-b66c-9318-601c-ed3aab96115d@hisilicon.com>
- <20240708111626.GG6788@unreal>
- <0d877e06-a4af-d3af-7dbb-98135219367f@hisilicon.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4A11DA303;
+	Tue,  9 Jul 2024 07:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720509768; cv=fail; b=ZPvUkD15SFuvt5MjYf80t+KWQbafUW85VOTZn+81I7vHgXrbADVeqwtQLXq5wGAsMdUbpsPNYoAj5aiWazd17gFY+kl+kKKAqkBW57z+EZIpLYjmGKjs7To6fDC+I/4fE9YBhl+vzVT7kLnZuj/qWP0AqOwTAHWy135SeSMy+3M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720509768; c=relaxed/simple;
+	bh=qWTZVVbCfBNf9q/xnbb+bUQ2A3/GsjZA+Ix5pLUcfII=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=qMiwe5R4r9K6vQ9N6mMSwHVwSgZHtUtPeYSwvkUIvG8S/8ShCJg7/2QUWE120NvnQpSXidVbdZCcuZw/PPXysC1M4RSBZeOh8tO8AUyt3eyzA2OfoLJL0oIYJhbaJbvwK2F1bfghFZEN3mJPMwphNuRfgkXzZyypBR++wxg5fns=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FHE5Qyz0; arc=fail smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720509767; x=1752045767;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=qWTZVVbCfBNf9q/xnbb+bUQ2A3/GsjZA+Ix5pLUcfII=;
+  b=FHE5Qyz0MyoGcA6zTqPEHO7UqnmoJlFbSq7mDfSe5ApT3TZOS29TKKhW
+   CalDsIei0YWkUZSuaZB60ZBcm9ap2vszx+JFuguwaQ/Xl7i8JNMxDCdUw
+   Gyq6owcGevxieW9hliiCPL2AKDQJf0bhqDfI2Xjv5YrovkvVx3i+uuxQP
+   VzVJfogq5gL6liF0pDcQb2uXgFxk223LUJgEg2crSb5vxRT51rS5LvMcT
+   LQ0Lyzp7tvE2j/4zjrSxyKsF5SRTrFbj2mRVYn17yq29K2eLDPvTXyyG/
+   d2xJ4tMrq+aVZW1jdjAsFTCE/f/z58hdyQD1sG76MsLIajUHFUOcHzh9o
+   Q==;
+X-CSE-ConnectionGUID: 9P5Rp2XMSdWOCZjKUQ5hSQ==
+X-CSE-MsgGUID: df81Oq8VSkO4dPErsGsnTQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="29141540"
+X-IronPort-AV: E=Sophos;i="6.09,194,1716274800"; 
+   d="scan'208";a="29141540"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 00:22:46 -0700
+X-CSE-ConnectionGUID: +X4Ze6LSRWaQl1hrQtiA/g==
+X-CSE-MsgGUID: rhKbn3k2Q6ifjeVvw613Gg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,194,1716274800"; 
+   d="scan'208";a="52941018"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 Jul 2024 00:22:46 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 9 Jul 2024 00:22:45 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 9 Jul 2024 00:22:45 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.44) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 9 Jul 2024 00:22:44 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NeyIbV3BHOr7jmUm2WGfcDAiQMT9QReUD2fAikRQrw18pA0IUr7yQMJMP2mslsNFN6zxAyCYMn7wApBHdWSLvsXPlRu3q3HbbrzADCUi3rkeD4p8P2BkpqgY4axQggO2IaC+p9ZSgD9m6Qh5J/DImz9DylN+s4DuG2lh091I4R0uke32A2e37vtDVnEz9nmvWyu3U+FfZoxG8VIxJ8vmUKvOdNoxp3jqJB94pIYnn50MNu2rTb+WnqQF+5ZIpL12mY65g2bxg2YWtUXNaoBX9WASt7F/MIkY/dqAsCYzdTH3TqUVBCruMnFRtosMXgFl/YkCEJRRVtvlhdyAzclb1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PMR3VqE/zxFJK28RK3iMbPYfhMSrrUaM2Hles4dpBwY=;
+ b=a0yAcHfkerBCbqyaSl9fpTwymS8BqTxRCMBZizIC8yeNdxeOZY7y5tL5NZNTOfWacbnLODRiqUA3LTJ7FCCFM7lLkw2meo2MVvJ6ApywMrLDyRCTvp6by706zvujdojWtipG2wUIKHikrMtOCPUTfuOd289KeSXoHUzJeCDJIbT6DgHXnLQDSML2d+pXPDms3BS0GHRFiDhJWvASXYczDPk0FfoLN2VEYk0Uf1AuYsdE7oEOGqNBEybp8/r4VB0xxJMWY5xi3Rgi2B4j3Kok1KrXfvmgJPdyBfRDwhzSHoZLF+B6AYvyANbiTruxoYRIMu0aWJmeFcZBkD2FyoYh0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by MW3PR11MB4522.namprd11.prod.outlook.com (2603:10b6:303:2d::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Tue, 9 Jul
+ 2024 07:22:40 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%4]) with mapi id 15.20.7741.033; Tue, 9 Jul 2024
+ 07:22:40 +0000
+Date: Tue, 9 Jul 2024 15:22:29 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, "Qais
+ Yousef" <qyousef@layalina.io>, <linux-doc@vger.kernel.org>,
+	<aubrey.li@linux.intel.com>, <yu.c.chen@intel.com>, <oliver.sang@intel.com>
+Subject: [linus:master] [sched/pelt]  97450eb909:
+ INFO:task_blocked_for_more_than#seconds
+Message-ID: <202407091527.bb0be229-lkp@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SI1PR02CA0011.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::19) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0d877e06-a4af-d3af-7dbb-98135219367f@hisilicon.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|MW3PR11MB4522:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3a4e970c-3fc3-48d6-9529-08dc9fe7eaa7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?nJ8JecKzM3WPKKineBXXxmtATvFzbkseEaBtkdre0Vgcnbfg8w/uZabXbmV+?=
+ =?us-ascii?Q?oJzVIsvDJY88PoISAwO2ZjerI6RCN4kRRPVdIpBbCyvUMvqGeyhbARpRJi1P?=
+ =?us-ascii?Q?YywdzNgS7S12sUCy1zYTPTSEVdZCjkxu4H2pbN0ijqUwqcAThJn9VJACdN7t?=
+ =?us-ascii?Q?tXUm0ewuUO0rRT3SCbkW/SCE+BvlQcifjGLUAbYRqV51gM6BRGx39IeL/uci?=
+ =?us-ascii?Q?hmLkgV876Hb7V8sSv5pmPV7HaessLXyo9CUm0CJG7iLMEputLuzBWlqoQj+5?=
+ =?us-ascii?Q?HzEyZ14JBTpZJixAilREVRXl5CuMkbQG25693mF3JRW2Gcxza1tFUocVp/tO?=
+ =?us-ascii?Q?XJQoVER3GqUF5kqj2iI6CNBPdTSF0MEPEbkc+5o1Ro7B6AOMW9Yg2oZ7R4Qw?=
+ =?us-ascii?Q?LDR1mGSONILLNyJBPUF8NvKh2o4ZAI1KijuwcdtyL8/4OhzlhB+hnWsC8E12?=
+ =?us-ascii?Q?SvjvS/RDRwQnE3+pAsswgGv5erfjqZUCfUdKZh6j+J4LnuIELaJadm8gbwuX?=
+ =?us-ascii?Q?vfURoZ0+M6j7ni0yEbUPrePQZ3HmV5gFsKgUnVKXwqeLGgFbZY0tmsNYlJd0?=
+ =?us-ascii?Q?R+x4B9p9y2CYPlxo8y46OI4r3ImA0fSXXtzduVNZ29jDW8G3AljM18lUcGLO?=
+ =?us-ascii?Q?nHSIPMQoIKPbK3VdNkAVcseAxsbugP/M79DFs6gAM09r1ITd5jCmxZfjqr9E?=
+ =?us-ascii?Q?Iaf6EoBl7iti9xtTJUahPG6mMphE8FzidM0vINYoAEJIrQV3IE4EpNASUI6E?=
+ =?us-ascii?Q?nDnj3ufDY56GPyR6hN7P4w4dds6GpghYfv0WIlueRh5joU5WtPjg3ycYC/fu?=
+ =?us-ascii?Q?zeGlFF3CVMBGauZ1MaJtGx9KN0sUv2qDCy1TdSGl4YCFTO9MaeY42vBeTfdz?=
+ =?us-ascii?Q?agzZdwybk772YiE9WwtZKiL/M8TUM7pEWLFR5Yd+mXvgkHYfDT9FowZfyxgC?=
+ =?us-ascii?Q?nT8XxuhC1qmpDsYLb6Uq5TkToElZCNFMYkS4ziwLTEN8IBPLYJWKc81F/OZS?=
+ =?us-ascii?Q?2diQpaoAvn2uzRa/ATnwShXrItM9f8CX4fPv99cOoGQhBFntKtzRDbbqvszt?=
+ =?us-ascii?Q?Hmgva8+kVlO8Ml+SaI/1T9qEaZzz50pC8ftePMF6004COfoyDCNyJvkr9p/p?=
+ =?us-ascii?Q?iNsqKroA42rL+tEaCmbKmejIY8sqk44Hb31ci0rkCJaKhsCP3QcMAZc96b/M?=
+ =?us-ascii?Q?EAr//7u5GoWD87RiwNgN36xpzaVrMStHfjN9ijLpitD8/XqRwocCVA8M/ASj?=
+ =?us-ascii?Q?3WDh2ef0YOXYpWj/e7IRicmcvetsQ54W8maf5vj4vs4MBX1M4/880g8lu9r8?=
+ =?us-ascii?Q?S75nQ4N0OGCHZkE2TowfSXP+?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?khdE18WTTfuRruSXN1OtsdHAhKpX65bZjwaxUDmEG9paGpH2GVVpMoZ8wNdE?=
+ =?us-ascii?Q?Fl8YYO0B+PRLy32C6juMBz8W9MRcXaaxEtl9CoeANCSdORPQR5TuALc7yk0k?=
+ =?us-ascii?Q?KTJ6C94tmbFHMxpASq2qV3RQPJlxIj0U5e1CP2/iFS51QpnPB9uN9FGXHVNk?=
+ =?us-ascii?Q?ajQjN4XdrmAIE5cucQkMZYyrgtsgKE3+QmxpSmmHJS0sqNTa5E85QhX7PboB?=
+ =?us-ascii?Q?cbJCYKNYH8mRHBQu4kh+WYEe8ZWT5Y/qJ/9ntAibE3OJd3FhRyAaQei9XAod?=
+ =?us-ascii?Q?UZWIlPbB9JWdRIPfsj8N6oWsB4DXnu+fMAhAylVopJssRACIEijL1hV46R9h?=
+ =?us-ascii?Q?KBi9U+E/UDT9hRtKLGX9PwCu5QmFoZ904bzMAKyzUIw6b/O6EpLRv7/1y4gS?=
+ =?us-ascii?Q?Cjd/MM5ZitQz0NqxJ9SPJN4I4CJPr4iXbpNv0QpXuxsBreyHAVF8mvW3cn5L?=
+ =?us-ascii?Q?zby/dbrLrvd12qPnEQ61M8+l7AlFcEypYTjilKrpY11me1tqdX8hH0GkyuYV?=
+ =?us-ascii?Q?ww+LlgmJn6QnGOlKHV++7Ndvy+re5tec1317kyjlEcx+WGKfnZaXJrRvumif?=
+ =?us-ascii?Q?CzVutLh4SXCJHYUbqF72jVWae+QAnZ1UZxAkjD5mQGNCLQLLulY9wqrtGlhM?=
+ =?us-ascii?Q?fAo8gy/wBMhlRRRNt54Qcw0u1qCvH4U0YvhVA4sF6yzUrd8YAwT2pf70QEE2?=
+ =?us-ascii?Q?BcKsdjnO2Fee5/R0DI7aQYbTdaTW6YeetZMsEcvUn2+O2/IW9CDW7eqN2bOy?=
+ =?us-ascii?Q?Q01zdgiGfatLaBiQOvOKxDbK7UEFgTyEjrvxhrcsl8QjjygXXCUkg3dKnD3M?=
+ =?us-ascii?Q?VzIzE7tJs26Pf2yCYYOdEWq4aycdoHm5/7Yb+JyEFIZaxaRLPMeVRAalvcPj?=
+ =?us-ascii?Q?9XdIPZZ28+VeA8s3C34W2b/yaJo21QYnxP1GON3+yLIcNPcwb9IcpVtRB6Ey?=
+ =?us-ascii?Q?nGvV5vOA0RxPlb13nqSkwIez0HJ0LX5e1JSXmEolAYQg/eNvNLXGh8VgQO7R?=
+ =?us-ascii?Q?CkSoj7juDom/GHD+vsVxgUafNOZRWK42dv6SSjM8sYZhCf2CxS3JkLXZxgRq?=
+ =?us-ascii?Q?T6JuqlXPNr5U7fMLPpV85SOZf7ZHo0driRGWWaZGzIedp86mirxkeM6gFehL?=
+ =?us-ascii?Q?XB5NiB3jq9QnK2lSZeAkJ7R9dNvgLodOlW8caRGmlgGH2Oc+l/DF346++9hI?=
+ =?us-ascii?Q?Qk0B/xnnUcSUe+BUk+zDulUmYq3jwLu2ZzQBZAoufUPursZDJ0k66SCYVOoc?=
+ =?us-ascii?Q?pYddQ55DTBsECxASjMUJjhsr9sLNkmnRm3YyzSXCA+mWTKYvou4yLkZKBQTi?=
+ =?us-ascii?Q?IBhwqVxAJ0bydRx7AFTyqLjZYQAhdRVj+BpO1v5WcEuDDreYcibFb2i/5weZ?=
+ =?us-ascii?Q?Q5WN8sLr7RQ63sVbEF8SRokCyzetm4+L1Lgtq8xFI722fYCm/pRcPMpfAsGk?=
+ =?us-ascii?Q?EODyE0AxQLznBPgINPUsvYxiEt6Gheb+nEOZYKCPNlUvgjBaH4l4OlnMdqqG?=
+ =?us-ascii?Q?cxx4Smnma8Dszk0J40A+Ng1GqC3RE5aHJWPtu5adcJs9tdF/djbZiLiq43JK?=
+ =?us-ascii?Q?QJEjlgP+KBeCYG0tBd9AUYUddQ9gzeJG/EjUTlkMsuNQN70qgnFztpyFUIkT?=
+ =?us-ascii?Q?BQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a4e970c-3fc3-48d6-9529-08dc9fe7eaa7
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2024 07:22:40.6124
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UsrVtwmbc0BB8WFEoFv/yWRZNGpK1lSyTPWxEr1FcCD3/xVCHlFQdWfsEqA6nZsiVjRmCw0wd9a84kxgblYEWA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4522
+X-OriginatorOrg: intel.com
 
-On Tue, Jul 09, 2024 at 02:21:31PM +0800, Junxian Huang wrote:
-> 
-> 
-> On 2024/7/8 19:16, Leon Romanovsky wrote:
-> > On Mon, Jul 08, 2024 at 05:30:58PM +0800, Junxian Huang wrote:
-> >>
-> >>
-> >> On 2024/7/8 16:59, Leon Romanovsky wrote:
-> >>> On Mon, Jul 08, 2024 at 04:45:34PM +0800, Junxian Huang wrote:
-> >>>>
-> >>>>
-> >>>> On 2024/7/8 16:27, Leon Romanovsky wrote:
-> >>>>> On Mon, Jul 08, 2024 at 03:46:26PM +0800, Junxian Huang wrote:
-> >>>>>>
-> >>>>>>
-> >>>>>> On 2024/7/8 15:33, Leon Romanovsky wrote:
-> >>>>>>> On Mon, Jul 08, 2024 at 02:50:50PM +0800, Junxian Huang wrote:
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>> On 2024/7/8 13:38, Leon Romanovsky wrote:
-> >>>>>>>>> On Mon, Jul 08, 2024 at 10:29:54AM +0800, Junxian Huang wrote:
-> >>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> On 2024/7/7 16:30, Leon Romanovsky wrote:
-> >>>>>>>>>>> On Fri, Jul 05, 2024 at 04:59:30PM +0800, Junxian Huang wrote:
-> >>>>>>>>>>>> From: wenglianfa <wenglianfa@huawei.com>
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> During reset, cmdq events won't be reported, leading to a long and
-> >>>>>>>>>>>> unnecessary wait. Notify all the cmdqs to stop waiting at the beginning
-> >>>>>>>>>>>> of reset.
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> Fixes: 9a4435375cd1 ("IB/hns: Add driver files for hns RoCE driver")
-> >>>>>>>>>>>> Signed-off-by: wenglianfa <wenglianfa@huawei.com>
-> >>>>>>>>>>>> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
-> >>>>>>>>>>>> ---
-> >>>>>>>>>>>>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 18 ++++++++++++++++++
-> >>>>>>>>>>>>  1 file changed, 18 insertions(+)
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> >>>>>>>>>>>> index a5d746a5cc68..ff135df1a761 100644
-> >>>>>>>>>>>> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> >>>>>>>>>>>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> >>>>>>>>>>>> @@ -6977,6 +6977,21 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
-> >>>>>>>>>>>>  
-> >>>>>>>>>>>>  	handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
-> >>>>>>>>>>>>  }
-> >>>>>>>>>>>> +
-> >>>>>>>>>>>> +static void hns_roce_v2_reset_notify_cmd(struct hns_roce_dev *hr_dev)
-> >>>>>>>>>>>> +{
-> >>>>>>>>>>>> +	struct hns_roce_cmdq *hr_cmd = &hr_dev->cmd;
-> >>>>>>>>>>>> +	int i;
-> >>>>>>>>>>>> +
-> >>>>>>>>>>>> +	if (!hr_dev->cmd_mod)
-> >>>>>>>>>>>
-> >>>>>>>>>>> What prevents cmd_mod from being changed?
-> >>>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> It's set when the device is being initialized, and won't be changed after that.
-> >>>>>>>>>
-> >>>>>>>>> This is exactly the point, you are assuming that the device is already
-> >>>>>>>>> ininitialized or not initialized at all. What prevents hns_roce_v2_reset_notify_cmd()
-> >>>>>>>>> from being called in the middle of initialization?
-> >>>>>>>>>
-> >>>>>>>>> Thanks
-> >>>>>>>>>
-> >>>>>>>>
-> >>>>>>>> This is ensured by hns3 NIC driver.
-> >>>>>>>>
-> >>>>>>>> Initialization and reset of hns RoCE are both called by hns3. It will check the state
-> >>>>>>>> of RoCE device (see line 3798), and notify RoCE device to reset (hns_roce_v2_reset_notify_cmd()
-> >>>>>>>> is called) only if the RoCE device has been already initialized:
-> >>>>>>>
-> >>>>>>> So why do you have "if (!hr_dev->cmd_mod)" check in the code?
-> >>>>>>>
-> >>>>>>> Thanks
-> >>>>>>>
-> >>>>>>
-> >>>>>> cmd_mod indicates the mode of cmdq (0: poll mode, 1: event mode).
-> >>>>>> This patch only affects event mode because HW won't report events during reset.
-> >>>>>
-> >>>>> You set cmd_mod to 1 in hns_roce_hw_v2_init_instance() without any
-> >>>>> condition, I don't see when hns v2 IB device is created and continue
-> >>>>> to operate in polling mode. 
-> >>>>>
-> >>>>> Thanks
-> >>>>>
-> >>>>
-> >>>> Event mode is the default. In hns_roce_cmd_use_events(), if kcalloc() fails
-> >>>> then it'll be set to polling mode instead.
-> >>>
-> >>> 1. Awesome, and we are returning back to the question. What prevents
-> >>>    hns_roce_v2_reset_notify_cmd() from being called in the middle of
-> >>>    changing cmd_mod from 1 to 0 and from 0 to 1?
-> >>
-> >> The changing of cmd_mod is during the initialization of a device. The call
-> >> of hns_roce_v2_reset_notify_cmd() is during reset. As I said previously,
-> >> the hns3 NIC driver ensures that there will be no concurrency between
-> >> initialization and reset, and therefore hns_roce_v2_reset_notify_cmd() won't
-> >> be called in the middle of changing cmd_mod.
-> >>
-> >>> 2. This cmd_mode swtich from 1 to 0 should be removed. Failure to
-> >>>    allocate memory is not a reason to switch to polling mode. The reason
-> >>>    can be HW limitation, but not OS limitation.
-> >>>
-> >>
-> >> But event mode relies on the allocated resource. If the allocation fails and
-> >> we don't switch to polling mode, the driver won't work any more. Are you suggesting
-> >> we should return an error and fail the initialization in this case?
-> > 
-> > Yes, please.
-> 
-> The reason of switching cmd_mod is that we try to keep the driver available,
-> even if the allocation of event mode resources fails. We don't consider this
-> as a critical error that should lead to an initialization failure. The driver
-> can still post mailbox and provide normal functionality in this case.
 
-Driver that failed to allocate memory in the middle of initialization
-can't be considered as "normal".
 
-> 
-> Our discussion seems to have strayed a bit away？This patch doesn't involve
-> polling mode.
+Hello,
 
-As long as patch has this line "if (!hr_dev->cmd_mod)", this discussion
-is related to polling mode.
+kernel test robot noticed "INFO:task_blocked_for_more_than#seconds" on:
 
-Thanks
+commit: 97450eb909658573dcacc1063b06d3d08642c0c1 ("sched/pelt: Remove shift of thermal clock")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
 
-> 
-> Junxian
-> 
-> > 
-> > Thanks
-> > 
-> >>
-> >> Junxian
-> >>
-> >>> Thanks
-> >>>
-> >>>>
-> >>>> Junxian
-> >>>>
-> >>>>>>
-> >>>>>> Junxian
-> >>>>>>
-> >>>>>>>>
-> >>>>>>>>  3791 static int hclge_notify_roce_client(struct hclge_dev *hdev,
-> >>>>>>>>  3792                                     enum hnae3_reset_notify_type type)
-> >>>>>>>>  3793 {
-> >>>>>>>>  3794         struct hnae3_handle *handle = &hdev->vport[0].roce;
-> >>>>>>>>  3795         struct hnae3_client *client = hdev->roce_client;
-> >>>>>>>>  3796         int ret;
-> >>>>>>>>  3797
-> >>>>>>>>  3798         if (!test_bit(HCLGE_STATE_ROCE_REGISTERED, &hdev->state) || !client)
-> >>>>>>>>  3799                 return 0;
-> >>>>>>>>  3800
-> >>>>>>>>  3801         if (!client->ops->reset_notify)
-> >>>>>>>>  3802                 return -EOPNOTSUPP;
-> >>>>>>>>  3803
-> >>>>>>>>  3804         ret = client->ops->reset_notify(handle, type);
-> >>>>>>>>  3805         if (ret)
-> >>>>>>>>  3806                 dev_err(&hdev->pdev->dev, "notify roce client failed %d(%d)",
-> >>>>>>>>  3807                         type, ret);
-> >>>>>>>>  3808
-> >>>>>>>>  3809         return ret;
-> >>>>>>>>  3810 }
-> >>>>>>>>
-> >>>>>>>> And the bit is set (see line 11246) after the initialization has been done (line 11242):
-> >>>>>>>>
-> >>>>>>>> 11224 static int hclge_init_roce_client_instance(struct hnae3_ae_dev *ae_dev,
-> >>>>>>>> 11225                                            struct hclge_vport *vport)
-> >>>>>>>> 11226 {
-> >>>>>>>> 11227         struct hclge_dev *hdev = ae_dev->priv;
-> >>>>>>>> 11228         struct hnae3_client *client;
-> >>>>>>>> 11229         int rst_cnt;
-> >>>>>>>> 11230         int ret;
-> >>>>>>>> 11231
-> >>>>>>>> 11232         if (!hnae3_dev_roce_supported(hdev) || !hdev->roce_client ||
-> >>>>>>>> 11233             !hdev->nic_client)
-> >>>>>>>> 11234                 return 0;
-> >>>>>>>> 11235
-> >>>>>>>> 11236         client = hdev->roce_client;
-> >>>>>>>> 11237         ret = hclge_init_roce_base_info(vport);
-> >>>>>>>> 11238         if (ret)
-> >>>>>>>> 11239                 return ret;
-> >>>>>>>> 11240
-> >>>>>>>> 11241         rst_cnt = hdev->rst_stats.reset_cnt;
-> >>>>>>>> 11242         ret = client->ops->init_instance(&vport->roce);
-> >>>>>>>> 11243         if (ret)
-> >>>>>>>> 11244                 return ret;
-> >>>>>>>> 11245
-> >>>>>>>> 11246         set_bit(HCLGE_STATE_ROCE_REGISTERED, &hdev->state);
-> >>>>>>>> 11247         if (test_bit(HCLGE_STATE_RST_HANDLING, &hdev->state) ||
-> >>>>>>>> 11248             rst_cnt != hdev->rst_stats.reset_cnt) {
-> >>>>>>>> 11249                 ret = -EBUSY;
-> >>>>>>>> 11250                 goto init_roce_err;
-> >>>>>>>> 11251         }
-> >>>>>>>>
-> >>>>>>>> Junxian
-> >>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> Junxian
-> >>>>>>>>>>
-> >>>>>>>>>>>> +		return;
-> >>>>>>>>>>>> +
-> >>>>>>>>>>>> +	for (i = 0; i < hr_cmd->max_cmds; i++) {
-> >>>>>>>>>>>> +		hr_cmd->context[i].result = -EBUSY;
-> >>>>>>>>>>>> +		complete(&hr_cmd->context[i].done);
-> >>>>>>>>>>>> +	}
-> >>>>>>>>>>>> +}
-> >>>>>>>>>>>> +
-> >>>>>>>>>>>>  static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
-> >>>>>>>>>>>>  {
-> >>>>>>>>>>>>  	struct hns_roce_dev *hr_dev;
-> >>>>>>>>>>>> @@ -6997,6 +7012,9 @@ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
-> >>>>>>>>>>>>  	hr_dev->dis_db = true;
-> >>>>>>>>>>>>  	hr_dev->state = HNS_ROCE_DEVICE_STATE_RST_DOWN;
-> >>>>>>>>>>>>  
-> >>>>>>>>>>>> +	/* Complete the CMDQ event in advance during the reset. */
-> >>>>>>>>>>>> +	hns_roce_v2_reset_notify_cmd(hr_dev);
-> >>>>>>>>>>>> +
-> >>>>>>>>>>>>  	return 0;
-> >>>>>>>>>>>>  }
-> >>>>>>>>>>>>  
-> >>>>>>>>>>>> -- 
-> >>>>>>>>>>>> 2.33.0
-> >>>>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>
-> >>>>
-> >>>
-> >>
-> > 
+[test failed on linus/master      22f902dfc51eb3602ff9b505ac3980f6ff77b1df]
+[test failed on linux-next/master 0b58e108042b0ed28a71cd7edf5175999955b233]
+
+in testcase: rcutorture
+version: 
+with following parameters:
+
+	runtime: 300s
+	test: cpuhotplug
+	torture_type: tasks
+
+
+
+compiler: gcc-13
+test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
+we noticed the issue is random, 86 times out of 500 runs as below, while
+keeping clean on parent.
+
+
+d4dbc991714eefcb 97450eb909658573dcacc1063b0
+---------------- ---------------------------
+       fail:runs  %reproduction    fail:runs
+           |             |             |
+           :500         17%          86:500   dmesg.INFO:task_blocked_for_more_than#seconds
+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202407091527.bb0be229-lkp@intel.com
+
+
+[  996.963402][   T17] INFO: task swapper:1 blocked for more than 491 seconds.
+[  996.973637][   T17]       Tainted: G        W          6.9.0-rc1-00051-g97450eb90965 #1
+[  996.983009][   T17] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  996.992369][   T17] task:swapper         state:D stack:5680  pid:1     tgid:1     ppid:0      flags:0x00004000
+[  997.003585][   T17] Call Trace:
+[ 997.022071][ T17] __schedule (kernel/sched/core.c:5412 kernel/sched/core.c:6746) 
+[ 997.032795][ T17] ? schedule (kernel/sched/core.c:6804 kernel/sched/core.c:6837) 
+[ 997.051350][ T17] schedule (arch/x86/include/asm/preempt.h:84 (discriminator 13) kernel/sched/core.c:6824 (discriminator 13) kernel/sched/core.c:6838 (discriminator 13)) 
+[ 997.061394][ T17] async_synchronize_cookie_domain (kernel/async.c:317 (discriminator 9) kernel/async.c:310 (discriminator 9)) 
+[ 997.071656][ T17] ? add_wait_queue (kernel/sched/wait.c:383) 
+[ 997.084201][ T17] wait_for_initramfs (init/initramfs.c:757) 
+[ 997.093158][ T17] ? do_header (init/initramfs.c:761) 
+[ 997.104204][ T17] populate_rootfs (init/initramfs.c:768) 
+[ 997.113736][ T17] do_one_initcall (init/main.c:1238) 
+[ 997.122668][ T17] ? parameq (kernel/params.c:90 (discriminator 1) kernel/params.c:99 (discriminator 1)) 
+[ 997.133272][ T17] ? rdinit_setup (init/main.c:1286) 
+[ 997.142176][ T17] ? parse_args (kernel/params.c:142 (discriminator 1) kernel/params.c:186 (discriminator 1)) 
+[ 997.172210][ T17] ? do_initcalls (init/main.c:1298 init/main.c:1316) 
+[ 997.183570][ T17] do_initcalls (init/main.c:1299 (discriminator 1) init/main.c:1316 (discriminator 1)) 
+[ 997.194241][ T17] ? rest_init (init/main.c:1429) 
+[ 997.204290][ T17] kernel_init_freeable (init/main.c:1552) 
+[ 997.214432][ T17] kernel_init (init/main.c:1439) 
+[ 997.223979][ T17] ret_from_fork (arch/x86/kernel/process.c:153) 
+[ 997.232870][ T17] ? rest_init (init/main.c:1429) 
+[ 997.244227][ T17] ret_from_fork_asm (arch/x86/entry/entry_32.S:737) 
+[ 997.254412][ T17] entry_INT80_32 (arch/x86/entry/entry_32.S:944) 
+[  997.831274][   T17]
+[  997.831274][   T17] Showing all locks held in the system:
+[  997.840770][   T17] 4 locks held by kworker/u4:1/16:
+[  997.844292][   T17] 1 lock held by khungtaskd/17:
+[ 997.853205][ T17] #0: c26e50c8 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks (kernel/locking/lockdep.c:6612) 
+[  997.880625][   T17]
+[  997.883881][   T17] =============================================
+[  997.883881][   T17]
+BUG: kernel hang in boot stage
+
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20240709/202407091527.bb0be229-lkp@intel.com
+
+
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
