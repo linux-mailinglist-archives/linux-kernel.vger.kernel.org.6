@@ -1,220 +1,173 @@
-Return-Path: <linux-kernel+bounces-245868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABE7492BAAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:09:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52A3D92BAB4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FF8D1F23780
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:09:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C70411F238BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3325315EFBD;
-	Tue,  9 Jul 2024 13:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD8215E5B8;
+	Tue,  9 Jul 2024 13:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JdASX8bi";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="kjUry5I3"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U1zkWpKf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A2727713;
-	Tue,  9 Jul 2024 13:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720530499; cv=fail; b=jNjjd1bYu06L09FuAfPRpYyW6dBHjL9Qo3pwYVHCoBXYv2JJBbm1FIfFUgcdk1NzPj9tQpxVCblwWNOJtF+MyBa8lsuFj9J7NOAa5UaAPfzmnbV6jyDKtBIoIFST6Jq3nvktF/OttppBn0VFqPpLKzHMZQh7iYhlLIjbHp/6v+E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720530499; c=relaxed/simple;
-	bh=kPEWE8oHj7DIirbDMU0RGmogSc4IfuUMeC25uIRO6Y4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=DRXlpQaRLEGm6Qu0akOVTfvvpKW49o7w/leyhS6KbAvLJOL226soUbH96BuygLDSo77QZ4A/SkdL4HRUqkcAV2LxnMfJ9z6heqr3Ypsjiw/vwGQ3sU00JQob/2lDf4ja1M0GMxd3yNQdTHG3DQjpJNrkIcum/WIfucwRrb441CQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=JdASX8bi; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=kjUry5I3; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469CT33P000824;
-	Tue, 9 Jul 2024 13:07:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=4Ev30IA+xtFxR4L
-	HzBo0s+kAxvV8AyGQj6eu9k85SAc=; b=JdASX8biaDIjEdvfH1Cn15bgacGjSdb
-	UBfhcPwCJCXat0nUlEULeEy1X1XhcMjAd2SUjDTMK84f3FwznY/wS9f8Xct7bMBN
-	/ee5WOmn6kb0HGbdS6aGRGeK0bBOZ0TmtS9wGfMcX0eJ5sUKIoWsGGPj/3N7L9/f
-	lj1rlysd0oB4Gok+ScI/CP1lkzWxwXJai3l11Z52wAiXjlQGqB/rJnIKmnILG3qB
-	PcN8IP99zrgAqgPJVTA8K5xtnQHnv74C547JCzFPoEdO4D/SL/1mJSZZtan8sb+n
-	GvnKW1FDnbH8tutYlLRUuGmW7ksXguVrJuP1DdiRroG1TLn8TV4pw7Q==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 406wkccu63-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 09 Jul 2024 13:07:44 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 469C7uL1027500;
-	Tue, 9 Jul 2024 13:07:43 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2173.outbound.protection.outlook.com [104.47.55.173])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 407tttmuv1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 09 Jul 2024 13:07:43 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JfETUIJLNnJmBfsZLArdML0Xv4d44FDxvBk3d56L7qICCdK40G0MDhfkbWFqUrDLPEng470GexxvuXr7gb7gtU5rJBq68z8NVD7rh/lwucfoVIE+hH1egY4+LK0hD5Hi739BRq5uEsZvoQxqahAKXvDAn/FUWeM98sy9IuY3d79eQ+HGiu27+sdNmgVi6pR3E9u8jJ6VYS301TWCJB3nBBtbfnrDwhvXpufn/zTg3NvecEnn5SVkGf0TWTUUdUrM9ZeKE5FBr4U6P5vkKtx+CzacFSKWlUsj+7ttTpjBfDBFey3h6SwjHU+XVXXbxsZdRhepehu3WlUnU1FA+3cFHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4Ev30IA+xtFxR4LHzBo0s+kAxvV8AyGQj6eu9k85SAc=;
- b=gY/2kwLseP7lD7Nin/11SWQd/kiWayBIjNhUOPnXTSmx/GFc9dnvhyNSQnIn0ryVxEM7qtom6l0yRVKrUK7hiwxKtVlrivbl6ptZZLt8W/BXU5g9bbcmrtmmwTXi+C8/elNiJ0pR9Mzl81GX9Z+oYHYCOShFzvs93AGhxyBWsHCw/01TZqHWeYcOyJUhb+S+6F4UXsgKU4f2elQVUyEhcu/bk4Epwz8NSB23BasROuAwikPQzG4IvWNq+nJpU8P3C66D2n+U3W6yUaP3HZhmvD/H3mo7MQbX+TsmJInXMlZsY91HJRrG4dZD6uGnSRZ4QsNrsYCPyeHjEuVVRuUAKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4Ev30IA+xtFxR4LHzBo0s+kAxvV8AyGQj6eu9k85SAc=;
- b=kjUry5I38s/ASrbGL4TdRW41vtriXZ8n12b6E8QBNp3pyE0TrGR+dbxNNu33I1St4/k6rMD/V5PisWVub+7osWr0r8jGmldbC3WYkyZ+XWaC8mb27VHbdot/mSHy5j0KA3NtVl/fNnfmwci2gFdHfDTpJby6v1Nx6ZWoKdlVaw8=
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
- by BY5PR10MB4244.namprd10.prod.outlook.com (2603:10b6:a03:207::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Tue, 9 Jul
- 2024 13:07:40 +0000
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490%3]) with mapi id 15.20.7741.033; Tue, 9 Jul 2024
- 13:07:40 +0000
-Date: Tue, 9 Jul 2024 09:07:36 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Vlastimil Babka <vbabka@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, SeongJae Park <sj@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
-Subject: Re: [PATCH v2 1/7] userfaultfd: move core VMA manipulation logic to
- mm/userfaultfd.c
-Message-ID: <4v3i2dkez33twngywzvosnc3vwlgxynktqceno3izup4mp46hd@nf6ebzbddnwx>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Vlastimil Babka <vbabka@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, SeongJae Park <sj@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	Brendan Higgins <brendanhiggins@google.com>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
-References: <cover.1720121068.git.lorenzo.stoakes@oracle.com>
- <76a0f9c7191544ad9ccd5c156d8c524cde67a894.1720121068.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <76a0f9c7191544ad9ccd5c156d8c524cde67a894.1720121068.git.lorenzo.stoakes@oracle.com>
-User-Agent: NeoMutt/20231103
-X-ClientProxiedBy: CH2PR07CA0019.namprd07.prod.outlook.com
- (2603:10b6:610:20::32) To DS0PR10MB7933.namprd10.prod.outlook.com
- (2603:10b6:8:1b8::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A830382;
+	Tue,  9 Jul 2024 13:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720530573; cv=none; b=USWDiM/qyeKSfvAGk6yWWsyc1vsOVnnkzOksBfEe3vcBuvYteJvIXjBQwPJOOE+AJMJSW0GzqgFYdWpsG3WKqmTC/Ga79zMQhjVYmEboolNC1yZUMxlT+gnk2WObf4yKvDamToPzf9LJz8P+2nxM+2u8HKCzxNlD3Dez5vGwmqE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720530573; c=relaxed/simple;
+	bh=3Z7C/k1/OCInJr3E0eRERpLS8eMXVKBjkm5IMZj13QE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=OKZ1PKM80vjizj96KYqeo44bfZcuUg+NiQFTOiODkQdXRkv1rK+SDHY5keRdYNNGR30+DM9xml2viXdo9eOQYiXjv2esyWZpoeXKd9ckwHgL8nkb2YqBd34kbj/Gl0dhRdxaO2VxsvKnk5YM3NrEF6UAK6UaKJ0tZshrP2YYh6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U1zkWpKf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4698HAkd026705;
+	Tue, 9 Jul 2024 13:08:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=MJluPvsOPAnlDo8aYbkYhi
+	dD7T6wP/LREsgsBkHtyeE=; b=U1zkWpKfm0efOWrsto6/6UPVitYWhVJNJSw3J4
+	+5gZrLK+shQXAnECUoIcUu25uIHWDYkKhIref9LwImzD7fXex0Iu/yao1YjxJT6W
+	IJrQf4FkuQ9SRO98SsvFIyPs4WUXOgcw0AlB2/sViLxw1rd8JdaRX3Wo9UVhiwQv
+	3eRb6uVRFwfyx9gBywt2CiJ2N8EKsN8R3uIZt1qzC1rD2ZAoB7Z++Q3YVeBi72Ul
+	AIzNM9eVHnbOAqAV3J1PUUgwkGiR8MBLjIy6dbAVoQD7Hlznr+XhXsf1pFYqG2dh
+	8mqLbtvGFKea2skjsF3X3d3QvoZGf5bINKjY34Wi5skbcGaw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4091jdgrd3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 13:08:25 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469D8OBF015271
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 13:08:24 GMT
+Received: from tengfan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 9 Jul 2024 06:08:18 -0700
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+Date: Tue, 9 Jul 2024 21:08:07 +0800
+Subject: [PATCH v2] dt-bindings: crypto: ice: Document QCS9100 inline
+ crypto engine
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|BY5PR10MB4244:EE_
-X-MS-Office365-Filtering-Correlation-Id: 760ac0e9-55da-4722-0e23-08dca0181cc3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info: 
-	=?us-ascii?Q?VrNlHlKZtv8t1PeU0QTwrHKYdyIlueVj12jXMDnDZpk23nL5/Xa68/lLOuRy?=
- =?us-ascii?Q?6N91DYTJkj3sr3yJ4pTycVOh/lUud8wGFHYpXBE6CV/EtxVrGMD8akX79CWT?=
- =?us-ascii?Q?x/hI2/FQIVPPrkApE5vGDBkJSsglMHr6RNv0pBkvzeMJtGd0Mtk/sgQf6E1C?=
- =?us-ascii?Q?B6JkoAQgtZMxhswu/jSEbn9VDBh54dgGCcgkH9iYm0+SVDCP5oxLQEkYpVx0?=
- =?us-ascii?Q?+XhAP6uoi37evlNenllRz5XXjxcgmRfOaoCXpSFwPypfO1uQyL/2jHRxVKDr?=
- =?us-ascii?Q?TCKXLfWCpe9JJ/+DMdBxsB8iSWd20XesNGqaWHj08NldyOe1J8A0TlxBgcGT?=
- =?us-ascii?Q?kbKJfBelKhUPAmCdAoNTOFWUforwUU0HRZE3CTbjQqxWHGeYAejWRf9dIvep?=
- =?us-ascii?Q?2gROCHaPXs6wjeRZ5LGczDR3Xr71ABcWBgCxuiHc3jSAv6576+HP3ovG2uAb?=
- =?us-ascii?Q?tD91AC4h0zJffeMcpkcUOox+PlsgIg7nOb5JZyAPTtNIu6QZelYFrCgVVAfB?=
- =?us-ascii?Q?UCCMXrQ3uB0DQAU95H3VUfZet8xKRaLUAJ5x4GJQEw6tyjuyJ1u3aeGhdliJ?=
- =?us-ascii?Q?mKL9GQmHY9zm7mESQXwjZZZv7s07V6aatxE4jXLdPFaVoavwWg6QA2R3/B6f?=
- =?us-ascii?Q?Mw+cs6yT7gPY3IbnpSTsW+n5GJDt93rM1m9SpcfMPeW62NrgNa65XYsYZR+7?=
- =?us-ascii?Q?UYMeMUoIQiRDEj1DN9u/CXgvfg8dQlJewfC9WtJkh6rBCZTbpHIHTg9c7041?=
- =?us-ascii?Q?udoyErMTEox5K1bHDWFYxRJfwITcRM/2yX9LOm3/5Uh5fd1INQHBJyrNM4Ne?=
- =?us-ascii?Q?ng07jXJsNuO6CEpQwoYeJeX5KY+51ZfdzIGyVdbT6m8bA8S/PPYj0A1ynmdW?=
- =?us-ascii?Q?cZu3KUGSID0wowFzLhmnieVHOTvCKeIFZRLU8R7zy0tL2oBxL1Iskpsn05UA?=
- =?us-ascii?Q?JUFH/3zYwSzahKl/epS+UTbxQ6J68PT/5NcWiqo3ud9DodGGjDVM6m35omuc?=
- =?us-ascii?Q?7gHvgOGFVuJsfrmzPvWzcyziSO0rcxv0A90qy8zM5kByZ7egK6/wVH5KPs6y?=
- =?us-ascii?Q?TuROwu7Es4SWxMiIK5JgC8CFHKl2+HseEKclXG84UhvgS2F0ca9G0ScvP68o?=
- =?us-ascii?Q?sGp/NiezzyVapVAS8FaaOVQSWtXyTZLUy61/g9amJidzHjUaPC6WyvY0oI6t?=
- =?us-ascii?Q?MIfRbcvM8BzBktwh5cUEFKl63VbFfoClqc9d5+nOu9KRkCWn1AM3HwdlCXTF?=
- =?us-ascii?Q?BEm6cVvYVineUtNnb7kQ4HPxx/nwKIqqjkIT9vCpF2iwPNA6jAKGLObp1057?=
- =?us-ascii?Q?/lxQpCg8ixlBUd65/RHOFxlmz5Xhnix72q6jg6pmW92o+Q=3D=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?F1tGs9cTHlOVtuXQ3wyk4JmJ1T8JfrKumy4+bOEuVI8g/6zO8uwqhEHwT1lE?=
- =?us-ascii?Q?eGJaVpH2qGx0TI5QVbCrIjhWo1ioNk11eYyx6Yfb7Eq4I0zM4cZTmLnu/TUo?=
- =?us-ascii?Q?4z/dUxEd5uepyDit0RbUt5zaixvTZu0TJdEEK30jDG820ADZ4Yv0yDGdDTd+?=
- =?us-ascii?Q?lesFF2AlMWcXPEbag6G4wYvF8OSzIUL1TLZeSmPpfq7FMEgrYOuer72TybgL?=
- =?us-ascii?Q?5ynULLzgjUnuajPsLQiT2hL9zchfKhJH8fmD99oiOrbI6jJM+sLXQP+XqNZP?=
- =?us-ascii?Q?MLayH86DErO/h21sZ1QbASYVp6CftuiVqC4I9yQ95GBM6MkzGqXbA+HWBYeh?=
- =?us-ascii?Q?CyAgnFnGTUifhQrJfMD30ryR6IOAcNpOyh07qW4ufPN1JQtD/2ccy/Mh0K+z?=
- =?us-ascii?Q?g/JX0ua2klbJmiXuW98lEw66D09Uxukj59aZ7KxKl97yWIf7qAUdyWMuxC0e?=
- =?us-ascii?Q?UZWAEKBdWoGkvrHN1LjKsT3WJ1CrjdfxHgblOSuSGTEXKOQBkhRXfVqU7kgj?=
- =?us-ascii?Q?0i70HZWB1Pbt13fpgEzqpmuo78//JGxo+vA9sjyc1x+bp2Ngm53AFPkOUXZw?=
- =?us-ascii?Q?AhGqXC+IyWp5fZ9c+Wh2IgVnThWtl3V4mt/IOk5uOQnAC7NafvVtqhavGokV?=
- =?us-ascii?Q?QxIaNVPygp0Q7gTGtFKMt6RMocD9txYLI6aaSG+uvip5e6fGJGSIXzl86Tfa?=
- =?us-ascii?Q?p/x1lNkxl4Jbakx1HMj2wXaJrz9l1tfBJJPPD1FXKZPNIpZgaeKQsxUhwoif?=
- =?us-ascii?Q?o1AYGY4wQMQFKlJ1gFx0tXhumthsnpJdYuN6f1tdM1CisJULIPgFhaGpYwBc?=
- =?us-ascii?Q?wB76ozW9fv5jgXv5+hzn7+yyOcYWOLOZoG8rRDgpQISZp54rNa58718Pmjgu?=
- =?us-ascii?Q?+IIxbfFmnTEljk/W9a+5GrImF+ipVbjETggC2HgEOc379KTmjugw7/j09gI7?=
- =?us-ascii?Q?X9gViOHNi9ZP+N6bODy3MV75bD6kqvem9kQ4m6kv1XqyEeUxVgVWYmxdxokQ?=
- =?us-ascii?Q?oMQH5vqueD5NcM7ujVbPhxMwZhV+2gUOmYVm0Tw6DshmMlkDS0nq6FlZ3yo+?=
- =?us-ascii?Q?plreAMMypcpDqS/dlroE4NbyLcHnwGH2Nduf4n3oRLQKAsbkL7qdi/3ZS2pV?=
- =?us-ascii?Q?x0WC4493FHi8EhfbIdipa5kVCK8LeOSWxGAVF134dkpWA1M/aTSzshhJYXzI?=
- =?us-ascii?Q?5CLmMP203YqKEZBDKCEA3Y1R0shZdtKOjWhoKtejl7Vb/0zchl1jVVfOkwWU?=
- =?us-ascii?Q?XTbDLzsnh+jW2azckCK/060X0k1161uE9NrGAgpDgj0opsbVEHrSFq8KMB6T?=
- =?us-ascii?Q?tWJ25vrE27j3G3yvKRw1/gUmA0oEdQoV8BPn9909Wf4dYRyFQJWvxyKoxy+y?=
- =?us-ascii?Q?NhQvAdLemvBimYA0JhfBC4R/1brdyD8otucYXzphZ4REr+UqMzVuJqltzG3I?=
- =?us-ascii?Q?teXS95mqvwqW6aOd8cTwsU6pZZHp21/ssdDa24yuXK4al0lZ9njtIKFj8RQ8?=
- =?us-ascii?Q?U6KK9ISz3UZHfGpaJK0+0hvYugfxuf13nLUCpmA8Wjikr+ljoSAZjm5YQ0KT?=
- =?us-ascii?Q?qHFgarkasyX0bbn8avh6bWN0kZ/ilOGNT8Z0xWdn?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	tPL//v08aaY2o8Pg2q04MwbFMoOMz2hYK0Q7UYzv46jp5if3aUUwqhQm7mHGX7uJfgrOO6FpZzYZ1zwfLKMXIArtAiy3uE+lQ3jEVU/m5N4L5QKreYdKof9rvQRWEWO6e4Vgj1VOEoasDRY+GhRPv1r7y0J0BNJ9VkVTGMpOS238OKujaJuXESweUkxvrOy62d42lYFfGz/AvfR7vqTVSlsMVnSs2e8vrOSBP5ANsjx/NBnn8aPthxPT/ZGbQjHlr7iHnQgX7BurQOpbWCpdRQaPsfr4Wz8AMPYqEFlBGXhPuchuQ7TbkHVfEt4NQa18H30n8/1zu2gDabYRtp4IOZLO6CR0lEYXaQhc7MwYw/v5W9ufLzXJVnZd++wjNh6J5os/ZW3kJKpDxlJXHx/h2TMZ/JBGJAgA1fk+SOoQ/w1Keu5j1uKk2MCdjV/FmBQJBHgRLrDd6g0+qOPEFY5d459DQg8YeTLq+fWmPb0453hx7DyHpwtHphlUFJi94raGPJPiot/nAP3ASgAwEFuhHubgRE8L+l5azhIrh80wxT8XdKS1RsHr4SV31NE5R3fyQoSDzIy2xYLYiu0oRWu/ii8cB0R8Wy6bzWCVlYlePg8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 760ac0e9-55da-4722-0e23-08dca0181cc3
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2024 13:07:40.3664
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7SdM97aV+p9pN4yR2BKfFXD4S1fqZspU1Eg1uBSwpGebKkXprXpnClVyu0WzvXjpze2oytBZoCuswZyLc2ER8Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR10MB4244
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240709-documnet_qcs9100_crypto_engine_compatible-v2-1-59bd16b1a99c@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIADY2jWYC/zXNQQ6DIBCF4as0rIsZaanaVe/RGKI46iQVFNDUG
+ O9eNOnyf4v3bcyjI/TsedmYw4U8WRNDXC9M95XpkFMTmwkQd8ig4I3V82AwqEn7IgVQ2q1jsAp
+ NRwaVtsNYBao/yFE2KBr5qHVVsPg3Omzpe1rvMnZPPli3nvSSHutfuYGQuYREpJkAyHnKp5m0C
+ tFoK/M6goxOosXKfd9/iuQmC8UAAAA=
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, Tengfei Fan <quic_tengfan@quicinc.com>,
+        Maria Yu
+	<quic_aiquny@quicinc.com>
+X-Mailer: b4 0.15-dev-a66ce
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720530498; l=2633;
+ i=quic_tengfan@quicinc.com; s=20240709; h=from:subject:message-id;
+ bh=3Z7C/k1/OCInJr3E0eRERpLS8eMXVKBjkm5IMZj13QE=;
+ b=tdxgb2nzo0CUI6WZQMGePXlr8dQXrZTL9IQKfE6mANIC5ixZs8mSFm3bbMwLFD5sWBgGOcfi2
+ bM7et+6Iv3ZCK38LfFgvGp0emK522kNY13SELvPgLKSkAybI9osY1CU
+X-Developer-Key: i=quic_tengfan@quicinc.com; a=ed25519;
+ pk=4VjoTogHXJhZUM9XlxbCAcZ4zmrLeuep4dfOeKqQD0c=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 3h1GkmC6XB48gAEHaAc5xCyz7CmJ_vdi
+X-Proofpoint-ORIG-GUID: 3h1GkmC6XB48gAEHaAc5xCyz7CmJ_vdi
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-07-09_02,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 suspectscore=0
- malwarescore=0 spamscore=0 phishscore=0 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2406180000
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 malwarescore=0 mlxlogscore=946
+ mlxscore=0 priorityscore=1501 phishscore=0 clxscore=1015 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
  definitions=main-2407090083
-X-Proofpoint-ORIG-GUID: XjkKjMjnWUq44mtrW2DqoK36f-T2-GCn
-X-Proofpoint-GUID: XjkKjMjnWUq44mtrW2DqoK36f-T2-GCn
 
-* Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [240704 15:28]:
-> This patch forms part of a patch series intending to separate out VMA logic
-> and render it testable from userspace, which requires that core
-> manipulation functions be exposed in an mm/-internal header file.
-> 
-> In order to do this, we must abstract APIs we wish to test, in this
-> instance functions which ultimately invoke vma_modify().
-> 
-> This patch therefore moves all logic which ultimately invokes vma_modify()
-> to mm/userfaultfd.c, trying to transfer code at a functional granularity
-> where possible.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Document the compatible used for the inline crypto engine found on
+QCS9100.
 
-Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+platform use non-SCMI resource. In the future, the SA8775p platform will
+move to use SCMI resources and it will have new sa8775p-related device
+tree. Consequently, introduce "qcom,qcs9100-inline-crypto-engine" to
+describe non-SCMI based crypto engine.
+
+Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+---
+Introduce support for the QCS9100 SoC device tree (DTSI) and the
+QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+While the QCS9100 platform is still in the early design stage, the
+QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+mounts the QCS9100 SoC instead of the SA8775p SoC.
+
+The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
+all the compatible strings will be updated from "SA8775p" to "QCS9100".
+The QCS9100 device tree patches will be pushed after all the device tree
+bindings and device driver patches are reviewed.
+
+The final dtsi will like:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
+ 
+The detailed cover letter reference:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+
+Co-developed-by: Maria Yu <quic_aiquny@quicinc.com>
+Signed-off-by: Maria Yu <quic_aiquny@quicinc.com>
+---
+Changes in v2:
+   - Split huge patch series into different patch series according to
+     subsytems
+   - Update patch commit message
+
+prevous disscussion here:
+[1] v1: https://lore.kernel.org/linux-arm-msm/1b32168b-7d1c-4b18-b4f3-a4979232b515@quicinc.com
+---
+ Documentation/devicetree/bindings/crypto/qcom,inline-crypto-engine.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/crypto/qcom,inline-crypto-engine.yaml b/Documentation/devicetree/bindings/crypto/qcom,inline-crypto-engine.yaml
+index 0304f074cf08..ad0944e05025 100644
+--- a/Documentation/devicetree/bindings/crypto/qcom,inline-crypto-engine.yaml
++++ b/Documentation/devicetree/bindings/crypto/qcom,inline-crypto-engine.yaml
+@@ -13,6 +13,7 @@ properties:
+   compatible:
+     items:
+       - enum:
++          - qcom,qcs9100-inline-crypto-engine
+           - qcom,sa8775p-inline-crypto-engine
+           - qcom,sc7180-inline-crypto-engine
+           - qcom,sc7280-inline-crypto-engine
+
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240709-documnet_qcs9100_crypto_engine_compatible-e5de2d56bca9
+
+Best regards,
+-- 
+Tengfei Fan <quic_tengfan@quicinc.com>
+
 
