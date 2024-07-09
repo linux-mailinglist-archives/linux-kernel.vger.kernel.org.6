@@ -1,120 +1,107 @@
-Return-Path: <linux-kernel+bounces-245257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE8692B04D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:37:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E2592B046
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47F86281F76
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:37:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC5B2B223F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E0813BC30;
-	Tue,  9 Jul 2024 06:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F122315218F;
+	Tue,  9 Jul 2024 06:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ol/phP0x"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jg0LDzEN"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376F213B7AF;
-	Tue,  9 Jul 2024 06:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61D813CAAD;
+	Tue,  9 Jul 2024 06:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720507006; cv=none; b=R3FU44nJtce04USl6A9OIA8uvDcscQ8qGxE2lID4jdrcxK8YZ/ZXEFL6h5ezSfi/0T41h7JyrM4FbGyPQEQ3AkQwRxawh7UKNFJJyfTMl00sfm6xHd2U8CRZbFDF0OJHgN3Fwiwja2dvAmwq3NJZF4h/JfrhHDAjhw8TiffMgyI=
+	t=1720506765; cv=none; b=VnituDqzT3v6HQfHi/Xt2eigv1k+SDQJdKTsxdC7e1qFREWBI1j+sCugeDEIx6pZZsMmnq33UlknWVVI3PX3UILvUzHs+zKbgz/9NoCpJNUGvrCzGZ7ce4mTJaSfJvupblLWKIAxgElb2Ej6jsjsRi3GESGdfR+lwy36knOp4Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720507006; c=relaxed/simple;
-	bh=RpAXK7DqvVegnwp8Vh3nGtV1F/CCyp0yIh0wn9fYZS4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LONzBzIun1pebEd5kdoecxYIZvGqUrT+ui1uxQ0zUSFksV7lwUBytP4rHLELwtZaJBk+2g3Z+BelyeG/wKDpFP5M66XJwb4FZtUytxJuw2xfCudj6+OzOLNVqRTTsTVurKO2vaa10ozDCHNgfj1+iVb1ltIj202XyNL5VYXm/K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ol/phP0x; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4690WDSt031488;
-	Tue, 9 Jul 2024 06:36:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=mu0GfX41Pj6F8M+OZgbvFj
-	ssGrwjbceCh1fDVyP0xic=; b=Ol/phP0xgPjMUhrQ1fgkZTTgJKDzRO6AYEMV9f
-	PJTZaj/wp0+bv+Z/iX76wbyBUAnYjr7B5h7aNEktfkLlOm6D9H1IvXiHT5vtgHTn
-	38mCkbMc67yf0Qr9OoBi44VH/ijiDj9KKkWd7QJx0IDIVMx1ZWe2nd3emev6ltgE
-	+HDsush7P1yAP1QFmyAk1+h1L7IyUytVG35/eooDo/0mXP8pPJ6UeiO0ztRMRA0f
-	1ogLUHEjv1no7IvDmL1yS5NfqNkxQ6qZCwS6ORJq8BlwrmR+flbLdJjKZI+Cv7dT
-	qsg+nsod/D2R6qENgTMF9QWrFvJ3Tq9fccWtpCPbGd1Eq3sA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wgwnhk3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 06:36:36 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4696aZsP020080
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 9 Jul 2024 06:36:35 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 8 Jul 2024 23:36:32 -0700
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: <manivannan.sadhasivam@linaro.org>, <lpieralisi@kernel.org>,
-        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
-        <quic_krichai@quicinc.com>, <linux-pci@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Varadarajan Narayanan <quic_varada@quicinc.com>
-Subject: [PATCH v1] pci: qcom: Fix 'opp' variable usage
-Date: Tue, 9 Jul 2024 12:06:20 +0530
-Message-ID: <20240709063620.4125951-1-quic_varada@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720506765; c=relaxed/simple;
+	bh=tZRcUZ+95IAQt8CTUWBeI5BuFARsGGVBApsv+FuXZIA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jJecO+/hg6O+Ui3seoozJ9dYIqbCu/HKNk32mO+LhyU1MWqvdnWwpqP4DltSJaY9Po/viudYWx3WQfmI7KZty+8lD116xdt2Nx4IbNdrAOOMXoMqI59S0iclZ1HTmSt9LNlzlO7byT6OETLpGKV/fMiaiM2xawYZ+KlpTuBC590=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jg0LDzEN; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a77d85f7fa3so531945966b.0;
+        Mon, 08 Jul 2024 23:32:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720506762; x=1721111562; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tZRcUZ+95IAQt8CTUWBeI5BuFARsGGVBApsv+FuXZIA=;
+        b=jg0LDzENzJ+CRgg6VtV5YBEWIBQVMJHygAIXI7odD0RgxR/qIN0ro/Ix671Yi4pz4b
+         0nC051tryBucrQntJZ778jQvI+MCcLUc5cyu1KVCtRFbrsMyPM23ArNO2XQ0eGEcA9gL
+         q4Hn+R0zLkJapDaoi30ivpMnlTIFPfKnESGlHlIc5MUI1WcakTMUiAswqkXJWpieGzjN
+         01y/PZ/oitzoQM5cMhoMFpPXAuxi2enirmAvRdMuTYuiBuhAswAzgXoy9mYW0rJVR8fi
+         0/eFSCuPNrDQGVyToUb1qpi6d0CWnw+jWH/keO+OxWmQYoPNrM8OT0n1vr0A1nj9/xul
+         bsnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720506762; x=1721111562;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tZRcUZ+95IAQt8CTUWBeI5BuFARsGGVBApsv+FuXZIA=;
+        b=ME1Vdqnm3POVGIoNFa7s7KFlhf6n0eI5XL+9lZIAlCwfUy6tAnmMgRNI3PN7Nqcfpu
+         7YoHCiuuRmF5vDL1NRReVOZG2hF6q9m6Y6jr2XC4U/sdcGz6x1vkTst9h+3TH5is2KvW
+         606t8IsWvcrmbgajMgdNlcc6af6iDzyMWeYfSo58bADDtUHgApVFL6R43cOw1SlOmR/U
+         pCSC3gzzE3QfTLmL3Gnf2fMu03ucGS6UvkCI7K4SIlp5PnvnQZ77/EP34JX7mxPAbqAD
+         0liMs+Vb8PG6fWPijohe6aU/hAP44JCbvsTEtsEghgoPSIpwbBZ7uQV4ekrqFedfOEbw
+         oO4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX9OCBssRHqF48SxjrLOEwjNDyePMEh2HvDj0t7vQSxN8Mr0kSCMhmMWYT1OOmxon7WnXCH3aWtQLSq6pd4n/iMqQS7wJ/6/+VdSEy4wc1vRLCN6ToJYsb3jqdHNpKZ4fYcsopUWxQDeQ==
+X-Gm-Message-State: AOJu0Yy4Q+U/x9TdavOOUOAp4W1B1LL7pP24pVSOm33/LAzF4ds9TIq4
+	jiCR/wRhY9ISYDHYNSMOAXaM8zQiLYhKYzTZDba6rG5dnVQSGniI
+X-Google-Smtp-Source: AGHT+IFYWv1no8Ke6U6rKRrYT/DMqxmdb4f0/Poh8xIj3JXlzLBuWHNHfAYGbNOAQB65ZfZxwEsNfA==
+X-Received: by 2002:a17:906:24d9:b0:a72:9ebe:29da with SMTP id a640c23a62f3a-a780d30cc6dmr89115266b.35.1720506761706;
+        Mon, 08 Jul 2024 23:32:41 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a872e23sm50534066b.225.2024.07.08.23.32.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 23:32:41 -0700 (PDT)
+Message-ID: <9c64adf6a686b2845c15b368592115f3f9ab39e4.camel@gmail.com>
+Subject: Re: [PATCH v8 2/3] Input: adp5588-keys - add support for pure gpio
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: utsav.agarwal@analog.com, Michael Hennerich
+ <michael.hennerich@analog.com>,  Dmitry Torokhov
+ <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>, Nuno
+ =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Arturs Artamonovs
+ <arturs.artamonovs@analog.com>,  Vasileios Bimpikas
+ <vasileios.bimpikas@analog.com>, Oliver Gaskell <oliver.gaskell@analog.com>
+Date: Tue, 09 Jul 2024 08:36:35 +0200
+In-Reply-To: <20240704-adp5588_gpio_support-v8-2-208cf5d4c2d6@analog.com>
+References: <20240704-adp5588_gpio_support-v8-0-208cf5d4c2d6@analog.com>
+	 <20240704-adp5588_gpio_support-v8-2-208cf5d4c2d6@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: shdqdnuhQ0HTffvqTa2nbHrdiTVArVOU
-X-Proofpoint-ORIG-GUID: shdqdnuhQ0HTffvqTa2nbHrdiTVArVOU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-08_15,2024-07-08_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=866 mlxscore=0
- adultscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
- suspectscore=0 clxscore=1011 priorityscore=1501 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090043
 
-qcom_pcie_icc_opp_update() calls 'dev_pm_opp_put(opp)' regardless
-of the success of dev_pm_opp_find_freq_exact().
+On Thu, 2024-07-04 at 15:26 +0100, Utsav Agarwal via B4 Relay wrote:
+> From: Utsav Agarwal <utsav.agarwal@analog.com>
+>=20
+> Keypad specific setup is relaxed if no keypad rows/columns are specified,
+> enabling a purely gpio operation.
+>=20
+> Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
+> ---
 
-If dev_pm_opp_find_freq_exact() had failed and 'opp' had some
-error value, the subsequent dev_pm_opp_put(opp) results in a
-crash. Hence call dev_pm_opp_put(opp) only if 'opp' has a valid
-value.
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-Fixes: 78b5f6f8855e ("PCI: qcom: Add OPP support to scale performance")
-Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
----
- drivers/pci/controller/dwc/pcie-qcom.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index 26405fcfa499..2a80d4499c25 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -1443,8 +1443,8 @@ static void qcom_pcie_icc_opp_update(struct qcom_pcie *pcie)
- 			if (ret)
- 				dev_err(pci->dev, "Failed to set OPP for freq (%lu): %d\n",
- 					freq_kbps * width, ret);
-+			dev_pm_opp_put(opp);
- 		}
--		dev_pm_opp_put(opp);
- 	}
- }
- 
--- 
-2.34.1
 
 
