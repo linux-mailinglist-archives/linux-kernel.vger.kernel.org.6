@@ -1,125 +1,212 @@
-Return-Path: <linux-kernel+bounces-246546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D9C992C358
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:37:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17DFE92C35C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C83C71F24134
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:37:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C10DA282885
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE5D180046;
-	Tue,  9 Jul 2024 18:37:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FB91B86D8;
+	Tue,  9 Jul 2024 18:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="MzRPetDr"
-Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="EMbD4TuP"
+Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E0E1B86D8
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 18:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC79F1B86E4
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 18:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720550229; cv=none; b=UbQTV0PILCg3vA5j6d8uCww+Iv+Y3fdNhnKfNZMpGHggyxrsDdnxuIEQ9c3M3/QvyJ0BzMmnUHqwPRTvbyMbqinRnADOMrS+FqY9q/7AP9rj6BDBWXeyvxGuZFVOUqCyXyZz0kSumlz9cYolBwnLR7IJZVdTtKl8y6OKcElhBs0=
+	t=1720550257; cv=none; b=InuGYn6WGM5FopjLKlmSVrAKYA1yS6wPU2N8Y9KV7nczmW31ZnSDDO6Wyhv1a/rokSTgLpGXTg2t2+I6HeWIZrOpYoykD3ZIVfjc3LXgkDcEwBvdkytZE5RmWnFtZoLxvZaJAYVaCM5PLLqnGltKA1LaeW/U2d3YPUJsVeZQpGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720550229; c=relaxed/simple;
-	bh=PKu3+1feBtqguibN2HU/GNOpO3G17sWxcaCB3calbdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sxceCgkZOdcm+HDt3gkhi8k7BLZ5ThGj/fI+KlJdy7i4klA/d+xh5t2TmmgSCqucadfd7gNBp8WQ9KNC/hN19cPm1qPuF0R3+jDds7FpHduwv1tJzKxBMXnPTqyko17UCy4wXXyydqMfkXtMH+8//hnjU1NH2ZdatnF4Y0K4Jd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=MzRPetDr; arc=none smtp.client-ip=148.163.143.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0150244.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469BH2qN020520;
-	Tue, 9 Jul 2024 18:36:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pps0720; bh=KyUSMfzFydxOVmvFJMdy2wP
-	Hcfhb8oQUAOvK06S0J04=; b=MzRPetDrMpduVDE7/C/uDLNHX+6LMxFUa+5Dnqo
-	WrL/z2umMUDTJfd9CCFTd4Yl+K7zOo7Qea+aCdx/eKek3rA2t10M35F08bd+vTp4
-	ZU97bnrAb1W44cSNTGgku0oqCWjyoKQKh7rxlLYcjdVaC1yeofHtGPH+FT10ytza
-	JYzl/DOE45Z5M44dhPcpJeyN2+5TK1sDmOXfsDG56KP6hEKAtodTyJGTRSZ3XLgM
-	FOB1tZjOOiYuRDKykV4jvX4Tcc26n9gh4S+jducTqT7C2HLnXQ9vfYvxAbBWZ2LG
-	SoR0pQSvrcQuFrZh7D184FO4O18K9OvkZ1v9GrvNVopwnHQ==
-Received: from p1lg14880.it.hpe.com ([16.230.97.201])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 40946skp9a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 18:36:09 +0000 (GMT)
-Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14880.it.hpe.com (Postfix) with ESMTPS id 54CED80025D;
-	Tue,  9 Jul 2024 18:36:07 +0000 (UTC)
-Received: from swahl-home.5wahls.com (unknown [16.231.227.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id DF6FA805766;
-	Tue,  9 Jul 2024 18:36:02 +0000 (UTC)
-Date: Tue, 9 Jul 2024 13:36:00 -0500
-From: Steve Wahl <steve.wahl@hpe.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Steve Wahl <steve.wahl@hpe.com>, Ard Biesheuvel <ardb@kernel.org>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        linux-kernel@vger.kernel.org, Pavin Joseph <me@pavinjoseph.com>,
-        Eric Hagberg <ehagberg@gmail.com>, Simon Horman <horms@verge.net.au>,
-        Eric Biederman <ebiederm@xmission.com>, Dave Young <dyoung@redhat.com>,
-        Sarah Brofeldt <srhb@dbc.dk>, Russ Anderson <rja@hpe.com>,
-        Dimitri Sivanich <sivanich@hpe.com>,
-        Hou Wenlong <houwenlong.hwl@antgroup.com>,
-        Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
-        Yuntao Wang <ytcoode@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        Joerg Roedel <jroedel@suse.de>, Michael Roth <michael.roth@amd.com>
-Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
-Message-ID: <Zo2DEOKcEyZNyGkV@swahl-home.5wahls.com>
-References: <20240708195810.GKZoxE0pRWHEUljjnQ@fat_crate.local>
- <ZoxOt1_w7nblRQCv@swahl-home.5wahls.com>
- <CAMj1kXGA8zG95WutMgVgeb-M7oQKJrVO6QWNzLi1GMuj1wq=bg@mail.gmail.com>
- <ZoxX9mckeu046zed@swahl-home.5wahls.com>
- <CAMj1kXE5OYTxxBEO38dRyYt_J1FNpU-tdkaU8rxvrMLd_k_beg@mail.gmail.com>
- <20240709103742.GCZo0S9md7YyeevRN-@fat_crate.local>
- <Zo1SRIZEhveMwSPX@swahl-home.5wahls.com>
- <20240709164620.GLZo1pXPiG42JH4ylN@fat_crate.local>
- <Zo1rugBl5WWy-1LJ@swahl-home.5wahls.com>
- <20240709175819.GNZo16OxP7VuZLTKFx@fat_crate.local>
+	s=arc-20240116; t=1720550257; c=relaxed/simple;
+	bh=at4EsWC72kT00VKxxmqnlOC0igBZImvWpcDtL72NrcQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CmcEJa2n5aiSTh36bctFtGj+r719Co/luSmRAwqBYMsYjRULg4jZSHBbf54sRTTfZt6Dg8s4il4RYjZ7jEae6v6mvoVILFhhUoACzXgtFWIp24Up7EzNvzMdO8PzSKH+hfep2Dg23750Klj+KcP6TAXmuI/lGCfE/gfWs2kTjxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=EMbD4TuP; arc=none smtp.client-ip=44.202.169.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
+	by cmsmtp with ESMTPS
+	id RF2csRCnTSqshRFiYs8DUm; Tue, 09 Jul 2024 18:37:34 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id RFiWs7a1hmx9aRFiXsPKIo; Tue, 09 Jul 2024 18:37:33 +0000
+X-Authority-Analysis: v=2.4 cv=Mb5quY/f c=1 sm=1 tr=0 ts=668d836d
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
+ a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=wYkD_t78qR0A:10 a=pGLkceISAAAA:8
+ a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=QyXUC8HyAAAA:8 a=oGMlB6cnAAAA:8
+ a=1XWaLZrsAAAA:8 a=8K4sKswruK-ULGrGXUgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=AjGcO6oz07-iQ99wixmX:22 a=NdAtdrkLVvyUPsUoGJp4:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=A8ezBF4AaCnowVFoVmRVzdwt6z2QVTYX8NN5Cjxe1+4=; b=EMbD4TuPh16NWTORuNa7IHiTHx
+	dCWy2hj9xoG52EUditg5pe2iCr6CE4Q/otUsBFXlN51J/TBUXr24p/hcF5mDkg+crAJsDj1k+9l5G
+	A2c12YSH8CXNkXWPFgbLLguSrdUGjmejap8gUHKsrVOPCBsTHlfIQepFLYZbuV9dNjqNYZGiFTej5
+	5cnFY9OFLG3MCLiQtv3cTqd9Zm3YNHL9GHOp7O/2GWHYaN4L3d7e2qnBk8tnkPGVX3+5OjwWifbcm
+	UGp3c6GhwK8cN2b7AkFv9Q/MoRQBNfGPKjNQs2nOQp1rDISd52s6nENrtGtDU7kmXv+0V3+lWtGo7
+	x69nCMnA==;
+Received: from [201.172.173.139] (port=55666 helo=[192.168.15.14])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sRFiU-0045JG-1p;
+	Tue, 09 Jul 2024 13:37:30 -0500
+Message-ID: <725db889-459e-45ae-8222-02dd6621f302@embeddedor.com>
+Date: Tue, 9 Jul 2024 12:37:27 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240709175819.GNZo16OxP7VuZLTKFx@fat_crate.local>
-X-Proofpoint-ORIG-GUID: Ph4LgLFSEpNa9vaSX03RxXK41aeGSawa
-X-Proofpoint-GUID: Ph4LgLFSEpNa9vaSX03RxXK41aeGSawa
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_07,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- adultscore=0 priorityscore=1501 phishscore=0 impostorscore=0
- malwarescore=0 mlxlogscore=508 lowpriorityscore=0 mlxscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090125
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/syscall: Avoid memcpy() for ia32
+ syscall_get_arguments()
+To: Mirsad Todorovac <mtodorovac69@gmail.com>, Kees Cook <kees@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+ Arnd Bergmann <arnd@arndb.de>, Brian Gerst <brgerst@gmail.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Peter Collingbourne <pcc@google.com>, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20240708202202.work.477-kees@kernel.org>
+ <e95852cf-231a-4525-9075-fad42930d328@embeddedor.com>
+ <39b94091-d452-4dac-9012-ae43024462cd@gmail.com>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <39b94091-d452-4dac-9012-ae43024462cd@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.139
+X-Source-L: No
+X-Exim-ID: 1sRFiU-0045JG-1p
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.14]) [201.172.173.139]:55666
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfLT2qhovROltRQ7TmalvCi+3tkOmTvyOkM1W+6ouK7q9elPCRnaFE9CUSxwZ5O83OpUqxEkSr0PqIzRXJ3YHdqXwmmyBS7eERv+J3d9fLFKe1Mjo37+n
+ KTl0PH9TUZ6DsD7Zk1+WWMwLAC5FWJ2c8bn2dXQWBo79Coo2ixVFGFCPlm3AKA9ccyHWg7NwnLgNfHvhqwe7i+HSwWzJatkLpw5cEhqQhyH/ATLnIBaWKGcF
 
-On Tue, Jul 09, 2024 at 07:58:19PM +0200, Borislav Petkov wrote:
-> On Tue, Jul 09, 2024 at 11:56:26AM -0500, Steve Wahl wrote:
-> > I will add it.
+
+
+On 09/07/24 12:20, Mirsad Todorovac wrote:
 > 
-> No, don't add it. This needs to be tested properly first. I'll do a separate
-> patch.
+> 
+> On 7/9/24 01:44, Gustavo A. R. Silva wrote:
+>>
+>>
+>> On 7/8/24 14:22, Kees Cook wrote:
+>>> Modern (fortified) memcpy() prefers to avoid writing (or reading) beyond
+>>> the end of the addressed destination (or source) struct member:
+>>>
+>>> In function ‘fortify_memcpy_chk’,
+>>>       inlined from ‘syscall_get_arguments’ at ./arch/x86/include/asm/syscall.h:85:2,
+>>>       inlined from ‘populate_seccomp_data’ at kernel/seccomp.c:258:2,
+>>>       inlined from ‘__seccomp_filter’ at kernel/seccomp.c:1231:3:
+>>> ./include/linux/fortify-string.h:580:25: error: call to ‘__read_overflow2_field’ declared with attribute warning: detected read beyond size of field (2nd parameter); maybe use struct_group()? [-Werror=attribute-warning]
+>>>     580 |                         __read_overflow2_field(q_size_field, size);
+>>>         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>
+>>> As already done for x86_64 and compat mode, do not use memcpy() to
+>>> extract syscall arguments from struct pt_regs but rather just perform
+>>> direct assignments. Binary output differences are negligible, and actually
+>>> ends up using less stack space:
+>>>
+>>> -       sub    $0x84,%esp
+>>> +       sub    $0x6c,%esp
+>>>
+>>> and less text size:
+>>>
+>>>      text    data     bss     dec     hex filename
+>>>     10794     252       0   11046    2b26 gcc-32b/kernel/seccomp.o.stock
+>>>     10714     252       0   10966    2ad6 gcc-32b/kernel/seccomp.o.after
+>>>
+>>> Reported-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+>>> Closes: https://lore.kernel.org/lkml/9b69fb14-df89-4677-9c82-056ea9e706f5@gmail.com/
+>>> Signed-off-by: Kees Cook <kees@kernel.org>
+>>> ---
+>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>> Cc: Ingo Molnar <mingo@redhat.com>
+>>> Cc: Borislav Petkov <bp@alien8.de>
+>>> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+>>> Cc: x86@kernel.org
+>>> Cc: "H. Peter Anvin" <hpa@zytor.com>
+>>> Cc: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+>>> Cc: Arnd Bergmann <arnd@arndb.de>
+>>> Cc: Brian Gerst <brgerst@gmail.com>
+>>> Cc: Josh Poimboeuf <jpoimboe@kernel.org>
+>>> Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+>>> Cc: Peter Collingbourne <pcc@google.com>
+>>
+>> Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+>>
+>> Thanks
+> 
+> I can confirm that the error was fixed after applying the patch, in the same build environment.
+> 
+> Tested-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+> 
+> However, why memcpy() directly from struct pt_regs doesn't work is beyond my understanding :-/
+> 
 
-OK!
+This is because under CONFIG_FORTIFY_SOURCE=y, memcpy() prevents writing or reading beyond
+the boundaries of dest/src objects.
 
---> Steve
--- 
-Steve Wahl, Hewlett Packard Enterprise
+--
+Gustavo
+
+> FWIW, bulk memcpy() might be replaced by a single assembler instruction? Or am I thinking still
+> in 6502 mode? :-)
+> 
+> Best regards,
+> Mirsad Todorovac
+> 
+>> -- 
+>> Gustavo
+>>
+>>> ---
+>>>    arch/x86/include/asm/syscall.h | 7 ++++++-
+>>>    1 file changed, 6 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/x86/include/asm/syscall.h b/arch/x86/include/asm/syscall.h
+>>> index 2fc7bc3863ff..7c488ff0c764 100644
+>>> --- a/arch/x86/include/asm/syscall.h
+>>> +++ b/arch/x86/include/asm/syscall.h
+>>> @@ -82,7 +82,12 @@ static inline void syscall_get_arguments(struct task_struct *task,
+>>>                         struct pt_regs *regs,
+>>>                         unsigned long *args)
+>>>    {
+>>> -    memcpy(args, &regs->bx, 6 * sizeof(args[0]));
+>>> +    args[0] = regs->bx;
+>>> +    args[1] = regs->cx;
+>>> +    args[2] = regs->dx;
+>>> +    args[3] = regs->si;
+>>> +    args[4] = regs->di;
+>>> +    args[5] = regs->bp;
+>>>    }
+>>>      static inline int syscall_get_arch(struct task_struct *task)
 
