@@ -1,129 +1,81 @@
-Return-Path: <linux-kernel+bounces-246602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 030D592C42E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:56:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D4F92C430
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B31D4284164
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:56:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF990B22244
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F311918560C;
-	Tue,  9 Jul 2024 19:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE0B18561E;
+	Tue,  9 Jul 2024 19:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a3Mk7TWS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B5E1B86ED;
-	Tue,  9 Jul 2024 19:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ATiLkjxc"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352DC182A75;
+	Tue,  9 Jul 2024 19:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720555007; cv=none; b=mU7oiGGUcrbpD/FynuPwE1VqLfgsy/UxdiSGzbiHAOCFYcPdDw0/O5/rKZze8wSGx0ImAiczi8XAdu9hiohgdl0WrwNkUMqloHUQvcrAI/75d4drFCSqFnw7cys7dCsmZHD9/SoxiNcwU4yH59aHJxFDGrqkta2OBI6sbi0lplI=
+	t=1720555008; cv=none; b=VPHNRXG0vxCJ4hdUjbwrnPtnHkfO8y5c3uBdBDwwpz0dRbeqrby9gup9hjJIdLZa2dr8FtkR6zZsNUHW2sxwbj0NztgHZhCNFz4PT7f5JZ4d83YyP40ZGvv96Er81eF0d3u51n17NOc3VDH6uIVJgbkHQnIOX34Lcy1GovCvDQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720555007; c=relaxed/simple;
-	bh=iGrkgNHDwjaspnRj+A9ep2nKHiE8m1A0f/54O8jUHa4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kh5nHgyWnwXsHVClMcp3WD/6Dcl8+E9OP3rvZxdaibjmmAuLnVcF/CvgfGQRIx6lrBEKGDBSt+udfLzFLdbgPG+okWnaDpaxU9cVEutHXm3TDOYMhtJuDfsm0nY981zVEui/XvhcUEV3+LYMsgQaAbYsUAO+rGnSHiyev9WQHno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a3Mk7TWS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469ArSYH016564;
-	Tue, 9 Jul 2024 19:56:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BZq8fvJRscNfyyoib00+DW3enVqCLU4u9OjMtygYT40=; b=a3Mk7TWSB4cYL8VZ
-	MEPQl7oRFORtOIvTz7nzd2fkG37dV9n7HVtscY5TjueeuMmpGfiysMKGG6T8IFWQ
-	6vZbuZY9WH/vJK/YFikC2vVtiUVnliTeJ8VZKUujCx8SCYDdmJErfPd+4C6YZtvG
-	me5A/AREbRXEaE9/tjwL/sE2wASm9/JWNJvHR3PuJKWXk9Xi9JB+36kUPMyb4wx0
-	gqmGeXz5xfjSwZWoUV3i5pF4920hwfcapCFMcSC0yhOOmHBI4qBIWRSBZm+zlx0L
-	0Z0POX3q4g8T6r9w68oo64kuN5IbWVeL3zRimhFahoMYVXF51+KdQOqdHEEv6gKI
-	yHCGsQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x517np7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 19:56:27 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469JuQR0017047
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 9 Jul 2024 19:56:26 GMT
-Received: from [10.48.245.228] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
- 12:56:25 -0700
-Message-ID: <389aa594-5c58-4740-8079-3c2c88754be7@quicinc.com>
-Date: Tue, 9 Jul 2024 12:56:24 -0700
+	s=arc-20240116; t=1720555008; c=relaxed/simple;
+	bh=yMlblo3pT/WeBHON112I8jimtkQPW6zIHpL/oOklDXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OzkvRuZGu5jBcSkkrnU+5FHAJ6khGyb7UDSBqKv/em7T8+pbEB+TbULYQtfCNc9GMiOiJ/2K4R0Ou7RjBEKbcpspj6+MLof8Z3uZyMfCn/xccEqb3IVfniExUOv/Oq/Z2KzXNCaO5MQfOEbPKHvm+xmjg2SuCfLq4/l70E9rAl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ATiLkjxc; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1131)
+	id B5D3C20B7165; Tue,  9 Jul 2024 12:56:46 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B5D3C20B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1720555006;
+	bh=dhi1vSchw/EYAhES2PjHFkEvmmjxoqTPVbWzzTRz3AI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ATiLkjxclJMC9arufM6VeFayAoxqWAcguyYldnw0jU8cB6mkPrlQpntb+tDxi4CGZ
+	 efU0TY4lobVPxMc5uMZzsiqcnVr4V6phoHLNN3Bhli5+bjJRtkO+PeITpvilFnX/sA
+	 AuwkSeOmoWaoxoW7SN7hKT50PaubOZsLid9SKUkU=
+Date: Tue, 9 Jul 2024 12:56:46 -0700
+From: Kelsey Steele <kelseysteele@linux.microsoft.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 000/102] 6.1.98-rc1 review
+Message-ID: <20240709195646.GA28302@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20240709110651.353707001@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] floppy: add missing MODULE_DESCRIPTION() macro
-Content-Language: en-US
-To: <efremov@linux.com>, Jens Axboe <axboe@kernel.dk>
-CC: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240602-md-block-floppy-v1-1-bc628ea5eb84@quicinc.com>
- <f3a27dbe-091a-43d0-aac8-eebb4e2833d4@linux.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <f3a27dbe-091a-43d0-aac8-eebb4e2833d4@linux.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: gBbqRD3DyAFeLuX82x96Ph0fxQBOMX6M
-X-Proofpoint-ORIG-GUID: gBbqRD3DyAFeLuX82x96Ph0fxQBOMX6M
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_08,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- suspectscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090134
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709110651.353707001@linuxfoundation.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On 6/3/2024 3:35 AM, Denis Efremov (Oracle) wrote:
-> On 6/3/24 04:05, Jeff Johnson wrote:
->> make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/floppy.o
->>
->> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->>  drivers/block/floppy.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
->> index 25c9d85667f1..854a88cf56bd 100644
->> --- a/drivers/block/floppy.c
->> +++ b/drivers/block/floppy.c
->> @@ -5016,6 +5016,7 @@ module_param(floppy, charp, 0);
->>  module_param(FLOPPY_IRQ, int, 0);
->>  module_param(FLOPPY_DMA, int, 0);
->>  MODULE_AUTHOR("Alain L. Knaff");
->> +MODULE_DESCRIPTION("Normal floppy disk support");
->>  MODULE_LICENSE("GPL");
->>  
->>  /* This doesn't actually get used other than for module information */
->>
->> ---
->> base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
->> change-id: 20240602-md-block-floppy-1984117350ec
->>
+On Tue, Jul 09, 2024 at 01:09:23PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.98 release.
+> There are 102 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Reviewed-by: Denis Efremov <efremov@linux.com>
+> Responses should be made by Thu, 11 Jul 2024 11:06:25 +0000.
+> Anything received after that time might be too late.
+> 
+No regressions found on WSL (x86 and arm64).
 
-I don't see this in linux-next yet so following up to see if anything else is
-needed to get this merged.
+Built, booted, and reviewed dmesg.
 
+Thank you. :)
 
+Tested-by: Kelsey Steele <kelseysteele@linux.microsoft.com> 
 
