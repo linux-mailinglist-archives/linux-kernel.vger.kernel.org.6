@@ -1,211 +1,329 @@
-Return-Path: <linux-kernel+bounces-245069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4555792ADE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:42:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6B892ADE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68C161C218D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:42:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92A1E1F22E93
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C0739FD9;
-	Tue,  9 Jul 2024 01:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957413CF6A;
+	Tue,  9 Jul 2024 01:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fUPmVD5X"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fz3xrphx"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC013D966;
-	Tue,  9 Jul 2024 01:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE22D347A2
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 01:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720489339; cv=none; b=Bqw6ROaNVlGceS/HIOMc1EsS/rv1LBoB34hL1HJUiso+PlNr1FBtBY+1fweBge3A7e855rxaOKwnI/UOKxStScwXFaE8QtHDDe6fOu7vU+IKjahXZIakvCQcHxUtHskPRmGJAODMy4xR7d7mJ/cbL2eMkHugiPn3ugG9uLPLAYg=
+	t=1720489476; cv=none; b=XU35fP+dLroX5zrV+6j1ZjRD7SeiaYGjQtnCEFaPY/smyLvrl63ZIUy+QFFx3Gp3Aj01V+ftDjmafJeiRiiWuJRvMYbLDRrwmIh9rpz1ig8KhsUTs//WkLexQv8REUynelG4wztV7JzfxtWr4NzmSIZPM0LMr6bfoW4YI5ZiaEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720489339; c=relaxed/simple;
-	bh=iLDEgsZEuGirQQVwHzZSmfqPlOaPKhWq15eL5/i+Fcw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ooIZ/DQ711E9G8pApAWQmZgn9MhOUSrwM39+wr28ORQZ8zBGKCnWRHv6G0L3TN/vqFkAaPdltVhAJs+kClRZVkc6OUO4hVvWGxNaL82sHvGFf/eGmQpA0vLpXvWTXl8RugCgBXejypgPdrZX3t9B50xBrwkzsYkTsiT9jhOGjhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fUPmVD5X; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1720489476; c=relaxed/simple;
+	bh=sdOJm9Z+Rrobjli2x5KtQupuJKfwPzoOOLPs6UXdhAc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b9p98o2mo1zrsDfLjxrshJX8Om8WbGT1j6x+uLK24sM7JyDz76DAM3TuroBJsOP+fXyiHoORW0BZsJz0i77m+AmrWsIq2p3JpEHhjXCEP7DysAu5vE1kWX1YGsmzloq9S7z6vj4xosyr1bTaiUn3voNLpVZJyRiMRESMS2mJPkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fz3xrphx; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-376069031c7so17924305ab.0;
-        Mon, 08 Jul 2024 18:42:17 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f9fb3ca81bso26004065ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 18:44:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720489337; x=1721094137; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=efZGwFEn680Tz97EnfQTVaTzk6j1FWkM3gtbIw3HXUY=;
-        b=fUPmVD5XvZhZgq8tL7TQh1JX6U6OAnbaAnC1UBMcFu3JURvQJ6G4MgB1POoRWyA0Qz
-         hbZEMDZY0RES6BS8HvTpR7pC2Vv6pezI67vfIO3sNuMbey/KgCiNvRFtURWHNqyn3wx8
-         pudCE+OwxFH9w+lyTuxCTr1AQzCsVg6sDgxxEQoKqIUoCvT/lh2p8+IzP+smkFCr2mvj
-         eF2yEUtsiyI2ykLod0S9cnnr4Ak7kC+dj5Bxv8VB0rQmfZn/X5hA0L3siLoSVVLzh8ON
-         pR8etb/EWc+nN+25nc/XPcuW46sqQRf8quBk/k166KkKfu/+rGR23xVlocM4VrVz5IOb
-         0q6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720489337; x=1721094137;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1720489474; x=1721094274; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=efZGwFEn680Tz97EnfQTVaTzk6j1FWkM3gtbIw3HXUY=;
-        b=QJAXokjNNTeoFfz9nKAHs3OmEDxpDEDAT7LQHr7JVjOVZXJv/Bh7C+W1BK60xGQ3qT
-         CZWCiN7x70UUY2vZ18qqyGqzXSE3yWjGu/rVgaarIxmz7KFe/cBuZBVlLXd6C4QSjPL/
-         8HrVQx7z+7gXtaBFXOd9ht4h6AZRPmhaJDiQgR5xDBFyX/DqoKlUnAbn/+vPByMdJu88
-         jLUr73WPQJ7yXjZLQ2Ln6+4shwfKZ4BPfWNPvJRmX0jwOsGlwMv4b3x/VO0hJ4BEHV18
-         jdA/dSoteOzKFhBCL2GKKn5Ad6202S1S7W/I3fUqsYio9IIATqih76Ar9d2jrkA8UDRu
-         JS+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVUtq7J2UYN/xxETioknUehIMvWgkf7rYup0hdmMkRt3whMH/AgQvWam2ULO2oQE6JfRFH4nF/nIjWTF7Pd6fUewxw/t2OX+3LZYKr4607x1YpJUfvloHPS1nsIfgJXvx+eUQvYz7TmJDtDMvgFx/SUX5faizBt6dsy8wVVxATyEAQUqA==
-X-Gm-Message-State: AOJu0YwNV4Ip8+xoMOXqTO0bdEwUpQivMhkz5gIY/Uneu5oqnL8eJ9e+
-	wH7ZMbKrzV/4KxohF6RrHD/cWeFOgmBadQoaKkgcyQGjxwcpbyoj
-X-Google-Smtp-Source: AGHT+IG8eUAcS4B1l5l4JiSl/3TaEIecY5XR5AN4tDAQCt2iZtbcK0ZRlYGtkKblTEEVqV94WD505g==
-X-Received: by 2002:a05:6e02:214f:b0:382:b446:e139 with SMTP id e9e14a558f8ab-38a5740178fmr14071885ab.11.1720489337076;
-        Mon, 08 Jul 2024 18:42:17 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4389abb6sm569002b3a.18.2024.07.08.18.42.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Jul 2024 18:42:15 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <b12fc4a5-1b12-4d59-bf21-edd583a81b4d@roeck-us.net>
-Date: Mon, 8 Jul 2024 18:42:14 -0700
+        bh=i7JwVPtkjnXuNlozYkqpZNw80t4p50gXWxEmF3epp84=;
+        b=Fz3xrphxr/ZORLU76gSmWpx/Dgf9XEOrv6Q2yxl4Fve09DmnShFRnAj+Fw95CHRxeN
+         xQxkPz/vqTVZ2oW3aItyJqNQHqKGj/I2pyzsyodpd9b4SJ3X376xPRiAwmNXIcG2dQJA
+         LleUJzjhTYdO6gSTi8cnEO10Ntb9X2rDR8wEO9zmvKz1tFiBswYWkqVhhNgI0w0MG787
+         Ma+9T8T3mmCy1NAsfvx5aDK/UoFFNw747GIJsVjnXg0h1pqQn18xBp9TzdCkcvP68FpZ
+         aRUqTzuY+r+2umZiM3dR7/8dXL3xmMEbXyLu3pIj28XB/RWDbkUPza7xIJ2mauji3ChO
+         Fuww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720489474; x=1721094274;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i7JwVPtkjnXuNlozYkqpZNw80t4p50gXWxEmF3epp84=;
+        b=gnZ0gWPAWcqI4ZJBxsTqSm0T5VZeB18BNjbohY1zHdZlfnSrcyUBWFY+Y2sxB45k0u
+         3nsb0hEwJBCubZBSBaGhvhIq/p/1RnDt248+9edDjlPwtytpPBP7h+v2BgKHURU060AF
+         B/k70ue1v4m6bbz3+HrfcqE7Z4hZhjvUrMCZLlWSmw9vKIhuz2K+LvOWsERmW1l5E5k6
+         b+NJCcyf+47wIrHVipwZs0WTNRXM2khDHiGKuVmfpJeiIw3wXpevzkiiqmL+dX3NrJ26
+         kk9U6YWkioEItSxZA9QJff+2jd+DJDdbsWdhsAZUjCOe5mVL95bIYs/zqZFUTMK7IEyG
+         /ykQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbQwYBNUL1BSSsVUuisw3M2Bftx88PNGO1KNVRPMv9KhJe96fJ0uk9ffQJFUe6lmM3NV8H8y1MxcJ6LpUwYr0TUd15I2pSVuU72KK3
+X-Gm-Message-State: AOJu0Yz2FTA7JaswXFWDcsl2g4jhwerfTFFmJTqcbSnevlrYvUAeCYze
+	0dlu+nJFOjAZseGZX4B+aJUykc7nK1DNmFH6IN/b1ch4MRIZQJUb
+X-Google-Smtp-Source: AGHT+IEGRgF6WH6W+fLpO2gg+v0EPIgumYh7bbxFBukp6w+Svkfg/57ie1z+Mr5bos7qmDXFjYhyog==
+X-Received: by 2002:a05:6a20:4388:b0:1c0:ee57:a9a5 with SMTP id adf61e73a8af0-1c2984ce6bemr962165637.42.1720489473967;
+        Mon, 08 Jul 2024 18:44:33 -0700 (PDT)
+Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ab6c53sm4910245ad.153.2024.07.08.18.44.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 18:44:33 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: ryan.roberts@arm.com
+Cc: akpm@linux-foundation.org,
+	baohua@kernel.org,
+	baolin.wang@linux.alibaba.com,
+	corbet@lwn.net,
+	da.gomez@samsung.com,
+	david@redhat.com,
+	hughd@google.com,
+	ioworker0@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	willy@infradead.org,
+	ziy@nvidia.com
+Subject: [PATCH v1] mm: shmem: Rename mTHP shmem counters
+Date: Tue,  9 Jul 2024 13:44:13 +1200
+Message-Id: <20240709014413.18044-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <744749c3-4506-40d9-ac48-0dbc59689f92@arm.com>
+References: <744749c3-4506-40d9-ac48-0dbc59689f92@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] drivers: hwmon: sophgo: Add SG2042 external
- hardware monitor support
-To: Inochi Amaoto <inochiama@outlook.com>,
- Chen Wang <unicorn_wang@outlook.com>, Jean Delvare <jdelvare@suse.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <IA1PR20MB4953967EA6AF3A6EFAE6AB10BBDD2@IA1PR20MB4953.namprd20.prod.outlook.com>
- <IA1PR20MB4953EC4C486B8D4B186BB848BBDD2@IA1PR20MB4953.namprd20.prod.outlook.com>
- <MA0P287MB2822935DEA9EE418F3411CFAFEDA2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
- <IA1PR20MB4953230DCEDD7DF01134A8A9BBDA2@IA1PR20MB4953.namprd20.prod.outlook.com>
- <MA0P287MB2822676C9CF9443B9A3CB657FEDA2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
- <IA1PR20MB495309AA07F1B77D4DA1EF6BBBDA2@IA1PR20MB4953.namprd20.prod.outlook.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <IA1PR20MB495309AA07F1B77D4DA1EF6BBBDA2@IA1PR20MB4953.namprd20.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 7/8/24 15:15, Inochi Amaoto wrote:
-> On Mon, Jul 08, 2024 at 03:11:37PM GMT, Chen Wang wrote:
->>
->> On 2024/7/8 8:53, Inochi Amaoto wrote:
->>> On Mon, Jul 08, 2024 at 08:25:55AM GMT, Chen Wang wrote:
->>>> On 2024/7/3 10:30, Inochi Amaoto wrote:
->>>>> SG2042 use an external MCU to provide basic hardware information
->>>>> and thermal sensors.
->>>>>
->>>>> Add driver support for the onboard MCU of SG2042.
->>>>>
->>>>> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
->>>>> ---
->>>>>     Documentation/hwmon/index.rst |   1 +
->>>>>     Documentation/hwmon/sgmcu.rst |  44 +++
->>>>>     drivers/hwmon/Kconfig         |  11 +
->>>>>     drivers/hwmon/Makefile        |   1 +
->>>>>     drivers/hwmon/sgmcu.c         | 585 ++++++++++++++++++++++++++++++++++
->>>>>     5 files changed, 642 insertions(+)
->>>>>     create mode 100644 Documentation/hwmon/sgmcu.rst
->>>>>     create mode 100644 drivers/hwmon/sgmcu.c
->>>>>
->>>>> diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
->>>>> index 03d313af469a..189626b3a055 100644
->>>>> --- a/Documentation/hwmon/index.rst
->>>>> +++ b/Documentation/hwmon/index.rst
->>>>> @@ -203,6 +203,7 @@ Hardware Monitoring Kernel Drivers
->>>>>        sch5636
->>>>>        scpi-hwmon
->>>>>        sfctemp
->>>>> +   sgmcu
->>>> This driver is for sg2042 only, right? "sgmcu" looks be general for all
->>>> sophgo products.
->>> Yes, according to sophgo, it use this mechanism for multiple products,
->>> so I switch to a general name.
->>
->> But multiple != ALL.
->>
->> [......]
->>
->>
-> 
-> We can add new driver when there is new mechanism.
+On Tue, Jul 9, 2024 at 12:30 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>
+> On 08/07/2024 12:36, Barry Song wrote:
+> > On Mon, Jul 8, 2024 at 11:24 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
+> >>
+> >> The legacy PMD-sized THP counters at /proc/vmstat include
+> >> thp_file_alloc, thp_file_fallback and thp_file_fallback_charge, which
+> >> rather confusingly refer to shmem THP and do not include any other types
+> >> of file pages. This is inconsistent since in most other places in the
+> >> kernel, THP counters are explicitly separated for anon, shmem and file
+> >> flavours. However, we are stuck with it since it constitutes a user ABI.
+> >>
+> >> Recently, commit 66f44583f9b6 ("mm: shmem: add mTHP counters for
+> >> anonymous shmem") added equivalent mTHP stats for shmem, keeping the
+> >> same "file_" prefix in the names. But in future, we may want to add
+> >> extra stats to cover actual file pages, at which point, it would all
+> >> become very confusing.
+> >>
+> >> So let's take the opportunity to rename these new counters "shmem_"
+> >> before the change makes it upstream and the ABI becomes immutable.
+> >
+> > Personally, I think this approach is much clearer. However, I recall
+> > we discussed this
+> > before [1], and it seems that inconsistency is a concern?
+>
+> Embarrassingly, I don't recall that converstation at all :-| but at least what I
+> said then is consistent with what I've done in this patch.
+>
+> I think David's conclusion from that thread was to call them FILE_, and add both
+> shmem and pagecache counts to those counters, meaning we can keep the same name
+> as legacy THP counters. But those legacy THP counters only count shmem, and I
+> don't think we would get away with adding pagecache counts to those at this
+> point? (argument: they have been around for long time and there is a risk that
+> user space relies on them and if they were to dramatically increase due to
+> pagecache addition now that could break things). In that case, there is still
+> inconsistency, but its worse; the names are consistent but the semantics are
+> inconsistent.
+>
+> So my vote is to change to SHMEM_ as per this patch :)
 
-Now you are contradicting yourself. Either sgmcu is the catch-all
-driver, or it isn't. How are you going to call that new driver ? sgmcuv2 ?
-Are we going to have sgmcuv[2-N] over time ?
+I have no objections. However, I dislike the documentation for
+thp_file_*. Perhaps we can clean it all up together ?
 
-All we know so far is that the driver and the mcu support sg2042. That is how the
-driver should be named. It is easier to add support a new device with a different
-name to the existing driver than to add a new driver if the name of an existing driver
-is too generic.
+diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+index 709fe10b60f4..65df48cb3bbb 100644
+--- a/Documentation/admin-guide/mm/transhuge.rst
++++ b/Documentation/admin-guide/mm/transhuge.rst
+@@ -417,21 +417,22 @@ thp_collapse_alloc_failed
+ 	the allocation.
+ 
+ thp_file_alloc
+-	is incremented every time a file huge page is successfully
+-	allocated.
++	is incremented every time a file (including shmem) huge page is
++	successfully allocated.
+ 
+ thp_file_fallback
+-	is incremented if a file huge page is attempted to be allocated
+-	but fails and instead falls back to using small pages.
++	is incremented if a file (including shmem) huge page is attempted
++	to be allocated but fails and instead falls back to using small
++	pages.
+ 
+ thp_file_fallback_charge
+-	is incremented if a file huge page cannot be charged and instead
+-	falls back to using small pages even though the allocation was
+-	successful.
++	is incremented if a file (including shmem) huge page cannot be
++	charged and instead falls back to using small pages even though
++	the allocation was successful.
+ 
+ thp_file_mapped
+-	is incremented every time a file huge page is mapped into
+-	user address space.
++	is incremented every time a file (including shmem) huge page is
++	mapped into user address space.
+ 
+ thp_split_page
+ 	is incremented every time a huge page is split into base
+ 	
+>
+> >
+> > [1] https://lore.kernel.org/linux-mm/05d0096e4ec3e572d1d52d33a31a661321ac1551.1713755580.git.baolin.wang@linux.alibaba.com/
+> >
+> >
+> >>
+> >> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> >> ---
+> >>
+> >> Hi All,
+> >>
+> >> Applies on top of today's mm-unstable (2073cda629a4) and tested with mm
+> >> selftests; no regressions observed.
+> >>
+> >> The backstory here is that I'd like to introduce some counters for regular file
+> >> folio allocations to observe how often large folio allocation succeeds, but
+> >> these shmem counters are named "file" which is going to make things confusing.
+> >> So hoping to solve that before commit 66f44583f9b6 ("mm: shmem: add mTHP
+> >> counters for anonymous shmem") goes upstream (it is currently in mm-stable).
+> >>
+> >> Admittedly, this change means the mTHP stat names are not the same as the legacy
+> >> PMD-size THP names, but I think that's a smaller issue than having "file_" mTHP
+> >> stats that only count shmem, then having to introduce "file2_" or "pgcache_"
+> >> stats for the regular file memory, which is even more inconsistent IMHO. I guess
+> >> the alternative is to count both shmem and file in these mTHP stats (that's how
+> >> they were documented anyway) but I think it's better to be able to consider them
+> >> separately like we do for all the other counters.
+> >>
+> >> Thanks,
+> >> Ryan
+> >>
+> >>  Documentation/admin-guide/mm/transhuge.rst | 12 ++++++------
+> >>  include/linux/huge_mm.h                    |  6 +++---
+> >>  mm/huge_memory.c                           | 12 ++++++------
+> >>  mm/shmem.c                                 |  8 ++++----
+> >>  4 files changed, 19 insertions(+), 19 deletions(-)
+> >>
+> >> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+> >> index 747c811ee8f1..8b891689fc13 100644
+> >> --- a/Documentation/admin-guide/mm/transhuge.rst
+> >> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> >> @@ -496,16 +496,16 @@ swpout_fallback
+> >>         Usually because failed to allocate some continuous swap space
+> >>         for the huge page.
+> >>
+> >> -file_alloc
+> >> -       is incremented every time a file huge page is successfully
+> >> +shmem_alloc
+> >> +       is incremented every time a shmem huge page is successfully
+> >>         allocated.
+> >>
+> >> -file_fallback
+> >> -       is incremented if a file huge page is attempted to be allocated
+> >> +shmem_fallback
+> >> +       is incremented if a shmem huge page is attempted to be allocated
+> >>         but fails and instead falls back to using small pages.
+> >>
+> >> -file_fallback_charge
+> >> -       is incremented if a file huge page cannot be charged and instead
+> >> +shmem_fallback_charge
+> >> +       is incremented if a shmem huge page cannot be charged and instead
+> >>         falls back to using small pages even though the allocation was
+> >>         successful.
+> >>
+> >> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> >> index acb6ac24a07e..cff002be83eb 100644
+> >> --- a/include/linux/huge_mm.h
+> >> +++ b/include/linux/huge_mm.h
+> >> @@ -269,9 +269,9 @@ enum mthp_stat_item {
+> >>         MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
+> >>         MTHP_STAT_SWPOUT,
+> >>         MTHP_STAT_SWPOUT_FALLBACK,
+> >> -       MTHP_STAT_FILE_ALLOC,
+> >> -       MTHP_STAT_FILE_FALLBACK,
+> >> -       MTHP_STAT_FILE_FALLBACK_CHARGE,
+> >> +       MTHP_STAT_SHMEM_ALLOC,
+> >> +       MTHP_STAT_SHMEM_FALLBACK,
+> >> +       MTHP_STAT_SHMEM_FALLBACK_CHARGE,
+> >>         MTHP_STAT_SPLIT,
+> >>         MTHP_STAT_SPLIT_FAILED,
+> >>         MTHP_STAT_SPLIT_DEFERRED,
+> >> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> >> index 9ec64aa2be94..f9696c94e211 100644
+> >> --- a/mm/huge_memory.c
+> >> +++ b/mm/huge_memory.c
+> >> @@ -568,9 +568,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
+> >>  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
+> >>  DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
+> >>  DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
+> >> -DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
+> >> -DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
+> >> -DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHARGE);
+> >> +DEFINE_MTHP_STAT_ATTR(shmem_alloc, MTHP_STAT_SHMEM_ALLOC);
+> >> +DEFINE_MTHP_STAT_ATTR(shmem_fallback, MTHP_STAT_SHMEM_FALLBACK);
+> >> +DEFINE_MTHP_STAT_ATTR(shmem_fallback_charge, MTHP_STAT_SHMEM_FALLBACK_CHARGE);
+> >>  DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
+> >>  DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
+> >>  DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
+> >> @@ -581,9 +581,9 @@ static struct attribute *stats_attrs[] = {
+> >>         &anon_fault_fallback_charge_attr.attr,
+> >>         &swpout_attr.attr,
+> >>         &swpout_fallback_attr.attr,
+> >> -       &file_alloc_attr.attr,
+> >> -       &file_fallback_attr.attr,
+> >> -       &file_fallback_charge_attr.attr,
+> >> +       &shmem_alloc_attr.attr,
+> >> +       &shmem_fallback_attr.attr,
+> >> +       &shmem_fallback_charge_attr.attr,
+> >>         &split_attr.attr,
+> >>         &split_failed_attr.attr,
+> >>         &split_deferred_attr.attr,
+> >> diff --git a/mm/shmem.c b/mm/shmem.c
+> >> index 921d59c3d669..f24dfbd387ba 100644
+> >> --- a/mm/shmem.c
+> >> +++ b/mm/shmem.c
+> >> @@ -1777,7 +1777,7 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
+> >>                         if (pages == HPAGE_PMD_NR)
+> >>                                 count_vm_event(THP_FILE_FALLBACK);
+> >>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >> -                       count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
+> >> +                       count_mthp_stat(order, MTHP_STAT_SHMEM_FALLBACK);
+> >>  #endif
+> >>                         order = next_order(&suitable_orders, order);
+> >>                 }
+> >> @@ -1804,8 +1804,8 @@ static struct folio *shmem_alloc_and_add_folio(struct vm_fault *vmf,
+> >>                                 count_vm_event(THP_FILE_FALLBACK_CHARGE);
+> >>                         }
+> >>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >> -                       count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK);
+> >> -                       count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_FALLBACK_CHARGE);
+> >> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_FALLBACK);
+> >> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_FALLBACK_CHARGE);
+> >>  #endif
+> >>                 }
+> >>                 goto unlock;
+> >> @@ -2181,7 +2181,7 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
+> >>                         if (folio_test_pmd_mappable(folio))
+> >>                                 count_vm_event(THP_FILE_ALLOC);
+> >>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >> -                       count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_ALLOC);
+> >> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SHMEM_ALLOC);
+> >>  #endif
+> >>                         goto alloced;
+> >>                 }
+> >> --
+> >> 2.43.0
+> >>
+> >
 
-Ultimately this is similar to wildcards in a file name, which are strongly discouraged.
-One of the worst examples is drivers/hwmon/ina2xx.c, which does _not_ support all chips
-from ina200 to ina299. Please don't let us go there.
-
-An opposite example is the lm90 driver, which has not problem supporting more than 40
-different chips with different names because they are all similar. The driver can be named
-sg2042 and support as many similar variants if that mcu as feasible. It should not be named
-sgmcu because we can not make the assumption that it will support all mcu variants from
-sophgo.
-
-Guenter
-
+Thanks
+Barry
 
