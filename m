@@ -1,78 +1,132 @@
-Return-Path: <linux-kernel+bounces-246203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E0EA92BF11
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:06:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D476E92BF17
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7C3B1F238EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:06:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BDEEB20F68
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96EB319D8AB;
-	Tue,  9 Jul 2024 16:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E310319DF53;
+	Tue,  9 Jul 2024 16:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="td14CaGs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CTGk//5R"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41DD192B6F;
-	Tue,  9 Jul 2024 16:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2214019D88D;
+	Tue,  9 Jul 2024 16:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720541156; cv=none; b=BmlFmagvWkI/ZQqYsEtDaJfqWXNSKlycKFfx0GEWCg+6W0nE1Mc5InfOwFQbNqHCWRMI2Baln5wsDNoJMu4WCDTzQRNXZ3Usfv3Wsh53f7tohsyPuvVIgtAHZIfzgqMHla7+1YjKb2YxKi5r48V/FoGQc9gjIFfjELMMl06Cotg=
+	t=1720541186; cv=none; b=LIB4qbXXVejexJCPKFjRAPPfEiNNCDWbNCjwCO14L6IlVPrYaKAd0ZaVCpwHfHD1wPgCq4miEmlCqREj0p48D7dP5hH+/aGHBE9PV9197wKC97J3O8/9K+rZW5zN6FECl/LFH0FFZaoucqVO+Bxw2Z96iUxDerZxoG66uNX2SBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720541156; c=relaxed/simple;
-	bh=0HiW9BQrBeQWPuzpdcXUwgz/GKySrhx1X9yGs7UcsVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QBdESjZ39ZUoAglb+gi3poRzxKV7pr6lybovPXcsXgcsTTxVvu1MwlbceJF2ed5NhEIMwk0m2DnL9vBSAaOAf2U0cVV14Uzndci0rdMZZpPnaoJnIdfQNOmXRh6HIxgldxHnTp1+2qWr+HWHP59bPe4HiyldcuhnV1JL7S/+698=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=td14CaGs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AFAEC3277B;
-	Tue,  9 Jul 2024 16:05:56 +0000 (UTC)
+	s=arc-20240116; t=1720541186; c=relaxed/simple;
+	bh=XomL6XkiSGmqijLHAImjPAoDH/hg/wLBpt7YmP/PttY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nfCuM9EQ3+ECEZutb9HsSr3FjokApEocYTlCH6XHrYfl93VUP92o7D/5WoE87SEizfhf2FZbmB7en4AsQPBIJ3EJSPYZUB5zNQlMTErOkZu9aaWIv75mYRVAsPbdGwyzmetdATgbjPJKJYcnIKgv1/10/8D/j90o7uekVl8613Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CTGk//5R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA6DCC32782;
+	Tue,  9 Jul 2024 16:06:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720541156;
-	bh=0HiW9BQrBeQWPuzpdcXUwgz/GKySrhx1X9yGs7UcsVU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=td14CaGsIkyo57mFub73471H/gjKKVxJxWsIq2VDOuX7H45rtJ+jbIlt7KzHYMv6t
-	 hDt+BglEfkxev/fhB2fy45Abb8MrwP4us5Z2fW++0+bY1/cKoljbRGhUlJQpJMLTNG
-	 r+9fOH9Mxcw5mcTQfFFj4q/JHnzugB9FUdYNXji1F1qFKpGgMcclurPD7btmeEYA7D
-	 auZo/Ohu3c6XFIU77F7zcmK0Q/zRwG3ZSAFqYHS4DH9gwMH4RNlGqLEpWVWeWeEWn9
-	 yPiIeBtOfChCdstFl8db34YRedatVWXLcS8FPe+x6wI4ZEACpWcSb60nvIPKMUhB4P
-	 HjR/KHSrXWfeA==
-Date: Tue, 9 Jul 2024 10:05:55 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Conor Dooley <conor+dt@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Marius Cristea <marius.cristea@microchip.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: iio: adc: add binding for pac1921
-Message-ID: <172054115357.3616759.13825605834232595478.robh@kernel.org>
-References: <20240704-iio-pac1921-v2-0-0deb95a48409@gmail.com>
- <20240704-iio-pac1921-v2-1-0deb95a48409@gmail.com>
+	s=k20201202; t=1720541185;
+	bh=XomL6XkiSGmqijLHAImjPAoDH/hg/wLBpt7YmP/PttY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CTGk//5RF6DJT5bk3YTgB1qKHHjc10H9GL67lrqHcLTsII4VOeQQBTovAh/j/GDZr
+	 HV4i92Fgz6IahKNJgoA9wOqfWKdwkM4DLLuTFtwZ0IMmitYdno8Yc/DgRo6B3zNxmB
+	 dj5HAvJDX0V3+Bzt2CgG1BQAigETQ80NQzforE8IkFYQDtDvm+7AuLjfwoSzvxqaNA
+	 VEu4iPwFgNl5lBwvldo/Ug1sY2FZyS0bNV8FAbr237qAjphQR8ftD2n/SxhQ3Y7aOr
+	 DrYtu4oYy/CJyEN8MV7zcDU/fnc6ArRjyRsoA3oUCjawBBki8X3fIMyLDiaRptfrwf
+	 ZJLR2mU02zZLw==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	linux-doc@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	workflows@vger.kernel.org
+Subject: [PATCH v2 00/13] Support several Rust toolchain versions
+Date: Tue,  9 Jul 2024 18:05:55 +0200
+Message-ID: <20240709160615.998336-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240704-iio-pac1921-v2-1-0deb95a48409@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Hi all,
+
+A few things improved here and there, and rebased on top of `rust-next`.
+
+The changelog is attached to each patch.
+
+I kept the `Tested-by`s since most of the changes are on documentation
+or comments, though I did remove them on the patch that changed the most
+just in case (even for that one, I think Benno's and Andreas' setup
+would not have made a difference).
+
+I plan to put this series into `rust-next` very soon so that it goes
+into the merge window.
+
+Previous cover letter:
+
+  v1: https://lore.kernel.org/rust-for-linux/20240701183625.665574-1-ojeda@kernel.org/
+
+Thanks!
+
+Cheers,
+Miguel
+
+Miguel Ojeda (13):
+  rust: macros: indent list item in `paste!`'s docs
+  rust: init: simplify from `map_err` to `inspect_err`
+  rust: allow `dead_code` for never constructed bindings
+  rust: relax most deny-level lints to warnings
+  rust: simplify Clippy warning flags set
+  rust: start supporting several compiler versions
+  rust: avoid assuming a particular `bindgen` build
+  rust: work around `bindgen` 0.69.0 issue
+  rust: start supporting several `bindgen` versions
+  rust: warn about `bindgen` versions 0.66.0 and 0.66.1
+  kbuild: rust: add `rustc-version` support
+  rust: support the new `-Zub-checks` flag
+  docs: rust: quick-start: add section on Linux distributions
+
+ Documentation/process/changes.rst        |   9 +-
+ Documentation/rust/quick-start.rst       | 136 +++++++++++++++++------
+ Makefile                                 |  31 +++---
+ init/Kconfig                             |  11 +-
+ lib/Kconfig.debug                        |  18 +++
+ rust/Makefile                            |   4 +-
+ rust/bindings/lib.rs                     |   1 +
+ rust/kernel/init.rs                      |  13 +--
+ rust/macros/lib.rs                       |   2 +-
+ rust/uapi/lib.rs                         |   1 +
+ scripts/Kconfig.include                  |   6 +
+ scripts/Makefile.compiler                |   4 +
+ scripts/rust_is_available.sh             |  33 +++---
+ scripts/rust_is_available_bindgen_0_66.h |   2 +
+ scripts/rust_is_available_test.py        |  59 ++++++----
+ scripts/rustc-version.sh                 |  52 +++++++++
+ 16 files changed, 274 insertions(+), 108 deletions(-)
+ create mode 100644 scripts/rust_is_available_bindgen_0_66.h
+ create mode 100755 scripts/rustc-version.sh
 
 
-On Thu, 04 Jul 2024 19:42:01 +0200, Matteo Martelli wrote:
-> Add binging for Microchip PAC1921 Power/Current monitor
-> 
-> Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
-> ---
->  .../bindings/iio/adc/microchip,pac1921.yaml        | 71 ++++++++++++++++++++++
->  1 file changed, 71 insertions(+)
-> 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+base-commit: fc6e66f4696b63b8a2645a2bcea407cb04bd0666
+--
+2.45.2
 
