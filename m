@@ -1,90 +1,82 @@
-Return-Path: <linux-kernel+bounces-246114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2F392BE17
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:20:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68AAD92BDB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96D4EB2DDF2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:03:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2368D28A766
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7A119D8A2;
-	Tue,  9 Jul 2024 15:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F9219CCEC;
+	Tue,  9 Jul 2024 15:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Po51Gkls"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eRop9ww4"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC05F15B999;
-	Tue,  9 Jul 2024 15:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC41A15B999
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720537338; cv=none; b=tpRqFEzs5GlMPhl7z2rn5SHLxX6kxNewce7iIgU9VpKGwOQ7vBgggCihWTKidr9Bk5BexzNjd2PrLkQs6eclYvuRWk/Dv3qsLCfDq9FV67JBy/308/VjayeAa5bcVl7995+6jkXIWLnhP/8opVPVDLadV9VCVDWL1VNQpk5zgo4=
+	t=1720537334; cv=none; b=jCciliNnc6XKhrVREjz4ZfJ862qu4Qwprtgj/0k3euPMhchFjJMarqEH0pfC6x5YyTcbge4PQ3hkH6RNbwa1qcv6MPEMGNAuAIT/jMk85KiBvthMpcwDJJ2XYa/Vnf47AHiByg+6e2corR5uSNqZGHis5vm3lpYYJQJgpBs9YIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720537338; c=relaxed/simple;
-	bh=QOu4N1gVL/EoBAJAI5M5R2AXSz6SIL6j6PhrzKJo5Y0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J5OUZtpu1YMe8a9zase9dVbPxF+/U6xfWz/bM7YdPVkzh7palwVruHqWs8n2Yei3tJ7lJ8vhHfpIqgM5F77XES9Cj2+OGuxT902kXiz/VztECnbGqVT56JdhMB6NcxlvKXg7TAWbbGGZkUsIkwmAGSdR8UDieMp1ECf+Enk28UE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Po51Gkls; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C70EC4AF0A;
-	Tue,  9 Jul 2024 15:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720537337;
-	bh=QOu4N1gVL/EoBAJAI5M5R2AXSz6SIL6j6PhrzKJo5Y0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Po51GklsoR8R61E7m9xF6gajCVJcicZzBpxe4bmXdWpQHu88m2D5dYh1h0vQOOVuZ
-	 XK2WesGh54zzOEAAm2etTV2F0inUC+v1suMw24lqvtym8o5GHwkpsq5rgJM0kcFIGb
-	 YdzJGFbtkVmnXZP7FGBv8b2uTvcwrWUpbBlC3YWPy5vhpM2C1/ZksILJGsGETuR4si
-	 HUga+rZ8quDKpvig+6jJEXciOozKhsZFA+dem8xUL+7B3JDv/pnG5+P+7FTbHOjkzO
-	 7kXSQ2FuWyb6zszjrenCP95UGlfj1ba8kpA7Dm2CKJzVCJuwYXYqoUgZY/gX6PPdv+
-	 y+vnBzdRvVNuw==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: thermal: Drop 'trips' node as required
-Date: Tue,  9 Jul 2024 09:01:53 -0600
-Message-ID: <20240709150154.3272825-1-robh@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720537334; c=relaxed/simple;
+	bh=vxstvNPq8f5VUg4HXbDfADhhT0UnJeyEtWzDWR7am0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZxktCYYlwbZdpZPoz1PdUxyC/ERw4IOSx4J5KumxPVNvhC3ZN8TxhiIdYbzY1kCOv5ecXFjgQGUUIuUX5LqC1Y1xrw2qBQmYdcwAYoJ/EiGomuVppFK5VEyVZUI3gUBoltCQWsiXX7SSEBFtZC3OGv+d6CqJOAKcWuxxE/bBGlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eRop9ww4; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=vxstvNPq8f5VUg4HXbDfADhhT0UnJeyEtWzDWR7am0Y=; b=eRop9ww4ibMWKQNeA36L9eOZ9i
+	9d8KaUDJv8pvjJd4Ibrnmln7iBBX59flb6cCGiW6MwyvsBbuIUnY6Wfhysyj7OpeQmV05OZMR0BLu
+	o5DiJauGr9xR2Y49p5zJ4XRsAyKR+yp3/FLog+V5VEdT5lTCCphSCWwNwiM7Lt2zP/FIL6St2f/+d
+	x0f8KdXgtrf9Qe/gancUqAxwoiipgpk0/QKUEOzCHDQTbdrFvpxLBhGbIQuNlWTDD/LKrerUuKRIA
+	6HMPsjLutcEE9gk01pMwvWCyGlSLTkP1dLUxHBOhEQKs+DBE2ezeVbZjl/eDCtTKT9RI6LcW3hGgW
+	nqOtFAPg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRCM2-00000000lL1-08Ht;
+	Tue, 09 Jul 2024 15:02:06 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6ADBE3006B7; Tue,  9 Jul 2024 17:02:05 +0200 (CEST)
+Date: Tue, 9 Jul 2024 17:02:05 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: mingo@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org,
+	clm@meta.com, paulmck@kernel.org
+Subject: Re: [PATCH 04/10] perf/uprobe: RCU-ify find_uprobe()
+Message-ID: <20240709150205.GO27299@noisy.programming.kicks-ass.net>
+References: <20240708091241.544262971@infradead.org>
+ <20240708092415.579623285@infradead.org>
+ <20240708163545.GB18761@redhat.com>
+ <20240708180837.GC27299@noisy.programming.kicks-ass.net>
+ <20240709143255.GD28495@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709143255.GD28495@redhat.com>
 
-It is possible to have thermal zones which don't have any trip points.
-These zones in effect simply represent a temperature sensor without any
-action associated with it. While the schema has always required a
-'trips' node, users have existed for a long time without it. Update the
-schema to match reality.
+On Tue, Jul 09, 2024 at 04:32:55PM +0200, Oleg Nesterov wrote:
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- Documentation/devicetree/bindings/thermal/thermal-zones.yaml | 1 -
- 1 file changed, 1 deletion(-)
+> Once guard(srcu)(&uprobes_srcu) in handle_swbp() drops the uprobes_srcu lock,
+> utask->active_uprobe can be freed.
 
-diff --git a/Documentation/devicetree/bindings/thermal/thermal-zones.yaml b/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
-index 68398e7e8655..8315ab4b00eb 100644
---- a/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
-+++ b/Documentation/devicetree/bindings/thermal/thermal-zones.yaml
-@@ -229,7 +229,6 @@ patternProperties:
- 
-     required:
-       - thermal-sensors
--      - trips
- 
-     additionalProperties: false
- 
--- 
-2.43.0
+Yeah, I've fixed all those already. It's a bit of churn, adding
+inc_not_zero all over the place and then removing it again, but yeah, it
+makes the individual patches better.
 
+Let me finish the complete set and I'll push out.
 
