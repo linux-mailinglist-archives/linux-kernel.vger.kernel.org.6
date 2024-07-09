@@ -1,150 +1,117 @@
-Return-Path: <linux-kernel+bounces-245726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E6492B856
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:33:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C8B092B861
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:33:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D605B1F22D11
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:33:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B678B25A20
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56A3158211;
-	Tue,  9 Jul 2024 11:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="r15hD5H3"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA080157485;
+	Tue,  9 Jul 2024 11:33:42 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E73255E4C;
-	Tue,  9 Jul 2024 11:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B9855E4C;
+	Tue,  9 Jul 2024 11:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720524792; cv=none; b=SgG2vyJya8PNgFPThZaE8nKCIPhbv9T9cg4Zrn4MgUdMAzo7P+ZirNos4V98JbTUg+IUv9KDRhKN+bpXYSrN1nyMDKuPIKkY5bNP6X70sE4pf3M9pifAb1ctIlaXQRsn94iv8Kc3ta51zDpiqpGsE22s4ZGCoRpsxKjsOq8q96M=
+	t=1720524822; cv=none; b=Khzwz+Eg9u2hKYUGHuxrtnUWQXWn4haF0ZZtt3NFXdh2mN6zdOcw7mvw6HhluDxdJM5K4uPsIvgbQYvTJwagbxDDJdd/4U3Fhzfykwda0gMr+Nk083nPsuyBrPSntFLMeZzWIhHOI1zr9RhqagPG1PiprdGTtvoTrDMD2TVUdy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720524792; c=relaxed/simple;
-	bh=lBtZOkfJyPcpzXO8Qc1kG/ymRCLuDT5d0JAGRrfTtQ4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FAbapoWDQG3a1/qy0dnrE8wKWK8n2qgQCgyGJFHoq1CRj5kEHbVkHh6sH6+BGpTPg+wGwnzQjtGl3seRtVa7Yp/bHTdTsfOULt0NQw486JIgJlqtc2Qsz1VU8ga5hGw/iNMi1X19G0hhCsn/izjAcd9HSaOf6XcUmtotcqwsWEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=r15hD5H3; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4696pDix011130;
-	Tue, 9 Jul 2024 13:32:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=selector1; bh=/S6wJW9F8VTUvVvLuJOhhpUi
-	VKNmEzWE/It5IEUxaQk=; b=r15hD5H30b3XfB5p1l9PU/nofzObR3/VQv8Xf5S5
-	r145yX84W9UzW6RRWdm0IRTdpKXMh60Fcq0CpAkQFv2/xTGdgvdLv+Ml/n5L2wyN
-	otO509vQwl31nSe3ZvC+p4TJSY3G1qc0bNwFOMkZBkHdcCfGRdBZC+AVEInsa5W+
-	Wwa/0zakjeWHvwwpFTpJ72L3NYDN8yAllaZxwpL/qR4XhRM+EIfqUUd0YNrw9t+p
-	+irDdr8BU6xz7dmhZ0Zt4JJJRM3XQJU8T8p9vlSoLcvZ0c/Ae5SHCUMr9RomwJ59
-	2cc7LEdhnmgGfylfWoJf5DGH5ztT0xgJVn5nvljRRRCSjg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 407gvhs407-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 13:32:54 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8E0FA40045;
-	Tue,  9 Jul 2024 13:32:48 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 36ABF21ED54;
-	Tue,  9 Jul 2024 13:32:22 +0200 (CEST)
-Received: from gnbcxd0016.gnb.st.com (10.129.178.213) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 9 Jul
- 2024 13:32:21 +0200
-Date: Tue, 9 Jul 2024 13:32:16 +0200
-From: Alain Volmat <alain.volmat@foss.st.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-CC: <linux-i2c@vger.kernel.org>,
-        Pierre-Yves MORDRET
-	<pierre-yves.mordret@foss.st.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Maxime
- Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 47/60] i2c: stm32f4: reword according to newest
- specification
-Message-ID: <20240709113216.GA57449@gnbcxd0016.gnb.st.com>
-References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
- <20240706112116.24543-48-wsa+renesas@sang-engineering.com>
+	s=arc-20240116; t=1720524822; c=relaxed/simple;
+	bh=+qzS59c3fdH5vXtrObTlu3zWUbvBHhppuPkCToi9+CY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EhVc2nAFon7cI1OKLzA/0/fslq+P8Y4rst1gq3qaTbpzPbf2up4XMOHVaSwKVIVa02grJ7S63NU7CprnBF/LTWESvxWDq7lXtlYuZ5PYuLMkYhCFIDYrWNlFYv+WSIz+v1OdzFMJSndl19NyOBRPxySzBvgdIBsoKnz2pyvSISk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-03 (Coremail) with SMTP id rQCowABXeiz5H41mOeXVFA--.41574S2;
+	Tue, 09 Jul 2024 19:33:23 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: patrik.r.jakobsson@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	daniel.vetter@ffwll.ch,
+	alan@linux.intel.com,
+	airlied@redhat.com,
+	akpm@linux-foundation.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v4] drm/gma500: fix null pointer dereference in cdv_intel_lvds_get_modes
+Date: Tue,  9 Jul 2024 19:33:11 +0800
+Message-Id: <20240709113311.37168-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240706112116.24543-48-wsa+renesas@sang-engineering.com>
-X-Disclaimer: ce message est personnel / this message is private
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_02,2024-07-08_01,2024-05-17_01
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowABXeiz5H41mOeXVFA--.41574S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uF1rJF1DtF1UKw43Xr1rCrg_yoW8Xr18pr
+	W7GFyYyr4FqF9FgFW8CF18WFW5G3W3J3W8KrykXws3u3Z0yryUXr95u3y3Xry3AFZxGrZY
+	yrnxtFW3GayUAF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUQZ23UUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-Hi Wolfram,
+In cdv_intel_lvds_get_modes(), the return value of drm_mode_duplicate()
+is assigned to mode, which will lead to a NULL pointer dereference on
+failure of drm_mode_duplicate(). Add a check to avoid npd.
 
-On Sat, Jul 06, 2024 at 01:20:47PM +0200, Wolfram Sang wrote:
-> Change the wording of this driver wrt. the newest I2C v7 and SMBus 3.2
-> specifications and replace "master/slave" with more appropriate terms.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: stable@vger.kernel.org
+Fixes: 6a227d5fd6c4 ("gma500: Add support for Cedarview")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v4:
+- revised the recipient email list, apologize for the inadvertent mistake.
+Changes in v3:
+- added the recipient's email address, due to the prolonged absence of a 
+response from the recipients.
+Changes in v2:
+- modified the patch according to suggestions from other patchs;
+- added Fixes line;
+- added Cc stable;
+- Link: https://lore.kernel.org/lkml/20240622072514.1867582-1-make24@iscas.ac.cn/T/
+---
+ drivers/gpu/drm/gma500/cdv_intel_lvds.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Acked-by: Alain Volmat <alain.volmat@foss.st.com>
+diff --git a/drivers/gpu/drm/gma500/cdv_intel_lvds.c b/drivers/gpu/drm/gma500/cdv_intel_lvds.c
+index f08a6803dc18..3adc2c9ab72d 100644
+--- a/drivers/gpu/drm/gma500/cdv_intel_lvds.c
++++ b/drivers/gpu/drm/gma500/cdv_intel_lvds.c
+@@ -311,6 +311,9 @@ static int cdv_intel_lvds_get_modes(struct drm_connector *connector)
+ 	if (mode_dev->panel_fixed_mode != NULL) {
+ 		struct drm_display_mode *mode =
+ 		    drm_mode_duplicate(dev, mode_dev->panel_fixed_mode);
++		if (!mode)
++			return 0;
++
+ 		drm_mode_probed_add(connector, mode);
+ 		return 1;
+ 	}
+-- 
+2.25.1
 
-> ---
->  drivers/i2c/busses/i2c-stm32f4.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-stm32f4.c b/drivers/i2c/busses/i2c-stm32f4.c
-> index f8b12be6ef55..230fff0c0bf9 100644
-> --- a/drivers/i2c/busses/i2c-stm32f4.c
-> +++ b/drivers/i2c/busses/i2c-stm32f4.c
-> @@ -95,7 +95,7 @@
->  
->  /**
->   * struct stm32f4_i2c_msg - client specific data
-> - * @addr: 8-bit slave addr, including r/w bit
-> + * @addr: 8-bit target addr, including r/w bit
->   * @count: number of bytes to be transferred
->   * @buf: data buffer
->   * @result: result of the transfer
-> @@ -480,7 +480,7 @@ static void stm32f4_i2c_handle_rx_done(struct stm32f4_i2c_dev *i2c_dev)
->  
->  /**
->   * stm32f4_i2c_handle_rx_addr() - Handle address matched interrupt in case of
-> - * master receiver
-> + * controller receiver
->   * @i2c_dev: Controller's private data
->   */
->  static void stm32f4_i2c_handle_rx_addr(struct stm32f4_i2c_dev *i2c_dev)
-> @@ -643,7 +643,7 @@ static irqreturn_t stm32f4_i2c_isr_error(int irq, void *data)
->  
->  	/*
->  	 * Acknowledge failure:
-> -	 * In master transmitter mode a Stop must be generated by software
-> +	 * In controller transmitter mode a Stop must be generated by software
->  	 */
->  	if (status & STM32F4_I2C_SR1_AF) {
->  		if (!(msg->addr & I2C_M_RD)) {
-> @@ -749,7 +749,7 @@ static u32 stm32f4_i2c_func(struct i2c_adapter *adap)
->  }
->  
->  static const struct i2c_algorithm stm32f4_i2c_algo = {
-> -	.master_xfer = stm32f4_i2c_xfer,
-> +	.xfer = stm32f4_i2c_xfer,
->  	.functionality = stm32f4_i2c_func,
->  };
->  
-> -- 
-> 2.43.0
-> 
 
