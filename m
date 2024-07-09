@@ -1,195 +1,212 @@
-Return-Path: <linux-kernel+bounces-245272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0349192B083
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:48:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2CC092B00F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD760282DE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:48:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68DCE1F229DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FEB13C819;
-	Tue,  9 Jul 2024 06:48:11 +0000 (UTC)
-Received: from mx0a-00300601.pphosted.com (mx0a-00300601.pphosted.com [148.163.146.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDCC13A25F;
+	Tue,  9 Jul 2024 06:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="caeLTwQC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D96813213A;
-	Tue,  9 Jul 2024 06:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.146.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E24F7D07F;
+	Tue,  9 Jul 2024 06:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720507690; cv=none; b=O7ZLy86QikSLjdU/ldkyoCkX0hP2X21ijg2BmO0518IurL3FP30attz/JHltfCRbW8J35XFIhAieIJnL26ys5/QI1En+rPxl7rJWXw0MfmurQkEgGbxz7aj67/PxwmvZbgEBYVXLYE2HLp8AsIsYRuzX+2FExCAv5xJ6Xd+ovHk=
+	t=1720506404; cv=none; b=mkTDqLMRRs1lm87yi/9wSwq0hP6H06m2UfxTVCCnjBiZqZvt6nvNLDK1pNzyR/wFaKzEi74v6iENPn+4RHSjwg0NXSGh70Od7+Zoug/A3KWBRMDPJcMyTqUKFjzOl2PnTmM19LJNx8aPnXdicTMl1cvWdhJNNZnwbAu2/Q2QtfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720507690; c=relaxed/simple;
-	bh=OQvb9CZbdmX9E0d9iBJGKerkjF+Vly6dcszw03VebUo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PQaKAuzbAeX0VMCOkeb0hXEM+yD+6sTpaGqWcov2Ed4qayNqkFlPEzVvYcRXfdT8Oh8Ep6lS5yHGZBlCvcgvU4NlEqV1DIROG6fv/JLvlX43hSBusKi6fuyu5Aa4Z1ps0NFuFBfhdUSfRRmiAzjrh3HleM6Va4ED651PtkEBDUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emerson.com; spf=pass smtp.mailfrom=emerson.com; arc=none smtp.client-ip=148.163.146.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emerson.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emerson.com
-Received: from pps.filterd (m0359308.ppops.net [127.0.0.1])
-	by mx0b-00300601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4692tkD2022971;
-	Tue, 9 Jul 2024 06:28:37 GMT
-Received: from usgdcecpmsgae02.extemr.org ([144.191.128.198])
-	by mx0b-00300601.pphosted.com (PPS) with ESMTPS id 408s364ewq-15
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 06:28:37 +0000 (GMT)
-Received: from usgdcecpmsgap04.emrsn.org (10.16.75.145) by mail.emerson.com
- (10.16.11.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 9 Jul
- 2024 06:28:49 +0000
-Received: from usgdcecpmsgap05.emrsn.org (10.16.75.137) by
- usgdcecpmsgap04.emrsn.org (10.16.75.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 9 Jul 2024 06:27:41 +0000
-Received: from aug-swlinux1c.aug (10.19.249.15) by Inetmail.emrsn.net
- (10.16.75.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11 via Frontend
- Transport; Tue, 9 Jul 2024 06:27:41 +0000
-Received: from Inetmail.emrsn.net (unknown [10.70.41.16])
-	by aug-swlinux1c.aug (Postfix) with ESMTP id 426EDB0B0017;
-	Tue,  9 Jul 2024 08:27:40 +0200 (CEST)
-From: Philipp Hortmann <philipp.hortmann@emerson.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-staging@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-CC: Philipp Hortmann <philipp.hortmann@emerson.com>
-Subject: [PATCH] staging: rtl8723bs: Remove constant result function CheckNegative()
-Date: Tue, 9 Jul 2024 08:26:34 +0200
-Message-ID: <20240709062634.9454-1-philipp.hortmann@emerson.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1720506404; c=relaxed/simple;
+	bh=7rhoCvATLjh7YDmR6VilaOYZi0txZK/lFS5HJUdBrGo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=USx25xQ3oUE9cd616y3qfqVtnmAbtGpDrHqO+Ajf7MXTejN7eQt15BMelLE97T1wAzb3uqxYZM7W602b6jyllDeZCC9CW83UFGTIsnpIXSQdQ8gEibXQBPEoLhOqpaihLrVAjWQTZJL5tlFR960NokBWFrdHM/195BaHphfWZ2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=caeLTwQC; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720506403; x=1752042403;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=7rhoCvATLjh7YDmR6VilaOYZi0txZK/lFS5HJUdBrGo=;
+  b=caeLTwQC3s1li4y0rWsFH+8XJrq3UNJA74sAfwbF9A9oTew/FVrlGVpv
+   l+/veVTbHodVv3Rz8tT1XBzYnO9r+/gT6JgSIjYc+YFkEHOwGYSTDpqUv
+   uhxD+xNko+a6qMHpU+kqQWM8V/QO0Waw6oUpXtbsGrhW4uyFRpqpyVKtg
+   /wu2Qv8Or+/eG/2NBxicp0lhRW+iZN37TJS27YH3Qz/ReMKzYWKkgGssy
+   ZcUU0K3ZFABTZIVTUUs4Bn3KIvRGl3fWkqy3zVgB5jsrT5g2w7K9D183F
+   Sd5QOlE+pcbEDXBMTu6F1ZxjJE8/MxkRV/BwxJ1Fm1l1SMtoTSYb9AP99
+   Q==;
+X-CSE-ConnectionGUID: O/rn2BV7R0W+zEmoNlsuzw==
+X-CSE-MsgGUID: TxS99ZrTRGqt185awUlryQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="35174053"
+X-IronPort-AV: E=Sophos;i="6.09,194,1716274800"; 
+   d="scan'208";a="35174053"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 23:26:43 -0700
+X-CSE-ConnectionGUID: vweDiCz2Rpq5DpUmPEbT0w==
+X-CSE-MsgGUID: 4kbflCVUTY2eYStYo00XPA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,194,1716274800"; 
+   d="scan'208";a="48407438"
+Received: from taofen1x-mobl1.ccr.corp.intel.com (HELO [10.238.11.85]) ([10.238.11.85])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 23:26:38 -0700
+Message-ID: <e7233d96-2ab1-4684-8ce4-0189a78339ca@linux.intel.com>
+Date: Tue, 9 Jul 2024 14:26:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v19 109/130] KVM: TDX: Handle TDX PV port io hypercall
+To: Isaku Yamahata <isaku.yamahata@intel.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ isaku.yamahata@gmail.com, Paolo Bonzini <pbonzini@redhat.com>,
+ erdemaktas@google.com, Sean Christopherson <seanjc@google.com>,
+ Sagi Shahar <sagis@google.com>, Kai Huang <kai.huang@intel.com>,
+ chen.bo@intel.com, hang.yuan@intel.com, tina.zhang@intel.com,
+ isaku.yamahata@linux.intel.com, Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Reinette Chatre <reinette.chatre@intel.com>
+References: <cover.1708933498.git.isaku.yamahata@intel.com>
+ <4f4aaf292008608a8717e9553c3315ee02f66b20.1708933498.git.isaku.yamahata@intel.com>
+ <00bb2871-8020-4d60-bdb6-d2cebe79d543@linux.intel.com>
+ <20240417201058.GL3039520@ls.amr.corp.intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20240417201058.GL3039520@ls.amr.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: cFmUnU8ehzE1BMmzNw-kVnDvI_HUDQao
-X-Proofpoint-GUID: cFmUnU8ehzE1BMmzNw-kVnDvI_HUDQao
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-08_15,2024-07-08_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- bulkscore=0 clxscore=1011 priorityscore=1501 phishscore=0
- lowpriorityscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0
- adultscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090041
 
-Remove function CheckNegative() that returns always true to shorten code.
 
-Signed-off-by: Philipp Hortmann <philipp.hortmann@emerson.com>
----
-Tested with rtl8723bs in ODYS Trendbook Next 14
----
- .../staging/rtl8723bs/hal/HalHWImg8723B_BB.c    | 17 ++---------------
- .../staging/rtl8723bs/hal/HalHWImg8723B_MAC.c   | 12 +-----------
- .../staging/rtl8723bs/hal/HalHWImg8723B_RF.c    | 12 +-----------
- 3 files changed, 4 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/staging/rtl8723bs/hal/HalHWImg8723B_BB.c b/drivers/staging/rtl8723bs/hal/HalHWImg8723B_BB.c
-index dd0f74b0cf0d..4da2487f6750 100644
---- a/drivers/staging/rtl8723bs/hal/HalHWImg8723B_BB.c
-+++ b/drivers/staging/rtl8723bs/hal/HalHWImg8723B_BB.c
-@@ -70,13 +70,6 @@ static bool CheckPositive(
- 	return false;
- }
- 
--static bool CheckNegative(
--	struct dm_odm_t *pDM_Odm, const u32  Condition1, const u32 Condition2
--)
--{
--	return true;
--}
+On 4/18/2024 4:10 AM, Isaku Yamahata wrote:
+> On Wed, Apr 17, 2024 at 08:51:39PM +0800,
+> Binbin Wu <binbin.wu@linux.intel.com> wrote:
+>
+>>
+>> On 2/26/2024 4:26 PM, isaku.yamahata@intel.com wrote:
+>>> From: Isaku Yamahata <isaku.yamahata@intel.com>
+>>>
+>>> Wire up TDX PV port IO hypercall to the KVM backend function.
+>>>
+>>> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+>>> Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+>>> ---
+>>> v18:
+>>> - Fix out case to set R10 and R11 correctly when user space handled port
+>>>     out.
+>>> ---
+>>>    arch/x86/kvm/vmx/tdx.c | 67 ++++++++++++++++++++++++++++++++++++++++++
+>>>    1 file changed, 67 insertions(+)
+>>>
+>>> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+>>> index a2caf2ae838c..55fc6cc6c816 100644
+>>> --- a/arch/x86/kvm/vmx/tdx.c
+>>> +++ b/arch/x86/kvm/vmx/tdx.c
+>>> @@ -1152,6 +1152,71 @@ static int tdx_emulate_hlt(struct kvm_vcpu *vcpu)
+>>>    	return kvm_emulate_halt_noskip(vcpu);
+>>>    }
+>>> +static int tdx_complete_pio_out(struct kvm_vcpu *vcpu)
+>>> +{
+>>> +	tdvmcall_set_return_code(vcpu, TDVMCALL_SUCCESS);
+>>> +	tdvmcall_set_return_val(vcpu, 0);
+>>> +	return 1;
+>>> +}
+>>> +
+>>> +static int tdx_complete_pio_in(struct kvm_vcpu *vcpu)
+>>> +{
+>>> +	struct x86_emulate_ctxt *ctxt = vcpu->arch.emulate_ctxt;
+>>> +	unsigned long val = 0;
+>>> +	int ret;
+>>> +
+>>> +	WARN_ON_ONCE(vcpu->arch.pio.count != 1);
+>>> +
+>>> +	ret = ctxt->ops->pio_in_emulated(ctxt, vcpu->arch.pio.size,
+>>> +					 vcpu->arch.pio.port, &val, 1);
+>>> +	WARN_ON_ONCE(!ret);
+>>> +
+>>> +	tdvmcall_set_return_code(vcpu, TDVMCALL_SUCCESS);
+>>> +	tdvmcall_set_return_val(vcpu, val);
+>>> +
+>>> +	return 1;
+>>> +}
+>>> +
+>>> +static int tdx_emulate_io(struct kvm_vcpu *vcpu)
+>>> +{
+>>> +	struct x86_emulate_ctxt *ctxt = vcpu->arch.emulate_ctxt;
+>>> +	unsigned long val = 0;
+>>> +	unsigned int port;
+>>> +	int size, ret;
+>>> +	bool write;
+>>> +
+>>> +	++vcpu->stat.io_exits;
+>>> +
+>>> +	size = tdvmcall_a0_read(vcpu);
+>>> +	write = tdvmcall_a1_read(vcpu);
+>>> +	port = tdvmcall_a2_read(vcpu);
+>>> +
+>>> +	if (size != 1 && size != 2 && size != 4) {
+>>> +		tdvmcall_set_return_code(vcpu, TDVMCALL_INVALID_OPERAND);
+>>> +		return 1;
+>>> +	}
+>>> +
+>>> +	if (write) {
+>>> +		val = tdvmcall_a3_read(vcpu);
+>>> +		ret = ctxt->ops->pio_out_emulated(ctxt, size, port, &val, 1);
+>>> +
+>>> +		/* No need for a complete_userspace_io callback. */
+>> I am confused about the comment.
+>>
+>> The code below sets the complete_userspace_io callback for write case,
+>> i.e. tdx_complete_pio_out().
+> You're correct. This comment is stale and should be removed it.
+Also, since the tdx_complete_pio_out() is installed as 
+complete_userspace_io callback for write, it's more reasonable to move 
+the reset of pio.count into tdx_complete_pio_out().
+How about the following fixup:
+
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index 9ead46cb75ab..b43bb8ccddb9 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -1115,6 +1115,7 @@ static int tdx_emulate_hlt(struct kvm_vcpu *vcpu)
+
+  static int tdx_complete_pio_out(struct kvm_vcpu *vcpu)
+  {
++       vcpu->arch.pio.count = 0;
+         tdvmcall_set_return_code(vcpu, TDVMCALL_SUCCESS);
+         tdvmcall_set_return_val(vcpu, 0);
+         return 1;
+@@ -1159,15 +1160,13 @@ static int tdx_emulate_io(struct kvm_vcpu *vcpu)
+         if (write) {
+                 val = tdvmcall_a3_read(vcpu);
+                 ret = ctxt->ops->pio_out_emulated(ctxt, size, port, 
+&val, 1);
 -
- /******************************************************************************
- *                           AGC_TAB.TXT
- ******************************************************************************/
-@@ -244,10 +237,7 @@ void ODM_ReadAndConfig_MP_8723B_AGC_TAB(struct dm_odm_t *pDM_Odm)
- 				READ_NEXT_PAIR(v1, v2, i);
- 			} else {
- 				READ_NEXT_PAIR(v1, v2, i);
--				if (!CheckNegative(pDM_Odm, v1, v2))
--					bMatched = false;
--				else
--					bMatched = true;
-+				bMatched = true;
- 				READ_NEXT_PAIR(v1, v2, i);
- 			}
- 
-@@ -506,10 +496,7 @@ void ODM_ReadAndConfig_MP_8723B_PHY_REG(struct dm_odm_t *pDM_Odm)
- 				READ_NEXT_PAIR(v1, v2, i);
- 			} else {
- 				READ_NEXT_PAIR(v1, v2, i);
--				if (!CheckNegative(pDM_Odm, v1, v2))
--					bMatched = false;
--				else
--					bMatched = true;
-+				bMatched = true;
- 				READ_NEXT_PAIR(v1, v2, i);
- 			}
- 
-diff --git a/drivers/staging/rtl8723bs/hal/HalHWImg8723B_MAC.c b/drivers/staging/rtl8723bs/hal/HalHWImg8723B_MAC.c
-index 47e66f4ad9d1..1f0cc8d58df3 100644
---- a/drivers/staging/rtl8723bs/hal/HalHWImg8723B_MAC.c
-+++ b/drivers/staging/rtl8723bs/hal/HalHWImg8723B_MAC.c
-@@ -68,13 +68,6 @@ static bool CheckPositive(
- 	return false;
- }
- 
--static bool CheckNegative(
--	struct dm_odm_t *pDM_Odm, const u32 Condition1, const u32 Condition2
--)
--{
--	return true;
--}
--
- /******************************************************************************
- *                           MAC_REG.TXT
- ******************************************************************************/
-@@ -214,10 +207,7 @@ void ODM_ReadAndConfig_MP_8723B_MAC_REG(struct dm_odm_t *pDM_Odm)
- 				READ_NEXT_PAIR(v1, v2, i);
- 			} else {
- 				READ_NEXT_PAIR(v1, v2, i);
--				if (!CheckNegative(pDM_Odm, v1, v2))
--					bMatched = false;
--				else
--					bMatched = true;
-+				bMatched = true;
- 				READ_NEXT_PAIR(v1, v2, i);
- 			}
- 
-diff --git a/drivers/staging/rtl8723bs/hal/HalHWImg8723B_RF.c b/drivers/staging/rtl8723bs/hal/HalHWImg8723B_RF.c
-index efc68c17b126..155ec311a52e 100644
---- a/drivers/staging/rtl8723bs/hal/HalHWImg8723B_RF.c
-+++ b/drivers/staging/rtl8723bs/hal/HalHWImg8723B_RF.c
-@@ -78,13 +78,6 @@ static bool CheckPositive(
- 	return false;
- }
- 
--static bool CheckNegative(
--	struct dm_odm_t *pDM_Odm, const u32  Condition1, const u32 Condition2
--)
--{
--	return true;
--}
--
- /******************************************************************************
- *                           RadioA.TXT
- ******************************************************************************/
-@@ -245,10 +238,7 @@ void ODM_ReadAndConfig_MP_8723B_RadioA(struct dm_odm_t *pDM_Odm)
- 				READ_NEXT_PAIR(v1, v2, i);
- 			} else {
- 				READ_NEXT_PAIR(v1, v2, i);
--				if (!CheckNegative(pDM_Odm, v1, v2))
--					bMatched = false;
--				else
--					bMatched = true;
-+				bMatched = true;
- 				READ_NEXT_PAIR(v1, v2, i);
- 			}
- 
--- 
-2.45.2
+-               /* No need for a complete_userspace_io callback. */
+-               vcpu->arch.pio.count = 0;
+-       } else
++       } else {
+                 ret = ctxt->ops->pio_in_emulated(ctxt, size, port, 
+&val, 1);
++       }
+
+-       if (ret)
++       if (ret) {
+                 tdvmcall_set_return_val(vcpu, val);
+-       else {
++       } else {
+                 if (write)
+                         vcpu->arch.complete_userspace_io = 
+tdx_complete_pio_out;
+                 else
 
 
