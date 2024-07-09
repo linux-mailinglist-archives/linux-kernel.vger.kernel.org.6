@@ -1,141 +1,150 @@
-Return-Path: <linux-kernel+bounces-245725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8580392B81E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:30:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E6492B856
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FA0A285D2A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:30:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D605B1F22D11
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C63156C61;
-	Tue,  9 Jul 2024 11:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56A3158211;
+	Tue,  9 Jul 2024 11:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="REHOlr9y"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="r15hD5H3"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C3312CDB6;
-	Tue,  9 Jul 2024 11:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E73255E4C;
+	Tue,  9 Jul 2024 11:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720524640; cv=none; b=sHNBp2U2ZjuETUFEvqH704YabaPKsiq0sfGUpi4LEytonml6Omdd+lsMxvtmAAjAHDj7wtLT1eEn90Oh6qSROoLy9JqyAm8LAMOAfImYOjOkFw0gn3DCK+ztByvrDKO0kpy6En3L20MSUPD93oULWEmpF8iFX9BQIkz5tsJp+hg=
+	t=1720524792; cv=none; b=SgG2vyJya8PNgFPThZaE8nKCIPhbv9T9cg4Zrn4MgUdMAzo7P+ZirNos4V98JbTUg+IUv9KDRhKN+bpXYSrN1nyMDKuPIKkY5bNP6X70sE4pf3M9pifAb1ctIlaXQRsn94iv8Kc3ta51zDpiqpGsE22s4ZGCoRpsxKjsOq8q96M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720524640; c=relaxed/simple;
-	bh=fIX6ixrAYdf6dI/dZkfwDgBUu1sXkxgK8sJ2KThkAKY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LJHQbyaWzZpCPEdpyIQjrPTAo/IF3ridL39bSJYvsvDexf24kMg5ynwvDaxjBTaht45YTJlaXpJ0pTBtffky1Q2AygbcyyZ6ptgnuQB4NZQfbyOvPqro52051LC34zrCV6gcKB36DX69HuHUfN2nX93DjvZRd7HCMNRB5yvTx1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=REHOlr9y; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-38b1ce72526so1021715ab.0;
-        Tue, 09 Jul 2024 04:30:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720524638; x=1721129438; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OybDJgpz6EY+j/3mJEj8sCqVPmrO9HMmhiXf8ikWJtY=;
-        b=REHOlr9yLph/zHi5D2ehMTTwZ48soxeCJaFIWes9SIj9qw3lQP8EUONC4UhHj/SdNH
-         HcPNwQZfNBoyFojIzFDqgSKKN/wY7gFTWbnL5lG8zUk1TxPZ1yREOUuL5joEYhLmWQl3
-         WTHSMk410jvEshtEOUGzfnPeGXq1Dekt6oUSnr4Y2utcZCaiHXxoQWUKD/93Gfx6QnrS
-         xjyJS0WDyTkkk69vs9DyXA2H6wBzU7Ls7PW+WfrK/bbzemes69BDPWEcRzjXCZ9Z14ZP
-         W9PQ9UBI7juiavZzSV2Veo6r3MEOh1jAxhhNWKgLnVuMAMp6w8rPUVMFjaUrUltJQeZI
-         94sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720524638; x=1721129438;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OybDJgpz6EY+j/3mJEj8sCqVPmrO9HMmhiXf8ikWJtY=;
-        b=J8jeIVeW788kHTus4SVaX3xnGBP8nHvs3qbC64OnzF+F17mqbsAkoELKYflWl4FeWj
-         g2lQaxt2OwTAeN0wSoll5ekR0MJSISh9EISCuK5MXsEJ7usgxEQnqkiqwslt+QBfGtR1
-         Nsv05FDpHPVh5nFYzRq5lYPimpsW92JCqLaDGcyzpfd1Zu8s5tvSLtPK6yhKw+Mj5c8F
-         4/cEZTD4EN2jp62n2BUKS3xs3pmmlCo2NS3iNMMdM5IIPZPWQl8+73yN3ElnHtUQBgtP
-         e+CU6JMm45sYCOkhg4vT1k3Ct7uNl/EmtnzwaO+0pYvAYITMaW5zsT5wHUgdIF8QMmpu
-         D6xA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyp/SlzUvAz1wCtFTTOY5InhjZsSABiLT5DWKGNqCglIy8P8jrNa8Bpjj84FIOWMObkiuwxpFku/wIkIjxuoGQ1R16N/l++imVfFaFgTOBY76YyDjX+FdKx7VaJ7Nd+84xhdcyxOAIIQ==
-X-Gm-Message-State: AOJu0YwOL63wzWFdCYEnVTXY7Ghlb2Xu7kPSR2GVngdd0A6NbGtng+aa
-	amJi/cXJaAt0dzQAJY1vc4btuhXag3g6oD0PM0DwOFJVAaFJXkk+VK2URUt2cZ6SEdwlSdjiQKT
-	RRAio4LRGg1wVmoDh0UIvmk13XHo=
-X-Google-Smtp-Source: AGHT+IFPPY70EF131mrWS92AdxahsTxcIjvT/UMQ5GCEha7X5m+AdeBkpVaMR0Kgsk0JXGV9ftk+CsXREEzIyZTvwPw=
-X-Received: by 2002:a05:6e02:1c03:b0:382:7825:fe4e with SMTP id
- e9e14a558f8ab-38a585851d4mr26758075ab.16.1720524637800; Tue, 09 Jul 2024
- 04:30:37 -0700 (PDT)
+	s=arc-20240116; t=1720524792; c=relaxed/simple;
+	bh=lBtZOkfJyPcpzXO8Qc1kG/ymRCLuDT5d0JAGRrfTtQ4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FAbapoWDQG3a1/qy0dnrE8wKWK8n2qgQCgyGJFHoq1CRj5kEHbVkHh6sH6+BGpTPg+wGwnzQjtGl3seRtVa7Yp/bHTdTsfOULt0NQw486JIgJlqtc2Qsz1VU8ga5hGw/iNMi1X19G0hhCsn/izjAcd9HSaOf6XcUmtotcqwsWEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=r15hD5H3; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4696pDix011130;
+	Tue, 9 Jul 2024 13:32:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=selector1; bh=/S6wJW9F8VTUvVvLuJOhhpUi
+	VKNmEzWE/It5IEUxaQk=; b=r15hD5H30b3XfB5p1l9PU/nofzObR3/VQv8Xf5S5
+	r145yX84W9UzW6RRWdm0IRTdpKXMh60Fcq0CpAkQFv2/xTGdgvdLv+Ml/n5L2wyN
+	otO509vQwl31nSe3ZvC+p4TJSY3G1qc0bNwFOMkZBkHdcCfGRdBZC+AVEInsa5W+
+	Wwa/0zakjeWHvwwpFTpJ72L3NYDN8yAllaZxwpL/qR4XhRM+EIfqUUd0YNrw9t+p
+	+irDdr8BU6xz7dmhZ0Zt4JJJRM3XQJU8T8p9vlSoLcvZ0c/Ae5SHCUMr9RomwJ59
+	2cc7LEdhnmgGfylfWoJf5DGH5ztT0xgJVn5nvljRRRCSjg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 407gvhs407-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 13:32:54 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8E0FA40045;
+	Tue,  9 Jul 2024 13:32:48 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 36ABF21ED54;
+	Tue,  9 Jul 2024 13:32:22 +0200 (CEST)
+Received: from gnbcxd0016.gnb.st.com (10.129.178.213) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 9 Jul
+ 2024 13:32:21 +0200
+Date: Tue, 9 Jul 2024 13:32:16 +0200
+From: Alain Volmat <alain.volmat@foss.st.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+CC: <linux-i2c@vger.kernel.org>,
+        Pierre-Yves MORDRET
+	<pierre-yves.mordret@foss.st.com>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 47/60] i2c: stm32f4: reword according to newest
+ specification
+Message-ID: <20240709113216.GA57449@gnbcxd0016.gnb.st.com>
+References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
+ <20240706112116.24543-48-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708230613.448846-1-quic_obabatun@quicinc.com>
-In-Reply-To: <20240708230613.448846-1-quic_obabatun@quicinc.com>
-From: Klara Modin <klarasmodin@gmail.com>
-Date: Tue, 9 Jul 2024 13:30:27 +0200
-Message-ID: <CABq1_vjvPeF-h19-H99q5D1u7wvtbRPoKKqroMJFaMb+yUFLgg@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Revert use of Unflatten_devicetree APIs from reserved_mem
-To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-Cc: robh@kernel.org, saravanak@google.com, aisheng.dong@nxp.com, hch@lst.de, 
-	m.szyprowski@samsung.com, robin.murphy@arm.com, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, will@kernel.org, 
-	catalin.marinas@arm.com, kernel@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240706112116.24543-48-wsa+renesas@sang-engineering.com>
+X-Disclaimer: ce message est personnel / this message is private
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_02,2024-07-08_01,2024-05-17_01
 
-Hi,
+Hi Wolfram,
 
-Den tis 9 juli 2024 kl 01:06 skrev Oreoluwa Babatunde
-<quic_obabatun@quicinc.com>:
->
-> With recent changes made to initialize the cma regions before the page
-> tables are setup, commit f2a524d9ef5b ("of: reserved_mem: Restructure
-> code to call reserved mem init functions earlier"), an issue was
-> introduced where the initialization of the cma regions fail and are
-> initialized as "non-reusable" regions instead of "reusable". [1], [2]
->
-> This issue occurs because the device_node of the regions are not yet
-> created by the time the cma regions are being initialized.
->
-> The cma regions need to be initialized before the page tables are setup
-> for them to be configured correctly as was realized in [3].
->
-> Hence, since the unflatten_devicetree APIs are not available until after
-> the page tables have been setup, revert back to using the fdt APIs. This
-> makes it possible to store a reference to each cma node in the
-> reserved_mem array by the time it is needed in the init function.
->
-> [1] https://lore.kernel.org/all/DU0PR04MB9299C3EC247E1FE2C373440F80DE2@DU0PR04MB9299.eurprd04.prod.outlook.com/
->
-> [2] https://lore.kernel.org/all/986361f4-f000-4129-8214-39f2fb4a90da@gmail.com/
->
-> [3] https://lore.kernel.org/all/20240610213403.GA1697364@thelio-3990X/
->
+On Sat, Jul 06, 2024 at 01:20:47PM +0200, Wolfram Sang wrote:
+> Change the wording of this driver wrt. the newest I2C v7 and SMBus 3.2
+> specifications and replace "master/slave" with more appropriate terms.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-These reverts also fixes the issue for me. Feel free to CC me when you
-decide to send the next version if you want and I can retest it.
+Acked-by: Alain Volmat <alain.volmat@foss.st.com>
 
-Regards,
-Tested-by: Klara Modin <klarasmodin@gmail.com>
-
-> Oreoluwa Babatunde (4):
->   Revert "of: reserved_mem: Restructure code to call reserved mem init
->     functions earlier"
->   Revert "of: reserved_mem: Rename fdt_* functions to refelct the change
->     from using fdt APIs"
->   Revert "of: reserved_mem: Use unflatten_devicetree APIs to scan
->     reserved memory nodes"
->   of: reserved_mem: Restructure code to call rmem init functions earlier
->
->  drivers/of/fdt.c                |   2 +-
->  drivers/of/of_private.h         |   2 +-
->  drivers/of/of_reserved_mem.c    | 103 +++++++++++++++++---------------
->  include/linux/of_reserved_mem.h |   2 +-
->  kernel/dma/coherent.c           |  10 ++--
->  kernel/dma/contiguous.c         |   8 +--
->  kernel/dma/swiotlb.c            |  10 ++--
->  7 files changed, 72 insertions(+), 65 deletions(-)
->
-> --
-> 2.34.1
->
+> ---
+>  drivers/i2c/busses/i2c-stm32f4.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-stm32f4.c b/drivers/i2c/busses/i2c-stm32f4.c
+> index f8b12be6ef55..230fff0c0bf9 100644
+> --- a/drivers/i2c/busses/i2c-stm32f4.c
+> +++ b/drivers/i2c/busses/i2c-stm32f4.c
+> @@ -95,7 +95,7 @@
+>  
+>  /**
+>   * struct stm32f4_i2c_msg - client specific data
+> - * @addr: 8-bit slave addr, including r/w bit
+> + * @addr: 8-bit target addr, including r/w bit
+>   * @count: number of bytes to be transferred
+>   * @buf: data buffer
+>   * @result: result of the transfer
+> @@ -480,7 +480,7 @@ static void stm32f4_i2c_handle_rx_done(struct stm32f4_i2c_dev *i2c_dev)
+>  
+>  /**
+>   * stm32f4_i2c_handle_rx_addr() - Handle address matched interrupt in case of
+> - * master receiver
+> + * controller receiver
+>   * @i2c_dev: Controller's private data
+>   */
+>  static void stm32f4_i2c_handle_rx_addr(struct stm32f4_i2c_dev *i2c_dev)
+> @@ -643,7 +643,7 @@ static irqreturn_t stm32f4_i2c_isr_error(int irq, void *data)
+>  
+>  	/*
+>  	 * Acknowledge failure:
+> -	 * In master transmitter mode a Stop must be generated by software
+> +	 * In controller transmitter mode a Stop must be generated by software
+>  	 */
+>  	if (status & STM32F4_I2C_SR1_AF) {
+>  		if (!(msg->addr & I2C_M_RD)) {
+> @@ -749,7 +749,7 @@ static u32 stm32f4_i2c_func(struct i2c_adapter *adap)
+>  }
+>  
+>  static const struct i2c_algorithm stm32f4_i2c_algo = {
+> -	.master_xfer = stm32f4_i2c_xfer,
+> +	.xfer = stm32f4_i2c_xfer,
+>  	.functionality = stm32f4_i2c_func,
+>  };
+>  
+> -- 
+> 2.43.0
+> 
 
