@@ -1,258 +1,160 @@
-Return-Path: <linux-kernel+bounces-245094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2220B92AE27
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:26:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D67DE92AE28
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 457891C21961
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:26:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 141471C21CFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECF440858;
-	Tue,  9 Jul 2024 02:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="IbhFCXff"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012063.outbound.protection.outlook.com [52.101.66.63])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28503D967;
+	Tue,  9 Jul 2024 02:27:19 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0592C1AC;
-	Tue,  9 Jul 2024 02:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720491967; cv=fail; b=VTcBUlO/428Lbf1Yv1QttjdeiyR9zNcduOs7WQz+yqPiLoO9K7q2Mvqjm5Ua7oty2rI+wehJjxKy46VKsGLABma8z9CRd8JzPNrPckfWjeBxPaCcXdRCc0qrfTcZ9pDXErqNetZYYe4UGbamBxwwBLAZ0gZq4GuBg4AD856LzYY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720491967; c=relaxed/simple;
-	bh=u5qIpLzOUMzYg0heJ8aALdNBTWlymkfvfaTNuu4ghso=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=XY3gU/XBQbCgGr8SnywG7CeTyxHECmPaN+Qdb9ozJer8fQZ5HYX5B6LVbdbiSHcH7roJvcNDx5H5a1f/jW8ojwc16zdVGdXS96wdi5VwXcPm3u+RImJNM1WzN76tO2/8X8edz8s4Y5i/sveRdYNw6zX4+AXtzAPkT4f2V+57rmY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=IbhFCXff; arc=fail smtp.client-ip=52.101.66.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NK+OmeuzgFYjbiaVLjDLoaSyQIBZM04xi5nR/GkM/XGLl1+ocQKgQF+uIZPXC9I5Pm5cJQSYBqJpyuys0vLS+xGAr5t+jniI69WZ9mPouY+Iualf2MEjtshZ5eC2W94zytAxl22OAtTuE4hMMgFE7NRdIZhZ8CN+mTncYhSwwUEJrwQk1ulKZKZA9IGCAK4ALBjfgyIqmsjOJWzBiTJUXchGJ0c4UwrdYhuXccUHmCUi6dEN7Y6qCJWWRfHUYQaXsTfAYu2M+MFr+XfwcD7CXA/Cj6OyhI5zd+Ef0wCXs3ph1nWR1eHj/dxSq0SACohZ/X+zO8iSrUDuW/P9f5QE/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/3URxQ6Hm0as1UKm8B8Jijpuk6pRMcGC0GAyzpM1H7I=;
- b=Co/eE43t6JiUKpKXlldGmr116q9sAYtDeIvTe2ySYKR4sDQLZnjJ03/WLyeR58mH7YNrUtPJOUXtHz2gFmY+FyARNC9EHm/1g4Pd71hwcrekakt6f405YRG6N4jPNT5c6Qom32PcZykgcSAVMAWATMCYRg3HH7wYxPCsJLmRZehsAnTbI0tc3h1vPehn5PphdaSvlnN/oTRKpSgwzy5hKvasa2avQwiofpftctCeNMdMxN0MA6QVh5mjnN3r3FV5zhU7J7EII9raigxvN6B+4wjjg5KZZeQ1sNAQ3R9IJhJfNn/GB3rBidSOQsZRQyuy3Or1CibXLq1bpvLyHzdYzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/3URxQ6Hm0as1UKm8B8Jijpuk6pRMcGC0GAyzpM1H7I=;
- b=IbhFCXffMHxByMBz78WPfjyn7OgwnqEF0JerVHmsmqR3igcwLPd4wM6Jh0KNypZVZ09ntI7dmh11JRh05tcXfUYYQQnrBK6r2Mqpkl+VYoe+OhDDCEPIHOL/9N1xPK3KwBxGTFHEuD6JmKE0KzyV4+kGam6oA9wIkxhnZlK5RC0=
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
- by PAXPR04MB9232.eurprd04.prod.outlook.com (2603:10a6:102:2ba::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Tue, 9 Jul
- 2024 02:26:02 +0000
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257%4]) with mapi id 15.20.7741.033; Tue, 9 Jul 2024
- 02:26:02 +0000
-From: David Lin <yu-hao.lin@nxp.com>
-To: Brian Norris <briannorris@chromium.org>
-CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kvalo@kernel.org" <kvalo@kernel.org>, "francesco@dolcini.it"
-	<francesco@dolcini.it>, Pete Hsieh <tsung-hsien.hsieh@nxp.com>, Francesco
- Dolcini <francesco.dolcini@toradex.com>
-Subject: RE: [EXT] Re: [PATCH v11 2/2] wifi: mwifiex: add host mlme for AP
- mode
-Thread-Topic: [EXT] Re: [PATCH v11 2/2] wifi: mwifiex: add host mlme for AP
- mode
-Thread-Index: AQHazcKJeQZ0w1psMEaSibqAnOP3HrHtPf4AgABztOA=
-Date: Tue, 9 Jul 2024 02:26:02 +0000
-Message-ID:
- <PA4PR04MB9638356DED14B0491B82486CD1DB2@PA4PR04MB9638.eurprd04.prod.outlook.com>
-References: <20240704033001.603419-1-yu-hao.lin@nxp.com>
- <20240704033001.603419-3-yu-hao.lin@nxp.com> <Zow9cOyMvgiddkKw@google.com>
-In-Reply-To: <Zow9cOyMvgiddkKw@google.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PA4PR04MB9638:EE_|PAXPR04MB9232:EE_
-x-ms-office365-filtering-correlation-id: c7bc242e-d9e4-4733-deaa-08dc9fbe7a25
-x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?hpYRpjwBuETzNFwleoXCBULzeddhjdsDhhKBdOOYzG8VoPBDMlUb2CoXRWPP?=
- =?us-ascii?Q?4rBAMJyodrbAiHqSiMhtyX/lX0/QPKNLuJq6Z+BucFMNEldDf07TJI74tDRw?=
- =?us-ascii?Q?kZTkxXb6paPftNIj0s5yriOSirAREtz4LVbzyS3/fFqb8AwcRV1H2T/uCFB3?=
- =?us-ascii?Q?tyg9rhAV2AUFCiwjdX1hOXVS8iIfNGfaFWY2CoZ+7amkxcQqmJ11p+neLPjE?=
- =?us-ascii?Q?+iEh/jmydUsM+zjW4u2d0V3UlvnhNxHnyuvi59RquyHwClZaJ4nty98dNxTj?=
- =?us-ascii?Q?+2e0zD7B9/Bs/xblKcqoKhBTszPCvp6IlO6z+xL3yU4M8T6Q8VBlYmbqR10o?=
- =?us-ascii?Q?Lh0SxY5rVCBPcwznxsaYdeQeFj0en3H+tVCcEOxJn4tyUzAbHigiISj0bcIo?=
- =?us-ascii?Q?FKPjWtaqa3CRKPxfbrUsgCfzVOrIf0fN4+i5YpP4Uj0uD249tn+O9+oG/noJ?=
- =?us-ascii?Q?4+cOb/LSdkvVGOMFgAE9K8HrENMcFHUDHOG2zdIIUIWq8u3/Vvo62x/eLY/M?=
- =?us-ascii?Q?Rw4+B5NaY8kA/T3ZhS+iJus494Vd0JRqnukjW9gPIzgO5ud82ITHZ+GE54OE?=
- =?us-ascii?Q?OfGueUrKRSRBGfbYmqoFy4rAAgwJ5k1fx031bqo0K/mLETf++XTXfFqDBAHp?=
- =?us-ascii?Q?IJaTARSvHd/RYMWhaFsDRPk61dh+JIdGNWMtgA0n5NmGt9RDbpLqeSBmBXZz?=
- =?us-ascii?Q?DGV/Xr7wT5jekSfQsbidcq5ZszHcH4nQ2SIzDH3AoSnCGkEW+6cSzrvsXffE?=
- =?us-ascii?Q?OQ+G/gkib4jrZiow3l4+tKhVtVR4xZGVEE/gMpa28CMZIJ66k8c1oXvSzbuD?=
- =?us-ascii?Q?AIuIN13FPbzwAghA3VjDOnY+8irFbZcQ0sCHQd9z8ftitijjoLHbTSDAgni/?=
- =?us-ascii?Q?5fHdr6ZnndeuSP3x3ecG/uKLhaBIYVt75i1tiBAwQzTL+TbEx+6ch/Sx69Vo?=
- =?us-ascii?Q?vFkhdq50wxDtxRgr89gTMrbx3pPnvMFsSVmddWm6fde8g9MewBmbfICFOlIp?=
- =?us-ascii?Q?BWZB4KUQZU2WUwMMW/b0B8Fqzht1Rv03BGJPIpodFIClIc8C1Ovv20xjnhc4?=
- =?us-ascii?Q?ycr1hEebfmiNvSTbNuyhLuUvTS8NeAB2tnvx7j/hHDDxD9YyIyP6SvbcH2Uh?=
- =?us-ascii?Q?GWxapsfCd97reCCqovbFaIuhhUDYOUnjr83MWjZgEU0HIGl/QRYC1XPqPN5m?=
- =?us-ascii?Q?/qti2+JKDens6fxyLZnRB7i13yBgVo8IZQ8kqGFXuKZfjy5OJEld2AUVt7PP?=
- =?us-ascii?Q?vogks76QKTW56QEFa16n+HTi4Sm5FtGoGvDKnoVVOCEq1z3HYQfBiDnT3OrI?=
- =?us-ascii?Q?BbTn7f7fEOWmKwaXKWdnZ/OZu2J8LnCRUUDxl3VTN3EgRFhD5G3E/Zud1Gyu?=
- =?us-ascii?Q?m6ylNx71bZKrgbycs/LTAamwEBuCp/NRcqkpnoV6WksKWzZGfQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?duT1VM0hscVNtO4aA1GUwQS03N/ySwdPFmseLqReMwRrFUEwXb80LqggUKSR?=
- =?us-ascii?Q?3wwFRAcsM+Ms04mj8pl2/Ewti1ZB23cif3QCWG6PrU65xCGEHpOudmEwrZPJ?=
- =?us-ascii?Q?fl5sIm9AEpW8ReETS/k+Af+H+2/76UfVHw1Qqw2OeFkQcCA2NGZ/F/nYRdy2?=
- =?us-ascii?Q?rgL5wxkzonL+rNFNtdaZ2VXNmOajeU2tp6KCNWe/09dxXp/dZ0lXNvdkc2Yc?=
- =?us-ascii?Q?xuK6g/uH8z/PRMUDcO9ZAC1ZuV2+uWPv7C0cGIUYyeMJvFFYYEgoaMv0s1BC?=
- =?us-ascii?Q?IJgJXRdo2/c9buFSZSU5WGpTcmCz4q+IYoPWUfG262VeDfPF+1uZ0JAFH4/q?=
- =?us-ascii?Q?J0yJXH+ng6LPrCiuTDA7+TuiHRxXx9Af2//i0x1EHk1QJ9+ekYvA4+WNmrL1?=
- =?us-ascii?Q?CwtMM1goQlAB8oEJd71WpSUxpt9VeCh4ACIqhITxwwrJ91fgIWxiNzHVil8Y?=
- =?us-ascii?Q?3ob2v89poi/WY2S5P1ppgZRmHKzHk4wfay8iaVvsiwFLF1QA+4l2wU8kWrmn?=
- =?us-ascii?Q?IZsjkUnNgpD64bM/sVb9Sz2nKstcF9/0rv2rfEuLahfSIKuEYzqY8GMk3l26?=
- =?us-ascii?Q?9KwzBR8r1xcwhTDMeiRy8Mk3CoTqSfofq6dGiKk9FKEsIITAYojZ6h3jZfsO?=
- =?us-ascii?Q?BxvdqaojWFrtOSp3EEf0YwaaHCD2+/JUMtTONTJ2/ONiI4b5t5oX1Hfxypon?=
- =?us-ascii?Q?znvlUj0cBltbyZf/KIMy0XlvFij5cP7GCIhtvZuWrsiu+Z6dsky1BfpBJdZG?=
- =?us-ascii?Q?EOWYh1Xwr2EnPipZQC9KlqWd4QiXkl35MqBQOAugud6GoJ9TbTMTOcE4HGUo?=
- =?us-ascii?Q?vEqJkb6cCg8xRIc+RyS9C0oSf6UJ2VWVm/zuH2aKJBDq+BXFoJaO+lTZz+QX?=
- =?us-ascii?Q?caHbuJZNbkNMshV5ApxYIIJgrZwlQzbVchSQLWnQlJg7w8PF+qAX0EeEx4Oa?=
- =?us-ascii?Q?UGXlU4NotxUCQ+8fY4EgsRO8WFETpIpp4kVrHea8LFrq20MXiQqDbEckRnXI?=
- =?us-ascii?Q?Tq0tFiXo6os+NxVdtYlSJmZBze6bnN1KuqUk364yQ0EpHs6IFakKRTMGq0UI?=
- =?us-ascii?Q?hF044oQOhNSXRdSsj30UVCkqvmeQPSEG38Hkr/sx9Rq8o/ppk0smvLwwrU+7?=
- =?us-ascii?Q?bs4uT2JYyfsOa8MIbB0zsrbvlnUfhfVBMw2kpsH155ZRQIXo3bT+zPNSGEp1?=
- =?us-ascii?Q?IgfGc2sMkop0/Q3bOuYgxIphaxWnFSvmwld01WbexFEUPvTYIhmlEgLPWUDk?=
- =?us-ascii?Q?x3P78GuvVDpIQ+AARmGWLVdA/+FrKyGdxDYHvVAH7kkmjeoef4JKMFgN5DLg?=
- =?us-ascii?Q?uQIZZuxZjdNx9Hx8R1GTHYEPAKJtJViFDu+VUoZauWxwF7u6VjBcEVV9TCXQ?=
- =?us-ascii?Q?nupSq7Y1i8E0jYDcaOgcdznVR1T5KmBbtVz2akP6hwGfNVbXs76vlJHNnJdM?=
- =?us-ascii?Q?pBUpm9/f4ASfJlUgaGXt1bUTQP7QP/p5sX3XXrh+wXcNNIaAKkYcw75I+qjB?=
- =?us-ascii?Q?Ehn9TlzJ6Dw0dK7gqPLJcovCfRPWkTHzXqWm0a48WZrJN8oRdpv8SB9gf1TS?=
- =?us-ascii?Q?EdhM/x00P36VnxfYFKV5Gdp/vhG4vLUI55OTgmb3?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B4D3F9FB;
+	Tue,  9 Jul 2024 02:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720492039; cv=none; b=PWwU/Z2ToTc9oAnoDYXsCdKw4BPBpe/XQ37CLAedpNmB30XBAWVnFl9F+OVPBOchCFtmXyYXo5IGE/QPwdDeOZQiNmfuLF89qNrcRF6/F80LfXRUoR8rQ64NFPbihUVbpL+Qtts/wdIMnTFhOlxdIpBkcxWo4KsrVy9AWajt8Ps=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720492039; c=relaxed/simple;
+	bh=rYEIDsBMvk3pJE8J5+B3r5kXdomRRqJ7GI/GmRNt184=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KTgCHHWTBV2rl0KIxBvfEkzCsdw7qNItZbZGmHq270tj44wBfZKF0DmO1bCpM6mvLNbORftw7kPamPnOe5zocaXyd9LBqS6ewkfWgZ6zkAA1NloDLtBawWfLIbQnsxvRbLzkskytSVr7hKloXacNebkNyBbUuGrJfQ59y5zVV/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WJ4Xl2Psjz1yv6V;
+	Tue,  9 Jul 2024 10:23:19 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3F3241400D4;
+	Tue,  9 Jul 2024 10:27:13 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 9 Jul 2024 10:27:13 +0800
+Message-ID: <5f5c2087-8508-4ed9-8f47-aba0bd73eca6@huawei.com>
+Date: Tue, 9 Jul 2024 10:27:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7bc242e-d9e4-4733-deaa-08dc9fbe7a25
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2024 02:26:02.1383
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BQJVMU5rbkNaD0CwDrFICfqNtjYF6cyQXj5NGWCXCbQ4buygxZ8DEg8dLsRyGVGWkuMA3q7aemP+pLda5ZEhVw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9232
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] bcachefs: Add support for FS_IOC_GETFSSYSFSPATH
+To: Youling Tang <youling.tang@linux.dev>
+CC: <linux-bcachefs@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Kent
+ Overstreet <kent.overstreet@linux.dev>
+References: <20240709011134.79954-1-youling.tang@linux.dev>
+ <20240709011134.79954-2-youling.tang@linux.dev>
+ <8a1b37b5-450c-4f12-978e-25d691fbf21b@huawei.com>
+ <c3471af6-0df7-44a9-8272-ab211f0f1b1b@linux.dev>
+Content-Language: en-US
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <c3471af6-0df7-44a9-8272-ab211f0f1b1b@linux.dev>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-Hi Brian,
 
-> -----Original Message-----
-> From: Brian Norris <briannorris@chromium.org>
-> Sent: Tuesday, July 9, 2024 3:27 AM
-> To: David Lin <yu-hao.lin@nxp.com>
-> Cc: linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> kvalo@kernel.org; francesco@dolcini.it; Pete Hsieh
-> <tsung-hsien.hsieh@nxp.com>; Francesco Dolcini
-> <francesco.dolcini@toradex.com>
-> Subject: [EXT] Re: [PATCH v11 2/2] wifi: mwifiex: add host mlme for AP mo=
-de
->=20
-> Caution: This is an external email. Please take care when clicking links =
-or
-> opening attachments. When in doubt, report the message using the 'Report
-> this email' button
->=20
->=20
-> Hi David,
->=20
-> On Thu, Jul 04, 2024 at 11:30:01AM +0800, David Lin wrote:
-> > Add host based MLME to enable WPA3 functionalities in AP mode.
-> > This feature required a firmware with the corresponding V2 Key API
-> > support. The feature (WPA3) is currently enabled and verified only on
-> > IW416. Also, verified no regression with change when host MLME is
-> > disabled.
-> >
-> > Signed-off-by: David Lin <yu-hao.lin@nxp.com>
-> > Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> > Acked-by: Brian Norris <briannorris@chromium.org>
-> > ---
-> >
-> > v11:
-> >    - modify 'mwifiex_mgmt_stypes' to allow multi-adapters with differen=
-t
-> >      setting of host_mlme_enbaled.
-> ...
-> > -     wiphy->mgmt_stypes =3D mwifiex_mgmt_stypes;
-> > +     if (adapter->host_mlme_enabled) {
-> > +             memcpy(adapter->mwifiex_mgmt_stypes,
-> > +                    mwifiex_mgmt_stypes,
-> > +                    NUM_NL80211_IFTYPES *
-> > +                    sizeof(struct ieee80211_txrx_stypes));
-> > +
-> > +             adapter->mwifiex_mgmt_stypes[NL80211_IFTYPE_AP].tx =3D
-> 0xffff;
-> > +             adapter->mwifiex_mgmt_stypes[NL80211_IFTYPE_AP].rx =3D
-> > +                     BIT(IEEE80211_STYPE_ASSOC_REQ >> 4) |
-> > +                     BIT(IEEE80211_STYPE_REASSOC_REQ >> 4) |
-> > +                     BIT(IEEE80211_STYPE_PROBE_REQ >> 4) |
-> > +                     BIT(IEEE80211_STYPE_DISASSOC >> 4) |
-> > +                     BIT(IEEE80211_STYPE_AUTH >> 4) |
-> > +                     BIT(IEEE80211_STYPE_DEAUTH >> 4) |
-> > +                     BIT(IEEE80211_STYPE_ACTION >> 4);
-> > +             wiphy->mgmt_stypes =3D adapter->mwifiex_mgmt_stypes;
-> > +     } else {
-> > +             wiphy->mgmt_stypes =3D mwifiex_mgmt_stypes;
-> > +     }
-> >       wiphy->max_remain_on_channel_duration =3D 5000;
-> >       wiphy->interface_modes =3D BIT(NL80211_IFTYPE_STATION) |
-> >                                BIT(NL80211_IFTYPE_P2P_CLIENT) |
-> ...
-> > --- a/drivers/net/wireless/marvell/mwifiex/main.h
-> > +++ b/drivers/net/wireless/marvell/mwifiex/main.h
-> > @@ -1008,6 +1008,7 @@ struct mwifiex_adapter {
-> >
-> >       bool ext_scan;
-> >       bool host_mlme_enabled;
-> > +     struct ieee80211_txrx_stypes
-> > + mwifiex_mgmt_stypes[NUM_NL80211_IFTYPES];
->=20
-> This wasn't exactly what I had in mind by a "second copy" of
-> mwifiex_mgmt_stypes -- that you add a new array to mwifiex_adapter that i=
-s
-> only sometimes used. I meant something more like a const
-> 'mwifiex_mgmt_stypes_mlme`, with the appropriate constant values. But I
-> suppose this works too, if a bit awkward, and saves a bit of code/data
-> duplication.
->=20
-> So, the 'Acked-by' still seems appropriate.
->=20
-> Thanks for the patience on this series.
->=20
-> Brian
 
-Thanks for you to keep "ACKed-by" tag and the efforts of you to continue to=
- maintain mwifiex.
+On 2024/7/9 10:11, Youling Tang wrote:
+> On 09/07/2024 10:04, Hongbo Li wrote:
+>>
+>>
+>> On 2024/7/9 9:11, Youling Tang wrote:
+>>> From: Kent Overstreet <kent.overstreet@linux.dev>
+>>>
+>>> [TEST]:
+>>> ```
+>>> $ cat ioctl_getsysfspath.c
+>>>   #include <stdio.h>
+>>>   #include <stdlib.h>
+>>>   #include <fcntl.h>
+>>>   #include <sys/ioctl.h>
+>>>   #include <linux/fs.h>
+>>>   #include <unistd.h>
+>>>
+>>>   int main(int argc, char *argv[]) {
+>>>       int fd;
+>>>       struct fs_sysfs_path sysfs_path = {};
+>>>
+>>>       if (argc != 2) {
+>>>           fprintf(stderr, "Usage: %s <path_to_file_or_directory>\n", 
+>>> argv[0]);
+>>>           exit(EXIT_FAILURE);
+>>>       }
+>>>
+>>>       fd = open(argv[1], O_RDONLY);
+>>>       if (fd == -1) {
+>>>           perror("open");
+>>>           exit(EXIT_FAILURE);
+>>>       }
+>>>
+>>>       if (ioctl(fd, FS_IOC_GETFSSYSFSPATH, &sysfs_path) == -1) {
+>>>           perror("ioctl FS_IOC_GETFSSYSFSPATH");
+>>>           close(fd);
+>>>           exit(EXIT_FAILURE);
+>>>       }
+>>>
+>>>       printf("FS_IOC_GETFSSYSFSPATH: %s\n", sysfs_path.name);
+>>>       close(fd);
+>>>       return 0;
+>>>   }
+>>>
+>>> $ gcc ioctl_getsysfspath.c
+>>> $ sudo bcachefs format /dev/sda
+>>> $ sudo mount.bcachefs /dev/sda /mnt
+>>> $ sudo ./a.out /mnt
+>>>    FS_IOC_GETFSSYSFSPATH: bcachefs/c380b4ab-fbb6-41d2-b805-7a89cae9cadb
+>>> ```
+>>>
+>>> Original patch link:
+>>> [1]: 
+>>> https://lore.kernel.org/all/20240207025624.1019754-8-kent.overstreet@linux.dev/
+>>>
+>>> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+>>> Signed-off-by: Youling Tang <youling.tang@linux.dev>
+>>> ---
+>>>   fs/bcachefs/fs.c | 1 +
+>>>   1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
+>>> index 011ee5075a52..8699770398d1 100644
+>>> --- a/fs/bcachefs/fs.c
+>>> +++ b/fs/bcachefs/fs.c
+>>> @@ -1978,6 +1978,7 @@ static int bch2_fs_get_tree(struct fs_context *fc)
+>>>       sb->s_time_min        = div_s64(S64_MIN, 
+>>> c->sb.time_units_per_sec) + 1;
+>>>       sb->s_time_max        = div_s64(S64_MAX, 
+>>> c->sb.time_units_per_sec);
+>>>       super_set_uuid(sb, c->sb.user_uuid.b, sizeof(c->sb.user_uuid));
+>>> +    super_set_sysfs_name_uuid(sb);
+>>
+>> Reviewed-by: Hongbo Li <lihongbo22@huawei.com>
+>>
+>> It's quite strange that other commits have been merged, but the ones 
+>> for bcachefs have not been merged.
+> Because bcachefs was not upstream at the time, [1] described the following:
+>    Note, I dropped the bcachefs changes because they're not upstream yet.
+>    But once this is a stable branch you can just pull in vfs.uuid and rely
+>    on that.
+> 
+Got it! Thank you!
 
-Hopefully this series can be merged to mainline Linux kernel soon. So user =
-of mwifiex can use more
-robust and updated security method - WPA3.
 
 Thanks,
-David
+Hongbo
+> [1]: 
+> https://lore.kernel.org/all/20240208-wecken-nutzen-3df1102a39b2@brauner/
+> 
+> Thanks,
+> Youling.
 
