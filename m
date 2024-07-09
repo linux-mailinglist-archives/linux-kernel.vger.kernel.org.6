@@ -1,152 +1,199 @@
-Return-Path: <linux-kernel+bounces-245380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A543892B1DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:13:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA4392B1DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58B691F21E4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:13:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 854A41C221AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8646152790;
-	Tue,  9 Jul 2024 08:13:29 +0000 (UTC)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9064B152789;
+	Tue,  9 Jul 2024 08:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AU3CebR2"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50EE15216A;
-	Tue,  9 Jul 2024 08:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F8115217D;
+	Tue,  9 Jul 2024 08:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720512809; cv=none; b=N0BlcU0E5lCdCNK8Jbvz62IhfYVVGpMODO5xfE+OaaXPcRUeQJOF9tGbDOK9MVXq0BEzXGIp1lYkno6ZYkxViBr1uUt4FyL6JA8uy5DtAhXTYQT9CNxnKNB35E7PGCeA7kd3UjmkXxbq4ZbU0+NWw/YMQk2bKCJCU92VLWnpQDQ=
+	t=1720512834; cv=none; b=SkMW/DPoMFOgjKiJdCS0WpyYUgy4ea6bk5SBF6aS28SktdRDw8Jb8YRZ69Cp1OPaS6TTMIhekxDFNkAPeLQB2R2zrIecL+gO5vlNZAiEjC6ND6L/Q0seIiPhLsMFm7i3nSitsv+dVb4A7C3d954QUmQXrEdBIEKN+ns9QoljYVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720512809; c=relaxed/simple;
-	bh=u+SFtLK8/aH+/6ShuSEacerQaiuddZJ11+oAKxLMbsM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F5qErwpJcWm1cgL0CxeAZ2Cr3QQeNt718uXbH9CcGoQNYn/CdjyA5by1pgyPq6qewV1xYaokCiXb/OjhiTIqO7K+znzvG6ETV3P/b2oGLmuxoFwwn+Gnh5OLYBUw3c/QvKreDwimr7CGvl1TNMVvKN/DjYBalB8d+sxvkXwFc/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6504101cfd6so43667757b3.3;
-        Tue, 09 Jul 2024 01:13:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720512805; x=1721117605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UWy5fM+Bn3PboFhjLeCT4KQSpv1r3KOtQtodjbe9XhQ=;
-        b=geR7/+YSRoDgJN+7xIGlABiF8UqvV0IzmLIckAf9rFK5cfMIzd9W6sZ6ZS7ZDH4ZEp
-         OEAg2lwwOPjdCzzv4VrbRxUt1npqCDjEH6ap0yak71Tk/ofZ2tormxt0IgVBoC9bsL1Q
-         q4MdHBlNdjjdepOOzt66NLhZ+JQvKFcutptnQsIyqcZRYD27DYgwyVuf/cs0xXNAxX1q
-         zYojWOGf7Uuyux3ynE39hnD0X9jo5QJsBNmmSiYbSqczIAkOOLUfqhsmgP/uNgXGZTzG
-         HpgikSybeKL5FJ6Ru2eAtwBZLDe7I+kfv1JDZXsFieznMfrxSzT8IY0waWVveU/FjOst
-         cEkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxJdCgcd9BU0LnBUqSJiZxbcpx3XNcRvWdVpEY/T3oJSB1pf3QDehbtl8ZKSJ//WzCK6uCKpFLh6s0+497fr3thFAQkPjHmFig/JmRbpLnsc08GtNTZncGLpmaxw8vieZvPB5SV2f8ALXy7hjeZxQp
-X-Gm-Message-State: AOJu0YyIPX42qa5dajmAbuMejAAkmujGullRGxGeZeYiH/flPrzoTkoW
-	rVHgEwHdXgfhFQw2PGoDFtIyB9DcV2bk/IixNxmNdc85vKNiUuhYO3+iRBQw4mE=
-X-Google-Smtp-Source: AGHT+IG2yXKEob6PAfUzJTw+lx3KCc3tYFOGMFaahhzaZ+tB6ulPEmpBAQLjSvE/jJlyswCuocq9Rg==
-X-Received: by 2002:a81:834a:0:b0:631:6970:eac with SMTP id 00721157ae682-658eed5df81mr20493917b3.13.1720512804524;
-        Tue, 09 Jul 2024 01:13:24 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e4d2ab4bsm2764687b3.33.2024.07.09.01.13.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 01:13:24 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-654cf0a069eso31509907b3.1;
-        Tue, 09 Jul 2024 01:13:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXCwGcMAJWlFyA/vwh5+8XyjnRtCn8GAT24XdD6cscbkVkBPQfdWgaJcBuQIfPlwPK+DslGz1UOZbI3hgO72qTzupO6jDi4WhAQrN5cXui2qtCcRCC23sxh5XkhfY/RuiNsCRZNcwRsTdkLBtvnl9Un
-X-Received: by 2002:a81:7cd6:0:b0:61a:ccb0:7cdd with SMTP id
- 00721157ae682-658f07d7740mr22170947b3.46.1720512803761; Tue, 09 Jul 2024
- 01:13:23 -0700 (PDT)
+	s=arc-20240116; t=1720512834; c=relaxed/simple;
+	bh=oJ8hh/8t4vsjU+ysZF9EeLCSM6YbX2RXOLNAbTgTtr0=;
+	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=E26qAogYXnGVu96d79QN6h76+ikvSQBE9O6Q3G21CaOE5WdPT0MsXkOUKrA1KGRSH8uCoh16t2IfjQTfiNwIhdt302VyxLJWDKivml5xoUOxaJmoZ9fSgn1r5UeJr0e8QXzfosucgZobOOfqKRRZqMPTuhSzdXOmZhUtEqtfNoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AU3CebR2; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1720512828; h=Message-ID:Subject:Date:From:To;
+	bh=cU7A1IzavM9ch2++8WnhmaPS8oMLehuFnhF2+Q5ihsg=;
+	b=AU3CebR2gW8EO1xnKpEjgZkJU2OlGRJRze1bQ6mNycs4W+RTUXMJdJwhQQfZ4nvbx2vBy8D4E0ixpnlYpkAmG6dJJCqgPC3jJrDtOjnF9Dc7sYPFlUyhIp+qt1ZBYTV9IMPiKDqS0A8OTzV2Nsr+K8bORbzTl0/xxLmOEHlA1kE=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045220184;MF=xuanzhuo@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0WABApQw_1720512826;
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WABApQw_1720512826)
+          by smtp.aliyun-inc.com;
+          Tue, 09 Jul 2024 16:13:48 +0800
+Message-ID: <1720512816.0395122-1-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH net-next v3 1/3] virtio: rename virtio_config_enabled to virtio_config_core_enabled
+Date: Tue, 9 Jul 2024 16:13:36 +0800
+From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ davem@davemloft.net,
+ edumazet@google.com,
+ kuba@kernel.org,
+ pabeni@redhat.com,
+ netdev@vger.kernel.org,
+ Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>,
+ "Gia-Khanh Nguyen" <gia-khanh.nguyen@oracle.com>,
+ mst@redhat.com,
+ jasowang@redhat.com,
+ eperezma@redhat.com
+References: <20240709080214.9790-1-jasowang@redhat.com>
+ <20240709080214.9790-2-jasowang@redhat.com>
+In-Reply-To: <20240709080214.9790-2-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240624082141.153871-1-alexghiti@rivosinc.com>
-In-Reply-To: <20240624082141.153871-1-alexghiti@rivosinc.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 9 Jul 2024 10:13:12 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUwx=rU2MWhFTE6KhYHm64phxx2Y6u05-aBLGfeG5696A@mail.gmail.com>
-Message-ID: <CAMuHMdUwx=rU2MWhFTE6KhYHm64phxx2Y6u05-aBLGfeG5696A@mail.gmail.com>
-Subject: Re: [PATCH -fixes] riscv: patch: Flush the icache right after
- patching to avoid illegal insns
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
-	Andy Chiu <andy.chiu@sifive.com>, Puranjay Mohan <puranjay12@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Alexandre,
+On Tue,  9 Jul 2024 16:02:12 +0800, Jason Wang <jasowang@redhat.com> wrote:
+> Following patch will allow the config interrupt to be disabled by a
+> specific driver via another boolean. So this patch renames
+> virtio_config_enabled and relevant helpers to
+> virtio_config_core_enabled.
+>
+> Cc: Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>
+> Cc: Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
 
-On Mon, Jun 24, 2024 at 10:23=E2=80=AFAM Alexandre Ghiti <alexghiti@rivosin=
-c.com> wrote:
-> We cannot delay the icache flush after patching some functions as we may
-> have patched a function that will get called before the icache flush.
->
-> The only way to completely avoid such scenario is by flushing the icache
-> as soon as we patch a function. This will probably be costly as we don't
-> batch the icache maintenance anymore.
->
-> Fixes: 6ca445d8af0e ("riscv: Fix early ftrace nop patching")
-> Reported-by: Conor Dooley <conor.dooley@microchip.com>
-> Closes: https://lore.kernel.org/linux-riscv/20240613-lubricant-breath-061=
-192a9489a@wendy/
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 
-Thanks for your patch, which is now commit edf2d546bfd6f5c4 ("riscv:
-patch: Flush the icache right after patching to avoid illegal
-insns") in v6.10-rc6.
+Thanks.
 
-> --- a/arch/riscv/kernel/patch.c
-> +++ b/arch/riscv/kernel/patch.c
-> @@ -189,9 +205,6 @@ int patch_text_set_nosync(void *addr, u8 c, size_t le=
-n)
+> ---
+>  drivers/virtio/virtio.c | 22 +++++++++++-----------
+>  include/linux/virtio.h  |  4 ++--
+>  2 files changed, 13 insertions(+), 13 deletions(-)
 >
->         ret =3D patch_insn_set(tp, c, len);
+> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
+> index b968b2aa5f4d..73bab89b5326 100644
+> --- a/drivers/virtio/virtio.c
+> +++ b/drivers/virtio/virtio.c
+> @@ -127,7 +127,7 @@ static void __virtio_config_changed(struct virtio_device *dev)
+>  {
+>  	struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
 >
-> -       if (!ret)
-> -               flush_icache_range((uintptr_t)tp, (uintptr_t)tp + len);
-> -
->         return ret;
+> -	if (!dev->config_enabled)
+> +	if (!dev->config_core_enabled)
+>  		dev->config_change_pending = true;
+>  	else if (drv && drv->config_changed)
+>  		drv->config_changed(dev);
+> @@ -143,17 +143,17 @@ void virtio_config_changed(struct virtio_device *dev)
 >  }
->  NOKPROBE_SYMBOL(patch_text_set_nosync);
-
-patch_text_set_nosync() is now identical to (static) patch_insn_set(),
-and the latter has no other callers.
-
-> @@ -224,9 +237,6 @@ int patch_text_nosync(void *addr, const void *insns, =
-size_t len)
+>  EXPORT_SYMBOL_GPL(virtio_config_changed);
 >
->         ret =3D patch_insn_write(tp, insns, len);
->
-> -       if (!ret)
-> -               flush_icache_range((uintptr_t) tp, (uintptr_t) tp + len);
-> -
->         return ret;
+> -static void virtio_config_disable(struct virtio_device *dev)
+> +static void virtio_config_core_disable(struct virtio_device *dev)
+>  {
+>  	spin_lock_irq(&dev->config_lock);
+> -	dev->config_enabled = false;
+> +	dev->config_core_enabled = false;
+>  	spin_unlock_irq(&dev->config_lock);
 >  }
->  NOKPROBE_SYMBOL(patch_text_nosync);
-
-patch_text_nosync() is now identical to patch_insn_write(), and both
-functions are called from outside this file.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+>
+> -static void virtio_config_enable(struct virtio_device *dev)
+> +static void virtio_config_core_enable(struct virtio_device *dev)
+>  {
+>  	spin_lock_irq(&dev->config_lock);
+> -	dev->config_enabled = true;
+> +	dev->config_core_enabled = true;
+>  	if (dev->config_change_pending)
+>  		__virtio_config_changed(dev);
+>  	dev->config_change_pending = false;
+> @@ -322,7 +322,7 @@ static int virtio_dev_probe(struct device *_d)
+>  	if (drv->scan)
+>  		drv->scan(dev);
+>
+> -	virtio_config_enable(dev);
+> +	virtio_config_core_enable(dev);
+>
+>  	return 0;
+>
+> @@ -340,7 +340,7 @@ static void virtio_dev_remove(struct device *_d)
+>  	struct virtio_device *dev = dev_to_virtio(_d);
+>  	struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
+>
+> -	virtio_config_disable(dev);
+> +	virtio_config_core_disable(dev);
+>
+>  	drv->remove(dev);
+>
+> @@ -455,7 +455,7 @@ int register_virtio_device(struct virtio_device *dev)
+>  		goto out_ida_remove;
+>
+>  	spin_lock_init(&dev->config_lock);
+> -	dev->config_enabled = false;
+> +	dev->config_core_enabled = false;
+>  	dev->config_change_pending = false;
+>
+>  	INIT_LIST_HEAD(&dev->vqs);
+> @@ -512,14 +512,14 @@ int virtio_device_freeze(struct virtio_device *dev)
+>  	struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
+>  	int ret;
+>
+> -	virtio_config_disable(dev);
+> +	virtio_config_core_disable(dev);
+>
+>  	dev->failed = dev->config->get_status(dev) & VIRTIO_CONFIG_S_FAILED;
+>
+>  	if (drv && drv->freeze) {
+>  		ret = drv->freeze(dev);
+>  		if (ret) {
+> -			virtio_config_enable(dev);
+> +			virtio_config_core_enable(dev);
+>  			return ret;
+>  		}
+>  	}
+> @@ -578,7 +578,7 @@ int virtio_device_restore(struct virtio_device *dev)
+>  	if (!(dev->config->get_status(dev) & VIRTIO_CONFIG_S_DRIVER_OK))
+>  		virtio_device_ready(dev);
+>
+> -	virtio_config_enable(dev);
+> +	virtio_config_core_enable(dev);
+>
+>  	return 0;
+>
+> diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+> index 96fea920873b..a6f6df72f01a 100644
+> --- a/include/linux/virtio.h
+> +++ b/include/linux/virtio.h
+> @@ -115,7 +115,7 @@ struct virtio_admin_cmd {
+>   * struct virtio_device - representation of a device using virtio
+>   * @index: unique position on the virtio bus
+>   * @failed: saved value for VIRTIO_CONFIG_S_FAILED bit (for restore)
+> - * @config_enabled: configuration change reporting enabled
+> + * @config_core_enabled: configuration change reporting enabled by core
+>   * @config_change_pending: configuration change reported while disabled
+>   * @config_lock: protects configuration change reporting
+>   * @vqs_list_lock: protects @vqs.
+> @@ -132,7 +132,7 @@ struct virtio_admin_cmd {
+>  struct virtio_device {
+>  	int index;
+>  	bool failed;
+> -	bool config_enabled;
+> +	bool config_core_enabled;
+>  	bool config_change_pending;
+>  	spinlock_t config_lock;
+>  	spinlock_t vqs_list_lock;
+> --
+> 2.31.1
+>
 
