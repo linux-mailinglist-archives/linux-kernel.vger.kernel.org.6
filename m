@@ -1,93 +1,82 @@
-Return-Path: <linux-kernel+bounces-245156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9CFE92AF0F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:25:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E90DB92AF07
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FC8E282AFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:25:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96DFD282A4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7460E13A258;
-	Tue,  9 Jul 2024 04:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E187F476;
+	Tue,  9 Jul 2024 04:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fibocomcorp.onmicrosoft.com header.i=@fibocomcorp.onmicrosoft.com header.b="cvc2IFn9"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2095.outbound.protection.outlook.com [40.107.215.95])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="gPzo9nYy"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2059.outbound.protection.outlook.com [40.107.117.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166AF13213A;
-	Tue,  9 Jul 2024 04:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE2C620
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 04:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.59
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720499064; cv=fail; b=c7DGCrYjN7nqu8i/tDU8VCUA6EmgQTKZhD8VI65IqKhljqIp5gF3QkvmvVq04fGg0skhcSfpjPWZ/wTBgeSxOLdDvc4pyRVHOlWY7ZVWbK+U9HAR+MJdK82JJQlCDxASUoeQi/WGet0A/QT0KU0MEZ5E6G2/pDvGmAncoUjfdCM=
+	t=1720499043; cv=fail; b=rbqC+Hu7k0CZZTx3XYi78lKv5n9wsFQzDdADqaPCyG0uzPdLj5piTiwd/lO1VJgTIxVcJJj6/ClYpdDNPNTcUnm5OeCTDIO5UnOlro5X2GlSOlv1lrOI7gu3XXBve0BMkZVn7yUeSDoh+x47Lf0z0iHJfEkJcp0Lz3R+FAQy/7M=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720499064; c=relaxed/simple;
-	bh=Qah8FHvSq0LnTKCgpkFPjQVpM4D/ftm1mv9WnUc0D8I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UPSK4+bISuyGmILzjVznVzQGTjzVspRbFRL+ARTzekTM3487cYS1uHaXJqQluaox+ciBVgJHHIuvhGvAtBu6/ocnvmlEK3jq/mlCpFRVu+URZhxjYA0yY6c2Kr9jT5GOORKHAXHK6Nqc9ERjiFqU+8E1YVeXYZ80AnLwJde9HbQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fibocom.com; spf=pass smtp.mailfrom=fibocom.com; dkim=pass (1024-bit key) header.d=fibocomcorp.onmicrosoft.com header.i=@fibocomcorp.onmicrosoft.com header.b=cvc2IFn9; arc=fail smtp.client-ip=40.107.215.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fibocom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fibocom.com
+	s=arc-20240116; t=1720499043; c=relaxed/simple;
+	bh=mWZqrh3BX/nQt2fEha5tE5PplXfk0LNWysZKzeBJZtA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=aFqC6QpqlXfNGZioiggGmruyrQHA0BhUVVTVR5dbEusP9KFxvk5DveY01qUDj0SbP1bXg1gxw4/YrCL1Bu9Jq12LYNxm6AI+cZneuf3Rz5uoJnrgj9b40e5IE+c0jx9sgrkUQrRnMF/iImFLQieIrIa7565SVAq5M6rbdoDdazk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=gPzo9nYy; arc=fail smtp.client-ip=40.107.117.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZRqD7y+tnssf0Qq5gApl3Y05eYhL26RovjmMKhTWVVtzhhRiikGsGQUg7MaljaRGV+YLYllVsYvAVueVREQ0dGf8TZ7gLs9JUU91mLg5CVQXEoOdGLRjUoUB9/1JascGRCSSPlsJnzd+XRyEdkeOzx5UKCf2neBpP3GoT1to+n307EXQXxgn33fRSVUpehyuN3+TprF24C1LgTeQ6eq5PbvgyikokG7Qhj9jvPfSJTmOAPJsNyb8jWrBfE7s/yiLyMsGuSsLBilsjWphRoSCUCIbe3NE3awkec4y6SLbTYE0mbn9uwd7SWX/Iq20E+lzNIg91SXDj5iS22A3whRudQ==
+ b=IWk6Dx77QXU4BeoTQGvqIvYojrTBrtUlp0TFtIBEhLrvHXiSNeqUeiIPyXuHminXFu0GYJb7LbQTap9ui9ilDv+gBTyvMSnb5NYBBu9LePakNUgfp49x8zFfOZYHLh4OYleX1LSgA+iumtL8TfprhWVJnQF/vP6wf5Fv2cd4f5FZlpfA365hfvLm3+7tvgj9RiRNWMfVbE5nwq8h5oCPADDADIQ2yNKN8YCTONdFKW3zEGpXZ6ZPPAT09rQjlV3IRLLI+fnYOdk47aw/atNrey6Bbcm3N/WXKI208Qac303vuHYto/kOVGIWZsJtYSkw51+uH/UCDcfo8huEg00f8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EM4ghNnLfT2Pu1S8Hc1PEiCzZ3UXxq4X+bpBVjXUqYM=;
- b=EtzaSviSq/L7WVnIV8Sb4An9KzmSxWWEv50DEpZ3Ym2LfVAjmV93ilSK57RiAxysya2DGIK0p/GtTK4e03dOe+X30Tgsr9SA+y9WD8mQ/Gp3VcL84Gg4UmdOL1dOQkFO1hXUI3s7gWoGQS+G1cfcQlMPamqOOoB3gup47u88AtbSe/eAwcT9YiiIRSb9g+BF3hfb1doMidTXHv8joG1r3oUXSbCn5A5uCPN9h1XtJlMResm2t6z2AsSUFhMEsWSCqt2geE9L0kttpp09XLtX349k0SqcHOapkJFSUYLjdosouMN9HhHBSCRtjKhSFjZ8Melrq0ezUsuyC3Iufih+0A==
+ bh=rEz5YGHSmCd73GD4lVcFrmlFGAJRzUuq4imxDRKVoUw=;
+ b=b43vDIvwvYj7vt1nB3xnygpIjZhDYyI5vtzfs/e1CJKNsZhBS6hqxTcalw1qdnlLi2Rm2QjfHHuJzfQtuG10lrWG49v3Wlh22L5UBR9e/is4E+j/GJ4F3E8tIubyCI48AWNfdKxbQpJ8H41uxwaQHQxhStTqbO4uXLouXkLbA8PD4XKeZNpaDM6h7EPe4LLm/k2vecb1HOO9os4mUhGUMGo6nWw/MEXPBr+8ACPLiBvpN4+UnjOUU1VpJFO2QGngb5QkUnq0PX3nF7S5Ly2meCs63Tw0mltAQqnXlrUg9gfplyW9dtVI8Ga9AT+teLKpSHou77h+ObD7P3zyjRm6oA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fibocom.com; dmarc=pass action=none header.from=fibocom.com;
- dkim=pass header.d=fibocom.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fibocomcorp.onmicrosoft.com; s=selector1-fibocomcorp-onmicrosoft-com;
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EM4ghNnLfT2Pu1S8Hc1PEiCzZ3UXxq4X+bpBVjXUqYM=;
- b=cvc2IFn9YVewCWU9Sbzw4XnT9Ky/JLw0E+PUfl6YG9NEoeEDE0wOH84fGqjJjuU1K2qhTJr2p63jiFIzXzAoYfmesxGYjrp1s1N3UkJy4N5gdfltBD67OeQ/UmeCmigYItdWudWYeEzE65op8NwDbkTXUVmUIdZ0bSTQh7VsEpo=
+ bh=rEz5YGHSmCd73GD4lVcFrmlFGAJRzUuq4imxDRKVoUw=;
+ b=gPzo9nYyjSVuSX6V87GtW2yyycEElcwAW6SzpTidaJMuodWh7y4/rGsQxwRnWix54YpiIhlJ5004u6YUwDpPd9P2V3xlyr/DX+bcUsR6A20+xUzfyolil24q+xukINHy0AtqReMafIeoDrzhlGnEKoABvgl4j3QBke3mo/JIZUhNHU/QcSNeJMOUu3HwJgOTdNiot7p5O0MSK1pToaRVm9b7bxddnxnaYGIuGaclMYqtyTs+QUny+q5J40ZO0h8Z4UNfbLB2crNxZp1B/GsBDo5CBtXUGHuETm0bNKu8XbQ9gxCY9UrELbtp5BgNm2AUW7HCpZkSDNFcprMou38XSA==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=fibocom.com;
-Received: from TY0PR02MB5766.apcprd02.prod.outlook.com (2603:1096:400:1b5::6)
- by SEZPR02MB7365.apcprd02.prod.outlook.com (2603:1096:101:1f6::14) with
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from JH0PR06MB6849.apcprd06.prod.outlook.com (2603:1096:990:47::12)
+ by TYZPR06MB5100.apcprd06.prod.outlook.com (2603:1096:400:1c4::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34; Tue, 9 Jul
- 2024 04:24:18 +0000
-Received: from TY0PR02MB5766.apcprd02.prod.outlook.com
- ([fe80::f53d:47b:3b04:9a8b]) by TY0PR02MB5766.apcprd02.prod.outlook.com
- ([fe80::f53d:47b:3b04:9a8b%7]) with mapi id 15.20.7741.033; Tue, 9 Jul 2024
- 04:24:18 +0000
-From: Jinjian Song <jinjian.song@fibocom.com>
-To: chandrashekar.devegowda@intel.com,
-	chiranjeevi.rapolu@linux.intel.com,
-	haijun.liu@mediatek.com,
-	m.chetan.kumar@linux.intel.com,
-	ricardo.martinez@linux.intel.com,
-	loic.poulain@linaro.org,
-	ryazanov.s.a@gmail.com,
-	johannes@sipsolutions.net,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	inux-doc@vger.kernel.org,
-	angelogioacchino.delregno@collabora.com,
-	linux-arm-kernel@lists.infradead.org,
-	matthias.bgg@gmail.com,
-	corbet@lwn.net,
-	linux-mediatek@lists.infradead.org,
-	Jinjian Song <jinjian.song@fibocom.com>
-Subject: [net-next v4 RESEND 2/2] net: wwan: t7xx: Add debug port
-Date: Tue,  9 Jul 2024 12:23:41 +0800
-Message-Id: <20240709042341.23180-3-jinjian.song@fibocom.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240709042341.23180-1-jinjian.song@fibocom.com>
-References: <20240709042341.23180-1-jinjian.song@fibocom.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Tue, 9 Jul
+ 2024 04:23:56 +0000
+Received: from JH0PR06MB6849.apcprd06.prod.outlook.com
+ ([fe80::ed24:a6cd:d489:c5ed]) by JH0PR06MB6849.apcprd06.prod.outlook.com
+ ([fe80::ed24:a6cd:d489:c5ed%3]) with mapi id 15.20.7741.033; Tue, 9 Jul 2024
+ 04:23:56 +0000
+Message-ID: <d2c24550-1274-4611-a26e-24b204da8778@vivo.com>
+Date: Tue, 9 Jul 2024 12:23:54 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] mm: shrink skip folio mapped by an exiting process
+To: Barry Song <baohua@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ LKML <linux-kernel@vger.kernel.org>, opensource.kernel@vivo.com,
+ David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>
+References: <20240708090413.888-1-justinjiang@vivo.com>
+ <CAGsJ_4yrGR5ULU=MDXZq+hEDb+TWuRkfbg9V9Rg=mGAWOpUkxQ@mail.gmail.com>
+ <122bbe20-f2ab-4d44-97ac-76df8469d3fa@vivo.com>
+ <4ca9836c-4f03-4792-9be8-f7db71a2b162@vivo.com>
+ <CAGsJ_4xMrzTfAC8wicK1-CLftXY-Bm+mZ8BnD=ZvtmB_NKzbKA@mail.gmail.com>
+ <cf6c6d1f-3719-4744-b943-5c572d0d5fb4@vivo.com>
+ <CAGsJ_4wE9pZoGoWoJD6R09uAppNqeycUdFUy0E8ZSUi4VcwaMQ@mail.gmail.com>
+From: zhiguojiang <justinjiang@vivo.com>
+In-Reply-To: <CAGsJ_4wE9pZoGoWoJD6R09uAppNqeycUdFUy0E8ZSUi4VcwaMQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SGBP274CA0020.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::32)
- To TY0PR02MB5766.apcprd02.prod.outlook.com (2603:1096:400:1b5::6)
+X-ClientProxiedBy: SI2PR02CA0008.apcprd02.prod.outlook.com
+ (2603:1096:4:194::12) To JH0PR06MB6849.apcprd06.prod.outlook.com
+ (2603:1096:990:47::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,475 +84,353 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY0PR02MB5766:EE_|SEZPR02MB7365:EE_
-X-MS-Office365-Filtering-Correlation-Id: 88c0fb10-fbaf-40ef-06f8-08dc9fceff5e
+X-MS-TrafficTypeDiagnostic: JH0PR06MB6849:EE_|TYZPR06MB5100:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3a2c6434-5b32-45f7-1404-08dc9fcef2da
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|7416014|52116014|366016|921020|38350700014;
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014|43062017;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9XO/7KvBh3F6t621CY9yaJA1sdEcJ//HZT/3kmYwH81x5c4EjLddLaIhF/O5?=
- =?us-ascii?Q?5ur06aoeieaFhnwz4v5TV08Thyr9837oX0aF2qwlT0mRbWTPeXOboTrOlORf?=
- =?us-ascii?Q?TWnrT/WVuqEW2aHrLUQ7rKTScilzQryIRQfeFvmh9rnOA3Oi3bGdeTSegG6+?=
- =?us-ascii?Q?XIYck+uSwJJdkWNWSJFM3n02gf5C5EWdhWmtZUwmI4xFUiWUXaH/sgvp/VVA?=
- =?us-ascii?Q?fRcScNdD93WhZwDywX8cICDrlRaOjZNQxTynVEflFboqTgyh+WZ5uIhVnQh+?=
- =?us-ascii?Q?qpUBjkfYI7Kg+69L2uHWJdUkNtV0x1EJBUQoNCPZ0nhHwiLsDq2+W1yf5L3n?=
- =?us-ascii?Q?7LdzUH++q+/EupAaPXZzSw02PZ39Tjz+0LLDJu6AYcDITeZtx1V7jTjjZwKe?=
- =?us-ascii?Q?7Ky1rxvmOVQ8jBJG3LrZsQi5jiAF3GiUd0tAaeYw4kVW+TKZbFcBEmTmwXel?=
- =?us-ascii?Q?iGu5mEmTbT7JToMFhUB1M00gQoTt5NRzUDjg+TqX9k8KBFu/FpvoPddFF5i3?=
- =?us-ascii?Q?iN3JPnFJ4bh3OjbCrLnU9ceAvz2MrhyLstZVhD5CHOehNcnZ8etFiVzApKJF?=
- =?us-ascii?Q?H+ICx8cmsMrH51E9nlUCwoUiJoZXooQoNrUaT0P2M6VXUvAZ3NEHLL7nGboG?=
- =?us-ascii?Q?m182exPe3kmwBlW4KFIgr0IfZjhOP4zeKRfuSBq3Ozr4tCGF/wksUaheIfR9?=
- =?us-ascii?Q?uEW4V/iri+f7SCun11hFhpKb9bKDAS8m0V48NATEUSFGuXKI1o7xRMIwOZ8M?=
- =?us-ascii?Q?FfNlr4ZxevdGbo7ULo2MOga3obKOHLezSZcslXIMwCoerlvTmfsSLL2ZlrM4?=
- =?us-ascii?Q?YgGg56Tk8xauDgv7EQOdxM6gJQh+w/iqhFaSxGfig1U035TYqkoAAP8tjZCe?=
- =?us-ascii?Q?IAnsrnORW8VWp1a90Y+v7RbKznFsD2dCeWAZOJ/C/Kq3Y1FY0Mj6zvgkEMlw?=
- =?us-ascii?Q?NIbeIEBoxA0UzbayFYmIpnEBukw0r2KKBMLNbGWuh8mJtMmQZzPd5+zLscLA?=
- =?us-ascii?Q?+mJVcCP5VpqZrE5+B+IhtVtuUh3XakERcBUQp736CjdT9MwjNbYIYYSK6EuI?=
- =?us-ascii?Q?AgUjtrVuRpk37dSuIoRW0bgeavu2eKNElpihzL5J52pMpf1Nn2OoWGHPc/AQ?=
- =?us-ascii?Q?OpujoOB/yxWaEqf6gSLSkTydTlqIZXp0Ei/lbbwEbHuGKHHYfOT/PiyTCVDS?=
- =?us-ascii?Q?iEprGoMd4RdMuGkLZbxJIa4GqPUkK7XdMrpX6f4iv3bK7uD1rpjZNuvzJVXJ?=
- =?us-ascii?Q?w5QrZfbp264UUhJN7VmKptMcBe3LLpISE/m62lpNTxwCibEDEP1Q//+JUd46?=
- =?us-ascii?Q?lpiqdcbJVZ22PXVu7iG5q0vLGFVarppgSZ17d48ZIGKIikW7yXWgVwcWFLr6?=
- =?us-ascii?Q?JGVIlUY=3D?=
+	=?utf-8?B?Zm5MLzBCN2o4MW9OMUxlYlNjckZBaVNFaHlsdUhwc2VJNExDWHc4WjhzQk5U?=
+ =?utf-8?B?QWdLRXIzd2NiYTJCcmlnRjFZUlZWQjlWRDNGdmwvSENsZm1sU25TTWxObmJL?=
+ =?utf-8?B?Sm5GVGpaK244M1RVMG8yWVFmL3FEV3BDTlpvdGRNY0t5Vm5YRnZjTkY1dm8x?=
+ =?utf-8?B?cmUweHdDMDE2SlJVMUNqeWhZQ0hOcTBFTWZEeTlhZGh5YlVJWFNPS25EajhQ?=
+ =?utf-8?B?WXlOZ0VaN0xnWGZKb2VTczdvUU5SVGwvUTE1WS9zOU1hc2hzWW56ZTRIMXFH?=
+ =?utf-8?B?Zy84VFhERTFCT1U2bjcxaFF1bmxHQnRWQkdXNk5udlhIajNlVnJYZlc0OEJs?=
+ =?utf-8?B?Y05nQklSWXRKckYvUEUvejJSUTZKMVhqYnN1V1J5WkRUOW91aVM3QWt3OS9O?=
+ =?utf-8?B?MjRxaCsweXh5UWZRYmZwYkVlQ3VjYnR5Z09JeDYwSmZBQ09Bc3krNFFlYTVT?=
+ =?utf-8?B?aU9BZ1hKVVppMDdBdnlYWEkyU0IvMlF6emhFaTVzTGVxQnpTS0w3ZDBZMHc0?=
+ =?utf-8?B?YzlKVkN1QVp3R3BFMHRMWE1TRU5nZE96dEFQaVpnK1N4UFVKQTdmTTdVd2NS?=
+ =?utf-8?B?RUxRWDhGUytUMGdRZmE2NGhyN2xDSG1aRnhQQ094ODkvVDNSQjBoZW5tVUw0?=
+ =?utf-8?B?SGJlMW9MbFlrMzhYakRUVlFMMnpiUlZ2Wm9xSktYVDY5bzRQNW5tbW9IOTVo?=
+ =?utf-8?B?c0hpTk5OS3hxY1c4bjBQRitRbWJINDYyWWkrZEZXampGNUUrNCtSVlFLTnZs?=
+ =?utf-8?B?clBYcWJpaXlOT0hETUpwRk1zSmsvYUxqc2RnWDZyY3orcGFkcWdBbnRZOGRC?=
+ =?utf-8?B?WEJ5K2NSczVjLzV1aE1vTmxDQkpqWFJSZVJvU0FMR1JYWmtpVFZGZkdjbUN0?=
+ =?utf-8?B?VkhIRGRtZUZENnM4MldRR0k3TyszbEVNOWw1TFllRVZJWDNYeUNYcGNIb2Nt?=
+ =?utf-8?B?aE1WQVd4NDF2NHo0NFFORit5blZRTFYxZExHdnRjTDhBVGlUVkMvdHlKMnpH?=
+ =?utf-8?B?NUV5T0czMEwxT3VJdUNQbGU1dHhuQk5FczJlbWF5Z2wvZXBDcWp3UlhVUTdB?=
+ =?utf-8?B?dS8raERzQUlaeHN3amRYQ3N4S0FQay9QUUNsSXdsN1Z4cFhIRnFxdmlvY2R3?=
+ =?utf-8?B?NFlvSS9haUVyZmFuSWdmU1VrNkRVQXZVbTZ6V0FVUTkxaDg4MW43d2JMd0o4?=
+ =?utf-8?B?L1IrSUw3eWlBY0gyb3dQWmlRYmpwZTVPRGFINmljVXhMVUlabytNTFRnbVhI?=
+ =?utf-8?B?K01WNWtRUVhRZjVEYW1ONTJvVnE0YkxLcU10aXVvZm1XTk1rYksvMXlGVUli?=
+ =?utf-8?B?SEZnQU81V3VSOG0wdWpQUVlXRXZCK2RDN25TN2ozRDBXd0lscnpwMkR2NWoy?=
+ =?utf-8?B?aERwd084VnIyS2lQNXp0eEFuMi9ZM0JFRVoyMmRHYkczNnV6aGtCaEs1Qjhp?=
+ =?utf-8?B?M08vMWMvTHVZWENpZVJMZTY3RjAvRXJYMkNIWHQ0Tm9kbW1iRDBvdzkwVk1j?=
+ =?utf-8?B?Mjg5b3NKS3Fsb2NEVE0xeE51YnVYOXJJSVZ3cWlmdkJIdDNVcGVLT2o2NkE0?=
+ =?utf-8?B?QVd5bHg5c1VCZnJaYUw2anBVdUZHMkFLdElHa2U3ZjV4S1BZVWJpUGtnNWFM?=
+ =?utf-8?B?b0puQWdRTW56N1ZPRGVlYlk0MHFQYnNiTU05TkdzanlLYkFhOHUzcnZ0TlMy?=
+ =?utf-8?B?RWg4bHJHU0JmQmVCZ3pBTkNqaEwzUUVKcjRDUnBGYURBVEwwblF5VXdGYzkx?=
+ =?utf-8?B?d200ZncyWVZaQWMvK1Vhalo1N1hCZWExZmNuTnBzb3JCdlRLZGh0VDNvSVc5?=
+ =?utf-8?B?U3B5c0JNVVZaY3h0aWZEUm1FK3FkWmxla1dSLzM4VWN5Qzl1WmhHQ21zWlE1?=
+ =?utf-8?Q?0OM76zfDwHwIa?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY0PR02MB5766.apcprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(52116014)(366016)(921020)(38350700014);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR06MB6849.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014)(43062017);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BCnXBVY+EOzWWrlXaOGcwPl6PGe9HYHYA+LWAkiw0KigqCpbxpVKTq9/wm1G?=
- =?us-ascii?Q?OVtnnhN717H1Pf3wQ1PxUzw9Dw3qFqjlsI/0zfL3U7+/MgVD3sN3Qrn5LRZi?=
- =?us-ascii?Q?FB7McKeNsMtUV79fR5sXMGvrYcqTR0zO0+wEGDqi3eN1ost89jfaCk3s2lR+?=
- =?us-ascii?Q?0O3WVsZjkkbL+t7e7MmWLPyFqE/HcLVLbH1ImOefT3IoxcrgIxbZCWdDDAJq?=
- =?us-ascii?Q?mhIUiGoNLFWRsxP69L1eCBIQ3XYOAR9ixmWYkfZFOPGGpmpaOh5XNbS3uGPD?=
- =?us-ascii?Q?RC19b2cwns+AFJp7rlnPU6UHVvKrnf6JFhSmMRRbV6stFVbEzQ58M956FRjP?=
- =?us-ascii?Q?xNWr/5Qd+yq/a7v+YlwHIaZ2z0+h6EKZoe/f+2w994uswHIGWSIvRAFNJf7z?=
- =?us-ascii?Q?bR1wtQmDTkhCevJZYIiLHUWT74DJeiFaM6oDUWu4KMMGDg8IFtqbBlFGRw7d?=
- =?us-ascii?Q?DVi+gtw8d2YVF2kUpNCJdnaJ59NGfeIQwvBVWxm3GyX8n8ZpGryxyMSq1WsA?=
- =?us-ascii?Q?366uw8xxlgBlrQ2eyTW65PCZcY99PyPzMjUtKKsrfQqZSZrGOnIojVgWlXt9?=
- =?us-ascii?Q?2LidRP6J+jSso0JJFCYFd0skQLg8teRTGmIDrOekxg0TgMxgK+ifBbwFMxXy?=
- =?us-ascii?Q?2f217dKJnp+knCIuAOuwfiXdxk0xFxll+f69tBdWJD5tBwV8SFd7T6xasldD?=
- =?us-ascii?Q?IQBfugOUPNsUxqcBpBT9dbawyMr9suxxc5klQZfZgwzbt9wO05Bf14raE5hv?=
- =?us-ascii?Q?1OE1OyrX2SUAj3ESk4L0hjnAnjQI51X16WhEZU+mShAdKZKYK8UzfB12+y2w?=
- =?us-ascii?Q?qmj04UzEJOS8fGUrZmwSlGNe6LzwdfYy3FWr/OpSmJyChZKYG9hblzujKCKo?=
- =?us-ascii?Q?Jxv/tZPKzBkAuo2YFNZtBQeclUFWbwkoHFexqVuX95D6WBLBMUAqNn6OxMBN?=
- =?us-ascii?Q?OBWJMUpJM8xw5xwKCWpjdtQ1o7fbunmblsm8/mQPX3aauGW9kpkGnWF/ULxW?=
- =?us-ascii?Q?852UbzHx1sE82HqoPp0MnMC1LIBKggaZSCzzkbSdKaFYvl3Jil9cwU/ItjPY?=
- =?us-ascii?Q?hBhLwoCK2N5kA0wttOUEY/2T5Tbq8OTYVnX2TeI4s4+Jbxw/23G1LIryZq9d?=
- =?us-ascii?Q?vxQK1dDHYW9KUYfsyB111b1qnRfqxHkP4w/FpSs/Wm2RWWV8nF+d7+pdfV2d?=
- =?us-ascii?Q?H6EInBlZtoLmswmmnd++TIedAbaNW76NzxopteaajdVyJU5I3rljRAid/grY?=
- =?us-ascii?Q?UMKzww/xFGBaW8Y2Hf8JuD6u+tYkwwHdUA03Ig5+PJzZpI12mCTrxP7mX92T?=
- =?us-ascii?Q?QteHqsbCUlKmMDErJxqprw0FKVkkL1zjrvhc4jtqyu+7+DdKZvoLcVYiPhoJ?=
- =?us-ascii?Q?OJOxTkoyZkiJrzARBZfmffyX+TAlS27JS5Gek9O5qZDuinTwt+izneEvMfvG?=
- =?us-ascii?Q?gxXJ9T6JH5ZraAyWh+ZskMEjGUWx/+WD+zo43S5efgIGmyzar0+xNH++ga1I?=
- =?us-ascii?Q?nFvsvdYdsSx5z13uBxK1x1wDJ4cnbwIBvG/X/JZqYVuerIgvQYB/RTRM7SpR?=
- =?us-ascii?Q?r+GplnYh9ZlXPZbP4Di3feOH+OB79iblXCfsRSqaza3rmc+a9P+IaCGiwKbU?=
- =?us-ascii?Q?XQ=3D=3D?=
-X-OriginatorOrg: fibocom.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88c0fb10-fbaf-40ef-06f8-08dc9fceff5e
-X-MS-Exchange-CrossTenant-AuthSource: TY0PR02MB5766.apcprd02.prod.outlook.com
+	=?utf-8?B?emZZR2JxRHdyeVRaWjU5NlB3M3g1cE1Sa1Y1L2dZQUZXczJacEY3TzRNRkIy?=
+ =?utf-8?B?c0FFRXBHN2FLTDNOWFlOa0RoSFhHVk5kSzI5WGVoaFlPZTFvTU8zU1FFQzJr?=
+ =?utf-8?B?YVZQRkpZaUdmYkQ4NmYzb0h2UVZyM0RiZzFMQlQ5ZzdlQW9BcS9sTXI3ZlBY?=
+ =?utf-8?B?Z0lRMVZpOFBpdUJrOXYvUFZUWS9nelZENzRyN2hrUkVSV0lNeGFIT29ZUyti?=
+ =?utf-8?B?Y0dtZnFCejQya3hHRkEvamFuOXIzdklPdkZxZFd1SDA0eWNHSGZpOVovY0c4?=
+ =?utf-8?B?ZWZBRm5KTHZjVlZXREhvbDMvYUttWkRwc3BXSEVETE9NVm1aeU51ZVAyendT?=
+ =?utf-8?B?M0RvUWQwdXF2REJSOTFUVG1hSC9ZWTBVSmdCaHhpZVVKUmxubEhYcGpxcXY3?=
+ =?utf-8?B?Z0d2WkhEKzNsT0NJM0UrOXlOR2VRQjBhNFpBQkNvSWsyeUdmMU5ITys4Qzcw?=
+ =?utf-8?B?cnMwdllMelVLRWVybktNN2NGeEh1ZlcxNnhULy9YczZSSFFvSUxpK2c2aEc2?=
+ =?utf-8?B?czEyeFcvR1E1UzREZmpHSEVjV003Z0tuejZBREFjaE1XR0xTSTVCS3JtSW9k?=
+ =?utf-8?B?L3lQUUFxUmJsazdvdUNMQUJtakozTmZ0ZTl0VHR2cFVDRFBzOHYxbVkrQjRX?=
+ =?utf-8?B?RmR4ampIOGxORVk3UE5oc1lMTkMydjJadDhhbzU0SHZ5cUV2UzlGS1Q4QzRk?=
+ =?utf-8?B?cyt6c09henhOd2g3bXZrRW5ZMUl5OGdKUkFjV0xUNlNIM0UvLzc4QUY3M3Fr?=
+ =?utf-8?B?blVSZHdNNWE4b2MvdGh2NmlpVi9qMFA2U2wybHhxelFFYmVvWG01TEtPV3Yw?=
+ =?utf-8?B?c0pTTnFOWjVqcUh5YUU4aEJlUXRRbnR6TTc2OTdIekRMTmRRckRxWmJVQ2RT?=
+ =?utf-8?B?VmsxSmpkbmNWTEdMTkJTZlgrME9vVXc2ZmNDZDBtRml6TjdTeGg3aTE4MXhu?=
+ =?utf-8?B?b1A4MWhNV1lueEU1czBnV21HV21rSVlub01WN3hGZUx5MjRrOXJobXRUbHJw?=
+ =?utf-8?B?SG9rMnhzNkc1TU8ybzI1cjFiOW8vRlNPL0hPVER2S0tlOGExU2hlczdlY21j?=
+ =?utf-8?B?eld3MFNESlVsZlgyTmF1cEtMZk1ka3BiQWRpaGtNZ2dobjRpc1ozUWxZeUlS?=
+ =?utf-8?B?ajVDb0lEL0F0cEN1emxNeVBPLzAvbVZsVElXM2twUXhjMnVBMlpBczNUbXhx?=
+ =?utf-8?B?dmlqcEhlVHhkQnNJTVN4RlVBMWE5MTQrSVY3bS9LMGZsQ0hsN05ydHN6QnA2?=
+ =?utf-8?B?K09BNEZrQkZDTFVwYjZKK0Q4UDNkMnhWckdkeU5PQ1dhZ2VXRTRPbUEyM0U3?=
+ =?utf-8?B?V3huWWhscm9wajZCbldBb0E4RzZnYWZzVVplYk10SHJGR1pjVlkrUm5iOXox?=
+ =?utf-8?B?dVFDSUpheldwQ3p2T0FSSTNaQ3h5NmhCREJJUXVLblBJb1JIdHhWbm5zelpx?=
+ =?utf-8?B?VG5LSVRzOEJlbVBBVDY2ZUtRTjRrbE5PUm9rcjRERm5STGIyS0h5WVZaK2Vu?=
+ =?utf-8?B?UTJ1cEd2ZjdVakVkcTVCM2F6eG05RktyMlpIcFFQaWYxaGM1ZGhNS1JQOFQv?=
+ =?utf-8?B?N3ZOMnhHc1NDQXppcmpFRkJTWTFKTlErSFpITU5RRjdINDRheVJndlRPMjFv?=
+ =?utf-8?B?Q2g5VnU1L3o3ckplNzB1c0QvR0h2UVhrclJ1QUh6ZnJyTjVIUTdUYTExbFZq?=
+ =?utf-8?B?Y0xEMVZzR2FBSzdXRnlKQ21NVm4ralhCVE5TSUxsRm9IOWg0QVpCTVdIQytQ?=
+ =?utf-8?B?OEd4dDBya0R6R3VCaStOaFcyTU1BSjFrY2J6ZGhIZGFRMTA3WFN1MU9Wc0hW?=
+ =?utf-8?B?ZFQ3dUpoWDQ0NGtXcm1zL2RCOUdqTmdEVjh2ZDBxNlEvZ1pQR0FKLzFyaFZx?=
+ =?utf-8?B?NTYxVStPZFloaDdpam82RXdqRjhMdHVJZnRZTHEwSXQyankwUnU2WFlUWWtq?=
+ =?utf-8?B?bjFYMnFFVjVya2toZkNqbVdZQ1dIVFFlZ3Q2a0VtTnQraUJPeW9BaS9PL0tx?=
+ =?utf-8?B?QW55NGtaaGdFaDZ2c3dHYlV6bHlSQU1Zd3dFQmN1Ykljc0d3UjBwcWRtM3Js?=
+ =?utf-8?B?UUJuUDF5b2FVTU52d09rYllLK3IzN1J6dldjUFhPU0lPdkM2T2ptdEh6a3lH?=
+ =?utf-8?Q?usQKWrd8WcEIEjLlAeybCpOWJ?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a2c6434-5b32-45f7-1404-08dc9fcef2da
+X-MS-Exchange-CrossTenant-AuthSource: JH0PR06MB6849.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2024 04:24:18.1780
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2024 04:23:56.7236
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 889bfe61-8c21-436b-bc07-3908050c8236
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VM0tLOnF9A/jDHOy1+dsVG/P+J42ypRLZVU08BVYTS1bm6hRWQV5B5sDcV63LznzRNs1gKYCpWiJHFKwOYAod19o03+GkzeegIJLvvMwVfU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR02MB7365
+X-MS-Exchange-CrossTenant-UserPrincipalName: iKWzWvNr2Z1F/JLVC6Azf/znFI9GYHmqKald5RsUJbqVIMK94e+xm3fykStOx/ZXtIWf89qsOQ0E3WdVl7lP9A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5100
 
-Add support for userspace to switch on the debug port(ADB,MIPC).
- - ADB port: /dev/wwan0adb0
- - MIPC port: /dev/wwan0mipc0
 
-Application can use ADB (Android Debg Bridge) port to implement
-functions (shell, pull, push ...) by ADB protocol commands.
-E.g., ADB commands:
- - A_OPEN: OPEN(local-id, 0, "destination")
- - A_WRTE: WRITE(local-id, remote-id, "data")
- - A_OKEY: READY(local-id, remote-id, "")
- - A_CLSE: CLOSE(local-id, remote-id, "")
 
-Link: https://android.googlesource.com/platform/packages/modules/adb/+/refs/heads/main/README.md
+在 2024/7/9 5:34, Barry Song 写道:
+> On Tue, Jul 9, 2024 at 1:11 AM zhiguojiang <justinjiang@vivo.com> wrote:
+>>
+>>
+>> 在 2024/7/8 20:41, Barry Song 写道:
+>>>
+>>> zhiguojiang <justinjiang@vivo.com> 于 2024年7月9日周二 00:25写道：
+>>>
+>>>
+>>>
+>>>      在 2024/7/8 20:17, zhiguojiang 写道:
+>>>      >
+>>>      >
+>>>      > 在 2024/7/8 19:02, Barry Song 写道:
+>>>      >> On Mon, Jul 8, 2024 at 9:04 PM Zhiguo Jiang <justinjiang@vivo.com>
+>>>      >> wrote:
+>>>      >>> The releasing process of the non-shared anonymous folio mapped
+>>>      >>> solely by
+>>>      >>> an exiting process may go through two flows: 1) the anonymous
+>>>      folio is
+>>>      >>> firstly is swaped-out into swapspace and transformed into a
+>>>      swp_entry
+>>>      >>> in shrink_folio_list; 2) then the swp_entry is released in the
+>>>      process
+>>>      >>> exiting flow. This will increase the cpu load of releasing a
+>>>      non-shared
+>>>      >>> anonymous folio mapped solely by an exiting process, because
+>>>      the folio
+>>>      >>> go through swap-out and the releasing the swapspace and swp_entry.
+>>>      >>>
+>>>      >>> When system is low memory, it is more likely to occur, because
+>>>      more
+>>>      >>> backend applidatuions will be killed.
+>>>      >>>
+>>>      >>> The modification is that shrink skips the non-shared anonymous
+>>>      folio
+>>>      >>> solely mapped by an exting process and the folio is only released
+>>>      >>> directly in the process exiting flow, which will save swap-out
+>>>      time
+>>>      >>> and alleviate the load of the process exiting.
+>>>      >>>
+>>>      >>> Signed-off-by: Zhiguo Jiang <justinjiang@vivo.com>
+>>>      >>> ---
+>>>      >>>
+>>>      >>> Change log:
+>>>      >>> v4->v5:
+>>>      >>> 1.Modify to skip non-shared anonymous folio only.
+>>>      >>> 2.Update comments for pra->referenced = -1.
+>>>      >>> v3->v4:
+>>>      >>> 1.Modify that the unshared folios mapped only in exiting task
+>>>      are skip.
+>>>      >>> v2->v3:
+>>>      >>> Nothing.
+>>>      >>> v1->v2:
+>>>      >>> 1.The VM_EXITING added in v1 patch is removed, because it will
+>>>      fail
+>>>      >>> to compile in 32-bit system.
+>>>      >>>
+>>>      >>>   mm/rmap.c   | 13 +++++++++++++
+>>>      >>>   mm/vmscan.c |  7 ++++++-
+>>>      >>>   2 files changed, 19 insertions(+), 1 deletion(-)
+>>>      >>>
+>>>      >>> diff --git a/mm/rmap.c b/mm/rmap.c
+>>>      >>> index 26806b49a86f..5b5281d71dbb
+>>>      >>> --- a/mm/rmap.c
+>>>      >>> +++ b/mm/rmap.c
+>>>      >>> @@ -843,6 +843,19 @@ static bool folio_referenced_one(struct
+>>>      folio
+>>>      >>> *folio,
+>>>      >>>          int referenced = 0;
+>>>      >>>          unsigned long start = address, ptes = 0;
+>>>      >>>
+>>>      >>> +       /*
+>>>      >>> +        * Skip the non-shared anonymous folio mapped solely by
+>>>      >>> +        * the single exiting process, and release it directly
+>>>      >>> +        * in the process exiting.
+>>>      >>> +        */
+>>>      >>> +       if ((!atomic_read(&vma->vm_mm->mm_users) ||
+>>>      >>> +               test_bit(MMF_OOM_SKIP, &vma->vm_mm->flags)) &&
+>>>      >>> +               folio_test_anon(folio) &&
+>>>      >>> folio_test_swapbacked(folio) &&
+>>>      >>> + !folio_likely_mapped_shared(folio)) {
+>>>      >>> +               pra->referenced = -1;
+>>>      >>> +               return false;
+>>>      >>> +       }
+>>>      >>> +
+>>>      >>>          while (page_vma_mapped_walk(&pvmw)) {
+>>>      >>>                  address = pvmw.address;
+>>>      > Sure, I agree with your modification suggestions. This way,
+>>>      using PTL
+>>>      > indeed sure
+>>>      > that the folio is mapped by this process.
+>>>      > Thanks
+>>>      >> As David suggested, what about the below?
+>>>      >>
+>>>      >> @@ -883,6 +870,21 @@ static bool folio_referenced_one(struct folio
+>>>      >> *folio,
+>>>      >>                          continue;
+>>>      >>                  }
+>>>      >>
+>>>      >> +               /*
+>>>      >> +                * Skip the non-shared anonymous folio mapped
+>>>      solely by
+>>>      >> +                * the single exiting process, and release it
+>>>      directly
+>>>      >> +                * in the process exiting.
+>>>      >> +                */
+>>>      >> +               if ((!atomic_read(&vma->vm_mm->mm_users) ||
+>>>      >> + test_bit(MMF_OOM_SKIP,
+>>>      >> &vma->vm_mm->flags)) &&
+>>>      >> + folio_test_anon(folio) &&
+>>>      >> folio_test_swapbacked(folio) &&
+>>>      >> + !folio_likely_mapped_shared(folio)) {
+>>>      >> +                       pra->referenced = -1;
+>>>      >> + page_vma_mapped_walk_done(&pvmw);
+>>>      >> +                       return false;
+>>>      >> +               }
+>>>      >> +
+>>>      >>                  if (pvmw.pte) {
+>>>      >>                          if (lru_gen_enabled() &&
+>>>      >> pte_young(ptep_get(pvmw.pte))) {
+>>>      >>
+>>>      >>
+>>>      >> By the way, I am not convinced that using test_bit(MMF_OOM_SKIP,
+>>>      >> &vma->vm_mm->flags) is
+>>>      >> correct (I think it is wrong).   For example, global_init can
+>>>      >> directly have it:
+>>>      >>                  if (is_global_init(p)) {
+>>>      >>                          can_oom_reap = false;
+>>>      >>                          set_bit(MMF_OOM_SKIP, &mm->flags);
+>>>      >>                          pr_info("oom killer %d (%s) has mm
+>>>      pinned by
+>>>      >> %d (%s)\n",
+>>>      >> task_pid_nr(victim),
+>>>      >> victim->comm,
+>>>      >> task_pid_nr(p), p->comm);
+>>>      >>                          continue;
+>>>      >>                  }
+>>>      >>
+>>>      >> And exit_mmap() automatically has MMF_OOM_SKIP.
+>>>      >>
+>>>      >> What is the purpose of this check? Is there a better way to
+>>>      determine
+>>>      >> if a process is an
+>>>      >> OOM target? What about check_stable_address_space() ?
+>>>      > 1.Sorry, I overlook the situation with if (is_global_init(p)),
+>>>      > MMF_OOM_SKIP is indeed not suitable.
+>>>      >
+>>>      > 2.check_stable_address_space() can indicate oom_reaper, but it
+>>>      seems
+>>>      > unable to identify the situation where the process exits normally.
+>>>      > What about task_is_dying()? static inline bool
+>>>      task_is_dying(void) {
+>>>      > return tsk_is_oom_victim(current) ||
+>>>      fatal_signal_pending(current) ||
+>>>      > (current->flags & PF_EXITING); } Thanks
+>>>      We can migrate task_is_dying() from mm/memcontrol.c to
+>>>      include/linux/oom.h
+>>>      > static inline bool task_is_dying(void)
+>>>      > {
+>>>      >     return tsk_is_oom_victim(current) ||
+>>>      fatal_signal_pending(current) ||
+>>>      >         (current->flags & PF_EXITING);
+>>>      > }
+>>>
+>>>
+>>> no. current is kswapd.
+>> Hi Barry,
+>>
+>> It seems feasible for check_stable_address_space() replacing MMF_OOM_SKIP.
+>> check_stable_address_space() can indicate oom kill, and
+>> !atomic_read(&vma->vm_mm->mm_users)
+>> can indicate the normal process exiting.
+>>
+>>           /*
+>>            * Skip the non-shared anonymous folio mapped solely by
+>>            * the single exiting process, and release it directly
+>>            * in the process exiting.
+>>            */
+>>           if ((!atomic_read(&vma->vm_mm->mm_users) ||
+>>               check_stable_address_space(vma->vm_mm)) &&
+>>               folio_test_anon(folio) && folio_test_swapbacked(folio) &&
+>>               !folio_likely_mapped_shared(folio)) {
+>>               pra->referenced = -1;
+>>               page_vma_mapped_walk_done(&pvmw);
+>>               return false;
+>>           }
+>>
+> Yes, + David, Willy (when you send a new version, please CC people who have
+> participated and describe how you have addressed comments from those
+> people.)
+>
+> I also think we actually can remove "folio_test_anon(folio)".
+>
+> So It could be,
+>
+> @@ -883,6 +871,21 @@ static bool folio_referenced_one(struct folio *folio,
+>                          continue;
+>                  }
+>
+> +               /*
+> +                * Skip the non-shared swapbacked folio mapped solely by
+> +                * the exiting or OOM-reaped process. This avoids redundant
+> +                * swap-out followed by an immediate unmap.
+> +                */
+> +               if ((!atomic_read(&vma->vm_mm->mm_users) ||
+> +                    check_stable_address_space(vma->vm_mm)) &&
+> +                    folio_test_swapbacked(folio) &&
+> +                    !folio_likely_mapped_shared(folio)) {
+> +                       pra->referenced = -1;
+> +                       page_vma_mapped_walk_done(&pvmw);
+> +                       return false;
+> +               }
+> +
+>                  if (pvmw.pte) {
+>                          if (lru_gen_enabled() &&
+>                              pte_young(ptep_get(pvmw.pte))) {
+Ok,  update in patch v6:
+https://lore.kernel.org/linux-mm/20240709042122.631-1-justinjiang@vivo.com/
 
-Application can use MIPC (Modem Information Process Center) port
-to debug antenna tunner or noise profiling through this MTK modem
-diagnostic interface.
-
-By default, debug ports are not exposed, so using the command
-to enable or disable debug ports.
-
-Switch on debug port:
- - debug: 'echo debug > /sys/bus/pci/devices/${bdf}/t7xx_port_mode
-
-Switch off debug port:
- - normal: 'echo normal > /sys/bus/pci/devices/${bdf}/t7xx_port_mode
-
-Signed-off-by: Jinjian Song <jinjian.song@fibocom.com>
----
-v4:
- * modify commit message t7xx_mode to t7xx_port_mode
-v3:
- * add sysfs interface t7xx_port_mode
- * delete spin_lock_init in t7xx_proxy_port_debug()
- * modify document t7xx.rst
-v2:
- * add WWAN ADB and MIPC port
----
- .../networking/device_drivers/wwan/t7xx.rst   | 47 +++++++++++++
- drivers/net/wwan/t7xx/t7xx_pci.c              | 67 +++++++++++++++++--
- drivers/net/wwan/t7xx/t7xx_pci.h              |  7 ++
- drivers/net/wwan/t7xx/t7xx_port.h             |  3 +
- drivers/net/wwan/t7xx/t7xx_port_proxy.c       | 44 +++++++++++-
- drivers/net/wwan/t7xx/t7xx_port_proxy.h       |  1 +
- drivers/net/wwan/t7xx/t7xx_port_wwan.c        |  8 ++-
- 7 files changed, 167 insertions(+), 10 deletions(-)
-
-diff --git a/Documentation/networking/device_drivers/wwan/t7xx.rst b/Documentation/networking/device_drivers/wwan/t7xx.rst
-index f346f5f85f15..02c8a47c2328 100644
---- a/Documentation/networking/device_drivers/wwan/t7xx.rst
-+++ b/Documentation/networking/device_drivers/wwan/t7xx.rst
-@@ -67,6 +67,28 @@ Write from userspace to set the device mode.
- ::
-   $ echo fastboot_switching > /sys/bus/pci/devices/${bdf}/t7xx_mode
- 
-+t7xx_port_mode
-+--------------
-+The sysfs interface provides userspace with access to the port mode, this interface
-+supports read and write operations.
-+
-+Port mode:
-+
-+- ``normal`` represents switching off debug ports
-+- ``debug`` represents switching on debug ports
-+
-+Currently supported debug ports (ADB/MIPC).
-+
-+Read from userspace to get the current port mode.
-+
-+::
-+  $ cat /sys/bus/pci/devices/${bdf}/t7xx_port_mode
-+
-+Write from userspace to set the port mode.
-+
-+::
-+  $ echo debug > /sys/bus/pci/devices/${bdf}/t7xx_port_mode
-+
- Management application development
- ==================================
- The driver and userspace interfaces are described below. The MBIM protocol is
-@@ -139,6 +161,25 @@ Please note that driver needs to be reloaded to export /dev/wwan0fastboot0
- port, because device needs a cold reset after enter ``fastboot_switching``
- mode.
- 
-+ADB port userspace ABI
-+----------------------
-+
-+/dev/wwan0adb0 character device
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+The driver exposes a ADB protocol interface by implementing ADB WWAN Port.
-+The userspace end of the ADB channel pipe is a /dev/wwan0adb0 character device.
-+Application shall use this interface for ADB protocol communication.
-+
-+MIPC port userspace ABI
-+-----------------------
-+
-+/dev/wwan0mipc0 character device
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+The driver exposes a diagnostic interface by implementing MIPC (Modem
-+Information Process Center) WWAN Port. The userspace end of the MIPC channel
-+pipe is a /dev/wwan0mipc0 character device.
-+Application shall use this interface for MTK modem diagnostic communication.
-+
- The MediaTek's T700 modem supports the 3GPP TS 27.007 [4] specification.
- 
- References
-@@ -164,3 +205,9 @@ speak the Mobile Interface Broadband Model (MBIM) protocol"*
- [5] *fastboot "a mechanism for communicating with bootloaders"*
- 
- - https://android.googlesource.com/platform/system/core/+/refs/heads/main/fastboot/README.md
-+
-+[6] *ADB (Android Debug Bridge) "a mechanism to keep track of Android devices and
-+emulators instances connected to or running on a given host developer machine with
-+ADB protocol"*
-+
-+- https://android.googlesource.com/platform/packages/modules/adb/+/refs/heads/main/README.md
-diff --git a/drivers/net/wwan/t7xx/t7xx_pci.c b/drivers/net/wwan/t7xx/t7xx_pci.c
-index e0b1e7a616ca..b15c470acd3c 100644
---- a/drivers/net/wwan/t7xx/t7xx_pci.c
-+++ b/drivers/net/wwan/t7xx/t7xx_pci.c
-@@ -41,6 +41,7 @@
- #include "t7xx_pcie_mac.h"
- #include "t7xx_reg.h"
- #include "t7xx_state_monitor.h"
-+#include "t7xx_port_proxy.h"
- 
- #define T7XX_PCI_IREG_BASE		0
- #define T7XX_PCI_EREG_BASE		2
-@@ -61,7 +62,13 @@ static const char * const t7xx_mode_names[] = {
- 	[T7XX_FASTBOOT_DUMP] = "fastboot_dump",
- };
- 
-+static const char * const t7xx_port_mode_names[] = {
-+	[T7XX_DEBUG] = "debug",
-+	[T7XX_NORMAL] = "normal",
-+};
-+
- static_assert(ARRAY_SIZE(t7xx_mode_names) == T7XX_MODE_LAST);
-+static_assert(ARRAY_SIZE(t7xx_port_mode_names) == T7XX_PORT_MODE_LAST);
- 
- static ssize_t t7xx_mode_store(struct device *dev,
- 			       struct device_attribute *attr,
-@@ -109,13 +116,61 @@ static ssize_t t7xx_mode_show(struct device *dev,
- 
- static DEVICE_ATTR_RW(t7xx_mode);
- 
--static struct attribute *t7xx_mode_attr[] = {
-+static ssize_t t7xx_port_mode_store(struct device *dev,
-+				    struct device_attribute *attr,
-+				    const char *buf, size_t count)
-+{
-+	struct t7xx_pci_dev *t7xx_dev;
-+	struct pci_dev *pdev;
-+	int index = 0;
-+
-+	pdev = to_pci_dev(dev);
-+	t7xx_dev = pci_get_drvdata(pdev);
-+	if (!t7xx_dev)
-+		return -ENODEV;
-+
-+	index = sysfs_match_string(t7xx_port_mode_names, buf);
-+	if (index == T7XX_DEBUG) {
-+		t7xx_proxy_port_debug(t7xx_dev, true);
-+		WRITE_ONCE(t7xx_dev->port_mode, T7XX_DEBUG);
-+	} else if (index == T7XX_NORMAL) {
-+		t7xx_proxy_port_debug(t7xx_dev, false);
-+		WRITE_ONCE(t7xx_dev->port_mode, T7XX_NORMAL);
-+	}
-+
-+	return count;
-+};
-+
-+static ssize_t t7xx_port_mode_show(struct device *dev,
-+				   struct device_attribute *attr,
-+				   char *buf)
-+{
-+	enum t7xx_port_mode port_mode = T7XX_NORMAL;
-+	struct t7xx_pci_dev *t7xx_dev;
-+	struct pci_dev *pdev;
-+
-+	pdev = to_pci_dev(dev);
-+	t7xx_dev = pci_get_drvdata(pdev);
-+	if (!t7xx_dev)
-+		return -ENODEV;
-+
-+	port_mode = READ_ONCE(t7xx_dev->port_mode);
-+	if (port_mode < T7XX_PORT_MODE_LAST)
-+		return sysfs_emit(buf, "%s\n", t7xx_port_mode_names[port_mode]);
-+
-+	return sysfs_emit(buf, "%s\n", t7xx_port_mode_names[T7XX_NORMAL]);
-+}
-+
-+static DEVICE_ATTR_RW(t7xx_port_mode);
-+
-+static struct attribute *t7xx_attr[] = {
- 	&dev_attr_t7xx_mode.attr,
-+	&dev_attr_t7xx_port_mode.attr,
- 	NULL
- };
- 
--static const struct attribute_group t7xx_mode_attribute_group = {
--	.attrs = t7xx_mode_attr,
-+static const struct attribute_group t7xx_attribute_group = {
-+	.attrs = t7xx_attr,
- };
- 
- void t7xx_mode_update(struct t7xx_pci_dev *t7xx_dev, enum t7xx_mode mode)
-@@ -806,7 +861,7 @@ static int t7xx_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	t7xx_pcie_mac_interrupts_dis(t7xx_dev);
- 
- 	ret = sysfs_create_group(&t7xx_dev->pdev->dev.kobj,
--				 &t7xx_mode_attribute_group);
-+				 &t7xx_attribute_group);
- 	if (ret)
- 		goto err_md_exit;
- 
-@@ -822,7 +877,7 @@ static int t7xx_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- err_remove_group:
- 	sysfs_remove_group(&t7xx_dev->pdev->dev.kobj,
--			   &t7xx_mode_attribute_group);
-+			   &t7xx_attribute_group);
- 
- err_md_exit:
- 	t7xx_md_exit(t7xx_dev);
-@@ -837,7 +892,7 @@ static void t7xx_pci_remove(struct pci_dev *pdev)
- 	t7xx_dev = pci_get_drvdata(pdev);
- 
- 	sysfs_remove_group(&t7xx_dev->pdev->dev.kobj,
--			   &t7xx_mode_attribute_group);
-+			   &t7xx_attribute_group);
- 	t7xx_md_exit(t7xx_dev);
- 
- 	for (i = 0; i < EXT_INT_NUM; i++) {
-diff --git a/drivers/net/wwan/t7xx/t7xx_pci.h b/drivers/net/wwan/t7xx/t7xx_pci.h
-index 49a11586d8d8..973d0f1f8f9a 100644
---- a/drivers/net/wwan/t7xx/t7xx_pci.h
-+++ b/drivers/net/wwan/t7xx/t7xx_pci.h
-@@ -53,6 +53,12 @@ enum t7xx_mode {
- 	T7XX_MODE_LAST, /* must always be last */
- };
- 
-+enum t7xx_port_mode {
-+	T7XX_NORMAL,
-+	T7XX_DEBUG,
-+	T7XX_PORT_MODE_LAST, /* must always be last */
-+};
-+
- /* struct t7xx_pci_dev - MTK device context structure
-  * @intr_handler: array of handler function for request_threaded_irq
-  * @intr_thread: array of thread_fn for request_threaded_irq
-@@ -94,6 +100,7 @@ struct t7xx_pci_dev {
- 	struct dentry		*debugfs_dir;
- #endif
- 	u32			mode;
-+	u32			port_mode;
- };
- 
- enum t7xx_pm_id {
-diff --git a/drivers/net/wwan/t7xx/t7xx_port.h b/drivers/net/wwan/t7xx/t7xx_port.h
-index f74d3bab810d..9f5d6d288c97 100644
---- a/drivers/net/wwan/t7xx/t7xx_port.h
-+++ b/drivers/net/wwan/t7xx/t7xx_port.h
-@@ -42,6 +42,8 @@ enum port_ch {
- 	/* to AP */
- 	PORT_CH_AP_CONTROL_RX = 0x1000,
- 	PORT_CH_AP_CONTROL_TX = 0x1001,
-+	PORT_CH_AP_ADB_RX = 0x100a,
-+	PORT_CH_AP_ADB_TX = 0x100b,
- 
- 	/* to MD */
- 	PORT_CH_CONTROL_RX = 0x2000,
-@@ -100,6 +102,7 @@ struct t7xx_port_conf {
- 	struct port_ops		*ops;
- 	char			*name;
- 	enum wwan_port_type	port_type;
-+	bool			debug;
- };
- 
- struct t7xx_port {
-diff --git a/drivers/net/wwan/t7xx/t7xx_port_proxy.c b/drivers/net/wwan/t7xx/t7xx_port_proxy.c
-index 7d6388bf1d7c..4891070ad9b1 100644
---- a/drivers/net/wwan/t7xx/t7xx_port_proxy.c
-+++ b/drivers/net/wwan/t7xx/t7xx_port_proxy.c
-@@ -39,6 +39,8 @@
- 
- #define Q_IDX_CTRL			0
- #define Q_IDX_MBIM			2
-+#define Q_IDX_MIPC			2
-+#define Q_IDX_ADB			3
- #define Q_IDX_AT_CMD			5
- 
- #define INVALID_SEQ_NUM			GENMASK(15, 0)
-@@ -100,7 +102,27 @@ static const struct t7xx_port_conf t7xx_port_conf[] = {
- 		.path_id = CLDMA_ID_AP,
- 		.ops = &ctl_port_ops,
- 		.name = "t7xx_ap_ctrl",
--	},
-+	}, {
-+		.tx_ch = PORT_CH_AP_ADB_TX,
-+		.rx_ch = PORT_CH_AP_ADB_RX,
-+		.txq_index = Q_IDX_ADB,
-+		.rxq_index = Q_IDX_ADB,
-+		.path_id = CLDMA_ID_AP,
-+		.ops = &wwan_sub_port_ops,
-+		.name = "adb",
-+		.port_type = WWAN_PORT_ADB,
-+		.debug = true,
-+	}, {
-+		.tx_ch = PORT_CH_MIPC_TX,
-+		.rx_ch = PORT_CH_MIPC_RX,
-+		.txq_index = Q_IDX_MIPC,
-+		.rxq_index = Q_IDX_MIPC,
-+		.path_id = CLDMA_ID_MD,
-+		.ops = &wwan_sub_port_ops,
-+		.name = "mipc",
-+		.port_type = WWAN_PORT_MIPC,
-+		.debug = true,
-+	}
- };
- 
- static const struct t7xx_port_conf t7xx_early_port_conf[] = {
-@@ -505,13 +527,31 @@ static void t7xx_proxy_init_all_ports(struct t7xx_modem *md)
- 		spin_lock_init(&port->port_update_lock);
- 		port->chan_enable = false;
- 
--		if (port_conf->ops && port_conf->ops->init)
-+		if (!port_conf->debug && port_conf->ops && port_conf->ops->init)
- 			port_conf->ops->init(port);
- 	}
- 
- 	t7xx_proxy_setup_ch_mapping(port_prox);
- }
- 
-+void t7xx_proxy_port_debug(struct t7xx_pci_dev *t7xx_dev, bool show)
-+{
-+	struct port_proxy *port_prox = t7xx_dev->md->port_prox;
-+	struct t7xx_port *port;
-+	int i;
-+
-+	for_each_proxy_port(i, port, port_prox) {
-+		const struct t7xx_port_conf *port_conf = port->port_conf;
-+
-+		if (port_conf->debug && port_conf->ops && port_conf->ops->init) {
-+			if (show)
-+				port_conf->ops->init(port);
-+			else
-+				port_conf->ops->uninit(port);
-+		}
-+	}
-+}
-+
- void t7xx_port_proxy_set_cfg(struct t7xx_modem *md, enum port_cfg_id cfg_id)
- {
- 	struct port_proxy *port_prox = md->port_prox;
-diff --git a/drivers/net/wwan/t7xx/t7xx_port_proxy.h b/drivers/net/wwan/t7xx/t7xx_port_proxy.h
-index 7f5706811445..a9c19c1253e6 100644
---- a/drivers/net/wwan/t7xx/t7xx_port_proxy.h
-+++ b/drivers/net/wwan/t7xx/t7xx_port_proxy.h
-@@ -98,6 +98,7 @@ extern struct port_ops ctl_port_ops;
- extern struct port_ops t7xx_trace_port_ops;
- #endif
- 
-+void t7xx_proxy_port_debug(struct t7xx_pci_dev *t7xx_dev, bool show);
- void t7xx_port_proxy_reset(struct port_proxy *port_prox);
- void t7xx_port_proxy_uninit(struct port_proxy *port_prox);
- int t7xx_port_proxy_init(struct t7xx_modem *md);
-diff --git a/drivers/net/wwan/t7xx/t7xx_port_wwan.c b/drivers/net/wwan/t7xx/t7xx_port_wwan.c
-index 4b23ba693f3f..7fc569565ff9 100644
---- a/drivers/net/wwan/t7xx/t7xx_port_wwan.c
-+++ b/drivers/net/wwan/t7xx/t7xx_port_wwan.c
-@@ -169,7 +169,9 @@ static int t7xx_port_wwan_init(struct t7xx_port *port)
- {
- 	const struct t7xx_port_conf *port_conf = port->port_conf;
- 
--	if (port_conf->port_type == WWAN_PORT_FASTBOOT)
-+	if (port_conf->port_type == WWAN_PORT_FASTBOOT ||
-+	    port_conf->port_type == WWAN_PORT_ADB ||
-+	    port_conf->port_type == WWAN_PORT_MIPC)
- 		t7xx_port_wwan_create(port);
- 
- 	port->rx_length_th = RX_QUEUE_MAXLEN;
-@@ -224,7 +226,9 @@ static void t7xx_port_wwan_md_state_notify(struct t7xx_port *port, unsigned int
- {
- 	const struct t7xx_port_conf *port_conf = port->port_conf;
- 
--	if (port_conf->port_type == WWAN_PORT_FASTBOOT)
-+	if (port_conf->port_type == WWAN_PORT_FASTBOOT ||
-+	    port_conf->port_type == WWAN_PORT_ADB ||
-+	    port_conf->port_type == WWAN_PORT_MIPC)
- 		return;
- 
- 	if (state != MD_STATE_READY)
--- 
-2.34.1
+Thanks
+>
+>> Thanks
+>> Zhiguo
+>>>
+>>>      >>
+>>>      >>
+>>>      >>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+>>>      >>> index 0761f91b407f..bae7a8bf6b3d
+>>>      >>> --- a/mm/vmscan.c
+>>>      >>> +++ b/mm/vmscan.c
+>>>      >>> @@ -863,7 +863,12 @@ static enum folio_references
+>>>      >>> folio_check_references(struct folio *folio,
+>>>      >>>          if (vm_flags & VM_LOCKED)
+>>>      >>>                  return FOLIOREF_ACTIVATE;
+>>>      >>>
+>>>      >>> -       /* rmap lock contention: rotate */
+>>>      >>> +       /*
+>>>      >>> +        * There are two cases to consider.
+>>>      >>> +        * 1) Rmap lock contention: rotate.
+>>>      >>> +        * 2) Skip the non-shared anonymous folio mapped solely by
+>>>      >>> +        *    the single exiting process.
+>>>      >>> +        */
+>>>      >>>          if (referenced_ptes == -1)
+>>>      >>>                  return FOLIOREF_KEEP;
+>>>      >>>
+>>>      >>> --
+>>>      >>> 2.39.0
+>>>      >>>
+>>>      >> Thanks
+>>>      >> Barry
+>>>      >
+>>>
+> Thanks
+> Barry
 
 
