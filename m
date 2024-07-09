@@ -1,160 +1,110 @@
-Return-Path: <linux-kernel+bounces-245032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6137792AD40
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:51:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF2CD92AD7B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7DF31F222C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:51:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97AE52829E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E7A29422;
-	Tue,  9 Jul 2024 00:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bwYc0puv"
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9472E3BBC9;
+	Tue,  9 Jul 2024 01:00:17 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57ED110FA;
-	Tue,  9 Jul 2024 00:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9783717F;
+	Tue,  9 Jul 2024 01:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720486256; cv=none; b=lfzpIKwmcvmE9WXDqQVhDZ9ZLkVFnzpOjgoZ9Loe3d6M52/4Eiuy+QUQC1+fOXZqn68nh17XhFDbcMvsnQMWul/ofOaIE9c/enzaGRgK4uG28SigNjlDtgKoVFbUbDcWlKxQUurWGxQz+4rFmulWl8CEu5IaHr2FRFCRSc+bA/M=
+	t=1720486817; cv=none; b=UWeltbkkgTQgkIXgY3SjB10wOGjASitUFcqDVbuqPLVJpfmkZwM9ZcTyIbExMG2oT6gZbMA/nmdumj69qvcIIBU31Rjhwo/N1I54RtNZPHWwrIXxALPF2n93JGaId0egLbVwRh/bHqVHBI4ArammWZdvublBW6QRo3b52d3dcw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720486256; c=relaxed/simple;
-	bh=BdXpEabngZDyg/iduns/YDXTEYzjjdakPHcMyl7lzlE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=amBmHJWKdI9ghFyF+23ZeWcr2NCkKfJCZlIGLB/PsGNSTf+NVhd3yCtdoLxut8CTBkeuReKeuIwMNQQH69KJg4tppMu+DXjcFyTIoXzEKSGaNC7ywi5dIceqL0JmA5wKBYwP/j9ovn452+EnwgLkl6luglBLYVq1+lnVeJ23Llg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bwYc0puv; arc=none smtp.client-ip=209.85.217.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-48fe76c0180so1523297137.1;
-        Mon, 08 Jul 2024 17:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720486250; x=1721091050; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jGCm7ULkHrxj85VKoDXAjcmHZHESjN0FxE0aujX1liU=;
-        b=bwYc0puvP1MjnrwUV+NBpBYnizLM1WCMhkGAitm46e7O94TjgHCjqM9nOdPxxwLu73
-         OSlqAUpPnjh8uBaiLREcNXd/8lEd0xqPnnQJb1hs2BGAtGA/bPeVOVRzn9W3Lk68QUWT
-         GYB8wIc3sn4VOdUKiEjIF34OY0Xnl89ujY552l2oMJfE/wQyf/wLA+dAWOZjl2V8zopd
-         2+FQ21aPJpM4mGjacHfay7sRQh7eueQoEqgzwcywgvL7oVYZeFBtTCWTPKNZxEfF7Lyu
-         MrWt37oqlpxvljkT+awkl/CsYPFJJx6VEClPMIqLaz5M+KYJhxsnoYLtwiWnlm++WiqW
-         uH0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720486250; x=1721091050;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jGCm7ULkHrxj85VKoDXAjcmHZHESjN0FxE0aujX1liU=;
-        b=AmAPJ2P0xSYaaRfUfcCfnvFbCCOnvkKOVRCRkmP6d0/rQJXXa6EW2som1zH+Gtiz8Y
-         D0i0LEAhenqFveEeceTmZF5EBn9PUbe8TL4/xTlL1pyg1bgqLk7ZWP8fh9EMoUYm2/xu
-         kK0NjNecFCPUW4VU3Rxk+UlJghWdU7rV2kCGMnSc51ymTLS4z2uBxl9MNJnZJV8J8Wba
-         UrV7zS5ueRmjoyHNWQo7EMcXZ08gRpJGbHj9mI+8WVvPKVRkBijzZGT6QLIN7uMRZVwS
-         gECGd2FpHXUpYxRwYZWqDtvuMgAjodml1x+BjDZ3wmsHP3yiRSpNbZfMGenwNWUNC8vn
-         jqcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJfXN7pultl9S4ROlLlbSe0XwZkKR1xQsRlirq94OCItOlMNUf6o/QluiUK/9LHCMeppMm3T+NxHbsFRrF0Nv0r1EnlYiI7p9IQiuwoAoQ0NKYH9Mb61LqEtStrXOVRNlV9kNrvp+O
-X-Gm-Message-State: AOJu0YzEX7wzdZuNIjsQ49iXFfqYy3utqCNeEvUNhvdfO7LhgDSf6rFE
-	0NN2JRKYUTPS2aPRryYS0SSaOuat3c22gtsvHgBHkfXkjiRykvGTy3hOd5N9FvM7GDuW/J2bJlt
-	FF3CMDILjVKaQhkNDYa+K5NzyTP8=
-X-Google-Smtp-Source: AGHT+IFXBIwiAdVJ2BbfSrFesf65v19ToW/by4CvTTpI4KW4/C2pWNEGAbprVYqYhVYM+Wxo7ApbBEdYo7ePOAaMkBI=
-X-Received: by 2002:a05:6102:c13:b0:48f:e62f:8863 with SMTP id
- ada2fe7eead31-49032153e82mr1287941137.2.1720486250168; Mon, 08 Jul 2024
- 17:50:50 -0700 (PDT)
+	s=arc-20240116; t=1720486817; c=relaxed/simple;
+	bh=DCgQZ0V97LeODbU+jANYGac8jCb2C4pq7bcU9vU4LGk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NhiU4+284mIl4ginYofdHe30hO9lgCOTCEFNRJ2MI7MyH3UjUwlNwhEF5mtDj9xcpO7cxO6rq9DGdqle1G3dOV9NWMoP+eobSbArKzU+oA9SQpIVxgiI7Rx5jgBwXQSzVb0OSzxXjJ6pg43uiGbxfsYJHMK0ERIw0OV8waYgJzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WJ2cD5gx9z1yvCh;
+	Tue,  9 Jul 2024 08:56:12 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id 980E4180028;
+	Tue,  9 Jul 2024 09:00:06 +0800 (CST)
+Received: from huawei.com (10.67.174.28) by kwepemd200013.china.huawei.com
+ (7.221.188.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 9 Jul
+ 2024 09:00:05 +0800
+From: Liao Chang <liaochang1@huawei.com>
+To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	<ast@kernel.org>, <daniel@iogearbox.net>, <andrii@kernel.org>,
+	<martin.lau@linux.dev>, <eddyz87@gmail.com>, <song@kernel.org>,
+	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
+	<sdf@fomichev.me>, <haoluo@google.com>, <mykolal@fb.com>, <shuah@kernel.org>,
+	<liaochang1@huawei.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>,
+	<bpf@vger.kernel.org>, <linux-kselftest@vger.kernel.org>
+Subject: [PATCH 0/2] Optimize the return_instance management of uretprobe
+Date: Tue, 9 Jul 2024 00:51:40 +0000
+Message-ID: <20240709005142.4044530-1-liaochang1@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702060418.387500-1-alistair.francis@wdc.com>
- <20240702060418.387500-3-alistair.francis@wdc.com> <20240702145806.0000669b@Huawei.com>
- <CAKmqyKPEX632ywm5DiKvVZU=hr-yHNBJ=tcN2DasKpfWdykgZg@mail.gmail.com>
- <20240705112953.00007303@Huawei.com> <20240708005533.GC586698@rocinante>
-In-Reply-To: <20240708005533.GC586698@rocinante>
-From: Alistair Francis <alistair23@gmail.com>
-Date: Tue, 9 Jul 2024 10:50:24 +1000
-Message-ID: <CAKmqyKOa2nf1yRuZ_zpkH422JRkoHi2cC0Yq8RnNap6Meu80Uw@mail.gmail.com>
-Subject: Re: [PATCH v13 3/4] PCI/DOE: Expose the DOE features via sysfs
-To: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, bhelgaas@google.com, 
-	linux-pci@vger.kernel.org, lukas@wunner.de, alex.williamson@redhat.com, 
-	christian.koenig@amd.com, kch@nvidia.com, gregkh@linuxfoundation.org, 
-	logang@deltatee.com, linux-kernel@vger.kernel.org, chaitanyak@nvidia.com, 
-	rdunlap@infradead.org, Alistair Francis <alistair.francis@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-On Mon, Jul 8, 2024 at 10:55=E2=80=AFAM Krzysztof Wilczy=C5=84ski <kw@linux=
-.com> wrote:
->
-> Hello,
->
-> > > Any input from a PCI maintainer here?
->
-> Something that I am curious about: can we make this a single file with a
-> bitmask inside that denotes what DOE features are enabled?  Would this be
-> approach be even feasible here?
+While exploring uretprobe syscall and trampoline for ARM64, we observed
+a slight performance gain for Redis benchmark using uretprobe syscall.
+This patchset aims to further improve the performance of uretprobe by
+optimizing the management of struct return_instance data.
 
-In theory there can be any vendor ID (16-bits but not 0xFFFF) and any
-feature (8-bits). So there is a huge possibility of values here.
+In details, uretprobe utilizes dynamically allocated memory for struct
+return_instance data. These data track the call chain of instrumented
+functions. This approach is not efficient, especially considering the
+inherent locality of function invocation.
 
->
-> Thoughts?  Or is it too late to think about this now?
+This patchset proposes a rework of the return_instances management. It
+replaces dynamic memory allocation with a statically allocated array.
+This approach leverages the stack-style usage of return_instance and
+remove the need for kamlloc/kfree operations.
 
-It's just too many possible options to use a bitmask. I guess we could
-use a feature bit mask per vendor if people feel strongly
+This patch has been tested on Kunpeng916 (Hi1616), 4 NUMA nodes, 64
+cores @ 2.4GHz. Redis benchmarks show a throughput gain by 2% for Redis
+GET and SET commands:
 
->
-> > > There are basically two approaches.
-> > >
-> > >  1. We can have a pci_doe_sysfs_init() function that is called where
-> > > we dynamically add the entries, like in v12
-> > >  2. We can go down the dev->groups and device_add() path, like this
-> > > patch and discussed at
-> > > https://lore.kernel.org/all/20231019165829.GA1381099@bhelgaas/
-> > >
-> > > For the second we will have to create a global pci_doe_sysfs_group
-> > > that contains all possible DOE entries on the system and then have th=
-e
-> > > show functions determine if they should be displayed for that device.
-> > >
-> > > Everytime we call pci_doe_init() we can check for any missing entries
-> > > in pci_doe_sysfs_group.attrs and then realloc
-> > > pci_doe_sysfs_group.attrs to add them.
-> > > Untested, but that should work
-> > > even for hot-plugged devices. pci_doe_sysfs_group.attrs would just
-> > > grow forever though as I don't think we have an easy way to deallocat=
-e
-> > > anything as we aren't sure if we are the only entry.
-> >
-> > I think this needs to be per device, not global and you'll have to manu=
-ally
-> > do the group visibility magic rather than using the macros.
->
-> Lukas proposes a very interesting feature of kernfs recently per:
->
->   https://lore.kernel.org/linux-pci/16490618cbde91b5aac04873c39c8fb7666ff=
-686.1719771133.git.lukas@wunner.de
->
-> Would this help with DOE features?
+------------------------------------------------------------------
+Test case       | No uretprobes | uretprobes     | uretprobes
+                |               | (current)      | (optimized)
+==================================================================
+Redis SET (RPS) | 47025         | 40619 (-13.6%) | 41529 (-11.6%)
+------------------------------------------------------------------
+Redis GET (RPS) | 46715         | 41426 (-11.3%) | 42306 (-9.4%)
+------------------------------------------------------------------
 
-That was the previous approach used here:
-https://lore.kernel.org/linux-pci/20240626045926.680380-3-alistair.francis@=
-wdc.com/
+Liao Chang (2):
+  uprobes: Optimize the return_instance related routines
+  selftests/bpf: Add uretprobe test for return_instance management
 
-Bjorn wanted to try and avoid using a function pci_doe_sysfs_init()
-[1], which is what I tried here. It sounds like the v12 approach is
-the way to go then. I'll send a v14 based on v12 with the comments
-addressed
+ include/linux/uprobes.h                       |  10 +-
+ kernel/events/uprobes.c                       | 162 +++++++++++-------
+ .../bpf/prog_tests/uretprobe_depth.c          | 150 ++++++++++++++++
+ .../selftests/bpf/progs/uretprobe_depth.c     |  19 ++
+ 4 files changed, 274 insertions(+), 67 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/uretprobe_depth.c
+ create mode 100644 tools/testing/selftests/bpf/progs/uretprobe_depth.c
 
-1: https://lore.kernel.org/all/20231019165829.GA1381099@bhelgaas/
+-- 
+2.34.1
 
-Alistair
-
->
->         Krzysztof
 
