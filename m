@@ -1,111 +1,109 @@
-Return-Path: <linux-kernel+bounces-246012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0617E92BCA7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:16:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F1A192BC75
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:05:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3EB41F21F4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:16:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 926631C203E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B237F19CCEC;
-	Tue,  9 Jul 2024 14:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="h5sBXcK+"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D20B198831;
+	Tue,  9 Jul 2024 14:05:17 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260B1158A37;
-	Tue,  9 Jul 2024 14:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D0C19B5B6;
+	Tue,  9 Jul 2024 14:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720534582; cv=none; b=PGfbpmd+wESoZLoDm5Gqm7SuFNUoK20a00jzmjgRRNzaQzmRaBFcNATSsOVGtKOd8KXfxufmSgPYRLWB2aP7/A5BY9Qnk0kFGrGNGuSvZjDaqScmFxIxIbbg+Hili61/XMbzFp8VcPx0GSU6MqI9V/fxpm/aVtyvKrC0jRtmjJ0=
+	t=1720533916; cv=none; b=aG0q9RMTuYrPNYYSk+vJGyshXr1uT0zqPdB4fzlD44hOaLlgp8BRYzsiG/zXCc1dDpzMMSAGO73KyQx5wSVJi0AX5Sju2a66cniM5LYT97YwEDL4BA/CScXIoP4/JLmbQSrPYWcSx8DIcPAxH8qTnKvOZEdGytjc+0BQJrF3l0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720534582; c=relaxed/simple;
-	bh=ZhaY/4x3f4ruOAcY8iwU5SlZfxMqNd80J3CoK7mNwY8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N0U5A/Jkp3RdDmcdZbcbnemJE3vLuJ0G/Wyan1J8zdrQGhB9GKEZYFqrGxm+7jMnqXn/iM69dNBGuW3jQ+8ZAmGvYOHFA1EJM/8HIlPvu8S4julaasHskZ4ia77cM4sG5MTmm14P/8oMMydqJkRYY+WHkIBXpdSnVxSEgsx5k7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=h5sBXcK+; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id CFBC3885CF;
-	Tue,  9 Jul 2024 16:16:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1720534578;
-	bh=j8uH5LAqoGEHnE0i2h70/qLLtUa4idrvgO0Or56fKwE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h5sBXcK+Co55wCMMwagBGX7JKSszZM7MNPT8jFFyRWLz9842GsMso0IRTgUX+kwIw
-	 2Kq/McQRYspT+6Z6QDz4qETUSI3W21jaPNmzSPcIkUTNcOL5Gd2996hid5tpgAsWbE
-	 cXjiAmSR0dQqY1oyQgAUCGSR3Vwt6gvk1NUhZqUqWkUELk/C029+lzRf7siOVwIdey
-	 QobNnpiRHgQEvwl9D9tUpYm7qcyKNCNlOpOP3LMEc19hcQht1Mq3jOYRjVFJtu1NvU
-	 T32nfkhREUUScQepqN6eEgiQ+R6sLcrQaQ65sA72+O2wY8T4+MqrbcliFAkHRQUNDx
-	 brugWrEj1LQVA==
-Message-ID: <944ecc41-9ef7-4d9e-9d96-3c5c0cdb71b5@denx.de>
-Date: Tue, 9 Jul 2024 15:24:05 +0200
+	s=arc-20240116; t=1720533916; c=relaxed/simple;
+	bh=aT9KxpR/5yygMSydYfDfbgl0RR3g7jLPoGITwLJc9FE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ErsosmRmOkAfF52SrmemOmAV8wg0f2Xitgey25NnomFYBvCs7yU3euSBkndbEX4c3CFpkVPE35++5vNE8sMS+ZEZwi3fwLtmoKtmFtaHTzY3fZIzdOh4qfg6rwBW6uPOAywTaiPaAxM2yY5FQx2DmWJ+Ls+dxkdsEjuw9ftw/rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowACnr+eHQ41mXppiAg--.14867S2;
+	Tue, 09 Jul 2024 22:05:03 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: kristo@kernel.org,
+	bp@alien8.de,
+	tony.luck@intel.com,
+	james.morse@arm.com,
+	mchehab@kernel.org,
+	rric@kernel.org
+Cc: linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>
+Subject: [PATCH] EDAC/ti: Fix possible null pointer dereference in _emif_get_id()
+Date: Tue,  9 Jul 2024 22:04:54 +0800
+Message-Id: <20240709140454.1222094-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: display: bridge: ti,sn65dsi83: add
- burst-mode-disabled
-To: Stefano Radaelli <stefano.radaelli21@gmail.com>,
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Andrzej Hajda <andrzej.hajda@intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- David Airlie <airlied@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <mripard@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
- "Noah J . Rosa" <noahj.rosa@gmail.com>, linux-kernel@vger.kernel.org
-References: <20240708151857.40538-1-stefano.radaelli21@gmail.com>
- <172045725750.3389992.15451403448241421795.robh@kernel.org>
- <CAK+owohBrewYFpDKjsE5iWC5OQ3p6S_9fwj7DWa1Ux2h8CXcAw@mail.gmail.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <CAK+owohBrewYFpDKjsE5iWC5OQ3p6S_9fwj7DWa1Ux2h8CXcAw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowACnr+eHQ41mXppiAg--.14867S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZrWxAw45Gr4DJF17JFy5urg_yoWDCwb_KF
+	1rWFy7Xr1vgF97GwsIqw13Z34Iy3yj9w1qgrs2g39aqry5Xa43XrsaqF1DZrZrWrW09Fy5
+	KrWqk34rAr1UujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb4xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
+	YxC7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+	IxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUAkucUUU
+	UU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On 7/9/24 2:45 PM, Stefano Radaelli wrote:
-> Hello everyone,
+In _emif_get_id(), of_get_address() may return NULL which is later
+dereferenced. Fix this bug by adding NULL check.
 
-Hi,
+Fixes: 86a18ee21e5e ("EDAC, ti: Add support for TI keystone and DRA7xx EDAC")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/edac/ti_edac.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> Thank you a lot for your prompt feedbacks.
-> I'm really sorry for all the mistakes, it is the first time that I try to
-> submit a patch and i thought I followed the guideline but clearly that was
-> not the case.
-> 
->   @Marek Vasut <marex@denx.de> About your question to why disabling
-> burst-mode:
-> - I agree with you that Burst Mode is the preferred way to send data. For
-> that reason I created the new flag in a way that, if not used in dts, burst
-> mode remains active by default.
->    However, I decide to introduced this property because I have noticed that
-> some dual-channel panels work better in non-burst mode (even if less
-> efficient), and since the sn65dsi84 datasheet allows this setting, I
-> thought to give this opportunity to users.
->    What do you think about it?
+diff --git a/drivers/edac/ti_edac.c b/drivers/edac/ti_edac.c
+index 29723c9592f7..6f3da8d99eab 100644
+--- a/drivers/edac/ti_edac.c
++++ b/drivers/edac/ti_edac.c
+@@ -207,6 +207,9 @@ static int _emif_get_id(struct device_node *node)
+ 	int my_id = 0;
+ 
+ 	addrp = of_get_address(node, 0, NULL, NULL);
++	if (!addrp)
++		return -EINVAL;
++
+ 	my_addr = (u32)of_translate_address(node, addrp);
+ 
+ 	for_each_matching_node(np, ti_edac_of_match) {
+@@ -214,6 +217,9 @@ static int _emif_get_id(struct device_node *node)
+ 			continue;
+ 
+ 		addrp = of_get_address(np, 0, NULL, NULL);
++		if (!addrp)
++			return -EINVAL;
++
+ 		addr = (u32)of_translate_address(np, addrp);
+ 
+ 		edac_printk(KERN_INFO, EDAC_MOD_NAME,
+-- 
+2.25.1
 
-Are there any further details, which panels behave this way ? Does your 
-DSI host generate correct HS clock, ones which the DSI84 expects to 
-receive on the DSI side ?
-
-Such link mode properties would have to be generic properties placed in 
-some dsi-client.yaml file in any case, such properties are not specific 
-to this DSI8x bridge.
 
