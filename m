@@ -1,132 +1,107 @@
-Return-Path: <linux-kernel+bounces-246170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38F2092BE78
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:32:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 597AF92BE7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35881F25836
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:32:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6393281159
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E4B19DF49;
-	Tue,  9 Jul 2024 15:31:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BF119D099;
+	Tue,  9 Jul 2024 15:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GWw9hR3n"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1oudxLfh"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F2F19D8A4
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8C33612D;
+	Tue,  9 Jul 2024 15:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720539114; cv=none; b=VgswljDbdBLZiIxlO/vqZ4Aw6msKAooL9ulO6uUQ6/B/qnzZ3WfC0YNKORHgjD+lbk3gt5PW+EYuIpiQunzghAbVGBR3vrXhjkMUi+YBZ6Yjfs0Eopxwy6RcdYqfst3wTvQ8NNSOQ1TCqcDJm7SU8fBEUJACEzp85HBXujT8xXY=
+	t=1720539206; cv=none; b=Y0cagndeqEvbM00PjKO4r958l9I58wLc/YkuoYeQ8lJAvQVPSddb+8LIohPCJCbs/AaSmUSrw4dejXYuxcLcE4/c8XhN3EpgJlauHk4zSVG6qCqiAeBl50/a6vn2rVIQvxompAIrAkUAcHbIvBMJukQLSEJmaK5S3wWwkn8Z7JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720539114; c=relaxed/simple;
-	bh=rBFFYJWprlboz0nJvWGx9LMFY6mldxF8e2qpxgT8MAw=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ixBkT+Z1XsDVCYATgdlCy+L2F1gUjZEi1b6ZXHtflbm2VbBFY8YAM1TFodM0n98hkqECXs9U0bfed7k1uA8MrIqvlfXk1VMOW5siIfdblsZSwFtyGJWj8MSVmcOBKrixtzdg4U3mGP7jbLoovL64VbKdWA1JH26nyhR1FM3KkG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GWw9hR3n; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52e976208f8so5840408e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 08:31:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720539111; x=1721143911; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xHpq5wMNrD2/hubIXHOBObHVSlKgS/wJVizku6aE47M=;
-        b=GWw9hR3nzm2cwpv4Hv9FKYaxBajE+r81HjJdnlxYb9TwFlhqaZ6v+X337uwX5/rFwB
-         rx0HmwNpnnEQOIQko/g0VS7okp8yfUiM9Wa1dCxBoQCWcsSPQ8d2pZZ14MupSWnECv3a
-         JhKNqiZmQtaPIEciHT7xefo3bJFEfjIl+g0CAK6nh7YpMT+xtDfvRJd1dn+th2JBkT5S
-         /LuFURVZIhbKK9Pg5st3OAlP2d96qkwQPf5a9u7DPbjbQeJLiesG06Bmag1IHrCiGPet
-         XXy7XXGD3rV2axvh7iZJxpONG2xTOvL8Wi6EyciQjCGkoy95w/1W/ofja54y/oNIYOCH
-         HoTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720539111; x=1721143911;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xHpq5wMNrD2/hubIXHOBObHVSlKgS/wJVizku6aE47M=;
-        b=N0lZ7fe20wgA289U7XbodPuCy7gfoCULY6Ul31UFExm5qZIwxBGAma+b74acPHVw5P
-         17P2zY3adgzRSOyQbJhTm7Wcb92yCouwqhAL0esz9U5qEfj6/lDQEQTsTOb7QIVq1FiU
-         uv15e+ZYnPF6hEAnpU5bUHqz6ouSacrDFyGaQxusX+gaQ6y2d1wWzAuD8LGne/Dr3wbx
-         LEYUYjh9pjbBBDGzv3FQWZx/3aoXggDVdygt1dbm8DLcjAK97SuJV7zgh22da1WoHqfc
-         eLexG3N5vb2wp/oS4ydp1VLNN1I+LrtImvU2CJa1tvHRwspy/pSB4v/R3a1SEQ4sj3Fy
-         RjoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVFIHFpRV0wvkcHA0ja81/EZINiBrePDa3c8gta7WoEoQBVOtsQsh6eMz/cHE6YB1+z9N/H1uOeuHvQ+zxSm/xt9WQaJwnj+zQK/42f
-X-Gm-Message-State: AOJu0YzXjSxVb8hvRnGeva80/bx+OPn6nYTiLi0nczbJy+3dnhsmd9mI
-	8pzyX8ZIxpZbM5iooSFARjXRIB+LdHWgmpTSN7ER/4ND+nERmXa0khpnhncC5iU=
-X-Google-Smtp-Source: AGHT+IHewN66x2HRe8W5Nt8NVnXoo8G3n2GpDN/d4haqMEb11yeCmND6FM7mgc4d6Mu6XfbF2ACV5g==
-X-Received: by 2002:a2e:7c04:0:b0:2ee:4af7:d78e with SMTP id 38308e7fff4ca-2eeb3181914mr24259971fa.34.1720539110506;
-        Tue, 09 Jul 2024 08:31:50 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a1d16b0sm209556185e9.7.2024.07.09.08.31.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 08:31:50 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240701165210.578817-1-krzysztof.kozlowski@linaro.org>
-References: <20240701165210.578817-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] ARM: dts: amlogic: meson8b-ec100: align GPIO keys node
- name with bindings
-Message-Id: <172053910960.1180991.4934338719791810029.b4-ty@linaro.org>
-Date: Tue, 09 Jul 2024 17:31:49 +0200
+	s=arc-20240116; t=1720539206; c=relaxed/simple;
+	bh=pY25WsTXcfXBN8yFknJRY2jmv9s2nDkXO4pyC+FRaNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HJinaxi+iwpIw7RSXQmZJ+LHQoTNFLkeaK+zBOQGOqrAY4FgTFLGjay7+c72comDs5NNE/ID1gfnQdpC6tLSmRQz0QoPOupGxaazRC3CrzEtBA+D/jCzE7CF5N5FMwn9zEa35ynLxGPXD3S3UaBT+eClLYfRU2UhK5QDEUuAHD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1oudxLfh; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=mkymJhpeavluqOFMiJvyV+2k3L6noINCsr3A0Nquf2k=; b=1oudxLfhdXbwEnf+Ad8eNy9dxx
+	CDjjadWAteVZi9kS9U1kGcr9M6DHvcyVBTMS6VtQTfs0+ZN5UOZKCbFF1RuOo960XdhuzbsqrhfZ8
+	9srazH+1+y3s/LC0YE9kI9OJfMMLXCWrtFOepxcX40hEtd2oDN3qEWMZ5G16D/IK7Kho=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sRCq0-0029ml-BN; Tue, 09 Jul 2024 17:33:04 +0200
+Date: Tue, 9 Jul 2024 17:33:04 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Andrew Halaney <ahalaney@redhat.com>
+Cc: Tengfei Fan <quic_tengfan@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, kernel@quicinc.com,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/2] net: stmmac: dwmac-qcom-ethqos: add support for
+ emac4 on qcs9100 platforms
+Message-ID: <2427a6fe-834c-432c-8e5a-4981354645d2@lunn.ch>
+References: <20240709-add_qcs9100_ethqos_compatible-v2-0-ba22d1a970ff@quicinc.com>
+ <20240709-add_qcs9100_ethqos_compatible-v2-2-ba22d1a970ff@quicinc.com>
+ <g7htltug74hz2iyosyn3rbo6wk3zu54ojooshjfkblcivvihv2@vj5vm2nbcw7x>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <g7htltug74hz2iyosyn3rbo6wk3zu54ojooshjfkblcivvihv2@vj5vm2nbcw7x>
 
-Hi,
-
-On Mon, 01 Jul 2024 18:52:10 +0200, Krzysztof Kozlowski wrote:
-> Bindings expect the GPIO keys node names to follow certain pattern, see
-> dtbs_check warnings:
+On Tue, Jul 09, 2024 at 09:40:55AM -0500, Andrew Halaney wrote:
+> These patches are for netdev, so you need to follow the netdev
+> rules, i.e. the subject should be have [PATCH net-next] in it, etc as
+> documented over here:
 > 
->   meson8b-ec100.dtb: gpio-keys: '#address-cells', '#size-cells' do not match any of the regexes: '^(button|event|key|switch|(button|event|key|switch)...
+>     https://docs.kernel.org/process/maintainer-netdev.html#tl-dr
 > 
+> On Tue, Jul 09, 2024 at 10:13:18PM GMT, Tengfei Fan wrote:
+> > QCS9100 uses EMAC version 4, add the relevant defines, rename the
+> > has_emac3 switch to has_emac_ge_3 (has emac greater-or-equal than 3)
+> > and add the new compatible.
 > 
+> This blurb isn't capturing what's done in this change, please make it
+> reflect the patch.
 
-Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.11/arm-dt)
+Hi Tengfei
 
-[1/1] ARM: dts: amlogic: meson8b-ec100: align GPIO keys node name with bindings
-      https://git.kernel.org/amlogic/c/488386d7ec680c8900f81b3fd7570797935bf1ff
+If i remember correctly, there was a similar comment made to one of
+the patches in the huge v1 series.
 
-These changes has been applied on the intermediate git tree [1].
+The commit messages are very important, just as important as the code
+itself. Please review them all and fixup issues like this before you
+repost.
 
-The v6.11/arm-dt branch will then be sent via a formal Pull Request to the Linux SoC maintainers
-for inclusion in their intermediate git branches in order to be sent to Linus during
-the next merge window, or sooner if it's a set of fixes.
+    Andrew
 
-In the cases of fixes, those will be merged in the current release candidate
-kernel and as soon they appear on the Linux master branch they will be
-backported to the previous Stable and Long-Stable kernels [2].
-
-The intermediate git branches are merged daily in the linux-next tree [3],
-people are encouraged testing these pre-release kernels and report issues on the
-relevant mailing-lists.
-
-If problems are discovered on those changes, please submit a signed-off-by revert
-patch followed by a corrective changeset.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-
--- 
-Neil
-
+---
+pw-bot: cr
 
