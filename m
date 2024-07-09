@@ -1,101 +1,117 @@
-Return-Path: <linux-kernel+bounces-246328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C1F92C083
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:38:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C07892C025
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:32:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D79061F210D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:38:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40B511F21EFD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848C21CF3E8;
-	Tue,  9 Jul 2024 16:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401301B5807;
+	Tue,  9 Jul 2024 16:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mrYE/ySk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fsryhlAU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C852F1A0713;
-	Tue,  9 Jul 2024 16:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812581B47C6;
+	Tue,  9 Jul 2024 16:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720542206; cv=none; b=kYYeJjviXjzOKWPpcuqHLozrJvfLlrPphuwBxlx2Xapug8eqyO0cnmCCiJOtQhawEutt+KafIv4iaCTqrzcxE6DsJRxsH2viiMA80PFYfQM5kzytkcmnehqth8HDq0FrOfkZtz8ERkl7fSA1xJ9SIoEpIeL+Q+p/ZFQdLbdTffI=
+	t=1720542116; cv=none; b=JcCSnbuIBtXg16cPl/3Cz6gtzif6amXLlXX25MQ1tHA/WKRiILvsuXET5/RMU+jteF3vGaFTZlU+0ozVPDACHhedEB+g1wIziQxoiQ+NbaKcdjDE5rYlNF7UNc90vPKMxanO0LiDZ2aVtPbCC/ArUq+KidRfttziuvVyYcJQ2iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720542206; c=relaxed/simple;
-	bh=OShLEkdTi2EvCSdk2rFvuaZhfFf72o7h9XN8W5BjG40=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PXO0AyQLCd1M2UawK+MzrJoO8N+OKqOhfXo71HgA2Mc6QAHOtQ7Dt0ZHqNKSxd4WeJF7TYRR1hvTb1yAYZ8HWxTnb8XZHUD8sxlXbMrojiGsaPV443n7a56s4OhUbrYCCIo6FChI6TRdad+mtvZM5Ix7PFG3pTF/Fu1aqLzG0Ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mrYE/ySk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54EBCC3277B;
-	Tue,  9 Jul 2024 16:23:24 +0000 (UTC)
+	s=arc-20240116; t=1720542116; c=relaxed/simple;
+	bh=9Gcw21XytUn5kvBs9uu7DBexRcY56exFFjtUr3t699k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LR2eBEqBvjNk0c+dC1+Kz12ijmRw0e4QItTij5nmZNmA8nsob2qlav+itKPXV3gMeroxHpcDSP2U1CY3s+kLEBxHsNr95aAOQ8PDeoGPvCRNuta8M40uSRMj9C9egWrN1g8IpTq2/v6uF/8s1EkNZ6m1sf9kSF6pkAS9D6bhyjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fsryhlAU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38363C32782;
+	Tue,  9 Jul 2024 16:21:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720542205;
-	bh=OShLEkdTi2EvCSdk2rFvuaZhfFf72o7h9XN8W5BjG40=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mrYE/ySk7oRHJGDIxT+StiaSz1+Oi0anXb9JgZcNTX3NbtjIdu1hBaeuBxjexChkk
-	 /UFA8hdXIegqhXcIYtFci0WTdraUY7l41VpYCuNagmiYS5NrvxdRZZD/yr/Kzq693E
-	 xHE7QnI9CBXkzBUa0tYs+89L0Z44ohVz+bf9zz27ZZunTB9nSXOpRtxnI8vr+cMnfT
-	 lMlI+3HKmOXUfvxzK977dWlcMPqmX2vr17FDiO7FrNR1yQrlYTe3P5A+QKZxLnmsZ9
-	 yG40SBSPvO6De0fawNH58tBg0qIZwIfF7Bm83LLI9+PfwA/o/akC/NEHCS6QGvlwma
-	 M7vkZXdBHyGHQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Sasha Levin <sashal@kernel.org>,
-	perex@perex.cz,
-	tiwai@suse.com,
-	pavel.hofman@ivitera.com,
-	dhowells@redhat.com,
-	cezary.rojewski@intel.com,
-	linux-sound@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 28/33] ALSA: PCM: Allow resume only for suspended streams
-Date: Tue,  9 Jul 2024 12:21:54 -0400
-Message-ID: <20240709162224.31148-28-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240709162224.31148-1-sashal@kernel.org>
-References: <20240709162224.31148-1-sashal@kernel.org>
+	s=k20201202; t=1720542116;
+	bh=9Gcw21XytUn5kvBs9uu7DBexRcY56exFFjtUr3t699k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=fsryhlAU8McMtVI0ObeJxYWgTWf3CZ+c3jtBxSQ0lvW4w31TM72q1Vra5slo085y6
+	 HyuwO6rW9GvZ+Qj9IDGSjAM7prFMNbVFZnN1vmYgtQZpKF501gayYCHQJ2Nbhi77C7
+	 rX1gOlqqiV4yzP6/WYRisT/NQGr2aWjBfM1/W8U6iTkPnbTI8wpZgA5A8eQjY++G31
+	 4AmqRBd3vEHOejCeHFBP66VWvPeF0jVFHuZrIELtYhp586/Txg3HgwDx6gDq4tAvl1
+	 dGdpvJ7nJoYWHoxcEuGmGfci23P6hXShiQHEwCWO33yXWK8LJ5aJ8R0MGJPdy5xTbE
+	 E4RrqgZ/8JGog==
+Date: Tue, 9 Jul 2024 11:21:54 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Stewart Hildebrand <stewart.hildebrand@amd.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/6] PCI: align small (<4k) BARs
+Message-ID: <20240709162154.GA175839@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.38
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709133610.1089420-7-stewart.hildebrand@amd.com>
 
-From: Takashi Iwai <tiwai@suse.de>
+On Tue, Jul 09, 2024 at 09:36:03AM -0400, Stewart Hildebrand wrote:
+> Issues observed when small (<4k) BARs are not 4k aligned are:
+> 
+> 1. Devices to be passed through (to e.g. a Xen HVM guest) with small
+> (<4k) BARs require each memory BAR to be page aligned. Currently, the
+> only way to guarantee this alignment from a user perspective is to fake
+> the size of the BARs using the pci=resource_alignment= option. This is a
+> bad user experience, and faking the BAR size is not always desirable.
+> See the comment in drivers/pci/pci.c:pci_request_resource_alignment()
+> for further discussion.
 
-[ Upstream commit 1225675ca74c746f09211528588e83b3def1ff6a ]
+Include the relevant part of this discussion directly here so this log
+is self-contained.  Someday that function will change, which will make
+this commit log less useful.
 
-snd_pcm_resume() should bail out if the stream isn't in a suspended
-state.  Otherwise it'd allow doubly resume.
-
-Link: https://patch.msgid.link/20240624125443.27808-1-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- sound/core/pcm_native.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
-index bd9ddf412b465..cc21c483c4a57 100644
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -1783,6 +1783,8 @@ static int snd_pcm_pre_resume(struct snd_pcm_substream *substream,
- 			      snd_pcm_state_t state)
- {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
-+	if (runtime->state != SNDRV_PCM_STATE_SUSPENDED)
-+		return -EBADFD;
- 	if (!(runtime->info & SNDRV_PCM_INFO_RESUME))
- 		return -ENOSYS;
- 	runtime->trigger_master = substream;
--- 
-2.43.0
-
+> 2. Devices with multiple small (<4k) BARs could have the MSI-X tables
+> located in one of its small (<4k) BARs. This may lead to the MSI-X
+> tables being mapped in the same 4k region as other data. The PCIe 6.1
+> specification (section 7.7.2 MSI-X Capability and Table Structure) says
+> we probably shouldn't do that.
+> 
+> To improve the user experience, and increase conformance to PCIe spec,
+> set the default minimum resource alignment of memory BARs to 4k. Choose
+> 4k (rather than PAGE_SIZE) for the alignment value in the common code,
+> since that is the value called out in the PCIe 6.1 spec, section 7.7.2.
+> The new default alignment may be overridden by arches by implementing
+> pcibios_default_alignment(), or by the user with the
+> pci=resource_alignment= option.
+> 
+> Signed-off-by: Stewart Hildebrand <stewart.hildebrand@amd.com>
+> ---
+> Preparatory patches in this series are prerequisites to this patch.
+> ---
+>  drivers/pci/pci.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 9f7894538334..e7b648304383 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -6453,7 +6453,12 @@ struct pci_dev __weak *pci_real_dma_dev(struct pci_dev *dev)
+>  
+>  resource_size_t __weak pcibios_default_alignment(void)
+>  {
+> -	return 0;
+> +	/*
+> +	 * Avoid MSI-X tables being mapped in the same 4k region as other data
+> +	 * according to PCIe 6.1 specification section 7.7.2 MSI-X Capability
+> +	 * and Table Structure.
+> +	 */
+> +	return 4 * 1024;
+>  }
+>  
+>  /*
+> -- 
+> 2.45.2
+> 
 
