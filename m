@@ -1,101 +1,96 @@
-Return-Path: <linux-kernel+bounces-245452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B58792B2AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:55:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C10A692B2B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE4BC280F24
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:55:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F33851C21A09
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9ACB15382F;
-	Tue,  9 Jul 2024 08:55:12 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0F415358A
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D21154430;
+	Tue,  9 Jul 2024 08:55:56 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDB014E2D9;
+	Tue,  9 Jul 2024 08:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720515312; cv=none; b=JAQ948i0q0lEMQegDoSEuvWtQAKj5J5utDXQMA3E+gUjjVYhID6Lz1lZDOAkviyEGRTR3NNLO9MhnSfpjB+uNkgtzWhN10O0e8GOXMk5zUZlTwvVNgba8MFqRqEeshfyBxLYiAZQz8n86XrV40H6HttM4a0AOUCocaFRgLgvYX8=
+	t=1720515356; cv=none; b=czrYWvoEYu30wlm9FNYCwhyntxoex8hr765WwBIkXssupByiE2KdaU2qFJjxswTHAwKsJ2wJ29Uu5eIKDt+KfixSa1JQnsYVt5SETy88XjV7XCDpeBuShXYQL7xmhsZjPs0MCx0zvkofMPU68T9F1wpHFV8bhGKYnXq0xXIgIJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720515312; c=relaxed/simple;
-	bh=2FYVMtmDzIZUKIJ+dabrFKImBJRSm71ljP7ZDyoecE0=;
+	s=arc-20240116; t=1720515356; c=relaxed/simple;
+	bh=oVjVFSnFCha3efjxmv3xh62Kiit5wNco299Vz9gRcDU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BGOx9e3AYyKHc65Oa8k6gVKcDql1tMXEIXG6uGrSzfol5zpFcy7dcTrm2y/7E3addwy+yDYZW1HGpZp7am7d5og6WrEFtmtx/abY+z2y2Bxf75y0OcDvVhGdiMgrdjPtjex6x4HqASdjyJWdL8xxCE7/X96pIqvt0Ls8ZkHGSck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sR6cj-0001sa-Fu; Tue, 09 Jul 2024 10:54:57 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sR6cg-008F2O-FK; Tue, 09 Jul 2024 10:54:54 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sR6cg-006TZB-1F;
-	Tue, 09 Jul 2024 10:54:54 +0200
-Date: Tue, 9 Jul 2024 10:54:54 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Horia Geanta <horia.geanta@nxp.com>,
-	Pankaj Gupta <pankaj.gupta@nxp.com>,
-	Gaurav Jain <gaurav.jain@nxp.com>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] crypto: caam - enable hash api only on ARM platforms per
- default
-Message-ID: <20240709085454.you3b3ueb3xbtrv6@pengutronix.de>
-References: <20240626155724.4045056-1-m.felsch@pengutronix.de>
- <258feb43-382d-4ea0-9164-357924350dec@nxp.com>
- <ZofSbH2Fu/xLnzif@gondor.apana.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=glgJBAlTIubOzzc7MmlpERUE1n1X+4bzwXkph31wYN2XaTBN8Fnmysf3QzuDhXITm0yQvhbWakR1obJop5u0MZv3thRHxSbbYBG0hBfUXH0dIV5DYjDJxV/GL/i1DMKlsoRZr61s4KZukaxTQq9vgPQUGqqk5jRfnJRO38mLpP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1sR6dK-0000Pq-00; Tue, 09 Jul 2024 10:55:34 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id C567EC0411; Tue,  9 Jul 2024 10:55:21 +0200 (CEST)
+Date: Tue, 9 Jul 2024 10:55:21 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+	Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <philmd@linaro.org>
+Subject: Re: [PATCH v3] MIPS: Implement ieee754 NAN2008 emulation mode
+Message-ID: <Zoz6+YmUk7CBsNFw@alpha.franken.de>
+References: <20240612-mips_ieee754_emul-v3-1-2c21b450abdb@flygoat.com>
+ <Zn1FuxNw2CUttzdg@alpha.franken.de>
+ <9cc26415-9cbc-47fa-a132-7d8c000874a4@app.fastmail.com>
+ <alpine.DEB.2.21.2406272053180.43454@angie.orcam.me.uk>
+ <fbd421a6-cf37-49ab-bdbe-6128a7cae8be@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZofSbH2Fu/xLnzif@gondor.apana.org.au>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fbd421a6-cf37-49ab-bdbe-6128a7cae8be@app.fastmail.com>
 
-On 24-07-05, Herbert Xu wrote:
-> On Fri, Jul 05, 2024 at 09:39:19AM +0000, Horia Geanta wrote:
+On Fri, Jun 28, 2024 at 01:33:06AM +0100, Jiaxun Yang wrote:
+> 
+> 
+> 在2024年6月27日六月 下午8:54，Maciej W. Rozycki写道：
+> > On Thu, 27 Jun 2024, Jiaxun Yang wrote:
 > >
-> > I disagree with compiling out the hash support.
-
-We don't compile it out, we just don't set the default=y since on ARMv8
-it's not required.
-
-> > If needed, algorithm priority could be changed - even at runtime,
-> > using NETLINK_CRYPTO messages (needs CONFIG_CRYPTO_USER=y/m).
+> >> >> @@ -318,6 +318,10 @@ void mips_set_personality_nan(struct arch_elf_state *state)
+> >> >>  	t->thread.fpu.fcr31 = c->fpu_csr31;
+> >> >>  	switch (state->nan_2008) {
+> >> >>  	case 0:
+> >> >> +		if (!(c->fpu_msk31 & FPU_CSR_NAN2008))
+> >> >> +			t->thread.fpu.fcr31 &= ~FPU_CSR_NAN2008;
+> >> >> +		if (!(c->fpu_msk31 & FPU_CSR_ABS2008))
+> >> >> +			t->thread.fpu.fcr31 &= ~FPU_CSR_ABS2008;
+> >> >
+> >> > why is this needed?
+> >> 
+> >> Because t->thread.fpu.fcr31 comes from c->fpu_csr31, in this case we the default
+> >> value of c->fpu_csr31 is read from hardware and we don't know what would that be.
+> >
+> >  But it has always been like this.  What has changed with your patch that 
+> > you need to mask the bit out now?
 > 
-> We should change the default priority.
-
-We had an patch exactly doing this but depending on the SoC the default
-prio may valid since the CAAM is used on ARMv7 and ARMv8 NXP SoCs. To
-not cause any regression we went this way.
-
-Regards,
-  Marco
-
+> After this patch kernel's copy of t->thread.fpu.fcr31 can disagree with hardware.
+> When disagree happens, we trigger emulation.
 > 
-> Thanks,
-> -- 
-> Email: Herbert Xu <herbert@gondor.apana.org.au>
-> Home Page: http://gondor.apana.org.au/~herbert/
-> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
-> 
+> Before that patch for nan legacy binary running on nan2008 CPU t->thread.fpu.fcr31
+> will still be nan2008 (for ieee754=relaxed) so that's not relevant.
+
+I'm considering to apply your patch, how much testing/verification did
+this patch see ? Do have some test binaries ?
+
+Thomas.
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
