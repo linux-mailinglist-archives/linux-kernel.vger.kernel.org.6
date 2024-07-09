@@ -1,228 +1,291 @@
-Return-Path: <linux-kernel+bounces-245004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7862892ACE8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:06:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8E8192ACE0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB4D2820B5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:06:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C8FF1F220D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02C6A21;
-	Tue,  9 Jul 2024 00:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E31A47;
+	Tue,  9 Jul 2024 00:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GiRuXzm0"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PqNQkIse"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434A7382;
-	Tue,  9 Jul 2024 00:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F8617C;
+	Tue,  9 Jul 2024 00:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720483575; cv=none; b=HrXlMC8o2PHyWjSfxixytb4F7u+QogfgMAYk1w4Ichl8G4Bu/nWV+Wda5LHVKLCQOYoCzwQPB9vCwJqMDIp/Ylp3yaWcUsntY0/UaXTn3h/uv4j+YCUwdIPvisUrvuN1giPiZa6r196Q4fJSLjRqfCoRVkjfRekyUzNqqH4UNhs=
+	t=1720483481; cv=none; b=drQPfYBAq0/rW8nzhmzv/0HH6uGnkqRgDEG5osquAyWRhtT5NlTeS0mtxJ6DVeAtNBNxAiXXC6z7AKwI8DG/lPu3bVaQNc1x6/U9JpVrmJPfmBs89ZG895nDUmMD3hRLvPLdEXMmswdbljTTC7Tr+I0Bo9BefVTfFKD7GK8pXg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720483575; c=relaxed/simple;
-	bh=R9um6fVugVQts5vQq8DrMeOdp7Wyg3dhnpXhSlOimME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NsgvcLnnUok6h9YToP+n/sm8D1swtkWmBQCfWnUOWSdmtthqpbccHaM9Cx2nE2hx4uIO/Tjm0E8WFUVt3oce5OHGoyqANkSL3KeXWHOXcZ4Y59eDHtyyP5L4P5PxBVbLO5jgmXrSWQK7/3Iy2WQ/Y8z7Rl5UM7invFJMVJTotZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GiRuXzm0; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-79eff7b0524so182465185a.1;
-        Mon, 08 Jul 2024 17:06:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720483573; x=1721088373; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=f4s9dyAk9gA4Urs+HScnWn9QMDcTw0a4uUhZubvcwsU=;
-        b=GiRuXzm0rgBjLs/gwtdfj4K0dyGkFdC+ZmdFkBhct5AMBsZVhL1pinIuxhz8yqn+yZ
-         dJNSPvyE63midx2O7isYIrXJl87UnVzcI/6HvII+QCR/wEevjk9s0v8CItGcS2kssFEm
-         KyHt2LCOpsfybQPycvMWv1trpahaoQxPXReElsD2pBGDjhXoy4aA2+KiMHb8uq35Nkzm
-         l1ErLaccLC6vgbnPDMDcLHRr6hGR7rGaJpmn6KeXD1qjGFB4pmi2tIDnng0z13VTeJc0
-         KJOMMNLAJaltIspyqaHtUkJ70Xfl818kacR5grlw84Kbmg1Cwg3kqQq2V9pXYTeOzw/9
-         8oCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720483573; x=1721088373;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f4s9dyAk9gA4Urs+HScnWn9QMDcTw0a4uUhZubvcwsU=;
-        b=WGsKAvOc+K2TqXYRaOwFbVjCFJ0stRIvFIvdTKBzc8LvdNyipJFx/CrAUrYeNduvca
-         jWG0N8W+MG4Iiq46nOojy3lmHws7RpeDjXx/ttgCQRmit7bTGEuQ2OLQGVU+mDQ9Bvkb
-         RbqJvjRcGMmu5nq858x6Eb6ALD1mwqLMyDAN6LwTEycFLH35+ZYfYqjaUvxJTqjl61yt
-         jyE0u+Dqh9Xrkp4lPfgqI0CdkAIUniqcbBGvxdAoYMiJe8sAqpUqaC1TZRnX/93XuWkC
-         eXou2cO6otL5k4zmcxxLs7sn5oqbQSXLr9lYaQxC9eoGoCcRbItQpm0HCe40P5GhbeuX
-         LnKg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4yaFrtdEYXSTlUVMTLDRADNSxelq4rSDt76fPHDsCr40+WojamPzc034NEIlmnk0c2VgAgdxss2cTbsva+OTP0CgB4lWYIN6XEQ==
-X-Gm-Message-State: AOJu0YwBLBofBuFWLu8Sl61aO78DoXUex5AXc5WhpRLBukShKkLxiMgI
-	epAv6LXIy/2zLPUgM646NH1oSCRpE0jY3lOOWh8r/KIyzlhjcWcp
-X-Google-Smtp-Source: AGHT+IF5mu5L0izgHwLELDIslDTOMrKUlc5OuXKYSMGIiKjD64e2aY13s7xCYeXiG8epwaEvQspb0g==
-X-Received: by 2002:a05:620a:21c5:b0:79e:f9f4:3e99 with SMTP id af79cd13be357-79f1b566e2bmr121510885a.1.1720483573078;
-        Mon, 08 Jul 2024 17:06:13 -0700 (PDT)
-Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f1908959esm40437785a.77.2024.07.08.17.06.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 17:06:12 -0700 (PDT)
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id CDA2E1200071;
-	Mon,  8 Jul 2024 19:56:56 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Mon, 08 Jul 2024 19:56:56 -0400
-X-ME-Sender: <xms:x3yMZjhQqPvOgpJBZym5Q42-1aZI-svnGbzjFpBmItkmLso-DV3ZMg>
-    <xme:x3yMZgCUUiqAWYZ62R_fBQ-Cj_r93bjYLxHA71TpOEhIkLZvaLOZ5yCCOWfoHWoNl
-    bzbYBP7E2bT-s8SeQ>
-X-ME-Received: <xmr:x3yMZjFcgZ3eaNFHHjHzsnhNj1pbyTGWx5gvZ_QU6BVXR2-i5WY2S4s0B8Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekgddvkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpedtvdffjeekheelieeggeekleeiuefhffegfeeiieetffdvtdeltdelhffh
-    jeekteenucffohhmrghinhepshihiihkrghllhgvrhdrrghpphhsphhothdrtghomhdpkh
-    gvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
-    lhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqie
-    elvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdr
-    tghomhesfhhigihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:x3yMZgSz9wifKmGioWlCZQWeHZOp8kWFclktk7A-6CWxuysNdaInwA>
-    <xmx:x3yMZgyVQBjFtgGeocvbmFNputYvTgUyXLokVKW8v9W_j32OgENnrQ>
-    <xmx:x3yMZm7aXqlfzx0_9q3LkDRqVAwrxw6wma7exGkenvkKT8AN60K7NA>
-    <xmx:x3yMZlxmp4nIoRMAI40O25LsYB_s-lOG_Gkjk4ZIYX1AWh0Wkig-WQ>
-    <xmx:yHyMZggKvi9iC1rhTMCMQgx_1psuVvpK1XFizSIwvqvSfHHEnmkFQTRK>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 8 Jul 2024 19:56:55 -0400 (EDT)
-Date: Mon, 8 Jul 2024 16:55:38 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: ahmed Ehab <bottaawesome633@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, linux-ext4@vger.kernel.org,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	syzkaller@googlegroups.com, "Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH] Forcing subclasses to have same name pointer as their
- parent class
-Message-ID: <Zox8ep23zUSzbFMZ@boqun-archlinux>
-References: <20240704003224.22832-1-bottaawesome633@gmail.com>
- <ZoXUgdUkD-GtKfKJ@boqun-archlinux>
- <CA+6bSasi4W8zEXu+gqGnpvJpFg0EDeW7fwnFMCqYeFH0hcCGag@mail.gmail.com>
+	s=arc-20240116; t=1720483481; c=relaxed/simple;
+	bh=qRxTCthB31Syc+yE1yuxaWwHeCheaNQ8QawquA37cTg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=kEhQRSjCjpbhlJh23Clvsz7qVSzVLvHu+NvAHKTRtQmhprh5iMZ1TW9G/hhmElcDWDSCwhop+UtuQeh9HymQEFJSe0YHNI6sroMGEI4zzw8ovWRHZ4rCYc3S0FCmm+bSzPtcb7RUbSEy38wHO6U18pi17Qsf+YKwlcIMbzLbmlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PqNQkIse; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11DD7C3277B;
+	Tue,  9 Jul 2024 00:04:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720483481;
+	bh=qRxTCthB31Syc+yE1yuxaWwHeCheaNQ8QawquA37cTg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PqNQkIsewtM9Zz5i2p0ct3WQFagEz3Cp16Eg505e7DOIQdX10ecpFyZj+tZT7vKTf
+	 DsAOufKGqHqZ/3iKwKNLI2nsv9EIF3e2cGg8f/m3c8g5I1fJZ9osEu4fRrdQrD/p+M
+	 4EVA2mqd2ooWPRQgfKhJ2yVsRNDozjzImR/hGGBRhKcgXkJ4uwf9wnlEIAZAMKzFIw
+	 7HIbNsJrhT8H1iMGDWYv2AiwD7EQRZQ3JvDZwU7zW3aRmP7I/ciPx8iAUtk2TUaPY5
+	 Yo1HIwMPN/8puLlpL4modRyWBF28b0TUEfY3mN0/sCp91QwUghGLaJh93aJBz9WehE
+	 UXfYKsK/VKVtg==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>,
+	Linux trace kernel <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Francis Laniel <flaniel@linux.microsoft.com>,
+	Nikolay Kuratov <kniv@yandex-team.ru>,
+	bpf@vger.kernel.org
+Subject: [PATCH for-next v4] tracing/kprobes: Add symbol counting check when module loads
+Date: Tue,  9 Jul 2024 09:04:36 +0900
+Message-Id: <172048347679.185217.9457864992619792356.stgit@devnote2>
+X-Mailer: git-send-email 2.34.1
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+6bSasi4W8zEXu+gqGnpvJpFg0EDeW7fwnFMCqYeFH0hcCGag@mail.gmail.com>
 
-On Tue, Jul 09, 2024 at 02:26:05AM +0300, ahmed Ehab wrote:
-> Hi,
->  thanks for the great feedback.
-> 
-> 
-> 
-> 
-> * Last but not the least, could you try to add a test case in
-> lib/locking-selftest.c to ensure the issue you fixed won't        happen
-> again? This could be tricky, since you will need to fight        against
-> the compiler to generate two string literals with the        same content.*
-> I added a test case, but I am not sure how to run this test file as it
-> doesn't seem to be part of the kselftests. I compiled it successfully by
-> setting the lock debugging option but couldn't get it to run.
-> 
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-My usual approach is: set CONFIG_DEBUG_LOCKING_API_SELFTESTS=y, compile
-a kernel, and boot it in qemu, the test result will show in serial log
-of the VM. Hope that helps.
+Currently, kprobe event checks whether the target symbol name is unique
+or not, so that it does not put a probe on an unexpected place. But this
+skips the check if the target is on a module because the module may not
+be loaded.
 
-Regards,
-Boqun
+To fix this issue, this patch checks the number of probe target symbols
+in a target module when the module is loaded. If the probe is not on the
+unique name symbols in the module, it will be rejected at that point.
 
-> Regards,
-> Ahmed
-> 
-> On Thu, Jul 4, 2024 at 1:46 AM Boqun Feng <boqun.feng@gmail.com> wrote:
-> 
-> > Hi,
-> >
-> > On Thu, Jul 04, 2024 at 03:32:24AM +0300, botta633 wrote:
-> > > Preventing Lockdep_set_subclass from creating a new instance of the
-> > > string literal. Hence, we will always have the class->name. This
-> > > prevents kernel panics when locking up a lock class while comparing
-> > > class locks and class names.
-> >
-> > Good catch! Thanks.
-> >
-> > >
-> > >
-> >
-> > Please remove the extra blank line here.
-> >
-> > > Signed-off-by: botta633 <bottaawesome633@gmail.com>
-> >
-> > Do you mind putting your real name here? Besides, IIUC, this is fixing:
-> >
-> >         https://syzkaller.appspot.com/bug?extid=7f4a6f7f7051474e40ad
-> >
-> >
-> > , right? If so, there are some more things:
-> >
-> > *       Copy ext4 and syzkaller people, so that you could get more
-> >         tests.
-> >
-> > *       Since this is a bug fix, could you please figure out which
-> >         commit introduces the issue, so that you can put a correct
-> >         "Fixes:" tag along with your signed-off-by?
-> >
-> > *       Since the issue was reported by syzkaller, you should put their
-> >         "Reported-by" tag, they have an example in the website I paste
-> >         above.
-> >
-> > *       Please also Cc stable mail list so that the fix can be
-> >         backported, you can find the information on "Cc: stable" tag at:
-> >
-> >                 https://docs.kernel.org/process/stable-kernel-rules.html
-> >
-> > *       Last but not the least, could you try to add a test case in
-> >         lib/locking-selftest.c to ensure the issue you fixed won't
-> >         happen again? This could be tricky, since you will need to fight
-> >         against the compiler to generate two string literals with the
-> >         same content.
-> >
-> > [Cc ext4 and syzkaller]
-> >
-> > Regards,
-> > Boqun
-> >
-> > > ---
-> > >  include/linux/lockdep.h | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-> > > index 08b0d1d9d78b..df8fa5929de7 100644
-> > > --- a/include/linux/lockdep.h
-> > > +++ b/include/linux/lockdep.h
-> > > @@ -173,7 +173,7 @@ static inline void lockdep_init_map(struct
-> > lockdep_map *lock, const char *name,
-> > >                             (lock)->dep_map.lock_type)
-> > >
-> > >  #define lockdep_set_subclass(lock, sub)
-> >       \
-> > > -     lockdep_init_map_type(&(lock)->dep_map, #lock,
-> > (lock)->dep_map.key, sub,\
-> > > +     lockdep_init_map_type(&(lock)->dep_map, (lock)->dep_map.name,
-> > (lock)->dep_map.key, sub,\
-> > >                             (lock)->dep_map.wait_type_inner,          \
-> > >                             (lock)->dep_map.wait_type_outer,          \
-> > >                             (lock)->dep_map.lock_type)
-> > > --
-> > > 2.45.2
-> > >
-> >
+Note that the symbol which has a unique name in the target module,
+it will be accepted even if there are same-name symbols in the
+kernel or other modules,
+
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+---
+ Changes in v4:
+  - Hide find_module() in try_module_get_by_name().
+  - Add bpf ML.
+ Changes in v3:
+  - Update the patch description.
+  - Update for latest probe/for-next
+ Updated from last October post, which was dropped by test failure:
+    https://lore.kernel.org/linux-trace-kernel/169854904604.132316.12500381416261460174.stgit@devnote2/
+ Changes in v2:
+  - Fix to skip checking uniqueness if the target module is not loaded.
+  - Fix register_module_trace_kprobe() to pass correct symbol name.
+  - Fix to call __register_trace_kprobe() from module callback.
+---
+ kernel/trace/trace_kprobe.c |  138 +++++++++++++++++++++++++++++--------------
+ 1 file changed, 94 insertions(+), 44 deletions(-)
+
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 7fd0f8576e4c..61a6da808203 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -678,6 +678,21 @@ static int register_trace_kprobe(struct trace_kprobe *tk)
+ }
+ 
+ #ifdef CONFIG_MODULES
++static int validate_module_probe_symbol(const char *modname, const char *symbol);
++
++static int register_module_trace_kprobe(struct module *mod, struct trace_kprobe *tk)
++{
++	const char *p;
++	int ret = 0;
++
++	p = strchr(trace_kprobe_symbol(tk), ':');
++	if (p)
++		ret = validate_module_probe_symbol(module_name(mod), p + 1);
++	if (!ret)
++		ret = __register_trace_kprobe(tk);
++	return ret;
++}
++
+ /* Module notifier call back, checking event on the module */
+ static int trace_kprobe_module_callback(struct notifier_block *nb,
+ 				       unsigned long val, void *data)
+@@ -696,7 +711,7 @@ static int trace_kprobe_module_callback(struct notifier_block *nb,
+ 		if (trace_kprobe_within_module(tk, mod)) {
+ 			/* Don't need to check busy - this should have gone. */
+ 			__unregister_trace_kprobe(tk);
+-			ret = __register_trace_kprobe(tk);
++			ret = register_module_trace_kprobe(mod, tk);
+ 			if (ret)
+ 				pr_warn("Failed to re-register probe %s on %s: %d\n",
+ 					trace_probe_name(&tk->tp),
+@@ -747,17 +762,81 @@ static int count_mod_symbols(void *data, const char *name, unsigned long unused)
+ 	return 0;
+ }
+ 
+-static unsigned int number_of_same_symbols(char *func_name)
++static unsigned int number_of_same_symbols(const char *mod, const char *func_name)
+ {
+ 	struct sym_count_ctx ctx = { .count = 0, .name = func_name };
+ 
+-	kallsyms_on_each_match_symbol(count_symbols, func_name, &ctx.count);
++	if (!mod)
++		kallsyms_on_each_match_symbol(count_symbols, func_name, &ctx.count);
+ 
+-	module_kallsyms_on_each_symbol(NULL, count_mod_symbols, &ctx);
++	module_kallsyms_on_each_symbol(mod, count_mod_symbols, &ctx);
+ 
+ 	return ctx.count;
+ }
+ 
++static int validate_module_probe_symbol(const char *modname, const char *symbol)
++{
++	unsigned int count = number_of_same_symbols(modname, symbol);
++
++	if (count > 1) {
++		/*
++		 * Users should use ADDR to remove the ambiguity of
++		 * using KSYM only.
++		 */
++		return -EADDRNOTAVAIL;
++	} else if (count == 0) {
++		/*
++		 * We can return ENOENT earlier than when register the
++		 * kprobe.
++		 */
++		return -ENOENT;
++	}
++	return 0;
++}
++
++#ifdef CONFIG_MODULES
++/* Return NULL if the module is not loaded or under unloading. */
++static struct module *try_module_get_by_name(const char *name)
++{
++	struct module *mod;
++
++	rcu_read_lock_sched();
++	mod = find_module(name);
++	if (mod && !try_module_get(mod))
++		mod = NULL;
++	rcu_read_unlock_sched();
++
++	return mod;
++}
++#else
++#define try_module_get_by_name(name)	(NULL)
++#endif
++
++static int validate_probe_symbol(char *symbol)
++{
++	struct module *mod = NULL;
++	char *modname = NULL, *p;
++	int ret = 0;
++
++	p = strchr(symbol, ':');
++	if (p) {
++		modname = symbol;
++		symbol = p + 1;
++		*p = '\0';
++		mod = try_module_get_by_name(modname);
++		if (!mod)
++			goto out;
++	}
++
++	ret = validate_module_probe_symbol(modname, symbol);
++out:
++	if (p)
++		*p = ':';
++	if (mod)
++		module_put(mod);
++	return ret;
++}
++
+ static int trace_kprobe_entry_handler(struct kretprobe_instance *ri,
+ 				      struct pt_regs *regs);
+ 
+@@ -881,6 +960,14 @@ static int __trace_kprobe_create(int argc, const char *argv[])
+ 			trace_probe_log_err(0, BAD_PROBE_ADDR);
+ 			goto parse_error;
+ 		}
++		ret = validate_probe_symbol(symbol);
++		if (ret) {
++			if (ret == -EADDRNOTAVAIL)
++				trace_probe_log_err(0, NON_UNIQ_SYMBOL);
++			else
++				trace_probe_log_err(0, BAD_PROBE_ADDR);
++			goto parse_error;
++		}
+ 		if (is_return)
+ 			ctx.flags |= TPARG_FL_RETURN;
+ 		ret = kprobe_on_func_entry(NULL, symbol, offset);
+@@ -893,31 +980,6 @@ static int __trace_kprobe_create(int argc, const char *argv[])
+ 		}
+ 	}
+ 
+-	if (symbol && !strchr(symbol, ':')) {
+-		unsigned int count;
+-
+-		count = number_of_same_symbols(symbol);
+-		if (count > 1) {
+-			/*
+-			 * Users should use ADDR to remove the ambiguity of
+-			 * using KSYM only.
+-			 */
+-			trace_probe_log_err(0, NON_UNIQ_SYMBOL);
+-			ret = -EADDRNOTAVAIL;
+-
+-			goto error;
+-		} else if (count == 0) {
+-			/*
+-			 * We can return ENOENT earlier than when register the
+-			 * kprobe.
+-			 */
+-			trace_probe_log_err(0, BAD_PROBE_ADDR);
+-			ret = -ENOENT;
+-
+-			goto error;
+-		}
+-	}
+-
+ 	trace_probe_log_set_index(0);
+ 	if (event) {
+ 		ret = traceprobe_parse_event_name(&event, &group, gbuf,
+@@ -1835,21 +1897,9 @@ create_local_trace_kprobe(char *func, void *addr, unsigned long offs,
+ 	char *event;
+ 
+ 	if (func) {
+-		unsigned int count;
+-
+-		count = number_of_same_symbols(func);
+-		if (count > 1)
+-			/*
+-			 * Users should use addr to remove the ambiguity of
+-			 * using func only.
+-			 */
+-			return ERR_PTR(-EADDRNOTAVAIL);
+-		else if (count == 0)
+-			/*
+-			 * We can return ENOENT earlier than when register the
+-			 * kprobe.
+-			 */
+-			return ERR_PTR(-ENOENT);
++		ret = validate_probe_symbol(func);
++		if (ret)
++			return ERR_PTR(ret);
+ 	}
+ 
+ 	/*
+
 
