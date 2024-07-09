@@ -1,230 +1,1526 @@
-Return-Path: <linux-kernel+bounces-246139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFEDA92BE12
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:19:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A141F92BE0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:18:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49229B24843
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:17:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C795289280
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBCB187356;
-	Tue,  9 Jul 2024 15:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFED19D079;
+	Tue,  9 Jul 2024 15:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0hKce5KB"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iQml/K/g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AC415AD90
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC5615AD90;
+	Tue,  9 Jul 2024 15:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720538245; cv=none; b=oFoTRWobDzZNs507p0FWE41vqlCDjQLKExKpo4T5DFOJ3AiV7Pmn0sLzdtVUeRSjKUWBtnmEQnukFGSBnH3baqBGd9WVBYYCmfhCdaXkudhFGQ+g9/2oIkK7kaqp1uSyyD+z34mHRTJmOu0YWiryWuBPtu3p3Xjy5X/pLMsxjiU=
+	t=1720538283; cv=none; b=i9i/5LtlhSA554Ed6WGtGeRsO8BwvzcLL4hORC8Ib5imQ6DsIGZ7Apyb5ahILfXfjZw1NgHYG7jFEKPVmuS33P/jOS0WE7H8TTBf1fy89hTVZTp3v6GrwUjgp1QF51e9kVyruLR+FN+t/C9eQQINHmKjKJpRTFuihTd9BM3WU3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720538245; c=relaxed/simple;
-	bh=BCey8AjMDfbjzwQFHrvi0uMaH8wJW0n3OaUZ9Y71v7o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HU2grtqQ5sRJSBdFwPLc08J5yjkLMq0/r9CP93StlwcvldEF9mvLuiTTFh+32WN9p6D9qx5Ow5Cu3FCXBsP99UnDb6KeYK3U+mxjOg9MNDDFaf+Hjw5jkFUMPhuP5sxzelDS0eOoTIM6fnE7ZlnBmkaEGgLzGbaFpGQJDitwUh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0hKce5KB; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-36796a9b636so3615769f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 08:17:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720538240; x=1721143040; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mErFL1epJxVxgpYVvgXNP62u9HODdDh0QCDRMnvCKHU=;
-        b=0hKce5KBpXqqazhQiTig7wbHvtDGHc/2Bdr/7sYrifPQBDjwIDLcEvnYZWYGCAqCLa
-         u7DOdzJuas9g+v2MaBbgKMBG68uBjKjQm/pNANRlz2blKEJfKsowsY8EV7XzTPnYwO3A
-         PiKSDUJie82NDr0JOeHRxainWs/XhpsIGgVtLNCJPj0Lhuxl7oLPMqcCwLzjvOgHlwz1
-         VDOjfE1pN12sofDRKWHTnwWFIbKmAWG4uinHogqO4JdWYXUenvkkF9NVjoWzkQlBe/pN
-         XWctHiIcZxsBdIJf0KuMzovOGsi/3aSSZ3g+6BITjh7A6BxO9Hq6LU3ctWvKWO3O9kJ0
-         9Bfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720538240; x=1721143040;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mErFL1epJxVxgpYVvgXNP62u9HODdDh0QCDRMnvCKHU=;
-        b=RrKdzAuCepzytjLEYhzEd8CFvdL52Nh4AzBYUhgmVMTy1VtYS1W6HcV6Sg9zeXERXY
-         Ju2hFF4iBIeyQyG/GcaZfvPdq+OtbFJ2+7t74Z9l3UmRUnXXK9wA60GWQG5Ar3G90VRA
-         bPaRf5dyxPDHTwpvJ9+N1YrMq6X4yD/ojx3K4Y8NpFMqVRKuZNbYEG0RzHKflsbeGYXv
-         PAXsUUsmZF5iy+LFbeFXr+YHPfLZwD050lncpgI181hUKW/ZIZbFEG1yKF2wjsqaKgl+
-         TDwAydCzProJfODj9cQks3ujFezDXm88VZ+jircZ3MODnxpHVbodzXbyuEFcZi3+cX17
-         mmhA==
-X-Forwarded-Encrypted: i=1; AJvYcCWz2ksg5gtu+uxc2MNekf32BiI5Oih0KUwhVyCEywEZbb/sjPXl35gNkH3Fa8on7O72I4fWvdEDXRUg7XzPbsrGB9WSBn8h1lyISvYS
-X-Gm-Message-State: AOJu0Yx2kTuiexRItkepkooZ2WOP3uKxgatEznF39FK+zuoYObzNko/p
-	nwF6qNpNtssrNy/Uj7ElW44mW8l5/KTsf1Z9PHQLqgOV+nb4e3ncEDEmdJypBvc=
-X-Google-Smtp-Source: AGHT+IGO8IFelHe4URymH4IAhQMKvxoHwu0bXEJPBXJYAOlwVaTPiFX9+Pdz/EPx7ZEpXu27qHvcuw==
-X-Received: by 2002:adf:fbcb:0:b0:366:eb61:b45 with SMTP id ffacd0b85a97d-367cea46c00mr1914596f8f.1.1720538240165;
-        Tue, 09 Jul 2024 08:17:20 -0700 (PDT)
-Received: from [192.168.1.61] ([2a02:842a:d52e:6101:6f8f:5617:c4b6:8627])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde890f6sm2827768f8f.53.2024.07.09.08.17.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 08:17:19 -0700 (PDT)
-From: Julien Stephan <jstephan@baylibre.com>
-Date: Tue, 09 Jul 2024 17:16:46 +0200
-Subject: [PATCH] docs: iio: new docs for ad7380 driver
+	s=arc-20240116; t=1720538283; c=relaxed/simple;
+	bh=Io+8vyw9HhoV2r2oZ+MqDgh7RjS7IfBO6mvrbxO5lIE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j9vFoZA35apZUfQDqkGkiOkO6rfM+qMwG8ZaIQ/jIDAGTUGe2qWRpTaozrGjzh/6U6tpkK9EUd6tHpDyBIed5IpFsRUMJ9lR31JpPVNZd6i3IzwyYPVtuitCKwlPgNV0sCufRDt6pnunJDvTXHw7JhFm52UQa1waL/tB+pg+quU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iQml/K/g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AE33C3277B;
+	Tue,  9 Jul 2024 15:18:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720538283;
+	bh=Io+8vyw9HhoV2r2oZ+MqDgh7RjS7IfBO6mvrbxO5lIE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iQml/K/gOBEVe9c8wAwlG6pfDKgW0JSYKDGolVBoL7dZi+xSjEbfmdCbTj0TqGaNu
+	 2KhN/J62MRjlByFMT4vxCHC9FpAhbgZ1BJPMXwcKodHd2QQnUgTp7WA6t93s5wEqIG
+	 phI+EfPkasSxI7az7yx10AeeLRsGF/JS2/3exmtYrMW97XvQBc67+PHlW9XR+seKlu
+	 MFCeS5xwUetE72SO9mawTRjVQl7X6pSaUhuyjbc2pEWqO2xJ23csei6rA7+5ajFqGk
+	 N3Kvg9aTsnRwC7W5iCnj59T1VOYeJdTrrJD2DfJZ74d7RFBVBUnP3IpakMwFgLtqJO
+	 VC16ixwyV6QJA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Saravana Kannan <saravanak@google.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] scripts/dtc: Update to upstream version v1.7.0-93-g1df7b047fe43
+Date: Tue,  9 Jul 2024 09:17:43 -0600
+Message-ID: <20240709151748.3390282-1-robh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240709-ad7380-add-docs-v1-1-458ced3dfcc5@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAF1UjWYC/x2MQQqAIBAAvxJ7TjCztL4SHcTdai8aChGIf086D
- XOYKZApMWVYuwKJHs4cQ5Oh78BfLpwkGJuDkkpLI61waEYrG1Bg9Flo5Ra1zDR5HKFVd6KD3/+
- 47bV+qC5xiWEAAAA=
-To: Michael Hennerich <michael.hennerich@analog.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-iio@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Julien Stephan <jstephan@baylibre.com>
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
 
-This adds a new page to document how to use the ad7380 ADC driver.
+This adds the following commits from upstream:
 
-Credit: this docs is based on ad7944 docs.
+1df7b047fe43 pylibfdt/Makefile.pylibfdt: use project's flags to compile the extension
+61e88fdcec52 libfdt: overlay: Fix phandle overwrite check for new subtrees
+49d30894466e meson: fix installation with meson-python
+d54aaf93673c pylibfdt: clean up python build directory
+ab86f1e9fda8 pylibfdt: add VERSION.txt to Python sdist
+7b8a30eceabe pylibfdt: fix Python version
+ff4f17eb5865 pylibfdt/Makefile.pylibfdt: fix Python library being rebuild during install
+9e313b14e684 pylibfdt/meson.build: fix Python library being rebuilt during install
+d598fc3648ec tests/run_tests.sh: fix Meson library path being dropped
+b98239da2f18 tests/meson.build: fix python and yaml tests not running
+c17d76ab5e84 checks: Check the overall length of "interrupt-map"
+ae26223a056e libfdt: overlay: Refactor overlay_fixup_phandle
+4dd831affd01 libfdt: tests: Update test case for overlay_bad_fixup
+e6d294200837 tests: Remove two_roots and named_root from LIBTREE_TESTS_L and add all dtb filenames generated by dumptrees to TESTS_TREES_L in Makefile.tests
+855c934e26ae tests: fix tests broken under Meson
+4fd3f4f0a95d github: enforce testing pylibfdt and yaml support
+9ca7d62dbf0b meson: split run-tests by type
+bb51223083a4 meson: fix dependencies of tests
+e81900635c95 meson: fix pylibfdt missing dependency on libfdt
+822123856980 pylibfdt: fix get_mem_rsv for newer Python versions
+1fad065080e6 libfdt: overlay: ensure that existing phandles are not overwritten
+b0aacd0a7735 github: add windows/msys CI build
+ae97d9745862 github: Don't accidentally suppress test errors
+057a7dbbb777 github: Display meson test logs on failure
+92b5d4e91678 pylibfdt: Remove some apparently deprecated options from setup.py
+417e3299dbd1 github: Update to newer checkout action
+5e6cefa17e2d fix MinGW format attribute
+24f60011fd43 libfdt: Simplify adjustment of values for local fixups
+da39ee0e68b6 libfdt: rework shared/static libraries
+a669223f7a60 Makefile: do not hardcode the `install` program path
+3fbfdd08afd2 libfdt: fix duplicate meson target
+dcef5f834ea3 tests: use correct pkg-config when cross compiling
+0b8026ff254f meson: allow building from shallow clones
+95c74d71f090 treesource: Restore string list output when no type markers
+2283dd78eff5 libfdt: fdt_path_offset_namelen: Reject empty path
+79b9e326a162 libfdt: fdt_get_alias_namelen: Validate aliases
+52157f13ef3d pylibfdt: Support boolean properties
+d77433727566 dtc: fix missing string in usage_opts_help
+ad8bf9f9aa39 libfdt: Fix fdt_appendprop_addrrange documentation
+6c5e189fb952 github: add workflow for Meson builds
+a3dc9f006a78 libfdt: rename libfdt-X.Y.Z.so to libfdt.so.X.Y.Z
+35019949c4c7 workflows: build: remove setuptools_scm hack
+cd3e2304f4a9 pylibfdt: use fallback version in tarballs
+0f5864567745 move release version into VERSION.txt
+38165954c13b libfdt: add missing version symbols
+5e98b5979354 editorconfig: use tab indentation for version.lds
+d030a893be25 tests: generate dtbs in Meson build directory
+8d8372b13706 tests: fix use of deprecated meson methods
+761114effaf7 pylibtfdt: fix use of deprecated meson method
+bf6377a98d97 meson: set minimum Meson version to 0.56.0
+4c68e4b16b22 libfdt: fix library version to match project version
+bdc5c8793a13 meson: allow disabling tests
+f088e381f29e Makefile: allow to install libfdt without building executables
+6df5328a902c Fix use of <ctype.h> functions
+ccf1f62d59ad libfdt: Fix a typo in libfdt.h
+71a8b8ef0adf libfdt: meson: Fix linking on macOS linker
+589d8c7653c7 dtc: Add an option to generate __local_fixups__ and __fixups__
+e8364666d5ac CI: Add build matrix with multiple Linux distributions
+3b02a94b486f dtc: Correct invalid dts output with mixed phandles and integers
+d4888958d64b tests: Add additional tests for device graph checks
+ea3b9a1d2c5a checks: Fix crash in graph_child_address if 'reg' cell size != 1
+b2b9671583e9 livetree: fix off-by-one in propval_cell_n() bounds check
+ab481e483061 Add definition for a GitHub Actions CI job
+c88038c9b8ca Drop obsolete/broken CI definitions
+0ac8b30ba5a1 yaml: Depend on libyaml >= 0.2.3
+f1657b2fb5be tests: Add test cases for bad endpoint node and remote-endpoint prop checks
+44bb89cafd3d checks: Fix segmentation fault in check_graph_node
+60bcf1cde1a8 improve documentation for fdt_path_offset()
+a6f997bc77d4 add fdt_get_symbol() and fdt_get_symbol_namelen() functions
+18f5ec12a10e use fdt_path_getprop_namelen() in fdt_get_alias_namelen()
+df093279282c add fdt_path_getprop_namelen() helper
+129bb4b78bc6 doc: dt-object-internal: Fix a typo
+390f481521c3 fdtoverlay: Drop a a repeated article
+9f8b382ed45e manual: Fix and improve documentation about -@
+2cdf93a6d402 fdtoverlay: Fix usage string to not mention "<type>"
+72fc810c3025 build-sys: add -Wwrite-strings
+083ab26da83b tests: fix leaks spotted by ASAN
+6f8b28f49609 livetree: fix leak spotted by ASAN
+fd68bb8c5658 Make name_node() xstrdup its name argument
+4718189c4ca8 Delay xstrdup() of node and property names coming from a flat tree
+0b842c3c8199 Make build_property() xstrdup its name argument
+9cceabea1ee0 checks: correct I2C 10-bit address check
+0d56145938fe yamltree.c: fix -Werror=discarded-qualifiers & -Werror=cast-qual
+61fa22b05f69 checks: make check.data const
+7a1d72a788e0 checks.c: fix check_msg() leak
+ee5799938697 checks.c: fix heap-buffer-overflow
+44c9b73801c1 tests: fix -Wwrite-strings
+5b60f5104fcc srcpos.c: fix -Wwrite-strings
+32174a66efa4 meson: Fix cell overflow tests when running from meson
+64a907f08b9b meson.build: bump version to 1.7.0
+e3cde0613bfd Add -Wsuggest-attribute=format warning, correct warnings thus generated
+41821821101a Use #ifdef NO_VALGRIND
+71c19f20b3ef Do not redefine _GNU_SOURCE if already set
+039a99414e77 Bump version to v1.7.0
+9b62ec84bb2d Merge remote-tracking branch 'gitlab/main'
+3f29d6d85c24 pylibfdt: add size_hint parameter for get_path
+2022bb10879d checks: Update #{size,address}-cells check for 'dma-ranges'
 
-Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
-This commit adds documentation page for ad738x ADC family
----
- Documentation/iio/ad7380.rst | 88 ++++++++++++++++++++++++++++++++++++++++++++
- Documentation/iio/index.rst  |  1 +
- MAINTAINERS                  |  1 +
- 3 files changed, 90 insertions(+)
+ scripts/dtc/checks.c             |  85 ++++----
+ scripts/dtc/dtc-parser.y         |   5 +
+ scripts/dtc/dtc.c                |   9 +-
+ scripts/dtc/dtc.h                |  12 +-
+ scripts/dtc/fdtoverlay.c         |   6 +-
+ scripts/dtc/flattree.c           |  21 +-
+ scripts/dtc/fstree.c             |   2 +-
+ scripts/dtc/libfdt/fdt_overlay.c | 349 ++++++++++++++++++++++++++-----
+ scripts/dtc/libfdt/fdt_ro.c      |  37 +++-
+ scripts/dtc/libfdt/libfdt.h      |  67 +++++-
+ scripts/dtc/livetree.c           |  56 ++---
+ scripts/dtc/srcpos.c             |  14 +-
+ scripts/dtc/treesource.c         |  26 +++
+ scripts/dtc/util.h               |   6 +-
+ scripts/dtc/version_gen.h        |   2 +-
+ 15 files changed, 539 insertions(+), 158 deletions(-)
 
-diff --git a/Documentation/iio/ad7380.rst b/Documentation/iio/ad7380.rst
-new file mode 100644
-index 000000000000..061cd632b5df
---- /dev/null
-+++ b/Documentation/iio/ad7380.rst
-@@ -0,0 +1,88 @@
-+.. SPDX-License-Identifier: GPL-2.0-only
-+
-+=============
-+AD7380 driver
-+=============
-+
-+ADC driver for Analog Devices Inc. AD7380 and similar devices. The module name
-+is ``ad7380``.
-+
-+
-+Supported devices
-+=================
-+
-+The following chips are supported by this driver:
-+
-+* `AD7380 <https://www.analog.com/en/products/ad7380.html>`_
-+* `AD7381 <https://www.analog.com/en/products/ad7381.html>`_
-+* `AD7383 <https://www.analog.com/en/products/ad7383.html>`_
-+* `AD7384 <https://www.analog.com/en/products/ad7384.html>`_
-+* `AD7380-4 <https://www.analog.com/en/products/ad7380-4.html>`_
-+* `AD7381-4 <https://www.analog.com/en/products/ad7381-4.html>`_
-+* `AD7383-4 <https://www.analog.com/en/products/ad7383-4.html>`_
-+* `AD7384-4 <https://www.analog.com/en/products/ad7384-4.html>`_
-+
-+
-+Supported features
-+==================
-+
-+SPI wiring modes
-+----------------
-+
-+ad738x ADCs can output data on several SDO lines (1/2/4). The driver currently
-+supports only 1 SDO line.
-+
-+Reference voltage
-+-----------------
-+
-+2 possible reference voltage sources are supported:
-+
-+- Internal reference (2.5V)
-+- External reference (2.5V to 3.3V)
-+
-+The source is determined by the device tree. If ``refio-supply`` is present,
-+then the external reference is used, else the internal reference is used.
-+
-+Oversampling and resolution boost
-+---------------------------------
-+
-+This family supports 2 types of oversampling: normal average and rolling
-+average. Only normal average is supported by the driver, as rolling average can
-+be achieved by processing a captured data buffer. The following ratios are
-+available: 1 (oversampling disabled)/2/4/8/16/32.
-+
-+When the on-chip oversampling function is enabled the performance of the ADC can
-+exceed the default resolution. To accommodate the performance boost achievable,
-+it is possible to enable an additional two bits of resolution. Because the
-+resolution boost feature can only be enabled when oversampling is enabled and
-+oversampling is not as useful without the resolution boost, the driver
-+automatically enables the resolution boost if and only if oversampling is
-+enabled.
-+
-+Since the resolution boost feature causes 16-bit chips to now have 18-bit data
-+which means the storagebits has to change from 16 to 32 bits, we use the new
-+ext_scan_type feature to allow changing the scan_type at runtime. Unfortunately
-+libiio does not support it. So when enabling or disabling oversampling, user
-+must restart iiod using the following command:
-+
-+.. code-block:: bash
-+
-+	root:~# systemctl restart iiod
-+
-+
-+Unimplemented features
-+----------------------
-+
-+- 2/4 SDO lines
-+- Rolling average oversampling
-+- Power down mode
-+- CRC indication
-+- Alert
-+
-+
-+Device buffers
-+==============
-+
-+This driver supports IIO triggered buffers.
-+
-+See :doc:`iio_devbuf` for more information.
-diff --git a/Documentation/iio/index.rst b/Documentation/iio/index.rst
-index 9cb4c50cb20d..b0385a9ee5a7 100644
---- a/Documentation/iio/index.rst
-+++ b/Documentation/iio/index.rst
-@@ -18,6 +18,7 @@ Industrial I/O Kernel Drivers
- .. toctree::
-    :maxdepth: 1
+diff --git a/scripts/dtc/checks.c b/scripts/dtc/checks.c
+index 9f31d2607182..10fb63894369 100644
+--- a/scripts/dtc/checks.c
++++ b/scripts/dtc/checks.c
+@@ -31,7 +31,7 @@ typedef void (*check_fn)(struct check *c, struct dt_info *dti, struct node *node
+ struct check {
+ 	const char *name;
+ 	check_fn fn;
+-	void *data;
++	const void *data;
+ 	bool warn, error;
+ 	enum checkstatus status;
+ 	bool inprogress;
+@@ -114,6 +114,7 @@ static inline void  PRINTF(5, 6) check_msg(struct check *c, struct dt_info *dti,
+ 	}
  
-+   ad7380
-    ad7944
-    adis16475
-    adis16480
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 06ecfa64a39a..40cf58c2f884 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -447,6 +447,7 @@ S:	Supported
- W:	https://wiki.analog.com/resources/tools-software/linux-drivers/iio-adc/ad738x
- W:	https://ez.analog.com/linux-software-drivers
- F:	Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml
-+F:	Documentation/iio/ad7380.rst
- F:	drivers/iio/adc/ad7380.c
+ 	fputs(str, stderr);
++	free(str);
+ }
  
- AD7877 TOUCHSCREEN DRIVER
-
----
-base-commit: 986da024b99a72e64f6bdb3f3f0e52af024b1f50
-change-id: 20240708-ad7380-add-docs-42a9296e5cd3
-
-Best regards,
+ #define FAIL(c, dti, node, ...)						\
+@@ -207,7 +208,7 @@ static void check_is_string(struct check *c, struct dt_info *dti,
+ 			    struct node *node)
+ {
+ 	struct property *prop;
+-	char *propname = c->data;
++	const char *propname = c->data;
+ 
+ 	prop = get_property(node, propname);
+ 	if (!prop)
+@@ -226,7 +227,7 @@ static void check_is_string_list(struct check *c, struct dt_info *dti,
+ {
+ 	int rem, l;
+ 	struct property *prop;
+-	char *propname = c->data;
++	const char *propname = c->data;
+ 	char *str;
+ 
+ 	prop = get_property(node, propname);
+@@ -254,7 +255,7 @@ static void check_is_cell(struct check *c, struct dt_info *dti,
+ 			  struct node *node)
+ {
+ 	struct property *prop;
+-	char *propname = c->data;
++	const char *propname = c->data;
+ 
+ 	prop = get_property(node, propname);
+ 	if (!prop)
+@@ -1078,10 +1079,11 @@ static void check_i2c_bus_reg(struct check *c, struct dt_info *dti, struct node
+ 		/* Ignore I2C_OWN_SLAVE_ADDRESS */
+ 		reg &= ~I2C_OWN_SLAVE_ADDRESS;
+ 
+-		if ((reg & I2C_TEN_BIT_ADDRESS) && ((reg & ~I2C_TEN_BIT_ADDRESS) > 0x3ff))
+-			FAIL_PROP(c, dti, node, prop, "I2C address must be less than 10-bits, got \"0x%x\"",
++		if (reg & I2C_TEN_BIT_ADDRESS) {
++			if ((reg & ~I2C_TEN_BIT_ADDRESS) > 0x3ff)
++				FAIL_PROP(c, dti, node, prop, "I2C address must be less than 10-bits, got \"0x%x\"",
+ 				  reg);
+-		else if (reg > 0x7f)
++		} else if (reg > 0x7f)
+ 			FAIL_PROP(c, dti, node, prop, "I2C address must be less than 7-bits, got \"0x%x\". Set I2C_TEN_BIT_ADDRESS for 10 bit addresses or fix the property",
+ 				  reg);
+ 	}
+@@ -1108,7 +1110,7 @@ static void check_spi_bus_bridge(struct check *c, struct dt_info *dti, struct no
+ 		for_each_child(node, child) {
+ 			struct property *prop;
+ 			for_each_property(child, prop) {
+-				if (strprefixeq(prop->name, 4, "spi-")) {
++				if (strstarts(prop->name, "spi-")) {
+ 					node->bus = &spi_bus;
+ 					break;
+ 				}
+@@ -1180,7 +1182,7 @@ static void check_unit_address_format(struct check *c, struct dt_info *dti,
+ 		/* skip over 0x for next test */
+ 		unitname += 2;
+ 	}
+-	if (unitname[0] == '0' && isxdigit(unitname[1]))
++	if (unitname[0] == '0' && isxdigit((unsigned char)unitname[1]))
+ 		FAIL(c, dti, node, "unit name should not have leading 0s");
+ }
+ WARNING(unit_address_format, check_unit_address_format, NULL,
+@@ -1222,7 +1224,7 @@ static void check_avoid_unnecessary_addr_size(struct check *c, struct dt_info *d
+ 	if (!node->parent || node->addr_cells < 0 || node->size_cells < 0)
+ 		return;
+ 
+-	if (get_property(node, "ranges") || !node->children)
++	if (get_property(node, "ranges") || get_property(node, "dma-ranges") || !node->children)
+ 		return;
+ 
+ 	for_each_child(node, child) {
+@@ -1232,7 +1234,7 @@ static void check_avoid_unnecessary_addr_size(struct check *c, struct dt_info *d
+ 	}
+ 
+ 	if (!has_reg)
+-		FAIL(c, dti, node, "unnecessary #address-cells/#size-cells without \"ranges\" or child \"reg\" property");
++		FAIL(c, dti, node, "unnecessary #address-cells/#size-cells without \"ranges\", \"dma-ranges\" or child \"reg\" property");
+ }
+ WARNING(avoid_unnecessary_addr_size, check_avoid_unnecessary_addr_size, NULL, &avoid_default_addr_size);
+ 
+@@ -1465,7 +1467,7 @@ static void check_provider_cells_property(struct check *c,
+ 					  struct dt_info *dti,
+ 				          struct node *node)
+ {
+-	struct provider *provider = c->data;
++	const struct provider *provider = c->data;
+ 	struct property *prop;
+ 
+ 	prop = get_property(node, provider->prop_name);
+@@ -1673,6 +1675,10 @@ static void check_interrupt_map(struct check *c,
+ 			parent_cellsize += propval_cell(cellprop);
+ 
+ 		cell += 1 + parent_cellsize;
++		if (cell > map_cells)
++			FAIL_PROP(c, dti, node, irq_map_prop,
++				"property size (%d) mismatch, expected %zu",
++				irq_map_prop->val.len, cell * sizeof(cell_t));
+ 	}
+ }
+ WARNING(interrupt_map, check_interrupt_map, NULL, &phandle_references, &addr_size_cells, &interrupt_provider);
+@@ -1765,6 +1771,11 @@ static void check_graph_nodes(struct check *c, struct dt_info *dti,
+ 		      get_property(child, "remote-endpoint")))
+ 			continue;
+ 
++                /* The root node cannot be a port */
++		if (!node->parent) {
++			FAIL(c, dti, node, "root node contains endpoint node '%s', potentially misplaced remote-endpoint property", child->name);
++			continue;
++		}
+ 		node->bus = &graph_port_bus;
+ 
+ 		/* The parent of 'port' nodes can be either 'ports' or a device */
+@@ -1778,31 +1789,6 @@ static void check_graph_nodes(struct check *c, struct dt_info *dti,
+ }
+ WARNING(graph_nodes, check_graph_nodes, NULL);
+ 
+-static void check_graph_child_address(struct check *c, struct dt_info *dti,
+-				      struct node *node)
+-{
+-	int cnt = 0;
+-	struct node *child;
+-
+-	if (node->bus != &graph_ports_bus && node->bus != &graph_port_bus)
+-		return;
+-
+-	for_each_child(node, child) {
+-		struct property *prop = get_property(child, "reg");
+-
+-		/* No error if we have any non-zero unit address */
+-		if (prop && propval_cell(prop) != 0)
+-			return;
+-
+-		cnt++;
+-	}
+-
+-	if (cnt == 1 && node->addr_cells != -1)
+-		FAIL(c, dti, node, "graph node has single child node '%s', #address-cells/#size-cells are not necessary",
+-		     node->children->name);
+-}
+-WARNING(graph_child_address, check_graph_child_address, NULL, &graph_nodes);
+-
+ static void check_graph_reg(struct check *c, struct dt_info *dti,
+ 			    struct node *node)
+ {
+@@ -1893,6 +1879,31 @@ static void check_graph_endpoint(struct check *c, struct dt_info *dti,
+ }
+ WARNING(graph_endpoint, check_graph_endpoint, NULL, &graph_nodes);
+ 
++static void check_graph_child_address(struct check *c, struct dt_info *dti,
++				      struct node *node)
++{
++	int cnt = 0;
++	struct node *child;
++
++	if (node->bus != &graph_ports_bus && node->bus != &graph_port_bus)
++		return;
++
++	for_each_child(node, child) {
++		struct property *prop = get_property(child, "reg");
++
++		/* No error if we have any non-zero unit address */
++                if (prop && propval_cell(prop) != 0 )
++			return;
++
++		cnt++;
++	}
++
++	if (cnt == 1 && node->addr_cells != -1)
++		FAIL(c, dti, node, "graph node has single child node '%s', #address-cells/#size-cells are not necessary",
++		     node->children->name);
++}
++WARNING(graph_child_address, check_graph_child_address, NULL, &graph_nodes, &graph_port, &graph_endpoint);
++
+ static struct check *check_table[] = {
+ 	&duplicate_node_names, &duplicate_property_names,
+ 	&node_name_chars, &node_name_format, &property_name_chars,
+diff --git a/scripts/dtc/dtc-parser.y b/scripts/dtc/dtc-parser.y
+index bff1337ec266..4d5eece52624 100644
+--- a/scripts/dtc/dtc-parser.y
++++ b/scripts/dtc/dtc-parser.y
+@@ -284,14 +284,17 @@ propdef:
+ 	  DT_PROPNODENAME '=' propdata ';'
+ 		{
+ 			$$ = build_property($1, $3, &@$);
++			free($1);
+ 		}
+ 	| DT_PROPNODENAME ';'
+ 		{
+ 			$$ = build_property($1, empty_data, &@$);
++			free($1);
+ 		}
+ 	| DT_DEL_PROP DT_PROPNODENAME ';'
+ 		{
+ 			$$ = build_property_delete($2);
++			free($2);
+ 		}
+ 	| DT_LABEL propdef
+ 		{
+@@ -570,10 +573,12 @@ subnode:
+ 	  DT_PROPNODENAME nodedef
+ 		{
+ 			$$ = name_node($2, $1);
++			free($1);
+ 		}
+ 	| DT_DEL_NODE DT_PROPNODENAME ';'
+ 		{
+ 			$$ = name_node(build_node_delete(&@$), $2);
++			free($2);
+ 		}
+ 	| DT_OMIT_NO_REF subnode
+ 		{
+diff --git a/scripts/dtc/dtc.c b/scripts/dtc/dtc.c
+index bc786c543b7e..0655c2e2c362 100644
+--- a/scripts/dtc/dtc.c
++++ b/scripts/dtc/dtc.c
+@@ -47,7 +47,7 @@ static void fill_fullpaths(struct node *tree, const char *prefix)
+ 
+ /* Usage related data. */
+ static const char usage_synopsis[] = "dtc [options] <input file>";
+-static const char usage_short_opts[] = "qI:O:o:V:d:R:S:p:a:fb:i:H:sW:E:@AThv";
++static const char usage_short_opts[] = "qI:O:o:V:d:R:S:p:a:fb:i:H:sW:E:@LAThv";
+ static struct option const usage_long_opts[] = {
+ 	{"quiet",            no_argument, NULL, 'q'},
+ 	{"in-format",         a_argument, NULL, 'I'},
+@@ -67,6 +67,7 @@ static struct option const usage_long_opts[] = {
+ 	{"warning",           a_argument, NULL, 'W'},
+ 	{"error",             a_argument, NULL, 'E'},
+ 	{"symbols",	     no_argument, NULL, '@'},
++	{"local-fixups",     no_argument, NULL, 'L'},
+ 	{"auto-alias",       no_argument, NULL, 'A'},
+ 	{"annotate",         no_argument, NULL, 'T'},
+ 	{"help",             no_argument, NULL, 'h'},
+@@ -104,6 +105,7 @@ static const char * const usage_opts_help[] = {
+ 	"\n\tEnable/disable warnings (prefix with \"no-\")",
+ 	"\n\tEnable/disable errors (prefix with \"no-\")",
+ 	"\n\tEnable generation of symbols",
++	"\n\tPossibly generates a __local_fixups__ and a __fixups__ node at the root node",
+ 	"\n\tEnable auto-alias of labels",
+ 	"\n\tAnnotate output .dts with input source file and line (-T -T for more details)",
+ 	"\n\tPrint this help and exit",
+@@ -252,6 +254,11 @@ int main(int argc, char *argv[])
+ 		case '@':
+ 			generate_symbols = 1;
+ 			break;
++
++		case 'L':
++			generate_fixups = 1;
++			break;
++
+ 		case 'A':
+ 			auto_label_aliases = 1;
+ 			break;
+diff --git a/scripts/dtc/dtc.h b/scripts/dtc/dtc.h
+index 0a1f54991026..4c4aaca1fc41 100644
+--- a/scripts/dtc/dtc.h
++++ b/scripts/dtc/dtc.h
+@@ -260,16 +260,16 @@ struct node {
+ void add_label(struct label **labels, char *label);
+ void delete_labels(struct label **labels);
+ 
+-struct property *build_property(char *name, struct data val,
++struct property *build_property(const char *name, struct data val,
+ 				struct srcpos *srcpos);
+-struct property *build_property_delete(char *name);
++struct property *build_property_delete(const char *name);
+ struct property *chain_property(struct property *first, struct property *list);
+ struct property *reverse_properties(struct property *first);
+ 
+ struct node *build_node(struct property *proplist, struct node *children,
+ 			struct srcpos *srcpos);
+ struct node *build_node_delete(struct srcpos *srcpos);
+-struct node *name_node(struct node *node, char *name);
++struct node *name_node(struct node *node, const char *name);
+ struct node *omit_node_if_unused(struct node *node);
+ struct node *reference_node(struct node *node);
+ struct node *chain_node(struct node *first, struct node *list);
+@@ -336,9 +336,9 @@ struct dt_info *build_dt_info(unsigned int dtsflags,
+ 			      struct reserve_info *reservelist,
+ 			      struct node *tree, uint32_t boot_cpuid_phys);
+ void sort_tree(struct dt_info *dti);
+-void generate_label_tree(struct dt_info *dti, char *name, bool allocph);
+-void generate_fixups_tree(struct dt_info *dti, char *name);
+-void generate_local_fixups_tree(struct dt_info *dti, char *name);
++void generate_label_tree(struct dt_info *dti, const char *name, bool allocph);
++void generate_fixups_tree(struct dt_info *dti, const char *name);
++void generate_local_fixups_tree(struct dt_info *dti, const char *name);
+ 
+ /* Checks */
+ 
+diff --git a/scripts/dtc/fdtoverlay.c b/scripts/dtc/fdtoverlay.c
+index 5350af65679f..4eba0460f240 100644
+--- a/scripts/dtc/fdtoverlay.c
++++ b/scripts/dtc/fdtoverlay.c
+@@ -23,9 +23,7 @@
+ /* Usage related data. */
+ static const char usage_synopsis[] =
+ 	"apply a number of overlays to a base blob\n"
+-	"	fdtoverlay <options> [<overlay.dtbo> [<overlay.dtbo>]]\n"
+-	"\n"
+-	USAGE_TYPE_MSG;
++	"	fdtoverlay <options> [<overlay.dtbo> [<overlay.dtbo>]]";
+ static const char usage_short_opts[] = "i:o:v" USAGE_COMMON_SHORT_OPTS;
+ static struct option const usage_long_opts[] = {
+ 	{"input",            required_argument, NULL, 'i'},
+@@ -50,7 +48,7 @@ static void *apply_one(char *base, const char *overlay, size_t *buf_len,
+ 	int ret;
+ 
+ 	/*
+-	 * We take a copies first, because a a failed apply can trash
++	 * We take a copies first, because a failed apply can trash
+ 	 * both the base blob and the overlay
+ 	 */
+ 	tmpo = xmalloc(fdt_totalsize(overlay));
+diff --git a/scripts/dtc/flattree.c b/scripts/dtc/flattree.c
+index 95e43d32c3e6..1bcd8089c5b9 100644
+--- a/scripts/dtc/flattree.c
++++ b/scripts/dtc/flattree.c
+@@ -604,11 +604,11 @@ static void flat_realign(struct inbuf *inb, int align)
+ 		die("Premature end of data parsing flat device tree\n");
+ }
+ 
+-static char *flat_read_string(struct inbuf *inb)
++static const char *flat_read_string(struct inbuf *inb)
+ {
+ 	int len = 0;
+ 	const char *p = inb->ptr;
+-	char *str;
++	const char *str;
+ 
+ 	do {
+ 		if (p >= inb->limit)
+@@ -616,7 +616,7 @@ static char *flat_read_string(struct inbuf *inb)
+ 		len++;
+ 	} while ((*p++) != '\0');
+ 
+-	str = xstrdup(inb->ptr);
++	str = inb->ptr;
+ 
+ 	inb->ptr += len;
+ 
+@@ -711,7 +711,7 @@ static struct reserve_info *flat_read_mem_reserve(struct inbuf *inb)
+ }
+ 
+ 
+-static char *nodename_from_path(const char *ppath, const char *cpath)
++static const char *nodename_from_path(const char *ppath, const char *cpath)
+ {
+ 	int plen;
+ 
+@@ -725,7 +725,7 @@ static char *nodename_from_path(const char *ppath, const char *cpath)
+ 	if (!streq(ppath, "/"))
+ 		plen++;
+ 
+-	return xstrdup(cpath + plen);
++	return cpath + plen;
+ }
+ 
+ static struct node *unflatten_tree(struct inbuf *dtbuf,
+@@ -733,7 +733,7 @@ static struct node *unflatten_tree(struct inbuf *dtbuf,
+ 				   const char *parent_flatname, int flags)
+ {
+ 	struct node *node;
+-	char *flatname;
++	const char *flatname;
+ 	uint32_t val;
+ 
+ 	node = build_node(NULL, NULL, NULL);
+@@ -741,9 +741,10 @@ static struct node *unflatten_tree(struct inbuf *dtbuf,
+ 	flatname = flat_read_string(dtbuf);
+ 
+ 	if (flags & FTF_FULLPATH)
+-		node->name = nodename_from_path(parent_flatname, flatname);
++		node->name = xstrdup(nodename_from_path(parent_flatname,
++							flatname));
+ 	else
+-		node->name = flatname;
++		node->name = xstrdup(flatname);
+ 
+ 	do {
+ 		struct property *prop;
+@@ -785,10 +786,6 @@ static struct node *unflatten_tree(struct inbuf *dtbuf,
+ 		}
+ 	} while (val != FDT_END_NODE);
+ 
+-	if (node->name != flatname) {
+-		free(flatname);
+-	}
+-
+ 	return node;
+ }
+ 
+diff --git a/scripts/dtc/fstree.c b/scripts/dtc/fstree.c
+index 5e59594ab301..0f9a534bacdb 100644
+--- a/scripts/dtc/fstree.c
++++ b/scripts/dtc/fstree.c
+@@ -43,7 +43,7 @@ static struct node *read_fstree(const char *dirname)
+ 					"WARNING: Cannot open %s: %s\n",
+ 					tmpname, strerror(errno));
+ 			} else {
+-				prop = build_property(xstrdup(de->d_name),
++				prop = build_property(de->d_name,
+ 						      data_copy_file(pfile,
+ 								     st.st_size),
+ 						      NULL);
+diff --git a/scripts/dtc/libfdt/fdt_overlay.c b/scripts/dtc/libfdt/fdt_overlay.c
+index 5c0c3981b89d..28b667ffc490 100644
+--- a/scripts/dtc/libfdt/fdt_overlay.c
++++ b/scripts/dtc/libfdt/fdt_overlay.c
+@@ -101,26 +101,22 @@ int fdt_overlay_target_offset(const void *fdt, const void *fdto,
+ static int overlay_phandle_add_offset(void *fdt, int node,
+ 				      const char *name, uint32_t delta)
+ {
+-	const fdt32_t *val;
+-	uint32_t adj_val;
++	fdt32_t *valp, val;
+ 	int len;
+ 
+-	val = fdt_getprop(fdt, node, name, &len);
+-	if (!val)
++	valp = fdt_getprop_w(fdt, node, name, &len);
++	if (!valp)
+ 		return len;
+ 
+-	if (len != sizeof(*val))
++	if (len != sizeof(val))
+ 		return -FDT_ERR_BADPHANDLE;
+ 
+-	adj_val = fdt32_to_cpu(*val);
+-	if ((adj_val + delta) < adj_val)
+-		return -FDT_ERR_NOPHANDLES;
+-
+-	adj_val += delta;
+-	if (adj_val == (uint32_t)-1)
++	val = fdt32_ld(valp);
++	if (val + delta < val || val + delta == (uint32_t)-1)
+ 		return -FDT_ERR_NOPHANDLES;
+ 
+-	return fdt_setprop_inplace_u32(fdt, node, name, adj_val);
++	fdt32_st(valp, val + delta);
++	return 0;
+ }
+ 
+ /**
+@@ -213,8 +209,8 @@ static int overlay_update_local_node_references(void *fdto,
+ 
+ 	fdt_for_each_property_offset(fixup_prop, fdto, fixup_node) {
+ 		const fdt32_t *fixup_val;
+-		const char *tree_val;
+ 		const char *name;
++		char *tree_val;
+ 		int fixup_len;
+ 		int tree_len;
+ 		int i;
+@@ -228,7 +224,7 @@ static int overlay_update_local_node_references(void *fdto,
+ 			return -FDT_ERR_BADOVERLAY;
+ 		fixup_len /= sizeof(uint32_t);
+ 
+-		tree_val = fdt_getprop(fdto, tree_node, name, &tree_len);
++		tree_val = fdt_getprop_w(fdto, tree_node, name, &tree_len);
+ 		if (!tree_val) {
+ 			if (tree_len == -FDT_ERR_NOTFOUND)
+ 				return -FDT_ERR_BADOVERLAY;
+@@ -237,33 +233,15 @@ static int overlay_update_local_node_references(void *fdto,
+ 		}
+ 
+ 		for (i = 0; i < fixup_len; i++) {
+-			fdt32_t adj_val;
+-			uint32_t poffset;
++			fdt32_t *refp;
+ 
+-			poffset = fdt32_to_cpu(fixup_val[i]);
++			refp = (fdt32_t *)(tree_val + fdt32_ld_(fixup_val + i));
+ 
+ 			/*
+-			 * phandles to fixup can be unaligned.
+-			 *
+-			 * Use a memcpy for the architectures that do
+-			 * not support unaligned accesses.
++			 * phandles to fixup can be unaligned, so use
++			 * fdt32_{ld,st}() to read/write them.
+ 			 */
+-			memcpy(&adj_val, tree_val + poffset, sizeof(adj_val));
+-
+-			adj_val = cpu_to_fdt32(fdt32_to_cpu(adj_val) + delta);
+-
+-			ret = fdt_setprop_inplace_namelen_partial(fdto,
+-								  tree_node,
+-								  name,
+-								  strlen(name),
+-								  poffset,
+-								  &adj_val,
+-								  sizeof(adj_val));
+-			if (ret == -FDT_ERR_NOSPACE)
+-				return -FDT_ERR_BADOVERLAY;
+-
+-			if (ret)
+-				return ret;
++			fdt32_st(refp, fdt32_ld(refp) + delta);
+ 		}
+ 	}
+ 
+@@ -337,7 +315,7 @@ static int overlay_update_local_references(void *fdto, uint32_t delta)
+  * @name: Name of the property holding the phandle reference in the overlay
+  * @name_len: number of name characters to consider
+  * @poffset: Offset within the overlay property where the phandle is stored
+- * @label: Label of the node referenced by the phandle
++ * @phandle: Phandle referencing the node
+  *
+  * overlay_fixup_one_phandle() resolves an overlay phandle pointing to
+  * a node in the base device tree.
+@@ -354,30 +332,14 @@ static int overlay_fixup_one_phandle(void *fdt, void *fdto,
+ 				     int symbols_off,
+ 				     const char *path, uint32_t path_len,
+ 				     const char *name, uint32_t name_len,
+-				     int poffset, const char *label)
++				     int poffset, uint32_t phandle)
+ {
+-	const char *symbol_path;
+-	uint32_t phandle;
+ 	fdt32_t phandle_prop;
+-	int symbol_off, fixup_off;
+-	int prop_len;
++	int fixup_off;
+ 
+ 	if (symbols_off < 0)
+ 		return symbols_off;
+ 
+-	symbol_path = fdt_getprop(fdt, symbols_off, label,
+-				  &prop_len);
+-	if (!symbol_path)
+-		return prop_len;
+-
+-	symbol_off = fdt_path_offset(fdt, symbol_path);
+-	if (symbol_off < 0)
+-		return symbol_off;
+-
+-	phandle = fdt_get_phandle(fdt, symbol_off);
+-	if (!phandle)
+-		return -FDT_ERR_NOTFOUND;
+-
+ 	fixup_off = fdt_path_offset_namelen(fdto, path, path_len);
+ 	if (fixup_off == -FDT_ERR_NOTFOUND)
+ 		return -FDT_ERR_BADOVERLAY;
+@@ -416,6 +378,10 @@ static int overlay_fixup_phandle(void *fdt, void *fdto, int symbols_off,
+ 	const char *value;
+ 	const char *label;
+ 	int len;
++	const char *symbol_path;
++	int prop_len;
++	int symbol_off;
++	uint32_t phandle;
+ 
+ 	value = fdt_getprop_by_offset(fdto, property,
+ 				      &label, &len);
+@@ -426,6 +392,18 @@ static int overlay_fixup_phandle(void *fdt, void *fdto, int symbols_off,
+ 		return len;
+ 	}
+ 
++	symbol_path = fdt_getprop(fdt, symbols_off, label, &prop_len);
++	if (!symbol_path)
++		return prop_len;
++	
++	symbol_off = fdt_path_offset(fdt, symbol_path);
++	if (symbol_off < 0)
++		return symbol_off;
++	
++	phandle = fdt_get_phandle(fdt, symbol_off);
++	if (!phandle)
++		return -FDT_ERR_NOTFOUND;
++
+ 	do {
+ 		const char *path, *name, *fixup_end;
+ 		const char *fixup_str = value;
+@@ -467,7 +445,7 @@ static int overlay_fixup_phandle(void *fdt, void *fdto, int symbols_off,
+ 
+ 		ret = overlay_fixup_one_phandle(fdt, fdto, symbols_off,
+ 						path, path_len, name, name_len,
+-						poffset, label);
++						poffset, phandle);
+ 		if (ret)
+ 			return ret;
+ 	} while (len > 0);
+@@ -520,6 +498,255 @@ static int overlay_fixup_phandles(void *fdt, void *fdto)
+ 	return 0;
+ }
+ 
++/**
++ * overlay_adjust_local_conflicting_phandle: Changes a phandle value
++ * @fdto: Device tree overlay
++ * @node: The node the phandle is set for
++ * @fdt_phandle: The new value for the phandle
++ *
++ * returns:
++ *      0 on success
++ *      Negative error code on failure
++ */
++static int overlay_adjust_local_conflicting_phandle(void *fdto, int node,
++						    uint32_t fdt_phandle)
++{
++	const fdt32_t *php;
++	int len, ret;
++
++	php = fdt_getprop(fdto, node, "phandle", &len);
++	if (php && len == sizeof(*php)) {
++		ret = fdt_setprop_inplace_u32(fdto, node, "phandle", fdt_phandle);
++		if (ret)
++			return ret;
++	}
++
++	php = fdt_getprop(fdto, node, "linux,phandle", &len);
++	if (php && len == sizeof(*php)) {
++		ret = fdt_setprop_inplace_u32(fdto, node, "linux,phandle", fdt_phandle);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
++/**
++ * overlay_update_node_conflicting_references - Recursively replace phandle values
++ * @fdto: Device tree overlay blob
++ * @tree_node: Node to recurse into
++ * @fixup_node: Node offset of the matching local fixups node
++ * @fdt_phandle: Value to replace phandles with
++ * @fdto_phandle: Value to be replaced
++ *
++ * Replaces all phandles with value @fdto_phandle by @fdt_phandle.
++ *
++ * returns:
++ *      0 on success
++ *      Negative error code on failure
++ */
++static int overlay_update_node_conflicting_references(void *fdto, int tree_node,
++						      int fixup_node,
++						      uint32_t fdt_phandle,
++						      uint32_t fdto_phandle)
++{
++	int fixup_prop;
++	int fixup_child;
++	int ret;
++
++	fdt_for_each_property_offset(fixup_prop, fdto, fixup_node) {
++		const fdt32_t *fixup_val;
++		const char *name;
++		char *tree_val;
++		int fixup_len;
++		int tree_len;
++		int i;
++
++		fixup_val = fdt_getprop_by_offset(fdto, fixup_prop,
++						  &name, &fixup_len);
++		if (!fixup_val)
++			return fixup_len;
++
++		if (fixup_len % sizeof(uint32_t))
++			return -FDT_ERR_BADOVERLAY;
++		fixup_len /= sizeof(uint32_t);
++
++		tree_val = fdt_getprop_w(fdto, tree_node, name, &tree_len);
++		if (!tree_val) {
++			if (tree_len == -FDT_ERR_NOTFOUND)
++				return -FDT_ERR_BADOVERLAY;
++
++			return tree_len;
++		}
++
++		for (i = 0; i < fixup_len; i++) {
++			fdt32_t *refp;
++			uint32_t valp;
++
++			refp = (fdt32_t *)(tree_val + fdt32_ld_(fixup_val + i));
++			valp = fdt32_ld(refp);
++
++			if (valp == fdto_phandle)
++				fdt32_st(refp, fdt_phandle);
++		}
++	}
++
++	fdt_for_each_subnode(fixup_child, fdto, fixup_node) {
++		const char *fixup_child_name = fdt_get_name(fdto, fixup_child, NULL);
++		int tree_child;
++
++		tree_child = fdt_subnode_offset(fdto, tree_node, fixup_child_name);
++
++		if (tree_child == -FDT_ERR_NOTFOUND)
++			return -FDT_ERR_BADOVERLAY;
++		if (tree_child < 0)
++			return tree_child;
++
++		ret = overlay_update_node_conflicting_references(fdto, tree_child,
++								 fixup_child,
++								 fdt_phandle,
++								 fdto_phandle);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
++/**
++ * overlay_update_local_conflicting_references - Recursively replace phandle values
++ * @fdto: Device tree overlay blob
++ * @fdt_phandle: Value to replace phandles with
++ * @fdto_phandle: Value to be replaced
++ *
++ * Replaces all phandles with value @fdto_phandle by @fdt_phandle.
++ *
++ * returns:
++ *      0 on success
++ *      Negative error code on failure
++ */
++static int overlay_update_local_conflicting_references(void *fdto,
++						       uint32_t fdt_phandle,
++						       uint32_t fdto_phandle)
++{
++	int fixups;
++
++	fixups = fdt_path_offset(fdto, "/__local_fixups__");
++	if (fixups == -FDT_ERR_NOTFOUND)
++		return 0;
++	if (fixups < 0)
++		return fixups;
++
++	return overlay_update_node_conflicting_references(fdto, 0, fixups,
++							  fdt_phandle,
++							  fdto_phandle);
++}
++
++/**
++ * overlay_prevent_phandle_overwrite_node - Helper function for overlay_prevent_phandle_overwrite
++ * @fdt: Base Device tree blob
++ * @fdtnode: Node in fdt that is checked for an overwrite
++ * @fdto: Device tree overlay blob
++ * @fdtonode: Node in fdto matching @fdtnode
++ *
++ * returns:
++ *      0 on success
++ *      Negative error code on failure
++ */
++static int overlay_prevent_phandle_overwrite_node(void *fdt, int fdtnode,
++						  void *fdto, int fdtonode)
++{
++	uint32_t fdt_phandle, fdto_phandle;
++	int fdtochild;
++
++	fdt_phandle = fdt_get_phandle(fdt, fdtnode);
++	fdto_phandle = fdt_get_phandle(fdto, fdtonode);
++
++	if (fdt_phandle && fdto_phandle) {
++		int ret;
++
++		ret = overlay_adjust_local_conflicting_phandle(fdto, fdtonode,
++							       fdt_phandle);
++		if (ret)
++			return ret;
++
++		ret = overlay_update_local_conflicting_references(fdto,
++								  fdt_phandle,
++								  fdto_phandle);
++		if (ret)
++			return ret;
++	}
++
++	fdt_for_each_subnode(fdtochild, fdto, fdtonode) {
++		const char *name = fdt_get_name(fdto, fdtochild, NULL);
++		int fdtchild;
++		int ret;
++
++		fdtchild = fdt_subnode_offset(fdt, fdtnode, name);
++		if (fdtchild == -FDT_ERR_NOTFOUND)
++			/*
++			 * no further overwrites possible here as this node is
++			 * new
++			 */
++			continue;
++
++		ret = overlay_prevent_phandle_overwrite_node(fdt, fdtchild,
++							     fdto, fdtochild);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
++/**
++ * overlay_prevent_phandle_overwrite - Fixes overlay phandles to not overwrite base phandles
++ * @fdt: Base Device Tree blob
++ * @fdto: Device tree overlay blob
++ *
++ * Checks recursively if applying fdto overwrites phandle values in the base
++ * dtb. When such a phandle is found, the fdto is changed to use the fdt's
++ * phandle value to not break references in the base.
++ *
++ * returns:
++ *      0 on success
++ *      Negative error code on failure
++ */
++static int overlay_prevent_phandle_overwrite(void *fdt, void *fdto)
++{
++	int fragment;
++
++	fdt_for_each_subnode(fragment, fdto, 0) {
++		int overlay;
++		int target;
++		int ret;
++
++		overlay = fdt_subnode_offset(fdto, fragment, "__overlay__");
++		if (overlay == -FDT_ERR_NOTFOUND)
++			continue;
++
++		if (overlay < 0)
++			return overlay;
++
++		target = fdt_overlay_target_offset(fdt, fdto, fragment, NULL);
++		if (target == -FDT_ERR_NOTFOUND)
++			/*
++			 * The subtree doesn't exist in the base, so nothing
++			 * will be overwritten.
++			 */
++			continue;
++		else if (target < 0)
++			return target;
++
++		ret = overlay_prevent_phandle_overwrite_node(fdt, target,
++							     fdto, overlay);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
+ /**
+  * overlay_apply_node - Merges a node into the base device tree
+  * @fdt: Base Device Tree blob
+@@ -824,18 +1051,26 @@ int fdt_overlay_apply(void *fdt, void *fdto)
+ 	if (ret)
+ 		goto err;
+ 
++	/* Increase all phandles in the fdto by delta */
+ 	ret = overlay_adjust_local_phandles(fdto, delta);
+ 	if (ret)
+ 		goto err;
+ 
++	/* Adapt the phandle values in fdto to the above increase */
+ 	ret = overlay_update_local_references(fdto, delta);
+ 	if (ret)
+ 		goto err;
+ 
++	/* Update fdto's phandles using symbols from fdt */
+ 	ret = overlay_fixup_phandles(fdt, fdto);
+ 	if (ret)
+ 		goto err;
+ 
++	/* Don't overwrite phandles in fdt */
++	ret = overlay_prevent_phandle_overwrite(fdt, fdto);
++	if (ret)
++		goto err;
++
+ 	ret = overlay_merge(fdt, fdto);
+ 	if (ret)
+ 		goto err;
+diff --git a/scripts/dtc/libfdt/fdt_ro.c b/scripts/dtc/libfdt/fdt_ro.c
+index 9f6c551a22c2..b78c4e48f1cb 100644
+--- a/scripts/dtc/libfdt/fdt_ro.c
++++ b/scripts/dtc/libfdt/fdt_ro.c
+@@ -255,6 +255,9 @@ int fdt_path_offset_namelen(const void *fdt, const char *path, int namelen)
+ 
+ 	FDT_RO_PROBE(fdt);
+ 
++	if (!can_assume(VALID_INPUT) && namelen <= 0)
++		return -FDT_ERR_BADPATH;
++
+ 	/* see if we have an alias */
+ 	if (*path != '/') {
+ 		const char *q = memchr(path, '/', end - p);
+@@ -522,16 +525,31 @@ uint32_t fdt_get_phandle(const void *fdt, int nodeoffset)
+ 	return fdt32_ld_(php);
+ }
+ 
++static const void *fdt_path_getprop_namelen(const void *fdt, const char *path,
++					    const char *propname, int propnamelen,
++					    int *lenp)
++{
++	int offset = fdt_path_offset(fdt, path);
++
++	if (offset < 0)
++		return NULL;
++
++	return fdt_getprop_namelen(fdt, offset, propname, propnamelen, lenp);
++}
++
+ const char *fdt_get_alias_namelen(const void *fdt,
+ 				  const char *name, int namelen)
+ {
+-	int aliasoffset;
++	int len;
++	const char *alias;
+ 
+-	aliasoffset = fdt_path_offset(fdt, "/aliases");
+-	if (aliasoffset < 0)
++	alias = fdt_path_getprop_namelen(fdt, "/aliases", name, namelen, &len);
++
++	if (!can_assume(VALID_DTB) &&
++	    !(alias && len > 0 && alias[len - 1] == '\0' && *alias == '/'))
+ 		return NULL;
+ 
+-	return fdt_getprop_namelen(fdt, aliasoffset, name, namelen, NULL);
++	return alias;
+ }
+ 
+ const char *fdt_get_alias(const void *fdt, const char *name)
+@@ -539,6 +557,17 @@ const char *fdt_get_alias(const void *fdt, const char *name)
+ 	return fdt_get_alias_namelen(fdt, name, strlen(name));
+ }
+ 
++const char *fdt_get_symbol_namelen(const void *fdt,
++				   const char *name, int namelen)
++{
++	return fdt_path_getprop_namelen(fdt, "/__symbols__", name, namelen, NULL);
++}
++
++const char *fdt_get_symbol(const void *fdt, const char *name)
++{
++	return fdt_get_symbol_namelen(fdt, name, strlen(name));
++}
++
+ int fdt_get_path(const void *fdt, int nodeoffset, char *buf, int buflen)
+ {
+ 	int pdepth = 0, p = 0;
+diff --git a/scripts/dtc/libfdt/libfdt.h b/scripts/dtc/libfdt/libfdt.h
+index 77ccff19911e..2d409d8e829b 100644
+--- a/scripts/dtc/libfdt/libfdt.h
++++ b/scripts/dtc/libfdt/libfdt.h
+@@ -524,10 +524,35 @@ int fdt_path_offset_namelen(const void *fdt, const char *path, int namelen);
+  * level matching the given component, differentiated only by unit
+  * address).
+  *
++ * If the path is not absolute (i.e. does not begin with '/'), the
++ * first component is treated as an alias.  That is, the property by
++ * that name is looked up in the /aliases node, and the value of that
++ * property used in place of that first component.
++ *
++ * For example, for this small fragment
++ *
++ * / {
++ *     aliases {
++ *         i2c2 = &foo; // RHS compiles to "/soc@0/i2c@30a40000/eeprom@52"
++ *     };
++ *     soc@0 {
++ *         foo: i2c@30a40000 {
++ *             bar: eeprom@52 {
++ *             };
++ *         };
++ *     };
++ * };
++ *
++ * these would be equivalent:
++ *
++ *   /soc@0/i2c@30a40000/eeprom@52
++ *   i2c2/eeprom@52
++ *
+  * returns:
+  *	structure block offset of the node with the requested path (>=0), on
+  *		success
+- *	-FDT_ERR_BADPATH, given path does not begin with '/' or is invalid
++ *	-FDT_ERR_BADPATH, given path does not begin with '/' and the first
++ *		component is not a valid alias
+  *	-FDT_ERR_NOTFOUND, if the requested node does not exist
+  *      -FDT_ERR_BADMAGIC,
+  *	-FDT_ERR_BADVERSION,
+@@ -869,6 +894,42 @@ const char *fdt_get_alias_namelen(const void *fdt,
+  */
+ const char *fdt_get_alias(const void *fdt, const char *name);
+ 
++/**
++ * fdt_get_symbol_namelen - get symbol based on substring
++ * @fdt: pointer to the device tree blob
++ * @name: name of the symbol to look up
++ * @namelen: number of characters of name to consider
++ *
++ * Identical to fdt_get_symbol(), but only examine the first @namelen
++ * characters of @name for matching the symbol name.
++ *
++ * Return: a pointer to the expansion of the symbol named @name, if it exists,
++ *	   NULL otherwise
++ */
++#ifndef SWIG /* Not available in Python */
++const char *fdt_get_symbol_namelen(const void *fdt,
++				   const char *name, int namelen);
++#endif
++
++/**
++ * fdt_get_symbol - retrieve the path referenced by a given symbol
++ * @fdt: pointer to the device tree blob
++ * @name: name of the symbol to look up
++ *
++ * fdt_get_symbol() retrieves the value of a given symbol.  That is,
++ * the value of the property named @name in the node
++ * /__symbols__. Such a node exists only for a device tree blob that
++ * has been compiled with the -@ dtc option. Each property corresponds
++ * to a label appearing in the device tree source, with the name of
++ * the property being the label and the value being the full path of
++ * the node it is attached to.
++ *
++ * returns:
++ *	a pointer to the expansion of the symbol named 'name', if it exists
++ *	NULL, if the given symbol or the /__symbols__ node does not exist
++ */
++const char *fdt_get_symbol(const void *fdt, const char *name);
++
+ /**
+  * fdt_get_path - determine the full path of a node
+  * @fdt: pointer to the device tree blob
+@@ -1450,7 +1511,7 @@ int fdt_nop_node(void *fdt, int nodeoffset);
+  * fdt_create_with_flags() begins the process of creating a new fdt with
+  * the sequential write interface.
+  *
+- * fdt creation process must end with fdt_finished() to produce a valid fdt.
++ * fdt creation process must end with fdt_finish() to produce a valid fdt.
+  *
+  * returns:
+  *	0, on success
+@@ -1968,7 +2029,7 @@ static inline int fdt_appendprop_cell(void *fdt, int nodeoffset,
+  * address and size) to the value of the named property in the given
+  * node, or creates a new property with that value if it does not
+  * already exist.
+- * If "name" is not specified, a default "reg" is used.
++ *
+  * Cell sizes are determined by parent's #address-cells and #size-cells.
+  *
+  * This function may insert data into the blob, and will therefore
+diff --git a/scripts/dtc/livetree.c b/scripts/dtc/livetree.c
+index f46a098d5ada..49f723002f85 100644
+--- a/scripts/dtc/livetree.c
++++ b/scripts/dtc/livetree.c
+@@ -36,27 +36,27 @@ void delete_labels(struct label **labels)
+ 		label->deleted = 1;
+ }
+ 
+-struct property *build_property(char *name, struct data val,
++struct property *build_property(const char *name, struct data val,
+ 				struct srcpos *srcpos)
+ {
+ 	struct property *new = xmalloc(sizeof(*new));
+ 
+ 	memset(new, 0, sizeof(*new));
+ 
+-	new->name = name;
++	new->name = xstrdup(name);
+ 	new->val = val;
+ 	new->srcpos = srcpos_copy(srcpos);
+ 
+ 	return new;
+ }
+ 
+-struct property *build_property_delete(char *name)
++struct property *build_property_delete(const char *name)
+ {
+ 	struct property *new = xmalloc(sizeof(*new));
+ 
+ 	memset(new, 0, sizeof(*new));
+ 
+-	new->name = name;
++	new->name = xstrdup(name);
+ 	new->deleted = 1;
+ 
+ 	return new;
+@@ -116,11 +116,11 @@ struct node *build_node_delete(struct srcpos *srcpos)
+ 	return new;
+ }
+ 
+-struct node *name_node(struct node *node, char *name)
++struct node *name_node(struct node *node, const char *name)
+ {
+ 	assert(node->name == NULL);
+ 
+-	node->name = name;
++	node->name = xstrdup(name);
+ 
+ 	return node;
+ }
+@@ -250,6 +250,7 @@ struct node * add_orphan_node(struct node *dt, struct node *new_node, char *ref)
+ 	name_node(new_node, "__overlay__");
+ 	node = build_node(p, new_node, NULL);
+ 	name_node(node, name);
++	free(name);
+ 
+ 	add_child(dt, node);
+ 	return dt;
+@@ -440,7 +441,7 @@ cell_t propval_cell(struct property *prop)
+ 
+ cell_t propval_cell_n(struct property *prop, unsigned int n)
+ {
+-	assert(prop->val.len / sizeof(cell_t) >= n);
++	assert(prop->val.len / sizeof(cell_t) > n);
+ 	return fdt32_to_cpu(*((fdt32_t *)prop->val.val + n));
+ }
+ 
+@@ -616,10 +617,25 @@ struct node *get_node_by_ref(struct node *tree, const char *ref)
+ 	return target;
+ }
+ 
++static void add_phandle_property(struct node *node,
++				 const char *name, int format)
++{
++	struct data d;
++
++	if (!(phandle_format & format))
++		return;
++	if (get_property(node, name))
++		return;
++
++	d = data_add_marker(empty_data, TYPE_UINT32, NULL);
++	d = data_append_cell(d, node->phandle);
++
++	add_property(node, build_property(name, d, NULL));
++}
++
+ cell_t get_node_phandle(struct node *root, struct node *node)
+ {
+ 	static cell_t phandle = 1; /* FIXME: ick, static local */
+-	struct data d = empty_data;
+ 
+ 	if (phandle_is_valid(node->phandle))
+ 		return node->phandle;
+@@ -629,16 +645,8 @@ cell_t get_node_phandle(struct node *root, struct node *node)
+ 
+ 	node->phandle = phandle;
+ 
+-	d = data_add_marker(d, TYPE_UINT32, NULL);
+-	d = data_append_cell(d, phandle);
+-
+-	if (!get_property(node, "linux,phandle")
+-	    && (phandle_format & PHANDLE_LEGACY))
+-		add_property(node, build_property("linux,phandle", d, NULL));
+-
+-	if (!get_property(node, "phandle")
+-	    && (phandle_format & PHANDLE_EPAPR))
+-		add_property(node, build_property("phandle", d, NULL));
++	add_phandle_property(node, "linux,phandle", PHANDLE_LEGACY);
++	add_phandle_property(node, "phandle", PHANDLE_EPAPR);
+ 
+ 	/* If the node *does* have a phandle property, we must
+ 	 * be dealing with a self-referencing phandle, which will be
+@@ -808,18 +816,18 @@ void sort_tree(struct dt_info *dti)
+ }
+ 
+ /* utility helper to avoid code duplication */
+-static struct node *build_and_name_child_node(struct node *parent, char *name)
++static struct node *build_and_name_child_node(struct node *parent, const char *name)
+ {
+ 	struct node *node;
+ 
+ 	node = build_node(NULL, NULL, NULL);
+-	name_node(node, xstrdup(name));
++	name_node(node, name);
+ 	add_child(parent, node);
+ 
+ 	return node;
+ }
+ 
+-static struct node *build_root_node(struct node *dt, char *name)
++static struct node *build_root_node(struct node *dt, const char *name)
+ {
+ 	struct node *an;
+ 
+@@ -1040,7 +1048,7 @@ static void generate_local_fixups_tree_internal(struct dt_info *dti,
+ 		generate_local_fixups_tree_internal(dti, lfn, c);
+ }
+ 
+-void generate_label_tree(struct dt_info *dti, char *name, bool allocph)
++void generate_label_tree(struct dt_info *dti, const char *name, bool allocph)
+ {
+ 	if (!any_label_tree(dti, dti->dt))
+ 		return;
+@@ -1048,7 +1056,7 @@ void generate_label_tree(struct dt_info *dti, char *name, bool allocph)
+ 				     dti->dt, allocph);
+ }
+ 
+-void generate_fixups_tree(struct dt_info *dti, char *name)
++void generate_fixups_tree(struct dt_info *dti, const char *name)
+ {
+ 	if (!any_fixup_tree(dti, dti->dt))
+ 		return;
+@@ -1056,7 +1064,7 @@ void generate_fixups_tree(struct dt_info *dti, char *name)
+ 				      dti->dt);
+ }
+ 
+-void generate_local_fixups_tree(struct dt_info *dti, char *name)
++void generate_local_fixups_tree(struct dt_info *dti, const char *name)
+ {
+ 	if (!any_local_fixup_tree(dti, dti->dt))
+ 		return;
+diff --git a/scripts/dtc/srcpos.c b/scripts/dtc/srcpos.c
+index 4fdb22a019bd..8e4d18a90b47 100644
+--- a/scripts/dtc/srcpos.c
++++ b/scripts/dtc/srcpos.c
+@@ -3,7 +3,9 @@
+  * Copyright 2007 Jon Loeliger, Freescale Semiconductor, Inc.
+  */
+ 
++#ifndef _GNU_SOURCE
+ #define _GNU_SOURCE
++#endif
+ 
+ #include <stdio.h>
+ 
+@@ -311,8 +313,8 @@ srcpos_string(struct srcpos *pos)
+ static char *
+ srcpos_string_comment(struct srcpos *pos, bool first_line, int level)
+ {
+-	char *pos_str, *fname, *first, *rest;
+-	bool fresh_fname = false;
++	char *pos_str, *fresh_fname = NULL, *first, *rest;
++	const char *fname;
+ 
+ 	if (!pos) {
+ 		if (level > 1) {
+@@ -330,9 +332,9 @@ srcpos_string_comment(struct srcpos *pos, bool first_line, int level)
+ 	else if (level > 1)
+ 		fname = pos->file->name;
+ 	else {
+-		fname = shorten_to_initial_path(pos->file->name);
+-		if (fname)
+-			fresh_fname = true;
++		fresh_fname = shorten_to_initial_path(pos->file->name);
++		if (fresh_fname)
++			fname = fresh_fname;
+ 		else
+ 			fname = pos->file->name;
+ 	}
+@@ -346,7 +348,7 @@ srcpos_string_comment(struct srcpos *pos, bool first_line, int level)
+ 			  first_line ? pos->first_line : pos->last_line);
+ 
+ 	if (fresh_fname)
+-		free(fname);
++		free(fresh_fname);
+ 
+ 	if (pos->next != NULL) {
+ 		rest = srcpos_string_comment(pos->next, first_line, level);
+diff --git a/scripts/dtc/treesource.c b/scripts/dtc/treesource.c
+index 33fedee82d58..ae15839ba6a5 100644
+--- a/scripts/dtc/treesource.c
++++ b/scripts/dtc/treesource.c
+@@ -139,6 +139,28 @@ static const char *delim_end[] = {
+ 	[TYPE_STRING] = "",
+ };
+ 
++static void add_string_markers(struct property *prop)
++{
++	int l, len = prop->val.len;
++	const char *p = prop->val.val;
++
++	for (l = strlen(p) + 1; l < len; l += strlen(p + l) + 1) {
++		struct marker *m, **nextp;
++
++		m = xmalloc(sizeof(*m));
++		m->offset = l;
++		m->type = TYPE_STRING;
++		m->ref = NULL;
++		m->next = NULL;
++
++		/* Find the end of the markerlist */
++		nextp = &prop->val.markers;
++		while (*nextp)
++			nextp = &((*nextp)->next);
++		*nextp = m;
++	}
++}
++
+ static enum markertype guess_value_type(struct property *prop)
+ {
+ 	int len = prop->val.len;
+@@ -164,6 +186,8 @@ static enum markertype guess_value_type(struct property *prop)
+ 
+ 	if ((p[len-1] == '\0') && (nnotstring == 0) && (nnul <= (len-nnul))
+ 	    && (nnotstringlbl == 0)) {
++		if (nnul > 1)
++			add_string_markers(prop);
+ 		return TYPE_STRING;
+ 	} else if (((len % sizeof(cell_t)) == 0) && (nnotcelllbl == 0)) {
+ 		return TYPE_UINT32;
+@@ -241,6 +265,8 @@ static void write_propval(FILE *f, struct property *prop)
+ 			} else {
+ 				write_propval_int(f, p, chunk_len, 4);
+ 			}
++			if (data_len > chunk_len)
++				fputc(' ', f);
+ 			break;
+ 		case TYPE_UINT64:
+ 			write_propval_int(f, p, chunk_len, 8);
+diff --git a/scripts/dtc/util.h b/scripts/dtc/util.h
+index 9d38edee9736..b448cd79efd3 100644
+--- a/scripts/dtc/util.h
++++ b/scripts/dtc/util.h
+@@ -13,7 +13,9 @@
+  */
+ 
+ #ifdef __GNUC__
+-#if __GNUC__ >= 5 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4)
++#ifdef __MINGW_PRINTF_FORMAT
++#define PRINTF(i, j)	__attribute__((format (__MINGW_PRINTF_FORMAT, i, j)))
++#elif __GNUC__ >= 5 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4)
+ #define PRINTF(i, j)	__attribute__((format (gnu_printf, i, j)))
+ #else
+ #define PRINTF(i, j)	__attribute__((format (printf, i, j)))
+@@ -65,7 +67,7 @@ extern char *xstrndup(const char *s, size_t len);
+ 
+ extern int PRINTF(2, 3) xasprintf(char **strp, const char *fmt, ...);
+ extern int PRINTF(2, 3) xasprintf_append(char **strp, const char *fmt, ...);
+-extern int xavsprintf_append(char **strp, const char *fmt, va_list ap);
++extern int PRINTF(2, 0) xavsprintf_append(char **strp, const char *fmt, va_list ap);
+ extern char *join_path(const char *path, const char *name);
+ 
+ /**
+diff --git a/scripts/dtc/version_gen.h b/scripts/dtc/version_gen.h
+index 99614ec1a289..4c5e17639d2b 100644
+--- a/scripts/dtc/version_gen.h
++++ b/scripts/dtc/version_gen.h
+@@ -1 +1 @@
+-#define DTC_VERSION "DTC 1.6.1-gabbd523b"
++#define DTC_VERSION "DTC 1.7.0-g1df7b047"
 -- 
-Julien Stephan <jstephan@baylibre.com>
+2.43.0
 
 
