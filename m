@@ -1,153 +1,223 @@
-Return-Path: <linux-kernel+bounces-246333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B46492C090
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:40:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11DB192C05B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25AD51F2371F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:40:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86E5A1F22C38
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99D91D47AD;
-	Tue,  9 Jul 2024 16:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D1C1C2332;
+	Tue,  9 Jul 2024 16:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CI0bTNGC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aUC5vETC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076A91D3647;
-	Tue,  9 Jul 2024 16:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBEE1C230A;
+	Tue,  9 Jul 2024 16:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720542220; cv=none; b=LouxP7E8J95ZEO3amdpRKjZnrLnkx3WqnsRHXSvqKnDPmXY255hSg7wTX88jcYpFUGkd/1srps5hXY8VoplkAdc99B650CBe62pM77yGv8ViPMNRdNtuph8oHOXUVaW9X336pshfujUIP5AN6FVjaAcUyngEs7+o2rasSpBhnH4=
+	t=1720542178; cv=none; b=ITAu3yP+IF71TVF+eJfVd5WwRgLA1Jv5Vj0iNZkrqOHnvvsIhImIZ+1gEufHRXwuuLbCN25PM7RhIjr5eSC3Pabo5/obVH7h0Z6qBXDEazNaR5wlR1voSXgdzGyt1qmCVdY8Q4ut2Sz4pgthfNrC9uL1WaMnVZZ1h9/s/03hjOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720542220; c=relaxed/simple;
-	bh=TrGBeVNk1Ux+gY07gT8pEvFKBb4XYgPsQ7mcBnzDkYM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZdlKDee6lgdkusxDJa18iznrXeuWoXqw80Rwofj+o05eX4rJfWZAkUWzD1ztGN6tQE07yF/OUPygrl56o8rtgIWh+54lUY29vSpGuxl7RPbaxHBlzF8Hhf1KxXdd6W07ESrydK/9qdnsTsUcQ4BW03Z2I8DL37F9X51WZqIyKus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CI0bTNGC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6BA6C3277B;
-	Tue,  9 Jul 2024 16:23:38 +0000 (UTC)
+	s=arc-20240116; t=1720542178; c=relaxed/simple;
+	bh=8082rWkAR8IgTw+ArT/i9Zh9oV0i6nYGOgdRqR/CthE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RDCpffKiprG7onrHEThfpCvPyuuE+r79n95wJO/MsAarI80IQzSpzqyjP54u1c5AH1co76WS9eVhJc2IhKCYRFDn6Ks7JcRxfDw1tkJAhxJXIbrEDCnDLIJMrFBAtdxyzlfRO18onbn/o63YvV4CNFoe3XX0IEoX0aqeOs3sFEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aUC5vETC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AA25C32782;
+	Tue,  9 Jul 2024 16:22:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720542219;
-	bh=TrGBeVNk1Ux+gY07gT8pEvFKBb4XYgPsQ7mcBnzDkYM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CI0bTNGCm98Ky06yKaqxKijjEPAVbFCy40RAOZNpIlMwmrTkEC530Sz73mOBlyEJ5
-	 j5TyEM5wtiKrUkNzk0dElRM8Vyed/YDDEe+xOvR+wh93DFFGBQ5cROXCe86HyryBF7
-	 JTzaVEuIiO/Lnlxvd0XGci0zMRAdMF5O8A3YxCDB5xlqdjH2xu3Olfj0rBklE4vh8j
-	 EfYoXeBZm8qxJHq7ybGimyAhBi0Rd1CgTFwZZNmi7io2CaG+cxjq87IgCNZbO9EwVm
-	 HeaTdfFcAcC6rYSOgN2nLOr6twxvz0REvo6VanGwc5WKMKTT5nzdIpzM4lbZ4E28C+
-	 IF+igw2gsE8+w==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Daniele Palmas <dnlplm@gmail.com>,
-	=?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 33/33] net: usb: qmi_wwan: add Telit FN912 compositions
-Date: Tue,  9 Jul 2024 12:21:59 -0400
-Message-ID: <20240709162224.31148-33-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240709162224.31148-1-sashal@kernel.org>
-References: <20240709162224.31148-1-sashal@kernel.org>
+	s=k20201202; t=1720542178;
+	bh=8082rWkAR8IgTw+ArT/i9Zh9oV0i6nYGOgdRqR/CthE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aUC5vETCz5KVR5sdZ89iOaxsISoYw5db/iXuSdBl1fsYS14xFSMnErsyxuBrTyGLm
+	 1DNobR3rYhAtYMq0u3YJAlXhLZ792OGEapN1gqx2juCvtrmN16aua+WRBM/dgMslSS
+	 qpkns/rr1bfJHg+NWuAQmP/MBYvbdlVs6BKyAB59cD73Ex0glDaO1HWMseIs1jTLq3
+	 JR8q87eo3LBDaCDSQLwcJshY21U63QqfIxZhPwx0i1/W2QuRkO+7Nm5wR4OsvggHy+
+	 VFJ2FKCMsd7q4qbUkrlcSug+Zeu8z/a8z1M8b6LmE4Kic0Fnxq9jpoph2O6zPQvoqR
+	 qU3XMa7TEyKJw==
+Date: Tue, 9 Jul 2024 10:22:55 -0600
+From: Rob Herring <robh@kernel.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: 'Sunyeal Hong' <sunyeal.hong@samsung.com>,
+	'Krzysztof Kozlowski' <krzk@kernel.org>,
+	'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+	'Chanwoo Choi' <cw00.choi@samsung.com>,
+	'Michael Turquette' <mturquette@baylibre.com>,
+	'Stephen Boyd' <sboyd@kernel.org>,
+	'Conor Dooley' <conor+dt@kernel.org>,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: add Exynos Auto v920 SoC CMU
+ bindings
+Message-ID: <20240709162255.GA3676452-robh@kernel.org>
+References: <20240707231331.3433340-1-sunyeal.hong@samsung.com>
+ <CGME20240707231444epcas2p17d7c9842f0acaff0cc352d5c15f38e73@epcas2p1.samsung.com>
+ <20240707231331.3433340-2-sunyeal.hong@samsung.com>
+ <000001dad121$bf3c0a80$3db41f80$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.38
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000001dad121$bf3c0a80$3db41f80$@samsung.com>
 
-From: Daniele Palmas <dnlplm@gmail.com>
+On Mon, Jul 08, 2024 at 03:59:40PM +0530, Alim Akhtar wrote:
+> Hello Sunyeal
+> 
+> > -----Original Message-----
+> > From: Sunyeal Hong <sunyeal.hong@samsung.com>
+> > Sent: Monday, July 8, 2024 4:43 AM
+> > To: Krzysztof Kozlowski <krzk@kernel.org>; Sylwester Nawrocki
+> > <s.nawrocki@samsung.com>; Chanwoo Choi <cw00.choi@samsung.com>;
+> > Alim Akhtar <alim.akhtar@samsung.com>; Michael Turquette
+> > <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; Rob
+> > Herring <robh@kernel.org>; Conor Dooley <conor+dt@kernel.org>
+> > Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
+> > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> > kernel@vger.kernel.org; Sunyeal Hong <sunyeal.hong@samsung.com>
+> > Subject: [PATCH v2 1/4] dt-bindings: clock: add Exynos Auto v920 SoC CMU
+> > bindings
+> > 
+> > Add dt-schema for Exynos Auto v920 SoC clock controller.
+> Prefer to have Exynos Auto -> ExynosAuto to match with the naming convention and the UM.
+> 
+> > Add device tree clock binding definitions for below CMU blocks.
+> > 
+> > - CMU_TOP
+> > - CMU_PERIC0
+> > 
+> > Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+> > ---
+> >  .../clock/samsung,exynosautov920-clock.yaml   | 115 +++++++++++
+> >  .../clock/samsung,exynosautov920.h            | 191 ++++++++++++++++++
+> >  2 files changed, 306 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/clock/samsung,exynosautov920-
+> > clock.yaml
+> >  create mode 100644 include/dt-bindings/clock/samsung,exynosautov920.h
+> > 
+> > diff --git
+> > a/Documentation/devicetree/bindings/clock/samsung,exynosautov920-
+> > clock.yaml
+> > b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-
+> > clock.yaml
+> > new file mode 100644
+> > index 000000000000..ade74d6e90c0
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-
+> > clo
+> > +++ ck.yaml
+> > @@ -0,0 +1,115 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+> > +---
+> > +$id:
+> > +http://devicetree.org/schemas/clock/samsung,exynosautov920-
+> > clock.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Samsung Exynos Auto v920 SoC clock controller
+> > +
+> > +maintainers:
+> > +  - Sunyeal Hong <sunyeal.hong@samsung.com>
+> > +  - Chanwoo Choi <cw00.choi@samsung.com>
+> > +  - Krzysztof Kozlowski <krzk@kernel.org>
+> > +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > +
+> > +description: |
+> > +  Exynos Auto v920 clock controller is comprised of several CMU units,
+> > +generating
+> > +  clocks for different domains. Those CMU units are modeled as separate
+> > +device
+> > +  tree nodes, and might depend on each other. Root clocks in that clock
+> > +tree are
+> > +  two external clocks:: OSCCLK/XTCXO (38.4 MHz) and RTCCLK/XrtcXTI
+> > (32768 Hz).
+> > +  The external OSCCLK must be defined as fixed-rate clock in dts.
+> > +
+> > +  CMU_TOP is a top-level CMU, where all base clocks are prepared using
+> > + PLLs and  dividers; all other clocks of function blocks (other CMUs)
+> > + are usually  derived from CMU_TOP.
+> > +
+> > +  Each clock is assigned an identifier and client nodes can use this
+> > + identifier  to specify the clock which they consume. All clocks
+> > + available for usage  in clock consumer nodes are defined as
+> > + preprocessor macros in  'include/dt-
+> > bindings/clock/samsung,exynosautov920.h' header.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - samsung,exynosautov920-cmu-top
+> > +      - samsung,exynosautov920-cmu-peric0
+> > +
+> > +  clocks:
+> > +    minItems: 1
+> > +    maxItems: 3
+> > +
+> > +  clock-names:
+> > +    minItems: 1
+> > +    maxItems: 3
+> > +
+> > +  "#clock-cells":
+> > +    const: 1
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +allOf:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: samsung,exynosautov920-cmu-top
+> > +
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          items:
+> > +            - description: External reference clock (38.4 MHz)
+> > +
+> > +        clock-names:
+> > +          items:
+> > +            - const: oscclk
+> > +
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: samsung,exynosautov920-cmu-peric0
+> > +
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          items:
+> > +            - description: External reference clock (38.4 MHz)
+> > +            - description: CMU_PERIC0 NOC clock (from CMU_TOP)
+> > +            - description: CMU_PERIC0 IP clock (from CMU_TOP)
+> > +
+> > +        clock-names:
+> > +          items:
+> > +            - const: oscclk
+> > +            - const: noc
+> > +            - const: ip
+> These are too generic name, please add peric0_noc and peric0_ip, and this is to match with the UM.
+> I am sure in future you would like to add other IPs like USI, I2C etc for the peric0 block
 
-[ Upstream commit 77453e2b015b5ced5b3f45364dd5a72dfc3bdecb ]
+Names are local to the block, so adding the block name is redundant.
 
-Add the following Telit FN912 compositions:
+Wouldn't USI and I2C clocks be outputs? This property is input clocks.
 
-0x3000: rmnet + tty (AT/NMEA) + tty (AT) + tty (diag)
-T:  Bus=03 Lev=01 Prnt=03 Port=07 Cnt=01 Dev#=  8 Spd=480  MxCh= 0
-D:  Ver= 2.01 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1bc7 ProdID=3000 Rev=05.15
-S:  Manufacturer=Telit Cinterion
-S:  Product=FN912
-S:  SerialNumber=92c4c4d8
-C:  #Ifs= 4 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=50 Driver=qmi_wwan
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=82(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=60 Driver=option
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-I:  If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+The names and descriptions should be defined at the top level and then 
+here should be just 'minItems: 3' (And above 'maxItems: 1').
 
-0x3001: rmnet + tty (AT) + tty (diag) + DPL (data packet logging) + adb
-T:  Bus=03 Lev=01 Prnt=03 Port=07 Cnt=01 Dev#=  7 Spd=480  MxCh= 0
-D:  Ver= 2.01 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1bc7 ProdID=3001 Rev=05.15
-S:  Manufacturer=Telit Cinterion
-S:  Product=FN912
-S:  SerialNumber=92c4c4d8
-C:  #Ifs= 5 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=50 Driver=qmi_wwan
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=82(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-I:  If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:  If#= 3 Alt= 0 #EPs= 1 Cls=ff(vend.) Sub=ff Prot=80 Driver=(none)
-E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:  If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=usbfs
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-
-Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
-Acked-by: Bjørn Mork <bjorn@mork.no>
-Link: https://patch.msgid.link/20240625102236.69539-1-dnlplm@gmail.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/usb/qmi_wwan.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-index a5469cf5cf670..befbca01bfe37 100644
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -1380,6 +1380,8 @@ static const struct usb_device_id products[] = {
- 	{QMI_QUIRK_SET_DTR(0x1bc7, 0x1260, 2)},	/* Telit LE910Cx */
- 	{QMI_QUIRK_SET_DTR(0x1bc7, 0x1261, 2)},	/* Telit LE910Cx */
- 	{QMI_QUIRK_SET_DTR(0x1bc7, 0x1900, 1)},	/* Telit LN940 series */
-+	{QMI_QUIRK_SET_DTR(0x1bc7, 0x3000, 0)},	/* Telit FN912 series */
-+	{QMI_QUIRK_SET_DTR(0x1bc7, 0x3001, 0)},	/* Telit FN912 series */
- 	{QMI_FIXED_INTF(0x1c9e, 0x9801, 3)},	/* Telewell TW-3G HSPA+ */
- 	{QMI_FIXED_INTF(0x1c9e, 0x9803, 4)},	/* Telewell TW-3G HSPA+ */
- 	{QMI_FIXED_INTF(0x1c9e, 0x9b01, 3)},	/* XS Stick W100-2 from 4G Systems */
--- 
-2.43.0
-
+Rob
 
