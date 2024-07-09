@@ -1,120 +1,202 @@
-Return-Path: <linux-kernel+bounces-246061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A3392BD28
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:40:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DDEB92BCFA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC7861F253B2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:40:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B28461F2384A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7136219CCFE;
-	Tue,  9 Jul 2024 14:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C3019B5B4;
+	Tue,  9 Jul 2024 14:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="OIaf+5Eb"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RKKdF5JM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B0A1684AE;
-	Tue,  9 Jul 2024 14:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37041132112;
+	Tue,  9 Jul 2024 14:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720535947; cv=none; b=LFL/rkGjT24h+C5NxxQ0Xc7tIgZQo3vifNok+yws4wX6DcBMCcETtKf6YBb0sEctG7rbXB4JDPJNcSPBSnE5HH/+yCn1T2kiE3SKitxa6L/tD71RBO2AHP7Ct8EbO94953Icv7GGhOTA6OmNPSZvE+c/MuOWtX72dzq3/8r85wc=
+	t=1720535635; cv=none; b=aZHDKLlEMM1KOo6do5OBK2sfaaY+rpW4+w0UfLKsKypb1IKD1F+wi6D85Ju3AaDyy6gq9gsxcWagK9e6bqeQAQJlMGmG7YLquOU7s9bxJyW9z/1euBHcNDDLJXNEiAf03rnKdEONjwugVi32Q9jrgZtrO0xEFhglJTEctiRU8zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720535947; c=relaxed/simple;
-	bh=0GE8MNSDH3Sj6P3Cex4jOCXxsjFoMGMyscdKZsmrqA0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=djy4rdMTdJt5GWilWbX9EixY5W3gSAKcRnqfeV6zrPHVvvWkwFqtmO2i0yYTC6f/yMdlnzdTuW4zEdIGFC0DDk+P3u13XwRfEu+YxGNOmYR7Og3FA5pRsqnaX5TBIja+TjUnCPo1YRBMtRdLX7IZgU3s6jWcec9IFF4w15ns830=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=OIaf+5Eb; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1720535936; x=1721140736; i=w_armin@gmx.de;
-	bh=FbCtUYHofHcGA8NLgniQK4sixnIWhvRfomMMUvQXIRE=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=OIaf+5EbfOuW45XiChM32gc0DGtuDN8oTu+6hrXnl//R+QlcDsgbUfddGk55WkzG
-	 V/rJoIX9ttqzCnCuvusj8LR2xKw0OoG9ul+2/DcJjNmfWlDR5i/Y9dLd2CmUuU0ps
-	 jQvr14jtDJMTsqTGn1wY4t3zhHTbR/6SA0VGH3CAQvHs3rvCpmnT++oTRPniNIRZh
-	 +9TjqmC6IyK8Ir+qOWfB0uKzIbWy4WffvOM5TUbwji1wiIRKLtOuo/EY+NKDDGv+W
-	 ziidRzklHmGSnbTkPGbV6jld2ykj48YmsdsfXzAF+B5xqvo7Kx38p4wRtV1H/5kxV
-	 dBdIlqGRuQhdncn5Xw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx.net
- (mrgmx104 [212.227.17.168]) with ESMTPSA (Nemesis) id
- 1MFbRm-1sbgfG0TFe-009Hts; Tue, 09 Jul 2024 16:38:56 +0200
-From: Armin Wolf <W_Armin@gmx.de>
-To: coproscefalo@gmail.com
-Cc: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers/platform: toshiba_acpi: Fix array out-of-bounds access
-Date: Tue,  9 Jul 2024 16:38:51 +0200
-Message-Id: <20240709143851.10097-1-W_Armin@gmx.de>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1720535635; c=relaxed/simple;
+	bh=YMAW9z1NAbGBMEAVcZUKWXcSRN9YTD2CjyP/WP2bFGA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DaZ8+52iz1evLHSZ9o1dIhH03gsXOKibq4KoT64L7zDECTG5piSlvwyF9avLEZnBBVkgQYBL5BxEC02E/jfJ3FP/XLaUKATX/McYB7ykC/7rVm9akcthtZBGNIBdvCaR0MGUbgs8Z+0iyHbdhewyTRhw7uGEqaD8hL/sg0T/49A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RKKdF5JM; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720535633; x=1752071633;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YMAW9z1NAbGBMEAVcZUKWXcSRN9YTD2CjyP/WP2bFGA=;
+  b=RKKdF5JMJv7+fTAPoaDwdBsG8D4HUSrHzjZPVP3Ftr2kXEAA3BREuSzf
+   tiVQ2dPsrviVNsjPL223bbq1KyCQ5dsNaUaXTVBiQ0zLwfenACzZRBOiS
+   /751MPCEqn0zboHMhBV+J0kFbzv3t2/W9vTi5xus9dYY2GRECNTVntubf
+   DTaVpUAymGyRtFPNfud01HGi1hg9fU1Q+1z9SDs6lv2+i/4GETCP0tkiZ
+   Z/wqhJ+eJpZCsMXOwwPecx2x/L60Bw5C5Whfz2PDRrcVPnCGYxDgh2KJe
+   TfIsI3634sdGsVTY5LZ9fR+Y3+zrJc6YdydTfMb40uFrXeoqHujHmT8ty
+   g==;
+X-CSE-ConnectionGUID: liv5bskGQXqb7Bfi3++Bog==
+X-CSE-MsgGUID: WxAZ4+ZwSdepMP/E6xrwKQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11128"; a="35331325"
+X-IronPort-AV: E=Sophos;i="6.09,195,1716274800"; 
+   d="scan'208";a="35331325"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 07:33:52 -0700
+X-CSE-ConnectionGUID: l06Vidm8Qp+kQb4OZdFJZw==
+X-CSE-MsgGUID: ZPrNFHJPRFKcRJEMUrJNXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,195,1716274800"; 
+   d="scan'208";a="52272043"
+Received: from jacob-builder.jf.intel.com ([10.54.39.125])
+  by fmviesa005.fm.intel.com with ESMTP; 09 Jul 2024 07:33:51 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: X86 Kernel <x86@kernel.org>,
+	Sean Christopherson <seanjc@google.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Ingo Molnar" <mingo@redhat.com>,
+	"Borislav Petkov" <bp@alien8.de>,
+	"Xin Li" <xin3.li@intel.com>,
+	linux-perf-users@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	acme@kernel.org,
+	kan.liang@linux.intel.com,
+	Andi Kleen <andi.kleen@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	"Mehta, Sohil" <sohil.mehta@intel.com>,
+	Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v4 00/11] Add support for NMI-source reporting
+Date: Tue,  9 Jul 2024 07:38:55 -0700
+Message-Id: <20240709143906.1040477-1-jacob.jun.pan@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:OQNN1zf+g4cYRhcc+QfQSNU7CivJHtMDWnsmS/yDRgQ8aLWBA1D
- K4ffr+ySx1lcn6uQRD0nUWqqPQnC5TE89hQnnPWqaTKfX9NSeOKHgEd5n0HRF9YklS0DlvI
- rDJBJ8u3JsuKuXZsV5QTtbxsJBDlPOaJvV9TXo9iEaRpRS3yyKyTNpYpWpQvZJtkmbFEWbe
- 9fRhE+mT+Dv4raqObHtLQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:pHZy82Z+vs4=;p+6L3xOdMtRcW1/F5s8XqyY1kol
- leSMuxy3B+aI46T9ZwKHXexpFB84bLn3mFdw5I+/LUubge76o63PIS30/7sCEhgXQRM8tWZUU
- G+ge+H/ATKQugTIPZDZokJtzCaBNpGxXTyKO6fDe2eRsDT/Wp51YGpjJ2DkLXgY4BIJkQJ1JH
- pmVMzviK6y4+21fXic6LJhRtfx00PuWpKu1+ZAnx8a89oZm5jghgEPkj4gPQkmrF4wKlmQQQR
- oNUfTLio1QEixZWOA1M2Zv8gMCB9sHPJG2Gjrl0v1xCfDkTS76gQFhiTBGmY52cl/nivyc5Ll
- cLa/D6QD6c5j6noXvs/5/N8bnavjyL5jeEebbDE79EJUdhHcq8vk8oxoRzO7PIEa1CtrL65oi
- AUseMeoyHlG9qDAJna0JlpSiCsnXl0BOgrQdm7J3x/pjpSD667dvv+4nDkQj1xpkNhnFPXg8I
- l5KUoAcyRmG75XhOf6DnRhtYKYau1WRbaLQ0z5if4asKUYtdN19bvNmlCG8NG4Ibq/W/cgIt5
- cg0hm5iwCxqYiD5lARu5WLZtfuoWb+m+HKikWwKHdHb69qeObN33Z7RBV+WGELTmvWbT0i1T0
- wHm7BrQuVueRaxcc5NjvdZzmhh6d3wu1AuVeH9UZ0ehTGQLxzMv4IKHETBpfK53rXDRLT6jpC
- LNn/c6lwj6U/bACb40skHmu8HEK5BWHXQEK9o2/diLB32J3dE5AbI6MH44gJPyHh7xhsp95up
- HdShfOSweS+VzkB/IHAVVwzAoRsgPXtwY89qBHnd+91Y5X9ml/3jlMVO7//AI2sR0MU2o6/j0
- ENmsduYo8Q1QuGlloBHVOXezzI36OeBEEYrzHob/umwGM=
+Content-Transfer-Encoding: 8bit
 
-In order to use toshiba_dmi_quirks[] together with the standard DMI
-matching functions, it must be terminated by a empty entry.
+Hi Thomas and all,
 
-Since this entry is missing, an array out-of-bounds access occurs
-every time the quirk list is processed.
+Non-Maskable Interrupts (NMIs) are routed to the local Advanced Programmable
+Interrupt Controller (APIC) using vector #2. Before the advent of the
+Flexible Return and Event Delivery (FRED)[1], the vector information set by
+the NMI initiator was disregarded or lost within the hardware, compelling
+system software to poll every registered NMI handler to pinpoint the source
+of the NMI[2]. This approach led to several issues:
 
-Fix this by adding the terminating empty entry.
+1.	Inefficiency due to the CPU's time spent polling all handlers.
+2.	Increased latency from the additional time taken to poll all handlers.
+3.	The occurrence of unnecessary NMIs if they are triggered shortly
+	after being processed by a different source.
 
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202407091536.8b116b3d-lkp@intel.com
-Fixes: 3cb1f40dfdc3 ("drivers/platform: toshiba_acpi: Call HCI_PANEL_POWER=
-_ON on resume on some models")
-Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-=2D--
- drivers/platform/x86/toshiba_acpi.c | 1 +
- 1 file changed, 1 insertion(+)
+To tackle these challenges, Intel introduced NMI source reporting as a part
+of the FRED specification (detailed in Chapter 9). This CPU feature ensures
+that while all NMI sources are still aggregated into NMI vector (#2) for
+delivery, the source of the NMI is now conveyed through FRED event data
+(a 16-bit bitmap on the stack). This allows for the selective dispatch
+of the NMI source handler based on the bitmap, eliminating the need to
+invoke all NMI source handlers indiscriminately.
 
-diff --git a/drivers/platform/x86/toshiba_acpi.c b/drivers/platform/x86/to=
-shiba_acpi.c
-index 3a8d8df89186..d54bccec6ad6 100644
-=2D-- a/drivers/platform/x86/toshiba_acpi.c
-+++ b/drivers/platform/x86/toshiba_acpi.c
-@@ -3299,6 +3299,7 @@ static const struct dmi_system_id toshiba_dmi_quirks=
-[] =3D {
- 		},
- 	 .driver_data =3D (void *)(QUIRK_TURN_ON_PANEL_ON_RESUME | QUIRK_HCI_HOT=
-KEY_QUICKSTART),
- 	},
-+	{ }
- };
+In line with the hardware architecture, various interrupt sources can
+generate NMIs by encoding an NMI delivery mode. However, this patchset
+activates only the local NMI sources that are currently utilized by the
+Linux kernel, which includes:
 
- static int toshiba_acpi_add(struct acpi_device *acpi_dev)
-=2D-
-2.39.2
+1.	Performance monitoring.
+2.	Inter-Processor Interrupts (IPIs) for functions like CPU backtrace,
+	machine check, Kernel GNU Debugger (KGDB), reboot, panic stop, and
+	self-test.
+
+Other NMI sources will continue to be handled as previously when the NMI
+source is not utilized or remains unidentified.
+
+Next steps:
+1. KVM support
+2. Optimization to reuse IDT NMI vector 2 as NMI source for "known" source.
+Link:https://lore.kernel.org/lkml/746fecd5-4c79-42f9-919e-912ec415e73f@zytor.com/
+
+
+[1] https://www.intel.com/content/www/us/en/content-details/779982/flexible-return-and-event-delivery-fred-specification.html
+[2] https://lore.kernel.org/lkml/171011362209.2468526.15187874627966416701.tglx@xen13/
+
+
+Thanks,
+
+Jacob
+
+---
+V4:
+	- Mostly coding style, comments, and naming changes (Li Xin, Nikolay, Kan)
+V3:
+	- Added KVM VMX patches to handle NMI exits (Sean)
+	- Clean up in KVM for code reuse in PV IPI (patch 10 and 11)
+	- Misc fixes based on reviews from HPA, Li Xin, and Sohil
+	
+Change logs are in individual patches.
+
+Thanks,
+
+Jacob
+
+Jacob Pan (9):
+  x86/irq: Add enumeration of NMI source reporting CPU feature
+  x86/irq: Define NMI source vectors
+  x86/irq: Extend NMI handler registration interface to include source
+  x86/irq: Factor out common NMI handling code
+  x86/irq: Process nmi sources in NMI handler
+  perf/x86: Enable NMI source reporting for perfmon
+  x86/irq: Enable NMI source on IPIs delivered as NMI
+  x86/irq: Move __prepare_ICR to x86 common header
+  KVM: X86: Use common code for PV IPIs in linux guest
+
+Zeng Guang (2):
+  KVM: VMX: Expand FRED kvm entry with event data
+  KVM: VMX: Handle NMI Source report in VM exit
+
+ arch/x86/entry/entry_64_fred.S     |   2 +-
+ arch/x86/events/amd/ibs.c          |   2 +-
+ arch/x86/events/core.c             |   7 +-
+ arch/x86/events/intel/core.c       |   6 +-
+ arch/x86/include/asm/apic.h        |  23 ++++++
+ arch/x86/include/asm/cpufeatures.h |   1 +
+ arch/x86/include/asm/fred.h        |   8 +-
+ arch/x86/include/asm/irq_vectors.h |  40 +++++++++
+ arch/x86/include/asm/nmi.h         |   4 +-
+ arch/x86/kernel/apic/hw_nmi.c      |   5 +-
+ arch/x86/kernel/apic/ipi.c         |   4 +-
+ arch/x86/kernel/apic/local.h       |  16 ----
+ arch/x86/kernel/cpu/mce/inject.c   |   4 +-
+ arch/x86/kernel/cpu/mshyperv.c     |   2 +-
+ arch/x86/kernel/kgdb.c             |   6 +-
+ arch/x86/kernel/kvm.c              |  10 +--
+ arch/x86/kernel/nmi.c              | 127 ++++++++++++++++++++++++++---
+ arch/x86/kernel/nmi_selftest.c     |   7 +-
+ arch/x86/kernel/reboot.c           |   4 +-
+ arch/x86/kernel/smp.c              |   4 +-
+ arch/x86/kernel/traps.c            |   4 +-
+ arch/x86/kvm/vmx/vmx.c             |  13 ++-
+ arch/x86/platform/uv/uv_nmi.c      |   4 +-
+ drivers/acpi/apei/ghes.c           |   2 +-
+ drivers/char/ipmi/ipmi_watchdog.c  |   2 +-
+ drivers/edac/igen6_edac.c          |   2 +-
+ drivers/watchdog/hpwdt.c           |   6 +-
+ 27 files changed, 237 insertions(+), 78 deletions(-)
+
+-- 
+2.25.1
 
 
