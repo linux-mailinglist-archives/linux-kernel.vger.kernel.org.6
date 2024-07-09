@@ -1,73 +1,42 @@
-Return-Path: <linux-kernel+bounces-245445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D34AA92B295
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:49:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAB2792B29C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03BFD1C21B19
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:49:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08DA81C21ABB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF64914A4E2;
-	Tue,  9 Jul 2024 08:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ePh4RaZr"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72A115358F;
+	Tue,  9 Jul 2024 08:51:27 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CB014831C
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29089146D6D;
+	Tue,  9 Jul 2024 08:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720514976; cv=none; b=TpdNHQJ8f2R8xAuinLpfCIZwvRnAYGox7Vyc5Jr/Er+0AENGyRBFEbLN/S6CuzUzd1C+4YwFT/i74V4YbN0A04n78vbFNYmhR8dTo9Sf4aesIcIVqsvEE27Wmyoq6u/agfX2MEPBMa+xnsJV2vnis7qabjHpBIW7UiBrLxjn4Eo=
+	t=1720515087; cv=none; b=vA/raACPiqCM1tt8dJaQQvmJMao3zCgM9aPuz0c/pTDkakb3v6TrB6RbR8W5UKzncOv/ny9UU5LInktUzPbxlPAMWrfaiXgRGR35CkqDn1gMSZCzL8ffZdF18L+cfoijNMLyKrIAwhFcTWWIlrRhQKg06+f/RU2u59kl3WIh93c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720514976; c=relaxed/simple;
-	bh=Xi9Hc2ZM06NZV5MTdSkdFEk4jOGTqy4WkDBxSBpOuuo=;
+	s=arc-20240116; t=1720515087; c=relaxed/simple;
+	bh=LD1/f+QGXtsINrfK/x9B1DLA2J3EdBZ8CD+2frlVZt4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UHk+x8CcuwQ+ZaPEk1mWi1aBvzR6nGEHdK7klVa5QfoxNCE7OgCuy0piXPl5zMiPiSgC0Putb7Jo5PGZl7LO96jyCdfEESTHP3eHp0T1/YO+IzNEKy/loOvA+SjxGq451KlDASrJ5uRtjwxThZMpFMFc++/wR8sh/6e3Qfepdw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ePh4RaZr; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-424ad289949so35256655e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 01:49:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1720514972; x=1721119772; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rK+GPVFZfJfDL1XCtaGpu7biKbYG6i3bP6BpmGcN1wY=;
-        b=ePh4RaZr6nnzeJBYN28HOm6mQlntRbkSuNUtIyS1g28tWi5skReXb5NswykY+RkC44
-         80WdJ0xCR+JyvjQH3LqV/nM54wpjwthkkoxlDepW/ZRMjfW5BeLlnRS29P1R/0Jx75/q
-         zx2SaIrihf/AN5EoTlL2yQxIzr/L/rcI8XvUVW8Ka2StnUZHF5I6CbTNdvy7fz8bPm0S
-         9PnQtuVk9XwF+2xl6dHntOqscbWEMgBqmD6+y+OfOucF/fBuam8qSZDEUhB8tqK70DXy
-         OdCAF1CEEyOX6CEuqoDF18PDq/RBBKTDpjok5+mGczdfqMpSDgfEICkvfrP80Pi/R5P3
-         zKEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720514972; x=1721119772;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rK+GPVFZfJfDL1XCtaGpu7biKbYG6i3bP6BpmGcN1wY=;
-        b=d3/svd6qz+J/jTk2AqMES2oedMPUPERc9Y5a02ympXWY2bgVfZVkXmrMNtkq6X2Jlq
-         1O18fa99yXkE9F3OyJpvXX1GMxgOC33kmYvt5MJSkN7y0a/lo+ZPF0UgHQLp/gM88Zf2
-         otkbPF2dmQO6IOMF/eSQ+DSijDFoA6gCWONYF3F6GZnXC4IOHuHLDa+f+fOj5qc5QqSy
-         eU6koHD1KFoXWBPUiWKB0wU1z1wq+ytWxHLALNgpVW6vOlIOP1HYPhneZQta10AIGH4v
-         ELnBHJoR6/RbqFuI20ou7tRKXxPNoKL2OJIJ7woGKgKQ7sPqeTvmDPWMhsk4W8YGOMAH
-         PrwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUr15gBjrBJRZZRCEujbWtBz4qOEZGnKvnfKwIgw490U5R/S1xUiVDrLiL1kuZbJgEPoRW4iwlXYWA41vyYmapLzec232OJVhz7qBN4
-X-Gm-Message-State: AOJu0YyP5qhSNhlp3jByxKP0UaZpuAtwZGonNxTrrt/LsFFh2RqXuBrl
-	lZx16tSl6rwVuqcQrLrCq/LrIbQ3ZR51uBTMv4ihfi8kU8GxGPjnrpGIhdMZPfk=
-X-Google-Smtp-Source: AGHT+IHZ7JsFeV2nR3nbcaQXDp3ha/ov+IGFOmMQthxprRK4ZQMIr9h8W5f6KLzyTlsRYSSC3k9D/A==
-X-Received: by 2002:a05:600c:49a8:b0:426:5dd0:a1fb with SMTP id 5b1f17b1804b1-426705ce9a3mr9784335e9.7.1720514972383;
-        Tue, 09 Jul 2024 01:49:32 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:757f:b03:3953:ffd3:86ef? ([2a10:bac0:b000:757f:b03:3953:ffd3:86ef])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f736304sm30415385e9.34.2024.07.09.01.49.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 01:49:32 -0700 (PDT)
-Message-ID: <4bf68f34-8a68-458f-9db2-c05b1b6bb711@suse.com>
-Date: Tue, 9 Jul 2024 11:49:29 +0300
+	 In-Reply-To:Content-Type; b=SgvFK34b3FN4XdR2PHBvZm0/NJRa6LdIojp76aXhP4dDWcJAjkW0TQdPfHzqhOa+Rn2bh6aj52nlL9adMSCu7FEduec4ARx4SlJhaBLJR8bGUTGsIUZBNWRECsovpWf1NwBcF5CKT+wOXrBt2tkR0hOk5LtW3EmpF9JqutAEBd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id C410161E40617;
+	Tue,  9 Jul 2024 10:49:57 +0200 (CEST)
+Message-ID: <033111e2-e743-4523-8c4f-7d5f1c801e65@molgen.mpg.de>
+Date: Tue, 9 Jul 2024 10:49:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,122 +44,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] math.h: Add macros for rounding to closest value
-To: Devarsh Thakkar <devarsht@ti.com>, mchehab@kernel.org,
- hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, sebastian.fricke@collabora.com,
- andriy.shevchenko@linux.intel.com, jani.nikula@intel.com,
- jirislaby@kernel.org, corbet@lwn.net, broonie@kernel.org,
- rdunlap@infradead.org, linux-doc@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, praneeth@ti.com, nm@ti.com,
- vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com, b-brnich@ti.com,
- detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com,
- andi.shyti@linux.intel.com, nicolas@ndufresne.ca, davidgow@google.com,
- dlatypov@google.com
-References: <20240708155943.2314427-1-devarsht@ti.com>
- <20240708155943.2314427-2-devarsht@ti.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
+Subject: Re: [Intel-wired-lan] [PATCH net-next v3] ice: Adjust over allocation
+ of memory in ice_sched_add_root_node() and ice_sched_add_node()
+To: Aleksandr Mishin <amishin@t-argos.ru>
+Cc: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
+ lvc-project@linuxtesting.org, intel-wired-lan@lists.osuosl.org,
+ linux-kernel@vger.kernel.org, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Eric Dumazet <edumazet@google.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>, netdev@vger.kernel.org,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "David S. Miller" <davem@davemloft.net>, Simon Horman <horms@kernel.org>
+References: <20240708182736.8514-1-amishin@t-argos.ru>
 Content-Language: en-US
-In-Reply-To: <20240708155943.2314427-2-devarsht@ti.com>
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20240708182736.8514-1-amishin@t-argos.ru>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Dear Aleksandr,
 
 
-On 8.07.24 г. 18:59 ч., Devarsh Thakkar wrote:
-> Add below rounding related macros:
+Thank you for your patch.
+
+
+Am 08.07.24 um 20:27 schrieb Aleksandr Mishin:
+> In ice_sched_add_root_node() and ice_sched_add_node() there are calls to
+> devm_kcalloc() in order to allocate memory for array of pointers to
+> 'ice_sched_node' structure. But incorrect types are used as sizeof()
+> arguments in these calls (structures instead of pointers) which leads to
+> over allocation of memory.
+
+If you have the explicit size at hand, it’d be great if you added those 
+to the commit message.
+
+> Adjust over allocation of memory by correcting types in devm_kcalloc()
+> sizeof() arguments.
 > 
-> round_closest_up(x, y) : Rounds x to closest multiple of y where y is a
-> power of 2, with a preference to round up in case two nearest values are
-> possible.
-> 
-> round_closest_down(x, y) : Rounds x to closest multiple of y where y is a
-> power of 2, with a preference to round down in case two nearest values are
-> possible.
-> 
-> roundclosest(x, y) : Rounds x to closest multiple of y, this macro should
-> generally be used only when y is not multiple of 2 as otherwise
-> round_closest* macros should be used which are much faster.
-> 
-> Examples:
->   * round_closest_up(17, 4) = 16
->   * round_closest_up(15, 4) = 16
->   * round_closest_up(14, 4) = 16
->   * round_closest_down(17, 4) = 16
->   * round_closest_down(15, 4) = 16
->   * round_closest_down(14, 4) = 12
->   * roundclosest(21, 5) = 20
->   * roundclosest(19, 5) = 20
->   * roundclosest(17, 5) = 15
-> 
-> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Maybe mention, that Coverity found that too, and the warning was 
+disabled, and use that commit in Fixes: tag? That’d be commit 
+b36c598c999c (ice: Updates to Tx scheduler code), different from the one 
+you used.
+
+`Documentation/process/submitting-patches.rst` says:
+
+> A Fixes: tag indicates that the patch fixes an issue in a previous
+> commit. It is used to make it easy to determine where a bug
+> originated, which can help review a bug fix. This tag also assists
+> the stable kernel team in determining which stable kernel versions
+> should receive your fix. This is the preferred method for indicating
+> a bug fixed by the patch.
+
+
+> Suggested-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
 > ---
-> NOTE: This patch is inspired from the Mentor Graphics IPU driver [1]
-> which uses similar macro locally and which is updated in further patch
-> in the series to use this generic macro instead along with other drivers
-> having similar requirements.
+> v3:
+>    - Update comment and use the correct entities as suggested by Przemek
+> v2: https://lore.kernel.org/all/20240706140518.9214-1-amishin@t-argos.ru/
+>    - Update comment, remove 'Fixes' tag and change the tree from 'net' to
+>      'net-next' as suggested by Simon
+>      (https://lore.kernel.org/all/20240706095258.GB1481495@kernel.org/)
+> v1: https://lore.kernel.org/all/20240705163620.12429-1-amishin@t-argos.ru/
 > 
-> Link: https://elixir.bootlin.com/linux/v6.8.9/source/drivers/gpu/ipu-v3/ipu-image-convert.c#L480 [1]
-> ---
->   include/linux/math.h | 63 ++++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 63 insertions(+)
+>   drivers/net/ethernet/intel/ice/ice_sched.c | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> diff --git a/include/linux/math.h b/include/linux/math.h
-> index dd4152711de7..79e3dfda77fc 100644
-> --- a/include/linux/math.h
-> +++ b/include/linux/math.h
-> @@ -34,6 +34,52 @@
->    */
->   #define round_down(x, y) ((x) & ~__round_mask(x, y))
+> diff --git a/drivers/net/ethernet/intel/ice/ice_sched.c b/drivers/net/ethernet/intel/ice/ice_sched.c
+> index ecf8f5d60292..6ca13c5dcb14 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_sched.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_sched.c
+> @@ -28,9 +28,8 @@ ice_sched_add_root_node(struct ice_port_info *pi,
+>   	if (!root)
+>   		return -ENOMEM;
 >   
-> +/**
-> + * round_closest_up - round closest to be multiple of specified value (which is
-> + *                    power of 2) with preference to rounding up
-> + * @x: the value to round
-> + * @y: multiple to round closest to (must be a power of 2)
-> + *
-> + * Rounds @x to closest multiple of @y (which must be a power of 2).
-> + * The value can be either rounded up or rounded down depending upon rounded
-> + * value's closeness to the specified value. If there are two closest possible
-> + * values, i.e. the difference between the specified value and it's rounded up
-> + * and rounded down values is same then preference is given to rounded up
-> + * value.
-> + *
-> + * To perform arbitrary rounding to closest value (not multiple of 2), use
-> + * roundclosest().
-> + *
-> + * Examples:
-> + * * round_closest_up(17, 4) = 16
-> + * * round_closest_up(15, 4) = 16
-> + * * round_closest_up(14, 4) = 16
-> + */
-> +#define round_closest_up(x, y) round_down((x) + (y) / 2, (y))
-> +
-> +/**
-> + * round_closest_down - round closest to be multiple of specified value (which
-> + *			is power of 2) with preference to rounding down
-> + * @x: the value to round
-> + * @y: multiple to round closest to (must be a power of 2)
-> + *
-> + * Rounds @x to closest multiple of @y (which must be a power of 2).
-> + * The value can be either rounded up or rounded down depending upon rounded
-> + * value's closeness to the specified value. If there are two closest possible
-> + * values, i.e. the difference between the specified value and it's rounded up
-> + * and rounded down values is same then preference is given to rounded up
-> + * value.
-> + *
-> + * To perform arbitrary rounding to closest value (not multiple of 2), use
-> + * roundclosest().
-> + *
-> + * Examples:
-> + * * round_closest_down(17, 4) = 16
-> + * * round_closest_down(15, 4) = 16
-> + * * round_closest_down(14, 4) = 12
-> + */
-> +#define round_closest_down(x, y) round_up((x) - (y) / 2, (y))
+> -	/* coverity[suspicious_sizeof] */
+>   	root->children = devm_kcalloc(ice_hw_to_dev(hw), hw->max_children[0],
+> -				      sizeof(*root), GFP_KERNEL);
+> +				      sizeof(*root->children), GFP_KERNEL);
+>   	if (!root->children) {
+>   		devm_kfree(ice_hw_to_dev(hw), root);
+>   		return -ENOMEM;
+> @@ -186,10 +185,9 @@ ice_sched_add_node(struct ice_port_info *pi, u8 layer,
+>   	if (!node)
+>   		return -ENOMEM;
+>   	if (hw->max_children[layer]) {
+> -		/* coverity[suspicious_sizeof] */
+>   		node->children = devm_kcalloc(ice_hw_to_dev(hw),
+>   					      hw->max_children[layer],
+> -					      sizeof(*node), GFP_KERNEL);
+> +					      sizeof(*node->children), GFP_KERNEL);
+>   		if (!node->children) {
+>   			devm_kfree(ice_hw_to_dev(hw), node);
+>   			return -ENOMEM;
 
-This is already identical to the existing round_down, no ?
 
-<snip>
+Kind regards,
+
+Paul
 
