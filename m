@@ -1,102 +1,110 @@
-Return-Path: <linux-kernel+bounces-245522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 281D892B3CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:28:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8896692B3D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D981F202A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:28:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B95F61C22648
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0322C15622E;
-	Tue,  9 Jul 2024 09:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lWH01lHC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A418155391;
+	Tue,  9 Jul 2024 09:27:16 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BD0155310;
-	Tue,  9 Jul 2024 09:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE5B154C0F;
+	Tue,  9 Jul 2024 09:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720517153; cv=none; b=bnPqpsYnieBfGAWkwPZYF+UZ4/GuEJeez/alI8gU6qr92xuxS5pcLTTt9DDPg9v5KE/TPw5Lxin95dUEWefy5TNy106cY2mDqCUsOz1xJAGNWKSEWizSfkMGLEZ7w5+fcozzzlS5ZzjfTkMnORvayWS/lZVsz4kP26EwJfhbgVY=
+	t=1720517236; cv=none; b=QKgapUYi2YDIyKDpnlu61iqENLqKvL7mVU8OIB6WtNk4CGRmz3uLdtOrFnO9uPdhlBD2ZdP+dNQDDBik2jN3ve6rOkU+C4Pdnb3R199D2wL1j9+0/AeeVNUBiMP9aeDfxwBTaekHl3oQiuR/WBAN/HoYY6kPymieJK/btuz90TM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720517153; c=relaxed/simple;
-	bh=QBQ3Vf3AsBCxVX0Ial0oaRT12iQXKMU1CCuUwuqKGGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hOR5O2y4O8et0y0vgbUvbezlOA72sd8d+dTfFiR8lmzESDqQ5m92fdtJzwmPXkBk/rL4JxGcDbm9d9wmx/FuII1BDPel7PzFH8wX+Tv9ZQbIC4lFxRuE9e3E3ZgGMPfW2nakkLBYNzBpCpSV3T3YoCW1u+gXA+4hYeotUadbhtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lWH01lHC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 801C7C3277B;
-	Tue,  9 Jul 2024 09:25:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720517152;
-	bh=QBQ3Vf3AsBCxVX0Ial0oaRT12iQXKMU1CCuUwuqKGGM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lWH01lHC26cPJsw/X+HBenWlEpFJJfJltpYufo4Nwc+j21AG+AgSd0mO35ip/x55X
-	 1j3wMkPD4jxOL9TWXbtvtIQpK+r5OevcF9GrmWkPk6CyxPTlJhwGyvfrSQpodhNU9T
-	 Ej5H2PNhkrvX3NwrYtw2gYhZg99SIq3DOU0O7SqXa+cuujYzDd5SUzD8zYIMTnYep1
-	 cIUi8500jcB+ittL3URif7r3qBocfl1W3F80r2sNTH5NJflOYtX8H98NBCeE2cMMLB
-	 HXmWdNfbJvJ6qLoehzpkJxb2fWCkI12TVgucRPshBHD2ku/q3Q9I9YQbQNDZx50ZBE
-	 BAe9M3W+wYjVQ==
-Date: Tue, 9 Jul 2024 10:25:47 +0100
-From: Lee Jones <lee@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Dustin Howett <dustin@howett.net>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	linux-leds@vger.kernel.org,
-	Rajas Paranjpe <paranjperajas@gmail.com>
-Subject: [GIT PULL] Immutable branch between MFD, LEDs and Platform due for
- the v6.11 merge window[GIT PULL] Immutable branch between MFD, LEDs and
- Platform due for the v6.11 merge window
-Message-ID: <20240709092547.GC501857@google.com>
-References: <20240526-cros_ec-kbd-led-framework-v3-0-ee577415a521@weissschuh.net>
+	s=arc-20240116; t=1720517236; c=relaxed/simple;
+	bh=BvITnZGwrv0DcMi9+rbLEpK9pqpsSHIG6x1UYrJpaw0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=diUFHl8EC+RLqa7wX+OrBWKQcd33tcZxyEeAFPydrI07EFZEEvFbAfwtA6x15s5d/5nH+Zf5wGQnZns7PfSwERXZhqpUCQdjX3IjVztSkAJOHB8RfDpjHS48UcVpQulj72LQG8ve1NqWcZXk8XVAc2PZ6NRfXpagtqFGmeysnU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowADX3+dDAo1mG3VXAg--.38115S2;
+	Tue, 09 Jul 2024 17:26:34 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	daniel.vetter@ffwll.ch,
+	sam@ravnborg.org,
+	noralf@tronnes.org,
+	akpm@linux-foundation.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] drm/client: fix null pointer dereference in drm_client_modeset_probe
+Date: Tue,  9 Jul 2024 17:26:26 +0800
+Message-Id: <20240709092626.3253492-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240526-cros_ec-kbd-led-framework-v3-0-ee577415a521@weissschuh.net>
+X-CM-TRANSID:zQCowADX3+dDAo1mG3VXAg--.38115S2
+X-Coremail-Antispam: 1UD129KBjvJXoWrtr4DZw13CFy5urW7urW5trb_yoW8Jr18pr
+	43JF90yF4jvrZrKFs2va97CF17A3W3JF48G3W7Aan3u3Z0qry2vryYvr13WFy7Gry3JF1U
+	JrnIyFW2qF18CaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUFYFADUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-Enjoy!
+In drm_client_modeset_probe(), the return value of drm_mode_duplicate() is
+assigned to modeset->mode, which will lead to a possible NULL pointer
+dereference on failure of drm_mode_duplicate(). Add a check to avoid npd.
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+Cc: stable@vger.kernel.org
+Fixes: cf13909aee05 ("drm/fb-helper: Move out modeset config code")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v2:
+- added the recipient's email address, due to the prolonged absence of a 
+response from the recipients.
+- added Cc stable.
+---
+ drivers/gpu/drm/drm_client_modeset.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-leds-platform-v6.11
-
-for you to fetch changes up to 970c3a6b7aa3c68ccdf5af2562c3d39533dd62a9:
-
-  mfd: cros_ec: Register keyboard backlight subdevice (2024-06-14 10:09:40 +0100)
-
-----------------------------------------------------------------
-Immutable branch between MFD, LEDs and Platform due for the v6.11 merge window
-
-----------------------------------------------------------------
-Thomas Weißschuh (4):
-      leds: class: Warn about name collisions earlier
-      leds: class: Add flag to avoid automatic renaming of LED devices
-      platform/chrome: cros_kbd_led_backlight: allow binding through MFD
-      mfd: cros_ec: Register keyboard backlight subdevice
-
- drivers/leds/led-class.c                         |  9 +++---
- drivers/mfd/cros_ec_dev.c                        |  9 ++++++
- drivers/platform/chrome/Kconfig                  |  2 +-
- drivers/platform/chrome/cros_kbd_led_backlight.c | 40 ++++++++++++++++++++++--
- include/linux/leds.h                             |  1 +
- 5 files changed, 54 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
+index 31af5cf37a09..cca37b225385 100644
+--- a/drivers/gpu/drm/drm_client_modeset.c
++++ b/drivers/gpu/drm/drm_client_modeset.c
+@@ -880,6 +880,9 @@ int drm_client_modeset_probe(struct drm_client_dev *client, unsigned int width,
+ 
+ 			kfree(modeset->mode);
+ 			modeset->mode = drm_mode_duplicate(dev, mode);
++			if (!modeset->mode)
++				continue;
++
+ 			drm_connector_get(connector);
+ 			modeset->connectors[modeset->num_connectors++] = connector;
+ 			modeset->x = offset->x;
 -- 
-Lee Jones [李琼斯]
+2.25.1
+
 
