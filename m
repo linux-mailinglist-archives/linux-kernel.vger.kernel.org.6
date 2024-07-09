@@ -1,139 +1,79 @@
-Return-Path: <linux-kernel+bounces-246485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED16B92C292
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:33:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C1C92C2B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29C801C22141
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:33:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81CEC1C220CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D91B17B025;
-	Tue,  9 Jul 2024 17:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="xRzT21ty"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5E317B057;
+	Tue,  9 Jul 2024 17:43:14 +0000 (UTC)
+Received: from a3.inai.de (a3.inai.de [88.198.85.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9DD1B86CC;
-	Tue,  9 Jul 2024 17:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6793D157470;
+	Tue,  9 Jul 2024 17:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.198.85.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720546401; cv=none; b=VJCNzRlIvgS5MH9oBQlg0E3ZIuzyJ0F5XVFBrsUhoEaMBa9RPZuPbMEEOZJ83NCzinuh5ZIp8X+6FioCf+A5icMvOFCpo4epJMf7PL75OoNEUFNn4vafW5ioyMskJTlRHx5kSu1r6XAMlHccuks7248ZKxpB2+sl8OAFEzxeKV0=
+	t=1720546994; cv=none; b=ByW6gQ9BmEndxl1tGKOORT07gKx22r19mTypyFwAo6a90gx00CWRMvDdbLUWzVDNhVP/Q9h9osagOVrYJApltNa8VXQICiev7+AnLM6p8NIjQHC/Kkl4OQgUuMtR1wEqMc4fgkp0G/zbfKhcgrsg8iUyRd7VMCBUmDRiC7deFG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720546401; c=relaxed/simple;
-	bh=ZM+OBPrcg7vNs0vpgUX3mtKe5N2ys9P0YoCnGWxTrzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lu00rVRXZQm3XG213G5ES0G9zuiAOjqmLMW5wriLcqZYFN9sUc349Tm5bDv2j1lGpn50wY/Xu5abNcIQxz4SsEjgZ0L3B7ZxvvcUR1t42rmTPJLfPHo9G5k7CS8fxv75T17hkxkf+fc5TPbFxpJgZrr3Cv9pCfSBzR+MB2lUfns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=xRzT21ty; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4WJSkZ1hfCz9sRn;
-	Tue,  9 Jul 2024 19:33:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1720546390;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=otfm4nHuOCKVaItEE8eENwKYWnrlA+AT8ngghD3F3L4=;
-	b=xRzT21tyRcASI0eQu22uFyLR34eYoEgDyWGw9mNDmWbUU19vbgvCF4NPSvzMJzm0KASsE0
-	ngMaRu29aTevKrpoLqeVn4XSTNLiSWOpWiVDnTdpQvAs8N0qnENPWdqrjFx+bBE1R4sirp
-	42fC/aYNhDAIPdFPmGs7exdty1NNYomPB8ldxGbraDzcFsVhbzIiyBlePiWqB4OZ7jB73E
-	gvf7QptuHX+XhEuI/PsWozith2J81Uy/MfiLt8LdX8ia8QmeXkpWSsrDJbbzotn3mqU8bi
-	RZKMiDy5yoqjN3fh8qJel/vrug1AjhLq5C2ci3aoPElDMDtlPN7eHvKQMqv4Ow==
-Date: Tue, 9 Jul 2024 17:33:05 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: david@fromorbit.com, ryan.roberts@arm.com, djwong@kernel.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>,
-	akpm@linux-foundation.org, chandan.babu@oracle.com
-Subject: Re: [PATCH v8 01/10] fs: Allow fine-grained control of folio sizes
-Message-ID: <20240709173305.gb3ffmlja72ypgsd@quentin>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-2-kernel@pankajraghav.com>
- <20240709162907.gsd5nf33teoss5ir@quentin>
- <Zo1neJYABzuMEvTO@casper.infradead.org>
+	s=arc-20240116; t=1720546994; c=relaxed/simple;
+	bh=sXS06RG7mRvH47DVMkm9hcVYched9n2sZ2yUgDnfv2M=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=aUgFNuSOJ7S9jckgFRO+qJgucuSKmjCey62/6cCc3HceYIKb85r4+Ka2SoeLOPsDDfjx+j/pIs4PcrNPIeKlND7lMwbsX77Yaz086CGvKFVxYgnCsybu7WiRnmZ8pK6pJdjwNbLzSrVHEB3m7CTzm4BWXfeBdoTn/RwQ8fLi8N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inai.de; spf=pass smtp.mailfrom=inai.de; arc=none smtp.client-ip=88.198.85.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inai.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inai.de
+Received: by a3.inai.de (Postfix, from userid 25121)
+	id D9BE658725FF2; Tue,  9 Jul 2024 19:33:13 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by a3.inai.de (Postfix) with ESMTP id D72B760C6495C;
+	Tue,  9 Jul 2024 19:33:13 +0200 (CEST)
+Date: Tue, 9 Jul 2024 19:33:13 +0200 (CEST)
+From: Jan Engelhardt <jengelh@inai.de>
+To: Sasha Levin <sashal@kernel.org>
+cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+    Tejun Heo <tj@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH AUTOSEL 6.9 01/40] workqueue: Refactor worker ID formatting
+ and make wq_worker_comm() use full ID string
+In-Reply-To: <20240709162007.30160-1-sashal@kernel.org>
+Message-ID: <pp021o2p-2025-7nor-7257-sons6q59rorp@vanv.qr>
+References: <20240709162007.30160-1-sashal@kernel.org>
+User-Agent: Alpine 2.26 (LSU 649 2022-06-02)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zo1neJYABzuMEvTO@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-On Tue, Jul 09, 2024 at 05:38:16PM +0100, Matthew Wilcox wrote:
-> On Tue, Jul 09, 2024 at 04:29:07PM +0000, Pankaj Raghav (Samsung) wrote:
-> > +++ b/include/linux/pagemap.h
-> > @@ -394,13 +394,24 @@ static inline void mapping_set_folio_order_range(struct address_space *mapping,
-> >                                                  unsigned int min,
-> >                                                  unsigned int max)
-> >  {
-> > -       if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-> > +       if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
-> > +               VM_WARN_ONCE(1, 
-> > +       "THP needs to be enabled to support mapping folio order range");
-> >                 return;
-> > +       }
-> 
-> No.  Filesystems call mapping_set_folio_order_range() without it being
-> conditional on CONFIG_TRANSPARENT_HUGEPAGE.  Usually that takes the
-> form of an unconditional call to mapping_set_large_folios().
 
-Ah, you are right.
+On Tuesday 2024-07-09 18:18, Sasha Levin wrote:
 
-Actually thinking more about it, we don't need VM_WARN_ONCE on
-CONFIG_THP IS_ENABLED, because if we go the route where a FS will
-call something like `mapping_max_folio_order_supported()` during mount
-time, that will already return `0` as the maximum order that will be
-supported.
+>From: Tejun Heo <tj@kernel.org>
+>
+>[ Upstream commit 2a1b02bcba78f8498ab00d6142e1238d85b01591 ]
+>
+>TASK_COMM_LEN is only 16 leading to badly truncated names for
+>rescuers. For example, the rescuer for the inet_frag_wq workqueue becomes:
+>
+>  $ ps -ef | grep '[k]worker/R-inet'
+>  root         483       2  0 Apr26 ?        00:00:00 [kworker/R-inet_]
 
-So just something like this should be enough:
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 14e1415f7dcf..ef6b13854385 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -397,10 +397,18 @@ static inline void mapping_set_folio_order_range(struct address_space *mapping,
-        if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
-                return;
- 
--       if (min > MAX_PAGECACHE_ORDER)
-+       if (min > MAX_PAGECACHE_ORDER) {
-+               VM_WARN_ONCE(1, 
-+       "min order > MAX_PAGECACHE_ORDER. Setting min_order to MAX_PAGECACHE_ORDER");
-                min = MAX_PAGECACHE_ORDER;
--       if (max > MAX_PAGECACHE_ORDER)
-+       }
-+
-+       if (max > MAX_PAGECACHE_ORDER) {
-+               VM_WARN_ONCE(1, 
-+       "max order > MAX_PAGECACHE_ORDER. Setting max_order to MAX_PAGECACHE_ORDER");
-                max = MAX_PAGECACHE_ORDER;
-+       }
-+
-        if (max < min)
-                max = min;
+* very old Linux: process names are fixed to 16 bytes
+* Linux 6.something: we relaxed it for kthreads in principle, but
+  oopsie-daisie forgot one case so it's still 16 bytes for that one case
+* 2a1b02: now that one case also has length limit lifted
 
-If we have a helper such as mapping_max_folio_order_supported() that
-could be invoked by FSs to see what page cache could support.
-
-And FSs that call mapping_set_large_folios() as an optimization will not
-see these random WARNINGS because we call this function with the actual
-min and max range.
-
-Let me know what you think.
-
---
-Pankaj
+which for me makes this count as a feature rather than a bugfix,
+and I would not add it to -stable.
+There might even be a poor soul who tests for exact process names in one
+obscure shell script of his… would not want to break his setup when going
+6.9.8->6.9.9, only with 6.9.8->6.10.
 
