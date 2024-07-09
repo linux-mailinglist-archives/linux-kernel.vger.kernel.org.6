@@ -1,114 +1,115 @@
-Return-Path: <linux-kernel+bounces-245361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3913792B1A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:55:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B5492B1AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:58:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECDF11F21673
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:55:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148DD281BB7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBEFC14D705;
-	Tue,  9 Jul 2024 07:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C46214B97B;
+	Tue,  9 Jul 2024 07:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RoHlAIDp"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZwZp9Dtf"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C615F12C478;
-	Tue,  9 Jul 2024 07:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1B012C478;
+	Tue,  9 Jul 2024 07:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720511733; cv=none; b=el63hsDKV81tSN5pjbEY79pSeSwnt5bAmS8SJdRrszG5CvGtg2/ePYiaSVKb88ac/ecW42/g44jKf27dPXnsDgaJdthepci2c7KHKwdMuFR2DKeY+WdXpKAq//LTmGojI76YpSITghDa0lwC4UDGeOFOLF2rjdhXvL07z6j5dnY=
+	t=1720511890; cv=none; b=ACU6jxwsQcFyfDekhRUfcy9F2HNWUltj4aXFu180PS1AL5z1lvyaEABRBrUzXVxMzLbGPdQ+dpDgnRvYs7zqW4DscSpGBd2HGaE8AGKUEUig2rXOV+JHZxFn+i4/Ytpplwbf9NZ0A8sqCgJDP6CpWbndw1akDwjHyl5lB0CEI6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720511733; c=relaxed/simple;
-	bh=YzvYfGmfAcSYTrnLdb6YghFGvOuva+jojEq/hwMLN68=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LkbvDHIgyUaMyq6lvoUvX8IItZ4yo1IxP5dTWAilDZB0R+NLVdERRtCUhdjOrqkvkXVS51cb1asmZAZGVOknH5TV9QS9gOgk5P2EBh1kzCQ4zsfv+hiysn/B2GT8dzJcIJxPjG4E1gay6xFZc5hDtjbfxHxqfu0B4MJ/i7sjHCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RoHlAIDp; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-707040e3018so3151453a12.1;
-        Tue, 09 Jul 2024 00:55:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720511730; x=1721116530; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YzvYfGmfAcSYTrnLdb6YghFGvOuva+jojEq/hwMLN68=;
-        b=RoHlAIDpy8DoiphmP5GU39+vnLNyRIvlyvN/OV4+NyL8Dj1FkbTbGmh4V1Eu1vxRJN
-         uq5wYXg7nlVSm41qhJn1vae7vJUpUG0KhYz3AnHU2cxe1L/qgA2iu7sRdQN2zjdWpKQU
-         848x6BzQMN3oke9DBrHfdpszTbKeCBTEyBACq10AeCJpklBfYiy29Hjdx1XrsvzIB8tq
-         SuuZDwJTN3259J63yk5yRXOKIjTdVjVPt+xCqF29aGurAGiMdpCd2gAHVLM+ANZlW3vC
-         41m8XzV0eB/X96f1spkJYs0AXCZtJrkthDPz9hlhGgNneFEiIz7aZ5M/k7VoHf3z0laG
-         XCzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720511730; x=1721116530;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YzvYfGmfAcSYTrnLdb6YghFGvOuva+jojEq/hwMLN68=;
-        b=YU7BZroIWEhsdOfKmDhd5ZonDtHjzPN3tWnHMNMcX57tMEeFC5s0bSFAgyx7Ak/3Ag
-         ynBmEydMT/ckeVISmR9iyDz1djRfMTn2auRDFP8Sra7AACqDdCFgXjGosBMSevk+flpr
-         Oqo46EQ7/Lee7M5KBsGpkFU7dPc3zNfRFVT7KtfxrJB1hqnhukErUiNOD65mdh8kWgQL
-         ffrcNNJ0Yjr5UNy3AjvsWk2PBREQBgjcRu50mjqQgS0CSlYANe1cDKe/nMO/GIicQnOr
-         YsoLv+NIa3eWST0zBymuU01ibSV5kPfCZhfs7xfsCuPKu1AS5aOdslvIn6/pfTYFrOg1
-         f1Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUleZtOynDWYWNgxorKKhxfnZ/KMwlNcI7V/MsVcZT8DCGHKFKh0IwNyITD6V9yowqSvv1qbxfYSJoyx0LislWuXBhgOeNcG+BMC3GvU+bE2QtAd3KxXdN0JrBmqDuMbr1N0JoNA3msIzAfdI=
-X-Gm-Message-State: AOJu0YwWL9GI01isllBdQyzAEr7/lMWin9T9LEW4cG8huAOPEGvmIBlu
-	9yEj4vMKLk4Q+gryPg8lDGXpyXH0M2cyBtdfexVJ6gqk5bpKw+0OQfYA8OCL8VOq/sNSvdFr1c5
-	/kVpZxG8H5Z67C296nu6RgZLa5UQ=
-X-Google-Smtp-Source: AGHT+IEPkJ7kX8DP6xXn1hqgjitAHhqA1vLoNVaXSl0RLERC8TNfjOKtWnm7ZTa/2tCJN+5SgSAPu9kP6iKo39EEFF8=
-X-Received: by 2002:a05:6a20:4321:b0:1c0:eec6:85ea with SMTP id
- adf61e73a8af0-1c2981ff8bemr2187647637.12.1720511730113; Tue, 09 Jul 2024
- 00:55:30 -0700 (PDT)
+	s=arc-20240116; t=1720511890; c=relaxed/simple;
+	bh=9cW7sQX4Ee2PIL31X06vcKNfrh94ngJ4D74dp0beZSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=SDDIuqcS2CfzHYm6Q7YWyPp5Wt/XOoVcyuGmBmOZMx6oBeFFQA7omz/6unnlF/twEnBhvBezjrQkzL59hXr/uLBb6EUrIGGu5o1MphII99FYAFLFf9SGslw/3rBysAWTUA1/PMep0p5bt9T12h83b6seDQqJcIrTCUJhvde9I54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ZwZp9Dtf; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720511884;
+	bh=WNy7ZuwZ2sUtmBRVrCqSKYtGy4m2BKgcdSiwYEATmpE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ZwZp9DtfHrHG29O0PwjIcoEnd0Q9tzL3pesAvWucV/O1HoFhrjigTSz9Lnp+dOAa0
+	 uHWZ8WHTMPxHcWtvj/5pAXHlOLctgg/I/P7xOREpjDSs1QH+O5jjCjokkrn4n2WnlF
+	 JGTObmwjiSQZBDZEf17/14TuDVZYvvkSVQe+wJkxB6FmUQ/HZwfgZNMcK20hAE81bP
+	 x0bDdyd/HV3kBKczYRjE99I4absy64RwZkVepEEm61GNHsGOZrP3DFL8l3yB/mDJRV
+	 gXO8q9ufq77q7067vw2yHjr+9cEtw2Tbq5AvqGMRnkgxex5nf1ADUlekGx1QpYCqAn
+	 572c8xx+OqrnA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJCyz4Y2Rz4w2K;
+	Tue,  9 Jul 2024 17:58:03 +1000 (AEST)
+Date: Tue, 9 Jul 2024 17:58:03 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kees Cook <kees@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, liujinlong <liujinlong@kylinos.cn>,
+ liujinlong <mingliu6104@gmail.com>
+Subject: linux-next: manual merge of the kspp tree with Linus' tree
+Message-ID: <20240709175803.36f8bca6@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240607-highmem-v1-1-d18c5ca4072f@google.com>
-In-Reply-To: <20240607-highmem-v1-1-d18c5ca4072f@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 9 Jul 2024 09:55:18 +0200
-Message-ID: <CANiq72kO2rpPBf0Gxfqmt7cUMMsrH9kx0==63rthwXQD3fgAqw@mail.gmail.com>
-Subject: Re: [PATCH] rust: alloc: add __GFP_HIGHMEM flag
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>, 
-	Kees Cook <keescook@chromium.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/qcOr_DR=iMkXoT2OuDs2tZ3";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/qcOr_DR=iMkXoT2OuDs2tZ3
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 7, 2024 at 10:23=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> Make it possible to allocate memory that doesn't need to mapped into the
-> kernel's address space. This flag is useful together with
-> Page::alloc_page [1].
->
-> Rust Binder needs this for the memory that holds incoming transactions
-> for each process. Each process will have a few megabytes of memory
-> allocated with this flag, which is mapped into the process using
-> vm_insert_page. When the kernel copies data for an incoming transaction
-> into a process's memory region, it will use kmap_local_page to
-> temporarily map pages that are being modified. There is no need for them
-> to take up address space in the kernel when the kernel is not writing an
-> incoming transaction into the page.
->
-> Link: https://lore.kernel.org/all/20240528-alice-mm-v7-4-78222c31b8f4@goo=
-gle.com/ [1]
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+Hi all,
 
-Applied to `rust-next`, thanks!
+Today's linux-next merge of the kspp tree got a conflict in:
 
+  kernel/kallsyms.c
+
+between commit:
+
+  7e1f4eb9a60d ("kallsyms: rework symbol lookup return codes")
+
+from Linus' tree and commit:
+
+  21b4564fedad ("sprint_symbol: Replace strcpy with memmove to handle poten=
+tial overlap")
+
+from the kspp tree.
+
+I fixed it up (the former removed the code modified by the latter, so I
+did that) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be mentioned
+to your upstream maintainer when your tree is submitted for merging.
+You may also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
+
+--=20
 Cheers,
-Miguel
+Stephen Rothwell
+
+--Sig_/qcOr_DR=iMkXoT2OuDs2tZ3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaM7YsACgkQAVBC80lX
+0GwIvAf/eSokduLCFkiUm0VI3VjxQ5l6EOv5sWiuWd6e+ogG7Bx+H5IR4eW/ILuL
+lC6jIREbFxZvTSpX26NWoT9wz3XwWp5e0os4aWaHAfJIVFFtn3WV3qhyi1SldVtD
+WTDckClVNPaXO4mp8qqQb1r3JncXgKD7DdOWzhcOWJ8Y1FKJ3ejoqDPZalP1KEg6
+Qv8UryngT/Rgz3U+qvO6mUTmhbK4L0SXBR86pfXxJmX2GHP6uDMPBL2+uJS0jeZE
+pP798gknfYXGAT6vC5oGBuHrvIwpE1mStrPcEFAOhkUs19VZNZ3k7WlCgfeStyIs
+CISiihqs4gGmzdbxGo0Umvf3Rpk5rQ==
+=tKSh
+-----END PGP SIGNATURE-----
+
+--Sig_/qcOr_DR=iMkXoT2OuDs2tZ3--
 
