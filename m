@@ -1,187 +1,158 @@
-Return-Path: <linux-kernel+bounces-245704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5377592B6AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:16:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67A2892B6B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 775FC1C20BD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:16:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E34A28538C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281D81591F1;
-	Tue,  9 Jul 2024 11:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3B0158A08;
+	Tue,  9 Jul 2024 11:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X0V4d5b2"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R9iS1Qj3"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31DF15957D
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 11:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AAB158875
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 11:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720523722; cv=none; b=U3u/SIg9c8qJUrAlBAdCkCpYsfSZDMgMaqhRf1O+oD6zJyQv8BuOo60q3ZnbxMrkC/t4vvZwUlfMQOiGEELB8xNepSMjUYoaAZlJrPepsCbgofgJnlLpoXG0ye82HVYQerkzHuWiBqnv+h/5lM5VG9cNARWvkK4ieiClipkM17w=
+	t=1720523750; cv=none; b=oilEMaJc8GcNu4zjgzB/P+YT29AO4vzUV/Qdd+PzTIQENG/5JII6hHVR8K5X80oo9brol3AvHtBTtlU6gqwoIvoaZmpe4X9Pg+WPh70E/QdRVuNxyfGxNa4k38a8YdPRJw6L4po+jsGyYl6XCoeOlkKbW3m/MJQUCugIkYGbO74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720523722; c=relaxed/simple;
-	bh=8o9HK/XW5AhtJvK6eFRArwMqdWRhZ5tZPR9MnQJ5oeM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oZw6dMI+7LaAQzi3mfIr4zR1whlPtWBAXtJAedw72k93N52u5EYhk0HZ4uQ2KcLdz45GWhKKe6dRkj1qprTB+ng9b9rHST514xNjzixzO7/qGSiQr87CtWZamX9War5i4+kyaTw0oWDwDgRrGYgeUTR2t8W2UTado+iDLND+qwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X0V4d5b2; arc=none smtp.client-ip=209.85.128.172
+	s=arc-20240116; t=1720523750; c=relaxed/simple;
+	bh=XIKVXG2FP4V3pnbSVcYW2sWKp3wew12zsDIFhsiuxm4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=U5TnCU5aYtI0RoUj92+nSOWdec/fY3cdYSV+BL1Vnz3AUm8nfRP/uD0KChdl/GmYVVF7LRqCh+4X5r30l+lKx1YUe2Udaoct4AFUeQ9Pky6VOTKFITQF4C3JJh00TboCEpvsuQcenNqOXfXsaAes/ZumWAqVBlOPVwdODrnByGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R9iS1Qj3; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-64b3655297aso48523967b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 04:15:20 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a77c9d3e593so432771066b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 04:15:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720523720; x=1721128520; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=amibtjMeBpHYdoWGEAnGfjOuZ2WN6rEsWzK1yJggVqI=;
-        b=X0V4d5b2DHrmkHpMqUq9F2twFXuz8n8ts6uR4Dh+jUNW2oWTbAYztI1gbOD8g+BgfH
-         Spcal3qkQShKInEPIS3kfg3F7+0+fcjuw3DXKxTzmtJpATbaeOea8nGGwe5YLzKoqKRG
-         ns6Uxq3yRJ08F0r/BHPwTaUXUxqu8Zs+U52diS9v6itHkb08k0pNuxmg9eoxvNw5W4c8
-         nRhlhExa+1uSHymJi9mGc22Zm1UQDc0KuN7cd2lIjbDGAQCGJf7kfZwRjgKw+SPIJJbk
-         bvxWamXqKPKoDZKg12YUX1TP7q3Bs10UbL6JNueEoK7z8oqRUVcuEit4MjfRjV7rdHsu
-         QbQA==
+        d=linaro.org; s=google; t=1720523747; x=1721128547; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iTDIAYS1v3Pxz5bKo9e6sLviKWQ74Nbc4ACLHcw546c=;
+        b=R9iS1Qj3E/FCnIErwEC5lO00yEKlcxvXMpWTaB3qlDC1Succ6O3Ongn87zYS/W7MYU
+         NChzOBAOdL9eAvjuhjNxCtJdqxRzUzNJprzTQ1FAJfr6Viz91YUK9yuaFNWnBggBncmh
+         NSyeH5ZTcxNkwqx4weYny9vmyU/mkoMjmGViu9lSxFpxOQeU/u+UG2eaZ9PxXgnCrwwm
+         vO270q0r3aNmQdhp/2AIG9bTE/40nAtmC/Kgq345s1NIoaq0kemJrdI47+CvwGRePf6M
+         Z7HQ1CeTs0EbCzSFS/ddgxn/YlSRHZy67a1eZBTB/SH4Oxr3DFSHuMjdv8qB7BVY6fj5
+         H+BQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720523720; x=1721128520;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1720523747; x=1721128547;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=amibtjMeBpHYdoWGEAnGfjOuZ2WN6rEsWzK1yJggVqI=;
-        b=oa8rOH7A4nI56FHvFNhsb2nvgRgb0geObnxTYwOYv0bToQEXgY6lipKIx7ycghCxZj
-         nStnXHxskqRQiQUx4cDvX2NVEWrwjFz39WeCV28zOAfI7zy7jLBIpGscFFlJbj+1nA4p
-         V9avNN8pTJ9pwAf9rZMdQTb0HI9U487yx05bfVKMUCQWox3oz4492JRCy/9E8YWxMUj/
-         oumpGkJujRkngOiCMAWV4zJ74iuV1rtlPIoRwBRHQ9+hDEIbzTSKg5P57G8hSwQeqjyI
-         JN5PyfVBzd1sm6OZvtlSoHt/8rPK1TY0BLoDo3WF+eqRFww2jzwdlb3t6f117Qs+1v4c
-         QalA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsEXKt8qPJ5OBJBJKcc54buRCkcDt0gO06z8ea8Q8iVhtMo27PpHtbn9WUYIiSlcjO/9Wrv8r0QIC/aph8TzYGSE4ITGSvjG10Vt4D
-X-Gm-Message-State: AOJu0YzPsmFAu/o4Y8zHqk1vysLtg1zXAx++Op9dl4qVQhuOMYbccETG
-	BEaSA9n4kwsm/SOJkdSmmeZcYJk6zO2yJ7El7NpunBbR5IfX5HzC7nCq+M25oxLCg1nd3OwCfom
-	8IH+Zxc77uAFNX4cyXhVnnW/D6jff7V2Lou5Q8A==
-X-Google-Smtp-Source: AGHT+IFZPKT3QneE1vinb0l0LrB8IBVWI9enPV/6FaauTcqtNWGCxq5Rdp14ew2EtEqk25i4Zh3v1NHOT10WrvY4W2M=
-X-Received: by 2002:a05:690c:7306:b0:64a:e7ec:f3d with SMTP id
- 00721157ae682-658eed5eae3mr32126757b3.18.1720523719826; Tue, 09 Jul 2024
- 04:15:19 -0700 (PDT)
+        bh=iTDIAYS1v3Pxz5bKo9e6sLviKWQ74Nbc4ACLHcw546c=;
+        b=ez98nRywZq/tL8oBzWxZVui84vjinM0eHa+DADbtl08WtnDfRI03qB57D5BoEO9YdP
+         eGXgTZGnCM1vEtiO5DVNoggNq3V4QMrgdFzLw5WvLpzF7regb9uyw+6h1eGbDWv9nDRX
+         FL91ZzZAJDBbqWO1LSlZtj5RL1C8MFxMNbhvp5Qv0xpl6RHf0ytKLObTk1ubtiUky83C
+         Qq2+o8J37qWoePt9UgRowZhl/ayjc8SVjEFfGsMzOMwdbGpBSFDQc9sPCy4oYd4+8s1a
+         I4gVLevvivL+N1Nlu+oN/tVYL/hzkpvNL4lg9Ki65lx5PyF74zfxBKnIVGbwJIXIiWeX
+         xdIg==
+X-Forwarded-Encrypted: i=1; AJvYcCX4a8mAcDD3hKkgAYnO7upwWpt21KjOhwmihr7Yq/bZFLeVYmkTRm35vjypW6LfbYl/zpwqAZ3ovZST/Hh48k1s4YlOJR3hVph8aRmU
+X-Gm-Message-State: AOJu0YwtF6TGm1E+yTO0SKBLKhlBm1XOGzBTczInseYTDWPnp99il2Sb
+	TFaPsNwICdJcuvPQNyHHUr5U478AO+HV6UoVnLWO9MHWBl0KlQdcb7TWM94rM58=
+X-Google-Smtp-Source: AGHT+IGp7EnF0TAVZ53RSFXeZuljBz7nakYWgnGbm0LiXhT2qOt1dQ9BYqAobTD4Vt/4QduRJSwTAw==
+X-Received: by 2002:a17:907:9692:b0:a77:eb34:3b45 with SMTP id a640c23a62f3a-a780b6fe39cmr173001866b.36.1720523746920;
+        Tue, 09 Jul 2024 04:15:46 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6e06dcsm69527166b.87.2024.07.09.04.15.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 04:15:46 -0700 (PDT)
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Date: Tue, 09 Jul 2024 13:15:40 +0200
+Subject: [PATCH] drm/msm/adreno: Assign msm_gpu->pdev earlier to avoid
+ nullptrs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <871d6b708de8bb42e1fabd8a601dc9a9a217cf00.1719863475.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <871d6b708de8bb42e1fabd8a601dc9a9a217cf00.1719863475.git.christophe.jaillet@wanadoo.fr>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 9 Jul 2024 13:14:43 +0200
-Message-ID: <CAPDyKFprG1iwNDegi45d0KPWiZ7QNthGUWihY05UQ63MCvs=2A@mail.gmail.com>
-Subject: Re: [PATCH] pmdomain: amlogic: Constify struct meson_secure_pwrc_domain_desc
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240709-topic-adreno_crash2-v1-1-9def36c3337d@linaro.org>
+X-B4-Tracking: v=1; b=H4sIANsbjWYC/x3MQQqAIBBA0avErBNMgrKrRISNY81GY4wIpLsnL
+ d/i/wKZhCnD1BQQujlzihVd2wAeLu6k2FeD0abXg7bqSiejcl4ophXF5cOoDm0IwdsNaYRankK
+ Bn/86L+/7AYLBTV5lAAAA
+To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720523745; l=2106;
+ i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
+ bh=XIKVXG2FP4V3pnbSVcYW2sWKp3wew12zsDIFhsiuxm4=;
+ b=BJPl9NqE6dAMkeZJadvcNFtD34BG63QModN0kwcUfSZ8DfUDTiyzg7FeP6R0h+A0hXu4BVmHM
+ ZmTc1qdvFWbBePAdEXeg5pbxfrQlBiauB4GANnGbOUW13+HrSV7x0hr
+X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On Mon, 1 Jul 2024 at 21:53, Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> 'struct meson_secure_pwrc_domain_desc' is not modified in this driver.
->
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
->
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> ======
->    text    data     bss     dec     hex filename
->    4909    4072       0    8981    2315 drivers/pmdomain/amlogic/meson-secure-pwrc.o
->
-> After:
-> =====
->    text    data     bss     dec     hex filename
->    8605     392       0    8997    2325 drivers/pmdomain/amlogic/meson-secure-pwrc.o
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+There are some cases, such as the one uncovered by Commit 46d4efcccc68
+("drm/msm/a6xx: Avoid a nullptr dereference when speedbin setting fails")
+where
 
-Re-based and applied for next, thanks!
+msm_gpu_cleanup() : platform_set_drvdata(gpu->pdev, NULL);
 
-Kind regards
-Uffe
+is called on gpu->pdev == NULL, as the GPU device has not been fully
+initialized yet.
 
+Turns out that there's more than just the aforementioned path that
+causes this to happen (e.g. the case when there's speedbin data in the
+catalog, but opp-supported-hw is missing in DT).
 
-> ---
-> Compile tested-only.
->
-> The .is_off() function is *always* set as pwrc_secure_is_off(), so it could
-> make sense to remove this function pointer and call pwrc_secure_is_off()
-> directly when needed.
-> This would save some memory and useless indirection.
->
-> I leave it as-is because it is maybe here for future use.
-> ---
->  drivers/pmdomain/amlogic/meson-secure-pwrc.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/pmdomain/amlogic/meson-secure-pwrc.c b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-> index df5567418226..62857482f874 100644
-> --- a/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-> +++ b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
-> @@ -46,7 +46,7 @@ struct meson_secure_pwrc_domain_desc {
->
->  struct meson_secure_pwrc_domain_data {
->         unsigned int count;
-> -       struct meson_secure_pwrc_domain_desc *domains;
-> +       const struct meson_secure_pwrc_domain_desc *domains;
->  };
->
->  static bool pwrc_secure_is_off(struct meson_secure_pwrc_domain *pwrc_domain)
-> @@ -110,7 +110,7 @@ static int meson_secure_pwrc_on(struct generic_pm_domain *domain)
->         .parent = __parent,                     \
->  }
->
-> -static struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
-> +static const struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
->         SEC_PD(DSPA,    0),
->         SEC_PD(DSPB,    0),
->         /* UART should keep working in ATF after suspend and before resume */
-> @@ -137,7 +137,7 @@ static struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
->         SEC_PD(RSA,     0),
->  };
->
-> -static struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
-> +static const struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
->         SEC_PD(A4_AUDIO,        0),
->         SEC_PD(A4_SDIOA,        0),
->         SEC_PD(A4_EMMC, 0),
-> @@ -155,7 +155,7 @@ static struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
->         SEC_PD(A4_AO_IR,        GENPD_FLAG_ALWAYS_ON),
->  };
->
-> -static struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
-> +static const struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
->         SEC_PD(C3_NNA,          0),
->         SEC_PD(C3_AUDIO,        0),
->         SEC_PD(C3_SDIOA,        0),
-> @@ -172,7 +172,7 @@ static struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
->         SEC_PD(C3_VCODEC,       0),
->  };
->
-> -static struct meson_secure_pwrc_domain_desc s4_pwrc_domains[] = {
-> +static const struct meson_secure_pwrc_domain_desc s4_pwrc_domains[] = {
->         SEC_PD(S4_DOS_HEVC,     0),
->         SEC_PD(S4_DOS_VDEC,     0),
->         SEC_PD(S4_VPU_HDMI,     0),
-> @@ -184,7 +184,7 @@ static struct meson_secure_pwrc_domain_desc s4_pwrc_domains[] = {
->         SEC_PD(S4_AUDIO,        0),
->  };
->
-> -static struct meson_secure_pwrc_domain_desc t7_pwrc_domains[] = {
-> +static const struct meson_secure_pwrc_domain_desc t7_pwrc_domains[] = {
->         SEC_PD(T7_DSPA,         0),
->         SEC_PD(T7_DSPB,         0),
->         TOP_PD(T7_DOS_HCODEC,   0, PWRC_T7_NIC3_ID),
-> --
-> 2.45.2
->
+Assigning msm_gpu->pdev earlier seems like the least painful solution
+to this, therefore do so.
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+There's no fixes tag on purpose, as there doesn't seem to be a good
+single commit to blame.
+---
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c | 1 +
+ drivers/gpu/drm/msm/msm_gpu.c           | 1 -
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+index 1c6626747b98..949d65437704 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+@@ -1083,6 +1083,7 @@ int adreno_gpu_init(struct drm_device *drm, struct platform_device *pdev,
+ 	adreno_gpu->chip_id = config->chip_id;
+ 
+ 	gpu->allow_relocs = config->info->family < ADRENO_6XX_GEN1;
++	gpu->pdev = pdev;
+ 
+ 	/* Only handle the core clock when GMU is not in use (or is absent). */
+ 	if (adreno_has_gmu_wrapper(adreno_gpu) ||
+diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
+index 3666b42b4ecd..a274b8466423 100644
+--- a/drivers/gpu/drm/msm/msm_gpu.c
++++ b/drivers/gpu/drm/msm/msm_gpu.c
+@@ -931,7 +931,6 @@ int msm_gpu_init(struct drm_device *drm, struct platform_device *pdev,
+ 	if (IS_ERR(gpu->gpu_cx))
+ 		gpu->gpu_cx = NULL;
+ 
+-	gpu->pdev = pdev;
+ 	platform_set_drvdata(pdev, &gpu->adreno_smmu);
+ 
+ 	msm_devfreq_init(gpu);
+
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240709-topic-adreno_crash2-1c9fffd9bce8
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
+
 
