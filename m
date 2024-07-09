@@ -1,224 +1,135 @@
-Return-Path: <linux-kernel+bounces-245903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF6A92BB0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:29:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96A4392BB15
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:29:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D7D01C21404
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:29:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D78D1F2183B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30F815B980;
-	Tue,  9 Jul 2024 13:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A7215FA66;
+	Tue,  9 Jul 2024 13:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hquBD+Ca"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eNDisifI"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2A1158D83
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 13:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDD015575C;
+	Tue,  9 Jul 2024 13:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720531750; cv=none; b=Wb329hYyfUfsZqXu3lyiiZ3zJFOLjZqIZJhotEDllZm1UtiSuI3TgRGRueLUhrE4V07WMZ85a5idGB0fVVIB2r7yJnB+QcAuggn5PdNLne9UuHW2Ke5MTKcIb/ptGHu7amtsokLbjD+FqEX4LXrxqYNAEKWUnlKSlrMxRcPftvw=
+	t=1720531763; cv=none; b=JpGLa6ebki496wpkMDDJ3jC3xhRFPtTsKxwhOl89D+MHIKeoJyr2GI3U8iQRQXjAZdpPAZW67x9sDnyJubB09oFv+hY6TiYU3sDphLPI0s974eqedDQRZmO1tBb74qRqEess3gpE94vYTJZexeDxb9+e7YE+bnXo3xWVVuWu11w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720531750; c=relaxed/simple;
-	bh=c+nnO9LMTahdthMrpi4qg1EXjDO3xxfybk7lUVAGKz4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PTi1Er7tLiS0fdomJ2/gkRY2Bu4LFrtZncd0sgmUTQKy+CBGortVNSF5mQbfMkIE4cbdSTSv1GtTAq93HNPxBSTBnDeE0jGkgEoT9haaY4hki9I9sQZi86kxKzynVi4cPMwcVuruiQzNFhl4Sy40Qxp4i5PyJtpbLo6em/Rg9Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hquBD+Ca; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720531747;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qubRVCLAojwM88nAZiz+jBh5XpRB8iC1kGfHwMyytLA=;
-	b=hquBD+CaODtzoJ+sfUkPExG+8BOizjwv6XWMyPxR73g6jb5f1gNhIR7rTtKhX+8N1qdI9e
-	BzjjyDuxts3sjy56PorsH8QvmzUCeVt3uCC+g7UtGseGfH6Ykze3KRIiYHkRIyjQ3yiUSy
-	zW6yb6xXDbNmvxxooUhH5CNlWA3oeGo=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-498-VogK5-7ONjKpEcMdc7WqKg-1; Tue,
- 09 Jul 2024 09:29:03 -0400
-X-MC-Unique: VogK5-7ONjKpEcMdc7WqKg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	s=arc-20240116; t=1720531763; c=relaxed/simple;
+	bh=KUMM/Y6Cr3JlVVQc0TPJ5+fE2qtpm+zVw5CjYuV9kfw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sjYsej1/LBRBMY9IfSqxX+kzCu/VxQskjbtfLxPjYLvTtNiY7R9FytJPMkjqZcCJwqxgNcAIYoy41Ny1QTYRhk7GcrVabLWX2az8vItYamzYcEWJWC4ihPlLq/u3dhQ0I7qTpnSDjLgfdLg6IJZLH+URELBwYwCrARpM47QcoHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=eNDisifI; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720531759;
+	bh=VmVJZsHAQJgYIEEqsBkQ/q4o+ZHXxEHrOveklUFiGuY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eNDisifI9FqwYzkTZgGPITOPnmeqSRHyWlKj+w7LNoHmDYS195OYsFYi8v94KlMZI
+	 csXZLRnd+92vr5Mqqeyxuj2NIFgP2AAYTmJmS//HH2oTEoI4S73AV1icBX7CYO1QbC
+	 gBxHWocLzTgSqgtPw35ymw/yWHcjVBbSQZ1g5NKSYjElUTHPKMowcPm2AErB9gLzpH
+	 GWaJsljYj9Oil1+kecgtqzC/6mVt82XYqKeHt3hynS9oru3WNxKaXPgoU9Au7r9jDK
+	 laxy5vD/KpznivknU6ZU//Iazrd+jWa+Lm3mYcMBoNY/kdIeprLVNEmOUkTXADmWTh
+	 UI/V9DFqeRpHg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DCBE81920C78;
-	Tue,  9 Jul 2024 13:28:57 +0000 (UTC)
-Received: from llong.com (unknown [10.22.34.7])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F28CE1955DDD;
-	Tue,  9 Jul 2024 13:28:40 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Tejun Heo <tj@kernel.org>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: cgroups@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH-cgroup v2] cgroup: Show # of subsystem CSSes in root cgroup.stat
-Date: Tue,  9 Jul 2024 09:28:14 -0400
-Message-Id: <20240709132814.2198740-1-longman@redhat.com>
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJMK94jrqz4w2P;
+	Tue,  9 Jul 2024 23:29:17 +1000 (AEST)
+Date: Tue, 9 Jul 2024 23:29:16 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Arnd Bergmann" <arnd@arndb.de>, "Rob Herring" <robh@kernel.org>
+Cc: "Olof Johansson" <olof@lixom.net>, "Palmer Dabbelt"
+ <palmer@dabbelt.com>, "Paul Walmsley" <paul@pwsan.com>, ARM
+ <linux-arm-kernel@lists.infradead.org>, "Linux Kernel Mailing List"
+ <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patches in the devicetree tree
+Message-ID: <20240709232916.270d9927@canb.auug.org.au>
+In-Reply-To: <f2ceee62-2612-42d1-b727-2f087acc6785@app.fastmail.com>
+References: <20240709164618.69cfcfad@canb.auug.org.au>
+	<CAL_JsqLmm6Da=4G9cJfAtKJB5j_dfbTywRRwHMKZyf3J7SAxfg@mail.gmail.com>
+	<f2ceee62-2612-42d1-b727-2f087acc6785@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: multipart/signed; boundary="Sig_/uG0ovzMaMlpMnt5a/gDqhBe";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-The /proc/cgroups file shows the number of cgroups for each of the
-subsystems.  With cgroup v1, the number of CSSes is the same as the
-number of cgroups. That is not the case anymore with cgroup v2. The
-/proc/cgroups file cannot show the actual number of CSSes for the
-subsystems that are bound to cgroup v2.
+--Sig_/uG0ovzMaMlpMnt5a/gDqhBe
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-So if a v2 cgroup subsystem is leaking cgroups (usually memory cgroup),
-we can't tell by looking at /proc/cgroups which cgroup subsystems may be
-responsible.  This patch adds CSS counts in the cgroup_subsys structure
-to keep track of the number of CSSes for each of the cgroup subsystems.
+Hi all,
 
-As cgroup v2 had deprecated the use of /proc/cgroups, the root
-cgroup.stat file is extended to show the number of outstanding CSSes
-associated with all the non-inhibited cgroup subsystems that have been
-bound to cgroup v2.  This will help us pinpoint which subsystems may be
-responsible for the increasing number of dying (nr_dying_descendants)
-cgroups.
+On Tue, 09 Jul 2024 15:15:44 +0200 "Arnd Bergmann" <arnd@arndb.de> wrote:
+>
+> On Tue, Jul 9, 2024, at 14:42, Rob Herring wrote:
+> > On Tue, Jul 9, 2024 at 12:46=E2=80=AFAM Stephen Rothwell <sfr@canb.auug=
+.org.au> wrote: =20
+> >>
+> >> The following commits are also in the arm-soc and risc-v trees as
+> >> different commits (but the same patches):
+> >>
+> >>   0620bce64afa ("dt-bindings: riscv: cpus: add ref to interrupt-contro=
+ller")
+> >>   877097a2fab0 ("dt-bindings: interrupt-controller: convert marvell,mp=
+ic binding to YAML")
+> >>   c7ce06684bf5 ("dt-bindings: interrupt-controller: riscv,cpu-intc: co=
+nvert to dtschema") =20
+> >
+> > I had to rebase my tree yesterday to drop a bunch of reserved-memory
+> > restructuring that seems broken beyond repair. Maybe I'm going to have
+> > to just do reverts instead. I had no knowledge that anyone had pulled
+> > in my tree and how is it just these 3 commits? It should be at least
+> > these: =20
+>=20
+> I picked up=20
+>=20
+> b1a4e71d4fc4 arm: dts: arm: Drop redundant fixed-factor clocks
+> f7e642bcd622 dt-bindings: interrupt-controller: convert marvell,mpic bind=
+ing to YAML
+> 2af8d8a583a4 ARM: dts: armada-{370-xp,375,38x,39x}: Drop #size-cells from=
+ mpic node
+>=20
+> from patchwork when they were sent to soc@kernel.org. I don't
+> see the other ones in the arm-soc tree though, maybe they
+> are merged elsewhere?
 
-The cgroup-v2.rst file is updated to discuss this new behavior.
+Yeah, the risc-v tree.  Sorry about that, I should probably have done 2
+notifications.
 
-With this patch applied, a sample output from root cgroup.stat file
-was shown below.
+--=20
+Cheers,
+Stephen Rothwell
 
-	nr_descendants 53
-	nr_dying_descendants 34
-	nr_cpuset 1
-	nr_cpu 40
-	nr_io 40
-	nr_memory 87
-	nr_perf_event 54
-	nr_hugetlb 1
-	nr_pids 53
-	nr_rdma 1
-	nr_misc 1
+--Sig_/uG0ovzMaMlpMnt5a/gDqhBe
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-In this particular case, it can be seen that memory cgroup is the most
-likely culprit for causing the 34 dying cgroups.
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- Documentation/admin-guide/cgroup-v2.rst | 10 ++++++++--
- include/linux/cgroup-defs.h             |  3 +++
- kernel/cgroup/cgroup.c                  | 19 +++++++++++++++++++
- 3 files changed, 30 insertions(+), 2 deletions(-)
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaNOywACgkQAVBC80lX
+0GwtLAgAgn2AN5hx5okQjavimXlOhMzyiu44dEo8DnkA2PWHc88QQTlSUG1NHQcy
+Fu0ZgllRPhGWyzz5PzMvWzHiyAEkd25h+I/GqgW+XIpl7WJtLJW3V5ow3BHDbs5k
+gC5roYnx0yY1aw6MEyEVTn6svq9OzDyRJQljvfht6Q42N53mx2Qx3VTDMbe5B6Xi
+4WHlpB2Ko7R3I3ANA4Uc1KBQhv8N0ey3L2SHg8TmnXv4jtcZRH28f5zm8VDEqRJI
+wGsDXdb9ajrZKNZ6dN+N0AZG3gjsTdj0Vh3NSeJFMvfucWNuEVMoUV8VXBNeASDf
+XYrBU2e8pfTK/a1P/iW+w3A+c7s8LQ==
+=3vEU
+-----END PGP SIGNATURE-----
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 52763d6b2919..65af2f30196f 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -981,6 +981,12 @@ All cgroup core files are prefixed with "cgroup."
- 		A dying cgroup can consume system resources not exceeding
- 		limits, which were active at the moment of cgroup deletion.
- 
-+	  nr_<cgroup_subsys>
-+		Total number of cgroups associated with that cgroup
-+		subsystem, e.g. cpuset or memory.  These cgroup counts
-+		will only be shown in the root cgroup and for subsystems
-+		bound to cgroup v2.
-+
-   cgroup.freeze
- 	A read-write single value file which exists on non-root cgroups.
- 	Allowed values are "0" and "1". The default is "0".
-@@ -2930,8 +2936,8 @@ Deprecated v1 Core Features
- 
- - "cgroup.clone_children" is removed.
- 
--- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" file
--  at the root instead.
-+- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" or
-+  "cgroup.stat" files at the root instead.
- 
- 
- Issues with v1 and Rationales for v2
-diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-index b36690ca0d3f..522ab77f0406 100644
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -776,6 +776,9 @@ struct cgroup_subsys {
- 	 * specifies the mask of subsystems that this one depends on.
- 	 */
- 	unsigned int depends_on;
-+
-+	/* Number of CSSes, used only for /proc/cgroups */
-+	atomic_t nr_csses;
- };
- 
- extern struct percpu_rw_semaphore cgroup_threadgroup_rwsem;
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index c8e4b62b436a..48eba2737b1a 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -3669,12 +3669,27 @@ static int cgroup_events_show(struct seq_file *seq, void *v)
- static int cgroup_stat_show(struct seq_file *seq, void *v)
- {
- 	struct cgroup *cgroup = seq_css(seq)->cgroup;
-+	struct cgroup_subsys *ss;
-+	int i;
- 
- 	seq_printf(seq, "nr_descendants %d\n",
- 		   cgroup->nr_descendants);
- 	seq_printf(seq, "nr_dying_descendants %d\n",
- 		   cgroup->nr_dying_descendants);
- 
-+	if (cgroup_parent(cgroup))
-+		return 0;
-+
-+	/*
-+	 * For the root cgroup, shows the number of csses associated
-+	 * with each of non-inhibited cgroup subsystems bound to it.
-+	 */
-+	do_each_subsys_mask(ss, i, ~cgrp_dfl_inhibit_ss_mask) {
-+		if (ss->root != &cgrp_dfl_root)
-+			continue;
-+		seq_printf(seq, "nr_%s %d\n", ss->name,
-+			   atomic_read(&ss->nr_csses));
-+	} while_each_subsys_mask();
- 	return 0;
- }
- 
-@@ -5375,6 +5390,7 @@ static void css_free_rwork_fn(struct work_struct *work)
- 		int id = css->id;
- 
- 		ss->css_free(css);
-+		atomic_dec(&ss->nr_csses);
- 		cgroup_idr_remove(&ss->css_idr, id);
- 		cgroup_put(cgrp);
- 
-@@ -5567,6 +5583,7 @@ static struct cgroup_subsys_state *css_create(struct cgroup *cgrp,
- 	if (IS_ERR(css))
- 		return css;
- 
-+	atomic_inc(&ss->nr_csses);
- 	init_and_link_css(css, ss, cgrp);
- 
- 	err = percpu_ref_init(&css->refcnt, css_release, 0, GFP_KERNEL);
-@@ -6005,6 +6022,8 @@ static void __init cgroup_init_subsys(struct cgroup_subsys *ss, bool early)
- 	/* Create the root cgroup state for this subsystem */
- 	ss->root = &cgrp_dfl_root;
- 	css = ss->css_alloc(NULL);
-+	atomic_set(&ss->nr_csses, 1);
-+
- 	/* We don't handle early failures gracefully */
- 	BUG_ON(IS_ERR(css));
- 	init_and_link_css(css, ss, &cgrp_dfl_root.cgrp);
--- 
-2.39.3
-
+--Sig_/uG0ovzMaMlpMnt5a/gDqhBe--
 
