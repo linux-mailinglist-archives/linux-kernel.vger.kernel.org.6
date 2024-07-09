@@ -1,173 +1,120 @@
-Return-Path: <linux-kernel+bounces-246590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C8892C3FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:39:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9775592C3FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6446CB220AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:39:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DEF5B22159
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7651182A6A;
-	Tue,  9 Jul 2024 19:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F4C182A6A;
+	Tue,  9 Jul 2024 19:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jpo4jrcM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PDuqNAfv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AA8839E4;
-	Tue,  9 Jul 2024 19:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C624F18003A
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 19:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720553967; cv=none; b=us9qxiqRAHtUsH/4XJbtS40Bfgl/NkrqOoLwQ9/78imEjEw8f6w3iwagKjdw49woJSov08e4FYAXLlUyGzyzGk8dGt1JsUi042xd96j4Gc4n1W1tzp1dNzr0avg1sqhQBEiPWhWRo5b7rcDlTBe42CXM23PHt6ec59VlHCS2cp0=
+	t=1720554018; cv=none; b=d1atqVhH6NqfFX1mjsucCSm/V85Rsk0bxJCplrPsvpeZ//ceAIo/VMYO06LaJqdJ/gjZ2ZiUmMMzY8M560a8h1qtys5AxUNULa2iEFgEZlVjgwrHgaLHVLI9mo2hFSXXJsqGSO63Vd9ZVybyScatF3Z1KiJnf+8r2yjIBWk4SpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720553967; c=relaxed/simple;
-	bh=Tuc3Josad+Eb8/QMMfhE4ENri/1snAxANRMNkQgGwRQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=UwVQ6IeEzNVQqHyo9bWePwlsBXpVvCmZhWUYsNCXg4OmKrkUnHu2hHGCAXguoXI/OdPYvZgDGl6DUeCDI8acIQ484VILjuPX6m4vcYcZJgGy4USuYBG3XpeDytj3XC1xmuq9luYjz15K/lAlwHurPHaTnTr5s+JfVmk8qARjoX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jpo4jrcM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469GgFDc025652;
-	Tue, 9 Jul 2024 19:38:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ay5oBrHSb2YL73YTY5mpyQMrO+3FJd7t8ZkpRjje6dM=; b=jpo4jrcMa1PYT1Hz
-	B/H88h/SwhPzHsKpo9u2/cDjbXHLWhtNHbLqoH9IkuCiFwsIBT4nG08RjVDRypnw
-	kqmwcI31votZ4naM/I5cx9rIfhLQU4pD+rMpkjaF56gIhqUNB/DayPmS//91zpiL
-	BDfN9bmxcO7raEaG748rv35YEZ9K9OURJC9lHxj/kQr9H89BjOsdx3mUE+ETsPem
-	lgo0EDOjEJ7CmzE9XaYnjl6KrMpYbV8FEET9TuiGbc8L3Rl6OZdxISwPRn89pJAb
-	KaiYhKXrFGYqhHhdQFb+vQsu2YSva/M5sRmZiHnWh9uqVPYzoyzRrxZrp3fW7vd/
-	I3l6Yw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4091jdhqs0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 19:38:16 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469JcFsE032048
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 9 Jul 2024 19:38:15 GMT
-Received: from [10.71.110.34] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
- 12:38:13 -0700
-Message-ID: <46487222-6818-b0bf-e5cc-2310d62b5fe6@quicinc.com>
-Date: Tue, 9 Jul 2024 12:38:00 -0700
+	s=arc-20240116; t=1720554018; c=relaxed/simple;
+	bh=YGzvZ8dxVRYalMaq9tCBYutkYQYcNWBWhQBGtLwI18k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jVgsJV1oVkgAiiyRISo1+HqbMSiR49jjnXEQ6RG4ktqrnRY2sGyRkkijl5QMZBkyeM1c/Rs4/kAqtaO/y+Y+9yLlDpkGGn9BaiJOH4DnIgqwpI45gDW69o78ZUzhTfzpEIoE9UoLB+c/1xL4Uptgh+IaZrG91ZTJjDTCWzRCVzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PDuqNAfv; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720554015;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YGzvZ8dxVRYalMaq9tCBYutkYQYcNWBWhQBGtLwI18k=;
+	b=PDuqNAfvLNMp6576OC8HL9be98zosGLNM6kb0jWdtvW2ejBAlI7PmqLA/WWfIBTbcwNmM1
+	znPKaQFKQu2eH58YsId0CZ+JQeVheQvYGNhtRRLUHl0nD7Kiexwsw919/dv0hRYLA4MCJh
+	NbyQkX6wJTfvUAj6eGFG+B85lTASqSQ=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-142-kLF32l6iPcugtoWkZu6kxg-1; Tue,
+ 09 Jul 2024 15:40:12 -0400
+X-MC-Unique: kLF32l6iPcugtoWkZu6kxg-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C0DA0195609F;
+	Tue,  9 Jul 2024 19:40:09 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.34])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E0DB519560AE;
+	Tue,  9 Jul 2024 19:40:05 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue,  9 Jul 2024 21:38:33 +0200 (CEST)
+Date: Tue, 9 Jul 2024 21:38:29 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Tejun Heo <tj@kernel.org>, io-uring@vger.kernel.org,
+	Jens Axboe <axboe@kernel.dk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Tycho Andersen <tandersen@netflix.com>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Julian Orth <ju.orth@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 2/2] kernel: rerun task_work while freezing in
+ get_signal()
+Message-ID: <20240709193828.GC3892@redhat.com>
+References: <cover.1720368770.git.asml.silence@gmail.com>
+ <1d935e9d87fd8672ef3e8a9a0db340d355ea08b4.1720368770.git.asml.silence@gmail.com>
+ <20240708104221.GA18761@redhat.com>
+ <62c11b59-c909-4c60-8370-77729544ec0a@gmail.com>
+ <20240709103617.GB28495@redhat.com>
+ <658da3fe-fa02-423b-aff0-52f54e1332ee@gmail.com>
+ <Zo1ntduTPiF8Gmfl@slm.duckdns.org>
+ <20240709190743.GB3892@redhat.com>
+ <d2667002-1631-4f42-8aad-a9ea56c0762b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Subject: Re: [PATCH 2/2] drm/msm/dpu: don't play tricks with debug macros
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Daniel
- Vetter <daniel@ffwll.ch>,
-        Jordan Crouse <jordan@cosmicpenguin.net>,
-        Chandan
- Uddaraju <chandanu@codeaurora.org>,
-        Rajesh Yadav <ryadav@codeaurora.org>,
-        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
-        Archit Taneja
-	<architt@codeaurora.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Jeykumar
- Sankaran <jsanka@codeaurora.org>
-References: <20240709-dpu-fix-wb-v1-0-448348bfd4cb@linaro.org>
- <20240709-dpu-fix-wb-v1-2-448348bfd4cb@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20240709-dpu-fix-wb-v1-2-448348bfd4cb@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: nwCNJHvQJK8e2IG-3esDB5ADKXGgn6BK
-X-Proofpoint-ORIG-GUID: nwCNJHvQJK8e2IG-3esDB5ADKXGgn6BK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_08,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- lowpriorityscore=0 adultscore=0 spamscore=0 malwarescore=0 mlxlogscore=999
- mlxscore=0 priorityscore=1501 phishscore=0 clxscore=1015 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2407090132
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d2667002-1631-4f42-8aad-a9ea56c0762b@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
+On 07/09, Pavel Begunkov wrote:
+>
+> On 7/9/24 20:07, Oleg Nesterov wrote:
+> >Hi Tejun,
+> >
+> >Thanks for looking at this, can you review this V2 patch from Pavel?
 
+Just in case, I obviously meant our next (V2) patch
 
-On 7/9/2024 6:48 AM, Dmitry Baryshkov wrote:
-> DPU debugging macros need to be converted to a proper drm_debug_*
-> macros, however this is a going an intrusive patch, not suitable for a
-> fix. Wire DPU_DEBUG and DPU_DEBUG_DRIVER to always use DRM_DEBUG_DRIVER
-> to make sure that DPU debugging messages always end up in the drm debug
-> messages and are controlled via the usual drm.debug mask.
-> 
+[PATCH v2 2/2] kernel: rerun task_work while freezing in get_signal()
+https://lore.kernel.org/all/149ff5a762997c723880751e8a4019907a0b6457.1720534425.git.asml.silence@gmail.com/
 
-These macros have been deprecated, is this waht you meant by the 
-conversion to proper drm_debug_*?
+> >Well, I don't really understand what can snapshot/restore actually mean...
+>
+> CRIU, I assume. I'll try it ...
 
-/* NOTE: this is deprecated in favor of drm_dbg(NULL, ...). */
-#define DRM_DEBUG_DRIVER(fmt, ...)                                      \
-         __drm_dbg(DRM_UT_DRIVER, fmt, ##__VA_ARGS__)
+Than I think we can forget about task_works and this patch. CRIU dumps
+the tasks in TASK_TRACED state.
 
-I think all that this macro was doing was to have appropriate DRM_UT_* 
-macros enabled before calling the corresponding DRM_DEBUG_* macros. But 
-I think what was incorrect here is for DPU_DEBUG, we could have used 
-DRM_UT_CORE instead of DRM_UT_KMS.
+> ... but I'm inclined to think the patch makes sense regardless,
+> we're replacing an infinite loop with wait-wake-execute-wait.
 
-And DRM_DEBUG_DRIVER should have been used instead of DRM_ERROR.
+Agreed.
 
-Was this causing the issue of the prints not getting enabled?
+Oleg.
 
-> Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h | 14 ++------------
->   1 file changed, 2 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
-> index e2adc937ea63..935ff6fd172c 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
-> @@ -31,24 +31,14 @@
->    * @fmt: Pointer to format string
->    */
->   #define DPU_DEBUG(fmt, ...)                                                \
-> -	do {                                                               \
-> -		if (drm_debug_enabled(DRM_UT_KMS))                         \
-> -			DRM_DEBUG(fmt, ##__VA_ARGS__); \
-> -		else                                                       \
-> -			pr_debug(fmt, ##__VA_ARGS__);                      \
-> -	} while (0)
-> +	DRM_DEBUG_DRIVER(fmt, ##__VA_ARGS__)
->   
->   /**
->    * DPU_DEBUG_DRIVER - macro for hardware driver logging
->    * @fmt: Pointer to format string
->    */
->   #define DPU_DEBUG_DRIVER(fmt, ...)                                         \
-> -	do {                                                               \
-> -		if (drm_debug_enabled(DRM_UT_DRIVER))                      \
-> -			DRM_ERROR(fmt, ##__VA_ARGS__); \
-> -		else                                                       \
-> -			pr_debug(fmt, ##__VA_ARGS__);                      \
-> -	} while (0)
-> +	DRM_DEBUG_DRIVER(fmt, ##__VA_ARGS__)
->   
->   #define DPU_ERROR(fmt, ...) pr_err("[dpu error]" fmt, ##__VA_ARGS__)
->   #define DPU_ERROR_RATELIMITED(fmt, ...) pr_err_ratelimited("[dpu error]" fmt, ##__VA_ARGS__)
-> 
 
