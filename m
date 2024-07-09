@@ -1,425 +1,250 @@
-Return-Path: <linux-kernel+bounces-245545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14FC892B430
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:41:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C307B92B432
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:42:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3743C1C217D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:41:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E663F1C219DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AF415534D;
-	Tue,  9 Jul 2024 09:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A73156880;
+	Tue,  9 Jul 2024 09:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Zk/I2ato"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iGjg0Ce0"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CFD15539D
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B503C155C93;
+	Tue,  9 Jul 2024 09:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720518077; cv=none; b=nPLy3Qvf2ExEzlcJu3Qzr33AzYcmyt6oZagnulxMC5ALpyQW/+sB4gvUPva32A9MEVrb71oKJ9ldUfZ3LxqjiLyWIEmrobcu6xT6ticqQgMnpsExus8NT8Xcve5SjNTa2tj66WVVg4g2uS3RwdxMP0enc6tUGcCDBESDQ713hkY=
+	t=1720518081; cv=none; b=tcqF/m43PsDbzZlz3bgF0gVO2l7YLxI3pO8i0SyeH4/IM/sDaKdNOg+mjJSdGUXsMtKnYesJH7fpFGvpdnLcB9JORpgtDKIqu+TUZwGVGt5ykuGVafNahIS87pjzNRgatPFerRDB+ROS6B0d18kFV1QwPfdah7VVNhI1blH2PYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720518077; c=relaxed/simple;
-	bh=x55W9F0+WuORKEg6GNCMKasXP0XPSIixRFgeKcoH914=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kSpZNAebBy+uMMvyZxsoj61jPtCr87X/W1fB38EDTqZTh7VqoZLC91jD0nne/LaUyuDZL3ufvxjZOBrDB10wfYIpBY2oKfkpC2ruIxQtcl5ueHDrjoIr1HLX6OJjNwudw/pWcZWVNtMNirWxw3hArHdXsoXrReG833PyJ9yz6gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Zk/I2ato; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1720518073; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=+fymTFP/EAlJjk3kKHD5EP0iLMVhuHOfslFtl2RNPDU=;
-	b=Zk/I2atomVcoJxBm2irmtfeg5q8juSTQwL+hz14TMprgqFX9covr1f9qIvXN9+iJnobTct+3IkbuATo8+uGLkCm65gGlDrezD+xG9h/RP5xLO5cJhlem09h1pnvbsCyUM4VkXVeNFaGFFPbuPPELNj9HNFG0Pp3sdGDdwERmdV8=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0WABZZoj_1720518071;
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WABZZoj_1720518071)
-          by smtp.aliyun-inc.com;
-          Tue, 09 Jul 2024 17:41:12 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH 2/3] erofs: refine z_erofs_{init,exit}_subsystem()
-Date: Tue,  9 Jul 2024 17:41:05 +0800
-Message-ID: <20240709094106.3018109-2-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240709094106.3018109-1-hsiangkao@linux.alibaba.com>
-References: <20240709094106.3018109-1-hsiangkao@linux.alibaba.com>
+	s=arc-20240116; t=1720518081; c=relaxed/simple;
+	bh=6/8m5t3tBJG+vQHucRBM2B3L/XB592V14euivKILF9w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h07UjGTDjz4R5beyT1jr9w/nqe6rMFdHmuyVOTagIm9dl2wNSfSCqP/c+noEzQ0G1FaU6WvkQosD/KFo0IexxhPGNmb+Q8otwKFvKCfDElZaJDWg6E6zTaL6gTrbdb2JJzctBiqERvQ5ZIfWlVvizDfQcmGjfosCqVh2MuAbb6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iGjg0Ce0; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2c927152b4bso3332892a91.2;
+        Tue, 09 Jul 2024 02:41:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720518079; x=1721122879; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oVroGXjljN7UKU/yhFIYpLiSd6PbIzKS4cUQFOHvuWw=;
+        b=iGjg0Ce0P/9yEInGqudsvhaCU6JRtqUtUaTY7qecXQsa6++ODQ15F8BPa38hRmihMx
+         kB6Z37QP58SdtpNYf4YuFvUuUwgSKifHMzgYhH/OULQEsvUTLRXljclspxr146S52oXd
+         3QGUnYS5ssSkvo+qJbh9Ag/kPmmTeAEV/BxiyyHf4oGE6pGfFlTXZCP8IUgE3woYzVqW
+         po+xUadHAUtSS4eQ/YiOSSfvyF97GCrSd93xoin8N7Mgip6cb5+Vt95HWjiaSypJmH2Q
+         hthc/rDZD3haDnJfjsV1nO4ccUDkTeM2jzuJsrBXU6ooVTsdFsyciEELGrKyw34sJ8x3
+         Ix+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720518079; x=1721122879;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oVroGXjljN7UKU/yhFIYpLiSd6PbIzKS4cUQFOHvuWw=;
+        b=RwqhyYJByh8kpd5vhqNp7pNt1t6B9oUvLJ+AnTm90Ps69ELSPLjSw0MB3oNiCnUjM4
+         4C8/NQeGhUYA52vUvgA291SCBXsX0XKUtJDWsNunoqFUo2pYBvK0tXSaPd4TuWm/hfdh
+         IdW4o3IySYt+rsIcUempp5svEJ4LuB2aNCNZ5JPbzvgOR2yUxquxdb7KkWSlJXY1Al8i
+         ULHtW3Y5Fd/w4/1lbjMO4zQklSLiGfkPmbIjWH5wdsv4hdkKWT549e7iowNtKfxrm5Bt
+         1ZXoQfyQPomn5IeNYQa9vplSzwN4DR/nOT735NfFgdMSbzfewOeurzjIQzp1bkS6SHCc
+         uU1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUZajYMN0TMAJMzMFcONmANW2JiUtyQK4WmW2tP+G4B40IRUW/obkuZNYJREJ+7SU35lggWnuXPp+enIJLUul95oSSX+xT4cXf9I4WqjqeWtqMfPB75b5N7O4doFRpFMDqoZ6vYlGCaSDZJa5k=
+X-Gm-Message-State: AOJu0YxxvoI7DGIsz2D9M1ofT7FIXmEgvzg8k4dYYO15PRk8vQS8DHwY
+	HWbu+XDPlHJZB1EEXurftGv2Fv7CqVId0p9BnfJ4HMTw9/4/KJn6YTyTEvu3FeQVtFUIQASWYCF
+	NG4y+WMCOnYxwwVX1n2nRrxf0ugs=
+X-Google-Smtp-Source: AGHT+IF8ZjDYhseE4Khi5hh3/IVLxfQ67v9J2c5cotmB0Lq+rDdIDmRbQdZ5yWgqnTKcX7faKxVbS2/+f/aXqcOR3ns=
+X-Received: by 2002:a17:90b:1e05:b0:2c8:1f30:4e04 with SMTP id
+ 98e67ed59e1d1-2ca35d48f74mr1921776a91.36.1720518079028; Tue, 09 Jul 2024
+ 02:41:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240709084458.158659-1-jfalempe@redhat.com> <20240709084458.158659-5-jfalempe@redhat.com>
+In-Reply-To: <20240709084458.158659-5-jfalempe@redhat.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 9 Jul 2024 11:41:06 +0200
+Message-ID: <CANiq72kS2fAgRnR8yNfpN69tMG+UPfgfytaA8sE=tYH+OQ_L6A@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] drm/panic: Add a qr_code panic screen
+To: Jocelyn Falempe <jfalempe@redhat.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Introduce z_erofs_{init,exit}_decompressor() to unexport
-z_erofs_{deflate,lzma,zstd}_{init,exit}().
+Hi Jocelyn,
 
-Besides, call them in z_erofs_{init,exit}_subsystem()
-for simplicity.
+A quick docs-only review of the Rust side (some of these apply in
+several cases -- I just wanted to give an overview for you to
+consider).
 
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/compress.h             |  4 ++++
- fs/erofs/decompressor.c         | 28 +++++++++++++++++++++++++++
- fs/erofs/decompressor_deflate.c |  6 ++++--
- fs/erofs/decompressor_lzma.c    |  6 ++++--
- fs/erofs/decompressor_zstd.c    |  6 ++++--
- fs/erofs/internal.h             | 34 ++++-----------------------------
- fs/erofs/super.c                | 34 +++------------------------------
- fs/erofs/zdata.c                | 29 +++++++++++++++++-----------
- 8 files changed, 69 insertions(+), 78 deletions(-)
+On Tue, Jul 9, 2024 at 10:45=E2=80=AFAM Jocelyn Falempe <jfalempe@redhat.co=
+m> wrote:
+>
+> +//! This is a simple qr encoder for DRM panic.
+> +//!
+> +//! Due to the Panic constraint, it doesn't allocate memory and does all
 
-diff --git a/fs/erofs/compress.h b/fs/erofs/compress.h
-index c68d5739932f..601f533c9649 100644
---- a/fs/erofs/compress.h
-+++ b/fs/erofs/compress.h
-@@ -24,6 +24,8 @@ struct z_erofs_decompressor {
- 		      void *data, int size);
- 	int (*decompress)(struct z_erofs_decompress_req *rq,
- 			  struct page **pagepool);
-+	int (*init)(void);
-+	void (*exit)(void);
- 	char *name;
- };
- 
-@@ -88,4 +90,6 @@ extern const struct z_erofs_decompressor *z_erofs_decomp[];
- 
- int z_erofs_fixup_insize(struct z_erofs_decompress_req *rq, const char *padbuf,
- 			 unsigned int padbufsize);
-+int __init z_erofs_init_decompressor(void);
-+void z_erofs_exit_decompressor(void);
- #endif
-diff --git a/fs/erofs/decompressor.c b/fs/erofs/decompressor.c
-index de50a9de4e8a..b22fce114061 100644
---- a/fs/erofs/decompressor.c
-+++ b/fs/erofs/decompressor.c
-@@ -2,6 +2,7 @@
- /*
-  * Copyright (C) 2019 HUAWEI, Inc.
-  *             https://www.huawei.com/
-+ * Copyright (C) 2024 Alibaba Cloud
-  */
- #include "compress.h"
- #include <linux/lz4.h>
-@@ -383,6 +384,8 @@ const struct z_erofs_decompressor *z_erofs_decomp[] = {
- 	[Z_EROFS_COMPRESSION_LZ4] = &(const struct z_erofs_decompressor) {
- 		.config = z_erofs_load_lz4_config,
- 		.decompress = z_erofs_lz4_decompress,
-+		.init = z_erofs_gbuf_init,
-+		.exit = z_erofs_gbuf_exit,
- 		.name = "lz4"
- 	},
- #ifdef CONFIG_EROFS_FS_ZIP_LZMA
-@@ -446,3 +449,28 @@ int z_erofs_parse_cfgs(struct super_block *sb, struct erofs_super_block *dsb)
- 	erofs_put_metabuf(&buf);
- 	return ret;
- }
-+
-+int __init z_erofs_init_decompressor(void)
-+{
-+	int i, err;
-+
-+	for (i = 0; i < Z_EROFS_COMPRESSION_MAX; ++i) {
-+		err = z_erofs_decomp[i] ? z_erofs_decomp[i]->init() : 0;
-+		if (err) {
-+			while (--i)
-+				if (z_erofs_decomp[i])
-+					z_erofs_decomp[i]->exit();
-+			return err;
-+		}
-+	}
-+	return 0;
-+}
-+
-+void z_erofs_exit_decompressor(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < Z_EROFS_COMPRESSION_MAX; ++i)
-+		if (z_erofs_decomp[i])
-+			z_erofs_decomp[i]->exit();
-+}
-diff --git a/fs/erofs/decompressor_deflate.c b/fs/erofs/decompressor_deflate.c
-index 1c0ed77dcdb2..79232ef15654 100644
---- a/fs/erofs/decompressor_deflate.c
-+++ b/fs/erofs/decompressor_deflate.c
-@@ -15,7 +15,7 @@ static DECLARE_WAIT_QUEUE_HEAD(z_erofs_deflate_wq);
- 
- module_param_named(deflate_streams, z_erofs_deflate_nstrms, uint, 0444);
- 
--void z_erofs_deflate_exit(void)
-+static void z_erofs_deflate_exit(void)
- {
- 	/* there should be no running fs instance */
- 	while (z_erofs_deflate_avail_strms) {
-@@ -41,7 +41,7 @@ void z_erofs_deflate_exit(void)
- 	}
- }
- 
--int __init z_erofs_deflate_init(void)
-+static int __init z_erofs_deflate_init(void)
- {
- 	/* by default, use # of possible CPUs instead */
- 	if (!z_erofs_deflate_nstrms)
-@@ -256,5 +256,7 @@ static int z_erofs_deflate_decompress(struct z_erofs_decompress_req *rq,
- const struct z_erofs_decompressor z_erofs_deflate_decomp = {
- 	.config = z_erofs_load_deflate_config,
- 	.decompress = z_erofs_deflate_decompress,
-+	.init = z_erofs_deflate_init,
-+	.exit = z_erofs_deflate_exit,
- 	.name = "deflate",
- };
-diff --git a/fs/erofs/decompressor_lzma.c b/fs/erofs/decompressor_lzma.c
-index 9cab3a2f7558..80e735dc8406 100644
---- a/fs/erofs/decompressor_lzma.c
-+++ b/fs/erofs/decompressor_lzma.c
-@@ -18,7 +18,7 @@ static DECLARE_WAIT_QUEUE_HEAD(z_erofs_lzma_wq);
- 
- module_param_named(lzma_streams, z_erofs_lzma_nstrms, uint, 0444);
- 
--void z_erofs_lzma_exit(void)
-+static void z_erofs_lzma_exit(void)
- {
- 	/* there should be no running fs instance */
- 	while (z_erofs_lzma_avail_strms) {
-@@ -46,7 +46,7 @@ void z_erofs_lzma_exit(void)
- 	}
- }
- 
--int __init z_erofs_lzma_init(void)
-+static int __init z_erofs_lzma_init(void)
- {
- 	unsigned int i;
- 
-@@ -297,5 +297,7 @@ static int z_erofs_lzma_decompress(struct z_erofs_decompress_req *rq,
- const struct z_erofs_decompressor z_erofs_lzma_decomp = {
- 	.config = z_erofs_load_lzma_config,
- 	.decompress = z_erofs_lzma_decompress,
-+	.init = z_erofs_lzma_init,
-+	.exit = z_erofs_lzma_exit,
- 	.name = "lzma"
- };
-diff --git a/fs/erofs/decompressor_zstd.c b/fs/erofs/decompressor_zstd.c
-index e8f931d41e60..49415bc40d7c 100644
---- a/fs/erofs/decompressor_zstd.c
-+++ b/fs/erofs/decompressor_zstd.c
-@@ -34,7 +34,7 @@ static struct z_erofs_zstd *z_erofs_isolate_strms(bool all)
- 	return strm;
- }
- 
--void z_erofs_zstd_exit(void)
-+static void z_erofs_zstd_exit(void)
- {
- 	while (z_erofs_zstd_avail_strms) {
- 		struct z_erofs_zstd *strm, *n;
-@@ -49,7 +49,7 @@ void z_erofs_zstd_exit(void)
- 	}
- }
- 
--int __init z_erofs_zstd_init(void)
-+static int __init z_erofs_zstd_init(void)
- {
- 	/* by default, use # of possible CPUs instead */
- 	if (!z_erofs_zstd_nstrms)
-@@ -281,5 +281,7 @@ static int z_erofs_zstd_decompress(struct z_erofs_decompress_req *rq,
- const struct z_erofs_decompressor z_erofs_zstd_decomp = {
- 	.config = z_erofs_load_zstd_config,
- 	.decompress = z_erofs_zstd_decompress,
-+	.init = z_erofs_zstd_init,
-+	.exit = z_erofs_zstd_exit,
- 	.name = "zstd",
- };
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 0c1b44ac9524..a094f83098b0 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -458,8 +458,8 @@ void erofs_shrinker_register(struct super_block *sb);
- void erofs_shrinker_unregister(struct super_block *sb);
- int __init erofs_init_shrinker(void);
- void erofs_exit_shrinker(void);
--int __init z_erofs_init_zip_subsystem(void);
--void z_erofs_exit_zip_subsystem(void);
-+int __init z_erofs_init_subsystem(void);
-+void z_erofs_exit_subsystem(void);
- int erofs_try_to_free_all_cached_folios(struct erofs_sb_info *sbi,
- 					struct erofs_workgroup *egrp);
- int z_erofs_map_blocks_iter(struct inode *inode, struct erofs_map_blocks *map,
-@@ -476,37 +476,11 @@ static inline void erofs_shrinker_register(struct super_block *sb) {}
- static inline void erofs_shrinker_unregister(struct super_block *sb) {}
- static inline int erofs_init_shrinker(void) { return 0; }
- static inline void erofs_exit_shrinker(void) {}
--static inline int z_erofs_init_zip_subsystem(void) { return 0; }
--static inline void z_erofs_exit_zip_subsystem(void) {}
--static inline int z_erofs_gbuf_init(void) { return 0; }
--static inline void z_erofs_gbuf_exit(void) {}
-+static inline int z_erofs_init_subsystem(void) { return 0; }
-+static inline void z_erofs_exit_subsystem(void) {}
- static inline int erofs_init_managed_cache(struct super_block *sb) { return 0; }
- #endif	/* !CONFIG_EROFS_FS_ZIP */
- 
--#ifdef CONFIG_EROFS_FS_ZIP_LZMA
--int __init z_erofs_lzma_init(void);
--void z_erofs_lzma_exit(void);
--#else
--static inline int z_erofs_lzma_init(void) { return 0; }
--static inline int z_erofs_lzma_exit(void) { return 0; }
--#endif	/* !CONFIG_EROFS_FS_ZIP_LZMA */
--
--#ifdef CONFIG_EROFS_FS_ZIP_DEFLATE
--int __init z_erofs_deflate_init(void);
--void z_erofs_deflate_exit(void);
--#else
--static inline int z_erofs_deflate_init(void) { return 0; }
--static inline int z_erofs_deflate_exit(void) { return 0; }
--#endif	/* !CONFIG_EROFS_FS_ZIP_DEFLATE */
--
--#ifdef CONFIG_EROFS_FS_ZIP_ZSTD
--int __init z_erofs_zstd_init(void);
--void z_erofs_zstd_exit(void);
--#else
--static inline int z_erofs_zstd_init(void) { return 0; }
--static inline int z_erofs_zstd_exit(void) { return 0; }
--#endif	/* !CONFIG_EROFS_FS_ZIP_ZSTD */
--
- #ifdef CONFIG_EROFS_FS_ONDEMAND
- int erofs_fscache_register_fs(struct super_block *sb);
- void erofs_fscache_unregister_fs(struct super_block *sb);
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index c93bd24d2771..c5673caa8943 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -849,23 +849,7 @@ static int __init erofs_module_init(void)
- 	if (err)
- 		goto shrinker_err;
- 
--	err = z_erofs_lzma_init();
--	if (err)
--		goto lzma_err;
--
--	err = z_erofs_deflate_init();
--	if (err)
--		goto deflate_err;
--
--	err = z_erofs_zstd_init();
--	if (err)
--		goto zstd_err;
--
--	err = z_erofs_gbuf_init();
--	if (err)
--		goto gbuf_err;
--
--	err = z_erofs_init_zip_subsystem();
-+	err = z_erofs_init_subsystem();
- 	if (err)
- 		goto zip_err;
- 
-@@ -882,16 +866,8 @@ static int __init erofs_module_init(void)
- fs_err:
- 	erofs_exit_sysfs();
- sysfs_err:
--	z_erofs_exit_zip_subsystem();
-+	z_erofs_exit_subsystem();
- zip_err:
--	z_erofs_gbuf_exit();
--gbuf_err:
--	z_erofs_zstd_exit();
--zstd_err:
--	z_erofs_deflate_exit();
--deflate_err:
--	z_erofs_lzma_exit();
--lzma_err:
- 	erofs_exit_shrinker();
- shrinker_err:
- 	kmem_cache_destroy(erofs_inode_cachep);
-@@ -906,13 +882,9 @@ static void __exit erofs_module_exit(void)
- 	rcu_barrier();
- 
- 	erofs_exit_sysfs();
--	z_erofs_exit_zip_subsystem();
--	z_erofs_zstd_exit();
--	z_erofs_deflate_exit();
--	z_erofs_lzma_exit();
-+	z_erofs_exit_subsystem();
- 	erofs_exit_shrinker();
- 	kmem_cache_destroy(erofs_inode_cachep);
--	z_erofs_gbuf_exit();
- }
- 
- static int erofs_statfs(struct dentry *dentry, struct kstatfs *buf)
-diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-index 40ad9c80433e..b6f7f1fbbfd9 100644
---- a/fs/erofs/zdata.c
-+++ b/fs/erofs/zdata.c
-@@ -449,44 +449,51 @@ static inline int erofs_cpu_hotplug_init(void) { return 0; }
- static inline void erofs_cpu_hotplug_destroy(void) {}
- #endif
- 
--void z_erofs_exit_zip_subsystem(void)
-+void z_erofs_exit_subsystem(void)
- {
- 	erofs_cpu_hotplug_destroy();
- 	erofs_destroy_percpu_workers();
- 	destroy_workqueue(z_erofs_workqueue);
- 	z_erofs_destroy_pcluster_pool();
-+	z_erofs_exit_decompressor();
- }
- 
--int __init z_erofs_init_zip_subsystem(void)
-+int __init z_erofs_init_subsystem(void)
- {
--	int err = z_erofs_create_pcluster_pool();
-+	int err = z_erofs_init_decompressor();
- 
- 	if (err)
--		goto out_error_pcluster_pool;
-+		goto err_decompressor;
-+
-+	err = z_erofs_create_pcluster_pool();
-+	if (err)
-+		goto err_pcluster_pool;
- 
- 	z_erofs_workqueue = alloc_workqueue("erofs_worker",
- 			WQ_UNBOUND | WQ_HIGHPRI, num_possible_cpus());
- 	if (!z_erofs_workqueue) {
- 		err = -ENOMEM;
--		goto out_error_workqueue_init;
-+		goto err_workqueue_init;
- 	}
- 
- 	err = erofs_init_percpu_workers();
- 	if (err)
--		goto out_error_pcpu_worker;
-+		goto err_pcpu_worker;
- 
- 	err = erofs_cpu_hotplug_init();
- 	if (err < 0)
--		goto out_error_cpuhp_init;
-+		goto err_cpuhp_init;
- 	return err;
- 
--out_error_cpuhp_init:
-+err_cpuhp_init:
- 	erofs_destroy_percpu_workers();
--out_error_pcpu_worker:
-+err_pcpu_worker:
- 	destroy_workqueue(z_erofs_workqueue);
--out_error_workqueue_init:
-+err_workqueue_init:
- 	z_erofs_destroy_pcluster_pool();
--out_error_pcluster_pool:
-+err_pcluster_pool:
-+	z_erofs_exit_decompressor();
-+err_decompressor:
- 	return err;
- }
- 
--- 
-2.43.5
+Perhaps clarify "Panic constraint" here?
 
+> +//! the work on the stack or on the provided buffers. For
+> +//! simplification, it only supports Low error correction, and apply the
+
+"applies"?
+
+> +//! first mask (checkboard). It will draw the smallest QRcode that can
+
+"QR code"? "QR-code"?
+
+In other places "QR-code" is used -- it would be ideal to be
+consistent. (Although, isn't the common spelling "QR code"?)
+
+> +//! contain the string passed as parameter. To get the most compact
+> +//! QR-code, the start of the url is encoded as binary, and the
+
+Probably "URL".
+
+> +//! compressed kmsg is encoded as numeric.
+> +//!
+> +//! The binary data must be a valid url parameter, so the easiest way is
+> +//! to use base64 encoding. But this waste 25% of data space, so the
+
+"wastes"
+
+> +//! whole stack trace won't fit in the QR-Code. So instead it encodes
+> +//! every 13bits of input into 4 decimal digits, and then use the
+
+"uses"
+
+> +//! efficient numeric encoding, that encode 3 decimal digits into
+> +//! 10bits. This makes 39bits of compressed data into 12 decimal digits,
+> +//! into 40bits in the QR-Code, so wasting only 2.5%. And numbers are
+> +//! valid url parameter, so the website can do the reverse, to get the
+
+"And the numbers are valid URL parameters"?
+
+> +//! Inspired by this 3 projects, all under MIT license:
+
+"these"
+
+> +// Generator polynomials for QR Code, only those that are needed for Low=
+ quality
+
+If possible, please remember to use periods at the end for both
+comments and docs. It is very pedantic, but if possible we would like
+to try to be consistent across subsystems on how the documentation
+looks etc. If everything looks the same, it is also easy to
+remember/check how to do it for new files and so on.
+
+> +/// QRCode parameter for Low quality ECC:
+> +/// - Error Correction polynomial
+> +/// - Number of blocks in group 1
+> +/// - Number of blocks in group 2
+> +/// - Block size in group 1
+> +/// (Block size in group 2 is one more than group 1)
+
+We typically leave a newline after a list.
+
+> +    // Return the smallest QR Version than can hold these segments
+> +    fn from_segments(segments: &[&Segment<'_>]) -> Option<Version> {
+
+Should be docs, even if private? i.e. `///`?
+
+Also third person and period.
+
+> +// padding bytes
+> +const PADDING: [u8; 2] =3D [236, 17];
+
+`///`?
+
+> +/// get the next 13 bits of data, starting at specified offset (in bits)
+
+Please capitalize.
+
+> +        // b is 20 at max (bit_off <=3D 7 and size <=3D 13)
+
+Please use Markdown for comments too.
+
+> +/// EncodedMsg will hold the data to be put in the QR-Code, with correct=
+ segment
+> +/// encoding, padding, and Error Code Correction.
+
+Missing newline? In addition, for the title (i.e. first paragraph), we
+try to keep it short/simple, e.g. you could perhaps say something
+like:
+
+    /// Data to be put in the QR code (with correct segment encoding,
+padding, and error code correction).
+
+> +/// QrImage
+> +///
+> +/// A QR-Code image, encoded as a linear binary framebuffer.
+
+Please remove the title -- the second paragraph should be the title.
+
+> +/// Max width is 177 for V40 QR code, so u8 is enough for coordinate.
+
+`u8`
+
+> +/// drm_panic_qr_generate()
+
+You can remove this title.
+
+> +/// C entry point for the rust QR Code generator.
+> +///
+> +/// Write the QR code image in the data buffer, and return the qrcode si=
+ze, or 0
+> +/// if the data doesn't fit in a QR code.
+> +///
+> +/// * `url` The base url of the QR code. It will be encoded as Binary se=
+gment.
+
+Typically we would write a colon. after the key, e.g.
+
+    /// * `url`: the base URL of the QR code.
+
+> +/// # Safety
+> +///
+> +/// * `url` must be null or point at a nul-terminated string.
+> +/// * `data` must be valid for reading and writing for `data_size` bytes=
+.
+> +/// * `data_len` must be less than `data_size`.
+> +/// * `tmp` must be valid for reading and writing for `tmp_size` bytes.
+
+It would be nice to mention for which duration these need to hold,
+e.g. the call or something else.
+
+> +        // Safety: url must be a valid pointer to a nul-terminated strin=
+g.
+
+Please use the `// SAFETY: ` prefix instead, since it is how we tag
+these (i.e. differently from from the `# Safety` section).
+
+> +/// * `version` QR code version, between 1-40.
+
+If something like this happens to be used in several places, you may
+want to consider using transparent newtypes for them. This would allow
+you to avoid having to document each use point and it would enrich the
+signatures.
+
+Thanks!
+
+Cheers,
+Miguel
 
