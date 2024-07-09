@@ -1,116 +1,105 @@
-Return-Path: <linux-kernel+bounces-246015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8943E92BCB3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:18:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92EF992BCB4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:18:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB3471C215B0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:18:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3698C2820EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3232417F508;
-	Tue,  9 Jul 2024 14:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B729518FDC6;
+	Tue,  9 Jul 2024 14:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KUmqfjOF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b0SipaOi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5FD15B980;
-	Tue,  9 Jul 2024 14:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0566718E76F;
+	Tue,  9 Jul 2024 14:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720534678; cv=none; b=H/bVAeJ6n55moBZ67WZsPHytXOzhkhinGFSCka2j+a0PelYlCV9DIRhUHj9SlQKWmqxyhAN84tXAjkCm1RGVeZvrdV2FRo6M1ACZZurQghflaZnTmdIhaxJa8uVxly9B+2+n5qZAt0FeO38WkJlmAciOoCVq6+SbTiQK2RBpfh4=
+	t=1720534728; cv=none; b=HLstgMHDAB25ykIysQJoQ2kU7bfXozVtEBGlcpDuF0wFN+RwOrqX9UNjhmKG1EctdQeEI9FCzkhfLRaFsQaU6EcbhwXd1ly4CSqplJF06DRuDgl5Zk1rFBfzurmKg2Ph9AIFkDsjQl/vxc3mpptxYBbbKIqEBDxT2YUVd5QhVpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720534678; c=relaxed/simple;
-	bh=d9OIMlWFAQq6nDGQev6p6KEjX+sSzz2+tjC7CnjeF14=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uiSxyUe/28v40cSP72gizpAE+oaXrC+LW8xDv0k5Yl2IYC/bLhjWGtiDTkazPxNsmFg6PRRTbR7OxLFBCPIUIDtCg8HcL6R/nbTm5DkyZs9+Lff5eKKIprP8dhlsxe6eZFGn/Sxxol69ZKasu00h1MYGZYJ4cyUZksXMNgCHfDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KUmqfjOF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469ACx1Z007224;
-	Tue, 9 Jul 2024 14:17:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	y9VA1iza+h9B8nN+Svz8hwQkj/T4Z31pBXmI7RGF0+g=; b=KUmqfjOFGgbIqx4S
-	9NkyDaGWcCtFIsZnhwjk6Fv41rKyRJRmUTYe1Ub4GjPU40TDzhrMYvedWNw1ptNL
-	2rzVbxv7TN7OvvaM42JYSg/g3mSzR4ihwdiRNhcIk36o7LZouzP5YMqP4Uh7Ug4K
-	AOtjZ5JxKruh2RNuU/0BuhYIBJ5zimRfKHnMKQgGYvd5wuy2t6fo1AP9Knf9FMro
-	Ei4stSpOZmkrPHcyOYP1JgImeL0JwLCOypenrbxSyORkZG0l4FFI8mR9Z5+v56uW
-	3jPCVdSet+dH6NpraqNtZyCl3yjBjHIi4Zb0a/iW6J9qNecg+vcbxihrRe14nxg2
-	z/v0Lw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wmmpsv4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 14:17:48 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469EHlbq004711
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 9 Jul 2024 14:17:47 GMT
-Received: from [10.48.245.228] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
- 07:17:46 -0700
-Message-ID: <10b11116-0523-4035-94d8-af244c96ed5d@quicinc.com>
-Date: Tue, 9 Jul 2024 07:17:46 -0700
+	s=arc-20240116; t=1720534728; c=relaxed/simple;
+	bh=0i6utTeX8DsPV7/9WcDwrn3XMqTdMQ92uqBdyZ9F1mo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MJIID2jFdmEOTXln9al5OzOzekEkreZgESXc1PLmds47RnFKtWRoyF/NzKHB38RcmSvN67TWAIvQCUgfJHU1vtdzbZnSRTSpsnqN1MC1KDYzdeDbay2SYDOzYM0igg4n2TlKrU+9zQ8LHeR6lE3/VlDaHhj8fT/brzhE9nbVtWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b0SipaOi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3795CC4AF0D;
+	Tue,  9 Jul 2024 14:18:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720534727;
+	bh=0i6utTeX8DsPV7/9WcDwrn3XMqTdMQ92uqBdyZ9F1mo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=b0SipaOiY6nCFMPx/id9nUCE1pzdR0Redys/TlMqLvYNG9PWYb6mWLAqm2MzyxxRs
+	 w2Uimh+A1WonyA+XR+W4F0ihJtL75HhEb089xfFbkAwDi0tsV4DPBm4RUXC5RQaphi
+	 untPjtavermqv63+y44cHCDyR27fZTu6ikoPxzSi/AaK0GFVbQePO0JkDGVN4smzBS
+	 8ariXvfnPPi3Jh5Lq/a5Q50MXRccrpVDzgr5PcsmM6HR8X8Ft82L/dGE7y5hZO2B7+
+	 nmTTjs6QdxdWZvddeIJw4thNsjnEJ1cKOdkuxhZzzCejBd5kiiQx5Pr1FAK5Be9cAo
+	 bB9ugwNiEEfJQ==
+Date: Tue, 9 Jul 2024 07:18:46 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>,
+ thomas.petazzoni@bootlin.com, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH net] net: ethtool: pse-pd: Fix possible null-deref
+Message-ID: <20240709071846.7b113db7@kernel.org>
+In-Reply-To: <20240709131201.166421-1-kory.maincent@bootlin.com>
+References: <20240709131201.166421-1-kory.maincent@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: ath12k: fix soft lockup on suspend
-Content-Language: en-US
-To: Johan Hovold <johan+linaro@kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>
-CC: Bhagavathi Perumal S <quic_bperumal@quicinc.com>,
-        "Vasanthakumar
- Thiagarajan" <quic_vthiagar@quicinc.com>,
-        Karthikeyan Periyasamy
-	<quic_periyasa@quicinc.com>,
-        Wen Gong <quic_wgong@quicinc.com>, <ath12k@lists.infradead.org>,
-        <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20240709073132.9168-1-johan+linaro@kernel.org>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240709073132.9168-1-johan+linaro@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: dorYZWuIwxNM8yS7s3Pl5bwj3ID3Istl
-X-Proofpoint-ORIG-GUID: dorYZWuIwxNM8yS7s3Pl5bwj3ID3Istl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_04,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- priorityscore=1501 lowpriorityscore=0 spamscore=0 bulkscore=0 adultscore=0
- impostorscore=0 suspectscore=0 malwarescore=0 mlxscore=0 mlxlogscore=615
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090092
 
-On 7/9/2024 12:31 AM, Johan Hovold wrote:
-> The ext interrupts are enabled when the firmware has been started, but
-> this may never happen, for example, if the board configuration file is
-> missing.
+On Tue,  9 Jul 2024 15:12:01 +0200 Kory Maincent wrote:
+> Fix a possible null dereference when a PSE supports both c33 and PoDL, but
+> only one of the netlink attributes is specified. The c33 or PoDL PSE
+> capabilities are already validated in the ethnl_set_pse_validate() call.
 > 
-> When the system is later suspended, the driver unconditionally tries to
-> disable interrupts, which results in an irq disable imbalance and causes
-> the driver to spin indefinitely in napi_synchronize().
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> Reported-by: Jakub Kicinski <kuba@kernel.org>
+> Closes: https://lore.kernel.org/netdev/20240705184116.13d8235a@kernel.org/
+> Fixes: 4d18e3ddf427 ("net: ethtool: pse-pd: Expand pse commands with the PSE PoE interface")
+> ---
+>  net/ethtool/pse-pd.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Make sure that the interrupts have been enabled before attempting to
-> disable them.
-> 
-> Fixes: d889913205cf ("wifi: ath12k: driver for Qualcomm Wi-Fi 7 devices")
-> Cc: stable@vger.kernel.org	# 6.3
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> diff --git a/net/ethtool/pse-pd.c b/net/ethtool/pse-pd.c
+> index 2c981d443f27..9dc70eb50039 100644
+> --- a/net/ethtool/pse-pd.c
+> +++ b/net/ethtool/pse-pd.c
+> @@ -178,9 +178,9 @@ ethnl_set_pse(struct ethnl_req_info *req_info, struct genl_info *info)
+>  
+>  	phydev = dev->phydev;
+>  	/* These values are already validated by the ethnl_pse_set_policy */
+> -	if (pse_has_podl(phydev->psec))
+> +	if (tb[ETHTOOL_A_PODL_PSE_ADMIN_CONTROL])
+>  		config.podl_admin_control = nla_get_u32(tb[ETHTOOL_A_PODL_PSE_ADMIN_CONTROL]);
+> -	if (pse_has_c33(phydev->psec))
+> +	if (tb[ETHTOOL_A_C33_PSE_ADMIN_CONTROL])
+>  		config.c33_admin_control = nla_get_u32(tb[ETHTOOL_A_C33_PSE_ADMIN_CONTROL]);
+>  
+>  	/* Return errno directly - PSE has no notification */
 
+At a glance this doesn't follow usual ethtool flow.
+If user doesn't specify a value the previous configuration should be
+kept. We init config to 0. Is 0 a special value for both those params
+which tells drivers "don't change" ?
+Normal ethtool flow is to first fill in the data with a ->get() then
+modify what user wants to change.
+
+Either we need:
+ - an explanation in the commit message how this keeps old config; or
+ - a ->get() to keep the previous values; or
+ - just reject setting one value but not the other in
+   ethnl_set_pse_validate() (assuming it never worked, anyway).
 
