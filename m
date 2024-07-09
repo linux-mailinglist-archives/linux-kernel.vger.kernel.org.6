@@ -1,113 +1,122 @@
-Return-Path: <linux-kernel+bounces-246794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF4AB92C6CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:51:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DB1592C6CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5660CB22537
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:51:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 369881F23B6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9B218C16E;
-	Tue,  9 Jul 2024 23:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF51189F57;
+	Tue,  9 Jul 2024 23:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DCzTmhwt"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7YPbSV7"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97901474BE;
-	Tue,  9 Jul 2024 23:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5AF189F24;
+	Tue,  9 Jul 2024 23:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720569064; cv=none; b=TFvvw2c/yr6PwYfrGzm6e1X5N/XUsWe2WItObIjs2vjViq9ID1xxFxLYHEd15GReIPunxWkAJpg+eR5iv4qftlpHDkkmAlxBt+N1fD5ex+L9etrXb97uHhGmV9ZdAfmgOnh2OXFkguOpnxM9eHSSl1l0qR6X5CrjLcJfqXJQKvg=
+	t=1720569098; cv=none; b=XlUhooVMUk1sgelkjIS8XxheoEsTLUtzzQXz8vd8oHEivDoUoUe3xlUbZZx0bXAsxz3q8EpgWKcXPwCi6FsQR5N9vvlatExocD4bnlylJPITk6sVgnNSyf4PcjiWW3eAvJzK0yU8JWDsY62F3jaicBevJK9WWuxiX1M5mC0YxfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720569064; c=relaxed/simple;
-	bh=06szhZhvI5y/0ml1HztEAZfKngl9g/YYJWu9WNQ4sLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rI+84Xf2G2rgFW86L2Zm+CaVFbcWAOIddwGqcFuW3PFvXG158EE3UuvVWI2bS9S2T+3Fy8Ii4WSpCg5yrDIJKu8pZgiPXCIWcBiZepm8uPvj+9eFzRhhlsc8i4kNrQEkMWZbuILInTWRCiF6gSxpigOPwAX40AGoaZHbzdrBjSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DCzTmhwt; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=1MnKJi0jeAHhcjlp5AtWFQ8iIjqs+OJI3rZ7gK/CmMU=; b=DCzTmhwt94ownkzIzPjjLO9YFf
-	eu92ryb30Y5fTRUbNpYryFLMftlaguCeCXoN5EOazjbAsFOs+tBSCQRNU7Q9+73B6Auj6hO18pDHa
-	tVqNTGWjeWJdyOsHdlhu3/6ety3pwwmck57aAkc4fbaq1wmZauOvq+WLqpISS8yRZqCLos8OaPI4C
-	hs61AA6++huLcis6+2wfhFY8FKzdLoiDZGfl8hPNz2QPC/0WLP/nmKUoFVXt2uML9oLLHVZjGnISQ
-	SNynxgD4UGwrFpzo35YzDs92U2UM4UsY3+jCn/D4vFLAhvCA1+Qv96t7MNQa7spkBp1odrX3/w5pV
-	UYTO+k7A==;
-Received: from [50.53.4.147] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sRKbT-00000008U6L-2tpi;
-	Tue, 09 Jul 2024 23:50:35 +0000
-Message-ID: <420ac42f-dad2-4fd9-b36a-6405d14b6e25@infradead.org>
-Date: Tue, 9 Jul 2024 16:50:24 -0700
+	s=arc-20240116; t=1720569098; c=relaxed/simple;
+	bh=3wzr2a0XimtxVC1KBQ1Ni94wnk3cR05AnPNN2T/ZKn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NwRHULk5d1rct5QBRRGDRpbpr3cPPJsJzkq1rSX3kmuVJj6fYOgTYBOc33NElAGT2BQS0qM6TU/neXaTIgrqy5HM3Lud7U3AWADn5bz7W/9MkXKyDrqos5uA1iQ7PPbqRLBReB2gSB6cXNGi9gjwW9Qj5mAAGOcLeD2QE1ugFAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G7YPbSV7; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-58b447c511eso7149337a12.2;
+        Tue, 09 Jul 2024 16:51:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720569095; x=1721173895; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nB80/jNPAo2TOKBslokBr5EVRDZovXrVO3U4Gd3724I=;
+        b=G7YPbSV7j+q7cm9sEHumGk1Ao09i6ud4c+UfN4XCrbysTR2lEDRR7KDjVsrDIHvVm1
+         ysfc02b2mMxbldvRDBiE54OKN0jZIAY7ymbueAyr2kBFXRQ1PpOe3hFCdWc25mXJ4Fhn
+         xTh/fye37bYrFV3nr8NQLzFOua1/i9KSzBaCW3e7tgb3vQzPbea0TbUNz9Dh/cnCtpRm
+         THKNCgQ3vIsdS3JZqDlpDs6XM+DKcNn8qfoOMOm6oSg4wk2rbQsb3aku/p3ILOgQu2e2
+         jTIYnFmAC9N063SZT/3IPdQU/KiWKh3/OXHjDb4V8IdlA142YrFuKq67XljnC87b/Hnr
+         EnpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720569095; x=1721173895;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nB80/jNPAo2TOKBslokBr5EVRDZovXrVO3U4Gd3724I=;
+        b=Z6GTkR5FJJQ5Au4tBkf++ftMleU+nq/MOgrZQRBmMTWSMEv6mK4a9Qw1j+LlaPhHIm
+         N4EpqY4sOwoUx+7PLE8RJ7ZVMVzgEEXqOdScR4HShOM2HBVubNbY5Ag4FvrAQCfLjId3
+         oTZxaMIBaQqlaId57RQViFJS7i8VCq3+shWTPM7rcUgPo+U6h0zyyiYPqrMjMD8OHxu6
+         Mu6WBgxrKovRIOUzwjR3uAacxm8jUt1QJAU/O6CT2W0JlvT8A3gzwRC6Kim5LHSKYKj4
+         3wXTRb7wJDTmiSOluCUUBfVq0JQ5wMijG6TEMF5zwhIQoRboVRgg0hwIr8T7BS//NFtc
+         UJUA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQOMUcEfYIYWhJzmTeqVtFyX7lEU8k5lyOJ+cdO4jLom5vGC+RkymoyU9kiWyhUeTeSYWO3PdWfA4nPbxuqTQgY0pivG8p98tNEjIHP22cbCLJ1bSn+1q2G7xboZ2NN0DhkSn3CKPLHnhmTTnF7RD2N3FjUFFSGE1ck3JCV0WRXRehmA==
+X-Gm-Message-State: AOJu0YzxF6/u7EPArulzQ8nqf4TUTCozRHlIM2rowWDu1/g9ZQ5xg6Ok
+	dn5/TDJUEmTw9hhU21uED1nfjTWFoO936DvPGouMGOXxCk1xKBAQ
+X-Google-Smtp-Source: AGHT+IERo/xgDrSK200bxqmR2c3Sm004d5DwR5IVGhXm6Nz9ihnXROLaZHmA+7eaORxPCJKinnytmw==
+X-Received: by 2002:a17:907:7e9c:b0:a6f:e3cf:2b8e with SMTP id a640c23a62f3a-a780b89dd3bmr375371966b.76.1720569095026;
+        Tue, 09 Jul 2024 16:51:35 -0700 (PDT)
+Received: from andrea ([84.242.162.60])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7fef9dsm115320266b.99.2024.07.09.16.51.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 16:51:34 -0700 (PDT)
+Date: Wed, 10 Jul 2024 01:51:32 +0200
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
+	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-arch@vger.kernel.org
+Subject: Re: [PATCH v2 03/10] riscv: Implement cmpxchg8/16() using Zabha
+Message-ID: <Zo3NBHUEMMec/6uD@andrea>
+References: <20240626130347.520750-1-alexghiti@rivosinc.com>
+ <20240626130347.520750-4-alexghiti@rivosinc.com>
+ <Zn1StcN3H0r/eHjh@andrea>
+ <1cd452af-58cd-468c-9bb6-90f67711d0b0@ghiti.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/9] Documentation: add a new file documenting
- multigrain timestamps
-To: Jeff Layton <jlayton@kernel.org>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong"
- <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
- Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: Dave Chinner <david@fromorbit.com>, Andi Kleen <ak@linux.intel.com>,
- Christoph Hellwig <hch@infradead.org>, Uros Bizjak <ubizjak@gmail.com>,
- Kent Overstreet <kent.overstreet@linux.dev>, kernel-team@fb.com,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
- linux-nfs@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20240708-mgtime-v4-0-a0f3c6fb57f3@kernel.org>
- <20240708-mgtime-v4-5-a0f3c6fb57f3@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240708-mgtime-v4-5-a0f3c6fb57f3@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1cd452af-58cd-468c-9bb6-90f67711d0b0@ghiti.fr>
 
-
-
-On 7/8/24 8:53 AM, Jeff Layton wrote:
-> Add a high-level document that describes how multigrain timestamps work,
-> rationale for them, and some info about implementation and tradeoffs.
+> > I admit that I found this all quite difficult to read; IIUC, this is
+> > missing an IS_ENABLED(CONFIG_RISCV_ISA_ZACAS) check.
 > 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  Documentation/filesystems/multigrain-ts.rst | 120 ++++++++++++++++++++++++++++
->  1 file changed, 120 insertions(+)
-> 
-> diff --git a/Documentation/filesystems/multigrain-ts.rst b/Documentation/filesystems/multigrain-ts.rst
-> new file mode 100644
-> index 000000000000..e4f52a9e3c51
-> --- /dev/null
-> +++ b/Documentation/filesystems/multigrain-ts.rst
-> @@ -0,0 +1,120 @@
+> I'm not sure we need the zacas check here, since we could use a toolchain
+> that supports zabha but not zacas, run this on a zabha/zacas platform and it
+> would work.
 
-> +Inode Timestamp Ordering
-> +========================
-> +
-> +In addition just providing info about changes to individual files, file
+One specific set-up I was concerned about is as follows:
 
-   In addition to just
+  1) hardware implements both zabha and zacas
+  2) toolchain supports both zabha and zacas
+  3) CONFIG_RISCV_ISA_ZABHA=y and CONFIG_RISCV_ISA_ZACAS=n
 
-> +timestamps also serve an important purpose in applications like "make". These
-> +programs measure timestamps in order to determine whether source files might be
-> +newer than cached objects.
+Since CONFIG_RISCV_ISA_ZABHA=y, the first asm goto will get executed
+and, since the hardware implements zacas, that will result in a nop.
+Then the second asm goto will get executed and, since the hardware
+implements zabha, it will result in the j zabha.  In conclusion, the
+amocas instruction following the zabha: label will get executed, thus
+violating (the semantics of) CONFIG_RISCV_ISA_ZACAS=n.  IIUC, the diff
+I've posted previously in this thread shared a similar limitation/bug.
 
+  Andrea
 
