@@ -1,121 +1,131 @@
-Return-Path: <linux-kernel+bounces-245597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F21F92B4C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:09:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3817B92B4C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED28E283C86
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:08:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2F711F22D0C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F22156862;
-	Tue,  9 Jul 2024 10:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB46B156236;
+	Tue,  9 Jul 2024 10:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="egnpSShm"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NmC1CwQf"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA35156654;
-	Tue,  9 Jul 2024 10:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994DB153824;
+	Tue,  9 Jul 2024 10:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720519710; cv=none; b=PX70eDJR1TtkB9cfBiZ4DYNeLyYB1DoREUVVaCA6IY58+8u/tZflyXZ9yk4eQCgrOQDve1LeJnKMt4rcUVaHWq0xe3wDdb92Xe80h35V5/PNqJUeMmRJZZnqIw3pRc27DDRiCnrNKdWLapSUYL/XxQ5yvRiarQy7Mbr1fEP7ViE=
+	t=1720519738; cv=none; b=o1cdKgBSXstMjZDODji0tDFn60ToYKKnYD67liugq1JSmU4N5r1hoOn0B1Bt9xcB+/QWyyWYOs0v28vwQE8pLRBVbzfKK1URnUO24UdUNN3tRaNyduTpOw0xC6+bhnYspwY4G5OMoVyKk3Cw+oxuY5AW6V8BkpXA7GqqQ8L6bgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720519710; c=relaxed/simple;
-	bh=nWj7z1TorOfWyEp+z7svFUdKhlCBxkJriO3mSH5MqNU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UilBH7rwE4MdGCnskaibUYrkMS+tEOAHSZV2pEYYa1TLky4L+fXzWl+FGGBEfyN0jag9Vf6UmR3Nlj8M+RmDQeGRqHkZ8wSLOi+OUBJTKlYGqBao84XQkcwVngl2OQJ9Yi3/raDqZ9FqRar52vSblLMelxu4NnNzb3FxEae4OLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=egnpSShm; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2c965efab0fso2915452a91.3;
-        Tue, 09 Jul 2024 03:08:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720519708; x=1721124508; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nWj7z1TorOfWyEp+z7svFUdKhlCBxkJriO3mSH5MqNU=;
-        b=egnpSShmb9edsXpdBTB9CUFhCa1AwKvluRevpRC41oI0wNcpi0MMJRLcDcRXYMwii/
-         OVGTtTJQ4fOHUy7FMWfH0ubzjmme1tjpWERTgy7agf9nWG5yu4PinEYEKPAYetMcZqKo
-         i17Mn4AhvMc9jn6fRDX6/g5BKsqQ1LcJ+cM8IH4oWbHYsZKath/qey0cDoR1LgbM6GTT
-         CG8pmI3Uedg33k3GIal7Q4vKxGDLwtIPhSty4JDfAerV2SPdzb/bADF6cAqQjOQP1/uq
-         fOX3lF6I2Kf2wqnt+Bdjq938jbaO3RiQxaDCVnq90oEi3ad2I/Z4T63oBmPthEr7nUKB
-         r4iQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720519708; x=1721124508;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nWj7z1TorOfWyEp+z7svFUdKhlCBxkJriO3mSH5MqNU=;
-        b=jGvNj3mF9NvSECmrsRTitGGQX55uyJMkxXEq2IDYaiNgVWl6dtHxgSsuB5TQyM7Uf4
-         hcKo0nA8UEJ/6o1OPEtp7gBSrRtc3wLBIV9m5+cnYEtaEpOzEYviUT0sElodPgJBg9bl
-         PeR1dV/y9Tc1g4WhoHeBn2mvagBxUxx7f3LP5rvJpn20Kj/+e66C6RZKz4gXwlrtzsNQ
-         63SS2Tbp+10XLal0rorQm5TU0ma6ESCdKZOwkf7mEjx2Ll8Jn4j4GIIX1ZcTzmV20mbB
-         3GIYxBkQMeDcVNp5deUGu+cv9lQGqvPeFIzOaWQW/M2mk7eK9wmFJD9f0Yoeatz7vtcS
-         2AQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLmy7lXZxpP8OSE9rko3no5EuaNuWr6AATooWsmPaEVmgUBFUM3Q6sg+B0cQMBGJsQecBXZ6H0lyFgn8t4ZR/Pms8070fE3GjON5We0WaBW8hRxn3tLXKNsB3NBP0Aefq1rnAZVHF0RBPwPptMIfXLjTyQVPFIm/xbt0q7JGodu8xkqJN/gy22Q4X6
-X-Gm-Message-State: AOJu0YwIrf1c2mZdMNlFVUUuLNrMN/LIyX9L2wVuMnKRZ2cCq4KAQyOD
-	jWpuz9oKeYKIDFC/Aib8zcsR+k4XBQWyvQY2UTNcjZG16exSu/FzcPq11e0cuHwP6/nVBOvOLsu
-	jLt6Zao9vT0GklGrP7+/yMrX+ROo=
-X-Google-Smtp-Source: AGHT+IHld6WdM8gyICJ9UQ7iwE27i5HdUoIjn7RXg8Wy49Z5KwCbryiZ6Jujq/ORtNhFyAz2hQmskxPe2HS4RdJUfiY=
-X-Received: by 2002:a17:90a:bd87:b0:2c2:e45b:ecd with SMTP id
- 98e67ed59e1d1-2ca35c3aa03mr1507835a91.12.1720519708252; Tue, 09 Jul 2024
- 03:08:28 -0700 (PDT)
+	s=arc-20240116; t=1720519738; c=relaxed/simple;
+	bh=b3D5mFHe2gAV5XZGi93yiYy7VXXyq8oSkdfJoHhpfXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tjgm6b7gWU04PRLqTQYQqjtlLhVcrnpBE/bNZGF3U7g2QjMTE2T807v6ZwTkQTzjl0NDAWj1b8ekTklRtbFY4crpfQKq19b9jGXGm7iXpVdy+jjY61fIOy+F5/OnbramTYXP41+lOpu860RJCHlCytke/4XL3UJr56p5Nv6cTjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NmC1CwQf; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720519733;
+	bh=5N1CgL0czTrdQ1O9I3N4PZaujusxp/eBhYnrXEwNLaA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NmC1CwQfVwAtG9lnEozKuDGmwMH2prkhlk63xC1VEJN+vEa03pC32WpRa9O28dukM
+	 TImJvSr0CK1+aEpdMRKKAzxlFJ3I4BHMdiUVqp9bIPbgfJ+/C9/VTc42qq4qXI5mbM
+	 WQTamuiz0cHTHyVb9ZEYIo+tmDRvekOAhMsEzcpAcow3WT3FlgvPx+nVgwOsAAb4t+
+	 ZuLZYPdZ42Dm1H3cng0K+d+NkrmXaPFfA0V1f43jcsUw536+masFHwFEffaSKsR+Jm
+	 UAVjScYI1SwWMjds8/g5+Ir5elHfgTOa6a9JALByO+pEsYQovEytXCYV2u3cLmdLkP
+	 0uzpZwVOVLaxA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJGsx2SDdz4w2R;
+	Tue,  9 Jul 2024 20:08:52 +1000 (AEST)
+Date: Tue, 9 Jul 2024 20:08:51 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>
+Cc: Christian =?UTF-8?B?R8O2dHRzY2hl?= <cgzones@googlemail.com>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the vfs-brauner tree with the
+ asm-generic tree
+Message-ID: <20240709200851.4d921e43@canb.auug.org.au>
+In-Reply-To: <20240709105709.18ce785d@canb.auug.org.au>
+References: <20240709105709.18ce785d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240705111455.142790-1-nmi@metaspace.dk> <ZoxdRjpy2hRndqmc@bombadil.infradead.org>
-In-Reply-To: <ZoxdRjpy2hRndqmc@bombadil.infradead.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 9 Jul 2024 12:08:16 +0200
-Message-ID: <CANiq72=VU+PHfkiq8HokfeCEKvQoeBiUaB76XbW6s3f2zYmEtA@mail.gmail.com>
-Subject: Re: [PATCH] rust: add `module_params` macro
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Andreas Hindborg <nmi@metaspace.dk>, Miguel Ojeda <ojeda@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Adam Bratschi-Kaye <ark.email@gmail.com>, 
-	Sami Tolvanen <samitolvanen@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/uChFyqG3dnbzBxBf.3BwiZn";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/uChFyqG3dnbzBxBf.3BwiZn
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 8, 2024 at 11:42=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.org=
-> wrote:
+Hi all,
+
+On Tue, 9 Jul 2024 10:57:09 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
 >
-> The rationale here is that a rust binding means commitment then also
-> from fresh blood to help co-maintain review C / Rust for exising code
-> when there is will / desire to collaborate from an existing C maintainer.
->
-> I realize this may be a lot to ask, but I think this is one of the
-> responsible ways to ask to scale here.
+> Today's linux-next merge of the fs-next tree got conflicts in:
+>=20
+>   arch/arm64/include/asm/unistd.h
+>   arch/arm64/include/asm/unistd32.h
+>=20
+> between commit:
+>=20
+>   ea0130bf3c45 ("arm64: convert unistd_32.h to syscall.tbl format")
+>=20
+> from the asm-generic tree and commit:
+>=20
+>   e6873349f700 ("fs/xattr: add *at family syscalls")
+>=20
+> from the vfs-brauner tree.
+>=20
+> I fixed it up (I used the former versions) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
 
-Yeah, there have been different approaches for this taken by different
-subsystems -- it depends on their constraints and how much the
-submitter can commit to.
+This resolution may be not enough as I now get the following warnings
+from the arm64 defconfig build:
 
-For instance, some maintainers may want to keep being the maintainers
-of both Rust and C. Some want that the submitter becomes a new
-co-maintainer in the subsystem and eventually maintainers both C and
-Rust. Some prefer to have a new maintainer for the Rust side only,
-i.e. considering Rust as a new section of the subsystem with a new
-`MAINTAINERS` entry and all.
+<stdin>:1603:2: warning: #warning syscall setxattrat not implemented [-Wcpp]
+<stdin>:1606:2: warning: #warning syscall getxattrat not implemented [-Wcpp]
+<stdin>:1609:2: warning: #warning syscall listxattrat not implemented [-Wcp=
+p]
+<stdin>:1612:2: warning: #warning syscall removexattrat not implemented [-W=
+cpp]
 
-On top of that, some allow the C and Rust sides to be independent, to
-the point of allowing temporary breakage on the Rust side if the new
-maintainers commits to be quick fixing it (though I have my
-reservations about how well that would eventually work if more
-core/common subsystems start doing that -- linux-next could be broken
-a lot of the time for the Rust side).
-
-But, yes, I think Rust is a great opportunity to get new
-co-maintainers, as well as getting new developers involved with kernel
-maintenance in general, which could help with other issues too.
-
+--=20
 Cheers,
-Miguel
+Stephen Rothwell
+
+--Sig_/uChFyqG3dnbzBxBf.3BwiZn
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaNDDMACgkQAVBC80lX
+0GxI5Qf9ESLnzAKkyfCYvrEzYJEGI6eSeeMKnfM/VEjejyl//lEB8B7KvCf/jjXL
+3xBhgR9wrYElXRZemOiyyEXOQSskrPTW6HysJKJ3v/2vCVeHfFhW9FCi+9hK8b1K
+9BsUF70O8H2Nvz+jCmuhaqJuMnogpcRVkX5sq/O/6zhuhQei4J2TCjalJcUr9gOb
+9+6s4Vwj4c2EAuWqLB55oPWtxZoeSLHWY6OlsTDMxSb65UxU1/F+wy6sWaSnuRkq
+jDces2t/JULyIw+FI23ubZNfyniGLklbNzVKfXe0m+8cptxVv6zpwc8J6STXv+cj
+1+Kks55aTAzbL61jt9JLZTtAuHqXPA==
+=gcpY
+-----END PGP SIGNATURE-----
+
+--Sig_/uChFyqG3dnbzBxBf.3BwiZn--
 
