@@ -1,257 +1,110 @@
-Return-Path: <linux-kernel+bounces-245980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBDF292BC45
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:59:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E6B92BC4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71308281294
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:59:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABF852848D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AED818FC6F;
-	Tue,  9 Jul 2024 13:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KXZxmi7+"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B52E18E74E;
+	Tue,  9 Jul 2024 13:58:56 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E4518E779;
-	Tue,  9 Jul 2024 13:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7506A181D0D;
+	Tue,  9 Jul 2024 13:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720533498; cv=none; b=HubpQ6kRSnzN3TxW/JLIFQ8Cxw9YOno89s0CjMfb36FtueXt1sdR3niJ0oXwHA7oZpAOlu7+vVLRk+SAv9Y5t3xG/1kGgUedJRzTf46ZrP+GQzn5a7sYaHpNzsypkTAu4ORpXzoKJ873xqSxbLPgh2fvZSRRQ7Q7q5Oi120yfLM=
+	t=1720533535; cv=none; b=Xw4bt0dxImjUM+9Lp3xKyJ9qgyOqvwBWd23mu8UbYK30HrccjZLGZ1OlUri/ZJ3dyuBfK23EaxgA80rtFG1EXPxS7ApwJ2kV6LYGi6pq24gZIYcp1u5wjLy/X8fYL6RZUNSZZxpkoWXLrQloWWD7+iFXKKVO9/xa+e7HkDOQvas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720533498; c=relaxed/simple;
-	bh=O5vT/WAVEi3I/1zZ1e6X9bF4G+TvWPZVtYQUS4pdoF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eJxpIAJsPhWW0yG3XVAb6iFAWcvIhiAF5LW62l65JUHPhu5/TVGRlpeSYKwZtJraS+hR9EJbVs8HuDgJ35FIAdbg7DTjFiMUjCRCEJf10YUSv6ltkIQ2qWO/5UFgfjSsPTVVTPyESfxJIH94CcXQlUwqqr4v+LNYDbVkE7XtVtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KXZxmi7+; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-367940c57ddso3401641f8f.3;
-        Tue, 09 Jul 2024 06:58:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720533495; x=1721138295; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TbYmgVACDAtRDSTL3B4NejRqBxXknmHxVQadZf89uHw=;
-        b=KXZxmi7+OTJN285NjyW0YP02AFRw6CHjcruRjCM5T95WKBeENgBH6i6/5Qvtok1sj6
-         J7MtCvB5DYxDWcGfVOUIBqFFW34XhNXRUNh5EsESilpUbvbk8uyvke6PYUMTLulk9556
-         AMY6848AtvhghX74MXEIfPq1mqCRHBWlW8q/6k2cUBFlcGl2OUF7R4+aDy7ivzy+ZzJw
-         2FTUomNh5UCoO7j/0kB8cP26CBabUOIg+6KVj6KgTNEBqznuLdkNZSgKQ+cy5Uq6lXRR
-         +MNtXUYE1dOpSkx1dr5/Ap3n5Wc34nXEapLzLAWRiJW184Vj1GJEMQXKw246tDbwljZX
-         Bx6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720533495; x=1721138295;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TbYmgVACDAtRDSTL3B4NejRqBxXknmHxVQadZf89uHw=;
-        b=wXSShomtjY9auuI3E4QHRcJ1zEc7ivys/Q6fZZnysxVrjuPIl5ZKKqryrAhvoYNgSA
-         nQqkCMYU6iCTcQWZss31s1FZ3SWZg4koJVz/wZeShgXRMQeEYBEXSRPHZozyB6XZchPi
-         j1P2cq88WB3rt/o4367E/BiPBnvKh8BjSWGAIEqpQRyLV7Ju8amDtyObEBjIa8dvT1Ig
-         e1W4k71eUG+ru21eyH1+nBY7i8C5v1Tp2+CXenJJ2YcLtkfau/JPWcNu+usM6P+qsEFt
-         RPYKW+1FZPz5ihwvddHhPpsv2oFEKjfLys7614+1x020KGbgqJYFw8KvP48wpRB6GQWv
-         4oAg==
-X-Forwarded-Encrypted: i=1; AJvYcCWvqaKdXsh4wAG+JtNEzPK4OCt8MeIyyJOSxZ7qYk7KNDXQqWhq4RJMBydi1gjIz0Y4gHGwm/lrsnjyrI/WqAglshrh7+0LfEqdI2o0z4IO/qLgvxf0Ew5GK/GByo4Q26qbYJHq
-X-Gm-Message-State: AOJu0Yz7L0ZBjTrJ9fIbwjrqjxWM1sDUuKpNb7yLT/0ndnDS6GQUF6f0
-	l1osy4Pl0HRW/9RsUVX0s2KXxwpffZlIv0V01xFoRk7DTgTem68DA0XYx9do
-X-Google-Smtp-Source: AGHT+IFhR6wXKYVJPy9dz+zWqOXpE2lauzhnAJp1D41g6UvLG42BZPLhgq5ODjo9utaXK51miT15Dw==
-X-Received: by 2002:adf:ffcd:0:b0:367:9791:2939 with SMTP id ffacd0b85a97d-367cea6b804mr1603691f8f.21.1720533494785;
-        Tue, 09 Jul 2024 06:58:14 -0700 (PDT)
-Received: from skbuf ([188.25.110.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a1d16b0sm206311405e9.7.2024.07.09.06.58.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 06:58:14 -0700 (PDT)
-Date: Tue, 9 Jul 2024 16:58:11 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: kernel test robot <lkp@intel.com>, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	kuba@kernel.org, horms@kernel.org, Roy.Pledge@nxp.com,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] soc: fsl: qbman: FSL_DPAA depends on COMPILE_TEST
-Message-ID: <20240709135811.c7tqh3ocfumg6ctt@skbuf>
-References: <20240624162128.1665620-1-leitao@debian.org>
- <202406261920.l5pzM1rj-lkp@intel.com>
- <20240626140623.7ebsspddqwc24ne4@skbuf>
- <Zn2yGBuwiW/BYvQ7@gmail.com>
- <20240708133746.ea62kkeq2inzcos5@skbuf>
- <Zow5FUmOADrqUpM9@gmail.com>
+	s=arc-20240116; t=1720533535; c=relaxed/simple;
+	bh=22cG5llQtF8LwxSlednl5ESTJKtEK/9dkFrkNUEnIP4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iLGrcxc0PXWMgpfhyccSgs+MDLBqxDHVn3evchQBNrIHuM8OSBpzf+jRlGFNwiWyy+iYbAUdWd9n1lnNRybqZPE4ayJYffysMPnbDIsHLohIeMlLB1rNOwt9rnxKqo7uTCDPfX9tozI68ygVi63TGPKr99na5DR9isKlFY4rtYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowAD3_7cHQo1m9kZiAg--.40139S2;
+	Tue, 09 Jul 2024 21:58:38 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: shubhrajyoti.datta@amd.com,
+	sai.krishna.potthuri@amd.com,
+	bp@alien8.de,
+	tony.luck@intel.com,
+	james.morse@arm.com,
+	mchehab@kernel.org,
+	rric@kernel.org
+Cc: linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>
+Subject: [PATCH] EDAC/versal: Fix possible null pointer dereference in emif_get_id()
+Date: Tue,  9 Jul 2024 21:58:30 +0800
+Message-Id: <20240709135830.1172936-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="hpogfizkbgtmf2d4"
-Content-Disposition: inline
-In-Reply-To: <Zow5FUmOADrqUpM9@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAD3_7cHQo1m9kZiAg--.40139S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrurWUKF1DGFWDuF1kZrWkZwb_yoWDtFc_Gw
+	48WFy7XF4kW3Z0kwsF9wnxZrySyw4qvr4DuFn7K3sakry5Zay3XrnaqFsrZw1DWr109FWD
+	GryDK343Ar1UujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
+	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUQZ23UUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
+In emif_get_id(), of_get_address() may return NULL which is later
+dereferenced. Fix this bug by adding NULL check.
 
---hpogfizkbgtmf2d4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi Breno,
-
-On Mon, Jul 08, 2024 at 12:08:05PM -0700, Breno Leitao wrote:
-> I thought about a patch like the following (compile tested only). What
-> do you think?
-
-To be honest, there are several things I don't really like about this
-patch.
-
-- I really struggled with applying it in the current format. Could you
-  please post the output of git format-patch in the future?
-- You addressed dpaa_set_coalesce() but not also dpaa_fq_setup()
-- You misrepresented the patch content by saying you only allocate size
-  for online CPUs in the commit message. But you allocate for all
-  possible CPUs.
-- You only kfree(needs_revert) in the error (revert_values) case, but
-  not in the normal (return 0) case.
-- The netdev coding style is to sort the lines with variable
-  declarations in reverse order of line length (they call this "reverse
-  Christmas tree"). Your patch broke that order.
-- You should use kcalloc() instead of kmalloc_array() + memset()
-
-I have prepared and tested the attached alternative patch on a board and
-I am preparing to submit it myself, if you don't have any objection.
-
-Thanks,
-Vladimir
-
---hpogfizkbgtmf2d4
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0001-net-dpaa-avoid-on-stack-arrays-of-NR_CPUS-elements.patch"
-
-From 00b942829ee283baa602011a05b02d18c6988171 Mon Sep 17 00:00:00 2001
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-Date: Mon, 8 Jul 2024 11:57:33 -0700
-Subject: [PATCH] net: dpaa: avoid on-stack arrays of NR_CPUS elements
-
-The dpaa-eth driver is written for PowerPC and Arm SoCs which have 1-24
-CPUs. It depends on CONFIG_NR_CPUS having a reasonably small value in
-Kconfig. Otherwise, there are 2 functions which allocate on-stack arrays
-of NR_CPUS elements, and these can quickly explode in size, leading to
-warnings such as:
-
-  drivers/net/ethernet/freescale/dpaa/dpaa_eth.c:3280:12: warning:
-  stack frame size (16664) exceeds limit (2048) in 'dpaa_eth_probe' [-Wframe-larger-than]
-
-The problem is twofold:
-- Reducing the array size to the boot-time num_possible_cpus() (rather
-  than the compile-time NR_CPUS) creates a variable-length array,
-  avoidable in the Linux kernel.
-- Using NR_CPUS as an array size makes the driver blow up in stack
-  consumption with generic, as opposed to hand-crafted, .config files.
-
-A simple solution is to use dynamic allocation for num_possible_cpus()
-elements (aka a small number determined at runtime).
-
-Link: https://lore.kernel.org/all/202406261920.l5pzM1rj-lkp@intel.com/
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+Fixes: 6f15b178cd63 ("EDAC/versal: Add a Xilinx Versal memory controller driver")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- .../net/ethernet/freescale/dpaa/dpaa_eth.c    | 20 ++++++++++++++-----
- .../ethernet/freescale/dpaa/dpaa_ethtool.c    | 10 +++++++++-
- 2 files changed, 24 insertions(+), 6 deletions(-)
+ drivers/edac/versal_edac.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-index ddeb0a5f2317..c856b556929d 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -931,14 +931,18 @@ static inline void dpaa_setup_egress(const struct dpaa_priv *priv,
- 	}
- }
+diff --git a/drivers/edac/versal_edac.c b/drivers/edac/versal_edac.c
+index a556d23e8261..6ab87277d439 100644
+--- a/drivers/edac/versal_edac.c
++++ b/drivers/edac/versal_edac.c
+@@ -1053,6 +1053,9 @@ static u32 emif_get_id(struct device_node *node)
+ 	const __be32 *addrp;
  
--static void dpaa_fq_setup(struct dpaa_priv *priv,
--			  const struct dpaa_fq_cbs *fq_cbs,
--			  struct fman_port *tx_port)
-+static int dpaa_fq_setup(struct dpaa_priv *priv,
-+			 const struct dpaa_fq_cbs *fq_cbs,
-+			 struct fman_port *tx_port)
- {
- 	int egress_cnt = 0, conf_cnt = 0, num_portals = 0, portal_cnt = 0, cpu;
- 	const cpumask_t *affine_cpus = qman_affine_cpus();
--	u16 channels[NR_CPUS];
- 	struct dpaa_fq *fq;
-+	u16 *channels;
+ 	addrp = of_get_address(node, 0, NULL, NULL);
++	if (!addrp)
++		return -EINVAL;
 +
-+	channels = kcalloc(num_possible_cpus(), sizeof(u16), GFP_KERNEL);
-+	if (!channels)
-+		return -ENOMEM;
+ 	my_addr = (u32)of_translate_address(node, addrp);
  
- 	for_each_cpu_and(cpu, affine_cpus, cpu_online_mask)
- 		channels[num_portals++] = qman_affine_channel(cpu);
-@@ -997,6 +1001,10 @@ static void dpaa_fq_setup(struct dpaa_priv *priv,
- 				break;
- 		}
- 	}
+ 	for_each_matching_node(np, xlnx_edac_match) {
+@@ -1060,6 +1063,9 @@ static u32 emif_get_id(struct device_node *node)
+ 			continue;
+ 
+ 		addrp = of_get_address(np, 0, NULL, NULL);
++		if (!addrp)
++			return _EINVAL;
 +
-+	kfree(channels);
-+
-+	return 0;
- }
+ 		addr = (u32)of_translate_address(np, addrp);
  
- static inline int dpaa_tx_fq_to_id(const struct dpaa_priv *priv,
-@@ -3416,7 +3424,9 @@ static int dpaa_eth_probe(struct platform_device *pdev)
- 	 */
- 	dpaa_eth_add_channel(priv->channel, &pdev->dev);
- 
--	dpaa_fq_setup(priv, &dpaa_fq_cbs, priv->mac_dev->port[TX]);
-+	err = dpaa_fq_setup(priv, &dpaa_fq_cbs, priv->mac_dev->port[TX]);
-+	if (err)
-+		goto free_dpaa_bps;
- 
- 	/* Create a congestion group for this netdev, with
- 	 * dynamically-allocated CGR ID.
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c b/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
-index 5bd0b36d1feb..3f8cd4a7d845 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
-@@ -457,12 +457,16 @@ static int dpaa_set_coalesce(struct net_device *dev,
- 			     struct netlink_ext_ack *extack)
- {
- 	const cpumask_t *cpus = qman_affine_cpus();
--	bool needs_revert[NR_CPUS] = {false};
- 	struct qman_portal *portal;
- 	u32 period, prev_period;
- 	u8 thresh, prev_thresh;
-+	bool *needs_revert;
- 	int cpu, res;
- 
-+	needs_revert = kcalloc(num_possible_cpus(), sizeof(bool), GFP_KERNEL);
-+	if (!needs_revert)
-+		return -ENOMEM;
-+
- 	period = c->rx_coalesce_usecs;
- 	thresh = c->rx_max_coalesced_frames;
- 
-@@ -485,6 +489,8 @@ static int dpaa_set_coalesce(struct net_device *dev,
- 		needs_revert[cpu] = true;
- 	}
- 
-+	kfree(needs_revert);
-+
- 	return 0;
- 
- revert_values:
-@@ -498,6 +504,8 @@ static int dpaa_set_coalesce(struct net_device *dev,
- 		qman_dqrr_set_ithresh(portal, prev_thresh);
- 	}
- 
-+	kfree(needs_revert);
-+
- 	return res;
- }
- 
+ 		edac_printk(KERN_INFO, EDAC_MC,
 -- 
-2.34.1
+2.25.1
 
-
---hpogfizkbgtmf2d4--
 
