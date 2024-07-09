@@ -1,254 +1,144 @@
-Return-Path: <linux-kernel+bounces-245193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57EF492AF73
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:36:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94DA692AF75
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBFCC1F226F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:36:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C775C1C21EB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041CF12F38B;
-	Tue,  9 Jul 2024 05:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9617712DD90;
+	Tue,  9 Jul 2024 05:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="dFR4kZS9"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="H9RNPmtg"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B113B3EA66;
-	Tue,  9 Jul 2024 05:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A7B12F375;
+	Tue,  9 Jul 2024 05:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720503406; cv=none; b=nckrG+wozp/6tJzrA5VA7Z5sswl9oL5fMwQKGAIgjTxu/IeAGnPKnllIx0rW9bH/GcZgrR9Tyk5ujDpQyRN1Do5ToU86xxbU5LxUevx3xmzRAiqN5WQglGFiRwBbEuRrLC/DdI2MZF/ROgeZG2iX1VymZApKe9zPCN2IbWNTBp4=
+	t=1720503478; cv=none; b=kEEJCbosuU+V+yn/oNruSN5E9QjQWJe0j2A3puO12DgtKmODCsCYg/eS5M+0TB7H7PA7izM70qYIrJvKQEKBSsciqFG0IVuby1qN7cmnOKhmtSiKZHIAusaBfDt1kHT7ZH+GSzoPq4pMfY3XEvFSblPpXDO9YO8bSDs2Q2+LMX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720503406; c=relaxed/simple;
-	bh=p0NBgWk01RpCw5kLuuOOKMNWUAnifz8EKAs5N210Qa0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NRZQyqLv2p+bLAU+KNHtRse5UuxX2gAnhHeeEFLXzauy2XEqyIRe9inHQQ5UYzMlJCBs5IRr/wimqhIiXJ1/LrOQgKKHcoL24nS9SS8qXdzS77f6f3YrkZGYQkPwAhOt/uvNTqTVY5hQVetpayXwWmCdKqz0WbK8Bmqn15yaYYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=dFR4kZS9; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1720503377; x=1721108177; i=quwenruo.btrfs@gmx.com;
-	bh=yDjRGjMl0S9FFORjiGz8nO18RDyMk1eu2LiTsRsBUNA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=dFR4kZS9CthtTTHz3WG6hRQT53r48T2XUDAgRR7uPK605uVstv6nFuDPSrtbBTIa
-	 ojC6tkcsMen9tKayy/5XQd+SRQcnLOkOlCcA34I/8pWuzVy4pCEUQ74VokrOrJA6u
-	 WNJ1QM9CWOiVvt50+QMJfqyaI5z7Tq4R82jJwL8GBUpsrNUPAYdUFi8uyyDdSb2ci
-	 q/qUXiM05OkeijNTtIrrnv91SNiYKTkZ3N+jnup+PfNodwhW+moO3UhZDbkhjDh/7
-	 PyKhqErgrIqmhK+AVMQNj2r6y7XnjrJcnvQKcOWFqaMHCvAqmcxKwey+L5FOsOZ3l
-	 yhTSHWofJWJNgqR5eg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx004
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1MF3DW-1sc69I2Qiu-00HIPF; Tue, 09
- Jul 2024 07:36:17 +0200
-Message-ID: <4a8f5863-6270-4f87-b65d-7bed6bf43c43@gmx.com>
-Date: Tue, 9 Jul 2024 15:06:12 +0930
+	s=arc-20240116; t=1720503478; c=relaxed/simple;
+	bh=OvEheWWr/Xaaxfb/IzwJiJS5OKTS97s57xi1JzrKHTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=q1mGG1nxTm77ZO/4Oi/bmGUErGaP0jgR+XWAUtZk8Bqy+pxJq3y5weXFlZLkrEmt0NIAShDi4sD/Zgpi5yIwLieTacbpexDu4tovSQJ8d3ZVq3wNMSowNGUeVQbp9y2+BL5mt565v1vizzCj5T26XKke84Z3EwyVmpNNal11QEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=H9RNPmtg; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720503470;
+	bh=Kb2sNZnu0CcRvr0hN0gsbVGhVm931fLwhcdsA85amDU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=H9RNPmtgzMjYhbPrnQW7VzPV1TitDyOZoQLNsiaL2bhA5Ux6NhObPj/LXSYikRTfW
+	 +Q7gAO1MZhrIkw54BPm1g/gIXCHU+Jc9BiAMg/lAPGrAh37Un/HJvQEhhZfZT3AOPv
+	 ++yyKkSa02YRkTsFWXrUccyP3Md+KcIyKrCAhntG5kfgPLv/EMq0iy6FbrxLNn9CnF
+	 50onYLseRgIr3Pa6dWPdR/j1EKbkaSVt5FE4lx8wbRZDRiJ2H2/8wNwjqLBLihppY5
+	 zuLJj0sCoIze+X5DskS4ghCJoQo1oZz/5nIn1c4ruqbpPoM/HRsJZIKdYxrcvTtfZT
+	 k5uPw07DDPL8g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJ8s92Wk3z4wZx;
+	Tue,  9 Jul 2024 15:37:49 +1000 (AEST)
+Date: Tue, 9 Jul 2024 15:37:47 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: linux-next: manual merge of the tty tree with the tty.current tree
+Message-ID: <20240709153747.07d7272c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/7] btrfs: replace stripe extents
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
- Johannes Thumshirn <jth@kernel.org>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
-Cc: "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240705-b4-rst-updates-v4-0-f3eed3f2cfad@kernel.org>
- <20240705-b4-rst-updates-v4-1-f3eed3f2cfad@kernel.org>
- <e51d0042-ec10-4a50-bd76-3d3d3cbc9bfc@gmx.com>
- <9d7f7acf-8077-481c-926e-d29b4b90d46f@wdc.com>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
-In-Reply-To: <9d7f7acf-8077-481c-926e-d29b4b90d46f@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: multipart/signed; boundary="Sig_/20wsyuH.4Ohkr5IbyyKsu/p";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/20wsyuH.4Ohkr5IbyyKsu/p
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:b26YNB3cKk5UyxM2iFfIDjOwAciVyCgCEVhgLd8P7wmSoQnx11I
- BaPfpb0YbozdSnNBW8wb3HB/BG1sGSY+74xJeCzSkXfp3XkNUPYiyeCO4tAjr5oCita0pKw
- Dd1c7CXnVW4GA+uizuZm26oXqUC1M0qzwrEvM4wGp9mKlQ2/q0R/UxDac0vmJC9EN0ISv/a
- OZRyq43K79LxhyVUL7XjA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:eZpMuLDevQE=;IP7apwzOrHE+UlgYgcYKhTpv0ZS
- NMlOf0n6mcFCCQ6F2ws5Ptg9lQ63s91oE6OpfAe4t0wgZ5ccaze5e497jb1Vh/BKcG/pZyQRa
- eR0nUMhnMRCOXvvZ4OEejDaqvZ4rtrisOKcieawbpTmafH/7WqqVYXPojs/NKfK9Qk2cVKI4c
- LfDbMWniI94Rive+TqQRCiwI6kz1cicY3JxBMamz19Auva5yNu8oWEue7pd80Jt+QMowCKHYj
- Ef5GRQqVRHJ1pB9D5zPRS79ENUFEM99MV29UmkycW7WRgL+SLJZ/kSEJ+UpgvdHbS109Wc0aS
- LjP2z7NSukfOaSdbreL45QEMKbo9WzZx2xYLxx+bqPgnchTIak9MPrAzhSsXqye0bOWeses3U
- OMLhGbjo8sUJqhL/r0PY4Pyn23sbCG23qZ6a35PS4Zd4qS8pP14ocMRhWM3ldcvEpdAufWgw7
- zypR+BPERsqC2CnNxg4ZcvvdCjQdo0awuuTxFeQ125OgwxIhHg6OusI1Wcwh52C122W5HPll2
- ycSymGLcv5Bxlh9SZgzSjA2LU4YNnVuQX9tZ9Qlur+P83eCM32OOYqHNI3zDRy4Sot3sotpRs
- wn0neV89EBFzsxQ68zA1FU8ZiH+3ozcEI2R5OtmYOdUyekRdqG1FZ2YPjWPlaksTpASSpbPHj
- tsfOnehdsOW/svZxlGpog2F/+hfnGHn9V0sEg0f8cw9pLjF9hQMPhThJq95iayo92wVD7BY+m
- 6AxjICt8oWunOa7E+wy598nih7t6ex22YlqZSpqcwrr5O7dgKq3jYx1CMhSLLVyZRO7CDgiY0
- gz/blQ3Bk5VBg5+RslrGXeatt3ZGAUPurRnHWZEcWnuq0=
 
+Hi all,
 
+Today's linux-next merge of the tty tree got a conflict in:
 
-=E5=9C=A8 2024/7/8 21:13, Johannes Thumshirn =E5=86=99=E9=81=93:
-> On 06.07.24 01:19, Qu Wenruo wrote:
->>
->>
->> =E5=9C=A8 2024/7/6 00:43, Johannes Thumshirn =E5=86=99=E9=81=93:
->>> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->>>
->>> If we can't insert a stripe extent in the RAID stripe tree, because
->>> the key that points to the specific position in the stripe tree is
->>> already existing, we have to remove the item and then replace it by a
->>> new item.
->>>
->>> This can happen for example on device replace operations.
->>
->> In that case, can we just modify the targeted dev stripe?
->>
->> Or do we have other call sites that can lead to such conflicts?
->>
->> As I'm not that confident if such replace behavior would mask some real
->> problems.
->
-> I've just tested the following patch and it looks like it's working:
+  drivers/tty/serial/imx.c
 
-After some more thinking, I'm wondering why dev-replace would even
-trigger an RST entry update?
+between commit:
 
-Normally for non-rst replace, we just reuse the scrub routine to read
-out all the extents, then only write the content to the replace target,
-thus there should be no update to anything (no chunk nor extent level
-update).
+  9706fc87b4cf ("serial: imx: only set receiver level if it is zero")
 
-I understand that for RST we can not directly go that routine, because
-the extents' bytenr is no longer directly mapped into a chunk, thus the
-data on-disk can be out-of-order and can not be directly used for
-dev-replace.
+from the tty.current tree and commit:
 
+  3093f180bc6e ("serial: imx: stop casting struct uart_port to struct imx_p=
+ort")
 
-But on the other hand, the extent based iteration is just to avoid
-wasting IO, in theory we can just copy the dev extent from one device to
-the target device, then everything should work as expected.
-(The bg is marked RO, thus no new write should happen there)
+from the tty tree.
 
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-Thus I'm wondering, can we just do a device extent level copying for RST
-replace.
-By that, we can avoid any update to RST entries at all, mirroring the
-behavior of non-RST code.
+--=20
+Cheers,
+Stephen Rothwell
 
-Although the cost is, we have to implement a dedicated RST routine for
-device-replace.
-As in that case, dev-replace for RST would be something like:
+diff --cc drivers/tty/serial/imx.c
+index ff32cd2d2863,d96f0524f7fb..000000000000
+--- a/drivers/tty/serial/imx.c
++++ b/drivers/tty/serial/imx.c
+@@@ -1549,10 -1553,9 +1554,10 @@@ static int imx_uart_startup(struct uart
+ =20
+  static void imx_uart_shutdown(struct uart_port *port)
+  {
+- 	struct imx_port *sport =3D (struct imx_port *)port;
++ 	struct imx_port *sport =3D to_imx_port(port);
+  	unsigned long flags;
+  	u32 ucr1, ucr2, ucr4, uts;
+ +	int loops;
+ =20
+  	if (sport->dma_is_enabled) {
+  		dmaengine_terminate_sync(sport->dma_chan_tx);
+@@@ -1984,8 -1937,8 +1989,8 @@@ static void imx_uart_poll_put_char(stru
+  static int imx_uart_rs485_config(struct uart_port *port, struct ktermios =
+*termios,
+  				 struct serial_rs485 *rs485conf)
+  {
+- 	struct imx_port *sport =3D (struct imx_port *)port;
++ 	struct imx_port *sport =3D to_imx_port(port);
+ -	u32 ucr2;
+ +	u32 ucr2, ufcr;
+ =20
+  	if (rs485conf->flags & SER_RS485_ENABLED) {
+  		/* Enable receiver if low-active RTS signal is requested */
 
-- Scrub the source device dev-extent
-- Copy the dev extent for that chunk directly to the target device
-   That can only happen if the source dev extent is all correct.
+--Sig_/20wsyuH.4Ohkr5IbyyKsu/p
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Thanks,
-Qu
+-----BEGIN PGP SIGNATURE-----
 
->
->
-> diff --git a/fs/btrfs/raid-stripe-tree.c b/fs/btrfs/raid-stripe-tree.c
-> index e6f7a234b8f6..7bfd8654c110 100644
-> --- a/fs/btrfs/raid-stripe-tree.c
-> +++ b/fs/btrfs/raid-stripe-tree.c
-> @@ -73,6 +73,53 @@ int btrfs_delete_raid_extent(struct
-> btrfs_trans_handle *trans, u64 start, u64 le
->           return ret;
->    }
->
-> +static int update_raid_extent_item(struct btrfs_trans_handle *trans,
-> +				   struct btrfs_key *key,
-> +				   struct btrfs_io_context *bioc)
-> +{
-> +	struct btrfs_path *path;
-> +	struct extent_buffer *leaf;
-> +	struct btrfs_stripe_extent *stripe_extent;
-> +	int num_stripes;
-> +	int ret;
-> +	int slot;
-> +
-> +	path =3D btrfs_alloc_path();
-> +	if (!path)
-> +		return -ENOMEM;
-> +
-> +	ret =3D btrfs_search_slot(trans, trans->fs_info->stripe_root, key, pat=
-h,
-> +				0, 1);
-> +	if (ret)
-> +		return ret =3D=3D 1 ? ret : -EINVAL;
-> +
-> +	leaf =3D path->nodes[0];
-> +	slot =3D path->slots[0];
-> +
-> +	btrfs_item_key_to_cpu(leaf, key, slot);
-> +	num_stripes =3D btrfs_num_raid_stripes(btrfs_item_size(leaf, slot));
-> +	stripe_extent =3D btrfs_item_ptr(leaf, slot, struct btrfs_stripe_exten=
-t);
-> +
-> +	for (int i =3D 0; i < num_stripes; i++) {
-> +		u64 devid =3D bioc->stripes[i].dev->devid;
-> +		u64 physical =3D bioc->stripes[i].physical;
-> +		u64 length =3D bioc->stripes[i].length;
-> +		struct btrfs_raid_stride *raid_stride =3D
-> +			&stripe_extent->strides[i];
-> +
-> +		if (length =3D=3D 0)
-> +			length =3D bioc->size;
-> +
-> +		btrfs_set_raid_stride_devid(leaf, raid_stride, devid);
-> +		btrfs_set_raid_stride_physical(leaf, raid_stride, physical);
-> +	}
-> +
-> +	btrfs_mark_buffer_dirty(trans, leaf);
-> +	btrfs_free_path(path);
-> +
-> +	return ret;
-> +}
-> +
->    static int btrfs_insert_one_raid_extent(struct btrfs_trans_handle *tr=
-ans,
-> 					struct btrfs_io_context *bioc)
->    {
-> @@ -112,6 +159,8 @@ static int btrfs_insert_one_raid_extent(struct
-> btrfs_trans_handle *trans,
->
-> 	ret =3D btrfs_insert_item(trans, stripe_root, &stripe_key, stripe_exten=
-t,
-> 				item_size);
-> +	if (ret =3D=3D -EEXIST)
-> +		ret =3D update_raid_extent_item(trans, &stripe_key, bioc);
-> 	if (ret)
-> 		btrfs_abort_transaction(trans, ret);
->
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaMzKsACgkQAVBC80lX
+0GwBaAf+IQdnt5lHrEVR733zi2DEUfysmf9dniwZEnSKMMXn21Pi/l/RACvNcKoq
+BU1au5gAw+QxyvggvqAjxGSjF+ASNNsYeUWmGyxy4yUN0RfTlzfbl3SUYQZswvyn
+BFmn15gdHDVUh5d7mYPOss3HekEhwYmC6KqDhLECj2BVDCVQk3WxeXGC8906bL9V
+E84grww3k0K8T+32EW3yxyNvDfFDoe0dqIi6DI8A79aCs7X53SsmkQ961eedT59y
+NvED0bUgIpRlcOSPgRJdQUwHIeOvcoPfB+oW1Y6vO6Dn3NvZrqBy8N3z3mworD42
+f0B2+LP3QYgCFsoZr3TfBejhm4MMtQ==
+=yz1h
+-----END PGP SIGNATURE-----
+
+--Sig_/20wsyuH.4Ohkr5IbyyKsu/p--
 
