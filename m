@@ -1,119 +1,117 @@
-Return-Path: <linux-kernel+bounces-246427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5628C92C198
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:03:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F17EB92C199
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:03:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA00D1F23316
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:03:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BC4E1F2224B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093A219E7D0;
-	Tue,  9 Jul 2024 16:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEDE19F487;
+	Tue,  9 Jul 2024 16:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHdvWKaQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SyDIDQH5"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533CE158A36
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 16:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3736D158A36;
+	Tue,  9 Jul 2024 16:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720542831; cv=none; b=SDae4U5KZbooJ+0GdzNdetkzIvWic34ae7chjNinQXmwFAQZ3f2/He3pFRqbUoFJ9FXSLcsNykeXI1XO8xLcB3LyNW+7vhmkIcworNRDonUQqfbmXjH8Olohj1e+WXTmcy/28VL4PxCwPbAXpKcj1Ekyq7xMccdcaZV5Q9BJoTE=
+	t=1720542838; cv=none; b=ZHq+McgMJOYg069tTn3yvXM+gd4Z178HeVI9OY5Vmic8cNYUMm/5mP8HmwU9LOpEKfNs3U8t3iOwWUD4UEJxFJNTPQX8WMpgCxT6v/yGs/kUwAO5HlxKRo+ea5H3QbN53+vRkzzzmDx/V3/IZ2xc6pY5+h4wzshw3qZRnydhtYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720542831; c=relaxed/simple;
-	bh=ieyUAGYiVa46emkVrhl4+PzpqIB/zaKo65nwYoPV9AI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KKkXgiKz1C/nihvAwsZAuY2k+QfRSJcaDW4sL+HfY+YkWUraKvHfxpa/rnGSDPKgiLMIAsSJHFzmiJG/pgrfSAFClWe3TEeaY8rPSZ/JBjgye3FUn+0Uj9E33BOEdd2XEozx7uZJCDZadUwbvSetissBYxglzoImrzcoE+Fsoa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHdvWKaQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4870CC3277B;
-	Tue,  9 Jul 2024 16:33:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720542830;
-	bh=ieyUAGYiVa46emkVrhl4+PzpqIB/zaKo65nwYoPV9AI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BHdvWKaQJdfVE98jA3FQVY5aUw2hlHkm/tinrJt2MBRd03MlIG7+FAdP8Po1idu8T
-	 jkfokUVp96HAzYpkwSyyMOqsjRF5mghpNsbGj36NcwMaA7p1NmM1VIbROUxa6OOSd8
-	 FASymBzQiQOUNoBPhChuIZTQPoHDe+cTPl4QpQJfkltA+okchRmxVYoDU9wIrVfJRG
-	 1uDzyL+qixZnsjn1puzrBdxWYZsrb+uwtHkqtk/LwUxps9hSK/16ugPvd9EUDAxu9z
-	 rnyTxraHL+BzZFvANMMnxQbL5HigybhWXnWBNnhbvQ3G28+3b3474omhMhahcXHpQK
-	 4SVu7mwFv7lvQ==
-Date: Tue, 9 Jul 2024 17:33:46 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	David Abdurachmanov <david.abdurachmanov@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Ross Burton <ross.burton@arm.com>
-Subject: Re: [PATCH v2] clocksource: sp804: Make user selectable
-Message-ID: <97f02ddd-5e9a-440a-bda8-82c2fd7957d5@sirena.org.uk>
-References: <20240529-arm64-vexpress-sp804-v2-1-c542a80af33a@kernel.org>
- <2b946a68-dcdd-4a1e-b7c3-416725033c2e@linaro.org>
- <ddfc867d-2431-44d2-9753-b577e8f5ddea@sirena.org.uk>
- <11c5de84-21f0-45de-81e0-dc765a391123@linaro.org>
+	s=arc-20240116; t=1720542838; c=relaxed/simple;
+	bh=UK1xgHEzajeGllYI2kRF8rHmhdURPXisZUswpRuwiNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HFlcIzVnpi66Ded+qjUncp+tsHZiwNNUsEAFfUoIXUnl9a7yoF9J/w2/kDsq4fME1uUovnJ79CjOaWVOUazG/o0YL1ru0x0G7sp0j7/PwJlydJOksVJmq8M5iJAEax1QsvUulr04neGTZ3i1ylI5Ga03jHNsXZlsyDx7QspLers=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SyDIDQH5; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5A9EE20007;
+	Tue,  9 Jul 2024 16:33:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720542833;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+x0AAyScM7vdDgaiQAw8ZvRTEHXX/3oaTOsMVo7wPHg=;
+	b=SyDIDQH5kqowfxOQjM82jF1YHKDDlTbfQAV60o9gQhXcUp81yt0vhvp/I4n9kRFL6IpfNG
+	cP+jI07moNTX+pL0I2WsrakLgZj3zITRy+rIi1GSmw55skV+OUmQFfovOftqdLeacvDv9w
+	QS0+wvP8UO/ihaLPzhO6/lHl7BTNqyS5TmyAk9bb4rSSlVM8QiPemkY9h69tLDuF1TkzfM
+	MoV7ZG5sLC05i0I1rJEiomxgGk08NyOd0ofEQtL/BXsM8TvtWFNdyMEQMtQ5gP+Ukam6xe
+	LRRwg/5WB8LnYJxWmFaGTxXi2DUqP/8nXhDETKOxZEheWpl1l5WB4ZRt14EGpw==
+Date: Tue, 9 Jul 2024 18:33:51 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>,
+ thomas.petazzoni@bootlin.com, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH net] net: ethtool: pse-pd: Fix possible null-deref
+Message-ID: <20240709183351.79ba61ea@kmaincent-XPS-13-7390>
+In-Reply-To: <20240709085205.0fa41f8f@kernel.org>
+References: <20240709131201.166421-1-kory.maincent@bootlin.com>
+	<20240709071846.7b113db7@kernel.org>
+	<20240709164305.695e5612@kmaincent-XPS-13-7390>
+	<20240709085205.0fa41f8f@kernel.org>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="KfBOkOhXk/hPZUaU"
-Content-Disposition: inline
-In-Reply-To: <11c5de84-21f0-45de-81e0-dc765a391123@linaro.org>
-X-Cookie: Most of your faults are not your fault.
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
+On Tue, 9 Jul 2024 08:52:05 -0700
+Jakub Kicinski <kuba@kernel.org> wrote:
 
---KfBOkOhXk/hPZUaU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Tue, 9 Jul 2024 16:43:05 +0200 Kory Maincent wrote:
+> > > Normal ethtool flow is to first fill in the data with a ->get() then
+> > > modify what user wants to change.
+> > >=20
+> > > Either we need:
+> > >  - an explanation in the commit message how this keeps old config; or
+> > >  - a ->get() to keep the previous values; or
+> > >  - just reject setting one value but not the other in
+> > >    ethnl_set_pse_validate() (assuming it never worked, anyway).   =20
+> >=20
+> > In fact it is the contrary we can't set both value at the same time bec=
+ause
+> > a PSE port can't be a PoE and a PoDL power interface at the same time. =
+=20
+>=20
+> In that case maybe we should have an inverse condition in validate, too?
+> Something like:
+>=20
+> 	if ((pse_has_podl(phydev->psec) &&
+> 	     GENL_REQ_ATTR_CHECK(info, ETHTOOL_A_PODL_PSE_ADMIN_CONTROL)) ||
+> 	    (pse_has_c33(phydev->psec) &&
+> 	     GENL_REQ_ATTR_CHECK(info, ETHTOOL_A_C33_PSE_ADMIN_CONTROL)))
+> 		return -EINVAL;
+>=20
+> GENL_REQ_ATTR_CHECK will set the extack for us.
 
-On Tue, Jul 09, 2024 at 06:15:40PM +0200, Daniel Lezcano wrote:
-> On 08/07/2024 19:44, Mark Brown wrote:
-> > On Mon, Jul 08, 2024 at 06:49:38PM +0200, Daniel Lezcano wrote:
+I don't think it will work.
+In a case a PSE controller have one PoDL port and one PoE port.
+Your code will always return EINVAL if we try to set the config of only one=
+ of
+those ports.=20
 
-> > > Would it make sense to add the option in the platform so it selects the
-> > > timer ?
+I think the patch I sent plus a change in pse-pd core to do nothing in case=
+ of
+an empty config will do.
 
-> > As the commit log says far as I'm aware all the platforms that rely on
-> > the sp804 timer already select it (they wouldn't otherwise be able to
-> > work unless COMPILE_TEST was enabled).  The Arm models and possibly
-> > other platforms have the sp804 but it will currently be ignored by Linux
-> > and the architected timers used instead so it would be wasteful to force
-> > it on for them.
-
-> The policy of the Kconfig is we should keep the option silent.
-
-That's not what the changelog claimed was the reason for adding the
-dependency, and we have other number of Kconfig options (eg,
-TEGRA186_TIMER or ARM_ARCH_TIMER_EVTSTREAM) which don't.  There does
-seem to be a bit of a randomness if the options are only visible with
-COMPILE_TEST too, quite a few depend on an arch or COMPILE_TEST.
-
-> My suggestion was to provide the option in the platforms Kconfig and
-> [un]select the ARM_TIMER_SP804 from there
-
-I can't parse what that means, sorry.  The goal here is to not have the
-FVP platforms depend on the driver since they don't actually depend on
-it, it's merely physially present.
-
---KfBOkOhXk/hPZUaU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaNZmkACgkQJNaLcl1U
-h9BS3Qf/bc4q1MlGYJLMX7Dgq5dtc5dAQv6Z47lh53EhMgwBxwRH17pMSPtQ/B/D
-nwY8BnlKyBEKspXIixKxYBGMbe0L8T+f8rUDzSewqx/0yHk7ym0SkBQvucuofCLF
-0xbsXmnhVusN2+Z76MeTeu5TLhHrujBapn5m2xuhfbmcl0fmTBMnFjD0vMscaa/F
-yOZAY9yJHjEMYocu58A2fHFDF6uWXwEq4R9oi0g09tkECyasmZqjyQnvZNVxSN+7
-leFwH6vh3Lqc79B/4DjzQgHSc7VdO4bizSwIi0/hACZWVce8qjFA9JLt5s/E3CTr
-7XeLU1SpvvVo/Pbtpr4NJyrXcw/xmA==
-=7r4/
------END PGP SIGNATURE-----
-
---KfBOkOhXk/hPZUaU--
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
