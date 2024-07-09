@@ -1,113 +1,159 @@
-Return-Path: <linux-kernel+bounces-245679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A702592B5ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:53:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81CE192B5F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44715B219A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:53:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F6FC284CA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E9915884A;
-	Tue,  9 Jul 2024 10:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92BCC157A4D;
+	Tue,  9 Jul 2024 10:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hEej11Kv"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bn5etg/B"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABA4155329;
-	Tue,  9 Jul 2024 10:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D3215278A;
+	Tue,  9 Jul 2024 10:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720522347; cv=none; b=CLeN6eI93M0OZLaUmEIhqBaHmWiKD3WXxJiO1NtMUxlu3pI0q0KitgTpS0bZu8A78wQ7CYVtYc0ynOKvy8tcZaFz+o7hE0e/dHZoXGr8Gd9kPIS55Wvgd+g92oZq67+zAbXoLa7JoQGykJnx4tlF4ITADF+LL/8b/9CLE7rddsY=
+	t=1720522401; cv=none; b=ZWhEgjti72Q0mVrrSz4kSidZPhUBclwLPjfDq5EqrEgX2J1XHInB/guiugx4+S2nJqqv4B5J9snvJAQhUmCGaHU78MCsuZvI7nsU0rr6293ErYiAxofB1LGDTR5bIMMr9gTu6h0CsRzwRvsILqMi9VFhoJ9CgjPP9tu7FbHUGzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720522347; c=relaxed/simple;
-	bh=vQYiMZyY4wCIinORfN1CaFqtYJUd5P93b1oJl47srJQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=pMfC/O6uR0VEfLMIDMeWc3yZToTd+jX0I7ehXAMZMFCQWKE1BhISpPBKGf6iKm33yez3Wx8vXnD050d+Ph29c6EthXw8J1OsnMKqTD2vQA8QtEGxmevt30P1g0b5c9cw2KQpvJWwkaf3i+LmCdNj/r/rEaQxIuwnSNKQYQk8BVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hEej11Kv; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-367b8a60b60so1959392f8f.2;
-        Tue, 09 Jul 2024 03:52:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720522344; x=1721127144; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7mRrmwMm1DmJw1xSNDgxQWCnqRc/CmvO9uv+arr7hQ0=;
-        b=hEej11KvDNh3gNeehY36vuFOchXMpovKQjVkXI277qnLfCVmqL4/0VmdElMRbRzrPD
-         JwwiU8HJOmpuihvE5DcczUItR/eoWzYt3uMAMFkCyMr/JK1fLE3WQAtp82iqCi8WyGEl
-         jUy4wV6As/e6lBn+GyquYl6XQkMXl0KJ4gf5RpGEPLBYp/P3b4MB8y5xmGLyFBr0Nolh
-         1Li12Q0GyaimMrx/W8JQBXx28wwMIdpevYXkDCV3fZhk+I6dFTCy8T1Zl+C4Bwx4cc3+
-         EPYmYXGD/FvREN5hC5jLZ4IdlOMxkrW7SST/82XeuQ2+U/sZaKRr7VNw2BZys9CzwOdb
-         Ucwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720522344; x=1721127144;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7mRrmwMm1DmJw1xSNDgxQWCnqRc/CmvO9uv+arr7hQ0=;
-        b=u0hKTyrulvM5e6HhvQFuqvroYp2itT9OaQUgRcyHxuQViunD8x91X4x5jbTHjEVCKm
-         KvppEIJUyVHUXgjAahxXcF3Vx5f1Dl4aFyWw1Ahg3VuT4pRFOMdjRFgNkjDxBHUyruVg
-         6LFs5Rt19wE/+veN0YeGbCZIGaE2tphpByZ8PlspceVH6jfHXA61pPXQd8CQaycMHXe3
-         XtKsC4KnkiEwY9TANY8XV7439CC6qbsrZNjN1mc9c1Iyg+lDEOmW7eGA/J9H8Uk9ujoz
-         5na8/P/yiSmCYqhoKd90oVaZ7wMnfkf32pB7B2IS5ADGgOAREHiGAmTYQfH/ee/rm2eW
-         h5+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVnbTNqUGP607mtGA7oY6D9jdF4WcfAnfWf0xF7LP4ymF5H76tnM+v7IrnMXVfnIFnRk+O8/imI8jiEPyPxhuxzlT9stUIWaj0Jl7nuKONNbAYzpDaJObpXb45Mh4H7ZbEGW5oT
-X-Gm-Message-State: AOJu0YzYNJbLdav/eEAtXAv2iTkFBlpd7uzTnHdUPX5XV3v+gA3UbY7W
-	iyhJGWewm4iOOuX7/JBCGHU4msjb4Iuj9Bqx+d9GeewZp91rqifu+/4WWg0K
-X-Google-Smtp-Source: AGHT+IGvTztA3LGIiuYsN8gV0etV5BgW0nqdXMyjLBSWtHQbBPY48hOhZy9U/wY6scIClzpl2Ij9Cg==
-X-Received: by 2002:a05:6000:e41:b0:367:992e:acc with SMTP id ffacd0b85a97d-367cea67df8mr1505425f8f.18.1720522343590;
-        Tue, 09 Jul 2024 03:52:23 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfab106sm2186078f8f.103.2024.07.09.03.52.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 03:52:23 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] net: pse-pd: pd692x0: Fix spelling mistake "availables" -> "available"
-Date: Tue,  9 Jul 2024 11:52:22 +0100
-Message-Id: <20240709105222.168306-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1720522401; c=relaxed/simple;
+	bh=dHOeuJ/fUbf7/BQudVG04INtahpwVAVzOw8zSnqKO1A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GtKwFfj4P1QTxCV7274X5QvJlPp8uOu2BsfTf5oOhBLp2/danNCeJdu7V0ns6g+rQko3MBI5DROakq028oAtpCgwIFVVKP9t9YbQH234m8ZkJD76WC7sZDJBLYdsMcyRvmlVGoSg7k4Hwque28gRrtBhzibnZYzTgaTEe/8In9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bn5etg/B; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469A5SN7026613;
+	Tue, 9 Jul 2024 10:53:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2tMabEDkukSFfEaVvcVxlVvVONtz8HMw08XPgSZAbiM=; b=bn5etg/BJES5T1zC
+	Z/m7k4qfzwXeftPMVnIvAlkkQ8FbyyI7jczlZXkAvV23N5UuB6XX9F2LeoSiGUWe
+	mEpoT6qgN+4MQ0AQpTNneCpmGx6tI4OqVFrgziacxkIHR1F9/ZwpJVZQRwFj2BcX
+	X2Avgyl3DXACgS8lOyJUHygFG/W3Zo0d/x3WuzhSNrS9FhPuqnWoPjbcmBK6C/hx
+	2EdtYZQN+NOhwcHwHCDGlavugnSV8JXX0g1rYyQVTav+Bfkt82lu11Q763kgOBtA
+	ldid32xrgYiHtN1NS58Lc8qR06N0ah7Xa7gpSJZISUS1pEsIS6TLJEx0dz+Hclok
+	58Dprw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x0t6d1e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 10:52:59 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469Aqwij025653
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 10:52:58 GMT
+Received: from [10.216.26.146] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
+ 03:52:52 -0700
+Message-ID: <cc1957af-17bc-cd71-e6da-013e3a740014@quicinc.com>
+Date: Tue, 9 Jul 2024 16:22:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH v2 5/6] clk: qcom: Add camera clock controller driver for
+ SM8150
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>
+References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
+ <20240702-camcc-support-sm8150-v2-5-4baf54ec7333@quicinc.com>
+ <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: s1qDvv-1z7Wqj0GcQOAoOjAu9IgFUnMu
+X-Proofpoint-ORIG-GUID: s1qDvv-1z7Wqj0GcQOAoOjAu9IgFUnMu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_02,2024-07-08_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=999 priorityscore=1501 malwarescore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090074
 
-There is a spelling mistake in a dev_err message. Fix it.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/pse-pd/pd692x0.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 7/3/2024 3:50 PM, Dmitry Baryshkov wrote:
+> On Tue, Jul 02, 2024 at 09:20:43PM GMT, Satya Priya Kakitapalli wrote:
+>> Add support for the camera clock controller for camera clients
+>> to be able to request for camcc clocks on SM8150 platform.
+>>
+>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/Kconfig        |    9 +
+>>   drivers/clk/qcom/Makefile       |    1 +
+>>   drivers/clk/qcom/camcc-sm8150.c | 2159 +++++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 2169 insertions(+)
+> The patch mostly LGTM, several quesitons:
+>
+> - There are no cam_cc_sleep_clk and no cam_cc_xo_clk_src. Why?
 
-diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
-index 29cc76a66c13..0af7db80b2f8 100644
---- a/drivers/net/pse-pd/pd692x0.c
-+++ b/drivers/net/pse-pd/pd692x0.c
-@@ -589,7 +589,7 @@ static int pd692x0_pi_set_pw_from_table(struct device *dev,
- 
- 		if (pw < pw_table->class_pw) {
- 			dev_err(dev,
--				"Power limit %dmW not supported. Ranges availables: [%d-%d] or [%d-%d]\n",
-+				"Power limit %dmW not supported. Ranges available: [%d-%d] or [%d-%d]\n",
- 				pw,
- 				(pw_table - 1)->class_pw,
- 				(pw_table - 1)->class_pw + (pw_table - 1)->max_added_class_pw,
--- 
-2.39.2
+
+These are not required for camcc sm8150 hence not modelled.
+
+
+> - Why is cam_cc_gdsc_clk not modelled in the clock framework?
+
+
+This clock is kept enabled from probe, hence not required to be modelled 
+explicitly.
+
+
+> - I see that most if not all RCG clocks use rcg2_shared ops instead of
+>    using simple rcg2 ops, could you please clarify that?
+
+
+As per the HW design recommendation, RCG needs to be parked at a safe 
+clock source(XO) in the disable path, shared_ops is used to achieve the 
+same.
+
+
+> - RETAIN_FF_ENABLE has been used for GDSCs for sc7280, sc8280xp, sm8550,
+>    sm8650 and x1e8 platforms. Should it really be set for sm8150? If so,
+>    should it also be added to other camcc drivers (if so, for which
+>    platforms)?
+
+
+I have rechecked this in downstream and seems it is not really needed 
+for sm8150, I'll drop in next post.
 
 
