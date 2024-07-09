@@ -1,103 +1,86 @@
-Return-Path: <linux-kernel+bounces-246022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC4F892BCD3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:25:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A6B92BCCF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8781C282057
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:25:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5D362817F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB6619B5B5;
-	Tue,  9 Jul 2024 14:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE1718FC6E;
+	Tue,  9 Jul 2024 14:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="cEaa5wx3"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bNw5Rkyl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6D619CCE1;
-	Tue,  9 Jul 2024 14:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E02132112
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 14:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720535096; cv=none; b=FXS6oMdD/soAizBH+0TWZgOoZHVX61NHHiyEbbWVIm8GDg5RrKuHPkYKhA0T7Yi21+YGqUqfpPvUvTQjuOnQ+W3yniHpMvASpzxrCriYdwRu+Dn5cy/Io+DXArgyjnOZ7r7ScRyDQf+F16x/erfEjZ52rRU9EiDFp22u1OMjeMo=
+	t=1720535075; cv=none; b=CSeHwbSMoIMjFF3Q/eAi60A502a6RbdwPF7jFJp03Ywkf/GemyzGv3E0FIOoQdFXgdDW17CX4OqsojmBPoJOupyoUm2EpvSFpEVcnoHABzQOPtTV6Fy3qYeQUb4ZE9ZOUjKRd1XM2kiNMjmbsLX80Aq7Mm0M8L2/Qinm3FCL0Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720535096; c=relaxed/simple;
-	bh=MTZEk95cVNmOlHjGboGqC2IjvsBNeV/FYtOh6Kkyrx4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=WOGT21xxPTJ2cNVn88DtZbeQlYZG/VLsXYOjUadhi5RId7xbT+uTdwReqB/KCx8LATgzmENXu0s0SHAXnLkrZx01jWbOf7uEwEG02OdjszEaV2CWGxQkAhSIsZdvqUMcwGF1PUrNIaafzn8NR5UGai2qjDx3MkfqGV9usnJ7lTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=cEaa5wx3; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720535051; x=1721139851; i=markus.elfring@web.de;
-	bh=MTZEk95cVNmOlHjGboGqC2IjvsBNeV/FYtOh6Kkyrx4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=cEaa5wx3voy8AQeo/RMUCaM0+M7rr44DeplLoH1LoL7zdkVRHn/MPpRnZEsT5M0e
-	 NifKpB+EimH08fovMMrkbFy8JiZY/ANi2DOTfW0OgRKddWiIyET63L7n25uillPvw
-	 2RiOQEMbe/QcARZxLV7qiEFJ1yPkHufrKUx3K/rKA2irvqh8X4xtNmC9J8ry/Hxx3
-	 qB3j46b+Gr8okC4cErk0bQc7FcRTV87CkkVTIEZwQz6JSAEAOqWpUBexfJe0zipSP
-	 zJf9NflpLF8U/DCaijwdW0SNpOnXsfS2cOZ5qMIVG3Gn3sC21MVRhr7paP04CFOzp
-	 wxGzGs20bb4wIN5n0Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1McZnj-1roYDu32yL-00gymh; Tue, 09
- Jul 2024 16:24:11 +0200
-Message-ID: <91a7a967-9aba-4e24-8e67-1b6d95f62d61@web.de>
-Date: Tue, 9 Jul 2024 16:24:07 +0200
+	s=arc-20240116; t=1720535075; c=relaxed/simple;
+	bh=0G+H+5Q/xwH/f4CxWVLQn9oSZHX/23Z/fMFGonhovSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RfPWa6BSXqURrxrjrhwTTmrW28s/K3t+zpB/ak776dQl9T3+ZSjiRU7Q2yqbNXxtCFi2CNF/fCHf5SNzDoAYByQxj9bdoM5rsyzaiCvnFURfu34NbIACkUjZFWcI+wTEx+8prufiPbWGKWOL6/hmp0M85dXaD14oJ6B9G4K3gtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bNw5Rkyl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22949C3277B;
+	Tue,  9 Jul 2024 14:24:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720535074;
+	bh=0G+H+5Q/xwH/f4CxWVLQn9oSZHX/23Z/fMFGonhovSw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bNw5Rkylzsxbi+hPih8LuzVCLJWofAlOQYq9YkGM77vz//5TUH+GLbRj2lqeYFSsX
+	 BwOBPGi4bOLrNcKni6yVttnhCOpwqZ7VB0aKcn4usJJB3NpTpJriz4OqtpoLIvKOvP
+	 P5E4I+Tg5HrMG2P+jzrvgINM1+hEYVtatAlCDyFQ=
+Date: Tue, 9 Jul 2024 16:24:31 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Lizhe <sensor1010@163.com>
+Cc: rafael@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] driver:core: no need to invert the return value of
+ the call_driver_probe()
+Message-ID: <2024070904-blob-unvarying-715f@gregkh>
+References: <20240709141417.3349-1-sensor1010@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: make24@iscas.ac.cn, linux-edac@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Borislav Petkov <bp@alien8.de>, Dinh Nguyen <dinguyen@kernel.org>,
- James Morse <james.morse@arm.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Niravkumar L Rabara <niravkumar.l.rabara@intel.com>,
- Robert Richter <rric@kernel.org>, Tony Luck <tony.luck@intel.com>,
- Wei Liu <wei.liu@kernel.org>
-References: <20240709133759.1012350-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] EDAC/altera: Fix possible null pointer dereference
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240709133759.1012350-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:bRLtD/pS+yG61EgWsjRd99XE9ffwfsmXNL2IOhIGJOG7z8bScNJ
- JWtlU5evQSUiUZIYQhjrNm7kQ2j4W673J0oMWeGFt1EDAYI5ea+wZKfqykFAx/1OJkkXji4
- 0IBJMRBP+2Yd/rayqT3VFjfiUrx/DYY6nyuBSQIdeoRZpxXn1S4vFEiRhzLA+0En71cmPYR
- i0C4Rd6j04i5yvfIGGEfw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:OUOKpLgiNhA=;iUBh/Goe++xlI5fnKz0aT+IvwF2
- dRzcAtz359CqFWr01azCrO4tHdx3x+7UbpNWJKrLjDDz07zUjDFURrHYDbd5D2DQn2fMV4XFJ
- dOGbwb/5dCDex+tdmwbzkVvaaCt/k2wBtr7Vy3aIALkSvLYqdRepJvv5S20tcyo/K5Px8zYUj
- ZHaUF1zI16PuU+7Ug25opRiOWZSkwtumaH2cZjmmKn0NpdfjwR3iP7yj4YUOU4sdzSVwMbvQY
- mqJi9h9M0qAzxjxlPBEC2ie9XfMgFsoRcxmAK5YdC2fTqNpfDk0OHz+r/8+jCvZw1HUmm9gY+
- tfB7R/FA8KmRmE9D6EA1+FJIdmafVTZgUP5E1bOjsDDxLcG3c2cEz4Yk5YInIOwfvtzxygrfv
- vx+SYzxbQ+YTButulnmddoLqeFh0+1OiVWTLnxl28PRgZ8KGI1bh5MhpVFz5kDINfolJE50tj
- QjmEgbUQCAzdrsaAXverXOFV7y5bPQ16eJRUQCApN+b/GPIsKZdMhyT5uYeRd2K8L2/llosVO
- QuuHGWHSlLYw5KL67WzQfeU2kGXxjibb65GwtPsAjeDG4bRiZBPnK4rif/yOTRlN3IuRkCNWa
- sRxeJmi5E9/IAZGhBVJ5tHzlOojk6u7TX98owU9nE1XwG2lOGeo3/TvvnuvavfUROnfiGw5eY
- q6dbatvxQBjsRg0b8beKiVf8ArCs9ydKlxu8AzaMjSgovdPNw7yk9BtCtxEg/NT1AN66vLy3s
- uEYC1GgwKUD/I+Itd3R6f3yx2owrt57L6e3Uq2YZ9T1/DmkMzM+ql5RZzRE4OH5mJBlwNJrcW
- cK0goW4T/n/aQGUGPMckuRm9qVn2vhbIQHOwfFQP2vAaw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709141417.3349-1-sensor1010@163.com>
 
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+On Tue, Jul 09, 2024 at 07:14:17AM -0700, Lizhe wrote:
+> In the probe function (either drv->bus->probe() or drv->probe()),
+> there is no return value of EPROBE_DEFER. the error return from probe
+> should be -EPROBE_DEFER, hence no negation of call_driver_probe()'s
+> return is needed, nor should there be an EPROBE_DEFER check in
+> driver_probe_device()
+> 
+> Signed-off-by: Lizhe <sensor1010@163.com>
+> 
+> v3:
+> 	Modify commit message and versions go below the ---
+> v2:
+> 	Delete the judgment with the return value of EPROBEDEFER
+> 	from the _driver_probe.device()
+> v1:
+> 	Add the judgment with the return value of EPROBEDEFER
+> 	from the _driver_probe.device()
+> ---
+>  drivers/base/dd.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
 
-Under which circumstances will this information be corrected anyhow?
+The documentation says to put the vN: stuff below the --- line, right?
 
-The usage of mailing list addresses is probably undesirable for
-the Developer's Certificate of Origin, isn't it?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc7#n398
+And how did you find this issue?
 
-Regards,
-Markus
+thanks,
+
+greg kh-
 
