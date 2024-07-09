@@ -1,186 +1,112 @@
-Return-Path: <linux-kernel+bounces-246155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BBF892BE4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:28:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A94EB92BE52
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2C38285C2C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:28:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D3F71F257BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1C019D889;
-	Tue,  9 Jul 2024 15:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF68619D099;
+	Tue,  9 Jul 2024 15:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vXZA6c3J"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dbo32DBy"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFE819D087
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCD718C34F
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 15:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720538888; cv=none; b=keq71tup8BZEOz1V6RZEN/R/VfrCvJQy4pNiTtHjqJxytiC5CvqgV304zf9rluKQuZm/ilAYO2V5oEyCPJ5ATYDNIWz3lct7UdmY5UrAIc7CIuGZ97Oh2BlquVpTtjIKBNBFHVJCnoWWWseJhFGwtho21C2owoU0WlROAzaZ+bQ=
+	t=1720538915; cv=none; b=iCZEN5nwdVxRczTKi4eSUU1GbhmKZ6yjoAL7VwF4EEKjNS/C0n2L3cYCz/Z521B9gHW5reZd98fMJi/zFT7lZZ0cNS+MPE5s3x4w0ueKuzHjq3UOoDwBRaGa/PJhvrzmJYTKY2DrOBgALZ3HCf6gcY73vONd1LtMbfXXfdANgs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720538888; c=relaxed/simple;
-	bh=bmzpuGZtae1sxfRhz5O/nUTK5nTCIQFyLTiHDi+hhK8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n/OEzrJEiyk9KMaAdBVBETGqkurHFN9swzk8HhWP9Ja7l/izc1LpIRcJTuQAJ3CH5gTz9jtSIFxtsrcoMIV64/Qpm/t6R5JKCzy/QLRi/YtVhBr14vuwhT6fiBWkSMmuJGu71PDbwWtDmb7vJCBQevqkYuUP1+SS+jNLyzJBfFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vXZA6c3J; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-58ce966a1d3so14435a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 08:28:06 -0700 (PDT)
+	s=arc-20240116; t=1720538915; c=relaxed/simple;
+	bh=pUVev29WhcEhgGm1elSQHnizmrZu4fP1GBI4M6iwq28=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zs9MrAgsRJWNKUq8UfHrQsbYvw2vuTm5NAE0NYoUmW6tI2YnnkSPH+jTd1ovsARGuA7fePgfB0xvKdzcM2wDgMCMFeEeaRWRe2OXgvTYmJKLYyYUw7K+APMd+wJwhwObAdRD29TxfuvVHjd2V8nLa1cifM/c89q1Qaw5OMP4Ops=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dbo32DBy; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52ea34ffcdaso5070637e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 08:28:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720538885; x=1721143685; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0oz7iFbPy9x6jKPSlipqwYKyt0mKn37mM+Pcl7G9Qsw=;
-        b=vXZA6c3JadF4p09aB/0gYpLfNPayplZ+t4HOf1olBMO5mZTxiEUDgT76YPWTlhJc5H
-         ymXBew2fbDEJVCMiMUNVH1Ey2Th29WPshbirnaLOjqyzl/M534dJQCSmMJilLPTnf7MR
-         DMNiBMU3trKcf2FOr3SXRVgs3J1J1ZFrqxlwUIrnjRqZdGkrrFBtFBAXS4rshDoFFJFA
-         ZqdIUrAKqbjst9bzqDihLG9v1rMGVG36DoxVwchKfIYtmPNfGjg2dA7QFWnscqNJpB9e
-         UM4SndO+NmXU02iKNJQMkmQIhvRXAzziRKfVk4jQ0urLOjedsriV64KNGqibHh2rDCJN
-         IMzg==
+        d=linaro.org; s=google; t=1720538910; x=1721143710; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JMOSbzRuI/wP8g2RSEEFBMHO9y92zSvonnYkHnjB1vo=;
+        b=Dbo32DBy9/I7QybbVHpRUl9MG71X0fuIIEXlKg92uJEJqCQmQ1ek7Ob4U9MNVixa33
+         uLge2+FynV3N05KKRL2P8f61J4OeCXOFzDuGn2Q61krEA8IC1EWCsQWZJXJ6A9zSlpdQ
+         9kp6UmMmc/avFeXLjfUy3qShH2a12WiS6bHxgT5rN5Wh/BWRqnNg9nAa71cCDlw/SuNg
+         iuisJwSbPonpYiPSGvNtuaWB/DRvFJgQfcbZvw7tsXnC0BaphNPjsKJI2bm37Nh/VtOG
+         z9rHzagrs6ReGGO9NgEKNuY6bbWxfn16WZ7Ee/rvfG+nfnucLhcfJSql043Ov0ZJZaxr
+         Fb/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720538885; x=1721143685;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0oz7iFbPy9x6jKPSlipqwYKyt0mKn37mM+Pcl7G9Qsw=;
-        b=BCFjSiyGphwjh1S33+FXJtd34m9QHZ5h6smIWiBq1tHcQZACG0z6z3ZUXRg8lo7SjL
-         GRTbXLyQ7qDIFhr3CwSoaOIEtONz1mVdzxIgimFmeoECFM50QVvRJuN8O/QoI7gHtnm0
-         ObGqdXmC7Nxw5ixCxo39dhZJoP3EFc9ZcYKtZdJC//vpS4eMhAwKOhH/p8kEEz5vyJGD
-         f80poCbvEBGUmjnpEDESnuyfC7qR831OUdIbzhDHMWylYy0LFL3OWbCOVFseius3+3Bw
-         aagKlAvYhoGAhgrWDO5ZR7OAdiersuxlp6v45Rx39zEhnCIc9hySL0o5Cc0dw6EulZSp
-         CzQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWpQnmqBc9xQ906eZpplIb+xbwnoZ3Xwv0GoY5OI/mRZCQDw0TZicFL0r2uPUYUDa1hHnvGJW7VgG7D0PuHvnLbIdHJ7uNH78EsNriw
-X-Gm-Message-State: AOJu0YwFJ38Gl+PfUYgakGHZ36IDyi+715TtjAeKfYEjHN6hG/9Rf/zu
-	ZRpUq6M3HNBW5z5Nzu/apj02TziNxSn44m0VQH7i2um8ICDLiaXua3hzzAtgpqwkYQXbWz89w+2
-	LY0FAFtKdZMkpqMlTy0cueKdvAVuwiaJB/5TK
-X-Google-Smtp-Source: AGHT+IF8CSkJvGGed5ndBA8XHwTEBAtbw5PQvIIvxORIqaGScYuzTZyQcKM6+zPcofzAMZGxN+ajQBZQkcxwNirf8P8=
-X-Received: by 2002:a50:9fc1:0:b0:58b:21f2:74e6 with SMTP id
- 4fb4d7f45d1cf-594cf64511dmr259393a12.0.1720538881433; Tue, 09 Jul 2024
- 08:28:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720538910; x=1721143710;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JMOSbzRuI/wP8g2RSEEFBMHO9y92zSvonnYkHnjB1vo=;
+        b=TPKLnJtd6+5JwlLX9+w8ccYdddzfVOHr02oC39rG2r6LeItdD5c3/Es2+m2Y8Vf94R
+         mGcOuJuy9Wjjv7P1R5ALM49NdLAqXRfNswXWFOy7tPlE72mK0E5jJBxEOeuKkX6XIcWa
+         logrjYojtWzEg6L4phS/qufTE6akWm5gzDIayDQRk9+wANmFadV4IQJ1F32hY2xjD8rq
+         Fcb9nyAQHxpAG2uoQmP72JVIFS5m1acxMPwAPXyN/bp/UJ4riOiCiXT7lGEPfcNGz1bz
+         dVZhLE2KGNCOUcUUePlI1TlqtbAytaqK6/yScAouG6wd5KpCNTVmuIvmxy40bF4XM7nx
+         gzBw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5Qz0PjI6TK0nOCubOuljPGP33F/SzTb8Gurgu0UfEzY+NgWs1uPFSsGBcWMoAWfTYD1Ke+pyhHzJQFpytYNK6z5kt3l9Fb8tH4Nbg
+X-Gm-Message-State: AOJu0YwC3tGJnW+eQt8tteQONRFJ8EMGAtkFCzfFfXIiqnhSboMptHG0
+	NhP075ZgxyA4FPa7D6ou2IVMe44Xam97RIzk+X7YXP/ZwHtJvSReEwuCgQu1jFI=
+X-Google-Smtp-Source: AGHT+IFgDSwXDcR641XU+jvAZ04BkLSldWISaOxKmLROroPi2YBGbkMFd54rHfiW2wRLpQGilsILaw==
+X-Received: by 2002:a2e:9c96:0:b0:2eb:d816:7a67 with SMTP id 38308e7fff4ca-2eeb30de2a7mr19395541fa.16.1720538910340;
+        Tue, 09 Jul 2024 08:28:30 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:cf24:cce:17df:12ab? ([2a05:6e02:1041:c10:cf24:cce:17df:12ab])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-367cdfab11csm2833723f8f.102.2024.07.09.08.28.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 08:28:29 -0700 (PDT)
+Message-ID: <4c989886-1fea-4975-853c-a9b34d9d8b2b@linaro.org>
+Date: Tue, 9 Jul 2024 17:28:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240709125433.4026177-1-leitao@debian.org>
-In-Reply-To: <20240709125433.4026177-1-leitao@debian.org>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 9 Jul 2024 08:27:45 -0700
-Message-ID: <CANn89iJSUg8LJkpRrT0BWWMTiHixJVo1hSpt2-2kBw7BzB8Mqg@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] netdevice: define and allocate &net_device _properly_
-To: Breno Leitao <leitao@debian.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, keescook@chromium.org, horms@kernel.org, 
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com, linux-hardening@vger.kernel.org, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Jiri Pirko <jiri@resnulli.us>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Johannes Berg <johannes.berg@intel.com>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, 
-	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: thermal: Drop 'trips' node as required
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240709150154.3272825-1-robh@kernel.org>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20240709150154.3272825-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 9, 2024 at 5:54=E2=80=AFAM Breno Leitao <leitao@debian.org> wro=
-te:
->
-> From: Alexander Lobakin <aleksander.lobakin@intel.com>
->
-> In fact, this structure contains a flexible array at the end, but
-> historically its size, alignment etc., is calculated manually.
-> There are several instances of the structure embedded into other
-> structures, but also there's ongoing effort to remove them and we
-> could in the meantime declare &net_device properly.
-> Declare the array explicitly, use struct_size() and store the array
-> size inside the structure, so that __counted_by() can be applied.
-> Don't use PTR_ALIGN(), as SLUB itself tries its best to ensure the
-> allocated buffer is aligned to what the user expects.
-> Also, change its alignment from %NETDEV_ALIGN to the cacheline size
-> as per several suggestions on the netdev ML.
->
-> bloat-o-meter for vmlinux:
->
-> free_netdev                                  445     440      -5
-> netdev_freemem                                24       -     -24
-> alloc_netdev_mqs                            1481    1450     -31
->
-> On x86_64 with several NICs of different vendors, I was never able to
-> get a &net_device pointer not aligned to the cacheline size after the
-> change.
->
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+On 09/07/2024 17:01, Rob Herring (Arm) wrote:
+> It is possible to have thermal zones which don't have any trip points.
+> These zones in effect simply represent a temperature sensor without any
+> action associated with it. While the schema has always required a
+> 'trips' node, users have existed for a long time without it. Update the
+> schema to match reality.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
-> Changelog:
->
-> v2:
->  * Rebased Alexander's patch on top of f750dfe825b90 ("ethtool: provide
->    customized dim profile management").
->  * Removed the ALIGN() of SMP_CACHE_BYTES for sizeof_priv.
->
-> v1:
->  * https://lore.kernel.org/netdev/90fd7cd7-72dc-4df6-88ec-fbc8b64735ad@in=
-tel.com
->
->  include/linux/netdevice.h | 12 +++++++-----
->  net/core/dev.c            | 30 ++++++------------------------
->  net/core/net-sysfs.c      |  2 +-
->  3 files changed, 14 insertions(+), 30 deletions(-)
->
-> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-> index 93558645c6d0..f0dd499244d4 100644
-> --- a/include/linux/netdevice.h
-> +++ b/include/linux/netdevice.h
-> @@ -2199,10 +2199,10 @@ struct net_device {
->         unsigned short          neigh_priv_len;
->         unsigned short          dev_id;
->         unsigned short          dev_port;
-> -       unsigned short          padded;
-> +       int                     irq;
-> +       u32                     priv_len;
->
->         spinlock_t              addr_list_lock;
-> -       int                     irq;
->
->         struct netdev_hw_addr_list      uc;
->         struct netdev_hw_addr_list      mc;
-> @@ -2406,7 +2406,10 @@ struct net_device {
->
->         /** @irq_moder: dim parameters used if IS_ENABLED(CONFIG_DIMLIB).=
- */
->         struct dim_irq_moder    *irq_moder;
-> -};
-> +
-> +       u8                      priv[] ____cacheline_aligned
-> +                                      __counted_by(priv_len);
-> +} ____cacheline_aligned;
->  #define to_net_dev(d) container_of(d, struct net_device, dev)
->
->  /*
-> @@ -2596,7 +2599,7 @@ void dev_net_set(struct net_device *dev, struct net=
- *net)
->   */
->  static inline void *netdev_priv(const struct net_device *dev)
->  {
-> -       return (char *)dev + ALIGN(sizeof(struct net_device), NETDEV_ALIG=
-N);
-> +       return (void *)dev->priv;
 
-Minor remark : the cast is not needed, but this is fine.
+Applied, thanks
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
 
-It would be great to get rid of NETDEV_ALIGN eventually.
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Thanks.
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
 
