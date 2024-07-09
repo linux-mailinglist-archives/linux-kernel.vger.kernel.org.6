@@ -1,142 +1,139 @@
-Return-Path: <linux-kernel+bounces-246791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E06E92C6B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:40:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD4692C6C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62E131C21C45
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:40:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F3E51F23256
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04DFC189F4C;
-	Tue,  9 Jul 2024 23:40:23 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6427189F4E;
+	Tue,  9 Jul 2024 23:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bxa2QnG8"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E9A156C74
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 23:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAF01474BE;
+	Tue,  9 Jul 2024 23:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720568422; cv=none; b=s3PBRaaRkc5BDVRWq3m2f1TH6CHLLm0oh8TlvXg6mf7C78S1L8ALaSOOCRSZnBhAJDERwBXFDJU8Dm++C7q9GYfAWh7wcXNxTfKRevc7f1F82pZILgtB46EfEqZt1JZvfP63Eav2tD7yhE5JJUWcPKPOtb40+GUVDHyG3Y+LlZE=
+	t=1720568873; cv=none; b=do5q4Miz6ExHbeKC6W73R/yPGAqu/EgMUmLILezp+vVT8L8cJX+ZE5LJ2JSjkuoxjnCoVGjZBY+3GvPf2imnJXi3+5V5zo2dE4WgzmXTtaCplIuZnV7SwTi28yz8Kob0ClnBnV7e8sKgCti/TRjioIStuOstYB+E/af9SyzXl9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720568422; c=relaxed/simple;
-	bh=HYd5bNgY6lE5Zn1y5qi9hfi3eadEVo09Div2fMrUvi4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=i9Two+2oBl5N3fAH5jgJsAE2znGKIzxb7u/WP9KWg3x3Ad1BIN51IndhHsf6CfLo8ujRaBCE/PQNQiJwrOMPf8oaOtw+ZDXO2wdIa+XUx9XVOPX5kcn9n/6QpehNTLTyST+K2dRNHZAEkefuf/qu7H7Ha8wkix+LMPhUix4WyDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7f3b0bc9cf6so689522739f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 16:40:20 -0700 (PDT)
+	s=arc-20240116; t=1720568873; c=relaxed/simple;
+	bh=tIRE9KmLtc76s2mAlYfT2NzFMidl50saX5dJqrpwYP0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e1ZqGyYugMy6Sh/3Vo5ZIYKtfLEWXQV/WYYxiUGXYLQmxt7pQ3GkLGyFI6IMWtVnirkbg8wBAiKC7SDcK9UXvQq9i1E+spvElvf7rT1s0hZLuOOI3fmtdtoT2dOqtEqM4L4USdyNvxYIOYWAMWQWrSwHKhmcWz9qzzZbNJ4tHoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bxa2QnG8; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ee9505cd37so47094641fa.2;
+        Tue, 09 Jul 2024 16:47:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720568869; x=1721173669; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mq/A9aOkBamVBWV7aSMjKHp0LFUAAImFzSMnmFWp048=;
+        b=Bxa2QnG8KFRMveHpvl45h1sAG+03olxIk1/ZHJz3r8VyXXpwgeO3ZnKWjt436dSBnP
+         JQkL2XvT4idDsW/J3lTd9Sxn15mUSyOFjoVBJ+9mRzEsPo9Lo7jj+Y9iTNrSu3KOHliE
+         14ozzfOjyvmN8OjeCygc7bWylOWHmAu0oO9qRlGaV+pYcHgcdh+B9nvM3OfI0vhW6iSN
+         QNHCFYMzhNiSxc2bhjrXi/72q3onn5rNfpPjPwazl27doAiEZqIoTTjXGFJwsDlOTG2u
+         qJtUA31LQoyGWElUmkbI3D/aeDOH6zvpzx5jHm9VEtNKGfKQrg8ElCiUJPsjvQGNat/u
+         38Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720568420; x=1721173220;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XBSjopU2zPVGxuAVzvZDSrcKW6icOp6WBz4fpp5ufsY=;
-        b=WCrswT97kCAEVOzhqL+hpoX/Gkg49ZQK9gdApbpmrkAF58ExcJN/bJlQm6UxMpyvUD
-         sFsPTgBS30YPu0uvbxDrhf6NrayKUKKuhqY8REsu4X4ZucF2lOCBsSKcLk/jX5tZucZC
-         KZh8tGm9DCZg2rmmWpXiSJREh9EZtlwQkUFp2QnOM5JWYV9wJTa+lEC+WjOzupwMdK5r
-         7yeJz+d7qeyqvy2LblfP7tuBTRLpOrfbfbzdSSefir1829K9CgCnPexyao0N2QH6YioB
-         C7iEI9XTsFfB4b0U80iBE1KNx6f7Eq+y5TAdeKvmDvAkUx1KIjnI2FMSfAYoPz/08aQs
-         2CSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPfMdPsbFLprnVdPuGhb3F471cD40Wo+yvlFfegHRs7N2CtsAkpjziKyR+mCHI+eBpc7xzFMW/AFcUtbqlEAMv2knkcCv/bDl3+VJ3
-X-Gm-Message-State: AOJu0YzZTJJK+SHQPLF0uhGuX8L4Tc88DWqhZ8KmSL6L5hLQ5NgQiexR
-	vXKHWD1+RppAIuknW+ike5+JvGX7WRyg7Xs1Zrvy35+mW3QvcZQTO3pLUeSM/S0f8pl9/wba+4U
-	X+XJkeoub9jVbJYWAOETqAykoqpOrOiYkFzH3md92WT51jM8QDI4Fddw=
-X-Google-Smtp-Source: AGHT+IE5fHt0zOzTEa8nkJ/Wyvq4QnoNnCpAPtZG9rz8c+dL50MJ5ZadjqmrVkojHjjqL51GBv940gjznBSK87S+rS5MMRp+cMAg
+        d=1e100.net; s=20230601; t=1720568869; x=1721173669;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mq/A9aOkBamVBWV7aSMjKHp0LFUAAImFzSMnmFWp048=;
+        b=f9/E62ayLqTZL4yxtaxIvbjQfy/d4t9c2EFOYyhnooEZSt88/PGXQ4Kc41DLrDyDAJ
+         Ib2MEeDd2tNrUfgBZeC60ANzqySz36InguHoTaSX+VbgZOzupW/KB+RRvKxsVtJDrTdU
+         KF/X4stZfYgs5iwWpfiTNRkmvHvXFpXDxs9Xee2cZ0KhupuCkagqloAF7VcnW6RVbZ7W
+         ONB2MiegBKdxB6yoDjB2/7N8aCANzAmUh/k7oJiGtkG8Q45yxH8XmclL4137vVaqfqxl
+         paf1javnw8Eix2IocfHflA4BykLDjOejFZ90XzSoLXF8c6Q40NfA3K0Q3lj4YJuWuZjl
+         M1Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCXG7j9Cz/tHdc4iU/d5thMLK4p49npM6qageSXx77Mm+x5Qj7toqHsr90AiIerR+T+A/SWVYSnSeak5nslOp/7ARn2W2POua3X+HDxb1fRy0iJzUwyJMdqG1L7R21hOzkss/409L56TeYH5PjhPpYIFD5MILU0sDNAHVNhQWng3weKHWQ==
+X-Gm-Message-State: AOJu0YyGHdLo8fe9IU1eADKOI3raBuTu9m8TSAu3ydmV6Eo8lP8S5m+D
+	9adZBxcujlXuIyJdrScQleJXW060OTbwVnck1Pl6QdDkbQL/zzbg
+X-Google-Smtp-Source: AGHT+IFR1lSNlGa657B6x4/YQYbJFtspl99U97GZRVKphke00G2h1klOiEvAgjx1eDOhCLqCcJHV1w==
+X-Received: by 2002:a2e:3608:0:b0:2ec:4428:b6fd with SMTP id 38308e7fff4ca-2eeb30ba12dmr23925291fa.9.1720568868822;
+        Tue, 09 Jul 2024 16:47:48 -0700 (PDT)
+Received: from andrea ([84.242.162.60])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bd45a1b6sm1563341a12.60.2024.07.09.16.47.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 16:47:48 -0700 (PDT)
+Date: Wed, 10 Jul 2024 01:47:43 +0200
+From: Andrea Parri <parri.andrea@gmail.com>
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
+	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-arch@vger.kernel.org
+Subject: Re: [PATCH v2 01/10] riscv: Implement cmpxchg32/64() using Zacas
+Message-ID: <Zo3MH8idihW4o+6Z@andrea>
+References: <20240626130347.520750-1-alexghiti@rivosinc.com>
+ <20240626130347.520750-2-alexghiti@rivosinc.com>
+ <Zn1Hwpcamaz1YaEM@andrea>
+ <4008aeca-352f-489e-ba07-7a11f5ab7ccb@ghiti.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d97:b0:382:56bd:dfb3 with SMTP id
- e9e14a558f8ab-38a58584818mr1416685ab.2.1720568420350; Tue, 09 Jul 2024
- 16:40:20 -0700 (PDT)
-Date: Tue, 09 Jul 2024 16:40:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000081caf2061cd90d7c@google.com>
-Subject: [syzbot] [wpan?] WARNING in cfg802154_pernet_exit
-From: syzbot <syzbot+ea134023eba0b937095a@syzkaller.appspotmail.com>
-To: alex.aring@gmail.com, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wpan@vger.kernel.org, 
-	miquel.raynal@bootlin.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	stefan@datenfreihafen.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4008aeca-352f-489e-ba07-7a11f5ab7ccb@ghiti.fr>
 
-Hello,
+> > Is this second IS_ENABLED(CONFIG_RISCV_ISA_ZACAS) check actually needed?
+> > (just wondering - no real objection)
+> 
+> To me yes, otherwise a toolchain without zacas support would fail to
+> assemble the amocas instruction.
 
-syzbot found the following issue on:
-
-HEAD commit:    0913ec336a6c net: ks8851: Fix deadlock with the SPI chip v..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=11fcf3b9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=864caee5f78cab51
-dashboard link: https://syzkaller.appspot.com/bug?extid=ea134023eba0b937095a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ca08c938c680/disk-0913ec33.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/94b3b925e4c6/vmlinux-0913ec33.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ecb897178dbe/bzImage-0913ec33.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ea134023eba0b937095a@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 1057 at net/ieee802154/core.c:354 cfg802154_pernet_exit+0xb9/0xe0 net/ieee802154/core.c:354
-Modules linked in:
-CPU: 1 PID: 1057 Comm: kworker/u8:5 Not tainted 6.10.0-rc6-syzkaller-00170-g0913ec336a6c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Workqueue: netns cleanup_net
-RIP: 0010:cfg802154_pernet_exit+0xb9/0xe0 net/ieee802154/core.c:354
-Code: 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 1c b7 c3 f6 48 8b 1b 4c 39 e3 74 12 e8 ef 01 5e f6 eb 89 e8 e8 01 5e f6 90 <0f> 0b 90 eb d0 e8 dd 01 5e f6 eb 05 e8 d6 01 5e f6 5b 41 5c 41 5d
-RSP: 0018:ffffc90004547a88 EFLAGS: 00010293
-RAX: ffffffff8b3825c8 RBX: ffff8880231c2008 RCX: ffff88802251bc00
-RDX: 0000000000000000 RSI: 00000000ffffffef RDI: 0000000000000000
-RBP: 00000000ffffffef R08: ffffffff8b382595 R09: 1ffffffff1ebcdc4
-R10: dffffc0000000000 R11: fffffbfff1ebcdc5 R12: ffffffff8f8d05e0
-R13: dffffc0000000000 R14: ffff888022dfd640 R15: ffff8880231c2608
-FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ff96115b460 CR3: 000000005cf20000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ops_exit_list net/core/net_namespace.c:173 [inline]
- cleanup_net+0x802/0xcc0 net/core/net_namespace.c:640
- process_one_work kernel/workqueue.c:3248 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3329
- worker_thread+0x86d/0xd50 kernel/workqueue.c:3409
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+To elaborate on my question:  Such a toolchain may be able to recognize
+that the block of code following the zacas: label (and comprising the
+amocas instruction) can't be reached/executed if the first IS_ENABLED()
+evaluates to false (due to the goto end; statement), and consequently it
+may compile out the entire block/instruction no matter the presence or
+not of the second IS_ENABLE() check.  IOW, such a toolchain/compiler may
+not actually have to assemble the amocas instruction under such config.
+In fact, this is how the current gcc trunk (which doesn't support zacas)
+seems to behave.  And this very same optimization/code removal seems to
+be performed by clang when CONFIG_RISCV_ISA_ZACAS=n.  IAC, I'd agree it
+is good to be explicit in the sources and keep both of these checks.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> > Why the semicolon?
+> 
+> That fixes a clang warning reported by Nathan here:
+> https://lore.kernel.org/linux-riscv/20240528193110.GA2196855@thelio-3990X/
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+I see.  Thanks for the pointer.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> > This is because the compiler doesn't realize __ret is actually
+> > initialized, right?  IAC, seems a bit unexpected to initialize
+> > with (old) (which indicates SUCCESS of the CMPXCHG operation);
+> > how about using (new) for the initialization of __ret instead?
+> > would (new) still work for you?
+> 
+> But amocas rd register must contain the expected old value in order to
+> actually work right?
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Agreed.  Thanks for the clarification.
 
-If you want to undo deduplication, reply with:
-#syz undup
+  Andrea
 
