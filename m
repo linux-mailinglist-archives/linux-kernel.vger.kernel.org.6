@@ -1,75 +1,42 @@
-Return-Path: <linux-kernel+bounces-245448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1CCE92B2A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:53:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FBC692B2B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65F981F22521
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:53:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580C61F22847
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6161615382C;
-	Tue,  9 Jul 2024 08:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wHRIHcyM"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE8E154426;
+	Tue,  9 Jul 2024 08:55:32 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B6613DB9B
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8D8152E06;
+	Tue,  9 Jul 2024 08:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720515224; cv=none; b=ZFFWMo7cISW0vvbul8ph6u94saj9AIcuC5JLt1qxQyDuvHS1H2emBO7o5Zn7NpGqwRzzPdug8DPPzO413Npogkzg4opEcQVShFOsp44ZTqfcxlUp5ps800nTTfx+W6J5Z4dC1yDN+T8TwCdSn7G6Fp0Opj0cilCOtZDIORljG/E=
+	t=1720515332; cv=none; b=rMLUamts+lAi6p9YXQwJJ6UwSSOefahd0gnvZgx0IByqkeOeaRxyqxSR+hMPzR1614QUqEEln6Gg+Y0dtDJS/kkSDawUCdvOjHWGxA/BoajTyDOijCP2PJwh13iVdw81PoSDgoXyUShz+iFx9jb4cz2Meyptznrfbz3bWiqSe0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720515224; c=relaxed/simple;
-	bh=cd79zXbx+N5vL7P7T5X50BfnGu+fuRaCuSWUDwLHr4E=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=r1jCdNhyrNDcjEhb+PlQTrJKB0XvXZjMz4WipEoaN+Trrs0k1NX/N4SnQimSYaMDxQ77ZivAach4Y31QNbH4r/xigb4NZD7zXdoh9nund3oOJdURIFKcuyOlTX+kzKOI6FJhoYWxRbftn7t28Jk2jimuJ9C4xZ9EN6Li+wWdG3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wHRIHcyM; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-36798779d75so4289925f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 01:53:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720515221; x=1721120021; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SA4aYgkuEJQ+2zt3ir0pQgoFJui8snze/b5Z9Ceeoqw=;
-        b=wHRIHcyMlXzYlbMt90M/WZqByG20ElKqxAluGsfVWgsQ7nOnBaQpqATQCqOXaCIYdx
-         MBsrtBVad9S9+iorF95revQHv7VwrMXfLYbcOqU3pStNWqy/84lTDRZOM/mgf7jRItrC
-         rlW8DXzQEIMXYl/G/EouPZBX+3qJe3AiV5AkTBrXsjrGk5vmoH36P4SmPW8CCpJ0NGrq
-         I2bNWLq6q4eyItfSQmO4aD/f4ziHxPPZjbYlGRXL1SMajfyMfWNp+igzrIKvf8YkaAsg
-         JOwpruZ9Y+KNK0qb9SGMqXGCkyBPc/jZPALtMS31NQCuCHcMmmqAAzAfkZMxM927R5Nk
-         rmhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720515221; x=1721120021;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=SA4aYgkuEJQ+2zt3ir0pQgoFJui8snze/b5Z9Ceeoqw=;
-        b=iLWQKksYvXZ2jh0oHy+NyC7Dq3WosvXkXsdPwE6X6oQlpp8ViQCXGJ4riePowBcgUc
-         d5UqLgKRTeEJwAAkFcnne8XYe6yRYX46nHlwa4O1TRIBpuLuD0QM8KsE/zANDM28/AoD
-         iVP3ekdGLzEBGOb0ypCh8BC3VnnD2IiKxEdy5t+xvN+Zt6Omavau6VmZN0sr/tGRyycB
-         Bzqpsv+mh+b2S+6+QppA1v068CKj0N7ayIJN0qpybMhqVKBsa5ZUYbvadmfGKYKfYTSX
-         tclrJlTBPSAILYtGI6DiC8rgMwzbEP2IAq2t6tAZ+3kcFJVfRZqSMRLKEA0fwAr7vbF4
-         E7Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvpzwkfyl0jvc4++DeWkxMP61eaPoTLFP8s5Qj78qFpgy8L1kq7fp/YEUmIRXTNRdM3KzaNDzf3hnU8qgW37a8l/F/BN//SS2Pwgfp
-X-Gm-Message-State: AOJu0YwdvpywDAsocNqC+2IDjEzHEPkyFDZrhuett3sWzYVekzC167Ns
-	LhDbw7ffrpnvTaeQcPJkfAtG2g5Hi3QHT7GxL2cXdpb4/3nQAlnPVd1HrD58k/M=
-X-Google-Smtp-Source: AGHT+IGqB81NuLSnCUMTBHrJCIu396Gu/1DlJmDXwuPVOZxJWI5XPrLUGFSWhEfO8pch8PKu4xYm1Q==
-X-Received: by 2002:adf:f30b:0:b0:366:eba0:8d8c with SMTP id ffacd0b85a97d-367cead19b5mr1656003f8f.54.1720515221137;
-        Tue, 09 Jul 2024 01:53:41 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:cad:2140:b12a:8461:5e2a:dfe? ([2a01:e0a:cad:2140:b12a:8461:5e2a:dfe])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6e09fcsm31353055e9.4.2024.07.09.01.53.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 01:53:40 -0700 (PDT)
-Message-ID: <a75ae0d7-9945-4e97-a4f9-706b253a161e@linaro.org>
-Date: Tue, 9 Jul 2024 10:53:38 +0200
+	s=arc-20240116; t=1720515332; c=relaxed/simple;
+	bh=TokFenMbMA9GY5HveERurGCJio7AvHRpXYngC1+kJKg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=GxQME5Cx2K62THWu3i0F58mWzZ0C5NxIslE2C0LhCeBZtaQ6TyXvL2LjqCtqwapEU6WkX4FU5I1RmvIkMnJmtm+O6M9VjhIx+u1N5v2oKdaU3sua3TlXNcKYja2gA/fIEhJIqzrR50N67c64j5r9uKsvFMknNL9UfezyGhNvQAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id CF0AF61E40617;
+	Tue,  9 Jul 2024 10:54:25 +0200 (CEST)
+Message-ID: <23d2e91c-4215-4ea5-8b3c-4dd58a1062af@molgen.mpg.de>
+Date: Tue, 9 Jul 2024 10:54:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,73 +44,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 4/4] arm64: dts: meson: a1: bind power domain to
- temperature sensor
-To: George Stark <gnstark@salutedevices.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, khilman@baylibre.com,
- jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
- hkallweit1@gmail.com, broonie@kernel.org, glaroque@baylibre.com,
- rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com,
- lukasz.luba@arm.com, b.galvani@gmail.com, mmkurbanov@sberdevices.ru
-Cc: linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, kernel@salutedevices.com
-References: <20240708194808.1819185-1-gnstark@salutedevices.com>
- <20240708194808.1819185-5-gnstark@salutedevices.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240708194808.1819185-5-gnstark@salutedevices.com>
+Subject: Re: [Intel-wired-lan] [PATCH net-next v3] ice: Adjust over allocation
+ of memory in ice_sched_add_root_node() and ice_sched_add_node()
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+To: Aleksandr Mishin <amishin@t-argos.ru>
+Cc: lvc-project@linuxtesting.org,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Eric Dumazet <edumazet@google.com>, linux-kernel@vger.kernel.org,
+ Jakub Kicinski <kuba@kernel.org>, intel-wired-lan@lists.osuosl.org,
+ Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+ Tony Nguyen <anthony.l.nguyen@intel.com>, Paolo Abeni <pabeni@redhat.com>,
+ "David S. Miller" <davem@davemloft.net>
+References: <20240708182736.8514-1-amishin@t-argos.ru>
+ <033111e2-e743-4523-8c4f-7d5f1c801e65@molgen.mpg.de>
+Content-Language: en-US
+In-Reply-To: <033111e2-e743-4523-8c4f-7d5f1c801e65@molgen.mpg.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 08/07/2024 21:48, George Stark wrote:
-> Meson A1 temperature sensor has dedicated power domain so bind it
-> to the device node.
-> 
-> Signed-off-by: George Stark <gnstark@salutedevices.com>
-> ---
->   arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-> index dd5695963caa..86d77f51c25c 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-> @@ -919,6 +919,7 @@ cpu_temp: temperature-sensor@4c00 {
->   				assigned-clock-rates = <500000>;
->   				#thermal-sensor-cells = <0>;
->   				amlogic,ao-secure = <&sec_AO>;
-> +				power-domains = <&pwrc PWRC_I2C_ID>;
->   			};
->   
->   			hwrng: rng@5118 {
+[Cc: -anirudh.venkataramanan@intel.com (Address rejected)]
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Am 09.07.24 um 10:49 schrieb Paul Menzel:
+> Dear Aleksandr,
+> 
+> 
+> Thank you for your patch.
+> 
+> 
+> Am 08.07.24 um 20:27 schrieb Aleksandr Mishin:
+>> In ice_sched_add_root_node() and ice_sched_add_node() there are calls to
+>> devm_kcalloc() in order to allocate memory for array of pointers to
+>> 'ice_sched_node' structure. But incorrect types are used as sizeof()
+>> arguments in these calls (structures instead of pointers) which leads to
+>> over allocation of memory.
+> 
+> If you have the explicit size at hand, it’d be great if you added those 
+> to the commit message.
+> 
+>> Adjust over allocation of memory by correcting types in devm_kcalloc()
+>> sizeof() arguments.
+>>
+>> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Maybe mention, that Coverity found that too, and the warning was 
+> disabled, and use that commit in Fixes: tag? That’d be commit 
+> b36c598c999c (ice: Updates to Tx scheduler code), different from the one 
+> you used.
+> 
+> `Documentation/process/submitting-patches.rst` says:
+> 
+>> A Fixes: tag indicates that the patch fixes an issue in a previous
+>> commit. It is used to make it easy to determine where a bug
+>> originated, which can help review a bug fix. This tag also assists
+>> the stable kernel team in determining which stable kernel versions
+>> should receive your fix. This is the preferred method for indicating
+>> a bug fixed by the patch.
+> 
+> 
+>> Suggested-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+>> Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+>> ---
+>> v3:
+>>    - Update comment and use the correct entities as suggested by Przemek
+>> v2: https://lore.kernel.org/all/20240706140518.9214-1-amishin@t-argos.ru/
+>>    - Update comment, remove 'Fixes' tag and change the tree from 'net' to
+>>      'net-next' as suggested by Simon
+>>      (https://lore.kernel.org/all/20240706095258.GB1481495@kernel.org/)
+>> v1: 
+>> https://lore.kernel.org/all/20240705163620.12429-1-amishin@t-argos.ru/
+>>
+>>   drivers/net/ethernet/intel/ice/ice_sched.c | 6 ++----
+>>   1 file changed, 2 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/intel/ice/ice_sched.c 
+>> b/drivers/net/ethernet/intel/ice/ice_sched.c
+>> index ecf8f5d60292..6ca13c5dcb14 100644
+>> --- a/drivers/net/ethernet/intel/ice/ice_sched.c
+>> +++ b/drivers/net/ethernet/intel/ice/ice_sched.c
+>> @@ -28,9 +28,8 @@ ice_sched_add_root_node(struct ice_port_info *pi,
+>>       if (!root)
+>>           return -ENOMEM;
+>> -    /* coverity[suspicious_sizeof] */
+>>       root->children = devm_kcalloc(ice_hw_to_dev(hw), hw->max_children[0],
+>> -                      sizeof(*root), GFP_KERNEL);
+>> +                      sizeof(*root->children), GFP_KERNEL);
+>>       if (!root->children) {
+>>           devm_kfree(ice_hw_to_dev(hw), root);
+>>           return -ENOMEM;
+>> @@ -186,10 +185,9 @@ ice_sched_add_node(struct ice_port_info *pi, u8 
+>> layer,
+>>       if (!node)
+>>           return -ENOMEM;
+>>       if (hw->max_children[layer]) {
+>> -        /* coverity[suspicious_sizeof] */
+>>           node->children = devm_kcalloc(ice_hw_to_dev(hw),
+>>                             hw->max_children[layer],
+>> -                          sizeof(*node), GFP_KERNEL);
+>> +                          sizeof(*node->children), GFP_KERNEL);
+>>           if (!node->children) {
+>>               devm_kfree(ice_hw_to_dev(hw), node);
+>>               return -ENOMEM;
+> 
+> 
+> Kind regards,
+> 
+> Paul
 
