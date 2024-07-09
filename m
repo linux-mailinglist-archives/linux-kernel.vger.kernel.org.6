@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-246240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F6C92BF7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:16:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C7392BF7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ACE71C235CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:16:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E9D61F2571E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B3619D8B2;
-	Tue,  9 Jul 2024 16:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5795B158A36;
+	Tue,  9 Jul 2024 16:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KRpjf3zB"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ke2B6Lhj"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55BB19CD11
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 16:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D2119CCE2;
+	Tue,  9 Jul 2024 16:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720541745; cv=none; b=MX8MikDMPcEKR+t3p92JnTDgIqe/YXOAAlDAJ5dumdriUwB/NAKO2LZwK2kSo+A2NfA0ZLfkGXtAEXZRdykmfSmXOUk1GcyPZUbsJlwDAJGAhDp+2yfIoLceXjOE4EqTxxFjXshSth95aVYyUVO7mYo7n2Q0eK6qMLMjcS28pQY=
+	t=1720541792; cv=none; b=mI7WhOi6DTYJPbswpxJLsCjIUIH8feT7SD/sW1FeJ9EgWbWuVk/QpUu2HdUHuJGZk5WdEhpGP8Wi++h6mea1Q8zcoMPk2vOB2SOmPm127va/hHSvQGWECi9w2fRM2HOg9lPwmBW/UO+3fIfkbh+tkG5hP2X5mJPC30x4brLrRds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720541745; c=relaxed/simple;
-	bh=5l36OQ1K9hQ2dxHxeGd44oq8T9kdsyNePCBNzm9ieAM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z3z33SpivI8361GPEaBRpyLuX9ZCx6xYDu6CDruDGtb5mf3RrpZnarikofL+euSwMUG//MDxsJlWspCXFTuTUtEdg+sMhs2KfIu1r+03wE37sqrgaSFwXyPqsTosk06JCwjqnXKSzwPH3B1DjIeBXrF2Klr4UtTXR+8tFF/HYZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KRpjf3zB; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2eaa89464a3so56458551fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 09:15:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720541742; x=1721146542; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+mmzHYcsrbq/WzadmZBrEv0IGke8Kg4qTQXnrPrl/hk=;
-        b=KRpjf3zB06xOiQkWdB2GssiO9R8aNaO5aLEF8CjNsGC5P8rusKCgR6GeF+mE0UVU6W
-         A09WBETGQ62X2gPm3ceXH4oHPoBiiV2PviQIKqLvB0HeTvcHwrzbGR560hmiHKTBq/Sg
-         8v3CZ64U89PorhqrB7JsU5zIWgijnQo9acNDbKfSoo2MR26J2Jny8WMbR8guBWaATYcB
-         JDP8kVttR2GHDBKNrsK4lcRm+YHDbJ/7d14DzpfYK/OWwvPkWeEnd9teJSbUaVQOPCXL
-         ZJNvpu1/3AlLoIp3GKH44dC3ZW+veSEdxeOBQ5laWDvksn7r+jXegf0Nxig38jU6h+5a
-         B1Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720541742; x=1721146542;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+mmzHYcsrbq/WzadmZBrEv0IGke8Kg4qTQXnrPrl/hk=;
-        b=NqUs7DTNNh2BEzrsyj9+cbI+aLusWXxLcjHGtYaTFXYFY6k1livs6MJ+HzIh5jVgFX
-         w9eqZMMoTNxTPTAT7zVDvOHSeDb/u5ofBS3q9dz8YWh0p/kbmDjAR50YeOdVsiH0q+kS
-         6nRadZEQPlbMq4UhgeOIJ0rbagut3T7gV4ydjp2swhlg8DC8JzftglYy5NFM6Q+bFcNq
-         nzFfthy7beh/UTy+OD/7LT+f7Wam+4MHRrwQswXkR7TLMOAOY1rTg3QOcSljmeXQ8N5X
-         s9ODjrkftrjYsJ9nZ5hzfMoL5FD8zz0Uh4kMlGbur/cPYABn6VUZX7aFCBLjHHTVkmO6
-         kq9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCULcygt+r6B4CFdVZbVtMrscCbrDVqEQyiVdXv+CYGtPYUdzuSehC5UpCH1gWxWiaOI3lQ+vIZ8qdIEAB1ziQ10DkpOKFr6gUzGIDQr
-X-Gm-Message-State: AOJu0Yzi95Dl+HEZHHsk1DgF3HoTIi3Dg+xM7PSHt4D35w8QJfEM30+r
-	hUPZXjH5k0Ocbe2Lf5/ZQEhhlRPnSaP7WRh4Q62lFQaviE8jH56v9QSAcaeIgS0=
-X-Google-Smtp-Source: AGHT+IEzXFlniImG/MtXKk3DCbQfzXjVjTAPnBQm4R1NlkNg4Akwf+zffKFhwFSImt1CnEXQreVDBQ==
-X-Received: by 2002:a2e:a415:0:b0:2ee:8ce9:3075 with SMTP id 38308e7fff4ca-2eeb3197a5fmr18174151fa.49.1720541742014;
-        Tue, 09 Jul 2024 09:15:42 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:6932:abde:fac8:217d? ([2a05:6e02:1041:c10:6932:abde:fac8:217d])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-367cde891cesm2972937f8f.62.2024.07.09.09.15.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 09:15:41 -0700 (PDT)
-Message-ID: <11c5de84-21f0-45de-81e0-dc765a391123@linaro.org>
-Date: Tue, 9 Jul 2024 18:15:40 +0200
+	s=arc-20240116; t=1720541792; c=relaxed/simple;
+	bh=Wac3H0Db3qXfYF3Jn0UPjaBVmOpSO6H/SsDk79ZzFm8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YeO+fyRPrYPtRqvHsApS4N7xKZJshWEJ7KCUzOj5N3McjXThJBW7TCjeiwz0/juvQKWHNIY5r6CgEIbenCYDzataJHE9RdOBD0+yNxoljgGGAS8h6FhAd2enb0gg2zKhu5TeGz8XDg4ILdKO9BwykAhMJrg6AEqCckVboslp+54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ke2B6Lhj; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 469GGGaE128937;
+	Tue, 9 Jul 2024 11:16:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1720541776;
+	bh=V4jAQwPKr1ZXAxeyrE183GLAcSFjKu8019oQfUyoCxM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=ke2B6LhjocNQMbk+6IRzoYCyjJczLyIZQH00dKTHtevH7obs3+YekHqgIdRGH+ye+
+	 Ghtm8c5vhDwQKzPRuO7yOdz+/ZnX35fsTSuQwFbhYFsFy/7YBA6N0s2g8am8SMqI62
+	 QbJTZjKq2daw4NL5ZuGXKEsAPh0s+q/qimfwMcpU=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 469GGF3W077469
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 9 Jul 2024 11:16:15 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 9
+ Jul 2024 11:16:15 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 9 Jul 2024 11:16:15 -0500
+Received: from [10.249.141.75] ([10.249.141.75])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 469GGB2Z086509;
+	Tue, 9 Jul 2024 11:16:12 -0500
+Message-ID: <39caa8a7-bc40-4f7e-87e1-005c8b677655@ti.com>
+Date: Tue, 9 Jul 2024 21:46:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,57 +64,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clocksource: sp804: Make user selectable
-To: Mark Brown <broonie@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- David Abdurachmanov <david.abdurachmanov@gmail.com>,
- Sudeep Holla <sudeep.holla@arm.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Ross Burton <ross.burton@arm.com>
-References: <20240529-arm64-vexpress-sp804-v2-1-c542a80af33a@kernel.org>
- <2b946a68-dcdd-4a1e-b7c3-416725033c2e@linaro.org>
- <ddfc867d-2431-44d2-9753-b577e8f5ddea@sirena.org.uk>
+Subject: Re: [PATCH] arm64: dts: ti: k3-j7xx: Change timer nodes status to
+ reserved
+To: Beleswar Padhi <b-padhi@ti.com>, <nm@ti.com>, <vigneshr@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <tony@atomide.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240607105559.771080-1-b-padhi@ti.com>
 Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <ddfc867d-2431-44d2-9753-b577e8f5ddea@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <20240607105559.771080-1-b-padhi@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 08/07/2024 19:44, Mark Brown wrote:
-> On Mon, Jul 08, 2024 at 06:49:38PM +0200, Daniel Lezcano wrote:
->> On 29/05/2024 21:48, Mark Brown wrote:
-> 
->>> The sp804 is currently only user selectable if COMPILE_TEST, this was
->>> done by commit dfc82faad725 ("clocksource/drivers/sp804: Add
->>> COMPILE_TEST to CONFIG_ARM_TIMER_SP804") in order to avoid it being
->>> spuriously offered on platforms that won't have the hardware since it's
->>> generally only seen on Arm based platforms.  This config is overly
->>> restrictive, while platforms that rely on the SP804 do select it in
->>> their Kconfig there are others such as the Arm fast models which have a
->>> SP804 available but currently unused by Linux.  Relax the dependency to
->>> allow it to be user selectable on arm and arm64 to avoid surprises and
->>> in case someone comes up with a use for extra timer hardware.
-> 
->> Would it make sense to add the option in the platform so it selects the
->> timer ?
-> 
-> As the commit log says far as I'm aware all the platforms that rely on
-> the sp804 timer already select it (they wouldn't otherwise be able to
-> work unless COMPILE_TEST was enabled).  The Arm models and possibly
-> other platforms have the sp804 but it will currently be ignored by Linux
-> and the architected timers used instead so it would be wasteful to force
-> it on for them.
+Hi Beleswa,
 
-The policy of the Kconfig is we should keep the option silent.
+On 6/7/2024 4:25 PM, Beleswar Padhi wrote:
+> The remoteproc firmware like of R5F and DSPs in the MAIN voltage domain
+> use timers. Therefore, change the status of the timer nodes to
+> "reserved" to avoid any clash.
+>
+> This change is already incorporated for timer nodes in the MCU voltage
+> domain.
+>
+> Fixes: 835d04422f9d ("arm64: dts: ti: k3-j721s2: Add general purpose timers")
+>
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> ---
+>   arch/arm64/boot/dts/ti/k3-j7200-main.dtsi  |  2 ++
+>   arch/arm64/boot/dts/ti/k3-j721e-main.dtsi  |  7 +++++++
+>   arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi |  6 ++++++
+>   arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi | 10 ++++++++++
+>   4 files changed, 25 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
+> index 9386bf3ef9f68..22351a4f3da6e 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
+> @@ -1254,6 +1254,7 @@ main_timer0: timer@2400000 {
+>   		assigned-clock-parents = <&k3_clks 49 2>;
+>   		power-domains = <&k3_pds 49 TI_SCI_PD_EXCLUSIVE>;
+>   		ti,timer-pwm;
+> +		status = "reserved";
+>   	};
 
-My suggestion was to provide the option in the platforms Kconfig and 
-[un]select the ARM_TIMER_SP804 from there
+
+Instead of changing these nodes in base device tree.
+
+I suggest to change in device tree, where those remoteproc drivers are 
+getting enabled.
 
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+>   
+> [..]
 
