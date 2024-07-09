@@ -1,246 +1,132 @@
-Return-Path: <linux-kernel+bounces-245389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A1692B1F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:21:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 922CC92B201
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5886B280E8E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:21:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3D311C22237
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40B615252D;
-	Tue,  9 Jul 2024 08:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27E015357F;
+	Tue,  9 Jul 2024 08:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z9VQouwJ"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gi44dWiQ"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6615C1D556;
-	Tue,  9 Jul 2024 08:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A97CE152790;
+	Tue,  9 Jul 2024 08:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720513273; cv=none; b=jmy7LdjWInwdctVh8GXLe/yxjy3ie0FWKBb7kBniaAVKL9LNDMY4cOtaRdGrG9ceupB8hqeIx8YOZJVxsJaud5rJaijpHoPhsN/TDoFkAFwevEL6DRKy/nV02/OzdSDPN4eVT1JEfqHwpWKpd0Sfaw3vjJFFduMEBdpVcvG8AGA=
+	t=1720513350; cv=none; b=aEzbZep6AI3og2ZaFt/8pomxu0IJiTCKFgeFiQBZ+77VNtR2JlZ08QCRxYxih/0RA/DBob4R5m8KhmJ/92Is3A0Q3vT+fqHppoPTjEp1IBE8WMFkwR7YRjgv0SnBibYc26bSH2OGUvAVH7XTbKVIZLAwdmk0EUTNAYtbydgkU5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720513273; c=relaxed/simple;
-	bh=d2qIWg94Pgm0hhjuDcO+Aopiw+vdWMVSPCeQhYGUSBs=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=mp6QkecbbeHmoLwMGW3llM3FPBHCuZq4fYuJ2VCWq3dZEKWjU5fX2nVG1Z20xTEs5s8OxIRkzppolSPrRtsfCjxrY1h/jwNdH7YMpOlQfLM7uti0ntzlQAELUQtZ41ezdYJEQ1fGK4mEWZrTipVNW0LfVF9koIhevq+WXY9Yz1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z9VQouwJ; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1720513350; c=relaxed/simple;
+	bh=Wzu/DaEWdpVdgeT+yN7K17zx9JZwRH+Ao0L+fCXoQrQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hlcGmsnBFtoYA1WtHXAs2TA68LOoHivAfbvAQQAc0TBs8oucIO16kT/kYY8oKh8nXCcJcQxeMyZgkweTUin4U9Qcvr/9ZysBQQT7Vj3zTXiav0pgt/fr7HiGpDKsIJadobsJDRxerZOaw2pLftIY5OJwoV7UaZ6OCrA1s3TY4H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gi44dWiQ; arc=none smtp.client-ip=209.85.161.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42671a676c7so4781915e9.3;
-        Tue, 09 Jul 2024 01:21:11 -0700 (PDT)
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5c1d2f7ab69so2512831eaf.3;
+        Tue, 09 Jul 2024 01:22:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720513270; x=1721118070; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5Oyx6FrKL7238jfjI4xQrSfHoIpZUun53kvKziTOzlU=;
-        b=Z9VQouwJrK4NQ9TludR0GoP1HdVKEL9ksLmGUDJl+NlDQEU+A29dLfqUlcimEGPgz1
-         qOm7E6EYWEH6cuw/NsDRIHaX37oyZ2PdNwk47i0c5sK/tnRWAhQ2+9Q+gUoHpTqcXhqp
-         0emw7MsXlp/L+Py2MObcPt9HMYfXzUsIZgFmSoRvkT2dJ2Ni0NnTxawUqwS+Ok4Z3vwG
-         9jBrysYeHLh57iHVp+etbXH/hy74uM37TWq/YznRO/I6QhbEYEEoTUdcnti4SVwszlse
-         qkYX+j/OzX7m6BiPKblTEW/KiAeFKU4mtol1+GHLp00hmlJWFm2HRSj8C+LrZSPnbT/e
-         FeyA==
+        d=gmail.com; s=20230601; t=1720513348; x=1721118148; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7XDcGnxl+L+Up+OM7xPAJaHLrc0hSR9f/AUvnRoMTks=;
+        b=Gi44dWiQl41S1NwNnIilOSN4iTWZr2LDIajYoJSOGwoavBp02VTrIk2AFF7Z4cFuQq
+         oxhjitll4yAkswF8qPHdoGZz5wktDu+F8jVUR5blzUIHOEYW3OvK5MSRnI0dAZrXfohj
+         6v0WMu+TSnsG8XFXdImbfuT1zhnRNQHePFIexnTnP6QfNqUJ0/EZy5GrDCzGdm45fDmw
+         xBIiO7BeY+Ow5Ucmndap7VxwKmaX8x4bR3BtvfV9C6FofYL0ZQQLhGwJJy3iEIjqjNVn
+         MJMdbCYS4+2jqlwy5Jzw8bmjEMmOD6qEmpppqt2+KP7rAT5baeVjaf8sfbtEVrjIeTMC
+         2mYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720513270; x=1721118070;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5Oyx6FrKL7238jfjI4xQrSfHoIpZUun53kvKziTOzlU=;
-        b=ocXyiUtr9IfxqH3NhhPt8iwDuiRudz611/OtmiypCqpQRCUKAoCz6xpO2P1NzI3dK8
-         mnPKdfCPUF4qFXSpegmOvDNDKlE7CtH37HG0PS5MXaVw5kVOtKa0o1BoauEWtn+b0fnI
-         aMue6/fOKljruki+EtS/P5G/q684GkewD1WA57uhrRZn72AtWyEf67S9IkTc+RTli/lv
-         z2a7lokKRXfHXtDnKDInW95dbpz6xfecQoMiPc8jKUcTTm5XW2f1Klgm0kBJWSB9BIpY
-         WcaWTn0mL1NjanN+n6JYzBSfs3/PZl6ZUlVZoXN4E0Ru2GosOHf7D1kw+LaTy1T8CHrD
-         Zg+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUKuyOGnm3qWNkOj39i+G2oOY8jalk7kSUnC/enMX/+Z8jf87sYUBXqr442RIOKEAI79JJWe1r13PhPjoEQ7NrpwhshsoNOwOCuXWtyMT7oJReslh5avkqz5YYiP/Jn1MpzpFGYxO1YwiAuPO3k2kNm205Meh14zV220GIBUavRb+PEBw==
-X-Gm-Message-State: AOJu0YzXEeiV3PlHN9xfj6ey3VvlNqlfJe/Lt88JBeZgZ1D9G3FBR2oO
-	iQF9Sh+Sb0XJIZgTJoPCBs9iqox+xu22lHFqjVxPL6v+iwX50xjGWKTnje35
-X-Google-Smtp-Source: AGHT+IEsdZTff0seLeEKmalSeHclTahjKFRJCT8BMEFjVHxoSZqlVJTz3vfZ+XNndSOkmnCEOeEEMA==
-X-Received: by 2002:a7b:cb92:0:b0:426:5ef5:bcb1 with SMTP id 5b1f17b1804b1-426706c62fbmr11566485e9.6.1720513269502;
-        Tue, 09 Jul 2024 01:21:09 -0700 (PDT)
-Received: from localhost (host-79-55-57-217.retail.telecomitalia.it. [79.55.57.217])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6e0b6bsm29339845e9.3.2024.07.09.01.21.08
+        d=1e100.net; s=20230601; t=1720513348; x=1721118148;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7XDcGnxl+L+Up+OM7xPAJaHLrc0hSR9f/AUvnRoMTks=;
+        b=mUPnT4Qp5ZtgyAFMYwKisHJptCveBoBkc0Whjq1mMmvIH7Xkvr9sxrAUvsTuXhapfp
+         IKnaPChYntQ9dDJKC0zoyf89BA3MffJhSgA9BSn+6811FkW8GYK6dTT7/UjYy/z/jp89
+         4Gt3Zcc30oTPd7teA7s2PxSjDzFbHjSw3LORfiKGRD1ATcqwCDjF73XQ45qlKPlZwlyw
+         B96XzId3s6pQzw/Lj6Z4Fo94KFpgdUuhk41n4khrC+Yp5k9ij1/MsgVVHOLYbh5cZRpP
+         AO1eFhftTHKRDiqXbBhm3f6u/B344aiKzPWApO+HtJTMhOeIaqJH8qWCpL7ZZ14BsC4x
+         V1Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCWNRnGd+qezcxcrgLz4iFCgUyx5legTlHy7uWLYEgVtPAGqsQt7KWCYYjDH6aKt2SgUwfTBSpnJ0Tq77v3drRSTMMGeyef6psDD+g7i
+X-Gm-Message-State: AOJu0YzGKNYBQTQO3b03GdhqdnO1iWJfKic/10izOi5ID5DHKr5OxhcO
+	B7gC18waBHEhg2Yz4jTyq4OaTh8LLhMaEvuYisCT4hQzgzRmy5si
+X-Google-Smtp-Source: AGHT+IFPsJC/yKbPpj0KK2U8xPVQYC1rgQUbrnuG7dcUGRNNy6Kjbw0VGZ2c7DelhGUEXHPww0fMHA==
+X-Received: by 2002:a05:6358:c3a2:b0:1aa:a177:359b with SMTP id e5c5f4694b2df-1aade0810ddmr150867855d.15.1720513347606;
+        Tue, 09 Jul 2024 01:22:27 -0700 (PDT)
+Received: from localhost.localdomain ([129.146.253.192])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2c99a92a430sm9588929a91.4.2024.07.09.01.22.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 01:21:09 -0700 (PDT)
-Date: Tue, 09 Jul 2024 10:21:07 +0200
-From: Matteo Martelli <matteomartelli3@gmail.com>
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, 
- Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Marius Cristea <marius.cristea@microchip.com>, 
- Matteo Martelli <matteomartelli3@gmail.com>, 
- linux-iio@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Message-ID: <668cf2f3ece62_1f6ba37012@njaxe.notmuch>
-In-Reply-To: <20240708173439.000070b4@Huawei.com>
-References: <20240704-iio-pac1921-v2-0-0deb95a48409@gmail.com>
- <20240704-iio-pac1921-v2-2-0deb95a48409@gmail.com>
- <20240707160442.6bab64c9@jic23-huawei>
- <668bec2a8b23a_6e037017@njaxe.notmuch>
- <20240708173439.000070b4@Huawei.com>
-Subject: Re: [PATCH v2 2/2] iio: adc: add support for pac1921
+        Tue, 09 Jul 2024 01:22:27 -0700 (PDT)
+From: Furong Xu <0x1207@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>
+Cc: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	xfr@outlook.com,
+	rock.xu@nio.com,
+	Furong Xu <0x1207@gmail.com>
+Subject: [PATCH net-next v1 0/7] net: stmmac: refactor FPE for gmac4 and xgmac
+Date: Tue,  9 Jul 2024 16:21:18 +0800
+Message-Id: <cover.1720512888.git.0x1207@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Jonathan Cameron wrote:
-...
-> > I could add the shunt-resistor controls to allow calibration as Marius
-> > suggested, but that's also a custom ABI, what are your thoughts on this?
-> 
-> This would actually be a generalization of existing device specific ABI
-> that has been through review in the past.
-> See Documentation/ABI/testing/sysfs-bus-iio-adc-pac1934
-> for example (similar in other places).
-> So if you want to do this move that ABI up a level to cover multiple devices
-> (removing the entries in specific files as you do so).
-> 
-I would do this in a separate commit, would you prefer it in this same patch
-set or in another separate patch?
+Refactor FPE implementation by moving common code for DWMAC4 and
+DWXGMAC into a separate FPE module.
 
-...
-> > 
-> > > > +
-> > > > +What:		/sys/bus/iio/devices/iio:deviceX/resolution_bits_available
-> > > > +KernelVersion:	6.10
-> > > > +Contact:	linux-iio@vger.kernel.org
-> > > > +Description:
-> > > > +		List all possible ADC measurement resolutions: "11 14"
-> > > > +
-> > > > +What:		/sys/bus/iio/devices/iio:deviceX/integration_samples
-> > > > +KernelVersion:	6.10
-> > > > +Contact:	linux-iio@vger.kernel.org
-> > > > +Description:
-> > > > +		Number of samples taken during a full integration period. Can be
-> > > > +		set to any power of 2 value from 1 (default) to 2048.
-> > > > +		This attribute affects the integration time: higher the number
-> > > > +		of samples, longer the integration time. See Table 4-5 in device
-> > > > +		datasheet for details.  
-> > > 
-> > > Sounds like oversampling_ratio which is standards ABI. So use that or explain
-> > > why you can't here.  
-> > 
-> > I am not sure that this is an oversampling ratio but correct me if I am wrong:
-> > generally by increasing the oversampling you would have additional samples in a
-> > fixed time period, while in this case by increasing the number of samples you
-> > would still have the same number of samples in a fixed time period, but you
-> > would have a longer integration period. So maybe the comment is not very
-> > clear since this parameter actually means "the number of samples required to
-> > complete the integration period".
-> 
-> No. Oversampling is independent of the sampling period in general (though
-> here the 'integration time' is very confusing terminology.  You may
-> have to have sampling_frequency (if provided) updated to incorporate that
-> the device can't deliver data as quickly.
-> 
-> > 
-> > Initially I thought to let the user edit this by writing the integration_time
-> > control (which is currently read-only), but since the integration period
-> > depends also on the resolution and whether filters are enabled or not, it would
-> > have introduced some confusion: what parameter is being changed upon
-> > integretion_time write? Maybe after removing resolution and filter controls
-> > there would be no such confusion anymore.
-> 
-> Hmm. The documentation seems to have an unusual definition of 'integration' time.
-> That looks like 1/sampling_frequency.  In an oversampling device integration time
-> is normally about a single sample, not the aggregate of sampling and read out
-> etc.
-> 
-> I guess here the complexity is that integration time isn't about the time
-> taken for a capacitor to charge, but more the time over which power is computed.
-> But then the value is divided by number of samples so I'm even more confused.
-> 
-> If we just read 'integration time' as data acquisition time, it makes a lot
-> more sense.
-> 
-I think I now get what you are suggesting, please correct me otherwise:
+FPE implementation for DWMAC4 and DWXGMAC differs only for:
+1) Offset address of MAC_FPE_CTRL_STS
+2) FPRQ(Frame Preemption Residue Queue) field in MAC_RxQ_Ctrl1
 
-1. Let's consider the sampling frequency as how often the device provides
-   computed ("integrated") measurements to the host, so this would be
-   1/"integration period". This is not the internal ADC sampling rate.
+Tested on DWMAC CORE 5.20a and DWXGMAC CORE 3.20a
 
-2. I will expose sampling_frequency (RO), oversampling_ratio (R/W) and
-   oversampling_ratio_available (RO) to the user, where oversampling_ratio
-   corresponds to what the datasheet refers to as the "number of ADC samples to
-   complete an integration".
+Furong Xu (7):
+  net: stmmac: xgmac: drop incomplete FPE implementation
+  net: stmmac: gmac4: drop FPE implementation for refactoring
+  net: stmmac: refactor Frame Preemption(FPE) implementation
+  net: stmmac: gmac4: complete FPE support
+  net: stmmac: xgmac: rename XGMAC_RQ to XGMAC_FPRQ
+  net: stmmac: xgmac: complete FPE support
+  net: stmmac: xgmac: enable Frame Preemption Interrupt by default
 
-3. When the user writes the oversampling_ratio, the sampling_frequency gets
-   updated accordingly.
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   2 +-
+ drivers/net/ethernet/stmicro/stmmac/common.h  |   1 +
+ .../net/ethernet/stmicro/stmmac/dwmac4_core.c |   6 -
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.c  |  66 ---------
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.h  |  16 ---
+ .../net/ethernet/stmicro/stmmac/dwxgmac2.h    |   9 +-
+ .../ethernet/stmicro/stmmac/dwxgmac2_core.c   |  27 ----
+ drivers/net/ethernet/stmicro/stmmac/hwif.c    |   7 +
+ drivers/net/ethernet/stmicro/stmmac/hwif.h    |  30 ++--
+ .../net/ethernet/stmicro/stmmac/stmmac_fpe.c  | 131 ++++++++++++++++++
+ .../net/ethernet/stmicro/stmmac/stmmac_fpe.h  |  16 +++
+ 11 files changed, 177 insertions(+), 134 deletions(-)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.h
 
-4. With two real examples:
-    4.1. The user writes 16 to oversampling_ratio, then reads 43.478 from
-      sampling_frequency: with 16 samples the "integration period" is 23ms
-      (from Table 4-5) so 1/0.023 => 43.478 Hz
-    4.2. The user writes 2048 to oversampling_ratio, then reads 0.34 from
-      sampling_frequency: with 2048 samples the "integration period" is 2941ms
-      (from Table 4-5) so 1/2.941 => 0.34 Hz
+-- 
+2.34.1
 
-5. Do not expose the integration_time control to avoid confusion: the so called
-   "integration period" can be derived from the sampling frequency as
-   1/sampling_frequency.
-
-...
-> > > > +static int pac1921_update_cfg_reg(struct pac1921_priv *priv, unsigned int reg,
-> > > > +				  unsigned int mask, unsigned int val)
-> > > > +{
-> > > > +	/* Enter READ state before configuration */
-> > > > +	int ret = regmap_update_bits(priv->regmap, PAC1921_REG_INT_CFG,
-> > > > +				     PAC1921_INT_CFG_INTEN, 0);
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > > +
-> > > > +	/* Update configuration value */
-> > > > +	ret = regmap_update_bits(priv->regmap, reg, mask, val);
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > > +
-> > > > +	/* Re-enable integration and reset start time */
-> > > > +	ret = regmap_update_bits(priv->regmap, PAC1921_REG_INT_CFG,
-> > > > +				 PAC1921_INT_CFG_INTEN, PAC1921_INT_CFG_INTEN);
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > > +
-> > > > +	priv->integr_start_time = jiffies;  
-> > > 
-> > > Add a comment for why this value.
-> > >  
-> > Could you elaborate what's confusing here? The comment above states "reset
-> > start time", maybe I should move it above the assignment of
-> > priv->integr_start_time? Or it's the use of jiffies that it's confusing?
-> 
-> Why is it jiffies?   Why not jiffies * 42?
-> I'm looking for a datasheet reference for why the particular value is used.
-> 
-I used jiffies just to track the elapsed time between readings. Something I am
-not considering here? Of course jiffies granularity might be larger than the
-minimum sampling frequency. Is there a common better approach?
-
-...
-> For future reference, no need to acknowledge stuff you agree
-> with.  Much better to crop to the places where there are questions or responses
-> as it saves time for the next step of the discussion!
-Ok....oops!
-
-> 
-> Thanks,
-> 
-> Jonathan
-> 
-
-Thanks,
-Matteo
 
