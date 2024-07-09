@@ -1,161 +1,143 @@
-Return-Path: <linux-kernel+bounces-245760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28A2492B8D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:54:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 707D992B8DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22D361C231DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:54:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26F591F22E4E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56718154BE8;
-	Tue,  9 Jul 2024 11:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1338A1534E4;
+	Tue,  9 Jul 2024 11:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EhFrFVfN"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="m337Rqwm";
+	dkim=pass (1024-bit key) header.d=xanderlent.com header.i=@xanderlent.com header.b="YghXHNlU"
+Received: from pb-smtp1.pobox.com (pb-smtp1.pobox.com [64.147.108.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1F8139563;
-	Tue,  9 Jul 2024 11:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847167AE5D
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 11:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.108.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720526033; cv=none; b=mTIxQYrwLmc1/1InTGV07sjZH9YTQUqxTE+BY4vWNQKtPRorTGZZ5yyS4Y4xmEMREWFBFHm2+7D/EvrPpH+SdGotu7X9mhJYgD6TTITNreC8OzLt++eKpokTdZ+rP4Yvx21onFQPUW4apCAXadf8La0O0C7MwNwAgLiK3uA3P2o=
+	t=1720526123; cv=none; b=dUc2kBOt0Omh/w324YXWwkcvle2PgJXWPkjPbSs0TjJglm5P4E2tfRH0UTmnqbOmdtaXBqIeSPWmtt5iVXTnqmn/T6kiumV+oEkX1xrUvoAmDoByCaNICbcXyB69nawCICb0Rv5h3ltAiPU2RODUdZm40cD9p60G8x+oTpbBank=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720526033; c=relaxed/simple;
-	bh=j8Ev10XUMjmF2WPESgNuNsxXRkYF5oMY0x3B4cAMKus=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g5ha3+RAvwgd2QHMIlFbmbGkDH8H8++t8iWjFF44545knH0LZNQgZxdbVqnOXmP1IA4ZNVWx75cu7ozQPetA9D+S9Cw3TqEhn6uRo3Rtc7XPN0i1cAb/oXPQP81QlRguCoHGs7zkIYcBTvT89TqArn7juwMAfiNG3RsiELd/1mQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EhFrFVfN; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-425809eef0eso34316455e9.3;
-        Tue, 09 Jul 2024 04:53:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720526030; x=1721130830; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IvJjRgeuSUUa7ARhseaeJHVmVCtPETK9oaUJL91wHLE=;
-        b=EhFrFVfNLqrxAU7xrj82eMbXNTHicFYkVY4KdihlJED5xTBHdnap0HutpoB2iG7FOH
-         7f4b7RM7A1Jrv/qKT2Fgp5tUe5lrm9f6516f+kgCVji2cvaU24u32hOYMaiLpZrT5AuP
-         raAzghi6/iORVX9ME7QXw1nTKaq23hX/oGnvQknb/BiZhjJj1lSpfWiMmsQCyWrWG4Mn
-         eF5+Psz0lMunyQ0Q4Ya5c9EW2bDRzg5b5oUtHXsWRkB7csFGK7ypUdvbBbMpUtzaqXXT
-         cFYLh6MBMThQ7HP9YESYa2Gu78gWLeVWVFWNazjHa0IksDPX2iGAluHYcma/YafGH4h4
-         DpIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720526030; x=1721130830;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IvJjRgeuSUUa7ARhseaeJHVmVCtPETK9oaUJL91wHLE=;
-        b=HbPT67iv6E4FhXPwblb1Dzg6SXhkipv+nGHgwNqbwN6AJQYcTkK+Vyk6Ixe04S6bWe
-         ns35hvvXRQaj0GDLocOjkWS1VUZwCfwABsMBHcIUaia/gnYjkHBpZOw/RK58+KMW7saA
-         8qSelVYOt9T2tXYSqmp90S9MAblD2gb/iOIoLwJObp3EMiaLCEq6yBgCw87Jrgm5LE/P
-         b3ATKGI9EXPo/2dy+1rXDX6GbqA/QRViqSx2Teb3iJEx4Ivb3CLrI0UZsYwlIdo1lxms
-         Y6paITVWktXpPMaNxiifBybcocvxIseJ04gvMD881lnfD3kozT8k0RrQdgvy9pbuXZSw
-         GWfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXy/e782hUckaJiTfxhott9TfFB0ZuErAgOGUE8TPcfZlV1+Sci8t/FfUvkvr04Ae27zDM+TX6dQYRbS1sBm7tUXhfwZhyXZ8nLUBx6bOQRwgZRfop5TDhbyHC3FkdaCizaTLGuiPUknw==
-X-Gm-Message-State: AOJu0YxPQW8y8qVsDQKMR7/Zz9YFYFeVaU8irHm2LjFAb7HAY6RNTuc4
-	NeE9CfNwt2ajfIbRtjonSw2RQ4ARWdKvz3dexbgD6YwmPNVG8QOU
-X-Google-Smtp-Source: AGHT+IEsRm4WaeqV5EtJz7rvnEi8txwMQPM5PkrJUDZTdi/Nk+qRtNJ/UnBr3r3wjwBSfDw1zZUilQ==
-X-Received: by 2002:a05:600c:6dca:b0:426:5269:983a with SMTP id 5b1f17b1804b1-426707cc00dmr16660225e9.8.1720526029893;
-        Tue, 09 Jul 2024 04:53:49 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42672558658sm11177935e9.0.2024.07.09.04.53.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 04:53:49 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 9 Jul 2024 13:53:48 +0200
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Christian Brauner <brauner@kernel.org>,
-	Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-next <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the vfs-brauner tree with the
- asm-generic tree
-Message-ID: <Zo0kzIR_ZueaEjTa@krava>
-References: <20240709105709.18ce785d@canb.auug.org.au>
- <20240709200851.4d921e43@canb.auug.org.au>
- <784a34e5-4654-44c9-9c07-f9f4ffd952a0@app.fastmail.com>
+	s=arc-20240116; t=1720526123; c=relaxed/simple;
+	bh=gddqCnx9SNES8455IEK6DYHaEE1wzJ8bS16ePXesBxo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eaFXS7TwZhlCaaUX4clD0+HNI8pWYxD/0W6ZTVNOrQOmAHIZ7eAuWlko7IB2kt0wulwQ4ymhB59e4BAy+F2rE0YsgHE/0/SVObr5oaevwC8bP2/ZSJpSD7EeQgKZ0VXw0QkcGKepwUvPWh+3FYFph8CGJqduJ5lQfRKkJXuAE8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xanderlent.com; spf=pass smtp.mailfrom=xanderlent.com; dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b=m337Rqwm; dkim=pass (1024-bit key) header.d=xanderlent.com header.i=@xanderlent.com header.b=YghXHNlU; arc=none smtp.client-ip=64.147.108.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xanderlent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xanderlent.com
+Received: from pb-smtp1.pobox.com (unknown [127.0.0.1])
+	by pb-smtp1.pobox.com (Postfix) with ESMTP id 3AD1B328E1;
+	Tue,  9 Jul 2024 07:55:20 -0400 (EDT)
+	(envelope-from lx@xanderlent.com)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=pobox.com; h=from:date
+	:subject:mime-version:content-type:content-transfer-encoding
+	:message-id:to:cc; s=sasl; bh=gddqCnx9SNES8455IEK6DYHaEE1wzJ8bS1
+	6ePXesBxo=; b=m337Rqwmyk/oWWKDxTJZCQ1IxfVooi3611FNMRTXMAJrx2h9RD
+	3xsHhsOnZRxFCr/DPdoDE2rdwLtHMKA75BGQW4kskQGENt6pxtAF6zSPZzJ5oLsD
+	6G5qW2PZtQc0u/FSiiB6zYjET2Ad05Qpwm+3QZt531zoBHXpt+Yiz+R24=
+Received: from pb-smtp1.nyi.icgroup.com (unknown [127.0.0.1])
+	by pb-smtp1.pobox.com (Postfix) with ESMTP id 31D66328E0;
+	Tue,  9 Jul 2024 07:55:20 -0400 (EDT)
+	(envelope-from lx@xanderlent.com)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=xanderlent.com;
+ h=from:date:subject:mime-version:content-type:content-transfer-encoding:message-id:to:cc; s=2021-09.pbsmtp; bh=gddqCnx9SNES8455IEK6DYHaEE1wzJ8bS16ePXesBxo=; b=YghXHNlUnioPbgapGFLjZgZUNlClRkGuUJRkiO4Zyy+Gfp421Z3LFndItt8ubNdWybjo2AFJkJdc4CzBRnoJec1LBxsTeviDkU13GVUYvrRY1udmT3xd8TeZx7t+A/Vd05eLuWxoeoHYvqGN3ekjGIWxPdWqJL9t1wu/SUyUHII=
+Received: from ultralight.local (unknown [172.56.166.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by pb-smtp1.pobox.com (Postfix) with ESMTPSA id BB045328DF;
+	Tue,  9 Jul 2024 07:55:18 -0400 (EDT)
+	(envelope-from lx@xanderlent.com)
+From: "Alexander F. Lent" <lx@xanderlent.com>
+Date: Tue, 09 Jul 2024 07:54:14 -0400
+Subject: [PATCH v3] accel/ivpu: Add missing MODULE_FIRMWARE metadata
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <784a34e5-4654-44c9-9c07-f9f4ffd952a0@app.fastmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240709-fix-ivpu-firmware-metadata-v3-1-55f70bba055b@xanderlent.com>
+X-B4-Tracking: v=1; b=H4sIAOUkjWYC/33O0QrCIBiG4VsJjzOcbtN11H1EBzr/mtDcULPF2
+ L2ngyCIduYH/g/vjDw4Ax4ddzNyEI03g02D7Xeo7aS9ATY6bUQJLQknJb6aCZs4PtLD9U/pAPc
+ QpJZBYqYJVbomvBYaJWB0kH6v+PmStpIesHLStl0m/0v5uDM+DO61hsUiE5+GaqshFrjAqVNxJ
+ iqqG3qapNXg7mDDoR16lEMi/fbEpkezJ1RTsYKng/rHW5blDeMRWH5GAQAA
+To: "Alexander F. Lent" <lx@xanderlent.com>, 
+ Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>, 
+ Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>, 
+ Oded Gabbay <ogabbay@kernel.org>, Jeffrey Hugo <quic_jhugo@quicinc.com>, 
+ Daniel Vetter <daniel.vetter@ffwll.ch>, 
+ Andrzej Kacprowski <andrzej.kacprowski@linux.intel.com>, 
+ Krystian Pradzynski <krystian.pradzynski@linux.intel.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720526118; l=1929;
+ i=lx@xanderlent.com; s=20240705; h=from:subject:message-id;
+ bh=gddqCnx9SNES8455IEK6DYHaEE1wzJ8bS16ePXesBxo=;
+ b=X1dbuarre7MVqlySIV9Dfl+4D9ojeKDqNmzZbaf7B2ikyO/hvj2j210u8YObmFp6Xck3eHrfS
+ 09l2j24SW0JA4BRMs3oLGgGiBn7cMu5bqZxNCsYyTz8dX+0xmfu83RO
+X-Developer-Key: i=lx@xanderlent.com; a=ed25519;
+ pk=T7WKAI9F1J7lcthsLG4aBF+wzehTsa3GPyzJkh5is3k=
+X-Pobox-Relay-ID:
+ 1D3FA9D6-3DEA-11EF-9712-5B6DE52EC81B-45904678!pb-smtp1.pobox.com
 
-On Tue, Jul 09, 2024 at 01:44:34PM +0200, Arnd Bergmann wrote:
-> On Tue, Jul 9, 2024, at 12:08, Stephen Rothwell wrote:
-> > On Tue, 9 Jul 2024 10:57:09 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >>
-> >> Today's linux-next merge of the fs-next tree got conflicts in:
-> >> 
-> >>   arch/arm64/include/asm/unistd.h
-> >>   arch/arm64/include/asm/unistd32.h
-> >> 
-> >> between commit:
-> >> 
-> >>   ea0130bf3c45 ("arm64: convert unistd_32.h to syscall.tbl format")
-> >> 
-> >> from the asm-generic tree and commit:
-> >> 
-> >>   e6873349f700 ("fs/xattr: add *at family syscalls")
-> >> 
-> >> from the vfs-brauner tree.
-> >> 
-> >> I fixed it up (I used the former versions) and can carry the fix as
-> >> necessary. This is now fixed as far as linux-next is concerned, but any
-> >> non trivial conflicts should be mentioned to your upstream maintainer
-> >> when your tree is submitted for merging.  You may also want to consider
-> >> cooperating with the maintainer of the conflicting tree to minimise any
-> >> particularly complex conflicts.
-> >
-> > This resolution may be not enough as I now get the following warnings
-> > from the arm64 defconfig build:
-> >
-> > <stdin>:1603:2: warning: #warning syscall setxattrat not implemented [-Wcpp]
-> > <stdin>:1606:2: warning: #warning syscall getxattrat not implemented [-Wcpp]
-> > <stdin>:1609:2: warning: #warning syscall listxattrat not implemented [-Wcpp]
-> > <stdin>:1612:2: warning: #warning syscall removexattrat not implemented [-Wcpp]
-> 
-> I see. The newly added syscalls need to be copied from
-> include/uapi/asm-generic/unistd.h into the newly added
-> scripts/syscall.tbl. I am aware of this and was planning
-> to send this as a fixup afterward to avoid an awkward
-> four-way merge with the uretprobe and xattrat patches.
-> 
-> Based on your merge in 1dd7a574e54e ("Merge branch
-> 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/
-> git/trace/linux-trace.git"), I think we want this
-> to be in all syscall.tbl files:
-> 
-> diff --git a/scripts/syscall.tbl b/scripts/syscall.tbl
-> index b0ea892de12e..4873fa3ca496 100644
-> --- a/scripts/syscall.tbl
-> +++ b/scripts/syscall.tbl
-> @@ -419,3 +419,8 @@
->  460	common	lsm_set_self_attr		sys_lsm_set_self_attr
->  461	common	lsm_list_modules		sys_lsm_list_modules
->  462	common	mseal				sys_mseal
-> +463	common	setxattrat			sys_setxattrat
-> +464	common	getxattrat			sys_getxattrat
-> +465	common	listxattrat			sys_listxattrat
-> +466	common	removexattrat			sys_removexattrat
-> +467	64	uretprobe			sys_uretprobe
-> 
-> Though I'm still not sure what uretprobe is only added
-> to half the architectures at the moment. There is a chance
-> we need a different conditional for it than '64'.
+Modules that load firmware from various paths at runtime must declare
+those paths at compile time, via the MODULE_FIRMWARE macro, so that the
+firmware paths are included in the module's metadata.
 
-hi,
-uretprobe is defined only for x86_64, not sure what that means
-for scripts/syscall.tbl though
+The accel/ivpu driver loads firmware but lacks this metadata,
+preventing dracut from correctly locating firmware files. Fix it.
 
-jirka
+Fixes: 9ab43e95f922 ("accel/ivpu: Switch to generation based FW names")
+Fixes: 02d5b0aacd05 ("accel/ivpu: Implement firmware parsing and booting")
+Signed-off-by: Alexander F. Lent <lx@xanderlent.com>
+---
+Hi Jacek,
+
+Thanks for catching the error, and for the more succinct comment.
+Please find v3 attached.
+---
+Changes in v3:
+- Simplify comment, per review.
+- Fix typo in 40xx firmware path, per review.
+- Link to v2: https://lore.kernel.org/r/20240708-fix-ivpu-firmware-metadata-v2-1-78b953172026@xanderlent.com
+
+Changes in v2:
+- Only annotate the module with the production firmware paths, per review.
+- Drop macros for de-duping firmware fileames, just use string literals, per review.
+- Link to v1: https://lore.kernel.org/r/20240705-fix-ivpu-firmware-metadata-v1-1-704b73852d92@xanderlent.com
+---
+ drivers/accel/ivpu/ivpu_fw.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/accel/ivpu/ivpu_fw.c b/drivers/accel/ivpu/ivpu_fw.c
+index 1457300828bf..ef717802a3c8 100644
+--- a/drivers/accel/ivpu/ivpu_fw.c
++++ b/drivers/accel/ivpu/ivpu_fw.c
+@@ -58,6 +58,10 @@ static struct {
+ 	{ IVPU_HW_40XX, "intel/vpu/vpu_40xx_v0.0.bin" },
+ };
+ 
++/* Production fw_names from the table above */
++MODULE_FIRMWARE("intel/vpu/vpu_37xx_v0.0.bin");
++MODULE_FIRMWARE("intel/vpu/vpu_40xx_v0.0.bin");
++
+ static int ivpu_fw_request(struct ivpu_device *vdev)
+ {
+ 	int ret = -ENOENT;
+
+---
+base-commit: 22a40d14b572deb80c0648557f4bd502d7e83826
+change-id: 20240704-fix-ivpu-firmware-metadata-3d02bd60768d
+
+Best regards,
+-- 
+Alexander F. Lent <lx@xanderlent.com>
+
 
