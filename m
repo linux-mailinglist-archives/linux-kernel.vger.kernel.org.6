@@ -1,131 +1,118 @@
-Return-Path: <linux-kernel+bounces-245334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F47392B169
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:43:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 230AB92B16C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3486D1F229E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:43:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 540301C21CA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D5E14534C;
-	Tue,  9 Jul 2024 07:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEC8144D11;
+	Tue,  9 Jul 2024 07:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lBZ5A5ed"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ee/pwKj/"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C392527713
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 07:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9662027713
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 07:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720510996; cv=none; b=dOh/aLS3DgSQbTiJ2t99g5JA+vdmvC82xgeUv3lJradhaiAJnwF051evDzQ7NqPju0yp3Md4hC1fm16XX6kUtn6YaOeFX0EuUfi4InLan2YK/ZFcN/YlvBOmuEGWlWBhoGCqCOTSNzBVL9x++eHlPSd0SSYffaFEgU0onA3T068=
+	t=1720511036; cv=none; b=EE66QKTCIslKum9ptflA97AuQbQ8rQSQZT6dwVMxbjb9jhYV0Lxg0ObeqIO8aQZQz3KLEOuLICtV8xSfIcyGg5flq36+7ZqRBH1XIBZycdWf38CqYe/KIZPJz/9hrzJXPkjoc0syi/5gafddpxZsT2hTFoGJFJKSf8Dd2dl0mkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720510996; c=relaxed/simple;
-	bh=jAG3/aKaD/kqbIcJypKqQbgWvBndMAYJGXwk/ugv40Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=siEzsT6Vb9vsTHp2Bc8DijuYfr4wLVa+5RIT3Ks2LP4FJvEdA+x040YX+bxrx61sj70oGBHELz5ka8vXlVkW8RS2XwkuAJbItc2X/I7Ti+uVzr9odY/aReramcyXNEPI0v081t6Ndt0r4aOSWL3p25SXQc5V267mPfoZNxDpPa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lBZ5A5ed; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-36796d2e5a9so3262061f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 00:43:14 -0700 (PDT)
+	s=arc-20240116; t=1720511036; c=relaxed/simple;
+	bh=20D5O3BjA9Qecn6pydHndjEQujH+ywE+VJHs0En/u64=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=O/N/rl+Gn4SM+fSs2iKMLacJ2XEbrgnMN+VJykjZlRFnQNedznXMv44p/Wa8Bg8V/SCC8zYEbWY6yZOzTgFTLP/az2uVMr5933D+UeLm1SQU1arNjVGLgFJBOyvZ9aQD2EEICEJg8i+IjGyytTdJl3oDvGOIUrxFzaj9a06jrpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ee/pwKj/; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a77cb7c106dso455676366b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 00:43:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720510993; x=1721115793; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=h1CLW71m5KlFIfS4WtV1HBML6Ik9miyTvvoVtrTfgdI=;
-        b=lBZ5A5ed3jLJAWQDSBmi68plpWpHA+F4E8qQYgOtu46nHdf5NTFGetJK8IfEdMijzJ
-         Iu5o227LaIzKXnLgFFLA/67Psjwt8XdbAKrFlq53I29f/mgUsWPtKvfIuaXhLTTdwQWB
-         IobTTLpchBtFcQLB2uismdWU0vC4FrGdjnqhjaRap1unKlz2LoR/3VA47acWSEl5cSZq
-         PPUIPPmrOTemFKrwcjF8XMcccyzEj3TzBXKD+XeTBsgthA8KRlE8a1sZDI5rbrwXSDgz
-         CqO/kHqvOvynfJvpJD5QzEpvinpgCndptbxaPIvZVwEmNyg5R67oeb3LPIH8dJNq/zov
-         phDw==
+        d=gmail.com; s=20230601; t=1720511033; x=1721115833; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=20D5O3BjA9Qecn6pydHndjEQujH+ywE+VJHs0En/u64=;
+        b=ee/pwKj/fTJMtTyOvHUq+l+U8dzF/tUcL8ysLM9dP64zqXFh6jD4wX9z+Y5WRWevLx
+         tw7J2ze7F++M6FDvCeuUHdfQof/09WKR44hYJO504EP9/oQnUZc+AjwOTNIZYtaH9thR
+         rv2z1k8m0bQugPWbPsFUIkeSATU+C0jqijOwq57kipmSJuEEXHaAVb2P0xBUlk4HCywi
+         1FPmxhOfy2NfFYxv8UMKrCou+M9dyLlwfxOjX/lTzJnSEzg8m3e+asKoKR+DCJMkKnOZ
+         QKXrdYqTmWfs2rebF53nQ3PgYMsmdlIZKSB/SHdThlNUIVSe0MD32sdE9tUI8vlb/+ZR
+         CP4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720510993; x=1721115793;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h1CLW71m5KlFIfS4WtV1HBML6Ik9miyTvvoVtrTfgdI=;
-        b=h58oUJJG5Caigh+NQu1UauEFc2XAQCGxo0ePt4GigJFAylMxJvFvX+oFNWwxwGHgtz
-         KOWX+QrSamICjLvjk4d0JF4B3vhwVH+TJ0TLatCza8kLILorMzR3+929SY3OOjbsZ4nR
-         CXFn9V21cYN0NRIoP6Cz9WuU7WZvQVkf7+uVUUWCdHNwCLRSbBF/Sg4lGYEf5RNdGlAt
-         2LgKVmt0rSWMGmCRy3HDpR3GOxfZp5Y0OC5TaEJmt8Xh/aR7Lnu3UJ71dkRHdfmc6QIr
-         E7cnF3zKubVYVeLThJdVQ4zZxJ5HoyF4Hu2pM2xbWs5TwS8OzSVU8b242+OGwXK8YOgy
-         15Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvcJG8yhpkRv0cWbhOnsiezJQm3MAJU/a/z9cYNJmb5XlEGGDNcU4TTb4Lcg5bGuItKNRNe/SAhbsoYq4eXr+YWWk2dMpf+iwHx/7d
-X-Gm-Message-State: AOJu0YyM3mFaYItIcsqaKfja5dbIJm/hmXsMtgEKp0fWjAH365R7RE19
-	jlZTVEgGwjaEGxe1QqizxZDN1XBiTz+reCdLYBRZRu9YuKD6HvfyoNqzosXt4jk=
-X-Google-Smtp-Source: AGHT+IFW+YP/WjH3mfocei0KWEyOnvOvhNRqjin5G0HJ1iruDzyBQrHEp0XoWZjyCQ5cCU6oLsl5Mw==
-X-Received: by 2002:a05:6000:18aa:b0:367:9073:3491 with SMTP id ffacd0b85a97d-367cea46301mr1400995f8f.5.1720510993204;
-        Tue, 09 Jul 2024 00:43:13 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:cf24:cce:17df:12ab? ([2a05:6e02:1041:c10:cf24:cce:17df:12ab])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-367cde7df48sm1746617f8f.1.2024.07.09.00.43.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 00:43:12 -0700 (PDT)
-Message-ID: <0fdbddfb-f25b-4d39-a80c-770fb8ed40f4@linaro.org>
-Date: Tue, 9 Jul 2024 09:43:12 +0200
+        d=1e100.net; s=20230601; t=1720511033; x=1721115833;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=20D5O3BjA9Qecn6pydHndjEQujH+ywE+VJHs0En/u64=;
+        b=cK+6dhhh/5dBvgZk4uhh32/no5xFw/r6jHcShpoJUErmcgWEQUXRGVRQIRaRr5Jczr
+         fh8tuCGVnJoyFeHh9VN2Ug+UfsnKFjHER/xXEPUZ4tm3oy/Nf6Ng/yE22EVFJwuh8bI3
+         AADab2SXa277b13u4cRqcVAhK96GTTI15KLYonycOnmz5eJJgbfSHzxic2crRFMA6P+l
+         2uPL1uPdbcAD2WlXrCLwyW/kgOhMfg//tnziJiiDdT7eQxds0G8Cgx6aHbKUCOnzUiMs
+         M6ofxDovV2Q8B6w3wjadaxV1wKISaBt0BOB87tCf5YEg/Y1MsVbGxkQ9kPozcmfEo1Nr
+         umCA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBOcQW39jAeJ3mgbt83Xkna7YSPd5cvZ0UAQMAGMqXPt4RPDbKPPMu+tJNg070qOirBpWYdqnsPDKpMdeCVglwtL36pRrzM7pSt/sa
+X-Gm-Message-State: AOJu0YzQcEWFEmaapvP6HYvK6gZGx+bNh45WjhfXlJhi+ZUPUJWh8ghx
+	8ROQrixqmLXbSsIw1fPg63KP+TRGSZNv7FLtOUThH4gslZ8XJZe5
+X-Google-Smtp-Source: AGHT+IGhQSfrd+amaKpnM5/PJQRIykf6Kxt0jaCjBol+EWAP88HS2ZqRo89aelEp8OMD2IpxIzYPcA==
+X-Received: by 2002:a17:906:c8c6:b0:a77:d85c:86f5 with SMTP id a640c23a62f3a-a780b884b5dmr100763666b.53.1720511032657;
+        Tue, 09 Jul 2024 00:43:52 -0700 (PDT)
+Received: from LPPLJK6X5M3.. (178-37-38-123.dynamic.inetia.pl. [178.37.38.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff7aesm54674966b.102.2024.07.09.00.43.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 00:43:52 -0700 (PDT)
+From: Radoslaw Zielonek <radoslaw.zielonek@gmail.com>
+To: peterz@infradead.org
+Cc: akpm@linux-foundation.org,
+	ardb@kernel.org,
+	bigeasy@linutronix.de,
+	brauner@kernel.org,
+	bristot@redhat.com,
+	bsegall@google.com,
+	dietmar.eggemann@arm.com,
+	juri.lelli@redhat.com,
+	kunyu@nfschina.com,
+	liam.howlett@oracle.com,
+	linux-kernel@vger.kernel.org,
+	mgorman@suse.de,
+	mingo@redhat.com,
+	oleg@redhat.com,
+	radoslaw.zielonek@gmail.com,
+	rostedt@goodmis.org,
+	syzbot+a941018a091f1a1f9546@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com,
+	tandersen@netflix.com,
+	vincent.guittot@linaro.org,
+	vincent.whitchurch@axis.com,
+	vschneid@redhat.com
+Subject: Re: [RFC] Signaling overhead on RT tasks is causing RCU stall
+Date: Tue,  9 Jul 2024 09:43:34 +0200
+Message-ID: <20240709074333.2799005-2-radoslaw.zielonek@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240705081052.GA11386@noisy.programming.kicks-ass.net>
+References: <20240705081052.GA11386@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] dt-bindings: timer: renesas,tmu: Add more SoC
- families
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-References: <cover.1716985096.git.geert+renesas@glider.be>
- <CAMuHMdWP7y=8rA5jszCbzh_RnXnv4tFUpHv0qtbucHEYRFE9qw@mail.gmail.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <CAMuHMdWP7y=8rA5jszCbzh_RnXnv4tFUpHv0qtbucHEYRFE9qw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 09/07/2024 09:39, Geert Uytterhoeven wrote:
-> On Wed, May 29, 2024 at 2:22 PM Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
->> This patch series documents support for the Timer Unit (TMU) on the
->> R-Mobile APE6 SoC, and on various SoCs from the RZ/G1 and R-Car Gen2
->> families.
->>
->> Changes compared to v1:
->>    - Add Acked-by, Reviewed-by.
->>
->> Thanks for your comments!
->>
->> Geert Uytterhoeven (3):
->>    dt-bindings: timer: renesas,tmu: Add R-Mobile APE6 support
->>    dt-bindings: timer: renesas,tmu: Add RZ/G1 support
->>    dt-bindings: timer: renesas,tmu: Add R-Car Gen2 support
->>
->>   .../devicetree/bindings/timer/renesas,tmu.yaml       | 12 ++++++++++++
->>   1 file changed, 12 insertions(+)
-> 
-> Gentle ping, as these are already in use in DTS since v6.10-rc1.
-> Thanks!
-> 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
+> I'm having trouble parsing this. What overhead becomes high? Is the task
+> spending time in-kernel? Because if the task is spending time in-user
+> handling all its signals, it should accumulate runtime just fine.
 
-Applied, thanks
+The overhead is in kernel. The RT task is preempted over and over by SIGRETURN.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+In my case userspace set posix timer interval to 8ns.
+The posix_timer_fn enqueues signal (send_sigqueue).
+Then when the signal is dequeued (dequeue_signal) the posix timer is rearmed.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Radoslaw
 
