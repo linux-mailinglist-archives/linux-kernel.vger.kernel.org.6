@@ -1,171 +1,176 @@
-Return-Path: <linux-kernel+bounces-245039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2865E92AD75
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:58:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 897F292AD7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1A14282974
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:58:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2AB21C213C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 01:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7E929CEA;
-	Tue,  9 Jul 2024 00:58:12 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B532AE95;
+	Tue,  9 Jul 2024 01:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gWnEutDF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AEF374EA
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 00:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F47827269
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 01:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720486692; cv=none; b=ioni3UxXHhOgtHm1SEELeyICScel55cefTKruj9jBp4RfqTYIlBg1Ip4iwPNzG9EhDyBnsTVa1fcVioNRXI9wFIWSIXtDAFl85hGYpkQbjAvn6Lw2gUazBm4EXRwQ12Rvg9uwSrlBtpyculEguBSCoNUcnq1Ybkn5N4bIv/cKp4=
+	t=1720487095; cv=none; b=uncPRRZXFIctyaSHoI/Mb3D4SgFbZ1v6YHZCwAwVLXW4zPjevEFVuPQhkhe0M2NH+dpx2tdFgj+2Cn+ECfj4buJsl/YudWtKoKJ1JXKDinnArhsEDt6SWJvOAPiJQa+ImQcrGOnRQ3E6ihnUXDJCsazEC8rijVziKGK7m4VdDhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720486692; c=relaxed/simple;
-	bh=GNI38pCAIw/mgTfyEWaKect+FEbkxtnjrrpW/eCbt9E=;
-	h=Date:Message-ID:Mime-Version:From:To:Subject:Content-Type; b=VU0RvmEOcK0zEqF+T9nZO+p7orLK+EC7Z6eawAu29ZZExVfquGlFtqZpSkr+805AFsT2FYLT4onhWfvZcORDchYX8vO58UzYbDsbznNg6jCXvcmSsfI1j7pwCsgKDJCiIy2GmbWgRm7bXRXMHyowXRqlzVtjXlfmF1+qCiEpH3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4WJ2fL1CDDz5B1Jb;
-	Tue,  9 Jul 2024 08:58:02 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl2.zte.com.cn with SMTP id 4690vw7l036219;
-	Tue, 9 Jul 2024 08:57:58 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 9 Jul 2024 08:57:59 +0800 (CST)
-Date: Tue, 9 Jul 2024 08:57:59 +0800 (CST)
-X-Zmail-TransId: 2afa668c8b174d8-a1077
-X-Mailer: Zmail v1.0
-Message-ID: <20240709085759651a9uzGqelMTphJR2RrB4lI@zte.com.cn>
+	s=arc-20240116; t=1720487095; c=relaxed/simple;
+	bh=GKrX/SAlf/AthAEOO9Vue4N/gi7OxPo3+l209YVXGbQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YYQYLXQUQZFy+z5EVndcQp45AljH8Dq6JY4G7SdJIXIO8a6/t60iRpEDqm28UP1G9eyZYvve6MQrJcIGkPGHSAHOBrDlXnu4WNP5UlTZd1qZ18vFqCOo9cKW2hlTtXkUCWQwTVvi/j1ZdyznVUJUmBwXr3ndVA8O/nq5D2Q+Sas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gWnEutDF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 468NorAi018665;
+	Tue, 9 Jul 2024 01:04:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BS5I75+H8x13f1B8KfKwBuZ0YFzz42LgQKig2a3ZeIU=; b=gWnEutDFsOtuOz06
+	ZJEvkXcuw4B4v9ehD7a5AKn8Xv6kR7V8PoGoJTIy+UrB6z5fuvHFrXA8G38w6AqO
+	s0c+B+sewD8LLvEHlA8w7aarMhCVyzpXWxvqyHwzwINbCXjNcVgD9uQo+2kYm7G8
+	ix2Heq8ohJ9WVMbTHLIk9WV/jF6xC4w98oP+b2Bv6eiPs0XYiZQlUqb0C7tAnJJf
+	7ccbyjZnjNdRWfbsx2xemyHPg4i3pVi7bP8Z1qG1ER5t+iQwfKYe6JBTtosgdp66
+	BVtfDe7LSfjlSNUS2BR9x1riaT41kEqEPXbDXspDPnYwg6uHkJjn1Dqx+duyNtLd
+	vYsvGg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406y77n0h2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 01:04:39 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46914d8s020522
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 01:04:39 GMT
+Received: from [10.253.14.85] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 8 Jul 2024
+ 18:04:37 -0700
+Message-ID: <b8e704f9-7392-4925-9593-e4a9da045e86@quicinc.com>
+Date: Tue, 9 Jul 2024 09:04:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <peterz@infradead.org>, <bsegall@google.com>, <dietmar.eggemann@arm.com>,
-        <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>, <jiang.kun2@zte.com.cn>,
-        <juri.lelli@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <liu.chun2@zte.com.cn>, <mgorman@suse.de>, <mingo@redhat.com>,
-        <rostedt@goodmis.org>, <tu.qiang35@zte.com.cn>,
-        <vincent.guittot@linaro.org>, <xu.xin16@zte.com.cn>,
-        <yang.yang29@zte.com.cn>, <zhang.yunkai@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHQgdjNdIHNjaGVkL2NvcmU6IEFkZCBXQVJOX09OX09OQ0UoKSB0byBjaGVjayBvdmVyZmxvdyBmb3IgbWlncmF0ZV9kaXNhYmxl?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 4690vw7l036219
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 668C8B1A.000/4WJ2fL1CDDz5B1Jb
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] driver core: Fix size calculation of symlink name for
+ devlink_(add|remove)_symlinks()
+To: Saravana Kannan <saravanak@google.com>, Zijun Hu <zijun_hu@icloud.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki"
+	<rafael@kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240707-devlink_fix-v1-1-623acb431cd8@quicinc.com>
+ <CAGETcx8YwD-cWYFJ72rfSfmrnoY=rv9oc_2KCK9_AF34Evw7wg@mail.gmail.com>
+Content-Language: en-US
+From: quic_zijuhu <quic_zijuhu@quicinc.com>
+In-Reply-To: <CAGETcx8YwD-cWYFJ72rfSfmrnoY=rv9oc_2KCK9_AF34Evw7wg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6-VJnI2IdQVP54T7cDJIXMeBVVAtDj13
+X-Proofpoint-ORIG-GUID: 6-VJnI2IdQVP54T7cDJIXMeBVVAtDj13
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_14,2024-07-08_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ mlxscore=0 clxscore=1011 priorityscore=1501 spamscore=0 lowpriorityscore=0
+ malwarescore=0 bulkscore=0 adultscore=0 mlxlogscore=999 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407090005
 
-From: Peilin He <he.peilin@zte.com.cn>
+On 7/9/2024 6:43 AM, Saravana Kannan wrote:
+> On Sun, Jul 7, 2024 at 6:24 AM Zijun Hu <zijun_hu@icloud.com> wrote:
+>>
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>
+>> devlink_(add|remove)_symlinks() wants to kzalloc() memory to save symlink
+>> name for either supplier or consumer, but forget to consider consumer
+>> prefix when calclulate memory size, fixed by considering prefix for both
+>> supplier and consumer.
+> 
+> No, I didn't forget to take "consumer" into account :) Both supplier
+> and consumer are the same length. So I didn't bother doing both. I
+> don't see a point behind this patch.
+> 
+it is not obvious for code readers that "supplier:" and "consumer:" have
+the same string length.
 
-Background
-==========
-When repeated migrate_disable() calls are made with missing the
-corresponding migrate_enable() calls, there is a risk of
-'migration_disabled' going upper overflow because
-'migration_disabled' is a type of unsigned short whose max value is
-65535.
+code readers maybe need to count characters one by one for both strings
+to confirm both have the same length.
+>>
+>> Fixes: 287905e68dd2 ("driver core: Expose device link details in sysfs")
+> 
+> It's definitely not "Fixing" anything because nothing is broken.
+>this change maybe fix algorithm or procedures to calculate the size to
+kzalloc() even if it don't change the resulted size.
 
-In PREEMPT_RT kernel, if 'migration_disabled' goes upper overflow, it may
-make the migrate_disable() ineffective within local_lock_irqsave(). This
-is because, during the scheduling procedure, the value of
-'migration_disabled' will be checked, which can trigger CPU migration.
-Consequently, the count of 'rcu_read_lock_nesting' may leak due to
-local_lock_irqsave() and local_unlock_irqrestore() occurring on different
-CPUs.
+> Nack.
+>> If you really want this in, remove this tag and send it again. I won't
+> ack or review it though as I don't think it adds much value. Greg can
+> take it if he thinks he likes it.
+> 
+okay, will send v2 which will remove the fix tag, i feels this change is
+worthy due to below reasons:
 
-Usecase
-========
-For example, When I developed a driver, I encountered a warning like
-"WARNING: CPU: 4 PID: 260 at kernel/rcu/tree_plugin.h:315
-rcu_note_context_switch+0xa8/0x4e8" warning. It took me half a month
-to locate this issue. Ultimately, I discovered that the lack of upper
-overflow detection mechanism in migrate_disable() was the root cause,
-leading to a significant amount of time spent on problem localization.
+1) readers is easier to understand the algorithm or procedures to
+calculate the resulted size.
 
-If the upper overflow detection mechanism was added to migrate_disable(),
-the root cause could be very quickly and easily identified.
+2) readers don't need to take extra effort to confirm that fact that
+both string have the same length.
 
-Effect
-======
-Using WARN_ON_ONCE() to check if 'migration_disabled' is upper overflow
-can help developers identify the issue quickly.
+let us wait for Greg's opinions.
+> -Saravana
+> 
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+>> ---
+>>  drivers/base/core.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/base/core.c b/drivers/base/core.c
+>> index 2b4c0624b704..f14cfe5c97b7 100644
+>> --- a/drivers/base/core.c
+>> +++ b/drivers/base/core.c
+>> @@ -572,7 +572,7 @@ static int devlink_add_symlinks(struct device *dev)
+>>         len = max(strlen(dev_bus_name(sup)) + strlen(dev_name(sup)),
+>>                   strlen(dev_bus_name(con)) + strlen(dev_name(con)));
+>>         len += strlen(":");
+>> -       len += strlen("supplier:") + 1;
+>> +       len += max(strlen("supplier:"), strlen("consumer:")) + 1;
+>>         buf = kzalloc(len, GFP_KERNEL);
+>>         if (!buf)
+>>                 return -ENOMEM;
+>> @@ -623,7 +623,7 @@ static void devlink_remove_symlinks(struct device *dev)
+>>         len = max(strlen(dev_bus_name(sup)) + strlen(dev_name(sup)),
+>>                   strlen(dev_bus_name(con)) + strlen(dev_name(con)));
+>>         len += strlen(":");
+>> -       len += strlen("supplier:") + 1;
+>> +       len += max(strlen("supplier:"), strlen("consumer:")) + 1;
+>>         buf = kzalloc(len, GFP_KERNEL);
+>>         if (!buf) {
+>>                 WARN(1, "Unable to properly free device link symlinks!\n");
+>>
+>> ---
+>> base-commit: c6653f49e4fd3b0d52c12a1fc814d6c5b234ea15
+>> change-id: 20240707-devlink_fix-0fa46dedfe95
+>>
+>> Best regards,
+>> --
+>> Zijun Hu <quic_zijuhu@quicinc.com>
+>>
 
-Signed-off-by: Peilin He<he.peilin@zte.com.cn>
-Signed-off-by: xu xin <xu.xin16@zte.com.cn>
-Reviewed-by: Yunkai Zhang <zhang.yunkai@zte.com.cn>
-Reviewed-by: Qiang Tu <tu.qiang35@zte.com.cn>
-Reviewed-by: Kun Jiang <jiang.kun2@zte.com.cn>
-Reviewed-by: Fan Yu <fan.yu9@zte.com.cn>
-Cc: Yang Yang <yang.yang29@zte.com.cn>
-Cc: Liu Chun <liu.chun2@zte.com.cn>
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
----
-v2->v3:
-Some fixes according to:
-https://lore.kernel.org/all/20240704134716.GU11386@noisy.programming.kicks-ass.net/
-1.Convert p->migration_disabled to a signed type and check earlier.
-2.Add overflow check for p->migration_disabled in migrate.enable().
-3.Check for overflow on debug builds.
-
-v1->v2:
-Some fixes according to:
-https://lore.kernel.org/all/20240702124334.762dbd5a@rorschach.local.home/
-1.Merge if conditions into WARN().
-2.Remove the newline character '\n'. Right, we don't need the redundant \n.
-
- kernel/sched/core.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 8cc4975d6b2b..1992f2848732 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2259,6 +2259,12 @@ void migrate_disable(void)
- 	struct task_struct *p = current;
-
- 	if (p->migration_disabled) {
-+#ifdef CONFIG_DEBUG_PREEMPT
-+		/*
-+		 *Warn about overflow half-way through the range.
-+		 */
-+		WARN_ON_ONCE((s16)p->migration_disabled < 0);
-+#endif
- 		p->migration_disabled++;
- 		return;
- 	}
-@@ -2277,14 +2283,20 @@ void migrate_enable(void)
- 		.flags     = SCA_MIGRATE_ENABLE,
- 	};
-
-+#ifdef CONFIG_DEBUG_PREEMPT
-+	/*
-+	 * Check both overflow from migrate_disable() and superfluous
-+	 * migrate_enable().
-+	 */
-+	if (WARN_ON_ONCE((s16)p->migration_disabled <= 0))
-+		return;
-+#endif
-+
- 	if (p->migration_disabled > 1) {
- 		p->migration_disabled--;
- 		return;
- 	}
-
--	if (WARN_ON_ONCE(!p->migration_disabled))
--		return;
--
- 	/*
- 	 * Ensure stop_task runs either before or after this, and that
- 	 * __set_cpus_allowed_ptr(SCA_MIGRATE_ENABLE) doesn't schedule().
--- 
-2.17.1
 
