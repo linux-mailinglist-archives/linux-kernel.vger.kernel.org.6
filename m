@@ -1,66 +1,60 @@
-Return-Path: <linux-kernel+bounces-246421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16CB992C189
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:01:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D5392C188
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4A8B288179
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:01:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFCED1C21F20
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDD31AD9CC;
-	Tue,  9 Jul 2024 16:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0E11AD408;
+	Tue,  9 Jul 2024 16:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZaR7Ei/e"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OcDj//x7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8769F19E82B;
-	Tue,  9 Jul 2024 16:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484EB19B5BA;
+	Tue,  9 Jul 2024 16:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720542643; cv=none; b=ChjcYcIdLVwbdSSPwxQn74jXJfaXoDLyp7jIondEBCYFx5y0BnQjXhrDCEO1o6T5IMB+7K7hdcnmK4KoW9nEcYMKgC5pRefRNZ7raU8uMHpdsezgQcAPhynKJ1MYcRcXDCggH7sQdoMFHCUxAaK+87QJ8MGfWYhlwsBQqL8ootY=
+	t=1720542641; cv=none; b=erpkQxiiMnqC665pXADrmppG+ctyRiFMec5cgoKQTD0BsT4QHeGDLm6zd28UTg07ManPZ34AFlVn44QuyExNzSHEOB+NmZc7ok1p1iXdXUDXhj7ketgZnXlkccjOq9DHZkSVJW+wut/3a4gnah2AaqAEeefCGhS0HYcmvFq+sBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720542643; c=relaxed/simple;
-	bh=+J135aSrqRX9xE08EI2dz/9gEk4k8tD5i2S4SEz08/A=;
+	s=arc-20240116; t=1720542641; c=relaxed/simple;
+	bh=UKvAsz1g4fnOhjjLhryynx4MnRPSHIJ84qICpjwLHE0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ji4hpgc66DfvS6th9f9PQNIB4Plt1EEjNyYj4v58uVaWGPu4Sehwv+3Q9NU+0QZam1QlhqajH+7BDCmnDh4mlLho6LsoaTWoqntkm6W7gj3f0vlCJmIqmEupceu/0FWQxToWq3qPhIN1zVbn64hKR+WQNu5WR6NcLYQBkFIIwdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZaR7Ei/e; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=7XRXfrB2fmvhSy87pLmluWUrfWrZdc4sO1XIVyso348=; b=ZaR7Ei/ex4FOsarOP4tLl94nhr
-	e1cacMyPF3N9oJdwpcqL2UaDdrA9n6fy53iEtvxvEI7BvwDLHDNwMQlSYkn13tosWrD09EvYRooub
-	qm/knWfWhIaQ5ZqqPUpCROJfAmN2pKzRJbRDj6ykEoPro5AGzXkQT98enA5+VnfrEE0/GONxKkhMM
-	B5sJLa+mAC/FS5nW81j9UtlF4WKn9H7MLTtz+u8+9naiT7T3rtVjvHcBnz5PPPudrPYvx6XJ09SRl
-	lFZEqd+QMLcSn+RRmZF8flLzN0TJv1KLh4v3B1w1i1xVSv1NaCp8hfUYFANFfNgweNN6uc9ObyPT4
-	MxVFMG6A==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sRDji-0000000845p-0jEz;
-	Tue, 09 Jul 2024 16:30:38 +0000
-Date: Tue, 9 Jul 2024 17:30:38 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org,
-	andrii@kernel.org, linux-kernel@vger.kernel.org,
-	rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org,
-	clm@meta.com, bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
-Message-ID: <Zo1lrpO3suceheVj@casper.infradead.org>
-References: <20240708091241.544262971@infradead.org>
- <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
- <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
- <20240709090153.GF27299@noisy.programming.kicks-ass.net>
- <91d37ad3-137b-4feb-8154-4deaa4b11dc3@paulmck-laptop>
- <20240709142943.GL27299@noisy.programming.kicks-ass.net>
- <Zo1hBFS7c_J-Yx-7@casper.infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IRgLxCJeLnVIW8QEKEOCM2gjjxCLAsInmGQutA8hdWIZC7f6P7de+h9+aY4HnFlm8DAQEqs6yMj6l2a88Pb2TRxMV+RgVxTp1TNdM2tbuW+Awcig6RmwC5/WjDo8iqLMiKN7LZOhAqP+7Rg3TzQqo5p6EYViEp9YQyoZXsJSKiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OcDj//x7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A9B5C3277B;
+	Tue,  9 Jul 2024 16:30:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720542640;
+	bh=UKvAsz1g4fnOhjjLhryynx4MnRPSHIJ84qICpjwLHE0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OcDj//x71lzAXPBTyD2LF+AFXbTXO0eT0YRpKj7V0MLPCfbQ5jVnxu1Ek9cOWy+Qf
+	 scFvukXODhmmZvouxZBh3vRGgHJZFG6ETDbCGpRJfyzeA/VretAxeLqqZqUndnnJnP
+	 NI6mfm+vRk8IOo1eMYd9bA+pxAirZBWjBZvsD3HsebwLXQzJwxxmThSqkwAckO7/aw
+	 ZO+ziOXinTvU9mmCIbgZSCGrHXIrTBYgWRvmlnaQ+ssu+OIFcxS3BvP5lEzkFrLA3Y
+	 u3Sx+1gdmw43NUajbpSF6Iho9R/KboZyP67DQvWKbGC5iJo/JbwI/Pxd1l83z6rBE8
+	 tL1xrH3JshPNA==
+Date: Tue, 9 Jul 2024 10:30:39 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Valentin Caron <valentin.caron@foss.st.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: rtc: stm32: introduce new
+ st,stm32mp25-rtc compatible
+Message-ID: <172054263823.3749406.8767907445542011155.robh@kernel.org>
+References: <20240708153434.416287-1-valentin.caron@foss.st.com>
+ <20240708153434.416287-2-valentin.caron@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,21 +63,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zo1hBFS7c_J-Yx-7@casper.infradead.org>
+In-Reply-To: <20240708153434.416287-2-valentin.caron@foss.st.com>
 
-On Tue, Jul 09, 2024 at 05:10:45PM +0100, Matthew Wilcox wrote:
-> > So I fundamentally do not believe in per-VMA locking. Specifically for
-> > this case that would be trading one hot line for another. I tried
-> > telling people that, but it doesn't seem to stick :/
-> 
-> SRCU also had its own performance problems, so we've got problems one
-> way or the other.  The per-VMA lock probably doesn't work quite the way
-> you think it does, but it absoutely can be a hot cacheline.
-> 
-> I did propose a store-free variant at LSFMM 2022 and again at 2023,
-> but was voted down.  https://lwn.net/Articles/932298/
 
-Actually, the 2022 version has a bit more of the flavour of the
-argument: https://lwn.net/Articles/893906/
+On Mon, 08 Jul 2024 17:34:33 +0200, Valentin Caron wrote:
+> Introduce new st,stm32mp25-rtc compatible. It is based on st,stm32mp1-rtc.
+> 
+> Difference is that stm32mp25 soc implements a triple protection on RTC
+> registers:
+> - Secure bit based protection
+> - Privileged context based protection
+> - Compartment ID filtering based protection
+> This driver will now check theses configurations before probing to avoid
+> exceptions and fake reads on register.
+> 
+> Link: https://www.st.com/resource/en/reference_manual/rm0457-stm32mp25xx-advanced-armbased-3264bit-mpus-stmicroelectronics.pdf#page=4081
+> Signed-off-by: Valentin Caron <valentin.caron@foss.st.com>
+> ---
+>  Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
