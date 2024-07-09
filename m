@@ -1,221 +1,183 @@
-Return-Path: <linux-kernel+bounces-245508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F6692B39A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:22:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7272492B3A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1FCF1F23166
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:22:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3ADF1F202A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5806F154C17;
-	Tue,  9 Jul 2024 09:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ADJ77naX"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111D91552E2;
+	Tue,  9 Jul 2024 09:24:26 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5A1154434
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95EB14C5A7
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720516928; cv=none; b=YJqQzw1szx2WkDZ7esxRvhZhugS8Kllycic7MRI0fJPf8p4A02TWACh8M5Xf+DSrXunL7VdaRYS0FY10O5YisDfkDtRXmtf3+mPWgQLVTT5eMUnQ2O7+6nkQz8CmFxYGZNke/hASMYkri6Zur8JpnUoFsT4Zm0hx2DkdE3VFj8Q=
+	t=1720517065; cv=none; b=pxkBnY9qCFAgMZJG9qLEsrmIJn1e50JoTaKHwWY1F6ixXpOZa+8P59/3rgVoA2JXTyNkNRvVYM/buTn0iHZnDqbhqBlPPcDfGFIpwKDfs4786IIAuO0HtpjrqHlppxvkji7OmxS2rSpMQLWL66J3WdZWop5v6JPAhUwBLX5T5Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720516928; c=relaxed/simple;
-	bh=1Afy59d9rvoNifwLU0IZusSAU7p8fTyjgjyF+URDHps=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FPHDBOKHfaaSK434TJMyt84aVkzp5m0yaWcsm5TZNZ3f1/NbYcE2vn+lWsFQk05z++DUJV8OOtBrJf5ZSsUQvBCp/Y7fo7FFTxcr7gsyihu3BnvvddSc1AmZFnbx4wUhWuQyzP1euWz0D7cL/ULOCSHcdl7+K9mlqwyQpdA/OGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ADJ77naX; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4697vMpK024493;
-	Tue, 9 Jul 2024 09:21:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:content-transfer-encoding
-	:mime-version; s=pp1; bh=VAu8nuSyKpLacLsQUVBecgg5k9Mqzo3eKlp3op6
-	poZg=; b=ADJ77naXvcUzRAu4i3KnasFfUhTEG55x5/gya9kq66qEiILR7fumpH9
-	tDncklx40bX5br0/JBziddJ9zEX/PoMXrB9oTydbne3ZS1r4nxq73Zew7HgBVHUv
-	WpLkPUuowIHxJ85mktEOVDNmxmhIZn8P6KpnQ+45wJgHsdorKxBYGS0qFQ7yGITk
-	oaOFaTl/kefxK2ewto34hFTecYq+S+OSM/G6u7omrwFnvFfYggE+E5LEwhUUN8X5
-	6Lxn4bIdQXx/UR2e0+hoGFCMtj0d1rgqRvxs4Giv2orufQg472o5xBLbRU/+j2vC
-	AvjEpOCscRYRa67agDhNkNgQmQY1lYw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 408ws38p9j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 09:21:34 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4699LXEl020805;
-	Tue, 9 Jul 2024 09:21:33 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 408ws38p9f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 09:21:33 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4698tVce024583;
-	Tue, 9 Jul 2024 09:21:32 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 407hrmkjpx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 09:21:32 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4699LS0r42140092
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 9 Jul 2024 09:21:30 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AAC3220040;
-	Tue,  9 Jul 2024 09:21:28 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 800A020043;
-	Tue,  9 Jul 2024 09:21:26 +0000 (GMT)
-Received: from ltczz402-lp1.aus.stglabs.ibm.com (unknown [9.40.194.31])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  9 Jul 2024 09:21:26 +0000 (GMT)
-From: Donet Tom <donettom@linux.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Muchun Song <muchun.song@linux.dev>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, David Hildenbrand <david@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Tony Battersby <tonyb@cybernetics.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-        Donet Tom <donettom@linux.ibm.com>
-Subject: [PATCH v2] fs/hugetlbfs/inode.c: Ensure generic_hugetlb_get_unmapped_area() returns higher address than mmap_min_addr
-Date: Tue,  9 Jul 2024 04:21:22 -0500
-Message-ID: <20240709092122.41232-1-donettom@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: oaUkanhYWHG3dfuPoU_w4oO8JCSI7bbG
-X-Proofpoint-ORIG-GUID: LNKnn6UQNhxNm9BSsiI72LSIydZX6VL0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1720517065; c=relaxed/simple;
+	bh=hPWdIQzrDIKsdWWedF3zVBgednRjpKR88jLhX5flbm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=huO+ZHsqEcMTJBR/c0EfAGbGqwDMyY866soQGeOgTqmGStGsR0upBk961GUm8c/NuT2SPQUKlh0mTPA7SrX80GV6UvqMUFdvcVxfd1D08TZXwplIPNuMuroQHxZC3LIytpYVT4+KKlLRMIlrGCVSoYof3NSZNt2LRaIONZK02kQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sR73F-0004Yx-KQ; Tue, 09 Jul 2024 11:22:21 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sR739-008FMs-2o; Tue, 09 Jul 2024 11:22:15 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sR738-006U3J-31;
+	Tue, 09 Jul 2024 11:22:14 +0200
+Date: Tue, 9 Jul 2024 11:22:14 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Russell King <linux@armlinux.org.uk>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>, Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	imx@lists.linux.dev, linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+	openbmc@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org,
+	linux-mips@vger.kernel.org, loongarch@lists.linux.dev
+Subject: Re: [PATCH 4/9] mtd: devices: add AT24 eeprom support
+Message-ID: <20240709092214.omr7ccphdzdk7z7j@pengutronix.de>
+References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
+ <20240701-b4-v6-10-topic-usbc-tcpci-v1-4-3fd5f4a193cc@pengutronix.de>
+ <07b701a9-7b52-45b7-8dba-1c25d77cbf15@linaro.org>
+ <mafs0ikxnykpr.fsf@kernel.org>
+ <20240702-congenial-vigilant-boar-aeae44@houat>
+ <mafs0ed8byj5z.fsf@kernel.org>
+ <20240702-mighty-brilliant-eel-b0d9fa@houat>
+ <20240708084440.70186564@xps-13>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-08_15,2024-07-08_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=999 clxscore=1015 impostorscore=0 lowpriorityscore=0
- spamscore=0 priorityscore=1501 bulkscore=0 mlxscore=0 suspectscore=0
- phishscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090059
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240708084440.70186564@xps-13>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-generic_hugetlb_get_unmapped_area() was returning an address less
-than mmap_min_addr if the mmap argument addr, after alignment, was
-less than mmap_min_addr, causing mmap to fail.
+Hi Miquel,
 
-This is because current generic_hugetlb_get_unmapped_area() code does
-not take into account mmap_min_addr.
+On 24-07-08, Miquel Raynal wrote:
+> Hi,
+> 
+> > > >> >> Port the current misc/eeprom/at24.c driver to the MTD framework since
+> > > >> >> EEPROMs are memory-technology devices and the framework already supports  
+> > > >> >
+> > > >> > I was under the impression that MTD devices are tightly coupled by erase
+> > > >> > blocks. But then we see MTD_NO_ERASE, so what are MTD devices after all?  
+> > > >> 
+> > > >> I was curious as well so I did some digging.
+> > > >>   
+> > > [...]  
+> > > >> 
+> > > >> I also found a thread from 2013 by Maxime Ripard (+Cc) suggesting adding
+> > > >> EEPROMs to MTD [1]. The main purpose would have been unifying the EEPROM
+> > > >> drivers under a single interface. I am not sure what came of it though,
+> > > >> since I can't find any patches that followed up with the proposal.  
+> > > >
+> > > > That discussion led to drivers/nvmem after I started to work on
+> > > > some early prototype, and Srinivas took over that work.  
+> > > 
+> > > So would you say it is better for EEPROM drivers to use nvmem instead of
+> > > moving under MTD?  
+> > 
+> > I thought so at the time, but that was more than 10y ago, and I have
+> > followed neither nvmem nor MTD since so I don't really have an opinion
+> > there.
+> > 
+> > It looks like drivers/misc/eeprom/at24.c has support for nvmem though,
+> > and MTD can be used as an nvmem provider too, so it's not clear to me
+> > why we would want to create yet another variant.
+> > 
+> > But again, you shouldn't really ask me in the first place :)
+> > 
+> > I'm sure Miquel, Srinivas, and surely others, are much more relevant to
+> > answer that question.
+> 
+> More relevant, I doubt, but just a feeling: EEPROMs have their own
+> subsystem now, NVMEM, which, as Maxime said, was initially written for
+> that very specific case. EEPROMs don't have the complexity of MTD
+> devices, and thus pulling the whole MTD subsystem just for getting
+> partitions seems counter intuitive to me. You can definitely "split"
+> EEPROM devices with NVMEM as well anyway.
 
-This patch ensures that generic_hugetlb_get_unmapped_area() always returns
-an address that is greater than mmap_min_addr. Additionally, similar to
-generic_get_unmapped_area(), vm_end_gap() checks are included to ensure
-that the address is within the limit.
+I asked for feedback on my RFC [1] and all I got was to merge both
+drivers into one and make the driver backward compatible, which I did by
+this commit.
 
-How to reproduce
-================
+> Overall I think the idea of getting rid of these misc/ drivers is goes
+> into the right direction, but registering directly into NVMEM makes
+> more sense IMO.
 
- #include <stdio.h>
- #include <stdlib.h>
- #include <sys/mman.h>
- #include <unistd.h>
+So you propose to have two places for the partition handling (one for
+MTD and one for NVMEM) instead of one and moving the code into NVMEM
+directly? That doesn't sound right to me either. Also I don't get the
+point why EEPROMs can't be handled by the MTD layer? The layer already
+supports devices of type MTD_RAM which are very simple and don't require
+an erase-op at least I don't see one.
 
- #define HUGEPAGE_SIZE (16 * 1024 * 1024)
+[1] https://lore.kernel.org/all/20231127164623.1008176-1-m.felsch@pengutronix.de
 
- int main() {
+Regards,
+  Marco
 
-    void *addr = mmap((void *)-1, HUGEPAGE_SIZE,
-                 PROT_READ | PROT_WRITE,
-                 MAP_SHARED | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    if (addr == MAP_FAILED) {
-        perror("mmap");
-        exit(EXIT_FAILURE);
-    }
-
-    snprintf((char *)addr, HUGEPAGE_SIZE, "Hello, Huge Pages!");
-
-    printf("%s\n", (char *)addr);
-
-    if (munmap(addr, HUGEPAGE_SIZE) == -1) {
-        perror("munmap");
-        exit(EXIT_FAILURE);
-    }
-
-    return 0;
- }
-
-Result without fix
-==================
- # cat /proc/meminfo |grep -i HugePages_Free
- HugePages_Free:       20
- # ./test
- mmap: Permission denied
- #
-
-Result with fix
-===============
- # cat /proc/meminfo |grep -i HugePages_Free
- HugePages_Free:       20
- # ./test
- Hello, Huge Pages!
- #
-
-V2:
-Added vm_end_gap() check.
-
-V1:
-https://lore.kernel.org/all/20240705071150.84972-1-donettom@linux.ibm.com/
-
-Reported-by Pavithra Prakash <pavrampu@linux.vnet.ibm.com>
-Signed-off-by: Donet Tom <donettom@linux.ibm.com>
----
- fs/hugetlbfs/inode.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 412f295acebe..cdd8e53ddd19 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -222,13 +222,13 @@ generic_hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
- 				  unsigned long flags)
- {
- 	struct mm_struct *mm = current->mm;
--	struct vm_area_struct *vma;
-+	struct vm_area_struct *vma, *prev;
- 	struct hstate *h = hstate_file(file);
- 	const unsigned long mmap_end = arch_get_mmap_end(addr, len, flags);
- 
- 	if (len & ~huge_page_mask(h))
- 		return -EINVAL;
--	if (len > TASK_SIZE)
-+	if (len > mmap_end - mmap_min_addr)
- 		return -ENOMEM;
- 
- 	if (flags & MAP_FIXED) {
-@@ -239,9 +239,10 @@ generic_hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
- 
- 	if (addr) {
- 		addr = ALIGN(addr, huge_page_size(h));
--		vma = find_vma(mm, addr);
--		if (mmap_end - len >= addr &&
--		    (!vma || addr + len <= vm_start_gap(vma)))
-+		vma = find_vma_prev(mm, addr, &prev);
-+		if (mmap_end - len >= addr && addr >= mmap_min_addr &&
-+		    (!vma || addr + len <= vm_start_gap(vma)) &&
-+		    (!prev || addr >= vm_end_gap(prev)))
- 			return addr;
- 	}
- 
--- 
-2.43.5
-
+> 
+> Thanks,
+> Miquèl
+> 
 
