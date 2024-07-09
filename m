@@ -1,110 +1,119 @@
-Return-Path: <linux-kernel+bounces-245524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8896692B3D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:28:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B60092B3D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B95F61C22648
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:28:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47EC01C21EA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A418155391;
-	Tue,  9 Jul 2024 09:27:16 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EE5B154C0F;
-	Tue,  9 Jul 2024 09:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2B6155303;
+	Tue,  9 Jul 2024 09:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="q0rztVPm"
+Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2985613C687;
+	Tue,  9 Jul 2024 09:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720517236; cv=none; b=QKgapUYi2YDIyKDpnlu61iqENLqKvL7mVU8OIB6WtNk4CGRmz3uLdtOrFnO9uPdhlBD2ZdP+dNQDDBik2jN3ve6rOkU+C4Pdnb3R199D2wL1j9+0/AeeVNUBiMP9aeDfxwBTaekHl3oQiuR/WBAN/HoYY6kPymieJK/btuz90TM=
+	t=1720517359; cv=none; b=HjPWxSFiy2yoK3t0ME7I+iqYTdxGCjn+cGz21Ew7Gkd+qo3FD4F2ORotX0np5/9+g7LZuxTZCjo3+PC5zX15mGOoAk4JtsW1URx88LsTpxanESGm8kPIlPGj3IqqeMQZysglHovjUcqtrmZQ8f1rRPvMYhyFdnVJG8jq1Xgusws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720517236; c=relaxed/simple;
-	bh=BvITnZGwrv0DcMi9+rbLEpK9pqpsSHIG6x1UYrJpaw0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=diUFHl8EC+RLqa7wX+OrBWKQcd33tcZxyEeAFPydrI07EFZEEvFbAfwtA6x15s5d/5nH+Zf5wGQnZns7PfSwERXZhqpUCQdjX3IjVztSkAJOHB8RfDpjHS48UcVpQulj72LQG8ve1NqWcZXk8XVAc2PZ6NRfXpagtqFGmeysnU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowADX3+dDAo1mG3VXAg--.38115S2;
-	Tue, 09 Jul 2024 17:26:34 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	daniel.vetter@ffwll.ch,
-	sam@ravnborg.org,
-	noralf@tronnes.org,
-	akpm@linux-foundation.org
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] drm/client: fix null pointer dereference in drm_client_modeset_probe
-Date: Tue,  9 Jul 2024 17:26:26 +0800
-Message-Id: <20240709092626.3253492-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720517359; c=relaxed/simple;
+	bh=7DWs8NlGzB6ngfSoSC5rIQPo0j9eV+sZdzaBHoXrKkY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
+	 In-Reply-To:Content-Type; b=AmHYhCK9JfpJMp15YX+jW3agnMLqps/QLotOUuUTDhG1XHTBIgKCiTk6D9l47GMTlHSk2N/mF22lJGL9Mf6dVKQk1oBAwYKSozqrZp2lI6n0uG+7+b0vPAqtLeJIPujtsnHp0KpxLA0YInOERPdf+z+yFWwsP83KajfrB8Io8/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=q0rztVPm; arc=none smtp.client-ip=3.9.82.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
+Received: from [IPV6:2a02:8010:6359:2:e181:9992:7c46:d034] (unknown [IPv6:2a02:8010:6359:2:e181:9992:7c46:d034])
+	(Authenticated sender: james)
+	by mail.katalix.com (Postfix) with ESMTPSA id 1DEAE7DA8A;
+	Tue,  9 Jul 2024 10:29:17 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
+	t=1720517357; bh=7DWs8NlGzB6ngfSoSC5rIQPo0j9eV+sZdzaBHoXrKkY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:Subject:
+	 In-Reply-To:From;
+	z=Message-ID:=20<9d86ddab-5177-b534-11be-6609065a2ab9@katalix.com>|
+	 Date:=20Tue,=209=20Jul=202024=2010:29:16=20+0100|MIME-Version:=201
+	 .0|To:=20Paolo=20Abeni=20<pabeni@redhat.com>,=20Hillf=20Danton=20<
+	 hdanton@sina.com>|Cc:=20netdev@vger.kernel.org,=20linux-kernel@vge
+	 r.kernel.org,=0D=0A=20syzkaller-bugs@googlegroups.com,=20tparkin@k
+	 atalix.com,=0D=0A=20syzbot+b471b7c936301a59745b@syzkaller.appspotm
+	 ail.com,=0D=0A=20syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail
+	 .com|References:=20<20240708115940.892-1-hdanton@sina.com>=0D=0A=2
+	 0<a65127e4-544b-27e6-a1e1-e20e5fb4d480@katalix.com>=0D=0A=20<ce597
+	 3fe2017177e6f4c1f577fa8309fe7258612.camel@redhat.com>|From:=20Jame
+	 s=20Chapman=20<jchapman@katalix.com>|Subject:=20Re:=20[PATCH=20net
+	 -next=20v2]=20l2tp:=20fix=20possible=20UAF=20when=20cleaning=20up=
+	 0D=0A=20tunnels|In-Reply-To:=20<ce5973fe2017177e6f4c1f577fa8309fe7
+	 258612.camel@redhat.com>;
+	b=q0rztVPmBNQ7tseS/E/mEEQyOg8aSo9qWeCgAnkKKbYuJHrRLakQBf2rYEg5H3XrR
+	 Dj5jvhcMlo5nCVkT99w/uO7BPfb+v6T+TFeVOrvXKxQnDOLdjNqGbwfpHWy4CupooA
+	 oZRDyOsscIoTlhovQGnIlndVJmgMYb+ljmWMOIwFqzXMkncew3VOYe935N89JDvhh/
+	 SKdzwRJWHC3a9IOjdOVmgsLeHGTfo7iXveo2mjdUuU52alQR519+1FFMc77iiDUrHc
+	 QY/Mf1oZNlxo4erhMX1FKv5l0JkidtRtYPRqaTapBhnCWoiwwMFqxO6geuJ62nZMlW
+	 sW2NoRerWBzzQ==
+Message-ID: <9d86ddab-5177-b534-11be-6609065a2ab9@katalix.com>
+Date: Tue, 9 Jul 2024 10:29:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowADX3+dDAo1mG3VXAg--.38115S2
-X-Coremail-Antispam: 1UD129KBjvJXoWrtr4DZw13CFy5urW7urW5trb_yoW8Jr18pr
-	43JF90yF4jvrZrKFs2va97CF17A3W3JF48G3W7Aan3u3Z0qry2vryYvr13WFy7Gry3JF1U
-	JrnIyFW2qF18CaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUFYFADUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+To: Paolo Abeni <pabeni@redhat.com>, Hillf Danton <hdanton@sina.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, tparkin@katalix.com,
+ syzbot+b471b7c936301a59745b@syzkaller.appspotmail.com,
+ syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com
+References: <20240708115940.892-1-hdanton@sina.com>
+ <a65127e4-544b-27e6-a1e1-e20e5fb4d480@katalix.com>
+ <ce5973fe2017177e6f4c1f577fa8309fe7258612.camel@redhat.com>
+Content-Language: en-US
+From: James Chapman <jchapman@katalix.com>
+Organization: Katalix Systems Ltd
+Subject: Re: [PATCH net-next v2] l2tp: fix possible UAF when cleaning up
+ tunnels
+In-Reply-To: <ce5973fe2017177e6f4c1f577fa8309fe7258612.camel@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In drm_client_modeset_probe(), the return value of drm_mode_duplicate() is
-assigned to modeset->mode, which will lead to a possible NULL pointer
-dereference on failure of drm_mode_duplicate(). Add a check to avoid npd.
+On 09/07/2024 10:03, Paolo Abeni wrote:
+[snip]
+> AFAICS this patch is safe, as the session refcount can't be 0 at
+> l2tp_session_inc_refcount() time and will drop to 0 after
+> l2tp_session_dec_refcount() only if no other entity/thread is owning
+> any reference to the session.
+> 
+> @James: the patch has a formal issue, you should avoid any empty line
+> in the tag area, specifically between the 'Fixes' and SoB tags.
+> 
+> I'll exceptionally fix this while applying the patch, but please run
+> checkpatch before your next submission.
 
-Cc: stable@vger.kernel.org
-Fixes: cf13909aee05 ("drm/fb-helper: Move out modeset config code")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- added the recipient's email address, due to the prolonged absence of a 
-response from the recipients.
-- added Cc stable.
----
- drivers/gpu/drm/drm_client_modeset.c | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks Paolo. Will do. I'll be more careful next time.
 
-diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
-index 31af5cf37a09..cca37b225385 100644
---- a/drivers/gpu/drm/drm_client_modeset.c
-+++ b/drivers/gpu/drm/drm_client_modeset.c
-@@ -880,6 +880,9 @@ int drm_client_modeset_probe(struct drm_client_dev *client, unsigned int width,
- 
- 			kfree(modeset->mode);
- 			modeset->mode = drm_mode_duplicate(dev, mode);
-+			if (!modeset->mode)
-+				continue;
-+
- 			drm_connector_get(connector);
- 			modeset->connectors[modeset->num_connectors++] = connector;
- 			modeset->x = offset->x;
--- 
-2.25.1
+> Also somewhat related, I think there is still a race condition in
+> l2tp_tunnel_get_session():
+> 
+> 	rcu_read_lock_bh();
+>          hlist_for_each_entry_rcu(session, session_list, hlist)
+>                  if (session->session_id == session_id) {
+>                          l2tp_session_inc_refcount(session);
+> 
+> I think that at l2tp_session_inc_refcount(), the session refcount could
+> be 0 due to a concurrent tunnel cleanup. l2tp_session_inc_refcount()
+> should likely be refcount_inc_not_zero() and the caller should check
+> the return value.
+> 
+> In any case the latter is a separate issue.
+
+I'm currently working on another series which will address this along 
+with more l2tp cleanup improvements.
 
 
