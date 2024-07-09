@@ -1,97 +1,218 @@
-Return-Path: <linux-kernel+bounces-245675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7FDF92B5DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:51:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95FB992B5E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:52:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04B9C1C217D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:51:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B205281495
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB355157460;
-	Tue,  9 Jul 2024 10:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1DB157497;
+	Tue,  9 Jul 2024 10:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KZid57NG"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I0ET5kgq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5046155329
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E117156967;
+	Tue,  9 Jul 2024 10:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720522288; cv=none; b=Wx7E05fp7nCJFH0jlYFQXo01zzngm47SwNtzLG0L4OWsVop1j7vQ1PIIg3zWdTbTB7ROJ1Y/TM4fPM9+Zy1ZS11Pta+0pG1XMOq2zc2Vb2JbrE4fEHRXpjB8R9SN38C5Pg/9turXS75bhZ7sPk/L5/JU59Xws9r0Z2PvaLEaI2w=
+	t=1720522338; cv=none; b=o4m8byBitGemWOoeJI4qg+AEkqH/kUr4Q5Ppoz6r3KWBR0rYDiSy/L0Uo11uBQVSHpH/0bk1iaA10hZRcW/+IRBPx21/aebWLsSitvBlvaOgLGWPYuymM6d9J6Bu6zTq0Dv2ck8LSfNwCjzky7MSlRBXCSRGh2ciACScfpkcEr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720522288; c=relaxed/simple;
-	bh=GuE84+tYe3IliZz36W/xwOvWAw5aen9f9pO/jTu9YLE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=joa2Pp3YU4xGi69JdtZZoSkSPG9xcDmaJbSKxJ8eqkRJEGNbnPk7Cq6SFm9JcLfy6JagFEjM+2Qkm3CML/FocQ67WhCKaljQeFkrd+ukx5ks9qG3/6XZ5c56vS93ZnzNrFgrkwPF5YLFVgsVQAjsrW71gjv3P2bbnScokwE0Nzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KZid57NG; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-25e397c51b2so2464472fac.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 03:51:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720522286; x=1721127086; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ne6sGKGQF4GM9jaPTveT7Fc90CaEuMuRCImmXptQf6Y=;
-        b=KZid57NGukekwIq+9YW7ovSClgvK3OT5wht0YGeLtLx6issn2BPNVKA9xWfqya3Q4D
-         rgrpdVUYupPbXsRQKFg2NaXugCsUps1748fntbGScIdOfZ15uvJ5Euqd4UtPVQ7yAUUY
-         fjG95ovi6Q0xR5807E7E0kr3k48JR/wihioYOzF83ahwNXcc1OEwMjglQkvns7fNdSRp
-         JCDaSRSkXEo1i4ly9PEOaZf+BHZoDgqPtGmbwqpOQ8WHtygCA8Z1Op3KmvADVJyx2eDC
-         LSycppoCDueVOLW48W7qUbmnhLISHmwsqMKQ5G6aksqXlhaaTZbfkBpG8l941JaMmZsK
-         6fwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720522286; x=1721127086;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ne6sGKGQF4GM9jaPTveT7Fc90CaEuMuRCImmXptQf6Y=;
-        b=aqu8L3qFgexUcV6tfsARDNA9Xdopfx67Ek9Ssy7DoCjXrufJKhll2Ev0rCvA4OV5BI
-         mIP7Gx9PB6x42xZjOSAMDmCj6Wj0WJ/sOTaGmIGyLYKekGg6svyihVvovmjE12dqfccy
-         z+45dZDEx/1Jfxdq/bvlu6GqxanssjrOE/vhS58D+rcvWt17DsRuHfSjj3uUEltH9Sr9
-         EP4D6UKsZ+xa/7e8XI+T9cDRNa07gI3SUGY0tjHEUS1vvYTw3ABZ3U10OCkmeZojBWG8
-         TxeP4cY/o4j0j7Mh1dXWCVU7mGh67lrV7meAXm2oNxyKFRMw/Mjk6OzM1p4WGxhjHikB
-         8qeA==
-X-Forwarded-Encrypted: i=1; AJvYcCXAWEbyCGhJ+CugXDTImbYbl0meCEMKPAS4jS+KeDtWaYiIePU9Kh7whfHtFLieXl/01fT2VT7SJKTQe5EaAq9x+Al2w6smv5VgD10t
-X-Gm-Message-State: AOJu0YxKaqoRDchn6ste6ZYkWsY30aklnq8ZCTNawzJqvEx8QQn4ty7x
-	F7/nwaqQqQPXxYLUAc//zD/oMqBuJjqivTBOvMGBjdX38Ym+Q+acVvkHJ4tYWBbGz/Pn9bYrrGL
-	jAmOGNGLm45HliEsp2JHJalRWupAltl1/rmpy4ARU5C8K7Y1GocI=
-X-Google-Smtp-Source: AGHT+IG+y2y1lYDjW0w074p6b32KN/SNBfuH66xZOYYfG/aQ33OHnDDWnfHU1jSQkLv7VHnBWB5U5y0xOdhTHcklAQw=
-X-Received: by 2002:a05:6870:ec87:b0:254:ccac:134d with SMTP id
- 586e51a60fabf-25eae7575dcmr1763592fac.2.1720522285808; Tue, 09 Jul 2024
- 03:51:25 -0700 (PDT)
+	s=arc-20240116; t=1720522338; c=relaxed/simple;
+	bh=YdQdM4xh2TvaXiWwL+MAEKPz4S6pTyKfrWoVs5MiXbc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GCJOK4qHALaTn7NTac3JF/VcyAMWU3y6B80qKfCKNWb9rZ+QADKZna5nwMU2P6lwjkVMvmBNZfJTTOzg9HRU30nVdVtLnnERtFT8VxGD1gXw4nSoD+4t7bJ/ktFspj2/UOTNesDXUEXo0YkgiIIACinJVAEha3WFXMzCRcqq4IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I0ET5kgq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46919w0X003975;
+	Tue, 9 Jul 2024 10:51:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jtlchnQOp+qiPnzd0Np2Gdw+hp5nOtyxLmguasiBaZ8=; b=I0ET5kgqIqnTLexz
+	kQDobNNWzQMUda0c/lsLbz5436ybQBkMjJgevy+0HlCWVknwCVbWcelEdZlN6Jgn
+	GlbXfRm/kRew/Xdp1xutO7BqY/OuhYrLYtWzu3eSIGQuTUjWimGM7YZfZOmgkeuV
+	LlEdTywnVVsg1pn41SyWYIbKwta9KxFXHhRNKpXY+4ZfUM3eQxRxQrwgSPhePzjb
+	j9noYa0afvaaBDpdqWftJHO1AT0XlVh7ISwd8YA2mR+Cpem86wEpPVTRdxltDSXi
+	4oEMPkyCExsPCQ3i2okkBoG0lfhF5YXYIWf0ITlauUGbrjCnceHCyRhjyjeJaR6J
+	x4X5aQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wmmpap3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 10:51:49 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469Apm2n023176
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 10:51:48 GMT
+Received: from [10.216.26.146] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
+ 03:51:42 -0700
+Message-ID: <6adaca81-2751-ae48-850c-453a34c0e341@quicinc.com>
+Date: Tue, 9 Jul 2024 16:21:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
-In-Reply-To: <a956a3e2-c6ce-4f07-ad80-ec8a96e00d16@stanley.mountain>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 9 Jul 2024 11:51:14 +0100
-Message-ID: <CADrjBPq13+k6LM=Xs3Eof9jXJwOHmcMoJUXAR18aHfp7fEeLcw@mail.gmail.com>
-Subject: Re: [PATCH] phy: exynos5-usbdrd: fix error code in probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Sam Protsenko <semen.protsenko@linaro.org>, Rob Herring <robh@kernel.org>, 
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH v2 3/6] clk: qcom: clk-alpha-pll: Add support for Regera
+ PLL ops
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>
+References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
+ <20240702-camcc-support-sm8150-v2-3-4baf54ec7333@quicinc.com>
+ <kxoxr5cxxedckh7q45zhhyssqx4ahdfbqw7sdsrxx2ddplummh@2s6jv62ipnhb>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <kxoxr5cxxedckh7q45zhhyssqx4ahdfbqw7sdsrxx2ddplummh@2s6jv62ipnhb>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: bkMPp0JjqBcXkNi5caMNDOKNajXImBl5
+X-Proofpoint-ORIG-GUID: bkMPp0JjqBcXkNi5caMNDOKNajXImBl5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_02,2024-07-08_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 lowpriorityscore=0 spamscore=0 bulkscore=0 adultscore=0
+ impostorscore=0 suspectscore=0 malwarescore=0 mlxscore=0 mlxlogscore=997
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090074
 
-On Mon, 8 Jul 2024 at 18:04, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> Return negative -ENOMEM instead of positive ENOMEM.
->
-> Fixes: 497ddafe915e ("phy: exynos5-usbdrd: convert Vbus supplies to regulator_bulk")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
 
-Reviewed-by:  Peter Griffin <peter.griffin@linaro.org>
+On 7/3/2024 3:35 PM, Dmitry Baryshkov wrote:
+> On Tue, Jul 02, 2024 at 09:20:41PM GMT, Satya Priya Kakitapalli wrote:
+>> From: Taniya Das <quic_tdas@quicinc.com>
+>>
+>> Regera PLL ops are required to control the Regera PLL from clock
+>> controller drivers, thus add support for the same.
+> the same what?
+
+
+I'll rephrase the commit text.
+
+
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/clk-alpha-pll.c | 32 +++++++++++++++++++++++++++++++-
+>>   drivers/clk/qcom/clk-alpha-pll.h |  5 +++++
+>>   2 files changed, 36 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+>> index d2bef078588f..afb7ab72c90d 100644
+>> --- a/drivers/clk/qcom/clk-alpha-pll.c
+>> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+>> @@ -1,7 +1,7 @@
+>>   // SPDX-License-Identifier: GPL-2.0
+>>   /*
+>>    * Copyright (c) 2015, 2018, The Linux Foundation. All rights reserved.
+>> - * Copyright (c) 2021, 2023, Qualcomm Innovation Center, Inc. All rights reserved.
+>> + * Copyright (c) 2021, 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>>    */
+>>   
+>>   #include <linux/kernel.h>
+>> @@ -2605,3 +2605,33 @@ const struct clk_ops clk_alpha_pll_stromer_plus_ops = {
+>>   	.set_rate = clk_alpha_pll_stromer_plus_set_rate,
+>>   };
+>>   EXPORT_SYMBOL_GPL(clk_alpha_pll_stromer_plus_ops);
+>> +
+>> +void clk_regera_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>> +			     const struct alpha_pll_config *config)
+>> +{
+>> +	clk_alpha_pll_write_config(regmap, PLL_L_VAL(pll), config->l);
+>> +	clk_alpha_pll_write_config(regmap, PLL_ALPHA_VAL(pll), config->alpha);
+>> +	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL(pll), config->config_ctl_val);
+>> +	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U(pll), config->config_ctl_hi_val);
+>> +	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U1(pll), config->config_ctl_hi1_val);
+>> +	clk_alpha_pll_write_config(regmap, PLL_USER_CTL(pll), config->user_ctl_val);
+>> +	clk_alpha_pll_write_config(regmap, PLL_USER_CTL_U(pll), config->user_ctl_hi_val);
+>> +	clk_alpha_pll_write_config(regmap, PLL_USER_CTL_U1(pll), config->user_ctl_hi1_val);
+>> +	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL(pll), config->test_ctl_val);
+>> +	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U(pll), config->test_ctl_hi_val);
+>> +	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U1(pll), config->test_ctl_hi1_val);
+>> +
+>> +	/* Set operation mode to STANDBY */
+>> +	regmap_write(regmap, PLL_OPMODE(pll), PLL_STANDBY);
+>> +}
+>> +EXPORT_SYMBOL_GPL(clk_regera_pll_configure);
+> Does it make sense to call this function from clk_zonda_pll_configure()?
+
+
+Okay, I'll evaluate this internally and see if that can be done.
+
+
+>
+>> +
+>> +const struct clk_ops clk_alpha_pll_regera_ops = {
+>> +	.enable = clk_zonda_pll_enable,
+>> +	.disable = clk_zonda_pll_disable,
+>> +	.is_enabled = clk_alpha_pll_is_enabled,
+>> +	.recalc_rate = clk_trion_pll_recalc_rate,
+>> +	.round_rate = clk_alpha_pll_round_rate,
+>> +	.set_rate = clk_zonda_pll_set_rate,
+>> +};
+>> +EXPORT_SYMBOL_GPL(clk_alpha_pll_regera_ops);
+>> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+>> index fb6d50263bb9..5bb0a07da53d 100644
+>> --- a/drivers/clk/qcom/clk-alpha-pll.h
+>> +++ b/drivers/clk/qcom/clk-alpha-pll.h
+>> @@ -21,6 +21,7 @@ enum {
+>>   	CLK_ALPHA_PLL_TYPE_LUCID = CLK_ALPHA_PLL_TYPE_TRION,
+>>   	CLK_ALPHA_PLL_TYPE_AGERA,
+>>   	CLK_ALPHA_PLL_TYPE_ZONDA,
+>> +	CLK_ALPHA_PLL_TYPE_REGERA = CLK_ALPHA_PLL_TYPE_ZONDA,
+>>   	CLK_ALPHA_PLL_TYPE_ZONDA_OLE,
+>>   	CLK_ALPHA_PLL_TYPE_LUCID_EVO,
+>>   	CLK_ALPHA_PLL_TYPE_LUCID_OLE,
+>> @@ -189,6 +190,8 @@ extern const struct clk_ops clk_alpha_pll_postdiv_lucid_evo_ops;
+>>   extern const struct clk_ops clk_alpha_pll_rivian_evo_ops;
+>>   #define clk_alpha_pll_postdiv_rivian_evo_ops clk_alpha_pll_postdiv_fabia_ops
+>>   
+>> +extern const struct clk_ops clk_alpha_pll_regera_ops;
+>> +
+>>   void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>>   			     const struct alpha_pll_config *config);
+>>   void clk_fabia_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>> @@ -210,5 +213,7 @@ void clk_rivian_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regm
+>>   				  const struct alpha_pll_config *config);
+>>   void clk_stromer_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>>   			       const struct alpha_pll_config *config);
+>> +void clk_regera_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>> +			     const struct alpha_pll_config *config);
+>>   
+>>   #endif
+>>
+>> -- 
+>> 2.25.1
+>>
 
