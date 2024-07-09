@@ -1,115 +1,131 @@
-Return-Path: <linux-kernel+bounces-245112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95DAB92AE7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:14:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B0E192AE80
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ADC81F22C1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:14:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C956E1C21856
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 03:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E670543AD5;
-	Tue,  9 Jul 2024 03:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FA27A15C;
+	Tue,  9 Jul 2024 03:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SKHrPRnj"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JxT5OWKg"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC9379DC5
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 03:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C58487A5;
+	Tue,  9 Jul 2024 03:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720494887; cv=none; b=DTUA9vK+FR22EUj/r8BS0uZYsiqXRB6NPZiI9nFaE742KuXe9jOwx2oUhUoKmwCG9Up5Pl0FhmBjFAbpKa7ZT3kd72OfhIM3Mxx5uGlkDiJj2fWNL0+2WfU6vtjFOHBFtLWP5gWqLxWVtNqobxNXjmuv6oh806DaWQez/FDSgDE=
+	t=1720494903; cv=none; b=fFKtGTObdibf7LYZKJcwbMCNyQN7Hz6xoCK5wsSt+JC3u3ygzznpvxWuAXTfq4/Gs8CFMh0b3SuJ4iPdAPk/REP23L3qbWn1Ezj+hj/JFjPjw5lCYTvpemsbRKRjveFJDHh+1bLOlInB7B80lsOWhp2+id8eCa38lq4QRGiZBvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720494887; c=relaxed/simple;
-	bh=dzRlwYxsrGJ4KIqc7+Icq4MRTAAHtMVVE8IegY0vCAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WGgXxz+TqS/TuieqHg8MKz4TbjHdKM+k8Yl74CqME5V6FjGYl3zauLqxWLQS7NDZAv1JORQhF3TB5hTph0wmNMkp+HXCe/bGFhw5Iee1p/rxjNvbTJcwzRluMsFmVPpJUeTBGZfa+jJfrLMoBR+8iBAPzShRMyO6Q5P7syb8JjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SKHrPRnj; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c1a4192d55so2659682a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 20:14:45 -0700 (PDT)
+	s=arc-20240116; t=1720494903; c=relaxed/simple;
+	bh=4ZZio3Wb7LL1vgb5mt6lXU9W0NhwIVtcCUDpe3CmPn8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kYC7eT/GIVlUky7oiqYMFsaoWc8t4ee39TEeuZDCavUFhLOlQ01J58zyp5ePKTxBSUOLl88FP7a8KoPzlnsdNXIysQ+JNo8hWHU4n/1uBbosKmK7tKVXIDLqKkKrnhHDdbN7eRIRWH0h680KhMRz9IGBfXB8xmZA9BIHr7SUfGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JxT5OWKg; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-38abd30a1c9so663555ab.3;
+        Mon, 08 Jul 2024 20:15:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720494885; x=1721099685; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pvPxOKXTY/4mtLUCkxWUWZxN49J8zpBnSU1X8IK8Sug=;
-        b=SKHrPRnjc8m/Vtd9qbTbw1DgzYVKsxjHRY7FwlfEYPR8QMh2YFcggmsdx5aFkIRRCA
-         IlLYAaSHEiUYm1vubQaslDgG338fk0y4X30k7A6+GyveBF+SuUis5lP+09AdMNNKnDYh
-         z2seNXIHMKhrbnDDhUqgYPPpSLyBvfupzQu/q0ryr7XR43DD2MmswE7gK8ZmDhhusUJz
-         TRZCjdPAjAwzTI8mTuhpGTNvK/hHylsGqeX+qxglUYbDf3v/QgDztM0G7As5UH/D29ux
-         Frtq+heSH5c4dmLRVhCDP3mTV6nZQqOo5t5cZ9LB4yhd7BFe0z0tlPXVVVoIqvrszg7k
-         mLZg==
+        d=gmail.com; s=20230601; t=1720494901; x=1721099701; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4ZZio3Wb7LL1vgb5mt6lXU9W0NhwIVtcCUDpe3CmPn8=;
+        b=JxT5OWKg9J3guX3BHjsZ3CBCNvoU0lnoTQuF/Cw6wEsPczpfWDwI0cHheNHSNg7Rw7
+         lPb2gphvIUBs/lPcg1kNjDjRnsvc7+8lxtE05sLxNaTazU0U297v8Y9Qsi/4GFRktGEp
+         I/nAj312sez3jmR6x79D+2BnvSbRaNNW7WuhJcHl5AKxpvJYWCrYmuxipzNWV6UNWySy
+         aFMzJqYtlBbBJOw1MjXDUw1000WPP6uO5E8oMCwHJGzXui+Lk+g9tvavw3Ui3hkkiKlt
+         90PHczZdUtvw1HU2eAvs+UtoLKX8bpdkyB9T1K3GffroCbCaCtMO4AYgGiV9/TO0/nIh
+         apYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720494885; x=1721099685;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pvPxOKXTY/4mtLUCkxWUWZxN49J8zpBnSU1X8IK8Sug=;
-        b=ZB5HR42zzt/At8w9hEHjDCqUeaCLOb2etcH9g9j/b8s8vU3GO2e8VzN4I+2shDNN0G
-         4FslGpAXGClFoKxq13ht3vYM0jQgeeYky3MnSx6f7YMXsq5gnGBPTLL8HKuFYBBpDlLX
-         9KQ/XT6HPSbPUg4pfETSSmOZ1l7blRHSAf582I2TTOmqiHMlX8RnOyyOkdtTzjT8bLqK
-         skaFy39mdF8eirz/HYfPo4sfHQWlN7QwbsJvgLqkGYVHDDQJOp20/lQkgtrwZUxIlwda
-         i/56qQOx5KRdZ2n2tHoN7bqc7kijyT1OT549Q02Ur3GZkzySUktuH1uMhsm0+Yy3iPxU
-         Ct3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUdCGEPlgVCzxnfv0nFLAjN/+ANdUldtk7l+rhvlSV9fNQ928QKrFAkF3V8Fn2KdHtnjnRKS0SlFdg8/5AHjKHOI3l9bLHukBC/5bq7
-X-Gm-Message-State: AOJu0YxhZEkb7oMHtsXGpGGGyw4ZJkSyhjTexVGqsjOrQZrPFdN8h2el
-	2CT6l8lfWb1tC6EbPO6Y/Gru1e+S8UCYWKFFVKqn3+1cedesnGTdLt6Ei/gX069Q0q7qViyp11A
-	0
-X-Google-Smtp-Source: AGHT+IEOBq8PuD4oFMJkLh1pFoBgqljC1pxKAEneoVV1FfRnIFMZiqDzLh38CGn0thkn3m/UL8JA9Q==
-X-Received: by 2002:a17:90a:6509:b0:2c9:8020:1b51 with SMTP id 98e67ed59e1d1-2ca35be21d9mr1196347a91.3.1720494885035;
-        Mon, 08 Jul 2024 20:14:45 -0700 (PDT)
-Received: from localhost ([122.172.84.129])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99aa66582sm8899587a91.37.2024.07.08.20.14.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 20:14:44 -0700 (PDT)
-Date: Tue, 9 Jul 2024 08:44:39 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Raphael Gallais-Pou <rgallaispou@gmail.com>
-Cc: Patrice Chotard <patrice.chotard@foss.st.com>,
-	"'Rafael J . Wysocki'" <rafael@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: sti: fix build warning
-Message-ID: <20240709031439.llqdyaoxldsevuhc@vireshk-i7>
-References: <20240708171434.111623-1-rgallaispou@gmail.com>
+        d=1e100.net; s=20230601; t=1720494901; x=1721099701;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4ZZio3Wb7LL1vgb5mt6lXU9W0NhwIVtcCUDpe3CmPn8=;
+        b=lnNNry/ZLggmtQoQNUMvHHIfC8xdBj+wQ5O3rGYIppcg122Dx3aEcWw9KjTt++SfLO
+         7B4xDfApcMB9ULx91oqXE3AJHOBNEgJyOG8pOz6sNSpSoSb8U52E8YEO6lhE5VnDbyQ6
+         kz8JieLXDQxo+BWZo4CXbSvJSI5fHOz5JpE06JORggfHlwBjT9seexQuhNQL8OIl4+a1
+         XUf1CxJOpBlPPo4dpxbsfmAhgxvqkm6dCFIQV7NDbj7s6lG0wnz/mqsz8wRvQYdCKkUh
+         I58WBh9f98q6LtKlJkb5Zu+55HIfE2ypfouvUAFVvMiZ5DFjFBW3OVnk5Pzg+j8ZabOh
+         6dgw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDzUxDxSu0Pgti2cZ+A/F48ts8cZIFyCDwojRm/SPoE71LEZLeNsj2fztGFQ1RhM/15uK8JUfjCkUohw6LGhNPEd4t2GGy3w5faZ8f/8Szl73/ZOe2SS5XEgwb5iRmztA3fNXGn83fTwIn0eltUXNJ83Wxn+19iozfZCPpKetsQA==
+X-Gm-Message-State: AOJu0YwetvddmtMYZbivB0+xx+wiHCaMD16r9F2DQAA3BvbRFf10iqtx
+	UaLDzTSSlOdZRR2neB+FSgQv6qu0eRqZHVu/vHM+wMeFFYjyT1/biQ31AQF5p7Zpj8J4iNzKVui
+	Y0/FekvPd0j+C+V9uZLXmJHK0YUg=
+X-Google-Smtp-Source: AGHT+IHHmXTRDZjaslqjVeI4snU9357L42htoF1UJL+C84StlG4Jwrg6KF8y1KxRD7RthYqkPyl9yDBwl8IWF0Yrv2c=
+X-Received: by 2002:a05:6e02:1847:b0:374:ada1:295a with SMTP id
+ e9e14a558f8ab-38a5848daeamr16806195ab.16.1720494901020; Mon, 08 Jul 2024
+ 20:15:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240708171434.111623-1-rgallaispou@gmail.com>
+References: <20240627170900.1672542-1-andrii@kernel.org> <20240627170900.1672542-4-andrii@kernel.org>
+ <878qyqyorq.fsf@linux.intel.com> <CAEf4BzZHOhruFGinsRoPLtOsCzbEJyf2hSW=-F67hEHhvAsNZQ@mail.gmail.com>
+ <Zn86IUVaFh7rqS2I@tassilo> <CAEf4Bzb3CnCKZi-kZ21F=qM0BHvJnexgajP0mHanRfEOzzES6A@mail.gmail.com>
+ <ZoQTlSLDwaX3u37r@tassilo> <CAEf4BzYikHHoPGGX=hZ5283F1DEoinEt0kfRX3kpq2YFhzqyDw@mail.gmail.com>
+ <ZoySCNydQ-bW6Yg_@tassilo>
+In-Reply-To: <ZoySCNydQ-bW6Yg_@tassilo>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 8 Jul 2024 20:14:48 -0700
+Message-ID: <CAEf4Bzbj7zCUzh2thV-Wkk-YjX71tDLPjb=wc6ZF4HbG5nqPRw@mail.gmail.com>
+Subject: Re: [PATCH v6 3/6] fs/procfs: add build ID fetching to PROCMAP_QUERY API
+To: Andi Kleen <ak@linux.intel.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	viro@zeniv.linux.org.uk, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, gregkh@linuxfoundation.org, 
+	linux-mm@kvack.org, liam.howlett@oracle.com, surenb@google.com, 
+	rppt@kernel.org, adobriyan@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08-07-24, 19:14, Raphael Gallais-Pou wrote:
-> Building this driver yields the following:
-> 
-> .../drivers/cpufreq/sti-cpufreq.c:215:50: warning: ‘%d’ directive output may be truncated writing between 1 and 10 bytes into a region of size 2 [-Wformat-truncation=]
->   215 |         snprintf(name, MAX_PCODE_NAME_LEN, pcode%d, pcode);
->       |                                                  ^~
-> .../drivers/cpufreq/sti-cpufreq.c:215:44: note: directive argument in the range [0, 2147483647]
->   215 |         snprintf(name, MAX_PCODE_NAME_LEN, pcode%d, pcode);
->       |                                            ^~~~~~~~~
-> .../drivers/cpufreq/sti-cpufreq.c:215:9: note: ‘snprintf’ output between 7 and 16 bytes into a destination of size 7
->   215 |         snprintf(name, MAX_PCODE_NAME_LEN, pcode%d, pcode);
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Fix the buffer size to avoid the warning at build time.
-> 
-> Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
-> ---
->  drivers/cpufreq/sti-cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, Jul 8, 2024 at 6:27=E2=80=AFPM Andi Kleen <ak@linux.intel.com> wrot=
+e:
+>
+> > So what exactly did you have in mind when you were proposing that
+> > check? Did you mean to do a pass over all VMAs within the process to
+> > check if there is at least one executable VMA belonging to
+> > address_space? If yes, then that would certainly be way too expensive
+> > to be usable.
+>
+> I was thinking to only report the build ID when the VMA queried
+> is executable. If software wanted to look up a data symbol
+> and needs that buildid it would need to check a x vma too.
 
-Applied. Thanks.
+I think that's way too restrictive and for no good reason, tbh. If
+there is some .rodata ELF section mapped as r/o VMA, I don't see any
+reason why user shouldn't be able to request build ID for it.
 
--- 
-viresh
+>
+> Normally tools iterate over all the mappings anyways so this
+> shouldn't be a big burden for them.
+>
+
+This API aims to make this unnecessary. So that tools can request only
+relevant VMAs based on whatever captured data or code addresses it got
+from, say, profiling of perf events. And if there are some locks or
+other global data structures that fall into mapped portions of ELF
+data sections, the ability to get build ID for those is just as
+important as getting build ID for executable sections.
+
+> Did I miss something?
+>
+> I guess an alternative would be a new VMA flag, but iirc we're low on
+> bits there already.
+
+I think we should just keep things as is. I don't think there is any
+real added security in restricting this just to executable VMAs.
+
+>
+> -Andi
 
