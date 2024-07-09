@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-246601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CCA892C42B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:55:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 030D592C42E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A96581F23489
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:55:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B31D4284164
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54114182A76;
-	Tue,  9 Jul 2024 19:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F311918560C;
+	Tue,  9 Jul 2024 19:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UYi8hbCM"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a3Mk7TWS"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C184182A74;
-	Tue,  9 Jul 2024 19:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B5E1B86ED;
+	Tue,  9 Jul 2024 19:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720554938; cv=none; b=U1yJRUWSU2ykYAbHk2sVq3lDMLaPzISkHCq/cb/eLjiHHoTSjmARHgy3WOFsISAcEsjITsXnPyt82KyyVa0UrZy+dCl44QqSznuUv4fNjm/2MvNwsJBEXkd3TC7gfW5P57/PtPuYrRbYjkbgS0daLDDxxFNV7yVYa+oB2b1BQ4Q=
+	t=1720555007; cv=none; b=mU7oiGGUcrbpD/FynuPwE1VqLfgsy/UxdiSGzbiHAOCFYcPdDw0/O5/rKZze8wSGx0ImAiczi8XAdu9hiohgdl0WrwNkUMqloHUQvcrAI/75d4drFCSqFnw7cys7dCsmZHD9/SoxiNcwU4yH59aHJxFDGrqkta2OBI6sbi0lplI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720554938; c=relaxed/simple;
-	bh=fX/KQ+mAl0LS1uvwZ5S2iSk6vGVLpLkxqGmAAdu8FJg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gPGEHdiAoTPjmzCkUKh9VfQnM+4/V0duG1uJ5GrsjLkwNCOJxsdNSbcQrDA0mhX6KB9fzq2OvE8n/UY9ck4AqTns3svDtVtMZ2UYR7xLCnUGV3H1ujrzEjA55YhMu939ctaIZcB4eV43lN0Tqyd1r7Sj75pDujIL8KjC/huW4RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UYi8hbCM; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-36798779d75so4864006f8f.3;
-        Tue, 09 Jul 2024 12:55:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720554935; x=1721159735; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tj8SXQ2T3v0Iau1Rc6pv6fU6a86nQKAkdshKGb1RYAY=;
-        b=UYi8hbCMvA5lDAFSbgSv+0MRCPSuADFKiAw/0FR0bXVGG8LygoDrznTWlcAz9P7yzd
-         njuk3OG9R8zvHKbgI5m29CB5ULLxYAew7llAJaSnyAqZ82FJCvmvbAfo7dvsHBL1v6/f
-         PYx42onVwxrI/ZLhiNCwvE8tavbc05uHvKWXQO0f4Z+ueHUVhX64S2Tz49oIOJALdLqm
-         Pi1geTD55SFcOric3s8O8TsIdnDHJdcGE8J1Zwk+6z/VzItgFhME/nWhh5ZTUtKwVXUT
-         SQqndF1EgnPGxqe6FmPtF/XUe0p8p7xoMeM4lKNCiHRFuIRj+4JsNfCisz4VZ/U/ME9H
-         6b5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720554935; x=1721159735;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tj8SXQ2T3v0Iau1Rc6pv6fU6a86nQKAkdshKGb1RYAY=;
-        b=s1fp6nPLuh8ip9d//4ezzdMbCNXu2akOttel9k6WMDmypP2s5f/bXMMOFAQ8io/x4N
-         3jFqqNcAbB4SYxq3kAVu/FembDq9pjGqrmpcBHJFAYhrOdGdbBcEJsoQXQjoeBKaqJsz
-         leXH9mprg7lUAX5Aav8RmGostQyvT9FOgCObl4oVLEbiZXo6GF0SNLF76bkPylt9mXt/
-         6EWAnBeY3X4MPxuO1GdioGj9bwjqOSjpKTuGKqm1SWiCR1z2LxAyQk9ho1hFwnsBdGOI
-         3z+bebbKUMCcEt4q9ICQHA2hd5bS5vZBcIH+N6MpB879Gq3THqMHt0ww9bzl9tzEI/9O
-         Af9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWwo3Q8ebEsdfW71R0rgU84DXJsgTRCUJrW4Ba4s0LPurNk8ywm4NrolSDCA22IVa1HX6T2WY/5J116G7dR2K85sJ1RzBKAefhqLWQfktcUOc9gARN2Ba2Fa/79Whf6RgHaEZfJbvA=
-X-Gm-Message-State: AOJu0YxmaOIe4ei/N6sbATqnGChyNZEv2ds0rjB+E0u6LVSqsQDjCZWE
-	SJIFaKiXS3IEYaAyGmsqsfWlyZuzCknQuVDGafUnwpxOBiYu+/GZSGzx6A==
-X-Google-Smtp-Source: AGHT+IGuTvXzsHmHxXkl4S3WCqh+kTVelQjxbW/kK1xkaXuhWYCJfRW9rmD5vFzeiqnd56AGP6+eKQ==
-X-Received: by 2002:a05:6000:a8f:b0:366:f74f:abf0 with SMTP id ffacd0b85a97d-367cea67d3cmr3007527f8f.16.1720554935214;
-        Tue, 09 Jul 2024 12:55:35 -0700 (PDT)
-Received: from [192.168.42.222] ([148.252.145.239])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde7e192sm3429120f8f.9.2024.07.09.12.55.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 12:55:34 -0700 (PDT)
-Message-ID: <d9c00f01-576c-46cd-a88c-76e244460dac@gmail.com>
-Date: Tue, 9 Jul 2024 20:55:43 +0100
+	s=arc-20240116; t=1720555007; c=relaxed/simple;
+	bh=iGrkgNHDwjaspnRj+A9ep2nKHiE8m1A0f/54O8jUHa4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kh5nHgyWnwXsHVClMcp3WD/6Dcl8+E9OP3rvZxdaibjmmAuLnVcF/CvgfGQRIx6lrBEKGDBSt+udfLzFLdbgPG+okWnaDpaxU9cVEutHXm3TDOYMhtJuDfsm0nY981zVEui/XvhcUEV3+LYMsgQaAbYsUAO+rGnSHiyev9WQHno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a3Mk7TWS; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469ArSYH016564;
+	Tue, 9 Jul 2024 19:56:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BZq8fvJRscNfyyoib00+DW3enVqCLU4u9OjMtygYT40=; b=a3Mk7TWSB4cYL8VZ
+	MEPQl7oRFORtOIvTz7nzd2fkG37dV9n7HVtscY5TjueeuMmpGfiysMKGG6T8IFWQ
+	6vZbuZY9WH/vJK/YFikC2vVtiUVnliTeJ8VZKUujCx8SCYDdmJErfPd+4C6YZtvG
+	me5A/AREbRXEaE9/tjwL/sE2wASm9/JWNJvHR3PuJKWXk9Xi9JB+36kUPMyb4wx0
+	gqmGeXz5xfjSwZWoUV3i5pF4920hwfcapCFMcSC0yhOOmHBI4qBIWRSBZm+zlx0L
+	0Z0POX3q4g8T6r9w68oo64kuN5IbWVeL3zRimhFahoMYVXF51+KdQOqdHEEv6gKI
+	yHCGsQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x517np7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 19:56:27 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469JuQR0017047
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 19:56:26 GMT
+Received: from [10.48.245.228] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
+ 12:56:25 -0700
+Message-ID: <389aa594-5c58-4740-8079-3c2c88754be7@quicinc.com>
+Date: Tue, 9 Jul 2024 12:56:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,65 +64,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] kernel: rerun task_work while freezing in
- get_signal()
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, io-uring@vger.kernel.org,
- Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
- Christian Brauner <brauner@kernel.org>,
- Tycho Andersen <tandersen@netflix.com>, Thomas Gleixner
- <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
- Julian Orth <ju.orth@gmail.com>, Peter Zijlstra <peterz@infradead.org>
-References: <cover.1720368770.git.asml.silence@gmail.com>
- <1d935e9d87fd8672ef3e8a9a0db340d355ea08b4.1720368770.git.asml.silence@gmail.com>
- <20240708104221.GA18761@redhat.com>
- <62c11b59-c909-4c60-8370-77729544ec0a@gmail.com>
- <20240709103617.GB28495@redhat.com>
- <658da3fe-fa02-423b-aff0-52f54e1332ee@gmail.com>
- <Zo1ntduTPiF8Gmfl@slm.duckdns.org> <20240709190743.GB3892@redhat.com>
- <d2667002-1631-4f42-8aad-a9ea56c0762b@gmail.com>
- <20240709193828.GC3892@redhat.com>
+Subject: Re: [PATCH] floppy: add missing MODULE_DESCRIPTION() macro
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240709193828.GC3892@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: <efremov@linux.com>, Jens Axboe <axboe@kernel.dk>
+CC: <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240602-md-block-floppy-v1-1-bc628ea5eb84@quicinc.com>
+ <f3a27dbe-091a-43d0-aac8-eebb4e2833d4@linux.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <f3a27dbe-091a-43d0-aac8-eebb4e2833d4@linux.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: gBbqRD3DyAFeLuX82x96Ph0fxQBOMX6M
+X-Proofpoint-ORIG-GUID: gBbqRD3DyAFeLuX82x96Ph0fxQBOMX6M
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_08,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ suspectscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090134
 
-On 7/9/24 20:38, Oleg Nesterov wrote:
-> On 07/09, Pavel Begunkov wrote:
+On 6/3/2024 3:35 AM, Denis Efremov (Oracle) wrote:
+> On 6/3/24 04:05, Jeff Johnson wrote:
+>> make allmodconfig && make W=1 C=1 reports:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/floppy.o
 >>
->> On 7/9/24 20:07, Oleg Nesterov wrote:
->>> Hi Tejun,
->>>
->>> Thanks for looking at this, can you review this V2 patch from Pavel?
-> 
-> Just in case, I obviously meant our next (V2) patch
-> 
-> [PATCH v2 2/2] kernel: rerun task_work while freezing in get_signal()
-> https://lore.kernel.org/all/149ff5a762997c723880751e8a4019907a0b6457.1720534425.git.asml.silence@gmail.com/
-> 
->>> Well, I don't really understand what can snapshot/restore actually mean...
+>> Add the missing invocation of the MODULE_DESCRIPTION() macro.
 >>
->> CRIU, I assume. I'll try it ...
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>> ---
+>>  drivers/block/floppy.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
+>> index 25c9d85667f1..854a88cf56bd 100644
+>> --- a/drivers/block/floppy.c
+>> +++ b/drivers/block/floppy.c
+>> @@ -5016,6 +5016,7 @@ module_param(floppy, charp, 0);
+>>  module_param(FLOPPY_IRQ, int, 0);
+>>  module_param(FLOPPY_DMA, int, 0);
+>>  MODULE_AUTHOR("Alain L. Knaff");
+>> +MODULE_DESCRIPTION("Normal floppy disk support");
+>>  MODULE_LICENSE("GPL");
+>>  
+>>  /* This doesn't actually get used other than for module information */
+>>
+>> ---
+>> base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
+>> change-id: 20240602-md-block-floppy-1984117350ec
+>>
 > 
-> Than I think we can forget about task_works and this patch. CRIU dumps
-> the tasks in TASK_TRACED state.
+> Reviewed-by: Denis Efremov <efremov@linux.com>
 
-And would be hard to test, io_uring (the main source of task_work)
-is not supported
-
-(00.466022) Error (criu/proc_parse.c:477): Unknown shit 600 (anon_inode:[io_uring])
-...
-(00.467642) Unfreezing tasks into 1
-(00.467656)     Unseizing 15488 into 1
-(00.468149) Error (criu/cr-dump.c:2111): Dumping FAILED.
+I don't see this in linux-next yet so following up to see if anything else is
+needed to get this merged.
 
 
->> ... but I'm inclined to think the patch makes sense regardless,
->> we're replacing an infinite loop with wait-wake-execute-wait.
-> 
-> Agreed.
-
--- 
-Pavel Begunkov
 
