@@ -1,76 +1,74 @@
-Return-Path: <linux-kernel+bounces-245489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C4ED92B33C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:08:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8BF792B33F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:09:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40CA9B22A9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:08:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6CA01C225F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6610C1534FD;
-	Tue,  9 Jul 2024 09:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890BE154434;
+	Tue,  9 Jul 2024 09:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XnEXZKoB"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bR6e3GoC"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102457BAE3
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2DD14534C
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720516116; cv=none; b=iCqIue3KtF7myhoFKAScrNlhUnES6Djc6anm/ogpyd6qgK0z/kyYPh9rydNokXT901NlAFxpV6vNrCkx60K1XMmPrgOJs7iQa2FRmojwgnaQ941e0ZoBMLePrqOFsCR7Zc2QEG+FuYSNRf+btVnfUDOt6Fku6vuUT6e43J+8KzQ=
+	t=1720516131; cv=none; b=CpNLqVzd0nDn4VBbDmVxkuZUcTNTRER81gCZcMhlQSccv2FZJOmDscRG0qic+VFWvL33RIA9IjaZzkuNr5kJNJOsenxO0uIRIuyVO71SjMkY7xR0IuVyAtuSX0VRcpFx5nOCDKOXqJAKFAOeOZXyYS06jmeVnAE9Bd2lGR/NHE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720516116; c=relaxed/simple;
-	bh=kB/OaWouFNU3hqh04VJ5xn/I4pF+y0PiN4vGWGxRAaY=;
+	s=arc-20240116; t=1720516131; c=relaxed/simple;
+	bh=Z0xPFpGMNM1DRzaaF5OZtuXrdJ6qOuf1nCpsWBwhJ0k=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=jwqDowS0vSmeRGMERDSw3sIHal6v6ZQWf8tONVGjpb09PEe6B2lX4PxDSRezsEKwfupTYJ2O0UBgoy1U7hIgkJYropzJ8wsmOqZvmix0PG5yaFXsIFKjfG9S7X87DggXl0A53ujYIRE/2gxSGpgA98HfBbPbU/2G5Zyfsxvhhgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XnEXZKoB; arc=none smtp.client-ip=209.85.208.182
+	 In-Reply-To:Content-Type; b=KKJz8ndD/M25yUa7bnjcWtQk3koTiL2hwqtcyZ8KzKT8chZXMPj9gAMQ9dd7Gcaqi3/YmIvm+trt3jdgvk1clf82Q4CvGHFKp+8yjM2InbGJTmVwrOskAqQxXJXfwVABB00Ou6xytuaeB8UlDQEulYvBCoutbxeaDKP8FGjYjOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bR6e3GoC; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eaafda3b5cso48365191fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 02:08:32 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4266fd39527so6301025e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 02:08:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720516111; x=1721120911; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720516128; x=1721120928; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CmdthfUB0lCia3+pjHR/TlqzyKmsnOAaiH7zcFhwtHw=;
-        b=XnEXZKoBxapXagxJ5ueyFqI03DEMohuWyLQEL81f+a4n6KfXFEaN8HLVkh38nHA5ky
-         3ZglG6b8T2BqhI36OO4BZE1+HkNcj+wFEAff1g14TBH6rtBQ0T0PFg3gzvujv7u4Xo1O
-         3701bUS4FxjO1v3ZJOSXVoDsjgoWK4qPLsP/XoksjFdGRiG/m3oM3snF/oPleO75yy7Z
-         ybE5wQwGtM32RZSA62dTkawmU90eN5ZYuDMvs70eAorhoKX2mQG9/6IlKPb/LM3ibY5H
-         EPCKT0DRGZo8NmPQypH99MBO+wDeZ6SdaQixpsW6x6NeAxDWF3ygSnBiCUz6J1z3nFEG
-         2mFQ==
+        bh=5ANmKzDOIKVmKZHKX18dtZ0Xwvo3oCJHasWzFPD4tQ0=;
+        b=bR6e3GoCkpNowZ88fec/nhAWdy7s974miRfJqwTkqq4F8SllCYmMuqDy/mNIogwcgN
+         v4Ho56sMRJX7RwglB9yU503gA7hjoVhngvhuqJ6vzJ5B31vbI5DgZEs8V1B4ASghDwjW
+         B0sgAIMMLGAYA9OLQ522X3rsscTVNVPeZW8lxg4XJBFYm1QF8e3TsGwAX/kalk++QXtF
+         dmCWlGpPVFHelox/sTvDjDzVZXcPd3+a2Zqx+80p5oiWRHOUlOg32G+oc2+qATwVEos5
+         AQPbyFkJVtb2ULPBK9iOrN9PsL1n1KhKOR8/xvFx/GEpBVTbkqkzlgGgdyd2vtzMUuXs
+         rMcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720516111; x=1721120911;
+        d=1e100.net; s=20230601; t=1720516128; x=1721120928;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=CmdthfUB0lCia3+pjHR/TlqzyKmsnOAaiH7zcFhwtHw=;
-        b=vkimMAqUAK6EBKsMZ8XH2461EuHi+p7Xi4KpB6UoJyKU4xlQGc0QP4YBUtPet9TJ3f
-         b3WF8VQucQVWnhyZE1BDHDNNvfcBsOZKc6CGRGWPkRRP6i0Ni9GMUca0L39PJMGm6ew3
-         /XRuv+ChhxoPPQDImWeh/PqkXVCrp5ePLO49taLmSx/tfKjhrWVkAXMf1Pydla6WDswY
-         ZjY4j12vLfYkH56kgV+F26p0x6LeBSFkfINuPaoq61c7jTeKxTQvuHb4WHZhDcpOL6KR
-         EVqIDLGfv43n4+e6tYDud1WZyQGGF1BF5gRG2qW/wEXwlxW1ayaZ5ID/PNmG+H1RDuio
-         9gGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8nkQB1EGFAyjp6lL/YAR0f5Q7V2c8UdieEAzkyLch6taDJqixI8aAvsyIJgstHy7PGzvB03gYvozRivO4GbRRHXN3JPMHaJyfP3Fu
-X-Gm-Message-State: AOJu0YwXZQXysDhJfqZn1yg7bKIbTkbMrvQYLVKl/UfwsGj4o4+rsZnY
-	OVDpnco3Hu/cnc7+M9ceaIRO6Ryxokk7jU4Mipf+mgd/GeQk2Ij+Alfo/jEhrtIE9ibb8AhINcO
-	U0u8=
-X-Google-Smtp-Source: AGHT+IEtJIiE86xhBgxBKeQv7zMaRRuPXmv/jRIb3QypyrUCqGULk6d0VIimsfliwDU5MxU0qIHW4A==
-X-Received: by 2002:a2e:9903:0:b0:2ec:5fe1:c762 with SMTP id 38308e7fff4ca-2eeb3197c6fmr12601331fa.46.1720516110918;
-        Tue, 09 Jul 2024 02:08:30 -0700 (PDT)
+        bh=5ANmKzDOIKVmKZHKX18dtZ0Xwvo3oCJHasWzFPD4tQ0=;
+        b=OpSBPI40ulvO+mKm9Np934WiK9MRmMAqoCh9uIBw0CmAiErIapw7mtUCwZRhdSQAU6
+         tuAqUjy+k2DdktaHbo3zyZRD4kmZZ6j/1Q/tAiMph0xmBjcBkWLjhtTFbk2v/RwUdDFS
+         NsaO56lATUdm1EbyN7m8I2ZHQpFy6rvLySTPNl/PS8TWwHS9CUyk0/Cgw0rxreeL4zyt
+         SttMe0YkUiiTOOrd7EBBjQzdZugGmFmZwKJKOz9k6ebVenIIlfCvtiD9/y5vjnOX5f/m
+         HkKZ0kz262hsngQ8PvWLaB5eeBPk+U+4abdUlZca1KiOF0qlnGdPHSCsojAF3VYsGU3I
+         B4+g==
+X-Gm-Message-State: AOJu0Ywz8JamwO7ZBmt26YLISEd8S5jc2NcSk9mzsu3b9yB8zm4W8sa9
+	8IqxAJmHHnzuA6T407OnPJqgBb7NAz+5e2oLK5L0cjCfqq5ElCmZrPWOydfLO8E=
+X-Google-Smtp-Source: AGHT+IE8dGfgukDFvsdorYHZw//51MvpbEXXLFPm2ybjz9IBphbGLeUpfAWThkn7OBaAt18C73eG9A==
+X-Received: by 2002:a7b:c446:0:b0:426:5ddf:fd22 with SMTP id 5b1f17b1804b1-426705ce962mr12407445e9.6.1720516128261;
+        Tue, 09 Jul 2024 02:08:48 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:cad:2140:b12a:8461:5e2a:dfe? ([2a01:e0a:cad:2140:b12a:8461:5e2a:dfe])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f74462esm30643605e9.48.2024.07.09.02.08.28
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42663f049e5sm98687965e9.35.2024.07.09.02.08.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 02:08:30 -0700 (PDT)
-Message-ID: <f4a17dbc-07f3-4335-8e0c-ec64e2f80727@linaro.org>
-Date: Tue, 9 Jul 2024 11:08:27 +0200
+        Tue, 09 Jul 2024 02:08:47 -0700 (PDT)
+Message-ID: <3ad982d1-6626-4618-b815-cbee1f4f4901@linaro.org>
+Date: Tue, 9 Jul 2024 11:08:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,15 +78,16 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] arm64: dts: amlogic: enable some device nodes for S4
-To: xianwei.zhao@amlogic.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+Subject: Re: [PATCH] pmdomain: amlogic: Constify struct
+ meson_secure_pwrc_domain_desc
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@baylibre.com>,
  Jerome Brunet <jbrunet@baylibre.com>,
  Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240705-s4_node-v1-1-646ca7ac4f09@amlogic.com>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org
+References: <871d6b708de8bb42e1fabd8a601dc9a9a217cf00.1719863475.git.christophe.jaillet@wanadoo.fr>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -115,354 +114,99 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20240705-s4_node-v1-1-646ca7ac4f09@amlogic.com>
+In-Reply-To: <871d6b708de8bb42e1fabd8a601dc9a9a217cf00.1719863475.git.christophe.jaillet@wanadoo.fr>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 05/07/2024 07:39, Xianwei Zhao via B4 Relay wrote:
-> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+On 01/07/2024 21:53, Christophe JAILLET wrote:
+> 'struct meson_secure_pwrc_domain_desc' is not modified in this driver.
 > 
-> Enable some device nodes for AQ222 base S4, including
-> SD, regulator and ethnernet node.
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
 > 
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> ======
+>     text	   data	    bss	    dec	    hex	filename
+>     4909	   4072	      0	   8981	   2315	drivers/pmdomain/amlogic/meson-secure-pwrc.o
+> 
+> After:
+> =====
+>     text	   data	    bss	    dec	    hex	filename
+>     8605	    392	      0	   8997	   2325	drivers/pmdomain/amlogic/meson-secure-pwrc.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->   .../boot/dts/amlogic/meson-s4-s805x2-aq222.dts     | 146 +++++++++++++++++++++
->   arch/arm64/boot/dts/amlogic/meson-s4.dtsi          | 128 ++++++++++++++++++
->   2 files changed, 274 insertions(+)
+> Compile tested-only.
 > 
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts b/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts
-> index 983caddc409c..2ab685d9bd1d 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dts
-> @@ -34,6 +34,112 @@ secmon_reserved: secmon@5000000 {
->   			no-map;
->   		};
->   	};
-> +
-> +	sdio_32k: sdio-32k {
-> +		compatible = "pwm-clock";
-> +		#clock-cells = <0>;
-> +		clock-frequency = <32768>;
-> +		pwms = <&pwm_ef 0 30518 0>; /* PWM_E at 32.768KHz */
-> +	};
-> +
-> +	sdio_pwrseq: sdio-pwrseq {
-> +		compatible = "mmc-pwrseq-simple";
-> +		reset-gpios = <&gpio GPIOX_6 GPIO_ACTIVE_LOW>;
-> +		clocks = <&sdio_32k>;
-> +		clock-names = "ext_clock";
-> +	};
-> +
-> +	main_12v: regulator-main-12v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "12V";
-> +		regulator-min-microvolt = <12000000>;
-> +		regulator-max-microvolt = <12000000>;
-> +		regulator-always-on;
-> +	};
-> +
-> +	vddao_3v3: regulator-vddao-3v3 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "VDDAO_3V3";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		vin-supply = <&main_12v>;
-> +		regulator-always-on;
-> +	};
-> +
-> +	vddio_ao1v8: regulator-vddio-ao1v8 {
-> +	       compatible = "regulator-fixed";
-> +	       regulator-name = "VDDIO_AO1V8";
-> +	       regulator-min-microvolt = <1800000>;
-> +	       regulator-max-microvolt = <1800000>;
-> +	       vin-supply = <&vddao_3v3>;
-> +	       regulator-always-on;
-> +	};
-> +
-> +	/* SY8120B1ABC DC/DC Regulator. */
-> +	vddcpu: regulator-vddcpu {
-> +		compatible = "pwm-regulator";
-> +
-> +		regulator-name = "VDDCPU";
-> +		regulator-min-microvolt = <689000>;
-> +		regulator-max-microvolt = <1049000>;
-> +
-> +		vin-supply = <&main_12v>;
-> +
-> +		pwms = <&pwm_ij 1 1500 0>;
-> +		pwm-dutycycle-range = <100 0>;
-> +
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +		/* Voltage Duty-Cycle */
-> +		voltage-table = <1049000 0>,
-> +				<1039000 3>,
-> +				<1029000 6>,
-> +				<1019000 9>,
-> +				<1009000 12>,
-> +				<999000 14>,
-> +				<989000 17>,
-> +				<979000 20>,
-> +				<969000 23>,
-> +				<959000 26>,
-> +				<949000 29>,
-> +				<939000 31>,
-> +				<929000 34>,
-> +				<919000 37>,
-> +				<909000 40>,
-> +				<899000 43>,
-> +				<889000 45>,
-> +				<879000 48>,
-> +				<869000 51>,
-> +				<859000 54>,
-> +				<849000 56>,
-> +				<839000 59>,
-> +				<829000 62>,
-> +				<819000 65>,
-> +				<809000 68>,
-> +				<799000 70>,
-> +				<789000 73>,
-> +				<779000 76>,
-> +				<769000 79>,
-> +				<759000 81>,
-> +				<749000 84>,
-> +				<739000 87>,
-> +				<729000 89>,
-> +				<719000 92>,
-> +				<709000 95>,
-> +				<699000 98>,
-> +				<689000 100>;
-> +		status = "okay";
-
-You can drop status=okay here
-
-> +	};
-> +};
-> +
-> +&pwm_ef {
-> +	status = "okay";
-> +	pinctrl-0 = <&pwm_e_pins1>;
-> +	pinctrl-names = "default";
-> +};
-> +
-> +&pwm_ij {
-> +	status = "okay";
->   };
->   
->   &uart_b {
-> @@ -46,6 +152,40 @@ &ir {
->   	pinctrl-names = "default";
->   };
->   
-> +&sdio {
-> +	pinctrl-0 = <&sdio_pins>;
-> +	pinctrl-1 = <&sdio_clk_gate_pins>;
-> +	pinctrl-names = "default", "clk-gate";
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +	bus-width = <4>;
-> +	cap-sd-highspeed;
-> +	sd-uhs-sdr50;
-> +	sd-uhs-sdr104;
-> +	max-frequency = <200000000>;
-> +	non-removable;
-> +	disable-wp;
-> +	no-sd;
-> +	no-mmc;
-> +	vmmc-supply = <&vddao_3v3>;
-> +	vqmmc-supply = <&vddio_ao1v8>;
-> +};
-> +
-> +&sd {
-> +	status = "okay";
-> +	pinctrl-0 = <&sdcard_pins>;
-> +	pinctrl-1 = <&sdcard_clk_gate_pins>;
-> +	pinctrl-names = "default", "clk-gate";
-> +	bus-width = <4>;
-> +	cap-sd-highspeed;
-> +	max-frequency = <200000000>;
-> +	disable-wp;
-> +
-> +	cd-gpios = <&gpio GPIOC_6 GPIO_ACTIVE_LOW>;
-> +	vmmc-supply = <&vddao_3v3>;
-> +	vqmmc-supply = <&vddao_3v3>;
-> +};
-> +
->   &nand {
->   	status = "okay";
->   	#address-cells = <1>;
-> @@ -90,3 +230,9 @@ &spicc0 {
->   	pinctrl-0 = <&spicc0_pins_x>;
->   	cs-gpios = <&gpio GPIOX_10 GPIO_ACTIVE_LOW>;
->   };
-> +
-> +&ethmac {
-> +	status = "okay";
-> +	phy-handle = <&internal_ephy>;
-> +	phy-mode = "rmii";
-> +};
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-> index b686eacb9662..c11c947fa18c 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-> @@ -10,6 +10,7 @@
->   #include <dt-bindings/clock/amlogic,s4-pll-clkc.h>
->   #include <dt-bindings/clock/amlogic,s4-peripherals-clkc.h>
->   #include <dt-bindings/power/meson-s4-power.h>
-> +#include <dt-bindings/reset/amlogic,meson-s4-reset.h>
->   
->   / {
->   	cpus {
-> @@ -466,6 +467,93 @@ mux {
->   					};
->   				};
->   
-> +				sdcard_pins: sdcard-pins {
-> +					mux {
-> +						groups = "sdcard_d0_c",
-> +							 "sdcard_d1_c",
-> +							 "sdcard_d2_c",
-> +							 "sdcard_d3_c",
-> +							 "sdcard_clk_c",
-> +							 "sdcard_cmd_c";
-> +						function = "sdcard";
-> +						bias-pull-up;
-> +						drive-strength-microamp = <4000>;
-> +					};
-> +				};
-> +
-> +				sdcard_clk_gate_pins: sdcard-clk-gate-pins {
-> +					mux {
-> +						groups = "GPIOC_4";
-> +						function = "gpio_periphs";
-> +						bias-pull-down;
-> +						drive-strength-microamp = <4000>;
-> +					};
-> +				};
-> +
-> +				emmc_pins: emmc-pins {
-> +					mux-0 {
-> +						groups = "emmc_nand_d0",
-> +							 "emmc_nand_d1",
-> +							 "emmc_nand_d2",
-> +							 "emmc_nand_d3",
-> +							 "emmc_nand_d4",
-> +							 "emmc_nand_d5",
-> +							 "emmc_nand_d6",
-> +							 "emmc_nand_d7",
-> +							 "emmc_cmd";
-> +						function = "emmc";
-> +						bias-pull-up;
-> +						drive-strength-microamp = <4000>;
-> +					};
-> +					mux-1 {
-> +						groups = "emmc_clk";
-> +						function = "emmc";
-> +						bias-pull-up;
-> +						drive-strength-microamp = <4000>;
-> +					};
-> +				};
-> +
-> +				emmc_ds_pins: emmc-ds-pins {
-> +					mux {
-> +						groups = "emmc_nand_ds";
-> +						function = "emmc";
-> +						bias-pull-down;
-> +						drive-strength-microamp = <4000>;
-> +					};
-> +				};
-> +
-> +				emmc_clk_gate_pins: emmc-clk-gate-pins {
-> +					mux {
-> +						groups = "GPIOB_8";
-> +						function = "gpio_periphs";
-> +						bias-pull-down;
-> +						drive-strength-microamp = <4000>;
-> +					};
-> +				};
-> +
-> +				sdio_pins: sdio-pins {
-> +					mux {
-> +						groups = "sdio_d0",
-> +							 "sdio_d1",
-> +							 "sdio_d2",
-> +							 "sdio_d3",
-> +							 "sdio_clk",
-> +							 "sdio_cmd";
-> +						function = "sdio";
-> +						bias-pull-up;
-> +						drive-strength-microamp = <4000>;
-> +					};
-> +				};
-> +
-> +				sdio_clk_gate_pins: sdio-clk-gate-pins {
-> +					mux {
-> +						groups = "GPIOX_4";
-> +						function = "gpio_periphs";
-> +						bias-pull-down;
-> +						drive-strength-microamp = <4000>;
-> +					};
-> +				};
-> +
->   				spicc0_pins_x: spicc0-pins_x {
->   					mux {
->   						groups = "spi_a_mosi_x",
-> @@ -712,5 +800,45 @@ mdio0: mdio {
->   				compatible = "snps,dwmac-mdio";
->   			};
->   		};
-> +
-> +		sdio: mmc@fe088000 {
-> +			compatible = "amlogic,meson-axg-mmc";
-> +			reg = <0x0 0xfe088000 0x0 0x800>;
-> +			interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&clkc_periphs CLKID_SDEMMC_A>,
-> +				 <&xtal>,
-> +				 <&clkc_pll CLKID_FCLK_DIV2>;
-> +			clock-names = "core", "clkin0", "clkin1";
-> +			resets = <&reset RESET_SD_EMMC_A>;
-> +			cap-sdio-irq;
-> +			keep-power-in-suspend;
-> +			status = "disabled";
-> +		};
-> +
-> +		sd: mmc@fe08a000 {
-> +			compatible = "amlogic,meson-axg-mmc";
-> +			reg = <0x0 0xfe08a000 0x0 0x800>;
-> +			interrupts = <GIC_SPI 177 IRQ_TYPE_EDGE_RISING>;
-> +			clocks = <&clkc_periphs CLKID_SDEMMC_B>,
-> +				 <&clkc_periphs CLKID_SD_EMMC_B>,
-> +				 <&clkc_pll CLKID_FCLK_DIV2>;
-> +			clock-names = "core", "clkin0", "clkin1";
-> +			resets = <&reset RESET_SD_EMMC_B>;
-> +			status = "disabled";
-> +		};
-> +
-> +		emmc: mmc@fe08c000 {
-> +			compatible = "amlogic,meson-axg-mmc";
-> +			reg = <0x0 0xfe08c000 0x0 0x800>;
-> +			interrupts = <GIC_SPI 178 IRQ_TYPE_EDGE_RISING>;
-> +			clocks = <&clkc_periphs CLKID_NAND>,
-> +				 <&xtal>,
-> +				 <&clkc_pll CLKID_FCLK_DIV2>;
-> +			clock-names = "core", "clkin0", "clkin1";
-> +			resets = <&reset RESET_NAND_EMMC>;
-> +			no-sdio;
-> +			no-sd;
-> +			status = "disabled";
-> +		};
->   	};
->   };
+> The .is_off() function is *always* set as pwrc_secure_is_off(), so it could
+> make sense to remove this function pointer and call pwrc_secure_is_off()
+> directly when needed.
+> This would save some memory and useless indirection.
 > 
+> I leave it as-is because it is maybe here for future use.
 > ---
-> base-commit: 338c92a5d1956f1841f84b86923087676d1d0cea
-> change-id: 20240705-s4_node-8110e3286c0c
+>   drivers/pmdomain/amlogic/meson-secure-pwrc.c | 12 ++++++------
+>   1 file changed, 6 insertions(+), 6 deletions(-)
 > 
-> Best regards,
-
-With that fixed:
+> diff --git a/drivers/pmdomain/amlogic/meson-secure-pwrc.c b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> index df5567418226..62857482f874 100644
+> --- a/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> +++ b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> @@ -46,7 +46,7 @@ struct meson_secure_pwrc_domain_desc {
+>   
+>   struct meson_secure_pwrc_domain_data {
+>   	unsigned int count;
+> -	struct meson_secure_pwrc_domain_desc *domains;
+> +	const struct meson_secure_pwrc_domain_desc *domains;
+>   };
+>   
+>   static bool pwrc_secure_is_off(struct meson_secure_pwrc_domain *pwrc_domain)
+> @@ -110,7 +110,7 @@ static int meson_secure_pwrc_on(struct generic_pm_domain *domain)
+>   	.parent = __parent,			\
+>   }
+>   
+> -static struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
+> +static const struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
+>   	SEC_PD(DSPA,	0),
+>   	SEC_PD(DSPB,	0),
+>   	/* UART should keep working in ATF after suspend and before resume */
+> @@ -137,7 +137,7 @@ static struct meson_secure_pwrc_domain_desc a1_pwrc_domains[] = {
+>   	SEC_PD(RSA,	0),
+>   };
+>   
+> -static struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
+> +static const struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
+>   	SEC_PD(A4_AUDIO,	0),
+>   	SEC_PD(A4_SDIOA,	0),
+>   	SEC_PD(A4_EMMC,	0),
+> @@ -155,7 +155,7 @@ static struct meson_secure_pwrc_domain_desc a4_pwrc_domains[] = {
+>   	SEC_PD(A4_AO_IR,	GENPD_FLAG_ALWAYS_ON),
+>   };
+>   
+> -static struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
+> +static const struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
+>   	SEC_PD(C3_NNA,		0),
+>   	SEC_PD(C3_AUDIO,	0),
+>   	SEC_PD(C3_SDIOA,	0),
+> @@ -172,7 +172,7 @@ static struct meson_secure_pwrc_domain_desc c3_pwrc_domains[] = {
+>   	SEC_PD(C3_VCODEC,	0),
+>   };
+>   
+> -static struct meson_secure_pwrc_domain_desc s4_pwrc_domains[] = {
+> +static const struct meson_secure_pwrc_domain_desc s4_pwrc_domains[] = {
+>   	SEC_PD(S4_DOS_HEVC,	0),
+>   	SEC_PD(S4_DOS_VDEC,	0),
+>   	SEC_PD(S4_VPU_HDMI,	0),
+> @@ -184,7 +184,7 @@ static struct meson_secure_pwrc_domain_desc s4_pwrc_domains[] = {
+>   	SEC_PD(S4_AUDIO,	0),
+>   };
+>   
+> -static struct meson_secure_pwrc_domain_desc t7_pwrc_domains[] = {
+> +static const struct meson_secure_pwrc_domain_desc t7_pwrc_domains[] = {
+>   	SEC_PD(T7_DSPA,		0),
+>   	SEC_PD(T7_DSPB,		0),
+>   	TOP_PD(T7_DOS_HCODEC,	0, PWRC_T7_NIC3_ID),
 
 Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-
 
