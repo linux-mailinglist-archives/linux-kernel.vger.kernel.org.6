@@ -1,70 +1,65 @@
-Return-Path: <linux-kernel+bounces-246236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ECA392BF73
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:15:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79CCD92BF76
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9220B25213
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:15:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A95041C22837
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42BF19DF9C;
-	Tue,  9 Jul 2024 16:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA16319E7E9;
+	Tue,  9 Jul 2024 16:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CCsife4/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pkMfWZI9"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C2619B5B5;
-	Tue,  9 Jul 2024 16:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF5319E7D1;
+	Tue,  9 Jul 2024 16:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720541398; cv=none; b=MZAZVnFeCE/GiT+K06zFwCpg5l2xw7wA7NluTcO1T5Ddqmv17DEMOFpANf2W/MBOZSTG3g2IJjHPr8CGo4xwDnkKF70cI0xBM3C6jNtnB6fpy0DIX78CTPC4RqKq0jwVtbJrVLhc5RuFwiL73IlMLXIqgK3EdT/LAndawWlb/6o=
+	t=1720541450; cv=none; b=bOa0Q4Xx/ZZAiq6XXV7fxjzVlewEzNv5Et5syEaynx86BSpR9HeojFX0CYnlUw8HmJZdPFU9tBlO9b4JTI0HNq/nXxYRXeu+acNGWYLqvVHj/BwHhjL0/Qmp4sTGEaWm1/WXqPdMvp4T/XtBGXuNwhoAgtWiVITb9g0OVToajPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720541398; c=relaxed/simple;
-	bh=uC+UbPQo4xxV5hC4nWLzCH3ncmgP4biBjlcal1ceo/4=;
+	s=arc-20240116; t=1720541450; c=relaxed/simple;
+	bh=dgC6tmtgrbQlFS4J2iYnZJ7iHw/grcAUBzAVqZ6jQVE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mgZo7r2BEDwPO6/8gls0G1DsSlrogewm/eN3Uh7HPJ6n1K09boX4oWTPBCgAlIrLRujEfs9jml+9mYSpkdVUKx7T+NrTZUPntmCY0PADiAo2/zCNPCasf/Cc3SktW+CFE9LQ/2bUmQSeMSJAvxJLNUa3ZuN4L0omZV5Jc80t3WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CCsife4/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8397AC3277B;
-	Tue,  9 Jul 2024 16:09:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720541397;
-	bh=uC+UbPQo4xxV5hC4nWLzCH3ncmgP4biBjlcal1ceo/4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CCsife4/CYvHvy2wqd6hQxFWZyjy6RBNr4SO4ugKRQa+0lnJ31ZFm0c4m0pokrAdC
-	 k02vWnFtUEeB0Q+mUDgXkfs9O34eri/mjlMVvSL0sku/633TTiXvqioMg5k/K68Efc
-	 KQbWI7i5jW+mpHEdj/gjitHXpacV1Kc1FeyDhKBUwpXHGwR71U6EqNHacA+MjxpTjm
-	 x63TS/Ii8olmk4ULslABkxJj5UJFcbkL5qgGmuwf9BrJQN3JIFdUbWPuG3okG7OA+4
-	 +FmhUxW9CP7c+Fdhj99ECBNYq1+5c8u9oFm+W0qsu+tOg4NmrobJpUDKxCyr7KRBpJ
-	 t3+dOUikwnAjQ==
-Date: Tue, 9 Jul 2024 09:09:57 -0700
-From: Kees Cook <kees@kernel.org>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
-	Jann Horn <jannh@google.com>, Tony Luck <tony.luck@intel.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Marco Elver <elver@google.com>,
-	Nathan Chancellor <nathan@kernel.org>, Hao Luo <haoluo@google.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jakub Kicinski <kuba@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Tony Ambardar <tony.ambardar@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [RFC][PATCH 2/4] slab: Detect negative size values and saturate
-Message-ID: <202407090903.38C2F463@keescook>
-References: <20240708190924.work.846-kees@kernel.org>
- <20240708191840.335463-2-kees@kernel.org>
- <fc080824-37ff-4b69-ad4a-e76b458218d6@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=t+JVByKRF3pTMZw0Hh6TynMkJi9m/AHZYV66KToBHY7tpzfQFZYcWJWN3EYMaAlKKJSMPOQM1Lymz61xQliglUCd0SOk8xXzf1AzaSX0MFLAHe2HHW704tWnU9FExtpaOBpghERSWC6YmpsH4eqGFuNYJ0FdR7GUF0yTc4aSPb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pkMfWZI9; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LnWIqChk4eTwYt1NcOMi/u0QVSohlymD7QkWGfATE+g=; b=pkMfWZI9YY6pgUaFUThC3X3Lai
+	DDNYdlTMoPovZjS1u0TxpFAhZHLmGD/vwicLPLFMrpEs045b1XsY343XZ7bOa0ZKLYmzKGFqUIuNW
+	Cbk/WR/i9G2ziZiuDC8bxp+VnlDDjqgmFsSgCNSD3traCbat7oWYF3aVjcXpEbzy6knS6/X5ym7Nb
+	FNhWeNWbpg53gKuB7rsYg0RoiZFKFJBFYMOSEXHHnJZGZbWAztGjfyWXOmI5Yu9mS3jPYX7kJ9O5q
+	o1pPl5yLdAvveDqnKk01eb8g2Xl05U9LSZr2Fgk7TpGXOtgzLR5GksqFP4lyNpdTVh87Uj4z2y3Fm
+	0S3S3Imw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRDQS-0000000831E-45TG;
+	Tue, 09 Jul 2024 16:10:45 +0000
+Date: Tue, 9 Jul 2024 17:10:44 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org,
+	andrii@kernel.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org,
+	clm@meta.com, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+Message-ID: <Zo1hBFS7c_J-Yx-7@casper.infradead.org>
+References: <20240708091241.544262971@infradead.org>
+ <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
+ <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
+ <20240709090153.GF27299@noisy.programming.kicks-ass.net>
+ <91d37ad3-137b-4feb-8154-4deaa4b11dc3@paulmck-laptop>
+ <20240709142943.GL27299@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,87 +68,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fc080824-37ff-4b69-ad4a-e76b458218d6@intel.com>
+In-Reply-To: <20240709142943.GL27299@noisy.programming.kicks-ass.net>
 
-On Tue, Jul 09, 2024 at 08:57:55AM +0200, Przemek Kitszel wrote:
-> On 7/8/24 21:18, Kees Cook wrote:
-> > The allocator will already reject giant sizes seen from negative size
-> > arguments, so this commit mainly services as an example for initial
-> > type-based filtering. The size argument is checked for negative values
-> > in signed arguments, saturating any if found instead of passing them on.
+On Tue, Jul 09, 2024 at 04:29:43PM +0200, Peter Zijlstra wrote:
+> On Tue, Jul 09, 2024 at 07:11:23AM -0700, Paul E. McKenney wrote:
+> > On Tue, Jul 09, 2024 at 11:01:53AM +0200, Peter Zijlstra wrote:
+> > > On Mon, Jul 08, 2024 at 05:25:14PM -0700, Andrii Nakryiko wrote:
+> > > 
+> > > > Quick profiling for the 8-threaded benchmark shows that we spend >20%
+> > > > in mmap_read_lock/mmap_read_unlock in find_active_uprobe. I think
+> > > > that's what would prevent uprobes from scaling linearly. If you have
+> > > > some good ideas on how to get rid of that, I think it would be
+> > > > extremely beneficial. 
+> > > 
+> > > That's find_vma() and friends. I started RCU-ifying that a *long* time
+> > > ago when I started the speculative page fault patches. I sorta lost
+> > > track of that effort, Willy where are we with that?
+
+Probably best to start with lock_vma_under_rcu() in mm/memory.c.
+
+> > > Specifically, how feasible would it be to get a simple RCU based
+> > > find_vma() version sorted these days?
 > > 
-> > For example, now the size is checked:
-> > 
-> > Before:
-> > 				/* %rdi unchecked */
-> >   1eb:   be c0 0c 00 00          mov    $0xcc0,%esi
-> >   1f0:   e8 00 00 00 00          call   1f5 <do_SLAB_NEGATIVE+0x15>
-> >                          1f1: R_X86_64_PLT32 __kmalloc_noprof-0x4
-> > 
-> > After:
-> >   6d0:   48 63 c7                movslq %edi,%rax
-> >   6d3:   85 ff                   test   %edi,%edi
-> >   6d5:   be c0 0c 00 00          mov    $0xcc0,%esi
-> >   6da:   48 c7 c2 ff ff ff ff    mov    $0xffffffffffffffff,%rdx
-> >   6e1:   48 0f 49 d0             cmovns %rax,%rdx
-> >   6e5:   48 89 d7                mov    %rdx,%rdi
-> >   6e8:   e8 00 00 00 00          call   6ed <do_SLAB_NEGATIVE+0x1d>
-> >                          6e9: R_X86_64_PLT32     __kmalloc_noprof-0x4
-> > 
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> > Cc: Christoph Lameter <cl@linux.com>
-> > Cc: Pekka Enberg <penberg@kernel.org>
-> > Cc: David Rientjes <rientjes@google.com>
-> > Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Vlastimil Babka <vbabka@suse.cz>
-> > Cc: Roman Gushchin <roman.gushchin@linux.dev>
-> > Cc: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-> > Cc: linux-mm@kvack.org
-> > ---
-> >   include/linux/slab.h | 19 ++++++++++++++++++-
-> >   1 file changed, 18 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/include/linux/slab.h b/include/linux/slab.h
-> > index d99afce36098..7353756cbec6 100644
-> > --- a/include/linux/slab.h
-> > +++ b/include/linux/slab.h
-> > @@ -684,7 +684,24 @@ static __always_inline __alloc_size(1) void *kmalloc_noprof(size_t size, gfp_t f
-> >   	}
-> >   	return __kmalloc_noprof(size, flags);
-> >   }
-> > -#define kmalloc(...)				alloc_hooks(kmalloc_noprof(__VA_ARGS__))
-> > +#define kmalloc_sized(...)			alloc_hooks(kmalloc_noprof(__VA_ARGS__))
-> > +
-> > +#define __size_force_positive(x)				\
-> > +	({							\
-> > +		typeof(__force_integral_expr(x)) __forced_val =	\
-> > +			__force_integral_expr(x);		\
-> > +		__forced_val < 0 ? SIZE_MAX : __forced_val;	\
-> > +	})
-> > +
-> > +#define kmalloc(p, gfp)		_Generic((p),    \
-> > +	unsigned char:  kmalloc_sized(__force_integral_expr(p), gfp), \
-> > +	unsigned short: kmalloc_sized(__force_integral_expr(p), gfp), \
-> > +	unsigned int:   kmalloc_sized(__force_integral_expr(p), gfp), \
-> > +	unsigned long:  kmalloc_sized(__force_integral_expr(p), gfp), \
-> > +	signed char:    kmalloc_sized(__size_force_positive(p), gfp), \
-> > +	signed short:   kmalloc_sized(__size_force_positive(p), gfp), \
-> > +	signed int:     kmalloc_sized(__size_force_positive(p), gfp), \
-> > +	signed long:    kmalloc_sized(__size_force_positive(p), gfp))
+> > Liam's and Willy's Maple Tree work, combined with Suren's per-VMA locking
+> > combined with some of Vlastimil's slab work is pushing in that direction.
+> > I believe that things are getting pretty close.
 > 
-> I like this idea and series very much, thank you!
+> So I fundamentally do not believe in per-VMA locking. Specifically for
+> this case that would be trading one hot line for another. I tried
+> telling people that, but it doesn't seem to stick :/
 
-Thanks!
+SRCU also had its own performance problems, so we've got problems one
+way or the other.  The per-VMA lock probably doesn't work quite the way
+you think it does, but it absoutely can be a hot cacheline.
 
-> What about bool?
-> What about long long?
+I did propose a store-free variant at LSFMM 2022 and again at 2023,
+but was voted down.  https://lwn.net/Articles/932298/
 
-Ah yes, I will add these. LKP also found a weird one (a bitfield!) that
-I'm fixing at the source:
-https://lore.kernel.org/lkml/20240709154953.work.953-kees@kernel.org/
+I don't think the door is completely closed to a migration to that,
+but it's a harder sell than what we've got.  Of course, data helps ...
 
--- 
-Kees Cook
+> Per VMA refcounts or per VMA locks are a complete fail IMO.
+> 
+> I suppose I should go dig out the latest versions of those patches to
+> see where they're at :/
+
+Merged in v6.4 ;-P
 
