@@ -1,303 +1,212 @@
-Return-Path: <linux-kernel+bounces-245236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FB1A92B01B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:30:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE06392B01E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 081CF282EEC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:30:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63AE2282F40
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A152C13B5B3;
-	Tue,  9 Jul 2024 06:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EF013C3E6;
+	Tue,  9 Jul 2024 06:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e+vFQtoM"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fLPM2flf"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84B412C49C;
-	Tue,  9 Jul 2024 06:30:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139C542058;
+	Tue,  9 Jul 2024 06:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720506624; cv=none; b=u8UQJaJPxJl3TW2GNUl8Y2VrBiNt/CpVC20J6yhbsKvuzd94rWiOSuZUQzFMuzXDUWsa0a3XWXEvQWB1ibh7F1fmFaU0ogxbDO8GUdtZ9P2FaF7EmiB7cftErUD2WInuePfRqb7pR4Zv90W3X8g+LH4EsRVBEtKthDY2RtTcD4Q=
+	t=1720506655; cv=none; b=BUkmYFE4ywHeh6UKY0bzGfYqA82/SAWAW9AsAj89D4PAstCvRePOB0+0SAf1Mj8Yj7uKfYroYBOQxqovsErBo6RkC2F/kCYjwu4CkIR26Fsi/qqo7NVVw7oz/18zk+7oQurCIF/BQgFkTkDbXy8rktAmoY0kQVumISpmu2YFXuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720506624; c=relaxed/simple;
-	bh=KlDRQVtmM8THEFm2okCe18ZiNAPaeO9CrxKIi3ZHxPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=M/qeWyBDjmtYAwSg/27ReuI3+UtufkI4OcLtLDY7GM2kxdoPG08jzdcgJbkIz2s9n6nuwTfgtpxPI+7qwQ2o3Ij8xLV6o8xGwGToFEQN85uxskR6rRe0xtH2Rgy9gwi9IqfjozcrgkEXDj431/gNlaU06PDSwOmcJDKEgvgoY4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e+vFQtoM; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52e99060b41so5076788e87.2;
-        Mon, 08 Jul 2024 23:30:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720506621; x=1721111421; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ShtGGv5EDAR4+wbh24vGDrCYLPGvjs8IbCaS8cbSqGs=;
-        b=e+vFQtoMB9WGAbSRCeutA6MhX+9VihxbGQI+SFyFVv/wVbFoLXK792KR2hKsBtrH3q
-         UCD7fe1HsZ+F78M/aVvcDBbWmk0bacb73sLapFpmzf/2OTHWC/cpYXzZ20xY/59OoqNk
-         TK0HmmULlsRzq/DjZiPkRITcKu2wUgdq38y/PStI58bCf0A8zEwaH6wEq3sBVXHJhVah
-         PzoBbztLb4ebom4hZhBOHM1j+gXBy6EB34FaCsnvu+j2TsOQ/vgiQ14sckp6S0RZZk9a
-         6alopt0zEuyFF5agfL/amiEsLiLdQYkOIFT7Neq70SF1ufyvm1AwmqSX2CDrB35OcZrA
-         ShqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720506621; x=1721111421;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ShtGGv5EDAR4+wbh24vGDrCYLPGvjs8IbCaS8cbSqGs=;
-        b=hHNZQCziM+T9PIoVZzxG+3cA5kxh9VEIG7LCCniiTxtu5VSaLAAhxpd7K8/ljnVWDL
-         VpKeNTTXzm64LqvTjtknF0XzWgX5DqXvWi1pU//t6EZyWGobPGGu5Gc2Mxo6cJgE6e8D
-         1U+ZBP/bfyT3LaJtIrc1Ssg+S/RNAP4ANamEN/OfGdKhbSM/xqL8zJBMWby/fFMUWb7l
-         ZbQOxQFTSuY25Q1xnAeFN0pTrGFGUd2vcPpHafXxa8zRTE7h3ZvqOyxX9v7OQEwMK4UH
-         aX0806imwrr005p8Jbq/ynf2E3TF1MBLopmEO8IMPSq1IPmS6zZGvDh2C/JsVMN4ZpaS
-         Znlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxXK2VD6sLP2wNLN+L+VrfPYeKuQw0FZ48iWglU/ANE1Xjbb060kR3tPbdZUplxr1D6yAT3Yp48VSCUfTDYmGykv+3ozgTCx1hfKXYic++IEX2KTOyr+9ARZ4ecfO4f5qQKG5AggUwMg==
-X-Gm-Message-State: AOJu0YwSZUMsnxd3xE9QJXo2wjWP8qiTR7pxO3k5n5oZ+9AdBZDsOwdJ
-	Kl8f+fb7kuf8FMcXujvGsKvLh0784g/QBEGfS0khrB+u6xq9oW93
-X-Google-Smtp-Source: AGHT+IHrKs/8CNW8VfLftkpz3GKY9iSu0jP4UR0SAR9FzqhgG+U76RdECOJ6HqAbEzyS5DKPUnRHsQ==
-X-Received: by 2002:a05:6512:110c:b0:52e:943c:c637 with SMTP id 2adb3069b0e04-52eb99a1936mr953395e87.37.1720506620535;
-        Mon, 08 Jul 2024 23:30:20 -0700 (PDT)
-Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a1f2375sm193478805e9.27.2024.07.08.23.30.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 23:30:20 -0700 (PDT)
-Date: Tue, 9 Jul 2024 08:30:18 +0200
-From: Stanislav Jakubek <stano.jakubek@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Baolin Wang <baolin.wang7@gmail.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: mmc: sdhci-sprd: convert to YAML
-Message-ID: <ZozY+tOkzK9yfjbo@standask-GA-A55M-S2HP>
+	s=arc-20240116; t=1720506655; c=relaxed/simple;
+	bh=etv6vyELnEAkeQTxSVxz08z5Z5ADc2zisg0lWuBcT5c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aSl90O3bGoSIX8Nz5yUdsuyFY+RWYaxl584KKpmXwtThP2p7zPWW+pEIoAN4OUx12H1s5uRoJq6tzgvHdX5TH2BWIqW+/oY04YvL7ze0+7FASIYt4DZ4CPen2V8icOTXnSJXuia1MqbEnSr0xAmpBf7YJ9GwBVO4vFHb1kb1mNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fLPM2flf; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9C3261BF20B;
+	Tue,  9 Jul 2024 06:30:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720506644;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+2NQDBxJlcZNc0N2RFHXTEqnJPgJq8y9lK5jTGSMgAI=;
+	b=fLPM2flfk7isQ1jC19u7BvZa5xxYRMkak2S63bJ7YXzI7YzLM2GPvRE5ZImCJkfS+SdVO6
+	lp5NWk1MTN3gCgR3cvjAy4EM66/QI/0Wifm1P6CHhT4SwqEucCT5/obKcXNq11sbtOZrSA
+	aITR+W6aZsI9KWO/Ujr8xZE1vMOTA3W2w2bFGhrdTCaGBS32l3LnI0Wwq947hQ4AZp3qJ9
+	v81Ig9veqyguUbockCrMCFhqpL0eKPQ5GFch3IVpjGEuaUjN5MM/q207599aW4EPlGMk34
+	qm7HsRi9osL0eGds9fX4a6zdqAInlKMEqvzcdFuDhAcJdV+DXpZYh+FNYLqsNA==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?UTF-8?q?Nicol=C3=B2=20Veronese?= <nicveronese@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	mwojtas@chromium.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Romain Gantois <romain.gantois@bootlin.com>
+Subject: [PATCH net-next v17 00/14] Introduce PHY listing and link_topology tracking
+Date: Tue,  9 Jul 2024 08:30:23 +0200
+Message-ID: <20240709063039.2909536-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Covert the Spreadtrum SDHCI controller bindings to DT schema.
-Rename the file to match compatible. Drop assigned-* properties as
-these should not be needed.
+Hello everyone,
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
----
-Node name adjustments in DTS are being handled as part of:
-https://lore.kernel.org/lkml/cover.1720112081.git.stano.jakubek@gmail.com/
+This is V17 of the phy_link_topology series, aiming at improving support
+for multiple PHYs being attached to the same MAC.
 
-Changes in V2:
-  - drop assigned-* properties, these shouldn't be needed (Krzysztof)
-  - reflect this change in the commit description
+V17 is mostly a rebase of V16 on net-next, as the addition of new
+features in the PSE-PD command raised a conflict on the ethtool netlink
+spec, and patch 10 was updated :
 
- .../devicetree/bindings/mmc/sdhci-sprd.txt    |  67 -----------
- .../bindings/mmc/sprd,sdhci-r11.yaml          | 112 ++++++++++++++++++
- 2 files changed, 112 insertions(+), 67 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
- create mode 100644 Documentation/devicetree/bindings/mmc/sprd,sdhci-r11.yaml
+	("net: ethtool: pse-pd: Target the command to the requested PHY")
 
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-sprd.txt b/Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
-deleted file mode 100644
-index eb7eb1b529f0..000000000000
---- a/Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
-+++ /dev/null
-@@ -1,67 +0,0 @@
--* Spreadtrum SDHCI controller (sdhci-sprd)
--
--The Secure Digital (SD) Host controller on Spreadtrum SoCs provides an interface
--for MMC, SD and SDIO types of cards.
--
--This file documents differences between the core properties in mmc.txt
--and the properties used by the sdhci-sprd driver.
--
--Required properties:
--- compatible: Should contain "sprd,sdhci-r11".
--- reg: physical base address of the controller and length.
--- interrupts: Interrupts used by the SDHCI controller.
--- clocks: Should contain phandle for the clock feeding the SDHCI controller
--- clock-names: Should contain the following:
--	"sdio" - SDIO source clock (required)
--	"enable" - gate clock which used for enabling/disabling the device (required)
--	"2x_enable" - gate clock controlling the device for some special platforms (optional)
--
--Optional properties:
--- assigned-clocks: the same with "sdio" clock
--- assigned-clock-parents: the default parent of "sdio" clock
--- pinctrl-names: should be "default", "state_uhs"
--- pinctrl-0: should contain default/high speed pin control
--- pinctrl-1: should contain uhs mode pin control
--
--PHY DLL delays are used to delay the data valid window, and align the window
--to sampling clock. PHY DLL delays can be configured by following properties,
--and each property contains 4 cells which are used to configure the clock data
--write line delay value, clock read command line delay value, clock read data
--positive edge delay value and clock read data negative edge delay value.
--Each cell's delay value unit is cycle of the PHY clock.
--
--- sprd,phy-delay-legacy: Delay value for legacy timing.
--- sprd,phy-delay-sd-highspeed: Delay value for SD high-speed timing.
--- sprd,phy-delay-sd-uhs-sdr50: Delay value for SD UHS SDR50 timing.
--- sprd,phy-delay-sd-uhs-sdr104: Delay value for SD UHS SDR50 timing.
--- sprd,phy-delay-mmc-highspeed: Delay value for MMC high-speed timing.
--- sprd,phy-delay-mmc-ddr52: Delay value for MMC DDR52 timing.
--- sprd,phy-delay-mmc-hs200: Delay value for MMC HS200 timing.
--- sprd,phy-delay-mmc-hs400: Delay value for MMC HS400 timing.
--- sprd,phy-delay-mmc-hs400es: Delay value for MMC HS400 enhanced strobe timing.
--
--Examples:
--
--sdio0: sdio@20600000 {
--	compatible  = "sprd,sdhci-r11";
--	reg = <0 0x20600000 0 0x1000>;
--	interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
--
--	clock-names = "sdio", "enable";
--	clocks = <&ap_clk CLK_EMMC_2X>,
--		 <&apahb_gate CLK_EMMC_EB>;
--	assigned-clocks = <&ap_clk CLK_EMMC_2X>;
--	assigned-clock-parents = <&rpll CLK_RPLL_390M>;
--
--	pinctrl-names = "default", "state_uhs";
--	pinctrl-0 = <&sd0_pins_default>;
--	pinctrl-1 = <&sd0_pins_uhs>;
--
--	sprd,phy-delay-sd-uhs-sdr104 = <0x3f 0x7f 0x2e 0x2e>;
--	bus-width = <8>;
--	non-removable;
--	no-sdio;
--	no-sd;
--	cap-mmc-hw-reset;
--	status = "okay";
--};
-diff --git a/Documentation/devicetree/bindings/mmc/sprd,sdhci-r11.yaml b/Documentation/devicetree/bindings/mmc/sprd,sdhci-r11.yaml
-new file mode 100644
-index 000000000000..b08081bc018b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/sprd,sdhci-r11.yaml
-@@ -0,0 +1,112 @@
-+# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mmc/sprd,sdhci-r11.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Spreadtrum SDHCI controller
-+
-+maintainers:
-+  - Orson Zhai <orsonzhai@gmail.com>
-+  - Baolin Wang <baolin.wang7@gmail.com>
-+  - Chunyan Zhang <zhang.lyra@gmail.com>
-+
-+properties:
-+  compatible:
-+    const: sprd,sdhci-r11
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 2
-+    items:
-+      - description: SDIO source clock
-+      - description: gate clock for enabling/disabling the device
-+      - description: gate clock controlling the device for some special platforms (optional)
-+
-+  clock-names:
-+    minItems: 2
-+    items:
-+      - const: sdio
-+      - const: enable
-+      - const: 2x_enable
-+
-+  pinctrl-0:
-+    description: default/high speed pin control
-+    maxItems: 1
-+
-+  pinctrl-1:
-+    description: UHS mode pin control
-+    maxItems: 1
-+
-+  pinctrl-names:
-+    minItems: 1
-+    items:
-+      - const: default
-+      - const: state_uhs
-+
-+patternProperties:
-+  "^sprd,phy-delay-(legacy|mmc-(ddr52|highspeed|hs[24]00|hs400es)|sd-(highspeed|uhs-sdr(50|104)))$":
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    items:
-+      - description: clock data write line delay value
-+      - description: clock read command line delay value
-+      - description: clock read data positive edge delay value
-+      - description: clock read data negative edge delay value
-+    description:
-+      PHY DLL delays are used to delay the data valid window, and align
-+      the window to the sampling clock. Each cell's delay value unit is
-+      cycle of the PHY clock.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+
-+allOf:
-+  - $ref: sdhci-common.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/sprd,sc9860-clk.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    mmc@50430000 {
-+      compatible = "sprd,sdhci-r11";
-+      reg = <0x50430000 0x1000>;
-+      interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
-+
-+      clocks = <&aon_prediv CLK_EMMC_2X>,
-+               <&apahb_gate CLK_EMMC_EB>,
-+               <&aon_gate CLK_EMMC_2X_EN>;
-+      clock-names = "sdio", "enable", "2x_enable";
-+
-+      pinctrl-0 = <&sd0_pins_default>;
-+      pinctrl-1 = <&sd0_pins_uhs>;
-+      pinctrl-names = "default", "state_uhs";
-+
-+      bus-width = <8>;
-+      cap-mmc-hw-reset;
-+      mmc-hs400-enhanced-strobe;
-+      mmc-hs400-1_8v;
-+      mmc-hs200-1_8v;
-+      mmc-ddr-1_8v;
-+      non-removable;
-+      no-sdio;
-+      no-sd;
-+
-+      sprd,phy-delay-mmc-ddr52 = <0x3f 0x75 0x14 0x14>;
-+      sprd,phy-delay-mmc-hs200 = <0x0 0x8c 0x8c 0x8c>;
-+      sprd,phy-delay-mmc-hs400 = <0x44 0x7f 0x2e 0x2e>;
-+      sprd,phy-delay-mmc-hs400es = <0x3f 0x3f 0x2e 0x2e>;
-+    };
-+...
+The new code was updated to make use of the new helpers to retrieve the
+PHY from the ethnl request, and an error message was also updated to
+better reflect the fact that we don't only rely on the attached PHY for
+configuration.
+
+As a remainder, here's what the PHY listings would look like :
+ - eth0 has a 88x3310 acting as media converter, and an SFP module with
+   an embedded 88e1111 PHY
+ - eth2 has a 88e1510 PHY
+
+# ethtool --show-phys *
+
+PHY for eth0:
+PHY index: 1
+Driver name: mv88x3310
+PHY device name: f212a600.mdio-mii:00
+Downstream SFP bus name: sfp-eth0
+Upstream type: MAC
+
+PHY for eth0:
+PHY index: 2
+Driver name: Marvell 88E1111
+PHY device name: i2c:sfp-eth0:16
+Upstream type: PHY
+Upstream PHY index: 1
+Upstream SFP name: sfp-eth0
+
+PHY for eth2:
+PHY index: 1
+Driver name: Marvell 88E1510
+PHY device name: f212a200.mdio-mii:00
+Upstream type: MAC
+
+Ethtool patches : https://github.com/minimaxwell/ethtool/tree/mc/topo-v16
+
+Link to V16: https://lore.kernel.org/netdev/20240705132706.13588-1-maxime.chevallier@bootlin.com/
+Link to V15: https://lore.kernel.org/netdev/20240703140806.271938-1-maxime.chevallier@bootlin.com/
+Link to V14: https://lore.kernel.org/netdev/20240701131801.1227740-1-maxime.chevallier@bootlin.com/
+Link to V13: https://lore.kernel.org/netdev/20240607071836.911403-1-maxime.chevallier@bootlin.com/
+Link to v12: https://lore.kernel.org/netdev/20240605124920.720690-1-maxime.chevallier@bootlin.com/
+Link to v11: https://lore.kernel.org/netdev/20240404093004.2552221-1-maxime.chevallier@bootlin.com/
+Link to V10: https://lore.kernel.org/netdev/20240304151011.1610175-1-maxime.chevallier@bootlin.com/
+Link to V9: https://lore.kernel.org/netdev/20240228114728.51861-1-maxime.chevallier@bootlin.com/
+Link to V8: https://lore.kernel.org/netdev/20240220184217.3689988-1-maxime.chevallier@bootlin.com/
+Link to V7: https://lore.kernel.org/netdev/20240213150431.1796171-1-maxime.chevallier@bootlin.com/
+Link to V6: https://lore.kernel.org/netdev/20240126183851.2081418-1-maxime.chevallier@bootlin.com/
+Link to V5: https://lore.kernel.org/netdev/20231221180047.1924733-1-maxime.chevallier@bootlin.com/
+Link to V4: https://lore.kernel.org/netdev/20231215171237.1152563-1-maxime.chevallier@bootlin.com/
+Link to V3: https://lore.kernel.org/netdev/20231201163704.1306431-1-maxime.chevallier@bootlin.com/
+Link to V2: https://lore.kernel.org/netdev/20231117162323.626979-1-maxime.chevallier@bootlin.com/
+Link to V1: https://lore.kernel.org/netdev/20230907092407.647139-1-maxime.chevallier@bootlin.com/
+
+More discussions on specific issues that happened in 6.9-rc:
+
+https://lore.kernel.org/netdev/20240412104615.3779632-1-maxime.chevallier@bootlin.com/
+https://lore.kernel.org/netdev/20240429131008.439231-1-maxime.chevallier@bootlin.com/
+https://lore.kernel.org/netdev/20240507102822.2023826-1-maxime.chevallier@bootlin.com/
+
+Maxime Chevallier (14):
+  net: phy: Introduce ethernet link topology representation
+  net: sfp: pass the phy_device when disconnecting an sfp module's PHY
+  net: phy: add helpers to handle sfp phy connect/disconnect
+  net: sfp: Add helper to return the SFP bus name
+  net: ethtool: Allow passing a phy index for some commands
+  netlink: specs: add phy-index as a header parameter
+  net: ethtool: Introduce a command to list PHYs on an interface
+  netlink: specs: add ethnl PHY_GET command set
+  net: ethtool: plca: Target the command to the requested PHY
+  net: ethtool: pse-pd: Target the command to the requested PHY
+  net: ethtool: cable-test: Target the command to the requested PHY
+  net: ethtool: strset: Remove unnecessary check on genl_info
+  net: ethtool: strset: Allow querying phy stats by index
+  Documentation: networking: document phy_link_topology
+
+ Documentation/netlink/specs/ethtool.yaml      |  58 ++++
+ Documentation/networking/ethtool-netlink.rst  |  51 +++
+ Documentation/networking/index.rst            |   1 +
+ .../networking/phy-link-topology.rst          | 121 +++++++
+ MAINTAINERS                                   |   1 +
+ drivers/net/phy/Makefile                      |   2 +-
+ drivers/net/phy/marvell-88x2222.c             |   2 +
+ drivers/net/phy/marvell.c                     |   2 +
+ drivers/net/phy/marvell10g.c                  |   2 +
+ drivers/net/phy/phy_device.c                  |  48 +++
+ drivers/net/phy/phy_link_topology.c           | 105 ++++++
+ drivers/net/phy/phylink.c                     |   3 +-
+ drivers/net/phy/qcom/at803x.c                 |   2 +
+ drivers/net/phy/qcom/qca807x.c                |   2 +
+ drivers/net/phy/sfp-bus.c                     |  26 +-
+ include/linux/netdevice.h                     |   4 +-
+ include/linux/phy.h                           |   6 +
+ include/linux/phy_link_topology.h             |  82 +++++
+ include/linux/sfp.h                           |   8 +-
+ include/uapi/linux/ethtool.h                  |  16 +
+ include/uapi/linux/ethtool_netlink.h          |  20 ++
+ net/core/dev.c                                |  15 +
+ net/ethtool/Makefile                          |   3 +-
+ net/ethtool/cabletest.c                       |  35 +-
+ net/ethtool/netlink.c                         |  66 +++-
+ net/ethtool/netlink.h                         |  33 ++
+ net/ethtool/phy.c                             | 308 ++++++++++++++++++
+ net/ethtool/plca.c                            |  30 +-
+ net/ethtool/pse-pd.c                          |  31 +-
+ net/ethtool/strset.c                          |  27 +-
+ 30 files changed, 1057 insertions(+), 53 deletions(-)
+ create mode 100644 Documentation/networking/phy-link-topology.rst
+ create mode 100644 drivers/net/phy/phy_link_topology.c
+ create mode 100644 include/linux/phy_link_topology.h
+ create mode 100644 net/ethtool/phy.c
+
 -- 
-2.34.1
+2.45.1
 
 
