@@ -1,417 +1,404 @@
-Return-Path: <linux-kernel+bounces-245378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F4192B1DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:13:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FAFE92B1DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:13:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 455AC282805
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:13:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04EF22815BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97079152190;
-	Tue,  9 Jul 2024 08:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF2E15219B;
+	Tue,  9 Jul 2024 08:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="U8vDRd4r"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2063.outbound.protection.outlook.com [40.107.223.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M4MxP9ul"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D6D152DE0;
-	Tue,  9 Jul 2024 08:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720512778; cv=fail; b=gGWVP6sR83ulRfd88X+pRDTny/csxUy9eQ0q2oMLkm6Q2uRzifQeWiAZWJH292BcA/ZDXo4LhZpPvijmu3WEJHTFekVIp4AVVKTWcS6gy5nJcgTVkPvPFgP6KnDR/d6GTX5q1MfJk6eqacuzClUWRJHCB7n62aBIV+0EZVYuOgE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720512778; c=relaxed/simple;
-	bh=dCimnvFurMuNHegakl8n5mnCZh0YLbxdzlezG231XqQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=XtEAUWRvMPesyO+ga41xkczBKmyCcYrDXhFAIaBW30oNrfs0VFR08DochC9q0Z2MiPDd0mOvPSVC/sdb7XIknVatbzRKelMojv1NsTaOKbzsKDW4QGjeazHvGiRgrPx9lqiBMMX1Wtl6mQdoJP7U55i7Fno0wqs2RymHqs+nmYo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=U8vDRd4r; arc=fail smtp.client-ip=40.107.223.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QObJbO6+coIPSKE42BqnoHRSC46LX+gsbRLj2O2YyKiWgPaR9kvuFL0tMTrscy8GZhaSyEW8nYdOmuwOY3OoAZL2Iug9GeXlD6bklPrQ/zE+BqkxZKsgMA2QGGin2hZ0UGop53pslkhYwyj4CUrLn7d6aEdhxaZmJrU2PT235JtM8j+rSDQG7TgzqMeWWXeD1rQB9KbDkiV59kb52FxUiKWj5jVZYdPukg3hauTHWpGZV+dNTA4qN4cdY2WoCLjHmKsW1X8aCVeLL5zpqyUEVxO/8UJ/nwHJylfKp9+Sc/aS/Ah6AVs1rX5IX+auZt2nY/TdX3thoCyCqCGvIfSbDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=olET9NKXpeM8+y4R8raTGm23sPCNkBGWN2BZfP6xGPM=;
- b=D3wqMfpxC/bkmtwlhNsrJcGoWWFux7TGBDts3wOgtUnL5nqXBFst7uG1+5I64ywDbp0/ZFsBpykMpznUpFNkI3/+025hgtKm/2YPhQRSd40uSO1Q+M7+VgfcDTZuR+gz2ioTM/fIxxylBsZCDEUd3dtsCVyqfbJo4hxX4JIIMfGx0nAgs9BTaSggTC//Ge1lbIC7peycroBlhzSakevttz8M28DfcR8XZ6xrO82hdBCre8YlfX/fWVyFHY/yKgrTS1i9nuFG8bC0DY3grAx4oPsdp41hvIhm8rAx5yn4z+BsrWsymprA3zng90PWpl0fCtSfgSfgxKqyfYKTl8DWdg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=olET9NKXpeM8+y4R8raTGm23sPCNkBGWN2BZfP6xGPM=;
- b=U8vDRd4rEQsmHtJDcJBxkWw5qhKB8fR14CdFgKlcTwQX/TJ6eK0w+zYYIOZN3vf3GfnCUYW3inq4wpYzR+S75/ZKcqShoUkVVqipy3BVV7htxlqTrK0aaxpcN1oNsyzTT3bIhHEjtfBIS4YbmBpBPKZHr0JI7zf8ky/4pRhErJk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SN6PR12MB2767.namprd12.prod.outlook.com (2603:10b6:805:75::23)
- by IA1PR12MB8224.namprd12.prod.outlook.com (2603:10b6:208:3f9::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Tue, 9 Jul
- 2024 08:12:52 +0000
-Received: from SN6PR12MB2767.namprd12.prod.outlook.com
- ([fe80::e441:89a7:4dd:dce7]) by SN6PR12MB2767.namprd12.prod.outlook.com
- ([fe80::e441:89a7:4dd:dce7%4]) with mapi id 15.20.7741.033; Tue, 9 Jul 2024
- 08:12:52 +0000
-Message-ID: <51f06b90-d992-4187-a533-f9e89c36521c@amd.com>
-Date: Tue, 9 Jul 2024 03:12:49 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 10/13] PCI: Give pci_intx() its own devres callback
-Content-Language: en-US
-To: Philipp Stanner <pstanner@redhat.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Bjorn Helgaas <helgaas@kernel.org>
-Cc: airlied@gmail.com, bhelgaas@google.com, dakr@redhat.com, daniel@ffwll.ch,
- dri-devel@lists.freedesktop.org, hdegoede@redhat.com,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, sam@ravnborg.org,
- tzimmermann@suse.de, thomas.lendacky@amd.com, mario.limonciello@amd.com
-References: <20240613115032.29098-11-pstanner@redhat.com>
- <20240708214656.4721-1-Ashish.Kalra@amd.com>
- <7734192dbf4d07ce77ab7a20481ccb12ff71ffcb.camel@redhat.com>
-From: "Kalra, Ashish" <ashish.kalra@amd.com>
-In-Reply-To: <7734192dbf4d07ce77ab7a20481ccb12ff71ffcb.camel@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA1PR03CA0012.namprd03.prod.outlook.com
- (2603:10b6:806:2d3::15) To SN6PR12MB2767.namprd12.prod.outlook.com
- (2603:10b6:805:75::23)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC06D150989
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720512806; cv=none; b=SZOUc07n80mQ1q2J0ICH9xHDkUHy0iwyVerCCGYDxCsNldS8jy0N/+wPR2vMp3KH9/QvjeQq+1zp/yScP6ArbKaAtYSFbY6UCjbRfIxghbLoSyFzymqMDnvhBfSEFHQS4ov94y9bbuMUX6DNgucKb1JgDN7rthYOjC9nfloQ5gQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720512806; c=relaxed/simple;
+	bh=l+0JA4AQdekPuGSCKlsPlOhzaLYjpGdIwXuJeuUHWMA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r9AA3+HgMBhZKTugO+xcBkS0SRFgjfi7oohBVinCl9Fl8Bh1UzKe6l9VZdhaWMruHiBzssDQXgbApHCv9D4pfLymWMNJ3BNNBTyOHwYJRjDMgDwpXkok9dQOGv7sbP0Mg2/9iK1bOMeoUsM5NJ4ivlodLP1ByAPAS635Fj/prUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M4MxP9ul; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-4f2e1093abeso1844765e0c.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 01:13:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720512804; x=1721117604; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ab5Y1VUQuoOzyq8nuVbYD/Ed9ffD45Te09SgAn6tRXo=;
+        b=M4MxP9ulwmmb07+3imR7CzhTHNt8YXxXOr94EF15mZeMUoQbv0ZpNjldShBCjHvABT
+         zwQIIsBQsb52Vbv+I697v2xYLcWY7pYBut1Lq5QH/urkkCzcYGkgBooN0HHjuif3vNAz
+         tL+V70k1kZwHSunvxt6zUQERhr28D5u9RJUrxw0QUxSf5xlLA8EbmZqvEsHfJtuNMPoo
+         faFoT/iIsPcdPklYX3HMhTUMqBHk2Kl4F6LZ8NEWvWQO/JA3qJ0GPHxQZ5OklnW/reS9
+         z/cQj2qYY7ghKeLI3469bj+Zpirf9mp4w1WLhNK4V+97V+Iek8TkM7/Eo0qmbp/w0sfH
+         F4wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720512804; x=1721117604;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ab5Y1VUQuoOzyq8nuVbYD/Ed9ffD45Te09SgAn6tRXo=;
+        b=KUmiIJ1rvLpYEuRttVo5/GDw0r8aIF+8lA2yIbZUsESnEOlMW4CDm4vTz9lOwbU5By
+         6rQGVVYm1ZushfF7LzjCHruiBbS2ScGSOdQB0UbZsAVwa+FRAMTF57Jl+g3AHTvsBnbQ
+         pSZWYUGXn9pc2RivRArxLFBtyXQcww1S3nEiXbWxG6oBRBW6jEyafPWF/Af1RTY+zCSW
+         BeitHqYl7Kn5Q1gZHXrCcsqmvYJdoiYnBK4jV64zqEa/2UKT7zLaOmdFQXkszY3XpT4L
+         IYqqEllI5uajBUrxkgLh8Kn/uknepOcbhpjjCUXzdcZTOPg0/Y1Pz6yOSCCdz6JY2Nvi
+         rJOg==
+X-Forwarded-Encrypted: i=1; AJvYcCWEpd/bUCw4/e8vrtJv4GCFtPX17KraeEcD90MPwAjd9DFPHyyMxa6827BF9Ws+eye4Z5hBEW7QxB7ozgD/56ADfR8tWabuFBsAcyjm
+X-Gm-Message-State: AOJu0YzTAolPzozzm20Cy18ngHXchvHz3yY2Ia876X7KMVcYrAAghREZ
+	bMZoj0Njw172Jjm6ZAPv2fSjgHOCQdrLiNQ0xgq0cJSlPbQlaEN/S6Rnb9PLaM6/615+PbMw2sW
+	WRuPdyyeSXu+a3U8hWhsWY2eZImM=
+X-Google-Smtp-Source: AGHT+IHYObEmYfEECsSxwORrF9H7EXEX//ZVvH5n3ik1g0i4zYI7j1Iiv05il1fPKrHOmh6dzKmsRS1cnkI7Hj9ZGGc=
+X-Received: by 2002:a05:6122:218d:b0:4ed:36f:9b38 with SMTP id
+ 71dfb90a1353d-4f33f29bc51mr2165474e0c.9.1720512802064; Tue, 09 Jul 2024
+ 01:13:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR12MB2767:EE_|IA1PR12MB8224:EE_
-X-MS-Office365-Filtering-Correlation-Id: c22c7bf0-9ec5-49f0-92df-08dc9feeedc7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WURTVWsxcDZ1elp6bWx6b1BSMDA4bHduZVk5NjdEaFdTNUZyNDVKS3REdU1v?=
- =?utf-8?B?VTE3SmZrdG1SUFpleTd3V1k1ZjNwRDgrM3dLajNWVHIvRU1oNTVLMmtKdWZM?=
- =?utf-8?B?dk5OUm5IMjUvY2JnOXFDcFFxSnJGdXdGRm9WcHN3L1MzTVRKYlkwSWVpUE1K?=
- =?utf-8?B?RUladmEwbkh6Y0JwWGlxaWhwK3BaR25vdlRtenlxbC85b0w3Q2YvMWxNTE42?=
- =?utf-8?B?Yll2a0VTeHhHeXk1ZlhqTGg1Q0JTaURudTRPSG5FbENadUJmVTAvSk1Dd2Nu?=
- =?utf-8?B?RVAybnVhYmNVSjFia1BNbHRDQUZmS2NVcUQ3K1l4S2dRaHpQVGtodkx2c2l4?=
- =?utf-8?B?dDM0RmxFK0tDR1ZzbVhWN1VyU0tmcWQ2c0lQMzA4c1ZGQ0FJZTFOdjVmbXBL?=
- =?utf-8?B?cW1HSEFHTlRTd244M1I5bFRJYVVUYW40c1JIZTZQUkZTSzhKV08zUGU2M3Fo?=
- =?utf-8?B?U2pWZEpJNkhvUFBuUEpZUnorbFBLb1FLSGlGeWxVUG91cVNmbFZmdGpQUmE2?=
- =?utf-8?B?RVc3d0w5WkJ3bHl6ejJjeGtxeXlnQzl0ODdwbXlMQ0gyR0d4anFmSFRhVUVC?=
- =?utf-8?B?ZzFtK1hIT3FiTHdBZG9wbzhRY1luUjZPa3oydmJiOHF6QXlPUjJYNTFVM0Uz?=
- =?utf-8?B?RlVzUFVsNXg3QUFLLzc2NEdLdEk4a1FxcjQ4ck8zOVNZOWhrM0t3K1hCSU1P?=
- =?utf-8?B?aXdFZHNkd0JkZTFhZjFRMm9nT2M1UnY0d1lRNFlQNHBvVEhtZTV5ZVVhTEpP?=
- =?utf-8?B?NzVKTFFKY1dUbG5xSlBKVTlWWnVrbjFXRHRBVmkvMERucS93azlReTZvWWRG?=
- =?utf-8?B?dlRyUWF3bXRGZUZKRmNFUXJseFhkeVg0VHZYRDRMLzV6U1NyVy9CZEdKOTBS?=
- =?utf-8?B?bmZQQ3Q4Tkx0eXhVTXo2eWRRZlYwcC9kWis0OEUvNko1Wm1MUXc3U1ZjcjJx?=
- =?utf-8?B?NUI4eURGV1A3ekpYUHY4d0EyeXZLaHViUEtyYXRUQTZlWU03cVFmTEF5bEdu?=
- =?utf-8?B?Z05VbUlEQys4VjhpNHhMVHJrTkN5L1lmVDlScjBqMG90ajZWNlkwZ1NWNEpo?=
- =?utf-8?B?Q0xwZFMwY1pxWUEvdlMrUTE0cTR4OXc1SXN0d1ZCZlhiUjM2UW9vMHNFNkpu?=
- =?utf-8?B?Ni9RQi9nNzdCVmFTNk9jWmc3YW02bERMYWZISXlRbUNpKzN6cm9rejYvUXdi?=
- =?utf-8?B?Vjd4ZVpQbng2cDdScWRxa3N0azhhVW1rK0RPRm0rbm5uVTY4NW9NbGdtbVlh?=
- =?utf-8?B?TCsxTlpEcFpSUjRLMlNlZWRTSUtKd3lDWmxrTGpkTzJDb1RMcFJHUi9aRXNl?=
- =?utf-8?B?OXBwNCswckFRK3lkaFBoUENtS2YvdlZPZzFwRldIMFByQkRSdnpYRzd4cnc0?=
- =?utf-8?B?VHkrWWxkdks0aCs3c1N2QnFGcGlMb0NqZjV2b3NLcjlsbnUza3VRZEJPY2la?=
- =?utf-8?B?b3piV1hucnBBcmt5M0pHc1RIODNJMS8rZnMvT1gzZ1ZDYlpYRW1CUjBheksv?=
- =?utf-8?B?V3QvSmltNXZqL21sYk8xc2tLcU9XUnFlSXZWeER5L2FZVXd6SlNaSThVQTBM?=
- =?utf-8?B?bnlGTjhNTXUzSXdpT0xDcnRseHZJVXNBcDRDUXd5WE1RMTNtMnpKbEVxZFV1?=
- =?utf-8?B?WS9TTDhvYVVaOEkyMGZLSWp2QkUwL0xFcWQwWWx4em1xM3JsNUkwQmd4OUxx?=
- =?utf-8?B?cVNaSGhNTWVxZVVrdFV4OWdtLzR6N3Zmb2FhT2puaDR1b1FaQ0RyemFuQld0?=
- =?utf-8?B?TXdPY0h5MkFMRmVwbUp6ZXZBRlhkZ2hXcXVGa1FSdFlScjNvMVpIUjhsNUZv?=
- =?utf-8?B?ZVR0a2VQRFRTM00rdWRDUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR12MB2767.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?c1dXWXVyTXJBOWVPOWk5RXZrZVp3ZUZXc0NJN2EwQTFQbjNpOWRXTzFIRnNH?=
- =?utf-8?B?VzdVTGdDb1pYWDNpWDF1ckcrZVpGZ1hPL2g3TndCcWNrZENYNnpiSm8wT2RY?=
- =?utf-8?B?NDVYZ3RlYzVMUzMxRHQrcWtXRW5sR0hFb25FMVpKMFkwM3BDUGh2T1hOTmJH?=
- =?utf-8?B?Wnl5TS9qNjJXZS94WDY5TFREOE1lSTRpbVJiRlZkekdEYXJLZ3lXTnh4OWND?=
- =?utf-8?B?TVc5dzV1U2g1enlXTUlCSzNzSjdyRS90dUs0NnRZWUJEOEhqcWh3dlBoQ3kv?=
- =?utf-8?B?U1JRdzhkUzNFdkw0QW1aREJYT1JjZFNhNEtXUzg2b3RaTFAyRmtydUFUTDRI?=
- =?utf-8?B?dm5NV1ZGQUdmRll3Z01iL3VHbXJIaW9WU0FXL0FhMlA3TGxqcDJEYmRwL3p2?=
- =?utf-8?B?TG9QZCtpZExmdGhPN0wyNjI1S1ovRm9yMGlXTlY0VVZDR1hKNCtHOElxVld6?=
- =?utf-8?B?cVgrM05QdDE2WkNWRmM0cWNPcVVyMzdqdVIvcDJiYTRvOGlrRUlDN05uRVpK?=
- =?utf-8?B?UHpHbEFtQWp1R0h6QS9idFhQYWRmb2laVU83RmJtL0Fqa1J2M3ZRNUJzUW9j?=
- =?utf-8?B?YzVvVkExOE5wdDg5WFV0SmVVdlM3MVlsYWU4ZzFsTGVKN2ExVTFTNEY5N05p?=
- =?utf-8?B?ZFVuNFl0UDZMSUNRU1o2T29aSWM1RmVFeFB4MVVMYThDbHkyWjJDRDZmWnJL?=
- =?utf-8?B?UkVHVkJ5a3FrdStINUwvVHR1bitud2RyZjVFWkV0YmZLc2xWVFg5RXNZN21D?=
- =?utf-8?B?RE5tRXk3SlNLT092OWp2UFg2ZEl5ZlJYWGFnR3Azcjcrb2FJck9NV0xGbnFs?=
- =?utf-8?B?eDREams1RHN3N1J4R2hXWkhWNGg4a0RnWXA4T2Q5SEd3eHFySmR6bzF2VVJR?=
- =?utf-8?B?VE5jYXEyQVg1VFRDbjdTRGJwK2Fod2VBQVFSOGwyaDJ1aDdzaEF6MS92WC9y?=
- =?utf-8?B?Y3RXZm9jZE52QUU3OE5lT25GdCtzTU0vNm9OZFNGSW1GQU5HK21MY1UrQk9S?=
- =?utf-8?B?cEQrUW9LdHBQS3JOeEVTYkRlcGNjQW96ZVY1emk5Z3l0L25ZWnJBVEhUZXFB?=
- =?utf-8?B?eERPU0pGcUszdUNhcGZobFBBNFN5RXRuYUN4MVlkU0hzRUVxT0NyRXlLSG1o?=
- =?utf-8?B?a0ZJN3R6eTRQeDZLeEdYdHZCNm41Tnh3WHVKL2t4VSt6MUpCZmFONGd1SFk4?=
- =?utf-8?B?TjJPM3BGRXFuazhxTTNhTTdST1VZUWZaaXFvako4U284Zlg0b2wwamRRN1oy?=
- =?utf-8?B?UEplNDRYQnhOTmNqS3NNS21hdUVoazY4ZXlqM3N3N1c0cGp4dGRaOEhLTUMz?=
- =?utf-8?B?Um4yRit4MTNLNGZXRXB5RVMyVE11c3FOamFsZ2NJMVhmTkw3aDdGOFpNM2c1?=
- =?utf-8?B?elE5ZC8vSUtpcGkrVXE0ZHhCSWhGc1ZZamRHYTBkR1RuZElrUFZTSEk5UlNp?=
- =?utf-8?B?U0grY3JZb3hqeXUvL3E2Y0FuYWJlY29CWmU5dy91UkxYMUpROXVxTDVHa2NW?=
- =?utf-8?B?ekJqZ1VmMFl1aWYvTXN4MUpBWVFqclkwUGswTUYwRVd2OEU1cnpabmZsVVRx?=
- =?utf-8?B?VGpVNlVHMlUraHhkeWhvU1k2L2s4Nk5XY2NKalY5VmJEMWkzS3BkS3BhRXdu?=
- =?utf-8?B?a3E2N2pXVW8vZWpoSHVtcGkrLzU1TTNvVEZ1SCs5ck90bzFQenlDa3hPeVcr?=
- =?utf-8?B?NXdzNnBxNWVZd0FIcmpKdGpBcXJDMkhUeWF6amNEQVA4Y1BkWjdMTFhoV1FU?=
- =?utf-8?B?eVdkazNsYVlEem5WUGtKejVTWEFJeWhyckhJSjd0MDdtaHpHSlNwT1YvOW91?=
- =?utf-8?B?VU51VGVlZzJmU01wOHhMWGg3VHYxWlR1bUFMZGpRWnV4UVRXWUlqZTc4emw0?=
- =?utf-8?B?TnNtTHh3YXBLN21IMHZMbXhWcFZPcjdvbHMyTTVQbGRMZzZUMkQyUVJMakt4?=
- =?utf-8?B?VDFnV2xYZTQwRWJ5MFlhVEJZSlZBZ3BSZDgvZFBodVNPMUtkVUZybFh6QXNN?=
- =?utf-8?B?SWhBUkNRRENMUm9LTkRxY2JzRlFvZ3FhVnBOSy9URVVqMkorcHFGOTFwOHlp?=
- =?utf-8?B?ZXJEczFTcEZ5clBwSWx6OUVkZlc3VURqYXVjQWw5UTdOQlF5bThvVnJnTG83?=
- =?utf-8?Q?+pt2tCic28vzesGATKfKTEKlJ?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c22c7bf0-9ec5-49f0-92df-08dc9feeedc7
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR12MB2767.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2024 08:12:52.1432
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZQ0+y532LOV4nfNAPNxlLLzG2zgrGj/EWB3UpvBkjNM6UsIEQi/HYozkxy9k4Gi+zjbvXP4TbyGF7INs+UAWyQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8224
+References: <744749c3-4506-40d9-ac48-0dbc59689f92@arm.com> <20240709014413.18044-1-21cnbao@gmail.com>
+ <70ac8a5d-f6cf-41e6-b295-cd40b81fa85e@arm.com>
+In-Reply-To: <70ac8a5d-f6cf-41e6-b295-cd40b81fa85e@arm.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 9 Jul 2024 20:13:10 +1200
+Message-ID: <CAGsJ_4xy+ADGF2te4Xh=DMABDGEAAp-7QGPgJF6MstOYXVNYtA@mail.gmail.com>
+Subject: Re: [PATCH v1] mm: shmem: Rename mTHP shmem counters
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: akpm@linux-foundation.org, baolin.wang@linux.alibaba.com, corbet@lwn.net, 
+	da.gomez@samsung.com, david@redhat.com, hughd@google.com, ioworker0@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org, 
+	ziy@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Philipp,
+On Tue, Jul 9, 2024 at 7:55=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.com> =
+wrote:
+>
+> On 09/07/2024 02:44, Barry Song wrote:
+> > On Tue, Jul 9, 2024 at 12:30=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.=
+com> wrote:
+> >>
+> >> On 08/07/2024 12:36, Barry Song wrote:
+> >>> On Mon, Jul 8, 2024 at 11:24=E2=80=AFPM Ryan Roberts <ryan.roberts@ar=
+m.com> wrote:
+> >>>>
+> >>>> The legacy PMD-sized THP counters at /proc/vmstat include
+> >>>> thp_file_alloc, thp_file_fallback and thp_file_fallback_charge, whic=
+h
+> >>>> rather confusingly refer to shmem THP and do not include any other t=
+ypes
+> >>>> of file pages. This is inconsistent since in most other places in th=
+e
+> >>>> kernel, THP counters are explicitly separated for anon, shmem and fi=
+le
+> >>>> flavours. However, we are stuck with it since it constitutes a user =
+ABI.
+> >>>>
+> >>>> Recently, commit 66f44583f9b6 ("mm: shmem: add mTHP counters for
+> >>>> anonymous shmem") added equivalent mTHP stats for shmem, keeping the
+> >>>> same "file_" prefix in the names. But in future, we may want to add
+> >>>> extra stats to cover actual file pages, at which point, it would all
+> >>>> become very confusing.
+> >>>>
+> >>>> So let's take the opportunity to rename these new counters "shmem_"
+> >>>> before the change makes it upstream and the ABI becomes immutable.
+> >>>
+> >>> Personally, I think this approach is much clearer. However, I recall
+> >>> we discussed this
+> >>> before [1], and it seems that inconsistency is a concern?
+> >>
+> >> Embarrassingly, I don't recall that converstation at all :-| but at le=
+ast what I
+> >> said then is consistent with what I've done in this patch.
+> >>
+> >> I think David's conclusion from that thread was to call them FILE_, an=
+d add both
+> >> shmem and pagecache counts to those counters, meaning we can keep the =
+same name
+> >> as legacy THP counters. But those legacy THP counters only count shmem=
+, and I
+> >> don't think we would get away with adding pagecache counts to those at=
+ this
+> >> point? (argument: they have been around for long time and there is a r=
+isk that
+> >> user space relies on them and if they were to dramatically increase du=
+e to
+> >> pagecache addition now that could break things). In that case, there i=
+s still
+> >> inconsistency, but its worse; the names are consistent but the semanti=
+cs are
+> >> inconsistent.
+> >>
+> >> So my vote is to change to SHMEM_ as per this patch :)
+> >
+> > I have no objections. However, I dislike the documentation for
+> > thp_file_*. Perhaps we can clean it all up together ?
+>
+> I agree that we should clean this documentation up and I'm happy to roll =
+it into
+> v2. However, I don't think what you have suggested is quite right.
+>
+> thp_file_alloc, thp_file_fallback and thp_file_fallback_charge *only* cou=
+nt
+> shmem. They don't count pagecache. So perhaps the change should be "...ev=
+ery
+> time a shmem huge page (dispite being named after "file", the counter mea=
+sures
+> only shmem) is..."?
 
-On 7/9/2024 2:21 AM, Philipp Stanner wrote:
-> @Bjorn, @Krzysztof
->
-> On Mon, 2024-07-08 at 21:46 +0000, Ashish Kalra wrote:
->> With this patch applied, we are observing unloading and then
->> reloading issues with the AMD Crypto (CCP) driver:
-> Thank you very much for digging into this, Ashish
->
-> Could you give me some pointers how one could test CCP by himself?
->
->> with DEVRES logging enabled, we observe the following logs:
->>
->> [  218.093588] ccp 0000:a2:00.1: DEVRES REL 00000000c18c52fb
->> 0xffff8d09dc1972c0 devm_kzalloc_release (152 bytes)
->> [  218.105527] ccp 0000:a2:00.1: DEVRES REL 000000003091fb95
->> 0xffff8d09d3aad000 devm_kzalloc_release (3072 bytes)
->> [  218.117500] ccp 0000:a2:00.1: DEVRES REL 0000000049e4adfe
->> 0xffff8d09d588f000 pcim_intx_restore (4 bytes)
->> [  218.129519] ccp 0000:a2:00.1: DEVRES ADD 000000001a2ac6ad
->> 0xffff8cfa867b7cc0 pcim_intx_restore (4 bytes)
->> [  218.140434] ccp 0000:a2:00.1: DEVRES REL 00000000627ecaf7
->> 0xffff8d09d588f680 pcim_msi_release (16 bytes)
->> [  218.151665] ccp 0000:a2:00.1: DEVRES REL 0000000058b2252a
->> 0xffff8d09dc199680 msi_device_data_release (80 bytes)
->> [  218.163625] ccp 0000:a2:00.1: DEVRES REL 00000000435cc85e
->> 0xffff8d09d588ff80 devm_attr_group_remove (8 bytes)
->> [  218.175224] ccp 0000:a2:00.1: DEVRES REL 00000000cb6fcd9b
->> 0xffff8d09eb583660 pcim_addr_resource_release (40 bytes)
->> [  218.187319] ccp 0000:a2:00.1: DEVRES REL 00000000d64a8b84
->> 0xffff8d09eb583180 pcim_iomap_release (48 bytes)
->> [  218.198615] ccp 0000:a2:00.1: DEVRES REL 0000000099ac6b28
->> 0xffff8d09eb5830c0 pcim_addr_resource_release (40 bytes)
->> [  218.210730] ccp 0000:a2:00.1: DEVRES REL 00000000bdd27f88
->> 0xffff8d09d3ac2700 pcim_release (0 bytes)
->> [  218.221489] ccp 0000:a2:00.1: DEVRES REL 00000000e763315c
->> 0xffff8d09d3ac2240 devm_kzalloc_release (20 bytes)
->> [  218.233008] ccp 0000:a2:00.1: DEVRES REL 00000000ae90f983
->> 0xffff8d09dc25a800 devm_kzalloc_release (184 bytes)
->> [  218.245251] ccp 0000:23:00.1: DEVRES REL 00000000a2ec0085
->> 0xffff8cfa86bee700 fw_name_devm_release (16 bytes)
->> [  218.256748] ccp 0000:23:00.1: DEVRES REL 0000000021bccd98
->> 0xffff8cfaa528d5c0 devm_pages_release (16 bytes)
->> [  218.268044] ccp 0000:23:00.1: DEVRES REL 000000003ef7cbc7
->> 0xffff8cfaa1b5ec00 devm_kzalloc_release (104 bytes)
->> [  218.279631] ccp 0000:23:00.1: DEVRES REL 00000000619322e1
->> 0xffff8cfaa1b5e480 devm_kzalloc_release (152 bytes)
->> [  218.300438] ccp 0000:23:00.1: DEVRES REL 00000000c261523b
->> 0xffff8cfaad88b000 devm_kzalloc_release (3072 bytes)
->> [  218.331000] ccp 0000:23:00.1: DEVRES REL 00000000fbd19618
->> 0xffff8cfaa528d140 pcim_intx_restore (4 bytes)
->> [  218.361330] ccp 0000:23:00.1: DEVRES ADD 0000000057f8e767
->> 0xffff8cfa867b7740 pcim_intx_restore (4 bytes)
->> [  218.391226] ccp 0000:23:00.1: DEVRES REL 0000000058c9dce1
->> 0xffff8cfaa528d880 pcim_msi_release (16 bytes)
->> [  218.421340] ccp 0000:23:00.1: DEVRES REL 00000000c8ab08a7
->> 0xffff8cfa9e617300 msi_device_data_release (80 bytes)
->> [  218.452357] ccp 0000:23:00.1: DEVRES REL 00000000cf5baccb
->> 0xffff8cfaa528d8c0 devm_attr_group_remove (8 bytes)
->> [  218.483011] ccp 0000:23:00.1: DEVRES REL 00000000b8cbbadd
->> 0xffff8cfa9c596060 pcim_addr_resource_release (40 bytes)
->> [  218.514343] ccp 0000:23:00.1: DEVRES REL 00000000920f9607
->> 0xffff8cfa9c596c60 pcim_iomap_release (48 bytes)
->> [  218.544659] ccp 0000:23:00.1: DEVRES REL 00000000d401a708
->> 0xffff8cfa9c596840 pcim_addr_resource_release (40 bytes)
->> [  218.575774] ccp 0000:23:00.1: DEVRES REL 00000000865d2fa2
->> 0xffff8cfaa528d940 pcim_release (0 bytes)
->> [  218.605758] ccp 0000:23:00.1: DEVRES REL 00000000f5b79222
->> 0xffff8cfaa528d080 devm_kzalloc_release (20 bytes)
->> [  218.636260] ccp 0000:23:00.1: DEVRES REL 0000000037ef240a
->> 0xffff8cfa9eeb3f00 devm_kzalloc_release (184 bytes)
->>
->> and the CCP driver reload issue during driver probe:
->>
->> [  226.552684] pci 0000:23:00.1: Resources present before probing
->> [  226.568846] pci 0000:a2:00.1: Resources present before probing
->>
->> From the above DEVRES logging, it looks like pcim_intx_restore
->> associated resource is being released but then
->> being re-added during detach/unload, which causes really_probe() to
->> fail at probe time, as dev->devres_head is
->> not empty due to this added resource:
->> ...
->> [  218.331000] ccp 0000:23:00.1: DEVRES REL 00000000fbd19618
->> 0xffff8cfaa528d140 pcim_intx_restore (4 bytes)
->> [  218.361330] ccp 0000:23:00.1: DEVRES ADD 0000000057f8e767
->> 0xffff8cfa867b7740 pcim_intx_restore (4 bytes)
->> ...
->>
->> Going more deep into this: 
->>
->> This is the initial pcim_intx_resoure associated resource being added
->> during first (CCP) driver load:
->>
->> [   40.418933]  pcim_intx+0x3a/0x120
->> [   40.418936]  pci_intx+0x8b/0xa0
->> [   40.418939]  __pci_enable_msix_range+0x369/0x530
->> [   40.418943]  pci_enable_msix_range+0x18/0x20
->> [   40.418946]  sp_pci_probe+0x106/0x310 [ccp]
->> [   40.418965] ipmi device interface
->> [   40.418960]  ? srso_alias_return_thunk+0x5/0xfbef5
->> [   40.418969]  local_pci_probe+0x4f/0xb0
->> [   40.418973]  work_for_cpu_fn+0x1e/0x30
->> [   40.418976]  process_one_work+0x183/0x350
->> [   40.418980]  worker_thread+0x2df/0x3f0
->> [   40.418982]  ? __pfx_worker_thread+0x10/0x10
->> [   40.418985]  kthread+0xd0/0x100
->> [   40.418987]  ? __pfx_kthread+0x10/0x10
->> [   40.418990]  ret_from_fork+0x40/0x60
->> [   40.418993]  ? __pfx_kthread+0x10/0x10
->> [   40.418996]  ret_from_fork_asm+0x1a/0x30
->> [   40.419001]  </TASK>
->> ..
->> ..
->> [   40.419012] ccp 0000:23:00.1: DEVRES ADD 00000000fbd19618
->> 0xffff8cfaa528d140 pcim_intx_restore (4 bytes)
->>
->> Now, at driver unload: 
->> devres_release_all() -> remove_nodes() -> release_nodes() ...
->>
->> remove_nodes() moves normal devres entries to the todo list, as can
->> be seen with the following log:
->> ...
->> [  218.245241] moving node 00000000fbd19618 0xffff8cfaa528d140 from
->> devres to todo list
->> ...
->>
->> So, now this pcim_intx_resource associated resource is no longer part
->> of dev->devres_head list and has been
->> moved to the todo list.
->>
->> Later, when release_nodes() is invoked, it calls the associated
->> release() callback associated with this devres:
->> ...
->> [  218.331000] ccp 0000:23:00.1: DEVRES REL 00000000fbd19618
->> 0xffff8cfaa528d140 pcim_intx_restore (4 bytes)
->> ...
->>
->> The call flow for that is:
->> pcim_intx_restore() -> pci_intx() -> pcim_intx() ...
->>
->> Now, pcim_intx() calls get_or_create_intx_devres() which tries to
->> find it's associated devres using devres_find(), but 
->> that fails to find the devres, as the devres is no longer on dev-
->>> devres_head and has been moved to todo list.
->> Therefore, get_or_create_intx_devres() adds a new devres at driver
->> unload/detach time:
->> ...
->> [  218.361330] ccp 0000:23:00.1: DEVRES ADD 0000000057f8e767
->> 0xffff8cfa867b7740 pcim_intx_restore (4 bytes)
->> ...
-> You're absolutely right, that seems to be the issue precisely. In fact,
-> this problem of PCI hybrid functions calling themselves again even
-> forced me to implement a "pure unmanaged" version of
-> __pci_request_region(). So it's a pity that I didn't think of that
-> problem for pci_intx().
->
->> But, then this is an issue as pcim_intx() is supposed to restore the
->> original PCI INTx state on driver detach, but it now
->> operating on a newly added devres and not the original devres (added
->> at driver probe) which contains the original PCI INTx
->> state, so it will be restoring an incorrect PCI INTx state ?
-> I think this is just UB and we don't have to think about whether it's
-> the correct state or not – it must only be restored once, so it's
-> broken in any case.
->
->> Additionally, this newly added devres causes driver reload/probe
->> failure as really_probe() now finds resources present
->> before probing.
-> Yes, that has to be separated.
->
-> @Bjorn:
-> So I think the solution will be not to call into pci_intx() from
-> pcim_intx_restore() at all anymore.
->
-> Similar as we do with __pci_request_region() <-> __pcim_request_region().
->
-> Let me dig into that..
->
-> I guess you'll prefer me to send a fixup commit to squash into the
-> pcim_intx() commit?
->
-> I'm quite busy today, but will definitely deliver that quite soon.
->
->> Not sure, if this issue has been observed with other PCI device
->> drivers.
-> Everyone using pci_intx() AND pcim_enable_device() will have this
-> issue.
->
-> The only thing I'm wondering about is where your code in
-> drivers/crypto/ccp/ calls into pci_intx()?
->
-Actually, the CCP driver does not explicitly call into pci_intx(), the flow to pci_intx() from CCP driver probe is as follows:
+I understand what you are saying, and I know that thp_file_* has only
+included shmem so far. My question is whether it will include regular
+files in the future? If not, I am perfectly fine with your approach.
 
-[   40.418933]  pcim_intx+0x3a/0x120
-[   40.418936]  pci_intx+0x8b/0xa0
-[   40.418939]  __pci_enable_msix_range+0x369/0x530
-[   40.418943]  pci_enable_msix_range+0x18/0x20
-[   40.418946]  sp_pci_probe+0x106/0x310 [ccp]
-[   40.418965] ipmi device interface
-[   40.418960]  ? srso_alias_return_thunk+0x5/0xfbef5
-[   40.418969]  local_pci_probe+0x4f/0xb0
+READ_ONLY_THP_FOR_FS isn't applicable in this path as it is created
+by khugepaged collapse.
 
-And obviously, pci_intx()->pcim_intx() get invoked due to pcim_intx_restore() callback being invoked during sp_pci_exit() code path, as below:
-
-[  218.128978]  pcim_intx+0x3a/0x120
-[  218.128986]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  218.128999]  pci_intx+0x8b/0xa0
-[  218.129010]  pcim_intx_restore+0x1b/0x30
-[  218.129019]  release_nodes+0x65/0x90
-[  218.129031]  devres_release_all+0x9f/0xe0
-[  218.129043]  device_unbind_cleanup+0x12/0x80
-[  218.129055]  device_release_driver_internal+0x20c/0x250
-[  218.129065]  ? srso_alias_return_thunk+0x5/0xfbef5
-[  218.129078]  driver_detach+0x4f/0xa0
-[  218.129091]  bus_remove_driver+0x87/0x100
-[  218.129101]  driver_unregister+0x35/0x60
-[  218.129113]  pci_unregister_driver+0x44/0xa0
-[  218.129123]  sp_pci_exit+0x19/0x20 [ccp]
-[  218.129137]  sp_mod_exit+0x12/0x18 [ccp]
-
-...
-
-Basically, CCP driver calls pci_enable_msix_range() and looking at this function:
-
-pci_enable_msix_range() -> __pci_enable_msix_range() -> msix_capability_init().
-
-And, msix_capability_init() -> pci_intx_for_msi() -> pci_intx().
-
-So it looks like drivers using MSI-X/MSI (using API such as pci_enable_msix_range()) and pcim_enable_device() will get into this issue without explicitly calling into pci_intx().
-
-Thanks, Ashish
-
-> Regards,
-> P.
 >
->> Thanks,
->> Ashish
->>
+> thp_file_mapped includes both file and shmem, so agree with your change t=
+here.
+>
+> What do you think?
+>
+>
+> >
+> > diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation=
+/admin-guide/mm/transhuge.rst
+> > index 709fe10b60f4..65df48cb3bbb 100644
+> > --- a/Documentation/admin-guide/mm/transhuge.rst
+> > +++ b/Documentation/admin-guide/mm/transhuge.rst
+> > @@ -417,21 +417,22 @@ thp_collapse_alloc_failed
+> >       the allocation.
+> >
+> >  thp_file_alloc
+> > -     is incremented every time a file huge page is successfully
+> > -     allocated.
+> > +     is incremented every time a file (including shmem) huge page is
+> > +     successfully allocated.
+> >
+> >  thp_file_fallback
+> > -     is incremented if a file huge page is attempted to be allocated
+> > -     but fails and instead falls back to using small pages.
+> > +     is incremented if a file (including shmem) huge page is attempted
+> > +     to be allocated but fails and instead falls back to using small
+> > +     pages.
+> >
+> >  thp_file_fallback_charge
+> > -     is incremented if a file huge page cannot be charged and instead
+> > -     falls back to using small pages even though the allocation was
+> > -     successful.
+> > +     is incremented if a file (including shmem) huge page cannot be
+> > +     charged and instead falls back to using small pages even though
+> > +     the allocation was successful.
+> >
+> >  thp_file_mapped
+> > -     is incremented every time a file huge page is mapped into
+> > -     user address space.
+> > +     is incremented every time a file (including shmem) huge page is
+> > +     mapped into user address space.
+> >
+> >  thp_split_page
+> >       is incremented every time a huge page is split into base
+> >
+> >>
+> >>>
+> >>> [1] https://lore.kernel.org/linux-mm/05d0096e4ec3e572d1d52d33a31a6613=
+21ac1551.1713755580.git.baolin.wang@linux.alibaba.com/
+> >>>
+> >>>
+> >>>>
+> >>>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> >>>> ---
+> >>>>
+> >>>> Hi All,
+> >>>>
+> >>>> Applies on top of today's mm-unstable (2073cda629a4) and tested with=
+ mm
+> >>>> selftests; no regressions observed.
+> >>>>
+> >>>> The backstory here is that I'd like to introduce some counters for r=
+egular file
+> >>>> folio allocations to observe how often large folio allocation succee=
+ds, but
+> >>>> these shmem counters are named "file" which is going to make things =
+confusing.
+> >>>> So hoping to solve that before commit 66f44583f9b6 ("mm: shmem: add =
+mTHP
+> >>>> counters for anonymous shmem") goes upstream (it is currently in mm-=
+stable).
+> >>>>
+> >>>> Admittedly, this change means the mTHP stat names are not the same a=
+s the legacy
+> >>>> PMD-size THP names, but I think that's a smaller issue than having "=
+file_" mTHP
+> >>>> stats that only count shmem, then having to introduce "file2_" or "p=
+gcache_"
+> >>>> stats for the regular file memory, which is even more inconsistent I=
+MHO. I guess
+> >>>> the alternative is to count both shmem and file in these mTHP stats =
+(that's how
+> >>>> they were documented anyway) but I think it's better to be able to c=
+onsider them
+> >>>> separately like we do for all the other counters.
+> >>>>
+> >>>> Thanks,
+> >>>> Ryan
+> >>>>
+> >>>>  Documentation/admin-guide/mm/transhuge.rst | 12 ++++++------
+> >>>>  include/linux/huge_mm.h                    |  6 +++---
+> >>>>  mm/huge_memory.c                           | 12 ++++++------
+> >>>>  mm/shmem.c                                 |  8 ++++----
+> >>>>  4 files changed, 19 insertions(+), 19 deletions(-)
+> >>>>
+> >>>> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentat=
+ion/admin-guide/mm/transhuge.rst
+> >>>> index 747c811ee8f1..8b891689fc13 100644
+> >>>> --- a/Documentation/admin-guide/mm/transhuge.rst
+> >>>> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> >>>> @@ -496,16 +496,16 @@ swpout_fallback
+> >>>>         Usually because failed to allocate some continuous swap spac=
+e
+> >>>>         for the huge page.
+> >>>>
+> >>>> -file_alloc
+> >>>> -       is incremented every time a file huge page is successfully
+> >>>> +shmem_alloc
+> >>>> +       is incremented every time a shmem huge page is successfully
+> >>>>         allocated.
+> >>>>
+> >>>> -file_fallback
+> >>>> -       is incremented if a file huge page is attempted to be alloca=
+ted
+> >>>> +shmem_fallback
+> >>>> +       is incremented if a shmem huge page is attempted to be alloc=
+ated
+> >>>>         but fails and instead falls back to using small pages.
+> >>>>
+> >>>> -file_fallback_charge
+> >>>> -       is incremented if a file huge page cannot be charged and ins=
+tead
+> >>>> +shmem_fallback_charge
+> >>>> +       is incremented if a shmem huge page cannot be charged and in=
+stead
+> >>>>         falls back to using small pages even though the allocation w=
+as
+> >>>>         successful.
+> >>>>
+> >>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> >>>> index acb6ac24a07e..cff002be83eb 100644
+> >>>> --- a/include/linux/huge_mm.h
+> >>>> +++ b/include/linux/huge_mm.h
+> >>>> @@ -269,9 +269,9 @@ enum mthp_stat_item {
+> >>>>         MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
+> >>>>         MTHP_STAT_SWPOUT,
+> >>>>         MTHP_STAT_SWPOUT_FALLBACK,
+> >>>> -       MTHP_STAT_FILE_ALLOC,
+> >>>> -       MTHP_STAT_FILE_FALLBACK,
+> >>>> -       MTHP_STAT_FILE_FALLBACK_CHARGE,
+> >>>> +       MTHP_STAT_SHMEM_ALLOC,
+> >>>> +       MTHP_STAT_SHMEM_FALLBACK,
+> >>>> +       MTHP_STAT_SHMEM_FALLBACK_CHARGE,
+> >>>>         MTHP_STAT_SPLIT,
+> >>>>         MTHP_STAT_SPLIT_FAILED,
+> >>>>         MTHP_STAT_SPLIT_DEFERRED,
+> >>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> >>>> index 9ec64aa2be94..f9696c94e211 100644
+> >>>> --- a/mm/huge_memory.c
+> >>>> +++ b/mm/huge_memory.c
+> >>>> @@ -568,9 +568,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_=
+STAT_ANON_FAULT_FALLBACK);
+> >>>>  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FA=
+ULT_FALLBACK_CHARGE);
+> >>>>  DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
+> >>>>  DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
+> >>>> -DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
+> >>>> -DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
+> >>>> -DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK=
+_CHARGE);
+> >>>> +DEFINE_MTHP_STAT_ATTR(shmem_alloc, MTHP_STAT_SHMEM_ALLOC);
+> >>>> +DEFINE_MTHP_STAT_ATTR(shmem_fallback, MTHP_STAT_SHMEM_FALLBACK);
+> >>>> +DEFINE_MTHP_STAT_ATTR(shmem_fallback_charge, MTHP_STAT_SHMEM_FALLBA=
+CK_CHARGE);
+> >>>>  DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
+> >>>>  DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
+> >>>>  DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
+> >>>> @@ -581,9 +581,9 @@ static struct attribute *stats_attrs[] =3D {
+> >>>>         &anon_fault_fallback_charge_attr.attr,
+> >>>>         &swpout_attr.attr,
+> >>>>         &swpout_fallback_attr.attr,
+> >>>> -       &file_alloc_attr.attr,
+> >>>> -       &file_fallback_attr.attr,
+> >>>> -       &file_fallback_charge_attr.attr,
+> >>>> +       &shmem_alloc_attr.attr,
+> >>>> +       &shmem_fallback_attr.attr,
+> >>>> +       &shmem_fallback_charge_attr.attr,
+> >>>>         &split_attr.attr,
+> >>>>         &split_failed_attr.attr,
+> >>>>         &split_deferred_attr.attr,
+> >>>> diff --git a/mm/shmem.c b/mm/shmem.c
+> >>>> index 921d59c3d669..f24dfbd387ba 100644
+> >>>> --- a/mm/shmem.c
+> >>>> +++ b/mm/shmem.c
+> >>>> @@ -1777,7 +1777,7 @@ static struct folio *shmem_alloc_and_add_folio=
+(struct vm_fault *vmf,
+> >>>>                         if (pages =3D=3D HPAGE_PMD_NR)
+> >>>>                                 count_vm_event(THP_FILE_FALLBACK);
+> >>>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >>>> -                       count_mthp_stat(order, MTHP_STAT_FILE_FALLBA=
+CK);
+> >>>> +                       count_mthp_stat(order, MTHP_STAT_SHMEM_FALLB=
+ACK);
+> >>>>  #endif
+> >>>>                         order =3D next_order(&suitable_orders, order=
+);
+> >>>>                 }
+> >>>> @@ -1804,8 +1804,8 @@ static struct folio *shmem_alloc_and_add_folio=
+(struct vm_fault *vmf,
+> >>>>                                 count_vm_event(THP_FILE_FALLBACK_CHA=
+RGE);
+> >>>>                         }
+> >>>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >>>> -                       count_mthp_stat(folio_order(folio), MTHP_STA=
+T_FILE_FALLBACK);
+> >>>> -                       count_mthp_stat(folio_order(folio), MTHP_STA=
+T_FILE_FALLBACK_CHARGE);
+> >>>> +                       count_mthp_stat(folio_order(folio), MTHP_STA=
+T_SHMEM_FALLBACK);
+> >>>> +                       count_mthp_stat(folio_order(folio), MTHP_STA=
+T_SHMEM_FALLBACK_CHARGE);
+> >>>>  #endif
+> >>>>                 }
+> >>>>                 goto unlock;
+> >>>> @@ -2181,7 +2181,7 @@ static int shmem_get_folio_gfp(struct inode *i=
+node, pgoff_t index,
+> >>>>                         if (folio_test_pmd_mappable(folio))
+> >>>>                                 count_vm_event(THP_FILE_ALLOC);
+> >>>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> >>>> -                       count_mthp_stat(folio_order(folio), MTHP_STA=
+T_FILE_ALLOC);
+> >>>> +                       count_mthp_stat(folio_order(folio), MTHP_STA=
+T_SHMEM_ALLOC);
+> >>>>  #endif
+> >>>>                         goto alloced;
+> >>>>                 }
+> >>>> --
+> >>>> 2.43.0
+> >>>>
+> >>>
+
+Thanks
+Barry
 
