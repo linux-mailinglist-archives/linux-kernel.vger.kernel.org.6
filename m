@@ -1,259 +1,143 @@
-Return-Path: <linux-kernel+bounces-246034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16EDB92BCF4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:31:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5913592BCF5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68ECEB22532
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:31:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8979E1C22542
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ABE719B5B4;
-	Tue,  9 Jul 2024 14:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BC015FA6B;
+	Tue,  9 Jul 2024 14:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="h9recBh0"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q+Zt6v3G"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CD4358A7;
-	Tue,  9 Jul 2024 14:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418921586F2
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 14:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720535496; cv=none; b=V/VeRwMtbEggqgEMNUtsqCxqGSK24WsKFo8lTJ6Ao4DgHQxxYjau0SN6zCm4k8iGFqKCOx/WlTS0W8HaLwdQNKD080tGAArYoJubmmlaT8KONdhFpl7/w56fJ9nKeVicbOc5RDsc12u5v7fJVJsidt9xvUrR502XGWXIr9saBz8=
+	t=1720535544; cv=none; b=Wgk87m44o/12kMX70uLhp/GHuCvd9KtUo7O0lYJRkca9TOyWW+6P5k+pGOBzXroFeVQmFGe+Er/PvDFmK/TMQyM+i/xltluXlg2MMUUZbTI2TeKeiG31R9GeVzq9BQEBl1+AZn3xkpNy0QQq5v8gyVNp+mwltBQfdoLiG8zdnEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720535496; c=relaxed/simple;
-	bh=kbE7E1aC67jpIZ6Ea2GEWtdODIBRtDkbzaxOt3uyn7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=srmc5jAUN/tK385wt4lrkizRcj0k31f1fYgnC/E0NTZFj3TbYyC1FahpgtDF2ygRjLfwjdEeV0fUHS1krm4Tkl46cc7YrYGbkOAoyePoLtQm631MGckl9yDmrGeq4BreaD8oR7pVCdQOOEQiyDqXJ+w6DpO2yjJTNcA5ZLVvajw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=h9recBh0; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 469EUxc4114038;
-	Tue, 9 Jul 2024 09:30:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1720535459;
-	bh=JEsmcDLJ0df5pbyPMQ8aHuk3Gr51wAKm5Svyaj62YKI=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=h9recBh0fhHIiTFzmoHPN48cWafhcWX6Y6CuNAIHgO8osQEUB7aafTtEyYu3RAPTn
-	 Oq+2fCs/wDldfWPEwjIbUSBW0LK4XU1FI2LfwuQtsYBkm+qgy4QJEiisstGKb6rPHT
-	 2z9/JGmWVejoZ9/ul1Z7jMhLj/9bMm/CTt0QQIYw=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 469EUxJ7124021
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 9 Jul 2024 09:30:59 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 9
- Jul 2024 09:30:59 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 9 Jul 2024 09:30:59 -0500
-Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 469EUqw5090071;
-	Tue, 9 Jul 2024 09:30:52 -0500
-Message-ID: <91380590-5450-16bc-ddc0-07f117ed6fe1@ti.com>
-Date: Tue, 9 Jul 2024 20:00:51 +0530
+	s=arc-20240116; t=1720535544; c=relaxed/simple;
+	bh=JltaKZeZoPepmvo00u/7n5SPVjFNCaLOZb0flPvDeAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TbsVDayfVFkbY1FfqXWD+wK2r7ceo+odvuzIhXMzPJyPyIW77BRM4pdDrlTnUzJswc7JDsjmA96mnHoXia/51gSg33yhEfIuPgIGBnsj3+M9e9Imd1zsrWh3vciTeRZ2ve7Qk3qz68W/Uyia8/EJNLZuGZrxpum9zwO3iWRlpME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q+Zt6v3G; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=QnQRtEAFTGpYXZppPGig49Hw32QYDPganEH//DlgqbE=; b=q+Zt6v3G62lVSZusFd3z6LRnSi
+	ToFQFdFMfPa3qMg3pYIrSYb9Wx3AatGkskxEV0MJ7Nk8UoEJkVtO6FaG4UdN3Y3uzmKQNgAenRqvB
+	hQUPoT+q1zLhQP3qmpgYUYJeOipH5ezowCZ8yU2iGi4bvV/4C2M5tFIPEKhb7X9bIyQ9KGEBIAzXt
+	IPoQhpa5gRZ5yb2raT3Mp3krMSq6dOlsIA4IahHh4AGVrwL3ZpsHtUgp8BPdJp3+uhpKx0w9MVvp/
+	RmE7jUWFbTYJ32fNAl1/Vv4CmNyUOgkSJ5xCdRaNNCMWUDjk+K+j1kgGBErd+KMmSG9DZXFclz3G0
+	f50SUhgw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRBtD-00000007yQI-0zJ0;
+	Tue, 09 Jul 2024 14:32:19 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D70F63006B7; Tue,  9 Jul 2024 16:32:18 +0200 (CEST)
+Date: Tue, 9 Jul 2024 16:32:18 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: mingo@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, jolsa@kernel.org,
+	clm@meta.com, paulmck@kernel.org
+Subject: Re: [PATCH 05/10] perf/uprobe: SRCU-ify uprobe->consumer list
+Message-ID: <20240709143218.GM27299@noisy.programming.kicks-ass.net>
+References: <20240708091241.544262971@infradead.org>
+ <20240708092415.695619684@infradead.org>
+ <20240709120551.GK27299@noisy.programming.kicks-ass.net>
+ <20240709133349.GC28495@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 1/6] math.h: Add macros for rounding to closest value
-Content-Language: en-US
-To: Jiri Slaby <jirislaby@kernel.org>, <mchehab@kernel.org>,
-        <hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <sebastian.fricke@collabora.com>,
-        <andriy.shevchenko@linux.intel.com>, <jani.nikula@intel.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <rdunlap@infradead.org>,
-        <linux-doc@vger.kernel.org>
-CC: <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
-        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
-        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
-        <vijayp@ti.com>, <andi.shyti@linux.intel.com>, <nicolas@ndufresne.ca>,
-        <davidgow@google.com>, <dlatypov@google.com>
-References: <20240708155943.2314427-1-devarsht@ti.com>
- <20240708155943.2314427-2-devarsht@ti.com>
- <a0e31542-e77b-4efa-959d-f7f5a8719616@kernel.org>
-From: Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <a0e31542-e77b-4efa-959d-f7f5a8719616@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709133349.GC28495@redhat.com>
 
-Hi Jiri,
-
-Thanks for the review.
-
-On 09/07/24 11:29, Jiri Slaby wrote:
-> On 08. 07. 24, 17:59, Devarsh Thakkar wrote:
->> Add below rounding related macros:
->>
->> round_closest_up(x, y) : Rounds x to closest multiple of y where y is a
->> power of 2, with a preference to round up in case two nearest values are
->> possible.
->>
->> round_closest_down(x, y) : Rounds x to closest multiple of y where y is a
->> power of 2, with a preference to round down in case two nearest values are
->> possible.
->>
->> roundclosest(x, y) : Rounds x to closest multiple of y, this macro should
->> generally be used only when y is not multiple of 2 as otherwise
->> round_closest* macros should be used which are much faster.
->>
->> Examples:
->>   * round_closest_up(17, 4) = 16
->>   * round_closest_up(15, 4) = 16
->>   * round_closest_up(14, 4) = 16
->>   * round_closest_down(17, 4) = 16
->>   * round_closest_down(15, 4) = 16
->>   * round_closest_down(14, 4) = 12
->>   * roundclosest(21, 5) = 20
+On Tue, Jul 09, 2024 at 03:33:49PM +0200, Oleg Nesterov wrote:
+> On 07/09, Peter Zijlstra wrote:
+> >
+> > > +	guard(srcu)(&uprobes_srcu);
+> > > +
+> > > +	for_each_consumer_rcu(uc, uprobe->consumers) {
+> > >  		int rc = 0;
+> > >
+> > >  		if (uc->handler) {
+> > > @@ -2116,7 +2126,6 @@ static void handler_chain(struct uprobe
+> > >  		WARN_ON(!uprobe_is_active(uprobe));
+> > >  		unapply_uprobe(uprobe, current->mm);
+> >
+> >    ^^^ this remove case needs more thought.
 > 
-> With consistency in mind, why is there no underscore?
-> 
+> Yeah... that is why the current code doesn't use ->consumer_rwsem, iirc.
 
-This is as per the convention followed in math.h for existing rounding macros
-round_up, roundup, round_down, rounddown :
+AFAICT something like the below should work. Concurrent
+remove_breakpoint() should already be possible today and doesn't appear
+to be a problem.
 
-for e.g. It use "_" for macros which work on power of 2 for e.g. we  have
-round_down, round_up macros which work on power of 2 and it remove "_" for
-normal rounding macros for e.g. rounddown and roundup which are normal
-rounding macros.
-
-There was already a discussion around naming convention in previous patch
-versions here [1] we aligned on this.
-
->>   * roundclosest(19, 5) = 20
->>   * roundclosest(17, 5) = 15
->>
->> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
->> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->> ---
->> NOTE: This patch is inspired from the Mentor Graphics IPU driver [1]
->> which uses similar macro locally and which is updated in further patch
->> in the series to use this generic macro instead along with other drivers
->> having similar requirements.
->>
->> Link:
->> https://elixir.bootlin.com/linux/v6.8.9/source/drivers/gpu/ipu-v3/ipu-image-convert.c#L480 [1]
->> ---
->>   include/linux/math.h | 63 ++++++++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 63 insertions(+)
->>
->> diff --git a/include/linux/math.h b/include/linux/math.h
->> index dd4152711de7..79e3dfda77fc 100644
->> --- a/include/linux/math.h
->> +++ b/include/linux/math.h
->> @@ -34,6 +34,52 @@
->>    */
->>   #define round_down(x, y) ((x) & ~__round_mask(x, y))
->>   +/**
->> + * round_closest_up - round closest to be multiple of specified value
->> (which is
->> + *                    power of 2) with preference to rounding up
->> + * @x: the value to round
->> + * @y: multiple to round closest to (must be a power of 2)
->> + *
->> + * Rounds @x to closest multiple of @y (which must be a power of 2).
->> + * The value can be either rounded up or rounded down depending upon rounded
->> + * value's closeness to the specified value. If there are two closest possible
->> + * values, i.e. the difference between the specified value and it's rounded up
->> + * and rounded down values is same then preference is given to rounded up
->> + * value.
->> + *
->> + * To perform arbitrary rounding to closest value (not multiple of 2), use
->> + * roundclosest().
->> + *
->> + * Examples:
->> + * * round_closest_up(17, 4) = 16
->> + * * round_closest_up(15, 4) = 16
->> + * * round_closest_up(14, 4) = 16
->> + */
->> +#define round_closest_up(x, y) round_down((x) + (y) / 2, (y))
->> +
->> +/**
->> + * round_closest_down - round closest to be multiple of specified value (which
->> + *            is power of 2) with preference to rounding down
->> + * @x: the value to round
->> + * @y: multiple to round closest to (must be a power of 2)
->> + *
->> + * Rounds @x to closest multiple of @y (which must be a power of 2).
->> + * The value can be either rounded up or rounded down depending upon rounded
->> + * value's closeness to the specified value. If there are two closest possible
->> + * values, i.e. the difference between the specified value and it's rounded up
->> + * and rounded down values is same then preference is given to rounded up
->> + * value.
-> 
-> Too heavy sentence. Did you mean "its" not "it's"?
-
-Yeah "its" is the correct one.
-> 
-> What about:
-> There can be two closest values. I.e. the difference between the specified
-> value and its rounded up and down values is the same. In that case, the
-> rounded up value is preferred.
-> ?
-> 
-
-Yeah this looks good but I would still prefer to prepend to this the text "The
-value can be either rounded up or rounded down depending upon rounded value's
-closeness to the specified value" just to avoid any confusion as it caused a
-bit of confusions in earlier iterations.
-
-
-> The same for round_closest_up().
-> 
->> + *
->> + * To perform arbitrary rounding to closest value (not multiple of 2), use
->> + * roundclosest().
->> + *
->> + * Examples:
->> + * * round_closest_down(17, 4) = 16
->> + * * round_closest_down(15, 4) = 16
->> + * * round_closest_down(14, 4) = 12
->> + */
->> +#define round_closest_down(x, y) round_up((x) - (y) / 2, (y))
->> +
->>   #define DIV_ROUND_UP __KERNEL_DIV_ROUND_UP
->>     #define DIV_ROUND_DOWN_ULL(ll, d) \
->> @@ -77,6 +123,23 @@
->>   }                            \
->>   )
->>   +/**
->> + * roundclosest - round to nearest multiple
->> + * @x: the value to round
->> + * @y: multiple to round nearest to
->> + *
->> + * Rounds @x to nearest multiple of @y.
->> + * The rounded value can be greater than or less than @x depending
-> 
-> greater or less than
-> 
-
-Agreed.
-
->> + * upon it's nearness to @x.
-> 
-> "its"
-> 
-Agreed.
-
->> If @y will always be a power of 2, consider
-> 
-> If @y is always a power...
-> 
-
-Agreed.
-
-[1]: https://lore.kernel.org/all/Zj42vTpyH71TWeTk@smile.fi.intel.com/
-
-Regards
-Devarsh
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -1260,6 +1260,10 @@ int uprobe_apply(struct inode *inode, lo
+ 	return ret;
+ }
+ 
++/*
++ * Can race against uprobe_unregister() / register_for_each_vma(), and relies
++ * on duplicate remove_breakpoint() being a no-op.
++ */
+ static int unapply_uprobe(struct uprobe *uprobe, struct mm_struct *mm)
+ {
+ 	VMA_ITERATOR(vmi, mm, 0);
+@@ -2101,6 +2105,7 @@ static void handler_chain(struct uprobe
+ 	struct uprobe_consumer *uc;
+ 	int remove = UPROBE_HANDLER_REMOVE;
+ 	bool need_prep = false; /* prepare return uprobe, when needed */
++	bool had_handler = false;
+ 
+ 	down_read(&uprobe->register_rwsem);
+ 	for (uc = uprobe->consumers; uc; uc = uc->next) {
+@@ -2115,16 +2120,26 @@ static void handler_chain(struct uprobe
+ 		if (uc->ret_handler)
+ 			need_prep = true;
+ 
++		/*
++		 * A single handler that does not mask out REMOVE, means the
++		 * probe stays.
++		 */
++		had_handler = true;
+ 		remove &= rc;
+ 	}
+ 
++	/*
++	 * If there were no handlers called, nobody asked for it to be removed
++	 * but also nobody got to mask the value. Fix it up.
++	 */
++	if (!had_handler)
++		remove = 0;
++
+ 	if (need_prep && !remove)
+ 		prepare_uretprobe(uprobe, regs); /* put bp at return */
+ 
+-	if (remove && uprobe->consumers) {
+-		WARN_ON(!uprobe_is_active(uprobe));
++	if (remove)
+ 		unapply_uprobe(uprobe, current->mm);
+-	}
+ 	up_read(&uprobe->register_rwsem);
+ }
+ 
 
