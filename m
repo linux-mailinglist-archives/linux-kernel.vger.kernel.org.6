@@ -1,254 +1,244 @@
-Return-Path: <linux-kernel+bounces-245676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BEC092B5E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:52:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 785FC92B5EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F80D1C20FAD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:52:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC6941F210B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D70114290;
-	Tue,  9 Jul 2024 10:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC141581FC;
+	Tue,  9 Jul 2024 10:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uDEQtLrN"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cbZmbl0b"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3EEC15098C
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C89155329;
+	Tue,  9 Jul 2024 10:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720522312; cv=none; b=B7IQidvzyNQWf3hXmEPP1U+HRq8jMGJm6XuSY3BVI0ffuYLiktiIZUz0qjgtkg1gr4txqJAYjRJjoaIXBoOnESZfvvkaAlPryD/gLzhcxosKP+z4J1l6bkvLdO/o+1AVN4F5i4bnrdUxScUngvwWOE36LWUg2s3aPvLFSaAxFio=
+	t=1720522339; cv=none; b=JhNigAN3amIjBCzZahnPjNxHO6rBkmGvl+N8e9KKhhGt2Ae3nGSSi/lnYKwbB6H10kejTmQlQ8bgdn8EyLpyhqdIEoTGxTY2XDZ0mFJwuhmU35jEZJOHk9m+qddr3qBTJjvsgn60WeJ33STtGiywebRTeJiyfF3wBdmccMNkrHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720522312; c=relaxed/simple;
-	bh=cA3RUsDXkBxoSAcMkVT+b+ttoxvbnJTaUNYMDvI+vCA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iOqwRNd2qpy6MSruQY3fJz9tKxf5yVu7whmCGu4LGlQthtOPlbxlXdWZHQmcCX/hg9sCsoaDaHet7ObiHb4eNbkJeJU6xu/5gXw20eI2JWu7HaCuRubXIU0PPCIcIBAmob45mTolrF9R6ywaTmaJ76nkgeiz0qArko6MY5vp3d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uDEQtLrN; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-595712c49ebso407739a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 03:51:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720522309; x=1721127109; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=2aJgCIXvib8wAEOFFZMtmdbxaP8wt49zCXrKRn4F5nc=;
-        b=uDEQtLrNf7ItHaqNDTJEsA+rtGqB5val6xN1cWYHXvK54baL+oiHrIHGEBnHHMLblZ
-         I4iY+GoMhHVGfAkpyfQgHkcCDhdotkltBlNQzS2Ic5gvd78TyiwaiaCvXi475colSdhQ
-         d2RqPyb0Q6eUg9jzhJuzwHa+MSF4PwRFuIi6LNTnFQpUT33GbHKHQ+jV0P0ZXtnJ0A6G
-         8qSAGkC8C+LWDZd2XfXgeNNpyeLR47pOSY2jbhOEuZNWqnCQZhwKSk/9aOrBBsYRTwF9
-         PHNpYcfZaVP6Hn9l7y49jTum2dVmw0XiaR6aQesyHxAkr2hKF8x9hQdnirjsISKoP1lu
-         VXAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720522309; x=1721127109;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2aJgCIXvib8wAEOFFZMtmdbxaP8wt49zCXrKRn4F5nc=;
-        b=OboENu2pIQpz93v2IffEPfnPwM3V9lN0OIcVanF0CdcntvdWIh5iVqh/FZnyc4SLzs
-         eJzqEe1kIcr6UAjLt97gS6VwqBQBBZRIO0frtFiGN+qejul0g8NlvNeciFB8WFj08Po9
-         PKNVF6CIOcnNJMZvpDT9KFK9Tr+zK5PSJeUN5/D9qUZkFWLQ3dWiuQ0XHJP1///H4lUP
-         A+0TG3dn17iO47f6ni97x+x6/+pmqgUlBu6ZukThIaV7azc+7uE9kLlDrvtQxGak0DMb
-         npVEpwolarRniS9J8MfwoAJR2sm9bR0jdL7eRkdTv/GDL2TLVMtgKuouPGk7nVWP88lS
-         y4Ng==
-X-Gm-Message-State: AOJu0YwORbaTbLtvGevXmS2F0+XP6olAMu/SL/bFREbKAdqBizOWmk4z
-	kzENDyRIdHLk65PUDj+j2wFyL2oHJFC2FlAWfICTvvQlkCq5vsTD6q7rKKLJYKACYGowMWGA3yl
-	O
-X-Google-Smtp-Source: AGHT+IGY7qmSYB6tpHSuApW/RciJG8sWNKiijIGpjoUVIGgaO/IQe1kPnKTxAnF4IVl3aQWTI3uEkg==
-X-Received: by 2002:aa7:c258:0:b0:57c:abf9:e6ab with SMTP id 4fb4d7f45d1cf-594bc7c7df9mr1503050a12.31.1720522309015;
-        Tue, 09 Jul 2024 03:51:49 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bc7c9e78sm929125a12.57.2024.07.09.03.51.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 03:51:48 -0700 (PDT)
-Message-ID: <54219ac8-45e2-49ea-b49d-d5304b8b7d94@linaro.org>
-Date: Tue, 9 Jul 2024 12:51:46 +0200
+	s=arc-20240116; t=1720522339; c=relaxed/simple;
+	bh=FRgjCLcJ6MXfKDSYddl5jo5cz8bvhM5ilxUGSXDAteA=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=fy8ocqqH+/wWzOA+m1Uygm/OMNlWzK01M+1GMT1kukoz610K7yOsnp3VbpG7dvkbhSFTtZIu1KA0Oal7pizxq89oLoybAQRIPH0SO/6XKPNiGJ7Qhv/RDbJJPfKI9TNAUppMG79TWtrExxoeXw2uGtjX7cgOihwFD3imF9IOFZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cbZmbl0b; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720522338; x=1752058338;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=FRgjCLcJ6MXfKDSYddl5jo5cz8bvhM5ilxUGSXDAteA=;
+  b=cbZmbl0brGS1ZuUutOydvwB2jZXKFJxFLGQZvwunGX5AewA7+qw9Jg29
+   4TKZhtguygXiO61XOCQ1W/TsdB1qWbo34AgiO2ai3Wq/63mmDQj+pSRQH
+   cuAG2L9tRM7IdhcU2NSmOJEnIZIh8V5/RzInEEkWCsvquXhBCydfV6hti
+   DTtepvjkPNWQuO+OgBu0E25YPQHy5ROSfOeebXmjhIhpmlq9BK5DsyZzn
+   R+ZcMvL/Tq6AGqdyltrbvPkRlqK+vKE2/rEOtM/s0Hen+jx89px/pMnph
+   t/DDQLlIJv30zVtocSxaG+c23zncsYqxL8sTKaATOen5AHVAZUrI4z8Ea
+   A==;
+X-CSE-ConnectionGUID: 2p52lraDRoSMEA11uU3gYQ==
+X-CSE-MsgGUID: PCuxifZtTl++tye+Neh+Rw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="28366708"
+X-IronPort-AV: E=Sophos;i="6.09,194,1716274800"; 
+   d="scan'208";a="28366708"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 03:52:17 -0700
+X-CSE-ConnectionGUID: WWaLn5PnTiaOMvwna+yrPQ==
+X-CSE-MsgGUID: KrKTrYGrREyTb4p/oMmiRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,194,1716274800"; 
+   d="scan'208";a="47708644"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.123])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 03:52:14 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 9 Jul 2024 13:52:07 +0300 (EEST)
+To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+cc: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <helgaas@kernel.org>, 
+    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+    Yazen Ghannam <yazen.ghannam@amd.com>, Bowman Terry <terry.bowman@amd.com>, 
+    Hagan Billy <billy.hagan@amd.com>, Simon Guinot <simon.guinot@seagate.com>, 
+    "Maciej W . Rozycki" <macro@orcam.me.uk>, 
+    Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Subject: Re: [PATCH v2] PCI: pciehp: Clear LBMS on hot-remove to prevent link
+ speed reduction
+In-Reply-To: <73fd7b2d-9256-9eba-70be-d69ea336fd67@amd.com>
+Message-ID: <6014882f-0936-ec31-d641-112a70eb2749@linux.intel.com>
+References: <20240617231841.GA1232294@bhelgaas> <27be113e-3e33-b969-c1e3-c5e82d1b8b7f@amd.com> <cf5f3b03-4c70-7a35-056e-5d94fc26f697@amd.com> <ZnKNJxJwdtWRphgX@wunner.de> <73fd7b2d-9256-9eba-70be-d69ea336fd67@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC V3 3/4] soc: qcom: Introduce SCMI based Memlat (Memory
- Latency) governor
-To: Sibi Sankar <quic_sibis@quicinc.com>, sudeep.holla@arm.com,
- cristian.marussi@arm.com, andersson@kernel.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com, conor+dt@kernel.org,
- Amir Vajid <avajid@quicinc.com>
-References: <20240702191440.2161623-1-quic_sibis@quicinc.com>
- <20240702191440.2161623-4-quic_sibis@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
- BB/OmIWU6X+LZW6P88ZmHe+KeyABLMP5s1tJNK1j4ntT7mECcWZDzafPWF4F6m4WJOG27kTJ
- HGWdmtO+RvadOVi6CoUDqALsmfS3MUG5Pj2Ne9+0jRg4hEnB92AyF9rW2G3qisFcwPgvatt7
- TXD5E38mLyOPOUyXNj9XpDbt1hNwKQfiidmPh5e7VNAWRnW1iCMMoKqzM1Anzq7e5Afyeifz
- zRcQPLaqrPjnKqZGL2BKQSZDh6NkI5ZLRhhHQf61fkWcUpTp1oDC6jWVfT7hwRVIQLrrNj9G
- MpPzrlN4YuAqKeIer1FMt8cq64ifgTzxHzXsMcUdclzq2LTk2RXaPl6Jg/IXWqUClJHbamSk
- t1bfif3SnmhA6TiNvEpDKPiT3IDs42THU6ygslrBxyROQPWLI9IL1y8S6RtEh8H+NZQWZNzm
- UQ3imZirlPjxZtvz1BtnnBWS06e7x/UEAguj7VHCuymVgpl2Za17d1jj81YN5Rp5L9GXxkV1
- aUEwONM3eCI3qcYm5JNc5X+JthZOWsbIPSC1Rhxz3JmWIwP1udr5E3oNRe9u2LIEq+wH/toH
- kpPDhTeMkvt4KfE5m5ercid9+ZXAqoaYLUL4HCEw+HW0DXcKDwARAQABzShLb25yYWQgRHli
- Y2lvIDxrb25yYWQuZHliY2lvQGxpbmFyby5vcmc+wsGOBBMBCAA4FiEEU24if9oCL2zdAAQV
- R4cBcg5dfFgFAmQ5bqwCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQR4cBcg5dfFjO
- BQ//YQV6fkbqQCceYebGg6TiisWCy8LG77zV7DB0VMIWJv7Km7Sz0QQrHQVzhEr3trNenZrf
- yy+o2tQOF2biICzbLM8oyQPY8B///KJTWI2khoB8IJSJq3kNG68NjPg2vkP6CMltC/X3ohAo
- xL2UgwN5vj74QnlNneOjc0vGbtA7zURNhTz5P/YuTudCqcAbxJkbqZM4WymjQhe0XgwHLkiH
- 5LHSZ31MRKp/+4Kqs4DTXMctc7vFhtUdmatAExDKw8oEz5NbskKbW+qHjW1XUcUIrxRr667V
- GWH6MkVceT9ZBrtLoSzMLYaQXvi3sSAup0qiJiBYszc/VOu3RbIpNLRcXN3KYuxdQAptacTE
- mA+5+4Y4DfC3rUSun+hWLDeac9z9jjHm5rE998OqZnOU9aztbd6zQG5VL6EKgsVXAZD4D3RP
- x1NaAjdA3MD06eyvbOWiA5NSzIcC8UIQvgx09xm7dThCuQYJR4Yxjd+9JPJHI6apzNZpDGvQ
- BBZzvwxV6L1CojUEpnilmMG1ZOTstktWpNzw3G2Gis0XihDUef0MWVsQYJAl0wfiv/0By+XK
- mm2zRR+l/dnzxnlbgJ5pO0imC2w0TVxLkAp0eo0LHw619finad2u6UPQAkZ4oj++iIGrJkt5
- Lkn2XgB+IW8ESflz6nDY3b5KQRF8Z6XLP0+IEdLOOARkOW7yEgorBgEEAZdVAQUBAQdAwmUx
- xrbSCx2ksDxz7rFFGX1KmTkdRtcgC6F3NfuNYkYDAQgHwsF2BBgBCAAgFiEEU24if9oCL2zd
- AAQVR4cBcg5dfFgFAmQ5bvICGwwACgkQR4cBcg5dfFju1Q//Xta1ShwL0MLSC1KL1lXGXeRM
- 8arzfyiB5wJ9tb9U/nZvhhdfilEDLe0jKJY0RJErbdRHsalwQCrtq/1ewQpMpsRxXzAjgfRN
- jc4tgxRWmI+aVTzSRpywNahzZBT695hMz81cVZJoZzaV0KaMTlSnBkrviPz1nIGHYCHJxF9r
- cIu0GSIyUjZ/7xslxdvjpLth16H27JCWDzDqIQMtg61063gNyEyWgt1qRSaK14JIH/DoYRfn
- jfFQSC8bffFjat7BQGFz4ZpRavkMUFuDirn5Tf28oc5ebe2cIHp4/kajTx/7JOxWZ80U70mA
- cBgEeYSrYYnX+UJsSxpzLc/0sT1eRJDEhI4XIQM4ClIzpsCIN5HnVF76UQXh3a9zpwh3dk8i
- bhN/URmCOTH+LHNJYN/MxY8wuukq877DWB7k86pBs5IDLAXmW8v3gIDWyIcgYqb2v8QO2Mqx
- YMqL7UZxVLul4/JbllsQB8F/fNI8AfttmAQL9cwo6C8yDTXKdho920W4WUR9k8NT/OBqWSyk
- bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
- nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
- izWDgYvmBE8=
-In-Reply-To: <20240702191440.2161623-4-quic_sibis@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 2.07.2024 9:14 PM, Sibi Sankar wrote:
-> Introduce a client driver that uses the memlat algorithm string hosted
-> on ARM SCMI QCOM Vendor Protocol to detect memory latency workloads and
-> control frequency/level of the various memory buses (DDR/LLCC/DDR_QOS).
+On Tue, 25 Jun 2024, Smita Koralahalli wrote:
+
+> Sorry for the delay here. Took some time to find a system to run experiments.
+> Comments inline.
+>
+> On 6/19/2024 12:47 AM, Lukas Wunner wrote:
+> > On Tue, Jun 18, 2024 at 02:23:21PM -0700, Smita Koralahalli wrote:
+> > > On 6/18/2024 11:51 AM, Smita Koralahalli wrote:
+> > > > > > > But IIUC LBMS is set by hardware but never cleared by hardware, so
+> > > > > > > if
+> > > > > > > we remove a device and power off the slot, it doesn't seem like
+> > > > > > > LBMS
+> > > > > > > could be telling us anything useful (what could we do in response
+> > > > > > > to
+> > > > > > > LBMS when the slot is empty?), so it makes sense to me to clear
+> > > > > > > it.
+> > > > > > > 
+> > > > > > > It seems like pciehp_unconfigure_device() does sort of PCI core
+> > > > > > > and
+> > > > > > > driver-related things and possibly could be something shared by
+> > > > > > > all
+> > > > > > > hotplug drivers, while remove_board() does things more specific to
+> > > > > > > the
+> > > > > > > hotplug model (pciehp, shpchp, etc).
+> > > > > > > 
+> > > > > > >  From that perspective, clearing LBMS might fit better in
+> > > > > > > remove_board(). In that case, I wonder whether it should be done
+> > > > > > > after turning off slot power? This patch clears is *before*
+> > > > > > > turning
+> > > > > > > off the power, so I wonder if hardware could possibly set it again
+> > > > > > > before the poweroff?
+> > > 
+> > > While clearing LBMS in remove_board() here:
+> > > 
+> > > if (POWER_CTRL(ctrl)) {
+> > > 	pciehp_power_off_slot(ctrl);
+> > > +	pcie_capability_write_word(ctrl->pcie->port, PCI_EXP_LNKSTA,
+> > > 				   PCI_EXP_LNKSTA_LBMS);
+> > > 
+> > > 	/*
+> > > 	 * After turning power off, we must wait for at least 1 second
+> > > 	 * before taking any action that relies on power having been
+> > > 	 * removed from the slot/adapter.
+> > > 	 */
+> > > 	msleep(1000);
+> > > 
+> > > 	/* Ignore link or presence changes caused by power off */
+> > > 	atomic_and(~(PCI_EXP_SLTSTA_DLLSC | PCI_EXP_SLTSTA_PDC),
+> > > 		   &ctrl->pending_events);
+> > > }
+> > > 
+> > > This can happen too right? I.e Just after the slot poweroff and before
+> > > LBMS
+> > > clearing the PDC/PDSC could be fired. Then
+> > > pciehp_handle_presence_or_link_change() would hit case "OFF_STATE" and
+> > > proceed with pciehp_enable_slot() ....pcie_failed_link_retrain() and
+> > > ultimately link speed drops..
+> > > 
+> > > So, I added clearing just before turning off the slot.. Let me know if I'm
+> > > thinking it right.
 > 
-> Co-developed-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-> Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-> Co-developed-by: Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
-> Signed-off-by: Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
-> Co-developed-by: Amir Vajid <avajid@quicinc.com>
-> Signed-off-by: Amir Vajid <avajid@quicinc.com>
-> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-> ---
+> I guess I should have experimented before putting this comment out.
+> 
+> After talking to the HW/FW teams, I understood that, none of our CRBs support
+> power controller for NVMe devices, which means the "Power Controller Present"
+> in Slot_Cap is always false. That's what makes it a "surprise removal." If the
+> OS was notified beforehand and there was a power controller attached, the OS
+> would turn off the power with SLOT_CNTL. That's an "orderly" removal. So
+> essentially, the entire block from "if (POWER_CTRL(ctrl))" will never be
+> executed for surprise removal for us.
+> 
+> There could be board designs outside of us, with power controllers for the
+> NVME devices, which I'm not aware of.
+> > 
+> > This was added by 3943af9d01e9 ("PCI: pciehp: Ignore Link State Changes
+> > after powering off a slot").  You can try reproducing it by writing "0"
+> > to the slot's "power" file in sysfs, but your hardware needs to support
+> > slot power.
+> > 
+> > Basically the idea is that after waiting for 1 sec, chances are very low
+> > that any DLLSC or PDSC events caused by removing slot power may still
+> > occur.
+> 
+> PDSC events occurring in our case aren't by removing slot power. It
+> should/will always happen on a surprise removal along with DLLSC for us. But
+> this PDSC is been delayed and happens after DLLSC is invoked and ctrl->state =
+> OFF_STATE in pciehp_disable_slot(). So the PDSC is mistook to enable slot in
+> pciehp_enable_slot() inside pciehp_handle_presence_or_link_change().
+> > 
+> > Arguably the same applies to LBMS changes, so I'd recommend to likewise
+> > clear stale LBMS after the msleep(1000).
+> > 
+> > pciehp_ctrl.c only contains the state machine and higher-level logic of
+> > the hotplug controller and all the actual register accesses are in helpers
+> > in pciehp_hpc.c.  So if you want to do it picture-perfectly, add a helper
+> > in pciehp_hpc.c to clear LBMS and call that from remove_board().
+> > 
+> > That all being said, I'm wondering how this plays together with Ilpo's
+> > bandwidth control driver?
+> > 
+> > https://lore.kernel.org/all/20240516093222.1684-1-ilpo.jarvinen@linux.intel.com/
+> 
+> I need to yet do a thorough reading of Ilpo's bandwidth control driver. Ilpo
+> please correct me if I misspeak something as I don't have a thorough
+> understanding.
+> 
+> Ilpo's bandwidth controller also checks for lbms count to be greater than zero
+> to bring down link speeds if CONFIG_PCIE_BWCTRL is true. If false, it follows
+> the default path to check LBMS bit in link status register. So if,
+> CONFIG_PCIE_BWCTRL is disabled by default we continue to see link speed drops.
+> Even, if BWCTRL is enabled, LBMS count is incremented to 1 in
+> pcie_bwnotif_enable() so likely pcie_lbms_seen() might return true thereby
+> bringing down speeds here as well if DLLLA is clear?
 
-[...]
+I did add code to clear the LBMS count in pciehp_unconfigure_device() in 
+part thanks to this patch of yours. Do you think it wouldn't work?
 
-> +/**
-> + * scmi_memlat_protocol_cmd - parameter_ids supported by the "MEMLAT" algo_str hosted
-> + *                            by the Qualcomm SCMI Vendor Protocol on the SCMI controller.
+But I agree there would still be problem if BWCTRL is not enabled. I 
+already have to keep part of it enabled due to the Target Speed quirk
+and now this is another case where just having it always on would be
+beneficial.
 
-'enum scmi_mem..'
+> > IIUC, the bandwidth control driver will be in charge of handling LBMS
+> > changes.  So clearing LBMS behind the bandwidth control driver's back
+> > might be problematic.  Ilpo?
 
-> +static int populate_cluster_info(u32 *cluster_info)
-> +{
-> +	char name[MAX_NAME_LEN];
-> +	int i = 0;
-> +
-> +	struct device_node *cn __free(device_node) = of_find_node_by_path("/cpus");
-> +	if (!cn)
-> +		return -ENODEV;
-> +
-> +	struct device_node *map __free(device_node) = of_get_child_by_name(cn, "cpu-map");
-> +	if (!map)
-> +		return -ENODEV;
-> +
-> +	do {
-> +		snprintf(name, sizeof(name), "cluster%d", i);
-> +		struct device_node *c __free(device_node) = of_get_child_by_name(map, name);
-> +		if (!c)
-> +			break;
-> +
-> +		*(cluster_info + i) = of_get_child_count(c);
-> +		i++;
-> +	} while (1);
+Yes, BW controller will take control of LBMS and other code should not 
+touch it directly (and LBMS will be kept cleared by the BW controller). 
+However, in this case I'll just need to adapt the code to replace the 
+LBMS clearing with resetting the LBMS count (if this patch is accepted 
+before BW controller), the resetting is already there anyway.
 
-of_cpu_device_node_get(0) + of_get_next_cpu_node() +
-of_get_cpu_hwid() & MPIDR_EL1.Aff2 [1]
+> > Also, since you've confirmed that this issue is fallout from
+> > a89c82249c37 ("PCI: Work around PCIe link training failures"),
+> > I'm wondering if the logic introduced by that commit can be
+> > changed so that the quirk is applied more narrowly, i.e. *not*
+> > applied to unaffected hardware, such as AMD's hotplug ports.
+> > That would avoid the need to undo the effect of the quirk and
+> > work around the downtraining you're seeing.
+> > 
+> > Maciej, any ideas?
+> 
+> Yeah I'm okay to go down to that approach as well. Any ideas would be helpful
+> here.
 
-[...]
+One thing I don't like in the Target Speed quirk is that it leaves the 
+Link Speed into the lower value if the quirk fails to bring the link up, 
+the quirk could restore the original Link Speed on failure to avoid these 
+problems. I even suggested that earlier, however, the downside of 
+restoring the original Link Speed is that it will require triggering yet 
+another retraining (perhaps we could avoid waiting for its completion 
+though since we expect it to fail).
 
-> +static struct cpufreq_memfreq_map *init_cpufreq_memfreq_map(struct device *dev,
-> +							    struct scmi_memory_info *memory,
-> +							    struct device_node *of_node,
-> +							    u32 *cnt)
-> +{
-> +	struct device_node *tbl_np, *opp_np;
-> +	struct cpufreq_memfreq_map *tbl;
-> +	int ret, i = 0;
-> +	u32 level, len;
-> +	u64 rate;
-> +
-> +	tbl_np = of_parse_phandle(of_node, "operating-points-v2", 0);
-> +	if (!tbl_np)
-> +		return ERR_PTR(-ENODEV);
-> +
-> +	len = min(of_get_available_child_count(tbl_np), MAX_MAP_ENTRIES);
-> +	if (len == 0)
-> +		return ERR_PTR(-ENODEV);
-> +
-> +	tbl = devm_kzalloc(dev, (len + 1) * sizeof(struct cpufreq_memfreq_map),
-> +			   GFP_KERNEL);
-> +	if (!tbl)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	for_each_available_child_of_node(tbl_np, opp_np) {
-> +		ret = of_property_read_u64_index(opp_np, "opp-hz", 0, &rate);
-> +		if (ret < 0)
-> +			return ERR_PTR(ret);
-> +
-> +		tbl[i].cpufreq_mhz = rate / HZ_PER_MHZ;
-> +
-> +		if (memory->hw_type != QCOM_MEM_TYPE_DDR_QOS) {
-> +			ret = of_property_read_u64_index(opp_np, "opp-hz", 1, &rate);
-> +			if (ret < 0)
-> +				return ERR_PTR(ret);
-> +
-> +			tbl[i].memfreq_khz = rate / HZ_PER_KHZ;
-> +		} else {
-> +			ret = of_property_read_u32(opp_np, "opp-level", &level);
-> +			if (ret < 0)
-> +				return ERR_PTR(ret);
-> +
-> +			tbl[i].memfreq_khz = level;
-> +		}
-> +
-> +		dev_dbg(dev, "Entry%d CPU:%u, Mem:%u\n", i, tbl[i].cpufreq_mhz, tbl[i].memfreq_khz);
-> +		i++;
-> +	}
-> +	*cnt = len;
-> +	tbl[i].cpufreq_mhz = 0;
+It might be possible to eventually trigger the Target Speed quirk from the 
+BW controller but it would require writing some state machine so that the 
+quirk is not repeatedly attempted. It seemed to complicate things too much 
+to add such a state machine at this point.
 
-missing of_node_put, or even better __free(device_node)
+-- 
+ i.
 
-[...]
-
-> +			/*
-> +			 * Variants of the SoC having reduced number of cpus operate
-> +			 * with the same number of logical cpus but the physical
-> +			 * cpu disabled will differ between parts. Calculate the
-> +			 * physical cpu number using cluster information instead.
-> +			 */
-> +			ret = populate_physical_mask(monitor_np, &monitor->mask,
-> +						     info->cluster_info);
-> +			if (ret < 0) {
-> +				dev_err_probe(&sdev->dev, ret, "failed to populate cpu mask\n");
-> +				goto err;
-> +			}
-
-err.. the same number of logical CPUs? as in, PSCI will happily report that
-the inexistent cores have been booted? or some cores start doing some sort
-of hyperthreading to make up for the missing ones? this sounds sketchy..
-
-Konrad
 
