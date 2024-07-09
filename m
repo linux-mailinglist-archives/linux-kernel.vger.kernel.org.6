@@ -1,130 +1,171 @@
-Return-Path: <linux-kernel+bounces-245181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 755A092AF5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:16:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDBDC92AF62
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FD6E1F21E86
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:16:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52A33B2107E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE317139F;
-	Tue,  9 Jul 2024 05:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1699D12D75A;
+	Tue,  9 Jul 2024 05:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q0nh4MA2"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fyTOuwZY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9293F9FB
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 05:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A25139F
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 05:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720502151; cv=none; b=QVbhthvEoxbTdhs2xNlEB+SZF+D9m00JyjPOJkyMWBs+Pqc8uqh9MOwjodOZxwUky59XgsZ48A9ANiyGThjUtKMHROdnhVq/FhergB2YjSvqkN2fX/qXHG7uN1SKruy9xLYKNeONns3T2CVKm4XOYLK6uDYKkYYYYwz1eSPuLgQ=
+	t=1720502358; cv=none; b=LFgRJGIQOsgkDeDMcjKNSsr4Kk5p+XLh1EeVPzMBmscC/IG1+vrqPmVFLRKIeYjVFXGx2Mhar+z2k1vRwp3k6kqFa3nZjc1WUTRF6XyWDW8xR+0f/6kembEdfC00alxw1xptXyV47s94xlm7CYD7qJSrP2bciAskAR3pKOjImZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720502151; c=relaxed/simple;
-	bh=P7OeQP7c9HqgK2yLsYhiPWT6hYg1DVYUTG3lGVemS90=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F7L6LG5M7Z9Ierp3rI+WnP5NVy8a+OMuhZUmPQTPUlTOLdBLX4KRPvhOCvUFixcXOY4rrWpzmGM9X7ewVTsizxkKd7P5ybw2foJYd+rXlG781WGg2R5hw6tlrCdhCTZOGeary+RUGBU6nAyYS+e+Mwtqz5KtOd22gwsmETe/uvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q0nh4MA2; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-75ee39f1ffbso3432931a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 22:15:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720502149; x=1721106949; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xDLPivrmkjKyg2q4jQZy8nP4kzWQRBZ8m1RjyeeDtNE=;
-        b=q0nh4MA2YgLcxfv61xgbOZDaE9opkE+uRymic/YLbcqNt8vFp+ACYurmNiTGYPTTLD
-         NJqM+RnmlQj5qOTAk3t5Pk/jci+tmfqARcB7+HmNGJRrJ7YkqkQf8G++nPWuwRJUugdg
-         Yri79TuHTZB4G/KFnk2tkryZ/+f02thWxS3vpLnXaIZo0S1tlOwLOIuAynPIUCjT9l0c
-         YQxch9CJEweRYXIqA1Wq2OutHuX09xxDzMkNZ+mVSCc5FA7qRjF1VB/A2EpVHWjnjcKq
-         2McuhHopgXH3BJlkZCrsfFrqtaX3WBCG2dZZDkOWYvPtshetT5TYVJtFBjaxvtc2YHc3
-         2low==
+	s=arc-20240116; t=1720502358; c=relaxed/simple;
+	bh=kxxZ4GZi+K29+wA/0D4vq8njOFzYZ2ku8FWTAgcRy2E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q275aBjrQNIR3uOead3qSAtbp8BeRedpjh0IOtpKbkcquODoX01z41d9QEAwrVE6adaReIDXEA/ILbf3bYGs1Vr2aQYWoC/20b9tvTvCNVQ9BAIBUObFyMziYrAfOG+BlbO1tjzh0qPaBu22ZrLCwKFnTXUc6nmtKZRNfbI80pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fyTOuwZY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720502355;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1NO3dhCc2LGOp3hm3fp51cTnn6RCFGh5hrEz11I777E=;
+	b=fyTOuwZY/QM/JV9upN6Hw3tabojJJMZAzJtk9/JcZAUFhjbx6NNTJP5QUcyjAMeZTWUx9E
+	IMjl8XJpJ72FcQ7AyRWToqR/j0/625fhG+0uoUJYqHNXMyV+6SCTxg0gfAFNm2xb4050Jf
+	XP/+w97y212tK0EZc74GoGendNjRM5w=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-138-qAQakBicM5e3GIy9omGURw-1; Tue, 09 Jul 2024 01:19:14 -0400
+X-MC-Unique: qAQakBicM5e3GIy9omGURw-1
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1fb4e7cc5d5so16557535ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 22:19:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720502149; x=1721106949;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1720502353; x=1721107153;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xDLPivrmkjKyg2q4jQZy8nP4kzWQRBZ8m1RjyeeDtNE=;
-        b=cRZXQHyVnBlKdgPJbJ9IAAhiy6W1e9al+bdExHQTBJ7DxVL0hwc2rYx50N0BMCjR9D
-         +v6shZplf43dj94R8w8w8MWwKgh+4i9AC1gPHUrbMdLO77HcVHwN7Y/6qQCoGoiFL6UT
-         yu/VLeFt1XrtUIb2bgJdHmbITwPYgo8+IK/cc++ddMMYf3M1l/XHPg2Qf1OCOiTyhd/B
-         Tfy8AkdtbFQHtRyBdGnLIC6bvPJntubyIpJnLEtWAgnM7xcryzzj7M6uvNWTmBbIhrwM
-         MMe2ZPIsg9q8VNNxdm3oRw2ERNJfakgtRpOWmJbi4ty/MPgtw9mvXYEY9hu3/Xdn96JH
-         gL9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXt/ZGoz6V57NVjTuKdal5vninoJOD6gZBeR+xrwi1ti9ZICFePUGmUPRrPRLeVNE23iqhSKegcuWMmMY31LFn2NXugWHQ12uBKl1e1
-X-Gm-Message-State: AOJu0YyJiopsYJJyyYBeWYKGsxdR+FbvWprqdB+NqL9Fiv2/r3mrGO2/
-	ktbtpgy0ifajg8kaiCkztuSNP7GBHR07F9hW5VTOUzwS9X4T0p9SDhgwzJRK2mtvdHnf2DWnF2w
-	=
-X-Google-Smtp-Source: AGHT+IGdB/mSqtlNzgyqtDYVfh5FespmcM82pecp53Uky3WSQDR7yhPKobzUwLPTl1k6IYZxsBLaWg==
-X-Received: by 2002:a05:6a21:6b0c:b0:1c2:3843:c7a with SMTP id adf61e73a8af0-1c29820c0dbmr1605818637.8.1720502149071;
-        Mon, 08 Jul 2024 22:15:49 -0700 (PDT)
-Received: from thinkpad ([117.193.209.237])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a1085dsm7259775ad.29.2024.07.08.22.15.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Jul 2024 22:15:48 -0700 (PDT)
-Date: Tue, 9 Jul 2024 10:45:40 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] PCI: qcom: Potential uninitialized variable in
- qcom_pcie_suspend_noirq()
-Message-ID: <20240709051540.GI3820@thinkpad>
-References: <20240708180539.1447307-1-dan.carpenter@linaro.org>
- <20240708180539.1447307-4-dan.carpenter@linaro.org>
+        bh=1NO3dhCc2LGOp3hm3fp51cTnn6RCFGh5hrEz11I777E=;
+        b=IsxXC77/ZlJ6T8XU6dx9suc6k40D6PqhcOWMf98rw/vupcX/E7h3dG6tTfGj+2g+uH
+         CIdb6iR0Lu19VxdS3DEdFg/Ysa0dHGxhOcfECtyjbuZMO+n95NYoLYWjXtFGQhfdW1S5
+         5iUNR9ktn6vMfoB6birq4Khba7kZ7hNBt44YnsyFKVQtNz83vuLqQIPPGEMrE4N7uKOC
+         B6FgozUhE+g5PkqqONdaFmJNML95yUdCW8NsaOHoS2WGH3OjoJvGVUyjCgL3PH90ZKKn
+         SrPbKWFGVagIG/hpKraSde/o7+QvaEIdxgCn2AuxVgber4kHRaBFAUl8yQ+8lMGFJFEh
+         tn4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUMi2KA54nryt285FrsU2fIi1CmntrL5/9ymPnBndmGUNN7qjhxJKI8pzdoBtXjjFWP3FPV1lHkCJ6SvHlTR+pgzp3d8IAQGs/DGkmc
+X-Gm-Message-State: AOJu0YxW25rm/OTSnz0+K10ax7boxR1wvg10pXxPRFuY1xhz+cplz2Aa
+	1uHq2k69E1H2jlbPvWGiGb3aHq43Qs//K/Df+nvft4Qm6uppTbTOUyPBXg53c+guxZlqvu1TGWs
+	BN3FYTaFP98mB8TZpePVnAw2KflliyL63RrMX7KLYZB6owwLKKvkDsCVZvOMSnQ==
+X-Received: by 2002:a17:902:ced2:b0:1fb:6ea1:4c with SMTP id d9443c01a7336-1fbb6d3d631mr11099505ad.23.1720502352945;
+        Mon, 08 Jul 2024 22:19:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFnVXcKv//QUkd2zalk0KVeKlO2V4LMxD2AA7tVtpYgxucEKRW687wZfsonrs0t+riLdK1vzA==
+X-Received: by 2002:a17:902:ced2:b0:1fb:6ea1:4c with SMTP id d9443c01a7336-1fbb6d3d631mr11099335ad.23.1720502352511;
+        Mon, 08 Jul 2024 22:19:12 -0700 (PDT)
+Received: from [192.168.68.54] ([103.210.27.92])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a28f83sm7276275ad.72.2024.07.08.22.19.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 22:19:11 -0700 (PDT)
+Message-ID: <3b1c8387-f40f-4841-b2b3-9e4dc1e35efc@redhat.com>
+Date: Tue, 9 Jul 2024 15:19:03 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240708180539.1447307-4-dan.carpenter@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/15] arm64: rsi: Add RSI definitions
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+References: <20240701095505.165383-1-steven.price@arm.com>
+ <20240701095505.165383-2-steven.price@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20240701095505.165383-2-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 08, 2024 at 01:05:38PM -0500, Dan Carpenter wrote:
-> Smatch complains that "ret" could be uninitialized if "pcie->icc_mem"
-> is NULL and "pm_suspend_target_state == PM_SUSPEND_MEM".  Silence this
-> warning by initializing ret to zero.
+On 7/1/24 7:54 PM, Steven Price wrote:
+> From: Suzuki K Poulose <suzuki.poulose@arm.com>
 > 
-> Fixes: 78b5f6f8855e ("PCI: qcom: Add OPP support to scale performance")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
+> The RMM (Realm Management Monitor) provides functionality that can be
+> accessed by a realm guest through SMC (Realm Services Interface) calls.
+> 
+> The SMC definitions are based on DEN0137[1] version A-eac5.
+> 
+> [1] https://developer.arm.com/documentation/den0137/latest
+> 
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
 > ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index e06c4ad3a72a..74e2acf4ae11 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -1633,7 +1633,7 @@ static int qcom_pcie_probe(struct platform_device *pdev)
->  static int qcom_pcie_suspend_noirq(struct device *dev)
->  {
->  	struct qcom_pcie *pcie = dev_get_drvdata(dev);
-> -	int ret;
-> +	int ret = 0;
->  
->  	/*
->  	 * Set minimum bandwidth required to keep data path functional during
-> -- 
-> 2.43.0
+> Changes since v3:
+>   * Drop invoke_rsi_fn_smc_with_res() function and call arm_smccc_smc()
+>     directly instead.
+>   * Rename header guard in rsi_smc.h to be consistent.
+> Changes since v2:
+>   * Rename rsi_get_version() to rsi_request_version()
+>   * Fix size/alignment of struct realm_config
+> ---
+>   arch/arm64/include/asm/rsi_cmds.h |  38 ++++++++
+>   arch/arm64/include/asm/rsi_smc.h  | 142 ++++++++++++++++++++++++++++++
+>   2 files changed, 180 insertions(+)
+>   create mode 100644 arch/arm64/include/asm/rsi_cmds.h
+>   create mode 100644 arch/arm64/include/asm/rsi_smc.h
 > 
 
--- 
-மணிவண்ணன் சதாசிவம்
+[...]
+
+> --- /dev/null
+> +++ b/arch/arm64/include/asm/rsi_smc.h
+> @@ -0,0 +1,142 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (C) 2023 ARM Ltd.
+> + */
+> +
+> +#ifndef __ASM_RSI_SMC_H_
+> +#define __ASM_RSI_SMC_H_
+> +
+> +/*
+> + * This file describes the Realm Services Interface (RSI) Application Binary
+> + * Interface (ABI) for SMC calls made from within the Realm to the RMM and
+> + * serviced by the RMM.
+> + */
+> +
+> +#define SMC_RSI_CALL_BASE		0xC4000000
+> +
+
+These fields have been defined in include/linux/arm-smccc.h. Those definitions
+can be reused. Otherwise, it's not obvious to reader what does 0xC4000000 represent.
+
+#define SMC_RSI_CALL_BASE	((ARM_SMCCC_FAST_CALL << ARM_SMCCC_TYPE_SHIFT)   | \
+                                  (ARM_SMCCC_SMC_64 << ARM_SMCCC_CALL_CONV_SHIFT) | \
+                                  (ARM_SMCCC_OWNER_STANDARD << ARM_SMCCC_OWNER_SHIFT))
+
+or
+
+#define SMC_RSI_CALL_BASE       ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,            \
+                                                    ARM_SMCCC_SMC_64,               \
+                                                    ARM_SMCCC_OWNER_STANDARD,       \
+                                                    0)
+
+Thanks,
+Gavin
+
 
