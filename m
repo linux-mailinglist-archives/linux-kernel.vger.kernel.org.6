@@ -1,74 +1,52 @@
-Return-Path: <linux-kernel+bounces-246543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D3A92C354
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:34:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84FC992C355
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 730AFB2303F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:34:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F17E1F23834
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B288A180050;
-	Tue,  9 Jul 2024 18:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bd2zQhz8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4BF1B86E4;
+	Tue,  9 Jul 2024 18:35:18 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0545B1B86E4;
-	Tue,  9 Jul 2024 18:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FF1152E06
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 18:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720550034; cv=none; b=fzH7s3Gd/lfoRVhYg079qEp9Pb46ow0D8urTXJ1yo7nrdUMJ4lZitbGUfbLajB6FsHFztbg8A1kI/PlMzjxa97Ct3R8d5qUZXoh0Hiw9Jp8KrF3Tn/yIcashp6rNXRbZe7X7uJ4QcCsQEit3fy0n9MWyKZaww7OTKMMKzCKO7es=
+	t=1720550117; cv=none; b=X1wgC0lRbNAn2PMDlX5aK4ofOs0uE6SwhmSgiASUfyVEl30D+vLBOy4ELkozo/ujYc4reDEnZ9N8nttUgBF4fuBKFXfvG/eUQqu8rh1KWgmEuDCF5uAhVvpwsdphkBEa2PERaMAZyeQsyw9Trgh6XZ8ELkYWVYOjJBxgU1/XAqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720550034; c=relaxed/simple;
-	bh=tmVX/C4yIEx1ethLXgaPRHHJAs0JD4bW3hQ7K8czov0=;
+	s=arc-20240116; t=1720550117; c=relaxed/simple;
+	bh=/kmrUjfG2lke5V47WD9Hzhi1nWUEYQPuTIPtqN6DaQw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=djrvYJ89v5IocSBjemZ8aKW5TGTXxxjhFiYE42VgqrzwQlLaxmV5pfxh4nBfMuipdNHMhXb6974Jz9XVQpul97dkL71z/jftU/lhbOFipR0Yc1BWHp8kfI4qeqKRtohBzz2qmZ7XsyE9qR841e3x1SuPGaVYl6UniEDWSJ9bwS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bd2zQhz8; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720550032; x=1752086032;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tmVX/C4yIEx1ethLXgaPRHHJAs0JD4bW3hQ7K8czov0=;
-  b=Bd2zQhz8ntfPPtbKP/23n/31QXcVDVmK+2FtplcH5XgFFMbZYyVqmDH2
-   aR35sQA7JmZiU7p1Kgvx9fCmgQn4CqRUdY0nhwlxMNoYpugYcBhi2bg4t
-   OYSpcD6W3GubYncMVCDszsXhR3RNpCb1iueZaRWbDHTfcj6/W4LPCYYkT
-   NKQM73MyT386tPkWTFQnMhlGBAP+gplXtqQEslyPPyBm4aB6FUTo71lqk
-   zoQ8lgk6wOilKWR1HQGGsIbWbBbgFYyP4rsYdF1co3274/cl9II6p2Tjx
-   DojxoNttWnXQ3ErZUEAx5Q0bYMiPp0SPuGO91H4wncQ5yV/m0r5tDtvaS
-   Q==;
-X-CSE-ConnectionGUID: uputb14AQwyp9SEZl9TQSg==
-X-CSE-MsgGUID: x2jJAH1/SiSt5ADV9igsFA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11128"; a="21593993"
-X-IronPort-AV: E=Sophos;i="6.09,195,1716274800"; 
-   d="scan'208";a="21593993"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 11:33:52 -0700
-X-CSE-ConnectionGUID: qszBf9+aR+635AihjfUasA==
-X-CSE-MsgGUID: 3uJ0Z4XMSq2Val5ybod/zw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,195,1716274800"; 
-   d="scan'208";a="52746275"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.105.195])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 11:33:52 -0700
-Date: Tue, 9 Jul 2024 11:33:49 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: peng guo <engguopeng@buaa.edu.cn>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	vishal.l.verma@intel.com, ira.weiny@intel.com,
-	dan.j.williams@intel.com, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, wyguopeng@163.com
-Subject: Re: [PATCH v2] cxl/core: Fix the UUID of CXL vendor debug Log
- identifier
-Message-ID: <Zo2CjTCSnPmn6t8R@aschofie-mobl2>
-References: <045fb08e-6d18-4558-b7b2-b83c412307da@intel.com>
- <20240709141239.10737-1-engguopeng@buaa.edu.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oDzSQ9looGj8lF9p4YKOGRiKloIcl2oK9h6rLeo124k4CLERCKfsTRZFIT32nsNyz/nWtXpH5HF6w/Up6axV5EkJKCYaCdoK/tBVEcir0/VN4BmZHh5Xbv9MBwIQvhez4IW9kQiG+03oYvQ5xYbvt5Y7Xt9mN7HgzPNWXFKnX20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82F4DC3277B;
+	Tue,  9 Jul 2024 18:35:15 +0000 (UTC)
+Date: Tue, 9 Jul 2024 19:35:13 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Yang Shi <yang@os.amperecomputing.com>
+Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, will@kernel.org,
+	anshuman.khandual@arm.com, david@redhat.com,
+	scott@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [v5 PATCH] arm64: mm: force write fault for atomic RMW
+ instructions
+Message-ID: <Zo2C4eXr5_9kifyO@arm.com>
+References: <20240626191830.3819324-1-yang@os.amperecomputing.com>
+ <Zn7q3oL1AE8jdM-g@arm.com>
+ <773c8be7-eb73-010c-acea-1c2fefd65b84@gentwo.org>
+ <Zn7xs6OYZz4dyA8a@arm.com>
+ <200c5d06-c551-4847-adaf-287750e6aac4@os.amperecomputing.com>
+ <ZoMG6n4hQp5XMhUN@arm.com>
+ <1689cd26-514a-4d72-a1bd-b67357aab3e0@os.amperecomputing.com>
+ <ZoZzhf9gGQxADLFM@arm.com>
+ <35f70ba6-5305-4268-b7ba-81545cacd83f@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,52 +55,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240709141239.10737-1-engguopeng@buaa.edu.cn>
+In-Reply-To: <35f70ba6-5305-4268-b7ba-81545cacd83f@os.amperecomputing.com>
 
-On Tue, Jul 09, 2024 at 10:12:39PM +0800, peng guo wrote:
-> Fix the definition value of DEFINE_CXL_VENDOR_DEBUG_UUID to match the
-> CXL r3.1 specification, although this value is not currently used.
+On Tue, Jul 09, 2024 at 10:56:55AM -0700, Yang Shi wrote:
+> On 7/4/24 3:03 AM, Catalin Marinas wrote:
+> > I haven't figured out what the +24% case is in there, it seems pretty
+> > large.
+> 
+> I think I ran the test much more iterations and I didn't see such outlier
+> anymore.
 
-I thought the value was actually used.
-Please help me understand by responding to v1 review:
-https://lore.kernel.org/Zow0Aw+vrXShXv+n@aschofie-mobl2/
+That's good, thanks for confirming.
 
---Alison
+> > What you haven't benchmarked (I think) is the case where the instruction
+> > is in an exec-only mapping. The subsequent instruction read will fault
+> > and it adds to the overhead. Currently exec-only mappings are not
+> > widespread but I heard some people planning to move in this direction as
+> > a default build configuration.
+> 
+> I tested exec-only on QEMU tcg, but I don't have a hardware supported EPAN.
+> I don't think performance benchmark on QEMU tcg makes sense since it is
+> quite slow, such small overhead is unlikely measurable on it.
 
+Yeah, benchmarking under qemu is pointless. I think you can remove some
+of the ARM64_HAS_EPAN checks (or replaced them with ARM64_HAS_PAN) just
+for testing. For security reason, we removed this behaviour in commit
+24cecc377463 ("arm64: Revert support for execute-only user mappings")
+but it's good enough for testing. This should give you PROT_EXEC-only
+mappings on your hardware.
 
-> 
-> All CXL devices that support a debug log shall support the Vendor Debug
-> Log to allow the log to be accessed through a common host driver, for any
-> device, all versions of the CXL specification define the same value with
-> Log Identifier of: 5e1819d9-11a9-400c-811f-d60719403d86
-> 
-> refer to:
-> CXL spec r2.0 Table 169
-> CXL spec r3.0 Table 8-62
-> CXL spec r3.1 Table 8-71
-> 
-> Fixes: 49be6dd80751 ("cxl/mbox: Move command definitions to common location")
-> Signed-off-by: peng guo <engguopeng@buaa.edu.cn>
-> ---
->  v1 -> v2: update commit message  and addressed review comments
-> 
->  drivers/cxl/cxlmem.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
-> index af8169ccdbc0..feb1106559d2 100644
-> --- a/drivers/cxl/cxlmem.h
-> +++ b/drivers/cxl/cxlmem.h
-> @@ -563,7 +563,7 @@ enum cxl_opcode {
->  		  0x3b, 0x3f, 0x17)
->  
->  #define DEFINE_CXL_VENDOR_DEBUG_UUID                                           \
-> -	UUID_INIT(0xe1819d9, 0x11a9, 0x400c, 0x81, 0x1f, 0xd6, 0x07, 0x19,     \
-> +	UUID_INIT(0x5e1819d9, 0x11a9, 0x400c, 0x81, 0x1f, 0xd6, 0x07, 0x19,     \
->  		  0x40, 0x3d, 0x86)
->  
->  struct cxl_mbox_get_supported_logs {
-> -- 
-> 2.43.0
-> 
+-- 
+Catalin
 
