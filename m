@@ -1,63 +1,57 @@
-Return-Path: <linux-kernel+bounces-246193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C2F392BEDF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:54:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E46092BEE1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC2CC1F22E55
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:54:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5D4BB2276B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25A619D8A2;
-	Tue,  9 Jul 2024 15:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51EF19D8A3;
+	Tue,  9 Jul 2024 15:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eu0EpuVH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kuP0nngX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A24315C9;
-	Tue,  9 Jul 2024 15:54:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37E719D889;
+	Tue,  9 Jul 2024 15:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720540452; cv=none; b=R/1SgvH/Nbz1xRQr5SqcgPAK0WZq2Eu4iVEY70Y6bcs55T1NMKIglG+0mHaC90KIU9hcsFx8Uu82BYoGIyYvW7aJMx7s9gVMIXQ+9MxGq07i1meIMEaq4zX02AO31fifuduL81i4XkVMXLDFS9EO7vKPZwIXoMSAJPJPU5u5UCg=
+	t=1720540531; cv=none; b=D9dB3b+oDYsbSjBe53gXv8VG6iul4ZbXRIAxNt115ul6EzCyL0auROv9W4cVU+LfeftIARhKTUaK32J9bRRuSf//Rbhh6s3gRYd3PWSza3merzW3ClLXRGR4jeWEarioQQdNXiU0VxXOrHsRfzUBsOoBvAyEq6Im79xIMohSRoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720540452; c=relaxed/simple;
-	bh=EoM5whDwCCG8XGdwUwCMcCTzrzGxwu8TOBiSd0x7Zrs=;
+	s=arc-20240116; t=1720540531; c=relaxed/simple;
+	bh=CL8pmg5DFHQd9+ANiwsowCJNRDv1egBuW4RViXT58tw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FM0ZwuIea2vURt6EdAgF3v6LugD2RenBMN3Q0Cr1B/rSHOlp3mSSRPbltNtqmj9vvWuG+LKlspMRlqLnBwvKWRtZrRdhzbwT0ttb9UjK3/oVFr6LCZdkxLo4vNBbWS5vqKrD/xtGqHn6icAg15Hj6bkuuzBRYVFledt2ORV8J1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eu0EpuVH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69E2EC3277B;
-	Tue,  9 Jul 2024 15:54:11 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=p1ShtV7AcZj9Crq3O8F+dNRL+eUHJKT21lu4IpbYnniQW9mnJ3fEwEkBYN2HVmLXZKpaA0dvzYVncfEz6XOA6tFJ2ef46D/Ci7nk9L6JfMs2coAE34xA0moUafBwoLrnrPuS6vT5FgxqdQYQ+xaGZoFUOWCGB4J/Iw0HNIBC9oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kuP0nngX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96B0FC3277B;
+	Tue,  9 Jul 2024 15:55:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720540451;
-	bh=EoM5whDwCCG8XGdwUwCMcCTzrzGxwu8TOBiSd0x7Zrs=;
+	s=k20201202; t=1720540530;
+	bh=CL8pmg5DFHQd9+ANiwsowCJNRDv1egBuW4RViXT58tw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eu0EpuVHa6HsPSiQ4C8rdDW92k1PUfh0er0dDuQtrSfnSdY2fUTnUuQPWcs9x93ry
-	 aBBEsbSk+svTm6PNvNjFgX2IOdzlz567dhoL/dTZu/Y0jAI+geeNoV9Q//ErYKycuO
-	 M+kRcavvkXU2ORaixkcR9QXMNMZo/peGrmo6Ka40UpjBF5oduSQ/40c2oXgBBPGPsH
-	 gussLIlZ7gagNc9ndyr87LoaS/5KtFkR13RSIt/bl8qSrTVfInvWCp/iIytYUhRTWf
-	 64fnHSNzhk2fGog0twJ2zs2KsUltmgcNkA6dflF8SPxRb4bJwSZL058bXCJA7WMiyK
-	 uCHr20sNR90SA==
-Date: Tue, 9 Jul 2024 09:54:10 -0600
-From: Rob Herring <robh@kernel.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linus.walleij@linaro.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, arnd@arndb.de,
-	durai.manickamkr@microchip.com, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Manikandan Muralidharan <manikandan.m@microchip.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v3 4/5] dt-bindings: gpio: convert Atmel GPIO to
- json-schema
-Message-ID: <20240709155410.GA3589336-robh@kernel.org>
-References: <20240709092354.191643-1-manikandan.m@microchip.com>
- <20240709092354.191643-5-manikandan.m@microchip.com>
- <172052434347.27822.16864713604407945517.b4-ty@linaro.org>
+	b=kuP0nngXqNYIGo1f/C4nH2zAcXu9AG8DlQhjfmcX6HZI4NMiJTI9NlxCg52FBzyVx
+	 KBfiHO0z4MyPcamR/JRKX9TEniT1wHsX12WP2pfKnX3uAHUtIEtGUVb/JSIWscSwi7
+	 mdgERbG/mqHCpuu0O3s61DBmPTtYo+yDd1WSVqIJXPaLX2OH18iBEtt1zEBTQAHWss
+	 5VoqIf1pBiDJlt5/7S2QMys4sOlasVxgvNrMTpk5lzt9RFYJhgaH+ehAQLi6SUk1RN
+	 lpcR6R/ug/SBApr0DL/35tdVqjCnpzXZTUc4dKhTAqpT8gRlmuK/pYgirVlSzl//3r
+	 ewd7BeRvmpfXA==
+Date: Tue, 9 Jul 2024 08:55:30 -0700
+From: Kees Cook <kees@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-next <linux-next@vger.kernel.org>,
+	liujinlong <liujinlong@kylinos.cn>,
+	liujinlong <mingliu6104@gmail.com>
+Subject: Re: linux-next: manual merge of the kspp tree with Linus' tree
+Message-ID: <202407090855.2CA07B977F@keescook>
+References: <20240709175803.36f8bca6@canb.auug.org.au>
+ <df14f286-a00c-493d-9abd-83d42dd6b6b2@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,30 +60,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <172052434347.27822.16864713604407945517.b4-ty@linaro.org>
+In-Reply-To: <df14f286-a00c-493d-9abd-83d42dd6b6b2@app.fastmail.com>
 
-On Tue, Jul 09, 2024 at 01:25:51PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Tue, Jul 09, 2024 at 10:29:19AM +0200, Arnd Bergmann wrote:
+> On Tue, Jul 9, 2024, at 09:58, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > Today's linux-next merge of the kspp tree got a conflict in:
+> >
+> >   kernel/kallsyms.c
+> >
+> > between commit:
+> >
+> >   7e1f4eb9a60d ("kallsyms: rework symbol lookup return codes")
+> >
+> > from Linus' tree and commit:
+> >
+> >   21b4564fedad ("sprint_symbol: Replace strcpy with memmove to handle 
+> > potential overlap")
+> >
+> > from the kspp tree.
+> >
+> > I fixed it up (the former removed the code modified by the latter, so I
+> > did that) and can carry the fix as necessary. This is now fixed as far as
+> > linux-next is concerned, but any non trivial conflicts should be mentioned
+> > to your upstream maintainer when your tree is submitted for merging.
+> > You may also want to consider cooperating with the maintainer of the
+> > conflicting tree to minimise any particularly complex conflicts.
 > 
+> Hi Stephen,
 > 
-> On Tue, 09 Jul 2024 14:53:53 +0530, Manikandan Muralidharan wrote:
-> > Convert the Atmel GPIO controller binding document to DT schema format
-> > using json-schema.
-> > The at91 pinctrl driver uses "atmel,at91rm9200-gpio" compatible string
-> > to find the number of active GPIO banks and identify the pinmux nodes.
-> > "atmel,at91sam9x5-gpio" and "microchip,sam9x60-gpio" have additional
-> > registers to handle drive-strength, slew-rate,  pull-down to drive the
-> > pinmux configs.
-> > The new compatible string "microchip,sam9x7-gpio" is added.
-> > 
-> > [...]
+> Thanks for pointing this out. It does look like the second
+> patch also just tries to address the same warning that I
+> fixed in my larger patch.
 > 
-> Applied, thanks!
-> 
-> [4/5] dt-bindings: gpio: convert Atmel GPIO to json-schema
->       commit: 337049890b8cbbb4fb527c58976ea19f4dc747a0
+> Kees, do you want to just drop that patch from your tree?
 
-Patch 5 depends on this one.
+Yup! Done. Thanks for the larger fix! :)
 
-Rob
+-- 
+Kees Cook
 
