@@ -1,135 +1,112 @@
-Return-Path: <linux-kernel+bounces-246029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08FEB92BCE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:28:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D4E092BCDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:27:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B10C71F229D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:28:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7078281E5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABDDD1940B2;
-	Tue,  9 Jul 2024 14:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34D619B5B8;
+	Tue,  9 Jul 2024 14:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZvgKn3I8"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hn9XRD3Z"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3407015749F
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 14:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C672A28E3;
+	Tue,  9 Jul 2024 14:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720535247; cv=none; b=Vrnfu05cXM6ckf8ZgKnadBh49gMhNU4wecT1fSynkOpcr+dl957Yr3BC7gYhIMpO66wxVgKVvWsj6IGmRRCFG49TKo3zorOj9bBQyIz340fIT6qq80HJYhUITCCtWumtCs6Sz3d8moiKocGcIcV8cA+nE7rSkkI4aFHOe9ls7F4=
+	t=1720535239; cv=none; b=ulzCXJB9/ro7cL8NaifrV+anrWN9pDULCVjk2U6Yy1nEGk4q3gNx1IMqGr26sbEILknCNqzDZXzegLjX3ijX1Pipj4h3xko5Y3ebmQOa4Hrtz32DRxjfae5k51gcpy4ZjEAmG/iS6lwdTariwUfDJND2NzADimwT/H9wLS/N9BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720535247; c=relaxed/simple;
-	bh=Y6OoUtinpMETnWd0YGmkmPcAttvftyJBVsRduasg6Cc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UchxVfkJ144p5m4u+x86f7nlgGPEOgBvEKYzkwUU8JZUViIXZl3r1D7D9FAyPo41jyA+SASypNoIW9bs+UzhHxZnMC6kzimNm3sjPlelArHYrvevfgt5ELFhh8QY0a7xrq+r3zyInImfM6mpQnPrVd7AovydWuIXetUmfwH+Cww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZvgKn3I8; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469Comf9030013;
-	Tue, 9 Jul 2024 14:27:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=Y
-	6OoUtinpMETnWd0YGmkmPcAttvftyJBVsRduasg6Cc=; b=ZvgKn3I8+ks5Lga2O
-	9OBuGcCkNS0YfGY3z0LVe4VMAJgh12W/kK8dr6k1TKfN9ku8NW3LFf7ped21jty9
-	IqjUohSxpV+c1v3CvOvjt9fEdNl8F8uyzxmZhPChld21ue9QU62YrvvnohQJEbOH
-	Cadsg0BH6BxaaJyp+fEjM7H1suEfE1OAOTTWZLlSQh+6a6ix6Volq/J7jBhHVSun
-	lfJjBKmqaqO8SqiQ65R8zz8zezea/P5/AYCJVGk62qaIIfydkvqKbf7J+Cnzbzgs
-	gHFIBQgsW/zKVo6UheSkQFleU/y8NkGh0Io6fYs3OusFhMFk8YdvWq8EieTempLI
-	CNqpw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 408nuxab1x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 14:27:10 +0000 (GMT)
-Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 469ER9aJ013428;
-	Tue, 9 Jul 2024 14:27:09 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 408nuxab1v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 14:27:09 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 469D8fsB006896;
-	Tue, 9 Jul 2024 14:27:08 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 407jfmcnqj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 14:27:08 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 469ER5Mn49676944
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 9 Jul 2024 14:27:08 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E79AF5807B;
-	Tue,  9 Jul 2024 14:27:03 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 290F158060;
-	Tue,  9 Jul 2024 14:26:59 +0000 (GMT)
-Received: from [9.171.46.21] (unknown [9.171.46.21])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  9 Jul 2024 14:26:58 +0000 (GMT)
-Message-ID: <978add3e-754c-4519-a511-117051519a70@linux.ibm.com>
-Date: Tue, 9 Jul 2024 19:56:57 +0530
+	s=arc-20240116; t=1720535239; c=relaxed/simple;
+	bh=bHNv1krS9O5CIeSOoJnUpX6Ug1/E9aV2zd53v+b/avU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N+Nm6Jvo8Ix7J4yOuIQZlfjcQmaGjLSeCu1ZN6nKmruPNWfv18LYNk6eL+Ir3WPc9AAET8PuvNhKWzBLzy6oooutpVtBmTivnm62FRXeeaC6URvRpED95KvsVTFJcJ3V0ZGDni7uqcmiteaOuf90sQ1EgPNGYooM73pYR+2zKlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hn9XRD3Z; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a77cc73d35fso674195766b.0;
+        Tue, 09 Jul 2024 07:27:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720535235; x=1721140035; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9QclN47byu9Xsdx9H2EcxAZbTcZCWWyzPecO9Rq5PJc=;
+        b=Hn9XRD3Z2VSIHymu2qSDXAmEP6OJYU03NdEuFf/tNJai/bVY8ROb2Y4Zr1JzQtCsWs
+         Fi63Cvha1tWSRQz691wMdRfOSyTmCpGt32zgJ0EED2ppcwWrqSjoJzMnK81/mqTr5e1R
+         E1t89RMp8ZIlBFq1Cv4VvKLoVoXdSgGXHzf2M0vbJfhqDXf+mi5glRpjQknIL23DPiyh
+         DfBRw+lkyuEsZibx9ZuCDGrmQGodz3eXfCbuiI4K5CpxULwAHa9vtpPEJ3xJ+xO4sj2c
+         7wVxNLiRYxqgazhlBoEvk6fTFQ/Li56v2vBFA01O0+gBdP0vrAjXw2bPmcnVyZStSSxx
+         KtXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720535235; x=1721140035;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9QclN47byu9Xsdx9H2EcxAZbTcZCWWyzPecO9Rq5PJc=;
+        b=aa/VaJkAHWFQi7XXi8imDKknAxstTL47PjJqPyT3sVLsOxrMVctMRWncKPykcnuc/n
+         t/oh80fb8nJlK2fsqS8Evxjq23K7v9cTlh704iZwrGAYyehxeLvUIeqDpX5i+RbgRxs5
+         1sQYidi80d+zdpXF1/5d0C9E3HKM/eryhsyPtTm148Szc5hz6qs1pCIcxy9vsQibbXww
+         AitYa2TyGMqPQku84xEBg50cmwhLqEyXEAHSDj6VBP65gjnW5aJv3qts4mjpkAwQnmv3
+         Y58MnHYdkMZ7vms9KrPkdzXJ8crIQJZZpCFOY7Gq9GNECBl2Vf6pLd0XRSie3fSMMoOB
+         lUxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ7hN3wG7pC/wPkYNuSLiofAWDBJy9BjyyEmojw7oVpCTKx8ijduTWN1zMLexdll6cC2HHGiPTtrN4mn6ZHvlScfZJrUYnyIhOZO94
+X-Gm-Message-State: AOJu0Yw7wKxZdUf8qTtBkdCQ//kmf1ix2GAhDgd5a2Lh+dlNiRfYxAaI
+	Uij6W69HMwb9R9jd60eQav789H0Q+hCBgxHZhkPBkxoZdO3ILITDysW6dw==
+X-Google-Smtp-Source: AGHT+IH1y3e4HfEfqP5LJUiu4bOdu+aOc2qNqQ3met9dnj/nm8W4IDL/dWaG26JTKatlGgZw6e2FCw==
+X-Received: by 2002:a17:906:f74e:b0:a77:dd70:a161 with SMTP id a640c23a62f3a-a780d22e117mr193894366b.10.1720535235197;
+        Tue, 09 Jul 2024 07:27:15 -0700 (PDT)
+Received: from 127.0.0.1localhost ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff21esm80649966b.135.2024.07.09.07.27.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 07:27:15 -0700 (PDT)
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: io-uring@vger.kernel.org
+Cc: Jens Axboe <axboe@kernel.dk>,
+	asml.silence@gmail.com,
+	Oleg Nesterov <oleg@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Tycho Andersen <tandersen@netflix.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org,
+	Julian Orth <ju.orth@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCH v2 0/2] fix task_work interation with freezing
+Date: Tue,  9 Jul 2024 15:27:17 +0100
+Message-ID: <cover.1720534425.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fs/hugetlbfs/inode.c: Ensure
- generic_hugetlb_get_unmapped_area() returns higher address than mmap_min_addr
-To: Oscar Salvador <osalvador@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Muchun Song <muchun.song@linux.dev>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, David Hildenbrand <david@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Tony Battersby
- <tonyb@cybernetics.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>, Andy Lutomirski <luto@kernel.org>
-References: <20240709092122.41232-1-donettom@linux.ibm.com>
- <Zo0JSVzKKmG_1ADQ@localhost.localdomain>
- <dc4a8671-b8c2-484f-a83c-03bfc1fbe078@linux.ibm.com>
- <Zo1DEjDawvmeqwRH@localhost.localdomain>
-Content-Language: en-US
-From: Donet Tom <donettom@linux.ibm.com>
-In-Reply-To: <Zo1DEjDawvmeqwRH@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: jh-qzAVYjFfZft_wE6GxEbdUmGzM2d8q
-X-Proofpoint-ORIG-GUID: 9-30sL8YaU3OqFBW56jR87MfhEyhmXlV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_04,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 impostorscore=0 mlxscore=0 lowpriorityscore=0
- clxscore=1015 suspectscore=0 bulkscore=0 mlxlogscore=575 phishscore=0
- malwarescore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090093
+Content-Transfer-Encoding: 8bit
 
+It's reported [1] that a task_work queued at a wrong time can prevent
+freezing and make the tasks to spin in get_signal() taking 100%
+of CPU. Patch 1 is a preparation. Patch 2 addresses the issue.
 
-On 7/9/24 19:32, Oscar Salvador wrote:
-> On Tue, Jul 09, 2024 at 07:14:38PM +0530, Donet Tom wrote:
->> Thank you Oscar.
-> Hi Donet,
->
->> The issue I am trying to fix will also get fixed by this new changes right.
->> So should we drop my patch or should we continue it?
-> I would keep this patch as it is easier to backport as a small fixup.
-OK thanks.
->
-> Thanks
->
+[1] https://github.com/systemd/systemd/issues/33626
+
+v2: move task_work_run() into do_freezer_trap()
+    change Fixes tag
+
+Pavel Begunkov (2):
+  io_uring/io-wq: limit retrying worker initialisation
+  kernel: rerun task_work while freezing in get_signal()
+
+ io_uring/io-wq.c | 10 +++++++---
+ kernel/signal.c  |  8 ++++++++
+ 2 files changed, 15 insertions(+), 3 deletions(-)
+
+-- 
+2.44.0
+
 
