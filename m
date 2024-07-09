@@ -1,130 +1,175 @@
-Return-Path: <linux-kernel+bounces-245768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82BB992B8F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:03:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC4892B8F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:02:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B313D1C234E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:03:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1E1EB21002
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FF815749E;
-	Tue,  9 Jul 2024 12:03:11 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F09E1586C4;
+	Tue,  9 Jul 2024 12:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CHmeeePA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C728B156F45
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 12:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0250612DDAE
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 12:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720526591; cv=none; b=hTVGW+4L89ugM1aXWGxszGG5Sbj3x/Yf9ltJq6dUKddczIwwgv4Qz7i/i+zhkN/8MfvzQzxw5kh85tem7XiKLje3a1sJbCuJ9HqslHcoW4IqlAPJqFj2FkC0gxWlhdZ6zr7Cm6HLgwXHmaHLKXrGIrvrpFWiGTcPP9EEDAgkmeE=
+	t=1720526567; cv=none; b=DH9ENg7K7ZOmkSDXfaWAg99of7WCMmzY0vlzOmXCp5zCw6coZHX5QB0C4gZa1dPOhMlWyaQaXkEYwtxYKb+lYtHz5mJf1O9QffQ+pMtmtMK1tnCdkOgfX3TZw1qq3dVT/d3AmBR5hopPgV0pv6IjehtweAu6xOArHGcremvs4ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720526591; c=relaxed/simple;
-	bh=1T7XXFEjJHde71OZCvZH01GVRsYLohPr7Cc7VeQO0Fg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i2Xy47VmFiWf8Lfc8NIovpOEkaeFPsM9Qxy4RL9daHSq0Tz0oJMUScumtrF7LIVEd/SXUDJtaEYxWuWqIcGHFj3UsNdFglE+hSamgaV0GwzOR7ezyqLYiNr5TIdhGK36gP7DqeqAtHtQ8xmnnJsIFLkbqN5bjbBpqVostAkTk7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WJKJQ0VBgzxVnq;
-	Tue,  9 Jul 2024 19:58:30 +0800 (CST)
-Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
-	by mail.maildlp.com (Postfix) with ESMTPS id 30D961402C6;
-	Tue,  9 Jul 2024 20:03:04 +0800 (CST)
-Received: from huawei.com (10.173.127.72) by kwepemd200019.china.huawei.com
- (7.221.188.193) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 9 Jul
- 2024 20:03:03 +0800
-From: Miaohe Lin <linmiaohe@huawei.com>
-To: <akpm@linux-foundation.org>, <muchun.song@linux.dev>, <hughd@google.com>,
-	<willy@infradead.org>
-CC: <linmiaohe@huawei.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] mm/hugetlb: fix kernel NULL pointer dereference when migrating hugetlb folio
-Date: Tue, 9 Jul 2024 19:58:41 +0800
-Message-ID: <20240709115841.4098393-1-linmiaohe@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1720526567; c=relaxed/simple;
+	bh=GPEKrnIfXI200uTTi3YvU/7kaTjsuMuRW1oNuL96hNg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I5+rdQduJBleSRdG7fQ86dW+9Bd55+myJsH5ZksEPetdU1macwLESwITl+DOqfBjSCatzRfhki9ZpC9gkIcju2f+IgOh8NiTKlnqw2HovnzegZVN4JGYFjnl5fIwoTrze+HRuSmA6KlEgjUNRXtOaTm/Hwyx+yqcaOJBWNd9J5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CHmeeePA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720526564;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dy4YRqqLNlf0j0FOWn3tiz8LkZrh0YUIypGbDuzRZ3A=;
+	b=CHmeeePA8HfjQ3i6p4S+teXMD1LcDi49vO9EZicWc0NZQpdVBxzdjXGh8sbAAP/NdASxHx
+	uBBhCJX20fiuG4mhpgS2vp9qTJPJlNF6pPVV6/9tBLzQBk6HO7aobO0C8dQyF7fENRMBOj
+	W0w2sYhstMdS0Ao1+spg/bmA3+u+njQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-608-c_qdNWy2PpGTy1EKmYFbfA-1; Tue, 09 Jul 2024 08:02:42 -0400
+X-MC-Unique: c_qdNWy2PpGTy1EKmYFbfA-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-426d316a96cso3199725e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 05:02:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720526561; x=1721131361;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dy4YRqqLNlf0j0FOWn3tiz8LkZrh0YUIypGbDuzRZ3A=;
+        b=DHYmELE3+IZBOM3H5lL4bFDnhKHXmUfcHY71tD30kGF8hZuQaWXUNnQRVEbNkQK8oZ
+         Q4BmYUbw1b/FrDG4idyrCYz7bqlSau3mahBvjPnfrEQqDLScYpGJRv8TR+LB19xnBIc/
+         NLRd4IzWfce7ff0AiFAqjUEOCl6YyUS3EyjTuyDfIkQcycsA+OGdt+oF4f+5ggz5S1qV
+         cn0SBZPOF/Z3DvGS+WJb9SJ4V3k2Jdye92QHHaVKrtsvDEjTEECVaLTlGfHZVrBHUZe+
+         t7EJx+NhpvJ4K6OZqz06Ss154FvTK4ID7Ku8n2OdpuTWCfZwpMDMNHZ9vsEViujzg+6y
+         fcEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNrbMxeUXkfUB2nv/9Kfbxw0EDgwZEdCcGYydFvCPPSlx8bqqB1qMuahQT8Pu7H4di/V6L6gFsBttRhR3LedAUXyIYngrEH17mdAfJ
+X-Gm-Message-State: AOJu0YyGfp6ffdhanGnQTHuunabSATHLEIK0wo3wYmKejYexI/YZ0qby
+	pNr4h8Ev/kThgmnzBNu50vnbhSFzoPxZsC9S4Bq5BocTgZQK2DmDjISMQGZOvndc7761+rCRmow
+	acXvWHO6a2kMDzXLpSVIX6cjm1LY4OOhFUXnB9nP5bEHsFNYimnrxqoYrm1sECA==
+X-Received: by 2002:a05:600c:3226:b0:426:59ec:17a9 with SMTP id 5b1f17b1804b1-426707d7c9fmr16596905e9.22.1720526561307;
+        Tue, 09 Jul 2024 05:02:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFSrbJt0jJlRogPAw/bQ1qZ0Lbp/49hLv8AiWFs4Pgl2/5UBg3dAYp6ZylEW9+XrxlA+vNo9w==
+X-Received: by 2002:a05:600c:3226:b0:426:59ec:17a9 with SMTP id 5b1f17b1804b1-426707d7c9fmr16596635e9.22.1720526560952;
+        Tue, 09 Jul 2024 05:02:40 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde7deeasm2422525f8f.8.2024.07.09.05.02.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 05:02:40 -0700 (PDT)
+Message-ID: <48cb6b5e-3685-4661-9183-080e25348892@redhat.com>
+Date: Tue, 9 Jul 2024 14:02:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd200019.china.huawei.com (7.221.188.193)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] drm/panic: Add a qr_code panic screen
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
+ <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ Bjorn Roy Baron <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
+ <aliceryhl@google.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
+ Danilo Krummrich <dakr@redhat.com>
+References: <20240709084458.158659-1-jfalempe@redhat.com>
+ <20240709084458.158659-5-jfalempe@redhat.com>
+ <2024070951-tall-effective-c916@gregkh>
+ <2024070947-exorcism-purchase-2f28@gregkh>
+ <acd5c505-f058-46e7-9d92-620dea41d707@redhat.com>
+ <2024070944-follow-crazy-ff95@gregkh>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <2024070944-follow-crazy-ff95@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-A kernel crash was observed when migrating hugetlb folio:
 
-BUG: kernel NULL pointer dereference, address: 0000000000000008
-PGD 0 P4D 0
-Oops: Oops: 0002 [#1] PREEMPT SMP NOPTI
-CPU: 0 PID: 3435 Comm: bash Not tainted 6.10.0-rc6-00450-g8578ca01f21f #66
-RIP: 0010:__folio_undo_large_rmappable+0x70/0xb0
-RSP: 0018:ffffb165c98a7b38 EFLAGS: 00000097
-RAX: fffffbbc44528090 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: ffffa30e000a2800 RSI: 0000000000000246 RDI: ffffa3153ffffcc0
-RBP: fffffbbc44528000 R08: 0000000000002371 R09: ffffffffbe4e5868
-R10: 0000000000000001 R11: 0000000000000001 R12: ffffa3153ffffcc0
-R13: fffffbbc44468000 R14: 0000000000000001 R15: 0000000000000001
-FS:  00007f5b3a716740(0000) GS:ffffa3151fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000008 CR3: 000000010959a000 CR4: 00000000000006f0
-Call Trace:
- <TASK>
- __folio_migrate_mapping+0x59e/0x950
- __migrate_folio.constprop.0+0x5f/0x120
- move_to_new_folio+0xfd/0x250
- migrate_pages+0x383/0xd70
- soft_offline_page+0x2ab/0x7f0
- soft_offline_page_store+0x52/0x90
- kernfs_fop_write_iter+0x12c/0x1d0
- vfs_write+0x380/0x540
- ksys_write+0x64/0xe0
- do_syscall_64+0xb9/0x1d0
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5b3a514887
-RSP: 002b:00007ffe138fce68 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 000000000000000c RCX: 00007f5b3a514887
-RDX: 000000000000000c RSI: 0000556ab809ee10 RDI: 0000000000000001
-RBP: 0000556ab809ee10 R08: 00007f5b3a5d1460 R09: 000000007fffffff
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000000000c
-R13: 00007f5b3a61b780 R14: 00007f5b3a617600 R15: 00007f5b3a616a00
 
-It's because hugetlb folio is passed to __folio_undo_large_rmappable()
-unexpectedly. large_rmappable flag is imperceptibly set to hugetlb folio
-since commit f6a8dd98a2ce ("hugetlb: convert alloc_buddy_hugetlb_folio to
-use a folio"). Then commit be9581ea8c05 ("mm: fix crashes from deferred
-split racing folio migration") makes folio_migrate_mapping() call
-folio_undo_large_rmappable() triggering the bug. Fix this issue by
-clearing large_rmappable flag for hugetlb folios. They don't need that
-flag set anyway.
+On 09/07/2024 12:12, Greg KH wrote:
+> On Tue, Jul 09, 2024 at 12:04:02PM +0200, Jocelyn Falempe wrote:
+>>
+>>
+>> On 09/07/2024 11:12, Greg KH wrote:
+>>> On Tue, Jul 09, 2024 at 11:11:35AM +0200, Greg KH wrote:
+>>>> On Tue, Jul 09, 2024 at 10:40:10AM +0200, Jocelyn Falempe wrote:
+>>>>> +config DRM_PANIC_SCREEN_QR_CODE_URL
+>>>>> +	string "Base url of the QR code in the panic screen"
+>>>>> +	depends on DRM_PANIC_SCREEN_QR_CODE
+>>>>> +	help
+>>>>> +	  This option sets the base url to report the kernel panic. If it's set
+>>>>> +	  the qr code will contain the url and the kmsg compressed with zlib as
+>>>>> +	  url parameter. If it's empty, the qr code will contain the kmsg as
+>>>>> +	  uncompressed text only.
+>>>>
+>>>> meta-comment, should we by default do this on a kernel.org domain so
+>>>> that no specific distro has to worry about hosing this type of web
+>>>> service?
+>>>
+>>> Also, do you have the backend source for this to show how anyone can
+>>> host it themselves as well?  We can't add features to the kernel that no
+>>> one but closed-source implementations will use for obvious reasons.
+>>
+>> I've made a proof of concept backend here:
+>> https://github.com/kdj0c/panic_report/
+>>
+>> And the javascript to decode the kmsg trace is here (under MIT licence):
+>> https://github.com/kdj0c/panic_report/blob/main/docs/panic_report.js
+> 
+> SPDX lines are your friend, you might want to look into that for this
+> stuff :)
 
-Fixes: f6a8dd98a2ce ("hugetlb: convert alloc_buddy_hugetlb_folio to use a folio")
-Fixes: be9581ea8c05 ("mm: fix crashes from deferred split racing folio migration")
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-Cc: <stable@vger.kernel.org>
----
- mm/hugetlb.c | 2 ++
- 1 file changed, 2 insertions(+)
+Sure, I've added the SPDX header for this file.
+> 
+>> It uses the pako js library to uncompress the zlib data, which is also under
+>> MIT/Zlib licence https://github.com/nodeca/pako/
+> 
+> Great, can you put that in the Kconfig help area for this option in your
+> next version?
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 6282dd9e37e3..4e288757da19 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -2173,6 +2173,8 @@ static struct folio *alloc_buddy_hugetlb_folio(struct hstate *h,
- 		nid = numa_mem_id();
- retry:
- 	folio = __folio_alloc(gfp_mask, order, nid, nmask);
-+	/* Ensure hugetlb folio won't have large_rmappable flag set. */
-+	folio_clear_large_rmappable(folio);
- 
- 	if (folio && !folio_ref_freeze(folio, 1)) {
- 		folio_put(folio);
+Yes, I will add a link to the panic_report github project.
+> 
+>> If kernel.org want to host a default service for that, that would be great.
+>> It can be linked with https://bugzilla.kernel.org to easily create a bug, or
+>> look for similar bugs.
+> 
+> Someone should at least propose it if this is going to be an option that
+> the kernel supports.
+
+I hope someone will volunteer to do that, as I'm not really into web 
+development. Also it's a bit early, drm panic is quite new, and needs 
+more driver support to be really useful.
+> thanks,
+> 
+> greg k-h
+> 
+
+
 -- 
-2.33.0
+
+Jocelyn
 
 
