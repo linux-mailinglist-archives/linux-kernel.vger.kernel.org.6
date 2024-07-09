@@ -1,222 +1,125 @@
-Return-Path: <linux-kernel+bounces-246441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A929092C1BC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:07:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E2792C1B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3A982891FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:07:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54CB92840FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADAF71BE84F;
-	Tue,  9 Jul 2024 16:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CC51B6A59;
+	Tue,  9 Jul 2024 16:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="rMxkriDa"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="lvzWx5O0"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732EC1BE258
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 16:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1B51A01A8
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 16:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720543020; cv=none; b=IfyCpQuZ2HP5z10KHU3ofAVcAnse3/+gU1F/SemcPMDLQhMVxtE6HHGwFL/280S/iaadjWtT7broSn/Kc3ZJNMLwz5baZd6urCLIz+Z0XevwBXBmlAf7FnFU7FuTm7O4XMS/UfYLVjWD41mfBANBMz9xrmUmQ+C0bQzZsPN+jfQ=
+	t=1720542979; cv=none; b=Gc+WI0utI+DkiCRFTfH4/6i6u+HBGQjd/niBZlhPGk7zS3Z6JZJ3O7Wt6AODUyfysCXzT2qKOxDzYHbg6tQY4Z8Qdan1fHFkBc8S4KlZQh73UiZcvPRcIEbDuSwY3dtpDInndeRC30i3VISyG9QKCDRkAmEklwQLUg+ZeUNMD+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720543020; c=relaxed/simple;
-	bh=uIItvsFiEiIBsA1xDvyGdp0R0i+SqUP9175o/Gq7eYo=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=dtfBCwZ5o8mCQO0zbjA7vVu4b9Hdpb0A0jgcXzbYUrreVzmrnCxHkgAEmQCGHqAp62pHwoZvui/p5gvgJ9m+rRuu5GTwuNaHjg/ZLomlKE0IRVE1TMTGdFepujzqTYgE+tOk0K4DlTEj5TrQ0N4UTgZDrR0Ym6Nq7Hs9Nfz0Y0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=rMxkriDa; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1720542979; c=relaxed/simple;
+	bh=gfuBjzaQL9gTYODlRQx6yFrgftBRvfPKkRJDUxKB4SU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dz6j536ESNYMn26759y9vevbKaqMIcuAZ+V2L9s2c5VvQ066/MzKGP+QtZKuP523lkQ2f4R9cW0V7svotK3aEns8+l99Vot+At/7Qkp0tFKUF8J07fNx1LfPeW1XxRZ4Y+r5qY867Krft5i6y4QDClsb1bcCScv7uHOq2XOkIQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=lvzWx5O0; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52ea1a69624so6190593e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 09:36:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1720542976; x=1721147776; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X9MYJUKCZJqpXesGhM7neSV7GESDWq919aeqPs6MM58=;
+        b=lvzWx5O0H3ZdXvs5RUmt5flpOHMNF5YFAICSl0boQ+tPi9XaI4r/lswnBgGFVd8eWF
+         3y9KfZaAc8gcePsZG/FuSa7S3XwNBjL0Q0LetHa/ILU6p45DpTZt3/+UJw6qE4m0t0nF
+         94rqgSaQHG9S1GSBo6a1c0iuVtOeoCe+fhVmpcoVXVXEV9bP19pWukFB3XXXINwEvjln
+         fEKYPANnKmd+skfQ0QmlpA+zhecAyX2OIn1KO4wxkbQuQSVp6ZwD71TPTX4vGXhRlU1s
+         gqclynI/digOtRb5cDeoS+MCf71KdgLdfxF4UOWPsBwrhDa2YZ6gQgdz2gwEJJwOLS7a
+         Q8sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720542976; x=1721147776;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X9MYJUKCZJqpXesGhM7neSV7GESDWq919aeqPs6MM58=;
+        b=QQxeFwsIxx20sjy+sOY+Z7vieMJhxPViwcDV2l6agk/pmRUOwH/RocSj+TossqdiGO
+         DPrmyNus9Xilboa4NfbjVghXT1XkT7fjBI/x64vriLupaCTWUmuf6INjGT8xIF2uPsJQ
+         7uzjwXp/jfevhfEjTzU3iZwJPANMU4449XcymQ3FQi8lqbk3C5cs+dmbGWWVIOhIOzYR
+         iGSzzHSiqLm51abcmvNxRTJ9ozNPYG6Hbp0pZAq1AOjyWcpMPn+GDR98NEVwAAFoNYqm
+         k70CpycLUln15A+0Jt2/dKbV9/WMGeyCC5S7lCGfMAVIfOvM56+w4KzjR/N25BowCSNu
+         zBgg==
+X-Forwarded-Encrypted: i=1; AJvYcCWNRDH9ZDgjO/yYtiCc/8HO5ZHR4OHWVvSOJEFkGxu/FQG0P2qOFKZVxC1tCQQEtkO3UQXFI+4NkLQaKrRT08iOlOpDGs/6c+34VtSO
+X-Gm-Message-State: AOJu0YwmPcR5jNs5CYzaxZJu86sqSPERKTNK877PE3gEcmjIuvOxJaAw
+	PGX67LRZCg4zE+7PfowX5T8c7YuMkD6BBrB45qU1j9py2A4gQ8r+am5eGHDdmHQ=
+X-Google-Smtp-Source: AGHT+IF2kTry7mVZy8wNL9+hXKmtByo6R5klQmpio5TGpcq8XeZkhMImhKEomb+u/Obf3niL5ZY8pQ==
+X-Received: by 2002:a05:6512:10ca:b0:52c:de47:b317 with SMTP id 2adb3069b0e04-52eb99a0805mr1684871e87.39.1720542975452;
+        Tue, 09 Jul 2024 09:36:15 -0700 (PDT)
+Received: from carbon.local (aztw-29-b2-v4wan-166913-cust1764.vm26.cable.virginm.net. [82.37.38.229])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6f5f25sm48897745e9.26.2024.07.09.09.36.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 09:36:15 -0700 (PDT)
+From: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
+Subject: [PATCH 0/2] iio: humidity: Add support for en21x sensor family
+Date: Tue, 09 Jul 2024 17:36:09 +0100
+Message-Id: <20240709-ens21x-v1-0-678521433cdd@thegoodpenguin.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1720543011;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Qb4jsYTIQzitlWMV3L8IKAQqxT2vxmP2fmC44qXIKog=;
-	b=rMxkriDamSGiRoMubJ+OPvOCJy32kDnf0T4D7nNs6RWEub+6GnN3/pLIhEzQki3IbyZkPe
-	XLrpTUWPjcJH07oYxVhmZcaOlrwabSoFRly/Kxnxp9YKinHoy8f5+Qma+8fCRuOpK16NlG
-	goGqtuxbimiKzWa5Yml+VK6CmM8el4k0YGHYTwXcmye/BzXUGzgDgf3rkLEyWi1X6dZf/D
-	cFduWZy3kPDGRXI813Vp4EciWmCojBkP+p93O5cUsHLGImeHE4Zq8cHhpQK6iaQ60JXLVH
-	7rRkAjj/kYj8JAEq9d6xuK1uTAmm+uWr6Thsq2IgLzPCSACyM3X7W2uFprU5Qg==
-Date: Tue, 09 Jul 2024 18:36:08 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andy Yan <andyshrk@163.com>, linux-rockchip@lists.infradead.org,
- dri-devel@lists.freedesktop.org, heiko@sntech.de, hjc@rock-chips.com,
- andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com,
- tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- javierm@redhat.com
-Subject: Re: [PATCH] drm/rockchip: cdn-dp: Remove redundant workarounds for
- firmware loading
-In-Reply-To: <20240709-exuberant-tentacled-oxpecker-bd1ea0@houat>
-References: <9b7a9e9b88ad8c7489ee1b4c70b8751eeb5cf6f9.1720049413.git.dsimic@manjaro.org>
- <109c6f19.2559.1907b817a99.Coremail.andyshrk@163.com>
- <0bf4701d98833609b917983718c610aa@manjaro.org>
- <2fd3aabd.785b.190914ec1a6.Coremail.andyshrk@163.com>
- <f0fb9feed2d9262bb4d7c8ade836af62@manjaro.org>
- <909d072.9028.19096c2429a.Coremail.andyshrk@163.com>
- <31062b80d3f9e11c339c400a70464f43@manjaro.org>
- <20240709-exuberant-tentacled-oxpecker-bd1ea0@houat>
-Message-ID: <b6d630447e6c69e913b76650d910f895@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPlmjWYC/yWMywqDMBBFfyXMuoGYPvVXxIXVazoLk3YmLYL47
+ w26upzL4aykEIZSY1YS/Fg5xQLVydDw6mOA5bEweecv7u5qi6i+Wuxj8tezq29lQUV+CyZe9lD
+ bHSz4fEsvHyc9e4Ud0jxzbkxOQRCo27Y/cLtgKYIAAAA=
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720542974; l=916;
+ i=jfelmeden@thegoodpenguin.co.uk; s=20240709; h=from:subject:message-id;
+ bh=gfuBjzaQL9gTYODlRQx6yFrgftBRvfPKkRJDUxKB4SU=;
+ b=UPDKdoiVHDUupCbcU10xRQso7vvKmh3tWU1eFOts+m/t6rLYecJWfFxLao1pg3dq9psg11s6D
+ JfPM4It7kCmC43aB39RZ07HHPgVnbpjXTgB29APGt5tCRgBVW6vHGer
+X-Developer-Key: i=jfelmeden@thegoodpenguin.co.uk; a=ed25519;
+ pk=tePkZ5iJ3ejQ2O3vjhsj7GrLYcyJN1o1sMT3IEXvKo0=
 
-Hello Maxime,
+This patch series adds support for the
+ENS210/ENS210A/ENS211/ENS212/ENS213A/ENS215 temperature and humidity
+sensors.
 
-On 2024-07-09 13:09, Maxime Ripard wrote:
-> On Tue, Jul 09, 2024 at 12:10:51PM GMT, Dragan Simic wrote:
->> On 2024-07-09 11:10, Andy Yan wrote:
->> > At 2024-07-09 16:17:06, "Dragan Simic" <dsimic@manjaro.org> wrote:
->> > > On 2024-07-08 09:46, Andy Yan wrote:
->> > > > At 2024-07-04 18:35:42, "Dragan Simic" <dsimic@manjaro.org> wrote:
->> > > > > On 2024-07-04 04:10, Andy Yan wrote:
->> > > > > > At 2024-07-04 07:32:02, "Dragan Simic" <dsimic@manjaro.org> wrote:
->> > > > > > > After the additional firmware-related module information was
->> > > > > > > introduced by
->> > > > > > > the commit c0677e41a47f ("drm/rockchip: cdn-dp-core: add
->> > > > > > > MODULE_FIRMWARE
->> > > > > > > macro"), there's no longer need for the
->> > > > > > > firmware-loading workarounds
->> > > > > > > whose
->> > > > > > > sole purpose was to prevent the missing firmware
->> > > > > > > blob in an initial
->> > > > > > > ramdisk
->> > > > > > > from causing driver initialization to fail.  Thus, delete the
->> > > > > > > workarounds,
->> > > > > > > which removes a sizable chunk of redundant code.
->> > > > > >
->> > > > > > What would happen if there was no ramdisk? And the firmware is in
->> > > > > > rootfs ？
->> > > > > >
->> > > > > > For example： A buildroot based tiny embedded system。
->> > > > >
->> > > > > Good point, let me explain, please.
->> > > > >
->> > > > > In general, if a driver is built into the kernel, there
->> > > > > should also be
->> > > > > an initial ramdisk that contains the related firmware blobs, because
->> > > > > it's
->> > > > > unknown is the root filesystem available when the driver is probed.
->> > > > > If
->> > > > > a driver is built as a module and there's no initial ramdisk, having
->> > > > > the related firmware blobs on the root filesystem should be fine,
->> > > > > because
->> > > > > the firmware blobs and the kernel module become available at
->> > > > > the same
->> > > > > time, through the root filesystem. [1]
->> > > > >
->> > > > > Another option for a driver built statically into the kernel, when
->> > > > > there's
->> > > > > no initial ramdisk, is to build the required firmware blobs into the
->> > > > > kernel
->> > > > > image. [2]  Of course, that's feasible only when a kernel image is
->> > > > > built
->> > > > > specificially for some device, because otherwise it would become too
->> > > > > large
->> > > > > because of too many drivers and their firmware blobs becoming
->> > > > > included,
->> > > > > but that seems to fit the Buildroot-based example.
->> > > > >
->> > > > > To sum it up, mechanisms already exist in the kernel for various
->> > > > > scenarios
->> > > > > when it comes to loading firmware blobs.  Even if the deleted
->> > > > > workaround
->> > > > > attempts to solve some issue specific to some environment,
->> > > > > that isn't
->> > > > > the
->> > > > > right place or the right way for solving any issues of that kind.
->> > > > >
->> > > > > While preparing this patch, I even tried to find another
->> > > > > kernel driver
->> > > > > that
->> > > > > also implements some similar workarounds for firmware loading, to
->> > > > > justify
->> > > > > the existence of such workarounds and to possibly move them into the
->> > > > > kernel's
->> > > > > firmware-loading interface.  Alas, I was unable to find such
->> > > > > workarounds
->> > > > > in
->> > > > > other drivers, which solidified my reasoning behind classifying the
->> > > > > removed
->> > > > > code as out-of-place and redundant.
->> > > >
->> > > > For some tiny embedded system，there is no such ramdisk，for example：
->> > > > a buildroot based rootfs，the buildroot only generate rootfs。
->> > > >
->> > > > And FYI， there are mainline drivers try to fix such issue by
->> > > > defer_probe，for example：
->> > > > smc_abc[0]
->> > > > There are also some other similar scenario in gpu driver{1}[2]
->> > > >
->> > > > [0]https://elixir.bootlin.com/linux/latest/source/drivers/tee/optee/smc_abi.c#L1518
->> > > > [1]https://patchwork.kernel.org/project/dri-devel/patch/20240109120604.603700-1-javierm@redhat.com/
->> > > > [2]https://lore.kernel.org/dri-devel/87y1918psd.fsf@minerva.mail-host-address-is-not-set/T/
->> > >
->> > > Thanks for providing these examples.
->> > >
->> > > Before I continue thinking about the possible systemic solution,
->> > > could you please clarify the way Buildroot builds the kernel and
->> > > prepares the root filesystem?  I'm not familiar with Buildroot,
->> > > but it seems to me that it builds the drivers statically into the
->> > > produced kernel image, while it places the related firmware blobs
->> > > into the produced root filesystem.  Am I right there?
->> >
->> > in practice we can chose build the drivers statically into the kernel，
->> > we can also build it as a module。
->> > And in both case， the firmware blobs are put in rootfs。
->> > If the drivers is built as a module， the module will also put in
->> > rootfs，
->> > so its fine。
->> > But if a drivers is built into the kernel ，it maybe can't access the
->> > firmware blob
->> > before the rootfs is mounted.
->> > So we can see some drivers try to use  DEFER_PROBE to fix this issue.
->> 
->> When Buildroot builds the drivers statically into the kernel image,
->> can it also be told to build the required firmware blobs into the
->> kernel image, for which there's already support in the kernel?
->> 
->> Of course, that would be feasible if only a small number of firmware
->> blobs would end up built into the kernel image, i.e. if the Buildroot
->> build would be tailored for a specific board.
-> 
-> IIRC, it can, but it's not really convenient from a legal point of 
-> view.
+Patch 1 adds the required device tree bindings.
 
-Ah, makes sense.  Very different licensing for the same file, etc.
+Patch 2 adds the driver, providing the probe and read functions.
 
->> Otherwise...
->> 
->> > > As I already wrote earlier, and as the above-linked discussions
->> > > conclude, solving these issues doesn't belong to any specific driver.
->> > > It should be resolved within the kernel's firmware loading mechanism
->> > > instead, and no driver should be specific in that regard.
->> >
->> > IT would be good if it can be resolved within the kernel's  firmware
->> > loading mechanism.
->> 
->> ... we'll need this as a systemic solution.
-> 
-> The general policy has been to put drivers that need a firmware as a
-> module, and just never build them statically.
+Signed-off-by: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
+---
+Joshua Felmeden (2):
+      dt-bindings: iio: humidity: add ENS21x sensor family
+      iio: humidity: Add support for ENS21x
 
-I totally agree, but if Buildroot builds them statically and provides
-no initial ramdisk, we need a better solution than having various 
-drivers
-attempt to implement their own workarounds.
+ .../bindings/iio/humidity/sciosense,ens21x.yaml    |  50 +++
+ drivers/iio/humidity/Kconfig                       |  11 +
+ drivers/iio/humidity/Makefile                      |   1 +
+ drivers/iio/humidity/ens21x.c                      | 348 +++++++++++++++++++++
+ 4 files changed, 410 insertions(+)
+---
+base-commit: 1ebab783647a9e3bf357002d5c4ff060c8474a0a
+change-id: 20240709-ens21x-8f2530968f2e
+
+Best regards,
+-- 
+Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
+
 
