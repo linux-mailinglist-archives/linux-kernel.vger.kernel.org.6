@@ -1,417 +1,98 @@
-Return-Path: <linux-kernel+bounces-246496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADDA692C2A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:40:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B1E92C2A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:41:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DCAAB23BEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:40:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E08271F25480
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E86C17B040;
-	Tue,  9 Jul 2024 17:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AAE717B023;
+	Tue,  9 Jul 2024 17:41:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="cmWOcTlM"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQSIo0lM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486D7180033
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 17:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4DB1B86F8
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 17:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720546787; cv=none; b=JokC8KGWEaDJrwL5T4HFkDVqPQWFT6ilP/Iw+pPu0gg7ttGPxJ1u0mmVaeEaEZzlv92BpF8Lfiv99kgB0x7Fl6wkUjfzFVWzYf2kqeBqqTNTMlx5YbKkMmmI5wbf5F2gIZ3KfU/8W2xpSAz4Vcw4w3lGzx0+Rwx3Jl6mGQ5zeT8=
+	t=1720546886; cv=none; b=n2oq5F/KukkbOCk9rN7WdEahgPIfS6X/Vuq5NY17u/tlREziaw5+BDwTA/Ag3ox/A3AYiTajA2HbyLUK6UllEL1i+38C0nlnni7KRO9HQlVZiIu1FaIcMmP9OD9oTUQ/Wrs0rTS11b+qp9LN41AMJ9w6+BCFM319GWU94fEYb2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720546787; c=relaxed/simple;
-	bh=IGoFOuz+Zi5Uhxx4emsE7F5oHebVKUziK0at7L29O1U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FEmfITb82ae4FWpLQqvhW3vGi676PY+0j16UgaJxF2QKtGzjvpENE63t0NldsXgOFZwRRLk2WhmpHNHSxCT8XSR3DOARXs15Xs3Cdee2qKWY0gHVEFgiqH/ydvrY9RJ7fHABQHOB5OynVXkrW7CJFCyliWdIJYceU54pWzYJaQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=cmWOcTlM; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3d9231a8dd6so1607367b6e.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 10:39:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1720546783; x=1721151583; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ys1Aw6VvBUculkzPHvM/HV7hPckJqLLorHwgfnWzAjs=;
-        b=cmWOcTlMhSlh3QNDd4eEIhRgAB87DkJaYjUq4GPwFgYUCtxhsAow5P+bITfOyZsToY
-         fcwSH0Ewd7lvXsK8bWBLFvkfaW8RSI7+UkmrWMzhjp0q2FPGzBxEOKIDTs5QdniT29Wu
-         igRKApedXLqaFznbnXcG0GipP/i9TCl1tdjQcMeFoKk9HmSU1APFfi6bM1QD6RBJiMcU
-         4eEaSqxJoB3X6BS1+Dq9jRwKqSwAEc4a2f7DOmQNhZ0gGPfxMzVg5BnbmNWqmOllrpAX
-         KCQuVMyo9hpjmYaYfzMtVeTJBAr3FtlgbQhvPuhPWV0Fr6DZRlRwz6bVj00PSaAjIb0i
-         4d/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720546783; x=1721151583;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ys1Aw6VvBUculkzPHvM/HV7hPckJqLLorHwgfnWzAjs=;
-        b=I9JcAFKlTIiTNCUNQ9GHR5pQry3Z0z0dfp6mhuwTeaQA9F8jE1g9zKEohgPVldH7yc
-         XJP0crd5srfzJOgM4RKNwMpve4ogw22CLKvpuRk3eotFNcilKyD5aEbloI0qawf+wrji
-         5MFuf26vFb06QYA7WcQef9MgAsCZlB+HhynMC6vJ7RHI5X+wmwi2NS/nVKT5MK8ujNh9
-         hb8Tpz/HHJtKAagpW51Ykl1nB2YhXtbsOY+ClPHIX2ciorwSQVXHEjhe4S75TubdhFoj
-         LWaaqYNz7pA5hiunWnV0XUYbVWeYZqqmsqOhDlKu2/YwB27rqzTr/1EXoLR5loKDM6kY
-         b86g==
-X-Forwarded-Encrypted: i=1; AJvYcCX8ZBBRqV6PqF3+Z0EieSP+MCV6ir2OsNzGXMLI6An+Ms8YS0xAakKNiNv1Z9z8J4A6GkeW0px/6079Ry+s6RGQxyTV+djrZ9wLgnoM
-X-Gm-Message-State: AOJu0YyoqwDNOmvOnc2k0dqcweT/GZ3wQjVi2hZwMfJA9l/SzRELzIsr
-	QqbjBIqPEVlLfhuUpQgMnwtYEjKqxeIK6BVTcxGQubtbodTk3pNQZSeKfQoUnbc=
-X-Google-Smtp-Source: AGHT+IGj1/PBL90vBofRatNEDEbdFQFf7AwNGmHOoh5MNXhXvkvRBUpAEVrV8n1KV+mCB1tFV7RvZg==
-X-Received: by 2002:a05:6808:13c9:b0:3d5:633b:3d8d with SMTP id 5614622812f47-3d93c0aaa10mr2959216b6e.53.1720546783247;
-        Tue, 09 Jul 2024 10:39:43 -0700 (PDT)
-Received: from jesse-desktop.. (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f18ff6762sm117547785a.10.2024.07.09.10.39.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 10:39:42 -0700 (PDT)
-From: Jesse Taube <jesse@rivosinc.com>
-To: linux-riscv@lists.infradead.org
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Jesse Taube <jesse@rivosinc.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Wende Tan <twd2.me@gmail.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Zong Li <zong.li@sifive.com>
-Subject: [PATCH v4 4/4] RISC-V: Use Zkr to seed KASLR base address
-Date: Tue,  9 Jul 2024 13:39:37 -0400
-Message-ID: <20240709173937.510084-5-jesse@rivosinc.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240709173937.510084-1-jesse@rivosinc.com>
-References: <20240709173937.510084-1-jesse@rivosinc.com>
+	s=arc-20240116; t=1720546886; c=relaxed/simple;
+	bh=dpQsM70QaCOUDwXwlC9bFXL1a5ELhi8e4N588OPS+A8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r8xI+lCvZD/iB6+7lN4TcW1PmZaIW3njTjnkirasztp5WYGqfe9VYwkcuaoEb7FgjUxGYwg1CS6tuY5VGBXKoIHElrkWmaQGn9Fwerp7cW5brreXdPr3BYVrTPG16JmER7ruVxfgKu+MvtRRYgrWES/f6nPk4eHKp+mZc6Zv3lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FQSIo0lM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38938C3277B;
+	Tue,  9 Jul 2024 17:41:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720546886;
+	bh=dpQsM70QaCOUDwXwlC9bFXL1a5ELhi8e4N588OPS+A8=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=FQSIo0lMFPeVg0Md/0gxAj8VEYa+PtL7VpVpA4QPyPDI7OMwEgpRC+v8JOSJFdA6I
+	 Odnfo/djM8+S8dxurJ0Cy/PGpYYDRqeo/LbvfXn5/eZLrzsezVtQLmlUmvQ/8c50ga
+	 IM0Fhq6B0aCPlRKNpMFBWjHzLjQMFDE2akzBP2xj+QCKYPYHnEkzEw7IJEw9J3tpOG
+	 3/9mxiV922eUnREFsJgYiR0ioUa86ItMBiDOOMg2tHOaTDWs0otj5ScNDRKcDaGawB
+	 eAraQJD3aAeGljjB7XpnIy5pK3L60JMLVmKoc6iPNq0ink3H+IiSL/OnLGK7pedesK
+	 mG4bUHYv++0zw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id CCC9ACE0A45; Tue,  9 Jul 2024 10:41:25 -0700 (PDT)
+Date: Tue, 9 Jul 2024 10:41:25 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Zqiang <qiang.zhang1211@gmail.com>
+Cc: imran.f.khan@oracle.com, tglx@linutronix.de,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] smp: Fix missed destroy_work_on_stack() calls in
+ smp_call_on_cpu()
+Message-ID: <4673661c-b6c0-4188-a98c-83dfdda48a13@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240704065213.13559-1-qiang.zhang1211@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240704065213.13559-1-qiang.zhang1211@gmail.com>
 
-Parse the device tree for Zkr in the isa string.
-If Zkr is present, use it to seed the kernel base address.
+On Thu, Jul 04, 2024 at 02:52:13PM +0800, Zqiang wrote:
+> For builts with CONFIG_DEBUG_OBJECTS_WORK=y kernels, the sscs.work
+> defined using INIT_WORK_ONSTACK() will be initialized by
+> debug_object_init_on_stack() for debug check in __init_work().
+> This commit therefore invoke destroy_work_on_stack() to free
+> sscs.work debug objects before smp_call_on_cpu() returns.
+> 
+> Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
 
-On an ACPI system, as of this commit, there is no easy way to check if
-Zkr is present. Blindly running the instruction isn't an option as;
-we have to be able to trust the firmware.
+I have queued this for testing.  My guess is that it should go to
+mainline some other way, so:
 
-Signed-off-by: Jesse Taube <jesse@rivosinc.com>
-Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-Tested-by: Zong Li <zong.li@sifive.com>
----
-V1 -> V2:
- - Almost entire rewrite
-V2 -> V3:
- - Dont parse iscv,isa-base
- - Move fdt_early_match_extension_isa in pi.h under comment
- - Only check enabled cpus
- - Rename early_isa_str to fdt_early_match_extension_isa
- - Rename get_ext_named to early_cpu_isa_ext_available
- - Rewrite isa_string_contains
- - Update commit description
- - Use fdt_stringlist_contains for riscv,isa-extensions
-V3 -> V4:
- - Add `CFLAGS_fdt_early.o += -D__NO_FORTIFY` to Makefile
- - Remove isdigit
----
- arch/riscv/kernel/pi/Makefile           |   3 +-
- arch/riscv/kernel/pi/archrandom_early.c |  30 +++++
- arch/riscv/kernel/pi/fdt_early.c        | 160 ++++++++++++++++++++++++
- arch/riscv/kernel/pi/pi.h               |   3 +
- arch/riscv/mm/init.c                    |   5 +-
- 5 files changed, 199 insertions(+), 2 deletions(-)
- create mode 100644 arch/riscv/kernel/pi/archrandom_early.c
+Tested-by: Paul E. McKenney <paulmck@kernel.org>
 
-diff --git a/arch/riscv/kernel/pi/Makefile b/arch/riscv/kernel/pi/Makefile
-index 1ef7584be0c3..d5bf1bc7de62 100644
---- a/arch/riscv/kernel/pi/Makefile
-+++ b/arch/riscv/kernel/pi/Makefile
-@@ -17,6 +17,7 @@ KBUILD_CFLAGS	+= -mcmodel=medany
- 
- CFLAGS_cmdline_early.o += -D__NO_FORTIFY
- CFLAGS_lib-fdt_ro.o += -D__NO_FORTIFY
-+CFLAGS_fdt_early.o += -D__NO_FORTIFY
- 
- $(obj)/%.pi.o: OBJCOPYFLAGS := --prefix-symbols=__pi_ \
- 			       --remove-section=.note.gnu.property \
-@@ -33,5 +34,5 @@ $(obj)/string.o: $(srctree)/lib/string.c FORCE
- $(obj)/ctype.o: $(srctree)/lib/ctype.c FORCE
- 	$(call if_changed_rule,cc_o_c)
- 
--obj-y		:= cmdline_early.pi.o fdt_early.pi.o string.pi.o ctype.pi.o lib-fdt.pi.o lib-fdt_ro.pi.o
-+obj-y		:= cmdline_early.pi.o fdt_early.pi.o string.pi.o ctype.pi.o lib-fdt.pi.o lib-fdt_ro.pi.o archrandom_early.pi.o
- extra-y		:= $(patsubst %.pi.o,%.o,$(obj-y))
-diff --git a/arch/riscv/kernel/pi/archrandom_early.c b/arch/riscv/kernel/pi/archrandom_early.c
-new file mode 100644
-index 000000000000..3f05d3cf3b7b
---- /dev/null
-+++ b/arch/riscv/kernel/pi/archrandom_early.c
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <asm/csr.h>
-+#include <linux/processor.h>
-+
-+#include "pi.h"
-+
-+/*
-+ * To avoid rewriting code include asm/archrandom.h and create macros
-+ * for the functions that won't be included.
-+ */
-+#undef riscv_has_extension_unlikely
-+#define riscv_has_extension_likely(...) false
-+#undef pr_err_once
-+#define pr_err_once(...)
-+
-+#include <asm/archrandom.h>
-+
-+u64 get_kaslr_seed_zkr(const uintptr_t dtb_pa)
-+{
-+	unsigned long seed = 0;
-+
-+	if (!fdt_early_match_extension_isa((const void *)dtb_pa, "zkr"))
-+		return 0;
-+
-+	if (!csr_seed_long(&seed))
-+		return 0;
-+
-+	return seed;
-+}
-diff --git a/arch/riscv/kernel/pi/fdt_early.c b/arch/riscv/kernel/pi/fdt_early.c
-index 40ee299702bf..9bdee2fafe47 100644
---- a/arch/riscv/kernel/pi/fdt_early.c
-+++ b/arch/riscv/kernel/pi/fdt_early.c
-@@ -2,6 +2,7 @@
- #include <linux/types.h>
- #include <linux/init.h>
- #include <linux/libfdt.h>
-+#include <linux/ctype.h>
- 
- #include "pi.h"
- 
-@@ -23,3 +24,162 @@ u64 get_kaslr_seed(uintptr_t dtb_pa)
- 	*prop = 0;
- 	return ret;
- }
-+
-+/**
-+ *  fdt_device_is_available - check if a device is available for use
-+ *
-+ * @fdt: pointer to the device tree blob
-+ * @node: offset of the node whose property to find
-+ *
-+ *  Returns true if the status property is absent or set to "okay" or "ok",
-+ *  false otherwise
-+ */
-+static bool fdt_device_is_available(const void *fdt, int node)
-+{
-+	const char *status;
-+	int statlen;
-+
-+	status = fdt_getprop(fdt, node, "status", &statlen);
-+	if (!status)
-+		return true;
-+
-+	if (statlen > 0) {
-+		if (!strcmp(status, "okay") || !strcmp(status, "ok"))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+/* Copy of fdt_nodename_eq_ */
-+static int fdt_node_name_eq(const void *fdt, int offset,
-+			    const char *s)
-+{
-+	int olen;
-+	int len = strlen(s);
-+	const char *p = fdt_get_name(fdt, offset, &olen);
-+
-+	if (!p || olen < len)
-+		/* short match */
-+		return 0;
-+
-+	if (memcmp(p, s, len) != 0)
-+		return 0;
-+
-+	if (p[len] == '\0')
-+		return 1;
-+	else if (!memchr(s, '@', len) && (p[len] == '@'))
-+		return 1;
-+	else
-+		return 0;
-+}
-+
-+/**
-+ *  isa_string_contains - check if isa string contains an extension
-+ *
-+ * @isa_str: isa string to search
-+ * @ext_name: the extension to search for
-+ *
-+ *  Returns true if the extension is in the given isa string,
-+ *  false otherwise
-+ */
-+static bool isa_string_contains(const char *isa_str, const char *ext_name)
-+{
-+	size_t i, single_end, len = strlen(ext_name);
-+	char ext_end;
-+
-+	/* Error must contain rv32/64 */
-+	if (strlen(isa_str) < 4)
-+		return false;
-+
-+	if (len == 1) {
-+		single_end = strcspn(isa_str, "sSxXzZ");
-+		/* Search for single chars between rv32/64 and multi-letter extensions */
-+		for (i = 4; i < single_end; i++) {
-+			if (tolower(isa_str[i]) == ext_name[0])
-+				return true;
-+		}
-+		return false;
-+	}
-+
-+	/* Skip to start of multi-letter extensions */
-+	isa_str = strpbrk(isa_str, "sSxXzZ");
-+	while (isa_str) {
-+		if (strncasecmp(isa_str, ext_name, len) == 0) {
-+			ext_end = isa_str[len];
-+			/* Check if matches the whole extension. */
-+			if (ext_end == '\0' || ext_end == '_')
-+				return true;
-+		}
-+		/* Multi-letter extensions must be split from other multi-letter
-+		 * extensions with an "_", the end of a multi-letter extension will
-+		 * either be the null character or the "_" at the start of the next
-+		 * multi-letter extension.
-+		 */
-+		isa_str = strchr(isa_str, '_');
-+		if (isa_str)
-+			isa_str++;
-+	}
-+
-+	return false;
-+}
-+
-+/**
-+ *  early_cpu_isa_ext_available - check if cpu node has an extension
-+ *
-+ * @fdt: pointer to the device tree blob
-+ * @node: offset of the cpu node
-+ * @ext_name: the extension to search for
-+ *
-+ *  Returns true if the cpu node has the extension,
-+ *  false otherwise
-+ */
-+static bool early_cpu_isa_ext_available(const void *fdt, int node, const char *ext_name)
-+{
-+	const void *prop;
-+	int len;
-+
-+	prop = fdt_getprop(fdt, node, "riscv,isa-extensions", &len);
-+	if (prop && fdt_stringlist_contains(prop, len, ext_name))
-+		return true;
-+
-+	prop = fdt_getprop(fdt, node, "riscv,isa", &len);
-+	if (prop && isa_string_contains(prop, ext_name))
-+		return true;
-+
-+	return false;
-+}
-+
-+/**
-+ *  fdt_early_match_extension_isa - check if all cpu nodes have an extension
-+ *
-+ * @fdt: pointer to the device tree blob
-+ * @ext_name: the extension to search for
-+ *
-+ *  Returns true if the all available the cpu nodes have the extension,
-+ *  false otherwise
-+ */
-+bool fdt_early_match_extension_isa(const void *fdt, const char *ext_name)
-+{
-+	int node, parent;
-+	bool ret = false;
-+
-+	parent = fdt_path_offset(fdt, "/cpus");
-+	if (parent < 0)
-+		return false;
-+
-+	fdt_for_each_subnode(node, fdt, parent) {
-+		if (!fdt_node_name_eq(fdt, node, "cpu"))
-+			continue;
-+
-+		if (!fdt_device_is_available(fdt, node))
-+			continue;
-+
-+		if (!early_cpu_isa_ext_available(fdt, node, ext_name))
-+			return false;
-+
-+		ret = true;
-+	}
-+
-+	return ret;
-+}
-diff --git a/arch/riscv/kernel/pi/pi.h b/arch/riscv/kernel/pi/pi.h
-index 493c8cb7c0e6..21141d84fea6 100644
---- a/arch/riscv/kernel/pi/pi.h
-+++ b/arch/riscv/kernel/pi/pi.h
-@@ -11,7 +11,10 @@
-  */
- 
- u64 get_kaslr_seed(uintptr_t dtb_pa);
-+u64 get_kaslr_seed_zkr(const uintptr_t dtb_pa);
- bool set_nokaslr_from_cmdline(uintptr_t dtb_pa);
- u64 set_satp_mode_from_cmdline(uintptr_t dtb_pa);
- 
-+bool fdt_early_match_extension_isa(const void *fdt, const char *ext_name);
-+
- #endif /* _RISCV_PI_H_ */
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 9940171c79f0..bfb068dc4a64 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -1025,6 +1025,7 @@ static void __init pt_ops_set_late(void)
- #ifdef CONFIG_RANDOMIZE_BASE
- extern bool __init __pi_set_nokaslr_from_cmdline(uintptr_t dtb_pa);
- extern u64 __init __pi_get_kaslr_seed(uintptr_t dtb_pa);
-+extern u64 __init __pi_get_kaslr_seed_zkr(const uintptr_t dtb_pa);
- 
- static int __init print_nokaslr(char *p)
- {
-@@ -1045,10 +1046,12 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
- 
- #ifdef CONFIG_RANDOMIZE_BASE
- 	if (!__pi_set_nokaslr_from_cmdline(dtb_pa)) {
--		u64 kaslr_seed = __pi_get_kaslr_seed(dtb_pa);
-+		u64 kaslr_seed = __pi_get_kaslr_seed_zkr(dtb_pa);
- 		u32 kernel_size = (uintptr_t)(&_end) - (uintptr_t)(&_start);
- 		u32 nr_pos;
- 
-+		if (kaslr_seed == 0)
-+			kaslr_seed = __pi_get_kaslr_seed(dtb_pa);
- 		/*
- 		 * Compute the number of positions available: we are limited
- 		 * by the early page table that only has one PUD and we must
--- 
-2.45.2
-
+> ---
+>  kernel/smp.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/smp.c b/kernel/smp.c
+> index cc13e73a887c..61f10f982341 100644
+> --- a/kernel/smp.c
+> +++ b/kernel/smp.c
+> @@ -1135,6 +1135,7 @@ int smp_call_on_cpu(unsigned int cpu, int (*func)(void *), void *par, bool phys)
+>  
+>  	queue_work_on(cpu, system_wq, &sscs.work);
+>  	wait_for_completion(&sscs.done);
+> +	destroy_work_on_stack(&sscs.work);
+>  
+>  	return sscs.ret;
+>  }
+> -- 
+> 2.17.1
+> 
 
