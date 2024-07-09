@@ -1,66 +1,80 @@
-Return-Path: <linux-kernel+bounces-245392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABFF292B1FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:22:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E198F92B268
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62CDA28106E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:22:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95FC52817E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 08:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0C015252E;
-	Tue,  9 Jul 2024 08:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9343E153808;
+	Tue,  9 Jul 2024 08:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="aU7JabxT"
-Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="b2Pf43Oe"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A21412CD96;
-	Tue,  9 Jul 2024 08:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0CF15358A
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720513347; cv=none; b=LTFT4sW1bl184HcKFhPjjfd1l3jO1kAXsQmN8cEpWYZZsZfA3w+/55g/GHDz945Ir1qz+Tefg2cJpeAS2xYbeMRXUI4PcPaFau3IugAf3Bg/XkBP6PrMVX9KnE/qoMcCliXO3plE5CfTJDUnkVaWuHpb6A0Z4I/C2frBQy9M9BI=
+	t=1720514557; cv=none; b=Tn2MIWAkMQBM+W5f4OKyEPnBHXeQVGiohrnW/PGg0lJpq6RSsHakTvnaCkxnjc6EEJwuaLc6+4U0yum2fDoyxym1wefXsn1KkU8CLM3iv245IjV58bhwOYu/Ta51jKqTG8icIBbLJ7O+c6trrXYS2tQG4pHqjVkaNW9Rc5BHzUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720513347; c=relaxed/simple;
-	bh=/gYVJD15xFaui6T9JocnKA1r2ooEEcIgwDZnejMpIlc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DOMl9yIgwtYFLRjLNmsJ6FIjMQNkX8TFS18EhE4X/tP3wFonyUJe0KFS931dLSZecXbTqiTJ9kDhSPM+cyx89G8NUEbkMv8m+mzlBHLEJP9IxS6e4o2HaWSV0Sh5HsATXJHaOPP1r//JILRys2bq48ZvefZhpHQjni7atBS4Ams=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=aU7JabxT; arc=none smtp.client-ip=134.0.28.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox2.masterlogin.de (unknown [192.168.10.89])
-	by mxout2.routing.net (Postfix) with ESMTP id 0C6E55FD4B;
-	Tue,  9 Jul 2024 08:16:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1720512985;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=MDMf7DvFYCdwJ6yYWc6ATDV2rtt8qlGbjIkB3P1prUA=;
-	b=aU7JabxTsf1aK/77OmIldWo1GPgTLA5vNZ2v32VbWnnegBjJxybkGe9FceGO9HlAj28g4w
-	Eb7b0Y8qwAYrzEfsX7GRXJyIQ+7C6CBG62hDSFd2fWvGkcl6v+8eJM2OHAoi8dOT3cgKov
-	mTn9L82xGi7m+N7npAFIKYaHOnhQNl8=
-Received: from frank-u24.. (fttx-pool-217.61.149.221.bambit.de [217.61.149.221])
-	by mxbox2.masterlogin.de (Postfix) with ESMTPSA id 082581006CA;
-	Tue,  9 Jul 2024 08:16:23 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	Daniel Golle <daniel@makrotopia.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v1] arm64: dts: mediatek: mt7988: add labels for different nodes
-Date: Tue,  9 Jul 2024 10:16:13 +0200
-Message-ID: <20240709081614.19993-1-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720514557; c=relaxed/simple;
+	bh=6mFIbIDQBlr+HpPKVY9P02FJpcGJ4jVepU8lmHx49Qg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=J6ZgHzrtAFPrWQor/+B7PehMAtFnTB3bKFGg1L9UbjWKvD916RXPbmnywRFyH/4WY+KvCP8xkjxKwFIEDN5vKb7LSQ05lMFpPeoxnjSB3ll9HkeS8mNrkX+wPyRajdRtdBnAkNsRgcR6RIwDOZRCMaNAy/UU03XMNJ9GxznDZ54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=b2Pf43Oe; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240709084231epoutp02865e5828c314db91dcf3cf4b77654082~gft6JcLDL0353503535epoutp02s
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 08:42:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240709084231epoutp02865e5828c314db91dcf3cf4b77654082~gft6JcLDL0353503535epoutp02s
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1720514551;
+	bh=gWa4sX4367N7SDdiZRThtehT9+wu6QZN+lnJvmGJ73g=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=b2Pf43Oer8pQkK60rFL2UvfnpkIjg35YBH6jxgXVcbUc+at0jvzxXQDOLO1bUsrs9
+	 BhEeV4YMZliXl6kiPfpB6xdQJ442RGvt+M+kRrvqxX4Hi7vC9vHS+oSuEuS5ODhELa
+	 Doh7ggtDOfzIbhFLcO7JGciaygIFS6wA9TttbA3w=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240709084231epcas5p3ff11b6712821ca88c3020cf894ea5a20~gft55XoQh0827908279epcas5p3Y;
+	Tue,  9 Jul 2024 08:42:31 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4WJDyG29yfz4x9Q8; Tue,  9 Jul
+	2024 08:42:30 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	74.78.11095.5F7FC866; Tue,  9 Jul 2024 17:42:29 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240709081627epcas5p3033c01e4816310394f8efbbd4b43cfd0~gfXIvaH7z0568705687epcas5p3m;
+	Tue,  9 Jul 2024 08:16:27 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240709081627epsmtrp276c2c18632897965a144ab9d9c7bc31e~gfXIup_SQ0608406084epsmtrp2C;
+	Tue,  9 Jul 2024 08:16:27 +0000 (GMT)
+X-AuditID: b6c32a49-3c3ff70000012b57-3c-668cf7f5abba
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9B.88.07412.AD1FC866; Tue,  9 Jul 2024 17:16:26 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240709081625epsmtip1e2afe68191ca8c444baac2d6c5df3cec~gfXHt01KE3067830678epsmtip1e;
+	Tue,  9 Jul 2024 08:16:25 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: axboe@kernel.dk
+Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hexue <xue01.he@samsung.com>
+Subject: [PATCH v6] io_uring: releasing CPU resources when polling
+Date: Tue,  9 Jul 2024 16:16:19 +0800
+Message-Id: <20240709081619.3177418-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,165 +82,274 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: 86a6b8d6-7d26-42ab-aaf3-d045996a5733
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDKsWRmVeSWpSXmKPExsWy7bCmlu7X7z1pBiveWlvMWbWN0WL13X42
+	i3et51gsfnXfZbS4vGsOm8XZCR9YLbounGJzYPfYOesuu8fls6UefVtWMXp83iQXwBKVbZOR
+	mpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdICSQlliTilQ
+	KCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1xMrQwMDIFKgwITtj8nmd
+	gtU2FQd2nmFpYJxi0MXIySEhYCJxbN41pi5GLg4hgd2MEsund7BCOJ8YJSbe7WWEcL4xShy7
+	/JcJpuX750dQVXsZJeZfWwZV9YNR4mL3AnaQKjYBJYn9Wz4wgtgiAsIS+ztaWUBsZoEiidcz
+	t7GC2MICThLfvuwHq2cRUJW43HwezOYVsJZ42TaNGWKbvMTNrv3MEHFBiZMzn0DNkZdo3jqb
+	GWSxhMA+dom/zVehGlwkJnROgTpVWOLV8S3sELaUxOd3e9kg7HyJyd/XM0LYNRLrNr9jgbCt
+	Jf5d2QNkcwAt0JRYv0sfIiwrMfXUOiaIvXwSvb+fQI3nldgxD8ZWklhyZAXUSAmJ3xMWsULY
+	HhInr05lBBkpJBAr8WW72QRG+VlIvpmF5JtZCIsXMDKvYpRMLSjOTU8tNi0wzEsth8drcn7u
+	JkZwMtTy3MF498EHvUOMTByMhxglOJiVRHjn3+hOE+JNSaysSi3Kjy8qzUktPsRoCgziicxS
+	osn5wHScVxJvaGJpYGJmZmZiaWxmqCTO+7p1boqQQHpiSWp2ampBahFMHxMHp1QDU+Wvt7c3
+	CDdxhp4r//uAL2GhxT/vaW+l3hxRXfNBI/b6qcfcyh847CMNetXmcLhx6zScE39RrnVqwtVs
+	TaU3h16tWnWmzyrF7e2jAw7hq+UF7icfnrzo5J+el22/jctv+T6eZHssfG/QM66s9S/CDfjt
+	H4YnVyzZosgR0Ci84ob9bYc+5sv+BXPfhVxb7F9cLli2Id303Odb6/Z+Dntm3CbttvLGhY3N
+	PiVhU9MaGNx27M9f2l3SENnfbqK6M1zQdP+MrStmiqjoOFwT3rOvSM5kQ6Wl28FXd1P2CEwJ
+	3pKS5mvclG3opld1Zc3x/8tm8X2bUctfItxa5jezz6qe+8Cui2r7l7s47Dgl06wgosRSnJFo
+	qMVcVJwIAIfPMFoPBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBLMWRmVeSWpSXmKPExsWy7bCSnO6tjz1pBjdfm1rMWbWN0WL13X42
+	i3et51gsfnXfZbS4vGsOm8XZCR9YLbounGJzYPfYOesuu8fls6UefVtWMXp83iQXwBLFZZOS
+	mpNZllqkb5fAlTH5vE7BapuKAzvPsDQwTjHoYuTkkBAwkfj++RFrFyMXh5DAbkaJN9NeMEIk
+	JCR2PPrDCmELS6z895wdougbo8TCDwvBEmwCShL7t3wAaxABKtrf0coCYjMLlEm8W7kerEZY
+	wEni25f97CA2i4CqxOXm82A2r4C1xMu2acwQC+QlbnbtZ4aIC0qcnPkEao68RPPW2cwTGPlm
+	IUnNQpJawMi0ilEytaA4Nz032bDAMC+1XK84Mbe4NC9dLzk/dxMjODC1NHYw3pv/T+8QIxMH
+	4yFGCQ5mJRHe+Te604R4UxIrq1KL8uOLSnNSiw8xSnOwKInzGs6YnSIkkJ5YkpqdmlqQWgST
+	ZeLglGpg8lFY/Om3k8Tq5KcF+yUEOiLXvpxdIbhxUQJTYHO99uXjd7cnexXNmcQpE1JmUWBf
+	8GDW5eZjPxPyPY4XXpljcnaHc7JYzxzhUxYClxIcmK7o7XGdtffexmbZxt8i+d/airn+zSpJ
+	DbnwQfjUd41sN921Bx5kmOvIrCuffXeKb/viXM3vWRtWGlTH7lidoBb/PmaD06t5tfuZA0S2
+	vN3xMKvg/ZmrvIbl3Pvm6mhJBm8WLv1+9ZXw1U1OS6/cPs21omNXcvn/T1PW8RxrmFjqFfGp
+	/+eGE/qGHZK/3Ft4a71msj+Z++mnSISHU6RxWs5+e9f/6799EbGXqbwiNWFGp31L+cbrmcW9
+	/7+yPahJU2Ipzkg01GIuKk4EABpcsAO7AgAA
+X-CMS-MailID: 20240709081627epcas5p3033c01e4816310394f8efbbd4b43cfd0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240709081627epcas5p3033c01e4816310394f8efbbd4b43cfd0
+References: <CGME20240709081627epcas5p3033c01e4816310394f8efbbd4b43cfd0@epcas5p3.samsung.com>
 
-From: Frank Wunderlich <frank-w@public-files.de>
+io_uring use polling mode could improve the IO performence, but it will
+spend 100% of CPU resources to do polling.
 
-Current devicetree-nodes missing a label which allows to add aproperties
-or phandles to them, so add them.
+This set a signal "IORING_SETUP_HY_POLL" to application, aim to provide
+a interface for user to enable a new hybrid polling at io_uring level.
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-Fixes: 660c230bf302 ("arm64: dts: mediatek: mt7988: add I2C controllers")
-Fixes: 09ff2216a035 ("arm64: dts: mediatek: mt7988: add PWM controller")
-Fixes: 09346afaba0a ("arm64: dts: mediatek: mt7988: add XHCI controllers")
-Fixes: b616b403cbff ("arm64: dts: mediatek: mt7988: add clock controllers")
-Fixes: 6c1d134a103f ("arm64: dts: mediatek: Add initial MT7988A and BPI-R4")
+A new hybrid poll is implemented on the io_uring layer. Once IO issued,
+it will not polling immediately, but block first and re-run before IO
+complete, then poll to reap IO. This poll function could be a suboptimal
+solution when running on a single thread, it offers the performance lower
+than regular polling but higher than IRQ, and CPU utilization is also lower
+than polling.
+
+Test Result
+fio-3.35, Gen 4 device
+-------------------------------------------------------------------------------------
+Performance
+-------------------------------------------------------------------------------------
+                            write                      read                 randwrite          randread
+regular poll    BW=3939MiB/s    BW=6596MiB/s    IOPS=190K       IOPS=526K
+IRQ                 BW=3927MiB/s    BW=6567MiB/s    IOPS=181K       IOPS=216K
+hybrid poll     BW=3933MiB/s    BW=6600MiB/s    IOPS=190K       IOPS=390K(suboptimal)
+-------------------------------------------------------------------------------------
+CPU Utilization
+------------------------------------------------------------------
+                        write   read    randwrite       randread
+regular poll    100%    100%    100%            100%
+IRQ                 38%       53%      100%            100%
+hybrid poll     76%       32%      70%              85%
+------------------------------------------------------------------
+
+--
+changes since v5:
+- Remove cstime recorder
+- Use minimize sleep time in different drivers
+- Use the half of whole runtime to do schedule
+- Consider as a suboptimal solution between
+  regular poll and IRQ
+
+changes since v4:
+- Rewrote the commit
+- Update the test results
+- Reorganized the code basd on 6.11
+
+changes since v3:
+- Simplified the commit
+- Add some comments on code
+
+changes since v2:
+- Modified some formatting errors
+- Move judgement to poll path
+
+changes since v1:
+- Extend hybrid poll to async polled io
+
+Signed-off-by: hexue <xue01.he@samsung.com>
 ---
- arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 32 +++++++++++------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ include/linux/io_uring_types.h |  6 +++
+ include/uapi/linux/io_uring.h  |  1 +
+ io_uring/io_uring.c            |  3 +-
+ io_uring/rw.c                  | 74 +++++++++++++++++++++++++++++++++-
+ 4 files changed, 82 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-index aa728331e876..9ced005b1595 100644
---- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-@@ -14,28 +14,28 @@ cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+index 91224bbcfa73..0897126fb2d7 100644
+--- a/include/linux/io_uring_types.h
++++ b/include/linux/io_uring_types.h
+@@ -428,6 +428,8 @@ struct io_ring_ctx {
+ 	unsigned short			n_sqe_pages;
+ 	struct page			**ring_pages;
+ 	struct page			**sqe_pages;
++	/* for hybrid poll*/
++	u64			available_time;
+ };
  
--		cpu@0 {
-+		cpu0: cpu@0 {
- 			compatible = "arm,cortex-a73";
- 			reg = <0x0>;
- 			device_type = "cpu";
- 			enable-method = "psci";
- 		};
+ struct io_tw_state {
+@@ -665,6 +667,10 @@ struct io_kiocb {
+ 		u64			extra1;
+ 		u64			extra2;
+ 	} big_cqe;
++    /* for hybrid iopoll */
++	bool		poll_state;
++	u64			iopoll_start;
++	u64			iopoll_end;
+ };
  
--		cpu@1 {
-+		cpu1: cpu@1 {
- 			compatible = "arm,cortex-a73";
- 			reg = <0x1>;
- 			device_type = "cpu";
- 			enable-method = "psci";
- 		};
+ struct io_overflow_cqe {
+diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+index 994bf7af0efe..ef32ec319d1f 100644
+--- a/include/uapi/linux/io_uring.h
++++ b/include/uapi/linux/io_uring.h
+@@ -199,6 +199,7 @@ enum io_uring_sqe_flags_bit {
+  * Removes indirection through the SQ index array.
+  */
+ #define IORING_SETUP_NO_SQARRAY		(1U << 16)
++#define IORING_SETUP_HY_POLL	(1U << 17)
  
--		cpu@2 {
-+		cpu2: cpu@2 {
- 			compatible = "arm,cortex-a73";
- 			reg = <0x2>;
- 			device_type = "cpu";
- 			enable-method = "psci";
- 		};
+ enum io_uring_op {
+ 	IORING_OP_NOP,
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 816e93e7f949..b38f8af118c5 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -299,6 +299,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+ 		goto err;
  
--		cpu@3 {
-+		cpu3: cpu@3 {
- 			compatible = "arm,cortex-a73";
- 			reg = <0x3>;
- 			device_type = "cpu";
-@@ -43,7 +43,7 @@ cpu@3 {
- 		};
- 	};
+ 	ctx->flags = p->flags;
++	ctx->available_time = LLONG_MAX;
+ 	atomic_set(&ctx->cq_wait_nr, IO_CQ_WAKE_INIT);
+ 	init_waitqueue_head(&ctx->sqo_sq_wait);
+ 	INIT_LIST_HEAD(&ctx->sqd_list);
+@@ -3637,7 +3638,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
+ 			IORING_SETUP_SQE128 | IORING_SETUP_CQE32 |
+ 			IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN |
+ 			IORING_SETUP_NO_MMAP | IORING_SETUP_REGISTERED_FD_ONLY |
+-			IORING_SETUP_NO_SQARRAY))
++			IORING_SETUP_NO_SQARRAY | IORING_SETUP_HY_POLL))
+ 		return -EINVAL;
  
--	oscillator-40m {
-+	system_clk: oscillator-40m {
- 		compatible = "fixed-clock";
- 		clock-frequency = <40000000>;
- 		#clock-cells = <0>;
-@@ -86,7 +86,7 @@ infracfg: clock-controller@10001000 {
- 			#clock-cells = <1>;
- 		};
+ 	return io_uring_create(entries, &p, params);
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 1a2128459cb4..5505f4292ce5 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -772,6 +772,13 @@ static bool need_complete_io(struct io_kiocb *req)
+ 		S_ISBLK(file_inode(req->file)->i_mode);
+ }
  
--		clock-controller@1001b000 {
-+		topckgen: clock-controller@1001b000 {
- 			compatible = "mediatek,mt7988-topckgen", "syscon";
- 			reg = <0 0x1001b000 0 0x1000>;
- 			#clock-cells = <1>;
-@@ -99,13 +99,13 @@ watchdog: watchdog@1001c000 {
- 			#reset-cells = <1>;
- 		};
++static void init_hybrid_poll(struct io_ring_ctx *ctx, struct io_kiocb *req)
++{
++	/* make sure every req only block once*/
++	req->poll_state = false;
++	req->iopoll_start = ktime_get_ns();
++}
++
+ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
+ {
+ 	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
+@@ -809,6 +816,8 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
+ 		kiocb->ki_flags |= IOCB_HIPRI;
+ 		kiocb->ki_complete = io_complete_rw_iopoll;
+ 		req->iopoll_completed = 0;
++		if (ctx->flags & IORING_SETUP_HY_POLL)
++			init_hybrid_poll(ctx, req);
+ 	} else {
+ 		if (kiocb->ki_flags & IOCB_HIPRI)
+ 			return -EINVAL;
+@@ -1106,6 +1115,67 @@ void io_rw_fail(struct io_kiocb *req)
+ 	io_req_set_res(req, res, req->cqe.flags);
+ }
  
--		clock-controller@1001e000 {
-+		apmixedsys: clock-controller@1001e000 {
- 			compatible = "mediatek,mt7988-apmixedsys";
- 			reg = <0 0x1001e000 0 0x1000>;
- 			#clock-cells = <1>;
- 		};
++static u64 io_delay(struct io_ring_ctx *ctx, struct io_kiocb *req)
++{
++	struct hrtimer_sleeper timer;
++	enum hrtimer_mode mode;
++	ktime_t kt;
++	u64 sleep_time;
++
++	if (req->poll_state)
++		return 0;
++
++	if (ctx->available_time == LLONG_MAX)
++		return 0;
++
++	/* Using half running time to do schedul */
++	sleep_time = ctx->available_time / 2;
++
++	kt = ktime_set(0, sleep_time);
++	req->poll_state = true;
++
++	mode = HRTIMER_MODE_REL;
++	hrtimer_init_sleeper_on_stack(&timer, CLOCK_MONOTONIC, mode);
++	hrtimer_set_expires(&timer.timer, kt);
++	set_current_state(TASK_INTERRUPTIBLE);
++	hrtimer_sleeper_start_expires(&timer, mode);
++
++	if (timer.task)
++		io_schedule();
++
++	hrtimer_cancel(&timer.timer);
++	__set_current_state(TASK_RUNNING);
++	destroy_hrtimer_on_stack(&timer.timer);
++
++	return sleep_time;
++}
++
++static int io_uring_hybrid_poll(struct io_kiocb *req,
++				struct io_comp_batch *iob, unsigned int poll_flags)
++{
++	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
++	struct io_ring_ctx *ctx = req->ctx;
++	int ret;
++	u64 runtime, sleep_time;
++
++	sleep_time = io_delay(ctx, req);
++
++	/* it doesn't implement with io_uring passthrough now */
++	ret = req->file->f_op->iopoll(&rw->kiocb, iob, poll_flags);
++
++	req->iopoll_end = ktime_get_ns();
++	runtime = req->iopoll_end - req->iopoll_start - sleep_time;
++	if (runtime < 0)
++		return 0;
++
++	/* use minimize sleep time if there are different speed
++	 * drivers, it could get more completions from fast one
++	 */
++	if (ctx->available_time > runtime)
++		ctx->available_time = runtime;
++	return ret;
++}
++
+ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ {
+ 	struct io_wq_work_node *pos, *start, *prev;
+@@ -1133,7 +1203,9 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+ 		if (READ_ONCE(req->iopoll_completed))
+ 			break;
  
--		pwm@10048000 {
-+		pwm: pwm@10048000 {
- 			compatible = "mediatek,mt7988-pwm";
- 			reg = <0 0x10048000 0 0x1000>;
- 			clocks = <&infracfg CLK_INFRA_66M_PWM_BCK>,
-@@ -124,7 +124,7 @@ pwm@10048000 {
- 			status = "disabled";
- 		};
+-		if (req->opcode == IORING_OP_URING_CMD) {
++		if (ctx->flags & IORING_SETUP_HY_POLL) {
++			ret = io_uring_hybrid_poll(req, &iob, poll_flags);
++		} else if (req->opcode == IORING_OP_URING_CMD) {
+ 			struct io_uring_cmd *ioucmd;
  
--		i2c@11003000 {
-+		i2c0: i2c@11003000 {
- 			compatible = "mediatek,mt7981-i2c";
- 			reg = <0 0x11003000 0 0x1000>,
- 			      <0 0x10217080 0 0x80>;
-@@ -137,7 +137,7 @@ i2c@11003000 {
- 			status = "disabled";
- 		};
- 
--		i2c@11004000 {
-+		i2c1: i2c@11004000 {
- 			compatible = "mediatek,mt7981-i2c";
- 			reg = <0 0x11004000 0 0x1000>,
- 			      <0 0x10217100 0 0x80>;
-@@ -150,7 +150,7 @@ i2c@11004000 {
- 			status = "disabled";
- 		};
- 
--		i2c@11005000 {
-+		i2c2: i2c@11005000 {
- 			compatible = "mediatek,mt7981-i2c";
- 			reg = <0 0x11005000 0 0x1000>,
- 			      <0 0x10217180 0 0x80>;
-@@ -163,7 +163,7 @@ i2c@11005000 {
- 			status = "disabled";
- 		};
- 
--		usb@11190000 {
-+		ssusb0: usb@11190000 {
- 			compatible = "mediatek,mt7988-xhci", "mediatek,mtk-xhci";
- 			reg = <0 0x11190000 0 0x2e00>,
- 			      <0 0x11193e00 0 0x0100>;
-@@ -177,7 +177,7 @@ usb@11190000 {
- 			clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck", "xhci_ck";
- 		};
- 
--		usb@11200000 {
-+		ssusb1: usb@11200000 {
- 			compatible = "mediatek,mt7988-xhci", "mediatek,mtk-xhci";
- 			reg = <0 0x11200000 0 0x2e00>,
- 			      <0 0x11203e00 0 0x0100>;
-@@ -191,21 +191,21 @@ usb@11200000 {
- 			clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck", "xhci_ck";
- 		};
- 
--		clock-controller@11f40000 {
-+		xfi_pll: clock-controller@11f40000 {
- 			compatible = "mediatek,mt7988-xfi-pll";
- 			reg = <0 0x11f40000 0 0x1000>;
- 			resets = <&watchdog 16>;
- 			#clock-cells = <1>;
- 		};
- 
--		clock-controller@15000000 {
-+		ethsys: clock-controller@15000000 {
- 			compatible = "mediatek,mt7988-ethsys", "syscon";
- 			reg = <0 0x15000000 0 0x1000>;
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
- 		};
- 
--		clock-controller@15031000 {
-+		ethwarp: clock-controller@15031000 {
- 			compatible = "mediatek,mt7988-ethwarp";
- 			reg = <0 0x15031000 0 0x1000>;
- 			#clock-cells = <1>;
+ 			ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
 -- 
-2.43.0
+2.40.1
 
 
