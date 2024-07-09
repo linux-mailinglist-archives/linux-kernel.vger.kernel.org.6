@@ -1,163 +1,107 @@
-Return-Path: <linux-kernel+bounces-245616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28EB092B4FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:17:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 805FD92B504
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ACA3B221DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:17:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F2C41F222DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991B1156231;
-	Tue,  9 Jul 2024 10:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A4B156257;
+	Tue,  9 Jul 2024 10:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PUybTvkG"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="NHR8jP9k"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505051FA3;
-	Tue,  9 Jul 2024 10:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E045214EC61
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 10:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720520246; cv=none; b=QaVMNzYHF5H5GArveC1rGlywvzRVWDQ7+S9V6S9W3nbPChEe7foq0iRWaQyWfWIURiz4F63hK1eOi42U9E87wnrQs32A+TjGhdBkEHqyEgg4wxn5XtlFQJMq5JSO35+9jfxoojM6NUKFhmdlLPpRP3/YzQhBq8prigXjaOJkJEI=
+	t=1720520397; cv=none; b=ncGXm4H/3kw6vbnXicXhYWe6sLary/PabIhTmIrRTIJ0+7Brz77N5fNsgAVuicM+LfCvR6o3sG7G+rrRaA2Hc684E1ECu1l0tYisp9WGu19SCARiMw2tDso4c9m0IjJGtklrziZpzzbHxDytE7ra9qykCdJ/dOjXqd87kzvZZb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720520246; c=relaxed/simple;
-	bh=lP7MS/SSQSGkVJ5jAW2+76EJviVIBFt7fQoTvHmqjJc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SAQCFew9lLbl05J6qmSXjePgVMkSt3gGn5eB2LjZ5ddGYGzNogRryuq9wD1fMNgrr1VJSAp/y4/IuOQfuaKXKPAdMxYVdT8NT0yhn42w+sm3ow4y9JoOexETJHbiH0gTxmXGpUQJ88Bl2EiASHN5dJycPM1cJ10G95hr1Qn8VdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PUybTvkG; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-58b447c511eso6141140a12.2;
-        Tue, 09 Jul 2024 03:17:25 -0700 (PDT)
+	s=arc-20240116; t=1720520397; c=relaxed/simple;
+	bh=7l7Gnx36n7yyUlfPBXRvLQSU/1+kcr0OdNm2VCuznG8=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=kR5JyILqmtzXkev59fdTu3vU7Zm0L/95SMUKCx/S8zbwpyrECgARdEuXPL8hrimEeTGv2mzKo6Clf9NRSjGoowfkNyAYQC+bKDAY9JADPO+mqdtNLzXhAG62f0zTWERuSKVfb8vLPOJYWXrWQl61d3WZ0JKiOp7DxVmhyReL4IM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=NHR8jP9k; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70b04cb28acso3320664b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 03:19:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720520244; x=1721125044; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=broadcom.com; s=google; t=1720520395; x=1721125195; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WUU4V5yTD3E6P/UWJvCDJ0CcvQXY96+XekGETdSHgbU=;
-        b=PUybTvkGeLBizrU6VaWp6QpuQ9CB7JQHsiYgGsjhYHFpDc5easkSVTPx8MAN1BgHga
-         r6k1FMD7eOfShmSIfiT8zoDf0JZyae/8q6541LxA9mVYtpiXXLv/RhvtteEjsSAHEvTL
-         W3uRw9z/qFBNyBM7B+F/ZeEcY9OA26L34j6JDR2SOO536Eac94ObVTEZveRycmXgXdAe
-         Z6EuzFQz0QVjhUCS5FVEy9NO+++Hp31/QeVtZvZ/3OGk/8Rt18+OZmIy/fwuHBIRGKsS
-         pxwfh+aCCIWUpdNorUHvMMRWoN9qQBJFYC3GAFv8vpEf6/oE1qCh52g1QhIBS3h9GOD5
-         2S/g==
+        bh=11ioL6MkBuE1i6Mzb5KKuPr/JiRiwhzn3IC3btu4k64=;
+        b=NHR8jP9klbFKVbHfTCILManHrRVxQ9VKS6YbARdF743JVNLbGP85UF4njgVQN5QyoT
+         +RfAt4YD0G4QlDA1cKaOaEohPAZhCRXF8BAuLfGoU8/tUAAAy9/PTLhgR9NoKu0zsHMZ
+         nk1uKh4a21rZHUfatUb0Fjdu6nvfGIBlD4VQI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720520244; x=1721125044;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1720520395; x=1721125195;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WUU4V5yTD3E6P/UWJvCDJ0CcvQXY96+XekGETdSHgbU=;
-        b=S3JoiTN8qZIbmdplvkciOGsENfZlSEU2zryqgHcVlrAH/15v49mOh/MNenulLU6M2t
-         HLSAgbJ6REX+/OBY+upjoYeUo/Ga236Bk/pHhpDsUQhWyq7ntlHJkqv/Psm9Ibqhr2Hz
-         9bO3qSKgTdHH4gGwVt8I0XL+Y7Se6mTMwbbQjWg1GmHJmrtWUOZS2y2NkSGkTsuZiJ9g
-         uc3Atbq96kPkcc5bqz0aLWF08FJaAW++c/2565cBGhbfe5PCcdidYtYEeEKeN5XdPE08
-         sxqnNaa9BSOkjE647iFZxuyyZ3vvecC0IiJ/oKjlWQIR9zaCe8oTrRbYCdYuZYDvFkH6
-         YpBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2sGFSM1VxllgH7H9s0+B2MAIxnxfFjkcyDVyPhXd44A9V7X5kzEASAjv2l+e4ggNGsHrLNpjhcaOMf2bTI0YOQ5JHlGSQj5S3flM+YwkCYf3w2P8l7MRtxTzBHY/3aMP2z9qTo/X6MYNaqg==
-X-Gm-Message-State: AOJu0YyoJSLPjZ1rrgH2Pgd6J6PJtO8UCseM01AoinsGH6u8432sHUQB
-	9dnh7m5in954/pkD2cwkNiiDkHrL8ebJvmZ5OJgAEr68dR6864qZSYOKm8HM4gdelyGCrkebzDh
-	Z4/+bl4+MtVIaZLcDg9M6ubecWEKMcA==
-X-Google-Smtp-Source: AGHT+IHUGKDAeSkKp9GM4WQ4dY21by1sO/dcn3kMOXX3QjhfD2crAARDs5/+8YBnt2MO0T7d0JodJtKs3FIlQ3siD6I=
-X-Received: by 2002:a17:907:7da8:b0:a72:4320:19f3 with SMTP id
- a640c23a62f3a-a780b70088cmr193963566b.39.1720520243335; Tue, 09 Jul 2024
- 03:17:23 -0700 (PDT)
+        bh=11ioL6MkBuE1i6Mzb5KKuPr/JiRiwhzn3IC3btu4k64=;
+        b=DrDWBrS4Ejuqj5LgfxTyEDLDrN1LN7/K9CvSUuYl0NhE4deLxZlCHm93tpEeQx9wo0
+         Q5ggE28hZC5Rvzi3JezlWQTbNf6sLnl1ofywpYBIbs4z/mg8p/Ws9GRyi8CZcsIZmahr
+         ot4W+FAe5cnLYP83p7l0TBStbr+T4tZvqcZzRGRcZUrxVuxdb61SkBMVfcAILpZaRn5y
+         Zks/v1EHqXaqXwIrdV165oYSTxf+PwV0XHYAZcVAtOCbU8SJUNf3NCqcqmDzJ5GHN/ZZ
+         CT/5aM4sFYm3nDdia66mI9F2n5rKTjOpWZFbwFZYiBTeAfV6i8sGpvzyq4zj77f5ok+Z
+         I9zA==
+X-Gm-Message-State: AOJu0YxNAnhkF8tRwKiFHFn0c5xhZEMpYCwOwlKNo/62GYkAweGpbbyU
+	U4+A8aQ1e/VWKMRVfMQkfLNLO8jf0GzDGeAKWmZldqQKHjl49SulY4tEE0t8aNe4FzNX9omxXGf
+	ju1K0+o9zP3cfIcG23heMu2JaTCNFVFAcytGmoiZckMdcjgQOSngjEtHgdId8EVDGgnGiGqVDht
+	Y6qs7I3u6TSZLUbg8x0+em5RuXsT8LD7dyd6ddYFY7jn1TMpS2islr3g5s
+X-Google-Smtp-Source: AGHT+IGgmqH7UQ62MCOmx/bF5fNPuls7Idvh3gTEMJN+4xl6ri7+bXz1HtPde01qGp0e8dNnIi9M+Q==
+X-Received: by 2002:a05:6a00:18a3:b0:70a:f001:d22c with SMTP id d2e1a72fcca58-70b44d4474dmr2944949b3a.4.1720520394971;
+        Tue, 09 Jul 2024 03:19:54 -0700 (PDT)
+Received: from kashwindayan-virtual-machine.eng.vmware.com ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b43967345sm1426016b3a.112.2024.07.09.03.19.53
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 09 Jul 2024 03:19:54 -0700 (PDT)
+From: Ashwin Kamat <ashwin.kamat@broadcom.com>
+To: linux-kernel@vger.kernel.org
+Cc: gregkh@linuxfoundation.org,
+	davem@davemloft.net,
+	yoshfuji@linux-ipv6.org,
+	dsahern@kernel.org,
+	kuba@kernel.org,
+	netdev@vger.kernel.org,
+	florian.fainelli@broadcom.com,
+	ajay.kaher@broadcom.com,
+	vasavi.sirnapalli@broadcom.com,
+	tapas.kundu@broadcom.com,
+	ashwin.kamat@broadcom.com
+Subject: [PATCH v5.15 0/2] Fix for CVE-2024-36901
+Date: Tue,  9 Jul 2024 15:49:42 +0530
+Message-Id: <1720520384-9690-1-git-send-email-ashwin.kamat@broadcom.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240614163416.728752-1-yu.ma@intel.com> <20240703143311.2184454-1-yu.ma@intel.com>
- <20240703143311.2184454-4-yu.ma@intel.com> <CAGudoHH_P4LGaVN1N4j8FNTH_eDm3SDL7azMc25+HY2_XgjvJQ@mail.gmail.com>
- <20240704215507.mr6st2d423lvkepu@quack3> <3c7a0cd7-1dd2-4762-a2dd-67e6b6a82df7@intel.com>
- <1296ef8d-dade-46e5-8571-e7dba158f405@intel.com>
-In-Reply-To: <1296ef8d-dade-46e5-8571-e7dba158f405@intel.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 9 Jul 2024 12:17:09 +0200
-Message-ID: <CAGudoHGJrRi_UZ2wv2dG9U9VGasHW203O4nQHkE9KkaWJJ61WQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] fs/file.c: add fast path in find_next_fd()
-To: "Ma, Yu" <yu.ma@intel.com>
-Cc: Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	edumazet@google.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com, 
-	tim.c.chen@intel.com, tim.c.chen@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Right, forgot to respond.
+From: Ashwin Dayanand Kamat <ashwin.kamat@broadcom.com>
 
-I suspect the different result is either because of mere variance
-between reboots or blogbench using significantly less than 100 fds at
-any given time -- I don't have an easy way to test at your scale at
-the moment. You could probably test that by benching both approaches
-while switching them at runtime with a static_branch. However, I don't
-know if that effort is warranted atm.
+net/ipv6: annotate data-races around cnf.disable_ipv6 
+       disable_ipv6 is read locklessly, add appropriate READ_ONCE() and WRITE_ONCE() annotations.
 
-So happens I'm busy with other stuff and it is not my call to either
-block or let this in, so I'm buggering off.
+net/ipv6: prevent NULL dereference in ip6_output()
+       Fix for CVE-2024-36901
 
-On Tue, Jul 9, 2024 at 10:32=E2=80=AFAM Ma, Yu <yu.ma@intel.com> wrote:
->
->
-> On 7/5/2024 3:56 PM, Ma, Yu wrote:
-> > I had something like this in mind:
-> >>> diff --git a/fs/file.c b/fs/file.c
-> >>> index a3b72aa64f11..4d3307e39db7 100644
-> >>> --- a/fs/file.c
-> >>> +++ b/fs/file.c
-> >>> @@ -489,6 +489,16 @@ static unsigned int find_next_fd(struct fdtable
-> >>> *fdt, unsigned int start)
-> >>>          unsigned int maxfd =3D fdt->max_fds; /* always multiple of
-> >>> BITS_PER_LONG */
-> >>>          unsigned int maxbit =3D maxfd / BITS_PER_LONG;
-> >>>          unsigned int bitbit =3D start / BITS_PER_LONG;
-> >>> +       unsigned int bit;
-> >>> +
-> >>> +       /*
-> >>> +        * Try to avoid looking at the second level map.
-> >>> +        */
-> >>> +       bit =3D find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_L=
-ONG,
-> >>> +                               start & (BITS_PER_LONG - 1));
-> >>> +       if (bit < BITS_PER_LONG) {
-> >>> +               return bit + bitbit * BITS_PER_LONG;
-> >>> +       }
-> >> Drat, you're right. I missed that Ma did not add the proper offset to
-> >> open_fds. *This* is what I meant :)
-> >>
-> >>                                 Honza
-> >
-> > Just tried this on v6.10-rc6, the improvement on top of patch 1 and
-> > patch 2 is 7% for read and 3% for write, less than just check first wor=
-d.
-> >
-> > Per my understanding, its performance would be better if we can find
-> > free bit in the same word of next_fd with high possibility, but
-> > next_fd just represents the lowest possible free bit. If fds are
-> > open/close frequently and randomly, that might not always be the case,
-> > next_fd may be distributed randomly, for example, 0-65 are occupied,
-> > fd=3D3 is returned, next_fd will be set to 3, next time when 3 is
-> > allocated, next_fd will be set to 4, while the actual first free bit
-> > is 66 , when 66 is allocated, and fd=3D5 is returned, then the above
-> > process would be went through again.
-> >
-> > Yu
-> >
-> Hi Guzik, Honza,
->
-> Do we have any more comment or idea regarding to the fast path? Thanks
-> for your time and any feedback :)
->
->
-> Regards
->
-> Yu
->
+Ashwin Dayanand Kamat (2):
+       net/ipv6: annotate data-races around cnf.disable_ipv6
+       net/ipv6: prevent NULL dereference in ip6_output()
 
+ net/ipv6/addrconf.c   | 9 +++++----
+ net/ipv6/ip6_input.c  | 2 +-
+ net/ipv6/ip6_output.c | 2 +-
+ 3 files changed, 7 insertions(+), 6 deletions(-)
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+-- 
+2.7.4
+
 
