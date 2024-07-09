@@ -1,101 +1,163 @@
-Return-Path: <linux-kernel+bounces-245615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F2E092B4FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:16:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28EB092B4FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:17:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE886281D53
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:16:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ACA3B221DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C00815623B;
-	Tue,  9 Jul 2024 10:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991B1156231;
+	Tue,  9 Jul 2024 10:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hqoIfGI4"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PUybTvkG"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5D913D89D;
-	Tue,  9 Jul 2024 10:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505051FA3;
+	Tue,  9 Jul 2024 10:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720520206; cv=none; b=bKJkUWC7yeq6O68PlISDwmIT1uwgwlNaXQaOfRJN/r2fSJZvPlGNQC4OGqIcwnuN3Fvkfqu9CKoDK4zvCPpQmRX0ucPVMindPvaSLPPIY6tw13Mq0e28vsKLKZot6LRjxK+DEyB25tahKEzv9ghFueEFV5D7roiZbQNMG8jWd8o=
+	t=1720520246; cv=none; b=QaVMNzYHF5H5GArveC1rGlywvzRVWDQ7+S9V6S9W3nbPChEe7foq0iRWaQyWfWIURiz4F63hK1eOi42U9E87wnrQs32A+TjGhdBkEHqyEgg4wxn5XtlFQJMq5JSO35+9jfxoojM6NUKFhmdlLPpRP3/YzQhBq8prigXjaOJkJEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720520206; c=relaxed/simple;
-	bh=Dtpi1yrKRTtPk6r5zt7CiBiVsXJzpMWBZmyOj05XhgY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dc4yLDkvNB7x+nVLcwx6BLMD/5Q9nMzPaU+DGNHrCFS/d9qGtRf4SXH5GIJx0faQ/QIsQZ2lZM2VrcHbCHHEdYdsauPvZ8sDpiuWCmctLnxrLbQv0oYKnsvoMgKbAYCYWLd6v3MkBL5i8+C1BPqx5o/qXmY8MY86A0h/DezvVpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hqoIfGI4; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mh5ahTlQQ1u1cc+uN8Y4hernut2vJWnu3t21K5h/yFo=; b=hqoIfGI4pB2BPewTPk/Y83AHAy
-	7nIAaAD/yld+8Afy4coT5a/rVwTEFYrsbHZr5TMMG8Bnshlp0kZgGYG2Q+HILcn2q6IOhdHdbWGV1
-	eyHR3/lRksZ4vHirOLLQQuxkrAGmWZRNUprcckTjKdgC7ZASCYe2dXUe79c6SIDbe6N51PUzjhktp
-	JPOn3PHkLIfUUfAlIdfZ/UXiNIzGq0ezQORAc55VCGrGFBwS0TqQB38MALIq69sEKbIJ3A9/2YmWW
-	4jAnnAsW2gyuxqXRZuliLOGHQZB9WGHTnMrWcpbS0SlP6V1wVcKN8BP6YjqaScY/uLGRAkwKP3iAd
-	YxvMr+9w==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sR7tj-00000007mEl-0Rtr;
-	Tue, 09 Jul 2024 10:16:35 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A87833006B7; Tue,  9 Jul 2024 12:16:34 +0200 (CEST)
-Date: Tue, 9 Jul 2024 12:16:34 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org,
-	andrii@kernel.org, linux-kernel@vger.kernel.org,
-	rostedt@goodmis.org, oleg@redhat.com, clm@meta.com,
-	paulmck@kernel.org, bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
-Message-ID: <20240709101634.GJ27299@noisy.programming.kicks-ass.net>
-References: <20240708091241.544262971@infradead.org>
- <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
- <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
- <20240709090304.GG27299@noisy.programming.kicks-ass.net>
- <Zo0KX1P8L3Yt4Z8j@krava>
+	s=arc-20240116; t=1720520246; c=relaxed/simple;
+	bh=lP7MS/SSQSGkVJ5jAW2+76EJviVIBFt7fQoTvHmqjJc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SAQCFew9lLbl05J6qmSXjePgVMkSt3gGn5eB2LjZ5ddGYGzNogRryuq9wD1fMNgrr1VJSAp/y4/IuOQfuaKXKPAdMxYVdT8NT0yhn42w+sm3ow4y9JoOexETJHbiH0gTxmXGpUQJ88Bl2EiASHN5dJycPM1cJ10G95hr1Qn8VdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PUybTvkG; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-58b447c511eso6141140a12.2;
+        Tue, 09 Jul 2024 03:17:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720520244; x=1721125044; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WUU4V5yTD3E6P/UWJvCDJ0CcvQXY96+XekGETdSHgbU=;
+        b=PUybTvkGeLBizrU6VaWp6QpuQ9CB7JQHsiYgGsjhYHFpDc5easkSVTPx8MAN1BgHga
+         r6k1FMD7eOfShmSIfiT8zoDf0JZyae/8q6541LxA9mVYtpiXXLv/RhvtteEjsSAHEvTL
+         W3uRw9z/qFBNyBM7B+F/ZeEcY9OA26L34j6JDR2SOO536Eac94ObVTEZveRycmXgXdAe
+         Z6EuzFQz0QVjhUCS5FVEy9NO+++Hp31/QeVtZvZ/3OGk/8Rt18+OZmIy/fwuHBIRGKsS
+         pxwfh+aCCIWUpdNorUHvMMRWoN9qQBJFYC3GAFv8vpEf6/oE1qCh52g1QhIBS3h9GOD5
+         2S/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720520244; x=1721125044;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WUU4V5yTD3E6P/UWJvCDJ0CcvQXY96+XekGETdSHgbU=;
+        b=S3JoiTN8qZIbmdplvkciOGsENfZlSEU2zryqgHcVlrAH/15v49mOh/MNenulLU6M2t
+         HLSAgbJ6REX+/OBY+upjoYeUo/Ga236Bk/pHhpDsUQhWyq7ntlHJkqv/Psm9Ibqhr2Hz
+         9bO3qSKgTdHH4gGwVt8I0XL+Y7Se6mTMwbbQjWg1GmHJmrtWUOZS2y2NkSGkTsuZiJ9g
+         uc3Atbq96kPkcc5bqz0aLWF08FJaAW++c/2565cBGhbfe5PCcdidYtYEeEKeN5XdPE08
+         sxqnNaa9BSOkjE647iFZxuyyZ3vvecC0IiJ/oKjlWQIR9zaCe8oTrRbYCdYuZYDvFkH6
+         YpBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2sGFSM1VxllgH7H9s0+B2MAIxnxfFjkcyDVyPhXd44A9V7X5kzEASAjv2l+e4ggNGsHrLNpjhcaOMf2bTI0YOQ5JHlGSQj5S3flM+YwkCYf3w2P8l7MRtxTzBHY/3aMP2z9qTo/X6MYNaqg==
+X-Gm-Message-State: AOJu0YyoJSLPjZ1rrgH2Pgd6J6PJtO8UCseM01AoinsGH6u8432sHUQB
+	9dnh7m5in954/pkD2cwkNiiDkHrL8ebJvmZ5OJgAEr68dR6864qZSYOKm8HM4gdelyGCrkebzDh
+	Z4/+bl4+MtVIaZLcDg9M6ubecWEKMcA==
+X-Google-Smtp-Source: AGHT+IHUGKDAeSkKp9GM4WQ4dY21by1sO/dcn3kMOXX3QjhfD2crAARDs5/+8YBnt2MO0T7d0JodJtKs3FIlQ3siD6I=
+X-Received: by 2002:a17:907:7da8:b0:a72:4320:19f3 with SMTP id
+ a640c23a62f3a-a780b70088cmr193963566b.39.1720520243335; Tue, 09 Jul 2024
+ 03:17:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zo0KX1P8L3Yt4Z8j@krava>
+References: <20240614163416.728752-1-yu.ma@intel.com> <20240703143311.2184454-1-yu.ma@intel.com>
+ <20240703143311.2184454-4-yu.ma@intel.com> <CAGudoHH_P4LGaVN1N4j8FNTH_eDm3SDL7azMc25+HY2_XgjvJQ@mail.gmail.com>
+ <20240704215507.mr6st2d423lvkepu@quack3> <3c7a0cd7-1dd2-4762-a2dd-67e6b6a82df7@intel.com>
+ <1296ef8d-dade-46e5-8571-e7dba158f405@intel.com>
+In-Reply-To: <1296ef8d-dade-46e5-8571-e7dba158f405@intel.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Tue, 9 Jul 2024 12:17:09 +0200
+Message-ID: <CAGudoHGJrRi_UZ2wv2dG9U9VGasHW203O4nQHkE9KkaWJJ61WQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] fs/file.c: add fast path in find_next_fd()
+To: "Ma, Yu" <yu.ma@intel.com>
+Cc: Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	edumazet@google.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com, 
+	tim.c.chen@intel.com, tim.c.chen@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 09, 2024 at 12:01:03PM +0200, Jiri Olsa wrote:
-> On Tue, Jul 09, 2024 at 11:03:04AM +0200, Peter Zijlstra wrote:
-> > On Mon, Jul 08, 2024 at 05:25:14PM -0700, Andrii Nakryiko wrote:
-> > 
-> > > Ramping this up to 16 threads shows that mmap_rwsem is getting more
-> > > costly, up to 45% of CPU. SRCU is also growing a bit slower to 19% of
-> > > CPU. Is this expected? (I'm not familiar with the implementation
-> > > details)
-> > 
-> > SRCU getting more expensive is a bit unexpected, it's just a per-cpu
-> > inc/dec and a full barrier.
-> > 
-> > > P.S. Would you be able to rebase your patches on top of latest
-> > > probes/for-next, which include Jiri's sys_uretprobe changes. Right now
-> > > uretprobe benchmarks are quite unrepresentative because of that.
-> > 
-> > What branch is that? kernel/events/ stuff usually goes through tip, no?
-> 
-> it went through the trace tree:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git probes/for-next
-> 
-> and it's in linux-next/master already
+Right, forgot to respond.
 
-FFS :-/ That touches all sorts and doesn't have any perf ack on. Masami
-what gives?
+I suspect the different result is either because of mere variance
+between reboots or blogbench using significantly less than 100 fds at
+any given time -- I don't have an easy way to test at your scale at
+the moment. You could probably test that by benching both approaches
+while switching them at runtime with a static_branch. However, I don't
+know if that effort is warranted atm.
 
+So happens I'm busy with other stuff and it is not my call to either
+block or let this in, so I'm buggering off.
+
+On Tue, Jul 9, 2024 at 10:32=E2=80=AFAM Ma, Yu <yu.ma@intel.com> wrote:
+>
+>
+> On 7/5/2024 3:56 PM, Ma, Yu wrote:
+> > I had something like this in mind:
+> >>> diff --git a/fs/file.c b/fs/file.c
+> >>> index a3b72aa64f11..4d3307e39db7 100644
+> >>> --- a/fs/file.c
+> >>> +++ b/fs/file.c
+> >>> @@ -489,6 +489,16 @@ static unsigned int find_next_fd(struct fdtable
+> >>> *fdt, unsigned int start)
+> >>>          unsigned int maxfd =3D fdt->max_fds; /* always multiple of
+> >>> BITS_PER_LONG */
+> >>>          unsigned int maxbit =3D maxfd / BITS_PER_LONG;
+> >>>          unsigned int bitbit =3D start / BITS_PER_LONG;
+> >>> +       unsigned int bit;
+> >>> +
+> >>> +       /*
+> >>> +        * Try to avoid looking at the second level map.
+> >>> +        */
+> >>> +       bit =3D find_next_zero_bit(&fdt->open_fds[bitbit], BITS_PER_L=
+ONG,
+> >>> +                               start & (BITS_PER_LONG - 1));
+> >>> +       if (bit < BITS_PER_LONG) {
+> >>> +               return bit + bitbit * BITS_PER_LONG;
+> >>> +       }
+> >> Drat, you're right. I missed that Ma did not add the proper offset to
+> >> open_fds. *This* is what I meant :)
+> >>
+> >>                                 Honza
+> >
+> > Just tried this on v6.10-rc6, the improvement on top of patch 1 and
+> > patch 2 is 7% for read and 3% for write, less than just check first wor=
+d.
+> >
+> > Per my understanding, its performance would be better if we can find
+> > free bit in the same word of next_fd with high possibility, but
+> > next_fd just represents the lowest possible free bit. If fds are
+> > open/close frequently and randomly, that might not always be the case,
+> > next_fd may be distributed randomly, for example, 0-65 are occupied,
+> > fd=3D3 is returned, next_fd will be set to 3, next time when 3 is
+> > allocated, next_fd will be set to 4, while the actual first free bit
+> > is 66 , when 66 is allocated, and fd=3D5 is returned, then the above
+> > process would be went through again.
+> >
+> > Yu
+> >
+> Hi Guzik, Honza,
+>
+> Do we have any more comment or idea regarding to the fast path? Thanks
+> for your time and any feedback :)
+>
+>
+> Regards
+>
+> Yu
+>
+
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
