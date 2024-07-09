@@ -1,124 +1,117 @@
-Return-Path: <linux-kernel+bounces-245931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FADF92BB85
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:38:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E28B092BB91
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0D801C23E4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:38:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9834C1F24951
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2EB16DC06;
-	Tue,  9 Jul 2024 13:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TmPGTSwh"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E35A15E5B8;
+	Tue,  9 Jul 2024 13:38:24 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1352416D4CA
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 13:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E60D145325;
+	Tue,  9 Jul 2024 13:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720532209; cv=none; b=twOId4smpHzOjBmP9JU7LCzfMaNslZq/D3gP8/kzkuhr0BqEpqYtxKBPbe0MnVCHb12UvNYjkhXcLRPVp9GFnGM81tBZEGl1ZmbChh/GFBGeFuZjpxdPIezbbpLy8q6t62WuxigrWIXcufktoibYbj6quOKoBEakhB2+UzowBb8=
+	t=1720532303; cv=none; b=aN55/o7/yEm5wegqqUnU8tigezg4ysWgKXn2fbWJH2p/ecy9RY56YbpD36gjZA01HqULRFYo4AaALwRvhvWz6LjjZlkFoTkJLHUxdbCZM/qDKiApOKT7dFCzMe0efYlgVXHFq6Kru0RWmC4KrxUNpqACq0Dr+OuHmnSLeGQzmAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720532209; c=relaxed/simple;
-	bh=Onc/w0W8oRYcL0nlkLqAaGGC05n10oVyNR6/WGfjgEY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iJ5wDBNcGh8ssHMqIxtJQGZ8Yn6BrCY4El2vs9/tixemdfiyD/xIA6/jHmi7x8ZqxlsUlvBfDfWU7vD1xfMIZ/sRP5JOHe8D9JscqKxgIXnjQt8x33ha4g/CIvaPJknsJazmsEBniSZP9ytzBvBr/o2/Nh+IHN70VVbSYFUDEsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TmPGTSwh; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-44931d9eda6so3081381cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 06:36:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720532207; x=1721137007; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Onc/w0W8oRYcL0nlkLqAaGGC05n10oVyNR6/WGfjgEY=;
-        b=TmPGTSwhhyAV4cjd0l1IUaQCuEk9eNBsPGO2/hVROmb0jF1uGQEbKKMi/IExfHZRs+
-         BYJrdSo/IvcQeM/XnO3mDS0TEgYnbzY3vVFGeVAMSqKhjjki5MT2Gum/VMeF3NHRi001
-         owG9Cs86Mq/llplhxSzo4ScOBpMNxIQtsbmPD/PSikxaNaY7Hmkx7riojYzVVFQoemK7
-         N+jsW7uhwsnjrlnbCc6Nzrr5aayCvc/TaoV+BlnmcxOgqmB0d1No6uYdschNvdKkla8i
-         VnXEaSo4cTEjtGS39p+otkeJybimHdc/T1fvDDCQFYEim1LSKY7Du8bWz6zs0dVt4ZPC
-         a0vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720532207; x=1721137007;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Onc/w0W8oRYcL0nlkLqAaGGC05n10oVyNR6/WGfjgEY=;
-        b=hPN597jkt8Z7BRiv2JBhN8JHYUqyPt+inPWuT5k21ob1qqz+ESaUCzTKRvWEfhhMp4
-         ZI2mM7hCemniMRhKTznesVqQGsNrEBRmJJ4lQ2TD3g0QUv73m3wwibWdsidPBubkbJKQ
-         GJ8w3qFyKqqk2JmFMebXoako9gqPF698aNNvRfsOzv4hrtY/+jO1KFVNYJMriRQbFdB+
-         pNIgjssbEgGnBC7uZLGEvo2hoOftQtRyoJdCnyWzUM2QrqSKu5zUCD0pcaZgLlOrvlwE
-         JQTw5tvbVtiyCY1otYva+BoCCSQfzJLz3hhST8G9Mcn9lrPF3lTMExxR7i4ZN5Rd4jyW
-         W4Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCXph/jo780VbEB/OzB9l3N+O5BaXvciALZPNx4EPZXKREFCoJ91zLbSWU4Di3HM7zv6VpXjfMMBDkF7sjpfN1mSW51UfOY+44W5JUtQ
-X-Gm-Message-State: AOJu0YwDk05lFTKVjWz5w3RSNcmUbI/wyXMcCbe+mpweuM6LsfSepoPp
-	P1OWzVTRV6EsdG/bESrMJfGWFxRg3LLQpFX8QPGvmPs9+vxzeVdnJyM+8mbFWLJx7kp9Gb+j3vG
-	oMs0+fdRHQxaKJpEMhQSeXOu2XV5cWrLICXLFfw==
-X-Google-Smtp-Source: AGHT+IFbY6+qvqocJnF91c8cRGW6w2sl4YtsuoGZuQkrm2HWP2P7YQnkbM6czb/WQ8nm2/0yW0zSzCFDvYSYvR4R3Sg=
-X-Received: by 2002:ac8:73d6:0:b0:447:e591:2d27 with SMTP id
- d75a77b69052e-447fc364793mr29602491cf.6.1720532206879; Tue, 09 Jul 2024
- 06:36:46 -0700 (PDT)
+	s=arc-20240116; t=1720532303; c=relaxed/simple;
+	bh=+Npn2ARSeScntu6PPTnz0FNM0maOuRq69uO3r2huVj4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JqzsDAmMigYxJa5xDQowBzWw9xheDbgw7nwF0GfQfQ07Br/uUtmGKEfDcbTUaWbDNsLtYhDgD8wCKb2Nr1hmsMbXXAfNi9jWEiReCLkm+X21xdosZy0UxWUwltL1KBRC7W1CwLSjfuktt15pObmCelxZ6jJnBZvfUr9BWkLsEhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowAA3PeU5PY1mLFdhAg--.39231S2;
+	Tue, 09 Jul 2024 21:38:09 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: dinguyen@kernel.org,
+	bp@alien8.de,
+	tony.luck@intel.com,
+	james.morse@arm.com,
+	mchehab@kernel.org,
+	rric@kernel.org,
+	niravkumar.l.rabara@intel.com
+Cc: linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] EDAC/altera: Fix possible null pointer dereference
+Date: Tue,  9 Jul 2024 21:37:59 +0800
+Message-Id: <20240709133759.1012350-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619031250.2936087-1-tj@kernel.org> <20240619031250.2936087-3-tj@kernel.org>
- <ZnM2ywDVRZbrN6OC@slm.duckdns.org> <CAKfTPtBPObGdcaQF5nKqr4042f-+5obTMm_S6S+=3_Ct33ZMyw@mail.gmail.com>
- <Zog5-Yd5wV0-Y76y@slm.duckdns.org> <CAKfTPtDeA4OTPJmEHd-wKToYwDVizcny-_qxEuDUA-OcaVm2Uw@mail.gmail.com>
- <ZonzAdyd6zb2Sm06@slm.duckdns.org> <CAKfTPtDE2rWbRouf8zRyM3UpTfK1k_xrWmvAs-zfoRZqM3zGsw@mail.gmail.com>
- <Zowt7pVWFB-Of-me@slm.duckdns.org> <CAKfTPtB=77c-RsJ23suNZVf7qByeGSjYQJbiEU4JpXU6DezNLQ@mail.gmail.com>
- <ZoxVZPCrWokjfmFY@slm.duckdns.org>
-In-Reply-To: <ZoxVZPCrWokjfmFY@slm.duckdns.org>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Tue, 9 Jul 2024 15:36:34 +0200
-Message-ID: <CAKfTPtAjFvOPByPyeAURN3gw0yp8ByVmpa99_dGEZiTGw_Fawg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] sched_ext: Add cpuperf support
-To: Tejun Heo <tj@kernel.org>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org, 
-	void@manifault.com, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
-	mingo@redhat.com, peterz@infradead.org, David Vernet <dvernet@meta.com>, 
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAA3PeU5PY1mLFdhAg--.39231S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WF47GF13XF1kCr48Xr1DKFg_yoW8GFyrpF
+	47W34YyFyUKa48Gr4qvwn5XFy5Cwn3XayxWrWIya4Y93y3X345JryUZFWjya4jqrW8Cay3
+	tr45tw45Aay8JaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUQZ23UUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On Mon, 8 Jul 2024 at 23:09, Tejun Heo <tj@kernel.org> wrote:
->
-> Hello, Vincent.
->
-> On Mon, Jul 08, 2024 at 09:51:08PM +0200, Vincent Guittot wrote:
-> > > Unless we add a WARN_ON_ONCE, if it doesn't behave as expected, the end
-> > > result will most likely be cpufreq sometimes picking a higher freq than
-> > > requested, which won't be the easiest to notice. Would you be against adding
-> > > WARN_ON_ONCE(scx_switched_all && !util) too?
-> >
-> > A WARN_ON_ONCE to detect misbehavior would be ok
->
-> I tried this and it's a bit problematic. Migrating out all the tasks do
-> bring the numbers pretty close to zero but the math doesn't work out exactly
-> and it often leaves 1 in the averages. While the fair class is in use, they
+In altr_s10_sdram_check_ecc_deps(), of_get_address() may return NULL which
+is later dereferenced. Fix this bug by adding NULL check.
 
-hmm interesting, such remaining small value could be expected for
-load_avg but not with util_avg which is normally a direct propagation.
-Do you have a sequence in particular ?
+Cc: stable@vger.kernel.org
+Fixes: e1bca853dddc ("EDAC/altera: Add SDRAM ECC check for U-Boot")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/edac/altera_edac.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-> would decay quickly through __update_blocked_fair(); however, when all tasks
-> are switched to sched_ext, that function doesn't get called and the
-> remaining small value never decays.
->
-> Now, the value being really low, it doesn't really matter but it's an
-> unnecessary complication. I can make sched_ext keep calling
-> __update_blocked_fair() in addition to update_other_load_avgs() to decay
-> fair's averages but that seems a lot more complicated than having one
-> scx_switched_all() test.
->
-> Thanks.
->
-> --
-> tejun
+diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+index fe89f5c4837f..d6bf0eebeb41 100644
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -1086,6 +1086,7 @@ static int altr_s10_sdram_check_ecc_deps(struct altr_edac_device_dev *device)
+ 	struct arm_smccc_res result;
+ 	struct device_node *np;
+ 	phys_addr_t sdram_addr;
++	const __be32 *sdram_addrp;
+ 	u32 read_reg;
+ 	int ret;
+ 
+@@ -1093,8 +1094,14 @@ static int altr_s10_sdram_check_ecc_deps(struct altr_edac_device_dev *device)
+ 	if (!np)
+ 		goto sdram_err;
+ 
+-	sdram_addr = of_translate_address(np, of_get_address(np, 0,
+-							     NULL, NULL));
++	sdram_addrp = of_get_address(np, 0, NULL, NULL);
++	if (!sdram_addrp)
++		return -EINVAL;
++
++	sdram_addr = of_translate_address(np, sdram_addrp);
++	if (!sdram_addr)
++		return -EINVAL;
++
+ 	of_node_put(np);
+ 	sdram_ecc_addr = (unsigned long)sdram_addr + prv->ecc_en_ofst;
+ 	arm_smccc_smc(INTEL_SIP_SMC_REG_READ, sdram_ecc_addr,
+-- 
+2.25.1
+
 
