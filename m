@@ -1,71 +1,62 @@
-Return-Path: <linux-kernel+bounces-246525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8645C92C31A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:09:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13AF192C31C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 20:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B5401F239C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:09:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFB90B23889
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 18:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164C317B056;
-	Tue,  9 Jul 2024 18:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BCC317B05E;
+	Tue,  9 Jul 2024 18:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TN8H2bbZ"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="GgxuQPcS"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC486BFB0
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 18:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B2F17B036;
+	Tue,  9 Jul 2024 18:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720548559; cv=none; b=bYYTys+BaMcIhuAo4s7xGFhRc8ZEB5ze1YlKkd3/lencgLcDmIKJBrQsA5Wb3eVy+Z9ysOsVTwDlIAr61BmB6kexukFtUtuMu0Oo36/Lm5L3yMsrEjLZ+3UK6/QVm6kedhV0vorg3OGlPD6z9E4Nj6ebjfOKyh+7b3T1tU7TyMg=
+	t=1720548640; cv=none; b=T2k7YQIHlhz5zhn8mU89DvcKbqIykr7X92xpdx59bNndvaxeMejUIuZqo8KpXHV5ZYiwgo9olmHWYTeNp0b1AFlZojgmV1NYUkYlEDymrIzKG2Hhf1F5fKvu16eUPirhUAON23hFCG3Vvvu06ifis15A2LNOMkcxMEvH4VIu0+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720548559; c=relaxed/simple;
-	bh=Nedr5O72MMaCJZHo0lSW5X91GqQNSfgbP3hdBOw9eC4=;
+	s=arc-20240116; t=1720548640; c=relaxed/simple;
+	bh=SGq/ssHoslmFRarDDEhZmqPBLmYTYCxhmjr52bo8hj4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xnv9UH4JuNjn10HRTqiEPQEwybPX8Ep1bPjr53htgm5v1Wa7ZSw5if2V7DzZu6WIP6/uxLcHLoREbsOOUJ4apKVQ/GzfGtHRuDWt0C6JqyQ3qAnRMTcYBl4QXZDWxvL7/Z339Gz8tTkhmfQLMszhCq69raOrlaZbQpr25CYyHZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TN8H2bbZ; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7fb3529622dso9534239f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 11:09:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1720548556; x=1721153356; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1E/FOgz2bzLAk7czsspwJRssUwyfo69Q4JV8FZsYC/0=;
-        b=TN8H2bbZ7ibYoNF1/DHVfQSYP5qoFtQyexlE/dzeUFZbgg/QELjX7t0j2ngDxcA+iZ
-         bHmZqjljGlnX/rOe2rfEGkxU0NO6qyvXOQFq7Fo77WzXMEIPjTHJY9QzeqIj/2qcp0kB
-         T1QuH14XYCiZr20E2bLg/GX180keEh6mnqYZk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720548556; x=1721153356;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1E/FOgz2bzLAk7czsspwJRssUwyfo69Q4JV8FZsYC/0=;
-        b=B4/cEUbLd50fzow9jwxfYXKwZjzrpgfKmqanaMBQ9nrsAowULDj3Yt3I3u3M1u87rX
-         zLUPBcx5/SW2NrFx7BMvtOi290GVSK0m6veYypotiCzCgKAqiTp/Okc65Mp6dtdb85D6
-         9gliKqU31as3MRz+Fir01B8EuC0H6znGpj7eXdvol6NKjX+7khgUfexAK6ntCrsQtHe6
-         v65YHQdksnCxExdP3dpSsD/00IEzV3gGXbAAZAJtS/TUf9KxXyIcSY1vTnaiN+zM4w2Z
-         MFk9m5O3XzLJM8TnytJtmI57v2RNrWZzc2FdwBKo+ClpTH2xZvbXq0DWF1vnKZi0EHX+
-         VUfA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ0R9F6IAdNNB5U2iooZ8cirRaTD0kgCXDkoOuxu0QpJ3AQKk5GlBXWx2XM/k9Ap+pcvIYsAdH13TfQNGgrCXLJFsxMGO51tw+Xg9M
-X-Gm-Message-State: AOJu0Yzq3nwz/ELVItKbxfAWcyDhoWdkjengVegPCCTXGvh3Yehskhba
-	N7lfH4kwdKXrJF7PtaSDI+ClwO73IwtNdGcHNIV/K1jqlngVCubSRQvhguIYK04L+wd9Ru1RlbF
-	I
-X-Google-Smtp-Source: AGHT+IHeHnBu5isyAddwI1V9QJx7d99P47RZ/yrGAW+PJhY/k0T9TJ/9xtTL5eHYe0IzkmsubRMkRg==
-X-Received: by 2002:a05:6602:3413:b0:7f8:bfcd:db53 with SMTP id ca18e2360f4ac-8000269672bmr385534639f.1.1720548556008;
-        Tue, 09 Jul 2024 11:09:16 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c0b1b0d41csm612367173.38.2024.07.09.11.09.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 11:09:15 -0700 (PDT)
-Message-ID: <bb8602f1-71f9-438d-91b9-6793250648ea@linuxfoundation.org>
-Date: Tue, 9 Jul 2024 12:09:14 -0600
+	 In-Reply-To:Content-Type; b=p3mx9APPPKST9L8xiCKbfwjJNXZELCJGsVfyrvg4mht46Hc5istiAjX48lay38nl0FT4hyMuRRLvpRd8g0myc5JnD7DHuPsqIGseoAsrlXCvyF1D1sj0gvF8eLAZeSqX1+yXtcHb9cyMWQRGdf/1mZKYzcoiVnaodne8iR9keAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=GgxuQPcS; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WJTYh1vfnz6CmM6L;
+	Tue,  9 Jul 2024 18:10:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1720548626; x=1723140627; bh=r6xt0/4Qdrzv5f5FS/Gooqnt
+	U2esThFOhUITG41SVE4=; b=GgxuQPcSCPpW1gpGm7/YlroBISYAj4bjVpKnaR3a
+	xDGtIjvl8oErMmfR7Tvxf/NgXL3ULulcposNUI6vcPhe75elGM3h1eEUW7lS3he3
+	F5PtlMRxZMYJ4CZfw4TFxDH37AXzVx9CvdxaoHEMB3syXQUqpqASEEQCRV4B3CkU
+	hfdz403Y2+c+SYw8nstHsx/Ca2tsJw95qSS7Yu/aIlN3eqgRanqAcU6qi4GnQ532
+	2dP3IY+qMDgxzXPcsfyga0vm47UxRpqrc2aWexu9zjaAkkDDaVsi20CBTy0PVw5g
+	LrdvBqKDaYqw8nJusGbQ7n+jF6uymuPzWZZwxM4Rq8Tmmg==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 9yCWi2MEivee; Tue,  9 Jul 2024 18:10:26 +0000 (UTC)
+Received: from [100.96.154.26] (unknown [104.132.0.90])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4WJTYY4WL6z6CmR07;
+	Tue,  9 Jul 2024 18:10:25 +0000 (UTC)
+Message-ID: <a89910ad-da5b-42c2-8a0f-9f4908fa2c1a@acm.org>
+Date: Tue, 9 Jul 2024 11:10:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,38 +64,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: duplicate patches in the random tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Theodore Ts'o <tytso@mit.edu>,
- "Jason A. Donenfeld" <Jason@zx2c4.com>, Shuah Khan <shuah@kernel.org>
-Cc: John Hubbard <jhubbard@nvidia.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240709180829.65e8967d@canb.auug.org.au>
+Subject: Re: [PATCH v3 1/1] scsi: ufs: core: Support Updating UIC Command
+ Timeout
+To: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>, quic_cang@quicinc.com,
+ quic_nitirawa@quicinc.com, avri.altman@wdc.com, peter.wang@mediatek.com,
+ manivannan.sadhasivam@linaro.org, minwoo.im@samsung.com,
+ adrian.hunter@intel.com, martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
+ "James E.J. Bottomley" <jejb@linux.ibm.com>, Bean Huo <beanhuo@micron.com>,
+ Maramaina Naresh <quic_mnaresh@quicinc.com>,
+ open list <linux-kernel@vger.kernel.org>
+References: <cover.1720503791.git.quic_nguyenb@quicinc.com>
+ <6513429b6d3b10829263bf33ace5c5128f106e59.1720503791.git.quic_nguyenb@quicinc.com>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240709180829.65e8967d@canb.auug.org.au>
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <6513429b6d3b10829263bf33ace5c5128f106e59.1720503791.git.quic_nguyenb@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 7/9/24 02:08, Stephen Rothwell wrote:
-> Hi all,
-> 
-> The following commits are also in the kselftest-fixes tree as different
-> commits (but the same patches):
-> 
->    868680ffba11 ("selftests/vDSO: remove duplicate compiler invocations from Makefile")
->    7bb79ef48b9d ("selftests/vDSO: remove partially duplicated "all:" target in Makefile")
->    14cd1a877fc6 ("selftests/vDSO: fix clang build errors and warnings")
-> 
-> These are already causing an unnecessary conflict
-> :-( Maybe you could just merge the kselftest-fixes tree
-> (git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git#fixes),
-> but first make sure that it won't be rebased.
-> 
+On 7/8/24 11:06 PM, Bao D. Nguyen wrote:
+> +static int uic_cmd_timeout_set(const char *val, const struct kernel_param *kp)
+> +{
+> +	unsigned int n;
+> +	int ret;
+> +
+> +	ret = kstrtou32(val, 0, &n);
+> +	if (ret != 0 || n < UIC_CMD_TIMEOUT_DEFAULT || n > UIC_CMD_TIMEOUT_MAX)
+> +		return -EINVAL;
+> +
+> +	return param_set_int(val, kp);
+> +}
 
-They are now in Linus's mainline. :)
+The above code converts 'val' twice to an integer: a first time by
+calling kstrtou32() and a second time by calling param_set_int().
+Please remove one of the two string-to-integer conversions, e.g. by
+changing "param_set_int(val, kp)" into "uic_cmd_timeout = n" or
+*(unsigned int *)kp->arg = n".
 
-thanks,
--- Shuah
+Thanks,
+
+Bart.
 
