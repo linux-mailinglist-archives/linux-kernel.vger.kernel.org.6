@@ -1,172 +1,252 @@
-Return-Path: <linux-kernel+bounces-245150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5C8292AF00
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:18:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7327392AEFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:18:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8654F282C3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:18:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E417F1F216A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDB812D1FC;
-	Tue,  9 Jul 2024 04:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC5280603;
+	Tue,  9 Jul 2024 04:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="inPCg2Eg"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BsZtANPc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EBC7D07F
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 04:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4D5620;
+	Tue,  9 Jul 2024 04:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720498687; cv=none; b=gq0t8QZBSOANfgu7wD3cd7/Yfwx3JLkbGkh3EOZCnZzyJlpkChMiDgkKB2srGG/nt/jq+ZFrDW1obdSLvfZwgKhbJeYstSK+sIkNPECGA+Xm3nM16DZ7jGf9RPh3MjHskh2mU+LcCfuJQhMsXf/d7WzYqMNjqCtlbOLGqQ2DveA=
+	t=1720498683; cv=none; b=uGdUeoRe8VV7umanlACq3JQ/uWLR1z/5c46Ci4MyJuuFqiaX+CZmtzjJ1NFlHyvTZBNEiCvcg8UD7LcBIsv7vupYZKzf1nPxP/IS0Ctafsua7lpXidSJng8vQd3J3OMA9hZ7loabAcvDIxV3l+ypsQrsnhwGlxVQr7lVJGdE87o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720498687; c=relaxed/simple;
-	bh=XWhzfCvOv6lGGXQToFg0a0wy94X+LXmKI0b4Q/iwd+k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=cSPe7Hr0gpeFI1PuEX07ifNVkS01Epix2R9jC7uqIRUT/HJQT8vHKNXKWtg1R4xSzL1mTGjQI+7jcxoT4VyE4poyAhXqPYljVdCNdYgKePCNU09peLnjq776DqRKs9KRWlUiSwaqB39/ldP/PRy83E71sxDp0GCOVWh1nRU6c00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=inPCg2Eg; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240709041755epoutp02367148d8b0dccb4a1d3bcabbec247b44~gcG4UHEPU0108501085epoutp02e
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 04:17:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240709041755epoutp02367148d8b0dccb4a1d3bcabbec247b44~gcG4UHEPU0108501085epoutp02e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1720498675;
-	bh=lKCM4eKVBkxuPbg+SH2M8AGj93cnrmRZpEG+UsgzVrk=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=inPCg2EgaDGpdRhOUNGOC1MqyLclFHLLw5RZz/Dl069+sec2GwSHe68U8yIma/erK
-	 BrQgxQZvtSw6NPUXmyoICD5oEGSZFXIzwkoafejh8g3+kJhUoNMkCvZb71InUg4MQB
-	 tA74qoFQuRv0wdpJ72h1TA4/sU1kBAak+Xc1rq8Y=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-	20240709041755epcas1p3fdb5a3f91c62ac6260d44f6c07c631a2~gcG398W781900219002epcas1p31;
-	Tue,  9 Jul 2024 04:17:55 +0000 (GMT)
-Received: from epsmgec1p1.samsung.com (unknown [182.195.36.227]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4WJ74z09JVz4x9Py; Tue,  9 Jul
-	2024 04:17:55 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	AC.4E.09847.2F9BC866; Tue,  9 Jul 2024 13:17:54 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240709041754epcas1p4ee6f7b1fd0dbf287e756b709aba321c8~gcG3UKUkw1389813898epcas1p4I;
-	Tue,  9 Jul 2024 04:17:54 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240709041754epsmtrp24b14da4d0e313e4186f761cd0611fc2f~gcG3Tl89j3110831108epsmtrp2c;
-	Tue,  9 Jul 2024 04:17:54 +0000 (GMT)
-X-AuditID: b6c32a36-60dff70000002677-83-668cb9f2c901
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	C0.D2.19057.2F9BC866; Tue,  9 Jul 2024 13:17:54 +0900 (KST)
-Received: from u20pb1-0435.tn.corp.samsungelectronics.net (unknown
-	[10.91.133.14]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240709041754epsmtip1f42c978a2a0792569eca3fee95ee74de~gcG3HCySO1245012450epsmtip1b;
-	Tue,  9 Jul 2024 04:17:54 +0000 (GMT)
-From: Sungjong Seo <sj1557.seo@samsung.com>
-To: hirofumi@mail.parknet.co.jp, akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, Sungjong Seo <sj1557.seo@samsung.com>
-Subject: [PATCH] fat: print s_dev via fat_msg
-Date: Tue,  9 Jul 2024 13:17:34 +0900
-Message-Id: <20240709041734.3719513-1-sj1557.seo@samsung.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720498683; c=relaxed/simple;
+	bh=0umrLKs/D2wKddOhXgjcIazLSq/Hbp2xYf2rHZ28AWE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fCOgviUnU8BuObHx3AoV6t/3VEwbhaTJbn+WMVWwzR00fNWko4RvzfEI0wMwWTYlWVNw1Esah8cUEkVvMxnrDKTk4t87i9oCUO6Igtfds97e0yeYlmP6ZrQIgYAYClzkPXjPc9VB7YCENwsxhFH1iCKerul8L+uH6kvzP51AnFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BsZtANPc; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720498682; x=1752034682;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=0umrLKs/D2wKddOhXgjcIazLSq/Hbp2xYf2rHZ28AWE=;
+  b=BsZtANPcFC/tb+opb3KCcGRJoJD+A/EkFJW0zvMQtPbQJT8FQc6Q3VdZ
+   1FrQJCkkLU4hi1gaeZ5jGke6LjbuPzkIdXo4qsNqgaF05MOVL5VjpRsO/
+   dOVHrz33tChk/07Wns7gO9wm39NurHS9FO+JDX6VQ68sqHfQSGdDWOvqI
+   GgjfaoWqz72DvlZWmaWQXB23tyBoyfOEve9Cdt3L7aaBlg8uioLmsZbWo
+   laDxOW2Wz2nQ8UXQJu74QQy5flkxcTyHhJCNxIQAzUAejz5/8PCT/hrfv
+   Q0KIZjrDbMZVFtPSalvGVJLCwJ4Hgj7AnAqLmjNkLCvFpY3BTyfXrXxio
+   A==;
+X-CSE-ConnectionGUID: C2C4NYU+QaWMP2aIUSMXNw==
+X-CSE-MsgGUID: AmzsL0vrQBqv38noG311hw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11127"; a="28329276"
+X-IronPort-AV: E=Sophos;i="6.09,193,1716274800"; 
+   d="scan'208";a="28329276"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 21:18:01 -0700
+X-CSE-ConnectionGUID: gRwl7b5SQJmWxa09PlzioA==
+X-CSE-MsgGUID: Oh/y5CggR2GOqiWy9JytEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,193,1716274800"; 
+   d="scan'208";a="48381604"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.225.1]) ([10.124.225.1])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jul 2024 21:17:57 -0700
+Message-ID: <4d39856e-396d-4a48-9ca3-2e1a574f50d7@linux.intel.com>
+Date: Tue, 9 Jul 2024 12:17:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v2 3/5] perf x86/topdown: Don't move topdown metrics
+ events when sorting events
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yongwei Ma <yongwei.ma@intel.com>,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20240708144204.839486-1-dapeng1.mi@linux.intel.com>
+ <20240708144204.839486-4-dapeng1.mi@linux.intel.com>
+ <CAP-5=fVPb4JGR3RxfPBGrihrra8bFzdJfFt2iASSs2xHOy=U4g@mail.gmail.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <CAP-5=fVPb4JGR3RxfPBGrihrra8bFzdJfFt2iASSs2xHOy=U4g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDJsWRmVeSWpSXmKPExsWy7bCmge6nnT1pBme2mFnMWb+GzWL63A0s
-	Fpd3zWGz2PLvCKsDi8eJGb9ZPO6/TfTo27KK0ePzJrkAlqgGRpvEouSMzLJUhdS85PyUzLx0
-	W6XQEDddCyWFjPziElulaENDIz1DA3M9IyMjPVOjWCsjUyWFvMTcVFulCl2oXiWFouQCoNrc
-	ymKgATmpelBxveLUvBSHrPxSkDP1ihNzi0vz0vWS83OVFMoSc0qBRijpJ3xjzPi35DhTwWvu
-	ilevvrM2MD7i7GLk5JAQMJH48fQzM4gtJLCDUeLdydIuRi4g+xOjxK/efjYI5xujRN/Fy2ww
-	HV275kF17GWUWPfCCqKonUmi799SJpAEm4C2xPKmZWBFIgJWEgdvXQFrZhZwl7i2ejVrFyMH
-	h7CArsTkWR4gJouAqsSCXrBqXgFbiSX3XrBCrJKXmHnpOztEXFDi5MwnLBBT5CWat85mhqjZ
-	xC6xYK8+hO0icfFxFyOELSzx6vgWdghbSuLzu71gv0gIdDNKHP/4jgUiMYNRYkmHA4RtL9Hc
-	2swGcg+zgKbE+l36ELv4JN597YG6R1Di9LVuZpASCQFeiY42IYiwisT3DztZYFZd+XGVCcL2
-	kDh9aQMTJKRiJabO3840gVF+FpJvZiH5ZhbC4gWMzKsYxVILinPTU4sNC4yQI3UTIzghapnt
-	YJz09oPeIUYmDsZDjBIczEoivPNvdKcJ8aYkVlalFuXHF5XmpBYfYkwGBu9EZinR5HxgSs4r
-	iTc0M7O0sDQyMTQ2MzQkLGxiaWBiZmRiYWxpbKYkznvmSlmqkEB6YklqdmpqQWoRzBYmDk6p
-	BibHpwU7Y9/3zzwx5dXXg8pMKvu3dM54qLTNfsnx6vNrko+zOFeYlyZIX/jVEbrnlArnrSPR
-	tapKxu2PX/s6NlXcWCT2XamiMibkb3znJgnvx1PO1hTk3k8p5+c7J1bvpX81XijG+qS69bOD
-	LZdfako1VEiu5JNQClh3/CtroNS6rCkfXpafqnhQlp/nanKnr7O1Qr+kXNWnv7e843WC7Ox4
-	SeYlqotXZ196uKlrzbr4rYI66vfnyBYkbeVYd17x+72/KzZmJuyad0J/trlu5w3JegOG7mzp
-	LLnA+h/VfhVVlQzJRp8twk/9Dzpygqf0u/u/SYGRvnM6MrRZHq3g5pt62M7WUi4yt5HXb+Mr
-	JZbijERDLeai4kQAfvI0oT8EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCLMWRmVeSWpSXmKPExsWy7bCSnO6nnT1pBsd/yFvMWb+GzWL63A0s
-	Fpd3zWGz2PLvCKsDi8eJGb9ZPO6/TfTo27KK0ePzJrkAligum5TUnMyy1CJ9uwSujH9LjjMV
-	vOauePXqO2sD4yPOLkZODgkBE4muXfOYuxi5OIQEdjNKLD3zm62LkQMoISVxcJ8mhCkscfhw
-	MUi5kEArk8SHm54gNpuAtsTypmXMICUiAjYSTyfygISZBTwlXt29wAQSFhbQlZg8ywPEZBFQ
-	lVjQywxSwStgK7Hk3gtWiP3yEjMvfWeHiAtKnJz5hAViirxE89bZzBMY+WYhSc1CklrAyLSK
-	UTK1oDg3PbfYsMAoL7Vcrzgxt7g0L10vOT93EyM44LS0djDuWfVB7xAjEwfjIUYJDmYlEd75
-	N7rThHhTEiurUovy44tKc1KLDzFKc7AoifN+e92bIiSQnliSmp2aWpBaBJNl4uCUamBasdrB
-	b03P8UuaMfkC3Fr3JbasPpD799eehVn3Ox9uPZO+KPdVU6/jSs4JDNU8iQIV+3bqBZecKvdj
-	7PlgoXhr+7TPugvj61/kvZrV/q3r378ZEWWBBg9n+2RUXz18xYZv/q+7fk+E1L81cbH+fCIn
-	4Mx9x6Bm8SIm5aZlCoH66Vx/vLSe+PsUPdzeNOdxWZ3Lqqh/jyQ/Llq57vPRGet1khIDXKQ4
-	Baue+Eq0rtI6PUXn2GxHxjfiP7KOOwicsqlq0WmWlJq7JKq0/wXjJfHMQ35tVqYO26Kb8k7U
-	+BbrJT9d/24tH9Ms38WF2XYHnk3aOT/f+sDFnu/u8udW/OW9pey1Lehetvxyh3qGTyFKLMUZ
-	iYZazEXFiQDffvCypwIAAA==
-X-CMS-MailID: 20240709041754epcas1p4ee6f7b1fd0dbf287e756b709aba321c8
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-ArchiveUser: EV
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240709041754epcas1p4ee6f7b1fd0dbf287e756b709aba321c8
-References: <CGME20240709041754epcas1p4ee6f7b1fd0dbf287e756b709aba321c8@epcas1p4.samsung.com>
 
-To clarify MAJOR/MINOR number of a mounted device, fat_msg prints prefix
-that includes them.
 
-Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
----
- fs/fat/fat.h  | 2 +-
- fs/fat/misc.c | 4 +++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+On 7/8/2024 11:08 PM, Ian Rogers wrote:
+> On Mon, Jul 8, 2024 at 12:40 AM Dapeng Mi <dapeng1.mi@linux.intel.com> wrote:
+>> when running below perf command, we say error is reported.
+>>
+>> perf record -e "{slots,instructions,topdown-retiring}:S" -vv -C0 sleep 1
+>>
+>> ------------------------------------------------------------
+>> perf_event_attr:
+>>   type                             4 (cpu)
+>>   size                             168
+>>   config                           0x400 (slots)
+>>   sample_type                      IP|TID|TIME|READ|CPU|PERIOD|IDENTIFIER
+>>   read_format                      ID|GROUP|LOST
+>>   disabled                         1
+>>   sample_id_all                    1
+>>   exclude_guest                    1
+>> ------------------------------------------------------------
+>> sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
+>> ------------------------------------------------------------
+>> perf_event_attr:
+>>   type                             4 (cpu)
+>>   size                             168
+>>   config                           0x8000 (topdown-retiring)
+>>   { sample_period, sample_freq }   4000
+>>   sample_type                      IP|TID|TIME|READ|CPU|PERIOD|IDENTIFIER
+>>   read_format                      ID|GROUP|LOST
+>>   freq                             1
+>>   sample_id_all                    1
+>>   exclude_guest                    1
+>> ------------------------------------------------------------
+>> sys_perf_event_open: pid -1  cpu 0  group_fd 5  flags 0x8
+>> sys_perf_event_open failed, error -22
+>>
+>> Error:
+>> The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (topdown-retiring).
+>>
+>> The reason of error is that the events are regrouped and
+>> topdown-retiring event is moved to closely after the slots event and
+>> topdown-retiring event needs to do the sampling, but Intel PMU driver
+>> doesn't support to sample topdown metrics events.
+>>
+>> For topdown metrics events, it just requires to be in a group which has
+>> slots event as leader. It doesn't require topdown metrics event must be
+>> closely after slots event. Thus it's a overkill to move topdown metrics
+>> event closely after slots event in events regrouping and furtherly cause
+>> the above issue.
+>>
+>> Thus delete the code that moving topdown metrics events to fix the
+>> issue.
+> I think this is wrong. The topdown events may not be in a group, such
+> cases can come from metrics due to grouping constraints, and so they
+> must be sorted together so that they may be gathered into a group to
+> avoid the perf event opens failing for ungrouped topdown events. I'm
+> not understanding what these patches are trying to do, if you want to
+> prioritize the event for leader sampling why not modify it to compare
 
-diff --git a/fs/fat/fat.h b/fs/fat/fat.h
-index 66cf4778cf3b..538bcb3e28e1 100644
---- a/fs/fat/fat.h
-+++ b/fs/fat/fat.h
-@@ -435,7 +435,7 @@ void __fat_fs_error(struct super_block *sb, int report, const char *fmt, ...);
- #define fat_fs_error_ratelimit(sb, fmt, args...) \
- 	__fat_fs_error(sb, __ratelimit(&MSDOS_SB(sb)->ratelimit), fmt , ## args)
- 
--#define FAT_PRINTK_PREFIX "%sFAT-fs (%s): "
-+#define FAT_PRINTK_PREFIX "%sFAT-fs (%s[%d:%d]): "
- #define fat_msg(sb, level, fmt, args...)				\
- do {									\
- 	printk_index_subsys_emit(FAT_PRINTK_PREFIX, level, fmt, ##args);\
-diff --git a/fs/fat/misc.c b/fs/fat/misc.c
-index c7a2d27120ba..6672cefc5484 100644
---- a/fs/fat/misc.c
-+++ b/fs/fat/misc.c
-@@ -9,6 +9,7 @@
- 
- #include "fat.h"
- #include <linux/iversion.h>
-+#include <linux/blkdev.h>
- 
- /*
-  * fat_fs_error reports a file system problem that might indicate fa data
-@@ -59,7 +60,8 @@ void _fat_msg(struct super_block *sb, const char *level, const char *fmt, ...)
- 	va_start(args, fmt);
- 	vaf.fmt = fmt;
- 	vaf.va = &args;
--	_printk(FAT_PRINTK_PREFIX "%pV\n", level, sb->s_id, &vaf);
-+	_printk(FAT_PRINTK_PREFIX "%pV\n", level, sb->s_id,
-+		MAJOR(sb->s_dev), MINOR(sb->s_dev), &vaf);
- 	va_end(args);
- }
- 
--- 
-2.25.1
+Per my understanding, this change doesn't break anything. The events
+regrouping can be divided into below several cases.
 
+a. all events in a group
+
+perf stat -e "{instructions,topdown-retiring,slots}" -C0 sleep 1
+WARNING: events were regrouped to match PMUs
+
+ Performance counter stats for 'CPU(s) 0':
+
+        15,066,240      slots
+         1,899,760      instructions
+         2,126,998      topdown-retiring
+
+       1.045783464 seconds time elapsed
+
+In this case, slots event would be adjusted as the leader event and all
+events are still in same group.
+
+b. all events not in a group
+
+perf stat -e "instructions,topdown-retiring,slots" -C0 sleep 1
+WARNING: events were regrouped to match PMUs
+
+ Performance counter stats for 'CPU(s) 0':
+
+         2,045,561      instructions
+        17,108,370      slots
+         2,281,116      topdown-retiring
+
+       1.045639284 seconds time elapsed
+
+In this case, slots and topdown-retiring are placed into a group and slots
+is the group leader. instructions event is outside the group.
+
+c. slots event in group but topdown metric events outside the group
+
+perf stat -e "{instructions,slots},topdown-retiring"  -C0 sleep 1
+WARNING: events were regrouped to match PMUs
+
+ Performance counter stats for 'CPU(s) 0':
+
+        20,323,878      slots
+         2,634,884      instructions
+         3,028,656      topdown-retiring
+
+       1.045076380 seconds time elapsed
+
+In this case, topdown-retiring event is placed into previous group and
+slots is adjusted to leader event.
+
+d. multiple event groups
+
+perf stat -e "{instructions,slots},{topdown-retiring}"  -C0 sleep 1
+WARNING: events were regrouped to match PMUs
+
+ Performance counter stats for 'CPU(s) 0':
+
+        26,319,024      slots
+         2,427,791      instructions
+         2,683,508      topdown-retiring
+
+       1.045495830 seconds time elapsed
+
+In this case, the two groups are merged to one group and slots event is
+adjusted as leader.
+
+The key point of this patch is that it's unnecessary to move topdown
+metrics events closely after slots event. It's a overkill since Intel core
+PMU driver doesn't require that. Intel PMU driver just requires topdown
+metrics events are in a group where slots event is the group leader, and
+worse the movement for topdown metrics events causes the issue in the
+commit message mentioned.
+
+This patch doesn't block to regroup topdown metrics event. It just removes
+the unnecessary movement for topdown metrics events.
+
+
+> first?
+>
+> Thanks,
+> Ian
+>
+>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>> ---
+>>  tools/perf/arch/x86/util/evlist.c | 5 -----
+>>  1 file changed, 5 deletions(-)
+>>
+>> diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util/evlist.c
+>> index 332e8907f43e..6046981d61cf 100644
+>> --- a/tools/perf/arch/x86/util/evlist.c
+>> +++ b/tools/perf/arch/x86/util/evlist.c
+>> @@ -82,11 +82,6 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
+>>                         return -1;
+>>                 if (arch_is_topdown_slots(rhs))
+>>                         return 1;
+>> -               /* Followed by topdown events. */
+>> -               if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
+>> -                       return -1;
+>> -               if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs))
+>> -                       return 1;
+>>         }
+>>
+>>         /* Default ordering by insertion index. */
+>> --
+>> 2.40.1
+>>
 
