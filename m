@@ -1,169 +1,136 @@
-Return-Path: <linux-kernel+bounces-245691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D736B92B62D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:07:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBE4692B62E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D28B28433F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:07:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CEA01F232DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BB81581E3;
-	Tue,  9 Jul 2024 11:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8E7157E94;
+	Tue,  9 Jul 2024 11:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="AhhcefCX"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="CTeB0jzn"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662BD155389;
-	Tue,  9 Jul 2024 11:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8003155303
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 11:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720523244; cv=none; b=s2pCGiX1e6ln38otZTnzbR3vwLExiOdIovRJvnDE7w6UHxvtd1z4VVI+8re/NlPfnBtAhuZDuDhXdjT7COCCY6YWbKmKNDXPU20iaN3ry4GNVN0VShsSx1hcCohkWQ4ot3UlCfWSipQY9ZSF54zV9YvgKE+q2XPY888vRdOEx7k=
+	t=1720523257; cv=none; b=orihpBFJrCuCjr/PTesXlBf5q+lIYInsqsqFUJ2ScCNz5Jf7aLBzNfVJyu8A2Ft/WTgZZz485M2D3YJv51YUdP2ff+aQMx25r/SlnIpXHjbzFajvsMVCRE1IxsH3sprPncIh3sQGRKRFVq3p/yE0RpqUcgFlLSvECDcwN9nXvUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720523244; c=relaxed/simple;
-	bh=ZQfO6yaxvGPGddmV/JKSFfpd7XOGtVMtsvCFc2pp4LM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KBfNX0jVeOatw8uWdsdbfmg6Is5CV9TSA3SUTd5lWo+CKWdKqYRYuRYGGuMKkR+NNp1As8z6YLX3KcdP+MuNYJJF8NEnX7yRvqdXthZ43L4y8X/t3dPa6FFrF2w/6b7lEB7JbGjH2cCFOaJDzPKJ5urbmmt3qUoNk/SaCyxox/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=AhhcefCX; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2A8D840E019D;
-	Tue,  9 Jul 2024 11:07:20 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id JulpA9dQV5i9; Tue,  9 Jul 2024 11:07:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1720523235; bh=zM5vw2X4vXpF2Weeo34wNg92YVwfkbif2ErMikAhomk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AhhcefCX8GcIWDqFu+CTWnaGOI8YROW+o6+kE/EBLRUy8wBbjOwQSMEYWpBjcewtt
-	 Kw3JyPCLj2ge+an+LZvW76/2PJgtXq0Gu/6KWZdgTjErlsPthfe1bRXyXDOqTSJElo
-	 JsLYoTsQkBnLO09zbMXR1QjBdXbyaiIzrOCzlHNgBmvps6DpiR/HMGAi0zY6Qndds7
-	 ngyFkDuacq13fW/JXW7QgwCwCjs6mxHCsR3qCfCJOlpY/f7j7o2bBLmp14Qe/4WIcA
-	 cjMywPLZ2keKPx3AlfAvSfUOj0+42DxBb47K5pX6eY2WaNeG6GN8KE9FQFjPaVhXBf
-	 7K0ZpdQpokWNU1P+W0RXU0AESICYqyIohVQOybFUkl2oNZpBRt2WupCHEOskKZmtp+
-	 jJ5+1jOZx69JRXpIZwWcdik17n7jRf2AeWD2pOXhNkn3eEgN297aCKX255PVst1Gmb
-	 +VJLxcLsgGWcCWY4+Snbe65Dki70zCMaBvKqlK1sGu5tb+jVr7RovLvjLCydf38VyP
-	 Z4xcoYuFM/LZPrpdA0WZLeCEDSMzjjCV+lXOFtgjI5qYktZERz4uVIiaAkm2HaTWi+
-	 yIsQNgx8nLvA0X5Z8vCUffbj0sg+OzzjxG5jVq0QfhPhFz10YxDCr6chy5mFUOtw9B
-	 xRYy6A1TLjpks9S3y0J7VGso=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0282E40E0192;
-	Tue,  9 Jul 2024 11:07:00 +0000 (UTC)
-Date: Tue, 9 Jul 2024 13:06:56 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Dexuan Cui <decui@microsoft.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"open list:X86 TRUST DOMAIN EXTENSIONS (TDX)" <linux-coco@lists.linux.dev>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	Michael Kelley <mikelley@microsoft.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Kai Huang <kai.huang@intel.com>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH] x86/tdx: Support vmalloc() for tdx_enc_status_changed()
-Message-ID: <20240709110656.GEZo0Z0EoI4xmHDx9b@fat_crate.local>
-References: <20240708183946.3991-1-decui@microsoft.com>
- <20240708191703.GJZow7L9DBNZVBXE95@fat_crate.local>
- <SA1PR21MB1317816DFCE6EF38A92CF254BFDA2@SA1PR21MB1317.namprd21.prod.outlook.com>
+	s=arc-20240116; t=1720523257; c=relaxed/simple;
+	bh=/F2IkqN6onhi8bqBg+Ffra8tWyO9XNvT/nQhWcfnN24=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lxSr7ysCFYW+VGFz+hzfGxRKvPuke+05+WjrFk+x0JM8YDkN/sLwwVBK+od8FRQ21uNA+MFXgckz1jpEbjasF8GFODHmdG4BjwR5ptAyEcVAqWMbbSGs9mc87SC5W8k0GE2Ssal0kZOSVbPbXZyazR7aWXS7yPYsxqgz346WLGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=CTeB0jzn; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58b966b4166so5967840a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 04:07:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1720523254; x=1721128054; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1I1Xf39ndiqFsWjFiF87exVBTjo0QTgARXHDppQr8z0=;
+        b=CTeB0jznI61lD1iyxEC5WLV+gzPSLPaRtMUoBS5xu1szVuzM5d0lT0LVBZxR28d1/K
+         Y2MJ38IuI9pKiTyDb4IS7TLJIdequJsk/IqRHhEYwmw3PXmnNPPYEaOajYABKTczZDuM
+         m93FupyXA+7jyUcT/fjjGaM1T5jIkBVnMu3nGIS0D2qM1eRVE7n53L/PEAddYN838B8I
+         lNn6w+8oY9VFh6PJ9+LNio11ohGJBD/RR4FjUQII9e8t18+kKfQ0QUTBdlM7SGsF4csk
+         Gig4UEAw9s3JygWXE30VjfhTtJ3cMKYfx4thHyzchfydY4gfm2wmhnXCuBxsheJ8SrAZ
+         elVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720523254; x=1721128054;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1I1Xf39ndiqFsWjFiF87exVBTjo0QTgARXHDppQr8z0=;
+        b=ScW0Jl0go4hcA4bt+jyJuO5uKNtBnYKt8yCfbk7gETRu218Lbs47TEEK2q436l2q+X
+         WZHGuB6WZnsWiJ9kcRBI2PCVpSKOiWc5erv5nenN4bn/lcAkNSk07VBbMHXvWbtf5ddS
+         bbWnKQVbxHya7XawZO1iNKVuyZgVqRkvPLItI5b+JtzCF9qhF+Oy/dNfhfxx5zcwsDBD
+         1PD4FTdJbxRU4sMtusK168lYPY/JzSblY8D1UrIFJoubkRog6pJRhAzAVBeo7jFF29E/
+         PsqoZ+EYC8f6PlqqwYa/YktyOeXH6wnMBe7l07iCScfF14r2WbSYzAj+C9jz1zZDYuWW
+         4RYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUnJFkx4556AS4G2+A4mmA4PJc9OGKTI/tHZXYhD9KiFmhLZ+N3l5ZdH6ZQZf4dj/wjlgQSSPdF+celSPtwB3BBUEmJOpaFH7rrx1HF
+X-Gm-Message-State: AOJu0YxkEZY2hEQZYw0tyVjjKTdz/yOalhdgbddbUQdE6VrlzH1sG2r3
+	PfgNRCJD2m15uz+maG2eVY/john1Bt9vPgOrjC16qbqaTxGBoa3NabZH6CXCMAw=
+X-Google-Smtp-Source: AGHT+IEkC6Gi8bnVVlEoW+KjySdnk0g6ZRKfC91eeq9IoFsCYK+Vmj3FZQuIZi13296mSsrR6orb0w==
+X-Received: by 2002:a17:906:46c9:b0:a77:e2b2:8ec with SMTP id a640c23a62f3a-a780b68899dmr145995466b.3.1720523253801;
+        Tue, 09 Jul 2024 04:07:33 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-82-135-80-224.dynamic.mnet-online.de. [82.135.80.224])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6bc8b8sm69164366b.30.2024.07.09.04.07.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 04:07:33 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: geert@linux-m68k.org
+Cc: linux-m68k@lists.linux-m68k.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] m68k: cmpxchg: Use swap() to improve code
+Date: Tue,  9 Jul 2024 13:07:04 +0200
+Message-ID: <20240709110703.66166-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <SA1PR21MB1317816DFCE6EF38A92CF254BFDA2@SA1PR21MB1317.namprd21.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 08, 2024 at 09:45:24PM +0000, Dexuan Cui wrote:
-> x86/tdx: Fix set_memory_decrypted() for vmalloc() buffers
-> 
-> When a TD mode Linux TDX VM runs on Hyper-V, the Linux hv_netvsc driver
-> needs to share a vmalloc()'d  buffer with the host OS: see
-> netvsc_init_buf() -> vmbus_establish_gpadl() -> ... ->
-> __vmbus_establish_gpadl() -> set_memory_decrypted().
-> 
-> Currently set_memory_decrypted() doesn't work for a vmalloc()'d  buffer
-> because tdx_enc_status_changed() uses __pa(vaddr), i.e., it assumes that
-> the 'vaddr' can't be from vmalloc(), and consequently hv_netvsc fails
-> to load.
-> 
-> Fix this by handling the pages one by one.
-> 
-> hv_netvsc is the first user of vmalloc() + set_memory_decrypted(), which
-> is why nobody noticed this until now.
-> 
-> v6.6 is a longterm kernel, which is used by some distros, so I hope
-> this patch can be in v6.6.y and newer, so it won't be carried out of tree.
+Remove the local variable tmp and use the swap() macro instead.
 
-So this is a corner-case thing. I guess CC:stable is ok, we have packported
-similar "fixes" in the past.
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ arch/m68k/include/asm/cmpxchg.h | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-> I think the patch (without Kirill's kexec fix)  has been well tested, e.g.,
-> it has been in Ubuntu's linux-azure kernel for about 2 years. Kirill's 
-> kexec fix works in my testing and it looks safe to me. 
-
-You seem to think that a patch which has been tested in some out-of-tree
-kernel,
-
-- gets modified
-- gets applied to the upstream kernel
-- it *breaks* a use case,
-
-and then it can still be considered tested.
-
-Are you seriously claiming that?!
-
-> I hope this can be in 6.11-rc1 if you see no high risks. 
-> It's also fine to me if you decide to queue the patch after 6.11-rc1.
-
-Yes, it will be after -rc1 because what you consider "tested" and what I do
-consider "tested" can just as well be from two different planets.
-
-> > > Co-developed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> https://lwn.net/ml/linux-kernel/20230412151937.pxfyralfichwzyv6@box/
-
-Since you'd go the length to quote the mail messages which gave you the tags
-but you will not read what I point you to, lemme read it for you:
-
-"Both Tested-by and Reviewed-by tags, once received on mailing list from
-tester or reviewer, should be added by author to the applicable patches when
-sending next versions.  However if the patch has changed substantially in
-following version, these tags might not be applicable anymore and thus should
-be removed.  Usually removal of someone's Tested-by or Reviewed-by tags should
-be mentioned in the patch changelog (after the '---' separator)."
-
-From Documentation/process/submitting-patches.rst
-
-Again, if you want to keep sending patches to the kernel, I'd strongly urge
-you to read that document!
-
-> This is not really a newly submitted patch :-)
-
-If you still think that and you want to keep your tags, all I can give you is
-a big fat NAK until you read and understand how the process works.
-
-Your decision.
-
+diff --git a/arch/m68k/include/asm/cmpxchg.h b/arch/m68k/include/asm/cmpxchg.h
+index 4ba14f3535fc..71fbe5c5c564 100644
+--- a/arch/m68k/include/asm/cmpxchg.h
++++ b/arch/m68k/include/asm/cmpxchg.h
+@@ -3,6 +3,7 @@
+ #define __ARCH_M68K_CMPXCHG__
+ 
+ #include <linux/irqflags.h>
++#include <linux/minmax.h>
+ 
+ #define __xg(type, x) ((volatile type *)(x))
+ 
+@@ -11,25 +12,19 @@ extern unsigned long __invalid_xchg_size(unsigned long, volatile void *, int);
+ #ifndef CONFIG_RMW_INSNS
+ static inline unsigned long __arch_xchg(unsigned long x, volatile void * ptr, int size)
+ {
+-	unsigned long flags, tmp;
++	unsigned long flags;
+ 
+ 	local_irq_save(flags);
+ 
+ 	switch (size) {
+ 	case 1:
+-		tmp = *(u8 *)ptr;
+-		*(u8 *)ptr = x;
+-		x = tmp;
++		swap(*(u8 *)ptr, x);
+ 		break;
+ 	case 2:
+-		tmp = *(u16 *)ptr;
+-		*(u16 *)ptr = x;
+-		x = tmp;
++		swap(*(u16 *)ptr, x);
+ 		break;
+ 	case 4:
+-		tmp = *(u32 *)ptr;
+-		*(u32 *)ptr = x;
+-		x = tmp;
++		swap(*(u32 *)ptr, x);
+ 		break;
+ 	default:
+ 		x = __invalid_xchg_size(x, ptr, size);
 -- 
-Regards/Gruss,
-    Boris.
+2.45.2
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
