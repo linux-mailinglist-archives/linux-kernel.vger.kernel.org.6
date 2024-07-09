@@ -1,81 +1,74 @@
-Return-Path: <linux-kernel+bounces-245468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A56B92B2E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:00:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF7E692B2EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FDE1281A77
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:00:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B45F1F230BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C31153503;
-	Tue,  9 Jul 2024 09:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E67154BF0;
+	Tue,  9 Jul 2024 09:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PxrCpOnX"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RuDJyog+"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E156152E06
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4286E42058;
+	Tue,  9 Jul 2024 09:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720515610; cv=none; b=HATRFsqMzjqViaALl250y0LmHQ/zhYteX1idV95a1jzIm4HgyG40JRZhzNKPvRBUC7h3hlKy4rFVEb1RJK76w9zTpejGMf9KxajzKRYXHvvSQLWPdvdeQUkJHmGXfk4Ym3IHfOzlAmOEERBcqM19u26ZZ7tJyrYluElm6wFy6+Y=
+	t=1720515729; cv=none; b=KooTBoLJ9R053aq7dQ6leNrT26PkEzUY1XxHEzdfWqM3ZicR2Yrzbp82qmsAOQ+CNaE5gwFKd4TQGKCUZujk8n8Yy/kaTo9InPXhQg4/WdG+WWSEthIuZ/+jm6UHqYdQtQA0ldSPUnAlCp5+ByjwaIPSKQMpIsEvQbGepSquf68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720515610; c=relaxed/simple;
-	bh=rSEx5LXb19RFI6tQdZ90d+lSOvudX1BzqdW9FYXHaRk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=hlmlBgzm91rcrzvY9QcGuhr6WADYO31uzxcRpiqtN1gbpOp5gwlinHL9tT39eLIKmPpI1r4pd5RrbZtv8WNfGLPhFN8gdiFxpi6aQTuf0y6iAAmrivyt1OFDA+CWp7+ek9F2SowqqvYFN56/UZy+qvAa6ePwx/SJkjtnRDtFq1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PxrCpOnX; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240709090005epoutp0102b7c4c79012eb1efaf845a04608fe56~gf9PaBnwF2903329033epoutp01k
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:00:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240709090005epoutp0102b7c4c79012eb1efaf845a04608fe56~gf9PaBnwF2903329033epoutp01k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1720515605;
-	bh=/LrVJ+LpewOfLOi/U8Ctrj59xEIFiGAGsOhkk/FMUtg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PxrCpOnXI0v/GtQZRIBa8Cdo3lDD0F7vcu+nFMRnsm1WJwLKaoAqx+9SqdsmnQwL/
-	 B6xNnErdjAwb612ed+daw2YcnNfBiBlFTJoQAGNeeHW2nQCMEKWWJK4DEfHqIfCyRJ
-	 Cou39p5DxJhO5+t1mRVVna9S5n8A69Yj//VpoXbU=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240709090005epcas5p4899067563465cfd53b17a1620785d03c~gf9PGmZQM1581615816epcas5p4U;
-	Tue,  9 Jul 2024 09:00:05 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.178]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4WJFLW6dd9z4x9Q3; Tue,  9 Jul
-	2024 09:00:03 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	4B.E8.07307.31CFC866; Tue,  9 Jul 2024 18:00:03 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240709085955epcas5p267fabe2536dc064f6595df1b46463a1e~gf9GMVKB71544815448epcas5p25;
-	Tue,  9 Jul 2024 08:59:55 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240709085955epsmtrp2f633d1e191344ad10e8ac2c99c320b4a~gf9GLqm3s3087030870epsmtrp25;
-	Tue,  9 Jul 2024 08:59:55 +0000 (GMT)
-X-AuditID: b6c32a44-18dff70000011c8b-4f-668cfc13d1ea
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	EE.B6.19057.B0CFC866; Tue,  9 Jul 2024 17:59:55 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240709085954epsmtip27d2ef8ed44a34dec2a25495778297e62~gf9FDKwu_0804008040epsmtip2R;
-	Tue,  9 Jul 2024 08:59:54 +0000 (GMT)
-From: Wenwen Chen <wenwen.chen@samsung.com>
-To: xue01.he@samsung.com
-Cc: axboe@kernel.dk, asml.silence@gmail.com, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6] io_uring: releasing CPU resources when polling
-Date: Tue,  9 Jul 2024 16:59:41 +0800
-Message-Id: <20240709085941.3195547-1-wenwen.chen@samsung.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240709081619.3177418-1-xue01.he@samsung.com>
+	s=arc-20240116; t=1720515729; c=relaxed/simple;
+	bh=xPZKDO1rBdxEtfpVAXK5ct854brW6RyqgECqcptbiF4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oCFGJo/vjKghoNX/2iftncFlToeHcZtBgAvBecex+a5mER9LhY2xNE8lSSm3/bu5kar9eQdFf0fVvCHoUGwAqWg3nzYN4Q40jicK7Uj3k7XeNv8e+oGG3+q/FalYYkxXYiaZgYNI+dauHvGU55Dirzg7Y2WMNET6zgXqJy0/VOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RuDJyog+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 468Mo2uY015544;
+	Tue, 9 Jul 2024 09:01:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=t4ItbgcS6sb44X3LFsdLAj
+	gu1Or45UdpeGhQsybDCZI=; b=RuDJyog+N6D4ej4l2CPitwav1gw7qfvyzhmFFI
+	j6gcB1m0E9vIO09T+hs2meZt67YswgrvZOk72/+Oetq2jk9sAF0wpIly4TYaaWus
+	eE1KubixNESOrfku2ZgU0TyGEkZf3ydmTT/HA+B3pybwlMPIhZZZhuZCaeeWIfrp
+	Z3bPRD6/pVeTY7D4f9W7pG99YL0ticX/QEdkXRmCEQ2hJO6h+2Yxqlyc5FzGGS8G
+	0VqpkKWF0TXUBoj/leRtTMqQHStW9PZTqKbnIvUGH45RRYK5amkk9cB1x86yVa59
+	EQwiq+Z8lkP5C1Cc6T8bWB6TieeWJVt4nPUquYOF8wWcwXYQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406we8wtjx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 09:01:54 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46991qSD008919
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 09:01:52 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 9 Jul 2024 02:01:44 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <angelogioacchino.delregno@collabora.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ilia.lin@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <ulf.hansson@linaro.org>,
+        <quic_sibis@quicinc.com>, <quic_varada@quicinc.com>,
+        <quic_rjendra@quicinc.com>, <otto.pflueger@abscue.de>,
+        <luca@z3ntu.xyz>, <danila@jiaxyga.com>, <quic_ipkumar@quicinc.com>,
+        <stephan.gerhold@kernkonzept.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>
+Subject: [PATCH v5 0/9] Enable CPR for IPQ9574
+Date: Tue, 9 Jul 2024 14:31:23 +0530
+Message-ID: <20240709090132.117077-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,65 +76,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuphk+LIzCtJLcpLzFFi42LZdlhTXVf4T0+aQf9+HYs5q7YxWqy+289m
-	8a71HIvFr+67jBaXd81hszg74QOrRdeFU2wO7B47Z91l97h8ttSjb8sqRo/Pm+QCWKKybTJS
-	E1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOADlBSKEvMKQUK
-	BSQWFyvp29kU5ZeWpCpk5BeX2CqlFqTkFJgU6BUn5haX5qXr5aWWWBkaGBiZAhUmZGf8ejef
-	reABe8XV5weZGxgPs3YxcnJICJhI7Dn4lKmLkYtDSGA3o0TjuTOMEM4nRolbe5pZIZxvjBKf
-	Ok7CtVybvp8dIrGXUWJh6242COcHo8TH+U9ZQKrYBLQl3q9tYQSxRQQkJNadXwUWZxZIldg+
-	7x1YXFjATeLz1E1gNouAqkTf7z/MIDavgJ3E21WrmSG2yUvc7NoPZnMK2EjMa1/CCFEjKHFy
-	5hOomfISzVtnM4McISFwi13i/OcPbBDNLhJP9yxlgrCFJV4d38IOYUtJfH63F6qmWGLiwS/s
-	EM0NjBLHL35lgUhYS/y7sgfI5gDaoCmxfpc+RFhWYuqpdUwQi/kken8/gZrPK7FjHoytJLHk
-	yApGCFtC4veERdCg85A4OwEUQKDQ6meUOPj3E/sERoVZSB6aheShWQirFzAyr2KUTC0ozk1P
-	TTYtMMxLLYfHc3J+7iZGcLLUctnBeGP+P71DjEwcjIcYJTiYlUR459/oThPiTUmsrEotyo8v
-	Ks1JLT7EaAoM8YnMUqLJ+cB0nVcSb2hiaWBiZmZmYmlsZqgkzvu6dW6KkEB6YklqdmpqQWoR
-	TB8TB6dUA9P6ZSUiSn3Hr07Mux3N6rp/y0uN0/d7AuatXhPuX568xzTLwITvmfj5xUVeXV/S
-	3sssnZFqGuh9Y+7L5dLrD5Rn7/0fLmaWbTT59S5f8SWKlSrqBfJ37Cb2XRUr+Df3U+D6v/q5
-	S1u3nTXyPuBYMF806fiSS6XVb7Y8OSvo8+Hxl5Vhf7ekGpeunFF794/Hk/q573Yods5ML/S8
-	t7WfSXzD/4nfLmSbCDlZdCq4xGyUFopdIevvesQxQXhuo2qKyEmJf7H/Dzg6yH3J6G2QN1sq
-	di7C9IVJ1sH1/RMlW/pP7SpIWfL0T+KttCnqOe/DLX+5RZUk+WdxzF7ez9J7OPywXa6oW9Ci
-	7rqQhoL4xUosxRmJhlrMRcWJADBf5s0fBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrILMWRmVeSWpSXmKPExsWy7bCSvC73n540g8PdchZzVm1jtFh9t5/N
-	4l3rORaLX913GS0u75rDZnF2wgdWi64Lp9gc2D12zrrL7nH5bKlH35ZVjB6fN8kFsERx2aSk
-	5mSWpRbp2yVwZfx6N5+t4AF7xdXnB5kbGA+zdjFyckgImEhcm76fvYuRi0NIYDejRNukbWwQ
-	CQmJHY/+QBUJS6z89xyq6BujxL9PHUwgCTYBbYn3a1sYQWwRoIZ151exgNjMApkSP58sZAex
-	hQXcJD5P3QRWwyKgKtH3+w8ziM0rYCfxdtVqZogF8hI3u/aD2ZwCNhLz2peA1QsJWEss3byS
-	CaJeUOLkzCdQ8+UlmrfOZp7AKDALSWoWktQCRqZVjJKpBcW56bnFhgVGeanlesWJucWleel6
-	yfm5mxjBoayltYNxz6oPeocYmTgYDzFKcDArifDOv9GdJsSbklhZlVqUH19UmpNafIhRmoNF
-	SZz32+veFCGB9MSS1OzU1ILUIpgsEwenVAOTYdhFpanKr8vsHPIO3D2W80yap8YtoLb02sn0
-	x7yXTQI4W3svWDDKFV/eZJU57ZWkoWJTlfePtmnVqjtU3ftPN80xDZVY48oebcx2UviKhFnt
-	VBf+Z1zbTgjePG7nseZfvf2PNL7bk+N2/V/Pbvzq/hvJhLbW3MM3ph8KmPrFsm1NlZqZYVH4
-	gw3v25RjFxxVOthykVMlSIRlHR/z23MbDty+v8Ms6pGMy46ZthUM8odFd2ncP/tM7W/ZlKS4
-	5NZT8+4keN2uUyi79snrUFnbF4a9+46vfDzjmvvXrav5IpwFzum8LUl9c7hXXW7aH3nfNWG/
-	/z3eLcWy7u12j9Vni2O85/xRkFHP2Og33TNYiaU4I9FQi7moOBEAB3VF29QCAAA=
-X-CMS-MailID: 20240709085955epcas5p267fabe2536dc064f6595df1b46463a1e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240709085955epcas5p267fabe2536dc064f6595df1b46463a1e
-References: <20240709081619.3177418-1-xue01.he@samsung.com>
-	<CGME20240709085955epcas5p267fabe2536dc064f6595df1b46463a1e@epcas5p2.samsung.com>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Yvry-qDnF5gN3HvHP_iIkLxXvdKShS3Q
+X-Proofpoint-GUID: Yvry-qDnF5gN3HvHP_iIkLxXvdKShS3Q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_15,2024-07-08_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
+ bulkscore=0 spamscore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
+ priorityscore=1501 mlxlogscore=999 malwarescore=0 mlxscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407090060
 
-Sorry for bad format, here is the test results maybe looks better:
+This series tries to enable CPR on IPQ9574, that implements
+CPRv4. Since [1] is older, faced few minor issues. Those are
+addressed in [2].
 
-Performance
--------------------------------------------------------------------------------------
-                  write          read           randwrite       randread
-regular poll    BW=3939MiB/s    BW=6596MiB/s    IOPS=190K       IOPS=526K
-IRQ             BW=3927MiB/s    BW=6567MiB/s    IOPS=181K       IOPS=216K
-hybrid poll     BW=3933MiB/s    BW=6600MiB/s    IOPS=190K       IOPS=390K(suboptimal)
--------------------------------------------------------------------------------------
-CPU Utilization
--------------------------------------------------------------------------------------
-                write   read    randwrite       randread
-regular poll    100%    100%    100%            100%
-IRQ             38%     53%     100%            100%
-hybrid poll     76%     32%     70%              85%
--------------------------------------------------------------------------------------
+dt_binding_check and dtbs_check passed.
 
---
-hexue
+Depends:
+	[1] https://lore.kernel.org/lkml/20230217-topic-cpr3h-v14-0-9fd23241493d@linaro.org/T/
+	[2] https://github.com/quic-varada/cpr/tree/4de50be55a89eb29ab0d40d3fcfe9aa7a9ccf910
+	[3] https://lore.kernel.org/linux-arm-msm/20240703091651.2820236-10-quic_varada@quicinc.com/
+
+v5: Drop 'dt-bindings: opp: v2-qcom-level: Update minItems for oloop-vadj & cloop-vadj',
+    the [3] dependency listed above. It should be squashed into [1]
+    Add acc_desc is not NULL check in one more place in cpr_probe
+    Update one commit message and add acked-by, reviewd-by
+
+v4: s/cprh/cpr4/
+    Create new match data for ipq9574 that includes genpd_names
+    Update cloop-vadj & oloop-vadj with minItems
+
+v3: Fix patch authorship for 2 patches
+    Include CPR3 file changes done to Konrad's patches in https://github.com/quic-varada/cpr/commits/konrad/
+    Change url for [2] to skip the cpr3 file changes
+
+v2: Fix Signed-off-by order in 2 patches
+    Update constraints in qcom,cpr3.yaml
+    Add rbcpr_clk_src registration
+    Add Reviewed-by to one of the patches
+    Not adding Acked-by as the file has changed
+
+Praveenkumar I (2):
+  pmdomain: qcom: rpmpd: Add IPQ9574 power domains
+  soc: qcom: cpr3: Add IPQ9574 definitions
+
+Varadarajan Narayanan (7):
+  soc: qcom: cpr3: Fix 'acc_desc' usage
+  cpufreq: qcom-nvmem: Add support for IPQ9574
+  dt-bindings: power: rpmpd: Add IPQ9574 power domains
+  dt-bindings: soc: qcom: cpr3: Add bindings for IPQ9574
+  dt-bindings: clock: Add CPR clock defines for IPQ9574
+  clk: qcom: gcc-ipq9574: Add CPR clock definition
+  dts: arm64: qcom: ipq9574: Enable CPR
+
+ .../devicetree/bindings/power/qcom,rpmpd.yaml |   1 +
+ .../bindings/soc/qcom/qcom,cpr3.yaml          |  35 +++
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 269 ++++++++++++++++--
+ drivers/clk/qcom/gcc-ipq9574.c                |  39 +++
+ drivers/cpufreq/qcom-cpufreq-nvmem.c          |   7 +-
+ drivers/pmdomain/qcom/cpr3.c                  | 146 +++++++++-
+ drivers/pmdomain/qcom/rpmpd.c                 |  19 ++
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h  |   2 +
+ include/dt-bindings/power/qcom-rpmpd.h        |   3 +
+ 9 files changed, 499 insertions(+), 22 deletions(-)
+
+-- 
+2.34.1
+
 
