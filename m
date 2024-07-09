@@ -1,144 +1,141 @@
-Return-Path: <linux-kernel+bounces-246586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2930392C3E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:29:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB8092C3F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 21:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C86B5283FF2
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:29:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 809691C2233A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33270182A6A;
-	Tue,  9 Jul 2024 19:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D05217B04B;
+	Tue,  9 Jul 2024 19:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tM9ouuHc"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="nch44eC1";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BPwP3bQn"
+Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEEF17B027
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 19:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F3D1B86D5
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 19:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720553357; cv=none; b=YCGKRXJju8j1/WJjKb6U/vzED5Q3iFxGQKlL5hE0cIa6neAm+rahSEEvrNmvRYxQ2MKKE/aisFxT6+zxCdfF5DPP9r49gMSR5EYgkzI+5mhwfxV9o8+UlO+V04p9Wrf/0ex/wNTirhvGzwqtJCDyyXvSJUtZSVPmtmf6nWD8nRI=
+	t=1720553606; cv=none; b=SHigzgvXEu1omV7TEEdS8sHlrdJUQhtiNk2dXK6DtSvwfjMCZ83obJIVnpXaIWR+3txWXxrapcwCKXiVeBikLR+duxkPk2K9Jc1wr/urmNU8BW2ImBn7evZ8MmceONFnPYv1C+2lDCp6/nPDFAUxhngz97LhrilVzDucLmgxx6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720553357; c=relaxed/simple;
-	bh=euDAfX44E+bzohp/qgvxP4Urd8ZWcP5tKni32VosqSc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uqKXngDJ8IGqOAnQgpNo3XEgUn5GQk47gp2EukQzuIcpBm/nn4L0mu/wcHnG9s0vP3v4AH0VgVHU86vvRW5IwP3tihcO5qRVzwNPNEG160aKxYW44FHMnSWQjYrmTFJWiGr3b+s/DLyjmN4KdfPSVxgwecJrfcPG/fxl6zCUg9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tM9ouuHc; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a77c7d3e8bcso571568966b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 12:29:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720553353; x=1721158153; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=qvD2qPO0laJ/OSl3ShKVGMpSyFV0nKDMpCM4gAwZl1A=;
-        b=tM9ouuHcwrKGEhCWZwqSEicatdSl/yd0v/VJ+ZkGWLyA03whX4pHAS8uhHTl6wXJNB
-         pCKxExbZ20b122+HLKnkUR+ZKhudSJcr/tBnK7Ahu/G8Lr6S9MqUS8yi531Jhwy5HUX0
-         SXDj71CxpJ/W9tUz+7oj9F5j20sBJG/8dL8EnyQN+sufOQM8XNV0MAPt7T1yw5Jm5A6r
-         H9dlPMa9WmQD5oy87Nh2MGDtA9LMw/9JVarIgciqNjScCYx7u5IoRPlbjWiKXZbO57EI
-         aDuMDjpBxfkFx88tqRyodDajddlWy6a2ERk9QVhYs/5bqzl78gZJZ5wub+qyPxkQzWPg
-         qFwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720553353; x=1721158153;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qvD2qPO0laJ/OSl3ShKVGMpSyFV0nKDMpCM4gAwZl1A=;
-        b=L+nix/5fAXXPJBmS5auMH51ahwt8a97MYohYnaXiOEzoc4M5syYJx6d+TIy8gNKsXY
-         T366+RWSBRLt524eu7jIqLu/8+ltqJ2uZO8NtGJvbFdJI1C2d6KluaMxd5fv0/UH8Ffl
-         QfRLmQhCFFOb/WXYI2+jPCp119Puluz4On+ZX8ql9yxd7FTULuihMpzy5ZrDLovJMKfv
-         +g9E1R0qJS3F3q7+eioD5F2JkwSdNxpLQNE/BrNo7FCG0+KZG/gIMfAEUY5S6SKt0GdR
-         F1RgoXtR0CD1EV2wGmfZNawJKn98wiMaduScjzwHzQvXJmIKJzbp+fL6k7JKDu6t5n12
-         +ZzA==
-X-Forwarded-Encrypted: i=1; AJvYcCWAgWjgTWVKT93lMQsyZQZKSS0t2BsuL77h7x/GDTYDmBjmqSBdccDRzdP60NDDGK/w5LJokIr53F3NgvW6ZuFdL6dFG55Eaqd7Wll0
-X-Gm-Message-State: AOJu0Yw+gdPyEvqTrZx5f6DFs/+7j/uZWEbB5kZ9ySMScGEKcazrfE1q
-	Ox8M/pdcg1f/1tLJhsvoooW1J4eix5xVAUoSxEnlGGZuZjPml/tCHBn1QcZblzk=
-X-Google-Smtp-Source: AGHT+IH11mCGDZKSx6Xr4YjwT39VrW3fzZXhulb9JkmQvzRHwpYPR2yV3DbXrjePhS+oNqyf4JoqoA==
-X-Received: by 2002:a17:906:c149:b0:a75:3c31:4f58 with SMTP id a640c23a62f3a-a780b6b3b67mr248170966b.32.1720553353188;
-        Tue, 09 Jul 2024 12:29:13 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6de0adsm100229066b.59.2024.07.09.12.29.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 12:29:12 -0700 (PDT)
-Message-ID: <8e6b8187-99fa-4e8b-8a00-2872ef5aee59@linaro.org>
-Date: Tue, 9 Jul 2024 21:29:10 +0200
+	s=arc-20240116; t=1720553606; c=relaxed/simple;
+	bh=0RZfBgZmupvxOas2m6iFvguY+l7cDh67NRGMRsrcFHs=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=SO1BCce8jOYuOIudaNoBxNw55xCSCy+6z17sbamG1L1P2/vxsB7+bZk4AC/AanneaOrVaUJHcBoqCbCkoStqTcJqoGKYcuGHkFEbr59ai+r8HIHI0WjloJ52HSMzeVWS/iNJyLhLZDIgQWyhoqx1ozCtkDFlWpAdbMq850gjtg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=nch44eC1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BPwP3bQn; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id BA6ED1140138;
+	Tue,  9 Jul 2024 15:33:23 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 09 Jul 2024 15:33:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1720553603; x=1720640003; bh=AE0fFzRZO9
+	9KbEKs+v9clAHq1pXfvPK0Ierrsu1abhs=; b=nch44eC1+Zbz0IdTfvfecqBNjX
+	YpXM7HfjV2RciRb0wXchwubHQzpnH6PsvZHaW2jiMaSutbhGYPkhFgNlggZLphkF
+	ka2kBNm81rXrOEukmnBzavFh0WgXb4hW6PxEopZ8YB/+5MG9IwLiKo9Exe8xrHY+
+	s7EMJCQEOba+aIs7L1ZhTAtROrenuQTPOfWAef+5Tb5/i8gm8OH5uw0y36kOtgSe
+	njIGjb3XJkKkw8JuK8Q6fJsIq8fF0ZlgOdDiIapJ9FDonaSEfhlLc2PtX09g7e+Z
+	kPFTnoy2/AN6g4kcb8IiUzGJhNsYNLWEG05LcZ1iFZaSRhmt4aCiKnd66a0A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1720553603; x=1720640003; bh=AE0fFzRZO99KbEKs+v9clAHq1pXf
+	vPK0Ierrsu1abhs=; b=BPwP3bQn0yC3nVNRRRTrZkI7J45R1r79uxSCNIOfwTX/
+	Pf/vybLFrBjHGHYBFGFefAIufoSNeY+eOh1iR8OIW2uBmICIykw+b46SFnORVyBf
+	DQmqAW8s19+7AP9EaD+uqrQZlYwhZlDJjnT4SUeauxLj3TC/YUM0O9ueWtUPaV9F
+	gAWIwDSwpXbbEIpVuzG0uIhiHFmFnUQPnYevbcRuJ8A9MuY8wyYPqnOC5ymgsX6X
+	sqgbzu9H2rUkXoxmx7WtGNNJoklgBL3yVZwsrdRMm7HnayPetzYF6PEvITva/c7k
+	aylQh60k0iUAJJ3AI6hT9iauRp8VpPwRVoiLC8PArA==
+X-ME-Sender: <xms:gpCNZoCXVKxZYgd-tL_p2k9_uAle5NRuWFn4b8oB91ZexvboAwvAow>
+    <xme:gpCNZqidF1K-9jUuTpzLvnQflD26Kb9sEmupPhPbyGA9GSp03Apa1q1viLXpquDUZ
+    AokqUCeyiJz8LMOVVg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdelgddufeelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:gpCNZrlo8ynwoKGV2tVyoVZMt7SWJuifyw3wICL6bMUVIvZwXZo-jA>
+    <xmx:gpCNZuw4KcrMuigBpuH5fvIFjqsotTvmBsQtqM4r_KdKiRkHuKaHIQ>
+    <xmx:gpCNZtQIhXrJAMWS_snE1w-VQFd1vK5gHYOcGo9BFyaUAxzSgEFSjQ>
+    <xmx:gpCNZpbW6SzaKP6FffvTqJOfe6Ku42gxdzjTMmwUfEj0O7Ox92ndQQ>
+    <xmx:g5CNZq9s7g6T8sbAgzbFYlPgW05GWwkwxKheEFU6xYuovRAa8A8CY_up>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 2F097B6008D; Tue,  9 Jul 2024 15:33:22 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: qcom: sa8775p: Add interconnects for
- ethernet
-To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
- Andrew Halaney <ahalaney@redhat.com>, kernel@quicinc.com
-References: <20240709-icc_bw_voting_emac_dtsi-v2-1-a1e02c7099a5@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240709-icc_bw_voting_emac_dtsi-v2-1-a1e02c7099a5@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-Id: <5bfebbd4-d12e-4735-acab-549a7cf9604a@app.fastmail.com>
+In-Reply-To: <0e0150ca-fdfa-40cb-ad7f-6ac695b702e4@quicinc.com>
+References: <87y16bbvgb.fsf@kernel.org>
+ <917565ee-732a-4df0-a717-a71fbb34fd79@quicinc.com>
+ <837cd2e4-d231-411a-8af4-64b950c4066a@quicinc.com>
+ <c9b23ee3-6790-404d-80a3-4ca196327546@app.fastmail.com>
+ <0e0150ca-fdfa-40cb-ad7f-6ac695b702e4@quicinc.com>
+Date: Tue, 09 Jul 2024 21:33:01 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jeff Johnson" <quic_jjohnson@quicinc.com>,
+ "Kalle Valo" <kvalo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, ath12k@lists.infradead.org,
+ kasan-dev@googlegroups.com, "Andrey Ryabinin" <ryabinin.a.a@gmail.com>,
+ "Alexander Potapenko" <glider@google.com>,
+ "Andrey Konovalov" <andreyknvl@gmail.com>,
+ "Dmitry Vyukov" <dvyukov@google.com>,
+ "Vincenzo Frascino" <vincenzo.frascino@arm.com>
+Subject: Re: crosstool: x86 kernel compiled with GCC 14.1 fails to boot
+Content-Type: text/plain
 
-On 9.07.2024 8:21 PM, Sagar Cheluvegowda wrote:
-> Define interconnect properties for ethernet hardware.
-> 
-> Suggested-by: Andrew Halaney <ahalaney@redhat.com>
-> Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-> ---
-> Adding interconnect dtsi properties within ethernet node of SA8775P,
-> this patch is adding support for the interconnect properties defined
-> in the series ->  
-> https://lore.kernel.org/all/20240703-icc_bw_voting_from_ethqos-v3-0-8f9148ac60a3@quicinc.com/
-> ---
+On Tue, Jul 9, 2024, at 17:29, Jeff Johnson wrote:
+> On 7/8/2024 10:44 PM, Arnd Bergmann wrote:
+>> On Tue, Jul 9, 2024, at 05:55, Jeff Johnson wrote:
+>
+> I picked my favorite to begin with, enabling KASAN (which in turn enabled a
+> few others). The resulting kernel did not boot for me (just saw a black screen
+> after the GRUB menu). Diff between working and non-working config is below.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Ok, good to know. I've added the KASAN developers to Cc now, maybe
+they have already seen reports of x86 kernels failing with gcc-14?
 
-Konrad
+> I then downloaded and built the config you supplied. With that I have the same
+> behavior as my original config, the display is frozen with:
+> Loading initial ramdisk ...
+
+Interesting, so the same config that works for me fails on your
+machine. I can see three possible reasons for this:
+
+- qemu vs hardware -- Can you try running this kernel in
+  qemu-system-x86_64 to see if that still boots
+
+- kernel version -- it's possible that this is a known bug
+  that was already fixed in the 6.10-rc7 kernel source I
+  tried, or that your source tree has a new bug that I don't.
+  Which version did you try?
+
+- cross-compile vs native compile -- It's possible that my
+  cross-built native x86_64 compiler has a bug that is not
+  in natively built gcc binaries, or in the cross compiler
+  I have on ARM. I've mostly ruled this one out by building
+  the same kernel using the x86 compilers through qemu-user.
+
+     Arnd
 
