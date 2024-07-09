@@ -1,114 +1,144 @@
-Return-Path: <linux-kernel+bounces-245503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D86392B382
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:17:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B746A92B38C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 541981C2178F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:17:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8B1A1C216DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08BA154BE0;
-	Tue,  9 Jul 2024 09:17:34 +0000 (UTC)
-Received: from h3cspam02-ex.h3c.com (smtp.h3c.com [60.191.123.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84961552FF;
+	Tue,  9 Jul 2024 09:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZTiHpEnf"
+Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FB115444F
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.191.123.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D9C154C16
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 09:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720516654; cv=none; b=F7caG1YGmCrXitd2BuOzhFyF9toMmrWd+aaDPC/3RNPsGGgsDUWSFtRvRNmBDwWhJAeAQR6mg1iVHBQKDb5I6k+lvypETfqyQr9A7skrwQHRekb1DQnrjktOqdx7WFMCAda0DUvMEQ2tx7/vbnlZ5k1Ah5TTPuXhiwAeywt9Cnw=
+	t=1720516707; cv=none; b=dUm1+10ffvNBA96tEWrYo0qtkQngoihxjNcZT9hSZ+uRlVUIO81ulF0go4LmlBdeeAwE1v3Jtcp6Tyw7cJ4yD9t+Qu7zKqzHaGj6ydnxgUQep/hG2dT8vs75geRuG1Yz+vYE5GaHC07yl0ofdUT+GuTy/rPCDKwlkjVYmiV6p18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720516654; c=relaxed/simple;
-	bh=4heESET2KVeH0IIj6LOX+jW+Y9bGLGe40FXDtpMD/lU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PELvikdylPhZbW1GF1x9XpD68klJkNHUepWXPErByOfLwxZRc2wD2WlPbxKh23INP6SCIDPCKsnLmSFmjIh/LXQQy62N1IPNRv4d/aYaWTYKNw32nYwED6cqVuCcR8dfP3rGUou7VbQed4xJpshYq1GSIVxfe+EXZKasWJg+iDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com; spf=pass smtp.mailfrom=h3c.com; arc=none smtp.client-ip=60.191.123.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h3c.com
-Received: from mail.maildlp.com ([172.25.15.154])
-	by h3cspam02-ex.h3c.com with ESMTP id 4699GLTr005458;
-	Tue, 9 Jul 2024 17:16:21 +0800 (GMT-8)
-	(envelope-from zhang.chunA@h3c.com)
-Received: from DAG6EX09-BJD.srv.huawei-3com.com (unknown [10.153.34.11])
-	by mail.maildlp.com (Postfix) with ESMTP id 64CB22302CD1;
-	Tue,  9 Jul 2024 17:20:36 +0800 (CST)
-Received: from localhost.localdomain.com (10.99.206.13) by
- DAG6EX09-BJD.srv.huawei-3com.com (10.153.34.11) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1258.27; Tue, 9 Jul 2024 17:16:23 +0800
-From: zhangchun <zhang.chuna@h3c.com>
-To: <akpm@linux-foundation.org>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <jiaoxupo@h3c.com>,
-        <zhang.zhengming@h3c.com>, <zhang.zhansheng@h3c.com>,
-        <shaohaojize@126.com>, zhangchun <zhang.chuna@h3c.com>
-Subject: [PATCH] =?UTF-8?q?mm:=20Give=20kmap=5Flock=20before=20call=20flus?= =?UTF-8?q?h=5Ftlb=5Fkernel=5Frang=EF=BC=8Cavoid=20kmap=5Fhigh=20deadlock.?=
-Date: Tue, 9 Jul 2024 17:17:38 +0800
-Message-ID: <1720516658-50434-1-git-send-email-zhang.chuna@h3c.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1720516707; c=relaxed/simple;
+	bh=eVK1yU/K1gUCeypMeHvP2ycH4mth7QtdS8bCm7eN+/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FCcfvIUHJScrmwYyFZ45vgAbpA0Ll13k2ZPU1o37KpVdL0Zo43FKscX9nx9w0ttmYMzO0YMsFTgbfLs632puIUrd8KA0eBReycU98tOylqdsgCAWJDQ+TkmzgyfDV3rfdN+6Zm/7kLFWQGzm++nwk3NLODzN5ZS+XLfuoChj/fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZTiHpEnf; arc=none smtp.client-ip=83.166.143.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WJFlW6pv4z5T6;
+	Tue,  9 Jul 2024 11:18:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1720516695;
+	bh=v/JFEHCX3gZ0MVpHje3ikJ9/D0FTAcZwjQbECtZLdZE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZTiHpEnfNR3mlatCxWux7y7Eu0qGDnEqSh+8W8s09JC/3VLLlbrWZwmN1jeWX5Vho
+	 ndmFxLkDKg4N0dPsk7JixdJH7Olf3q4BBy/rLZ/oO3L8jaUA2xpIdzwOIgKnGlTAP3
+	 N7+HAeqyif99g6G9CBVvsU6dg8SkNZKc9yNMrgvw=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WJFlH1ZZFzVjC;
+	Tue,  9 Jul 2024 11:18:03 +0200 (CEST)
+Date: Tue, 9 Jul 2024 11:18:00 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jeff Xu <jeffxu@google.com>
+Cc: Florian Weimer <fweimer@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
+	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
+	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 1/5] exec: Add a new AT_CHECK flag to execveat(2)
+Message-ID: <20240709.gae4cu4Aiv6s@digikod.net>
+References: <20240704190137.696169-1-mic@digikod.net>
+ <20240704190137.696169-2-mic@digikod.net>
+ <87bk3bvhr1.fsf@oldenburg.str.redhat.com>
+ <CALmYWFu_JFyuwYhDtEDWxEob8JHFSoyx_SCcsRVKqSYyyw30Rg@mail.gmail.com>
+ <87ed83etpk.fsf@oldenburg.str.redhat.com>
+ <CALmYWFvkUnevm=npBeaZVkK_PXm=A8MjgxFXkASnERxoMyhYBg@mail.gmail.com>
+ <87r0c3dc1c.fsf@oldenburg.str.redhat.com>
+ <CALmYWFvA7VPz06Tg8E-R_Jqn2cxMiWPPC6Vhy+vgqnofT0GELg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BJSMTP01-EX.srv.huawei-3com.com (10.63.20.132) To
- DAG6EX09-BJD.srv.huawei-3com.com (10.153.34.11)
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:h3cspam02-ex.h3c.com 4699GLTr005458
+In-Reply-To: <CALmYWFvA7VPz06Tg8E-R_Jqn2cxMiWPPC6Vhy+vgqnofT0GELg@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-Use kmap_high and kmap_XXX or kumap_xxx among differt cores at the same
-time may cause deadlock. The issue is like this：
+On Mon, Jul 08, 2024 at 10:52:36AM -0700, Jeff Xu wrote:
+> On Mon, Jul 8, 2024 at 10:33 AM Florian Weimer <fweimer@redhat.com> wrote:
+> >
+> > * Jeff Xu:
+> >
+> > > On Mon, Jul 8, 2024 at 9:26 AM Florian Weimer <fweimer@redhat.com> wrote:
+> > >>
+> > >> * Jeff Xu:
+> > >>
+> > >> > Will dynamic linkers use the execveat(AT_CHECK) to check shared
+> > >> > libraries too ?  or just the main executable itself.
+> > >>
+> > >> I expect that dynamic linkers will have to do this for everything they
+> > >> map.
+> > > Then all the objects (.so, .sh, etc.) will go through  the check from
+> > > execveat's main  to security_bprm_creds_for_exec(), some of them might
+> > > be specific for the main executable ?
 
- CPU 0:                                                 CPU 1:
- kmap_high(){                                           kmap_xxx() {
-               ...                                        irq_disable();
-        spin_lock(&kmap_lock)
-               ...
-        map_new_virtual                                     ...
-           flush_all_zero_pkmaps
-              flush_tlb_kernel_range         /* CPU0 holds the kmap_lock */
-                      smp_call_function_many         spin_lock(&kmap_lock)
-                      ...                                   ....
-        spin_unlock(&kmap_lock)
-               ...
+Yes, we should check every executable code (including seccomp filters)
+to get a consistent policy.
 
-CPU 0 holds the kmap_lock, waiting for CPU 1 respond to IPI. But CPU 1
-has disabled irqs, waiting for kmap_lock, cannot answer the IPI. Fix
-this by releasing  kmap_lock before call flush_tlb_kernel_range,
-avoid kmap_lock deadlock.
+What do you mean by "specific for the main executable"?
 
-Fixes: 3297e760776a ("highmem: atomic highmem kmap page pinning")
-Signed-off-by: zhangchun <zhang.chuna@h3c.com>
-Co-developed-by: zhangzhansheng <zhang.zhansheng@h3c.com>
-Signed-off-by: zhangzhansheng <zhang.zhansheng@h3c.com>
-Reviewed-by: zhangzhengming <zhang.zhengming@h3c.com>
----
- mm/highmem.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+> >
+> > If we want to avoid that, we could have an agreed-upon error code which
+> > the LSM can signal that it'll never fail AT_CHECK checks, so we only
+> > have to perform the extra system call once.
 
-diff --git a/mm/highmem.c b/mm/highmem.c
-index bd48ba4..841b370 100644
---- a/mm/highmem.c
-+++ b/mm/highmem.c
-@@ -220,8 +220,11 @@ static void flush_all_zero_pkmaps(void)
- 		set_page_address(page, NULL);
- 		need_flush = 1;
- 	}
--	if (need_flush)
-+	if (need_flush) {
-+		spin_unlock(&kmap_lock);
- 		flush_tlb_kernel_range(PKMAP_ADDR(0), PKMAP_ADDR(LAST_PKMAP));
-+		spin_lock(&kmap_lock);
-+	}
- }
- 
- void __kmap_flush_unused(void)
--- 
-1.8.3.1
+I'm not sure to follow.  Either we check executable code or we don't,
+but it doesn't make sense to only check some parts (except for migration
+of user space code in a system, which is one purpose of the securebits
+added with the next patch).
 
+The idea with AT_CHECK is to unconditionnaly check executable right the
+same way it is checked when a file is executed.  User space can decide
+to check that or not according to its policy (i.e. securebits).
+
+> >
+> Right, something like that.
+> I would prefer not having AT_CHECK specific code in LSM code as an
+> initial goal, if that works, great.
+
+LSMs should not need to change anything, but they are free to implement
+new access right according to AT_CHECK.
+
+> 
+> -Jeff
+> 
+> > Thanks,
+> > Florian
+> >
 
