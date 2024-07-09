@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-246746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0518A92C622
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:16:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8712992C607
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F7F1F216C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:16:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EFD21F22D0C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 22:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B646187878;
-	Tue,  9 Jul 2024 22:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3B818C169;
+	Tue,  9 Jul 2024 22:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="A2YKNw8H"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="P+eFttkY"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73E918FA3D;
-	Tue,  9 Jul 2024 22:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74EDB182A6B;
+	Tue,  9 Jul 2024 22:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720563154; cv=none; b=ExmfaUJvcbWftdjz079IRMhj06k3uNE7LJWodV6O6La0u0W0I92EUuaFO2bshbX//W8Pq5LPCnrNdPPPUBwm1CBMUbn8FxlIkPbhSEyIzBRmg0xhvbswrvZ4SvfHg+MjjJRgZcTEtoU86aiEMv6bE+727+uogujHqvmOn7//v0U=
+	t=1720563144; cv=none; b=RfEueL/LNblevwZ4v79+c8btF+GUIuu5tydqzCC6Kh6NYMUdD9YYEhqykVH5m+15MCWY0zyoFVRbnenNFd4CvIpEr5qIrnrZ9J4P9JI+CTTO/GWe9hvDpYFv8DBre4oKQ5LVbMjsbQ2Wlhv0zDL1/QDAOhaWSb2aVefZ8AnJk1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720563154; c=relaxed/simple;
-	bh=xjT8WW2svCMOY9fr4Kc/Wz9LwaUXQYyYK2DJ3x1om+Q=;
+	s=arc-20240116; t=1720563144; c=relaxed/simple;
+	bh=13BbAyB+MhLrZ/RAst4pg7cFayKlQOwS6KYT8yJT44I=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KIMzI9u7jOYvygZ9HyKyjJDBbfevYBA3IZT7VoT92x2VYjLYiy13OFfv7R0GrbQ8kvuAQZ29yo25sYTIWREr/o1xsioOzyextJhiTMQAT+VjBDTCRRu7FOieG+hDu7Uc++wVumHXcUCLc4fD7HS48thiNXvMoq6SzPOR/sQW+M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=A2YKNw8H; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 0595B12000D;
-	Wed, 10 Jul 2024 01:12:30 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 0595B12000D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1720563150;
-	bh=TH9GMqEQBDvfR0/+9rnebD1UAn7nTz2hWEt091Y4gEo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=A2YKNw8HpU4hFJBQ/1978/O9nJ1yB2gwClKuBpISBTjGvQUWUWJvfxRJH9ykFFuZ4
-	 S7/czC6VhTv7nK+d6qtF9SsXvzfkQDJceHJEPmbO5p+NdvUSE3JkDx2QpEvWwiJCqT
-	 q3+gFk6CFfkOLmhE+mgQtsGLCIjNmjAry4kzXJrLzzPEeZZKBufac19vulGhxvfWGC
-	 v/1ky+yFU2++svw4jYVuo0rdr7uML3y+s2duOtXsHuHLz3iY/KFii3letZNmc6CuFi
-	 vw9drYASf3pychk03L4squkfl1nYicSStZ5pWuwKH1xjbWUCYZncms+5dZRiFu2Gee
-	 9RJc693WZD4WQ==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed, 10 Jul 2024 01:12:29 +0300 (MSK)
-Received: from localhost.localdomain (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+	 MIME-Version:Content-Type; b=LOiVNjrnAd5YVEaHPbDyBRa3U5YvLGwneDQqd4Y7xxHc+WeZd5xxcXHor3zTglrst5U/yXkO0n/528Lone7n5Nr/484lk1J6xmX9ixLKXciMBrkOlK6xD3cyMV5X5yJwnbzMbtB0rV535yL6l08ac8+eB+OO8svQhXk2KmZ8dYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=P+eFttkY; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469KHNfZ020699;
+	Tue, 9 Jul 2024 15:12:16 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=f
+	jFRuhlHwNnZyquoPIAo2NWv1uDnlWUPxZDl4u49QfA=; b=P+eFttkYLapqAYFWk
+	AJHftmcPsnV3NtuaLH4mzDe3hNng7q1YfuqT9TYLVs64s6dS7f99GknMFeXs0FRF
+	uyM4g68UyaKMrVKqgnNBA5X9fRzkk3OxYM0Lj0tRkiicVDX0vHmzk0I2GYE3Io50
+	xfYIZRzB9VZ6/J+rE/KW502RKfC+mCqC547Z08RISPYLHsybL4+PnWx3UJTZItjp
+	Gq/gRcrDsCaKqxiOXQstPxRkCtYh7wJM1/TnXK9/xGR6YAGsCybhPFcmoRp8qjpF
+	y84rFhBUDt4Gyx2Q5hu7zyJnziX/y5NyBZdaK7nBNA89PBiDB1MheTUj95woUugF
+	aB4yg==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 408ntymyxj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 15:12:16 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Wed, 10 Jul 2024 01:12:29 +0300
-From: Igor Prusov <ivprusov@salutedevices.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>, Igor Prusov
-	<ivprusov@salutedevices.com>
-CC: <prusovigor@gmail.com>, <kernel@salutedevices.com>,
-	<linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 6/6] ASoC: codecs: Add NeoFidelity NTP8835 codec
-Date: Wed, 10 Jul 2024 01:12:03 +0300
-Message-ID: <20240709221203.92167-7-ivprusov@salutedevices.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240709221203.92167-1-ivprusov@salutedevices.com>
-References: <20240709221203.92167-1-ivprusov@salutedevices.com>
+ 15.2.1544.4; Tue, 9 Jul 2024 15:12:15 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 9 Jul 2024 15:12:15 -0700
+Received: from Dell2s-9.sclab.marvell.com (unknown [10.110.150.250])
+	by maili.marvell.com (Postfix) with ESMTP id E8A623F7083;
+	Tue,  9 Jul 2024 15:12:14 -0700 (PDT)
+From: Witold Sadowski <wsadowski@marvell.com>
+To: <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: <broonie@kernel.org>, <robh@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <pthombar@cadence.com>, Witold Sadowski <wsadowski@marvell.com>
+Subject: [PATCH v10 2/9] spi: cadence: Add static PHY configuration in Marvell overlay
+Date: Tue, 9 Jul 2024 15:12:04 -0700
+Message-ID: <20240709221211.2130456-3-wsadowski@marvell.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240709221211.2130456-1-wsadowski@marvell.com>
+References: <20240709221211.2130456-1-wsadowski@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,514 +77,190 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186406 [Jul 09 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ivprusov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;www.cpbay.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/07/09 21:28:00
-X-KSMG-LinksScanning: Clean, bases: 2024/07/09 21:28:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/09 21:28:00 #25931284
-X-KSMG-AntiVirus-Status: Clean, skipped
+X-Proofpoint-ORIG-GUID: -rShjI5kajXT6lGz5GZW_ANzJm1i6zBa
+X-Proofpoint-GUID: -rShjI5kajXT6lGz5GZW_ANzJm1i6zBa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_10,2024-07-09_01,2024-05-17_01
 
-The NeoFidelity NTP8835 adn NTP8835C are 2.1 channel amplifiers with
-mixer and biquad filters. Both amplifiers have identical programming
-interfaces but differ in output signal characteristics.
+This commit adds support for static PHY configuration of Cadence xSPI
+block. Configuration will be applied only if Marvell overlay compatible
+string will be detected. Configuration is static over the whole
+frequency range.
 
-Datasheet: https://www.cpbay.com/Uploads/20210225/6037116a3ea91.pdf
-Datasheet: https://www.cpbay.com/Uploads/20210918/61458b2f2631e.pdf
-Signed-off-by: Igor Prusov <ivprusov@salutedevices.com>
+Signed-off-by: Witold Sadowski <wsadowski@marvell.com>
 ---
- sound/soc/codecs/Kconfig   |   5 +
- sound/soc/codecs/Makefile  |   2 +
- sound/soc/codecs/ntp8835.c | 432 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 439 insertions(+)
- create mode 100644 sound/soc/codecs/ntp8835.c
+ drivers/spi/spi-cadence-xspi.c | 113 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 112 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index d16c983fcb7a..2235727f0d41 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -2500,6 +2500,11 @@ config SND_SOC_NTP8918
- 	tristate "NeoFidelity NTP8918 amplifier"
- 	depends on I2C
+diff --git a/drivers/spi/spi-cadence-xspi.c b/drivers/spi/spi-cadence-xspi.c
+index 2e3eacd46b72..70b1b4a0ff13 100644
+--- a/drivers/spi/spi-cadence-xspi.c
++++ b/drivers/spi/spi-cadence-xspi.c
+@@ -193,6 +193,30 @@
+ 		((op)->data.dir == SPI_MEM_DATA_IN) ? \
+ 		CDNS_XSPI_STIG_CMD_DIR_READ : CDNS_XSPI_STIG_CMD_DIR_WRITE))
  
-+config SND_SOC_NTP8835
-+	select SND_SOC_NTPFW
-+	tristate "NeoFidelity NTP8835 and NTP8835C amplifiers"
-+	depends on I2C
++/* Marvell PHY default values */
++#define MARVELL_REGS_DLL_PHY_CTRL		0x00000707
++#define MARVELL_CTB_RFILE_PHY_CTRL		0x00004000
++#define MARVELL_RFILE_PHY_TSEL			0x00000000
++#define MARVELL_RFILE_PHY_DQ_TIMING		0x00000101
++#define MARVELL_RFILE_PHY_DQS_TIMING		0x00700404
++#define MARVELL_RFILE_PHY_GATE_LPBK_CTRL	0x00200030
++#define MARVELL_RFILE_PHY_DLL_MASTER_CTRL	0x00800000
++#define MARVELL_RFILE_PHY_DLL_SLAVE_CTRL	0x0000ff01
 +
- config SND_SOC_TPA6130A2
- 	tristate "Texas Instruments TPA6130A2 headphone amplifier"
- 	depends on I2C
-diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
-index a49ab11a98ec..49fc78bc631e 100644
---- a/sound/soc/codecs/Makefile
-+++ b/sound/soc/codecs/Makefile
-@@ -183,6 +183,7 @@ snd-soc-nau8821-y := nau8821.o
- snd-soc-nau8822-y := nau8822.o
- snd-soc-nau8824-y := nau8824.o
- snd-soc-nau8825-y := nau8825.o
-+snd-soc-ntp8835-y := ntp8835.o
- snd-soc-ntp8918-y := ntp8918.o
- snd-soc-ntpfw-y := ntpfw.o
- snd-soc-hdmi-codec-y := hdmi-codec.o
-@@ -577,6 +578,7 @@ obj-$(CONFIG_SND_SOC_NAU8821)   += snd-soc-nau8821.o
- obj-$(CONFIG_SND_SOC_NAU8822)   += snd-soc-nau8822.o
- obj-$(CONFIG_SND_SOC_NAU8824)   += snd-soc-nau8824.o
- obj-$(CONFIG_SND_SOC_NAU8825)   += snd-soc-nau8825.o
-+obj-$(CONFIG_SND_SOC_NTP8835)	+= snd-soc-ntp8835.o
- obj-$(CONFIG_SND_SOC_NTP8918)	+= snd-soc-ntp8918.o
- obj-$(CONFIG_SND_SOC_NTPFW)	+= snd-soc-ntpfw.o
- obj-$(CONFIG_SND_SOC_HDMI_CODEC)	+= snd-soc-hdmi-codec.o
-diff --git a/sound/soc/codecs/ntp8835.c b/sound/soc/codecs/ntp8835.c
-new file mode 100644
-index 000000000000..ec16660478c2
---- /dev/null
-+++ b/sound/soc/codecs/ntp8835.c
-@@ -0,0 +1,432 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Driver for the NTP8835/NTP8835C Audio Amplifiers
-+ *
-+ * Copyright (c) 2024, SaluteDevices. All Rights Reserved.
-+ *
-+ * Author: Igor Prusov <ivprusov@salutedevices.com>
-+ */
++/* PHY config registers */
++#define CDNS_XSPI_RF_MINICTRL_REGS_DLL_PHY_CTRL			0x1034
++#define CDNS_XSPI_PHY_CTB_RFILE_PHY_CTRL			0x0080
++#define CDNS_XSPI_PHY_CTB_RFILE_PHY_TSEL			0x0084
++#define CDNS_XSPI_PHY_DATASLICE_RFILE_PHY_DQ_TIMING		0x0000
++#define CDNS_XSPI_PHY_DATASLICE_RFILE_PHY_DQS_TIMING		0x0004
++#define CDNS_XSPI_PHY_DATASLICE_RFILE_PHY_GATE_LPBK_CTRL	0x0008
++#define CDNS_XSPI_PHY_DATASLICE_RFILE_PHY_DLL_MASTER_CTRL	0x000c
++#define CDNS_XSPI_PHY_DATASLICE_RFILE_PHY_DLL_SLAVE_CTRL	0x0010
++#define CDNS_XSPI_DATASLICE_RFILE_PHY_DLL_OBS_REG_0		0x001c
 +
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/moduleparam.h>
-+#include <linux/bits.h>
-+#include <linux/gpio.h>
-+#include <linux/slab.h>
-+#include <linux/of.h>
-+#include <linux/of_gpio.h>
-+#include <linux/reset.h>
-+#include <linux/init.h>
-+#include <linux/i2c.h>
-+#include <linux/regmap.h>
++#define CDNS_XSPI_DLL_RST_N BIT(24)
++#define CDNS_XSPI_DLL_LOCK  BIT(0)
 +
-+#include <sound/initval.h>
-+#include <sound/core.h>
-+#include <sound/pcm.h>
-+#include <sound/pcm_params.h>
-+#include <sound/soc.h>
-+#include <sound/soc-component.h>
-+#include <sound/tlv.h>
-+
-+#include "ntpfw.h"
-+
-+#define NTP8835_FORMATS     (SNDRV_PCM_FMTBIT_S16_LE | \
-+			     SNDRV_PCM_FMTBIT_S20_3LE | \
-+			     SNDRV_PCM_FMTBIT_S24_LE | \
-+			     SNDRV_PCM_FMTBIT_S32_LE)
-+
-+#define NTP8835_INPUT_FMT			0x0
-+#define  NTP8835_INPUT_FMT_MASTER_MODE		BIT(0)
-+#define  NTP8835_INPUT_FMT_GSA_MODE		BIT(1)
-+#define NTP8835_GSA_FMT				0x1
-+#define  NTP8835_GSA_BS_MASK			GENMASK(3, 2)
-+#define  NTP8835_GSA_BS(x)			((x) << 2)
-+#define  NTP8835_GSA_RIGHT_J			BIT(0)
-+#define  NTP8835_GSA_LSB			BIT(1)
-+#define NTP8835_SOFT_MUTE			0x26
-+#define  NTP8835_SOFT_MUTE_SM1			BIT(0)
-+#define  NTP8835_SOFT_MUTE_SM2			BIT(1)
-+#define  NTP8835_SOFT_MUTE_SM3			BIT(2)
-+#define NTP8835_PWM_SWITCH			0x27
-+#define  NTP8835_PWM_SWITCH_POF1		BIT(0)
-+#define  NTP8835_PWM_SWITCH_POF2		BIT(1)
-+#define  NTP8835_PWM_SWITCH_POF3		BIT(2)
-+#define NTP8835_PWM_MASK_CTRL0			0x28
-+#define  NTP8835_PWM_MASK_CTRL0_OUT_LOW		BIT(1)
-+#define  NTP8835_PWM_MASK_CTRL0_FPMLD		BIT(2)
-+#define NTP8835_MASTER_VOL			0x2e
-+#define NTP8835_CHNL_A_VOL			0x2f
-+#define NTP8835_CHNL_B_VOL			0x30
-+#define NTP8835_CHNL_C_VOL			0x31
-+#define REG_MAX					NTP8835_CHNL_C_VOL
-+
-+#define NTP8835_FW_NAME				"eq_8835.bin"
-+#define NTP8835_FW_MAGIC			0x38383335	/* "8835" */
-+
-+struct ntp8835_priv {
-+	struct i2c_client *i2c;
-+	struct reset_control *reset;
-+	unsigned int format;
+ enum cdns_xspi_stig_instr_type {
+ 	CDNS_XSPI_STIG_INSTR_TYPE_0,
+ 	CDNS_XSPI_STIG_INSTR_TYPE_1,
+@@ -209,6 +233,34 @@ enum cdns_xspi_stig_cmd_dir {
+ 	CDNS_XSPI_STIG_CMD_DIR_WRITE,
+ };
+ 
++struct cdns_xspi_driver_data {
++	bool mrvl_hw_overlay;
++	u32 dll_phy_ctrl;
++	u32 ctb_rfile_phy_ctrl;
++	u32 rfile_phy_tsel;
++	u32 rfile_phy_dq_timing;
++	u32 rfile_phy_dqs_timing;
++	u32 rfile_phy_gate_lpbk_ctrl;
++	u32 rfile_phy_dll_master_ctrl;
++	u32 rfile_phy_dll_slave_ctrl;
 +};
 +
-+static const DECLARE_TLV_DB_RANGE(ntp8835_vol_scale,
-+	0, 1, TLV_DB_SCALE_ITEM(-15000, 0, 0),
-+	2, 6, TLV_DB_SCALE_ITEM(-15000, 1000, 0),
-+	7, 0xff, TLV_DB_SCALE_ITEM(-10000, 50, 0),
-+);
++static struct cdns_xspi_driver_data marvell_driver_data = {
++	.mrvl_hw_overlay = true,
++	.dll_phy_ctrl = MARVELL_REGS_DLL_PHY_CTRL,
++	.ctb_rfile_phy_ctrl = MARVELL_CTB_RFILE_PHY_CTRL,
++	.rfile_phy_tsel = MARVELL_RFILE_PHY_TSEL,
++	.rfile_phy_dq_timing = MARVELL_RFILE_PHY_DQ_TIMING,
++	.rfile_phy_dqs_timing = MARVELL_RFILE_PHY_DQS_TIMING,
++	.rfile_phy_gate_lpbk_ctrl = MARVELL_RFILE_PHY_GATE_LPBK_CTRL,
++	.rfile_phy_dll_master_ctrl = MARVELL_RFILE_PHY_DLL_MASTER_CTRL,
++	.rfile_phy_dll_slave_ctrl = MARVELL_RFILE_PHY_DLL_SLAVE_CTRL,
++};
 +
-+static int ntp8835_mute_info(struct snd_kcontrol *kcontrol,
-+			     struct snd_ctl_elem_info *uinfo)
++static struct cdns_xspi_driver_data cdns_driver_data = {
++	.mrvl_hw_overlay = false,
++};
++
+ struct cdns_xspi_dev {
+ 	struct platform_device *pdev;
+ 	struct device *dev;
+@@ -230,8 +282,55 @@ struct cdns_xspi_dev {
+ 	const void *out_buffer;
+ 
+ 	u8 hw_num_banks;
++
++	const struct cdns_xspi_driver_data *driver_data;
+ };
+ 
++static void cdns_xspi_reset_dll(struct cdns_xspi_dev *cdns_xspi)
 +{
-+	uinfo->type = SNDRV_CTL_ELEM_TYPE_BOOLEAN;
-+	uinfo->count = 1;
++	u32 dll_cntrl = readl(cdns_xspi->iobase +
++			      CDNS_XSPI_RF_MINICTRL_REGS_DLL_PHY_CTRL);
 +
-+	uinfo->value.integer.min = 0;
-+	uinfo->value.integer.max = 1;
-+	uinfo->value.integer.step = 1;
-+
-+	return 0;
++	/* Reset DLL */
++	dll_cntrl |= CDNS_XSPI_DLL_RST_N;
++	writel(dll_cntrl, cdns_xspi->iobase +
++			  CDNS_XSPI_RF_MINICTRL_REGS_DLL_PHY_CTRL);
 +}
 +
-+static int ntp8835_mute_get(struct snd_kcontrol *kcontrol,
-+			    struct snd_ctl_elem_value *ucontrol)
++static bool cdns_xspi_is_dll_locked(struct cdns_xspi_dev *cdns_xspi)
 +{
-+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
-+	unsigned int val;
++	u32 dll_lock;
 +
-+	val = snd_soc_component_read(component, NTP8835_SOFT_MUTE);
-+
-+	ucontrol->value.integer.value[0] = val ? 0 : 1;
-+	return 0;
++	return !readl_relaxed_poll_timeout(cdns_xspi->iobase +
++		CDNS_XSPI_INTR_STATUS_REG,
++		dll_lock, ((dll_lock & CDNS_XSPI_DLL_LOCK) == 1), 10, 10000);
 +}
 +
-+static int ntp8835_mute_put(struct snd_kcontrol *kcontrol,
-+			    struct snd_ctl_elem_value *ucontrol)
++/* Static configuration of PHY */
++static bool cdns_xspi_configure_phy(struct cdns_xspi_dev *cdns_xspi)
 +{
-+	struct snd_soc_component *component = snd_soc_kcontrol_component(kcontrol);
-+	unsigned int val;
++	writel(cdns_xspi->driver_data->dll_phy_ctrl,
++	       cdns_xspi->iobase + CDNS_XSPI_RF_MINICTRL_REGS_DLL_PHY_CTRL);
++	writel(cdns_xspi->driver_data->ctb_rfile_phy_ctrl,
++	       cdns_xspi->auxbase + CDNS_XSPI_PHY_CTB_RFILE_PHY_CTRL);
++	writel(cdns_xspi->driver_data->rfile_phy_tsel,
++	       cdns_xspi->auxbase + CDNS_XSPI_PHY_CTB_RFILE_PHY_TSEL);
++	writel(cdns_xspi->driver_data->rfile_phy_dq_timing,
++	       cdns_xspi->auxbase + CDNS_XSPI_PHY_DATASLICE_RFILE_PHY_DQ_TIMING);
++	writel(cdns_xspi->driver_data->rfile_phy_dqs_timing,
++	       cdns_xspi->auxbase + CDNS_XSPI_PHY_DATASLICE_RFILE_PHY_DQS_TIMING);
++	writel(cdns_xspi->driver_data->rfile_phy_gate_lpbk_ctrl,
++	       cdns_xspi->auxbase + CDNS_XSPI_PHY_DATASLICE_RFILE_PHY_GATE_LPBK_CTRL);
++	writel(cdns_xspi->driver_data->rfile_phy_dll_master_ctrl,
++	       cdns_xspi->auxbase + CDNS_XSPI_PHY_DATASLICE_RFILE_PHY_DLL_MASTER_CTRL);
++	writel(cdns_xspi->driver_data->rfile_phy_dll_slave_ctrl,
++	       cdns_xspi->auxbase + CDNS_XSPI_PHY_DATASLICE_RFILE_PHY_DLL_SLAVE_CTRL);
 +
-+	val = ucontrol->value.integer.value[0] ? 0 : 7;
++	cdns_xspi_reset_dll(cdns_xspi);
 +
-+	snd_soc_component_write(component, NTP8835_SOFT_MUTE, val);
-+
-+	return 0;
++	return cdns_xspi_is_dll_locked(cdns_xspi);
 +}
 +
-+static const struct snd_kcontrol_new ntp8835_vol_control[] = {
-+	SOC_SINGLE_TLV("Playback Volume", NTP8835_MASTER_VOL, 0,
-+		       0xff, 0, ntp8835_vol_scale),
+ static int cdns_xspi_wait_for_controller_idle(struct cdns_xspi_dev *cdns_xspi)
+ {
+ 	u32 ctrl_stat;
+@@ -544,13 +643,17 @@ static int cdns_xspi_probe(struct platform_device *pdev)
+ 		SPI_RX_DUAL | SPI_RX_QUAD | SPI_TX_OCTAL | SPI_RX_OCTAL |
+ 		SPI_MODE_0  | SPI_MODE_3;
+ 
++	cdns_xspi = spi_controller_get_devdata(host);
++	cdns_xspi->driver_data = of_device_get_match_data(dev);
++	if (!cdns_xspi->driver_data)
++		return -ENODEV;
++
+ 	host->mem_ops = &cadence_xspi_mem_ops;
+ 	host->dev.of_node = pdev->dev.of_node;
+ 	host->bus_num = -1;
+ 
+ 	platform_set_drvdata(pdev, host);
+ 
+-	cdns_xspi = spi_controller_get_devdata(host);
+ 	cdns_xspi->pdev = pdev;
+ 	cdns_xspi->dev = &pdev->dev;
+ 	cdns_xspi->cur_cs = 0;
+@@ -592,6 +695,9 @@ static int cdns_xspi_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	if (cdns_xspi->driver_data->mrvl_hw_overlay)
++		cdns_xspi_configure_phy(cdns_xspi);
++
+ 	cdns_xspi_print_phy_config(cdns_xspi);
+ 
+ 	ret = cdns_xspi_controller_init(cdns_xspi);
+@@ -616,6 +722,11 @@ static int cdns_xspi_probe(struct platform_device *pdev)
+ static const struct of_device_id cdns_xspi_of_match[] = {
+ 	{
+ 		.compatible = "cdns,xspi-nor",
++		.data = &cdns_driver_data,
++	},
 +	{
-+		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-+		.name = "Playback Switch",
-+		.info = ntp8835_mute_info,
-+		.access = SNDRV_CTL_ELEM_ACCESS_TLV_READ | SNDRV_CTL_ELEM_ACCESS_READWRITE,
-+		.get = ntp8835_mute_get,
-+		.put = ntp8835_mute_put,
-+	},
-+};
-+
-+static void ntp8835_reset_gpio(struct ntp8835_priv *ntp8835, bool active)
-+{
-+	if (active) {
-+		/*
-+		 * According to NTP8835 datasheet, 6.2 Timing Sequence (recommended):
-+		 * Deassert for T2 >= 1ms...
-+		 */
-+		reset_control_deassert(ntp8835->reset);
-+		fsleep(1000);
-+
-+		/* ...Assert for T3 >= 0.1us... */
-+		reset_control_assert(ntp8835->reset);
-+		fsleep(1);
-+
-+		/* ...Deassert, and wait for T4 >= 0.5ms before sound on sequence. */
-+		reset_control_deassert(ntp8835->reset);
-+		fsleep(500);
-+	} else {
-+		reset_control_assert(ntp8835->reset);
-+	}
-+}
-+
-+static const struct reg_sequence ntp8835_sound_on[] = {
-+	{ NTP8835_PWM_MASK_CTRL0,	NTP8835_PWM_MASK_CTRL0_FPMLD },
-+	{ NTP8835_PWM_SWITCH,		0x00 },
-+	{ NTP8835_SOFT_MUTE,		0x00 },
-+};
-+
-+static const struct reg_sequence ntp8835_sound_off[] = {
-+	{ NTP8835_SOFT_MUTE,		NTP8835_SOFT_MUTE_SM1 |
-+					NTP8835_SOFT_MUTE_SM2 |
-+					NTP8835_SOFT_MUTE_SM3 },
-+
-+	{ NTP8835_PWM_SWITCH,		NTP8835_PWM_SWITCH_POF1 |
-+					NTP8835_PWM_SWITCH_POF2 |
-+					NTP8835_PWM_SWITCH_POF3 },
-+
-+	{ NTP8835_PWM_MASK_CTRL0,	NTP8835_PWM_MASK_CTRL0_OUT_LOW |
-+					NTP8835_PWM_MASK_CTRL0_FPMLD },
-+};
-+
-+static int ntp8835_load_firmware(struct ntp8835_priv *ntp8835)
-+{
-+	int ret;
-+
-+	ret = ntpfw_load(ntp8835->i2c, NTP8835_FW_NAME, NTP8835_FW_MAGIC);
-+	if (ret == -ENOENT) {
-+		dev_warn_once(&ntp8835->i2c->dev,
-+			      "Could not find firmware %s\n", NTP8835_FW_NAME);
-+		return 0;
-+	}
-+
-+	return ret;
-+}
-+
-+static int ntp8835_snd_suspend(struct snd_soc_component *component)
-+{
-+	struct ntp8835_priv *ntp8835 = snd_soc_component_get_drvdata(component);
-+
-+	regcache_cache_only(component->regmap, true);
-+
-+	regmap_multi_reg_write_bypassed(component->regmap,
-+					ntp8835_sound_off,
-+					ARRAY_SIZE(ntp8835_sound_off));
-+
-+	/*
-+	 * According to NTP8835 datasheet, 6.2 Timing Sequence (recommended):
-+	 * wait after sound off for T6 >= 0.5ms
-+	 */
-+	fsleep(500);
-+	ntp8835_reset_gpio(ntp8835, false);
-+
-+	regcache_mark_dirty(component->regmap);
-+
-+	return 0;
-+}
-+
-+static int ntp8835_snd_resume(struct snd_soc_component *component)
-+{
-+	struct ntp8835_priv *ntp8835 = snd_soc_component_get_drvdata(component);
-+	int ret;
-+
-+	ntp8835_reset_gpio(ntp8835, true);
-+
-+	regmap_multi_reg_write_bypassed(component->regmap,
-+					ntp8835_sound_on,
-+					ARRAY_SIZE(ntp8835_sound_on));
-+
-+	ret = ntp8835_load_firmware(ntp8835);
-+	if (ret) {
-+		dev_err(&ntp8835->i2c->dev, "Failed to load firmware\n");
-+		return ret;
-+	}
-+
-+	regcache_cache_only(component->regmap, false);
-+	snd_soc_component_cache_sync(component);
-+
-+	return 0;
-+}
-+
-+static int ntp8835_probe(struct snd_soc_component *component)
-+{
-+	int ret;
-+	struct ntp8835_priv *ntp8835 = snd_soc_component_get_drvdata(component);
-+	struct device *dev = component->dev;
-+
-+	ret = snd_soc_add_component_controls(component, ntp8835_vol_control,
-+					     ARRAY_SIZE(ntp8835_vol_control));
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to add controls\n");
-+
-+	ret = ntp8835_load_firmware(ntp8835);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to load firmware\n");
-+
-+	return 0;
-+}
-+
-+static const struct snd_soc_dapm_widget ntp8835_dapm_widgets[] = {
-+	SND_SOC_DAPM_DAC("AIFIN", "Playback", SND_SOC_NOPM, 0, 0),
-+
-+	SND_SOC_DAPM_OUTPUT("OUT1"),
-+	SND_SOC_DAPM_OUTPUT("OUT2"),
-+	SND_SOC_DAPM_OUTPUT("OUT3"),
-+};
-+
-+static const struct snd_soc_dapm_route ntp8835_dapm_routes[] = {
-+	{ "OUT1", NULL, "AIFIN" },
-+	{ "OUT2", NULL, "AIFIN" },
-+	{ "OUT3", NULL, "AIFIN" },
-+};
-+
-+static const struct snd_soc_component_driver soc_component_ntp8835 = {
-+	.probe = ntp8835_probe,
-+	.suspend = ntp8835_snd_suspend,
-+	.resume = ntp8835_snd_resume,
-+	.dapm_widgets = ntp8835_dapm_widgets,
-+	.num_dapm_widgets = ARRAY_SIZE(ntp8835_dapm_widgets),
-+	.dapm_routes = ntp8835_dapm_routes,
-+	.num_dapm_routes = ARRAY_SIZE(ntp8835_dapm_routes),
-+};
-+
-+static int ntp8835_hw_params(struct snd_pcm_substream *substream,
-+			     struct snd_pcm_hw_params *params,
-+			     struct snd_soc_dai *dai)
-+{
-+	struct snd_soc_component *component = dai->component;
-+	struct ntp8835_priv *ntp8835 = snd_soc_component_get_drvdata(component);
-+	unsigned int input_fmt = 0;
-+	unsigned int gsa_fmt = 0;
-+	unsigned int gsa_fmt_mask;
-+	int ret;
-+
-+	switch (ntp8835->format) {
-+	case SND_SOC_DAIFMT_I2S:
-+		break;
-+	case SND_SOC_DAIFMT_RIGHT_J:
-+		input_fmt |= NTP8835_INPUT_FMT_GSA_MODE;
-+		gsa_fmt |= NTP8835_GSA_RIGHT_J;
-+		break;
-+	case SND_SOC_DAIFMT_LEFT_J:
-+		input_fmt |= NTP8835_INPUT_FMT_GSA_MODE;
-+		break;
-+	}
-+
-+	ret = snd_soc_component_update_bits(component, NTP8835_INPUT_FMT,
-+					    NTP8835_INPUT_FMT_MASTER_MODE |
-+					    NTP8835_INPUT_FMT_GSA_MODE,
-+					    input_fmt);
-+
-+	if (!(input_fmt & NTP8835_INPUT_FMT_GSA_MODE) || ret < 0)
-+		return ret;
-+
-+	switch (params_width(params)) {
-+	case 24:
-+		gsa_fmt |= NTP8835_GSA_BS(0);
-+		break;
-+	case 20:
-+		gsa_fmt |= NTP8835_GSA_BS(1);
-+		break;
-+	case 18:
-+		gsa_fmt |= NTP8835_GSA_BS(2);
-+		break;
-+	case 16:
-+		gsa_fmt |= NTP8835_GSA_BS(3);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	gsa_fmt_mask = NTP8835_GSA_BS_MASK |
-+		       NTP8835_GSA_RIGHT_J |
-+		       NTP8835_GSA_LSB;
-+	return snd_soc_component_update_bits(component, NTP8835_GSA_FMT,
-+					     gsa_fmt_mask, gsa_fmt);
-+}
-+
-+static int ntp8835_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
-+{
-+	struct snd_soc_component *component = dai->component;
-+	struct ntp8835_priv *ntp8835 = snd_soc_component_get_drvdata(component);
-+
-+	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
-+	case SND_SOC_DAIFMT_I2S:
-+	case SND_SOC_DAIFMT_RIGHT_J:
-+	case SND_SOC_DAIFMT_LEFT_J:
-+		ntp8835->format = fmt & SND_SOC_DAIFMT_FORMAT_MASK;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+	return 0;
-+};
-+
-+static const struct snd_soc_dai_ops ntp8835_dai_ops = {
-+	.hw_params = ntp8835_hw_params,
-+	.set_fmt = ntp8835_set_fmt,
-+};
-+
-+static struct snd_soc_dai_driver ntp8835_dai = {
-+	.name = "ntp8835-amplifier",
-+	.playback = {
-+		.stream_name = "Playback",
-+		.channels_min = 1,
-+		.channels_max = 3,
-+		.rates = SNDRV_PCM_RATE_8000_192000,
-+		.formats = NTP8835_FORMATS,
-+	},
-+	.ops = &ntp8835_dai_ops,
-+};
-+
-+static struct regmap_config ntp8835_regmap = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = REG_MAX,
-+	.cache_type = REGCACHE_MAPLE,
-+};
-+
-+static int ntp8835_i2c_probe(struct i2c_client *i2c)
-+{
-+	struct ntp8835_priv *ntp8835;
-+	struct regmap *regmap;
-+	int ret;
-+
-+	ntp8835 = devm_kzalloc(&i2c->dev, sizeof(struct ntp8835_priv), GFP_KERNEL);
-+	if (!ntp8835)
-+		return -ENOMEM;
-+
-+	ntp8835->i2c = i2c;
-+
-+	ntp8835->reset = devm_reset_control_get_shared(&i2c->dev, NULL);
-+	if (IS_ERR(ntp8835->reset))
-+		return dev_err_probe(&i2c->dev, PTR_ERR(ntp8835->reset),
-+				     "Failed to get reset\n");
-+
-+	ret = reset_control_deassert(ntp8835->reset);
-+	if (ret)
-+		return dev_err_probe(&i2c->dev, PTR_ERR(ntp8835->reset),
-+				     "Failed to deassert reset\n");
-+
-+	dev_set_drvdata(&i2c->dev, ntp8835);
-+
-+	ntp8835_reset_gpio(ntp8835, true);
-+
-+	regmap = devm_regmap_init_i2c(i2c, &ntp8835_regmap);
-+	if (IS_ERR(regmap))
-+		return dev_err_probe(&i2c->dev, PTR_ERR(regmap),
-+				     "Failed to allocate regmap\n");
-+
-+	ret = devm_snd_soc_register_component(&i2c->dev, &soc_component_ntp8835,
-+					      &ntp8835_dai, 1);
-+	if (ret)
-+		return dev_err_probe(&i2c->dev, ret,
-+				     "Failed to register component\n");
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id ntp8835_i2c_id[] = {
-+	{ "ntp8835", 0 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(i2c, ntp8835_i2c_id);
-+
-+static const struct of_device_id ntp8835_of_match[] = {
-+	{.compatible = "neofidelity,ntp8835",},
-+	{.compatible = "neofidelity,ntp8835c",},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, ntp8835_of_match);
-+
-+static struct i2c_driver ntp8835_i2c_driver = {
-+	.probe = ntp8835_i2c_probe,
-+	.id_table = ntp8835_i2c_id,
-+	.driver = {
-+		.name = "NTP8835",
-+		.of_match_table = ntp8835_of_match,
-+	},
-+};
-+module_i2c_driver(ntp8835_i2c_driver);
-+
-+MODULE_AUTHOR("Igor Prusov <ivprusov@salutedevices.com>");
-+MODULE_DESCRIPTION("NTP8835 Audio Amplifier Driver");
-+MODULE_LICENSE("GPL");
++		.compatible = "marvell,cn10-xspi-nor",
++		.data = &marvell_driver_data,
+ 	},
+ 	{ /* end of table */}
+ };
 -- 
-2.34.1
+2.43.0
 
 
