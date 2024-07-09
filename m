@@ -1,140 +1,225 @@
-Return-Path: <linux-kernel+bounces-245021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112DD92AD1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:25:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBB8A92AD1E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 02:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD81C28235A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:25:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F96828159F
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 00:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8334A0A;
-	Tue,  9 Jul 2024 00:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262CC2AE69;
+	Tue,  9 Jul 2024 00:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="b9i60mlp";
-	dkim=pass (1024-bit key) header.d=xanderlent.com header.i=@xanderlent.com header.b="UY7iJU+q"
-Received: from pb-smtp2.pobox.com (pb-smtp2.pobox.com [64.147.108.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZPnhvpM1"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C450D10F2
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 00:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.108.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E5628399
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 00:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720484742; cv=none; b=WTEDr/s4iDE3K+inH5H5nVqvvBzxL4Aw0TfBtIXctqCgDqT27Hwm2WS0MftFoEEcfac5dnpEgP/PRafFN/6l/37g71IdGjxdvYuCyBZBOEv2ZFwowTZLvzC26rNLfJ6f/hFCztgQdPXddJahlDBl0HdBWq0SZMwAXS4iOqNvUG4=
+	t=1720484892; cv=none; b=CuEO4gbxCQizKD9bcy0oFmtq27iedoBkIAPiP4SojY5PeXFmQWIUSwmp+C3XUwbP7ABDku8/j5euploYApNoM/0eWvWzGMEtsIF2B3AD+Ho8SyWoRB8aLFisbXvYXxBuoo+CwaDK/yOyh1bNCUOZfobyWLq3RL/YTrxT599mtmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720484742; c=relaxed/simple;
-	bh=Jg/fyH7UKVIwiUWlPCTGYCi3w6sML/69oj+YOKqujis=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ikmfg1QG6bmQTEkqb3gw+OH5y5qLHrr6dPiNFTD8rXyuWHIQZiZQS95VHpWIpFNiMcHM6/2EYruOeEmHKJMVMPIkGd/tCMxJ2Oz7wDqPvAstmK3EtuHZY4ha7SyPW3NXf+yhuXpLjH48Tz3lGymYwyf/J9JCDoGSs5UlJrFKmo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xanderlent.com; spf=pass smtp.mailfrom=xanderlent.com; dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b=b9i60mlp; dkim=pass (1024-bit key) header.d=xanderlent.com header.i=@xanderlent.com header.b=UY7iJU+q; arc=none smtp.client-ip=64.147.108.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xanderlent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xanderlent.com
-Received: from pb-smtp2.pobox.com (unknown [127.0.0.1])
-	by pb-smtp2.pobox.com (Postfix) with ESMTP id 9555A2502F;
-	Mon,  8 Jul 2024 20:25:39 -0400 (EDT)
-	(envelope-from lx@xanderlent.com)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=pobox.com; h=from:date
-	:subject:mime-version:content-type:content-transfer-encoding
-	:message-id:to:cc; s=sasl; bh=Jg/fyH7UKVIwiUWlPCTGYCi3w6sML/69oj
-	+YOKqujis=; b=b9i60mlpdETCvX++SK+3/+LZil5UQfLmOA4m+O35JgiR0gxY1V
-	BliaZbtG8qv1AdYaKH6SfLTsKRPE8aUJUf+vw2FVriDstGKd0osM0kZb0o+xfxYz
-	IBIPkitxx4jVH6witcDk8y1GaRPyxY3FQNZsSW8XwM5MQeFYSfaN1XOHk=
-Received: from pb-smtp2.nyi.icgroup.com (unknown [127.0.0.1])
-	by pb-smtp2.pobox.com (Postfix) with ESMTP id 8C3122502E;
-	Mon,  8 Jul 2024 20:25:39 -0400 (EDT)
-	(envelope-from lx@xanderlent.com)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=xanderlent.com;
- h=from:date:subject:mime-version:content-type:content-transfer-encoding:message-id:to:cc; s=2021-09.pbsmtp; bh=Jg/fyH7UKVIwiUWlPCTGYCi3w6sML/69oj+YOKqujis=; b=UY7iJU+qlCKayLB+HxAAL1w5pp72/VNMVXo+aKUPVMNsilaHWFGa07C+3WWvujmoWwxF25EBfxbn2KL006Oa0j/XaC6fUS/sIvAcFjdtnF0VJU4wF2Gu0nqo+oykYWwlVrTcqkBULdMDUbAWGdc5gce0hU96euBSONIIApaiLBY=
-Received: from ultralight.local (unknown [172.58.229.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by pb-smtp2.pobox.com (Postfix) with ESMTPSA id 44A3A2502D;
-	Mon,  8 Jul 2024 20:25:37 -0400 (EDT)
-	(envelope-from lx@xanderlent.com)
-From: "Alexander F. Lent" <lx@xanderlent.com>
-Date: Mon, 08 Jul 2024 20:25:26 -0400
-Subject: [PATCH v2] accel/ivpu: Add missing MODULE_FIRMWARE metadata
+	s=arc-20240116; t=1720484892; c=relaxed/simple;
+	bh=IsZ6oW7Trf+eW/3lDR+xG2zNK36LG6LP59CDpe+n3vU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pKvfMMcW81b7CpTe6SW8fi/kL4QWdFkOYdFEaZ2s+KVC4IHXH0H55JFxOYOLO/K2j29nIHiorezpcktp4JgCprblGqdGQGSwQytGKGHXlTvwt5rddTBfCuLf97ZSg+Y/90sQiBxp5Oip58mG7K/8oUeU+GkeKclJncZwYvp0eN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZPnhvpM1; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e04196b7603so760136276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 17:28:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1720484886; x=1721089686; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UYM3zw5Ilnu3cOqCw9QUJr0rFrT7FZCvEIIlOa+MUGg=;
+        b=ZPnhvpM1WBQWuqvSHmlSpkGpvGbagNItv0FZyzPm6lJsL2Pkzgi+pORceCEWp3FP0x
+         PkKoX0znyewdZvs6YuRH7yBP00WZpWADuVuQhZ6ZZAXCVt4c1IidQtEgjjCNK+RTR3Tn
+         DvmbTgAx4Ym/5OjdSHCtwwr6v+744HFtOL3vA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720484886; x=1721089686;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UYM3zw5Ilnu3cOqCw9QUJr0rFrT7FZCvEIIlOa+MUGg=;
+        b=PTLd0QsLqyjc6qa7oejiQvLV2FyO2HRyIdnQlzCX5k98Kwhcgg0YCgQ3bmRBhpq90T
+         UnVrUNmH0gxHlyUptUAcVg+5ATvc6iGYX0bMQrnTqdEpQ8twWc2g54tYVsNSjxWDe6Wo
+         JLZ39lvpqhCthF5g8/ga0nTHnLHek4Dr8R2hsm8ofpab7S3amb45bEmuNpruuNHyDRm/
+         LEmcg2xxAbhcXnMPXYNJOQ5vf6V+QfusRfvGXg3jycadD0Pjpdn8U/5mocpe+LIWiSax
+         0T5QjaC85d5j+caB82K9wMGBDu6Z/ZlcwjP1D7P+JVNoQwwD1cv5QQncZzubK/nDFgkU
+         pZZA==
+X-Forwarded-Encrypted: i=1; AJvYcCWblkjyCL3mcdLAwhfe7zFatdNSEAWxVMHaDb7UgYlDqKl0kJy5m+mO5NdqhKScK8j+fhzSP+eEBC1c9qzRIc0l7eJ66S2Svz3yRI1O
+X-Gm-Message-State: AOJu0YyY3EDj86Bl9BsJ9xp79+nn+X9yAR1LmV2k4QJak1UD8x5qu0QD
+	Agjto1sgcB2kMi9nsV1OfaeojcE4Kc/RAp9mXXRDZevlZXiPEQlN1OncXT+uAcl7Nt1dDvdmWqL
+	m/U1Z
+X-Google-Smtp-Source: AGHT+IF38fAeYNCBTDccs4Raa0u1u/PZvGqzsc7Q8HkmO25bPvuXBIxX429jEWY216jXLPAETevyNg==
+X-Received: by 2002:a25:3187:0:b0:dff:3058:e30f with SMTP id 3f1490d57ef6-e041b0597bamr1347037276.21.1720484886413;
+        Mon, 08 Jul 2024 17:28:06 -0700 (PDT)
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com. [209.85.160.178])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b61b9c4c0dsm4241706d6.15.2024.07.08.17.28.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 17:28:03 -0700 (PDT)
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-44664ad946eso62751cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 17:28:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXl9FgTCSZsFbPPt9jTI5xcu+yMCMuAor4go1C21MjHCogjmwjw0JJDSAvVYR7d2ZXIuTusqlLSkgBazWowtciMkz1irNDTebTvqJ5M
+X-Received: by 2002:ac8:7a83:0:b0:447:ed90:7396 with SMTP id
+ d75a77b69052e-447fba65e4cmr1638641cf.24.1720484883356; Mon, 08 Jul 2024
+ 17:28:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240708-fix-ivpu-firmware-metadata-v2-1-78b953172026@xanderlent.com>
-X-B4-Tracking: v=1; b=H4sIAHWDjGYC/32OzQ6CMBAGX4X07JpSfvXkexgOC12liRSyrRVDe
- HcLiUe97ST7TWYRjtiQE+dkEUzBODPaCOqQiK5HeycwOrJQUuWykjnczAwmTM948PBCJhjIo0a
- PkGmpWl3Kqqy1iIKJKX7v8msTuUVH0DLart+Uv03buDfOj/zew0K6Kb4Nxb+GkEIKsbOtsrpQ+
- qQuM1pN/CDrj904iGZd1w/X1ln89gAAAA==
-To: "Alexander F. Lent" <lx@xanderlent.com>, 
- Jacek Lawrynowicz <jacek.lawrynowicz@linux.intel.com>, 
- Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>, 
- Oded Gabbay <ogabbay@kernel.org>, Jeffrey Hugo <quic_jhugo@quicinc.com>, 
- Daniel Vetter <daniel.vetter@ffwll.ch>, 
- Andrzej Kacprowski <andrzej.kacprowski@linux.intel.com>, 
- Krystian Pradzynski <krystian.pradzynski@linux.intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720484737; l=1820;
- i=lx@xanderlent.com; s=20240705; h=from:subject:message-id;
- bh=Jg/fyH7UKVIwiUWlPCTGYCi3w6sML/69oj+YOKqujis=;
- b=9rsy/xGAWfm0mmS7AcZaDR5U3eTRs6P2LO2AaJAlt70WUjBxulFQsBTMN+Ft6NEZT2Gp524P7
- TrN/KR0yEODAE3ACcj0MBHK9ZosfpzalC43Y4LLC+WZEt+DJxOqQzBA
-X-Developer-Key: i=lx@xanderlent.com; a=ed25519;
- pk=T7WKAI9F1J7lcthsLG4aBF+wzehTsa3GPyzJkh5is3k=
-X-Pobox-Relay-ID:
- C494A6DE-3D89-11EF-8113-965B910A682E-45904678!pb-smtp2.pobox.com
+References: <20240628182428.171031-1-tejasvipin76@gmail.com> <20240628182428.171031-3-tejasvipin76@gmail.com>
+In-Reply-To: <20240628182428.171031-3-tejasvipin76@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 8 Jul 2024 17:27:51 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=U=YJu-QS9qck-Q89UxwEEfitJHyk6-gGX7zCGNz9xF0w@mail.gmail.com>
+Message-ID: <CAD=FV=U=YJu-QS9qck-Q89UxwEEfitJHyk6-gGX7zCGNz9xF0w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] drm/panel: startek-kd070fhfid015: transition to
+ mipi_dsi wrapped functions
+To: Tejas Vipin <tejasvipin76@gmail.com>
+Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Modules that load firmware from various paths at runtime must declare
-those paths at compile time, via the MODULE_FIRMWARE macro, so that the
-firmware paths are included in the module's metadata.
+Hi,
 
-The accel/ivpu driver loads firmware but lacks this metadata,
-preventing dracut from correctly locating firmware files. Fix it.
+On Fri, Jun 28, 2024 at 11:25=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail.co=
+m> wrote:
+>
+> @@ -52,92 +52,63 @@ static inline struct stk_panel *to_stk_panel(struct d=
+rm_panel *panel)
+>  static int stk_panel_init(struct stk_panel *stk)
+>  {
+>         struct mipi_dsi_device *dsi =3D stk->dsi;
+> -       struct device *dev =3D &stk->dsi->dev;
+> -       int ret;
+> +       struct mipi_dsi_multi_context dsi_ctx =3D {.dsi =3D dsi};
+>
+> -       ret =3D mipi_dsi_dcs_soft_reset(dsi);
+> -       if (ret < 0) {
+> -               dev_err(dev, "failed to mipi_dsi_dcs_soft_reset: %d\n", r=
+et);
+> -               return ret;
+> -       }
+> -       mdelay(5);
+> +       mipi_dsi_dcs_soft_reset_multi(&dsi_ctx);
+>
+> -       ret =3D mipi_dsi_dcs_exit_sleep_mode(dsi);
+> -       if (ret < 0) {
+> -               dev_err(dev, "failed to set exit sleep mode: %d\n", ret);
+> -               return ret;
+> -       }
+> -       msleep(120);
+> +       if (!dsi_ctx.accum_err)
+> +               mdelay(5);
 
-Fixes: 9ab43e95f922 ("accel/ivpu: Switch to generation based FW names")
-Fixes: 02d5b0aacd05 ("accel/ivpu: Implement firmware parsing and booting")
-Signed-off-by: Alexander F. Lent <lx@xanderlent.com>
----
-Hi Jacek,
+I'm curious: why isn't the above just "mipi_dsi_msleep(5)" and get rid
+of the "if" test?
 
-Thank you for the review. I've updated the patch based on your recommendations.
-Please let me know what you think.
----
-Changes in v2:
-- Only annotate the module with the production firmware paths, per review.
-- Drop macros for de-duping firmware fileames, just use string literals, per review.
-- Link to v1: https://lore.kernel.org/r/20240705-fix-ivpu-firmware-metadata-v1-1-704b73852d92@xanderlent.com
----
- drivers/accel/ivpu/ivpu_fw.c | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/accel/ivpu/ivpu_fw.c b/drivers/accel/ivpu/ivpu_fw.c
-index 1457300828bf..38125cdc8510 100644
---- a/drivers/accel/ivpu/ivpu_fw.c
-+++ b/drivers/accel/ivpu/ivpu_fw.c
-@@ -58,6 +58,12 @@ static struct {
- 	{ IVPU_HW_40XX, "intel/vpu/vpu_40xx_v0.0.bin" },
- };
- 
-+/* Add module metadata for the production firmware paths.
-+ * This needs to be kept in sync with fw_names above.
-+ */
-+MODULE_FIRMWARE("intel/vpu/vpu_37xx_v0.0.bin");
-+MODULE_FIRMWARE("intel/vpu/vpu_37xx_v0.0.bin");
-+
- static int ivpu_fw_request(struct ivpu_device *vdev)
- {
- 	int ret = -ENOENT;
+> +       mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
+>
+> -       mipi_dsi_generic_write_seq(dsi, DSI_REG_MCAP, 0x04);
+> +       mipi_dsi_msleep(&dsi_ctx, 120);
+> +
+> +       mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_MCAP, 0x04);
+>
+>         /* Interface setting, video mode */
+> -       mipi_dsi_generic_write_seq(dsi, DSI_REG_IS, 0x14, 0x08, 0x00, 0x2=
+2, 0x00);
+> -       mipi_dsi_generic_write_seq(dsi, DSI_REG_IIS, 0x0C, 0x00);
+> -       mipi_dsi_generic_write_seq(dsi, DSI_REG_CTRL, 0x3A, 0xD3);
+> +       mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_IS, 0x14, 0x08=
+, 0x00, 0x22, 0x00);
+> +       mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_IIS, 0x0C, 0x0=
+0);
+> +       mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_CTRL, 0x3A, 0x=
+D3);
 
----
-base-commit: 22a40d14b572deb80c0648557f4bd502d7e83826
-change-id: 20240704-fix-ivpu-firmware-metadata-3d02bd60768d
+nit: While touching these lines, it'd be nice to transition them to
+lower case hex (3a vs 3A).
 
-Best regards,
--- 
-Alexander F. Lent <lx@xanderlent.com>
 
+> -       ret =3D mipi_dsi_dcs_set_display_brightness(dsi, 0x77);
+> -       if (ret < 0) {
+> -               dev_err(dev, "failed to write display brightness: %d\n", =
+ret);
+> -               return ret;
+> -       }
+> +       mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, 0x77);
+>
+> -       mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_WRITE_CONTROL_DISPLAY,
+> -                              MIPI_DCS_WRITE_MEMORY_START);
+> +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_WRITE_CONTROL_DIS=
+PLAY,
+> +                                    MIPI_DCS_WRITE_MEMORY_START);
+>
+> -       ret =3D mipi_dsi_dcs_set_pixel_format(dsi, 0x77);
+> -       if (ret < 0) {
+> -               dev_err(dev, "failed to set pixel format: %d\n", ret);
+> -               return ret;
+> -       }
+> +       mipi_dsi_dcs_set_pixel_format_multi(&dsi_ctx, 0x77);
+>
+> -       ret =3D mipi_dsi_dcs_set_column_address(dsi, 0, stk->mode->hdispl=
+ay - 1);
+> -       if (ret < 0) {
+> -               dev_err(dev, "failed to set column address: %d\n", ret);
+> -               return ret;
+> -       }
+> +       mipi_dsi_dcs_set_column_address_multi(&dsi_ctx, 0, stk->mode->hdi=
+splay - 1);
+>
+> -       ret =3D mipi_dsi_dcs_set_page_address(dsi, 0, stk->mode->vdisplay=
+ - 1);
+> -       if (ret < 0) {
+> -               dev_err(dev, "failed to set page address: %d\n", ret);
+> -               return ret;
+> -       }
+> +       mipi_dsi_dcs_set_page_address_multi(&dsi_ctx, 0, stk->mode->vdisp=
+lay - 1);
+
+Nice to get rid of all of these special case "if" tests and error handling!=
+ :-)
+
+optional nit: it feels like there are two many blank lines separating
+single line statements. Maybe get rid of a few of the blank lines?
+
+>
+> -       return 0;
+> +       return dsi_ctx.accum_err;
+>  }
+>
+>  static int stk_panel_on(struct stk_panel *stk)
+>  {
+>         struct mipi_dsi_device *dsi =3D stk->dsi;
+> -       struct device *dev =3D &stk->dsi->dev;
+> -       int ret;
+> +       struct mipi_dsi_multi_context dsi_ctx =3D {.dsi =3D dsi};
+>
+> -       ret =3D mipi_dsi_dcs_set_display_on(dsi);
+> -       if (ret < 0)
+> -               dev_err(dev, "failed to set display on: %d\n", ret);
+> +       mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
+>
+> -       mdelay(20);
+> +       if (!dsi_ctx.accum_err)
+> +               mdelay(20);
+
+Like above, not sure why this isn't mipi_dsi_msleep(20).
+
+
+-Doug
 
