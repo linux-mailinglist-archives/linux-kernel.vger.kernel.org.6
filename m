@@ -1,90 +1,107 @@
-Return-Path: <linux-kernel+bounces-246510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E842592C2E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:56:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D87792C264
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DE9AB223B9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:56:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D58F228424C
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:27:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00DB617B047;
-	Tue,  9 Jul 2024 17:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B934417B031;
+	Tue,  9 Jul 2024 17:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="rF65cSGn"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m9wSRZF8"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00E21B86EF;
-	Tue,  9 Jul 2024 17:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07EE7F476;
+	Tue,  9 Jul 2024 17:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720547807; cv=none; b=QXuytOQAXAVvYnws95xVym+gUsreMKOWiSrm93ywgddAPwUFnyGvHappXY8fCvJEMpl2ZakzfLr/iE907TGKo7/bKsLXxDYkQMPnfiOT+jZhE+nHcuBpUQ/CEYkGXcOiwCWaKLdEghOrGA+Vcms6yLYdQ8i6EokNk70MCtJQaHk=
+	t=1720546019; cv=none; b=KJmW2ASHJIoY4AFZGClICjgmUzn7aYuy9dyJNtFp4hLtvUJWwFKAhxizz7W1Zmrjh5F6w1X0MBdcqC/ImZ1Q6IyPvaobxr2DwQEG7FTfSGW85wj+IPitMb/8tuzaHytp//mnKNT6YXVYKlNOQUJvMCvAGP45fDgs8Lbl+Jihgzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720547807; c=relaxed/simple;
-	bh=lqIfszPJjpiNasWfZrcbbg6gcB3GlCMI5AiZWnuHdVI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=JYE87bm9J+zD/8eO7ohKdPxd7Exe9WuMe0+rZpfSbVCJRtsbz8tkP6RH6k2BBtyq9WEtzgnRtCzp93eCwhDCOuKxw1bVCnlw91oD9Tk0a7Y9MK+gIHsO5NxXsEgLhvP0Uxasbmsk4ex4iGAOgL0rA8aOWFQgxOst+YgIxUE2bzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=rF65cSGn; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1720545992;
-	bh=lqIfszPJjpiNasWfZrcbbg6gcB3GlCMI5AiZWnuHdVI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=rF65cSGn0PVhYU0/wM2M+ak/jAdLosvZRg3k1Jg9d+Q+1Rpl9XvxKWkthpKTPuAc8
-	 eWXR17uJx32gbd8Lvn6C9WmqQGzyuOoiO8H8mwfx6wl1vPhnstMI6F/AnNkg/GOMCG
-	 mNwC7D9i2ywQLMTc5HRwR/cDkj/eZTIjst3od5c4=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id B98A540364; Tue,  9 Jul 2024 10:26:32 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id B6A4640253;
-	Tue,  9 Jul 2024 10:26:32 -0700 (PDT)
-Date: Tue, 9 Jul 2024 10:26:32 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Kees Cook <kees@kernel.org>
-cc: Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-    Tony Luck <tony.luck@intel.com>, 
-    Nick Desaulniers <ndesaulniers@google.com>, 
-    Miguel Ojeda <ojeda@kernel.org>, Marco Elver <elver@google.com>, 
-    Nathan Chancellor <nathan@kernel.org>, Hao Luo <haoluo@google.com>, 
-    Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-    Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-    Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Roman Gushchin <roman.gushchin@linux.dev>, 
-    Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-    "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
-    Mark Rutland <mark.rutland@arm.com>, Jakub Kicinski <kuba@kernel.org>, 
-    Petr Pavlu <petr.pavlu@suse.com>, 
-    Alexander Lobakin <aleksander.lobakin@intel.com>, 
-    Tony Ambardar <tony.ambardar@gmail.com>, linux-kernel@vger.kernel.org, 
-    linux-mm@kvack.org, linux-hardening@vger.kernel.org
-Subject: Re: [RFC][PATCH 0/4] slab: Allow for type introspection during
- allocation
-In-Reply-To: <20240708190924.work.846-kees@kernel.org>
-Message-ID: <a1fd42b5-50b7-1360-4fd0-8f590dc08e02@gentwo.org>
-References: <20240708190924.work.846-kees@kernel.org>
+	s=arc-20240116; t=1720546019; c=relaxed/simple;
+	bh=xEGa7zkjzsiIbiqcbCacwWsNu1ijTpLI6cSiJFBTmDM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QAbmC1l3HSqFxAZ5HubdtmLL6cWzrlhVnaMwGGOX+YIAciP2vqb+SzPY9Adq/X4en5T2yxMA8cbsD2O6a6tomNjgZ7hWbeH81ecmJUMoP9EbbfIocbuTnClWaM6gI6fy2pMQRs1nI+10pW/QORIPs9Gg4Y5lnCx5xOIJ6Z/fed0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m9wSRZF8; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70b3c0a00f2so1307316b3a.3;
+        Tue, 09 Jul 2024 10:26:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720546017; x=1721150817; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xEGa7zkjzsiIbiqcbCacwWsNu1ijTpLI6cSiJFBTmDM=;
+        b=m9wSRZF84Orp8AU3K8K9lOF1qMOMy6uLszId+2xYH0K2T/y/mBW7f+URi+oRYGfiv9
+         KQWYx9zwOj4uDPpGIWHhXycmuwzT3R2tA9plq/03FJ09wNdNXEFooM5zoB0qY3IywYBV
+         QKt20Y7T8s92+Tkgc5ZacSPqMokmaBEwv7Bo9g19KLjrRTTpIBW43riq1Zd/uJKDKmir
+         kGULSWBMfp/hwClJRmZlePCDYBkyRlq6fYFibFOPeHqSn/BxtYVwpCyRff8YNWB0ko04
+         45oXcnJb656xiKUxhCD9RPYXvSKcVEG3frS8rxeomHfWLE/fDGZoy/Q7dcuuG0WtdR5k
+         Ewog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720546017; x=1721150817;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xEGa7zkjzsiIbiqcbCacwWsNu1ijTpLI6cSiJFBTmDM=;
+        b=EOITeq4nTdNI5bN4YVL0oAijXkTRC2a7HzJmCQkNlCGBpKgFcNNXtfJrNjivJdygMX
+         AYxfYTTb5qXH6kFhShfjrGKeJIhntZCkv+ZlaGctAK7WMQ0HBTk4cG+Ojpa8XcyOJ3sI
+         Z5+LU/9tqMqEm6YMc/XFiFuZ8YcnDb8Tv6qk9CFIwNZe8DNu2bBJZjRROyvKVLMjkyX6
+         EjnjM/DnPt43iI/hE/fpnTfDpiZWg7kBMG4VNN3SAM0Yzk2UOYecWZpXtVjIzL2fob+d
+         3QWC3P9WQKP4pMjoOo2qx9l0Y186jz4/3u8Vfbxw27HdtZRnoT/flMYLO1KTN5TehJ1A
+         YkBw==
+X-Forwarded-Encrypted: i=1; AJvYcCW57OkHNYYI70buTh8uEeXnoolci+msHcbjQwFSlXv3usGbsViguSgFPSgpZRSkoJncX5IZLWujg2gSGDvNHQqS3iOpWvVbB0sxBIQResN4hO/8ptDLu6Nwix8J8FRg614MpLgVNDSlNzFjybccZdkC5fYNGdPIiZlQSWWjsR3fIZa8zLTaX2cMF4k=
+X-Gm-Message-State: AOJu0Yxl39kXNOJPTHdKaGffaWmWWYGCBiYVqjnE62BTQQFMSy/ht10K
+	GJ34meUB368iQReShnbYcEDtbwovLseRbheowr2IpzmNo4heumGUIxjI08ksUjxCawRYaafapa8
+	PJkeHbN0FmIIwMu2zIiH79T8hlG8C416q/NY=
+X-Google-Smtp-Source: AGHT+IFD/VyEdp6BX4ESg9u5UEPG6dtbbRDyeOinfTVoM+xlvEchxrjSSX7hROo3qyMmwbS5fz9U9VEDbFyQRuqBE/k=
+X-Received: by 2002:a05:6a21:194:b0:1c2:9d88:f2a7 with SMTP id
+ adf61e73a8af0-1c29d88f3f1mr2016849637.52.1720546016963; Tue, 09 Jul 2024
+ 10:26:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+References: <20240709160615.998336-1-ojeda@kernel.org> <20240709160615.998336-12-ojeda@kernel.org>
+In-Reply-To: <20240709160615.998336-12-ojeda@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 9 Jul 2024 19:26:45 +0200
+Message-ID: <CANiq72=kCJB-g03s6fHtSYBWTG_MT3yMW0YvehnAhHP_edHPcw@mail.gmail.com>
+Subject: Re: [PATCH v2 11/13] kbuild: rust: add `rustc-version` support
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, 
+	Finn Behrens <me@kloenk.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 8 Jul 2024, Kees Cook wrote:
-
+On Tue, Jul 9, 2024 at 6:07=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
+e:
 >
->            obj = kmalloc(obj, gfp);
+> +$(error-if,$(success,test -z "$(rustc-info)"),Sorry$(comma) this Rust co=
+mpiler is not supported.)
 
-Could we avoid repeating "obj" in this pattern?
+Bah, this is broken, I just noticed in my CI that I didn't handle the
+"Rust not installed" case.
 
-F.e.
+Anyway, this patch (and the next one) are not important for the
+series, I will just drop them and send them independently next cycle
+to Kbuild instead. I should have done that anyway, even if they were
+correct.
 
- 	KMALLOC(obj, gfp);
-
-instead?
+Cheers,
+Miguel
 
