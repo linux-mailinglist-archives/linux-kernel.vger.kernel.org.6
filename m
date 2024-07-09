@@ -1,166 +1,121 @@
-Return-Path: <linux-kernel+bounces-245596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4358F92B4C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:08:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F21F92B4C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:09:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DB8E1C21FD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:08:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED28E283C86
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 10:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04F81581E3;
-	Tue,  9 Jul 2024 10:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F22156862;
+	Tue,  9 Jul 2024 10:08:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OG5NbqLD"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="egnpSShm"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2673156677;
-	Tue,  9 Jul 2024 10:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA35156654;
+	Tue,  9 Jul 2024 10:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720519650; cv=none; b=DRADQNkC34yMG1SEGZdBV97eK4OcI9+whWZr0kYXh1oHp5v1LJdP9/pLPHUKfofvXHn6z5WGWF6umCcr1wXy/sNbaOsz3vih+0mq8i3gnQHZAuiL3R0zA/zfKrqvaL7/kHSjWuojV4utRwzD3wlKp58sAK9HQjT/QVIlRI0JTkw=
+	t=1720519710; cv=none; b=PX70eDJR1TtkB9cfBiZ4DYNeLyYB1DoREUVVaCA6IY58+8u/tZflyXZ9yk4eQCgrOQDve1LeJnKMt4rcUVaHWq0xe3wDdb92Xe80h35V5/PNqJUeMmRJZZnqIw3pRc27DDRiCnrNKdWLapSUYL/XxQ5yvRiarQy7Mbr1fEP7ViE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720519650; c=relaxed/simple;
-	bh=5KKw6M74A/DclraUTuoBJCsigKAUo94+LXOXkaaNZcc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ysezp/X4hLQVaSIH/lqRDP6dOcLLOpVNMJPtd6+PtJE7QQQWF90Hn/ccDimT15c3H4XATnSAQvebhXapDeDefmUyAxh6hZGnigNatIXzYQpTSPVh3usVdT35fK2uV1ceECvVBdeWPJA7lzHsPr07ykgkCCkBPC2wTcI4nHxgo0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OG5NbqLD; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 89A6C4000D;
-	Tue,  9 Jul 2024 10:07:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720519646;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ES8mi7d+KSw4EqedKB92e7v4sIMF0mwW3Ict+VP51AU=;
-	b=OG5NbqLDCZjIVYYEUEpydKqEgnUS2ISHAhyus72wN8mPU9VLi8sNlv2ZeyIq+gaPg/twZO
-	DSk9KwzEfjEtR/MVQPOBArnRqobi0nK4vodab2PZIGka9JLfE/yWCZnFbBEbNWFlvIfkIl
-	rNholjGdHPOw+N8qT1cQF9VPoKXbVb86Q6Ik0ItnuAuu6VUbMMyZEBNHsDXwpTGkDhk130
-	1FUzp2yeuX7fVYc2xjRgrB+7JpCSdV6zwyIxeGrxbo0j4+JmIERL6Ovy6psxcDMkhBv2y/
-	NOme7KpDrtvuNmv4ifF5hitt6J0ZsfvMHfyAEAghDIYngs7x6GIdY5A3TkdI+w==
-From: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Date: Tue, 09 Jul 2024 12:07:20 +0200
-Subject: [PATCH v3 5/5] riscv: dts: sophgo: Add LicheeRV Nano board device
- tree
+	s=arc-20240116; t=1720519710; c=relaxed/simple;
+	bh=nWj7z1TorOfWyEp+z7svFUdKhlCBxkJriO3mSH5MqNU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UilBH7rwE4MdGCnskaibUYrkMS+tEOAHSZV2pEYYa1TLky4L+fXzWl+FGGBEfyN0jag9Vf6UmR3Nlj8M+RmDQeGRqHkZ8wSLOi+OUBJTKlYGqBao84XQkcwVngl2OQJ9Yi3/raDqZ9FqRar52vSblLMelxu4NnNzb3FxEae4OLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=egnpSShm; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2c965efab0fso2915452a91.3;
+        Tue, 09 Jul 2024 03:08:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720519708; x=1721124508; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nWj7z1TorOfWyEp+z7svFUdKhlCBxkJriO3mSH5MqNU=;
+        b=egnpSShmb9edsXpdBTB9CUFhCa1AwKvluRevpRC41oI0wNcpi0MMJRLcDcRXYMwii/
+         OVGTtTJQ4fOHUy7FMWfH0ubzjmme1tjpWERTgy7agf9nWG5yu4PinEYEKPAYetMcZqKo
+         i17Mn4AhvMc9jn6fRDX6/g5BKsqQ1LcJ+cM8IH4oWbHYsZKath/qey0cDoR1LgbM6GTT
+         CG8pmI3Uedg33k3GIal7Q4vKxGDLwtIPhSty4JDfAerV2SPdzb/bADF6cAqQjOQP1/uq
+         fOX3lF6I2Kf2wqnt+Bdjq938jbaO3RiQxaDCVnq90oEi3ad2I/Z4T63oBmPthEr7nUKB
+         r4iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720519708; x=1721124508;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nWj7z1TorOfWyEp+z7svFUdKhlCBxkJriO3mSH5MqNU=;
+        b=jGvNj3mF9NvSECmrsRTitGGQX55uyJMkxXEq2IDYaiNgVWl6dtHxgSsuB5TQyM7Uf4
+         hcKo0nA8UEJ/6o1OPEtp7gBSrRtc3wLBIV9m5+cnYEtaEpOzEYviUT0sElodPgJBg9bl
+         PeR1dV/y9Tc1g4WhoHeBn2mvagBxUxx7f3LP5rvJpn20Kj/+e66C6RZKz4gXwlrtzsNQ
+         63SS2Tbp+10XLal0rorQm5TU0ma6ESCdKZOwkf7mEjx2Ll8Jn4j4GIIX1ZcTzmV20mbB
+         3GIYxBkQMeDcVNp5deUGu+cv9lQGqvPeFIzOaWQW/M2mk7eK9wmFJD9f0Yoeatz7vtcS
+         2AQA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLmy7lXZxpP8OSE9rko3no5EuaNuWr6AATooWsmPaEVmgUBFUM3Q6sg+B0cQMBGJsQecBXZ6H0lyFgn8t4ZR/Pms8070fE3GjON5We0WaBW8hRxn3tLXKNsB3NBP0Aefq1rnAZVHF0RBPwPptMIfXLjTyQVPFIm/xbt0q7JGodu8xkqJN/gy22Q4X6
+X-Gm-Message-State: AOJu0YwIrf1c2mZdMNlFVUUuLNrMN/LIyX9L2wVuMnKRZ2cCq4KAQyOD
+	jWpuz9oKeYKIDFC/Aib8zcsR+k4XBQWyvQY2UTNcjZG16exSu/FzcPq11e0cuHwP6/nVBOvOLsu
+	jLt6Zao9vT0GklGrP7+/yMrX+ROo=
+X-Google-Smtp-Source: AGHT+IHld6WdM8gyICJ9UQ7iwE27i5HdUoIjn7RXg8Wy49Z5KwCbryiZ6Jujq/ORtNhFyAz2hQmskxPe2HS4RdJUfiY=
+X-Received: by 2002:a17:90a:bd87:b0:2c2:e45b:ecd with SMTP id
+ 98e67ed59e1d1-2ca35c3aa03mr1507835a91.12.1720519708252; Tue, 09 Jul 2024
+ 03:08:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240709-sg2002-v3-5-af779c3d139d@bootlin.com>
-References: <20240709-sg2002-v3-0-af779c3d139d@bootlin.com>
-In-Reply-To: <20240709-sg2002-v3-0-af779c3d139d@bootlin.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>, 
- Chao Wei <chao.wei@sophgo.com>
-Cc: Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>, 
- Samuel Holland <samuel.holland@sifive.com>, 
- Thomas Gleixner <tglx@linutronix.de>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-riscv@lists.infradead.org, 
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-X-Mailer: b4 0.14.0
-X-GND-Sasl: thomas.bonnefille@bootlin.com
+References: <20240705111455.142790-1-nmi@metaspace.dk> <ZoxdRjpy2hRndqmc@bombadil.infradead.org>
+In-Reply-To: <ZoxdRjpy2hRndqmc@bombadil.infradead.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 9 Jul 2024 12:08:16 +0200
+Message-ID: <CANiq72=VU+PHfkiq8HokfeCEKvQoeBiUaB76XbW6s3f2zYmEtA@mail.gmail.com>
+Subject: Re: [PATCH] rust: add `module_params` macro
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Andreas Hindborg <nmi@metaspace.dk>, Miguel Ojeda <ojeda@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Adam Bratschi-Kaye <ark.email@gmail.com>, 
+	Sami Tolvanen <samitolvanen@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-LicheeRV Nano B [1] is an embedded development platform based on the SOPHGO
-SG2002 chip, the B(ase) version is deprived of Wifi/Bluetooth and Ethernet.
+On Mon, Jul 8, 2024 at 11:42=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.org=
+> wrote:
+>
+> The rationale here is that a rust binding means commitment then also
+> from fresh blood to help co-maintain review C / Rust for exising code
+> when there is will / desire to collaborate from an existing C maintainer.
+>
+> I realize this may be a lot to ask, but I think this is one of the
+> responsible ways to ask to scale here.
 
-Add only support for UART and SDHCI.
+Yeah, there have been different approaches for this taken by different
+subsystems -- it depends on their constraints and how much the
+submitter can commit to.
 
-Link: https://wiki.sipeed.com/hardware/en/lichee/RV_Nano/1_intro.html [1]
+For instance, some maintainers may want to keep being the maintainers
+of both Rust and C. Some want that the submitter becomes a new
+co-maintainer in the subsystem and eventually maintainers both C and
+Rust. Some prefer to have a new maintainer for the Rust side only,
+i.e. considering Rust as a new section of the subsystem with a new
+`MAINTAINERS` entry and all.
 
-Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
----
- arch/riscv/boot/dts/sophgo/Makefile                |  1 +
- .../boot/dts/sophgo/sg2002-licheerv-nano-b.dts     | 54 ++++++++++++++++++++++
- 2 files changed, 55 insertions(+)
+On top of that, some allow the C and Rust sides to be independent, to
+the point of allowing temporary breakage on the Rust side if the new
+maintainers commits to be quick fixing it (though I have my
+reservations about how well that would eventually work if more
+core/common subsystems start doing that -- linux-next could be broken
+a lot of the time for the Rust side).
 
-diff --git a/arch/riscv/boot/dts/sophgo/Makefile b/arch/riscv/boot/dts/sophgo/Makefile
-index 57ad82a61ea6..47d4243a8f35 100644
---- a/arch/riscv/boot/dts/sophgo/Makefile
-+++ b/arch/riscv/boot/dts/sophgo/Makefile
-@@ -1,4 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
- dtb-$(CONFIG_ARCH_SOPHGO) += cv1800b-milkv-duo.dtb
- dtb-$(CONFIG_ARCH_SOPHGO) += cv1812h-huashan-pi.dtb
-+dtb-$(CONFIG_ARCH_SOPHGO) += sg2002-licheerv-nano-b.dtb
- dtb-$(CONFIG_ARCH_SOPHGO) += sg2042-milkv-pioneer.dtb
-diff --git a/arch/riscv/boot/dts/sophgo/sg2002-licheerv-nano-b.dts b/arch/riscv/boot/dts/sophgo/sg2002-licheerv-nano-b.dts
-new file mode 100644
-index 000000000000..fc98b6a0ddf7
---- /dev/null
-+++ b/arch/riscv/boot/dts/sophgo/sg2002-licheerv-nano-b.dts
-@@ -0,0 +1,54 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright (C) 2024 Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-+ */
-+
-+/dts-v1/;
-+
-+#include "sg2002.dtsi"
-+
-+/ {
-+	model = "LicheeRV Nano B";
-+	compatible = "sipeed,licheerv-nano-b", "sipeed,licheerv-nano", "sophgo,sg2002";
-+
-+	aliases {
-+		gpio0 = &gpio0;
-+		gpio1 = &gpio1;
-+		gpio2 = &gpio2;
-+		gpio3 = &gpio3;
-+		serial0 = &uart0;
-+		serial1 = &uart1;
-+		serial2 = &uart2;
-+		serial3 = &uart3;
-+		serial4 = &uart4;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&osc {
-+	clock-frequency = <25000000>;
-+};
-+
-+&sdhci0 {
-+	status = "okay";
-+	bus-width = <4>;
-+	no-1-8-v;
-+	no-mmc;
-+	no-sdio;
-+	disable-wp;
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-+
-+&uart1 {
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+};
+But, yes, I think Rust is a great opportunity to get new
+co-maintainers, as well as getting new developers involved with kernel
+maintenance in general, which could help with other issues too.
 
--- 
-2.45.2
-
+Cheers,
+Miguel
 
