@@ -1,157 +1,164 @@
-Return-Path: <linux-kernel+bounces-246470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BAA392C217
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:15:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5629E92C205
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 517101C230E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:15:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12018294065
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0ED18D4A5;
-	Tue,  9 Jul 2024 17:07:33 +0000 (UTC)
-Received: from relay161.nicmail.ru (relay161.nicmail.ru [91.189.117.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31EE2189F58;
+	Tue,  9 Jul 2024 16:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="VEYdgSfR"
+Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1029818C198;
-	Tue,  9 Jul 2024 17:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.189.117.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782F0189F4C
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 16:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720544853; cv=none; b=BhCrBRlj8YqHp/VqTRdRTUTHXN4YORfsRw0iMt4MFjgnk1pXAvkWW1MAg2wnxpbPR7r4VCzAKJ0KKLHw3P8qRC5xpN/kCRVZhM0naFkF481YECaZvxdRXyYxQ91Mkt/5CABz3YBwFmvNF83Q7Ubq+iUE1mAkVHAVVmuh3NDcZmU=
+	t=1720544284; cv=none; b=akwb0CnjGQ9EiJlwEZkLM17EXtG44HYjjOxuZEJvyVHa3S7jArKDSW7Wsi8dYn1qRb76AZL9b8fkic7T0NHyy2pp/HpWTQ6UkNCEld6AWlih8cZcNwYPKVe2YN3CTUCUcCF/JLynlluud5NeqFAj7ZLpoUqJe7GiqBflapLbe0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720544853; c=relaxed/simple;
-	bh=wGUjfacfqZIc4tuQ1brrCye1gLHVU1GVgMpl3ErvS40=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jS/cCs52c3QyqtjnDT11BAFephXlLIGHMS/Qe5dw27Hpal51QPJgeHv3JS6Iyuq/S0xqjoijOvOEhj+YdrsbvA7+MOkwq7hPJjq46808ma+TZCNrwz7Ce8vGKvE4mTVNfkgAr0PaiSwS/JPW9EQOnlIP37oubLxAuKuo5sKRKG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ancud.ru; spf=pass smtp.mailfrom=ancud.ru; arc=none smtp.client-ip=91.189.117.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ancud.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ancud.ru
-Received: from [10.28.136.255] (port=24526 helo=mitx-gfx..)
-	by relay.hosting.mail.nic.ru with esmtp (Exim 5.55)
-	(envelope-from <kiryushin@ancud.ru>)
-	id 1sRE6q-0000HJ-6P;
-	Tue, 09 Jul 2024 19:54:33 +0300
-Received: from [87.245.155.195] (account kiryushin@ancud.ru HELO mitx-gfx..)
-	by incarp1105.mail.hosting.nic.ru (Exim 5.55)
-	with id 1sRE6q-00FmHT-2q;
-	Tue, 09 Jul 2024 19:54:32 +0300
-From: Nikita Kiryushin <kiryushin@ancud.ru>
-To: Michael Chan <mchan@broadcom.com>
-Cc: Nikita Kiryushin <kiryushin@ancud.ru>,
-	Pavan Chebbi <pavan.chebbi@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	Michael Chan <michael.chan@broadcom.com>
-Subject: [PATCH net-next v3] tg3: Remove residual error handling in tg3_suspend
-Date: Tue,  9 Jul 2024 19:54:10 +0300
-Message-Id: <20240709165410.11507-1-kiryushin@ancud.ru>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720544284; c=relaxed/simple;
+	bh=nkTWMGfjEyh1vvy7M5TLEzkpGoCAbgKFsJFG64WstwE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eVHcygSYN4tpf0LkB2PjqTFfgupRsSDaMu7G6F7G5R+cXt42qq6fV411eCc6EtivfHv7T1G1VMRqeKUf96kFHWx4Jl8P1tOX9dg51HbJ5MIFWgJI9aGP0z+WtNYncPaNgDsU6jflfSYftiax8B2M8xlurEPn5M93D+GJIUQNf7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=VEYdgSfR; arc=none smtp.client-ip=148.163.147.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0134422.ppops.net [127.0.0.1])
+	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469G2xj0025294;
+	Tue, 9 Jul 2024 16:56:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pps0720; bh=xFASJwdgR+cb5+o7gVSxSuY
+	ML2SzklMlZnUynN7IJA0=; b=VEYdgSfROL6G5DJhp+vkx/g3ybkpPAEKlVCBuMJ
+	8neEVSdGBA1kL/h0fYGo9+bdNhL2u6394RHRgSQtIq6f67MF4vVHcXHdEmR1z4SF
+	PS0HEvUBmCf9VWW7qm3AjabEtNXLdI1vztE7BANHR8Nj1Dls/sALG+DR+Tf6Xoof
+	leOq2kWZ449pPZZIaAylae0s2CvLhNox948u6zf3VsP9et8KDmAIITP/dWa6wp5y
+	Q3EivPIRbzqjkvnCI3mZ1kelbGV8wh+UKmaUSPJBl5N6XHeNXXxK3lvrXNy/Cp59
+	oaVabVKy2LdNk2H0gY+J9DySXPhSKUm9lplq2aEbixUvSoA==
+Received: from p1lg14881.it.hpe.com ([16.230.97.202])
+	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 408x1xnppp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 16:56:33 +0000 (GMT)
+Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id D12C88059E9;
+	Tue,  9 Jul 2024 16:56:32 +0000 (UTC)
+Received: from swahl-home.5wahls.com (unknown [16.231.227.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id 5BFD2801D88;
+	Tue,  9 Jul 2024 16:56:28 +0000 (UTC)
+Date: Tue, 9 Jul 2024 11:56:26 -0500
+From: Steve Wahl <steve.wahl@hpe.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Steve Wahl <steve.wahl@hpe.com>, Ard Biesheuvel <ardb@kernel.org>,
+        Ashish Kalra <ashish.kalra@amd.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        linux-kernel@vger.kernel.org, Pavin Joseph <me@pavinjoseph.com>,
+        Eric Hagberg <ehagberg@gmail.com>, Simon Horman <horms@verge.net.au>,
+        Eric Biederman <ebiederm@xmission.com>, Dave Young <dyoung@redhat.com>,
+        Sarah Brofeldt <srhb@dbc.dk>, Russ Anderson <rja@hpe.com>,
+        Dimitri Sivanich <sivanich@hpe.com>,
+        Hou Wenlong <houwenlong.hwl@antgroup.com>,
+        Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
+        Yuntao Wang <ytcoode@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
+        Joerg Roedel <jroedel@suse.de>, Michael Roth <michael.roth@amd.com>
+Subject: Re: [PATCH 0/3] Resolve problems with kexec identity mapping
+Message-ID: <Zo1rugBl5WWy-1LJ@swahl-home.5wahls.com>
+References: <20240708190724.GIZow47G0J8vO6J3ee@fat_crate.local>
+ <Zow-AXsLHjU6gfET@swahl-home.5wahls.com>
+ <20240708195810.GKZoxE0pRWHEUljjnQ@fat_crate.local>
+ <ZoxOt1_w7nblRQCv@swahl-home.5wahls.com>
+ <CAMj1kXGA8zG95WutMgVgeb-M7oQKJrVO6QWNzLi1GMuj1wq=bg@mail.gmail.com>
+ <ZoxX9mckeu046zed@swahl-home.5wahls.com>
+ <CAMj1kXE5OYTxxBEO38dRyYt_J1FNpU-tdkaU8rxvrMLd_k_beg@mail.gmail.com>
+ <20240709103742.GCZo0S9md7YyeevRN-@fat_crate.local>
+ <Zo1SRIZEhveMwSPX@swahl-home.5wahls.com>
+ <20240709164620.GLZo1pXPiG42JH4ylN@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MS-Exchange-Organization-SCL: -1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709164620.GLZo1pXPiG42JH4ylN@fat_crate.local>
+X-Proofpoint-ORIG-GUID: HoTSir1je7_bwYRIiP2vGIAvwwc_E7AM
+X-Proofpoint-GUID: HoTSir1je7_bwYRIiP2vGIAvwwc_E7AM
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_06,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ priorityscore=1501 bulkscore=0 malwarescore=0 mlxscore=0 phishscore=0
+ clxscore=1015 suspectscore=0 lowpriorityscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090112
 
-As of now, tg3_power_down_prepare always ends with success, but
-the error handling code from former tg3_set_power_state call is still here.
+On Tue, Jul 09, 2024 at 06:46:20PM +0200, Borislav Petkov wrote:
+> On Tue, Jul 09, 2024 at 10:07:48AM -0500, Steve Wahl wrote:
+> > I think perhaps the cover letter was also too verbose on the history
+> > and unintentionally hid the information necesary to understand the
+> > situation.  I will try to make it more concise.
+> 
+> Thanks.
+> 
+> And while we're at it, I think we should do this too.
+> 
+> Which should actually fix your issue too.
 
-This code became unreachable in commit c866b7eac073 ("tg3: Do not use
-legacy PCI power management").
+Ok, that one is interesting.  I think you are right, it will fix the
+problem as we would bail before calling find_cc_blob(), which is where
+we get into trouble.  (That call happens just outside the context
+displayed by the diff below).
 
-Remove (now unreachable) error handling code for simplification and change
-tg3_power_down_prepare to a void function as its result is no more checked.
+I will add it.
 
-Signed-off-by: Nikita Kiryushin <kiryushin@ancud.ru>
-Reviewed-by: Michael Chan <michael.chan@broadcom.com>
----
-Resubmitted tha patch as it was applied to wrong tree and then
-reverted in commit 72076fc9fe60
-v3:
-  - Change commit message wording as
-    Jakub Kicinski <kuba@kernel.org> requested
-v2: https://lore.kernel.org/netdev/a6f3f931-17eb-4e53-9220-f81e7b311a8c@ancud.ru/
-  - Change tg3_power_down_prepare() to a void function as
-    Michael Chan <michael.chan@broadcom.com> suggested
-v1: https://lore.kernel.org/netdev/4e7e11f8-03b5-4289-9475-d3b4e105d40a@ancud.ru/
- drivers/net/ethernet/broadcom/tg3.c | 30 ++++-------------------------
- 1 file changed, 4 insertions(+), 26 deletions(-)
+--> Steve
 
-diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
-index 04964bbe08cf..bc36926a57cf 100644
---- a/drivers/net/ethernet/broadcom/tg3.c
-+++ b/drivers/net/ethernet/broadcom/tg3.c
-@@ -4019,7 +4019,7 @@ static int tg3_power_up(struct tg3 *tp)
- 
- static int tg3_setup_phy(struct tg3 *, bool);
- 
--static int tg3_power_down_prepare(struct tg3 *tp)
-+static void tg3_power_down_prepare(struct tg3 *tp)
- {
- 	u32 misc_host_ctrl;
- 	bool device_should_wake, do_low_power;
-@@ -4263,7 +4263,7 @@ static int tg3_power_down_prepare(struct tg3 *tp)
- 
- 	tg3_ape_driver_state_change(tp, RESET_KIND_SHUTDOWN);
- 
--	return 0;
-+	return;
- }
- 
- static void tg3_power_down(struct tg3 *tp)
-@@ -18090,7 +18090,6 @@ static int tg3_suspend(struct device *device)
- {
- 	struct net_device *dev = dev_get_drvdata(device);
- 	struct tg3 *tp = netdev_priv(dev);
--	int err = 0;
- 
- 	rtnl_lock();
- 
-@@ -18114,32 +18113,11 @@ static int tg3_suspend(struct device *device)
- 	tg3_flag_clear(tp, INIT_COMPLETE);
- 	tg3_full_unlock(tp);
- 
--	err = tg3_power_down_prepare(tp);
--	if (err) {
--		int err2;
--
--		tg3_full_lock(tp, 0);
--
--		tg3_flag_set(tp, INIT_COMPLETE);
--		err2 = tg3_restart_hw(tp, true);
--		if (err2)
--			goto out;
--
--		tg3_timer_start(tp);
--
--		netif_device_attach(dev);
--		tg3_netif_start(tp);
--
--out:
--		tg3_full_unlock(tp);
--
--		if (!err2)
--			tg3_phy_start(tp);
--	}
-+	tg3_power_down_prepare(tp);
- 
- unlock:
- 	rtnl_unlock();
--	return err;
-+	return 0;
- }
- 
- static int tg3_resume(struct device *device)
+> ---
+> diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
+> index cd44e120fe53..a838cad72532 100644
+> --- a/arch/x86/boot/compressed/sev.c
+> +++ b/arch/x86/boot/compressed/sev.c
+> @@ -484,6 +484,15 @@ static bool early_snp_init(struct boot_params *bp)
+>  {
+>  	struct cc_blob_sev_info *cc_info;
+>  
+> +	/*
+> +	 * Bail out if not running on a hypervisor (HV). If the HV
+> +	 * doesn't set the bit, that's an easy SEV-* guest DOS but that
+> +	 * HV has then bigger problems: the SEV-* guest simply won't
+> +	 * start.
+> +	 */
+> +	if (!(native_cpuid_ecx(1) & BIT(31)))
+> +		return false;
+> +
+>  	if (!bp)
+>  		return false;
+>  
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
+
 -- 
-2.34.1
-
+Steve Wahl, Hewlett Packard Enterprise
 
