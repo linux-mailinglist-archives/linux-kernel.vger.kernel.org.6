@@ -1,148 +1,113 @@
-Return-Path: <linux-kernel+bounces-246167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE40592BE6F
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:31:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AADB92BE8A
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:37:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CFA91F257A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:31:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9B061F24658
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FEC619D099;
-	Tue,  9 Jul 2024 15:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C447C19CCF2;
+	Tue,  9 Jul 2024 15:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i7AFXYQg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="qcKflvWK"
+Received: from forward502b.mail.yandex.net (forward502b.mail.yandex.net [178.154.239.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7FD1514DE;
-	Tue,  9 Jul 2024 15:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A6517B425;
+	Tue,  9 Jul 2024 15:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720539011; cv=none; b=bNYgkjDc89EWYhy+KeB0G/L+CGVicYQS36JstB0+6ht9XtiR8oCeTQWkSubEtipDnNTiwKPC2L5WqqZN1KqzD/HVThYx99lVsJta/ccgJOQN+0jbX6vWs/LTxB+EPABp1YOhvF5W3QMBx5ep8rC8XCDSUA+3KpQTWA6BpIcb780=
+	t=1720539448; cv=none; b=QnuYR1rRYNXk+IuOVou6k4Jn/cGP/l/4XIX54mRJ21RHGGZbSPkPGaSAWP2+p0rtPeM0tt8JPx5hhDP5iTiBLj+2SnIDIMqEG9ezshQI4FHkWwUkFqPW4o6cY9qFEgAMXwqACWRl5Q6pofNJu4zJWTioA20gyKQcGIXZMXf53nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720539011; c=relaxed/simple;
-	bh=+ZQqls9Ki3eLB72qUlI4VM01dYMXVStw5ak0Hd2lE+M=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=ebpCBcAkMbcCs7UdROeGXfsp2aDa2IZV78zg3K4awIOsgIRqFmDswJmIWpZUpWoRwqTiX0PLCf/APcGH4e5AXr5BJvjPMm8BmtAD0IQrbWhXA2pRm5dEeQdkEhoP31x0WYSBzzMaqLwlqpm5ntt/v5N1S+mq2B9tTyTyNT/12SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i7AFXYQg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE69AC3277B;
-	Tue,  9 Jul 2024 15:30:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720539011;
-	bh=+ZQqls9Ki3eLB72qUlI4VM01dYMXVStw5ak0Hd2lE+M=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=i7AFXYQguJeWjmOqz9Ncvilo/H7LDSdis3d86F0w4rZI+EeJPxk4CNR2fPFxI6DQt
-	 E6TVsVGY+Jg0ZbgkUWIxisxs3vxApiAKTu8tBZyJ4HQ1U57IkfHImWKsHkwPyIHnxY
-	 4eK4M0qupkxLG9e6jP1KoXwb9ezFoxNwj5aElhzELn4YN/Hc0bo++eKPg2XmNeL4dK
-	 DpU8XcM1iwRXblkDKcy5YP1EVgh0J/76imAX3vRGhpxGtHY7qdGHpuEGFna+Scve5D
-	 9p1B/fGT/cditH56ZHavrfxnyVKqLCGa9O0ZM/2GOog1lft1YcsR07sBeFL3Ljr6h0
-	 WtZwQD/ZPxy2g==
-Date: Tue, 09 Jul 2024 09:30:09 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1720539448; c=relaxed/simple;
+	bh=Xk2dWsAOYkiRMa800QNsMJz1vPrBP/xB8HCyGAHzAO4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GKQ1D+H6cOK5aCtkruqFD7zKdi0XIWM35P9Z5A3Sk9rlq0HAbovuEvV0QNE8Pl057friFKjMRAmyw99ysmtY46BVmlWSHIQAxcl8wna5ch5YcLAebkpJznFNePjlsI+REFO5fANPbMTz/gPv+GQ3uW5Oa/VwIZmP7R1WGGWtwso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=qcKflvWK; arc=none smtp.client-ip=178.154.239.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
+Received: from mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net [IPv6:2a02:6b8:c23:2146:0:640:e7:0])
+	by forward502b.mail.yandex.net (Yandex) with ESMTPS id BAD485F040;
+	Tue,  9 Jul 2024 18:30:45 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id iUf9TIBfvKo0-lQjVki5X;
+	Tue, 09 Jul 2024 18:30:45 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
+	t=1720539045; bh=Eu+Rbc6iPL4yDSVzK47roezPd1zllNytDY/2RCNIz64=;
+	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
+	b=qcKflvWKybTRl0Qt8dh+yLjzCPlXn9BxpnA/EE2mYP8thaE2ufVjvdX5+4UQm0aIh
+	 n28zE/ShiZIrUY0Ljuv44eWR9BJ0UlVs2pTqoelvwT6ck8t0kK7pJBPrJi1T8qIyp7
+	 nBoPMs3TYDYN+NmHNS1c13M3131VRemfop2zq2Rc=
+Authentication-Results: mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
+Message-ID: <e935d937241f9bcbaeaad5100114b50dc0f97fbd.camel@maquefel.me>
+Subject: Re: [PATCH v10 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
+From: Nikita Shubin <nikita.shubin@maquefel.me>
+To: Stephen Boyd <sboyd@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Nikita Shubin via B4 Relay
+ <devnull+nikita.shubin.maquefel.me@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Arnd Bergmann
+	 <arnd@arndb.de>
+Date: Tue, 09 Jul 2024 18:30:44 +0300
+In-Reply-To: <6c5d6c0730698969ef613ec9ec4aa14a.sboyd@kernel.org>
+References: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me>
+	 <20240617-ep93xx-v10-3-662e640ed811@maquefel.me>
+	 <6c5d6c0730698969ef613ec9ec4aa14a.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Cc: Inochi Amaoto <inochiama@outlook.com>, 
- Albert Ou <aou@eecs.berkeley.edu>, Thomas Gleixner <tglx@linutronix.de>, 
- Chao Wei <chao.wei@sophgo.com>, Conor Dooley <conor.dooley@microchip.com>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Chen Wang <unicorn_wang@outlook.com>, 
- Samuel Holland <samuel.holland@sifive.com>, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>, 
- =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-In-Reply-To: <20240709-sg2002-v3-0-af779c3d139d@bootlin.com>
-References: <20240709-sg2002-v3-0-af779c3d139d@bootlin.com>
-Message-Id: <172053886159.3452537.17376675816752046144.robh@kernel.org>
-Subject: Re: [PATCH v3 0/5] Add board support for Sipeed LicheeRV Nano
 
+Hi Stephen,=20
 
-On Tue, 09 Jul 2024 12:07:15 +0200, Thomas Bonnefille wrote:
-> The LicheeRV Nano is a RISC-V SBC based on the Sophgo SG2002 chip. Adds
-> minimal device tree files for this board to make it boot to a basic
-> shell.
-> 
-> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-> ---
-> Changes in v3:
-> - Remove /dts-v1/ directive from sg2002.dtsi file
-> - Add disable-wp property to sdhci node to avoid having a write
->   protected SD card
-> - Drop changes in cv18xx.dtsi and cv1800b.dtsi
-> - Add fallback compatible to cv1800b in SDHCI node of sg2002.dtsi
-> - Link to v2: https://lore.kernel.org/r/20240612-sg2002-v2-0-19a585af6846@bootlin.com
-> 
-> Changes in v2:
-> - Add SDHCI support
-> - Change device tree name to match the Makefile
-> - Add oscillator frequency
-> - Add aliases to other UARTs
-> - Add aliases to GPIOs
-> - Move compatible for SDHCI from common DT to specific DT
-> - Link to v1: https://lore.kernel.org/r/20240527-sg2002-v1-0-1b6cb38ce8f4@bootlin.com
-> 
-> ---
-> Thomas Bonnefille (5):
->       dt-bindings: interrupt-controller: Add SOPHGO SG2002 plic
->       dt-bindings: timer: Add SOPHGO SG2002 clint
->       dt-bindings: riscv: Add Sipeed LicheeRV Nano board compatibles
->       riscv: dts: sophgo: Add initial SG2002 SoC device tree
->       riscv: dts: sophgo: Add LicheeRV Nano board device tree
-> 
->  .../interrupt-controller/sifive,plic-1.0.0.yaml    |  1 +
->  .../devicetree/bindings/riscv/sophgo.yaml          |  5 ++
->  .../devicetree/bindings/timer/sifive,clint.yaml    |  1 +
->  arch/riscv/boot/dts/sophgo/Makefile                |  1 +
->  .../boot/dts/sophgo/sg2002-licheerv-nano-b.dts     | 54 ++++++++++++++++++++++
->  arch/riscv/boot/dts/sophgo/sg2002.dtsi             | 32 +++++++++++++
->  6 files changed, 94 insertions(+)
-> ---
-> base-commit: d20f6b3d747c36889b7ce75ee369182af3decb6b
-> change-id: 20240515-sg2002-93dce1d263be
-> 
-> Best regards,
-> --
-> Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-> 
-> 
-> 
+Thank you for looking into this.
 
+On Mon, 2024-07-08 at 15:18 -0700, Stephen Boyd wrote:
+> Quoting Nikita Shubin via B4 Relay (2024-06-17 02:36:37)
+> > diff --git a/drivers/clk/clk-ep93xx.c b/drivers/clk/clk-ep93xx.c
+> > new file mode 100644
+> > index 000000000000..a0430a5ae4da
+> > --- /dev/null
+> > +++ b/drivers/clk/clk-ep93xx.c
+> > @@ -0,0 +1,834 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +/*
+> [...]
+>=20
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_spi_div =3D id->driver_data;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hw =3D devm_clk_hw_register_fixed=
+_factor(dev, "ep93xx-spi.0",
+> > "xtali",
+>=20
+> Are these clk names trying to match device names?
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+Yes, ep93xx is still a pure platform SoC, so spi for example still uses
+devm_clk_get:
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+	espi->clk =3D devm_clk_get(&pdev->dev, NULL);
+	[...]
+	.driver		=3D {
+		.name	=3D "ep93xx-spi",
+	},
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+This, of course, is no longer necessary in these series (since we
+convert to DT).
 
-  pip3 install dtschema --upgrade
+The clock names are from CLK conversion of arch/arm/mach-ep93xx/clock.c
+i made earlier:
 
+9645ccc7bd7a16cd73c3be9dee70cd702b03be37 ep93xx: clock: convert in-
+place to COMMON_CLK
 
-New warnings running 'make CHECK_DTBS=y sophgo/sg2002-licheerv-nano-b.dtb' for 20240709-sg2002-v3-0-af779c3d139d@bootlin.com:
-
-arch/riscv/boot/dts/sophgo/sg2002-licheerv-nano-b.dtb: mmc@4310000: compatible: ['sophgo,sg2002-dwcmshc', 'sophgo,cv1800b-dwcmshc'] is too long
-	from schema $id: http://devicetree.org/schemas/mmc/snps,dwcmshc-sdhci.yaml#
-arch/riscv/boot/dts/sophgo/sg2002-licheerv-nano-b.dtb: mmc@4310000: Unevaluated properties are not allowed ('compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/mmc/snps,dwcmshc-sdhci.yaml#
-
-
-
-
+Where i kept the original names which were used before conversion.
 
 
