@@ -1,165 +1,160 @@
-Return-Path: <linux-kernel+bounces-245989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 028B592BC66
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:02:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F083E92BC6D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:03:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25D781C20E0A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:02:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB8332838AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56D5199EA3;
-	Tue,  9 Jul 2024 14:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D352619B5AA;
+	Tue,  9 Jul 2024 14:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Npgnq2Hu"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ioFG9pVz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OiIzH1Oj";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ioFG9pVz";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OiIzH1Oj"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06E519939B;
-	Tue,  9 Jul 2024 14:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BEFF19B581
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 14:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720533735; cv=none; b=plhHpi4HPGQPOmS3VsBAHy4zsbkNT6xb93tOWIEsJIvW4VxVNDOntLONmCxWg7OPV7LE2Gp8qCk4Ge7Maf08Z0/eXn7ftJS3l1oT0CKdJPt/hDX6H17i3qa0RAYk43Ww7YYbr5zOtZoWYy38jSa95ykgRtDs0juF2kxmBQpx7LY=
+	t=1720533786; cv=none; b=Pkr/kyEBwrSgZnXmj5lc5CNoUU5vO4/Mq4Gll5RzUEL4g53KVTxrW0Ll/+Kgx1pTaoHtkioZK9G02WEXentzhyFlPxWAZp+MKt4mkswg2PljBr11dCFCrW6ML7NBCidvabvUNKK57EgntLe3D1rrH1pvOVemOYU21seqLi+FLg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720533735; c=relaxed/simple;
-	bh=3fSj0y2jXQbuWqt4S1+LIvS+/ArVG4NLKrkB7yI352w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=SNVkow7GQPh77ThWKyFHWD8zPYd8USMVRAB1S8vlj2e9Lkn4yXKGtNOyOhg7rv4L+T6MNQtW6PvfyoTmhcRw3m1VwT0O5ZIjAF65wo7ySKR7nPmd3bGXaZyAqDO+KqnvwaS1yMONG2DWQt4tvM/J+vVz1cyUxVSZNiRqenI2+ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Npgnq2Hu; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469AaFwN003666;
-	Tue, 9 Jul 2024 14:02:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=hfbVdoM187pV4i/DYrKvdF
-	915mLLy9E4bOKezzFXXWM=; b=Npgnq2Hum34AeBUHztwyQAN0oAfRUN3IQq5KDg
-	iTDmS7bOPbal1X16hWknqgSZTKVGrNpc8Pbva3wS1AErd45TZ2GoFjNNPpKu8yt9
-	RAS16GUoKf2NiFm9HnTA9IqyIZ+A7rYOwxSMTm4ZgUmcbFMCDpIuiRYAHhncFqmq
-	AdnE44Ln0YOeUMmDsNKdMwmhTrRBO2f5B5qLKMOl61WQfimoVzU49vLnHVpzanTR
-	NWPyxwYwSpe3oJbvOeMzJotP2TUmkiTpvTK3KYSpxyL392OTfNyRS+M2zMnB+7BH
-	MSb78MGBQoeidqL5agCpMmuUa0jA++4KYkB6YtjiLYyOT/ZA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wgwpkn4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 14:02:08 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469E27tN014470
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 9 Jul 2024 14:02:07 GMT
-Received: from tengfan-gv.ap.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 9 Jul 2024 07:02:01 -0700
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-Date: Tue, 9 Jul 2024 22:01:47 +0800
-Subject: [PATCH v2] dt-bindings: mailbox: qcom-ipcc: Document the QCS9100
- IPCC
+	s=arc-20240116; t=1720533786; c=relaxed/simple;
+	bh=4cBtKCqTn2DNHHRdH23m7TBSp/YWmBxCZHwmuYIrDGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M8xS9xOcOVOBx1g13oANjSF3uowiYiHgoMcuXmG3VCMqVsYOstzaC+rY+qY6SBShgwcPyAOlhRDS2lJhu5BdR94zmOe4AWulumLv/2K6MKo2wz5nPeF3ssuJeXfI+RIT70Tn+AfNtN6BIv5AeR4bEu6WDAogoLXttJ4cV2gqXK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ioFG9pVz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OiIzH1Oj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ioFG9pVz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OiIzH1Oj; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7D7A91F7C2;
+	Tue,  9 Jul 2024 14:03:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720533782; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hyncx8i5TISJb9MacWlSDc+0IoMyxyZ0b26Lhk5kcb0=;
+	b=ioFG9pVzU7mE8jjm9TgIpDzOkFYk7ODhFZ/UWwvTLllHffD6KzweFC06PqeVkBgbBQftCz
+	5TRAHuQG2yyqj4lObOLLeVAUSX7Z/CPuFT/LKVQ9xInsUF9hM9RtJMaU0HezV6925uzP3Y
+	3o4no6rdZw1A/IJXjpEjlD5aox6475M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720533782;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hyncx8i5TISJb9MacWlSDc+0IoMyxyZ0b26Lhk5kcb0=;
+	b=OiIzH1OjTd5PyW7ExdfqTP+oT8gAnMxSKm3kYycY5Ondq8KUZ1R3AIys7RxE29p18dy6gL
+	N9PMYDsu/4F5KkAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1720533782; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hyncx8i5TISJb9MacWlSDc+0IoMyxyZ0b26Lhk5kcb0=;
+	b=ioFG9pVzU7mE8jjm9TgIpDzOkFYk7ODhFZ/UWwvTLllHffD6KzweFC06PqeVkBgbBQftCz
+	5TRAHuQG2yyqj4lObOLLeVAUSX7Z/CPuFT/LKVQ9xInsUF9hM9RtJMaU0HezV6925uzP3Y
+	3o4no6rdZw1A/IJXjpEjlD5aox6475M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1720533782;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hyncx8i5TISJb9MacWlSDc+0IoMyxyZ0b26Lhk5kcb0=;
+	b=OiIzH1OjTd5PyW7ExdfqTP+oT8gAnMxSKm3kYycY5Ondq8KUZ1R3AIys7RxE29p18dy6gL
+	N9PMYDsu/4F5KkAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DA5FE1396E;
+	Tue,  9 Jul 2024 14:03:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id a6stLxRDjWavFwAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Tue, 09 Jul 2024 14:03:00 +0000
+Date: Tue, 9 Jul 2024 16:02:58 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Donet Tom <donettom@linux.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Ritesh Harjani <ritesh.list@gmail.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Tony Battersby <tonyb@cybernetics.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v2] fs/hugetlbfs/inode.c: Ensure
+ generic_hugetlb_get_unmapped_area() returns higher address than
+ mmap_min_addr
+Message-ID: <Zo1DEjDawvmeqwRH@localhost.localdomain>
+References: <20240709092122.41232-1-donettom@linux.ibm.com>
+ <Zo0JSVzKKmG_1ADQ@localhost.localdomain>
+ <dc4a8671-b8c2-484f-a83c-03bfc1fbe078@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240709-document_qcs9100_ipcc_compatible-v2-1-0fd67000e6b1@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAMtCjWYC/zWNwQqDMBAFf0VybmSNFU1P/Y8iwa6JLrSJJlFax
- H9vFHqcx2NmY0F70oHdso15vVIgZxOIS8Zw7OygOfWJmQBxhRok7x0ub22jmjHIAkDRhKjQvac
- u0vOluamMLMs+3WXDkmby2tDnTDzaxCOF6Pz3LK7Fsf7lJYiqqSAXRS0AGl7weSFUUdvBdPZ+A
- FnMU4u1+77/AKBmAky8AAAA
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Jassi Brar
-	<jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Tengfei Fan
-	<quic_tengfan@quicinc.com>
-X-Mailer: b4 0.15-dev-a66ce
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720533721; l=2354;
- i=quic_tengfan@quicinc.com; s=20240709; h=from:subject:message-id;
- bh=3fSj0y2jXQbuWqt4S1+LIvS+/ArVG4NLKrkB7yI352w=;
- b=w5Alz2E3vARVhA3DHBqIML2C4xPSsIwf2QU6ZvuwXwfy3L1ScztY2PwW2mcyJ6od/TJs0aXC2
- 4vbkX2tiWM0BH+ObiW1/52CL/WI7BDN8gpxBnBis8kCM5HGFVcXbOoE
-X-Developer-Key: i=quic_tengfan@quicinc.com; a=ed25519;
- pk=4VjoTogHXJhZUM9XlxbCAcZ4zmrLeuep4dfOeKqQD0c=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: M7drvkJ3Qa8xJ2sog4wsg-6CkPjWmoNe
-X-Proofpoint-ORIG-GUID: M7drvkJ3Qa8xJ2sog4wsg-6CkPjWmoNe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_04,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=760 mlxscore=0
- adultscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
- suspectscore=0 clxscore=1015 priorityscore=1501 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090090
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dc4a8671-b8c2-484f-a83c-03bfc1fbe078@linux.ibm.com>
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,linux.dev,linux.intel.com,kvack.org,vger.kernel.org,gmail.com,kernel.org,redhat.com,infradead.org,cybernetics.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
+X-Spam-Level: 
 
-Document the Inter-Processor Communication Controller on the QCS9100
-Platform.
-QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
-platform use non-SCMI resource. In the future, the SA8775p platform will
-move to use SCMI resources and it will have new sa8775p-related device
-tree. Consequently, introduce "qcom,qcs9100-ipcc" to describe non-SCMI
-based IPCC.
+On Tue, Jul 09, 2024 at 07:14:38PM +0530, Donet Tom wrote:
+> Thank you Oscar.
 
-Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
----
-Introduce support for the QCS9100 SoC device tree (DTSI) and the
-QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
-While the QCS9100 platform is still in the early design stage, the
-QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
-mounts the QCS9100 SoC instead of the SA8775p SoC.
+Hi Donet,
 
-The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
-all the compatible strings will be updated from "SA8775p" to "QCS9100".
-The QCS9100 device tree patches will be pushed after all the device tree
-bindings and device driver patches are reviewed.
+> The issue I am trying to fix will also get fixed by this new changes right.
+> So should we drop my patch or should we continue it?
 
-The final dtsi will like:
-https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
+I would keep this patch as it is easier to backport as a small fixup.
 
-The detailed cover letter reference:
-https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
----
-Changes in v2:
-  - Split huge patch series into different patch series according to
-    subsytems
-  - Update patch commit message
+Thanks
 
-prevous disscussion here:
-[1] v1: https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
----
- Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml b/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
-index 05e4e1d51713..916c47fbc238 100644
---- a/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
-+++ b/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
-@@ -24,6 +24,7 @@ properties:
-   compatible:
-     items:
-       - enum:
-+          - qcom,qcs9100-ipcc
-           - qcom,qdu1000-ipcc
-           - qcom,sa8775p-ipcc
-           - qcom,sc7280-ipcc
-
----
-base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
-change-id: 20240709-document_qcs9100_ipcc_compatible-f5f933d24098
-
-Best regards,
 -- 
-Tengfei Fan <quic_tengfan@quicinc.com>
-
+Oscar Salvador
+SUSE Labs
 
