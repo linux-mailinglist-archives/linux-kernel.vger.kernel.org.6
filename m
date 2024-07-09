@@ -1,135 +1,89 @@
-Return-Path: <linux-kernel+bounces-245904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96A4392BB15
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:29:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DD1692BB6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D78D1F2183B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:29:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B76287901
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A7215FA66;
-	Tue,  9 Jul 2024 13:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF15517CA02;
+	Tue,  9 Jul 2024 13:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eNDisifI"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2f+Eujxf"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDD015575C;
-	Tue,  9 Jul 2024 13:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6931817C7DB;
+	Tue,  9 Jul 2024 13:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720531763; cv=none; b=JpGLa6ebki496wpkMDDJ3jC3xhRFPtTsKxwhOl89D+MHIKeoJyr2GI3U8iQRQXjAZdpPAZW67x9sDnyJubB09oFv+hY6TiYU3sDphLPI0s974eqedDQRZmO1tBb74qRqEess3gpE94vYTJZexeDxb9+e7YE+bnXo3xWVVuWu11w=
+	t=1720531900; cv=none; b=NfaCEztK65MyaJOzy2EIYemObm6DyLSi+TN8zv4rjp2hkpiei76jbr5ddR3ArYMks+K4YNFEsG+d72BWRKs+eQ5CH3n8UL3s8SA1vhruGVxY+urMN3jcbhbE6otZwKuFodcJ3u4L7d2q6sPtcCiCls3OkKc6RWCNkjG98VySqNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720531763; c=relaxed/simple;
-	bh=KUMM/Y6Cr3JlVVQc0TPJ5+fE2qtpm+zVw5CjYuV9kfw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sjYsej1/LBRBMY9IfSqxX+kzCu/VxQskjbtfLxPjYLvTtNiY7R9FytJPMkjqZcCJwqxgNcAIYoy41Ny1QTYRhk7GcrVabLWX2az8vItYamzYcEWJWC4ihPlLq/u3dhQ0I7qTpnSDjLgfdLg6IJZLH+URELBwYwCrARpM47QcoHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=eNDisifI; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720531759;
-	bh=VmVJZsHAQJgYIEEqsBkQ/q4o+ZHXxEHrOveklUFiGuY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eNDisifI9FqwYzkTZgGPITOPnmeqSRHyWlKj+w7LNoHmDYS195OYsFYi8v94KlMZI
-	 csXZLRnd+92vr5Mqqeyxuj2NIFgP2AAYTmJmS//HH2oTEoI4S73AV1icBX7CYO1QbC
-	 gBxHWocLzTgSqgtPw35ymw/yWHcjVBbSQZ1g5NKSYjElUTHPKMowcPm2AErB9gLzpH
-	 GWaJsljYj9Oil1+kecgtqzC/6mVt82XYqKeHt3hynS9oru3WNxKaXPgoU9Au7r9jDK
-	 laxy5vD/KpznivknU6ZU//Iazrd+jWa+Lm3mYcMBoNY/kdIeprLVNEmOUkTXADmWTh
-	 UI/V9DFqeRpHg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJMK94jrqz4w2P;
-	Tue,  9 Jul 2024 23:29:17 +1000 (AEST)
-Date: Tue, 9 Jul 2024 23:29:16 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Arnd Bergmann" <arnd@arndb.de>, "Rob Herring" <robh@kernel.org>
-Cc: "Olof Johansson" <olof@lixom.net>, "Palmer Dabbelt"
- <palmer@dabbelt.com>, "Paul Walmsley" <paul@pwsan.com>, ARM
- <linux-arm-kernel@lists.infradead.org>, "Linux Kernel Mailing List"
- <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the devicetree tree
-Message-ID: <20240709232916.270d9927@canb.auug.org.au>
-In-Reply-To: <f2ceee62-2612-42d1-b727-2f087acc6785@app.fastmail.com>
-References: <20240709164618.69cfcfad@canb.auug.org.au>
-	<CAL_JsqLmm6Da=4G9cJfAtKJB5j_dfbTywRRwHMKZyf3J7SAxfg@mail.gmail.com>
-	<f2ceee62-2612-42d1-b727-2f087acc6785@app.fastmail.com>
+	s=arc-20240116; t=1720531900; c=relaxed/simple;
+	bh=4WP+WQ9nQvGm3F9qQzb3JcVtkEtMk1y8Lok9QkQkdaA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SqufbVOOumHFYxEHgZZ5oT7z8GV2mYlB3rIdiWcr+RkzF/ggvXJC7luBmUvLafZjOxxRwM5pJ7TbTXi+K7oYzOUZOEPGo3dQObRFMhNufe0H9ApOtnmbkOo7zafvEwv9kA3qFrlToYJABOAlDohjb/DZhtH8Jw4NV9Cz5fU1mtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=2f+Eujxf; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Zre5YSHteeLdEYtuTx/X+RGnWx775ASLQOdTxRDdE1M=; b=2f+Eujxf0jG9ADlgV4JEjThm70
+	ijEtLEUs5PC2z37RnVaF0M08Hvl0ZPDHZ7WYUK7azsyd9E/0uohZwhiEnMtmvjay5hIurMagJv5ZG
+	BcvftJrTYNWO2BWi3y5juufyiUQ/mBqiSNv4FVLHqS/qv0gY5OurErVfDUE9+ixx5QjY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sRAwD-002945-K6; Tue, 09 Jul 2024 15:31:21 +0200
+Date: Tue, 9 Jul 2024 15:31:21 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Furong Xu <0x1207@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	xfr@outlook.com, rock.xu@nio.com
+Subject: Re: [PATCH net-next v1 7/7] net: stmmac: xgmac: enable Frame
+ Preemption Interrupt by default
+Message-ID: <28ddf3e2-be4e-437a-b872-5ba07659e40e@lunn.ch>
+References: <cover.1720512888.git.0x1207@gmail.com>
+ <fc69b94aad4bbe568dcf9ef7aa73f9bac685142c.1720512888.git.0x1207@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/uG0ovzMaMlpMnt5a/gDqhBe";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fc69b94aad4bbe568dcf9ef7aa73f9bac685142c.1720512888.git.0x1207@gmail.com>
 
---Sig_/uG0ovzMaMlpMnt5a/gDqhBe
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jul 09, 2024 at 04:21:25PM +0800, Furong Xu wrote:
+> Frame Preemption Interrupt is required to finish FPE handshake.
+> 
+> XGMAC_FPEIE is read-only reserved if FPE is not supported by HW.
+> There is no harm that we always set XGMAC_FPEIE bit.
 
-Hi all,
+This is better, it explains what is going on, why the change is being
+made. But when i see this, i think about the interrupt handler. You
+don't just enable a new interrupt, you also need to handle the
+interrupt. Where is that handler code?
 
-On Tue, 09 Jul 2024 15:15:44 +0200 "Arnd Bergmann" <arnd@arndb.de> wrote:
->
-> On Tue, Jul 9, 2024, at 14:42, Rob Herring wrote:
-> > On Tue, Jul 9, 2024 at 12:46=E2=80=AFAM Stephen Rothwell <sfr@canb.auug=
-.org.au> wrote: =20
-> >>
-> >> The following commits are also in the arm-soc and risc-v trees as
-> >> different commits (but the same patches):
-> >>
-> >>   0620bce64afa ("dt-bindings: riscv: cpus: add ref to interrupt-contro=
-ller")
-> >>   877097a2fab0 ("dt-bindings: interrupt-controller: convert marvell,mp=
-ic binding to YAML")
-> >>   c7ce06684bf5 ("dt-bindings: interrupt-controller: riscv,cpu-intc: co=
-nvert to dtschema") =20
-> >
-> > I had to rebase my tree yesterday to drop a bunch of reserved-memory
-> > restructuring that seems broken beyond repair. Maybe I'm going to have
-> > to just do reverts instead. I had no knowledge that anyone had pulled
-> > in my tree and how is it just these 3 commits? It should be at least
-> > these: =20
->=20
-> I picked up=20
->=20
-> b1a4e71d4fc4 arm: dts: arm: Drop redundant fixed-factor clocks
-> f7e642bcd622 dt-bindings: interrupt-controller: convert marvell,mpic bind=
-ing to YAML
-> 2af8d8a583a4 ARM: dts: armada-{370-xp,375,38x,39x}: Drop #size-cells from=
- mpic node
->=20
-> from patchwork when they were sent to soc@kernel.org. I don't
-> see the other ones in the arm-soc tree though, maybe they
-> are merged elsewhere?
+The commit message is the place you try to answer the questions
+reviewers are going to ask. So if the interrupt handler already looks
+for this interrupt cause and handles it, add a statement to the commit
+message explaining it.
 
-Yeah, the risc-v tree.  Sorry about that, I should probably have done 2
-notifications.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/uG0ovzMaMlpMnt5a/gDqhBe
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaNOywACgkQAVBC80lX
-0GwtLAgAgn2AN5hx5okQjavimXlOhMzyiu44dEo8DnkA2PWHc88QQTlSUG1NHQcy
-Fu0ZgllRPhGWyzz5PzMvWzHiyAEkd25h+I/GqgW+XIpl7WJtLJW3V5ow3BHDbs5k
-gC5roYnx0yY1aw6MEyEVTn6svq9OzDyRJQljvfht6Q42N53mx2Qx3VTDMbe5B6Xi
-4WHlpB2Ko7R3I3ANA4Uc1KBQhv8N0ey3L2SHg8TmnXv4jtcZRH28f5zm8VDEqRJI
-wGsDXdb9ajrZKNZ6dN+N0AZG3gjsTdj0Vh3NSeJFMvfucWNuEVMoUV8VXBNeASDf
-XYrBU2e8pfTK/a1P/iW+w3A+c7s8LQ==
-=3vEU
------END PGP SIGNATURE-----
-
---Sig_/uG0ovzMaMlpMnt5a/gDqhBe--
+	Andrew
 
