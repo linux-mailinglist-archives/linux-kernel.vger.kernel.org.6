@@ -1,215 +1,198 @@
-Return-Path: <linux-kernel+bounces-245166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA95D92AF27
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:51:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 754C392AF30
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 06:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 598111F2253E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:51:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23EC41F22386
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 04:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15A212CD89;
-	Tue,  9 Jul 2024 04:51:04 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11A612D1FD;
+	Tue,  9 Jul 2024 04:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JeV1ScEj"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70D929CEA
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 04:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747EC29CEA;
+	Tue,  9 Jul 2024 04:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720500664; cv=none; b=VLrramf6SebKyoAmOOd2jnEyHEz6Ic7QEXFxJiC6gq/y+xUFDp6WTU6UltFIOFfZqmxPZydslS0bWNvQCBceJ++DV9YTkv5/8q384YZl7J8VUP3cWvAtXqD7eDnzRBWbHD03BWglMOb4oY5aq3bfwaokXGj1UKAft+vbQQ019Yk=
+	t=1720500943; cv=none; b=lPcgWrZCbo7mZ0XIW8Y0ly257uXO3ulh1l9T+MdsNNY03aED1XaNUqT8SdFqLOaXhmkwV4dayzztMo3w+PyFOvR8AfBCDFlDgH3yi1d5pd2CNullSGnWMgvWFLXNav1JodK0sXNGo2HIecFq/4poXgsafxN5AaLzythn+tvFeIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720500664; c=relaxed/simple;
-	bh=8ACvb9qAkBRTEj7u90+Er/6ilXk6geJHwxx5MnDC8JY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hRo6tk/40h8s0I33aQl6O8AVONJhJB9Dz1+U9ooADOHJeDH12n0geFsus/pNoymPvK92P4TTII6sdubJxvnTX+5dHyZpxv+sw6lmsD1+vsTvTm6qpYAmqFeIommpPtRSJcyxzT0RuC+p5sAKMuwsR35ou+JMm51bP3MVALsU5ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7fb15d52c5cso266517539f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 08 Jul 2024 21:51:02 -0700 (PDT)
+	s=arc-20240116; t=1720500943; c=relaxed/simple;
+	bh=eHlJaYGkVYm28d+8Yw6VuGyew1kE2JhPT0Et+UQxfhU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aA2AfDe83D22s2PEAK4OkLky/dfFVMQZA6QBAS2CH5K5oDVWgSEl64rABj8cr6P8F203PM9Jayov17iewmEfm/23tAV4hVd+llvXLZNfzJCqHzVIAB9Y3DXXkML8WIkuWDzl9K9wlk4YIfcYoQzyQlZ8D0JQABsdtlIhccZI5Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JeV1ScEj; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-6bce380eb9bso2730855a12.0;
+        Mon, 08 Jul 2024 21:55:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720500942; x=1721105742; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SqKaJocUioa9zVhmFj29t92/q5RUZD9GpRYJvaszsh0=;
+        b=JeV1ScEjpjpHkm0YU8QzGqt/TFmi4AyED8Su5GxN/Uju2Qu8IpTmdcqqwHw4x3vr8d
+         3S0H1vDQxyR3GRqyipX3j3dKL2UhuJ8rEeov9nmQDk5GlJnhhvmf9qRpX2BY9QWbGr6u
+         EXSBlaErmE/jqLXLCoO2F6wUswRInUcAiLYp5gtogbvQhNM02eVj5hhL1jw9JMeKXygU
+         7NTm/aq9nmaVS+MLcLzJdeEU8YhOnKEAsSnHnHdRJnDGb99mTMgom7DflzkOvQK7isUj
+         fIWVm3W9qzKN7rK4CfW23cwH0ObdUDryGiRdhNRkg1mVKZX9jsw+MGD/BRjdsEsp6nKA
+         tO4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720500662; x=1721105462;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oTC6GF+ZRWSB5wNTbXocLcnLt0XHbfCyoaqLkX+t0iw=;
-        b=qORYyjz4ovHFz0uLn0fesxSBbi8hwTl7C5W1clLu0IU/+Mltv8G84taiNseOhexYw6
-         lXi0XIBoVhOcKelbEnNkN1L22edJSJJzpdPWBUdKt1RVTqDR/+WzJWdOQ3iWMeKIshA8
-         fF3kMMncjsryZg8XbI/q8LPx2pDjT7FHpkSpE7e0jsIot8OWIky7NGZnEZPGhI54H8i8
-         11cY3+0GqfkMNL4d90q9y2AjMS+/xkrKuZuGiOzZm0RwNAXV9WRsrNALJHj+epd9MxP7
-         8xErrZiC4mJ9DdFd0DYcRKf5koUDkq7qF8ItwjXbo1Vk2l1kFa7D5GICsIXL93ng97mn
-         mSXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBSCb5gs4a9I00sNRpPZP0JO9iAOy9Gs782dNS2wX+7lA/NFjhIPg1R2YRW440zI7CkOS7Ng3B4k3WqpGpxQBRWisHoEjXbPbZvHg8
-X-Gm-Message-State: AOJu0YypWWP1GtSn5kLSxrwKsU0Xg1Z84UTf9DKumnltzkrb6oAbBPFW
-	aovq8HyM66fonjKC/smkpIcWSXyUlDLSASUDObzVCmc/xZ1L0B/DF2aijq6g5zsET/BBWCIBFLz
-	7NDRnMe59S8P4zdQByV5WyYWJ9/kld6yJ8SHyh0i50nb7E5P0e8Wv9cs=
-X-Google-Smtp-Source: AGHT+IEw+hujp2wbj/ZEUCREr+6rq9Ix+nU4yKiNzQRSUzHXuSitqM9DAObS7Z6hdaXnTexGzpxKoBaL9XTILpxDbeE7hotNtulf
+        d=1e100.net; s=20230601; t=1720500942; x=1721105742;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SqKaJocUioa9zVhmFj29t92/q5RUZD9GpRYJvaszsh0=;
+        b=vw8ro2tpXu9vQJ5u3KRfJYxmoshEjQ6JOg4sZYvnmb236As/dnQp41tvz+e6SwLV7d
+         I+r/kn8Jw1QwvZh3G1434oUauUMIxpxvf4F3gcQPhbTp//9wHZkAHZUNMJKh8HKEtEge
+         x2LhWbfKkYsnU7vNl6Jxg9K04804FJsWC3v7pXr3BqL7ckO1XgcAoovhAuqldnKqnwal
+         jNbqy8Nk90917AB12CTph0zWx6YBadSJIBSg83mGwWKFQ/ynZYUTpTxWxQ6j0up7wV7z
+         wyopITaVzYmRwZT+U6lMJa+nKASTA/7+Hu+8ndWZ9/jbY24EsMinRzEj9evlfcpUhj+M
+         SfrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhEtKrsvwJdwG8GgWeK1BdWmHSnaXevEA44z+g2XqhxoX4WBRALkg9LAFp/ubKEOnI7GeT5YicUhTFwbduZr7v5zHG6tAcIvztxyyhHIjCYSLCl9Go07e03jKWcF0Gkgz3wqY60GOhvNejh4mImENfUplokfEXEFT7mk6d3uSzNFDRt79w
+X-Gm-Message-State: AOJu0YzuHWm8i/LB3s/z72T3Y5eF1f9CPp92aFK5rqiBK0t6Ku+1yhJ3
+	grpmBTn0S/dfy0W0Ycy7+dCGL72dK1oHZZVgioAWGxgMWgjZg5qIE48V8w==
+X-Google-Smtp-Source: AGHT+IHbadqVJQre10gCHyswTEmwsTSHIFV6clkSkz4h7Tp9Flx8bMAH8aAoU2KjYDqs5mnA6wfg4Q==
+X-Received: by 2002:a05:6a20:4f12:b0:1be:e265:81fa with SMTP id adf61e73a8af0-1c29824d472mr1014200637.35.1720500941419;
+        Mon, 08 Jul 2024 21:55:41 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:922a:af36:b3d9:2eac])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ca34e89d46sm889698a91.27.2024.07.08.21.55.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jul 2024 21:55:41 -0700 (PDT)
+Date: Mon, 8 Jul 2024 21:55:37 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Stefan Eichenberger <eichest@gmail.com>
+Cc: nick@shmanahar.org, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, nicolas.ferre@microchip.com,
+	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
+	linus.walleij@linaro.org, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [PATCH v4 1/4] Input: atmel_mxt_ts - add power off and power on
+ functions
+Message-ID: <ZozCyQ-deK8A2uOe@google.com>
+References: <20240417090527.15357-1-eichest@gmail.com>
+ <20240417090527.15357-2-eichest@gmail.com>
+ <ZnRMxONryyi5uZ8a@google.com>
+ <ZnWQYc1IunNyhmD4@eichest-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1641:b0:7f8:bfcd:db3f with SMTP id
- ca18e2360f4ac-7ffffa48c77mr11973339f.1.1720500662031; Mon, 08 Jul 2024
- 21:51:02 -0700 (PDT)
-Date: Mon, 08 Jul 2024 21:51:02 -0700
-In-Reply-To: <20240709034644.8243-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cbec28061cc946f8@google.com>
-Subject: Re: [syzbot] [net?] [s390?] possible deadlock in smc_release
-From: syzbot <syzbot+621fd56ba002faba6392@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnWQYc1IunNyhmD4@eichest-laptop>
 
-Hello,
+Hi Stefan,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-possible deadlock in smc_release
+On Fri, Jun 21, 2024 at 04:38:25PM +0200, Stefan Eichenberger wrote:
+> Hi Dmitry
+> 
+> On Thu, Jun 20, 2024 at 08:37:40AM -0700, Dmitry Torokhov wrote:
+> > Hi Stefan,
+> > 
+> > On Wed, Apr 17, 2024 at 11:05:24AM +0200, Stefan Eichenberger wrote:
+> > > @@ -3374,8 +3390,7 @@ static void mxt_remove(struct i2c_client *client)
+> > >  	sysfs_remove_group(&client->dev.kobj, &mxt_attr_group);
+> > >  	mxt_free_input_device(data);
+> > >  	mxt_free_object_table(data);
+> > > -	regulator_bulk_disable(ARRAY_SIZE(data->regulators),
+> > > -			       data->regulators);
+> > > +	mxt_power_off(data);
+> > 
+> > This change means that on unbind we will leave with GPIO line asserted.
+> > Won't this potentially cause some current leakage? Why do we need to
+> > have reset asserted here?
+> 
+> This is correct, but I checked the datasheet of three different maxTouch
+> models and all of them have the reset line low active. This means we had
+> a current leakage before this patch.
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-rc7-syzkaller-g4376e966ecb7 #0 Not tainted
-------------------------------------------------------
-syz-executor386/31174 is trying to acquire lock:
-ffff8880723c08f8 ((work_completion)(&new_smc->smc_listen_work)){+.+.}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
-ffff8880723c08f8 ((work_completion)(&new_smc->smc_listen_work)){+.+.}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
-ffff8880723c08f8 ((work_completion)(&new_smc->smc_listen_work)){+.+.}-{0:0}, at: start_flush_work kernel/workqueue.c:4138 [inline]
-ffff8880723c08f8 ((work_completion)(&new_smc->smc_listen_work)){+.+.}-{0:0}, at: __flush_work+0xe6/0xd00 kernel/workqueue.c:4197
+No, the reset line would be either set or pulled high, which is the
+normal state for the device.
 
-but task is already holding lock:
-ffff8880723c7058 (sk_lock-AF_SMC/1){+.+.}-{0:0}, at: smc_release+0x231/0x530
+> Now it is fixed because we assert
+> the reset line, which sets the pin to 0. I also think it makes sense if
+> we look at the power on sequence. There we first power on the controller
+> before we release the reset line. Without asserting it on unbind this
+> would never trigger a reset after a power on.
 
-which lock already depends on the new lock.
+Please see that in mxt_probe() we do:
 
+	/* Request the RESET line as asserted so we go into reset */
+	data->reset_gpio = devm_gpiod_get_optional(&client->dev,
+						   "reset", GPIOD_OUT_HIGH);
 
-the existing dependency chain (in reverse order) is:
+If the reset GPIO is annotated as "active low" (as it should unless
+there are inverters on the line) this will cause the line
+be driven to 0, putting the chip into the reset state. Then we enable
+regulators and deassert the reset GPIO with this bit of code:
 
--> #1 (sk_lock-AF_SMC/1){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       lock_sock_nested+0x48/0x100 net/core/sock.c:3534
-       smc_listen_out+0x113/0x3d0 net/smc/af_smc.c:1904
-       process_one_work kernel/workqueue.c:3248 [inline]
-       process_scheduled_works+0xab6/0x18e0 kernel/workqueue.c:3329
-       worker_thread+0x86d/0xd50 kernel/workqueue.c:3409
-       kthread+0x2f0/0x390 kernel/kthread.c:389
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+	if (data->reset_gpio) {
+		/* Wait a while and then de-assert the RESET GPIO line */
+		msleep(MXT_RESET_GPIO_TIME);
+		gpiod_set_value(data->reset_gpio, 0);
+		msleep(MXT_RESET_INVALID_CHG);
+	}
 
--> #0 ((work_completion)(&new_smc->smc_listen_work)){+.+.}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
-       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       touch_work_lockdep_map kernel/workqueue.c:3910 [inline]
-       start_flush_work kernel/workqueue.c:4164 [inline]
-       __flush_work+0x73c/0xd00 kernel/workqueue.c:4197
-       __cancel_work_sync+0xbc/0x110 kernel/workqueue.c:4347
-       smc_clcsock_release+0x62/0xf0 net/smc/smc_close.c:29
-       __smc_release+0x683/0x800 net/smc/af_smc.c:300
-       smc_close_non_accepted+0xd8/0x1f0 net/smc/af_smc.c:1836
-       smc_close_cleanup_listen net/smc/smc_close.c:45 [inline]
-       smc_close_active+0xad8/0xe90 net/smc/smc_close.c:225
-       __smc_release+0xa0/0x800 net/smc/af_smc.c:276
-       smc_release+0x2d9/0x530 net/smc/af_smc.c:343
-       __sock_release net/socket.c:659 [inline]
-       sock_close+0xbc/0x240 net/socket.c:1421
-       __fput+0x24a/0x8a0 fs/file_table.c:422
-       task_work_run+0x24f/0x310 kernel/task_work.c:180
-       exit_task_work include/linux/task_work.h:38 [inline]
-       do_exit+0xa27/0x27e0 kernel/exit.c:876
-       do_group_exit+0x207/0x2c0 kernel/exit.c:1025
-       __do_sys_exit_group kernel/exit.c:1036 [inline]
-       __se_sys_exit_group kernel/exit.c:1034 [inline]
-       __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1034
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+So the line here will be left at "1" state (logical off). It should stay
+this way until we need to go through the reset sequence again.
 
-other info that might help us debug this:
+I can see that you need the power on sequence to be executed again after
+probing is done. I recommend you make it something like this:
 
- Possible unsafe locking scenario:
+static int mxt_power_on()
+{
+	int error;
 
-       CPU0                    CPU1
-       ----                    ----
-  lock(sk_lock-AF_SMC/1);
-                               lock((work_completion)(&new_smc->smc_listen_work));
-                               lock(sk_lock-AF_SMC/1);
-  lock((work_completion)(&new_smc->smc_listen_work));
-
- *** DEADLOCK ***
-
-3 locks held by syz-executor386/31174:
- #0: ffff888069ffca10 (&sb->s_type->i_mutex_key#10){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:791 [inline]
- #0: ffff888069ffca10 (&sb->s_type->i_mutex_key#10){+.+.}-{3:3}, at: __sock_release net/socket.c:658 [inline]
- #0: ffff888069ffca10 (&sb->s_type->i_mutex_key#10){+.+.}-{3:3}, at: sock_close+0x90/0x240 net/socket.c:1421
- #1: ffff8880723c7058 (sk_lock-AF_SMC/1){+.+.}-{0:0}, at: smc_release+0x231/0x530
- #2: ffffffff8e334820 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
- #2: ffffffff8e334820 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
- #2: ffffffff8e334820 (rcu_read_lock){....}-{1:2}, at: start_flush_work kernel/workqueue.c:4138 [inline]
- #2: ffffffff8e334820 (rcu_read_lock){....}-{1:2}, at: __flush_work+0xe6/0xd00 kernel/workqueue.c:4197
-
-stack backtrace:
-CPU: 0 PID: 31174 Comm: syz-executor386 Not tainted 6.10.0-rc7-syzkaller-g4376e966ecb7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
- __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- touch_work_lockdep_map kernel/workqueue.c:3910 [inline]
- start_flush_work kernel/workqueue.c:4164 [inline]
- __flush_work+0x73c/0xd00 kernel/workqueue.c:4197
- __cancel_work_sync+0xbc/0x110 kernel/workqueue.c:4347
- smc_clcsock_release+0x62/0xf0 net/smc/smc_close.c:29
- __smc_release+0x683/0x800 net/smc/af_smc.c:300
- smc_close_non_accepted+0xd8/0x1f0 net/smc/af_smc.c:1836
- smc_close_cleanup_listen net/smc/smc_close.c:45 [inline]
- smc_close_active+0xad8/0xe90 net/smc/smc_close.c:225
- __smc_release+0xa0/0x800 net/smc/af_smc.c:276
- smc_release+0x2d9/0x530 net/smc/af_smc.c:343
- __sock_release net/socket.c:659 [inline]
- sock_close+0xbc/0x240 net/socket.c:1421
- __fput+0x24a/0x8a0 fs/file_table.c:422
- task_work_run+0x24f/0x310 kernel/task_work.c:180
- exit_task_work include/linux/task_work.h:38 [inline]
- do_exit+0xa27/0x27e0 kernel/exit.c:876
- do_group_exit+0x207/0x2c0 kernel/exit.c:1025
- __do_sys_exit_group kernel/exit.c:1036 [inline]
- __se_sys_exit_group kernel/exit.c:1034 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1034
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0f905fac09
-Code: Unable to access opcode bytes at 0x7f0f905fabdf.
-RSP: 002b:00007ffcd9863848 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f0f905fac09
-RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-RBP: 00007f0f906752d0 R08: ffffffffffffffb8 R09: 0000000000000006
-R10: 0000000000000006 R11: 0000000000000246 R12: 00007f0f906752d0
-R13: 0000000000000000 R14: 00007f0f90675d20 R15: 00007f0f905cbe60
- </TASK>
+	if (data->reset_gpio)
+		gpiod_set_value_cansleep(data->reset_gpio, 1);
 
 
-Tested on:
+	error = regulator_bulk_enable(ARRAY_SIZE(data->regulators),
+				      data->regulators);
+	if (error) {
+		dev_err(&client->dev, "failed to enable regulators: %d\n",
+			error);
+		return error;
+	}
 
-commit:         4376e966 Merge tag 'perf-tools-fixes-for-v6.10-2024-07..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13dcf47e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=451e6d4de6561673
-dashboard link: https://syzkaller.appspot.com/bug?extid=621fd56ba002faba6392
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+	/*
+	 * The device takes 40ms to come up after power-on according
+	 * to the mXT224 datasheet, page 13.
+	 */
+	msleep(MXT_BACKUP_TIME);
 
-Note: no patches were applied.
+	if (data->reset_gpio) {
+		/* Wait a while and then de-assert the RESET GPIO line */
+		msleep(MXT_RESET_GPIO_TIME);
+		gpiod_set_value(data->reset_gpio, 0);
+		msleep(MXT_RESET_INVALID_CHG);
+	}
+
+	return 0;
+}
+
+And then mxt_power_off() should only disable regulators, and leave the
+reset line alone. This way first time around the first
+"piod_set_value_cansleep(data->reset_gpio, 1)" will be effectively a
+noop, but on subsequent calls it will ensure that you have the
+transition inactive->active->inactive for the reset line.
+
+I wonder if we need both MXT_BACKUP_TIME and MXT_RESET_GPIO_TIME
+though...
+
+Thanks.
+
+-- 
+Dmitry
 
