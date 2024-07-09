@@ -1,209 +1,154 @@
-Return-Path: <linux-kernel+bounces-246104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55F6792BD9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 16:59:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87D1F92BDA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C93061F21557
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:59:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31B351F215C5
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7297819D07E;
-	Tue,  9 Jul 2024 14:58:27 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46EB19CD05;
+	Tue,  9 Jul 2024 14:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T1gPUi8X"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0DB19D06F
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 14:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7E1159209;
+	Tue,  9 Jul 2024 14:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720537106; cv=none; b=bXfiAG8FTY3I9X2PUEosMvNyAdiwvUFiKnloo9fyTx/AbaNW5QQWhb5gjX3hYrfEr8eR8yZyIR9EhN9KrW3T1oW4qL5zuk6HaRZf32fWYO4898xZm7GKVzKhMgRrXaIEbEtQ5vj8Ay/uTmBxB9hJPBtb5KHM8c1wrhL8A31lh04=
+	t=1720537197; cv=none; b=b9upIjVhJyvc3hvQekIhu/eerMk5GcTmQdZdwoIKZqs13YDbTSQ8PkvbvXKPBdHkA/k2JGpK+Arec1doijPpOIFSoyu574uq2/QrtPKpAwrNwkoEm6m6lS4djXOxiudccO+7dHIyPkws1gjyYE2PIqwZrGiVyxa/eFUjQ/xH1dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720537106; c=relaxed/simple;
-	bh=vSTCHLGuCHe7D6rcZRmdQJaq8ydwYCjHHy2ZWljf0tc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ROaeJfZCaoPml8gexy3KQAAaxJQacNZRa4jRADIhpG16A3Zh0tndz6rD6RVYel2nkKy7VXf6/vJLxWCfFaO20o3NPyu5pzM1C7dxfrtTLflmq+0z/8veYLGfxKYo7aLTOlDvZgDevW5UGbE3ggS8lCl+vujWsY5E2ZFcM2FUpKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f61da4d7beso645927439f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 07:58:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720537104; x=1721141904;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WPJjJcj7VngdiZf+A4w3M17sKSvfb6WSVtNSm/hzGtE=;
-        b=wzmRPpVNH4ONdeJLyo0WyDVViUXgij925BNHaAQE48hLnfDRji4uLOzngtQeSC9Wfj
-         ru/hbDbNV+fcs18UipSL1l9W8sh2GgurcequEBr495ekLxa1ASpi35Wq8xeuglf+blv5
-         HVS0D6+6SOeOyk/xVfM1ILrWkmcSvMjRXSyk0LyYxKTUrOVsjLaIIbe0BGTySt9zZ1JU
-         9fmmWI+sLXYhFk9gVB2UnAHXAmGWfuDJ9beFpfGGa1YxL47ezByj6afu6Cip4Jcl1x3U
-         gyAu/hGLIrYNo6WrHiKRQRjgi9jreuimRcy10DtVqC4VN0masSbNTT0wR7XKARAVPpEj
-         bBwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnpbUpz8GtUT/4ZR+ZGniFMtnKm8EL5nvEZjXELbGzwI4S3/Ttm19vYhxDVeWAaP9K4ODyq3tkeI5NSn+xYzYAKx3aWytFGweMukue
-X-Gm-Message-State: AOJu0Yy8LgSiSoCP16WoEZCC2YfbCKbKrAx/XqOFhd+p6oYrM2pncvD0
-	1YJmEo1w7dutCKuupVRsmmsl8r6H9JVIViIy+005/DqjYFRymNPBNvlkz9BUGGkxNZILsuwQH+7
-	x7KDqYKJH9GR84UuINBRSJyimVNART88X1es54Bh3XMgUDXWHQ0q6vmA=
-X-Google-Smtp-Source: AGHT+IHgzNjjFUCHR2VKWP0iH+rBAa6ZiouYheTep8sADKHdHdLaYG7dZZ/eCb+N6aWWs1wtvYcvY8EPzMdLJ+expSBOcjBrIxrF
+	s=arc-20240116; t=1720537197; c=relaxed/simple;
+	bh=nXvWlpHqHF441FnOFVRN8eXxo/VFt9vrSrgeUZS86m0=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=cOfGaPjPNki9Ww+a4ALnXE6BCp3aQBDlwX5k3x3P7L4P813i3BVz9YwLjvBN0J/kkjPFWrf8xEwYv2nfC0HbMnS3qSofxsagdnjTlvII/kc/h9TRNgFNzPneBrHhmD+HfkMZmwtgcnxlv4JEpsB1acUhg3CyTCnoT+swjvg3suM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T1gPUi8X; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469BL5QA001714;
+	Tue, 9 Jul 2024 14:59:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=JHm6+Wex/Cc/Ixo/RhKm7J
+	kww1zUVKyNmPnW18TIxAc=; b=T1gPUi8Xb4XTqL09/jBfpWC69Ol6NWcnwLQNCY
+	su0B1gJHvjeZQPcZGNKd8J6JBsEBiee4hZfXHv3lMraNaNA3Ga4kao+UnUwfM57o
+	Y9I4WA0/SVhSYYPYrxNwTjxmMUOCNtWg4OvVpp3IVKjbBwbm8R1J2CDnFddUtA9R
+	Zp8Zoh99SsE+wLumV6/qGHM4raT5YomoScVrUEcj2iz7cB4syJExUsPKjT45+CPe
+	EFuJsWeQD+I6nyw59FNTk4TYB5L2aTmnD0oy6PU8zF6U+0ZvgdGzPsKx2ub4oQ+m
+	+SHJp3uKg+rbrm3CKtBWxFVXAtTV/1fvBJF1w32vkWZems+w==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406xa66q2p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 14:59:47 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469Exk5f030845
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 14:59:46 GMT
+Received: from tengfan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 9 Jul 2024 07:59:40 -0700
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+Subject: [PATCH v2 0/2] PCI: qcom: Add QCS9100 PCIe compatible
+Date: Tue, 9 Jul 2024 22:59:28 +0800
+Message-ID: <20240709-add_qcs9100_pcie_compatible-v2-0-04f1e85c8a48@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:710a:b0:4b9:def5:3dcb with SMTP id
- 8926c6da1cb9f-4c0b29ba495mr248148173.2.1720537104398; Tue, 09 Jul 2024
- 07:58:24 -0700 (PDT)
-Date: Tue, 09 Jul 2024 07:58:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ee4d7c061cd1c21f@google.com>
-Subject: [syzbot] [bcachefs?] WARNING: suspicious RCU usage in bch2_bucket_ref_update
-From: syzbot <syzbot+e74fea078710bbca6f4b@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFBQjWYC/zXNQQ6CMBCF4auYri2ZthLAlfcwpKnDAJNogRaJh
+ nB3C4nL7y3+t4pIgSmK62kVgRaOPPgEfT4J7J3vSHKTLDToCxRQSdc0dsJYKQA7IpPF4TW6mR9
+ PkkiEoIwzJm9EKoyBWv4c9Xud3HOch/A9zha1r/+uAZ2XOWRaFRqglEpOb0Y7k+9a52872GOWv
+ kS9bdsPO2dVgbcAAAA=
+To: Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
+	<kw@linux.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Tengfei Fan <quic_tengfan@quicinc.com>
+X-Mailer: b4 0.15-dev-a66ce
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720537180; l=1672;
+ i=quic_tengfan@quicinc.com; s=20240709; h=from:subject:message-id;
+ bh=nXvWlpHqHF441FnOFVRN8eXxo/VFt9vrSrgeUZS86m0=;
+ b=L9Pj90AXZiS+7ZbGE93OGjKe2IiQK0wExhteGxxM7B6Q0BPMIEqJwViMGf0xbG5p4ubCiLfpZ
+ 0eXIuDxXOeyCJPqmcfYhzyirUN1YuCncAqr9RHkcMHGGSOa1ErChZvB
+X-Developer-Key: i=quic_tengfan@quicinc.com; a=ed25519;
+ pk=4VjoTogHXJhZUM9XlxbCAcZ4zmrLeuep4dfOeKqQD0c=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Q0kdTam4V5oNegOCi4DQhSj6VL9I1bme
+X-Proofpoint-ORIG-GUID: Q0kdTam4V5oNegOCi4DQhSj6VL9I1bme
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-09_04,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=721
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0 spamscore=0
+ clxscore=1015 adultscore=0 malwarescore=0 mlxscore=0 bulkscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090097
 
-Hello,
+Introduce support for the QCS9100 SoC device tree (DTSI) and the
+QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+While the QCS9100 platform is still in the early design stage, the
+QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+mounts the QCS9100 SoC instead of the SA8775p SoC.
 
-syzbot found the following issue on:
+The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
+all the compatible strings will be updated from "SA8775p" to "QCS9100".
+The QCS9100 device tree patches will be pushed after all the device tree
+bindings and device driver patches are reviewed.
 
-HEAD commit:    256abd8e550c Linux 6.10-rc7
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1606fe6e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=42a432cfd0e579e0
-dashboard link: https://syzkaller.appspot.com/bug?extid=e74fea078710bbca6f4b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=119422a5980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15869b76980000
+The final dtsi will like:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/49b114b276ef/disk-256abd8e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ef1a6b8836ca/vmlinux-256abd8e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4c81ede104a4/bzImage-256abd8e.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/99b2b0c25d67/mount_0.gz
+The detailed cover letter reference:
+https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
 
-The issue was bisected to:
+Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+---
+Changes in v2:
+  - Split huge patch series into different patch series according to
+    subsytems
+  - Update patch commit message
 
-commit f7643bc9749f270d487c32dc35b578575bf1adb0
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Wed Apr 17 05:26:02 2024 +0000
-
-    bcachefs: make btree read errors silent during scan
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12c7687e980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=11c7687e980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=16c7687e980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e74fea078710bbca6f4b@syzkaller.appspotmail.com
-Fixes: f7643bc9749f ("bcachefs: make btree read errors silent during scan")
-
-bcachefs (loop0): done starting filesystem
-=============================
-WARNING: suspicious RCU usage
-6.10.0-rc7-syzkaller #0 Not tainted
------------------------------
-fs/bcachefs/buckets.h:107 suspicious rcu_dereference_check() usage!
-
-other info that might help us debug this:
-
-
-rcu_scheduler_active = 2, debug_locks = 1
-9 locks held by syz-executor107/5084:
- #0: ffff88807441c420 (sb_writers#9){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:409
- #1: ffff88807441c730 (&type->s_vfs_rename_key){+.+.}-{3:3}, at: lock_rename fs/namei.c:3078 [inline]
- #1: ffff88807441c730 (&type->s_vfs_rename_key){+.+.}-{3:3}, at: do_renameat2+0x5cf/0x13f0 fs/namei.c:4985
- #2: ffff88807a278150 (&type->i_mutex_dir_key#6/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:826 [inline]
- #2: ffff88807a278150 (&type->i_mutex_dir_key#6/1){+.+.}-{3:3}, at: lock_two_directories+0x145/0x220 fs/namei.c:3044
- #3: ffff88807a2788b8 (&type->i_mutex_dir_key#6/5){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:826 [inline]
- #3: ffff88807a2788b8 (&type->i_mutex_dir_key#6/5){+.+.}-{3:3}, at: lock_two_directories+0x16f/0x220 fs/namei.c:3045
- #4: ffff888077f842d8 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:116 [inline]
- #4: ffff888077f842d8 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:215 [inline]
- #4: ffff888077f842d8 (&c->btree_trans_barrier){.+.+}-{0:0}, at: __bch2_trans_get+0x840/0xce0 fs/bcachefs/btree_iter.c:3193
- #5: ffff88802fc93070 (&dev->mutex){....}-{3:3}, at: six_relock_type fs/bcachefs/six.h:289 [inline]
- #5: ffff88802fc93070 (&dev->mutex){....}-{3:3}, at: __bch2_btree_node_relock+0x142/0x9c0 fs/bcachefs/btree_locking.c:507
- #6: ffff88802fc93070 (&dev->mutex){....}-{3:3}, at: btree_node_lock_increment fs/bcachefs/btree_locking.h:248 [inline]
- #6: ffff88802fc93070 (&dev->mutex){....}-{3:3}, at: __bch2_btree_node_relock+0x675/0x9c0 fs/bcachefs/btree_locking.c:509
- #7: ffff88807a0db340 (&dev->mutex){....}-{3:3}, at: six_relock_type fs/bcachefs/six.h:289 [inline]
- #7: ffff88807a0db340 (&dev->mutex){....}-{3:3}, at: __bch2_btree_node_relock+0x142/0x9c0 fs/bcachefs/btree_locking.c:507
- #8: ffff88802b279870 (&dev->mutex){....}-{3:3}, at: six_relock_type fs/bcachefs/six.h:289 [inline]
- #8: ffff88802b279870 (&dev->mutex){....}-{3:3}, at: __bch2_btree_node_relock+0x142/0x9c0 fs/bcachefs/btree_locking.c:507
-
-stack backtrace:
-CPU: 0 PID: 5084 Comm: syz-executor107 Not tainted 6.10.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- lockdep_rcu_suspicious+0x221/0x340 kernel/locking/lockdep.c:6712
- bucket_gens fs/bcachefs/buckets.h:103 [inline]
- bucket_gen fs/bcachefs/buckets.h:112 [inline]
- bch2_bucket_ref_update+0xbe1/0x1100 fs/bcachefs/buckets.c:808
- __mark_pointer fs/bcachefs/buckets.c:1000 [inline]
- bch2_trigger_pointer fs/bcachefs/buckets.c:1037 [inline]
- __trigger_extent+0x1524/0x6260 fs/bcachefs/buckets.c:1176
- bch2_trigger_extent+0x636/0x920 fs/bcachefs/buckets.c:1261
- bch2_key_trigger fs/bcachefs/bkey_methods.h:88 [inline]
- bch2_key_trigger_old fs/bcachefs/bkey_methods.h:102 [inline]
- run_one_trans_trigger fs/bcachefs/btree_trans_commit.c:514 [inline]
- run_btree_triggers+0xadb/0x11d0 fs/bcachefs/btree_trans_commit.c:544
- bch2_trans_commit_run_triggers fs/bcachefs/btree_trans_commit.c:576 [inline]
- __bch2_trans_commit+0x3a6/0x88e0 fs/bcachefs/btree_trans_commit.c:1022
- bch2_trans_commit fs/bcachefs/btree_update.h:170 [inline]
- bch2_inode_delete_keys+0xae8/0x1440 fs/bcachefs/inode.c:845
- bch2_inode_rm+0x165/0xd40 fs/bcachefs/inode.c:874
- bch2_evict_inode+0x21c/0x3c0 fs/bcachefs/fs.c:1588
- evict+0x2a8/0x630 fs/inode.c:667
- __dentry_kill+0x20d/0x630 fs/dcache.c:603
- dput+0x19f/0x2b0 fs/dcache.c:845
- do_renameat2+0xda1/0x13f0 fs/namei.c:5052
- __do_sys_renameat2 fs/namei.c:5084 [inline]
- __se_sys_renameat2 fs/namei.c:5081 [inline]
- __x64_sys_renameat2+0xd2/0xf0 fs/namei.c:5081
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f491fe4ad59
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff84583f28 EFLAGS: 00000246 ORIG_RAX: 000000000000013c
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f491fe4ad59
-RDX: 0000000000000004 RSI: 0000000020000080 RDI: 00000000ffffff9c
-RBP: 00007f491fec45f0 R08: 0000000000000000 R09: 000055555e2ff4c0
-R10: 0000000020000980 R11: 0000000000000246 R12: 00007fff84583f50
-R13: 00007fff84584178 R14: 431bde82d7b634db R15: 00007f491fe9403b
- </TASK>
-bucket 0:34 gen 7 (mem gen 0) data type user: stale dirty ptr (gen 0)
-while marking u64s 7 type extent 536870913:8:U32_MAX len 8 ver 0: durability: 1 crc: c_size 8 size 8 offset 0 nonce 0 csum crc32c compress incompressible ptr: 0:34:0 gen 0, shutting down
-bcachefs (loop0): inconsistency detected - emergency read only at journal seq 11
-syz-executor107 (5084) used greatest stack depth: 18488 bytes left
-
+prevous disscussion here:
+[1] v1: https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Tengfei Fan (2):
+      dt-bindings: PCI: Document compatible for QCS9100
+      PCI: qcom: Add support for QCS9100 SoC
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+ Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml | 5 ++++-
+ drivers/pci/controller/dwc/pcie-qcom.c                       | 1 +
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240709-add_qcs9100_pcie_compatible-ceec013a335d
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Best regards,
+-- 
+Tengfei Fan <quic_tengfan@quicinc.com>
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
