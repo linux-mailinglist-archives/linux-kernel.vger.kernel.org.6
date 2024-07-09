@@ -1,98 +1,146 @@
-Return-Path: <linux-kernel+bounces-246497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44B1E92C2A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:41:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A374892C2AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 19:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E08271F25480
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:41:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FBF9282A81
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 17:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AAE717B023;
-	Tue,  9 Jul 2024 17:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBB517B03A;
+	Tue,  9 Jul 2024 17:41:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQSIo0lM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="pleTIFYo"
+Received: from out.smtpout.orange.fr (out-15.smtpout.orange.fr [193.252.22.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4DB1B86F8
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 17:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25EB1B86F8;
+	Tue,  9 Jul 2024 17:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720546886; cv=none; b=n2oq5F/KukkbOCk9rN7WdEahgPIfS6X/Vuq5NY17u/tlREziaw5+BDwTA/Ag3ox/A3AYiTajA2HbyLUK6UllEL1i+38C0nlnni7KRO9HQlVZiIu1FaIcMmP9OD9oTUQ/Wrs0rTS11b+qp9LN41AMJ9w6+BCFM319GWU94fEYb2M=
+	t=1720546908; cv=none; b=AJipyfsKTDHhgtQQ8Qt+wcDIY9rMmgiTax9YJM4dBOvjNfCB2Z1T6CLg/VrrI7rcSg6y3xoVANsYxBg88XTjRBbwihm+coYsng/kPQHb+Ikb70LsrmOAC4AMuuSvm6myz6PUNUxDLoPnBuK99Oe+lc+Ghiv3rgTLbZBEaK8STVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720546886; c=relaxed/simple;
-	bh=dpQsM70QaCOUDwXwlC9bFXL1a5ELhi8e4N588OPS+A8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r8xI+lCvZD/iB6+7lN4TcW1PmZaIW3njTjnkirasztp5WYGqfe9VYwkcuaoEb7FgjUxGYwg1CS6tuY5VGBXKoIHElrkWmaQGn9Fwerp7cW5brreXdPr3BYVrTPG16JmER7ruVxfgKu+MvtRRYgrWES/f6nPk4eHKp+mZc6Zv3lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FQSIo0lM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38938C3277B;
-	Tue,  9 Jul 2024 17:41:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720546886;
-	bh=dpQsM70QaCOUDwXwlC9bFXL1a5ELhi8e4N588OPS+A8=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=FQSIo0lMFPeVg0Md/0gxAj8VEYa+PtL7VpVpA4QPyPDI7OMwEgpRC+v8JOSJFdA6I
-	 Odnfo/djM8+S8dxurJ0Cy/PGpYYDRqeo/LbvfXn5/eZLrzsezVtQLmlUmvQ/8c50ga
-	 IM0Fhq6B0aCPlRKNpMFBWjHzLjQMFDE2akzBP2xj+QCKYPYHnEkzEw7IJEw9J3tpOG
-	 3/9mxiV922eUnREFsJgYiR0ioUa86ItMBiDOOMg2tHOaTDWs0otj5ScNDRKcDaGawB
-	 eAraQJD3aAeGljjB7XpnIy5pK3L60JMLVmKoc6iPNq0ink3H+IiSL/OnLGK7pedesK
-	 mG4bUHYv++0zw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id CCC9ACE0A45; Tue,  9 Jul 2024 10:41:25 -0700 (PDT)
-Date: Tue, 9 Jul 2024 10:41:25 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Zqiang <qiang.zhang1211@gmail.com>
-Cc: imran.f.khan@oracle.com, tglx@linutronix.de,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] smp: Fix missed destroy_work_on_stack() calls in
- smp_call_on_cpu()
-Message-ID: <4673661c-b6c0-4188-a98c-83dfdda48a13@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240704065213.13559-1-qiang.zhang1211@gmail.com>
+	s=arc-20240116; t=1720546908; c=relaxed/simple;
+	bh=c8cxlmF6gbJmKp0GvscVOmvNDUYjxKXUjTI5ERmG9Cg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l6LqfSnzegNoZdZyMBgbTDyW56KBZF6UfbEW27HT9E8GjgGhExMXo5Jngvl+yVodmFxgevBs1kn3eCx+7+ZQxr3aHpYuOvxL6XufM7sQtUGO+Cwhy6sQKeeDtdbW8ylTmfQPC6qM18DnoAOsSMKz+9AbWnOvsUKf4LIuYBnZPfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=pleTIFYo; arc=none smtp.client-ip=193.252.22.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([86.243.222.230])
+	by smtp.orange.fr with ESMTPA
+	id REqNsAwXTzs6PREqNsRYPw; Tue, 09 Jul 2024 19:41:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1720546896;
+	bh=xCRQ9FdghEv29HWsRbQeBsLGTuUnfGCmDM9LR32omWo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=pleTIFYoaqWyd+Pr6fLoKQXMRzTsdVt+kaE8c1aUWdyMsUhn1wL+yKZXCxDsNUtMF
+	 dlSMDMV/4pwzNhoyIQ3ZRZPmN0DI9/Z1BJAJeDNmPJuCpXHqx9WZoWWyGj+KcPrlXj
+	 Wy/8ckrgeJN+rpy98huLj4LyLtQiF3Om6QXgi58riuoCFbaruRg25avoT4Ojy8dcBo
+	 PWCpOzQ/Epuzt3WW5++ENhGN2UnUu1VielyHxzg4QGXi3J6WnJs2HC4g4gAWez2Ktt
+	 uQQvoUelindGlgXj0uCNmL8uMgx6PVQw64hT4xxjrwgVTyVGMnfeoeXLOqYVlINR50
+	 5CYSseVscUEFA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 09 Jul 2024 19:41:36 +0200
+X-ME-IP: 86.243.222.230
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Nishanth Menon <nm@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] soc: ti: k3-ringacc: Constify struct k3_ring_ops
+Date: Tue,  9 Jul 2024 19:41:29 +0200
+Message-ID: <cb9dfc18cdf890afa2c53cd74b0b330d6f1c30ab.1720546863.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240704065213.13559-1-qiang.zhang1211@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 04, 2024 at 02:52:13PM +0800, Zqiang wrote:
-> For builts with CONFIG_DEBUG_OBJECTS_WORK=y kernels, the sscs.work
-> defined using INIT_WORK_ONSTACK() will be initialized by
-> debug_object_init_on_stack() for debug check in __init_work().
-> This commit therefore invoke destroy_work_on_stack() to free
-> sscs.work debug objects before smp_call_on_cpu() returns.
-> 
-> Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
+'struct k3_ring_ops' is not modified in this driver.
 
-I have queued this for testing.  My guess is that it should go to
-mainline some other way, so:
+Constifying this structure moves some data to a read-only section, so
+increase overall security.
 
-Tested-by: Paul E. McKenney <paulmck@kernel.org>
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  17090	   3304	     32	  20426	   4fca	drivers/soc/ti/k3-ringacc.o
 
-> ---
->  kernel/smp.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/smp.c b/kernel/smp.c
-> index cc13e73a887c..61f10f982341 100644
-> --- a/kernel/smp.c
-> +++ b/kernel/smp.c
-> @@ -1135,6 +1135,7 @@ int smp_call_on_cpu(unsigned int cpu, int (*func)(void *), void *par, bool phys)
->  
->  	queue_work_on(cpu, system_wq, &sscs.work);
->  	wait_for_completion(&sscs.done);
-> +	destroy_work_on_stack(&sscs.work);
->  
->  	return sscs.ret;
->  }
-> -- 
-> 2.17.1
-> 
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  17266	   3144	     32	  20442	   4fda	drivers/soc/ti/k3-ringacc.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested-only
+---
+ drivers/soc/ti/k3-ringacc.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/soc/ti/k3-ringacc.c b/drivers/soc/ti/k3-ringacc.c
+index fd4251d75935..8c0102968351 100644
+--- a/drivers/soc/ti/k3-ringacc.c
++++ b/drivers/soc/ti/k3-ringacc.c
+@@ -161,7 +161,7 @@ struct k3_ring {
+ 	struct k3_ringacc_proxy_target_regs  __iomem *proxy;
+ 	dma_addr_t	ring_mem_dma;
+ 	void		*ring_mem_virt;
+-	struct k3_ring_ops *ops;
++	const struct k3_ring_ops *ops;
+ 	u32		size;
+ 	enum k3_ring_size elm_size;
+ 	enum k3_ring_mode mode;
+@@ -268,17 +268,17 @@ static int k3_ringacc_ring_pop_mem(struct k3_ring *ring, void *elem);
+ static int k3_dmaring_fwd_pop(struct k3_ring *ring, void *elem);
+ static int k3_dmaring_reverse_pop(struct k3_ring *ring, void *elem);
+ 
+-static struct k3_ring_ops k3_ring_mode_ring_ops = {
++static const struct k3_ring_ops k3_ring_mode_ring_ops = {
+ 		.push_tail = k3_ringacc_ring_push_mem,
+ 		.pop_head = k3_ringacc_ring_pop_mem,
+ };
+ 
+-static struct k3_ring_ops k3_dmaring_fwd_ops = {
++static const struct k3_ring_ops k3_dmaring_fwd_ops = {
+ 		.push_tail = k3_ringacc_ring_push_mem,
+ 		.pop_head = k3_dmaring_fwd_pop,
+ };
+ 
+-static struct k3_ring_ops k3_dmaring_reverse_ops = {
++static const struct k3_ring_ops k3_dmaring_reverse_ops = {
+ 		/* Reverse side of the DMA ring can only be popped by SW */
+ 		.pop_head = k3_dmaring_reverse_pop,
+ };
+@@ -288,7 +288,7 @@ static int k3_ringacc_ring_pop_io(struct k3_ring *ring, void *elem);
+ static int k3_ringacc_ring_push_head_io(struct k3_ring *ring, void *elem);
+ static int k3_ringacc_ring_pop_tail_io(struct k3_ring *ring, void *elem);
+ 
+-static struct k3_ring_ops k3_ring_mode_msg_ops = {
++static const struct k3_ring_ops k3_ring_mode_msg_ops = {
+ 		.push_tail = k3_ringacc_ring_push_io,
+ 		.push_head = k3_ringacc_ring_push_head_io,
+ 		.pop_tail = k3_ringacc_ring_pop_tail_io,
+@@ -300,7 +300,7 @@ static int k3_ringacc_ring_push_tail_proxy(struct k3_ring *ring, void *elem);
+ static int k3_ringacc_ring_pop_head_proxy(struct k3_ring *ring, void *elem);
+ static int k3_ringacc_ring_pop_tail_proxy(struct k3_ring *ring, void *elem);
+ 
+-static struct k3_ring_ops k3_ring_mode_proxy_ops = {
++static const struct k3_ring_ops k3_ring_mode_proxy_ops = {
+ 		.push_tail = k3_ringacc_ring_push_tail_proxy,
+ 		.push_head = k3_ringacc_ring_push_head_proxy,
+ 		.pop_tail = k3_ringacc_ring_pop_tail_proxy,
+-- 
+2.45.2
+
 
