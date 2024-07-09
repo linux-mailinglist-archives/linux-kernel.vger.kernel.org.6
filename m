@@ -1,36 +1,37 @@
-Return-Path: <linux-kernel+bounces-245569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3010292B47B
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:55:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A9792B47E
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3C981F2284E
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:55:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B1091F2267D
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0909215575C;
-	Tue,  9 Jul 2024 09:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A159156674;
+	Tue,  9 Jul 2024 09:55:14 +0000 (UTC)
 Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487EA14F131;
-	Tue,  9 Jul 2024 09:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48832152E03;
+	Tue,  9 Jul 2024 09:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720518912; cv=none; b=arFDD6lZzch5PmR8X1H3aVj/GAMoHSvoo4L6fkYkSxvxro2p/tIkN24ca7EbiizzEdTnwxYmFDKQGmHO4PQr51Xv689Yov8tTewid8MHDUXJSsq2291wU+Fzsb9TKLfSHdGN8O8uQuDr6vyZueJdZ4GIh/KEe7YJLIOui5PxwGY=
+	t=1720518913; cv=none; b=JcrSl/9K40yv0OaR99xH994gBAbNZ3pJllhHV0GEc8VFLaHffqPaxOvwx7S+sW514uOe3+fZ8tqG01wPt921tFCtwvCOcjYY3i2Qh5whpmBf+acuXxU8/1Q6MBP7eyOAglJtYBUkQy1zP97G0BqvVBWUhtqm4RL38jja3zuJHBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720518912; c=relaxed/simple;
-	bh=xbBYpeUgi3jxNaO/CakzXkYOVeh8wOfJ6lkI8xevQds=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OUoCAbDyqHTRyrSpMY69GdukF9O5NvL/QRiCLCGxIJ4xmDRpMN6X0QiNpYZ6ALORsdbmilF+d5hXlZ4/ddeXQWvhjQr4KvwKAu+01UVrWj31o35xPSoS+gma2cVRJwkYDp5EE2A+xQUmnh0gtYSkKnmL0WX2bdLV6pYPxr6FFmQ=
+	s=arc-20240116; t=1720518913; c=relaxed/simple;
+	bh=4iUYg/XUgLCB2QRELheVzquktJ8dWrPootwzGAHVilM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=IdI9MJoog+3t0pJvjikTIHoFAwmPEN1lL0/XeA4YGyD4wodvcWsu227mOL7UeRGgUA5mzX5iBSbnN8Yma02pRSP5pPNY3vejiPF8e99gbN8mc/MObDmi3NAbLeBo389U3F2P/bpN+QebunE4/bJS0e2opu8cLvUnE7jiCtauyFA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
 Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8DxS_D8CI1mT2ACAA--.7078S3;
+	by gateway (Coremail) with SMTP id _____8AxXPD8CI1mVmACAA--.7142S3;
 	Tue, 09 Jul 2024 17:55:08 +0800 (CST)
 Received: from linux.localdomain (unknown [113.200.148.30])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8Cxqsb6CI1mgt1AAA--.17645S2;
-	Tue, 09 Jul 2024 17:55:07 +0800 (CST)
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8Cxqsb6CI1mgt1AAA--.17645S3;
+	Tue, 09 Jul 2024 17:55:08 +0800 (CST)
 From: Tiezhu Yang <yangtiezhu@loongson.cn>
 To: Will Deacon <will@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
@@ -44,10 +45,12 @@ To: Will Deacon <will@kernel.org>,
 Cc: linux-arm-kernel@lists.infradead.org,
 	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/3] hw_breakpoint: Save privilege of access control via ptrace
-Date: Tue,  9 Jul 2024 17:55:03 +0800
-Message-ID: <20240709095506.9691-1-yangtiezhu@loongson.cn>
+Subject: [PATCH v3 1/3] perf: Add perf_event_attr::bp_priv
+Date: Tue,  9 Jul 2024 17:55:04 +0800
+Message-ID: <20240709095506.9691-2-yangtiezhu@loongson.cn>
 X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20240709095506.9691-1-yangtiezhu@loongson.cn>
+References: <20240709095506.9691-1-yangtiezhu@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,49 +58,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8Cxqsb6CI1mgt1AAA--.17645S2
+X-CM-TRANSID:AQAAf8Cxqsb6CI1mgt1AAA--.17645S3
 X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj9xXoWrtryxCrWDXrW3Zw13KF4kGrX_yoWfJwcEgF
-	yxJ34DK3yv9F15ta4UJ3WSvF93t3y5W34Yyr1UKrZxGasIva48Zwn8AayxWwn8Xrs2vFWD
-	Awn8urn2vrnxKosvyTuYvTs0mTUanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbS8YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6F4UJVW0owAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
-	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_
-	Jw1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
-	xGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
-	JVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
-	vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IY
-	x2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26c
-	xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAF
-	wI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07joc_-UUUUU=
+X-Coremail-Antispam: 1Uk129KBj93XoW7uFWkAF1rXr47Cr1DXF1DJwc_yoW8Ww4Upr
+	Zxurn8K3ykJa4F9w13G3yDZw1UJws7W39Fga43Kw4Yyr43Z393uw1kWFyav3Z8Zw1UAayF
+	qwnIgFyDta4UXagCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUB2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVWxJr0_GcWln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
+	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q
+	6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64
+	vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E
+	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4YLvDUUUU
 
-v3:
-  -- Put the new member "bp_priv" lives in a union on config3
-     at the end of the uapi struct perf_event_attr.
-  -- Update the commit message to make the goal common and clear.
+When developing hardware watchpoint on LoongArch, we want to set the
+same privilege passed by the ptrace user data, but there is no bridge
+to save this value like bp_addr, bp_type and bp_len. This is a common
+issue for the archs which have privilege level of breakpoint.
 
-v2:
-  -- Put the new member "bp_priv" at the end of the uapi
-     struct perf_event_attr and add PERF_ATTR_SIZE_VER9.
-  -- Update the commit message to make the goal clear.
+Add a member "bp_priv" which lives in a union on config3 at the end
+of the uapi struct perf_event_attr to make a bridge between ptrace
+and hardware breakpoint.
 
-Tiezhu Yang (3):
-  perf: Add perf_event_attr::bp_priv
-  arm: hw_breakpoint: Save privilege of access control via ptrace
-  arm64: hw_breakpoint: Save privilege of access control via ptrace
+This is preparation for later patch on some archs such as ARM, ARM64
+and LoongArch which have privilege level of breakpoint.
 
- arch/arm/kernel/hw_breakpoint.c   |  4 +---
- arch/arm/kernel/ptrace.c          |  2 ++
- arch/arm64/kernel/hw_breakpoint.c | 11 ++---------
- arch/arm64/kernel/ptrace.c        |  2 ++
- include/uapi/linux/perf_event.h   |  5 ++++-
- kernel/events/hw_breakpoint.c     |  1 +
- 6 files changed, 12 insertions(+), 13 deletions(-)
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+---
+ include/uapi/linux/perf_event.h | 5 ++++-
+ kernel/events/hw_breakpoint.c   | 1 +
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 3a64499b0f5d..abe8da7a1f60 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -521,7 +521,10 @@ struct perf_event_attr {
+ 	 */
+ 	__u64	sig_data;
+ 
+-	__u64	config3; /* extension of config2 */
++	union {
++		__u8	bp_priv; /* privilege level of breakpoint */
++		__u64	config3; /* extension of config2 */
++	};
+ };
+ 
+ /*
+diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+index 6c2cb4e4f48d..3ad16b226e4f 100644
+--- a/kernel/events/hw_breakpoint.c
++++ b/kernel/events/hw_breakpoint.c
+@@ -754,6 +754,7 @@ static void hw_breakpoint_copy_attr(struct perf_event_attr *to,
+ 	to->bp_addr = from->bp_addr;
+ 	to->bp_type = from->bp_type;
+ 	to->bp_len  = from->bp_len;
++	to->bp_priv = from->bp_priv;
+ 	to->disabled = from->disabled;
+ }
+ 
 -- 
 2.42.0
 
