@@ -1,99 +1,106 @@
-Return-Path: <linux-kernel+bounces-245944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FBAD92BBA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:46:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B7E192BBAE
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 818DD1C21D24
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:46:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42E341F22619
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B6A15FA66;
-	Tue,  9 Jul 2024 13:46:04 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9368A15EFC8;
+	Tue,  9 Jul 2024 13:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O0q3uGbD"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F330D38DD8;
-	Tue,  9 Jul 2024 13:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E0F158D92
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 13:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720532764; cv=none; b=XYemnHUQ1OwCYySrPqnt+G2yMchhC8jqeX7q2n6gSQ+HnAFJGOnkCCNFVH+GS5talruM7LYRsVkET+1qOn7tM5zmGjtTnepd1w+c1Qmm0M/vR9cYfVS+CZ9Y51RDPXoaYjL8P5AuaKc7CvPXCJpNWz8pQO9ppPdnFttcfuCRJ0Y=
+	t=1720532835; cv=none; b=k+X8SC7RguGBpctvVjE08oJ6X+hdWsgMPgnWHOsy8vFDfGLBpHUCfN5ihIPKGPRgC2aE4bnd8rhC+eoz7aj9SXv6F2kgEhyvl5aTbFzWVBs0vb5FKnXuiC58xVxTkZPavVL43wA9ronaoiQPNoZ3i8sFFNxCvp6ztO9ipzosfyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720532764; c=relaxed/simple;
-	bh=69Zg09kOFuS8vnbadZiA0MZFZvEHafPmE15XT+i8spI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XDViIhJzEcM4nGmi+26dDpcUv3yo1kEUACmFLnoQQHwo57EcwZ2t0rBsuUoDmKWry1QDnLSUB11x1FOoNoZI7GPvRgUeDYfNdQAT8oqZgX1A2GGjlA7Gnlw0DvdDIk6i5Er5TjTdKW+TmmQXYGeRrLjSdSeOTgm83oyFcd4zh0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WJMbw1MbSzQkfL;
-	Tue,  9 Jul 2024 21:42:04 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0E183180ADD;
-	Tue,  9 Jul 2024 21:45:59 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 9 Jul
- 2024 21:45:58 +0800
-Message-ID: <e90c32d2-2a85-4f28-9154-09c7d320cb60@huawei.com>
-Date: Tue, 9 Jul 2024 21:45:57 +0800
+	s=arc-20240116; t=1720532835; c=relaxed/simple;
+	bh=nSFfZbFd2BGFpO2PCYukKqAyfoTHr45MAIbU0YjCNiQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sFe8NkWi8B2oDN7QaTd0l+4NDY+Cj6fM+PkV1xPRibeZJ6kNIr7fbi0BB7rAC/yOmqGYb1ZJQV9NpMDj0lDKDTXUHVlmbXtxRvxtzAiBx7EhXOObjy4NTtkQ27G65pmS4z7clDRID2JzhGLFG2ibqyy6ou2Or3n2eXXsY6yidiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O0q3uGbD; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-447eefeeb92so11465531cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 06:47:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720532833; x=1721137633; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TGIkGdkV4++eu2vnY9yilT0/UE+0DjFMMuz2Pn4/rzA=;
+        b=O0q3uGbDVO/POATFHqKFOnBYipnWi3xrBFYdQpooKxBfMWl9NZxFQE2unsFMqpIjA8
+         eEmZ1pn+XwSR6ugfMkkFRet6SKIQ0zbm+v8/HvQH0MMtycoA/suD5zX8DE49bypPqlr+
+         YAZ87XEnWXRo2hYVor7qg0qKXISr6hC00m1+4oHSTjCyl/bOmEuMaR4FvR8USp1EWYMp
+         jnewCngi5sQyPeYC7oZyLudZ5bdzP63JrPsAkCOuAql68doSnBN6dS//PKT+V8nXwzZD
+         w2h8a7mpP1Rjy9gr5fLDdgOE2wisvun8O+N6xleSQXhicBBZb0aDQZI7Oi7Ar+cmcLY0
+         ftFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720532833; x=1721137633;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TGIkGdkV4++eu2vnY9yilT0/UE+0DjFMMuz2Pn4/rzA=;
+        b=e375TMguPN1u4be3ZTdtcE1unGa7e44DLWSivg7Sn2psU/Lw/xkLYW/BYydfEQqNV3
+         BpuraF5ZXpcB0EjJEKSFjNT2N2xFt5yzxw6qPddH8q7tmPFugL9hrPyDQYkLdJssOFNN
+         dZDPRon9wr+B0pPC2w8xF1w+SHfFSvL6v3Oj1FSk2kvKAGSQeIcypNIrlszZVzAS+UMu
+         qR6CR8BOBlomf3EHPBCLZxs+8jeje+ReIZegy/j5vAgcjh7V9peneIC+UQTlM6XTX/Dy
+         i1MTfwS2WK2+/+AsGPbYcxs7Ue1Wh0h3kU+B0tlABsB3NSqQE6DPXS66NY9nyjifayFd
+         Y/pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqToeKZbGZgXz0Ni8aJwiDHLRT4HdZOQCJazTMkyk7RQSuWRyiowDEGRlEMhcRUeFvsY+AYSC8YKPcDHeutiGESPoqZWj380N7lc+5
+X-Gm-Message-State: AOJu0YzOPAItye8kA//2OjlJNwLIZTE4zfs9Ld6OWpbtm9nI3lnMZClF
+	dMsQQIxSFzhjdXgfu4M3ZD2AWlbBLDTF3uv+TqxNCA1plxeU/F9AY19qW5atDdcQ+/aqGMfAUej
+	HCAhUpHnVnu02HOthS0zm1YVnz5N/QLU73N0RuA==
+X-Google-Smtp-Source: AGHT+IGmoA0T88ljBnzqezS2HNtUpAzZ6Pl7miiM/qOWeZpUofmQ2dI94hIlzdSJknzxEm3/dd12u75cGCnd0agjHgU=
+X-Received: by 2002:ac8:7f07:0:b0:447:f4f6:7a1 with SMTP id
+ d75a77b69052e-447faaa57f2mr30672561cf.52.1720532833330; Tue, 09 Jul 2024
+ 06:47:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] cgroup: Fix AA deadlock caused by
- cgroup_bpf_release
-To: Markus Elfring <Markus.Elfring@web.de>, <bpf@vger.kernel.org>,
-	<cgroups@vger.kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Alexei
- Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Eduard
- Zingerman <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
-	<jolsa@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, John Fastabend
-	<john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Martin KaFai Lau
-	<martin.lau@linux.dev>, Roman Gushchin <roman.gushchin@linux.dev>, Song Liu
-	<song@kernel.org>, Stanislav Fomichev <sdf@google.com>, Tejun Heo
-	<tj@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, Zefan Li
-	<lizefan.x@bytedance.com>
-CC: LKML <linux-kernel@vger.kernel.org>
-References: <20240607110313.2230669-1-chenridong@huawei.com>
- <f8dfa410-bce0-48fe-b3d1-19fb5f5768a8@web.de>
-Content-Language: en-US
-From: chenridong <chenridong@huawei.com>
-In-Reply-To: <f8dfa410-bce0-48fe-b3d1-19fb5f5768a8@web.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+References: <CANtevs+a-ec45oz1tJd0m2Qc+dU4ASj9BcdUbyhsQ5Hm94dEKQ@mail.gmail.com>
+In-Reply-To: <CANtevs+a-ec45oz1tJd0m2Qc+dU4ASj9BcdUbyhsQ5Hm94dEKQ@mail.gmail.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 9 Jul 2024 15:47:00 +0200
+Message-ID: <CAKfTPtBhd9f5V7VCYtuYH5gBe7x01dZkTYCQtvTJDDPpmoZpAw@mail.gmail.com>
+Subject: Re: [PATCH] sched/autogroup: Improve readability and performance
+To: Parker Stafford <parkerstafforddev@gmail.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, "rostedt@goodmis.org" <rostedt@goodmis.org>, bsegall@google.com, 
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Parker,
 
+You should have a look at the process for submitting patches:
+ https://www.kernel.org/doc/html/v4.17/process/submitting-patches.html#no-mime-no-links-no-compression-no-attachments-just-plain-text
 
-On 2024/6/10 20:28, Markus Elfring wrote:
->> We found an AA deadlock problem as shown belowed:
-> 
->                                             below?
-> 
-> * How was an “AA deadlock” problem detected?
-> 
-> * Were any special analysis tools involved?
-It occurred after a long time of pressure testing.
+Thanks,
+Vincent
 
-> 
-> 
-> …
->> preblem is solved.
-> 
->    problem?
-> 
-Sorry for the spelling mistake.
-> 
-> Regards,
-> Markus
-
-Regards,
-Ridong
+On Sun, 7 Jul 2024 at 00:21, Parker Stafford
+<parkerstafforddev@gmail.com> wrote:
+>
+>  Hello,
+>
+>  This patch improves the readability and performance of the autogroup scheduling code. The changes include:
+>
+>  - Added detailed comments for better understanding.
+>  - Optimized locking mechanisms to minimize contention.
+>  - Improved error handling and provided more informative error messages.
+>  - Avoided unnecessary memory allocations and deallocations.
+>
+>  The patch has been tested and shown to work as expected. Signed-off-by: Parker Stafford parkerstafforddev@gmail.com
 
