@@ -1,168 +1,254 @@
-Return-Path: <linux-kernel+bounces-245191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C7692AF70
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:34:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57EF492AF73
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:36:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60C231F21FC9
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:34:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBFCC1F226F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 05:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB9863A;
-	Tue,  9 Jul 2024 05:34:33 +0000 (UTC)
-Received: from mail.valinux.co.jp (mail.valinux.co.jp [210.128.90.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041CF12F38B;
+	Tue,  9 Jul 2024 05:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="dFR4kZS9"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB409381BE;
-	Tue,  9 Jul 2024 05:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.128.90.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B113B3EA66;
+	Tue,  9 Jul 2024 05:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720503273; cv=none; b=k1HyJvbQSN6/GJkhwosj6uHzSCBttpXwA3SPMJabbqMOIcB5P+8UQjsvt0wYb1Dw4abyquoCYMr9oGd3vFxDWOfjkcW+jcDvLCJ8bvgrI9seo76IPBjD3/I0Q/DZQ7N99YJGQbe2QAaIrQZciePm6xIVJOon2pEc28gjpxdeEfM=
+	t=1720503406; cv=none; b=nckrG+wozp/6tJzrA5VA7Z5sswl9oL5fMwQKGAIgjTxu/IeAGnPKnllIx0rW9bH/GcZgrR9Tyk5ujDpQyRN1Do5ToU86xxbU5LxUevx3xmzRAiqN5WQglGFiRwBbEuRrLC/DdI2MZF/ROgeZG2iX1VymZApKe9zPCN2IbWNTBp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720503273; c=relaxed/simple;
-	bh=OLrGDxVS/AZ8w4mBiU4QW+Uhv6Y1Flmef6JocrFtI5k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MGyv8fUV1SHJpgjv1XmNsuEuTxMapfaCXm+SxE3m2g6gM0IBB0b0C7Dz2yuy0HU1sZj4ydBgXs956qtSq94/qlledRlH0I4vminuRtE3cscTEB7GkQ9qOD+8QquFvPUcCJhlOPnn4stlnKt9MGD2TKfxcIsW7zP5BflTMj32V8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; arc=none smtp.client-ip=210.128.90.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
-Received: from localhost (localhost [127.0.0.1])
-	by mail.valinux.co.jp (Postfix) with ESMTP id C5E48A9D35;
-	Tue,  9 Jul 2024 14:34:27 +0900 (JST)
-X-Virus-Scanned: Debian amavisd-new at valinux.co.jp
-Received: from mail.valinux.co.jp ([127.0.0.1])
-	by localhost (mail.valinux.co.jp [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 47VvWRLgAQLL; Tue,  9 Jul 2024 14:34:27 +0900 (JST)
-Received: from DESKTOP-NBGHJ1C.local.valinux.co.jp (vagw.valinux.co.jp [210.128.90.14])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail.valinux.co.jp (Postfix) with ESMTPSA id 90454A98C3;
-	Tue,  9 Jul 2024 14:34:27 +0900 (JST)
-From: takakura@valinux.co.jp
-To: paulmck@kernel.org
-Cc: boqun.feng@gmail.com,
-	bristot@redhat.com,
-	bsegall@google.com,
-	dietmar.eggemann@arm.com,
-	frederic@kernel.org,
-	jiangshanlai@gmail.com,
-	joel@joelfernandes.org,
-	josh@joshtriplett.org,
-	juri.lelli@redhat.com,
-	linux-kernel@vger.kernel.org,
-	mathieu.desnoyers@efficios.com,
-	mgorman@suse.de,
-	mingo@redhat.com,
-	neeraj.upadhyay@kernel.org,
-	peterz@infradead.org,
-	qiang.zhang1211@gmail.com,
-	rcu@vger.kernel.org,
-	rostedt@goodmis.org,
-	takakura@valinux.co.jp,
-	vincent.guittot@linaro.org,
-	vschneid@redhat.com
-Subject: Re: [PATCH] rcu: Let rcu_dump_task() be used without preemption disabled
-Date: Tue,  9 Jul 2024 14:34:26 +0900
-Message-Id: <20240709053426.94526-1-takakura@valinux.co.jp>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <5528fb77-9249-4223-96fb-8f5e9c3dac7f@paulmck-laptop>
-References: <5528fb77-9249-4223-96fb-8f5e9c3dac7f@paulmck-laptop>
+	s=arc-20240116; t=1720503406; c=relaxed/simple;
+	bh=p0NBgWk01RpCw5kLuuOOKMNWUAnifz8EKAs5N210Qa0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NRZQyqLv2p+bLAU+KNHtRse5UuxX2gAnhHeeEFLXzauy2XEqyIRe9inHQQ5UYzMlJCBs5IRr/wimqhIiXJ1/LrOQgKKHcoL24nS9SS8qXdzS77f6f3YrkZGYQkPwAhOt/uvNTqTVY5hQVetpayXwWmCdKqz0WbK8Bmqn15yaYYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=dFR4kZS9; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1720503377; x=1721108177; i=quwenruo.btrfs@gmx.com;
+	bh=yDjRGjMl0S9FFORjiGz8nO18RDyMk1eu2LiTsRsBUNA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=dFR4kZS9CthtTTHz3WG6hRQT53r48T2XUDAgRR7uPK605uVstv6nFuDPSrtbBTIa
+	 ojC6tkcsMen9tKayy/5XQd+SRQcnLOkOlCcA34I/8pWuzVy4pCEUQ74VokrOrJA6u
+	 WNJ1QM9CWOiVvt50+QMJfqyaI5z7Tq4R82jJwL8GBUpsrNUPAYdUFi8uyyDdSb2ci
+	 q/qUXiM05OkeijNTtIrrnv91SNiYKTkZ3N+jnup+PfNodwhW+moO3UhZDbkhjDh/7
+	 PyKhqErgrIqmhK+AVMQNj2r6y7XnjrJcnvQKcOWFqaMHCvAqmcxKwey+L5FOsOZ3l
+	 yhTSHWofJWJNgqR5eg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx004
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MF3DW-1sc69I2Qiu-00HIPF; Tue, 09
+ Jul 2024 07:36:17 +0200
+Message-ID: <4a8f5863-6270-4f87-b65d-7bed6bf43c43@gmx.com>
+Date: Tue, 9 Jul 2024 15:06:12 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/7] btrfs: replace stripe extents
+To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+ Johannes Thumshirn <jth@kernel.org>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
+Cc: "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240705-b4-rst-updates-v4-0-f3eed3f2cfad@kernel.org>
+ <20240705-b4-rst-updates-v4-1-f3eed3f2cfad@kernel.org>
+ <e51d0042-ec10-4a50-bd76-3d3d3cbc9bfc@gmx.com>
+ <9d7f7acf-8077-481c-926e-d29b4b90d46f@wdc.com>
+Content-Language: en-US
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
+ pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
+ BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
+ XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
+ jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
+ LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
+ mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
+ CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
+ tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
+ INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
+ DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
+ iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
+In-Reply-To: <9d7f7acf-8077-481c-926e-d29b4b90d46f@wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:b26YNB3cKk5UyxM2iFfIDjOwAciVyCgCEVhgLd8P7wmSoQnx11I
+ BaPfpb0YbozdSnNBW8wb3HB/BG1sGSY+74xJeCzSkXfp3XkNUPYiyeCO4tAjr5oCita0pKw
+ Dd1c7CXnVW4GA+uizuZm26oXqUC1M0qzwrEvM4wGp9mKlQ2/q0R/UxDac0vmJC9EN0ISv/a
+ OZRyq43K79LxhyVUL7XjA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:eZpMuLDevQE=;IP7apwzOrHE+UlgYgcYKhTpv0ZS
+ NMlOf0n6mcFCCQ6F2ws5Ptg9lQ63s91oE6OpfAe4t0wgZ5ccaze5e497jb1Vh/BKcG/pZyQRa
+ eR0nUMhnMRCOXvvZ4OEejDaqvZ4rtrisOKcieawbpTmafH/7WqqVYXPojs/NKfK9Qk2cVKI4c
+ LfDbMWniI94Rive+TqQRCiwI6kz1cicY3JxBMamz19Auva5yNu8oWEue7pd80Jt+QMowCKHYj
+ Ef5GRQqVRHJ1pB9D5zPRS79ENUFEM99MV29UmkycW7WRgL+SLJZ/kSEJ+UpgvdHbS109Wc0aS
+ LjP2z7NSukfOaSdbreL45QEMKbo9WzZx2xYLxx+bqPgnchTIak9MPrAzhSsXqye0bOWeses3U
+ OMLhGbjo8sUJqhL/r0PY4Pyn23sbCG23qZ6a35PS4Zd4qS8pP14ocMRhWM3ldcvEpdAufWgw7
+ zypR+BPERsqC2CnNxg4ZcvvdCjQdo0awuuTxFeQ125OgwxIhHg6OusI1Wcwh52C122W5HPll2
+ ycSymGLcv5Bxlh9SZgzSjA2LU4YNnVuQX9tZ9Qlur+P83eCM32OOYqHNI3zDRy4Sot3sotpRs
+ wn0neV89EBFzsxQ68zA1FU8ZiH+3ozcEI2R5OtmYOdUyekRdqG1FZ2YPjWPlaksTpASSpbPHj
+ tsfOnehdsOW/svZxlGpog2F/+hfnGHn9V0sEg0f8cw9pLjF9hQMPhThJq95iayo92wVD7BY+m
+ 6AxjICt8oWunOa7E+wy598nih7t6ex22YlqZSpqcwrr5O7dgKq3jYx1CMhSLLVyZRO7CDgiY0
+ gz/blQ3Bk5VBg5+RslrGXeatt3ZGAUPurRnHWZEcWnuq0=
 
-Hi Paul,
 
-On Mon, 8 July 2024, Paul E. McKenney wrote:
->On Fri, Jun 28, 2024 at 01:18:26PM +0900, takakura@valinux.co.jp wrote:
->> From: Ryo Takakura <takakura@valinux.co.jp>
->> 
->> The commit 2d7f00b2f0130 ("rcu: Suppress smp_processor_id() complaint
->> in synchronize_rcu_expedited_wait()") disabled preemption around
->> dump_cpu_task() to suppress warning on its usage within preemtible context.
->> 
->> Calling dump_cpu_task() doesn't required to be in non-preemptible context
->> except for suppressing the smp_processor_id() warning.
->> As the smp_processor_id() is evaluated along with in_hardirq()
->> to check if it's in interrupt context, this patch removes the need
->> for its preemtion disablement by reordering the condition so that
->> smp_processor_id() only gets evaluated when it's in interrupt context.
->> 
->> Signed-off-by: Ryo Takakura <takakura@valinux.co.jp>
->
->Hearing no objections, I pulled this in for further review and testing.
->
->I had to hand-apply this due to a recent conflicting change in the
->-rcu tree, so could you please check the version below in case I messed
->something up?
->
->							Thanx, Paul
 
-Thanks for preparing the patch!
-I checked it on the rcu tree and looks good to me.
+=E5=9C=A8 2024/7/8 21:13, Johannes Thumshirn =E5=86=99=E9=81=93:
+> On 06.07.24 01:19, Qu Wenruo wrote:
+>>
+>>
+>> =E5=9C=A8 2024/7/6 00:43, Johannes Thumshirn =E5=86=99=E9=81=93:
+>>> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+>>>
+>>> If we can't insert a stripe extent in the RAID stripe tree, because
+>>> the key that points to the specific position in the stripe tree is
+>>> already existing, we have to remove the item and then replace it by a
+>>> new item.
+>>>
+>>> This can happen for example on device replace operations.
+>>
+>> In that case, can we just modify the targeted dev stripe?
+>>
+>> Or do we have other call sites that can lead to such conflicts?
+>>
+>> As I'm not that confident if such replace behavior would mask some real
+>> problems.
+>
+> I've just tested the following patch and it looks like it's working:
 
-If possible, could you replace the title with s/rcu_dump_task()/dump_cpu_task()/ 
-when applying?
-I made a mistake with the title where dump_cpu_task() is the one being modified, 
-not rcu_dump_task(). I'm sorry for the confusion.
+After some more thinking, I'm wondering why dev-replace would even
+trigger an RST entry update?
 
-Sincerely,
-Ryo Takakura
+Normally for non-rst replace, we just reuse the scrub routine to read
+out all the extents, then only write the content to the replace target,
+thus there should be no update to anything (no chunk nor extent level
+update).
+
+I understand that for RST we can not directly go that routine, because
+the extents' bytenr is no longer directly mapped into a chunk, thus the
+data on-disk can be out-of-order and can not be directly used for
+dev-replace.
+
+
+But on the other hand, the extent based iteration is just to avoid
+wasting IO, in theory we can just copy the dev extent from one device to
+the target device, then everything should work as expected.
+(The bg is marked RO, thus no new write should happen there)
+
+
+Thus I'm wondering, can we just do a device extent level copying for RST
+replace.
+By that, we can avoid any update to RST entries at all, mirroring the
+behavior of non-RST code.
+
+Although the cost is, we have to implement a dedicated RST routine for
+device-replace.
+As in that case, dev-replace for RST would be something like:
+
+- Scrub the source device dev-extent
+- Copy the dev extent for that chunk directly to the target device
+   That can only happen if the source dev extent is all correct.
+
+Thanks,
+Qu
 
 >
->------------------------------------------------------------------------
 >
->commit ad6647a70f239aa9f2741b2f5a828a4483122a26
->Author: Ryo Takakura <takakura@valinux.co.jp>
->Date:   Fri Jun 28 13:18:26 2024 +0900
+> diff --git a/fs/btrfs/raid-stripe-tree.c b/fs/btrfs/raid-stripe-tree.c
+> index e6f7a234b8f6..7bfd8654c110 100644
+> --- a/fs/btrfs/raid-stripe-tree.c
+> +++ b/fs/btrfs/raid-stripe-tree.c
+> @@ -73,6 +73,53 @@ int btrfs_delete_raid_extent(struct
+> btrfs_trans_handle *trans, u64 start, u64 le
+>           return ret;
+>    }
 >
->    rcu: Let rcu_dump_task() be used without preemption disabled
->    
->    The commit 2d7f00b2f0130 ("rcu: Suppress smp_processor_id() complaint
->    in synchronize_rcu_expedited_wait()") disabled preemption around
->    dump_cpu_task() to suppress warning on its usage within preemtible context.
->    
->    Calling dump_cpu_task() doesn't required to be in non-preemptible context
->    except for suppressing the smp_processor_id() warning.
->    As the smp_processor_id() is evaluated along with in_hardirq()
->    to check if it's in interrupt context, this patch removes the need
->    for its preemtion disablement by reordering the condition so that
->    smp_processor_id() only gets evaluated when it's in interrupt context.
->    
->    Signed-off-by: Ryo Takakura <takakura@valinux.co.jp>
->    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> +static int update_raid_extent_item(struct btrfs_trans_handle *trans,
+> +				   struct btrfs_key *key,
+> +				   struct btrfs_io_context *bioc)
+> +{
+> +	struct btrfs_path *path;
+> +	struct extent_buffer *leaf;
+> +	struct btrfs_stripe_extent *stripe_extent;
+> +	int num_stripes;
+> +	int ret;
+> +	int slot;
+> +
+> +	path =3D btrfs_alloc_path();
+> +	if (!path)
+> +		return -ENOMEM;
+> +
+> +	ret =3D btrfs_search_slot(trans, trans->fs_info->stripe_root, key, pat=
+h,
+> +				0, 1);
+> +	if (ret)
+> +		return ret =3D=3D 1 ? ret : -EINVAL;
+> +
+> +	leaf =3D path->nodes[0];
+> +	slot =3D path->slots[0];
+> +
+> +	btrfs_item_key_to_cpu(leaf, key, slot);
+> +	num_stripes =3D btrfs_num_raid_stripes(btrfs_item_size(leaf, slot));
+> +	stripe_extent =3D btrfs_item_ptr(leaf, slot, struct btrfs_stripe_exten=
+t);
+> +
+> +	for (int i =3D 0; i < num_stripes; i++) {
+> +		u64 devid =3D bioc->stripes[i].dev->devid;
+> +		u64 physical =3D bioc->stripes[i].physical;
+> +		u64 length =3D bioc->stripes[i].length;
+> +		struct btrfs_raid_stride *raid_stride =3D
+> +			&stripe_extent->strides[i];
+> +
+> +		if (length =3D=3D 0)
+> +			length =3D bioc->size;
+> +
+> +		btrfs_set_raid_stride_devid(leaf, raid_stride, devid);
+> +		btrfs_set_raid_stride_physical(leaf, raid_stride, physical);
+> +	}
+> +
+> +	btrfs_mark_buffer_dirty(trans, leaf);
+> +	btrfs_free_path(path);
+> +
+> +	return ret;
+> +}
+> +
+>    static int btrfs_insert_one_raid_extent(struct btrfs_trans_handle *tr=
+ans,
+> 					struct btrfs_io_context *bioc)
+>    {
+> @@ -112,6 +159,8 @@ static int btrfs_insert_one_raid_extent(struct
+> btrfs_trans_handle *trans,
 >
->diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
->index d4be644afb50..c5d9a7eb0803 100644
->--- a/kernel/rcu/tree_exp.h
->+++ b/kernel/rcu/tree_exp.h
->@@ -597,9 +597,7 @@ static void synchronize_rcu_expedited_stall(unsigned long jiffies_start, unsigne
-> 			mask = leaf_node_cpu_bit(rnp, cpu);
-> 			if (!(READ_ONCE(rnp->expmask) & mask))
-> 				continue;
->-			preempt_disable(); // For smp_processor_id() in dump_cpu_task().
-> 			dump_cpu_task(cpu);
->-			preempt_enable();
-> 		}
-> 		rcu_exp_print_detail_task_stall_rnp(rnp);
-> 	}
->diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->index 05afa2932b5e..bdb0e0328f6a 100644
->--- a/kernel/sched/core.c
->+++ b/kernel/sched/core.c
->@@ -11485,7 +11485,7 @@ struct cgroup_subsys cpu_cgrp_subsys = {
-> 
-> void dump_cpu_task(int cpu)
-> {
->-	if (cpu == smp_processor_id() && in_hardirq()) {
->+	if (in_hardirq() && cpu == smp_processor_id()) {
-> 		struct pt_regs *regs;
-> 
-> 		regs = get_irq_regs();
+> 	ret =3D btrfs_insert_item(trans, stripe_root, &stripe_key, stripe_exten=
+t,
+> 				item_size);
+> +	if (ret =3D=3D -EEXIST)
+> +		ret =3D update_raid_extent_item(trans, &stripe_key, bioc);
+> 	if (ret)
+> 		btrfs_abort_transaction(trans, ret);
+>
 
