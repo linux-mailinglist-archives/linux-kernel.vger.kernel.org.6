@@ -1,484 +1,107 @@
-Return-Path: <linux-kernel+bounces-245518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BDE592B3C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:26:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2256392B3CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 11:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87B3CB20F9A
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:26:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3886B22564
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0E9156968;
-	Tue,  9 Jul 2024 09:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EE8157A58;
+	Tue,  9 Jul 2024 09:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="2iISLQGb"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="m9aKwtBV"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E83156875;
-	Tue,  9 Jul 2024 09:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82154156875;
+	Tue,  9 Jul 2024 09:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720517104; cv=none; b=Turd2KsVV5TBre992Ms+JT0ZkISMzpwoFbWBc1Y4cs0TMFhwNbAZZDRahoKsZ8W67LzzS/yrxGOkfg5b8eHFAU0xizjzMK3LcFXhfQe59I0LCk0n1qWKMR3r5fg5XC+g3n8Ye9gp2fQ4W1j+qNy9OhbX27ehh9SYKLPOsqEr2XI=
+	t=1720517113; cv=none; b=XD9AP4x9herI8n6EShXMYWn7GjhqFAcHXn9MNyx8lHPhlavLf7Pxcsua4Xbniv+WiTG/PYUxXlwYUv3AgSbM9WZ3Iq4CQCn97ndKrHiE7nW3AIOsLSDy1PiMofesStxV30/JY6woJxZVUhsfoa9hWVx37oUWEyXiNdGchdLBVRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720517104; c=relaxed/simple;
-	bh=zj0fd/imRiAKIwJx4OpFuxV6UFcMenqLCPAQKv0jFsQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hSVIi/CQGu+AD4kZ9r39Si8ZXdKeQc973ueC3kkzYRbZD6lE1LCH4GybTNRkfnYqQ+SkpwQZ0kRtkBbFV4+934Ei8nuUB6fuzvT5Nrwnl5f62uBkpezGt5FeMG5TVz4o6zDs2OecbJsG0TzYyMgUK4s6PDzyTOSSykx9u75i/sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=2iISLQGb; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1720517102; x=1752053102;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=zj0fd/imRiAKIwJx4OpFuxV6UFcMenqLCPAQKv0jFsQ=;
-  b=2iISLQGblhrMKI3Da7ieRrCPz26WpdQli7esKUItx3qBsJCDbRh7da93
-   iwHvfdrzpv83nBLFMx8gtapkpcmwf9B0pjlN6PO3/t+ObbqszaSR75MOJ
-   P6JqbxI7OoeHIcJXr4kzjm7l/knqAqH6hdKQ4nncBlDMBxHTWLNszi4DP
-   yjIBiphMNEcb2gN+J5GvRYkAp/vwiIbLYeSuFWpSQy/WV9Wwo2LzPQtaL
-   TkK+BxiBuVNoWfBBf/jab9EXiEA15plfW7bmuJkKGk8IeYQfHHaimkh3r
-   S+Ue8hseDXZ0ctoTW6FYRDVwiiPJE01pS1MmgJA0wrc0MX1zDXgHdOoL9
-   Q==;
-X-CSE-ConnectionGUID: ll16me3gQkedAh4EH1xcvQ==
-X-CSE-MsgGUID: lEjfDLNXQoKqLP670qvLzA==
-X-IronPort-AV: E=Sophos;i="6.09,194,1716274800"; 
-   d="scan'208";a="259885751"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Jul 2024 02:25:01 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 9 Jul 2024 02:24:39 -0700
-Received: from che-lt-i67131.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Tue, 9 Jul 2024 02:24:33 -0700
-From: Manikandan Muralidharan <manikandan.m@microchip.com>
-To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>, <arnd@arndb.de>,
-	<durai.manickamkr@microchip.com>, <linux-gpio@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <manikandan.m@microchip.com>
-Subject: [PATCH v3 5/5] dt-bindings: pinctrl: Convert Atmel PIO3 pinctrl to json-schema
-Date: Tue, 9 Jul 2024 14:53:54 +0530
-Message-ID: <20240709092354.191643-6-manikandan.m@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240709092354.191643-1-manikandan.m@microchip.com>
-References: <20240709092354.191643-1-manikandan.m@microchip.com>
+	s=arc-20240116; t=1720517113; c=relaxed/simple;
+	bh=J+1hPuhHeGaLG8RaIcdJzDWKam0wGYfdcX5++xetsIw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=phbIH04BDx4btOPZmmHpelQ0l3w+iSdrTu+XYliiqt525dq1iqbv1Ejj6nVSQjxjJl391TX9ReIG9rBQddeh+U430aQLppPFbMUFvfUqbsC59+7/NQJJLZSw+XZVW80TP1FZySX8Djp8e6b2z+fTqDQHFmrJAfxz9vh0g9rzntc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=m9aKwtBV; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720517076; x=1721121876; i=markus.elfring@web.de;
+	bh=J+1hPuhHeGaLG8RaIcdJzDWKam0wGYfdcX5++xetsIw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=m9aKwtBV7fvwLToEAu7ZcEZ3OmazsV/Cg68MjuCA5alZ2CwHKKTpBlBbCEoyFL/q
+	 P3XhGTddnzFeRmGuWS14kmNgJ2Ot/VlKzmTB0CBEWfX958hHQM1g2P8z3mcsq6tLt
+	 6r6ilFb4L2tBdSweeoawb003zq6aw41idfMAKNX3ARvu6HTuYPoQLJUspYzJFjxOU
+	 XCkMVznAzZe6Cze7dHt8V7UnZlPtWdnC8oPfGDmkhqqSEX40Cr+mftrwsyRuq/8I8
+	 R4uNGy4MQvyyiJoaG99MtuW2F6Ev7g2XidjkHXN9TCj9lNy9u9Pbd/NRdKXrbqBni
+	 CA8z0PY6XPLx9AE5dQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M5j5y-1sTtJ02ilO-00DY7f; Tue, 09
+ Jul 2024 11:24:36 +0200
+Message-ID: <43d7a27e-5b45-4d45-8ff7-8c10e128db88@web.de>
+Date: Tue, 9 Jul 2024 11:24:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+To: make24@iscas.ac.cn, dri-devel@lists.freedesktop.org,
+ kernel-janitors@vger.kernel.org
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Alan Cox <alan@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>,
+ David Airlie <airlied@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+References: <20240709085916.3002467-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH v3] drm/gma500: fix null pointer dereference in
+ cdv_intel_lvds_get_modes
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240709085916.3002467-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:RSrk3mncGUb8pKlEo1cdNPJk9W1ixGdfqI+k3kTLx2Jl/K9fR1y
+ +P29RjkHCoyhpjabNt3iYTlwcqzKg95aJweUtEhupC2WZv0m9rEP/rxHPq4mhEraRxMUGBK
+ P3gT++6GYtR3Rt/8+a3gXPDikk9lNQ3WKuQuA2PdclIx2vntMZNE+OE9Tu/bjl+Mos0md/9
+ nI63PGF2oB4x2ze8LCJPg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:7+yOAalgqd0=;CmFfosr4UNWvErVMkE0pCcB8JBa
+ PFAjH7CW2L6+HTBs3Uxjgq5X4diF2BTMaQwOxWEhxU0HpdCUHL3UpaZ8cOvlEf+U7AklOWCRe
+ foCvYzh7OfA5XuVmL6qkLUHQVS1aNYwit6r76e8RdvvZWhOr9DIxI1qckEUtWIQtGkd7b693W
+ YO1DgLpbSroDo9+axdyDspX4nEv4BgidHRnZNERcs737lTf7fhrBDCMsei7jEZnAq77gKsDmj
+ sfee0g1DxU/KfFvxRlblXleJFCQ8cy2F4Eq6Zhr1JUCwh9fWtV8Ik9jvqtVkjoKuErpTRDGoV
+ 1VXxUqM46OysUcV87DC8OQPHWhm0ekRd0zYFSmyXWg6QRdgQIeePzg005DnMD7n/zE9mF6sD/
+ wehbzQCPUaOF7yiGHx2TL19GEo8Qa2Wg7pU4xU9XZtnkONxpxitiqsopqKhj8IDFEYkanpaCh
+ SpOzITw7zzghHw8iHMeyaMaQ88Y2nDZTbh0UVVFEfAHdsN0+pPxbjjIL7t0KSJQRX132myfCw
+ dSE/mO7Iq2/ojw89Vf1Hrv9rOO11fv38xvIha+yzqZdVTckkbqXvB9GsJXQdYC/f53F4heMJe
+ /Y/5nP8ztidnt5YEpsS4G75q4t3hU9YDVGxZgzMxaJ0Yy7bYTu6uNIXqe6nJnr2HPux7kXh76
+ bj+9PZiNf4ruGZ99XzJQR1mKoUblPLwDMlfU7AlU89c3uRCI9h5qDLZgbafyFaP5CbgVziDZE
+ XlQYGPJNt3cIvamcRU8begghx9N6Po9hKrpIkfGp/kTW6uTojvXTXu2mCUftXB1AM8kVHYhOD
+ Lei5YkwRnjIUEEYT20c3GX6Qf7gqC5TqmSieZBzGaIJJw=
 
-Convert Atmel PIO3 pinctrl binding document to DT schema format
-json-schema.
+=E2=80=A6
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 
-Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
----
-changes in v3:
-- Remove quotes in $ref
-- modify the gpio regex
-- Remove pinmux pinctrl subnode regex and modify it since they do not
-follow a particular order or pattern, Adding 'type:object' with this
-'^[a-z0-9-_]+$' regex does throw DTC_CHK errors for other
-pio3 pinctrl properties
+Are you going to adjust this information anyhow?
 
-changes in v2:
-- Fix bot errors by fixing issues in 4/5 
-- remove qoutes from $ref
----
- .../bindings/pinctrl/atmel,at91-pinctrl.txt   | 178 -----------------
- .../pinctrl/atmel,at91rm9200-pinctrl.yaml     | 184 ++++++++++++++++++
- 2 files changed, 184 insertions(+), 178 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
- create mode 100644 Documentation/devicetree/bindings/pinctrl/atmel,at91rm9200-pinctrl.yaml
+The usage of mailing list addresses is probably undesirable for
+the Developer's Certificate of Origin, isn't it?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc7#n398
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
-deleted file mode 100644
-index 0aa1a53012d6..000000000000
---- a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
-+++ /dev/null
-@@ -1,178 +0,0 @@
--* Atmel AT91 Pinmux Controller
--
--The AT91 Pinmux Controller, enables the IC
--to share one PAD to several functional blocks. The sharing is done by
--multiplexing the PAD input/output signals. For each PAD there are up to
--8 muxing options (called periph modes). Since different modules require
--different PAD settings (like pull up, keeper, etc) the controller controls
--also the PAD settings parameters.
--
--Please refer to pinctrl-bindings.txt in this directory for details of the
--common pinctrl bindings used by client devices, including the meaning of the
--phrase "pin configuration node".
--
--Atmel AT91 pin configuration node is a node of a group of pins which can be
--used for a specific device or function. This node represents both mux and config
--of the pins in that group. The 'pins' selects the function mode(also named pin
--mode) this pin can work on and the 'config' configures various pad settings
--such as pull-up, multi drive, etc.
--
--Required properties for iomux controller:
--- compatible: "atmel,at91rm9200-pinctrl" or "atmel,at91sam9x5-pinctrl"
--		or "atmel,sama5d3-pinctrl" or "microchip,sam9x60-pinctrl"
--		or "microchip,sam9x7-pinctrl", "microchip,sam9x60-pinctrl"
--- atmel,mux-mask: array of mask (periph per bank) to describe if a pin can be
--  configured in this periph mode. All the periph and bank need to be describe.
--
--How to create such array:
--
--Each column will represent the possible peripheral of the pinctrl
--Each line will represent a pio bank
--
--Take an example on the 9260
--Peripheral: 2 ( A and B)
--Bank: 3 (A, B and C)
--=>
--
--  /*    A         B     */
--  0xffffffff 0xffc00c3b  /* pioA */
--  0xffffffff 0x7fff3ccf  /* pioB */
--  0xffffffff 0x007fffff  /* pioC */
--
--For each peripheral/bank we will describe in a u32 if a pin can be
--configured in it by putting 1 to the pin bit (1 << pin)
--
--Let's take the pioA on peripheral B
--From the datasheet Table 10-2.
--Peripheral B
--PA0	MCDB0
--PA1	MCCDB
--PA2
--PA3	MCDB3
--PA4	MCDB2
--PA5	MCDB1
--PA6
--PA7
--PA8
--PA9
--PA10	ETX2
--PA11	ETX3
--PA12
--PA13
--PA14
--PA15
--PA16
--PA17
--PA18
--PA19
--PA20
--PA21
--PA22	ETXER
--PA23	ETX2
--PA24	ETX3
--PA25	ERX2
--PA26	ERX3
--PA27	ERXCK
--PA28	ECRS
--PA29	ECOL
--PA30	RXD4
--PA31	TXD4
--
--=> 0xffc00c3b
--
--Required properties for pin configuration node:
--- atmel,pins: 4 integers array, represents a group of pins mux and config
--  setting. The format is atmel,pins = <PIN_BANK PIN_BANK_NUM PERIPH CONFIG>.
--  The PERIPH 0 means gpio, PERIPH 1 is periph A, PERIPH 2 is periph B...
--  PIN_BANK 0 is pioA, PIN_BANK 1 is pioB...
--
--Bits used for CONFIG:
--PULL_UP		(1 << 0): indicate this pin needs a pull up.
--MULTIDRIVE	(1 << 1): indicate this pin needs to be configured as multi-drive.
--			Multi-drive is equivalent to open-drain type output.
--DEGLITCH	(1 << 2): indicate this pin needs deglitch.
--PULL_DOWN	(1 << 3): indicate this pin needs a pull down.
--DIS_SCHMIT	(1 << 4): indicate this pin needs to the disable schmitt trigger.
--DRIVE_STRENGTH (3 << 5): indicate the drive strength of the pin using the
--			following values:
--				00 - No change (reset state value kept)
--				01 - Low
--				10 - Medium
--				11 - High
--OUTPUT		(1 << 7): indicate this pin need to be configured as an output.
--OUTPUT_VAL	(1 << 8): output val (1 = high, 0 = low)
--SLEWRATE	(1 << 9): slew rate of the pin: 0 = disable, 1 = enable
--DEBOUNCE	(1 << 16): indicate this pin needs debounce.
--DEBOUNCE_VAL	(0x3fff << 17): debounce value.
--
--NOTE:
--Some requirements for using atmel,at91rm9200-pinctrl binding:
--1. We have pin function node defined under at91 controller node to represent
--   what pinmux functions this SoC supports.
--2. The driver can use the function node's name and pin configuration node's
--   name describe the pin function and group hierarchy.
--   For example, Linux at91 pinctrl driver takes the function node's name
--   as the function name and pin configuration node's name as group name to
--   create the map table.
--3. Each pin configuration node should have a phandle, devices can set pins
--   configurations by referring to the phandle of that pin configuration node.
--4. The gpio controller must be describe in the pinctrl simple-bus.
--
--For each bank the required properties are:
--- compatible: "atmel,at91sam9x5-gpio" or "atmel,at91rm9200-gpio" or
--  "microchip,sam9x60-gpio"
--  or "microchip,sam9x7-gpio", "microchip,sam9x60-gpio", "atmel,at91rm9200-gpio"
--- reg: physical base address and length of the controller's registers
--- interrupts: interrupt outputs from the controller
--- interrupt-controller: marks the device node as an interrupt controller
--- #interrupt-cells: should be 2; refer to ../interrupt-controller/interrupts.txt
--  for more details.
--- gpio-controller
--- #gpio-cells: should be 2; the first cell is the GPIO number and the second
--  cell specifies GPIO flags as defined in <dt-bindings/gpio/gpio.h>.
--- clocks: bank clock
--
--Examples:
--
--pinctrl@fffff400 {
--	#address-cells = <1>;
--	#size-cells = <1>;
--	ranges;
--	compatible = "atmel,at91rm9200-pinctrl", "simple-bus";
--	reg = <0xfffff400 0x600>;
--
--	pioA: gpio@fffff400 {
--		compatible = "atmel,at91sam9x5-gpio";
--		reg = <0xfffff400 0x200>;
--		interrupts = <2 IRQ_TYPE_LEVEL_HIGH 1>;
--		#gpio-cells = <2>;
--		gpio-controller;
--		interrupt-controller;
--		#interrupt-cells = <2>;
--		clocks = <&pmc PMC_TYPE_PERIPHERAL 2>;
--	};
--
--	atmel,mux-mask = <
--	      /*    A         B     */
--	       0xffffffff 0xffc00c3b  /* pioA */
--	       0xffffffff 0x7fff3ccf  /* pioB */
--	       0xffffffff 0x007fffff  /* pioC */
--	      >;
--
--	/* shared pinctrl settings */
--	dbgu {
--		pinctrl_dbgu: dbgu-0 {
--			atmel,pins =
--				<1 14 0x1 0x0	/* PB14 periph A */
--				 1 15 0x1 0x1>;	/* PB15 periph A with pullup */
--		};
--	};
--};
--
--dbgu: serial@fffff200 {
--	compatible = "atmel,at91sam9260-usart";
--	reg = <0xfffff200 0x200>;
--	interrupts = <1 4 7>;
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_dbgu>;
--};
-diff --git a/Documentation/devicetree/bindings/pinctrl/atmel,at91rm9200-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/atmel,at91rm9200-pinctrl.yaml
-new file mode 100644
-index 000000000000..1bb386b42039
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/atmel,at91rm9200-pinctrl.yaml
-@@ -0,0 +1,184 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/atmel,at91rm9200-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Microchip PIO3 Pinmux Controller
-+
-+maintainers:
-+  - Manikandan Muralidharan <manikandan.m@microchip.com>
-+
-+description:
-+  The AT91 Pinmux Controller, enables the IC to share one PAD to several
-+  functional blocks. The sharing is done by multiplexing the PAD input/output
-+  signals. For each PAD there are up to 8 muxing options (called periph modes).
-+  Since different modules require different PAD settings (like pull up, keeper,
-+  etc) the controller controls also the PAD settings parameters.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - atmel,at91rm9200-pinctrl
-+              - atmel,at91sam9x5-pinctrl
-+              - atmel,sama5d3-pinctrl
-+              - microchip,sam9x60-pinctrl
-+          - const: simple-mfd
-+      - items:
-+          - enum:
-+              - microchip,sam9x7-pinctrl
-+          - const: microchip,sam9x60-pinctrl
-+          - const: simple-mfd
-+
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 1
-+
-+  ranges: true
-+
-+  atmel,mux-mask:
-+    $ref: /schemas/types.yaml#/definitions/uint32-matrix
-+    description: |
-+      Array of mask (periph per bank) to describe if a pin can be
-+      configured in this periph mode. All the periph and bank need to
-+      be described.
-+
-+      #How to create such array:
-+
-+      Each column will represent the possible peripheral of the pinctrl
-+      Each line will represent a pio bank
-+
-+      #Example:
-+
-+      In at91sam9260.dtsi,
-+      Peripheral: 2 ( A and B)
-+      Bank: 3 (A, B and C)
-+
-+      #    A          B
-+      0xffffffff 0xffc00c3b  # pioA
-+      0xffffffff 0x7fff3ccf  # pioB
-+      0xffffffff 0x007fffff  # pioC
-+
-+      For each peripheral/bank we will describe in a u32 if a pin can be
-+      configured in it by putting 1 to the pin bit (1 << pin)
-+
-+      Let's take the pioA on peripheral B whose value is 0xffc00c3b
-+      From the datasheet Table 10-2.
-+      Peripheral B
-+      PA0     MCDB0
-+      PA1     MCCDB
-+      PA2
-+      PA3     MCDB3
-+      PA4     MCDB2
-+      PA5     MCDB1
-+      PA6
-+      PA7
-+      PA8
-+      PA9
-+      PA10    ETX2
-+      PA11    ETX3
-+      PA12
-+      PA13
-+      PA14
-+      PA15
-+      PA16
-+      PA17
-+      PA18
-+      PA19
-+      PA20
-+      PA21
-+      PA22    ETXER
-+      PA23    ETX2
-+      PA24    ETX3
-+      PA25    ERX2
-+      PA26    ERX3
-+      PA27    ERXCK
-+      PA28    ECRS
-+      PA29    ECOL
-+      PA30    RXD4
-+      PA31    TXD4
-+
-+allOf:
-+  - $ref: pinctrl.yaml#
-+
-+required:
-+  - compatible
-+  - ranges
-+  - "#address-cells"
-+  - "#size-cells"
-+  - atmel,mux-mask
-+
-+patternProperties:
-+  'gpio@[0-9a-f]+$':
-+    $ref: /schemas/gpio/atmel,at91rm9200-gpio.yaml
-+    unevaluatedProperties: false
-+
-+additionalProperties:
-+  type: object
-+  additionalProperties:
-+    type: object
-+    additionalProperties: false
-+
-+    properties:
-+      atmel,pins:
-+        $ref: /schemas/types.yaml#/definitions/uint32-matrix
-+        description: |
-+          Each entry consists of 4 integers and represents the pins
-+          mux and config setting.The format is
-+          atmel,pins = <PIN_BANK PIN_BANK_NUM PERIPH CONFIG>.
-+          Supported pin number and mux varies for different SoCs, and
-+          are defined in <include/dt-bindings/pinctrl/at91.h>.
-+          items:
-+            items:
-+              - description:
-+                  Pin bank
-+              - description:
-+                  Pin bank index
-+              - description:
-+                  Peripheral function
-+              - description:
-+                  Pad configuration
-+
-+examples:
-+  - |
-+     #include <dt-bindings/clock/at91.h>
-+     #include <dt-bindings/interrupt-controller/irq.h>
-+     #include <dt-bindings/pinctrl/at91.h>
-+
-+     pinctrl@fffff400 {
-+       #address-cells = <1>;
-+       #size-cells = <1>;
-+       compatible = "atmel,at91rm9200-pinctrl", "simple-mfd";
-+       ranges = <0xfffff400 0xfffff400 0x600>;
-+
-+       atmel,mux-mask = <
-+         /*    A         B     */
-+         0xffffffff 0xffc00c3b  /* pioA */
-+         0xffffffff 0x7fff3ccf  /* pioB */
-+         0xffffffff 0x007fffff  /* pioC */
-+         >;
-+
-+       dbgu {
-+         pinctrl_dbgu: dbgu-0 {
-+           atmel,pins =
-+             <AT91_PIOB 14 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
-+              AT91_PIOB 15 AT91_PERIPH_A AT91_PINCTRL_NONE>;
-+         };
-+       };
-+
-+       pioA: gpio@fffff400 {
-+         compatible = "atmel,at91rm9200-gpio";
-+         reg = <0xfffff400 0x200>;
-+         interrupts = <2 IRQ_TYPE_LEVEL_HIGH 1>;
-+         #gpio-cells = <2>;
-+         gpio-controller;
-+         interrupt-controller;
-+         #interrupt-cells = <2>;
-+         clocks = <&pmc PMC_TYPE_PERIPHERAL 2>;
-+       };
-+     };
-+...
--- 
-2.25.1
-
+Regards,
+Markus
 
