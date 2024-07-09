@@ -1,138 +1,97 @@
-Return-Path: <linux-kernel+bounces-245311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF6092B107
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:27:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D38A092B114
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 09:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 723F31F223A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:27:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 108DA1C22451
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 07:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC504140E30;
-	Tue,  9 Jul 2024 07:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ceyuq7Ny"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E7B14831C;
+	Tue,  9 Jul 2024 07:30:14 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D051DA303;
-	Tue,  9 Jul 2024 07:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD27140E30;
+	Tue,  9 Jul 2024 07:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720510057; cv=none; b=BtDLx5/dMiXstK0VmC94lAOGMuEE1I4U8lwvMBrsa4JWnfmOUQrSyxURmCqfbzNDNgILpBUTV+33DhRp/7dHbUsT/MhBCJC/W/GE/UvgYALNuIU6lCr9GBF4nEZYNJtJeD3b39R6iLY7Av8W+G+tX2TgWyHTcPYOmWe47iyok8s=
+	t=1720510214; cv=none; b=k/9YMNzwisbcZoNNeNrUyf6hcKA1/rCX1GclwdabvatJvZyrZEKcO1F9sfbDOGuvz8WJx0G86s+nW6pZKrekkMpheVNXn1hGLK7OLim3uajnWA+ImXRWm6BfnFVEGOJTXEUd6jTDf+ablnux/8NemvVLKQP60xbDWPiPwRtLPkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720510057; c=relaxed/simple;
-	bh=XSbWc+QmMsURRHs5VQZCMpBJk/ZJQzofXzukTl77Teg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ttnNosACUTP7LvbqOiZSYfyZ5vJJRFfXBbOBffFJmcl4FA49shf9v6h1jeRa/ErkdjxVymj7H81YnFuuIQLk3wOpDUC2nzsQyzo5lh7SzGrYQCA/tneVjZTssqheEkHTyPQxt1iNFVmUmNkscaXqSgcLRjCNg58jgEf2cXWrRjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ceyuq7Ny; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 22E2D24000B;
-	Tue,  9 Jul 2024 07:27:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720510046;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HibcTUfYnEmcYJNR1chZFfn71QJWTGsOoH5RNfwQefg=;
-	b=Ceyuq7NyzSiJ0uMtuQPS2sSe0gfh1H5majfQZpQXoUjWx3QxtXz9+4GoC721Xm7Lb07AOj
-	72FNsBvyOpq9AlTa3A7OakQk8ZGSJ81B5t9w+LvVjQYYV8jluE0b3svt+hH6YgYF1Ecf/C
-	KE2ukLJ8yebR/x0u28u7StSBV/Odz+R8a0z5n3pGrkAtslcJxyw6VlM12zIw+jcIsT+/7Y
-	xSJKjKN6A8OaZYGr3syfyCBDgz1EyOp6cgB7caZOJMX0VxbP1MmJAXA4d6capMNp98tueB
-	8GNQGPFeTGs62oKyfIIj2XJsxc3Z1GApmK0C/ZuI8nAUZ/N457aBibvSVJpzcA==
-Date: Tue, 9 Jul 2024 09:27:22 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor@kernel.org>,
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Jonathan Cameron
- <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto
- <inochiama@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, "Palmer
- Dabbelt" <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v2 1/3] dt-bindings: iio: adc:
- sophgo,cv18xx-saradc.yaml: Add Sophgo SARADC binding documentation
-Message-ID: <20240709092722.1a3a2482@xps-13>
-In-Reply-To: <20240708165719.000021b9@Huawei.com>
-References: <20240705-sg2002-adc-v2-0-83428c20a9b2@bootlin.com>
-	<20240705-sg2002-adc-v2-1-83428c20a9b2@bootlin.com>
-	<20240705-unaired-pesticide-4135eaa04212@spud>
-	<6b5459fd-2873-4c26-b986-882413b8d95b@bootlin.com>
-	<20240706-remote-undergo-3b9dfe44d16f@spud>
-	<20240708083011.058d0c57@xps-13>
-	<304b7bb1-d315-4147-820b-1ec0aa63e759@kernel.org>
-	<20240708142344.47da466e@xps-13>
-	<20240708165719.000021b9@Huawei.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720510214; c=relaxed/simple;
+	bh=T38RomaN6IVvN1u99Rxq68WUG0h/IzMUegAp2pExboQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ehdkDgBNPQja0eweL51mNQbJWztN+eObflhhRP/rVCI14aa++aKKLb90buO4+4uwUw5+J+4iTSl1T/2r0EsMAapt1wNKMX8+DeaZTtLK09Dk8F0o4AmB1Jhc0eZAqbLgJxOVBl7PpoG9kFuvpfSoy6rGHkp077mOvbdJ65HJenc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowABHTs7y5oxmx7fMFA--.39776S2;
+	Tue, 09 Jul 2024 15:29:55 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: jhs@mojatatu.com,
+	xiyou.wangcong@gmail.com,
+	jiri@resnulli.us,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH net-next] net/sched: act_skbmod: convert comma to semicolon
+Date: Tue,  9 Jul 2024 15:28:38 +0800
+Message-Id: <20240709072838.1152880-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowABHTs7y5oxmx7fMFA--.39776S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF15Zr47JryfCFyUKFg_yoW3WFb_Zw
+	15KF4kJFy8tr1vyw4xZw4Yvr4fK3yxuF48Wr1j9FyYy3WkJryDZr1vkrn7GFy5urW7uF13
+	Gwn3XFy8Ca17ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7MxkIecxEwVAFwVW8CwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUd5rcUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Hi Jonathan,
+Replace a comma between expression statements by a semicolon.
 
-> > > > * DO use fallback compatibles when devices are the same as or a sub=
-set
-> > > >   of prior implementations.
-> > > >=20
-> > > > I believe we fall in the "devices are the same" category, so I would
-> > > > have myself wrote a similar binding here with a compatible matching
-> > > > them all, plus a hardware-implementation-specific compatible as wel=
-l;
-> > > > just in case.   =20
-> > >=20
-> > > Fallback from one model to another. There is no "another" model here,
-> > > but wildcard. There is no such device as cv18xx, right? =20
-> >=20
-> > No there is not. But I don't think there is a "base" model either.
-> > Just multiple SoCs named cv18<something> with apparently the same ADC.
-> >=20
-> > So actually I guess the discussion here is about the wildcard
-> > compatible. It feels strange to me to have no generic compatible either
-> > with a wildcard or with a "base" implementation (because there is
-> > probably none). So I guess the solution here is to just list a single
-> > specific compatible in the end.
->=20
-> It comes from long experience of silicon vendors not being consistent
-> with part naming.
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ net/sched/act_skbmod.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Oh, agreed :-)
+diff --git a/net/sched/act_skbmod.c b/net/sched/act_skbmod.c
+index cd0accaf844a..dc0229693461 100644
+--- a/net/sched/act_skbmod.c
++++ b/net/sched/act_skbmod.c
+@@ -246,7 +246,7 @@ static int tcf_skbmod_dump(struct sk_buff *skb, struct tc_action *a,
+ 
+ 	memset(&opt, 0, sizeof(opt));
+ 	opt.index   = d->tcf_index;
+-	opt.refcnt  = refcount_read(&d->tcf_refcnt) - ref,
++	opt.refcnt  = refcount_read(&d->tcf_refcnt) - ref;
+ 	opt.bindcnt = atomic_read(&d->tcf_bindcnt) - bind;
+ 	spin_lock_bh(&d->tcf_lock);
+ 	opt.action = d->tcf_action;
+-- 
+2.25.1
 
->  Far too often we've had a nice generic wild card
-> entry and along comes the vendor with a new part in the middle
-> of that range that is completely incompatible.  Then we end up with
-> people assuming the wildcard means it will work and a bunch of bug
-> reports.  Hence no wild cards, just define first supported part as your
-> 'base' and go from there.
-
-I see what you mean. I must admit I'm not a big fan of naming
-compatibles (and drivers) after a working base rather than a good
-enough wildcard, but I do understand your point and kind of agree with
-it actually.
-
-> It's even more fun when a vendor driver papers over the differences
-> and so it 'works', but the upstream one doesn't.  In extreme case
-> because a different driver entirely is required.
->=20
-> So basically we don't trust silicon vendors :)
-> Speaking as someone who works for one - I think that's entirely
-> reasonable!!
-
-Haha <3
-
-Thanks (once again) for your valuable inputs!
-Miqu=C3=A8l
 
