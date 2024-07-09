@@ -1,164 +1,130 @@
-Return-Path: <linux-kernel+bounces-245790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0878A92B94D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:22:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C649892B953
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 14:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6AD72877AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:22:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E5ACB251A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 12:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE11F15A86D;
-	Tue,  9 Jul 2024 12:19:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855A0158DB7;
+	Tue,  9 Jul 2024 12:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NuS/Ze8v"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="t9cxp9wX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IgzLWRJ9"
+Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715CF15887F
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 12:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7BB158211;
+	Tue,  9 Jul 2024 12:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720527579; cv=none; b=etLM92OL6QuP2bxzYeV328GmYcJMvfkS7Sr6eHoBjO9vQIF96B2KowrSafchrX4rRCvNQHBunUSAEf0yiAODMenioYlfLSBZYCcmGBm1RnY9CC4Z/f2k9ZMwmEniFExck7Vib/FSP6TPs4WLuikkWNS+SSVn72d2mMlSHhHuok8=
+	t=1720527651; cv=none; b=buaqzzndW9f9DpRd1Ra8+r3Bd6CvwJHqjap3Ge+WJW9wYqWMpZoYhOPyrzHUlUrApFu4RXWBqsAQIG5OkRM9zGAdD2GBubOfht2NoZ10VZ1hK9RU1KHK3arrv8c0x6D8SpiYzcq78vu4X0IMlT5iAjDX470uCIgsrreK9u1cSmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720527579; c=relaxed/simple;
-	bh=wwg9T7d2yBCHnXt74rxBEjB7TDXiUZKfjUZmjmOG3eE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SriCjOvoomLaGt8cIp4QPddKSzHQIh8tigiIqI8XXly1le8U0Q71AnGN2XVcHhhSfBoEEIRnim9Oyc23eLKwrrObqbV0I15lwMDqBj4EJIWCYheJODMDvFiOI7ilhJYxcOQixe2n/i7+9K+1KCOz6tYfcP4lBq6wZOaNysA/H0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NuS/Ze8v; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-58c2e5e8649so9011829a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 05:19:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720527576; x=1721132376; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=K0JcjxVLv/i0PeVxmJo/2AeXjlP7/Xz2DM4bSUFo9xw=;
-        b=NuS/Ze8vVcheBfafQXmUT0jE0+bwJGRbJdIDCUTrQbEdJXdjFnqp6Lv+Z807buQ4UH
-         oKid0/bLKrP76rHa6JldKsZNXVSALiD0EIRna2O2mv7XGA3UfNqqiOqr1ifXuYySDuid
-         +Q1P6Akk9yRDBjiwe/Bm/LRS0TQeM2BhDadz0vnQtHsXQQr9PJ4vCm2D6tLzfG39FRU6
-         xa/11hhqfZ1mHW1dT/o7yktd3ZVcSSFP3LF1wdIAZYh5quQxTPHmBxkO1bxcJLLtir6E
-         uXflvjliPgQDPL1r18V/dBbJr4hFcSxWIpfgtilpvsXltqzOfxWtFTTt1NvkNAKMzt+3
-         h9jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720527576; x=1721132376;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K0JcjxVLv/i0PeVxmJo/2AeXjlP7/Xz2DM4bSUFo9xw=;
-        b=fpSBks4ppfFcVmcxEDhxjwM7vZwDdCdLgyE9dwHe2Uud7ww/z6M6YeMlwrKgTUfUW+
-         j5tJJMb9CXx/SYn0P/vxmr+9sPbvPHUehojqLO/Jt7QAv0R/WA9g9YC1eOY0IKw/oe9E
-         fMeVQacwF+qofX99Frd564axyQAce1IfpTkIBkhQ0QoEBaLMxyxF53KkT9O1ZkaiTta9
-         rRzqCfG/zobP0Yvq61Hl9tSJ/aqwoQTfAG4zgn1YReHGn6WTwwhSbD6cRTFdYMcixwEF
-         qdvfcgvKwpW/8ZyJ9JUUiW0Sg+P+cMRoGmmNGH6twFwawNlPEDoZIR8rCj83Uh+BOVmW
-         O/TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWq0tu/dRTBd0cGHFU7DRqI0HYgSu6Orvy15hIGbQwg9xFEvjbjV3oOw2EiJtAKGmxYYHiXUPEtJZa9HdmsAjeyxiZRwvJBuCeaZCtz
-X-Gm-Message-State: AOJu0YyN6dk+Vvi2G12yH1VOfrIAAklEU2QBsYJ7yaHqimhzUQSpBMjE
-	iqZ+GmLMk5VWKWdaLzDn3pum28frM/eDFrKQxCm6l7XD6ttsA0JiZRqzvSb18FI=
-X-Google-Smtp-Source: AGHT+IETP+x6ceMtCRXfaP1AJJDwtxfBU1Wtet4Ur+40MKTLTGbV1kvJ/b3uu1sOGoj/YhsZa/8NSg==
-X-Received: by 2002:a05:6402:2708:b0:57c:6a05:afd0 with SMTP id 4fb4d7f45d1cf-594dd2555b7mr1431568a12.14.1720527575789;
-        Tue, 09 Jul 2024 05:19:35 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bda30f76sm997747a12.97.2024.07.09.05.19.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 05:19:35 -0700 (PDT)
-Message-ID: <6af7308b-ab84-4173-968f-c67fc1aef04b@linaro.org>
-Date: Tue, 9 Jul 2024 14:19:33 +0200
+	s=arc-20240116; t=1720527651; c=relaxed/simple;
+	bh=lg51kiG0bH2wha3CWkMu86WelvccUDFoYneT0UfT70k=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=FI9BKQ4r9WCYK8uV+V2I84c5953tWX6WNqVuxYBo2KUeLscMW+f0Lwp4eFYywWeMh5D1HtzwCk7XPrakwXkWlCSnHAYLXf+fAh0t8BIJawr2eDyu3+qDLNFFWO9ld8Sxt9wFcg6aqlFgfVez9NAaJQDKM8fF87xI+hFJWQ8aGq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=t9cxp9wX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IgzLWRJ9; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 0FDB71146E4E;
+	Tue,  9 Jul 2024 08:20:49 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 09 Jul 2024 08:20:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1720527649; x=1720614049; bh=NmuEqsdIBv
+	nTnkIAbmhsVQaDimK4bgjI7WetAoXyddc=; b=t9cxp9wX1dPUWsdEeL0ONvbgq/
+	Fu7IaKCBkNzagYz8/C/wqxCjVz4zcbyXmuDP2WyemyVZbvU5TEVM7StShWAqMB/T
+	D8m3QCBSOszLtYye+4B79Dq3t4VFpEccbHclQfMxieimqAYPjkuVMRMmDoe0YlR7
+	nZVQ2WnoMPvS2ui7Cf5S0m3XDBsa+s4j6Ql3+5oKpu6tvlhPShJrjN55uJ/keKFV
+	l424/nd+cJsxOe3beiCzeCQ3Uf48KUdzSqo1+4tjWdGmS0tj69LWKCvZ71CTrb21
+	4BZEoErYkaR735QHDuw8yc0LR9fTEOv+p5T0mJmAfOsb/PnSMcBikGwixhAQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1720527649; x=1720614049; bh=NmuEqsdIBvnTnkIAbmhsVQaDimK4
+	bgjI7WetAoXyddc=; b=IgzLWRJ9n2rfPUYmI6HYBl0E8phMdKY79qROe1vjYNkK
+	70d6fsKzf5Olo3ozgyXKrm0Msma+4JOcnECQpGKPYGfwdXToC1IW2/Hh7PsQEeYJ
+	2I9Wjplgx0aokatFfGEoliBeIyl8mt6PSfLWAj0cQjN3uhxaLjOIYACIoudM+C8n
+	HNJ/ub+dUGc2doqlNrgOV55SHiYHcQh9PjEXPv04+iqDKFPfyWqmLNwlN1TEzjQ+
+	XY6uZXCJgETEjbdPXYzY+BvOaIS8icjr7RhSxrj5GWt5aXoFwFu33jjOfwGlghsr
+	dQpFryoqW2a3BqMourNzwST+23TBP/l7MtL87DZTwQ==
+X-ME-Sender: <xms:HyuNZvO6Ae5VikP2ENomMZwoaaERatKELJss13Hnx6Cr2mlB6MEcmw>
+    <xme:HyuNZp8HrT7ye-1lTHxI130NaF7MGBhOhwu18EaZdI4xO-kWwJCGhItHOgozR-S59
+    8s04VvPYIk0CJchpgM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdelgdehudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:HyuNZuRweQSmrWo-xdnNfkQvYXgWc-4a5uMgodPt6FAb7iCqguiThg>
+    <xmx:HyuNZjtVNRLYS1AEdNEyThzvkaz1Z1aQEWXWKofxN1cZbNuUqO0HPA>
+    <xmx:HyuNZncQ8KN-A0uC-2lJcCpPUUYayFoFu4kfrOYPG6GsDRzkpuX5Gw>
+    <xmx:HyuNZv2InFx6qQ3cfYP-dlVYRukCGFdWxL8O08S8IGuZjDXzIEsrtQ>
+    <xmx:ISuNZoGx9FfH1GKo0jcoV0LaAf2xpuSjm4r3kRqEKcVShp9KmWBKGRgj>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 3B4D4B60092; Tue,  9 Jul 2024 08:20:47 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: sa8775p: Add interconnects for ethernet
-To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
- Andrew Halaney <ahalaney@redhat.com>, kernel@quicinc.com
-References: <20240708-icc_bw_voting_emac_dtsi-v1-1-4b091b3150c0@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240708-icc_bw_voting_emac_dtsi-v1-1-4b091b3150c0@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-Id: <c25a32c6-8ed0-4ef9-a13e-cb16a89edb73@app.fastmail.com>
+In-Reply-To: <Zo0kzIR_ZueaEjTa@krava>
+References: <20240709105709.18ce785d@canb.auug.org.au>
+ <20240709200851.4d921e43@canb.auug.org.au>
+ <784a34e5-4654-44c9-9c07-f9f4ffd952a0@app.fastmail.com>
+ <Zo0kzIR_ZueaEjTa@krava>
+Date: Tue, 09 Jul 2024 14:20:26 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jiri Olsa" <olsajiri@gmail.com>
+Cc: "Stephen Rothwell" <sfr@canb.auug.org.au>,
+ "Christian Brauner" <brauner@kernel.org>,
+ =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ linux-next <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the vfs-brauner tree with the asm-generic tree
+Content-Type: text/plain
 
-On 8.07.2024 11:14 PM, Sagar Cheluvegowda wrote:
-> Define interconnect properties for ethernet hardware.
-> 
-> Suggested-by: Andrew Halaney <ahalaney@redhat.com>
-> Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-> ---
-> Adding interconnect dtsi properties within ethernet node of SA8775P,
-> this patch is adding support for the interconnect properties defined
-> in the series ->  
-> https://lore.kernel.org/all/20240703-icc_bw_voting_from_ethqos-v3-0-8f9148ac60a3@quicinc.com/
-> ---
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> index 23f1b2e5e624..7ebf03953b7b 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> @@ -3464,6 +3464,12 @@ ethernet1: ethernet@23000000 {
->  				      "ptp_ref",
->  				      "phyaux";
->  
-> +			interconnect-names = "mac-mem", "cpu-mac";
-> +			interconnects = <&aggre1_noc MASTER_EMAC_1 QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-> +					 &config_noc SLAVE_EMAC1_CFG QCOM_ICC_TAG_ALWAYS>;
+On Tue, Jul 9, 2024, at 13:53, Jiri Olsa wrote:
+> On Tue, Jul 09, 2024 at 01:44:34PM +0200, Arnd Bergmann wrote:
+>
+>> Though I'm still not sure what uretprobe is only added
+>> to half the architectures at the moment. There is a chance
+>> we need a different conditional for it than '64'.
+>
+> uretprobe is defined only for x86_64, not sure what that means
+> for scripts/syscall.tbl though
 
-property
-property-names
+I meant you hooked it up unconditionally for all architectures
+using the old method, i.e. arc, arm64, csky, hexagon, loongarch64,
+nios2, openrisc, riscv32, riscv64, and xtensa in addition
+to x86-64, but not for the other ABIs: alpha, arm32, m68k,
+microblaze, mips-o32, mips-n32, mips64, nios2, parisc32, parisc64,
+powerpc32, powerpc64, powerpc-spu, s390-31, s390-64, sh,
+sparc32, sparc64, x86-32 and x86-x32.
 
-please
+If that is not the list you had intended, do you have a list
+of which architectures actually have the required hardware
+to hook it up? It would be good to do this correctly from
+the start so we don't rely on architecture maintainers assigning
+the numbers individually.
 
-otherwise lgtm
-
-Konrad
+     ARnd
 
