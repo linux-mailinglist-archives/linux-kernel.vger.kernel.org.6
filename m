@@ -1,187 +1,278 @@
-Return-Path: <linux-kernel+bounces-245900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-245901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2345D92BAFE
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:26:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB6692BB05
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 15:27:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98F481F2175D
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:26:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDA411C221EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 13:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C3315B57A;
-	Tue,  9 Jul 2024 13:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5CB15E5B8;
+	Tue,  9 Jul 2024 13:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uJu15Kp0"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ayn3y+Vj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5049382
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 13:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB63619E
+	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 13:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720531589; cv=none; b=EksL20FVyM7/WZAhbwF+s2B2wyaqIuPL8ouKL+wSyJZyDQOAC1jLsXhREbcw3ymxYkAeYEZVMqMunUREjlyPuMu5h/8tez9stG8aXYCbuM9RHMJSDohj4RGFthHGdubALJwjA3acM5O19uVM0G8sSoFWFuAgHi+ZlR1uEdDqGr0=
+	t=1720531652; cv=none; b=E92T/O3ETdD6Bwui11JXUecEIG3RUjop+U3x+Mk0khikCIj5QzAGyOj25QdHYhmcAyWKhNflNE7mRfmg5UITcPO+ePOWUZvDASdXWYXhryM9OkIqv7SqDJMNTv0RGgYOM3djy12BNCBcVlkBru/edeo1+dfyCXHhk/YvChbOj3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720531589; c=relaxed/simple;
-	bh=6WKOe37mxUTkug8sK5724WFmpZAnjnbPNun28ZV3tSc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qY2iX28Qj+ncDPf78GDBgXMgm5gPWbx7GguaIAzftRGDvAxDWmWN6gaZubmct6ToyaW42vTz/yiZk06YjFbw0NAXqg+2bbFRVDl/QnJCcatd5eDSXT/0T5e7smLT8bZ0k7quR+JOy8BK/3APviE/eZd663EVs6lpF4eb2QDAKU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uJu15Kp0; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: flintglass@gmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1720531585;
+	s=arc-20240116; t=1720531652; c=relaxed/simple;
+	bh=PRTs7ENNNPkFFlE7BIaCY/EAUslJtTBxr+x41B6vuKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PFGxfc/UmMdEaduHIaV7Fqm24AGDYMJyJ7G8HZWOLhVW3slUuLXmoPVR7TU/t1im0x/0XhfgeoH+QhW/10okSaDAHVETAbP59HSQm/7UzC2nMaxggNB6EzGQRCaiWDws4f5ZmdXc+t6OqHuANFihkKNJym+VE7uIZ2b2gODvq/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ayn3y+Vj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720531648;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fXJuI7uI1qCv8xGpT5wNFuY2vtyb8QTYfSJpVlZ43kY=;
-	b=uJu15Kp0Gc3uZ5gTkAbUQdOALV9UDlVCIFe+aqLZ33fbq+d79F2WBUIylcKdM3M5dIMr9T
-	SUItIfy9gyqmeWg5MmnuJbO3dYb11sw5Nz3ITLBAs5r/PnPH6UgjeXBAJU9ehyCuyGlI3T
-	UbZqN6NB5P4bmntG0BFIzyF/UMuA+WU=
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: yosryahmed@google.com
-X-Envelope-To: nphamcs@gmail.com
-X-Envelope-To: corbet@lwn.net
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: cerasuolodomenico@gmail.com
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-doc@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Message-ID: <cc5ba793-59a4-4904-a1b3-723ebaa3a93e@linux.dev>
-Date: Tue, 9 Jul 2024 21:26:12 +0800
+	bh=gtVPK2ZkpErkolXPfykX1c4ToiqBJouweYxuDjYw52I=;
+	b=ayn3y+VjJMe4SnTsxo/tQ+1i8qCtvGlx74bH9xexf0WM752DYkytOfgci7MH5nkusMPmjv
+	ALw+aKDdl880826A+OID0lQDQamD1BUMYnZIYXgkG2uEblbSzhRjfJe5/YPEPXao15RoMo
+	Vem+wg+5difh7FHGiuTwpkOAjV8ui58=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-65-UwEUnrpZNneV-RvCR112Ew-1; Tue, 09 Jul 2024 09:27:27 -0400
+X-MC-Unique: UwEUnrpZNneV-RvCR112Ew-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42674318a4eso6442435e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 06:27:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720531645; x=1721136445;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gtVPK2ZkpErkolXPfykX1c4ToiqBJouweYxuDjYw52I=;
+        b=KtFeNTxCoOE/ATeZG4M+I57Z4/xiXN1WWZSwS0f0YLwOoUAV2eXPh8lso47cbKjDdz
+         qldYlXxYiSG1E6VYbeqNwsko6ZzOFyECr9QdX1LyOlc+x+SJUZrbwiPNR8z2HLJ7BKkf
+         P10X/yLTVpcmzSFEUIwqERQkYl2Vl94BaXgPlWbMCOAJGJsV7geH++bM9JoJYvFX6lgc
+         IVG2/ETl6S5nmV/q9XO961b8Z/oWnbAnI24e8lLgwkfN5XFxq1sWyzVz5hihgzF7uqzq
+         0TynKUd8AaNvWhH99W/qbl4/0KtTVl6XxwZEpwqFe9TH/yjXwXSCUi1JgKRj+/5TmAhb
+         ognA==
+X-Forwarded-Encrypted: i=1; AJvYcCWPVZHd6Unshjp3ThY5+T9fh3Puj1AZh5f5H7aRf/aQtrwiAhMzODFhk27u5kOjrrJzhHo/AzoYLp2Qji9bJ6sCvyUDBdOZS1XBagij
+X-Gm-Message-State: AOJu0YyqpoRoIwL/algbbppkMR/dgFMI/O7xbA7e6sG65QI2u1oV86yA
+	bR3BxYTB0j0yFhCrmbs8WdvHmQEaGcPRaVhMA4L4LDT2Z/wt8zVe0qgDPI+TF0kPX+EhfzhIqdp
+	Fh7XdxXORcnG2vV95xtlI/suBTPzwCPqw/o+vaccr7i1HOPYfYWBdh26iNxieuw==
+X-Received: by 2002:a05:600c:4aa9:b0:426:5b44:2be7 with SMTP id 5b1f17b1804b1-426707cea49mr23970645e9.10.1720531645011;
+        Tue, 09 Jul 2024 06:27:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtCh7cTPgB26yWMyLQJhXp4cXICRWd/EuMsW0N0P3ozyXfXO/Wb4u4clbYFjvvspzLgUGLnQ==
+X-Received: by 2002:a05:600c:4aa9:b0:426:5b44:2be7 with SMTP id 5b1f17b1804b1-426707cea49mr23970305e9.10.1720531644464;
+        Tue, 09 Jul 2024 06:27:24 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:174:f6ae:a6e3:8cbc:2cbd:b8ff])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2fca8bsm208275575e9.47.2024.07.09.06.27.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 06:27:23 -0700 (PDT)
+Date: Tue, 9 Jul 2024 09:27:18 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>,
+	Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
+Subject: Re: [PATCH net-next v3 3/3] virtio-net: synchronize operstate with
+ admin state on up/down
+Message-ID: <20240709090743-mutt-send-email-mst@kernel.org>
+References: <20240709080214.9790-1-jasowang@redhat.com>
+ <20240709080214.9790-4-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 5/6] mm: zswap: store incompressible page as-is
-To: Takero Funaki <flintglass@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed
- <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
- Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240706022523.1104080-1-flintglass@gmail.com>
- <20240706022523.1104080-6-flintglass@gmail.com>
- <0afc769e-241a-404e-b2c9-a6a27bdd3c72@linux.dev>
- <CAPpoddfySkGpD5hKgqUAAMgMp2vWcivg1AzcyYh_NP1-ZsGkug@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <CAPpoddfySkGpD5hKgqUAAMgMp2vWcivg1AzcyYh_NP1-ZsGkug@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709080214.9790-4-jasowang@redhat.com>
 
-On 2024/7/8 21:44, Takero Funaki wrote:
-> 2024年7月8日(月) 12:56 Chengming Zhou <chengming.zhou@linux.dev>:
+On Tue, Jul 09, 2024 at 04:02:14PM +0800, Jason Wang wrote:
+> This patch synchronize operstate with admin state per RFC2863.
 > 
->>>        comp_ret = crypto_wait_req(crypto_acomp_compress(acomp_ctx->req), &acomp_ctx->wait);
->>>        dlen = acomp_ctx->req->dlen;
->>> -     if (comp_ret)
->>> +
->>> +     /* coa_compress returns -EINVAL for errors including insufficient dlen */
->>> +     if (comp_ret && comp_ret != -EINVAL)
->>>                goto unlock;
->>
->> Seems we don't need to care about? "comp_ret" is useless anymore.
->>
->> Just:
->>
->> if (comp_ret || dlen > PAGE_SIZE - 64)
->>          dlen = PAGE_SIZE;
->>
->> And remove the checkings of comp_ret at the end.
->>
+> This is done by trying to toggle the carrier upon open/close and
+> synchronize with the config change work. This allows propagate status
+> correctly to stacked devices like:
 > 
->>
->> We actually don't need to hold mutex if we are just copying folio.
->>
->> Thanks.
->>
+> ip link add link enp0s3 macvlan0 type macvlan
+> ip link set link enp0s3 down
+> ip link show
 > 
-> Thanks for reviewing.
+> Before this patch:
 > 
-> For comp_ret, can we consolidate all possible error codes as
-> incompressible data?
+> 3: enp0s3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000
+>     link/ether 00:00:05:00:00:09 brd ff:ff:ff:ff:ff:ff
+> ......
+> 5: macvlan0@enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+>     link/ether b2:a9:c5:04:da:53 brd ff:ff:ff:ff:ff:ff
+> 
+> After this patch:
+> 
+> 3: enp0s3: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000
+>     link/ether 00:00:05:00:00:09 brd ff:ff:ff:ff:ff:ff
+> ...
+> 5: macvlan0@enp0s3: <NO-CARRIER,BROADCAST,MULTICAST,UP,M-DOWN> mtu 1500 qdisc noqueue state LOWERLAYERDOWN mode DEFAULT group default qlen 1000
+>     link/ether b2:a9:c5:04:da:53 brd ff:ff:ff:ff:ff:ff
 
-Maybe we still want these debug counters? I'm not sure.
+I think that the commit log is confusing. It seems to say that
+the issue fixed is synchronizing state with hardware
+config change. But your example does not show any
+hardware change. Isn't this example really just
+a side effect of setting carrier off on close?
 
-With your proposal, I think we don't care about compression failures
-anymore, in all cases it's just ok to fallback to just copy the folio.
 
-> if we do not need to distinguish -EINVAL and the others, diff v2..v3
-> can be like:
+> Cc: Venkat Venkatsubra <venkat.x.venkatsubra@oracle.com>
+> Cc: Gia-Khanh Nguyen <gia-khanh.nguyen@oracle.com>
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+
+Yes but this just forces lots of re-reads of config on each
+open/close for no good reason.
+Config interrupt is handled in core, you can read once
+on probe and then handle config changes.
+
+
+
+
+
+> ---
+>  drivers/net/virtio_net.c | 64 ++++++++++++++++++++++++----------------
+>  1 file changed, 38 insertions(+), 26 deletions(-)
 > 
-> @@ -62,8 +62,6 @@ static u64 zswap_pool_limit_hit;
->   static u64 zswap_written_back_pages;
->   /* Store failed due to a reclaim failure after pool limit was reached */
->   static u64 zswap_reject_reclaim_fail;
-> -/* Store failed due to compression algorithm failure */
-> -static u64 zswap_reject_compress_fail;
->   /* Compressed page was too big for the allocator to (optimally) store */
->   static u64 zswap_reject_compress_poor;
->   /* Store failed because underlying allocator could not get memory */
-> @@ -1043,10 +1041,6 @@ static bool zswap_compress(struct folio *folio,
-> struct zswap_entry *entry)
->          comp_ret =
-> crypto_wait_req(crypto_acomp_compress(acomp_ctx->req),
-> &acomp_ctx->wait);
->          dlen = acomp_ctx->req->dlen;
-> 
-> -       /* coa_compress returns -EINVAL for errors including
-> insufficient dlen */
-> -       if (comp_ret && comp_ret != -EINVAL)
-> -               goto unlock;
+> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+> index 0b4747e81464..e6626ba25b29 100644
+> --- a/drivers/net/virtio_net.c
+> +++ b/drivers/net/virtio_net.c
+> @@ -2476,6 +2476,25 @@ static void virtnet_cancel_dim(struct virtnet_info *vi, struct dim *dim)
+>  	net_dim_work_cancel(dim);
+>  }
+>  
+> +static void virtnet_update_settings(struct virtnet_info *vi)
+> +{
+> +	u32 speed;
+> +	u8 duplex;
+> +
+> +	if (!virtio_has_feature(vi->vdev, VIRTIO_NET_F_SPEED_DUPLEX))
+> +		return;
+> +
+> +	virtio_cread_le(vi->vdev, struct virtio_net_config, speed, &speed);
+> +
+> +	if (ethtool_validate_speed(speed))
+> +		vi->speed = speed;
+> +
+> +	virtio_cread_le(vi->vdev, struct virtio_net_config, duplex, &duplex);
+> +
+> +	if (ethtool_validate_duplex(duplex))
+> +		vi->duplex = duplex;
+> +}
+> +
+>  static int virtnet_open(struct net_device *dev)
+>  {
+>  	struct virtnet_info *vi = netdev_priv(dev);
+> @@ -2494,6 +2513,18 @@ static int virtnet_open(struct net_device *dev)
+>  			goto err_enable_qp;
+>  	}
+>  
+> +	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
+> +		virtio_config_driver_enable(vi->vdev);
+> +		/* Do not schedule the config change work as the
+> +		 * config change notification might have been disabled
+> +		 * by the virtio core. */
+
+I don't get why you need this.
+If the notification was disabled it will just trigger later.
+This is exactly why using core is a good idea.
+
+
+> +		virtio_config_changed(vi->vdev);
+> +	} else {
+> +		vi->status = VIRTIO_NET_S_LINK_UP;
+> +		virtnet_update_settings(vi);
+
+
+And why do we need this here I don't get at all.
+
+> +		netif_carrier_on(dev);
+> +	}
+
+
+
+> +
+>  	return 0;
+>  
+>  err_enable_qp:
+> @@ -2936,12 +2967,19 @@ static int virtnet_close(struct net_device *dev)
+>  	disable_delayed_refill(vi);
+>  	/* Make sure refill_work doesn't re-enable napi! */
+>  	cancel_delayed_work_sync(&vi->refill);
+> +	/* Make sure config notification doesn't schedule config work */
+> +	virtio_config_driver_disable(vi->vdev);
+> +	/* Make sure status updating is cancelled */
+> +	cancel_work_sync(&vi->config_work);
+>  
+>  	for (i = 0; i < vi->max_queue_pairs; i++) {
+>  		virtnet_disable_queue_pair(vi, i);
+>  		virtnet_cancel_dim(vi, &vi->rq[i].dim);
+>  	}
+>  
+> +	vi->status &= ~VIRTIO_NET_S_LINK_UP;
+> +	netif_carrier_off(dev);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -4640,25 +4678,6 @@ static void virtnet_init_settings(struct net_device *dev)
+>  	vi->duplex = DUPLEX_UNKNOWN;
+>  }
+>  
+> -static void virtnet_update_settings(struct virtnet_info *vi)
+> -{
+> -	u32 speed;
+> -	u8 duplex;
 > -
->          /*
->           * If the data cannot be compressed well, store the data as-is.
->           * Switching by a threshold at
-> @@ -1056,7 +1050,8 @@ static bool zswap_compress(struct folio *folio,
-> struct zswap_entry *entry)
->           */
->          if (comp_ret || dlen > PAGE_SIZE - 64) {
->                  /* we do not use compressed result anymore */
-> -               comp_ret = 0;
-> +               mutex_unlock(&acomp_ctx->mutex);
-> +               acomp_ctx = NULL;
->                  dlen = PAGE_SIZE;
->          }
->          zpool = zswap_find_zpool(entry);
-> @@ -1083,12 +1078,11 @@ static bool zswap_compress(struct folio
-> *folio, struct zswap_entry *entry)
->   unlock:
->          if (alloc_ret == -ENOSPC)
->                  zswap_reject_compress_poor++;
-> -       else if (comp_ret)
-> -               zswap_reject_compress_fail++;
+> -	if (!virtio_has_feature(vi->vdev, VIRTIO_NET_F_SPEED_DUPLEX))
+> -		return;
+> -
+> -	virtio_cread_le(vi->vdev, struct virtio_net_config, speed, &speed);
+> -
+> -	if (ethtool_validate_speed(speed))
+> -		vi->speed = speed;
+> -
+> -	virtio_cread_le(vi->vdev, struct virtio_net_config, duplex, &duplex);
+> -
+> -	if (ethtool_validate_duplex(duplex))
+> -		vi->duplex = duplex;
+> -}
+> -
+>  static u32 virtnet_get_rxfh_key_size(struct net_device *dev)
+>  {
+>  	return ((struct virtnet_info *)netdev_priv(dev))->rss_key_size;
+> @@ -6000,13 +6019,6 @@ static int virtnet_probe(struct virtio_device *vdev)
+>  	/* Assume link up if device can't report link status,
+>  	   otherwise get link status from config. */
+>  	netif_carrier_off(dev);
+> -	if (virtio_has_feature(vi->vdev, VIRTIO_NET_F_STATUS)) {
+> -		schedule_work(&vi->config_work);
+> -	} else {
+> -		vi->status = VIRTIO_NET_S_LINK_UP;
+> -		virtnet_update_settings(vi);
+> -		netif_carrier_on(dev);
+> -	}
 
-If you want to keep these debug counters, you can move these forward.
 
->          else if (alloc_ret)
->                  zswap_reject_alloc_fail++;
-> 
-> -       mutex_unlock(&acomp_ctx->mutex);
-> +       if (acomp_ctx)
-> +               mutex_unlock(&acomp_ctx->mutex);
->          return comp_ret == 0 && alloc_ret == 0;
+Here it all made sense - we were reading config for the 1st time.
 
-And here we don't care about comp_ret anymore.
 
-Thanks.
+>  	for (i = 0; i < ARRAY_SIZE(guest_offloads); i++)
+>  		if (virtio_has_feature(vi->vdev, guest_offloads[i]))
+> -- 
+> 2.31.1
 
->   }
-> 
-> @@ -1886,8 +1880,6 @@ static int zswap_debugfs_init(void)
->                             zswap_debugfs_root, &zswap_reject_alloc_fail);
->          debugfs_create_u64("reject_kmemcache_fail", 0444,
->                             zswap_debugfs_root, &zswap_reject_kmemcache_fail);
-> -       debugfs_create_u64("reject_compress_fail", 0444,
-> -                          zswap_debugfs_root, &zswap_reject_compress_fail);
->          debugfs_create_u64("reject_compress_poor", 0444,
->                             zswap_debugfs_root, &zswap_reject_compress_poor);
->          debugfs_create_u64("written_back_pages", 0444,
 
