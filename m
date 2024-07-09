@@ -1,231 +1,168 @@
-Return-Path: <linux-kernel+bounces-246786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D335492C6A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:36:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE9D492C6AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 077051C2208C
-	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:36:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E07C71C22257
+	for <lists+linux-kernel@lfdr.de>; Tue,  9 Jul 2024 23:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EAF18561C;
-	Tue,  9 Jul 2024 23:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7732F189F39;
+	Tue,  9 Jul 2024 23:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Z9W4TrX8"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjH1w3+G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEAA18786F
-	for <linux-kernel@vger.kernel.org>; Tue,  9 Jul 2024 23:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7ABF144D00;
+	Tue,  9 Jul 2024 23:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720568210; cv=none; b=WwQlbDcfXWpThWliL8uS62uzo/ZArj2jlcwDyGHCh+7HzC7NeksuWR8qvP4u6ogtm7arHvvmAPZiXAON9N0LxJWOXJ7+2GMFMlyB93v3sgtDpb723lEuOjaxy/ZBfGBPGsNsjTX/ko09+XjobKMkrfDG6nbZIcVBwuQyv1QHf+Q=
+	t=1720568251; cv=none; b=Z2HuTm/dqDu1MbbSoemf+vD4QKa4L13MobM3KOUwkVPuIcrIJhbCcY5Ac2Ss9idMA0M5gd88pwaPHhhp75XQ/pFSVzHciutSp1rIgLKmg/f7zHSnsZIkmf+yTnsVinFB+XMRND/4aSSW7dPlPn/QXHDQi4pNXGNG1cEWeSgiS8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720568210; c=relaxed/simple;
-	bh=n5MYWmUU+zJ2ToBZXhyOO9IWeN/BTKmPpd9NkIhmWxQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sgdbyHXEV5VTmIU/vUiHdAXX7p69mJg7JfjIq9/hwhum4DEXTOgQ8TLBnMXSTU0v4ETytRhN200zBs8kWdo5NOR0E45xkFdn5dHZArIvN26iIgpgX0CjHpIcmtc1PIhGkowfQHauHxnx1GrWRR6JYirOYzur6pKCLmktyqIxDvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Z9W4TrX8; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-7f7c41f1bb5so9510639f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 16:36:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1720568208; x=1721173008; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4Obet+zOgI/d3hoWH4SK5GTEdBjNetrBshISKYPEwy8=;
-        b=Z9W4TrX8dKiyNFqIfO7HNKFtOnaUAkEa8b06D04fFPZJXywOiQgT4zg7J75qgaG9KY
-         IwbrNlFHotYtTqw4f5jrxANJxCHVdd9fIkouH2JF8hNb8Fo5hv+w3O8HvTPJdJPBRqfz
-         FVsS/uaudd6/WmAP2eptKxsJjN1VNaRHGGHRI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720568208; x=1721173008;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Obet+zOgI/d3hoWH4SK5GTEdBjNetrBshISKYPEwy8=;
-        b=KGE2IgT7Vjt04PUVZLuAWjeUsKP0wDsjh02kqz7jhrkS0MEaPdDWGjaxYU7pAXAZjk
-         mU9fvji1YH3Lplxyj3pTxiw6xMWjpvS45WYDbHg5Hge8DIJxqH/RbZXjVsLntO+8afZy
-         AXqe8fcQOpLmt8G4/mIZAXHwjRbbNfPdxvWpkzsLppnslBpR3fKERSHNrhAB/gw3CXj7
-         r0cdz0vNf57ro9ff9WHJC6QYieE1OETc6Et0pM6XdyfHo4t5VXGFikvGzcVizvVar3vH
-         ypnmX0MwiknRB1pVEknoREMmeDfJQGRbt2kvEzSTpkIpC9fkqZp8LKZ6R1kCtABohCOL
-         YXWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUf+xElZKK4ShSj6czqbCsRHTfxYHa+kZB7WRpaekVOZCo+6EL7oIDzZ0QB6SrCz/48yUssSxnfwwPtKZVwp6W0o4zyyCSKy9p2IqqQ
-X-Gm-Message-State: AOJu0YxAOkVe1Dju+vtafWJgOrhXbs6Spe9mlNFcjQsvI6D2iwJhggNK
-	TNIb3fprJuAKphjBR6wbukXxck6bHu3EeIJ0TMXjHHd5l3urYOHXs5HGi/t+SP8=
-X-Google-Smtp-Source: AGHT+IHsNYIFKKi8+YuyGeucGs9eDNkgkXTxNRKSb3UpG8nYC+rbPU4+HLdEcNir5iUkF3anyZzK0g==
-X-Received: by 2002:a05:6602:3413:b0:7f9:90c5:4107 with SMTP id ca18e2360f4ac-800023b5fdcmr529040239f.1.1720568208034;
-        Tue, 09 Jul 2024 16:36:48 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c0b1af85efsm777378173.6.2024.07.09.16.36.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 16:36:47 -0700 (PDT)
-Message-ID: <6940383d-68cb-4966-a587-9fa0cc56545e@linuxfoundation.org>
-Date: Tue, 9 Jul 2024 17:36:46 -0600
+	s=arc-20240116; t=1720568251; c=relaxed/simple;
+	bh=ce5m4W0fTEHvtlSSwUCGDSLthpcNoLs+lwaEEU/0Tqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=KSDg51FmeQSSRqc+KYNnwGneRM+6aItmJV3bjYQPJj3akeBrxiyywblwibv8ZqXk9xp6TxRt4no+8oHMlqBZ4LLSIC1Qch3T9bOosJp10BVLhsqgwfsBdbBl0PyXvnHJLQKV0mWt2Z/EPCRF9QOjLH4PN9SEpME/EZgAgBsAtS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KjH1w3+G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84E15C3277B;
+	Tue,  9 Jul 2024 23:37:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720568250;
+	bh=ce5m4W0fTEHvtlSSwUCGDSLthpcNoLs+lwaEEU/0Tqk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=KjH1w3+GK6JjMxQpEFrZQX8ts8VlEcvNb3CYpGGD4EHPnf3XI9Cb+fBDRs5vFbk+7
+	 q+/jXZj03pb7qNYHJWBib4/v+1IYiFd5vHa/qBxZexlIZUw2Lsjbd2QBF8Be4QFHrH
+	 iNwHFnhb9/KblVSrNVCCgrZajLrxkDNW5B/WSV4B5DpY6/b4G5Qr71OretdkcDKOz7
+	 eCTlCkSmgCnglMxvrmnKRxdeNSQfD2NAQvAKV2iOd2f0lYsBeHqxdUW5ddi3vo1dIR
+	 K2rbp6ZEpqlwVhyRwyYm3//p0ftPsujgamKOTpbXanAk2G5L19DXEGs6PNYtlc8kmH
+	 mGKiLSoZhzUJw==
+Date: Tue, 9 Jul 2024 18:37:28 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Xiaowei Song <songxiaowei@hisilicon.com>,
+	Binghui Wang <wangbinghui@hisilicon.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: kirin: fix memory leak in kirin_pcie_parse_port()
+Message-ID: <20240709233728.GA226193@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: tpm2: conform test to TAP output
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Jarkko Sakkinen <jarkko@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: kernel@collabora.com, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240702065559.772855-1-usama.anjum@collabora.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240702065559.772855-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240609-pcie-kirin-memleak-v1-1-62b45b879576@gmail.com>
 
-On 7/2/24 00:55, Muhammad Usama Anjum wrote:
-> The python unittest is being used for executing tests. TAP output
-> cannot be added in the unittest framework. The python unittest is being
-> run from a script. Add the output TAP logs to the script. Add "#"
-> prefix to the python unittest output which will mark all output as
-> informational TAP messages. Check exit status of the python unittest to
-> decide if test passed or failed. Not sure why but python unittest
-> outputs logs in stderr. So redirect the logs to stdout and then add
-> prefix.
+On Sun, Jun 09, 2024 at 12:56:14PM +0200, Javier Carrasco wrote:
+> The conversion of this file to use the agnostic GPIO API has introduced
+> a new early return where the refcounts of two device nodes (parent and
+> child) are not decremented.
 > 
-> Specify the bash explicitly instead of sh to run these tests as all of
-> the kselftests are shifting towards using bash explicitly. Some
-> interpreters have different syntax and cause issues.
+> Given that the device nodes are not required outside the loops where
+> they are used, and to avoid potential bugs every time a new error path
+> is introduced to the loop, the _scoped() versions of the macros have
+> been applied. The bug was introduced recently, and the fix is not
+> relevant for old stable kernels that might not support the scoped()
+> variant.
 > 
-> Cc: Jarkko Sakkinen <jarkko@kernel.org>
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> Fixes: 1d38f9d89f85 ("PCI: kirin: Convert to use agnostic GPIO API")
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
+FYI, I moved this to the pci/controller/gpio patch just before
+1d38f9d89f85.  That way there's no bisection hole and we don't need to
+complicate this commit log with details about the bug because the bug
+never exists.
+
 > ---
-> Changes since v1:
-> - CC more people which were missing earlier
-> ---
->   tools/testing/selftests/tpm2/test_async.sh | 24 ++++++++++++++++------
->   tools/testing/selftests/tpm2/test_smoke.sh | 19 ++++++++++++++---
->   tools/testing/selftests/tpm2/test_space.sh | 19 ++++++++++++++---
->   3 files changed, 50 insertions(+), 12 deletions(-)
+> This bug was found while analyzing the code and I don't have hardware to
+> validate it beyond compilation and static analysis. Any test with real
+> hardware to make sure there are no regressions is always welcome.
 > 
-> diff --git a/tools/testing/selftests/tpm2/test_async.sh b/tools/testing/selftests/tpm2/test_async.sh
-> index 43bf5bd772fd4..0e6e5d9d649fb 100755
-> --- a/tools/testing/selftests/tpm2/test_async.sh
-> +++ b/tools/testing/selftests/tpm2/test_async.sh
-> @@ -1,10 +1,22 @@
-> -#!/bin/sh
-> +#!/bin/bash
->   # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
->   
-> -# Kselftest framework requirement - SKIP code is 4.
-> -ksft_skip=4
-> +DIR="$(dirname $(readlink -f "$0"))"
-> +source "${DIR}"/../kselftest/ktap_helpers.sh
->   
-> -[ -e /dev/tpm0 ] || exit $ksft_skip
-> -[ -e /dev/tpmrm0 ] || exit $ksft_skip
-> +ktap_print_header
->   
-> -python3 -m unittest -v tpm2_tests.AsyncTest
-> +[ -e /dev/tpm0 ] || ktap_finished
-> +[ -e /dev/tpmrm0 ] || ktap_finished
-> +
-> +ktap_set_plan 1
-> +
-> +python3 -m unittest -v tpm2_tests.AsyncTest 2>&1 | sed "s/^/# /"
-> +
-> +if [ ${PIPESTATUS[0]} -eq $ksft_pass ]; then
-> +	ktap_test_pass "tpm2_tests.AsyncTest"
-> +else
-> +	ktap_test_fail "tpm2_tests.AsyncTest"
-> +fi
-> +
-> +ktap_finished
-> diff --git a/tools/testing/selftests/tpm2/test_smoke.sh b/tools/testing/selftests/tpm2/test_smoke.sh
-> index 58af963e5b55a..2219a180de91d 100755
-> --- a/tools/testing/selftests/tpm2/test_smoke.sh
-> +++ b/tools/testing/selftests/tpm2/test_smoke.sh
-> @@ -1,9 +1,22 @@
-> -#!/bin/sh
-> +#!/bin/bash
->   # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
->   
->   # Kselftest framework requirement - SKIP code is 4.
-> -ksft_skip=4
-> +DIR="$(dirname $(readlink -f "$0"))"
-> +source "${DIR}"/../kselftest/ktap_helpers.sh
-> +
-> +ktap_print_header
->   
->   [ -e /dev/tpm0 ] || exit $ksft_skip
->   
-> -python3 -m unittest -v tpm2_tests.SmokeTest
-> +ktap_set_plan 1
-> +
-> +python3 -m unittest -v tpm2_tests.SmokeTest 2>&1 | sed "s/^/# /"
-> +
-> +if [ ${PIPESTATUS[0]} -eq $ksft_pass ]; then
-> +	ktap_test_pass "tpm2_tests.AsyncTest"
-> +else
-> +	ktap_test_fail "tpm2_tests.AsyncTest"
-> +fi
-> +
-> +ktap_finished
-> diff --git a/tools/testing/selftests/tpm2/test_space.sh b/tools/testing/selftests/tpm2/test_space.sh
-> index 04c47b13fe8ac..6a55d13d74983 100755
-> --- a/tools/testing/selftests/tpm2/test_space.sh
-> +++ b/tools/testing/selftests/tpm2/test_space.sh
-> @@ -1,9 +1,22 @@
-> -#!/bin/sh
-> +#!/bin/bash
->   # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
->   
->   # Kselftest framework requirement - SKIP code is 4.
-> -ksft_skip=4
-> +DIR="$(dirname $(readlink -f "$0"))"
-> +source "${DIR}"/../kselftest/ktap_helpers.sh
-> +
-> +ktap_print_header
->   
->   [ -e /dev/tpmrm0 ] || exit $ksft_skip
->   
-> -python3 -m unittest -v tpm2_tests.SpaceTest
-> +ktap_set_plan 1
-> +
-> +python3 -m unittest -v tpm2_tests.SpaceTest 2>&1 | sed "s/^/# /"
-> +
-> +if [ ${PIPESTATUS[0]} -eq $ksft_pass ]; then
-> +	ktap_test_pass "tpm2_tests.AsyncTest"
-> +else
-> +	ktap_test_fail "tpm2_tests.AsyncTest"
-> +fi
-> +
-> +ktap_finished
-
-Usama,
-
-As I mentioned another TAP conversion patch from you  patch if the
-following command gives you TAP, there is  no need to convert.
-
-make -C tools/testing/tmp2 run_tests
-make kselftest TARGETS=tmp2
-
-kselftest framework lib.mk and runtests wrappers take care for
-TAP. The reason to take care of this at framework level is to
-avoid changes to individual tests. The wrapper keys off of
-KSFT_* codes returned from tests.
-
-Please don't send TAP conversion patches like this one. The output
-from the commands will have duplicate messages. The reason tests
-return
-
-make -C tools/testing/tmp2 run_tests
-make kselftest TARGETS=tmp2
-
-thanks,
--- Shuah
-
-
-
+> The dev_err() messages have not been converted into dev_err_probe() to
+> keep the current format, but I am open to convert them if preferred.
+> ---
+>  drivers/pci/controller/dwc/pcie-kirin.c | 21 ++++++---------------
+>  1 file changed, 6 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
+> index d1f54f188e71..0a29136491b8 100644
+> --- a/drivers/pci/controller/dwc/pcie-kirin.c
+> +++ b/drivers/pci/controller/dwc/pcie-kirin.c
+> @@ -403,11 +403,10 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
+>  				 struct device_node *node)
+>  {
+>  	struct device *dev = &pdev->dev;
+> -	struct device_node *parent, *child;
+>  	int ret, slot, i;
+>  
+> -	for_each_available_child_of_node(node, parent) {
+> -		for_each_available_child_of_node(parent, child) {
+> +	for_each_available_child_of_node_scoped(node, parent) {
+> +		for_each_available_child_of_node_scoped(parent, child) {
+>  			i = pcie->num_slots;
+>  
+>  			pcie->id_reset_gpio[i] = devm_fwnode_gpiod_get_index(dev,
+> @@ -424,14 +423,13 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
+>  			pcie->num_slots++;
+>  			if (pcie->num_slots > MAX_PCI_SLOTS) {
+>  				dev_err(dev, "Too many PCI slots!\n");
+> -				ret = -EINVAL;
+> -				goto put_node;
+> +				return -EINVAL;
+>  			}
+>  
+>  			ret = of_pci_get_devfn(child);
+>  			if (ret < 0) {
+>  				dev_err(dev, "failed to parse devfn: %d\n", ret);
+> -				goto put_node;
+> +				return ret;
+>  			}
+>  
+>  			slot = PCI_SLOT(ret);
+> @@ -439,10 +437,8 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
+>  			pcie->reset_names[i] = devm_kasprintf(dev, GFP_KERNEL,
+>  							      "pcie_perst_%d",
+>  							      slot);
+> -			if (!pcie->reset_names[i]) {
+> -				ret = -ENOMEM;
+> -				goto put_node;
+> -			}
+> +			if (!pcie->reset_names[i])
+> +				return -ENOMEM;
+>  
+>  			gpiod_set_consumer_name(pcie->id_reset_gpio[i],
+>  						pcie->reset_names[i]);
+> @@ -450,11 +446,6 @@ static int kirin_pcie_parse_port(struct kirin_pcie *pcie,
+>  	}
+>  
+>  	return 0;
+> -
+> -put_node:
+> -	of_node_put(child);
+> -	of_node_put(parent);
+> -	return ret;
+>  }
+>  
+>  static long kirin_pcie_get_resource(struct kirin_pcie *kirin_pcie,
+> 
+> ---
+> base-commit: d35b2284e966c0bef3e2182a5c5ea02177dd32e4
+> change-id: 20240609-pcie-kirin-memleak-18c83a31d111
+> 
+> Best regards,
+> -- 
+> Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> 
 
