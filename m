@@ -1,148 +1,145 @@
-Return-Path: <linux-kernel+bounces-247788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D29592D48D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:52:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C90B292D46E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEF1A1C2190C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:52:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 061B21C21484
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C229B194088;
-	Wed, 10 Jul 2024 14:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8D6194082;
+	Wed, 10 Jul 2024 14:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="ijfqrO40"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [167.172.40.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yVsDsvp6"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EBB19309E
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.172.40.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66409193479
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720623161; cv=none; b=cebceyb8qMNG6LDbh4+Pli88OuW+Vsy49aJGDm6/NqfyOrK4Dhib7EVsH7sANdJs95TIWNJhcJ9TOZO1597R8f3btnn5cCNU8QEMP/PBm5WWd376I+2x/PGnWr/b+ZVrZAg809R6whzw3uEOoqVNkdenLBNejZ8WjP1ouoJ0WuY=
+	t=1720622593; cv=none; b=ltP1P3M1kqUbVfzBld20/Xdqji1UqShDp671058pMCJQYwXDA1qe3d/ffFO2IxPJI82GZEiqBdFmCaTEZ6Y9NyjIvzwVBhq6Deq7jLjQ/yywF6IIwLCtlqSn+yLOx4d5lcy7YIgK2OZOiEKy1nVVND4pImkqjKeRTNgv8/fFB6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720623161; c=relaxed/simple;
-	bh=QCXEave5NU6o2HSHySwi+llu0gALOnXIFYCrr4kwS9s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kAzwjBiNSw6amV0Qd+8P6Tk5FJR5kcJjUmba4NQTQH4Fkwg5dCFF6V/pTOL2dlsQhae/0HqniN41VhYIcOQigxIQzmNHrjFosmF+uiY/Kcp5qoVGfc/+clomWqcVWpTKXDHHzt+nQgzJdYTEoECpfUN5KSbiu2BPo2GUFdyk4eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=ijfqrO40; arc=none smtp.client-ip=167.172.40.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1720623139;
- bh=NXPTGPBY0179P6BWZHx7/WS3Plscrxo5swZEML9bMlE=;
- b=ijfqrO40nuxnI/qbViZ+LHX0tLwo6k/Xp4ZB7fY8G+jJDLf/4CTFZVkM1mW0YaWzM+Glf6Ch4
- pkQsO6kaxUNNX0D1Ew6VMM1XYinMv2fcilMyKcE3i3bzsSnbfa+Cx3RUr3O08oQdLa3zG0P1lE7
- NKM30lsN7b1WELE7kMtsb1KRiaKJC/iG5/dMaUU6PHJOHOGnF+yU5HFqAkcW6PV5wWpEX7pU0tf
- QVXMD8Je6eLFzOtLvhRR1LsgIdp9E+pj6ZLNLwaWtSD9uPD6Ba72asqUbEap5DjR1tnKarNE/hN
- 1zYGpasGHy5R8mV9cbUovv89wvvCQNhEeytEnn56IIIA==
-Message-ID: <84dc40f4-1948-4eb7-b16e-8a79357c2622@kwiboo.se>
-Date: Wed, 10 Jul 2024 16:41:23 +0200
+	s=arc-20240116; t=1720622593; c=relaxed/simple;
+	bh=KpsIZ6jzaxZLqZC+0GjwVgDUh89rNXpUnOtFQAHPfIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EThvx8PBuEsPnPl0MKl5NfN385Crn0lNRWIS2jpECX6BQhfUVEK56MYlbTZk8bom3XHqIT4j44NZmCkb5YBaV0hVBPFSNizUo8fVp2gPGr/zhp3c0IG6n7dCcuzYcYCtkIHhHyxre/S7Wfq6fnOnTkKUSq++Kp3aga59JwbkjqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yVsDsvp6; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42662d80138so25431895e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:43:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720622590; x=1721227390; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QOsOdIxYv2ExEMFqfT+PN67MY38Sp+oZzT0Ko1qTmks=;
+        b=yVsDsvp6KjjX9KCLs5jt8OP5Lcb/GInB6Lo9r1vMlhKQgW6c8lGaCo4tC5h2RezO5x
+         DU7rcWMyB3CUVXJscUgLpunZLr3WxcwFDXSGGQs5mSkYMrt3C5zcqRr/vKB+gP21TU5u
+         RcVQqrAsntFy6ufBQRq/1tB6VD4hGN49QPHL7xNi9vhYROn6VEpWTULdY6NU+XVxeaqD
+         wf3irod1d/vrZfk80MzwSPwJSx73qdYnDB0+Oyak2fIr3BhRgBIvo7+v9EI49t8q/B61
+         Uq5QVkl2g9QeyYt2Jf9BG2Jvn8oBA6quq8yckQZH99EKfzeqRGsH5/y/zM8V09tW58gv
+         i/kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720622590; x=1721227390;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QOsOdIxYv2ExEMFqfT+PN67MY38Sp+oZzT0Ko1qTmks=;
+        b=I5eTOtQy8tIko5w0ZlXDp9PJA/hR/Fep8DP/3nTZZYo0hVtQTMxIzMR7iwtC325kkO
+         ysY/7pSnEsJ3D7qCQ45gSAP3mCCvc4ASJntaObg6WwwM37UhfjiHaNs5ir18vMp7C/+N
+         FF061JUDFQ2D9a8F6YrJJ1Yc/UTCaKmRhDKtnkrh7pSmgBbm56nuq+0aZMK1bx/sjvlc
+         DxNN0oHkxH2MiXrOYuCVckmbLOMC2IVxDo7RxT5QGbAtWSvLgpqOSmuTozzaCkvHpYfl
+         mLf7+e7qiVKNKtk5iBD8hNbYsQb9yrNdVwM3Gj9dDOWk1x6zvYubAWJW4RHXFA5DDqJ9
+         rHuw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjxwY9z1qe9w9C8r4aYCy+abq47cUgh1dy/cE9BFRYgFziN7VePT4CTI45NYI49n/RpCe0i6jfJFse+Ab8niU3t8c008+/KZTejgwy
+X-Gm-Message-State: AOJu0Yzw3jBVHtNSgRK3LK9KY5UJINg3FJncHCWFhemmRZaUKFXy6wig
+	asptpONVeugkSzCs1IOiwwgZYIOqwSiyN++idIyFTfOAn3C+N5tjaXyYyeIXQeo=
+X-Google-Smtp-Source: AGHT+IGVb8T0zmjUppXKMiGZvXO5lSsizz8CluNzkaf++om0s6TaTa5apn/9eqEINpHhSmfa5Hi0zQ==
+X-Received: by 2002:a05:600c:5584:b0:426:6087:198f with SMTP id 5b1f17b1804b1-426708fa98emr36208235e9.39.1720622589688;
+        Wed, 10 Jul 2024 07:43:09 -0700 (PDT)
+Received: from linaro.org ([82.79.124.209])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde89108sm5480933f8f.55.2024.07.10.07.43.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 07:43:09 -0700 (PDT)
+Date: Wed, 10 Jul 2024 17:43:07 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: Fix up BAR spaces
+Message-ID: <Zo6d+3T/wcVHiWi1@linaro.org>
+References: <20240710-topic-barman-v1-1-5f63fca8d0fc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64: dts: rockchip: Add missing pinctrl for PCIe30x4
- node
-To: Anand Moon <linux.amoon@gmail.com>, Heiko Stuebner <heiko@sntech.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240710142001.7234-1-linux.amoon@gmail.com>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20240710142001.7234-1-linux.amoon@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 167.172.40.54
-X-ForwardEmail-ID: 668e9d98fc7608dd27c22368
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710-topic-barman-v1-1-5f63fca8d0fc@linaro.org>
 
-Hi Anand,
-
-On 2024-07-10 16:19, Anand Moon wrote:
-> Add missing pinctrl settings for PCIe 3.0 x4 clock request and wake
-> signals. Rename node from 'pcie3' to 'pcie30x4' to align with schematic
-> nomenclature.
+On 24-07-10 16:07:23, Konrad Dybcio wrote:
+> The 32-bit BAR spaces are reaching outside their assigned register
+> regions. Shrink them to match their actual sizes.
+> While at it, unify the style.
 > 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> Fixes: 5eb83fc10289 ("arm64: dts: qcom: x1e80100: Add PCIe nodes")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Also tested on CRD, so:
+
+Tested-by: Abel Vesa <abel.vesa@linaro.org>
+
 > ---
->  .../boot/dts/rockchip/rk3588-rock-5b.dts      | 20 +++++++++++++------
->  1 file changed, 14 insertions(+), 6 deletions(-)
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> index 2e7512676b7e..a9b55b7996cf 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> @@ -301,7 +301,7 @@ &pcie30phy {
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> index 7bca5fcd7d52..bc5b4f5ea127 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> @@ -2895,9 +2895,9 @@ pcie6a: pci@1bf8000 {
+>  				    "mhi";
+>  			#address-cells = <3>;
+>  			#size-cells = <2>;
+> -			ranges = <0x01000000 0 0x00000000 0 0x70200000 0 0x100000>,
+> -				 <0x02000000 0 0x70300000 0 0x70300000 0 0x3d00000>;
+> -			bus-range = <0 0xff>;
+> +			ranges = <0x01000000 0x0 0x00000000 0x0 0x70200000 0x0 0x100000>,
+> +				 <0x02000000 0x0 0x70300000 0x0 0x70300000 0x0 0x1d00000>;
+> +			bus-range = <0x00 0xff>;
 >  
->  &pcie3x4 {
->  	pinctrl-names = "default";
-> -	pinctrl-0 = <&pcie3_rst>;
-> +	pinctrl-0 = <&pcie30x4_perstn_m1 &pcie30x4_clkreqn_m1 &pcie30x4_waken_m1>;
->  	reset-gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
->  	vpcie3v3-supply = <&vcc3v3_pcie30>;
->  	status = "okay";
-> @@ -340,14 +340,22 @@ pcie2_2_rst: pcie2-2-rst {
->  		};
->  	};
+>  			dma-coherent;
 >  
-> -	pcie3 {
-> -		pcie3_rst: pcie3-rst {
-> -			rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
-> -		};
-> -
-> +	pcie30x4 {
->  		pcie3_vcc3v3_en: pcie3-vcc3v3-en {
->  			rockchip,pins = <1 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
->  		};
-> +
-> +		pcie30x4_clkreqn_m1: pcie30x4-clkreqn-m1 {
-> +			rockchip,pins = <4 RK_PB4 RK_FUNC_GPIO &pcfg_pull_up>;
-> +		};
-> +
-> +		pcie30x4_waken_m1: pcie30x4-waken-m1 {
-> +			rockchip,pins = <4 RK_PB5 RK_FUNC_GPIO &pcfg_pull_down>;
-> +		};
-
-Should these not be routed to the clkreqn_m1 and waken_m1 function
-instead of gpio function?
-
-E.g. something like:
-
-		pcie30x4m1_pins: pcie30x4m1-pins {
-			rockchip,pins =
-				<4 RK_PB4 4 &pcfg_pull_none>,
-				<4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>,
-				<4 RK_PB5 4 &pcfg_pull_none>;
-		};
-
-There are other rk35xx boards where only the perstn pin is configured
-and could use a similar fix.
-
-Regards,
-Jonas
-
-> +
-> +		pcie30x4_perstn_m1: pcie30x4-perstn-m1 {
-> +			rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_down>;
-> +		};
->  	};
+> @@ -3016,8 +3016,8 @@ pcie4: pci@1c08000 {
+>  				    "mhi";
+>  			#address-cells = <3>;
+>  			#size-cells = <2>;
+> -			ranges = <0x01000000 0 0x00000000 0 0x7c200000 0 0x100000>,
+> -				 <0x02000000 0 0x7c300000 0 0x7c300000 0 0x3d00000>;
+> +			ranges = <0x01000000 0x0 0x00000000 0x0 0x7c200000 0x0 0x100000>,
+> +				 <0x02000000 0x0 0x7c300000 0x0 0x7c300000 0x0 0x1d00000>;
+>  			bus-range = <0x00 0xff>;
 >  
->  	usb {
+>  			dma-coherent;
 > 
-> base-commit: 34afb82a3c67f869267a26f593b6f8fc6bf35905
-
+> ---
+> base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+> change-id: 20240710-topic-barman-57a52f7de103
+> 
+> Best regards,
+> -- 
+> Konrad Dybcio <konrad.dybcio@linaro.org>
+> 
 
