@@ -1,183 +1,134 @@
-Return-Path: <linux-kernel+bounces-247704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AD5592D367
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:52:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B31E892D369
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:53:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB6511F24803
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:52:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A8011F247E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46B812C491;
-	Wed, 10 Jul 2024 13:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BEB193067;
+	Wed, 10 Jul 2024 13:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dRpNqBuA"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z30DtUh9"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F10719309E
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057D6193074
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720619543; cv=none; b=mmS8uoFDlgca6Bw6TgQZLIx0fEcdQTqgoNtgWqLh3KhC9SARcn4Sv1U2lTiw3+5Na81al630uVafZmAEPjdCUXBf0qVl961XlThN8IzXTojr2lNvTHLtzRKW9xNZkLPeOZpJ/S+JimQ0CvkbenPmXSrY7JqVaTJ7SDXXIYZ/cjY=
+	t=1720619564; cv=none; b=DtkD0XrmI0Z0BtPIU6Xlc8nvZkIX8YDRODxAE3W0mrYV7IPNoHf8ndUD3YhbEbn20tMyGPq1Ga17TpAm5vt52f6uBW5E+NLHi5tF00dJzpsGh5cE6L0LV0VIbnRaOXMWLZRWJx1Oc71DJrJvV5r4A/wdZ+oU2jXlQ5tVzcxb9BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720619543; c=relaxed/simple;
-	bh=K+zPsZi+srywBZDuKcnUQzrg2Z14hU1r6iCS86pvCkk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=aQtDxGMUDpDFLNIuqzzV7CLAm4nZUgousP+8IoiCRzx9WcIPOOyKUH6WU4w3wDLesecqZ4PKkN7cGGXRjyLZ9Q/KPpp8rZ06ISvTm54J2Ggr6XVX8Ni+JM0FVRHkdkez6bh2QxoWSoCPpjudKvBJ4tTGeP9hA07ooMkRhYteyr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dRpNqBuA; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e02b5792baaso11142962276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:52:21 -0700 (PDT)
+	s=arc-20240116; t=1720619564; c=relaxed/simple;
+	bh=xCLRTG7ipn4tiGh+nXkgwfMZfAsmNK9dFGTdCsvf/7E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qAR4GpVrnCMHL17Zr5H4Cqx/AOyKZE8hI/WRgGprFMEM2XZK6yW+HFQKoH++J5vBVdRITebkh7cPdoJh62qM4+/6hu17DYXbeyaiNJyfmsANyNOaFFac+5noc7dtsMSfvm90KzUtoKXpQ3/3FjBYspOI6RFpq6LRzsnvDLvkIeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z30DtUh9; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52ea929ea56so8880755e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:52:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720619540; x=1721224340; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8rUr00jWkE2y0/1opy/I3K41SPy3FE0JTaHuvcV+2TE=;
-        b=dRpNqBuAQuO1J6v6hO4DnGr3Gqqbi8Wc66iOsMBaTG5iU1gVzFVBixfskCP7gQA0lK
-         YESOiDro4mGFxd2IbCvPMwmL4XOBed6DqWXBvQnWbXKalR7fzeQR4fCvyWbXu0Q8JjOo
-         hnMmJr4GGstSWg6r/GOXUBvPqylcfgM4EhlpmIVez7/iDDEsk+TqKr2+5vMutO2pDOoV
-         aVSYVoVqhvoOa/9LZa4QOYG6+v28P1QrNI2RPxb4KUmKL1pEyLjsiJHMhSVlqVIJQCEn
-         NAtAEfUZA3DC01UBWKhIO40c/wzVcjydwLPYGnvzsoGyfRUWWZU5CddvEV1Uyf+8GowZ
-         YS3w==
+        d=linaro.org; s=google; t=1720619561; x=1721224361; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eG+Sr5tcj4iLYaVgjAszjSri4jbIahacA3U2hkyfLzQ=;
+        b=Z30DtUh9N6QdpXwDi9fRAFVXM5278EZUIjTiilVZ64Kr3iW5kngSc/zAcEa/iXvwPn
+         SKl10LTI+QrUb6Gz+jY+oHQ4sEHXVMw18T6Civ5C2GXUL08SgBEk7Du5MlVbbP+9k9xo
+         VDjRACERs3JfRO4ctVMoQPqMv3QCyPgZtq63k1R9xXn8SPU0Ki2NYnp3u6G1ZCEoa/H3
+         a0CwcPFD2uM+BI4kvzFi2Lgy4ahTHowTVNOtCcYOcb6HgVHg7r+TXg6czMuBWUweF5XW
+         ni6F2pEZ9/rJ1M/63a8axS14IcQ4ZmbCKUFimjOCgKGga14SHs4sz3Omb6D33iLPZ2wI
+         epLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720619540; x=1721224340;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8rUr00jWkE2y0/1opy/I3K41SPy3FE0JTaHuvcV+2TE=;
-        b=i1pjzeb35U9MxttyvGVrSDm/C3jNkJpVdsGxvrYEW8a3/csUENsK9eidAHi1ptudH4
-         umqLRBvksBUWOXkzu/3l6imeGiLFyN5uXi/HtdibY8dyN6qMmuB1JBVZzkcJqO70vdpE
-         3P+t2mdbiuVreJ1gea8unTV5Fs/dmvVJtclf+G6C31EgCMdXCZ96qvmvB9sdgMV4bYWJ
-         f3sX9k4W83suDkAt66srmOWTFsjW2V/1KAEkGmK+MrQFWqw+guWuQ/RNZotkQ/K/zRci
-         WwEnO6YBXmaafGsYO+u85pMJRy6u/1uBkn3u1wuZms0GQq3duhQz0n8JA83zQU2PUhq6
-         Xmng==
-X-Forwarded-Encrypted: i=1; AJvYcCWEyzb9fYF3w7bCULLSCyyjDpMa4CLGKVOxac2d8fOv0fEwujamsMMczAaMvDKZYxpm5MB9QGgf0CWpU6hNwKQc5hq+eG7V1b+8069n
-X-Gm-Message-State: AOJu0YxMX5PXc0OTSBa/iakeSzb37lfzqtZDFXqkEHFJJB+jZNuaryRy
-	Sjw8pN1k2mpTjUrWs3jkDmO7YnguVBuyDcie8Um6vwFbvWXjzvJdRnvjhbu8th0rUJ31mz71IWL
-	NgQ==
-X-Google-Smtp-Source: AGHT+IF5FKCCSgKayU+3HxtAmEuD2r8g64i5mfbrkGAq2HRAzkjanq7IuF/cbMLIHkKt50yZooyzb0oBz6E=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:2005:b0:e03:c033:1ce3 with SMTP id
- 3f1490d57ef6-e041b04e66emr273986276.4.1720619540454; Wed, 10 Jul 2024
- 06:52:20 -0700 (PDT)
-Date: Wed, 10 Jul 2024 06:52:18 -0700
-In-Reply-To: <CALMp9eRet6+v8Y1Q-i6mqPm4hUow_kJNhmVHfOV8tMfuSS=tVg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1720619561; x=1721224361;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eG+Sr5tcj4iLYaVgjAszjSri4jbIahacA3U2hkyfLzQ=;
+        b=CEyc6ueS3pVC9EZasHlj3e2104VudaL0kSTHIMYyI2S4barFpIEx8lkuUmC0v5bTHU
+         45mJ8yUxHz6FUc0hkTXypgmO3+WUaDlrlCaDlWogb/57K56Sx38SEmIDxfDoyUR9FYB2
+         Y4P1ypcE+IIt26JsRD1vtIqmdLLO7hGIaaVODGik6Kn9nwv07w1GTg733kJFJa8C3bIu
+         zAaq+5vSlc1kQijZxnB4PGLOWcUwhyAUxO4KDAoVk0wy8XiMr6O9crEBQd8t3p6laH8f
+         nATD1r14XtV4TexpIE/tk6JrK8mXagFGRqaBSKMxmir07Q/TwGOYCf/GZmrE6dNs6kid
+         piuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtyNTOtfZMhRftoE4eHl9vxFFqqL7j+PC15cGQIPABLcPVQZfKDwrp9eABIhS4WA+XjBvkE373S/s/gkDZUJYS018Nwx3u24ydOGXw
+X-Gm-Message-State: AOJu0Yx9YhmbFGuD5Pdf3TsRzLvk6iEeyJGwcL5af3MRX5xwGvwW1VZC
+	cRJpTuNU4Gj/SqSiiIO+yF+2KyN+EKXJlwZSytAlzFOx2Tr8cCiWcTdNCNajdyQ=
+X-Google-Smtp-Source: AGHT+IGI74Tkk+bMOUOiLt7ShAbiFrBfr/fOEAEBbMRa7tJDzVxniq8rJ4ZAffl1kUcxrWh4qs60mQ==
+X-Received: by 2002:a19:7708:0:b0:52e:9921:6dff with SMTP id 2adb3069b0e04-52eb999c2damr3844744e87.26.1720619560886;
+        Wed, 10 Jul 2024 06:52:40 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a8551afsm160440366b.166.2024.07.10.06.52.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 06:52:40 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/4] ASoC: codecs: wsa88xx: Few cleanups
+Date: Wed, 10 Jul 2024 15:52:29 +0200
+Message-Id: <20240710-asoc-wsa88xx-version-v1-0-f1c54966ccde@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240429060643.211-1-ravi.bangoria@amd.com> <20240429060643.211-4-ravi.bangoria@amd.com>
- <Zl5jqwWO4FyawPHG@google.com> <e1c29dd4-2eb9-44fe-abf2-f5ca0e84e2a6@amd.com>
- <ZmB_hl7coZ_8KA8Q@google.com> <59381f4f-94de-4933-9dbd-f0fbdc5d5e4a@amd.com>
- <Zmj88z40oVlqKh7r@google.com> <0b74d069-51ed-4e5e-9d76-6b1a60e689df@amd.com> <CALMp9eRet6+v8Y1Q-i6mqPm4hUow_kJNhmVHfOV8tMfuSS=tVg@mail.gmail.com>
-Message-ID: <Zo6RxnGJrxh9mi7g@google.com>
-Subject: Re: [PATCH 3/3] KVM SVM: Add Bus Lock Detect support
-From: Sean Christopherson <seanjc@google.com>
-To: Jim Mattson <jmattson@google.com>
-Cc: Ravi Bangoria <ravi.bangoria@amd.com>, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, pbonzini@redhat.com, 
-	thomas.lendacky@amd.com, hpa@zytor.com, rmk+kernel@armlinux.org.uk, 
-	peterz@infradead.org, james.morse@arm.com, lukas.bulwahn@gmail.com, 
-	arjan@linux.intel.com, j.granados@samsung.com, sibs@chinatelecom.cn, 
-	nik.borisov@suse.com, michael.roth@amd.com, nikunj.dadhania@amd.com, 
-	babu.moger@amd.com, x86@kernel.org, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, santosh.shukla@amd.com, ananth.narayan@amd.com, 
-	sandipan.das@amd.com, manali.shukla@amd.com
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB2SjmYC/x3MPQqAMAxA4atIZgOx/nsVcSg2ahaVBrRQvLvV8
+ Q3fi6DshRWGLILnS1SOPUWRZzBvdl8ZxaUGQ6aitiC0esx4q+26EPBi/wF0jqjsTVObqoZET8+
+ LhH87Ts/zAvQQhONmAAAA
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>
+Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=735;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=xCLRTG7ipn4tiGh+nXkgwfMZfAsmNK9dFGTdCsvf/7E=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmjpIgOoSVr2Zwu1wsDHRIcZrveKRJRSIuDq8nt
+ RPtif7BrGWJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZo6SIAAKCRDBN2bmhouD
+ 1wh/D/9lsgACXVjSoXDNyKh/50MNApgsGUF1FAG7hSEA8wgGCwfXTAlF+T6iLK/CwOAkjjYnr/X
+ cmNfVrwGDq8BVLYIMRKbC2HNV2obW+l+Ujo07/fLa+g9aQUhC7ZEP4tHAm8qrlY/m3aK5hPDBuf
+ z6IZTOW4byybU0zESW2OFb82RYXE1kt2ykvp+Q10qcYohOJloV/KKrC0YByHeLAv1/58adeBjeo
+ gcSIsfPleSMx29G2WjbpQ7tXT5wWDIANzMl4+PkUGgZrbd27unoL+xYm+0NqyGqis0G/BXI4JqH
+ +yErT3gQKDJaI4RNI8edaxLj3mkY5KYSQbSiQ75wklEz+xLdGmiQ7hdduSwxr+JagfZNuKIeaZe
+ jEuRBkbyQ4lQGu4kzyMJkXOWgFTWo1gDOSBVIvc0HcWvRtWs+Xtw3jiNjg7EJVGEnxyAy36AjBq
+ f2hQCZncbX3Kz85G7x/ARpGU79aXANhLFec/a/mWVqG5sqowgfvYq4Yh4Jax9Vyzfe1DODtHWLz
+ Y+Z39HzUJqBiosEnlz/+5ptF4y+/rUSDig+76co81LY2E3B6BzDxg7II0oZtO8pwoVfS9ivMuzv
+ C20tQU+/QOyG+ZDA2TVW688bOr4jgRDpAGFngu4vigPD0N5Of9bXOj5fnwQQWS1reYa49NMsF2u
+ B8nHm7ztuwmkKjA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-On Tue, Jul 09, 2024, Jim Mattson wrote:
-> On Tue, Jul 9, 2024 at 7:25=E2=80=AFPM Ravi Bangoria <ravi.bangoria@amd.c=
-om> wrote:
-> >
-> > Sean,
-> >
-> > Apologies for the delay. I was waiting for Bus Lock Threshold patches t=
-o be
-> > posted upstream:
-> >
-> >   https://lore.kernel.org/r/20240709175145.9986-1-manali.shukla@amd.com
-> >
-> > On 12-Jun-24 7:12 AM, Sean Christopherson wrote:
-> > > On Wed, Jun 05, 2024, Ravi Bangoria wrote:
-> > >> On 6/5/2024 8:38 PM, Sean Christopherson wrote:
-> > >>> Some of the problems on Intel were due to the awful FMS-based featu=
-re detection,
-> > >>> but those weren't the only hiccups.  E.g. IIRC, we never sorted out=
- what should
-> > >>> happen if both the host and guest want bus-lock #DBs.
-> > >>
-> > >> I've to check about vcpu->guest_debug part, but keeping that aside, =
-host and
-> > >> guest can use Bus Lock Detect in parallel because, DEBUG_CTL MSR and=
- DR6
-> > >> register are save/restored in VMCB, hardware cause a VMEXIT_EXCEPTIO=
-N_1 for
-> > >> guest #DB(when intercepted) and hardware raises #DB on host when it'=
-s for the
-> > >> host.
-> > >
-> > > I'm talking about the case where the host wants to do something in re=
-sponse to
-> > > bus locks that occurred in the guest.  E.g. if the host is taking pun=
-itive action,
-> > > say by stalling the vCPU, then the guest kernel could bypass that beh=
-avior by
-> > > enabling bus lock detect itself.
-> > >
-> > > Maybe it's moot point in practice, since it sounds like Bus Lock Thre=
-shold will
-> > > be available at the same time.
-> > >
-> > > Ugh, and if we wanted to let the host handle guest-induced #DBs, we'd=
- need code
-> > > to keep Bus Lock Detect enabled in the guest since it resides in DEBU=
-G_CTL.  Bah.
-> > >
-> > > So I guess if the vcpu->guest_debug part is fairly straightforward, i=
-t probably
-> > > makes to virtualize Bus Lock Detect because the only reason not to vi=
-rtualize it
-> > > would actually require more work/code in KVM.
-> >
-> > KVM forwards #DB to Qemu when vcpu->guest_debug is set and it's Qemu's
-> > responsibility to re-inject exception when Bus Lock Trap is enabled
-> > inside the guest. I realized that it is broken so I've prepared a
-> > Qemu patch, embedding it at the end.
-> >
-> > > I'd still love to see Bus Lock Threshold support sooner than later th=
-ough :-)
-> >
-> > With Bus Lock Threshold enabled, I assume the changes introduced by thi=
-s
-> > patch plus Qemu fix are sufficient to support Bus Lock Trap inside the
-> > guest?
->=20
-> In any case, it seems that commit 76ea438b4afc ("KVM: X86: Expose bus
-> lock debug exception to guest") prematurely advertised the presence of
-> X86_FEATURE_BUS_LOCK to userspace on non-Intel platforms. We should
-> probably either accept these changes or fix up that commit. Either
-> way, something should be done for all active branches back to v5.15.
+Hi,
 
-Drat.  Yeah, we need a patch to clear BUS_LOCK_DETECT in svm_set_cpu_caps()=
-, marked
-for stable@.  Then this series can remove that clearing.
+Few cleanups around wsa88xx codecs.
 
-At least I caught it for CET[*]!  It'd be nice to not have to rely on human=
-s to
-detect potential issues like this, but I can't think of a way to programmat=
-ically
-handle this situation without incurring an annoying amount of overhead and/=
-or
-duplicate code between VMX and SVM.
+Best regards,
+Krzysztof
 
-[*] https://lore.kernel.org/all/ZjLRnisdUgeYgg8i@google.com
+---
+Krzysztof Kozlowski (4):
+      ASoC: codecs: wsa881x: Drop unused version readout
+      ASoC: codecs: wsa883x: Handle reading version failure
+      ASoC: codecs: wsa883x: Simplify handling variant/version
+      ASoC: codecs: wsa884x: Simplify handling variant
+
+ sound/soc/codecs/wsa881x.c |  2 --
+ sound/soc/codecs/wsa883x.c | 33 ++++++++++++++++++---------------
+ sound/soc/codecs/wsa884x.c |  5 ++---
+ 3 files changed, 20 insertions(+), 20 deletions(-)
+---
+base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+change-id: 20240710-asoc-wsa88xx-version-dd0039265245
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
