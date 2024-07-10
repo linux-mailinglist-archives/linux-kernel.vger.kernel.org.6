@@ -1,145 +1,297 @@
-Return-Path: <linux-kernel+bounces-247739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C0A992D3D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:07:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF02392D3D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DA991C23419
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:07:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A7C5B219C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91190193467;
-	Wed, 10 Jul 2024 14:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RwjItfZm"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133CE19345F;
+	Wed, 10 Jul 2024 14:08:34 +0000 (UTC)
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8A219007E
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB7119309A
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720620454; cv=none; b=kPMM36sDJhoyfzUXgeWtQC0gz4+EvqjCAYUiOeED0yYQQZaq0jjv2stXRUt8JjCO5GNep8c3/vH+pmawA0ACGR0Up5zkfpRw56SCzegGCFidjNOz91ICt7ChSGJ6eAGB0zV6hzCAATidZrDVpAgb3lIZFZ1jg0QMRMoj4O0onlQ=
+	t=1720620513; cv=none; b=LrNpic0BtBnro7N39e9CVo6JAcpna9o9ppd/DOROfXz65Rz8uKIfu3wY6kgbO3ZAipaVKTV+J1VZyF/GdFBoLoeyhMJSfkIB3G7Ef/Mhiv/md/GgMll6+WQre5McX+Lx0X3p9rZ+O04kECQDFM1WJLzoZDIPrGtZtR7oPjE+Aow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720620454; c=relaxed/simple;
-	bh=cc9CIi6FXqHyC+RzNiFyiXUQnHUWe7bMpSfnjFA8YDQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=R7Pi0By/Q/RQWlotjYWsxZpYAuS/2OLvXlRWr7zFZtaBiFaCeSXVUo1inLtQDtw2CoVFAiTGAxi89N9xIKFKtJQwbwjURtiGpRr7KMUCWgo2WW6CHwlC6vCheGN5YP4H8V8uiVS9q3Lai9R6gtrcFuc/o+vHrg6JZ35BNC7eT7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RwjItfZm; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-58be2b8b6b2so8074620a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:07:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720620451; x=1721225251; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OrPbTUJ3Ty6Uw7Wpl3J3nMIjvJ0SNXzbgRdLrpj8Nn0=;
-        b=RwjItfZmR8T2nX40cB1ewVEL0owyYuzEscXkP207Zi3dio2FCJCmRxr/D4kkvOivLK
-         iYzAP39OxnolB26LqU29W8Rdr+0a2ewvdWs1BlhWjSADsH7smb2g/+m9/62iwzolVGjH
-         imXGo4vAOlDhJvD2uhe+RFJ+BosEH49JHHdPWp+RYLlGXPNAouzKCPSalntmftYcZn6+
-         W2CESmprLiTCVRlqZze7IvCwJk05C6dBGKLChrmBW81iiV8m0iev0JX45u+ZsCl4246N
-         kCowxETeCpFPXCGKxQPhe4HZnYNvdSZq6kKX5kgDT0bYe5h8pYbepeG10WBPIb4ZcwVh
-         FrAg==
+	s=arc-20240116; t=1720620513; c=relaxed/simple;
+	bh=HzgJS4tYAjbMx06YjLeQEIBWrZ8Lri4QCWztMcUuZtk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HTa5cDQ0M+PAs7FT+AZlypOCwm+67FrvNY2vGNwxPxai7v8OGMB23b8VpZbsqX9JStrerub1lZnOMqYrKML8hiz47JMpY0rfX4DZ5rsz6LI6WniclqF1n6W+w8q5kbvzvwoGizuhwvFp2bHeZFyfU0K9U3bLXdnVfVwullepaQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3d9bcb47182so678483b6e.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:08:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720620451; x=1721225251;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OrPbTUJ3Ty6Uw7Wpl3J3nMIjvJ0SNXzbgRdLrpj8Nn0=;
-        b=sFwcMTblVJv9Ds8SnHZNjh9UeH0d1VIbzd6nkJRL0oyXw8PD2Dpt0Dp/PRzTSDqAUo
-         JMdi/jJUFt/O+2QYqjZvrAWWYapFuT8RYigjrAu8v20VuoyjFGyJIjkGNPEmaAYTOA44
-         +fse/27+qT1mFmqcja+7A5GF8GFh9t1beTopolqoYk3vH/vj0vnUWB+4kw6lrAtm0BXl
-         eF7Z6hTNjTYEAj7DElTWeGMcv6nRmzqCvkq1fz3N7gPPch3yAsWCngp1imwz+2LyjOyU
-         j+6h8KwtRldVixUDLX//Dhf/Og4UzN4hsmgI4y64lWyg12I3v8CWBdAHUj4rFp7ptc54
-         ZIbg==
-X-Forwarded-Encrypted: i=1; AJvYcCXCtu52IceXg4p3LYw5BreWGGbcgWfyhVKhBn3t0W9ZsfsGQJiONAH98kF6/4G0G0zkjj21xo0ZnjX+0N13MgMPF4I6/VHU3pW5Y1BW
-X-Gm-Message-State: AOJu0YwDdU1tXXlNGwyX+yn4Zh7UJ5bX1pEtROx7a9nxHSmhGnR8n5pC
-	hm/ii9/bwrMCHnL4nXcxvjfN6408zcCYhtU7NpSytKEiQ8FeomSgCBFpwNdehPU=
-X-Google-Smtp-Source: AGHT+IHurdb6yUA+njBCJHvTGjZgbz0YaqcO15oMamk2z/YBtajmPDVIJgwUgYr/Buvf0dALlsiHgQ==
-X-Received: by 2002:a17:907:7f12:b0:a77:de2a:aef8 with SMTP id a640c23a62f3a-a780b8848f2mr489159466b.58.1720620450533;
-        Wed, 10 Jul 2024 07:07:30 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6e380asm164919466b.90.2024.07.10.07.07.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 07:07:29 -0700 (PDT)
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Wed, 10 Jul 2024 16:07:23 +0200
-Subject: [PATCH] arm64: dts: qcom: x1e80100: Fix up BAR spaces
+        d=1e100.net; s=20230601; t=1720620511; x=1721225311;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iEUae8LL4yTltrn/8LVs2k9hfnmoKZsI7ZDNm1zTbEk=;
+        b=bt35Zr8Iomfz93JVlBk7modTCxBKbyCUugWHQ8YTIWxO1EYrEnF/4STAjCBFFbJLJw
+         dt+BEt7c1eVLe0sOGNS3q5pqu91odSteIv4uQbF8j8VvJKhIl+tgysvnr/xJzZehsFg+
+         WhnKuWdkkAAGkW1f3/scQsZiKjpUW9XKKlg4u4znjLhjuBQ8ftzFqIIP/+bbYCWC5juH
+         zKrgmP5luP8Zz1+i7zjHOB4Dz5TGMmJgtQG6VSHAYH+TpaQWJIjxh1DypYSJwC8BDpky
+         FDg1kGlxhLVIGfM9J4CGRFLWZ8THg0hw465mRY3bz3wu3PwPzdYd7w60fuuqXLeemZIC
+         mDLw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6xqh3nm3kmDoB3ccmsLV2AGlz0AJqyEagIzPNbvwI6fIV9dmHt8Jn3xrIgjKeF3PDQQt9aQJC7GV5tW8TIrNCt7jqfkFPO29XqTcB
+X-Gm-Message-State: AOJu0YyyVbNpTjdpt/TmSprduBYyhk0YvCO7BzKDrDUV6hkOWY3nLJs5
+	qDaL4meOsOeSVu5vnCuJ6+hjkBuq6eiTUIvQV5TNUL+qxQWBwbrEpdR1MbbwHyDgeEeOL4V8Zhc
+	P0K8jRM5hcAZ9vwWXPGmU1tvrewI=
+X-Google-Smtp-Source: AGHT+IGd7WsiNXVe+9MM6aRnm5OIIEGJUvbHnAWwyCRYxRmj1HUpucvEUd5b+jyo73PS1RpgEj+P4NZNAhPBd9QQDvc=
+X-Received: by 2002:a05:6808:128c:b0:3c7:3106:e2e1 with SMTP id
+ 5614622812f47-3d93bde36acmr7753462b6e.8.1720620510052; Wed, 10 Jul 2024
+ 07:08:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240710-topic-barman-v1-1-5f63fca8d0fc@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAJqVjmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDc0MD3ZL8gsxk3aTEotzEPF1T80RTozTzlFRDA2MloJaCotS0zAqwcdG
- xtbUA1YTriV4AAAA=
-To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>, 
- Abel Vesa <abel.vesa@linaro.org>, Rajendra Nayak <quic_rjendra@quicinc.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720620448; l=1670;
- i=konrad.dybcio@linaro.org; s=20230215; h=from:subject:message-id;
- bh=cc9CIi6FXqHyC+RzNiFyiXUQnHUWe7bMpSfnjFA8YDQ=;
- b=FB7jlFH8cVFiVYY2u5QGIChbNO6811dlOa65eIlzsuHli/YWU7ZRgTWY59tnrEiCZ8Y4ETQck
- KNTG4R1PR0kCp1NQGNLNPHEVrduQOM/S/jTZYlcgZf22JiE5hVC/j+S
-X-Developer-Key: i=konrad.dybcio@linaro.org; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+References: <20240710095503.3193901-1-ryan.roberts@arm.com>
+In-Reply-To: <20240710095503.3193901-1-ryan.roberts@arm.com>
+From: Barry Song <baohua@kernel.org>
+Date: Wed, 10 Jul 2024 22:08:18 +0800
+Message-ID: <CAGsJ_4xQtV=08qakiyi4kMVQx9aXs+P0FMDiDjq3Lv7vA=nEXA@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: shmem: Rename mTHP shmem counters
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang <ioworker0@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, Zi Yan <ziy@nvidia.com>, 
+	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The 32-bit BAR spaces are reaching outside their assigned register
-regions. Shrink them to match their actual sizes.
-While at it, unify the style.
+On Wed, Jul 10, 2024 at 5:55=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.com>=
+ wrote:
+>
+> The legacy PMD-sized THP counters at /proc/vmstat include
+> thp_file_alloc, thp_file_fallback and thp_file_fallback_charge, which
+> rather confusingly refer to shmem THP and do not include any other types
+> of file pages. This is inconsistent since in most other places in the
+> kernel, THP counters are explicitly separated for anon, shmem and file
+> flavours. However, we are stuck with it since it constitutes a user ABI.
+>
+> Recently, commit 66f44583f9b6 ("mm: shmem: add mTHP counters for
+> anonymous shmem") added equivalent mTHP stats for shmem, keeping the
+> same "file_" prefix in the names. But in future, we may want to add
+> extra stats to cover actual file pages, at which point, it would all
+> become very confusing.
+>
+> So let's take the opportunity to rename these new counters "shmem_"
+> before the change makes it upstream and the ABI becomes immutable. While
+> we are at it, let's improve the documentation for the legacy counters to
+> make it clear that they count shmem pages only.
+>
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Reviewed-by: Lance Yang <ioworker0@gmail.com>
 
-Fixes: 5eb83fc10289 ("arm64: dts: qcom: x1e80100: Add PCIe nodes")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Reviewed-by: Barry Song <baohua@kernel.org>
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index 7bca5fcd7d52..bc5b4f5ea127 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -2895,9 +2895,9 @@ pcie6a: pci@1bf8000 {
- 				    "mhi";
- 			#address-cells = <3>;
- 			#size-cells = <2>;
--			ranges = <0x01000000 0 0x00000000 0 0x70200000 0 0x100000>,
--				 <0x02000000 0 0x70300000 0 0x70300000 0 0x3d00000>;
--			bus-range = <0 0xff>;
-+			ranges = <0x01000000 0x0 0x00000000 0x0 0x70200000 0x0 0x100000>,
-+				 <0x02000000 0x0 0x70300000 0x0 0x70300000 0x0 0x1d00000>;
-+			bus-range = <0x00 0xff>;
- 
- 			dma-coherent;
- 
-@@ -3016,8 +3016,8 @@ pcie4: pci@1c08000 {
- 				    "mhi";
- 			#address-cells = <3>;
- 			#size-cells = <2>;
--			ranges = <0x01000000 0 0x00000000 0 0x7c200000 0 0x100000>,
--				 <0x02000000 0 0x7c300000 0 0x7c300000 0 0x3d00000>;
-+			ranges = <0x01000000 0x0 0x00000000 0x0 0x7c200000 0x0 0x100000>,
-+				 <0x02000000 0x0 0x7c300000 0x0 0x7c300000 0x0 0x1d00000>;
- 			bus-range = <0x00 0xff>;
- 
- 			dma-coherent;
-
----
-base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
-change-id: 20240710-topic-barman-57a52f7de103
-
-Best regards,
--- 
-Konrad Dybcio <konrad.dybcio@linaro.org>
-
+> ---
+>
+> Hi All,
+>
+> Applies on top of yesterday's mm-unstable (2073cda629a4) and tested with =
+mm
+> selftests; no regressions observed.
+>
+> The backstory here is that I'd like to introduce some counters for regula=
+r file
+> folio allocations to observe how often large folio allocation succeeds, b=
+ut
+> these shmem counters are named "file" which is going to make things confu=
+sing.
+> So hoping to solve that before commit 66f44583f9b6 ("mm: shmem: add mTHP
+> counters for anonymous shmem") goes upstream (it is currently in mm-stabl=
+e).
+>
+> Changes since v1 [1]
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>   - Updated documentation for existing legacy "file_" counters to make it=
+ clear
+>     they only count shmem pages.
+>
+> [1] https://lore.kernel.org/linux-mm/20240708112445.2690631-1-ryan.robert=
+s@arm.com/
+>
+> Thanks,
+> Ryan
+>
+>  Documentation/admin-guide/mm/transhuge.rst | 29 ++++++++++++----------
+>  include/linux/huge_mm.h                    |  6 ++---
+>  mm/huge_memory.c                           | 12 ++++-----
+>  mm/shmem.c                                 |  8 +++---
+>  4 files changed, 29 insertions(+), 26 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/a=
+dmin-guide/mm/transhuge.rst
+> index 747c811ee8f1..3528daa1f239 100644
+> --- a/Documentation/admin-guide/mm/transhuge.rst
+> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> @@ -412,20 +412,23 @@ thp_collapse_alloc_failed
+>         the allocation.
+>
+>  thp_file_alloc
+> -       is incremented every time a file huge page is successfully
+> -       allocated.
+> +       is incremented every time a shmem huge page is successfully
+> +       allocated (Note that despite being named after "file", the counte=
+r
+> +       measures only shmem).
+>
+>  thp_file_fallback
+> -       is incremented if a file huge page is attempted to be allocated
+> -       but fails and instead falls back to using small pages.
+> +       is incremented if a shmem huge page is attempted to be allocated
+> +       but fails and instead falls back to using small pages. (Note that
+> +       despite being named after "file", the counter measures only shmem=
+).
+>
+>  thp_file_fallback_charge
+> -       is incremented if a file huge page cannot be charged and instead
+> +       is incremented if a shmem huge page cannot be charged and instead
+>         falls back to using small pages even though the allocation was
+> -       successful.
+> +       successful. (Note that despite being named after "file", the
+> +       counter measures only shmem).
+>
+>  thp_file_mapped
+> -       is incremented every time a file huge page is mapped into
+> +       is incremented every time a file or shmem huge page is mapped int=
+o
+>         user address space.
+>
+>  thp_split_page
+> @@ -496,16 +499,16 @@ swpout_fallback
+>         Usually because failed to allocate some continuous swap space
+>         for the huge page.
+>
+> -file_alloc
+> -       is incremented every time a file huge page is successfully
+> +shmem_alloc
+> +       is incremented every time a shmem huge page is successfully
+>         allocated.
+>
+> -file_fallback
+> -       is incremented if a file huge page is attempted to be allocated
+> +shmem_fallback
+> +       is incremented if a shmem huge page is attempted to be allocated
+>         but fails and instead falls back to using small pages.
+>
+> -file_fallback_charge
+> -       is incremented if a file huge page cannot be charged and instead
+> +shmem_fallback_charge
+> +       is incremented if a shmem huge page cannot be charged and instead
+>         falls back to using small pages even though the allocation was
+>         successful.
+>
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index acb6ac24a07e..cff002be83eb 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -269,9 +269,9 @@ enum mthp_stat_item {
+>         MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
+>         MTHP_STAT_SWPOUT,
+>         MTHP_STAT_SWPOUT_FALLBACK,
+> -       MTHP_STAT_FILE_ALLOC,
+> -       MTHP_STAT_FILE_FALLBACK,
+> -       MTHP_STAT_FILE_FALLBACK_CHARGE,
+> +       MTHP_STAT_SHMEM_ALLOC,
+> +       MTHP_STAT_SHMEM_FALLBACK,
+> +       MTHP_STAT_SHMEM_FALLBACK_CHARGE,
+>         MTHP_STAT_SPLIT,
+>         MTHP_STAT_SPLIT_FAILED,
+>         MTHP_STAT_SPLIT_DEFERRED,
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 9ec64aa2be94..f9696c94e211 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -568,9 +568,9 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_=
+ANON_FAULT_FALLBACK);
+>  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_F=
+ALLBACK_CHARGE);
+>  DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
+>  DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
+> -DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
+> -DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
+> -DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHAR=
+GE);
+> +DEFINE_MTHP_STAT_ATTR(shmem_alloc, MTHP_STAT_SHMEM_ALLOC);
+> +DEFINE_MTHP_STAT_ATTR(shmem_fallback, MTHP_STAT_SHMEM_FALLBACK);
+> +DEFINE_MTHP_STAT_ATTR(shmem_fallback_charge, MTHP_STAT_SHMEM_FALLBACK_CH=
+ARGE);
+>  DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
+>  DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
+>  DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
+> @@ -581,9 +581,9 @@ static struct attribute *stats_attrs[] =3D {
+>         &anon_fault_fallback_charge_attr.attr,
+>         &swpout_attr.attr,
+>         &swpout_fallback_attr.attr,
+> -       &file_alloc_attr.attr,
+> -       &file_fallback_attr.attr,
+> -       &file_fallback_charge_attr.attr,
+> +       &shmem_alloc_attr.attr,
+> +       &shmem_fallback_attr.attr,
+> +       &shmem_fallback_charge_attr.attr,
+>         &split_attr.attr,
+>         &split_failed_attr.attr,
+>         &split_deferred_attr.attr,
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 921d59c3d669..f24dfbd387ba 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1777,7 +1777,7 @@ static struct folio *shmem_alloc_and_add_folio(stru=
+ct vm_fault *vmf,
+>                         if (pages =3D=3D HPAGE_PMD_NR)
+>                                 count_vm_event(THP_FILE_FALLBACK);
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -                       count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
+> +                       count_mthp_stat(order, MTHP_STAT_SHMEM_FALLBACK);
+>  #endif
+>                         order =3D next_order(&suitable_orders, order);
+>                 }
+> @@ -1804,8 +1804,8 @@ static struct folio *shmem_alloc_and_add_folio(stru=
+ct vm_fault *vmf,
+>                                 count_vm_event(THP_FILE_FALLBACK_CHARGE);
+>                         }
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -                       count_mthp_stat(folio_order(folio), MTHP_STAT_FIL=
+E_FALLBACK);
+> -                       count_mthp_stat(folio_order(folio), MTHP_STAT_FIL=
+E_FALLBACK_CHARGE);
+> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SHM=
+EM_FALLBACK);
+> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SHM=
+EM_FALLBACK_CHARGE);
+>  #endif
+>                 }
+>                 goto unlock;
+> @@ -2181,7 +2181,7 @@ static int shmem_get_folio_gfp(struct inode *inode,=
+ pgoff_t index,
+>                         if (folio_test_pmd_mappable(folio))
+>                                 count_vm_event(THP_FILE_ALLOC);
+>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -                       count_mthp_stat(folio_order(folio), MTHP_STAT_FIL=
+E_ALLOC);
+> +                       count_mthp_stat(folio_order(folio), MTHP_STAT_SHM=
+EM_ALLOC);
+>  #endif
+>                         goto alloced;
+>                 }
+> --
+> 2.43.0
+>
+Thanks
+Barry
 
