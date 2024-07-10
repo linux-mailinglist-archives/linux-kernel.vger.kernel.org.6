@@ -1,233 +1,262 @@
-Return-Path: <linux-kernel+bounces-248249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FFFD92DA9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:17:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A497292DAA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4664A282B6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:17:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FBC71C2119F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DB312F365;
-	Wed, 10 Jul 2024 21:17:24 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14FC12D1F1;
+	Wed, 10 Jul 2024 21:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WGQ5he8o"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C052D8120F
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 21:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB5A8120F;
+	Wed, 10 Jul 2024 21:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720646244; cv=none; b=LBNI/9trKhtNwsuOjii1LZyVdmXSNytRZNv6L7dQF0j1iq0gYSizjss45wnxM9wEcCM+f6TPHgQkzyU0BaYwaD/Uyz+WWvgznmIpQTn7IWuJElYDSCbtN9XXphgYhxUjEUBLU+IWJ0oy/x3UZaL5jinAPBPkYn07MmpjE/dfI5E=
+	t=1720646483; cv=none; b=Opgcno9RxczLnj/ek33/4BUbVTlwJBcxp5P7wYTxIH0Mi7Yy5G8v9Az1V3QLWBHltlrS/Fr+NxuGBq4R6GyumcWLJUuqHD/viND1k7Z9FEn14mwtUqe2NB7Ocozv8OOWs4VyB7QDE0HdaGipimhG5CzcshxgLoB7PyDmD7dgYUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720646244; c=relaxed/simple;
-	bh=gJYJBB0NsyzzqMUK7KfgIhOcbcB8cneMSWttlzudC2Q=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=A6fPyL3xXSzW4nlFL/x4UnnOhZl1RiDtW4S4rDWt++dkLBTpQxboPOyGo/xVm88dMc3jLMTgB5ikvVw71J6eXDEnRC5wA9jyMB5WtVTXVeH6hNhniqBXKs5i7m+bhyu7KVxgEQu8hK4L8wcWa8F9boGzzs/5oSTTL+nUODbZmJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-80376d9cf1eso29414239f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:17:22 -0700 (PDT)
+	s=arc-20240116; t=1720646483; c=relaxed/simple;
+	bh=zRuM6d9U739C8YtmXCDkI9vP6Yy6wL+ZAZ8jYMcFhT0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t5gyWnFemzagcfYDJLHg365S7WJ+DY/q08sVS0+J53evLUb6isrD8gK1ej7fobicNYIDDFMlzJ/BP/5AMKgC0UWEMtCWby91y0UO2tuH0AKe2PSRADKKfDhnPrTJQ/IYv+xXqe2pWincNbLQ+O/dfvmGbI6Vc8SCXZeFPQaPfzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WGQ5he8o; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e03caab48a2so208096276.1;
+        Wed, 10 Jul 2024 14:21:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720646480; x=1721251280; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JWwzDBJy8f277WXqXl6R3RMuPRUwh+qJXOSNVB7ffMc=;
+        b=WGQ5he8oQ8efhXYYMCgpG4JQUQZEbmp1ia/G1TPlXpNiNz0dVtxJuwWMt6vC9ah0OW
+         bGSyRipbnTJeWpzCUtzEI4rlyZXfaLNEVGnJiV6oMkXjYl2mZ7V5hoe/ClkN7bmcAnvU
+         /YwE53IbjZ8ZtQ1Cm7N2o5HDs98+NwSOOycVox9MQynTolLPEde1aEymTnab2uugYcMS
+         lNK2sk9cyxAd55UY634xganeYRGMoTLAHQphhJYRu6/wsZLP3ZGN55azwzcoaJOcCvKi
+         LyaDMC39xg7cyJ6xT29HqsTCQm+6J6S7jwJgKgBoneDW5eSrX2BzjEJkjUalevu80fNb
+         mWEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720646242; x=1721251042;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7CMc7XLzacg8kfKZlW0Mj3vytwn0Qj3S+42+6j7j+dE=;
-        b=bk341jmOFFhcYmF2pBF9o6ZMULyG4/mspf9zUOlqw60+/LVQItrs2KsImzh5VnM+wW
-         FqTrrH6hK2vq+fW6e8gkCTPY9TXYhyDe/gh5Xnp3s6Tv/wvHSZKJzaJgsRw5UEUZZnVq
-         ESeRbdlY5KTlbRZTe9M7ATprmK0CqgC36WbhXDtksg7jmQo1CuivAhZeHeKPI7e3n0rY
-         EFQTD/hw+3N5GAOUTlHFho/Sg46sGG/AyojU7mi6zgIthfKjHH1XbNFL+GD3G/j6TThu
-         tmIMQoJlD+LsAVsVy6UGfyCgSBC43DSNBrPfSA0ZYemMExwluoyPXKHDPL36UmvDS4qg
-         cH7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVTeNPis47BrNGDolfrN/x0EN9S21jFCgAzSzapfe6UrrrXGigGR9YNlkIslb7l5pPFU3kjdpwxjD4RP3YcJpVbDh89W615IH3Ugf7Y
-X-Gm-Message-State: AOJu0Yyj7MVmF+CK68k2/Gw1OObRTTexfX93QaBKON/4Q0GRAgMt0Sbg
-	LR0t3nMHAVAWvV/0+3z+KCFMoXqrAp5FpWF66pQktcd76XoDRVEgjntNp8ZRn02HTxtH8Y7Q4fa
-	8Gom+tSAlOzW3DA42daBQLv45LyxYrlXLA9oxjSsdgSRxuSDf/WbTK+0=
-X-Google-Smtp-Source: AGHT+IFt9WpGMIVtdYuPIEYdZiSbqTU9SeqhxXTf69jeA/Soe1gQamKv+CmmpopZeIVr1MOyLppV4+AGD65aDUwcf0IGoTJSzAXm
+        d=1e100.net; s=20230601; t=1720646480; x=1721251280;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JWwzDBJy8f277WXqXl6R3RMuPRUwh+qJXOSNVB7ffMc=;
+        b=cbDAEDgL4ujzSFvyvRdtIPTnjhWQif5+LmJ2P3w/uVurJkcQdI95mhcKq3yXEHQheL
+         OjqiepFEGuUkgeZ/2cDcCLfygSElHIZpCVR867YBPwxmQXKsg7zjGzFKcJX8HdhdBLOP
+         GmkDcVh+qbt9rhoO4tt94wNqT/X5UeXbn7iCliJMkhviwQuPCSOJzTmdaDv4YYcB7/7h
+         QUgi1J8h0MzM3khacBk31fQWJLqnwX1Hf3M5M89IiXqu7UQYU6u2PVGQykWK/8CwqFOm
+         59VhKyFkUwklVktrtAi2JoxS3XsZamDOfC4yqXXOkIRlpBTl8s2UPJtDeYhWXuNHCUdy
+         arAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEcPNRAFaQzweLl0hbQ+QG2Oi/qLngPLYGIu2ayW0/5io8NTqrIi72Ryuog+JqaSjvzHzF5UmO/d0NEfFklUwcdqGPZQs6mV9LG+RAJP5OAvWJFJZ1yseGBIHVArrVR8frYMwP+/RT
+X-Gm-Message-State: AOJu0YyHHtH0J7aSOd4hj2/R29+/9AA6smJUGwfd7yGS+5zDWZsCeX2z
+	gx5W1hw4bwZOkCRuB3jW5UimOBoVbKpi1eZ31IIQEOaz7lAVKCNMYv4xJ5kkJaH6Wssc19mXDGz
+	ZwOr+sh/p0obAULVhB6jXIO7FFGs=
+X-Google-Smtp-Source: AGHT+IH6bYgfsoNbVGtdjaiR7EunA/HaBDZYQjDSrczVs0R6MHfQSww7S19jaEyCiiHD4LMGaazU7obguZVGu0/l9pM=
+X-Received: by 2002:a25:7d02:0:b0:e03:5b97:cbec with SMTP id
+ 3f1490d57ef6-e0577fb65e5mr780329276.10.1720646480390; Wed, 10 Jul 2024
+ 14:21:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:831e:b0:4c0:73d0:3d77 with SMTP id
- 8926c6da1cb9f-4c0b2b6b9damr514464173.5.1720646241959; Wed, 10 Jul 2024
- 14:17:21 -0700 (PDT)
-Date: Wed, 10 Jul 2024 14:17:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000955a0061ceb2c38@google.com>
-Subject: [syzbot] [net?] possible deadlock in do_ip_getsockopt (3)
-From: syzbot <syzbot+aa5e39930997b0fe3dba@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+References: <20240706022523.1104080-1-flintglass@gmail.com>
+ <20240706022523.1104080-7-flintglass@gmail.com> <CAKEwX=NJjDL3aW3hXioxh=yASSsHbDBWubV9cE2RiH+tSXpscw@mail.gmail.com>
+In-Reply-To: <CAKEwX=NJjDL3aW3hXioxh=yASSsHbDBWubV9cE2RiH+tSXpscw@mail.gmail.com>
+From: Takero Funaki <flintglass@gmail.com>
+Date: Thu, 11 Jul 2024 06:21:09 +0900
+Message-ID: <CAPpoddfpU1rN5ST49vBBJ_=MHKehQQrwsz_hwBd6xyzi4-uQkQ@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] mm: zswap: interrupt shrinker writeback while
+ pagein/out IO
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+2024=E5=B9=B47=E6=9C=889=E6=97=A5(=E7=81=AB) 4:17 Nhat Pham <nphamcs@gmail.=
+com>:
 
-syzbot found the following issue on:
+>
+> Do you see this problem actually manifesting in real life? Does not
+> sound infeasible to me, but I wonder how likely this is the case.
+>
+> Do you have any userspace-visible metrics, or any tracing logs etc.
+> that proves that it actually happens?
+>
+> This might also affect the dynamic shrinker as well FWIW.
+>
 
-HEAD commit:    0b58e108042b Add linux-next specific files for 20240703
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=171d06e1980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ed034204f2e40e53
-dashboard link: https://syzkaller.appspot.com/bug?extid=aa5e39930997b0fe3dba
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Although it is rare, on a small VM with 0.5GB RAM, performing `apt
+upgrade` for ubuntu kernel update degrades system responsiveness.
+Since kernel upgrade is memory consuming for zstd compressed
+initramfs, there is heavy memory pressure like the benchmark.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Unfortunately I could not get evidence that clearly indicates the
+contention. Perhaps IO latency can be a metric?
+While allocating large memory, perf showed that __swap_writepage() was
+consuming time and was called mostly from kswapd and some fraction
+from user faults of python script and from shrink_worker. CPU was
+mostly idling even in a single CPU system, so lock contention and
+compression should not be the reason. I believe these behaviors
+suggest contention on writeback IO.
+As shown in the benchmark,  reducing shrinker writeback by patches 3
+to 6 reduced elapsed time, which also indicates IO contention.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1d079762feae/disk-0b58e108.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e53996c8d8c2/vmlinux-0b58e108.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a0bf21cdd844/bzImage-0b58e108.xz
+> > +/*
+> > + * To avoid IO contention between pagein/out and global shrinker write=
+back,
+> > + * track the last jiffies of pagein/out and delay the writeback.
+> > + * Default to 500msec in alignment with mq-deadline read timeout.
+>
+> If there is a future version, could you include the reason why you
+> select 500msec in the patch's changelog as well?
+>
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+aa5e39930997b0fe3dba@syzkaller.appspotmail.com
+The 500ms can be any value longer than the average interval of each
+pageout/in and is not significant for behavior. If subsequent pageout
+rejection occurs while the shrinker is sleeping, writeback will be
+delayed again by 500ms from the last timestamp update. If pageout
+occurs at a 1ms interval on average, the minimal delay should be 1+ms.
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-rc6-next-20240703-syzkaller #0 Not tainted
-------------------------------------------------------
-syz.4.2164/18168 is trying to acquire lock:
-ffffffff8f5ff788 (rtnl_mutex){+.+.}-{3:3}, at: do_ip_getsockopt+0x10f5/0x2940 net/ipv4/ip_sockglue.c:1702
-
-but task is already holding lock:
-ffff88807ce84c50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_getsockopt+0x144/0x3e0 net/smc/af_smc.c:3144
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&smc->clcsock_release_lock){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5816
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       smc_switch_to_fallback+0x35/0xd00 net/smc/af_smc.c:902
-       smc_sendmsg+0x11f/0x530 net/smc/af_smc.c:2779
-       sock_sendmsg_nosec net/socket.c:730 [inline]
-       __sock_sendmsg+0x221/0x270 net/socket.c:745
-       __sys_sendto+0x3a4/0x4f0 net/socket.c:2204
-       __do_sys_sendto net/socket.c:2216 [inline]
-       __se_sys_sendto net/socket.c:2212 [inline]
-       __x64_sys_sendto+0xde/0x100 net/socket.c:2212
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (sk_lock-AF_INET){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5816
-       lock_sock_nested+0x48/0x100 net/core/sock.c:3543
-       do_ip_setsockopt+0x1a2d/0x3cd0 net/ipv4/ip_sockglue.c:1078
-       ip_setsockopt+0x63/0x100 net/ipv4/ip_sockglue.c:1417
-       do_sock_setsockopt+0x3af/0x720 net/socket.c:2324
-       __sys_setsockopt+0x1ae/0x250 net/socket.c:2347
-       __do_sys_setsockopt net/socket.c:2356 [inline]
-       __se_sys_setsockopt net/socket.c:2353 [inline]
-       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2353
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (rtnl_mutex){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3158 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3277 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
-       __lock_acquire+0x1359/0x2000 kernel/locking/lockdep.c:5193
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5816
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       do_ip_getsockopt+0x10f5/0x2940 net/ipv4/ip_sockglue.c:1702
-       ip_getsockopt+0xed/0x2e0 net/ipv4/ip_sockglue.c:1765
-       tcp_getsockopt+0x163/0x1c0 net/ipv4/tcp.c:4409
-       smc_getsockopt+0x1d9/0x3e0 net/smc/af_smc.c:3154
-       do_sock_getsockopt+0x373/0x850 net/socket.c:2386
-       __sys_getsockopt+0x271/0x330 net/socket.c:2415
-       __do_sys_getsockopt net/socket.c:2425 [inline]
-       __se_sys_getsockopt net/socket.c:2422 [inline]
-       __x64_sys_getsockopt+0xb5/0xd0 net/socket.c:2422
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  rtnl_mutex --> sk_lock-AF_INET --> &smc->clcsock_release_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&smc->clcsock_release_lock);
-                               lock(sk_lock-AF_INET);
-                               lock(&smc->clcsock_release_lock);
-  lock(rtnl_mutex);
-
- *** DEADLOCK ***
-
-1 lock held by syz.4.2164/18168:
- #0: ffff88807ce84c50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_getsockopt+0x144/0x3e0 net/smc/af_smc.c:3144
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 18168 Comm: syz.4.2164 Not tainted 6.10.0-rc6-next-20240703-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2203
- check_prev_add kernel/locking/lockdep.c:3158 [inline]
- check_prevs_add kernel/locking/lockdep.c:3277 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
- __lock_acquire+0x1359/0x2000 kernel/locking/lockdep.c:5193
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5816
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- do_ip_getsockopt+0x10f5/0x2940 net/ipv4/ip_sockglue.c:1702
- ip_getsockopt+0xed/0x2e0 net/ipv4/ip_sockglue.c:1765
- tcp_getsockopt+0x163/0x1c0 net/ipv4/tcp.c:4409
- smc_getsockopt+0x1d9/0x3e0 net/smc/af_smc.c:3154
- do_sock_getsockopt+0x373/0x850 net/socket.c:2386
- __sys_getsockopt+0x271/0x330 net/socket.c:2415
- __do_sys_getsockopt net/socket.c:2425 [inline]
- __se_sys_getsockopt net/socket.c:2422 [inline]
- __x64_sys_getsockopt+0xb5/0xd0 net/socket.c:2422
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa7f3175bd9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fa7f2bff048 EFLAGS: 00000246 ORIG_RAX: 0000000000000037
-RAX: ffffffffffffffda RBX: 00007fa7f3303f60 RCX: 00007fa7f3175bd9
-RDX: 0000000000000029 RSI: 0000000000000000 RDI: 0000000000000005
-RBP: 00007fa7f31e4aa1 R08: 00000000200000c0 R09: 0000000000000000
-R10: 0000000020000080 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007fa7f3303f60 R15: 00007fffb5a9a058
- </TASK>
+I chose 500ms from the mq-deadline scheduler that tries to perform
+read IO in a 500ms timeframe by default (bfq for HDD uses a shorter
+timeout).
+When the shrinker performs writeback IO with a 500ms delay from the
+last pagein, the write IO will be of lower priority than the read IO
+waiting in the queue, as the pagein read becomes the highest priority
+by the deadline. This logic emulates low-priority write IO by
+voluntarily delaying IO.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> Hmmm is there a reason why we do not just do:
+>
+> zswap_shrinker_delay_start =3D jiffies;
+>
+> or, more unnecessarily:
+>
+> unsigned long now =3D jiffies;
+>
+> zswap_shrinker_delay_start =3D now;
+>
+> IOW, why the branching here? Does not seem necessary to me, but
+> perhaps there is a correctness/compiler reason I'm not seeing?
+>
+> In fact, if it's the first version, then we could manually inline it.
+>
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+That was to avoid invalidating the CPU cache of the shared variable
+unnecessarily. Removing the branch and manually inlining it for v3.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> Additionally/alternatively, I wonder if it is more convenient to do it
+> at the mm/page_io.c zswap callsites, i.e whenever zswap_store() and
+> zswap_load() returns false, then delay the shrinker before proceeding
+> with the IO steps.
+>
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Should we expose the timestamp variable? It is only used in zswap
+internally, and the timestamp is not required when zswap is disabled.
 
-If you want to undo deduplication, reply with:
-#syz undup
+> >         do {
+> > +               /*
+> > +                * delay shrinking to allow the last rejected page comp=
+letes
+> > +                * its writeback
+> > +                */
+> > +               sleepuntil =3D delay + READ_ONCE(zswap_shrinker_delay_s=
+tart);
+>
+> I assume we do not care about racy access here right? Same goes for
+> updates - I don't see any locks protecting these operations (but I
+> could be missing something).
+>
+
+Right. Do we need atomic or spinlock for safety?
+ I think the bare store/load of unsigned long is sufficient here. The
+possible deviation by concurrent updates is mostly +/-1 jiffy. Sleep
+does not need ms accuracy.
+
+Ah, I found a mistake here. v2 missed continue statement in the loop.
+The delay should be extended if zswap_store() rejects another page. In
+v2, one writeback was allowed per 500ms, which was not my intended
+behavior.
+The corrected logic for v3 should be:
+
+               if (time_before(now, sleepuntil) &&
+                               time_before(sleepuntil, now + delay + 1)) {
+                       fsleep(jiffies_to_usecs(sleepuntil - now));
+                       /* check if subsequent pageout/in extended delay */
+                       continue;
+               }
+
+
+2024=E5=B9=B47=E6=9C=889=E6=97=A5(=E7=81=AB) 9:57 Nhat Pham <nphamcs@gmail.=
+com>:
+>
+> Hmm what about this scenario: when we disable zswap writeback on a
+> cgroup, if zswap_store() fails, we are delaying the global shrinker
+> for no gain essentially. There is no subsequent IO. I don't think we
+> are currently handling this, right?
+>
+> >
+> > The same logic applies to zswap_load(). When zswap cannot find requeste=
+d
+> > page from pool and read IO is performed, shrinker should be interrupted=
+.
+> >
+>
+> Yet another (less concerning IMHO) scenario is when a cgroup disables
+> zswap by setting zswap.max =3D 0 (for instance, if the sysadmin knows
+> that this cgroup's data are really cold, and/or that the workload is
+> latency-tolerant, and do not want it to take up valuable memory
+> resources of other cgroups). Every time this cgroup reclaims memory,
+> it would disable the global shrinker (including the new proactive
+> behavior) for other cgroup, correct? And, when they do need to swap
+> in, it would further delay the global shrinker. Would this break of
+> isolation be a problem?
+>
+> There are other concerns I raised in the cover letter's response as
+> well - please take a look :)
+
+I haven't considered these cases much, but I suppose the global
+shrinker should be delayed in both cases as well. In general, any
+pagein/out should be prefered over shrinker writeback throughput.
+
+When zswap writeback was disabled for a memcg
+(memcg.zswap.writeback=3D0), I suppose disabling/delaying writeback is
+harmless.
+If the rejection incurs no IO, there is no more memory pressure and
+shrinking is not urgent. We can postpone the shrinker writeback. If
+the rejection incurs IO (i.e. mm choose another page from a memcg with
+writeback enabled), again we should delay the shrinker.
+
+For pageout from latency-tolerant memcg (zswap.max=3D0), I think pageout
+latency may affect other memcgs.
+For example, when a latency-sensitive workload tries to allocate
+memory, mm might choose to swap out pages from zswap-disabled memcg.
+The slow direct pageout may indirectly delay allocation of the
+latency-sensitive workload. IOW, we cannot determine which workload
+would be blocked by a slow pageout based on which memcg owns the page.
+In this case, it would be better to delay shrinker writeback even if
+the owner is latency tolerant memcg.
+Also for pagein, we cannot determine how urgent the pagein is.
+
+Delaying shrinker on any pagein/out diminishes proactive shrinking
+progress, but that is still better than the existing shrinker that
+cannot shrink.
 
