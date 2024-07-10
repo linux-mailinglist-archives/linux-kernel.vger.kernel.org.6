@@ -1,97 +1,132 @@
-Return-Path: <linux-kernel+bounces-247988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1599C92D719
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:08:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D837992D710
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 338321F23E18
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:05:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3A351C20307
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52312194C75;
-	Wed, 10 Jul 2024 17:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F16A195B3B;
+	Wed, 10 Jul 2024 17:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f4JQkaJI"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LGsgaows"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1181946DE
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 17:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB631953B9
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 17:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720631112; cv=none; b=JNv5ldIBVCFCpkyEYHby3DW4zmr33GS+7oWLW3sbSks6hZJ/dVxyNTBFcXUgjhvhA+pTFz1aedAO5aTNq0UcsYK5l4o+DPvw5zKV8FraeMbacHGm8lA9cNVKA9bYeSCT0GhzgQj5l+gy/2Vm9M/zZjrr+xWgmsl/t7I1Gge5S7M=
+	t=1720631118; cv=none; b=B4jotpaHczmBKhytnW06d+tSyo77V8cng9wPKcTlxhKDJ2T6CTUVlwcSR8nkezmbiQZKEdfuSoxv/7UClMEBxKNdl7zG8sitbvh8WUCzpqhAOjmQlopIi/dlwngc/0o7wRJPC4lx6mDsY9gL6G5v2fPqtyStmsni7DTkdJy+cLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720631112; c=relaxed/simple;
-	bh=IfcJkSc/LNwp9LlB29Us6vaIZxKEnh2p+SCln+tmuyI=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=DeT795pRUfMPm90G7MzVDmZRm22sQRrZP85hf+Ix2p1MCg+Ox2rwQXzieQySJF+d/4J+scrMnAHI7vtAwwyNm5sgdOPx/yWPzpDe0OEPRErhhuhy9xN1UWHtrOCyfe7akbJezEfeDxwqz5wC1exLBAyMCjYq9fwcvV+nk9DOszs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ericchancf.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f4JQkaJI; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ericchancf.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e03a544b9c8so10484797276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 10:05:11 -0700 (PDT)
+	s=arc-20240116; t=1720631118; c=relaxed/simple;
+	bh=y3mPP+gIzqE00dgxHNQadnkkTkyDIlA2uQAKtot/hqg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FyguxsU7aoxu+zbwIxnicFm1J4idaVfayS671V9moTgNpOlElyXziaXCZGEpRaFwc/WefCGhDEMswxFNWX6uhC59bQGnv2zDiCjiikO1WIifY08a9mLj7pjURyqbtkl3v/U0abkEps8VnnKGaZrWTBUWyv+owMSEndPGSdnTO10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LGsgaows; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so17209325e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 10:05:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720631110; x=1721235910; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cY/lfgDlHnS08Kow/zkoxri6JCWNBRfckkCZV0YNXKM=;
-        b=f4JQkaJI1QFykHYnMu4RSuWXFH0ZKrwRm5cqvM84MzIIvDU/y95O2KwyCddGpuZdi7
-         V61JUuMRXYgvfuXaQu+TNbfmW6XleovcKo95xlRVEbo/LGVW/NqTCcE+FeVfsVCTryeG
-         H+BYIwgXOI+uDL8rYt6y79gDdVo/lOJPEb4cTda0DMtndZ91Zk+muUGD4hlgKABrdACE
-         jCRavVfTmjzkJk6xuaPvEr0jdpPalI6e3bb4LWXutHdiee2XXmBtBO1+cznKo8Z4y+gE
-         +yh9jDa1nnHJ1cBhc6R6oAj+ewNwGhYHqkbE9VDn+RLkqraJauKzo3v2VjKzgoIXrVSM
-         fnOQ==
+        d=linaro.org; s=google; t=1720631115; x=1721235915; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UO6/lK5/7C6XDmsvIs3cVH295usofusy4WKu+UT3LKI=;
+        b=LGsgaowsX3M8QYqgcgDSWCJOKe7jb81lRQ25UGmbb1uAUaL8QMvGE9rYLR94cCkUO6
+         I4G0HnsJH41LA2vkBUTAtPxobrAQtzOndR2a6+Wdbpo3EE98Kvyu3aU/gK2JoAeC9wmz
+         cWFvXu03aYw66M7Y8xGcRzIH150Xi5WGkoL5aSDnT/Udo76NVJL6N7HL/OfA4F2uCHiv
+         OndGp+BqwWZJ94cGYL0pHxsMww3pVary4wvLB6d+E1rnwSLbaMpktxh4g61C4QoXSoBw
+         iHjFdzCOWqsfUxYDFPomv8qYOlaHmwQNuFiKZF/hL05APMd7NR+D1SpgA1sd5gf+x8hR
+         xzDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720631110; x=1721235910;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cY/lfgDlHnS08Kow/zkoxri6JCWNBRfckkCZV0YNXKM=;
-        b=SnBcTHWgxb9e//CmsICoiap7c0oIBKZpH7Czsu6yQz+t8E8h9F7ILcr9H4tFbDJ70I
-         mTrY3h1WGbC2XoFBmo5S0h7cFe24HcIJLtJb51BhSwEqnnhbR9QmuDG52s6KwYzSvdNM
-         KFeJKZOpy5xRW9T1EixU4YWwduNvex3DynoB57B3EUqSl/KgJsFsBbDVXMVTpRNZsPHf
-         LA66YyKm4qlsXNpZMqRZBHJtYUFF+a3m2O+wFV0ORgOWmcl0baTHny+Cd42QEVDP6Gyj
-         9zyJwx/3hPdXoAhHhSnwzyzGv4ni0xc9xq9vW16MnaN99B8LpyeHpKjmcrtXjEjWPddJ
-         NoBw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmA3FpP+URmCG/gUI5W9SyAit0CCOSW7iPjAhd7vvdqgTog9EmPSXtFHaUnQCkzCjR6vEP6X1JcA8hCe+3lqdLv+//1OGbi/pM94Y6
-X-Gm-Message-State: AOJu0YxoFneqCzcklDC916zrHb705wcji6LIz3r5phwvi47TEoAhoHmR
-	U/DGE3A8+W3FQk5ti4remtM37EGbQBfUQZnD8s2fVqNlO4YNyb5kR9PbIMrBrUQSFLIjympIZmi
-	TqXKmqbRc9xxhMSCcwA==
-X-Google-Smtp-Source: AGHT+IGj8HtzaJx1AJHVLeKKYwrMAwK8N6nm3v4IK7iTRBO5uLo7bkOz+HhmrwwwdqMrcdtrCJ2Toe+er6l63gMY
-X-Received: from ericchancf.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:4139])
- (user=ericchancf job=sendgmr) by 2002:a05:6902:2b0d:b0:e03:3c8c:e806 with
- SMTP id 3f1490d57ef6-e041b07159cmr15222276.7.1720631110325; Wed, 10 Jul 2024
- 10:05:10 -0700 (PDT)
-Date: Wed, 10 Jul 2024 17:04:48 +0000
+        d=1e100.net; s=20230601; t=1720631115; x=1721235915;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UO6/lK5/7C6XDmsvIs3cVH295usofusy4WKu+UT3LKI=;
+        b=N/gOCh9Z5SdV9KrWdBq9NFlH8CWycaRwkq9jWvwAEwIn1/IpuPUOBUkx65IHtBju1/
+         X5JuXfWksz8RC6+/iT2DX0GolBWW8xCdCNexOBDHnM5yaa9k/IwmBToTFnUQYWJ8jWyR
+         8sFGjlgeO9XTFRZo1xd0A14fmpZTfGZR81Pl91jfoK8HBCzJuXlr8BI46349NeW0tN0M
+         EmxtK9NjpTx9nfmG4omgc/JX0NbjhBAAfAjLyMPVMWGXwlDO1ANEXgLInJHwP6tuQ/5K
+         zUoRDXMzrd48G042KUSAkTYJRyOjsDSpsCSqiTLxlJ1i6xJt7TECqypRMVGo39nogVWZ
+         6m+w==
+X-Forwarded-Encrypted: i=1; AJvYcCX2zuQ7G4a6IE/+xo2/7B4G+Bm530nwHK8VpzQnXioyMibPtlEUWteBj2TlgiYhnqDqBIoNykG/iglRkTqpCHzcMD0+awbdMLaY71gW
+X-Gm-Message-State: AOJu0YxIz/KyV6XgkN7wLfc5uT/AObTurgtpNdXwCIripo15ij9D4XfE
+	iqfjZSpvsIEfKq7VvecNKi0lmNZvAMahCmKxahIZfo6FJKFvUoqkTublEjgYxjw=
+X-Google-Smtp-Source: AGHT+IEZ/vduzwwhO5K4kQPX85w5VJ3dB+TYQDHXeHNJPj2YvvMVSizSFMwuGwYgtxvCPlkuMJjVQA==
+X-Received: by 2002:a05:600c:5345:b0:426:602d:a243 with SMTP id 5b1f17b1804b1-426707d8a90mr42891675e9.16.1720631115301;
+        Wed, 10 Jul 2024 10:05:15 -0700 (PDT)
+Received: from [127.0.0.2] ([2a02:2454:ff1f:b240:65e6:93ca:5f80:ea9b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde7dedfsm5838446f8f.24.2024.07.10.10.05.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 10:05:14 -0700 (PDT)
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+Subject: [PATCH 0/5] drm/panel: atna33xc20: Fix the Samsung ATNA45AF01
+ panel
+Date: Wed, 10 Jul 2024 19:04:56 +0200
+Message-Id: <20240710-x1e80100-crd-backlight-v1-0-eb242311a23e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Message-ID: <20240710170448.1399967-1-ericchancf@google.com>
-Subject: [PATCH 0/3] kunit: Improve the readability and functionality of macro.
-From: Eric Chan <ericchancf@google.com>
-To: brendan.higgins@linux.dev, davidgow@google.com, rmoar@google.com
-Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, ericchancf@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADi/jmYC/x3MSwqAMAwA0atI1gbSKv6uIi60TTUoKq2IULy7x
+ eVbzEQI7IUDdFkEz7cEOfYElWdglnGfGcUmgyZdUq0IH8UNKSI03uI0mnWTebmwKrRrJ9cWFTt
+ I8enZyfOP++F9P56MXmJoAAAA
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Douglas Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
+ Johan Hovold <johan@kernel.org>
+X-Mailer: b4 0.13.0
 
-This series let kunit macro more neat and clear.
-Fix comment and rename the macro.
-Also introduce new type of assertion marco for functionality.
+The backlight of the Samsung ATNA45AF01 panel used in the Qualcomm X1E80100
+CRD does not work correctly with the current display panel configuration
+and drivers: It works after boot, but once the display gets disabled it is
+not possible to get it back on. It turns out that the ATNA45AF01 panel
+needs exactly the same non-standard power sequence as implemented for
+ATNA33XC20 in the panel-samsung-atna33xc20 driver.
 
-Eric Chan (3):
-  kunit: Fix the comment of KUNIT_ASSERT_STRNEQ as assertion
-  kunit: Rename KUNIT_ASSERT_FAILURE to KUNIT_ASSERT for readability
-  kunit: Introduce KUNIT_ASSERT_MEMEQ and KUNIT_ASSERT_MEMNEQ macros
+Move the ATNA45AF01 panel from the generic panel-edp driver to the
+panel-samsung-atna33xc20 driver and fix the panel configuration in the
+x1e80100-crd device tree to make the panel work correctly.
 
- drivers/input/tests/input_test.c |  2 +-
- include/kunit/assert.h           |  2 +-
- include/kunit/test.h             | 71 ++++++++++++++++++++++++++++++--
- 3 files changed, 70 insertions(+), 5 deletions(-)
+The DT changes are included here for reference and easier testing, I assume
+Bjorn or Konrad will pick them up after the DRM panel changes were applied.
 
+Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+---
+Stephan Gerhold (5):
+      dt-bindings: display: panel: samsung,atna33xc20: Document ATNA45AF01
+      drm/panel: samsung-atna33xc20: Add compatible for ATNA45AF01
+      Revert "drm/panel-edp: Add SDC ATNA45AF01"
+      arm64: dts: qcom: x1e80100-crd: Fix backlight
+      arm64: defconfig: Add CONFIG_DRM_PANEL_SAMSUNG_ATNA33XC20
+
+ .../bindings/display/panel/samsung,atna33xc20.yaml      |  6 +++++-
+ arch/arm64/boot/dts/qcom/x1e80100-crd.dts               | 17 +++++++++++++++--
+ arch/arm64/configs/defconfig                            |  1 +
+ drivers/gpu/drm/panel/panel-edp.c                       |  2 --
+ drivers/gpu/drm/panel/panel-samsung-atna33xc20.c        |  1 +
+ 5 files changed, 22 insertions(+), 5 deletions(-)
+---
+base-commit: 523b23f0bee3014a7a752c9bb9f5c54f0eddae88
+change-id: 20240710-x1e80100-crd-backlight-632f9bf936ef
+
+Best regards,
 -- 
-2.45.2.803.g4e1b14247a-goog
+Stephan Gerhold <stephan.gerhold@linaro.org>
+
 
