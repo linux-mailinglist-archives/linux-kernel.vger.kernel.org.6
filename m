@@ -1,126 +1,123 @@
-Return-Path: <linux-kernel+bounces-247411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21DF92CF27
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:32:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B213C92CF2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CD42B27FFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:32:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 664BC1F23583
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BFD1946A5;
-	Wed, 10 Jul 2024 10:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C0C194A45;
+	Wed, 10 Jul 2024 10:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FSGOHKI1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="MoKCsSlN";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ag2jSf4s"
+Received: from flow7-smtp.messagingengine.com (flow7-smtp.messagingengine.com [103.168.172.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF591190060;
-	Wed, 10 Jul 2024 10:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79DC190068;
+	Wed, 10 Jul 2024 10:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720607078; cv=none; b=kJcjj+caF4AXV9YwZASDy7sXnUaauuejoV/R8nD3aiJL2JZFuOmvUXaREGcErtZkBAExB00J23Q3DDWTmj3PQzWht44xCcPNaAlQvmqqeOOJo4eGbAvrt28SROqVTwBXpb9ROPvvtckT8oNXr+GiExk7S8VpfiFDQitFYAhnqvQ=
+	t=1720607102; cv=none; b=ItHXInvVZ9FFSI4q7Urjkz/EYWxo4AOLsHJrkZepzkF4DKMCd7552B/5Xi2Ue5po9iJvVkMk4Jqv2/LWE+INbUx9652Ld0X3pZmsSlspeL44bCV78Xed8ARfIZ6l7KfShblphTrDgsiWobQ3t05+4+hSc0ErVIwwNLvc+CanQlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720607078; c=relaxed/simple;
-	bh=wEyjfW8r7FuprVCbJOuHzRa8MC6uYVcwQ35sjaLJCM8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E2fDeoS3ZIXwdDPwcNEjKogmRu5tSmvYfbfle0PGWSFJrX6S+hKQBkew3rW0KT7uFhxTKLG4KlZjUsx9oz+ADBVYHVvn0yt9aQfnrjHe3LqnUxQRNLuV6zMKWVBUkwa55h0PcgziWVMTEcNDQyQ3ogq3gVYqmkEvX4EK/eh/RhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FSGOHKI1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59C7CC32781;
-	Wed, 10 Jul 2024 10:24:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720607078;
-	bh=wEyjfW8r7FuprVCbJOuHzRa8MC6uYVcwQ35sjaLJCM8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FSGOHKI1syVIzJKxKeQg7X563CAb5zDCqAfltMvi6lPXeBGfqLBTJBYRs0uKQ0ie8
-	 7h5qQ/6UmuHXuDjTtDtYpJizWWTQXKN09AKBYPvjL9mjlOPic1iT/sqL/pxlbJkqY3
-	 Cu0V17czxPzLRbf8VmO7Wpb5uQ9ABDMRWWwiqLgtB2Ube492dp1V8ounWIWeo7CCJp
-	 ZEaXrCCDmP96/A3pbzihxcwujYE06Ek8pe6Tnd2MzWTKqQNy0tnV+NmYo/0zIlHOLk
-	 /nq/UwFYTo7bLQB/elDmjKzFtT8tq4UPOo32/NETYZezj/Vvy+VHRp4f3VNoz0e/ZS
-	 A+uOJnJP9svgw==
-Message-ID: <4cb531b8-5ea1-437f-bdb0-a49f7799af47@kernel.org>
-Date: Wed, 10 Jul 2024 12:24:33 +0200
+	s=arc-20240116; t=1720607102; c=relaxed/simple;
+	bh=FC04BLdIs8tuiDfvf/c1ZzpMpSeOaRa/C5ZTu2v8tNw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sMZfBsM7AyZ9yXEd9zjroety0vBtDGqDI33UMr8+XU5x/2IbUwhGtA9eIa5DCiEe6AZJ+h8y2tqIGDj5eHvXJ+YxvnZ8rEE2p3eyNiDq2UzrqDOqKkRsL5Td4YhsCa/604IWOtgbQ1D+xZ8vuWaWyWKa/RfYcJdUV0I0n+sTStw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=MoKCsSlN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ag2jSf4s; arc=none smtp.client-ip=103.168.172.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailflow.nyi.internal (Postfix) with ESMTP id BCD602004B2;
+	Wed, 10 Jul 2024 06:24:59 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Wed, 10 Jul 2024 06:24:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1720607099; x=1720614299; bh=VVZAdYDgdn
+	sfeF4pUTyu7FXWVOGM6tvVCvnnRo6O8PU=; b=MoKCsSlNBy6bgouajIyVgN/zhj
+	Er7/Rk9QqGPtZr/wVKqy44VGRa6XWubW2QuWxhsDYV4h0Z3WPhWkAmNTW4YvAXdf
+	BrGZBFhqVq8HJx1ld5AkVqGCYjiSewKpNW/3OBqJPA5Cd20v3vWVU+2+Lhp6aMg7
+	2eMaCLJtFGuVQvIOHqjx7ObNeIuLHPOwc6Km/27ctjP3DEJEcMISrDlrKRSqneb0
+	uUBiRxFIuKrOdoDWy0ECYxuvSF1jNCmBJXWPNKrQM30SJ7y5c7jLDDjV7QhCYmse
+	YT4qiCzCy+4R7CKjFIf1pzZd+e0jo3DXp66qz6+xVmlyLevuDgIoxJyiTYFg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1720607099; x=1720614299; bh=VVZAdYDgdnsfeF4pUTyu7FXWVOGM
+	6tvVCvnnRo6O8PU=; b=ag2jSf4sQ+V5anT5AGga62piqqrUy5vQAjmyDo75xrTz
+	Yxs0Oq/RKG9xLEJL0fQRszct7rYSaCbAAteXH/FQ+57huUJFbQ3IDaGpYeycTDTp
+	Wlg5RU5Ve9q+8ifuFbDNfqsjJOwIh4LiWWvsy9wGMCFREXiriucmzNoeR6un1mEW
+	+6ngYPUBMjTAbg1OB1g+zvNtog5AQVnx5d+sD5mZsz0XZO2xaSediZ5aJs7SgAci
+	zQ/MN3WXXaK4lhcb7V1IrRlhyXntWHx6tsMROhlDxCeBo0eBXbNCqssk/uE6rWzg
+	rw5xyNnyCnCGff9fNch2nTMO4eKLo/92biOxz7SqlQ==
+X-ME-Sender: <xms:emGOZhCzlwAQMgOIgSRZj_TKljUCaVaRn0Ep7wT4-xKAgvlyL1F9Tg>
+    <xme:emGOZvi5Lcbtxunsa--WqRb0XHSO5g9cv8cpDF5ZZLAerxVMHHSisT4JdhXSp_4Yt
+    bLivpSjT7upFQ>
+X-ME-Received: <xmr:emGOZslWje7kWkXLR-vBIkn4Uc39s9QXHQ04o_CACiq0zuNTW8QbaysCfkU-KKI1NNspPExXyWtwP0N0EJsM5zS6x459NZtrqzFzbA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfedugddvkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
+    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehgedvve
+    dvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhushht
+    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhh
+    drtghomh
+X-ME-Proxy: <xmx:emGOZrz1VSKtafnVU48h05mD3oRW2dWTfUYDWZZ3fJLhqv-PLInS7A>
+    <xmx:emGOZmRN9Ka7NH62KKB45QopZVxAox0ticbPIDcJBGco3OEhxw_WPg>
+    <xmx:emGOZuZnoyRUi504xvKURnDneeQUWCSzP54FNASIZ39EiuYB3WLmPA>
+    <xmx:emGOZnRykRfpY-YtacHi3j_hT7bSB81dyp6D6VryvQnMUqhs8sgoVA>
+    <xmx:e2GOZqoJ7wn4xbIhpqX5LKMGZweVNa2GpKq2oBtncNWlVDYwA4AK4hQy>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 10 Jul 2024 06:24:57 -0400 (EDT)
+Date: Wed, 10 Jul 2024 12:24:55 +0200
+From: Greg KH <greg@kroah.com>
+To: Pavel Machek <pavel@denx.de>
+Cc: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Dmitry Antipov <dmantipov@yandex.ru>,
+	syzbot+253cd2d2491df77c93ac@syzkaller.appspotmail.com,
+	Johannes Berg <johannes.berg@intel.com>, johannes@sipsolutions.net,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.19] wifi: cfg80211: wext: add extra SIOCSIWSCAN
+ data check
+Message-ID: <2024071033-geologic-emerald-f6a2@gregkh>
+References: <20240701001526.2921645-1-sashal@kernel.org>
+ <Zo5cn37w8NjVyZdj@duo.ucw.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] ASoC: dt-bindings: Add bindings for NeoFidelity
- NTP8835
-To: Igor Prusov <ivprusov@salutedevices.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: prusovigor@gmail.com, kernel@salutedevices.com,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240709172834.9785-1-ivprusov@salutedevices.com>
- <20240709172834.9785-6-ivprusov@salutedevices.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240709172834.9785-6-ivprusov@salutedevices.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zo5cn37w8NjVyZdj@duo.ucw.cz>
 
-On 09/07/2024 19:28, Igor Prusov wrote:
-> Add dt-bindings for NeoFidelity NTP8835C/NTP8835C Amplifiers
+On Wed, Jul 10, 2024 at 12:04:15PM +0200, Pavel Machek wrote:
+> Hi!
 > 
-> Signed-off-by: Igor Prusov <ivprusov@salutedevices.com>
-> ---
->  .../bindings/sound/neofidelity,ntp8835.yaml   | 65 +++++++++++++++++++
+> > [ Upstream commit 6ef09cdc5ba0f93826c09d810c141a8d103a80fc ]
+> > 
+> > In 'cfg80211_wext_siwscan()', add extra check whether number of
+> > channels passed via 'ioctl(sock, SIOCSIWSCAN, ...)' doesn't exceed
+> > IW_MAX_FREQUENCIES and reject invalid request with -EINVAL otherwise.
+> 
+> This results in very confusing code in 4.19 at least. It should goto
+> out for consistency, exploting kfree(NULL) to be nop. Ok, not sure we
+> care...
 
-No need for new schema. Just put it - after testing - into previous
-bindings file.
+kfree(NULL) is always supposed to be a nop, we have relied on that for
+decades, that's not an issue anywhere.
 
-Best regards,
-Krzysztof
-
+greg k-h
 
