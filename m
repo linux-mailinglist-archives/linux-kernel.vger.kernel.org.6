@@ -1,121 +1,106 @@
-Return-Path: <linux-kernel+bounces-247632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8A792D235
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:05:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B4AC92D241
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35909288130
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:05:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9ECF1F25A1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBC219246D;
-	Wed, 10 Jul 2024 13:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B4C192499;
+	Wed, 10 Jul 2024 13:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFe895Wt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="REHhfGcu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F64191F70;
-	Wed, 10 Jul 2024 13:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8101922C1;
+	Wed, 10 Jul 2024 13:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720616702; cv=none; b=takgrk/Jw3ZTGnFhx/3R8E6IkXlSn4LmQ8cjEZ8JpRuMNdboorK2b8VVojOHQQH5ZC7KcfaZBuPbFfjoVXoQbiq3XjCUC4qRl0CxuUPczT3Do25vbZP1YF2sepWeFVIVmj9pKWxpi7WWqvJaxXshAUhckVPkqOWQ6DExBxgJazk=
+	t=1720616788; cv=none; b=YkI2zVPkXVriyqo/id4gp0uL8JJf1DUNVRgZKZ12dRrZh6HH9jwXmSA21JBHw/1y+EcfyoWabSmoYxRPKkDSWvrdL/QBR/nMwWtmOxHl+l6QZf842WVt8RcTFGF1DwZSbAsqHz+Yx0pZpPEVh6PWEH/yLFPT11i0W5gRgSKIM2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720616702; c=relaxed/simple;
-	bh=t39MmqwSPaxrZuPTDtESZrs/I/TqlSQHH2rexBiE5uU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JxG0mx41EmVkgSnk9CY5jWpbGgQRXcfv5/wFB7fjF2W2OerqLzDnwt45F8fStExkl123/ktnpjY/Oh7JjBaic3ZDuusd5DbtrZ1uAl8Vn3oZ/T1MJqPe6v8Nw2rzaI6B1sRCOGlty/t5k/ykmID8Cg7lvOJeMZbUK9bUX1RLF6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFe895Wt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A31DC32781;
-	Wed, 10 Jul 2024 13:05:01 +0000 (UTC)
+	s=arc-20240116; t=1720616788; c=relaxed/simple;
+	bh=c35CfLJcGNAisGpu6esFSKnBAYC3NzNx56l4H9qM9zE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sOCgPjHk/mbMCd/+ypr2RnAAOYsHWkxBa/FB5Q/7QE1Iq8arJYliaSRC4yJORNiSwdpgbD9X5YuPlQqu02pN9uRJI9GOsMOy17e3GKbS/7u5n1Gu+Zco9zcQ0Y07PwVZIyWvItQ/N4DD+mAveb05aMlG9oj3T0B23BkS9vJ0xLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=REHhfGcu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB8BFC32781;
+	Wed, 10 Jul 2024 13:06:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720616701;
-	bh=t39MmqwSPaxrZuPTDtESZrs/I/TqlSQHH2rexBiE5uU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YFe895WtRUX9zFbWxG6cn58NS6JBTJvPfw/+5fJi1Bl+56gkLPVhVJEWEPBUjPL3U
-	 GA0xxc/Yg05QHNHXIcEp3r3m5/L+gae3EEpw4TBTbyLab133Z77jRLGsygGMoypDyB
-	 zCDkZTmMLi2oP3lf2dAk6McQTG2ezHXBGKr+b4aKwqX0rWlYFVopJ7nF/Zyf3jDHui
-	 g/RvEIcOCKg0760T3ZBPpv2uxPMWUt4xbuwkvetKsGexMuAIfR9Nde5eWsQR2sDf2G
-	 P8jO5lMVEqXbHbSSDvzysNHVUarwsalpD6VKzQ9eeAezyiZjbbJWcV7hXefHHXcION
-	 5jx3MBeOPMt1w==
-Date: Wed, 10 Jul 2024 14:04:52 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Subject: Re: [PATCH 6.9 000/197] 6.9.9-rc1 review
-Message-ID: <Zo6G9C-AzU2jBrOt@finisterre.sirena.org.uk>
-References: <20240709110708.903245467@linuxfoundation.org>
+	s=k20201202; t=1720616787;
+	bh=c35CfLJcGNAisGpu6esFSKnBAYC3NzNx56l4H9qM9zE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=REHhfGcu/+DoyR76imt2kpoZLBOszANA/mxc4PM2PtlvuTjZdvtkmCHcmBPuf30gw
+	 zZXCVUzTgzno5RJErOJLBBUlMT1D198j8huHohbswGoj3My2E2hdSIg0PPgEwGB1FY
+	 ufb5BoKefVQO4fxxl1toCVGxnUB4C6YmFPwS2WidWuHIzLOerCo+3QUifXoApMkjlZ
+	 DK5im56fw4TKTfyMLQGzHawo9Uw6NZUkdjNz2ZZPje+L4cwnUcp8DI0GBGDhsxVrCT
+	 GK35VsIW1LWeCxILlSSxDqmnddLcel5kgbUeUTJ/BVzXhTBait3Y+w1lvhUcH0XsnU
+	 bchsEQjQ78C2A==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH 0/3] nfsd: plug some filecache refcount leaks
+Date: Wed, 10 Jul 2024 09:05:30 -0400
+Message-Id: <20240710-nfsd-next-v1-0-21fca616ac53@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7cKoKgjgoj6gFu6Q"
-Content-Disposition: inline
-In-Reply-To: <20240709110708.903245467@linuxfoundation.org>
-X-Cookie: Your love life will be... interesting.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABqHjmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDc0MD3by04hTdvNSKEl0Dw1SjxLSU1KQkY0MloPqCotS0zAqwWdGxtbU
+ AUuiZAFsAAAA=
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>
+Cc: Youzhong Yang <youzhong@gmail.com>, linux-nfs@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=914; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=c35CfLJcGNAisGpu6esFSKnBAYC3NzNx56l4H9qM9zE=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmjodOl3Ot7CcRVujpSIdO3UjhLcDr6cWqob2Gj
+ eNeE7bqJ6GJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZo6HTgAKCRAADmhBGVaC
+ FYFdD/4q/ePN5uO59LK63rmrEpLTVl3BwoVZOwQg2yMmKAseh76R0Gmu+c5gLliLL8lBpgbrz5Z
+ 3cPnf5Bw9C6rtCD79jN7WOrH7s2L3zA8lv+dW6bYKaeqnVU3qCboD6DKjHaPSFjzaxBl4yBufl+
+ fgwU8oNM4bGR4taph8K3R6dZj3n+NdRkjvkbzLcvpIOdZ4cHiYfeqjbwo0kyOs9frP/mVlzuS0P
+ 5e4duwKIoPeLKIwVsPSuvA82aJsTVBko+CCVbfF/z4DSQ16KPpQvaWW3Y90RvlraPl2E1zIk112
+ Br9SlSBOA3C2aNNb68xZ1tD+7///ELJzyImkjHBZO+pqLsz4K8EhrXVfCpiO7+/AWpB3f935QVk
+ CqbBBo7CP0idj7n2mBX2e7pl+pxNXaqd9tY1SFoNbknjYZzOTs+IBEUa+stSiHEGk1ZEZz8wnUu
+ saiGGzjdZuVih+Zg17YQCppqziRBwx+8xlTnQ2zrQ6Ekm74ELFEr4oEeZkqyKZJFEUMM2yM99ti
+ i7X/9OyENnfPMQVrRURAy+bTMo6WA3FrHpSmKwKhUUvZGPL1FAe8X1Qj6/AXL8Uje+pEziaX97N
+ uJ+gwRVd17nATksYi7i1vyD7paL6eEWx+ZNNQEj1ODKtEMG9GLjtA4zMs5lH2gmgCkvRqJXUAgw
+ LytHDHFAx+j0YJg==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
+Youzhong Yang sent an email to the list (along with some draft patches)
+that indicated some nfsd_file refcount leaks. I went crawling over the
+filecache code (again) and found a couple of places where we didn't put
+references when we should. I'm not sure if it'll fix the problem they
+reported, but they are bugs.
 
---7cKoKgjgoj6gFu6Q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Plus, let's start counting nfsd_file allocations. The last patch adds
+support for this.
 
-On Tue, Jul 09, 2024 at 01:07:34PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.9.9 release.
-> There are 197 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Jeff Layton (3):
+      nfsd: fix refcount leak when failing to hash nfsd_file
+      nfsd: fix refcount leak when file is unhashed after being found
+      nfsd: count nfsd_file allocations
 
-I'm seeing the RTC date_read_loop test start triggering timeouts on the
-i.MX8MP EVK with this:
+ fs/nfsd/filecache.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+---
+base-commit: 24decb225ed20a5ba46a79f4609e109cb0e4a359
+change-id: 20240710-nfsd-next-01e2afdebb31
 
-# #  RUN           rtc.date_read_loop ...
-# # rtctest.c:95:date_read_loop:Continuously reading RTC time for 30s (with 11ms breaks after every read).
-# # date_read_loop: Test terminated by timeout
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-The test was fine with v6.10-rc3 (the first tag it worked at all for
-v6.10 but that's another story...), but is broken in -next:
-
-# #  RUN           rtc.date_read_loop ...
-# # rtctest.c:95:date_read_loop:Continuously reading RTC time for 30s (with 11ms breaks after every read).
-# # rtctest.c:122:date_read_loop:Performed 2954 RTC time reads.
-# #            OK  rtc.date_read_loop
-
-Bisection points to "selftests/harness: Fix tests timeout and race
-condition" but this looks like a test bug, the timeout for tests is 30s
-and the test tries to run for 30s which obviously doesn't add up.
-Previously the test would pass because the bug the patch is fixing is
-that timeout had no effect.  I'm also running the test on other
-platforms without it triggering new timeouts, it's just this one
-specific platform that triggered which is a bit worrying.
-
-I'll send a patch for the test.
-
---7cKoKgjgoj6gFu6Q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaOhvMACgkQJNaLcl1U
-h9ADCwf/Xcr6nSrhNXlBvO9LvYnwTFr5vm7XLa2D4BrIJ+SLvmihiQXZt/jsCnpj
-sEeVakh712Z41PKO9+kXvG+fCyNJnnSGj+C6YwMqO3IhfLrmoa392JVmRDB1ad97
-YdfDNhTEgisqfMJJyIbzYY6tN0ZpB56DrBwyJIHYJkUL+JaXfbVtGBd1xg2rk5ZY
-ONIcxLjrIhdJRbh9pGiUSkYoWM/pQWQNFVFHnvjE1Wkb5XrE2maRyPDJuSKM4/tZ
-hxZdqRJQX7UwNwkLrG1GI6OeC1YBGd3pMNuhRQAAmsz/jcHCFfDD+i3tvTk77M/Z
-QA3FPmIZwQjoGbo/gRlTSokzwO8AhA==
-=K/ql
------END PGP SIGNATURE-----
-
---7cKoKgjgoj6gFu6Q--
 
