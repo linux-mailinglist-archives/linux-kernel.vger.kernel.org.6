@@ -1,136 +1,114 @@
-Return-Path: <linux-kernel+bounces-247192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 090AE92CC53
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:56:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E1A92CC55
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A83101F21285
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:56:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 615D01F24406
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1F184A35;
-	Wed, 10 Jul 2024 07:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E04A84A36;
+	Wed, 10 Jul 2024 07:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cdrOSkbt"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="rbF+/Oze"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7371D7BB17
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEE27BB17
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720598167; cv=none; b=XzpWPY/P6SnzeVJy+5PNeD5VrqVsBdz0edx8C1/FRym3tL/pNa1xpXnhoaZUyQdOxbtBPC2/33eg9goC0zrxnYKem3aReM+A7GYSyH6e+Bzvz8t+AHJcU0VjIuRA/GEHAuNPmf8DgzkmVKb+ubFNxOl4vPWMSpXG5bgsTdiJKD4=
+	t=1720598207; cv=none; b=QenAiMh8MTlLImt8DiwHDaYn81PlINB/l18gMys+JIcxrqqu8L1QgPNtO7BSb76xTZZ21e4wb8dYu8zd0yIGQ5f25D8G2OxTK5niZnpXkyh6ijAB+shwCpPrrRfQd66iy5JWHVXh4qONOm+FeniepWcaSKDHAJdi9eIq9Gb+oaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720598167; c=relaxed/simple;
-	bh=inmnD2fQgpAM/3A0Ue90iCvsEUAxhw8QfjYju/cmk7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qsN4bVKC5s4ioKCs9XNEIA0TLP0sSxbYCMSQDL94NPx727I4INSJ0y4Sk09tFQ2yyWwszYYg8BZWilYK0WOHpCtQ/pBp22Q44e33s+WTRsXT7+u9u2ah3V/xMorjMXaTrisEd333zvhAP6XKj2wSgvOZ9hKFh01B4jjvzg0PTx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cdrOSkbt; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9kAqGJsHyHkATKKyUNzXIJNUM9lm6tJYyjP0FY/do5o=; b=cdrOSkbtByOdWixEuGDhRpTe4m
-	WpQedhIUoxhHMP6l6lW/lTi0VfGOlHWjmRv1P903QOMcyg7w1sCdQHkhv3HwWvgiGWfkj53XZDO56
-	Mq0/n6OSB95PZ1iPJdgdYJQ4Kse9cwy2idgfoJm1u2WQd7ShZ0V7zGiOMwoxVr1rtXGB2b5iH3sLt
-	jjk5FaXBchtYCPsUvfdDOgjz8fAl0yIkWwPXRAICATVi2bGFzOVhaKn9lLEjr1wb3anWOEJCfQ7Wv
-	9Z7MditnzOi1mciYtRPhnf2CG3bRK2tAQpYxmufi3KQ7KH76GUmhUZgDMa3cvRgkLqHO10KFgTYpH
-	i0Mf/i9Q==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sRSBB-00000000sHz-3e1S;
-	Wed, 10 Jul 2024 07:55:58 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 3D3B7300694; Wed, 10 Jul 2024 09:55:57 +0200 (CEST)
-Date: Wed, 10 Jul 2024 09:55:57 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: mingo@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
-	rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org,
-	clm@meta.com, paulmck@kernel.org
-Subject: Re: [PATCH 03/10] rbtree: Provide rb_find_rcu() / rb_find_add_rcu()
-Message-ID: <20240710075557.GS27299@noisy.programming.kicks-ass.net>
-References: <20240708091241.544262971@infradead.org>
- <20240708092415.464066230@infradead.org>
- <20240710102959.291a71349ec71ef48919a9fe@kernel.org>
+	s=arc-20240116; t=1720598207; c=relaxed/simple;
+	bh=c95Qk0eEWg1EqqavyDXuIh3UP1MhVbRWFGKlXhpw6xM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y40meib5m4CESzlG9b36ULJ0mVAdjv1qEVYIBBV/HzHflkIcdqI1iaxjhUmU6Fec/Cm6A3uGT9Fe2+ws+4eBIX2kfK4ja/4DeDe2Rro3XjM4woLwB/Yg0Y3/OunUu/PYCuVPbGzzWULjfuNf4Ulo5fv6ybLNu5crexd/ObofhNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=rbF+/Oze; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ee9b1b422fso4796611fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 00:56:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720598204; x=1721203004; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HOSNhvX2fTnZ5eop2y/6vcG46FGcgD00Yko2TrPilbc=;
+        b=rbF+/OzeilR0kR5X7oJ1/MZSSuHWDONCRvT8m5nkoz3/kE72zy2H4lQ7JDx8oFgpPY
+         j3zGlrBM+iC/pLhImh2vF3lnSwnKlIx9Iu1r20sdqlh0WTMBS4UTQ1P7oCvyY1qvWp7T
+         W3PIWyu5xsncZ6KY9Mi/KQ1n+t7mUQFEMYOvSi+mi7VNgFqwTGYTgcU+7eHM77HHREof
+         3kzXk1wniHsxS2E/oN6KGy9dNSFpSp3x4u7Qftq9ZKDIhF6KMjxOHQvw6thTeHbcIMg2
+         sVhlvlysqGaowJjAxBHAJewXPjFgWLkJuwx5n2HS9P2u06NXy6jtumICcjMTqxRjgv5y
+         lB0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720598204; x=1721203004;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HOSNhvX2fTnZ5eop2y/6vcG46FGcgD00Yko2TrPilbc=;
+        b=SbV7rEJJn435+8uVYulNfdV0bm5/C+fuXHaQBf3GyXAesSypZG5645uugHr/jzH1WW
+         5EbNKW8h/Q262vH7iNz9NaEY3w4dwnwcBhjFFKJo1WtbFuGDQBwiscAdoTcwCEH2CsHc
+         YKAmOGRg0aQiCQMMC3y1WWygZbP7tn4y3lh5OQzmA5TZRXE7C+8eAtPeIIlZR8jfJ6qi
+         CiMzly1Sw1/mbXs5y52/eT7gKhlvMdIu7nvJBUxNTaxcvsszNrIdtNTO1x4lX+TKiY/B
+         Pc7NYXB9rMPsNPTlNppaIQ+KRACqgqJP4Ql5B3lcq+v3S2/EimO+abIK7Ztb/NDjnjL4
+         BkIA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2caSbygO/uWzmbpkC6FnU3rUcCrVLWpBpXpCpQ7O4PxT5cPL7LIhAKMmY9dEW/+COKjGjdginHjRqmhPmS8BSy0HBz4CfCtdVN3Df
+X-Gm-Message-State: AOJu0Yy9X+/55B5vHZlfCa2mRSjuki/r6XV27/Q/7GpIPS6AwcsoWzay
+	uDC0XcMNEQ+Bpa3dI4WztT9nkgyLCM/DHedcgqw0pC7X2zzUMepvIhaQOYR2lQWTzF25LXx312x
+	o+F5WOJ9Rgswy5oNFp+aL+lJjzw38hVhKlqwPsbFgMpCsU/Qx
+X-Google-Smtp-Source: AGHT+IEQPK5BvKG62/rcQJWivaYYXpcgyK4iH/08mQXPMMZVo+si0r71P5cFlWmZxZJpKSjf0rsjIlTsd+8hqxYiTpQ=
+X-Received: by 2002:a2e:9d8e:0:b0:2ec:3f79:dcd5 with SMTP id
+ 38308e7fff4ca-2eeb46d031fmr12617111fa.18.1720598204058; Wed, 10 Jul 2024
+ 00:56:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710102959.291a71349ec71ef48919a9fe@kernel.org>
+References: <20240710014401.1719716-1-nichen@iscas.ac.cn>
+In-Reply-To: <20240710014401.1719716-1-nichen@iscas.ac.cn>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 10 Jul 2024 09:56:33 +0200
+Message-ID: <CAMRc=MdfG5Tru1VS1xg+Q_w0dPEOwMuwbEzHBZiuFDO_mjioEg@mail.gmail.com>
+Subject: Re: [PATCH] ARM: davinci: Convert comma to semicolon
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 10, 2024 at 10:29:59AM +0900, Masami Hiramatsu wrote:
-> On Mon, 08 Jul 2024 11:12:44 +0200
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > Much like latch_tree, add two RCU methods for the regular RB-tree,
-> > which can be used in conjunction with a seqcount to provide lockless
-> > lookups.
-> > 
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > ---
-> >  include/linux/rbtree.h |   67 +++++++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 67 insertions(+)
-> > 
-> > --- a/include/linux/rbtree.h
-> > +++ b/include/linux/rbtree.h
-> > @@ -245,6 +245,42 @@ rb_find_add(struct rb_node *node, struct
-> >  }
-> >  
-> >  /**
-> > + * rb_find_add_rcu() - find equivalent @node in @tree, or add @node
-> > + * @node: node to look-for / insert
-> > + * @tree: tree to search / modify
-> > + * @cmp: operator defining the node order
-> > + *
-> > + * Adds a Store-Release for link_node.
-> > + *
-> > + * Returns the rb_node matching @node, or NULL when no match is found and @node
-> > + * is inserted.
-> > + */
-> > +static __always_inline struct rb_node *
-> > +rb_find_add_rcu(struct rb_node *node, struct rb_root *tree,
-> > +		int (*cmp)(struct rb_node *, const struct rb_node *))
-> > +{
-> > +	struct rb_node **link = &tree->rb_node;
-> > +	struct rb_node *parent = NULL;
-> > +	int c;
-> > +
-> > +	while (*link) {
-> 
-> 	Don't we need to use rcu_dereference_raw(*link) here?
+On Wed, Jul 10, 2024 at 3:44=E2=80=AFAM Chen Ni <nichen@iscas.ac.cn> wrote:
+>
+> Replace a comma between expression statements by a semicolon.
+>
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> ---
+>  arch/arm/mach-davinci/pm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/mach-davinci/pm.c b/arch/arm/mach-davinci/pm.c
+> index 8aa39db095d7..2c5155bd376b 100644
+> --- a/arch/arm/mach-davinci/pm.c
+> +++ b/arch/arm/mach-davinci/pm.c
+> @@ -61,7 +61,7 @@ static void davinci_pm_suspend(void)
+>
+>         /* Configure sleep count in deep sleep register */
+>         val =3D __raw_readl(pm_config.deepsleep_reg);
+> -       val &=3D ~DEEPSLEEP_SLEEPCOUNT_MASK,
+> +       val &=3D ~DEEPSLEEP_SLEEPCOUNT_MASK;
+>         val |=3D pm_config.sleepcount;
+>         __raw_writel(val, pm_config.deepsleep_reg);
+>
+> --
+> 2.25.1
+>
 
-This is a modifying operation and as such we can assume operation under
-the exclusive lock. IOW the tree should be stable here.
+Same as the GPIO patch, can you add the Fixes tag?
 
-> > +		parent = *link;
-> > +		c = cmp(node, parent);
-> > +
-> > +		if (c < 0)
-> > +			link = &parent->rb_left;
-> > +		else if (c > 0)
-> > +			link = &parent->rb_right;
-> > +		else
-> > +			return parent;
-> > +	}
-> > +
-> > +	rb_link_node_rcu(node, parent, link);
-
-Only the link operation needs the rcu_assign_pointer() thing for
-publishing our new node.
-
-> > +	rb_insert_color(node, tree);
-
-The rotations use WRITE_ONCE() to avoid tearing.
-
-> > +	return NULL;
-> > +}
+Bart
 
