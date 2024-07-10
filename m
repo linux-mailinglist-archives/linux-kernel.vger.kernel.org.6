@@ -1,66 +1,66 @@
-Return-Path: <linux-kernel+bounces-248325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB87E92DBC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:17:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F093792DBC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7158D2846F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:17:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20C801C21A4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311B91509B9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B77D15252E;
 	Wed, 10 Jul 2024 22:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="UnDt5K2i"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="LDQaniCd"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B151482EE
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 22:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09A814C5A1
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 22:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720649801; cv=none; b=DoMU/9ZWnl/DvOGzHiTfXdszFvODnI7ooo5YArII1PUoYoJis+xVrX+sInKEJkuxk9eI5OSSUsQQbZAfutl8m4OAZkvZRIPfU5MY4rRrDscOo18UwOn+BKTYhn61u/No0kosGstY6Hh1mtWNaKF/xPVVyX2NZJyH5tXQhAObluI=
+	t=1720649801; cv=none; b=ZbMP+PsVYFFuDLwKEv+4dz0TDtg1ecNEOM+UEqgZ22HJNPmr8LBkXs6SWZSb0vf06NceHsTiqKNLrucOwrqvQ40HK4NTvfIRdqTfeoCtSnHCB6P58N7FlYpClFq3a2dtWBIU/I5S3Q6ZNVcICZUbmq4x1r0+E8bP2DDPqX9VJFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720649801; c=relaxed/simple;
-	bh=zCL91w7z+OtpKogEWj+sGhv0EjZ966XOHOANuTDZT5A=;
+	bh=ZcLE/KWra4zMzqMow/29WKOL4n2DDhneJLcq+nJyCes=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type; b=amtIeuWd5UgnxPbox62PYl1uGmpp/PNlqli+GwMHrLgbrn0IC1DykaFe8nQhjwAmj54Lj7O4+N6plZ+b6bLUNKc0Fzyoxdu8kkVKmGwBocRw036XD8dN+t7yNA0cURVeZuylfK04sCoQu7RdJz7dbNQVKWQ9Lr4VbBm6Fb/SxGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=UnDt5K2i; arc=none smtp.client-ip=209.85.219.43
+	 Content-Type; b=IyktjFx5N/BUSq0guTEUOY7xStqxcLj1kkhG9/sBBUrESAdbDDQONPKdPKK9UDh9mBnoLz70evo0R+v7GrJ7AEgEV4m0z1rbA8wQFIjN2fFxOCzn6b1vMb2OKuSGZ8rBEUUb4aqNQlkDkh7LtNKJ+lTJM8FYlPLzXA3doHUNOx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=LDQaniCd; arc=none smtp.client-ip=209.85.219.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6b06e63d288so1775836d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:16:38 -0700 (PDT)
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6b2c95b6c5aso1420286d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:16:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1720649797; x=1721254597; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1720649799; x=1721254599; darn=vger.kernel.org;
         h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=BcroTdGTsnEL6L6YeLhhdaIM3SddauEqnT1S1mC8BsU=;
-        b=UnDt5K2ioddjZqyNBdMI2ubdOu020ZEzqBBzuVbys64JwTw4Y33ylUfudfWaTSMk+u
-         9s7s9OAxZ1Q3qo2Yd88vbZHIyY4sGhdKn78tZ90KOKS2uTWReHykDOPY6xDf4kh7Cu2c
-         uChN0cFvCufLGcdcQnBm23MFQX7aNpKZyFcM4=
+        bh=F2aOeXwyMYpMqhQ2lfVwIH0JtsSaCG99jYoz09xke0g=;
+        b=LDQaniCd0k+2jAGrDWnaxgrhVrQlruO2MnhzlyVZxSca76fvwhb5Sa9475T6R3Woss
+         j+0oQD8x40UGQte3h1Ea1iTqAjfYtvxaBl/OhjTy13OmOlrZXartER8CQg7uuWIp7x8J
+         JxlqDOiCtpgDUJkWuDhprQFy2z68lob6xBxC4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720649797; x=1721254597;
+        d=1e100.net; s=20230601; t=1720649799; x=1721254599;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BcroTdGTsnEL6L6YeLhhdaIM3SddauEqnT1S1mC8BsU=;
-        b=X5B16jnAHiRzuIXl8rnQZVKj3B+pv2jtgfBD4ZI43jB7tUDKO2muu8W6NVQ1mqSXVS
-         EepEPYzyVa/kusMWnmv1dRKts1i3kGwbwc4t/lSDcAx5DzOMO8D4leESWtcdikXEsYIZ
-         wcY1OvUkjTFG3YBLMmI67eS5XgaNziZVxSR0mTR+sIUj63H+UkCBVHLLmZnkPZGqpyqu
-         iwAzIaIIzKdgOHmkEJ0kLR37e/YjhnRQ6Jvx37qJ6rsPt1goAMaOJ/OzkTNeoEO5Doam
-         65u5Py/lo8ihct+g4MjFL+1JXFd1l9IBpxXzChZgE+fhINEAErHNFv4oHVyYegMTZBiC
-         g8Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCWN70ihVhHr4aACp3KzBy3c6fmoq28Wffkx+7VDnvI5r+sVR/63LPWxA3W/0HoL5Sv6H73z4zwMLC6HTGqWxEM9/4pLZEAlg+cuGAGv
-X-Gm-Message-State: AOJu0Yx1Ha7ec+Za2JFg9LP7LhpldqebMWMpoLb/GBT8NP4Xrg6/HpyH
-	HXkwCqqSjFwXVaOcQRx7HQPbQw0Q/pf5wjZl9EWMTzTTvk2JUiurZdf3Y4EbEw==
-X-Google-Smtp-Source: AGHT+IFzVGiiSLmMGDXbNCHIA1KeqD+W+twXnb8DN1H60OFrc0BAZkdMUwHWH9AyiPfpAuyTfdjgpg==
-X-Received: by 2002:a05:6214:e6d:b0:6b5:4249:7c5 with SMTP id 6a1803df08f44-6b61bf37662mr72990276d6.36.1720649797405;
-        Wed, 10 Jul 2024 15:16:37 -0700 (PDT)
+        bh=F2aOeXwyMYpMqhQ2lfVwIH0JtsSaCG99jYoz09xke0g=;
+        b=SJ84+0Uslr3K/baqmty/RgGEedtaJoA8tRd0dtjQ9sI6dL/Nofi8qWgPZzld3yu/Am
+         9TZ24YX5DQUDIr3eHvrpW4a2keYmnKo1Fa4S8bXJrwuVdSDVIpgdZAy2i3v5xiUrIe5R
+         DXi7xYbNBV49kVLob7JsV0q2GES6Z4Efqs6jZaALfzdR/GanljCbAe28pnHVsXuDoQ1K
+         YtZfPsdFQ2HHvODqdanwxPACGLplEkRluHx08SAVnf9CvofrD6s2VcqHm24uI7A07Vle
+         NXnHbp0+8KwymIXabmBKEyRgAccnqHRk+6FV3cIdCBMSxi3z37MZkAfwr9TARI8aePIy
+         rlbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOq7+EcKutW6uJM0bxUTFwW9LnrcimfLaSvj0gCqsbzN8RfRhvff+8Z/W/QRQqafWrgsacxhXH3S5GA99PkVCszg1vPteHq27zpoYk
+X-Gm-Message-State: AOJu0YzF67PSZ6gkhDHFzf/DeOv+FbCR4W8A/cjIZEi2SBPFou47qq1X
+	H5TQ5Ai0LZt+F1HPorHTrKB+YBzQLOqauXcLdf6U99y1Ynz3/ThGsp6BhZcawA==
+X-Google-Smtp-Source: AGHT+IGbfaXkPyk4MDsNSx6d35fq97HqilT9H1mudUwc/uOzVRR+c/sXn3tlIfapfqJG9SCcL0HVUQ==
+X-Received: by 2002:a05:6214:246d:b0:6b2:c034:6aa3 with SMTP id 6a1803df08f44-6b61bf35eb5mr63873476d6.35.1720649798807;
+        Wed, 10 Jul 2024 15:16:38 -0700 (PDT)
 Received: from stbsrv-and-01.and.broadcom.net ([192.19.144.250])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b61ba04c16sm20182326d6.60.2024.07.10.15.16.36
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b61ba04c16sm20182326d6.60.2024.07.10.15.16.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 15:16:36 -0700 (PDT)
+        Wed, 10 Jul 2024 15:16:38 -0700 (PDT)
 From: Jim Quinlan <james.quinlan@broadcom.com>
 To: linux-pci@vger.kernel.org,
 	Nicolas Saenz Julienne <nsaenz@kernel.org>,
@@ -76,129 +76,100 @@ Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
 	Lorenzo Pieralisi <lpieralisi@kernel.org>,
 	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
 	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE),
 	linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE),
 	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 02/12] dt-bindings: PCI: Cleanup of brcmstb YAML and add 7712 SoC
-Date: Wed, 10 Jul 2024 18:16:16 -0400
-Message-Id: <20240710221630.29561-3-james.quinlan@broadcom.com>
+Subject: [PATCH v3 03/12] PCI: brcmstb: Use common error handling code in brcm_pcie_probe()
+Date: Wed, 10 Jul 2024 18:16:17 -0400
+Message-Id: <20240710221630.29561-4-james.quinlan@broadcom.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20240710221630.29561-1-james.quinlan@broadcom.com>
 References: <20240710221630.29561-1-james.quinlan@broadcom.com>
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000f93f5d061cebff43"
+	boundary="0000000000000fd0c2061cec00ce"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
---000000000000f93f5d061cebff43
+--0000000000000fd0c2061cec00ce
 
-o Change order of the compatible strings to be alphabetical
-o Describe resets/reset-names before using them in rules
-o Add in new resets for 7712 (swinit, bridge)
-o Add in changes for 7712
+o Move the clk_prepare_enable() below the resource allocations.
+o Add a jump target (clk_out) so that a bit of exception handling can be
+  better reused at the end of this function implementation.
 
 Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
----
- .../bindings/pci/brcm,stb-pcie.yaml           | 46 +++++++++++++++++--
- 1 file changed, 41 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-index 558a18fd2e77..dd7c76ec9ceb 100644
---- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-+++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-@@ -16,11 +16,12 @@ properties:
-           - brcm,bcm2711-pcie # The Raspberry Pi 4
-           - brcm,bcm4908-pcie
-           - brcm,bcm7211-pcie # Broadcom STB version of RPi4
--          - brcm,bcm7278-pcie # Broadcom 7278 Arm
-           - brcm,bcm7216-pcie # Broadcom 7216 Arm
--          - brcm,bcm7445-pcie # Broadcom 7445 Arm
-+          - brcm,bcm7278-pcie # Broadcom 7278 Arm
-           - brcm,bcm7425-pcie # Broadcom 7425 MIPs
-           - brcm,bcm7435-pcie # Broadcom 7435 MIPs
-+          - brcm,bcm7445-pcie # Broadcom 7445 Arm
-+          - brcm,bcm7712-pcie # STB sibling SOC of Raspberry Pi 5
+Fixes: bb610757fcd7 ("PCI: brcmstb: Use reset/rearm instead of deassert/assert")
+---
+ drivers/pci/controller/pcie-brcmstb.c | 29 +++++++++++++++------------
+ 1 file changed, 16 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+index c08683febdd4..c257434edc08 100644
+--- a/drivers/pci/controller/pcie-brcmstb.c
++++ b/drivers/pci/controller/pcie-brcmstb.c
+@@ -1613,31 +1613,30 @@ static int brcm_pcie_probe(struct platform_device *pdev)
  
-   reg:
-     maxItems: 1
-@@ -95,6 +96,20 @@ properties:
-       minItems: 1
-       maxItems: 3
+ 	pcie->ssc = of_property_read_bool(np, "brcm,enable-ssc");
  
-+  resets:
-+    items:
-+      - description: reset for phy reset calibration
-+      - description: reset for PCIe/CPU bus bridge
-+      - description: reset for soft PCIe core reset
-+      - description: reset for external PCIe PERST# signal
+-	ret = clk_prepare_enable(pcie->clk);
+-	if (ret) {
+-		dev_err(&pdev->dev, "could not enable clock\n");
+-		return ret;
+-	}
+ 	pcie->rescal = devm_reset_control_get_optional_shared(&pdev->dev, "rescal");
+-	if (IS_ERR(pcie->rescal)) {
+-		clk_disable_unprepare(pcie->clk);
++	if (IS_ERR(pcie->rescal))
+ 		return PTR_ERR(pcie->rescal);
+-	}
 +
-+  reset-names:
-+    items:
-+      - const: rescal
-+      - const: bridge
-+      - const: swinit
-+      - const: perst
+ 	pcie->perst_reset = devm_reset_control_get_optional_exclusive(&pdev->dev, "perst");
+-	if (IS_ERR(pcie->perst_reset)) {
+-		clk_disable_unprepare(pcie->clk);
++	if (IS_ERR(pcie->perst_reset))
+ 		return PTR_ERR(pcie->perst_reset);
 +
- required:
-   - compatible
-   - reg
-@@ -118,8 +133,8 @@ allOf:
-     then:
-       properties:
-         resets:
--          items:
--            - description: reset controller handling the PERST# signal
-+          minItems: 1
-+          maxItems: 1
++	ret = clk_prepare_enable(pcie->clk);
++	if (ret) {
++		dev_err(&pdev->dev, "could not enable clock\n");
++		return ret;
+ 	}
  
-         reset-names:
-           items:
-@@ -136,12 +151,33 @@ allOf:
-     then:
-       properties:
-         resets:
-+          minItems: 1
-+          maxItems: 1
-+
-+        reset-names:
-           items:
--            - description: phandle pointing to the RESCAL reset controller
-+            - const: rescal
-+
-+      required:
-+        - resets
-+        - reset-names
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: brcm,bcm7712-pcie
-+    then:
-+      properties:
-+        resets:
-+          minItems: 3
-+          maxItems: 3
+ 	ret = reset_control_reset(pcie->rescal);
+-	if (ret)
++	if (ret) {
+ 		dev_err(&pdev->dev, "failed to deassert 'rescal'\n");
++		goto clk_out;
++	}
  
-         reset-names:
-           items:
-             - const: rescal
-+            - const: bridge
-+            - const: swinit
+ 	ret = brcm_phy_start(pcie);
+ 	if (ret) {
+ 		reset_control_rearm(pcie->rescal);
+-		clk_disable_unprepare(pcie->clk);
+-		return ret;
++		goto clk_out;
+ 	}
  
-       required:
-         - resets
+ 	ret = brcm_pcie_setup(pcie);
+@@ -1676,6 +1675,10 @@ static int brcm_pcie_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
++clk_out:
++	clk_disable_unprepare(pcie->clk);
++	return ret;
++
+ fail:
+ 	__brcm_pcie_remove(pcie);
+ 	return ret;
 -- 
 2.17.1
 
 
---000000000000f93f5d061cebff43
+--0000000000000fd0c2061cec00ce
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -269,14 +240,14 @@ AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
 75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
 AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
 AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCB2n+JYztXAPTERA0D0PUnxJ9Id1Wch
-OObnRS0OXvlvJjAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA3
-MTAyMjE2MzdaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCDiivgltQBYshQEJEnWtBAS2JrcK0zD
+PyYpW18MJiGF5zAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA3
+MTAyMjE2MzlaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
 hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
-AgEwDQYJKoZIhvcNAQEBBQAEggEARvKQ4r0QqUCOZNBdC7i66XMUrguBGsHu47OCa0IW4gx8GrZD
-1mPQi8Bz2J4fn0Jr/Ez6QBUkngWELRczBEMFZRM3zErpWMA1gDkUvq/DpTMlz8d/dbRk4R9xnQsy
-r8WUBuZkTuJooC1MS9Xm+O4VJl1JA6ELTYC56zpAAgktzUqA+5XtDuHSaI2YvEt7LcCO22ZP4Xpk
-CjzH+uY6nVzmQdlEONumZdrfRAFFOoZPqzCwiPC4ZgD3tt/iodSgxfYK8JId++i2TxMxBFz9tR1W
-VU6fDpN9OREreXSElbMeYKnic44ui6W7X9TjgYesC3EKqb2aHpfAbUqMFaF07Z0bUA==
---000000000000f93f5d061cebff43--
+AgEwDQYJKoZIhvcNAQEBBQAEggEAJFJjJN5KTYCH6+O7RPCkzWsc+CMELfvYIBWBG8qwDV/V2FdC
+3q7urC/n+6r6itzCAWv+BNU6AoCy+oV6r+Nl4XkZcTrgCGanadTt9xgVXmKI2witt1fQvS6hOhL7
+Q8QNQv9Z2q5cqNt5RcOFppdmhaLuLVpKwkWGoUzmNXLlOfyOJ6h6FOB1FxqZnw82fU8ENZ6NUpcQ
+t+K0rEoFYkHpMICdDfvq5sWsE+6n1u0wmu+ckvOlLUSqwEK9bgoEaoqp/RnX5h0iVFlB6Gf/2j54
+dKDx24jSwB+eEGCdfPRivNLqqJ77/o9GbNyRY2GW2rz76IJOPxz6o5kBWs4HMhYzPw==
+--0000000000000fd0c2061cec00ce--
 
