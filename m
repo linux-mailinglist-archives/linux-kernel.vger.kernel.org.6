@@ -1,196 +1,180 @@
-Return-Path: <linux-kernel+bounces-247392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFF2C92CEDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:07:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4515992CEE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BB42283C0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:07:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A84F5B26B3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CB418FA34;
-	Wed, 10 Jul 2024 10:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2DE18FC64;
+	Wed, 10 Jul 2024 10:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="NUAVtNEe"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JnD3ha88"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCD61B86F3;
-	Wed, 10 Jul 2024 10:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0602F43156;
+	Wed, 10 Jul 2024 10:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720606049; cv=none; b=W8leYlGGQuCY/+7jwTy8yVTe8CnsgV3pTo8JbekwDak+95egBjV3zxJGri3sdwxn6xSjizHWkuQMRbdseJxyvEy/iEifzleUA7/u6I2tczleOoY9tI7X7joeHPjKK/xBT3E2yLkaFuWJyLBWXCvK/GNZdvJLLJ0hF1OatmWcAlE=
+	t=1720606168; cv=none; b=jY4H7QI9jFLXPper5R9iRlfyj3oKNhePUCRGenwmYkMaXUbHZM7OCuUjtrPZIy1HieFZeo7nvMKYB6TpajHdyfO9F0Jqv8+I+BSzrLBu6pFCvwhJ22F9pJVd+rS6jiXx7ds1B/lzMv/5sPStqb5g5ncU+vURE73wnTyVM9YOKik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720606049; c=relaxed/simple;
-	bh=6wXpt7XYjcDNGjv5yoOXr7CoBDQcbXL3aGdpf2FY4yI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KtrjC8T26nRCxBxzTo3+ORXMz05bXv80WoyLZL5Apdxq1POlolaDZb8kxhC/Js33XUE21V8UbN0GHb/paADfA8Cvfq9FGH7YCUnjb42N2IwtVJsYijpD2jTrKN56u6OCb29la3gxqmu0HdsGY+8G+oIKikZLTRJILMPWZObDvYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=NUAVtNEe; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: lukma@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 5805C886EE;
-	Wed, 10 Jul 2024 12:07:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1720606039;
-	bh=ylgL5qgH3GiW86diEu73+cfrmEBeNmq9X/KhYaPz8rE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=NUAVtNEexXjQmiUylNIcugGMv8sL0weM6AmC3/idhQCyw00N+yHEkxArxYrCguzJO
-	 z9TDXOr2/1snN9Z+wvefZr8VA5DHaDJ+JxWtyEJEV+7iezXRapQBh4njPAN+5aHOlX
-	 YuCZVTS04N7paM9904AFZNfePT1DkracfrVV+cWI/uAMs6br4coRgeirX7yzeF65Ht
-	 pExEx1pR78lGyJ1q/SOEXitGZ17QlG1QHKYBjCgrWT7uz6xOxA9l1PNKX27J+gbE/5
-	 aFUuowmhdQIujEzA+FdqQJbUlTtQwqu/+Z7odZ8rPKCiSGg75PmowWOHWvwqd/tAEb
-	 +7AF5AqkZ+ieA==
-From: Lukasz Majewski <lukma@denx.de>
-To: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Li Zetao <lizetao1@huawei.com>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukasz Majewski <lukma@denx.de>
-Subject: [PATCH v1 net-next] leds: trigger: netdev: Add support for tx_err and rx_err notification with LEDs
-Date: Wed, 10 Jul 2024 12:06:51 +0200
-Message-Id: <20240710100651.4059887-1-lukma@denx.de>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1720606168; c=relaxed/simple;
+	bh=YeOOqgqihShtVaR4aobEpHkV+3/ihbCPBoX+nXP4imc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RVF2zvFuhFLg6sdk8en0FiVSqbmmnzKeAaFi4DZ36zv5ySQWNhVuRpgHmvhCCdUiPeEQlmZwWebxB92AZjG5L8kxqwzNHlMEhJH6SnXlnlVnZ6rRgqcoaPm3Tx0E0noW0ekYAqMpF8GDuDkzc7/tlGj9/LjMsrSwLJp06o9RQBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JnD3ha88; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FD60C32781;
+	Wed, 10 Jul 2024 10:09:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720606167;
+	bh=YeOOqgqihShtVaR4aobEpHkV+3/ihbCPBoX+nXP4imc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JnD3ha88K7DkkntKt9UlcD+9HmgoBYN3T8c0dpyiFyQjy1CKoCrElTXyDlOf/O/n8
+	 +xkitYfn5pc2z73Ucg/upY6bJ4/pwi3QCtJxx6z3olBFpZuqmesY305clciDvsd7j9
+	 vIfPCexDNkfhA98cFOtbjC/hbbEtJLN4f4Mk3tgtXTt7pziQ5gKFTcZ4ausC+5Lisy
+	 KK/B8zAlf+bfzFqiKY0p9EqqEJDlIWzdUVLFuCtSKR2JK7VLHzO59BqB2Cq9vOVymB
+	 VHf676l7/lG6qjUcLK6R22EAFd8ZfGZ5kyg9vvCXLWz3U1h2slJygKavNzWQfU2USX
+	 BQcuKh3WLiI3w==
+Message-ID: <54468cb8-9603-430e-8d09-ba2a243ff552@kernel.org>
+Date: Wed, 10 Jul 2024 12:09:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: iio: humidity: add ENS21x sensor family
+To: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240709-ens21x-v1-0-678521433cdd@thegoodpenguin.co.uk>
+ <20240709-ens21x-v1-1-678521433cdd@thegoodpenguin.co.uk>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240709-ens21x-v1-1-678521433cdd@thegoodpenguin.co.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This patch provides support for enabling blinking of LEDs when RX or TX
-errors are detected.
+On 09/07/2024 18:36, Joshua Felmeden wrote:
+> Add device tree documentation for ENS21x family of temperature and
+> humidity sensors
+> 
+> Signed-off-by: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
 
-Approach taken in this patch is similar to one for TX or RX data
-transmission indication (i.e. TRIGGER_NETDEV_TX/RX attribute).
 
-One can inspect transmission errors with:
-ip -s link show eth0
+I believe that's either RESEND or v2, so you are supposed to mark it in
+patch prefix accordingly. If it is v2, then provide also changelog under
+--- or in cover letter.
 
-Example LED configuration:
-cd /sys/devices/platform/amba_pl@0/a001a000.leds/leds/
-echo netdev > mode:blue/trigger && \
-echo eth0 > mode:blue/device_name && \
-echo 1 > mode:blue/tx_err
+> ---
+>  .../bindings/iio/humidity/sciosense,ens21x.yaml    | 50 ++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/humidity/sciosense,ens21x.yaml b/Documentation/devicetree/bindings/iio/humidity/sciosense,ens21x.yaml
+> new file mode 100644
+> index 000000000000..3140349a58b8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/humidity/sciosense,ens21x.yaml
+> @@ -0,0 +1,50 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/humidity/sciosense,ens21x.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ScioSense ENS21x temperature and humidity sensor
+> +
+> +maintainers:
+> +  - Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
+> +
+> +description: |
+> +  Temperature and Humidity sensor.
+> +
+> +  Datasheet:
+> +    https://www.sciosense.com/wp-content/uploads/2024/04/ENS21x-Datasheet.pdf
+> +    https://www.sciosense.com/wp-content/uploads/2023/12/ENS210-Datasheet.pdf
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - sciosense,ens210
+> +      - sciosense,ens210a
+> +      - sciosense,ens211
+> +      - sciosense,ens212
+> +      - sciosense,ens213a
+> +      - sciosense,ens215
 
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
----
- drivers/leds/trigger/ledtrig-netdev.c | 24 +++++++++++++++++++++---
- include/linux/leds.h                  |  2 ++
- 2 files changed, 23 insertions(+), 3 deletions(-)
+Driver suggests these are compatible, so I would normally expect using
+one as fallback for others.
 
-diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
-index 22bba8e97642..4b0863db901a 100644
---- a/drivers/leds/trigger/ledtrig-netdev.c
-+++ b/drivers/leds/trigger/ledtrig-netdev.c
-@@ -39,6 +39,8 @@
-  *         (has carrier) or not
-  * tx -  LED blinks on transmitted data
-  * rx -  LED blinks on receive data
-+ * tx_err -  LED blinks on transmit error
-+ * rx_err -  LED blinks on receive error
-  *
-  * Note: If the user selects a mode that is not supported by hw, default
-  * behavior is to fall back to software control of the LED. However not every
-@@ -144,7 +146,9 @@ static void set_baseline_state(struct led_netdev_data *trigger_data)
- 		 * checking stats
- 		 */
- 		if (test_bit(TRIGGER_NETDEV_TX, &trigger_data->mode) ||
--		    test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode))
-+		    test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode) ||
-+		    test_bit(TRIGGER_NETDEV_TX_ERR, &trigger_data->mode) ||
-+		    test_bit(TRIGGER_NETDEV_RX_ERR, &trigger_data->mode))
- 			schedule_delayed_work(&trigger_data->work, 0);
- 	}
- }
-@@ -337,6 +341,8 @@ static ssize_t netdev_led_attr_show(struct device *dev, char *buf,
- 	case TRIGGER_NETDEV_FULL_DUPLEX:
- 	case TRIGGER_NETDEV_TX:
- 	case TRIGGER_NETDEV_RX:
-+	case TRIGGER_NETDEV_TX_ERR:
-+	case TRIGGER_NETDEV_RX_ERR:
- 		bit = attr;
- 		break;
- 	default:
-@@ -371,6 +377,8 @@ static ssize_t netdev_led_attr_store(struct device *dev, const char *buf,
- 	case TRIGGER_NETDEV_FULL_DUPLEX:
- 	case TRIGGER_NETDEV_TX:
- 	case TRIGGER_NETDEV_RX:
-+	case TRIGGER_NETDEV_TX_ERR:
-+	case TRIGGER_NETDEV_RX_ERR:
- 		bit = attr;
- 		break;
- 	default:
-@@ -429,6 +437,8 @@ DEFINE_NETDEV_TRIGGER(half_duplex, TRIGGER_NETDEV_HALF_DUPLEX);
- DEFINE_NETDEV_TRIGGER(full_duplex, TRIGGER_NETDEV_FULL_DUPLEX);
- DEFINE_NETDEV_TRIGGER(tx, TRIGGER_NETDEV_TX);
- DEFINE_NETDEV_TRIGGER(rx, TRIGGER_NETDEV_RX);
-+DEFINE_NETDEV_TRIGGER(tx_err, TRIGGER_NETDEV_TX_ERR);
-+DEFINE_NETDEV_TRIGGER(rx_err, TRIGGER_NETDEV_RX_ERR);
- 
- static ssize_t interval_show(struct device *dev,
- 			     struct device_attribute *attr, char *buf)
-@@ -538,6 +548,8 @@ static struct attribute *netdev_trig_attrs[] = {
- 	&dev_attr_half_duplex.attr,
- 	&dev_attr_rx.attr,
- 	&dev_attr_tx.attr,
-+	&dev_attr_rx_err.attr,
-+	&dev_attr_tx_err.attr,
- 	&dev_attr_interval.attr,
- 	&dev_attr_offloaded.attr,
- 	NULL
-@@ -628,7 +640,9 @@ static void netdev_trig_work(struct work_struct *work)
- 
- 	/* If we are not looking for RX/TX then return  */
- 	if (!test_bit(TRIGGER_NETDEV_TX, &trigger_data->mode) &&
--	    !test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode))
-+	    !test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode) &&
-+	    !test_bit(TRIGGER_NETDEV_TX_ERR, &trigger_data->mode) &&
-+	    !test_bit(TRIGGER_NETDEV_RX_ERR, &trigger_data->mode))
- 		return;
- 
- 	dev_stats = dev_get_stats(trigger_data->net_dev, &temp);
-@@ -636,7 +650,11 @@ static void netdev_trig_work(struct work_struct *work)
- 	    (test_bit(TRIGGER_NETDEV_TX, &trigger_data->mode) ?
- 		dev_stats->tx_packets : 0) +
- 	    (test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode) ?
--		dev_stats->rx_packets : 0);
-+		dev_stats->rx_packets : 0) +
-+	    (test_bit(TRIGGER_NETDEV_TX_ERR, &trigger_data->mode) ?
-+		dev_stats->tx_errors : 0) +
-+	    (test_bit(TRIGGER_NETDEV_RX_ERR, &trigger_data->mode) ?
-+		dev_stats->rx_errors : 0);
- 
- 	if (trigger_data->last_activity != new_activity) {
- 		led_stop_software_blink(trigger_data->led_cdev);
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 6300313c46b7..c4087c15e61d 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -574,6 +574,8 @@ enum led_trigger_netdev_modes {
- 	TRIGGER_NETDEV_FULL_DUPLEX,
- 	TRIGGER_NETDEV_TX,
- 	TRIGGER_NETDEV_RX,
-+	TRIGGER_NETDEV_TX_ERR,
-+	TRIGGER_NETDEV_RX_ERR,
- 
- 	/* Keep last */
- 	__TRIGGER_NETDEV_MAX,
--- 
-2.39.2
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+
+Missing supply.
+
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +unevaluatedProperties: false
+
+This must be additionalProperties instead.
+
+Best regards,
+Krzysztof
 
 
