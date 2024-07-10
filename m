@@ -1,109 +1,183 @@
-Return-Path: <linux-kernel+bounces-248021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AD4492D77B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:30:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F267692D77C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:32:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAF2B1F215FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:30:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EA1C1F21911
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77917195383;
-	Wed, 10 Jul 2024 17:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKJN0R27"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A8F191F8E;
-	Wed, 10 Jul 2024 17:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0E6194C74;
+	Wed, 10 Jul 2024 17:32:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34F312F37C;
+	Wed, 10 Jul 2024 17:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720632641; cv=none; b=de7N+jWX/KRuDT9sNRSJI1O1itPkvDhWuYxaiH2TJOPsY1JSfI18QrS1i6w8WJ1hd39RFtVNwaP3LwHZcOvqeIOLozXMcnBw1vzA5pkxaOilLa8FDedT6cSOxMyxYtbxxZXkJqjkYUtQekSTa1FEuncQikQ0zb87gY5SK8MaZ6c=
+	t=1720632740; cv=none; b=p0ePVQFcUYnMppXDjl2/Y/dMKgK4YYGnwYa1cFtmy1zZCuTcAmOOq5m5Ad+GEkVM46FyZYSt1AowYfHeK5/vFSNTlEqKX04IJPzL7jcRnhZaflmZ1yhqLvkQ6owkKXWSB8+CM2FGEjvsJn26o5ZpFzwAM4Z7mqEJ8hldDrE7WIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720632641; c=relaxed/simple;
-	bh=Di4N2+cqCl7OWvZju80WUQzsEksScl5VdjNETIMG00w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=K+STRmnxm2tMX3DCegQ3lel0LHxZKB2zV5nAWrNLDYsnawZQ2DyF2WnseHPDojAnlS207W1PuPBl1C3yFZzanNPEO34JP2WOHCpogzs/rq1j2o+HdiE/G4RYtlVL0gi8NgpBuEan58nxc5Y3cebjkb0ASswAzFbzKFo/lHJuPsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKJN0R27; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34303C32781;
-	Wed, 10 Jul 2024 17:30:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720632641;
-	bh=Di4N2+cqCl7OWvZju80WUQzsEksScl5VdjNETIMG00w=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=qKJN0R27Xog5Tz7/XAEJvxQO76CdTZFxbmPuehklH9ZM4+2fKHaVVUGNIaMmEt6TH
-	 hLdQjVB0zt9oq71N5UswCoNIQLnGh2rayodHhe9SdPew6weL4+NDO9LqJHMwVDSfBq
-	 XFKldJqsbowAgDEyeerjO9E9tiSvp0wYvEj1NqFDZgzrPDzTv4l+i0Q0hqcwRoJNEO
-	 /ghUYe23bbMfKr7NGcSL4sJrJzd+FMxacPyFu0gD9jB4NqOz2IhNHB4y0A77mVECDW
-	 zQ9DjFAANqmPnzsFEehx6AriQBS296Uriwms8vRAJrjY13APvIxPVlZeO67icHv3rh
-	 F/I+vbpcsT5lg==
-From: Mark Brown <broonie@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>, 
- Marc Kleine-Budde <mkl@pengutronix.de>, 
- David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240708-spi-mux-fix-v1-0-6c8845193128@baylibre.com>
-References: <20240708-spi-mux-fix-v1-0-6c8845193128@baylibre.com>
-Subject: Re: [PATCH 0/3] spi: fix spi-mux/spi_optimize_message()
- compatibility
-Message-Id: <172063263994.22861.3909751860412680134.b4-ty@kernel.org>
-Date: Wed, 10 Jul 2024 18:30:39 +0100
+	s=arc-20240116; t=1720632740; c=relaxed/simple;
+	bh=1bai3oIFmuvB9JUlUEb5BkCdTrZXQeL5a88P5kXa0Vk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Murfww/LTJZXmdXrbx1JdYRTTYmzWeibKfpXbmRJJdAMzzkHh1WRnq3TqZ/9+YYbNTGEYeKT7LS8C74Gy6lODywQGnKS3gu8cmLONsBOSN/Iq9WcXm57JLQTcvSy/apIeqYl5hWLd2z7A1bgPlpbS+zgZSnEvevHWp2BkGNEqtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EDCA81042;
+	Wed, 10 Jul 2024 10:32:41 -0700 (PDT)
+Received: from pluto.guestnet.cambridge.arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 193153F766;
+	Wed, 10 Jul 2024 10:32:13 -0700 (PDT)
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org
+Cc: sudeep.holla@arm.com,
+	james.quinlan@broadcom.com,
+	f.fainelli@gmail.com,
+	vincent.guittot@linaro.org,
+	etienne.carriere@st.com,
+	peng.fan@oss.nxp.com,
+	michal.simek@amd.com,
+	quic_sibis@quicinc.com,
+	quic_nkela@quicinc.com,
+	ptosi@google.com,
+	dan.carpenter@linaro.org,
+	souvik.chakravarty@arm.com,
+	Cristian Marussi <cristian.marussi@arm.com>
+Subject: [PATCH 0/8] Make SCMI transport as standalone drivers
+Date: Wed, 10 Jul 2024 18:31:45 +0100
+Message-ID: <20240710173153.4060457-1-cristian.marussi@arm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+Content-Transfer-Encoding: 8bit
 
-On Mon, 08 Jul 2024 20:05:27 -0500, David Lechner wrote:
-> Since the spi-mux controller driver is doing unusual things with SPI
-> messages, it needs special handling with regard to spi_optimize_message
-> and friends.
-> 
-> The main fix along with a detailed explanation is in the second patch.
-> 
-> The first patch is another unrelated general fix that I noticed while
-> working on this.
-> 
-> [...]
+Hi all,
 
-Applied to
+Till now the SCMI transport layer was being built embedded into in the core
+SCMI stack.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+Some of these transports, despite being currently part of the main SCMI
+module, are indeed also registered with different subsystems like optee or
+virtio, and actively probed also by those: this led to a few awkward and
+convoluted tricks to properly handle such interactions at boot time in the
+SCMI stack.
 
-Thanks!
+Moreover some partner expressed the desire to be able to fully modularize
+the transports components.
 
-[1/3] spi: don't unoptimize message in spi_async()
-      commit: c86a918b1bdba78fb155184f8d88dfba1e63335d
-[2/3] spi: add defer_optimize_message controller flag
-      commit: ca52aa4c60f76566601b42e935b8a78f0fb4f8eb
-[3/3] spi: mux: set ctlr->bits_per_word_mask
-      commit: c8bd922d924bb4ab6c6c488310157d1a27996f31
+This series aim to make all such transports as standalone drivers that can
+be optionally loaded as modules.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+In order to do this, at first some new mechanism is introduced to support
+this new capability while maintaining, in parallel, the old legacy embedded
+transports; then each transport, one by one, is transitioned to be a
+standalone driver and finally the old legacy support for embedded transport
+is removed.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Patch [1/8] is a mostly unrelated (but much needed) clean-up from Peng,
+which I included in this series to avoid conflicts at merge.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Patch [2/8] simply collects the existing datagram manipulation helpers in a
+pair of function pointers structures, in preparation for later reworks.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Patch [3/8] adds the bulk of the new logic to the core SCMI stack and then
+each existing transport is transitioned to be a standalone driver in
+patches 4,5,6,7 while shuffling around the compatibles. (no DT change is
+needed of curse for backward compatibility)
+While doing this I kept the module authorship in line with the main
+author(S) as spitted out by git-blame.
+
+Finally patch [8/8] removes all the legacy dead code from the core SCMI
+stack.
+
+No new symbol EXPORT has been added.
+
+The new transport drivers have been tested, as built-in and LKM, as
+follows:
+
+- mailbox on JUNO
+- virtio on emulation
+- optee on QEMU/optee using Linaro setup
+
+Exercised using the regular SCMI drivers stack and the SCMI ACS suite,
+testing commands, replies, delayed responses and notification.
+
+Multiple virtual SCMI instances support has been tested too.
+
+SMC has NOT been tested/exercised at run-time, only compile-tested.
+(due to lack of hardware)
+
+Note that in this new setup, all the probe deferral and retries between the
+SCMI core stack and the transports has been removed, since no more needed.
+
+Moreover the new drivers have been tested also with a fully modularized
+SCMI stack, i.e.:
+
+  scmi-core.ko + scmi-module.ko + scmi_transport_*.ko [ + vendor modules ]
+
+ToBeDone:
+ - completely remove any dependency at build time at the Kconfig level between
+   the SCMI core and the transport drivers: so that the transports will be
+   dependent only on the related subsystems (optee/virtio/mailbox/smc)
+   (easy to be done but maybe it is not worth...)
+ - integrate per-platform transport configuration capabilities
+   (max_rx_timeout_ms & friends..)
+
+Based on sudeep/for-next/scmi/updates.
+
+Any feedback, and especially testing (:D) is welcome.
 
 Thanks,
-Mark
+Cristian
+
+---
+v1 --> v2
+- fixed setup_shmem_iomap to address also SMC needs (QC/nikunj)
+  (silencing also warnings by kernel test robot <lkp@intel.com>)
+- using __free OF cleanup.h magic in setup_shmme_iomap
+- properly handle platform_driver_register() failures (Dan)
+- fixed a few commit message style
+- added a few missing static in scmi_desc
+  (addresses warnings by kernel test robot <lkp@intel.com>)
+
+Cristian Marussi (7):
+  firmware: arm_scmi: Introduce packet handling helpers
+  firmware: arm_scmi: Add support for standalone transport drivers
+  firmware: arm_scmi: Make MBOX transport a standalone driver
+  firmware: arm_scmi: Make SMC transport a standalone driver
+  firmware: arm_scmi: Make OPTEE transport a standalone driver
+  firmware: arm_scmi: Make VirtIO transport a standalone driver
+  firmware: arm_scmi: Remove legacy transport-layer code
+
+Peng Fan (1):
+  firmware: arm_scmi: Introduce setup_shmem_iomap
+
+ drivers/firmware/arm_scmi/Kconfig             |  20 +-
+ drivers/firmware/arm_scmi/Makefile            |   9 +-
+ drivers/firmware/arm_scmi/common.h            | 184 +++++++++++++-----
+ drivers/firmware/arm_scmi/driver.c            | 140 +++++--------
+ drivers/firmware/arm_scmi/msg.c               |  34 +++-
+ .../{mailbox.c => scmi_transport_mailbox.c}   |  69 ++++---
+ .../{optee.c => scmi_transport_optee.c}       | 124 +++++-------
+ .../arm_scmi/{smc.c => scmi_transport_smc.c}  |  58 +++---
+ .../{virtio.c => scmi_transport_virtio.c}     | 103 +++++-----
+ drivers/firmware/arm_scmi/shmem.c             |  85 ++++++--
+ 10 files changed, 468 insertions(+), 358 deletions(-)
+ rename drivers/firmware/arm_scmi/{mailbox.c => scmi_transport_mailbox.c} (87%)
+ rename drivers/firmware/arm_scmi/{optee.c => scmi_transport_optee.c} (89%)
+ rename drivers/firmware/arm_scmi/{smc.c => scmi_transport_smc.c} (87%)
+ rename drivers/firmware/arm_scmi/{virtio.c => scmi_transport_virtio.c} (94%)
+
+-- 
+2.45.2
 
 
