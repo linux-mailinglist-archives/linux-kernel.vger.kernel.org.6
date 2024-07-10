@@ -1,114 +1,136 @@
-Return-Path: <linux-kernel+bounces-247728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C0192D3B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:02:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7999892D3BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C35D287958
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:02:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2CCB1F21664
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE14D194A42;
-	Wed, 10 Jul 2024 14:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90539193453;
+	Wed, 10 Jul 2024 14:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Ohmtt9ks"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2311F1946C8
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dfqx2H44"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B12193479
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720620106; cv=none; b=dVoP84/9hjA6MThbg4flcmNgYNiEzA2Pwf2Ni/QT6rqUVMQGG/ugyYTxhw1Bw0q25RtE/IAVK8eOF0t6oh1r5HmN/T2NBO7RSVS4iyPmWiB/87WfRo1oxSMsSIKQET8EQE+7HWDzfS2vvb5x5QEuIN0mxNJn6hT0/ZMs3Ecifa8=
+	t=1720620153; cv=none; b=cKAlfOvDkpegwQt3kPJXE5c8IGgWsP0H+dATI9JlFGMWMHvLZdbtNQVAuCNmy/Tkwu574T5cZgxLXHtqAxrCyKP94IWp+nnAqzg/ce89xkZvFLutOa/Rc197nuEcQXLHBu9yQ7tUQtibB9/YAinDUp3Cubg5trbXiyfuY6hNTEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720620106; c=relaxed/simple;
-	bh=6YBxGUqzUkosXEuudIAjOYOpZ3JddHdhfEKCBfxlj18=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=K3M1Vz8NhNNHIx9fzQpYnqn/QnyHNsvM3EcV4VQiy8IBWjeBEVFmhyCtJXUnn3H91G3pV7sYe5a7A/Z/v/CLJ+ghZFZBOKwB3Go512TfQoG3roN6b1/1kEJQJ/4BLgK36YMtu0kA8Om65cJG9bFQHOC/lrtJEtBp37u89iP7vss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Ohmtt9ks; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=7isddE9S7WZLEiUgbZ1fKxvJB1ZBtoJq/q76qOrytWc=;
-	b=Ohmtt9ksGPq8I0yEmf/4Ee9Al5Eu8O/7NvG/0Hl6QHICC129FNrTQWrmYUEclR
-	iQD09Z5T7OdvDf3/8vdzSEuaRhchN3hCx02JEZRwlpjqjyUZnpzwewsVP9cEmrl7
-	XatlH1cOqaLVixAPhMH34Ha02CWZ0Jve5fQ/OR6Koi/tY=
-Received: from localhost.localdomain (unknown [114.92.56.131])
-	by gzga-smtp-mta-g2-2 (Coremail) with SMTP id _____wDX3_EXlI5mEf7XAw--.49360S2;
-	Wed, 10 Jul 2024 22:01:06 +0800 (CST)
-From: =?UTF-8?q?=E6=9D=8E=E5=93=B2?= <sensor1010@163.com>
-To: gregkh@linuxfoundation.org,
-	rafael@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	=?UTF-8?q?=E6=9D=8E=E5=93=B2?= <sensor1010@163.com>
-Subject: [PATCH v4] driver:core: no need to invert the return value of the call_driver_probe()
-Date: Wed, 10 Jul 2024 07:00:41 -0700
-Message-Id: <20240710140041.4066-1-sensor1010@163.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1720620153; c=relaxed/simple;
+	bh=3fFgDE4OsqEl0CR4v/BXkTgh23Wwzi2tM4TX4jOQH3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dWAhrEJeFBqbUEra3M8fCzGmOytsECOVwNKHx9mmjDrED2o88RdrNoRxPymLPJ8XWfo0ttHkibKHxckivbkLLgm3BxNK42ILPWJCtesQvEG0RK69E+be0z63he8hjQ4ts0hO5XXQLuXtLoQZRgxDKl5HdF0gqtY9GaiKWlTiSCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dfqx2H44; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720620151;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M2d3fQHOAvDigG9uiTalKtqbAMril6sAQN4aXRekhWQ=;
+	b=Dfqx2H44jKVxcTwXctz26MIqoaZqhbz8veeN+Xtgi6cI20STyehELqIfwLV9IgWKuncxjC
+	I/u6RLOBKVoqCWJ/6NUNIP4oi8jb6uE8COrQNYeADRMbPRJuPOnMMSFszHSEeBPP2t85DL
+	dVRcYbpxQbIiEn8560AlGRX1cGGyQ6I=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-237-14z2meJRPBCO_NDEQ5NO9Q-1; Wed,
+ 10 Jul 2024 10:02:28 -0400
+X-MC-Unique: 14z2meJRPBCO_NDEQ5NO9Q-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C6FB019560B4;
+	Wed, 10 Jul 2024 14:02:26 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.169])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A7CE11955F40;
+	Wed, 10 Jul 2024 14:02:23 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 10 Jul 2024 16:00:50 +0200 (CEST)
+Date: Wed, 10 Jul 2024 16:00:45 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org
+Cc: clm@meta.com, jolsa@kernel.org, mingo@kernel.org, paulmck@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] uprobes: document the usage of mm->mmap_lock
+Message-ID: <20240710140045.GA1084@redhat.com>
+References: <20240710140017.GA1074@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDX3_EXlI5mEf7XAw--.49360S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uFWxtw18Kw1rGFy8CrWDCFg_yoW8XrykpF
-	s8AFWYvFn8u3yv9FWUGry0yFyFy3WxCrW09r18G34S9w17Ary5G3y7KrWYqr18ZrWv9Fyr
-	tF43ZrWrCFW7AF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piaFAdUUUUU=
-X-CM-SenderInfo: 5vhq20jurqiii6rwjhhfrp/1tbiSAcYq2XAmMpaiAAAsZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710140017.GA1074@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-In the probe function (either drv->bus->probe() or drv->probe()),
-there is no return value of EPROBE_DEFER. the error return from probe
-should be -EPROBE_DEFER, hence no negation of call_driver_probe()'s
-return is needed, nor should there be an EPROBE_DEFER check in
-driver_probe_device()
+The comment above uprobe_write_opcode() is wrong, unapply_uprobe() calls
+it under mmap_read_lock() and this is correct.
 
-Signed-off-by: 李哲 <sensor1010@163.com>
+And it is completely unclear why register_for_each_vma() takes mmap_lock
+for writing, add a comment to explain that mmap_write_lock() is needed to
+avoid the following race:
 
+	- A task T hits the bp installed by uprobe and calls
+	  find_active_uprobe()
+
+	- uprobe_unregister() removes this uprobe/bp
+
+	- T calls find_uprobe() which returns NULL
+
+	- another uprobe_register() installs the bp at the same address
+
+	- T calls is_trap_at_addr() which returns true
+
+	- T returns to handle_swbp() and gets SIGTRAP.
+
+Reported-by: Andrii Nakryiko <andrii@kernel.org>
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 ---
-v4:
-	Change the pinyin "Lizhe" to the Chinese name 李哲
-v3:
-	Modify commit message and versions go below the ---
-v2:
-	Delete the judgment with the return value of EPROBEDEFER
-	from the _driver_probe.device()
-v1:
-	Add the judgment with the return value of EPROBEDEFER
-	from the _driver_probe.device()
----
- drivers/base/dd.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ kernel/events/uprobes.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index 83d352394fdf..d047919d1f5e 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -664,11 +664,6 @@ static int really_probe(struct device *dev, struct device_driver *drv)
- 		if (link_ret == -EAGAIN)
- 			ret = -EPROBE_DEFER;
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 2c83ba776fc7..d52b624a50fa 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -453,7 +453,7 @@ static int update_ref_ctr(struct uprobe *uprobe, struct mm_struct *mm,
+  * @vaddr: the virtual address to store the opcode.
+  * @opcode: opcode to be written at @vaddr.
+  *
+- * Called with mm->mmap_lock held for write.
++ * Called with mm->mmap_lock held for read or write.
+  * Return 0 (success) or a negative errno.
+  */
+ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
+@@ -1046,7 +1046,12 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
  
--		/*
--		 * Return probe errors as positive values so that the callers
--		 * can distinguish them from other errors.
--		 */
--		ret = -ret;
- 		goto probe_failed;
- 	}
- 
-@@ -826,7 +821,7 @@ static int driver_probe_device(struct device_driver *drv, struct device *dev)
- 
- 	atomic_inc(&probe_count);
- 	ret = __driver_probe_device(drv, dev);
--	if (ret == -EPROBE_DEFER || ret == EPROBE_DEFER) {
-+	if (ret == -EPROBE_DEFER) {
- 		driver_deferred_probe_add(dev);
- 
- 		/*
+ 		if (err && is_register)
+ 			goto free;
+-
++		/*
++		 * We take mmap_lock for writing to avoid the race with
++		 * find_active_uprobe(), install_breakpoint() must not
++		 * make is_trap_at_addr() true right after find_uprobe()
++		 * returns NULL.
++		 */
+ 		mmap_write_lock(mm);
+ 		vma = find_vma(mm, info->vaddr);
+ 		if (!vma || !valid_vma(vma, is_register) ||
 -- 
-2.17.1
+2.25.1.362.g51ebf55
+
 
 
