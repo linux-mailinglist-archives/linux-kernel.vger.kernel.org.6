@@ -1,197 +1,172 @@
-Return-Path: <linux-kernel+bounces-247654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C44D92D29D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:20:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 192E792D233
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30B9F1C227CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:20:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7D9F2880CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9646192B80;
-	Wed, 10 Jul 2024 13:20:02 +0000 (UTC)
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2094.outbound.protection.partner.outlook.cn [139.219.17.94])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9B71922FE;
+	Wed, 10 Jul 2024 13:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQNUs39L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA64818560A;
-	Wed, 10 Jul 2024 13:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720617602; cv=fail; b=dt9BGk4Hyz23MqnwtO+RAA5II2Un18oGc1mH3XWi8YQWpq619wyen73YKygTW5icdtWvdYq8axuFrHIWAywd1+3o43Jya7u14/aiDd0tquPJgESSkxnSFd1fesuARAt1p/g3KGc089YO2ZB3HHx38QY9zwIDoxZxtVidJJmW6U4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720617602; c=relaxed/simple;
-	bh=zZOkhTSS4Az48aT1oSlFjbBwtMjKBRY3xbxuoUVRA7E=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Pn0FCB95+aVsOJ+QvmJ8b0eh/QhBGRGk7WiHaqPD/3hJMPFwJIYDcTG9534BDgwYP/goM3JCY7jCT/+U1FQ1t5b70eh/5IADQ6ORynV55yENVv1euLqGfBpgH9t0yVwogR4WZ4bilyzW+j7GelurwYaSPZPb1crvoULYOmuw/4s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SHEACoYwAnnCaUbh304SJpBfxTabgrs0vNcqTIngEWQBPFAOj9zwK4Ntka0ZtqEYxX/Le/riXoTMz6Nx5iDR/R4BMP5MSMHR74FXt5Idq1XaRT2/KPb8PFfnLdVM2bBXwVeNIvyQa6J/Yy4MBeRDoobolh5x1CYBoAgtwrohwNY59TFOSMlh+QM5VYqKbU03nKbT8bnXANu1na32l7To5635x1AbtnnRSq7I54AqNhi52la+jGJjOuiUenuU8CU05QfMzX+rAwyT8iF4xzNXZjfJwthlFhUZ2gEB/p5NDiX23RHLN8tzsYO+tlmbfEszvrB/065bBeoJt8aCF3Bduw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zZOkhTSS4Az48aT1oSlFjbBwtMjKBRY3xbxuoUVRA7E=;
- b=DoPnDwNXk0B8a1OOB8cOxhK4+Ajx+Gu3QsKjD1zQIfLC9jhTtR8KKE0e1+mDuYw2CXfYuz/2wpwBETRdikGVecp4uFvwqfpV2CiH4lxN9mNCqEdGMxbRxFXnR0q/9mqVj+NCD7Ga8W7GOhT2a9BnblfhW21mV8f3M53pH7d1ykzZSVubVY2ZxJSDEypgXK4QMCqtxwgntBF4ZpqMD6zN+m9ciI2zKqBHGl2Va3dYCXVXe8bclxVHZXFtIg+k6PYhzaDc0BX+QVOvO7NIx9biRzD8RHV4PgLdlOE58ByYKkQjco7SzaAmCbvljj2KS1gs952x6kZ/kzAyviKhhdy0qw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9) by ZQ0PR01MB1064.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:d::5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.38; Wed, 10 Jul
- 2024 13:04:27 +0000
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- ([fe80::64c5:50d8:4f2c:59aa]) by
- ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn ([fe80::64c5:50d8:4f2c:59aa%6])
- with mapi id 15.20.7741.033; Wed, 10 Jul 2024 13:04:27 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-CC: Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Laurent Pinchart
-	<laurent.pinchart@ideasonboard.com>, Jean-Michel Hautbois
-	<jeanmichel.hautbois@ideasonboard.com>, Benjamin Gaignard
-	<benjamin.gaignard@collabora.com>, Tomi Valkeinen
-	<tomi.valkeinen+renesas@ideasonboard.com>, Mingjia Zhang
-	<mingjia.zhang@mediatek.com>, Jack Zhu <jack.zhu@starfivetech.com>, Keith
- Zhao <keith.zhao@starfivetech.com>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-staging@lists.linux.dev"
-	<linux-staging@lists.linux.dev>
-Subject:
- =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjUgMDQvMTRdIHN0YWdpbmc6IG1lZGlhOiBzdGFy?=
- =?utf-8?B?Zml2ZTogQWRkIGEgcGFyYW1zIHNpbmsgcGFkIGFuZCBhIHNjZCBzb3VyY2Ug?=
- =?utf-8?Q?pad_for_ISP?=
-Thread-Topic: [PATCH v5 04/14] staging: media: starfive: Add a params sink pad
- and a scd source pad for ISP
-Thread-Index: AQHa0dtkcNKKzXoXiUypx3sthnB42bHvuaWAgAA0quA=
-Date: Wed, 10 Jul 2024 13:04:27 +0000
-Message-ID:
- <ZQ0PR01MB13024823EE94D8A5705FC728F2A42@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
-References: <20240709083824.430473-1-changhuang.liang@starfivetech.com>
- <20240709083824.430473-5-changhuang.liang@starfivetech.com>
- <ku5lhlocshwrc6yxbofr7dtqgrpdijaop4c265njyjnu42rpi5@o36mnwborhjo>
-In-Reply-To: <ku5lhlocshwrc6yxbofr7dtqgrpdijaop4c265njyjnu42rpi5@o36mnwborhjo>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: ZQ0PR01MB1302:EE_|ZQ0PR01MB1064:EE_
-x-ms-office365-filtering-correlation-id: b10794e9-c71b-459a-7058-08dca0e0d42b
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|366016|41320700013|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- HAQaRSLLmHaNFdcNjUgE6cDBmgUIL5gp/aH5CKMU9YptBO/dDpMNYMFMXi16wjBJPOCv9ziKvJd6Liaza0PkqsSbaP41rmM/Rm+uGU515C+zTZQJ2aQ9YnT0hYvtmB9NtE6CYnNkFHtirea8As1zRAB82LNbcrv7lGZwnWU6LHn4AWmstOATcKF9MICWZLbhuabTToC/AcPitgYpZ5SMGHGYN1lIWo5X1yH91JE5XnIDjEMBuZ68opc8WgmtejJUTF/TM4Pl4onOOHRJ4THfuMUsfiQ1k2jIeOceGmRiARhC5HYnoQGyHaKjRvyVG8Khb4x8h53Gd8h5zB9fZQ7ax5Flyiwyu/5PM2g67eBBIMIteOZgJm2vs9TINh2AoTxEabsMJaMKiv40qDDIQ/WWHNOasD9FwYuCZa7bT093SK4NP7q+5e+ehy/+/uz9sC0v1g/JDWvSkoc3YxFkz2YzXLblsNTAn4s7OPzWCULf+gTyFwf15YuFHyPBwhFh593IyAIn2bBzWNfiabs9HBIdF4OVTy3R4egCvNbcudDnS7JL0ElrvgqeR6hhCcddpCh573+AZXZ03UJYuLsKHrv7Iz8GDBHDpJ1qTfyPC0wUUmqead8EFOruIXQU81xn64XI
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(41320700013)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?Y0dtWVNBSnB5U2tXSURSYjQ0YW1KUFFTRjBHMnltSGpJckZZbnhDUElic1ha?=
- =?utf-8?B?VTRjQmkyc0dQMXhxQmhQeThBSjh6aGdVZDdNMVR2OUU3eGtFb0JYYlJCT1ZU?=
- =?utf-8?B?VnhMaGNORkxpbE45QTh6Mm45dllsTTFuZ2FZOEMxdWJnUXZnbU40UUQrejFF?=
- =?utf-8?B?TllldGVZQnd4OVJ5b3J6anlCTTlXckVPYVB3eUJmdHZqeFh4VWgwdjZmd1hY?=
- =?utf-8?B?WlhZZktMR1djNTZYT3BKNXh0WnB1d0Y1S0V3WHRmeHE0R1hhSEVSZFByaGs5?=
- =?utf-8?B?MVBaMnQvdG1DRURxdzdpWmk3M1VwMXZzcEs0L2llSExRU2lyZzVCSk0xM3ox?=
- =?utf-8?B?MkhGYVBRYUQyWExNenBoSklYbGZ3S3VEUmlVWHhKbDFnR0pBNjROc1crcnh3?=
- =?utf-8?B?b1Y4aVlMRXkybUxZQnptbm0vdWRKbEN2djV2d243K2lqNDcyaG5yNUpWTy92?=
- =?utf-8?B?UkVOeWRCcWtjdXFlZm0zU2pkRjMzNXFiTXpUdnpjL1dPVlJtZHpMdHhBQWpQ?=
- =?utf-8?B?bjkxNEJIR24vc2d4R2hKVkhZKzd4RWJIVWg0OFBEK0x3aVpwZE9LK0Nsdm41?=
- =?utf-8?B?Y2NEQXRBWitxVXoyVWFuZW5BR09jakxOZjJvQTJSaCtFV1RHcnJ5N0prM2Ur?=
- =?utf-8?B?OFNjTWwxUnBoSG8wQVNpR01qTmg5QThlb0xEbFFmK2xKQlZBOUpmMlFjLzNW?=
- =?utf-8?B?aEEvRzJrdEJrMlMza1FhY0l2RlA5RkZXWm1lbTdXcmtwaDNGTnk1OUZZd0cx?=
- =?utf-8?B?OVhqY1M3SXN3SlIyakVPVEVNK3I5amoxZW9oc3lvYW1iM1htWFlVUVdDZ2o2?=
- =?utf-8?B?Q3FxMUY4eUNGR0VlM3pxN2pwWkxQdjl0cjVseDVCQnNzUXowU1IyaUtIVTI1?=
- =?utf-8?B?aUVGVjVPbUM5VFVMV1BqckV2ZjRqRnpCcUQvTHZiS0pOMTU3dWpDaTVwdGJY?=
- =?utf-8?B?V3ZVWXRoUjR4NEFmVFV0aURWQzUxUEd4V2lDdjNFdnpBU3gyditnV0JYSXJE?=
- =?utf-8?B?OTNqV0ZCRG14anlqbVdQbTJJYm1xNU1OVzFaaXh6KzlmNEZvNVVKbDFsNlhP?=
- =?utf-8?B?L3FIeUhodHdHeWtERjdEeEFLQVdHYzdVV3dWUmpzaXJTMnZVNXdXNTJUOTk1?=
- =?utf-8?B?OHJkOUlwZmRwT0tYNXlMblRkZmpRNllhSVY3T2E0dndoeFF0QVhPbXByQmZF?=
- =?utf-8?B?U08xYWJhS0FmR3RGWGRobWxqUlBmWWRyRCtKVDNDZENacTZpYzVsYnFmUm11?=
- =?utf-8?B?MGt1dFczeUFmcGdIZDdGdXhDenJ0Y3ovSWo1WklicVRucGthOGZ1RHJlYUV6?=
- =?utf-8?B?MHMxZlN6a2VhTlZhWnRkcEtWRmo2Q01yODlIanZ1RkpRQ0d6cisyUHU1bEps?=
- =?utf-8?B?dXhBWE0xZXg3UFA0VkZGVHQ2eldrbG9nYWtJNUtIelBxdVJXSmlzSVMrVUFF?=
- =?utf-8?B?VDV6aGlSZlBIM2djV1c0NkNVRUR2RXROZ0hka09jT2V2Z0lYSFppRjU1em5H?=
- =?utf-8?B?ZzdBNjYzdjFyMHpaUE1Za1d1QjZ2WlZ6MHBlNGtsK1cwMUhqbllxeEY2bG91?=
- =?utf-8?B?Vm04MGJvTVdiWXlCYk9jOUZqWGQ4VklXNmdXQmhOVGFoS0ZHTnNNaVEzcFdE?=
- =?utf-8?B?TitGWjlWRVpQOVBPdy9zTmZoMkJGcEdoRCswaGFyL08zT2JqdFNkQnc1TU1Q?=
- =?utf-8?B?YUFCYmRHTzZLczdYN3BkTXRhMm96bU00azhsQjZKVUhvSFN5aFpmOVpMQklw?=
- =?utf-8?B?Vy9tN0FoSHp2c1gzb2FUcHlVcE1QZDd2ZktoYnlPei91dTlCZXRNU2ZjRUNu?=
- =?utf-8?B?TDU1dzh2UDMwWnowOGg4YXlNZVE4VXhmU0RwSlI3UmJMVDBsSzhnREJha0NG?=
- =?utf-8?B?ZmdGemwzbkR0OU5aYTZWSU56V1ZFVUdoN2lIM3ZrbzJYSnIwOXZnYjN2UXVO?=
- =?utf-8?B?ODZaZVd6ZU1nU0hSNkJFM1FpNFUybHN1d1JVbXMrcVVHcFBjZmtlM3QrRmZs?=
- =?utf-8?B?SnJnWFRFTEFQZWpDcVo4blR0WXgvbks2clU4ZXh3WGZjWGlrNGptdC84K2xR?=
- =?utf-8?B?NGFIc1N0WmpBcGgrUFdYT0tGOWkwQ2ZxU2IyL1Jyd2RuSmx3STI1NTFheUs0?=
- =?utf-8?B?TW1EN1BOZGVqeE8vMHg4WWNWUlA2bHJSUmYwYnYwTU9TbExud3pncUxLVWF1?=
- =?utf-8?B?SEE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F232E83CD4
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720616677; cv=none; b=XiW4rQrIsocMY/Y8am21If/xLBfVxqgfN1ChV/JK7cMcsEt2YZqUAYyshDEiWmtFUPsujmfPyUZji8ol2LV46o1FqU3MT9UTLh0GZ+T/C6eIbRaaH0zinUkxG8/dzJO/a/gNM24cgnlRC46gy9KnePK6/PowUG7H+AjXzS3MwoA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720616677; c=relaxed/simple;
+	bh=onzmcxaR9WVaOaR53OrVwg2UDI/A4ORQ6Oxc7wv+1zw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iRDe9WFRjrlnW5RkHxTTAX+drqOBZAv+wqzgZ3UuLNHHMLSlSxYHH86+4o8zrjhboZ0K05Rz+WmzTl43fNJRVzQIDr9Cbivf1xcbOl+RTORVRS95qCZE6EvzaPKysqXXkmygDYN543LkZ/W7w0fuvNaW7DOvbRKfoV3OFPqhmxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQNUs39L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D2B3C32781;
+	Wed, 10 Jul 2024 13:04:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720616676;
+	bh=onzmcxaR9WVaOaR53OrVwg2UDI/A4ORQ6Oxc7wv+1zw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=cQNUs39L19kCh4XO/FzWZc1h22oxZNouZMR1RCYXBJkZk0u63HGcCrWbxNqoHq1Jo
+	 XGVOicyiwQkh7Vo7bOKGOducpHEL3O12/LQ34XchU+HDdmMrtHpQAEo9zvK50nVM75
+	 CXQ90vwrLqmx/92r7pEb7/I09cX2RfO2DIzLP4eA8skI99YxByD/dFycO9onzRVxEx
+	 dHoCTAp4HKEbw3xaMZbyzVMN5XKWwF5u60JCNC6LvuzM6SkkyquFxVraYG39CCd70h
+	 OcnPbliyXZgVfh/uBpy9TU278Q+1/jBxg1p4P7ZS1bI59RE0U5lx2X4K+l8upfnmQN
+	 VeUj3YuO1s6zw==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: =?utf-8?Q?Cs=C3=B3k=C3=A1s=2C_Bence?= <csokas.bence@prolan.hu>
+Cc: <linux-mtd@lists.infradead.org>,  <linux-kernel@vger.kernel.org>,
+  "Tudor Ambarus" <tudor.ambarus@linaro.org>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,  Miquel Raynal
+ <miquel.raynal@bootlin.com>,  Richard Weinberger <richard@nod.at>,
+  Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: [PATCH] mtd: spi-nor: sst: Factor out common write operation to
+ `sst_nor_write_data()`
+In-Reply-To: <20240710091401.1282824-1-csokas.bence@prolan.hu>
+ (=?utf-8?B?IkNzw7Nrw6FzLA==?=
+	Bence"'s message of "Wed, 10 Jul 2024 11:14:01 +0200")
+References: <20240710091401.1282824-1-csokas.bence@prolan.hu>
+Date: Wed, 10 Jul 2024 15:04:34 +0200
+Message-ID: <mafs07cdto0t9.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: b10794e9-c71b-459a-7058-08dca0e0d42b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2024 13:04:27.2048
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sJT+U1KdQMVZU2f6ReT/t29CxGV9mNGcY/7XEft1kzXRTjouGxfhXJ6yQzrbhZB2TOD6sbWnT0Nvu5OTj+bP4XN9r+gAXy09f/2JYKgJ9AFCVYSBdXyIc5C92Yb8RHNd
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB1064
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-SGksIEphY29wbw0KDQpUaGFua3MgZm9yIHlvdXIgY29tbWVudHMuDQoNClsuLi5dDQoNCj4gPiBA
-QCAtMTUxLDYgKzE3MSw5IEBAIHN0YXRpYyBpbnQgaXNwX3NldF9mb3JtYXQoc3RydWN0IHY0bDJf
-c3ViZGV2ICpzZCwNCj4gPiAgCWlzcF90cnlfZm9ybWF0KGlzcF9kZXYsIHN0YXRlLCBmbXQtPnBh
-ZCwgJmZtdC0+Zm9ybWF0KTsNCj4gPiAgCSpmb3JtYXQgPSBmbXQtPmZvcm1hdDsNCj4gPg0KPiA+
-ICsJaWYgKGZtdC0+cGFkID09IFNURl9JU1BfUEFEX1NSQ19TQ0QgfHwgZm10LT5wYWQgPT0NCj4g
-PiArU1RGX0lTUF9QQURfU0lOS19QQVJBTVMpDQo+IA0KPiBuaXQ6IGNhbiBlYXNpbHkgYmUgbWFk
-ZSA8IDgwIGNvbHMgKGFnYWluLCBub3QgbWFuZGF0b3J5IGluIExpbnV4IGJ1dCBlbmZvcmNlZA0K
-PiBpbiB2NGwgYWNjb3JkaW5nIHRvDQo+IERvY3VtZW50YXRpb24vZHJpdmVyLWFwaS9tZWRpYS9t
-YWludGFpbmVyLWVudHJ5LXByb2ZpbGUucnN0KQ0KPiANCg0KSSB3aWxsIGFkZCAtLW1heC1saW5l
-LWxlbmd0aD04MCB0byBjaGVjayBwYXRjaHMgYWdhaW4uDQoNCj4gPiArCQlyZXR1cm4gMDsNCj4g
-PiArDQo+ID4gIAlpc3BfZGV2LT5jdXJyZW50X2ZtdCA9DQo+IHN0Zl9nX2ZtdF9ieV9tY29kZSgm
-aXNwX2Rldi0+Zm9ybWF0c1tmbXQtPnBhZF0sDQo+ID4gIAkJCQkJCSAgZm10LT5mb3JtYXQuY29k
-ZSk7DQo+ID4NCj4gPiBAQCAtMjAyLDYgKzIyNSw5IEBAIHN0YXRpYyBpbnQgaXNwX2dldF9zZWxl
-Y3Rpb24oc3RydWN0IHY0bDJfc3ViZGV2ICpzZCwNCj4gPiAgCXN0cnVjdCB2NGwyX3N1YmRldl9m
-b3JtYXQgZm10ID0geyAwIH07DQo+ID4gIAlzdHJ1Y3QgdjRsMl9yZWN0ICpyZWN0Ow0KPiA+DQo+
-ID4gKwlpZiAoc2VsLT5wYWQgPT0gU1RGX0lTUF9QQURfU1JDX1NDRCB8fCBzZWwtPnBhZCA9PQ0K
-PiBTVEZfSVNQX1BBRF9TSU5LX1BBUkFNUykNCj4gPiArCQlyZXR1cm4gLUVJTlZBTDsNCj4gPiAr
-DQo+ID4gIAlzd2l0Y2ggKHNlbC0+dGFyZ2V0KSB7DQo+ID4gIAljYXNlIFY0TDJfU0VMX1RHVF9D
-Uk9QX0JPVU5EUzoNCj4gPiAgCQlpZiAoc2VsLT5wYWQgPT0gU1RGX0lTUF9QQURfU0lOSykgeyBA
-QCAtMjM5LDYgKzI2NSw5IEBAIHN0YXRpYw0KPiBpbnQNCj4gPiBpc3Bfc2V0X3NlbGVjdGlvbihz
-dHJ1Y3QgdjRsMl9zdWJkZXYgKnNkLA0KPiA+ICAJc3RydWN0IHN0Zl9pc3BfZGV2ICppc3BfZGV2
-ID0gdjRsMl9nZXRfc3ViZGV2ZGF0YShzZCk7DQo+ID4gIAlzdHJ1Y3QgdjRsMl9yZWN0ICpyZWN0
-Ow0KPiA+DQo+ID4gKwlpZiAoc2VsLT5wYWQgPT0gU1RGX0lTUF9QQURfU1JDX1NDRCB8fCBzZWwt
-PnBhZCA9PQ0KPiBTVEZfSVNQX1BBRF9TSU5LX1BBUkFNUykNCj4gPiArCQlyZXR1cm4gLUVJTlZB
-TDsNCj4gPiArDQo+ID4gIAlpZiAoc2VsLT50YXJnZXQgIT0gVjRMMl9TRUxfVEdUX0NST1ApDQo+
-ID4gIAkJcmV0dXJuIC1FSU5WQUw7DQo+ID4NCj4gPiBAQCAtMjk2LDggKzMyNSwzOCBAQCBzdGF0
-aWMgaW50IGlzcF9pbml0X2Zvcm1hdHMoc3RydWN0IHY0bDJfc3ViZGV2ICpzZCwNCj4gPiAgCQkJ
-LmhlaWdodCA9IDEwODANCj4gPiAgCQl9DQo+ID4gIAl9Ow0KPiA+ICsJc3RydWN0IHY0bDJfc3Vi
-ZGV2X2Zvcm1hdCBmb3JtYXRfcGFyYW1zID0gew0KPiA+ICsJCS5wYWQgPSBTVEZfSVNQX1BBRF9T
-SU5LX1BBUkFNUywNCj4gPiArCQkud2hpY2ggPSBWNEwyX1NVQkRFVl9GT1JNQVRfQUNUSVZFLA0K
-PiA+ICsJCS5mb3JtYXQgPSB7DQo+ID4gKwkJCS5jb2RlID0gTUVESUFfQlVTX0ZNVF9NRVRBREFU
-QV9GSVhFRCwNCj4gPiArCQkJLndpZHRoID0gMSwNCj4gPiArCQkJLmhlaWdodCA9IDENCj4gPiAr
-CQl9DQo+ID4gKwl9Ow0KPiA+ICsJc3RydWN0IHY0bDJfc3ViZGV2X2Zvcm1hdCBmb3JtYXRfc2Nk
-ID0gew0KPiA+ICsJCS5wYWQgPSBTVEZfSVNQX1BBRF9TUkNfU0NELA0KPiA+ICsJCS53aGljaCA9
-IFY0TDJfU1VCREVWX0ZPUk1BVF9BQ1RJVkUsDQo+ID4gKwkJLmZvcm1hdCA9IHsNCj4gPiArCQkJ
-LmNvZGUgPSBNRURJQV9CVVNfRk1UX01FVEFEQVRBX0ZJWEVELA0KPiA+ICsJCQkud2lkdGggPSAx
-LA0KPiA+ICsJCQkuaGVpZ2h0ID0gMQ0KPiA+ICsJCX0NCj4gPiArCX07DQo+ID4gKwlpbnQgcmV0
-Ow0KPiA+ICsNCj4gPiArCS8qIEluaXQgZm9yIFNURl9JU1BfUEFEX1NJTksgYW5kIFNURl9JU1Bf
-UEFEX1NSQyBwYWQgKi8NCj4gDQo+IERvZXMgdGhpcyBpbml0aWFsaXplIHRoZSBmb3JtYXQgb24g
-U1RGX0lTUF9QQURfU1JDIGZvciByZWFsID8NCj4gDQoNClllcywgaXQgd2lsbCBpbml0aWFsaXpl
-IHRoZSBQQURfU0lOSyBhbmQgUEFORF9TUkMgZm9ybWF0cyBieSBpc3Bfc2V0X3NlbGVjdGlvbi4N
-Cg0KPiBBbnl3YXksIHdhcyB0aGVyZSBhbHJlYWR5IHNvDQo+IFJldmlld2VkLWJ5OiBKYWNvcG8g
-TW9uZGkgPGphY29wby5tb25kaUBpZGVhc29uYm9hcmQuY29tPg0KPiANCj4gVGhhbmtzDQo+ICAg
-ag0KPiANCg0K
+Hi,
+
+On Wed, Jul 10 2024, Cs=C3=B3k=C3=A1s, Bence wrote:
+
+> Writing to the Flash in `sst_nor_write()` is a 3-step process:
+> first an optional one-byte write to get 2-byte-aligned, then the
+> bulk of the data is written out in vendor-specific 2-byte writes.
+> Finally, if there's a byte left over, another one-byte write.
+> This was implemented 3 times in the body of `sst_nor_write()`.
+> To reduce code duplication, factor out these sub-steps to their
+> own function.
+>
+> Signed-off-by: Cs=C3=B3k=C3=A1s, Bence <csokas.bence@prolan.hu>
+> ---
+>
+> Notes:
+>     RFC: I'm thinking of removing SPINOR_OP_BP in favor of
+>     SPINOR_OP_PP (they have the same value). SPINOR_OP_PP
+>     is the "standard" name for the elementary unit-sized
+>     (1 byte, in the case of NOR) write operation. I find it
+>     confusing to have two names for the same operation,
+>     so in a followup I plan to remove the vendor-specific
+>     name in favor of the standard one.
+
+Even though the operations have the same opcode, I see them as different
+operations. One is a byte program: it can only write one byte at a time.
+The other is a page program: it can write up to one page (256 bytes
+usually) at a time.
+
+So I would actually find it more confusing if you use page program in a
+situation where the operation is actually a byte program, and attempting
+to program the whole page will fail.
+
+>
+>  drivers/mtd/spi-nor/sst.c | 39 +++++++++++++++++++--------------------
+>  1 file changed, 19 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/mtd/spi-nor/sst.c b/drivers/mtd/spi-nor/sst.c
+> index 180b7390690c..fec71689e644 100644
+> --- a/drivers/mtd/spi-nor/sst.c
+> +++ b/drivers/mtd/spi-nor/sst.c
+> @@ -167,6 +167,21 @@ static const struct flash_info sst_nor_parts[] =3D {
+>  	}
+>  };
+>=20=20
+> +static int sst_nor_write_data(struct spi_nor *nor, loff_t to, size_t len,
+> +			const u_char *buf)
+> +{
+> +	u8 op =3D (len =3D=3D 1) ? SPINOR_OP_BP : SPINOR_OP_AAI_WP;
+
+Hmm, this looks a bit hacky. But the whole sst_nor_writa() is kinda
+hacky anyway so it is fine I guess... LGTM otherwise.
+
+Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+
+Not directly related to this patch, but when reviewing this patch I
+noticed another small improvement you can make. since you are already
+looking at this code. (to be clear, this is not needed for this patch to
+get merged, this can be a follow up patch).
+
+sst_nor_write() looks like:
+
+	/* Write out most of the data here. */
+	for (; actual < len - 1; actual +=3D 2) {
+        	[...]
+	}
+	nor->sst_write_second =3D false;
+
+	ret =3D spi_nor_write_disable(nor);
+	if (ret)
+		goto out;
+
+	ret =3D spi_nor_wait_till_ready(nor);
+	if (ret)
+		goto out;
+
+	/* Write out trailing byte if it exists. */
+	if (actual !=3D len) {
+		ret =3D spi_nor_write_enable(nor);
+                [...]
+
+		ret =3D spi_nor_write_data(nor, to, 1, buf + actual);
+                [...]
+
+		ret =3D spi_nor_wait_till_ready(nor);
+		if (ret)
+			goto out;
+
+
+		ret =3D spi_nor_write_disable(nor);
+	}
+
+Here, we do a write disable. Then if a one-byte write is needed, do a
+write enable again, write the data and write disable.
+
+Do we really need to toggle write enable between these? If not, it can
+be simplified to only do the write disable after all bytes have been
+written.
+
+[...]
+
+--=20
+Regards,
+Pratyush Yadav
 
