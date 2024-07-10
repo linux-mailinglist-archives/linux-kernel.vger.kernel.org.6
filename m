@@ -1,62 +1,70 @@
-Return-Path: <linux-kernel+bounces-247647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B70F92D28B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:15:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D5592D28C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC2861C22874
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:15:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CD851F24A86
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43249192B99;
-	Wed, 10 Jul 2024 13:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6480C19004F;
+	Wed, 10 Jul 2024 13:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GVIEhoPs"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mi0MmQFE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9DF192492;
-	Wed, 10 Jul 2024 13:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC976192492;
+	Wed, 10 Jul 2024 13:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720617305; cv=none; b=dk0yyHP7jNkfxN4T1vpmT2NiheC3krKmzoMVI9pza3bCq1XSUxopEma3lovuwEs9BjZRuKBr5QNYG/w3pvr95IJDI8UAgYzdDHW5ZVx5hyZd02tN1tL6pT3zVLfmlZ5aZXpYySCB+5ZBudyo27yWSSTRoIfBN4uGUAeEPi33VIo=
+	t=1720617310; cv=none; b=QmxZm28HqYY4FYWvo9gtRCxeRVe6LziJLx1zMpEWDQu10ztfK8s/NW9u4+nq9UjSF+v8zcAoarbM+v3SFxXTAfT99kHK+N+/RXHvOuzGACKOPXDtugmA5sePmwMCPLSXlISVr9MmczamULpqWIYfWGxRqPaAF2+L0D6EPV5QOz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720617305; c=relaxed/simple;
-	bh=DGfVoZNfPdaJiCC+VkpyJKmwJ+ljufKF/kBN7p8Ex/U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mSFKr1oE4v96AIcWXhDfbTJpbl7uYFo07RYni5lV/WlaujJ0J1EOy0tQPRhVg+6G8ln4QnZNgcbBlBQ6T8amVEVa++Pv1r8dp2fMxoWvbiFRawPiBaxMlkOi+mavjexBubaazTqnkj5WhS62/j5oPCF1nfMnpcEfhfc1aMF6c3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GVIEhoPs; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46ACU7SX009474;
-	Wed, 10 Jul 2024 13:14:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	xIzS/n1i16QTfubuhek/ODHZ/H5HNuwuEmZGlaTudYc=; b=GVIEhoPsp9qnIMcj
-	p4h8bWoKha/n6pE7F1veaDVm9eV5/2uLnPXuRMnZkEzkHkznJubOo6+Z+nvHWzG/
-	Gndp+elVQJ5S9UXBkXSel58DiZ0eVgWNJbnXouaVLST/lfYdrKCH3qOmvyJhhj8+
-	K5AKNlWENCA0x09nd2HKb091TPhdGjB/YBUQErxGlT2ZPCCJA1oXUTLlJcbNL4Nr
-	Nq7SRPPSts9s303NaAvD9FQ0FUILtr6p+WZReoKVBcjy0Yg2nKNda00zozux0kHL
-	iqmzKD1kEP9rXOKFFpqlJeF/bfwPgR1jnJ8pwi7ntf/FP04TM5/UGiFoTocSGZSv
-	ermIjA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 408w0rc8jh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jul 2024 13:14:58 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46ADEvhF020617
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jul 2024 13:14:57 GMT
-Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 10 Jul
- 2024 06:14:51 -0700
-Message-ID: <2ab60446-7187-43c9-893b-68cac8c9b96f@quicinc.com>
-Date: Wed, 10 Jul 2024 21:14:49 +0800
+	s=arc-20240116; t=1720617310; c=relaxed/simple;
+	bh=QqROtBlwIbTLLGVHQb9i+CqPbESJBaurcZ9oTX/Jk/g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SutEatKfJn/AbK9ViRbMmtwNDoBp7G51VAy9P3zy+i9I3CV0TkYI82Jme7NkhYQEM1kiuO+TES2Z/C9mlyYZGYginsDSNYYQOAztLmSsuCbz+Pm82Lo0IQMbmpbYCieF54tKvZLY1Q3RxOQtxxEmx26oWheXFpeI6Vy8KdYdN6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mi0MmQFE; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720617309; x=1752153309;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=QqROtBlwIbTLLGVHQb9i+CqPbESJBaurcZ9oTX/Jk/g=;
+  b=mi0MmQFEhXE0BxsrYOAzEm49nF9XF94rR9mwtvJrYV3o+xkB/lp5ibUu
+   4QRbUd3Rb+lFpT6GgFeWeIKM59RXW9Wi7qNia+hVdJVx9UozUsuBfwCAN
+   jP88xAVTMurCzpvZ1PAXfv+0fiGowKkiTYO2Vs/KH+bwbXM2DUBN9M61r
+   s9Qe7s8K0Ctn2g/hdOKMAm3hmetw+ReX5UHbGAnRGXw6ErCJ7Bb5aRUsr
+   lbZLgsUfCVD42NjXUxPugUsQIzg9+X6baZBf6Duw1lrWULrVGozs5ovS9
+   F6INT/F6+1UanC/CTuhCDVwnI593EcrEB06Iser0SvnZSjA8f30q3CgMo
+   A==;
+X-CSE-ConnectionGUID: TNGWco4QTxq5+ubrKs3PCQ==
+X-CSE-MsgGUID: HvC3B+IUT7iKKcDd3Udp+A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11128"; a="20840264"
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="20840264"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 06:15:08 -0700
+X-CSE-ConnectionGUID: bCHm0/F/Q4WgbKzFPP11sg==
+X-CSE-MsgGUID: 9lkXQ7MjRMmArgSvJof8OQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="53012361"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 06:15:08 -0700
+Received: from [10.212.47.151] (kliang2-mobl1.ccr.corp.intel.com [10.212.47.151])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id B49EF20738FE;
+	Wed, 10 Jul 2024 06:15:06 -0700 (PDT)
+Message-ID: <a0ac56fc-eedc-492b-884c-d68e0460f178@linux.intel.com>
+Date: Wed, 10 Jul 2024 09:15:05 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,87 +72,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/13] media: qcom: camss: csiphy-3ph: Add Gen2 v1.2
- two-phase MIPI CSI-2 DPHY init
-To: Krzysztof Kozlowski <krzk@kernel.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <quic_eberman@quicinc.com>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
-References: <20240709160656.31146-1-quic_depengs@quicinc.com>
- <20240709160656.31146-9-quic_depengs@quicinc.com>
- <e1b298df-05da-4881-a628-149a8a625544@kernel.org>
+Subject: Re: [linux-next:master] [perf vendor events] e2641db83f:
+ perf-sanity-tests.perf_all_PMU_test.fail
+To: kernel test robot <oliver.sang@intel.com>, Ian Rogers <irogers@google.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ Namhyung Kim <namhyung@kernel.org>, Weilin Wang <weilin.wang@intel.com>,
+ Caleb Biggers <caleb.biggers@intel.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <202407101021.2c8baddb-oliver.sang@intel.com>
 Content-Language: en-US
-From: Depeng Shao <quic_depengs@quicinc.com>
-In-Reply-To: <e1b298df-05da-4881-a628-149a8a625544@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <202407101021.2c8baddb-oliver.sang@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: gvrLUFD4Czg5RT3Ve2NcwOzvn-dSwMuv
-X-Proofpoint-GUID: gvrLUFD4Czg5RT3Ve2NcwOzvn-dSwMuv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-10_08,2024-07-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- impostorscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
- phishscore=0 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407100092
 
 
 
-On 7/10/2024 7:09 PM, Krzysztof Kozlowski wrote:
-> On 09/07/2024 18:06, Depeng Shao wrote:
->> Add a PHY configuration sequence for the SM8550 which uses a Qualcomm
->> Gen 2 version 1.2 CSI-2 PHY.
->>
->> The PHY can be configured as two phase or three phase in C-PHY or D-PHY
->> mode. This configuration supports two-phase D-PHY mode.
->>
->> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
->> ---
->>   .../qcom/camss/camss-csiphy-3ph-1-0.c         | 105 ++++++++++++++++++
->>   1 file changed, 105 insertions(+)
->>
->> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
->> index 1219a25ec55b..b6d5a27b94a6 100644
->> --- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
->> +++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
->> @@ -324,6 +324,111 @@ csiphy_lane_regs lane_regs_sm8250[] = {
->>   	{0x0884, 0x01, 0x00, CSIPHY_DEFAULT_PARAMS},
->>   };
->>   
->> +/* GEN2 1.2 2PH */
->> +static const struct
->> +csiphy_lane_regs lane_regs_sm8550[] = {
+On 2024-07-10 12:59 a.m., kernel test robot wrote:
 > 
-> This should sparkle warnings.
 > 
-> There is no user of it. You must organize your patches in logical junks.
-> Adding piece of structure without users is not a logical chunk.
+> Hello,
 > 
-> Best regards,
-> Krzysztof
+> kernel test robot noticed "perf-sanity-tests.perf_all_PMU_test.fail" on:
 > 
+> commit: e2641db83f18782f57a0e107c50d2d1731960fb8 ("perf vendor events: Add/update skylake events/metrics")
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> 
+> [test failed on linux-next/master 82d01fe6ee52086035b201cfa1410a3b04384257]
+> 
+> in testcase: perf-sanity-tests
+> version: 
+> with following parameters:
+> 
+> 	perf_compiler: gcc
+> 
+> 
+> 
+> compiler: gcc-13
+> test machine: 16 threads 1 sockets Intel(R) Xeon(R) E-2278G CPU @ 3.40GHz (Coffee Lake) with 32G memory
+> 
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+> 
+> 
+> we also observed two cases which also failed on parent can pass on this commit.
+> FYI.
+> 
+> 
+> caccae3ce7b988b6 e2641db83f18782f57a0e107c50
+> ---------------- ---------------------------
+>        fail:runs  %reproduction    fail:runs
+>            |             |             |
+>            :6          100%           6:6     perf-sanity-tests.perf_all_PMU_test.fail
+>            :6          100%           6:6     perf-sanity-tests.perf_all_metricgroups_test.pass
+>            :6          100%           6:6     perf-sanity-tests.perf_all_metrics_test.pass
+> 
+> 
+> 
+> 
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202407101021.2c8baddb-oliver.sang@intel.com
+> 
+> 
+> 
+> 2024-07-09 07:09:53 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 105
+> 105: perf all metricgroups test                                      : Ok
+> 2024-07-09 07:10:11 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 106
+> 106: perf all metrics test                                           : Ok
+> 2024-07-09 07:10:23 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 107
+> 107: perf all libpfm4 events test                                    : Ok
+> 2024-07-09 07:10:47 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 108
+> 108: perf all PMU test                                               : FAILED!
 
-Hi Krzysztof,
-
-Sure, will move this patch to "media: qcom: camss: Add sm8550 support",
-It is used in below code.
-
-> +	case CAMSS_8550:
-> +		regs->lane_regs = &lane_regs_sm8550[0];
-> +		regs->lane_array_size = ARRAY_SIZE(lane_regs_sm8550);
-> +		regs->offset = 0x1000;
-> +		break;
->  	default:
+Can you please try the -vvv option, which should tell the failed event?
+perf test -vvv "perf all PMU test"
 
 Thanks,
-Depeng
-
+Kan
+> 
+> 
+> 
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20240710/202407101021.2c8baddb-oliver.sang@intel.com
+> 
+> 
+> 
 
