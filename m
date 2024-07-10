@@ -1,141 +1,109 @@
-Return-Path: <linux-kernel+bounces-247516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CF7992D09E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:23:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BA7592D0A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4EFBB272E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:23:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD6921F21178
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E53190467;
-	Wed, 10 Jul 2024 11:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1600819048F;
+	Wed, 10 Jul 2024 11:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lyP6mHgI"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VVdwHw+q"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BBE18FDD5;
-	Wed, 10 Jul 2024 11:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6C818C161;
+	Wed, 10 Jul 2024 11:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720610577; cv=none; b=sKiPWGZRi4luD6T02a7SEtkh/MR0dSDwVF+aXRHr/WDk1cQy1/fec9X/awYau4bk8jeFHvKAd8Z/Sz30SekZP7dn6lQ7E4R1M7jeyTlNisGR4q8eouoLfZ+K5IVF7BLYMx5vC25RuewfXqQgnzDLwSsQUixXcHdLgYyvz0KOKto=
+	t=1720610578; cv=none; b=V9oHMlfFISSLO4m+hfKWZY29/F3O1CzY2Q2xgrEti9kVMWaj0ZRWTkXxpx1gpAWZgF8X9LZzNDiuP5TDm290TNjmLpBGaVqsNM9D6oli1GNYClE8zsOrczI2x1ZfALWRf9dkfoVqs1JrzDpJzDGCYjD1y6hl4xQG40sZ74zfiS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720610577; c=relaxed/simple;
-	bh=MCcfZbWSzhPegG/ACs7RYwMZqkPgZbAAu1wOaSgm1BQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iitYdxBPTR0Vlq1INZmM4GnskY1eA4MT4PKltyIvVXw55jQIf6sHLuAGUxNiyLgkEWyegByG8c8fDqDwYmrlb+qHCJ71PJ0End/OWGst3YWkWRrWojwODPRrYNnR7Nlv1JzP47Y1usW2nDnBrxO85vbnf0dmYp9sbNFHrtgYlA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lyP6mHgI; arc=none smtp.client-ip=209.85.167.54
+	s=arc-20240116; t=1720610578; c=relaxed/simple;
+	bh=+2lG3eONR6clr5oIGVEwoEoU8KiT5nobeApkSFqKMb0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=F6BxUuI1p866kJGFMoyP+ox41CZR6Uo7TE1GYsvxzVroGtbFD0mZVEw64k0y4Sfl9NIjJAMjIBoGYl90++3wOh/RMpfSfpm6bBbx6TB4E3s2T4lrWuyyQ3O1QeKEarhYcH+8WNzvqTdnu/9YZSJO9MWQO+j2pveCLfyKjDqRZk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VVdwHw+q; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52e9f863c46so6756043e87.1;
-        Wed, 10 Jul 2024 04:22:55 -0700 (PDT)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-367a9ab4d81so3103174f8f.1;
+        Wed, 10 Jul 2024 04:22:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720610574; x=1721215374; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7CZIM3swadjLi9UygmpfkohZo/v8gw4/IRQgklum/Gg=;
-        b=lyP6mHgIaex4AHv3WjMjgGcfRSlnC7zW/xVMNsePRVUnOBA6hlcC/aNwZcd2yI0GIV
-         oBDTuaM1lK6VkcjKWyEh66N7tAiLXdK/zuhR5jSNgxb3YaTAvJ7loqUSIzfzwJexzRss
-         uEyq/bcXZrdGpw8hMKoDjS46dKZ78cTvCqxsSDF4w4+w7C8ac58fBPFtrm50tJVvJhCW
-         FTp9+X5bwDJiJf8wHwMecLKJo09Ni59wqBUrRv68L+uBHVe/4Rj0W8OrGMuqAlvZDYMp
-         q8rZZRI0zb4v5CLgEPkUvc2q4bPfqJcbg884lXkG/wT7B6CIkA70S7LRVAyryCDVSDN6
-         ywVg==
+        d=gmail.com; s=20230601; t=1720610575; x=1721215375; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+5pSWEv/oTNW6NcIbQDcaGxWdOTM6qk7A0MwW/PmYxc=;
+        b=VVdwHw+qpFWD/zDxNccyGPyU7Q6CHClU9oRreNYTG9kjlSFEv3EA7GIcQw50eBxHob
+         THhGzc4sl0MEw+GBhchGsNHg/rZDyuEussnMUTvd08yKxBqM2qbyWlzKALQiuqdHKdpL
+         cXeD83kxxsPUj0wNv9yAbc0J08I6GYE40XHIOhrVHpjr9I2aKyKEqnUrDjht7b47hcNz
+         IzC9k+w2zfrpQgI6W+XE6O1yrtALoiCXj8ldN32/+2SdEGwRaqNh3j7fdUW6PsCu396/
+         XIYTpY0HOclfDokj1wysBr00xk9miCHsvivOpQGfBGAexJRywViK8qk3Rimo2eY7vy8d
+         Kvig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720610574; x=1721215374;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7CZIM3swadjLi9UygmpfkohZo/v8gw4/IRQgklum/Gg=;
-        b=ID95zAgx5SxvtfaoLgFG0pRDmFDZHm6lqY6HjMf87D7gEDtwU5UK/N1ksoswH4XgRC
-         HaP3Vx8/PdtnFd6KLxE/1Zw9J5EbrA+70UxOQI5CJhYVV5inMqjIKoojfhJWk87E4nNM
-         KPaqUhJ3QgH+9s472ncIe+yVKYliY6C2Qi6PsDc1vH5B7JTTWjqojlBRR4R8snGfiiun
-         jGGxXc1mzbCSiw8BYomhBk/K/xhqLsEhogIbv4EIBWK1IOIcsyb1GmVHr8N3VIsNCRqZ
-         0L/R9M94rrPbrAs4gMfB4K1gOOz1DpDUNed5YvOzMr4et3eu9pE7mXSt+oX52KBKQbMc
-         QLjA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8V13d+k03oL5+DHCLDny6D3NX/E6Q6A3mTHFP/2gE7Hevbe9/Rzg+uzSVandSUUWLEdRUfPUt/ptWfzgUAdmuoMhOj0qQKVywIhnMWlvrj8FRk3uK+R8oAH6ZZYjyTaAgo/axe3bPRUPYh3V/mpS7e3MtovMwbMtppBM1WNsWios=
-X-Gm-Message-State: AOJu0YyJ8ztvUhFTZNDSBUDJnLnM0+P68Zp+qzM0CZr8T4Mp03J3e4A5
-	dhhn+Nt0LS2ccHp9uj3zlwWPEh+2Yck/VHgjsRqvTDEa4DAN7HT5cYc7Ud50S+5qqxX4bM+uTTC
-	npf7m8K697MHYYjlwdUas8lqy1AI=
-X-Google-Smtp-Source: AGHT+IErIIy4dBfKAXYPr/lGgJbvC3B/Y3aNUY2b5lfsmwPl4sL/cK6+FAenoDW3cHp8s1dQmoaP4aYGnRhTYyWuWYc=
-X-Received: by 2002:a19:f703:0:b0:52e:9407:ddcd with SMTP id
- 2adb3069b0e04-52eb9994b6dmr3216226e87.18.1720610573384; Wed, 10 Jul 2024
- 04:22:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720610575; x=1721215375;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+5pSWEv/oTNW6NcIbQDcaGxWdOTM6qk7A0MwW/PmYxc=;
+        b=jAyLVgCc+Yly3x63LK/xjkxFIA4Qo/HWqDwI2Jb5hASQOGW4P9UDxEQ+wSE2whIE/Q
+         76p5TxOTSIK6EOorPjEk2wQzyQsRtqG1nFAJbXFzbu7WhYzZsefiF8j7QXjljqmABhA/
+         yr2rEzXYlTpsmJzG5Sam8c4IG8HuOEGI1yI/ZEc3Sw/QuxFmWdZBk+3JbinImaOg5oFW
+         6OISkVSbTz4xCqd0sqTvUngKNVAKJRIiLihP8rEHtRgYRbFi7PfbjocYEzJZrRNm+vr6
+         mMpoZWcqT3Ns90mcfDUBBYs12ONgMxJo4lyN5/vndt7s5n34fABat0lajYMq8Hwd88PW
+         uF0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVr101atbLJsA0lj8bWkK+bkrdO+tP89QiOEPbTI1/NAPTzKWI7XorXCM1W2PDMIArBuhGrglHN31BBLwvq7kx8JSGmg/3FB7W9C+Ex4bRAv/7G8ThaPlq5ul+FEY99rfneATH0Gk49++gyISc=
+X-Gm-Message-State: AOJu0YzMycHDNIysh7l7AnXfp2CssD/+fMumagEvOp9tcVy2cBDZ7ibD
+	aP2Uc+lydHGLqYO3xQmykMplJt/R34CF4Oj9lzTco5k4cTV3LLWLItkINz4c
+X-Google-Smtp-Source: AGHT+IGxvkA0FD/5EZ/WLWTb5skCt68JxrBOSHiF5I5G4EGu4EkYmc0RJXX+XWkeKTdsYZUs8gIf3g==
+X-Received: by 2002:a5d:4fd1:0:b0:367:97b9:d5f3 with SMTP id ffacd0b85a97d-367cea4674emr3721820f8f.2.1720610575007;
+        Wed, 10 Jul 2024 04:22:55 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfab11csm5052022f8f.102.2024.07.10.04.22.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 04:22:54 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Ping-Ke Shih <pkshih@realtek.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	linux-wireless@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] wifi: rtw89: 8852bt: rfk: Fix spelling mistake "KIP_RESOTRE" -> "KIP_RESTORE"
+Date: Wed, 10 Jul 2024 12:22:53 +0100
+Message-Id: <20240710112253.228171-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJNi4rOGZpG6qK4ctO7yFY-s_uOax49TYNzdMx_GDXATepY4hQ@mail.gmail.com>
-In-Reply-To: <CAJNi4rOGZpG6qK4ctO7yFY-s_uOax49TYNzdMx_GDXATepY4hQ@mail.gmail.com>
-From: Neeraj upadhyay <neeraj.iitr10@gmail.com>
-Date: Wed, 10 Jul 2024 16:52:41 +0530
-Message-ID: <CAFwiDX8MWS8WRkvkt=DgEnn6ZxRZWtiyHuc0hHuSzXoGK+Lpig@mail.gmail.com>
-Subject: Re: 'rcu_preempt detected stalls on CPUs/tasks...' issue of
- cyclictest on rt-linux
-To: richard clark <richard.xnu.clark@gmail.com>
-Cc: paulmck@kernel.org, josh@joshtriplett.org, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, mathieu.desnoyers@efficios.com, 
-	Steven Rostedt <rostedt@goodmis.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, rcu@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rt-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hello Richard,
+There is a spelling mistake in a literal string. Fix it.
 
-On Wed, Jul 10, 2024 at 1:56=E2=80=AFPM richard clark
-<richard.xnu.clark@gmail.com> wrote:
->
-> Hi,
-> I am running a Ubuntu 20.04.5 LTS on Nvidia Jetson AGX Orin platform
-> with 12-cores as a guestOS, the kernel version is - 6.1.83-rt28.
-> Kernel cmdline is:
-> 'root=3D/dev/mmcblk0p1 rw rootwait rootfstype=3Dext4 mminit_loglevel=3D4
-> console=3DttyTCU0,115200 console=3Dtty0 firmware_class.path=3D/etc/firmwa=
-re
-> fbcon=3Dmap:0 net.ifnames=3D0'
->
-> The cyclictest command 'cyclictest -Smp99 -H 3000
-> --histfile=3Dorin_idle_hyp_4h.hist -D 4h' will hang randomly during the
-> test, then the minicom console will show below messages:
-> ...
->
-> [97619.450889] [CPU11-E] rcu: INFO: rcu_preempt detected stalls on CPUs/t=
-asks:
-> [97619.450894] [CPU11-E] rcu:   1-...!: (0 ticks this GP)
-> idle=3Ddc88/0/0x0 softirq=3D0/0 fqs=3D2 (false positive?)
-> [97619.450914] [ CPU1-E] NMI backtrace for cpu 1
-> [97619.451912] [CPU11-E] rcu: rcu_preempt kthread timer wakeup didn't
-> happen for 5251 jiffies! g6029253 f0x0 RCU_GP_WAIT_FQS(5)
-> ->state=3D0x402
-> [97619.451916] [CPU11-E] rcu:   Possible timer handling issue on cpu=3D1
-> timer-softirq=3D342864
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This log indicates that jiffies timers are not getting handled on CPU1, due=
- to
-which GP kthread was not woken up. Can you check irq, softirq and timer tra=
-ces
-on CPU1, to see if the softirqs/timers are getting served on this CPU?
+diff --git a/drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c b/drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c
+index fa0e49d58112..5bdabb45e968 100644
+--- a/drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c
++++ b/drivers/net/wireless/realtek/rtw89/rtw8852bt_rfk.c
+@@ -1863,7 +1863,7 @@ static void _dpk_one_shot(struct rtw89_dev *rtwdev, enum rtw89_phy_idx phy,
+ 		    id == 0x14 ? "PWR_CAL" :
+ 		    id == 0x15 ? "DPK_RXAGC" :
+ 		    id == 0x16 ? "KIP_PRESET" :
+-		    id == 0x17 ? "KIP_RESOTRE" :
++		    id == 0x17 ? "KIP_RESTORE" :
+ 		    "DPK_TXAGC", dpk_cmd);
+ }
+ 
+-- 
+2.39.2
 
-
-- Neeraj
-
-> [97619.451918] [CPU11-E] rcu: rcu_preempt kthread starved for 5252
-> jiffies! g6029253 f0x0 RCU_GP_WAIT_FQS(5) ->state=3D0x402 ->cpu=3D1
-> [97619.451921] [CPU11-E] rcu:   Unless rcu_preempt kthread gets
-> sufficient CPU time, OOM is now expected behavior.
-> [97619.451923] [CPU11-E] rcu: RCU grace-period kthread stack dump:
-> [97619.451966] [CPU11-E] rcu: Stack dump where RCU GP kthread last ran:
-> ...
-> This issue doesn't show if run the Ubuntu 20.04.5 LTS with the same
-> kernel natively on the Orin board.
->
-> Any comments about this or what can I do to triage this issue?
->
 
