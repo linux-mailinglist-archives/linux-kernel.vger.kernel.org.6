@@ -1,113 +1,184 @@
-Return-Path: <linux-kernel+bounces-248351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21DF492DC02
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:44:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4B0E92DC0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DFEA1C21BC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:44:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70BED281EE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49C814AD3F;
-	Wed, 10 Jul 2024 22:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E3814D457;
+	Wed, 10 Jul 2024 22:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J9GN5ooH"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tdjJ17+5"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8289848E;
-	Wed, 10 Jul 2024 22:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B694214A606
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 22:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720651473; cv=none; b=Hg/WY6IqZ2IZ7t20mh87hLFGIwXUjgnIJY+T5z+olRg731UR0vliH7PYgUdPQ+IDlFaX9yh/14GhrehobLrAKdbGFTpAbYpBsiFq/ww8AxvPvfbeh7CEjZ/X1q/e2qkyOWIKfXOBkhrW0VqUzrzW/uDa/lU/96mZm9umxlIfYo8=
+	t=1720651537; cv=none; b=OYiejkB5akvxhtQ1vqdo7YqVd6q5VXjhMYh3skLhTlEzRjGG2vjbDDe1vTOnmnkQ/D5uVPDmPb9qi8nrMX9spIOgX+8KZK2TC17BGd+Te0faMwlt5yFgK+rkhnbiGNzFmPShvhD5eEnxQHEY7lKxsZupwYtszx4Zhxt575zUJG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720651473; c=relaxed/simple;
-	bh=fvWdhHLovgt+jya2TMB20BQz/oBbl2iXoIPBY6cJUtU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JSkwHtbWCH46GY7erviP+DgUn3LgTIaHE3GeF7k7gl4U+IyVgrU9eQCVH6Wpa7Vr7TmI247Tke+PsgGaA1h3aAUpzV3XW+MDznuosGTDqWcPPDVb1ZyKN6u33dOdpnHSzM6RF9QbgnVl98w5JPALzCVgDvY641RFtGMEjhQypeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J9GN5ooH; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fb72eb3143so2157575ad.1;
-        Wed, 10 Jul 2024 15:44:31 -0700 (PDT)
+	s=arc-20240116; t=1720651537; c=relaxed/simple;
+	bh=zEZ4qa1KY5W/ArZqfvSqtxOP5I0qkz6xjUA5gKFEtjE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c5+z2FWcqZoVZnvEeDRDhgssXI40AqGT/dZYtTgH8+It76Dkccr63NthGAvpSQ9knHVGjtqX8Pm3PuwWNQyYK9hATXouE64F6h2vnp9G/TbSiHRWxYS8iouWT2xJEz9q1Rd9uQGvyq8PWw4VuMbUHsllaQueiTulxKnkdqlUWqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tdjJ17+5; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-447e1eb0117so1154971cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:45:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720651471; x=1721256271; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:sender:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1720651535; x=1721256335; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3gk6sF82NF1Ybt4+7fvH8lVGCFlFLbxNhBaoEg2984M=;
-        b=J9GN5ooH2wgR8MPiS2/hhiYxQZpcKiiPagkVPBOYYwo7bOS1nDledadYXyzMbWhNkK
-         VChER6fSo2Ik+0qvg/fISxjkfo4cGO+prQ9YrC2A+nftFyi9HH4XkEddOuDKIGCG4Lsv
-         olN/ekBvoA2sCbh5m5L5UUWim5ffZa2wfaPPslN8SqVFvLki/h7Z/F2lgt2tq2xCRNc/
-         KiVkPv59Q3WLCGrw5Vk/DVlC7MS/4DFB3M4y0Keeh+NKjev+P9YDtkLsE8+V/rFv+ceF
-         7cH+/hAF/iEQ2FWPhGq4M2yHECno2v5nhyQJnXT8V9Ifg6qnt1C3QVz8NAMHgO3dqGWR
-         CH3A==
+        bh=ewitibS3zX+WzUTqst3po2B/GkvecNeXUFCMiBjweyg=;
+        b=tdjJ17+5BiKAbEvFm/bTZZzzeiiuS2bzDiid0gXaBYsG5QBdfjBTyZ10S1L+z9OmfJ
+         i2b8kliyvcF2mUD5KyQmAplFOedGO69LhmT6jJWy0JP68Z7LqfmLCFJojtm7G1D6xahE
+         BGELmK27tCIRvjRszqt74+slO+hb0WcuzSCNTbmccmZrVUxtZ8NzK7VoL7+HjIQ6V1ws
+         9maAlusmQ8tdmc4g2j152mq/GNfVm37aQb4hCFbmvL6lnexAPE1M4CtbZry8Xy9j+Gg8
+         9kNGJvyZ6yZsJV9OfllYLEj+k3aADj7IaE3Fs50CuDe6z1ztPvz33gASo+aPVafropCy
+         jrxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720651471; x=1721256271;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=3gk6sF82NF1Ybt4+7fvH8lVGCFlFLbxNhBaoEg2984M=;
-        b=ZAFC8wOwESmoEQePXSeA98KOvSywbXeBYOsOQJrwrgvl+FlWoLJVt7aIWxBWGmsz0W
-         Uo9Oa9pZvVYBTSYrmHzwe9N8UAW/8QtMOP5o8g4yqtNR6bdQ3Uifuvny4EJngR25lVHT
-         m0RmrGKnCQl+jpxuLA5Bo4tV3DgLlYjwjWfJ4GfzhSQFo8WWTNiU0n7JHpBosF5dhBIb
-         TEmgBLJVNxuB6a2QDAQMy6VLmyAqsZ6GnRYg0AoXdxU09iQDwVxqbjQCYQPaTLL9LATx
-         jBric2EVObI1QFMv1Q1xW4xBNSOhjY6qOmlN39Q3HYB4s7Dh57pu62t0TLPwL219vPRz
-         iVoA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0CTQgl+Ek/x2d7m6gbRJcK1SrwgroBg/jb/8/pAIb5Ivbf8vy4lsQHdzKeAg8E5z92lDkPYCu+RPgf8mRF+Tx33b0j3UyK42CIgKqa9DTMmduDJM6MFW5Vs9xK8NnnHMbQP+PZg==
-X-Gm-Message-State: AOJu0YzWCgAX7+CkMUCNZ6lTG3/sVdO5OFwJ/fSrx7ee9ArgyyfFxVkt
-	5wDTiqf/pq77cdWRcIBggD1Wx+TbM+zpZYR1JeNUidThCjPt7tk4
-X-Google-Smtp-Source: AGHT+IGR3P+DEu0XNM3M/nOjjd4cF4m2J4U96JtQ8AJIJRVngGyjle4NU0oZq3caIF4sXXz6SgRVPg==
-X-Received: by 2002:a17:902:db0d:b0:1fa:1be4:1e48 with SMTP id d9443c01a7336-1fbdb9f99bemr12093995ad.11.1720651470982;
-        Wed, 10 Jul 2024 15:44:30 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ac3111sm38394455ad.212.2024.07.10.15.44.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 15:44:30 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Wed, 10 Jul 2024 12:44:29 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Johannes Weiner <hannes@cmpxchg.org>,
-	Zefan Li <lizefan.x@bytedance.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH cgroup/for-6.11] cgroup: Add Michal Koutny as a maintainer
-Message-ID: <Zo8OzWUzDv3rQIiw@slm.duckdns.org>
+        d=1e100.net; s=20230601; t=1720651535; x=1721256335;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ewitibS3zX+WzUTqst3po2B/GkvecNeXUFCMiBjweyg=;
+        b=LTSFLQBH3e6db2F/c0Ock60RkfeDIHsj1iyRcAgEo384j2RuUGLJkqawDHCSy3tiGd
+         oww1uQC86vubfW9e98uinuqG+zDX6NoYz5Aqa/KNdPA5NLuvNFThbgwtIIyVLotJyeBa
+         g7vSoTHF91MJ1HiE+nVBRC+ExgEHku03HCMSQ7BznFZ4r/qq2Wdyf4wW7KMKlc4OF8de
+         w+01WN1N0yxErTyzgwSJBk9aTpwWpVXKb7nvOy18nb7EsH4ccRkZYQPDXrs5YVJr2ddJ
+         r7t6WHF7wdm76teL39LFRoM/oM3s9Ma5Id+i/VsAFZOyso431e5UyeMmRtMueL8bKoq1
+         jtkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcvKJDfX9xWo78qTeQXE61YLGtwvrsVojJsuErMEWachfoDdrhRitgNFXiT1crDP/wwfn2ayPoN8h+dgxCf4lR9eAj5inyIWfAlrJL
+X-Gm-Message-State: AOJu0YyklfNL9JDi/FCkpwaH4OudhdzHrWD8lbgC0NinR2KXovfmMhxx
+	Flq5BOt7rZpdmFEj+1UkrZW/NRyAM7ChJUi5qFDOtHlzv0OsqvXbtS3jZueJkxRsvTUn30HVKI0
+	R0Nur8Dxuz9O42I51vv2DZEVtk0y1Vm59DF9V
+X-Google-Smtp-Source: AGHT+IF5eUrWI3iGBloyaIenGjn6niXEyyaOV4S/5O4aymX7e6kogYU+UbBk/KI5YYE/pmMB4biArqXH6clq6XINtH0=
+X-Received: by 2002:ad4:5c68:0:b0:6b5:d9ef:d576 with SMTP id
+ 6a1803df08f44-6b61bc80440mr73134066d6.12.1720651534418; Wed, 10 Jul 2024
+ 15:45:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+References: <20240710001749.1388631-1-almasrymina@google.com>
+ <20240710001749.1388631-5-almasrymina@google.com> <20240710093624.26d22f02@kernel.org>
+ <CAHS8izOoM3YfcQorLJXL4H+t2OL+oJ4fPP5ZBJRhnH5AxsUqfQ@mail.gmail.com> <20240710125533.7a14bbe7@kernel.org>
+In-Reply-To: <20240710125533.7a14bbe7@kernel.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Wed, 10 Jul 2024 15:45:19 -0700
+Message-ID: <CAHS8izMhTKndLEYrCyNK5WcUHQB6iXefr1=TcxKNxd+ghJGp0w@mail.gmail.com>
+Subject: Re: [PATCH net-next v16 04/13] netdev: netdevice devmem allocator
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>, 
+	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
+	Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Michal has been contributing and reviewing patches across cgroup for a while
-now. Add him as a maintainer.
+On Wed, Jul 10, 2024 at 12:55=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> w=
+rote:
+>
+> On Wed, 10 Jul 2024 12:29:58 -0700 Mina Almasry wrote:
+> > On Wed, Jul 10, 2024 at 9:37=E2=80=AFAM Jakub Kicinski <kuba@kernel.org=
+> wrote:
+> > > On Wed, 10 Jul 2024 00:17:37 +0000 Mina Almasry wrote:
+> > > > +     net_devmem_dmabuf_binding_get(binding);
+> > >
+> > > Why does every iov need to hold a ref? pp holds a ref and does its ow=
+n
+> > > accounting, so it won't disappear unless all the pages are returned.
+> >
+> > I guess it doesn't really need to, but this is the design/approach I
+> > went with, and I actually prefer it a bit. The design is borrowed from
+> > how struct dev_pagemap does this, IIRC. Every page allocated from the
+> > pgmap holds a reference to the pgmap to ensure the pgmap doesn't go
+> > away while some page that originated from it is out in the wild, and
+> > similarly I did so in the binding here.
+>
+> Oh, you napi_pp_put_page() on the other end! I can see how that could
+> be fine.
+>
+> > We could assume that the page_pool is accounting iovs for us, but that
+> > is not always true, right? page_pool_return_page() disconnects a
+> > netmem from the page_pool and AFAIU the page_pool can go away while
+> > there is such a netmem still in use in the net stack. Currently this
+> > can't happen with iovs because I currently don't support non-pp
+> > refcounting for iovs (so they're always recyclable), but you have a
+> > comment on the other patch asking why that works; depending on how we
+> > converge on that conversation, the details of how the pp refcounting
+> > could change.
+>
+> Even then - we could take the ref as the page "leaks" out of the pool,
+> rather than doing it on the fast path, right? Or just BUG_ON() 'cause
+> that reference ain't coming back ;)
+>
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Michal Koutný <mkoutny@suse.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Zefan Li <lizefan.x@bytedance.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+OK, I'll see how the conversation on the other thread converges
+vis-a-vis net_iov refcounting happens, and then look at if I can avoid
+the binding_get/put per page in that framework.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d6c90161c7bf..3dd70792f572 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5536,6 +5536,7 @@ CONTROL GROUP (CGROUP)
- M:	Tejun Heo <tj@kernel.org>
- M:	Zefan Li <lizefan.x@bytedance.com>
- M:	Johannes Weiner <hannes@cmpxchg.org>
-+M:	Michal Koutný <mkoutny@suse.com>
- L:	cgroups@vger.kernel.org
- S:	Maintained
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git
+> > It's nice to know that the binding refcounting will work regardless of
+> > the details of how the pp refcounting works. IMHO having the binding
+> > rely on the pp refcounting to ensure all the iovs are freed introduces
+> > some fragility.
+> >
+> > Additionally IMO the net_devmem_dmabuf_binding_get/put aren't so
+> > expensive to want to optimize out, right? The allocation is a slow
+> > path anyway and the fast path recycles netmem.
+>
+> Yes, I should have read patch 10. I think it's avoidable :) but with
+> recycling it can indeed perform just fine (do you happen to have
+> recycling rate stats from prod runs?)
+
+I don't to be honest. For a couple of reasons, one is that gcloud VMs
+where we mainly use this, these stats are private to the VM and is not
+something I can query widly. I only get access to the data when shared
+with bug reports on specific issues.
+
+In our internal test runs, I do not monitor the recycling rate to be
+honest, as that is fine as long as the recycling is fast enough to
+find available memory for incoming data. What I do look at very
+closely is the allocation failure rate. That is when GVE tries to
+alloc a new devmem but it's out of devmem (which would likely be due
+to recycling not happening fast enough). The stat is `page_alloc_fail`
+in ethtool -S for us and it's one of the first things I check when
+things go wrong. It hasn't been the root cause for any of our issues
+in reality.
+
+--
+Thanks,
+Mina
 
