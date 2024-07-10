@@ -1,113 +1,163 @@
-Return-Path: <linux-kernel+bounces-247649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD5ED92D292
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:17:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21D0892D2A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:20:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32277B222AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:17:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80A28B25207
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF88192B72;
-	Wed, 10 Jul 2024 13:17:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B69193098;
+	Wed, 10 Jul 2024 13:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTTNBMZf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="lA/Pvfja";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="qRiOmQMn"
+Received: from smtpout45.security-mail.net (smtpout45.security-mail.net [85.31.212.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2E61DDC5;
-	Wed, 10 Jul 2024 13:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720617460; cv=none; b=iPu+uD7cZ+MTY7UIXJ+VRNNVLidu0fHKHA3VWfs9RXgZoeP0N9m24lXIoX6WQZjTziz8om4TAIkagU2bD71kPrEczqdAh++I5GQ0oiJianOgfdLRfbOwqWs6TLqn2qP2pg8Wxst7B69fmVRdNITexQPRSmZfYvN/ciOsm/6xmO4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720617460; c=relaxed/simple;
-	bh=VmKKD27z2aOVSa1CLMwiPu6poVOxX6juNUr5X9b0taU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XToNS+q9bHy52JNzo71Bo5ZfixsO2FRxVnnwvfqLslMwqJchmnvSio95AAuzJuv9hBupIKyyGYggHWIoSsHK9qyDxf/btv5lNpFBR5ZZLGRDapHKDwlSDUAKGexaWqZKqosLULIK6xX5CaN523ZbUqKcxloz9C5jHRJoYwMTJJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTTNBMZf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BE85C32781;
-	Wed, 10 Jul 2024 13:17:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720617459;
-	bh=VmKKD27z2aOVSa1CLMwiPu6poVOxX6juNUr5X9b0taU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HTTNBMZfK6jQPbUQiR+ZQNJTyFKIzXUwDwG3CxLvDtdvvXlvNs0XOATi7iVLKYn9e
-	 m8JNnSn7CylHOU7YGDW76bP/SAGy2NPMth/avv3ywV2QgxDJ3HYi0/ZA8Nebs6IWI1
-	 8QETJa+mDNGc9DYlKRosmz0ZtQeqClTY4YmXtwmSxa2fmRewamQ2bks755KtcJLf+k
-	 wX2zku7GU1H0KfM6grraBzhxffOcWHGPpTxG8UXhFQ4y2ywXNzBDcKGd4s7yGON3Ia
-	 dHePDZM2Oskj6DKewi5UXiyHXthxYRPUUpDccMQ9/TP1nB4g4Kx9YUrc2YexMe741q
-	 zacACTAkKZAiQ==
-Date: Wed, 10 Jul 2024 14:17:33 +0100
-From: Will Deacon <will@kernel.org>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Subject: Re: [PATCH v4 12/15] irqchip/gic-v3-its: Share ITS tables with a
- non-trusted hypervisor
-Message-ID: <20240710131732.GA14582@willie-the-truck>
-References: <20240701095505.165383-1-steven.price@arm.com>
- <20240701095505.165383-13-steven.price@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE383192B9B
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.31.212.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720617606; cv=fail; b=L7jHUoVsIQswaSrxcG+El0Y/OtO8iS3rMnaJNiEhKXNKsgEdmdqcQ1aWSdwp3Xj69TuHo+BZoplRs3iHbnLBDdGvH3V4pFOF+jANcwWvUIUVBgkHtfbxlBClENO2YKjHiBn5O1BHzGh/tF6/7t9da9bpwLQVBprqoeF2sgUqBlo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720617606; c=relaxed/simple;
+	bh=tL0lTlf19aYwfgpifnNgEG8c4hy8jgU7udEMjhgz7sQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Cu0Kn63qbPBIFc+3PeAxJQqrnLLbcRk3pBrRuscH316sApdEgNcJeBgZQh2RwlBglSL7KzhwCYT+uw+adKchYKu1DgrDqH3GAmn4xt8aae/0RpPYLGuBpPm9kqP3danGKcXMGVvKXiU5fBvMNu3tPkkW56KLvAz1HUc9UQXtbcg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=lA/Pvfja; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=qRiOmQMn reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
+Received: from localhost (localhost [127.0.0.1])
+	by fx301.security-mail.net (Postfix) with ESMTP id 0B72D53FBFF
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:17:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
+	s=sec-sig-email; t=1720617469;
+	bh=tL0lTlf19aYwfgpifnNgEG8c4hy8jgU7udEMjhgz7sQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=lA/PvfjaikPYs/1qrmZqjc65c0MiYybpitzOsUd0JpoWRJM6pFcGkVu4SehNVnd0B
+	 HH6nA3gXm5qr1VU2TBnOSYm4Wjyh8sz8DAHHymdYq5oumstsMfXmiep6CQMdEdVZYp
+	 RXM332+msWT2SPQ26gQ5FrVpSKCxFcTLsOJf1Qig=
+Received: from fx301 (localhost [127.0.0.1]) by fx301.security-mail.net
+ (Postfix) with ESMTP id BC13253FFEE; Wed, 10 Jul 2024 15:17:48 +0200 (CEST)
+Received: from PAUP264CU001.outbound.protection.outlook.com
+ (mail-francecentralazlp17011029.outbound.protection.outlook.com
+ [40.93.76.29]) by fx301.security-mail.net (Postfix) with ESMTPS id
+ 05A9B5286C9; Wed, 10 Jul 2024 15:17:48 +0200 (CEST)
+Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:14b::6)
+ by MRZP264MB2007.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:c::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.20; Wed, 10 Jul
+ 2024 13:17:46 +0000
+Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::7a6f:1976:3bf3:aa39]) by PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::7a6f:1976:3bf3:aa39%4]) with mapi id 15.20.7741.033; Wed, 10 Jul
+ 2024 13:17:46 +0000
+X-Secumail-id: <175de.668e89fc.4107.0>
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mAindqBZtHo3MgUjuTOoMuwRnBwTRqBqR1F1HnxFxf4O/ybafEhBvJsr2kAb26ow/HS1rQPZEVYEb1fNr4Sg/VIddOFXPL7PeVyEPwU3VCxpiZmM3oJJjp5wng0AmdwJZDv0V4XwAqOyotHDFtaNeU3C5tc6mYO1V10aGzPoOLLArZg/88+I7ay243RjcMUtQ8HMrQFLtxHay9AoS4IZDu+Icd20Fra4h9DDym3MP6ob7wID+GouxvGahPfEtLYJlFwLrwWwb/1X22M4wmqEkqtNWZUeGf5HnvPSmLEw4Gdggu3Nn2ViJ9F9QkrRky+KcUSNA127asYheB7ImH0KuQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microsoft.com; s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lh4uarxWWiBoTV6TTz54Wd59sUZIwKeCdTWFHOIwJ6k=;
+ b=OknwNqlNg7kjl9+9plCVkIiJWLQoHU0WM0IueRymh7jcbwDT1LizdhCI5m6D0rozX3YJGkZHV9VvttsFdL1+faY3bnn0L0tKfs0gpoHtr33DiBt38py5pR+lfSzIGwRBKUIFcb4OQXV8SkQV+2nJEgoJ8iz3gTy6EsyVeeSuZL40v+rkWMExFkhlQb0ftoL3QHCSo3IR2gPWy8LizWqdsKUvHP51jXviik80hGzTO5DxA6XPnicgu4q4ZBA3vF/Uudb40pxqbG69GDN27Bcb+ICGGOVfNcRudEFGRKe0BUBqyxG9eS6z65dcmSF9fz5BZlu5i0g7b8KGMaZv6P9lBQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kalrayinc.com; dmarc=pass action=none
+ header.from=kalrayinc.com; dkim=pass header.d=kalrayinc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalrayinc.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lh4uarxWWiBoTV6TTz54Wd59sUZIwKeCdTWFHOIwJ6k=;
+ b=qRiOmQMnakDgOhJBun22IhjCCrAim/AJcI8snkt8/wPkQZQilBBr7Qvd5nXsAbNdR9gAKHJvONRmwWjf1kYMpIuu/18k+KASrfMF5H1u33+zOkdN36kPlAur6Vb9xUeTO1O/FIZKrHO/fxg7/qJByA5SIqRuyCpoD4DZab6IDfOL9kR2LZYEuQbdLqkLxDZ2yjN0G1hvkZGr2vkVAW+046ud8Got1VoINYjfeBiI5S441oIL30tkjWY5jUBzUkTISIQvIWjiD9OMSQeblVZNGh5TQfotPFqIPJj0aEQyPlRxgzSiQ/zxNpfbtj45ngJcBkniMzaMlObWu8Ztc4lqvw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kalrayinc.com;
+Message-ID: <e82f2ee5-e190-4bf4-8887-81857362c429@kalrayinc.com>
+Date: Wed, 10 Jul 2024 15:17:44 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/102] 6.1.98-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240709110651.353707001@linuxfoundation.org>
+Content-Language: en-us, fr
+From: Yann Sionneau <ysionneau@kalrayinc.com>
+In-Reply-To: <20240709110651.353707001@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PAZP264CA0072.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:1fd::22) To PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:14b::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240701095505.165383-13-steven.price@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PR0P264MB3481:EE_|MRZP264MB2007:EE_
+X-MS-Office365-Filtering-Correlation-Id: 97ae6877-9acb-480f-48ac-08dca0e2b05c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
+X-Microsoft-Antispam-Message-Info: iMyahF4hbQmMDf+Pn0Y9Cc6K7hbsKpa3oSYPZucGW1eKiOP5DIImiCsIQ3yIr14B5NPZIufFV9pRPI3FFsgZtfRsih6uuKgHXLQcYPfnCKoiFZ+Yyp9tFfYdR0UFytqvdMmXuHbcEk+jb7hFk4wl0l7MYDBbIpygRXRZOzjr8bhugdDE0ttxOI1adiCLxUf8OjBPErBLFQ9rYn0FvSu/dyxx9/WYjMzuYd/zoLIyI7ETaTyLfzH6jQK3Qb0VaMZ8mNvimQuHpYkJ4K0ZSXAseO5dKLq6NLdRRVFHXVuAHTdJXtfdRpmcSFG8Fp+2PliR7ns8WlCUM9g3B7FeXW4YucZLsLR9K+uCmTiP6md3Xr0jWdwDI0+ibKNIIF+99fJ9bn6k6jOrk97NEKXS/O3iMs6iQMNr6sdwVY+OYNbZf+uHbWLNbHzWpKQvq/E78WXT8RNA+Ltq7fXOX7sazhFqUyMQ2blQ3dpRLii2MTb2wz+asvIYgw027FjjneoB8wFmCI4TTTGpZttwLfFg4W8rMemmWfmj1LcmlRO5kqCjwCWzCydCBmP1it90pyZE8BevOsrzw0XszPptRurimevvQXNqDpqCvZN0PoIVB2tIBF4YrmqcFmr2C9+9L3hEBy8FCb0vcvYHRaFFiKJ7PsjnKxWyFpF3LZoHoSQD2Y98oU49pWEsg9PkWNKsgnNDPgJfK8KJZGIsOMQfqP4BP+U06ZNbPQyqaVe9sAPWkEjgmN0VHURDDXhHbnFsFIZE/G/hI4Wmrcyjb0zY665sbLHIMrTWO2Vw7zqs3qGTTrE0W2oXu1/JBTx8SJwR2RwAOGZn50PVlFyfQIHzAZU7yGry2gaPvHTQ5DgJyU3uz9Y9LoZU/zC0eWHn7So5xd9pemd2Ig6dQL+4VbZMnBlumWxcvEsoC56P8uGeniQvp+m6Iw4rHut6M0CzP5LkcAO+NdmwXgI
+ mzT4DOf6/0TxI4eFIeayisOuJLfKXDW2HOEgm9l7/cdsFSEmyhdaGDf6f7kuN3FRtdXzgUnWpHigFhOW3SIJVYbWy5gfm55w5c5yRW/S3DTBskVM+a2LhijfbySn0zgINvmwlltr7loA9oCLEn3t4a0VqUReclRp+cXj6PNt4lOqhpJPhkaLyRb5O4Te1jnvqq98mthQxl1hA93yehnEYMKsL9oXdIaM29QDYqYSiHXrdUEkw5JJuaK+hev82Dz9UNeDM9aUs9FanSv8crQrAHmU75yQSLTEPiWaXrd5+rk+FeKA8G9xt9vNm6L+EFOX9k43YPInpbvwxmJQOojejpSSKPvKrHSnR6FeY5Kw=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: NgbVlgX8ZIrZ0IZSQt6YUGxncVBGAMUIgTpdK56w9bG5wzWZBvr4hY0bWDmwjVZXbd2JilIGFneLlWRuklFo16QnyqctYDlPeiSM4wc8qOV7BZwnikSgOIEZv88KcP8bqATo/+AmOK9GNy966ncGHpyDlEA/0jFSiHaF8ifK7BcKprBOzF58Ydryr3ex1dOLnWa1SYSoRvJ+/AcWRmR+fUsMTX4Ss6yfgRfDgSqAlz1P9ksjZvYuOY1rIYsEVvb9C1EDkY9Lf/+N3akOkr/yYNbC30NEFKxsVYN/y1hptL1Sys9gEJ5aW5ofWtjkumm4vmSJ6ypZihMYspZZdDG1agfMvC6FRP+c1l8CFf04TqHEA2yuZ5qeIeccpm/zUy1KvHLPnlzCtegzVgQ+IRMmAqmhf+4JH3U6JqstQj4aBnw2pSCApH+CfxMdq4ZZ9oOXXovy/a52oFO+/LxsncsECp+xohaCOp5BKhsWoyuhE+VNqtgLvqAUG6Q6XE9hdwdmXP1sb1SnHpypK8fgrYuLNeyKIuZ6/2S+z/7JYjmAD7641DoaRjK86hJ/K51wTipwm1OzxW2FpKBNvt/HyiZgkopSnQUgDb0z6cT7YZt6KQWmk4BkJ37qDIx4ZK1oOcp9002w6uSnYfGaAO2ct2epR9KDC+NCsH2p6M9kMCeeqI6gQXuc31KQbb8VLheykphB3eKLBW2OF9LAYsKj6XgDMm/5b9VwCAKgUj5vbwYpFkNmhcibc1M8sUaJiahpIeQvmIIqB5FEhdbnCq3zNterE6Y6trgfJH66JsqXALj1NMARkhIqelTyp+KjasY25P5CFnxpMT/3l2WOaDmx9SLlAY10DmL4DzsIasVZiB4zHxqZYV4EBRzxZimOgr+/XeDujdrDeSu9bUG6jO3C3qkGv7STOkUoL8gmBqhIzLF/ZP3J67ReieKdGndPFr1qFGmk
+ gqc3L8JhvNbOHBRgOv3Ty6gjH1AQporM9aYh6MM1wNdSJtpI/sylkJbJLuLlavCnO9k7/5pwfaQN2djQLxdP4HG0F/rx3DzHF10ZTzKPP/SLeKQ/z2cYaOaK+eB4AReoaRh363vl6C7snTzbQJFgI1c8u0J9WEcasFVkJl2CgPdPWPiFVPJHMBJLGAybi43K2Uhbg75QRZr5y7sOP1TLtTocwX5tNMT8eC/B3Fg2NRXefogL9+RbNYdGnC61YPgXgMPazqnTSd0P/R8RMDzqPwYVSfZ/9hD/CJG2o9FVfah4cn0GomjA9IRilaf4/8rXGw89OaT/Q0PJApBHT+rS+8QYk4mCykiwwxka4f78h0GkgJ+MkyShZ+SVZRt28+IzZjn6tvRpMhyc/QSMvF/16HiAlPR8ukV+j7aSqvmgHqKzpIPJ+M0/29m/QfpQx68blgcXGLDe/+BKTdA5L6BhhwU5jR2P8EJxYLSJQybqtilE6/CFB2DZHAUkEkeFEeUYKNiSCWM0EL12Cpq61WpgCcOphwjf3bDL46FJUxywJv0WHn5+k0C1hLTc9yPtYnnr8jfJqs2Hp1U2H36ftSDlkQK3lgpxLbyjlAJR/iJ5aVOBQhaakB2MqoOgF1kyu/SVNO/lLPEeZLZLciMrEBWnx7NEzTfWUpN72eNZSzAlXujtlrFMBiIhrL62l5RiYz8cLMSvKuwyJlBs277ALUOoaA==
+X-OriginatorOrg: kalrayinc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97ae6877-9acb-480f-48ac-08dca0e2b05c
+X-MS-Exchange-CrossTenant-AuthSource: PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2024 13:17:46.4046
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8931925d-7620-4a64-b7fe-20afd86363d3
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: F4Wby4aWYvJREGW3bsfSv/TPJZxSOxNMOwMnfh5ehS+ikNRL6ISAM5pVl3Pr1c3v3Incy7ZPY8DRhXVp7m0yUA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MRZP264MB2007
+X-ALTERMIMEV2_out: done
 
-On Mon, Jul 01, 2024 at 10:55:02AM +0100, Steven Price wrote:
-> Within a realm guest the ITS is emulated by the host. This means the
-> allocations must have been made available to the host by a call to
-> set_memory_decrypted(). Introduce an allocation function which performs
-> this extra call.
-> 
-> For the ITT use a custom genpool-based allocator that calls
-> set_memory_decrypted() for each page allocated, but then suballocates
-> the size needed for each ITT. Note that there is no mechanism
-> implemented to return pages from the genpool, but it is unlikely the
-> peak number of devices will so much larger than the normal level - so
-> this isn't expected to be an issue.
-> 
-> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v3:
->  * Use BIT() macro.
->  * Use a genpool based allocator in its_create_device() to avoid
->    allocating a full page.
->  * Fix subject to drop "realm" and use gic-v3-its.
->  * Add error handling to ITS alloc/free.
-> Changes since v2:
->  * Drop 'shared' from the new its_xxx function names as they are used
->    for non-realm guests too.
->  * Don't handle the NUMA_NO_NODE case specially - alloc_pages_node()
->    should do the right thing.
->  * Drop a pointless (void *) cast.
-> ---
->  drivers/irqchip/irq-gic-v3-its.c | 139 ++++++++++++++++++++++++++-----
->  1 file changed, 116 insertions(+), 23 deletions(-)
+Hi Greg,
 
-I gave this (and the following patch) a spin in a protected guest under
-pKVM and was able to use MSIs for my virtio devices, so:
+On 09/07/2024 13:09, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.98 release.
+> There are 102 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 11 Jul 2024 11:06:25 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.98-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
 
-Tested-by: Will Deacon <will@kernel.org>
+I tested 6.1.98-rc1 (b10d15fc38486) on Kalray kvx arch (not upstream yet) and everything looks good!
 
-Will
+It ran on real hw (k200, k200lp and k300 boards), on qemu and on our internal instruction set simulator (ISS).
+
+Tests were run on several interfaces/drivers (usb, qsfp ethernet, eMMC, PCIe endpoint+RC, SPI, remoteproc, uart, iommu). LTP and uClibc-ng testsuites are also run without any regression.
+
+Everything looks fine to us.
+
+Tested-by: Yann Sionneau <ysionneau@kalrayinc.com>
+
+-- Yann
+
+
+
+
+
 
