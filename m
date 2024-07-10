@@ -1,139 +1,116 @@
-Return-Path: <linux-kernel+bounces-246798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048A592C6D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 02:02:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C2392C6DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 02:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCA882843CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:02:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAF3F1F23909
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55ADB848E;
-	Wed, 10 Jul 2024 00:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B06410E6;
+	Wed, 10 Jul 2024 00:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pC9Lqqoj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B5We3Hvt"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F524381C4;
-	Wed, 10 Jul 2024 00:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F43125C1;
+	Wed, 10 Jul 2024 00:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720569745; cv=none; b=OlcLDS4dMla9Kr1SgtowNuknqIcNVKg1TM9LcTlbnFSoxyvuVnHNc+2ui7tSZopLlHqgbGGhYn3rFbS48sYENiJZ51fsDZCJRNzCrOhv97mILG6e9ughaZ8+KAgmes8xtYfIyu0A2PumJJUEgOiZYCTosWkZPGUpD64y9w2+E6A=
+	t=1720569880; cv=none; b=H7BzTpOIBTDZPl0OfiY0Gcb5ACxTl+Aw0YVpYAzovvfju6t5DfN+UTIkEQslpLpaTd96Taa8FBPc2z/IkFTumK2EE+bGuErpBaPSrViWs6ZoZAfA8F/SfZEmxyuw/dqoOiKt/IVWsACnONjc4Dou2uFFIj/n3h5DsO6GGYSx9D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720569745; c=relaxed/simple;
-	bh=dNkV6tukVgBwu5V2LMKcR/mlV+qm2kWi8I5WE8thKuw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uKehZ4YKaZLu4iyljbNj0dw8XVSxHUkezo5n28YvDW3M8/nyfEPvr56LxmxAVzEBd41abNBYxWK9jUhwOE/jAvNbJGsyd0oKS9DrZuAiS01+Cr4XEyDI28vsuxC81rP/NvlkVlacPJGjZ0Zn4UYbOnJsiZrizpq+PQ+bOuX0Exk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pC9Lqqoj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23224C3277B;
-	Wed, 10 Jul 2024 00:02:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720569745;
-	bh=dNkV6tukVgBwu5V2LMKcR/mlV+qm2kWi8I5WE8thKuw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=pC9LqqojU87wv5uf7qin8GD0jKwBd4pPReW6XGz1G6Nr7dj2R3kzY3QAREejXjo4G
-	 ys+OsZ998graE72eGMTSh3NRMYVxk/AVy5VDMf4bTryGyQqQRt7eKOvPNnWoaoACuc
-	 oDVn+pU2P3tUK2cs/JFsahwdc4LpMa6v1ToKOam827lgqVRIhlyBFyg6Wc3uylVYub
-	 qul4YuECKKxjJ/VJd0ke9uXEf60KYKbHsnZnsjSzpNJT+NVUclDhsYJ33b9mQ7HNUN
-	 wlR42AfciBCE9rTzUtZ85gvIxRGw0shgpoDZTRe9PgXfapBrF6OC5DiO7/oj09kp2d
-	 Wa0T0sMPKf9pQ==
-From: Kees Cook <kees@kernel.org>
-To: Brendan Higgins <brendan.higgins@linux.dev>
-Cc: Kees Cook <kees@kernel.org>,
-	David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>,
-	linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] kunit: executor: Simplify string allocation handling
-Date: Tue,  9 Jul 2024 17:02:24 -0700
-Message-Id: <20240710000220.work.852-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720569880; c=relaxed/simple;
+	bh=7svXtIRIQev3qw6/H5fBsnzbi9V2xC1keg6/wSjP/jc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VkqBZhDxe6I02GSwTZUHLPRxNbfdrZsQS/OXBh1qlUzja8qH0eopS+huwRRJj9uVJdG+CV1x/0tOBmHNJweKjm6gY9zf4dwXwr5/j5aZjgUfHcjseLNu8FuEkPjRrC8PHsnFJL382DE2NRwhYjEshDVqJI3IuYSqpjMCeh6bTRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B5We3Hvt; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70b12572bd8so2852499b3a.2;
+        Tue, 09 Jul 2024 17:04:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720569878; x=1721174678; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=skE6m8I/Wpu8lnOuMGo8EZdY4lGens1131mvpVe4I+8=;
+        b=B5We3Hvtn+Dz/pJs+24DtTGjGqqKRSd2xagoOP9LDOHnFLrWhfGMXuR9DaRpCHGonx
+         dCIGG5hz5hNKou0c8Nh6j05lwKlYEZsz/2YPsK43682ku2f/6daIBcFqXYBjbaR8cEKP
+         PI3BxaUoddgb5VRxgmoVeY1eUnC+oZujx5E+ncqHpecWTHyYJfkXfy1QGIoSz+AFTSLU
+         JmEfL7Z0EbWJQ9rK+v90yniTuzNY/sxnrASTHo21+Cl5oBobq6ZLQmBOtg018zPxE/yb
+         wvPgQpdkZlw0OW4j8dOnJC2G8V7iAxcQidSLVIXCV2B2a6FRvO6rNp/bK0ExGBFkHRz/
+         7IAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720569878; x=1721174678;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=skE6m8I/Wpu8lnOuMGo8EZdY4lGens1131mvpVe4I+8=;
+        b=WJbNZw6nPAC8ImPyKkouTVRVGHAshoKOsnU+d9lW+evMzmZzEHPMyEo8ZeubFacPK5
+         DSOsqto8VfUqhyDEud+GMe1VEy/3UVhrzR+F1v1tfx5/mx0yHXilecTPqI3ApKS65GuJ
+         61bbC8Eu7MipIu2EYCtVfL7xhTLCmH78aDMPBKsWpAKrBI7MDffkBOxC+9cLZS1A8DNJ
+         bxrYCjAVpw2H9760rrZrA2HgjS0f/uD/Hwqnscle7dFr2NlislFFs6ByQ65gS8tJiPWM
+         GNEJrRwW4EWys0oiao/9w1WiqXgup+Aj5bmecaALmqNrnx912Ddq9QozgjyMqmiCyv8q
+         jWgg==
+X-Gm-Message-State: AOJu0YzlxfvOVWHoWn42wbwWkc8twNENpOONtM+vzZbU/DWPy9Nk0pNO
+	3XscxekHZVudK5dMJUZLh1Hmfbv4ovjLNzHsbb1blvEjbcNo4dfHY1FiBQ==
+X-Google-Smtp-Source: AGHT+IHEHZ8qSXr8kyZHsPzj3a9OH8na6Fyw9Ccju34FIBurqIo2WnGg7EevDuqfe3tq7zruW6eQog==
+X-Received: by 2002:a05:6a00:3e02:b0:706:5b9a:b6d5 with SMTP id d2e1a72fcca58-70b43576ab9mr4518027b3a.15.1720569878226;
+        Tue, 09 Jul 2024 17:04:38 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:f11c:146:525b:f491])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b439ac718sm2420477b3a.168.2024.07.09.17.04.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 17:04:37 -0700 (PDT)
+Date: Tue, 9 Jul 2024 17:04:35 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Mirsad Todorovac <mtodorovac69@gmail.com>
+Subject: [PATCH] Input: twl4030-pwrbutton - fix kernel-doc warning
+Message-ID: <Zo3QE00GqCrA3M9b@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2517; i=kees@kernel.org; h=from:subject:message-id; bh=dNkV6tukVgBwu5V2LMKcR/mlV+qm2kWi8I5WE8thKuw=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmjc+PZXJJxRbINPefVtIME+9yZdeKBzJ1iW3C1 eyTnqWYXv+JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZo3PjwAKCRCJcvTf3G3A JsktEACKVc0OYnuXoXkPh2yb8Fr4ex1k37Ezhl9eRNlb4NQVk6k8oN/0XFwbab71eNM51R4f60w RLoi4J7xBLL6Ne8k0NrEftneM2Gt8ESEH7o5rxtLR33biHZ7401jxXjwWMM6WdQbwrqjUARmntu WBaG/Ejzuy1SkeZFatHPYIUHO1BMHLnTgsiTqiCdnW4LcTcX7M1nuEeJvoLx0VxblwWYYdHMzj9 eow2m4n2jpZWZajZBE1tmAlyi4jjqERMMVBs8w4ehLFHrQvbuobjyJv3T/AV6edIGMEQkgr37br aD0y323b8Q8zCjBtBRaGVue4AqpuYpwHMd68Vl2D00Sb8FCdKfiTawxU5dF5VfjswhDSaFYv2k1 HV2wTpFC5+jc3JMBaF4HOw8dDrMnWF7xymP9dZgk+ZqQt+lpWNDYtgQp1DbWSsS6MuXE4Y6y/cT plVLC4THbNAUInTPTSmBMHGwlSyyX2w6MMZoGxJcLu5sDPv31pM/EnhoBUw2Q1xL23KIq2NpW7K y5ERKXqvD/17uX9APz33dS4diZN4oNG7Dua5PVR7rXjyu2swmcTJ7KoSGH8QKCwocmY9O8AkYEH fSj+yvz5+Ikp6GheeY8N3TlM0lxBSkS00BEp4zvZDSrPYm1XLIPi78rgkisVVNwdR/XrMug8ave BRtStD7wdi/l8
- +w==
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The alloc/copy code pattern is better consolidated to single kstrdup (and
-kstrndup) calls instead. This gets rid of deprecated[1] strncpy() uses as
-well. Replace one other strncpy() use with the more idiomatic strscpy().
+Do not use kernel-doc style for comment describing contents of the
+source file, as it trips the script:
 
-Link: https://github.com/KSPP/linux/issues/90 [1]
-Signed-off-by: Kees Cook <kees@kernel.org>
+  scripts/kernel-doc -none   drivers/input/misc/twl4030-pwrbutton.c
+drivers/input/misc/twl4030-pwrbutton.c:2: info: Scanning doc for function twl4030
+drivers/input/misc/twl4030-pwrbutton.c:33: warning: expecting prototype for twl4030(). Prototype was for PWR_PWRON_IRQ() instead
+1 warnings
+
+Also remove file name from the same comment - it it not the best idea
+to have it as they tend to get stale when sources get moved or renamed.
+
+Reported-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
-Cc: Brendan Higgins <brendan.higgins@linux.dev>
-Cc: David Gow <davidgow@google.com>
-Cc: Rae Moar <rmoar@google.com>
-Cc: linux-kselftest@vger.kernel.org
-Cc: kunit-dev@googlegroups.com
----
- lib/kunit/executor.c      | 12 +++---------
- lib/kunit/executor_test.c |  2 +-
- 2 files changed, 4 insertions(+), 10 deletions(-)
+ drivers/input/misc/twl4030-pwrbutton.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/lib/kunit/executor.c b/lib/kunit/executor.c
-index 70b9a43cd257..34b7b6833df3 100644
---- a/lib/kunit/executor.c
-+++ b/lib/kunit/executor.c
-@@ -70,32 +70,26 @@ struct kunit_glob_filter {
- static int kunit_parse_glob_filter(struct kunit_glob_filter *parsed,
- 				    const char *filter_glob)
- {
--	const int len = strlen(filter_glob);
- 	const char *period = strchr(filter_glob, '.');
- 
- 	if (!period) {
--		parsed->suite_glob = kzalloc(len + 1, GFP_KERNEL);
-+		parsed->suite_glob = kstrdup(filter_glob, GFP_KERNEL);
- 		if (!parsed->suite_glob)
- 			return -ENOMEM;
--
- 		parsed->test_glob = NULL;
--		strcpy(parsed->suite_glob, filter_glob);
- 		return 0;
- 	}
- 
--	parsed->suite_glob = kzalloc(period - filter_glob + 1, GFP_KERNEL);
-+	parsed->suite_glob = kstrndup(filter_glob, period - filter_glob, GFP_KERNEL);
- 	if (!parsed->suite_glob)
- 		return -ENOMEM;
- 
--	parsed->test_glob = kzalloc(len - (period - filter_glob) + 1, GFP_KERNEL);
-+	parsed->test_glob = kstrdup(period + 1, GFP_KERNEL);
- 	if (!parsed->test_glob) {
- 		kfree(parsed->suite_glob);
- 		return -ENOMEM;
- 	}
- 
--	strncpy(parsed->suite_glob, filter_glob, period - filter_glob);
--	strncpy(parsed->test_glob, period + 1, len - (period - filter_glob));
--
- 	return 0;
- }
- 
-diff --git a/lib/kunit/executor_test.c b/lib/kunit/executor_test.c
-index 3f7f967e3688..7191be9c4f9b 100644
---- a/lib/kunit/executor_test.c
-+++ b/lib/kunit/executor_test.c
-@@ -286,7 +286,7 @@ static struct kunit_suite *alloc_fake_suite(struct kunit *test,
- 
- 	/* We normally never expect to allocate suites, hence the non-const cast. */
- 	suite = kunit_kzalloc(test, sizeof(*suite), GFP_KERNEL);
--	strncpy((char *)suite->name, suite_name, sizeof(suite->name) - 1);
-+	strscpy((char *)suite->name, suite_name);
- 	suite->test_cases = test_cases;
- 
- 	return suite;
+diff --git a/drivers/input/misc/twl4030-pwrbutton.c b/drivers/input/misc/twl4030-pwrbutton.c
+index e3ee0638ffba..f85cc289c053 100644
+--- a/drivers/input/misc/twl4030-pwrbutton.c
++++ b/drivers/input/misc/twl4030-pwrbutton.c
+@@ -1,5 +1,5 @@
+-/**
+- * twl4030-pwrbutton.c - TWL4030 Power Button Input Driver
++/*
++ * TWL4030 Power Button Input Driver
+  *
+  * Copyright (C) 2008-2009 Nokia Corporation
+  *
 -- 
-2.34.1
+2.45.2.803.g4e1b14247a-goog
 
+
+-- 
+Dmitry
 
