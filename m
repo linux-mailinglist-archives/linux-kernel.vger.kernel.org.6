@@ -1,161 +1,94 @@
-Return-Path: <linux-kernel+bounces-247830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC5D92D52B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:41:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6199092D51A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 815EF282562
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:41:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 929FD1C2182B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E921946AF;
-	Wed, 10 Jul 2024 15:40:59 +0000 (UTC)
-Received: from mail.enpas.org (zhong.enpas.org [46.38.239.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049741946BB;
+	Wed, 10 Jul 2024 15:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfbpzxdf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF86191494;
-	Wed, 10 Jul 2024 15:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.38.239.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A71910A09;
+	Wed, 10 Jul 2024 15:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720626059; cv=none; b=EW7LFSXV/saO/XhaDwxR4GtMgBBwJEv8khpwA4rMyEanVM+5HtqBmq01rAOrjqdaHvoCu5orVOQvDiqc6CjvdPK8oQIVPCVqhyDweaUSJla7C+a68WHZXVQGIOwtL41mm60nrucOxeYNtqJVG42BMK/4DqrwWcOUxFcsuu/zB0o=
+	t=1720625751; cv=none; b=cpVDIJOw9hBt/cjHMCfFmB/28MlAZcsb9fMoZBIpyrZTgphtdNMX62DFhqzKCDhpU2lETKqMaP+4recl3LfsuHwC5NJfFUsdji6EloT6rCexuEox2gMA8EIiRteN0iF2ihBFX8VCmPEK9tppYzUbHG4FF2WGLZZiHyWOsNcUVTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720626059; c=relaxed/simple;
-	bh=CrL/Jn/Ty/fnR5ezAckIV+af6We6y4cUsMgzE8M/R7o=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=uCCfNzvj6D7MYgtbMrW5EklZQtHgUj0zmFy51vcqNn+21ROgi1iDyIUoBJhj/yaq1hRKxgnwyhvgjCUTd5MoPDtWjfCQowtw3VcQvsZ0mQmobkAZA21Wxmpv9DdHHb4QuPfu0+nEAbHJcHfxfxSVQomBUrRjZ0PZTM4sTgvNKdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org; spf=pass smtp.mailfrom=enpas.org; arc=none smtp.client-ip=46.38.239.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enpas.org
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by mail.enpas.org (Postfix) with ESMTPSA id 1A3FF1000C8;
-	Wed, 10 Jul 2024 15:35:21 +0000 (UTC)
-Message-ID: <afda41dc-7b36-4ddd-abfc-c9430d8c9503@enpas.org>
-Date: Thu, 11 Jul 2024 00:35:16 +0900
+	s=arc-20240116; t=1720625751; c=relaxed/simple;
+	bh=7nXaOQ2Y21REg/4hAQAvgB2v44nvBiwZIAy1N2EwgCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hjcEVsu79zWT/hf0wnL45AAPB4i2gj3zARouZJEg7JUFMi6FYvWODg2i2FX8FO9r7LUba59XqGt2EUi6LdUnWzSTLlVkkS36OYTeKVeT/aBZwnVVFvG8w+Bx+45lPWtaFPi0PzD1JxB0/UzUp+0YTKqQEUkQSlNYV+MIfFL8fXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kfbpzxdf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10EF9C4AF0F;
+	Wed, 10 Jul 2024 15:35:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720625750;
+	bh=7nXaOQ2Y21REg/4hAQAvgB2v44nvBiwZIAy1N2EwgCI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kfbpzxdfM08YiMA9CnN1Ds8V/6cfkbBcUBSyJUyyszqmvYhChL4AE5DcSgHpHQIYk
+	 uK6ddvllWwmNjBDlk3YUhq9pHqSdF5gfYxmE2VWuRJ24IMML35Yn06oLI7IZlAIQyu
+	 e6KTtc0qNrFVdrEHQO4OpHLx928c8B5RM0yZfDSyHHGyN8gHHr0wE6R/0HM9//M+dF
+	 WOS/N61/Bw/aAKSPINmAQeel29qmosvlZBX5HDEDRV/WOCgFhRB43qP/dsRIiCfz9e
+	 iA0zOurNkwSguAGh8kpj73E0ZgtzvHfuDJS1HaVwMLIIvDDkUTbyuNZPVPHOiytyeH
+	 99nf/1JFxtdpw==
+Date: Wed, 10 Jul 2024 08:35:48 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ bpf@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
+ <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, Ivan
+ Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>,
+ Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
+ <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, Herbert
+ Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem
+ de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>, "Christian =?UTF-8?B?S8O2bmln?="
+ <christian.koenig@amd.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
+ Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
+ Taehee Yoo <ap420073@gmail.com>, Pavel Begunkov <asml.silence@gmail.com>,
+ David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
+ <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
+ Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
+ <pkaligineedi@google.com>
+Subject: Re: [PATCH net-next v16 01/13] netdev: add
+ netdev_rx_queue_restart()
+Message-ID: <20240710083548.351e51e5@kernel.org>
+In-Reply-To: <20240710001749.1388631-2-almasrymina@google.com>
+References: <20240710001749.1388631-1-almasrymina@google.com>
+	<20240710001749.1388631-2-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Max Staudt <max@enpas.org>
-Subject: Re: [PATCH v1] hid-playstation: DS4: Update rumble and lightbar
- together
-To: Roderick Colenbrander <thunderbird2k@gmail.com>
-Cc: Roderick Colenbrander <roderick.colenbrander@sony.com>,
- Jiri Kosina <jikos@kernel.org>,
- Benjamin Tissoires <benjamin.tissoires@redhat.com>,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240616163055.75174-1-max@enpas.org>
- <CAEc3jaCkH5JwNTpHRZYsekbwX+G6T5tMTLD0+O6E7Q2hqcAFHw@mail.gmail.com>
- <dedb2c39-fc28-4cba-802f-5d56f23db722@enpas.org>
- <CAEc3jaC-Tmd2XtK9H2sipBJAhCf16dMWx46r8Hs4p9At3LC_Jg@mail.gmail.com>
-Content-Language: en-US
-In-Reply-To: <CAEc3jaC-Tmd2XtK9H2sipBJAhCf16dMWx46r8Hs4p9At3LC_Jg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Hi Roderick,
+On Wed, 10 Jul 2024 00:17:34 +0000 Mina Almasry wrote:
+> +	DEBUG_NET_WARN_ON_ONCE(!rtnl_is_locked());
 
-
-On 7/9/24 01:07, Roderick Colenbrander wrote:
-> The console behavior (I checked the code) does use the flags as well 
-> like I do. The architecture there between usermode/kernel is a bit 
-> different, so in some cases flags do get set when not needed.
-
-Thank you so, so much for double checking this. It's always great to 
-have someone who can speak authoritatively on such matters and eliminate 
-the guesswork.
-
-
-> Various devices tried to capture bit patterns and see what kind of 
-> worked even though not really right. (Officially licensed
-> controllers are a different story they use different hid reports.) We
-> didn't know other devices did this wrong.
-
-Licensed controllers... That will be my next patch set, apologies in 
-advance :)
-
-They need quite a few quirks, too... And as it turns out, my previous 
-patches have laid a lot of ground work for them :)
-
-
-> Correct the validation tests are all uhid based, which is the best 
-> which can be done.
-
-Please correct me if I'm getting the wrong idea here, but what I read 
-between the lines and from your email address is that this is something 
-in Sony's interest.
-
-So an idea comes to mind: Maybe somewhere inside Sony, there exists 
-something like a DS4 simulator at the HID level, which could serve as a 
-foundation for improving the tests? That would get the tests much closer 
-to the gold standard, which is using a real controller.
-
-If not, then maybe there is protocol documentation that could help test 
-writers in creating more precise tests?
-
-
-> There is the hid-tools one, but the one which we help out with, but
-> the key one is the Android ones. We have so many problems with these.
-> Mostly because of vendors not enabling e.g. FF support or LED support
-> other things.
-
-Hm, but downstream users misconfiguring kernels is not our fault, is it? 
-In that case, the tests actually do their work correctly if they show 
-that something is amiss.
-
-
-> The main new Android kernel (public knowledge) is now 6.6 and many
-> new devices due later this year/early next year will use it.  The
-> eco system is a lot wider now and the drivers are used a lot on
-> non-mobile devices (cars, televisions, chromecast,..). Occassionally
-> driver patches are also backported from upstream to older Android
-> kernels (patches have to be merged upstream first).
-
-I see. But still, that is just typical downstream risk of building on 
-behaviour that the kernel does not provide guarantees for. I know 
-first-hand that backporting is a lot of work and easy to get wrong, but 
-this is the first time that I hear that as a reason to stop improving 
-the mainline kernel. Hence my confusion here.
-
-
-> Not that I wouldn't want these kind of patches, but I have to weigh 
-> both sides.
-
-Thanks for your understanding, and hence my offer to help if I somehow 
-can...
-
-
-> The pain on addressing things downstream and in Android conformance
-> tests is quite painful.
-
-Hm, I can somewhat imagine this. I've heard that Android conformance is 
-quite strict.
-
-Given Sony's supposed interest (see above), I guess it would be a 
-worthwhile investment to make the tests more robust? We could just hold 
-off on this patch for a while until downstream has better tests... What 
-would be a timeline for this to trickle downstream?
-
-
-> We would also have both code paths used in the wild forever, because
-> existing 6.6 devices wouldn't change behavior.
-
-Well, that's kind of the point of LTS releases, if I'm not mistaken...
-
-
-> (The official Android tests are kind of kernel version agnostic as
-> they work across multiple kernel and Android versions.
-
-Hm, sounds to me like the Android test framework is broken if it cannot 
-be kernel-specific in such cases. What's required in order to improve this?
-
-
-
-Max
-
-
+ASSERT_RTNL() ?
 
