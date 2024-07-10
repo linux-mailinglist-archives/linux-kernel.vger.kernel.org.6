@@ -1,157 +1,252 @@
-Return-Path: <linux-kernel+bounces-248219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6512492DA03
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:29:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C91E92DA0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C11B81F23C84
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:29:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 027742866FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB75A198A21;
-	Wed, 10 Jul 2024 20:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106DC197A95;
+	Wed, 10 Jul 2024 20:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QBPG2a2e"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BJZxbkmN"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73621198821;
-	Wed, 10 Jul 2024 20:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AD1198E6F
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 20:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720643354; cv=none; b=p9hYn4aIrmiJtgJn8rYhnCtPtjuUIIlyS71nZi7JNeWiKk2geBoso8hBkcRqOmiTDP2iGBiGi+sUeeQV+mvmYbgNHpG2IQ/AZi5CznTedd/Vo/lTvv9beiwttHLynQGFydP0sbHX7It5vsOtcK7S6/PGu04IaUyPBMTO23CuUNw=
+	t=1720643361; cv=none; b=gr0DTZAhz5cScRwwi46QP+qT6w4/p0OvGLS/kJU94mOlMLWAMpYILbYAC+0CyFEvCLw/nd8JbOtnwzaCG594o3Uyp7Ao3Gtw6qorcdqyUSr6KFEFQHf93odq7GL9GW65FqnzF1g5gJiuyCU7NMhreiKuhVKgx9UCtlr9LqgtDT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720643354; c=relaxed/simple;
-	bh=Ab4dyjGo3s7pHsz5/ulNmvnZqavLu3mWbxo6X+2wGGQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=C+tY7gcaNhgBBVzqfbDQbRO1I7yDfZ85y9f/Bm7/Z1HWioKo1prAF5zmGnjTyCa2+WdhPu2R/ZkOy4RIvREf37A/l0WzB9mcdHx8q2os5v6QaiNTM5z8YTfWBvOIGM/RqF5oMFb0mbrkEo7G1hOHGoTlUoihG1uV5NNCHoIkbQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QBPG2a2e; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46ACnK06024771;
-	Wed, 10 Jul 2024 20:29:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/C8Dd1IaJCe5rvJYmcGSvfztZGrxmsF+Dg8Fz7OEvrQ=; b=QBPG2a2e+XFF/AC0
-	5e5/TmUUqL5KZ3SgC7/bG6khgNcfPBiy0B9acSAeI2Q2akr5XpSYpR8GpHmJEvIL
-	vS/0/yBfXwFgFXc/aTifUfrB13FvMyTiC3A2969hoJnPDj3nIgjHEKsQphZEv8Na
-	/6rqKfIDdwlvHKOKMrX+5WHd4CFqGL+A/fepTopBQ5H0dgrDwswHPNn0ap4ubdsT
-	U/cZEXpJ9BZUgSacrHYbBXogEZLU88zfuBuu+KKsPkm7z97MioVow8LuSNSWRTt9
-	CTs5jv6NFObacvaZTqkHYv2DQPHzdFs/KWmg/bvqnrT7GExjmml0tUMdsDdNbxAM
-	OjS+bw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 409kdtj818-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jul 2024 20:29:01 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46AKSxpF023891
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jul 2024 20:28:59 GMT
-Received: from [10.110.41.85] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 10 Jul
- 2024 13:28:58 -0700
-Message-ID: <0d659413-1122-402a-bf85-aa9abb720850@quicinc.com>
-Date: Wed, 10 Jul 2024 13:28:58 -0700
+	s=arc-20240116; t=1720643361; c=relaxed/simple;
+	bh=lUBEgBl64OukQYoXw+IzWRxkunsos7uu5wD0WIADxEc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S3j93nzV4jEAA5jb6+zOyXOtqcC66BcYvJBlasLUIjJlT2WBqPlQSCBa40VSvXJInLfNVug0y9bOf4mRO8SztowHcK/xIU5q3Weuvpsj1D3gWdczHH3360pxR8OL2i7c+PLkCrCrKdLGBCLyXzZ1mtm0rZijSH0wOkteWRAinHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BJZxbkmN; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7035d5eec5aso59805a34.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:29:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720643356; x=1721248156; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ip/0MDOrHp5lX/Irp7UEa2BIGo3LvwiW3nUCmkpVR3o=;
+        b=BJZxbkmNVvsrwsOuaaprwEqVg0CMet2325nHNs5uvMq63SzxrXSfmdtUd5/igfuBB5
+         jgvxXpBg+b5P9K4cSsYXndaGhb9pG6io8fOpsrAVQd6eQbisUPDp5GX2yK3xOT31K+hB
+         rLXwaUbLpXIB9Q8v6gUxwPZvMaiutAxat3yGpdgYDau0bKKtb1PqBwTj9smNTxWa9uqn
+         ZOCLTZyhZ/8hIrlgllUXJArVcKmiCm1dWbpOErCJbkZe5/sFJt4kL9PtuqFW0Ove1CUu
+         Nh8cY4TxxbDibsYnfTcPZ/+y1o+vX+c63l8fC/vydJq0Ce+I40QGkc0fyN+PLM3HKAgI
+         +oSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720643356; x=1721248156;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ip/0MDOrHp5lX/Irp7UEa2BIGo3LvwiW3nUCmkpVR3o=;
+        b=ODiH2YvNf+xfuGRrkucw4zhSYRhpfTbw2MkmwqHB/++EBDsTQo2kKl6y0DvX6DxN0b
+         kIvEgTf45o1ocaKFF14TyE0GiN7OJBOagUbOVH/8Tldph97Texu10SFLKd083xqSKvhm
+         na4GU4zxLi2B8wd1S2u6whKYe3YT4BNsLwneq9FhhDx+CQXaU2rUzjpCOt1DH09d/l4I
+         Zi+w18x0gyozCG/P1QlgfFbqxrve4puWdOAZNQS3baklx681I6Xmr3YZboDUnrnYeXWA
+         rgnXYzSvRnM4pHqCaEradIu/6mTL08nXIdJ0yPy2YlZZ/FUEuVKFoexEio4knh2Ao/Nm
+         g+eg==
+X-Forwarded-Encrypted: i=1; AJvYcCX3MWvwHiN5/PpOQ98/W2qbxEi4YBQPEO/lR9QQhiHxcIfhUHW+2WIKw1ThdaLt8nTpzNxwBB9JiX9TSxjU7EyoGoSwZwGXqx0wJICr
+X-Gm-Message-State: AOJu0YzuB7gcjp5D8lae9of5vlRQjmfKQsv8/mdKYgKsW/UQtFap8S7D
+	tJCPSJAkrKKLgVRNzkTA0ttB2jG8u7LmShIw4tzT7/SJs6n8XUB0buLuwZx0RwgRgdEwOsMP/aG
+	NLZa2s/am0HrSqlWq5ii9KCa77N5Trfpklz8+
+X-Google-Smtp-Source: AGHT+IFh61JWNinxflrD0b4ZVWkvEczGu6mIg9bnLfCV6X6pe63Th6j/ytHY2kvRgro//9ydMtTk5x6Go2aTaB1/aws=
+X-Received: by 2002:a05:6830:22ed:b0:704:4995:3733 with SMTP id
+ 46e09a7af769-704499539f5mr3557560a34.31.1720643355799; Wed, 10 Jul 2024
+ 13:29:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/4] PCI: qcom-ep: Add support for D-state change
- notification
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-        "Manivannan
- Sadhasivam" <manivannan.sadhasivam@linaro.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
-        Kishon Vijay Abraham I
-	<kishon@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet
-	<corbet@lwn.net>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>
-CC: <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <mhi@lists.linux.dev>, <quic_vbadigan@quicinc.com>,
-        <quic_ramkri@quicinc.com>, <quic_nitegupt@quicinc.com>,
-        <quic_skananth@quicinc.com>, <quic_parass@quicinc.com>,
-        Manivannan Sadhasivam
-	<mani@kernel.org>
-References: <20240710-dstate_notifier-v7-0-8d45d87b2b24@quicinc.com>
- <20240710-dstate_notifier-v7-2-8d45d87b2b24@quicinc.com>
-Content-Language: en-US
-From: Mayank Rana <quic_mrana@quicinc.com>
-In-Reply-To: <20240710-dstate_notifier-v7-2-8d45d87b2b24@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: bIS7u-y-X3Zr1nM-Owgr6W3JVQHyygWi
-X-Proofpoint-GUID: bIS7u-y-X3Zr1nM-Owgr6W3JVQHyygWi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-10_15,2024-07-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
- impostorscore=0 mlxlogscore=999 lowpriorityscore=0 malwarescore=0
- adultscore=0 suspectscore=0 phishscore=0 bulkscore=0 priorityscore=1501
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407100145
+References: <20240710001749.1388631-1-almasrymina@google.com>
+ <20240710001749.1388631-6-almasrymina@google.com> <20240710094900.0f808684@kernel.org>
+In-Reply-To: <20240710094900.0f808684@kernel.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Wed, 10 Jul 2024 13:29:03 -0700
+Message-ID: <CAHS8izPnFxeEMEQkxq=A9Rp7T8ADJ__3eWfeQmC2hEBYQVzcvw@mail.gmail.com>
+Subject: Re: [PATCH net-next v16 05/13] page_pool: devmem support
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>, 
+	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, linux-mm@kvack.org, 
+	Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jul 10, 2024 at 9:49=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+>
+> On Wed, 10 Jul 2024 00:17:38 +0000 Mina Almasry wrote:
+> > @@ -68,17 +107,103 @@ static inline netmem_ref page_to_netmem(struct pa=
+ge *page)
+> >
+> >  static inline int netmem_ref_count(netmem_ref netmem)
+> >  {
+> > +     /* The non-pp refcount of net_iov is always 1. On net_iov, we onl=
+y
+> > +      * support pp refcounting which uses the pp_ref_count field.
+> > +      */
+> > +     if (netmem_is_net_iov(netmem))
+> > +             return 1;
+> > +
+> >       return page_ref_count(netmem_to_page(netmem));
+> >  }
+>
+> How can this work if we had to revert the patch which made all of
+> the networking stack take pp-aware refs? Maybe we should add the
+> refcount, and let it be bumped, but WARN() if the net_iov is released
+> with refcount other than 1? Or we need a very solid explanation why
+> the conversion had to be reverted and this is fine.
+>
 
+Right, as you are aware, page refcounting is based on 2 refcounts: pp
+refs and full page refs. To be honest I find the 2-ref flow confusing
+and I made an effort to avoid porting this bit to net_iovs. net_iovs
+just supports 1 refcount, which is the pp-ref.
 
-On 7/10/2024 4:08 AM, Krishna chaitanya chundru wrote:
-> Add support to pass D-state change notification to Endpoint
-> function driver.
-> Read perst value to determine if the link is in D3Cold/D3hot.
-> 
-> Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
->   drivers/pci/controller/dwc/pcie-qcom-ep.c | 8 +++++++-
->   1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> index 236229f66c80..817fad805c51 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> @@ -648,6 +648,7 @@ static irqreturn_t qcom_pcie_ep_global_irq_thread(int irq, void *data)
->   	struct device *dev = pci->dev;
->   	u32 status = readl_relaxed(pcie_ep->parf + PARF_INT_ALL_STATUS);
->   	u32 mask = readl_relaxed(pcie_ep->parf + PARF_INT_ALL_MASK);
-> +	pci_power_t state;
->   	u32 dstate, val;
->   
->   	writel_relaxed(status, pcie_ep->parf + PARF_INT_ALL_CLEAR);
-> @@ -671,11 +672,16 @@ static irqreturn_t qcom_pcie_ep_global_irq_thread(int irq, void *data)
->   		dstate = dw_pcie_readl_dbi(pci, DBI_CON_STATUS) &
->   					   DBI_CON_STATUS_POWER_STATE_MASK;
->   		dev_dbg(dev, "Received D%d state event\n", dstate);
-> -		if (dstate == 3) {
-> +		state = dstate;
-> +		if (dstate == PCI_D3hot) {
->   			val = readl_relaxed(pcie_ep->parf + PARF_PM_CTRL);
->   			val |= PARF_PM_CTRL_REQ_EXIT_L1;
->   			writel_relaxed(val, pcie_ep->parf + PARF_PM_CTRL);
-Can you please also check that do we really need to bring link back out 
-of L1/L1SS on receiving D3 hot ?
-> +			if (gpiod_get_value(pcie_ep->reset))
-> +				state = PCI_D3cold;
->   		}
-> +		pci_epc_dstate_notify(pci->ep.epc, state);
->   	} else if (FIELD_GET(PARF_INT_ALL_LINK_UP, status)) {
->   		dev_dbg(dev, "Received Linkup event. Enumeration complete!\n");
->   		dw_pcie_ep_linkup(&pci->ep);
-> 
+My intention is that when a reference is needed on a net_iov, we
+obtain the pp-ref, and when we drop a reference on a net_iov, we drop
+the pp_ref. This is able to work for net_iov but not pages, because
+(as you explained to me) pages can be inserted into the net stack with
+full page refs. So when it comes to refcounting pages we need to be
+careful which ref to obtain or drop depending on is_pp_netmem() and
+skb->pp_recycle (as pp_recycle serves as a concurrency check, like you
+explained).
 
-Regards,
-Mayank
+AFAICT, since net_iovs always originate from the net stack, we can
+make the simplification that they're always seeded with 1 pp-ref, and
+never support non-pp-refs. This simplifies the refcounting such that:
+
+1. net_iov are always is_pp_netmem (they are never disconnected from
+the pp as they never have elevated non-pp refcount), and
+2. net_iov refcounting doesn't need to check skb->pp_recycle for
+refcounting, because we can be sure that the caller always has a
+non-pp ref (since it's the only one supported).
+
+Currently, as written, I just realized I did not add net_iov support
+to __skb_frag_ref(). But net_iov does support skb_pp_frag_ref(). So
+there is no way to increment a non-pp ref for net_iov.
+
+If we want to add __skb_frag_ref() support for net_iov I suggest something =
+like:
+
+diff --git a/include/linux/skbuff_ref.h b/include/linux/skbuff_ref.h
+index 0f3c58007488a..02f7f4c7d4821 100644
+--- a/include/linux/skbuff_ref.h
++++ b/include/linux/skbuff_ref.h
+@@ -17,7 +17,13 @@
+  */
+ static inline void __skb_frag_ref(skb_frag_t *frag)
+ {
+-       get_page(skb_frag_page(frag));
++       netmem_ref netmem =3D skb_frag_netmem(frag);
++
++       /* netmem always uses pp-refs for refcounting. Never non-pp refs. *=
+/
++       if (!netmem_is_net_iov(netmem))
++               get_page(netmem_to_page(netmem));
++       else
++               page_pool_ref_netmem(netmem);
+ }
+
+If you don't like the 1 ref simplification, I can definitely add a
+second refcount as you suggest, but AFAICT the simplification is safe
+due to how net_iov are originated, and maybe also because devmem usage
+in the net stack is limited due to all the skb_is_readable() checks,
+and it's possible that the edge cases don't reproduce. I was looking
+to find a concrete bug report with devmem before taking a hammer and
+adding a secondary refcount, rather than do it preemptively, but I'm
+happy to look into it if you insist.
+
+> >  static inline unsigned long netmem_to_pfn(netmem_ref netmem)
+> >  {
+> > +     if (netmem_is_net_iov(netmem))
+> > +             return 0;
+> > +
+> >       return page_to_pfn(netmem_to_page(netmem));
+> >  }
+>
+> Can we move this out and rename it to netmem_pfn_trace() ?
+> Silently returning 0 is not generally okay, but since it's only
+> for tracing we don't care.
+>
+
+Yes, I will do.
+
+> > +static inline struct net_iov *__netmem_clear_lsb(netmem_ref netmem)
+> > +{
+> > +     return (struct net_iov *)((__force unsigned long)netmem & ~NET_IO=
+V);
+> > +}
+> > +
+> > +static inline unsigned long netmem_get_pp_magic(netmem_ref netmem)
+> > +{
+> > +     return __netmem_clear_lsb(netmem)->pp_magic;
+> > +}
+> > +
+> > +static inline void netmem_or_pp_magic(netmem_ref netmem, unsigned long=
+ pp_magic)
+> > +{
+> > +     __netmem_clear_lsb(netmem)->pp_magic |=3D pp_magic;
+> > +}
+> > +
+> > +static inline void netmem_clear_pp_magic(netmem_ref netmem)
+> > +{
+> > +     __netmem_clear_lsb(netmem)->pp_magic =3D 0;
+> > +}
+> > +
+> > +static inline struct page_pool *netmem_get_pp(netmem_ref netmem)
+> > +{
+> > +     return __netmem_clear_lsb(netmem)->pp;
+> > +}
+> > +
+> > +static inline void netmem_set_pp(netmem_ref netmem, struct page_pool *=
+pool)
+> > +{
+> > +     __netmem_clear_lsb(netmem)->pp =3D pool;
+> > +}
+>
+> Why is all this stuff in the main header? It's really low level.
+> Please put helpers which are only used by the core in a header
+> under net/core/, like net/core/dev.h
+
+Sorry, will do.
+
+--
+Thanks,
+Mina
 
