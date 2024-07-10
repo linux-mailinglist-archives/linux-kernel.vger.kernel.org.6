@@ -1,178 +1,128 @@
-Return-Path: <linux-kernel+bounces-246888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7EB292C88B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 04:31:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58EA192C88C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 04:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 594AD1F233C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 02:31:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 353CA283F32
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 02:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824838F6C;
-	Wed, 10 Jul 2024 02:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5931F111AD;
+	Wed, 10 Jul 2024 02:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FmU5MR1L"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA808F5D
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 02:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	dkim=pass (1024-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b="sfPl+Hon"
+Received: from zg8tmja2lje4os4yms4ymjma.icoremail.net (zg8tmja2lje4os4yms4ymjma.icoremail.net [206.189.21.223])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB031803D;
+	Wed, 10 Jul 2024 02:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.21.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720578662; cv=none; b=VkwNHqLIOSa5NSgoWvBK/OOnI6SE8D+0JJzW/7N1D69NBbjJKgATyLxOUA/v6LBAnzelSEY8/Ivneqfi1j3+OpqrvCgEFYXovkphrQNKpg37K6yOxn64CGKdZQhvWd5hNIRSt+ZTT1K6+3+VBCOAQWGqBlILW/Aa7YRj5UmDPGI=
+	t=1720578707; cv=none; b=GZE55l2S2O09PIXd5n8obqKxnOLxdf8BbIYZphr0dlICj3W/iGJbAZ/Kao5qGCBg5gE86vu92+baP0yWmmKRBhbWK3Hy/GzZjY1XrrCs0aqcLUIs1dqkYaSnZ6+0qyZFqi8EepBg3t/ZSwHkh6vFFIqhQ6uhvgWIqZ9vvKjxRZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720578662; c=relaxed/simple;
-	bh=mwptTxn28rWfskx29dt0gAdAArH0YgrYTZ4PFdnUQvg=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=S2BuOY7kfj1fAuYxspNFQvuJxz95wa6dZP4A0MN7OdL/fik4rxJYghTkJDt1DLtjRENiTkP06BBjgj6nI6yISO3bpz2/J5u60ohermopM4fCQW46sE1eJ034ID+yopJJWGNai8dDUrAYB4Zab0T8huB+QsKkIUbJcPTX9kY08PA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FmU5MR1L; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240710023059epoutp024af99c598a565c728dbdfd6e49e33933~guSymNLig1936219362epoutp02O
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 02:30:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240710023059epoutp024af99c598a565c728dbdfd6e49e33933~guSymNLig1936219362epoutp02O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1720578659;
-	bh=7tI7JoXgIfZYsfc1JpDRCyPoQBSqkIdfe1GtbFGzetE=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=FmU5MR1LTP1WzD1XNerB8zpxkytEQAPlP8JC1SxhxhaeUMWuIR/41cDddZ+TkT04a
-	 /9KCruAgI7pWOSIcvjYDtA4/oOsj1Ne67I9Z0Lk03uCKYxqCeAF2Lk2rhebDhfZ9YG
-	 YaRzdM/V7RE/LmA7c4hp3VakD2EecDfM1zkScABY=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240710023058epcas5p36ff27ccd56ff18d23b3d95da28028c5c~guSyGoUy80882708827epcas5p3E;
-	Wed, 10 Jul 2024 02:30:58 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4WJhg4555Nz4x9QH; Wed, 10 Jul
-	2024 02:30:56 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9F.26.07307.062FD866; Wed, 10 Jul 2024 11:30:56 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240710023056epcas5p204fb5e155dab6395575b8717c06b247e~guSv844VM2654026540epcas5p2a;
-	Wed, 10 Jul 2024 02:30:56 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240710023056epsmtrp16e0a30e21faf4d1459a6086c71b80424~guSv3IO3l0814108141epsmtrp1P;
-	Wed, 10 Jul 2024 02:30:56 +0000 (GMT)
-X-AuditID: b6c32a44-18dff70000011c8b-0f-668df2606012
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	0A.1B.19057.F52FD866; Wed, 10 Jul 2024 11:30:55 +0900 (KST)
-Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240710023054epsmtip197c5c0bffc05c8219462aa9035e0b578~guSuC5OFx2525925259epsmtip1D;
-	Wed, 10 Jul 2024 02:30:54 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'sunyeal.hong'" <sunyeal.hong@samsung.com>, "'Krzysztof Kozlowski'"
-	<krzk@kernel.org>, "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-	"'Chanwoo Choi'" <cw00.choi@samsung.com>, "'Michael Turquette'"
-	<mturquette@baylibre.com>, "'Stephen Boyd'" <sboyd@kernel.org>, "'Rob
- Herring'" <robh@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <000101dad26f$0d0fc0f0$272f42d0$@samsung.com>
-Subject: RE: [PATCH v2 2/4] arm64: dts: exynos: add initial CMU clock nodes
- in Exynos Auto v920
-Date: Wed, 10 Jul 2024 08:00:52 +0530
-Message-ID: <015501dad271$30f54a10$92dfde30$@samsung.com>
+	s=arc-20240116; t=1720578707; c=relaxed/simple;
+	bh=VfASIcXgp6WP1IkMElURGKvL9Z0Ezt72D6Iw28GRsnA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pGmnT4HClr4FIWfXsr7QnBMCWsOCNxxsaPyjB41Y9fWO+RAljmH1v0VWyXsnaMoq9boopcmDQyLbIP0CieLD3eAGUJC1UtKwK69wqYtG1lpWiFq2dcJpY5CaHLUuZjhNaU9cI6kPmR6FyLrwTgOccw0yCAxKsp+bXEYjanjXuvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn; spf=pass smtp.mailfrom=buaa.edu.cn; dkim=pass (1024-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b=sfPl+Hon; arc=none smtp.client-ip=206.189.21.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buaa.edu.cn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=buaa.edu.cn; s=buaa; h=Received:From:To:Cc:Subject:Date:
+	Message-ID:MIME-Version:Content-Transfer-Encoding; bh=GxeGh6VsVK
+	wOay+/N1Y08QePwQlg5NH+QbtG0//gEQg=; b=sfPl+HonHxlY6nHUSWYobPQFxv
+	8H4CQ3Z/OSoJXuhRcd0s+EJYwO2tlqfPS88+jWWLAADgtTtdgesnRnuF9ihKJVNv
+	zSIMRrjBSUMS1z1cwtQCrmB9qydhax5WOtapM06uiqBiQYnC1P7t8i9saEaWJwU1
+	ihKRXjSEf6EuvwZjU=
+Received: from gp-VMware-Virtual-Platform.localdomain (unknown [139.227.253.190])
+	by coremail-app2 (Coremail) with SMTP id Nyz+CgCX7_J+8o1my0+rAA--.270S2;
+	Wed, 10 Jul 2024 10:31:28 +0800 (CST)
+From: peng guo <engguopeng@buaa.edu.cn>
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	wyguopeng@163.com,
+	peng guo <engguopeng@buaa.edu.cn>
+Subject: [PATCH v3] cxl/core: Support mbox op clear log of vendor debug logs
+Date: Wed, 10 Jul 2024 10:31:12 +0800
+Message-ID: <20240710023112.8063-1-engguopeng@buaa.edu.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJHtUpDsgLCeLIQdS8546uqgvLWdQIAh4UhAdGvMNoB/Od1kAIfmP8esNYBDcA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJJsWRmVeSWpSXmKPExsWy7bCmlm7Cp940g+vX1SzW7D3HZHH9y3NW
-	i/lHzrFanD+/gd1i0+NrrBYfe+6xWlzeNYfNYsb5fUwWF0+5Wvzfs4Pd4vCbdlaLf9c2slg0
-	LVvP5MDr8f5GK7vHplWdbB6bl9R79G1ZxejxeZNcAGtUtk1GamJKapFCal5yfkpmXrqtkndw
-	vHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0IlKCmWJOaVAoYDE4mIlfTubovzSklSFjPzi
-	Elul1IKUnAKTAr3ixNzi0rx0vbzUEitDAwMjU6DChOyMhc3TmQve8lRcbW1hbmCcy93FyMkh
-	IWAisXj3ApYuRi4OIYHdjBItJ5ezQzifGCU+dcyAcr4xSrzq3s4K07Kr+QozRGIvo8SPHfeh
-	+l8wSkzYtQmsik1AV2LH4jY2kISIwD0miQc/2plAHGaBdYwSm2ceYQep4hSwkri38wILiC0s
-	kCjx+ckEJhCbRUBVYs+MFmYQm1fAUmLRrlWsELagxMmZT8DqmQW0JZYtfM0McZOCxM+ny8Bq
-	RAT8JI5tOM8MUSMu8fLoEbAnJAQOcEhcO/4cqsFF4uO6Y0wQtrDEq+Nb2CFsKYmX/W1QdrbE
-	8Yuz2CDsConu1o9QcXuJnY9uAh3BAbRAU2L9Ln2IXXwSvb+fMIGEJQR4JTrahCCqVSWa311l
-	gbClJSZ2d0OD0UPi+/UG9gmMirOQfDYLyWezkHwwC2HZAkaWVYySqQXFuempyaYFhnmp5fAo
-	T87P3cQITsNaLjsYb8z/p3eIkYmD8RCjBAezkgjv/BvdaUK8KYmVValF+fFFpTmpxYcYTYHB
-	PZFZSjQ5H5gJ8kriDU0sDUzMzMxMLI3NDJXEeV+3zk0REkhPLEnNTk0tSC2C6WPi4JRqYJqT
-	tX7xjpL/Qq9bdq7tmWc5t/VEjlJ97tGJPW9TgtvOJ85KP+3+/ZZmRNifWz80e3PXiDFPuWL7
-	fEOk0sllEVtuaa46Jr6x69/RlHeS/k4bN3GK8n+P3pNVG9D7+Ni+BzdfJP1zVz/y4sS6/y0d
-	+35Ka/bWdSvsNfe+u9NMk71ykvAb794DG+9w9xtzvrH1XFTMxOC5bfk+ZetGD9XzLmKHHaxk
-	RMXLw4pqJTyVpVZP297pp//tH0fw6XQd3gzFzR7/7kmuur5eaU/eg+e2YT9eTHqUwr+xvXET
-	87YfHxPeGugc/iLZyLNQg6GceeeKYo24cy8mt+WdbRVJevlltpLXVRXzK7dW2jy6/OBkf5QS
-	S3FGoqEWc1FxIgDSh8hyTAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPIsWRmVeSWpSXmKPExsWy7bCSnG7Cp940g7U6Fmv2nmOyuP7lOavF
-	/CPnWC3On9/AbrHp8TVWi48991gtLu+aw2Yx4/w+JouLp1wt/u/ZwW5x+E07q8W/axtZLJqW
-	rWdy4PV4f6OV3WPTqk42j81L6j36tqxi9Pi8SS6ANYrLJiU1J7MstUjfLoEro/HoVtaCx1wV
-	l1eJNzDu4Ohi5OSQEDCR2NV8hbmLkYtDSGA3o8SbuW+YIBLSEtc3TmCHsIUlVv57zg5R9IxR
-	4tXW76wgCTYBXYkdi9vYQGwRgSdMEpc+lIMUMQtsYpQ4t/smG0THQiaJxdMPg43lFLCSuLfz
-	AguILSwQL/H20TtmEJtFQFViz4wWMJtXwFJi0a5VrBC2oMTJmU/A6pkFtCWe3nwKZy9b+JoZ
-	4jwFiZ9Pl7FCXOEncWzDeWaIGnGJl0ePsE9gFJ6FZNQsJKNmIRk1C0nLAkaWVYySqQXFuem5
-	xYYFRnmp5XrFibnFpXnpesn5uZsYwXGopbWDcc+qD3qHGJk4GA8xSnAwK4nwzr/RnSbEm5JY
-	WZValB9fVJqTWnyIUZqDRUmc99vr3hQhgfTEktTs1NSC1CKYLBMHp1QD0+VvucsS9QXvOD+Z
-	karVtrLnx52Y9ZKKwdafBNa8yNoc9/oZ55nagvcMe76xJsrM/DF97faNx/svHrPw9pVSmCrg
-	aZP78OPLWZpbs/nV3U+KFFofTJLvP33WJk8iobRvppqiaKfu3znckmqv3O3a+iLnrO9T7vHg
-	/j/dP8/S9ecfqSsyk64fNFz3ReFKuvdh6UnV2l38R++93V9w58IbqZVbNfh/yJ6duCWCeU3y
-	M/YjNxIMuJb9vvjUqyFy01unr8ccee0SS///6rZoYvrxl23tq7N6K9SnMvoubJ4duKz+yKlo
-	WZc1s/Lse0s/hAod9d5bpXDA3nXBS9H6RfeXGn3YcCnogdeRGfKnat2W1SixFGckGmoxFxUn
-	AgA6w1ntMgMAAA==
-X-CMS-MailID: 20240710023056epcas5p204fb5e155dab6395575b8717c06b247e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240707231445epcas2p2cf78684e3cbcf8ed914a0d8e52115216
-References: <20240707231331.3433340-1-sunyeal.hong@samsung.com>
-	<CGME20240707231445epcas2p2cf78684e3cbcf8ed914a0d8e52115216@epcas2p2.samsung.com>
-	<20240707231331.3433340-3-sunyeal.hong@samsung.com>
-	<000101dad126$b964e2d0$2c2ea870$@samsung.com>
-	<000101dad26f$0d0fc0f0$272f42d0$@samsung.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Nyz+CgCX7_J+8o1my0+rAA--.270S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tr4xCr18Kr13Jr1fZrW8WFg_yoW8WrWkpF
+	WYga4jvFZxWa4UKwn2va48WFWruasakry5G3ZFvrW0vwsxZa10qry5tay7XFyFvryrAa4U
+	tr4kKr15G3W0y3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvm1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AE
+	w4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2
+	IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2
+	z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcV
+	Aq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j
+	6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64
+	vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28I
+	cxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_Aw1UJr1UMxC20s026xCaFVCjc4AY6r1j6r
+	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
+	67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
+	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
+	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
+	UI43ZEXa7VUbXdbUUUUUU==
+X-CM-SenderInfo: d2isijirrujqpexdthxhgxhubq/
 
-Hello Sunyeal,
+When user send a mbox cmd whose opcode is CXL_MBOX_OP_CLEAR_LOG and
+the in_payload is normal vendor debug log UUID according to
+the CXL specification
+cxl_payload_from_user_allowed() will return false unexpectedly,
+Sending mobox cmd operation failed and the kernel log will print:
+Clear Log: input payload not allowed.
 
-> -----Original Message-----
-> From: sunyeal.hong <sunyeal.hong=40samsung.com>
->=20
-=5Bsnip=5D
-> > Subject: RE: =5BPATCH v2 2/4=5D arm64: dts: exynos: add initial CMU clo=
-ck
-> > nodes in Exynos Auto v920
-> >
-> >
-> >
-> > > -----Original Message-----
-> > > From: Sunyeal Hong <sunyeal.hong=40samsung.com>
-> > > Sent: Monday, July 8, 2024 4:43 AM
-> > > To: Krzysztof Kozlowski <krzk=40kernel.org>; Sylwester Nawrocki
-> > > <s.nawrocki=40samsung.com>; Chanwoo Choi
-> <cw00.choi=40samsung.com>; Alim
-> > > Akhtar <alim.akhtar=40samsung.com>; Michael Turquette
-=5BSnip=5D
-> > > +		cmu_peric0: clock-controller=4010800000 =7B
-> > > +			compatible =3D =22samsung,exynosautov920-cmu-
-> > > peric0=22;
-> > > +			reg =3D <0x10800000 0x8000>;
-> > Please cross check the size of the register range, this looks to be
-> > more then what is needed.
-> >
-> In the case of preic0, the size is up to 0x7088. The CMU block SFR area o=
-f =E2=80=8B=0D=0A>=20ExynosAuto=20v920=20is=20generally=20specified=20up=20=
-to=200x8000.=20There=20are=20differences=0D=0A>=20for=20each=20block,=20but=
-=20the=20settings=20are=20the=20same.=0D=0A>=20Do=20you=20think=20it=20is=
-=20necessary=20to=20change=20the=20actual=20size=20of=20each=20block?=0D=0A=
-To=20avoid=20any=20overlap=20between=20difference=20SFR=20region,=20better=
-=20to=20mention=20the=20exact=20size=20of=20the=20SFR=20region.=0D=0A=0D=0A=
-=5Bsnip=5D=0D=0A>=20>=20>=20--=0D=0A>=20>=20>=202.45.2=0D=0A>=20>=0D=0A>=20=
->=0D=0A>=20=0D=0A>=20Please=20review=20my=20answer=20again.=0D=0A>=20=0D=0A=
->=20Thanks,=0D=0A>=20Sunyeal=20Hong=0D=0A>=20=0D=0A=0D=0A=0D=0A
+All CXL devices that support a debug log shall support the Vendor Debug
+Log to allow the log to be accessed through a common host driver, for any
+device, all versions of the CXL specification define the same value with
+Log Identifier of: 5e1819d9-11a9-400c-811f-d60719403d86
+
+refer to:
+CXL spec r2.0 Table 169
+CXL spec r3.0 Table 8-62
+CXL spec r3.1 Table 8-71
+
+Fix the definition value of DEFINE_CXL_VENDOR_DEBUG_UUID to match the
+CXL r3.1 specification.
+
+Fixes: 472b1ce6e9d6 ("cxl/mem: Enable commands via CEL")
+Signed-off-by: peng guo <engguopeng@buaa.edu.cn>
+---
+v2 -> v3: Add a description of the impact of this issue on user usage
+          Modify the fixes tag
+v1 -> v2: update commit message  and addressed review comments
+
+ drivers/cxl/cxlmem.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
+index af8169ccdbc0..feb1106559d2 100644
+--- a/drivers/cxl/cxlmem.h
++++ b/drivers/cxl/cxlmem.h
+@@ -563,7 +563,7 @@ enum cxl_opcode {
+ 		  0x3b, 0x3f, 0x17)
+ 
+ #define DEFINE_CXL_VENDOR_DEBUG_UUID                                           \
+-	UUID_INIT(0xe1819d9, 0x11a9, 0x400c, 0x81, 0x1f, 0xd6, 0x07, 0x19,     \
++	UUID_INIT(0x5e1819d9, 0x11a9, 0x400c, 0x81, 0x1f, 0xd6, 0x07, 0x19,     \
+ 		  0x40, 0x3d, 0x86)
+ 
+ struct cxl_mbox_get_supported_logs {
+-- 
+2.43.0
+
 
