@@ -1,353 +1,161 @@
-Return-Path: <linux-kernel+bounces-248407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80F5D92DCBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:41:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFEC892DCCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A29B1F26501
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:41:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5945F1F264B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6258159582;
-	Wed, 10 Jul 2024 23:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4268159565;
+	Wed, 10 Jul 2024 23:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="s4uxAe4p"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dWrM/6qT"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FC914D428;
-	Wed, 10 Jul 2024 23:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA555158861
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720654890; cv=none; b=feXfaZeBI+V+Lk54pDLkZ2EEVTndxEHi0pRS9y+Awbq9deyD4OE5aKHUHaNeAHo+mRISWqsonE85R8N1l8ceHO4+RHMLyjAu1S8sj+L2pwz903FA5foVojMC5MQMtSNS1C6jjExMFLYQfzS+SVO/wygZKXCphIqShH0+IizzC+E=
+	t=1720654939; cv=none; b=SHRrn3d9b2UTN5by6VT2na395rinox3zue1SK7+M0CXAcsqHJ1PPt+nwXE/R3ofNwxx+rzPAn7e0HJTU8OHo59pXqTtR3IpmN9uN+gD7Krtpp6GXopyJ3bXwblqenp8kP9Q8ZEgH2NTszRMD2MI068SpoVTq/LsSyWVE65PIxxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720654890; c=relaxed/simple;
-	bh=dKFjxkZdtnZUoLhr2PrdX1lc7Ess3zGR8UBRJNQvEIY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g//7Agpt/yt3hp2Y9FMiJf6zYy8tXU3NXLBLNqQlEld7Knw/8cBhfqNNUqKQlrcjooMWjsVXpHlWeQwyksgy79hN562eeT9PzwWS4U2NjSzRVHdgX8NGgDSCkAd6EWeetKLAi4LGrJZnzTJmI8xQzdlhAMUvxQXZXXenohCaGaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=s4uxAe4p; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id D27CB12000F;
-	Thu, 11 Jul 2024 02:41:23 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru D27CB12000F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1720654883;
-	bh=9kR5DRSgGX30EoSyDUitp1Cc//79tcnSd50jyX29VWM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=s4uxAe4pDlI9cDDlJq5u/cxIPEQ6I6oq/58rrRx9GtYB4dDvRWElIItmo2F5hphlC
-	 jmyTTeAXaA9CsXC4sxPVkDAnDVwsgCptK+UROLVS+4P21RP9iVbSgla3tBytueFVud
-	 RWelS3kG+YNmDdni/CsjO8i5F5RNwbVrwfdvSXKVo6eRz7zCysrRpIvbzjjNjWbl6z
-	 QQnU9hqfRCCvltwBkwELQ+jXew2o0F97o57dSAGXrrLfClxHQpIR4VrsAY1t7AzYtW
-	 2W+QC2ZswBAljgCHVpfCctiuJC6Weg2U9V1Co3QpkyK68ORd/hA4/lefEGpfImU0jj
-	 t6nKH5qAbhUiA==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Thu, 11 Jul 2024 02:41:23 +0300 (MSK)
-Received: from work.sberdevices.ru (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Thu, 11 Jul 2024 02:41:23 +0300
-From: George Stark <gnstark@salutedevices.com>
-To: <ukleinek@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <neil.armstrong@linaro.org>, <khilman@baylibre.com>,
-	<jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
-	<hkallweit1@gmail.com>
-CC: <linux-pwm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <kernel@salutedevices.com>, George Stark
-	<gnstark@salutedevices.com>, Dmitry Rokosov <ddrokosov@salutedevices.com>
-Subject: [PATCH v4 3/3] arm64: dts: meson: a1: add definitions for meson PWM
-Date: Thu, 11 Jul 2024 02:41:16 +0300
-Message-ID: <20240710234116.2370655-4-gnstark@salutedevices.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240710234116.2370655-1-gnstark@salutedevices.com>
-References: <20240710234116.2370655-1-gnstark@salutedevices.com>
+	s=arc-20240116; t=1720654939; c=relaxed/simple;
+	bh=WmCXshM9BwamSUxd01N4bO9J01nXQuiD7Ah98aEMfxw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PC1SqTulYesxzwUZbEvZ16mfqQmnFDluSWFB6goJZ5KDKNhU6v3gXkIrv0F7s1kDn0v++LTXWiWP5tVvdj+JjP/Y1HDJIzHq1GSr0+AUGRZZYTbaRdjBqkQ1pSquIDf9nTuXE94ufDWCYuN/toczn8p+fAwNUWN96s1twjUM1F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dWrM/6qT; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6b613921035so2081456d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:42:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720654936; x=1721259736; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xw22ZH4c8gyTKnFajh7vcYEJsOdrHlsxvg9OLt0kZtA=;
+        b=dWrM/6qT8jNEjecjc9s08cKSX4h+fb6bTc35XK4KJuziyKO+fD/7CbRZJ4UwApGsfl
+         1W71iFYoXZAhm3NUXU7xD7Et5TuKbhgYB9RICTMsmQqsulI9HWNXvdCZHwLpiCf52//6
+         G0IPDLquKspE/p1oSvCYSjr7fUwxb4l6eRxqgiHh75JUIw5D2hPSiYm8K+UJe5eH7SRd
+         /dF+ZtLkEny2rN/U/siaCZX8u0XTToiPx05I65KGy53ugYyndbw8ILn+iDK4dSayMnmE
+         xi0fKa2ZiL0jp2pJtdOoi+Vg+Muzkoc1dZnbx7V4UDdtpTsUIEoFy1CaPVb9D9iyk86J
+         c36A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720654936; x=1721259736;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xw22ZH4c8gyTKnFajh7vcYEJsOdrHlsxvg9OLt0kZtA=;
+        b=BYLhumh++ewZ2cuB+gw+uhvcLZHDhScbJl5kP20fXVxbte8W8aRMs5dbfkMwZEEQ2C
+         IZU5qHSSy4b9AiBxdfVob+JaSrqqFzpd6mBYcB0eEi0U8bE+NqbfhoyrwBzDuom3qVt0
+         mGw/MHp9YGDdwViB3YCyAzlNR7XIfmEnCXlcaD0M4XV2XU1Iw6AUba9UdVQ4loIQ73ud
+         LBhKeNg55DwR5NoffkagUMeCygTXV8a61t+9C9puwe0CPrHTFtWoefAW5K8x2cTQN0jN
+         oobFdaMAdoWEDW2BAsuQlCrAQGbuqaypWdQwSBwEuZT9HtHvDDeLS43htyz/9e61lQ1N
+         9cIA==
+X-Forwarded-Encrypted: i=1; AJvYcCXmxnGSsuFM4900+TF4HH9cP/PUN3evAp92WB7aaVjMjgKmYLL9Iatc/nIrKzvx5l4+RUX+HbtsCzh1hW6GmfX7Y7o+YEwMSGEzv8rI
+X-Gm-Message-State: AOJu0YzzYvzWjCcXSrcmkrBQ4gfv4E8eeBwmsSaz9gm/O28iVxt3dRuD
+	58lua0XlbaosShxqBELVPaMo09o4QNsWadNYYHPayl3hhkVihwMMIn8hJeXplNaEhheQ1BSm/Jq
+	+Rbmg7CAD3unn26IATy8rSDSxgF01Y0ay6erPnLfczILJS1cujuvAfPw=
+X-Google-Smtp-Source: AGHT+IGOLOQ6K3/3da49V2eHyCz+KQjRCyIEiAYnB4b8F1iCu2D4bkJxhlzGFfxvSjmRGC6gzv7EI1OWCLflWXtCr4A=
+X-Received: by 2002:a05:6214:20e2:b0:6b5:9c9c:7baf with SMTP id
+ 6a1803df08f44-6b61bca896amr97392016d6.23.1720654936406; Wed, 10 Jul 2024
+ 16:42:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186446 [Jul 10 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;100.64.160.123:7.1.2;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/10 21:42:00 #25942395
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <20240710001749.1388631-1-almasrymina@google.com>
+ <20240710001749.1388631-6-almasrymina@google.com> <20240710094900.0f808684@kernel.org>
+In-Reply-To: <20240710094900.0f808684@kernel.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Wed, 10 Jul 2024 16:42:04 -0700
+Message-ID: <CAHS8izPTqsNQnQWKpDPTxULTFL4vr4k6j9Zw8TQzJVDBMXWMaA@mail.gmail.com>
+Subject: Re: [PATCH net-next v16 05/13] page_pool: devmem support
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>, 
+	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, linux-mm@kvack.org, 
+	Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The chip has 3 dual-channel PWM modules PWM_AB, PWM_CD, PWM_EF those
-can be connected to various digital I/O pins.
+On Wed, Jul 10, 2024 at 9:49=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
+ote:
+>
+> On Wed, 10 Jul 2024 00:17:38 +0000 Mina Almasry wrote:
+> > +static inline struct net_iov *__netmem_clear_lsb(netmem_ref netmem)
+> > +{
+> > +     return (struct net_iov *)((__force unsigned long)netmem & ~NET_IO=
+V);
+> > +}
+> > +
+> > +static inline unsigned long netmem_get_pp_magic(netmem_ref netmem)
+> > +{
+> > +     return __netmem_clear_lsb(netmem)->pp_magic;
+> > +}
+> > +
+> > +static inline void netmem_or_pp_magic(netmem_ref netmem, unsigned long=
+ pp_magic)
+> > +{
+> > +     __netmem_clear_lsb(netmem)->pp_magic |=3D pp_magic;
+> > +}
+> > +
+> > +static inline void netmem_clear_pp_magic(netmem_ref netmem)
+> > +{
+> > +     __netmem_clear_lsb(netmem)->pp_magic =3D 0;
+> > +}
+> > +
+> > +static inline struct page_pool *netmem_get_pp(netmem_ref netmem)
+> > +{
+> > +     return __netmem_clear_lsb(netmem)->pp;
+> > +}
+> > +
+> > +static inline void netmem_set_pp(netmem_ref netmem, struct page_pool *=
+pool)
+> > +{
+> > +     __netmem_clear_lsb(netmem)->pp =3D pool;
+> > +}
+>
+> Why is all this stuff in the main header? It's really low level.
+> Please put helpers which are only used by the core in a header
+> under net/core/, like net/core/dev.h
 
-Each of 6 PWM is driven by individually selected clock parent and
-8-bit divider. The PWM signal is generated using two 16-bit counters.
+Sorry none of those are only used by net/core/*. Pretty much all of
+these are used by include/net/page_pool/helpers.h, and some have
+callers in net/core/devmem.c or net/core/skbuff.c
 
-Signed-off-by: George Stark <gnstark@salutedevices.com>
-Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
----
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 215 ++++++++++++++++++++++
- 1 file changed, 215 insertions(+)
+Would you like me to move these pp specific looking ones to
+include/net/page_pool/netmem.h or something similar?
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-index 85e56c021e99..0dc39fb8f59d 100644
---- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-@@ -307,6 +307,188 @@ mux {
- 					};
- 				};
- 
-+				pwm_a_pins1: pwm-a-pins1 {
-+					mux {
-+						groups = "pwm_a_x6";
-+						function = "pwm_a";
-+					};
-+				};
-+
-+				pwm_a_pins2: pwm-a-pins2 {
-+					mux {
-+						groups = "pwm_a_x7";
-+						function = "pwm_a";
-+					};
-+				};
-+
-+				pwm_a_pins3: pwm-a-pins3 {
-+					mux {
-+						groups = "pwm_a_f10";
-+						function = "pwm_a";
-+					};
-+				};
-+
-+				pwm_a_pins4: pwm-a-pins4 {
-+					mux {
-+						groups = "pwm_a_f6";
-+						function = "pwm_a";
-+					};
-+				};
-+
-+				pwm_a_pins5: pwm-a-pins5 {
-+					mux {
-+						groups = "pwm_a_a";
-+						function = "pwm_a";
-+					};
-+				};
-+
-+				pwm_b_pins1: pwm-b-pins1 {
-+					mux {
-+						groups = "pwm_b_x";
-+						function = "pwm_b";
-+					};
-+				};
-+
-+				pwm_b_pins2: pwm-b-pins2 {
-+					mux {
-+						groups = "pwm_b_f";
-+						function = "pwm_b";
-+					};
-+				};
-+
-+				pwm_b_pins3: pwm-b-pins3 {
-+					mux {
-+						groups = "pwm_b_a";
-+						function = "pwm_b";
-+					};
-+				};
-+
-+				pwm_c_pins1: pwm-c-pins1 {
-+					mux {
-+						groups = "pwm_c_x";
-+						function = "pwm_c";
-+					};
-+				};
-+
-+				pwm_c_pins2: pwm-c-pins2 {
-+					mux {
-+						groups = "pwm_c_f3";
-+						function = "pwm_c";
-+					};
-+				};
-+
-+				pwm_c_pins3: pwm-c-pins3 {
-+					mux {
-+						groups = "pwm_c_f8";
-+						function = "pwm_c";
-+					};
-+				};
-+
-+				pwm_c_pins4: pwm-c-pins4 {
-+					mux {
-+						groups = "pwm_c_a";
-+						function = "pwm_c";
-+					};
-+				};
-+
-+				pwm_d_pins1: pwm-d-pins1 {
-+					mux {
-+						groups = "pwm_d_x15";
-+						function = "pwm_d";
-+					};
-+				};
-+
-+				pwm_d_pins2: pwm-d-pins2 {
-+					mux {
-+						groups = "pwm_d_x13";
-+						function = "pwm_d";
-+					};
-+				};
-+
-+				pwm_d_pins3: pwm-d-pins3 {
-+					mux {
-+						groups = "pwm_d_x10";
-+						function = "pwm_d";
-+					};
-+				};
-+
-+				pwm_d_pins4: pwm-d-pins4 {
-+					mux {
-+						groups = "pwm_d_f";
-+						function = "pwm_d";
-+					};
-+				};
-+
-+				pwm_e_pins1: pwm-e-pins1 {
-+					mux {
-+						groups = "pwm_e_p";
-+						function = "pwm_e";
-+					};
-+				};
-+
-+				pwm_e_pins2: pwm-e-pins2 {
-+					mux {
-+						groups = "pwm_e_x16";
-+						function = "pwm_e";
-+					};
-+				};
-+
-+				pwm_e_pins3: pwm-e-pins3 {
-+					mux {
-+						groups = "pwm_e_x14";
-+						function = "pwm_e";
-+					};
-+				};
-+
-+				pwm_e_pins4: pwm-e-pins4 {
-+					mux {
-+						groups = "pwm_e_x2";
-+						function = "pwm_e";
-+					};
-+				};
-+
-+				pwm_e_pins5: pwm-e-pins5 {
-+					mux {
-+						groups = "pwm_e_f";
-+						function = "pwm_e";
-+					};
-+				};
-+
-+				pwm_e_pins6: pwm-e-pins6 {
-+					mux {
-+						groups = "pwm_e_a";
-+						function = "pwm_e";
-+					};
-+				};
-+
-+				pwm_f_pins1: pwm-f-pins1 {
-+					mux {
-+						groups = "pwm_f_b";
-+						function = "pwm_f";
-+					};
-+				};
-+
-+				pwm_f_pins2: pwm-f-pins2 {
-+					mux {
-+						groups = "pwm_f_x";
-+						function = "pwm_f";
-+					};
-+				};
-+
-+				pwm_f_pins3: pwm-f-pins3 {
-+					mux {
-+						groups = "pwm_f_f4";
-+						function = "pwm_f";
-+					};
-+				};
-+
-+				pwm_f_pins4: pwm-f-pins4 {
-+					mux {
-+						groups = "pwm_f_f12";
-+						function = "pwm_f";
-+					};
-+				};
-+
- 				sdio_pins: sdio {
- 					mux0 {
- 						groups = "sdcard_d0_x",
-@@ -648,6 +830,28 @@ uart_AO_B: serial@2000 {
- 				status = "disabled";
- 			};
- 
-+			pwm_ab: pwm@2400 {
-+				compatible = "amlogic,meson-a1-pwm",
-+					     "amlogic,meson-s4-pwm";
-+				reg = <0x0 0x2400 0x0 0x24>;
-+				#pwm-cells = <3>;
-+				clocks = <&clkc_periphs CLKID_PWM_A>,
-+					 <&clkc_periphs CLKID_PWM_B>;
-+				power-domains = <&pwrc PWRC_I2C_ID>;
-+				status = "disabled";
-+			};
-+
-+			pwm_cd: pwm@2800 {
-+				compatible = "amlogic,meson-a1-pwm",
-+					     "amlogic,meson-s4-pwm";
-+				reg = <0x0 0x2800 0x0 0x24>;
-+				#pwm-cells = <3>;
-+				clocks = <&clkc_periphs CLKID_PWM_C>,
-+					 <&clkc_periphs CLKID_PWM_D>;
-+				power-domains = <&pwrc PWRC_I2C_ID>;
-+				status = "disabled";
-+			};
-+
- 			saradc: adc@2c00 {
- 				compatible = "amlogic,meson-g12a-saradc",
- 					"amlogic,meson-saradc";
-@@ -732,6 +936,17 @@ sec_AO: ao-secure@5a20 {
- 				amlogic,has-chip-id;
- 			};
- 
-+			pwm_ef: pwm@5400 {
-+				compatible = "amlogic,meson-a1-pwm",
-+					     "amlogic,meson-s4-pwm";
-+				reg = <0x0 0x5400 0x0 0x24>;
-+				#pwm-cells = <3>;
-+				clocks = <&clkc_periphs CLKID_PWM_E>,
-+					 <&clkc_periphs CLKID_PWM_F>;
-+				power-domains = <&pwrc PWRC_I2C_ID>;
-+				status = "disabled";
-+			};
-+
- 			clkc_pll: pll-clock-controller@7c80 {
- 				compatible = "amlogic,a1-pll-clkc";
- 				reg = <0 0x7c80 0 0x18c>;
--- 
-2.25.1
-
+--=20
+Thanks,
+Mina
 
