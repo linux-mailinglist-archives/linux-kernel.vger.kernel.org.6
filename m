@@ -1,86 +1,147 @@
-Return-Path: <linux-kernel+bounces-247588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D1C92D18D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:28:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47FEF92D197
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B44761F2228A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:28:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0847528578E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E93191499;
-	Wed, 10 Jul 2024 12:28:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67DBF1922C6;
+	Wed, 10 Jul 2024 12:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mlWtW8hR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968F7848E
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 12:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E7B1E4AF;
+	Wed, 10 Jul 2024 12:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720614485; cv=none; b=XUuLO6jiVG5QomzvUU8AiuojBCCiAVJfie+js3wz18HkomjXWQQezk7BTTuVrfLpZZbpiLoZAJL6pOzRgLNWFROm1f0zsI0W4H8sEwaHS7G95xSnkMI1+fsw8SBs+/ynAhwMz6t1TXX2dj24LaH26bSDqUt1Mq79QllVR0vZAfo=
+	t=1720614611; cv=none; b=qmQtng371Fb8ch4sLuaAtm9nFYdBfW0nccVriVtT0pBPqj/JRxM7KOEk2Zr+p0Dscoo4ZUegMyLPWOsYSjTJe+NgqI2s3cOlojMHGsi8ny9pCp5jgqdieHcbUcEKzyIScS+wJ0qj3ozhM0C6i+snbixGnRZ7V1uJhvp+zida+7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720614485; c=relaxed/simple;
-	bh=FIo74+MaoiWUC8xkYDfiyRB22TPZV2YzgZdkt46aVcc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jSENVcoYKNi5S0oHXy08W7+3vkLKlpncsy9PHh8NzlkgnPrlUMil94V7IZdWXVk/g9vv12CbNRpejA7vZET8JoWO4JcMI9ePRsf81rehgshcByGbqnznBcj1m4OmpylQRQtZYLx+CofofmgO9l1uNj0i1qbufdD6WkS9Hi02kas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7fc9fc043eeso348759139f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 05:28:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720614483; x=1721219283;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1MQSwPjcLvlTywvMFoKitsBZYGS8ON2IjJ+7g9izWs0=;
-        b=VwGoYlYx8CMKdT8vvvax7RaH/QVt17ELrD41rX0ZOuvaDGhrFpDU8N1uT8FKDJdvBr
-         rCcKu2VT+cg51CtCcvWGRkqg9ST0bck6i8t/t96AgQvRfg2sHKZiYDJuCDdsYY+nengn
-         OdyZqSbl1U3y9eCyWK7ypu9A5oaspvR4CqHgpHdk4XAmO0O6qaWd5ebu/eAq10qYNddW
-         pJiZCdUVSTPCGvOpUvq3rpO21eQOF7zz1BMiLZp9P2n0yKLU2Y36b07nnxAv+XWzQ11o
-         d3/m0RJNPHUxeHoq+RCbFwuFBTWdUOdxzL9gMf48eCTFlucU14yWXq+d6llV+FEstRhy
-         5THg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7MKB3ySNXbpDossrh8/tpxgeFxmjxLh/yzQmCqNHhusBoQroV1X175kY/NSHkkhY2I17vH7M+L6sfsZd1Ggk/spOM/3AZs7oN5LHo
-X-Gm-Message-State: AOJu0Yzd74JmKAmrPCi225PGwhoaCavOj0fVOF8brhOoYbpawuit2a0+
-	se/4ZT+QvGeb8UoKX4r1ZB15afHklpzJR6vRant3KuaE2UP2arcvrNc0NF2aaFBt5DMC8CGBXAc
-	5T4eOVUmdVhqUm9V2ZkOsKcj7zVLwQzb0W4vjVROgFxcOF1gv019jdcQ=
-X-Google-Smtp-Source: AGHT+IFtjdhqLTv2at9zhmW31utc+VFnp2hu8ZbuZmbbqhepW34m4u4NJR60Vg2wOp10SuATuf7ZGJqYJXVJ4lPeSGQ42FXKsyYa
+	s=arc-20240116; t=1720614611; c=relaxed/simple;
+	bh=Q26aL892K0l+LyyYgM0jUhvcj2Dc0Hq5zyGMegKD5TM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c7zqdZuEMhu0eGw6h0VOtZcPyT6sz5TetvayBX546Bbkj62j6Fkg22gHtBUlKZOsC8VB353orv+bIW6Ms95LmnhPPbpA1XSYyRV1Z0ss2I4MxEI6eWdqs3aNQl4lMBmPg1XFGvA2uvXvbbre+s+wJ1z01m4c3bT3dt6mHDinpBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mlWtW8hR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAA09C32782;
+	Wed, 10 Jul 2024 12:30:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720614611;
+	bh=Q26aL892K0l+LyyYgM0jUhvcj2Dc0Hq5zyGMegKD5TM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mlWtW8hRbQSvovcDiDXBskauLgXt0Y+GVyBEaV5okO9Dd5yTMYt1Ef8J7qSIt8EYZ
+	 Xfz3BWd67AO20WHpAHPO3T2DzYfnbiSMJvzxEkZ6Zk4yBlD/51h5wxSba3CU76fwt4
+	 TjvB+2IkLUzAdOisWKzGIW+e7BSxX1hZN1RGjxSoiXm70RbCJKNCLJOdnY0zUHfhHb
+	 epapw73s6Tv42UKocsLMhbfIOI9R5rT1z1+YmI1TEeG+Ih9ej9AasskIrFVXfOMW3W
+	 1AvQ6OqiU45L1hkyfDq7gnJIpXUi/JH7tr8mexnZbG+GbJYOOaItrzXtFpsJguVRKB
+	 DGNACBVMjjbRw==
+Message-ID: <d72ec08a-bd5c-482b-8af9-3fc923820d25@kernel.org>
+Date: Wed, 10 Jul 2024 14:30:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8608:b0:4c0:9380:a260 with SMTP id
- 8926c6da1cb9f-4c0b2af25c4mr356574173.3.1720614482774; Wed, 10 Jul 2024
- 05:28:02 -0700 (PDT)
-Date: Wed, 10 Jul 2024 05:28:02 -0700
-In-Reply-To: <20240710104650.1032-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000aa151061ce3c788@google.com>
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in l2tp_session_delete
-From: syzbot <syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 00/13] media: qcom: camss: Add sm8550 support
+To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20240709160656.31146-1-quic_depengs@quicinc.com>
+ <55e850dd-1b45-4bad-a11f-f645cca07f2a@kernel.org>
+ <d8d6574a-2823-4955-898d-d6637e40946e@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <d8d6574a-2823-4955-898d-d6637e40946e@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 10/07/2024 13:27, Depeng Shao wrote:
+> 
+> 
+> On 7/10/2024 7:08 PM, Krzysztof Kozlowski wrote:
+>> On 09/07/2024 18:06, Depeng Shao wrote:
+>>> V3:
+>>> - Rebased the change based on below change which will be merged firstly.
+>>>    "Move camss version related defs in to resources"
+>>> Link: https://lore.kernel.org/all/20240522154659.510-1-quic_grosikop@quicinc.com/
+>>> - Rebased the change based on Bryan's csiphy optimization change and add
+>>> these changes into this series, so that the new csiphy-3ph driver don't
+>>> need to add duplicate code. This has got Bryan's permission to add his
+>>> patches into this series.
+>>> - Refactor some changes based on the comments to move the random code to
+>>> patches where they are used.
+>>> - Remove the vfe780 irq function since it isn't doing the actual work.
+>>> - Add dt-binding for sm8550 camss driver.
+>>> Link to V2: https://lore.kernel.org/all/20240320141136.26827-1-quic_depengs@quicinc.com/
+>>
+>> I asked for reference to upstream DTS - where can I find the DTS patches?
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> 
+> Hi Krzysztof,
+> 
+> Sorry for that, I thought add the dt-binding is also fine, since I saw 
+> other patches also do like this. Will add add the DTS in next patch set.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+DTS should not be part of this patchset, but sent separately.  It's
+enough if you post a lore link to it.
 
-Reported-and-tested-by: syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com
+Best regards,
+Krzysztof
 
-Tested on:
-
-commit:         185d7211 net: xilinx: axienet: Enable multicast by def..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=1505d6e1980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e78fc116033e0ab7
-dashboard link: https://syzkaller.appspot.com/bug?extid=c041b4ce3a6dfd1e63e2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13d4869e980000
-
-Note: testing is done by a robot and is best-effort only.
 
