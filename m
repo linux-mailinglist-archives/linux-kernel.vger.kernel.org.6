@@ -1,355 +1,449 @@
-Return-Path: <linux-kernel+bounces-247337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8290592CE27
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:28:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE48A92CE2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC0E1C226DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:28:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 814E2282178
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44DC418FA09;
-	Wed, 10 Jul 2024 09:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C599F18FA05;
+	Wed, 10 Jul 2024 09:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="daUgGD9t";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="VNjObKCs"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="ijupoYYe"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E54484A5B;
-	Wed, 10 Jul 2024 09:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A544B84A5B
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720603678; cv=none; b=HzYH6nwZw1FP9a1gpaU++pXvA+8iC0IBQ94yVfFsj+5vJvmJvkFrNu1Fby4jihKnKJhpCEP3FaEjvJn9S73yEEzd+fmyWL+e981e+T+PCnbeUe/urSnvszfQ3PDZ45hqBjLcIqY3TqAiRVrC9uMjnqQ/GIoYjj4y621VUcz1Btg=
+	t=1720603724; cv=none; b=AQSqpY/ejCqkJx3jKc54raINfBXZXX5SH+KmeieSka+twp8+rPtptDdqMQcBaQh4QevbnFt8CwDoLuuju8Vdpwp8S8iMCkIms029i5DzbQwIl0d78Qt4qCrzc+7+QAtO7TwVHHQT//DdV8KcSDyBt/b+uWhUHXrIhMzbmc4RJYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720603678; c=relaxed/simple;
-	bh=VEqA41itZfYP/d964jrgEgto9VD/PxH1g3l/LYZKcGY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kzDcNWNPs1Ad65N1kzNm21Dob0pg1X4/K1wNnYyOFmdYaIeR3NRxuMU9Lvo03lS0TQcUPipXRpSZdYb+jEd50haQmEdV9zlxSXFWJrXYnz/3IWGUJ5T+HhGeGMeyHX+gqX5TnT04N4BqT8YCdHMhSfUnJAO2NFkIKYwHuYVsKSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=daUgGD9t; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=VNjObKCs; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id F09E01F824;
-	Wed, 10 Jul 2024 09:27:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1720603674; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=yvkLuMdtx87SaARp851BXKgU7x+Jf7wtc4J0og1cdRI=;
-	b=daUgGD9tEMuNPzUgpg/FQZ7RXfLbw7PD673gmBqu0GAQ1EHGap50iw99rOTyB2Jie4ovOP
-	alKzOglb8/g5W2QVPudBnakYBl/9ke77Hk0B/q8GWscRpBEpyCdplcnzQFxE/VejuamPlx
-	2w/ZUCOLaw3uA94uVi3Ui/7kG6qycpU=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=VNjObKCs
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1720603673; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=yvkLuMdtx87SaARp851BXKgU7x+Jf7wtc4J0og1cdRI=;
-	b=VNjObKCsO11Do8K01whufQ0VT1CjbyhKjCTvzRHWR/YBxTTNV8YvonFIb04cdBbJ15utIl
-	L6F1XDtd3jVpsRltj4cuXAPG6uzOEolcKDAPmX2uU+yGUbZjosV29utrn3VkZX0ZVSqPlf
-	PML+I4PQU2pW7x5kLsxihGTa+nzdo5A=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 94F64137D2;
-	Wed, 10 Jul 2024 09:27:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BpvjIhhUjmY+WAAAD6G6ig
-	(envelope-from <jgross@suse.com>); Wed, 10 Jul 2024 09:27:52 +0000
-From: Juergen Gross <jgross@suse.com>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	linux-doc@vger.kernel.org
-Cc: Juergen Gross <jgross@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	xen-devel@lists.xenproject.org
-Subject: [PATCH v2] xen: make multicall debug boot time selectable
-Date: Wed, 10 Jul 2024 11:27:49 +0200
-Message-ID: <20240710092749.13595-1-jgross@suse.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720603724; c=relaxed/simple;
+	bh=qPCvkIgZ0LQIEjStFmwvqwbb/Q7SN0OGzH/ZGYgN2Dk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GHgomx4HDadnVdJR/nM7jL0F7x3ma50OMbUqapQh0qz+Ox9CASkKhYOJscpE9zTs6+hz7RJp1aL/Hh67gh8Qb8W7oPYQJTaXg7b8RY6g/qKB0JuieIAbzzSCBRvjYQlkv+aNmRUb6wvt4s2wh5zbkMHk4dXBlvwkAvDupKX+/ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=ijupoYYe; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4210f0bb857so7233125e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 02:28:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1720603720; x=1721208520; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QXMqaQ3CoV5zetv7uvxj3VrSA7H8PuasSLsOG39mM68=;
+        b=ijupoYYe5ONIi0KVrVeqcreA4QaZWCbzEa1glKEli0CknyInLKu3MVVsuUskvrEliv
+         iLogHUEcQn+5tp52SCqOiY70M/M8+InSPoHefRSeIJQ9ZeGZupw6WDJdqKZhzyXZCxUJ
+         sK0ak4HZb/VQwo5idWrJ3xSkLJte3ZkuYXjlw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720603720; x=1721208520;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QXMqaQ3CoV5zetv7uvxj3VrSA7H8PuasSLsOG39mM68=;
+        b=Un54X4X3kzpDfzgZPh9KIHPu3El4ql/uiqEQNJtBPY/acCLpbbfd1L3fobNvUDAIQc
+         xrgiUZxyBIz9SjHGcBWIPXe6pNfiiQ5EiPZm+skgo+PWwy8vVCYiVkLjSojCYyxEYBRW
+         m7QJhQaQehnz7O92CTEso3V/Hp72XU7GIH0tZeVhI1sGgXLoEdyBoyk+GC7lgsG4RDwG
+         78h1l80CwgYAZoHre4zUAjqf4uvly3jIT7v3+hzoNOcu8L3YAAIgSGueC2gX0VervDbw
+         CF7nXoLCnUJICYbS9ytiWECtr6NCgJ0ZrW1AV09dOOjZ7HtO8hTpHqhMwGOj/gl+xJEo
+         9qqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdRiANSi3SQrH5UlDZ+nrywQG25si+KGJR4YvDrq1kvcYhvMauIdIHSDkxB4JOWlvHiarxKnR9yhkSXfJDBjpQToJ/ADUs/JxTeTmk
+X-Gm-Message-State: AOJu0YzjxNhuDzhfoeifV0G0tPZK56FC/xAQrwnczP3dePeUSYgmzSdt
+	Ot5pep7nXZgz3nnVUsQ6nuicEXFkukXJ+t37Db0QJjusci2mYYGaUP5E4x0PGbU=
+X-Google-Smtp-Source: AGHT+IFDhL2plDsssKiIesAVPihoGi/+2qZ2J3g9xFx123hma/wuKeX2uZUbpD0NiOKhV7Qb/ozrcw==
+X-Received: by 2002:a05:600c:5106:b0:426:67e0:3aa with SMTP id 5b1f17b1804b1-426707cee07mr31430455e9.1.1720603719843;
+        Wed, 10 Jul 2024 02:28:39 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4264a2fc942sm240427935e9.42.2024.07.10.02.28.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 02:28:39 -0700 (PDT)
+Date: Wed, 10 Jul 2024 11:28:36 +0200
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+To: syzbot <syzbot+2e171785a12db2e2bd5d@syzkaller.appspotmail.com>
+Cc: airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+	hamohammed.sa@gmail.com, linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com, mairacanal@riseup.net,
+	melissa.srw@gmail.com, mripard@kernel.org,
+	rodrigosiqueiramelo@gmail.com, syzkaller-bugs@googlegroups.com,
+	tzimmermann@suse.de
+Subject: Re: [syzbot] [dri?] possible deadlock in drm_modeset_lock
+Message-ID: <Zo5URGHN3d4le-GJ@phenom.ffwll.local>
+Mail-Followup-To: syzbot <syzbot+2e171785a12db2e2bd5d@syzkaller.appspotmail.com>,
+	airlied@gmail.com, dri-devel@lists.freedesktop.org,
+	hamohammed.sa@gmail.com, linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com, mairacanal@riseup.net,
+	melissa.srw@gmail.com, mripard@kernel.org,
+	rodrigosiqueiramelo@gmail.com, syzkaller-bugs@googlegroups.com,
+	tzimmermann@suse.de
+References: <00000000000073db8b061cd43496@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: F09E01F824
-X-Spam-Score: -3.01
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.com:dkim];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000073db8b061cd43496@google.com>
+X-Operating-System: Linux phenom 6.9.7-amd64 
 
-Today Xen multicall debugging needs to be enabled via modifying a
-define in a source file for getting debug data of multicall errors
-encountered by users.
+On Tue, Jul 09, 2024 at 10:53:18AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    8e2f4becf4fa Merge remote-tracking branch 'tglx/devmsi-arm..
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10676a9e980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=15349546db652fd3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=2e171785a12db2e2bd5d
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> userspace arch: arm64
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/ee71a34a1c26/disk-8e2f4bec.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/f8a6bf3c4b1c/vmlinux-8e2f4bec.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/236760504de5/Image-8e2f4bec.gz.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+2e171785a12db2e2bd5d@syzkaller.appspotmail.com
+> 
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 6.10.0-rc6-syzkaller-g8e2f4becf4fa #0 Not tainted
+> ------------------------------------------------------
+> syz.4.1912/14164 is trying to acquire lock:
+> ffff0000ccd2e988 (&mm->mmap_lock){++++}-{3:3}, at: __might_fault+0x9c/0x124 mm/memory.c:6233
+> 
+> but task is already holding lock:
+> ffff0000c8f64518 (crtc_ww_class_mutex){+.+.}-{3:3}, at: drm_modeset_lock+0x78/0xa4 drivers/gpu/drm/drm_modeset_lock.c:398
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #8 (crtc_ww_class_mutex){+.+.}-{3:3}:
+>        __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+>        __ww_mutex_lock kernel/locking/mutex.c:759 [inline]
+>        ww_mutex_lock+0x64/0x3a4 kernel/locking/mutex.c:876
+>        modeset_lock+0x278/0x59c drivers/gpu/drm/drm_modeset_lock.c:314
+>        drm_modeset_lock+0x64/0xa4 drivers/gpu/drm/drm_modeset_lock.c:396
+>        drmm_mode_config_init+0xba0/0x1280 drivers/gpu/drm/drm_mode_config.c:454
+>        vkms_modeset_init drivers/gpu/drm/vkms/vkms_drv.c:156 [inline]
+>        vkms_create drivers/gpu/drm/vkms/vkms_drv.c:215 [inline]
+>        vkms_init+0x2fc/0x600 drivers/gpu/drm/vkms/vkms_drv.c:252
+>        do_one_initcall+0x24c/0x9c0 init/main.c:1267
+>        do_initcall_level+0x154/0x214 init/main.c:1329
+>        do_initcalls+0x58/0xac init/main.c:1345
+>        do_basic_setup+0x8c/0xa0 init/main.c:1364
+>        kernel_init_freeable+0x324/0x478 init/main.c:1578
+>        kernel_init+0x24/0x2a0 init/main.c:1467
+>        ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+> 
+> -> #7 (crtc_ww_class_acquire){+.+.}-{0:0}:
+>        ww_acquire_init include/linux/ww_mutex.h:149 [inline]
+>        drm_modeset_acquire_init+0x194/0x330 drivers/gpu/drm/drm_modeset_lock.c:250
+>        drm_client_modeset_commit_atomic+0xe0/0x730 drivers/gpu/drm/drm_client_modeset.c:1002
+>        drm_client_modeset_commit_locked+0xd0/0x4a8 drivers/gpu/drm/drm_client_modeset.c:1166
+>        drm_client_modeset_commit+0x50/0x7c drivers/gpu/drm/drm_client_modeset.c:1192
+>        __drm_fb_helper_restore_fbdev_mode_unlocked+0xd4/0x178 drivers/gpu/drm/drm_fb_helper.c:251
+>        drm_fb_helper_set_par+0xc4/0x110 drivers/gpu/drm/drm_fb_helper.c:1347
+>        fbcon_init+0xf34/0x1eb8 drivers/video/fbdev/core/fbcon.c:1093
+>        visual_init+0x27c/0x548 drivers/tty/vt/vt.c:1011
+>        do_bind_con_driver+0x7dc/0xe04 drivers/tty/vt/vt.c:3833
+>        do_take_over_console+0x4ac/0x5f0 drivers/tty/vt/vt.c:4399
+>        do_fbcon_takeover+0x158/0x260 drivers/video/fbdev/core/fbcon.c:531
+>        do_fb_registered drivers/video/fbdev/core/fbcon.c:2968 [inline]
+>        fbcon_fb_registered+0x370/0x4ec drivers/video/fbdev/core/fbcon.c:2988
+>        do_register_framebuffer drivers/video/fbdev/core/fbmem.c:449 [inline]
+>        register_framebuffer+0x470/0x610 drivers/video/fbdev/core/fbmem.c:515
+>        __drm_fb_helper_initial_config_and_unlock+0x13b0/0x19a4 drivers/gpu/drm/drm_fb_helper.c:1871
+>        drm_fb_helper_initial_config+0x48/0x64 drivers/gpu/drm/drm_fb_helper.c:1936
+>        drm_fbdev_generic_client_hotplug+0x158/0x22c drivers/gpu/drm/drm_fbdev_generic.c:278
+>        drm_client_register+0x144/0x1e0 drivers/gpu/drm/drm_client.c:141
+>        drm_fbdev_generic_setup+0x11c/0x2cc drivers/gpu/drm/drm_fbdev_generic.c:340
+>        vkms_create drivers/gpu/drm/vkms/vkms_drv.c:226 [inline]
+>        vkms_init+0x4f0/0x600 drivers/gpu/drm/vkms/vkms_drv.c:252
+>        do_one_initcall+0x24c/0x9c0 init/main.c:1267
+>        do_initcall_level+0x154/0x214 init/main.c:1329
+>        do_initcalls+0x58/0xac init/main.c:1345
+>        do_basic_setup+0x8c/0xa0 init/main.c:1364
+>        kernel_init_freeable+0x324/0x478 init/main.c:1578
+>        kernel_init+0x24/0x2a0 init/main.c:1467
+>        ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+> 
+> -> #6 (&client->modeset_mutex){+.+.}-{3:3}:
+>        __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+>        __mutex_lock kernel/locking/mutex.c:752 [inline]
+>        mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+>        drm_client_modeset_probe+0x318/0x3f68 drivers/gpu/drm/drm_client_modeset.c:832
+>        __drm_fb_helper_initial_config_and_unlock+0xf0/0x19a4 drivers/gpu/drm/drm_fb_helper.c:1848
+>        drm_fb_helper_initial_config+0x48/0x64 drivers/gpu/drm/drm_fb_helper.c:1936
+>        drm_fbdev_generic_client_hotplug+0x158/0x22c drivers/gpu/drm/drm_fbdev_generic.c:278
+>        drm_client_register+0x144/0x1e0 drivers/gpu/drm/drm_client.c:141
+>        drm_fbdev_generic_setup+0x11c/0x2cc drivers/gpu/drm/drm_fbdev_generic.c:340
+>        vkms_create drivers/gpu/drm/vkms/vkms_drv.c:226 [inline]
+>        vkms_init+0x4f0/0x600 drivers/gpu/drm/vkms/vkms_drv.c:252
+>        do_one_initcall+0x24c/0x9c0 init/main.c:1267
+>        do_initcall_level+0x154/0x214 init/main.c:1329
+>        do_initcalls+0x58/0xac init/main.c:1345
+>        do_basic_setup+0x8c/0xa0 init/main.c:1364
+>        kernel_init_freeable+0x324/0x478 init/main.c:1578
+>        kernel_init+0x24/0x2a0 init/main.c:1467
+>        ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+> 
+> -> #5 (&helper->lock){+.+.}-{3:3}:
+>        __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+>        __mutex_lock kernel/locking/mutex.c:752 [inline]
+>        mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+>        __drm_fb_helper_restore_fbdev_mode_unlocked+0xb4/0x178 drivers/gpu/drm/drm_fb_helper.c:242
+>        drm_fb_helper_set_par+0xc4/0x110 drivers/gpu/drm/drm_fb_helper.c:1347
+>        fbcon_init+0xf34/0x1eb8 drivers/video/fbdev/core/fbcon.c:1093
+>        visual_init+0x27c/0x548 drivers/tty/vt/vt.c:1011
+>        do_bind_con_driver+0x7dc/0xe04 drivers/tty/vt/vt.c:3833
+>        do_take_over_console+0x4ac/0x5f0 drivers/tty/vt/vt.c:4399
+>        do_fbcon_takeover+0x158/0x260 drivers/video/fbdev/core/fbcon.c:531
+>        do_fb_registered drivers/video/fbdev/core/fbcon.c:2968 [inline]
+>        fbcon_fb_registered+0x370/0x4ec drivers/video/fbdev/core/fbcon.c:2988
+>        do_register_framebuffer drivers/video/fbdev/core/fbmem.c:449 [inline]
+>        register_framebuffer+0x470/0x610 drivers/video/fbdev/core/fbmem.c:515
+>        __drm_fb_helper_initial_config_and_unlock+0x13b0/0x19a4 drivers/gpu/drm/drm_fb_helper.c:1871
+>        drm_fb_helper_initial_config+0x48/0x64 drivers/gpu/drm/drm_fb_helper.c:1936
+>        drm_fbdev_generic_client_hotplug+0x158/0x22c drivers/gpu/drm/drm_fbdev_generic.c:278
+>        drm_client_register+0x144/0x1e0 drivers/gpu/drm/drm_client.c:141
+>        drm_fbdev_generic_setup+0x11c/0x2cc drivers/gpu/drm/drm_fbdev_generic.c:340
+>        vkms_create drivers/gpu/drm/vkms/vkms_drv.c:226 [inline]
+>        vkms_init+0x4f0/0x600 drivers/gpu/drm/vkms/vkms_drv.c:252
+>        do_one_initcall+0x24c/0x9c0 init/main.c:1267
+>        do_initcall_level+0x154/0x214 init/main.c:1329
+>        do_initcalls+0x58/0xac init/main.c:1345
+>        do_basic_setup+0x8c/0xa0 init/main.c:1364
+>        kernel_init_freeable+0x324/0x478 init/main.c:1578
+>        kernel_init+0x24/0x2a0 init/main.c:1467
+>        ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+> 
+> -> #4 (console_lock){+.+.}-{0:0}:
+>        console_lock+0x19c/0x1f4 kernel/printk/printk.c:2665
+>        bch2_print_string_as_lines+0x2c/0xd4 fs/bcachefs/util.c:264
 
-Switch multicall debugging to depend on a boot parameter "xen_mc_debug"
-instead, enabling affected users to boot with the new parameter set in
-order to get better diagnostics.
+Still the same function that's busted, this is a dupe of
+https://lore.kernel.org/dri-devel/00000000000026c1ff061cd0de12@google.com/
 
-With debugging enabled print the following information in case at least
-one of the batched calls failed:
-- all calls of the batch with operation, result and caller
-- all parameters of each call
-- all parameters stored in the multicall data for each call
+Cheers, Sima
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
-V2:
-- fixed argument printing, added parameter printing
-- in debug case print entries without error, too
-- rename struct member from debug to entries (Boris Ostrovsky)
-- get rid of get_mc_debug_ptr() (Boris Ostrovsky)
----
- .../admin-guide/kernel-parameters.txt         |   6 +
- arch/x86/xen/multicalls.c                     | 125 ++++++++++++++----
- 2 files changed, 108 insertions(+), 23 deletions(-)
+>        bch2_fsck_err+0x1d84/0x3300 fs/bcachefs/error.c:352
+>        bch2_check_fix_ptr fs/bcachefs/buckets.c:504 [inline]
+>        bch2_check_fix_ptrs+0x14b4/0x4ae8 fs/bcachefs/buckets.c:631
+>        bch2_trigger_extent+0x634/0x734 fs/bcachefs/buckets.c:1238
+>        bch2_key_trigger fs/bcachefs/bkey_methods.h:88 [inline]
+>        bch2_gc_mark_key+0x474/0xb3c fs/bcachefs/btree_gc.c:613
+>        bch2_gc_btree fs/bcachefs/btree_gc.c:664 [inline]
+>        bch2_gc_btrees fs/bcachefs/btree_gc.c:697 [inline]
+>        bch2_check_allocations+0x2128/0x80d8 fs/bcachefs/btree_gc.c:1224
+>        bch2_run_recovery_pass+0xe4/0x1d4 fs/bcachefs/recovery_passes.c:182
+>        bch2_run_recovery_passes+0x258/0x6e0 fs/bcachefs/recovery_passes.c:225
+>        bch2_fs_recovery+0x31f0/0x5488 fs/bcachefs/recovery.c:813
+>        bch2_fs_start+0x30c/0x53c fs/bcachefs/super.c:1035
+>        bch2_fs_open+0x8b4/0xb64 fs/bcachefs/super.c:2132
+>        bch2_mount+0x4fc/0xe68 fs/bcachefs/fs.c:1926
+>        legacy_get_tree+0xd4/0x16c fs/fs_context.c:662
+>        vfs_get_tree+0x90/0x288 fs/super.c:1780
+>        do_new_mount+0x278/0x900 fs/namespace.c:3352
+>        path_mount+0x590/0xe04 fs/namespace.c:3679
+>        do_mount fs/namespace.c:3692 [inline]
+>        __do_sys_mount fs/namespace.c:3898 [inline]
+>        __se_sys_mount fs/namespace.c:3875 [inline]
+>        __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3875
+>        __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+>        invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+>        el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:131
+>        do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:150
+>        el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+>        el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+>        el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+> 
+> -> #3 (&c->fsck_error_msgs_lock){+.+.}-{3:3}:
+>        __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
+>        __mutex_lock kernel/locking/mutex.c:752 [inline]
+>        mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
+>        bch2_fsck_err+0x2d4/0x3300 fs/bcachefs/error.c:239
+>        bch2_check_fix_ptr fs/bcachefs/buckets.c:504 [inline]
+>        bch2_check_fix_ptrs+0x14b4/0x4ae8 fs/bcachefs/buckets.c:631
+>        bch2_trigger_extent+0x634/0x734 fs/bcachefs/buckets.c:1238
+>        bch2_key_trigger fs/bcachefs/bkey_methods.h:88 [inline]
+>        bch2_gc_mark_key+0x474/0xb3c fs/bcachefs/btree_gc.c:613
+>        bch2_gc_btree fs/bcachefs/btree_gc.c:664 [inline]
+>        bch2_gc_btrees fs/bcachefs/btree_gc.c:697 [inline]
+>        bch2_check_allocations+0x2128/0x80d8 fs/bcachefs/btree_gc.c:1224
+>        bch2_run_recovery_pass+0xe4/0x1d4 fs/bcachefs/recovery_passes.c:182
+>        bch2_run_recovery_passes+0x258/0x6e0 fs/bcachefs/recovery_passes.c:225
+>        bch2_fs_recovery+0x31f0/0x5488 fs/bcachefs/recovery.c:813
+>        bch2_fs_start+0x30c/0x53c fs/bcachefs/super.c:1035
+>        bch2_fs_open+0x8b4/0xb64 fs/bcachefs/super.c:2132
+>        bch2_mount+0x4fc/0xe68 fs/bcachefs/fs.c:1926
+>        legacy_get_tree+0xd4/0x16c fs/fs_context.c:662
+>        vfs_get_tree+0x90/0x288 fs/super.c:1780
+>        do_new_mount+0x278/0x900 fs/namespace.c:3352
+>        path_mount+0x590/0xe04 fs/namespace.c:3679
+>        do_mount fs/namespace.c:3692 [inline]
+>        __do_sys_mount fs/namespace.c:3898 [inline]
+>        __se_sys_mount fs/namespace.c:3875 [inline]
+>        __arm64_sys_mount+0x45c/0x594 fs/namespace.c:3875
+>        __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+>        invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+>        el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:131
+>        do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:150
+>        el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+>        el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+>        el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+> 
+> -> #2 (&c->mark_lock){++++}-{0:0}:
+>        percpu_down_read+0x5c/0x2e8 include/linux/percpu-rwsem.h:51
+>        __bch2_disk_reservation_add+0x98/0x904 fs/bcachefs/buckets.c:1530
+>        bch2_disk_reservation_add+0x2f0/0x45c fs/bcachefs/buckets.h:430
+>        bch2_folio_reservation_get+0x4b0/0x7a0 fs/bcachefs/fs-io-pagecache.c:446
+>        bch2_page_mkwrite+0xa08/0xddc fs/bcachefs/fs-io-pagecache.c:616
+>        do_page_mkwrite+0x140/0x2dc mm/memory.c:3093
+>        do_shared_fault mm/memory.c:4993 [inline]
+>        do_fault mm/memory.c:5055 [inline]
+>        do_pte_missing mm/memory.c:3897 [inline]
+>        handle_pte_fault+0x11e4/0x5714 mm/memory.c:5381
+>        __handle_mm_fault mm/memory.c:5524 [inline]
+>        handle_mm_fault+0xe84/0x15cc mm/memory.c:5689
+>        do_page_fault+0x428/0xb1c arch/arm64/mm/fault.c:613
+>        do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:690
+>        do_mem_abort+0x74/0x200 arch/arm64/mm/fault.c:826
+>        el0_da+0x60/0x178 arch/arm64/kernel/entry-common.c:580
+>        el0t_64_sync_handler+0xcc/0xfc arch/arm64/kernel/entry-common.c:733
+>        el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+> 
+> -> #1 (sb_pagefaults#2){.+.+}-{0:0}:
+>        percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+>        __sb_start_write include/linux/fs.h:1655 [inline]
+>        sb_start_pagefault include/linux/fs.h:1820 [inline]
+>        bch2_page_mkwrite+0x260/0xddc fs/bcachefs/fs-io-pagecache.c:593
+>        do_page_mkwrite+0x140/0x2dc mm/memory.c:3093
+>        do_shared_fault mm/memory.c:4993 [inline]
+>        do_fault mm/memory.c:5055 [inline]
+>        do_pte_missing mm/memory.c:3897 [inline]
+>        handle_pte_fault+0x11e4/0x5714 mm/memory.c:5381
+>        __handle_mm_fault mm/memory.c:5524 [inline]
+>        handle_mm_fault+0xe84/0x15cc mm/memory.c:5689
+>        do_page_fault+0x428/0xb1c arch/arm64/mm/fault.c:613
+>        do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:690
+>        do_mem_abort+0x74/0x200 arch/arm64/mm/fault.c:826
+>        el0_da+0x60/0x178 arch/arm64/kernel/entry-common.c:580
+>        el0t_64_sync_handler+0xcc/0xfc arch/arm64/kernel/entry-common.c:733
+>        el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+> 
+> -> #0 (&mm->mmap_lock){++++}-{3:3}:
+>        check_prev_add kernel/locking/lockdep.c:3134 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+>        validate_chain kernel/locking/lockdep.c:3869 [inline]
+>        __lock_acquire+0x3384/0x763c kernel/locking/lockdep.c:5137
+>        lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5754
+>        __might_fault+0xc4/0x124 mm/memory.c:6234
+>        drm_mode_object_get_properties+0x208/0x560 drivers/gpu/drm/drm_mode_object.c:406
+>        drm_mode_getconnector+0xde4/0x1224 drivers/gpu/drm/drm_connector.c:3020
+>        drm_ioctl_kernel+0x26c/0x368 drivers/gpu/drm/drm_ioctl.c:744
+>        drm_ioctl+0x5e4/0xae4 drivers/gpu/drm/drm_ioctl.c:841
+>        vfs_ioctl fs/ioctl.c:51 [inline]
+>        __do_sys_ioctl fs/ioctl.c:907 [inline]
+>        __se_sys_ioctl fs/ioctl.c:893 [inline]
+>        __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:893
+>        __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+>        invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+>        el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:131
+>        do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:150
+>        el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+>        el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+>        el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+> 
+> other info that might help us debug this:
+> 
+> Chain exists of:
+>   &mm->mmap_lock --> crtc_ww_class_acquire --> crtc_ww_class_mutex
+> 
+>  Possible unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(crtc_ww_class_mutex);
+>                                lock(crtc_ww_class_acquire);
+>                                lock(crtc_ww_class_mutex);
+>   rlock(&mm->mmap_lock);
+> 
+>  *** DEADLOCK ***
+> 
+> 1 lock held by syz.4.1912/14164:
+>  #0: ffff0000c8f64518 (crtc_ww_class_mutex){+.+.}-{3:3}, at: drm_modeset_lock+0x78/0xa4 drivers/gpu/drm/drm_modeset_lock.c:398
+> 
+> stack backtrace:
+> CPU: 0 PID: 14164 Comm: syz.4.1912 Not tainted 6.10.0-rc6-syzkaller-g8e2f4becf4fa #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+> Call trace:
+>  dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
+>  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:114
+>  dump_stack+0x1c/0x28 lib/dump_stack.c:123
+>  print_circular_bug+0x150/0x1b8 kernel/locking/lockdep.c:2060
+>  check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2187
+>  check_prev_add kernel/locking/lockdep.c:3134 [inline]
+>  check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+>  validate_chain kernel/locking/lockdep.c:3869 [inline]
+>  __lock_acquire+0x3384/0x763c kernel/locking/lockdep.c:5137
+>  lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5754
+>  __might_fault+0xc4/0x124 mm/memory.c:6234
+>  drm_mode_object_get_properties+0x208/0x560 drivers/gpu/drm/drm_mode_object.c:406
+>  drm_mode_getconnector+0xde4/0x1224 drivers/gpu/drm/drm_connector.c:3020
+>  drm_ioctl_kernel+0x26c/0x368 drivers/gpu/drm/drm_ioctl.c:744
+>  drm_ioctl+0x5e4/0xae4 drivers/gpu/drm/drm_ioctl.c:841
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:907 [inline]
+>  __se_sys_ioctl fs/ioctl.c:893 [inline]
+>  __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:893
+>  __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+>  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
+>  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:131
+>  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:150
+>  el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+>  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+>  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 27ec49af1bf2..b33d048e01d8 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -7427,6 +7427,12 @@
- 			Crash from Xen panic notifier, without executing late
- 			panic() code such as dumping handler.
- 
-+	xen_mc_debug	[X86,XEN,EARLY]
-+			Enable multicall debugging when running as a Xen PV guest.
-+			Enabling this feature will reduce performance a little
-+			bit, so it should only be enabled for obtaining extended
-+			debug data in case of multicall errors.
-+
- 	xen_msr_safe=	[X86,XEN,EARLY]
- 			Format: <bool>
- 			Select whether to always use non-faulting (safe) MSR
-diff --git a/arch/x86/xen/multicalls.c b/arch/x86/xen/multicalls.c
-index 07054572297f..a8d699687d5c 100644
---- a/arch/x86/xen/multicalls.c
-+++ b/arch/x86/xen/multicalls.c
-@@ -23,6 +23,8 @@
- #include <linux/percpu.h>
- #include <linux/hardirq.h>
- #include <linux/debugfs.h>
-+#include <linux/jump_label.h>
-+#include <linux/printk.h>
- 
- #include <asm/xen/hypercall.h>
- 
-@@ -31,18 +33,12 @@
- 
- #define MC_BATCH	32
- 
--#define MC_DEBUG	0
--
- #define MC_ARGS		(MC_BATCH * 16)
- 
- 
- struct mc_buffer {
- 	unsigned mcidx, argidx, cbidx;
- 	struct multicall_entry entries[MC_BATCH];
--#if MC_DEBUG
--	struct multicall_entry debug[MC_BATCH];
--	void *caller[MC_BATCH];
--#endif
- 	unsigned char args[MC_ARGS];
- 	struct callback {
- 		void (*fn)(void *);
-@@ -50,13 +46,98 @@ struct mc_buffer {
- 	} callbacks[MC_BATCH];
- };
- 
-+struct mc_debug_data {
-+	struct multicall_entry entries[MC_BATCH];
-+	void *caller[MC_BATCH];
-+	size_t argsz[MC_BATCH];
-+	unsigned long *args[MC_BATCH];
-+};
-+
- static DEFINE_PER_CPU(struct mc_buffer, mc_buffer);
-+static struct mc_debug_data mc_debug_data_early __initdata;
-+static struct mc_debug_data __percpu *mc_debug_data __refdata =
-+	&mc_debug_data_early;
- DEFINE_PER_CPU(unsigned long, xen_mc_irq_flags);
- 
-+static struct static_key mc_debug __ro_after_init;
-+static bool mc_debug_enabled __initdata;
-+
-+static int __init xen_parse_mc_debug(char *arg)
-+{
-+	mc_debug_enabled = true;
-+	static_key_slow_inc(&mc_debug);
-+
-+	return 0;
-+}
-+early_param("xen_mc_debug", xen_parse_mc_debug);
-+
-+static int __init mc_debug_enable(void)
-+{
-+	struct mc_debug_data __percpu *mcdb;
-+	unsigned long flags;
-+
-+	if (!mc_debug_enabled)
-+		return 0;
-+
-+	mcdb = alloc_percpu(struct mc_debug_data);
-+	if (!mcdb) {
-+		pr_err("xen_mc_debug inactive\n");
-+		static_key_slow_dec(&mc_debug);
-+		return -ENOMEM;
-+	}
-+
-+	/* Be careful when switching to percpu debug data. */
-+	local_irq_save(flags);
-+	xen_mc_flush();
-+	mc_debug_data = mcdb;
-+	local_irq_restore(flags);
-+
-+	pr_info("xen_mc_debug active\n");
-+
-+	return 0;
-+}
-+early_initcall(mc_debug_enable);
-+
-+/* Number of parameters of hypercalls used via multicalls. */
-+static const uint8_t hpcpars[] = {
-+	[__HYPERVISOR_mmu_update] = 4,
-+	[__HYPERVISOR_stack_switch] = 2,
-+	[__HYPERVISOR_fpu_taskswitch] = 1,
-+	[__HYPERVISOR_update_descriptor] = 2,
-+	[__HYPERVISOR_update_va_mapping] = 3,
-+	[__HYPERVISOR_mmuext_op] = 4,
-+};
-+
-+static void print_debug_data(struct mc_buffer *b, struct mc_debug_data *mcdb,
-+			     int idx)
-+{
-+	unsigned int arg;
-+	unsigned int opidx = mcdb->entries[idx].op & 0xff;
-+	unsigned int pars = 0;
-+
-+	pr_err("  call %2d: op=%lu result=%ld caller=%pS ", idx + 1,
-+	       mcdb->entries[idx].op, b->entries[idx].result,
-+	       mcdb->caller[idx]);
-+	if (opidx < ARRAY_SIZE(hpcpars))
-+		pars = hpcpars[opidx];
-+	if (pars) {
-+		pr_cont("pars=");
-+		for (arg = 0; arg < pars; arg++)
-+			pr_cont("%lx ", mcdb->entries[idx].args[arg]);
-+	}
-+	if (mcdb->argsz[idx]) {
-+		pr_cont("args=");
-+		for (arg = 0; arg < mcdb->argsz[idx] / 8; arg++)
-+			pr_cont("%lx ", mcdb->args[idx][arg]);
-+	}
-+	pr_cont("\n");
-+}
-+
- void xen_mc_flush(void)
- {
- 	struct mc_buffer *b = this_cpu_ptr(&mc_buffer);
- 	struct multicall_entry *mc;
-+	struct mc_debug_data *mcdb = NULL;
- 	int ret = 0;
- 	unsigned long flags;
- 	int i;
-@@ -69,10 +150,11 @@ void xen_mc_flush(void)
- 
- 	trace_xen_mc_flush(b->mcidx, b->argidx, b->cbidx);
- 
--#if MC_DEBUG
--	memcpy(b->debug, b->entries,
--	       b->mcidx * sizeof(struct multicall_entry));
--#endif
-+	if (static_key_false(&mc_debug)) {
-+		mcdb = this_cpu_ptr(mc_debug_data);
-+		memcpy(mcdb->entries, b->entries,
-+		       b->mcidx * sizeof(struct multicall_entry));
-+	}
- 
- 	switch (b->mcidx) {
- 	case 0:
-@@ -103,21 +185,14 @@ void xen_mc_flush(void)
- 		pr_err("%d of %d multicall(s) failed: cpu %d\n",
- 		       ret, b->mcidx, smp_processor_id());
- 		for (i = 0; i < b->mcidx; i++) {
--			if (b->entries[i].result < 0) {
--#if MC_DEBUG
--				pr_err("  call %2d: op=%lu arg=[%lx] result=%ld\t%pS\n",
--				       i + 1,
--				       b->debug[i].op,
--				       b->debug[i].args[0],
--				       b->entries[i].result,
--				       b->caller[i]);
--#else
-+			if (static_key_false(&mc_debug)) {
-+				print_debug_data(b, mcdb, i);
-+			} else if (b->entries[i].result < 0) {
- 				pr_err("  call %2d: op=%lu arg=[%lx] result=%ld\n",
- 				       i + 1,
- 				       b->entries[i].op,
- 				       b->entries[i].args[0],
- 				       b->entries[i].result);
--#endif
- 			}
- 		}
- 	}
-@@ -155,9 +230,13 @@ struct multicall_space __xen_mc_entry(size_t args)
- 	}
- 
- 	ret.mc = &b->entries[b->mcidx];
--#if MC_DEBUG
--	b->caller[b->mcidx] = __builtin_return_address(0);
--#endif
-+	if (static_key_false(&mc_debug)) {
-+		struct mc_debug_data *mcdb = this_cpu_ptr(mc_debug_data);
-+
-+		mcdb->caller[b->mcidx] = __builtin_return_address(0);
-+		mcdb->argsz[b->mcidx] = args;
-+		mcdb->args[b->mcidx] = (unsigned long *)(&b->args[argidx]);
-+	}
- 	b->mcidx++;
- 	ret.args = &b->args[argidx];
- 	b->argidx = argidx + args;
 -- 
-2.43.0
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
