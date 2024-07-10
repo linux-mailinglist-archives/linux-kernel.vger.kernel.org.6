@@ -1,84 +1,58 @@
-Return-Path: <linux-kernel+bounces-247642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30BE392D259
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:08:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F2DE92D280
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61EB91C21102
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:08:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0CAF1C240B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA9019249A;
-	Wed, 10 Jul 2024 13:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58613192B7F;
+	Wed, 10 Jul 2024 13:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S9hM2atZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QB+HIIEb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5591619246A;
-	Wed, 10 Jul 2024 13:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3DA192488;
+	Wed, 10 Jul 2024 13:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720616905; cv=none; b=eWCSlnyMa0SurAsX9MECYuiZBj8c971ZlxUT90K0AGJGfZD8RHGiobKLoze2GLZ2mjlbmVikCC9nPNdd+GTHDHq0QRp0SIlDno69SxmtKDeCigDYskWOHrxMHbAEVJbmtlfpBFyL5eQFOm3jIGn8ebIbpUcTCUs99JSMk80gT7M=
+	t=1720617063; cv=none; b=nZHSIv4Hgq3Tpt+kHtY0e05iZRv9wA6HQUr9lwWzcq0ukIL94mLM3fSDRKRdA3r8jjJmslF1ahudNa2+fN0hYCw/6nf7PPfmDoCw9IGHRvlCPQ5gBEJ0EF/G3NNzxJYBDm9kZq+PNhQuj03vmopRUyMF14ZZxu9UfS3UtuZWrAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720616905; c=relaxed/simple;
-	bh=20hAmUQJ5H0dqXfMYq7iNS/LgEwVNBfRSwX6Fbv7Rx0=;
+	s=arc-20240116; t=1720617063; c=relaxed/simple;
+	bh=2C0SCICUVCA7qXDa+oaxC/O0LDsnqm9TnLyXjcGE6jM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dF/l9j3q0AMiFLIr1MaYby7PsDj7jYFOk2tNhvDQPb8Kg6YBvJr9XrXsBlNYqARIDyJA5rv7RyfZ6+VIYrUQVMgAchHO2cejXS0Kdycm4CdwQ5dL5DvGXk57urfYEiMRUj6in7PIJ6lYGYL23nImY/ItBlzlag624bYDStWRwJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S9hM2atZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6311EC32782;
-	Wed, 10 Jul 2024 13:08:24 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=iMvv/iFEIVjFwmJcR8IRxc+gcw8L/8vDeb0W12UkPSjhmAj5TodwhTdOnZaSux0sBssDlrm1q7SrzbK5XnaTU1AYX9Bcjhdfe5Scgwm3KGZ5daDeLeev7aO6hf1qQhbWjYYwmbPl2fXcM9EeEcDqzrPR6AftETGaG+FfiWr29lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QB+HIIEb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE5D3C4AF07;
+	Wed, 10 Jul 2024 13:11:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720616905;
-	bh=20hAmUQJ5H0dqXfMYq7iNS/LgEwVNBfRSwX6Fbv7Rx0=;
+	s=k20201202; t=1720617063;
+	bh=2C0SCICUVCA7qXDa+oaxC/O0LDsnqm9TnLyXjcGE6jM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S9hM2atZ5ZFhaUOVjx6PR2HXOtRcW2QNjebxTAoB2FvvbNZ4PvOIsIwpDlPboosKj
-	 aUtUzXLMfzd0O5DHyr4sCCAr1JRNez2zaVxXGyiPdJVbKNb37V2ly+VVxzpMDXgG/0
-	 yLekhO+MGKNgwADbhYOjSo5b4rpMXYgWwoL2bNSCBQKmOvzvqtC3rwJbQrGVvORCEw
-	 J4pHDoVTPveEEH9d10qvcPrL+POj3GC5r8YQvSmPXeVF0PMmlfQ/MZUMEctcHXW0qy
-	 0yxxDbGN2tLa8mdEVPGQM3LjZRro94QHKN4+ZoTczDbhEko0b/JGYs5RGeGNJyt6+s
-	 scOo6mzmOh59Q==
-Date: Wed, 10 Jul 2024 14:08:15 +0100
+	b=QB+HIIEbqTmMGIRtnY0cBYn1eTmT8P3INCBcP+V33mGBAudR8xHoIjNR2tZPHvr3b
+	 wR8URe5Zh5w3UoL48KyovzLEAOUIQuCa/gdK9jKG2ITsoTwQQcJyuViQB7WYPVYtm8
+	 ilwzaRnQS+6ommCzQLCUUlp4CH6g5psWI9p/uhLl+t6ZBWRI/0X6U7Al6Tj6mA8siV
+	 NmB/yeL47YUbpn7/8ilItIAawYUGVVc9Pk9Qucg8kzGh8kaliREbOEBe1s9YbvBeMX
+	 cyo19SM03nEltewikc9dMTmVKFcL8+fqHKufwTOfCgS13az3XV/a7IuoEemjsLl+E+
+	 uJloajBeT0cqw==
+Date: Wed, 10 Jul 2024 14:10:53 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Arnd Bergmann <arnd@kernel.org>,
-	Linux-Arch <linux-arch@vger.kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Vineet Gupta <vgupta@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, guoren <guoren@kernel.org>,
-	Brian Cain <bcain@quicinc.com>, Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>, Dinh Nguyen <dinguyen@kernel.org>,
-	Jonas Bonn <jonas@southpole.se>,
-	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-	Stafford Horne <shorne@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	Kunwu Chan <chentao@kylinos.cn>, kernel@collabora.com,
 	linux-arm-kernel@lists.infradead.org,
-	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
-	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
-	"linux-openrisc@vger.kernel.org" <linux-openrisc@vger.kernel.org>,
-	linux-riscv@lists.infradead.org,
-	Aishwarya TCV <Aishwarya.TCV@arm.com>, shuah <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 10/17] arm64: generate 64-bit syscall.tbl
-Message-ID: <Zo6Hv18S35K0hH_7@finisterre.sirena.org.uk>
-References: <20240704143611.2979589-1-arnd@kernel.org>
- <20240704143611.2979589-11-arnd@kernel.org>
- <c8c882ad-d508-40b7-9af5-b2a2ddf777c1@sirena.org.uk>
- <93c84e97-b307-4486-8dfb-e966c96751a1@app.fastmail.com>
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] selftests: arm64: tags_test: conform test to TAP
+ output
+Message-ID: <Zo6IXQM-R_1YJGIn@finisterre.sirena.org.uk>
+References: <20240602132502.4186771-1-usama.anjum@collabora.com>
+ <Zo5xCW9GJqFeTZUi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,51 +60,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LdSnlI4UojlRSCq3"
+	protocol="application/pgp-signature"; boundary="+DeUeqluINSvPD0/"
 Content-Disposition: inline
-In-Reply-To: <93c84e97-b307-4486-8dfb-e966c96751a1@app.fastmail.com>
+In-Reply-To: <Zo5xCW9GJqFeTZUi@arm.com>
 X-Cookie: Your love life will be... interesting.
 
 
---LdSnlI4UojlRSCq3
+--+DeUeqluINSvPD0/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Wed, Jul 10, 2024 at 10:57:25AM +0200, Arnd Bergmann wrote:
+On Wed, Jul 10, 2024 at 12:31:21PM +0100, Catalin Marinas wrote:
 
-> Thanks for the report! I just panicked a bit and thought I had
-> done something entirely wrong here, but after having a closer
-> look it turned out to be a silly typo:
+> Sorry, these patches slipped through the cracks. We seem to be pretty
+> inconsistent with using ksft_exit_fail_perror() and ksft_finished(). Is
+> there some plan to update the rest or is it only this location that you
+> came across?
 
-> -#include <unistd_64.h>
-> +#include <asm/unistd_64.h>
+Any ksft_exit_*() should implicitly do a ksft_finished(), the _exit_
+will just exit the test program immediately.  ksft_finished() is for
+normal exit from the test program after running everything.
 
-Doh, I should've spotted that even from the very quick look I gave it!
-Thanks for the quick fix.
-
-> I checked that arm64 is the only architecture that has this
-> particular bug, and I tried building kselftest now, which seems
-> to work better. There are still a few warnings and errors
-> I get doing that, but I suspect those are all preexisting
-> issues.
-
-Yeah, not everything there builds cleanly (and there's a bunch of
-external deps you need for many of the suites).
-
---LdSnlI4UojlRSCq3
+--+DeUeqluINSvPD0/
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaOh74ACgkQJNaLcl1U
-h9CcQgf+N85DM6dZVHX8s5b4IoK8zBscjfKv6tCiwPcVRTNMH1dJqkR5LYNpb1am
-KnuwKdCAcqascCbdmTx6ZzWDw52YDXohUbXSLkof3qyp5Js5aEyrs51UQTogwoi4
-kW2K0EYgg4Wk0OF5Fe2Iq2ITXeoZ9O++joUeRHwXE9hSesKKiM+kZoHBaKHFQf8G
-KDEhNvrFyrB2F9RDVIHcqt7IlySirRkKj8aWx9Dytd3Z8QtLv8rI6mbWZQ17ym4y
-zDuDf4710dlhVUmR8eYF+JeHyJGcKQMF1BZAqwIkxQHuuP8uaNfhIR/rSOL1okjv
-4LFBmMQqolC9ttdMprhk/DBLuxJAwA==
-=NATo
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaOiF0ACgkQJNaLcl1U
+h9C03gf/QrzQHK2kkcpp70nVcG6K4B2np85gQ+s3m7dVjryEkMSsEJnNdqiIRlUj
+xF44BYqmpc/wt6dMJ6nW8PkDG2/J9+H7HV9W8/FJs27erDOlGWo2QX+vKKP8pi9Q
+EpGQyJtDXky0XIudXFr0Oy5E/pEbyhR7/JF9QDxcEgWb18LSja2EgYfZ7IcKd/79
+pn3/1HtmqNLMWyf+gCpD1omN/4HXA8Qzh1PHd1XdrclZEIS62y8kf+wk4qXUpM0q
+ZkBcmV6EzPtsHZBpKlOpTOoM2oYjULJ45sZB8++bJ8PwF9W4uwashQ5ZWMfgQxmm
+x1yea3CyTYgXIXnfkUhxgWn5WpPs0g==
+=ecGr
 -----END PGP SIGNATURE-----
 
---LdSnlI4UojlRSCq3--
+--+DeUeqluINSvPD0/--
 
