@@ -1,113 +1,107 @@
-Return-Path: <linux-kernel+bounces-247154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D6E592CBF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:34:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AC4492CBF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B64B1C229BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:34:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 200DA1F23067
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E824083A19;
-	Wed, 10 Jul 2024 07:34:04 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A3F482CD;
-	Wed, 10 Jul 2024 07:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A97683CC8;
+	Wed, 10 Jul 2024 07:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="De3peI2c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD2E82D9A
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720596844; cv=none; b=AT7Voy9BjqrsR8X6Vp6td5/xol/iq8t3Ofec7aspWA1FpQJebFBAMVNlr6v4V3+340fFO5CklM2ABVszUdL1jjRRDV/fLvGfC4CLTfHh7UpyCK4M1FWSbTA9tMYQ6YUNnvSV0YQgyEU5GmzZnYVYrpVcBw3YLG/8ugMV3R144MY=
+	t=1720596860; cv=none; b=aTeot1kZa24+DYgi6VGLkqizmF7+GibuhbZaFiZ19hULv3QUqirn3JizU9p11FPshY5mfWjGpnVLhxE0Sb1NGsmWyI95P8YhoSkZQPoPKejgwlmIGpOT3j790ySjs3Y8ezpAa17oqcdFdM5/r/zO79vlrZ0E9OTusQESjc5CuBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720596844; c=relaxed/simple;
-	bh=yPnoWvlljWgpuoo96HJlqVf3Nwk71XJ7q2vsS6fs+j8=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=uM3wn6xw9E8vfvwD+mKzYEEh7rqriIwpzyWOoOQ/fGl8ykzQIiV2sExYRJcn9yFBuDHd3U4h4U/E/PucKFoFF4Yg1SaVVAQpAJWm66QhqUJgNatoSX5d+4mUDQEokSQxM9E85KhJKPHbJNMfaGuR47C0mx6CAdgdH86/3cxvAtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee5668e3960ff2-2aff3;
-	Wed, 10 Jul 2024 15:33:53 +0800 (CST)
-X-RM-TRANSID:2ee5668e3960ff2-2aff3
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[10.54.5.255])
-	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee9668e39603a5-dfd4b;
-	Wed, 10 Jul 2024 15:33:53 +0800 (CST)
-X-RM-TRANSID:2ee9668e39603a5-dfd4b
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: shuah@kernel.org,
-	akpm@linux-foundation.org
-Cc: cyphar@cyphar.com,
-	jeffxu@google.com,
-	sauravshah.31@gmail.com,
-	zhujun2@cmss.chinamobile.com,
-	gthelen@google.com,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/memfd:Fix a resource leak
-Date: Wed, 10 Jul 2024 00:33:51 -0700
-Message-Id: <20240710073351.6479-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1720596860; c=relaxed/simple;
+	bh=y2RBXzpMCsokUrPr3LFtArnvH9uzbPQI9Q11ocJOi4A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pBTOxbii9VudX7QrTlaFstUSVUApEs6zahBsCALlQoJFFrGkKF3u0ay2Xj1PG0PAxQ9jD8iUcnPUdnJz52TUQu+YRKvSWBjEi4eYLdDWceKdYCSn6MQFZKhWEmVuZLx3+rIx5lDloEyS+rJxF9Vkxe65jzbnxaC0VUvTzkvBfa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=De3peI2c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC801C32781;
+	Wed, 10 Jul 2024 07:34:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720596860;
+	bh=y2RBXzpMCsokUrPr3LFtArnvH9uzbPQI9Q11ocJOi4A=;
+	h=From:To:Cc:Subject:Date:From;
+	b=De3peI2cvXgBuiLY0oTROaIq4QMo/HqMXwE8UbpfHnOScuTDp2YoRrcHppuG42wXu
+	 5VMtGHRQuNE6nZ70mpBYoEi048OnU802ecwejmUgyxp0xEWSlZ5Bv490Yr2tE7mjS8
+	 e0WRuMlS8byVE4jxE9ft74K0tvV2SL2DZ0hUa9Bk=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: geert@linux-m68k.org
+Cc: linux-m68k@lists.linux-m68k.org,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] zorro: make match function take a const pointer
+Date: Wed, 10 Jul 2024 09:34:14 +0200
+Message-ID: <20240710073413.495541-2-gregkh@linuxfoundation.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1944; i=gregkh@linuxfoundation.org; h=from:subject; bh=y2RBXzpMCsokUrPr3LFtArnvH9uzbPQI9Q11ocJOi4A=; b=owGbwMvMwCRo6H6F97bub03G02pJDGl9lqW71t9LVPn0c/oX4aCfRxZe3H6NZ1PeOqH6/WzHU r71hS8N64hlYRBkYpAVU2T5so3n6P6KQ4pehranYeawMoEMYeDiFICJJK1jWNDT7Mv+x2L384Z9 cv4LpylqVgRnz2SYZzFde4K96KSWLTZcpRfZmRcsX1TBAAA=
+X-Developer-Key: i=gregkh@linuxfoundation.org; a=openpgp; fpr=F4B60CC5BF78C2214A313DCB3147D40DDB2DFB29
+Content-Transfer-Encoding: 8bit
 
-From a good programming practice perspective, especially in more
-complex programs, explicitly freeing allocated memory is a good habit.
+In commit d69d80484598 ("driver core: have match() callback in struct bus_type
+take a const *"), the match callback for busses was changed to take a const
+pointer to struct device_driver.  Unfortunatly I missed fixing up the zorro
+code, and was only noticed after-the-fact by the kernel test robot.  Resolve
+this issue by properly changing the zorro_bus_match() function.
 
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Fixes: d69d80484598 ("driver core: have match() callback in struct bus_type take a const *")
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/memfd/memfd_test.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/zorro/zorro-driver.c | 4 ++--
+ include/linux/zorro.h        | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
-index 95af2d78fd31..f842a4aeb47d 100644
---- a/tools/testing/selftests/memfd/memfd_test.c
-+++ b/tools/testing/selftests/memfd/memfd_test.c
-@@ -661,9 +661,11 @@ static void mfd_assert_grow_write(int fd)
- 	l = pwrite(fd, buf, mfd_def_size * 8, 0);
- 	if (l != (mfd_def_size * 8)) {
- 		printf("pwrite() failed: %m\n");
-+		free(buf);
- 		abort();
- 	}
+diff --git a/drivers/zorro/zorro-driver.c b/drivers/zorro/zorro-driver.c
+index f49d19977e82..e7d3af1a223f 100644
+--- a/drivers/zorro/zorro-driver.c
++++ b/drivers/zorro/zorro-driver.c
+@@ -118,10 +118,10 @@ EXPORT_SYMBOL(zorro_unregister_driver);
+      *  supported, and 0 if there is no match.
+      */
  
-+	free(buf);
- 	mfd_assert_size(fd, mfd_def_size * 8);
- }
+-static int zorro_bus_match(struct device *dev, struct device_driver *drv)
++static int zorro_bus_match(struct device *dev, const struct device_driver *drv)
+ {
+ 	struct zorro_dev *z = to_zorro_dev(dev);
+-	struct zorro_driver *zorro_drv = to_zorro_driver(drv);
++	const struct zorro_driver *zorro_drv = to_zorro_driver(drv);
+ 	const struct zorro_device_id *ids = zorro_drv->id_table;
  
-@@ -685,8 +687,11 @@ static void mfd_fail_grow_write(int fd)
- 	l = pwrite(fd, buf, mfd_def_size * 8, 0);
- 	if (l == (mfd_def_size * 8)) {
- 		printf("pwrite() didn't fail as expected\n");
-+		free(buf);
- 		abort();
- 	}
-+
-+	free(buf);
- }
+ 	if (!ids)
+diff --git a/include/linux/zorro.h b/include/linux/zorro.h
+index db7416ed6057..f36c8d39553d 100644
+--- a/include/linux/zorro.h
++++ b/include/linux/zorro.h
+@@ -52,7 +52,7 @@ struct zorro_driver {
+     struct device_driver driver;
+ };
  
- static void mfd_assert_mode(int fd, int mode)
-@@ -771,9 +776,11 @@ static pid_t spawn_thread(unsigned int flags, int (*fn)(void *), void *arg)
- 	pid = clone(fn, stack + STACK_SIZE, SIGCHLD | flags, arg);
- 	if (pid < 0) {
- 		printf("clone() failed: %m\n");
-+		free(stack);
- 		abort();
- 	}
+-#define	to_zorro_driver(drv)	container_of(drv, struct zorro_driver, driver)
++#define	to_zorro_driver(drv)	container_of_const(drv, struct zorro_driver, driver)
  
-+	free(stack);
- 	return pid;
- }
  
+ #define zorro_for_each_dev(dev)	\
 -- 
-2.17.1
-
-
+2.45.2
 
 
