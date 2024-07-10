@@ -1,457 +1,124 @@
-Return-Path: <linux-kernel+bounces-247554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AEDA92D120
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:57:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F2692D121
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77720B27240
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:57:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D669B2758E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09485190488;
-	Wed, 10 Jul 2024 11:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31A0191489;
+	Wed, 10 Jul 2024 11:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bqvfULnx"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="jHbGRvZw"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2740B7E58D
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 11:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B673190675
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 11:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720612621; cv=none; b=rAzr+Y3vTcyapxOcjkeXtmuxTHyE6mhq6IH6V+BcjI8FACuyGFNQnmsbwG0iojoHaZzG9uhTwowQCR6sd+ln934VC3ow5m7VQLComQgRmvOv0MDdiTGMJLdU7lz5LKZGJwgSlkHvg+kvo7WEJNVLx4AvnfOTEyzWoVHiTbSuxpg=
+	t=1720612626; cv=none; b=biK4LCvb5rtVqfay/ZekBsUHid2ZDkmQrWNn/bkpodLhBFtlIXWW7rIUU4KATyP6h+FYiEfMaSYW7ZlF31PsXm+Bz50rdYyVQ+EwQmha0az1rSVKHv7Fltnd9ktFsEdU9j19L4qu5Lm76Z3HAoAyp+ZjRuXw4qH65JCT6ukrFkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720612621; c=relaxed/simple;
-	bh=9A2Q78TalcnVAkuJp03rxUOOiszGzNlvc6e5kPBpMl0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EMGYtoa7o2H4etag3ClZM37n863BNi6+R3aapAo1ZjJ9gHf4SDE8PAbBVPlWgMpKg7+KQ/5INtTprIGlGeMJbbGF1Jt28xYKdcHFv4mqcvfUjarNh50QW5l1MRaieslvg+KC0ZHd14qbKh7lCP0mFGNzNOBYKxmgcQ/xVpVdx5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bqvfULnx; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46ABuUSS098258;
-	Wed, 10 Jul 2024 06:56:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1720612590;
-	bh=1IxapFT0FG4APMMHo9mZi3Qq4+oJ0bmI4Z6pyJJmsSA=;
-	h=From:To:CC:Subject:Date;
-	b=bqvfULnx002q7S1vLwO1lANhKMY/5KsnGJU2mHFN227LKwf2x2DErKxFXt/L208yx
-	 wRbYa0/AjHOtOqqiqDLo0KAIHqsYfS9gUnF9qTnGUKubS33Mje5xyiwCme7VpMGbig
-	 lprWnxCoRLjddzlHJnVM6VYmefKMlo5coCkUE89M=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46ABuUin067659
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 10 Jul 2024 06:56:30 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 10
- Jul 2024 06:56:29 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 10 Jul 2024 06:56:29 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46ABuPQx034083;
-	Wed, 10 Jul 2024 06:56:25 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <vkoul@kernel.org>, <kishon@kernel.org>, <p.zabel@pengutronix.de>,
-        <sjakhade@cadence.com>, <rogerq@kernel.org>,
-        <thomas.richard@bootlin.com>, <theo.lebrun@bootlin.com>,
-        <robh@kernel.org>
-CC: <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH v2] phy: cadence-torrent: add support for three or more links using 2 protocols
-Date: Wed, 10 Jul 2024 17:26:24 +0530
-Message-ID: <20240710115624.3232925-1-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1720612626; c=relaxed/simple;
+	bh=WsDlAVZcBSC+PHsEZqH18u+wQ7q/gzTehoBiGRVxn5M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GiIU9uMLb9vzoeUzo+VEKyf8LbUiDu7gH1VlPRqwKuOSCNKL3frJc47OCCLJsFfaBGdkVq2L85zdk8M/3xeYSu2s4nFYX8TsCNuOmPexdafnpjbA7OTJQpn86sCMMJhqmyT+HHgTuhHBQO8MIjJV2kTw1JGA3Rsz/iMxTN2Lc/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=jHbGRvZw; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ebe40673d8so82824011fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 04:57:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720612622; x=1721217422; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XwfoyeupSwjDIeqWgElN6yiHYZ67SywUBwzOBWbpi4M=;
+        b=jHbGRvZw4Q4ynOGgQz5WTsPB0uAl0xSKqNdp4EclEJ4rX0Q9N6neiAushlS1yAhmIE
+         UnvHPXeUqj1BM1juCQyB25y/JULYpZ06PDQGSO3jspn8TTBktX+nBakp9HjOBW4uB2+0
+         FlILHHUHdDfc8Ku7NwG5V+fssYO5WP7KrSBL9JmRq784OhEClSjDNccUwjMpqqmsE47i
+         AJRZ4bbspk+DtXPYDpJ0hqPxBF+djWGZe3Xdaj+kcyP8xj6qwmmQIp9AigtyGjHACW3/
+         T6gG7IxpIE0ThbG3rnoa/A2h5ElJp1GBZKsiBIRx+C8JNy0cuaRjDS0gfKxUR6eCOORO
+         UFSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720612622; x=1721217422;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XwfoyeupSwjDIeqWgElN6yiHYZ67SywUBwzOBWbpi4M=;
+        b=c4TTFtzqTDqBCbLZZUeq0/iW8Put9oIurU0Ehe6ZHYvFitdvAsyhQEzvb32LbX6ZiR
+         QF+C+5RNJG/lcfJUzkBY90JKCssLh3mpU+pNNFyXaO8Gk9QWq7YPane+vKM2K9LJ8QRp
+         Eq5MQyDOQrDQITon14krdAFxQrVgS+GQfKeJoMOlTR2jbNvKW5a5Y6j93a1V1VhJyQVM
+         kuLV1T9+/5WIyI16HfwQgQJlZFHSFzLCRfUXYatPeWPNAZ1z983/zkIlBdo0OkhK2x83
+         THt3vku7LffQQD+xHBiAolxzISC/nCUL9hSDC4WPSke5ePb9ZHffg81PcSBg/Dc8SPiV
+         By9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUl0pZ3ukOQ07/Pm+NgqNTw8G5/a/UXzdIVfaaqzvNAglOHhiI9Q2FkcdiNDYW82OuPdGykSYFw6NGW+9JaCtPh/ipumYepY5UCj2UV
+X-Gm-Message-State: AOJu0YzHLvbS4h3cqZMftQetfmwDEngZOpftb+kubHSjDZl32X7ynmh1
+	uybl/aW6LbGolseIOlQWL7B77T2s/eVx6O9xk5QHvDiASyivfuMRpaboH7Yw3VRf/7AQJwmICGy
+	MaKeXW5DwxNCiuFbyZBiNKe5AIVUrJwO2DTR0rw==
+X-Google-Smtp-Source: AGHT+IHJGswK2Y+OebO2SiwrHVLpVQDHaAegDJkVw5rzzL9UruW2bK24KpA95w5gRrAvh8NQOgUtDeLzV9pkwgRp238=
+X-Received: by 2002:a05:651c:b23:b0:2ee:8736:6c19 with SMTP id
+ 38308e7fff4ca-2eeb3102b5bmr42639441fa.30.1720612622161; Wed, 10 Jul 2024
+ 04:57:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240710082813.2287329-1-nichen@iscas.ac.cn>
+In-Reply-To: <20240710082813.2287329-1-nichen@iscas.ac.cn>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 10 Jul 2024 13:56:51 +0200
+Message-ID: <CAMRc=Mc=0LgyH432JWCfdTwty1sYPX=ZViuoL6u3K_1SW5RnDw@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: mc33880: Convert comma to semicolon
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: linus.walleij@linaro.org, grant.likely@secretlab.ca, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Torrent SERDES can support at most two different protocols. This only
-mandates that the device-tree sub-nodes expressing the configuration should
-describe links with at-most two different protocols.
+On Wed, Jul 10, 2024 at 10:28=E2=80=AFAM Chen Ni <nichen@iscas.ac.cn> wrote=
+:
+>
+> Replace a comma between expression statements by a semicolon.
+>
+> Fixes: c103de240439 ("gpio: reorganize drivers")
 
-The existing implementation however imposes an artificial constraint that
-allows only two links (device-tree sub-nodes). As long as at-most two
-protocols are chosen, using more than two links to describe them in an
-alternating configuration is still a valid configuration of the Torrent
-SERDES.
+This is not correct. The commit that introduced that issue is
+1e5db00687c1 ("gpio: add MC33880 driver"). I'll fix it when applying.
 
-A 3-Link 2-Protocol configuration of the 4-Lane SERDES can be:
-Lane 0 => Protocol 1 => Link 1
-Lane 1 => Protocol 1 => Link 1
-Lane 2 => Protocol 2 => Link 2
-Lane 3 => Protocol 1 => Link 3
+Bart
 
-A 4-Link 2-Protocol configuration of the 4-Lane SERDES can be:
-Lane 0 => Protocol 1 => Link 1
-Lane 1 => Protocol 2 => Link 2
-Lane 2 => Protocol 1 => Link 3
-Lane 3 => Protocol 2 => Link 4
-
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
-
-Hello,
-
-This patch is based on linux-next tagged next-20240710.
-Patch has been sanity tested and tested for functionality in the following
-configurations with the Torrent SERDES0 on J7200-EVM:
-1. PCIe (Lanes 0 and 1) + QSGMII (Lane 2)
-   => 2 protocols, 2 links
-2. PCIe (Lane0 as 1 Link) + PCIe (Lane 1 as 1 Link)
-   => 1 protocol, 2 links
-3. PCIe (Lanes 0 and 1) + QSGMII (Lane 2) + PCIe (Lane 3)
-   => 2 protocols, 3 links
-
-v1:
-https://lore.kernel.org/r/20240709120703.2716397-1-s-vadapalli@ti.com/
-Changes since v1:
-- A multilink configuration doesn't necessarily imply two protocols
-  since a single protocol may be split across links as follows:
-  Lane 0 => Protocol 1
-  Lane 1 => Unused
-  Lane 2 => Protocol 1
-  Lane 3 => Unused
-  which corresponds to two links and therefore two sub-nodes. In such a
-  case, treat it as two single-link configurations performed sequentially
-  which happens to be the case prior to this patch. To address this,
-  handle the case where cdns_torrent_phy_configure_multilink() can be
-  invoked for a single protocol with multiple sub-nodes (links) by
-  erroring out only when the number of protocols is strictly greater
-  than two, followed by handling the configuration similar to how it was
-  done prior to this patch.
-
-Regards,
-Siddharth.
-
- drivers/phy/cadence/phy-cadence-torrent.c | 252 ++++++++++++----------
- 1 file changed, 136 insertions(+), 116 deletions(-)
-
-diff --git a/drivers/phy/cadence/phy-cadence-torrent.c b/drivers/phy/cadence/phy-cadence-torrent.c
-index 56ce82a47f88..a6d0082e448d 100644
---- a/drivers/phy/cadence/phy-cadence-torrent.c
-+++ b/drivers/phy/cadence/phy-cadence-torrent.c
-@@ -351,6 +351,7 @@ struct cdns_torrent_phy {
- 	void __iomem *sd_base; /* SD0801 registers base */
- 	u32 max_bit_rate; /* Maximum link bit rate to use (in Mbps) */
- 	u32 dp_pll;
-+	u32 protocol_bitmask;
- 	struct reset_control *phy_rst;
- 	struct reset_control *apb_rst;
- 	struct device *dev;
-@@ -2475,21 +2476,32 @@ int cdns_torrent_phy_configure_multilink(struct cdns_torrent_phy *cdns_phy)
- 	struct cdns_reg_pairs *reg_pairs;
- 	enum cdns_torrent_ssc_mode ssc;
- 	struct regmap *regmap;
--	u32 num_regs;
-+	u32 num_regs, num_protocols, protocol;
- 
--	/* Maximum 2 links (subnodes) are supported */
--	if (cdns_phy->nsubnodes != 2)
-+	num_protocols = hweight32(cdns_phy->protocol_bitmask);
-+	/* Maximum 2 protocols are supported */
-+	if (num_protocols > 2) {
- 		return -EINVAL;
--
--	phy_t1 = cdns_phy->phys[0].phy_type;
--	phy_t2 = cdns_phy->phys[1].phy_type;
-+	} else if (num_protocols == 2) {
-+		phy_t1 = fns(cdns_phy->protocol_bitmask, 0);
-+		phy_t2 = fns(cdns_phy->protocol_bitmask, 1);
-+	} else {
-+		phy_t1 = fns(cdns_phy->protocol_bitmask, 0);
-+		/**
-+		 * For a single protocol split across multiple links,
-+		 * assign TYPE_NONE to phy_t2 for configuring each link
-+		 * identical to a single-link configuration with a single
-+		 * protocol.
-+		 */
-+		phy_t2 = TYPE_NONE;
-+	}
- 
- 	/**
- 	 * First configure the PHY for first link with phy_t1. Get the array
- 	 * values as [phy_t1][phy_t2][ssc].
- 	 */
--	for (node = 0; node < cdns_phy->nsubnodes; node++) {
--		if (node == 1) {
-+	for (protocol = 0; protocol < num_protocols; protocol++) {
-+		if (protocol == 1) {
- 			/**
- 			 * If first link with phy_t1 is configured, then
- 			 * configure the PHY for second link with phy_t2.
-@@ -2499,130 +2511,136 @@ int cdns_torrent_phy_configure_multilink(struct cdns_torrent_phy *cdns_phy)
- 			swap(ref_clk, ref_clk1);
- 		}
- 
--		mlane = cdns_phy->phys[node].mlane;
--		ssc = cdns_phy->phys[node].ssc_mode;
--		num_lanes = cdns_phy->phys[node].num_lanes;
-+		for (node = 0; node < cdns_phy->nsubnodes; node++) {
-+			if (cdns_phy->phys[node].phy_type != phy_t1)
-+				continue;
- 
--		/**
--		 * PHY configuration specific registers:
--		 * link_cmn_vals depend on combination of PHY types being
--		 * configured and are common for both PHY types, so array
--		 * values should be same for [phy_t1][phy_t2][ssc] and
--		 * [phy_t2][phy_t1][ssc].
--		 * xcvr_diag_vals also depend on combination of PHY types
--		 * being configured, but these can be different for particular
--		 * PHY type and are per lane.
--		 */
--		link_cmn_vals = cdns_torrent_get_tbl_vals(&init_data->link_cmn_vals_tbl,
--							  CLK_ANY, CLK_ANY,
--							  phy_t1, phy_t2, ANY_SSC);
--		if (link_cmn_vals) {
--			reg_pairs = link_cmn_vals->reg_pairs;
--			num_regs = link_cmn_vals->num_regs;
--			regmap = cdns_phy->regmap_common_cdb;
-+			mlane = cdns_phy->phys[node].mlane;
-+			ssc = cdns_phy->phys[node].ssc_mode;
-+			num_lanes = cdns_phy->phys[node].num_lanes;
- 
- 			/**
--			 * First array value in link_cmn_vals must be of
--			 * PHY_PLL_CFG register
-+			 * PHY configuration specific registers:
-+			 * link_cmn_vals depend on combination of PHY types being
-+			 * configured and are common for both PHY types, so array
-+			 * values should be same for [phy_t1][phy_t2][ssc] and
-+			 * [phy_t2][phy_t1][ssc].
-+			 * xcvr_diag_vals also depend on combination of PHY types
-+			 * being configured, but these can be different for particular
-+			 * PHY type and are per lane.
- 			 */
--			regmap_field_write(cdns_phy->phy_pll_cfg,
--					   reg_pairs[0].val);
-+			link_cmn_vals = cdns_torrent_get_tbl_vals(&init_data->link_cmn_vals_tbl,
-+								  CLK_ANY, CLK_ANY,
-+								  phy_t1, phy_t2, ANY_SSC);
-+			if (link_cmn_vals) {
-+				reg_pairs = link_cmn_vals->reg_pairs;
-+				num_regs = link_cmn_vals->num_regs;
-+				regmap = cdns_phy->regmap_common_cdb;
- 
--			for (i = 1; i < num_regs; i++)
--				regmap_write(regmap, reg_pairs[i].off,
--					     reg_pairs[i].val);
--		}
-+				/**
-+				 * First array value in link_cmn_vals must be of
-+				 * PHY_PLL_CFG register
-+				 */
-+				regmap_field_write(cdns_phy->phy_pll_cfg,
-+						   reg_pairs[0].val);
- 
--		xcvr_diag_vals = cdns_torrent_get_tbl_vals(&init_data->xcvr_diag_vals_tbl,
--							   CLK_ANY, CLK_ANY,
--							   phy_t1, phy_t2, ANY_SSC);
--		if (xcvr_diag_vals) {
--			reg_pairs = xcvr_diag_vals->reg_pairs;
--			num_regs = xcvr_diag_vals->num_regs;
--			for (i = 0; i < num_lanes; i++) {
--				regmap = cdns_phy->regmap_tx_lane_cdb[i + mlane];
--				for (j = 0; j < num_regs; j++)
--					regmap_write(regmap, reg_pairs[j].off,
--						     reg_pairs[j].val);
-+				for (i = 1; i < num_regs; i++)
-+					regmap_write(regmap, reg_pairs[i].off,
-+						     reg_pairs[i].val);
- 			}
--		}
- 
--		/* PHY PCS common registers configurations */
--		pcs_cmn_vals = cdns_torrent_get_tbl_vals(&init_data->pcs_cmn_vals_tbl,
--							 CLK_ANY, CLK_ANY,
--							 phy_t1, phy_t2, ANY_SSC);
--		if (pcs_cmn_vals) {
--			reg_pairs = pcs_cmn_vals->reg_pairs;
--			num_regs = pcs_cmn_vals->num_regs;
--			regmap = cdns_phy->regmap_phy_pcs_common_cdb;
--			for (i = 0; i < num_regs; i++)
--				regmap_write(regmap, reg_pairs[i].off,
--					     reg_pairs[i].val);
--		}
-+			xcvr_diag_vals = cdns_torrent_get_tbl_vals(&init_data->xcvr_diag_vals_tbl,
-+								   CLK_ANY, CLK_ANY,
-+								   phy_t1, phy_t2, ANY_SSC);
-+			if (xcvr_diag_vals) {
-+				reg_pairs = xcvr_diag_vals->reg_pairs;
-+				num_regs = xcvr_diag_vals->num_regs;
-+				for (i = 0; i < num_lanes; i++) {
-+					regmap = cdns_phy->regmap_tx_lane_cdb[i + mlane];
-+					for (j = 0; j < num_regs; j++)
-+						regmap_write(regmap, reg_pairs[j].off,
-+							     reg_pairs[j].val);
-+				}
-+			}
- 
--		/* PHY PMA common registers configurations */
--		phy_pma_cmn_vals = cdns_torrent_get_tbl_vals(&init_data->phy_pma_cmn_vals_tbl,
--							     CLK_ANY, CLK_ANY,
--							     phy_t1, phy_t2, ANY_SSC);
--		if (phy_pma_cmn_vals) {
--			reg_pairs = phy_pma_cmn_vals->reg_pairs;
--			num_regs = phy_pma_cmn_vals->num_regs;
--			regmap = cdns_phy->regmap_phy_pma_common_cdb;
--			for (i = 0; i < num_regs; i++)
--				regmap_write(regmap, reg_pairs[i].off,
--					     reg_pairs[i].val);
--		}
-+			/* PHY PCS common registers configurations */
-+			pcs_cmn_vals = cdns_torrent_get_tbl_vals(&init_data->pcs_cmn_vals_tbl,
-+								 CLK_ANY, CLK_ANY,
-+								 phy_t1, phy_t2, ANY_SSC);
-+			if (pcs_cmn_vals) {
-+				reg_pairs = pcs_cmn_vals->reg_pairs;
-+				num_regs = pcs_cmn_vals->num_regs;
-+				regmap = cdns_phy->regmap_phy_pcs_common_cdb;
-+				for (i = 0; i < num_regs; i++)
-+					regmap_write(regmap, reg_pairs[i].off,
-+						     reg_pairs[i].val);
-+			}
- 
--		/* PMA common registers configurations */
--		cmn_vals = cdns_torrent_get_tbl_vals(&init_data->cmn_vals_tbl,
--						     ref_clk, ref_clk1,
--						     phy_t1, phy_t2, ssc);
--		if (cmn_vals) {
--			reg_pairs = cmn_vals->reg_pairs;
--			num_regs = cmn_vals->num_regs;
--			regmap = cdns_phy->regmap_common_cdb;
--			for (i = 0; i < num_regs; i++)
--				regmap_write(regmap, reg_pairs[i].off,
--					     reg_pairs[i].val);
--		}
-+			/* PHY PMA common registers configurations */
-+			phy_pma_cmn_vals =
-+				cdns_torrent_get_tbl_vals(&init_data->phy_pma_cmn_vals_tbl,
-+							  CLK_ANY, CLK_ANY, phy_t1, phy_t2,
-+							  ANY_SSC);
-+			if (phy_pma_cmn_vals) {
-+				reg_pairs = phy_pma_cmn_vals->reg_pairs;
-+				num_regs = phy_pma_cmn_vals->num_regs;
-+				regmap = cdns_phy->regmap_phy_pma_common_cdb;
-+				for (i = 0; i < num_regs; i++)
-+					regmap_write(regmap, reg_pairs[i].off,
-+						     reg_pairs[i].val);
-+			}
- 
--		/* PMA TX lane registers configurations */
--		tx_ln_vals = cdns_torrent_get_tbl_vals(&init_data->tx_ln_vals_tbl,
--						       ref_clk, ref_clk1,
--						       phy_t1, phy_t2, ssc);
--		if (tx_ln_vals) {
--			reg_pairs = tx_ln_vals->reg_pairs;
--			num_regs = tx_ln_vals->num_regs;
--			for (i = 0; i < num_lanes; i++) {
--				regmap = cdns_phy->regmap_tx_lane_cdb[i + mlane];
--				for (j = 0; j < num_regs; j++)
--					regmap_write(regmap, reg_pairs[j].off,
--						     reg_pairs[j].val);
-+			/* PMA common registers configurations */
-+			cmn_vals = cdns_torrent_get_tbl_vals(&init_data->cmn_vals_tbl,
-+							     ref_clk, ref_clk1,
-+							     phy_t1, phy_t2, ssc);
-+			if (cmn_vals) {
-+				reg_pairs = cmn_vals->reg_pairs;
-+				num_regs = cmn_vals->num_regs;
-+				regmap = cdns_phy->regmap_common_cdb;
-+				for (i = 0; i < num_regs; i++)
-+					regmap_write(regmap, reg_pairs[i].off,
-+						     reg_pairs[i].val);
- 			}
--		}
- 
--		/* PMA RX lane registers configurations */
--		rx_ln_vals = cdns_torrent_get_tbl_vals(&init_data->rx_ln_vals_tbl,
--						       ref_clk, ref_clk1,
--						       phy_t1, phy_t2, ssc);
--		if (rx_ln_vals) {
--			reg_pairs = rx_ln_vals->reg_pairs;
--			num_regs = rx_ln_vals->num_regs;
--			for (i = 0; i < num_lanes; i++) {
--				regmap = cdns_phy->regmap_rx_lane_cdb[i + mlane];
--				for (j = 0; j < num_regs; j++)
--					regmap_write(regmap, reg_pairs[j].off,
--						     reg_pairs[j].val);
-+			/* PMA TX lane registers configurations */
-+			tx_ln_vals = cdns_torrent_get_tbl_vals(&init_data->tx_ln_vals_tbl,
-+							       ref_clk, ref_clk1,
-+							       phy_t1, phy_t2, ssc);
-+			if (tx_ln_vals) {
-+				reg_pairs = tx_ln_vals->reg_pairs;
-+				num_regs = tx_ln_vals->num_regs;
-+				for (i = 0; i < num_lanes; i++) {
-+					regmap = cdns_phy->regmap_tx_lane_cdb[i + mlane];
-+					for (j = 0; j < num_regs; j++)
-+						regmap_write(regmap, reg_pairs[j].off,
-+							     reg_pairs[j].val);
-+				}
- 			}
--		}
- 
--		if (phy_t1 == TYPE_DP) {
--			ret = cdns_torrent_dp_get_pll(cdns_phy, phy_t2);
--			if (ret)
--				return ret;
--		}
-+			/* PMA RX lane registers configurations */
-+			rx_ln_vals = cdns_torrent_get_tbl_vals(&init_data->rx_ln_vals_tbl,
-+							       ref_clk, ref_clk1,
-+							       phy_t1, phy_t2, ssc);
-+			if (rx_ln_vals) {
-+				reg_pairs = rx_ln_vals->reg_pairs;
-+				num_regs = rx_ln_vals->num_regs;
-+				for (i = 0; i < num_lanes; i++) {
-+					regmap = cdns_phy->regmap_rx_lane_cdb[i + mlane];
-+					for (j = 0; j < num_regs; j++)
-+						regmap_write(regmap, reg_pairs[j].off,
-+							     reg_pairs[j].val);
-+				}
-+			}
- 
--		reset_control_deassert(cdns_phy->phys[node].lnk_rst);
-+			if (phy_t1 == TYPE_DP) {
-+				ret = cdns_torrent_dp_get_pll(cdns_phy, phy_t2);
-+				if (ret)
-+					return ret;
-+			}
-+
-+			reset_control_deassert(cdns_phy->phys[node].lnk_rst);
-+		}
- 	}
- 
- 	/* Take the PHY out of reset */
-@@ -2826,6 +2844,7 @@ static int cdns_torrent_phy_probe(struct platform_device *pdev)
- 	dev_set_drvdata(dev, cdns_phy);
- 	cdns_phy->dev = dev;
- 	cdns_phy->init_data = data;
-+	cdns_phy->protocol_bitmask = 0;
- 
- 	cdns_phy->sd_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(cdns_phy->sd_base))
-@@ -3010,6 +3029,7 @@ static int cdns_torrent_phy_probe(struct platform_device *pdev)
- 		}
- 
- 		cdns_phy->phys[node].phy = gphy;
-+		cdns_phy->protocol_bitmask |= BIT(cdns_phy->phys[node].phy_type);
- 		phy_set_drvdata(gphy, &cdns_phy->phys[node]);
- 
- 		node++;
--- 
-2.40.1
-
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> ---
+> Changelog:
+>
+> v1 -> v2:
+>
+> 1. Add Fixes tag.
+> ---
+>  drivers/gpio/gpio-mc33880.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpio-mc33880.c b/drivers/gpio/gpio-mc33880.c
+> index 94f6fefc011b..5fb357d7b78a 100644
+> --- a/drivers/gpio/gpio-mc33880.c
+> +++ b/drivers/gpio/gpio-mc33880.c
+> @@ -99,7 +99,7 @@ static int mc33880_probe(struct spi_device *spi)
+>
+>         mc->spi =3D spi;
+>
+> -       mc->chip.label =3D DRIVER_NAME,
+> +       mc->chip.label =3D DRIVER_NAME;
+>         mc->chip.set =3D mc33880_set;
+>         mc->chip.base =3D pdata->base;
+>         mc->chip.ngpio =3D PIN_NUMBER;
+> --
+> 2.25.1
+>
 
