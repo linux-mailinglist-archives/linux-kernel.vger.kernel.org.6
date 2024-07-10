@@ -1,352 +1,190 @@
-Return-Path: <linux-kernel+bounces-248223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDCA492DA28
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:33:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB1AE92DA2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17369B23BDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:33:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE9231C21A4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC7319149A;
-	Wed, 10 Jul 2024 20:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YJgR3O7q"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFBF9198833;
+	Wed, 10 Jul 2024 20:34:23 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6624C193068;
-	Wed, 10 Jul 2024 20:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8999519539F
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 20:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720643580; cv=none; b=MtSHbHgPNvvWTMv1vOVkWE+2lNLP1Kc5eO74ImAN5MtoRLzpA9mrQBkNejcmFLFGgEXB69TiOKzhkLKrPN8Kvy7ioxJdK3CWJpLkOq6GAJVsFYbsx6Kwjn1JTNLW6Cz5eebNmmrrbTkioGNfvy19kNxTIV8zd56d8PX/CtNogVA=
+	t=1720643663; cv=none; b=q+4HtIqs9rlopfuyrV2Ll6xkR/g5j8R7NV89lyzjJntbn89P76tlSGnocKeEa4KkTFj/AJFlhxXaTEufSOTKrkAQltHN1Fb/jr7rs2MvEgOZTsEgSVnsWCe0vCUB08KCDHBsFLL5dlaedhGtn6/pG7rsTkLGdPmPrHg/t215tx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720643580; c=relaxed/simple;
-	bh=u1EaGdzdZhazkExoELLOUh5xVpslqzZXG1v3WYXqMLc=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=bQJmKrab5CzGmtFaYut8KGzrvd1bVWcN5nmSYAnTX1z1j9iKiQqPoehz2EIKSCHm1vyzVjjdT50cHamZWNSRfILM/8VyrmMUOkRUpICmq74nuIEWqEMPM6ZYmQjEZXOFcFUARPB/rmbgEI2qhvpSTw51vvoldkawc0ez51MdNkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YJgR3O7q; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70af5fbf0d5so149616b3a.1;
-        Wed, 10 Jul 2024 13:32:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720643579; x=1721248379; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Eq3JIg1oATa3NdJjOk623LvywPQZdgGRBXTXdShRg5I=;
-        b=YJgR3O7qX4nF71RRaloCVgVJjuTy+cp/FN0BZ6+ZHt0PyF6nKMu28OboUpS0tAirP0
-         39o3+YDJ6yuwGFX66QOzSKWRsbnE/C6ne7Rx5mIx6VXnc5XA7M/U98YOD4AHXI5pPsD0
-         NgGBMkg/+Fdpk0vnwHtt4bNLNA6L8AWW/pg3OAx2zWE04G3aRfjKCCVDBy1quHZrbQbl
-         YbjfrnZzZ3LdxDtdsHk20KIJVwcVz4zBuwdIhmVwzlEwq3jmEPm03A1oGdzKEOm0x6HY
-         5fBti8TlxUjcYGJIFWIxavC5MZmdJjb3BIHKKgKStZoYgb+B51g7rwtD29dMUhuO+9Ek
-         d2JQ==
+	s=arc-20240116; t=1720643663; c=relaxed/simple;
+	bh=g8LjupbUKU8NHTH5Uuvp0PGEuzjenQ658hvrRkjCm9o=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=n8dC4hly2XNcgwRGUBI8sUS43iCPxeMrcf9Cf0rKjGKVmIo+2oDF/A9iGWijrp1BVWDmdDCZkYg1B80GBz+RrQMDFA2j8XE4j5GBwqjVTHF17fg1syVh62kW6jG8koExYIDAYEVSvYx1zhIxPGH8E7GCb4nlKqdS07lpJAVUKUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7ec0802fd0dso18893239f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:34:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720643579; x=1721248379;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Eq3JIg1oATa3NdJjOk623LvywPQZdgGRBXTXdShRg5I=;
-        b=TjClA+didvJ8hWFswpUzWetMYsPqkH0xav9Fe9OftjO10sTfiAAX8BKyWYEdbbOAqs
-         w1QNPah92ABYX9kSxn0Rt9jvMeW/u+BmU+0B1TpiwLat0W9UM132p9T9vFhqh7m9pQ1C
-         FibIR4W9meuigXDa2xLDvArT396HMvwoB91M2oDaFbg9PG4Qzg9cxZ3BOgKt1MuTj2z2
-         OJNPg0DMbQ+sEFUnzoGfvL8o+NFH8CDlkAZcIvVH2SMI8KHwOMrvZG3+4NUjvSOwzviE
-         4oeiLnCMWeXxvI3vu252FknwRA6wX80KxuTVnNcHpSXv3jCaQKqbuQgR7MpQFMciVGfY
-         ik9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVe1F9fNTlT9XNSQdUP1lHlonBFGAFzHRRIG3XUv6tvQFAYVPzr+Jsp+YzJwbRW/FY44mQ4697UdHaU+4AY5OAq7jX/k4/O7oHxDd3rbJrvaWGg/Y0Oegvx77EPOJSh2YsmAJiOEQRribb4G9JZ
-X-Gm-Message-State: AOJu0YxfLPpZbjcUMph4wkgFa3RI5JG4jkFl9K2hMUu8o1HYqzDRKnAR
-	5vLnaFMIcMDWo9RfkynHebYmLgFbeRJw0UzGU24y1e3OGGN8X69a
-X-Google-Smtp-Source: AGHT+IE9TuBFXjREoKsBh0G0aHT26DqQ90JHzqJd/5KbGHIun9eti3YCqMKqUCzeKlMzN86W6uMUWw==
-X-Received: by 2002:a05:6a00:986:b0:706:5c4c:1390 with SMTP id d2e1a72fcca58-70b5de18917mr903207b3a.7.1720643578437;
-        Wed, 10 Jul 2024 13:32:58 -0700 (PDT)
-Received: from localhost.localdomain ([2604:a880:4:1d0::427:6000])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70b439b5676sm4222180b3a.184.2024.07.10.13.32.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 13:32:57 -0700 (PDT)
-From: Gatlin Newhouse <gatlin.newhouse@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Kees Cook <keescook@chromium.org>,
-	Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Gatlin Newhouse <gatlin.newhouse@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Pengfei Xu <pengfei.xu@intel.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Changbin Du <changbin.du@huawei.com>,
-	Xin Li <xin3.li@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com,
-	linux-hardening@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH v4] x86/traps: Enable UBSAN traps on x86
-Date: Wed, 10 Jul 2024 20:32:38 +0000
-Message-Id: <20240710203250.238782-1-gatlin.newhouse@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1720643661; x=1721248461;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=F/FsAanCn6HRVuUfzPd0zjjxYUK3mPPHg7WjHz5sd5E=;
+        b=VlCxiPlRVM4ckevDs0PiT6yg/NkR8jtQkHIf8rcJgfBGK4kGegJUoAHYAOpgI6Z1T5
+         YDDBuo/Up7wvG8Sy5TUjbSzdSOjnJwLqUqvL/B2kDvgZjNhozuZ0pw6t1cGJLtSUa7AL
+         BbtsGFIa5flU1+Bzf5pQGDKtDbgZw29NsjdNQ+jO5TdK+YGI7x6z5S0uWjbmi9l+vyAH
+         MadpHWg6wcN8vAumzn67aGZxi3XBu7TOGOH1UnbcOxYz/ZMfE/2w//B4tt0Z5J0T/LEn
+         ueFxefswUMGASzz4JCNvu3ZTgKxRLV67cfNdpYU8aQAi/YtK6GEGxGOuH/dwyI3hr403
+         iiig==
+X-Forwarded-Encrypted: i=1; AJvYcCWU/j4CWqTzNfRYWKrqJq7F5IVCyWQNgHpdZbIICd3UVvQ/mwuR21YocuIHGSGszGfV2kghLI5N4NJzsUyvhwd9Gt+GYSeyZIVWsGIG
+X-Gm-Message-State: AOJu0YyiddbhFe+MF+iJXi233NFIJDS+MZqSIsHyxkjzVEuwHgz4ZJWi
+	K5jbp/j203FM4uSQTcyNkCiWYIoypeqYoNCUTAYwMKXh4vhkHBPuqnz/DUtWb621AvTj+X+zKTR
+	ePLdyZzTdVQ5ipF78X/+hiYbmoaL8yR5ELXX9m+eOmMBIt6pnYWj7mbc=
+X-Google-Smtp-Source: AGHT+IHWZ/UCpGMXR2VJ8jYnEPWu3BNfGHy6LS/46oHOpxdNia3MPIkNld54bakFF3OU0vBnEh4yxrJcA2eaZan8YPD4ItO61Mrx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:6d0c:b0:7f6:1a62:58bb with SMTP id
+ ca18e2360f4ac-80004173ff5mr50758939f.3.1720643660723; Wed, 10 Jul 2024
+ 13:34:20 -0700 (PDT)
+Date: Wed, 10 Jul 2024 13:34:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002ec51a061cea9292@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in bch2_bio_compress
+From: syzbot <syzbot+cf190b6276e5bd33a108@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Currently ARM architectures extract which specific sanitizer
-has caused a trap via encoded data in the trap instruction.
-Clang on x86 currently encodes the same data in ud1 instructions
-but the x86 handle_bug() and is_valid_bugaddr() functions
-currently only look at ud2s.
+Hello,
 
-Bring x86 to parity with arm64, similar to commit 25b84002afb9
-("arm64: Support Clang UBSAN trap codes for better reporting").
-Enable the reporting of UBSAN sanitizer detail on x86 architectures
-compiled with clang when CONFIG_UBSAN_TRAP=y.
+syzbot found the following issue on:
 
-Signed-off-by: Gatlin Newhouse <gatlin.newhouse@gmail.com>
+HEAD commit:    34afb82a3c67 Merge tag '6.10-rc6-smb3-server-fixes' of git..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=11932b76980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=42a432cfd0e579e0
+dashboard link: https://syzkaller.appspot.com/bug?extid=cf190b6276e5bd33a108
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14109821980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1235f47e980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5e93dc1544ee/disk-34afb82a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/005e374613f0/vmlinux-34afb82a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b6931db81a1a/bzImage-34afb82a.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/d469706bc1c9/mount_0.gz
+
+The issue was bisected to:
+
+commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Sat Sep 23 22:41:51 2023 +0000
+
+    bcachefs: Ignore unknown mount options
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1475d6e1980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1675d6e1980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1275d6e1980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+cf190b6276e5bd33a108@syzkaller.appspotmail.com
+Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
+
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/compress.c:398!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 PID: 1036 Comm: kworker/u8:5 Not tainted 6.10.0-rc7-syzkaller-00012-g34afb82a3c67 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: writeback wb_workfn (flush-bcachefs-1)
+RIP: 0010:__bio_compress fs/bcachefs/compress.c:398 [inline]
+RIP: 0010:bch2_bio_compress+0x13a1/0x13e0 fs/bcachefs/compress.c:498
+Code: e1 07 38 c1 0f 8c 77 fb ff ff be 14 00 00 00 4c 89 ef e8 52 6d dc fd e9 65 fb ff ff e8 48 00 7a fd 90 0f 0b e8 40 00 7a fd 90 <0f> 0b e8 38 00 7a fd 90 0f 0b e8 00 0f 61 07 e8 2b 00 7a fd 90 0f
+RSP: 0018:ffffc9000403e660 EFLAGS: 00010293
+RAX: ffffffff841c2680 RBX: ffff8880769c7e78 RCX: ffff888021ddda00
+RDX: 0000000000000000 RSI: 0000000000000003 RDI: 0000000000000004
+RBP: ffffc9000403e8f0 R08: ffffffff841c14df R09: 0000000000000003
+R10: ffffc9000403ed00 R11: fffff52000807da5 R12: 00000000000002e0
+R13: ffff888076845688 R14: dffffc0000000000 R15: 0000000000000004
+FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f1b70de0db8 CR3: 0000000079450000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ bch2_write_extent fs/bcachefs/io_write.c:963 [inline]
+ __bch2_write+0x1537/0x5c40 fs/bcachefs/io_write.c:1461
+ bch2_write+0x947/0x1670 fs/bcachefs/io_write.c:1634
+ closure_queue include/linux/closure.h:269 [inline]
+ closure_call include/linux/closure.h:425 [inline]
+ bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:460 [inline]
+ bch2_writepages+0x27d/0x380 fs/bcachefs/fs-io-buffered.c:652
+ do_writepages+0x359/0x870 mm/page-writeback.c:2656
+ __writeback_single_inode+0x165/0x10b0 fs/fs-writeback.c:1651
+ writeback_sb_inodes+0x99c/0x1380 fs/fs-writeback.c:1947
+ __writeback_inodes_wb+0x11b/0x260 fs/fs-writeback.c:2018
+ wb_writeback+0x495/0xd40 fs/fs-writeback.c:2129
+ wb_check_background_flush fs/fs-writeback.c:2199 [inline]
+ wb_do_writeback fs/fs-writeback.c:2287 [inline]
+ wb_workfn+0xc58/0x1090 fs/fs-writeback.c:2314
+ process_one_work kernel/workqueue.c:3248 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3329
+ worker_thread+0x86d/0xd50 kernel/workqueue.c:3409
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__bio_compress fs/bcachefs/compress.c:398 [inline]
+RIP: 0010:bch2_bio_compress+0x13a1/0x13e0 fs/bcachefs/compress.c:498
+Code: e1 07 38 c1 0f 8c 77 fb ff ff be 14 00 00 00 4c 89 ef e8 52 6d dc fd e9 65 fb ff ff e8 48 00 7a fd 90 0f 0b e8 40 00 7a fd 90 <0f> 0b e8 38 00 7a fd 90 0f 0b e8 00 0f 61 07 e8 2b 00 7a fd 90 0f
+RSP: 0018:ffffc9000403e660 EFLAGS: 00010293
+RAX: ffffffff841c2680 RBX: ffff8880769c7e78 RCX: ffff888021ddda00
+RDX: 0000000000000000 RSI: 0000000000000003 RDI: 0000000000000004
+RBP: ffffc9000403e8f0 R08: ffffffff841c14df R09: 0000000000000003
+R10: ffffc9000403ed00 R11: fffff52000807da5 R12: 00000000000002e0
+R13: ffff888076845688 R14: dffffc0000000000 R15: 0000000000000004
+FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f1b70de0db8 CR3: 000000007d568000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
-Changes in v4:
-  - Implement Peter's suggestions for decode_bug(), and fix
-    inconsistent capitalization in hex values.
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Changes in v3:
-  - Address Thomas's remarks about: change log structure,
-    get_ud_type() instead of is_valid_bugaddr(), handle_bug()
-    changes, and handle_ubsan_failure().
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Changes in v2:
-  - Name the new constants 'LEN_ASOP' and 'INSN_ASOP' instead of
-    'LEN_REX' and 'INSN_REX'
-  - Change handle_ubsan_failure() from enum bug_trap_type to void
-    function
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-v1: https://lore.kernel.org/linux-hardening/20240529022043.3661757-1-gatlin.newhouse@gmail.com/
-v2: https://lore.kernel.org/linux-hardening/20240601031019.3708758-1-gatlin.newhouse@gmail.com/
-v3: https://lore.kernel.org/linux-hardening/20240625032509.4155839-1-gatlin.newhouse@gmail.com/
----
- MAINTAINERS                  |  2 ++
- arch/x86/include/asm/bug.h   | 11 +++++++
- arch/x86/include/asm/ubsan.h | 23 +++++++++++++++
- arch/x86/kernel/Makefile     |  1 +
- arch/x86/kernel/traps.c      | 57 ++++++++++++++++++++++++++++++++----
- arch/x86/kernel/ubsan.c      | 21 +++++++++++++
- 6 files changed, 110 insertions(+), 5 deletions(-)
- create mode 100644 arch/x86/include/asm/ubsan.h
- create mode 100644 arch/x86/kernel/ubsan.c
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 28e20975c26f..b8512887ffb1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22635,6 +22635,8 @@ L:	kasan-dev@googlegroups.com
- L:	linux-hardening@vger.kernel.org
- S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/hardening
-+F:	arch/x86/include/asm/ubsan.h
-+F:	arch/x86/kernel/ubsan.c
- F:	Documentation/dev-tools/ubsan.rst
- F:	include/linux/ubsan.h
- F:	lib/Kconfig.ubsan
-diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-index a3ec87d198ac..ccd573d58edb 100644
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -13,6 +13,17 @@
- #define INSN_UD2	0x0b0f
- #define LEN_UD2		2
- 
-+/*
-+ * In clang we have UD1s reporting UBSAN failures on X86, 64 and 32bit.
-+ */
-+#define INSN_ASOP	0x67
-+#define OPCODE_PREFIX	0x0f
-+#define OPCODE_UD1	0xb9
-+#define OPCODE_UD2	0x0b
-+#define BUG_NONE	0xffff
-+#define BUG_UD1		0xfffe
-+#define BUG_UD2		0xfffd
-+
- #ifdef CONFIG_GENERIC_BUG
- 
- #ifdef CONFIG_X86_32
-diff --git a/arch/x86/include/asm/ubsan.h b/arch/x86/include/asm/ubsan.h
-new file mode 100644
-index 000000000000..ac2080984e83
---- /dev/null
-+++ b/arch/x86/include/asm/ubsan.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_X86_UBSAN_H
-+#define _ASM_X86_UBSAN_H
-+
-+/*
-+ * Clang Undefined Behavior Sanitizer trap mode support.
-+ */
-+#include <linux/bug.h>
-+#include <linux/ubsan.h>
-+#include <asm/ptrace.h>
-+
-+/*
-+ * UBSAN uses the EAX register to encode its type in the ModRM byte.
-+ */
-+#define UBSAN_REG	0x40
-+
-+#ifdef CONFIG_UBSAN_TRAP
-+void handle_ubsan_failure(struct pt_regs *regs, u16 insn);
-+#else
-+static inline void handle_ubsan_failure(struct pt_regs *regs, u16 insn) { return; }
-+#endif /* CONFIG_UBSAN_TRAP */
-+
-+#endif /* _ASM_X86_UBSAN_H */
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 74077694da7d..fe1d9db27500 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -145,6 +145,7 @@ obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)		+= sev.o
- 
- obj-$(CONFIG_CFI_CLANG)			+= cfi.o
-+obj-$(CONFIG_UBSAN_TRAP)		+= ubsan.o
- 
- obj-$(CONFIG_CALL_THUNKS)		+= callthunks.o
- 
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 4fa0b17e5043..b6664016622a 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -67,6 +67,7 @@
- #include <asm/vdso.h>
- #include <asm/tdx.h>
- #include <asm/cfi.h>
-+#include <asm/ubsan.h>
- 
- #ifdef CONFIG_X86_64
- #include <asm/x86_init.h>
-@@ -91,6 +92,45 @@ __always_inline int is_valid_bugaddr(unsigned long addr)
- 	return *(unsigned short *)addr == INSN_UD2;
- }
- 
-+/*
-+ * Check for UD1 or UD2, accounting for Address Size Override Prefixes.
-+ * If it's a UD1, get the ModRM byte to pass along to UBSan.
-+ */
-+__always_inline int decode_bug(unsigned long addr, u32 *imm)
-+{
-+	u8 v;
-+
-+	if (addr < TASK_SIZE_MAX)
-+		return BUG_NONE;
-+
-+	v = *(u8 *)(addr++);
-+	if (v == INSN_ASOP)
-+		v = *(u8 *)(addr++);
-+	if (v != OPCODE_PREFIX)
-+		return BUG_NONE;
-+
-+	v = *(u8 *)(addr++);
-+	if (v == OPCODE_UD2)
-+		return BUG_UD2;
-+	if (v != OPCODE_UD1)
-+		return BUG_NONE;
-+
-+	v = *(u8 *)(addr++);
-+	if (X86_MODRM_RM(v) == 4)
-+		addr++;
-+
-+	*imm = 0;
-+	if (X86_MODRM_MOD(v) == 1)
-+		*imm = *(u8 *)addr;
-+	else if (X86_MODRM_MOD(v) == 2)
-+		*imm = *(u32 *)addr;
-+	else
-+		WARN_ONCE(1, "Unexpected MODRM_MOD: %u\n", X86_MODRM_MOD(v));
-+
-+	return BUG_UD1;
-+}
-+
-+
- static nokprobe_inline int
- do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
- 		  struct pt_regs *regs,	long error_code)
-@@ -216,6 +256,8 @@ static inline void handle_invalid_op(struct pt_regs *regs)
- static noinstr bool handle_bug(struct pt_regs *regs)
- {
- 	bool handled = false;
-+	int ud_type;
-+	u32 imm;
- 
- 	/*
- 	 * Normally @regs are unpoisoned by irqentry_enter(), but handle_bug()
-@@ -223,7 +265,8 @@ static noinstr bool handle_bug(struct pt_regs *regs)
- 	 * irqentry_enter().
- 	 */
- 	kmsan_unpoison_entry_regs(regs);
--	if (!is_valid_bugaddr(regs->ip))
-+	ud_type = decode_bug(regs->ip, &imm);
-+	if (ud_type == BUG_NONE)
- 		return handled;
- 
- 	/*
-@@ -236,10 +279,14 @@ static noinstr bool handle_bug(struct pt_regs *regs)
- 	 */
- 	if (regs->flags & X86_EFLAGS_IF)
- 		raw_local_irq_enable();
--	if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
--	    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
--		regs->ip += LEN_UD2;
--		handled = true;
-+	if (ud_type == BUG_UD2) {
-+		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
-+		    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-+			regs->ip += LEN_UD2;
-+			handled = true;
-+		}
-+	} else {
-+		handle_ubsan_failure(regs, imm);
- 	}
- 	if (regs->flags & X86_EFLAGS_IF)
- 		raw_local_irq_disable();
-diff --git a/arch/x86/kernel/ubsan.c b/arch/x86/kernel/ubsan.c
-new file mode 100644
-index 000000000000..c90e337a1b6a
---- /dev/null
-+++ b/arch/x86/kernel/ubsan.c
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Clang Undefined Behavior Sanitizer trap mode support.
-+ */
-+#include <linux/bug.h>
-+#include <linux/string.h>
-+#include <linux/printk.h>
-+#include <linux/ubsan.h>
-+#include <asm/ptrace.h>
-+#include <asm/ubsan.h>
-+
-+/*
-+ * Checks for the information embedded in the UD1 trap instruction
-+ * for the UB Sanitizer in order to pass along debugging output.
-+ */
-+void handle_ubsan_failure(struct pt_regs *regs, u16 type)
-+{
-+	if ((type & 0xFF) == UBSAN_REG)
-+		type >>= 8;
-+	pr_crit("%s at %pS\n", report_ubsan_failure(regs, type), (void *)regs->ip);
-+}
--- 
-2.25.1
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
