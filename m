@@ -1,150 +1,119 @@
-Return-Path: <linux-kernel+bounces-247179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00F0592CC3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:51:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6642092CC3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1B1F285915
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:51:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9751B1C21E91
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A3D84A32;
-	Wed, 10 Jul 2024 07:51:14 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B2084A21;
+	Wed, 10 Jul 2024 07:51:43 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988735CB8;
-	Wed, 10 Jul 2024 07:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC035CB8
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720597873; cv=none; b=q8sqywlCEIfm9lfjtr9dOAU+JLA1ncdmoNAzIi1SH6lGJgbrAopRCeCdVnB/8gST5mJmy1ECUpelhUAAE481Z8gEyCPGeHphtCTnsx6vqzUGDFLFNVag2WOty8NzV4fSZwe/Xw4XFxnlhcogio6rYxyYjhby2k/+Q9aMm0KKFC0=
+	t=1720597903; cv=none; b=j16nyMVACraC/BZsNAWHv3k85DriQykO53a4xCVDeB7Zo9WwykMD5PavEm+XPD6mLqn4zKfWobrmNZPCCrm+mB4l6U/VzQwbGv73/SJ5hrUToC7vat638dMCPUmm+55gvudrFyQbTZBNvy9hOvlwoTnD9fLbFMgX3/Q7WO6bF4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720597873; c=relaxed/simple;
-	bh=j9D8EnqCO6rUDfX2KsGZvRybWwMp5yvoLvK/MoKl9oY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wkv2R4R1Dnm7Y1cMtaPS3wNPZ6YX+QFCJcBxuEAeeajUQGMwRhU+k/1G/XicFqUBn/ANFIPnnqjjsraZ24gLLkwATKqYALgDikJAvw4iHyLfSMjNPiZSNKP9P1AO0brb3Ly5t0X4o9JCl0uP+/1QS4A5eUPhZeg20j42nyyXztM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e860d18.versanet.de ([94.134.13.24] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sRS6O-0005Or-Ip; Wed, 10 Jul 2024 09:51:00 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, quentin.schulz@cherry.de,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 0/6] Binding and driver for "dumb" clock generators
-Date: Wed, 10 Jul 2024 09:50:59 +0200
-Message-ID: <4022386.ZaRXLXkqSa@diego>
-In-Reply-To:
- <CANAwSgQGoeyy3V9hBNcxFynRgR-rUanUzVN41uFxu0-_OqKKZg@mail.gmail.com>
-References:
- <20240709123121.1452394-1-heiko@sntech.de>
- <CANAwSgQGoeyy3V9hBNcxFynRgR-rUanUzVN41uFxu0-_OqKKZg@mail.gmail.com>
+	s=arc-20240116; t=1720597903; c=relaxed/simple;
+	bh=Ndc+9Qc/wSd8cgS0VuGQFkVzbnR7y1hmuot87Sn0J4w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NZDRDZOHNoJwMOaLd+8H5ITCZC2xMqOAmON/YACeek14LOembVEPB/60i649fH+wv4gCJ8q7H7dytAM140lwyY3C1WZfQfQU9IZy5Y2Hu9X4m43LwEjqJxOXg9PFgDcQaKYbZ41njawFf+miNpFDEohs4mfLW04hC4DhS9osopM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4WJqn62Pw2z9sSv;
+	Wed, 10 Jul 2024 09:51:38 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id EpgCmhGS0H2a; Wed, 10 Jul 2024 09:51:38 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4WJqmw2510z9sT8;
+	Wed, 10 Jul 2024 09:51:28 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 35A9E8B779;
+	Wed, 10 Jul 2024 09:51:28 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id Su09KU2IeCB5; Wed, 10 Jul 2024 09:51:28 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.233.26])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E1D468B766;
+	Wed, 10 Jul 2024 09:51:27 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	x86@kernel.org,
+	linux-riscv@lists.infradead.org,
+	Oscar Salvador <osalvador@suse.de>,
+	Peter Xu <peterx@redhat.com>
+Subject: [PATCH v2 1/3] arch/x86: Drop own definition of pgd,p4d_leaf
+Date: Wed, 10 Jul 2024 09:51:20 +0200
+Message-ID: <bcd6ab8246348f18fdc77694e321ee6458f05781.1720597744.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720597882; l=1393; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=y1Fku5Ig+SrLh/mlbGZSDg5khbyWLz2sNH+Fhxvf8CY=; b=ZZZbGXGTOnTKjAp08fuPZS4cmRBbyfRVezQt4Oz9YhJ7W4Res5iQwjOEEXfNvOQwA/ghhFQas Nvz5aEWhOUEA4kFg32/yccO89q7Vl3J1d9wEvAyscMk8Xay/WbsDPQO
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-Hi Anand,
+From: Oscar Salvador <osalvador@suse.de>
 
-Am Mittwoch, 10. Juli 2024, 05:02:57 CEST schrieb Anand Moon:
-> On Tue, 9 Jul 2024 at 18:02, Heiko Stuebner <heiko@sntech.de> wrote:
-> >
-> > Rockchip boards with PCIe3 controllers inside the soc (rk3568, rk3588) have
-> > external clock generators on the board to generate the needed 100MHz
-> > reference clock the PCIe3 controller needs.
-> >
-> > Often these clock generators need supplies to be enabled to run.
-> >
-> > Modelling this clock has taken a number of shapes:
-> > - The rk3568 Rock-3a modelled the generator-regulator as "phy-supply" [0]
-> >   &pcie30phy {
-> >         phy-supply = <&vcc3v3_pi6c_03>;
-> >         status = "okay";
-> >   };
-> >   which is of course not part of the binding
-> >
-> > - On the Rock-5-ITX the supply of the clock generator is controlled by
-> >   the same gpio as the regulator supplying the the port connected to the
-> >   pcie30x4 controller, so if this controller probes first, both
-> >   controllers will just run. But if the pcie30x2 controller probes first
-> >   (which has a different supply), the controller will stall at the first
-> >   dbi read.
-> >
-> > - Recent Theobroma-Systems boards (Jaguar and Tiger) modelled their
-> >   generator as a combination of fixed clock and gpio-gate, which works
-> >   because the generator's vdd-supply is always on and only the output-
-> >   enable pin needs to be toggled.
-> >
-> >
-> > So this series attempts to improve the situation by allowing to model
-> > these clock generators as actual entities in the devicetree, to not have
-> > them just accidentially work or break bindings.
-> >
-> 
-> I was wondering if these changes apply to Radxa Rock 5b SbC, it does not have
-> pi6c557 clock generator but the schematic supports GEN_CLK_100MHZ is
-> input to CLKin0 which is generated via the VCC3V3_PI6C_05 (100MHz,3.3V,3225)
-> regulator.
+We provide generic definitions of pXd_leaf in pgtable.h when the arch
+do not define their own, where the generic pXd_leaf always return false.
 
-yes, that is the same setup as on the Rock 5 ITX, see it's patch in
-this series.
+Although x86 defines {pgd,p4d}_leaf, they end up being a no-op, so drop them
+and make them fallback to the generic one.
 
-The difference being that for your Rock 5b it already works by accident,
-as the pcie30x4 port-supply and the supply for the clock-generator are
-controlled by the same gpio.
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ arch/x86/include/asm/pgtable.h | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-So it does make sense to model this correctly for correctness sake, but
-there is no immediate need for action, as there is no fault happening
-like on the Rock 5 ITX with its two separate ports.
-
-
-Heiko
-
-
-> > [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts#n605
-> >
-> > Heiko Stuebner (6):
-> >   dt-bindings: clocks: add binding for generic clock-generators
-> >   clk: add driver for generic clock generators
-> >   arm64: dts: rockchip: fix the pcie clock generator on Rock 5 ITX
-> >   arm64: dts: rockchip: use clock-generator for pcie-refclk on
-> >     rk3588-jaguar
-> >   arm64: dts: rockchip: use clock-generator for pcie-refclk on
-> >     rk3588-tiger
-> >   arm64: dts: rockchip: add pinctrl for clk-generator gpio on
-> >     rk3588-tiger
-> >
-> >  .../bindings/clock/clock-generator.yaml       |  62 ++++++++
-> >  .../arm64/boot/dts/rockchip/rk3588-jaguar.dts |  13 +-
-> >  .../boot/dts/rockchip/rk3588-rock-5itx.dts    |  34 ++++-
-> >  .../arm64/boot/dts/rockchip/rk3588-tiger.dtsi |  21 +--
-> >  drivers/clk/Kconfig                           |   7 +
-> >  drivers/clk/Makefile                          |   1 +
-> >  drivers/clk/clk-generator.c                   | 133 ++++++++++++++++++
-> >  7 files changed, 251 insertions(+), 20 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/clock-generator.yaml
-> >  create mode 100644 drivers/clk/clk-generator.c
-> >
-> > --
-> > 2.39.2
-> >
-> >
-> 
-
-
-
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 65b8e5bb902c..772f778bac06 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -252,13 +252,6 @@ static inline unsigned long pgd_pfn(pgd_t pgd)
+ 	return (pgd_val(pgd) & PTE_PFN_MASK) >> PAGE_SHIFT;
+ }
+ 
+-#define p4d_leaf p4d_leaf
+-static inline bool p4d_leaf(p4d_t p4d)
+-{
+-	/* No 512 GiB pages yet */
+-	return 0;
+-}
+-
+ #define pte_page(pte)	pfn_to_page(pte_pfn(pte))
+ 
+ #define pmd_leaf pmd_leaf
+@@ -1396,9 +1389,6 @@ static inline bool pgdp_maps_userspace(void *__ptr)
+ 	return (((ptr & ~PAGE_MASK) / sizeof(pgd_t)) < PGD_KERNEL_START);
+ }
+ 
+-#define pgd_leaf	pgd_leaf
+-static inline bool pgd_leaf(pgd_t pgd) { return false; }
+-
+ #ifdef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
+ /*
+  * All top-level MITIGATION_PAGE_TABLE_ISOLATION page tables are order-1 pages
+-- 
+2.44.0
 
 
