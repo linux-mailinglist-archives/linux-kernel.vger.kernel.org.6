@@ -1,162 +1,161 @@
-Return-Path: <linux-kernel+bounces-248064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF7D992D7F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:02:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31E9192D7F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:04:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D364C1C213E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:02:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E59B7286715
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347C7195B14;
-	Wed, 10 Jul 2024 18:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55283195811;
+	Wed, 10 Jul 2024 18:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VK8yHcxG"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ht5AEvMe"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CD4194099
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 18:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7B3194099;
+	Wed, 10 Jul 2024 18:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720634543; cv=none; b=S/W6teo9gd5tjEoSfehMDN+ZRJM5z8Kvpqp3t3WvLx0diI/hRiXDqEGTrW1Nq9tdd4xLJWZ+5xzySw7PRmD0CeeOJs9ovOdhJQdWroDRef92rR3vvcM9BUtYKm+KeZ8QdBYPkzEeCG1BWj7zgAuMJLkrh4t55bQ/jE9qXvgd9wQ=
+	t=1720634647; cv=none; b=JyxLmUZB8O1ZTLSu4aNXW7uxdc7LSoccuqaCivbO7qNA5r/ptFEU3tFRfIrAWPYr31JjSRrJDxxZDaqUziGeqalIWOZQbjFVwfmUDKl3OAYARiqQuyFdZiJkCSlzZ4bhvpH1r9Xv7BsleQ8DUM2T00qFME7QGLKamJbfiGeF8w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720634543; c=relaxed/simple;
-	bh=PdHPvlbEI3WkdsdnZkmhStlR+34lGMLayWBOq8cq+fs=;
+	s=arc-20240116; t=1720634647; c=relaxed/simple;
+	bh=03kxh5pdd60/OEQNjoXPbqHOMmMMfsErItVT3Snd2X0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HaiOiSs5o1sR5iJ/uUXiWrAQi0GS6Cs4ZQFGWhGuQ8CASRykf/9o/va3cI2St/fR+VJ8wb8hLI/SbZ7Jyh6erEpwYY/eNmqI3zISGgLt9mcYorZEuUjERq6JOvJI06dpZzpZE4JKqVayIz0ThMf3GTxbwjnqc1IESM5xkXl3vnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VK8yHcxG; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-375fc24a746so9895ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 11:02:21 -0700 (PDT)
+	 To:Cc:Content-Type; b=Bp+uNy2S3L6aG8NuSVl+QyJ3XxLRU9Keih+9XOVYCma05muJbXkFl3UKQX8iwSix23Ju9mBfDQtkKdZs0k39VbDHIumfV7ICKoV+L1u/ai7sV4uAEVIThwOEKO3RP6qQ/2vWRd+Vxl2Fvh/ZkVIx0oE7FKkH9EI0yvmffk2qmm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ht5AEvMe; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70af2b1a35aso81885b3a.1;
+        Wed, 10 Jul 2024 11:04:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720634541; x=1721239341; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720634645; x=1721239445; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OOsNmbPrF2STZyyL5Kpp+cQCII13OaquvqokEKK2An0=;
-        b=VK8yHcxGEJJbA76IrPr9yeXh2M0GFSTS+TyGoaukf0XbZ15Tv41fFw0SG3pHWzIQir
-         fVgyXbjiD42NbUJHqsQVYqxjADVpCqstyRgKUQLJ23JBLeD0WVNzQTTNHKPPPUJZtrum
-         TbBG9+jOG/7u0oVq2PqrVEzcKQWGGs952/+kXlJ63khJ/RRu9fIHDQLeXsfpxT5iuAw9
-         VTEGzypFWLJAIt6DxbH8bRUFnGQIe30xnhTSfqs03XXd4lhpu/1YX7OrauueeSoNyFuc
-         S9DBNHI7R76ZEeeYqSVROSV919/K120cbTgCfT2VgtDNAGJucLl/BmhGkD1J+9mE2bLn
-         +A8A==
+        bh=9Mf0qpFnrgMm7ZyO6IPiv9h5/mvXdyNwfvX9vXzksXE=;
+        b=Ht5AEvMedCneS1j4SkdYo8P040s7PkVrqrdgkdLeIqdLNL2X56B8qQ6o2S6xm+fTej
+         3EADYeZXyTCHa2OX1iSCA/xRmFYfP87z9UlKUYGHIO8vZuu5hQH1vTFulNPHtXWMO1VH
+         5OSQKNg9X06/vW0sgfAwwrBdToy39Og8j8pbSCXNDqM9TF0VTrRnEvtOuZeS54LfyUQP
+         tRkKzKBssdA4B5tpAIFfnsR30etyq4TwUqL+iQxCwI5pso8y/70fQxkbPS4DQ3d5Lf2/
+         fKNLhtiVPYMONUok0c/vYUYMLZpGx+7f8wMQEsYyCnWqxTScnNnJ1yM1g0EWeTX0Bp0D
+         XN7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720634541; x=1721239341;
+        d=1e100.net; s=20230601; t=1720634645; x=1721239445;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OOsNmbPrF2STZyyL5Kpp+cQCII13OaquvqokEKK2An0=;
-        b=aTmGJxA9FoMPFoTjmp0EBSyo0mEhDq9RE6ANjAfV7Wr6EZ/r2kXEy1CoVX9Q3mBSR0
-         7HB04rpTaVCbvyQbZm1bIZJZ3ErTQyQD7bommQbTRb5gXw2B0ynklWObRSVCumwvqm3x
-         ZQGB6fkKoBm1sguAV2Vm2NCNdepKBZl9Oy4H4JSKp47RpUcFOiUNhlrcNtq146r4RuFm
-         G6qqrdtMWHJvixytRLX82jgNG0mZ4jJaoyWqDnHhiJte6NU8/U3d+NQagRxgzxhD1gwI
-         NKXIsir5VpORQflrkEAaReBDeeE9LZBAMgkXJEB+nyoScO0eczQ/ecwIip4RjyiRKka4
-         EbHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPnRIzobUH0LMVeu29y6MSFBmVJ7jRdiJgST8n41dHHAh7dFJK6jCic/3VDVR7wUk/rieesx+HaSPeoMA/b1GyNP+22qK5GEn9Nw6d
-X-Gm-Message-State: AOJu0Yztzp7s65hMuOlkVAND7dWBPW17KI4Jhprn+Pl0hrqWir8OJBAW
-	XWFz+ZOy9D/rXH6pzgJ+kmhgfgbT5XU9kLYbqUTI9a4RJoje641Yz+DhCcbsMRRB2UBKKU1qyDr
-	WjqMFCLTIJt72UrKbKq/ua17e4vP4vPOWSIlf
-X-Google-Smtp-Source: AGHT+IEHo7LR6ArOXTJkal+hND0YIB8MGeuzD4QP2Kr9qu/4LstjGlefnnRc8EIaqJgafRoLSx1q0y46haL1FbJ5qSM=
-X-Received: by 2002:a05:6e02:184f:b0:375:edce:baf1 with SMTP id
- e9e14a558f8ab-38d2c77159bmr34315ab.13.1720634540903; Wed, 10 Jul 2024
- 11:02:20 -0700 (PDT)
+        bh=9Mf0qpFnrgMm7ZyO6IPiv9h5/mvXdyNwfvX9vXzksXE=;
+        b=usa4Y+nq+VbyhaU8jZ6wWKV0u6o23fEqlfelyOTXE9sdOhXN0PMSYIjOj8xd1+MmRG
+         QDGbhu9q6dktICQaJSsrQa/Vecf7L1GNHYLRRWmFE3ucBoLTHVzh7563jBAUHI+EpJvt
+         jHfaBJEJzVftWTEdVP8WGzDdVHiKHvZn/HVknzE8u6Pdu3/BDeMm3oyTW7o1g8yWeUqm
+         RYZw3OUH4zlZvWkZ7CiYvkjFHH8GQLZs5SE9lzPN0L/iITlSEp5ytzWNYF873qLyJ6CV
+         AaY/2f36EU7SNifjhNC2/rLJsYizGTmbHf211fcMt601slR/WrPLTcbw6z9Eo431B5CK
+         IikA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6AXjbZJkgiDDJDkZ4V743j0XX6rjmYg+Ip2p7DEOsNeH7LfJc4G8Y1vf+sfw0kRc7/69+fYRS/Rm4JD1SFX/F4B9vhbbYltcJ2N4CKYU88eExuYngPIW8Xf+7npVgma+EVytP7qtI7TVrqXPvFEoA
+X-Gm-Message-State: AOJu0YwG9c5E+HSuOJVWGvgQFOlenrHFE76sEpQNuNQQQr7N6kDLTLWZ
+	e7bbk3DZQ8kJ1Bzvgx1loZvUJDQWG13gZgnYwV6/KS0+2XJsi0LZ42G5MYim/t4hzW8Oqv+R17R
+	PHp9K3CZBhsKtbeCjvTgtHG0Rx6w=
+X-Google-Smtp-Source: AGHT+IGKJkC1mkn/dxcVBP1W/9U2WGlsIEcdENR8wOLqnWRuUG5gT4XLsXVVz/NFk9EzBy6diqy3D+5uCT6D1snWnQU=
+X-Received: by 2002:a05:6a20:244e:b0:1c2:89a3:4e19 with SMTP id
+ adf61e73a8af0-1c29824370cmr6896548637.27.1720634645531; Wed, 10 Jul 2024
+ 11:04:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240705132059.853205-1-howardchu95@gmail.com>
-In-Reply-To: <20240705132059.853205-1-howardchu95@gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 10 Jul 2024 11:02:09 -0700
-Message-ID: <CAP-5=fVoXg4sPnyEJ095YkXmYDtW35d7mRjoWfO8=KEr7Oc-Mg@mail.gmail.com>
-Subject: Re: [PATCH v5 0/8] perf trace: Augment enum arguments with BTF
-To: Howard Chu <howardchu95@gmail.com>
-Cc: acme@kernel.org, adrian.hunter@intel.com, jolsa@kernel.org, 
-	kan.liang@linux.intel.com, namhyung@kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240710140017.GA1074@redhat.com> <20240710163022.GA13298@redhat.com>
+ <20240710163047.GB13298@redhat.com>
+In-Reply-To: <20240710163047.GB13298@redhat.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 10 Jul 2024 11:03:53 -0700
+Message-ID: <CAEf4BzZScUsh94P67-1rKOj=26ycj87nmT0fBrP9BvvmxAi8kQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] uprobes: kill uprobe_register_refctr()
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org, clm@meta.com, 
+	jolsa@kernel.org, mingo@kernel.org, paulmck@kernel.org, rostedt@goodmis.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 5, 2024 at 6:20=E2=80=AFAM Howard Chu <howardchu95@gmail.com> w=
-rote:
+On Wed, Jul 10, 2024 at 9:32=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wro=
+te:
 >
-> Changes in v5:
+> It doesn't make any sense to have 2 versions of _register(). Note that
+> trace_uprobe_enable(), the only user of uprobe_register(), doesn't need
+> to check tu->ref_ctr_offset to decide which one should be used, it could
+> safely pass ref_ctr_offset =3D=3D 0 to uprobe_register_refctr().
 >
-> - Use hardcoded landlock structs and macros for landlock.c workload to
-> make this build in older systems.
+> Add this argument to uprobe_register(), update the callers, and kill
+> uprobe_register_refctr().
+>
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> ---
+>  include/linux/uprobes.h     |  9 ++-------
+>  kernel/events/uprobes.c     | 23 +++++------------------
+>  kernel/trace/bpf_trace.c    |  2 +-
+>  kernel/trace/trace_uprobe.c |  8 ++------
+>  4 files changed, 10 insertions(+), 32 deletions(-)
+>
 
-A few nits but otherwise:
-Reviewed-by: Ian Rogers <irogers@google.com>
+LGTM with few nits below.
 
-Thanks,
-Ian
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
-> Changes in v4:
+>  /*
+>   * uprobe_apply - unregister an already registered probe.
+>   * @inode: the file in which the probe has to be removed.
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index d1daeab1bbc1..467f358c8ce7 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -3477,7 +3477,7 @@ int bpf_uprobe_multi_link_attach(const union bpf_at=
+tr *attr, struct bpf_prog *pr
+>                       &bpf_uprobe_multi_link_lops, prog);
 >
-> - Fix landlock workload's build error.
+>         for (i =3D 0; i < cnt; i++) {
+> -               err =3D uprobe_register_refctr(d_real_inode(link->path.de=
+ntry),
+> +               err =3D uprobe_register(d_real_inode(link->path.dentry),
+>                                              uprobes[i].offset,
+>                                              uprobes[i].ref_ctr_offset,
+>                                              &uprobes[i].consumer);
+
+please adjust indentation here
+
+> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+> index c98e3b3386ba..78a5c40e885a 100644
+> --- a/kernel/trace/trace_uprobe.c
+> +++ b/kernel/trace/trace_uprobe.c
+> @@ -1089,12 +1089,8 @@ static int trace_uprobe_enable(struct trace_uprobe=
+ *tu, filter_func_t filter)
+>         tu->consumer.filter =3D filter;
+>         tu->inode =3D d_real_inode(tu->path.dentry);
 >
-> Changes in v3:
->
-> - Add trace__btf_scnprintf() helper function
-> - Remove is_enum memeber in struct syscall_arg_fmt, replace it with
-> btf_is_enum()
-> - Add syscall_arg_fmt__cache_btf_enum() to cache btf_type only
-> - Resolve NO_LIBBPF=3D1 build error
-> - Skip BTF augmentation test if landlock_add_rule syscall and LIBBPF are =
-not
-> available
-> - Rename landlock.c workload, add a comment to landlock.c workload
-> - Change the way of skipping 'enum ' prefix
-> - Add type_name member to struct syscall_arg
->
-> Changes in v2:
->
-> - Add trace_btf_enum regression test, and landlock workload
->
-> v1:
->
-> In this patch, BTF is used to turn enum value to the corresponding
-> enum variable name. There is only one system call that uses enum value
-> as its argument, that is `landlock_add_rule()`.
->
-> Enum arguments of non-syscall tracepoints can also be augmented, for
-> instance timer:hrtimer_start and timer:hrtimer_init's 'mode' argument.
->
->
-> Arnaldo Carvalho de Melo (2):
->   perf trace: Introduce trace__btf_scnprintf()
->   perf trace: Remove arg_fmt->is_enum, we can get that from the BTF type
->
-> Howard Chu (6):
->   perf trace: Fix iteration of syscall ids in syscalltbl->entries
->   perf trace: BTF-based enum pretty printing for syscall args
->   perf trace: Augment non-syscall tracepoints with enum arguments with
->     BTF
->   perf trace: Filter enum arguments with enum names
->   perf test: Add landlock workload
->   perf test trace_btf_enum: Add regression test for the BTF augmentation
->     of enums in 'perf trace'
->
->  tools/perf/builtin-trace.c               | 229 ++++++++++++++++++++---
->  tools/perf/tests/builtin-test.c          |   1 +
->  tools/perf/tests/shell/trace_btf_enum.sh |  61 ++++++
->  tools/perf/tests/tests.h                 |   1 +
->  tools/perf/tests/workloads/Build         |   2 +
->  tools/perf/tests/workloads/landlock.c    |  66 +++++++
->  tools/perf/trace/beauty/beauty.h         |   1 +
->  tools/perf/util/syscalltbl.c             |   7 +
->  tools/perf/util/syscalltbl.h             |   1 +
->  9 files changed, 345 insertions(+), 24 deletions(-)
->  create mode 100755 tools/perf/tests/shell/trace_btf_enum.sh
->  create mode 100644 tools/perf/tests/workloads/landlock.c
+> -       if (tu->ref_ctr_offset)
+> -               ret =3D uprobe_register_refctr(tu->inode, tu->offset,
+> -                               tu->ref_ctr_offset, &tu->consumer);
+> -       else
+> -               ret =3D uprobe_register(tu->inode, tu->offset, &tu->consu=
+mer);
+> -
+> +       ret =3D uprobe_register(tu->inode, tu->offset, tu->ref_ctr_offset=
+,
+> +                             &tu->consumer);
+
+doesn't fit under 100 characters? If it does, please keep as a single line.
+
+>         if (ret)
+>                 tu->inode =3D NULL;
 >
 > --
-> 2.45.2
+> 2.25.1.362.g51ebf55
+>
 >
 
