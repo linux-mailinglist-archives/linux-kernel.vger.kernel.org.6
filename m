@@ -1,213 +1,130 @@
-Return-Path: <linux-kernel+bounces-247961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5159592D6E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:53:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FB292D6A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A3F9B2D03A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:39:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B014C1F289DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E518197A95;
-	Wed, 10 Jul 2024 16:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07EFB197556;
+	Wed, 10 Jul 2024 16:36:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qZNZv2GO"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2067.outbound.protection.outlook.com [40.107.95.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="TXq782N4"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE57197548;
-	Wed, 10 Jul 2024 16:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720629370; cv=fail; b=Q0cn+e69Blcgc5xx6CIIcyyTeSrB/1lZsl3RNGmrJTr7IrQBsMjdSmCUkzSxmUmEbvlyN5JCINyBOmpjWyAqAYgJqO+7wpUl5utZtLx4ezTvtslLZQRlrh0c9zK+EWpoA6AjFh0FdiA2clYDMHJC6wz+OG/c06c+gLbntwTsoF4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720629370; c=relaxed/simple;
-	bh=bkjRjjD6Orfc02ht1otKQWXo3VDS7a/ma6hR4nBB/dk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lzjUOcSB8Gcdw41fuGkjkHBtg5Hcj7J6FGBQJw6Z8XVPmht9KEyu7+eqWtSawmvyiWYrv6j44+eWCS+BZDxjOCch1fI7Jcfw6ZUJKEXJ/JtAf7mUK2vK1109CFc3edMxzjPdpOEGIVkbnmVZz5lEemGVK0rwKKbA5lHUtcbZ6NQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qZNZv2GO; arc=fail smtp.client-ip=40.107.95.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YRdBGKFlWpGWG6LWpK/fvXHvccp/8nJDXNvAJP9PloQZMDvvgN7vNU++IaNs6yPYskXtZmU5gK2nbUnL+hUmCbAbRyQwunFuMYfuQuBqJ8aaNgraS8QBu4yVnT/w5g6VogTH1HiQY8wXcE1ifE7hdj3Lp/dzH6mxXOwSLZIEZx82tNYgTZ/07pvYS31kVzxzbnatxpCoONc03xc/mHd5PzKcwxKInOGHk8X34GXRCcY0InHVlzOx9tMxh9z/tyn5TSY2rilPaRhuhT0TkB9OB1FwGCO2+kQ+1gSVG27jOOLNKmrsg+Yjl0nvB0WgHlTOOmRwu0KMxFUUDG9WhcuutA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WU6Oi9DHbNhA2qiVY8ZKegFLJwg5qq06kR3lgdh9Uto=;
- b=dehVKo+PSzHykQbaXcKtp8PFuqLyxYncoZ9khtmtW1eheDQxQj/IGgB++SNQMIwuYuB85CKio3zHjc9cdfjVk4Yu9hxblfPwgKMbmXxnzMBLUZAq8nFZo96kGDJZxQ8jza5DStKQvCtRyC4hTsedulBg733TvbJogAN2/jdjeB79CXgwQyrPTOaBJasia6YP+8AYnTaVrd4PUZSL4ErfyMRCdw8ZCONgBwLgu/AWx9qLeA8gOBcsYDpZhnnbnwh9C4O3oysJ1TSzC4oxkIXhm4RubQlne112SzEQCnnj/F25ksKj/1FBStEWvLMVkt7XVjScaN5dsZHTuMAKby4eRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WU6Oi9DHbNhA2qiVY8ZKegFLJwg5qq06kR3lgdh9Uto=;
- b=qZNZv2GOcwD3RFv0bLOThlZaKF2wNt1FA9/w71d0gO1XFza/gYhoUHKckt/LvGWey4RuB6W6jom02j0UKLhlDEelDjCbouwa/GsmtfJOnw9MbdrTyXGUSrZ07g9fyyLqwjQ4wxV4g5XWoMjhSzhzZj7hWC0axWzRGIv8dnt8fho=
-Received: from SJ0PR13CA0045.namprd13.prod.outlook.com (2603:10b6:a03:2c2::20)
- by PH7PR12MB6634.namprd12.prod.outlook.com (2603:10b6:510:211::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Wed, 10 Jul
- 2024 16:36:03 +0000
-Received: from SJ1PEPF000023DA.namprd21.prod.outlook.com
- (2603:10b6:a03:2c2:cafe::41) by SJ0PR13CA0045.outlook.office365.com
- (2603:10b6:a03:2c2::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.19 via Frontend
- Transport; Wed, 10 Jul 2024 16:36:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- SJ1PEPF000023DA.mail.protection.outlook.com (10.167.244.75) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7784.5 via Frontend Transport; Wed, 10 Jul 2024 16:36:03 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 10 Jul
- 2024 11:36:00 -0500
-Received: from [172.25.198.154] (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 10 Jul 2024 11:36:00 -0500
-Message-ID: <05907efb-0b60-4fe8-8c1e-71506424879d@amd.com>
-Date: Wed, 10 Jul 2024 12:35:59 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1AF3193476
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720629368; cv=none; b=UxEUXof0dyQtdG2t+lmvktA81u1hLsdAgOqhzqbq3SqH94p+BgtlMQtje08CxgZZ3zeY/vLsloqyOXGt841MgeI6mbqDWVVcLFl+Qxv7tTY3tWp5PWrja5Qlq6MwRprXrvqmJDo/1lwaEbEIw20M0LXsnJ0W3PODYd5hJhN+s7s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720629368; c=relaxed/simple;
+	bh=AmY7/0Kx5MgGmOlXPK9ZhPz0KG3pwbKkQWq8KfClfAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=M+JS1GyBlyn3lyOv0ATrWAJNqcZdG3w4Bymhv9K8CpRwm37pDmfnYqrz11mAEobQQC28+jCCJT/pqdQOQNjFVWL12id579k50dfjeOEMNBXBy9XwPmyQh7oRcTJAfex/ZfEJjtkhVu0CrqN3Kbqs3pnR2sJ30Xyu0rNLplZ68NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=TXq782N4; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fb05b0be01so39673985ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:36:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1720629366; x=1721234166; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GAyPmOUdsLd03mlAddpRof18UDE0qDKzzkyVj4fd57k=;
+        b=TXq782N4GvwyHd48ipHsDO3etE2d20/+V5M6qIka7kkntUCKxBAxsK+tdiolSMOVgA
+         glcFBqoe4UXxI1AFXNUK4fG5HSp4ggXEplqxx4qGbl8TUIbeXns67Y2JGInI1hKDh3Ul
+         Lqjf87pK4l4lP5/T3Zg6573aA5cqoydHj8GkM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720629366; x=1721234166;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GAyPmOUdsLd03mlAddpRof18UDE0qDKzzkyVj4fd57k=;
+        b=cFoSW3Xdmi23sz+wNOqeUxaPADl51NW6N6c50IfVEr7byLG3XeWJE4Kwja1xYff5vR
+         88rF8ALcZoJwxE9wIL/tMJjUZcHIeAO2g5P45rAIlI9dMKbDzgJP+4GsxtUsp0HkmSSQ
+         zyW6IQX4r/sh9ddfugScKUtY3fjENrc8qvCh1oW+VJjtKuXVdlvQP2OPd4iR+M4PKZu1
+         otjupuevdsb2eWzwHSwpLym41jt0HWAXiwBnzF2BBRH7DNhdTBipQ4J5psWmvegAcdBz
+         QsOIA8VfyWbYFjUf9ZtEktIanv1IHoITkwnX4BpHnCSRts94qjhvzbUjmx8gwlv1M1T1
+         ftJA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0L4OV+oTfn2NqNRyZ+LGo4zkvCEcXhiyi4MMIAWzRSnVw+VgkbHAx0y7C12XqofmmJTzXozOlMbgN0PisMSWN4XtOgsvqqNc8Kqxt
+X-Gm-Message-State: AOJu0YwhXzaHRELjE/oNg6Tfkjyoda9Eqs8AkKsZgu+N7LTT3Ai6HNyZ
+	EaAqTbuDLn2OHFwC+TS5C9Gw8NfLyq+05HGVaLreZz/PABn4c6iIcciqD1ghyRo=
+X-Google-Smtp-Source: AGHT+IFSu03Qqw8EY48ag2gKY7v/+/XrSg8iNnofNUiIjWSb3EZMr23XoXHhqrVrkqdA19mx9qnCjQ==
+X-Received: by 2002:a17:903:2344:b0:1fb:9b91:d7c9 with SMTP id d9443c01a7336-1fbb6d34b18mr54539825ad.4.1720629366052;
+        Wed, 10 Jul 2024 09:36:06 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ac3111sm35614245ad.212.2024.07.10.09.36.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 09:36:05 -0700 (PDT)
+Date: Wed, 10 Jul 2024 09:36:02 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: me@kylehuey.com
+Cc: acme@kernel.org, andrii.nakryiko@gmail.com, bpf@vger.kernel.org,
+	elver@google.com, jolsa@kernel.org, khuey@kylehuey.com,
+	linux-kernel@vger.kernel.org, mingo@kernel.org, namhyung@kernel.org,
+	peterz@infradead.org, robert@ocallahan.org, yonghong.song@linux.dev,
+	mkarsten@uwaterloo.ca
+Subject: possible bpf overflow/output bug introduced in 6.10?
+Message-ID: <Zo64cpho2cFQiOeE@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] PCI: align small (<4k) BARs
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240709162154.GA175839@bhelgaas>
-Content-Language: en-US
-From: Stewart Hildebrand <stewart.hildebrand@amd.com>
-In-Reply-To: <20240709162154.GA175839@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Received-SPF: None (SATLEXMB03.amd.com: stewart.hildebrand@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023DA:EE_|PH7PR12MB6634:EE_
-X-MS-Office365-Filtering-Correlation-Id: 619897f4-8f0b-42ed-90de-08dca0fe63a5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eFFlZVYzcnRrbll5UzMweUJZY0NpNDhLK0pkNmNjVFlvdnZSQlljOFg0Wjdu?=
- =?utf-8?B?aTRmT3RFTU9ONytidUJ3NktCRzdTeUFFbnBTL2tVcjAzcDlYV3ZRK1NuaXZ0?=
- =?utf-8?B?T3FuUXZXbFZqTFJ1Ujh6SnFzL3NCMmUrZUtadWpyVDFzM2Zja0lXMnJWTE1E?=
- =?utf-8?B?S1hiZXpjeThjZGU4NEtlOVhteHlFVmdoMUNoZDZKMXdTdSt3dnlTTEx2Tldi?=
- =?utf-8?B?R2pFN0xhTHRFanlYOFNqTGQrUEh4ZXh4ZXNjMGdxRjhLek1uWFVENkpkRTla?=
- =?utf-8?B?a2VwMjU5Um83OS81ZEFpdmxKL0EyMis4NFhlVjJCSk9GdzNjano2cDhjR0FB?=
- =?utf-8?B?eEFMTHRGMEtvV292Ni9yZXpJNGRWRGR4TjhDT3cyczV3NFBaN2tSMUlnT0FL?=
- =?utf-8?B?YTFsWSs1blRtMkdvenJlSjNVeVFMcDNBVnhGYk5nTHlnVXM1MDc0SEltMnNE?=
- =?utf-8?B?MmQzTDNuQW1NL3djU2p1eGlpdVlIQ0lNUUFUU2VoTEsrbndRS2NWWFZtdTBx?=
- =?utf-8?B?RFhEYkNLbnhSV0VDUkh5ckdpR3BpMzFiRzUrSXVORmVCVlJCckhlZGpvV1hq?=
- =?utf-8?B?cXo4RHNIOCtjREhsU0p5ZUdlb1R1bCtydytCRWRmZmlRSmRyT0ZndmJSQnY2?=
- =?utf-8?B?bzE5OVMzZEp5K1ZMRnBDUjZEa2RTYXo0MjVyczQ4SHFBZGJUNXVWQnZoVzhk?=
- =?utf-8?B?bVRaa1crajdudm84WG5iY3VEOG1IQzk2UXlrYmpoOC9qeFBhck9ESnZxTGNz?=
- =?utf-8?B?SmNKc1h6YUtzU2pmWm1MRVYvSEdrS3ZKTVFFcERuN1pidlpsSGtvYnRNQ2Vv?=
- =?utf-8?B?bEpsUGJWcUxlTnl1eVRrVm1TUTBXaXdWOTdGc3BBRDFsYmw4bEVDRU9oY3ZH?=
- =?utf-8?B?TjRYV3VQWm12OWhuTURwQzhnNnZtY2pqRTJHQXdaK0Q5OW5yRHlqelhURGlt?=
- =?utf-8?B?S1JlQXNJTWNXdHR5MXJIbENsOHQvWUpYRWExVG8xdkc1bkN4Ti9oVzI4S3NK?=
- =?utf-8?B?UFhJK1c0cFpGOTJlSmQrUmEwcHlBSnFpWlJMRXpFSitLMy9mcGM2Mnk2eFEw?=
- =?utf-8?B?anRlS0RQamptU1VyazljcnRkZTBhbzZnUG1KZ0pVcmRZZEkvVWJiV0Q4RGFB?=
- =?utf-8?B?SGdGQ0l3clI1YlhnQVREbDFnbENWZDNseW40L1dMR2R5blZwRlQ1NTQ5Mms5?=
- =?utf-8?B?eU9DTzdqMks0T1hhQmRka2Z3YXl1ZlFYMlRnYW5iRFJvRWppRlVYT2Zrc3cr?=
- =?utf-8?B?bWFPUk5SamIxelpHSkU3UXVTbWUzNm5LRm0zN3lWSUNkSk9uV2FCdTZMS3N2?=
- =?utf-8?B?VnU0aEphS2ZCVFZYMENIdlhHTHY2Z2lnOXFwOTBlQ0lBZGkxeWN2Uk1XMG04?=
- =?utf-8?B?b3l6cjFMWHRNMXpOMC9VTGN2dzAvVFVITVZvaVpZWmpsVi9BUFI5MjhINU50?=
- =?utf-8?B?bXppOVB4cW9iRXRMRjlqQ2loQldFM3plRVVkQVpaRFJReUNsRi9iL1hncld1?=
- =?utf-8?B?djd5SWlpZTRhVDJiOWdEMDVveFdUdlFLUjAwWW1ibG1uYzZIemRwUm9HV0xq?=
- =?utf-8?B?Tm5vNEFFMjRkejNwaHdxZHVPbDBzMlBmS0NhOFJ2YlBURkdROHFFTU0rWGJJ?=
- =?utf-8?B?S0I5TUNiSXo2djRmUmpNcW9kOCt6akVLeTBoUUpZYWFHSDgwVExudFJtOGlh?=
- =?utf-8?B?cDdhbTd0dnp0OEFDYS90RkxjU2cvWGorWFhSYmZQWVRmUERQdU81VnBJOVJ4?=
- =?utf-8?B?eG05YnJXQ2U3azBNb0pHWTBBc2VTZVlOUGI0bkNUY2FDdG4yY3Rya3pJSk8v?=
- =?utf-8?B?OUprTFlqY25qRTV6WWhWRCtvMmhlSTNaRVJXVnNiSUN5VFo3KzB5VVRqYVNN?=
- =?utf-8?B?RkpPWkNuaU04MmlJcmNacFlTSmFtZFVFamQ1NThJS3RhWVZZcG1qc2VHV1pZ?=
- =?utf-8?Q?kkw+YjdWvQvDQ9Zd4LsUFd3SkkwpdhA6?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2024 16:36:03.1981
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 619897f4-8f0b-42ed-90de-08dca0fe63a5
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023DA.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6634
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 7/9/24 12:21, Bjorn Helgaas wrote:
-> On Tue, Jul 09, 2024 at 09:36:03AM -0400, Stewart Hildebrand wrote:
->> Issues observed when small (<4k) BARs are not 4k aligned are:
->>
->> 1. Devices to be passed through (to e.g. a Xen HVM guest) with small
->> (<4k) BARs require each memory BAR to be page aligned. Currently, the
->> only way to guarantee this alignment from a user perspective is to fake
->> the size of the BARs using the pci=resource_alignment= option. This is a
->> bad user experience, and faking the BAR size is not always desirable.
->> See the comment in drivers/pci/pci.c:pci_request_resource_alignment()
->> for further discussion.
-> 
-> Include the relevant part of this discussion directly here so this log
-> is self-contained.  Someday that function will change, which will make
-> this commit log less useful.
+Greetings:
 
-Will do
+While testing some unrelated networking code with Martin Karsten (cc'd on
+this email) we discovered what appears to be some sort of overflow bug in
+bpf.
 
->> 2. Devices with multiple small (<4k) BARs could have the MSI-X tables
->> located in one of its small (<4k) BARs. This may lead to the MSI-X
->> tables being mapped in the same 4k region as other data. The PCIe 6.1
->> specification (section 7.7.2 MSI-X Capability and Table Structure) says
->> we probably shouldn't do that.
->>
->> To improve the user experience, and increase conformance to PCIe spec,
->> set the default minimum resource alignment of memory BARs to 4k. Choose
->> 4k (rather than PAGE_SIZE) for the alignment value in the common code,
->> since that is the value called out in the PCIe 6.1 spec, section 7.7.2.
->> The new default alignment may be overridden by arches by implementing
->> pcibios_default_alignment(), or by the user with the
->> pci=resource_alignment= option.
->>
->> Signed-off-by: Stewart Hildebrand <stewart.hildebrand@amd.com>
->> ---
->> Preparatory patches in this series are prerequisites to this patch.
->> ---
->>  drivers/pci/pci.c | 7 ++++++-
->>  1 file changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
->> index 9f7894538334..e7b648304383 100644
->> --- a/drivers/pci/pci.c
->> +++ b/drivers/pci/pci.c
->> @@ -6453,7 +6453,12 @@ struct pci_dev __weak *pci_real_dma_dev(struct pci_dev *dev)
->>  
->>  resource_size_t __weak pcibios_default_alignment(void)
->>  {
->> -	return 0;
->> +	/*
->> +	 * Avoid MSI-X tables being mapped in the same 4k region as other data
->> +	 * according to PCIe 6.1 specification section 7.7.2 MSI-X Capability
->> +	 * and Table Structure.
->> +	 */
->> +	return 4 * 1024;
->>  }
->>  
->>  /*
->> -- 
->> 2.45.2
->>
+git bisect suggests that commit f11f10bfa1ca ("perf/bpf: Call BPF handler
+directly, not through overflow machinery") is the first commit where the
+(I assume) buggy behavior appears.
 
+Running the following on my machine as of the commit mentioned above:
+
+  bpftrace -e 'tracepoint:napi:napi_poll { @[args->work] = count(); }'
+
+while simultaneously transferring data to the target machine (in my case, I
+scp'd a 100MiB file of zeros in a loop) results in very strange output
+(snipped):
+
+  @[11]: 5
+  @[18]: 5
+  @[-30590]: 6
+  @[10]: 7
+  @[14]: 9
+
+It does not seem that the driver I am using on my test system (mlx5) would
+ever return a negative value from its napi poll function and likewise for
+the driver Martin is using (mlx4).
+
+As such, I don't think it is possible for args->work to ever be a large
+negative number, but perhaps I am misunderstanding something?
+
+I would like to note that commit 14e40a9578b7 ("perf/bpf: Remove #ifdef
+CONFIG_BPF_SYSCALL from struct perf_event members") does not exhibit this
+behavior and the output seems reasonable on my test system. Martin confirms
+the same for both commits on his test system, which uses different hardware
+than mine.
+
+Is this an expected side effect of this change? I would expect it is not
+and that the output is a bug of some sort. My apologies in that I am not
+particularly familiar with the bpf code and cannot suggest what the root
+cause might be.
+
+If it is not a bug, can anyone suggest what this output might mean or
+how the script run above should be modified?
+
+Thanks,
+Joe
 
