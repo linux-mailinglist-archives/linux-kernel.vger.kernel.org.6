@@ -1,143 +1,127 @@
-Return-Path: <linux-kernel+bounces-248097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A952E92D865
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:41:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C6F592D869
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:42:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35F651F22A95
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:41:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DEF91C21322
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C203196438;
-	Wed, 10 Jul 2024 18:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F47196D80;
+	Wed, 10 Jul 2024 18:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SQTvqH1V"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ByHOYa/z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D61E195803
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 18:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05397195B14
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 18:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720636886; cv=none; b=NzdWQzZ6CMank8pDCuQbCvxOUMvnUhgmHzeqW33kD1o/B9d1YXgwFZUslntNLELK1Te8a+R/WdPfGPvLxc7RyT77JTpn/B8s42c51smb+5WWi8Ejc90WZrWrmT4m8g6tdtmSVIRFKAFoJgSjlAIFgzpgGWlhHorXo3ShONOKmCg=
+	t=1720636903; cv=none; b=ld7ZIxA3BklGnQGhjNiJSyXSVnkfrs4moQWb+tWPfwX+okDEHr5dL7YnZkDUmvUO8YIQ+iEHRjmMItz8uQdprFLkRitm4Km7LS/CKcO4z+JawRYkrRAyxGLD7gC3qWBmPKZVtU1qq47mVVtGiDcp1PEt2t3I6hdEfQfZN4BBxGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720636886; c=relaxed/simple;
-	bh=jBb2ZgyqNHHzXqzPfyVmH8sGami6SZ423WosKVZ5w2A=;
+	s=arc-20240116; t=1720636903; c=relaxed/simple;
+	bh=kFOZP6lI7AgDUHF0HVs5zGxIUNwq87ClOyIhyJ9v/Rk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VTOSm5coPEwgx97APwKcnKEOu6aOpoKhjN5G+ptwRD7Qi/yV4U2Ittnli434HjAlmNWKHS1U5CTCPQ3JIWuFQ29G5XDeeBo8CdGcbQ6KH3ZWXxIuh/xQkl+7GBCBOI4my2ZyDPevQ4glhyyi0GYK7ZOKnv/CeBQZFaYtNQIWYJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SQTvqH1V; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=bqG91uwsK8/ht6XCvs1qH8EJdQ1cJURi1gsD2ZAkeaFMxGQ0wFZmAEsfCg2zWNGcR5+y5vb/4EYqArFUgaWN86ngwVfEQvSxdtpF9vj0dNc1hhDu2F9dOMUV1mXrwXE5CfctUzVzDwMsEgRH9oIC0OLE0VvVqqX/nZB7Ekou1oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ByHOYa/z; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720636884;
+	s=mimecast20190719; t=1720636900;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+eIVX3Nh3vYBEeF7J3Cswb85HDhmhS0B4NjP2O37xgE=;
-	b=SQTvqH1VXrn9Aeo9m4R4YTmFmJBf4WEoW2fqcuCBo5NG6yeuiXKftDZYA1CgjrXS7BENA5
-	1oX7SZXS216FmWepvlxj0YLTuHUwr8hOv+UBxn6k4gkfB7VfeYz8Txv51tiVtFaJIxiYfP
-	4lkkkN2Omj56okHVNTOoi1jCxsb938s=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=tpHbHafyRz1p56VJ6Fm5TcwApHDo2ZOEJ9cujlJzeok=;
+	b=ByHOYa/zsONq+1Rx82oake8Hzol7Xn/G3Yu6ttxJNzGrqhLqRh887mgI1/ppWffdCMTOrN
+	LGTJZB2Y1IWnT7h/9fEeu+VKVmrci/wl/rKlwfWgan7TDGMLlXC2bFr7+j40m4U+RF+2ST
+	93eTComEp92MCyPo842WHNnm4m5J+/U=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-595-9fr8iaBAPJCtVADaHJfSyg-1; Wed, 10 Jul 2024 14:41:23 -0400
-X-MC-Unique: 9fr8iaBAPJCtVADaHJfSyg-1
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-79f1770b273so1263985a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 11:41:22 -0700 (PDT)
+ us-mta-342-T3xPEGmePIS5-_gY-jEPbA-1; Wed, 10 Jul 2024 14:41:39 -0400
+X-MC-Unique: T3xPEGmePIS5-_gY-jEPbA-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4272718b9b0so556865e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 11:41:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720636882; x=1721241682;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+eIVX3Nh3vYBEeF7J3Cswb85HDhmhS0B4NjP2O37xgE=;
-        b=erymcQEfUxGoMHbXamtFmBI523RY8ljAyFpUt34Fa3bZ9C0EGMGW7hn9aCRt59qZPN
-         yfLiacWxoiA8Kgxgp32sVoN9clruWxyuxuxErdEsU/QIlhG9wcgNMRzA3FUEhcf2KWUS
-         UnND33rbhUApaZS+K9OYhnbio+v6IDiLQNGlI6Z7E0W7foe83mRedDpowCmJQ2JD4N7o
-         NFOJ5uXBZ+gyKka3Jq7tlsSlUsswT81kg1b98kPC+BEkootyJy4VXJsgRicDaDX9pT1h
-         zC9oQGKh8wcA0h5ZpOuOuTnOi093R9gSmvEA6wYKGjGUyQK9cGx7cTZ9Fl3YZ4oR3Vt9
-         xtGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSjjBm9Gvs5egIVRxsK4r2ElzQwKB2kzn7n8Aksiye5Afg2w8cbuMtG0DQ5Qjxy3Ire3F/Qs0ZI4G0cTfrUEe4gVUmirH3KrKD7yu9
-X-Gm-Message-State: AOJu0YxpimUpo0d3vnhfe3okM/nrPVlklMmr87uTALunJLuJgWXgVNSx
-	GP5MJnlPS+2T4FMZviWSXh9nR0PmyAr9LLm8y1j83A0b5AuBH3qAxk+z1jw0nZUVaJkGxaGgCon
-	xThyVPYTABOjIzGaULEnZHpI14JTwmFMcAmfoi94Aos04/196Cu8Z+TENxEVQ5w==
-X-Received: by 2002:ac8:4c82:0:b0:447:f0c4:8298 with SMTP id d75a77b69052e-44cfc3fa56amr3702471cf.2.1720636882416;
-        Wed, 10 Jul 2024 11:41:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IETdUfrXNqDgbDS7Z1BhFJRvI4WQSOwSqIDdD+5+bC0SwiVZqBADzNnXqHzy4Zdi40FUQ/PVQ==
-X-Received: by 2002:ac8:4c82:0:b0:447:f0c4:8298 with SMTP id d75a77b69052e-44cfc3fa56amr3702401cf.2.1720636882087;
-        Wed, 10 Jul 2024 11:41:22 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-447f9b26c83sm22681111cf.2.2024.07.10.11.41.20
+        d=1e100.net; s=20230601; t=1720636898; x=1721241698;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tpHbHafyRz1p56VJ6Fm5TcwApHDo2ZOEJ9cujlJzeok=;
+        b=Ef7AKgJEJ1iGn9dPOWMDVnPdG7VzLc1JpkeXP08tBwVArpP/uqPs8CN5hLgtXahebZ
+         DRflWrOKu6pte9Vpzhn4Ohbya2ju1F5lmcfjomL8J9JO8qbsab+jnxI3hXpnkNeREFuK
+         F5ti3WSteGX0/iDzfdsV90lj3hlyDxrWlg3CCUaS+De4vCqXOZXkyB4eTvwFiBPatgOh
+         G/vm4b68LxVPO9dxKYvUlOqX6EqMNIJudbXY9U+xJ3VA4+2Ea4I6JEnPO2O9fdaE6pMI
+         jNA7qqHBSQiAdk+M98BOBlniZFLYt+rMfs+JBgEZ7KBQcbVq4XqueC4vVAaV9IszOzFo
+         GbEg==
+X-Gm-Message-State: AOJu0YwZZ1HddB0p35hNTMtXcjEnAJCHH4NlTCqVrOfJnK7S5pn2cCBU
+	lsGLncoVdIiCP8gEsiniXNB/gXbQx9S5/KRmkRYWEjo1EAoTk/6/ZQfnY+G+EqHmcwWdQBy9ezn
+	aUfZAx2KEoO47EYWYC+9r+nM3N5FoYBiEti47SrUICxoqa9aeK7OgDd5Ef10xcQ==
+X-Received: by 2002:a05:600c:42cb:b0:421:7bed:5274 with SMTP id 5b1f17b1804b1-426707d88e9mr46372835e9.10.1720636898396;
+        Wed, 10 Jul 2024 11:41:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE7VKcxKMDhg9EZyXdQKrl1gUprzWqV7P/VmvC4BXJ1ELuvBe8gZ09LFEYckiyns6FkYstsqA==
+X-Received: by 2002:a05:600c:42cb:b0:421:7bed:5274 with SMTP id 5b1f17b1804b1-426707d88e9mr46372765e9.10.1720636897880;
+        Wed, 10 Jul 2024 11:41:37 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:174:f6ae:a6e3:8cbc:2cbd:b8ff])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfab141sm5906585f8f.96.2024.07.10.11.41.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 11:41:21 -0700 (PDT)
-Date: Wed, 10 Jul 2024 14:41:19 -0400
-From: Peter Xu <peterx@redhat.com>
-To: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH v2 3/3] mm: Add p{g/4}d_leaf() in
- asm-generic/pgtable-nop{4/u}d.h
-Message-ID: <Zo7Vz_LGUgaf9BGN@x1n>
-References: <bcd6ab8246348f18fdc77694e321ee6458f05781.1720597744.git.christophe.leroy@csgroup.eu>
- <f69941b076bf8fec89b6bec5573fdb79483c2a75.1720597744.git.christophe.leroy@csgroup.eu>
- <Zo6e1ILgDn6nuhGC@x1n>
- <b37a0bb5-ba6f-4db3-af8f-83e06eec086d@cs-soprasteria.com>
+        Wed, 10 Jul 2024 11:41:37 -0700 (PDT)
+Date: Wed, 10 Jul 2024 14:41:34 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v2 0/2] virtio-balloon: make it spec compliant
+Message-ID: <20240710144053-mutt-send-email-mst@kernel.org>
+References: <cover.1720611677.git.mst@redhat.com>
+ <e9405f5d-2b43-40bf-b496-9eaae7c873c5@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b37a0bb5-ba6f-4db3-af8f-83e06eec086d@cs-soprasteria.com>
+In-Reply-To: <e9405f5d-2b43-40bf-b496-9eaae7c873c5@redhat.com>
 
-On Wed, Jul 10, 2024 at 02:54:36PM +0000, LEROY Christophe wrote:
-> 
-> 
-> Le 10/07/2024 à 16:46, Peter Xu a écrit :
-> > On Wed, Jul 10, 2024 at 09:51:22AM +0200, Christophe Leroy wrote:
-> >> Commit 2c8a81dc0cc5 ("riscv/mm: fix two page table check related
-> >> issues") added pud_leaf() in include/asm-generic/pgtable-nopmd.h
-> >>
-> >> Do the same for p4d_leaf() and pgd_leaf() to avoid getting them
-> >> erroneously defined by architectures that do not implement the
-> >> related page level.
-> >>
-> >> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> >> ---
-> >> v2: Added pXd_leaf macro as well in asm-generic/pgtable-nopXd.h to cohabit with the fallback
-> >> ---
+On Wed, Jul 10, 2024 at 08:25:56PM +0200, David Hildenbrand wrote:
+> On 10.07.24 13:42, Michael S. Tsirkin wrote:
+> > Currently, if VIRTIO_BALLOON_F_FREE_PAGE_HINT is off but
+> > VIRTIO_BALLOON_F_REPORTING is on, then the reporting vq
+> > gets number 3 while spec says it's number 4.
+> > It happens to work because the qemu virtio pci driver
+> > is *also* out of spec.
 > > 
-> > Thanks.  I'd drop the inline functions, but no strong opinions.
+> > To fix:
+> > 1. add vq4 as per spec
+> > 2. to help out the buggy qemu driver, if finding vqs fail,
+> > try with vq3 as reporting.
+> > 
+> > Fixes: b0c504f15471 ("virtio-balloon: add support for providing free page reports to host")
+> > Cc: "Alexander Duyck" <alexander.h.duyck@linux.intel.com>
+> > Reported-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> > 
+> > Changes from v1:
+> > 	rebased on vhost tip
+> > 
 > 
-> Inline functions enable type checking.
+> Looks like you missed to include acks from me and Jason.
 > 
-> With a macro you would be able to write pud_leaf(pgd) without the 
-> compiler noticing the mistake.
+> -- 
+> Cheers,
 > 
-> All other helpers in asm-generic/pgtable-nopXd.h are functions so from 
-> my point of view it makes sense to keep them as functions not macros.
+> David / dhildenb
 
-Whoever fallbacks to the pgtable.h pxx_leaf() will still use macros and
-lose the type check again.  I'd rather rely on cross-arch builds and most
-of real *_leaf() users will always detect a type mismatch.
 
-Totally no big deal, and I agree keeping them match nopxd.h rules makes
-sense.
-
-Thanks,
-
--- 
-Peter Xu
+indeed they are on lore but not in the mbox, weird. fixed - thanks
+for pointing this out.
 
 
