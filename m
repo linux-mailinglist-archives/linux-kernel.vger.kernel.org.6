@@ -1,90 +1,108 @@
-Return-Path: <linux-kernel+bounces-247092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93A6692CB1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:31:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E054E92CB22
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46D501F23D25
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:31:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9567C1F238CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC2777115;
-	Wed, 10 Jul 2024 06:31:05 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE30A3D96D;
-	Wed, 10 Jul 2024 06:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3726977F1B;
+	Wed, 10 Jul 2024 06:31:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="GCASBJhn"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A66D4F602
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720593064; cv=none; b=gs648NirWs7P3XVG/wGZ3HTMlCbuVXF7vJWQtx2BWYbq80acO3YY+5BBeoBBC4o9eCmDdO2nK/2z7l38xc5ltB1s7c9EHjY6UUmPuI0CX/EyRhESeCFFR6zWAwOe8Ktyv9NWCkNGOGzhJ6ViIOUOEDzlojxXO1qdU0wJP2APtB0=
+	t=1720593113; cv=none; b=fbqn2x6vXyarnp+ERQ/NxerJlyH8ux2vVsVAoeh13z9LusdF2sanhFFB1PAsfWD+dPG3m0et95GihpF+Bk9rLTsYh26B0HoKzDNld8GCCEGV7AtT2FoIrEx0+oXE47RW6eULQgLOVNkb4xEOPRdUQnZXxokSEs0OokRKDOMRYdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720593064; c=relaxed/simple;
-	bh=sM6KFWH6gfzQ94i0OID2kqBYu4u4wpOqFm2ESjUAg1I=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Ko2ruFZcVA2iDbP/w6boEw7h7fNj6TDJCoT+uamcCRhkXk/6CdN0XdBfo6iblzVbMoioQnsgNxNcJF+AfEieW2lwLHLfDfBKRtegqyb618MOCHQP4kNYy5EhOzBtzF2F0cPkxg8WtjRvyoY+8RF3axSswYK/FSDznlaRc/8mZ4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee3668e2a989c3-f91ce;
-	Wed, 10 Jul 2024 14:30:50 +0800 (CST)
-X-RM-TRANSID:2ee3668e2a989c3-f91ce
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[10.54.5.255])
-	by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee4668e2a99679-de188;
-	Wed, 10 Jul 2024 14:30:49 +0800 (CST)
-X-RM-TRANSID:2ee4668e2a99679-de188
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: shuah@kernel.org
-Cc: zhujun2@cmss.chinamobile.com,
-	chenxiang66@hisilicon.com,
-	iommu@lists.linux.dev,
-	linux-kselftest@vger.kernel.org,
+	s=arc-20240116; t=1720593113; c=relaxed/simple;
+	bh=YNDrrTRBQSjhUMAakyE2kGoYvvxbKHmBOp6I/Rc0QpM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dQvIAcBBwLrCoPFbKwT2qTNwWo8FCB4KQOBAbfhczTHC8SlGB9pClCbVqV1fgyYftXn2oUYgfrSbplK9qXqBUqA+Jaw32yCj1MXTn6oMVVm3Teh/+O8z7tHERyjiPdksJ4PvRPNhg/pHu+78N6weeAg29EGDWGaPgxYYEshP+zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=GCASBJhn; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=YNDr
+	rTRBQSjhUMAakyE2kGoYvvxbKHmBOp6I/Rc0QpM=; b=GCASBJhnrUssM10ejZm9
+	xA8xARZloXym1g7Fyzef3UUj69nj02V2BUKy9hvzADge2vvUJ+dXvCOfSsqGZXWD
+	vKwedEiUVRocwlT4aCYF3q7f+whxxmfUBhF/P9LuKQGPAJQr1KpYG1H0iS0PjqM6
+	aKMlc2GbYxVZ8EYFGU+U70cXU54zomHQ11U+02xAm0TBqpYEbnNBgp9giAtMIbfg
+	TquFpXgwkzJ61OLPcC1yGHNFftZlOz1eeoAaru6IXwVkVwqNq4TtNemawF7qdltV
+	v0eSl+dhZLifZwvqh5VHWqBnkoCWT7QTC/Q47Hp0QLKImCHgwu3N6sRpVTRZ3R7G
+	FQ==
+Received: (qmail 430513 invoked from network); 10 Jul 2024 08:31:48 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Jul 2024 08:31:48 +0200
+X-UD-Smtp-Session: l3s3148p1@8FcKzd4cPrAujnsa
+Date: Wed, 10 Jul 2024 08:31:48 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/dma:Fix a resource leak
-Date: Tue,  9 Jul 2024 23:30:45 -0700
-Message-Id: <20240710063045.5308-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+Subject: Re: [PATCH v2] i2c: add debug message for detected HostNotify alerts
+Message-ID: <Zo4q1NeXY-cI2GhD@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-renesas-soc@vger.kernel.org,
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+References: <20240704032940.4268-2-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-
-The opened file should be closed in main(), otherwise resource
-leak will occur that this problem was discovered by reading code
-
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
----
- tools/testing/selftests/dma/dma_map_benchmark.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/tools/testing/selftests/dma/dma_map_benchmark.c b/tools/testing/selftests/dma/dma_map_benchmark.c
-index 5c997f17fcbd..3fcea00961c0 100644
---- a/tools/testing/selftests/dma/dma_map_benchmark.c
-+++ b/tools/testing/selftests/dma/dma_map_benchmark.c
-@@ -114,6 +114,7 @@ int main(int argc, char **argv)
- 	map.granule = granule;
- 
- 	if (ioctl(fd, cmd, &map)) {
-+		close(fd);
- 		perror("ioctl");
- 		exit(1);
- 	}
-@@ -125,5 +126,7 @@ int main(int argc, char **argv)
- 	printf("average unmap latency(us):%.1f standard deviation:%.1f\n",
- 			map.avg_unmap_100ns/10.0, map.unmap_stddev/10.0);
- 
-+	close(fd);
-+
- 	return 0;
- }
--- 
-2.17.1
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lNfHY2uifUQlosPe"
+Content-Disposition: inline
+In-Reply-To: <20240704032940.4268-2-wsa+renesas@sang-engineering.com>
 
 
+--lNfHY2uifUQlosPe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jul 04, 2024 at 05:28:59AM +0200, Wolfram Sang wrote:
+> Setting up HostNotify can be tricky. Support debugging by stating
+> when a HostNotify alert was received independent of the irq being
+> mapped. Especially useful with the in-kernel i2c testunit. Update
+> documentation as well.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+
+Applied to for-next, thanks!
+
+
+--lNfHY2uifUQlosPe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaOKtQACgkQFA3kzBSg
+KbZ7Fw/6A8i37TXaEbXEtYmoR7BsLnIcOdYClfNGNCbg3+AReDDs3lHRTRmtHJUA
+v6Gn5EmgfBpBKi6potQf2mCrqGvosJrvwNdtk5/ydsMf9xRGp8p7MKFElMZoocQ1
+det8Br9vzh6WXLtfnaU6vOyICp/gE1TUkzlQ032HMf/iFdTAEibogSRGZXpzu26u
+sMIanEOiZ55++SOhXccY7yflvEggnAcZS93RPq1675FVeQxgBLp1t/VtsCgsITRN
+4/x7ydn3renfwI851lngio8eF16wKoY9541SJWRIHFtSgvCcIfRGr/LNZZfKehEq
+9Gutmjig1jFnB/Nma2iBknclzeyl9B+MEG+CExA1QZH0KgpjrpvydiWH5Ny8z0gY
+FH5Nq/ivOZEES3K7YeTDuq8hEl6XUJXlEniL/+OWULMmx+CoDBJUeS2zBg6aNP68
+Qt7/9llHwNyKIEaoQrxETfC3WP3I/wmXXiliHFI2RhJRh2dZblpHQ6ve66YXN0mb
+jCgOX9udkxTLrwgdqJcZUSRDdHZEM5vSe5uDiu9gnEpEiS+hjS3CmopbaEn6dGx8
+6nksdnAFsyocdCAW1WLxfw8lzaWhFvaCXjbJyXwAIxMhui6skoVAjvA0EXPB9nJ7
+ocUh4cRXo8ITHNGMDGY0ND5N3L1AQ3YcE7jPJCognoL+PwcdwwQ=
+=G+fr
+-----END PGP SIGNATURE-----
+
+--lNfHY2uifUQlosPe--
 
