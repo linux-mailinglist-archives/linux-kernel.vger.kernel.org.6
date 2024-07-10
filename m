@@ -1,94 +1,124 @@
-Return-Path: <linux-kernel+bounces-247676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A856A92D2E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:34:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B73C92D2E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42102B279E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:34:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D63DBB27C82
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28C4192B87;
-	Wed, 10 Jul 2024 13:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0392219344C;
+	Wed, 10 Jul 2024 13:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="M9LTJIu3"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="k2TSwLen"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37151922C9;
-	Wed, 10 Jul 2024 13:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA411922C9;
+	Wed, 10 Jul 2024 13:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720618426; cv=none; b=grd/672hIuGxODuCSlzKouDvVSzO0hQXIJhbLyjJxG8kXCPiniD2VpG3tjmVQ/JXwZrX4d94tZzhHL1NYe4XZe7rJ3qQ2QVldYBSE4ogzNXDm34QXrqfDS3DPBLvVa5XCyT/nNCokg1Ip0fyd6C7WDHwvWYuEUArhbvPAP2qXCA=
+	t=1720618431; cv=none; b=E8tlmXdd/T6sSN1w7X54mK2bhxDjNm9T10WHz7LQfFKqsLRkCAFeYssv9oyCu/qr9m/YzeVWVzwuuzrAYgMyjuMvM3If37n/gzDBIUaLPft2pcFw7QzjlVPPmq1QjuSYKpzq0aLtddOOfq+oLfJaiFdvmU4tP1bsCceXL2tUwyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720618426; c=relaxed/simple;
-	bh=2hcCAtYib7Cs+niMrifUeOS1QsLxGjZWPakWKOZUp4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PtBP/BDt3jwf01Gg+rr0zRAfdp0OT05AL3sDLtQqaG19p5Gwr8knozOLXS1nFK+oPH82FA1o8KoHyXKbBjg8u05ZcdsEhadZzTlTvmhFII/Q9d/VpkcJ0kMySgPGr4Ovlidt6nvwLagyhAcvRn/068we5gVOQKOmO1Fr20EHldo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=M9LTJIu3; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=4gA98zOhBB3RrJOx3PzymQJlJUxX+ZinTD7Q9TPm3bE=; b=M9LTJIu34RsAljCahFllN2TIFm
-	7yLY9bK78/a/2FpX+BfeqlIkkLlN1248cHRExobbyYzsVodYdxCPAEh/NkWc4WwNMx3txvLQha+vu
-	L6SYskNC8Z//ttViCmyiVVwQL4/SJWfu3lx9b84rbPQckdDlXeN0nL9mzExlMa+p4TPs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sRXRq-002EDw-NH; Wed, 10 Jul 2024 15:33:30 +0200
-Date: Wed, 10 Jul 2024 15:33:30 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Li Zetao <lizetao1@huawei.com>, linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 net-next] leds: trigger: netdev: Add support for
- tx_err and rx_err notification with LEDs
-Message-ID: <8c8ba30d-dbec-47db-ae8c-a734fb2468c0@lunn.ch>
-References: <20240710100651.4059887-1-lukma@denx.de>
+	s=arc-20240116; t=1720618431; c=relaxed/simple;
+	bh=JxC1b1DOzM6+22LaPEwtC9M+vPgX91o112/b/28+6Ic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ODJjfD1LWUW2siq20H9YCn1yXJxuU24QaJ2dSSOPyAavYIW+uGR7yJxLC4OvXd2eN/hyFq/rDy1i0HXIhvcMCwD1NC/83roXWqBDUdNrm6mARtpvnUH7EeJ7MfyVK8Aw2csDUU//MXhFQs0qKPCLf1A8phu1/89uC7w14RQZAvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=k2TSwLen; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46A7ngLF026708;
+	Wed, 10 Jul 2024 13:33:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/CHTQcGxnfbCSKtvZW1zamqa2/4lL+6xBB0Ei/bCngs=; b=k2TSwLenybgB6JfU
+	GvrIf9Hgr6+yl5QONA8DteaNYmwx7k79pdZdL+1u9GSSfsJ2XBN7tk8n4aI0VPep
+	qKUi/tCrv1mfaJV2apS1EdYBNHo/i4WWkOri8+YrgxKe+/LErT3HDOT8GkzxuIbe
+	6pVQSTzLOGP81etdxO1Z1JQ/CVS0alyrKc2s4xQERaydP6Ju2ZiNIT//1NZsVHOl
+	p3vf5/ujfyoyDk3v9EXCOho3CoxNVJbYiuQv6RQj0fgE2kxPmQigGvYfu0KFLG9V
+	sNgNq7nvAyA7Gh9YY+wwFcJIyKVd7YOyphPkdnRMRXFXokhQfAajiOl1RzBfSJK0
+	o0kXig==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4091jdkrcv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jul 2024 13:33:45 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46ADXjsB015226
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jul 2024 13:33:45 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 10 Jul
+ 2024 06:33:39 -0700
+Message-ID: <70cb6434-76af-42f7-9bb4-810ac561c0e3@quicinc.com>
+Date: Wed, 10 Jul 2024 21:33:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710100651.4059887-1-lukma@denx.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/13] media: qcom: camss: csiphy-3ph: Add Gen2 v1.2
+ two-phase MIPI CSI-2 DPHY init
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <mchehab@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <quic_eberman@quicinc.com>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
+References: <20240709160656.31146-1-quic_depengs@quicinc.com>
+ <20240709160656.31146-9-quic_depengs@quicinc.com>
+ <02e34bdd-3e84-4f93-b9a8-a814fcfd465b@linaro.org>
+Content-Language: en-US
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <02e34bdd-3e84-4f93-b9a8-a814fcfd465b@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: WKTpgsn9z9sADuTfwZP6HXZtzKU-smjN
+X-Proofpoint-ORIG-GUID: WKTpgsn9z9sADuTfwZP6HXZtzKU-smjN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-10_09,2024-07-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 malwarescore=0 mlxlogscore=901
+ mlxscore=0 priorityscore=1501 phishscore=0 clxscore=1015 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407100094
 
-On Wed, Jul 10, 2024 at 12:06:51PM +0200, Lukasz Majewski wrote:
-> This patch provides support for enabling blinking of LEDs when RX or TX
-> errors are detected.
+
+
+On 7/10/2024 7:13 PM, Bryan O'Donoghue wrote:
+> On 09/07/2024 17:06, Depeng Shao wrote:
+>> +/* GEN2 1.2 2PH */
+>> +static const struct
+>> +csiphy_lane_regs lane_regs_sm8550[] = {
+>> +    {0x0E90, 0x0f, 0x00, CSIPHY_DEFAULT_PARAMS},
+>> +    {0x0E98, 0x08, 0x00, CSIPHY_DEFAULT_PARAMS},
 > 
-> Approach taken in this patch is similar to one for TX or RX data
-> transmission indication (i.e. TRIGGER_NETDEV_TX/RX attribute).
+> Definitely not DPHY 1.2 init sequence.
 > 
-> One can inspect transmission errors with:
-> ip -s link show eth0
+> Could you update to something like /* GEN2 2.x - two phase 5 Gbps DPHY 
+> mode 4 lanes */
 > 
-> Example LED configuration:
-> cd /sys/devices/platform/amba_pl@0/a001a000.leds/leds/
-> echo netdev > mode:blue/trigger && \
-> echo eth0 > mode:blue/device_name && \
-> echo 1 > mode:blue/tx_err
+> Since the PHY can be in DPHY or CPHY mode at different data-rates it 
+> would be nice to call out the exact mode we are upstreaming here.
+> 
+> ---
+> bod
 
-When i look at the machines around me, they all have an error count of
-0. Do you have a real customer use case for this? What sort of systems
-do you have which do have sufficient errors to justify an LED?
 
-There is no standardisation of LEDs. Every vendor implements something
-different. What i don't want is lots of different blink patterns,
-which nobody ever uses.
+Yes, this isn't 1.2, it should be GEN2 2.1.2, thanks for catching this.
 
-	Andrew
+Thanks,
+Depeng
 
