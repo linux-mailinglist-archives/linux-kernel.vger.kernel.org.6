@@ -1,155 +1,125 @@
-Return-Path: <linux-kernel+bounces-247376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7E992CE98
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:52:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14CE792CE96
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4456F1F26A2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:52:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DBE7B20A6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5C018FA3B;
-	Wed, 10 Jul 2024 09:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379B118FA23;
+	Wed, 10 Jul 2024 09:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="kmbW9RFx"
-Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="m8EqlA+p"
+Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7350618FA24;
-	Wed, 10 Jul 2024 09:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F2D18EFCC
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720605103; cv=none; b=dDDOSeNoQDMd/1WxeHwKibtQMhdtxJurxa3vRHRFGH+AYmDhuCWTeGWQEj9Jfvc3xdZNTUNqTPa8419Zn7FTMX3o2r8AS3rgTcU3fWwtqzyw7gvGmAM9Ea3tGf2pkSiLM8nZDZSLLekmK3O2GaQARV3T/Vhc05awy5bHIQ3AHMc=
+	t=1720605090; cv=none; b=n3C9IcSbTB/70VG7RqCkTTFtdgNLsiiUkx8wAhd+lxOt5ZSPYH2T9tdsHs5LNXpQnkgN+1xaPZEe/Ux7/24/FRdJ3vGzaaEeAc3Jj1Ff370AXiYEDSiEM7EaeB+UGi1mEFe0f7fHadRy8ZaqPZYOU8osrSwlV5TqOGjeDd9JODE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720605103; c=relaxed/simple;
-	bh=LKUQ1g3huEdYZKIyc/kRdhR95IYzPsKqaNbyDCwocn4=;
-	h=Subject:Message-ID:Date:MIME-Version:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GQMnWwNkgrJ8xs2C3IGKAQfSrmlglvFnkkB7ynxvoCItk8tnYVUAl5+RixpwwQTKXqiVyhjlgwsnLEJIJcuaQQ6A2p2RnHdAq3Xa4CARhkeauTOtVad/wptAve7n/pIuedOG9LnCTOdg5PnkqWn/8H6QEaEaZl9ydK8s1R4Ghds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=kmbW9RFx; arc=none smtp.client-ip=207.171.188.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1720605102; x=1752141102;
-  h=message-id:date:mime-version:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:subject;
-  bh=nK6dem30/R4Q7t0pgui63Ry1Sj5Xd4Mv4l1MOOrjNtU=;
-  b=kmbW9RFxVl/nREu/4VWqAapAFgQVNXghfgkDx1KkFy/2Hz2C5gNOpWQf
-   6Gol2JrH0y/1AAl4+mgCgof4BtdUN7/pzKwogYvyZ+kCROSnGzKmo+L1e
-   K8QadeSVd0G7+vW0qvLqKk970SdBYx1BLwo/CpNlGdHGlGs6yOWYsxzjR
-   0=;
-X-IronPort-AV: E=Sophos;i="6.09,197,1716249600"; 
-   d="scan'208";a="739710169"
-Subject: Re: [RFC PATCH 8/8] kvm: gmem: Allow restricted userspace mappings
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 09:51:23 +0000
-Received: from EX19MTAUEA002.ant.amazon.com [10.0.44.209:62414]
- by smtpin.naws.us-east-1.prod.farcaster.email.amazon.dev [10.0.81.34:2525] with esmtp (Farcaster)
- id 35b3f801-8f14-44a3-a9e2-5ce76030037f; Wed, 10 Jul 2024 09:51:21 +0000 (UTC)
-X-Farcaster-Flow-ID: 35b3f801-8f14-44a3-a9e2-5ce76030037f
-Received: from EX19D008UEA003.ant.amazon.com (10.252.134.116) by
- EX19MTAUEA002.ant.amazon.com (10.252.134.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 10 Jul 2024 09:51:21 +0000
-Received: from EX19MTAUEA001.ant.amazon.com (10.252.134.203) by
- EX19D008UEA003.ant.amazon.com (10.252.134.116) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 10 Jul 2024 09:51:20 +0000
-Received: from [127.0.0.1] (172.19.88.180) by mail-relay.amazon.com
- (10.252.134.102) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34 via Frontend
- Transport; Wed, 10 Jul 2024 09:51:18 +0000
-Message-ID: <f7106744-2add-4346-b3b6-49239de34b7f@amazon.co.uk>
-Date: Wed, 10 Jul 2024 10:51:17 +0100
+	s=arc-20240116; t=1720605090; c=relaxed/simple;
+	bh=5vy6X0O6qEnfmBFIMy66z8mbjzBObduDt7gIIzeMJf0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=llQkMpB29fe/ethfoGtoFzq3LWpT3CiThb9imAxRtcu8UPnTluYfAWQMn1PU2qY64pTsoG/ndezdPplQTiN5VqzH+qupHe4UjNU54MGcL+QExrC2Cg/EiX4kowN97SGyVnII1YrJN+NO021sRacNHawSXKuJy4xN1ENC/sxBUEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=m8EqlA+p; arc=none smtp.client-ip=91.26.50.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
+	q=dns/txt; i=@phytec.de; t=1720605086; x=1723197086;
+	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=5vy6X0O6qEnfmBFIMy66z8mbjzBObduDt7gIIzeMJf0=;
+	b=m8EqlA+paYoBgUaLDhjoUNJTSZc9qT5Ei0rlLfOHx8Quwvf81nB/uYM9fRc5YUFm
+	XSM8dFP1BbRuzkQaNyCn3T3fhdaSV/GICatMauruOfVSeJaTis8A+bQyBOD9A8Eb
+	rb89pTvD/BnJaUK5OaA3wtmjv+FhtCP+EJMAab9NPGo=;
+X-AuditID: ac14000a-03e52700000021bc-46-668e599e3cbe
+Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
+	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client did not present a certificate)
+	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id BD.7F.08636.E995E866; Wed, 10 Jul 2024 11:51:26 +0200 (CEST)
+Received: from Berlix.phytec.de (172.25.0.12) by Berlix.phytec.de
+ (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Wed, 10 Jul
+ 2024 11:51:25 +0200
+Received: from Berlix.phytec.de ([fe80::197e:d26b:2ca:c7b4]) by
+ berlix.phytec.de ([fe80::197e:d26b:2ca:c7b4%4]) with mapi id 15.01.2507.006;
+ Wed, 10 Jul 2024 11:51:25 +0200
+From: Benjamin Hahn <B.Hahn@phytec.de>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Shawn Guo
+	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, "Pengutronix
+ Kernel Team" <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+	"Rob Herring" <robh+dt@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>
+CC: PHYTEC Upstream <upstream@lists.phytec.de>, "imx@lists.linux.dev"
+	<imx@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] arm64: dts: freescale: imx8mp-phycore: Add no-eth
+ overlay
+Thread-Topic: [PATCH v2] arm64: dts: freescale: imx8mp-phycore: Add no-eth
+ overlay
+Thread-Index: AQHaztTwwwIaBQqxY0i9PdyfIGTAlrHsiQGAgAMVQoA=
+Date: Wed, 10 Jul 2024 09:51:25 +0000
+Message-ID: <829ab483-fb96-4fd2-be7c-03548ba22ce5@phytec.de>
+References: <20240705-bspimx8m-3180-v2-1-dc1a7e1689be@phytec.de>
+ <1764670d-0248-46fd-b0ce-03bcbcd6977b@linaro.org>
+In-Reply-To: <1764670d-0248-46fd-b0ce-03bcbcd6977b@linaro.org>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7CD51A38C1FC3D4991D2BFE0AD5067E4@phytec.de>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>
-CC: <seanjc@google.com>, <pbonzini@redhat.com>, <akpm@linux-foundation.org>,
-	<dwmw@amazon.co.uk>, <rppt@kernel.org>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, <hpa@zytor.com>, <willy@infradead.org>, <graf@amazon.com>,
-	<derekmn@amazon.com>, <kalyazin@amazon.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <dmatlack@google.com>,
-	<chao.p.peng@linux.intel.com>, <xmarcalx@amazon.co.uk>, James Gowans
-	<jgowans@amazon.com>
-References: <20240709132041.3625501-1-roypat@amazon.co.uk>
- <20240709132041.3625501-9-roypat@amazon.co.uk>
- <CA+EHjTynVpsqsudSVRgOBdNSP_XjdgKQkY_LwdqvPkpJAnAYKg@mail.gmail.com>
- <47ce1b10-e031-4ac1-b88f-9d4194533745@redhat.com>
-Content-Language: en-US
-From: Patrick Roy <roypat@amazon.co.uk>
-Autocrypt: addr=roypat@amazon.co.uk; keydata=
- xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
- NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
- wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
- CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
- AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
- AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
- IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
- 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
- 8hlxFQM=
-In-Reply-To: <47ce1b10-e031-4ac1-b88f-9d4194533745@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHIsWRmVeSWpSXmKPExsWyRpKBR3deZF+awYV/fBZr9p5jsph/5Byr
+	xcOr/hYz77WyWayaupPFou/FQ2aLva+3sltsenyN1eLyrjlsFq17j7Bb/N2+icXixRZxi+53
+	6g68Hjtn3WX32LSqk83jzrU9bB6bl9R7vNg8k9Gjv7uF1aP/r4HH501yARxRXDYpqTmZZalF
+	+nYJXBnbJy9iLmjhrWi+/4+1gfEGTxcjJ4eEgInEjM9HGbsYuTiEBJYwSTw8MY0VwrnPKNH1
+	+AQ7hLOBUWL3jQUsIC1sAmoSu968BqsSEXjAJNH0+CxYP7PAGiaJk1dWMHcxcnAICwRLbDzD
+	CtIgIhAisfrILRYI20pix/WzbCA2i4CqxJ79G8DivAI2Ev8OL2EEsYUESiQ+zloMNoZTwE5i
+	0lNFkDCjgKzEhg3nmUFsZgFxiU3PvrNCvCAgsWQPRFxCQFTi5eN/UHF5iRO3pjGBjGEW0JRY
+	v0sfotVC4klHJ9QYRYkp3Q/ZIS4QlDg58wnLBEbxWUg2zELonoWkexaS7llIuhcwsq5iFMrN
+	TM5OLcrM1ivIqCxJTdZLSd3ECEoDIgxcOxj75ngcYmTiYDzEKMHBrCTCO/9Gd5oQb0piZVVq
+	UX58UWlOavEhRmkOFiVx3tUdwalCAumJJanZqakFqUUwWSYOTqkGxsRXeR0n+XKXPbpScX9R
+	xMZcLYtVvvmmJ1YnsSxpk39YV7ZQh/O6bPEdo937Hlgte8/SdeztN59ndQ69st/n2hvu2eDW
+	/fTrvL6QB5+dfSo+3DY0eZlw6/XpRapMc09zNz2rzPP7sW+ryL+vztMyvWbLfHN8vEigLeJE
+	uaDN8zOlDlGON9uPVSqxFGckGmoxFxUnAgBYqL1j8QIAAA==
 
-
-
-On 7/9/24 22:13, David Hildenbrand wrote:
-> CAUTION: This email originated from outside of the organization. Do not click links or open attachments unless you can confirm the sender and know the content is safe.
-> 
-> 
-> 
-> On 09.07.24 16:48, Fuad Tabba wrote:
->> Hi Patrick,
->>
->> On Tue, Jul 9, 2024 at 2:21 PM Patrick Roy <roypat@amazon.co.uk> wrote:
->>>
->>> Allow mapping guest_memfd into userspace. Since AS_INACCESSIBLE is set
->>> on the underlying address_space struct, no GUP of guest_memfd will be
->>> possible.
->>
->> This patch allows mapping guest_memfd() unconditionally. Even if it's
->> not guppable, there are other reasons why you wouldn't want to allow
->> this. Maybe a config flag to gate it? e.g.,
-> 
-> 
-> As discussed with Jason, maybe not the direction we want to take with
-> guest_memfd.
-> If it's private memory, it shall not be mapped. Also not via magic
-> config options.
-> 
-> We'll likely discuss some of that in the meeting MM tomorrow I guess
-> (having both shared and private memory in guest_memfd).
-
-Oh, nice. I'm assuming you mean this meeting:
-https://lore.kernel.org/linux-mm/197a2f19-c71c-fbde-a62a-213dede1f4fd@google.com/T/?
-Would it be okay if I also attend? I see it also mentions huge pages,
-which is another thing we are interested in, actually :)
-
-> Note that just from staring at this commit, I don't understand the
-> motivation *why* we would want to do that.
-
-Fair - I admittedly didn't get into that as much as I probably should
-have. In our usecase, we do not have anything that pKVM would (I think)
-call "guest-private" memory. I think our memory can be better described
-as guest-owned, but always shared with the VMM (e.g. userspace), but
-ideally never shared with the host kernel. This model lets us do a lot
-of simplifying assumptions: Things like I/O can be handled in userspace
-without the guest explicitly sharing I/O buffers (which is not exactly
-what we would want long-term anyway, as sharing in the guest_memfd
-context means sharing with the host kernel), we can easily do VM
-snapshotting without needing things like TDX's TDH.EXPORT.MEM APIs, etc.
-
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
+T24gMDguMDcuMjQgMTI6NDYsIEtyenlzenRvZiBLb3psb3dza2kgd3JvdGU6DQo+IE9uIDA1LzA3
+LzIwMjQgMTQ6MTQsIEJlbmphbWluIEhhaG4gd3JvdGU6DQo+PiBBZGQgYSBkZXZpY2V0cmVlIG92
+ZXJsYXkgdG8gZGlzYWJsZSBldGhlcm5ldCBmb3IgYm9hcmRzIHdoZXJlIGl0IGlzIG5vdA0KPj4g
+cG9wdWxhdGVkLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IEJlbmphbWluIEhhaG4gPEIuSGFobkBw
+aHl0ZWMuZGU+DQo+PiAtLS0NCj4+IENoYW5nZXMgaW4gdjI6DQo+IFRoYXQncyBzb21lIG9sZCBr
+ZXJuZWwgeW91IGFyZSBkZXZlbG9waW5nIG9uLCByaWdodD8NCg0KWW91IGFyZSBjb3JyZWN0LiBJ
+IHdhcyBzdGlsbCBvbiBLZXJuZWwgdmVyc2lvbiA2LjguDQoNCkkgcmViYXNlZCB0byBtYXN0ZXIg
+YW5kIHNlbnQgYSB2My4NCg0KUmVnYXJkcywNCg0KQmVuamFtaW4NCg0KPg0KPiA8Zm9ybSBsZXR0
+ZXI+DQo+IFBsZWFzZSB1c2Ugc2NyaXB0cy9nZXRfbWFpbnRhaW5lcnMucGwgdG8gZ2V0IGEgbGlz
+dCBvZiBuZWNlc3NhcnkgcGVvcGxlDQo+IGFuZCBsaXN0cyB0byBDQyAoYW5kIGNvbnNpZGVyIC0t
+bm8tZ2l0LWZhbGxiYWNrIGFyZ3VtZW50KS4gSXQgbWlnaHQNCj4gaGFwcGVuLCB0aGF0IGNvbW1h
+bmQgd2hlbiBydW4gb24gYW4gb2xkZXIga2VybmVsLCBnaXZlcyB5b3Ugb3V0ZGF0ZWQNCj4gZW50
+cmllcy4gVGhlcmVmb3JlIHBsZWFzZSBiZSBzdXJlIHlvdSBiYXNlIHlvdXIgcGF0Y2hlcyBvbiBy
+ZWNlbnQgTGludXgNCj4ga2VybmVsLg0KPg0KPiBUb29scyBsaWtlIGI0IG9yIHNjcmlwdHMvZ2V0
+X21haW50YWluZXIucGwgcHJvdmlkZSB5b3UgcHJvcGVyIGxpc3Qgb2YNCj4gcGVvcGxlLCBzbyBm
+aXggeW91ciB3b3JrZmxvdy4gVG9vbHMgbWlnaHQgYWxzbyBmYWlsIGlmIHlvdSB3b3JrIG9uIHNv
+bWUNCj4gYW5jaWVudCB0cmVlIChkb24ndCwgaW5zdGVhZCB1c2UgbWFpbmxpbmUpIG9yIHdvcmsg
+b24gZm9yayBvZiBrZXJuZWwNCj4gKGRvbid0LCBpbnN0ZWFkIHVzZSBtYWlubGluZSkuIEp1c3Qg
+dXNlIGI0IGFuZCBldmVyeXRoaW5nIHNob3VsZCBiZQ0KPiBmaW5lLCBhbHRob3VnaCByZW1lbWJl
+ciBhYm91dCBgYjQgcHJlcCAtLWF1dG8tdG8tY2NgIGlmIHlvdSBhZGRlZCBuZXcNCj4gcGF0Y2hl
+cyB0byB0aGUgcGF0Y2hzZXQuDQo+IDwvZm9ybSBsZXR0ZXI+DQo+DQo+IEJlc3QgcmVnYXJkcywN
+Cj4gS3J6eXN6dG9mDQo+DQoNCg==
 
