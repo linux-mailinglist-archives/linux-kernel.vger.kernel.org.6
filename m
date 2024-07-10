@@ -1,171 +1,158 @@
-Return-Path: <linux-kernel+bounces-248031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D981692D787
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:34:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5354692D78A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08AAF1C227FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:34:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD37A1F24A4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC09F194C79;
-	Wed, 10 Jul 2024 17:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4E5195385;
+	Wed, 10 Jul 2024 17:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dhG+n51C"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dTd9390j"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A605194C74
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 17:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D839F191F8E
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 17:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720632784; cv=none; b=TJ0O5JnJCZqmXZ0G3RdpFFNZgqjO8ta0VqIs+VHOxCQIPLNYWEavVknkWASnGzhAV4SF+jX4ApMIR0EUW9jsk7+F5yHbPKnbvxbCKTxPSxvwz8IB0tXy+aX8N9Ae6wMnCx8E+s4r9TA7aPP2EfWyu2swa4pjIH3zwakZkLX95CY=
+	t=1720632951; cv=none; b=YJG736sFKPiSBlpNt6QqJhsFTa+xtMH2zQums+qhfkR3LiiU9Q9yFnxO6bSlLfZCzK+jYH7Puk98HXAKOMuNfSyTszbej5+5/FNuJRDbw/O/P+tkaqg9mPLxszaJDY8pThlWPRgkb8B9FPt2GJVUxqenDGY+FUuhzAX/r8CAsNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720632784; c=relaxed/simple;
-	bh=w5L3J45UVuMZGyUksnsqYOMKJS7SXFkN4agIORLKAGk=;
+	s=arc-20240116; t=1720632951; c=relaxed/simple;
+	bh=qUtJuf7BpW7416xCDEnMAZ4qpPxi046SuSivO4rvOIw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gCLqz+ePBDbrqHIrImOSPsZNkD5GhRXq6yXvUFWPmPgVT8PpM+BR0U/yrDJ9E3LYe9SEFdMIlOZNV4TGHJ7cmWR+AbnxSNyFaYoErcZ3OxWIlW20c1uzx8lvPnX6yGhxbwTQ6U1nIIq5uvT2htAS0UBdFz7Cfd6tTf1mt9SLBRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dhG+n51C; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-654cf0a069eso48521167b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 10:33:02 -0700 (PDT)
+	 To:Cc:Content-Type; b=apP0GHaQhQUi+8SJy8Il5ooDgWy6ARP2neFBe8S8cD8/781mxC+q17xId3+eCXk/N7DspchpwzM18UluvTSXxEAawkm4UaCtN49I/AhjLcjuI7+G283GL1DPWZJlUnUy2sEzogXB8EtC4Zvsq1KwvkAlZqHaIuTyCUz7oqt3/Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dTd9390j; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-70360eeb7d2so2945274a34.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 10:35:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720632781; x=1721237581; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1720632946; x=1721237746; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HvVDDEmpFZaMdI2FUKr1cZ22MakUZTGbQ7PWvtblDNs=;
-        b=dhG+n51CdF48D0tHYP4JAnaSwV70jLqYsHP0rNA6WXABSLDR79lFoLR9lC95SKkk0s
-         F0m+msaOmdmMFo5/iZO61Z7OcHF+pBalfYVh503qDnuiDMPRHeG/0+gtmo2tljvIRY3r
-         YWpGhDDO0nv/4aXZ2/ocu9zNlf0ZscfFkui02Egdr/HctzEiIjaoxe0Sx9jhWqjmVubX
-         sRr8XDgjLBfxuIH8romiFqxeWgFRCw7X5N0OAsUH4o0jOy7gZ/RcGt1Ggwmw7VrDZNZy
-         J2bwtneWWnDjZXdK2ugdBWDYPzGNsDaECp3dxMSzH41hbHcRDbEBJH9vOzDQvQdJW2B6
-         Qvng==
+        bh=nq9tNUhoBsUEDC1UEIUaCv3t+k06QOX2ENZA+annY9M=;
+        b=dTd9390jg/D/SmsKCxxhn04a7hRndu21txgY9l77A9b0DPU6V1LKaokKpULbIb6tq6
+         Yv0ZaI778IJ/HFBOSMNHcR05d9NWDbwRunfJH5QwF71QjN2V5SQ5FONfHB/nT5AeFPGi
+         A/cHioEtG9Y5tdXDCFuV2r9s5PF1mlK5J5QPI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720632781; x=1721237581;
+        d=1e100.net; s=20230601; t=1720632946; x=1721237746;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HvVDDEmpFZaMdI2FUKr1cZ22MakUZTGbQ7PWvtblDNs=;
-        b=IIVRhgVMdrR9w2nYmMO9uc9DP297X0CsHVOocU+7BobmlcDzSYn2fETU/v9Ttvc0/X
-         V60kI2OABzMc5Zo9R0r5YIhvjQCq75UV9yampQ+Dhg8qXe56a1GZS2WyHh4xNjSEFSeh
-         RtjPIxXfDf5w4E+D3w9AOI4Xdm/pjkzIfb6JlcIAcc9RIyPcYGFhYxJAg6/NAmA0LXNn
-         iY2aytlUMF8Kq16T3kx3hS4h73M2OSKovdJn/93+WuTnPrGtSYeERsUWsjNsWUyz9xKP
-         /SzCYdrq6hL0NsXgMByQsj5RnFO5BOOqR9TB/chhkz3SNFc7ygWDsz24pWjFYLJdBsNU
-         zUSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXd7NbdE21cHAL7MeKdsDo/5rE3zaxcF5zJ38q+sDe6xZh70n4YTbBL7Gg+lg+nVfUIZZXtNP55my9BnNVmaKbQ+bL+RiozidYqZiSY
-X-Gm-Message-State: AOJu0Yyv8G1byub4XphE/Hj2UKOiN6zHRATbVtNpHH1vTDkkESEBKD0u
-	LseMf3/x6trr0emBbD9s9D+9B7+ODT0kl3twDR4wM+LZmd7IswmqrMkacL/cN59TNtMSdXMvGjI
-	0kzb9lhWTAdRAkn4NRMGLogeJTLb2m2ZTC+i4
-X-Google-Smtp-Source: AGHT+IGmpx1+Idub9F1goSZv6lGJvb6f5I03FVYBQVmDWes7dy0EfLBUgZB8gjKOYRNMHum3C+QdIlw3gXuGBzA8AS8=
-X-Received: by 2002:a81:8d0a:0:b0:646:49de:5dfd with SMTP id
- 00721157ae682-658ef4431ecmr55886377b3.25.1720632781111; Wed, 10 Jul 2024
- 10:33:01 -0700 (PDT)
+        bh=nq9tNUhoBsUEDC1UEIUaCv3t+k06QOX2ENZA+annY9M=;
+        b=oQGKIXjlwzw9AVHTP4e0kbPAzcNUf85MCjaUfA/cWJ2f8nfPXqjHEuq41c9hJgn5V4
+         mgl43pcCFfGBTjKF0k16FVj9/wzpqBn4d42sTtPOorS2WMKUX8YBqVl8N52wWlgKaBOI
+         jwjfzwxj5vHlnN7OsW/pv7YQ/49jGT6AKt6fYq911plw9ZeuhIOW1mNlwscmpoBw1R2m
+         iOznS1n5IibR4kriliYF3ViE7XfFMPDp3p/qZY8HnXBAel6x6qEa90PlqxAoK3szl1XO
+         Tf4kAus6kO2wBNSZNYx/PsSeaT4O62SrafqrgXvAZ6Q6u0Y/F9HAxAvTW/QXhVbtlNh9
+         xcsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUY55i0BO7aHNhz+wvvv46niAbrIO9ZaGZGiFX0lhC6/OaTWmOaSQ64fqplZ20y6A7LSUJbr6x+0y5eEgjbxfTxOWpsfV4SL5Vqne/9
+X-Gm-Message-State: AOJu0YyzloC8ENKA2x3WYhljNHHwlWdRsUX+JN9GyQofoGXqwXVSlkQO
+	Ow0MMale1vxrkdZiOvNAAAgyT5+1DIzVA7X/F5ey1bS0MyuYRhrdNRihuTyjn6p5/3HvjpFiqeX
+	JYQ==
+X-Google-Smtp-Source: AGHT+IFBJTf5d0mcFgPTo6uizkn2ppYgGw3RKBRrfO8YnhwA0LhIzV5baNtGY9mSfYL2ow04sU3Wmg==
+X-Received: by 2002:a05:6808:189:b0:3d9:dbd1:88f2 with SMTP id 5614622812f47-3d9dbd18bb6mr2457081b6e.16.1720632945663;
+        Wed, 10 Jul 2024 10:35:45 -0700 (PDT)
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com. [209.85.160.182])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f18ff80c7sm214988585a.3.2024.07.10.10.35.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jul 2024 10:35:44 -0700 (PDT)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-44a8b140a1bso24451cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 10:35:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV1fNyJTCr1eTJbSAMwOaLxLFFwG3ln6Mwv2eb0n42CwURlCBLWcejGE4Qc1RFJkfWLHfyUjxsHDKxT+jQFgOz4cA2VXUqwJQYDYM48
+X-Received: by 2002:ac8:5399:0:b0:447:f3ae:383b with SMTP id
+ d75a77b69052e-44b1a14a434mr3218051cf.19.1720632943866; Wed, 10 Jul 2024
+ 10:35:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704182718.2653918-1-Liam.Howlett@oracle.com>
- <20240704182718.2653918-15-Liam.Howlett@oracle.com> <7a0350b3-ea23-42d4-b2f7-4680d761c969@lucifer.local>
-In-Reply-To: <7a0350b3-ea23-42d4-b2f7-4680d761c969@lucifer.local>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 10 Jul 2024 10:32:50 -0700
-Message-ID: <CAJuCfpHvno-XJRxkaDUFaFt0fokLioM-ChTOfSihNvfSb9d77A@mail.gmail.com>
-Subject: Re: [PATCH v3 14/16] mm/mmap: Use PHYS_PFN in mmap_region()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lstoakes@gmail.com>, Matthew Wilcox <willy@infradead.org>, sidhartha.kumar@oracle.com, 
-	"Paul E . McKenney" <paulmck@kernel.org>, Bert Karwatzki <spasswolf@web.de>, Jiri Olsa <olsajiri@gmail.com>, 
-	linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>
+References: <20240710-x1e80100-crd-backlight-v1-0-eb242311a23e@linaro.org> <20240710-x1e80100-crd-backlight-v1-1-eb242311a23e@linaro.org>
+In-Reply-To: <20240710-x1e80100-crd-backlight-v1-1-eb242311a23e@linaro.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 10 Jul 2024 10:35:28 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XJuV12mStW3eUm5MHG8BA9W_fn0skN=BrtmqC+fnCZig@mail.gmail.com>
+Message-ID: <CAD=FV=XJuV12mStW3eUm5MHG8BA9W_fn0skN=BrtmqC+fnCZig@mail.gmail.com>
+Subject: Re: [PATCH 1/5] dt-bindings: display: panel: samsung,atna33xc20:
+ Document ATNA45AF01
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 8, 2024 at 5:21=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Thu, Jul 04, 2024 at 02:27:16PM GMT, Liam R. Howlett wrote:
-> > From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
-> >
-> > Instead of shifting the length by PAGE_SIZE, use PHYS_PFN.  Also use th=
-e
-> > existing local variable everywhere instead of some of the time.
-> >
-> > Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-> > ---
-> >  mm/mmap.c | 10 +++++-----
-> >  1 file changed, 5 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/mm/mmap.c b/mm/mmap.c
-> > index 0c334eeae8cd..b14da6bd257f 100644
-> > --- a/mm/mmap.c
-> > +++ b/mm/mmap.c
-> > @@ -2935,7 +2935,7 @@ unsigned long mmap_region(struct file *file, unsi=
-gned long addr,
-> >       struct mm_struct *mm =3D current->mm;
-> >       struct vm_area_struct *vma =3D NULL;
-> >       struct vm_area_struct *next, *prev, *merge;
-> > -     pgoff_t pglen =3D len >> PAGE_SHIFT;
-> > +     pgoff_t pglen =3D PHYS_PFN(len);
-> >       unsigned long charged =3D 0;
-> >       struct vma_munmap_struct vms;
-> >       struct ma_state mas_detach;
-> > @@ -2955,7 +2955,7 @@ unsigned long mmap_region(struct file *file, unsi=
-gned long addr,
-> >        * MAP_FIXED may remove pages of mappings that intersects with re=
-quested
-> >        * mapping. Account for the pages it would unmap.
-> >        */
-> > -     if (!may_expand_vm(mm, vm_flags, (len >> PAGE_SHIFT) - nr_pages))
-> > +     if (!may_expand_vm(mm, vm_flags, pglen - nr_pages))
-> >               return -ENOMEM;
-> >
-> >       if (unlikely(!can_modify_mm(mm, addr, end)))
-> > @@ -2990,7 +2990,7 @@ unsigned long mmap_region(struct file *file, unsi=
-gned long addr,
-> >        * Private writable mapping: check memory availability
-> >        */
-> >       if (accountable_mapping(file, vm_flags)) {
-> > -             charged =3D len >> PAGE_SHIFT;
-> > +             charged =3D pglen;
-> >               charged -=3D nr_accounted;
-> >               if (security_vm_enough_memory_mm(mm, charged))
-> >                       goto abort_munmap;
-> > @@ -3149,14 +3149,14 @@ unsigned long mmap_region(struct file *file, un=
-signed long addr,
-> >       if (vms.nr_pages)
-> >               vms_complete_munmap_vmas(&vms, &mas_detach);
-> >
-> > -     vm_stat_account(mm, vm_flags, len >> PAGE_SHIFT);
-> > +     vm_stat_account(mm, vm_flags, pglen);
-> >       if (vm_flags & VM_LOCKED) {
-> >               if ((vm_flags & VM_SPECIAL) || vma_is_dax(vma) ||
-> >                                       is_vm_hugetlb_page(vma) ||
-> >                                       vma =3D=3D get_gate_vma(current->=
-mm))
-> >                       vm_flags_clear(vma, VM_LOCKED_MASK);
-> >               else
-> > -                     mm->locked_vm +=3D (len >> PAGE_SHIFT);
-> > +                     mm->locked_vm +=3D pglen;
-> >       }
-> >
-> >       if (file)
-> > --
-> > 2.43.0
-> >
->
-> Maybe I should literally look ahead before making comments :)) thanks for
-> reading my mind and doing what I asked though! ;)
->
-> However I don't think you've fixed the duplication of PHYS_PFN(vm_end -
-> vm_start) in count_vma_pages_range() - still worth doing I think.
->
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Hi,
 
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+On Wed, Jul 10, 2024 at 10:05=E2=80=AFAM Stephan Gerhold
+<stephan.gerhold@linaro.org> wrote:
+>
+> The Samsung ATNA45AF01 panel is an AMOLED eDP panel that has backlight
+> control over the DP AUX channel. While it works almost correctly with the
+> generic "edp-panel" compatible, the backlight needs special handling to
+> work correctly. It is similar to the existing ATNA33XC20 panel, just with
+> a larger resolution and size.
+>
+> Add a new "samsung,atna45af01" compatible to describe this panel in the D=
+T.
+>
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
+>  .../devicetree/bindings/display/panel/samsung,atna33xc20.yaml       | 6 =
++++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/display/panel/samsung,atna=
+33xc20.yaml b/Documentation/devicetree/bindings/display/panel/samsung,atna3=
+3xc20.yaml
+> index 765ca155c83a..d668e8d0d296 100644
+> --- a/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.=
+yaml
+> +++ b/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.=
+yaml
+> @@ -14,7 +14,11 @@ allOf:
+>
+>  properties:
+>    compatible:
+> -    const: samsung,atna33xc20
+> +    enum:
+> +      # Samsung 13.3" FHD (1920x1080 pixels) eDP AMOLED panel
+> +      - samsung,atna33xc20
+> +      # Samsung 14.5" WQXGA+ (2880x1800 pixels) eDP AMOLED panel
+> +      - samsung,atna45af01
+
+Seems OK, but a few thoughts:
+
+1. Is it worth renaming this file? Something like
+"samsung,atna-oled-panel.yaml"? I'd be interested in DT maintainer
+folks' opinions here.
+
+2. In theory you could make your compatible look like this:
+
+compatible =3D "samsung,atna45af01", "samsung,atna33xc20"
+
+...which would say "I have a 45af01 but if the OS doesn't have
+anything special to do that it would be fine to use the 33xc20
+driver". That would allow device trees to work without the kernel
+changes and would allow you to land the DT changes in parallel with
+the driver changes and things would keep working.
+
+...and, in fact, that would mean you _didn't_ need to add the new
+compatible string to the driver, which is nice.
+
+
+-Doug
 
