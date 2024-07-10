@@ -1,39 +1,38 @@
-Return-Path: <linux-kernel+bounces-247823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D38F92D50D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:35:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC5D92D52B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:41:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC07A286020
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:35:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 815EF282562
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B8B194A75;
-	Wed, 10 Jul 2024 15:34:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9545194A68;
-	Wed, 10 Jul 2024 15:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E921946AF;
+	Wed, 10 Jul 2024 15:40:59 +0000 (UTC)
+Received: from mail.enpas.org (zhong.enpas.org [46.38.239.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF86191494;
+	Wed, 10 Jul 2024 15:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.38.239.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720625686; cv=none; b=K0i6cIolaNFAddlcJs2zcx0aHqtVJ9ZoAwlNB7RHUC7Q2AUkzngiyzcOgjHVUII2N1NpH7hh+tSiCeklc6u8aXcCrq7BBWaWLU7HOZ8O9iw33YbMI0MYPSpDz1yJ4S5fEQJCcA/ghVDQ/1Lg0F18gSak8v+rRwfKRiQFTTd6nfY=
+	t=1720626059; cv=none; b=EW7LFSXV/saO/XhaDwxR4GtMgBBwJEv8khpwA4rMyEanVM+5HtqBmq01rAOrjqdaHvoCu5orVOQvDiqc6CjvdPK8oQIVPCVqhyDweaUSJla7C+a68WHZXVQGIOwtL41mm60nrucOxeYNtqJVG42BMK/4DqrwWcOUxFcsuu/zB0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720625686; c=relaxed/simple;
-	bh=kH/nBqBMRKMBsBOFarCSegF7AJyzJWPtEZxPewVSvjI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Boe9AQLI0/+NtbeV5YcAszER2SAcSWMFA6lBD3L8ekeP9wdsROojctpaGiyBw6hu0S5ZCotb4gUbqIDoQpsPeWJe0uePP+g9a1tyJ3eTcoCyLSHONek3UEXkTOf0/tKc7N+aHU1RBDHLsBtor36Obu689SiBLVRLWszJ7GYXigk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72A73113E;
-	Wed, 10 Jul 2024 08:35:09 -0700 (PDT)
-Received: from [10.57.8.115] (unknown [10.57.8.115])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9967D3F766;
-	Wed, 10 Jul 2024 08:34:36 -0700 (PDT)
-Message-ID: <40746334-7669-48f2-9aa7-a73da0b2a275@arm.com>
-Date: Wed, 10 Jul 2024 16:34:20 +0100
+	s=arc-20240116; t=1720626059; c=relaxed/simple;
+	bh=CrL/Jn/Ty/fnR5ezAckIV+af6We6y4cUsMgzE8M/R7o=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=uCCfNzvj6D7MYgtbMrW5EklZQtHgUj0zmFy51vcqNn+21ROgi1iDyIUoBJhj/yaq1hRKxgnwyhvgjCUTd5MoPDtWjfCQowtw3VcQvsZ0mQmobkAZA21Wxmpv9DdHHb4QuPfu0+nEAbHJcHfxfxSVQomBUrRjZ0PZTM4sTgvNKdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org; spf=pass smtp.mailfrom=enpas.org; arc=none smtp.client-ip=46.38.239.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enpas.org
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by mail.enpas.org (Postfix) with ESMTPSA id 1A3FF1000C8;
+	Wed, 10 Jul 2024 15:35:21 +0000 (UTC)
+Message-ID: <afda41dc-7b36-4ddd-abfc-c9430d8c9503@enpas.org>
+Date: Thu, 11 Jul 2024 00:35:16 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,102 +40,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/15] arm64: Make the PHYS_MASK_SHIFT dynamic
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, Will Deacon <will@kernel.org>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
- Zenghui Yu <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-References: <20240701095505.165383-1-steven.price@arm.com>
- <20240701095505.165383-7-steven.price@arm.com>
- <20240709114337.GB13242@willie-the-truck>
- <1ce456b5-0652-4522-98ea-b32d96c1adf4@arm.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <1ce456b5-0652-4522-98ea-b32d96c1adf4@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Max Staudt <max@enpas.org>
+Subject: Re: [PATCH v1] hid-playstation: DS4: Update rumble and lightbar
+ together
+To: Roderick Colenbrander <thunderbird2k@gmail.com>
+Cc: Roderick Colenbrander <roderick.colenbrander@sony.com>,
+ Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240616163055.75174-1-max@enpas.org>
+ <CAEc3jaCkH5JwNTpHRZYsekbwX+G6T5tMTLD0+O6E7Q2hqcAFHw@mail.gmail.com>
+ <dedb2c39-fc28-4cba-802f-5d56f23db722@enpas.org>
+ <CAEc3jaC-Tmd2XtK9H2sipBJAhCf16dMWx46r8Hs4p9At3LC_Jg@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAEc3jaC-Tmd2XtK9H2sipBJAhCf16dMWx46r8Hs4p9At3LC_Jg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 09/07/2024 13:55, Suzuki K Poulose wrote:
-> On 09/07/2024 12:43, Will Deacon wrote:
->> On Mon, Jul 01, 2024 at 10:54:56AM +0100, Steven Price wrote:
->>> Make the PHYS_MASK_SHIFT dynamic for Realms. This is only is required
->>> for masking the PFN from a pte entry. For a realm phys_mask_shift is
->>> reduced if the RMM reports a smaller configured size for the guest.
->>>
->>> The realm configuration splits the address space into two with the top
->>> half being memory shared with the host, and the bottom half being
->>> protected memory. We treat the bit which controls this split as an
->>> attribute bit and hence exclude it (and any higher bits) from the mask.
->>>
->>> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>> Signed-off-by: Steven Price <steven.price@arm.com>
->>>
->>> ---
->>> v3: Drop the MAX_PHYS_MASK{,_SHIFT} definitions as they are no longer
->>> needed.
->>> ---
->>>   arch/arm64/include/asm/pgtable-hwdef.h | 6 ------
->>>   arch/arm64/include/asm/pgtable.h       | 5 +++++
->>>   arch/arm64/kernel/rsi.c                | 5 +++++
->>>   3 files changed, 10 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h
->>> b/arch/arm64/include/asm/pgtable-hwdef.h
->>> index 9943ff0af4c9..2e3af0693bd8 100644
->>> --- a/arch/arm64/include/asm/pgtable-hwdef.h
->>> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
->>> @@ -203,12 +203,6 @@
->>>    */
->>>   #define PTE_S2_MEMATTR(t)    (_AT(pteval_t, (t)) << 2)
->>>   -/*
->>> - * Highest possible physical address supported.
->>> - */
->>> -#define PHYS_MASK_SHIFT        (CONFIG_ARM64_PA_BITS)
->>> -#define PHYS_MASK        ((UL(1) << PHYS_MASK_SHIFT) - 1)
->>> -
->>>   #define TTBR_CNP_BIT        (UL(1) << 0)
->>>     /*
->>> diff --git a/arch/arm64/include/asm/pgtable.h
->>> b/arch/arm64/include/asm/pgtable.h
->>> index f8efbc128446..11d614d83317 100644
->>> --- a/arch/arm64/include/asm/pgtable.h
->>> +++ b/arch/arm64/include/asm/pgtable.h
->>> @@ -39,6 +39,11 @@
->>>   #include <linux/sched.h>
->>>   #include <linux/page_table_check.h>
->>>   +extern unsigned int phys_mask_shift;
->>> +
->>> +#define PHYS_MASK_SHIFT        (phys_mask_shift)
->>> +#define PHYS_MASK        ((1UL << PHYS_MASK_SHIFT) - 1)
->>
->> I tried to figure out where this is actually used so I could understand
->> your comment in the commit message:
->>
->>   > This is only is required for masking the PFN from a pte entry
->>
->> The closest thing I could find is in arch/arm64/mm/mmap.c, where the
->> mask is used as part of valid_mmap_phys_addr_range() which exists purely
->> to filter accesses to /dev/mem. That's pretty niche, so why not just
->> inline the RSI-specific stuff in there behind a static key instead of
->> changing these definitions?
->>
->> Or did I miss a subtle user somewhere else?
-> 
-> We need to prevent ioremap() of addresses beyond that limit too.
+Hi Roderick,
 
-Which is arguably not much better in terms of nicheness... But this
-seemed cleaner rather than trying to keep track of the niche areas of
-the kernel which require this and modifying them. We could use a static
-key here, but I don't think this is used for any hot-paths so it didn't
-seem worth the complexity.
 
-Steve
+On 7/9/24 01:07, Roderick Colenbrander wrote:
+> The console behavior (I checked the code) does use the flags as well 
+> like I do. The architecture there between usermode/kernel is a bit 
+> different, so in some cases flags do get set when not needed.
+
+Thank you so, so much for double checking this. It's always great to 
+have someone who can speak authoritatively on such matters and eliminate 
+the guesswork.
+
+
+> Various devices tried to capture bit patterns and see what kind of 
+> worked even though not really right. (Officially licensed
+> controllers are a different story they use different hid reports.) We
+> didn't know other devices did this wrong.
+
+Licensed controllers... That will be my next patch set, apologies in 
+advance :)
+
+They need quite a few quirks, too... And as it turns out, my previous 
+patches have laid a lot of ground work for them :)
+
+
+> Correct the validation tests are all uhid based, which is the best 
+> which can be done.
+
+Please correct me if I'm getting the wrong idea here, but what I read 
+between the lines and from your email address is that this is something 
+in Sony's interest.
+
+So an idea comes to mind: Maybe somewhere inside Sony, there exists 
+something like a DS4 simulator at the HID level, which could serve as a 
+foundation for improving the tests? That would get the tests much closer 
+to the gold standard, which is using a real controller.
+
+If not, then maybe there is protocol documentation that could help test 
+writers in creating more precise tests?
+
+
+> There is the hid-tools one, but the one which we help out with, but
+> the key one is the Android ones. We have so many problems with these.
+> Mostly because of vendors not enabling e.g. FF support or LED support
+> other things.
+
+Hm, but downstream users misconfiguring kernels is not our fault, is it? 
+In that case, the tests actually do their work correctly if they show 
+that something is amiss.
+
+
+> The main new Android kernel (public knowledge) is now 6.6 and many
+> new devices due later this year/early next year will use it.  The
+> eco system is a lot wider now and the drivers are used a lot on
+> non-mobile devices (cars, televisions, chromecast,..). Occassionally
+> driver patches are also backported from upstream to older Android
+> kernels (patches have to be merged upstream first).
+
+I see. But still, that is just typical downstream risk of building on 
+behaviour that the kernel does not provide guarantees for. I know 
+first-hand that backporting is a lot of work and easy to get wrong, but 
+this is the first time that I hear that as a reason to stop improving 
+the mainline kernel. Hence my confusion here.
+
+
+> Not that I wouldn't want these kind of patches, but I have to weigh 
+> both sides.
+
+Thanks for your understanding, and hence my offer to help if I somehow 
+can...
+
+
+> The pain on addressing things downstream and in Android conformance
+> tests is quite painful.
+
+Hm, I can somewhat imagine this. I've heard that Android conformance is 
+quite strict.
+
+Given Sony's supposed interest (see above), I guess it would be a 
+worthwhile investment to make the tests more robust? We could just hold 
+off on this patch for a while until downstream has better tests... What 
+would be a timeline for this to trickle downstream?
+
+
+> We would also have both code paths used in the wild forever, because
+> existing 6.6 devices wouldn't change behavior.
+
+Well, that's kind of the point of LTS releases, if I'm not mistaken...
+
+
+> (The official Android tests are kind of kernel version agnostic as
+> they work across multiple kernel and Android versions.
+
+Hm, sounds to me like the Android test framework is broken if it cannot 
+be kernel-specific in such cases. What's required in order to improve this?
+
+
+
+Max
+
 
 
