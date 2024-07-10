@@ -1,90 +1,143 @@
-Return-Path: <linux-kernel+bounces-248430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B6CE92DD13
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:48:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D9B192DD16
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:48:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D51D1C217B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:48:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 438611F22491
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:48:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBD5158A19;
-	Wed, 10 Jul 2024 23:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48559158D8F;
+	Wed, 10 Jul 2024 23:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6YbKyWz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d6nssw7L"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51E1156968
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DD9158D92;
+	Wed, 10 Jul 2024 23:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720655094; cv=none; b=tYOJL5v9ys8nr5GDcaTorYJ7eyDF90ujuye1sbdYvcHaimr0XeclGQUYgXBCHMYl9o3flLOdvkgREEyQ74bc33lw6R6hFnUC5ZvBbsnOGVRg06XRBxBph+vYqh/zNlaB8o34P6Vt/iNyht1c5N3OggKAsUe0MkZQXr2xzlEtUqU=
+	t=1720655100; cv=none; b=n9JU7qh2APQqBRRkfA73W5U8Z7WizTO5fMxa/VwuXhd/CAgQe9b/A5nm7DUNHTVSJBv6awQW0PqmX9grhjindZ++QwSTtJQWtDObPc86qk1VtzmN6kib8PVJs/rjLdla4GVjMqO0NpWCQ4qZ+5BG5K6wuAlL1mKrQAleEsR56s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720655094; c=relaxed/simple;
-	bh=RlU5qdZXTV2dF3NT+nL4H3tIUBMv0nZjJ1Ispw7bS6U=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=atFf0zx2wWk+gqm/KUhi5vE/a1O14MuLrm4h4Yy0OugAAEd00GZndPIsTteJ+NtA7yZcDiCxpxqt59YBsEQgS26zHnTgZXK7Qoz0RtCZ4ZlQvw5h2Eqb9RZd91eQuCuxTewIwerP/4WPXd2R5uxQl+3pPy4rTPEdE63GMB0+x4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G6YbKyWz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5EDBC4AF07;
-	Wed, 10 Jul 2024 23:44:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720655093;
-	bh=RlU5qdZXTV2dF3NT+nL4H3tIUBMv0nZjJ1Ispw7bS6U=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=G6YbKyWzszMGepScRgEHNrHj4Nrv0oyNXTCGShHa77bwVmwpJI7vjRSUFrrPacN12
-	 8CZOzXmkvQNk3AJCb99Rwak5fWrbTMtoMdjtTCjg8IVKFOngrpPxlMXQo2LEboZgVv
-	 +nFLyCB2zkce60ihkxKy3pOCR//2FO/VFJTrWf+BIdAfu5I3bF/WeZslOJrI1wbhIS
-	 5QDk+pqq3oUifuX0LVFxj8tuKBg/jqFa9H/MYwYelktbmVvl233cR5EPPlzYIZkJCV
-	 puJDz86RvqGrxlxYzefoYOt+PGWevFjooB5q/hFUjMyu0sJj/hGoHpxw3PYDXUGO1x
-	 K6E92DY0MNMRg==
-Date: Wed, 10 Jul 2024 16:44:51 -0700 (PDT)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
-To: Chen Ni <nichen@iscas.ac.cn>
-cc: sstabellini@kernel.org, linux@armlinux.org.uk, 
-    xen-devel@lists.xenproject.org, linux-arm-kernel@lists.infradead.org, 
-    linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>
-Subject: Re: [PATCH] xen/arm: Convert comma to semicolon
-In-Reply-To: <20240710014208.1719662-1-nichen@iscas.ac.cn>
-Message-ID: <alpine.DEB.2.22.394.2407101643290.3635@ubuntu-linux-20-04-desktop>
-References: <20240710014208.1719662-1-nichen@iscas.ac.cn>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1720655100; c=relaxed/simple;
+	bh=2FL1KLCRwEBjN0Eyy0mybvPOrQPAKC/0qRzk5OZQZ3s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=H9y8st4WZmS67xmB32rKb+/Jlxn1JUXbL34opbWd/fe94HOftEhY/ec4vzBx/ScdA1q+/K/WhapyRoIDQi7bSpw92TQnFfc1gZctag9LUFQcty8uMjGqzPTFmIZF22vDEUDKNKw+8wADxM6OfRjLmycmk8gvvCJZjMo5tIx/ICg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d6nssw7L; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720655099; x=1752191099;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=2FL1KLCRwEBjN0Eyy0mybvPOrQPAKC/0qRzk5OZQZ3s=;
+  b=d6nssw7LzGCWsFDtDHRIL1P2X3rDomVpAclubaCtTO3oTcSNX1tsQ90H
+   7hiwyJBC2Xbw+y4+e6fcOos5EL7eHCmkUKIiNxceaZ3TT1bqPYrPKesIL
+   +YaVWqegBA+kvavk4jutcyoBrFo6lZ4emqeUafZJTjhGseHNqhm76qIcs
+   iLthM/GJ+0aq8G+ahYg+G/RiLvGHyjr1FAB/Gmjb7K8XVaZtKSvvUKlIO
+   Y4MQhLkZf6alj0yf7BMAaZBKmyPqunDs5yO7nKvha98gQW4HPDujNB8Ew
+   UvctzA1+oYitWrrkfjKsf0oOo2lsBvvwxcKpxLl94NGeGc6RLULhxxa8O
+   g==;
+X-CSE-ConnectionGUID: xyDz//9LTmO+/BBRZAO5nw==
+X-CSE-MsgGUID: ZCDHJCGbSHGAxCPevOm72g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="18145496"
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="18145496"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 16:44:59 -0700
+X-CSE-ConnectionGUID: EtNu+p8KSAqlqVHEqTAZsw==
+X-CSE-MsgGUID: LZ2kLGFIQxadmLv6EIr4Dw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="48344507"
+Received: from bmurrell-mobl.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.221.70])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 16:44:57 -0700
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jesse Brandeburg
+ <jesse.brandeburg@intel.com>, Tony
+ Nguyen <anthony.l.nguyen@intel.com>, Simon Horman <horms@kernel.org>,
+ Richard Cochran <richardcochran@gmail.com>, Paul Menzel
+ <pmenzel@molgen.mpg.de>, Sasha Neftin <sasha.neftin@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, Faizal Rahim
+ <faizal.abdul.rahim@linux.intel.com>
+Subject: Re: [PATCH iwl-net v2 2/3] igc: Fix reset adapter logics when tx
+ mode change
+In-Reply-To: <20240707125318.3425097-3-faizal.abdul.rahim@linux.intel.com>
+References: <20240707125318.3425097-1-faizal.abdul.rahim@linux.intel.com>
+ <20240707125318.3425097-3-faizal.abdul.rahim@linux.intel.com>
+Date: Wed, 10 Jul 2024 16:44:56 -0700
+Message-ID: <87o774u807.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 
-On Wed, 10 Jul 2024, Chen Ni wrote:
-> Replace a comma between expression statements by a semicolon.
-> 
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+Faizal Rahim <faizal.abdul.rahim@linux.intel.com> writes:
 
-Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
-
+> Following the "igc: Fix TX Hang issue when QBV Gate is close" changes,
+> remaining issues with the reset adapter logic in igc_tsn_offload_apply()
+> have been observed:
+>
+> 1. The reset adapter logics for i225 and i226 differ, although they should
+>    be the same according to the guidelines in I225/6 HW Design Section
+>    7.5.2.1 on software initialization during tx mode changes.
+> 2. The i225 resets adapter every time, even though tx mode doesn't change.
+>    This occurs solely based on the condition  igc_is_device_id_i225() when
+>    calling schedule_work().
+> 3. i226 doesn't reset adapter for tsn->legacy tx mode changes. It only
+>    resets adapter for legacy->tsn tx mode transitions.
+> 4. qbv_count introduced in the patch is actually not needed; in this
+>    context, a non-zero value of qbv_count is used to indicate if tx mode
+>    was unconditionally set to tsn in igc_tsn_enable_offload(). This could
+>    be replaced by checking the existing register
+>    IGC_TQAVCTRL_TRANSMIT_MODE_TSN bit.
+>
+> This patch resolves all issues and enters schedule_work() to reset the
+> adapter only when changing tx mode. It also removes reliance on qbv_count.
+>
+> qbv_count field will be removed in a future patch.
+>
+> Test ran:
+>
+> 1. Verify reset adapter behaviour in i225/6:
+>    a) Enrol a new GCL
+>       Reset adapter observed (tx mode change legacy->tsn)
+>    b) Enrol a new GCL without deleting qdisc
+>       No reset adapter observed (tx mode remain tsn->tsn)
+>    c) Delete qdisc
+>       Reset adapter observed (tx mode change tsn->legacy)
+>
+> 2. Tested scenario from "igc: Fix TX Hang issue when QBV Gate is closed"
+>    to confirm it remains resolved.
+>
+> Fixes: 175c241288c0 ("igc: Fix TX Hang issue when QBV Gate is closed")
+> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+> Reviewed-by: Simon Horman <horms@kernel.org>
 > ---
->  arch/arm/xen/p2m.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/xen/p2m.c b/arch/arm/xen/p2m.c
-> index 309648c17f48..9da57a5b81c7 100644
-> --- a/arch/arm/xen/p2m.c
-> +++ b/arch/arm/xen/p2m.c
-> @@ -109,7 +109,7 @@ int set_foreign_p2m_mapping(struct gnttab_map_grant_ref *map_ops,
->  		 * immediate unmapping.
->  		 */
->  		map_ops[i].status = GNTST_general_error;
-> -		unmap.host_addr = map_ops[i].host_addr,
-> +		unmap.host_addr = map_ops[i].host_addr;
->  		unmap.handle = map_ops[i].handle;
->  		map_ops[i].handle = INVALID_GRANT_HANDLE;
->  		if (map_ops[i].flags & GNTMAP_device_map)
-> -- 
-> 2.25.1
-> 
+
+There were a quite a few bugs, some of them my fault, on this part of
+the code, changing between the modes in the hardware.
+
+So I would like some confirmation that ETF offloading/LaunchTime was
+also tested with this change. Just to be sure.
+
+But code-wise, looks good:
+
+Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+
+
+Cheers,
+-- 
+Vinicius
 
