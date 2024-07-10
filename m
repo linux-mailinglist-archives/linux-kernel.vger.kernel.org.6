@@ -1,109 +1,115 @@
-Return-Path: <linux-kernel+bounces-247087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99E0492CB00
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:25:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26AC992CB02
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53AB2283A37
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:25:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6F49B21639
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1314784D04;
-	Wed, 10 Jul 2024 06:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="cAoOEajs"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F4871747;
+	Wed, 10 Jul 2024 06:25:40 +0000 (UTC)
+Received: from h3cspam02-ex.h3c.com (smtp.h3c.com [60.191.123.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA9C82D94
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0925914C
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.191.123.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720592635; cv=none; b=YHFhHz3bIf4EeAmL0rewULlfsF/J7VOuhOHOTCmmlWrXxxjR7eq5nigOiQsKPx8JxsMXE9JdzxBIVKfId65iW3rlrpKT5/Mq25qwqaBG3YCy2iBx95rLCyOaRIGcgbyC2D23BUNz4WoJUjzx4uk3+oiPk1WpMOVhXbvr/ETN+js=
+	t=1720592740; cv=none; b=mblLLZCarIFujmASz2XtWdthEL5lCDkwwDr5yZkYGpcnQHObkBcESe6wOm1hcYmNKhXrALIXeJtUAecghYAfrZ0kPXCV537gLECzbNI+KfsP1FvBVJu21rUfMfM9iTkTBarFg+R9qcILoCKjPrNHjpinBZFRUmEw3iJiuaQj0ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720592635; c=relaxed/simple;
-	bh=6s7so5c7HOknihvumh3Haewm4qizE8uH5cVOjlcBNW4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=R5BEBkdwV7sIWrAkHdAXGoXhmG9oibbtwnqBTsRy8Hn2VbNFEQp/239yROAnSSCZDO9W0G+bmawg9/x5sRq37quQ8I5WrxKQ/WuGhXpHGfWVP86PVhIVIc6qug/RbyOdwjpCm2/yPYsM7E6kDO4B4gcfX4Pg5nOn/L5/jyL5+Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=cAoOEajs; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ee9bca8652so3765951fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 23:23:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1720592632; x=1721197432; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=assg/spa4cOMqEpYiqy3ecAcAwnhbvPRfb3jWzWA0iQ=;
-        b=cAoOEajsdhDU8va5s4PHGyPaNulXDepCAefXzmlZnAWnst8moQ5y7AQaqh1jXiBNp2
-         7FOQa29N26sqz2xs3H5NgHjg2EPhZQ5rCO/UDgkpEAoRG2+BH+9K3bMd+qwXNIWgENDq
-         9VLav8cwsJSYX/99U7eQ5qR7feS374tthDGjz2/mRzqy+mADE83nrHuBgDu+zurQH8SG
-         sopn9KeaOoqC7O1fxdYOJvnz/D/dakD+NPrUeDkxMvF36yLdSEKWZGBHbldggjgbEPWO
-         BCmofiytZC/E2Aqy7eoGb7rispIIIHC/XO/N+yi041IBqCLujFD3+1Llrn+ZI/mJ1A0R
-         nH3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720592632; x=1721197432;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=assg/spa4cOMqEpYiqy3ecAcAwnhbvPRfb3jWzWA0iQ=;
-        b=JcTQvMEa7w420krJAu4tpPk81baxPIK/nQK341tSjN4I1GTxYGfcMzVmpBeroWWeDB
-         X2SgWwibfRpNTyld3g2Tb5bTaQUenWo4oVql6geTc5swXBdtjBodSwX2D6TKhiyCeWpC
-         qITuF24z5Bj99Ife1jDfGKhA2nTcuKYG3ddSHeb8A1Pn7b7vKxBgLKOSC1LJ/EvtO9lJ
-         eA8yGeKBlAaAIig3OT8OvOqJjCUIES+C0PxQ0vzu8AZZKefec/jUQmpPfj0CVRAO9hMN
-         2YM8HttnuVrPHyvZ3bPWeHgp2FM+j3shATTu4HuKGH2W5rMHQlY0sipqMDHeCKjjXba5
-         YbIA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/Gil8Rb/t5DZSGcJ9YRrC9Hg5EQL3T6A0zulWAHq6FgWJNNrEbxeCWpQbPIGny63onFeHp61vnUEubxdZxcwrXYkZMwCiP7AcKW5F
-X-Gm-Message-State: AOJu0YzVktguAgOKDvpq2RqXVTKA32FB7+DkuwbbwrwzS8yC+GajrQFv
-	KB2kZHeMTflr9YG8z0qAmW7bK9kzv6Lcg46KHO4qeBu7Mlntlt+ZOM8ZXvrzOIY=
-X-Google-Smtp-Source: AGHT+IFrolNW5lOMuUJhl618lI6yjdNOR6K82mCSLOdcX6udq8FJVW5dASBzQo09mgslsZx9YSpn/g==
-X-Received: by 2002:a05:6512:31cc:b0:52c:dd58:1a97 with SMTP id 2adb3069b0e04-52eb9a0498bmr3119303e87.5.1720592632042;
-        Tue, 09 Jul 2024 23:23:52 -0700 (PDT)
-Received: from [127.0.0.1] (87-52-80-167-dynamic.dk.customer.tdc.net. [87.52.80.167])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52eb90670b6sm463892e87.197.2024.07.09.23.23.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 23:23:50 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Denis Efremov <efremov@linux.com>, 
- Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <20240602-md-block-floppy-v1-1-bc628ea5eb84@quicinc.com>
-References: <20240602-md-block-floppy-v1-1-bc628ea5eb84@quicinc.com>
-Subject: Re: [PATCH] floppy: add missing MODULE_DESCRIPTION() macro
-Message-Id: <172059263066.380385.1122582379768544116.b4-ty@kernel.dk>
-Date: Wed, 10 Jul 2024 00:23:50 -0600
+	s=arc-20240116; t=1720592740; c=relaxed/simple;
+	bh=LUxcke6cCvFGxBD8FujaEFN2PRI41jELIs/CQ2+jB+k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=by5Kf868akhwvCzzdD6z/+wcQ+zcnvffQ/185k9VA6X4zviNV2OIf6cHOFDR8ni5dpR7w0FUfCvxcyaq0GGMH7V7DI/SKZNnDVhM9KWkPN0kEnblvOT4TD2GbEVNGA31tAdvZklsi9qKRYg7RbWtYAlblenozKZHfKdWgKpCJ+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com; spf=pass smtp.mailfrom=h3c.com; arc=none smtp.client-ip=60.191.123.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h3c.com
+Received: from mail.maildlp.com ([172.25.15.154])
+	by h3cspam02-ex.h3c.com with ESMTP id 46A6Oj9O095773;
+	Wed, 10 Jul 2024 14:24:45 +0800 (GMT-8)
+	(envelope-from zhang.chunA@h3c.com)
+Received: from DAG6EX09-BJD.srv.huawei-3com.com (unknown [10.153.34.11])
+	by mail.maildlp.com (Postfix) with ESMTP id B129220081BA;
+	Wed, 10 Jul 2024 14:29:00 +0800 (CST)
+Received: from localhost.localdomain.com (10.99.206.13) by
+ DAG6EX09-BJD.srv.huawei-3com.com (10.153.34.11) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1258.27; Wed, 10 Jul 2024 14:24:46 +0800
+From: zhangchun <zhang.chuna@h3c.com>
+To: <akpm@linux-foundation.org>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <jiaoxupo@h3c.com>,
+        <zhang.zhengming@h3c.com>, <zhang.zhansheng@h3c.com>,
+        <shaohaojize@126.com>, zhangchun <zhang.chuna@h3c.com>
+Subject: [PATCH] =?UTF-8?q?mm:=20Give=20kmap=5Flock=20before=20call=20flus?= =?UTF-8?q?h=5Ftlb=5Fkernel=5Frang=EF=BC=8Cavoid=20kmap=5Fhigh=20deadlock?= =?UTF-8?q?=20V2.?=
+Date: Wed, 10 Jul 2024 14:26:12 +0800
+Message-ID: <1720592772-19904-1-git-send-email-zhang.chuna@h3c.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BJSMTP01-EX.srv.huawei-3com.com (10.63.20.132) To
+ DAG6EX09-BJD.srv.huawei-3com.com (10.153.34.11)
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:h3cspam02-ex.h3c.com 46A6Oj9O095773
 
+Use kmap_high and kmap_XXX or kumap_xxx among differt cores at the same
+time may cause deadlock. The issue is like this：
 
-On Sun, 02 Jun 2024 17:05:31 -0700, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/block/floppy.o
-> 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
-> 
-> 
+ CPU 0:                                                 CPU 1:
+ kmap_high(){                                           kmap_xxx() {
+               ...                                        irq_disable();
+        spin_lock(&kmap_lock)
+               ...
+        map_new_virtual                                     ...
+           flush_all_zero_pkmaps
+              flush_tlb_kernel_range         /* CPU0 holds the kmap_lock */
+                      smp_call_function_many         spin_lock(&kmap_lock)
+                      ...                                   ....
+        spin_unlock(&kmap_lock)
+               ...
 
-Applied, thanks!
+CPU 0 holds the kmap_lock, waiting for CPU 1 respond to IPI. But CPU 1
+has disabled irqs, waiting for kmap_lock, cannot answer the IPI. Fix
+this by releasing  kmap_lock before call flush_tlb_kernel_range,
+avoid kmap_lock deadlock.
 
-[1/1] floppy: add missing MODULE_DESCRIPTION() macro
-      commit: 3c1743a685b19bc17cf65af4a2eb149fd3b15c50
+Fixes: 3297e760776a ("highmem: atomic highmem kmap page pinning")
+Signed-off-by: zhangchun <zhang.chuna@h3c.com>
+Co-developed-by: zhangzhansheng <zhang.zhansheng@h3c.com>
+Signed-off-by: zhangzhansheng <zhang.zhansheng@h3c.com>
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Reviewed-by: zhangzhengming <zhang.zhengming@h3c.com>
+---
+ mm/highmem.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Best regards,
+diff --git a/mm/highmem.c b/mm/highmem.c
+index bd48ba4..841b370 100644
+--- a/mm/highmem.c
++++ b/mm/highmem.c
+@@ -220,8 +220,11 @@ static void flush_all_zero_pkmaps(void)
+ 		set_page_address(page, NULL);
+ 		need_flush = 1;
+ 	}
+-	if (need_flush)
++	if (need_flush) {
++		unlock_kmap();
+ 		flush_tlb_kernel_range(PKMAP_ADDR(0), PKMAP_ADDR(LAST_PKMAP));
++		lock_kmap();
++	}
+ }
+ 
+ void __kmap_flush_unused(void)
 -- 
-Jens Axboe
-
-
+1.8.3.1
 
 
