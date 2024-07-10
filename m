@@ -1,193 +1,203 @@
-Return-Path: <linux-kernel+bounces-246881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5469892C865
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 04:22:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EE8E92C868
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 04:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 746211C21950
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 02:22:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E98E528419B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 02:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520F9BA39;
-	Wed, 10 Jul 2024 02:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F05B10A0E;
+	Wed, 10 Jul 2024 02:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ulDfp3US"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gbiLjUbm"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883A94C6B;
-	Wed, 10 Jul 2024 02:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D031F79C0
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 02:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720578142; cv=none; b=ET3fJyxWwP4jKmjs3lPlCWyJcl8eMnNq+fqgHmmdn3uUL78BTbPWrazOMQu5yaDMBjtrqOe5+SRF5/fg13sQeqM/SLmGYbNuAzcfnngHL7c1YBZ16uNSwvmKDMfYkbDHqzQXh06CurE52tZohktZ0FtKxq1J+Z1oLyN1JoKisWA=
+	t=1720578168; cv=none; b=VxpIjy+sq57bbET1LExSl7+/DKIA9unCrnBOS+vKYyBefwVjIekOP5odYvbXW7Q0K+XFP0Pqx1DEoab1KuFXYbjR+2FQu6uy9nncvMEdhcsa6oJmr+hBuHFhb3Ajn37G2iDnH2Nvm280G+nYepUKotRBEncYOVRVo4vdzdpv6uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720578142; c=relaxed/simple;
-	bh=eFOYdRn1ECFr63rgUzuEcRQBGl1iiKE1nTouLGeF1Xc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dR/A0eOuT+VeYQ3MkflI9PJJIGtxIFXPYW80YphErkNVCRY6E2LyrdVtk7Xle3J2KcPyLue8BPUu6pD9DNkKpmfYjDMdGNoTnClqAq4DJkhlUj3hk7h/PkLPu2ju8hUp4AKEp8srajmz3CgcTqXNmbCGuMP2v6oZYA91QnSC/Ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ulDfp3US; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720578136;
-	bh=RxuRMetBI4DFsxXi3ukHOyx3N1MdWq19bHTjU08akcE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ulDfp3USaPAN5hThxFEDKXdH0nAQ41XLl9LQpn9QloWV8jHPLzvubgL6Eu4akp/Sh
-	 qIdjAhXPFT4BEHccC7FUYhf2YyQxlaHO6UrvGKeg3FYb+xs8NoQCz2g39SqABfZOGH
-	 TCDE7E9FirkGLMPUQe3pTcYXs2LoYJGTvipmUgqp70arWd0fLSXMmsxDPYblDoJUIu
-	 4vbZcyHgiYOZ1pYP/7VnyHWlvgvwzD8K9GulTqYfqxwwRo7re06Gjxu21gZMqCxbvK
-	 K/gAB3PM27mCO8H7csQpTWpVcMY+UxM8WV5kl7H62+iAV6xrCMzEJjZDkyotiO0VIQ
-	 GmQFFNzWIZyDQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJhT40PsWz4w2M;
-	Wed, 10 Jul 2024 12:22:16 +1000 (AEST)
-Date: Wed, 10 Jul 2024 12:22:15 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Christian Brauner" <brauner@kernel.org>, Christian =?UTF-8?B?R8O2dHRz?=
- =?UTF-8?B?Y2hl?= <cgzones@googlemail.com>, "Linux Kernel Mailing List"
- <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>,
- "Jiri Olsa" <jolsa@kernel.org>
-Subject: Re: linux-next: manual merge of the vfs-brauner tree with the
- asm-generic tree
-Message-ID: <20240710122215.7b09d347@canb.auug.org.au>
-In-Reply-To: <784a34e5-4654-44c9-9c07-f9f4ffd952a0@app.fastmail.com>
-References: <20240709105709.18ce785d@canb.auug.org.au>
-	<20240709200851.4d921e43@canb.auug.org.au>
-	<784a34e5-4654-44c9-9c07-f9f4ffd952a0@app.fastmail.com>
+	s=arc-20240116; t=1720578168; c=relaxed/simple;
+	bh=exy/3SWSqSbemeMVW5eEXLE0MxoV5Vfj924B0k3VrZ0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=GlKXQ0xFfAQNaafnWnXF3zbC+9/Fh7SgYEqwzsQ3cFoUEeVisrtFJ8m8+nrMPWVUoS1bxOSjuDyZqG0edNH32o5G6Za5ugFrOHbdjEcWnMSvysCyzBVmab/CFo4N1m7kQufUV/uJZHnPiDrxe+InvZwegBHHCOZUL2C7l5+vZJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=gbiLjUbm; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240710022245epoutp03764bfe42236b491248d6e2958ff88301~guLmdT0DO2839128391epoutp030
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 02:22:45 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240710022245epoutp03764bfe42236b491248d6e2958ff88301~guLmdT0DO2839128391epoutp030
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1720578165;
+	bh=uw+bsmZVY7hnnavGq0UHXYJ7wgRwm/6D69JG/zFh/As=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=gbiLjUbm0fCwA7WRe7QCSSqneewf7i8L5aW8DJZUS3QsXqjNSkpUiJ6/b5deLAFuB
+	 padbL/iCfxBcL8ycdzOuYO60JdCHNKpsbyIgU8/e+vZopwYpoUrjhG6soRhwtMmaEC
+	 puvBt8XPcnoJ61UeOcT6djnLp3RFZHbPBcj85ZRY=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240710022243epcas5p4dca8a4ebacfb7b8de2d253786b7fb4d6~guLlPVUH_0144901449epcas5p48;
+	Wed, 10 Jul 2024 02:22:43 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WJhTX32Htz4x9Q1; Wed, 10 Jul
+	2024 02:22:40 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	82.88.09989.E60FD866; Wed, 10 Jul 2024 11:22:38 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240710022238epcas5p1e1a54ce77378641c52e4d67329ac26eb~guLgDdWn_1105011050epcas5p1Q;
+	Wed, 10 Jul 2024 02:22:38 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240710022238epsmtrp2106e6e31ca779ca8a834eb67cf5481a9~guLgCnvYm0614606146epsmtrp2V;
+	Wed, 10 Jul 2024 02:22:38 +0000 (GMT)
+X-AuditID: b6c32a4a-bffff70000002705-29-668df06e217a
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	77.2A.19057.D60FD866; Wed, 10 Jul 2024 11:22:38 +0900 (KST)
+Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240710022236epsmtip26c11ec9c6702e6856202b24eed5847be~guLeQIBaC0384103841epsmtip2S;
+	Wed, 10 Jul 2024 02:22:36 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Rob Herring'" <robh@kernel.org>
+Cc: "'Sunyeal Hong'" <sunyeal.hong@samsung.com>, "'Krzysztof Kozlowski'"
+	<krzk@kernel.org>, "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
+	"'Chanwoo	Choi'" <cw00.choi@samsung.com>, "'Michael Turquette'"
+	<mturquette@baylibre.com>, "'Stephen Boyd'" <sboyd@kernel.org>, "'Conor
+ Dooley'" <conor+dt@kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <20240709162255.GA3676452-robh@kernel.org>
+Subject: RE: [PATCH v2 1/4] dt-bindings: clock: add Exynos Auto v920 SoC CMU
+ bindings
+Date: Wed, 10 Jul 2024 07:52:34 +0530
+Message-ID: <015401dad270$0822f610$1868e230$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/QNsCmDa43aeu.PDi6I7imoX";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJHtUpDsgLCeLIQdS8546uqgvLWdQE7Blz4AfM7P5wBaRtFEQIwSLSysN8xaMA=
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGJsWRmVeSWpSXmKPExsWy7bCmpm7eh940gxMd0hZr9p5jsrj+5Tmr
+	xfwj51gtzp/fwG6x6fE1VouPPfdYLS7vmsNmMeP8PiaLi6dcLf7v2cFucfhNO6vFv2sbWSya
+	lq1ncuD1eH+jld1j06pONo/NS+o9+rasYvT4vEkugDUq2yYjNTEltUghNS85PyUzL91WyTs4
+	3jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6EQlhbLEnFKgUEBicbGSvp1NUX5pSapCRn5x
+	ia1SakFKToFJgV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbG3NuPWAr+CVU8m7mXqYHxFV8XIyeH
+	hICJROPB/YxdjFwcQgK7GSVW73nKDuF8YpSYvfkdE4TzjVHiWudV1i5GDrCWm088QbqFBPYy
+	Sjx+WApR84JRYsrV7awgCTYBXYkdi9vYQGwRAVWJplkPWECKmAWeM0s8nfmKCSTBKWAucaR5
+	IwuILSwQLvH3xAR2EJsFqGHPicNgg3gFLCXet0xih7AFJU7OfAJWzywgL7H97RxmiB8UJH4+
+	XcYKscxPYuG0r0wQNeISL48eAXtHQuAIh8T9nmmsEA0uEtcbpzBB2MISr45vYYewpSQ+v9vL
+	BmFnSxy/OAvKrpDobv0IVWMvsfPRTRZQSDALaEqs36UPsYtPovf3EyZIAPFKdLQJQVSrSjS/
+	u8oCYUtLTOzuhrrAQ2LSv0eMExgVZyH5bBaSz2Yh+WAWwrIFjCyrGCVTC4pz01OLTQuM8lLL
+	4fGdnJ+7iRGcgLW8djA+fPBB7xAjEwfjIUYJDmYlEd75N7rThHhTEiurUovy44tKc1KLDzGa
+	AoN7IrOUaHI+MAfklcQbmlgamJiZmZlYGpsZKonzvm6dmyIkkJ5YkpqdmlqQWgTTx8TBKdXA
+	FC+Z6nM1RNR6/rnqGpYdCTf/umewvZ16RSBpteqNbdODv1zNT1/mF2nD9lpd+sPlOVXmPsbr
+	bfsiNj+PWi2UI79kj8L8uh93Vc7q3mbmM+U/fHBdymOmTfm97CpudfsKPG9Ok35r8vCrSXP7
+	jRL9UhdR1dsr17XP+xr5p8Nuh7R5/jTeFj39pCWHrZLMr/IVF7kKnzGeuqhlXxTHe8v1y6sE
+	rgstjdJPnv3gQM6lf+tO3V1q6HBGYOlHjVTf+I0b5TdLv1jhFpES5lG6pzbp85wlLJsyXukG
+	vjns8n/OjrMOK69/cGS6HL9oWi0Lr0zk3lbDzP62o5WTbgjMK9T/OHWzJ9/Emalb8mZ81F+p
+	rMRSnJFoqMVcVJwIAPqBnoNJBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHIsWRmVeSWpSXmKPExsWy7bCSvG7eh940g+mvGS3W7D3HZHH9y3NW
+	i/lHzrFanD+/gd1i0+NrrBYfe+6xWlzeNYfNYsb5fUwWF0+5Wvzfs4Pd4vCbdlaLf9c2slg0
+	LVvP5MDr8f5GK7vHplWdbB6bl9R79G1ZxejxeZNcAGsUl01Kak5mWWqRvl0CV8bc249YCv4J
+	VTybuZepgfEVXxcjB4eEgInEzSeeXYxcHEICuxklJl84y9TFyAkUl5a4vnECO4QtLLHy33N2
+	iKJnjBKbjl9gA0mwCehK7FjcBmaLCKhKNM16wAJSxCzwkVniYt89RoiOeUwSH99uA6viFDCX
+	ONK8kQXEFhYIlfh76wQjiM0C1L3nxGFWEJtXwFLifcskdghbUOLkzCcsIKcyC+hJtG0EK2cW
+	kJfY/nYOM8R1ChI/ny5jhTjCT2LhtK9MEDXiEi+PHmGfwCg8C8mkWQiTZiGZNAtJxwJGllWM
+	kqkFxbnpucWGBUZ5qeV6xYm5xaV56XrJ+bmbGMFRqKW1g3HPqg96hxiZOBgPMUpwMCuJ8M6/
+	0Z0mxJuSWFmVWpQfX1Sak1p8iFGag0VJnPfb694UIYH0xJLU7NTUgtQimCwTB6dUA9OKAJMF
+	s1/E/Zn9cm14S0tpwd7NvYu2dLxYLLq8UL/LUOatnsEuG0Wf9xWMTME3uw5K8ivM79FxfsH/
+	4fiHe6k/b3lW9m6IF1ZZu1pB8/qUaVrdsgxPmQ4wLP0846/gh3j2/XZ6dySUmR6e7DY1bOte
+	uIpr/9eoRQ7/lA4t94+3DDRoT8/6sly3cmauLJvPU96pF5hOHys58FB2t4HSo2cSG5hvzw0v
+	OGGU6C/b9YBRz+0Ai6b4MjnZgGAxo7jCDQoRoXeNzgdyLNjd8Szu4BU3l7aciPcOasqMUYIB
+	4hLZq1fqnY0T6du82jK7nIMl6vTmpfPPppUrcHTrzNgf1iG09vWNwAfTa8Pexk7UU2Ipzkg0
+	1GIuKk4EAEwxCpgxAwAA
+X-CMS-MailID: 20240710022238epcas5p1e1a54ce77378641c52e4d67329ac26eb
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240707231444epcas2p17d7c9842f0acaff0cc352d5c15f38e73
+References: <20240707231331.3433340-1-sunyeal.hong@samsung.com>
+	<CGME20240707231444epcas2p17d7c9842f0acaff0cc352d5c15f38e73@epcas2p1.samsung.com>
+	<20240707231331.3433340-2-sunyeal.hong@samsung.com>
+	<000001dad121$bf3c0a80$3db41f80$@samsung.com>
+	<20240709162255.GA3676452-robh@kernel.org>
 
---Sig_/QNsCmDa43aeu.PDi6I7imoX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Rob,
 
-Hi all,
-
-On Tue, 09 Jul 2024 13:44:34 +0200 "Arnd Bergmann" <arnd@arndb.de> wrote:
->
-> On Tue, Jul 9, 2024, at 12:08, Stephen Rothwell wrote:
-> > On Tue, 9 Jul 2024 10:57:09 +1000 Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote: =20
-> >>
-> >> Today's linux-next merge of the fs-next tree got conflicts in:
-> >>=20
-> >>   arch/arm64/include/asm/unistd.h
-> >>   arch/arm64/include/asm/unistd32.h
-> >>=20
-> >> between commit:
-> >>=20
-> >>   ea0130bf3c45 ("arm64: convert unistd_32.h to syscall.tbl format")
-> >>=20
-> >> from the asm-generic tree and commit:
-> >>=20
-> >>   e6873349f700 ("fs/xattr: add *at family syscalls")
-> >>=20
-> >> from the vfs-brauner tree.
-> >>=20
-> >> I fixed it up (I used the former versions) and can carry the fix as
-> >> necessary. This is now fixed as far as linux-next is concerned, but any
-> >> non trivial conflicts should be mentioned to your upstream maintainer
-> >> when your tree is submitted for merging.  You may also want to consider
-> >> cooperating with the maintainer of the conflicting tree to minimise any
-> >> particularly complex conflicts. =20
+> -----Original Message-----
+> From: Rob Herring <robh@kernel.org>
+> Sent: Tuesday, July 9, 2024 9:53 PM
+> To: Alim Akhtar <alim.akhtar@samsung.com>
+> Cc: 'Sunyeal Hong' <sunyeal.hong@samsung.com>; 'Krzysztof Kozlowski'
+> <krzk@kernel.org>; 'Sylwester Nawrocki' <s.nawrocki@samsung.com>;
+> 'Chanwoo Choi' <cw00.choi@samsung.com>; 'Michael Turquette'
+> <mturquette@baylibre.com>; 'Stephen Boyd' <sboyd@kernel.org>; 'Conor
+> Dooley' <conor+dt@kernel.org>; linux-samsung-soc@vger.kernel.org; linux-
+> clk@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH v2 1/4] dt-bindings: clock: add Exynos Auto v920 SoC
+> CMU bindings
+> 
+> On Mon, Jul 08, 2024 at 03:59:40PM +0530, Alim Akhtar wrote:
+> > Hello Sunyeal
 > >
-> > This resolution may be not enough as I now get the following warnings
-> > from the arm64 defconfig build:
-> >
-> > <stdin>:1603:2: warning: #warning syscall setxattrat not implemented [-=
-Wcpp]
-> > <stdin>:1606:2: warning: #warning syscall getxattrat not implemented [-=
-Wcpp]
-> > <stdin>:1609:2: warning: #warning syscall listxattrat not implemented [=
--Wcpp]
-> > <stdin>:1612:2: warning: #warning syscall removexattrat not implemented=
- [-Wcpp] =20
->=20
-> I see. The newly added syscalls need to be copied from
-> include/uapi/asm-generic/unistd.h into the newly added
-> scripts/syscall.tbl. I am aware of this and was planning
-> to send this as a fixup afterward to avoid an awkward
-> four-way merge with the uretprobe and xattrat patches.
->=20
-> Based on your merge in 1dd7a574e54e ("Merge branch
-> 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/
-> git/trace/linux-trace.git"), I think we want this
-> to be in all syscall.tbl files:
->=20
-> diff --git a/scripts/syscall.tbl b/scripts/syscall.tbl
-> index b0ea892de12e..4873fa3ca496 100644
-> --- a/scripts/syscall.tbl
-> +++ b/scripts/syscall.tbl
-> @@ -419,3 +419,8 @@
->  460	common	lsm_set_self_attr		sys_lsm_set_self_attr
->  461	common	lsm_list_modules		sys_lsm_list_modules
->  462	common	mseal				sys_mseal
-> +463	common	setxattrat			sys_setxattrat
-> +464	common	getxattrat			sys_getxattrat
-> +465	common	listxattrat			sys_listxattrat
-> +466	common	removexattrat			sys_removexattrat
+> > > -----Original Message-----
+> > > From: Sunyeal Hong <sunyeal.hong@samsung.com>
+[snip]
+> > > +            - description: External reference clock (38.4 MHz)
+> > > +            - description: CMU_PERIC0 NOC clock (from CMU_TOP)
+> > > +            - description: CMU_PERIC0 IP clock (from CMU_TOP)
+> > > +
+> > > +        clock-names:
+> > > +          items:
+> > > +            - const: oscclk
+> > > +            - const: noc
+> > > +            - const: ip
+> > These are too generic name, please add peric0_noc and peric0_ip, and
+this
+> is to match with the UM.
+> > I am sure in future you would like to add other IPs like USI, I2C etc
+> > for the peric0 block
+> 
+> Names are local to the block, so adding the block name is redundant.
+> 
+Yes, noc and IP clocks are input to CMU_PERIC0 block which is coming from
+another block (CMU_TOP)
+The name mentioned in the UM as DIV_CLKCMU_PERIC0_NOC and
+DIV_CLKCMU_PERIC0_IP. To match UM,
+suggested to add prefix block name. It is redundant though.
+I can think of a case where clock names are big and taking several
+characters, it make sense to drop the prefix. 
 
-I have added this merge fix patch to the merge of the fs-next tree
-today (it is needed when the vfs-brauner tree is merged with the
-asm-generic tree):
+> Wouldn't USI and I2C clocks be outputs? This property is input clocks.
+> 
+Yes it is, what I meant was the clock ID mentioned in
+include/dt-bindings/clock/samsung,exynosautov920.h
+Also contains _PERIC0_ as prefix.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 10 Jul 2024 12:16:06 +1000
-Subject: [PATCH] fixup for "fs/xattr: add *at family syscalls"
+I am fine with the recommended name (just keeping NoC and IP) for the local
+clocks to a block.
 
-interacting with "arm64: convert unistd_32.h to syscall.tbl format"
+> The names and descriptions should be defined at the top level and then
+here
+> should be just 'minItems: 3' (And above 'maxItems: 1').
+> 
+> Rob
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- scripts/syscall.tbl | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/scripts/syscall.tbl b/scripts/syscall.tbl
-index 797e20ea99a2..86b53c7a815b 100644
---- a/scripts/syscall.tbl
-+++ b/scripts/syscall.tbl
-@@ -402,3 +402,7 @@
- 460	common	lsm_set_self_attr		sys_lsm_set_self_attr
- 461	common	lsm_list_modules		sys_lsm_list_modules
- 462	common	mseal				sys_mseal
-+463	common	setxattrat			sys_setxattrat
-+464	common	getxattrat			sys_getxattrat
-+465	common	listxattrat			sys_listxattrat
-+466	common	removexattrat			sys_removexattrat
---=20
-2.43.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/QNsCmDa43aeu.PDi6I7imoX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaN8FcACgkQAVBC80lX
-0GwUugf/fY1jDZ/+ud9Gus6SZQsl7wzRYCCOkxWg8pyh++qL3g+nmvj2gCW7nHO7
-IWnCVNJeZg+Pri7IwHFJGVK1B7Cg0YvLlvHYqwx2Bmzaw11Xo3YQTVDUtQf68xVL
-tj6RMRhFlWSA2165R/qzUeTUOB302fEECuNmxtVUA2Sim1i6fOtKJ/gv0zuo2VaQ
-gxZ7LcFXZHccmuFNHATvEHrVhE9HOn5iAhmCR4erVvSFNP1+g66is5YSkogbmPrG
-zZAjfjNBxvRe0WKKnrwBA9a2yAqPBNsbZ5wssjONTNRZq9t700sK0PjH2DcqALXa
-yCfqHneW1cLctsMoCwVlUtGcr6xTqw==
-=0l88
------END PGP SIGNATURE-----
-
---Sig_/QNsCmDa43aeu.PDi6I7imoX--
 
