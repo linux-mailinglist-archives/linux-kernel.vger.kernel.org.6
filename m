@@ -1,47 +1,80 @@
-Return-Path: <linux-kernel+bounces-247274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21DE592CD65
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:46:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 922D892CD67
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 532A21C219F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:46:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C37CC1C21981
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3DE13AA35;
-	Wed, 10 Jul 2024 08:46:45 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF5F13C9A4;
+	Wed, 10 Jul 2024 08:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infogain-com.20230601.gappssmtp.com header.i=@infogain-com.20230601.gappssmtp.com header.b="CxiB+YLI"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4B63AC0C;
-	Wed, 10 Jul 2024 08:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA3113C821
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720601204; cv=none; b=hwQzOFIPj3K1uwPzZ14whK0YJ6mWNVPe8jJhqFXuepjew80Ag6PSbOGKUQFH+T/Fd7gI0dslWFgaRb7+wSFKMbPf5fAs+B50rO6jzcGlPymQHBfvj54mpmzVWkLL0JHdi9AkAYvxajmi6OBGmrqf/u29pNNAFDt4vHvvcFlASkQ=
+	t=1720601234; cv=none; b=tCe3PlbakW7mv+r1de6C69SyTKz4kA47lsI9+yO06adHM2vYks44O+Nz3tKt4iF65fyrVx5l3W95aLPWQ1Ywg7ZtdGpN2sKbHZf4a4Kie9ENuWrCYC3yxf0XNaqVMQZRZ6TuRkkN7eD+VO/LNgTwj1TotCVk3kMY/Q16nB1iZiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720601204; c=relaxed/simple;
-	bh=Cmo/AXaenWF8sdqaQkQAQdmAJ2X7SEE2lgcGXtbm0po=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dx52qy+pRs3Jyv2lJ2R42BTb3+rlGraOiZmjW5TI/AH8uAkyL2lahy9gVRQNjCd6AMvHODfBWX8RWTQoYLqp4FrClGuDBpZ4GH1vitjkH8/NfaKECAg5+eWOtYJf7h2+oTEvML7Ysc5hd7yJl//c/xjxdi16fJjvy/Wi2PgkYUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC47FC32781;
-	Wed, 10 Jul 2024 08:46:41 +0000 (UTC)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Bibo Mao <maobibo@loongson.cn>
-Cc: kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [GIT PULL] LoongArch KVM changes for v6.11
-Date: Wed, 10 Jul 2024 16:46:30 +0800
-Message-ID: <20240710084630.2553263-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1720601234; c=relaxed/simple;
+	bh=h7wPKwl9gyLl5ae6rikweGiUuq0RojGxlMGVvH0VlDc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YK98P1eu8Ros1jbeccWdsXP+Qv9BTJN7z0t6T7RRCzd8qNP/OuGyXxAfW1+3F5JWNjp1f2F86Bh26bTwQcAQAkYjPfTVN40lXgphokfH4FdG9QlI3lP2nKCDwsPOrk2wADuEhYZcDqZ07gOlYGpRI/7AcbJ4kd/0NzGZGY58r5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=infogain.com; spf=fail smtp.mailfrom=infogain.com; dkim=pass (2048-bit key) header.d=infogain-com.20230601.gappssmtp.com header.i=@infogain-com.20230601.gappssmtp.com header.b=CxiB+YLI; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=infogain.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=infogain.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58b5f7bf3edso3881259a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 01:47:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=infogain-com.20230601.gappssmtp.com; s=20230601; t=1720601230; x=1721206030; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X8FqtNzO0keF9wcj5E753g+Uz3zdkp3wogKQchcCmCQ=;
+        b=CxiB+YLIldaAXdQ9zsqasj3fWMS1rCjBKhjWez8aQ7+KTANOp5b1kmgPmQLyMJ9Cq1
+         VJksRj2FaQxPq5iQES1BubkcH8TG8w6kquoVLYruhxGng5t5NOGq9S/HmoyqzSWV/LYD
+         h8HIwdL20ctBRmgm4vZ0Jii4eCanC2C5kShnlZp0jhXBTZlCbjVJVqbQvZWnBoDrS9Xr
+         Z4hkUijyQG6gE41VXENYLjhUxUS/mM/iXYFAAsTwSMkClO3z4d//7U8DrDuxddxwne8o
+         5U+tGlSwYZ+P3YAJh+fYG/YediM3PN25k0ZY7zwXa6wGhLOzoKyGUm7YX9/P+1Sujys2
+         uyHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720601230; x=1721206030;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X8FqtNzO0keF9wcj5E753g+Uz3zdkp3wogKQchcCmCQ=;
+        b=dxxCWD9/3fcVLB5gsrT2vtFGliZHn1S45JFMMCUm/F3BhsmxOj3mtNpXHuW3f+3XgK
+         0GCngOzvR0Mf5xgR6qL9NbxfCW9mAxOHqC8dJEINrcufhJsSPVTHdbi2R4fefpRaT+nf
+         YT5SxGpsvTFv9GwZCps9uduu5ubTBCK/FYSzxGYvj7uEq8W1LchdExPjMmb/SBAgF14j
+         94aVQdOenR4CkFbRpqK3fB89f8+z9IAvQi8JSgwk48PNbrKAYi+C9H358HEMv6QrVHyS
+         amSxnes07MxNeku3VxXvc+Ab2O8Ypf7ExGJSAC0DzYOTDe5okGCr3RpNTxa3IzzJZUXq
+         vnKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVzq+mbt4QFtvq+FEe/J8n/qHkR++08Br34qJMTSb1jnC2EK2VD5cSZJMFfrFKtnhm3RuktcrQ/X9JtYBp9Icb2LLwuxtKWDsqscYpP
+X-Gm-Message-State: AOJu0YyJfZFVosY44fZeedywpbt+9DNQ6l1gcWfqrRT/NC/OwP3SUwK1
+	jtr5lGRzzDQbno8gxDxmHtfjAzVj/GRAAvKEKgwH3oQ8aEOOJgPdtpfrwz53JDA=
+X-Google-Smtp-Source: AGHT+IFuVw53kf5KJm2tlhyO0sC/jRbJo31a1h3ervkGuYBYOrwF7JQYUZyHDLWOXwdlUWZj3VYpxA==
+X-Received: by 2002:a05:6402:1a2f:b0:57c:71ca:f651 with SMTP id 4fb4d7f45d1cf-594bb67f240mr3758414a12.20.1720601230017;
+        Wed, 10 Jul 2024 01:47:10 -0700 (PDT)
+Received: from michal-Latitude-5420.. ([88.220.73.114])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bd45a16esm1967497a12.75.2024.07.10.01.47.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 01:47:09 -0700 (PDT)
+From: Michal Switala <michal.switala@infogain.com>
+To: revest@google.com,
+	bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Michal Switala <michal.switala@infogain.com>,
+	syzbot+cca39e6e84a367a7e6f6@syzkaller.appspotmail.com
+Subject: [PATCH] bpf: Ensure BPF programs testing skb context initialization
+Date: Wed, 10 Jul 2024 10:46:33 +0200
+Message-ID: <20240710084633.2229015-1-michal.switala@infogain.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,62 +83,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The following changes since commit 256abd8e550ce977b728be79a74e1729438b4948:
+This commit addresses an issue where a netdevice was found to be uninitialized.
+To mitigate this case, the change ensures that BPF programs designed to test
+skb context initialization thoroughly verify the availability of a fully
+initialized context before execution.The root cause of a NULL ctx stems from
+the initialization process in bpf_ctx_init(). This function returns NULL if
+the user initializes the bpf_attr variables ctx_in and ctx_out with invalid
+pointers or sets them to NULL. These variables are directly controlled by user
+input, and if both are NULL, the context cannot be initialized, resulting in a
+NULL ctx.
 
-  Linux 6.10-rc7 (2024-07-07 14:23:46 -0700)
+Reported-by: syzbot+cca39e6e84a367a7e6f6@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=cca39e6e84a367a7e6f6
+Link: https://lore.kernel.org/all/000000000000b95d41061cbf302a@google.com/
+Signed-off-by: Michal Switala <michal.switala@infogain.com>
+---
+ net/bpf/test_run.c | 30 +++++++++++++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
 
-are available in the Git repository at:
+diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
+index 36ae54f57bf5..8b2efcee059f 100644
+--- a/net/bpf/test_run.c
++++ b/net/bpf/test_run.c
+@@ -970,7 +970,7 @@ static struct proto bpf_dummy_proto = {
+ int bpf_prog_test_run_skb(struct bpf_prog *prog, const union bpf_attr *kattr,
+ 			  union bpf_attr __user *uattr)
+ {
+-	bool is_l2 = false, is_direct_pkt_access = false;
++	bool is_l2 = false, is_direct_pkt_access = false, ctx_needed = false;
+ 	struct net *net = current->nsproxy->net_ns;
+ 	struct net_device *dev = net->loopback_dev;
+ 	u32 size = kattr->test.data_size_in;
+@@ -998,6 +998,34 @@ int bpf_prog_test_run_skb(struct bpf_prog *prog, const union bpf_attr *kattr,
+ 		return PTR_ERR(ctx);
+ 	}
+ 
++	switch (prog->type) {
++	case BPF_PROG_TYPE_SOCKET_FILTER:
++	case BPF_PROG_TYPE_SCHED_CLS:
++	case BPF_PROG_TYPE_SCHED_ACT:
++	case BPF_PROG_TYPE_XDP:
++	case BPF_PROG_TYPE_CGROUP_SKB:
++	case BPF_PROG_TYPE_CGROUP_SOCK:
++	case BPF_PROG_TYPE_SOCK_OPS:
++	case BPF_PROG_TYPE_SK_SKB:
++	case BPF_PROG_TYPE_SK_MSG:
++	case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
++	case BPF_PROG_TYPE_LWT_SEG6LOCAL:
++	case BPF_PROG_TYPE_SK_REUSEPORT:
++	case BPF_PROG_TYPE_NETFILTER:
++	case BPF_PROG_TYPE_LWT_IN:
++	case BPF_PROG_TYPE_LWT_OUT:
++	case BPF_PROG_TYPE_LWT_XMIT:
++		ctx_needed = true;
++		break;
++	default:
++		break;
++	}
++
++	if (!ctx && ctx_needed) {
++		kfree(data);
++		return -EINVAL;
++	}
++
+ 	switch (prog->type) {
+ 	case BPF_PROG_TYPE_SCHED_CLS:
+ 	case BPF_PROG_TYPE_SCHED_ACT:
+-- 
+2.43.0
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-kvm-6.11
-
-for you to fetch changes up to b3403f8d3c3fd8398bb5f23fe4f69faa738f1399:
-
-  perf kvm: Add kvm-stat for loongarch64 (2024-07-09 16:25:51 +0800)
-
-----------------------------------------------------------------
-LoongArch KVM changes for v6.11
-
-1. Add ParaVirt steal time support.
-2. Add some VM migration enhancement.
-3. Add perf kvm-stat support for loongarch.
-
-----------------------------------------------------------------
-Bibo Mao (10):
-      LoongArch: KVM: Sync pending interrupt when getting ESTAT from user mode
-      LoongArch: KVM: Delay secondary mmu tlb flush until guest entry
-      LoongArch: KVM: Select huge page only if secondary mmu supports it
-      LoongArch: KVM: Discard dirty page tracking on readonly memslot
-      LoongArch: KVM: Add memory barrier before update pmd entry
-      LoongArch: KVM: Add dirty bitmap initially all set support
-      LoongArch: KVM: Mark page accessed and dirty with page ref added
-      LoongArch: KVM: Add PV steal time support in host side
-      LoongArch: KVM: Add PV steal time support in guest side
-      perf kvm: Add kvm-stat for loongarch64
-
-Jia Qingtong (1):
-      LoongArch: KVM: always make pte young in page map's fast path
-
- Documentation/admin-guide/kernel-parameters.txt |   6 +-
- arch/loongarch/Kconfig                          |  11 ++
- arch/loongarch/include/asm/kvm_host.h           |  13 ++
- arch/loongarch/include/asm/kvm_para.h           |  11 ++
- arch/loongarch/include/asm/kvm_vcpu.h           |   5 +
- arch/loongarch/include/asm/loongarch.h          |   1 +
- arch/loongarch/include/asm/paravirt.h           |   5 +
- arch/loongarch/include/uapi/asm/kvm.h           |   4 +
- arch/loongarch/kernel/paravirt.c                | 145 ++++++++++++++++++++++
- arch/loongarch/kernel/time.c                    |   2 +
- arch/loongarch/kvm/Kconfig                      |   1 +
- arch/loongarch/kvm/exit.c                       |  38 +++++-
- arch/loongarch/kvm/main.c                       |   1 +
- arch/loongarch/kvm/mmu.c                        |  72 +++++++----
- arch/loongarch/kvm/tlb.c                        |   5 +-
- arch/loongarch/kvm/vcpu.c                       | 154 +++++++++++++++++++++++-
- tools/perf/arch/loongarch/Makefile              |   1 +
- tools/perf/arch/loongarch/util/Build            |   2 +
- tools/perf/arch/loongarch/util/header.c         |  96 +++++++++++++++
- tools/perf/arch/loongarch/util/kvm-stat.c       | 139 +++++++++++++++++++++
- 20 files changed, 680 insertions(+), 32 deletions(-)
- create mode 100644 tools/perf/arch/loongarch/util/header.c
- create mode 100644 tools/perf/arch/loongarch/util/kvm-stat.c
 
