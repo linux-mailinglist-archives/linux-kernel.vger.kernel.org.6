@@ -1,103 +1,116 @@
-Return-Path: <linux-kernel+bounces-247478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E927B92CFFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:00:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C9CB92CFEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:59:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C810BB23E5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:59:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA1051F25C5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5CC18FC63;
-	Wed, 10 Jul 2024 10:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nTYjcdw6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE16B18FC62;
+	Wed, 10 Jul 2024 10:59:35 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043A884DEB;
-	Wed, 10 Jul 2024 10:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DD918FA26;
+	Wed, 10 Jul 2024 10:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720609143; cv=none; b=RuqgROnajAajoO2tkC90Dhd0YJGhzv6diXNtbctCZ5JNkP/Jn9w3KRGcKZv/RbOqYWQw8wEji1PXhqi/KfYgDjrQSBVgTGeywjyl53Z3XT8OiJlDJItA1tfcsP5XzvBeLtXVAYgF14tHl/yU5rAb1m9TxyN6sNgYQfIebxxiit0=
+	t=1720609175; cv=none; b=pgZdL7DNt4P6X8iQ1dtsG9RvD1PNBaFPtVMEbgEAEBYFWYiMZlqnl3U12OQd4GMVTksS4KvWmNwqNhiTLUKAZoYSYVO5YZ/BNZwkGgbLOeA8Y6CDUE1pSdo0tEZ6CMkxJyy7KXiesmG1UeKfc6ZDAJjZasbTfZFSqBvbmhnFhaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720609143; c=relaxed/simple;
-	bh=wtbumarMHL/KcUlc0xqRB/4mZTa+OunuouNJ4yUUSxo=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=OgNwZiwncxH5sv0tFv7RNjlDJU2H5Cn2l24lyvvx57v77DrJGcE31aW2K4GI0MJDAExmVOCRUzuTgCkmLAKC5TDDk1NDA/HOYNr+iUVn1+efKifvyezP7LpRbYIMX7KjvY+K7XkaMWNc8hAN86t8QyT6b6WBIecfczkNSc1Mo9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nTYjcdw6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDD42C32781;
-	Wed, 10 Jul 2024 10:59:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720609142;
-	bh=wtbumarMHL/KcUlc0xqRB/4mZTa+OunuouNJ4yUUSxo=;
-	h=From:Date:Subject:To:Cc:From;
-	b=nTYjcdw6DheuoWusFyUCUCJS3rWN3wyKi5QfM5is2bnoHb7Z3dul5scgKOth4N8Cl
-	 qC5KwnTHNAdxD6knVUdzU/E4RonsYhao88kj5dXjJ2HUNWg7vwDq36tUfCCQG3UvX2
-	 YoJvripMhmYt5HnaUHwV6T3Tkw5BUriK5T36PopM5vyX+doBKw9EzxI3mmzSMTBUPZ
-	 vKoEcWeJevfFOp/ZdSSrAzLTLoRI6UYkoXwEc5SZJJogo7L6rCZrgWUBLCJshi2hRJ
-	 3J1O1iUeobXxNITvIPUj5zwQywQ+0ibiBqOHJIxx8T+z9bznaOTLCSl5k6U75zYudV
-	 lR6mk1Z0ySXGg==
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-25e55d0f551so430585fac.0;
-        Wed, 10 Jul 2024 03:59:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWfabiF+POVEMc5I7t4u+wn2KT2t4UdEjQ/pmuh22EGqodPuyB8UDgA5XWO44XseJliIVUub7F4pZPUPY8bNEaYqf3FOrbqzNbgI4A+C5qVtjmfJHZdi5HT+9qK85ow/1y1fDce19dfWA==
-X-Gm-Message-State: AOJu0Ywf4M01tHN/sRgO1OVxGadHP6Elw+MjVnzQ1HZ8Uf8tgwlIzNuh
-	Gek6yhujS0d+UT1+7/yh87TqQYKRVlUOvIpmzyHswVytH23wrfsdPtUZ5repnYzPkjVv962GZ/R
-	59NTma/iB0METa1YO25if+fePaC0=
-X-Google-Smtp-Source: AGHT+IFcQIBelGB/VdxKWUuj+48/X1QckGYiNSoDCeEqnYcbj/dXpTY03oOS5VCr2UxcGVQ1uhDg+2nMMGK60/A62go=
-X-Received: by 2002:a4a:d02f:0:b0:5c6:67b7:41dd with SMTP id
- 006d021491bc7-5c68df98c61mr5065636eaf.0.1720609142046; Wed, 10 Jul 2024
- 03:59:02 -0700 (PDT)
+	s=arc-20240116; t=1720609175; c=relaxed/simple;
+	bh=E/a4FQDoam0Lp6sh3PoMJFMZ/7+BWLYYRATRzpVRUQI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Fvh35rgpeVAkLyYmQqPak1c+xqIrl++dIO34VDzwXVZ6g0peMbJBK8AYBQxVXEfo3OmnAMAExdPEWCHyae3k6IsDcWQU2USWduMI1sHrhgza2IFKCtfna+DimwR3Wc5scUjIdynaKx+VDC9Qs04ZYqkrTy3hBSL0b3FydcqMXoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowADn7+eAaY5mo5mNAg--.50742S2;
+	Wed, 10 Jul 2024 18:59:23 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: adrian.hunter@intel.com,
+	ulf.hansson@linaro.org,
+	thomas.petazzoni@free-electrons.com
+Cc: linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>
+Subject: [PATCH v2] mmc: sdhci-pxav3: Fix potential NULL dereference in sdhci_pxav3_probe
+Date: Wed, 10 Jul 2024 18:59:11 +0800
+Message-Id: <20240710105911.2076942-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 10 Jul 2024 12:58:50 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0j01pmgnms9cPKeUn=5TNH_g3cwYB6Wd0kCuEic42PRgA@mail.gmail.com>
-Message-ID: <CAJZ5v0j01pmgnms9cPKeUn=5TNH_g3cwYB6Wd0kCuEic42PRgA@mail.gmail.com>
-Subject: [GIT PULL] Power management fixes for v6.10-rc8
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowADn7+eAaY5mo5mNAg--.50742S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZF13Kw4UJw4rtF43GF1Utrb_yoW8Ary8pa
+	n8XrW5KrWrJr4rGa4ku3s8u3WakF1Yv3y29FZ7Jw1S9FZ5tryqqan7CFyrtr1UZrWUG3W3
+	XFnrZ348CrykXwUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkG14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
+	6r4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUq-erUUU
+	UU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-Hi Linus,
+In sdhci_pxav3_probe(), mv_mbus_dram_info() returns NULL if
+CONFIG_PLAT_ORION macro is not defined[1]. Fix this bug by adding NULL 
+check.
 
-Please pull from the tag
+Fixes: aa8165f91442 ("mmc: sdhci-pxav3: do the mbus window configuration after enabling clocks")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v2:
+- refined the vulnerability description;
+- provided similar vulnerability's reference link[2].
+Reference link:
+[1] https://github.com/torvalds/linux/blob/34afb82a3c67f869267a26f593b6f8fc6bf35905/include/linux/mbus.h#L65
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=d48d0c5fd733bd6d8d3ddb2ed553777ab4724169
+---
+ drivers/mmc/host/sdhci-pxav3.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- pm-6.10-rc8
+diff --git a/drivers/mmc/host/sdhci-pxav3.c b/drivers/mmc/host/sdhci-pxav3.c
+index 3af43ac05825..ac89cb2eb9f6 100644
+--- a/drivers/mmc/host/sdhci-pxav3.c
++++ b/drivers/mmc/host/sdhci-pxav3.c
+@@ -375,6 +375,7 @@ static int sdhci_pxav3_probe(struct platform_device *pdev)
+ 	struct sdhci_host *host = NULL;
+ 	struct sdhci_pxa *pxa = NULL;
+ 	const struct of_device_id *match;
++	const struct mbus_dram_target_info *dram;
+ 	int ret;
+ 
+ 	host = sdhci_pltfm_init(pdev, &sdhci_pxav3_pdata, sizeof(*pxa));
+@@ -406,7 +407,12 @@ static int sdhci_pxav3_probe(struct platform_device *pdev)
+ 		ret = armada_38x_quirks(pdev, host);
+ 		if (ret < 0)
+ 			goto err_mbus_win;
+-		ret = mv_conf_mbus_windows(pdev, mv_mbus_dram_info());
++		dram = mv_mbus_dram_info();
++		if (!dram) {
++			ret = 0;
++			goto err_mbus_win;
++		}
++		ret = mv_conf_mbus_windows(pdev, dram);
+ 		if (ret < 0)
+ 			goto err_mbus_win;
+ 	}
+-- 
+2.25.1
 
-with top-most commit d92467ad9d9ee63a700934b9228a989ef671d511
-
- cpufreq: ACPI: Mark boost policy as enabled when setting boost
-
-on top of commit 22a40d14b572deb80c0648557f4bd502d7e83826
-
- Linux 6.10-rc6
-
-to receive power management fixes for final 6.10.
-
-These fix two issues related to boost frequencies handling, one in the
-cpufreq core and one in the ACPI cpufreq driver (Mario Limonciello).
-
-Thanks!
-
-
----------------
-
-Mario Limonciello (2):
-      cpufreq: Allow drivers to advertise boost enabled
-      cpufreq: ACPI: Mark boost policy as enabled when setting boost
-
----------------
-
- drivers/cpufreq/acpi-cpufreq.c | 4 +++-
- drivers/cpufreq/cpufreq.c      | 3 ++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
 
