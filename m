@@ -1,561 +1,153 @@
-Return-Path: <linux-kernel+bounces-247099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D24C792CB49
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:44:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00E8E92CB4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C9A7282C14
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:44:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 213A41C224E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239AD79B87;
-	Wed, 10 Jul 2024 06:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501EE7581B;
+	Wed, 10 Jul 2024 06:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PW1ZXttK"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CRVpibdL"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFC26F30D
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E70D24A08
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720593861; cv=none; b=SZtOx9p0TdiPPrlX4qZFiN6lgfApQW++Id4q2vmiPA5CEIWJxKt+RThEDW670uYzV+x6vvoxqMedQAy/9G3RDN939ivE4IHegIMfGfcvFWS5t1Jy6iiFbUl8iaSvHky2aPP6AS70ofav3wcnTr6BCIaYLgf5suCY//3G0RQokA0=
+	t=1720593921; cv=none; b=R8d/Edki+A6zYWzC75buXhxckOTS97MB2vZDACJHMFVpVt+PBYco40GbvJ8QE/nQ6omAg0la494KKDxLcs14zkGwVvQHe0r6cqp0NRd0HeW7RZn5p3k6dpXNb21OckfEXVdGgNf+8MgOD48XVgkLxtRJUsZcQ+UU5xJw9CQbrO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720593861; c=relaxed/simple;
-	bh=m6D72MD2uqSvIf5D87kdboFzBBuO8uCqstFbCLqnZhI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lpNGSGqVVbHw5BVJgwQ/9iA/uaoGI6yiFJyrwr17vDDuk6n3SXt2faDQaA1K4qKzaGhJoQlX5o2v7rMR+Ker/zHRuXpWQp477t5VmykxtxBTfZezWyhnJjaeR2q3UQ6Q6Gh4LkI/NRUMhLbbIhkVXrFpG0EGiyEZJlcXD3JIepA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PW1ZXttK; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46A6grlO000475;
-	Wed, 10 Jul 2024 01:42:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1720593773;
-	bh=s6Xq/gZhM9iqgWbjUVyMYpxd26jZixkFzpaDATyv3tI=;
-	h=From:To:CC:Subject:Date;
-	b=PW1ZXttKKn2AzNFGWGZMeS4bVNrtM2SmPX35rb0yhh+YXW4Gso+C5QQ/VxPGaxoi6
-	 K1aPLqZWJTmOBx9RVccIHjw6XwhQZhINWsQWpuLAUbbntx2DtKwAP57DuOP46PWYHk
-	 FQx/zDlZAVpE/g+RA4daqmOum3jHaS9N+wjk+LFs=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46A6grOl011823
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 10 Jul 2024 01:42:53 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 10
- Jul 2024 01:42:52 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 10 Jul 2024 01:42:52 -0500
-Received: from LT5CG31242FY.dhcp.ti.com (lt5cg31242fy.dhcp.ti.com [10.85.14.67])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46A6ggvX106623;
-	Wed, 10 Jul 2024 01:42:43 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <broonie@kernel.org>
-CC: <andriy.shevchenko@linux.intel.com>, <lgirdwood@gmail.com>,
-        <perex@perex.cz>, <pierre-louis.bossart@linux.intel.com>,
-        <13916275206@139.com>, <zhourui@huaqin.com>,
-        <alsa-devel@alsa-project.org>, <i-salazar@ti.com>,
-        <linux-kernel@vger.kernel.org>, <j-chadha@ti.com>,
-        <liam.r.girdwood@intel.com>, <jaden-yue@ti.com>,
-        <yung-chuan.liao@linux.intel.com>, <dipa@ti.com>, <yuhsuan@google.com>,
-        <henry.lo@ti.com>, <tiwai@suse.de>, <baojun.xu@ti.com>, <soyer@irl.hu>,
-        <Baojun.Xu@fpt.com>, <judyhsiao@google.com>, <navada@ti.com>,
-        <cujomalainey@google.com>, <aanya@ti.com>, <nayeem.mahmud@ti.com>,
-        <savyasanchi.shukla@netradyne.com>, <flaviopr@microsoft.com>,
-        <jesse-ji@ti.com>, <darren.ye@mediatek.com>,
-        Shenghao Ding
-	<shenghao-ding@ti.com>
-Subject: [PATCH v2] ASoc: tas2781: Add new Kontrol to set tas2563 digital Volume
-Date: Wed, 10 Jul 2024 14:42:37 +0800
-Message-ID: <20240710064238.1480-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1720593921; c=relaxed/simple;
+	bh=b3Wexf/9lut/LUtyb3GEMQrMT5qsMZ/VXrXaUdAmjts=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=G/V2ikVc5xhx5OfVrjJiS50SAFQJE5EjAL18LaF8mi5/SdLzudDZS7yae+I8/vLRA/uKcYWI9edFKD1gNNg2GlscG5LOGQMTCpl4g2xg5h9cG5ce+LjUQ2wem/o9D9A4t3YwASEypfBHp45Sz6rATNbPiPjOdmpVTot3eUqCaAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CRVpibdL; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a77bf336171so89718666b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 23:45:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720593917; x=1721198717; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7aZECrEA5tQWlK6pbaSqNy3VIVWi6gzN6CRcwSGtkk8=;
+        b=CRVpibdLDvDZbERDK+5NllLdwSsccseZ6HMUn6OjoEV0jKMdaKuzoPqZU4b680tOmx
+         K5eZu61aJa7hxLtE1lcYwV0PxdhaNgKAQ0/bXs0tBzqhRs+PuOC0yvXoRu3MUiHEMx6I
+         84k7UV7fzdA7NWvz2lRSDQWeAfn+5S4kfv32ZUoy3tgbIczBa3GsskYNVYuLkrH/8Wst
+         2pmOF3Eh8vraztUEe1svNlbMb8jHQPS1188RA7nIgsdq8JYOymhsiUq6EifAyFwKFOKv
+         XWkanaSDpMkJDUaWrNKQGXOCYjMZqDAxNIgUVbsfCxzSm2kDw6r2xjBsviQcvdHUEItb
+         OUMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720593917; x=1721198717;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7aZECrEA5tQWlK6pbaSqNy3VIVWi6gzN6CRcwSGtkk8=;
+        b=VFT85shRrjFmoDkKSwIfi5XFBP3Wxtb4A0TOZ5xQgRYw9Dktw121CAr6Rck0J9ctPC
+         s48qwnpSLeoOnseWJYWVA2Jb/T/CEgmSrawYuiojn5NBXGbFMwjI6XsycdnjMZxSTDLu
+         tP4AE59wjX6p9SJS+FbfbWeIV423aPz9PpcZFwCg0RTyxgaem9xB+rgpNnE4/ARcJGV5
+         9WuRhKrqTkuT8uZkkW4cZmy1nB/qXRacAI3D/PVo56+oe6uiBOxTWFDParv2qQ0p71jI
+         9D5nPDIKnkBK8hfcZCT4f4f6NW6hL9odIzW3JN1fpTq+X0qc/D/40FO+HnDsfrb2xuu4
+         9hKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPuU4IF3JBKrcjVWwr/uigTr+Pff8Dp3MpBG2FMlFPa0FYocy/hZ2T+lHN72mMMPsTMR6L+uIze2eyMLhROFnk2sWwCBQE5V6Fy4su
+X-Gm-Message-State: AOJu0YxT0oGE4pOBVo3IRZv7dyjd3WfqPYyv7wWQIzC/EMCwb59xVVbt
+	cSjRTv2N3nMSd41n/rth2Zl4BijqALZlA3jj+XDP4ky+HlslWqiRV1So2MpYz50=
+X-Google-Smtp-Source: AGHT+IHw00t1Zg30xrx1hACKh7awa0kbStIosk2q3dxs2TJLXa5CTmZFvqt9t2YMS5YHAWLuzCeAww==
+X-Received: by 2002:a17:907:60d2:b0:a6f:e0f0:d669 with SMTP id a640c23a62f3a-a780d218c40mr341081266b.12.1720593916943;
+        Tue, 09 Jul 2024 23:45:16 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a86f620sm132214766b.209.2024.07.09.23.45.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 23:45:16 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Wed, 10 Jul 2024 07:45:07 +0100
+Subject: [PATCH] phy: exynos5-usbdrd: convert some FIELD_PREP_CONST() to
+ FIELD_PREP()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Message-Id: <20240710-phy-field-prep-v1-1-2fa3f7dc4fc7@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAPItjmYC/x2MWwqAIBAArxL73YLay7pK9FG55UKYKEQh3T3pc
+ wZmEkQKTBGGIkGgiyOfLoMsC1jt7HZCNplBCVWLTgr09sGN6TDoA3lcqO21MpVWsoEcZbnx/Q/
+ H6X0/orbl02AAAAA=
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-Requriment from customer to add new kcontrol to set tas2563 digital
-Volume
+Use of FIELD_PREP_CONST() was a thinko - it's meant to be used for
+(constant) initialisers, not constant values.
 
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+Use FIELD_PREP() where possible. It has better error checking and is
+therefore the preferred macro to use in those cases.
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+ drivers/phy/samsung/phy-exynos5-usbdrd.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+index df52b78a120b..0cc5c4249447 100644
+--- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
++++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+@@ -607,7 +607,7 @@ exynos5_usbdrd_usbdp_g2_v4_ctrl_pma_ready(struct exynos5_usbdrd_phy *phy_drd)
+ 
+ 	reg = readl(regs_base + EXYNOS850_DRD_SECPMACTL);
+ 	reg &= ~SECPMACTL_PMA_REF_FREQ_SEL;
+-	reg |= FIELD_PREP_CONST(SECPMACTL_PMA_REF_FREQ_SEL, 1);
++	reg |= FIELD_PREP(SECPMACTL_PMA_REF_FREQ_SEL, 1);
+ 	/* SFR reset */
+ 	reg |= (SECPMACTL_PMA_LOW_PWR | SECPMACTL_PMA_APB_SW_RST);
+ 	reg &= ~(SECPMACTL_PMA_ROPLL_REF_CLK_SEL |
+@@ -1123,19 +1123,19 @@ static void exynos850_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
+ 	reg &= ~SSPPLLCTL_FSEL;
+ 	switch (phy_drd->extrefclk) {
+ 	case EXYNOS5_FSEL_50MHZ:
+-		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 7);
++		reg |= FIELD_PREP(SSPPLLCTL_FSEL, 7);
+ 		break;
+ 	case EXYNOS5_FSEL_26MHZ:
+-		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 6);
++		reg |= FIELD_PREP(SSPPLLCTL_FSEL, 6);
+ 		break;
+ 	case EXYNOS5_FSEL_24MHZ:
+-		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 2);
++		reg |= FIELD_PREP(SSPPLLCTL_FSEL, 2);
+ 		break;
+ 	case EXYNOS5_FSEL_20MHZ:
+-		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 1);
++		reg |= FIELD_PREP(SSPPLLCTL_FSEL, 1);
+ 		break;
+ 	case EXYNOS5_FSEL_19MHZ2:
+-		reg |= FIELD_PREP_CONST(SSPPLLCTL_FSEL, 0);
++		reg |= FIELD_PREP(SSPPLLCTL_FSEL, 0);
+ 		break;
+ 	default:
+ 		dev_warn(phy_drd->dev, "unsupported ref clk: %#.2x\n",
 
 ---
-v2:
- - Volume controls should end in Volume
- - Write this as a switch statement for extension
- - Correct return value of tas2563_digital_gain_put
- - Submit tas2563 digital Volume as an independant patch
----
- include/sound/tas2781-tlv.h    | 262 ++++++++++++++++++++++++++++++++-
- include/sound/tas2781.h        |   1 +
- sound/soc/codecs/tas2781-i2c.c | 129 ++++++++++++++--
- 3 files changed, 382 insertions(+), 10 deletions(-)
+base-commit: 82d01fe6ee52086035b201cfa1410a3b04384257
+change-id: 20240710-phy-field-prep-be6982d38215
 
-diff --git a/include/sound/tas2781-tlv.h b/include/sound/tas2781-tlv.h
-index 1dc59005d241..99c41bfc7827 100644
---- a/include/sound/tas2781-tlv.h
-+++ b/include/sound/tas2781-tlv.h
-@@ -2,7 +2,7 @@
- //
- // ALSA SoC Texas Instruments TAS2781 Audio Smart Amplifier
- //
--// Copyright (C) 2022 - 2023 Texas Instruments Incorporated
-+// Copyright (C) 2022 - 2024 Texas Instruments Incorporated
- // https://www.ti.com
- //
- // The TAS2781 driver implements a flexible and configurable
-@@ -17,5 +17,265 @@
- 
- static const __maybe_unused DECLARE_TLV_DB_SCALE(dvc_tlv, -10000, 100, 0);
- static const DECLARE_TLV_DB_SCALE(amp_vol_tlv, 1100, 50, 0);
-+static const DECLARE_TLV_DB_SCALE(tas2563_dvc_tlv, -12150, 50, 1);
- 
-+/* pow(10, db/20) * pow(2,30) */
-+static const unsigned char tas2563_dvc_table[][4] = {
-+	{ 0X00, 0X00, 0X00, 0X00 }, /* -121.5db */
-+	{ 0X00, 0X00, 0X03, 0XBC }, /* -121.0db */
-+	{ 0X00, 0X00, 0X03, 0XF5 }, /* -120.5db */
-+	{ 0X00, 0X00, 0X04, 0X31 }, /* -120.0db */
-+	{ 0X00, 0X00, 0X04, 0X71 }, /* -119.5db */
-+	{ 0X00, 0X00, 0X04, 0XB4 }, /* -119.0db */
-+	{ 0X00, 0X00, 0X04, 0XFC }, /* -118.5db */
-+	{ 0X00, 0X00, 0X05, 0X47 }, /* -118.0db */
-+	{ 0X00, 0X00, 0X05, 0X97 }, /* -117.5db */
-+	{ 0X00, 0X00, 0X05, 0XEC }, /* -117.0db */
-+	{ 0X00, 0X00, 0X06, 0X46 }, /* -116.5db */
-+	{ 0X00, 0X00, 0X06, 0XA5 }, /* -116.0db */
-+	{ 0X00, 0X00, 0X07, 0X0A }, /* -115.5db */
-+	{ 0X00, 0X00, 0X07, 0X75 }, /* -115.0db */
-+	{ 0X00, 0X00, 0X07, 0XE6 }, /* -114.5db */
-+	{ 0X00, 0X00, 0X08, 0X5E }, /* -114.0db */
-+	{ 0X00, 0X00, 0X08, 0XDD }, /* -113.5db */
-+	{ 0X00, 0X00, 0X09, 0X63 }, /* -113.0db */
-+	{ 0X00, 0X00, 0X09, 0XF2 }, /* -112.5db */
-+	{ 0X00, 0X00, 0X0A, 0X89 }, /* -112.0db */
-+	{ 0X00, 0X00, 0X0B, 0X28 }, /* -111.5db */
-+	{ 0X00, 0X00, 0X0B, 0XD2 }, /* -111.0db */
-+	{ 0X00, 0X00, 0X0C, 0X85 }, /* -110.5db */
-+	{ 0X00, 0X00, 0X0D, 0X43 }, /* -110.0db */
-+	{ 0X00, 0X00, 0X0E, 0X0C }, /* -109.5db */
-+	{ 0X00, 0X00, 0X0E, 0XE1 }, /* -109.0db */
-+	{ 0X00, 0X00, 0X0F, 0XC3 }, /* -108.5db */
-+	{ 0X00, 0X00, 0X10, 0XB2 }, /* -108.0db */
-+	{ 0X00, 0X00, 0X11, 0XAF }, /* -107.5db */
-+	{ 0X00, 0X00, 0X12, 0XBC }, /* -107.0db */
-+	{ 0X00, 0X00, 0X13, 0XD8 }, /* -106.5db */
-+	{ 0X00, 0X00, 0X15, 0X05 }, /* -106.0db */
-+	{ 0X00, 0X00, 0X16, 0X44 }, /* -105.5db */
-+	{ 0X00, 0X00, 0X17, 0X96 }, /* -105.0db */
-+	{ 0X00, 0X00, 0X18, 0XFB }, /* -104.5db */
-+	{ 0X00, 0X00, 0X1A, 0X76 }, /* -104.0db */
-+	{ 0X00, 0X00, 0X1C, 0X08 }, /* -103.5db */
-+	{ 0X00, 0X00, 0X1D, 0XB1 }, /* -103.0db */
-+	{ 0X00, 0X00, 0X1F, 0X73 }, /* -102.5db */
-+	{ 0X00, 0X00, 0X21, 0X51 }, /* -102.0db */
-+	{ 0X00, 0X00, 0X23, 0X4A }, /* -101.5db */
-+	{ 0X00, 0X00, 0X25, 0X61 }, /* -101.0db */
-+	{ 0X00, 0X00, 0X27, 0X98 }, /* -100.5db */
-+	{ 0X00, 0X00, 0X29, 0XF1 }, /* -100.0db */
-+	{ 0X00, 0X00, 0X2C, 0X6D }, /* -99.5db */
-+	{ 0X00, 0X00, 0X2F, 0X0F }, /* -99.0db */
-+	{ 0X00, 0X00, 0X31, 0XD9 }, /* -98.5db */
-+	{ 0X00, 0X00, 0X34, 0XCD }, /* -98.0db */
-+	{ 0X00, 0X00, 0X37, 0XEE }, /* -97.5db */
-+	{ 0X00, 0X00, 0X3B, 0X3F }, /* -97.0db */
-+	{ 0X00, 0X00, 0X3E, 0XC1 }, /* -96.5db */
-+	{ 0X00, 0X00, 0X42, 0X79 }, /* -96.0db */
-+	{ 0X00, 0X00, 0X46, 0X6A }, /* -95.5db */
-+	{ 0X00, 0X00, 0X4A, 0X96 }, /* -95.0db */
-+	{ 0X00, 0X00, 0X4F, 0X01 }, /* -94.5db */
-+	{ 0X00, 0X00, 0X53, 0XAF }, /* -94.0db */
-+	{ 0X00, 0X00, 0X58, 0XA5 }, /* -93.5db */
-+	{ 0X00, 0X00, 0X5D, 0XE6 }, /* -93.0db */
-+	{ 0X00, 0X00, 0X63, 0X76 }, /* -92.5db */
-+	{ 0X00, 0X00, 0X69, 0X5B }, /* -92.0db */
-+	{ 0X00, 0X00, 0X6F, 0X99 }, /* -91.5db */
-+	{ 0X00, 0X00, 0X76, 0X36 }, /* -91.0db */
-+	{ 0X00, 0X00, 0X7D, 0X37 }, /* -90.5db */
-+	{ 0X00, 0X00, 0X84, 0XA2 }, /* -90.0db */
-+	{ 0X00, 0X00, 0X8C, 0X7E }, /* -89.5db */
-+	{ 0X00, 0X00, 0X94, 0XD1 }, /* -89.0db */
-+	{ 0X00, 0X00, 0X9D, 0XA3 }, /* -88.5db */
-+	{ 0X00, 0X00, 0XA6, 0XFA }, /* -88.0db */
-+	{ 0X00, 0X00, 0XB0, 0XDF }, /* -87.5db */
-+	{ 0X00, 0X00, 0XBB, 0X5A }, /* -87.0db */
-+	{ 0X00, 0X00, 0XC6, 0X74 }, /* -86.5db */
-+	{ 0X00, 0X00, 0XD2, 0X36 }, /* -86.0db */
-+	{ 0X00, 0X00, 0XDE, 0XAB }, /* -85.5db */
-+	{ 0X00, 0X00, 0XEB, 0XDC }, /* -85.0db */
-+	{ 0X00, 0X00, 0XF9, 0XD6 }, /* -84.5db */
-+	{ 0X00, 0X01, 0X08, 0XA4 }, /* -84.0db */
-+	{ 0X00, 0X01, 0X18, 0X52 }, /* -83.5db */
-+	{ 0X00, 0X01, 0X28, 0XEF }, /* -83.0db */
-+	{ 0X00, 0X01, 0X3A, 0X87 }, /* -82.5db */
-+	{ 0X00, 0X01, 0X4D, 0X2A }, /* -82.0db */
-+	{ 0X00, 0X01, 0X60, 0XE8 }, /* -81.5db */
-+	{ 0X00, 0X01, 0X75, 0XD1 }, /* -81.0db */
-+	{ 0X00, 0X01, 0X8B, 0XF7 }, /* -80.5db */
-+	{ 0X00, 0X01, 0XA3, 0X6E }, /* -80.0db */
-+	{ 0X00, 0X01, 0XBC, 0X48 }, /* -79.5db */
-+	{ 0X00, 0X01, 0XD6, 0X9B }, /* -79.0db */
-+	{ 0X00, 0X01, 0XF2, 0X7E }, /* -78.5db */
-+	{ 0X00, 0X02, 0X10, 0X08 }, /* -78.0db */
-+	{ 0X00, 0X02, 0X2F, 0X51 }, /* -77.5db */
-+	{ 0X00, 0X02, 0X50, 0X76 }, /* -77.0db */
-+	{ 0X00, 0X02, 0X73, 0X91 }, /* -76.5db */
-+	{ 0X00, 0X02, 0X98, 0XC0 }, /* -76.0db */
-+	{ 0X00, 0X02, 0XC0, 0X24 }, /* -75.5db */
-+	{ 0X00, 0X02, 0XE9, 0XDD }, /* -75.0db */
-+	{ 0X00, 0X03, 0X16, 0X0F }, /* -74.5db */
-+	{ 0X00, 0X03, 0X44, 0XDF }, /* -74.0db */
-+	{ 0X00, 0X03, 0X76, 0X76 }, /* -73.5db */
-+	{ 0X00, 0X03, 0XAA, 0XFC }, /* -73.0db */
-+	{ 0X00, 0X03, 0XE2, 0XA0 }, /* -72.5db */
-+	{ 0X00, 0X04, 0X1D, 0X8F }, /* -72.0db */
-+	{ 0X00, 0X04, 0X5B, 0XFD }, /* -71.5db */
-+	{ 0X00, 0X04, 0X9E, 0X1D }, /* -71.0db */
-+	{ 0X00, 0X04, 0XE4, 0X29 }, /* -70.5db */
-+	{ 0X00, 0X05, 0X2E, 0X5A }, /* -70.0db */
-+	{ 0X00, 0X05, 0X7C, 0XF2 }, /* -69.5db */
-+	{ 0X00, 0X05, 0XD0, 0X31 }, /* -69.0db */
-+	{ 0X00, 0X06, 0X28, 0X60 }, /* -68.5db */
-+	{ 0X00, 0X06, 0X85, 0XC8 }, /* -68.0db */
-+	{ 0X00, 0X06, 0XE8, 0XB9 }, /* -67.5db */
-+	{ 0X00, 0X07, 0X51, 0X86 }, /* -67.0db */
-+	{ 0X00, 0X07, 0XC0, 0X8A }, /* -66.5db */
-+	{ 0X00, 0X08, 0X36, 0X21 }, /* -66.0db */
-+	{ 0X00, 0X08, 0XB2, 0XB0 }, /* -65.5db */
-+	{ 0X00, 0X09, 0X36, 0XA1 }, /* -65.0db */
-+	{ 0X00, 0X09, 0XC2, 0X63 }, /* -64.5db */
-+	{ 0X00, 0X0A, 0X56, 0X6D }, /* -64.0db */
-+	{ 0X00, 0X0A, 0XF3, 0X3C }, /* -63.5db */
-+	{ 0X00, 0X0B, 0X99, 0X56 }, /* -63.0db */
-+	{ 0X00, 0X0C, 0X49, 0X48 }, /* -62.5db */
-+	{ 0X00, 0X0D, 0X03, 0XA7 }, /* -62.0db */
-+	{ 0X00, 0X0D, 0XC9, 0X11 }, /* -61.5db */
-+	{ 0X00, 0X0E, 0X9A, 0X2D }, /* -61.0db */
-+	{ 0X00, 0X0F, 0X77, 0XAD }, /* -60.5db */
-+	{ 0X00, 0X10, 0X62, 0X4D }, /* -60.0db */
-+	{ 0X00, 0X11, 0X5A, 0XD5 }, /* -59.5db */
-+	{ 0X00, 0X12, 0X62, 0X16 }, /* -59.0db */
-+	{ 0X00, 0X13, 0X78, 0XF0 }, /* -58.5db */
-+	{ 0X00, 0X14, 0XA0, 0X50 }, /* -58.0db */
-+	{ 0X00, 0X15, 0XD9, 0X31 }, /* -57.5db */
-+	{ 0X00, 0X17, 0X24, 0X9C }, /* -57.0db */
-+	{ 0X00, 0X18, 0X83, 0XAA }, /* -56.5db */
-+	{ 0X00, 0X19, 0XF7, 0X86 }, /* -56.0db */
-+	{ 0X00, 0X1B, 0X81, 0X6A }, /* -55.5db */
-+	{ 0X00, 0X1D, 0X22, 0XA4 }, /* -55.0db */
-+	{ 0X00, 0X1E, 0XDC, 0X98 }, /* -54.5db */
-+	{ 0X00, 0X20, 0XB0, 0XBC }, /* -54.0db */
-+	{ 0X00, 0X22, 0XA0, 0X9D }, /* -53.5db */
-+	{ 0X00, 0X24, 0XAD, 0XE0 }, /* -53.0db */
-+	{ 0X00, 0X26, 0XDA, 0X43 }, /* -52.5db */
-+	{ 0X00, 0X29, 0X27, 0X9D }, /* -52.0db */
-+	{ 0X00, 0X2B, 0X97, 0XE3 }, /* -51.5db */
-+	{ 0X00, 0X2E, 0X2D, 0X27 }, /* -51.0db */
-+	{ 0X00, 0X30, 0XE9, 0X9A }, /* -50.5db */
-+	{ 0X00, 0X33, 0XCF, 0X8D }, /* -50.0db */
-+	{ 0X00, 0X36, 0XE1, 0X78 }, /* -49.5db */
-+	{ 0X00, 0X3A, 0X21, 0XF3 }, /* -49.0db */
-+	{ 0X00, 0X3D, 0X93, 0XC3 }, /* -48.5db */
-+	{ 0X00, 0X41, 0X39, 0XD3 }, /* -48.0db */
-+	{ 0X00, 0X45, 0X17, 0X3B }, /* -47.5db */
-+	{ 0X00, 0X49, 0X2F, 0X44 }, /* -47.0db */
-+	{ 0X00, 0X4D, 0X85, 0X66 }, /* -46.5db */
-+	{ 0X00, 0X52, 0X1D, 0X50 }, /* -46.0db */
-+	{ 0X00, 0X56, 0XFA, 0XE8 }, /* -45.5db */
-+	{ 0X00, 0X5C, 0X22, 0X4E }, /* -45.0db */
-+	{ 0X00, 0X61, 0X97, 0XE1 }, /* -44.5db */
-+	{ 0X00, 0X67, 0X60, 0X44 }, /* -44.0db */
-+	{ 0X00, 0X6D, 0X80, 0X60 }, /* -43.5db */
-+	{ 0X00, 0X73, 0XFD, 0X65 }, /* -43.0db */
-+	{ 0X00, 0X7A, 0XDC, 0XD7 }, /* -42.5db */
-+	{ 0X00, 0X82, 0X24, 0X8A }, /* -42.0db */
-+	{ 0X00, 0X89, 0XDA, 0XAB }, /* -41.5db */
-+	{ 0X00, 0X92, 0X05, 0XC6 }, /* -41.0db */
-+	{ 0X00, 0X9A, 0XAC, 0XC8 }, /* -40.5db */
-+	{ 0X00, 0XA3, 0XD7, 0X0A }, /* -40.0db */
-+	{ 0X00, 0XAD, 0X8C, 0X52 }, /* -39.5db */
-+	{ 0X00, 0XB7, 0XD4, 0XDD }, /* -39.0db */
-+	{ 0X00, 0XC2, 0XB9, 0X65 }, /* -38.5db */
-+	{ 0X00, 0XCE, 0X43, 0X28 }, /* -38.0db */
-+	{ 0X00, 0XDA, 0X7B, 0XF1 }, /* -37.5db */
-+	{ 0X00, 0XE7, 0X6E, 0X1E }, /* -37.0db */
-+	{ 0X00, 0XF5, 0X24, 0XAC }, /* -36.5db */
-+	{ 0X01, 0X03, 0XAB, 0X3D }, /* -36.0db */
-+	{ 0X01, 0X13, 0X0E, 0X24 }, /* -35.5db */
-+	{ 0X01, 0X23, 0X5A, 0X71 }, /* -35.0db */
-+	{ 0X01, 0X34, 0X9D, 0XF8 }, /* -34.5db */
-+	{ 0X01, 0X46, 0XE7, 0X5D }, /* -34.0db */
-+	{ 0X01, 0X5A, 0X46, 0X27 }, /* -33.5db */
-+	{ 0X01, 0X6E, 0XCA, 0XC5 }, /* -33.0db */
-+	{ 0X01, 0X84, 0X86, 0X9F }, /* -32.5db */
-+	{ 0X01, 0X9B, 0X8C, 0X27 }, /* -32.0db */
-+	{ 0X01, 0XB3, 0XEE, 0XE5 }, /* -31.5db */
-+	{ 0X01, 0XCD, 0XC3, 0X8C }, /* -31.0db */
-+	{ 0X01, 0XE9, 0X20, 0X05 }, /* -30.5db */
-+	{ 0X02, 0X06, 0X1B, 0X89 }, /* -30.0db */
-+	{ 0X02, 0X24, 0XCE, 0XB0 }, /* -29.5db */
-+	{ 0X02, 0X45, 0X53, 0X85 }, /* -29.0db */
-+	{ 0X02, 0X67, 0XC5, 0XA2 }, /* -28.5db */
-+	{ 0X02, 0X8C, 0X42, 0X3F }, /* -28.0db */
-+	{ 0X02, 0XB2, 0XE8, 0X55 }, /* -27.5db */
-+	{ 0X02, 0XDB, 0XD8, 0XAD }, /* -27.0db */
-+	{ 0X03, 0X07, 0X36, 0X05 }, /* -26.5db */
-+	{ 0X03, 0X35, 0X25, 0X29 }, /* -26.0db */
-+	{ 0X03, 0X65, 0XCD, 0X13 }, /* -25.5db */
-+	{ 0X03, 0X99, 0X57, 0X0C }, /* -25.0db */
-+	{ 0X03, 0XCF, 0XEE, 0XCF }, /* -24.5db */
-+	{ 0X04, 0X09, 0XC2, 0XB0 }, /* -24.0db */
-+	{ 0X04, 0X47, 0X03, 0XC1 }, /* -23.5db */
-+	{ 0X04, 0X87, 0XE5, 0XFB }, /* -23.0db */
-+	{ 0X04, 0XCC, 0XA0, 0X6D }, /* -22.5db */
-+	{ 0X05, 0X15, 0X6D, 0X68 }, /* -22.0db */
-+	{ 0X05, 0X62, 0X8A, 0XB3 }, /* -21.5db */
-+	{ 0X05, 0XB4, 0X39, 0XBC }, /* -21.0db */
-+	{ 0X06, 0X0A, 0XBF, 0XD4 }, /* -20.5db */
-+	{ 0X06, 0X66, 0X66, 0X66 }, /* -20.0db */
-+	{ 0X06, 0XC7, 0X7B, 0X36 }, /* -19.5db */
-+	{ 0X07, 0X2E, 0X50, 0XA6 }, /* -19.0db */
-+	{ 0X07, 0X9B, 0X3D, 0XF6 }, /* -18.5db */
-+	{ 0X08, 0X0E, 0X9F, 0X96 }, /* -18.0db */
-+	{ 0X08, 0X88, 0XD7, 0X6D }, /* -17.5db */
-+	{ 0X09, 0X0A, 0X4D, 0X2F }, /* -17.0db */
-+	{ 0X09, 0X93, 0X6E, 0XB8 }, /* -16.5db */
-+	{ 0X0A, 0X24, 0XB0, 0X62 }, /* -16.0db */
-+	{ 0X0A, 0XBE, 0X8D, 0X70 }, /* -15.5db */
-+	{ 0X0B, 0X61, 0X88, 0X71 }, /* -15.0db */
-+	{ 0X0C, 0X0E, 0X2B, 0XB0 }, /* -14.5db */
-+	{ 0X0C, 0XC5, 0X09, 0XAB }, /* -14.0db */
-+	{ 0X0D, 0X86, 0XBD, 0X8D }, /* -13.5db */
-+	{ 0X0E, 0X53, 0XEB, 0XB3 }, /* -13.0db */
-+	{ 0X0F, 0X2D, 0X42, 0X38 }, /* -12.5db */
-+	{ 0X10, 0X13, 0X79, 0X87 }, /* -12.0db */
-+	{ 0X11, 0X07, 0X54, 0XF9 }, /* -11.5db */
-+	{ 0X12, 0X09, 0XA3, 0X7A }, /* -11.0db */
-+	{ 0X13, 0X1B, 0X40, 0X39 }, /* -10.5db */
-+	{ 0X14, 0X3D, 0X13, 0X62 }, /* -10.0db */
-+	{ 0X15, 0X70, 0X12, 0XE1 }, /* -9.5db */
-+	{ 0X16, 0XB5, 0X43, 0X37 }, /* -9.0db */
-+	{ 0X18, 0X0D, 0XB8, 0X54 }, /* -8.5db */
-+	{ 0X19, 0X7A, 0X96, 0X7F }, /* -8.0db */
-+	{ 0X1A, 0XFD, 0X13, 0X54 }, /* -7.5db */
-+	{ 0X1C, 0X96, 0X76, 0XC6 }, /* -7.0db */
-+	{ 0X1E, 0X48, 0X1C, 0X37 }, /* -6.5db */
-+	{ 0X20, 0X13, 0X73, 0X9E }, /* -6.0db */
-+	{ 0X21, 0XFA, 0X02, 0XBF }, /* -5.5db */
-+	{ 0X23, 0XFD, 0X66, 0X78 }, /* -5.0db */
-+	{ 0X26, 0X1F, 0X54, 0X1C }, /* -4.5db */
-+	{ 0X28, 0X61, 0X9A, 0XE9 }, /* -4.0db */
-+	{ 0X2A, 0XC6, 0X25, 0X91 }, /* -3.5db */
-+	{ 0X2D, 0X4E, 0XFB, 0XD5 }, /* -3.0db */
-+	{ 0X2F, 0XFE, 0X44, 0X48 }, /* -2.5db */
-+	{ 0X32, 0XD6, 0X46, 0X17 }, /* -2.0db */
-+	{ 0X35, 0XD9, 0X6B, 0X02 }, /* -1.5db */
-+	{ 0X39, 0X0A, 0X41, 0X5F }, /* -1.0db */
-+	{ 0X3C, 0X6B, 0X7E, 0X4F }, /* -0.5db */
-+	{ 0X40, 0X00, 0X00, 0X00 }, /* 0.0db */
-+	{ 0X43, 0XCA, 0XD0, 0X22 }, /* 0.5db */
-+	{ 0X47, 0XCF, 0X26, 0X7D }, /* 1.0db */
-+	{ 0X4C, 0X10, 0X6B, 0XA5 }, /* 1.5db */
-+	{ 0X50, 0X92, 0X3B, 0XE3 }, /* 2.0db */
-+	{ 0X55, 0X58, 0X6A, 0X46 }, /* 2.5db */
-+	{ 0X5A, 0X67, 0X03, 0XDF }, /* 3.0db */
-+	{ 0X5F, 0XC2, 0X53, 0X32 }, /* 3.5db */
-+	{ 0X65, 0X6E, 0XE3, 0XDB }, /* 4.0db */
-+	{ 0X6B, 0X71, 0X86, 0X68 }, /* 4.5db */
-+	{ 0X71, 0XCF, 0X54, 0X71 }, /* 5.0db */
-+	{ 0X78, 0X8D, 0XB4, 0XE9 }, /* 5.5db */
-+	{ 0XFF, 0XFF, 0XFF, 0XFF }, /* 6.0db */
-+};
- #endif
-diff --git a/include/sound/tas2781.h b/include/sound/tas2781.h
-index a43ad6dcb7c7..18161d02a96f 100644
---- a/include/sound/tas2781.h
-+++ b/include/sound/tas2781.h
-@@ -50,6 +50,7 @@
- #define TASDEVICE_I2CChecksum		TASDEVICE_REG(0x0, 0x0, 0x7E)
- 
- /* Volume control */
-+#define TAS2563_DVC_LVL			TASDEVICE_REG(0x00, 0x02, 0x0C)
- #define TAS2781_DVC_LVL			TASDEVICE_REG(0x0, 0x0, 0x1A)
- #define TAS2781_AMP_LEVEL		TASDEVICE_REG(0x0, 0x0, 0x03)
- #define TAS2781_AMP_LEVEL_MASK		GENMASK(5, 1)
-diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
-index d5d95ae57c73..e79d613745b4 100644
---- a/sound/soc/codecs/tas2781-i2c.c
-+++ b/sound/soc/codecs/tas2781-i2c.c
-@@ -31,6 +31,7 @@
- #include <sound/tas2781.h>
- #include <sound/tlv.h>
- #include <sound/tas2781-tlv.h>
-+#include <asm/unaligned.h>
- 
- static const struct i2c_device_id tasdevice_id[] = {
- 	{ "tas2563", TAS2563 },
-@@ -140,6 +141,101 @@ static int tasdev_force_fwload_put(struct snd_kcontrol *kcontrol,
- 	return change;
- }
- 
-+static int tas2563_digital_gain_get(
-+	struct snd_kcontrol *kcontrol,
-+	struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct soc_mixer_control *mc =
-+		(struct soc_mixer_control *)kcontrol->private_value;
-+	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
-+	struct tasdevice_priv *tas_dev = snd_soc_component_get_drvdata(codec);
-+	unsigned int l = 0, r = mc->max;
-+	unsigned int target, ar_mid, mid, ar_l, ar_r;
-+	unsigned int reg = mc->reg;
-+	unsigned char data[4];
-+	int ret;
-+
-+	mutex_lock(&tas_dev->codec_lock);
-+	/* Read the primary device */
-+	ret =  tasdevice_dev_bulk_read(tas_dev, 0, reg, data, 4);
-+	if (ret) {
-+		dev_err(tas_dev->dev, "%s, get AMP vol error\n", __func__);
-+		goto out;
-+	}
-+
-+	target = get_unaligned_be32(&data[0]);
-+
-+	while (r > 1 + l) {
-+		mid = (l + r) / 2;
-+		ar_mid = get_unaligned_be32(tas2563_dvc_table[mid]);
-+		if (target < ar_mid)
-+			r = mid;
-+		else
-+			l = mid;
-+	}
-+
-+	ar_l = get_unaligned_be32(tas2563_dvc_table[l]);
-+	ar_r = get_unaligned_be32(tas2563_dvc_table[r]);
-+
-+	/* find out the member same as or closer to the current volume */
-+	ucontrol->value.integer.value[0] =
-+		abs(target - ar_l) <= abs(target - ar_r) ? l : r;
-+out:
-+	mutex_unlock(&tas_dev->codec_lock);
-+	return 0;
-+}
-+
-+static int tas2563_digital_gain_put(
-+	struct snd_kcontrol *kcontrol,
-+	struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct soc_mixer_control *mc =
-+		(struct soc_mixer_control *)kcontrol->private_value;
-+	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
-+	struct tasdevice_priv *tas_dev = snd_soc_component_get_drvdata(codec);
-+	int vol = ucontrol->value.integer.value[0];
-+	int status = 0, max = mc->max, rc = 1;
-+	int i, ret;
-+	unsigned int reg = mc->reg;
-+	unsigned int volrd, volwr;
-+	unsigned char data[4];
-+
-+	vol = clamp(vol, 0, max);
-+	mutex_lock(&tas_dev->codec_lock);
-+	/* Read the primary device */
-+	ret =  tasdevice_dev_bulk_read(tas_dev, 0, reg, data, 4);
-+	if (ret) {
-+		dev_err(tas_dev->dev, "%s, get AMP vol error\n", __func__);
-+		rc = -1;
-+		goto out;
-+	}
-+
-+	volrd = get_unaligned_be32(&data[0]);
-+	volwr = get_unaligned_be32(tas2563_dvc_table[vol]);
-+
-+	if (volrd == volwr) {
-+		rc = 0;
-+		goto out;
-+	}
-+
-+	for (i = 0; i < tas_dev->ndev; i++) {
-+		ret = tasdevice_dev_bulk_write(tas_dev, i, reg,
-+			(unsigned char *)tas2563_dvc_table[vol], 4);
-+		if (ret) {
-+			dev_err(tas_dev->dev,
-+				"%s, set digital vol error in dev %d\n",
-+				__func__, i);
-+			status |= BIT(i);
-+		}
-+	}
-+
-+	if (status)
-+		rc = -1;
-+out:
-+	mutex_unlock(&tas_dev->codec_lock);
-+	return rc;
-+}
-+
- static const struct snd_kcontrol_new tasdevice_snd_controls[] = {
- 	SOC_SINGLE_BOOL_EXT("Speaker Force Firmware Load", 0,
- 		tasdev_force_fwload_get, tasdev_force_fwload_put),
-@@ -154,6 +250,13 @@ static const struct snd_kcontrol_new tas2781_snd_controls[] = {
- 		tas2781_digital_putvol, dvc_tlv),
- };
- 
-+static const struct snd_kcontrol_new tas2563_snd_controls[] = {
-+	SOC_SINGLE_RANGE_EXT_TLV("Speaker Digital Volume", TAS2563_DVC_LVL, 0,
-+		0, ARRAY_SIZE(tas2563_dvc_table) - 1, 0,
-+		tas2563_digital_gain_get, tas2563_digital_gain_put,
-+		tas2563_dvc_tlv),
-+};
-+
- static int tasdevice_set_profile_id(struct snd_kcontrol *kcontrol,
- 		struct snd_ctl_elem_value *ucontrol)
- {
-@@ -593,17 +696,25 @@ static struct snd_soc_dai_driver tasdevice_dai_driver[] = {
- static int tasdevice_codec_probe(struct snd_soc_component *codec)
- {
- 	struct tasdevice_priv *tas_priv = snd_soc_component_get_drvdata(codec);
-+	struct snd_kcontrol_new *p;
-+	unsigned int size;
- 	int rc;
- 
--	if (tas_priv->chip_id == TAS2781) {
--		rc = snd_soc_add_component_controls(codec,
--			tas2781_snd_controls,
--			ARRAY_SIZE(tas2781_snd_controls));
--		if (rc < 0) {
--			dev_err(tas_priv->dev, "%s: Add control err rc = %d",
--				__func__, rc);
--			return rc;
--		}
-+	switch (tas_priv->chip_id) {
-+	case TAS2781:
-+		p = (struct snd_kcontrol_new *)tas2781_snd_controls;
-+		size = ARRAY_SIZE(tas2781_snd_controls);
-+		break;
-+	default:
-+		p = (struct snd_kcontrol_new *)tas2563_snd_controls;
-+		size = ARRAY_SIZE(tas2563_snd_controls);
-+	}
-+
-+	rc = snd_soc_add_component_controls(codec, p, size);
-+	if (rc < 0) {
-+		dev_err(tas_priv->dev, "%s: Add control err rc = %d",
-+			__func__, rc);
-+		return rc;
- 	}
- 
- 	tas_priv->name_prefix = codec->name_prefix;
+Best regards,
 -- 
-2.34.1
+André Draszik <andre.draszik@linaro.org>
 
 
