@@ -1,173 +1,214 @@
-Return-Path: <linux-kernel+bounces-246849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B18092C7F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:31:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D91A92C7D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B19FD28244F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:31:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23C3A283EA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5655CB8;
-	Wed, 10 Jul 2024 01:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64734404;
+	Wed, 10 Jul 2024 01:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kMtWl5pO"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="TH+JlTxj"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2047.outbound.protection.outlook.com [40.107.117.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB958472;
-	Wed, 10 Jul 2024 01:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720575108; cv=none; b=LU5mheZQaMWa0b7gTBGqkVefKWdDWfvao9JQRKymmgcJ1+8Z9eOOIW4al57HmTCXQBg69Zx5Vv1YxPCi+DC47xAkgFCTEPM5GrSR3hkWBJVengoUaKAJvS67alI/tceYKTL5xziknYZ/Q+tA/kwZN8UVycjAYA3xiIr/eIr4hG4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720575108; c=relaxed/simple;
-	bh=XkLG/lpis0cxksm/XMIcTpTRTmAa0nlZciH2cS6caPo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YjflXPpaDNGFiMB1LpMuA2iB7YBbtr4Eskz848+PJmj2PlSvVP7FQLV65BhKUqFhFso9mPAXv5VOyF0hI/fXDoFzLvBUvEgEQUWaMAs0i7GPUR0l2ks3EyvnZhT/89c7mvO3qiSN34sIWjDJVSYuQpfJEkHpyaZCFdIQeoIIKt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kMtWl5pO; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720575102;
-	bh=mnQz/kO/nUpbOqX3N0KKL9uzBnombFral8islbwMTME=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kMtWl5pOyGBVr3dUYN+H/7aFYuPV0+GfUFGaekZAbJNmbyDnTPG+OW4e/wFATVnkY
-	 OHU1wo5XSqRYzAn0T+T9UcbcUKCHrQYxTiJbSHyajALk0ipOWR1Wxdk0AkxJ8+o2a/
-	 ucxpZctUtl67TB6NyV77JVxj5VnFry/shQGm3Ao2/w5WLL8rM3HRB4s4YsdXj4pKP1
-	 Uw1a0V0MGmNZoOa8SJQCiX0tA20NIuPNbw+ugPgNDLDOEz8wT48Zmy36HNy4cSInoD
-	 rmyXuLQJeUA/Ivr+3C/cGXVA+9GNwNsFmIKD1nCjZ+yD3gCs+le2TcgsijXq2Ky49C
-	 5lYTkbFG+X8ng==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJgLk2sGDz4w2F;
-	Wed, 10 Jul 2024 11:31:41 +1000 (AEST)
-Date: Wed, 10 Jul 2024 11:31:41 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Huacai Chen" <chenhuacai@loongson.cn>
-Cc: "Arnd Bergmann" <arnd@arndb.de>, "Huacai Chen" <chenhuacai@kernel.org>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>, linux-next
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the loongarch tree with the
- asm-generic tree
-Message-ID: <20240710113141.25abf0cb@canb.auug.org.au>
-In-Reply-To: <9e756bbf-fca2-4ebc-bc04-538aded93747@app.fastmail.com>
-References: <20240709100154.0b4b1372@canb.auug.org.au>
-	<9e756bbf-fca2-4ebc-bc04-538aded93747@app.fastmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0DE161
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 01:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720574350; cv=fail; b=tfjRtloYmV5tIGoT4BH7vTYzhixE4i3v5rl0MyH1jF0pcz/3vw3KqZ5aFh2hbMZhPGeYcdASUNv0zFKaYLdXkvERLAsyBnAYyLC6itucMO8FJvYCCqt+hVKqXIw8R/rRb6eWCDnOIpQOH5e2uFK++Xq6QeltSPqqZ69Vcb0YyTE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720574350; c=relaxed/simple;
+	bh=xGrDTKQgHFsMKAsCF9dk88T6oOGCK5mbPoNbSEFvHwE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=nVRd2le92/qY2b7RKAKH2Og8Grb/5AhL8H2HU4MiqOICQSeQE12f7kHs68Ex/dQMmoFgFecs6xpIE9xGfUlzDdRoIpvjdaVKBQmO0XspMG4XL4amkJYbbuNbphMwz0fcFL95qriL03fWalUsNmR5nxlAE1PbviYTnzcnkAstDm8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=TH+JlTxj; arc=fail smtp.client-ip=40.107.117.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Cs0mQ0+9THylIQMXpaBkbnquKabGbqmdc7VHQRH/2wqeGzt75jGtEFjgNnm0EvlZKowjQAj+JJ3q6Dh36nIm8b4SFtS8uLYba2sq0r1effWSnN79lzqXcqTdvGzKuGULBkpg6jKiWI2TXgDOg0P1uNJJM1PyO5u53uUe5dhTgF7guqlY5hPAY4rdtLnK0EgMjh+DiYcnj45H1vexVjgt27P87MTwKD/3wsfcccBZu6D8eJRGyV8dZgbhhhYQyxuiK8WcIf/zjEhengO2lLJroh80JEJlP2y8BJcdHgmz4wJYIAjVMT1uUHxWm2l8PKo33wZ6X1GrwA4K/5P8p+yfiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=g4QD2basy0BOPGPoM4t8O1QZNDxdgZ/jxcqW/JuibGs=;
+ b=m1jkwwUhCR4+84EsaB0mtXmpmyAVjd02qI+e+Zi8bQTfZ58NTQC3AICPIPdogCd3s+Y6NiPmJRqHGcOmlJEiimvwa8VvMAcYDQcIK34jT5zcuTeBoCSu5yUJM9k6J8iSWa5Y6YMiKOUhreMCN/5xHgfQ2gtqsvtnfHretufyE1r36gBnQjaec+BzC9UQ4Oe6peA9D0jdD+DsS8WDXP+y4aNPTNlnO84uGlS76BgE2MEm0rzO0Sgcsxef/vhOtLMJfmyeF5I/FrXUwqZsFfGWTNzk/FtDS46fmP5beEC1Ideu8nl1oLasU5fF0mzmPzBs2Roy3AIOciBMb2b700VXKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g4QD2basy0BOPGPoM4t8O1QZNDxdgZ/jxcqW/JuibGs=;
+ b=TH+JlTxjW7iGzLz+8HAYm0f+UUPKupCKZCKjELEt5TmORrUXW3IwosRAgsK0lX32oAHGDIxP5yWX/dQS2L5fNKQKhMEAA4e5utIjlwXo50B+IaPZz8AhJZBe+w/P2oWw7mRL1nsp8TQkKzLhs4b/YzT9FFRdLTlZ87aak3G4TAz9VgskunWuZcDbTj/rQ+ZuoRqqL6QlJDpvHnOefPSILTQuwQBbN4As8V9z+zZ82FDIiJo3PU3LTOtyZOgNNn9bi8751BcabkIAwyNHsrdWsN0DaMp6bdHMvZ0YgNQ5eIMHpLgwHNj3U5v66WvyJfvZhrEy5SDCloRqRUOzc7k7dQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PSAPR06MB4486.apcprd06.prod.outlook.com (2603:1096:301:89::11)
+ by JH0PR06MB6889.apcprd06.prod.outlook.com (2603:1096:990:46::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Wed, 10 Jul
+ 2024 01:19:02 +0000
+Received: from PSAPR06MB4486.apcprd06.prod.outlook.com
+ ([fe80::43cb:1332:afef:81e5]) by PSAPR06MB4486.apcprd06.prod.outlook.com
+ ([fe80::43cb:1332:afef:81e5%5]) with mapi id 15.20.7741.033; Wed, 10 Jul 2024
+ 01:19:02 +0000
+From: Wu Bo <bo.wu@vivo.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Wu Bo <wubo.oduw@gmail.com>,
+	Wu Bo <bo.wu@vivo.com>
+Subject: [RFC PATCH 0/5] Add inline tail support
+Date: Tue,  9 Jul 2024 19:33:02 -0600
+Message-Id: <cover.1720515215.git.bo.wu@vivo.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR01CA0030.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::15) To PSAPR06MB4486.apcprd06.prod.outlook.com
+ (2603:1096:301:89::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/lyA8fFrpgGBzUNAsY+3_0lN";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PSAPR06MB4486:EE_|JH0PR06MB6889:EE_
+X-MS-Office365-Filtering-Correlation-Id: 83a8a0f3-9e6b-405a-7c38-08dca07e4859
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?HIL/2HSLyRZ1TMqDm0nAVtZ9jssSXIIBg87FCBwyn5Hsu7VBu4XBYoVvcli7?=
+ =?us-ascii?Q?vGgLWPqJOJ4QNgQ0EHbG+a73mZjSt7+NF2rL+nzqgScYnMtePqA5RIi4QNjg?=
+ =?us-ascii?Q?4PM3eXnUcSCSdNQ9VcQ1wyt7rdfRNOhv7mZnksZAOZDZ0PTkh6YVWFrq9NEZ?=
+ =?us-ascii?Q?bpRxyjzxWCi3ksKe1ZL94pJYCSd22doKsThTXPcsfeCOMILnuD5osnsyYaAE?=
+ =?us-ascii?Q?ANjUd7CpSAe6t7r9wW55EkKANUmBAcPoTolE6g3EXzINQw5mbJdDtOvlNecR?=
+ =?us-ascii?Q?2nOOkNekkHbLAvN7do75+eeUYBmFLjHvNv/gdfxeVHdvvJGNknFvdCpcvscW?=
+ =?us-ascii?Q?owbE4im3AU+LgfIieSwt94JyZoI4hAxGfgXA8XngIEnO+R6dQIIujqSVk3c5?=
+ =?us-ascii?Q?ZX3ae5imAcr6CVtIuhPcoMla8SjfHN5J0z5T1VFBgWfXUMpL2neq8N6IpTVO?=
+ =?us-ascii?Q?NTdpFJT3W3I7pb09EjEA68RxM7bc+Y+jTtxkBA5jAH9tPQ1D5MGEq7wnYC8X?=
+ =?us-ascii?Q?2QQb30VMNJ4kI5/UkdAhUQQwnMTMuzSeUsjTWL/ZLe9Ge9+x1YPSRf5ZIGrT?=
+ =?us-ascii?Q?AVY92/vkLNXGRNs2wgu/zH94e4SoeAFpxfKkZBCoDM33SnOrpix1gBhPIhsK?=
+ =?us-ascii?Q?FMSM0O7uHDyIlf7qqJiDIASqT7cu3uBpRYjiO2+QydJWV6I9qnUeSoLgtkvP?=
+ =?us-ascii?Q?7GtafQbR8+w4w26MThC9FOdjuD73gjn776W5hcShQebBOJpTxlk9yQ1SUOak?=
+ =?us-ascii?Q?RVq1ZzgnJrkn9CWb7cm0/+21ai3hQv/z7ivyjFWOY4B5jOreKqVWFffsR7jl?=
+ =?us-ascii?Q?ebiL80HmgFCiI2y9vNiYhN+3PL2MYwyHqks9GiB6BLNhKmQNvP4pU2f6Sp0q?=
+ =?us-ascii?Q?q7PP+CT0Nqif1B/ojjsJLED0X7C6q21imKzmuRbrbBRwFdOlhQtcdfTAs0u7?=
+ =?us-ascii?Q?odhxOIuHMSj6aLagTrlIzBI4vumljZeq92yTlIGzaxx/Okspz1oLN/71k2+N?=
+ =?us-ascii?Q?FbFWsbrzNomfP3uR7AwUVNqOypYOqgRZOM5uyFtasbMpVoeE4xJuJMGkTVaj?=
+ =?us-ascii?Q?wDc9ChEF1kpVugqMeLXbIXEErrLOc0wgMeIAOzS+OPraskVkXEreBz/bDLKM?=
+ =?us-ascii?Q?DV0kW/lyyReV6pBBx7YJ+Zl8zg4LMzd/XaR5oVsgXRcVmsEWBxJQPv86EKYh?=
+ =?us-ascii?Q?PbB00b8ene1BsDycgBe5oo3t1oE1afvNHABHl0rLHRLCJiZHq6Ep5T8rYVVa?=
+ =?us-ascii?Q?rP1e3drRCC7DMUl8Xrq4UoibBgUmuQFr7kt+/3O3plUKubtCbadW/3Rpu4Xh?=
+ =?us-ascii?Q?ls2xMGgMEJpLXoecb/LHlSbB5uZm7ro/E+0m8ugw0SbXNIwNxD5AEApPqilr?=
+ =?us-ascii?Q?pyAzIXdMRG3EB+6FVj2C/UhHySiNlL+MdzPOWM3al9+xyVN9dA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR06MB4486.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ndAaIKo2IM/1l9RIkDQvE951JqqeJCrdoKh81k5HvOWi+PaR7jUCU9rkZ7NL?=
+ =?us-ascii?Q?4KxdmNWGnSLGwtu3VTnSUkqL+dEs3RbavfHDJ4rXhBQXojydHgJJef2wU/OC?=
+ =?us-ascii?Q?3UsXRM7TvC1KPAHPyYIdJt9sLDuYW7m4+dUbR8qSv/ysYb69lEqHj/ZP4sDw?=
+ =?us-ascii?Q?Zfb/ddWDPKZ+8zN/VdqHot6bwqJHzwnl42cgjIinkvro4kABQ8UfPvX7Y1Mt?=
+ =?us-ascii?Q?uXyWCq3UP5QfiAqFnRB3S3MVG+iYRKEW1QGYmjmi61gi7PGVJm8pm+Ij5P/4?=
+ =?us-ascii?Q?1Cm47TOvj6conPnqPsoBG+jKYgJ8alfdrC6GaLl4UeimkUyn+VuXO2AfE8z8?=
+ =?us-ascii?Q?Q+YxGXt9dzZ4XEPzb/g4f1gaII/8M6/emIkYj0Q+l9oWPH/vjkMXC++qMbhY?=
+ =?us-ascii?Q?UrwlFbTRRdkisQ5P8qrLdWvhRGk43PYevffUGMOl8HTNtTqkZ7ErWCOqwzR8?=
+ =?us-ascii?Q?rmje4x9MqcrSQyLL6YcqxW5erm8X5crrgBpP3tnpkkGLyQs83ts/ylI8x1s0?=
+ =?us-ascii?Q?dbALUTU4brprkNiV065/kW+5kP+Bocf6cHOGRiUnAnFwdEVfapxF185oMT65?=
+ =?us-ascii?Q?RTD7M5idv2c+i/5ME5/JIT9NehBKohgAj8nLRp6k2/hHiCEFHEUCD2yHpTGy?=
+ =?us-ascii?Q?/cwGqVjJXMvpZ/zWktVPOoFI8stpbHNfxFOF9WrTiWaCkG2hc7cRCmQOTcYL?=
+ =?us-ascii?Q?xKmrkxz+KW13Nigc3tNo/4zq4enJxj24VQ3JuBaVzxP8sFqy/jCQ8DINIUtw?=
+ =?us-ascii?Q?rcKXesAl74rQSUKdaSPG0ANCeG/0udHqQd9vDl89Vd/VWKUPOkxBWQkNfox1?=
+ =?us-ascii?Q?7M0cJ/TwyUTvK95l8K+ighfOfmzc60n+OE/teFK0WOUQmVKGGQJevjvq+LZp?=
+ =?us-ascii?Q?MHoLfrAt6IFqbVPEL2cVQCw12YdItZpOa4gizPFHKfq0VkcW3+AdB1xvfNRz?=
+ =?us-ascii?Q?PR2dxJvGsDN8XxFiQaVRRuaDwiQtoqHZ2tgAj3Qo4X/O/oaP92UKxXN1yOU5?=
+ =?us-ascii?Q?PJ8YNHET+j0wcuOtHFkik+7P7FfsGkv/JEwhLXE4pF/I2oMkduF6hmZTjsKo?=
+ =?us-ascii?Q?cqZ2e8MhnVKXTX4Iv5tXZjFvRu5ZTk7xvbqDaoYhegvxZDOo07e0d5LPuJTT?=
+ =?us-ascii?Q?DiTXoGYCoI0R9/tVo0H5Y2MbrW90r+lPX1AXlon1PF7Y/gfYrm4DGKYShaU3?=
+ =?us-ascii?Q?4wGRHssDG3yTCQV6MUTZQ25+w4LuatIOZjMEJnrHIdpkoC94M+bd1oKgSC7U?=
+ =?us-ascii?Q?nt/bG8zHoi98bjc7eI+G4KYulrYX/awBrLLNMTZqvcfFHTqVPoV5B4Twg5HM?=
+ =?us-ascii?Q?WszJis807Pc16mAz93mKnCsvmNu9vnIawOHAQTDaPckPArZ4DgR/RqjhaEtJ?=
+ =?us-ascii?Q?WxeRwwpTgjGh/ZVYS7sI8Y1nCRLoDqTH4DaPE6aKInLb8zU+65YIOtz+Dmfl?=
+ =?us-ascii?Q?KR3VVrGYg+2GgsnelqLYkrLIhEs37FuJ/RXhcEFqCKMwP3BB08XspjQ1Cu6q?=
+ =?us-ascii?Q?8DZBWrCn1NLAvOmAKRqxtyGMHjYeylfYh80OnM+hoOPCpEVySwcIxFUKrJaC?=
+ =?us-ascii?Q?fiNGggLaYl2FXOWOVv4fOr8i1Xgu4nb4fOjE4Yeb?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 83a8a0f3-9e6b-405a-7c38-08dca07e4859
+X-MS-Exchange-CrossTenant-AuthSource: PSAPR06MB4486.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2024 01:19:02.2522
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1fiVaXRvCaSZoDq8T8ljENINnoUpJwAC8KoIm+ZVsWOzk039jN4ZrnQSolnT/MhtntA+7sCLU4ATbV+6oo8ttQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6889
 
---Sig_/lyA8fFrpgGBzUNAsY+3_0lN
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The inode in F2FS occupies an entire 4k block. For many small files, this means
+they consume much more space than their actual size. Therefore, there is
+significant potential to better utilize the inode block space.
 
-Hi all,
+Currently, F2FS has two features to make use of the inode block space: inline
+data and inline xattr.
 
-On Tue, 09 Jul 2024 08:00:56 +0200 "Arnd Bergmann" <arnd@arndb.de> wrote:
->
-> On Tue, Jul 9, 2024, at 02:01, Stephen Rothwell wrote:
-> >
-> > Today's linux-next merge of the loongarch tree got a conflict in:
-> >
-> >   arch/loongarch/include/uapi/asm/unistd.h
-> >
-> > between commits:
-> >
-> >   13aa27ce8de0 ("clone3: drop __ARCH_WANT_SYS_CLONE3 macro")
-> >   1d7b98ec5d78 ("loongarch: convert to generic syscall table")
-> >
-> > from the asm-generic tree and commit:
-> >
-> >   a5d43e6d87c0 ("LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h")
-> >
-> > from the loongarch tree.
-> >
-> > I fixed it up (I think - see below) and can carry the fix as
-> > necessary. This is now fixed as far as linux-next is concerned, but any
-> > non trivial conflicts should be mentioned to your upstream maintainer
-> > when your tree is submitted for merging.  You may also want to consider
-> > cooperating with the maintainer of the conflicting tree to minimise any
-> > particularly complex conflicts. =20
->=20
-> Thanks for taking care of it. There is a slightly better way
-> to do it though:
->=20
-> > diff --cc arch/loongarch/include/uapi/asm/unistd.h
-> > index 1f01980f9c94,b344b1f91715..000000000000
-> > --- a/arch/loongarch/include/uapi/asm/unistd.h
-> > +++ b/arch/loongarch/include/uapi/asm/unistd.h
-> > @@@ -1,3 -1,6 +1,4 @@@
-> >   /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> > + #define __ARCH_WANT_NEW_STAT
-> >  -#define __ARCH_WANT_SYS_CLONE
-> >  -#define __ARCH_WANT_SYS_CLONE3
-> >   =20
->=20
-> The macro is no longer needed in the uapi header and
-> should now be included in arch/loongarch/include/asm/unistd.h
-> instead.
+Inline data stores file which size is smaller then 3.5k in inode block. However,
+for slightly larger small files, there still have much waste.
+For example, a 5k file requires 3 blocks, totaling 12k of space, which is
+more than twice the size of the file itself!
 
-OK, so I have removed the __ARCH_WANT_NEW_STAT line from my resolution
-of arch/loongarch/include/uapi/asm/unistd.h and applied the following
-merge fix patch:
+Additionally, the end of a file often does not occupy an entire block. If we can
+store the end of the file data within the inode block, we can save an entire
+block for the file. This is particularly important for small files.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 10 Jul 2024 11:25:28 +1000
-Subject: [PATCH] fixup for "LoongArch: Define __ARCH_WANT_NEW_STAT in unist=
-d.h"
+In fact, the current inline data is a special case of inline tail, and
+inline tail is an extension of inline data.
 
-interacting with "loongarch: convert to generic syscall table"
+To verify the benefits of inline tail, I have developed these preliminary codes.
+To make it simple, inline tail only on small files(<64k). And the layout of
+an inode block is following:
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/loongarch/include/asm/unistd.h | 1 +
- 1 file changed, 1 insertion(+)
+| inode block     | 4096 |     inline tail enable    |
+| --------------- | ---- | --------------------------|
+| inode info      | 360  |                           |
+| --------------- | ---- | --------------------------|
+|                 |      | extra info         | 0~36 |
+|                 |      | **compact_addr[16] | 64   |
+| addr table[923] | 3692 | reserved           | 4    |
+|                 |      | **tail data        |      |
+|                 |      | inline_xattr       | 200  |
+| --------------- | ---- | --------------------------|
+| nid table[5]    | 20   |
+| node footer     | 24   |
 
-diff --git a/arch/loongarch/include/asm/unistd.h b/arch/loongarch/include/a=
-sm/unistd.h
-index fc0a481a7416..e2c0f3d86c7b 100644
---- a/arch/loongarch/include/asm/unistd.h
-+++ b/arch/loongarch/include/asm/unistd.h
-@@ -8,6 +8,7 @@
-=20
- #include <uapi/asm/unistd.h>
-=20
-+#define __ARCH_WANT_NEW_STAT
- #define __ARCH_WANT_SYS_CLONE
-=20
- #define NR_syscalls (__NR_syscalls)
---=20
-2.43.0
+I tested inline tail by copying the source code of Linux 6.9.7. The storage
+space was reduced by approximately 8%. Additionally, due to the reduced IO, the
+copy time also reduced by around 10%.
 
---=20
-Cheers,
-Stephen Rothwell
+Wu Bo (5):
+  f2fs: add inline tail mount option
+  f2fs: add inline tail disk layout definition
+  f2fs: implement inline tail write & truncate
+  f2fs: implement inline tail read & fiemap
+  f2fs: set inline tail flag when create inode
 
---Sig_/lyA8fFrpgGBzUNAsY+3_0lN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+ fs/f2fs/data.c   | 61 ++++++++++++++++++++++++++++++++++++++++++++-
+ fs/f2fs/f2fs.h   | 44 ++++++++++++++++++++++++++++++++-
+ fs/f2fs/file.c   | 10 ++++++++
+ fs/f2fs/inline.c | 64 ++++++++++++++++++++++++++++++++----------------
+ fs/f2fs/inode.c  |  6 +++++
+ fs/f2fs/namei.c  |  3 +++
+ fs/f2fs/node.c   |  6 ++++-
+ fs/f2fs/super.c  | 15 ++++++++++++
+ 8 files changed, 185 insertions(+), 24 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.35.3
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaN5H0ACgkQAVBC80lX
-0GwPAAf/WxNK6HA7UzP9pSwQ6qeJUDesZaAWecG1sCwcxKENQ6WRJ6y/gl2bw6JI
-9yh2XiuxPzIMXtj82gqj0BebZ4gtVZ5YPNCybuwkU5rQ8U4gbwBLw+fX6a4/nRTA
-b3bfsB3AcJeXnsXiB+uz925SpXVFrcCzae/t6i1Ze8p5YOnJsJw2+EiqEmLa70hC
-EyiE3Kkb9vwlNYLYW1fg8LuBp3QMAocMYYeeIr1vOTzbXAJmYY+cow/CqpwvME+9
-EcviCC/EbwnoIu+DkYNceKN+CcavyYGklBWrutqZ1Oco+io0cRZ2revVY17QO2XT
-5ocGUqrGXUcFNz2Rq3Z0MHpl+1L84A==
-=Zsjz
------END PGP SIGNATURE-----
-
---Sig_/lyA8fFrpgGBzUNAsY+3_0lN--
 
