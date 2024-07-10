@@ -1,149 +1,133 @@
-Return-Path: <linux-kernel+bounces-248018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B55C92D775
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:29:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 474AE92D777
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07D4BB26390
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:29:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3F361F217F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17B0195809;
-	Wed, 10 Jul 2024 17:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E768192483;
+	Wed, 10 Jul 2024 17:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uADhgHFF"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Bj2G0UK9"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808D619539F
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 17:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F53194C73;
+	Wed, 10 Jul 2024 17:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720632560; cv=none; b=hH296DdjPjJqpukZdFbj4p/1HxKqw3I7SnOlJ2vrv1s50xcdvuuhLFAm+N7WIUq4R6BoqJP1Sr6MzwSTNL/sUlPF8elZkDRkQOC/P1A0JEmraVe+TQApO6zgEnCp0j15A107nIhT0vTTeAJAi+/ykSwLin6+KB/VHmctAKOxVAc=
+	t=1720632590; cv=none; b=E64zoolgtpITwvATSXCeQDOMbNFiUMR1zvf/D8T/xz+fA5va4yMvRyA7gYpGwVVcmPE1yk8KBP27TPkhXySy2ssiSjrI9sYyFUtcuxcNF/L3EccTWS6mZPLbJwjcXcGqS8JD7YKBdfQA/hTvrE/Tpj1GdIoAE5GgkblBC/dtoN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720632560; c=relaxed/simple;
-	bh=07CFIh48UVDQo3/6l+jorZzGDNHXB5XF1EuHgydrehY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=uC3z/JbFbZ3b0+hP9Gj/qTnxBHuOHdKeDval7ALljmRCfMKYbIziCYYTPkBHq5BgaQenrVWh9bpyhfWklDILfCmIfIKASFbBo9j59BMELhV0HHpbP5em1lmdwUIad9ndzdgJTsFhZsL1PmMPu6vP1NIWL7W/DGUR+/CAwYpzOxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uADhgHFF; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-651da7c1531so47617b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 10:29:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720632557; x=1721237357; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3iXewCGk4UXaW4hocBhxSKfcWdGSVP/acob1v9TkqC8=;
-        b=uADhgHFFin7sjv/RQpux011yayLfpRkYhMRwYG176hg1cdqVz5Wze1X08ULjd+S6LZ
-         O3O93qIUtBtjdXJwUt/7wMvj0J5rM2PUKGu0Ev/iKh09tXFrgLFwc6401YU3p12JNwq+
-         jn0ZlcNy7SkLmhdatFBEdj+SoajyfFbZdFCBFToBVPGNQhvzDSV0oOmGbzYUo/gyHqYB
-         Lyzd+7JawKtrOK9rsFe4pfnOaVWiDPfzQ8rPCXUHJTA3MmY1+VW4ja5J4qetGKAo7kkU
-         QtK7Afm1PpRSGH0C6nMjrUEeVIuI2VVviB/B5VSShZyM9ffXkZl6AteQ5KUz51hqGmrn
-         RRPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720632557; x=1721237357;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3iXewCGk4UXaW4hocBhxSKfcWdGSVP/acob1v9TkqC8=;
-        b=YTiUyqiOLoqB6r2LLW6xvjP7sET7F55lbfVLuQq+SORyTzL89uC2NEJPerbLggacmy
-         AtpsIf37lLbktNbVhXjZYB1PzwQqlooJMKmunPlYIqXLAGK6WqCvAbr00Zja2GApLEBM
-         aFypSHzsyVLPcuTfqtgW6EiCKwwY53z0Fpl1CFJlfFEVxUM+R4CG2MIakNskcjLMUkRk
-         M4d2JPRZew6aOmo841/93t5sJhU707ZitcjzyKq4Qv5bVYAZw22xIdjzmOMOEAJ4+dxD
-         p9RvnxxfxwVFrP8AklwqRmfaFzu0QsIfLYkcUg1tvSXRn5elmCpo/8qQ2glgwjHfKHU9
-         0Osw==
-X-Forwarded-Encrypted: i=1; AJvYcCWOmKc6UkNIwoQoH9rmIJaE/4Dao168BCbRH1Bo/1X8QinrtmdvfLmYGUq9Kr98e3+8Gqxp2sjMnNyD0Mw6Rp8iSDetvOz/6g2T8Mxw
-X-Gm-Message-State: AOJu0YwpSrUjmOwqHbWFPC44T5zit0Irik6+E3IDpnAhTkkmdr/1o1oL
-	LZ/OFl5NyMvoBeVHGmQ54u/2RwODH3pURBQpeySHf0mNuKsf4gYoP4WMHmujrAGdVU60owSDjUV
-	Y0QzgK0royIDcPKZFAe7qwonFtWTVA4CNhyfB
-X-Google-Smtp-Source: AGHT+IEIDiCBHmmpw23IGTQWJ41MQYqaIhSIDn6iqpEnXhLW5tT7MkOR627Dov6cGq5tnj+GsCRbDY7uModenssyYUw=
-X-Received: by 2002:a05:690c:630b:b0:64a:3d6c:476d with SMTP id
- 00721157ae682-658ef24af88mr78735977b3.25.1720632557191; Wed, 10 Jul 2024
- 10:29:17 -0700 (PDT)
+	s=arc-20240116; t=1720632590; c=relaxed/simple;
+	bh=DyGRGlgOLGpoVuyLhfvxdym1NoUTGtpMoLs9b6MzGtI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Y5TyEvtPV6L8e5VofRahxMRIJ/vNodEwnus3HmVY9koCJQXgRboYva0hV1DpGsBoKDr7C2SLA7jOsxOdnjtbH9BmJ640AXj/nT1bt2gq9EUBMpk+Df1xiZougtj96XEudqThhe1iTM9VX55T2wVIms9xabhrNrbGZOdL9gO2YhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Bj2G0UK9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46AD5ZT2022205;
+	Wed, 10 Jul 2024 17:29:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6Mw/t8xLpptDWSgL1nDLhnAFYxFHqHSyHbIPdNWVA84=; b=Bj2G0UK9pgTKCDAQ
+	BNaJ4RXTG2/0ISwzrTg3RJp1bNutxQAoUhQxCUOOMOXAMGDqZQq3qwWAFU9amZp7
+	HjGCuJxJV4mkvWl8VYXtjw/owyMsb6g5qVnSKsRTbMmXdmlVwTE2idg2L9b8ApZ9
+	NiILelIm1mkbITxskIeiLQNBxAp8/7lJrVnlR/nKy4CwKrpCduobZlmRqyIsmFJz
+	/uV+sCot9P0B5nymFxvPt5HEByCUE7iNnWFhXf1dH3C3DQKYgU/WyDm3E3i8yGJ8
+	M02tjulIaDuL0JWqJBuLoFcIrtb9f0uMd83BpxYykWTUAYSTPinuvwkPMEHRzfsg
+	r/eN1g==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406y3hhn5e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jul 2024 17:29:37 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46AHTafI006932
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jul 2024 17:29:36 GMT
+Received: from [10.48.245.228] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 10 Jul
+ 2024 10:29:36 -0700
+Message-ID: <2594acbf-f2d5-43fc-9967-f3660a9c2c54@quicinc.com>
+Date: Wed, 10 Jul 2024 10:29:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704182718.2653918-1-Liam.Howlett@oracle.com>
- <20240704182718.2653918-7-Liam.Howlett@oracle.com> <f12e65e3-adfb-4140-9aaa-e7b11cab972d@lucifer.local>
- <l6j7mytvepxnpxzq6i4kru4datfxhijf44lzugltbxs5f23f6i@lsfcft2tkg7j> <CAJuCfpG0UQwuuw=u+J8E3=CLKBzFuE=YLh=Hi9eebD9yZHcntg@mail.gmail.com>
-In-Reply-To: <CAJuCfpG0UQwuuw=u+J8E3=CLKBzFuE=YLh=Hi9eebD9yZHcntg@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 10 Jul 2024 10:29:04 -0700
-Message-ID: <CAJuCfpHo2DY4XeR74tSpjcAN+qBfSDzCyi0mPqO-49dZts1uXg@mail.gmail.com>
-Subject: Re: [PATCH v3 06/16] mm/mmap: Change munmap to use
- vma_munmap_struct() for accounting and surrounding vmas
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, sidhartha.kumar@oracle.com, 
-	"Paul E . McKenney" <paulmck@kernel.org>, Bert Karwatzki <spasswolf@web.de>, Jiri Olsa <olsajiri@gmail.com>, 
-	linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/page_counter: Move calculating protection values to
+ page_counter
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        <linux-mm@kvack.org>, <cgroups@vger.kernel.org>,
+        Andrew Morton
+	<akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal
+ Hocko <mhocko@kernel.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Shakeel
+ Butt <shakeel.butt@linux.dev>,
+        Muchun Song <muchun.song@linux.dev>
+CC: <linux-kernel@vger.kernel.org>
+References: <20240703112510.36424-1-maarten.lankhorst@linux.intel.com>
+Content-Language: en-US
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240703112510.36424-1-maarten.lankhorst@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: huDRjL5LilBcFuYCdTi9px4eNmYgRlZv
+X-Proofpoint-GUID: huDRjL5LilBcFuYCdTi9px4eNmYgRlZv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-10_12,2024-07-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ spamscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0
+ clxscore=1011 mlxlogscore=999 impostorscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407100122
 
-On Wed, Jul 10, 2024 at 9:07=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> On Fri, Jul 5, 2024 at 12:59=E2=80=AFPM Liam R. Howlett <Liam.Howlett@ora=
-cle.com> wrote:
-> >
-> > * Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [240705 15:27]:
-> > > On Thu, Jul 04, 2024 at 02:27:08PM GMT, Liam R. Howlett wrote:
-> > > > Clean up the code by changing the munmap operation to use a structu=
-re
-> > > > for the accounting and munmap variables.
-> > > >
-> > > > Since remove_mt() is only called in one location and the contents w=
-ill
-> > > > be reduce to almost nothing.  The remains of the function can be ad=
-ded
+On 7/3/2024 4:25 AM, Maarten Lankhorst wrote:
+> It's a lot of math, and there is nothing memcontrol specific about it.
+> This makes it easier to use inside of the drm cgroup controller.
+> 
+> Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> ---
+...
+> +/**
+> + * page_counter_calculate_protection - check if memory consumption is in the normal range
+> + * @root: the top ancestor of the sub-tree being checked
+> + * @memcg: the memory cgroup to check
 
-nit: s/reduce/reduced
+need to document @counter instead
 
-> > > > to vms_complete_munmap_vmas().
-> > > >
-> > > > Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-> > > > ---
-> > > >  mm/internal.h |  6 ++++
-> > > >  mm/mmap.c     | 81 ++++++++++++++++++++++++++---------------------=
-----
-> > > >  2 files changed, 47 insertions(+), 40 deletions(-)
-> > > >
-> > > > diff --git a/mm/internal.h b/mm/internal.h
-> > > > index f1e6dea2efcf..8cbbbe7d40f3 100644
-> > > > --- a/mm/internal.h
-> > > > +++ b/mm/internal.h
-> > > > @@ -1488,12 +1488,18 @@ struct vma_munmap_struct {
-> > > >     struct vma_iterator *vmi;
-> > > >     struct mm_struct *mm;
-> > > >     struct vm_area_struct *vma;     /* The first vma to munmap */
-> > > > +   struct vm_area_struct *next;    /* vma after the munmap area */
-> > > > +   struct vm_area_struct *prev;    /* vma before the munmap area *=
-/
-> > >
-> > > I mean this is about as pedantic as it gets, and, admittedly an annoy=
-ing
-> > > comment to make, but the ordering... can't we at least put prev befor=
-e
-> > > next? ;)
-> >
-> > I can do that, no problem.
-> > ...
-> >
-> > >
-> > > This is a big improvement overall, very fiddly code.
-> > >
-> > > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->
-> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
->
-> >
-> > Thanks!
+mm/page_counter.c:400: warning: Function parameter or struct member 'counter' not described in 'page_counter_calculate_protection'
+mm/page_counter.c:400: warning: Excess function parameter 'memcg' description in 'page_counter_calculate_protection'
+
+> + * @recursive_protection: Whether to use memory_recursiveprot behavior.
+> + *
+> + * Calculates elow/emin thresholds for given page_counter.
+> + *
+> + * WARNING: This function is not stateless! It can only be used as part
+> + *          of a top-down tree iteration, not for isolated queries.
+> + */
+> +void page_counter_calculate_protection(struct page_counter *root,
+> +				       struct page_counter *counter,
+> +				       bool recursive_protection)
+> +{
+
 
