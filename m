@@ -1,76 +1,107 @@
-Return-Path: <linux-kernel+bounces-247020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F63492CA03
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:48:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3A2E92CA04
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE3C12833D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 04:48:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D180A28174F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 04:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7F94AEEA;
-	Wed, 10 Jul 2024 04:48:37 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854B040862;
+	Wed, 10 Jul 2024 04:49:28 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17AF46542
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 04:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040C429AB
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 04:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720586916; cv=none; b=cQzc0r93eYumospcX0/NaoAbPbtoPtCNkRtzIAMcr5uXvLBEVCjg8HihCJli+fmWKVPaT2dJT49m6+J1pQGvaUIBimVRNxrm1HBuVTrZCRVSSrCSMedhkPT7/Z0Hdguv8w/MFTDoqGcm1kM/vsVwmzAk+ca3cKAR6vZFR37v7m0=
+	t=1720586968; cv=none; b=XsafOa3h662oEj4BvLGX2uKOSjMaHPbL7385XPvYgygyukYFOrXEXLMiOVWNe0iuiahF/FvPh8nRUaHlPOMWbKD9zAHPZtcx8004Kz/6knjjsuZRM9evR4AkUuu8VWAMMBwJ+uNh1JJSZNqpe2efREyn8Geeq9T3CDyhoXU3McM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720586916; c=relaxed/simple;
-	bh=WVFH6uwcMIYyE0zqWdYgh/RIFDJcAYHNlvOWOEQx0Bc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Ry5CjLwSv/UMv1mUHtcHgkqNAfsN/qEBuNPrPmF/kPhR9fvvo6LRNapeNbRXD0/bJKcguccbuk76cU5ZIjUrh0YuqzbV2eDUPgAFXBzRrE6fAl7RlgUeSwmOhACDNLKBnKLtfXQY7NuF8SfHfcJfisktcmUkd1ERg71CK5iT9G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-804b8301480so30687739f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 21:48:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720586915; x=1721191715;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WVFH6uwcMIYyE0zqWdYgh/RIFDJcAYHNlvOWOEQx0Bc=;
-        b=X+PNzCzsrKuS1L1mPjnqp6973eHRHBY3ncKkYcIi9O/geg/aOyqAOLoFZ2Ib0o6f0x
-         V8MifXa9ZNNIY1v5tU6hxv6OUGNCi7SeWM44EfKgoakdCBITQeQKo75IgCRhk7h+gaVE
-         5B1vE6o734c1irLpzsCOS8zsViBcbCD9Js24BCeoIiC0zkwPi5z32nvPzSgQXWZD9tKj
-         rf5vhnQcs4JKghH2VVOM4r7IH4F01ty0+weIgZTYV+87cOqj8DItWZ6n2XZpvx5YaLsK
-         81jWJbQUjog2+1+eZ45yfZKfLx+zO9hdaJnlp7VHy1h6SdHDD4dkaf5dguH998mTlZE/
-         tkrw==
-X-Gm-Message-State: AOJu0YzoXUTM1XVkf+wkisrJ8D8CupQjClgfEbsgI9vJ7xFIShySEBkl
-	eAonebaKhuC8CMdkgyIdOo7/XHt8rU1DplmDF/q4yTxOoGzdaAdo4SlNiVp20G2ZMok61ncnEEY
-	cmcVur24XH4JA/XpIQbRKq0oks2RSdvA02wVlwtw8IrVfo1DGCcavy7U=
-X-Google-Smtp-Source: AGHT+IGf2fd/QjW2nwOEuKG9NAAQh0DvnvZwQSAu1idLRhtcllg4Qm9X827oaGAr8tITXQldauVJDEH/WDutMFTF6sHv516+uZy+
+	s=arc-20240116; t=1720586968; c=relaxed/simple;
+	bh=xSchiPNrxhR9nMUskf+Vua7v4cO6bQOX+zcwSb5XdbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tieKTAtsHLwbizzNKE+scnO94Q2vCNbDEO9/OoLZ4gVeW1pGyBobFmDPLXFNhWY8pOY/blaX00VfoNfU4+6nbGasT9eCVEw35rFVginpntt0HOHcy5qJdKxaSOx0BlMMgL/4tqwRZx9RUmjeVCMxU77jbbUG9FZS0YoNynmhWLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sRPGb-0006vq-Cu; Wed, 10 Jul 2024 06:49:21 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sRPGa-008RAB-0j; Wed, 10 Jul 2024 06:49:20 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sRPGZ-008Ks4-30;
+	Wed, 10 Jul 2024 06:49:19 +0200
+Date: Wed, 10 Jul 2024 06:49:19 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH net-next] MAINTAINERS: Add ethtool pse-pd to PSE NETWORK
+ DRIVER
+Message-ID: <Zo4Sz-EitiDPxh8V@pengutronix.de>
+References: <20240709130637.163991-1-kory.maincent@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6d0c:b0:7fe:3630:f857 with SMTP id
- ca18e2360f4ac-80004174e91mr27321739f.3.1720586914920; Tue, 09 Jul 2024
- 21:48:34 -0700 (PDT)
-Date: Tue, 09 Jul 2024 21:48:34 -0700
-In-Reply-To: <000000000000ee4d7c061cd1c21f@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000de8fbb061cdd5bf0@google.com>
-Subject: Re: [syzbot] WARNING: suspicious RCU usage in bch2_bucket_ref_update
-From: syzbot <syzbot+e74fea078710bbca6f4b@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240709130637.163991-1-kory.maincent@bootlin.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Tue, Jul 09, 2024 at 03:06:36PM +0200, Kory Maincent wrote:
+> Add net/ethtool/pse-pd.c to PSE NETWORK DRIVER to receive emails concerning
+> modifications to the ethtool part.
+> 
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 
-***
+Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Subject: WARNING: suspicious RCU usage in bch2_bucket_ref_update
-Author: peili.dev@gmail.com
+Thank you!
 
-#syz test
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e0f28278e504..b8312a8ba808 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18050,6 +18050,7 @@ L:	netdev@vger.kernel.org
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/net/pse-pd/
+>  F:	drivers/net/pse-pd/
+> +F:	net/ethtool/pse-pd.c
+>  
+>  PSTORE FILESYSTEM
+>  M:	Kees Cook <kees@kernel.org>
+> -- 
+> 2.34.1
+> 
+> 
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
