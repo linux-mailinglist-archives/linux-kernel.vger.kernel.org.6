@@ -1,138 +1,113 @@
-Return-Path: <linux-kernel+bounces-246830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABF6692C7BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:06:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7992A92C7C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:08:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D944283CAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:06:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1895B2109F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0F74C6B;
-	Wed, 10 Jul 2024 01:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="RFqMiO8s"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997B93D7A;
+	Wed, 10 Jul 2024 01:08:16 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672531388;
-	Wed, 10 Jul 2024 01:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B3C4C6B;
+	Wed, 10 Jul 2024 01:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720573554; cv=none; b=CoQXh2pqio+JZNlxFXSHJrPoe1tz0nKY6JF6/266cWYfxvTCPtn44C4q8NP4ZsnMw5iVEyMCGbMBG+ni2JCrHapnheEJDpVpRyf9l9gbfn+9MpYK/zSkaHIR91J7CHPNDxO8p/PnJBwZb/p5VszyDe8HF16QoJAF5Hus8w84Pxo=
+	t=1720573696; cv=none; b=aj5YUkpIH7pbFM6YokonJn3x2G7J6S2DnWjfcrc1t/sO/Kxd5/REeQCV7G9mHhv+CqGbbc2vQ7F4wtcMv8+XZ5nsVV56zOXVHwpAtJAGj6rG9EEygK8ikFKhF1qVhMa46VFJKiDJLHi5j1PwZo0yTrV+XWXdeVMkYlb026zqZvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720573554; c=relaxed/simple;
-	bh=g6d7VhbAqjM9GJxp46hZAw6jfGnxM3P3F17Ui593rq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=FIuhx7QNRsR1O+/UzwrBfwAi0qkMtSsz1aGKCS3VzJH1dyzebluIHb/MqsQwBGgfIAe+q1f+kg0HhtSwOZg8wt3i9zHDuYylPi0g0iJKpITr6XWnicPUgYeuz0dOsOEylD4ss5TdGdR25SaXWMkh01jPTk5Eb/j1sgrZAL9WafA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=RFqMiO8s; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720573546;
-	bh=b2KDwUVEyWWRif6rhV5WfDhybBHE3TnImXtqL+BrTys=;
-	h=Date:From:To:Cc:Subject:From;
-	b=RFqMiO8s3N9Jf+MxXnHukkogBp6KXzx0nvS6Ji2J6QkZhE5QHbS8/PeYto2MXG/eB
-	 pKDBksxUkteVeuaZwHk6Vb9dhhSo5O9Chw6Kqx81uvE//4VuaG8vZDl0rWyGd2IEyq
-	 pO/yGbz0LXMNS4/LBkTim1DwbN2fCUI1IZB9JBjoHQVCVRZmZSkpyxwcqALynS+ezG
-	 d2DdMwhVE1+ydGBWrmi1pAd024TNjw2m0U3hvZNeZz1TjOB2ACBEK2GL8w/fwJ3ecb
-	 fMeiwWiYbjv831lV91bVsFYMxh2K67bTAA78Vst0d4ofi937PC0zUuaAP6fvMpt+UB
-	 HdMS/NhQ8jWmA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJfmp5F54z4wcl;
-	Wed, 10 Jul 2024 11:05:46 +1000 (AEST)
-Date: Wed, 10 Jul 2024 11:05:45 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Michael Kelley <mhklinux@outlook.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the dma-mapping tree
-Message-ID: <20240710110545.110366a4@canb.auug.org.au>
+	s=arc-20240116; t=1720573696; c=relaxed/simple;
+	bh=4QzTcAu3+1KRXwwsgq9iuObNy/GQtA1vHbtbx5obFS0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FDgjbbiCsPynU8+lW6CAyYCic4FbybGvLv9UWigSgQ03mf54jxCQ8nayJcGEUd/lk2GukNoPJbqaIN583gldtvdnWRhR5GJZTuQB2oHVHs9/PMIrXOCjIMpiEyfY9Bzp2HcqpP9UZOX2iAJxMQbJv2zrx5nvumX262xuCpVFa4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-01 (Coremail) with SMTP id qwCowAAXHsrk3o1mYa2MAg--.15259S2;
+	Wed, 10 Jul 2024 09:07:55 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: shubhrajyoti.datta@amd.com,
+	sai.krishna.potthuri@amd.com,
+	bp@alien8.de,
+	tony.luck@intel.com,
+	james.morse@arm.com,
+	mchehab@kernel.org,
+	rric@kernel.org
+Cc: linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>
+Subject: [PATCH v2] EDAC/versal: Fix possible null pointer dereference in emif_get_id()
+Date: Wed, 10 Jul 2024 09:07:46 +0800
+Message-Id: <20240710010746.1741228-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Zu6vUPG3LQ=OvX5OPgGAoki";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAAXHsrk3o1mYa2MAg--.15259S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrurWUKF1DGw13tr4kuFWUtwb_yoWkWFg_Gw
+	18WFy7XF4kK3Z0kwsF9rnxZrySyayq9r4DWrn7Kasakry5X3WUXrnaqF1DZw1DWr1j9FWD
+	Kryqk343Ar1UujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6r1S6rWUM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
+	WxJr1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUQZ23UUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
---Sig_/Zu6vUPG3LQ=OvX5OPgGAoki
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+In emif_get_id(), of_get_address() may return NULL which is later
+dereferenced. Fix this bug by adding NULL check.
 
-Hi all,
-
-After merging the dma-mapping tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-kernel/dma/swiotlb.c: In function 'swiotlb_alloc':
-kernel/dma/swiotlb.c:1770:17: error: too few arguments to function 'swiotlb=
-_release_slots'
- 1770 |                 swiotlb_release_slots(dev, tlb_addr);
-      |                 ^~~~~~~~~~~~~~~~~~~~~
-kernel/dma/swiotlb.c:1443:13: note: declared here
- 1443 | static void swiotlb_release_slots(struct device *dev, phys_addr_t t=
-lb_addr,
-      |             ^~~~~~~~~~~~~~~~~~~~~
-
-Caused by commit
-
-  b21a42af002d ("swiotlb: reduce swiotlb pool lookups")
-
-I applied the following patch (which may or may not be correct):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 10 Jul 2024 10:39:48 +1000
-Subject: [PATCH] fixup for "swiotlb: reduce swiotlb pool lookups"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Fixes: 6f15b178cd63 ("EDAC/versal: Add a Xilinx Versal memory controller driver")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- kernel/dma/swiotlb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+- fixed the typo according to suggestions.
+---
+ drivers/edac/versal_edac.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-index 618602fd10df..b4d8167b2f8d 100644
---- a/kernel/dma/swiotlb.c
-+++ b/kernel/dma/swiotlb.c
-@@ -1767,7 +1767,7 @@ struct page *swiotlb_alloc(struct device *dev, size_t=
- size)
- 	if (unlikely(!PAGE_ALIGNED(tlb_addr))) {
- 		dev_WARN_ONCE(dev, 1, "Cannot allocate pages from non page-aligned swiot=
-lb addr 0x%pa.\n",
- 			      &tlb_addr);
--		swiotlb_release_slots(dev, tlb_addr);
-+		swiotlb_release_slots(dev, tlb_addr, pool);
- 		return NULL;
- 	}
-=20
---=20
-2.43.0
+diff --git a/drivers/edac/versal_edac.c b/drivers/edac/versal_edac.c
+index a556d23e8261..d837edac30e7 100644
+--- a/drivers/edac/versal_edac.c
++++ b/drivers/edac/versal_edac.c
+@@ -1053,6 +1053,9 @@ static u32 emif_get_id(struct device_node *node)
+ 	const __be32 *addrp;
+ 
+ 	addrp = of_get_address(node, 0, NULL, NULL);
++	if (!addrp)
++		return -EINVAL;
++
+ 	my_addr = (u32)of_translate_address(node, addrp);
+ 
+ 	for_each_matching_node(np, xlnx_edac_match) {
+@@ -1060,6 +1063,9 @@ static u32 emif_get_id(struct device_node *node)
+ 			continue;
+ 
+ 		addrp = of_get_address(np, 0, NULL, NULL);
++		if (!addrp)
++			return -EINVAL;
++
+ 		addr = (u32)of_translate_address(np, addrp);
+ 
+ 		edac_printk(KERN_INFO, EDAC_MC,
+-- 
+2.25.1
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Zu6vUPG3LQ=OvX5OPgGAoki
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaN3mkACgkQAVBC80lX
-0GwwgwgAo7mAv53pb6h2+kms90r3zIk99v1b4s+lGRTjDG30AZrIzWV/i2O84/+Q
-/VghfwttgkUvlicSP3vIVqwDm1uUcoqGtX2SoHmtlu80B/WfOPKQRNfiay7ghomE
-XkapNnqY8kFtPi4NMHtlWPdyKdbLPhIKe+qccVv7vifYQvk75leXSErUPzZVBm7x
-q4wT8PnpfcHkjGqKug4pISnXjMoMrv+BlHFSqsIDNGd/hWtlTc1wKxD6hEFiPfZu
-q9xr8Go9HYyFCzMXHcnnKCLZjmSYNJPFRX6/+yDXLoMhdaqd1fevPEHb+YD9RHf1
-R9GSKanvjG5NFd5XbQ3mHoH1TJoqlA==
-=FVrp
------END PGP SIGNATURE-----
-
---Sig_/Zu6vUPG3LQ=OvX5OPgGAoki--
 
