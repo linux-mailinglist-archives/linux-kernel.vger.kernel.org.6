@@ -1,156 +1,130 @@
-Return-Path: <linux-kernel+bounces-247639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B53292D249
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:07:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E34F692D23F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 070AD28840C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:07:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B802283151
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED90193083;
-	Wed, 10 Jul 2024 13:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6DF19246D;
+	Wed, 10 Jul 2024 13:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IfgoENiV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="jI+Bwb6E"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE431193065;
-	Wed, 10 Jul 2024 13:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B93191497
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720616790; cv=none; b=PPEffbY08NVbUnY6MvARTOrQLhvrY2Wh/sHY+Di48TWJjI5/544f9VZteA2GMux86O1zzd30W/8VmCf4zOqofymBJCkiIrl/bz/chUCTCCZLcXjeTEkrbd4CzywsspzagA6ouxLwDAv5jIMeMvVAnLLMEHZJyD37MfsvcUjR7pk=
+	t=1720616786; cv=none; b=Qr+xfmwQW2tWVloE2hon3WuPNPSGAEhXOgNSKJ9feyYqkiQu4Y2zxTVhyNlE29D5s5DGuiHRyMqunzhjUkSV5TotsozUFSo5a+GFhovXD5hzzruYlc12fKyKIj/UYRZN5Ult5UCO4bgY094v1288qm1coOBZXWmtqxdgtlXrIlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720616790; c=relaxed/simple;
-	bh=vunybwmwyeDdA28AxzCVTJeL0m1p52lwXE6ZLQY3F/8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PuC43TVhSGYUfdQKm+Gr9SimUYAn15mFHLmd0S/QZFkMbepc4jeen75fuubunPo9G+ilEzQbUbQSiYyoTdnQeGOWpYA6meGixOyQuNwZGTTpxPEcPtCCdNAEVGOAWzjA0h1djSAvY8Q+jcQry0IO+DnGVml6QEnxujDL1oRnrsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IfgoENiV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3B0EC32786;
-	Wed, 10 Jul 2024 13:06:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720616790;
-	bh=vunybwmwyeDdA28AxzCVTJeL0m1p52lwXE6ZLQY3F/8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=IfgoENiViytTpJNukjjgWY5Xwo4LcHush9imrrp2AsonI8/1JVAvJa3aRkSae9ffK
-	 jWdGgtw4taZjbjkJpDwWVerxDabezB9KOVdFIJ95xCajExv6yTZKvSclpjRVFh7kJ9
-	 pGdprC/Hw9RY1XfKNJfTWaJPPYMEaPh412LqV3etLNOETtfRsKuS2sHLcS8I+Cv/8C
-	 gADOgMFHteIZD9ePOkR257zVAIfbDBugeHTbCpWAZt8/N06GH554HXcdIk9n04M+Bh
-	 IFGm4yineBsJ85WmC69z4yooDcquOwB9kim6KxyNzsB2gILefHf1yZ0m4Z0o6u2uWB
-	 FOgds+xsJqyTw==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 10 Jul 2024 09:05:33 -0400
-Subject: [PATCH 3/3] nfsd: count nfsd_file allocations
+	s=arc-20240116; t=1720616786; c=relaxed/simple;
+	bh=cnr4r9LciJZYdRBWiSWNwRQcV8Njo3jA3n7WtVMyLro=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=Hel7f5mrrQq/foyWJRc8pWTrvyIblnH+5mdL0JwaCOENygMlNnO8AdUrPtSe00fmklBgUrxwLJA+RqkqkqaRW44B1muYxLFOCe4bEPMNZ/NH3KHLzJl02huSUw6Vzq8NsHPPx59V0AXY6QcSVAGFqITqRJvi8uebhfDuDQhadXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=jI+Bwb6E; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6002a.ext.cloudfilter.net ([10.0.30.222])
+	by cmsmtp with ESMTPS
+	id RUTRsd1YiSLKxRX1csUMTp; Wed, 10 Jul 2024 13:06:24 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id RX1bsQweWiKqRRX1bs5zMq; Wed, 10 Jul 2024 13:06:23 +0000
+X-Authority-Analysis: v=2.4 cv=I9quR8gg c=1 sm=1 tr=0 ts=668e8750
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=-Ou01B_BuAIA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=AjGcO6oz07-iQ99wixmX:22 a=nmWuMzfKamIsx3l42hEX:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=pdZDpnt4p51YYHdFvqRoQXdleqkuAHHgphSpMovPt7I=; b=jI+Bwb6EVnK5iF8/VTDVCdXjsH
+	j3udSui/CTnsfaaXdGCdLXkHGOG1lx0dH/vdbp9e5ojAVxml6Wxof5840X/gV6Uhx5XaFmoE2PeI3
+	6pnBmcUUu11S48zCJ4n6qmQtBoFnzo300heigsb4AgimVyybwsh2RGg1E5RwCy5y78M3A1t7LeOJh
+	RrxrlyKKDAKoiZpYwUS1vxAI30jSGLpeofDD6KwbEgJzu7XA9YhGrivQn/lZMAvTMdcf4CuwH7K/W
+	zS/pOkpQdvGiEqEIkdWDilGArly7q+R0hin9VjG3eKe5/pNTQodbugfMJo7Z7n9HnhJVRhdbNPe3t
+	VXmeFZRA==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:47994 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1sRX1Z-001goi-1v;
+	Wed, 10 Jul 2024 07:06:21 -0600
+Subject: Re: [PATCH 6.1 000/102] 6.1.98-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240709110651.353707001@linuxfoundation.org>
+In-Reply-To: <20240709110651.353707001@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <f9d3a91a-114e-0a1f-8b03-e36c6e037e30@w6rz.net>
+Date: Wed, 10 Jul 2024 06:06:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240710-nfsd-next-v1-3-21fca616ac53@kernel.org>
-References: <20240710-nfsd-next-v1-0-21fca616ac53@kernel.org>
-In-Reply-To: <20240710-nfsd-next-v1-0-21fca616ac53@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>
-Cc: Youzhong Yang <youzhong@gmail.com>, linux-nfs@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3046; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=vunybwmwyeDdA28AxzCVTJeL0m1p52lwXE6ZLQY3F/8=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmjodSpMClY8wJaVfsbcP3P9VAWwdL3w6tcQ7dZ
- fqvThP6IAaJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZo6HUgAKCRAADmhBGVaC
- Fcq8EACOlaIh7xXlDVDhEcFBXMNIiVBM139vNb7Q9o3FjCBoCGCYT94CTavutyRfhHPesiKeYhr
- cF1KnTdW7z6+g709GHylnmW61qalOm+P0xIH7UNeUutRC3wxsOzXpfsa4WvJ0juS43lI7TkZRdU
- 7bx49ABaKgnm8kLH4U8aihnLcZqK/lBkXKjEerroG8G0DmC/MH2YBBD3Jcqi8M8f5BL+zLDJDTE
- HfswSCZ1oKbkXlHJN+yMziPPPHqnOX3ExtvqQMD5mjcOq7ZV38V1FLPSLLGOLhk3m19TrKc23Tw
- JxqjUZ4HFwe01scxc7em3RxHBbMkHNEfpGDw5WfdGMf5JvLfM5ROd9QT8iYSUNAQqzu6dbiOr+A
- AVueGwgZyYQ5wR5ystL3PuCtec1Iw1QoDgCVVUXYLlnTqRa2OcakQHF1WobBjDzU1N7kXcDLl9m
- 9FwjKvPBGUFl+4sZV/MShBXTsWqmDuUj3LYv04BQRuQQyQOG7rzdcSTMCsgbqwo3tL2QPFHWgrt
- vmU8lH32n31Pq9YsoUBhUiNNDFI4tcJrygybzkgTQOn7rHbO1r0y7k3Apf+2Gqa3sw6Zeu3FNZO
- Vdvy5UlazZxKeOhmYZ/z6Gbr7AySffIG2OgMO3ZcwonKf+dBzbStwcvvSLIsYdypUXI2D2t5gub
- exCq6qivdchdARA==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1sRX1Z-001goi-1v
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:47994
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 23
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfHfyQ5j8/1BtuSbY5sf4MRYOcoCZ/z8IXrmEFs670faUEX0+u63Q5vcBu5ejZ+qY6ifyXkaJpeuf5hGYcM+s6SqeC9J05m5IQhj1mmjKvhjasnW3C5gp
+ MoHHCbj5+TlnrYfxX2O2rCc7xuHYGqIPN5huCjtXlIxHb7SgexvaDcC4ZOHCPTxhNyzoSyz0PPmn4YPbs+mgWTRbYwnlrsOiNpY=
 
-We already count the frees (via nfsd_file_releases). Count the
-allocations as well. Also switch the direct call to nfsd_file_slab_free
-in nfsd_file_do_acquire to nfsd_file_free, so that the allocs and
-releases match up.
+On 7/9/24 4:09 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.98 release.
+> There are 102 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 11 Jul 2024 11:06:25 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.98-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/nfsd/filecache.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
-index 52063f2cf0df..8997058ddbcb 100644
---- a/fs/nfsd/filecache.c
-+++ b/fs/nfsd/filecache.c
-@@ -56,6 +56,7 @@
- 
- static DEFINE_PER_CPU(unsigned long, nfsd_file_cache_hits);
- static DEFINE_PER_CPU(unsigned long, nfsd_file_acquisitions);
-+static DEFINE_PER_CPU(unsigned long, nfsd_file_allocations);
- static DEFINE_PER_CPU(unsigned long, nfsd_file_releases);
- static DEFINE_PER_CPU(unsigned long, nfsd_file_total_age);
- static DEFINE_PER_CPU(unsigned long, nfsd_file_evictions);
-@@ -215,6 +216,7 @@ nfsd_file_alloc(struct net *net, struct inode *inode, unsigned char need,
- 	if (unlikely(!nf))
- 		return NULL;
- 
-+	this_cpu_inc(nfsd_file_allocations);
- 	INIT_LIST_HEAD(&nf->nf_lru);
- 	INIT_LIST_HEAD(&nf->nf_gc);
- 	nf->nf_birthtime = ktime_get();
-@@ -912,6 +914,7 @@ nfsd_file_cache_shutdown(void)
- 	for_each_possible_cpu(i) {
- 		per_cpu(nfsd_file_cache_hits, i) = 0;
- 		per_cpu(nfsd_file_acquisitions, i) = 0;
-+		per_cpu(nfsd_file_allocations, i) = 0;
- 		per_cpu(nfsd_file_releases, i) = 0;
- 		per_cpu(nfsd_file_total_age, i) = 0;
- 		per_cpu(nfsd_file_evictions, i) = 0;
-@@ -1027,7 +1030,7 @@ nfsd_file_do_acquire(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 	if (unlikely(nf)) {
- 		spin_unlock(&inode->i_lock);
- 		rcu_read_unlock();
--		nfsd_file_slab_free(&new->nf_rcu);
-+		nfsd_file_free(new);
- 		goto wait_for_construction;
- 	}
- 	nf = new;
-@@ -1205,7 +1208,7 @@ nfsd_file_acquire_opened(struct svc_rqst *rqstp, struct svc_fh *fhp,
-  */
- int nfsd_file_cache_stats_show(struct seq_file *m, void *v)
- {
--	unsigned long releases = 0, evictions = 0;
-+	unsigned long allocations = 0, releases = 0, evictions = 0;
- 	unsigned long hits = 0, acquisitions = 0;
- 	unsigned int i, count = 0, buckets = 0;
- 	unsigned long lru = 0, total_age = 0;
-@@ -1230,6 +1233,7 @@ int nfsd_file_cache_stats_show(struct seq_file *m, void *v)
- 	for_each_possible_cpu(i) {
- 		hits += per_cpu(nfsd_file_cache_hits, i);
- 		acquisitions += per_cpu(nfsd_file_acquisitions, i);
-+		allocations += per_cpu(nfsd_file_allocations, i);
- 		releases += per_cpu(nfsd_file_releases, i);
- 		total_age += per_cpu(nfsd_file_total_age, i);
- 		evictions += per_cpu(nfsd_file_evictions, i);
-@@ -1240,6 +1244,7 @@ int nfsd_file_cache_stats_show(struct seq_file *m, void *v)
- 	seq_printf(m, "lru entries:   %lu\n", lru);
- 	seq_printf(m, "cache hits:    %lu\n", hits);
- 	seq_printf(m, "acquisitions:  %lu\n", acquisitions);
-+	seq_printf(m, "allocations:   %lu\n", allocations);
- 	seq_printf(m, "releases:      %lu\n", releases);
- 	seq_printf(m, "evictions:     %lu\n", evictions);
- 	if (releases)
-
--- 
-2.45.2
+Tested-by: Ron Economos <re@w6rz.net>
 
 
