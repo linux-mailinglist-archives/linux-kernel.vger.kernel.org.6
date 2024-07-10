@@ -1,226 +1,264 @@
-Return-Path: <linux-kernel+bounces-247030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81D0992CA1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:20:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB80192CA22
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36306284D60
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:20:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 446851F24343
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4BE4776E;
-	Wed, 10 Jul 2024 05:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C734C631;
+	Wed, 10 Jul 2024 05:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aoxxe9yR"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PGtIp55W"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B2517FD
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 05:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5702817FD
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 05:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720588796; cv=none; b=Jy6gq0n7y4XhC9MFRx8cn4F8A/exM8NSEf0Ljp9JeVoSl0k3B9eAR47/4Qq0YexzDlIUMiWD0296oEiw1UQHHCD0ChXxGSfH2gQiitk+kCswMK5zovTXo9N3umUvUUK5ip0jySYoi9VIShXNKcO0LOXk5O1p/Y1AvzA093/l09s=
+	t=1720589362; cv=none; b=OdtbmvksXo+ZUMGLRvyjnCr1jfvGM3yo1gPL2uDizx6bL/DTeZtRMc+PIxPqx2Rsg+Q5ykjqXYaASIvl+ldDloZlGOAVxYr0Zb4RxO73i7jtZuKJNPLMVfw7hH+3kbx7qU5toKzXJ7isnbE5+KOw6rtYclgsIufKkS+uf1V7BR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720588796; c=relaxed/simple;
-	bh=n2s3o8q4v7j+RxNat2yf/U7NfD/vMRwcxyjm1SF4J7E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WFBrnzO6oJpNZ3y4vaRlKQ7t8U0PLHAFgqdFe7Ly4RhIKyT6WC6kfsggpNi9fkQ+bTpQYjGwQBsI7vc44NcTGIzGS0dc6Yhr7DsndmaJUoiTQxse5HEFEM/UssjA0P0keM0UzopVCFt+KJ7144PxsXiYhRUFTeTm/JijbpFJbBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aoxxe9yR; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46A4vfTf017813;
-	Wed, 10 Jul 2024 05:19:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:content-transfer-encoding
-	:mime-version; s=pp1; bh=6BvyBR57+4bOjGzhiVOtOwfSUiZBWtVHAhehWzI
-	xV5g=; b=aoxxe9yRqhUQU5m5TLuOZDOSmiY9RRMvhKZL+7E5R7yOh0TAm+W6Dmz
-	5r6tCdv6Cqg1JfnnuzHHOv6MgQjrS77gm0dcSJCGJOrf7ZiKlpPs3EsrF22n9uss
-	PVUCH8rOIa/U7aPuvjeesnXJWt3NxmM7jA4oAOvXztuIaaS2UIipPyx5XkOIc3Cz
-	/hyuQEoqXJjcW7qzfvl4pvKLUCOqs+aGIZf1HncqdgGU0KhSkmJphLsDLCIU3mj2
-	Oj6x9rZzc0vo6MKBAiuRqixIoIWrGatLomlw+bT8pTuxPgWVXConmV44C7ZKb/T1
-	178q4whSAL2UtWgudBLqwd+CQ2xp21w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 409gnugfun-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jul 2024 05:19:28 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46A5JRH5017582;
-	Wed, 10 Jul 2024 05:19:27 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 409gnugfuh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jul 2024 05:19:27 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46A2PCIs025046;
-	Wed, 10 Jul 2024 05:19:26 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 407g8u9fkj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jul 2024 05:19:26 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46A5JMLs55902602
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 10 Jul 2024 05:19:25 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D62C12004B;
-	Wed, 10 Jul 2024 05:19:22 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A304520040;
-	Wed, 10 Jul 2024 05:19:20 +0000 (GMT)
-Received: from ltczz402-lp1.aus.stglabs.ibm.com (unknown [9.40.194.31])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 10 Jul 2024 05:19:20 +0000 (GMT)
-From: Donet Tom <donettom@linux.ibm.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Muchun Song <muchun.song@linux.dev>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>,
-        Mike Rapoport <rppt@kernel.org>, David Hildenbrand <david@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Tony Battersby <tonyb@cybernetics.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>, Andy Lutomirski <luto@kernel.org>,
-        Donet Tom <donettom@linux.ibm.com>
-Subject: [PATCH v3] hugetlbfs: Ensure generic_hugetlb_get_unmapped_area() returns higher address than mmap_min_addr
-Date: Wed, 10 Jul 2024 00:19:12 -0500
-Message-ID: <20240710051912.4681-1-donettom@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: eXjPB2DIEx78qqOf_HQlGo0-EbgYisCH
-X-Proofpoint-GUID: BeQV48yM1TyCSP-cQFPb40GhdOf-yhbT
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1720589362; c=relaxed/simple;
+	bh=YKFqlL8WDjs3wKDFtySY8+kh7N+qzfkDIEkoepTmHvg=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=XBit0KgMm9zYYE0iKZWfUcW6mOV4r9+4dZrXPcI6mokHBU7wlHwzVZAYteg+fgRVrfflf2H4PDFW0VKbu9eKsoTe4svbx/KMVa59HXCV96HerwdZYTqaBUO4705eL0MQ8edxQbyezxpwqiDUOoI7mSooJmHQQA8x/UnGjCm4Nas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PGtIp55W; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720589360; x=1752125360;
+  h=date:from:to:cc:subject:message-id;
+  bh=YKFqlL8WDjs3wKDFtySY8+kh7N+qzfkDIEkoepTmHvg=;
+  b=PGtIp55WQprXSzGYeyxd46pJezyLwbpzhiNNQEkO3EedeQ2ZTWz0HYVi
+   bpAKj3J9vXeZG0+7xjtV5qjhiWiKXg6ucm7vneRZWsB25eDRGlmJxwLVe
+   KglvB59buWXKm9oLVZH+ljCgRur4h2+NJ6caBc02qIM4ZFyUczObyHuXk
+   kEcH5RbRkmxnMcoBGIb1RGhfsTUxf4bFIkpFuB98w73x1k7nvPovN1drz
+   tGhqXhbfKyzEiHeFsoU82o3PKbsImxhP23IB0FkcpRbb9emW1YmW+Zzoo
+   SBs07JW2KLqtFV0bYaJ1W95tuIdLmmKVzKhLT9i64AqEwZbQsU6l2a844
+   w==;
+X-CSE-ConnectionGUID: WDv+YvK8QXq5aF4rte5xZA==
+X-CSE-MsgGUID: mrQf8V52RLynUSjGq3pQ4w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11128"; a="17721695"
+X-IronPort-AV: E=Sophos;i="6.09,197,1716274800"; 
+   d="scan'208";a="17721695"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 22:29:15 -0700
+X-CSE-ConnectionGUID: vc/yr3mcS3+imnWtrYwy1Q==
+X-CSE-MsgGUID: ViSZ0++lQhe9JpQGz9tnwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,197,1716274800"; 
+   d="scan'208";a="47965676"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 09 Jul 2024 22:29:14 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sRPtA-000XU2-18;
+	Wed, 10 Jul 2024 05:29:12 +0000
+Date: Wed, 10 Jul 2024 13:28:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:perf/core] BUILD SUCCESS
+ fa0c1c9d283b37fdb7fc1dcccbb88fc8f48a4aa4
+Message-ID: <202407101313.lARjfAml-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-10_01,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- mlxscore=0 spamscore=0 malwarescore=0 phishscore=0 adultscore=0
- impostorscore=0 mlxlogscore=999 suspectscore=0 priorityscore=1501
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407100036
 
-generic_hugetlb_get_unmapped_area() was returning an address less
-than mmap_min_addr if the mmap argument addr, after alignment, was
-less than mmap_min_addr, causing mmap to fail.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+branch HEAD: fa0c1c9d283b37fdb7fc1dcccbb88fc8f48a4aa4  perf/x86/intel: Add a distinct name for Granite Rapids
 
-This is because current generic_hugetlb_get_unmapped_area() code does
-not take into account mmap_min_addr.
+elapsed time: 1016m
 
-This patch ensures that generic_hugetlb_get_unmapped_area() always returns
-an address that is greater than mmap_min_addr. Additionally, similar to
-generic_get_unmapped_area(), vm_end_gap() checks are included to maintain
-stack gap.
+configs tested: 172
+configs skipped: 5
 
-How to reproduce
-================
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
- #include <stdio.h>
- #include <stdlib.h>
- #include <sys/mman.h>
- #include <unistd.h>
+tested configs:
+alpha                             allnoconfig   gcc-13.2.0
+alpha                            allyesconfig   gcc-13.2.0
+alpha                               defconfig   gcc-13.2.0
+arc                              allmodconfig   gcc-13.2.0
+arc                               allnoconfig   gcc-13.2.0
+arc                              allyesconfig   gcc-13.2.0
+arc                                 defconfig   gcc-13.2.0
+arc                   randconfig-001-20240710   gcc-13.2.0
+arc                   randconfig-002-20240710   gcc-13.2.0
+arm                              allmodconfig   gcc-13.2.0
+arm                               allnoconfig   gcc-13.2.0
+arm                              allyesconfig   gcc-13.2.0
+arm                                 defconfig   gcc-13.2.0
+arm                            hisi_defconfig   gcc-13.2.0
+arm                          ixp4xx_defconfig   gcc-13.2.0
+arm                          pxa910_defconfig   gcc-13.2.0
+arm                   randconfig-001-20240710   gcc-13.2.0
+arm                   randconfig-002-20240710   gcc-13.2.0
+arm                   randconfig-003-20240710   gcc-13.2.0
+arm                   randconfig-004-20240710   gcc-13.2.0
+arm                        realview_defconfig   gcc-13.2.0
+arm64                            allmodconfig   gcc-13.2.0
+arm64                             allnoconfig   gcc-13.2.0
+arm64                               defconfig   gcc-13.2.0
+arm64                 randconfig-001-20240710   gcc-13.2.0
+arm64                 randconfig-002-20240710   gcc-13.2.0
+arm64                 randconfig-003-20240710   gcc-13.2.0
+arm64                 randconfig-004-20240710   gcc-13.2.0
+csky                              allnoconfig   gcc-13.2.0
+csky                                defconfig   gcc-13.2.0
+csky                  randconfig-001-20240710   gcc-13.2.0
+csky                  randconfig-002-20240710   gcc-13.2.0
+hexagon                          allmodconfig   clang-19
+hexagon                          allyesconfig   clang-19
+i386                             allmodconfig   clang-18
+i386                              allnoconfig   clang-18
+i386                              allnoconfig   gcc-13
+i386                             allyesconfig   clang-18
+i386                             allyesconfig   gcc-13
+i386         buildonly-randconfig-001-20240710   clang-18
+i386         buildonly-randconfig-002-20240710   clang-18
+i386         buildonly-randconfig-003-20240710   clang-18
+i386         buildonly-randconfig-004-20240710   clang-18
+i386         buildonly-randconfig-005-20240710   clang-18
+i386         buildonly-randconfig-006-20240710   clang-18
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240710   clang-18
+i386                  randconfig-002-20240710   clang-18
+i386                  randconfig-003-20240710   clang-18
+i386                  randconfig-004-20240710   clang-18
+i386                  randconfig-005-20240710   clang-18
+i386                  randconfig-006-20240710   clang-18
+i386                  randconfig-011-20240710   clang-18
+i386                  randconfig-012-20240710   clang-18
+i386                  randconfig-013-20240710   clang-18
+i386                  randconfig-014-20240710   clang-18
+i386                  randconfig-015-20240710   clang-18
+i386                  randconfig-016-20240710   clang-18
+loongarch                        allmodconfig   gcc-13.2.0
+loongarch                         allnoconfig   gcc-13.2.0
+loongarch                           defconfig   gcc-13.2.0
+loongarch             randconfig-001-20240710   gcc-13.2.0
+loongarch             randconfig-002-20240710   gcc-13.2.0
+m68k                             allmodconfig   gcc-13.2.0
+m68k                              allnoconfig   gcc-13.2.0
+m68k                             allyesconfig   gcc-13.2.0
+m68k                                defconfig   gcc-13.2.0
+m68k                       m5249evb_defconfig   gcc-13.2.0
+microblaze                       allmodconfig   gcc-13.2.0
+microblaze                        allnoconfig   gcc-13.2.0
+microblaze                       allyesconfig   gcc-13.2.0
+microblaze                          defconfig   gcc-13.2.0
+mips                              allnoconfig   gcc-13.2.0
+nios2                             allnoconfig   gcc-13.2.0
+nios2                               defconfig   gcc-13.2.0
+nios2                 randconfig-001-20240710   gcc-13.2.0
+nios2                 randconfig-002-20240710   gcc-13.2.0
+openrisc                          allnoconfig   gcc-13.2.0
+openrisc                         allyesconfig   gcc-13.2.0
+openrisc                            defconfig   gcc-13.2.0
+parisc                           allmodconfig   gcc-13.2.0
+parisc                            allnoconfig   gcc-13.2.0
+parisc                           allyesconfig   gcc-13.2.0
+parisc                              defconfig   gcc-13.2.0
+parisc                randconfig-001-20240710   gcc-13.2.0
+parisc                randconfig-002-20240710   gcc-13.2.0
+parisc64                         alldefconfig   gcc-13.2.0
+parisc64                            defconfig   gcc-13.2.0
+powerpc                          allmodconfig   gcc-13.2.0
+powerpc                           allnoconfig   gcc-13.2.0
+powerpc                          allyesconfig   gcc-13.2.0
+powerpc                      katmai_defconfig   gcc-13.2.0
+powerpc               randconfig-001-20240710   gcc-13.2.0
+powerpc               randconfig-002-20240710   gcc-13.2.0
+powerpc               randconfig-003-20240710   gcc-13.2.0
+powerpc                     tqm8548_defconfig   gcc-13.2.0
+powerpc64             randconfig-001-20240710   gcc-13.2.0
+powerpc64             randconfig-002-20240710   gcc-13.2.0
+powerpc64             randconfig-003-20240710   gcc-13.2.0
+riscv                            allmodconfig   gcc-13.2.0
+riscv                             allnoconfig   gcc-13.2.0
+riscv                            allyesconfig   gcc-13.2.0
+riscv                               defconfig   gcc-13.2.0
+riscv                    nommu_virt_defconfig   gcc-13.2.0
+riscv                 randconfig-001-20240710   gcc-13.2.0
+riscv                 randconfig-002-20240710   gcc-13.2.0
+s390                             allmodconfig   clang-19
+s390                              allnoconfig   clang-19
+s390                              allnoconfig   gcc-13.2.0
+s390                             allyesconfig   clang-19
+s390                             allyesconfig   gcc-13.2.0
+s390                                defconfig   gcc-13.2.0
+s390                  randconfig-001-20240710   gcc-13.2.0
+s390                  randconfig-002-20240710   gcc-13.2.0
+sh                               allmodconfig   gcc-13.2.0
+sh                                allnoconfig   gcc-13.2.0
+sh                               allyesconfig   gcc-13.2.0
+sh                                  defconfig   gcc-13.2.0
+sh                        dreamcast_defconfig   gcc-13.2.0
+sh                        edosk7705_defconfig   gcc-13.2.0
+sh                    randconfig-001-20240710   gcc-13.2.0
+sh                    randconfig-002-20240710   gcc-13.2.0
+sh                          rsk7264_defconfig   gcc-13.2.0
+sh                           se7780_defconfig   gcc-13.2.0
+sh                            titan_defconfig   gcc-13.2.0
+sparc                            allmodconfig   gcc-13.2.0
+sparc64                             defconfig   gcc-13.2.0
+sparc64               randconfig-001-20240710   gcc-13.2.0
+sparc64               randconfig-002-20240710   gcc-13.2.0
+um                               allmodconfig   clang-19
+um                               allmodconfig   gcc-13.2.0
+um                                allnoconfig   clang-17
+um                                allnoconfig   gcc-13.2.0
+um                               allyesconfig   gcc-13
+um                               allyesconfig   gcc-13.2.0
+um                                  defconfig   gcc-13.2.0
+um                             i386_defconfig   gcc-13.2.0
+um                    randconfig-001-20240710   gcc-13.2.0
+um                    randconfig-002-20240710   gcc-13.2.0
+um                           x86_64_defconfig   gcc-13.2.0
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64       buildonly-randconfig-001-20240710   clang-18
+x86_64       buildonly-randconfig-002-20240710   clang-18
+x86_64       buildonly-randconfig-003-20240710   clang-18
+x86_64       buildonly-randconfig-004-20240710   clang-18
+x86_64       buildonly-randconfig-005-20240710   clang-18
+x86_64       buildonly-randconfig-006-20240710   clang-18
+x86_64                              defconfig   clang-18
+x86_64                              defconfig   gcc-13
+x86_64                randconfig-001-20240710   clang-18
+x86_64                randconfig-002-20240710   clang-18
+x86_64                randconfig-003-20240710   clang-18
+x86_64                randconfig-004-20240710   clang-18
+x86_64                randconfig-005-20240710   clang-18
+x86_64                randconfig-006-20240710   clang-18
+x86_64                randconfig-011-20240710   clang-18
+x86_64                randconfig-012-20240710   clang-18
+x86_64                randconfig-013-20240710   clang-18
+x86_64                randconfig-014-20240710   clang-18
+x86_64                randconfig-015-20240710   clang-18
+x86_64                randconfig-016-20240710   clang-18
+x86_64                randconfig-071-20240710   clang-18
+x86_64                randconfig-072-20240710   clang-18
+x86_64                randconfig-073-20240710   clang-18
+x86_64                randconfig-074-20240710   clang-18
+x86_64                randconfig-075-20240710   clang-18
+x86_64                randconfig-076-20240710   clang-18
+x86_64                          rhel-8.3-rust   clang-18
+xtensa                            allnoconfig   gcc-13.2.0
+xtensa                randconfig-001-20240710   gcc-13.2.0
+xtensa                randconfig-002-20240710   gcc-13.2.0
 
- #define HUGEPAGE_SIZE (16 * 1024 * 1024)
-
- int main() {
-
-    void *addr = mmap((void *)-1, HUGEPAGE_SIZE,
-                 PROT_READ | PROT_WRITE,
-                 MAP_SHARED | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    if (addr == MAP_FAILED) {
-        perror("mmap");
-        exit(EXIT_FAILURE);
-    }
-
-    snprintf((char *)addr, HUGEPAGE_SIZE, "Hello, Huge Pages!");
-
-    printf("%s\n", (char *)addr);
-
-    if (munmap(addr, HUGEPAGE_SIZE) == -1) {
-        perror("munmap");
-        exit(EXIT_FAILURE);
-    }
-
-    return 0;
- }
-
-Result without fix
-==================
- # cat /proc/meminfo |grep -i HugePages_Free
- HugePages_Free:       20
- # ./test
- mmap: Permission denied
- #
-
-Result with fix
-===============
- # cat /proc/meminfo |grep -i HugePages_Free
- HugePages_Free:       20
- # ./test
- Hello, Huge Pages!
- #
-
-V3:
-Changed subject prefix and commit message.
-
-V2:
-Added vm_end_gap() check.
-https://lore.kernel.org/all/20240709092122.41232-1-donettom@linux.ibm.com/
-
-V1:
-https://lore.kernel.org/all/20240705071150.84972-1-donettom@linux.ibm.com/
-
-Reported-by Pavithra Prakash <pavrampu@linux.vnet.ibm.com>
-Signed-off-by: Donet Tom <donettom@linux.ibm.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
----
- fs/hugetlbfs/inode.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 412f295acebe..cdd8e53ddd19 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -222,13 +222,13 @@ generic_hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
- 				  unsigned long flags)
- {
- 	struct mm_struct *mm = current->mm;
--	struct vm_area_struct *vma;
-+	struct vm_area_struct *vma, *prev;
- 	struct hstate *h = hstate_file(file);
- 	const unsigned long mmap_end = arch_get_mmap_end(addr, len, flags);
- 
- 	if (len & ~huge_page_mask(h))
- 		return -EINVAL;
--	if (len > TASK_SIZE)
-+	if (len > mmap_end - mmap_min_addr)
- 		return -ENOMEM;
- 
- 	if (flags & MAP_FIXED) {
-@@ -239,9 +239,10 @@ generic_hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
- 
- 	if (addr) {
- 		addr = ALIGN(addr, huge_page_size(h));
--		vma = find_vma(mm, addr);
--		if (mmap_end - len >= addr &&
--		    (!vma || addr + len <= vm_start_gap(vma)))
-+		vma = find_vma_prev(mm, addr, &prev);
-+		if (mmap_end - len >= addr && addr >= mmap_min_addr &&
-+		    (!vma || addr + len <= vm_start_gap(vma)) &&
-+		    (!prev || addr >= vm_end_gap(prev)))
- 			return addr;
- 	}
- 
 -- 
-2.43.5
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
