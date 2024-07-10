@@ -1,143 +1,216 @@
-Return-Path: <linux-kernel+bounces-248431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D9B192DD16
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:48:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6C1592DD19
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 438611F22491
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:48:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82073283FC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48559158D8F;
-	Wed, 10 Jul 2024 23:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d6nssw7L"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD73B14C583;
+	Wed, 10 Jul 2024 23:45:22 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DD9158D92;
-	Wed, 10 Jul 2024 23:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E2D63A5
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720655100; cv=none; b=n9JU7qh2APQqBRRkfA73W5U8Z7WizTO5fMxa/VwuXhd/CAgQe9b/A5nm7DUNHTVSJBv6awQW0PqmX9grhjindZ++QwSTtJQWtDObPc86qk1VtzmN6kib8PVJs/rjLdla4GVjMqO0NpWCQ4qZ+5BG5K6wuAlL1mKrQAleEsR56s4=
+	t=1720655122; cv=none; b=eozb81IESGqw9lLYEFFOfuuMzmCJycGRlAoLtstLo2ioLD6QTXPbukFwm8pvhurs0I06nAqCDKmKvveX9r+pgl5e/jFQq2aqvDg77bHuN0ugFV+SJ/WvsIAWwCA0FoSZdKaQGs/0kfL6PdORRBPlkPflQ924ijoRNPoDniB/jU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720655100; c=relaxed/simple;
-	bh=2FL1KLCRwEBjN0Eyy0mybvPOrQPAKC/0qRzk5OZQZ3s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=H9y8st4WZmS67xmB32rKb+/Jlxn1JUXbL34opbWd/fe94HOftEhY/ec4vzBx/ScdA1q+/K/WhapyRoIDQi7bSpw92TQnFfc1gZctag9LUFQcty8uMjGqzPTFmIZF22vDEUDKNKw+8wADxM6OfRjLmycmk8gvvCJZjMo5tIx/ICg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d6nssw7L; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720655099; x=1752191099;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=2FL1KLCRwEBjN0Eyy0mybvPOrQPAKC/0qRzk5OZQZ3s=;
-  b=d6nssw7LzGCWsFDtDHRIL1P2X3rDomVpAclubaCtTO3oTcSNX1tsQ90H
-   7hiwyJBC2Xbw+y4+e6fcOos5EL7eHCmkUKIiNxceaZ3TT1bqPYrPKesIL
-   +YaVWqegBA+kvavk4jutcyoBrFo6lZ4emqeUafZJTjhGseHNqhm76qIcs
-   iLthM/GJ+0aq8G+ahYg+G/RiLvGHyjr1FAB/Gmjb7K8XVaZtKSvvUKlIO
-   Y4MQhLkZf6alj0yf7BMAaZBKmyPqunDs5yO7nKvha98gQW4HPDujNB8Ew
-   UvctzA1+oYitWrrkfjKsf0oOo2lsBvvwxcKpxLl94NGeGc6RLULhxxa8O
-   g==;
-X-CSE-ConnectionGUID: xyDz//9LTmO+/BBRZAO5nw==
-X-CSE-MsgGUID: ZCDHJCGbSHGAxCPevOm72g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="18145496"
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="18145496"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 16:44:59 -0700
-X-CSE-ConnectionGUID: EtNu+p8KSAqlqVHEqTAZsw==
-X-CSE-MsgGUID: LZ2kLGFIQxadmLv6EIr4Dw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="48344507"
-Received: from bmurrell-mobl.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.221.70])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 16:44:57 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jesse Brandeburg
- <jesse.brandeburg@intel.com>, Tony
- Nguyen <anthony.l.nguyen@intel.com>, Simon Horman <horms@kernel.org>,
- Richard Cochran <richardcochran@gmail.com>, Paul Menzel
- <pmenzel@molgen.mpg.de>, Sasha Neftin <sasha.neftin@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, Faizal Rahim
- <faizal.abdul.rahim@linux.intel.com>
-Subject: Re: [PATCH iwl-net v2 2/3] igc: Fix reset adapter logics when tx
- mode change
-In-Reply-To: <20240707125318.3425097-3-faizal.abdul.rahim@linux.intel.com>
-References: <20240707125318.3425097-1-faizal.abdul.rahim@linux.intel.com>
- <20240707125318.3425097-3-faizal.abdul.rahim@linux.intel.com>
-Date: Wed, 10 Jul 2024 16:44:56 -0700
-Message-ID: <87o774u807.fsf@intel.com>
+	s=arc-20240116; t=1720655122; c=relaxed/simple;
+	bh=ppd6gWks0aUEmhroV6/A0palDKJ5Nb1FUPca03Afuqg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=rHYwMkmAQZDpiznEVzyIMPbkiM1j9022xM52UNWLO3ofrPVWL4Z+Jhgf1E94GlrD7za8vGWV+KBVBviNruXlpMwsuyni61SGV3b+UykNEYME0AuI7aYNXvr5o1ElqPyKs2gMxyJ8aNP0dr7nRStha4YvUWFXh8oRHTg+edgPuGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8045e14c387so47961939f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:45:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720655119; x=1721259919;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q/dRzecO4TXDSgIVqu9c62mv7YdSRVfiDzRyV5wH5tw=;
+        b=rE660ixbDZeglN37YwbhcY6WarYO7BoHcJnnDmHePNwJ/1vFQMUID0WUWUV3EbG8hd
+         GsKhNYTNgifaattCoWh1Bf2C4zMrKFMLZleS+3L9Sq94wTVLDwEAFz2Rnxd4pxFHeCIm
+         fwwnOr6rpI0PcgkMAvy73Uw5a4TpQWVsE4Kebt+L/RuA8YTdF60SO8zxH6quy39Qd3qU
+         t+sYw8CndmHHO368uy9yTmdmwYSV99vfLVSxVXHqcGKCkIyd7dktzRnS8nnEamlg7yp9
+         ALDnm8GAl988caHVl5ZuEyR7HSmMDPixl8lNOvN693XUqN8eAfVRcp7kZfjkV+AV1amY
+         TH+A==
+X-Forwarded-Encrypted: i=1; AJvYcCX5xX4x9SItETJBFOwjL8pH/p3iq+h1Q3CIN2TMi3iz+gu/zhufBeuKd3YFVmQqXM/aP2ciolLZJ1Y5OMT5yttRGd1ww8ukBDclSd1A
+X-Gm-Message-State: AOJu0Ywv+VWVo12hTKjbS0pgxpOeKCwr+7AsrC9jinL4oaDHGhnPFZRl
+	Ng+79sS8/Puhwq4hstf1eXW5BzI/tyyr3/c+GjAisWG6JGjkATT8kaLzED6aVjzX5HMuoi+C6jd
+	CHqTDNmWbsXTxYLBSuEdUvzIigg89MtfwsGTmEtZNmkdShAn4rFNj7UI=
+X-Google-Smtp-Source: AGHT+IGwWFUwyrJeI0U0jvO8sayv9TBTSx9h3lH4d/F2Orezba9DpEgW1Z6mlwU8xCdMCdR4euTEyZF8+jG6uuDiBK7HkyBN/0m8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6638:1693:b0:4c0:9a3e:c259 with SMTP id
+ 8926c6da1cb9f-4c0b2b8f692mr504474173.5.1720655119626; Wed, 10 Jul 2024
+ 16:45:19 -0700 (PDT)
+Date: Wed, 10 Jul 2024 16:45:19 -0700
+In-Reply-To: <00000000000031fb62061cc4c118@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002fcc8d061ced3d52@google.com>
+Subject: Re: [syzbot] [bluetooth?] BUG: workqueue leaked atomic, lock or RCU: kworker/u9:NUM[NUM]
+From: syzbot <syzbot+733a96463546d3026b60@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Faizal Rahim <faizal.abdul.rahim@linux.intel.com> writes:
+syzbot has found a reproducer for the following issue on:
 
-> Following the "igc: Fix TX Hang issue when QBV Gate is close" changes,
-> remaining issues with the reset adapter logic in igc_tsn_offload_apply()
-> have been observed:
->
-> 1. The reset adapter logics for i225 and i226 differ, although they should
->    be the same according to the guidelines in I225/6 HW Design Section
->    7.5.2.1 on software initialization during tx mode changes.
-> 2. The i225 resets adapter every time, even though tx mode doesn't change.
->    This occurs solely based on the condition  igc_is_device_id_i225() when
->    calling schedule_work().
-> 3. i226 doesn't reset adapter for tsn->legacy tx mode changes. It only
->    resets adapter for legacy->tsn tx mode transitions.
-> 4. qbv_count introduced in the patch is actually not needed; in this
->    context, a non-zero value of qbv_count is used to indicate if tx mode
->    was unconditionally set to tsn in igc_tsn_enable_offload(). This could
->    be replaced by checking the existing register
->    IGC_TQAVCTRL_TRANSMIT_MODE_TSN bit.
->
-> This patch resolves all issues and enters schedule_work() to reset the
-> adapter only when changing tx mode. It also removes reliance on qbv_count.
->
-> qbv_count field will be removed in a future patch.
->
-> Test ran:
->
-> 1. Verify reset adapter behaviour in i225/6:
->    a) Enrol a new GCL
->       Reset adapter observed (tx mode change legacy->tsn)
->    b) Enrol a new GCL without deleting qdisc
->       No reset adapter observed (tx mode remain tsn->tsn)
->    c) Delete qdisc
->       Reset adapter observed (tx mode change tsn->legacy)
->
-> 2. Tested scenario from "igc: Fix TX Hang issue when QBV Gate is closed"
->    to confirm it remains resolved.
->
-> Fixes: 175c241288c0 ("igc: Fix TX Hang issue when QBV Gate is closed")
-> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> ---
+HEAD commit:    ef445d1539dd Merge remote-tracking branches 'origin/arm64-..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=1544df69980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=79a49b0b9ffd6585
+dashboard link: https://syzkaller.appspot.com/bug?extid=733a96463546d3026b60
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13768021980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=176e2c7e980000
 
-There were a quite a few bugs, some of them my fault, on this part of
-the code, changing between the modes in the hardware.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/76e73f830dca/disk-ef445d15.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d54cbf6f6ee2/vmlinux-ef445d15.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9240e4c79dfc/Image-ef445d15.gz.xz
 
-So I would like some confirmation that ETF offloading/LaunchTime was
-also tested with this change. Just to be sure.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+733a96463546d3026b60@syzkaller.appspotmail.com
 
-But code-wise, looks good:
+BUG: workqueue leaked atomic, lock or RCU: kworker/u9:0[52]
+     preempt=0x00000000 lock=0->1 RCU=0->0 workfn=hci_rx_work
+1 lock held by kworker/u9:0/52:
+ #0: ffff0000d9876518 (&chan->lock/1){+.+.}-{3:3}, at: l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+ #0: ffff0000d9876518 (&chan->lock/1){+.+.}-{3:3}, at: l2cap_conless_channel net/bluetooth/l2cap_core.c:6764 [inline]
+ #0: ffff0000d9876518 (&chan->lock/1){+.+.}-{3:3}, at: l2cap_recv_frame+0x610/0xc934 net/bluetooth/l2cap_core.c:6830
+CPU: 1 PID: 52 Comm: kworker/u9:0 Not tainted 6.10.0-rc7-syzkaller-gef445d1539dd #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: hci0 hci_rx_work
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:114
+ dump_stack+0x1c/0x28 lib/dump_stack.c:123
+ process_one_work+0xdc0/0x15b8 kernel/workqueue.c:3269
+ process_scheduled_works kernel/workqueue.c:3329 [inline]
+ worker_thread+0x938/0xecc kernel/workqueue.c:3409
+ kthread+0x288/0x310 kernel/kthread.c:389
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
 
-Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+======================================================
+WARNING: possible circular locking dependency detected
+6.10.0-rc7-syzkaller-gef445d1539dd #0 Not tainted
+------------------------------------------------------
+kworker/u9:0/52 is trying to acquire lock:
+ffff0000d385e948 ((wq_completion)hci0#2){+.+.}-{0:0}, at: process_one_work+0x624/0x15b8 kernel/workqueue.c:3222
+
+but task is already holding lock:
+ffff0000d9876518 (&chan->lock/1){+.+.}-{3:3}, at: l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+ffff0000d9876518 (&chan->lock/1){+.+.}-{3:3}, at: l2cap_conless_channel net/bluetooth/l2cap_core.c:6764 [inline]
+ffff0000d9876518 (&chan->lock/1){+.+.}-{3:3}, at: l2cap_recv_frame+0x610/0xc934 net/bluetooth/l2cap_core.c:6830
+
+which lock already depends on the new lock.
 
 
-Cheers,
--- 
-Vinicius
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&chan->lock/1){+.+.}-{3:3}:
+       __lock_release kernel/locking/lockdep.c:5468 [inline]
+       lock_release+0x334/0x9b8 kernel/locking/lockdep.c:5774
+       process_one_work+0x8a0/0x15b8 kernel/workqueue.c:3255
+       process_scheduled_works kernel/workqueue.c:3329 [inline]
+       worker_thread+0x938/0xecc kernel/workqueue.c:3409
+       kthread+0x288/0x310 kernel/kthread.c:389
+       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+
+-> #0 ((wq_completion)hci0#2){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3869 [inline]
+       __lock_acquire+0x3384/0x763c kernel/locking/lockdep.c:5137
+       lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5754
+       process_one_work+0x668/0x15b8 kernel/workqueue.c:3223
+       process_scheduled_works kernel/workqueue.c:3329 [inline]
+       worker_thread+0x938/0xecc kernel/workqueue.c:3409
+       kthread+0x288/0x310 kernel/kthread.c:389
+       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&chan->lock/1);
+                               lock((wq_completion)hci0#2);
+                               lock(&chan->lock/1);
+  lock((wq_completion)hci0#2);
+
+ *** DEADLOCK ***
+
+1 lock held by kworker/u9:0/52:
+ #0: ffff0000d9876518 (&chan->lock/1){+.+.}-{3:3}, at: l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+ #0: ffff0000d9876518 (&chan->lock/1){+.+.}-{3:3}, at: l2cap_conless_channel net/bluetooth/l2cap_core.c:6764 [inline]
+ #0: ffff0000d9876518 (&chan->lock/1){+.+.}-{3:3}, at: l2cap_recv_frame+0x610/0xc934 net/bluetooth/l2cap_core.c:6830
+
+stack backtrace:
+CPU: 1 PID: 52 Comm: kworker/u9:0 Not tainted 6.10.0-rc7-syzkaller-gef445d1539dd #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: hci0 hci_cmd_timeout
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:114
+ dump_stack+0x1c/0x28 lib/dump_stack.c:123
+ print_circular_bug+0x150/0x1b8 kernel/locking/lockdep.c:2060
+ check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3869 [inline]
+ __lock_acquire+0x3384/0x763c kernel/locking/lockdep.c:5137
+ lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5754
+ process_one_work+0x668/0x15b8 kernel/workqueue.c:3223
+ process_scheduled_works kernel/workqueue.c:3329 [inline]
+ worker_thread+0x938/0xecc kernel/workqueue.c:3409
+ kthread+0x288/0x310 kernel/kthread.c:389
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+Bluetooth: hci0: command tx timeout
+BUG: workqueue leaked atomic, lock or RCU: kworker/u9:0[52]
+     preempt=0x00000000 lock=1->0 RCU=0->0 workfn=hci_cmd_timeout
+INFO: lockdep is turned off.
+CPU: 1 PID: 52 Comm: kworker/u9:0 Not tainted 6.10.0-rc7-syzkaller-gef445d1539dd #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: hci0 hci_cmd_timeout
+Call trace:
+ dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:114
+ dump_stack+0x1c/0x28 lib/dump_stack.c:123
+ process_one_work+0xdc0/0x15b8 kernel/workqueue.c:3269
+ process_scheduled_works kernel/workqueue.c:3329 [inline]
+ worker_thread+0x938/0xecc kernel/workqueue.c:3409
+ kthread+0x288/0x310 kernel/kthread.c:389
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+Bluetooth: hci0: command tx timeout
+Bluetooth: hci0: command tx timeout
+Bluetooth: hci0: command tx timeout
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
