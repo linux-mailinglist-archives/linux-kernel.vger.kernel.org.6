@@ -1,86 +1,120 @@
-Return-Path: <linux-kernel+bounces-247655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C11EF92D29E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:20:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D15B92D2A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81B0E286B55
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:20:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBF1C281286
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6404B19306B;
-	Wed, 10 Jul 2024 13:20:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858E4192495;
+	Wed, 10 Jul 2024 13:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PaD2r72i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAAA192B99
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B766C1DDC5;
+	Wed, 10 Jul 2024 13:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720617605; cv=none; b=r136emkxX4E187s/yw9I7hDDTltElYAQ1cDmd6V3M9kUXLXsJgGvMfx6K35dhs15GZUHeOGZaoQ399bYu73GvZppA5RX2x97U60S9TwBiaIAE68UqfSKMynaXCdjPqVV7tX2zFSwoulojuPBqKAlTqYzL2a+sXWVqbKRYlFwAbI=
+	t=1720617746; cv=none; b=bwEUJ/kMputaRYAvWq2qC6MfcluKZB2kORFA7MJYrFZBFy9Kc5wrqA6JnGYHTavo4nk8vwOD9RKV4Qk1USEhS5oFlG5UOe266gLiMzHND96cTrUsqSotGzuBLflS0+GCgJoTYnGgqJEEa28hsg5EiB4uFncWUXW1dPfHA14v+Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720617605; c=relaxed/simple;
-	bh=UzccWqntR3Rp39PaFijwuBRKjFmhL6iCoFWN2E9ViRQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ubbEtE4ToP/Qawj2kejuKbKyU2mvzNRvdX+W0Zr9xHgVkoP7HjLMJUohuDs1Xw0DzCX4nBTQt1azTUHUGu+/AFCq7VJjFU4LDbfkZn5Z2ArJQ2PdUja80VG2qEZExfjL9mRLxtWo/Xlun2iIhlm8OrTQU2B/yz6Sse32l33VQmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-804825a316bso88449239f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:20:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720617602; x=1721222402;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XP0E7kJ+vD2pN9mRIYuQjB4ae7HZ2ZJuN60VrPyPFqQ=;
-        b=uKqCPokPaRXvuhoAl5ozA8AmE+CNLRMPz6mmTlVZnUqYgsHUuHq1wCqEg9r8wqlXVC
-         S7W+DJSD2KzidAg/E66PQmwbHzbO916aOnpMAWCeR7csRtCANlP9eXDIykS4QuysTUlQ
-         QPFcNqEPkTwgAD4q9ianRkjn8D53wFvI3UNpqbAenhqH0kYoHe/GLOdVLHXm4Tl5X7bz
-         Mxa00nsJQCN6+ImbSnMbiVd+dL+dBQ3F25W+15QKRUycERjCk3zNuU7x7Own1A8vFpHh
-         da6zk3rgL3lj4VoOSsE8wG0hK31ZYihIeM/cwuEf/hO/u0a+ysF76XzJIOSC/TCNIklj
-         iUbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpIAKjHEEEeASY1hUCuOpJc6S8zG0jCU2MehVERXpvsSAP/WtAMwalK6Yq+3UQxQC79T7ifYx37Cu+v199bqYkEyeY6iaGbx64PLAv
-X-Gm-Message-State: AOJu0Yx7r9TY1jTlWlkQcfexMIk5qBqDfx+otFDEoGhKkmMJ8JBYXeH2
-	J+tfg5/mUwQLg6JZSSMcT9ITjSn2/VVEerXGaIF0w6+9p/wtN4slJDFKSA7sLAe/JAjyXKfYI4x
-	ZqmNy0JtBxLUR/gLIUIZMG9peYrDfAaXXd19tG/0aZfuh9JTSOlH7bjE=
-X-Google-Smtp-Source: AGHT+IFQ1Z3Enb7LewbrFTOuyUiyugihGV8hcov9D7Em+4kvS80mREreE8zLRjF8bP71WGTJXobwJ7eSARmydY2yaFBGsJX/ImIG
+	s=arc-20240116; t=1720617746; c=relaxed/simple;
+	bh=H/Mh5dijKIbLYIxonJjEKCDKJU/iEvbrdpiVCnmG2dY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rxLRvVi4kh/92VXHc0Lybc5PqGskRozBZU2qhWI9tQw3wYZAaF41yW9qTKHH92CsNu5PGDteR8UZ/ULOgrqJJs9Yo3sKCFhQRl8987+ISebWZIOqS1D7hWs87EsFJtQvOY05pSYDO/3i1wukey4JuIK1k70mED6BjFWDRnMzCro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PaD2r72i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFA1FC32781;
+	Wed, 10 Jul 2024 13:22:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720617745;
+	bh=H/Mh5dijKIbLYIxonJjEKCDKJU/iEvbrdpiVCnmG2dY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PaD2r72iJ7Oz+lB6QWTBKvGGi1zGUpmdiwtKSwfAnT8zbaLBRanI7OPDR2Nw9+UEo
+	 NarRLTQhlJ1jOJBnDZJzBQUFGrEQTrUVBPwj5Ar9JksnyoG2pKGABp5iYaEe3dDxZH
+	 mLCigsguIlw2/S3JVRHdl8wVimCYV43VfDqUxrIU=
+Date: Wed, 10 Jul 2024 15:22:22 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: =?iso-8859-1?Q?=C1gatha?= Isabelle Chris Moreira Guedes <code@agatha.dev>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>, patch-reply@agatha.dev
+Subject: Re: [PATCH v3] init: staging: Fix missing warning/taint on builtin
+ code
+Message-ID: <2024071032-hardened-discard-4cf6@gregkh>
+References: <zsk54zosv6tht4j4nma4ix7lq2knxi3ylqadd2foznc72nkaa3@xbc7gpozx6ai>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2709:b0:4c0:9a3e:c263 with SMTP id
- 8926c6da1cb9f-4c0b24abdb2mr377357173.0.1720617602680; Wed, 10 Jul 2024
- 06:20:02 -0700 (PDT)
-Date: Wed, 10 Jul 2024 06:20:02 -0700
-In-Reply-To: <20240710125518.1083-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000000991d061ce481a0@google.com>
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in l2tp_session_delete
-From: syzbot <syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <zsk54zosv6tht4j4nma4ix7lq2knxi3ylqadd2foznc72nkaa3@xbc7gpozx6ai>
 
-Hello,
+On Sat, Jul 06, 2024 at 12:15:01AM -0300, Ágatha Isabelle Chris Moreira Guedes wrote:
+> Fix the absence of warning message and kernel tainting when initializing
+> drivers from the `drivers/staging` subtree from initcalls (when
+> configured as built-in).
+> 
+> When such a driver is built as module and the module is loaded, the
+> `load_module()` function taints the kernel to signal code of unknown
+> quality is loaded, and produces a warning like this:
+> 
+> [    8.076352] rts5208: module is from the staging directory, the
+> quality is unknown, you have been warned.
+> 
+> The same behaviour is absent, however, when a staging driver is compiled
+> as built-in on the kernel image, since loading it happens through
+> initcalls and not through load_module().
+> 
+> This might prevent relevant information of being available on a bug
+> report (i.e. on a panic log) among other possible problems.
+> 
+> NOTES:
+> - The patch is written in such a way that all non-staging drivers are
+>   kept the way they were, except for staging drivers built with
+>   `-DSTAGING_CODE`.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+That's good!
 
-Reported-and-tested-by: syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com
+> - Since it changes some macros related to clang LTO as well, I tested it
+>   and it works properly in kernels compiled with both clang and gcc.
 
-Tested on:
+This is odd, why is it messing with LTO stuff?  It should be much more
+"self contained" than this I feel like.
 
-commit:         185d7211 net: xilinx: axienet: Enable multicast by def..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=143531e1980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e78fc116033e0ab7
-dashboard link: https://syzkaller.appspot.com/bug?extid=c041b4ce3a6dfd1e63e2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12732b76980000
+I see what you are doing by trying to use some of the LTO macros again,
+but in doing so, it makes it really hard to understand the diff and feel
+comfortable with this.
 
-Note: testing is done by a robot and is best-effort only.
+If you want to stick with what you have done here, can you split it up a
+bit more?  Once patch for the LTO header file changes and then another
+that only adds the staging stuff.  That way it's easier to review and
+justify that nothing is going to be broken with this patch.
+
+> - Some `checkpatch.pl` errors, warnings and checks (with `--strict`) are
+>   present. Some were already there, some I introduced but I think
+>   they're unavoidable. Some IMHO don´t make sense at all, I think they
+>   would apply for most regular macros but initcall macros are just way
+>   different.
+
+Yeah, checkpatch and macros can get tricky, use your best judgement here
+and it looks ok.
+
+> Fixes: 061b1bd394ca ("Staging: add TAINT_CRAP for all drivers/staging code")
+
+I think it really fixes the commit _after_ this one that turns on the
+taint for the build :)
+
+anyway, nice work, I think it's almost there!
+
+greg k-h
 
