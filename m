@@ -1,122 +1,168 @@
-Return-Path: <linux-kernel+bounces-246829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B49092C7BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 02:57:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE88E92C7C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:06:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C27B1C221C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:57:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74C77284826
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FA94A04;
-	Wed, 10 Jul 2024 00:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946704A3E;
+	Wed, 10 Jul 2024 01:06:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtxNH/Ic"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HdY8Zb8Q"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2040.outbound.protection.outlook.com [40.107.92.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05164A07;
-	Wed, 10 Jul 2024 00:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720573049; cv=none; b=b87q6TiYAmwERkfFD9ZkGOR+qAIyTrkG//eXLzSpG8VfnYVV00tu1jATn9e/8MbcmAsBFSDEphU1toZF7UjULLAHHzNs70m6mMOeNycUlsqBPiJEkSGdKJnT1DHo/2fa8JVuHqAWs2glQgELkJa3NhNDwkB6HJS089yT4jwDnjk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720573049; c=relaxed/simple;
-	bh=B2IJUWG+gIY1F0/nl3PBsnRoD1Lqo2RSfjArrbG8HaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jC/ziSWjCQUjxs01FbjGrCWoS+UQGerTJ25t6OiLXpKzOJUiZlaGcw/HoLYnqti2mPrFw//ykdAN7NMz1yp2RHPe4gm6DbPlK9Zve/jJw2b1YBjjjJJrR6bhkecCkEdZthThnlKsWCRysYnSZNrU0a9kUW+9LHg6NsztnBTbv3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtxNH/Ic; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7036815bde7so1764372a34.3;
-        Tue, 09 Jul 2024 17:57:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720573045; x=1721177845; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2YqcG/O7UO17pKVeqS9vSTR5z7c3JMkKO7hnG3tldC4=;
-        b=dtxNH/IcflGUjibj8v5KNdAAa8moMxLqmGzniUtyEy+mc341k0Q4xZdRlrw9gommVe
-         H85eLboWFDkB4bxKvZ6VzMUMHJdibrQbcmJymDLBfTcAUl36ruILpnYRraBNgTI2OCxU
-         JrnsylFTP7wNaOVxC1fjXLwl/aSYkHMlxaBf8556sAuk+9ejtF35TvJ2lEDYiOo3PHVE
-         NIFe87cybBZIAyBZB5jF0F+6XfD90yR296Qoq1A3B3rQ6iK5OBHGsUbym0wJCBtL5Qik
-         5dCjPMtkZJ3k8wwHp/iatBCz9s0kiA2stk5n7c2GdtywVI9fkTskLUSsmfmd4JaMAItb
-         I+nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720573045; x=1721177845;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2YqcG/O7UO17pKVeqS9vSTR5z7c3JMkKO7hnG3tldC4=;
-        b=eysRH6HjzLzluBYmsF0hA0s2v6hbT9jVu7WndOqiaq3J+10ZhY+dJPGknt1/pObp49
-         V3I+2zqgIJoSMPOqz3cDfWdMqnC1svgA9S0wOJXzG7VHj8BKrMIASJIoJY9EPFnqgEkW
-         gODatId87czaL50qSgc/ZeplQsLlcT8uBWBgU6EDPM6JPafihZ9HPAwjh+M+1xF71ArT
-         dvmny2XDhZ6MVO6BQJx+hWiFaljtYp7aQQZr0EXMmMOZUwY68Wcv4oksIWRTnscFNe9H
-         GZEs9FZX+RrITuwdAONS7OLzSJ1lncgj09WtqNP8lxBu+i28+UMYPuPJb2WKZxjLUtAv
-         LYMw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9o9QQCClpcHwIKO6YdXLaO75o7B4ZIroQVjHtUIoPI810EWpmxTbqcZ22bCEihVoOxmIaK6pTq6ZyuWVD7lTw9+5tnV8AbYR4oYSq
-X-Gm-Message-State: AOJu0YydSTC5TC6XFo9yUz/bw9tQyAZ/wC29WHSIUgv2aAkgeEkIllDW
-	X8HGeQVs5DfRsA3Yb9ASzC1ZF0/TiMpr+lh5/NIBANyHg0n4477q
-X-Google-Smtp-Source: AGHT+IGCdW4ebx+zL0Pukp6i4b9YkL+Fx//qJ6Wqq2XyXbYfl7OoNWXIXyjdewNDL0PDLXDB5jkExw==
-X-Received: by 2002:a05:6830:1648:b0:704:4938:e4fb with SMTP id 46e09a7af769-7044938e726mr933070a34.24.1720573045525;
-        Tue, 09 Jul 2024 17:57:25 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b438c70a4sm2467638b3a.83.2024.07.09.17.57.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 17:57:25 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 9 Jul 2024 14:57:24 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: io-uring@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Tycho Andersen <tandersen@netflix.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Julian Orth <ju.orth@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2 2/2] kernel: rerun task_work while freezing in
- get_signal()
-Message-ID: <Zo3cdEMZVOJcseWm@slm.duckdns.org>
-References: <cover.1720534425.git.asml.silence@gmail.com>
- <149ff5a762997c723880751e8a4019907a0b6457.1720534425.git.asml.silence@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EFD53207;
+	Wed, 10 Jul 2024 01:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720573606; cv=fail; b=alGzRXTG1RJkIW7YjD/npYbxzTHYj7pIsSGtJW+WzBG5blX2P1/VXWWqO9+KPImoriAd3QUD+x+Z8JnlHYmThsf61JACIv0XaO7nyyl54ZA5zQ4/qj/OuGRYmoJVT6F+Z24elh4/LiZ9XEiIeRP+du+IHD18SMNAbRRQXB+8Aro=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720573606; c=relaxed/simple;
+	bh=ev/DbwUoJjM+VHQ1HVoQZlyBa/flmbVG8T8PK0CcWSc=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 Content-Type:MIME-Version; b=gA0XCgJ0C2+HSkfiVDfLDk7w2AJfjEqu2ffc503j64rMxS/YXQXHGXuF0irId/c9xs3HescuAdRaumOUIQeSWAtCfSj9rj239AvIgh2UjQ025FwxFJe8FLikJHhZFsEiTEIjN8umssy8AyQBgZOeRyYFBItaYOgqTuPzNzh4Cv0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HdY8Zb8Q; arc=fail smtp.client-ip=40.107.92.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=M3X9XEcucSgAm098xqRpfcj6nHgT6HBdu06D2SiBE/OcRglLEJfD7FoWMxQwUK2FqNjept0Lv09b9eIYR0yhNx6CA27aeCbxRlMRTZruY3KTsxdOBt3UolwMFsoPiBbSfgf3QZcmQ4WkL5+im+OwU+kcPUnwRN3nC7sJ9HSWyfJXMDCwDov9djBbgGVv7Doo+ouBH5XXELW7MVWbpcKau0QEAuXbJc5vLOhRQxGmW5sgCv2wp1KFMkkLv5sRVlmvuah1CaGslY7+/XzVEgD5f8N6FQ1Qa88N8aE/RKAmyFJLrYRRnocgIlYDMuZSj3V47Q0P7gcaod3zWbtoCJxW0g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ev/DbwUoJjM+VHQ1HVoQZlyBa/flmbVG8T8PK0CcWSc=;
+ b=VPYUlQEWDqCr5QUKm4PVRwA/6gOKn9xduwizmAo9vXtYAZDYgngWBXykhfA1JlEXj75m8btjst5ELfpxshix1W2CC+jXJ7quMZN83I0+tkc9i9BoQoNT2A8D0pmTNPhhlTXSpBcZ8w1x8Cw3qedSNKgwZqjah9hhkPvj7R47uTo2NmmR7B6VLs6hWdADa4Qw9+yPV1vBEg7H2g5TIxIjx45iGv4eDt1j3I3855dsExnV8l4pYgERicHCAdhg7WbnxgaNRdcrpbZQi+uDCtNm4OLzV2EA/M7+koMqjrrGCS4Ijs+Zxqgc+97Fjcgb20u8ZGzA4rVeJVSMq9mdJz0Zcg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ev/DbwUoJjM+VHQ1HVoQZlyBa/flmbVG8T8PK0CcWSc=;
+ b=HdY8Zb8QP9/ETiv7+4TZMv+nDUyT9bytM0N2hQj5mgCHvVG/H2/6YUQH9oFKc/nAAotUvqea6roCmUVDF/x3jUioy9F1pgbO4Ya0YIFcpFOnUjPNsf03NnaeOMrFvbUlf16lTKvPieulfjEKLCTGp0NBAPYh6iTrr1E9xtYsDC0dyDw0ksiytLs5d51Th2uXRtrxZQtpu8PDthQfXbHpFFtimeTZU9qGiCC13cLLcmfSVUPmyjyigvcyMS/wVCrIEhH7jxJGP4GvE2Qzg25BfZOzpOl9p9UMB6kqQPtrphMTcagjNxxKw772DncbC3y3PhdoUaLRLtrQvY9C1xHGlg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ PH8PR12MB6913.namprd12.prod.outlook.com (2603:10b6:510:1ca::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Wed, 10 Jul
+ 2024 01:06:40 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%2]) with mapi id 15.20.7741.033; Wed, 10 Jul 2024
+ 01:06:39 +0000
+References: <20240710000942.623704-1-rtummala@nvidia.com>
+ <Zo3SN_qlYUWLAlyR@casper.infradead.org>
+User-agent: mu4e 1.10.8; emacs 29.1
+From: Alistair Popple <apopple@nvidia.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Ram Tummala <rtummala@nvidia.com>, akpm@linux-foundation.org,
+ fengwei.yin@intel.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] mm: Fix PTE_AF handling in fault path on architectures
+ with HW AF support
+Date: Wed, 10 Jul 2024 11:02:03 +1000
+In-reply-to: <Zo3SN_qlYUWLAlyR@casper.infradead.org>
+Message-ID: <875xtevyw6.fsf@nvdebian.thelocal>
+Content-Type: text/plain
+X-ClientProxiedBy: SY6PR01CA0159.ausprd01.prod.outlook.com
+ (2603:10c6:10:1ba::17) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <149ff5a762997c723880751e8a4019907a0b6457.1720534425.git.asml.silence@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|PH8PR12MB6913:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5f51fc75-c53b-4ec3-abee-08dca07c8dc0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?XZfwbNfslaL7EvSR12me2hYWfcZ6yWsUVQLov2kQUD09AiuRMrN4OrojQvJe?=
+ =?us-ascii?Q?oaNYISe2qY4+KAOJH2Y1DVaeiNw+MTglkFb3lMRdD+td87qJZ1/Btj00DYNk?=
+ =?us-ascii?Q?FrMLuGo+Ak014/S2ibQqroZ/0AGs1Pymwwlczfwr8Bodk7hlcGvqNm4S4vIO?=
+ =?us-ascii?Q?QrktRJSVnlz90oPlCSP02/3HDyV8CZsYPGdLNEqZRYF4GFtY/D9vSnl2Rr6C?=
+ =?us-ascii?Q?by1hgZ72VKCLE+pWRoFIMN8cYUxJaOek4n08DGYw+luTLIALYqAuHwYWXxah?=
+ =?us-ascii?Q?BR10Rf0/0TMKerCY+OKFzuQGTsOF3zclz6PKVM3kdswjzJ9yiOobmRnYRani?=
+ =?us-ascii?Q?OJG4LK1FahO+ButvDW10f4A2MdzBs97iL5v4HSUgAL97NuTtOakqLqvlKiW+?=
+ =?us-ascii?Q?19P0yPUQDBWOooPeF3dRU7/sBJIY52XbYtmnFlHxMmyCqloAdSjzSuyPupPZ?=
+ =?us-ascii?Q?ESp0XEl35G3NSMyxmbc5ZKa14l7mxdzFD5w+HiOIpLOa85k7opbE/LeZrnr/?=
+ =?us-ascii?Q?gifPFWkyzmxpqD+aiMm/7bAN6++ZzH73APtLyhZGUclNzVlRvlnX8qqAPcZh?=
+ =?us-ascii?Q?SZ5KmRMOCTHY823EsXqg4EwvotHnZiNsJkAVysnpubt7fZBotrz+95IsnPFk?=
+ =?us-ascii?Q?TKuLbKGvqBP1OunWR1+ZqULKaXa0DbVCrspuwufUGDrHRrWlThjkfWRn9MoG?=
+ =?us-ascii?Q?D55xuhq9cDgGBQrXYe3wrATETVcbBdRX0bUSiEhO2XpOb2YtwXauU3SVV42i?=
+ =?us-ascii?Q?YMLU2icQQ9z8RTt0L7Y5JAF/AqydB9RIX2my/p6u9DrDTMjMtG9MFGmTLlOO?=
+ =?us-ascii?Q?7UIpEIGcsGAgFRQD3sYnepEdtU05EFtnwYF6ItjjDkDwude7zqkrgbrBeErx?=
+ =?us-ascii?Q?fWM0aX9EBdP9SliXRcpnB4Rkx2GwgdXfnbI0YpH265lYl2PuRlxg8jrac+SK?=
+ =?us-ascii?Q?/t1dbOPD1bt0Uq2CNNJcDW0XyD/tYq7GH6TsT5eD6Jr8bcR7/cq3yOELfyql?=
+ =?us-ascii?Q?n9hjKKdhtzUxgzt0s+6Mtf9WwYI1LtTwkvOcHzJS3HFy3D34L6tCiClU/LVX?=
+ =?us-ascii?Q?UxO1bZz3fRokL7f/EwW+/qRcLwGO9QKxmsz/vrOuR1F1S+YzrEsBp+o4ZyNa?=
+ =?us-ascii?Q?qCDLpr6UiCQeq0NF7/vrP5Md5CfsQe4NhfPDr3WxL/1nUFxt3bclIOW2ghuy?=
+ =?us-ascii?Q?Ksrwcy7KzlWVqUOfH5gRIF5RIic+eYiZOni9yni9PSTdU7GE1Ch5EPMSE81F?=
+ =?us-ascii?Q?NYm03ZJ5RiSKDq0iobYYNCXh3z/XUuTzzW8nN/D379PGx7mNwwOhnFvZ15dM?=
+ =?us-ascii?Q?XY2JBgCzQ4lmNf5b+EvhOZCLGWSpxBqkKpr3uNv+M1j9aQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?SHNib+deeP+WdpSOG/jj/AAjTAYX6uhx7483gIgT6OI7EA57J2OampIrFJx6?=
+ =?us-ascii?Q?QmEUzAPLuMYGbD5GRUB2zJ5FgDV/ihLMIixlbDfwZQGBYwHhDuA7gxi9X7+p?=
+ =?us-ascii?Q?atnQkjWbxHWRj/KZaxbRglBL8MRolewffjDowwElnbB1hE3REhtcVZYvaPkz?=
+ =?us-ascii?Q?0ePFULU8eWh9Lh3MVxuhGOWfRCEZoeoSBzZ64DlgAAsDHfOa3MBu5rotRPs8?=
+ =?us-ascii?Q?J2CRFGhLgFtK0RjYNz2XXy+voJgfPM19j71yXRbdryBw2N5X2vtqWwvrRtof?=
+ =?us-ascii?Q?RMts4UQKSxUg1LcvWH7VTUorhXHLiBJU8A9isBBthK45/TiniCYzUTBLK15j?=
+ =?us-ascii?Q?tQOukHrQ/7aSyFwVXZehv81e8eGI8v2wL+mXFwjhC9Bd0+vm0lxk5/obT7QR?=
+ =?us-ascii?Q?xLpgfeyUw7CSJGFyR+il3mIqJOHHLWVZU5BmKKNLuU1bbGhOXcfgLQg2oGhq?=
+ =?us-ascii?Q?FRLgJTAUCFaR9vvozhOXjN2ykciWAhziAhS1TqZJv3l3nfGwR7w1HbaSeRjm?=
+ =?us-ascii?Q?97EZbPd1G2lGZHMiQtgmP6OO0EvsCCtIAIJyJ7Bqa/S9ggG6K3wGCJt4PGK6?=
+ =?us-ascii?Q?HZm3udvpAJDzGRHTq7qgbjTJFMHNFixR/kZBmSjCJQWmx4ja/5fqW9ka5yX2?=
+ =?us-ascii?Q?uzAl0BICp3OUdw9jWnVS+TI/AiC4rnoOXSUIPsbchS5so4y/V8XYWr97W5C2?=
+ =?us-ascii?Q?uJNiqjQiSCi3Q7YkjQnbPL6S4t/QtBy9JDv2YI86szPFPo9FWdBlVvt9kWfm?=
+ =?us-ascii?Q?mLPF3g0OSz7/RL9UJNmPs3VQFSV3qrTkqhP3rFiOQhQ1oEOdF1hQVHlbhheU?=
+ =?us-ascii?Q?2y+LJCe7K+VBHBsJmEL5cgXWqqkGU6BrWqcM3gsPYlUoUOIhXq3NwIAKcMqu?=
+ =?us-ascii?Q?mzvLfIPiA+8tbA+i4OrqaRVIen2+4fi9q+na5bV3YltqC/szXJlE/FKG2dQ2?=
+ =?us-ascii?Q?2C5EU9J7rivHOkQDcwbBClE6o3S83TnQIN9SkNf137lT0loFW9k1NWTehr4K?=
+ =?us-ascii?Q?Njyq8un4/zk/x511sLPYzI3BV4HBBCQIgQ8ykSLb3yFYAlKt2O2abKsUvWkg?=
+ =?us-ascii?Q?vy2iKROQliNzNYY9PP52TUqDtmCTvrNp62t0pU2Y3NcgJCcKmN+10/uynIsH?=
+ =?us-ascii?Q?xvN/+QNvHW1q6BzpVcKv+kJxAR02TUJDu+jUXM2eXyaLix9E5YFmnAeV7x8F?=
+ =?us-ascii?Q?rRLDj1yp9ihmOV6DL2lkotooc8R9PNU7iBIZuPCJSM6sXQaVlnkvprG2ktgY?=
+ =?us-ascii?Q?JYeMhfhZcIdDBHqwgYu3+Wp6TSC3U+pfx/4wQ6Bqo3c8vsOtjhrCakPClv0U?=
+ =?us-ascii?Q?dL+N9A5uQDTFPMUrUuCGOgnerqMQdEXauCQHbSSTHxY7hdeLO24cUR0TkKsz?=
+ =?us-ascii?Q?WzkGxkiH10SXCkNJjVW3StkZ2DrMEzfcTFvRO8yUc+52X2RqH4ZoBxROpf9V?=
+ =?us-ascii?Q?RVB6u5mz41OYB+Jw5FXm/V7kTCskq1PojxDzAncqF/YtlozyBKUZJltWOv9E?=
+ =?us-ascii?Q?xqt25BIuofb59KoOuQLU30pCpZszRywmF/7Fo1iK1dEAxgRJYVkQKSDalyPh?=
+ =?us-ascii?Q?1HZwALC5u630i/Pgp3IjeJ5hnj0L+dewCRnTYMJI?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f51fc75-c53b-4ec3-abee-08dca07c8dc0
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2024 01:06:39.5638
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Gu677zx0JmrQ+5c1ppsOXbW6AmXdNVNBvkF6pyeDVUx2WbvvnOrHikOSAborOi/nzVbmhO4/PhEFJF2o/fYS1g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6913
 
-On Tue, Jul 09, 2024 at 03:27:19PM +0100, Pavel Begunkov wrote:
-> io_uring can asynchronously add a task_work while the task is getting
-> freezed. TIF_NOTIFY_SIGNAL will prevent the task from sleeping in
-> do_freezer_trap(), and since the get_signal()'s relock loop doesn't
-> retry task_work, the task will spin there not being able to sleep
-> until the freezing is cancelled / the task is killed / etc.
-> 
-> Cc: stable@vger.kernel.org
-> Link: https://github.com/systemd/systemd/issues/33626
-> Fixes: 12db8b690010c ("entry: Add support for TIF_NOTIFY_SIGNAL")
-> Reported-by: Julian Orth <ju.orth@gmail.com>
-> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 
-I haven't looked at the signal code for too long to be all that useful but
-the problem described and the patch does make sense to me. FWIW,
+Matthew Wilcox <willy@infradead.org> writes:
 
-Acked-by: Tejun Heo <tj@kernel.org>
+> On Tue, Jul 09, 2024 at 05:09:42PM -0700, Ram Tummala wrote:
+>> Commit 3bd786f76de2 ("mm: convert do_set_pte() to set_pte_range()")
+>> replaced do_set_pte() with set_pte_range() and that introduced a regression
+>> in the following faulting path of non-anonymous vmas on CPUs with HW AF
+>
+> At no point in this do you say what "AF" stands for.
 
-Maybe note that this is structured specifically to ease backport and we need
-further cleanups? It's not great that this is special cased in
-do_freezer_trap() instead of being integrated into the outer loop.
-
-Thanks.
-
--- 
-tejun
+It stands for "Access Flag", but that is specific to ARM64. As the fix
+is in generic architecture independent code it would be better to use
+that terminology (ie. old/young).
 
