@@ -1,208 +1,111 @@
-Return-Path: <linux-kernel+bounces-248009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1134792D75E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:21:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D10F692D75C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42DA01C20E29
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:21:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87D121F225A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED5C19580F;
-	Wed, 10 Jul 2024 17:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CAC18FA02;
+	Wed, 10 Jul 2024 17:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hOU0ty+q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lY0pkjCZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045EF194C6F;
-	Wed, 10 Jul 2024 17:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1884A19580F;
+	Wed, 10 Jul 2024 17:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720632064; cv=none; b=OFhPJaZ59ibZAibf8z1ZVpbj1qzMnj5Qc+0eZfiUnUjmwSPJKhXHY52+IROVlx4/PYiUb3I0Hj+1yCvJikl+4gUu+qxeZ22tsHB0d8pV7Y1DB+g37oBm3+okZJpcP7IplV3aZwt9IK/AZDUOXHlfhLi8HNUNdo0rMrl44yHo0QI=
+	t=1720632053; cv=none; b=I3BGKNhZBooYdfcr5+PkgPllRssgtSn+Px8BB0S5l7r1+TIY2dRlMFvGFyY+tjnwoodECkRWW7JIpwJGRV91vQG1UpHZqbC9+eHTbtE881rhdiiUcdcXoyAUCo01VS/r6VQrPT5NUxQtbCK2+eePyl3rvC9gRt3WG2nCReeiI0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720632064; c=relaxed/simple;
-	bh=FF0aSktouEQaGWd9Hm0QcgvEejLKXDoWmf2IlT0telM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dKvYb/uN603+bDe8aYDxrGn0S4zqpN6hT8r2mFaYue3wgVaFVhdrZE4kavKBEPwY2qVai5h9Fs+0Xn7ywXFf+1taz6jDkt0L6H1Y7es5VibXFWZBVtSVbcFJzrYxd6Veis2Iecw4et3P+wt1W3KGtDzrFLWXh8hulOJlV320Jmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hOU0ty+q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9034EC32781;
-	Wed, 10 Jul 2024 17:21:03 +0000 (UTC)
+	s=arc-20240116; t=1720632053; c=relaxed/simple;
+	bh=rb42RhIoXqeY6d3mu58OrK8GMi/G3ObjVhuM25pbjwc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ekb5n1wnIsz1hVjOJO8T5QD6SvsxtIT91gRyIZ4KlutMya1WkCig34WIOlheEgEBtxhsUV1sg07DryWjkjqVeYCmU5wqkmGDZkMZQcbsFMRQ9y1v74y9G9reKFF7EryS9VeQzipvp46NLnXNXQgYe6ap2IMMtJTxaP08xsn81CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lY0pkjCZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06834C32786;
+	Wed, 10 Jul 2024 17:20:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720632063;
-	bh=FF0aSktouEQaGWd9Hm0QcgvEejLKXDoWmf2IlT0telM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hOU0ty+q8xrVwNpiFshOm/bFyN+vdegtm/F5NX43mkp8WEcX9fQ71ISqToQTtF0e6
-	 0j0Y+uRgyOV7jDEBUCGpYbyn/nTLTh2j7uVEKTre8k4g5UevahiEpgcKo8MdAVM1er
-	 aMRkDdJovuhi95ObaONk7IXJvyXvYNej0Jagkc90tUIxew+OOhhgPX5qTpw5cJ6kn4
-	 ioeptSRxPhsX+7Js4/4Dcy3wkC/mpdF1ZxWk0EWbbIJcSRWP2z+zbl2At9Tg2WLS8x
-	 Pv3dgAxCCAI+P+D0naIbSWOr3C5I6Ls+3ffbDaIdUnZtgae5xsJqzuju+pR4QeF/DJ
-	 fOgFWDEyauo/A==
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-44930ea05b8so13415021cf.1;
-        Wed, 10 Jul 2024 10:21:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXEGWtvwlctR/pa1S1Ny731QbDx4QLzMs0ke+my67VpLwPBuhnm3yTXgj01LCrPKO5sjkshmUJM59bJB8+uVcmgKiwgAGxwxut1lo+RnJ6b2o/jMBUshuESfy8jiweNaA7/AOs0cdl/WQHF4kidQttjHxovt3s5lhYrTsyK1g2YL1S/XH62E4pl
-X-Gm-Message-State: AOJu0YyBI3SuZ6Ds2qFA5bbhLVIyyCyHXV3SnxnMxZwIEwsUyzeE/W6+
-	j7/g+N303eNXY0sxRSZIY4bTsaLo1urFsawIRQkrPVJa+v+x/NvqpSvjg2pSQeEaNIS5vzm2Ofl
-	nMa5F9cbdQGCK8jmWtQ7y+sVr1fU=
-X-Google-Smtp-Source: AGHT+IE93hixvKRPtGdm2fytIjue/h7k9Qm8hBlA2dg0b0ijKs92ZN9gaaVKBlhiHqiRp+nik0lHjYL9wLIXDLbVNkc=
-X-Received: by 2002:ac8:5ace:0:b0:447:efb8:97f4 with SMTP id
- d75a77b69052e-447fa825df1mr69787041cf.2.1720632062902; Wed, 10 Jul 2024
- 10:21:02 -0700 (PDT)
+	s=k20201202; t=1720632052;
+	bh=rb42RhIoXqeY6d3mu58OrK8GMi/G3ObjVhuM25pbjwc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lY0pkjCZ6m8F0TnvvKWK+LWxgFP5683shIa5FV6Z50MhKwl2d6fQmp7CFYpsZ4Uhc
+	 CVXXnN2oDsXFD9gR/JSnzmzzPlStrr026ogVwfX9lqDRbPbHPJD8XafYObDSTipI2H
+	 VoIQAy2cq9q7N6bCK1X8k4bgPG1PKX2xzO1QPn/6iodn7bfPS1zWyA64KA7O++6B1I
+	 U0G10G49x84TDKDBcwD/CpXc8zyQ1I68hLcnwczqNurs2WTWlpNfPumOaEi5iC971L
+	 IujjN3532RYTVhHsEufw58gdJ5LiunqyOBp6QolKxXHW9qR5qZ37j49ez2PffCgKmt
+	 zfP5oAAvfG/sQ==
+Date: Wed, 10 Jul 2024 18:20:49 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Subject: Re: [PATCH 6.9 000/197] 6.9.9-rc1 review
+Message-ID: <Zo7C8W97URxXYXd-@finisterre.sirena.org.uk>
+References: <20240709110708.903245467@linuxfoundation.org>
+ <Zo6G9C-AzU2jBrOt@finisterre.sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625-md-fs-nfs-v2-1-2316b64ffaa5@quicinc.com>
- <abe2e12fcd6a64b603179f234ca684a182657d6a.camel@kernel.org>
- <e0a9f5ab-92d4-4a41-8693-358e861f2ef6@quicinc.com> <ab51cd2e8fef48dac690ca4549b409269ff9beae.camel@kernel.org>
-In-Reply-To: <ab51cd2e8fef48dac690ca4549b409269ff9beae.camel@kernel.org>
-From: Anna Schumaker <anna@kernel.org>
-Date: Wed, 10 Jul 2024 13:20:46 -0400
-X-Gmail-Original-Message-ID: <CAFX2Jfm4OaVa0i5Za2YM9EBL4aCgP6+LZRijazthRY_88_vhig@mail.gmail.com>
-Message-ID: <CAFX2Jfm4OaVa0i5Za2YM9EBL4aCgP6+LZRijazthRY_88_vhig@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: nfs: add missing MODULE_DESCRIPTION() macros
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Jeff Johnson <quic_jjohnson@quicinc.com>, 
-	Trond Myklebust <trond.myklebust@hammerspace.com>, Chuck Lever <chuck.lever@oracle.com>, 
-	Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
-	Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, linux-nfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Q8Zrf79JJXTQqdty"
+Content-Disposition: inline
+In-Reply-To: <Zo6G9C-AzU2jBrOt@finisterre.sirena.org.uk>
+X-Cookie: Your love life will be... interesting.
 
-On Wed, Jul 10, 2024 at 8:27=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
-ote:
->
-> On Tue, 2024-07-09 at 13:47 -0700, Jeff Johnson wrote:
-> > On 6/25/2024 9:44 AM, Jeff Layton wrote:
-> > > On Tue, 2024-06-25 at 09:42 -0700, Jeff Johnson wrote:
-> > > > Fix the 'make W=3D1' warnings:
-> > > > WARNING: modpost: missing MODULE_DESCRIPTION() in
-> > > > fs/nfs_common/nfs_acl.o
-> > > > WARNING: modpost: missing MODULE_DESCRIPTION() in
-> > > > fs/nfs_common/grace.o
-> > > > WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfs.o
-> > > > WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv2.o
-> > > > WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv3.o
-> > > > WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv4.o
-> > > >
-> > > > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> > > > ---
-> > > > Changes in v2:
-> > > > - Updated the description in grace.c per Jeff Layton
-> > > > - Link to v1:
-> > > > https://lore.kernel.org/r/20240527-md-fs-nfs-v1-1-64a15e9b53a6@quic=
-inc.com
-> > > > ---
-> > > >  fs/nfs/inode.c         | 1 +
-> > > >  fs/nfs/nfs2super.c     | 1 +
-> > > >  fs/nfs/nfs3super.c     | 1 +
-> > > >  fs/nfs/nfs4super.c     | 1 +
-> > > >  fs/nfs_common/grace.c  | 1 +
-> > > >  fs/nfs_common/nfsacl.c | 1 +
-> > > >  6 files changed, 6 insertions(+)
-> > > >
->
-> Given that this is mostly client-side changes, this should probably go
-> through the client tree. Anna, could you pick this one up?
 
-Yep, It's been in my linux-next branch for a while now.
+--Q8Zrf79JJXTQqdty
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Anna
+On Wed, Jul 10, 2024 at 02:04:55PM +0100, Mark Brown wrote:
 
->
-> Thanks,
-> Jeff
->
-> > > > diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-> > > > index acef52ecb1bb..57c473e9d00f 100644
-> > > > --- a/fs/nfs/inode.c
-> > > > +++ b/fs/nfs/inode.c
-> > > > @@ -2538,6 +2538,7 @@ static void __exit exit_nfs_fs(void)
-> > > >
-> > > >  /* Not quite true; I just maintain it */
-> > > >  MODULE_AUTHOR("Olaf Kirch <okir@monad.swb.de>");
-> > > > +MODULE_DESCRIPTION("NFS client support");
-> > > >  MODULE_LICENSE("GPL");
-> > > >  module_param(enable_ino64, bool, 0644);
-> > > >
-> > > > diff --git a/fs/nfs/nfs2super.c b/fs/nfs/nfs2super.c
-> > > > index 467f21ee6a35..b1badc70bd71 100644
-> > > > --- a/fs/nfs/nfs2super.c
-> > > > +++ b/fs/nfs/nfs2super.c
-> > > > @@ -26,6 +26,7 @@ static void __exit exit_nfs_v2(void)
-> > > >   unregister_nfs_version(&nfs_v2);
-> > > >  }
-> > > >
-> > > > +MODULE_DESCRIPTION("NFSv2 client support");
-> > > >  MODULE_LICENSE("GPL");
-> > > >
-> > > >  module_init(init_nfs_v2);
-> > > > diff --git a/fs/nfs/nfs3super.c b/fs/nfs/nfs3super.c
-> > > > index 8a9be9e47f76..20a80478449e 100644
-> > > > --- a/fs/nfs/nfs3super.c
-> > > > +++ b/fs/nfs/nfs3super.c
-> > > > @@ -27,6 +27,7 @@ static void __exit exit_nfs_v3(void)
-> > > >   unregister_nfs_version(&nfs_v3);
-> > > >  }
-> > > >
-> > > > +MODULE_DESCRIPTION("NFSv3 client support");
-> > > >  MODULE_LICENSE("GPL");
-> > > >
-> > > >  module_init(init_nfs_v3);
-> > > > diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
-> > > > index 8da5a9c000f4..b29a26923ce0 100644
-> > > > --- a/fs/nfs/nfs4super.c
-> > > > +++ b/fs/nfs/nfs4super.c
-> > > > @@ -332,6 +332,7 @@ static void __exit exit_nfs_v4(void)
-> > > >   nfs_dns_resolver_destroy();
-> > > >  }
-> > > >
-> > > > +MODULE_DESCRIPTION("NFSv4 client support");
-> > > >  MODULE_LICENSE("GPL");
-> > > >
-> > > >  module_init(init_nfs_v4);
-> > > > diff --git a/fs/nfs_common/grace.c b/fs/nfs_common/grace.c
-> > > > index 1479583fbb62..27cd0d13143b 100644
-> > > > --- a/fs/nfs_common/grace.c
-> > > > +++ b/fs/nfs_common/grace.c
-> > > > @@ -139,6 +139,7 @@ exit_grace(void)
-> > > >  }
-> > > >
-> > > >  MODULE_AUTHOR("Jeff Layton <jlayton@primarydata.com>");
-> > > > +MODULE_DESCRIPTION("NFS client and server infrastructure");
-> > > >  MODULE_LICENSE("GPL");
-> > > >  module_init(init_grace)
-> > > >  module_exit(exit_grace)
-> > > > diff --git a/fs/nfs_common/nfsacl.c b/fs/nfs_common/nfsacl.c
-> > > > index 5a5bd85d08f8..ea382b75b26c 100644
-> > > > --- a/fs/nfs_common/nfsacl.c
-> > > > +++ b/fs/nfs_common/nfsacl.c
-> > > > @@ -29,6 +29,7 @@
-> > > >  #include <linux/nfs3.h>
-> > > >  #include <linux/sort.h>
-> > > >
-> > > > +MODULE_DESCRIPTION("NFS ACL support");
-> > > >  MODULE_LICENSE("GPL");
-> > > >
-> > > >  struct nfsacl_encode_desc {
-> > > >
-> > > > ---
-> > > > base-commit: 50736169ecc8387247fe6a00932852ce7b057083
-> > > > change-id: 20240527-md-fs-nfs-42f19eb60b50
-> > > >
-> > >
-> > > Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> >
-> > I don't see this in linux-next yet so following up to see if anything e=
-lse is
-> > needed to get this merged.
-> >
->
-> --
-> Jeff Layton <jlayton@kernel.org>
+> # #  RUN           rtc.date_read_loop ...
+> # # rtctest.c:95:date_read_loop:Continuously reading RTC time for 30s (with 11ms breaks after every read).
+> # # rtctest.c:122:date_read_loop:Performed 2954 RTC time reads.
+> # #            OK  rtc.date_read_loop
+
+> Bisection points to "selftests/harness: Fix tests timeout and race
+> condition" but this looks like a test bug, the timeout for tests is 30s
+> and the test tries to run for 30s which obviously doesn't add up.
+> Previously the test would pass because the bug the patch is fixing is
+> that timeout had no effect.  I'm also running the test on other
+> platforms without it triggering new timeouts, it's just this one
+> specific platform that triggered which is a bit worrying.
+
+> I'll send a patch for the test.
+
+Sorry, spoke too soon on that - the test is explicitly overriding the
+timeout to be longer so there's something else going on here.
+
+--Q8Zrf79JJXTQqdty
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaOwvAACgkQJNaLcl1U
+h9BNKQf+MAQs/CgxWnTvh3OsE4hobSoPByQlOu7/LGEq7ocdGNLJh7Njdoe3j4iC
+4LilAWZK92NhF6NCl5ND5h+2nx7ME9Gjd/Mgfi6VhHKZ367LOmBT9O7lT1jX7vnO
+snCOxmB6zZtL1Vo3VgUZTyYH2Qjs+i6LZEi1OxAwTFqAEwugImmUe+i/U1FQEFEK
+AvYKzIEPx54o90TVWJ4o0xtJ290ypMMjLmKUOCcAqOEqvrDL528COGgqT1lSXVct
+0AF6njZxW6MqNIfhW4ARtGR7gd2N53ssm143DLIeNv7wZgVJ4MzG8MIUnl7BGauL
+QvUeLZJJcIHKTp4qNPiqBpL76u3hUQ==
+=KSPE
+-----END PGP SIGNATURE-----
+
+--Q8Zrf79JJXTQqdty--
 
