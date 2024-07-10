@@ -1,291 +1,162 @@
-Return-Path: <linux-kernel+bounces-247075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE4C92CADA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:16:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F21A392CAD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0F92284FB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:16:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84F40281DAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8464A79B7E;
-	Wed, 10 Jul 2024 06:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C196AFAE;
+	Wed, 10 Jul 2024 06:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="drMKKM1p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QAa7Id9i"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A146214D;
-	Wed, 10 Jul 2024 06:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15475FB95
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720592198; cv=none; b=EKq5N0Xebp4LoTTYpTtDEVa9n7WcSHKO/h+sgPGG5sM11I2OQbzLESjmY4E8i4YwzT1lMV98R+c3e7wm7WVBaOBczJHmq798geHYqHKWvGdQfnYS2zJ5+wH1hm/89fKkJ/EBv+pKZc4np9Ml1jAibMaxjf/pxNXIBuI58cXvVw0=
+	t=1720592175; cv=none; b=V6C8RaO97CnJC+8+wvKupH5Xs4VQZ4ZSNT6215+1mZwViRKxy9uBqSpBzn9+DmOWCv5X90dXkgkuFAg4fl57sll593DVpj5lKmYE2ysB8sOPDd4G86Md55QqIevsyyBjWqOnqWlIHA+MuigIu3p5zr4HQiwroOCmG3MfVYoCRg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720592198; c=relaxed/simple;
-	bh=w1HAGk/mz2aE96EttCrBnH9QPrQ60Q/GLsd6fME4K9s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LAVVJ4Ddu5uE/iaI32ih2B9NUWawh4aeYdkfXioYDBP6TNE3MofEWSFKamtU0M6jiOAHQgMwUn0kryUIkOGx/kyvfoZN/Y22M1o6klCmi6JqnsIqu4HIUBrwrrLg/RDRFQO2h4SwhQZOAlkG0IVRTJUxy3D2+Fmu0zo/r0iBzzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=drMKKM1p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DB92AC4AF0F;
-	Wed, 10 Jul 2024 06:16:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720592197;
-	bh=w1HAGk/mz2aE96EttCrBnH9QPrQ60Q/GLsd6fME4K9s=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=drMKKM1pZrtxeWYAxmddwV9LU2AXPkJFv3E5nT7dpHP7x4G8AxFXI5WYZybJxzQeI
-	 hST+jKzxkIBhzq3vntJ6DDPocftdLi98ghhHNlO0zx0ddxxZsak+hqqEal4bBtegTG
-	 Ml0+ULZzvCWvfOEA3sQUi+LOajxLm/QNNjxr6pAX/ufKJ+djHkoOZ4DUiGyqy19soE
-	 /fIjAgr07qtXkrulgbzYTQpvdZrxXR/2sED72q1b7BNZK7Ay8stzqoTsQt45XURaQK
-	 27J8KduyMdyY7QlJjlvznwnG9sN57+1L6vXK6pq+3mUvVwa9Ra56aJ7isR6PHyCslp
-	 9ImNnOmhqlEQg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD41C38150;
-	Wed, 10 Jul 2024 06:16:37 +0000 (UTC)
-From: Pieterjan Camerlynck via B4 Relay <devnull+pieterjanca.gmail.com@kernel.org>
-Date: Wed, 10 Jul 2024 08:15:45 +0200
-Subject: [PATCH 2/2] leds: leds-pca995x: Add support for NXP PCA9956B
+	s=arc-20240116; t=1720592175; c=relaxed/simple;
+	bh=iHfMvlRCdeSCmCn+gosEI7hLv7yJDjDMkOnCUgrZe0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hcu/WwM1s5EK8QsyvZWZzoa5uKPauOYkKe0iJwjMOF2erOOyVx9y366Eje1Lf8ClTuSMNJtLsS3Lel6QUub6qrcKfg+SVevi9DALto525j8c+oSxBl6TrgLbBk2/l1QXLaIMeDt++E1shYl3Rh/r2nFgBE3PfaSwJS01DZ1bWz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QAa7Id9i; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720592172;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nG64wpqZ5i6Hhdx10fctj8MX2Oe6BbD4hvrpu9U64kw=;
+	b=QAa7Id9i9NOpWQ31LyIt0Q+ns56L1yt5i7AS9+/hKAacmVDkjO0WcdrtQ+ZEv7I9syJRyv
+	PajToo8Dap5sQPrtSI3PWiGg12FgpHD9T0OCTBMWKMY4vjSjzJEaEg+oP2byX4/mBayk1K
+	rWuen1JxkV7XqvVcs12ibeJq8Of3zKw=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-408-Szyu2zLiO7W1Zaa0_OchAA-1; Wed, 10 Jul 2024 02:16:11 -0400
+X-MC-Unique: Szyu2zLiO7W1Zaa0_OchAA-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42796140873so860645e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 23:16:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720592169; x=1721196969;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nG64wpqZ5i6Hhdx10fctj8MX2Oe6BbD4hvrpu9U64kw=;
+        b=vrnkZspNLgNYN8McYPLcYg+JdIPWB6GKWEmeHiglf9a3Flf5+Ta9xET55XYFXeUxpe
+         SOCUUYlXtGSJo0mXju+KJXR4MDpKFeEjqwYk888XGsxcEVP89LwCsfPdMuEyiXE69N77
+         /bYUJChYAP5wOE3a/jVXKr/N34+9lfDoaB0vJ73hK8Yspmzfd7WsJs+XWz3wdRKkzHth
+         uW8g8+U1HApqABA03Ab0KVzj8+FkaID0lUUGcZFQdULs4f08GY5FD7U4rzTFGIeSznKN
+         TShb1XdUXa4d+wcmMl7hWA7C9WOBuGh68ns0lla2qVXORxX/x1CdvY6J4fmXGfdknxrC
+         ghow==
+X-Gm-Message-State: AOJu0Yy+WK84TdZTyYeN2xghBD8zdhRHDPuqz8zMHmNka/eQqhutQASp
+	MS8TT9amkmDjj+i7rStmN9xPMQsDXS5U6cO9jKLPD6j2aXn1OakSArRXdzCIvWGzQlRu3QxlMjC
+	5EZdw6SaWotmpBCc20/q8JXCFdL2AAk6QVlnSuinZDAbxM3PW0oV+iw41bfo9b7r2r+0iIA==
+X-Received: by 2002:a05:600c:230f:b0:426:5fcf:5e89 with SMTP id 5b1f17b1804b1-426708fa1d5mr31680595e9.33.1720592169242;
+        Tue, 09 Jul 2024 23:16:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGogtW/P5GMJqkRp473befh8IMF5KbwpHPgee+YwSI975xbMbt5re21Dp6bt8On+t2r/Lcfnw==
+X-Received: by 2002:a05:600c:230f:b0:426:5fcf:5e89 with SMTP id 5b1f17b1804b1-426708fa1d5mr31680405e9.33.1720592168524;
+        Tue, 09 Jul 2024 23:16:08 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:174:f6ae:a6e3:8cbc:2cbd:b8ff])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266a38f5a5sm104671615e9.43.2024.07.09.23.16.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 23:16:07 -0700 (PDT)
+Date: Wed, 10 Jul 2024 02:16:04 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	virtualization@lists.linux.dev
+Subject: Re: [PATCH 1/2] virtio_balloon: add work around for out of spec QEMU
+Message-ID: <20240710021441-mutt-send-email-mst@kernel.org>
+References: <cover.1720173841.git.mst@redhat.com>
+ <14b1a2a1acfcaf6d519db8c67f6f207d7cdd7c3b.1720173841.git.mst@redhat.com>
+ <CACGkMEtszy1YNB1KAtXVdYFkythWDfrYR+w6CSBAQWV1NCc3hA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240710-pca995x-v1-2-545015603000@gmail.com>
-References: <20240710-pca995x-v1-0-545015603000@gmail.com>
-In-Reply-To: <20240710-pca995x-v1-0-545015603000@gmail.com>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Isai Gaspar <isaiezequiel.gaspar@nxp.com>, Marek Vasut <marex@denx.de>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Pieterjan Camerlynck <pieterjanca@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720592196; l=6318;
- i=pieterjanca@gmail.com; s=20240709; h=from:subject:message-id;
- bh=mq1PsTTh485sVEEY1ZBDdJqiSjiPqk3EQrYCQXfMA50=;
- b=SbQHhVwjSFK9g1cGv36Rm5bUDYoJubQXqDyj3b/2CjQJnXHZhloJhGK6WSBJ31uvPpkFrSkod
- Zbt3mKR/xhlBcznznmCbm4T/iUOpDXZ24/HSw+STNKOT3S8xPWWMS7f
-X-Developer-Key: i=pieterjanca@gmail.com; a=ed25519;
- pk=gSAHfvqQjVhNa1MhUClqbt7d3S+fviKz6FdQVaWFRyM=
-X-Endpoint-Received: by B4 Relay for pieterjanca@gmail.com/20240709 with
- auth_id=182
-X-Original-From: Pieterjan Camerlynck <pieterjanca@gmail.com>
-Reply-To: pieterjanca@gmail.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACGkMEtszy1YNB1KAtXVdYFkythWDfrYR+w6CSBAQWV1NCc3hA@mail.gmail.com>
 
-From: Pieterjan Camerlynck <pieterjanca@gmail.com>
+On Wed, Jul 10, 2024 at 11:23:20AM +0800, Jason Wang wrote:
+> On Fri, Jul 5, 2024 at 6:09 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> >
+> > QEMU implemented the configuration
+> >         VIRTIO_BALLOON_F_REPORTING && ! VIRTIO_BALLOON_F_FREE_PAGE_HINT
+> > incorrectly: it then uses vq3 for reporting, spec says it is always 4.
+> >
+> > This is masked by a corresponding bug in driver:
+> > add a work around as I'm going to try and fix the driver bug.
+> >
+> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> > ---
+> >  drivers/virtio/virtio_balloon.c | 19 +++++++++++++++++--
+> >  1 file changed, 17 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+> > index 9a61febbd2f7..7dc3fcd56238 100644
+> > --- a/drivers/virtio/virtio_balloon.c
+> > +++ b/drivers/virtio/virtio_balloon.c
+> > @@ -597,8 +597,23 @@ static int init_vqs(struct virtio_balloon *vb)
+> >
+> >         err = virtio_find_vqs(vb->vdev, VIRTIO_BALLOON_VQ_MAX, vqs,
+> >                               callbacks, names, NULL);
+> > -       if (err)
+> > -               return err;
+> > +       if (err) {
+> > +               /*
+> > +                * Try to work around QEMU bug which since 2020 confused vq numbers
+> > +                * when VIRTIO_BALLOON_F_REPORTING but not
+> > +                * VIRTIO_BALLOON_F_FREE_PAGE_HINT are offered.
+> > +                */
+> > +               if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_REPORTING) &&
+> > +                   !virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
+> > +                       names[VIRTIO_BALLOON_VQ_FREE_PAGE] = "reporting_vq";
+> > +                       callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] = balloon_ack;
+> > +                       err = virtio_find_vqs(vb->vdev,
+> > +                                             VIRTIO_BALLOON_VQ_REPORTING, vqs, callbacks, names, NULL);
+> > +               }
+> > +
+> > +               if (err)
+> > +                       return err;
+> > +       }
+> >
+> >         vb->inflate_vq = vqs[VIRTIO_BALLOON_VQ_INFLATE];
+> >         vb->deflate_vq = vqs[VIRTIO_BALLOON_VQ_DEFLATE];
+> > --
+> > MST
+> >
+> 
+> Acked-by: Jason Wang <jasowang@redhat.com>
+> 
+> Do we need a spec to say this is something that needs to be considered
+> by the driver?
+> 
+> Thanks
 
-Add support for PCA9956B chip, which belongs to the same family.
-
-This chip features 24 instead of 16 outputs, so add a chipdef struct to
-deal with the different register layouts.
-
-Signed-off-by: Pieterjan Camerlynck <pieterjanca@gmail.com>
----
- drivers/leds/leds-pca995x.c | 88 ++++++++++++++++++++++++++-------------------
- 1 file changed, 52 insertions(+), 36 deletions(-)
-
-diff --git a/drivers/leds/leds-pca995x.c b/drivers/leds/leds-pca995x.c
-index 78215dff1499..4cd2828a3f2d 100644
---- a/drivers/leds/leds-pca995x.c
-+++ b/drivers/leds/leds-pca995x.c
-@@ -19,10 +19,6 @@
- #define PCA995X_MODE1			0x00
- #define PCA995X_MODE2			0x01
- #define PCA995X_LEDOUT0			0x02
--#define PCA9955B_PWM0			0x08
--#define PCA9952_PWM0			0x0A
--#define PCA9952_IREFALL			0x43
--#define PCA9955B_IREFALL		0x45
- 
- /* Auto-increment disabled. Normal mode */
- #define PCA995X_MODE1_CFG		0x00
-@@ -34,17 +30,43 @@
- #define PCA995X_LDRX_MASK		0x3
- #define PCA995X_LDRX_BITS		2
- 
--#define PCA995X_MAX_OUTPUTS		16
- #define PCA995X_OUTPUTS_PER_REG		4
- 
- #define PCA995X_IREFALL_FULL_CFG	0xFF
- #define PCA995X_IREFALL_HALF_CFG	(PCA995X_IREFALL_FULL_CFG / 2)
- 
--#define PCA995X_TYPE_NON_B		0
--#define PCA995X_TYPE_B			1
--
- #define ldev_to_led(c)	container_of(c, struct pca995x_led, ldev)
- 
-+enum pca995x_type {
-+	pca9952,
-+	pca9955b,
-+	pca9956b,
-+};
-+
-+struct pca995x_chipdef {
-+	unsigned int num_leds;
-+	u8 pwm_base;
-+	u8 irefall;
-+};
-+
-+static const struct pca995x_chipdef pca995x_chipdefs[] = {
-+	[pca9952] = {
-+		.num_leds	= 16,
-+		.pwm_base	= 0x0a,
-+		.irefall	= 0x43,
-+	},
-+	[pca9955b] = {
-+		.num_leds	= 16,
-+		.pwm_base	= 0x08,
-+		.irefall	= 0x45,
-+	},
-+	[pca9956b] = {
-+		.num_leds	= 24,
-+		.pwm_base	= 0x0a,
-+		.irefall	= 0x40,
-+	},
-+};
-+
- struct pca995x_led {
- 	unsigned int led_no;
- 	struct led_classdev ldev;
-@@ -52,9 +74,9 @@ struct pca995x_led {
- };
- 
- struct pca995x_chip {
-+	const struct pca995x_chipdef *chipdef;
- 	struct regmap *regmap;
--	struct pca995x_led leds[PCA995X_MAX_OUTPUTS];
--	int btype;
-+	struct pca995x_led leds[];
- };
- 
- static int pca995x_brightness_set(struct led_classdev *led_cdev,
-@@ -62,10 +84,11 @@ static int pca995x_brightness_set(struct led_classdev *led_cdev,
- {
- 	struct pca995x_led *led = ldev_to_led(led_cdev);
- 	struct pca995x_chip *chip = led->chip;
-+	const struct pca995x_chipdef *chipdef = chip->chipdef;
- 	u8 ledout_addr, pwmout_addr;
- 	int shift, ret;
- 
--	pwmout_addr = (chip->btype ? PCA9955B_PWM0 : PCA9952_PWM0) + led->led_no;
-+	pwmout_addr = (chipdef->pwm_base) + led->led_no;
- 	ledout_addr = PCA995X_LEDOUT0 + (led->led_no / PCA995X_OUTPUTS_PER_REG);
- 	shift = PCA995X_LDRX_BITS * (led->led_no % PCA995X_OUTPUTS_PER_REG);
- 
-@@ -101,24 +124,24 @@ static const struct regmap_config pca995x_regmap = {
- 
- static int pca995x_probe(struct i2c_client *client)
- {
--	struct fwnode_handle *led_fwnodes[PCA995X_MAX_OUTPUTS] = { 0 };
- 	struct fwnode_handle *np, *child;
- 	struct device *dev = &client->dev;
-+	const struct pca995x_chipdef *chipdef;
- 	struct pca995x_chip *chip;
- 	struct pca995x_led *led;
--	int i, btype, reg, ret;
-+	int reg, ret;
- 
--	btype = (unsigned long)device_get_match_data(&client->dev);
-+	chipdef = device_get_match_data(&client->dev);
- 
- 	np = dev_fwnode(dev);
- 	if (!np)
- 		return -ENODEV;
- 
--	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-+	chip = devm_kzalloc(dev, struct_size(chip, leds, chipdef->num_leds), GFP_KERNEL);
- 	if (!chip)
- 		return -ENOMEM;
- 
--	chip->btype = btype;
-+	chip->chipdef = chipdef;
- 	chip->regmap = devm_regmap_init_i2c(client, &pca995x_regmap);
- 	if (IS_ERR(chip->regmap))
- 		return PTR_ERR(chip->regmap);
-@@ -126,41 +149,34 @@ static int pca995x_probe(struct i2c_client *client)
- 	i2c_set_clientdata(client, chip);
- 
- 	fwnode_for_each_available_child_node(np, child) {
-+		struct led_init_data init_data = {};
-+
- 		ret = fwnode_property_read_u32(child, "reg", &reg);
- 		if (ret) {
- 			fwnode_handle_put(child);
- 			return ret;
- 		}
- 
--		if (reg < 0 || reg >= PCA995X_MAX_OUTPUTS || led_fwnodes[reg]) {
-+		if (reg < 0 || reg >= chipdef->num_leds) {
- 			fwnode_handle_put(child);
- 			return -EINVAL;
- 		}
- 
- 		led = &chip->leds[reg];
--		led_fwnodes[reg] = child;
- 		led->chip = chip;
- 		led->led_no = reg;
- 		led->ldev.brightness_set_blocking = pca995x_brightness_set;
- 		led->ldev.max_brightness = 255;
--	}
--
--	for (i = 0; i < PCA995X_MAX_OUTPUTS; i++) {
--		struct led_init_data init_data = {};
--
--		if (!led_fwnodes[i])
--			continue;
--
--		init_data.fwnode = led_fwnodes[i];
-+		init_data.fwnode = child;
- 
- 		ret = devm_led_classdev_register_ext(dev,
--						     &chip->leds[i].ldev,
-+						     &led->ldev,
- 						     &init_data);
- 		if (ret < 0) {
- 			fwnode_handle_put(child);
- 			return dev_err_probe(dev, ret,
- 					     "Could not register LED %s\n",
--					     chip->leds[i].ldev.name);
-+					     led->ldev.name);
- 		}
- 	}
- 
-@@ -170,21 +186,21 @@ static int pca995x_probe(struct i2c_client *client)
- 		return ret;
- 
- 	/* IREF Output current value for all LEDn outputs */
--	return regmap_write(chip->regmap,
--			    btype ? PCA9955B_IREFALL : PCA9952_IREFALL,
--			    PCA995X_IREFALL_HALF_CFG);
-+	return regmap_write(chip->regmap, chipdef->irefall, PCA995X_IREFALL_HALF_CFG);
- }
- 
- static const struct i2c_device_id pca995x_id[] = {
--	{ "pca9952", .driver_data = (kernel_ulong_t)PCA995X_TYPE_NON_B },
--	{ "pca9955b", .driver_data = (kernel_ulong_t)PCA995X_TYPE_B },
-+	{ "pca9952", .driver_data = (kernel_ulong_t)&pca995x_chipdefs[pca9952] },
-+	{ "pca9955b", .driver_data = (kernel_ulong_t)&pca995x_chipdefs[pca9955b] },
-+	{ "pca9956b", .driver_data = (kernel_ulong_t)&pca995x_chipdefs[pca9956b] },
- 	{}
- };
- MODULE_DEVICE_TABLE(i2c, pca995x_id);
- 
- static const struct of_device_id pca995x_of_match[] = {
--	{ .compatible = "nxp,pca9952",  .data = (void *)PCA995X_TYPE_NON_B },
--	{ .compatible = "nxp,pca9955b", .data = (void *)PCA995X_TYPE_B },
-+	{ .compatible = "nxp,pca9952", .data = &pca995x_chipdefs[pca9952] },
-+	{ .compatible = "nxp,pca9955b", . data = &pca995x_chipdefs[pca9955b] },
-+	{ .compatible = "nxp,pca9956b", .data = &pca995x_chipdefs[pca9956b] },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, pca995x_of_match);
+I'd say it's a temporary situation that we won't need to bother
+about in several years.
 
 -- 
-2.45.2
-
+MST
 
 
