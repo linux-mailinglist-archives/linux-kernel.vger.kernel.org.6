@@ -1,124 +1,124 @@
-Return-Path: <linux-kernel+bounces-248345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95CCC92DBF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:33:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE1D92DBF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6A561C23BB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:33:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95AAF1F266A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFD1156968;
-	Wed, 10 Jul 2024 22:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124AE14A633;
+	Wed, 10 Jul 2024 22:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="Rk3h/63J"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I9zNEi31"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A209E14F9EB;
-	Wed, 10 Jul 2024 22:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84E913C685;
+	Wed, 10 Jul 2024 22:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720650756; cv=none; b=R2zzFuacezoGq6N9pUGxM5jEjXPMz9aGGYxtrOPb++QuzJHF1IRGNkI2sicCVgK1VWe66+KjlsMy2vf8Ezf5UOjLywED0M6wkKZlu6dg4ZaqBuCrRtj2CDC+XGIfbSHkKe1aPaNkbHDO2rcXgj/Rw/uHIhvSFm+m6lZFo68m5DA=
+	t=1720650817; cv=none; b=RtBlj6Z3OhusV2J8Y/0qvZxjWRDqncjJvdLtUBPJCs8pH+xBRcE/8VnlVcl82IcOQ4S8/20YhoOrSVM/ZFRgIPE/V6cieCYtjlfFU9Dal786xdL9t+YHGskYPlO4C06GkTwVjvcfvUE8myboQWZZ2qf+DiRLkRjcGOPNoQcjAVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720650756; c=relaxed/simple;
-	bh=1TyNBh/3TdKVwXcfxotgwKE1mWxZRiJWxiKbkfBSuo0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t6ZMhHDBuPE1jNjeEiGywyvXHN1OYsxtsXIRF/5WOOe/iZev/l6LrBejstOCYeNemLJhlGCzKDYgPqwLP/YaecCWClAB0PxdpFseKJr1lV5Z0zkSmJBBneCkEWemL4CaHkkURf0hCcI3kO43f0m0DlVto1tzwtTXWbfTO8SX304=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=Rk3h/63J; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id D91E110002F;
-	Thu, 11 Jul 2024 01:32:22 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru D91E110002F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1720650742;
-	bh=hfI/ofSEp+yYAlRKoLDJJ07qjeCsQBjJxdJc5MY1PJc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=Rk3h/63JlkS9lq9+Ix0C2KPOAKT8iUx3ok3tdG1d06r0bER+7Jng3VRUuBwf+5vn8
-	 R/xgm3Fr9F7lbzZFdgQ7t/T+mTngHHV90a9hm7af0z+8BMuUOuTrxJpT8qDTEZGDgV
-	 PvVi69DcVitV2yPvdvJ2sk4Fhje47AL21Rp0jZL5/T7nt1WjmWgYsUuFhxkqpEt1XM
-	 sB4u36oiQko56Oc5qPdjoXxoC48QSRk52PJro5mbccyYlhwHXkjeaCDH2A5NALrWRb
-	 I3t3PQ5PhZXbOWohUvcYdmLVctwY0KvSY9lupbLoMvtkqraUEVaMO5G+2vVP55PhfN
-	 7zGndYRTUfUXw==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Thu, 11 Jul 2024 01:32:22 +0300 (MSK)
-Received: from work.sberdevices.ru (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Thu, 11 Jul 2024 01:32:22 +0300
-From: George Stark <gnstark@salutedevices.com>
-To: <andi.shyti@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <neil.armstrong@linaro.org>, <khilman@baylibre.com>,
-	<jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
-	<glaroque@baylibre.com>, <rafael@kernel.org>, <daniel.lezcano@linaro.org>,
-	<rui.zhang@intel.com>, <lukasz.luba@arm.com>, <b.galvani@gmail.com>,
-	<mmkurbanov@sberdevices.ru>
-CC: <linux-i2c@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<kernel@salutedevices.com>, George Stark <gnstark@salutedevices.com>
-Subject: [PATCH v2 3/3] arm64: dts: meson: a1: bind power domain to temperature sensor
-Date: Thu, 11 Jul 2024 01:32:14 +0300
-Message-ID: <20240710223214.2348418-4-gnstark@salutedevices.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240710223214.2348418-1-gnstark@salutedevices.com>
-References: <20240710223214.2348418-1-gnstark@salutedevices.com>
+	s=arc-20240116; t=1720650817; c=relaxed/simple;
+	bh=7xsnAqLc4rT1FvFy/8gthJ9Rs0Qx2xqN6hIj1IsWJNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LfmSY811XHfVt6l65vF0HtsklzlYaRtuLqTK+7adDLDAvlj+qaEtJNNKAevFiyYZ1ysAH9r/6Bz5QjNa3mlWFaTR0B252fdz018ecL/KLkL1oogEu0x0qQyN8ARu895Cl0rLOlBfe/pnpQ6oJFPpKDrr4U6d4AwsEpTbiySIk0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I9zNEi31; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720650816; x=1752186816;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7xsnAqLc4rT1FvFy/8gthJ9Rs0Qx2xqN6hIj1IsWJNo=;
+  b=I9zNEi31EOIIrFePRKwLwNpteqy13vSQ+d7hgBuRVHc7aV74qxN2ibFO
+   87AXrb6jK9FkxlyNRL+D1+BdZ5JZR/SkXPudxUlUAqsbnUpc1+oq3o5Io
+   G1d2CXq1xYjHAWisVYn4GR2aSCEETGOCwTpiSzDq+aKaXwUaF/SiX/WTL
+   j/o5i2NX12oezLRc7n3udLw5jcif0qlDEudW5j6U6JmBcde2+suIw82WN
+   R/rJw9CjXQvNk+e+Qz6cQI7AneH/VRUvCSPlAEt3qodkPHRHzhdGnQwyr
+   bR/2nw/hhPG5Q6UMtVTdKlFgp4Ri0KKjbkHEN6eSp0vXHhkHQ3t5Zgj9T
+   g==;
+X-CSE-ConnectionGUID: Tb+0NgX9Q6+9rpzIlzRJYg==
+X-CSE-MsgGUID: SMr6LeEyRSmU0PnRTpvMgg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="17822630"
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="17822630"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 15:33:35 -0700
+X-CSE-ConnectionGUID: OPGhT1HVT0+ytRpZQYdHYg==
+X-CSE-MsgGUID: I+fF4Wv9SkKH6ucqKAiA1g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="48448372"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa010.fm.intel.com with ESMTP; 10 Jul 2024 15:33:25 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 94A4829E; Thu, 11 Jul 2024 01:33:23 +0300 (EEST)
+Date: Thu, 11 Jul 2024 01:33:23 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ard Biesheuvel <ardb@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Xiongwei Song <xiongwei.song@windriver.com>, 
+	Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
+	Brijesh Singh <brijesh.singh@amd.com>, Michael Roth <michael.roth@amd.com>, 
+	Tony Luck <tony.luck@intel.com>, Alexey Kardashevskiy <aik@amd.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>, 
+	Ingo Molnar <mingo@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>, 
+	Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Yian Chen <yian.chen@intel.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
+	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org
+Subject: Re: [PATCH v4 03/16] x86/alternatives: Disable LASS when patching
+ kernel alternatives
+Message-ID: <cqacx3crogegwyslm25kwcdcezgg2n44lhy3mg5qkka3vgn4xa@lhqsoseyduus>
+References: <20240710160655.3402786-1-alexander.shishkin@linux.intel.com>
+ <20240710160655.3402786-4-alexander.shishkin@linux.intel.com>
+ <20240710171836.GGZo7CbFJeZwLCZUAt@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186446 [Jul 10 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;100.64.160.123:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/10 21:42:00 #25942395
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710171836.GGZo7CbFJeZwLCZUAt@fat_crate.local>
 
-Meson A1 temperature sensor has dedicated power domain so bind it
-to the device node.
+On Wed, Jul 10, 2024 at 07:18:36PM +0200, Borislav Petkov wrote:
+> On Wed, Jul 10, 2024 at 07:06:39PM +0300, Alexander Shishkin wrote:
+> >  static void text_poke_memcpy(void *dst, const void *src, size_t len)
+> >  {
+> > -	memcpy(dst, src, len);
+> > +	stac();
+> > +	__inline_memcpy(dst, src, len);
+> > +	clac();
+> 
+> I think you need LASS-specific stac()/clac() or an alternative_2 or so. You
+> can't cause that perf penalty on !LASS machines.
 
-Signed-off-by: George Stark <gnstark@salutedevices.com>
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+Hm. Do we have text_poke() in hot path?
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-index dd5695963caa..86d77f51c25c 100644
---- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-@@ -919,6 +919,7 @@ cpu_temp: temperature-sensor@4c00 {
- 				assigned-clock-rates = <500000>;
- 				#thermal-sensor-cells = <0>;
- 				amlogic,ao-secure = <&sec_AO>;
-+				power-domains = <&pwrc PWRC_I2C_ID>;
- 			};
- 
- 			hwrng: rng@5118 {
+Even if we do, I doubt flipping AC flag would make any performance
+difference in context of all locking and TLB flushing we do in this
+codepath.
+
 -- 
-2.25.1
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
