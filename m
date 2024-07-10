@@ -1,144 +1,195 @@
-Return-Path: <linux-kernel+bounces-247673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2345092D2D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:31:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DDBB92D2E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BE74B27126
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:31:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EAB81F23BBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761E51940B1;
-	Wed, 10 Jul 2024 13:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFDD192B89;
+	Wed, 10 Jul 2024 13:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l13m+4+5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bnZZ9ovH"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B765A192B91;
-	Wed, 10 Jul 2024 13:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB131922C9
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720618218; cv=none; b=tpC29uQE805y50Wb8bWqEb90HEVCHeOZ7B1Z3Ez8atv2SKOVVcAddZlv/7n0BBpkAaFivi9dio6OpR9tHrvN1lkxlVChn2BC/wH0cWn4lpcKrfzB6RCmJDaEoYlytUrA9cgNOymZbga69QWJ2sdJ6IFeOWJZdlu9VYCDcpV8DiU=
+	t=1720618418; cv=none; b=HzdbllnGnqQGKmm52LOBbF+CU8LlJDWJrat1ncpv4RGc2NTba6izW7evf9M5pfcwPXw/BBPYPJU8MhSGQRWZ1AyIpIsm1PDi4cwjYF3HI4tlmmhCqjo7MWfnUQtRO/V/PR8btGNK8HdSLuq0QivXf0txeaUoY98zguUCYVhtaC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720618218; c=relaxed/simple;
-	bh=WnmHFbV9qGDjAcF91zk+1or9P4/JEgGUFqWbs8nvKw8=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=TASGdFg5uDOr3ev3R17w5tWZgr+2DQ4t66afYxv3lwpLyjwhc41/vXdqtK76pDfoB2uLxjUsGaiwNoPQs0jOQYEtd79ilMtSqC6v5IE1dk+AunbUj7KLZRnVgEzfbvs6wBJCp/GK8xrYfKGRTweYsHJzEqaalDtEzo7gSc+Mkt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l13m+4+5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11D98C32781;
-	Wed, 10 Jul 2024 13:30:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720618218;
-	bh=WnmHFbV9qGDjAcF91zk+1or9P4/JEgGUFqWbs8nvKw8=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=l13m+4+5zjvjn3m1cCI2exo5SU7UHQYQOvj1oeEADWbO04p+MN2XDFgvZ11xxGFtv
-	 8HRjuhCtNEQKHoqL26rC7hBK0DawUoXLFPnT52uACqfi6yIuVbmqmYj/fMcucBSvs8
-	 SRjMn5oEsIkhvKQGfYqEeLDJgFxl8IqDb1z+Y4CdEGMA23CWOHzvpvyqYmW2vxPqF5
-	 OLWk4A12HLbWvDlNKQjvODfh2WlWqP07oFvqc7ON9UoPCF8KUr3XHAj6X81ZioYMLz
-	 UWFhFUOlflbdkIOafZM9fK4xjAWfKSPoa5dzL4/YKCrYkwOTjNWU+WJWWGyVQ9PPdg
-	 /kljNrsYdcoSA==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720618418; c=relaxed/simple;
+	bh=FhnvB485w1HY1BpYWf4IIAKXmnfOo2Ex9Gt1bbXVihk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RmQ83zjjJS16KGFSTOD7avtSbQfATCIeWsAC46mMFpK71UNoNoT/G+BubTsmUDOxVjExZ1fS0L7yHGydLF7s04rMsS6nnctegGDuG1p41Gagwd6juAOHVzFNHdjFvv/7e58v0RamTaBEOtrarVVXjAvcP08FK4yi8aPjPrMEs1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bnZZ9ovH; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-58b966b4166so7805517a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:33:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720618415; x=1721223215; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1y6QWcxBkpL8sLlZ7Lnp0OFscz5jEsI1SABkkWAxiaY=;
+        b=bnZZ9ovHIb4KvV0wOL1seVMxVb9Zha3DLWqFwsd7SB3AnWWHFZh7HzOq+J9uLJMIBk
+         H1uqNT3roydNOumH6isYxACDbHYFfKySDxIwjfd9FHMbGOeULqKgt6DQxfWb+9MN7M47
+         J0AXFXT4MG7FH6usitKbV7Ib7QibPL7y3uUFffQD/DL4IUQAAsqUVOXQ5SNDgTSZtipw
+         UxWT2I/e8oc9n7/PpyMqZWEYZm++pDkut5KdRz91n4wJo+zYO5d8cMxH+I3EYYD7qyeG
+         1FtzQwiEInr80t7Tc55eo/IP7iizDEBpS1yXS03jdClLaZH1orerHZJLxHIQImpIoeAK
+         qawg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720618415; x=1721223215;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1y6QWcxBkpL8sLlZ7Lnp0OFscz5jEsI1SABkkWAxiaY=;
+        b=VinZolIpc40rUuh+t+aAm67lxyhoMWSiRiwWR/OXO/0n5oi7UpeDlwFpEiC3l7b/kD
+         bAjV0pINyZqjXCD7e7CPap2R64o72GXcfG0XbY+25Lbc9NGqRJ84n85ac9Lh0iDPsQaX
+         oJWFLk1J8T0Qt5VATLG6eWr5k274Pyn1GCbwcBcfG9qTm2hFk+629DM7FB/HJz87Z+ji
+         pFbbQpPy49RAkB58oNvEZy0nvxiyUJwq1yNnnLL5lBKKEllns4sG13UfJQFvzRgEqkKA
+         UTRpzxDi1TJbdWKX4RiBqb+5T6IG7k7tduunm426rPYdDzAV1nhEIEtl3QC/sBuYHq6z
+         ZV8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVpYd3nx1IyXCCdfewObB5lkduLXu+o4bo+/u8qm73vKbVTFO8c1OnUuzDPPYe87nyZrhjcDzkQ0IWmZlBKOgYx9+/hIr1DtJw/fQk0
+X-Gm-Message-State: AOJu0YyrxA2do1Ip/Qok9WDuY/vryoKtIo/t9qroEhXIT2p8IbHfPNPy
+	adwNc/dDiCjI11w3NYBAqkYAAYIZYsrqNM/6amz6TGSAFMSavFzsS0ToCRtZgBw=
+X-Google-Smtp-Source: AGHT+IEEff496JavyqfJq2LbrLMOXmUgoqw2wNiKA4XmY54IbkKvb8k1RWAvkt+sVr9kiG7HW6bnWA==
+X-Received: by 2002:a05:6402:b19:b0:58d:842:6272 with SMTP id 4fb4d7f45d1cf-594bb67e9demr2995655a12.25.1720618414622;
+        Wed, 10 Jul 2024 06:33:34 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bc4e81a6sm2220643a12.49.2024.07.10.06.33.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 06:33:34 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Wed, 10 Jul 2024 14:33:29 +0100
+Subject: [PATCH] tty: serial: samsung: add clock comment for earlycon on
+ gs101
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240710090742.1657606-1-amorenoz@redhat.com>
-References: <20240710090742.1657606-1-amorenoz@redhat.com>
-Subject: Re: [PATCH net-next v2] net: psample: fix flag being set in wrong skb
-From: Antoine Tenart <atenart@kernel.org>
-Cc: Adrian Moreno <amorenoz@redhat.com>, Yotam Gigi <yotam.gi@gmail.com>, David S. Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Ido Schimmel <idosch@nvidia.com>, Eelco Chaudron <echaudro@redhat.com>, Aaron Conole <aconole@redhat.com>, linux-kernel@vger.kernel.org
-To: Adrian Moreno <amorenoz@redhat.com>, netdev@vger.kernel.org
-Date: Wed, 10 Jul 2024 15:30:14 +0200
-Message-ID: <172061821475.5582.9226948763101271068@kwain.local>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240710-samsung_tty-gs101earlycon-v1-1-bd0f8481542a@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAKiNjmYC/x3MQQqDMBBA0avIrBuY0RTBq5RSopmkAzaWjIoi3
+ t3g8i3+P0A5Cyt01QGZV1GZUgE9Khi+LkU24ouhxtpiS2jU/XRJ8TPPu4lKSOzyuA9TMpbanhr
+ 04UkeSv/PHGS736/3eV5IQ8KBawAAAA==
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, 
+ Sam Protsenko <semen.protsenko@linaro.org>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-Hi Adri=C3=A1n,
+As pointed out in [1] before, the hand-over between earlycon and serial
+console is fragile due to clocking issues:
 
-Quoting Adrian Moreno (2024-07-10 11:07:42)
-> A typo makes PSAMPLE_ATTR_SAMPLE_RATE netlink flag be added to the wrong
-> sk_buff.
->=20
-> Fix the error and make the input sk_buff pointer "const" so that it
-> doesn't happen again.
->=20
-> Also modify OVS psample test to verify the flag is properly emitted.
+    ... causing earlycon to stop to work sometime into the boot for two
+    reasons:
+    * peric0_top1_ipclk_0 requires its parent gout_cmu_peric0_ip to be
+      running, but because earlycon doesn't deal with clocks that
+      parent will be disabled when none of the other drivers that
+      actually deal with clocks correctly require it to be running and
+      the real serial driver (which does deal with clocks) hasn't taken
+      over yet
 
-I don't see that part; although it can be sent as a follow-up and not
-part of the fix.
+    The console UART, and I2C bus 8 are on the same cmu_peric0 controller,
+    and that cmu_peric0 has two clocks coming from cmu_top, ip and bus. For
+    I2C8 & UART to work, both of these clocks from cmu_top need to to be on
+    as they are the parent of the i2c8-(ip|pclk) and uart-(ip|pclk) each.
 
-Thanks,
-Antoine
+    The bootloader leaves those clocks running, yes. So earlycon works (for
+    a while).
 
-> Fixes: 7b1b2b60c63f ("net: psample: allow using rate as probability")
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> ---
->  include/net/psample.h | 8 +++++---
->  net/psample/psample.c | 7 ++++---
->  2 files changed, 9 insertions(+), 6 deletions(-)
->=20
-> diff --git a/include/net/psample.h b/include/net/psample.h
-> index c52e9ebd88dd..5071b5fc2b59 100644
-> --- a/include/net/psample.h
-> +++ b/include/net/psample.h
-> @@ -38,13 +38,15 @@ struct sk_buff;
-> =20
->  #if IS_ENABLED(CONFIG_PSAMPLE)
-> =20
-> -void psample_sample_packet(struct psample_group *group, struct sk_buff *=
-skb,
-> -                          u32 sample_rate, const struct psample_metadata=
- *md);
-> +void psample_sample_packet(struct psample_group *group,
-> +                          const struct sk_buff *skb, u32 sample_rate,
-> +                          const struct psample_metadata *md);
-> =20
->  #else
-> =20
->  static inline void psample_sample_packet(struct psample_group *group,
-> -                                        struct sk_buff *skb, u32 sample_=
-rate,
-> +                                        const struct sk_buff *skb,
-> +                                        u32 sample_rate,
->                                          const struct psample_metadata *m=
-d)
->  {
->  }
-> diff --git a/net/psample/psample.c b/net/psample/psample.c
-> index f48b5b9cd409..a0ddae8a65f9 100644
-> --- a/net/psample/psample.c
-> +++ b/net/psample/psample.c
-> @@ -360,8 +360,9 @@ static int psample_tunnel_meta_len(struct ip_tunnel_i=
-nfo *tun_info)
->  }
->  #endif
-> =20
-> -void psample_sample_packet(struct psample_group *group, struct sk_buff *=
-skb,
-> -                          u32 sample_rate, const struct psample_metadata=
- *md)
-> +void psample_sample_packet(struct psample_group *group,
-> +                          const struct sk_buff *skb, u32 sample_rate,
-> +                          const struct psample_metadata *md)
->  {
->         ktime_t tstamp =3D ktime_get_real();
->         int out_ifindex =3D md->out_ifindex;
-> @@ -498,7 +499,7 @@ void psample_sample_packet(struct psample_group *grou=
-p, struct sk_buff *skb,
->                 goto error;
-> =20
->         if (md->rate_as_probability)
-> -               nla_put_flag(skb, PSAMPLE_ATTR_SAMPLE_PROBABILITY);
-> +               nla_put_flag(nl_skb, PSAMPLE_ATTR_SAMPLE_PROBABILITY);
-> =20
->         genlmsg_end(nl_skb, data);
->         genlmsg_multicast_netns(&psample_nl_family, group->net, nl_skb, 0,
-> --=20
-> 2.45.2
->=20
->
+    At some point into the boot, one of two things happens:
+    1) Linux will load the i2c driver. That driver does clock handling
+    (correctly), it will initialise and then it has nothing to do, therefore
+    it disables cmu_peric0's i2c8 ip and pclk clocks. Because at that stage
+    nothing appears to be using the cmu_peric0's ip clock (the real serial
+    driver hasn't initialised yet), Linux decides to also disable the parent
+    ip clock coming from cmu_top.
+
+    At this stage, the earlycon driver stops working, as the parent ip clock
+    of the uart ip clock is not running any more. No serial output can be
+    observed from this stage onwards. I think what is probably happening is
+    that the console uart FIFO doesn't get emptied anymore, and earlycon
+    will simply wait forever for space to become available in the FIFO (but
+    I didn't debug this).
+
+    Anyway, the boot doesn't progress, the system appears to hang. In any
+    case it's not usable as we have no other means of using it at this stage
+    (network / usb / display etc.).
+
+    2) Alternatively, the UART driver will load at this stage. Again, it
+    will tweak the clocks and after probe it will leave its clocks disabled.
+    The serial console driver hasn't taken over at this stage and earlycon
+    is still active. Again, the system will hang, because IP and PCLK have
+    been disabled by the UART driver. Once the serial console is enabled,
+    clocks are being enabled again, but because earlycon is still waiting
+    for progress, the boot doesn't progress past disabling ip and pclk. It
+    never gets to enabling the serial console (re-enabling the clocks).
+
+    So in both cases we get some output from earlycon, but the system hangs
+    once the first consumer driver of an IP attached to cmu_peric0 has
+    completed probing.
+
+    ...
+
+    If earlycon is not enabled in kernel command line, everything works
+    fine, the kernel buffers its messages and once the real serial console
+    driver starts, all messages since boot are being printed.
+
+As requested, add a comment to the code for posterity, so the
+information is not lost. The patch referenced in the comment can be
+found at [2].
+
+Link: https://lore.kernel.org/all/d45de3b2bb6b48653842cf1f74e58889ed6783ae.camel@linaro.org/ [1]
+Link: https://lore.kernel.org/all/20240710-gs101-non-essential-clocks-2-v3-2-5dcb8d040d1c@linaro.org/ [2]
+Suggested-by: Sam Protsenko <semen.protsenko@linaro.org>
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+ drivers/tty/serial/samsung_tty.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
+index dc35eb77d2ef..ae2378cfcf84 100644
+--- a/drivers/tty/serial/samsung_tty.c
++++ b/drivers/tty/serial/samsung_tty.c
+@@ -2821,6 +2821,15 @@ static int __init gs101_early_console_setup(struct earlycon_device *device,
+ 	return s5pv210_early_console_setup(device, opt);
+ }
+ 
++/*
++ * Note that for earlycon to work, the respective ipclk and pclk need to be
++ * running! The bootloader normally leaves them enabled, but the serial
++ * driver will start handling those clocks before the console driver takes
++ * over from earlycon, breaking earlycon. If earlycon is required, please
++ * revert the patch "clk: samsung: gs101: don't mark non-essential (UART)
++ * clocks critical" locally first to mark them CLK_IS_CRITICAL and avoid this
++ * problem.
++ */
+ OF_EARLYCON_DECLARE(gs101, "google,gs101-uart", gs101_early_console_setup);
+ 
+ /* Apple S5L */
+
+---
+base-commit: 523b23f0bee3014a7a752c9bb9f5c54f0eddae88
+change-id: 20240710-samsung_tty-gs101earlycon-417b130df51d
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
 
