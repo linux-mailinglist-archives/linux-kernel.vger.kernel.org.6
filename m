@@ -1,276 +1,118 @@
-Return-Path: <linux-kernel+bounces-247281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE6E092CD82
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:51:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CF3592CD8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:53:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 695C428A429
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:51:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D63C1F22FFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF5916F8E1;
-	Wed, 10 Jul 2024 08:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A028217B43B;
+	Wed, 10 Jul 2024 08:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q3eCAnjz"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mIVsdcf9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAFA284A32;
-	Wed, 10 Jul 2024 08:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E161F158D7B
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720601477; cv=none; b=eZ2rbHxn0KbydspH4VjlIGHCGWwx74gr9JwzZMT5uHD/gYo8QW20VWkApKrJ6rBkcwQ+IgcLcSzm1pC5ph9IaqKYucUUz+uKu7EMT1gDD8PweKN2Iepop0hZGr6jE5UU8bgzyXJnTaR2z/9quOBSNV0Sm4akX0RgweN/2YD48e8=
+	t=1720601575; cv=none; b=YkeYGRI1op74PO3gkdr+GYX+58ffbIujoMMykIb7tRWCGKVnZKBti3gubbII1j5uwr6DGsmkh+3SZyE0I7noET5Xs8LAjlKRf/TFQzQyDm5LBWMD4RgdcjP99UCXO44x6ctrVCpQDxrILwjPiv4vmYweLphbYODUBGwmDD1rYks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720601477; c=relaxed/simple;
-	bh=k1di7eE6iyOCbrJ0NNxim1Vsvi0SGbj6aHDjcWAUwUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f2VeXpPaT6N/dagrSEOLP7jQYA6veWucJYsG5bv93KdUZoOfZ7I5jhcRK0i7eWV+ziaiLhdghs1Z4JPErz9+nsjpqnEbyPwLUHYjn1OfJBeZC/P6QJ73YTCS9Jtvvp1Qx8GVDCQ7BNF8X7jf/L8FRsFJ+C8oSm/p/9hUQ1rEIMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q3eCAnjz; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a797c62565aso43864466b.2;
-        Wed, 10 Jul 2024 01:51:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720601474; x=1721206274; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r3i2DC8f+stmUekDQHQ9DmW3w1oyom/tsI0fkuIxzbA=;
-        b=Q3eCAnjzgnvkZC6f9hQie24tittHM5EuETlAgkFPRfAWMFDt2MwPKovzdZo16uf+qV
-         UAFHoQ5n9YXbQbcSKN1z5PkHvSvcHLsEw165Zd6iLEI7MdlFuT10dVQfKjQwnBNHnzYz
-         B1roufTKPlGkRYUZswWH0aqlcDC4KLxBSihe03ux1K5tsMIbvX3gf1puPWEY8bElZo+Z
-         sScWL763eaEdEB4WkJ+qXi6ba4ekqPGpkMsRqFgJ3/8+NqD0NHLQI6c+5kzgJ/PKgffH
-         ryuwuvTll5KQA1BLjqyOgZ7koK2UQS3l7IBh6OqmkmR55vItnbpLE6FcsHQD/uBki2yu
-         vg3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720601474; x=1721206274;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r3i2DC8f+stmUekDQHQ9DmW3w1oyom/tsI0fkuIxzbA=;
-        b=FM3E2n/IiUwfCn7PNfZX4WMBNkN7aZ0ismuYVWHfrcHteqWOI8xaLZOr7mQc0ZSW6u
-         DkoAOnzP/L6RJEmMIX73bsdZMyCLDnLrrIoDIHGdPEDoUOvApVZFl7M6Hj8jP+V0ArN2
-         z/DkqudcugApBV2nKr5n36/AFLVidyogNi5moST98FWLARwjcr9RJf1Ind+rLUNvSD4H
-         SSCfibjK0BHsSStchmkYv9ECCIZ6xzBDXthEJIf5YB8Y0/knJAZ7jdNxjIm3fo/jfq+/
-         n+q+aqGO3K9/I+WfF6tfTw/FocPIlVuuYWyDqRMAOPxh2JN/n5l8bPHY8NmH8/cLfwfm
-         Q3+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXtENSVYY/x9wdbJRX0sqT0Gqx8DRPrZnUaWJr25t55tZlU257GMxF3vlTfvLIYl23gWogvO8TXrYMwZExyzZC2GiDJIKqGmlJkPL3t
-X-Gm-Message-State: AOJu0YykOS9KH/pkJBHlTeEe9w4iuW16hvMZyNCmqtYQ2LNm4dgJU3wU
-	UataDzWnl8Mw1E+Ma+lQkiNuKtGsBUtV/wfHWAzzOL1wP/0oY0Oh
-X-Google-Smtp-Source: AGHT+IG0SUHUE0sHpBRo0UPS675LR5wn0XNQLd0Qc+xSb7Lo9X4aeOudEWKZuSApzI3c1Dz5EPYkJA==
-X-Received: by 2002:a17:906:5650:b0:a72:8d2f:8594 with SMTP id a640c23a62f3a-a780b6b2f20mr312112966b.27.1720601474003;
-        Wed, 10 Jul 2024 01:51:14 -0700 (PDT)
-Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation (net-2-39-142-11.cust.vodafonedsl.it. [2.39.142.11])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6bc80asm139917366b.7.2024.07.10.01.51.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 01:51:13 -0700 (PDT)
-Date: Wed, 10 Jul 2024 10:51:11 +0200
-From: Tommaso Merciai <tomm.merciai@gmail.com>
-To: Umang Jain <umang.jain@ideasonboard.com>
-Cc: linux-media@vger.kernel.org,
-	Alexander Shiyan <eagle.alexander923@gmail.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] media: imx335: Support vertical flip
-Message-ID: <Zo5Lf6c6HKlPm6Rs@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
-References: <20240710044633.81372-1-umang.jain@ideasonboard.com>
- <20240710044633.81372-3-umang.jain@ideasonboard.com>
+	s=arc-20240116; t=1720601575; c=relaxed/simple;
+	bh=PhMCKB+xJTR+gWnIW4XNQs4NwAAVWihotq9v6lufwcc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DxA0670MVv8tr/LArg1s4XbtWg1bsnlFnoCBN9kEDC49dGIaKGaTLPf/3OPawO/nOt+KaNrEmOhjjX1Pn42r45Hcp0l8mgeZIAN+2zo85+RPDtChejfFc5S07Kxv1GDiSdhGH9fbVxpODNrX3LuaEhlqREIg0blM75YqUMfvgyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mIVsdcf9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 818F6C32781;
+	Wed, 10 Jul 2024 08:52:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720601574;
+	bh=PhMCKB+xJTR+gWnIW4XNQs4NwAAVWihotq9v6lufwcc=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=mIVsdcf9Wq8E3d8aADG4+Ad/topqdU/CzpA38t5GjNHBmlgrzJ7vQPmrlq+1NNZ60
+	 5b64GvL5nk4XMFsyiQ3gIVvODP2fIWuRx1Niho4Y1gs9wEg/IYqgi5z4pvkF/tnIwP
+	 ux8eyIsDwT5fN74oki5yn5pTldkTGGlFLzDs4O2tI39uMw9cVQymbgHlmqfMlH9aNB
+	 d81d/dzO3Pbm6KdNvXnecazvXxfrkwnC5hQMBTMzvrhNy30aBdPOwHjNR+RSH5Hf/a
+	 CiRrE4VJu21uxO6COyZLhWcyTgLp18i0fJtXc9v/g03+F8v65/G7kFX9vOw4iu4h5s
+	 le0CBuq0+5+aQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71CFDC3DA42;
+	Wed, 10 Jul 2024 08:52:54 +0000 (UTC)
+From: Hsiao Chien Sung via B4 Relay <devnull+shawn.sung.mediatek.com@kernel.org>
+Subject: [PATCH v3 0/5] Support alpha blending in MTK display driver
+Date: Wed, 10 Jul 2024 16:52:50 +0800
+Message-Id: <20240710-alpha-blending-v3-0-289c187f9c6f@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710044633.81372-3-umang.jain@ideasonboard.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOJLjmYC/22OQQ6CMBREr2K6tubzgRZceQ/jotAvNEIhLTYaw
+ t0tsDAxLmeS92Zm5skZ8ux8mJmjYLwZbAzp8cDqVtmGuNExMwTMQCbAVTe2ilcdWW1sw0FILPN
+ cQiFSFqFKeeKVU7ZuI2afXRfL0dHdvLaV6y3m1vhpcO9tNCRru/sFwm7mIeHAJQoJILFWCJeet
+ FETPU710LNVEvAL/jkWMBp0VuWQkygLUD+GZVk+xAF9pv0AAAA=
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
+ Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Hsiao Chien Sung <shawn.sung@mediatek.corp-partner.google.com>, 
+ CK Hu <ck.hu@mediatek.com>, Hsiao Chien Sung <shawn.sung@mediatek.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720601573; l=1352;
+ i=shawn.sung@mediatek.com; s=20240710; h=from:subject:message-id;
+ bh=PhMCKB+xJTR+gWnIW4XNQs4NwAAVWihotq9v6lufwcc=;
+ b=0Y6YJ9l6hxNTlX0eT4eoJURDFUA2bVcNpmPnbtUiNExoTDahpGjBRDE/4MJ2UbOapU7x5pPeU
+ EEEFzTpFXvMBWiv6eU0YelHHmhb3XA8smpTagNVshdUtYeK+kQZXD6S
+X-Developer-Key: i=shawn.sung@mediatek.com; a=ed25519;
+ pk=VRlGZ3diQkQtpDd8fCL9/mx+TpZStm08pg8UPaG1NGc=
+X-Endpoint-Received: by B4 Relay for shawn.sung@mediatek.com/20240710 with
+ auth_id=184
+X-Original-From: Hsiao Chien Sung <shawn.sung@mediatek.com>
+Reply-To: shawn.sung@mediatek.com
 
-Hi Umang,
+Support "Pre-multiplied" and "None" blend mode on MediaTek's chips by
+adding correct blend mode property when the planes init.
+Before this patch, only the "Coverage" mode (default) is supported.
 
-On Wed, Jul 10, 2024 at 10:16:32AM +0530, Umang Jain wrote:
-> Support vertical flip by setting REG_VREVERSE.
-> Additional registers also needs to be set per mode, according
-> to the readout direction (normal/inverted) as mentioned in the
-> data sheet.
-> 
-> Since the register IMX335_REG_AREA3_ST_ADR_1 is based on the
-> flip (and is set via vflip related registers), it has been
-> moved out of the 2592x1944 mode regs.
-> 
-> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
-> ---
->  drivers/media/i2c/imx335.c | 71 ++++++++++++++++++++++++++++++++++++--
->  1 file changed, 69 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
-> index 6c1e61b6696b..cd150606a8a9 100644
-> --- a/drivers/media/i2c/imx335.c
-> +++ b/drivers/media/i2c/imx335.c
-> @@ -56,6 +56,9 @@
->  #define IMX335_AGAIN_STEP		1
->  #define IMX335_AGAIN_DEFAULT		0
->  
-> +/* Vertical flip */
-> +#define IMX335_REG_VREVERSE		CCI_REG8(0x304f)
-> +
->  #define IMX335_REG_TPG_TESTCLKEN	CCI_REG8(0x3148)
->  
->  #define IMX335_REG_INCLKSEL1		CCI_REG16_LE(0x314c)
-> @@ -155,6 +158,8 @@ static const char * const imx335_supply_name[] = {
->   * @vblank_max: Maximum vertical blanking in lines
->   * @pclk: Sensor pixel clock
->   * @reg_list: Register list for sensor mode
-> + * @vflip_normal: Register list vflip (normal readout)
-> + * @vflip_inverted: Register list vflip (inverted readout)
->   */
->  struct imx335_mode {
->  	u32 width;
-> @@ -166,6 +171,8 @@ struct imx335_mode {
->  	u32 vblank_max;
->  	u64 pclk;
->  	struct imx335_reg_list reg_list;
-> +	struct imx335_reg_list vflip_normal;
-> +	struct imx335_reg_list vflip_inverted;
->  };
->  
->  /**
-> @@ -183,6 +190,7 @@ struct imx335_mode {
->   * @pclk_ctrl: Pointer to pixel clock control
->   * @hblank_ctrl: Pointer to horizontal blanking control
->   * @vblank_ctrl: Pointer to vertical blanking control
-> + * @vflip: Pointer to vertical flip control
->   * @exp_ctrl: Pointer to exposure control
->   * @again_ctrl: Pointer to analog gain control
->   * @vblank: Vertical blanking in lines
-> @@ -207,6 +215,7 @@ struct imx335 {
->  	struct v4l2_ctrl *pclk_ctrl;
->  	struct v4l2_ctrl *hblank_ctrl;
->  	struct v4l2_ctrl *vblank_ctrl;
-> +	struct v4l2_ctrl *vflip;
->  	struct {
->  		struct v4l2_ctrl *exp_ctrl;
->  		struct v4l2_ctrl *again_ctrl;
-> @@ -259,7 +268,6 @@ static const struct cci_reg_sequence mode_2592x1944_regs[] = {
->  	{ IMX335_REG_HTRIMMING_START, 48 },
->  	{ IMX335_REG_HNUM, 2592 },
->  	{ IMX335_REG_Y_OUT_SIZE, 1944 },
-> -	{ IMX335_REG_AREA3_ST_ADR_1, 176 },
->  	{ IMX335_REG_AREA3_WIDTH_1, 3928 },
->  	{ IMX335_REG_OPB_SIZE_V, 0 },
->  	{ IMX335_REG_XVS_XHS_DRV, 0x00 },
-> @@ -333,6 +341,26 @@ static const struct cci_reg_sequence mode_2592x1944_regs[] = {
->  	{ CCI_REG8(0x3a00), 0x00 },
->  };
->  
-> +static const struct cci_reg_sequence mode_2592x1944_vflip_normal[] = {
-> +	{ IMX335_REG_AREA3_ST_ADR_1, 176 },
-> +
-> +	/* Undocumented V-Flip related registers on Page 55 of datasheet. */
-> +	{ CCI_REG8(0x3081), 0x02, },
-> +	{ CCI_REG8(0x3083), 0x02, },
-> +	{ CCI_REG16_LE(0x30b6), 0x00 },
-> +	{ CCI_REG16_LE(0x3116), 0x08 },
-> +};
-> +
-> +static const struct cci_reg_sequence mode_2592x1944_vflip_inverted[] = {
-> +	{ IMX335_REG_AREA3_ST_ADR_1, 4112 },
-> +
-> +	/* Undocumented V-Flip related registers on Page 55 of datasheet. */
-> +	{ CCI_REG8(0x3081), 0xfe, },
-> +	{ CCI_REG8(0x3083), 0xfe, },
-> +	{ CCI_REG16_LE(0x30b6), 0x1fa },
-> +	{ CCI_REG16_LE(0x3116), 0x002 },
-> +};
-> +
->  static const struct cci_reg_sequence raw10_framefmt_regs[] = {
->  	{ IMX335_REG_ADBIT, 0x00 },
->  	{ IMX335_REG_MDBIT, 0x00 },
-> @@ -419,6 +447,14 @@ static const struct imx335_mode supported_mode = {
->  		.num_of_regs = ARRAY_SIZE(mode_2592x1944_regs),
->  		.regs = mode_2592x1944_regs,
->  	},
-> +	.vflip_normal = {
-> +		.num_of_regs = ARRAY_SIZE(mode_2592x1944_vflip_normal),
-> +		.regs = mode_2592x1944_vflip_normal,
-> +	},
-> +	.vflip_inverted = {
-> +		.num_of_regs = ARRAY_SIZE(mode_2592x1944_vflip_inverted),
-> +		.regs = mode_2592x1944_vflip_inverted,
-> +	},
->  };
->  
->  /**
-> @@ -492,6 +528,26 @@ static int imx335_update_exp_gain(struct imx335 *imx335, u32 exposure, u32 gain)
->  	return ret;
->  }
->  
-> +static int imx335_update_vertical_flip(struct imx335 *imx335, u32 vflip)
-> +{
-> +	int ret = 0;
-> +
-> +	if (vflip)
-> +		cci_multi_reg_write(imx335->cci,
-> +				    imx335->cur_mode->vflip_inverted.regs,
-> +				    imx335->cur_mode->vflip_inverted.num_of_regs,
-> +				    &ret);
-> +	else
-> +		cci_multi_reg_write(imx335->cci,
-> +				    imx335->cur_mode->vflip_normal.regs,
-> +				    imx335->cur_mode->vflip_normal.num_of_regs,
-> +				    &ret);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return cci_write(imx335->cci, IMX335_REG_VREVERSE, vflip, NULL);
-> +}
-> +
->  static int imx335_update_test_pattern(struct imx335 *imx335, u32 pattern_index)
->  {
->  	int ret = 0;
-> @@ -584,6 +640,10 @@ static int imx335_set_ctrl(struct v4l2_ctrl *ctrl)
->  
->  		ret = imx335_update_exp_gain(imx335, exposure, analog_gain);
->  
-> +		break;
-> +	case V4L2_CID_VFLIP:
-> +		ret = imx335_update_vertical_flip(imx335, ctrl->val);
-> +
->  		break;
->  	case V4L2_CID_TEST_PATTERN:
->  		ret = imx335_update_test_pattern(imx335, ctrl->val);
-> @@ -1167,7 +1227,7 @@ static int imx335_init_controls(struct imx335 *imx335)
->  		return ret;
->  
->  	/* v4l2_fwnode_device_properties can add two more controls */
-> -	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 9);
-> +	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 10);
->  	if (ret)
->  		return ret;
->  
-> @@ -1202,6 +1262,13 @@ static int imx335_init_controls(struct imx335 *imx335)
->  
->  	v4l2_ctrl_cluster(2, &imx335->exp_ctrl);
->  
-> +	imx335->vflip = v4l2_ctrl_new_std(ctrl_hdlr,
-> +					  &imx335_ctrl_ops,
-> +					  V4L2_CID_VFLIP,
-> +					  0, 1, 1, 0);
-> +	if (imx335->vflip)
-> +		imx335->vflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
-> +
->  	imx335->vblank_ctrl = v4l2_ctrl_new_std(ctrl_hdlr,
->  						&imx335_ctrl_ops,
->  						V4L2_CID_VBLANK,
-> -- 
-> 2.45.0
-> 
+Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.corp-partner.google.com>
+---
+Changes in v3:
+- Remove the Change-Id
+- Link to v2: https://lore.kernel.org/r/20240710-alpha-blending-v2-0-d4b505e6980a@mediatek.com
 
-This patch looks good to me.
-Reviewed-by: Tommaso Merciai <tomm.merciai@gmail.com>
+Changes in v2:
+- Remove unnecessary codes
+- Add more information to the commit message
+- Link to v1: https://lore.kernel.org/r/20240620-blend-v1-0-72670072ca20@mediatek.com
 
-Thanks & Regards,
-Tommaso
+---
+Hsiao Chien Sung (5):
+      drm/mediatek: Support "None" blending in OVL
+      drm/mediatek: Support "None" blending in Mixer
+      drm/mediatek: Support "Pre-multiplied" blending in OVL
+      drm/mediatek: Support "Pre-multiplied" blending in Mixer
+      drm/mediatek: Support alpha blending in display driver
+
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 36 +++++++++++++++++++++++++--------
+ drivers/gpu/drm/mediatek/mtk_ethdr.c    | 13 +++++++++---
+ drivers/gpu/drm/mediatek/mtk_plane.c    | 11 ++++++++++
+ 3 files changed, 49 insertions(+), 11 deletions(-)
+---
+base-commit: 8ad49a92cff4bab13eb2f2725243f5f31eff3f3b
+change-id: 20240710-alpha-blending-067295570863
+
+Best regards,
+-- 
+Hsiao Chien Sung <shawn.sung@mediatek.com>
+
 
 
