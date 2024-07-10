@@ -1,154 +1,208 @@
-Return-Path: <linux-kernel+bounces-247104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E30C492CB58
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:52:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E741C92CB5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DCECB21747
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:52:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 169F91C22540
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A360B7C6D5;
-	Wed, 10 Jul 2024 06:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FA57BB01;
+	Wed, 10 Jul 2024 06:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MQg6a3PK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iyvC5Sd9"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D209624A08;
-	Wed, 10 Jul 2024 06:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DDA24A08;
+	Wed, 10 Jul 2024 06:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720594355; cv=none; b=V2N6CMLYMkRYKtuTY0LgZFXd87Kuq2nMWApNi0+J0Ns592bdPW+UimYOg5hOTnWKc8+h9yoxUV/ZgPuDFK+w8qsXzcTA+47CKiFyXWYfAV3aMc2oW4oIeAihCHbg3wiDLQgTU0Wib+qZsLVI+j7K/wnWiaPRp8WTWkFSu4aisdA=
+	t=1720594459; cv=none; b=Ez0eZVo9wtTHboYzEHNzhKMAGTSI2T6jzhDUqpcIPxyWe2SCF06SWkCA06Jm6rb860Fnx8hzWlFGdwTm+vzsygPiPtx4TTJxKuBNmCmUQO4CtgQ8rXCQBLta9Eide1YO1htKIHi3k+eYeCyvzZtTYiNPbSNiqKRLIIQyhWaO2hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720594355; c=relaxed/simple;
-	bh=iZxoqZimCKpehyFMmHWFzK08XaEwDFJ155aep/IdTMg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K+sbPG2KTksg1AKpIItIM4KjFSG76bb/Wjonv0CYFtt3g3lZBS0tMTgllZtphNoTWGzAUIkE4mYImso2PWUwreR8j2GCOwJsr2tqsBwD3Qhm86iwX4D7A/wZxm83hTKcW6S+yDd+XSEgytp4Hjt3Kh9yaIu7E/AfTPushTYTmgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MQg6a3PK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1AC7C32781;
-	Wed, 10 Jul 2024 06:52:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720594355;
-	bh=iZxoqZimCKpehyFMmHWFzK08XaEwDFJ155aep/IdTMg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MQg6a3PKdVltcZFlYr/S/1wB9oDTpcn2qA0BfYKmEUgPFV8gnjyWqgbYfTcbn2X6v
-	 +Gk5rcqBBdQTJ2vSeBi7dk60uSdUDaTqR4MtrCzwqYr1D2CFD5b7GrNh9a0uSKfTRb
-	 cW9GtYuLq7tiOgqcdYrl3DUE3wMhblGPM4tE6gBBF4VGE4ham1z4pIeNAA1leaY88c
-	 TbXF1ze12POpRLOCknGq+acUH7bttnjl3ggEeyhrpyMx1eUCaCQX1IbMT0BhCzpo+u
-	 bAsPXSw/10HSz6qu68ieI/eQMpr9u4zG3IIP/+LQHscA0pkU+uBCXtnIOPLFq3SCtq
-	 5rn9nvL+Zc5cA==
-Message-ID: <e5ded1c1-be7e-4e16-b175-f4bd4a121d3a@kernel.org>
-Date: Wed, 10 Jul 2024 08:52:29 +0200
+	s=arc-20240116; t=1720594459; c=relaxed/simple;
+	bh=pjYP4y25RDcgP0zH1/EuAfgZZCwTSHNncA7y1lkzjV8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XxTqkK4M5BaobHGcirhNHXV6mFvFQIqagsdAddRYg9HrcHAZjT+pQzRXildUBjklueaD3WGl4oyxaLH0dlYxWvD5+tOL9zZAyIjUEm4AMN40vXv2HAsQQMbQw5hSXmQub0qal5PfJSWGE2hvLTSU3SnU9pJpxzLNc554wG7UbXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iyvC5Sd9; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-595856e2332so1588417a12.1;
+        Tue, 09 Jul 2024 23:54:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720594456; x=1721199256; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qCh9lr/6CT2gr3Pq/BvV6O8SufZtSPyjV3cZbBfVTrk=;
+        b=iyvC5Sd94sZ4GBzjmkIY7fJygsmBRUUUjHEdE+rrCsPgJe5zQUgUW8KaPc8nTpRD4o
+         xjiGa78hoQsqwYNCHJU0/FSdVPfZv1FfkIyi4sNZ3JRnWK0r1pLPPGJnxx+1BgoPahZT
+         NyLQEo/inZIIr6i8M8iZLu/UPg/M4ajGuf7xijWAvXpVTKVoUmJvNfHWZooapdeb/oMa
+         IcNVql1qQs2Q9RbqmXcr60zQcNvvYHI7epK1LAlvKROUwg9u1gNBcBg36Rnyxv/hI+to
+         WeQCsZS48OxHkWJ10j+XIKMT0KRShOsyEhSLC16Px7lFAEWglm+6fit1heyHEtB4eaMq
+         RW3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720594456; x=1721199256;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qCh9lr/6CT2gr3Pq/BvV6O8SufZtSPyjV3cZbBfVTrk=;
+        b=gKmZ//MaPUi0gBHtnoCG2k5GbSINQ+I7lDC6phFI0awE0aqn7CCIX5Jgppj6ZOi8Xu
+         9x0HPPf9aaJeLvseHiNDg9h1zMX4dIWkLSPw0/nSKjgb9BaItDt/tULpRyCTYf/lIsAG
+         B5U/ArpIUs07o8x0LBqz+X6kGRbhIlw9ZcEWm/mR7JhIjvFPzw4BkKDARA44QvsSSAxk
+         uiE/FIkgia4HIulPY4H9gwfv+AsurgPjgk2Q4Y/YI49zyAQ2NARIs3dy8dw2zQqVPSVc
+         fyHz9S2WSz78hvoMvcys8+MsWIFMmPa0ZBY8dC7GPClK0UoumIGrDR44SD/V0MXwQebd
+         MUIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVKuwwLTkW/MiavLqlA3mY5sUrxkjHn2EV2PKeVAOPmXwt8bu37Pf7Grd6hlc3PYOiFrbM40DiZxeAC5ZUW1lgt/XQh9+97P4SX9ioq
+X-Gm-Message-State: AOJu0YwJGAEae1C8qRMl3szVS9Sh6trnEMmnaKNCr6EvRbyq/WjZDKPE
+	UDTO9pDVXBVb4FctPk3UfULr6izXqSSos422ctmVSEjaOWRE46jl5Olq8Q==
+X-Google-Smtp-Source: AGHT+IGusW3WZy/Lw3Ek2eKwFbS4PzOokvo8hx4ZoSu/N7ZZkCs/bheldgU/2TnseP4sUZadyG0hqw==
+X-Received: by 2002:a05:6402:2742:b0:57c:610a:6e7f with SMTP id 4fb4d7f45d1cf-594baf8719fmr3883007a12.11.1720594455833;
+        Tue, 09 Jul 2024 23:54:15 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:908:e842:bf20::c7d2])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bc7c8a39sm1894590a12.55.2024.07.09.23.54.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 23:54:15 -0700 (PDT)
+From: Ole Schuerks <ole0811sch@gmail.com>
+To: linux-kbuild@vger.kernel.org
+Cc: ole0811sch@gmail.com,
+	jude.gyimah@rub.de,
+	thorsten.berger@rub.de,
+	deltaone@debian.org,
+	jan.sollmann@rub.de,
+	mcgrof@kernel.org,
+	masahiroy@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 00/12] kconfig: Add support for conflict resolution
+Date: Wed, 10 Jul 2024 08:52:43 +0200
+Message-Id: <20240710065255.10338-1-ole0811sch@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] arm64: dts: ti: introduce a minimal am642 device tree
-To: Logan Bristol <l-bristol@ti.com>, Bryan Brattlof <bb@ti.com>,
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Tero Kristo <kristo@kernel.org>
-Cc: Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220321155417.13267-1-bb@ti.com>
- <55e161d1-face-6958-1d86-8a85b82e8485@kernel.org>
- <766dceb1-222a-401b-95e3-69b7fb331411@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <766dceb1-222a-401b-95e3-69b7fb331411@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 09/07/2024 18:20, Logan Bristol wrote:
-> 
-> Hi all,
-> 
-> On 3/22/22 13:14, Krzysztof Kozlowski wrote:
->> On 21/03/2022 16:54, Bryan Brattlof wrote:
->>> Texas Instrument's am642 is one of many k3 based, low cost, low power,
->>> chips designed to work in a wide range of applications spanning an even
->>> wider range of industries that TI is actively developing
->>>
->>> With its pin-mux and peripheral rich designs, these chips will likely
->>> have a multitude of custom device trees that range wildly from one
->>> another and (hopefully) guarantee an influx of variants into the kernel
->>> in the coming years
->>>
->>> With overlays no longer a thing, I wanted to ask for opinions on how
->>> we can best help integrate these dt files as they begin to be developed
->>>
->>> I also wanted to introduce a skeletonized (nothing but uart) device tree
->>> to give others a good starting point while developing their projects.
->>
->> Real hardware as DTS please. There is no need to add some skeleton for
->> specific SoC. What if every SoC goes that way?
->>
->> Feel free to create re-usable components in DTSI ways, still reflecting
->> some hardware parts.
->>
-> 
-> I am working on a project for the AM62 and came across this email thread.
-> 
-> Following Krzysztof's direction, I am wanting to submit a DTSI to serve
-> as a minimal configuration for the existing boards based on the AM62
-> SoC, which are currently defined by bloated DTS files.
-> 
-> This DTSI file can be consumed by other board DTS files to reduce the
-> configuration. Krzysztof, could this be merged upstream?
+Hi,
 
-Aren't you writing something contradictory to what I wrote above? I do
-not see your description matching my earlier guideline.
+Configuring a kernel requires a forward enabling approach where one
+enables each option one needs at a time. If one enables an option
+that selects other options, these options are no longer de-selectable
+by design. Likewise, if one has enabled an option which creates a
+conflict with a secondary option one wishes to enable, one cannot
+easily enable that secondary option, unless one is willing to spend
+time analyzing the dependencies that led to this conflict. Sometimes,
+these conflicts are not easy to understand [0,1].
 
-Best regards,
-Krzysztof
+This patch series (for linux-next) provides support to enable users to
+express their desired target configuration and display possible
+resolutions to their conflicts. This support is provided within xconfig.
+
+Conflict resolution is provided by translating kconfig's configuration
+option tree to a propositional formula, and then allowing our resolution
+algorithm, which uses a SAT solver (picosat, implemented in C) calculate
+the possible fixes for an expressed target kernel configuration.
+
+New UI extensions are made to xconfig with panes and buttons to allow
+users to express new desired target options, calculate fixes, and apply
+any of found solutions.
+
+We created a separate test infrastructure that we used to validate the
+correctness of the suggestions made. It shows that our resolution
+algorithm resolves around 95% of the conflicts. We plan to incorporate
+this with a later patch series.
+
+We envision that our translation of the kconfig option tree into a 
+propositional formula could potentially also later be repurposed to 
+address other problems. An example is checking the consistency between the
+use of ifdefs and logic expressed in kconfig files. We suspect that this 
+could, for example, help avoid invalid kconfig configurations and help 
+with ifdef maintenance.
+
+You can see a YouTube video demonstrating this work [2]. This effort is 
+part of the kernelnewbies Kconfig-SAT project [3], the 
+approach and effort is also explained in detail in our paper [4]. The 
+results from the evaluation have significantly improved since then: Around
+80 % of the conflicts could be resolved, and 99.9 % of the generated 
+fixes resolved the conflict. It is also our attempt at contributing back 
+to the kernel community, whose configurator researchers studied a lot.
+
+Patches applicable to next-20240703.
+
+[0] https://gsd.uwaterloo.ca/sites/default/files/vamos12-survey.pdf
+[1] https://www.linux-magazine.com/Issues/2021/244/Kconfig-Deep-Dive
+[2] https://www.youtube.com/watch?v=vn2JgK_PTbc
+[3] https://kernelnewbies.org/KernelProjects/kconfig-sat
+[4] http://www.cse.chalmers.se/~bergert/paper/2021-icseseip-configfix.pdf
+
+Thanks from the team! (and thanks to Luis Chamberlain for guiding us here)
+
+Co-developed-by: Patrick Franz <deltaone@debian.org>
+Signed-off-by: Patrick Franz <deltaone@debian.org>
+Co-developed-by: Ibrahim Fayaz <phayax@gmail.com>
+Signed-off-by: Ibrahim Fayaz <phayax@gmail.com>
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+Tested-by: Evgeny Groshev <eugene.groshev@gmail.com>
+Suggested-by: Sarah Nadi <nadi@ualberta.ca>
+Suggested-by: Thorsten Berger <thorsten.berger@rub.de>
+Signed-off-by: Thorsten Berger <thorsten.berger@rub.de>
+Signed-off-by: Ole Schuerks <ole0811sch@gmail.com>
+
+Ole Schuerks (12):
+  kconfig: Add picosat.h
+  kconfig: Add picosat.c (1/3)
+  kconfig: Add picosat.c (2/3)
+  kconfig: Add picosat.c (3/3)
+  kconfig: Add definitions
+  kconfig: Add files for building constraints
+  kconfig: Add files for handling expressions
+  kconfig: Add files for RangeFix
+  kconfig: Add files with utility functions
+  kconfig: Add tools
+  kconfig: Add xconfig-modifications
+  kconfig: Add loader.gif
+
+ scripts/kconfig/.gitignore       |    1 +
+ scripts/kconfig/Makefile         |   13 +-
+ scripts/kconfig/cf_constraints.c | 1720 ++++++
+ scripts/kconfig/cf_constraints.h |   26 +
+ scripts/kconfig/cf_defs.h        |  287 +
+ scripts/kconfig/cf_expr.c        | 2594 +++++++++
+ scripts/kconfig/cf_expr.h        |  296 ++
+ scripts/kconfig/cf_rangefix.c    | 1066 ++++
+ scripts/kconfig/cf_rangefix.h    |   21 +
+ scripts/kconfig/cf_utils.c       | 1031 ++++
+ scripts/kconfig/cf_utils.h       |  115 +
+ scripts/kconfig/cfoutconfig.c    |  142 +
+ scripts/kconfig/configfix.c      |  337 ++
+ scripts/kconfig/configfix.h      |   40 +
+ scripts/kconfig/expr.h           |   17 +
+ scripts/kconfig/loader.gif       |  Bin 0 -> 4177 bytes
+ scripts/kconfig/picosat.c        | 8502 ++++++++++++++++++++++++++++++
+ scripts/kconfig/picosat.h        |  658 +++
+ scripts/kconfig/qconf.cc         |  515 +-
+ scripts/kconfig/qconf.h          |  103 +
+ 20 files changed, 17480 insertions(+), 4 deletions(-)
+ create mode 100644 scripts/kconfig/cf_constraints.c
+ create mode 100644 scripts/kconfig/cf_constraints.h
+ create mode 100644 scripts/kconfig/cf_defs.h
+ create mode 100644 scripts/kconfig/cf_expr.c
+ create mode 100644 scripts/kconfig/cf_expr.h
+ create mode 100644 scripts/kconfig/cf_rangefix.c
+ create mode 100644 scripts/kconfig/cf_rangefix.h
+ create mode 100644 scripts/kconfig/cf_utils.c
+ create mode 100644 scripts/kconfig/cf_utils.h
+ create mode 100644 scripts/kconfig/cfoutconfig.c
+ create mode 100644 scripts/kconfig/configfix.c
+ create mode 100644 scripts/kconfig/configfix.h
+ create mode 100644 scripts/kconfig/loader.gif
+ create mode 100644 scripts/kconfig/picosat.c
+ create mode 100644 scripts/kconfig/picosat.h
+
+-- 
+2.39.2
 
 
