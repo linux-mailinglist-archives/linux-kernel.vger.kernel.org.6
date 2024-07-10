@@ -1,220 +1,109 @@
-Return-Path: <linux-kernel+bounces-247491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA5892D01E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:08:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B387792D020
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D6EA1C215FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:08:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E57281C215FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F103F18FDA0;
-	Wed, 10 Jul 2024 11:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7451B18FC9B;
+	Wed, 10 Jul 2024 11:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eeg9wG8X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iLOyAksa"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE8B1B86ED;
-	Wed, 10 Jul 2024 11:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D09918FA35;
+	Wed, 10 Jul 2024 11:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720609679; cv=none; b=DJYcUSRJbgt9GVhuJXkb7GY6dYVxTB4Pbyzn9uQv1x7TyQek72/UKamQ1eqw8b4nKo5jolUDTZc43yVSwoEIqjpXCgs6WMI9hKXOaUtlPmJpdjC64GlK2e2BD1d1cn5dXekxeZs6QVA5BiTzrTAeAMLtPqiMEgJZ6HPoUF5dsbQ=
+	t=1720609701; cv=none; b=JxfWuoOZM1wJ3ZVDctONuEwyjiF/XX0dI/y6Q3u6u49PJe4p/w7NCKd6otz3NEh0eBO6I4L0Ux8325TDg4Eegq8QJAdCkFx/aKvWhvHVWZxIb6fYaTM1skpb20DzjSWBLK6UwDkWUdQH7p8HPt7HOTGfmckz+7HyR8Cl0rH2hCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720609679; c=relaxed/simple;
-	bh=QB3UOI1KEGMUrpOayx9L/cdLb0ywpon1cMVLsZARrwE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BVPQZzY4Fsw7CE1n0jsQLSNZkLDTgUMcrQF8hSQyEK08qrHRN55Pjp89FwdBlD+9mxn+MwkrubzU0aR/YTngGkn8ALKr4fYVyc8Of7jq5C/rmb51YnfmFg0/PMEUQpI6fumebJJW5hbm+Jd05ngRuHsiwShWCvimicGxieiIzaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eeg9wG8X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58BA8C32781;
-	Wed, 10 Jul 2024 11:07:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720609678;
-	bh=QB3UOI1KEGMUrpOayx9L/cdLb0ywpon1cMVLsZARrwE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eeg9wG8X0U5MiMwN2iaz6k6vw/72Yt+irvrFqW5Qd7cIIiqSYBtQ2SuXuW2wWzfST
-	 zLnL6EsqVv3ZDH5gAu65fO/tkCMI0r20yhbu1T7UQ0YT/wsJq3/yhRXsly9Js5/B4t
-	 sdrNZuvNQGX2hLlwHWWqi82c2AT7kmm0VWYfMQxeyqW4ACmElEG3LwQuVc7062dHuE
-	 UfC7E0IAXb7XRUae0hpkcXr0nkuhHy64RrWkpafr6K4zceMIvjwVlnQM4nCrDCmzMD
-	 zSyCn7ZZ7utLU4qhIRzoRBv9RkVlhdgd9qhQFLz8PsC3dCjrLoA+BkXTtYCdekORcQ
-	 YQaaIJGg9hGkw==
-Message-ID: <0a3105c5-7cb4-411a-9779-d89600925dfe@kernel.org>
-Date: Wed, 10 Jul 2024 13:07:53 +0200
+	s=arc-20240116; t=1720609701; c=relaxed/simple;
+	bh=SwL5TVDUykkBPz8CWYeHIj/sJyJG+DCt2K/keOZiI/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=m/tznSEyJTYYJhZQ3fQOUorDRVU5MX3BoyNY/8mV9R00YO5tXla2iIoocfe8NMBp6YKIvvZvanj7Bkyo4ueSRYVNc9c93/1aeyRmEtGRLmXNIMxf5lQeghXnpOZdUsylnHraf9F118IppDcbCLGmIusjsYM1tQt5M9b9IbBXFNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iLOyAksa; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70b04cb28acso546028b3a.0;
+        Wed, 10 Jul 2024 04:08:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720609700; x=1721214500; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9MLBAAq/8WgkXtZstYMuDUrrVfHrmeGeX9XzyNmKcDY=;
+        b=iLOyAksaIQVRSDT9qSS7DvTCBH+H9zDW7zJc7+vXlzcx0530E4ZLyaXn9fwWUffW5B
+         MRcSLjuaUize5gGeAg6g+ZhbYyIDLnxhmaAD9lDEuzcIS4O+MniVYiJSb+xyV3WGZ32+
+         ANgX70M10ayoO6Zennoj8p+YR2C06ys2Ox3MEMmoK1kaPqqmj9g7zd4oM0eHI+JMrK40
+         qDXQ5dYcklj3ZvwddCBoCkpxTPzuak879FePi69Qm/LNTASlD1j1Yc+EReT3fFxsjqww
+         Vaj4VmopoTAjdac+S3SmC2Sc0mpCQwoXZmglJETeI4BIFoUL0GbJjSwEkQzUIhlhNiSO
+         P0Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720609700; x=1721214500;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9MLBAAq/8WgkXtZstYMuDUrrVfHrmeGeX9XzyNmKcDY=;
+        b=IrmvVHrAUWrDzXZr+Z+Gk0aId6cgmZX39G4+vubkubXpKJF0xn9Ikem1MysjrsQBsF
+         6gWoXHznGsxk97BjgmkdVv3OgbpbtIoz9B2C/zQ8mNcLckL9jCJEhI2SIM4uEa0pto1C
+         QthEs7MjEn30K+ppFuG+mS5iSZ55R91ht033LKveKAODGQhgULCFA+SPAuqRds0QrO13
+         3HTaaisIDrFJE9rMuwgBebLJft3TkxrPyXA9rEc5wD39M0Y8nmEkP9vaNkarwi21i6s/
+         YigrwxUVAzFuuw99XjkLuW2auHyrTjj+RzscC1sr7XQWjE489l60Fg7YDjU3jPG+KXSH
+         +mqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXIB7P4iEfNe5C/Bje8SsCCi86WulzOZ9uSMljBNelGcfelheuprWBGE1eTW8do43/j4kfCO4RfP7bYXlLtEgp7Z6DCwydLlmzEas/4sZZr//GHAana78LYF0JIXdg3VpPzCAivg3JQM0DXxA==
+X-Gm-Message-State: AOJu0YxOYXgIoC7uDxM5b1bkn/MiZMtejM8jRVA8zctxLohV/nbG2yaU
+	CQo0xa7dwA9Rn/vwuPZ6l7BJn3unr2AMhpjow52ezig0GafqR7P3tMKAOQ==
+X-Google-Smtp-Source: AGHT+IHc7aGV3hUz/Oxgaox34zwvQkHcSeFQ8Mx+i7UcoqC1Hom/gQ3uftn0TTI5zfpnw+/wHiUMeA==
+X-Received: by 2002:a05:6a00:6903:b0:706:a97d:ca1c with SMTP id d2e1a72fcca58-70b44d60dadmr5941791b3a.6.1720609699681;
+        Wed, 10 Jul 2024 04:08:19 -0700 (PDT)
+Received: from bnew-VirtualBox ([2405:201:3020:7812:b416:d4b5:f43f:6324])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b43899705sm3491936b3a.1.2024.07.10.04.08.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 04:08:18 -0700 (PDT)
+Date: Wed, 10 Jul 2024 16:38:13 +0530
+From: Ankit Agrawal <agrawal.ag.ankit@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drivers/clocksource/qcom: Add missing iounmap() on error
+ when reading clock frequency.
+Message-ID: <20240710110813.GA15351@bnew-VirtualBox>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/13] dt-bindings: media: camss: Add qcom,sm8550-camss
- binding
-To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com,
- Yongsheng Li <quic_yon@quicinc.com>
-References: <20240709160656.31146-1-quic_depengs@quicinc.com>
- <20240709160656.31146-8-quic_depengs@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240709160656.31146-8-quic_depengs@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 09/07/2024 18:06, Depeng Shao wrote:
-> Add bindings for qcom,sm8550-camss in order to support the camera
-> subsystem for sm8550
-> 
-> Co-developed-by: Yongsheng Li <quic_yon@quicinc.com>
-> Signed-off-by: Yongsheng Li <quic_yon@quicinc.com>
-> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
-> ---
->  .../bindings/media/qcom,sm8550-camss.yaml     | 545 ++++++++++++++++++
->  1 file changed, 545 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/qcom,sm8550-camss.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8550-camss.yaml b/Documentation/devicetree/bindings/media/qcom,sm8550-camss.yaml
-> new file mode 100644
-> index 000000000000..d002b0ff119e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/qcom,sm8550-camss.yaml
-> @@ -0,0 +1,545 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/qcom,sm8550-camss.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm SM8550 Camera Subsystem (CAMSS)
-> +
-> +maintainers:
-> +  - Depeng Shao <quic_depengs@quicinc.com>
-> +
-> +description: |
+Add the missing iounmap() when clock frequency fails to get read by the
+of_property_read_u32() call.
 
-Do not need '|' unless you need to preserve formatting.
+Signed-off-by: Ankit Agrawal <agrawal.ag.ankit@gmail.com>
+---
+ drivers/clocksource/timer-qcom.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-This wasn't tested so I am not going to perform full review.
-
-Look at "Re: [PATCH 1/6] media: dt-bindings: media: camss: Add
-qcom,sc7280-camss binding" - all comments apply.
-
-...
-
-> +
-> +required:
-> +  - clock-names
-> +  - clocks
-> +  - compatible
-
-Keep the same order as in "properties:'.
-
-> +  - interconnects
-> +  - interconnect-names
-> +  - interrupts
-> +  - interrupt-names
-> +  - iommus
-> +  - power-domains
-> +  - reg
-> +  - reg-names
-> +  - vdda-phy-supply
-> +  - vdda-pll-supply
-> +  - ports
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/qcom,sm8550-camcc.h>
-> +    #include <dt-bindings/clock/qcom,sm8550-gcc.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/power/qcom-rpmpd.h>
-> +    #include <dt-bindings/clock/qcom,rpmh.h>
-> +    #include <dt-bindings/interconnect/qcom,sm8550-rpmh.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        camss: camss@ace4000 {
-> +            compatible = "qcom,sm8550-camss";
-> +
-> +            reg = <0 0x0ace4000 0 0x2000>,
-> +                  <0 0x0ace6000 0 0x2000>,
-> +                  <0 0x0ace8000 0 0x2000>,
-> +                  <0 0x0acea000 0 0x2000>,
-> +                  <0 0x0acec000 0 0x2000>,
-> +                  <0 0x0acee000 0 0x2000>,
-> +                  <0 0x0acf0000 0 0x2000>,
-> +                  <0 0x0acf2000 0 0x2000>,
-> +                  <0 0x0acb7000 0 0xd00>,
-> +                  <0 0x0acb9000 0 0xd00>,
-> +                  <0 0x0acbb000 0 0xd00>,
-> +                  <0 0x0acca000 0 0xa00>,
-> +                  <0 0x0acce000 0 0xa00>,
-> +                  <0 0x0acb6000 0 0x1000>,
-> +                  <0 0x0ac62000 0 0xf000>,
-> +                  <0 0x0ac71000 0 0xf000>,
-> +                  <0 0x0ac80000 0 0xf000>,
-> +                  <0 0x0acca000 0 0x2800>,
-> +                  <0 0x0acce000 0 0x2800>;
-> +            reg-names = "csiphy0",
-> +                    "csiphy1",
-> +                    "csiphy2",
-> +                    "csiphy3",
-
-These (and many others further) looks misaligned.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/clocksource/timer-qcom.c b/drivers/clocksource/timer-qcom.c
+index b4afe3a67..a66fa7f8e 100644
+--- a/drivers/clocksource/timer-qcom.c
++++ b/drivers/clocksource/timer-qcom.c
+@@ -233,6 +233,7 @@ static int __init msm_dt_timer_init(struct device_node *np)
+ 	}
+ 
+ 	if (of_property_read_u32(np, "clock-frequency", &freq)) {
++		iounmap(cpu0_base);
+ 		pr_err("Unknown frequency\n");
+ 		return -EINVAL;
+ 	}
+-- 
+2.25.1
 
 
