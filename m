@@ -1,104 +1,143 @@
-Return-Path: <linux-kernel+bounces-248098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B00BD92D868
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:41:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A952E92D865
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5938F1F22C6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:41:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35F651F22A95
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86870197555;
-	Wed, 10 Jul 2024 18:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C203196438;
+	Wed, 10 Jul 2024 18:41:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C6WcssT6"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SQTvqH1V"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED0C195803;
-	Wed, 10 Jul 2024 18:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D61E195803
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 18:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720636892; cv=none; b=eJftqZ+xQeTCSkDhG7OayTSLQu8h7a5GT3wD2+WD6zNUs14KugmeP6gd+RtpfW5d3Nfqmz3D5CmlXXrj+pJd84199vTZI+RWC51gsOhm/ziiO+3c1TFAH2Je2MXq5je1YAwBIJUmXmTa/6twOgN6trFnENobdUWKDrUXEne9NSA=
+	t=1720636886; cv=none; b=NzdWQzZ6CMank8pDCuQbCvxOUMvnUhgmHzeqW33kD1o/B9d1YXgwFZUslntNLELK1Te8a+R/WdPfGPvLxc7RyT77JTpn/B8s42c51smb+5WWi8Ejc90WZrWrmT4m8g6tdtmSVIRFKAFoJgSjlAIFgzpgGWlhHorXo3ShONOKmCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720636892; c=relaxed/simple;
-	bh=/6ZdP5ZM/JfMQZmkv1icoRxVdcTKnlZGbxoMGuBNnSo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qtVc7Qllfx5FmvyQhB0sFuglCLz/kypLDY+lJU9RmZomoo3GRWCVXlUGLUXjjF031nh0vXxK4SzRPxFNWo3elOqwS9y0foh3JYCAoq0Jj8wYA9DdnJJBw3GtO48vkMbXSLsNoq8c4Vl2dya9FSB0d81Jltsg7WslVdAQtIDouhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C6WcssT6; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2c2dee9d9cfso86249a91.3;
-        Wed, 10 Jul 2024 11:41:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720636890; x=1721241690; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GBxSFl8LoHS9twH9xDyNT3cXkhW2LHblXm1qvqlBk90=;
-        b=C6WcssT60q6b2csS4ApKhVcrtGQNbA3eWPP+VkZqdDSkwJUkDBg4rJmKrWob+TfUIx
-         6/0LNYGb3DQeGRG8Zp35O0aaq6Vv9od/Idjz8UiA+jD3/1GhPUrAzPsfy071o282QOET
-         jvdRwskCgJlMJuBJho7Dx7mEPchJ6cr2q4mge/tB1f9SoibtvcyT2k8w2Lbh8M9ICp1Z
-         LKsRp0yKJuH8tJMFN1XN/0FVBBSUYm4RiTK1pqaX6RF32GcOscYQJnt9q84/PCA1Xuxe
-         VZ+ruTjmyJdqIUWyAM+mp1A0vmQY7R301gWO/XvV/2+LAuYl7WHj5i0L9bRhz/GgXDVS
-         v1GA==
+	s=arc-20240116; t=1720636886; c=relaxed/simple;
+	bh=jBb2ZgyqNHHzXqzPfyVmH8sGami6SZ423WosKVZ5w2A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VTOSm5coPEwgx97APwKcnKEOu6aOpoKhjN5G+ptwRD7Qi/yV4U2Ittnli434HjAlmNWKHS1U5CTCPQ3JIWuFQ29G5XDeeBo8CdGcbQ6KH3ZWXxIuh/xQkl+7GBCBOI4my2ZyDPevQ4glhyyi0GYK7ZOKnv/CeBQZFaYtNQIWYJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SQTvqH1V; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720636884;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+eIVX3Nh3vYBEeF7J3Cswb85HDhmhS0B4NjP2O37xgE=;
+	b=SQTvqH1VXrn9Aeo9m4R4YTmFmJBf4WEoW2fqcuCBo5NG6yeuiXKftDZYA1CgjrXS7BENA5
+	1oX7SZXS216FmWepvlxj0YLTuHUwr8hOv+UBxn6k4gkfB7VfeYz8Txv51tiVtFaJIxiYfP
+	4lkkkN2Omj56okHVNTOoi1jCxsb938s=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-595-9fr8iaBAPJCtVADaHJfSyg-1; Wed, 10 Jul 2024 14:41:23 -0400
+X-MC-Unique: 9fr8iaBAPJCtVADaHJfSyg-1
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-79f1770b273so1263985a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 11:41:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720636890; x=1721241690;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GBxSFl8LoHS9twH9xDyNT3cXkhW2LHblXm1qvqlBk90=;
-        b=a8LZQ2gh5A5v+T1n4hmRkmfAr5nwf5uUo1Xxwyeesn6shWVuEngY0TdTlDjfft4wbq
-         hlMvCmoC4Z7zvq1/Migp7NNqJJ2HzMDTbgtuEjsLBshPVr5ynR0ChvkMrW2N1AyEhf5N
-         5y4Ol5XI9YLtp3R6txd20MWe9/+4fB+sZV2pJsERijG11tK992EzXSEG+AIY0IUpadOk
-         9udDTCqnbK7UmhBymqyCHmUzi+3yqyfzhnLM4WwVBik31LXBA2OYhbiOFk31Pe4hTE2C
-         o1GvgzLqik0Qt5n0xVU55/8wfmTdoN0m8uTmTzPQoOW9IzX6mOFBJlWkmIRKwK76TO4W
-         Plxg==
-X-Forwarded-Encrypted: i=1; AJvYcCW0N93m5lK8/O8IQwQOV+ghHxosvcIpMoMdnSKDnPn9A/dGt+FEpD63CNYUcFaZOT04WqX9lYD1pUzGg/XU1sfKfDrmNsVfh8z3AiqPWX8Qy7i3npKaajvE4X0H6dZiDNS3c7ILrt2dmllc1w1dcMMdIIWvYaHsZEFR0uwVkVM8Aw==
-X-Gm-Message-State: AOJu0YxoUb9MMwWAbZ8CKP3AvC1AcM30lw+whKCLYAKktOszsDMYGaSf
-	iG1PaAbOpPzUUfQF+jtZuvFCdtX80O1U+G8F3ujwGV+KtHaoj2huDPfbwVtO9rQRx7IOxwx7RQs
-	7bkXvCupVyZNyF15Y431h37Mf4ZI=
-X-Google-Smtp-Source: AGHT+IEJXwm7pdf8JwdvXdSZZi6IyXCVzfds1s3XT3svtFCDKiakMYSU1tjVm15bDHgIst8I80Z5hQXcfgQoXD7xIKQ=
-X-Received: by 2002:a17:90a:f58c:b0:2c9:6a15:640 with SMTP id
- 98e67ed59e1d1-2ca35bde1a6mr5164660a91.4.1720636890155; Wed, 10 Jul 2024
- 11:41:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720636882; x=1721241682;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+eIVX3Nh3vYBEeF7J3Cswb85HDhmhS0B4NjP2O37xgE=;
+        b=erymcQEfUxGoMHbXamtFmBI523RY8ljAyFpUt34Fa3bZ9C0EGMGW7hn9aCRt59qZPN
+         yfLiacWxoiA8Kgxgp32sVoN9clruWxyuxuxErdEsU/QIlhG9wcgNMRzA3FUEhcf2KWUS
+         UnND33rbhUApaZS+K9OYhnbio+v6IDiLQNGlI6Z7E0W7foe83mRedDpowCmJQ2JD4N7o
+         NFOJ5uXBZ+gyKka3Jq7tlsSlUsswT81kg1b98kPC+BEkootyJy4VXJsgRicDaDX9pT1h
+         zC9oQGKh8wcA0h5ZpOuOuTnOi093R9gSmvEA6wYKGjGUyQK9cGx7cTZ9Fl3YZ4oR3Vt9
+         xtGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSjjBm9Gvs5egIVRxsK4r2ElzQwKB2kzn7n8Aksiye5Afg2w8cbuMtG0DQ5Qjxy3Ire3F/Qs0ZI4G0cTfrUEe4gVUmirH3KrKD7yu9
+X-Gm-Message-State: AOJu0YxpimUpo0d3vnhfe3okM/nrPVlklMmr87uTALunJLuJgWXgVNSx
+	GP5MJnlPS+2T4FMZviWSXh9nR0PmyAr9LLm8y1j83A0b5AuBH3qAxk+z1jw0nZUVaJkGxaGgCon
+	xThyVPYTABOjIzGaULEnZHpI14JTwmFMcAmfoi94Aos04/196Cu8Z+TENxEVQ5w==
+X-Received: by 2002:ac8:4c82:0:b0:447:f0c4:8298 with SMTP id d75a77b69052e-44cfc3fa56amr3702471cf.2.1720636882416;
+        Wed, 10 Jul 2024 11:41:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IETdUfrXNqDgbDS7Z1BhFJRvI4WQSOwSqIDdD+5+bC0SwiVZqBADzNnXqHzy4Zdi40FUQ/PVQ==
+X-Received: by 2002:ac8:4c82:0:b0:447:f0c4:8298 with SMTP id d75a77b69052e-44cfc3fa56amr3702401cf.2.1720636882087;
+        Wed, 10 Jul 2024 11:41:22 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-447f9b26c83sm22681111cf.2.2024.07.10.11.41.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 11:41:21 -0700 (PDT)
+Date: Wed, 10 Jul 2024 14:41:19 -0400
+From: Peter Xu <peterx@redhat.com>
+To: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v2 3/3] mm: Add p{g/4}d_leaf() in
+ asm-generic/pgtable-nop{4/u}d.h
+Message-ID: <Zo7Vz_LGUgaf9BGN@x1n>
+References: <bcd6ab8246348f18fdc77694e321ee6458f05781.1720597744.git.christophe.leroy@csgroup.eu>
+ <f69941b076bf8fec89b6bec5573fdb79483c2a75.1720597744.git.christophe.leroy@csgroup.eu>
+ <Zo6e1ILgDn6nuhGC@x1n>
+ <b37a0bb5-ba6f-4db3-af8f-83e06eec086d@cs-soprasteria.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627170900.1672542-1-andrii@kernel.org> <20240710113234.7d8fe0c61b5bebb275e1e2a6@linux-foundation.org>
-In-Reply-To: <20240710113234.7d8fe0c61b5bebb275e1e2a6@linux-foundation.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 10 Jul 2024 11:41:18 -0700
-Message-ID: <CAEf4BzZLPMc95B1PPaF4YVNO92F02wNuwnswoMptN=5zkjkUeA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/6] ioctl()-based API to query VMAs from /proc/<pid>/maps
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
-	viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	gregkh@linuxfoundation.org, linux-mm@kvack.org, liam.howlett@oracle.com, 
-	surenb@google.com, rppt@kernel.org, adobriyan@gmail.com, 
-	Andi Kleen <ak@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b37a0bb5-ba6f-4db3-af8f-83e06eec086d@cs-soprasteria.com>
 
-On Wed, Jul 10, 2024 at 11:32=E2=80=AFAM Andrew Morton
-<akpm@linux-foundation.org> wrote:
->
-> On Thu, 27 Jun 2024 10:08:52 -0700 Andrii Nakryiko <andrii@kernel.org> wr=
-ote:
->
-> > Implement binary ioctl()-based interface to /proc/<pid>/maps file to al=
-low
-> > applications to query VMA information more efficiently than reading *al=
-l* VMAs
-> > nonselectively through text-based interface of /proc/<pid>/maps file.
->
-> I haven't seen any acks or reviewed-by's for this series.  lgtm, so I
-> plan to move it into mm-stable later this week.
+On Wed, Jul 10, 2024 at 02:54:36PM +0000, LEROY Christophe wrote:
+> 
+> 
+> Le 10/07/2024 à 16:46, Peter Xu a écrit :
+> > On Wed, Jul 10, 2024 at 09:51:22AM +0200, Christophe Leroy wrote:
+> >> Commit 2c8a81dc0cc5 ("riscv/mm: fix two page table check related
+> >> issues") added pud_leaf() in include/asm-generic/pgtable-nopmd.h
+> >>
+> >> Do the same for p4d_leaf() and pgd_leaf() to avoid getting them
+> >> erroneously defined by architectures that do not implement the
+> >> related page level.
+> >>
+> >> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> >> ---
+> >> v2: Added pXd_leaf macro as well in asm-generic/pgtable-nopXd.h to cohabit with the fallback
+> >> ---
+> > 
+> > Thanks.  I'd drop the inline functions, but no strong opinions.
+> 
+> Inline functions enable type checking.
+> 
+> With a macro you would be able to write pud_leaf(pgd) without the 
+> compiler noticing the mistake.
+> 
+> All other helpers in asm-generic/pgtable-nopXd.h are functions so from 
+> my point of view it makes sense to keep them as functions not macros.
 
-great, thanks!
+Whoever fallbacks to the pgtable.h pxx_leaf() will still use macros and
+lose the type check again.  I'd rather rely on cross-arch builds and most
+of real *_leaf() users will always detect a type mismatch.
+
+Totally no big deal, and I agree keeping them match nopxd.h rules makes
+sense.
+
+Thanks,
+
+-- 
+Peter Xu
+
 
