@@ -1,141 +1,90 @@
-Return-Path: <linux-kernel+bounces-247782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BAB792D47A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:46:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D2E692D47C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D885DB236CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:46:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E50D1C21AA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E04193060;
-	Wed, 10 Jul 2024 14:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFAB8194099;
+	Wed, 10 Jul 2024 14:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="F3+A1OUt"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="3NMlPHPE"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07B015E97;
-	Wed, 10 Jul 2024 14:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CC6BE4E;
+	Wed, 10 Jul 2024 14:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720622785; cv=none; b=EatD/udQT/BDPG6bVyXKmyxzYakXGQ+QkFuVu2Y6mztQAzbAbIsaREjAx2xE7bbbgxIlUxzhlCP1wOsT+cRN/H/U2HQJRM1F4ftz53+VRJOiUQJpVWAhsxW+yrxdB8iNmMeLOLmWctvxEqBmY5XsvpiPWK2+Cehfij4z+MRx4c4=
+	t=1720622801; cv=none; b=dQgPsWxTI0HBLJQv5m5g2wj8zbYAZvEnsBZJF+/oAENFn4aw8X01eIhHfsI64A2syE6EMnLQSMLyX2uSPWFR2uUGiAAbU4dvHDl96FaJIFOsIwC4VVUUP80v+u4eZm51m/4GWdTSVcUsm9vXgotDjUqTnTq2F5LXLj54gMbxt0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720622785; c=relaxed/simple;
-	bh=yOXgcSetJMIuIuBSusBHwSM0RfsFnWWBxADW8NZvzjQ=;
+	s=arc-20240116; t=1720622801; c=relaxed/simple;
+	bh=UcQ+IrpD+nz8oe5EfdMIcNxhG8gX1w/M8qt/8+Ibe6Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kigzpkWW4w3qtZmWJk4GyncdGOm3n4h+E7nE+70U9O7c7h9aS4sPQQKKE0U04dgnoMMkX2Ke9sguVfwLZV2ZCdRJ7TMl7PUlvjRuM4hQttBS3kVPhIo0atBpO9XXnIKIhZecAzmdQlX1YAJAk2ZTF3p9YTQLV5tB32EakB0puYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=F3+A1OUt; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1720622778;
-	bh=yOXgcSetJMIuIuBSusBHwSM0RfsFnWWBxADW8NZvzjQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F3+A1OUtKDH/DGbE00XW3xDmkUHn5Xs6zwQJTlhgEWAIu33cBBInYw5Q7/Y2qbhIj
-	 xEJ/3mnnbkJ42IMgmIR/hu2po+QGE0dKt3Cd4dBybUuA8JjYXKF3nq+fbUntRXgigO
-	 zoRaXiBOEl+w+VnpENcIwIvyI3bLnK+YpF+ux/gM=
-Date: Wed, 10 Jul 2024 16:46:18 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Nicolas Schier <nicolas@fjasle.eu>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, "Jan Alexander Steffens (heftig)" <heftig@archlinux.org>, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH v3] kbuild: add script and target to generate pacman
- package
-Message-ID: <270d9b2a-4c22-4a6d-be25-66da48c68390@t-8ch.de>
-References: <20240708-kbuild-pacman-pkg-v3-1-885df3cbc740@weissschuh.net>
- <Zo6dQQIJmkauRmFM@fjasle.eu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NGqEQ07e6yQib5H/8uaFnzHFBUqH66XKw0KuznRaNui2GXxsqgrKzS4JFXBXvfDP/lyIVZsTpth0bDtv+SIBLYEVcD8kHZ9GqZ3OfLv7+AhEWKI849zFN8c4sRBQ9u9pEc3MbGRWH1j+paMbV1H+tuHj1UVMYLjE2DSXwMfekHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=3NMlPHPE; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=SHF3+gwvR/5mzTF+Xdx6aTMxYpW7ExwElJi09pIgIco=; b=3NMlPHPExFMOH/7+9F2ABvRmrv
+	/KrvBEbcRUMmPCrpKt753QibYFORq9rEp3Ihn/4ZwIfh08fmTP0a+WJRwAbI0SBx1uqrhREiz/smZ
+	gpeU4X6EV2or83/L1j2KzcaY6iWBouuvX0L5O+CZ1JcaYb9qDqqN8aknYr6mmqj1pD8k=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sRYaP-002EWG-P0; Wed, 10 Jul 2024 16:46:25 +0200
+Date: Wed, 10 Jul 2024 16:46:25 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Li Zetao <lizetao1@huawei.com>, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 net-next] leds: trigger: netdev: Add support for
+ tx_err and rx_err notification with LEDs
+Message-ID: <702949fc-96af-4202-a404-c8678a99fab4@lunn.ch>
+References: <20240710100651.4059887-1-lukma@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zo6dQQIJmkauRmFM@fjasle.eu>
+In-Reply-To: <20240710100651.4059887-1-lukma@denx.de>
 
-On 2024-07-10 16:40:01+0000, Nicolas Schier wrote:
-> On Mon, Jul 08, 2024 at 10:11:51PM +0200 Thomas Weißschuh wrote:
-> > pacman is the package manager used by Arch Linux and its derivates.
-> > Creating native packages from the kernel tree has multiple advantages:
-> > 
-> > * The package triggers the correct hooks for initramfs generation and
-> >   bootloader configuration
-> > * Uninstallation is complete and also invokes the relevant hooks
-> > * New UAPI headers can be installed without any manual bookkeeping
-> > 
-> > The PKGBUILD file is a simplified version of the one used for the
-> > downstream Arch Linux "linux" package.
-> > Extra steps that should not be necessary for a development kernel have
-> > been removed and an UAPI header package has been added.
-> > 
-> > Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-> > Tested-by: Nathan Chancellor <nathan@kernel.org>
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> > Changes in v3:
-> > - Enforce matching architectures for installation
-> > - Add Reviewed-by and Tested-by from Nathan
-> > - Link to v2: https://lore.kernel.org/r/20240706-kbuild-pacman-pkg-v2-1-613422a03a7a@weissschuh.net
-> > 
-> > Changes in v2:
-> > - Replace ${MAKE} with $MAKE for consistency with other variables
-> > - Use $MAKE for "-s image_name"
-> > - Avoid permission warnings from build directory
-> > - Clarify reason for /build symlink removal
-> > - Install System.map and config
-> > - Install dtbs where available
-> > - Allow cross-build through arch=any
-> > - Sort Contributor/Maintainer chronologically
-> > - Disable some unneeded makepkg options
-> > - Use DEPMOD=true for consistency with rpm-package
-> > - Link to v1: https://lore.kernel.org/r/20240704-kbuild-pacman-pkg-v1-1-ac2f63f5fa7b@weissschuh.net
-> > ---
-> >  .gitignore               |  6 ++++
-> >  scripts/Makefile.package | 16 ++++++++++
-> >  scripts/package/PKGBUILD | 83 ++++++++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 105 insertions(+)
-> > 
-> > diff --git a/.gitignore b/.gitignore
-> > index c59dc60ba62e..7902adf4f7f1 100644
-> > --- a/.gitignore
-> > +++ b/.gitignore
-> > @@ -92,6 +92,12 @@ modules.order
-> >  #
-> >  /tar-install/
-> >  
-> > +#
-> > +# pacman files (make pacman-pkg)
-> > +#
-> > +/PKGBUILD
-> > +/pacman/
-> > +
-> >  #
-> >  # We don't want to ignore the following even if they are dot-files
-> >  #
-> > diff --git a/scripts/Makefile.package b/scripts/Makefile.package
-> > index bf016af8bf8a..a5b5b899d90c 100644
-> > --- a/scripts/Makefile.package
-> > +++ b/scripts/Makefile.package
-> > @@ -141,6 +141,21 @@ snap-pkg:
-> >  	cd $(objtree)/snap && \
-> >  	snapcraft --target-arch=$(UTS_MACHINE)
-> >  
-> > +# pacman-pkg
-> > +# ---------------------------------------------------------------------------
-> > +
-> > +PHONY += pacman-pkg
-> > +pacman-pkg:
-> > +	@ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
+On Wed, Jul 10, 2024 at 12:06:51PM +0200, Lukasz Majewski wrote:
+> This patch provides support for enabling blinking of LEDs when RX or TX
+> errors are detected.
 > 
-> Can you please also add PKGBUILD to MRPROPER_FILES in top-level Makefile?
+> Approach taken in this patch is similar to one for TX or RX data
+> transmission indication (i.e. TRIGGER_NETDEV_TX/RX attribute).
+> 
+> One can inspect transmission errors with:
+> ip -s link show eth0
+> 
+> Example LED configuration:
+> cd /sys/devices/platform/amba_pl@0/a001a000.leds/leds/
+> echo netdev > mode:blue/trigger && \
+> echo eth0 > mode:blue/device_name && \
+> echo 1 > mode:blue/tx_err
+> 
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
 
-Sure! "pacman" should also go there, no?
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Thomas
+    Andrew
 
