@@ -1,177 +1,181 @@
-Return-Path: <linux-kernel+bounces-247941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72A292D67C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:31:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C4192D681
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 047B81C208A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:31:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BC211C21037
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B154A19A2BA;
-	Wed, 10 Jul 2024 16:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EA61953B9;
+	Wed, 10 Jul 2024 16:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0bnDpGIu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MIDpl++q"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOoq4U1y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96BD8194C76;
-	Wed, 10 Jul 2024 16:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6AB19AD93;
+	Wed, 10 Jul 2024 16:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720628759; cv=none; b=B69jJSeqb29NjYDMVN3AhcVshOedE28ZLbk2XwcKNzdTfaotp0AgJ68lWv0TwHp/fq2PX504LgTixq3U01AuPk9kvXkvgh8jkmFeZLEO6pVg+7RhNr10A9FgdnEyXEyDQh1PUT0QBUyrAep1SGAgSFolHP/J0IlxL4leYqUq/lY=
+	t=1720628775; cv=none; b=lHhJxuTtPpjLe2I8cZaaL2Wl+vxxb6SVjBfo7Y497DE3ZSczGFeRIq7R2SVvl7aQY7bS4h85EJMEIwLpETHzuoUVDQUctxms46Qmz5/ejlE3HeQ8PwnJaGdtZtGz0iAxxmJKJSRQ8RaJAX1mJSVczj3TCH690kBTCDoD9Yb2Us4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720628759; c=relaxed/simple;
-	bh=mtd75yFZxtytaUaBHke0UfoZiAtqt2nehHx/5pBxF6Q=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=hBHpvDW1h0KXw6rNZvszj5QA09mZyX5BhJWLaOD3H9quKcdPrjkmb1sUIZxdvLVo0nQ1uhqQ/TKOZRQykucZ3/vB2iPEu56jQ4chXUPuwkeDlP8he7tA7/dVbk8i/b7WVVxihNqY6npSSwfj5WA6H98GF57tpLNCJsVHIYy5+cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0bnDpGIu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MIDpl++q; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 10 Jul 2024 16:25:55 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1720628755;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IigpQ9uWNZ2SHk72Idjeq6bdQ/CTWQ7zgTSWQi4UtCM=;
-	b=0bnDpGIumWrf9hRshCpwhvJ0213TO3isV2TWW9Q+jgbt3Nu4KYvCbg6LtfrSkkUz43lrbF
-	bdTcrXETLvuNWk7ldX8uEOwHYcWExmiBk9bb0gQ1l+Ihimz00tykWBT/9jFbGgUhumUcX7
-	3QdOekDKsEiK9D7S0FofE4mGAtsCisi0FnCLsxZvB2zg/tLK6WCDpsIVeeu40zq0a4iZyn
-	NbFG/iQJZL8ZPWGhUc1cyZb86Tt5xzs2Ou0s3pO0QMNsvNDJSpnJ3dDIZd0gw/gVxTAlQN
-	LibTroapa8b0Z1NDVY6dPbaVlJoB475jn881mNj7w6lBXxEzyazvDHN4H7AziA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1720628755;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IigpQ9uWNZ2SHk72Idjeq6bdQ/CTWQ7zgTSWQi4UtCM=;
-	b=MIDpl++qHQb7fkeOhSUF8I3xCIMgfgJU2/zEm4DKJN5jUWL8KejZPucSd/lpffA9QhAN+4
-	/VlHbjERcbEWehCA==
-From: "tip-bot2 for Shivamurthy Shastri" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] PCI/MSI: Provide MSI_FLAG_PCI_MSI_MASK_PARENT
-Cc: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>,
- Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <87ed8j34pj.ffs@tglx>
-References: <87ed8j34pj.ffs@tglx>
+	s=arc-20240116; t=1720628775; c=relaxed/simple;
+	bh=6SS1VzsAN02ABjDahpP3q5Q9MfB8o/CX8E1l3SuhboU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X0rJ2UsM9GsZAIBp/3eYFux3omGov92dhC4OwOVvDlx7RhoGh5q2Lu4b0kY0/7SJKpveKvCjglSD6XJwjf0LhvBKwaBOQtP3T8h2KaUml74JFcpe5tjB4smzA7eGpD+0Uudpe68gDfTGAJiUNlCH4Iq5shmD8rEGJthv2awGfeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EOoq4U1y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA285C32781;
+	Wed, 10 Jul 2024 16:26:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720628774;
+	bh=6SS1VzsAN02ABjDahpP3q5Q9MfB8o/CX8E1l3SuhboU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EOoq4U1ybtMOS83+O4Pt4y4wluYXnG29O5G4LSWXFYV7rH7syR0lBDZXcbc5UcYX/
+	 kF7a+kOhG55Bs6NXCmkFwZOISzkENspnSwr20lmmJ4e4t1G9JWChqIj2cFUYHjr7qJ
+	 vTRo+9wwBKa5v8080kSQHhQlUNv85enpW4fd+p71m4AdtrwBNuwW/SUgbxG354jNsB
+	 56Hc7+4q62olrBxTzcuFPicf4rL7SCaydxmqd4S4V6N0yoXaZigjjMyB4RdORKLxLt
+	 t6+nJ4XirQdY0UcjIyyOrqjGM3BXXDzn7z3d6qc6gxRqDu6003ehkGL+VNHUDUROZR
+	 CcOJjjW1YTdjQ==
+Date: Wed, 10 Jul 2024 09:26:14 -0700
+From: Kees Cook <kees@kernel.org>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Jeff Xu <jeffxu@google.com>, Steve Dower <steve.dower@python.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>,
+	Alejandro Colomar <alx@kernel.org>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Christian Heimes <christian@python.org>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Eric Chiang <ericchiang@google.com>,
+	Fan Wu <wufan@linux.microsoft.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Jordan R Abrahams <ajordanr@google.com>,
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+	Luca Boccassi <bluca@debian.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Matthew Garrett <mjg59@srcf.ucam.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Steve Grubb <sgrubb@redhat.com>,
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+	Xiaoming Ni <nixiaoming@huawei.com>,
+	Yin Fengwei <fengwei.yin@intel.com>,
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
+ SHOULD_EXEC_RESTRICT securebits
+Message-ID: <202407100921.687BE1A6@keescook>
+References: <20240704190137.696169-3-mic@digikod.net>
+ <CALmYWFscz5W6xSXD-+dimzbj=TykNJEDa0m5gvBx93N-J+3nKA@mail.gmail.com>
+ <CALmYWFsLUhkU5u1NKH8XWvSxbFKFOEq+A_eqLeDsN29xOEAYgg@mail.gmail.com>
+ <20240708.quoe8aeSaeRi@digikod.net>
+ <CALmYWFuVJiRZgB0ye9eR95dvBOigoOVShgS9i_ESjEre-H5pLA@mail.gmail.com>
+ <ef3281ad-48a5-4316-b433-af285806540d@python.org>
+ <CALmYWFuFE=V7sGp0_K+2Vuk6F0chzhJY88CP1CAE9jtd=rqcoQ@mail.gmail.com>
+ <20240709.aech3geeMoh0@digikod.net>
+ <CALmYWFuOXAiT05Pi2rZ1nUAKDGe9JyTH7fro2EYS1fh3zeGV5Q@mail.gmail.com>
+ <20240710.eiKohpa4Phai@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172062875551.2215.8934562341098722721.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240710.eiKohpa4Phai@digikod.net>
 
-The following commit has been merged into the irq/core branch of tip:
+On Wed, Jul 10, 2024 at 11:58:25AM +0200, Mickaël Salaün wrote:
+> Here is another proposal:
+> 
+> We can change a bit the semantic by making it the norm to always check
+> file executability with AT_CHECK, and using the securebits to restrict
+> file interpretation and/or command injection (e.g. user supplied shell
+> commands).  Non-executable checked files can be reported/logged at the
+> kernel level, with audit, configured by sysadmins.
+> 
+> New securebits (feel free to propose better names):
+> 
+> - SECBIT_EXEC_RESTRICT_FILE: requires AT_CHECK to pass.
 
-Commit-ID:     698c86faa99ae60a19aacbb74ec1df243bc5eba6
-Gitweb:        https://git.kernel.org/tip/698c86faa99ae60a19aacbb74ec1df243bc5eba6
-Author:        Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>
-AuthorDate:    Wed, 26 Jun 2024 21:05:12 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 10 Jul 2024 18:19:23 +02:00
+Would you want the enforcement of this bit done by userspace or the
+kernel?
 
-PCI/MSI: Provide MSI_FLAG_PCI_MSI_MASK_PARENT
+IIUC, userspace would always perform AT_CHECK regardless of
+SECBIT_EXEC_RESTRICT_FILE, and then which would happen?
 
-Most ARM(64) PCI/MSI domains mask and unmask in the parent domain after or
-before the PCI mask/unmask operation takes place. So there are more than a
-dozen of the same wrapper implementation all over the place.
+1) userspace would ignore errors from AT_CHECK when
+   SECBIT_EXEC_RESTRICT_FILE is unset
 
-Don't make the same mistake with the new per device PCI/MSI domains and
-provide a new MSI feature flag, which lets the domain implementation
-enable this sequence in the PCI/MSI code.
+or
 
-Signed-off-by: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-Link: https://lore.kernel.org/r/87ed8j34pj.ffs@tglx
+2) kernel would allow all AT_CHECK when SECBIT_EXEC_RESTRICT_FILE is
+   unset
 
----
- drivers/pci/msi/irqdomain.c | 20 ++++++++++++++++++++
- include/linux/msi.h         |  2 ++
- 2 files changed, 22 insertions(+)
+I suspect 1 is best and what you intend, given that
+SECBIT_EXEC_DENY_INTERACTIVE can only be enforced by userspace.
 
-diff --git a/drivers/pci/msi/irqdomain.c b/drivers/pci/msi/irqdomain.c
-index 03d2dd2..5691257 100644
---- a/drivers/pci/msi/irqdomain.c
-+++ b/drivers/pci/msi/irqdomain.c
-@@ -148,17 +148,35 @@ static void pci_device_domain_set_desc(msi_alloc_info_t *arg, struct msi_desc *d
- 	arg->hwirq = desc->msi_index;
- }
- 
-+static __always_inline void cond_mask_parent(struct irq_data *data)
-+{
-+	struct msi_domain_info *info = data->domain->host_data;
-+
-+	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
-+		irq_chip_mask_parent(data);
-+}
-+
-+static __always_inline void cond_unmask_parent(struct irq_data *data)
-+{
-+	struct msi_domain_info *info = data->domain->host_data;
-+
-+	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
-+		irq_chip_unmask_parent(data);
-+}
-+
- static void pci_irq_mask_msi(struct irq_data *data)
- {
- 	struct msi_desc *desc = irq_data_get_msi_desc(data);
- 
- 	pci_msi_mask(desc, BIT(data->irq - desc->irq));
-+	cond_mask_parent(data);
- }
- 
- static void pci_irq_unmask_msi(struct irq_data *data)
- {
- 	struct msi_desc *desc = irq_data_get_msi_desc(data);
- 
-+	cond_unmask_parent(data);
- 	pci_msi_unmask(desc, BIT(data->irq - desc->irq));
- }
- 
-@@ -195,10 +213,12 @@ static const struct msi_domain_template pci_msi_template = {
- static void pci_irq_mask_msix(struct irq_data *data)
- {
- 	pci_msix_mask(irq_data_get_msi_desc(data));
-+	cond_mask_parent(data);
- }
- 
- static void pci_irq_unmask_msix(struct irq_data *data)
- {
-+	cond_unmask_parent(data);
- 	pci_msix_unmask(irq_data_get_msi_desc(data));
- }
- 
-diff --git a/include/linux/msi.h b/include/linux/msi.h
-index dc27cf3..04f33e7 100644
---- a/include/linux/msi.h
-+++ b/include/linux/msi.h
-@@ -556,6 +556,8 @@ enum {
- 	MSI_FLAG_USE_DEV_FWNODE		= (1 << 7),
- 	/* Set parent->dev into domain->pm_dev on device domain creation */
- 	MSI_FLAG_PARENT_PM_DEV		= (1 << 8),
-+	/* Support for parent mask/unmask */
-+	MSI_FLAG_PCI_MSI_MASK_PARENT	= (1 << 9),
- 
- 	/* Mask for the generic functionality */
- 	MSI_GENERIC_FLAGS_MASK		= GENMASK(15, 0),
+> - SECBIT_EXEC_DENY_INTERACTIVE: deny any command injection via
+>   command line arguments, environment variables, or configuration files.
+>   This should be ignored by dynamic linkers.  We could also have an
+>   allow-list of shells for which this bit is not set, managed by an
+>   LSM's policy, if the native securebits scoping approach is not enough.
+> 
+> Different modes for script interpreters:
+> 
+> 1. RESTRICT_FILE=0 DENY_INTERACTIVE=0 (default)
+>    Always interpret scripts, and allow arbitrary user commands.
+>    => No threat, everyone and everything is trusted, but we can get
+>    ahead of potential issues with logs to prepare for a migration to a
+>    restrictive mode.
+> 
+> 2. RESTRICT_FILE=1 DENY_INTERACTIVE=0
+>    Deny script interpretation if they are not executable, and allow
+>    arbitrary user commands.
+>    => Threat: (potential) malicious scripts run by trusted (and not
+>       fooled) users.  That could protect against unintended script
+>       executions (e.g. sh /tmp/*.sh).
+>    ==> Makes sense for (semi-restricted) user sessions.
+> 
+> 3. RESTRICT_FILE=1 DENY_INTERACTIVE=1
+>    Deny script interpretation if they are not executable, and also deny
+>    any arbitrary user commands.
+>    => Threat: malicious scripts run by untrusted users.
+>    ==> Makes sense for system services executing scripts.
+> 
+> 4. RESTRICT_FILE=0 DENY_INTERACTIVE=1
+>    Always interpret scripts, but deny arbitrary user commands.
+>    => Goal: monitor/measure/assess script content (e.g. with IMA/EVM) in
+>       a system where the access rights are not (yet) ready.  Arbitrary
+>       user commands would be much more difficult to monitor.
+>    ==> First step of restricting system services that should not
+>        directly pass arbitrary commands to shells.
+
+I like these bits!
+
+-- 
+Kees Cook
 
