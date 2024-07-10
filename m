@@ -1,181 +1,113 @@
-Return-Path: <linux-kernel+bounces-247942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47C4192D681
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:33:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5602692D684
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BC211C21037
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:33:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DE2C1F25777
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EA61953B9;
-	Wed, 10 Jul 2024 16:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1863B195985;
+	Wed, 10 Jul 2024 16:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOoq4U1y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="qNJYuxlu"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6AB19AD93;
-	Wed, 10 Jul 2024 16:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2D2194AF8;
+	Wed, 10 Jul 2024 16:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720628775; cv=none; b=lHhJxuTtPpjLe2I8cZaaL2Wl+vxxb6SVjBfo7Y497DE3ZSczGFeRIq7R2SVvl7aQY7bS4h85EJMEIwLpETHzuoUVDQUctxms46Qmz5/ejlE3HeQ8PwnJaGdtZtGz0iAxxmJKJSRQ8RaJAX1mJSVczj3TCH690kBTCDoD9Yb2Us4=
+	t=1720628809; cv=none; b=d1XsUpJcr2DfDLKqVlNVwVq/mQ3n2sNfbqGUwO7764TTKPio3BIdqfVbjwK1CP2n3xA/GUkdug+X0folJ1E6S8euDQBvPywrD3kW/HaRu1mYU6rafsXNgLpQMtIKgL+LB3Gv3AN46rLsjFqaGfJybemui70DPlsAqYwaVBKx2AU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720628775; c=relaxed/simple;
-	bh=6SS1VzsAN02ABjDahpP3q5Q9MfB8o/CX8E1l3SuhboU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X0rJ2UsM9GsZAIBp/3eYFux3omGov92dhC4OwOVvDlx7RhoGh5q2Lu4b0kY0/7SJKpveKvCjglSD6XJwjf0LhvBKwaBOQtP3T8h2KaUml74JFcpe5tjB4smzA7eGpD+0Uudpe68gDfTGAJiUNlCH4Iq5shmD8rEGJthv2awGfeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EOoq4U1y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA285C32781;
-	Wed, 10 Jul 2024 16:26:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720628774;
-	bh=6SS1VzsAN02ABjDahpP3q5Q9MfB8o/CX8E1l3SuhboU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EOoq4U1ybtMOS83+O4Pt4y4wluYXnG29O5G4LSWXFYV7rH7syR0lBDZXcbc5UcYX/
-	 kF7a+kOhG55Bs6NXCmkFwZOISzkENspnSwr20lmmJ4e4t1G9JWChqIj2cFUYHjr7qJ
-	 vTRo+9wwBKa5v8080kSQHhQlUNv85enpW4fd+p71m4AdtrwBNuwW/SUgbxG354jNsB
-	 56Hc7+4q62olrBxTzcuFPicf4rL7SCaydxmqd4S4V6N0yoXaZigjjMyB4RdORKLxLt
-	 t6+nJ4XirQdY0UcjIyyOrqjGM3BXXDzn7z3d6qc6gxRqDu6003ehkGL+VNHUDUROZR
-	 CcOJjjW1YTdjQ==
-Date: Wed, 10 Jul 2024 09:26:14 -0700
-From: Kees Cook <kees@kernel.org>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Jeff Xu <jeffxu@google.com>, Steve Dower <steve.dower@python.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>,
-	Alejandro Colomar <alx@kernel.org>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Christian Heimes <christian@python.org>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	Eric Chiang <ericchiang@google.com>,
-	Fan Wu <wufan@linux.microsoft.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Jordan R Abrahams <ajordanr@google.com>,
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-	Luca Boccassi <bluca@debian.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Matthew Garrett <mjg59@srcf.ucam.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Steve Grubb <sgrubb@redhat.com>,
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-	Xiaoming Ni <nixiaoming@huawei.com>,
-	Yin Fengwei <fengwei.yin@intel.com>,
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
- SHOULD_EXEC_RESTRICT securebits
-Message-ID: <202407100921.687BE1A6@keescook>
-References: <20240704190137.696169-3-mic@digikod.net>
- <CALmYWFscz5W6xSXD-+dimzbj=TykNJEDa0m5gvBx93N-J+3nKA@mail.gmail.com>
- <CALmYWFsLUhkU5u1NKH8XWvSxbFKFOEq+A_eqLeDsN29xOEAYgg@mail.gmail.com>
- <20240708.quoe8aeSaeRi@digikod.net>
- <CALmYWFuVJiRZgB0ye9eR95dvBOigoOVShgS9i_ESjEre-H5pLA@mail.gmail.com>
- <ef3281ad-48a5-4316-b433-af285806540d@python.org>
- <CALmYWFuFE=V7sGp0_K+2Vuk6F0chzhJY88CP1CAE9jtd=rqcoQ@mail.gmail.com>
- <20240709.aech3geeMoh0@digikod.net>
- <CALmYWFuOXAiT05Pi2rZ1nUAKDGe9JyTH7fro2EYS1fh3zeGV5Q@mail.gmail.com>
- <20240710.eiKohpa4Phai@digikod.net>
+	s=arc-20240116; t=1720628809; c=relaxed/simple;
+	bh=f4AWJ4v7LBNJ1i5ZPwA6x/8HFvJo4c4qap3ClodWtdU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qgYRvYgGyo5BwRBC0ks50vBJi0sndN48tqJCOBk4RuKl5B563m3tIquKs0UZU5rsroGwOxWOijedv/NxgyrT58eBWAdSDh//xiTrlxz+jQTyorB4PQrN2I2/6zrmA7lT2S0Zb56XiUHZDEMakC4aelfMSoq+2zVywGPOW8gyVaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=qNJYuxlu; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1720628807; x=1752164807;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=f4AWJ4v7LBNJ1i5ZPwA6x/8HFvJo4c4qap3ClodWtdU=;
+  b=qNJYuxlumSVnHLPO1Cg+eE6WBb0QBpH/yL2Bi0n6rOU1JDfpm2ybe6PI
+   W8Sfewlpn9LMnzpomRs9q9P11XjtDqufuNZBMKaj4LibBCqFgou10x2cN
+   oY74klzkUw9mQaCZa+vXHiYuYITfu6gzkjGmeOl4pjDVQPf5bh3QtWdBv
+   kTw0ny14PxTe+krxphbHznDj7xHVMRePBlOSTF+GQUYf8qZcMg0CLB/1U
+   WM6T0a0uQP5uQBrsWOIQNYQow2bbMdWCVj1XeUBY1q0D7cYURLRAhTDbT
+   bjOwygj9nnJUPoqNdyKckaTpgPwwF5hoe5mhkNd9cGoPPy4DkPU88qHPi
+   A==;
+X-CSE-ConnectionGUID: XASOd4uNTD+x0ce+O9FQrA==
+X-CSE-MsgGUID: cLKmhQ2tRUKqBsKw0SCqzg==
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="29043742"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Jul 2024 09:26:45 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 10 Jul 2024 09:26:15 -0700
+Received: from ROU-LL-M43238.amer.actel.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Wed, 10 Jul 2024 09:26:12 -0700
+From: <nicolas.ferre@microchip.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Conor Dooley
+	<conor.dooley@microchip.com>, Andi Shyti <andi.shyti@kernel.org>, Rob Herring
+	<robh@kernel.org>, <devicetree@vger.kernel.org>
+CC: Claudiu Beznea <claudiu.beznea@tuxon.dev>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>, "Nicolas
+ Ferre" <nicolas.ferre@microchip.com>
+Subject: [PATCH] dt-bindings: i2c: at91: Add sama7d65 compatible string
+Date: Wed, 10 Jul 2024 18:26:15 +0200
+Message-ID: <20240710162615.332888-1-nicolas.ferre@microchip.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240710.eiKohpa4Phai@digikod.net>
+Content-Type: text/plain
 
-On Wed, Jul 10, 2024 at 11:58:25AM +0200, Mickaël Salaün wrote:
-> Here is another proposal:
-> 
-> We can change a bit the semantic by making it the norm to always check
-> file executability with AT_CHECK, and using the securebits to restrict
-> file interpretation and/or command injection (e.g. user supplied shell
-> commands).  Non-executable checked files can be reported/logged at the
-> kernel level, with audit, configured by sysadmins.
-> 
-> New securebits (feel free to propose better names):
-> 
-> - SECBIT_EXEC_RESTRICT_FILE: requires AT_CHECK to pass.
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
 
-Would you want the enforcement of this bit done by userspace or the
-kernel?
+Add compatible string for sama7d65. Like sama7g5, it currently binds to
+"microchip,sam9x60-i2c" compatible string for this driver.
 
-IIUC, userspace would always perform AT_CHECK regardless of
-SECBIT_EXEC_RESTRICT_FILE, and then which would happen?
+Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+---
+ Documentation/devicetree/bindings/i2c/atmel,at91sam-i2c.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-1) userspace would ignore errors from AT_CHECK when
-   SECBIT_EXEC_RESTRICT_FILE is unset
-
-or
-
-2) kernel would allow all AT_CHECK when SECBIT_EXEC_RESTRICT_FILE is
-   unset
-
-I suspect 1 is best and what you intend, given that
-SECBIT_EXEC_DENY_INTERACTIVE can only be enforced by userspace.
-
-> - SECBIT_EXEC_DENY_INTERACTIVE: deny any command injection via
->   command line arguments, environment variables, or configuration files.
->   This should be ignored by dynamic linkers.  We could also have an
->   allow-list of shells for which this bit is not set, managed by an
->   LSM's policy, if the native securebits scoping approach is not enough.
-> 
-> Different modes for script interpreters:
-> 
-> 1. RESTRICT_FILE=0 DENY_INTERACTIVE=0 (default)
->    Always interpret scripts, and allow arbitrary user commands.
->    => No threat, everyone and everything is trusted, but we can get
->    ahead of potential issues with logs to prepare for a migration to a
->    restrictive mode.
-> 
-> 2. RESTRICT_FILE=1 DENY_INTERACTIVE=0
->    Deny script interpretation if they are not executable, and allow
->    arbitrary user commands.
->    => Threat: (potential) malicious scripts run by trusted (and not
->       fooled) users.  That could protect against unintended script
->       executions (e.g. sh /tmp/*.sh).
->    ==> Makes sense for (semi-restricted) user sessions.
-> 
-> 3. RESTRICT_FILE=1 DENY_INTERACTIVE=1
->    Deny script interpretation if they are not executable, and also deny
->    any arbitrary user commands.
->    => Threat: malicious scripts run by untrusted users.
->    ==> Makes sense for system services executing scripts.
-> 
-> 4. RESTRICT_FILE=0 DENY_INTERACTIVE=1
->    Always interpret scripts, but deny arbitrary user commands.
->    => Goal: monitor/measure/assess script content (e.g. with IMA/EVM) in
->       a system where the access rights are not (yet) ready.  Arbitrary
->       user commands would be much more difficult to monitor.
->    ==> First step of restricting system services that should not
->        directly pass arbitrary commands to shells.
-
-I like these bits!
-
+diff --git a/Documentation/devicetree/bindings/i2c/atmel,at91sam-i2c.yaml b/Documentation/devicetree/bindings/i2c/atmel,at91sam-i2c.yaml
+index 588478862bd1..e61cdb5b16ef 100644
+--- a/Documentation/devicetree/bindings/i2c/atmel,at91sam-i2c.yaml
++++ b/Documentation/devicetree/bindings/i2c/atmel,at91sam-i2c.yaml
+@@ -26,6 +26,7 @@ properties:
+               - microchip,sam9x60-i2c
+       - items:
+           - enum:
++              - microchip,sama7d65-i2c
+               - microchip,sama7g5-i2c
+               - microchip,sam9x7-i2c
+           - const: microchip,sam9x60-i2c
+@@ -78,6 +79,7 @@ allOf:
+               - atmel,sama5d4-i2c
+               - atmel,sama5d2-i2c
+               - microchip,sam9x60-i2c
++              - microchip,sama7d65-i2c
+               - microchip,sama7g5-i2c
+     then:
+       properties:
 -- 
-Kees Cook
+2.39.2
+
 
