@@ -1,260 +1,128 @@
-Return-Path: <linux-kernel+bounces-247363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 249FF92CE78
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:45:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA3F92CE7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3E4C28842B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:45:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6991CB26EDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FD318FA26;
-	Wed, 10 Jul 2024 09:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04CB418FC6F;
+	Wed, 10 Jul 2024 09:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="p+lEzOo6"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UNN2aqoF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA35618EFF9;
-	Wed, 10 Jul 2024 09:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A7818FC76;
+	Wed, 10 Jul 2024 09:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720604701; cv=none; b=cFQ+oOcPe0YaSUUAZ93sSxU7RJCMYgN8zmjTBzEaq4F604lN4CSwIL74XEVl1bczNE3yNhCtUTLOnPCRYeqzOLQbw8Mzcn6ZOfqgHUXKcrD43jM7Q1z0TYmKbibBfWIuYLGaLFaD6udvhGaxgk0EnSOJYhUxL8OhjZS+PRLWVik=
+	t=1720604708; cv=none; b=OEGZUbmkamnlUj2HT5ATFE8jLQDBV7zzWW7tzTPxZefHXa9ojLSHXay9k+pAXMgAqzQcIym/aGv2qruzchmgEpB+3Z1J+bxi2H1/RE9uDeQ6N2IqHouAMMUnnlOpUBUUvpmpW1/rcKjv7/wIXIUQhe6mIztvcEsL4nOYJ5eGFhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720604701; c=relaxed/simple;
-	bh=zuLdMcepRN/UScnbC+ohCbrPF8wsnjY0QJ2444VG8H8=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=qnO083nKskAa3DWZvH4hWxD/fiJmaDDWg8xJA+kek8eiAeBkEQHVF3eTCYyzfjfV4C3B5CeW1HTI522921JtFSuFOAWJqapuo9E6dgyMM1ngFmvK6tEQgEOOWYlw5KamOtFwfaFYV1GRAbGodJz02pWTnq4PZiJPew7R1lsBDU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=p+lEzOo6; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id EC3C68D0;
-	Wed, 10 Jul 2024 11:44:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1720604665;
-	bh=zuLdMcepRN/UScnbC+ohCbrPF8wsnjY0QJ2444VG8H8=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=p+lEzOo62HQ6J/Y3IvNkDQmKEkhNbO8vMvPFuvzKIhis9SACWy9Bl9ZgbV6eOFM7M
-	 NKIUEoIY7Rk4rVuTxXhSsLwb+qyuBGGodfIHcQ+bKTi3XDkDScOD4NkQVTDPRk8O3r
-	 FKbZD9r/OlgTpbN62Zmf75tfWTsSOyHWLzddr2uw=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720604708; c=relaxed/simple;
+	bh=lC2q9hw6vrd5GKebrfAdfev9DYDFJlvNG5u+kkHvdDM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R1MAhdI+wBCGV8WbBlCkI6EApNXfv/1bgwZsSIFynjHWoaovcHWkptDCVkZa28y7tmtJaim7zz5Ah0UbOJYJra4Tuyq+JEYJ8qNpKGRYjokAlY8Spj5ehryL0FGsbqi43hs8m3qPC+CkZaGcZnMUMtlqhO2LLy7NdBPbwF4m2ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UNN2aqoF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3507CC32786;
+	Wed, 10 Jul 2024 09:45:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720604707;
+	bh=lC2q9hw6vrd5GKebrfAdfev9DYDFJlvNG5u+kkHvdDM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UNN2aqoFbfXmFjqvZ4s03RT8LelFMjzHn3zo8kWNi52hehvCIsGi0x03EkO63++Qb
+	 iHfK3qYj4wUZkc6rXRsa+WZsLGr46kckUNylodwf7whjuWezBl9Fn9cP+7nPq+4U4B
+	 7/4LZsHunD/cRj+3t9pZ0UCIhKDaQ89Ix63OuGWPGEcN4P1zkLzeqsK7XbbWzr1FAB
+	 0pOOY+0tjCjOFgmXP1tWCuBj4tzPjsRcwmdyUU3Qsb76n/mMZ+GWjq9XegP8OXEAvZ
+	 viGmgHHGYGLYt5F3qRC0UE67o1bsdfpgsM//2gl01DL6Srru0L+ZTkUJUZRGUjSDhF
+	 novokT/CE7kJw==
+Message-ID: <daaa0e56-9042-417b-a39f-d56084a0ce76@kernel.org>
+Date: Wed, 10 Jul 2024 11:45:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240710044633.81372-3-umang.jain@ideasonboard.com>
-References: <20240710044633.81372-1-umang.jain@ideasonboard.com> <20240710044633.81372-3-umang.jain@ideasonboard.com>
-Subject: Re: [PATCH 2/2] media: imx335: Support vertical flip
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Alexander Shiyan <eagle.alexander923@gmail.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, open list <linux-kernel@vger.kernel.org>, Umang Jain <umang.jain@ideasonboard.com>
-To: Umang Jain <umang.jain@ideasonboard.com>, linux-media@vger.kernel.org
-Date: Wed, 10 Jul 2024 10:44:54 +0100
-Message-ID: <172060469478.392292.6825899092646846962@ping.linuxembedded.co.uk>
-User-Agent: alot/0.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] ARM: dts: qcom: ipq4019: adhere to pinctrl dtschema
+To: Rayyan Ansari <rayyan.ansari@linaro.org>, linux-arm-msm@vger.kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ Rob Herring <robh@kernel.org>
+References: <20240710084250.11342-1-rayyan.ansari@linaro.org>
+ <20240710084250.11342-4-rayyan.ansari@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240710084250.11342-4-rayyan.ansari@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Quoting Umang Jain (2024-07-10 05:46:32)
-> Support vertical flip by setting REG_VREVERSE.
-> Additional registers also needs to be set per mode, according
-> to the readout direction (normal/inverted) as mentioned in the
-> data sheet.
->=20
-> Since the register IMX335_REG_AREA3_ST_ADR_1 is based on the
-> flip (and is set via vflip related registers), it has been
-> moved out of the 2592x1944 mode regs.
->=20
-> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+On 10/07/2024 10:41, Rayyan Ansari wrote:
+> Pass dt_binding_check for qcom,ipq4019-pinctrl.yaml.
+> 
+> Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
 > ---
->  drivers/media/i2c/imx335.c | 71 ++++++++++++++++++++++++++++++++++++--
->  1 file changed, 69 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
-> index 6c1e61b6696b..cd150606a8a9 100644
-> --- a/drivers/media/i2c/imx335.c
-> +++ b/drivers/media/i2c/imx335.c
-> @@ -56,6 +56,9 @@
->  #define IMX335_AGAIN_STEP              1
->  #define IMX335_AGAIN_DEFAULT           0
-> =20
-> +/* Vertical flip */
-> +#define IMX335_REG_VREVERSE            CCI_REG8(0x304f)
-> +
->  #define IMX335_REG_TPG_TESTCLKEN       CCI_REG8(0x3148)
-> =20
->  #define IMX335_REG_INCLKSEL1           CCI_REG16_LE(0x314c)
-> @@ -155,6 +158,8 @@ static const char * const imx335_supply_name[] =3D {
->   * @vblank_max: Maximum vertical blanking in lines
->   * @pclk: Sensor pixel clock
->   * @reg_list: Register list for sensor mode
-> + * @vflip_normal: Register list vflip (normal readout)
-> + * @vflip_inverted: Register list vflip (inverted readout)
->   */
->  struct imx335_mode {
->         u32 width;
-> @@ -166,6 +171,8 @@ struct imx335_mode {
->         u32 vblank_max;
->         u64 pclk;
->         struct imx335_reg_list reg_list;
-> +       struct imx335_reg_list vflip_normal;
-> +       struct imx335_reg_list vflip_inverted;
->  };
-> =20
->  /**
-> @@ -183,6 +190,7 @@ struct imx335_mode {
->   * @pclk_ctrl: Pointer to pixel clock control
->   * @hblank_ctrl: Pointer to horizontal blanking control
->   * @vblank_ctrl: Pointer to vertical blanking control
-> + * @vflip: Pointer to vertical flip control
->   * @exp_ctrl: Pointer to exposure control
->   * @again_ctrl: Pointer to analog gain control
->   * @vblank: Vertical blanking in lines
-> @@ -207,6 +215,7 @@ struct imx335 {
->         struct v4l2_ctrl *pclk_ctrl;
->         struct v4l2_ctrl *hblank_ctrl;
->         struct v4l2_ctrl *vblank_ctrl;
-> +       struct v4l2_ctrl *vflip;
->         struct {
->                 struct v4l2_ctrl *exp_ctrl;
->                 struct v4l2_ctrl *again_ctrl;
-> @@ -259,7 +268,6 @@ static const struct cci_reg_sequence mode_2592x1944_r=
-egs[] =3D {
->         { IMX335_REG_HTRIMMING_START, 48 },
->         { IMX335_REG_HNUM, 2592 },
->         { IMX335_REG_Y_OUT_SIZE, 1944 },
-> -       { IMX335_REG_AREA3_ST_ADR_1, 176 },
->         { IMX335_REG_AREA3_WIDTH_1, 3928 },
->         { IMX335_REG_OPB_SIZE_V, 0 },
->         { IMX335_REG_XVS_XHS_DRV, 0x00 },
-> @@ -333,6 +341,26 @@ static const struct cci_reg_sequence mode_2592x1944_=
-regs[] =3D {
->         { CCI_REG8(0x3a00), 0x00 },
->  };
-> =20
-> +static const struct cci_reg_sequence mode_2592x1944_vflip_normal[] =3D {
-> +       { IMX335_REG_AREA3_ST_ADR_1, 176 },
-> +
-> +       /* Undocumented V-Flip related registers on Page 55 of datasheet.=
- */
-> +       { CCI_REG8(0x3081), 0x02, },
-> +       { CCI_REG8(0x3083), 0x02, },
-> +       { CCI_REG16_LE(0x30b6), 0x00 },
-> +       { CCI_REG16_LE(0x3116), 0x08 },
-> +};
-> +
-> +static const struct cci_reg_sequence mode_2592x1944_vflip_inverted[] =3D=
- {
-> +       { IMX335_REG_AREA3_ST_ADR_1, 4112 },
-> +
-> +       /* Undocumented V-Flip related registers on Page 55 of datasheet.=
- */
-> +       { CCI_REG8(0x3081), 0xfe, },
-> +       { CCI_REG8(0x3083), 0xfe, },
-> +       { CCI_REG16_LE(0x30b6), 0x1fa },
-> +       { CCI_REG16_LE(0x3116), 0x002 },
+>  .../boot/dts/qcom/qcom-ipq4018-ap120c-ac.dtsi | 34 ++++++++-----------
+>  .../boot/dts/qcom/qcom-ipq4018-jalapeno.dts   | 27 ++++++---------
+>  .../boot/dts/qcom/qcom-ipq4019-ap.dk01.1.dtsi | 26 +++++---------
+>  .../boot/dts/qcom/qcom-ipq4019-ap.dk04.1.dtsi | 14 ++++----
+>  .../dts/qcom/qcom-ipq4019-ap.dk07.1-c1.dts    |  8 ++---
+>  .../dts/qcom/qcom-ipq4019-ap.dk07.1-c2.dts    |  2 +-
+>  .../boot/dts/qcom/qcom-ipq4019-ap.dk07.1.dtsi |  6 ++--
 
-A little more awkward than the usual flip controls, but I think we do
-need to track what the datasheet gives us for now unless we can get more
-information from Sony or do some reverse engineering here which isn't
-really worth the effort at the moment.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
+Best regards,
+Krzysztof
 
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-
-> +};
-> +
->  static const struct cci_reg_sequence raw10_framefmt_regs[] =3D {
->         { IMX335_REG_ADBIT, 0x00 },
->         { IMX335_REG_MDBIT, 0x00 },
-> @@ -419,6 +447,14 @@ static const struct imx335_mode supported_mode =3D {
->                 .num_of_regs =3D ARRAY_SIZE(mode_2592x1944_regs),
->                 .regs =3D mode_2592x1944_regs,
->         },
-> +       .vflip_normal =3D {
-> +               .num_of_regs =3D ARRAY_SIZE(mode_2592x1944_vflip_normal),
-> +               .regs =3D mode_2592x1944_vflip_normal,
-> +       },
-> +       .vflip_inverted =3D {
-> +               .num_of_regs =3D ARRAY_SIZE(mode_2592x1944_vflip_inverted=
-),
-> +               .regs =3D mode_2592x1944_vflip_inverted,
-> +       },
->  };
-> =20
->  /**
-> @@ -492,6 +528,26 @@ static int imx335_update_exp_gain(struct imx335 *imx=
-335, u32 exposure, u32 gain)
->         return ret;
->  }
-> =20
-> +static int imx335_update_vertical_flip(struct imx335 *imx335, u32 vflip)
-> +{
-> +       int ret =3D 0;
-> +
-> +       if (vflip)
-> +               cci_multi_reg_write(imx335->cci,
-> +                                   imx335->cur_mode->vflip_inverted.regs,
-> +                                   imx335->cur_mode->vflip_inverted.num_=
-of_regs,
-> +                                   &ret);
-> +       else
-> +               cci_multi_reg_write(imx335->cci,
-> +                                   imx335->cur_mode->vflip_normal.regs,
-> +                                   imx335->cur_mode->vflip_normal.num_of=
-_regs,
-> +                                   &ret);
-> +       if (ret)
-> +               return ret;
-> +
-> +       return cci_write(imx335->cci, IMX335_REG_VREVERSE, vflip, NULL);
-> +}
-> +
->  static int imx335_update_test_pattern(struct imx335 *imx335, u32 pattern=
-_index)
->  {
->         int ret =3D 0;
-> @@ -584,6 +640,10 @@ static int imx335_set_ctrl(struct v4l2_ctrl *ctrl)
-> =20
->                 ret =3D imx335_update_exp_gain(imx335, exposure, analog_g=
-ain);
-> =20
-> +               break;
-> +       case V4L2_CID_VFLIP:
-> +               ret =3D imx335_update_vertical_flip(imx335, ctrl->val);
-> +
->                 break;
->         case V4L2_CID_TEST_PATTERN:
->                 ret =3D imx335_update_test_pattern(imx335, ctrl->val);
-> @@ -1167,7 +1227,7 @@ static int imx335_init_controls(struct imx335 *imx3=
-35)
->                 return ret;
-> =20
->         /* v4l2_fwnode_device_properties can add two more controls */
-> -       ret =3D v4l2_ctrl_handler_init(ctrl_hdlr, 9);
-> +       ret =3D v4l2_ctrl_handler_init(ctrl_hdlr, 10);
->         if (ret)
->                 return ret;
-> =20
-> @@ -1202,6 +1262,13 @@ static int imx335_init_controls(struct imx335 *imx=
-335)
-> =20
->         v4l2_ctrl_cluster(2, &imx335->exp_ctrl);
-> =20
-> +       imx335->vflip =3D v4l2_ctrl_new_std(ctrl_hdlr,
-> +                                         &imx335_ctrl_ops,
-> +                                         V4L2_CID_VFLIP,
-> +                                         0, 1, 1, 0);
-> +       if (imx335->vflip)
-> +               imx335->vflip->flags |=3D V4L2_CTRL_FLAG_MODIFY_LAYOUT;
-> +
->         imx335->vblank_ctrl =3D v4l2_ctrl_new_std(ctrl_hdlr,
->                                                 &imx335_ctrl_ops,
->                                                 V4L2_CID_VBLANK,
-> --=20
-> 2.45.0
->
 
