@@ -1,72 +1,71 @@
-Return-Path: <linux-kernel+bounces-248075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0321B92D821
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:14:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1815A92D823
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAC51282637
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:14:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 496A51C21264
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E097F195FEA;
-	Wed, 10 Jul 2024 18:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE11195F28;
+	Wed, 10 Jul 2024 18:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O8zVYiWI"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZHiFDq33"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BEA1B809;
-	Wed, 10 Jul 2024 18:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2B11922E3
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 18:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720635265; cv=none; b=tkCWDtZWtwiB/QBCGhrjnoAIp8vu6hbDHbm5Woy7KsfgHB+y/nsAWhML4SOZ02O9Ae3yqYfRFNpUOPSEvlARE7icWtP7uNgABBVJXXKqvLjuOQwPREU7gqz0gIgo1yMOwLOseh+TjwXYyWJz65TB3NMf5eOk+0+Z7AiGQL+O7us=
+	t=1720635316; cv=none; b=U1zVj/qN5W2eT20uv2BNdsFNUiA+TFSfloUnQPgiFEUk39s1Q8ed/7urhFFM4iqWGUrLpeKNkN6o5blV5vJ0xZCN03TwCsh9pCMRBxSmhYl7jXTZIqoMI6O++j/b4MAeElh9O5+dGZs5Dgrsva337180wIOm8OcemWypye5CKV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720635265; c=relaxed/simple;
-	bh=f8ykv9uJVkjGiFVm2W20/V26D7sBzuKYq9icfj2JEuc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=K/0uQsdEqsoGtg2qIqS2P2lhNe057PeUX54J+Y6OJHZ5Ms7WPI+PUU5ddMX8NmgsgypU41TWmw9mA4eG0/zSeA8scixf1CWv3EwKm1tfYphWjEMc3g1d41SWzCuBm2DgW15vgu1uVQckZGWpT2RYCTSUz52kbiPKZKmV//gRcY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O8zVYiWI; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52e9a920e73so72923e87.2;
-        Wed, 10 Jul 2024 11:14:23 -0700 (PDT)
+	s=arc-20240116; t=1720635316; c=relaxed/simple;
+	bh=fi0BW+/k8VQydo/kennAewSTGcXiLJiRcnEfWWAowLQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gihOBZ+svEP67JGXlzxgS5bxZy57L/gRTnGYxaXvgwkH1b1prpEYZr45NQ7EpaqWB2jIH2vU7b2iR25NIkl1hSpFJW8GYjuonyPGJ7cWr2bPP5HxmlvuzChwYVXXkrGbOG4IN8sLFDMfPoOtMIcwNk2Z5hh3o3zLYK8ZYs/we+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZHiFDq33; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3734052ffd9so23285ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 11:15:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720635261; x=1721240061; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2+sF/bjhxyvhZbt0rQa40ozfkYj8d6417QqMvSP+eRo=;
-        b=O8zVYiWI5XsVwkg8cmWLU4agCl5wpg/KpQdOb0DTes9ds61pgke0+f/1ldVyGfAh3U
-         jRpUDwZa+1kXqYhJutxXgGOF/R2S/5E+uNOBfPBTemn79YOMwlq2gOwvxEJ+QFyFLHMj
-         +8Yh3Fqa5Y2a0fcH8y6uO3+WPQqIWRzkjnf2EvxYovGHwTHhGG8ESVmRIvL4HmkZoHX8
-         ZGiHD44hr0RV2gYtb+ndzv7jueqiCaPFAmoQKIUupylw0n8bzwpiYIDEed5ZP7012n4J
-         Tyf5Sl9N2Gnlgw+F306SQDIq0UW3KKArfabwajk7at68oJ911PmW3y8Dy9S8+3nK9z/a
-         A2Mg==
+        d=linuxfoundation.org; s=google; t=1720635314; x=1721240114; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fi0BW+/k8VQydo/kennAewSTGcXiLJiRcnEfWWAowLQ=;
+        b=ZHiFDq33pmdMcxOcOWPt0u7b8VF/mv3Js/7+nzeRqfsiTQAOHhdapUST31w/EfQkZ/
+         eMOL6DVO7amjwB+aDtLWuKDX0t+Fv4r11wNBOtm8RMuDCQe64FEZCi15d9PZ5xljA9GW
+         ML/YGxcFYm7BAFBsYXYp+af4ArvRE1RbzhCRc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720635261; x=1721240061;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2+sF/bjhxyvhZbt0rQa40ozfkYj8d6417QqMvSP+eRo=;
-        b=I50Iuu+69Kxplz7rZSWdriUKg8/fniNpiis5I4UDKCX+MHp2+AfkGccFJaTdRs3xSr
-         XOuSbAcmxSP6gbcr7DM9xOjogpIIUfRj/wLritRtYGyj9HIeKSsJABNDuZqJqM9KRHrk
-         ziIrj/RVLMCvrsbjCdrgQWPWjeON+Bd9oalGYrWQ5b+LM/AOZHRBsD6O8owIPGfRlgKd
-         G/mQr03kb4UqLIsuOY6hrd2ajwvgNH4Puxv4lOm1OCERNe6Nf1juY5WtGg4KWCX1fKXV
-         VdaXMQXL7K739A0zJnBWzm5NaNh00io6RlxFll8H7nqa1CjbAuLov+/ugGCab9ugwe5P
-         azFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWn3Dy4uJnCuU1HvOdi9RtHz1aMb1qPtDmbh3yYl4y2TNUnVZ5LKuMUbq7gqQ/jxHK/jNWWkbYKnQjN6Hn8gDEsYFSR
-X-Gm-Message-State: AOJu0Ywj0ZxsuqjhobW6Qze+nEEodc2EXlGPAZroAvbYcKll+ASnAMfN
-	PBLDyCBz99VlnTatujpX6FSYVtyKZqgdeL5Vi7ewm6y0yuuThjmYzvW30g==
-X-Google-Smtp-Source: AGHT+IHZXdNH9l2sQOHJbWoz+cYb/7YmC9FdbdTnmBbBTYD2iTGbYjZOKdXbFdHy8bq5lP7DBdA3tg==
-X-Received: by 2002:a19:8c4d:0:b0:52c:e10b:cb36 with SMTP id 2adb3069b0e04-52eb99a0702mr2615204e87.33.1720635260981;
-        Wed, 10 Jul 2024 11:14:20 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-43-148.xnet.hr. [88.207.43.148])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279781dc79sm12765655e9.23.2024.07.10.11.14.19
+        d=1e100.net; s=20230601; t=1720635314; x=1721240114;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fi0BW+/k8VQydo/kennAewSTGcXiLJiRcnEfWWAowLQ=;
+        b=lncIL1uSmVRt9GUmBhmRid7Ji1/L1aAX3hcLH6K2flmiNVZ5BzhMKDXTPh8RJLW15+
+         IXaYtfJchcviusaIlCvFpanCE/bpbxuLxkNFyUi0iPiL1oESTC+lCXj6HtzDtYQIDJqc
+         T41FLUvIhZkWrS2iuXwR3q+4D6e0X9fsx+vF0RnRi6XMozJDiEHTde1GH/xzKRepW+gM
+         hJAaqowuN4lujSi1DxtE9+5Y85CGoIX5z7yT29z1fBw9jQt9UuITW7j6NsrElSSaALta
+         1F521eUzr31XxnALq2HHflSzt2muNegwp0JH9NkesXEDS/XWZsmQUgK7WPowMv+/eW/a
+         w2XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXNcnacn1yXxosd1KqaRM80c1GCta2ASCx32nEqYr3V6IZYPSkl1mocyO0vme8Vc7vPG6yR30SeewkhLmmGIfwOuQrGBgtnblOd+nY
+X-Gm-Message-State: AOJu0Yw9W2GuG7Zi4mN9UNuYZjXMPwAcuzP48Hb1LhoU0zgou/Ectat8
+	XSJdFXJSNySrQ7b9bgRMFWmzJPlA0SR1kZeBQXv1OE0fNI5Zg/HfMqQ4O6YZPrNh1O7AtWf+XhS
+	D
+X-Google-Smtp-Source: AGHT+IEzdvyoCYqDNqyo/iN7U0xS3TaWnI9DWR7yzrDPdcmXeGnd4nNRI+1ytQfug5kfdYbTFC9Bxg==
+X-Received: by 2002:a5e:da41:0:b0:803:f97f:59e1 with SMTP id ca18e2360f4ac-806d91a2a7emr38799939f.0.1720635313687;
+        Wed, 10 Jul 2024 11:15:13 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7ffed680f8esm133773339f.49.2024.07.10.11.15.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jul 2024 11:14:20 -0700 (PDT)
-Message-ID: <a8b20c72-6631-4404-9e1f-0410642d7d20@gmail.com>
-Date: Wed, 10 Jul 2024 20:14:19 +0200
+        Wed, 10 Jul 2024 11:15:13 -0700 (PDT)
+Message-ID: <415baa3e-1bbe-4da0-8f69-d4e818f45925@linuxfoundation.org>
+Date: Wed, 10 Jul 2024 12:15:12 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,80 +73,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] selftests/thermel/intel: conform the test to TAP
+ output
+To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Shuah Khan <shuah@kernel.org>, "Rafael J. Wysocki"
+ <rafael.j.wysocki@intel.com>
+Cc: kernel@collabora.com, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240522170655.2879712-1-usama.anjum@collabora.com>
+ <175ac98f-481f-46e2-a3f7-206b64d8b0e9@collabora.com>
+ <7e3b3870a68f4e98f2e33d748a2740d3d430bad1.camel@linux.intel.com>
 Content-Language: en-US
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-Subject: =?UTF-8?Q?=5BPROBLEM_linux-next=5D_/kernel/bpf/btf=2Ec=3A7581=3A9?=
- =?UTF-8?B?OiBlcnJvcjogZnVuY3Rpb24g4oCYYnRmX3NucHJpbnRmX3Nob3figJkgbWlnaHQg?=
- =?UTF-8?Q?be_a_candidate_for_=E2=80=98gnu=5Fprintf=E2=80=99_format_attribut?=
- =?UTF-8?Q?e_=5B-Werror=3Dsuggest-attribute=3Dformat=5D?=
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <7e3b3870a68f4e98f2e33d748a2740d3d430bad1.camel@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Dear all,
+On 7/1/24 03:38, srinivas pandruvada wrote:
+> On Mon, 2024-07-01 at 13:36 +0500, Muhammad Usama Anjum wrote:
+>> Soft reminder
+>>
+>> On 5/22/24 10:06 PM, Muhammad Usama Anjum wrote:
+>>> Conform the layout, informational and status messages to TAP. No
+>>> functional change is intended other than the layout of output
+>>> messages.
+>>>
+>>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>>> ---
 
-On the linux-next vanilla next-20240709 tree, I have attempted the seed KCONFIG_SEED=0xEE7AB52F
-which was known from before to trigger various errors in compile and build process.
 
-Though this might seem as contributing to channel noise, Linux refuses to build this config,
-treating warnings as errors, using this build line:
+Okay. I think I responded to your other patches that are adding TAP
+to individual tests when kselftest wrapped does it for you based on
+return values.
 
-$ time nice make W=1 -k -j 36 |& tee ../err-next-20230709-01a.log; date
+The reason I don't want to take this patch is if you run the test
+using the recommended method:
 
-As I know that the Chief Penguin doesn't like warnings, but I am also aware that there are plenty
-left, there seems to be more tedious work ahead to make the compilers happy.
+make -C tools/testing/selftests/vDSO/ run_tests you will get the
+TAP output because lib.mk runtests framework takes care of this.
 
-The compiler output is:
+or
 
-./kernel/bpf/btf.c: In function ‘btf_seq_show’:
-./kernel/bpf/btf.c:7544:29: error: function ‘btf_seq_show’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
- 7544 |         seq_vprintf((struct seq_file *)show->target, fmt, args);
-      |                             ^~~~~~~~
-./kernel/bpf/btf.c: In function ‘btf_snprintf_show’:
-./kernel/bpf/btf.c:7581:9: error: function ‘btf_snprintf_show’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
- 7581 |         len = vsnprintf(show->target, ssnprintf->len_left, fmt, args);
-      |         ^~~
+make kselftest TARGETS=vDSO will do the same.
 
-This doesn't seem alarming, but it prevents build with this config.
+Please don't send TAP conversions for individual runs. You will
+start seeing duplicate TAP output which will make it unreadable.
 
-7541 static void btf_seq_show(struct btf_show *show, const char *fmt,
-7542                          va_list args)
-7543 {
-7544      → seq_vprintf((struct seq_file *)show->target, fmt, args);
-7545 }
-7546 
+Run the test using make -C or make kselftest TARGETS before
+investing time to concert to TAP. I am not going to take TAP
+conversions patches if make -C or make kselftest TARGETS
+shows TAP.
 
-7575 static void btf_snprintf_show(struct btf_show *show, const char *fmt,
-7576                               va_list args)
-7577 {
-7578         struct btf_show_snprintf *ssnprintf = (struct btf_show_snprintf *)show;
-7579         int len;
-7580 
-7581       → len = vsnprintf(show->target, ssnprintf->len_left, fmt, args);
-7582 
-7583         if (len < 0) {
-7584                 ssnprintf->len_left = 0;
-7585                 ssnprintf->len = len;
-7586         } else if (len >= ssnprintf->len_left) {
-7587                 /* no space, drive on to get length we would have written */
-7588                 ssnprintf->len_left = 0;
-7589                 ssnprintf->len += len;
-7590         } else {
-7591                 ssnprintf->len_left -= len;
-7592                 ssnprintf->len += len;
-7593                 show->target += len;
-7594         }
-7595 }
-
-Hope this helps.
-
-Best regards,
-Mirsad Todorovac
+thanks,
+-- Shuah
 
