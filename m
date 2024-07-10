@@ -1,123 +1,89 @@
-Return-Path: <linux-kernel+bounces-247079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60AC092CAE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:22:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF27692CAE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:22:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0759028397E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:22:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 565C11F23C59
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E7D6A33B;
-	Wed, 10 Jul 2024 06:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Brwc913e"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1038B78281;
+	Wed, 10 Jul 2024 06:22:20 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9EE75B1F8
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C115BAF0;
+	Wed, 10 Jul 2024 06:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720592516; cv=none; b=Depa5Ykpes0ndbh0hDadqvDggw/UH4mvrpCEwiVL7wW3K2G4IOTAb1YdciyK+W0Yzm6gJMoj6/CvNJV/KY1aDjlJx5hRy55teHzXhlkliyMVefJcddZN9zB6y/SGT1B0A4TM2lwgItzfrACIR+RlgebzQxbz5FXtwwg33e5bkHc=
+	t=1720592539; cv=none; b=ehRfjnBLffcoV6YgiCpuc+cxdmxbNrbZT6V6Jf9u0v79mYkDlXM/peFXTRjCuAy8kEOO/RhWUpxz1uoUsDv7fw9TKL2pZKK11J6sLut5CDioai3ZWFyjnNqlcIt6rG3l1MHn6aU4tke5k1jFcZXlBIhhQmUWA5raE7SXyTDRocg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720592516; c=relaxed/simple;
-	bh=DjRfHsq2OwCmyWbMuyL8sU1oh74XsFkOydwtU3E+bvY=;
+	s=arc-20240116; t=1720592539; c=relaxed/simple;
+	bh=NGY6+a5EweXEppSGRkflKSDqFxD1LoZFRBntbil7k4w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gQ97T/cuFxBmG4TJOERdaa+FZiyaM23tvnhixtwjh/QFSA6XSUOZZtqZ/AW5e8IXmlo8yIihATxQoaBP6mzFl4W8kdaLtd8f0ASW8ryGULF/hmFJSoX1hF8g+1yG8Zj+G3W+RXYvAkU0s8wFalFbPaKyeIkVwXz60nk/x+Dxc1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Brwc913e; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=Hsis
-	lCWVw+VYGXePRMPXTjTZABHOco1LrXMIPTs+dV4=; b=Brwc913ejyOxvPscFA+v
-	K6Lci7ruCt0Se064R8bF16I3tizAfKA24DOcdYG5rRCD6erZ5/SQppnPB0FLksPc
-	QL/8guQUxo89wlpUk3mP6VHzjWuB++LoeezPWIMXzQ7+6bWVDRCe8xkbS6T05UQB
-	FQgQY16hXtxcTBMIseSSMvLlqJKEVRCVhfvtz/tPUW+kDUATHmqAlEWDBG2zwV7Q
-	GZDFtID6MKZjZMDo2x//YrboPoTflErMPqLkovRCfZvXq0GunrWqQXyCdcLZFxKq
-	J1OVwxhUKFkB3g9dW79WpxWP5AP6qf2KTIr1gPjfDE7RKSCrQ/bHfpMcka458Iaz
-	Bw==
-Received: (qmail 428081 invoked from network); 10 Jul 2024 08:21:48 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Jul 2024 08:21:48 +0200
-X-UD-Smtp-Session: l3s3148p1@qUM7qd4cPMYujnsa
-Date: Wed, 10 Jul 2024 08:21:47 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Lee Jones <lee@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the mfd tree with the mmc tree
-Message-ID: <Zo4oe536Yo14SlBT@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>, Lee Jones <lee@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20240710141010.4fbd65a0@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PmSyOAwZE3d2YSfLl9Dt976QbrPsBEdrpqzDa3eqGxfn3oq+4uO+7HddSmmKRx+8gRr1xC+2QR3wpE13877RgaDLurM8J0fCZIIfE89bQUOsGWdsHBW+31KhYdPzDS54e0UYrAPTFgNazP7W4RmUiyFlIAi6dgMg9wTafJ4uwgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id ACBCC227A87; Wed, 10 Jul 2024 08:22:12 +0200 (CEST)
+Date: Wed, 10 Jul 2024 08:22:12 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Christoph Hellwig <hch@lst.de>, Leon Romanovsky <leon@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Keith Busch <kbusch@kernel.org>, "Zeng, Oak" <oak.zeng@intel.com>,
+	Chaitanya Kulkarni <kch@nvidia.com>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v1 00/18] Provide a new two step DMA API mapping API
+Message-ID: <20240710062212.GA25895@lst.de>
+References: <cover.1719909395.git.leon@kernel.org> <20240705063910.GA12337@lst.de> <20240708235721.GF14050@ziepe.ca> <20240709062015.GB16180@lst.de> <20240709190320.GN14050@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9cxp5WarzjLTxvue"
-Content-Disposition: inline
-In-Reply-To: <20240710141010.4fbd65a0@canb.auug.org.au>
-
-
---9cxp5WarzjLTxvue
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240709190320.GN14050@ziepe.ca>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, Jul 10, 2024 at 02:10:10PM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Today's linux-next merge of the mfd tree got a conflict in:
->=20
->   include/linux/mfd/tmio.h
->=20
-> between commits:
->=20
->   89f415b99050 ("mfd: tmio: Remove obsolete .set_clk_div() callback")
->   f86937afb446 ("mmc: tmio: Remove obsolete .set_pwr() callback()")
->=20
-> from the mmc tree and commit:
->=20
->   70b46487b155 ("mfd: tmio: Move header to platform_data")
->=20
-> from the mfd tree.
->=20
-> I fixed it up (I removed the file and applied the following patch) and
+On Tue, Jul 09, 2024 at 04:03:20PM -0300, Jason Gunthorpe wrote:
+> > Except for the powerpc bypass IOMMU or not is a global decision,
+> > and the bypass is per I/O.  So I'm not sure what else you want there?
+> 
+> For P2P we know if the DMA will go through the IOMMU or not based on
+> the PCIe fabric path between the initiator (the one doing the DMA) and
+> the target (the one providing the MMIO memory).
 
-The fix looks good to me. Thank you!
+Oh, yes.  So effectively you are asking if we can arbitrarily mix
+P2P sources in a single map request.  I think the only sane answer
+from the iommu/dma subsystem perspective is: hell no.
 
+But that means the upper layer need to split at such a boundary.
+E.g. get_user_pages needs to look at this and stop at the boundary,
+leaving the rest to the next call.
 
---9cxp5WarzjLTxvue
-Content-Type: application/pgp-signature; name="signature.asc"
+For the block layer just having one kind per BIO is fine right now,
+although I could see use cases where people would want to combine
+them.  We can probably defer that until it is needed, though.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaOKHsACgkQFA3kzBSg
-KbYNuhAAiV7yl4g0HVVc3mrLR2UfgTk9z46YIjJ4vs413DWJ38KfSWCjB/gchepx
-60YvSzFwNf7fSeJ9qFq9ovp5UfA+LPeN/gHY1Ik47jKU+0shR277vYVtslFKcMC8
-jX2NKs3+AWiJHKWS4vQRKQOET2FjmipjVR/oKqCRJTrP6fzguVVs4UnVts9Z5pzs
-Pt8uV7M8Na7Z18fNXeFh4bH+xEYwG2sfmjvqYkmsmVwr8O/O5meRDQPdvXnBsWah
-2d4VUOkytrLwlf6Dobv3UrqywcOXzIOuhG/LJIss84xqo0yTfV5p7FHs2nYSxPMg
-eeqsx3TtAWi/Nspngg7P/5QOPuAMV3Mu2b5WqvLLJZJnE0HyUbcoYC19bZ9W/6KG
-ehX2yFuXSJEaVKKUT2g575nmE5n/wEj4WfW0nZO7j5vE4bR0UD11RPYrXJQ9OTX/
-qmrcKTgnql95GCcuPVNASgwQMRzJakBCDFgRAoBWnUIZ5dJNpHkd0/jkVBq3rZRV
-7RECkWUdjmWV2MP5fciSpLO3mduvVoPkG11+yeQCfplrtHP73aBu9CCdZlia3n94
-cuOXc69HMCALWOs3AJsOVHZ0BhxLmniuGI+aLEPhLOsgFVKwYglrjAf6+8MEOIHZ
-gsJGPiWGEtM0suL7Lu/UhzddQQNATnAiAOjTBwqOHj857R8gxsE=
-=r2KP
------END PGP SIGNATURE-----
-
---9cxp5WarzjLTxvue--
 
