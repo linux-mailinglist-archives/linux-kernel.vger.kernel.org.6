@@ -1,281 +1,149 @@
-Return-Path: <linux-kernel+bounces-247816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7032092D4F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:29:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E9C92D4F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:28:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90ADF1C22A1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:29:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E611B280F6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C81194A42;
-	Wed, 10 Jul 2024 15:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B200D1946AE;
+	Wed, 10 Jul 2024 15:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EAQcXKpJ"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hx6QaqQC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DEF1946D5
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796FD18FDAB
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720625352; cv=none; b=lSo1GKc7FxtyykcUhQZsSyu7wc3RN02OanHsBkdJMuJPnACF9vcZFvgr85RHI2Em0Hlv0SbeYYDS1+Tg3IUgGpr2FI9Q3qi6unPsZGVlh7iRWXaNDmDIqoinq78aZRp37fBpqmGIe1l2FH+uLKgV1Eg5oZdhiOF5d3N7A4lMSh4=
+	t=1720625330; cv=none; b=aPQRQGXc9CyEPwkjZQAsA97vJR6jjqgFv5Moh1d1EfXMhNyd7X/e9qnYr5No2ffAYEC1/4uJou/OTrcmqMe/lYs8W+yl7HFX0/VCByvEaFeQrigCoDdWN30vg2cb7x1LQdZQbShM8yZ1Y1bOF0DEi7hfMBcTlAzznjpF4fOxDUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720625352; c=relaxed/simple;
-	bh=0lWURBss3nBOg5NlkB2tEwctfOSX76EvuB40iqcOCUM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a3SrBW2edwKjKUTapVedR5dvHhSu0SnRsv0ITgZsRfTrvR/iylZVaEmRvsesAizxZ0tH4ouSzuzCCNMzRBHy1Y8GxJHsc7nBhm2GMEoMmbvqZlLUkfP3qZ0NT4c0KxsRK347BT4iudiA56qPKbk7XGTFYmf2TLrm4jV44YRWUfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EAQcXKpJ; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-367940c57ddso4244393f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:29:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720625349; x=1721230149; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BZ/UGiqczEfNWeKnxq+ScYWf6jHGQxfDprcFSlNwXPQ=;
-        b=EAQcXKpJcPDT/uXLJP6lphrRR/pDanRvAZD97HoMZmOfo58VMnFQB8O5oYj0JuyPGB
-         p/QCKsXAKjhe6uJuJwsHJ2zApYZLBNxbIRKTPx96mM3ideKB8jEatpwo3dEIyqnH1HIc
-         xszSN7w+IjjDoAAurf++X2cj9bTlhS3t85QJsRBMuf/XW/CDiSUAjDojGl9es4xDLveW
-         fXWhNrQcqcP2hRBPdknAH7LGHgvrrKPtDxbn3Hzy2i+BLSJzGBLUTneOKk9EtngG2pjW
-         /G5KyjBq6Xz90JGUgCBYbVG6YIcKM2GhZRh/K31H7FX0IfSN6IuFLGRc25SMjcpKdZx5
-         TpaA==
+	s=arc-20240116; t=1720625330; c=relaxed/simple;
+	bh=umm5NQLzqFULNPwOL9iavZyEgQiYul3xYGSdC/V3Yi0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MHJA2/0nD70aUbsylk/HrEYKWZhA7rWGVnhF9RBqHFgZbCjNYxUYqOlXCg3eTVrvVGRouJWFOfyWRm4/t0rpRJtr4lRL4wxkZ9ysKDQ5bXzy2UG19BvsQC7R3//q0A7ip4eW1q7FPezKJKXVqPtRRNIekv2lnxjUGjCpzlxo05A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hx6QaqQC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720625327;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JiswT65XwU9I/0a+3mkQf8xLZNUkrdHDC4aVFNJHkF8=;
+	b=hx6QaqQC/baxfVj5v2DlQeaDsTL4tTiRvPzDQJ1INaqjhtxbp/2W0f/4co/n74ilt27yIy
+	39XmJZviSLdsl4tHgeeVMIB5/VZvKWnK/XytlOwdQlQEr07jUX034K7zTdVHIu+q9n0LaE
+	iJRpzaMkL2SHiyPqp31L3JIariNNtQw=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-647-7iGdA8UTNiK33EieEUs3zg-1; Wed, 10 Jul 2024 11:28:46 -0400
+X-MC-Unique: 7iGdA8UTNiK33EieEUs3zg-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42667cc80e8so24751545e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:28:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720625349; x=1721230149;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BZ/UGiqczEfNWeKnxq+ScYWf6jHGQxfDprcFSlNwXPQ=;
-        b=n+Bnf1OK19EMzUJRVOGqUGgnP1Qid9dsbkc6xA6ezmamo4UEA/LjUeIc9RbaN39oqm
-         z4+Ss+n6MZz0RZnXobJFjbMuRpA52Vj/0h6OEac6/ABeHIRz5JtaZp8dykUz+mJanKVx
-         im7AfBui38TKDsOpr5qdSXwK4/X0JB0P1NErvgFZsFRWbcDWcgkguC7yBZorurLI0rFw
-         6ragsMjlDABeXy4FWjE2GVCTrffVdstCeO7sIHuQ9VHfMZTUxvSw54N34nKXJCVCbUZL
-         VBK0d/ECvLjaoQ4xpogsxLcAJM7W7Aacq7oiEtPIkTCGSl8mxBXridlnD1xwvj3HunxT
-         RUSg==
-X-Gm-Message-State: AOJu0YxqewLiTAKrOOZUfwbdQoyCOMiQy7qoqwJyBvIPgUJ+Hj2wiwp6
-	p7Lxgm7rphlSboKOpeA66ItzN9Gc96J/dHDS1GPp7H/9sKvoSKGSB6Ipv4URYVVCFlCfMdM6Ssh
-	ecJGWjTZMBbHDCNGq+tRfzxnOODLpq9pg6v6Fck7UBWHQjsR4
-X-Google-Smtp-Source: AGHT+IFva/aOSUrC0d2gfrJaELKiBejlXq7juoOS4NWsej9fRXJn2qGo6TDgD4S8OrEaTK71/Fglkt59vHORRLv93uk=
-X-Received: by 2002:a05:6512:1189:b0:52c:d8e9:5d8b with SMTP id
- 2adb3069b0e04-52eb999446emr3966106e87.25.1720625328028; Wed, 10 Jul 2024
- 08:28:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720625325; x=1721230125;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JiswT65XwU9I/0a+3mkQf8xLZNUkrdHDC4aVFNJHkF8=;
+        b=pzP5w+MGsKIvSzX5z36gzCrxNwKXTkQZCR3qmrCDr3jJrre5qHdJUUWi3AvtBKk/gQ
+         tJlSPNgIWdn4EsGzvJaI/KE8BOnVpl09H3k1RC191OZyAROU2vFPMh/I3bLoRqoDizRJ
+         qBFrZ7NSz7XVnPgfAFSC5OpotAzgVfpqD41zQbLTiu+MfYLrnK6rpWaJKmM5FE6mfH2U
+         9bYEWIALoNAZdDScVq3aw9VyaYRD1WILcSw9jj6i++vHACMByrksS7CBxR4aBYVNLLm5
+         A/HUA2PUd2WQuVo+gDmC8G0H4gF0dVAavYN+OdNHCveXYnW126sT4+vjZudwerwNkfws
+         0LSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWTPFgPRADXNGxg2j7VuFo1U9Cc0DEUxT4JqG/9PVaTQCXQIzqs22v0uJfsdNbJuma/XlCzVm4ThTMFUbejGm14kodp1k2gTC96SERu
+X-Gm-Message-State: AOJu0YzdlgCvhq9WezF+hgFQwOn8cpKeUT6DV4ccgWGZct34MoWpsURs
+	7SadixCQ6jRVLoIocKsKfIENxH/P6ps6abzdWXh1PJ/7QezcEF1Bl7/ZgubnrvkCZ4b4k6nCo6b
+	EeZSAEwMVJgMPuOa3Yha5NiQ1JK7V9hBSI0ECA30bR3jtne4dBnCcfeQAyzYiWg==
+X-Received: by 2002:adf:e80b:0:b0:363:341:1cf2 with SMTP id ffacd0b85a97d-367cea7355emr3811028f8f.22.1720625325140;
+        Wed, 10 Jul 2024 08:28:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGaOpwUVhMBcEaYLWlYi0AGlNxmlsgMJ9+TlNHkqzOC0lgyPh6t979vO258uH0PKKJUo2HQ8g==
+X-Received: by 2002:adf:e80b:0:b0:363:341:1cf2 with SMTP id ffacd0b85a97d-367cea7355emr3811000f8f.22.1720625324747;
+        Wed, 10 Jul 2024 08:28:44 -0700 (PDT)
+Received: from pollux ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde7e07fsm5583240f8f.17.2024.07.10.08.28.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 08:28:44 -0700 (PDT)
+Date: Wed, 10 Jul 2024 17:28:41 +0200
+From: Danilo Krummrich <dakr@redhat.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+	rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH V3 8/8] cpufreq: Add Rust based cpufreq-dt driver
+Message-ID: <Zo6oqfFX-TNIeaIC@pollux>
+References: <cover.1719990273.git.viresh.kumar@linaro.org>
+ <b7df0c75cc07a451243b554fb2272c91cbe42dfe.1719990273.git.viresh.kumar@linaro.org>
+ <f0016987-4288-4adf-954d-665b35ae1bf1@redhat.com>
+ <20240710085652.zu7ntnv4gmy7zr2i@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1720611677.git.mst@redhat.com> <3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst@redhat.com>
-In-Reply-To: <3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst@redhat.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Wed, 10 Jul 2024 09:28:36 -0600
-Message-ID: <CANLsYkyqhdmOWtHbNi5npOFXtMKrs7s21j+axW_4N=yQh=eHbw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] virtio: fix vq # for balloon
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, 
-	Alexander Duyck <alexander.h.duyck@linux.intel.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Bjorn Andersson <andersson@kernel.org>, 
-	Cornelia Huck <cohuck@redhat.com>, Halil Pasic <pasic@linux.ibm.com>, 
-	Eric Farman <farman@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Jason Wang <jasowang@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	linux-um@lists.infradead.org, linux-remoteproc@vger.kernel.org, 
-	linux-s390@vger.kernel.org, virtualization@lists.linux.dev, 
-	kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710085652.zu7ntnv4gmy7zr2i@vireshk-i7>
 
-On Wed, 10 Jul 2024 at 05:43, Michael S. Tsirkin <mst@redhat.com> wrote:
->
-> virtio balloon communicates to the core that in some
-> configurations vq #s are non-contiguous by setting name
-> pointer to NULL.
->
-> Unfortunately, core then turned around and just made them
-> contiguous again. Result is that driver is out of spec.
->
-> Implement what the API was supposed to do
-> in the 1st place. Compatibility with buggy hypervisors
-> is handled inside virtio-balloon, which is the only driver
-> making use of this facility, so far.
->
-> Message-ID: <cover.1720173841.git.mst@redhat.com>
-> Fixes: b0c504f15471 ("virtio-balloon: add support for providing free page reports to host")
-> Cc: "Alexander Duyck" <alexander.h.duyck@linux.intel.com>
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
->  arch/um/drivers/virtio_uml.c           |  4 ++--
->  drivers/remoteproc/remoteproc_virtio.c |  4 ++--
+On Wed, Jul 10, 2024 at 02:26:52PM +0530, Viresh Kumar wrote:
+> On 05-07-24, 13:32, Danilo Krummrich wrote:
+> > On 7/3/24 09:14, Viresh Kumar wrote:
+> > > +    fn probe(_dev: &mut platform::Device, _id_info: Option<&Self::IdInfo>) -> Result<Self::Data> {
+> > > +        let drv = Arc::new(
+> > > +            cpufreq::Registration::<CPUFreqDTDriver>::register(
+> > > +                c_str!("cpufreq-dt"),
+> > > +                (),
+> > > +                cpufreq::flags::NEED_INITIAL_FREQ_CHECK | cpufreq::flags::IS_COOLING_DEV,
+> > > +                true,
+> > > +            )?,
+> > > +            GFP_KERNEL,
+> > > +        )?;
+> > 
+> > Putting the `cpufreq::Registration` into `Arc<DeviceData>` is unsafe from a
+> > lifetime point of view. Nothing prevents this `Arc` to out-live the
+> > `platform::Driver`.
+> 
+> Hmm, the platform driver layer (in Rust) should guarantee that the
+> data will be freed from the driver removal path. Isn't it ?
 
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+No, the platform driver layer will only guarantee that it decreses the reference
+count of the `Arc` by one, that doesn't guarantee a free. If something else
+still holds a reference to the `Arc` it will keep the `Registration` alive,
+unless it's wrapped by `Devres`.
 
->  drivers/s390/virtio/virtio_ccw.c       |  4 ++--
->  drivers/virtio/virtio_mmio.c           |  4 ++--
->  drivers/virtio/virtio_pci_common.c     | 11 ++++++++---
->  drivers/virtio/virtio_vdpa.c           |  4 ++--
->  6 files changed, 18 insertions(+), 13 deletions(-)
->
-> diff --git a/arch/um/drivers/virtio_uml.c b/arch/um/drivers/virtio_uml.c
-> index 2b6e701776b6..c903e4959f51 100644
-> --- a/arch/um/drivers/virtio_uml.c
-> +++ b/arch/um/drivers/virtio_uml.c
-> @@ -1019,7 +1019,7 @@ static int vu_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->                        struct irq_affinity *desc)
->  {
->         struct virtio_uml_device *vu_dev = to_virtio_uml_device(vdev);
-> -       int i, queue_idx = 0, rc;
-> +       int i, rc;
->         struct virtqueue *vq;
->
->         /* not supported for now */
-> @@ -1038,7 +1038,7 @@ static int vu_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->                         continue;
->                 }
->
-> -               vqs[i] = vu_setup_vq(vdev, queue_idx++, vqi->callback,
-> +               vqs[i] = vu_setup_vq(vdev, i, vqi->callback,
->                                      vqi->name, vqi->ctx);
->                 if (IS_ERR(vqs[i])) {
->                         rc = PTR_ERR(vqs[i]);
-> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> index d3f39009b28e..1019b2825c26 100644
-> --- a/drivers/remoteproc/remoteproc_virtio.c
-> +++ b/drivers/remoteproc/remoteproc_virtio.c
-> @@ -185,7 +185,7 @@ static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
->                                  struct virtqueue_info vqs_info[],
->                                  struct irq_affinity *desc)
->  {
-> -       int i, ret, queue_idx = 0;
-> +       int i, ret;
->
->         for (i = 0; i < nvqs; ++i) {
->                 struct virtqueue_info *vqi = &vqs_info[i];
-> @@ -195,7 +195,7 @@ static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
->                         continue;
->                 }
->
-> -               vqs[i] = rp_find_vq(vdev, queue_idx++, vqi->callback,
-> +               vqs[i] = rp_find_vq(vdev, i, vqi->callback,
->                                     vqi->name, vqi->ctx);
->                 if (IS_ERR(vqs[i])) {
->                         ret = PTR_ERR(vqs[i]);
-> diff --git a/drivers/s390/virtio/virtio_ccw.c b/drivers/s390/virtio/virtio_ccw.c
-> index 62eca9419ad7..82a3440bbabb 100644
-> --- a/drivers/s390/virtio/virtio_ccw.c
-> +++ b/drivers/s390/virtio/virtio_ccw.c
-> @@ -694,7 +694,7 @@ static int virtio_ccw_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->  {
->         struct virtio_ccw_device *vcdev = to_vc_device(vdev);
->         dma64_t *indicatorp = NULL;
-> -       int ret, i, queue_idx = 0;
-> +       int ret, i;
->         struct ccw1 *ccw;
->         dma32_t indicatorp_dma = 0;
->
-> @@ -710,7 +710,7 @@ static int virtio_ccw_find_vqs(struct virtio_device *vdev, unsigned nvqs,
->                         continue;
->                 }
->
-> -               vqs[i] = virtio_ccw_setup_vq(vdev, queue_idx++, vqi->callback,
-> +               vqs[i] = virtio_ccw_setup_vq(vdev, i, vqi->callback,
->                                              vqi->name, vqi->ctx, ccw);
->                 if (IS_ERR(vqs[i])) {
->                         ret = PTR_ERR(vqs[i]);
-> diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
-> index 90e784e7b721..db6a0366f082 100644
-> --- a/drivers/virtio/virtio_mmio.c
-> +++ b/drivers/virtio/virtio_mmio.c
-> @@ -494,7 +494,7 @@ static int vm_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
->  {
->         struct virtio_mmio_device *vm_dev = to_virtio_mmio_device(vdev);
->         int irq = platform_get_irq(vm_dev->pdev, 0);
-> -       int i, err, queue_idx = 0;
-> +       int i, err;
->
->         if (irq < 0)
->                 return irq;
-> @@ -515,7 +515,7 @@ static int vm_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
->                         continue;
->                 }
->
-> -               vqs[i] = vm_setup_vq(vdev, queue_idx++, vqi->callback,
-> +               vqs[i] = vm_setup_vq(vdev, i, vqi->callback,
->                                      vqi->name, vqi->ctx);
->                 if (IS_ERR(vqs[i])) {
->                         vm_del_vqs(vdev);
-> diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-> index 7d82facafd75..fa606e7321ad 100644
-> --- a/drivers/virtio/virtio_pci_common.c
-> +++ b/drivers/virtio/virtio_pci_common.c
-> @@ -293,7 +293,7 @@ static int vp_find_vqs_msix(struct virtio_device *vdev, unsigned int nvqs,
->         struct virtio_pci_device *vp_dev = to_vp_device(vdev);
->         struct virtqueue_info *vqi;
->         u16 msix_vec;
-> -       int i, err, nvectors, allocated_vectors, queue_idx = 0;
-> +       int i, err, nvectors, allocated_vectors;
->
->         vp_dev->vqs = kcalloc(nvqs, sizeof(*vp_dev->vqs), GFP_KERNEL);
->         if (!vp_dev->vqs)
-> @@ -332,7 +332,7 @@ static int vp_find_vqs_msix(struct virtio_device *vdev, unsigned int nvqs,
->                         msix_vec = allocated_vectors++;
->                 else
->                         msix_vec = VP_MSIX_VQ_VECTOR;
-> -               vqs[i] = vp_setup_vq(vdev, queue_idx++, vqi->callback,
-> +               vqs[i] = vp_setup_vq(vdev, i, vqi->callback,
->                                      vqi->name, vqi->ctx, msix_vec);
->                 if (IS_ERR(vqs[i])) {
->                         err = PTR_ERR(vqs[i]);
-> @@ -368,7 +368,7 @@ static int vp_find_vqs_intx(struct virtio_device *vdev, unsigned int nvqs,
->                             struct virtqueue_info vqs_info[])
->  {
->         struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-> -       int i, err, queue_idx = 0;
-> +       int i, err;
->
->         vp_dev->vqs = kcalloc(nvqs, sizeof(*vp_dev->vqs), GFP_KERNEL);
->         if (!vp_dev->vqs)
-> @@ -388,8 +388,13 @@ static int vp_find_vqs_intx(struct virtio_device *vdev, unsigned int nvqs,
->                         vqs[i] = NULL;
->                         continue;
->                 }
-> +<<<<<<< HEAD
->                 vqs[i] = vp_setup_vq(vdev, queue_idx++, vqi->callback,
->                                      vqi->name, vqi->ctx,
-> +=======
-> +               vqs[i] = vp_setup_vq(vdev, i, callbacks[i], names[i],
-> +                                    ctx ? ctx[i] : false,
-> +>>>>>>> f814759f80b7... virtio: fix vq # for balloon
->                                      VIRTIO_MSI_NO_VECTOR);
->                 if (IS_ERR(vqs[i])) {
->                         err = PTR_ERR(vqs[i]);
-> diff --git a/drivers/virtio/virtio_vdpa.c b/drivers/virtio/virtio_vdpa.c
-> index 7364bd53e38d..149e893583e9 100644
-> --- a/drivers/virtio/virtio_vdpa.c
-> +++ b/drivers/virtio/virtio_vdpa.c
-> @@ -368,7 +368,7 @@ static int virtio_vdpa_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
->         struct cpumask *masks;
->         struct vdpa_callback cb;
->         bool has_affinity = desc && ops->set_vq_affinity;
-> -       int i, err, queue_idx = 0;
-> +       int i, err;
->
->         if (has_affinity) {
->                 masks = create_affinity_masks(nvqs, desc ? desc : &default_affd);
-> @@ -384,7 +384,7 @@ static int virtio_vdpa_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
->                         continue;
->                 }
->
-> -               vqs[i] = virtio_vdpa_setup_vq(vdev, queue_idx++, vqi->callback,
-> +               vqs[i] = virtio_vdpa_setup_vq(vdev, i, vqi->callback,
->                                               vqi->name, vqi->ctx);
->                 if (IS_ERR(vqs[i])) {
->                         err = PTR_ERR(vqs[i]);
-> --
-> MST
->
+> 
+> > Instead, you should wrap `cpufreq::Registration` into `Devres`. See
+> > `drm::drv::Registration` for an example [1].
+> > 
+> > [1] https://gitlab.freedesktop.org/drm/nova/-/blob/nova-next/rust/kernel/drm/drv.rs?ref_type=heads#L173
+> 
+> I can convert to that too, will do it anyway.
+> 
+> -- 
+> viresh
+> 
+
 
