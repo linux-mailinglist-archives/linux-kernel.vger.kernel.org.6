@@ -1,108 +1,90 @@
-Return-Path: <linux-kernel+bounces-247091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDFEA92CB12
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:29:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A6692CB1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99F4E283463
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:29:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46D501F23D25
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440E67581B;
-	Wed, 10 Jul 2024 06:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="HWx/VAlW"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8EB5F876
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC2777115;
+	Wed, 10 Jul 2024 06:31:05 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE30A3D96D;
+	Wed, 10 Jul 2024 06:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720592986; cv=none; b=Z3A82IALvG6WVAfZfN3vH3woS15XHzZ3ZkzcjkWT1cM4S07nfA43WszVfFqZlDrJunKKVKniTLb077I+WB0jBtF7G7SdNH4RCZ8dNOsBkh+ImU+/kBvOlvHUHfqpsZd2uZ3QXzhPEdoXoea8EQBey59mOMGh4+BfbMedvf5oASg=
+	t=1720593064; cv=none; b=gs648NirWs7P3XVG/wGZ3HTMlCbuVXF7vJWQtx2BWYbq80acO3YY+5BBeoBBC4o9eCmDdO2nK/2z7l38xc5ltB1s7c9EHjY6UUmPuI0CX/EyRhESeCFFR6zWAwOe8Ktyv9NWCkNGOGzhJ6ViIOUOEDzlojxXO1qdU0wJP2APtB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720592986; c=relaxed/simple;
-	bh=0LeCYgifEtDjwIApEekRRIa7a2c+iCDVuMUvFa3BoKs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H8NA6MyZ5T5QGUTG3BRStCTSuXy6p0rATdv3I7SRusSmp5snEWpWwSSDU5rgDwAvNdXJEz00eSWR1+JNJCXodJutTsG8JQvK12ercbVI+mKlP8HflaGLe74XEwKbTh/Tyn6g5OVJnklLcyiwsYNC1Czjq4qSYBCv6PXCOIaYnmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=HWx/VAlW; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=0LeC
-	YgifEtDjwIApEekRRIa7a2c+iCDVuMUvFa3BoKs=; b=HWx/VAlWcDIs/Do7o3j3
-	HYDCUm76zsuu5TUOtpUcWS6owuxwqGie4w9DXyi96e+/srK0pXnUGQavIUdcnc3j
-	YaswKN0WZ69pekn+VzPWEwTAMqTbzbCre8qddG/MkDYKd/51DUH9mE8H8QKFEYr2
-	YqY1RqNg29AYoIYzU2hyaiDdhm+Jpmhi4b8QWxXiu0baR9qcId5i6wtNW45nrvHP
-	HKVI/sXZFtud9+EUlof7MerBRX/42mwa2tk/hmwgAau5gGGTmvCXZTlf5Pn3fgsI
-	imKATNo4KYBuAFsGO5HGnjvcAOny5X5UcoF8YuTzyxB/BnEt9YgzYb+R+Gy62cpf
-	Aw==
-Received: (qmail 429862 invoked from network); 10 Jul 2024 08:29:41 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Jul 2024 08:29:41 +0200
-X-UD-Smtp-Session: l3s3148p1@YsZxxd4cfIUujnsa
-Date: Wed, 10 Jul 2024 08:29:41 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/3] i2c: rcar: minor changes to adhere to coding style
-Message-ID: <Zo4qVeIjGCQH5zXn@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>
-References: <20240707082848.5424-4-wsa+renesas@sang-engineering.com>
- <f93eda7e-e65f-42e9-b96d-e88290201ca0@web.de>
- <Zop2vNCrzDmEKKiO@shikoro>
- <Zou2g8nGBD7Pv8kR@shikoro>
- <5trq7ondxem43rfnckonywhrucvjvecc52pvyik2fsz64ivknv@r22caitz5y3s>
+	s=arc-20240116; t=1720593064; c=relaxed/simple;
+	bh=sM6KFWH6gfzQ94i0OID2kqBYu4u4wpOqFm2ESjUAg1I=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Ko2ruFZcVA2iDbP/w6boEw7h7fNj6TDJCoT+uamcCRhkXk/6CdN0XdBfo6iblzVbMoioQnsgNxNcJF+AfEieW2lwLHLfDfBKRtegqyb618MOCHQP4kNYy5EhOzBtzF2F0cPkxg8WtjRvyoY+8RF3axSswYK/FSDznlaRc/8mZ4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee3668e2a989c3-f91ce;
+	Wed, 10 Jul 2024 14:30:50 +0800 (CST)
+X-RM-TRANSID:2ee3668e2a989c3-f91ce
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[10.54.5.255])
+	by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee4668e2a99679-de188;
+	Wed, 10 Jul 2024 14:30:49 +0800 (CST)
+X-RM-TRANSID:2ee4668e2a99679-de188
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: shuah@kernel.org
+Cc: zhujun2@cmss.chinamobile.com,
+	chenxiang66@hisilicon.com,
+	iommu@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests/dma:Fix a resource leak
+Date: Tue,  9 Jul 2024 23:30:45 -0700
+Message-Id: <20240710063045.5308-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="IhJEtiCBxsxZ2Uge"
-Content-Disposition: inline
-In-Reply-To: <5trq7ondxem43rfnckonywhrucvjvecc52pvyik2fsz64ivknv@r22caitz5y3s>
+
+The opened file should be closed in main(), otherwise resource
+leak will occur that this problem was discovered by reading code
+
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+ tools/testing/selftests/dma/dma_map_benchmark.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/tools/testing/selftests/dma/dma_map_benchmark.c b/tools/testing/selftests/dma/dma_map_benchmark.c
+index 5c997f17fcbd..3fcea00961c0 100644
+--- a/tools/testing/selftests/dma/dma_map_benchmark.c
++++ b/tools/testing/selftests/dma/dma_map_benchmark.c
+@@ -114,6 +114,7 @@ int main(int argc, char **argv)
+ 	map.granule = granule;
+ 
+ 	if (ioctl(fd, cmd, &map)) {
++		close(fd);
+ 		perror("ioctl");
+ 		exit(1);
+ 	}
+@@ -125,5 +126,7 @@ int main(int argc, char **argv)
+ 	printf("average unmap latency(us):%.1f standard deviation:%.1f\n",
+ 			map.avg_unmap_100ns/10.0, map.unmap_stddev/10.0);
+ 
++	close(fd);
++
+ 	return 0;
+ }
+-- 
+2.17.1
 
 
---IhJEtiCBxsxZ2Uge
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-
-> That's OK... if you want I can remove those blank lines before
-> applying them, it's just two cases in your patch.
-
-Then, please do that. Thanks!
-
-
---IhJEtiCBxsxZ2Uge
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaOKlQACgkQFA3kzBSg
-KbbtzA/+Kw9xO01OGlslCruzbmZYhVCwLvE1SFNHOoutCgb/qBXc5L8Vq2V6akCB
-EsaVXvDdQfQ/xA/YxrGLJdwEi+/38wum8Vece7UxZLIJ9IV5aEJNOXA1Uu5hbBEV
-fCyZNLUMNHFgrdMeRbuLczh8sMz599hbbSoicBsxrvwtxUYX3dKxV8e4S8FqQtqa
-zqJqDI07SJsqDpzUeixZXRK39ozODJY1V2Bglb5Lp5UXzpDbq5eDKrS9PrJNTyYX
-1daqkXWr/NLpVmtg6uot/V9mGj2PJSvQA2BwFDQXg+ikKMbQZCQaXNgFYDi/WOsa
-GU+I9nx5JjzKAZZjbQ8QqJPE8d9UEbKDFdJ+/91QnC3ONE8Qy6My+TdJzWR88QVt
-NlAwq9548g34FwAUXG/70XOnooNZowlj6yt+jdmkemCsyoGmPv8hZIEiR5VF2qik
-exlEk6ceDXm/PJ+WfeyrRBcag4KBj0zEjCQE22hnzHthDIxX6bSa32+ZwXlU6l8n
-29KE3LmDg+6TGiU++8OKatnqdyuEZf6q5RBMyepfU8YBmy5Kb0AS4skMF7niMgc9
-FD9nLc1USju2Lh7bEC6p+Eer+OAciOtSGpTzZ3c1iw+5kTBG4ADmvgTx6Obkb17H
-F9enmw7Qjf9ss1MRu+ZR7TPBezEwZ6/inOiWU4M1umCSptroLmY=
-=jV4i
------END PGP SIGNATURE-----
-
---IhJEtiCBxsxZ2Uge--
 
