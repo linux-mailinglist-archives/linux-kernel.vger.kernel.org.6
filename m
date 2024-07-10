@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-248247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B7C592DA93
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:12:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE3692DA9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B53D51F24615
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:12:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CDEC1C213AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63C512C465;
-	Wed, 10 Jul 2024 21:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8991F196D80;
+	Wed, 10 Jul 2024 21:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OwPKPkkX"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TuxM9/LV"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2715F2B9DD
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 21:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D2384047
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 21:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720645953; cv=none; b=Zq6rJSQ86M77gdlTjocPn54nZNgcFawFrnsrtFg3cqa1bCc/47w8PH1Oxd20t0q7niKUnGx1+Vb+Om9y5nGq3fcedSGxir7YF1n6CyRlWHvjOh+JZOPtwfy8Fqe9vRnVj99MojOfEei/atpSwN/N9cvdWYEPRAfJz8GmOk7tCfA=
+	t=1720646052; cv=none; b=S+IuIqa8ZDDN1vEm8EaQ8ZanMX8/+n9+SlkIl/tFGHY++ZPwsQYf6ZZOIHKRsXSap5B4lSLOPLrettxJgEsgYVuDUFFFDG9Is4n89JwAl9xjcicqi3oEOF4Q3P6MFdpwBfiPV/8bb94+QQ+232No9tO0HSVEWilrUSQGla8smIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720645953; c=relaxed/simple;
-	bh=6EeH1cJP/4uBnJzT45MjbNsMaiqVa1P7qj5lwBSrZ5k=;
+	s=arc-20240116; t=1720646052; c=relaxed/simple;
+	bh=LxJp3MpjlW3XhQhZ/broXQZIzle4N+yhALuMK83M/+U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UEjTDYks1Kish7p4rxenMA5IINONXL+Zsl/QM/ykpcrsF3kHESemNdq+UllTNSW0K7NuyuigVFD4y4KheMh8CEbPgenRZ58sBUl4zwkUg8n1KjkThkV1ji9JFHhUiIHrBsgwYUOrbsIBQLixrQY9dsA8cHwxylKAdMl3LdqcZ3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OwPKPkkX; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=e65nAC/ozQoRtCJNQaGpKucoIVncsaNiJox29dlsKnaifcoV9ZEQ/Fz+l6iTAAoPEO45qxUpnQ+WMTchZuov7Atq3vvZJrANSFfCrmgvqTPgxwYaqGRTX2y1SQhp4zU+Ocy2qSaAC4kSIcIXj/csqDx0Pxr0J3DNwZOnz+C2tXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TuxM9/LV; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720645951;
+	s=mimecast20190719; t=1720646049;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EDkAtSJPc4fDTZHD3QI6mFYT1Fgs+3upA6c38pBIcU0=;
-	b=OwPKPkkXkwfabCFUrwa5w6hxQfnlB3SACuI/eOCKuaFoC65pvKnwoQgNRvQ4M5ygd+eC5s
-	J7RpGJqSO5i4szOHlbo3jIbPGWW+Z71XajHzSgmK6uUTSqzvCFyMVneJ1G7NrNsqJk4zIk
-	vEbjeRy4uDgnmMhdxkmZmoSWBTsHWvg=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=UelbpIUr40UAVvqSX5FfP2oj9LzgIV56BaNyb4HIROM=;
+	b=TuxM9/LV4TmYAEylcR2JdsPepJX7e3T3A9HwbbgVsCAKsXcNC5lpO3BzL9TIONnTz00vJs
+	YG+aMWJsSX9CI+PFqGet73yOoAIWiViaPelh8DA4kHH0F744hBXIZijtcX8jHH5PIAVX1q
+	UNWyegrA0DyRGOy9ryRoLne54Mn6k8Y=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-260-TNyO2UYCOKyUCij-cwGV6Q-1; Wed, 10 Jul 2024 17:12:29 -0400
-X-MC-Unique: TNyO2UYCOKyUCij-cwGV6Q-1
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1fb269ff96bso1143015ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:12:29 -0700 (PDT)
+ us-mta-328-9vF6W4yZOo2pC3gFx9RSMw-1; Wed, 10 Jul 2024 17:14:07 -0400
+X-MC-Unique: 9vF6W4yZOo2pC3gFx9RSMw-1
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-70afee11d7bso206725b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:14:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720645948; x=1721250748;
+        d=1e100.net; s=20230601; t=1720646047; x=1721250847;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=EDkAtSJPc4fDTZHD3QI6mFYT1Fgs+3upA6c38pBIcU0=;
-        b=jVv+npd6zQ0rEAuBYb84jhdO5NbBwBwAuD/L/k2eZPlUp1yyywNuVxhYj3sC37A7s2
-         tApSSLi+D5uFnDyu7xzCAvEX9Wys4GjYzXLa47dxPHMiuarhIzMCx6ixn2Xg+oOewK0K
-         1xrywCkhTtuTmoPzNQNUgSBdPLkHdVNNziqG+R+ZCbcgrmeZ5xywtt73D3ojuD6ifKNc
-         6YvN7dR3FlufxvRroAPZVpN72jK123WKuJNmEvM8V1X4PlL5yNVg067egTitr7Dvl4x5
-         KHDg7b9C422/PHK0Lbw//8CQoVqQsRpr8v70sXa0QhBbd9bQ73JnZoEg6qrkSTsg5JKg
-         oRNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBuGcnkkQeZMkyrtqAw49R767+jslqg61flFydmVUX3voqhxWr8bbjmo6wyC6Ab/7x2EVcwTPh+ZWDA3lm9nxUdeDFlFO7RsS2UOro
-X-Gm-Message-State: AOJu0Yzj1wVmRe0F2VBrr07mW7UlTyGZmCTLNR++xZpEKmPpIzfFgQLi
-	o0dHBtpaLOcuflH3uqlwsoIl/DuHhpCjI6n2pgARiZWpSr050WtWeQeQit0hmfY/hygNTUPXbtM
-	DVyD/cHXddwz5ZU61zr/NEymNVKV6MoRMzU0wh+LoxwXihJAgP1T5p6KJOsqK+g==
-X-Received: by 2002:a17:903:1210:b0:1fb:5681:5f0 with SMTP id d9443c01a7336-1fbb6ce132bmr51939805ad.23.1720645948360;
-        Wed, 10 Jul 2024 14:12:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFeparPAWlZOWUmpNdjWGb6HKjLI7St8Hnre9nS98aWNojEhnwQSTtD7BSAWWEvfEHQAzFkeA==
-X-Received: by 2002:a17:903:1210:b0:1fb:5681:5f0 with SMTP id d9443c01a7336-1fbb6ce132bmr51939575ad.23.1720645947899;
-        Wed, 10 Jul 2024 14:12:27 -0700 (PDT)
+        bh=UelbpIUr40UAVvqSX5FfP2oj9LzgIV56BaNyb4HIROM=;
+        b=j9GY8XBztG+uOEXQbqEgTWBbuE1H017861o+yr3btHVA0p4gGFYuiQMLduZJwqZiOT
+         0m2XtROWe8b4kebYK5lkrvTd8l7IqSRYgn6RYNh2mXR/Ze9BWt1bXIZxCQr9H4Z3H6T9
+         gpY0OtydbVRGadK1lI/FPzD5Hhft9xYzqUt2A0nOXbYZ6ItVRJ04yB4aUCDPUpBXaB3+
+         36cXkj2uYitiD8o5TP6C8ehB2emqSBeZht4uc+0NBQsU4HJC/1giWROTDdbjmGL8WgZN
+         /E3D11iPpyVRzTnaWMUSTQ8q2QCN6NSj44S5UXvBfdB4L/qKbAUm74SmYGH0tkWIjf3w
+         TRUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWLRU84jOvn4ddh0DRvA7G28uKLTnGyo0WPwG13508aaxeMfmCQnuaU940vTmQHZtWPvHnqWQbp312zKmA2dkb7QOYbwsULrmxQELbJ
+X-Gm-Message-State: AOJu0YzUSQXAaClkrbIs1FMeCfGujlVMTgGGwCz7E7xdL2Qzf7H4IvGy
+	uZz6Eo0C8Hhl7wTD0nURcqf4LCHUBeNBoVCX25gfrwwJLdpJvgGDzZNlhHi05LAj9NYVWPlg1Yx
+	SYvlt57KivZZp6kfe9YB0KwHZWUVHoHEoYMNTrw6ZrpEJaTSawBoIjR0KLsYYvg==
+X-Received: by 2002:a05:6a00:1d83:b0:70b:17a9:e98a with SMTP id d2e1a72fcca58-70b43626d6amr7509463b3a.33.1720646046747;
+        Wed, 10 Jul 2024 14:14:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGIL5NZakoeWxrceiZO5dPOGtHYUbvR+7u663g+7/eUG7NXVlKeuTVAdylslhMzFr1TdO1NJw==
+X-Received: by 2002:a05:6a00:1d83:b0:70b:17a9:e98a with SMTP id d2e1a72fcca58-70b43626d6amr7509431b3a.33.1720646046328;
+        Wed, 10 Jul 2024 14:14:06 -0700 (PDT)
 Received: from [10.35.209.243] ([208.115.86.71])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6acf38dsm38026225ad.263.2024.07.10.14.12.25
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4397c02fsm4390228b3a.143.2024.07.10.14.14.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jul 2024 14:12:27 -0700 (PDT)
-Message-ID: <f21d8157-a5e9-4acb-93fc-d040e9b585c8@redhat.com>
-Date: Wed, 10 Jul 2024 23:12:24 +0200
+        Wed, 10 Jul 2024 14:14:06 -0700 (PDT)
+Message-ID: <c87a4ba0-b9c4-4044-b0c3-c1112601494f@redhat.com>
+Date: Wed, 10 Jul 2024 23:14:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,20 +82,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 8/8] kvm: gmem: Allow restricted userspace mappings
-To: Patrick Roy <roypat@amazon.co.uk>, Fuad Tabba <tabba@google.com>
+Subject: Re: [RFC PATCH 7/8] mm: secretmem: use AS_INACCESSIBLE to prohibit
+ GUP
+To: Patrick Roy <roypat@amazon.co.uk>, Mike Rapoport <rppt@kernel.org>
 Cc: seanjc@google.com, pbonzini@redhat.com, akpm@linux-foundation.org,
- dwmw@amazon.co.uk, rppt@kernel.org, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ dwmw@amazon.co.uk, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
  willy@infradead.org, graf@amazon.com, derekmn@amazon.com,
  kalyazin@amazon.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, dmatlack@google.com, chao.p.peng@linux.intel.com,
- xmarcalx@amazon.co.uk, James Gowans <jgowans@amazon.com>
+ linux-mm@kvack.org, dmatlack@google.com, tabba@google.com,
+ chao.p.peng@linux.intel.com, xmarcalx@amazon.co.uk,
+ James Gowans <jgowans@amazon.com>
 References: <20240709132041.3625501-1-roypat@amazon.co.uk>
- <20240709132041.3625501-9-roypat@amazon.co.uk>
- <CA+EHjTynVpsqsudSVRgOBdNSP_XjdgKQkY_LwdqvPkpJAnAYKg@mail.gmail.com>
- <47ce1b10-e031-4ac1-b88f-9d4194533745@redhat.com>
- <f7106744-2add-4346-b3b6-49239de34b7f@amazon.co.uk>
+ <20240709132041.3625501-8-roypat@amazon.co.uk>
+ <0dc45181-de7e-4d97-9178-573c6f683f55@redhat.com>
+ <Zo45CQGe_UDUnXXu@kernel.org>
+ <258b3b76-cf87-4dfc-bcfa-b2af94aba811@amazon.co.uk>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -143,78 +145,101 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <f7106744-2add-4346-b3b6-49239de34b7f@amazon.co.uk>
+In-Reply-To: <258b3b76-cf87-4dfc-bcfa-b2af94aba811@amazon.co.uk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 10.07.24 11:51, Patrick Roy wrote:
+On 10.07.24 11:50, Patrick Roy wrote:
 > 
 > 
-> On 7/9/24 22:13, David Hildenbrand wrote:
+> On 7/10/24 08:32, Mike Rapoport wrote:
 >> CAUTION: This email originated from outside of the organization. Do not click links or open attachments unless you can confirm the sender and know the content is safe.
 >>
 >>
 >>
->> On 09.07.24 16:48, Fuad Tabba wrote:
->>> Hi Patrick,
->>>
->>> On Tue, Jul 9, 2024 at 2:21 PM Patrick Roy <roypat@amazon.co.uk> wrote:
+>> On Tue, Jul 09, 2024 at 11:09:29PM +0200, David Hildenbrand wrote:
+>>> On 09.07.24 15:20, Patrick Roy wrote:
+>>>> Inside of vma_is_secretmem and secretmem_mapping, instead of checking
+>>>> whether a vm_area_struct/address_space has the secretmem ops structure
+>>>> attached to it, check whether the address_space has the AS_INACCESSIBLE
+>>>> bit set. Then set the AS_INACCESSIBLE flag for secretmem's
+>>>> address_space.
 >>>>
->>>> Allow mapping guest_memfd into userspace. Since AS_INACCESSIBLE is set
->>>> on the underlying address_space struct, no GUP of guest_memfd will be
->>>> possible.
+>>>> This means that get_user_pages and friends are disables for all
+>>>> adress_spaces that set AS_INACCESIBLE. The AS_INACCESSIBLE flag was
+>>>> introduced in commit c72ceafbd12c ("mm: Introduce AS_INACCESSIBLE for
+>>>> encrypted/confidential memory") specifically for guest_memfd to indicate
+>>>> that no reads and writes should ever be done to guest_memfd
+>>>> address_spaces. Disallowing gup seems like a reasonable semantic
+>>>> extension, and means that potential future mmaps of guest_memfd cannot
+>>>> be GUP'd.
+>>>>
+>>>> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
+>>>> ---
+>>>>    include/linux/secretmem.h | 13 +++++++++++--
+>>>>    mm/secretmem.c            |  6 +-----
+>>>>    2 files changed, 12 insertions(+), 7 deletions(-)
+>>>>
+>>>> diff --git a/include/linux/secretmem.h b/include/linux/secretmem.h
+>>>> index e918f96881f5..886c8f7eb63e 100644
+>>>> --- a/include/linux/secretmem.h
+>>>> +++ b/include/linux/secretmem.h
+>>>> @@ -8,10 +8,19 @@ extern const struct address_space_operations secretmem_aops;
+>>>>    static inline bool secretmem_mapping(struct address_space *mapping)
+>>>>    {
+>>>> -   return mapping->a_ops == &secretmem_aops;
+>>>> +   return mapping->flags & AS_INACCESSIBLE;
+>>>> +}
+>>>> +
+>>>> +static inline bool vma_is_secretmem(struct vm_area_struct *vma)
+>>>> +{
+>>>> +   struct file *file = vma->vm_file;
+>>>> +
+>>>> +   if (!file)
+>>>> +           return false;
+>>>> +
+>>>> +   return secretmem_mapping(file->f_inode->i_mapping);
+>>>>    }
 >>>
->>> This patch allows mapping guest_memfd() unconditionally. Even if it's
->>> not guppable, there are other reasons why you wouldn't want to allow
->>> this. Maybe a config flag to gate it? e.g.,
+>>> That sounds wrong. You should leave *secretmem alone and instead have
+>>> something like inaccessible_mapping that is used where appropriate.
+>>>
+>>> vma_is_secretmem() should not suddenly succeed on something that is not
+>>> mm/secretmem.c
 >>
+>> I'm with David here.
 >>
->> As discussed with Jason, maybe not the direction we want to take with
->> guest_memfd.
->> If it's private memory, it shall not be mapped. Also not via magic
->> config options.
+> 
+> Right, that makes sense. My thinking here was that if memfd_secret and
+> potential mappings of guest_memfd have the same behavior wrt GUP, then
+> it makes sense to just have them rely on the same checks. But I guess I
+> didn't follow that thought to its logical conclusion of renaming the
+> "secretmem" checks into "inaccessible" checks and moving them out of
+> secretmem.h.
+> 
+> Or do you mean to just leave secretmem untouched and add separate
+> "inaccessible" checks? But then we'd have two different ways of
+> disabling GUP for specific VMAs that both rely on checks in exactly the
+> same places :/
+
+You can just replace the vma_is_secretmem in relevant places by checks 
+if inaccessible address spaces. No need for the additional 
+vma_is_secretmem check then.
+
+BUT, as raised in my other reply, I wonder if adding support for 
+secretmem in KVM (I assume) would be simpler+cleaner.
+
+> 
+>>> --
+>>> Cheers,
+>>>
+>>> David / dhildenb
+>>>
 >>
->> We'll likely discuss some of that in the meeting MM tomorrow I guess
->> (having both shared and private memory in guest_memfd).
+>> --
+>> Sincerely yours,
+>> Mike.
 > 
-> Oh, nice. I'm assuming you mean this meeting:
-> https://lore.kernel.org/linux-mm/197a2f19-c71c-fbde-a62a-213dede1f4fd@google.com/T/?
-> Would it be okay if I also attend? I see it also mentions huge pages,
-> which is another thing we are interested in, actually :)
-
-Hi,
-
-sorry for the late reply. Yes, you could have joined .... too late. 
-There will be a summary posted soon. So far the agreement is that we're 
-planning on allowing shared memory as part guest_memfd, and will allow 
-that to get mapped and pinned. Private memory is not going to get mapped 
-and pinned.
-
-If we have to disallow pinning of shared memory on top for some use 
-cases (i.e., no directmap), I assume that could be added.
-
-> 
->> Note that just from staring at this commit, I don't understand the
->> motivation *why* we would want to do that.
-> 
-> Fair - I admittedly didn't get into that as much as I probably should
-> have. In our usecase, we do not have anything that pKVM would (I think)
-> call "guest-private" memory. I think our memory can be better described
-> as guest-owned, but always shared with the VMM (e.g. userspace), but
-> ideally never shared with the host kernel. This model lets us do a lot
-> of simplifying assumptions: Things like I/O can be handled in userspace
-> without the guest explicitly sharing I/O buffers (which is not exactly
-> what we would want long-term anyway, as sharing in the guest_memfd
-> context means sharing with the host kernel), we can easily do VM
-> snapshotting without needing things like TDX's TDH.EXPORT.MEM APIs, etc.
-
-Okay, so essentially you would want to use guest_memfd to only contain 
-shard memory and disallow any pinning like for secretmem.
-
-If so, I wonder if it wouldn't be better to simply add KVM support to 
-consume *real* secretmem memory? IIRC so far there was only demand to 
-probably remove the directmap of private memory in guest_memfd, not of 
-shared memory.
 
 -- 
 Cheers,
