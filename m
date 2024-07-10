@@ -1,113 +1,121 @@
-Return-Path: <linux-kernel+bounces-248439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E51FC92DD2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:51:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72FA792DD30
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06E201C2183F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:51:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4F3B1C21DB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6068D15886C;
-	Wed, 10 Jul 2024 23:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF09158A06;
+	Wed, 10 Jul 2024 23:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="i3Np4jzr"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eAQ1WsoO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B202012B169;
-	Wed, 10 Jul 2024 23:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6720D157467
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720655467; cv=none; b=frfh7nDChYzj3+mTgXF92mMjNnB+EZbA2oHRbfQgFt1/YiY/k18BAzP9lTU3uUJcOrhdXPNIDzutZ0cKyLXojD30PHmWhun7Y+wC6+iottI+qQOR2vwGx8rM8U2zbEjjFDHiTijiX4IjOuK87F/ukp798Tn+9j+jI5i2A2gKLAI=
+	t=1720655505; cv=none; b=WroI5xedDw5DILJ31WVTFS5lErtGvxF7Z2y3M4i7y9stbAOmT/k1nDoVVo5bR1F2u6Q1iAAu2OBq3daWvN2jsY6yY4lqJ5P3F+lZBH2CQmG5D68et8JL+4bCUGu6LvpDmLVhR82t3iRUpmfHAp3ad7N2/Z1vO1WqbSYhqHbsjfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720655467; c=relaxed/simple;
-	bh=mtsASaRHLqCYOck08Oznj4zFQ0NoMEVAeyzbF/s/GWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=B4D3yKLwnEzhIj8tkIsmh6mQ4RRTqBmhkH7Vr3R0QN7CPTygHYaWOoEypXJKGLRaXdUlpOA7zmgIzxmdIe+IZN3dOL3kgSuS38oMxSU2JBqtV8yRQZ+iGW/ZESfQXsZbglbqizCLwRw1n4mNrFbMWZV0RGFX3LCea2X9gKeIFSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=i3Np4jzr; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720655458;
-	bh=gmaq3glubBaHvlPPSZbCguHSxQhUdcxR8i8ZKyuSizc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=i3Np4jzr3EC02FU/vme++F3LYHbzDZuxiVM32qgeu+wRvQfkHbK4AShO2ouPhwWG8
-	 qeIVZDriTdyzPOiGpSYmIVVGjIj11O9nljNMQLnQsjhnJk2J3UNuVWst45MdKfyISv
-	 j9LOtsN7qD6tYaaRm8ep99Cyx8yD2+bXwK/XHwqGSfdUHKPnVA3Y9Ief23IC78BD7L
-	 e+DGnNzrUDpcMNtL7pIHm8ONvWDf+Lk5xRIUeibgiB+HcuCdhOde56dRs+1gdgGFoK
-	 9NaG9GXwsUus9c4vL7FMKyMVS11GYKFxKc8oUTPKftidHELQTRAU9zUYOJJ6VLfjhh
-	 /XgJvvcnbAywg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1720655505; c=relaxed/simple;
+	bh=npGFZ7+tSqeY2xxryGCHThpOWXBJ+gAv7JI9axGTi9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bFtS569QYvmuuJOcENNr7O/XqGzXHue5cUuktAMTL2uO4MZyUNoEKJEwxeL/JfTYE39TAQpoT8NfLkQ/1ndCJ5240KVbsL1izCxehmTPYep6qnN6/f6tLAk22gH1TG5PV5YzHuDf6JQZ/mg6TxraLDd+co05LubJj07Ay9r2NgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eAQ1WsoO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720655502;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NA5BtkAtts8DBgOsaPfYF+PKA9KEchHy7+koVC7lhY8=;
+	b=eAQ1WsoOIohbSWDbIMVss3bQwt3n+Zy6HK32OaNGnyikBKDFdNHSmBOAEu3uQczdLwIe0N
+	vUGeZy0UwNY4tMzPJngUluPsY3fbfBBwn4jQqyiORWA+TMWNhCEqLMIbc1Y+7WSPqGHK/n
+	TXHrmgS/gVsR39gP/uIjln4qsbMxfa8=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-54-gbRn394WMUSJ9IOq0kwrXQ-1; Wed,
+ 10 Jul 2024 19:51:35 -0400
+X-MC-Unique: gbRn394WMUSJ9IOq0kwrXQ-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WKF421Jd7z4w2D;
-	Thu, 11 Jul 2024 09:50:58 +1000 (AEST)
-Date: Thu, 11 Jul 2024 09:50:57 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the bcachefs tree with Linus' tree
-Message-ID: <20240711095057.469a268a@canb.auug.org.au>
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7AAEF1955F43;
+	Wed, 10 Jul 2024 23:51:33 +0000 (UTC)
+Received: from [10.22.48.10] (unknown [10.22.48.10])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5DBBC1955F40;
+	Wed, 10 Jul 2024 23:51:31 +0000 (UTC)
+Message-ID: <fc72e655-bb17-4b55-b00e-1fc640d35d77@redhat.com>
+Date: Wed, 10 Jul 2024 19:51:30 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/nQyA8CJS2klhp_UN.TA7=.7";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] cgroup: Show # of subsystem CSSes in cgroup.stat
+To: Tejun Heo <tj@kernel.org>
+Cc: Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Kamalesh Babulal <kamalesh.babulal@oracle.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>
+References: <20240710182353.2312025-1-longman@redhat.com>
+ <Zo8ELsGOyFwkpKUj@slm.duckdns.org>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <Zo8ELsGOyFwkpKUj@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
---Sig_/nQyA8CJS2klhp_UN.TA7=.7
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On 7/10/24 17:59, Tejun Heo wrote:
+> Hello,
+>
+> On Wed, Jul 10, 2024 at 02:23:52PM -0400, Waiman Long wrote:
+>> With this patch applied, a sample output from root cgroup.stat file
+>> was shown below.
+>>
+>> 	nr_descendants 54
+>> 	nr_dying_descendants 44
+>> 	nr_cpuset 1
+>> 	nr_cpu 40
+>> 	nr_io 40
+>> 	nr_memory 54
+>> 	nr_dying_memory 44
+>> 	nr_perf_event 55
+>> 	nr_hugetlb 1
+>> 	nr_pids 54
+>> 	nr_rdma 1
+>> 	nr_misc 1
+> So, css may be too specific a name but this looks a bit disorganized. How
+> about using controller as the common prefix? Maybe something like:
+>
+> 	nr_controllers_cpu 40
+> 	nr_controllers_io 40
+> 	nr_controllers_memory 54
+> 	nr_controller_perf_event 55
+> 	...
+> 	nr_dying_controllers_memory 44
+>
+> If controllers is too long, we can shorten it somehow or use subsys, maybe?
 
-Today's linux-next merge of the bcachefs tree got a conflict in:
+I think "controllers" is too long. I am fine with "subsys". Will make 
+change in the next version.
 
-  fs/bcachefs/alloc_background.c
+Thanks,
+Longman
 
-between commit:
-
-  d39881d2da2a ("bcachefs: add check for missing fragmentation in check_all=
-oc_to_lru_ref()")
-
-from Linus' tree and commit:
-
-  f75ad706a1cf ("bcachefs: fsck_err() may now take a btree_trans")
-
-from the bcachefs tree.
-
-I fixed it up (I just used the former where they conflicted) and can
-carry the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/nQyA8CJS2klhp_UN.TA7=.7
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaPHmEACgkQAVBC80lX
-0GxaKgf/edr1S35gOhQEjJXLBw3C5y1q4xyVmUoIcaRiGGDpUa7b8um2xNkKUYOR
-4q6YynRmRLABKVPSlxbjhWEMsNtp2oZqpucxVK7T2few1RUo9Xh+eQcj99jN4Qr1
-PJjwqzsi0IDISkVnIZQIfgBCS2lvveNQ6lNppHCRnwhukqATfMxiVehtG11bHtuI
-N5F9TuVUQZow1OxyQe5XVhNw/E8mkG8XRuw2hh6ndq5qBOaY3KNT1ST4B/vE/tVf
-ZtRBt955o9qjrNxZrb5FJc+DECLbQUfZqTfkNyTdj2CHGQYty3S2bFM6N2nzAxqd
-wW+dth/qKTB9KDW5+6WaGrTR3GFdhQ==
-=pRhl
------END PGP SIGNATURE-----
-
---Sig_/nQyA8CJS2klhp_UN.TA7=.7--
 
