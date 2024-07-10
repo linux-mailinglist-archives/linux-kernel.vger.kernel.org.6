@@ -1,295 +1,89 @@
-Return-Path: <linux-kernel+bounces-247583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 273E792D17B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:21:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75D1092D143
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0C4C1F260CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:21:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EA751F2313D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DA11922CF;
-	Wed, 10 Jul 2024 12:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCFE190045;
+	Wed, 10 Jul 2024 12:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="MlkPk0fJ"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EtFJ3cN1"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805ED189F31;
-	Wed, 10 Jul 2024 12:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A53084A35
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 12:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720614094; cv=none; b=LYVeumTQptjc8vRFLrG9V+PODa5uwz74GTlZhKPcHkASVApfdTmWzu6Cu9zYfFHbV56JF54mGYV4bEmKpSXH9ZN5vRRmBcMChEM1ZdzklfhQrUwUSt5FE2azMiTvl5BfPelRTqX5t0dIcdLb+QvAfSediZPPGQxvoH3Kej4Jnrg=
+	t=1720613129; cv=none; b=q0IzuZMkzeebPKBdYByM6at9CDr4zYY0CVg26dnCCN/+NhftqrdplE1sd5vlGWZbFvsKmHoTb8MXwPRdm42lOyesjHU2/NNajNzxOJKTEKIbfRSjiJDIPE37OYbt7ADOLNvog4VlIlBTfdfcTEmqZhGc0aqEVYtFcu7cqNily9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720614094; c=relaxed/simple;
-	bh=6lcB/GTtcNy9Y7JwxZl+cZSnTrbhAgRl/T3G3uY09jY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JgN+LqiHCSa3QF1S4FtnZVjBj8dOmnUmOMMAkzZ/VdOrumaOhVyXd42EVCcUqU0G26SMY6O48p/9AeTKWF0Pgs7i96F/Xw1MilPVsL69hAshd0nf4fJ7ohsWWTrbDwCoGZRvby6nB29DZ9MtpsT/hAFww7TXR7iIaROWh5e+IIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=MlkPk0fJ; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 1EE5A88680;
-	Wed, 10 Jul 2024 14:21:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1720614090;
-	bh=bhAWYJWEy4uNUzNHTeq/ur8icdNDQlXB5LyvA4dUs5Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MlkPk0fJC7sx+SpZlPjaH42VQxf6GpsmSf/NTrcJltr7Rf4cKp38wYhUcJUnVp6pH
-	 3/oiCwhgWkFXB6RaYmy7uRv7U1qGrVJ0jdjPVGWO3RZj8TdXBG2LCcb9VGlNzo67vS
-	 dFCwWkE759WjDlW34gQlGhRY5FUPL0iGVLKjIY6LvGd5qoNP7FeRDMDzN8aUmxypn4
-	 Vr/Z5gcqHIO4+bchPX/o0syUe+bHGb+ZVk2Ud8+NNAyAErKNcO9Qd4+jpBYRMrdMj5
-	 VNVt20Tr05+tdkQqt+TsU72TE4LezkgSoJKYD29oOTjAI5+F6FjiM41cBp5ZjEI7B8
-	 dytuObVUS1ItQ==
-Message-ID: <9eea108a-9a8c-4b75-88ea-b1edaca4d46d@denx.de>
-Date: Wed, 10 Jul 2024 13:58:19 +0200
+	s=arc-20240116; t=1720613129; c=relaxed/simple;
+	bh=cwYrQDVubfmHIIQTxf/oakGcgeCXhp5ZT1iYvn/NvHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K6/qwxksH3tdBZW4gxzDMB2eyzQZ/i3CG9Ev+JUvOpVXMbyjPhQqM6Q/j0+lEzAXLPTU8K1jc7dfyTBJyNUO33P9R5AjgCTbidLt8HKj8atarQQqZlIeaWGgawzxU04VzymgCeYf9VKs+yaDzsHeNeUwdmIJS7BBSstSat+AdlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EtFJ3cN1; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Zb0rr64RAc9NH99bhfbrYCHxbMOUZzI99hc+h4zjp34=; b=EtFJ3cN1V3xN42fLGIDNeV0xJm
+	DpsM5fNaWFp7k1cZfAUkPP09OuJWO8xXz83mq/8NgUeaZkvm4TtfTlR+iq90AH6jsVbZWhUzCCOoq
+	8NJSYQAVRAXDorqSRofDP6lRBDcvX4xy8ENV2btsujizV86aPAXSdUZEa+NlkOlFUS9Y7XRtGlGC2
+	ZMBHsDz0LvLRnjMzRH4bSENi+O6ftU2DSkeKeZZKh4/0qMdXJq88cfHNzJCHWdpLqeXKDLMPLuXSZ
+	0pnLMcwJtACx+1+fzaMUW2DkMJoOqSz/nl4iI2otHvgFTOvcnFAaUoD6uTC3a09+j1w7a/1r4NYLO
+	W7VC+wPQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRW4Y-00000009Dte-1b64;
+	Wed, 10 Jul 2024 12:05:22 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 08C223001FD; Wed, 10 Jul 2024 14:05:22 +0200 (CEST)
+Date: Wed, 10 Jul 2024 14:05:22 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: mingo@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, oleg@redhat.com,
+	jolsa@kernel.org, clm@meta.com, paulmck@kernel.org
+Subject: Re: [PATCH 08/10] srcu: Add __srcu_clone_read_lock()
+Message-ID: <20240710120522.GG28838@noisy.programming.kicks-ass.net>
+References: <20240708091241.544262971@infradead.org>
+ <20240708092416.010695534@infradead.org>
+ <Zo4gtyzNvinXBOHU@Boquns-Mac-mini.home>
+ <20240710100202.GU27299@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] leds: leds-pca995x: Add support for NXP PCA9956B
-To: pieterjanca@gmail.com, Pavel Machek <pavel@ucw.cz>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Isai Gaspar <isaiezequiel.gaspar@nxp.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240710-pca995x-v1-0-545015603000@gmail.com>
- <20240710-pca995x-v1-2-545015603000@gmail.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <20240710-pca995x-v1-2-545015603000@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710100202.GU27299@noisy.programming.kicks-ass.net>
 
-On 7/10/24 8:15 AM, Pieterjan Camerlynck via B4 Relay wrote:
-> From: Pieterjan Camerlynck <pieterjanca@gmail.com>
+On Wed, Jul 10, 2024 at 12:02:02PM +0200, Peter Zijlstra wrote:
+> On Tue, Jul 09, 2024 at 10:48:39PM -0700, Boqun Feng wrote:
+> > On Mon, Jul 08, 2024 at 11:12:49AM +0200, Peter Zijlstra wrote:
+> > > In order to support carrying an srcu_read_lock() section across fork,
+> > > where both the parent and child process will do: srcu_read_unlock(),
+> > > it is needed to account for the extra decrement with an extra
+> > > increment at fork time.
+> > > 
+> > 
+> > We also need to dup the per-task lock held stack in order to maintain
+> > consistent data for lockdep, right?
 > 
-> Add support for PCA9956B chip, which belongs to the same family.
+> Urgh, not the whole stack, but yeah, we need to stick an entry on there.
 > 
-> This chip features 24 instead of 16 outputs, so add a chipdef struct to
-> deal with the different register layouts.
-> 
-> Signed-off-by: Pieterjan Camerlynck <pieterjanca@gmail.com>
-> ---
->   drivers/leds/leds-pca995x.c | 88 ++++++++++++++++++++++++++-------------------
->   1 file changed, 52 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-pca995x.c b/drivers/leds/leds-pca995x.c
-> index 78215dff1499..4cd2828a3f2d 100644
-> --- a/drivers/leds/leds-pca995x.c
-> +++ b/drivers/leds/leds-pca995x.c
-> @@ -19,10 +19,6 @@
->   #define PCA995X_MODE1			0x00
->   #define PCA995X_MODE2			0x01
->   #define PCA995X_LEDOUT0			0x02
-> -#define PCA9955B_PWM0			0x08
-> -#define PCA9952_PWM0			0x0A
-> -#define PCA9952_IREFALL			0x43
-> -#define PCA9955B_IREFALL		0x45
->   
->   /* Auto-increment disabled. Normal mode */
->   #define PCA995X_MODE1_CFG		0x00
-> @@ -34,17 +30,43 @@
->   #define PCA995X_LDRX_MASK		0x3
->   #define PCA995X_LDRX_BITS		2
->   
-> -#define PCA995X_MAX_OUTPUTS		16
->   #define PCA995X_OUTPUTS_PER_REG		4
->   
->   #define PCA995X_IREFALL_FULL_CFG	0xFF
->   #define PCA995X_IREFALL_HALF_CFG	(PCA995X_IREFALL_FULL_CFG / 2)
->   
-> -#define PCA995X_TYPE_NON_B		0
-> -#define PCA995X_TYPE_B			1
-> -
->   #define ldev_to_led(c)	container_of(c, struct pca995x_led, ldev)
->   
-> +enum pca995x_type {
-> +	pca9952,
-> +	pca9955b,
-> +	pca9956b,
-> +};
+> Let me see if I can frob that somehow.
 
-This enum shouldn't be needed (see below).
-
-> +struct pca995x_chipdef {
-> +	unsigned int num_leds;
-> +	u8 pwm_base;
-> +	u8 irefall;
-> +};
-> +
-> +static const struct pca995x_chipdef pca995x_chipdefs[] = {
-
-Define three separate static const struct pca995x_chipdef {} , one for 
-each chip type ...
-
-> +	[pca9952] = {
-> +		.num_leds	= 16,
-> +		.pwm_base	= 0x0a,
-> +		.irefall	= 0x43,
-> +	},
-> +	[pca9955b] = {
-> +		.num_leds	= 16,
-> +		.pwm_base	= 0x08,
-> +		.irefall	= 0x45,
-> +	},
-> +	[pca9956b] = {
-> +		.num_leds	= 24,
-> +		.pwm_base	= 0x0a,
-> +		.irefall	= 0x40,
-> +	},
-> +};
-> +
->   struct pca995x_led {
->   	unsigned int led_no;
->   	struct led_classdev ldev;
-> @@ -52,9 +74,9 @@ struct pca995x_led {
->   };
->   
->   struct pca995x_chip {
-> +	const struct pca995x_chipdef *chipdef;
->   	struct regmap *regmap;
-> -	struct pca995x_led leds[PCA995X_MAX_OUTPUTS];
-> -	int btype;
-> +	struct pca995x_led leds[];
->   };
->   
->   static int pca995x_brightness_set(struct led_classdev *led_cdev,
-> @@ -62,10 +84,11 @@ static int pca995x_brightness_set(struct led_classdev *led_cdev,
->   {
->   	struct pca995x_led *led = ldev_to_led(led_cdev);
->   	struct pca995x_chip *chip = led->chip;
-> +	const struct pca995x_chipdef *chipdef = chip->chipdef;
->   	u8 ledout_addr, pwmout_addr;
->   	int shift, ret;
->   
-> -	pwmout_addr = (chip->btype ? PCA9955B_PWM0 : PCA9952_PWM0) + led->led_no;
-> +	pwmout_addr = (chipdef->pwm_base) + led->led_no;
->   	ledout_addr = PCA995X_LEDOUT0 + (led->led_no / PCA995X_OUTPUTS_PER_REG);
->   	shift = PCA995X_LDRX_BITS * (led->led_no % PCA995X_OUTPUTS_PER_REG);
->   
-> @@ -101,24 +124,24 @@ static const struct regmap_config pca995x_regmap = {
->   
->   static int pca995x_probe(struct i2c_client *client)
->   {
-> -	struct fwnode_handle *led_fwnodes[PCA995X_MAX_OUTPUTS] = { 0 };
->   	struct fwnode_handle *np, *child;
->   	struct device *dev = &client->dev;
-> +	const struct pca995x_chipdef *chipdef;
->   	struct pca995x_chip *chip;
->   	struct pca995x_led *led;
-> -	int i, btype, reg, ret;
-> +	int reg, ret;
->   
-> -	btype = (unsigned long)device_get_match_data(&client->dev);
-> +	chipdef = device_get_match_data(&client->dev);
->   
->   	np = dev_fwnode(dev);
->   	if (!np)
->   		return -ENODEV;
->   
-> -	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-> +	chip = devm_kzalloc(dev, struct_size(chip, leds, chipdef->num_leds), GFP_KERNEL);
->   	if (!chip)
->   		return -ENOMEM;
->   
-> -	chip->btype = btype;
-> +	chip->chipdef = chipdef;
->   	chip->regmap = devm_regmap_init_i2c(client, &pca995x_regmap);
->   	if (IS_ERR(chip->regmap))
->   		return PTR_ERR(chip->regmap);
-> @@ -126,41 +149,34 @@ static int pca995x_probe(struct i2c_client *client)
->   	i2c_set_clientdata(client, chip);
->   
->   	fwnode_for_each_available_child_node(np, child) {
-> +		struct led_init_data init_data = {};
-> +
->   		ret = fwnode_property_read_u32(child, "reg", &reg);
->   		if (ret) {
->   			fwnode_handle_put(child);
->   			return ret;
->   		}
->   
-> -		if (reg < 0 || reg >= PCA995X_MAX_OUTPUTS || led_fwnodes[reg]) {
-> +		if (reg < 0 || reg >= chipdef->num_leds) {
->   			fwnode_handle_put(child);
->   			return -EINVAL;
->   		}
->   
->   		led = &chip->leds[reg];
-> -		led_fwnodes[reg] = child;
->   		led->chip = chip;
->   		led->led_no = reg;
->   		led->ldev.brightness_set_blocking = pca995x_brightness_set;
->   		led->ldev.max_brightness = 255;
-> -	}
-> -
-> -	for (i = 0; i < PCA995X_MAX_OUTPUTS; i++) {
-> -		struct led_init_data init_data = {};
-> -
-> -		if (!led_fwnodes[i])
-> -			continue;
-> -
-> -		init_data.fwnode = led_fwnodes[i];
-> +		init_data.fwnode = child;
->   
->   		ret = devm_led_classdev_register_ext(dev,
-> -						     &chip->leds[i].ldev,
-> +						     &led->ldev,
->   						     &init_data);
->   		if (ret < 0) {
->   			fwnode_handle_put(child);
->   			return dev_err_probe(dev, ret,
->   					     "Could not register LED %s\n",
-> -					     chip->leds[i].ldev.name);
-> +					     led->ldev.name);
->   		}
->   	}
->   
-> @@ -170,21 +186,21 @@ static int pca995x_probe(struct i2c_client *client)
->   		return ret;
->   
->   	/* IREF Output current value for all LEDn outputs */
-> -	return regmap_write(chip->regmap,
-> -			    btype ? PCA9955B_IREFALL : PCA9952_IREFALL,
-> -			    PCA995X_IREFALL_HALF_CFG);
-> +	return regmap_write(chip->regmap, chipdef->irefall, PCA995X_IREFALL_HALF_CFG);
->   }
->   
->   static const struct i2c_device_id pca995x_id[] = {
-> -	{ "pca9952", .driver_data = (kernel_ulong_t)PCA995X_TYPE_NON_B },
-> -	{ "pca9955b", .driver_data = (kernel_ulong_t)PCA995X_TYPE_B },
-> +	{ "pca9952", .driver_data = (kernel_ulong_t)&pca995x_chipdefs[pca9952] },
-> +	{ "pca9955b", .driver_data = (kernel_ulong_t)&pca995x_chipdefs[pca9955b] },
-> +	{ "pca9956b", .driver_data = (kernel_ulong_t)&pca995x_chipdefs[pca9956b] },
-
-... pass pointer to each (separate) chip type structure here ...
-
->   	{}
->   };
->   MODULE_DEVICE_TABLE(i2c, pca995x_id);
->   
->   static const struct of_device_id pca995x_of_match[] = {
-> -	{ .compatible = "nxp,pca9952",  .data = (void *)PCA995X_TYPE_NON_B },
-> -	{ .compatible = "nxp,pca9955b", .data = (void *)PCA995X_TYPE_B },
-> +	{ .compatible = "nxp,pca9952", .data = &pca995x_chipdefs[pca9952] },
-> +	{ .compatible = "nxp,pca9955b", . data = &pca995x_chipdefs[pca9955b] },
-> +	{ .compatible = "nxp,pca9956b", .data = &pca995x_chipdefs[pca9956b] },
-
-... and here.
-
-In pca995x_probe() , cache pointer to the whole struct pca995x_chipdef 
-and use its members all over the driver. That's how you can get rid of 
-the enum .
+Ah, since this all is across userspace, the easiest solution it so also
+use __srcu_read_{,un}lock() and ignore lockdep entirely.
 
