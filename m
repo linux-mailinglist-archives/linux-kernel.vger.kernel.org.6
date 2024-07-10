@@ -1,104 +1,116 @@
-Return-Path: <linux-kernel+bounces-247848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B657F92D583
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:57:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A17892D585
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:57:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E34051C215E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:57:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F3041C218E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9F7194C96;
-	Wed, 10 Jul 2024 15:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897AD194A5C;
+	Wed, 10 Jul 2024 15:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nhh6UqTy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OD7ZnHFq"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44791194ACF;
-	Wed, 10 Jul 2024 15:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A03194A59
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720627000; cv=none; b=Ubk1J8xN+AjpFPC3oyxn9cz6+lYGu7Xkd3KQzXIGpNIYRzdnUECoiNGX0uToNAn9Z80/VhSN80xaLDaUb1ZUtIXAjDhsur4akC68tVCa/IfFfk+XPIazT0xOMTauQoUKLLDsTpHnNES7rKZrG9MqL49zDc6Bz1X+bxTGbbY1+6s=
+	t=1720627016; cv=none; b=QBj+Yp9ybccWEYBBuHU6fTIw7gZEQF31ghrjle4blxvrAna/XmZ89zgAU4gjWX0WKnxIaLL1uH1QvAvll9+w6w+poqaRwkb+H3O/vV+510GG0/v33KZDh/b2x3NRVxL3jxWjlnoY3DTQZJDafwiSPQKdzYY13GVCXsqPhm2LQ5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720627000; c=relaxed/simple;
-	bh=LnSN3f1kBTQZBMgn9k+Kpjy3WQodTEYNn6I5AuMkXR0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TuEeR10RyODCEz/6odpBqwPSHdV90x2mLplpPnogrs5Yyq2V6R4cHtnzZd8+0lenBfbBz/UiAs0CFtPEg7WBmVknPX+WBtahQzv7hASpvvmD9qcnmlCCabSfj2kDuySohBJ4u0ZQlo+hmNPXX0hJI3SM7q41J2HyGGUQzamsifQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nhh6UqTy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E7A0C4AF0F;
-	Wed, 10 Jul 2024 15:56:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720627000;
-	bh=LnSN3f1kBTQZBMgn9k+Kpjy3WQodTEYNn6I5AuMkXR0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Nhh6UqTyrSr0wo2AywZf2hg4eQ0qQGSBsIOTv4oGyXQTX6vabooxsZHLJX1VF1c59
-	 tSODVeFqtFA2V8MxwFzIpm4gp/4O29+s9eX715D6Rq36F5EKQOe6ryT2OR0gglz/UO
-	 UKohM+G9agXaWRQxMn6sSbc3DQYzoRrBXaqJz1VydZ+/IN+BVAkeuET3oh+YhAxE0R
-	 h9ouVOeN7urrk1jU9/IKmO48m/vG2HGtWSX6NNlntfMbLGdNMTy7dwUnWPRVqrmgpi
-	 D7BDS6Sqpuuv8GoHSGy+v01VvLPT8j1t851KKG4kjk87hcVQlLRJ/CcXiE7RBN/SZj
-	 F4nU4p5RcNZyw==
-Date: Wed, 10 Jul 2024 08:56:37 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
- bpf@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
- <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, Ivan
- Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>,
- Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
- <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, Herbert
- Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem
- de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>,
- Sumit Semwal <sumit.semwal@linaro.org>, "Christian =?UTF-8?B?S8O2bmln?="
- <christian.koenig@amd.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
- Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
- Taehee Yoo <ap420073@gmail.com>, Pavel Begunkov <asml.silence@gmail.com>,
- David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
- <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
- Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
- Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
- <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, Kaiyuan
- Zhang <kaiyuanz@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: [PATCH net-next v16 03/13] netdev: support binding dma-buf to
- netdevice
-Message-ID: <20240710085637.4284c7d7@kernel.org>
-In-Reply-To: <20240710001749.1388631-4-almasrymina@google.com>
-References: <20240710001749.1388631-1-almasrymina@google.com>
-	<20240710001749.1388631-4-almasrymina@google.com>
+	s=arc-20240116; t=1720627016; c=relaxed/simple;
+	bh=JJbrd/SAXQmG1te/lqb4KxyAONESrRs5fEKrCQIBTnk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ctmKsXVYv/oEfRapcHxVnNVlbMrtKNSt9Pg0M1I/wa4P8wweEYjhWCm/FWLhtlrKRdYbqaTnAhJVlkx1pLle+mfJipUaxQoQ/RLsIX8R6xZ2FOmbIPCJ0JDOOUDBA8rucAKLjAeB2V0mEZVzZM9rWzWeH20EXDkzAjqJMthcS00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OD7ZnHFq; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-389cb8f18beso1847635ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:56:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1720627014; x=1721231814; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VERdU1qedh1l6GdB7M2mTLj4O6X+fYd5WvsHYcPRDpk=;
+        b=OD7ZnHFqKGzN+Uyd+JQP/hHvvZPH1PaadFyiFUexeHbeloEJGv+RnVJmU5Whc/r8Hr
+         +XsomoyIHpPG3dwtXG8vl8nLN/Z/gBF0/ovz1C55Fijda6G7zDsef/WhSCc2ESuhR2wo
+         ro2Dg2H3c0Hu8UfR9vt8sQKTaNmQugKtvH2ZA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720627014; x=1721231814;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VERdU1qedh1l6GdB7M2mTLj4O6X+fYd5WvsHYcPRDpk=;
+        b=QpsbUIGJY3cICTtfTwkyZ8AtXomKBWZEyt5yX6A/etbdf36mGq4jVWrXV4NLUGL9Kv
+         NsytRQR3SbkgJBObg19HI6lDSwbAuzGx4Llx9wjjJ1pVRfC5R1bXu/9mp0AFi0Ofz8SW
+         OCC+r3vwLBtMf6WnkzMp0ezub2jBoIgKXitfSlIHBG4w1w89Ch41EEE45azvwPz95jpz
+         O0DsZBG61Vrg2BroZJM3jMxoeMGGp5E4BHWU5rCnmMaY6vQYpyRa48leXWKNjiOFdGWl
+         eU/abyYjOKIc+emW+GRrA5PE2qbzKtkT390QVxyIqbay6zqRqtY5N41oNtYbpYvgO0Oq
+         UMKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXV+XX/pD4goZFDQFq4wS3pVCFp0kSf5xVjmdIKmpMFudf5CKpalMfKWy4u8axK+wiP5pFjNB+70JC6F6Tn62KBJtIaObeV9OdkA9B2
+X-Gm-Message-State: AOJu0Yy+Bp12IAGce1vQxdPKL4mn+KBoP4L8OijjCXDMUd27a+6uNyFR
+	RJpspotrgCZyg0yKxwol2nqwr5AqFwEV/dXwuRnLY4gd3/ngB3nTfLUbOpN8XZM5nnZDqmhDL6j
+	9
+X-Google-Smtp-Source: AGHT+IHg/yspDQjdmkEKcTdfBZHi8HL6V6VKME/ltM73JgpK9pD4RTHubfradQsoa23jOALtcvaZxQ==
+X-Received: by 2002:a05:6602:6103:b0:7f6:85d1:f81a with SMTP id ca18e2360f4ac-80004dea088mr660879239f.2.1720627014247;
+        Wed, 10 Jul 2024 08:56:54 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c0b1b5c781sm1196507173.76.2024.07.10.08.56.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jul 2024 08:56:53 -0700 (PDT)
+Message-ID: <7f6f9c8e-8bed-458d-92cc-32b68c68ef21@linuxfoundation.org>
+Date: Wed, 10 Jul 2024 09:56:53 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests/breakpoints:Remove unused variable
+To: Zhu Jun <zhujun2@cmss.chinamobile.com>, shuah@kernel.org
+Cc: angquan21@gmail.com, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240710021136.2753-1-zhujun2@cmss.chinamobile.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240710021136.2753-1-zhujun2@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Wed, 10 Jul 2024 00:17:36 +0000 Mina Almasry wrote:
-> +		err = gen_pool_add_owner(binding->chunk_pool, dma_addr,
-> +					 dma_addr, len, dev_to_node(&dev->dev),
-> +					 owner);
-> +		if (err) {
+On 7/9/24 20:11, Zhu Jun wrote:
+> This variable is never referenced in the code, just remove them
+> that this problem was discovered by reading the code
+> 
+> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+> ---
+> Changes in v2:
+>   - modify commit info
+> 
+>   tools/testing/selftests/breakpoints/step_after_suspend_test.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/breakpoints/step_after_suspend_test.c b/tools/testing/selftests/breakpoints/step_after_suspend_test.c
+> index b8703c499d28..dfec31fb9b30 100644
+> --- a/tools/testing/selftests/breakpoints/step_after_suspend_test.c
+> +++ b/tools/testing/selftests/breakpoints/step_after_suspend_test.c
+> @@ -130,7 +130,6 @@ int run_test(int cpu)
+>   void suspend(void)
+>   {
+>   	int power_state_fd;
+> -	struct sigevent event = {};
+>   	int timerfd;
+>   	int err;
+>   	struct itimerspec spec = {};
 
-	kfree(owner);
+Applied to linux-kselftest next for Linux 6.11-rc1.
 
-right? If the insert fails gen_pool_for_each_chunk() won't see it
-
-> +			err = -EINVAL;
-> +			goto err_free_chunks;
-> +		}
+thanks,
+-- Shuah
 
