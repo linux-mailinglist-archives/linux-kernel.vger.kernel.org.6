@@ -1,104 +1,120 @@
-Return-Path: <linux-kernel+bounces-248381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F9F92DC73
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:16:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3CA292DC7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:17:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E3431F258A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:16:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A016A1C226EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AA3152DF5;
-	Wed, 10 Jul 2024 23:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E72157480;
+	Wed, 10 Jul 2024 23:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPw1nJ9F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h3sYo3Ee"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930ED12BF23;
-	Wed, 10 Jul 2024 23:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A6113C679;
+	Wed, 10 Jul 2024 23:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720653357; cv=none; b=nfoI2fpWESnQ5Fc/PfqV8hPiBILnHlQqAgLAE//qFKmojKS0xZlVNk9BJdU7XWPNQMcOUzczDCxL+74YrK5F9uZW4BGYKD3+qJqqBLCRCyesZArelnuhZYLUZLrxHZLAPjUKjuvuvlq0d4Lt4bqODo0uAESVz3jEEZU+EBJr2Ns=
+	t=1720653436; cv=none; b=OSQKzxGGRVlC2vbGm0qLxg2bW+Gr3FHKGSUMWx8w7JobKwH0wPLDQMOcfgJD8p0JTqhCAXF6tLCbhyaGNzNtKzjcC0fyluAazJH3h318UFFFCv2+lrqsjEmc1aR9+mUxSO3QH8pAfWnD+zaTSFd1WsjGYmnq0uIYqp/NSJAiG6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720653357; c=relaxed/simple;
-	bh=12K8PkjgAlf4Yy3Ph2YxFc15bLk8RLBUzI3Tg0Ee4Y8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XSUcmWOqY54u6VaciDrw1Wh5eOuqklcPOgHb5p+8uqYw8uEVefKzu0DEtEF+LyPvLy7dciNdvJ6u9zcSSLQtWoy1wzB4e7hhNK56gUVU7zgZsK2Wdih/JmLdyt2Nky15UTGKseqPV4nIf7i3lB0Z6x9KSeYfA/FBoEhNDigB6LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPw1nJ9F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32AB6C32781;
-	Wed, 10 Jul 2024 23:15:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720653357;
-	bh=12K8PkjgAlf4Yy3Ph2YxFc15bLk8RLBUzI3Tg0Ee4Y8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=IPw1nJ9FWyMJ6rTcVV6mwP+n/EHVO/hu/nsrqzc5cpIKH1VmmBUEnw8iFlpOkTzUR
-	 UktTExsVFBCeg/uyY6vOrV2NGrq2d8X/85c72WrOTEqSPDgnnrWemCyh4ccEtYXZO2
-	 vOqUcimb9vciIKCk2SD+sFO2+Ovcp80ogM6I+Hub7W3LBI1kExXbGNztdepzhSod0o
-	 oPUdgbonjSRFK1D/alPJDZpWDDy+Zxbj/LP/67xrdFINUBS7AIU1Xyct4+vajBk8EK
-	 pWSnYVdDq/gdOa+8GQuXw2heWfUnuOaBirvuJArr318gd7rej2RuKK+00eYeNRklLB
-	 jW4zR0VCvjEWA==
-From: Kees Cook <kees@kernel.org>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Kees Cook <kees@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] virt: vbox: struct vmmdev_hgcm_pagelist: Replace 1-element array with flexible array
-Date: Wed, 10 Jul 2024 16:15:55 -0700
-Message-Id: <20240710231555.work.406-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720653436; c=relaxed/simple;
+	bh=UvnaxlqmvLPi8Lr06uQh+kZE7yBmnckwmYquWml+mFU=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=rbBnwuPaM3gv/RfIIFqckzIhafEq7x/Zlyr/KDdUyyuMPkqlK9kSPunqdmCovtNiWd5bgn5TcyRBpFvU7cOV9mcYr7+yFYCTJTt6QKrufmR33nrzowwnoMJ1wrvB87h6S7bBDKR3neZXwLmTRZ4SaipqqzeDT6Fvft2IPoyAaAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h3sYo3Ee; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fbc3a9d23bso1948245ad.1;
+        Wed, 10 Jul 2024 16:17:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720653434; x=1721258234; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PQWSgKIn8SEmuSNSdTgDWNDQAMDWOagG0JDZoov0LeU=;
+        b=h3sYo3EeMMxrd8tQNFdADJIl2MZL5g8XcibMpYdGUPCBYh/llbk8nxTdl9YdGPbrHj
+         xM8MgDduxBbX9UI4xMgpMPcBa4meBj8TIxzVIlHAW0XvxSAIpvJrxWHbW1KUUdm2usYg
+         7Kr1V+e1vJyYIIdPH2AqJg+J5dsHX230h1Ar0oi7geI3Q742VyhYmtdtRCVmSZ93svsm
+         Pvq+FXjpne1YntqFFVsnhSmKDPBekXzojTcIVI+A+HpjL/qdYAt0KrzDz/TK6TchwKmd
+         561mLaiyKX3O4nxuXYEHTwNkhubrW24EtA64VtxSe9e28IDm/ObsgrGMTRqNC/vLeTzx
+         uZpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720653434; x=1721258234;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PQWSgKIn8SEmuSNSdTgDWNDQAMDWOagG0JDZoov0LeU=;
+        b=u9c0JLZzqyKEQdFzKAMavS9nsaq9N1IPzYNVO/2vjVbxUw45Mxpq4KrrJvtidF1+3j
+         MKGlGboVJSgD2wAgESL0VK0taAU1gbgMeScjEnc/S8t9p4JDn0XNMHS8p4CTVbHEr6lU
+         pSzAedCQXV0q9uHvHG38SvwoDKAkQ8r50zx1qRDmIlEpcaVhcUd+p3pwnGm8jSAOWwQO
+         fPw2Qo+y/cT7JOFI8dU7VzArdL7H4KNjKwtvZMIGHTUKsITGoX3UpMeJyhxFPpWI5U2n
+         AueZzsUj7pZoAGVrLOWkGktY9Kzfk/Y3l0oocar5u3tcV8OLiTvH54sm2lnbvC4Iwonj
+         mYUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVU7DLw2Q0gKE4sSaq7V680IPq/NlVVoAzPopI67TWBDFbh2WcuAq8jXxgWprmBs1owDMA1BcERbJ5fruE3h/0AKMtP7AGNlYHCUsDNc/9VYJjETiv71Njj4C1A4+eeBUGCBz009Jb5
+X-Gm-Message-State: AOJu0YxqboRM/7ohnxxiM6Owdm1T7L06Qpnyp8byuuKAFUAPBBEbh//o
+	9cLTpFyJbCxIDOdNZOz/XZMLlXnQSAS7mGaGI2HpJI62FTRnNUvQ
+X-Google-Smtp-Source: AGHT+IF0369HLlf0s7HuwPmn5hGEIVx0M9loDIYoTAscU8I/4tLonBO2sWtXOaotBw0tCDfUpnNMbw==
+X-Received: by 2002:a17:902:ec8a:b0:1fb:35c7:8ea4 with SMTP id d9443c01a7336-1fbb6d25092mr56341335ad.2.1720653434291;
+        Wed, 10 Jul 2024 16:17:14 -0700 (PDT)
+Received: from localhost.localdomain ([46.232.120.226])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ad1e47sm38492715ad.282.2024.07.10.16.17.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 16:17:13 -0700 (PDT)
+From: ryan <ryanzhou54@gmail.com>
+To: jikos@kernel.org
+Cc: gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ryan <ryanzhou54@gmail.com>
+Subject: [PATCH] hid: usbhid: Enable remote wake-up based on device configuration
+Date: Thu, 11 Jul 2024 07:16:06 +0800
+Message-Id: <20240710231606.3029-1-ryanzhou54@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1505; i=kees@kernel.org; h=from:subject:message-id; bh=12K8PkjgAlf4Yy3Ph2YxFc15bLk8RLBUzI3Tg0Ee4Y8=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmjxYrQFvg6Myp/dqaxd9c1I9SQeTAOBna3TgY/ 4ZwxFwY9FKJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZo8WKwAKCRCJcvTf3G3A JhwQD/9gHHrHq9XVc3JrCq1py5D/rZjBDuIAIorvUWWAftf+AI6Ksg43Ttb42ARYdOkuP9uwy8Y QNleZEenyiyFmgrad+UruCXN6KM7esTqmYRaXkxKgP9Garf/rusUyNAJdT2MCqr7w37GECSjBLZ 5a7EC/HBYrT2NWFY8VExq3HDwrNFouM+/MI3tvt72oWzP/3EHb49JQ3mENBeVhtC+83TzgziGHr xFuiBc3TPskKcJFF9a8iXQIT7c+kzJvGR/KZglwyu7sKK9Hpw2kYzA8YmNWVSwNH0ScrLWJgrzg S43C4Sq4Dxc9jJUYatAhzCNckZiduDETM0QVbvxKaZI4T9Cn05sbSoXCqJl0GICFPHC4Dwucqr7 0/yxlNdrlRL+ftuNizQkh3okzMG36oQDg7+t4oAR6tCFkQYlNtF9k3opPhbFd3GmF7IoWzUGFne arkW1v8LpAWfg32vYIYF0svYCISOJQwG89/QWeWCQ/EeFrrE/eQSYOWIOXEtfSQWV2aWeV4Dy02 YT6pRATV4x6CmM30+ut72yKua7sknXZ/sdAADpDWpXecIwIKz7q9ijWzErGllaB/lrJL9pG1A5x Sj2k8Bi9taR6NsEDPOdNr6xIYwfCiQa/WKEnI/B/ryeTXEogvONqN7xJiT0Hh4TAKuFn8eUaKQI fseDqnnoOUllh
- lg==
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
 
-Replace the deprecated[1] use of a 1-element array in
-struct vmmdev_hgcm_pagelist with a modern flexible array. As this is
-UAPI, we cannot trivially change the size of the struct, so use a union
-to retain the old first element's size, but switch "pages" to a flexible
-array.
+According to the USB protocol, the host should automatically
+adapt the remote wake-up function based on the configuration
+descriptor reported by the device, rather than only the default
+keyboard support. Therefore, it's necessary to support other hid
+devices, such as digital headsets,mice,etc.
 
-No binary differences are present after this conversion.
-
-Link: https://github.com/KSPP/linux/issues/79 [1]
-Signed-off-by: Kees Cook <kees@kernel.org>
+Signed-off-by: ryan <ryanzhou54@gmail.com>
 ---
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-hardening@vger.kernel.org
----
- include/uapi/linux/vbox_vmmdev_types.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/hid/usbhid/hid-core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/uapi/linux/vbox_vmmdev_types.h b/include/uapi/linux/vbox_vmmdev_types.h
-index f8a8d6b3c521..6073858d52a2 100644
---- a/include/uapi/linux/vbox_vmmdev_types.h
-+++ b/include/uapi/linux/vbox_vmmdev_types.h
-@@ -282,7 +282,10 @@ struct vmmdev_hgcm_pagelist {
- 	__u32 flags;             /** VMMDEV_HGCM_F_PARM_*. */
- 	__u16 offset_first_page; /** Data offset in the first page. */
- 	__u16 page_count;        /** Number of pages. */
--	__u64 pages[1];          /** Page addresses. */
-+	union {
-+		__u64 unused;	/** Deprecated place-holder for first "pages" entry. */
-+		__DECLARE_FLEX_ARRAY(__u64, pages); /** Page addresses. */
-+	};
- };
- VMMDEV_ASSERT_SIZE(vmmdev_hgcm_pagelist, 4 + 2 + 2 + 8);
+diff --git a/drivers/hid/usbhid/hid-core.c b/drivers/hid/usbhid/hid-core.c
+index a90ed2ceae84..d2901ad9a871 100644
+--- a/drivers/hid/usbhid/hid-core.c
++++ b/drivers/hid/usbhid/hid-core.c
+@@ -1179,16 +1179,16 @@ static int usbhid_start(struct hid_device *hid)
+ 	/* Some keyboards don't work until their LEDs have been set.
+ 	 * Since BIOSes do set the LEDs, it must be safe for any device
+ 	 * that supports the keyboard boot protocol.
+-	 * In addition, enable remote wakeup by default for all keyboard
+-	 * devices supporting the boot protocol.
+ 	 */
+ 	if (interface->desc.bInterfaceSubClass == USB_INTERFACE_SUBCLASS_BOOT &&
+ 			interface->desc.bInterfaceProtocol ==
+ 				USB_INTERFACE_PROTOCOL_KEYBOARD) {
+ 		usbhid_set_leds(hid);
+-		device_set_wakeup_enable(&dev->dev, 1);
+ 	}
+ 
++	if (dev->actconfig->desc.bmAttributes & USB_CONFIG_ATT_WAKEUP)
++		device_set_wakeup_enable(&dev->dev, 1);
++
+ 	mutex_unlock(&usbhid->mutex);
+ 	return 0;
  
 -- 
-2.34.1
+2.17.1
 
 
