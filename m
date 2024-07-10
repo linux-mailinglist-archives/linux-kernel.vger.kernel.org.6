@@ -1,115 +1,94 @@
-Return-Path: <linux-kernel+bounces-247598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 280ED92D1B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:36:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6748F92D1BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FAA2B26911
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:36:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18307286D13
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528AD191F95;
-	Wed, 10 Jul 2024 12:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BF6191F95;
+	Wed, 10 Jul 2024 12:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PXFxNTcz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kF0X6NM5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9071C128369;
-	Wed, 10 Jul 2024 12:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3AD191496;
+	Wed, 10 Jul 2024 12:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720614988; cv=none; b=TabFeX7vFH8ZEN8niyy5oqqRcKMSrM6dJ+rwFL0F1p1pRw/YnkrZX4Igdi9TK0BT8O6Rv4XM1M2WRQ9sarfOYYKMeCwTddRJj7jwpiaYNmNhyyELI+XCvkex4kGvREg4e2tLfiN7CZz5/8EulL3X97slVwxyEHn4YVuX/7aqtTc=
+	t=1720615151; cv=none; b=OlM3VpC9uq4mIiyqE/ZoFdndxwzEpE4IKL0/uMNQn9D84EusjLqIhltXZ85FLZzvIl5jojkiK/M6vj2rotRrwnVrPZcLfDvl/PcOQozZXUqxPHzGgoccGsfNlBrdudzBie1Weqq6ZO6Iy1JnrIZ0wgyA7dEh+K3l5fb8Z9kaStc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720614988; c=relaxed/simple;
-	bh=Y4Al+y2W175lU4nuPuJc7qg78aq+qmDqDJ0XFPiR0qg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MLwJ5BE7Ijwr3s72HxcIbigUtTwj2MsHZA4595/57mX+If5qiqxi6fUq0shgAqRvxdBojcMCk0wlZBWDcW7tkWI3YbXnLvWVtHhztUukPHyu5Unv6mCw8Gf/k+hOC0HgwbgELegMw79K1ORptv7KoGL42Ei/jB89cWjIobe1VGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PXFxNTcz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46AFEC32781;
-	Wed, 10 Jul 2024 12:36:24 +0000 (UTC)
+	s=arc-20240116; t=1720615151; c=relaxed/simple;
+	bh=Pkl0N61cIs16sTy1Os3VUMkDmIplUrRbwQp3A+pBqhE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=I8sppV8gfIeWKtm4S5FU440NnNVwloxw/iIZXVwo/ECcsS3ch+v5+8Fco3eP+gBj5WMEvn4tnobeCXx2F61+pKqqvjJPfKPEasrwxBeSjvimolHFPmgjVtyQXaiDcVlHBQu4t8RhhoN6qI7zJ1SV7h+Q2PeXEQ7yQrGCG3dMCVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kF0X6NM5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5897C32786;
+	Wed, 10 Jul 2024 12:39:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720614988;
-	bh=Y4Al+y2W175lU4nuPuJc7qg78aq+qmDqDJ0XFPiR0qg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PXFxNTczHjo8Pn6CMsxF5GxaFs9FIwMXtAf9rKkX5vEHvZMdgBDUy5SpN1ZW/kgil
-	 ZCZkCPmDFjBmxoJbx35WGsbyBW2zAFTy31a5aVBxKdA69vvx1FbDgTdgoapZXIgmS6
-	 bIDWvflWRo0Boa/8X/b/VqvEw7K0nnLCsjDe1EnMQ4JPF5GcdlhlKpscNgrwXsGxdn
-	 0fBI6Qe7mh++WOIB/T7uGFKiaS9/bNGcw9vnCTpaXQZIeQ2uGSOBFlH6/gI5CrMBN+
-	 uIeU5MV1K69500Mia8cyCigJNxEKOZFc6tpprU4tz45iFABhgEv0jU6/xxlIQVnYGO
-	 VS3IdlNlBb8mQ==
-Date: Wed, 10 Jul 2024 13:36:20 +0100
+	s=k20201202; t=1720615150;
+	bh=Pkl0N61cIs16sTy1Os3VUMkDmIplUrRbwQp3A+pBqhE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=kF0X6NM5ZQ6RVrRPG917AZ8uI6AafaDCw3KdxlvPfNpNvKLlldS1zjMwHH702yM2g
+	 Tb8Df5XunssFakljELmc/lNx0NNP95YO2XXJONWcPsJ21WGww+UWjatLAEy/iWPrIl
+	 AIJy8x9ZQ4gBb57r0G1NQKUOCcX2LPlNWyY8eRX0Sihz5K68hYpdjv5shzK670Niif
+	 UU8L68Nug/l4hn6Fzgt372IRMtrgAtJ+NOZMFPuAJIRqprwERICtOiuV3BwsVTyrzv
+	 z44X1Vk7rjrirBw23CQ9nmW80ZBbzo1ZObOKx8SqD9MM2ftz+4CNHZRavkRyBgaq+0
+	 Ic+b9wDlLGHqQ==
 From: Will Deacon <will@kernel.org>
-To: Russell King <linux@armlinux.org.uk>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	James Clark <james.clark@arm.com>,
-	"Rob Herring (Arm)" <robh@kernel.org>
-Cc: kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v2 00/12] arm64: Add support for Armv9.4 PMU fixed
- instruction counter
-Message-ID: <20240710123620.GA14423@willie-the-truck>
-References: <20240626-arm-pmu-3-9-icntr-v2-0-c9784b4f4065@kernel.org>
- <172001203729.3396033.17013529444643308853.b4-ty@kernel.org>
+To: Joerg Roedel <joro@8bytes.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Louis Maliyam <louispm@google.com>,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] iommu/vt-d: Fix aligned pages for cache invalidation
+Date: Wed, 10 Jul 2024 13:39:03 +0100
+Message-Id: <172061321610.624103.9680592794561118105.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20240709152643.28109-1-baolu.lu@linux.intel.com>
+References: <20240709152643.28109-1-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <172001203729.3396033.17013529444643308853.b4-ty@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 03, 2024 at 03:38:44PM +0100, Will Deacon wrote:
-> On Wed, 26 Jun 2024 16:32:24 -0600, Rob Herring (Arm) wrote:
-> > This series adds support for the optional fixed instruction counter
-> > added in Armv9.4 PMU. Most of the series is a refactoring to remove the
-> > index to counter number conversion which dates back to the Armv7 PMU
-> > driver. Removing it is necessary in order to support more than 32
-> > counters without a bunch of conditional code further complicating the
-> > conversion.
-> > 
-> > [...]
+On Tue, 09 Jul 2024 23:26:41 +0800, Lu Baolu wrote:
+> The aligned pages for cache invalidation returned by
+> calculate_psi_aligned_address() are incorrect if the start pfn is not
+> aligned, which can lead to cache inconsistencies when qi_flush_piotlb()
+> uses the number of pages to flush caches for the first-stage
+> translation.
 > 
-> Applied to will (for-next/perf), thanks!
+> Fix this by updating the aligned pages once the address mask is adjusted.
 > 
-> [01/12] perf: arm_pmuv3: Avoid assigning fixed cycle counter with threshold
->         https://git.kernel.org/will/c/81e15ca3e523
-> [02/12] perf: arm_pmuv3: Drop unnecessary IS_ENABLED(CONFIG_ARM64) check
->         https://git.kernel.org/will/c/598c1a2d9f4b
-> [03/12] perf/arm: Move 32-bit PMU drivers to drivers/perf/
->         https://git.kernel.org/will/c/8d75537bebfa
-> [04/12] perf: arm_v6/7_pmu: Drop non-DT probe support
->         https://git.kernel.org/will/c/12f051c987dc
-> [05/12] perf: arm_pmuv3: Include asm/arm_pmuv3.h from linux/perf/arm_pmuv3.h
->         https://git.kernel.org/will/c/d688ffa26942
+> [...]
 
-I've had an off-list report that this series causes a kernel crash under
-KVM unit tests (panic in write_pmevtypern()).
+Applied to iommu (intel/vt-d), thanks!
 
-Given that I don't have enough information to repro/debug and Catalin is
-tagging the arm64 branch for 6.11 today, I've dropped patches 6-12 for
-now. Please can you send a fixed version after the merge window?
+[1/2] iommu/vt-d: Limit max address mask to MAX_AGAW_PFN_WIDTH
+      https://git.kernel.org/iommu/c/c420a2b4e8be
+[2/2] iommu/vt-d: Fix aligned pages in calculate_psi_aligned_address()
+      https://git.kernel.org/iommu/c/0a3f6b346301
 
 Cheers,
-
+-- 
 Will
+
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
 
