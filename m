@@ -1,137 +1,160 @@
-Return-Path: <linux-kernel+bounces-247954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE57492D6BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:41:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D56B92D6A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39941B2CFAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:37:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F23F1C20EB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0006D199223;
-	Wed, 10 Jul 2024 16:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C2E195FEF;
+	Wed, 10 Jul 2024 16:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=python.org header.i=@python.org header.b="orCNdDWu"
-Received: from mail.python.org (mail.python.org [188.166.95.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UrpvLcFK"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A1C1991BF;
-	Wed, 10 Jul 2024 16:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.166.95.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5367A193445;
+	Wed, 10 Jul 2024 16:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720629168; cv=none; b=QRMCvKT17gnDdQm0lUGoBkK/GAyXiCzxXnAfLtARjMaLFL2q8m191CVQVgRWX+guW6upQ44JJlXWyvPWEnhjs6rcH9tKfSTkbK+Wa+vPsCHPbR0pJ9JZ/wxISKRyDwNe2D0KV/xUCD09vMNdH3LfJbhJKzfWz0cVxRyzgqPca4s=
+	t=1720629303; cv=none; b=Kpd2GydJdIGj1uOe0vivfmwIzpFGDT21qt7BFxzImbhJ1BbRVCN5f1xBE8BX3+uAtXVxFxI4ala32aikRLPKlxIiU80Jqb2d8s/gIW+yAaL5oC+L+QHiT01qEo68pKYh1kJrtogqF7yMScFA8QoTbmeXlGlQz+WWdk9SYDag0/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720629168; c=relaxed/simple;
-	bh=h2ueXzl9+sWF3YmpYxvon1twDz2ALcDQP5/oXQTST5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZFKPnw1saapKzrck/ekbHq0qrHjwtsFqlXBpDySb/SdRi5n29DCEQIXLtCXYuI8iW7GRjLWx3dew61Bu9J+WCE0E6Ej9FjkHK7CRnJFQaLJcCC6F7uQs9tq6e42B2jZ9s2i2HBU6UMDNyYli58uHm+Zay+Gi8aIVr+V2p5TP4VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=python.org; spf=pass smtp.mailfrom=python.org; dkim=pass (1024-bit key) header.d=python.org header.i=@python.org header.b=orCNdDWu; arc=none smtp.client-ip=188.166.95.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=python.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=python.org
-Received: from [192.168.1.83] (unknown [2.29.184.121])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.python.org (Postfix) with ESMTPSA id 4WK3LD4nhrznVC3;
-	Wed, 10 Jul 2024 12:32:36 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=python.org; s=200901;
-	t=1720629158; bh=h2ueXzl9+sWF3YmpYxvon1twDz2ALcDQP5/oXQTST5o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=orCNdDWudCwG90M687meldIOq5/EKuuIheRaXFPgs6pRjZnOQvl0JDohh68MAjUiI
-	 s4xIkd1yVurO4t3vSs1/vto/eK5p0gW0i5Yz0uvn0sdyeMtjkbfXJE5u9zsPFpqDN1
-	 iXEmSBDTMNFhv/jRjzG1bSRS5+61zKFeOr4ihtow=
-Message-ID: <296b11b2-5ff2-488b-ac4c-7945aabd7b3c@python.org>
-Date: Wed, 10 Jul 2024 17:32:36 +0100
+	s=arc-20240116; t=1720629303; c=relaxed/simple;
+	bh=cigVI0/QagXC8kd68wWHO+vt27ycO/n/2ePlPQR9ee4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rhZXHI2IKl5QyKsqenNnXT1Hj7xB+4OXPoXRhT4fT1srj4mNAhS3zBUAoOECzl4E98y9XaDqvxzC09c2+4/Nix01hMamM2sLQTGUd003gu/+Ju+DZ+HKxmJP2hMki0jLitdUGjspalNUyPnQWxUv0BSbHK+G6yUMlyHBj0/7GHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UrpvLcFK; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5c47ad9967cso3473001eaf.2;
+        Wed, 10 Jul 2024 09:35:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720629301; x=1721234101; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9sOw1jVOlPobAJPu4gbAldy0PGuhCOSwT4XWJvQdr+M=;
+        b=UrpvLcFKKQdeErGIxvK5HgJTHyxX/Tevi6ZbYWKxo5d73fY5ISpM2RX3YLCDm3vcf5
+         VS9v3XzrsQmNcfzGXKFj509UlTb3HjIBrqRgsD+1h78IXkwkLhqF2X5bjAjELxFilENF
+         0vq67dkGTZWlS1VU8itIi0V2qUN+5pi96zbwj/68mXZ1BgehtbV354J9bRGfT5DG2BXy
+         swvJoOE+1cL/UEIcGLhEOrJaMh3scdX9WUYd3HoqUWnHJInhDkgl912TTxrIsv4T55IT
+         w2NK5o6CeZObdwuBmwPzkzRTyOjq10LRBIJ6CJxfHHn6tXyVsmPQnJqeMZTScOUdlV5L
+         eCuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720629301; x=1721234101;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9sOw1jVOlPobAJPu4gbAldy0PGuhCOSwT4XWJvQdr+M=;
+        b=XPMExduuzRpBL6s8pYfRAMh6KQgHDeEIJL7CsSUoK6zcFvmNrW8U/CXSiZmxvimtcB
+         CpazMOLVH8SPIvKVra0EAGc08jwDDNfZICsk3Q/mxW0ea1casfhcf0wMesb4KABAxjws
+         1jatWXycJCzn24pORl3X8xupghLXB2qYpOdmbhoZti20NTkpnHaXZZzaS/njvVVWe5Um
+         q33tvpiaBFwNnfecVAds7ZvXz38dC7PsNY8wUML39NBMpx5sKw+xPcAzIxAQu956arAg
+         qfGXzjxUpYo75anD85+4e6+5p7PgAQBMGIqFdlk6Kn5oZ3ySHtz6DPZF1fE199nRuevv
+         m7mQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWDNi58nm27Og3VGs0UTQheA95dgf0rlFMKB9t3RW9giSQn/UvU03gi4rzwOGdf4445BxKyaZIJ5HVmo8lo91JeVJWmqx4rXG0sc25n3QaphOsmp6UyBITxv1umOVRhDF0IIMySaJLEAg==
+X-Gm-Message-State: AOJu0YxYjN8DzAZ9ONecjWGLY+uCh7OgGe/cAgOk3AuJVdJdLAOLtR75
+	o9Jbz4bH/JaVheYTr1fTC/AHYjdYyl4rR7X2NeAp+6kDlUep2bU6atfKzvWx05t4qk+IEW+ClAf
+	RZNCJQwi+20a59omEa3QX9+p4hAo=
+X-Google-Smtp-Source: AGHT+IF1zYlVf2JrR0UfDR5LnB72Hd9SePyzSM9ncesabGOLw4uWD1oZizxNrLHziXyws/BSSl8GrVl4f4+HnbSyZ4c=
+X-Received: by 2002:a4a:ac0c:0:b0:5c6:72fb:103e with SMTP id
+ 006d021491bc7-5c68e16fb36mr6096218eaf.7.1720629301347; Wed, 10 Jul 2024
+ 09:35:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v19 2/5] security: Add new SHOULD_EXEC_CHECK and
- SHOULD_EXEC_RESTRICT securebits
-Content-Language: en-GB
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- Jeff Xu <jeffxu@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Kees Cook <keescook@chromium.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>,
- Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
- Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski
- <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Casey Schaufler <casey@schaufler-ca.com>,
- Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>,
- Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>,
- Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>,
- Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
- Jordan R Abrahams <ajordanr@google.com>,
- Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
- Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>,
- "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
- Matt Bobrowski <mattbobrowski@google.com>,
- Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>,
- Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>,
- Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
- Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>, Steve Grubb <sgrubb@redhat.com>,
- Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
- Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
- Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>,
- kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20240704190137.696169-1-mic@digikod.net>
- <20240704190137.696169-3-mic@digikod.net>
- <CALmYWFscz5W6xSXD-+dimzbj=TykNJEDa0m5gvBx93N-J+3nKA@mail.gmail.com>
- <CALmYWFsLUhkU5u1NKH8XWvSxbFKFOEq+A_eqLeDsN29xOEAYgg@mail.gmail.com>
- <20240708.quoe8aeSaeRi@digikod.net>
- <CALmYWFuVJiRZgB0ye9eR95dvBOigoOVShgS9i_ESjEre-H5pLA@mail.gmail.com>
- <ef3281ad-48a5-4316-b433-af285806540d@python.org>
- <CALmYWFuFE=V7sGp0_K+2Vuk6F0chzhJY88CP1CAE9jtd=rqcoQ@mail.gmail.com>
- <20240709.aech3geeMoh0@digikod.net>
- <CALmYWFuOXAiT05Pi2rZ1nUAKDGe9JyTH7fro2EYS1fh3zeGV5Q@mail.gmail.com>
- <20240710.eiKohpa4Phai@digikod.net>
-From: Steve Dower <steve.dower@python.org>
-In-Reply-To: <20240710.eiKohpa4Phai@digikod.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240710142001.7234-1-linux.amoon@gmail.com> <84dc40f4-1948-4eb7-b16e-8a79357c2622@kwiboo.se>
+In-Reply-To: <84dc40f4-1948-4eb7-b16e-8a79357c2622@kwiboo.se>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Wed, 10 Jul 2024 22:04:44 +0530
+Message-ID: <CANAwSgQr2J_MU1idf5xGt4Q=gSLxLHJSEJGwnnPxWLhRjrx=6Q@mail.gmail.com>
+Subject: Re: [PATCH v1] arm64: dts: rockchip: Add missing pinctrl for PCIe30x4 node
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/07/2024 10:58, Mickaël Salaün wrote:
-> On Tue, Jul 09, 2024 at 02:57:43PM -0700, Jeff Xu wrote:
->>> Hmm, I'm not sure this "CHECK=0, RESTRICT=1" configuration would make
->>> sense for a dynamic linker except maybe if we want to only allow static
->>> binaries?
->>>
->>> The CHECK and RESTRICT securebits are designed to make it possible a
->>> "permissive mode" and an enforcement mode with the related locked
->>> securebits.  This is why this "CHECK=0, RESTRICT=1" combination looks a
->>> bit weird.  We can replace these securebits with others but I didn't
->>> find a better (and simple) option.  I don't think this is an issue
->>> because with any security policy we can create unusable combinations.
->>> The three other combinations makes a lot of sense though.
->>>
->> If we need only handle 3  combinations,  I would think something like
->> below is easier to understand, and don't have wield state like
->> CHECK=0, RESTRICT=1
-> 
-> The "CHECK=0, RESTRICT=1" is useful for script interpreter instances
-> that should not interpret any command from users e.g., but only execute
-> script files.
+Hi Jonas,
 
-I see this case as being most relevant to something that doesn't usually 
-need any custom scripts, but may have it. For example, macros in a 
-document, or pre/post-install scripts for a package manager.
+On Wed, 10 Jul 2024 at 20:11, Jonas Karlman <jonas@kwiboo.se> wrote:
+>
+> Hi Anand,
+>
+> On 2024-07-10 16:19, Anand Moon wrote:
+> > Add missing pinctrl settings for PCIe 3.0 x4 clock request and wake
+> > signals. Rename node from 'pcie3' to 'pcie30x4' to align with schematic
+> > nomenclature.
+> >
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> >  .../boot/dts/rockchip/rk3588-rock-5b.dts      | 20 +++++++++++++------
+> >  1 file changed, 14 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> > index 2e7512676b7e..a9b55b7996cf 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+> > @@ -301,7 +301,7 @@ &pcie30phy {
+> >
+> >  &pcie3x4 {
+> >       pinctrl-names = "default";
+> > -     pinctrl-0 = <&pcie3_rst>;
+> > +     pinctrl-0 = <&pcie30x4_perstn_m1 &pcie30x4_clkreqn_m1 &pcie30x4_waken_m1>;
+> >       reset-gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
+> >       vpcie3v3-supply = <&vcc3v3_pcie30>;
+> >       status = "okay";
+> > @@ -340,14 +340,22 @@ pcie2_2_rst: pcie2-2-rst {
+> >               };
+> >       };
+> >
+> > -     pcie3 {
+> > -             pcie3_rst: pcie3-rst {
+> > -                     rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
+> > -             };
+> > -
+> > +     pcie30x4 {
+> >               pcie3_vcc3v3_en: pcie3-vcc3v3-en {
+> >                       rockchip,pins = <1 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
+> >               };
+> > +
+> > +             pcie30x4_clkreqn_m1: pcie30x4-clkreqn-m1 {
+> > +                     rockchip,pins = <4 RK_PB4 RK_FUNC_GPIO &pcfg_pull_up>;
+> > +             };
+> > +
+> > +             pcie30x4_waken_m1: pcie30x4-waken-m1 {
+> > +                     rockchip,pins = <4 RK_PB5 RK_FUNC_GPIO &pcfg_pull_down>;
+> > +             };
+>
+> Should these not be routed to the clkreqn_m1 and waken_m1 function
+> instead of gpio function?
+>
+> E.g. something like:
+>
+>                 pcie30x4m1_pins: pcie30x4m1-pins {
+>                         rockchip,pins =
+>                                 <4 RK_PB4 4 &pcfg_pull_none>,
+>                                 <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>,
+>                                 <4 RK_PB5 4 &pcfg_pull_none>;
+>                 };
+>
+> There are other rk35xx boards where only the perstn pin is configured
+> and could use a similar fix.
+>
 
-For something whose sole purpose is to execute scripts, it doesn't make 
-much sense. But there are other cases that can be reasonably controlled 
-with this option.
+I understand this grouping for Gpio, but I am not very familiar with
+this feature.
 
-Cheers,
-Steve
+> Regards,
+> Jonas
+>
+Thanks
+-Anand
 
