@@ -1,95 +1,105 @@
-Return-Path: <linux-kernel+bounces-247764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4122292D440
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:31:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87FB592D471
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:43:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03087287396
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:31:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42DCE282592
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0825194148;
-	Wed, 10 Jul 2024 14:31:03 +0000 (UTC)
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF05119408A;
+	Wed, 10 Jul 2024 14:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="dQRWMx0k"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27D0194090;
-	Wed, 10 Jul 2024 14:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D357C193477
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720621863; cv=none; b=sqYgFxwW8D9kS24kN9r+HTOKJYXSxu1YNcnNODm+bxIYsG2O8nctqOSucCQ000AiuWqbnwa5B6SRrrgJM3jryiFSNExdEX5KBKyknEnsKU0pK4e7sWxemk6K4ABFSWjqc4cknNpJtI+hA2By3S689OEIxXsbzg3fXaHB1Dm81fg=
+	t=1720622609; cv=none; b=BbP21T5EZuJOi05zJg2UBPzkA+uE+LhzB9h/c2zswWRbKiXdxLrpeUM17zOVfEQlRaI/vS7NSp6h5uHvy7Q1BS1R0t4aUMs7Ag0h5WetAzemdAkuEOcEZX2vt3cCyABQcO4sjd/eVGDze6kJatuiypGODR2O7d8aSa8nraxBaAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720621863; c=relaxed/simple;
-	bh=FbPLGAdPKDgVaxAJAVLqZmYC+GPn3gPqG4v8AyTchtc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SWQuHRchVyqoHf06SqQwRylU4TPxeFxp+TLGGrbTLMPf8sbrioAoUWUzYUXFzf8o1HP0FlLp9O1wlSi0hp7DCYwE8/vHBGRPzPUAYJ9/JIQVoq0zhnnud5bBqYT2H+mpZBxaNvaJjIthNtJ/l/EhHrPA7GdSdQTJJk6/ILHNmGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c00:fb60:82c0:6879:f4d2:caf4])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id ADB257E0173;
-	Wed, 10 Jul 2024 22:30:44 +0800 (CST)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Chukun Pan <amadeus@jmu.edu.cn>
-Subject: [PATCH v3 3/3] arm64: dts: rockchip: Enable UHS-I SDR-50 for Lunzn FastRhino R66S
-Date: Wed, 10 Jul 2024 22:30:17 +0800
-Message-Id: <20240710143017.685905-4-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240710143017.685905-1-amadeus@jmu.edu.cn>
-References: <20240710143017.685905-1-amadeus@jmu.edu.cn>
+	s=arc-20240116; t=1720622609; c=relaxed/simple;
+	bh=gzD91Lc+TFKAzfZaYsU1hvL5P3UN/LvwShzPyx8Kj5Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OVCECoJgs6CXSJojZJuynAr/0tmww/tHRAv8K4UbsOj6MjHDEeyAMJB5TXxvI55i1BvBkkJrRe6fz1n2KdQ4ZG8BcJO+e1cHb02ETxAV0KU3NFL+qDiRLkBUoAs368u84lDE9xRzASPPdlCmMezYR269azMqDglnUwQgmpJGeLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=dQRWMx0k; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1720622588;
+ bh=hZhXVKWV0BbCE5f7SbJ+Zt2x4Pus6WrIiDPVjBe5XNY=;
+ b=dQRWMx0kaHTYOwcrnUZOPAfX+6CxkUq6/RoeA4JpUOfPuoZSu0ebSQio5pw54QC82GeQw2TdN
+ OGGUZg06LljOaenmGqPqV4uQxM/DBRRy8UnU3rkY0x2A28xWfEJf2GWC+lbRMOLysPe/0IOUYRS
+ ch4cSt5ts106iBY4DmvRgYlNQ7CQDluNTrIPJAPKAOHMAwnMkB1iWSEqdf2V1wmn62hfjPE1b40
+ 5EAARTj0u6XsTJW543TX1Ue8blncl95VaDNdshko5B4OYCFAxBITKEdTOtskSPHr92gNw4/VwNx
+ VdS2qGVlZR6tJGODyPFChPEmGPEmBYZeUQxZKZp8YkSQ==
+Message-ID: <caf55fe6-4674-4c89-a94e-f4ad348e2ba0@kwiboo.se>
+Date: Wed, 10 Jul 2024 16:30:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZQx9MVkpDTx1MHk1KQklPGVYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtLQR0ZTUtBQ0kYS0FNQ0xCQR1PH0lBGBodT1lXWRYaDx
-	IVHRRZQVlPS0hVSktJSEJLQ1VKS0tVSkJZBg++
-X-HM-Tid: 0a909d0dc9bf03a2kunmadb257e0173
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PlE6MRw*EDI1DDAwPEofPRBC
-	KT8aCT9VSlVKTElLTUlKQ09OSUxIVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
-	Sx5BSBlIQUkYS0tBHRlNS0FDSRhLQU1DTEJBHU8fSUEYGh1PWVdZCAFZQUlITUM3Bg++
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/9] arm64: dts: rockchip: use generic Ethernet PHY
+ reset bindings for Lunzn Fastrhino R68S
+To: Chukun Pan <amadeus@jmu.edu.cn>, heiko@sntech.de
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, robh@kernel.org
+References: <2210411.C4sosBPzcN@diego>
+ <20240710133029.676677-1-amadeus@jmu.edu.cn>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20240710133029.676677-1-amadeus@jmu.edu.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-ForwardEmail-ID: 668e9b26a862f9d735124bc1
 
-This board can work in UHS-I SDR-104 mode, but may not be stable,
-use SDR-50 instead. Remove the max-frequency property, which is
-already defined in rk356x.dtsi.
+Hi,
 
-Fixes: c79dab407afd ("arm64: dts: rockchip: Add Lunzn Fastrhino R66S")
-Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
----
- arch/arm64/boot/dts/rockchip/rk3568-fastrhino-r66s.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2024-07-10 15:30, Chukun Pan wrote:
+>> what's the reason behind the changed timings?
+>>
+>> The original comment stated,
+>> 	/* Reset time is 15ms, 50ms for rtl8211f */
+>> so that timing change needs an explanation please :-)
+> 
+> I don't know why this comment says that, but it's clearly wrong.
+> According to the PHY datasheet, the RTL8211F PHY needs a 10ms
+> assert delay and at least 72ms deassert delay. Considering the
+> possibility of mixed use of PHY chips, the reset time should be
+> further increased.
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3568-fastrhino-r66s.dts b/arch/arm64/boot/dts/rockchip/rk3568-fastrhino-r66s.dts
-index b5e67990dd0f..8e5c182ef76c 100644
---- a/arch/arm64/boot/dts/rockchip/rk3568-fastrhino-r66s.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3568-fastrhino-r66s.dts
-@@ -20,9 +20,9 @@ &sdmmc0 {
- 	cap-mmc-highspeed;
- 	cap-sd-highspeed;
- 	disable-wp;
--	max-frequency = <150000000>;
- 	no-sdio;
- 	no-mmc;
-+	sd-uhs-sdr50;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;
- 	vmmc-supply = <&vcc3v3_sd>;
--- 
-2.25.1
+Where do you find the 72ms in the datasheet?
+
+In RTL8211F-CG v1.1 I see 10ms and minimum of 30ms, in v1.2 and v1.4
+I see 10ms and minimum of 50ms.
+
+I have used 50ms on a few recently added boards and they seem to all
+work fine with 50ms, wonder if the deassert delay should be changed for
+those boards.
+
+Regards,
+Jonas
+
+> 
+> Thanks,
+> Chukun
+> 
 
 
