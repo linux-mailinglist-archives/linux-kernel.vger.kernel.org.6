@@ -1,60 +1,55 @@
-Return-Path: <linux-kernel+bounces-247909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1D2092D638
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:23:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 023A792D63A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7420DB2666B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:23:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FD081F2276E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8160C194C68;
-	Wed, 10 Jul 2024 16:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3CE1194ACB;
+	Wed, 10 Jul 2024 16:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="Le+UP53V"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kdWFi3F7"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D43194A66;
-	Wed, 10 Jul 2024 16:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FFC20312;
+	Wed, 10 Jul 2024 16:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720628601; cv=none; b=tmCCZkpBHO//4TSwhCmcYqlJzF5Tw07ejoqF9MzVPbyWRsW5DXncQOEMU6wNBTpPVlt0AYf3puTMFDNUBqKejKC1795cFD1a+MnH2Nzzzk1RE5B1zQJzmaPxqqJb6fJ11Nr/yl4ZvWJMGqO17OS3H9jXfbGCKOQ49CY5B+6XpgQ=
+	t=1720628679; cv=none; b=XsJ6H7sUl+70OWQWf2jDLVldHxj/kAyOaVj+HE2TQDGpK0InfG18kRA/SwxGd6vN9rJPBnZVa1PkyUgFr35OF/3+KoWEHVxBHNe+6UUgSVlfP5ORxXXrSsQG6x4qk9P0x5IFtBj/4eYRKfEBrdaJrrGUNRJOfvMD9HeQWZVmgvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720628601; c=relaxed/simple;
-	bh=w/I0E48novxq0cdVbKYVodF78Zwxb7daSCKMaJ04mAc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HOKlSXhp/L07GD/ipI6n1d4nTD2d2WYDsNc0XuGivGSRENin0DRPDxZ+dAupQcieicMp+Z8jsRfirg7o6/AP94M187WfTNhGYeFBszrb1rbcivLKVUgEeEAIE+9F2+lWIBF9jS3UQIyQ05lq9OeSuAkzH4gAk5Dq+fH/flRkcrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=Le+UP53V; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id DEEE8120007;
-	Wed, 10 Jul 2024 19:23:05 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru DEEE8120007
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1720628585;
-	bh=UxMw2H1wG2rrssfdT9EsTgjW0YQUtwZBVo4IjBGhuDU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=Le+UP53VKWyjsNKvjJgUKyOymUoG36MmvHSPk7PRogpzaDrQZ43vsoGUjivZamoCQ
-	 t20QV3BJ719mrKod+eijBV7UyKY2IzEDIgvYNapM48kA7OhT3TT+nyY0h2ug2GZ4Pk
-	 vVXEtk1pH+EqgoPWyUYo/6PvYl5ArD73LPFqTbN8YkWnCtkRQM1BkS1tzN1QQf1PJ/
-	 VFDzj948BE4228CQUmv/uSH27ePYiouFerz1TRrA7qc/gCGslu3DyDZxkxVoaOKFlC
-	 rAGqkSE/uExLF2C7Gf/R/bOZpYRUCe0wVeNHKX144o+EhwHqUTnHgJIcw2L7R7ccUk
-	 zbMW5tqCqvgFA==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed, 10 Jul 2024 19:23:05 +0300 (MSK)
-Received: from [192.168.1.143] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Wed, 10 Jul 2024 19:23:05 +0300
-Message-ID: <3667b7d5-2cca-458b-bdaf-a69cac0309ce@salutedevices.com>
-Date: Wed, 10 Jul 2024 19:23:04 +0300
+	s=arc-20240116; t=1720628679; c=relaxed/simple;
+	bh=UXU+DxVxjQagSgAXY7Rb8a048yQL1SfKoLai/ZzuI2A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=RTG1VGIxkEukzhuHWvqP3OmRUUb7RTipKDDSWijQXxMlAVxnXzFQqt219lp4fUGwHT5hKm3jOntZIENlesDbG+RioXwlkcN4zpTYa1zG1HXNgGZQm3IuW7dj9c6tUcHK49X4aNY1+XCpJKOAFZ5wuQTXeDkIJAyWgtI7ZjzBvHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=kdWFi3F7; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720628668; x=1721233468; i=markus.elfring@web.de;
+	bh=4IJhOj56nkIUoFk5P3kuHi2YMmKFFhtp70989RwP5ig=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:Cc:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=kdWFi3F79eWGyE4naYgAprjPwAIu1JyglJABye15pi5Hm1dvcZ0D3Oj4VmjxQwJB
+	 mwCKUtSXXdKCLxbDL0nliX8b5LbmaBPVuQIoDvTeXzY3sAwx5yDdO0QLrkSa4DXyM
+	 IAUzcDv+QMJRrkZpnvj41Idfq5NwFi5N+HRaB00jHkeyKXI1TWWK4fAr5Xr91kHiu
+	 0Rdc/0dXVgLkiGDLnlaWikg048jvqTm8oMGuJQFcjnYAg217Jwvj3TekMM+T9JqxD
+	 cSs66TmgAD4bLJgvAeT69IfWCSWnfWzh9g6MznkpPBaSZnj7iuY+w2udC2mzduCyA
+	 FfHqSnNjZlMxdDXbSw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MjBVh-1rvnWz2xBF-00diE0; Wed, 10
+ Jul 2024 18:24:28 +0200
+Message-ID: <493f3160-90be-4c02-a0d8-bedb630e5f1c@web.de>
+Date: Wed, 10 Jul 2024 18:24:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,81 +57,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: spi: amlogic,a1-spifc: make
- power-domains required
-To: Krzysztof Kozlowski <krzk@kernel.org>, <robh@kernel.org>,
-	<neil.armstrong@linaro.org>
-CC: <linux-i2c@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-	<krzk+dt@kernel.org>, <hkallweit1@gmail.com>, <glaroque@baylibre.com>,
-	<khilman@baylibre.com>, <broonie@kernel.org>, <jbrunet@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>, <linux-pm@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<lukasz.luba@arm.com>, <b.galvani@gmail.com>, <mmkurbanov@sberdevices.ru>,
-	<rui.zhang@intel.com>, <rafael@kernel.org>, <daniel.lezcano@linaro.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<kernel@salutedevices.com>, <conor+dt@kernel.org>
-References: <20240708194808.1819185-1-gnstark@salutedevices.com>
- <20240708194808.1819185-2-gnstark@salutedevices.com>
- <6add148f-efe7-4444-82b3-20b1198c6d07@kernel.org>
-Content-Language: en-US
-From: George Stark <gnstark@salutedevices.com>
-In-Reply-To: <6add148f-efe7-4444-82b3-20b1198c6d07@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186445 [Jul 10 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/10 14:21:00 #25942305
-X-KSMG-AntiVirus-Status: Clean, skipped
+Subject: Re: [PATCH 3/3] leds: leds-lp55xx: Convert mutex lock/unlock to guard
+ API
+To: Christian Marangi <ansuelsmth@gmail.com>, linux-leds@vger.kernel.org
+References: <20240626221520.2846-1-ansuelsmth@gmail.com>
+ <20240626221520.2846-3-ansuelsmth@gmail.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>,
+ Lee Jones <lee@kernel.org>
+In-Reply-To: <20240626221520.2846-3-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:FRG+/KXd/pIe/Mus6vmllhAmzHbhpwQKy8K14r/MHK43mTmOfnF
+ zvlLhIW4Oot0GW2xoJkyzEfCvwr+Xh/xriI/iByRY2G93CHgYk/uEcHM9Ki9MrLl4lma+kg
+ 542cM+bXs+Qh3kzhj0TrGXhfpEP0zzajJLFH9pIdVV39yDmERwIap+B38Wnj5spiIvhTnmi
+ 8QyCylMNFK0p1qMfDlnPA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:g3Ic6HYhxzI=;bTUyNxP7aomfs6bbZlWIFCAqoMZ
+ dUCYkU2fknshhgrKYtsFNiZXO57lBKUOGY6s2iAaaFbCEYoPBwCUj4KYIaFB8SUQqEt5qPyYj
+ t6L+T7vl1T0AEjjrYA+2iIp7xK29j9sKdn+BPbMA/KOsOV9cf56oWTzcFa4CUR8u0xwzhBO+0
+ zmVDWgI49yc2UPA6RopvfbBIshfPpilvaJTnL6Yaj+NQTZ4670ceo4ctdnxWlO3U+xpUuzknq
+ Px987/PzSPqPNc5ycRYviDJPzuGObj+MyVeFmr7z3egPjz2ukADF6AGhH1dZgE7+8suQq/qVn
+ EvTYAP4Q3Iyc13Ej9DEoAi8kVfFo3TpID5C6mUUFTRYGS0F5I4ITQ2/NWQH0i8jjYHgk4khbc
+ +5ToC1iY7ycttLLAGf7qbXsWi2Fi+tlf96fGli9+heOY7giChAjZm32M2JYR8lIWm/4pmqGuY
+ 3xBFz+GgnZIXAsXJ/aYU6yrZ3l+VGVx602H6OXlKWmsuBKYIvl7mq02U+GsRHplG1cUdt1ErM
+ qqgyQaTbElyUC51jXeS8QCMyQ9ygFyXaed/AyjNGc1JsLynzINv8GyidDvtFe4Blnn1muypYy
+ nslWZdWbajGGjBjfCgeX9ZF7UiaXmVh0Auls7ApfBVqFNzO96k1QOKAdUnP5PCL/vp3LOfyXb
+ UMv/63qF7kZR4cRc8pAl+sEbgkiUzYNGbySmfn2q9XXkCscTyDoBmrfkvDrew93/vLf/YWyoJ
+ vCKgLqfZ0e/HjP2KUd6G4HsxMFgbRNfWwkweYZAxfzkxjQR5IwXpyqZCFF4h5l1GioxnFWd2B
+ ye8ilAlHTzH0/OkJkiPcqmzA==
 
-Hello Krzysztof, Neil, Rob
+=E2=80=A6
+> +++ b/drivers/leds/leds-lp5521.c
+=E2=80=A6
+> @@ -185,9 +186,9 @@ static ssize_t lp5521_selftest(struct device *dev,
+>  	struct lp55xx_chip *chip =3D led->chip;
+>  	int ret;
+>
+> -	mutex_lock(&chip->lock);
+> +	guard(mutex, &chip->lock);
 
-Thanks for your reviews.
+How did you come to the conclusion to try such a syntax variant out?
 
-I'd just like to clarify things a little on that matter. On A1 most of
-periphery has either dedicated power domain (ir, spifc, spi, cpu etc) or
-several peripheries share single PD e.g. pwm, temp sensor, i2c, adc
-share PD 12. Appropriate PD must be turned on before the periphery is
-touched and be on while periphery is used. Experiments confirm it. So
-power-domains property in dts nodes is really required. It makes kernel
-to control PDs when bound periphery is used.
+Would the following statement (with additional parentheses) be more approp=
+riate?
 
-If I understand bindings thing correctly we should make power-domains
-property required in bindings too in that case, at least for those
-peripheries which has *a1* compatibles (some peripheries use compatible
-from older SoCs without PDs).
+	guard(mutex)(&chip->lock);
 
-What you think?
 
-On 7/8/24 22:51, Krzysztof Kozlowski wrote:
-> On 08/07/2024 21:48, George Stark wrote:
->> SPI Flash Controller has dedicated power domain so make the
->> corresponding property required.
-> 
-> That's an ABI break. Being part of power domain does not necessarily
-> mean it must be required, so your commit msg lacks rationale. Especially
-> on the ABI part.
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
-
--- 
-Best regards
-George
+Regards,
+Markus
 
