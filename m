@@ -1,132 +1,181 @@
-Return-Path: <linux-kernel+bounces-247046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2AC992CA41
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:51:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A7692CA3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58A8B2824F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:51:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2F67282B51
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93EB41C92;
-	Wed, 10 Jul 2024 05:51:32 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6781941C92;
+	Wed, 10 Jul 2024 05:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VwFGIxlV"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712EEA47
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 05:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C910A47
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 05:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720590692; cv=none; b=FhE/teBx6C3Wts8JznQiaWXBjujmS+aqowwjR+OCRCduzZyq5Ma+xTQC2+d4xCX4OZpnI9GvnbKZk5br4zM4APprgYWJW+EGPS0RD+48sc9Ocxp8qt/VO+Zs+HBoWN7ZQ1mblvBGTrc5i/PEKOdA9EBTUQPMuUs5/LXIyumUqFA=
+	t=1720590525; cv=none; b=D/1uy3JrfaMJZmQWFcyT3egosKkgqYZTjaDaunpYb/O1cXCZSeQiRa/KIWod55hnSSEqCyMY0EGNt5XKfVLvI/XDPTWr6awaxLnKfJWogt5NOMhxcXi6fpJYukiANU1vjlQPSvdBipT0CW5GlnIGK9aFQwBe4HWPEZpcFheKRKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720590692; c=relaxed/simple;
-	bh=qJAAyECMg5CnLOBtWJVgn/vwuKboRSLGFE96LMa/3sU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jvta+o9QxdcrIRD9Qh3ZwYA1x7Vk+WrDZ84y7PJnsval5wvWfpTZ8mB+rDziRXvKU/hSIJ4QVDBOwDBFhGGMUGT2Awz7PVpJ32wlMxl/uuVHLoSsilhuM1iJzYsEX0ZOaxi2ZA9F+nHadcB2/Ghudt4A/QJjZ0OE0XEiVvkc+jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: b0c1c9063e7f11ef93f4611109254879-20240710
-X-CID-CACHE: Type:Local,Time:202407101339+08,HitQuantity:1
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:f2f0c3ad-8855-4a6d-a8e9-82744da539f0,IP:0,U
-	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:25
-X-CID-META: VersionHash:82c5f88,CLOUDID:b8788c9dc47839bc094a2b215019a1db,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:5,IP:nil,URL:0,
-	File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:N
-	O,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: b0c1c9063e7f11ef93f4611109254879-20240710
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <jianghaoran@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 594430874; Wed, 10 Jul 2024 13:46:01 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id A97891600208E;
-	Wed, 10 Jul 2024 13:46:01 +0800 (CST)
-X-ns-mid: postfix-668E2019-6054441873
-Received: from jhr-TianYi510S-07IMB.. (unknown [172.30.60.215])
-	by node4.com.cn (NSMail) with ESMTPA id BD4EB1600208E;
-	Wed, 10 Jul 2024 05:45:59 +0000 (UTC)
-From: Haoran Jang <jianghaoran@kylinos.cn>
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org,
-	lstoakes@gmail.com,
-	vbabka@suse.cz,
-	Liam.Howlett@oracle.com,
-	akpm@linux-foundation.org,
-	Haoran Jiang <jianghaoran@kylinos.cn>
-Subject: [PATCH] mm/mmap: Align the length parameter of munmap with hugepage size
-Date: Wed, 10 Jul 2024 13:45:58 +0800
-Message-ID: <20240710054558.1959243-1-jianghaoran@kylinos.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720590525; c=relaxed/simple;
+	bh=4iq9U6XdO+rE5jpmKClt97kM5/zeGb+1/z7RYegUV0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G/uSIVTIIJMU5ROaIX/g2Pf6oq5O5Pg/V6G9ZQXo+WcwcgKRkC8Lmvwwptk5NLp2p+17ttXUX7f7un4lsM18Y6dnfB7PPS4gMa7IN21Z9lbonWFft93TUm0DIDGqV8b06L2Tyu4HX7JO24nAdoCFQkQO1EgVZ+owvCxyJBa6sTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VwFGIxlV; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7a05c755477so66842685a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 22:48:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720590523; x=1721195323; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z86NvuyzaJOPDfrjzycHXBN7UlfbAsixtiZJR+7NcKk=;
+        b=VwFGIxlVAv+5n8JJoSPZzw8rDHEOA2x4BH8NnrtuADpI8TpJtuoHjCCDxpfQthwAqe
+         3rQuHHlq5wrqTq+VEUTQWpV6XWWMhMXLsMVTraQe9QDlZJkkJloP1mVS4gqnZPZs/vG6
+         hG5sOCCdl/wen0gzC9NqsucGR+UJgKE71n5V07hHnNPhO4zsgUM1458NAKpoinTUkBLg
+         1amGoGt8/nu1+X5SqkUpPOGXcVRbPJP8mAjaWDIbqeLG2Vs/F4GS+L4jHwMtqOSEtaWT
+         bMwMZYiHZUKR/sre/z6R8JZLDPnZrQu1LZELfFesQUKkHrgBFwqULvnavlq3rTNljgi8
+         DHpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720590523; x=1721195323;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z86NvuyzaJOPDfrjzycHXBN7UlfbAsixtiZJR+7NcKk=;
+        b=lRg0x1Xm9yRHt/iFTytUtaYJjrW5qsLUWj3YtsHpB9SOQPS+E2T8IZSdBR5RAPzSqw
+         yChD67XB8XwqRkny+wiZZgt8EYhG0uVLeLkgDUJraSUzD1X6rc9DAOEpE0LhNSTzkZBC
+         1QVJPMWvk7frpVTOn1/VqEcbx0kzJghcwBhECGHYm5HgGAtMXgA18FBY8Xyn4RF3BE2H
+         +vRrjlXDAXc1/6P7cD6mewWRhJM8aY+CzE0wNh0//JUFM7DHo5slMUhFrMKYHkR3iHGb
+         RHR8np6BZq+1NTUGTg7ufPSqL6eG8zFSpssMEAcm5rAqa+TKDU4LbJPtFtZ9G4QipaJW
+         wJEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqy6l9xYkvFnH47ou7bXtwqS/vUeyL/Tfztlupi0aplKzSsO2SdPcXgHf2hY1M024cwSrdWJOw3om30Ydtl+iCWyJK9ZLU+Iy50ayi
+X-Gm-Message-State: AOJu0YzFLfj4X5IkaXEEpZ9V3VjuWjWgrMvc0O9VhHpoZnoNClQdRXKs
+	6DEEH9LtlFtLhH4qShoFEnN/yHxc0QGQEndEqsUn4d/eRL5n8gwg
+X-Google-Smtp-Source: AGHT+IEPzqupu9wCQT5SlmX1xuSLqDOVaS4aS3BmlAgZVFVqtH93lQUJ8eZqieZsV111ahuSdaJ7dA==
+X-Received: by 2002:a05:620a:3bd3:b0:79f:121d:d808 with SMTP id af79cd13be357-79f19bf00a1mr426347485a.71.1720590522944;
+        Tue, 09 Jul 2024 22:48:42 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f190b1dd1sm164467485a.117.2024.07.09.22.48.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 22:48:42 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 243691200043;
+	Wed, 10 Jul 2024 01:48:42 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Wed, 10 Jul 2024 01:48:42 -0400
+X-ME-Sender: <xms:uSCOZqx7sGF9T5nq37PK7B37X9aUft8o1gRQhU0xtmymd27j7Zi0Ag>
+    <xme:uSCOZmRMx5kk2cY0HjQQ0nhSofVMku3SvODPCyBnCEhMdivA1WU2e4ElQmJe47EB7
+    fLsnFeCa6-MsfWXjg>
+X-ME-Received: <xmr:uSCOZsW2DaQfubUTtJHywdx32icdaWKwFrDEHqdtdxuONMiJkSVMzo_uUA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfedtgddutdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueeviedu
+    ffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
+    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
+    igmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:uSCOZgg8i8TxDdaLq4HjdurRd8aBWxqZicAUwXJTflj_bdHH6d1NCQ>
+    <xmx:uSCOZsCD20rukaBluEVlfTrdO0OkIau5yPc5-T5-giAbaXUC-w8xjA>
+    <xmx:uSCOZhI1vI0KMLrjeWG54UYxeWpX0bK8mflAc3ZexbBFEmp6FsCzWg>
+    <xmx:uSCOZjBWBmyg2Jx-IDMVN6PIybKl9zfu1t-Hf4VYZ_WSBaNWerYiVA>
+    <xmx:uiCOZkyfEs0Whd3qYzaKfSjPlXf9eZWMLEPKaKXiWICJDnlojjlEIEXd>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 10 Jul 2024 01:48:40 -0400 (EDT)
+Date: Tue, 9 Jul 2024 22:48:39 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, oleg@redhat.com,
+	jolsa@kernel.org, clm@meta.com, paulmck@kernel.org
+Subject: Re: [PATCH 08/10] srcu: Add __srcu_clone_read_lock()
+Message-ID: <Zo4gtyzNvinXBOHU@Boquns-Mac-mini.home>
+References: <20240708091241.544262971@infradead.org>
+ <20240708092416.010695534@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240708092416.010695534@infradead.org>
 
-From: Haoran Jiang <jianghaoran@kylinos.cn>
+On Mon, Jul 08, 2024 at 11:12:49AM +0200, Peter Zijlstra wrote:
+> In order to support carrying an srcu_read_lock() section across fork,
+> where both the parent and child process will do: srcu_read_unlock(),
+> it is needed to account for the extra decrement with an extra
+> increment at fork time.
+> 
 
-munmap hugepge mappings, if the length of the range to munmap
-is not aligned with hugepage size,munmap will fail.
-In the hugetlb_vm_op_split function, an error will be returned
-if startaddr+len is not hugepage size aligned.
+We also need to dup the per-task lock held stack in order to maintain
+consistent data for lockdep, right?
 
-before this patch:
-in "tools/testing/selftests/mm/hugepage-mremap.c"
-modify DEFAULT_LENGTH_MB to 3M,compile and run,
-the following error message is displayed
+Regards,
+Boqun
 
--------------------------
-running ./hugepage-mremap
--------------------------
-TAP version 13
-1..1
-Map haddr: Returned address is 0x7eaa40000000
-Map daddr: Returned address is 0x7daa40000000
-Map vaddr: Returned address is 0x7faa40000000
-Address returned by mmap() =3D 0x7cb34b000000
-Mremap: Returned address is 0x7faa40000000
-First hex is 0
-First hex is 3020100
-Bail out! mremap: Expected failure, but call succeeded
-
-Signed-off-by: Haoran Jiang <jianghaoran@kylinos.cn>
----
- mm/mmap.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 83b4682ec85c..0b3a60bf9b6f 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2733,7 +2733,15 @@ int do_vmi_munmap(struct vma_iterator *vmi, struct=
- mm_struct *mm,
- 	if ((offset_in_page(start)) || start > TASK_SIZE || len > TASK_SIZE-sta=
-rt)
- 		return -EINVAL;
-=20
--	end =3D start + PAGE_ALIGN(len);
-+	vma =3D find_vma(mm, start);
-+	if (!vma) {
-+		if (unlock)
-+			mmap_write_unlock(mm);
-+		return 0;
-+	}
-+
-+	end =3D start + ALIGN(len, vma_kernel_pagesize(vma));
-+
- 	if (end =3D=3D start)
- 		return -EINVAL;
-=20
---=20
-2.43.0
-
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  include/linux/srcu.h     |    1 +
+>  include/linux/srcutiny.h |   10 ++++++++++
+>  kernel/rcu/srcutree.c    |    5 +++++
+>  3 files changed, 16 insertions(+)
+> 
+> --- a/include/linux/srcu.h
+> +++ b/include/linux/srcu.h
+> @@ -55,6 +55,7 @@ void call_srcu(struct srcu_struct *ssp,
+>  		void (*func)(struct rcu_head *head));
+>  void cleanup_srcu_struct(struct srcu_struct *ssp);
+>  int __srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp);
+> +void __srcu_clone_read_lock(struct srcu_struct *ssp, int idx);
+>  void __srcu_read_unlock(struct srcu_struct *ssp, int idx) __releases(ssp);
+>  void synchronize_srcu(struct srcu_struct *ssp);
+>  unsigned long get_state_synchronize_srcu(struct srcu_struct *ssp);
+> --- a/include/linux/srcutiny.h
+> +++ b/include/linux/srcutiny.h
+> @@ -71,6 +71,16 @@ static inline int __srcu_read_lock(struc
+>  	return idx;
+>  }
+>  
+> +static inline void __srcu_clone_read_lock(struct srcu_struct *ssp, int idx)
+> +{
+> +	int newval;
+> +
+> +	preempt_disable();  // Needed for PREEMPT_AUTO
+> +	newval = READ_ONCE(ssp->srcu_lock_nesting[idx]) + 1;
+> +	WRITE_ONCE(ssp->srcu_lock_nesting[idx], newval);
+> +	preempt_enable();
+> +}
+> +
+>  static inline void synchronize_srcu_expedited(struct srcu_struct *ssp)
+>  {
+>  	synchronize_srcu(ssp);
+> --- a/kernel/rcu/srcutree.c
+> +++ b/kernel/rcu/srcutree.c
+> @@ -720,6 +720,11 @@ int __srcu_read_lock(struct srcu_struct
+>  }
+>  EXPORT_SYMBOL_GPL(__srcu_read_lock);
+>  
+> +void __srcu_clone_read_lock(struct srcu_struct *ssp, int idx)
+> +{
+> +	this_cpu_inc(ssp->sda->srcu_lock_count[idx].counter);
+> +}
+> +
+>  /*
+>   * Removes the count for the old reader from the appropriate per-CPU
+>   * element of the srcu_struct.  Note that this may well be a different
+> 
+> 
 
