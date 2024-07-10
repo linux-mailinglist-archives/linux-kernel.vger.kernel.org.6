@@ -1,145 +1,111 @@
-Return-Path: <linux-kernel+bounces-247778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C90B292D46E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:43:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B1ED92D472
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 061B21C21484
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:43:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 129CB1F2295A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:43:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8D6194082;
-	Wed, 10 Jul 2024 14:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7AE19408A;
+	Wed, 10 Jul 2024 14:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yVsDsvp6"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UsiJig+c"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66409193479
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71EC193476
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720622593; cv=none; b=ltP1P3M1kqUbVfzBld20/Xdqji1UqShDp671058pMCJQYwXDA1qe3d/ffFO2IxPJI82GZEiqBdFmCaTEZ6Y9NyjIvzwVBhq6Deq7jLjQ/yywF6IIwLCtlqSn+yLOx4d5lcy7YIgK2OZOiEKy1nVVND4pImkqjKeRTNgv8/fFB6k=
+	t=1720622631; cv=none; b=GnwoYTJuR/7BVyWLT9lOnuMATVvg7GUb8ggIvTh/s0GpB4TxchZ3Ny5uAsbYBGtvddtUnEwVgVN/y/T58mW+Sgn+gBKJZ7/0vyyVdm8baBOY66kToCMIupCD3QcgWVlW3a/U72tfIGMB9q4u7eDTi6clNZgOy9SVrO2AX3ZrmP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720622593; c=relaxed/simple;
-	bh=KpsIZ6jzaxZLqZC+0GjwVgDUh89rNXpUnOtFQAHPfIo=;
+	s=arc-20240116; t=1720622631; c=relaxed/simple;
+	bh=wxUf7+WncWeXLeiWfLfp5uqEz6LxO4feTNrN84VH3Vc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EThvx8PBuEsPnPl0MKl5NfN385Crn0lNRWIS2jpECX6BQhfUVEK56MYlbTZk8bom3XHqIT4j44NZmCkb5YBaV0hVBPFSNizUo8fVp2gPGr/zhp3c0IG6n7dCcuzYcYCtkIHhHyxre/S7Wfq6fnOnTkKUSq++Kp3aga59JwbkjqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yVsDsvp6; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42662d80138so25431895e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:43:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720622590; x=1721227390; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QOsOdIxYv2ExEMFqfT+PN67MY38Sp+oZzT0Ko1qTmks=;
-        b=yVsDsvp6KjjX9KCLs5jt8OP5Lcb/GInB6Lo9r1vMlhKQgW6c8lGaCo4tC5h2RezO5x
-         DU7rcWMyB3CUVXJscUgLpunZLr3WxcwFDXSGGQs5mSkYMrt3C5zcqRr/vKB+gP21TU5u
-         RcVQqrAsntFy6ufBQRq/1tB6VD4hGN49QPHL7xNi9vhYROn6VEpWTULdY6NU+XVxeaqD
-         wf3irod1d/vrZfk80MzwSPwJSx73qdYnDB0+Oyak2fIr3BhRgBIvo7+v9EI49t8q/B61
-         Uq5QVkl2g9QeyYt2Jf9BG2Jvn8oBA6quq8yckQZH99EKfzeqRGsH5/y/zM8V09tW58gv
-         i/kw==
+	 Content-Type:Content-Disposition:In-Reply-To; b=qPp3XVIGPquhtUTC7qEMYLT5QxbyLtkyBKjHSneAf2YzR2EZLquaJNmx6r4gdVJTwq4JscYvZLlrmp4mwgS2TRlDOgGj1OCwkOmp0VlfOxYomj6XslzMwY/r3Bhbfruz2dFSABFujUxoIVzdGE8prOsEhIsDcC3FrpmsVgSSuuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UsiJig+c; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720622628;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZvC/1briAqboclLx4gZNfSMQXCaqMLqhaARp61h92zQ=;
+	b=UsiJig+caOeVUj1lqS+X54m05X8Og+0zgxdXNANBLkfbFw0pjbuVUw4WG0xpO778JTRXAA
+	t8PW+7EBMUPU2gY0Ae2IpswvuAp0vMwn2JMs1RR+T7Ce1MT7doLEWcnb27kqTvOmW/QsFG
+	NEDpY3xGSGp3yNZfNmxOqggyC8pmITI=
+Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com
+ [209.85.160.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-58-mnHkatc_PHujBBOSE2qf8w-1; Wed, 10 Jul 2024 10:43:47 -0400
+X-MC-Unique: mnHkatc_PHujBBOSE2qf8w-1
+Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-25e8c18a7c8so750059fac.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:43:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720622590; x=1721227390;
+        d=1e100.net; s=20230601; t=1720622625; x=1721227425;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QOsOdIxYv2ExEMFqfT+PN67MY38Sp+oZzT0Ko1qTmks=;
-        b=I5eTOtQy8tIko5w0ZlXDp9PJA/hR/Fep8DP/3nTZZYo0hVtQTMxIzMR7iwtC325kkO
-         ysY/7pSnEsJ3D7qCQ45gSAP3mCCvc4ASJntaObg6WwwM37UhfjiHaNs5ir18vMp7C/+N
-         FF061JUDFQ2D9a8F6YrJJ1Yc/UTCaKmRhDKtnkrh7pSmgBbm56nuq+0aZMK1bx/sjvlc
-         DxNN0oHkxH2MiXrOYuCVckmbLOMC2IVxDo7RxT5QGbAtWSvLgpqOSmuTozzaCkvHpYfl
-         mLf7+e7qiVKNKtk5iBD8hNbYsQb9yrNdVwM3Gj9dDOWk1x6zvYubAWJW4RHXFA5DDqJ9
-         rHuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjxwY9z1qe9w9C8r4aYCy+abq47cUgh1dy/cE9BFRYgFziN7VePT4CTI45NYI49n/RpCe0i6jfJFse+Ab8niU3t8c008+/KZTejgwy
-X-Gm-Message-State: AOJu0Yzw3jBVHtNSgRK3LK9KY5UJINg3FJncHCWFhemmRZaUKFXy6wig
-	asptpONVeugkSzCs1IOiwwgZYIOqwSiyN++idIyFTfOAn3C+N5tjaXyYyeIXQeo=
-X-Google-Smtp-Source: AGHT+IGVb8T0zmjUppXKMiGZvXO5lSsizz8CluNzkaf++om0s6TaTa5apn/9eqEINpHhSmfa5Hi0zQ==
-X-Received: by 2002:a05:600c:5584:b0:426:6087:198f with SMTP id 5b1f17b1804b1-426708fa98emr36208235e9.39.1720622589688;
-        Wed, 10 Jul 2024 07:43:09 -0700 (PDT)
-Received: from linaro.org ([82.79.124.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde89108sm5480933f8f.55.2024.07.10.07.43.08
+        bh=ZvC/1briAqboclLx4gZNfSMQXCaqMLqhaARp61h92zQ=;
+        b=WZ9qH1siV+pR/92M7mLqjvtM465Ml0N2cwh8BH+nyB6OuABR1bE4TVWlqmKDV7AWBz
+         Zo0CifmxBmkUpMF1YGm1Gkgea+UVWLXWUdvaEUSFyNheqd6VAKSaWyp50iCxT5A6l/PV
+         9UkGJQSE3Ju5aAAUUGTYWOKj5ahT631DGA5EJkrscoFZfrgt95X8Ok0oBNXGNKdWQnaD
+         +FPrwUBG7jkfkkWjYM2RdQ+klyxw8+eO4uSq2zYshl6FVtV7kla7Q2K1HJhm3gdGx6ii
+         z68z4iZfLtE1dE+Oi52haudPBxXJZhjLQZL+LRBVz3JtxKy/JwtrzlNvW+2FPjFLkhyK
+         L49Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWIz0cVGLq2J+mifN6p1J77BMQstiV7q8Au5LEEsVHzWfAlPcZ2ntqUASvdhD3d3AJYsOsAKHiRiFitcHd7BWR0WHmzZa93+lgu0GL1
+X-Gm-Message-State: AOJu0YwmozlFWGdvJWE9Z7dTa9eyDWvov+W0+Bwy/cxPn7pe68SO2YUJ
+	LpIAKo/euENaPVeybJXt/30BTiHmG0rVw4xX+S7JBo/gR42mxb+3F9APlQvEAfZFJMfICHlgQ3a
+	HgaoydUdkaaPiAQz14PEMzyDoiBilJmTWDAQgmUkUO+toYTtYtgtrP2kBKF3MYg==
+X-Received: by 2002:a05:6870:610c:b0:25e:180:9183 with SMTP id 586e51a60fabf-25eaecbbec3mr5784206fac.4.1720622625421;
+        Wed, 10 Jul 2024 07:43:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGTD/gcLKLatwoODGC6PBmZLpDHOquqnlFmI5MDo6NjD0BVLxBJxqbPHflFRf/y2o8S5g+V2w==
+X-Received: by 2002:a05:6870:610c:b0:25e:180:9183 with SMTP id 586e51a60fabf-25eaecbbec3mr5784188fac.4.1720622625106;
+        Wed, 10 Jul 2024 07:43:45 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f19022e5dsm199404585a.57.2024.07.10.07.43.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 07:43:09 -0700 (PDT)
-Date: Wed, 10 Jul 2024 17:43:07 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: Fix up BAR spaces
-Message-ID: <Zo6d+3T/wcVHiWi1@linaro.org>
-References: <20240710-topic-barman-v1-1-5f63fca8d0fc@linaro.org>
+        Wed, 10 Jul 2024 07:43:44 -0700 (PDT)
+Date: Wed, 10 Jul 2024 10:43:41 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, x86@kernel.org, linux-riscv@lists.infradead.org,
+	Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v2 1/3] arch/x86: Drop own definition of pgd,p4d_leaf
+Message-ID: <Zo6eHVBcUyznRalN@x1n>
+References: <bcd6ab8246348f18fdc77694e321ee6458f05781.1720597744.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240710-topic-barman-v1-1-5f63fca8d0fc@linaro.org>
+In-Reply-To: <bcd6ab8246348f18fdc77694e321ee6458f05781.1720597744.git.christophe.leroy@csgroup.eu>
 
-On 24-07-10 16:07:23, Konrad Dybcio wrote:
-> The 32-bit BAR spaces are reaching outside their assigned register
-> regions. Shrink them to match their actual sizes.
-> While at it, unify the style.
+On Wed, Jul 10, 2024 at 09:51:20AM +0200, Christophe Leroy wrote:
+> From: Oscar Salvador <osalvador@suse.de>
 > 
-> Fixes: 5eb83fc10289 ("arm64: dts: qcom: x1e80100: Add PCIe nodes")
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> We provide generic definitions of pXd_leaf in pgtable.h when the arch
+> do not define their own, where the generic pXd_leaf always return false.
+> 
+> Although x86 defines {pgd,p4d}_leaf, they end up being a no-op, so drop them
+> and make them fallback to the generic one.
+> 
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-Also tested on CRD, so:
+Reviewed-by: Peter Xu <peterx@redhat.com>
 
-Tested-by: Abel Vesa <abel.vesa@linaro.org>
+-- 
+Peter Xu
 
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index 7bca5fcd7d52..bc5b4f5ea127 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -2895,9 +2895,9 @@ pcie6a: pci@1bf8000 {
->  				    "mhi";
->  			#address-cells = <3>;
->  			#size-cells = <2>;
-> -			ranges = <0x01000000 0 0x00000000 0 0x70200000 0 0x100000>,
-> -				 <0x02000000 0 0x70300000 0 0x70300000 0 0x3d00000>;
-> -			bus-range = <0 0xff>;
-> +			ranges = <0x01000000 0x0 0x00000000 0x0 0x70200000 0x0 0x100000>,
-> +				 <0x02000000 0x0 0x70300000 0x0 0x70300000 0x0 0x1d00000>;
-> +			bus-range = <0x00 0xff>;
->  
->  			dma-coherent;
->  
-> @@ -3016,8 +3016,8 @@ pcie4: pci@1c08000 {
->  				    "mhi";
->  			#address-cells = <3>;
->  			#size-cells = <2>;
-> -			ranges = <0x01000000 0 0x00000000 0 0x7c200000 0 0x100000>,
-> -				 <0x02000000 0 0x7c300000 0 0x7c300000 0 0x3d00000>;
-> +			ranges = <0x01000000 0x0 0x00000000 0x0 0x7c200000 0x0 0x100000>,
-> +				 <0x02000000 0x0 0x7c300000 0x0 0x7c300000 0x0 0x1d00000>;
->  			bus-range = <0x00 0xff>;
->  
->  			dma-coherent;
-> 
-> ---
-> base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
-> change-id: 20240710-topic-barman-57a52f7de103
-> 
-> Best regards,
-> -- 
-> Konrad Dybcio <konrad.dybcio@linaro.org>
-> 
 
