@@ -1,182 +1,324 @@
-Return-Path: <linux-kernel+bounces-247665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9746B92D2C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:29:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB4892D2DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8D541C22339
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:29:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54FEB2811D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BF7193095;
-	Wed, 10 Jul 2024 13:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20601922C9;
+	Wed, 10 Jul 2024 13:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l8eIPKS1"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3728B193066
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="SDAMP48G"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288FE1CA9C;
+	Wed, 10 Jul 2024 13:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720618160; cv=none; b=S/2ar5ZCC57NwlBAdJdidhvoPFgAzhDjFm51anjqZhTypVF6tAfkgrlYA6jtfOXyvUlQb98XOsnIPJ7UxKrjBW2PjDZYa/jfRGuRU6s8JbgiIr5oECGpjbV8/vDp3PIz7pyMlSNluV4d5gF5MWVL52C+Y3cWPvf9IXZWPL0oupo=
+	t=1720618350; cv=none; b=WulDiyPPoYdJ73hQG/GiziKM4cyutH8uiWPEwqgeFu/LuhnDLVGxOBT1lc6fsIOdgBQ9IyYqOTnUKu9KIxD27Mxkcu+JvSwgOGDEvpPwnRCaBu0zNJ1oqAiFByP3cxXTNmZRkc429he9jns5t9qhCAYIL93NBSz9EUsAo5H8oEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720618160; c=relaxed/simple;
-	bh=AwciVWBN6o5FqHKJ5LPF4pXKyx3wKFnc8wjZffp2tFk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=O831WxcjAB6LjaEGjjsGySTHB7uyZF/qdmVSP+ooteaI/Wdxf5BPJ2ciHfd8zIrjN58QhbAUu6wEO0oCjFILxwN9JsRgbqqQ1dvTK5LXgW2EpQuotDtNx301AFBuaadbsBghC3fKf8WLqdO5hAtTbKpcp2aWEeyvLnezr+b85hQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l8eIPKS1; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa6c4so6991904a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:29:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720618156; x=1721222956; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B1ovYW2wp1YdZUcVm4+EsuNX58Iw+I3DZAQaUJWfuBU=;
-        b=l8eIPKS1i8Pdf5MeXmKBdw1LgaZiExhpyNpbFL1SJs/RTH+H3DdMh5/VqI8OydKt08
-         9l+eNDz5tYRD0RkAPpoTkltbgNSzwRjgWHQkwMr5+vlpHvxMg1xlKdPPokwNKtuWRq98
-         X5kTJPZqw4dIUjWKEosen+HadEkaJUy7QAOnIiyoG6LRIKmXw8a574DkMaijNiMsnm6F
-         QP62FxP0PzWSp3ikCp3/TS8PyE43nsCihhHDbQNgnpxfncJ+CLQaUC3usW0ONmLgy37u
-         4uMGvyrkCO1G/Zbk+s6OqpbNYMLDtvIj1nO98aFAC7fkpHmsjo4PwUBpsrQ3AvPsQYxl
-         BrUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720618156; x=1721222956;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B1ovYW2wp1YdZUcVm4+EsuNX58Iw+I3DZAQaUJWfuBU=;
-        b=b/u+nGwezwvsGZOpa3rdpoDp32fxZTzuOXBrn62HzlD8oLWMxS7eLa/bxRx8iQqzSn
-         3tuWZP8Ua4LQlOJv+KAUqBWtNY2m2sFCkKpNTfwiCSXcGpeNVg7PrKWWH8Gv88q6HsSK
-         miK6B8gqDPIPdMdKgIrYIIGAI6o0Ha/QMPlL5ZGz6cmDS03nlbNxMYbaEXP3ySNdK4Zp
-         BGSbDWCGcf0rNXUd1FatKg4cdyDmoMP5WHUm924vviyTv/YBvoqiMdylDKajbbPZ1STC
-         Jpy4Uw6qvRE9cGvaC3Hzqk9/htApfpfs0hJwh0fmg7DFBjaxbV1Q7M0ORBG6IgMD4QqV
-         S58w==
-X-Forwarded-Encrypted: i=1; AJvYcCU7P5Gl59aA9sPeYN/7bNRKoFenRYzVMs0qS6hXjf57OszHdsq5HOSU+dSIvBvIhnVIJn0GVfXbnqUegmgoE8sSV0xx7CQKlsJId6T+
-X-Gm-Message-State: AOJu0YyDmfleNudjAdExIaIfnCxqQWSrZxGgnQycqwXhBDp3Z/5WQtd8
-	oR3i7qV0rEJvSjxSALT1gGKpg/MgmnwPgkiUSi8oWjgxA4QUrls57Z80JPrDLNI=
-X-Google-Smtp-Source: AGHT+IH0wfyOVdRhcW2jRiu8H4odPRc9NSHsemNyYVnlGxE+R2CgMqKnHWhRuSXSeVw2EKEQKgf1Pw==
-X-Received: by 2002:a05:6402:31e6:b0:58c:804a:6ee2 with SMTP id 4fb4d7f45d1cf-594bb56ea1cmr3092624a12.20.1720618156425;
-        Wed, 10 Jul 2024 06:29:16 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bd45a162sm2204844a12.68.2024.07.10.06.29.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 06:29:16 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Wed, 10 Jul 2024 14:29:15 +0100
-Subject: [PATCH v3 2/2] clk: samsung: gs101: don't mark non-essential
- (UART) clocks critical
+	s=arc-20240116; t=1720618350; c=relaxed/simple;
+	bh=1sQbIrS1JVYEEZ8wsStgULcn7YAsrepfKI36ed3D5FI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AQup+a2bvTWsNRVU08PADFGjb03ist3utE1tuwdwiBhJG5CKZRcn+RWo1KPdaTgafhhxoloT+Ofy2QmR1w3Rb4sEwrkiM90WnG+vV1BZKOBI8FxplnZtaFHbrOXHdwcI+8zung+nswS+ItEJ0z4iLeWfDpJLAEAYArfNLRp4o/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=SDAMP48G; arc=none smtp.client-ip=45.254.50.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=hcluSJjCmhnWXX8YTDLv8feP55y3/EV9PtZgqhLBZl8=;
+	b=SDAMP48GpwvMjb58QXp8GEGj44RTz7mlOO8xCFH7BY2iqW9p9OK/lcQMmDZyYE
+	V428UhzNIKOqn7e0q+nDWYXml9IweBrAB9MZUIgXES5dOjYkutIE55zQc/jpU+Sx
+	ZJqQl/8Bwq9b60PPfy5+2gMqb+zMuqJoXWAAtEXqtuUgM=
+Received: from [10.0.2.15] (unknown [111.205.43.230])
+	by gzga-smtp-mta-g0-2 (Coremail) with SMTP id _____wD3X5a2jI5mqCcSCg--.45966S2;
+	Wed, 10 Jul 2024 21:29:27 +0800 (CST)
+Message-ID: <b5d99ec8-9e4d-494a-bf62-02b992a042e8@163.com>
+Date: Wed, 10 Jul 2024 21:29:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] PCI: vmd: Create domain symlink before
+ pci_bus_add_devices()
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: nirmal.patel@linux.intel.com, jonathan.derrick@linux.dev,
+ paul.m.stillwell.jr@intel.com, lpieralisi@kernel.org, kw@linux.com,
+ robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, sunjw10@lenovo.com, ahuang12@lenovo.com,
+ Pawel Baldysiak <pawel.baldysiak@intel.com>,
+ Alexey Obitotskiy <aleksey.obitotskiy@intel.com>,
+ Tomasz Majchrzak <tomasz.majchrzak@intel.com>
+References: <20240709205938.GA194355@bhelgaas>
+Content-Language: en-US
+From: Jiwei Sun <sjiwei@163.com>
+In-Reply-To: <20240709205938.GA194355@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240710-gs101-non-essential-clocks-2-v3-2-5dcb8d040d1c@linaro.org>
-References: <20240710-gs101-non-essential-clocks-2-v3-0-5dcb8d040d1c@linaro.org>
-In-Reply-To: <20240710-gs101-non-essential-clocks-2-v3-0-5dcb8d040d1c@linaro.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.13.0
+X-CM-TRANSID:_____wD3X5a2jI5mqCcSCg--.45966S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3XryfurWrAr4UKF17Aw48Crg_yoWftF48pF
+	ZxW3W5tFs7Gr43XayUu3y8WFyayw4vvry5try5Kw1jv3yDAFy09FW0kF45Cr42vF1DKasF
+	vw4qgrn09Fn0kaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UnmRUUUUUU=
+X-CM-SenderInfo: 5vml4vrl6rljoofrz/1tbiDxoYmWVOFIrZegAAsC
 
-The peric0_top1_ipclk_0 and peric0_top1_pclk_0 are the clocks going to
-peric0/uart_usi, with pclk being the bus clock. Without pclk running,
-any bus access will hang.
-Unfortunately, in commit d97b6c902a40 ("arm64: dts: exynos: gs101:
-update USI UART to use peric0 clocks") the gs101 DT ended up specifying
-an incorrect pclk in the respective node and instead the two clocks
-here were marked as critical.
 
-Since then, the DT has been updated to use the correct clock in
-commit 21e4e8807bfc ("arm64: dts: exynos: gs101: use correct clocks for
-usi_uart") and the driver here should be corrected and the work-around
-removed.
+On 7/10/24 04:59, Bjorn Helgaas wrote:
+> [+cc Pawel, Alexey, Tomasz for mdadm history]
+> 
+> On Wed, Jun 05, 2024 at 08:48:44PM +0800, Jiwei Sun wrote:
+>> From: Jiwei Sun <sunjw10@lenovo.com>
+>>
+>> During booting into the kernel, the following error message appears:
+>>
+>>   (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: Unable to get real path for '/sys/bus/pci/drivers/vmd/0000:c7:00.5/domain/device''
+>>   (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: /dev/nvme1n1 is not attached to Intel(R) RAID controller.'
+>>   (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: No OROM/EFI properties for /dev/nvme1n1'
+>>   (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: no RAID superblock on /dev/nvme1n1.'
+>>   (udev-worker)[2149]: nvme1n1: Process '/sbin/mdadm -I /dev/nvme1n1' failed with exit code 1.
+>>
+>> This symptom prevents the OS from booting successfully.
+> 
+> I guess the root filesystem must be on a RAID device, and it's the
+> failure to assemble that RAID device that prevents OS boot?  The
+> messages are just details about why the assembly failed?
 
-Note that this commit has the side-effect of causing earlycon to stop
-to work sometime into the boot for two reasons:
-    * peric0_top1_ipclk_0 requires its parent gout_cmu_peric0_ip to be
-      running, but because earlycon doesn't deal with clocks that
-      parent will be disabled when none of the other drivers that
-      actually deal with clocks correctly require it to be running and
-      the real serial driver (which does deal with clocks) hasn't taken
-      over yet
-    * hand-over between earlycon and serial driver appears to be
-      fragile and clocks get enabled and disabled a few times, which
-      also causes register access to hang while earlycon is still
-      active
-(A wordier explanation can also be found in [1])
+Yes, you are right, in our test environment, we installed the SLES15SP6
+on a VROC RAID 1 device which is set up by two NVME hard drivers. And
+there is also a hardware RAID kit on the motherboard with other two NVME 
+hard drivers.
 
-Nonetheless we shouldn't keep these clocks running unconditionally just
-for earlycon. Clocks should be disabled where possible. If earlycon is
-required in the future, e.g. for debug, this commit can simply be
-reverted (locally!).
+# lsblk
+NAME        MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINTS
+nvme0n1     259:1    0     7T  0 disk
+├─nvme0n1p1 259:2    0   512M  0 part
+├─nvme0n1p2 259:3    0    40G  0 part
+└─nvme0n1p3 259:4    0   6.9T  0 part
+nvme1n1     259:6    0   1.7T  0 disk
+├─md126       9:126  0   1.7T  0 raid1
+│ ├─md126p1 259:9    0   600M  0 part  /boot/efi
+│ ├─md126p2 259:10   0     1G  0 part
+│ ├─md126p3 259:11   0    40G  0 part  /usr/local
+│ │                                    /var
+│ │                                    /tmp
+│ │                                    /srv
+│ │                                    /root
+│ │                                    /opt
+│ │                                    /boot/grub2/x86_64-efi
+│ │                                    /boot/grub2/i386-pc
+│ │                                    /.snapshots
+│ │                                    /
+│ ├─md126p4 259:12   0   1.5T  0 part  /home
+│ └─md126p5 259:13   0 125.5G  0 part  [SWAP]
+└─md127       9:127  0     0B  0 md
+nvme2n1     259:8    0   1.7T  0 disk
+├─md126       9:126  0   1.7T  0 raid1
+│ ├─md126p1 259:9    0   600M  0 part  /boot/efi
+│ ├─md126p2 259:10   0     1G  0 part
+│ ├─md126p3 259:11   0    40G  0 part  /usr/local
+│ │                                    /var
+│ │                                    /tmp
+│ │                                    /srv
+│ │                                    /root
+│ │                                    /opt
+│ │                                    /boot/grub2/x86_64-efi
+│ │                                    /boot/grub2/i386-pc
+│ │                                    /.snapshots
+│ │                                    /
+│ ├─md126p4 259:12   0   1.5T  0 part  /home
+│ └─md126p5 259:13   0 125.5G  0 part  [SWAP]
+└─md127       9:127  0     0B  0 md
 
-Link: https://lore.kernel.org/all/d45de3b2bb6b48653842cf1f74e58889ed6783ae.camel@linaro.org/ [1]
-Fixes: 893f133a040b ("clk: samsung: gs101: add support for cmu_peric0")
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+And the nvme0n1 is hardware RAID kit,
+the nvme1n1 and nvme2n1 is VROC.
 
----
-v3:
-- add git commit SHA1s (Krzysztof)
-- add link to wordier description of earlycon issue
+The OS entered emergency mode after installation and restart. And we
+found that no RAID was detected on the first NVME hard driver according
+to the emergency mode log, but when we try to detect it manually by 
+using the following command
 
-v2:
-- commit message typo fixed
-- collect Reviewed-by: tags
----
- drivers/clk/samsung/clk-gs101.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+#/sbin/mdadm -I /dev/nvme1n1
 
-diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
-index 85098c61c15e..9769c00b6ca8 100644
---- a/drivers/clk/samsung/clk-gs101.c
-+++ b/drivers/clk/samsung/clk-gs101.c
-@@ -3946,20 +3946,18 @@ static const struct samsung_gate_clock peric0_gate_clks[] __initconst = {
- 	     "gout_peric0_peric0_top0_pclk_9", "mout_peric0_bus_user",
- 	     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_PCLK_9,
- 	     21, 0, 0),
--	/* Disabling this clock makes the system hang. Mark the clock as critical. */
- 	GATE(CLK_GOUT_PERIC0_PERIC0_TOP1_IPCLK_0,
- 	     "gout_peric0_peric0_top1_ipclk_0", "dout_peric0_usi0_uart",
- 	     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP1_IPCLKPORT_IPCLK_0,
--	     21, CLK_IS_CRITICAL, 0),
-+	     21, 0, 0),
- 	GATE(CLK_GOUT_PERIC0_PERIC0_TOP1_IPCLK_2,
- 	     "gout_peric0_peric0_top1_ipclk_2", "dout_peric0_usi14_usi",
- 	     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP1_IPCLKPORT_IPCLK_2,
- 	     21, CLK_SET_RATE_PARENT, 0),
--	/* Disabling this clock makes the system hang. Mark the clock as critical. */
- 	GATE(CLK_GOUT_PERIC0_PERIC0_TOP1_PCLK_0,
- 	     "gout_peric0_peric0_top1_pclk_0", "mout_peric0_bus_user",
- 	     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP1_IPCLKPORT_PCLK_0,
--	     21, CLK_IS_CRITICAL, 0),
-+	     21, 0, 0),
- 	GATE(CLK_GOUT_PERIC0_PERIC0_TOP1_PCLK_2,
- 	     "gout_peric0_peric0_top1_pclk_2", "mout_peric0_bus_user",
- 	     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP1_IPCLKPORT_PCLK_2,
+It works, the RAID device was found, it tells us that the RAID is just
+not detected in the booting process. We added the "rd.udev.debug" to 
+kernel's cmdline, the error logs appears.
 
--- 
-2.45.2.803.g4e1b14247a-goog
+  (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: Unable to get real path for '/sys/bus/pci/drivers/vmd/0000:c7:00.5/domain/device''
+  (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: /dev/nvme1n1 is not attached to Intel(R) RAID controller.'
+  (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: No OROM/EFI properties for /dev/nvme1n1'
+  (udev-worker)[2149]: nvme1n1: '/sbin/mdadm -I /dev/nvme1n1'(err) 'mdadm: no RAID superblock on /dev/nvme1n1.'
+  (udev-worker)[2149]: nvme1n1: Process '/sbin/mdadm -I /dev/nvme1n1' failed with exit code 1.
+
+> 
+>> After a NVMe disk is probed/added by the nvme driver, the udevd executes
+>> some rule scripts by invoking mdadm command to detect if there is a
+>> mdraid associated with this NVMe disk. The mdadm determines if one
+>> NVMe devce is connected to a particular VMD domain by checking the
+>> domain symlink. Here is the root cause:
+> 
+> Can you tell us something about what makes this a vmd-specific issue?
+> 
+> I guess vmd is the only driver that creates a "domain" symlink, so
+> *that* part is vmd-specific.  But I guess there's something in mdadm
+> or its configuration that looks for that symlink?
+
+According to the following error log,
+
+  mdadm: Unable to get real path for '/sys/bus/pci/drivers/vmd/0000:c7:00.5/domain/device
+
+We enable the dyndbg log of the drivers/base/*(add dyndbg="file drivers/base/* +p" to cmdline),
+and add some debug logs in the find_driver_devices() of the madam source code [1],
+We found that the "domain" has not been created when the error log appears.
+And as you stated, the "domain" symlink is created by vmd driver.
+
+> 
+> I suppose it has to do with the mdadm code at [1] and the commit at
+> [2]?
+
+Yes, you are right, mdadm determine which NVMe dev is connected to the VMD
+domain by checking "/sys/bus/%s/drivers/%s/%s/domain/device", according to the following mdadm code[1],
+              /*
+              * Each VMD device (domain) adds separate PCI bus, it is better
+              * to store path as a path to that bus (easier further
+              * determination which NVMe dev is connected to this particular
+              * VMD domain).
+              */
+              if (type == SYS_DEV_VMD) {
+                     sprintf(path, "/sys/bus/%s/drivers/%s/%s/domain/device",
+                            bus, driver, de->d_name);
+              }
+              p = realpath(path, NULL);
+              if (p == NULL) {
+                     pr_err("Unable to get real path for '%s'\n", path);
+                     continue;
+              }
+
+[1] https://github.com/md-raid-utilities/mdadm/blob/main/platform-intel.c#L208
+
+> 
+> [1] https://github.com/md-raid-utilities/mdadm/blob/96b8035a09b6449ea99f2eb91f9ba4f6912e5bd6/platform-intel.c#L199
+> [2] https://github.com/md-raid-utilities/mdadm/commit/60f0f54d6f5227f229e7131d34f93f76688b085f
+> 
+> I assume this is a race between vmd_enable_domain() and mdadm?  And
+> vmd_enable_domain() only loses the race sometimes?  Trying to figure
+
+Yes, you are right, what you said is the conclusion of our investigation.
+
+> out why this hasn't been reported before or on non-VMD configurations.
+> Now that I found [2], the non-VMD part is obvious, but I'm still
+> curious about why we haven't seen it before.
+
+According to our test, if we remove that hardware RAID kit, the issue
+can't be reproduced, the driver name on the hardware RAID kit is nvme0, 
+and the driver name on VROC is nvme1 and nvme2. It seems the special 
+configuration makes the problem more apparent.
+
+> 
+> The VMD device is sort of like another host bridge, and I wouldn't
+> think mdadm would normally care about a host bridge, but it looks like
+> mdadm does need to know about VMD for some reason.
+
+I think so, it is better if the application doesn't have to pay too 
+much attention to hardware details. Just we can see, the mdadm uses 
+the "domain" symlink.
+
+Thanks,
+Regards,
+Jiwei
+
+> 
+>> Thread A                   Thread B             Thread mdadm
+>> vmd_enable_domain
+>>   pci_bus_add_devices
+>>     __driver_probe_device
+>>      ...
+>>      work_on_cpu
+>>        schedule_work_on
+>>        : wakeup Thread B
+>>                            nvme_probe
+>>                            : wakeup scan_work
+>>                              to scan nvme disk
+>>                              and add nvme disk
+>>                              then wakeup udevd
+>>                                                 : udevd executes
+>>                                                   mdadm command
+>>        flush_work                               main
+>>        : wait for nvme_probe done                ...
+>>     __driver_probe_device                        find_driver_devices
+>>     : probe next nvme device                     : 1) Detect the domain
+>>     ...                                            symlink; 2) Find the
+>>     ...                                            domain symlink from
+>>     ...                                            vmd sysfs; 3) The
+>>     ...                                            domain symlink is not
+>>     ...                                            created yet, failed
+>>   sysfs_create_link
+>>   : create domain symlink
+>>
+>> sysfs_create_link() is invoked at the end of vmd_enable_domain().
+>> However, this implementation introduces a timing issue, where mdadm
+>> might fail to retrieve the vmd symlink path because the symlink has not
+>> been created yet.
+>>
+>> Fix the issue by creating VMD domain symlinks before invoking
+>> pci_bus_add_devices().
+>>
+>> Signed-off-by: Jiwei Sun <sunjw10@lenovo.com>
+>> Suggested-by: Adrian Huang <ahuang12@lenovo.com>
+>> ---
+>> v3 changes:
+>>  - Per Paul's comment, move sysfs_remove_link() after
+>>    pci_stop_root_bus()
+>>
+>> v2 changes:
+>>  - Add "()" after function names in subject and commit log
+>>  - Move sysfs_create_link() after vmd_attach_resources()
+>>
+>>  drivers/pci/controller/vmd.c | 8 ++++----
+>>  1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+>> index 87b7856f375a..4e7fe2e13cac 100644
+>> --- a/drivers/pci/controller/vmd.c
+>> +++ b/drivers/pci/controller/vmd.c
+>> @@ -925,6 +925,9 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
+>>  		dev_set_msi_domain(&vmd->bus->dev,
+>>  				   dev_get_msi_domain(&vmd->dev->dev));
+>>  
+>> +	WARN(sysfs_create_link(&vmd->dev->dev.kobj, &vmd->bus->dev.kobj,
+>> +			       "domain"), "Can't create symlink to domain\n");
+>> +
+>>  	vmd_acpi_begin();
+>>  
+>>  	pci_scan_child_bus(vmd->bus);
+>> @@ -964,9 +967,6 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
+>>  	pci_bus_add_devices(vmd->bus);
+>>  
+>>  	vmd_acpi_end();
+>> -
+>> -	WARN(sysfs_create_link(&vmd->dev->dev.kobj, &vmd->bus->dev.kobj,
+>> -			       "domain"), "Can't create symlink to domain\n");
+>>  	return 0;
+>>  }
+>>  
+>> @@ -1042,8 +1042,8 @@ static void vmd_remove(struct pci_dev *dev)
+>>  {
+>>  	struct vmd_dev *vmd = pci_get_drvdata(dev);
+>>  
+>> -	sysfs_remove_link(&vmd->dev->dev.kobj, "domain");
+>>  	pci_stop_root_bus(vmd->bus);
+>> +	sysfs_remove_link(&vmd->dev->dev.kobj, "domain");
+>>  	pci_remove_root_bus(vmd->bus);
+>>  	vmd_cleanup_srcu(vmd);
+>>  	vmd_detach_resources(vmd);
+>> -- 
+>> 2.27.0
+>>
 
 
