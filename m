@@ -1,187 +1,123 @@
-Return-Path: <linux-kernel+bounces-247300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0731892CDC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:01:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DCD992CD51
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF588282F7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:01:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43C931F246C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D1817CA03;
-	Wed, 10 Jul 2024 08:59:28 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4F612EBD3;
+	Wed, 10 Jul 2024 08:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i3lrIdmP"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B69317B516;
-	Wed, 10 Jul 2024 08:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26F512C491
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720601968; cv=none; b=Kr69YyIokQOMQl3kDyHbwtnt3bCk3rJvt4DtkFlHjNEYXPbQr1Uk+ddztPOtf0MlepThSeHsVfPFz0YTZhEMNzNtCsuhD/tHPWstviV1bynWhwh47Z84qX2EntbOBB9TerlVxXyMpuTX0hwxA8UnV57YLI2cxvlQpk9ZSimA9oM=
+	t=1720601066; cv=none; b=eC3YP51Be0LrnbtbsPd/uM8FZ+Xpw2miUqKrh40RFEQeAbNtaw48rIUGk27pIgX+sjywAkiRNiu44kN3Q8G5vFyshrg3dLCvAqi6BygaV30pweAkA8X075Ihcj2NPVsjdYM/GS97wAjw2ZG3gM7EzdcK/RMDr+UiwoRtzH2awPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720601968; c=relaxed/simple;
-	bh=QR3vrdm6Tw0jXM4c95/q8aSOd5Fb+85TowCeTOlRDVQ=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=htBofsbi4pth4gTipxF/Abw5hopyXbTMYedPfcDe3uws3fUm5mPUVpmdbYhNpxtQ4y+oxBqvBo7Zh9r2Xhp7D84l1WnCqfKlW1ftGUq6mN53zxrly9YtLB19lUFYCnsQxPiSJzYqP3QEEH7Lb3b5BF25DB2qcEdCiVCRwD7MWZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C52001A054C;
-	Wed, 10 Jul 2024 10:59:18 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 625971A0543;
-	Wed, 10 Jul 2024 10:59:18 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id AF2A6183487B;
-	Wed, 10 Jul 2024 16:59:16 +0800 (+08)
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: abelvesa@kernel.org,
-	peng.fan@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	imx@lists.linux.dev,
-	shengjiu.wang@gmail.com
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] clk: imx: imx8: Use clk_hw pointer for self registered clock in clk_parent_data
-Date: Wed, 10 Jul 2024 16:41:00 +0800
-Message-Id: <1720600860-18866-1-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1720601066; c=relaxed/simple;
+	bh=8ivO6POCAIo3G3CYfy3m9OdFWnmlORGF6h0AojDDhAY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cq150NLpJPMX1DPPdooQWSAQ0kI4urBz4VtU85hcu3fmlSIQNqTz9+AfgLwBWpZMrWiPdHXujZzMpQn42+yIWvAsLIbNLOHkInGwtAisMv9mhd38qVVvgjEWKBDDq0NDs7rN6sELBWahp7sIO9diQHKxNfUKEPVsd82yLJbR4N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i3lrIdmP; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42726d6eca5so7324165e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 01:44:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720601063; x=1721205863; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BonLjpSet1ctnfC03bK8l/0hpA9XluDOFZV6vKsFj/k=;
+        b=i3lrIdmPI7UpuG4Otqxi74Uc0qTO5YTYqYgFT+sFXEjJWdRdCBJy/w4O+J8RzeSvoc
+         ATKFJZ2N7KgmUTaJANpR+4hmCUU0cEKJrhRWJkTK1njiArjZY2TgNI+Fx7taBezMPdHw
+         y7TY6iX9r596Ul4IHnvgLbb5HXyBT2ET/NmivYh2g+8pCcTzY/sH89V0PeaoAnrzygc0
+         DAf6USTZjryYwoi/9A98sS9cfJM3zype6/x9xXLEtbgzXsGohvfTXes867USk/14BZ66
+         nnQoRQCDPPEWLLoimcO0bBqIphIhzYzdV2vMf6AXJj7r6JvBfucgU+p5RarFNbRn9q8N
+         8gBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720601063; x=1721205863;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BonLjpSet1ctnfC03bK8l/0hpA9XluDOFZV6vKsFj/k=;
+        b=vRpOJBUXXavOD3ETkWOZRzrY5fTXevtkH8eisZjkNL9cafJ4f4tt3R7wZbsSqJV1xO
+         cr2/DKaaU5SUvBrZJoaCpZg23Va8/0N9B9/pyafR+qK0w1wY2fDFwGNY3b8rCJCTFXHJ
+         60tB3GNgMnaZoMM2k+3flBdb9ePYSl+WBncEKOyxGAXWfHbBAKYrZ9ELsZgy6EpgGzzY
+         x9Q+oiPONUMvusrSrsSQeOcBGKQYgfBD0pdNT9xYWOMpN0jacVYPjhgFi7PP2MiY6RCo
+         AGoGIFikj+WAIVrM1Pj+1dah90FgqU24RNk6wIetlsLKu/CPz7VpgkZj/nXAJ1PEsBVC
+         JdCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoj0hQz7eIAsfFZkNU4vlniPbFYrtucSS3tV2sGw/80P8KjgAyl7GCImjSC3LXEa7E+ysYTqp05Jzp+yw030bS7LfWIynXs3m3y2qm
+X-Gm-Message-State: AOJu0YzQ+fts6M4hbI7OjAfJx7p7TaqP0mDN6P/ZBlBpkddghkjUJn3Y
+	7VcnJN9ISffpgh0DdrAog2IH4T97keIWOBpYHY6z/yFtYYox3P22ru3AJJOtGk0=
+X-Google-Smtp-Source: AGHT+IHJw2e3QTVBDhstDlKVjyu4nCN3502ntTVILiGZA1l68yg2qaBJmWreQgXWrZkmJl5tO5vlgQ==
+X-Received: by 2002:a05:6000:2ab:b0:367:844a:1ca3 with SMTP id ffacd0b85a97d-367cea46c64mr4085862f8f.10.1720601063248;
+        Wed, 10 Jul 2024 01:44:23 -0700 (PDT)
+Received: from rayyan-pc.broadband ([2a0a:ef40:ee7:2401:197d:e048:a80f:bc44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfa06ffsm4700403f8f.77.2024.07.10.01.44.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 01:44:22 -0700 (PDT)
+From: Rayyan Ansari <rayyan.ansari@linaro.org>
+To: linux-arm-msm@vger.kernel.org
+Cc: Rayyan Ansari <rayyan.ansari@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>
+Subject: [PATCH 0/3] ARM: dts: qcom: adhere to pinctrl dt schema
+Date: Wed, 10 Jul 2024 09:41:08 +0100
+Message-ID: <20240710084250.11342-1-rayyan.ansari@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-"acm_aud_clk0_sel" and "acm_aud_clk1_sel" are registered by this ACM
-driver, but they are the parent clocks for other clocks, in order to
-use assigned-clock-parents in device tree, the ".fw_name" can't be used,
-need to assign the clk_hw pointer for the imx8qm_mclk_sels[],
-imx8qxp_mclk_sels[], imx8dxl_mclk_sels[].
+Hi,
+The following patches make the device trees compliant with the pinctrl
+text to dt schema conversion here:
+https://lore.kernel.org/all/20240709162009.5166-1-rayyan.ansari@linaro.org/
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
+Thanks,
+Rayyan
 
-changes in v2:
-- don't use string name, but use the clk_hw pointer for "acm_aud_clk0_sel"
-  and "acm_aud_clk1_sel"
+Rayyan Ansari (3):
+  ARM: dts: qcom: apq8064: adhere to pinctrl dtschema
+  ARM: dts: qcom: ipq8064: adhere to pinctrl dtschema
+  ARM: dts: qcom: ipq4019: adhere to pinctrl dtschema
 
- drivers/clk/imx/clk-imx8-acm.c | 38 ++++++++++++++++++++++++++--------
- 1 file changed, 29 insertions(+), 9 deletions(-)
+ .../dts/qcom/qcom-apq8064-asus-nexus7-flo.dts |   4 -
+ .../boot/dts/qcom/qcom-apq8064-cm-qs600.dts   |  25 +-
+ .../boot/dts/qcom/qcom-apq8064-ifc6410.dts    |  25 +-
+ arch/arm/boot/dts/qcom/qcom-apq8064-pins.dtsi | 362 +++++++-----------
+ .../qcom-apq8064-sony-xperia-lagan-yuga.dts   |  10 +-
+ arch/arm/boot/dts/qcom/qcom-apq8064.dtsi      |  34 +-
+ .../boot/dts/qcom/qcom-ipq4018-ap120c-ac.dtsi |  34 +-
+ .../boot/dts/qcom/qcom-ipq4018-jalapeno.dts   |  27 +-
+ .../boot/dts/qcom/qcom-ipq4019-ap.dk01.1.dtsi |  26 +-
+ .../boot/dts/qcom/qcom-ipq4019-ap.dk04.1.dtsi |  14 +-
+ .../dts/qcom/qcom-ipq4019-ap.dk07.1-c1.dts    |   8 +-
+ .../dts/qcom/qcom-ipq4019-ap.dk07.1-c2.dts    |   2 +-
+ .../boot/dts/qcom/qcom-ipq4019-ap.dk07.1.dtsi |   6 +-
+ arch/arm/boot/dts/qcom/qcom-ipq8064-ap148.dts |  11 +-
+ .../arm/boot/dts/qcom/qcom-ipq8064-rb3011.dts |  76 ++--
+ arch/arm/boot/dts/qcom/qcom-ipq8064.dtsi      | 114 +++---
+ 16 files changed, 309 insertions(+), 469 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-imx8-acm.c
-index 1bdb480cc96c..61d8c7e9ae0b 100644
---- a/drivers/clk/imx/clk-imx8-acm.c
-+++ b/drivers/clk/imx/clk-imx8-acm.c
-@@ -54,10 +54,12 @@ struct clk_imx8_acm_sel {
-  * struct imx8_acm_soc_data - soc specific data
-  * @sels: pointer to struct clk_imx8_acm_sel
-  * @num_sels: numbers of items
-+ * @mclk_sels: pointer to imx8qm/qxp/dxl_mclk_sels
-  */
- struct imx8_acm_soc_data {
- 	struct clk_imx8_acm_sel *sels;
- 	unsigned int num_sels;
-+	struct clk_parent_data *mclk_sels;
- };
- 
- /**
-@@ -111,11 +113,14 @@ static const struct clk_parent_data imx8qm_mclk_out_sels[] = {
- 	{ .fw_name = "sai6_rx_bclk" },
- };
- 
--static const struct clk_parent_data imx8qm_mclk_sels[] = {
-+#define ACM_AUD_CLK0_SEL_INDEX  2
-+#define ACM_AUD_CLK1_SEL_INDEX  3
-+
-+static struct clk_parent_data imx8qm_mclk_sels[] = {
- 	{ .fw_name = "aud_pll_div_clk0_lpcg_clk" },
- 	{ .fw_name = "aud_pll_div_clk1_lpcg_clk" },
--	{ .fw_name = "acm_aud_clk0_sel" },
--	{ .fw_name = "acm_aud_clk1_sel" },
-+	{  }, /* clk_hw pointer of "acm_aud_clk0_sel" */
-+	{  }, /* clk_hw pointer of "acm_aud_clk1_sel" */
- };
- 
- static const struct clk_parent_data imx8qm_asrc_mux_clk_sels[] = {
-@@ -176,11 +181,11 @@ static const struct clk_parent_data imx8qxp_mclk_out_sels[] = {
- 	{ .fw_name = "sai4_rx_bclk" },
- };
- 
--static const struct clk_parent_data imx8qxp_mclk_sels[] = {
-+static struct clk_parent_data imx8qxp_mclk_sels[] = {
- 	{ .fw_name = "aud_pll_div_clk0_lpcg_clk" },
- 	{ .fw_name = "aud_pll_div_clk1_lpcg_clk" },
--	{ .fw_name = "acm_aud_clk0_sel" },
--	{ .fw_name = "acm_aud_clk1_sel" },
-+	{  }, /* clk_hw pointer of "acm_aud_clk0_sel" */
-+	{  }, /* clk_hw pointer of "acm_aud_clk1_sel" */
- };
- 
- static struct clk_imx8_acm_sel imx8qxp_sels[] = {
-@@ -228,11 +233,11 @@ static const struct clk_parent_data imx8dxl_mclk_out_sels[] = {
- 	{ .index = -1 },
- };
- 
--static const struct clk_parent_data imx8dxl_mclk_sels[] = {
-+static struct clk_parent_data imx8dxl_mclk_sels[] = {
- 	{ .fw_name = "aud_pll_div_clk0_lpcg_clk" },
- 	{ .fw_name = "aud_pll_div_clk1_lpcg_clk" },
--	{ .fw_name = "acm_aud_clk0_sel" },
--	{ .fw_name = "acm_aud_clk1_sel" },
-+	{  }, /* clk_hw pointer of "acm_aud_clk0_sel" */
-+	{  }, /* clk_hw pointer of "acm_aud_clk1_sel" */
- };
- 
- static struct clk_imx8_acm_sel imx8dxl_sels[] = {
-@@ -375,6 +380,18 @@ static int imx8_acm_clk_probe(struct platform_device *pdev)
- 			imx_check_clk_hws(hws, IMX_ADMA_ACM_CLK_END);
- 			goto err_clk_register;
- 		}
-+
-+		/*
-+		 * The IMX_ADMA_ACM_AUD_CLK0_SEL and IMX_ADMA_ACM_AUD_CLK1_SEL are
-+		 * registered first. After registration, update the clk_hw pointer
-+		 * to imx8qm/qxp/dxl_mclk_sels structures.
-+		 */
-+		if (sels[i].clkid == IMX_ADMA_ACM_AUD_CLK0_SEL)
-+			priv->soc_data->mclk_sels[ACM_AUD_CLK0_SEL_INDEX].hw =
-+								hws[IMX_ADMA_ACM_AUD_CLK0_SEL];
-+		if (sels[i].clkid == IMX_ADMA_ACM_AUD_CLK1_SEL)
-+			priv->soc_data->mclk_sels[ACM_AUD_CLK1_SEL_INDEX].hw =
-+								hws[IMX_ADMA_ACM_AUD_CLK1_SEL];
- 	}
- 
- 	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_hw_data);
-@@ -406,16 +423,19 @@ static void imx8_acm_clk_remove(struct platform_device *pdev)
- static const struct imx8_acm_soc_data imx8qm_acm_data = {
- 	.sels = imx8qm_sels,
- 	.num_sels = ARRAY_SIZE(imx8qm_sels),
-+	.mclk_sels = imx8qm_mclk_sels,
- };
- 
- static const struct imx8_acm_soc_data imx8qxp_acm_data = {
- 	.sels = imx8qxp_sels,
- 	.num_sels = ARRAY_SIZE(imx8qxp_sels),
-+	.mclk_sels = imx8qxp_mclk_sels,
- };
- 
- static const struct imx8_acm_soc_data imx8dxl_acm_data = {
- 	.sels = imx8dxl_sels,
- 	.num_sels = ARRAY_SIZE(imx8dxl_sels),
-+	.mclk_sels = imx8dxl_mclk_sels,
- };
- 
- static const struct of_device_id imx8_acm_match[] = {
 -- 
-2.34.1
+2.45.2
 
 
