@@ -1,103 +1,89 @@
-Return-Path: <linux-kernel+bounces-247522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 056F592D0B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:31:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1003792D0B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3445283A4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:31:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C74A8283ECB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2864D19046D;
-	Wed, 10 Jul 2024 11:31:26 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0B219047D;
+	Wed, 10 Jul 2024 11:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="A0mA/v5z"
+Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC87325757;
-	Wed, 10 Jul 2024 11:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9E484DEB
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 11:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720611085; cv=none; b=szNjF84d+287gW04EvVcE1BCB4/PbwAkSews4Wc2CzYiVvWpFrGoBB+qj3OFKuqzPj4y7xrGcsVj3xmQMHJfAYz3Hl0v4a1rAfdq+wjFTR0Kl8fH/M9kmYnnX+E1pdqodl3gyHSLk/1gvb6v9l6UFJDMXsG4RbNIbj9D5KQrtNk=
+	t=1720611140; cv=none; b=GKwwv5sUC0eKUDYP6G6o44Y793gahwtPvypcjCwgC3yc7VGukG21YzaiCRDz8AmsCZZ297WfoahUXbkTXRkiyaLooSSkGZg1rr+k5QQ08uGNN7iTupY7JYrhCtGuC2zDuCR9ZXcg35IF2wid9F0fO4HMGwT9fmNMZol+Kvi8qQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720611085; c=relaxed/simple;
-	bh=iud5V400U/4DVUMX/ecCQPH0l2Tpll+t3Kkg2R/9jS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i0VwW8Ige3bc5vC5qNy2DVWjSazCsKeBO5Sv0IUvm7xLTt7Ras/bj7ehkdKlRHcMHFh55J2wjbkDzlTjzRm6x0n/+2heX6SbVYqnrTJbbHxMxUHMpYxZhrSr3HiFP0u4efAuiQu6U2MyHB8JuHIeq1Lv9gy/GiRdY/d+emcRoug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B8B0C32781;
-	Wed, 10 Jul 2024 11:31:23 +0000 (UTC)
-Date: Wed, 10 Jul 2024 12:31:21 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	Kunwu Chan <chentao@kylinos.cn>, kernel@collabora.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/2] selftests: arm64: tags_test: conform test to TAP
- output
-Message-ID: <Zo5xCW9GJqFeTZUi@arm.com>
-References: <20240602132502.4186771-1-usama.anjum@collabora.com>
+	s=arc-20240116; t=1720611140; c=relaxed/simple;
+	bh=moHes3pnqVk61P66RkEXxoLuJdZ/zT/x933Dj0tPO7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FX4oqD3Bp5CEaVf2cnSzj7aYxuKSBb17lteUIgheNuOwS2ba7WtTWJ6HoiB3U+Ndksyiv5Ay3Ri3SLWjwuu6uNu93xOTQJN0RE/KgQu+3uWzEY5zVgdN59dqg5HUgqJd2e5UWgfA3FyzX5auKzOa7RkedGIYqhDQkWZca8rXWec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=A0mA/v5z; arc=none smtp.client-ip=37.205.15.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
+Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by bee.tesarici.cz (Postfix) with ESMTPSA id 4C74C1E33D1;
+	Wed, 10 Jul 2024 13:32:10 +0200 (CEST)
+Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
+	t=1720611130; bh=moHes3pnqVk61P66RkEXxoLuJdZ/zT/x933Dj0tPO7U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=A0mA/v5z1/FWOl7Z7VV+oN9LRRUp/ACb0HMAtlO3u6hH/6Ph52DVNy502vk3QXxmj
+	 l0OSQsKlqu9YVZ7Ve4lEGWsekGte9uAxFm7HdlLz7Y1/hFqPF5IU0Tq/f4PsU5IvvP
+	 KNRWuK1Oo8yoNKxRQuz4N9v8QyCi2oAUyUQiz4WeloiEPGZuReLfHnyo2rJbk3QA8U
+	 b9bW3haJadDoGY8DZZDYzUKfC/yT2gNj5vmHdsCM7W4cvIH63qehWF0o1ojwsHNkQg
+	 /d9V7wTWwF99wHnal5hC0MrnwV10x7Kl7dVvGyx5olfAA+QqSKovJKAlyTuR5jbWzS
+	 QV/dvdSNN15kQ==
+Date: Wed, 10 Jul 2024 13:32:05 +0200
+From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+To: Christoph Hellwig <hch@lst.de>
+Cc: mhkelley58@gmail.com, mhklinux@outlook.com, robin.murphy@arm.com,
+ joro@8bytes.org, will@kernel.org, jgross@suse.com, sstabellini@kernel.org,
+ oleksandr_tyshchenko@epam.com, m.szyprowski@samsung.com,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v3 1/1] swiotlb: Reduce swiotlb pool lookups
+Message-ID: <20240710133205.63858e7a@mordecai.tesarici.cz>
+In-Reply-To: <20240710055520.GA25305@lst.de>
+References: <20240708194100.1531-1-mhklinux@outlook.com>
+	<20240709111013.6103d3f0@mordecai.tesarici.cz>
+	<20240709111812.GB4421@lst.de>
+	<20240709210818.28116c53@meshulam.tesarici.cz>
+	<20240710055520.GA25305@lst.de>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240602132502.4186771-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 02, 2024 at 06:24:59PM +0500, Muhammad Usama Anjum wrote:
-> Conform the layout, informational and status messages to TAP. No
-> functional change is intended other than the layout of output messages.
-> 
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
->  tools/testing/selftests/arm64/tags/tags_test.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/arm64/tags/tags_test.c b/tools/testing/selftests/arm64/tags/tags_test.c
-> index 955f87c1170d7..8ae26e496c89c 100644
-> --- a/tools/testing/selftests/arm64/tags/tags_test.c
-> +++ b/tools/testing/selftests/arm64/tags/tags_test.c
-> @@ -17,19 +17,21 @@ int main(void)
->  	static int tbi_enabled = 0;
->  	unsigned long tag = 0;
->  	struct utsname *ptr;
-> -	int err;
-> +
-> +	ksft_print_header();
-> +	ksft_set_plan(1);
->  
->  	if (prctl(PR_SET_TAGGED_ADDR_CTRL, PR_TAGGED_ADDR_ENABLE, 0, 0, 0) == 0)
->  		tbi_enabled = 1;
->  	ptr = (struct utsname *)malloc(sizeof(*ptr));
->  	if (!ptr)
-> -		ksft_exit_fail_msg("Failed to allocate utsname buffer\n");
-> +		ksft_exit_fail_perror("Failed to allocate utsname buffer");
->  
->  	if (tbi_enabled)
->  		tag = 0x42;
->  	ptr = (struct utsname *)SET_TAG(ptr, tag);
-> -	err = uname(ptr);
-> +	ksft_test_result(!uname(ptr), "Syscall successful with tagged address\n");
->  	free(ptr);
->  
-> -	return err;
-> +	ksft_finished();
->  }
+On Wed, 10 Jul 2024 07:55:20 +0200
+Christoph Hellwig <hch@lst.de> wrote:
 
-Sorry, these patches slipped through the cracks. We seem to be pretty
-inconsistent with using ksft_exit_fail_perror() and ksft_finished(). Is
-there some plan to update the rest or is it only this location that you
-came across?
+> On Tue, Jul 09, 2024 at 09:08:18PM +0200, Petr Tesa=C5=99=C3=ADk wrote:
+> > I'm confused. If you're not a big fan, why are we effectively adding
+> > them to more places now than before the patch? =20
+>=20
+> Because I didn't want to second guess the patch author too much.
 
-Adding Mark Brown as well to this thread, he's been contributing quite a
-lot recently to the arm64 kselftests.
+Fair enough. I don't have any relevant test cases either, so when/if
+somebody encounters an issue, let them change it then.
 
--- 
-Catalin
+Thanks!
+Petr T
 
