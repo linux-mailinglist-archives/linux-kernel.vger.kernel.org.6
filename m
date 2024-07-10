@@ -1,166 +1,123 @@
-Return-Path: <linux-kernel+bounces-248057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA58B92D7D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:57:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A9292D79A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC4381C21343
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:57:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A12A21F24B60
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759E01957ED;
-	Wed, 10 Jul 2024 17:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB07196455;
+	Wed, 10 Jul 2024 17:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="XxZjmqz/"
-Received: from smtp120.iad3b.emailsrvr.com (smtp120.iad3b.emailsrvr.com [146.20.161.120])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="csT4Koyl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD17E848E
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 17:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B63195383
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 17:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720634225; cv=none; b=QR9SyKcVdizDgKGKbdi3EaOnRiqOCl9S/2voxBpwJiQSlCAvKW2hvXj1sflmfVUd6u8WHZrbJV3R3zwReLFUYzUi8nCx7YAOV6vRAiU15OMEFvvsvGN5WzGHASaoCjXKebIWLXC1XeVFthuWDRAhTMiTFXliLNbk7TqdKXBAIcQ=
+	t=1720633242; cv=none; b=IW3AHUdl45xnjRllb31YLMN4Ab5p4WgTBM8ligDDRipySMKpaxD7AWhd4CwMBbDpGXCzat664O1jL64z1gtrjGZ69V7bsljL1nsLWmwCbSXQZfo8LwqxjInP+DlIxztgPV+O9tU+KkTmqNfwLSjkviaEA0K+KVyhRtVW6cKaRAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720634225; c=relaxed/simple;
-	bh=+rdEet2a03M3feNf2DDNH4FKyG5Yx6JcUFaF8Zfe/R0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YEPIp08QwevYEnlnXg6PhKmNCsuDitqhPv3Mqe7sBy7ulziezN7xZe/veOiJrJUfWgYYMUgr17zXwy/JDx+3RipLtcAffpMrRZmWx9iIlfIBqFrNoW5Mu1JiwlwZmNcIllJCHJrJUd39ZEF5sPUFiK/BxcXe2dBVUk++PYtCG+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=XxZjmqz/; arc=none smtp.client-ip=146.20.161.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-	s=20221208-6x11dpa4; t=1720633049;
-	bh=+rdEet2a03M3feNf2DDNH4FKyG5Yx6JcUFaF8Zfe/R0=;
-	h=From:To:Subject:Date:From;
-	b=XxZjmqz/1ZqmGQbYAVaSH4sxNTDmUeZhFMD9l7v1RqfGU/Vk10LqFEErBV3NC+9gs
-	 1QH/FJ5iUn6TQRXjQk+i6lLpWVEIzIf76BAKsw3V9hXoqVE/0x32d07+PrlwOhiZv8
-	 F7L0wAz+l4Z23mRnpnHM6FM/0X+Tpx2x0iM9C/kI=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp16.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id DC399C019C;
-	Wed, 10 Jul 2024 13:37:28 -0400 (EDT)
-From: Ian Abbott <abbotti@mev.co.uk>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	Mirsad Todorovac <mtodorovac69@gmail.com>
-Subject: [PATCH] staging: comedi: ni_*: do not declare unused variable range_ni_E_ao_ext
-Date: Wed, 10 Jul 2024 18:37:19 +0100
-Message-ID: <20240710173719.3559437-1-abbotti@mev.co.uk>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1720633242; c=relaxed/simple;
+	bh=opzMe0nXF8vNlyJupZcDVV/kJQgovpTF493lgSf1Jnk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MdNAQUfEbYJ18O2h6XR0yrOJu7gHCD/cZBv7ozJuBfHu51h+crIF5TTADMoqsGUIGw2xtZKj389iV5mQYFifAe59Pc3TnkGPHqkV9cqJcuVR6TMtpexowEmPzs8UXvenObYscxwd2/+A2ufWIWEAdjh8YkTtDuNmKPwC6g2OQZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=csT4Koyl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720633239;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=deJJLDfnOfFPz4qroPoBEdALt7gnxQ1Eowi++rkDz7U=;
+	b=csT4KoylxD/6+y+AxH/eN/vkZBe1icv1IQHu7JGIQupl5hmG9ZEtXFJHZleOSQfv4oet/H
+	nCxdNhst8Lvjpgq/lnJWtVnj1QwDJc8O+EPfldlBh7owoSsGzGlCMPTQu4kPGrjSc93NpG
+	6poeuB1iXOa8sLSq3VLaP4ORDI66phg=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-621-FcM0hb2KPnKo9yyQqKbNLQ-1; Wed,
+ 10 Jul 2024 13:40:34 -0400
+X-MC-Unique: FcM0hb2KPnKo9yyQqKbNLQ-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1F177195419C;
+	Wed, 10 Jul 2024 17:40:33 +0000 (UTC)
+Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B81501955E85;
+	Wed, 10 Jul 2024 17:40:31 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Cc: isaku.yamahata@intel.com,
+	seanjc@google.com,
+	binbin.wu@linux.intel.com,
+	xiaoyao.li@intel.com
+Subject: [PATCH v5 0/7] KVM: Guest Memory Pre-Population API
+Date: Wed, 10 Jul 2024 13:40:24 -0400
+Message-ID: <20240710174031.312055-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
-X-Classification-ID: 3d444693-b8ce-4e33-8baf-6beb2feabbf9-1-1
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Mirsad Todorovac reported a compiler warning in "ni_stc.h" due to the
-variable `range_ni_E_ao_ext` being defined but unused when building the
-"ni_routes_test" module.
+Pre-population has been requested several times to mitigate KVM page faults
+during guest boot or after live migration.  It is also required by TDX
+before filling in the initial guest memory with measured contents.
+Introduce it as a generic API.
 
-The `range_ni_E_ao_ext` variable is tentatively defined in "ni_stc.h"
-(with internal linkage) and fully defined in "ni_mio_common.c".
-"ni_stc.h" and/or "ni_mio_common.c" are included by the "ni_atmio",
-"ni_pcimio", "ni_mio_cs", and "ni_routes_test" modules, which will each
-get their own local `range_ni_E_ao_ext` variable defined.  However, it
-is not used by the "ni_mio_cs" or "ni_routes_test" modules.  They should
-get optimized out, but there are compiler warnings about the unused
-variable when built with the `W=1` option.
+Paolo
 
-Move the full definition of the variable from "ni_mio_common.c" into the
-places where it is used, namely "ni_atmio.c" and "ni_pcimio.c", and
-remove the tentative definition of the variable from "ni_stc.h".  This
-fixes the compiler warnings.
+v4->v5:
+- add EIO as possible error
+- do not introduce __kvm_mmu_do_page_fault(), instead update stats in callers
+- remove goto
+- fix commit message to not mention weak symbol
+- return error if range->size is 0
+- fix comment to explain TDP restriction
+- fix guest_test_phys_mem > guest_test_virt_mem case in test
 
-Reported-by: Mirsad Todorovac <mtodorovac69@gmail.com>
-Link: https://lore.kernel.org/lkml/3bab8580-c01a-4183-94af-ba3193c94c0e@gmail.com/
-Cc: Mirsad Todorovac <mtodorovac69@gmail.com>
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
----
-Note: The linked report also covers similar warnings elsewhere in the
-kernel, so is not closed by this patch.
----
- drivers/comedi/drivers/ni_atmio.c      | 9 +++++++++
- drivers/comedi/drivers/ni_mio_common.c | 9 ---------
- drivers/comedi/drivers/ni_pcimio.c     | 9 +++++++++
- drivers/comedi/drivers/ni_stc.h        | 2 --
- 4 files changed, 18 insertions(+), 11 deletions(-)
+Isaku Yamahata (3):
+  KVM: Document KVM_PRE_FAULT_MEMORY ioctl
+  KVM: Add KVM_PRE_FAULT_MEMORY vcpu ioctl to pre-populate guest memory
+  KVM: selftests: x86: Add test for KVM_PRE_FAULT_MEMORY
 
-diff --git a/drivers/comedi/drivers/ni_atmio.c b/drivers/comedi/drivers/ni_atmio.c
-index 8876a1d24c56..330ae1c58800 100644
---- a/drivers/comedi/drivers/ni_atmio.c
-+++ b/drivers/comedi/drivers/ni_atmio.c
-@@ -79,6 +79,15 @@
- 
- #include "ni_stc.h"
- 
-+static const struct comedi_lrange range_ni_E_ao_ext = {
-+	4, {
-+		BIP_RANGE(10),
-+		UNI_RANGE(10),
-+		RANGE_ext(-1, 1),
-+		RANGE_ext(0, 1)
-+	}
-+};
-+
- /* AT specific setup */
- static const struct ni_board_struct ni_boards[] = {
- 	{
-diff --git a/drivers/comedi/drivers/ni_mio_common.c b/drivers/comedi/drivers/ni_mio_common.c
-index 980f309d6de7..3acb449d293c 100644
---- a/drivers/comedi/drivers/ni_mio_common.c
-+++ b/drivers/comedi/drivers/ni_mio_common.c
-@@ -166,15 +166,6 @@ static const struct comedi_lrange range_ni_M_ai_628x = {
- 	}
- };
- 
--static const struct comedi_lrange range_ni_E_ao_ext = {
--	4, {
--		BIP_RANGE(10),
--		UNI_RANGE(10),
--		RANGE_ext(-1, 1),
--		RANGE_ext(0, 1)
--	}
--};
--
- static const struct comedi_lrange *const ni_range_lkup[] = {
- 	[ai_gain_16] = &range_ni_E_ai,
- 	[ai_gain_8] = &range_ni_E_ai_limited,
-diff --git a/drivers/comedi/drivers/ni_pcimio.c b/drivers/comedi/drivers/ni_pcimio.c
-index 0b055321023d..f63c390314e1 100644
---- a/drivers/comedi/drivers/ni_pcimio.c
-+++ b/drivers/comedi/drivers/ni_pcimio.c
-@@ -102,6 +102,15 @@
- 
- #define PCIDMA
- 
-+static const struct comedi_lrange range_ni_E_ao_ext = {
-+	4, {
-+		BIP_RANGE(10),
-+		UNI_RANGE(10),
-+		RANGE_ext(-1, 1),
-+		RANGE_ext(0, 1)
-+	}
-+};
-+
- /*
-  * These are not all the possible ao ranges for 628x boards.
-  * They can do OFFSET +- REFERENCE where OFFSET can be
-diff --git a/drivers/comedi/drivers/ni_stc.h b/drivers/comedi/drivers/ni_stc.h
-index fbc0b753a0f5..7837e4683c6d 100644
---- a/drivers/comedi/drivers/ni_stc.h
-+++ b/drivers/comedi/drivers/ni_stc.h
-@@ -1137,6 +1137,4 @@ struct ni_private {
- 	u8 rgout0_usage;
- };
- 
--static const struct comedi_lrange range_ni_E_ao_ext;
--
- #endif /* _COMEDI_NI_STC_H */
+Paolo Bonzini (2):
+  KVM: x86/mmu: Make kvm_mmu_do_page_fault() return mapped level
+  KVM: x86: Implement kvm_arch_vcpu_pre_fault_memory()
+
+Sean Christopherson (2):
+  KVM: x86/mmu: Bump pf_taken stat only in the "real" page fault handler
+  KVM: x86/mmu: Account pf_{fixed,emulate,spurious} in callers of "do
+    page fault"
+
+ Documentation/virt/kvm/api.rst                |  55 +++++++
+ arch/x86/kvm/Kconfig                          |   1 +
+ arch/x86/kvm/mmu/mmu.c                        |  96 +++++++++++-
+ arch/x86/kvm/mmu/mmu_internal.h               |  26 +---
+ arch/x86/kvm/x86.c                            |   3 +
+ include/linux/kvm_host.h                      |   5 +
+ include/uapi/linux/kvm.h                      |  10 ++
+ tools/include/uapi/linux/kvm.h                |  14 +-
+ tools/testing/selftests/kvm/Makefile          |   1 +
+ .../selftests/kvm/pre_fault_memory_test.c     | 146 ++++++++++++++++++
+ virt/kvm/Kconfig                              |   3 +
+ virt/kvm/kvm_main.c                           |  60 +++++++
+ 12 files changed, 394 insertions(+), 26 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/pre_fault_memory_test.c
+
 -- 
 2.43.0
 
