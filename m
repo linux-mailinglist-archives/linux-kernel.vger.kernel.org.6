@@ -1,263 +1,281 @@
-Return-Path: <linux-kernel+bounces-247746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F30492D3E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:11:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C32C92D3E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 328541C2144E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:11:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5108D2880B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A47194A45;
-	Wed, 10 Jul 2024 14:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B265193085;
+	Wed, 10 Jul 2024 14:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JAxcEy7C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LMEpsJTs"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4123419346A;
-	Wed, 10 Jul 2024 14:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7455D193453
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720620643; cv=none; b=eB26ueZXhR1YgwwSYu3DIO6q6AhZPiCbN+JVjk0pxC4GPcKWhxjnStqviyiHj3JDYK//Vg8x8dESNREkxBFs7U/auHVQZUZLKpjtbTXs6L+VUUd2Lpr6G8UzvNXwfx5ajdFfXViDEtFlMT8fNXdlVYZwRi2LZ565JvT/N4UVBu0=
+	t=1720620703; cv=none; b=PE8NBX67t1fl0X//6IFOLccX2OlVvFmbZLcgy8FaZBrtfm2MuaC/9M46oXM0KtdNhZMsbwkVEOXd1Kr4YTYMeAc2hk/87BSGHeOlvKkrOoulpaGWZUGjTvrfq4Ab85izMOjgIRxYsz+kyYW+9dq+7kkjDHjMWqJ/BFgJOTRWilc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720620643; c=relaxed/simple;
-	bh=nDTy8rPWM2cyZ0nmnNV1tC8bbKmApbzgWSzmCTAq4gw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gw+6SNtoMBkQRUv7FqEnX3i3YMY1Gj6LVkX22AXC6FjN5LXtJHgfL1GhusLIps/2355s0v8VgJ+vnQ3KsH/IwdIpxgs9bHMR07k+YDLk94hEiQPm7DRxal+vjsSQbjpYibkMrj0FcQJxML8IjXc2Sq9iHk+66jjRIZL7kxrMlLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JAxcEy7C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31FAFC32781;
-	Wed, 10 Jul 2024 14:10:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720620642;
-	bh=nDTy8rPWM2cyZ0nmnNV1tC8bbKmApbzgWSzmCTAq4gw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JAxcEy7CxmTqyvvy3ArzfYyP8035acIouQ67LSfrd3qEoUlreswixmuhOBvq9egi0
-	 OW40zZOrUQ+9rC51WW87KPZ188bp1YBpqP5I4HX0JPYn0f/flG9LblKRtlR6Rb7j+K
-	 fbt2+J1pECTgx9Ic0OvGqstXS4yDxgn0CSRu65fc=
-Date: Wed, 10 Jul 2024 16:10:40 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@redhat.com>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
-	daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2 02/10] rust: implement generic driver registration
-Message-ID: <2024071052-bunion-kinswoman-6577@gregkh>
-References: <20240618234025.15036-1-dakr@redhat.com>
- <20240618234025.15036-3-dakr@redhat.com>
- <2024062025-wrecking-utilize-30cf@gregkh>
- <ZnRjCnvtPBhEatt_@cassiopeiae>
+	s=arc-20240116; t=1720620703; c=relaxed/simple;
+	bh=M3NTlKufyjn+J1Tx+IElh5yRPH9Gd298RvqHaxfBu5w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J/X1ayITVgfoWDKHP37w04OD4wBZCulKOca10hM1L2dsvfBFBd1Z4fn8kH+Vd4eWzvjxaYzNSw6wOgLrQ+MjPWMMordPfrpkixk/4eaeryrmomncMHrfxtlYutxhAb5HonoHJUMq5e0+5cTKbQ1uK1aVq193x9vWuNLjj16/wt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LMEpsJTs; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3d9ddfbbc58so348939b6e.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:11:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720620699; x=1721225499; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mBHCfF+fRoODKJrxxIob/lIHbfhaheSYHsBiC/FGg6I=;
+        b=LMEpsJTsmyOnMM7XtgCz2vMnGb2EJl8UHKaBvcHxZAEmF320y/DjeJLni8kNYT3mq6
+         iJ4Wk2vGYeHQPTAnCOVinm+A1YwpzbnLzfVARkmto/KlLlx5ZvwNkqswMtu4NXr1tFim
+         vAFqfbqh/sk7XYrtn0Z/pAYJPHGalannw0mrTasTd60N84vBLDIjoKOrjs7CQ2yAZG+n
+         F/gaGGC0RLlVyCMTBiyUt8UsFsytkCidDbdA2fIjt6Jb36i9Ph+vAgeF3mCZFuD/EaZe
+         aCu3mudMw8vp1S2833+FNC7UZLCN1weC5OgpUF3Gh8c9uV1F1d44FXzzScng9NyEBO25
+         D+0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720620699; x=1721225499;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mBHCfF+fRoODKJrxxIob/lIHbfhaheSYHsBiC/FGg6I=;
+        b=aR0o2nqwPt72+T1S9uxmmLYy9XvrRT/BaChlMxpHvFxBk2nMRc4d7nRvFvrgxcWx7X
+         nepJqaoYg4xeQlhhpU4aLakQ8lO3pcp2gmTPcdvuqyDsBxSw1OfiZG+rLwb7qW6XnKqQ
+         he/MDmBKP1bMELaf14Eqsbtzl7JhuqACl+awtZqJgG8Ig3DLsRUdKuuVjLiDA6UTILt+
+         kDfXntj7ENGX2wZ0qoIFhRzt5RqzMIuKYBwsD9Da5R87AZ9Kms8UyLNNL021XqWpcVR1
+         TaRjmxV63oC6Q6PF0w7cuXFXpLMiOZX1vbTayzkCwRXWudOT6IiUHClL91XP6lCKubRe
+         LXAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2r5wwzUCdvFpFiFUnzKEjOxMKYW1ffX7S4oY3ODhUtusL96a48aBP3k2/VFBZpxqD4k8moCkV2JjBPKuJLJu6tg2ozLVUdDrGptXJ
+X-Gm-Message-State: AOJu0Yy3kE4f/YXPeq8uMaWdKi9tIorgHZdWdU560o4LoLQM6xSWV/Eh
+	FimbX06z2L3a44FSIVre7LOZD//d659Mxam49gCr9Q06GllYEbnJ1rCcPOXkHvTGnCpuUFTsbL/
+	Y9IXUlkIm4/rfO7djML4O3ZrSL79jIcdF4CFupw==
+X-Google-Smtp-Source: AGHT+IGGO+ZLAwaPKfnWP2SYubTBuh3R69ACSSxI1COqxyNqeSYnfTw1TktmrY/JAg7lP1gVC2AllArgIH2awn8ysXs=
+X-Received: by 2002:a05:6808:1306:b0:3d6:9c05:1aff with SMTP id
+ 5614622812f47-3d93beda13dmr7079147b6e.10.1720620699166; Wed, 10 Jul 2024
+ 07:11:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnRjCnvtPBhEatt_@cassiopeiae>
+References: <20240709110658.146853929@linuxfoundation.org>
+In-Reply-To: <20240709110658.146853929@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 10 Jul 2024 19:41:27 +0530
+Message-ID: <CA+G9fYvTZvjcWL1KgQcQKX1-qn-YANGnAmy3mcvgtjAK-t71hQ@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/139] 6.6.39-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 20, 2024 at 07:12:42PM +0200, Danilo Krummrich wrote:
-> On Thu, Jun 20, 2024 at 04:28:23PM +0200, Greg KH wrote:
-> > On Wed, Jun 19, 2024 at 01:39:48AM +0200, Danilo Krummrich wrote:
-> > > Implement the generic `Registration` type and the `DriverOps` trait.
-> > 
-> > I don't think this is needed, more below...
-> > 
-> > > The `Registration` structure is the common type that represents a driver
-> > > registration and is typically bound to the lifetime of a module. However,
-> > > it doesn't implement actual calls to the kernel's driver core to register
-> > > drivers itself.
-> > 
-> > But that's not what normally happens, more below...
-> 
-> I can't find below a paragraph that seems related to this, hence I reply here.
-> 
-> The above is just different wording for: A driver is typically registered in
-> module_init() and unregistered in module_exit().
-> 
-> Isn't that what happens normally?
+On Tue, 9 Jul 2024 at 16:42, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.39 release.
+> There are 139 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 11 Jul 2024 11:06:25 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.6.39-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Yes, but it's nothing we have ever used in the kernel before.  You are
-defining new terms in some places, and renaming existing ones in others,
-which is going to do nothing but confuse us all.
+[Please ignore older version report email]
+[Here is the latest one]
 
-I don't see why you need a "registration" structure here when no .c
-driver ever does.  You just have a module init/exit call and go from
-there.  Why not stick with that?
+Results from Linaro=E2=80=99s test farm.
+We have two major regressions.
 
-> > > Instead the `DriverOps` trait is provided to subsystems, which have to
-> > > implement `DriverOps::register` and `DrvierOps::unregister`. Subsystems
-> > > have to provide an implementation for both of those methods where the
-> > > subsystem specific variants to register / unregister a driver have to
-> > > implemented.
-> > 
-> > So you are saying this should be something that a "bus" would do?
-> > Please be explicit as to what you mean by "subsystem" here.
-> 
-> Yes, I agree it's more precise to say that this should be implemented by a bus
-> (e.g. PCI). I can reword this one.
+1)
+As I have reported on 6.9.9-rc1 the same kernel panic was noticed while
+running kunit tests [1] seen on 6.6.39-rc1.
 
-Wording matters.
+  BUG: KASAN: null-ptr-deref in _raw_spin_lock_irq+0xa4/0x158
 
-> > > For instance, the PCI subsystem would call __pci_register_driver() from
-> > > `DriverOps::register` and pci_unregister_driver() from
-> > > `DrvierOps::unregister`.
-> > 
-> > So this is a BusOps, or more in general, a "subsystem" if it's not a
-> > bus (i.e. it's a class).  Note, we used to use the term "subsystem" a
-> > very long time ago but got rid of them in the driver core, let's not
-> > bring it back unless we REALLY know we want it this time.
-> > 
-> > So why isn't this just a BusOps?
-> 
-> I think it's really about perspective. Generally speaking, when a driver is
-> registered it gets added to a bus through bus_add_driver(). Now, one could argue
-> that the "register" operation is a bus operation, since something gets
-> registered on the bus, but one could also argue that it's a driver operation,
-> since a driver is registered on something.
-> 
-> Consequently, I think it's neither wrong to call this one `BusOps` nor is it
-> wrong to call it `DriverOps`.
-> 
-> I still think `DriverOps` is more appropriate, since here we're looking at it
-> from the perspective of the driver.
+ [1] https://lore.kernel.org/stable/CA+G9fYsqkB4=3DpVZyELyj3YqUc9jXFfgNULsP=
+k9t8q-+P1w_G6A@mail.gmail.com/
 
-Stick with the same terms we have today please.  These are specific bus
-operations.  Some drivers implement multiple bus operations within them
-as they can handle multiple bus types.  Keep the same names we have
-today, it will save maintaining this for the next 40+ years easier.
+2)
+s390 build regressions [2]:
+--------
+arch/s390/include/asm/processor.h:311:11: error: expected ';' at end
+of declaration
+  311 |         psw_t psw __uninitialized;
+      |                  ^
+      |                  ;
 
-> In the end we call it as `driver.register()` instead of `bus.register()`. For
-> instance, in the PCI implementation of it, we call __pci_register_driver() from
-> `DriverOps::register`.
+ [2] https://storage.tuxsuite.com/public/linaro/lkft/builds/2j0Y8vJ0DjSyCxU=
+Fw4CFk1yTq9S/
 
-You are registering with a bus, stick with that term please.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-> > > +/// The [`DriverOps`] trait serves as generic interface for subsystems (e.g., PCI, Platform, Amba,
-> > > +/// etc.) to privide the corresponding subsystem specific implementation to register / unregister a
-> > > +/// driver of the particular type (`RegType`).
-> > > +///
-> > > +/// For instance, the PCI subsystem would set `RegType` to `bindings::pci_driver` and call
-> > > +/// `bindings::__pci_register_driver` from `DriverOps::register` and
-> > > +/// `bindings::pci_unregister_driver` from `DriverOps::unregister`.
-> > > +pub trait DriverOps {
-> > > +    /// The type that holds information about the registration. This is typically a struct defined
-> > > +    /// by the C portion of the kernel.
-> > > +    type RegType: Default;
-> > > +
-> > > +    /// Registers a driver.
-> > > +    ///
-> > > +    /// # Safety
-> > > +    ///
-> > > +    /// `reg` must point to valid, initialised, and writable memory. It may be modified by this
-> > > +    /// function to hold registration state.
-> > > +    ///
-> > > +    /// On success, `reg` must remain pinned and valid until the matching call to
-> > > +    /// [`DriverOps::unregister`].
-> > > +    fn register(
-> > > +        reg: &mut Self::RegType,
-> > > +        name: &'static CStr,
-> > > +        module: &'static ThisModule,
-> > > +    ) -> Result;
-> > > +
-> > > +    /// Unregisters a driver previously registered with [`DriverOps::register`].
-> > > +    ///
-> > > +    /// # Safety
-> > > +    ///
-> > > +    /// `reg` must point to valid writable memory, initialised by a previous successful call to
-> > > +    /// [`DriverOps::register`].
-> > > +    fn unregister(reg: &mut Self::RegType);
-> > > +}
-> > 
-> > So you are getting into what a bus wants/needs to support here, why is
-> > register/unregister the "big" things to be implemented first?  Why not
-> > just map the current register/unregister bus functions to a bus-specific
-> > trait for now?  And then, if you think it really should be generic, we
-> 
-> A bus specific trait would not add any value. The whole point if a trait is to
-> represent a generic interface. It basically describes the functionality we
-> expect from a certain category of types.
-> 
-> In this case we know that every driver can be registered and unregistered, hence
-> we can define a generic trait that every bus specific driver structure, e.g. PCI
-> driver, has to implement.
+## Build
+* kernel: 6.6.39-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 3be0ca2a17a0142c600526e9ec5676d797ad213e
+* git describe: v6.6.38-140-g3be0ca2a17a0
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.3=
+8-140-g3be0ca2a17a0
 
-So this is a generic trait that all drivers of all bus types must do?
-Ick, no, don't make this so generic it's impossible to unwind.
+## Test Regressions (compared to v6.6.35-193-g580e509ea134)
 
-Make things specific FIRST.  Then implement a second one.  Then a third
-one.  And THEN see what you can make generic, before then it's going to
-be hard and a mess.
+* qemu-armv5, boot
+  - clang-18-multi_v5_defconfig-kunit
+  - clang-nightly-multi_v5_defconfig-kunit
+  - gcc-13-multi_v5_defconfig-kunit
 
-Stick with specifics first, you can always make them more generic later.
+* qemu-i386, boot
+  - gcc-13-lkftconfig-kunit
 
-> > can make it that way then.  I don't see why this needs to be generic now
-> > as you aren't implementing a bus in rust at this point in time, right?
-> 
-> With the above tait (or interface) we now can have a generic `Registration` that
-> calls `T::register` and `T::unregister` and works for all driver types (PCI,
-> platform, etc.). Otherwise we'd need a `pci::Registration`, a
-> `platform::Registration` etc. and copy-paste the below code for all of them.
+* s390, build
+  - clang-18-allnoconfig
+  - clang-18-defconfig
+  - clang-18-tinyconfig
+  - clang-nightly-allnoconfig
+  - clang-nightly-defconfig
+  - clang-nightly-tinyconfig
+  - gcc-13-allnoconfig
+  - gcc-13-defconfig
+  - gcc-13-tinyconfig
+  - gcc-8-allnoconfig
+  - gcc-8-defconfig-fe40093d
+  - gcc-8-tinyconfig
 
-Good, copy/paste to start with and then if it gets messy on the third
-implementation, THEN we can think about unifying them.
 
-I'm going to argue that registering with a pci bus is VERY different
-than registering with the platform bus, or a USB bus, which, if you look
-at the kernel today, is why those are different functions!  Only in the
-driver core is the unified portions.  Don't attempt to make the rust
-code generic and then have it split back out, and THEN have it become
-generic afterward.  That's an odd way to do things, please don't.
+## Metric Regressions (compared to v6.6.35-193-g580e509ea134)
 
-> > > +
-> > > +/// A [`Registration`] is a generic type that represents the registration of some driver type (e.g.
-> > > +/// `bindings::pci_driver`). Therefore a [`Registration`] is initialized with some type that
-> > > +/// implements the [`DriverOps`] trait, such that the generic `T::register` and `T::unregister`
-> > > +/// calls result in the subsystem specific registration calls.
-> > > +///
-> > > +///Once the `Registration` structure is dropped, the driver is unregistered.
-> > > +#[pin_data(PinnedDrop)]
-> > > +pub struct Registration<T: DriverOps> {
-> > > +    #[pin]
-> > > +    reg: Opaque<T::RegType>,
-> > > +}
-> > > +
-> > > +// SAFETY: `Registration` has no fields or methods accessible via `&Registration`, so it is safe to
-> > > +// share references to it with multiple threads as nothing can be done.
-> > > +unsafe impl<T: DriverOps> Sync for Registration<T> {}
-> > > +
-> > > +// SAFETY: Both registration and unregistration are implemented in C and safe to be performed from
-> > > +// any thread, so `Registration` is `Send`.
-> > > +unsafe impl<T: DriverOps> Send for Registration<T> {}
-> > > +
-> > > +impl<T: DriverOps> Registration<T> {
-> > > +    /// Creates a new instance of the registration object.
-> > > +    pub fn new(name: &'static CStr, module: &'static ThisModule) -> impl PinInit<Self, Error> {
-> > 
-> > Drivers have modules, not busses.  So you are registering a driver with
-> > a bus here, it's not something that a driver itself implements as you
-> > have named here.
-> 
-> We are registering a driver on bus here, see the below `T::register` call, this
-> one ends up in __pci_register_driver() or __platform_driver_register(), etc. Hence
-> we need the module and the module name.
+## Test Fixes (compared to v6.6.35-193-g580e509ea134)
 
-Again, let's be specific first, make things generic later.  Why do you
-need/want a trait at all when you have only 1 bus type in the whole
-kernel?
+## Metric Fixes (compared to v6.6.35-193-g580e509ea134)
 
-Keep it simple, make it so obvious that I would be foolish to reject it.
-Right now, it's so complex and generic that I feel foolish accepting it.
+## Test result summary
+total: 249497, pass: 213701, fail: 5004, skip: 30287, xfail: 505
 
-thanks,
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 127 total, 127 passed, 0 failed
+* arm64: 36 total, 36 passed, 0 failed
+* i386: 27 total, 27 passed, 0 failed
+* mips: 24 total, 24 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 34 total, 34 passed, 0 failed
+* riscv: 17 total, 17 passed, 0 failed
+* s390: 12 total, 0 passed, 12 failed
 
-greg k-h
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 31 total, 31 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
