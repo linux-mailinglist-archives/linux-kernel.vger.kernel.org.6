@@ -1,133 +1,104 @@
-Return-Path: <linux-kernel+bounces-247323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7161792CE05
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:16:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3AEA92CE09
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:17:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCEB2284BDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:16:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D0771C22FB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604FD18FA08;
-	Wed, 10 Jul 2024 09:16:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B90A18FA09;
+	Wed, 10 Jul 2024 09:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="betFNRsC"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="abljnqDk"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351E959160;
-	Wed, 10 Jul 2024 09:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48DC12C499;
+	Wed, 10 Jul 2024 09:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720603001; cv=none; b=PQhQzm31XsVrMW5Uk0QALCKnzJrbfh6ls+vQJZPgHJhd6RIPcC7p9xJeZVypB2QXKikJ9is/AoY3I26iOGzIOEvoAJW6aUybUb0wUSBDwXmHbRXyUJaDyMZYEdFLXv85sfasdoJr/nKDqZIa0azHU4/4PEpLF6dNm0/3XsPKWts=
+	t=1720603034; cv=none; b=luA4VuRum04C2N/xdU8QE2omMeMu6Hsn4Ct7/OzwTLvPVLKbXlFurJdy2k1sRaucbB4LQc4wUiE1AKA1nDzaFJ2l4opa54OSD+p8OWoY/BY/1pe9iFf3kwI3IqK9Pa2BEti+364WzHESUQZn0vDUdtJOMrjD0TCZAr2NjASz0Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720603001; c=relaxed/simple;
-	bh=bA7KVUJvi38Y0Hh2xT5n55OKZxlKLiORsdhJCsdZu1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TIcn3yZP5zyeAIDJtJ+fe2tedgAtOLAIcPTGFYVMVeu8S6XlK8sC3ywl64pthjXL+iQzC8TVi0BI0CMbS3W9EjEo1Aq0wM8VUzhHbW4DWdUvLpHXO/f8E6mYaAAnjHdoUIxLgO/w6UW7opgQ+5PrlPbO+ABJvR9z0jUWFUx1DgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=betFNRsC; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JPliClW6JnRbEV8cOEjjeV2jC/W7ip0o4p0b+/xDw58=; b=betFNRsCwlkGFJU2MXHbcmoV4s
-	r0bDVakb5qP7xg5LA+lhYSSN4QOhozdWpfUizdVih1PhlY/R/oDgBp5QM9dZnnlKYfiXsx3OGQu0y
-	SvO1oOYonOu8Q3WWB9xcaiZiWjTh3b6a1Dzlssi0KHiDNeioRtxtHe5UjPZMD86dMHBWDFeqKbzoI
-	GGc0V8SZobTeq9U5Rade69IuE8V4oQ2RfgaZv8egsQfDaoZf2IFXNJobiW2mSmHEUA8CPzOFHxMSU
-	aI6g0t73ScDyXPTzufSIsbh14WeJAanwZQLl/1EgHlf59y0Ynxpm1arImtRR6Z5i4i6HCRQLAZiGK
-	WforoHiw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sRTRA-00000000sq2-2ET2;
-	Wed, 10 Jul 2024 09:16:32 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B2F87300694; Wed, 10 Jul 2024 11:16:31 +0200 (CEST)
-Date: Wed, 10 Jul 2024 11:16:31 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org,
-	andrii@kernel.org, linux-kernel@vger.kernel.org,
-	rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org,
-	clm@meta.com, bpf <bpf@vger.kernel.org>
-Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
-Message-ID: <20240710091631.GT27299@noisy.programming.kicks-ass.net>
-References: <20240708091241.544262971@infradead.org>
- <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
- <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
- <20240709090153.GF27299@noisy.programming.kicks-ass.net>
- <91d37ad3-137b-4feb-8154-4deaa4b11dc3@paulmck-laptop>
- <20240709142943.GL27299@noisy.programming.kicks-ass.net>
- <Zo1hBFS7c_J-Yx-7@casper.infradead.org>
+	s=arc-20240116; t=1720603034; c=relaxed/simple;
+	bh=1BIbj8gqWvAK9dy/9EE/67KCD5eryOi6uFcCDMa2RXQ=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=k9t1oeiLMiAK/DlAStRDQKuXfqhCX7bV8zV8anAwQpN+gMLP4NyGBpzRv7J7rM9hTYtEofgTlBx+4ZPqIHaXLh0P5hmFag94DFoEC7mzLFXdH0H5SvhJsGoNfc4befzBJokSRlrH3eaIr0IiE8mz/wyVBc7T7eZYwddjy0gmiyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=abljnqDk; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720602999; x=1721207799; i=markus.elfring@web.de;
+	bh=1BIbj8gqWvAK9dy/9EE/67KCD5eryOi6uFcCDMa2RXQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=abljnqDka9y3oruhMVfd/xyLXfDi3A0jHi7CG0tqKrZTx5vNMeli3aqIAsWn4Doa
+	 fur/AJIbQHaFyFHRklhycOqNciAzisQMYT0DuicxZGhoq7pyqwMab40SOHHDJzNX6
+	 uyxffNj3t4niADC348s6SMAZP1f3sIjxeYi9VuSGm//loC0K0wz4hwE0ok/1LxISx
+	 P68n8rZ69wZKOsPnv1TJ5qtnhzWVIq2paHKHTBSVD5ONZf0dS2RejbMKhErmicXdS
+	 yVR2aO989PtP4e9JWE+dXqR3Qw5AOodhlaOB8Y/PcQ0nI7rhXuj8v6kjm5X9L50W1
+	 Os/kZBJt3MyyTF0pqA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MTOlk-1soYBv3KTk-00Ja79; Wed, 10
+ Jul 2024 11:16:39 +0200
+Message-ID: <24d6ddab-c4aa-49d6-899a-1dd3a3e1bd20@web.de>
+Date: Wed, 10 Jul 2024 11:16:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zo1hBFS7c_J-Yx-7@casper.infradead.org>
+User-Agent: Mozilla Thunderbird
+To: make24@iscas.ac.cn, linux-edac@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>,
+ James Morse <james.morse@arm.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Robert Richter <rric@kernel.org>,
+ Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>,
+ Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+ Tony Luck <tony.luck@intel.com>, Wei Liu <wei.liu@kernel.org>
+References: <20240710010746.1741228-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH v2] EDAC/versal: Fix possible null pointer dereference in
+ emif_get_id()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240710010746.1741228-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:XuZm9nktWDHsIpAvNrlbnIGr2boEbuB71vnR11x74ixZmXVcn14
+ ql0WtrRZ0qz4SUgKLyDSsbXltJ2b9NbsWlBdmpPz/3A8jncGVPaz1u8bjQCWonjx9bx57cG
+ +Er55b3x+4ZYrJIcKEQfiG4mG+K7BCV5Hi64WV6Bu0IIAyd2xKyx8tMODwOhyXD1GwZMNG8
+ OvjawnHFyiVuPw8/CqckA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ZsQE4SVYc5Q=;AFGl7MSwGr4BvvX48U7lXdNaH/h
+ RcphXqgX1XXjKqw/4vwuz3AI4GyGjZyREPGN93EQR02A5nWWUyRmJL/IhkVBnKnC6z9Po+d6a
+ VOqv1AyozT8eIjX44HHoIKqzV1dhXB0AXVk2OoBqY7l5rzeXh9nXaQ98oh9tMgVj4703Z1JSF
+ Wunboj28Jnj3sKd7DLD0amqpktJptnkF8SOscxQq+9lBk41OtjWTiZplJVcwVewyKq/r1Ylz1
+ j9x7ybLDsDFZDKLwIEs7VYWdqDU0SYtdDolld++BTkmawKLLTj3LtH672qd6EqUr/GQTEc03z
+ udjm5dK3pDqV+0uQCCvuS6zJgrO4qbuf3ZuKXbTW2m3FmT+5WYwHBLLv+eP/htFNLGYgDupjb
+ Qr1b1Z6OgGlNJjE288IjLnAg48AqTldrXz/rJmVF/fzngXlgMkvItT0WxCaUnTh4GMIuGEBGQ
+ Jj3SdnC0216tWhmEdNTbt8pSujXbknqvWG6lvXk9T072+UVz42+5+JSb25op9uS5la8YgPtz7
+ DNxnNnrYOrKBy14tQLdoa9lqdvKzAEXexNS8FDgWTXcH7V83WzLl1mZToBxsfiEEbLBuln38k
+ SWSeafQRzb5J+WAxY1kQ4IN0sAWqgy1YTo9fpkF3oYfBQDcJgiy37AClMX2RhzAhGWJUu8HWh
+ b35MGHsx440fnwE8C1PVTWhUvvn+23X/Qcti2aBxzoqliUnmNSUjkQmGZdrYXbZnLgiBspTOL
+ GVIU76kUXCNcBzRN5Kh4ELl1q4BntIRr1608iRXgw6tQ+rKuPUueEZDqbq9BovNDiD7uoX7b6
+ /XffhxYSVr5uDA+kfcwHom/w==
 
-On Tue, Jul 09, 2024 at 05:10:44PM +0100, Matthew Wilcox wrote:
+=E2=80=A6
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 
-> Probably best to start with lock_vma_under_rcu() in mm/memory.c.
+Do you care for the applicability of the available information
+according to this tag?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc7#n398
 
-So close and yet so far :/ 
-
-> > > > Specifically, how feasible would it be to get a simple RCU based
-> > > > find_vma() version sorted these days?
-> > > 
-> > > Liam's and Willy's Maple Tree work, combined with Suren's per-VMA locking
-> > > combined with some of Vlastimil's slab work is pushing in that direction.
-> > > I believe that things are getting pretty close.
-> > 
-> > So I fundamentally do not believe in per-VMA locking. Specifically for
-> > this case that would be trading one hot line for another. I tried
-> > telling people that, but it doesn't seem to stick :/
-> 
-> SRCU also had its own performance problems, so we've got problems one
-> way or the other.  The per-VMA lock probably doesn't work quite the way
-> you think it does, but it absoutely can be a hot cacheline.
-> 
-> I did propose a store-free variant at LSFMM 2022 and again at 2023,
-> but was voted down.  https://lwn.net/Articles/932298/
-
-That seems to be lacking much details. Anyway, page-tables are sorta RCU
-freed -- per GUP fast requirements. Making it actually RCU isn't
-hard, just increases the delay.
-
-> I don't think the door is completely closed to a migration to that,
-> but it's a harder sell than what we've got.  Of course, data helps ...
-
-Current 'problem' is a heavily multi-threaded application using uprobes.
-Executable is typically one VMA (per DSO) and all the probes will live
-in that one VMA. Then have all the CPUs concurrently hit probes, and
-they're all hammering the same VMA in order to translate
-{mm,vaddr}->{inode,offset}.
-
-After fixing a ton of uprobe things, Andrii is seeing 45% of CPU time
-spend in mmap_rwsem:
-
-  https://lkml.kernel.org/r/CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com
-
-Given it's all typically one VMA, anything per VMA is not going to help
-much.
-
-Anyway, back to this PER_VMA_LOCK code, it took me a fair while to
-digest because it lacks a coherent comment. It took me extra time
-because I assumed (silly me) that _seq would mean an actual sequence
-count.
-
-If it were an actual sequence count, I could make it work, but sadly,
-not. Also, vma_end_write() seems to be missing :-( If anything it could
-be used to lockdep annotate the thing.
-
-Mooo.. I need to stare more at this to see if perhaps it can be made to
-work, but so far, no joy :/
+Regards,
+Markus
 
