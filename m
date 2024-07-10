@@ -1,224 +1,250 @@
-Return-Path: <linux-kernel+bounces-246944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5251992C937
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:32:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 929CD92C939
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C579282109
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:32:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D98332815C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34A622F03;
-	Wed, 10 Jul 2024 03:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A87381AD;
+	Wed, 10 Jul 2024 03:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lVpL43Kl"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="wUzN9R2V"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7522E15CB
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 03:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE03EC2D6;
+	Wed, 10 Jul 2024 03:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720582354; cv=none; b=ecuKMB2t7a4ZgTUrQ9s5VDYmH6A0X/GZ6r9J4zMgGSVX/I4h+9U44EBOIqbuPooUppYiZ5316aZK+cPxRP5s6szax+8hZXYh1VMzxm1WhfP5a3xc/xaI3vS89DIl6DREMynrBDO7N/frSnoGNr163XAOxy0i9L6lTWpUa/SHY+k=
+	t=1720582408; cv=none; b=lJqpd8k+B6O/TfP+XHphN7eQjhlw65ToxlwfxlcIIErbVyYxi2jRWdrRthFv4f+Ti1gR35CBJYmDZZKj5Rtjnzgf8bapG+q/eRuekdIG2GQgztlySHGhoo1HAPQXaeupHrcPIHqwJiFmH4eK/goFuIdCQGYhg4wPOczJUF8V+9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720582354; c=relaxed/simple;
-	bh=ciO9GdiFIL6HbBmJjPFekxtrSBzQtFocV6TLVRpaZ4I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O4tuOaZo4dxXljeEeEpngXmgLs46aElzgJqbvlmOgb7TjXkvylcBOYg9Tf2VZrFiIgCbem/c+0dr33q+f47c8rBxhA/L/menlduKJYg6DBaaKr2+jNHIY939q9N4HIajNdmGpxnBu30tIzIUduD2o8TDkKFHuEiS8HKzs6zcVwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lVpL43Kl; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fbc09ef46aso8838115ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 20:32:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720582353; x=1721187153; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xQVH0SfMzB2fGcavBeBUmXLxwFGQclxpF5/YP0r+ic0=;
-        b=lVpL43KlncNdkDLRyJ84vrJAZ4BZ+7Hu7pjY+NLoC/LvuXtpfFR+zTqpvMVc4pfFlL
-         8UQ1IKgCKOKlHq4jYEmh073fA/t+Fa2juwkF9d14Skb9iXjmIVq+O4uQbN2zYCby+5MW
-         HHfVJ2YWwlBtGhlb2N/7u6Tr/3+ctp/r3KnPE8hf4Uanm3Rckf5+5gjhfb6zLf6GqKg8
-         YXLq9gPhKB9i2HwPMsAmkAbC8n7abNUF2BAKIZFiu5Fb3KEDffelJtgMIdlxAzNg1N5J
-         zIAUsmZ9DQC1USJZHo+FZnSbLx4ohZ+8zTZ8W2HRgdRdH9ErHNXZNDKuRws2/B89JvT1
-         t8uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720582353; x=1721187153;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xQVH0SfMzB2fGcavBeBUmXLxwFGQclxpF5/YP0r+ic0=;
-        b=MEksdP19COF1YwUZ6Y9pRTHkIdWpm+o19TSNxKjejgtiJ8wqayxlP5JSJv9TuOnBAI
-         nFfpDmjTzD6uqa3rXZVeRErc5J0PeXGSEscLGesgVZb6B/VoYA2WK7YLrMqAgL4P5Ko5
-         IFH1y/T239Cxa01EiBfjiIQRf79P1Gw5mAYijw0BQtRObifyAQNe3iXQJQ4updWBvpMm
-         n+H2qC8ianOkZ6scXAji5J/ZrV28N7FtwcqqvimWUn1ck+qx5JNWhzLHlu4w1OEOye5Y
-         ud6oz+bIMDZKrRU1cQ79P0yI1lwIjJMlaYB64y48eaN4nFLRrciRgQ0ojrCL7+BakZMw
-         7Nxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNsLRBL/ukdP7CjAFkVnZffmcdu2O4K6BerV7KFl8OJuhbGKrZyCH6u0WmTn4aKUAyNb82nF1NfBsYnnW3aMB72ElDUwRL1LXQFWG7
-X-Gm-Message-State: AOJu0YzmDI1vu4OmfPqlS/FzeggkYi/N2FlFZF2H+Pwr7Nm0CWOOsyoA
-	yqmycNnAjpMJugxGhy/0emmuCXLef+YbEZLr6+jPsbbhK9o3HQZw
-X-Google-Smtp-Source: AGHT+IHZiB3/+XMW56ClRvapdT7LlIo/fbLLW8refL2J+bDXaexjAPms3UOkv0Tm9mcGXkZb9O3ECA==
-X-Received: by 2002:a05:6a21:328a:b0:1c0:f080:ed51 with SMTP id adf61e73a8af0-1c29820388dmr5084332637.2.1720582352685;
-        Tue, 09 Jul 2024 20:32:32 -0700 (PDT)
-Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a122a1sm23946845ad.45.2024.07.09.20.32.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 20:32:32 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: akpm@linux-foundation.org
-Cc: baohua@kernel.org,
-	david@redhat.com,
-	justinjiang@vivo.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	opensource.kernel@vivo.com,
-	willy@infradead.org
-Subject: Re: [PATCH v7] mm: shrink skip folio mapped by an exiting process
-Date: Wed, 10 Jul 2024 15:32:12 +1200
-Message-Id: <20240710033212.36497-1-21cnbao@gmail.com>
+	s=arc-20240116; t=1720582408; c=relaxed/simple;
+	bh=Lb1cngF15A+UjScDP8U6+9XAOxmhvHYZPfYZxnNez1U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q9C7nyVDKQbfKd7LD4T9EdfhVIbbijF1T8OQ+102o3UazuWw/N8PduLY8zPbjQ+e94qRlVOsNT+9S3HYm5zuDEm1AYXi4EMBvfnh5DGGsRoXkhRQ0d8eORgf0AqYFWqeR5xdAjGdEzEa34hJRJFRsTLF4ZtvHZgIOHFur3lNA+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=wUzN9R2V; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46A3WgndE1585807, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1720582362; bh=Lb1cngF15A+UjScDP8U6+9XAOxmhvHYZPfYZxnNez1U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=wUzN9R2V0Q56TtfXxStDKKdCI47GaHLbGDX91YR3OOk9msJ8n/YgfYgV1r3hHujnk
+	 lyluz+C9Bo13rgc6ABoccXAqyOdf/1s/PcftcerBFnGswDtnzi2W/ghnU2UjJ2qkXj
+	 nT0ZjmkHhOfVe6ekhz9/Wtjt7ktgXCQmez/7nV5cUgySQ7MgeFDdL+FKVDq+PRZYiS
+	 wnEcEhJC8uYV5SAqnxInXZINtgk0ADpu2qezjFlxEUbGNMlKizLdrR66rNGNFXcCiV
+	 9oreB5uCQ/3wE1jkU7+Wmd6bBjkySNHnPYgvdGEB6IHkfFaNUKlHYB250KJ+ECmEoJ
+	 DfFg2eqqMgvtg==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46A3WgndE1585807
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 10 Jul 2024 11:32:42 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 10 Jul 2024 11:32:43 +0800
+Received: from RTDOMAIN (172.21.210.68) by RTEXMBS04.realtek.com.tw
+ (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Wed, 10 Jul
+ 2024 11:32:42 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: <kuba@kernel.org>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <andrew@lunn.ch>, <jiri@resnulli.us>, <horms@kernel.org>,
+        <rkannoth@marvell.com>, <jdamato@fastly.com>, <pkshih@realtek.com>,
+        <larry.chiu@realtek.com>, "Justin
+ Lai" <justinlai0215@realtek.com>
+Subject: [PATCH net-next v23 00/13] Add Realtek automotive PCIe driver
+Date: Wed, 10 Jul 2024 11:32:21 +0800
+Message-ID: <20240710033234.26868-1-justinlai0215@realtek.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240709142312.372b20d49c6a97ecd2cd9904@linux-foundation.org>
-References: <20240709142312.372b20d49c6a97ecd2cd9904@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTEXH36505.realtek.com.tw (172.21.6.25) To
+ RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-On Wed, Jul 10, 2024 at 9:23 AM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Tue,  9 Jul 2024 20:31:15 +0800 Zhiguo Jiang <justinjiang@vivo.com> wrote:
->
-> > The releasing process of the non-shared anonymous folio mapped solely by
-> > an exiting process may go through two flows: 1) the anonymous folio is
-> > firstly is swaped-out into swapspace and transformed into a swp_entry
-> > in shrink_folio_list; 2) then the swp_entry is released in the process
-> > exiting flow. This will result in the high cpu load of releasing a
-> > non-shared anonymous folio mapped solely by an exiting process.
-> >
-> > When the low system memory and the exiting process exist at the same
-> > time, it will be likely to happen, because the non-shared anonymous
-> > folio mapped solely by an exiting process may be reclaimed by
-> > shrink_folio_list.
-> >
-> > This patch is that shrink skips the non-shared anonymous folio solely
-> > mapped by an exting process and this folio is only released directly in
-> > the process exiting flow, which will save swap-out time and alleviate
-> > the load of the process exiting.
->
-> It would be helpful to provide some before-and-after runtime
-> measurements, please.  It's a performance optimization so please let's
-> see what effect it has.
+This series includes adding realtek automotive ethernet driver
+and adding rtase ethernet driver entry in MAINTAINERS file.
 
-Hi Andrew,
+This ethernet device driver for the PCIe interface of
+Realtek Automotive Ethernet Switch,applicable to
+RTL9054, RTL9068, RTL9072, RTL9075, RTL9068, RTL9071.
 
-This was something I was curious about too, so I created a small test program
-that allocates and continuously writes to 256MB of memory. Using QEMU, I set
-up a small machine with only 300MB of RAM to trigger kswapd.
+v1 -> v2:
+- Remove redundent debug message.
+- Modify coding rule.
+- Remove other function codes not related to netdev.
 
-qemu-system-aarch64 -M virt,gic-version=3,mte=off -nographic \
- -smp cpus=4 -cpu max \
- -m 300M -kernel arch/arm64/boot/Image
- 
-The test program will be randomly terminated by its subprocess to trigger
-the use case of this patch.
+v2 -> v3:
+- Remove SR-IOV function - We will add the SR-IOV function together when
+uploading the vf driver in the future.
+- Remove other unnecessary code and macro.
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <time.h>
-#include <signal.h>
+v3 -> v4:
+- Remove function prototype - Our driver does not use recursion, so we
+have reordered the code and removed the function prototypes.
+- Define macro precisely - Improve macro code readability to make the
+source code cleaner.
 
-#define MEMORY_SIZE (256 * 1024 * 1024)
+v4 -> v5:
+- Modify ethtool function - Remove some unnecessary code.
+- Don't use inline function - Let the compiler decide.
 
-unsigned char *memory;
+v5 -> v6:
+- Some old macro definitions have been removed and replaced with the
+lastest usage.
+- Replace s32 with int to ensure consistency.
+- Clearly point out the objects of the service and remove unnecessary
+struct.
 
-void allocate_and_write_memory()
-{
-    memory = (unsigned char *)malloc(MEMORY_SIZE);
-    if (memory == NULL) {
-        perror("malloc");
-        exit(EXIT_FAILURE);
-    }
+v6 -> v7:
+- Split this driver into multiple patches.
+- Reorganize this driver code and remove redundant code to make this
+driver more concise.
 
-    while (1)
-        memset(memory, 0x11, MEMORY_SIZE);
-}
+v7 -> v8:
+- Add the function to calculate time mitigation and the function to
+calculate packet number mitigation. Users can use these two functions
+to calculate the reg value that needs to be set for the mitigation value
+they want to set.
+- This device is usually used in automotive embedded systems. The page
+pool api will use more memory in receiving packets and requires more
+verification, so we currently do not plan to use it in this patch.
 
-int main()
-{
-    pid_t pid;
-    srand(time(NULL));
+v8 -> v9:
+- Declare functions that are not extern as static functions and increase
+the size of the character array named name in the rtase_int_vector struct
+to correct the build warning noticed by the kernel test robot.
 
-    pid = fork();
+v9 -> v10:
+- Currently we change to use the page pool api. However, when we allocate
+more than one page to an rx buffer, it will cause system errors
+in some cases. Therefore, we set the rx buffer to fixed size with 3776
+(PAGE_SIZE - SKB_DATA_ALIGN(sizeof(skb_shared_info) )), and the maximum
+value of mtu is set to 3754(rx buffer size - VLAN_ETH_HLEN - ETH_FCS_LEN).
+- When ndo_tx_timeout is called, it will dump some device information,
+which can be used for debugging.
+- When the mtu is greater than 1500, the device supports checksums
+but not TSO.
+- Fix compiler warnning.
 
-    if (pid < 0) {
-        perror("fork");
-        exit(EXIT_FAILURE);
-    }
+v10 -> v11:
+- Added error handling of rtase_init_ring().
+- Modify the error related to asymmetric pause in rtase_get_settings.
+- Fix compiler error.
 
-    if (pid == 0) {
-        int delay = (rand() % 10000) + 10000;
-        usleep(delay * 1000);
+v11 -> v12:
+- Use pm_sleep_ptr and related macros.
+- Remove multicast filter limit.
+- Remove VLAN support and CBS offload functions.
+- Remove redundent code.
+- Fix compiler warnning.
 
-	/* kill parent when it is busy on swapping */
-        kill(getppid(), SIGKILL);
-        _exit(0);
-    } else {
-        allocate_and_write_memory();
+v12 -> v13:
+- Fixed the compiler warning of unuse rtase_suspend() and rtase_resume()
+when there is no define CONFIG_PM_SLEEP.
 
-        wait(NULL);
+v13 -> v14:
+- Remove unuse include.
+- call eth_hw_addr_random() to generate random MAC and set device flag
+- use pci_enable_msix_exact() instead of pci_enable_msix_range()
+- If dev->dma_mask is non-NULL, dma_set_mask_and_coherent with a 64-bit
+mask will never fail, so remove the part that determines the 32-bit mask.
+- set dev->pcpu_stat_type before register_netdev() and core will allocate
+stats.
+- call NAPI instance at the right location
 
-        free(memory);
-    }
+v14 -> v15:
+- In rtase_open, when the request interrupt fails, all request interrupts
+are freed.
+- When calling netif_device_detach, there is no need to call
+netif_stop_queue.
+- Call netif_tx_disable() instead of stop_queue(), it takes the tx lock so
+there is no need to worry about the packets being transmitted.
+- In rtase_tx_handler, napi budget is no longer used, but a customized
+tx budget is used.
+- Use the start / stop macros from include/net/netdev_queues.h.
+- Remove redundent code.
 
-    return 0;
-}
+v15 -> v16:
+- Re-upload v15 patch set
 
-I tracked the number of folios that could be redundantly
-swapped out by adding a simple counter as shown below:
+v16 -> v17:
+- Prefix the names of some rtase-specific macros, structs, and enums.
+- Fix the abnormal problem when returning page_pool resources.
 
-@@ -879,6 +880,9 @@ static bool folio_referenced_one(struct folio *folio,
-                    check_stable_address_space(vma->vm_mm)) &&
-                    folio_test_swapbacked(folio) &&
-                    !folio_likely_mapped_shared(folio)) {
-+                       static long i, size;
-+                       size += folio_size(folio);
-+                       pr_err("index: %d skipped folio:%lx total size:%d\n", i++, (unsigned long)folio, size);
-                        pra->referenced = -1;
-                        page_vma_mapped_walk_done(&pvmw);
-                        return false;
+v17 -> v18:
+- Limit the width of each line to 80 colums.
+- Use reverse xmas tree order.
+- Modify the error handling of rtase_alloc_msix and rtase_alloc_interrupt.
 
+v18 -> v19:
+- Use dma_wmb() instead of wmb() to ensure the order of access
+instructions for a memory shared by DMA and CPU.
+- Add error message when allocate dma memory fails.
+- Add .get_eth_mac_stats function to report hardware information.
+- Remove .get_ethtool_stats function.
+- In rtase_tx_csum, when the packet is not ipv6 or ipv4, a warning will
+no longer be issued.
 
-This is what I have observed:
+v19 -> v20:
+- Modify the description of switch architecture.
 
-/ # /home/barry/develop/linux/skip_swap_out_test
-[   82.925645] index: 0 skipped folio:fffffdffc0425400 total size:65536
-[   82.925960] index: 1 skipped folio:fffffdffc0425800 total size:131072
-[   82.927524] index: 2 skipped folio:fffffdffc0425c00 total size:196608
-[   82.928649] index: 3 skipped folio:fffffdffc0426000 total size:262144
-[   82.929383] index: 4 skipped folio:fffffdffc0426400 total size:327680
-[   82.929995] index: 5 skipped folio:fffffdffc0426800 total size:393216
-...
-[   88.469130] index: 6112 skipped folio:fffffdffc0390080 total size:97230848
-[   88.469966] index: 6113 skipped folio:fffffdffc038d000 total size:97296384
-[   89.023414] index: 6114 skipped folio:fffffdffc0366cc0 total size:97300480
+v20 -> v21:
+- Remove the 16b packet statistics and 32b byte statistics report.
+- Remove all parts that use struct net_device_stats stats, and instead
+store the necessary counter fields in struct rtase_private.
+- Modify the handling method of allocation failure in rtase_alloc_desc().
+- Remove redundant conditionals and parentheses.
+- Keep the message in the single line.
+- Assign the required feature to dev->feature and dev->hw_feature at once.
+- Single statement does not need to use braces.
 
-I observed that this patch effectively skipped 6114 folios (either 4KB or 64KB
-mTHP), potentially reducing the swap-out by up to 92MB (97,300,480 bytes) during
-the process exit.
+v21 -> v22:
+- Fix the warning when building the driver.
 
-Despite the numerous mistakes Zhiguo made in sending this patch, it is still
-quite valuable. Please consider pulling his v9 into the mm tree for testing.
+v22 -> v23:
+- Remove the execute bit setting.
 
-Thanks
-Barry
+Justin Lai (13):
+  rtase: Add support for a pci table in this module
+  rtase: Implement the .ndo_open function
+  rtase: Implement the rtase_down function
+  rtase: Implement the interrupt routine and rtase_poll
+  rtase: Implement hardware configuration function
+  rtase: Implement .ndo_start_xmit function
+  rtase: Implement a function to receive packets
+  rtase: Implement net_device_ops
+  rtase: Implement pci_driver suspend and resume function
+  rtase: Implement ethtool function
+  rtase: Add a Makefile in the rtase folder
+  realtek: Update the Makefile and Kconfig in the realtek folder
+  MAINTAINERS: Add the rtase ethernet driver entry
+
+ MAINTAINERS                                   |    7 +
+ drivers/net/ethernet/realtek/Kconfig          |   19 +
+ drivers/net/ethernet/realtek/Makefile         |    1 +
+ drivers/net/ethernet/realtek/rtase/Makefile   |   10 +
+ drivers/net/ethernet/realtek/rtase/rtase.h    |  338 +++
+ .../net/ethernet/realtek/rtase/rtase_main.c   | 2340 +++++++++++++++++
+ 6 files changed, 2715 insertions(+)
+ create mode 100644 drivers/net/ethernet/realtek/rtase/Makefile
+ create mode 100644 drivers/net/ethernet/realtek/rtase/rtase.h
+ create mode 100644 drivers/net/ethernet/realtek/rtase/rtase_main.c
+
+-- 
+2.34.1
+
 
