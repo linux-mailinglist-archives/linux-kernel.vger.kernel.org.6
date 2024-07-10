@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-248423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F8C792DD00
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:46:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C091C92DD08
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 446691C22408
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:46:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76C30286805
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF7F16CD39;
-	Wed, 10 Jul 2024 23:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB3416D9A0;
+	Wed, 10 Jul 2024 23:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Yt+IaSSB"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gDXVRsCx"
 Received: from mail-ua1-f73.google.com (mail-ua1-f73.google.com [209.85.222.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A683F16C42C
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FEC16C862
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720654974; cv=none; b=ig1fNtI8n4wZsfTNhlXFlla/IHtNj7gws4xBmnZwKCDy/x96WkgWeseQ1Jmd1c4/Oh6x3xRR+mlHBGBZmVzhXndFxuo9QdoyvXLfsq55zurkuIezuj+6Ky0jMzUATWrQFz6HgCzv9onaJh3974eaKAcEqnMeYeHvJHvAUwP2L8A=
+	t=1720654976; cv=none; b=L99c3/H+E2yf/ep0MuW2jT8tKcZ0uhJDYe64DlSEzIkKPlPgf/hiUkFWERUYEKfCLILsFkbaGBMMmK14ls0M9rF4fTgdVmhso+o7BQraEnNbs2WdvPdqaCk7rKAVu3t5mGMoswFlV/RYJ9+yPskDuEwAg/j+rMCi7oNV8ltxnxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720654974; c=relaxed/simple;
-	bh=eTv+8mtXv9pcwUVaOkiFS2pyxVlBIejV0U8K7ZFMz7Q=;
+	s=arc-20240116; t=1720654976; c=relaxed/simple;
+	bh=9nGVvjTtRrzXeDKQT/PGApCposmumXI12BdKtg64Aj8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=RQK1QxFQrIoOEyi6BCdkiKMP+VszuStwIQUqvkioCOSdX1yf6WKWRF7zJ3CzRdJMgjemzZA3IopGxZ8nU+5TFTHPVj8LUzs8BvmFs6Sv+9zih/bvd/RbzOlHMe+MG+oSYDzAWceR8iFIxoGnoOgdMYwwNnCeZavJjdWCO8rLJNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Yt+IaSSB; arc=none smtp.client-ip=209.85.222.73
+	 To:Cc:Content-Type; b=sr0MBajdDkIvG7PwjziK7ZMJZz5b7PbNJe8Uib896oF+5WF32ycObu9mTUFboxSxXOHgzuAM4eFggLn9/lxg68HkkKG4NzSEEsRD4Br35hmCqp40DUD+aXC9mWDSUIiOYVb444Gs3novJ5BBfb6FKoTVeIUaIFHl2dJgv+QuGSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gDXVRsCx; arc=none smtp.client-ip=209.85.222.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
-Received: by mail-ua1-f73.google.com with SMTP id a1e0cc1a2514c-81063552eafso225501241.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:42:52 -0700 (PDT)
+Received: by mail-ua1-f73.google.com with SMTP id a1e0cc1a2514c-8101ef99bf6so89288241.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:42:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720654972; x=1721259772; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1720654973; x=1721259773; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jKPHohqFL0IhECSvPRQXiNGrzNnrPvfhaSYPnkkePdA=;
-        b=Yt+IaSSBMbGS+IafqDzS6nVUHKzASFutAlsF8viGS8g8/0qK7zNvQ5Gon20P4DJij9
-         Xp3+z577g3+G8sI+wHNMJLlGWB+72IslupSJ3/KivD3jZJdlI0hW0n9omk2FDFeYNXiz
-         sR6gBeUg6K0wDk4mbC9oF8Z9TaAPYd78aiq/dNDmrNkXE30o4ECHwfl3Sz9LTejMoW/Y
-         xW0EyEroLdkQE2qu7ITqjEkjudpCN2oOOi+Zl9H8CKluK38kJZIb4zsARs+ByEB3y2T3
-         86gK3HMyTi9byNbDVFuTjNTIfOApqyPih5qF4CAlqr7zVZ9p4JW9JnpHh012jrVpRNUg
-         /Bgg==
+        bh=86wUnUhZHhvP2m3KtD2mzNoNsfKZM3y2BVe++0uTyFA=;
+        b=gDXVRsCx4zAb+aXQVU500pfuxdZC1fBEA1iLF/nd/5kaJzmrZvl9SDY2pHegNlDieX
+         hd8gLixD2Jl+++LLsALferKZDuhbA1PzIJmVwFM8Wxmp/scWJlgpfU4AOkD3t3ObKRst
+         OenkqnPb3tJdCOiWX2bVSr6jwWzDTB9i8nH3LgleIWgOGXl/Rttrre+zbPV0eS4/jV7t
+         GxzpanKaknmyn08V6EwDg4rLCLeQnOEpfQJwuOgWAkBzMg1JhsnWXn8AFPs44QJP8Z5X
+         4VhbUFc2EcLF1yjqiDWBwv3TuwVIiYFgdsjHaSSKoewzwiQlIBfCLxwee5mFwULOgDOb
+         40LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720654972; x=1721259772;
+        d=1e100.net; s=20230601; t=1720654973; x=1721259773;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jKPHohqFL0IhECSvPRQXiNGrzNnrPvfhaSYPnkkePdA=;
-        b=pWeGZjmUfWxZ0LwWCxZWtXdfl7Ffx0SkA/sdZ+kM7LCQv7lTOH/eJ3YrjiBfw8EEEo
-         W6GyqjOazowb7GiQZtO1twGzISZrb6w75VB91O+B5c09EiU/+0PAfr/I774xLA/3GfuQ
-         v31CGw1aTEJ/szCUOeui15QSQhJ1tTWQ2abWKSDxF/QPQSafu0oiP1VjQSzrRh1UUMU3
-         l+Frwswnv3e/Ntov+/lfQMPnrq8b+gjx48rP4hoAb8e386DdZmZxQ6g6Bv9dNhOAjs1z
-         DQW3i03c4pUdhbisdu+nJE4FMQDSSn1307kzECikhyjyiJ1OfVv+XNiqgUA5/lssJPw4
-         EP5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWN0mLqwa0wc8ZTN4qBtsrQolBzHqgWlojs5F24eYidi3PpP0OHhs4GgWt7ltvZh9O/OAKtaPzlHmTNsTxC7PEHGFDzGslHpvhdUWrU
-X-Gm-Message-State: AOJu0YxVRniwUczKqpVHS9qmeQ8MW/53HPYwYpbsyCqrzjlnw1u3J88a
-	IgWOHSJzY1YTHFMOaG5vYoPtP/UwntV10WUIuKJyUrGkfD5eL60lmIBf8Hkh2P1G8Os808pjd2k
-	zjFe7qeTszyFEbeaIOg==
-X-Google-Smtp-Source: AGHT+IHgRj71HIHo+Vr3YRAiQ2me1afxQxUXle9EqleBoMEZbhkar+2O7/FONbR7df58PgwPGZmAiebsYvwdmxCn
+        bh=86wUnUhZHhvP2m3KtD2mzNoNsfKZM3y2BVe++0uTyFA=;
+        b=vKYMC8MOodW50jELNSdqCFphvPyG38jsPXDO9klGzwKEe8FnKiAf1QxIXsvu4MI5l9
+         1/aCm0cL9CND70kFJImh7lsVdJM/bSD7/SdU1kZNhNEg/FOPp72D5NXN7us0jnVXVNUR
+         CVcMJOVyrQMmL/r1hyHtzbkvFleizGl61p2Q8zxWwJaETrpW3K5EaS+LcgjyfkBPtuxp
+         MJtBZOQHOKwqDohN4wnDYWVEuri5WE9hn/zO0YWmC6zEwgtrDz7eaWBaW6ucW8Sf0IdY
+         B3QesvmfmqZb8qSn2jcb8CdzV9S5zz22IBbeVxix1CPXewLD33y2nGCTbJVRT1lD1Wwz
+         Q8nw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgw8ijsT7PS4tKyHShGEvRSZFLDXmtEGZCGtbsXQLHaWyKplcLyms8zhxeZhkEaBr9CB9UiVGeOBtd9BG0+y+YnRsJC/74NFzl6WRt
+X-Gm-Message-State: AOJu0YwMX3038dKo3rbtR2FLNuhKo5GDmUgnMw4YOoei0oAIv5yITxuo
+	Nzl+38n6+7SFziOZfB4lu4OLj3xKBiAvaQ+xR7Z3H1XT18ZQsie/j5havwWEWQOeTaA3Z6qfwzx
+	a1YHT39qU2WltmQzYlg==
+X-Google-Smtp-Source: AGHT+IFuuD8TX5cMTXqfbBITU1Rk5gbgp8/gjNqtfzjUDzjMtEhdHehLKT0HBMd1mO2mStlwTdwfc0NYjYZ51/Zs
 X-Received: from jthoughton.c.googlers.com ([fda3:e722:ac3:cc00:14:4d90:c0a8:2a4f])
- (user=jthoughton job=sendgmr) by 2002:a05:6130:288d:b0:80f:b1c4:fcef with
- SMTP id a1e0cc1a2514c-81185662fe2mr17887241.1.1720654971766; Wed, 10 Jul 2024
- 16:42:51 -0700 (PDT)
-Date: Wed, 10 Jul 2024 23:42:18 +0000
+ (user=jthoughton job=sendgmr) by 2002:a05:6130:2c07:b0:80f:e89a:dc21 with
+ SMTP id a1e0cc1a2514c-81076f04ee0mr30519241.2.1720654972976; Wed, 10 Jul 2024
+ 16:42:52 -0700 (PDT)
+Date: Wed, 10 Jul 2024 23:42:19 +0000
 In-Reply-To: <20240710234222.2333120-1-jthoughton@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240710234222.2333120-1-jthoughton@google.com>
 X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
-Message-ID: <20240710234222.2333120-15-jthoughton@google.com>
-Subject: [RFC PATCH 14/18] KVM: Add asynchronous userfaults, KVM_READ_USERFAULT
+Message-ID: <20240710234222.2333120-16-jthoughton@google.com>
+Subject: [RFC PATCH 15/18] KVM: guest_memfd: Add KVM Userfault support
 From: James Houghton <jthoughton@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
@@ -86,195 +86,77 @@ Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
 	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 
-It is possible that KVM wants to access a userfault-enabled GFN in a
-path where it is difficult to return out to userspace with the fault
-information. For these cases, add a mechanism for KVM to wait for a GFN
-to not be userfault-enabled.
+We now have to pass our struct kvm into __kvm_gmem_get_pfn to know if a
+gfn is userfault-enabled or not.
 
-The mechanism introduced in this patch uses an eventfd to signal that a
-userfault is ready to be read. Userspace then reads the userfault with
-KVM_READ_USERFAULT. The fault itself is stored in a list, and KVM will
-busy-wait for the gfn to not be userfault-enabled.
+For faults on userfault-enabled gfns, indicate this to the caller by
+setting *pfn to KVM_PFN_ERR_USERFAULT. Architectures may use this to
+know to return a userfault to userspace, though they should be careful
+to set a value for *pfn before calling (e.g. KVM_PFN_ERR_FAULT).
 
-The implementation of this mechanism is certain to change before KVM
-Userfault could possibly be merged. Really the main concerns are whether
-or not this kind of asynchronous userfault system is required and if the
-UAPI for reading faults works.
+While we're at it, set *pfn to KVM_PFN_ERR_HWPOISON for accesses to
+poisoned gfns.
 
 Signed-off-by: James Houghton <jthoughton@google.com>
 ---
- include/linux/kvm_host.h |  7 +++
- include/uapi/linux/kvm.h |  7 +++
- virt/kvm/kvm_main.c      | 92 +++++++++++++++++++++++++++++++++++++++-
- 3 files changed, 104 insertions(+), 2 deletions(-)
+ virt/kvm/guest_memfd.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index dc12d0a5498b..3b9780d85877 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -734,8 +734,15 @@ struct kvm_memslots {
- 	int node_idx;
- };
- 
-+struct kvm_userfault_list_entry {
-+	struct list_head list;
-+	gfn_t gfn;
-+};
-+
- struct kvm_userfault_ctx {
- 	struct eventfd_ctx *ev_fd;
-+	spinlock_t list_lock;
-+	struct list_head gfn_list;
- };
- 
- struct kvm {
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index 6aa99b4587c6..8cd8e08f11e1 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -1554,4 +1554,11 @@ struct kvm_create_guest_memfd {
- #define KVM_USERFAULT_ENABLE		(1ULL << 0)
- #define KVM_USERFAULT_DISABLE		(1ULL << 1)
- 
-+struct kvm_fault {
-+	__u64 address;
-+	/* TODO: reserved fields */
-+};
-+
-+#define KVM_READ_USERFAULT		_IOR(KVMIO, 0xd5, struct kvm_fault)
-+
- #endif /* __LINUX_KVM_H */
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 4ac018cac704..d2ca16ddcaa1 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -2678,6 +2678,43 @@ static bool memslot_is_readonly(const struct kvm_memory_slot *slot)
- 	return slot->flags & KVM_MEM_READONLY;
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index 9148b9679bb1..ba7a981e3396 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -542,8 +542,9 @@ void kvm_gmem_unbind(struct kvm_memory_slot *slot)
+ 	fput(file);
  }
  
-+static int read_userfault(struct kvm_userfault_ctx __rcu *ctx, gfn_t *gfn)
-+{
-+	struct kvm_userfault_list_entry *entry;
-+
-+	spin_lock(&ctx->list_lock);
-+
-+	entry = list_first_entry_or_null(&ctx->gfn_list,
-+					 struct kvm_userfault_list_entry,
-+					 list);
-+
-+	list_del(&entry->list);
-+
-+	spin_unlock(&ctx->list_lock);
-+
-+	if (!entry)
-+		return -ENOENT;
-+
-+	*gfn = entry->gfn;
-+	return 0;
-+}
-+
-+static void signal_userfault(struct kvm *kvm, gfn_t gfn)
-+{
-+	struct kvm_userfault_ctx __rcu *ctx =
-+		srcu_dereference(kvm->userfault_ctx, &kvm->srcu);
-+	struct kvm_userfault_list_entry entry;
-+
-+	entry.gfn = gfn;
-+	INIT_LIST_HEAD(&entry.list);
-+
-+	spin_lock(&ctx->list_lock);
-+	list_add(&entry.list, &ctx->gfn_list);
-+	spin_unlock(&ctx->list_lock);
-+
-+	eventfd_signal(ctx->ev_fd);
-+}
-+
- static unsigned long __gfn_to_hva_many(const struct kvm_memory_slot *slot, gfn_t gfn,
- 				       gfn_t *nr_pages, bool write, bool atomic)
+-static int __kvm_gmem_get_pfn(struct file *file, struct kvm_memory_slot *slot,
+-		       gfn_t gfn, kvm_pfn_t *pfn, int *max_order, bool prepare)
++static int __kvm_gmem_get_pfn(struct kvm *kvm, struct file *file,
++		       struct kvm_memory_slot *slot, gfn_t gfn, kvm_pfn_t *pfn,
++		       int *max_order, bool prepare)
  {
-@@ -2687,8 +2724,14 @@ static unsigned long __gfn_to_hva_many(const struct kvm_memory_slot *slot, gfn_t
- 	if (memslot_is_readonly(slot) && write)
- 		return KVM_HVA_ERR_RO_BAD;
+ 	pgoff_t index = gfn - slot->base_gfn + slot->gmem.pgoff;
+ 	struct kvm_gmem *gmem = file->private_data;
+@@ -551,6 +552,11 @@ static int __kvm_gmem_get_pfn(struct file *file, struct kvm_memory_slot *slot,
+ 	struct page *page;
+ 	int r;
  
--	if (gfn_has_userfault(slot->kvm, gfn))
--		return KVM_HVA_ERR_USERFAULT;
-+	if (gfn_has_userfault(slot->kvm, gfn)) {
-+		if (atomic)
-+			return KVM_HVA_ERR_USERFAULT;
-+		signal_userfault(slot->kvm, gfn);
-+		while (gfn_has_userfault(slot->kvm, gfn))
-+			/* TODO: don't busy-wait */
-+			cpu_relax();
++	if (gfn_has_userfault(kvm, gfn)) {
++		*pfn = KVM_PFN_ERR_USERFAULT;
++		return -EFAULT;
 +	}
- 
- 	if (nr_pages)
- 		*nr_pages = slot->npages - (gfn - slot->base_gfn);
-@@ -5009,6 +5052,10 @@ static int kvm_enable_userfault(struct kvm *kvm, int event_fd)
- 	}
- 
- 	ret = 0;
 +
-+	INIT_LIST_HEAD(&userfault_ctx->gfn_list);
-+	spin_lock_init(&userfault_ctx->list_lock);
-+
- 	userfault_ctx->ev_fd = ev_fd;
+ 	if (file != slot->gmem.file) {
+ 		WARN_ON_ONCE(slot->gmem.file);
+ 		return -EFAULT;
+@@ -567,6 +573,7 @@ static int __kvm_gmem_get_pfn(struct file *file, struct kvm_memory_slot *slot,
+ 		return PTR_ERR(folio);
  
- 	rcu_assign_pointer(kvm->userfault_ctx, userfault_ctx);
-@@ -5037,6 +5084,27 @@ static int kvm_vm_ioctl_enable_userfault(struct kvm *kvm, int options,
- 	else
- 		return kvm_disable_userfault(kvm);
+ 	if (folio_test_hwpoison(folio)) {
++		*pfn = KVM_PFN_ERR_HWPOISON;
+ 		folio_unlock(folio);
+ 		folio_put(folio);
+ 		return -EHWPOISON;
+@@ -594,7 +601,7 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
+ 	if (!file)
+ 		return -EFAULT;
+ 
+-	r = __kvm_gmem_get_pfn(file, slot, gfn, pfn, max_order, true);
++	r = __kvm_gmem_get_pfn(kvm, file, slot, gfn, pfn, max_order, true);
+ 	fput(file);
+ 	return r;
  }
-+
-+static int kvm_vm_ioctl_read_userfault(struct kvm *kvm, gfn_t *gfn)
-+{
-+	int ret;
-+	int idx;
-+	struct kvm_userfault_ctx __rcu *ctx;
-+
-+	idx = srcu_read_lock(&kvm->srcu);
-+
-+	ctx = srcu_dereference(kvm->userfault_ctx, &kvm->srcu);
-+
-+	ret = -ENOENT;
-+	if (!ctx)
-+		goto out;
-+
-+	ret = read_userfault(ctx, gfn);
-+
-+out:
-+	srcu_read_unlock(&kvm->srcu, idx);
-+	return ret;
-+}
- #endif
+@@ -634,7 +641,8 @@ long kvm_gmem_populate(struct kvm *kvm, gfn_t start_gfn, void __user *src, long
+ 			break;
+ 		}
  
- static int kvm_vm_ioctl_enable_cap_generic(struct kvm *kvm,
-@@ -5403,6 +5471,26 @@ static long kvm_vm_ioctl(struct file *filp,
- 		r = kvm_gmem_create(kvm, &guest_memfd);
- 		break;
- 	}
-+#endif
-+#ifdef CONFIG_KVM_USERFAULT
-+	case KVM_READ_USERFAULT: {
-+		struct kvm_fault fault;
-+		gfn_t gfn;
-+
-+		r = kvm_vm_ioctl_read_userfault(kvm, &gfn);
-+		if (r)
-+			goto out;
-+
-+		fault.address = gfn;
-+
-+		/* TODO: if this fails, this gfn is lost. */
-+		r = -EFAULT;
-+		if (copy_to_user(&fault, argp, sizeof(fault)))
-+			goto out;
-+
-+		r = 0;
-+		break;
-+	}
- #endif
- 	default:
- 		r = kvm_arch_vm_ioctl(filp, ioctl, arg);
+-		ret = __kvm_gmem_get_pfn(file, slot, gfn, &pfn, &max_order, false);
++		ret = __kvm_gmem_get_pfn(kvm, file, slot, gfn, &pfn,
++					 &max_order, false);
+ 		if (ret)
+ 			break;
+ 
 -- 
 2.45.2.993.g49e7a77208-goog
 
