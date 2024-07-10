@@ -1,152 +1,126 @@
-Return-Path: <linux-kernel+bounces-247736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D74B92D3C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:05:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF0B92D3C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBF22B21ED2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:05:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A4541F21631
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15782193453;
-	Wed, 10 Jul 2024 14:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1CF193461;
+	Wed, 10 Jul 2024 14:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZA/P6SR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ahhp7u+V"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4E4190075
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DE7193096;
+	Wed, 10 Jul 2024 14:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720620327; cv=none; b=hR9Oe2O7vazQr4I6er/Yg6TZopO6UTX2U8n0Az5kHfVAdlWkAEuKSGOapYML/UVRtuNgqcg6/1CN62yn4s6o4TpIfS/X2eNEvDf+KT7e1M+1sZnSyiZj56D3bEMvS1iumvSC1XZEj/p537K3RAcYNqphAoIQvURTiv4366og7gM=
+	t=1720620352; cv=none; b=X+O2GzvO1Src8mfut7Tg7O+78ipSFJpiI2xVWWDCfGCqMkei8ulemf1MFvQTWkEB1IoMIzJf0zb3APdpnBIO33Y2vl39bRF/wNaliVP//QHAWhVzx1EoSfomfr6h47LQ2Bz08NN9LMkn3qA1D5gwplnfV/I6ktwi/Mks8dARuIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720620327; c=relaxed/simple;
-	bh=HtlymKn4vVZB7cE/VW/XbqpAg4LhAbY/Dpx6qL2BAbw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=sFQMfneVDBS4Ca2mrlee4FUpyMNES/XDh506yUkBUl5FbHBMVb0EE01H5adp1wcv8oYzWZwVI2+N2wYcmCCvMn++enXzIcIUSL/265/V0jQLJQSrKOmbB07V3Qat/lmHKS1fE5zeMGaqoc1YD5jSvw0zQ37lCTjb7qGUgKRyPaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KZA/P6SR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D605FC32781;
-	Wed, 10 Jul 2024 14:05:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720620326;
-	bh=HtlymKn4vVZB7cE/VW/XbqpAg4LhAbY/Dpx6qL2BAbw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KZA/P6SRLVafNoU8yO8WykWyAR7MfA7uN6nn2fq185T5U1mV25oTYvQ/6K9S77SHn
-	 8qTtSCxMpC3X3a7dbfb3YKqZkI7qoTwo2Le1NddF7UigPv+EsRMYX3x+2XVexmCesp
-	 MAvOdbnXJAvSsOzzSBwRTA4RxmRceyiHO22XR8Hzhg7awa2b6zJ923jt1MzMJHQiLK
-	 JGjNRKU1rUswvwfVx4QyaCmRrdJNM2yL6Ui08yjlCJi1mcvVoCycliXCdST/FfCCya
-	 gdMo2h7MwU8pMUtDyEjbUcjtKxUM+K6XMAF+/vyb0ltMEduZ4PyT3mC03AacDwrV2Q
-	 SpasbGMyeI8+Q==
-Date: Wed, 10 Jul 2024 23:05:21 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
- rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org, clm@meta.com,
- paulmck@kernel.org
-Subject: Re: [PATCH 03/10] rbtree: Provide rb_find_rcu() / rb_find_add_rcu()
-Message-Id: <20240710230521.db73990a46ca2f927dd0e8a5@kernel.org>
-In-Reply-To: <20240710075557.GS27299@noisy.programming.kicks-ass.net>
-References: <20240708091241.544262971@infradead.org>
-	<20240708092415.464066230@infradead.org>
-	<20240710102959.291a71349ec71ef48919a9fe@kernel.org>
-	<20240710075557.GS27299@noisy.programming.kicks-ass.net>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720620352; c=relaxed/simple;
+	bh=Xt4bkgZHwxsHrvxmJbV75SNzVSxCstIYh/IHaJrCNPo=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=RmkXWKnQSElcJxPAbjd9vNBO9msq2il+pCNr8c5+vDpBSUQlQk94TW2LVUnWryTRNUW1tbPNORvVDpwzfmK+doa3XSeq8z0oVedUqKe29J+V+lYkP49VMYPCljcYe0xki7G3ZCBsebe2yGEpswlXlkezqGAXAN0CIRDOS3VCW8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ahhp7u+V; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720620350; x=1752156350;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Xt4bkgZHwxsHrvxmJbV75SNzVSxCstIYh/IHaJrCNPo=;
+  b=ahhp7u+VDABtZkip837hIuVws9pmBVreuFsh/4EShi/IdgsSZ7nMsb3s
+   OOzFNW2AkW57J4t0N9cZHevgGb8xbjD2WDUUtZ+gKamcWccoqFTnYe/+E
+   11K6ZA+v0B5hNzzWZsAlGFk7G7hyytyt1sWpyrtViadEGqF8XIdqzr+FF
+   tRv6lx284cLjkhSCm1wpkhtHRkCP75Cekj2CV6LwCrNf5Ub0349j7/FUV
+   IFzA10QMN46RcvIs8mWVAj3UPgvJ4PL/XhCTDq4SleyShgUq5xcNv5Gh+
+   nYF/0FaM/Lwgz6tvfCrnJrBP/nSPOswdb9PC3yh5E/4bz3S9eJL+3DkMb
+   A==;
+X-CSE-ConnectionGUID: NgyQEVIhRKGSWjlwQm1+dA==
+X-CSE-MsgGUID: 7v1GY/RBQa2RzBKCqvMERA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="43363387"
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="43363387"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 07:05:49 -0700
+X-CSE-ConnectionGUID: z25MDvvgR6eofElbSbzQEQ==
+X-CSE-MsgGUID: OhmxU+l5SIqlGQ7BwjhNIw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="79382288"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.125])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 07:05:46 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 10 Jul 2024 17:05:43 +0300 (EEST)
+To: Stewart Hildebrand <stewart.hildebrand@amd.com>
+cc: Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+    Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+    Dave Hansen <dave.hansen@linux.intel.com>, 
+    "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org, 
+    linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 4/6] x86: PCI: preserve IORESOURCE_STARTALIGN
+ alignment
+In-Reply-To: <20240709133610.1089420-5-stewart.hildebrand@amd.com>
+Message-ID: <22e339c1-0ada-0824-cd34-d5779328b522@linux.intel.com>
+References: <20240709133610.1089420-1-stewart.hildebrand@amd.com> <20240709133610.1089420-5-stewart.hildebrand@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Wed, 10 Jul 2024 09:55:57 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+On Tue, 9 Jul 2024, Stewart Hildebrand wrote:
 
-> On Wed, Jul 10, 2024 at 10:29:59AM +0900, Masami Hiramatsu wrote:
-> > On Mon, 08 Jul 2024 11:12:44 +0200
-> > Peter Zijlstra <peterz@infradead.org> wrote:
-> > 
-> > > Much like latch_tree, add two RCU methods for the regular RB-tree,
-> > > which can be used in conjunction with a seqcount to provide lockless
-> > > lookups.
-> > > 
-> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > ---
-> > >  include/linux/rbtree.h |   67 +++++++++++++++++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 67 insertions(+)
-> > > 
-> > > --- a/include/linux/rbtree.h
-> > > +++ b/include/linux/rbtree.h
-> > > @@ -245,6 +245,42 @@ rb_find_add(struct rb_node *node, struct
-> > >  }
-> > >  
-> > >  /**
-> > > + * rb_find_add_rcu() - find equivalent @node in @tree, or add @node
-> > > + * @node: node to look-for / insert
-> > > + * @tree: tree to search / modify
-> > > + * @cmp: operator defining the node order
-> > > + *
-> > > + * Adds a Store-Release for link_node.
-> > > + *
-> > > + * Returns the rb_node matching @node, or NULL when no match is found and @node
-> > > + * is inserted.
-> > > + */
-> > > +static __always_inline struct rb_node *
-> > > +rb_find_add_rcu(struct rb_node *node, struct rb_root *tree,
-> > > +		int (*cmp)(struct rb_node *, const struct rb_node *))
-> > > +{
-> > > +	struct rb_node **link = &tree->rb_node;
-> > > +	struct rb_node *parent = NULL;
-> > > +	int c;
-> > > +
-> > > +	while (*link) {
-> > 
-> > 	Don't we need to use rcu_dereference_raw(*link) here?
+> Currently, it's not possible to use the IORESOURCE_STARTALIGN flag on
+> x86 due to the alignment being overwritten in
+> pcibios_allocate_dev_resources(). Make one small change in arch/x86 to
+> make it work on x86.
 > 
-> This is a modifying operation and as such we can assume operation under
-> the exclusive lock. IOW the tree should be stable here.
-
-Ah, got it.
-
+> Signed-off-by: Stewart Hildebrand <stewart.hildebrand@amd.com>
+> ---
+> RFC: We don't have enough info in this function to re-calculate the
+>      alignment value in case of IORESOURCE_STARTALIGN. Luckily our
+>      alignment value seems to be intact, so just don't touch it...
+>      Alternatively, we could call pci_reassigndev_resource_alignment()
+>      after the loop. Would that be preferable?
+> ---
+>  arch/x86/pci/i386.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> > > +		parent = *link;
-> > > +		c = cmp(node, parent);
-> > > +
-> > > +		if (c < 0)
-> > > +			link = &parent->rb_left;
-> > > +		else if (c > 0)
-> > > +			link = &parent->rb_right;
-> > > +		else
-> > > +			return parent;
-> > > +	}
-> > > +
-> > > +	rb_link_node_rcu(node, parent, link);
+> diff --git a/arch/x86/pci/i386.c b/arch/x86/pci/i386.c
+> index f2f4a5d50b27..ff6e61389ec7 100644
+> --- a/arch/x86/pci/i386.c
+> +++ b/arch/x86/pci/i386.c
+> @@ -283,8 +283,11 @@ static void pcibios_allocate_dev_resources(struct pci_dev *dev, int pass)
+>  						/* We'll assign a new address later */
+>  						pcibios_save_fw_addr(dev,
+>  								idx, r->start);
+> -						r->end -= r->start;
+> -						r->start = 0;
+> +						if (!(r->flags &
+> +						      IORESOURCE_STARTALIGN)) {
+> +							r->end -= r->start;
+> +							r->start = 0;
+> +						}
+>  					}
+>  				}
+>  			}
 > 
-> Only the link operation needs the rcu_assign_pointer() thing for
-> publishing our new node.
 
-Yes.
-
-> 
-> > > +	rb_insert_color(node, tree);
-> 
-> The rotations use WRITE_ONCE() to avoid tearing.
-
-OK, thanks for confirmation.
-
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thank you,
-
-> 
-> > > +	return NULL;
-> > > +}
-
+As a general comment to that loop in pcibios_allocate_dev_resources() 
+function, it would be nice to reverse some of the logic in the if 
+conditions and use continue to limit the runaway indentation level.
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+ i.
+
 
