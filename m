@@ -1,105 +1,259 @@
-Return-Path: <linux-kernel+bounces-248377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2497D92DC63
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:09:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C62A592DC6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56AAA1C21F29
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:09:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 801142835D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4889E156F21;
-	Wed, 10 Jul 2024 23:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F4C1534FB;
+	Wed, 10 Jul 2024 23:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kzkvWggb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UCE7s+TO"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C0C14BFA2;
-	Wed, 10 Jul 2024 23:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B0514F9C5
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720652955; cv=none; b=ik5hp8Ffopx28IAtikMpKmvoGjzIFlJDW9d9w4ALH5NerVlO6j7IPxjHKpuIoieMaqT1wyRPhP+8lUgS6rnKivVnA+DCkdpCaVwgSjp1O4f3UiLVWrzu31OtKKQWgwMeKPhExy4u/SLQNiu8MlAzyoecXAmEbF+wH5GtwT9uz2s=
+	t=1720653070; cv=none; b=K0HXd35PndZl2RSf/PgOuCW3coW+RsWSLSaoAsR+a1ext7kmhhQu+aUl5E4Trox8VGBetoZl3/CQvGSipjE129tVWlSOwtNzMkFa/rhIKDn9iDAONs9qfUOzBsT9faPFv1jNUymA3Av89YxexMkn3jvGMFT2YLOmWinDf7slpFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720652955; c=relaxed/simple;
-	bh=iJc/bf8te2V4HIoUt6truxqDC2AFjane+tEtVaHMpDY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JGcNY8lPZLEKSON7opmVk2hdjj2NaMHJtwghS+LHqmYx9KHF9vWHhAHC6Mdrhi0uz4S8bXfsNzgqzkSfIJ/ISXkrZH9qJW0+x/LW83+VTkfXOto1PCb31TLwstK72quFiT9eNpFNGppKij/6cI6xlSEkw5nVS6tBqMDudshmv4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kzkvWggb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 214FEC4AF09;
-	Wed, 10 Jul 2024 23:09:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720652955;
-	bh=iJc/bf8te2V4HIoUt6truxqDC2AFjane+tEtVaHMpDY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kzkvWggbyqNQ25bBkRuzsc7yRc5uuJeLcyoqJ7BH3XhNJARf1iN49ojgIgAJ3GUVb
-	 1sxWUQe3AA0ggfN7mskBEmkZkHHj7gac+IUx9GCGZ6tgmsYafqkRvYZQ9g2TwsCCBc
-	 4fvvVf/Vnv0b/D41kVfp7Y944+js1nX+e3fzah1A6EOOmUsIawWd/SKgE72SMTxAEV
-	 i87wg7Zs8ynt1PmPGp7fkh8ggrGJoqXrZCcxN055x4ZnAzOcaTtEXmIkeW6Z+yvNCx
-	 BjBcnsFFU4hC9eEJcEWS81EjCe7Czl1kjK5gx4UBlXgZ1Ix/CSJtiKI9NpVWN51OEb
-	 cmvez/ieukZiQ==
-From: Kees Cook <kees@kernel.org>
-To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
-Cc: Kees Cook <kees@kernel.org>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-media@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] media: venus: hfi_cmds: struct hfi_session_release_buffer_pkt: Add __counted_by annotation
-Date: Wed, 10 Jul 2024 16:09:13 -0700
-Message-Id: <20240710230914.3156277-2-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240710230728.work.977-kees@kernel.org>
-References: <20240710230728.work.977-kees@kernel.org>
+	s=arc-20240116; t=1720653070; c=relaxed/simple;
+	bh=Pz0I0ZuPQJNsCVP+7BMKlxh3Arp7J6K1rlyeZNl314U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HlBmcPEzgEjFhCdoDa44TmM5P6nj3CmaOTyc7bx3NwtSic+tSycGAXkEewFRM10ayui/EEE/IVMni27KwC56HBo1FIegRgbFq//j7CQJmVFD/l3TBrv9XB4kY/QvIVQzl1OBB8sy7tCI/atQ4NmDY7T0Kgez1mnJ3g68JtDCkso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UCE7s+TO; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-447f8aa87bfso165781cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:11:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720653067; x=1721257867; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MJTeSm6eMBTbHXnqICN2W1jCeLI7nzO2Ktbu8vr4Dfo=;
+        b=UCE7s+TO1QmRo+sxKxuGzcxMacJfBy92C0nmtraHr8SPFhTz+JStqlWzS4ZPnK4mgB
+         pxgWtOjLzq95hbdOAyXWBnch6Dp7ScL2UlGzDHPU12cn5oXM1gCDMroNzvR894gNn8fJ
+         aMw18TeG1M0kVuQC10miQlQmhoG23EETgyvi1TYYgrM7+2Q5EZYahhR12b9wrM9Ei75i
+         fEoOC/jV+iHYy6VKNWLzC3cHOZVj5w22p8Y+IBu7H5B+CZkvd7ZSI1OidRFQ94SlL8A7
+         YhJNSfUu+wQhwdiyTxrzc+9BWE51QKtgIKqEtwWSVFZjFVrIUIE00ejA/XQKxl1DUIVs
+         r4pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720653067; x=1721257867;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MJTeSm6eMBTbHXnqICN2W1jCeLI7nzO2Ktbu8vr4Dfo=;
+        b=C4uCCR8W6Wey7PdsooKb3J7+DHN5jQOwyGFt3I6BDq96XoY9Q4nxs8tMQmwsgt3yTK
+         sRHwVPYfaRa80lsHvQPAD/x17PR7y4m4JQI2hKPp0jG8/vrAHeO8tQLEu52C97whoI42
+         NGE0lXekMlRrQfnwRtS014VokYv+9Ao6vYltFo+OXg6lfTxTJ7sw/vzyLr1mFW45fAAq
+         fnzmg+Zfi+6WN9dJ3gfVnzQBFZCU6NlzYDxh78AGGYx9nKfXVMM8DWJFX6tzUqRc1QoV
+         5gVGB9S1msaCByqyV22EtVX8b2rCube1dvIDY29upG82Q1STfbSKHh4aPDGPMo9LcLaj
+         tgAg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGoaOh/4WtXfslfbyz6RwQKEbDBRO3CJNl0MZBmcTUA9gOgLfYznpoKS23NLvdjX0bk9HVA6CV9JMruRHbWOqagH8ZHEs/KheW5KOU
+X-Gm-Message-State: AOJu0YxB9dVChXOACtjw4HcHqKJdnGsaMqt6UAS/H8McIu+oVYxZNyT8
+	tiQrOvkgUszr16bEj/dtSEi1U4TghmuMYyjCyHPvkHV0KDe7rB69BxbG264WmZvOO1D7+YPJPH+
+	FxEEPeBQwjdIahb8u/DOclx2QvXYk4RraXG9T
+X-Google-Smtp-Source: AGHT+IGzszVF+IxKrY/ClY51Y2kjfgE37Xj8trnZtH5JYTor6nkkszob6If5ud2bc91ZsUHmQ4RjHdSOlc0bNNlnZxM=
+X-Received: by 2002:ac8:7cba:0:b0:447:f958:ab83 with SMTP id
+ d75a77b69052e-44d35b2b31emr557951cf.21.1720653067221; Wed, 10 Jul 2024
+ 16:11:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1278; i=kees@kernel.org; h=from:subject; bh=iJc/bf8te2V4HIoUt6truxqDC2AFjane+tEtVaHMpDY=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmjxSZUawcA9Ew7IpbCfivm2IRppHC3x5DpA7ZX H5tgKkNgMGJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZo8UmQAKCRCJcvTf3G3A Jq+FEACCCc+lCg8Q5cP7rKh6vLWy0J5PTf6zKb7XBrrU3GuPjXsCH5LD7ugkdRRrDQhX+bQ+6Jw 2omDkASy0fmKm30Pv8LFrK64HdQZaOUVuhLsf9iCSmY/bPiVKjycqNq+JD3a/QsbmBxVxYddqju VD+zSxn2ZYkJ/cweO3g5c15VFm8jSe0zErw7wy6hX7YPvXhoth9DqA59zrUM/Wi8VhiDY2Wl64T T7BZsLn8SaDntoVrJKi03adr7A3bMpK95J19BvEgx+L8CQme2Q35jppbE1FJ38WYKH3fgfKFcFt 65K4spkwsxXKeeNXRxO2fvmsgW9Nisq/3hcezwuiOk16ZHLPE6S5r9qa45gUNqSxMXfqc3u4VaZ NHrjOe52IGNolMbQErfkFpxAdVGSTmiTFvvKmlsF2wzZv346MmCXQyp74qx0f9p4K7SyDx/202A uM+5F+jUQsrqY4z0TKmZaWtWPXg5b11ot25DLCcltlYJ1WpKmjFOxT5o30z9gKv8jFA9O+dVrx5 vBux7ANwfQOaCmtvlvBLimsg+yrpA/rFjR/BsnJY5Vxr87s6FlMQy9Ho2Npsv2/B45ieWIoMWVU WN1WyiuKU5uX4TQHmLtVq6Nj5DYPpWvsSltg6c3a2+Hjnv3zwdKiXlCe0ZA0TRLsHSUefGLYzfv z1CAA4/gYxcrozw==
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+References: <CADrL8HU_FKHTz_6d=xhVLZFDQ_zQo-zdB2rqdpa2CKusa1uo+A@mail.gmail.com>
+ <ZmjtEBH42u7NUWRc@google.com> <CADrL8HUW2q79F0FsEjhGW0ujij6+FfCqas5UpQp27Epfjc94Nw@mail.gmail.com>
+ <ZmxsCwu4uP1lGsWz@google.com> <CADrL8HVDZ+m_-jUCaXf_DWJ92N30oqS=_9wNZwRvoSp5fo7asg@mail.gmail.com>
+ <ZmzPoW7K5GIitQ8B@google.com> <CADrL8HW3rZ5xgbyGa+FXk50QQzF4B1=sYL8zhBepj6tg0EiHYA@mail.gmail.com>
+ <ZnCCZ5gQnA3zMQtv@google.com> <CADrL8HW=kCLoWBwoiSOCd8WHFvBdWaguZ2ureo4eFy9D67+owg@mail.gmail.com>
+ <CADrL8HUv6T4baOi=VTFV6ZA=Oyn3dEc6Hp9rXXH0imeYkwUhew@mail.gmail.com> <Zo137P7BFSxAutL2@google.com>
+In-Reply-To: <Zo137P7BFSxAutL2@google.com>
+From: James Houghton <jthoughton@google.com>
+Date: Wed, 10 Jul 2024 16:10:29 -0700
+Message-ID: <CADrL8HW4PLTeC9Gq3Fd43-idjzOw8mXOzzG_RP1TYVoGp1_g+g@mail.gmail.com>
+Subject: Re: [PATCH v5 4/9] mm: Add test_clear_young_fast_only MMU notifier
+To: Sean Christopherson <seanjc@google.com>
+Cc: Yu Zhao <yuzhao@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Ankit Agrawal <ankita@nvidia.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
+	James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Raghavendra Rao Ananta <rananta@google.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Shaoqin Huang <shahuang@redhat.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
+	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The only direct user of struct hfi_session_release_buffer_pkt is
-pkt_session_unset_buffers() which sets "num_buffers" before using it
-as a loop counter for accessing "buffer_info". Add the __counted_by
-annotation to reflect the relationship.
+On Tue, Jul 9, 2024 at 10:49=E2=80=AFAM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> On Mon, Jul 08, 2024, James Houghton wrote:
+> > On Fri, Jun 28, 2024 at 7:38=E2=80=AFPM James Houghton <jthoughton@goog=
+le.com> wrote:
+> > >
+> > > On Mon, Jun 17, 2024 at 11:37=E2=80=AFAM Sean Christopherson <seanjc@=
+google.com> wrote:
+> > I still don't think we should get rid of the WAS_FAST stuff.
+>
+> I do :-)
+>
+> > The assumption that the L1 VM will almost never share pages between L2
+> > VMs is questionable. The real question becomes: do we care to have
+> > accurate age information for this case? I think so.
+>
+> I think you're conflating two different things.  WAS_FAST isn't about acc=
+uracy,
+> it's about supporting lookaround in conditionally fast secondary MMUs.
+>
+> Accuracy only comes into play when we're talking about the last-minute ch=
+eck,
+> which, IIUC, has nothing to do with WAS_FAST because any potential lookar=
+ound has
+> already been performed.
 
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
-Cc: Vikash Garodia <quic_vgarodia@quicinc.com>
-Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-media@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-hardening@vger.kernel.org
----
- drivers/media/platform/qcom/venus/hfi_cmds.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sorry, I thought you meant: have the MMU notifier only ever be
+lockless (when tdp_mmu_enabled), and just return a potentially wrong
+result in the unlikely case that L1 is sharing pages between L2s.
 
-diff --git a/drivers/media/platform/qcom/venus/hfi_cmds.h b/drivers/media/platform/qcom/venus/hfi_cmds.h
-index 42825f07939d..1adf2d2ae5f2 100644
---- a/drivers/media/platform/qcom/venus/hfi_cmds.h
-+++ b/drivers/media/platform/qcom/venus/hfi_cmds.h
-@@ -227,7 +227,7 @@ struct hfi_session_release_buffer_pkt {
- 	u32 extradata_size;
- 	u32 response_req;
- 	u32 num_buffers;
--	u32 buffer_info[];
-+	u32 buffer_info[] __counted_by(num_buffers);
- };
- 
- struct hfi_session_release_resources_pkt {
--- 
-2.34.1
+I think it's totally fine to just drop WAS_FAST. So then we can either
+do look-around (1) always, or (2) only when there is a secondary MMU
+with has_fast_aging. (2) is pretty simple, I'll just do that.
 
+We can add some shadow MMU lockless support later to make the
+look-around not as useless for the nested TDP case.
+
+> > It's not completely trivial to get the lockless walking of the shadow
+> > MMU rmaps correct either (please see the patch I attached here[1]).
+>
+> Heh, it's not correct.  Invoking synchronize_rcu() in kvm_mmu_commit_zap_=
+page()
+> is illegal, as mmu_lock (rwlock) is held and synchronize_rcu() might_slee=
+p().
+>
+> For kvm_test_age_rmap_fast(), KVM can blindly read READ_ONCE(*sptep).  KV=
+M might
+> read garbage, but that would be an _extremely_ rare scenario, and reporti=
+ng a
+> zapped page as being young is acceptable in that 1 in a billion situation=
+.
+>
+> For kvm_age_rmap_fast(), i.e. where KVM needs to write, I'm pretty sure K=
+VM can
+> handle that by rechecking the rmap and using CMPXCHG to write the SPTE.  =
+If the
+> rmap is unchanged, then the old SPTE value is guaranteed to be valid, in =
+the sense
+> that its value most definitely came from a KVM shadow page table.  Ah, dr=
+at, that
+> won't work, because very theoretically, the page table could be freed, re=
+allocated,
+> and rewritten with the exact same value by something other than KVM.  Hrm=
+.
+>
+> Looking more closely, I think we can go straight to supporting rmap walks=
+ outside
+> of mmu_lock.  There will still be a "lock", but it will be a *very* rudim=
+entary
+> lock, akin to the TDP MMU's REMOVED_SPTE approach.  Bit 0 of rmap_head->v=
+al is
+> used to indicate "many", while bits 63:3/31:2 on 64-bit/32-bit KVM hold t=
+he
+> pointer (to a SPTE or a list).  That means bit 1 is available for shenani=
+gans.
+>
+> If we use bit 1 to lock the rmap, then the fast mmu_notifier can safely w=
+alk the
+> entire rmap chain.  And with a reader/write scheme, the rmap walks that a=
+re
+> performed under mmu_lock don't need to lock the rmap, which means flows l=
+ike
+> kvm_mmu_zap_collapsible_spte() don't need to be modified to avoid recursi=
+ve
+> self-deadlock.  Lastly, the locking can be conditioned on the rmap being =
+valid,
+> i.e. having at least one SPTE.  That way the common case of a gfn not hav=
+ing any
+> rmaps is a glorified nop.
+>
+> Adding the locking isn't actually all that difficult, with the *huge* cav=
+eat that
+> the below patch is compile-tested only.  The vast majority of the churn i=
+s to make
+> it so existing code ignores the new KVM_RMAP_LOCKED bit.
+
+This is very interesting, thanks for laying out how this could be
+done. I don't want to hold this series up on getting the details of
+the shadow MMU lockless walk exactly right. :)
+
+> I don't know that we should pursue such an approach in this series unless=
+ we have
+> to.  E.g. if we can avoid WAS_FAST or don't have to carry too much interm=
+ediate
+> complexity, then it'd probably be better to land the TDP MMU support firs=
+t and
+> then add nested TDP support later.
+
+Agreed!
+
+> At the very least, it does make me more confident that a fast walk of the=
+ rmaps
+> is very doable (at least for nested TDP), i.e. makes me even more steadfa=
+st
+> against adding WAS_FAST.
+>
+> > And the WAS_FAST functionality isn't even that complex to begin with.
+>
+> I agree the raw code isn't terribly complex, but it's not trivial either.=
+  And the
+> concept and *behavior* is complex, which is just as much of a maintenance=
+ burden
+> as the code itself.  E.g. it requires knowing that KVM has multiple MMUs =
+buried
+> behind a single mmu_notifier, and that a "hit" on the fast MMU will trigg=
+er
+> lookaround on the fast MMU, but not the slow MMU.  Understanding and desc=
+ribing
+> the implications of that behavior isn't easy.  E.g. if GFN=3DX is young i=
+n the TDP
+> MMU, but X+1..X+N are young only in the shadow MMU, is doing lookaround a=
+nd making
+> decisions based purely on the TDP MMU state the "right" behavior?
+>
+> I also really don't like bleeding KVM details into the mmu_nofitier APIs.=
+  The
+> need for WAS_FAST is 100% a KVM limitation.  AFAIK, no other secondary MM=
+U has
+> multiple MMU implementations active behind a single notifier, and other t=
+han lack
+> of support, nothing fundamentally prevents a fast query in the shadow MMU=
+.
+
+Makes sense.
+
+So in v6, I will make the following changes:
+
+1. Drop the WAS_FAST complexity.
+2. Add a function like mm_has_fast_aging_notifiers(), use that to
+determine if we should be doing look-around.
+3. Maybe change the notifier calls slightly[1], still need to check perform=
+ance.
+
+Does that sound good to you?
+
+Thanks!
+
+[1]: https://lore.kernel.org/linux-mm/CAOUHufb2f_EwHY5LQ59k7Nh7aS1-ZbOKtkoy=
+sb8BtxRNRFMypQ@mail.gmail.com/
 
