@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-247356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E42E92CE66
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:42:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5569592CE6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:42:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E8561F252C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:42:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F5FB2882D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1015018FA3E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A808718FC7D;
 	Wed, 10 Jul 2024 09:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="JiE0Oj3A"
+	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="S3Q35DX5"
 Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086F718FA10;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086A518FA0F;
 	Wed, 10 Jul 2024 09:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720604525; cv=none; b=qIFktZyDvnEYTRhAjOMLG4Ibg8KT6iXPXpaDgR9yGdwJtlW4zbOQ9KVHuNAhp5Sr+nSI8HTVURI7g3JK25Ng4uwfxm4wDSVRPiho7+6YPnGFSScH/FEQplOvAkA6P07l6v9e2jurMZcKeb/ftRMXcjJkTdQzPlrxanp/QO6T+GY=
+	t=1720604526; cv=none; b=FDcF+KfYd/8GGI7+iaB2J8VkFjjxUSxgntah/1ONVb1FTEJxIHxlIcWtnj/31MU/oIMEzypmJivnyutQGyMnxbmlKhIEqc7AQm3xzlJ7SXWEqXOW3/0rt5VxHn6u8AcbU0XysY1fdrwVRXngv2mQQoGJh5xyRH2+IqjPHYS1phk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720604525; c=relaxed/simple;
-	bh=noBYTgg81ZU8cu0/+c0Q/0EfJggIqOPLTcc8Qq/l6Ck=;
+	s=arc-20240116; t=1720604526; c=relaxed/simple;
+	bh=mFJu3AuQwBhYu6nvYHmXFe8W3vkUUK1zringR+EoIf0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZonD4YWdvNCcDSpRZI/8cKnzHk0vpIfmafrTrG70rY8qwEQGidNTg6dBI8pYMsehT43+dIQ8QMFurnOUXtCKktLkrz7DcgowpkHFUrzMijjtG58luK2URht3jhedaoo3JnPjs39WixWIR3EYj6nA4muSp4PmZ3VduHcEdhZguDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=JiE0Oj3A; arc=none smtp.client-ip=94.231.106.210
+	 MIME-Version:Content-Type; b=KsAsjNovXnI/wNeNilybaGnZsXIDDMu1UrpaHYBGo80Cs5TArtQkHVipn0XR10wOn+ztZfDvo5X6+uIVIGqvPy7TeJpeTZ5iSPpfkJZrMfbvkDKQBlM84d8z3mGvml4jX+sw0CYvZI7bEbyJzXleYec4CuGeaYbO+hq7nMp+TZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=S3Q35DX5; arc=none smtp.client-ip=94.231.106.210
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
 Received: from localhost (localhost [127.0.0.1])
-	by smtp.simply.com (Simply.com) with ESMTP id 4WJtDT28Pdz1DPkr;
+	by smtp.simply.com (Simply.com) with ESMTP id 4WJtDT3mTfz1DPkb;
 	Wed, 10 Jul 2024 11:42:01 +0200 (CEST)
 Received: from andreas.got.gaisler.com (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
-	by smtp.simply.com (Simply.com) with ESMTPA id 4WJtDS6yYGz1DPkh;
-	Wed, 10 Jul 2024 11:42:00 +0200 (CEST)
+	by smtp.simply.com (Simply.com) with ESMTPA id 4WJtDT1gsPz1DPks;
+	Wed, 10 Jul 2024 11:42:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
 	s=unoeuro; t=1720604521;
-	bh=CBlJ5z2MKq7rgo7HzbdN4LVE4I3xLgtSKjY4UTWkJLg=;
+	bh=JmftKPWxL9NkSuMkpkySeuAYiQ7NRqf/1r5N/kj6mYY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=JiE0Oj3AO9NT3Bx8EmOqbq+smItHF6gMIALGpTe4c9o29U+rM7vIM7AeGyffK9Hu3
-	 VmEijsJWDWahExt+hfmzZbwVDRepphC8ca1qy/jhMLV7WjMxMP4TMNPy/Iju78Cm7X
-	 w42gcqFWn8HZxkk2clGZUF3GH94DpJYRkyOXEx6I=
+	b=S3Q35DX5rS1BXnVgEVE4/WB5zVvohltKTwzz38IeMNQG6iyNmXExdfn7w9aiy+SCb
+	 Ajd5dxrjFihYpo8tDpZHJ7YjmNQf/hAX0G4ZQ4BtEq/dGVbcI+eOp94piZ3KnXaFml
+	 A5gFqSP6vbCJ7xc9qbrKX/Ug7DCDG6ySnEqqNNSk=
 From: Andreas Larsson <andreas@gaisler.com>
 To: David Miller <davem@davemloft.net>,
 	sparclinux@vger.kernel.org
 Cc: Sam Ravnborg <sam@ravnborg.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/4] sparc64: Fix incorrect function signature and add prototype for prom_cif_init
-Date: Wed, 10 Jul 2024 11:41:53 +0200
-Message-Id: <20240710094155.458731-3-andreas@gaisler.com>
+Subject: [PATCH 3/4] sparc64: Fix prototype warning for prom_get_mmu_ihandle
+Date: Wed, 10 Jul 2024 11:41:54 +0200
+Message-Id: <20240710094155.458731-4-andreas@gaisler.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240710094155.458731-1-andreas@gaisler.com>
 References: <20240710094155.458731-1-andreas@gaisler.com>
@@ -63,63 +63,29 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Remove the unused cif_stack argument and add a protype in oplib_64.h
-Commit ef3e035c3a9b ("sparc64: Fix register corruption in top-most
-kernel stack frame during boot.") removed the cif_stack argument to
-prom_cif init in the declaration at the caller site and the usage of it
-within prom_cif_init, but not in the function signature of the function
-itself.
+arch/sparc/prom/misc_64.c:165:5: warning: no previous prototype for ‘prom_get_mmu_ihandle’
 
-This also fixes the following warning:
-arch/sparc/prom/p1275.c:52:6: warning: no previous prototype for ‘prom_cif_init’
+The function prom_get_mmu_ihandle has no users outside of misc_64.c so
+declare it static.
 
-Fixes: ef3e035c3a9b ("sparc64: Fix register corruption in top-most kernel stack frame during boot.")
 Signed-off-by: Andreas Larsson <andreas@gaisler.com>
 ---
- arch/sparc/include/asm/oplib_64.h | 1 +
- arch/sparc/prom/init_64.c         | 3 ---
- arch/sparc/prom/p1275.c           | 2 +-
- 3 files changed, 2 insertions(+), 4 deletions(-)
+ arch/sparc/prom/misc_64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/sparc/include/asm/oplib_64.h b/arch/sparc/include/asm/oplib_64.h
-index a67abebd43592..1b86d02a84556 100644
---- a/arch/sparc/include/asm/oplib_64.h
-+++ b/arch/sparc/include/asm/oplib_64.h
-@@ -247,6 +247,7 @@ void prom_sun4v_guest_soft_state(void);
- int prom_ihandle2path(int handle, char *buffer, int bufsize);
+diff --git a/arch/sparc/prom/misc_64.c b/arch/sparc/prom/misc_64.c
+index aed94cd4a1e73..3792736ff21fd 100644
+--- a/arch/sparc/prom/misc_64.c
++++ b/arch/sparc/prom/misc_64.c
+@@ -162,7 +162,7 @@ unsigned char prom_get_idprom(char *idbuf, int num_bytes)
+ 	return 0xff;
+ }
  
- /* Client interface level routines. */
-+void prom_cif_init(void *cif_handler);
- void p1275_cmd_direct(unsigned long *);
- 
- #endif /* !(__SPARC64_OPLIB_H) */
-diff --git a/arch/sparc/prom/init_64.c b/arch/sparc/prom/init_64.c
-index 103aa91043185..f7b8a1a865b8f 100644
---- a/arch/sparc/prom/init_64.c
-+++ b/arch/sparc/prom/init_64.c
-@@ -26,9 +26,6 @@ phandle prom_chosen_node;
-  * routines in the prom library.
-  * It gets passed the pointer to the PROM vector.
-  */
--
--extern void prom_cif_init(void *);
--
- void __init prom_init(void *cif_handler)
+-int prom_get_mmu_ihandle(void)
++static int prom_get_mmu_ihandle(void)
  {
  	phandle node;
-diff --git a/arch/sparc/prom/p1275.c b/arch/sparc/prom/p1275.c
-index 889aa602f8d86..51c3f984bbf72 100644
---- a/arch/sparc/prom/p1275.c
-+++ b/arch/sparc/prom/p1275.c
-@@ -49,7 +49,7 @@ void p1275_cmd_direct(unsigned long *args)
- 	local_irq_restore(flags);
- }
- 
--void prom_cif_init(void *cif_handler, void *cif_stack)
-+void prom_cif_init(void *cif_handler)
- {
- 	p1275buf.prom_cif_handler = (void (*)(long *))cif_handler;
- }
+ 	int ret;
 -- 
 2.34.1
 
