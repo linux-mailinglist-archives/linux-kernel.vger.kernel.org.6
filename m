@@ -1,172 +1,121 @@
-Return-Path: <linux-kernel+bounces-247831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 442F292D52E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:42:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD0E992D52F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:42:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 614CB1C20F78
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:42:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 678E91F21187
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D48C11946BD;
-	Wed, 10 Jul 2024 15:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38AB189F26;
+	Wed, 10 Jul 2024 15:42:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BpkxVglJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="etqYWTrI"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98091EB2A
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBEF10A09
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720626112; cv=none; b=vFESWookMOZC9tFOyAVKUCh0kEcposOFTeSTpZ+Nuu8sveQOnSxr0u4Yz236Utgo/r5aecMic/1WdNv/3FRCYd5P6HNbxbRBV8GwOvZvzEsTrsheq6z7O0hc3htPKOLDxetNixtv1WqDlwfALA9SS10tB47SF+9Y6LTw5YYNO7A=
+	t=1720626146; cv=none; b=HR3/y+z2zDAT7kBSk0SthO3mwwglP43dSWk0H8K7SvTwt2sGs24IEaQ+FQ5GtW6HIrQ7vsg+ra7w3c7m3ri68U7NEKOHc4XGJE83VQ+/S0dDkvQEU6fQJq2Njg0OBLDCA4viXW3kYjFeWMg29hDDGtRUhZHcIOC+iq7qcfPCp4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720626112; c=relaxed/simple;
-	bh=kjSkQRtJBB57kXqddkxjG3h6NHhl8b8AwIuhcgW6jvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aJNAaKz1tVn+Kdr/CmgbBm1uaFfYACh1R1fdvt7rhPqkojdeH1iwT1O38Dz4Cp/75PgqZROCM0Wzdf3gzofYcMB8GQat5bdWrelTYtFQ6CorfGZ71cXAQ2KjQ2gi0Q+xYUeX7uyTiavjoNjObgW3U3jT4j0zxxGg74EJUEi5Sy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BpkxVglJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720626109;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RFy0Pt4ubesULzO+oQaiRFBM5Ze1aZnn+Qz6jyyaJAc=;
-	b=BpkxVglJmEDOvITQxlBN7RUpPcLsMAoBt+3XF7gbU8thCFy2sZZl9GuwNuEHK+MD3ZYYOb
-	N6lopLSx1m5fk1Q5NagU66uX4RC7wBkHSPQl/8rJ+egdC6ia8i2//Na7lQuYeHLkr1Tt3H
-	h9UV6egzvXXWHXf5z7qZ6IavgjlSGss=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-503-dIh-x8UiP_iCt5h6YmjwEQ-1; Wed, 10 Jul 2024 11:41:48 -0400
-X-MC-Unique: dIh-x8UiP_iCt5h6YmjwEQ-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6b5dacdc192so17472076d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:41:48 -0700 (PDT)
+	s=arc-20240116; t=1720626146; c=relaxed/simple;
+	bh=C5gY+uljMJ/TRBVbOsR/U+KA7yyl6SUm21CDlJJs9PA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=WlZQdsEU2SPgYIWeaqZ+0CU+uF4pFX8b0dwWlIl3MxQJmgPdbjWgIdFoQ/T8W9WaBh989/Z8nijYBO5l6FooOUGOH03bSuPrO0nlt1mjWfkb48g8sNRkE2Epqg9LPJknW//Emx34sLQuvaF43c/spi/Eu6kIfn4HnqZSIFkqZHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=etqYWTrI; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2c8402d08b4so4419108a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:42:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720626144; x=1721230944; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vr1BiQBEp9CDY456xclZlBCD5OqWtOAN5xfFP72uoHk=;
+        b=etqYWTrIVfLDQODIy3T1a3X0m1dxtnn2r3ccGn92e2eIwab5Hite794/6HLJt+4Ieq
+         +e5h2VRDMhBRQbJnAH3hZcj82JalX8xFB63c0rKdKbvJHyHaIlGuxc0F8dwF7OJ4GAB5
+         HAYXnkj6JVES2ogGf4rK/6QjeprpDJcj6wQ/OhN8V/bPlSS46PRuhPZM+FgvlWhx/k+b
+         Xxxy8TbRNl9ITs1NdqiJiDha4NtzcgQLXEa69kcWSBjfyMw1eNUU3PodFSwcnchIaxxO
+         BJwMyLcXgCNrxGtT/Zbq7QDjmcw/Lk72k1KHRbI/M/CgLNbLCm4zQOZn5tL+GlvqOzMJ
+         Nguw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720626108; x=1721230908;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RFy0Pt4ubesULzO+oQaiRFBM5Ze1aZnn+Qz6jyyaJAc=;
-        b=HjU4slmg/PBv4PA0zV41AUINkBu9l98Xoo+aZDwLiOQz8OK1d+s/qNNRHXQTAeMYId
-         xELGV93SaFXWmgszLM2U8xiGWfiZ0C3gYY/dxShvGATn7ryO+KdlLYjuK3Ug8oGzH98u
-         uvI7EZ0bLbcES/QFr02rgG/g6EtPo1dganDM0noIfuhb5kalmWZaNKQPSIrTQXi/UshN
-         gBT08/DEJlKh2xhwqyDBpuhv3/pxT/uFPbOodsyKxABeQvcClP7iT5crZ5Wkvh0T0ZNi
-         eGh4S3FkeCI5xxEKdd+iUov0Y6Wrj9bQyI1ytYjeawhC11LBENaDS7i9obJhrhgszBWB
-         FqYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWCWQqqv4Oq1NC/zGIAmYWgMRI3xgQMjVpujSHwrIqhvSXSQ1JEH0UbyoxR4ye0KfVdDSTbs3A2gip5snFFJVPTDq6BxnpG1NRO8Tyq
-X-Gm-Message-State: AOJu0YwctNWBXscULekesOm6CFw9urCCZopvF/W7BBuTM6ex1qyNsrvJ
-	AqnZBUwPJHffEb8E/i+iVXdlxvomNX69kzDiNDEGqetgSNDn71H3pGDkr4UnfhTpWQGX3txXS4I
-	JAyc5TzLcZcSGbna6wnAD7DSt8Sdlmqq3AEAfGRP69XwoFEQOLLmDbCVQnEqRUQ==
-X-Received: by 2002:ad4:5e8b:0:b0:6b5:d95c:692d with SMTP id 6a1803df08f44-6b74af531a6mr711936d6.13.1720626107772;
-        Wed, 10 Jul 2024 08:41:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFm/74UP4TLT1vGs8DLjUNFGeFxt2DXzfyoISdrNcO4smbnFu4jefOYDtfhRDnu4G/xSbFhqw==
-X-Received: by 2002:ad4:5e8b:0:b0:6b5:d95c:692d with SMTP id 6a1803df08f44-6b74af531a6mr711666d6.13.1720626107436;
-        Wed, 10 Jul 2024 08:41:47 -0700 (PDT)
-Received: from x1gen2nano ([2600:1700:1ff0:d0e0::40])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b61b9c47d4sm18003426d6.23.2024.07.10.08.41.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 08:41:47 -0700 (PDT)
-Date: Wed, 10 Jul 2024 10:41:44 -0500
-From: Andrew Halaney <ahalaney@redhat.com>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: nm@ti.com, vigneshr@ti.com, kristo@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, vkoul@kernel.org, 
-	kishon@kernel.org, sjakhade@cadence.com, rogerq@kernel.org, 
-	thomas.richard@bootlin.com, theo.lebrun@bootlin.com, make24@iscas.ac.cn, 
-	linux-phy@lists.infradead.org, mranostay@ti.com
-Subject: Re: [BUG] k3-j784s4-evm/phy-cadence-torrent: Shared reset using
- exclusive API
-Message-ID: <qgqpibrr6hcicpofi64fxenenq7xdffnddbapefjgzsw6q7j2s@cl3gkkytj2w4>
-References: <yhtb4clns57t7qo5yxil3oofisdlzfubyiwrvjo2ufw2ngv67m@g6p7ktxfgfv3>
- <46e635e6-b6bf-404c-87a2-57fe25b4855a@ti.com>
+        d=1e100.net; s=20230601; t=1720626144; x=1721230944;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vr1BiQBEp9CDY456xclZlBCD5OqWtOAN5xfFP72uoHk=;
+        b=YZxR05J7CUdXSHvbpckauRzUws/+dhK/PasFQeje7r5QKMKhwxLlo2XmGoZWXjYP0V
+         ON3TMIGBkS/m1NY6v+92/h1CCs4N/8eaIkMp7pQ6sIvz5/+NFZoEjfH1kybdg7C7VlFW
+         uuPMBZYvVUbISUAcRfvWIXIHhRmOHbDsEY/CesjTA0VwGykd9wdnpTz3svC5f6VkrqVi
+         xx2Q1Rdjs3a8jqcEVyqdf7y+vW+aGfQFX1b6fU7MZ4ltTQYW41TXTR+kcUDK7hkFb2C7
+         qQgd7U2mAsp6ybxqgqHws91I0hXTKkX11Rb8dD/ROqOZf+ADyzA+S3nPivj4arrYtB5I
+         3KQg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8xFKBJ9RTHCnntudM5Y2WAZqWR/GuAFe8cTfH0dMHyw/zEaLWojeJyBNeRJ/QLqv+mGBctmG1caSu/rPMmRlLxL9FyuNogM8Ausrh
+X-Gm-Message-State: AOJu0YytLggEi9C55yTnHl5B6r7jvxKxEb2d0PRhOGPwohfj+6BqZZ9j
+	myx3t5fKyUABKwzdznqgA8w4XGnwSMfQaP5ZrgkKb42KY7E2A2u7oD0b6vqIe/dwmvgcGc25HRt
+	QsA==
+X-Google-Smtp-Source: AGHT+IHIj7Frqqn9vAIzHqtf502PiSXlpH0diSrPuQbhr/RJ6vdXrfi41gkE/7i/gmNkhPd0gOtvr19TZbE=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:a412:b0:2c9:6abb:ee40 with SMTP id
+ 98e67ed59e1d1-2ca35d524b8mr13373a91.6.1720626144135; Wed, 10 Jul 2024
+ 08:42:24 -0700 (PDT)
+Date: Wed, 10 Jul 2024 08:42:22 -0700
+In-Reply-To: <5354a7ae-ca32-42fe-9231-a0d955bc8675@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <46e635e6-b6bf-404c-87a2-57fe25b4855a@ti.com>
+Mime-Version: 1.0
+References: <cover.1718214999.git.reinette.chatre@intel.com>
+ <171961507216.241377.3829798983563243860.b4-ty@google.com> <5354a7ae-ca32-42fe-9231-a0d955bc8675@intel.com>
+Message-ID: <Zo6r3if6rTERxnwl@google.com>
+Subject: Re: [PATCH V9 0/2] KVM: x86: Make bus clock frequency for vAPIC timer configurable
+From: Sean Christopherson <seanjc@google.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: isaku.yamahata@intel.com, pbonzini@redhat.com, erdemaktas@google.com, 
+	vkuznets@redhat.com, vannapurve@google.com, jmattson@google.com, 
+	mlevitsk@redhat.com, xiaoyao.li@intel.com, chao.gao@intel.com, 
+	rick.p.edgecombe@intel.com, yuan.yao@intel.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Jul 10, 2024 at 10:29:46AM GMT, Siddharth Vadapalli wrote:
-
-<snip>
-
+On Fri, Jun 28, 2024, Reinette Chatre wrote:
+> Hi Sean,
 > 
-> No, the resets are correct. Both PCIe1 and USB0 use the same instances
-> of SERDES which is SERDES0. I had posted the series for PCIe at:
-> https://lore.kernel.org/r/20240529082259.1619695-1-s-vadapalli@ti.com/
-> with all 4 Lanes of SERDES0 given to PCIe1. Similarly, Ravi had posted
-> the series for USB at:
-> https://lore.kernel.org/r/20240507095545.8210-1-r-gunasekaran@ti.com/
-> with lane 3 of SERDES0 given to USB0.
-> 
-> Since both of the series got merged on the same day (14 Jun 2024):
-> PCIe series:
-> https://lore.kernel.org/r/171826022277.240984.16790260886500529482.b4-ty@ti.com/
-> USB series:
-> https://lore.kernel.org/r/171826022274.240984.5150753966671933401.b4-ty@ti.com/
-> the dependency was unknown when the individual series were posted as
-> neither of them was a part of linux-next/ti-k3-dts-next when the other
-> one was posted.
-> 
+> On 6/28/24 3:55 PM, Sean Christopherson wrote:
+> > On Wed, 12 Jun 2024 11:16:10 -0700, Reinette Chatre wrote:
+> > > Changes from v8:
+> > > - v8: https://lore.kernel.org/lkml/cover.1718043121.git.reinette.chatre@intel.com/
+> > > - Many changes to new udelay() utility patch as well as the APIC bus
+> > >    frequency test aimed to make it more robust (additional ASSERTs,
+> > >    consistent types, eliminate duplicate code, etc.) and useful with
+> > >    support for more user configuration. Please refer to individual patches for
+> > >    detailed changes.
+> > > - Series applies cleanly to next branch of kvm-x86 with HEAD
+> > >    e4e9e1067138e5620cf0500c3e5f6ebfb9d322c8.
+> > > 
+> > > [...]
 > > 
-> > Total aside, I think we should put the above dts snippet into one &serdes0 reference
-> > for readability sake. I'd post the patch but I'm hoping to get the above answered
-> > first in order to clean that up before shuffling things around for readability sake.
+> > Applied to kvm-x86 misc, with all the changes mentioned in my earlier replies.
+> > I'm out next week, and don't want to merge the KVM changes without these tests,
+> > hence the rushed application.
+> > 
+> > Please holler if you disagree with anything (or if I broke something).  I won't
+> > respond until July 8th at the earliest, but worst case scenario we can do fixup
+> > patches after 6.11-rc1.
 > 
-> Yes, I agree that both sub-nodes should go into the same referenced
-> serdes0 node in k3-j784s4-evm.dts. The reason it didn't happen that way
-> to begin with is due to the fact that both series got merged on the same
-> day as I pointed out above.
+> Thank you very much for taking the time to make the changes and apply the patches.
+> All the changes look good to me and passes my testing.
 > 
-> The fix in this case will be to assign lanes 0 and 1 of SERDES0 to PCIe1
-> and lane 3 to USB0 with lane 2 left unused since PCIe doesn't have the
-> concept of a x3 link. In such a configuration, the device-tree nodes
-> will look like:
+> Now that the x86 udelay() utility no longer use cpu_relax(), should ARM
+> and RISC-V's udelay() be modified to match in this regard? I can prepare
+> (unable to test) changes for you to consider on your return.
 
-Thanks alot for the quick explanation and suggestion!
-
-> 
-> &serdes0 {
-> 	status = "okay";
-> 
-> 	serdes0_pcie1_link: phy@0 {
-> 		reg = <0>;
-> 		cdns,num-lanes = <2>;
-> 		#phy-cells = <0>;
-> 		cdns,phy-type = <PHY_TYPE_PCIE>;
-> 		resets = <&serdes_wiz0 1>, <&serdes_wiz0 2>;
-> 	};
-> 
-> 	serdes0_usb_link: phy@3 {
-> 		reg = <3>;
-> 		cdns,num-lanes = <1>;
-> 		#phy-cells = <0>;
-> 		cdns,phy-type = <PHY_TYPE_USB3>;
-> 		resets = <&serdes_wiz0 4>;
-> 	};
-> };
-> 
-> Thank you for pointing out this issue. Please let me know if you plan to
-> post the patch with the above fix or you want me to post the patch for it.
-> 
-
-I've posted a series (with you CC'ed, just realized I CC'ed Matt instead
-of Ravi -- whoops): https://lore.kernel.org/all/20240710-k3-j784s4-evm-serdes0-cleanup-v1-0-03850fe33922@redhat.com/
-
-I'll be on PTO the next few days, so if any changes are required there
-do feel free to do them on my behalf if I don't respin by end of today
-US-time, otherwise I'll make the changes when I return next week.
-
-Thanks again,
-Andrew!
-
+I don't think so?  IIUC, arm64's "yield", used by cpu_relax() doesn't trigger the
+"on spin" exists.  Such exist are only triggered by "wfet" and friends.
 
