@@ -1,165 +1,143 @@
-Return-Path: <linux-kernel+bounces-247971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B3E92D6C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:43:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EB9192D6E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3152E281548
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:43:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DD4BB26B57
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F09194C79;
-	Wed, 10 Jul 2024 16:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE90A194AF0;
+	Wed, 10 Jul 2024 16:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IK8yMSqL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L2CCYMK2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="F/Qyzfae"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8393236;
-	Wed, 10 Jul 2024 16:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F55257D
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720629773; cv=none; b=PplTXj6ukBttbgRNlLlo03PrAUfnazS+z8pdclSKHGMGFYLC/LjyteNvL8yb0/xu4iVXK0Asb1VwKE3pyr8XTntW8VyGtQyBhjJGseJOKFlmc5RJsSHbLBXPNeXmqXXG0fdsOF3RhxDwbR4oyiU9Iz2dapOo4EOkxN3ZFC19Ces=
+	t=1720629881; cv=none; b=OF5HcE91VGLPtIl/XKYGP3if6ohldLYIwyE+c+mQ0Q6Wx9xNTE37ySnqOsVdbk1Ez7gLsPehAlOuPhCoN0ZlW0s1UgAFgMxSWqPQredkti9i01wS/iM8YGIB7myMbTCBr+DBbS8aB2cRSG3ZuNthm24WLT2gU/VQ2cy5dL8bO6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720629773; c=relaxed/simple;
-	bh=QNqNT9hCY7isvL1GMlA4WDct8r18fjRGXrrEQtyJTyo=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=TCOpax6ys5hv8waAwr2moD+BWx5xAlhbi8mUooT3rsbrB40AiZSV+U6CNTufOj4FM5HGkujZiozAjJU6TKoVTkjJPBOMgRiuQf5z1iuPPjkeBXY1oTncQKgbXAQf77fqfUrL4LZtKv61zOwVzAUJnYJJDuic3IGQ+EZT6tYWSYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IK8yMSqL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=L2CCYMK2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 10 Jul 2024 16:42:49 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1720629769;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/XrHg5vmtutLvbviNrFaMTdQqHltkn2UY/QBa9yJQPQ=;
-	b=IK8yMSqLJIzb5k+bko2uSSfzUzqTgM1JLhpXv/C6JbkJ/RLgHuUqgCGY5kjfWZMgbEkIFA
-	guRFe1zDVUV/3/uRcPbK4Ws3GxGseD9Zybl40+6fi4VnT9n9s1wG/pjztzFaFrgXv9ukl5
-	CVJzsJoK+MjsxZmPqnxOlW56GUGyhPFYklUKnh/8qxxifFV0Z+pm9YHtzHjBm2Dl/p2sIf
-	g7W5JBnHkJxv4yfITt2YEE94uwrHS0zQ+t5w8UegH+JULruHa80TLPO3qvSlhYTUmMwTbP
-	68k7aDJF3PqNiT2mwRc3PSrV5Wzvofpu4LajMyVwD5A2/Kf1qjTtcVpU9OFORw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1720629769;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/XrHg5vmtutLvbviNrFaMTdQqHltkn2UY/QBa9yJQPQ=;
-	b=L2CCYMK2Dl65bcF7wzAxpm3i3YLDQ8ntgHiK17ZZepnMwKLu7BNngiexxPxOF0decBhYtT
-	26nSRtAV1hBuucBw==
-From: "tip-bot2 for Marc Zyngier" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: irq/core] irqchip/gic-v4: Always configure affinity on VPE activation
-Cc: Nianyao Tang <tangnianyao@huawei.com>, Marc Zyngier <maz@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240705093155.871070-2-maz@kernel.org>
-References: <20240705093155.871070-2-maz@kernel.org>
+	s=arc-20240116; t=1720629881; c=relaxed/simple;
+	bh=5ZzOHfd3R0+0zqGqHFDsyrkYUTop8TDSuImC+ChHTj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kzZXUmB79AB8c6x9ezcH955H/VhQR9U20i2pnTTqgi15au9OMVMe+LLV7t1jXQkKveEDhiHf9ycLt2SZ2aLlRS1o/lY6ZjFCv+/ESxaaGFPkXdBThCV/hZRIYSq0JTvwMNibFlICOM9yGd9Z0yBnOAxCqmC8g+R0FWxQeewdhjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=F/Qyzfae; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: torvalds@linux-foundation.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1720629876;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=9tF9D8XaKYCGC9eMddRJtpdZ7Xm28FQve9kppKorHRw=;
+	b=F/Qyzfae6hnaeJmLHBL8+VAJZ+ETORBn3joeq3evxHOSOXDXWIig6LJkce/qibtDnl5F5B
+	2ylrRKVQXe4qEySH/9fPIohpz/Gx4cNnSsxznQ61OJquUvPPrO/Inlzeq9jmRnuJ3ystTq
+	u9yJiDa0BM51e1F+PDoB2hvq7U/Ek78=
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Date: Wed, 10 Jul 2024 12:44:31 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs fixes for 6.10-rc8
+Message-ID: <lmdvnow3yfejsiqgoxg5yxcs4patibvllsc533skksxpoykzcr@fstcszxequbj>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172062976916.2215.5685048299012070437.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-The following commit has been merged into the irq/core branch of tip:
+Hi Linus, fresh batch of bcachefs fixes for you.
 
-Commit-ID:     5ad2e910aeae9d2eaad61c8ae3adf7c721ac32e4
-Gitweb:        https://git.kernel.org/tip/5ad2e910aeae9d2eaad61c8ae3adf7c721ac32e4
-Author:        Marc Zyngier <maz@kernel.org>
-AuthorDate:    Fri, 05 Jul 2024 10:31:53 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 10 Jul 2024 18:40:09 +02:00
+Cheers,
+Kent
 
-irqchip/gic-v4: Always configure affinity on VPE activation
+The following changes since commit 64cd7de998f393e73981e2aa4ee13e4e887f01ea:
 
-There are currently two paths to set the initial affinity of a VPE:
+  bcachefs: Fix kmalloc bug in __snapshot_t_mut (2024-06-25 20:51:14 -0400)
 
- - at activation time on GICv4 without the stupid VMOVP list, and
-   on GICv4.1
+are available in the Git repository at:
 
- - at map time for GICv4 with VMOVP list
+  https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-07-10
 
-The latter location may end-up modifying the affinity of VPE that is
-currently running, making the results unpredictible.
+for you to fetch changes up to 7d7f71cd8763a296d02dff9514447aa3de199c47:
 
-Instead, unify the two paths, making sure to set the initial affinity only
-at activation time.
+  bcachefs: Add missing bch2_trans_begin() (2024-07-10 09:53:39 -0400)
 
-Reported-by: Nianyao Tang <tangnianyao@huawei.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Nianyao Tang <tangnianyao@huawei.com>
-Link: https://lore.kernel.org/r/20240705093155.871070-2-maz@kernel.org
+----------------------------------------------------------------
+bcachefs fixes for 6.10-rc8
 
----
- drivers/irqchip/irq-gic-v3-its.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+- Switch some asserts to WARN()
+- Fix a few "transaction not locked" asserts in the data read retry
+  paths and backpointers gc
+- Fix a race that would cause the journal to get stuck on a flush commit
+- Add missing fsck checks for the fragmentation LRU
+- The usual assorted ssorted syzbot fixes
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 047e566..8d31e4a 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -1810,13 +1810,9 @@ static void its_map_vm(struct its_node *its, struct its_vm *vm)
- 
- 		for (i = 0; i < vm->nr_vpes; i++) {
- 			struct its_vpe *vpe = vm->vpes[i];
--			struct irq_data *d = irq_get_irq_data(vpe->irq);
- 
--			/* Map the VPE to the first possible CPU */
--			vpe->col_idx = cpumask_first(cpu_online_mask);
- 			its_send_vmapp(its, vpe, true);
- 			its_send_vinvall(its, vpe);
--			irq_data_update_effective_affinity(d, cpumask_of(vpe->col_idx));
- 		}
- 	}
- 
-@@ -4584,6 +4580,10 @@ static int its_vpe_irq_domain_activate(struct irq_domain *domain,
- 	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
- 	struct its_node *its;
- 
-+	/* Map the VPE to the first possible CPU */
-+	vpe->col_idx = cpumask_first(cpu_online_mask);
-+	irq_data_update_effective_affinity(d, cpumask_of(vpe->col_idx));
-+
- 	/*
- 	 * If we use the list map, we issue VMAPP on demand... Unless
- 	 * we're on a GICv4.1 and we eagerly map the VPE on all ITSs
-@@ -4592,9 +4592,6 @@ static int its_vpe_irq_domain_activate(struct irq_domain *domain,
- 	if (!gic_requires_eager_mapping())
- 		return 0;
- 
--	/* Map the VPE to the first possible CPU */
--	vpe->col_idx = cpumask_first(cpu_online_mask);
--
- 	list_for_each_entry(its, &its_nodes, entry) {
- 		if (!is_v4(its))
- 			continue;
-@@ -4603,8 +4600,6 @@ static int its_vpe_irq_domain_activate(struct irq_domain *domain,
- 		its_send_vinvall(its, vpe);
- 	}
- 
--	irq_data_update_effective_affinity(d, cpumask_of(vpe->col_idx));
--
- 	return 0;
- }
- 
+----------------------------------------------------------------
+Kent Overstreet (21):
+      bcachefs: Switch online_reserved shutdown assert to WARN()
+      bcachefs: Delete old faulty bch2_trans_unlock() call
+      bcachefs: Change bch2_fs_journal_stop() BUG_ON() to warning
+      bcachefs: Fix shift greater than integer size
+      bcachefs: Don't use the new_fs() bucket alloc path on an initialized fs
+      bcachefs: Fix bch2_read_retry_nodecode()
+      bcachefs: Fix loop restart in bch2_btree_transactions_read()
+      bcachefs: Add missing printbuf_tabstops_reset() calls
+      bcachefs: bch2_btree_write_buffer_maybe_flush()
+      bcachefs: add check for missing fragmentation in check_alloc_to_lru_ref()
+      bcachefs: Repair fragmentation_lru in alloc_write_key()
+      bcachefs: io clock: run timer fns under clock lock
+      bcachefs: Fix journal getting stuck on a flush commit
+      closures: fix closure_sync + closure debugging
+      bcachefs: Fix bch2_inode_insert() race path for tmpfiles
+      bcachefs: Fix undefined behaviour in eytzinger1_first()
+      bcachefs: Log mount failure error code
+      bcachefs: bch2_data_update_to_text()
+      bcachefs: Warn on attempting a move with no replicas
+      bcachefs: Fix missing error check in journal_entry_btree_keys_validate()
+      bcachefs: Add missing bch2_trans_begin()
+
+Youling Tang (1):
+      bcachefs: Mark bch_inode_info as SLAB_ACCOUNT
+
+ fs/bcachefs/alloc_background.c   | 48 +++++++++++++--------------
+ fs/bcachefs/alloc_foreground.c   |  2 ++
+ fs/bcachefs/backpointers.c       | 70 +++++++++++++++-------------------------
+ fs/bcachefs/bkey.c               |  5 +--
+ fs/bcachefs/bkey.h               |  7 ++++
+ fs/bcachefs/btree_gc.c           | 24 +++++++-------
+ fs/bcachefs/btree_write_buffer.c | 37 +++++++++++++++++++++
+ fs/bcachefs/btree_write_buffer.h |  3 ++
+ fs/bcachefs/clock.c              |  7 ++--
+ fs/bcachefs/data_update.c        | 44 +++++++++++++++++++++++++
+ fs/bcachefs/data_update.h        |  5 +++
+ fs/bcachefs/debug.c              | 12 +++----
+ fs/bcachefs/eytzinger.h          |  6 ++--
+ fs/bcachefs/fs.c                 | 11 ++++++-
+ fs/bcachefs/io_read.c            |  4 ++-
+ fs/bcachefs/journal.c            | 18 ++++++-----
+ fs/bcachefs/journal.h            |  2 +-
+ fs/bcachefs/journal_io.c         | 12 ++++---
+ fs/bcachefs/lru.c                | 39 ++++++++++++++++++++++
+ fs/bcachefs/lru.h                |  3 ++
+ fs/bcachefs/move.c               | 25 --------------
+ fs/bcachefs/sb-errors_format.h   |  3 +-
+ fs/bcachefs/super.c              | 11 ++++---
+ include/linux/closure.h          |  7 ++++
+ lib/closure.c                    |  3 ++
+ 25 files changed, 266 insertions(+), 142 deletions(-)
 
