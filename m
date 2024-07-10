@@ -1,94 +1,143 @@
-Return-Path: <linux-kernel+bounces-246976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 177BD92C985
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:09:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F2C092C9B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4863D1C22EF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 04:09:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 418731C248F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 04:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525293FB30;
-	Wed, 10 Jul 2024 04:08:54 +0000 (UTC)
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01004AEE0;
+	Wed, 10 Jul 2024 04:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Lp2kIq4j"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C7B15D1;
-	Wed, 10 Jul 2024 04:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F80C4F20E;
+	Wed, 10 Jul 2024 04:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720584533; cv=none; b=n7EsAxbYSUwU3LB9ErdAZE/sUPuZ9249/2DPRr8O8mtfHv935Am2esf4ANyp2vd7q+QbGCBrGw5ps4kwzijYRNJUtyMhTjfWwf62k+4OYdBE/WTEv3Y3i75Yi+gz5bEah1uWGL/IUpx4ng6EG7buNdBaTl/l9oBJZX1W9PY0G0c=
+	t=1720584619; cv=none; b=EQXo65Ovhxb7xHx0MEfww6l6bJrRjEkWjoAtpQQhjBhTg2TKrPZ1qC6QV6SortI/SnFq+g0rG9tx5UMHWNAHfeChOUiGghh/SVWuurpLOHHBFtH4Qqm/Qbtu+1bqV763U/uGiQCDlN6V7EK8ickzOVDQVm+kODGmouTZmnz+eIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720584533; c=relaxed/simple;
-	bh=lW0v2nhKcMGt/jrtsJNLRJop6ETqi7Sa/oaFtGZQlFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DnwhVAbsvEaqhUleuFG2Puon/S4Cf8hNT3n371/OMpML9USs8OhqmH216MSdaL2xjr5xT4pyWOPTMDBkZPlaG08VUKc5nZNoeoAKXRP8dOldCMZwrQYrLsN0ESUxNr8IanB5CBgQkK1m8h4mQEPRIE6fhsMjuSD8Qzzug7PV5Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70b5117ae06so370393b3a.2;
-        Tue, 09 Jul 2024 21:08:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720584532; x=1721189332;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PTrvYsLDk9v5IzbDuWsLNN1KAHqZ8dYz0D0OzWAGnT0=;
-        b=aSWvnO3BQS247ISDAtrvKjFbLjhzABg9xLSYvN8ZzSetZtDtYu0w5sTlrE+bJ8kOjD
-         3kO3+Cbf5uSI9brmLOy6q7RLX3Km9ULVR7auMeHAD5AkOAiVNVTIH9rs9ffyMVBjvOtz
-         932GG62nk8Vxw8JCuMU8L7gVcC72fzFcTXio9EEqf10pS7NxPBBGE4IpTmYmfBo/vhbf
-         zo15bVEAYQu6xC5ArC3yAQGVWsapg5GEO3XaP0qLDejwtW3a9++TKVafwA8C2BoV9S6m
-         zIrZegSTtFyNAwfU2SiB+odC1ir4CgyS8v1cngol7lU9SJP0/fZAiImbmzzvcUTPs4Gb
-         s1AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVcHXP6mrdtpvgmSC0s7HkvBkjNiY6CPXPKRN5pCM+z5CJWzT3dRzoYn+OgWNm+LU/yTALYKeWg2lRWnEg47vxriUqpFrb0Et602tf5oqO9rBcRTbrCOaOUn9p9j+RHAZk5WdxO6DEp
-X-Gm-Message-State: AOJu0YwXjuwamnOaObnQazGVP53xa254z9ey2crwvI8qZFH7+AFPOK+d
-	pSn+uxgnKPQVRse1VCMkIgFT62LFo7PhrWTMrB4EtWEFVJaV6X2v
-X-Google-Smtp-Source: AGHT+IEIALYwl8BZTk+7LRVdCMC7liY8odUXaxzuBtNBTCvGDH+Iy0eQzYzSZAU88Vt8TRGuYJF7ow==
-X-Received: by 2002:a05:6a00:1748:b0:705:b81b:6ee2 with SMTP id d2e1a72fcca58-70b4356a698mr5917442b3a.19.1720584531799;
-        Tue, 09 Jul 2024 21:08:51 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4397ed2esm2741866b3a.149.2024.07.09.21.08.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 21:08:51 -0700 (PDT)
-Date: Wed, 10 Jul 2024 13:08:49 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: "Kalra, Ashish" <ashish.kalra@amd.com>
-Cc: Philipp Stanner <pstanner@redhat.com>, airlied@gmail.com,
-	bhelgaas@google.com, dakr@redhat.com, daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org, hdegoede@redhat.com,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	sam@ravnborg.org, tzimmermann@suse.de, thomas.lendacky@amd.com,
-	mario.limonciello@amd.com
-Subject: Re: [PATCH v9 10/13] PCI: Give pci_intx() its own devres callback
-Message-ID: <20240710040849.GA3748595@rocinante>
-References: <20240613115032.29098-11-pstanner@redhat.com>
- <20240708214656.4721-1-Ashish.Kalra@amd.com>
- <426645d40776198e0fcc942f4a6cac4433c7a9aa.camel@redhat.com>
- <8c4634e9-4f02-4c54-9c89-d75e2f4bf026@amd.com>
+	s=arc-20240116; t=1720584619; c=relaxed/simple;
+	bh=Hjg0tZCZoUc/FOi0mxezcVRS6LEqOqDBaFL+nWTd+7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=psx0e+JQIfR94f1aqiZlBF8bhbBHTUTFyrEP/5I90cS5M03tN1l6zsi7GQGgd9kMulyxfruiYHdRPIhsYlM15SM+M/CUgG+1JJ3in4KER1rdFpp3s0A/KRKm8PuGOFJRCu3zfqgqRZ4tb37tV4+cIVmOeNfFz1tm5ZkwLjpBcFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Lp2kIq4j; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720584613;
+	bh=QmwatSe6xDOm1ub+iZk2c8778Yhh2yDKnslgKCXYFhk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Lp2kIq4jQBIZTeWoxsl21RJDc/9n9F5oJ4fSIhmG0qvQEe3695KV8CpdYqUExcPBt
+	 iYX0kxonkscz4EgNVA2LJS8LpQLZOzT0g0UGXkmPNHFAOMogTjxv985coRUjo8LED4
+	 hF8gfYs1m7YLkSRHkb0JvltWfg5JjXT31ud80Zm5jt88iOWXBBmh0J0vmMZ9xb0ngU
+	 9/iqFVHrAz/SpMRb80rl20hWPJ0zrCNTte0nycHL8S8id55bQX+ivD5JgBsXHKZyDf
+	 3iHrBJ6iyA5lQh551s38kLYfpACeuFX3nFTOGd1IwUKUDKb8frtDtJJe3o9w3SU7RT
+	 WNEUp8Ax2jztg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJksb3j3Kz4w2R;
+	Wed, 10 Jul 2024 14:10:11 +1000 (AEST)
+Date: Wed, 10 Jul 2024 14:10:10 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Lee Jones <lee@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>
+Subject: linux-next: manual merge of the mfd tree with the mmc tree
+Message-ID: <20240710141010.4fbd65a0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8c4634e9-4f02-4c54-9c89-d75e2f4bf026@amd.com>
+Content-Type: multipart/signed; boundary="Sig_/c490n6ucVeH+kRFRvoypLYm";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hello Ashish and Philipp,
+--Sig_/c490n6ucVeH+kRFRvoypLYm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> I have reviewed and tested this patch, looks to be working fine and fixes the issue.
+Hi all,
 
-Great news!
+Today's linux-next merge of the mfd tree got a conflict in:
 
-Ashish, thank you for taking the time to report the problem and then also
-testing the fix.  Much appreciated.
+  include/linux/mfd/tmio.h
 
-Philipp, I will take this patch and squash into the series you have sent
-earlier, since the changes are not yet part of the mainline.
+between commits:
 
-	Krzysztof
+  89f415b99050 ("mfd: tmio: Remove obsolete .set_clk_div() callback")
+  f86937afb446 ("mmc: tmio: Remove obsolete .set_pwr() callback()")
+
+from the mmc tree and commit:
+
+  70b46487b155 ("mfd: tmio: Move header to platform_data")
+
+from the mfd tree.
+
+I fixed it up (I removed the file and applied the following patch) and
+can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 10 Jul 2024 14:06:29 +1000
+Subject: [PATCH] fixup for "mfd: tmio: Move header to platform_data"
+
+interacting with "mfd: tmio: Remove obsolete .set_clk_div() callback"
+and "mmc: tmio: Remove obsolete .set_pwr() callback()" from the mmc tree
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/platform_data/tmio.h | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/include/linux/platform_data/tmio.h b/include/linux/platform_da=
+ta/tmio.h
+index 1cf418643da9..b060124ba1ae 100644
+--- a/include/linux/platform_data/tmio.h
++++ b/include/linux/platform_data/tmio.h
+@@ -58,7 +58,5 @@ struct tmio_mmc_data {
+ 	dma_addr_t			dma_rx_offset;
+ 	unsigned int			max_blk_count;
+ 	unsigned short			max_segs;
+-	void (*set_pwr)(struct platform_device *host, int state);
+-	void (*set_clk_div)(struct platform_device *host, int state);
+ };
+ #endif
+--=20
+2.43.0
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/c490n6ucVeH+kRFRvoypLYm
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaOCaIACgkQAVBC80lX
+0Gy0eQf/QrPDbRIZf1kFbH0j7SPaEM363P2SsQ+/5zariThhhecZ4u12koRpFcJl
+2y5VQ3y/RRtOAsXMkDK27C4ukZbGayftoJFLTW0AboOtfQeUfYNqj/+PRfVTUKRF
+S/f2J831bqJtCVzT0NDKTyhrg8lg3zJGGB5p0pBN1Sp3VNsElYLtYeQHi7bREdtG
+iq1hs8L3M2WW+WSJezmvoQTesIhcC1hwUGwFgzUgp29ftPRCae6qKkfKLXqy3Fv9
+48DIaLF/i+BCiYqEz6wwuY/11C/U4hMjDG1jkLr0jZiaokJ9nXRHE9zQfRNrgT3k
+HOOgE1B5UK29y3TA2sRZcqkUuawynQ==
+=f/Kj
+-----END PGP SIGNATURE-----
+
+--Sig_/c490n6ucVeH+kRFRvoypLYm--
 
