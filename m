@@ -1,177 +1,140 @@
-Return-Path: <linux-kernel+bounces-247350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D9C92CE54
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:38:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FDE792CE57
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD85BB25BC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:38:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4162C28792C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F80218FA2C;
-	Wed, 10 Jul 2024 09:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3DC18FA10;
+	Wed, 10 Jul 2024 09:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dXBVre5y"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Pj4UUZzD"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3288118FA18;
-	Wed, 10 Jul 2024 09:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A2F17FD;
+	Wed, 10 Jul 2024 09:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720604272; cv=none; b=PLo50SBl7GDbdtaQdOzXiM4cHk18tIFx7Yu6OiDHpTsAthiAkssr5H5o31beqigHwN5lFY6fRbri3C7+2ArOwfnG705fPXAt9RI8/2CC0zIu1J4OKKBFK3TCZcTq3f96NXWPW2hyI6LuT9nJF1uDWkMih14DupG+KScU52hujXA=
+	t=1720604337; cv=none; b=Gm7aa93Q8Mc4hVFIKIP1IehzyBziEUu/NBPcnMoCy0gFE/8BWd3/nmCZSEpvKWPpMNQbtiQl71CZg9c2da+x583i+1RasKqD5db4SLwA55VykYiU0z8Z8xzC521l07lM7vYu7/zzOGCOI7EkFbraumvHLc5wuOctXW60QnjOyL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720604272; c=relaxed/simple;
-	bh=l0InjUn+r9qMZLELw7DvorDCNWscZsq07ZH4vjQNSpo=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CtPjjvGr1cmp15M4PF439Ob56sWmRj+quTjwHw224CUNDVBvQ5Hnhg4I+gghwor60qUo9bAgXk9WcI0HgGxF2BIhKCUzfgnOYjznsxEkcmWiVfSRJwrdimQMIF+VBNvPjZu54XEjC65zC7Gu0kRA8dLMZJ9TBjjYz6YAJmUulQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dXBVre5y; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720604269;
-	bh=l0InjUn+r9qMZLELw7DvorDCNWscZsq07ZH4vjQNSpo=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=dXBVre5y+Yvxx3PzpkRSgBvm+9evADx4Ie/OjSZOjTSMNHhYvUWcC4x1oQjt/kjdK
-	 GP4uaFZm1bHDzjIXj9IBZILXkf9a60jxtHP0ynAts7SBBNCnO1VnDvr3Cz7jT5e15R
-	 WDQQwHXswZlCMJtBspdPA5AQG8BG9wYvbXx1ERH5bSZdLwFYvCTdVN3RgVk5C6MtDr
-	 aNu5mIzltQQzPxwfUPLW07s3VVsY2YYc/OcFHY2Fe2vduU/vbilwcF5edI6J9bcLul
-	 rATfWGU0+/40CL45Pzze7vYFTTI5/dcGMpQqsoofO8gcJROBUj96yyf7IWDg1v17qq
-	 Mi+P0N4Fr996Q==
-Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1720604337; c=relaxed/simple;
+	bh=BytwbyifiKESLkwzNohBtpgLDUZDoGmKbGcw/9M/2/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BKci7hso2bjcQAAAEDwY4M/tPzOhCHnjl5Yze2gFgUmmoNDoo7mt2YGZ96fUG4EQWO3iis/tV5Nj+5mQhtdJNE8SV2eFni/n79luHxvdydnlKbHe1fUwIqqnS/bdZEuq0xxFkXL6g31qF06xjE+YuySLmJBgLxVt8mTYeZsw0pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Pj4UUZzD; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D881940E019C;
+	Wed, 10 Jul 2024 09:38:53 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ZUC_3agCiurD; Wed, 10 Jul 2024 09:38:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1720604327; bh=4tD55kRk58dzBkcPyPWKImU3k357bp6g9dUEFXRiH5s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pj4UUZzD3z8BN3ScRN0bDvLplYjALfVoYh3H4FoAWcjoklLMm/Ibbl0ZdPlS5IFFw
+	 ouLNVb7H/H8KYCPtM63E4bN4qpeW4GYUqZNvoHE8AAkf0lSKN3UZMtIrq+f52ANGti
+	 Set4pCeQu/dAf8OsKNbXUHRFC5t2uzkp6uxkRf7kq9wtgiKzVvTi4SzXsZGFHX61DF
+	 XsOieiXltD7d8US6ccBWrW6JZptU3A/NkBpcRvt5EDAaSL5+YcspcPi2PnGZvrtwYx
+	 rtrPsyW8TzJt1OVuiCyEgpoweOkTrF1pBohA+idpm1GZzuTb8KJGcbzCsjGEynvy0x
+	 PY0wS3MjeESBrQCjAYhExEAQmYge/xqabxnaPgN1Qb1ehMBQRjc57hcLYNC03GFoBE
+	 UCgXv13WkJYt96YwuTARB3bDoklfU8tNocMlPdeGw4qklW0EWaYnhlxTrojbu2KTGL
+	 XxlZ8Sc7cbo1b7QdX9W5Haj+/SBXQnhZl2xgn1ld9x2NZUzVKVtOLJytZ3djQ2lUzr
+	 c1aY0ZLuxAlok9Tr88YqCnNkbKAe1w+91nM2BDvEDWX0IV7mT6cuawx+qQ11mmPNZW
+	 YB9LGO9XkK+33kWbuYR82elmqT6ruXSg1JkDFjIhFIyXRn7aXdNIrGWFJvxtuQKb4i
+	 7u+qClYOlf/gq9G3Fb8iGQRg=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 742213782192;
-	Wed, 10 Jul 2024 09:37:39 +0000 (UTC)
-Message-ID: <f929b8c4-fb66-4724-b2ee-d012a5c20324@collabora.com>
-Date: Wed, 10 Jul 2024 14:37:26 +0500
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 52FB640E019D;
+	Wed, 10 Jul 2024 09:38:29 +0000 (UTC)
+Date: Wed, 10 Jul 2024 11:38:28 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Naik, Avadhut" <avadnaik@amd.com>
+Cc: x86@kernel.org, linux-edac@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tony.luck@intel.com,
+	rafael@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	rostedt@goodmis.org, lenb@kernel.org, mchehab@kernel.org,
+	james.morse@arm.com, airlied@gmail.com, yazen.ghannam@amd.com,
+	john.allen@amd.com, Avadhut Naik <avadhut.naik@amd.com>
+Subject: Re: [PATCH v2 2/4] x86/mce, EDAC/mce_amd: Add support for new
+ MCA_SYND{1,2} registers
+Message-ID: <20240710093828.GDZo5WlPrXLg-SbBHd@fat_crate.local>
+References: <20240625195624.2565741-1-avadhut.naik@amd.com>
+ <20240625195624.2565741-3-avadhut.naik@amd.com>
+ <20240626111036.GOZnv3LFCPnYfrRYSE@fat_crate.local>
+ <6c318161-9ae4-4965-b8f3-e38bf1393628@amd.com>
+ <20240626181805.GDZnxbXRJlCecNeDGW@fat_crate.local>
+ <17bba31a-9bb0-40e5-be7e-96ac6d421066@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH v2] selftests: x86: conform test to TAP format output
-To: "Chang S. Bae" <chang.seok.bae@intel.com>,
- Binbin Wu <binbin.wu@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20240426101824.2894574-1-usama.anjum@collabora.com>
- <da0f535d-b970-4de5-9dfb-e2cbf62c816b@collabora.com>
- <890460a3-fd09-4f59-ab21-4f5b16256175@collabora.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <890460a3-fd09-4f59-ab21-4f5b16256175@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <17bba31a-9bb0-40e5-be7e-96ac6d421066@amd.com>
 
-This patch brings just readability implements by using kselftests wrappers
-instead of manual pass/fail test cases counting. It has been on mailing
-list from several months now. Please can someone ack or nack?
+On Tue, Jul 09, 2024 at 01:27:25AM -0500, Naik, Avadhut wrote:
+> IIUC, its an abbreviation of a Latin word and is used as a synonym for "namely"
+> or "that is to say".
+> Might not be the best choice in this case. Will change it.
 
-On 7/1/24 1:38 PM, Muhammad Usama Anjum wrote:
-> Adding more reviewers. Please review.
+I learn new stuff every day:
+
+https://en.wikipedia.org/wiki/Viz.
+
+> Userspace error decoding tools like the rasdaemon gather related hardware error
+> information through the tracepoints. As such, its important to have these two
+> registers in the tracepoint so that the tools like rasdaemon can parse them
+> and output the supplemental error information like FRU Text contained in them.
+
+Put *that* in the commit message - do not explain what the patch does.
+
+> Got it. The first SoB entry is of the primary author. The successive SoB's are
+> from the people handling and transporting the patch.
+
+Exactly!
+
+> IOW, the route taken by a patch, as its propagated, to maintainers and eventually
+> to Linus, should be evident from the SoB chain.
+
+You got it.
+
+> With this set, the first two elements of the vendor data dynamic array are SYND 1/2
+> registers while the third element is MCA_CONFIG (added through patch 4 of the set).
+> Now, in rasdaemon, SYND1/2 register contents (i.e. first two fields) are interpreted
+> as FRU Text only if BIT(9) of MCA_CONFIG (third field) is set.
 > 
-> On 5/28/24 10:05 AM, Muhammad Usama Anjum wrote:
->> Kind reminder
->>
->> On 4/26/24 3:18 PM, Muhammad Usama Anjum wrote:
->>> Conform the layout, informational and status messages to TAP. No
->>> functional change is intended other than the layout of output messages.
->>>
->>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->>> ---
->>> Changes since v1:
->>> - No changes, sending it again as got no response on v1 even after weeks
->>> ---
->>>  tools/testing/selftests/x86/vdso_restorer.c | 29 +++++++++------------
->>>  1 file changed, 12 insertions(+), 17 deletions(-)
->>>
->>> diff --git a/tools/testing/selftests/x86/vdso_restorer.c b/tools/testing/selftests/x86/vdso_restorer.c
->>> index fe99f24341554..f621167424a9c 100644
->>> --- a/tools/testing/selftests/x86/vdso_restorer.c
->>> +++ b/tools/testing/selftests/x86/vdso_restorer.c
->>> @@ -21,6 +21,7 @@
->>>  #include <unistd.h>
->>>  #include <syscall.h>
->>>  #include <sys/syscall.h>
->>> +#include "../kselftest.h"
->>>  
->>>  /* Open-code this -- the headers are too messy to easily use them. */
->>>  struct real_sigaction {
->>> @@ -44,17 +45,19 @@ static void handler_without_siginfo(int sig)
->>>  
->>>  int main()
->>>  {
->>> -	int nerrs = 0;
->>>  	struct real_sigaction sa;
->>>  
->>> +	ksft_print_header();
->>> +	ksft_set_plan(2);
->>> +
->>>  	void *vdso = dlopen("linux-vdso.so.1",
->>>  			    RTLD_LAZY | RTLD_LOCAL | RTLD_NOLOAD);
->>>  	if (!vdso)
->>>  		vdso = dlopen("linux-gate.so.1",
->>>  			      RTLD_LAZY | RTLD_LOCAL | RTLD_NOLOAD);
->>>  	if (!vdso) {
->>> -		printf("[SKIP]\tFailed to find vDSO.  Tests are not expected to work.\n");
->>> -		return 0;
->>> +		ksft_print_msg("[SKIP]\tFailed to find vDSO. Tests are not expected to work.\n");
->>> +		return KSFT_SKIP;
->>>  	}
->>>  
->>>  	memset(&sa, 0, sizeof(sa));
->>> @@ -62,21 +65,16 @@ int main()
->>>  	sa.flags = SA_SIGINFO;
->>>  	sa.restorer = NULL;	/* request kernel-provided restorer */
->>>  
->>> -	printf("[RUN]\tRaise a signal, SA_SIGINFO, sa.restorer == NULL\n");
->>> +	ksft_print_msg("Raise a signal, SA_SIGINFO, sa.restorer == NULL\n");
->>>  
->>>  	if (syscall(SYS_rt_sigaction, SIGUSR1, &sa, NULL, 8) != 0)
->>>  		err(1, "raw rt_sigaction syscall");
->>>  
->>>  	raise(SIGUSR1);
->>>  
->>> -	if (handler_called) {
->>> -		printf("[OK]\tSA_SIGINFO handler returned successfully\n");
->>> -	} else {
->>> -		printf("[FAIL]\tSA_SIGINFO handler was not called\n");
->>> -		nerrs++;
->>> -	}
->>> +	ksft_test_result(handler_called, "SA_SIGINFO handler returned\n");
->>>  
->>> -	printf("[RUN]\tRaise a signal, !SA_SIGINFO, sa.restorer == NULL\n");
->>> +	ksft_print_msg("Raise a signal, !SA_SIGINFO, sa.restorer == NULL\n");
->>>  
->>>  	sa.flags = 0;
->>>  	sa.handler = handler_without_siginfo;
->>> @@ -86,10 +84,7 @@ int main()
->>>  
->>>  	raise(SIGUSR1);
->>>  
->>> -	if (handler_called) {
->>> -		printf("[OK]\t!SA_SIGINFO handler returned successfully\n");
->>> -	} else {
->>> -		printf("[FAIL]\t!SA_SIGINFO handler was not called\n");
->>> -		nerrs++;
->>> -	}
->>> +	ksft_test_result(handler_called, "SA_SIGINFO handler returned\n");
->>> +
->>> +	ksft_finished();
->>>  }
->>
-> 
+> Thus, we depend on array's layout for accurate FRU Text decoding in the rasdaemon.
+
+So it sounds to me like we want to document and thus freeze the
+vendor-specific blob layout because tools are going to be using and parsing
+it. And this will spare us the kernel version checks.
+
+And new additions to that AMD-specific blob will come at the end and will
+have to be documented too.
+
+That sounds like an ok compromise to me...
+
+Thx.
 
 -- 
-BR,
-Muhammad Usama Anjum
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
