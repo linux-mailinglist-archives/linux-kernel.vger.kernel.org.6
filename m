@@ -1,100 +1,117 @@
-Return-Path: <linux-kernel+bounces-247220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D400892CCB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:18:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC2AD92CCB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A6C62812DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:18:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC2411C20C73
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE2B8526A;
-	Wed, 10 Jul 2024 08:17:59 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBD885283;
+	Wed, 10 Jul 2024 08:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iUY4IW3L"
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0171F2B9DD
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67B92B9DD;
+	Wed, 10 Jul 2024 08:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720599479; cv=none; b=lT861+6P9OJoi7L55jPyID83POC22vu4v8pUzX1X8mYXfNoYQ3HtztL3ZtMxxxV2S4BL62pbiP1G2pX1qN7ey60jTcRWUjBFL6v1h8kf3lIJZeZxqPtFq8XQBLO39/PjrP2wegHIFr6wSeF68nJvSULbPE3xU7bzaihSlUm/n2k=
+	t=1720599457; cv=none; b=V5YGT43lLHu7UdeEgBbMNXcO8mKMYVwFZzQ8NIc9Yj1gg0r4yO1+V+mofbhHzlJ8t7k1m1zFT3tPFcmn86BmHQQBfwLmOr99lLq8lqKm3XW9dZNl+W3zRijTpYU9w5B+Tv+6MDMGy/5nKLfTj3kDE2LSvWhY9YFY/eeTkOYB0Tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720599479; c=relaxed/simple;
-	bh=vMTCO084NzNSlWMkSv2H0Px1AmWGV2K4ZrGqgram07o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O6ULTYMJ5S3oy+451zTV6UgiYDHuWHtiC1i7PXtKTbZL5BQcpNtOxzHmek8bfRNdeZiacL+wwM/3TWayOyMCeYsBzM7+k3dPDXSdRbHL59yddRRpk2PdMW9Osmut4/UJ06oM5AIS175sW1+eWhvzfFkcSB1+1Tl0cU2hjsddaVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowABXX1ugQ45mFtIBFQ--.48772S2;
-	Wed, 10 Jul 2024 16:17:36 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: brgl@bgdev.pl,
-	linux@armlinux.org.uk,
-	khilman@deeprootsystems.com,
-	nsekhar@ti.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH v2] ARM: davinci: Convert comma to semicolon
-Date: Wed, 10 Jul 2024 16:16:48 +0800
-Message-Id: <20240710081648.2286573-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720599457; c=relaxed/simple;
+	bh=QL7gXfmn3sHEwdX5L7XIswSOUs7PLUJi/MBJBtdrt+w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GIxo1XBpPmGcC29DtS/3O0LczN6r/z4ujUj7O8xeZyK0TiadMZkTs/AjZXHMITAyI8LaauI4gLeWlkuN3Ju2sKAQKT0zcK7E5VQwa9iWudo61p1D/MRJsryWevTuSUay0QZvKnK6WAk9Elv0bnElrwFr8TlUUyTDWNW5QN/nLrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iUY4IW3L; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5c6924f2383so790914eaf.2;
+        Wed, 10 Jul 2024 01:17:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720599455; x=1721204255; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eEpPXs/xVI0eqBmePk09QmlwebuqlY4VOlxdZ0TFkAo=;
+        b=iUY4IW3L4mrbg4xUvZCfL5f1CbnwffUuTRfM8D1G62Yb3tGAE2FLIFVzSwonV4ZHbz
+         LVh0UXFg4nqXnyZC0f37zO0g20fab9UyiME5gsTIZGPqPVib8VhFfjTPUrNCb/SB5LdW
+         AL04o44IBMqWffP1X+kvX21Ht83BqMFk7fYuypHU22xPLVHhNljcheu8KGG05r0ImjSd
+         xR9XEMcIvuQz1O2fV7tTZEQhNUzcroO/DztflGgmD0rwajBzRp3/JKBZVQ3FTOFYDvOc
+         rOgKyLMrQKU2CkYGOudoQMpzzDY6cvAZ/SWzBdmrc5RdeCOiNNsoO/5Tsz4V3FLxTV5Z
+         OO7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720599455; x=1721204255;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eEpPXs/xVI0eqBmePk09QmlwebuqlY4VOlxdZ0TFkAo=;
+        b=WM6ZsTOqhgEOadxFOHL25XONSIQi5LjQsPmfNLpRfZI3jyKfRWGnMuAu+lY2xdckDw
+         l6VZNXSdWUfs2MDSmNjeBPRHScFmmfUn9gch8X3ShcaPYu0ADMb2vKtAUDkA0QVPltl9
+         9p0eDLqtVyNZuNPI5Tl4cebh9jlGtCwD6xqd3gsoQwDmIi9LRQL08NyCrY6znqrJL9if
+         KGBAQtutPxyt1jj0q7hWfCWnUS2clzmCy5IvYiJPIhtwockSIzPfAi4qjxSTf94D1/PY
+         /bJKUnfz4TQhAK62c/c1wQtd8vcJAGZsnvxrVxfPTU6HCqQMd5K1K5fKs1xU46M7TA9Y
+         0uFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVk3ytQ4235GxVx6gwn4AKe53kVxT5LuT0yd1PXQeskSj2H7m1zw4bH+nmaY/wXBdzMfZHkE+OKC/32QAyFWLPP3JxNtMY04fpd5zGNu26z3FowrSQT8oyXZYnS+bpR461lSypQ/lxh+Q==
+X-Gm-Message-State: AOJu0YyivNS6ZpLkA8GJyL2yTRkWxm3Imk6utFwWXcn2OXUh0vMF2xqd
+	PyhpDMO491a3RB7du3AKYxrBKpQKOOR7yD/ie0fy1b2IWWWoi4Y5IauS9Wwhq0Eq5hIlsYqWMfd
+	xJY10UT9EVVBZbSwLLlula2KC1t8=
+X-Google-Smtp-Source: AGHT+IGHAy/9l62EKquxsTUZGlYQXzClyADc66DY/NsV80+il46z6M+yIiFPfwdTr56EhK/InWbXZug+PcV9AN4feQI=
+X-Received: by 2002:a05:6870:348d:b0:258:4dcb:7d4a with SMTP id
+ 586e51a60fabf-25eae7eea87mr3724874fac.16.1720599454904; Wed, 10 Jul 2024
+ 01:17:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowABXX1ugQ45mFtIBFQ--.48772S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZrWfXF1ftrW8Xr47Jwb_yoW3Krc_Kw
-	1ft3y7ArnakrWj9w1UX3yrGr40ywn8WFnrZryvvFnYyrW3Xr4a939YqF1IvrW5W3W5GrW3
-	KrWUGryrGwnakjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbcxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK6r43
-	MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr
-	0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0E
-	wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJV
-	W8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAI
-	cVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU1oq2tUUUUU==
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+References: <20240709064400.869619-1-nichen@iscas.ac.cn> <0c9db292-7b13-4d95-bc5f-f96800ea91b7@redhat.com>
+In-Reply-To: <0c9db292-7b13-4d95-bc5f-f96800ea91b7@redhat.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Wed, 10 Jul 2024 10:17:22 +0200
+Message-ID: <CAOi1vP_7fHdhZbi-Jk_RLHbNO8htX50wWFMrHyhFKMApHMq9fw@mail.gmail.com>
+Subject: Re: [PATCH] ceph: convert comma to semicolon
+To: Xiubo Li <xiubli@redhat.com>
+Cc: Chen Ni <nichen@iscas.ac.cn>, ceph-devel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Replace a comma between expression statements by a semicolon.
+On Wed, Jul 10, 2024 at 9:18=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
+>
+>
+> On 7/9/24 14:44, Chen Ni wrote:
+> > Replace a comma between expression statements by a semicolon.
+> >
+> > Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> > ---
+> >   fs/ceph/dir.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> > index 5aadc56e0cc0..18c72b305858 100644
+> > --- a/fs/ceph/dir.c
+> > +++ b/fs/ceph/dir.c
+> > @@ -1589,7 +1589,7 @@ void __ceph_dentry_dir_lease_touch(struct ceph_de=
+ntry_info *di)
+> >       }
+> >
+> >       spin_lock(&mdsc->dentry_list_lock);
+> > -     __dentry_dir_lease_touch(mdsc, di),
+> > +     __dentry_dir_lease_touch(mdsc, di);
+> >       spin_unlock(&mdsc->dentry_list_lock);
+> >   }
+> >
+> Reviewed-by: Xiubo Li <xiubli@redhat.com>
 
-Fixes: efc1bb8a6fd5 ("davinci: add power management support")
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
-Changelog:
+Applied.
 
-v1 -> v2:
+Thanks,
 
-1. Add Fixes tag.
----
- arch/arm/mach-davinci/pm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-davinci/pm.c b/arch/arm/mach-davinci/pm.c
-index 8aa39db095d7..2c5155bd376b 100644
---- a/arch/arm/mach-davinci/pm.c
-+++ b/arch/arm/mach-davinci/pm.c
-@@ -61,7 +61,7 @@ static void davinci_pm_suspend(void)
- 
- 	/* Configure sleep count in deep sleep register */
- 	val = __raw_readl(pm_config.deepsleep_reg);
--	val &= ~DEEPSLEEP_SLEEPCOUNT_MASK,
-+	val &= ~DEEPSLEEP_SLEEPCOUNT_MASK;
- 	val |= pm_config.sleepcount;
- 	__raw_writel(val, pm_config.deepsleep_reg);
- 
--- 
-2.25.1
-
+                Ilya
 
