@@ -1,124 +1,109 @@
-Return-Path: <linux-kernel+bounces-247634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31D7192D23E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:06:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E204392D244
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:06:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D05881F25A1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:06:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96C531F25AAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6613A192479;
-	Wed, 10 Jul 2024 13:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A0D192B77;
+	Wed, 10 Jul 2024 13:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Wtv5WKeK"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SiMw688F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5C983CD4;
-	Wed, 10 Jul 2024 13:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36DC192493;
+	Wed, 10 Jul 2024 13:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720616770; cv=none; b=FEe4nOa68E8erV738hNJLxxUfOnEyMJBI86LAJqeCA5Wo++wQopyO3Yu4CdsCKo5xAX2O57nWcaR7CvRTvIzvS58JY8lSV+7hUsjRaZXPJJrFhwKyFvcHH3TvghOe8VepKvssqZsY233wKg4xqRECcPpYOHPgVvARU54KRz7o64=
+	t=1720616788; cv=none; b=Bw+585vAlEaWkTf41O/rRZbvxOhG9q5ciWfZEt2uFW4MI4fNbEWENxrz2h9KLTR5Y27pA3s4VyeyJ4ZwL67zNrw5Jc+QKnIZjsMBS9ZXIDeLDHR80889+0B3TViylTJ9uUwkFWiq0I2kwMKC5/tknkaVzQ1ksYuR5f398D+TLA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720616770; c=relaxed/simple;
-	bh=mgA99OrDmthPsDPhXumxSed5OSOz0lcBLKjYOBeh/vM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=P9KM0hnaa4ztYJ49x2/hw+xJiEtKZr/xNbfe4t/jWHLgDdY1uhQAJwXUOEmCrOYf1Q8+j60/DEmjW2SwbVP2Dp/zg3d+7kWHUFiSZV7JR8Fku5tpp9ywNVvr7H52jshtxaSKt/lm84fIw2j9g85QiY5Gm8rrCmhq4nIzEnL++oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Wtv5WKeK; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1720616734; x=1721221534; i=markus.elfring@web.de;
-	bh=hL1FGV0d+/uNuT5MwoYkBSDKdQE8pznXZfxl1D6esK4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Wtv5WKeKXhTZ4xKMJdhVn4hR0512X93slSKmuJcIJq3zP4UTGggQGgS/rwS7KW7A
-	 fWmPHQFZnmGKE5po8BZuXyWUjGeWcH7uKkXCcKLV0WrEuucuyxISWs55EOkfvLQbF
-	 xpkJZwjHYvT0YsnNwh+yXvk3+Db8gY3XxyKLz6+IkV51bT2ygM1+FbHEkuutUY1zl
-	 O/+b9NQHt8VooN5QiRor4c2mH6MG3Sxv52ajrp9ghTg9KVMWJ3JhbaME2nNb3CSsd
-	 VtQXtqPNUZS20uh8njvx3uEcnZA03SjN4ANAPI2RlDGiBkxQqU3cWH1eDYiVy//rw
-	 t3WkhWLnopmmo7M6IA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MD5jp-1sadhP2Yi1-00DHGg; Wed, 10
- Jul 2024 15:05:34 +0200
-Message-ID: <17c94d87-e260-4155-90c1-b7e5013ac69e@web.de>
-Date: Wed, 10 Jul 2024 15:05:31 +0200
+	s=arc-20240116; t=1720616788; c=relaxed/simple;
+	bh=PW5J9RmIMWOs63awhlKVRUsc/q4YKmg5qreeXssolV4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=u8tUzbZl7EP9l13keF+K4fU4nfHjqurR9ujKMNbDjLNNH9aR9ZvhoWFIQeciDO/VNlfP30XIhtYmHJt3J+fD4Iz+SEQqL6oWmLr9HoG035rfGwr8sg1QRCx0po3GhSss/opPHYQqAT/O0urwlJOxK2ilbZRreopBLrS/aIndeyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SiMw688F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4900C32786;
+	Wed, 10 Jul 2024 13:06:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720616788;
+	bh=PW5J9RmIMWOs63awhlKVRUsc/q4YKmg5qreeXssolV4=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=SiMw688FWW7JGJgbfE2KskdR2xPCVCUaohwjmypFnJMo3FxpWOONbpCP8SsmobD4D
+	 WA8J2x7Md3quwMCadzF/01mL+0M5MnsqUH77+hhEDdWwXSaoqIfd1RzoNW1ZDXaC2W
+	 /s0J9FZZlMdS9wUhLCR0ZwXgQ90XxG7+RqEC1z+Opm1XHRJTgrUv0KfRQy8RX/M9I5
+	 Ke1dZNyrtmOE97bjHeotQ36db8ffQHMON6hppZao4Ws8l1MIvB0h76ITvIOMsRekUv
+	 fB8R4SesdotUEAPrvXvqqWi1WHJGNqhKRBKFKlQehInflrFRnYKycXXNM8uIFq57jI
+	 ttbkElQkQucSQ==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Wed, 10 Jul 2024 09:05:31 -0400
+Subject: [PATCH 1/3] nfsd: fix refcount leak when failing to hash nfsd_file
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: make24@iscas.ac.cn, linuxppc-dev@lists.ozlabs.org,
- kernel-janitors@vger.kernel.org
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Aleksandr Mishin <amishin@t-argos.ru>, Andrew Donnellan <ajd@linux.ibm.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Christophe Lombard <clombard@linux.vnet.ibm.com>,
- Frederic Barrat <fbarrat@linux.ibm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Ian Munsie <imunsie@au1.ibm.com>, "Manoj N. Kumar" <manoj@linux.ibm.com>,
- Maxime Ripard <mripard@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
- Shuah Khan <shuah@kernel.org>, Wei Liu <wei.liu@kernel.org>
-References: <20240710103352.1890726-1-make24@iscas.ac.cn>
-Subject: Re: [v2] cxl: Fix possible null pointer dereference in read_handle()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240710103352.1890726-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ySccpis36z6zCEn3Lvza8Bcw69K9CLTO951Rfrr+vzx9/WjUznR
- uBGLzfKx31PWoZiRB7dopUjsxoO0LOxfLLn4qYbLDy1tjwFRFR18KxbDMxFvi5MN48BHBPQ
- miagwSx+EDmvQYcvoizxkyvQjC5+j5OC437GHMMocZo4AYMnYa8QXKcpxrrhdIXySYhjuF5
- a0sHalsGI2NtM8CUfLAHA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:QlxgUnxO+Gg=;x1/tJ3UEsXUlj19rmtzQQ0Bu+/G
- YIcvK+OTSSc01X209tkGyk5j8jwQlXZ32ANqTTIePu5iRihf4ut5PA3mR7P+FWxVwabR4HXzQ
- 17Wscigeq99PSTCarfj4XqQ/Z8C4YRVLrBSDK5+9Fjd7HL8o9JSxFdluCYO0wT3lVPYH/BQca
- uf0lZpBzQjqf5cybjn2CSqA8HZHEBxhOTAx+gNqI5PWoEjsrMdAp4voUezMcf23rHXn181CM3
- Z1Emz5epnsZfAegPh3EQUeAS7Q0CkLrLfa2aADvyltNUTxIF4EArIC2ssrICGKEXBDCLBruPv
- eQvNRztTrwHhiAmdJpA3fqnpshh2+yl9eqbM+UqUgy/vqKrGmI34iAhz7yTy0Mkew6JOqclvo
- lMuHgPYa1nsnyuifDQr7bWVlAIHcWrgaaJzRdpfBpLmI/Nwqtoc68LHCAf75ozIpiIFauqz/6
- VL2SewEm9CM7hgs0Hclh2ddtfgyBFbPRXf35itDLjcKS2qO90FuDCW6Oe3qm5T/fwd3Q6nUPd
- n8smSTA6h59vpOccMJekDgxsO222HBG+DEF4h5m6d7RnpzqMUma5y+s7Vp5kQhqCN+lgjGjMg
- vt4YTnfgcRcw1NgAp2t/1e6ydafGPLJFtOgBaGiL4ZsxT5uVLqZu6KiFdEqyGwPjYdtS+yHlF
- uMmnbU+hIUH4YEpBswED5dCiHnRdhF4ojLT24KlMkbxnW4IhwneZ/FrRq4xN1sfeMJYhSraVe
- 381f0ddaMdKzSNPHJuakGeAS+cKIOG4qq3W+LUulGRiCCfa8W+poZUgL3P/Cx+SXWb+ogIAa6
- IPsjOQ09tJ/I3rEl8xtJsHkg==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240710-nfsd-next-v1-1-21fca616ac53@kernel.org>
+References: <20240710-nfsd-next-v1-0-21fca616ac53@kernel.org>
+In-Reply-To: <20240710-nfsd-next-v1-0-21fca616ac53@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>
+Cc: Youzhong Yang <youzhong@gmail.com>, linux-nfs@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=875; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=PW5J9RmIMWOs63awhlKVRUsc/q4YKmg5qreeXssolV4=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmjodSC+xMX7A+v7sYgagQPog5F6NLwmjttcuO0
+ xBcvKjd/Q+JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZo6HUgAKCRAADmhBGVaC
+ FRiHD/9I1vDhHMocDJFsxvaHkCVa3fKzADNGbS9odsia4tuFszKqqHCAG2Bwa0427ewDEU7bpzX
+ P2R4KrGUSCIq1b+Wrc0S+AtsgZY57O3nBN4yO7cc6Gi3bXcf9OqJXUXOB95wewIOx2akAVIjfco
+ SLXnRFVx9sEuX6JuKs/TVJ3UcRI0whKRs9d28aY9jV2gik+fJ/gRlK231ydiRR14azllZBUlaf3
+ VIQ5sq/eaocem/gOOsPhw4gUGaNjPzSPDF01jRF4lSb5FppiRR9rkMZ9U6H1G6Gs8Sd1wYkq+gC
+ BoOwLEqe4aKR+wVrWdajMCbTHep6hCoiGHfny1oCOrVTeKIl+PT4UITzn4iJE3uYSoV4vX3fiJP
+ ts2ZzY4xlhWWYcWZd5wI+jqNxeKqVAkvuJKaVsCfGsChYQCpsPyCNl2LZSVblj5DtqeKxdEwO6F
+ v5CLzE+FIHdyoJJarKwWYqlXLWYByIXUzrbL0cECDUjMbzUrbiu4iDFxZ7XyfTzRO5xhthXA4H2
+ 2Sve9REPux/eN3fHKyma7Xj4XRRCknjzABT3hbd7bbXE62+MbfGWYtiheYAUPjc1txWvZfyUSof
+ 5hns8o+AQhksQ3eZ7VD3P+yfs0dLBYTMedEfADpp6AuGDZ8w9TjI4JlqIp+rAm9PCjI3zEHVIrP
+ 0lVSp4DXgeryGlw==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-=E2=80=A6
-> - The potential vulnerability was discovered as follows: based on our
-> customized static analysis tool,
+At this point, we have a new nf that we couldn't properly insert into
+the hashtable. Just free it before retrying, since it was never hashed.
 
-I became curious in which time range further corresponding information wil=
-l be published.
+Fixes: c6593366c0bf ("nfsd: don't kill nfsd_files because of lease break error")
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/nfsd/filecache.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
+diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
+index f84913691b78..4fb5e8546831 100644
+--- a/fs/nfsd/filecache.c
++++ b/fs/nfsd/filecache.c
+@@ -1038,8 +1038,10 @@ nfsd_file_do_acquire(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 	if (likely(ret == 0))
+ 		goto open_file;
+ 
+-	if (ret == -EEXIST)
++	if (ret == -EEXIST) {
++		nfsd_file_free(nf);
+ 		goto retry;
++	}
+ 	trace_nfsd_file_insert_err(rqstp, inode, may_flags, ret);
+ 	status = nfserr_jukebox;
+ 	goto construction_err;
 
->                                  extract vulnerability features[1],
+-- 
+2.45.2
 
-Various software corrections were published through the years.
-
-Several error (or weakness) categories are known already.
-https://cwe.mitre.org/
-https://wiki.sei.cmu.edu/confluence/display/c/
-
-
-> and then match similar vulnerability features in this function.
-> - Reference link:
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/com=
-mit/?id=3D2d9adecc88ab678785b581ab021f039372c324cb
-
-Another reference format can be helpful also for the commit c534b63bede6cb=
-987c2946ed4d0b0013a52c5ba7
-("drm: vc4: Fix possible null pointer dereference") from 2024-04-15.
-
-Regards,
-Markus
 
