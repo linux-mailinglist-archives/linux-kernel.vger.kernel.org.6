@@ -1,122 +1,121 @@
-Return-Path: <linux-kernel+bounces-247946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07FFB92D68B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:34:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B53692D68E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:34:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B23501F265D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:34:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD08E1C20F20
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E30197543;
-	Wed, 10 Jul 2024 16:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A32B197A95;
+	Wed, 10 Jul 2024 16:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEGi+sto"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gqFRE8j/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC921194C7D;
-	Wed, 10 Jul 2024 16:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7E4197A6A;
+	Wed, 10 Jul 2024 16:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720628988; cv=none; b=fXKpTBWjA6c4ppbrrI1CsACCRe+suKxsXEEBzgWnwDMx5WSlrkXF2J3gbJcnM3COifl5hpH7zBBU4s+ejhe663ZWYj8ff4IP59YaBGk/0bs/wPvuow1UJnbTHKpLYv4uHRDhSBrBYA6Jv7tYGzVOx9QPBZIPp+lBoGehzAyswwU=
+	t=1720629004; cv=none; b=ArmGsHyArpBTVlr85/H7VkQOrWvisTVr8FH5bPnWjOy1YqBzbmp9r/bq/yvO4dGB9W/Sj6jVIZxgJuiVYGAFdXaTITKMEbJmu25CMXH1aKM/mp7WkcSk45b9EEXFwT6xcYb4kF2axttcYfjzI/SqKbnZcwMu7LbLD3XQlXMJavw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720628988; c=relaxed/simple;
-	bh=bx9D8NKwTdRINZb3r2LnlQ1Wd7RT9h4+RBDqcerlajk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kj8hJK1JHvwvt4B06thB3/PLkVVAQxv2txlH3BdFewBg/xLP2AaJ+MorMfINCgJkmNlJr3niHnWO0j0i2/et1czqx+5pegMfnHmx2OtJRvwz8HJTPkaiGnrjJ1Cr8nwGMVft7AoCsulxCRrG7UyIUYuXWLgRyQgbYtgX+37MQrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEGi+sto; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66CAAC32781;
-	Wed, 10 Jul 2024 16:29:47 +0000 (UTC)
+	s=arc-20240116; t=1720629004; c=relaxed/simple;
+	bh=Bx9uFFb7QrVPq34e0L9QEl0vHkz4QoQtHL7QlIkMJyE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YZg4J9iG6bVj9eEY5XWPbFTxIBBWHTYpVZRJQmqrzKcSz6zWM/pC/dMDj9yArYBDKlD+BfXnC3pid64Uf2SozYsJ6LUXr8yMfSqg/Uahc0sLLA3cShIj0+rv7Xx1HGGfaQWAZaFarzywPQjhjefVTgM5vfdFYJas+tJi2Sje6gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gqFRE8j/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DD8FC32781;
+	Wed, 10 Jul 2024 16:30:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720628987;
-	bh=bx9D8NKwTdRINZb3r2LnlQ1Wd7RT9h4+RBDqcerlajk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OEGi+stov8aPkMbYfVULNzrQjikFEyCT3EM9gGTyjbSuUAphaNf3gCpn3ouKGyqcT
-	 hNkWbmQD+qJdAxpxMTsxKFFTMZntrG3Ugcr6uGKzyWLWCiIOE0By3uvVtxecA7+MWP
-	 5T2SPF9cSxrnjJ7jk9AJved5hoS9CPaA4oOP6pHuJlZSPfunbN5Z17FR9J/oUE+c1F
-	 bTF+mPfyhTwMpMK9GG3QRb10j0hjziso00LbfCyI90ksnaHRI55dX0il9kFM+nZ9MI
-	 OEW3OCRzNZQaKNYPpkTo46plPVDtbtR9SRtQnyFPGHM7dWgXAIFpNprL7wxRa4MxGU
-	 1LaiYSmqiKfeg==
-Date: Wed, 10 Jul 2024 09:29:46 -0700
-From: Kees Cook <kees@kernel.org>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: Breno Leitao <leitao@debian.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, horms@kernel.org,
-	linux-hardening@vger.kernel.org,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v3] netdevice: define and allocate &net_device
- _properly_
-Message-ID: <202407100927.3CA9DE888A@keescook>
-References: <20240710113036.2125584-1-leitao@debian.org>
- <0664910d-026d-49b8-8b70-a5c881888761@intel.com>
+	s=k20201202; t=1720629004;
+	bh=Bx9uFFb7QrVPq34e0L9QEl0vHkz4QoQtHL7QlIkMJyE=;
+	h=From:Date:Subject:To:Cc:From;
+	b=gqFRE8j/S79AhOUC4URKYKzrVWPU+N0fv2wttMwDyWtjaoI2eC0E8woMVWwyW7laz
+	 xgcKXCAmNqahfeRt6ixKjoPzTFbZg6hySnJBVuiG9YkaZq8smbFSc/IwzoHmGy0UxS
+	 U0TD56cE7l9iYy5xB7J+Kbw4K7lJWQOhTd3P8hB0iXunVQLpeOhdiUlG60RAupn1t0
+	 Jp2YJTAw8rvX9HNIfSzZCGYXADvwfOTbJvnPQs8CuJA0ABuLGJWi7THegfi5+PvlOr
+	 X/hfMlzHr5E0WaCnhXKsPLfRN0niVzbT8y36USIFJ/xHqwgF++Z4U/884WNfVqO18E
+	 QH4cORy3G1UhA==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Wed, 10 Jul 2024 09:29:57 -0700
+Subject: [PATCH] ACPI: HMAT: Mark hmat_set_default_dram_perf() as __init
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0664910d-026d-49b8-8b70-a5c881888761@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240710-fix-modpost-warning-default_dram_nodes-v1-1-8961453cc82d@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAAS3jmYC/x2NywrCQAwAf6XkbGDbioq/IlKiSWrA7pakPqD03
+ 108zmFmVghxk4Bzs4LL28JKrtDuGrg/KI+CxpWhS90+HduEal+cCs8lFvyQZ8sjsii9nsvATtO
+ QC0tgf7odlFSlZ4Iam12q+R9drtv2A0FOH9p4AAAA
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Len Brown <lenb@kernel.org>, Ho-Ren Chuang <horen.chuang@linux.dev>, 
+ "Huang, Ying" <ying.huang@intel.com>, 
+ Jonathan Cameron <Jonathan.Cameron@Huawei.com>, linux-acpi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, 
+ Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1828; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=Bx9uFFb7QrVPq34e0L9QEl0vHkz4QoQtHL7QlIkMJyE=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDGl927l9fn5sq/wov0A079N3Zbed05huq07edODku+apJ
+ 5f0/bsm31HKwiDGxSArpshS/Vj1uKHhnLOMN05NgpnDygQyhIGLUwAmEuzKyHBpfteazMOXDx+t
+ feQc8NezVCPt6stfdf/Cyq0drG8Gfz/KyHA55s+HIMZrVWe+lGRLhqc9e+p8IfamvdjB/Mkr7V/
+ UHeQCAA==
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-On Wed, Jul 10, 2024 at 04:01:35PM +0200, Alexander Lobakin wrote:
-> From: Breno Leitao <leitao@debian.org>
-> Date: Wed, 10 Jul 2024 04:30:28 -0700
-> 
-> > From: Alexander Lobakin <aleksander.lobakin@intel.com>
-> > 
-> > In fact, this structure contains a flexible array at the end, but
-> > historically its size, alignment etc., is calculated manually.
-> > There are several instances of the structure embedded into other
-> > structures, but also there's ongoing effort to remove them and we
-> > could in the meantime declare &net_device properly.
-> > Declare the array explicitly, use struct_size() and store the array
-> > size inside the structure, so that __counted_by() can be applied.
-> > Don't use PTR_ALIGN(), as SLUB itself tries its best to ensure the
-> > allocated buffer is aligned to what the user expects.
-> > Also, change its alignment from %NETDEV_ALIGN to the cacheline size
-> > as per several suggestions on the netdev ML.
-> > 
-> > bloat-o-meter for vmlinux:
-> > 
-> > free_netdev                                  445     440      -5
-> > netdev_freemem                                24       -     -24
-> > alloc_netdev_mqs                            1481    1450     -31
-> > 
-> > On x86_64 with several NICs of different vendors, I was never able to
-> > get a &net_device pointer not aligned to the cacheline size after the
-> > change.
-> > 
-> > Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-> > Reviewed-by: Eric Dumazet <edumazet@google.com>
-> > Reviewed-by: Kees Cook <kees@kernel.org>
-> 
-> You did a great job converting embedded &net_devices, thanks a lot!
-> 
-> I hope SLUB won't return you a non-cacheline-aligned pointer after that
-> you removed SMP_CACHE_ALIGN(sizeof_priv), right?
+After commit 4dc70b711dbc ("memory tier: consolidate the initialization
+of memory tiers"), there is a modpost warning when
+hmat_set_default_dram_perf() is not inlined into its callsite, as it
+appears that default_dram_nodes may be accessed after its memory has
+been freed.
 
-Currently the slab will do power-of-2 alignment (i.e. aligned to the
-bucket size), so this should be fine. In the future I'm trying to make
-the slab more aware of the required alignments so that it can still
-provide needed alignment without having to do maximal (power-of-2)
-alignments.
+  WARNING: modpost: vmlinux: section mismatch in reference: hmat_set_default_dram_perf+0x18 (section: .text) -> default_dram_nodes (section: .init.data)
 
+The single callsite, hmat_init(), is __init, so this warning is not a
+problem in reality but it is easily solvable by marking
+hmat_set_default_dram_perf() as __init, which should have been done when
+this function was added in commit 3718c02dbd4c ("acpi, hmat: calculate
+abstract distance with HMAT").
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202406292310.hlRATeZJ-lkp@intel.com/
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+I left off a fixes tag as I assume this is going to be squashed into the
+former change mentioned above, as it is still in mm-unstable, but feel
+free to add one if the patch is going to be standalone.
+---
+ drivers/acpi/numa/hmat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
+index a2f9e7a4b479..ca0c0ea3e1ef 100644
+--- a/drivers/acpi/numa/hmat.c
++++ b/drivers/acpi/numa/hmat.c
+@@ -933,7 +933,7 @@ static int hmat_callback(struct notifier_block *self,
+ 	return NOTIFY_OK;
+ }
+ 
+-static int hmat_set_default_dram_perf(void)
++static __init int hmat_set_default_dram_perf(void)
+ {
+ 	int rc;
+ 	int nid, pxm;
+
+---
+base-commit: 17bcc624e67da6383060ee24483db77aa17276aa
+change-id: 20240710-fix-modpost-warning-default_dram_nodes-38b6faffe3da
+
+Best regards,
 -- 
-Kees Cook
+Nathan Chancellor <nathan@kernel.org>
+
 
