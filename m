@@ -1,132 +1,188 @@
-Return-Path: <linux-kernel+bounces-247703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C67992D365
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:52:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A1292D360
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:52:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F28BA1F24712
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:52:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 631301C20D48
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB33193088;
-	Wed, 10 Jul 2024 13:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83CB193066;
+	Wed, 10 Jul 2024 13:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I/YRcBEf"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jLX3OLpI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C398192B8F
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56ADF81723
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720619536; cv=none; b=cm5iC6KzpDbxj7BiYL2mPqTA/2lgLSzUj59/bkW+v/JFDg4FLkWC8ih1vRLjzgkAljz8/6JTuGBl3abPj9pv/KRWYWAknIcOcFvag9X+UYTwxI6MkupOJfRlMHr+YTR1vhtRv2ybxcbjO7BTNvY8pzpeUy6fgMQYx2Zvm6/PRlY=
+	t=1720619524; cv=none; b=GaB/5eOdZK8tkKw3hD5Mj1LYhDQWag+jRi1JqehDaa5ewotCW8IynjOV/0UuCtFzKdfTdsDQgoAoWsjGL5biqaV4TP4aVLD7WkC5KQshstfK76sdHuhQriVBTtZQ1mheMTxVGh/lIWSUdrXA4yxABAd5e4q54IYSGJOlr19HoMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720619536; c=relaxed/simple;
-	bh=3WiWOBn7pHdmhx9iPoez08ScqRj7WvY9UsQuBoxjbvQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UEI2u6xky1sdeocnMBDchNxk9EMjEt/ZbDFm7rhvsStXu7/tb1AbNWnOZG140mXEVt6mVgHwC8/F7rpA34mvQyBJW2FVXa4v3TVL/9F/FM0GTA0gA6jU/9PxVc38i32Y3v6n8x32rWyAbtrcjKpj7x6qIkRsP7JkBJ4ash5P3c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I/YRcBEf; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e02c4983bfaso6593021276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:52:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720619532; x=1721224332; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=s6ihtFgMXol2238V4wCVG6CHvKqmNcnW+Q3HHUXDtbg=;
-        b=I/YRcBEff5PrvIhr8gqO5kZjyjr1Cb4kNaAidhFvpiOXYlphQF2XBfcEnxEeEo2a2a
-         fVPYFO9VaKoanXiEB8wFOSRK8lzhUFSXn1h/08HFQEULyVj7CVH2ZQfJbuT4RJ4kNleX
-         Wuf6pV2vbCBd+OQFoVtY4TrCQ0e7q3l8+Bk1x9UA4KxuyOcRAsnO4h9KFiXrADD8s6Fl
-         izhrQRn3XhMhCMscVDvootI8LWke5iGTYCOI543vCh9OTV+E0IbDS/Mcc0+zyb9F0xG7
-         Rr7MkHzUiTr724g9b4O+tGn97C9QdqSitWoiV3TNVUNE5bBSO1vOkEel6BqrahftsjC6
-         NquA==
+	s=arc-20240116; t=1720619524; c=relaxed/simple;
+	bh=j0eXykdnRIlbr1rB3yho86bg+xuhpJM7RF/337+HIGU=;
+	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YaeXJ2WHJbS1OvbS60CEAz8EmIIwKfwPloKrTh62mry4c+cMLaAgURY2MJXIu6Xx0k/Hw62KDFGU0szb6n6sepaS0Sgz3fz0UndHB4OsiseMEe2NnRLmqNzRDYU7FGhAhMdiFmVgcD1z8XtdlR2vnqc5NhnWR9+3VT2AG2bMRbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jLX3OLpI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720619522;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ApMfsMbUlfLMAL+cNRnf74nXamuHyvNu+25SQh6Wu4w=;
+	b=jLX3OLpIzx0gynF/8GlAUfuS4dTJaZV5HuXjhrIHfHwa8eAhxXb2T53IPKQawV/QjJDpSt
+	qZ8vTvmV2hCkJzJHgu0nEDHP5j1h3iCtL0cBjItNpX88yUCUIRtwCNpO5Bk52etQOt8M+X
+	qn+mVlJpwzsrMTF3o/7LhAH9kTqPP8o=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-452-2O6WLcz5M36w2U_qX6MwEA-1; Wed, 10 Jul 2024 09:52:00 -0400
+X-MC-Unique: 2O6WLcz5M36w2U_qX6MwEA-1
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-447f9a3d7d1so30787411cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:52:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720619532; x=1721224332;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s6ihtFgMXol2238V4wCVG6CHvKqmNcnW+Q3HHUXDtbg=;
-        b=POowHDafq35Z0+nLKCK0+r4K5eWyyMDcLXUnm6yrtuoBGvT+8ibVj9Cq8OS2cAIa9a
-         opOCLulzlnyLVovge6hyepOKdmPEyzutNdAU5Ba2mC+4F3BK+RRYxvhoixuyX4KCiop1
-         yzkDIhL+28E1PvzXf4Cta716h0zm7xbRTGFgoF3DOZWk6DZHjCm/vL+GIo/yUNGNquNw
-         sddKeJPn99bBhsBiOHADQtNvuSAkHJPAa03vjR4A5W/OWY8pRbFZoIe08xDehirzMHny
-         NALNAFPUSeibMUDlTJXiiVyiRh7sK58PsZU36uWaHycT6MR4jaD4ioR6zLKemFwgrk7U
-         JlTA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvRqFcapWTTza6fIh5IARKk1vKbfN4KgoFOdidG0bfXef3aJJ1b6PXy7CgU8xXhfLr5/2Jn/xWFZ1HlZfEq03wRLkwcaPq733lWaOu
-X-Gm-Message-State: AOJu0YwMKlcuC2RqNXCjfiwuZWkLZfydtIRFufA+vNYMtg/rAmfHsF/x
-	ZLQIOmHUtAfuRIRECa0WBCQGiCBE5i7GTHYZjUyJ2G0xRTEx5LLBJDIGWlXHDe8A2Py61lPdnCd
-	5agteoluoZwbI0yfR9AWjk8Wdczy6sCjktUPMHQ==
-X-Google-Smtp-Source: AGHT+IEgGhImB1CZ9V2zyPwOjbF7xu90LRXOFMyWlUsr33fZ9RPD7FcjB6nD790/e/8piCgrefZcj52pseUw7tQZ7qs=
-X-Received: by 2002:a25:bc8a:0:b0:e03:4ddd:49f0 with SMTP id
- 3f1490d57ef6-e041b22a2c7mr6248368276.57.1720619532289; Wed, 10 Jul 2024
- 06:52:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720619520; x=1721224320;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:in-reply-to
+         :mime-version:references:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ApMfsMbUlfLMAL+cNRnf74nXamuHyvNu+25SQh6Wu4w=;
+        b=XfB8rPeJvfSPGuYQwK5xNMxgKkwNnD/9sfWHBGvqVldHQqFVP+dw03t3u45CQTdane
+         8wHOmrRI3XbWmS6Sc10oSb/r14V4bPyLa0JTmpCnTIf7aL+JvjsU3cQk6l7LIfhelkRT
+         yLOb3bE7GxxCs81f5KclBKlX5qTl4j92aAnABCdavaJaL9AF0vv2e/KqXNX/jJmDOEqC
+         Z/ymB2J57pT0LC1rXJLDog0d2qLVRt5Rl4u0uF/Q6Qa3mH+O0lOINjKMlx2+RKhoRZv9
+         a4FW8qcMH7SJllpTuET1qj7ecuiStjzuAz7+hzimNNCLeEsyGfJgVU0udRKRAJ8mpHd7
+         czNw==
+X-Forwarded-Encrypted: i=1; AJvYcCURBBhLyo50Djp/RuuUdylOG21lb32eQsaeID8OM28ZD4PsslrRfl03xB1ibrO9rH1Jeuzgy3WQlKyLkfLEw6kvia4wBZus3Jg0uEoJ
+X-Gm-Message-State: AOJu0YzbtuxMuuBkVCrlrXcUzFEOegVrGXh4e9CdZ/Hbz9aDzkoojmPi
+	GC051loCj8sudLXjOaL6KbmaTEA4Fzr27z13G8NH8xrcNje3yyDpHnXaJqfa1S9W9HesX8KfseF
+	qmFqybJdd8JTeUvr9rsmETTSejLNuIdIE9NGaiSKOeRMShLYME2NlnVtso7K0PXlY9twyHBWn6k
+	sp9a7+DyWCRb40guz4i+p9bZAaOsIJpGHzB2GS
+X-Received: by 2002:a05:6214:626:b0:6b5:e3fe:e734 with SMTP id 6a1803df08f44-6b61bc7ef71mr59088406d6.3.1720619520267;
+        Wed, 10 Jul 2024 06:52:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEa/uNBVy9JK1Eb3gOwOVU+yq2jPR+jnCOWvV4+ZWsu0Ac7Bh4ZQxgFgXkK6zrvJbrbrjP9wgEgnpY0qMqgDRY=
+X-Received: by 2002:a05:6214:626:b0:6b5:e3fe:e734 with SMTP id
+ 6a1803df08f44-6b61bc7ef71mr59088266d6.3.1720619520013; Wed, 10 Jul 2024
+ 06:52:00 -0700 (PDT)
+Received: from 311643009450 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 10 Jul 2024 13:51:59 +0000
+From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
+References: <20240710090742.1657606-1-amorenoz@redhat.com> <172061821475.5582.9226948763101271068@kwain.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618155013.323322-1-ulf.hansson@linaro.org>
- <20240625105425.pkociumt4biv4j36@vireshk-i7> <CAPDyKFpLfBjozpcOzKp4jngkYenqSdpmejvCK37XvE1-WbBY2g@mail.gmail.com>
- <20240701114748.hodf6pngk7opx373@vireshk-i7> <20240702051526.hyqhvmxnywofsjp2@vireshk-i7>
-In-Reply-To: <20240702051526.hyqhvmxnywofsjp2@vireshk-i7>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 10 Jul 2024 15:51:35 +0200
-Message-ID: <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
-Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM domains
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
+In-Reply-To: <172061821475.5582.9226948763101271068@kwain.local>
+Date: Wed, 10 Jul 2024 13:51:59 +0000
+Message-ID: <CAG=2xmNR8Uw2Ecw=NS5BoRGoWWp7hJgd4zxKTRbSrq+VVKq5Uw@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] net: psample: fix flag being set in wrong skb
+To: Antoine Tenart <atenart@kernel.org>
+Cc: netdev@vger.kernel.org, Yotam Gigi <yotam.gi@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Ido Schimmel <idosch@nvidia.com>, 
+	Eelco Chaudron <echaudro@redhat.com>, Aaron Conole <aconole@redhat.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2 Jul 2024 at 07:15, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+On Wed, Jul 10, 2024 at 03:30:14PM GMT, Antoine Tenart wrote:
+> Hi Adri=C3=A1n,
 >
-> On 01-07-24, 17:17, Viresh Kumar wrote:
-> > What about this patch instead ?
+> Quoting Adrian Moreno (2024-07-10 11:07:42)
+> > A typo makes PSAMPLE_ATTR_SAMPLE_RATE netlink flag be added to the wron=
+g
+> > sk_buff.
 > >
-> > diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> > index 5f4598246a87..2086292f8355 100644
-> > --- a/drivers/opp/core.c
-> > +++ b/drivers/opp/core.c
-> > @@ -1091,7 +1091,8 @@ static int _set_required_opps(struct device *dev, struct opp_table *opp_table,
-> >               if (devs[index]) {
-> >                       required_opp = opp ? opp->required_opps[index] : NULL;
+> > Fix the error and make the input sk_buff pointer "const" so that it
+> > doesn't happen again.
 > >
-> > -                     ret = dev_pm_opp_set_opp(devs[index], required_opp);
-> > +                     /* Set required OPPs forcefully */
-> > +                     ret = dev_pm_opp_set_opp_forced(devs[index], required_opp, true);
+> > Also modify OVS psample test to verify the flag is properly emitted.
 >
-> Maybe better to do just this instead:
+> I don't see that part; although it can be sent as a follow-up and not
+> part of the fix.
+
+Yep. Sorry I was planning to add it to the fix but thought it was better
+off as a follow-up. I should have removed this comment.
+
 >
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index 5f4598246a87..9484acbeaa66 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -1386,7 +1386,12 @@ int dev_pm_opp_set_opp(struct device *dev, struct dev_pm_opp *opp)
->                 return PTR_ERR(opp_table);
->         }
+> Thanks,
+> Antoine
 >
-> -       ret = _set_opp(dev, opp_table, opp, NULL, false);
-> +       /*
-> +        * For a genpd's OPP table, we always want to set the OPP (and
-> +        * performance level) and let the genpd core take care of aggregating
-> +        * the votes. Set `forced` to true for a genpd here.
-> +        */
-> +       ret = _set_opp(dev, opp_table, opp, NULL, opp_table->is_genpd);
->         dev_pm_opp_put_opp_table(opp_table);
+> > Fixes: 7b1b2b60c63f ("net: psample: allow using rate as probability")
+> > Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+> > ---
+> >  include/net/psample.h | 8 +++++---
+> >  net/psample/psample.c | 7 ++++---
+> >  2 files changed, 9 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/include/net/psample.h b/include/net/psample.h
+> > index c52e9ebd88dd..5071b5fc2b59 100644
+> > --- a/include/net/psample.h
+> > +++ b/include/net/psample.h
+> > @@ -38,13 +38,15 @@ struct sk_buff;
+> >
+> >  #if IS_ENABLED(CONFIG_PSAMPLE)
+> >
+> > -void psample_sample_packet(struct psample_group *group, struct sk_buff=
+ *skb,
+> > -                          u32 sample_rate, const struct psample_metada=
+ta *md);
+> > +void psample_sample_packet(struct psample_group *group,
+> > +                          const struct sk_buff *skb, u32 sample_rate,
+> > +                          const struct psample_metadata *md);
+> >
+> >  #else
+> >
+> >  static inline void psample_sample_packet(struct psample_group *group,
+> > -                                        struct sk_buff *skb, u32 sampl=
+e_rate,
+> > +                                        const struct sk_buff *skb,
+> > +                                        u32 sample_rate,
+> >                                          const struct psample_metadata =
+*md)
+> >  {
+> >  }
+> > diff --git a/net/psample/psample.c b/net/psample/psample.c
+> > index f48b5b9cd409..a0ddae8a65f9 100644
+> > --- a/net/psample/psample.c
+> > +++ b/net/psample/psample.c
+> > @@ -360,8 +360,9 @@ static int psample_tunnel_meta_len(struct ip_tunnel=
+_info *tun_info)
+> >  }
+> >  #endif
+> >
+> > -void psample_sample_packet(struct psample_group *group, struct sk_buff=
+ *skb,
+> > -                          u32 sample_rate, const struct psample_metada=
+ta *md)
+> > +void psample_sample_packet(struct psample_group *group,
+> > +                          const struct sk_buff *skb, u32 sample_rate,
+> > +                          const struct psample_metadata *md)
+> >  {
+> >         ktime_t tstamp =3D ktime_get_real();
+> >         int out_ifindex =3D md->out_ifindex;
+> > @@ -498,7 +499,7 @@ void psample_sample_packet(struct psample_group *gr=
+oup, struct sk_buff *skb,
+> >                 goto error;
+> >
+> >         if (md->rate_as_probability)
+> > -               nla_put_flag(skb, PSAMPLE_ATTR_SAMPLE_PROBABILITY);
+> > +               nla_put_flag(nl_skb, PSAMPLE_ATTR_SAMPLE_PROBABILITY);
+> >
+> >         genlmsg_end(nl_skb, data);
+> >         genlmsg_multicast_netns(&psample_nl_family, group->net, nl_skb,=
+ 0,
+> > --
+> > 2.45.2
+> >
+> >
+>
 
-I think this should work, but in this case we seem to need a similar
-thing for dev_pm_opp_set_rate().
-
-Another option is to let _set_opp() check "opp_table->is_genpd" and
-enforce the opp to be set in that case. Whatever you prefer, I can
-re-spin the patch.
-
-Kind regards
-Uffe
 
