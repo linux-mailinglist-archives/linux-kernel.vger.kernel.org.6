@@ -1,100 +1,148 @@
-Return-Path: <linux-kernel+bounces-247040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6936F92CA36
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:43:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4275492CA32
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5A98284906
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:43:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73F1E1C21F3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA8E4EB45;
-	Wed, 10 Jul 2024 05:43:27 +0000 (UTC)
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E034C631;
+	Wed, 10 Jul 2024 05:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rwB9O0tj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3065D3C39;
-	Wed, 10 Jul 2024 05:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B131CA87
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 05:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720590207; cv=none; b=kneGuPqUnGueSBp+Cfl8N6dpP+sI3aFNzEXV0XWJHz/ssVG4ShHMKp+x3Q45umj/vk3oTnL72jy5oWd3MoQqQB29Xlbe+vz3Hbg9j/p8qi8FK0o836YP1EEyePrcXcv4hfWJnM8MnFnRDUdB1c/J2PNXLxGVS8FUJ7bjJYjtIEE=
+	t=1720589916; cv=none; b=QTis7x2LvZChy2ZfW5e5oyRDiCU9JHKqErIOCLt7BOCGqHdtJG/LtAQB51q3N22w1M9CQ0wHUo33BagE1wDYKfoN9qHwQvPZ6YZQPvq6gO/IFavfSfrStt2vJ+CkkhmnEtVhEJOE9ezhAq5yQIQRKqUPtSGuzwzYRmXBYZnwlz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720590207; c=relaxed/simple;
-	bh=5dh2BM5kmusIF/emCATu6OKJF3a52TlVjNE7020QT0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rI2l0ihBTf5B95rR9fnG4+T6mqBJJMk0vRNZd46BM5WjvxgnYGwRSSgTV3J8Ca65XoPz1tDJaVq+cwxxcd+XhsfXjicwJcKvdr2hlS8cjOyiQx3uM3RIltLuG+NLmuZsFAYMXAjBAnqxJGOmIH9hWDfLqIYjCsJAUvlYYHmNGK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fb0d88fd25so3025965ad.0;
-        Tue, 09 Jul 2024 22:43:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720590205; x=1721195005;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CG2UsJ19/k/VCkkO2JedqMRmNYp6nm/WZ7sVX+CbtOw=;
-        b=aoj+fDfIkMsn7e0BvNTzcSgzG3HCS2++9PeDGgzuaqruqoNF1rPk4ltfOzx3AWOB7C
-         tMWhPQYF+kHMps6uXWupLGcUldU/YgdCkqhWlBNBq2sjjEV0gp61bnMp84aGKBjIvvSi
-         7Ml3Mv1rdg+1fydafBKTp85jkGClc8y77JMHRqdiOS6oosJBfrneEvizhWnHG0MdWQSV
-         TPOaZhIm1iF/9dZFo1j0rRAkC3/kuXXRe4rHB1kYzEmIqjgcNmO9jZsINe+wQty/Yk0m
-         iRL2B5wjX06ls+n33l2xksKTmfL4l1Agcyc/MrLWJVy4f98ZWC6Oc2AGHxtfn62AqJjJ
-         izPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXjYkVdqdqcYffaOi63xf94RujYObB3D0u1ZjcA36k/u4DOl6F3KsA7YW5cWNZm8GSin6frHqviEs44lTi0Pw2HeY9O6gvvxO/8iYrGcpjjFarKhoBaOZpACgbF7i8VET3DW/tsBwgFtPPacMh9wYxsklDg4oIjgohnlx2ya/RUHJhv0/0Tw==
-X-Gm-Message-State: AOJu0YyZDDswbbzb/hVyJTsc7AAqb8J6EDxyelvwT0X2rZNYfTXC/0Z+
-	/mMoaJ4jCzC3DRRHpsLu8bR8g4UpEQkdMQ0d0FlCXz+gdwCbn0OnwczrEnURrCw=
-X-Google-Smtp-Source: AGHT+IFe/bQ14uIzohPNP8ZGjEv1nOW827IvMmY9fB+n2PcsmRtGUNgfl4Zi3BEYozS4OnDo5N563w==
-X-Received: by 2002:a17:902:ec87:b0:1fa:2b11:657d with SMTP id d9443c01a7336-1fbb7fbe431mr66342375ad.10.1720590205188;
-        Tue, 09 Jul 2024 22:43:25 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ab6c48sm25166755ad.152.2024.07.09.22.43.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 22:43:24 -0700 (PDT)
-Date: Wed, 10 Jul 2024 14:43:22 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Anders Roxell <anders.roxell@linaro.org>
-Cc: dan.carpenter@linaro.org,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	bhelgaas@google.com, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org,
-	robh@kernel.org
-Subject: Re: [PATCH 2/3] PCI: qcom: Prevent potential error pointer
- dereference
-Message-ID: <20240710054322.GA3763187@rocinante>
-References: <20240708180539.1447307-1-dan.carpenter@linaro.org>
- <20240708180539.1447307-3-dan.carpenter@linaro.org>
+	s=arc-20240116; t=1720589916; c=relaxed/simple;
+	bh=it+lZnG8qkE+IDVtq8XvafLTCOle5Ypn5AUBVAIbtok=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ob268s3wzF672xg20YRMtfRHNe4jn2plpDRXTrvJ40RI3tFUFHV+p60eQSJgtFoFol5u6JEgIiIUoOdcn55vzBOL9DA/kk6iNikp9qKQnS9Sd4Y6gcXBQPzRtm2eRjdiqHHSYNPRSGVLSUiqZB5+nzfmLTQASbfd28Kalylk7cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rwB9O0tj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8921C32782;
+	Wed, 10 Jul 2024 05:38:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720589916;
+	bh=it+lZnG8qkE+IDVtq8XvafLTCOle5Ypn5AUBVAIbtok=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rwB9O0tjOmWTH7b+Jobb4sv4nhtpk7dp3Ax0d1ZIjx42t/HjR2M5GLNsv1fftL2kN
+	 zJTqVaglzg/nTjChdLWzpUlXfSeeqSubCbh2tZpesARXZXdva3ixJNd5g13MdWe5yi
+	 kl8QuazuQv8rdtaF17KI3BCz2fr/Uca838vx0D50bo+7A0H6vjqXMvFMIE11TfHW2Y
+	 OtgpGyZAaj5k1UnI7tFWflJ7e9dYziNREcKF8u70Zl5uCaPhHGTUkb41wPNsvimxgq
+	 2xclOoVNqblTybM5rA0p9SbxEdmhaSy2yxFh9ivXh1X1wi02q8QOMLfCJWkum9c3sD
+	 ghnib4x0WNQaQ==
+From: alexs@kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: "Alex Shi (Tencent)" <alexs@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Yoann Congal <yoann.congal@smile.fr>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Petr Mladek <pmladek@suse.com>,
+	Suren Baghdasaryan <surenb@google.com>
+Subject: [PATCH v3 1/2] mm/memcg: alignment memcg_data define condition
+Date: Wed, 10 Jul 2024 13:43:35 +0800
+Message-ID: <20240710054336.190410-1-alexs@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240708180539.1447307-3-dan.carpenter@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: "Alex Shi (Tencent)" <alexs@kernel.org>
 
-[...]
-> > Only call dev_pm_opp_put() if dev_pm_opp_find_freq_exact() succeeds.
-> > Otherwise it leads to an error pointer dereference.
-> > 
-> > Fixes: 78b5f6f8855e ("PCI: qcom: Add OPP support to scale performance")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> 
-> Tested-by: Anders Roxell <anders.roxell@linaro.org>
-> 
-> Applied this patch ontop of linux-next tag, next-20240709.
-> 
-> Booted fine on dragonboard-845c HW.
+commit 21c690a349ba ("mm: introduce slabobj_ext to support slab object
+extensions") changed the folio/page->memcg_data define condition from
+MEMCG to SLAB_OBJ_EXT. And selected SLAB_OBJ_EXT for MEMCG, just for
+SLAB_MATCH(memcg_data, obj_exts), even no other relationship between them.
 
-Thank you for testing!
+Above action make memcg_data exposed and include SLAB_OBJ_EXT for
+!MEMCG. That's incorrect in logcial and pay on code size.
 
-I took the liberty and added your Tested-by: tag to the relevant commits
-on our controller/qcom branch.
+As Vlastimil Babka suggested, let's add _unused_slab_obj_ext for
+SLAB_MATCH for slab.obj_exts while !MEMCG. That could resolve the match
+issue, clean up the feature logical. And decouple the SLAB_OBJ_EXT from
+MEMCG in next patch.
 
-	Krzysztof
+Signed-off-by: Alex Shi (Tencent) <alexs@kernel.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Yoann Congal <yoann.congal@smile.fr>
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+---
+v1->v3: take Vlastimil's suggestion and move SLAB_OBJ_EXT/MEMCG decouple
+to 2nd patch.
+---
+ include/linux/mm_types.h | 8 ++++++--
+ mm/slab.h                | 4 ++++
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index ef09c4eef6d3..4ac3abc673d3 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -180,8 +180,10 @@ struct page {
+ 	/* Usage count. *DO NOT USE DIRECTLY*. See page_ref.h */
+ 	atomic_t _refcount;
+ 
+-#ifdef CONFIG_SLAB_OBJ_EXT
++#ifdef CONFIG_MEMCG
+ 	unsigned long memcg_data;
++#elif defined(CONFIG_SLAB_OBJ_EXT)
++	unsigned long _unused_slab_obj_ext;
+ #endif
+ 
+ 	/*
+@@ -343,8 +345,10 @@ struct folio {
+ 			};
+ 			atomic_t _mapcount;
+ 			atomic_t _refcount;
+-#ifdef CONFIG_SLAB_OBJ_EXT
++#ifdef CONFIG_MEMCG
+ 			unsigned long memcg_data;
++#elif defined(CONFIG_SLAB_OBJ_EXT)
++			unsigned long _unused_slab_obj_ext;
+ #endif
+ #if defined(WANT_PAGE_VIRTUAL)
+ 			void *virtual;
+diff --git a/mm/slab.h b/mm/slab.h
+index 3586e6183224..8ffdd4f315f8 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -98,7 +98,11 @@ SLAB_MATCH(flags, __page_flags);
+ SLAB_MATCH(compound_head, slab_cache);	/* Ensure bit 0 is clear */
+ SLAB_MATCH(_refcount, __page_refcount);
+ #ifdef CONFIG_SLAB_OBJ_EXT
++#ifdef CONFIG_MEMCG
+ SLAB_MATCH(memcg_data, obj_exts);
++#else
++SLAB_MATCH(_unused_slab_obj_ext, obj_exts);
++#endif
+ #endif
+ #undef SLAB_MATCH
+ static_assert(sizeof(struct slab) <= sizeof(struct page));
+-- 
+2.43.0
+
 
