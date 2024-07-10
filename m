@@ -1,252 +1,115 @@
-Return-Path: <linux-kernel+bounces-247604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A74092D1C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:41:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B9E492D1C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82825B272D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:41:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA4971F24CF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC11191F90;
-	Wed, 10 Jul 2024 12:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8175D1922FA;
+	Wed, 10 Jul 2024 12:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Tjb6ADZK"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gBKxwxnF"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C0A4C631
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 12:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C28F1922C9
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 12:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720615262; cv=none; b=ZaLbRhOW7QIZR3bk3yyoggRkaR8dHXsqJPtlFYCBt0MJ00CX5JTaZial9nF8YqhN5IYDuOOWakX05F6OccubJ35j1nj7+5Z7nKckII4dtIbSVuObcNDbpYBqAlBDG/JDfieb2kjN6/I9HekVulbVnaWtOCMeHwckkRb674JdEpE=
+	t=1720615268; cv=none; b=I4hhnvOZRjy7hlRJfXh2nsWlJU47Y6slE9m11tn2j/pzEwF+cDfONjqeA7ROmsuL7kq+OaeXb3vpxHDicApCeIW2vpxF2Ote+DwIjBPnIOL7HW8DR+uajnclIk+d5j0woC3901vtg0jFkl5C7fcOg5Mtnw+R/cX+8QKU7BIc/B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720615262; c=relaxed/simple;
-	bh=1qonYkuvgugxym8dPLSROyJnYV8KaGdsqJmBI4WouCc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fy3tNvYpK+1cDg9BfnMqaIcA9+Ig28SVaONlLOwBr3D/icRxrtTRF/P883I9K8IyTj2yeq0gjBOK3GSrggpVp/WXaDkwT+pxsfNd8C8aW1G9Gf8qVr6cHK8OuD4cwL9VISOBjWv0Q4I6GhvEifFvqpzS3hChPb3opW38KSh36/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Tjb6ADZK; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720615259;
-	bh=1qonYkuvgugxym8dPLSROyJnYV8KaGdsqJmBI4WouCc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Tjb6ADZKOLPeVs089OvMIT94I609pxISnM7G/pDFj6rus2l+cMo2DNO2DvufFC+Kb
-	 23/WoKBHJYQDMpMrvlEv4Lhf9xdp1VOsGdHaBFIOEWWUqa2VqcXD1jE9Uz6XVsnlLA
-	 tzRtu0eMJzZMQdAbNUoog2SClH34waKALJ+BAz0K30gV++YFY7eqasl9crRkSmiU8u
-	 g+EpEuvMRCM1Dwn163f6S001bFH7/Izbw+tlqplEwpIW+9UOdmHmIwET5v+dWe5epx
-	 nkyDU6srM/0YG0P/6dgKHsk4tmmnK1U/7ttd8zXKHKzl3c0E5AI9H8CjhuB/CJ6bRR
-	 saaF6T/NgMw2Q==
-Received: from localhost (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sebastianfricke)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id F299C378107C;
-	Wed, 10 Jul 2024 12:40:58 +0000 (UTC)
-Date: Wed, 10 Jul 2024 14:40:57 +0200
-From: Sebastian Fricke <sebastian.fricke@collabora.com>
-To: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Cc: mchehab@kernel.org, ezequiel@vanguardiasur.com.ar,
-	hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.or,
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	kernel@collabora.com
-Subject: Re: [PATCH v3 1/2] media: videodev2: Add flags to unconditionnaly
- enumerate pixels formats
-Message-ID: <20240710124057.j3j4kow5fcvveyrm@basti-XPS-13-9310>
-References: <20240709161710.83109-1-benjamin.gaignard@collabora.com>
- <20240709161710.83109-2-benjamin.gaignard@collabora.com>
+	s=arc-20240116; t=1720615268; c=relaxed/simple;
+	bh=Ool8JEcomupLYFCAVUceeyirLvgRl1G6dqSHkrYH0y8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=YLnyrQ2bXHOkUoXWrVkr1xPfDPLoos1MH+rtNGBoSfpEQhQ3KdaLQhA7KRJIOTcSuKMgTndHR0H2E+moAUny5Qms5qWwaZ3TtsoJUwTG79bZr43ZNu7ORP8zti+IUXU6oYepE2GCa6sAByW+/L9Ex3ndbYvcuxg2IQbo4hnsv1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gBKxwxnF; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42797bcfc77so34395e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 05:41:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720615263; x=1721220063; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MQLVDFNoFuKRZg7eJdxMfqN4N8nKsyXTgSDfnf3uLGM=;
+        b=gBKxwxnFgp9AOzK/2lb/jr8A/NhFbZkPUvlg5TH0mYbtG80V2yXBxIIGQvh4g7ceFq
+         /p8TADEAgk5hHMbeU8Tukh32d9OIGqzZmfx95mc6DLzqR8snLBQlJQCAs/BkM6qpK4Hp
+         N6T2dw64rhaATV3XQn682pDmYgzZnjOyUe28zGdBZk9rtBdEKvAwBxUwtyxngbHCS4QR
+         zL2fucGqKtrty8SgITaWWyVyRhze8rY5iLuZ+Q4jsuVNssqLydBEXXYq86zPrfcvVZKI
+         3rTFR/GdzADTnvoVz8gMZo3ox3VRVv1SB7RBvQfcFu9D6CIOG9HqeYx5XbK+gFgGgdmn
+         u7QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720615263; x=1721220063;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MQLVDFNoFuKRZg7eJdxMfqN4N8nKsyXTgSDfnf3uLGM=;
+        b=UYd8aDJfvAw0UwXch3s/7tfgyPOGr0esux+1AF0FzM7AEwryUCYMNx1jO52br2up1U
+         QyTvx//iJUsEH/wuzdaWnQBnUEZjN7s7SC4ZUIv4/JfuakI7/mD047eC7Aettq/BFHpH
+         +zJEmWRfeOXVvtVTysvcMjbO8Vg6D6E1kXHEdLDUzEBuFeME1VtRMFhzZRAdVVyapBa/
+         UddlAkB263NTDTZS3jY3J2HudAinoRk8Bzy0pGzILScZpEN35GG3QcV7s7cZrwYt3mYv
+         IxD/dEIjTEAP/sKGPHQhTmsBQwwnOEABkH6FVn/CMa6HBzUxvCAMFTXH7Qo8skWmQEdC
+         qwOg==
+X-Forwarded-Encrypted: i=1; AJvYcCU94LI0pu7VinOuyeUSPLFwxJzOCPuqE02uomyqnyFCE8LhBYbWTEWBwy4DjxAxotQahqFzRNVLUDHXmhaHTCjA/jUszdFt4X36sEwj
+X-Gm-Message-State: AOJu0YxemIY64eaaoiFKMN34nYiWaEkp5Wk0r0KvJwytHTgj+m6KWKXs
+	0jOvw7S9FbiuvOAi0XsP1AupiOjIfHsdTlyvKp9Tsxy2wNp8jM+SOyfikuXgqu4=
+X-Google-Smtp-Source: AGHT+IGT5ilXJSn/KNzsrB9+RCqhsbkJiqU3dqpEBIzoFB+Fcmer/Kih8Fhroy2GBRX27ac1gAp6gw==
+X-Received: by 2002:a05:600c:6c51:b0:426:51e8:5192 with SMTP id 5b1f17b1804b1-426709fac0bmr30666695e9.41.1720615262749;
+        Wed, 10 Jul 2024 05:41:02 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:f3cc:df72:f495:3b49])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-367cde890f6sm5214025f8f.53.2024.07.10.05.41.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 05:41:02 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Vladimir Zapolskiy <vz@mleia.com>, Bjorn Andersson <andersson@kernel.org>, 
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Michal Simek <michal.simek@amd.com>, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-sunxi@lists.linux.dev
+In-Reply-To: <20240703-clk-const-regmap-v1-0-7d15a0671d6f@gmail.com>
+References: <20240703-clk-const-regmap-v1-0-7d15a0671d6f@gmail.com>
+Subject: Re: (subset) [PATCH 00/10] clk: constify struct regmap_config
+Message-Id: <172061526145.2117005.2499091095196670705.b4-ty@baylibre.com>
+Date: Wed, 10 Jul 2024 14:41:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240709161710.83109-2-benjamin.gaignard@collabora.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
 
-Hey Benjamin,
+Applied to clk-meson (clk-meson-next), thanks!
 
-On 09.07.2024 18:17, Benjamin Gaignard wrote:
->Add new flags to allow enumerate all pixels formats when
+[01/10] clk: meson: a1: peripherals: Constify struct regmap_config
+        https://github.com/BayLibre/clk-meson/commit/4a7665b885b6
+[02/10] clk: meson: a1: pll: Constify struct regmap_config
+        https://github.com/BayLibre/clk-meson/commit/5c6ffe3537d5
+[03/10] clk: meson: c3: peripherals: Constify struct regmap_config
+        https://github.com/BayLibre/clk-meson/commit/af3e4505e6bc
+[04/10] clk: meson: c3: pll: Constify struct regmap_config
+        https://github.com/BayLibre/clk-meson/commit/11c7c1b94059
+[05/10] clk: meson: s4: peripherals: Constify struct regmap_config
+        https://github.com/BayLibre/clk-meson/commit/02cc1df92d75
+[06/10] clk: meson: s4: pll: Constify struct regmap_config
+        https://github.com/BayLibre/clk-meson/commit/3d0e8b6edd6b
 
-s/enumerate all pixels formats/enumeration of pixel formats,/
+Best regards,
+--
+Jerome
 
->calling VIDIOC_ENUM_FMT ioctl.
->When this V4L2_FMT_FLAG_ENUM_ALL_FORMATS flag is set drivers must
->ignore the configuration and return the hardware supported pixel
->formats for the specified queue.
->To distinguish this partical enumeration case V4L2_FMT_FLAG_ALL_FORMATS
-
-s/partical/partiuclar/
-
->flag must be set be drivers so user space applications can know that
-
-s/be/by the/
-
->drivers support this feature.
-
-s/so user space applications can know that drivers support this feature./
-   , to highlight support for this feature to user space applications.
-
->This will permit to discover which pixels formats are supported
-
-s/pixels/pixel/
-
->without setting codec-specific information so userland can more easily
->knows if the driver suit well to what it needs.
-
-s/knows/know/
-s/suit well to what it needs/suits its needs well/
-
->The main target are stateless decoders so update the documentation
->about how use this flag.
-
-s/how/how to/
-
->
->Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
->---
->changes in version 3:
->- Add a flag to inform userspace application that driver
->  as take care of the flag.
->
-> .../userspace-api/media/v4l/dev-stateless-decoder.rst  |  6 ++++++
-> .../userspace-api/media/v4l/vidioc-enum-fmt.rst        | 10 ++++++++++
-> .../userspace-api/media/videodev2.h.rst.exceptions     |  2 ++
-> drivers/media/v4l2-core/v4l2-ioctl.c                   |  3 +++
-> include/uapi/linux/videodev2.h                         |  2 ++
-> 5 files changed, 23 insertions(+)
->
->diff --git a/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst b/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
->index 35ed05f2695e..de006a7fd02a 100644
->--- a/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
->+++ b/Documentation/userspace-api/media/v4l/dev-stateless-decoder.rst
->@@ -58,6 +58,12 @@ Querying capabilities
->      default values for these controls being used, and a returned set of formats
->      that may not be usable for the media the client is trying to decode.
->
->+   * If ``V4L2_FMT_FLAG_ENUM_ALL_FORMATS`` flag is set the driver must enumerate
-
-s/If/If the/
-
->+     all the supported formats without taking care of codec-dependent controls
->+     set on ``OUTPUT`` queue. To indicate that the driver has take care of this
-
-s/set on/set on the/
-s/has take/has taken/
-
->+     flag it must set ``V4L2_FMT_FLAG_ALL_FORMATS`` flag when it enumerates the
-
-s/set/set the/
-s/when it enumerates/for each format, while enumerating/
-(to highlight that every enumerated format must carry the flag)
-
->+     format.
-
-s/format/formats/
-
->+
-> 3. The client may use :c:func:`VIDIOC_ENUM_FRAMESIZES` to detect supported
->    resolutions for a given format, passing desired pixel format in
->    :c:type:`v4l2_frmsizeenum`'s ``pixel_format``.
->diff --git a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
->index 3adb3d205531..510d2a6700aa 100644
->--- a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
->+++ b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
->@@ -234,6 +234,16 @@ the ``mbus_code`` field is handled differently:
-> 	valid. The buffer consists of ``height`` lines, each having ``width``
-> 	Data Units of data and the offset (in bytes) between the beginning of
-> 	each two consecutive lines is ``bytesperline``.
->+    * - ``V4L2_FMT_FLAG_ENUM_ALL_FORMATS``
->+      - 0x0400
->+      - Set by userland application to enumerate all possible pixels formats
-
-s/application/applications/
-s/pixels/pixel/
-
->+        without taking care of any configuration done on OUTPUT or CAPTURE
->+        queues.
-
-s/any configuration done on OUTPUT or CAPTURE queues/
-   any OUTPUT or CAPTURE queue configuration/
-
->+    * - ``V4L2_FMT_FLAG_ALL_FORMATS``
->+      - 0x0800
->+      - Set by driver to indicated that format has been enumerated because
-
-s/driver to indicated that format has/
-   the driver to indicate, that formats have/
-
->+        :ref:`V4L2_FMT_FLAG_ENUM_ALL_FORMATS <v4l2-pix-fmt-flag-set-csc>` has
->+        been set by userland application.
-
-s/by/by the/
-
-Regards,
-Sebastian
-
->
-> Return Value
-> ============
->diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exceptions b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
->index bdc628e8c1d6..7a3a1e9dc055 100644
->--- a/Documentation/userspace-api/media/videodev2.h.rst.exceptions
->+++ b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
->@@ -216,6 +216,8 @@ replace define V4L2_FMT_FLAG_CSC_YCBCR_ENC fmtdesc-flags
-> replace define V4L2_FMT_FLAG_CSC_HSV_ENC fmtdesc-flags
-> replace define V4L2_FMT_FLAG_CSC_QUANTIZATION fmtdesc-flags
-> replace define V4L2_FMT_FLAG_META_LINE_BASED fmtdesc-flags
->+replace define V4L2_FMT_FLAG_ENUM_ALL_FORMATS fmtdesc-flags
->+replace define V4L2_FMT_FLAG_ALL_FORMATS fmtdesc-flags
->
-> # V4L2 timecode types
-> replace define V4L2_TC_TYPE_24FPS timecode-type
->diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
->index 4c76d17b4629..5785a98b6ba2 100644
->--- a/drivers/media/v4l2-core/v4l2-ioctl.c
->+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
->@@ -1569,6 +1569,7 @@ static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
-> 	int ret = check_fmt(file, p->type);
-> 	u32 mbus_code;
-> 	u32 cap_mask;
->+	u32 flags;
->
-> 	if (ret)
-> 		return ret;
->@@ -1578,8 +1579,10 @@ static int v4l_enum_fmt(const struct v4l2_ioctl_ops *ops,
-> 		p->mbus_code = 0;
->
-> 	mbus_code = p->mbus_code;
->+	flags = p->flags & V4L2_FMT_FLAG_ENUM_ALL_FORMATS;
-> 	memset_after(p, 0, type);
-> 	p->mbus_code = mbus_code;
->+	p->flags = flags;
->
-> 	switch (p->type) {
-> 	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
->diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
->index fe6b67e83751..b6a5da79ba21 100644
->--- a/include/uapi/linux/videodev2.h
->+++ b/include/uapi/linux/videodev2.h
->@@ -886,6 +886,8 @@ struct v4l2_fmtdesc {
-> #define V4L2_FMT_FLAG_CSC_HSV_ENC		V4L2_FMT_FLAG_CSC_YCBCR_ENC
-> #define V4L2_FMT_FLAG_CSC_QUANTIZATION		0x0100
-> #define V4L2_FMT_FLAG_META_LINE_BASED		0x0200
->+#define V4L2_FMT_FLAG_ENUM_ALL_FORMATS		0x0400
->+#define V4L2_FMT_FLAG_ALL_FORMATS		0x0800
->
-> 	/* Frame Size and frame rate enumeration */
-> /*
->-- 
->2.43.0
->
->_______________________________________________
->Kernel mailing list -- kernel@mailman.collabora.com
->To unsubscribe send an email to kernel-leave@mailman.collabora.com
->This list is managed by https://mailman.collabora.com
 
