@@ -1,118 +1,177 @@
-Return-Path: <linux-kernel+bounces-247141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4649D92CBCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:18:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E899D92CBCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5508E2830CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:18:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88720B21302
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51E982C63;
-	Wed, 10 Jul 2024 07:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DDC8289E;
+	Wed, 10 Jul 2024 07:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JBtiC2LM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="RBZ1t4z+";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="T7x6sGhg"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D35DD535
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBACD535;
+	Wed, 10 Jul 2024 07:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720595896; cv=none; b=BhL5LnSbmj/DqBQnyULHkucrOKHfEZvSsKsK+tuC8i/o9N9qyGYMFZoIBaW/EIB7k/i97X9rw2e5dSCO0yfCE1L9WEjZNF0A7UBT3YXqeaEaLyYuBUH+4LO0u1tm7TCEIR3+qxXjk0vDAwyHjQ9NyT0ldUh2IEt/rOApzA1V5J8=
+	t=1720595903; cv=none; b=LLzky3b//X6052/OzMSHK/JJhbl/qghLa/hdUqmz+VZ7bOzYO1WFdNIZx15YhvL2/UuJTVf8T3l6ky884azLgf3R0KUdwLznTd0hIzMFMAfysQRQqVQZl2ITH9dBkqETVmxNyCzClqsjKglfW9sYI+pxXQ+qBuum1Oy9nI4larE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720595896; c=relaxed/simple;
-	bh=y/2Uwf84AKVLMAatdGxP40dKI8PxpoAEQkovgd2zjXQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ofEyVCOGwhBgVI9CREgK2Q+jy5tACWr/OVaPt9elnaJtvhTOIqmca1dYUolEBPQPYt3is8vjFECGrjRfuPZ0nc4b/aCVkFMV8rVYW66YyR6TZbE7vbTXuR5/Cdj4CIwZ1nyIqN5LJDp/dDHI+sW/tLjmHQvllb6xWEZfpJZ6uVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JBtiC2LM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720595893;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dr5XCf0gY+osLWRevdHMR9c5fdKc3782+BL3hUmPAxs=;
-	b=JBtiC2LM/w41BDx7S8eyZ9lNILoPKOhe5B2B6lsuiA9d3rThbxvnXYbM1qkQhliTehnyNu
-	TMm5UHaiE+m5TCV4mcoAljeRKcMfZmo9kXtW7kzTMOqjUXNboIV+wbSlNlLjIdj+8nPEE4
-	sUVWbmz3VYgjp6kXvlY/coHaC56ehu4=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-530-DvAfUMUPNk6mP1NpdKmxqg-1; Wed, 10 Jul 2024 03:18:08 -0400
-X-MC-Unique: DvAfUMUPNk6mP1NpdKmxqg-1
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-70af548db1eso468777b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 00:18:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720595887; x=1721200687;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dr5XCf0gY+osLWRevdHMR9c5fdKc3782+BL3hUmPAxs=;
-        b=r+M5L68JOCKeQrWnwmqM5c98DpE9hAUpK7aHvCGrZrVYnSP8ko5igo+AlhITvI5PQl
-         5yRcym6t81WMmfeqiLUTukQHHIkAKtkzvNoRyLs/kkX3ldqR4GD/shTxCsWlnBVtQdqd
-         yuiciGar8J6pfIaUCZHZVqchL2RMjLfUsDLPfhMGdWq21PMgyOUCtALkSHFWPrGhtLVp
-         Y1tWi5apie7+0i+C+chHujjkCu9eca3byk0dFeRpfV8byMvgOa9Prx//e4X+MebUiH6J
-         QrczKqeSAlde6LqTPzkMoNK78UGHsYDU/WNsZwcN9ZeQsA0DJQXEP4kw4hv8Huuo2/V+
-         bsUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWekbycJ4W+uIyjJwzg1gxBGdWjTdTb/0CAd2DG9ME8Wx6LEh2clj3tt3JhPydTtKhZmni7bg1dWAMQIASbY7h3aOoyk9463VpBUzqq
-X-Gm-Message-State: AOJu0YysIl0kTcwyb1B2FlX5elpS/XDBGF3GTwjDUFMo9Fz7ikVG7n35
-	zQ5K6Po5ewbRBNpAXMAWwXFOpNrggqBnT5yC/SK0QCzloKk/dlv8IpMbp65XmQT3gAA5EPEEykd
-	S9u/eKJurWEd11W3nj834QtzYLtpR+pBe30cOCw0aPJsNP2h1aCQPqGv/lmTwow==
-X-Received: by 2002:a05:6a00:2d0b:b0:6f6:76c8:122c with SMTP id d2e1a72fcca58-70b44dd31bemr6568586b3a.16.1720595887542;
-        Wed, 10 Jul 2024 00:18:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHtKQKWIntnO93T2N5/0HkX4mUK4StkTYBoYwJlFsG21sb0V6OHhpb0kgUFy/S8AFfw69nf4Q==
-X-Received: by 2002:a05:6a00:2d0b:b0:6f6:76c8:122c with SMTP id d2e1a72fcca58-70b44dd31bemr6568559b3a.16.1720595887130;
-        Wed, 10 Jul 2024 00:18:07 -0700 (PDT)
-Received: from [10.72.116.145] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4396752esm3020696b3a.125.2024.07.10.00.18.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jul 2024 00:18:06 -0700 (PDT)
-Message-ID: <0c9db292-7b13-4d95-bc5f-f96800ea91b7@redhat.com>
-Date: Wed, 10 Jul 2024 15:18:00 +0800
+	s=arc-20240116; t=1720595903; c=relaxed/simple;
+	bh=q1n3vhCEwT0L8KK1wY4qRJB02yVy4nxM8B2JsbUp65g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tK+3eZaLGSxiLlq27MM/RGXdF4qPvHI0aCfPLi1ku1UeJkkF9j06tsDDZHy4TuUlDk/cCrE4X4S6FJNLITuGbXANvjjXXgCzK4Wy/oal23cFL4pxmV1SH/NbK4RTb41d1Cnz2uH4pMU2XDEbJ3SHXifjpArk63hE55btc/pdxDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=RBZ1t4z+; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=T7x6sGhg reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1720595900; x=1752131900;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=bzFdmN4YSMsYqNzg1gKeQE0QeWkldNu+KdO/Z6kO2Ok=;
+  b=RBZ1t4z+w1rQnAR2NJdBXh8cT1G7rBf3I4AhdgFE99Km2Pgl3ABtcZW8
+   2TWWUF4fuNmKTUlak4KQkvZs6OMndeYj9KpDvbrbSoRTXdeirjo6koMY6
+   iKAXDZeMj/rSKAy199k6Rz0Rvv7SRxRYY97t+SOX76/Y1huxKuY7x739W
+   KGXgdxJ0xRcHIR8lhljGhN8NhIsX6pmW1A+4xi2n42k6RCOsSDA0sYebI
+   iSHN1KRqwjreo3JVJnMAgSbSjA0U/iIS5ZFEDCUDbZsHsvCBwn4SYsEvv
+   Ix1UArZNJpTMdxBZvmYRD5HXbqcoyp/EE2gWBtVXiPIITv6p+Wv4vrkzy
+   Q==;
+X-CSE-ConnectionGUID: iBBx2iWjTXqVlKJTpMk04g==
+X-CSE-MsgGUID: a3vuhXTYTue6VNz0KPa+jA==
+X-IronPort-AV: E=Sophos;i="6.09,197,1716242400"; 
+   d="scan'208";a="37831245"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 10 Jul 2024 09:18:17 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D9E26160B1D;
+	Wed, 10 Jul 2024 09:18:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1720595893;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=bzFdmN4YSMsYqNzg1gKeQE0QeWkldNu+KdO/Z6kO2Ok=;
+	b=T7x6sGhgYzu7QX5HNtiaCZ0KFg4oZ43vL8ZbpFnbdYSyQYxbNHc/IbZ2WLU/qBrYvulVlo
+	j8prnJLSET50sm0dN0JVoe/Dz5uLVlvf2AsRqLoaGqupap+PHHDOpmfc/EUyLiQoSRKN0I
+	M//on1iSYxik7leOemWKsOWxJjo51dF0qno35w7M3f7qqH0oIkCkV4IvrE3Tjem7XSGmqK
+	O5fA2/SwsxX0Fjn3cPpMmXwOi9K3s0+1K1l7OeO0IolxQpIsm7YhWeOYI3QQuIa2RPPrgL
+	yJWugsvPjdnsEp6gNyx6GxfBkxS8BrTFCl8FFmZQ8HEd71hwXS6YzAdDTZOhsA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: York Sun <york.sun@nxp.com>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Robert Richter <rric@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>, devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Frank Li <Frank.Li@nxp.com>, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH 4/6] dt-bindings: memory: fsl: Add compatible string nxp, imx9-memory-controller
+Date: Wed, 10 Jul 2024 09:18:16 +0200
+Message-ID: <6068670.lOV4Wx5bFT@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20240709-imx95_edac-v1-4-3e9c146c1b01@nxp.com>
+References: <20240709-imx95_edac-v1-0-3e9c146c1b01@nxp.com> <20240709-imx95_edac-v1-4-3e9c146c1b01@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ceph: convert comma to semicolon
-To: Chen Ni <nichen@iscas.ac.cn>, idryomov@gmail.com
-Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240709064400.869619-1-nichen@iscas.ac.cn>
-Content-Language: en-US
-From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20240709064400.869619-1-nichen@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
+Hi Frank,
 
-On 7/9/24 14:44, Chen Ni wrote:
-> Replace a comma between expression statements by a semicolon.
->
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+Am Dienstag, 9. Juli 2024, 22:23:05 CEST schrieb Frank Li:
+> iMX9 memory controller is similar with other layerscape chips. But some
+> register layout has a little bit difference, so add new compatible string
+> 'nxp,imx9-memory-controller' for it.
+
+Is this controller the same for all i.MX9 SoC? E.g. i.MX91, i.MX93,
+i.MX95 and any future variants?
+
+Best regards,
+Alexander
+
+> imx9 need two 'reg', one for DDR controller and the other is ECC inject
+> engine register space. Keep the same restriction for other compatible
+> string.
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->   fs/ceph/dir.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> index 5aadc56e0cc0..18c72b305858 100644
-> --- a/fs/ceph/dir.c
-> +++ b/fs/ceph/dir.c
-> @@ -1589,7 +1589,7 @@ void __ceph_dentry_dir_lease_touch(struct ceph_dentry_info *di)
->   	}
->   
->   	spin_lock(&mdsc->dentry_list_lock);
-> -	__dentry_dir_lease_touch(mdsc, di),
-> +	__dentry_dir_lease_touch(mdsc, di);
->   	spin_unlock(&mdsc->dentry_list_lock);
->   }
->   
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+>  .../bindings/memory-controllers/fsl/fsl,ddr.yaml   | 31 ++++++++++++++++=
++++++-
+>  1 file changed, 30 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/fsl/fsl=
+,ddr.yaml b/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,dd=
+r.yaml
+> index 84f778a99546b..e0786153eec73 100644
+> --- a/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ddr.ya=
+ml
+> +++ b/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ddr.ya=
+ml
+> @@ -40,6 +40,7 @@ properties:
+>            - fsl,p1021-memory-controller
+>            - fsl,p2020-memory-controller
+>            - fsl,qoriq-memory-controller
+> +          - nxp,imx9-memory-controller
+> =20
+>    interrupts:
+>      maxItems: 1
+> @@ -51,13 +52,41 @@ properties:
+>      type: boolean
+> =20
+>    reg:
+> -    maxItems: 1
+> +    items:
+> +      - description: Controller register space
+> +      - description: Inject register space
+> +    minItems: 1
+> +
+> +  reg-names:
+> +    items:
+> +      - const: ctrl
+> +      - const: inject
+> +    minItems: 1
+> =20
+>  required:
+>    - compatible
+>    - interrupts
+>    - reg
+> =20
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - nxp,imx9-memory-controller
+> +    then:
+> +      properties:
+> +        reg:
+> +          minItems: 2
+> +        reg-names:
+> +          minItems: 2
+> +    else:
+> +      properties:
+> +        reg:
+> +          maxItems: 1
+> +        reg-names: false
+> +
+>  additionalProperties: false
+> =20
+>  examples:
+>=20
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
 
