@@ -1,74 +1,207 @@
-Return-Path: <linux-kernel+bounces-247331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3C8692CE19
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:21:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D7192CE1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B7F0280EB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:21:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39F852815B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626CF18FA0A;
-	Wed, 10 Jul 2024 09:21:32 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B741918F2F7;
-	Wed, 10 Jul 2024 09:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E7D18FA0E;
+	Wed, 10 Jul 2024 09:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="KMSn1EBi"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC10E17BB31;
+	Wed, 10 Jul 2024 09:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720603292; cv=none; b=rT3xRKAL281H1tAUYtay3nXxowRwoQRYrLsGJNbvxHbS25AGj3c1XbqCMJBnl1IUzxqbOdt6R7OS3MZpOSX88V1uVTi2sV1OuqQkXMTBAgqzeuePjvO+3NY/BmZ5Dbje2x7t24hnMw3EccJNgVnvc3s0ZUQcaes6GzjfOe3MiXY=
+	t=1720603341; cv=none; b=bp/o2qzWOjhHXP6hwQX3xiHTnSoBrSLqcBx9JKuv6D/CueUJUreRjV/Pq8mhsn2Dw0D1dSXxGz8Tnf3B4yBf8WYFJSTXPVjqjVmOQMQa6G6vABUmboSuBHD5/75HURDPJ/cTCfTPNRSyNWJtGmRcnDHwx4orOYoiR4axQTtvkoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720603292; c=relaxed/simple;
-	bh=CvV6B9ZEnynNgddzGLGfSr5hjeldvTVOvNTMV/usLK0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=qrYoytlqfyCbab5HMH5uyqpjx+q5F4tW6cNgvPY5lPQHLMgHiG3am8dxCk5NOm9oCDlIswwa8THSxYozCFFemlTIpjzyAFvUuUTCYTQ/n6w5ShvreWIAWwm2k0dV47LR0HvPw4mlRTgw+ISfwPz0wLRgMNaT9/zu2bx/Egvm1CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 1F66292009C; Wed, 10 Jul 2024 11:21:21 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 1B1E892009B;
-	Wed, 10 Jul 2024 10:21:21 +0100 (BST)
-Date: Wed, 10 Jul 2024 10:21:21 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, Jonathan Corbet <corbet@lwn.net>, 
-    linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
-    =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
-Subject: Re: [PATCH v3] MIPS: Implement ieee754 NAN2008 emulation mode
-In-Reply-To: <Zo457UgAkhbAgm2R@alpha.franken.de>
-Message-ID: <alpine.DEB.2.21.2407101015120.38148@angie.orcam.me.uk>
-References: <20240612-mips_ieee754_emul-v3-1-2c21b450abdb@flygoat.com> <Zn1FuxNw2CUttzdg@alpha.franken.de> <9cc26415-9cbc-47fa-a132-7d8c000874a4@app.fastmail.com> <alpine.DEB.2.21.2406272053180.43454@angie.orcam.me.uk> <fbd421a6-cf37-49ab-bdbe-6128a7cae8be@app.fastmail.com>
- <Zoz6+YmUk7CBsNFw@alpha.franken.de> <7797a7b2-1bb2-4c45-b65d-678f685dfa3d@app.fastmail.com> <Zo457UgAkhbAgm2R@alpha.franken.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1720603341; c=relaxed/simple;
+	bh=5EbffKwvwNM6NfdRxM4VDxmXquU4ZU5CTCdXR+CJnU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=olzSFUTHpT7zuafVO0iVltxL6GtZOLj7QesusvU4LRrDx0T+5JTuE2dlvs8WUMF1uTNLCwZXulqUiY/0y3MKhFyYkb15QTtAb2YtBewHXsgCIOvhf22hCgKp4Y1/VyEXqYLze/uax/99CFOtax8iORLl5+JGGFWZhxyDWj9Adw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=KMSn1EBi; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (unknown [IPv6:2001:b07:5d2e:52c9:72c3:346:a663:c82d])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F37545A5;
+	Wed, 10 Jul 2024 11:21:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1720603305;
+	bh=5EbffKwvwNM6NfdRxM4VDxmXquU4ZU5CTCdXR+CJnU0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KMSn1EBitXS2ofUCitdh0hMuHp22bjjtS13RjjGcSbXacwO9GhI0vOYubm0tDHGXf
+	 hLSXrDxMxvREuOVev3vZpwjTFwc7fuiNkpMJj4nJQNHxCzDyU5+Vhj/qXQECMcpbIZ
+	 gQJUzU2k/NQXD/iFtIfYYBzEjpeA2Qe+s65YiZHg=
+Date: Wed, 10 Jul 2024 11:22:14 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Mingjia Zhang <mingjia.zhang@mediatek.com>, 
+	Jack Zhu <jack.zhu@starfivetech.com>, Keith Zhao <keith.zhao@starfivetech.com>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH v5 02/14] media: Documentation: Add description for
+ StarFive ISP metadata formats
+Message-ID: <dncfjg7e7a2i6xin7kuwnxifcjpdjxcwkfcudxnqczi4lhwac7@u7jjunr7zqc6>
+References: <20240709083824.430473-1-changhuang.liang@starfivetech.com>
+ <20240709083824.430473-3-changhuang.liang@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240709083824.430473-3-changhuang.liang@starfivetech.com>
 
-On Wed, 10 Jul 2024, Thomas Bogendoerfer wrote:
+Hi Changhuang
 
-> > > I'm considering to apply your patch, how much testing/verification did
-> > > this patch see ? Do have some test binaries ?
-> > 
-> > It has been tested against Debian rootfs. There is no need to test againt special binary,
-> > but you need NaN2008 hardware such as Loongson 3A4000.
-> 
-> that's just one case, what about NaN2008 binaries on a legacy MIPS CPU ?
+On Tue, Jul 09, 2024 at 01:38:12AM GMT, Changhuang Liang wrote:
+> Add description for V4L2_META_FMT_STF_ISP_PARAMS and
+> V4L2_META_FMT_STF_ISP_STAT_3A meta data formats.
+>
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 
- It would be good to check with hard-float QEMU configured for writable 
-FCSR.NAN2008 (which is one way original code was verified) that things 
-have not regressed.  And also what happens if once our emulation has 
-triggered for the unsupported FCSR.NAN2008 mode, an attempt is made to 
-flip the mode bit via ptrace(2), e.g. under GDB, which I reckon our 
-emulation permits for non-legacy CPUs (and which I think should not be 
-allowed under the new setting).
+I get this warnings when compiling documentation
 
-  Maciej
+Please fix these in the uapi header
+
+../include/uapi/linux/jh7110-isp.h:17: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+ * ISP Module Diagram
+../include/uapi/linux/jh7110-isp.h:152: warning: expecting prototype for struct jh7110_isp_cfa_params. Prototype was for struct jh7110_isp_cfa_setting instead
+../include/uapi/linux/jh7110-isp.h:178: warning: expecting prototype for struct jh7110_isp_ctc_params. Prototype was for struct jh7110_isp_ctc_setting instead
+../include/uapi/linux/jh7110-isp.h:200: warning: expecting prototype for struct jh7110_isp_dbc_params. Prototype was for struct jh7110_isp_dbc_setting instead
+../include/uapi/linux/jh7110-isp.h:226: warning: expecting prototype for struct jh7110_isp_dnyuv_params. Prototype was for struct jh7110_isp_dnyuv_setting instead
+../include/uapi/linux/jh7110-isp.h:707: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+ * Statistics Collection Meta Data Flag
+
+and this in the documentation here below:
+
+Documentation/userspace-api/media/v4l/metafmt-starfive-isp.rst:73: WARNING: Title underline too short.
+
+JH7110 ISP uAPI data types
+======================
+
+Documentation/userspace-api/media/v4l/metafmt-starfive-isp.rst: WARNING: document isn't included in any toctree
+
+(You should  add this file to
+Documentation/userspace-api/media/v4l/meta-formats.rst)
+
+> ---
+>  .../media/v4l/metafmt-starfive-isp.rst        | 75 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 76 insertions(+)
+>  create mode 100644 Documentation/userspace-api/media/v4l/metafmt-starfive-isp.rst
+>
+> diff --git a/Documentation/userspace-api/media/v4l/metafmt-starfive-isp.rst b/Documentation/userspace-api/media/v4l/metafmt-starfive-isp.rst
+> new file mode 100644
+> index 000000000000..ebb4291833d6
+> --- /dev/null
+> +++ b/Documentation/userspace-api/media/v4l/metafmt-starfive-isp.rst
+> @@ -0,0 +1,75 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +.. _v4l2-meta-fmt-stf-isp-params:
+> +
+> +.. _v4l2-meta-fmt-stf-isp-stat-3a:
+> +
+> +*****************************************************************************
+> +V4L2_META_FMT_STF_ISP_PARAMS ('stfp'), V4L2_META_FMT_STF_ISP_STAT_3A ('stfs')
+> +*****************************************************************************
+> +
+> +.. jh7110_isp_params_buffer
+> +
+> +Configuration parameters
+> +========================
+> +
+> +The configuration parameters are passed to the "output_params" metadata output
+> +video node, using the :c:type:`v4l2_meta_format` interface. They are formatted
+> +as described by the :c:type:`jh7110_isp_params_buffer` structure.
+> +
+> +.. code-block:: c
+> +
+> +	struct jh7110_isp_params_buffer {
+> +		__u32 enable_setting;
+> +		struct jh7110_isp_wb_setting wb_setting;
+> +		struct jh7110_isp_car_setting car_setting;
+> +		struct jh7110_isp_ccm_setting ccm_setting;
+> +		struct jh7110_isp_cfa_setting cfa_setting;
+> +		struct jh7110_isp_ctc_setting ctc_setting;
+> +		struct jh7110_isp_dbc_setting dbc_setting;
+> +		struct jh7110_isp_dnyuv_setting dnyuv_setting;
+> +		struct jh7110_isp_gmargb_setting gmargb_setting;
+> +		struct jh7110_isp_lccf_setting lccf_setting;
+> +		struct jh7110_isp_obc_setting obc_setting;
+> +		struct jh7110_isp_oecf_setting oecf_setting;
+> +		struct jh7110_isp_r2y_setting r2y_setting;
+> +		struct jh7110_isp_sat_setting sat_setting;
+> +		struct jh7110_isp_sharp_setting sharp_setting;
+> +		struct jh7110_isp_ycrv_setting ycrv_setting;
+> +		struct jh7110_isp_sc_setting sc_setting;
+> +	};
+> +
+> +.. jh7110_isp_sc_buffer
+
+Is this used ?
+
+> +
+> +3A and histogram statistics
+> +===========================
+> +
+> +The ISP device collects different statistics over an input Bayer frame.
+> +Those statistics are obtained from the "capture_scd" metadata capture video
+> +node, using the :c:type:`v4l2_meta_format` interface. They are formatted as
+> +described by the :c:type:`jh7110_isp_sc_buffer` structure.
+> +
+> +.. code-block:: c
+> +
+> +	struct jh7110_isp_sc_buffer {
+> +		__u32 y_histogram[64];
+> +		__u32 reserv0[33];
+> +		__u32 bright_sc[4096];
+> +		__u32 reserv1[96];
+> +		__u32 ae_hist_y[128];
+> +		__u32 reserv2[511];
+> +		__u16 flag;
+> +	};
+> +
+> +The statistics collected are Auto Exposure, AWB (Auto-white balance), Histogram
+> +and AF (Auto-focus). See :c:type:`jh7110_isp_sc_buffer` for details of the
+> +statistics.
+> +
+> +The 3A statistics and configuration parameters described here are usually
+> +consumed and produced by dedicated user space libraries that comprise the
+> +important tuning tools using software control loop.
+> +
+> +JH7110 ISP uAPI data types
+> +======================
+> +
+> +.. kernel-doc:: include/uapi/linux/jh7110-isp.h
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 890604eb0d64..8fd613c93e62 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21304,6 +21304,7 @@ L:	linux-media@vger.kernel.org
+>  S:	Maintained
+>  F:	Documentation/admin-guide/media/starfive_camss.rst
+>  F:	Documentation/devicetree/bindings/media/starfive,jh7110-camss.yaml
+> +F:	Documentation/userspace-api/media/v4l/metafmt-starfive-isp.rst
+>  F:	drivers/staging/media/starfive/camss
+>  F:	include/uapi/linux/jh7110-isp.h
+>
+> --
+> 2.25.1
+>
+>
 
