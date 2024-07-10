@@ -1,132 +1,113 @@
-Return-Path: <linux-kernel+bounces-247158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4331A92CBFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:35:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D6E592CBF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 747AA1C22F76
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:35:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B64B1C229BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342A984A21;
-	Wed, 10 Jul 2024 07:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gaDdLIb2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E9383A0D;
-	Wed, 10 Jul 2024 07:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E824083A19;
+	Wed, 10 Jul 2024 07:34:04 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A3F482CD;
+	Wed, 10 Jul 2024 07:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720596911; cv=none; b=TMs67JhWLWEczaTrn2ZaU6N0rXIDppc1sXx6hzET6zMk+3SGW/DahdBG7D+H2esDEO7RerkMfojAvKB8TH5qSIH5iEOS72suH5M/mYQK+1q6xjQ/sfw7fV097xiJ4tFpqxsynOOoWveCs0pzSwyCqzAFI3O/PNIbzkcmGWgHhvs=
+	t=1720596844; cv=none; b=AT7Voy9BjqrsR8X6Vp6td5/xol/iq8t3Ofec7aspWA1FpQJebFBAMVNlr6v4V3+340fFO5CklM2ABVszUdL1jjRRDV/fLvGfC4CLTfHh7UpyCK4M1FWSbTA9tMYQ6YUNnvSV0YQgyEU5GmzZnYVYrpVcBw3YLG/8ugMV3R144MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720596911; c=relaxed/simple;
-	bh=6Bqq4Ewk7zpTLugZf5KjwcAghC3qqCdO74iRTV/2vys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n+HPTDLi2khw72jqSRp6DoCy8fMwpZeHawZK5w/LBkSVENX700UudlpsT7rj8mBTjiesL1dwlaongaCm6RWI6bLh/COQzsl+sjOYVoIzV5O04YKETmq0gsOHF/UWkqtBI1Rn/lxDB4O3sdEYC12NQoGKyDY0W36Xz6jLQMmVdpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gaDdLIb2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53BF2C32781;
-	Wed, 10 Jul 2024 07:35:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720596911;
-	bh=6Bqq4Ewk7zpTLugZf5KjwcAghC3qqCdO74iRTV/2vys=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gaDdLIb2asilEsYwMYfxjQiXe/jKOTfX6mA6XGwmSm/Trndrk8Y/Zr+WauUC+xHYl
-	 zlodR4URQHujRikilL9PJWpYh20D8Z5dtvNEtfyJCO+NGPA9SZoZjVt/ICFnY38znP
-	 7rGQVVjjx98NLb9jVEPakhrFX0pk/iYwnJm3opeXZ2MM2vbUCiFdZtpcNxgh5QKIs+
-	 EmRap+tWsjTRiV433a8Go5joeXBkKeDnUR3LtH1WQMHWf1TSemnF862L1poQ/dhE5K
-	 n7w4E4JgfP7Iqbcqb21fEaTSzp6M6XM7c19v8Q2qX4s5T2BRiewwq+zWTeHG3llGfR
-	 eq7jxdjWOwP4w==
-Date: Wed, 10 Jul 2024 10:32:25 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Patrick Roy <roypat@amazon.co.uk>, seanjc@google.com,
-	pbonzini@redhat.com, akpm@linux-foundation.org, dwmw@amazon.co.uk,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	willy@infradead.org, graf@amazon.com, derekmn@amazon.com,
-	kalyazin@amazon.com, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	dmatlack@google.com, tabba@google.com, chao.p.peng@linux.intel.com,
-	xmarcalx@amazon.co.uk
-Subject: Re: [RFC PATCH 7/8] mm: secretmem: use AS_INACCESSIBLE to prohibit
- GUP
-Message-ID: <Zo45CQGe_UDUnXXu@kernel.org>
-References: <20240709132041.3625501-1-roypat@amazon.co.uk>
- <20240709132041.3625501-8-roypat@amazon.co.uk>
- <0dc45181-de7e-4d97-9178-573c6f683f55@redhat.com>
+	s=arc-20240116; t=1720596844; c=relaxed/simple;
+	bh=yPnoWvlljWgpuoo96HJlqVf3Nwk71XJ7q2vsS6fs+j8=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=uM3wn6xw9E8vfvwD+mKzYEEh7rqriIwpzyWOoOQ/fGl8ykzQIiV2sExYRJcn9yFBuDHd3U4h4U/E/PucKFoFF4Yg1SaVVAQpAJWm66QhqUJgNatoSX5d+4mUDQEokSQxM9E85KhJKPHbJNMfaGuR47C0mx6CAdgdH86/3cxvAtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee5668e3960ff2-2aff3;
+	Wed, 10 Jul 2024 15:33:53 +0800 (CST)
+X-RM-TRANSID:2ee5668e3960ff2-2aff3
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[10.54.5.255])
+	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee9668e39603a5-dfd4b;
+	Wed, 10 Jul 2024 15:33:53 +0800 (CST)
+X-RM-TRANSID:2ee9668e39603a5-dfd4b
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: shuah@kernel.org,
+	akpm@linux-foundation.org
+Cc: cyphar@cyphar.com,
+	jeffxu@google.com,
+	sauravshah.31@gmail.com,
+	zhujun2@cmss.chinamobile.com,
+	gthelen@google.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests/memfd:Fix a resource leak
+Date: Wed, 10 Jul 2024 00:33:51 -0700
+Message-Id: <20240710073351.6479-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0dc45181-de7e-4d97-9178-573c6f683f55@redhat.com>
 
-On Tue, Jul 09, 2024 at 11:09:29PM +0200, David Hildenbrand wrote:
-> On 09.07.24 15:20, Patrick Roy wrote:
-> > Inside of vma_is_secretmem and secretmem_mapping, instead of checking
-> > whether a vm_area_struct/address_space has the secretmem ops structure
-> > attached to it, check whether the address_space has the AS_INACCESSIBLE
-> > bit set. Then set the AS_INACCESSIBLE flag for secretmem's
-> > address_space.
-> > 
-> > This means that get_user_pages and friends are disables for all
-> > adress_spaces that set AS_INACCESIBLE. The AS_INACCESSIBLE flag was
-> > introduced in commit c72ceafbd12c ("mm: Introduce AS_INACCESSIBLE for
-> > encrypted/confidential memory") specifically for guest_memfd to indicate
-> > that no reads and writes should ever be done to guest_memfd
-> > address_spaces. Disallowing gup seems like a reasonable semantic
-> > extension, and means that potential future mmaps of guest_memfd cannot
-> > be GUP'd.
-> > 
-> > Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
-> > ---
-> >   include/linux/secretmem.h | 13 +++++++++++--
-> >   mm/secretmem.c            |  6 +-----
-> >   2 files changed, 12 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/include/linux/secretmem.h b/include/linux/secretmem.h
-> > index e918f96881f5..886c8f7eb63e 100644
-> > --- a/include/linux/secretmem.h
-> > +++ b/include/linux/secretmem.h
-> > @@ -8,10 +8,19 @@ extern const struct address_space_operations secretmem_aops;
-> >   static inline bool secretmem_mapping(struct address_space *mapping)
-> >   {
-> > -	return mapping->a_ops == &secretmem_aops;
-> > +	return mapping->flags & AS_INACCESSIBLE;
-> > +}
-> > +
-> > +static inline bool vma_is_secretmem(struct vm_area_struct *vma)
-> > +{
-> > +	struct file *file = vma->vm_file;
-> > +
-> > +	if (!file)
-> > +		return false;
-> > +
-> > +	return secretmem_mapping(file->f_inode->i_mapping);
-> >   }
-> 
-> That sounds wrong. You should leave *secretmem alone and instead have
-> something like inaccessible_mapping that is used where appropriate.
-> 
-> vma_is_secretmem() should not suddenly succeed on something that is not
-> mm/secretmem.c
+From a good programming practice perspective, especially in more
+complex programs, explicitly freeing allocated memory is a good habit.
 
-I'm with David here.
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+ tools/testing/selftests/memfd/memfd_test.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
+index 95af2d78fd31..f842a4aeb47d 100644
+--- a/tools/testing/selftests/memfd/memfd_test.c
++++ b/tools/testing/selftests/memfd/memfd_test.c
+@@ -661,9 +661,11 @@ static void mfd_assert_grow_write(int fd)
+ 	l = pwrite(fd, buf, mfd_def_size * 8, 0);
+ 	if (l != (mfd_def_size * 8)) {
+ 		printf("pwrite() failed: %m\n");
++		free(buf);
+ 		abort();
+ 	}
  
-> -- 
-> Cheers,
-> 
-> David / dhildenb
-> 
-
++	free(buf);
+ 	mfd_assert_size(fd, mfd_def_size * 8);
+ }
+ 
+@@ -685,8 +687,11 @@ static void mfd_fail_grow_write(int fd)
+ 	l = pwrite(fd, buf, mfd_def_size * 8, 0);
+ 	if (l == (mfd_def_size * 8)) {
+ 		printf("pwrite() didn't fail as expected\n");
++		free(buf);
+ 		abort();
+ 	}
++
++	free(buf);
+ }
+ 
+ static void mfd_assert_mode(int fd, int mode)
+@@ -771,9 +776,11 @@ static pid_t spawn_thread(unsigned int flags, int (*fn)(void *), void *arg)
+ 	pid = clone(fn, stack + STACK_SIZE, SIGCHLD | flags, arg);
+ 	if (pid < 0) {
+ 		printf("clone() failed: %m\n");
++		free(stack);
+ 		abort();
+ 	}
+ 
++	free(stack);
+ 	return pid;
+ }
+ 
 -- 
-Sincerely yours,
-Mike.
+2.17.1
+
+
+
 
