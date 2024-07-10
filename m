@@ -1,88 +1,180 @@
-Return-Path: <linux-kernel+bounces-248438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A12C292DD2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:50:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1791C92DD1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D23928783B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:50:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99E741F21131
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F56F15958D;
-	Wed, 10 Jul 2024 23:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4707615958E;
+	Wed, 10 Jul 2024 23:48:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TxVFDFfZ"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DWS4TtL2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A45D15EFAF
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65FF156997;
+	Wed, 10 Jul 2024 23:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720655355; cv=none; b=t/qPlketQJZDyifsteVjJhbimBfR044cajb5wSK06tcxvzuaDUfi2t9Y6z5joXsW/+McTAiy+ATRs0oMb9ZgmS1Em7bHks8c31l30yO39V67RPk1Y+43hLmT0U3gzkwRpoPNhmjpvOqqDP50cP4/5uiwQwEsIwILb5NN8NJfKm8=
+	t=1720655324; cv=none; b=RwdcYrEsJerV5GYcv/SPmdcp9JmDp2/WbSUWH/0d+mk8rbQS2TVFyR6vGcJvttYEs/q/UCPmF2T7gUtOalRKn2XKUPSmZ823GwWi74jwjbxSn9lamP5I0xxFWa0lq3uvq5FlWV5aoBx0Kd6W6yDwKn3d4f54cM9Qn76PQ1ZLkko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720655355; c=relaxed/simple;
-	bh=WpUWnTWcQ9yZbCFEuArGMs4Fxk919PYBB/xOGitk7xM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ll6rFYWqtLgkOkA7HSKR8WH5EanONWQ/R29YdTTt/OtRZt9fyGhys5gT2FZ6e+wIZwz0h/JiJFHWIZs1Pxqe3rebHbKrWs7rV6ayMOUUKsNbVE3bC5I0yKUE2coIGuluSXySgTfDQWZ6KeKmZVELmkX7mlHZse09CdnMLDPXhu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TxVFDFfZ; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-447df43324fso64781cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:49:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720655353; x=1721260153; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WpUWnTWcQ9yZbCFEuArGMs4Fxk919PYBB/xOGitk7xM=;
-        b=TxVFDFfZrvROa1IKZ3G5x2ZkEvq9G8gQk4z8oeAb/KpPpPvQOH/gIU0KLHUwUU6GFn
-         zHjX3/emlwa1Wq8KkRnLm/gAk7ZSpGZd+0D0hWyGHNdvypxPkVvYAwNkIG7hDC0jmwns
-         6BwPHSONhiwDP92nugSYgG/1eVSF9OzY4SWiAe45CXyIaey6oVcoW7jc7pvnOLXgCnNK
-         AR5QwzdR+o+LAOiRAiEgiegcIRa2yNMefFsu/Zjn+6Ok0C22D+4MxmqggJiAH2ljTTCy
-         rHuCbdu4xAxVsXkUPgUR1XYB3+y2/ecAqd96rNfabcyRGfdJAU47FpwBR8yJMOjCJI9u
-         H6Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720655353; x=1721260153;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WpUWnTWcQ9yZbCFEuArGMs4Fxk919PYBB/xOGitk7xM=;
-        b=umgsK7DndA9YqgSPfX4GsPXueoDEZEnlhMQAuZwwRd+1UKLdyMhpBAgbIqxNNO3O1I
-         +h/Bdqou6XwJYenDk6fpoC9A95NTAtxHfd+ozoz92vWO/MgX+mBCcvYpK0tN4FLHZsg0
-         WTGm7iF6W06aL9cLTrfyw62VU0sX/ha65bnyoqoVKThM0C0J+UdRCU2bOuDN4XRTFWDJ
-         DxsNbHntiNw977ipOsA6YctePgo/jV4F4uW5wKMdy7YKn9O9NbzRu3YzLS7AXsT/XfId
-         AvKeAfRH1ip24NbrOORyCyKlSNyN2D8HUk5w1NK4RGANXM+oRSkNw/zPu751Cx/9GLG3
-         JYOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbeD35hGwNxr2YkGhCwQOTtmzrJ+TwK7j34P8FpaWx8Bm8sEM20LdXbHd6E0h+n7eOXQr++gL7DtJjE+Uvl2HP58IcvCPAeOq82/nG
-X-Gm-Message-State: AOJu0Yzv8OLwRn8KP3C3ZQK/+VaxtA1o9MQ+FHGgY1+iLlTBdRZX/YsN
-	AzE0sEt+zAu7ptVeM87zK43uIRHj9cRLiCLsQrqMnUsK7NT3uTd0wY8JjeaIgH4jz2SRJD1BZmZ
-	RLho6JToava0SCXXyb2fsleAzp49U1esGiVLn
-X-Google-Smtp-Source: AGHT+IEuslvTU7O114maCMu6s7q1QatazKYK4Au3LHFSN1TQt2fd6q24xfMVdE/dWH6oyRO5MWqPuiKjKkMbsPD4dqw=
-X-Received: by 2002:ac8:7386:0:b0:447:ec33:f488 with SMTP id
- d75a77b69052e-44d0aa4788bmr1329661cf.4.1720655352838; Wed, 10 Jul 2024
- 16:49:12 -0700 (PDT)
+	s=arc-20240116; t=1720655324; c=relaxed/simple;
+	bh=yWzx2TsHnZ+PLHk0dmdvk2Z399kXYrvS0ZYOZ6bSS2A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=X/wWe1baFPqmWdJfaT2tCVjRvq1WP9TnxWtMwB0midpQuug1QO6lmUBMCLyfkcmW0hzLJiOxQq+YzPF7YsKqGD3LlSxqmvgs6jWAiKqxnurabd3qSQUa+M/9++rFO2oTPcGqp15bzJkUhdxZJgSAn1wGKxeJVqPW3RQv3/yQXa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DWS4TtL2; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720655323; x=1752191323;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=yWzx2TsHnZ+PLHk0dmdvk2Z399kXYrvS0ZYOZ6bSS2A=;
+  b=DWS4TtL2eO4USGau5bNJW+lcHTj3CTB+bIsakOIANYWf+Q/5SFl35ScS
+   b4/2ppxj22+MFmaHOxvI43kaWEPmzj0NgY/2pViYa2y8kk1icG4VUeeO6
+   u4/QKX8kTqbbEBG/RGn8L9dAVlS1iYs40gbswFhmN9EOn2qtrPpdJW5Ka
+   Msk6eo1yFXJTnUiHfPey+x6nqCq3UT4j/v4ewg9Nrzw15lzzJie0AAUoo
+   7l759uo5NCZCtQvo9vgDpO2dqHeWZs4fOqih3MNI22U4ZXlYsyNJ4+qjp
+   OnliRgIHt1vQEcH1F1DHuEUUSfcCE5aOANnRmbf2xtY3LIunBxg/Jfm97
+   A==;
+X-CSE-ConnectionGUID: +iW67wmDRoaULgGUOwVkbg==
+X-CSE-MsgGUID: y1fhvaTbQ7m7r684sqBF5w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="40527430"
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="40527430"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 16:48:42 -0700
+X-CSE-ConnectionGUID: pqwBzH28Rmumt/CFRUy/rg==
+X-CSE-MsgGUID: BURFX1PjQOGgOobF6ZA7XA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="71596699"
+Received: from bmurrell-mobl.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.221.70])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 16:48:41 -0700
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jesse Brandeburg
+ <jesse.brandeburg@intel.com>, Tony
+ Nguyen <anthony.l.nguyen@intel.com>, Simon Horman <horms@kernel.org>,
+ Richard Cochran <richardcochran@gmail.com>, Paul Menzel
+ <pmenzel@molgen.mpg.de>, Sasha Neftin <sasha.neftin@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, Faizal Rahim
+ <faizal.abdul.rahim@linux.intel.com>
+Subject: Re: [PATCH iwl-net v2 3/3] igc: Fix qbv tx latency by setting
+ gtxoffset
+In-Reply-To: <20240707125318.3425097-4-faizal.abdul.rahim@linux.intel.com>
+References: <20240707125318.3425097-1-faizal.abdul.rahim@linux.intel.com>
+ <20240707125318.3425097-4-faizal.abdul.rahim@linux.intel.com>
+Date: Wed, 10 Jul 2024 16:48:41 -0700
+Message-ID: <87a5iou7ty.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710234222.2333120-1-jthoughton@google.com>
-In-Reply-To: <20240710234222.2333120-1-jthoughton@google.com>
-From: James Houghton <jthoughton@google.com>
-Date: Wed, 10 Jul 2024 16:48:36 -0700
-Message-ID: <CADrL8HUHRMwUPhr7jLLBgD9YLFAnVHc=N-C=8er-x6GUtV97pQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/18] KVM: Post-copy live migration for guest_memfd
-To: Paolo Bonzini <pbonzini@redhat.com>, Peter Xu <peterx@redhat.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Sean Christopherson <seanjc@google.com>, Shuah Khan <shuah@kernel.org>, 
-	Axel Rasmussen <axelrasmussen@google.com>, David Matlack <dmatlack@google.com>, kvm@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Ah, I put the wrong email for Peter! I'm so sorry!
+Faizal Rahim <faizal.abdul.rahim@linux.intel.com> writes:
+
+> A large tx latency issue was discovered during testing when only QBV was
+> enabled. The issue occurs because gtxoffset was not set when QBV is
+> active, it was only set when launch time is active.
+>
+> The patch "igc: Correct the launchtime offset" only sets gtxoffset when
+> the launchtime_enable field is set by the user. Enabling launchtime_enable
+> ultimately sets the register IGC_TXQCTL_QUEUE_MODE_LAUNCHT (referred to as
+> LaunchT in the SW user manual).
+>
+> Section 7.5.2.6 of the IGC i225/6 SW User Manual Rev 1.2.4 states:
+> "The latency between transmission scheduling (launch time) and the
+> time the packet is transmitted to the network is listed in Table 7-61."
+>
+> However, the patch misinterprets the phrase "launch time" in that section
+> by assuming it specifically refers to the LaunchT register, whereas it
+> actually denotes the generic term for when a packet is released from the
+> internal buffer to the MAC transmit logic.
+>
+> This launch time, as per that section, also implicitly refers to the QBV
+> gate open time, where a packet waits in the buffer for the QBV gate to
+> open. Therefore, latency applies whenever QBV is in use. TSN features such
+> as QBU and QAV reuse QBV, making the latency universal to TSN features.
+>
+> Discussed with i226 HW owner (Shalev, Avi) and we were in agreement that
+> the term "launch time" used in Section 7.5.2.6 is not clear and can be
+> easily misinterpreted. Avi will update this section to:
+> "When TQAVCTRL.TRANSMIT_MODE = TSN, the latency between transmission
+> scheduling and the time the packet is transmitted to the network is listed
+> in Table 7-61."
+>
+> Fix this issue by using igc_tsn_is_tx_mode_in_tsn() as a condition to
+> write to gtxoffset, aligning with the newly updated SW User Manual.
+>
+> Tested:
+> 1. Enrol taprio on talker board
+>    base-time 0
+>    cycle-time 1000000
+>    flags 0x2
+>    index 0 cmd S gatemask 0x1 interval1
+>    index 0 cmd S gatemask 0x1 interval2
+>
+>    Note:
+>    interval1 = interval for a 64 bytes packet to go through
+>    interval2 = cycle-time - interval1
+>
+> 2. Take tcpdump on listener board
+>
+> 3. Use udp tai app on talker to send packets to listener
+>
+> 4. Check the timestamp on listener via wireshark
+>
+> Test Result:
+> 100 Mbps: 113 ~193 ns
+> 1000 Mbps: 52 ~ 84 ns
+> 2500 Mbps: 95 ~ 223 ns
+>
+> Note that the test result is similar to the patch "igc: Correct the
+> launchtime offset".
+>
+> Fixes: 790835fcc0cb ("igc: Correct the launchtime offset")
+> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+> Reviewed-by: Simon Horman <horms@kernel.org>
+> ---
+
+Good catch.
+
+Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+
+>  drivers/net/ethernet/intel/igc/igc_tsn.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/ethernet/intel/igc/igc_tsn.c b/drivers/net/ethernet/intel/igc/igc_tsn.c
+> index 9fafe275f30f..efe13a9350ca 100644
+> --- a/drivers/net/ethernet/intel/igc/igc_tsn.c
+> +++ b/drivers/net/ethernet/intel/igc/igc_tsn.c
+> @@ -61,7 +61,7 @@ void igc_tsn_adjust_txtime_offset(struct igc_adapter *adapter)
+>  	struct igc_hw *hw = &adapter->hw;
+>  	u16 txoffset;
+>  
+> -	if (!is_any_launchtime(adapter))
+> +	if (!igc_tsn_is_tx_mode_in_tsn(adapter))
+>  		return;
+>  
+>  	switch (adapter->link_speed) {
+> -- 
+> 2.25.1
+>
+
+
+Cheers,
+-- 
+Vinicius
 
