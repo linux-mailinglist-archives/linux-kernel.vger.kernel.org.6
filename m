@@ -1,183 +1,183 @@
-Return-Path: <linux-kernel+bounces-246916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91A8692C8E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:05:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4517892C8E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 065C41F23D23
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:05:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9252281059
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4D22C182;
-	Wed, 10 Jul 2024 03:05:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C952937169;
+	Wed, 10 Jul 2024 03:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZFDT+tea"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UcLR93b1"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A421317C61
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 03:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F9E1B809
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 03:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720580717; cv=none; b=IL6P8J3/UQYh2ug7/jGN12jJ+EVna6q6LwfsSpaZBcpu5sIRXjsYKcOtkMX49SaK8+1DUNEENyW/CaOjdt7ci5HPdALgH8moNaiDpTWnoWoyfc/eRisuflGKIZa6Z/TfUhDXzXJ8H4v2pRM6SlxnhL2GXv+MvHWfkGL2Kshw0jg=
+	t=1720580767; cv=none; b=WyTArY8myjDbQ3qPyVgT6dZMRZd80VMdtXh7Zmq1kBtGwtJtzd1Zakm0wWdY9BGmT3ZyVRwjNSW9Eop0MJWjxm0ZmsdZnKxppI9Ud2GgUE/T5kaRwaX+RrirQfPrJ7ZMcMam6giHoDhOGN0ec/ZDgNFLUZIaZuifNA9fxe/Y8GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720580717; c=relaxed/simple;
-	bh=lC2iLHDbMQ38zhC4zsqNudHcBBOUTXnavp1gCkyE4V8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mvijwWFJV0dI0FhR+uNK/83Mhij9b6rFRYZIr+FbHIo297r//+IuzMW8x8dgwlWKqwJryl/3rGu3TWC8H/27GwppeJU+LuivH9aBTeD4dFzhKsFHfQDesKjbm9gJ7JkXB9QniFgCoWJg0jJZ1mPiOkCDBCh8UkUE2ym+oh6bICA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZFDT+tea; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1720580767; c=relaxed/simple;
+	bh=EYv+drGfxgAVKA3MvkSYy/jUZ5AZKM8QAx68YvyMpMY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oH5WXjXXmANbwc9ZDTmRkiU5kAGayxxxJEJSVaklR4uW2N4v46rDLZMAWt44tXEGD5Qb5CcA/61N3T9N+p8h557Bq60XU2iQwEAMyYq6Xcec66K8c5l6Ad/tSiYWo2pYX8HAiwJUs8K53MyU18VlAS1aXhdy9cCDkqxbOJpTpQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UcLR93b1; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720580714;
+	s=mimecast20190719; t=1720580764;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5hWVXOLtu6rf/89iUvCUXtmePRV1Vw51pzd7ajhPkBg=;
-	b=ZFDT+teaQ1eDJFE3jOpqjjc7dAG/98oZmD7egvq/MyEL1irbu10R/aXByQsFSd8rFX1TNF
-	21yLM3Vs+35htKbNrMU0epSpxAyrOEtlEN1dR3kxc8Jaew7fexZ9B3nqxpyFX6ckgdXPCI
-	JSkx9y5thQiawzancFos3MTM3PV1FFU=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references;
+	bh=EmCQNSPX5//DDrpA1NsAAhVFDFrTcMhRa+zaTiY1dwA=;
+	b=UcLR93b1lpIhaUbA3rr8BppOTXD0j2sNLKDdoTZ7ecoKl8pboASIgNcIrqp0JpTWjdPCu2
+	re/ckJpxRxD0HImGgcUx3INZKWVnpKGcGZn/WW9QYcZn7jyJUPjkGZGL7wpfuTSp+sJ3M2
+	xJfiqDONAUIy5QkSTEVKFBCjpw4WGQU=
+Received: from mail-oa1-f71.google.com (mail-oa1-f71.google.com
+ [209.85.160.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-628-PRX5pW3uNUW29h81aaicVA-1; Tue, 09 Jul 2024 23:05:12 -0400
-X-MC-Unique: PRX5pW3uNUW29h81aaicVA-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2c99c1075c9so4538597a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 20:05:12 -0700 (PDT)
+ us-mta-434-zRxs-lzDNByTlelK2f9BgQ-1; Tue, 09 Jul 2024 23:06:02 -0400
+X-MC-Unique: zRxs-lzDNByTlelK2f9BgQ-1
+Received: by mail-oa1-f71.google.com with SMTP id 586e51a60fabf-25cb4261a5cso2673245fac.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 20:06:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720580712; x=1721185512;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5hWVXOLtu6rf/89iUvCUXtmePRV1Vw51pzd7ajhPkBg=;
-        b=tmdu3za3o+x2XEXIFf3WYF2CigpTS2X0CcyrTs4zehjHTWQFiEWl8gxF/6VMu3591C
-         Fb1yvSOKeE+l4FE+i9bjj6alQiA0O6LvyRUQeZvgKM92LAuRaUFBzmHdmfUqeR/1lARg
-         ko/p/2M7hReAuWABpvJHGSDsUFiIpvqla0O4iHENQU+bpIkQ3FhsI0tXIpXNs2XVdDji
-         XnoDaDQ1CfJ+lZ1TJohWPQJyRcvtFtu45XFZWprvBOoemx1HHhK+FxX2HoXcH0tt6ELL
-         wjcsxSus7ayJLU//KJflV1Rx22PSRVOjETnELniId0EEywfG1fMc2XFLwmCZ0P45JXBn
-         WPrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWzBE6lwFKo0sQsA24GBcWrCdTTdqveWHExxEEJ6X7LgTkQpMygTKRz5l4rLxHEcSQIrBW4fGpa6zhJza2miI+jvkbQL0QR4KSzF5fz
-X-Gm-Message-State: AOJu0YwBStuaiGIwD0hQCSj1abzMKof5NvaPYYQ7I0BEgzfF3pCjQXYp
-	C9DvFo0Et1v2ba3RBKf2Oo9ERTRYLFZufqhb6sEvVFi88VWLuCQUAQlaYuSQJGSG84WeblSUVu1
-	e7Ce+//7wy7JuWkBxVIwvJmIo17gtkGq7TTIlCLBkLWfujboJ6Hxc7gd7pdFqbA==
-X-Received: by 2002:a17:902:e745:b0:1fb:696a:47b3 with SMTP id d9443c01a7336-1fbb6cda899mr37539265ad.7.1720580711693;
-        Tue, 09 Jul 2024 20:05:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEYl5EzkPUwkpW69f1wyltPvAOLktLATNGMJCPy/PZjKeQJBv7DuXtJ+5CBvp35An+OW/5sNg==
-X-Received: by 2002:a17:902:e745:b0:1fb:696a:47b3 with SMTP id d9443c01a7336-1fbb6cda899mr37539065ad.7.1720580711276;
-        Tue, 09 Jul 2024 20:05:11 -0700 (PDT)
-Received: from [172.20.2.228] ([4.28.11.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ac2c94sm22922375ad.215.2024.07.09.20.05.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 20:05:10 -0700 (PDT)
-Message-ID: <b71d8619-1182-43b6-940b-d68f672aa379@redhat.com>
-Date: Wed, 10 Jul 2024 05:05:06 +0200
+        d=1e100.net; s=20230601; t=1720580762; x=1721185562;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EmCQNSPX5//DDrpA1NsAAhVFDFrTcMhRa+zaTiY1dwA=;
+        b=Xv2Ltt7eSKfnqW5Dlidfj0TYTTib3DNPMHQv2z6pgIEYnj9x5Isdvmrx/QdQl6XDt+
+         +6yc2m2da22CWR+5ib1pdmzHUlhetqOEroM7rhxiq3KemJdyFtwnUuMemFp/zGki54zK
+         FfPAaWaunJ1wi9gGqnQUwGCaCn6R3whBxgbfXBt0kloAHJ6YDz+pLQ2h5uWgAQPxen4+
+         BFHVlioyYv0i81ttZ13ZR5NPNLIao7CxBPZKXEm5fAKIMURIuaYiu+0qeyFR/VTYhlVI
+         dKNHPqSzzDdUq3r0OHnPZfPoBHSL+laTjV9IRA4f+4pwpqXwTzaxFTxkQQ/8MChhuyRW
+         rwXw==
+X-Forwarded-Encrypted: i=1; AJvYcCXepX1q5mrp+2yWL33BiOpqqtaHeaac6P8fLKGR0BF6VEofZjmBdWm/hyAOvhkoK5qA817E1ZRes6grmJQhhc348jdv9z8j6ufw2wZU
+X-Gm-Message-State: AOJu0YybcTuEhZ2urrdYtQJ4D170/RxmZ3eCyYmAJYXHx44JmSsCI7wG
+	R4KPqo8V6COTPEsqf/vYty/VATuZwsCtSzygO0r3cKUmbDASYyDb8wr3I79DKnaZf4+MLKBBDUn
+	6hg5aKinaAAsCxgsqLqff7x4IKLs6MrsWfEDYJxnnlwJd+3I8Ljkx3aQlfQt/ssTdPY7Lui1VXv
+	APmsMgBlzjYoVd6DrXf4Z2VTqRhQY04ogSezgd
+X-Received: by 2002:a05:6870:470a:b0:254:7a82:cb28 with SMTP id 586e51a60fabf-25eae9bc1a9mr3539210fac.35.1720580761742;
+        Tue, 09 Jul 2024 20:06:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHGkCsClUv5KuWRwpjkBgC/upvmj64D87aIsN1C0U4KlwhgMoVY/k1ysamyySaRMmvPvzejsu/eF6WXuQBTCRM=
+X-Received: by 2002:a05:6870:470a:b0:254:7a82:cb28 with SMTP id
+ 586e51a60fabf-25eae9bc1a9mr3539189fac.35.1720580761338; Tue, 09 Jul 2024
+ 20:06:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v21 1/4] mm: add VM_DROPPABLE for designating always
- lazily freeable mappings
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, patches@lists.linux.dev, tglx@linutronix.de,
- linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
- Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
- Christian Brauner <brauner@kernel.org>,
- David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
-References: <1583c837-a4d5-4a8a-9c1d-2c64548cd199@redhat.com>
- <CAHk-=wjs-9DVeoc430BDOv+dkpDkdVvkEsSJxNVZ+sO51H1dJA@mail.gmail.com>
- <e2f104ac-b6d9-4583-b999-8f975c60d469@redhat.com>
- <CAHk-=wibRRHVH5D4XvX1maQDCT-o4JLkANXHMoZoWdn=tN0TLA@mail.gmail.com>
- <6705c6c8-8b6a-4d03-ae0f-aa83442ec0ab@redhat.com>
- <CAHk-=wi=XvCZ9r897LjEb4ZarLzLtKN1p+Fyig+F2fmQDF8GSA@mail.gmail.com>
- <7439da2e-4a60-4643-9804-17e99ce6e312@redhat.com>
- <Zovv4lzM38EHtnms@zx2c4.com> <Zov6SZZCKrqmigua@zx2c4.com>
- <75d6c45d-deea-464d-b0fd-b36e5d73b898@redhat.com>
- <Zoyd1DYuD7cmJbgx@zx2c4.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Zoyd1DYuD7cmJbgx@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240708064820.88955-1-lulu@redhat.com> <PH0PR12MB5481AE2FD52AEE1C10411F3DDCDB2@PH0PR12MB5481.namprd12.prod.outlook.com>
+ <CACLfguXk4qiw4efRGK4Gw8OZQ_PKw6j+GVQJCVtbyJ+hxOoE0Q@mail.gmail.com> <20240709084109-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20240709084109-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 10 Jul 2024 11:05:48 +0800
+Message-ID: <CACGkMEtdFgbgrjNDoYfW1B+4BwG8=i9CP5ePiULm2n3837n29w@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] vdpa: support set mac address from vdpa tool
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Cindy Lu <lulu@redhat.com>, Parav Pandit <parav@nvidia.com>, 
+	Dragos Tatulea <dtatulea@nvidia.com>, "sgarzare@redhat.com" <sgarzare@redhat.com>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	Leonardo Milleri <lmilleri@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09.07.24 04:17, Jason A. Donenfeld wrote:
-> Hi David,
-> 
-> On Mon, Jul 08, 2024 at 10:21:09PM +0200, David Hildenbrand wrote:
->> BTW, I was just trying to understand how MADV_FREE + MAP_DROPPABLE would
->> behave without any swap space around.
->>
->> Did you experiment with that?
-> 
-> You mean on a system without any swap configured? That's actually my
-> primary test environment for this. It behaves as expected: when ram
-> fills up and the scanner is trying to reclaim what it can,
-> folio_test_swapbacked(folio) is false, and the memory gets freed. After,
-> reads fault in a zero page. So it's working as expected.
+On Tue, Jul 9, 2024 at 8:42=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com> =
+wrote:
+>
+> On Tue, Jul 09, 2024 at 02:19:19PM +0800, Cindy Lu wrote:
+> > On Tue, 9 Jul 2024 at 11:59, Parav Pandit <parav@nvidia.com> wrote:
+> > >
+> > > Hi Cindy,
+> > >
+> > > > From: Cindy Lu <lulu@redhat.com>
+> > > > Sent: Monday, July 8, 2024 12:17 PM
+> > > >
+> > > > Add support for setting the MAC address using the VDPA tool.
+> > > > This feature will allow setting the MAC address using the VDPA tool=
+.
+> > > > For example, in vdpa_sim_net, the implementation sets the MAC addre=
+ss to
+> > > > the config space. However, for other drivers, they can implement th=
+eir own
+> > > > function, not limited to the config space.
+> > > >
+> > > > Changelog v2
+> > > >  - Changed the function name to prevent misunderstanding
+> > > >  - Added check for blk device
+> > > >  - Addressed the comments
+> > > > Changelog v3
+> > > >  - Split the function of the net device from vdpa_nl_cmd_dev_attr_s=
+et_doit
+> > > >  - Add a lock for the network device's dev_set_attr operation
+> > > >  - Address the comments
+> > > >
+> > > > Cindy Lu (2):
+> > > >   vdpa: support set mac address from vdpa tool
+> > > >   vdpa_sim_net: Add the support of set mac address
+> > > >
+> > > >  drivers/vdpa/vdpa.c                  | 81 ++++++++++++++++++++++++=
+++++
+> > > >  drivers/vdpa/vdpa_sim/vdpa_sim_net.c | 19 ++++++-
+> > > >  include/linux/vdpa.h                 |  9 ++++
+> > > >  include/uapi/linux/vdpa.h            |  1 +
+> > > >  4 files changed, 109 insertions(+), 1 deletion(-)
+> > > >
+> > > > --
+> > > > 2.45.0
+> > >
+> > > Mlx5 device already allows setting the mac and mtu during the vdpa de=
+vice creation time.
+> > > Once the vdpa device is created, it binds to vdpa bus and other drive=
+r vhost_vdpa etc bind to it.
+> > > So there was no good reason in the past to support explicit config af=
+ter device add complicate the flow for synchronizing this.
+> > >
+> > > The user who wants a device with new attributes, as well destroy and =
+recreate the vdpa device with new desired attributes.
+> > >
+> > > vdpa_sim_net can also be extended for similar way when adding the vdp=
+a device.
+> > >
+> > > Have you considered using the existing tool and kernel in place since=
+ 2021?
+> > > Such as commit d8ca2fa5be1.
+> > >
+> > > An example of it is,
+> > > $ vdpa dev add name bar mgmtdev vdpasim_net mac 00:11:22:33:44:55 mtu=
+ 9000
+> > >
+> > Hi Parav
+> > Really thanks for your comments. The reason for adding this function
+> > is to support Kubevirt.
+> > the problem we meet is that kubevirt chooses one random vdpa device
+> > from the pool and we don't know which one it going to pick. That means
+> > we can't get to know the Mac address before it is created. So we plan
+> > to have this function to change the mac address after it is created
+> > Thanks
+> > cindy
+>
+> Well you will need to change kubevirt to teach it to set
+> mac address, right?
 
-Okay, just to be clear: no swap/zram/zswap. The reclaim code regarding 
-not scanning anonymous memory without swap was a bit confusing.
+That's the plan. Adding Leonardo.
 
-thanks!
+Thanks
 
--- 
-Cheers,
-
-David / dhildenb
+>
+> --
+> MST
+>
 
 
