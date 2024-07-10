@@ -1,105 +1,110 @@
-Return-Path: <linux-kernel+bounces-247779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87FB592D471
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:43:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2782792D44B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:34:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42DCE282592
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:43:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5F152815A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF05119408A;
-	Wed, 10 Jul 2024 14:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E4019414A;
+	Wed, 10 Jul 2024 14:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="dQRWMx0k"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LvH2CAax"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D357C193477
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF76218EFDC;
+	Wed, 10 Jul 2024 14:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720622609; cv=none; b=BbP21T5EZuJOi05zJg2UBPzkA+uE+LhzB9h/c2zswWRbKiXdxLrpeUM17zOVfEQlRaI/vS7NSp6h5uHvy7Q1BS1R0t4aUMs7Ag0h5WetAzemdAkuEOcEZX2vt3cCyABQcO4sjd/eVGDze6kJatuiypGODR2O7d8aSa8nraxBaAk=
+	t=1720622069; cv=none; b=bhgCaCRaqc792Egjuolti4Xbtu4xNvhingiJzb6JU7rCNJL1u05PGeWjXCqxSn71pO0VfMpS7iClWBXf8pnBz0zCObj6wp5SARufwIp7siz87oqxNmrL1QDtcLr2xNbfXunaIjEZwiFganemUI1B8A6QkU20IBROtii+2dnWF/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720622609; c=relaxed/simple;
-	bh=gzD91Lc+TFKAzfZaYsU1hvL5P3UN/LvwShzPyx8Kj5Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OVCECoJgs6CXSJojZJuynAr/0tmww/tHRAv8K4UbsOj6MjHDEeyAMJB5TXxvI55i1BvBkkJrRe6fz1n2KdQ4ZG8BcJO+e1cHb02ETxAV0KU3NFL+qDiRLkBUoAs368u84lDE9xRzASPPdlCmMezYR269azMqDglnUwQgmpJGeLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=dQRWMx0k; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1720622588;
- bh=hZhXVKWV0BbCE5f7SbJ+Zt2x4Pus6WrIiDPVjBe5XNY=;
- b=dQRWMx0kaHTYOwcrnUZOPAfX+6CxkUq6/RoeA4JpUOfPuoZSu0ebSQio5pw54QC82GeQw2TdN
- OGGUZg06LljOaenmGqPqV4uQxM/DBRRy8UnU3rkY0x2A28xWfEJf2GWC+lbRMOLysPe/0IOUYRS
- ch4cSt5ts106iBY4DmvRgYlNQ7CQDluNTrIPJAPKAOHMAwnMkB1iWSEqdf2V1wmn62hfjPE1b40
- 5EAARTj0u6XsTJW543TX1Ue8blncl95VaDNdshko5B4OYCFAxBITKEdTOtskSPHr92gNw4/VwNx
- VdS2qGVlZR6tJGODyPFChPEmGPEmBYZeUQxZKZp8YkSQ==
-Message-ID: <caf55fe6-4674-4c89-a94e-f4ad348e2ba0@kwiboo.se>
-Date: Wed, 10 Jul 2024 16:30:57 +0200
+	s=arc-20240116; t=1720622069; c=relaxed/simple;
+	bh=HQPU+5jS7G7Dj8KsEuC+g6jBNrSexrUpV+05g1CQqTo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UgRaipDomAmRf2O7rmPEccqfGcueDS+UbbBk/3x7m7P+tFhIrilp0N24cOAxziKmXyVmOz0gZjHxZFkDHDhnsbNPeoBSCfEhK6+OUM4h/Wck6V8/ypd8aVy4Ff2c+m8pUPHX3CYL4MSHdB8NdW6Y7APz/xpS5yUsR6jr2azu26k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LvH2CAax; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5E0DAC4AF1D;
+	Wed, 10 Jul 2024 14:34:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720622069;
+	bh=HQPU+5jS7G7Dj8KsEuC+g6jBNrSexrUpV+05g1CQqTo=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=LvH2CAaxNb0Tk2Ofx6u/UKjZqs8AVpfmqr84FlrxHX1SlQ6/0yR4FNFSY3lMw1Phz
+	 ir5UIllEh99b+/K7Vd+qYUVbZz7hZco1KFhrploohEj+JSje1fGVisLqIH6VqFcRed
+	 W1wb4zeOrRnFucgJAyQxTcOYKabE62aOmXiNJl7QWxLFOLH/WiOn8g2JU1jXteHCdt
+	 KJ0HzEVCzHk6q56K8wjOAokWr+aXT+KhVm9DAycjQEfuCxQkD9mmM+qu+PMTDSQean
+	 6blR2f/1qhK9mmNJQirA+S5mVzjL0onZ9cdSzTKdtxwtixk+FPUkD2JmhyEwFJelv0
+	 Ud5BAXVw+C74Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 489C1C3DA42;
+	Wed, 10 Jul 2024 14:34:29 +0000 (UTC)
+From: Pieterjan Camerlynck via B4 Relay <devnull+pieterjanca.gmail.com@kernel.org>
+Subject: [PATCH v2 0/2] leds: leds-pca995x: Add support for NXP PCA9956B
+Date: Wed, 10 Jul 2024 16:32:40 +0200
+Message-Id: <20240710-pca995x-v2-0-8fafb6e4b7d5@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/9] arm64: dts: rockchip: use generic Ethernet PHY
- reset bindings for Lunzn Fastrhino R68S
-To: Chukun Pan <amadeus@jmu.edu.cn>, heiko@sntech.de
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, robh@kernel.org
-References: <2210411.C4sosBPzcN@diego>
- <20240710133029.676677-1-amadeus@jmu.edu.cn>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20240710133029.676677-1-amadeus@jmu.edu.cn>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-ForwardEmail-ID: 668e9b26a862f9d735124bc1
+X-B4-Tracking: v=1; b=H4sIAIibjmYC/z3MQQrDIBCF4auEWdcy2hixq96jZGGNJgNNDFokJ
+ Xj32lC6/B+Pb4fkIrkE12aH6DIlCksNcWrATmYZHaOhNggULSrUbLVGa7mxQVnptfKde1io7zU
+ 6T9sh3fvaE6VXiO8Dzvy7/gyOfyNzhky2Erns8IKIt3E29DzbMENfSvkAr1tInZ4AAAA=
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Isai Gaspar <isaiezequiel.gaspar@nxp.com>, Marek Vasut <marex@denx.de>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Pieterjan Camerlynck <pieterjanca@gmail.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720622068; l=1042;
+ i=pieterjanca@gmail.com; s=20240709; h=from:subject:message-id;
+ bh=HQPU+5jS7G7Dj8KsEuC+g6jBNrSexrUpV+05g1CQqTo=;
+ b=+7OE7Srtgo57fzZtzKrAvZxDoLui0UX7KXjIQnCXh1pkUl52uBwoU2xRri3g4xXm0Ee7J7pir
+ 7GH18tfGxjDDSA2OE+snIK9QgVcFUFm7nmNCBnR9/gIIPmy8cr4PzsO
+X-Developer-Key: i=pieterjanca@gmail.com; a=ed25519;
+ pk=gSAHfvqQjVhNa1MhUClqbt7d3S+fviKz6FdQVaWFRyM=
+X-Endpoint-Received: by B4 Relay for pieterjanca@gmail.com/20240709 with
+ auth_id=182
+X-Original-From: Pieterjan Camerlynck <pieterjanca@gmail.com>
+Reply-To: pieterjanca@gmail.com
 
-Hi,
+This series adds support for NXP PCA9956B to the pca995x driver. This
+chip is similar to the others but has 24 instead of 16 outputs and a
+slightly different register layout. Datasheet available at [1].
 
-On 2024-07-10 15:30, Chukun Pan wrote:
->> what's the reason behind the changed timings?
->>
->> The original comment stated,
->> 	/* Reset time is 15ms, 50ms for rtl8211f */
->> so that timing change needs an explanation please :-)
-> 
-> I don't know why this comment says that, but it's clearly wrong.
-> According to the PHY datasheet, the RTL8211F PHY needs a 10ms
-> assert delay and at least 72ms deassert delay. Considering the
-> possibility of mixed use of PHY chips, the reset time should be
-> further increased.
+[1]: https://www.nxp.com/docs/en/data-sheet/PCA9956B.pdf
 
-Where do you find the 72ms in the datasheet?
+Signed-off-by: Pieterjan Camerlynck <pieterjanca@gmail.com>
+---
+Changes in v2:
+- define seperate const struct pca995x_chipdef for each chip
+- remove chip enum
+- Link to v1: https://lore.kernel.org/r/20240710-pca995x-v1-0-545015603000@gmail.com
 
-In RTL8211F-CG v1.1 I see 10ms and minimum of 30ms, in v1.2 and v1.4
-I see 10ms and minimum of 50ms.
+---
+Pieterjan Camerlynck (2):
+      dt-bindings: leds: pca995x: Add new nxp,pca9956b compatible
+      leds: leds-pca995x: Add support for NXP PCA9956B
 
-I have used 50ms on a few recently added boards and they seem to all
-work fine with 50ms, wonder if the deassert delay should be changed for
-those boards.
+ .../devicetree/bindings/leds/nxp,pca995x.yaml      |  6 +-
+ drivers/leds/leds-pca995x.c                        | 82 ++++++++++++----------
+ 2 files changed, 50 insertions(+), 38 deletions(-)
+---
+base-commit: 82d01fe6ee52086035b201cfa1410a3b04384257
+change-id: 20240709-pca995x-d7c5f97f6ebc
 
-Regards,
-Jonas
+Best regards,
+-- 
+Pieterjan Camerlynck <pieterjanca@gmail.com>
 
-> 
-> Thanks,
-> Chukun
-> 
 
 
