@@ -1,225 +1,145 @@
-Return-Path: <linux-kernel+bounces-248226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4C9492DA32
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:39:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D45C192DA5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F753281F71
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:39:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 122751C2184D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D0B198830;
-	Wed, 10 Jul 2024 20:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF71C198A37;
+	Wed, 10 Jul 2024 20:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z2QCAeOF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g53VPLWh"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E701974EA
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 20:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F988249A;
+	Wed, 10 Jul 2024 20:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720643978; cv=none; b=dj3n5W2/MM8LcFlDAUyw1kYKWruUZWrnSqkSaZwyJhjYlRPGw3joPZnuci9TAPFauW+ShRMJflQDCIOKQGSL9CeWgWhXcnGLMxdsmT0C5Pe0aO5zp1FpS4PJnk+y8sqKRFI+u48CYfm5846reCqlB4xnG/dmQyGsoUx0x5x4zZY=
+	t=1720644245; cv=none; b=KMxHQv4PrCvkYPjxYRz48L2iouQaSj464/hJQimPhZ6m6g/NgT92E7LK4gu8dLEpkt6GrGFGsTvJm4Z3pET7vbo8EL53dE/NZVslH+JAur193TGZLNOhgAIhmIxWY37fRD0CDflhfEERLBbLK5rpCfvwFJ6Em6jnO5lpDBv3qdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720643978; c=relaxed/simple;
-	bh=FkBwZIwX/vwv/flv1JLtkKzJfwEAAipbXsO2aRGsSSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mIdNOl8NCUxZjbEyWMml3TBFs/IfA7CgWYW5xVdMubE9KTJ8Fsx3WnZmRrvJefE0c6K2t9UxWq/eMng6s/bxO8HuuQSxiJBDYqoJdc04AosjUzoKgiBLkVWBOS+OIz9SbIbAQGPymLlAt3vTz1vcGL6q/vFBox5wSP5gxAMC2oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z2QCAeOF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720643976;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F+f+kV8PGs9cvgE7zeVigaMsenY/36PRSuVdnQGbWD0=;
-	b=Z2QCAeOFLkXf8HD0Peyl0H2jOvym1qUDEamcq146JulAx1xaK1jQQVvKCahQ07UcNylA9g
-	WpnR0Nor1jDaUYx2akV7aC0JnuGdDSSSvUn6C6nrcI6cMmPxGhvi1lX6Txnr5zewRprPyT
-	NofkfHfMuZz2ekx8CXiFrpWo8QESppU=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-386-XJViQEcPNT-7Wj1okEHLTw-1; Wed, 10 Jul 2024 16:39:34 -0400
-X-MC-Unique: XJViQEcPNT-7Wj1okEHLTw-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4256667ebf9so1201235e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:39:34 -0700 (PDT)
+	s=arc-20240116; t=1720644245; c=relaxed/simple;
+	bh=9n/YiBNZAFtCKNJs9J4qVg6zoK1HVK5GRMT7/tkugk8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SuJxS9gT8boYzK28AClTr5TnLXZf2vfOOY2U2gNPa3vZ28Jv2PdQzgMSVI0gvF1nOsICYL385NOH7G4ZoWM6E92rn4hVGWV6+i6bSoLGv635ab5i4t3IpCH/rl0Y4b9ssNAUAbXi8MsQnJYKmrXOwHDrbmDRoCCM9tQEyA3ULW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g53VPLWh; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2eea7e2b073so2116331fa.0;
+        Wed, 10 Jul 2024 13:44:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720644242; x=1721249042; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q96L90hi9kIYDhvQ8lEOxb1HxG/veUDmgixtXCczj8U=;
+        b=g53VPLWhOTNRgBBMMAM51mC5oxLVQ7ifhj7LOoM1iCwg0izn+n2gem5sPliEgsyp99
+         SCUCsNgW/1MQiR5ekZYk1zv8iLg2P8w/mdFsIYl0VHIkYaWCXNOzZXBgT1s9VH99te2y
+         Pme0NjrXr4+m8e3WhEuB40LAc3GzrHDf10zf4R54BGx7Dfto6C6SXVlPf7vaYPERFpVu
+         6+qImjbU4w0RFZzBdRmf1YXJADMUy5ZqZq6iZmfgThZFPfmCzpvi4vYMexpkUhdOIJrt
+         5yhOcDkWDmAQi47Dmznc35jU+vVwp5RmCGinwz+6mfei3h4juN0FGU24Ys0I8BCM4Ga6
+         FShg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720643973; x=1721248773;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F+f+kV8PGs9cvgE7zeVigaMsenY/36PRSuVdnQGbWD0=;
-        b=qiuwlh1njmVWDkJgDygFoYQV5MUyy4vdkzG6lVeFKqRUFcieRqog8NifTqdvVTL4hI
-         knY8QB5oFdWnGm0ki88dSyJ2sZcc9PsE+wUmjQHdaNZkRg4XEeZSmMe5H7tiHleZq0U8
-         C0l9Bk3N8cXsF1YTHypuSB0B8a3ATAHfSgWLirxp8xNlwchssoGY1DKFqmWLh1laoSXD
-         j72czHwDtH1jYGgofDC9Akx/iFbFAmlEUTN3XUfew5kAv79weyD/WxmU7yFHZ80rXDXC
-         zFQkjhoymvsM3xkodHk6Hykqwz0kud2BrT+0Ql+RNtqWpXfMrflvSyN9VqSahDer31PT
-         BRLQ==
-X-Gm-Message-State: AOJu0YxwZLRJCZYJCVFc0TncxxyaliqDOFa15xpqeB15lB0BIdxB0oPU
-	xvbjytHcYDj6MSTJUILAXBtKlCVnY2XOlMyBd+n4oj8RCEEez9SDEjreOkDdUvCSLjRZMGl5zUP
-	/JQH7a5p09Qh1GWvvHgNg2V0Ed6Gp4EJkHG2Xey2DyQmDuYfW1zPdJweXGilo+w==
-X-Received: by 2002:a05:600c:229a:b0:426:5f75:1c2c with SMTP id 5b1f17b1804b1-426707cbc97mr44811735e9.11.1720643973114;
-        Wed, 10 Jul 2024 13:39:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEtCfrEexr56Rkv7hJ8Mgk/LJU1kKofEwb65pnZ1cmAQDQy0+5tLig+uLI502/i8+1HPIzcTQ==
-X-Received: by 2002:a05:600c:229a:b0:426:5f75:1c2c with SMTP id 5b1f17b1804b1-426707cbc97mr44811475e9.11.1720643972423;
-        Wed, 10 Jul 2024 13:39:32 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc7:341:761e:f82:fc9a:623b:3fd1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6e9666sm92264125e9.9.2024.07.10.13.39.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 13:39:32 -0700 (PDT)
-Date: Wed, 10 Jul 2024 16:38:59 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Daniel Verkamp <dverkamp@chromium.org>
-Cc: linux-kernel@vger.kernel.org,
-	Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Halil Pasic <pasic@linux.ibm.com>,
-	Eric Farman <farman@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	linux-um@lists.infradead.org, linux-remoteproc@vger.kernel.org,
-	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-	kvm@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] virtio: fix vq # for balloon
-Message-ID: <20240710162640-mutt-send-email-mst@kernel.org>
-References: <cover.1720611677.git.mst@redhat.com>
- <3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst@redhat.com>
- <CABVzXAnjAdQqVNtir_8SYc+2dPC-weFRxXNMBLRcmFsY8NxBhQ@mail.gmail.com>
- <20240710142239-mutt-send-email-mst@kernel.org>
- <CABVzXAmp_exefHygEGvznGS4gcPg47awyOpOchLPBsZgkAUznw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1720644242; x=1721249042;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q96L90hi9kIYDhvQ8lEOxb1HxG/veUDmgixtXCczj8U=;
+        b=Rw3OXJUb6L1xqyLGHJw6n9eDcTrIxbrpAZOMZLZZI1ld3ZMyHChKm0Sid4j2rmr6ZC
+         rU8FNiWUiAgNT3z/t8q9uDNp9JmYkQIK4jGPaMrpETXfHUZiRpb8dlpgX0vcFXhOJ57D
+         lS84NrrkKfMrjJ6jifFE9xwpDW8nyG9aA5KxG36XIA+qNROBp39nFnA/Ih+JXSxZishu
+         49KX4GkB4P1SKxfhOWNuaCo2YCd5WwAwAb3/dq2NjFX41EMFeg6sNUhCUbrUViOs9G0S
+         h5ofcXfMVgfPGPf4kHqgQAPC2uH8KL0WdtG1cpVkoU1bYWU6d0e1gfm2aXDwklnYBexR
+         h2Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWPlP9pkfqJiHMksur1vsl9J1abc6yLGxLtqj+erSsFvhy+mkzvxUbDtCHG2oFOHVRg0ZBwBekzuOcvYQGUc/UGDATIFvCAErAQKvxWx9ISVJsvVM+VBdVtReJmQF5wOUNWvMkiGbrDKbPjkRhKZEUshK6awKuV8PQA8yyWjxGEefIxsZnAuI16FAM3cBcgj5Kfz+dxAdzD+HrU3fOZAOYlc8GDHUa/ALXLFUJmtDrYbnAPx22WZP0VnjrO59GicAM=
+X-Gm-Message-State: AOJu0YyFJZC57kWyX2Y0Q3ccLQQK7nA5a0KDYxtq7ksQw1yaKdp8M3LB
+	M6NkGD6dlAMGU+FTXNGAGCljsMNrljlJPiesVIuIqSn3+CpIulr/QvWrFTh9z2V61uoJV+bNSuO
+	myVT0FuG7PT5DqPtzy6ndtniHyk0=
+X-Google-Smtp-Source: AGHT+IHURG/sGagfJtYokQfANJj/ymOwtgMawMxrvRuFmItb9BIoJ9IqnHF4+ClawkTFmnwhytU+9+Ynj3Rm/KiYGCs=
+X-Received: by 2002:a2e:854e:0:b0:2ee:4f22:33f9 with SMTP id
+ 38308e7fff4ca-2eeb30fd3e0mr41054391fa.24.1720644241382; Wed, 10 Jul 2024
+ 13:44:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABVzXAmp_exefHygEGvznGS4gcPg47awyOpOchLPBsZgkAUznw@mail.gmail.com>
+References: <20240709-hci_qca_refactor-v3-0-5f48ca001fed@linaro.org> <172064103479.11923.11962118903624442308.git-patchwork-notify@kernel.org>
+In-Reply-To: <172064103479.11923.11962118903624442308.git-patchwork-notify@kernel.org>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Wed, 10 Jul 2024 16:43:48 -0400
+Message-ID: <CABBYNZKvSF9h1K29oex3kXm+2h+62gwJ8+YJPM0Orap6_xVDTQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] Bluetooth: hci_qca: use the power sequencer for wcn7850
+To: patchwork-bot+bluetooth@kernel.org
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, marcel@holtmann.org, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, quic_bgodavar@quicinc.com, 
+	quic_rjliao@quicinc.com, andersson@kernel.org, konrad.dybcio@linaro.org, 
+	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, bartosz.golaszewski@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 10, 2024 at 12:58:11PM -0700, Daniel Verkamp wrote:
-> On Wed, Jul 10, 2024 at 11:39 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+Hi Bartosz,
+
+On Wed, Jul 10, 2024 at 3:50=E2=80=AFPM <patchwork-bot+bluetooth@kernel.org=
+> wrote:
+>
+> Hello:
+>
+> This series was applied to bluetooth/bluetooth-next.git (master)
+> by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+>
+> On Tue, 09 Jul 2024 14:18:31 +0200 you wrote:
+> > The following series extend the usage of the power sequencing subsystem
+> > in the hci_qca driver.
 > >
-> > On Wed, Jul 10, 2024 at 11:12:34AM -0700, Daniel Verkamp wrote:
-> > > On Wed, Jul 10, 2024 at 4:43 AM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > >
-> > > > virtio balloon communicates to the core that in some
-> > > > configurations vq #s are non-contiguous by setting name
-> > > > pointer to NULL.
-> > > >
-> > > > Unfortunately, core then turned around and just made them
-> > > > contiguous again. Result is that driver is out of spec.
-> > >
-> > > Thanks for fixing this - I think the overall approach of the patch looks good.
-> > >
-> > > > Implement what the API was supposed to do
-> > > > in the 1st place. Compatibility with buggy hypervisors
-> > > > is handled inside virtio-balloon, which is the only driver
-> > > > making use of this facility, so far.
-> > >
-> > > In addition to virtio-balloon, I believe the same problem also affects
-> > > the virtio-fs device, since queue 1 is only supposed to be present if
-> > > VIRTIO_FS_F_NOTIFICATION is negotiated, and the request queues are
-> > > meant to be queue indexes 2 and up. From a look at the Linux driver
-> > > (virtio_fs.c), it appears like it never acks VIRTIO_FS_F_NOTIFICATION
-> > > and assumes that request queues start at index 1 rather than 2, which
-> > > looks out of spec to me, but the current device implementations (that
-> > > I am aware of, anyway) are also broken in the same way, so it ends up
-> > > working today. Queue numbering in a spec-compliant device and the
-> > > current Linux driver would mismatch; what the driver considers to be
-> > > the first request queue (index 1) would be ignored by the device since
-> > > queue index 1 has no function if F_NOTIFICATION isn't negotiated.
+> > The end goal is to convert the entire driver to be exclusively pwrseq-b=
+ased
+> > and simplify it in the process. However due to a large number of users =
+we
+> > need to be careful and consider every case separately.
 > >
-> >
-> > Oh, thanks a lot for pointing this out!
-> >
-> > I see so this patch is no good as is, we need to add a workaround for
-> > virtio-fs first.
-> >
-> > QEMU workaround is simple - just add an extra queue. But I did not
-> > reasearch how this would interact with vhost-user.
-> >
-> > From driver POV, I guess we could just ignore queue # 1 - would that be
-> > ok or does it have performance implications?
-> 
-> As a driver workaround for non-compliant devices, I think ignoring the
-> first request queue would be a reasonable approach if the device's
-> config advertises num_request_queues > 1. Unfortunately, both
-> virtiofsd and crosvm's virtio-fs device have hard-coded
-> num_request_queues =1, so this won't help with those existing devices.
+> > [...]
+>
+> Here is the summary with links:
+>   - [v3,1/6] dt-bindings: bluetooth: qualcomm: describe the inputs from P=
+MU for wcn7850
+>     https://git.kernel.org/bluetooth/bluetooth-next/c/e1c54afa8526
+>   - [v3,2/6] Bluetooth: hci_qca: schedule a devm action for disabling the=
+ clock
+>     https://git.kernel.org/bluetooth/bluetooth-next/c/a887c8dede8e
+>   - [v3,3/6] Bluetooth: hci_qca: unduplicate calls to hci_uart_register_d=
+evice()
+>     https://git.kernel.org/bluetooth/bluetooth-next/c/cdd10964f76f
+>   - [v3,4/6] Bluetooth: hci_qca: make pwrseq calls the default if availab=
+le
+>     https://git.kernel.org/bluetooth/bluetooth-next/c/958a33c3f9fc
+>   - [v3,5/6] Bluetooth: hci_qca: use the power sequencer for wcn7850 and =
+wcn6855
+>     https://git.kernel.org/bluetooth/bluetooth-next/c/4fa54d8731ec
+>   - [v3,6/6] arm64: dts: qcom: sm8650-qrd: use the PMU to power up blueto=
+oth
+>     (no matching commit)
 
-Do they care what the vq # is though?
-We could do some magic to translate VQ #s in qemu.
+Last one doesn't apply so you will probably need to rebase or
+something if it really needs to go thru bluetooth-next.
 
-
-> Maybe there are other devices that we would need to consider as well;
-> commit 529395d2ae64 ("virtio-fs: add multi-queue support") quotes
-> benchmarks that seem to be from a different virtio-fs implementation
-> that does support multiple request queues, so the workaround could
-> possibly be used there.
-> 
-> > Or do what I did for balloon here: try with spec compliant #s first,
-> > if that fails then assume it's the spec issue and shift by 1.
-> 
-> If there is a way to "guess and check" without breaking spec-compliant
-> devices, that sounds reasonable too; however, I'm not sure how this
-> would work out in practice: an existing non-compliant device may fail
-> to start if the driver tries to enable queue index 2 when it only
-> supports one request queue,
-
-You don't try to enable queue - driver starts by checking queue size.
-The way my patch works is that it assumes a non existing queue has
-size 0 if not available.
-
-This was actually a documented way to check for PCI and MMIO:
-	Read the virtqueue size from queue_size. This controls how big the virtqueue is (see 2.6 Virtqueues).
-	If this field is 0, the virtqueue does not exist.
-MMIO:
-	If the returned value is zero (0x0) the queue is not available.
-
-unfortunately not for CCW, but I guess CCW implementations outside
-of QEMU are uncommon enough that we can assume it's the same?
+> You are awesome, thank you!
+> --
+> Deet-doot-dot, I am a bot.
+> https://korg.docs.kernel.org/patchwork/pwbot.html
+>
+>
 
 
-To me the above is also a big hint that drivers are allowed to
-query size for queues that do not exist.
-
-
-
-> and a spec-compliant device would probably
-> balk if the driver tries to enable queue 1 but does not negotiate
-> VIRTIO_FS_F_NOTIFICATION. If there's a way to reset and retry the
-> whole virtio device initialization process if a device fails like
-> this, then maybe it's feasible. (Or can the driver tweak the virtqueue
-> configuration and try to set DRIVER_OK repeatedly until it works? It's
-> not clear to me if this is allowed by the spec, or what device
-> implementations actually do in practice in this scenario.)
-> 
-> Thanks,
-> -- Daniel
-
-My patch starts with a spec compliant behaviour. If that fails,
-try non-compliant one as a fallback.
-
--- 
-MST
-
+--=20
+Luiz Augusto von Dentz
 
