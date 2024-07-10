@@ -1,182 +1,210 @@
-Return-Path: <linux-kernel+bounces-248093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CDFB92D853
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:39:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 084B192D858
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95C1FB21507
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:39:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6A8F281972
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049D6196C9C;
-	Wed, 10 Jul 2024 18:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87EA196D81;
+	Wed, 10 Jul 2024 18:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JpjxA57B"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FlNJV09o"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0CA257D;
-	Wed, 10 Jul 2024 18:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A6D196C67
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 18:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720636745; cv=none; b=mnaL9Ahs2nrj7Qz9V5kmNcLpgi22yeUMDezvKS6sItKvvlKeFJgCNYtNESoAQfVevt1CIGwAvQ0YB89zYmvqd24JRIy06A65upkd7MDiyBIxYzonFu8+O43qBYGPBKaVTy7Sn0zLG05CI0GXeI/CZJoBKLgI+CrfSBvBo5ZONlw=
+	t=1720636778; cv=none; b=A+ecgUqCV6iWROiP8TR+YyYHYmb538jV2FOTrhSpjjn13iO4m02HRSAzcwCRo2dK/rGoB4uHmIOc2ZKsLnZaI2ulX70L3su2laKTj+jOud7pl9dG1vorUPom8ipoeVh9jeh5t1hM64hzupFCp0+aGeq+y/q0VCSntfPDHdcid0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720636745; c=relaxed/simple;
-	bh=1EoAa/AmhNuclk2x9Yo4mBdL40sJBA6UUazcYZTxKQQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WZKIj4NJH8P8dWYSpt27Se5z3zm/OM/9VaR31dn4pCAm7FFuXD87R9lzsx3eS6z8qRIV6VfBj+oPsEkhWk3E1vEu6FsLulM+HNm8JIhlbmRfGq1TPdvZiw8QU9prBRGkAPOa30GFKWaljt+z/AHzicf3yUrqZ3r64G24mtIiQOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JpjxA57B; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-367b8a60b60so2861599f8f.2;
-        Wed, 10 Jul 2024 11:39:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720636741; x=1721241541; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6+c/uAX+gfaXTN3G9nM1mEmOxMkFaMUwGwxmh1TvO3g=;
-        b=JpjxA57Bnc/MNIG0IwI+9lG5/jH/Q1rMo+Szc9sJBwNXrvsO3WIr5OfgGMiZuq1D+Z
-         XYEd99Avg/5SgFrAEe6FRO/Lgz/fDLfNJ6un3+G140O4V7SZu4o0u3256uZ9HNH3s/y1
-         kZrcHNtJ49zljfjCLI32pKauLZ4OQ5zvl7oCFBNwoVeVc1k92ZpXGvbB9WluGjHC4Tbs
-         0Y4OXKBTJZ6JKllWH5VQNIYVbjU6e18j41+LuI9nmbjSr+HfGR5vXhbBOsx7B0aJVVmO
-         fl8b+uoEuhazj76TpqLf+xV9nyKcYvBDcBTonfq7jbLCSrlnK6zD4hr0bywApqAVa9al
-         g/4Q==
+	s=arc-20240116; t=1720636778; c=relaxed/simple;
+	bh=jl/G74jU3/LJKTndyg9Ir8ZK6ZCpRMd0UXIwTJV5u7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rU/C8foB/TdQIratv6/4fFfWsfr5GV8qHCnUlNf8P5wUARCmYysyw42B+WXzJS/HTbYMqYUvAseqeO7JdaNUSBQn0DZggHDGbWOfQT8PB5w9DR9UVg1SQ3RlHS8bezBTrtf1jbpVPOIGzCibt6IO/hsjxi7f2dyX4QMt7YaZ/sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FlNJV09o; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720636775;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4Wa91XRdvflqoUl4ERsLfqpwV8EWmy2Wo2L5wqHiP4U=;
+	b=FlNJV09o7oEB3u2chwRYHwojVqIaoUy3LhTKPo61VCgLt9tGEMM3HgtwLg2o4jIxQU4YJ7
+	fc+G3JEap7m7KRJ0zW2z68Ms1RTPkGEd7B+m9/giAgERJ7XeBqL7RJaWGN4NP3Y/EnoWFJ
+	9Z64TXYZuSvJDZdfya3Co0cI4wXjy94=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-53-J9LRC-kgPHaMK8D0cxEZcA-1; Wed, 10 Jul 2024 14:39:34 -0400
+X-MC-Unique: J9LRC-kgPHaMK8D0cxEZcA-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-426620721c2so438935e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 11:39:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720636741; x=1721241541;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6+c/uAX+gfaXTN3G9nM1mEmOxMkFaMUwGwxmh1TvO3g=;
-        b=uv8agK8IBI9FNrRIblFX3a17aW1Vs7tD4i4D+jK4cN31cu/RKEH0DZcLWC1WtYdqla
-         YE7j3lo0zuzsYfbguKWSPrr2yQVjAnww6ZENLmRnLiHWEGQP6Po9h4TP/rqAI5Yb4iHl
-         i9iGbCf3i3YxsJo18qKX+TU8lkaLE5nrHqix5K3vsKRklXk515U+WJmGMVNrJeA9nxSq
-         3DF+Q6MUs9bi1M91S/J0IQxv6GE5BoVq0cBQpzN7hJaTXwyFFXT0BrS4/bEHPKzhIlCX
-         mQUKIc9ckF+rjTtPDOhT6aaPvULKs56iZpIlpzhljnmIgEYkoeDmDJHpa1QICJ/C9SC7
-         hKCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWRCAtvUlCKGukrKJ+Vr1+a6WxRedKMeDlpvJp01UIfnzjo2gd5EUWj7oFWHZrFX6Oo625p6EV9Eww08Yuoy+0P7G1VjZfmLL3FT4taW4b4Lw7wnOE25LUqBLwYahyynm54dNs8U4nKifOyXhjx+XCdJX/fJdO64LAs
-X-Gm-Message-State: AOJu0YyZ+szd5ikqk496nhyKmZBYgjv67WklRpnZRCPsN46sjGtxcMjr
-	5aNmWxmFckWHNQTUf9ZE9codnjXYDP4OBn4WWxov2uwNkH2cUhPlQCh91htLq4A9gxIFC/MYtxN
-	b5SwfjdZ+jFRbsA/dJKCzO1b0A1g=
-X-Google-Smtp-Source: AGHT+IHsPP8rxAlZIrz6b3npTF1WDVE0RTBSUFNCW6j7UhoywHqT7giMNyX2dg9WJV7T5/7TbXcgdf4Kz62f7Me8m9M=
-X-Received: by 2002:adf:e692:0:b0:366:ec2f:dbc9 with SMTP id
- ffacd0b85a97d-367ceac4ba5mr4214557f8f.51.1720636740515; Wed, 10 Jul 2024
- 11:39:00 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720636773; x=1721241573;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Wa91XRdvflqoUl4ERsLfqpwV8EWmy2Wo2L5wqHiP4U=;
+        b=tSKHV68ZxvzSsXgeQkvPcb2sYhiISkLsij2CgAfXadF7bWB4m0hWze/gkOacx2ebXI
+         6J3JsrZGzhfFV2lFtQFvfRo/9IR7eFpEObEwHxPShNpwkZrfkjDSHaj1ajE7lFKqMsk3
+         L63JVUCzRaLHhheeQfCURD/SO2JH08ogdIPYjcKkWH7Zi1TooL2K0REzle+ezP0x7myv
+         gm1qxXmI6Y4ZcDfrmExUpMsyGmiRW6HQWSJd0WSxi9mp+ePW/1QUc0m/EM+ObvfE57Ao
+         74oZCtmp3CtAuHEP4zAYvzoJlqmWJKTeJVUf9NCM/t5tJ8Qy7qLgnFLwKR7V8tCQserY
+         LtTg==
+X-Gm-Message-State: AOJu0Ywutp8h3mI/BrqgGA671KJP7d+qBecjpf6eigJR9ujqQWgKUTGP
+	QfxPOTb5Md9lswU21NxRD4xBc+qbAIy+A39X2K0Wsx3efNAMAi7x54CD4OGqJY1M4CtKsGcXL9Q
+	cK4eZdwx7qcML9HuVtbIk321UDUWc1iX0khfSSAnYjOEkNuS6N9Qwon6Ekef6+Q==
+X-Received: by 2002:a7b:c458:0:b0:426:64f5:b10d with SMTP id 5b1f17b1804b1-426707db59bmr38554075e9.14.1720636773020;
+        Wed, 10 Jul 2024 11:39:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG74ZhHPUOEWOdKZQANHlo67lTxvcQgP6YunxBETGdCT6l5hx3iAl/9nDeoE0ZV+lKH4kLIVQ==
+X-Received: by 2002:a7b:c458:0:b0:426:64f5:b10d with SMTP id 5b1f17b1804b1-426707db59bmr38553905e9.14.1720636772416;
+        Wed, 10 Jul 2024 11:39:32 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:174:f6ae:a6e3:8cbc:2cbd:b8ff])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427270238a6sm57772915e9.20.2024.07.10.11.39.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 11:39:31 -0700 (PDT)
+Date: Wed, 10 Jul 2024 14:39:26 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Daniel Verkamp <dverkamp@chromium.org>
+Cc: linux-kernel@vger.kernel.org,
+	Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Cornelia Huck <cohuck@redhat.com>,
+	Halil Pasic <pasic@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	linux-um@lists.infradead.org, linux-remoteproc@vger.kernel.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] virtio: fix vq # for balloon
+Message-ID: <20240710142239-mutt-send-email-mst@kernel.org>
+References: <cover.1720611677.git.mst@redhat.com>
+ <3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst@redhat.com>
+ <CABVzXAnjAdQqVNtir_8SYc+2dPC-weFRxXNMBLRcmFsY8NxBhQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710084633.2229015-1-michal.switala@infogain.com>
-In-Reply-To: <20240710084633.2229015-1-michal.switala@infogain.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 10 Jul 2024 11:38:49 -0700
-Message-ID: <CAADnVQJPzya3VkAajv02yMEnQLWtXKsHuzjZ1vQ6R19N_BZkTQ@mail.gmail.com>
-Subject: Re: [PATCH] bpf: Ensure BPF programs testing skb context initialization
-To: Michal Switala <michal.switala@infogain.com>
-Cc: Florent Revest <revest@google.com>, bpf <bpf@vger.kernel.org>, 
-	Network Development <netdev@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	syzbot+cca39e6e84a367a7e6f6@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABVzXAnjAdQqVNtir_8SYc+2dPC-weFRxXNMBLRcmFsY8NxBhQ@mail.gmail.com>
 
-On Wed, Jul 10, 2024 at 4:58=E2=80=AFAM Michal Switala
-<michal.switala@infogain.com> wrote:
->
-> This commit addresses an issue where a netdevice was found to be uninitia=
-lized.
-> To mitigate this case, the change ensures that BPF programs designed to t=
-est
-> skb context initialization thoroughly verify the availability of a fully
-> initialized context before execution.The root cause of a NULL ctx stems f=
-rom
-> the initialization process in bpf_ctx_init(). This function returns NULL =
-if
-> the user initializes the bpf_attr variables ctx_in and ctx_out with inval=
-id
-> pointers or sets them to NULL. These variables are directly controlled by=
- user
-> input, and if both are NULL, the context cannot be initialized, resulting=
- in a
-> NULL ctx.
->
-> Reported-by: syzbot+cca39e6e84a367a7e6f6@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3Dcca39e6e84a367a7e6f6
-> Link: https://lore.kernel.org/all/000000000000b95d41061cbf302a@google.com=
-/
+On Wed, Jul 10, 2024 at 11:12:34AM -0700, Daniel Verkamp wrote:
+> On Wed, Jul 10, 2024 at 4:43 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+> >
+> > virtio balloon communicates to the core that in some
+> > configurations vq #s are non-contiguous by setting name
+> > pointer to NULL.
+> >
+> > Unfortunately, core then turned around and just made them
+> > contiguous again. Result is that driver is out of spec.
+> 
+> Thanks for fixing this - I think the overall approach of the patch looks good.
+> 
+> > Implement what the API was supposed to do
+> > in the 1st place. Compatibility with buggy hypervisors
+> > is handled inside virtio-balloon, which is the only driver
+> > making use of this facility, so far.
+> 
+> In addition to virtio-balloon, I believe the same problem also affects
+> the virtio-fs device, since queue 1 is only supposed to be present if
+> VIRTIO_FS_F_NOTIFICATION is negotiated, and the request queues are
+> meant to be queue indexes 2 and up. From a look at the Linux driver
+> (virtio_fs.c), it appears like it never acks VIRTIO_FS_F_NOTIFICATION
+> and assumes that request queues start at index 1 rather than 2, which
+> looks out of spec to me, but the current device implementations (that
+> I am aware of, anyway) are also broken in the same way, so it ends up
+> working today. Queue numbering in a spec-compliant device and the
+> current Linux driver would mismatch; what the driver considers to be
+> the first request queue (index 1) would be ignored by the device since
+> queue index 1 has no function if F_NOTIFICATION isn't negotiated.
 
-Something doesn't add up.
-This syzbot report is about:
 
-dev_map_enqueue+0x31/0x3e0 kernel/bpf/devmap.c:539
-__xdp_do_redirect_frame net/core/filter.c:4397 [inline]
-bpf_prog_test_run_xdp
+Oh, thanks a lot for pointing this out!
 
-while you're fixing bpf_prog_test_run_skb ?
+I see so this patch is no good as is, we need to add a workaround for
+virtio-fs first.
 
-pw-bot: cr
+QEMU workaround is simple - just add an extra queue. But I did not
+reasearch how this would interact with vhost-user.
 
-> Signed-off-by: Michal Switala <michal.switala@infogain.com>
-> ---
->  net/bpf/test_run.c | 30 +++++++++++++++++++++++++++++-
->  1 file changed, 29 insertions(+), 1 deletion(-)
->
-> diff --git a/net/bpf/test_run.c b/net/bpf/test_run.c
-> index 36ae54f57bf5..8b2efcee059f 100644
-> --- a/net/bpf/test_run.c
-> +++ b/net/bpf/test_run.c
-> @@ -970,7 +970,7 @@ static struct proto bpf_dummy_proto =3D {
->  int bpf_prog_test_run_skb(struct bpf_prog *prog, const union bpf_attr *k=
-attr,
->                           union bpf_attr __user *uattr)
->  {
-> -       bool is_l2 =3D false, is_direct_pkt_access =3D false;
-> +       bool is_l2 =3D false, is_direct_pkt_access =3D false, ctx_needed =
-=3D false;
->         struct net *net =3D current->nsproxy->net_ns;
->         struct net_device *dev =3D net->loopback_dev;
->         u32 size =3D kattr->test.data_size_in;
-> @@ -998,6 +998,34 @@ int bpf_prog_test_run_skb(struct bpf_prog *prog, con=
-st union bpf_attr *kattr,
->                 return PTR_ERR(ctx);
->         }
->
-> +       switch (prog->type) {
-> +       case BPF_PROG_TYPE_SOCKET_FILTER:
-> +       case BPF_PROG_TYPE_SCHED_CLS:
-> +       case BPF_PROG_TYPE_SCHED_ACT:
-> +       case BPF_PROG_TYPE_XDP:
-> +       case BPF_PROG_TYPE_CGROUP_SKB:
-> +       case BPF_PROG_TYPE_CGROUP_SOCK:
-> +       case BPF_PROG_TYPE_SOCK_OPS:
-> +       case BPF_PROG_TYPE_SK_SKB:
-> +       case BPF_PROG_TYPE_SK_MSG:
-> +       case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
-> +       case BPF_PROG_TYPE_LWT_SEG6LOCAL:
-> +       case BPF_PROG_TYPE_SK_REUSEPORT:
-> +       case BPF_PROG_TYPE_NETFILTER:
-> +       case BPF_PROG_TYPE_LWT_IN:
-> +       case BPF_PROG_TYPE_LWT_OUT:
-> +       case BPF_PROG_TYPE_LWT_XMIT:
-> +               ctx_needed =3D true;
-> +               break;
-> +       default:
-> +               break;
-> +       }
-> +
-> +       if (!ctx && ctx_needed) {
-> +               kfree(data);
-> +               return -EINVAL;
-> +       }
-> +
->         switch (prog->type) {
->         case BPF_PROG_TYPE_SCHED_CLS:
->         case BPF_PROG_TYPE_SCHED_ACT:
-> --
-> 2.43.0
->
->
+From driver POV, I guess we could just ignore queue # 1 - would that be
+ok or does it have performance implications?
+Or do what I did for balloon here: try with spec compliant #s first,
+if that fails then assume it's the spec issue and shift by 1.
+
+
+> [...]
+> > diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
+> > index 7d82facafd75..fa606e7321ad 100644
+> > --- a/drivers/virtio/virtio_pci_common.c
+> > +++ b/drivers/virtio/virtio_pci_common.c
+> > @@ -293,7 +293,7 @@ static int vp_find_vqs_msix(struct virtio_device *vdev, unsigned int nvqs,
+> >         struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+> >         struct virtqueue_info *vqi;
+> >         u16 msix_vec;
+> > -       int i, err, nvectors, allocated_vectors, queue_idx = 0;
+> > +       int i, err, nvectors, allocated_vectors;
+> >
+> >         vp_dev->vqs = kcalloc(nvqs, sizeof(*vp_dev->vqs), GFP_KERNEL);
+> >         if (!vp_dev->vqs)
+> > @@ -332,7 +332,7 @@ static int vp_find_vqs_msix(struct virtio_device *vdev, unsigned int nvqs,
+> >                         msix_vec = allocated_vectors++;
+> >                 else
+> >                         msix_vec = VP_MSIX_VQ_VECTOR;
+> > -               vqs[i] = vp_setup_vq(vdev, queue_idx++, vqi->callback,
+> > +               vqs[i] = vp_setup_vq(vdev, i, vqi->callback,
+> >                                      vqi->name, vqi->ctx, msix_vec);
+> >                 if (IS_ERR(vqs[i])) {
+> >                         err = PTR_ERR(vqs[i]);
+> > @@ -368,7 +368,7 @@ static int vp_find_vqs_intx(struct virtio_device *vdev, unsigned int nvqs,
+> >                             struct virtqueue_info vqs_info[])
+> >  {
+> >         struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+> > -       int i, err, queue_idx = 0;
+> > +       int i, err;
+> >
+> >         vp_dev->vqs = kcalloc(nvqs, sizeof(*vp_dev->vqs), GFP_KERNEL);
+> >         if (!vp_dev->vqs)
+> > @@ -388,8 +388,13 @@ static int vp_find_vqs_intx(struct virtio_device *vdev, unsigned int nvqs,
+> >                         vqs[i] = NULL;
+> >                         continue;
+> >                 }
+> > +<<<<<<< HEAD
+> >                 vqs[i] = vp_setup_vq(vdev, queue_idx++, vqi->callback,
+> >                                      vqi->name, vqi->ctx,
+> > +=======
+> > +               vqs[i] = vp_setup_vq(vdev, i, callbacks[i], names[i],
+> > +                                    ctx ? ctx[i] : false,
+> > +>>>>>>> f814759f80b7... virtio: fix vq # for balloon
+> 
+> This still has merge markers in it.
+> 
+> Thanks,
+> -- Daniel
+
 
