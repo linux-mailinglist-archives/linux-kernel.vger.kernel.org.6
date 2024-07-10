@@ -1,245 +1,170 @@
-Return-Path: <linux-kernel+bounces-247585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E033892D183
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:24:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8FF592D185
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:25:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CDAC28219B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:24:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C5A4285267
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2F7191499;
-	Wed, 10 Jul 2024 12:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5347F191496;
+	Wed, 10 Jul 2024 12:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S01nk2H0"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6yyd6Dr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09886848E;
-	Wed, 10 Jul 2024 12:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91246848E;
+	Wed, 10 Jul 2024 12:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720614271; cv=none; b=VDEj0zcNHUUlJ4SiZp2OcVr+7k9zu+1BsWl6XVryzLgkrnreDeARHgCXp0FAwRnVLvTpJV46NL91glNbTaU52xqoRJggLNxfuaSJfrDqDAH+mIQrKzr2hQoM49+EmetyVuPqmyYbWD8iJv3pQ4D07sGakR8oAibnQWJKqeCsoxw=
+	t=1720614292; cv=none; b=FtjoCdsP3LA2Dnumcd78JVKHCPHKUZXKYHG9In462QHw+OltHuuSLmV8/5+v3rw5txPuz25bHc4SjNvibkNipIMepr0TyA41QtsslpmfHnmIiV97USMujF44gsIxABbCl5iEnoylDvRMa9uLFEzbmE5hhv0uDkTAUcvBtAe7uWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720614271; c=relaxed/simple;
-	bh=kbU7tD2GBgU8NvEktzRkbYPDMzRKvaYJa29eeuiH0V0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KAYprRjBk3mRf4XrCdqh9ojz57Vn3n6eUJ7U0wgxInfPH5xEnyJjQVo/Gxnsi36SoE3Qk22F+zeVJpl5M3bb5Bvv+r11DJPpDz0WJLuWCTd385uhfrziyHMBPXSypHQVjYpjX+mm/6scGVWzrAeLTHlgRJqf5wGQyl+OT9TblOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S01nk2H0; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a77c349bb81so579195466b.3;
-        Wed, 10 Jul 2024 05:24:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720614268; x=1721219068; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mv9Ma+PfTP3jkLEGca17uO0MTJeX8PXN4+wRnopYpKE=;
-        b=S01nk2H0/a/lXTYTZcSwykt/ss9ZSZf2uIiDo3mRsgY/PodKHCxeIebOvk3Gv6jgjM
-         UsYnyDY+Qhth+au7JWb77fIz0TrA3XjUY5sp37LfAxVDX+3mddTGdiQ2PJVBC90kZ11M
-         6ier1yLsHEHOT/5JNMeGTxE2bhXb/CPhANuTJU2cttOkN5xdEovy4y4nUcJBSQxlKxbU
-         rmGLQqGT6g8FYgkxgChTHPEpi6fdSM4OW0h5/maG/L04xkYF091JdcGyAzPOrJGuAHVa
-         Va/miIAC4W8ju5OgyNG4RPvPVTzxth9mtU34xcOkkPUJe2IMR1DfQZ3I1rxzLkHRfCJw
-         +1ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720614268; x=1721219068;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mv9Ma+PfTP3jkLEGca17uO0MTJeX8PXN4+wRnopYpKE=;
-        b=Wsz0XjK1EX9KepWkQE/nS+/QELPvufpLGdnAqpuNGBD7E7G3+e7pcT+qzMp6mZVVPW
-         zEjNnZ4MIUaX4Og9uMq+jn2mPqwHeu+5HjhZXFqEhfD4J2OVQqZmXWYL5niNkswaaUEW
-         dncX8slaLqqjdjCSv7kKqhvTGDiiaojhMOPltd2IWPrIeM9a8nKF2YBEUvSFQhTUAj6m
-         VXW6EiQKUT0diLlC8XMZU1QmQeJgmbt3daEFAbGJzmwE2NWrrb2/lPkHOlwy26GufTqT
-         OSm2zKaViECY2R+JE9MmKybrOz98W4GzeFm3K3X7yxZlvd1ybj1RrVW3jNFQoHLnL1P9
-         zZNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkbd7En6LtXrN/jIZ0rqn3/ImKCvbw3AlLfiMTEOkcTwkqk2pvT9QtNDn+ihd7z2otr+yYgfkIP3d7c/WsbDV2rXWV0zi3K2pUtw9IEy2jxqN5RzqovL3/HQvjESi6sMFgEYjnyET9PV/7Iw==
-X-Gm-Message-State: AOJu0YyqO5kqqheSaBSeIPMDoFDENp7Nt5mNnyfyxDc42L4h+td8+OB+
-	HKsTyKdmNdFmXq6TSKejL5JL5FXUYfzvbDHhtMYhS1TPUBfQrJ62oPSziOPhdACIPBDGCM+znk+
-	VSwfh/32wvIhBHauzQAzXu+4xXrQ=
-X-Google-Smtp-Source: AGHT+IEXhNr2COma1ZTpeoyqBrcvGs3CYE3G72PaJVMCpLT5Ns64zmX9n+ExOaPDVMP2uN5DPhWGtpOWxmooj8sHVHA=
-X-Received: by 2002:a17:906:cd0d:b0:a72:8d2f:859c with SMTP id
- a640c23a62f3a-a780b6ff0f7mr302169566b.33.1720614268121; Wed, 10 Jul 2024
- 05:24:28 -0700 (PDT)
+	s=arc-20240116; t=1720614292; c=relaxed/simple;
+	bh=Z1iHW0xwjuUolgLlUVZ38XpPOyQpCRbkMMbxly+aDN0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s59cH0pLql/mCXo9fce3Fc1a77sTrkltnUx6ID78xXTCW5yiqWnE7Ppu0sIeF1dEpzwbhHHL5UL2EEdAzu6xQhYDkwZ0axM1XfedYuiiTenQYeUWc6YY3IsGHpg6zaY9xST73lBFTsF65IlLhqpAHgUN01y1+MfOGWNmON31dJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6yyd6Dr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57FEAC32781;
+	Wed, 10 Jul 2024 12:24:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720614292;
+	bh=Z1iHW0xwjuUolgLlUVZ38XpPOyQpCRbkMMbxly+aDN0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=F6yyd6Dr3eH/h9NOEcsOXE6RR+cYQo7q/p6k/uVgKwfpQFUiUqSRej7p9cQYDyEBm
+	 5x2AGTV6CNyHRFFr1tTnYRKbvNreLNXXQQ6iOPQI1NzZOBYCJ/ufKeGyY/c63raVRh
+	 wNouwbRtyeZugTFv8HGaRhQ+QLbEj1+mSxg3N0NQaSdgPnXukkgf3oODtpRNcznT91
+	 hGCgzQQXC5JAGma2bWHmsFtcaXEN+HFDNbIvVtUy70wbd7U6vbb2lezmWfTPP2rm01
+	 GubsmqSvmmF66LkP4RW3KiBY9DbmyTnGVKy+Ioug1+t+MSwPNRyuE8UmeNG42d3xOf
+	 QqA2I6oFIqQsg==
+Message-ID: <22d972e9-4abd-4990-9fc6-828f3300b34b@kernel.org>
+Date: Wed, 10 Jul 2024 14:24:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d2841226-e27b-4d3d-a578-63587a3aa4f3@amd.com> <CAOUHufawNerxqLm7L9Yywp3HJFiYVrYO26ePUb1jH-qxNGWzyA@mail.gmail.com>
- <4307e984-a593-4495-b4cc-8ef509ddda03@amd.com>
-In-Reply-To: <4307e984-a593-4495-b4cc-8ef509ddda03@amd.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 10 Jul 2024 14:24:16 +0200
-Message-ID: <CAGudoHH4N0eEQCpJqFioRCJx75WAO5n+kCA0XcRZ-914xFR0gw@mail.gmail.com>
-Subject: Re: Hard and soft lockups with FIO and LTP runs on a large system
-To: Bharata B Rao <bharata@amd.com>
-Cc: Yu Zhao <yuzhao@google.com>, david@fromorbit.com, kent.overstreet@linux.dev, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, nikunj@amd.com, 
-	"Upadhyay, Neeraj" <Neeraj.Upadhyay@amd.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, willy@infradead.org, vbabka@suse.cz, kinseyho@google.com, 
-	Mel Gorman <mgorman@suse.de>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jul 10, 2024 at 2:04=E2=80=AFPM Bharata B Rao <bharata@amd.com> wro=
-te:
->
-> On 07-Jul-24 4:12 AM, Yu Zhao wrote:
-> >> Some experiments tried
-> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >> 1) When MGLRU was enabled many soft lockups were observed, no hard
-> >> lockups were seen for 48 hours run. Below is once such soft lockup.
-> <snip>
-> >> Below preemptirqsoff trace points to preemption being disabled for mor=
-e
-> >> than 10s and the lock in picture is lruvec spinlock.
-> >
-> > Also if you could try the other patch (mglru.patch) please. It should
-> > help reduce unnecessary rotations from deactivate_file_folio(), which
-> > in turn should reduce the contention on the LRU lock for MGLRU.
->
-> Thanks. With mglru.patch on a MGLRU-enabled system, the below latency
-> trace record is no longer seen for a 30hr workload run.
->
-> >
-> >>       # tracer: preemptirqsoff
-> >>       #
-> >>       # preemptirqsoff latency trace v1.1.5 on 6.10.0-rc3-mglru-irqstr=
-c
-> >>       # --------------------------------------------------------------=
-------
-> >>       # latency: 10382682 us, #4/4, CPU#128 | (M:desktop VP:0, KP:0, S=
-P:0
-> >> HP:0 #P:512)
-> >>       #    -----------------
-> >>       #    | task: fio-2701523 (uid:0 nice:0 policy:0 rt_prio:0)
-> >>       #    -----------------
-> >>       #  =3D> started at: deactivate_file_folio
-> >>       #  =3D> ended at:   deactivate_file_folio
-> >>       #
-> >>       #
-> >>       #                    _------=3D> CPU#
-> >>       #                   / _-----=3D> irqs-off/BH-disabled
-> >>       #                  | / _----=3D> need-resched
-> >>       #                  || / _---=3D> hardirq/softirq
-> >>       #                  ||| / _--=3D> preempt-depth
-> >>       #                  |||| / _-=3D> migrate-disable
-> >>       #                  ||||| /     delay
-> >>       #  cmd     pid     |||||| time  |   caller
-> >>       #     \   /        ||||||  \    |    /
-> >>            fio-2701523 128...1.    0us$: deactivate_file_folio
-> >> <-deactivate_file_folio
-> >>            fio-2701523 128.N.1. 10382681us : deactivate_file_folio
-> >> <-deactivate_file_folio
-> >>            fio-2701523 128.N.1. 10382683us : tracer_preempt_on
-> >> <-deactivate_file_folio
-> >>            fio-2701523 128.N.1. 10382691us : <stack trace>
-> >>        =3D> deactivate_file_folio
-> >>        =3D> mapping_try_invalidate
-> >>        =3D> invalidate_mapping_pages
-> >>        =3D> invalidate_bdev
-> >>        =3D> blkdev_common_ioctl
-> >>        =3D> blkdev_ioctl
-> >>        =3D> __x64_sys_ioctl
-> >>        =3D> x64_sys_call
-> >>        =3D> do_syscall_64
-> >>        =3D> entry_SYSCALL_64_after_hwframe
->
-> However the contention now has shifted to inode_hash_lock. Around 55
-> softlockups in ilookup() were observed:
->
-> # tracer: preemptirqsoff
-> #
-> # preemptirqsoff latency trace v1.1.5 on 6.10.0-rc3-trnmglru
-> # --------------------------------------------------------------------
-> # latency: 10620430 us, #4/4, CPU#260 | (M:desktop VP:0, KP:0, SP:0 HP:0
-> #P:512)
-> #    -----------------
-> #    | task: fio-3244715 (uid:0 nice:0 policy:0 rt_prio:0)
-> #    -----------------
-> #  =3D> started at: ilookup
-> #  =3D> ended at:   ilookup
-> #
-> #
-> #                    _------=3D> CPU#
-> #                   / _-----=3D> irqs-off/BH-disabled
-> #                  | / _----=3D> need-resched
-> #                  || / _---=3D> hardirq/softirq
-> #                  ||| / _--=3D> preempt-depth
-> #                  |||| / _-=3D> migrate-disable
-> #                  ||||| /     delay
-> #  cmd     pid     |||||| time  |   caller
-> #     \   /        ||||||  \    |    /
->       fio-3244715 260...1.    0us$: _raw_spin_lock <-ilookup
->       fio-3244715 260.N.1. 10620429us : _raw_spin_unlock <-ilookup
->       fio-3244715 260.N.1. 10620430us : tracer_preempt_on <-ilookup
->       fio-3244715 260.N.1. 10620440us : <stack trace>
-> =3D> _raw_spin_unlock
-> =3D> ilookup
-> =3D> blkdev_get_no_open
-> =3D> blkdev_open
-> =3D> do_dentry_open
-> =3D> vfs_open
-> =3D> path_openat
-> =3D> do_filp_open
-> =3D> do_sys_openat2
-> =3D> __x64_sys_openat
-> =3D> x64_sys_call
-> =3D> do_syscall_64
-> =3D> entry_SYSCALL_64_after_hwframe
->
-> It appears that scalability issues with inode_hash_lock has been brought
-> up multiple times in the past and there were patches to address the same.
->
-> https://lore.kernel.org/all/20231206060629.2827226-9-david@fromorbit.com/
-> https://lore.kernel.org/lkml/20240611173824.535995-2-mjguzik@gmail.com/
->
-> CC'ing FS folks/list for awareness/comments.
-
-Note my patch does not enable RCU usage in ilookup, but this can be
-trivially added.
-
-I can't even compile-test at the moment, but the diff below should do
-it. Also note the patches are present here
-https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=3Dvfs.in=
-ode.rcu
-, not yet integrated anywhere.
-
-That said, if fio you are operating on the same target inode every
-time then this is merely going to shift contention to the inode
-spinlock usage in find_inode_fast.
-
-diff --git a/fs/inode.c b/fs/inode.c
-index ad7844ca92f9..70b0e6383341 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1524,10 +1524,14 @@ struct inode *ilookup(struct super_block *sb,
-unsigned long ino)
- {
-        struct hlist_head *head =3D inode_hashtable + hash(sb, ino);
-        struct inode *inode;
-+
- again:
--       spin_lock(&inode_hash_lock);
--       inode =3D find_inode_fast(sb, head, ino, true);
--       spin_unlock(&inode_hash_lock);
-+       inode =3D find_inode_fast(sb, head, ino, false);
-+       if (IS_ERR_OR_NULL_PTR(inode)) {
-+               spin_lock(&inode_hash_lock);
-+               inode =3D find_inode_fast(sb, head, ino, true);
-+               spin_unlock(&inode_hash_lock);
-+       }
-
-        if (inode) {
-                if (IS_ERR(inode))
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V6] cgroup/rstat: Avoid thundering herd problem by kswapd
+ across NUMA nodes
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: tj@kernel.org, cgroups@vger.kernel.org, yosryahmed@google.com,
+ hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com,
+ kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <172052399087.2357901.4955042377343593447.stgit@firesoul>
+ <3oyf3p3xyhxxugucwsuhtuais6547rvzob5fkz3yc7jgocow2n@odqb6l2oweto>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <3oyf3p3xyhxxugucwsuhtuais6547rvzob5fkz3yc7jgocow2n@odqb6l2oweto>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+On 10/07/2024 01.17, Shakeel Butt wrote:
+> On Tue, Jul 09, 2024 at 01:20:48PM GMT, Jesper Dangaard Brouer wrote:
+>> Avoid lock contention on the global cgroup rstat lock caused by kswapd
+>> starting on all NUMA nodes simultaneously. At Cloudflare, we observed
+>> massive issues due to kswapd and the specific mem_cgroup_flush_stats()
+>> call inlined in shrink_node, which takes the rstat lock.
+>>
+>> On our 12 NUMA node machines, each with a kswapd kthread per NUMA node,
+>> we noted severe lock contention on the rstat lock. This contention
+>> causes 12 CPUs to waste cycles spinning every time kswapd runs.
+>> Fleet-wide stats (/proc/N/schedstat) for kthreads revealed that we are
+>> burning an average of 20,000 CPU cores fleet-wide on kswapd, primarily
+>> due to spinning on the rstat lock.
+>>
+>> Help reviewers follow code: __alloc_pages_slowpath calls wake_all_kswapds
+>> causing all kswapdN threads to wake up simultaneously. The kswapd thread
+>> invokes shrink_node (via balance_pgdat) triggering the cgroup rstat flush
+>> operation as part of its work. This results in kernel self-induced rstat
+>> lock contention by waking up all kswapd threads simultaneously. Leveraging
+>> this detail: balance_pgdat() have NULL value in target_mem_cgroup, this
+>> cause mem_cgroup_flush_stats() to do flush with root_mem_cgroup.
+>>
+>> To avoid this kind of thundering herd problem, kernel previously had a
+>> "stats_flush_ongoing" concept, but this was removed as part of commit
+>> 7d7ef0a4686a ("mm: memcg: restore subtree stats flushing"). This patch
+>> reintroduce and generalized the concept to apply to all users of cgroup
+>> rstat, not just memcg.
+>>
+>> If there is an ongoing rstat flush, and current cgroup is a descendant,
+>> then it is unnecessary to do the flush. For callers to still see updated
+>> stats, wait for ongoing flusher to complete before returning, but add
+>> timeout as stats are already inaccurate given updaters keeps running.
+>>
+>> Fixes: 7d7ef0a4686a ("mm: memcg: restore subtree stats flushing").
+>> Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
+>> ---
+>> V5: https://lore.kernel.org/all/171956951930.1897969.8709279863947931285.stgit@firesoul/
+> 
+> Does this version fixes the contention you are observing in production
+> for v5?
+
+No conclusions yet, as I'm still waiting for production servers to
+reboot into my experimental kernel.
+
+The V5 contention issue is observable via oneliner. That records lock
+contention and records the process that observe this:
+
+  sudo bpftrace -e '
+        tracepoint:cgroup:cgroup_rstat_lock_contended { @cnt[comm]=count()}
+        interval:s:1 {time("%H:%M:%S "); print(@cnt); clear(@cnt);}'
+
+Example output:
+
+11:52:34
+11:52:35 @cnt[kswapd4]: 114
+@cnt[kswapd5]: 115
+11:52:36
+11:52:37
+11:52:38
+11:52:39
+11:52:40
+11:52:41 @cnt[kswapd2]: 124
+@cnt[kswapd1]: 125
+@cnt[kswapd7]: 137
+@cnt[kswapd0]: 137
+
+As we can see above kswapd processes, that must be flushing root-cgroup
+and should be waiting on cgrp_rstat_ongoing_flusher are seeing
+lock_contended.  This indicate the race this patch address exists.
+
+For the record without this patch prod server (same HW generation), 
+looks like this (so there is a significant improvement):
+
+12:08:59 @cnt[kswapd2]: 565
+@cnt[kswapd8]: 574
+@cnt[kswapd9]: 575
+@cnt[kswapd5]: 576
+@cnt[kswapd6]: 577
+@cnt[kswapd11]: 577
+@cnt[kswapd3]: 578
+@cnt[kswapd0]: 578
+@cnt[kswapd4]: 688
+@cnt[kswapd10]: 758
+@cnt[kswapd1]: 768
+@cnt[kswapd7]: 875
+
+
+I'm going to send a V7 patch, because this V6 have an issue with usage 
+of tracepoints for trylock scheme, that breaks my bpftrace script[1].
+
+Coding it up now... I'm also adding a tracepoint for the 
+cgrp_rstat_ongoing_flusher wait, such that we can measure this. I'm also 
+adding a race indicator that can we read from this new tracepoint, as it 
+will be helpful to proof/measure if this race is happening, and needed 
+to tell the race apart from normal cgroup_rstat_lock_contended case.
+
+
+--Jesper
+
+
+[1] 
+https://github.com/xdp-project/xdp-project/blob/master/areas/latency/cgroup_rstat_tracepoint.bt
 
