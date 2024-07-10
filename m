@@ -1,160 +1,269 @@
-Return-Path: <linux-kernel+bounces-247959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D56B92D6A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:38:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9366292D6A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F23F1C20EB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:38:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49B692876F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C2E195FEF;
-	Wed, 10 Jul 2024 16:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98953195F00;
+	Wed, 10 Jul 2024 16:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UrpvLcFK"
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XPPuiiuv"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5367A193445;
-	Wed, 10 Jul 2024 16:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD5F37169
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720629303; cv=none; b=Kpd2GydJdIGj1uOe0vivfmwIzpFGDT21qt7BFxzImbhJ1BbRVCN5f1xBE8BX3+uAtXVxFxI4ala32aikRLPKlxIiU80Jqb2d8s/gIW+yAaL5oC+L+QHiT01qEo68pKYh1kJrtogqF7yMScFA8QoTbmeXlGlQz+WWdk9SYDag0/0=
+	t=1720629302; cv=none; b=cFkBnLc1IQoYZClOHmhNfP7f2SyC0iaXaEyj+CMLY9apEL9eNYaZFOG8nTYNM/duUAppKrdMc6oVQ+IpAwCdt/hBygQZle/ozJ3HAr4mIxtRzvMS88ZzA4XjYgu2lGAeAIwSHTdNYf5CX4U+v7/9hrhn21i7qIjYcTD17KQj+To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720629303; c=relaxed/simple;
-	bh=cigVI0/QagXC8kd68wWHO+vt27ycO/n/2ePlPQR9ee4=;
+	s=arc-20240116; t=1720629302; c=relaxed/simple;
+	bh=Bo1iq4RtdnqagKRhpGR0svouD/Lh8LfzKjfI2iX5ut8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rhZXHI2IKl5QyKsqenNnXT1Hj7xB+4OXPoXRhT4fT1srj4mNAhS3zBUAoOECzl4E98y9XaDqvxzC09c2+4/Nix01hMamM2sLQTGUd003gu/+Ju+DZ+HKxmJP2hMki0jLitdUGjspalNUyPnQWxUv0BSbHK+G6yUMlyHBj0/7GHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UrpvLcFK; arc=none smtp.client-ip=209.85.161.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5c47ad9967cso3473001eaf.2;
-        Wed, 10 Jul 2024 09:35:02 -0700 (PDT)
+	 To:Cc:Content-Type; b=hH91KW+JAk2cXla1c+gnAcHH3YAd/CojCbcOOQ9F8fxK6oFy3ijwhyaI7LATaMqaYE/m9zGW57yZ7FGmEXVUtDH8s38tjkv7bVDwQfEQ3bA8zlLFp/dIYcd+e2J/lavAWlltyIMZbc37PsON7aUg9SsK0DRTP6jYfTU3sAyHEnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XPPuiiuv; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e02b79c6f21so7395754276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:35:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720629301; x=1721234101; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9sOw1jVOlPobAJPu4gbAldy0PGuhCOSwT4XWJvQdr+M=;
-        b=UrpvLcFKKQdeErGIxvK5HgJTHyxX/Tevi6ZbYWKxo5d73fY5ISpM2RX3YLCDm3vcf5
-         VS9v3XzrsQmNcfzGXKFj509UlTb3HjIBrqRgsD+1h78IXkwkLhqF2X5bjAjELxFilENF
-         0vq67dkGTZWlS1VU8itIi0V2qUN+5pi96zbwj/68mXZ1BgehtbV354J9bRGfT5DG2BXy
-         swvJoOE+1cL/UEIcGLhEOrJaMh3scdX9WUYd3HoqUWnHJInhDkgl912TTxrIsv4T55IT
-         w2NK5o6CeZObdwuBmwPzkzRTyOjq10LRBIJ6CJxfHHn6tXyVsmPQnJqeMZTScOUdlV5L
-         eCuQ==
+        d=google.com; s=20230601; t=1720629300; x=1721234100; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BF9ive2p9YXUMgbnwW6FuoRy0oF4ePAeLEyGAEOkhY0=;
+        b=XPPuiiuv5yy0LLZfelI0p0uV+pjKeDlfIv32MB30JwXWimGbcLwfZKG/BGWvlXIVta
+         2p62qzURjcIFKx3B4F2cTdXIIK+9rZKVSVXuX0sgtRQxPi4XxfWFxGM7SkokbsLlSVOt
+         faNPFZzcyOuklwhdXjyGUOi2/7e+lwZi+cpW6T3LM5LtrjlZVNJTekXFx5lDb3I1MYr3
+         XPX1rouzX9ULy17T2t2MZTQjzml8+R9DBoeqTMKt4AWQKFBxuY45ae+RnbGk9EufO2d9
+         DMUyQLyQIRBmxj4Yx1JA6dEwW6eaCxTvIElHFnX0uBiEWm1uNwIA81WY30xWgd7RTHqg
+         Nh4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720629301; x=1721234101;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9sOw1jVOlPobAJPu4gbAldy0PGuhCOSwT4XWJvQdr+M=;
-        b=XPMExduuzRpBL6s8pYfRAMh6KQgHDeEIJL7CsSUoK6zcFvmNrW8U/CXSiZmxvimtcB
-         CpazMOLVH8SPIvKVra0EAGc08jwDDNfZICsk3Q/mxW0ea1casfhcf0wMesb4KABAxjws
-         1jatWXycJCzn24pORl3X8xupghLXB2qYpOdmbhoZti20NTkpnHaXZZzaS/njvVVWe5Um
-         q33tvpiaBFwNnfecVAds7ZvXz38dC7PsNY8wUML39NBMpx5sKw+xPcAzIxAQu956arAg
-         qfGXzjxUpYo75anD85+4e6+5p7PgAQBMGIqFdlk6Kn5oZ3ySHtz6DPZF1fE199nRuevv
-         m7mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDNi58nm27Og3VGs0UTQheA95dgf0rlFMKB9t3RW9giSQn/UvU03gi4rzwOGdf4445BxKyaZIJ5HVmo8lo91JeVJWmqx4rXG0sc25n3QaphOsmp6UyBITxv1umOVRhDF0IIMySaJLEAg==
-X-Gm-Message-State: AOJu0YxYjN8DzAZ9ONecjWGLY+uCh7OgGe/cAgOk3AuJVdJdLAOLtR75
-	o9Jbz4bH/JaVheYTr1fTC/AHYjdYyl4rR7X2NeAp+6kDlUep2bU6atfKzvWx05t4qk+IEW+ClAf
-	RZNCJQwi+20a59omEa3QX9+p4hAo=
-X-Google-Smtp-Source: AGHT+IF1zYlVf2JrR0UfDR5LnB72Hd9SePyzSM9ncesabGOLw4uWD1oZizxNrLHziXyws/BSSl8GrVl4f4+HnbSyZ4c=
-X-Received: by 2002:a4a:ac0c:0:b0:5c6:72fb:103e with SMTP id
- 006d021491bc7-5c68e16fb36mr6096218eaf.7.1720629301347; Wed, 10 Jul 2024
- 09:35:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720629300; x=1721234100;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BF9ive2p9YXUMgbnwW6FuoRy0oF4ePAeLEyGAEOkhY0=;
+        b=gPEsju0I8Be+Ji26Ofnn0p5EYaDgAkc6r9+ok7VsBiRhH/2XXpIpB6+wf1+q2X2li/
+         KqkCZnLhymeZTAVdtpNIHK7A/w+UVXTA9VBiScvp5aB9g8ktgT7vcNtxtsj2Lfi5iBE4
+         elsHJFamteV6uoCTmgEwXoXRqEJo63SzpH/JutpmqhNSEbzvLEf+JLadNPcfGudc+w5p
+         XRPrUr9dOzr0Zq4rG9aQUSw43NBs33F4wI6U8qYiURuu6tZlK7Qj3/Ny3HtPTZoRDfbF
+         4CFS9RiGr7SFqaqfJoHqO4Pm8C6yJuyNQkTyT490eFSrAxdT9E1iHse4jB1n1/rUuvp3
+         eJow==
+X-Forwarded-Encrypted: i=1; AJvYcCV3mlCqx9dG73IlF/Qt0EcM5Imao70BZpJrzBaM/TlyEfVQbd52RGwdq510RDX0LzjSCoW3la0z0jZAKMgJAxzXBHde9K9bODbHAF9p
+X-Gm-Message-State: AOJu0Yyz1nLBQVghJeOSmyAcTd5UVFad5IsxyIfmbj0Tp+Y73BQ4eDqt
+	fyhyklZ4/o0cEhPhIHG9ySJlBUZaUAZ6VZU+LveZzOVlPLLOp96A4z6iW4OsDiB12CRL7HqZnSe
+	TybS8V0jt6nmC/R+Yi84ixJTIgzORhUvHffLe
+X-Google-Smtp-Source: AGHT+IHZ5TRrLFlHZ0PUpr8ak7tkgpez+qbokWJEToBW1Plq4/Xn+bXBEL4Smbx2jz+0wQ10oMADhbvO2AMcGSXJNgc=
+X-Received: by 2002:a25:26c8:0:b0:e03:5d07:e17a with SMTP id
+ 3f1490d57ef6-e041b17195bmr7050542276.56.1720629299714; Wed, 10 Jul 2024
+ 09:34:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710142001.7234-1-linux.amoon@gmail.com> <84dc40f4-1948-4eb7-b16e-8a79357c2622@kwiboo.se>
-In-Reply-To: <84dc40f4-1948-4eb7-b16e-8a79357c2622@kwiboo.se>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Wed, 10 Jul 2024 22:04:44 +0530
-Message-ID: <CANAwSgQr2J_MU1idf5xGt4Q=gSLxLHJSEJGwnnPxWLhRjrx=6Q@mail.gmail.com>
-Subject: Re: [PATCH v1] arm64: dts: rockchip: Add missing pinctrl for PCIe30x4 node
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+References: <20240710135757.25786-1-liulei.rjpt@vivo.com> <5e5ee5d3-8a57-478a-9ce7-b40cab60b67d@amd.com>
+ <d70cf558-cf34-4909-a33e-58e3a10bbc0c@vivo.com> <0393cf47-3fa2-4e32-8b3d-d5d5bdece298@amd.com>
+ <e8bfe5ed-130a-4f32-a95a-01477cdd98ca@vivo.com>
+In-Reply-To: <e8bfe5ed-130a-4f32-a95a-01477cdd98ca@vivo.com>
+From: "T.J. Mercier" <tjmercier@google.com>
+Date: Wed, 10 Jul 2024 09:34:47 -0700
+Message-ID: <CABdmKX26f+6m9Gh34Lb+rb2yQB--wSKP3GXRRri6Nxp3Hwxavg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Support direct I/O read and write for memory
+ allocated by dmabuf
+To: Lei Liu <liulei.rjpt@vivo.com>
+Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
+	Muhammad Usama Anjum <usama.anjum@collabora.com>, Andrei Vagin <avagin@google.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	Daniel Vetter <daniel@ffwll.ch>, "Vetter, Daniel" <daniel.vetter@intel.com>, opensource.kernel@vivo.com, 
+	quic_sukadev@quicinc.com, quic_cgoldswo@quicinc.com, 
+	Akilesh Kailash <akailash@google.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jonas,
+On Wed, Jul 10, 2024 at 8:08=E2=80=AFAM Lei Liu <liulei.rjpt@vivo.com> wrot=
+e:
+>
+>
+> on 2024/7/10 22:48, Christian K=C3=B6nig wrote:
+> > Am 10.07.24 um 16:35 schrieb Lei Liu:
+> >>
+> >> on 2024/7/10 22:14, Christian K=C3=B6nig wrote:
+> >>> Am 10.07.24 um 15:57 schrieb Lei Liu:
+> >>>> Use vm_insert_page to establish a mapping for the memory allocated
+> >>>> by dmabuf, thus supporting direct I/O read and write; and fix the
+> >>>> issue of incorrect memory statistics after mapping dmabuf memory.
+> >>>
+> >>> Well big NAK to that! Direct I/O is intentionally disabled on DMA-buf=
+s.
+> >>
+> >> Hello! Could you explain why direct_io is disabled on DMABUF? Is
+> >> there any historical reason for this?
+> >
+> > It's basically one of the most fundamental design decision of DMA-Buf.
+> > The attachment/map/fence model DMA-buf uses is not really compatible
+> > with direct I/O on the underlying pages.
+>
+> Thank you! Is there any related documentation on this? I would like to
+> understand and learn more about the fundamental reasons for the lack of
+> support.
 
-On Wed, 10 Jul 2024 at 20:11, Jonas Karlman <jonas@kwiboo.se> wrote:
->
-> Hi Anand,
->
-> On 2024-07-10 16:19, Anand Moon wrote:
-> > Add missing pinctrl settings for PCIe 3.0 x4 clock request and wake
-> > signals. Rename node from 'pcie3' to 'pcie30x4' to align with schematic
-> > nomenclature.
-> >
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> >  .../boot/dts/rockchip/rk3588-rock-5b.dts      | 20 +++++++++++++------
-> >  1 file changed, 14 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> > index 2e7512676b7e..a9b55b7996cf 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-> > @@ -301,7 +301,7 @@ &pcie30phy {
-> >
-> >  &pcie3x4 {
-> >       pinctrl-names = "default";
-> > -     pinctrl-0 = <&pcie3_rst>;
-> > +     pinctrl-0 = <&pcie30x4_perstn_m1 &pcie30x4_clkreqn_m1 &pcie30x4_waken_m1>;
-> >       reset-gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
-> >       vpcie3v3-supply = <&vcc3v3_pcie30>;
-> >       status = "okay";
-> > @@ -340,14 +340,22 @@ pcie2_2_rst: pcie2-2-rst {
-> >               };
-> >       };
-> >
-> > -     pcie3 {
-> > -             pcie3_rst: pcie3-rst {
-> > -                     rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
-> > -             };
-> > -
-> > +     pcie30x4 {
-> >               pcie3_vcc3v3_en: pcie3-vcc3v3-en {
-> >                       rockchip,pins = <1 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
-> >               };
-> > +
-> > +             pcie30x4_clkreqn_m1: pcie30x4-clkreqn-m1 {
-> > +                     rockchip,pins = <4 RK_PB4 RK_FUNC_GPIO &pcfg_pull_up>;
-> > +             };
-> > +
-> > +             pcie30x4_waken_m1: pcie30x4-waken-m1 {
-> > +                     rockchip,pins = <4 RK_PB5 RK_FUNC_GPIO &pcfg_pull_down>;
-> > +             };
->
-> Should these not be routed to the clkreqn_m1 and waken_m1 function
-> instead of gpio function?
->
-> E.g. something like:
->
->                 pcie30x4m1_pins: pcie30x4m1-pins {
->                         rockchip,pins =
->                                 <4 RK_PB4 4 &pcfg_pull_none>,
->                                 <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>,
->                                 <4 RK_PB5 4 &pcfg_pull_none>;
->                 };
->
-> There are other rk35xx boards where only the perstn pin is configured
-> and could use a similar fix.
->
+Hi Lei and Christian,
 
-I understand this grouping for Gpio, but I am not very familiar with
-this feature.
+This is now the third request I've seen from three different companies
+who are interested in this, but the others are not for reasons of read
+performance that you mention in the commit message on your first
+patch. Someone else at Google ran a comparison between a normal read()
+and a direct I/O read() into a preallocated user buffer and found that
+with large readahead (16 MB) the throughput can actually be slightly
+higher than direct I/O. If you have concerns about read performance,
+have you tried increasing the readahead size?
 
-> Regards,
-> Jonas
+The other motivation is to load a gajillion byte file from disk into a
+dmabuf without evicting the entire contents of pagecache while doing
+so. Something like this (which does not currently work because read()
+tries to GUP on the dmabuf memory as you mention):
+
+static int dmabuf_heap_alloc(int heap_fd, size_t len)
+{
+    struct dma_heap_allocation_data data =3D {
+        .len =3D len,
+        .fd =3D 0,
+        .fd_flags =3D O_RDWR | O_CLOEXEC,
+        .heap_flags =3D 0,
+    };
+    int ret =3D ioctl(heap_fd, DMA_HEAP_IOCTL_ALLOC, &data);
+    if (ret < 0)
+        return ret;
+    return data.fd;
+}
+
+int main(int, char **argv)
+{
+        const char *file_path =3D argv[1];
+        printf("File: %s\n", file_path);
+        int file_fd =3D open(file_path, O_RDONLY | O_DIRECT);
+
+        struct stat st;
+        stat(file_path, &st);
+        ssize_t file_size =3D st.st_size;
+        ssize_t aligned_size =3D (file_size + 4095) & ~4095;
+
+        printf("File size: %zd Aligned size: %zd\n", file_size, aligned_siz=
+e);
+        int heap_fd =3D open("/dev/dma_heap/system", O_RDONLY);
+        int dmabuf_fd =3D dmabuf_heap_alloc(heap_fd, aligned_size);
+
+        void *vm =3D mmap(nullptr, aligned_size, PROT_READ | PROT_WRITE,
+MAP_SHARED, dmabuf_fd, 0);
+        printf("VM at 0x%lx\n", (unsigned long)vm);
+
+        dma_buf_sync sync_flags { DMA_BUF_SYNC_START |
+DMA_BUF_SYNC_READ | DMA_BUF_SYNC_WRITE };
+        ioctl(dmabuf_fd, DMA_BUF_IOCTL_SYNC, &sync_flags);
+
+        ssize_t rc =3D read(file_fd, vm, file_size);
+        printf("Read: %zd %s\n", rc, rc < 0 ? strerror(errno) : "");
+
+        sync_flags.flags =3D DMA_BUF_SYNC_END | DMA_BUF_SYNC_READ |
+DMA_BUF_SYNC_WRITE;
+        ioctl(dmabuf_fd, DMA_BUF_IOCTL_SYNC, &sync_flags);
+}
+
+Or replace the mmap() + read() with sendfile().
+
+So I would also like to see the above code (or something else similar)
+be able to work and I understand some of the reasons why it currently
+does not, but I don't understand why we should actively prevent this
+type of behavior entirely.
+
+Best,
+T.J.
+
+
+
+
+
+
+
+
+> >
+> >>>
+> >>> We already discussed enforcing that in the DMA-buf framework and
+> >>> this patch probably means that we should really do that.
+> >>>
+> >>> Regards,
+> >>> Christian.
+> >>
+> >> Thank you for your response. With the application of AI large model
+> >> edgeification, we urgently need support for direct_io on DMABUF to
+> >> read some very large files. Do you have any new solutions or plans
+> >> for this?
+> >
+> > We have seen similar projects over the years and all of those turned
+> > out to be complete shipwrecks.
+> >
+> > There is currently a patch set under discussion to give the network
+> > subsystem DMA-buf support. If you are interest in network direct I/O
+> > that could help.
 >
-Thanks
--Anand
+> Is there a related introduction link for this patch?
+>
+> >
+> > Additional to that a lot of GPU drivers support userptr usages, e.g.
+> > to import malloced memory into the GPU driver. You can then also do
+> > direct I/O on that malloced memory and the kernel will enforce correct
+> > handling with the GPU driver through MMU notifiers.
+> >
+> > But as far as I know a general DMA-buf based solution isn't possible.
+>
+> 1.The reason we need to use DMABUF memory here is that we need to share
+> memory between the CPU and APU. Currently, only DMABUF memory is
+> suitable for this purpose. Additionally, we need to read very large files=
+.
+>
+> 2. Are there any other solutions for this? Also, do you have any plans
+> to support direct_io for DMABUF memory in the future?
+>
+> >
+> > Regards,
+> > Christian.
+> >
+> >>
+> >> Regards,
+> >> Lei Liu.
+> >>
+> >>>
+> >>>>
+> >>>> Lei Liu (2):
+> >>>>    mm: dmabuf_direct_io: Support direct_io for memory allocated by
+> >>>> dmabuf
+> >>>>    mm: dmabuf_direct_io: Fix memory statistics error for dmabuf
+> >>>> allocated
+> >>>>      memory with direct_io support
+> >>>>
+> >>>>   drivers/dma-buf/heaps/system_heap.c |  5 +++--
+> >>>>   fs/proc/task_mmu.c                  |  8 +++++++-
+> >>>>   include/linux/mm.h                  |  1 +
+> >>>>   mm/memory.c                         | 15 ++++++++++-----
+> >>>>   mm/rmap.c                           |  9 +++++----
+> >>>>   5 files changed, 26 insertions(+), 12 deletions(-)
+> >>>>
+> >>>
+> >
 
