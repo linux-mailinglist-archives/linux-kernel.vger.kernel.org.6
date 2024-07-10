@@ -1,151 +1,195 @@
-Return-Path: <linux-kernel+bounces-247766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB49992D444
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:34:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E6C492D454
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF35A1C22733
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:34:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7543B23F56
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE12B19346A;
-	Wed, 10 Jul 2024 14:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BBC819414B;
+	Wed, 10 Jul 2024 14:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="pStlYLo2"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mbxLu5p3"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C91538FA0;
-	Wed, 10 Jul 2024 14:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AAE6193468
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720622063; cv=none; b=PFYlC/6Aa+D/CEAxA9+fhH2REQQVRZPtvMYLocHbDZaPLH24g//QEojjVmpngvMcOLb3wiI5AqE5fIAUdHoh+W2iUIF5CjtycM3jkCnRaPko701bmSHtASg1S3dTkW1N+z/DHvxWJtgkD6vuV5NLTpVo0aKzp6YHMLJsNcjZJUc=
+	t=1720622121; cv=none; b=asr1+so0yGjA3tkcE+ox/OxV9arEvNFySTT+Q1ctZIdgN3Iq9eeO8WMh2uvuSVLKk/VppEYmobIa3/9+YeSaYnA8gOM+jt7OB+aUP0rjDMQxBOsW5Wk2sGxvzrucrS6opAtMFaQGHy18zZk7oGGpdJ/wQNlRrLw7AREbdAhSx/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720622063; c=relaxed/simple;
-	bh=K+LGB86ywzCtdkH0UoRCHTGWEXsnmmCtiTK+UHcIU6o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YHdDgqrSMKtGw+ZEUU4W8LlLhLrfyrxBf/f+XO1A9YEChV7ErT9Oc/y75kDkK7kDlHgDDBeTLEiv/DjUFXD7COOV9QjYMoGi+FsLRMYTDYLoaFigBzAsBrMZE9VYDAoYAUlVnHTL6E38zFCm73B0UObwVeNtnjT52Q4AOPkb9yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=pStlYLo2; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=GAM6y8fnj0Euu5w+krZO4tj7MaXUS23Xc1S4ib+0mIk=; b=pStlYLo2/DPDeFYt364zdbEe48
-	QjopVVMc9xErJvDb/64k7JYtL631EN5KqkTc0fZKgmiRTlogv9dO9VK6j1iUNKKYbtpVncaWch17n
-	bnFEScNpCK74BzRzqV40P218HqcXDYx5pi0ftMN1e0ERaEg7VP/STkBoWopB3eW1RjJQHaMCXX4vw
-	SAnP4yuATGEReB4DmufkoK6Y7L8Ril0Gs7T95SQKYZiCC/fow6R4FGAAruCmuanvfmo80/gq1oeGx
-	rNeJzRUJ75ZfDPRP4YoTsGvMALE3zOtXh6kUDy6B35XHmHrVAFT1yp8sMa3pRHWBOJvsZMDmOaxiN
-	LgtRTFEg==;
-Received: from sslproxy01.your-server.de ([78.46.139.224])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1sRYOW-000LnL-US; Wed, 10 Jul 2024 16:34:08 +0200
-Received: from [87.49.147.209] (helo=localhost)
-	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1sRYOV-000GU1-10;
-	Wed, 10 Jul 2024 16:34:08 +0200
-From: Esben Haabendal <esben@geanix.com>
-To: Erez <erezgeva2@gmail.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Jaime Liao
- <jaimeliao@mxic.com.tw>,  leoyu@mxic.com.tw,  Alvin Zhou
- <alvinzhou@mxic.com.tw>,  Julien Su <juliensu@mxic.com.tw>,  Erez Geva
- <erezgeva@nwtime.org>,  linux-mtd@lists.infradead.org,  Pratyush Yadav
- <pratyush@kernel.org>,  Michael Walle <mwalle@kernel.org>,
-  linux-kernel@vger.kernel.org,  Miquel Raynal <miquel.raynal@bootlin.com>,
-  Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  devicetree@vger.kernel.org,  Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
- Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v2 3/4] dt-bindings: mtd: macronix,mx25l12833f: add
- SPI-NOR chip
-In-Reply-To: <CANeKEMP+mRefYZNb+TuBmOD7dC6=7Rg7D1EcfnjJoiaeaV28SQ@mail.gmail.com>
-	(Erez's message of "Wed, 3 Jul 2024 10:23:16 +0200")
-References: <20240629103914.161530-1-erezgeva@nwtime.org>
-	<20240629103914.161530-4-erezgeva@nwtime.org>
-	<1c457520-07b7-4bde-b040-e8bca959a4f5@linaro.org>
-	<CANeKEMOODBNZA6efh0E0Ga_KaVs5Y3WLcUftRhNwYHhnXO=GNw@mail.gmail.com>
-	<CANeKEMO42rJt5Ob4_HDcZ3eEMvuMOPvRaFaLwL8SA65NtxSV7A@mail.gmail.com>
-	<1d56c3b2-7adf-45b9-a509-956340f3f17b@linaro.org>
-	<CANeKEMMe-Onpn7xWQHgWz1Ps_uQPEMa7HrKA00HpoKjG+DCJNQ@mail.gmail.com>
-	<3bafcbea-6aa5-43ca-9d12-3916be3fe03d@linaro.org>
-	<CANeKEMM02-Jvb8Pd0fZJFnRg-hsAW+hckYWm11tZZXNMPSPJ=w@mail.gmail.com>
-	<9b45cc73-2251-4085-af95-7ccd00dd6d3b@linaro.org>
-	<CANeKEMP+mRefYZNb+TuBmOD7dC6=7Rg7D1EcfnjJoiaeaV28SQ@mail.gmail.com>
-Date: Wed, 10 Jul 2024 16:34:07 +0200
-Message-ID: <875xtd48ps.fsf@geanix.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1720622121; c=relaxed/simple;
+	bh=7ZxJZY6gKoQFwNHdxiPGNOckl89lxdBAnIdeXwRvngo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=XVVKfRHyW5TcwIvD6t5Ol8i5lxHf7IOt6r6zBbrMX7v5K6/+1ylPVv8I98OE9k4+343UGt2ZFA9xfBYXUJF8lqs/JGeDf4VWGjeEcp9hr1UATkJ24bMWjSr1S/Pa6+POSO8TT26QEsmybQdss7cUGmT2O4GLFx1C/RZ2MBWzuOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mbxLu5p3; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240710143516euoutp018555910a4e526b6611e7d08c1659e7c3~g4LLhXLvi2585825858euoutp01K
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:35:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240710143516euoutp018555910a4e526b6611e7d08c1659e7c3~g4LLhXLvi2585825858euoutp01K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1720622116;
+	bh=aEBvXZqhS4HH+bJh8VEk5/tXzC2cbn/RN1jKxc/D+Ts=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=mbxLu5p3EamHhQp5Kew1KujYyRcsL3dho9oglRqdJgqt4zv6rtRO1N8Lr5tIy0bIe
+	 0bl7RjrJkC91tuiS+Q+o9e2Tcv+/LtFtegoSV8mbkXtim8exhI1RgpvxJ9CBzFiWKe
+	 UQt3fvjimOFNmTbFeHBSLZB43rkz6H4Fo9tRrbPE=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240710143516eucas1p105f3f6ae03c7dbfa3024557a3b6be453~g4LLG7kls0056600566eucas1p1v;
+	Wed, 10 Jul 2024 14:35:16 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id A6.5F.09875.32C9E866; Wed, 10
+	Jul 2024 15:35:16 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240710143515eucas1p259fa5a03cb56cc2b3d82d124fb8f1cb1~g4LKpxdnc2890628906eucas1p2-;
+	Wed, 10 Jul 2024 14:35:15 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240710143515eusmtrp2afbfab2c14d5a198be6ade93b7f9dfaa~g4LKpABwN2804928049eusmtrp2v;
+	Wed, 10 Jul 2024 14:35:15 +0000 (GMT)
+X-AuditID: cbfec7f4-9acd8a8000002693-a3-668e9c2375dd
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 71.D7.08810.32C9E866; Wed, 10
+	Jul 2024 15:35:15 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240710143513eusmtip12b69aa17ffc422426b00e9e44f936f53~g4LJAFqBO2253622536eusmtip1i;
+	Wed, 10 Jul 2024 14:35:13 +0000 (GMT)
+Message-ID: <0faacbeb-2ca3-4749-89a8-6dd81621a07d@samsung.com>
+Date: Wed, 10 Jul 2024 16:35:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27332/Wed Jul 10 10:36:46 2024)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] clk: samsung: gs101: don't mark non-essential
+ (UART) clocks critical
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, Greg
+	Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+	<jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Peter Griffin
+	<peter.griffin@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, Tudor
+	Ambarus <tudor.ambarus@linaro.org>
+Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20240710-gs101-non-essential-clocks-2-v3-2-5dcb8d040d1c@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBKsWRmVeSWpSXmKPExsWy7djPc7oqc/rSDNZuZrJ4MG8bm8WWV5tZ
+	LNbsPcdkcf3Lc1aL+UfOsVo0L17PZvFurozFju0iFi9n3WOz2PT4GqvFx557rBaXd81hs5hx
+	fh+TxZnFvewWF0+5WmyY8Y/F4v+eHewWh9+0s1r8u7aRxeJ5H1DFp1txFqs+/Wd0EPPYtnsb
+	q8f7G63sHgs2lXpsWtXJ5nHn2h42j/1z17B7bF5S79G3ZRWjx+dNcgGcUVw2Kak5mWWpRfp2
+	CVwZMxbMYyo4KVLxcmojewPjXoEuRk4OCQETib+7ljN2MXJxCAmsYJQ4N2MXM4TzhVHiyMQl
+	rBDOZ0aJk3u+ssK0XPx0mB0isZxR4sWXTVD9Hxklll++xQRSxStgJ/HqwnywDhYBVYkdTxey
+	QMQFJU7OfAJmiwrIS9y/NYMdxBYWSJJYcOMV2DoRgWssEp+fPwQ7hFmgjUni4aVWZpAqZgFx
+	iVtP5oNtYBMwlOh628UGYnMKBErcPH0EqkZeonnrbGaIWx9xShw5ZdbFyAFku0isOBgDERaW
+	eHV8CzuELSPxfyfISC4gu51RYsHv+1DOBEaJhue3GCGqrCXunPvFBjKIWUBTYv0ufYiwo8Ts
+	jhcsEPP5JG68FYQ4gU9i0rbpzBBhXomONiGIajWJWcfXwa09eOES8wRGpVlIwTILyZOzkDwz
+	C2HvAkaWVYziqaXFuempxUZ5qeV6xYm5xaV56XrJ+bmbGIGJ8/S/4192MC5/9VHvECMTB+Mh
+	RgkOZiUR3vk3utOEeFMSK6tSi/Lji0pzUosPMUpzsCiJ86qmyKcKCaQnlqRmp6YWpBbBZJk4
+	OKUamBZsi3x6VzJKY4Pgrat10x3u7khV7vJN2fzaPDvK2OGx7AzdvKk3wrrSHq2TrfWYK+So
+	c14z917WhArNNfuSPrw9X+w/fRq37lHxqA/Kr6O/+pfoz/AQ2fA8vuq629/lV6cnXVgTl+gz
+	/WzsdIm8u/sPChVteHztzLnYrQVJkhK6wsJch5qnzlW8nlAmcnzJrMSJrdv6nn3lnnnveJeO
+	dtuxHZ57dxY91bD2kl8Qkxdt9O7Q6/bXns7s29eIT9Rxmf4mYmayX8ev24JxocvX64a7VvCK
+	W87ZO8Nr0ycDvyVGKTk3/J7IcGQq/P0u47VTdrVwkH/NmgNG0c92H93BuuGw8n6BnkvnJX0+
+	LG6dulOJpTgj0VCLuag4EQBlHAcPCwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupileLIzCtJLcpLzFFi42I5/e/4XV3lOX1pBoe7pSwezNvGZrHl1WYW
+	izV7zzFZXP/ynNVi/pFzrBbNi9ezWbybK2OxY7uIxctZ99gsNj2+xmrxseceq8XlXXPYLGac
+	38dkcWZxL7vFxVOuFhtm/GOx+L9nB7vF4TftrBb/rm1ksXjeB1Tx6VacxapP/xkdxDy27d7G
+	6vH+Riu7x4JNpR6bVnWyedy5tofNY//cNewem5fUe/RtWcXo8XmTXABnlJ5NUX5pSapCRn5x
+	ia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7GjAXzmApOilS8nNrI3sC4
+	V6CLkZNDQsBE4uKnw+xdjFwcQgJLGSUu/exkgkjISJyc1sAKYQtL/LnWxQZR9J5R4veDZWBF
+	vAJ2Eq8uzAcrYhFQldjxdCELRFxQ4uTMJ2C2qIC8xP1bM9hBbGGBJIkFN14B1XNwiAjcYJG4
+	agQyk1mgjUni19orrBALXjNK3F30hxmkgVlAXOLWk/lgy9gEDCW63oJcwcnBKRAocfP0Eaga
+	M4murV2MELa8RPPW2cwTGIVmIbljFpJRs5C0zELSsoCRZRWjSGppcW56brGhXnFibnFpXrpe
+	cn7uJkZgoth27OfmHYzzXn3UO8TIxMF4iFGCg1lJhHf+je40Id6UxMqq1KL8+KLSnNTiQ4ym
+	wMCYyCwlmpwPTFV5JfGGZgamhiZmlgamlmbGSuK8ngUdiUIC6YklqdmpqQWpRTB9TBycUg1M
+	+2Vnb+LP3x5z+emhpa9LOHlZ5LyNxBpPzUyMqIn8oFFfPuGB4bqSnbnKIdrPLI+0OERcjF53
+	UC9g79UvShsk/1/flNRSpDbtZe6rH6aPtq0+0XVkg55eBtMnn/hFJlN/cEkkp69y3vkj0XRa
+	vR3rN53LTm4/dkhr1USKOPOxMq23mBhx1+mAx8KG3asiE98Z17F91Z6Yf3p3w5ZIn6VfDRvm
+	rL1X/c6Uc2Jpd8yOol2HA80sn03uDT1qZVKm0e375IVNTpLl7RoNqSTPlGSpXTY3dx6K3pk0
+	0ff2kpy3KcKRxqUdycoutVdivL8GXBZ6vYPPbuVHf+lTb//wu1qn6fdXtj12YP5rKtiZslaJ
+	pTgj0VCLuag4EQAGpS7nnQMAAA==
+X-CMS-MailID: 20240710143515eucas1p259fa5a03cb56cc2b3d82d124fb8f1cb1
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240710132933eucas1p1b4367ec7a3938a39e732b3079eff6f32
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240710132933eucas1p1b4367ec7a3938a39e732b3079eff6f32
+References: <20240710-gs101-non-essential-clocks-2-v3-0-5dcb8d040d1c@linaro.org>
+	<CGME20240710132933eucas1p1b4367ec7a3938a39e732b3079eff6f32@eucas1p1.samsung.com>
+	<20240710-gs101-non-essential-clocks-2-v3-2-5dcb8d040d1c@linaro.org>
 
-Erez <erezgeva2@gmail.com> writes:
-
-> On Wed, 3 Jul 2024 at 09:12, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->> On 7/3/24 12:16 AM, Erez wrote:
->>> On Tue, 2 Jul 2024 at 07:00, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->>>
->>> The table below uses fixed width characters.
->>>
->>> ID      Part.         Size              Status          SFDP status
->>> according to spec.
->>>                                                         New chip with
->>> SFDP for EOL
->>> c22012  MX25L2005(A)  SZ_256K =  2Mb    EOL             MX25L2006E
->>> c22532  MX25U2033E    SZ_256K =  2Mb    EOL
->>> c22013  MX25L4005A    SZ_512K =  4Mb    EOL
->>> c22533  MX25U4035     SZ_512K =  4Mb    EOL
->>> c22534  MX25U8035     SZ_1M   =  8Mb    EOL
->>> c22016  MX25L3205D    SZ_4M   =  32Mb   EOL             MX25L3233F
->>> c29e16  MX25L3255E    SZ_4M   =  32Mb   EOL
->>> c22017  MX25L6405D    SZ_8M   =  64Mb   EOL
->>> c22018  MX25L12805D   SZ_16M  =  128Mb  EOL             MX25L12833F
->>> c22538  MX25U12835F   SZ_16M  =  128Mb  EOL
->>> c2253a  MX66U51235F   SZ_64M  =  512Mb  EOL             MX25U51245G
->>> c22010  MX25L512E     SZ_64K  =  512Kb  NO_REC          Have-SFDP!
->>> c22015  MX25L1606E    SZ_2M   =  16Mb   NO_REC          Have-SFDP!
->>> c22536  MX25U3235F    SZ_4M   =  32Mb   NO_REC          Have-SFDP!
->>> c22816  MX25R3235F    SZ_4M   =  32Mb   NO_REC          Have-SFDP!
->>> c22537  MX25U6435F    SZ_8M   =  64Mb   NO_REC          Have-SFDP!
->>> c22019  MX25L25635E   SZ_32M  =  256Mb  NO_REC          Have-SFDP!
->>> c22539  MX25U25635F   SZ_32M  =  256Mb  NO_REC          Have-SFDP!
->>> c2201a  MX66L51235F   SZ_64M  =  512Mb  NO_REC          Have-SFDP!
->>> c2261b  MX66L1G55G    SZ_128M =  1Gb    NO_REC          Spec. is not public
->>> c22314  MX25V8035F    SZ_1M   =  8Mb    PROD            Have-SFDP!
->>> c22815  MX25R1635F    SZ_2M   =  16Mb   PROD            Have-SFDP!
->>> c2201b  MX66L1G45G    SZ_128M =  1Gb    PROD            Have-SFDP!
->>> c2253c  MX66U2G45G    SZ_256M =  2Gb    PROD            Have-SFDP!
->>> c2253a  MX25U51245G   SZ_64M  =  512Mb  PROD            Have-SFDP!
->>>
->>> EOL     End of Life
->>> PROD    Normal Production
->>> NO_REC  Not recommend for new design
->>>
->>>
->>
->> not sure what you want me to do with these.
+On 10.07.2024 15:29, André Draszik wrote:
+> The peric0_top1_ipclk_0 and peric0_top1_pclk_0 are the clocks going to
+> peric0/uart_usi, with pclk being the bus clock. Without pclk running,
+> any bus access will hang.
+> Unfortunately, in commit d97b6c902a40 ("arm64: dts: exynos: gs101:
+> update USI UART to use peric0 clocks") the gs101 DT ended up specifying
+> an incorrect pclk in the respective node and instead the two clocks
+> here were marked as critical.
 >
-> That we can read SFDP for all chips from Macronix.
-> Only old chips before 2010 do not have SFDP.
+> Since then, the DT has been updated to use the correct clock in
+> commit 21e4e8807bfc ("arm64: dts: exynos: gs101: use correct clocks for
+> usi_uart") and the driver here should be corrected and the work-around
+> removed.
+>
+> Note that this commit has the side-effect of causing earlycon to stop
+> to work sometime into the boot for two reasons:
+>      * peric0_top1_ipclk_0 requires its parent gout_cmu_peric0_ip to be
+>        running, but because earlycon doesn't deal with clocks that
+>        parent will be disabled when none of the other drivers that
+>        actually deal with clocks correctly require it to be running and
+>        the real serial driver (which does deal with clocks) hasn't taken
+>        over yet
+>      * hand-over between earlycon and serial driver appears to be
+>        fragile and clocks get enabled and disabled a few times, which
+>        also causes register access to hang while earlycon is still
+>        active
+> (A wordier explanation can also be found in [1])
+>
+> Nonetheless we shouldn't keep these clocks running unconditionally just
+> for earlycon. Clocks should be disabled where possible. If earlycon is
+> required in the future, e.g. for debug, this commit can simply be
+> reverted (locally!).
+>
+> Link: https://lore.kernel.org/all/d45de3b2bb6b48653842cf1f74e58889ed6783ae.camel@linaro.org/ [1]
+> Fixes: 893f133a040b ("clk: samsung: gs101: add support for cmu_peric0")
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-So, should we try and identify new chips (with SFDP) that re-use the ID of all the
-above mentioned EOL chips that does not have SFDP?
+Frankly speaking I'm not sure that anyone will find this comment and do 
+local reverts before getting angry that earlycon doesn't work for his 
+device and wasting his time.
 
-As I read the communication from Macronix, then we should expect new
-chips re-using the ID for all of them. It is just a matter of digging.
+I think that it would be much better to check if earlycon is specified 
+in kernel's cmdline and if so, simply mark those problematic clocks 
+critical in this driver. Make this code hidden under 
+IS_ENABLED(CONFIG_SERIAL_EARLYCON) to avoid polluting release builds. 
+Any comments?
 
-/Esben
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
