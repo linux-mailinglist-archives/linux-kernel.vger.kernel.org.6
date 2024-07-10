@@ -1,179 +1,109 @@
-Return-Path: <linux-kernel+bounces-247321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F203B92CE00
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:15:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ACA892CE03
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:15:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F7B01C21A89
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:15:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 266DE284E00
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB39118D4BB;
-	Wed, 10 Jul 2024 09:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CD918FA22;
+	Wed, 10 Jul 2024 09:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="Z50GdAvE"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gm2r9EeE"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C78284A28
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A120459160;
+	Wed, 10 Jul 2024 09:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720602911; cv=none; b=HGj76N36fFCC9BrQ2/8b02JGFNXFHY3EikApfjqCA+RfmxP5o55VSW6lYZ4h5VmimnVuLGYLDH7+yvgmMh+zeotRo1IPvQO6LMy5+0hzmfDYbLy5S1etdLnPVJ3tdMyU4YNUdfVa8jwzbcMe2qEQEHxmKo9EE7qNgJtJf+cICrU=
+	t=1720602925; cv=none; b=nLBnozzXLeig4m/yHKqrij+tQoE5H7skithaZNASHt9ioKQqZj8GJEMqdaihfDHEBriHxg5m5qK+73Wj+caeZlNb6VI0tcq/b0E7W2Zm8ZkDC9oZk91zjMF520oVHsVzwFq4vV4BvAt61hsJJMNytp/ZzXCquz4ZlvaiNUz8lB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720602911; c=relaxed/simple;
-	bh=b2bPxOZ8FtzU9jdf9PzyWfJweVqYxNip8z8TgoZ4jo0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kNtb2o3BSY0YW376olc4ruVhF4JI4VowzlzNmWrFbnnQZxhW9AHMuAfvUtxWfaPXZFe7WqoHyX/LxhsZYZTFHWDGfCP+xV4QolxHklDG5ade45KY+UKXa4NtuSrqkosfSMp1JaAhc2hQM+DoBlTsw1Vx7l7FIceKIQz+paVjhYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=Z50GdAvE; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id A98E2A05EC;
-	Wed, 10 Jul 2024 11:14:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=8i40Vuw+IuYEzl6a9Xr69NauHgXUINvZ77epVTOrtQo=; b=
-	Z50GdAvExkv3NnypvITdQM2xmrzqWeMaOm5QMq3OBtRvAAOEifvmwPoXs2UVXu2Q
-	oOHxpjo+o0qh1c97Pb+C3szrvmWJ998CE6ysvbQCqSSt8R+yQ8h7hGZAOwfyaPOX
-	a/cdZ95LUDQmSabiyUdkciWo49x9vCSqeFn0dBKouMHm1rwqF1Ph31jlj7tLeswy
-	NsMj05ng3hv+aNTT4jrE//wqANKKzaVQte/QMhhxzeSHdqvJGA51FKRLOmRlZpq5
-	870eCCW6OIMOHk7lbUqpeXMNkIApu+dQ3F+ExLt98g7rDjOwfQCncTZ8kSXkXQl9
-	5n/LB2MxqKJHJ+nhYnpmyjCSBFbHxo71KTnUVMQ3fNvjxOyAmP8q8RV3XceCoLuD
-	vjfP0y3OU9ZKi6+0qqJ8pQTF8ieDKJ6QA9vw5zO22HvE8IHR+zvec9jD+puNGF8R
-	N4snsRXeLjIoLO61wRQsrwWddJocxZQIIf7DrA7IuoWy2y1GTwtqfp7H6TtBfu8U
-	cyEsFyNXtamzd1MBgnwPsNUGscF7jQ/+E/NcCmRAXlhz44Q4pEbshGFq4MNwIs6L
-	6eI5UB871+ekkT7GfpZ6ilQ6PhVHOL+9Z2ZuaESYmpYIYpAilQ1LY5syRJVgPpN1
-	9e2096CcQA9OhUw35rs7Vcf0/AjhnJWkPfiZa1j9DyM=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, "Tudor
- Ambarus" <tudor.ambarus@linaro.org>, Pratyush Yadav <pratyush@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Subject: [PATCH] mtd: spi-nor: sst: Factor out common write operation to `sst_nor_write_data()`
-Date: Wed, 10 Jul 2024 11:14:01 +0200
-Message-ID: <20240710091401.1282824-1-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720602925; c=relaxed/simple;
+	bh=U6uSuiOQr7cJdidG6Se5kn3otyFo/nVBww9vRyRM+ww=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=vEzwA3d6OlGByBmXqObQ64D7V0w7OJan8/NsjgA8wBLMZRghrVDnpyHq0vUeuLSf3vamKDrdbfRdUG0DHTggGz/iib4LYKFI8+v2DP2hGD7TRMZj3kH3rVNuw0WmRbNe34ZZX3j57GJs/zf4RGMFQYh336Zf/2HCWCMex3V7fb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gm2r9EeE; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52e9c6b5a62so6637815e87.0;
+        Wed, 10 Jul 2024 02:15:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720602921; x=1721207721; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2ArFh9MZnuzA5Ph/PTRIWLDz/F411ANgeX7cDdeu74A=;
+        b=gm2r9EeEuvsQPHUuKKScXUIcVfFLSQaguju6B3lWTJWf4rMvwJCg+hj+/ZedzokJ1A
+         AoMdp50vtYzHdpIk3KJdkBOy7gqZV5rmBwNDVB80nLGbEXIFxBj6Da+Cz1t05fvyLxQR
+         vfPAee5SmV5/eU2B5uodhA8DWa1osU4cqo/a1gOGvIaU+k1glI5Lef8NShkzGY1K+ckF
+         WrDM4RuOAURVTXFNZEGVWubNusVyE6y7aPN2Shryng0d86emvwPkw9IQ/59fQMd++AEa
+         tj0qprd5YOWnx5djocJqflT7f+Em8Id6QBVbjH4DmR5ohnWAqoeCmHkl0k5fx3yXAwZQ
+         tU2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720602921; x=1721207721;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2ArFh9MZnuzA5Ph/PTRIWLDz/F411ANgeX7cDdeu74A=;
+        b=FyUq1YVhAzfcfz6AIXxxBt6ozWF9T+E7Z8HN4k4IUztBZPayQF1F4qFSXFvCvxeAIx
+         9Hhj6G99KOpIjfngA80W3vMd9ND2+pISBbLRC/u/FyKjnqMFhgmRxUC01Mru4+6e9u5N
+         QedNMM11KW+d8JmGTHpr1BgtnCJg+13Z2oCKBLYiT8lmktDoLq21L1M+L88P/WijJshQ
+         9wVkRq+gT6lB4C4LPcDWVsLZDKyMN7YQZ1RWYUiZfCL51tMNa9kDmN9LPJknKvYy/MP1
+         DVmR0aHAKvf5SqqHg32GgbhrlosaffsVbRlcnIFvSa649M6Qqju+YwhtlrHXGhLIv2nd
+         nyEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmx5W6EkCIzcQifVdTIfcNuKztoU/kt3BJkWNBzFeufmOYeKF3gGMvgvoB2jM3kr0qSjWftO4Vpwin4NXwhkRy3FnR0TKQ3xlSdFPNJqVZsTMEjMiEetcImnB9s9qMt4r+lwmNtwwWEAbIXnF7Clk8bRumnnxn8zn2CMKfNTrF1tBj4oaeZbmW9TQ=
+X-Gm-Message-State: AOJu0YxaOVL5a5FKKNJ2kzpuPviO83OKRzKbzCGC6ZQEPptMlje0yAXU
+	AaY1ufXKNNQ7FLc1w07LOd5Q8BVhkNEh46duvC3fHPa1/S91PPMEZdP5+g==
+X-Google-Smtp-Source: AGHT+IEHwoR4lUflEvXgQp7sPamQNBBmvHBUPLpX8/fuj+E4rBxHFStvWzC7Tj16yYvw5wR/atq/GA==
+X-Received: by 2002:ac2:4c56:0:b0:52e:be49:9d32 with SMTP id 2adb3069b0e04-52ebe499f4amr1417318e87.47.1720602921079;
+        Wed, 10 Jul 2024 02:15:21 -0700 (PDT)
+Received: from [192.168.1.105] ([31.173.87.238])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52eb8e492ddsm537649e87.88.2024.07.10.02.15.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jul 2024 02:15:20 -0700 (PDT)
+Subject: Re: [PATCH] i2c: mark HostNotify target address as used
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ linux-renesas-soc@vger.kernel.org
+Cc: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
+ Alain Volmat <alain.volmat@st.com>, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240710085506.31267-2-wsa+renesas@sang-engineering.com>
+From: Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Message-ID: <c8f837f5-16b1-a5da-c687-a95d2ec42fa0@gmail.com>
+Date: Wed, 10 Jul 2024 12:15:18 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1720602896;VERSION=7975;MC=3621083219;ID=61954;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D9485464756B
+In-Reply-To: <20240710085506.31267-2-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 
-Writing to the Flash in `sst_nor_write()` is a 3-step process:
-first an optional one-byte write to get 2-byte-aligned, then the
-bulk of the data is written out in vendor-specific 2-byte writes.
-Finally, if there's a byte left over, another one-byte write.
-This was implemented 3 times in the body of `sst_nor_write()`.
-To reduce code duplication, factor out these sub-steps to their
-own function.
+On 7/10/24 11:55 AM, Wolfram Sang wrote:
 
-Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
----
+> I2C core handles the local target for receiving HostNotify alerts. There
+> is no separate driver bound to that address. That means userspace can
+> access it if desired, leading to further complications if controllers
+> are not capable of reading their own local target. Bind the local target
+> to the dummy driver so it will marked as "handled by the kernel" if the
+                                ^ be? :-)
 
-Notes:
-    RFC: I'm thinking of removing SPINOR_OP_BP in favor of
-    SPINOR_OP_PP (they have the same value). SPINOR_OP_PP
-    is the "standard" name for the elementary unit-sized
-    (1 byte, in the case of NOR) write operation. I find it
-    confusing to have two names for the same operation,
-    so in a followup I plan to remove the vendor-specific
-    name in favor of the standard one.
+> HostNotify feature is used. That protects aginst userspace access and
+> prevents other drivers binding to it.
+> 
+> Fixes: 2a71593da34d ("i2c: smbus: add core function handling SMBus host-notify")
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+[...]
 
- drivers/mtd/spi-nor/sst.c | 39 +++++++++++++++++++--------------------
- 1 file changed, 19 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/mtd/spi-nor/sst.c b/drivers/mtd/spi-nor/sst.c
-index 180b7390690c..fec71689e644 100644
---- a/drivers/mtd/spi-nor/sst.c
-+++ b/drivers/mtd/spi-nor/sst.c
-@@ -167,6 +167,21 @@ static const struct flash_info sst_nor_parts[] = {
- 	}
- };
- 
-+static int sst_nor_write_data(struct spi_nor *nor, loff_t to, size_t len,
-+			const u_char *buf)
-+{
-+	u8 op = (len == 1) ? SPINOR_OP_BP : SPINOR_OP_AAI_WP;
-+	int ret;
-+
-+	nor->program_opcode = op;
-+	ret = spi_nor_write_data(nor, to, 1, buf);
-+	if (ret < 0)
-+		return ret;
-+	WARN(ret != len, "While writing %i byte written %i bytes\n", len, ret);
-+
-+	return spi_nor_wait_till_ready(nor);
-+}
-+
- static int sst_nor_write(struct mtd_info *mtd, loff_t to, size_t len,
- 			 size_t *retlen, const u_char *buf)
- {
-@@ -188,16 +203,10 @@ static int sst_nor_write(struct mtd_info *mtd, loff_t to, size_t len,
- 
- 	/* Start write from odd address. */
- 	if (to % 2) {
--		nor->program_opcode = SPINOR_OP_BP;
--
- 		/* write one byte. */
--		ret = spi_nor_write_data(nor, to, 1, buf);
-+		ret = sst_nor_write_data(nor, to, 1, buf);
- 		if (ret < 0)
- 			goto out;
--		WARN(ret != 1, "While writing 1 byte written %i bytes\n", ret);
--		ret = spi_nor_wait_till_ready(nor);
--		if (ret)
--			goto out;
- 
- 		to++;
- 		actual++;
-@@ -205,16 +214,11 @@ static int sst_nor_write(struct mtd_info *mtd, loff_t to, size_t len,
- 
- 	/* Write out most of the data here. */
- 	for (; actual < len - 1; actual += 2) {
--		nor->program_opcode = SPINOR_OP_AAI_WP;
--
- 		/* write two bytes. */
--		ret = spi_nor_write_data(nor, to, 2, buf + actual);
-+		ret = sst_nor_write_data(nor, to, 2, buf + actual);
- 		if (ret < 0)
- 			goto out;
--		WARN(ret != 2, "While writing 2 bytes written %i bytes\n", ret);
--		ret = spi_nor_wait_till_ready(nor);
--		if (ret)
--			goto out;
-+
- 		to += 2;
- 		nor->sst_write_second = true;
- 	}
-@@ -234,14 +238,9 @@ static int sst_nor_write(struct mtd_info *mtd, loff_t to, size_t len,
- 		if (ret)
- 			goto out;
- 
--		nor->program_opcode = SPINOR_OP_BP;
--		ret = spi_nor_write_data(nor, to, 1, buf + actual);
-+		ret = sst_nor_write_data(nor, to, 1, buf + actual);
- 		if (ret < 0)
- 			goto out;
--		WARN(ret != 1, "While writing 1 byte written %i bytes\n", ret);
--		ret = spi_nor_wait_till_ready(nor);
--		if (ret)
--			goto out;
- 
- 		actual += 1;
- 
--- 
-2.34.1
-
-
+MBR, Sergey
 
