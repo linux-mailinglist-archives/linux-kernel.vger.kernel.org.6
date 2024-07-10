@@ -1,137 +1,148 @@
-Return-Path: <linux-kernel+bounces-247710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D35692D379
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:54:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C0F592D37D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16008B23961
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:54:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0F3C283102
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A80194082;
-	Wed, 10 Jul 2024 13:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222C2193449;
+	Wed, 10 Jul 2024 13:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZkIZxIE9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="V3xs9yDp"
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3B6193449;
-	Wed, 10 Jul 2024 13:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581C7193084
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720619577; cv=none; b=YtzVHb6E1aPS5Om+ZbXZCdazoTdCvJF7iJeCQUadcAsVqE7LmM5zCZsOSJF0jK1Z0YsXNQX6tqe1pytsQR2s76qwez8TWJVb5+k6LeSNflSoJRmqxwOVymQrA0UHF6qJ9wlEmwxo9YXqFHVqlLyB/DT029Tk+DvzVxoPQqoBFNc=
+	t=1720619609; cv=none; b=Htzqz1leEEvERGNj/RYndNdxj8l9u5TJx05A4PrjyKpqFXPHX7BhAYpzfdhdSWSqG3WK7Ke8cIUoIiJM0SHBOj9KfaBZY40CSXLp8EiR7Jw0EVWqhmiv2o5s0Jy4mkR42FPzCRDC4QCoW+WQ5/D0gd1rwBjBtpu740sK4gT8MNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720619577; c=relaxed/simple;
-	bh=QhaNADKPWhmGoAiQ07UnKvQntsV5hpp5wAActCfsVSU=;
+	s=arc-20240116; t=1720619609; c=relaxed/simple;
+	bh=5Q6phVlqBjRBZPPTioIgE049kVnw2FiAlwyhm369ZKs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HX8MvLOT7COjDaTKwgQxcxk8900EvlDMV5zSC4L+Ory0qGZaf+VMJ3nXdNZ1zxOiEdJrAXje19YOTbRT07h/CDurajZsdxHaJ/Aq0HL4DfB5T8jQjMFnTSOMUuLYGrLRhG5J8J6NLyDa9kq6XMA1n3QWUt8j0IlSaOZ6/DONPF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZkIZxIE9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D85E4C32786;
-	Wed, 10 Jul 2024 13:52:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720619576;
-	bh=QhaNADKPWhmGoAiQ07UnKvQntsV5hpp5wAActCfsVSU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=GlllV5NKd96mUrdW9mlBUVy7o3wotU+E/yltHhI6YLBqnhrkr8xVG3Cz3Z70L8cc9LqQwZGwvdKjXLx+ad1IPEmEhqZftlgSwL/Jxp+1m2xcxnFGi/AbepyrFu1QHn61NvgmvQowJwfk11eJVQnFTc9PCvdMzyPoNsp53lnPle0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=V3xs9yDp; arc=none smtp.client-ip=83.166.143.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WJzpV0VXGzbm7;
+	Wed, 10 Jul 2024 15:53:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1720619601;
+	bh=ifwDgxqKwDaPE0SIqSz4qw8wsXTHuLeU/PsJiOUMJI4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZkIZxIE9HFZpTFdTcF9Pn3T5CVGo0zmI+mKzMTlUtV32Ky5lpV5NTDQ1HxoU9e139
-	 2CwfH8fja2VIo1DUzJvoO2VafelRm3DIBLrD6UuJj2vJSoOBNQ/FkgQ6E7xH9h8p6t
-	 dUS8yHsHK0BTKJVfgAI/942cKxbbEom/uzbLDVbd0y8M7kZ+ml5TTdPvUSHGrGh5CK
-	 mWN0glJls9YrvjxYiXKdMXiWre+n+LC1pBoQlQ5u1pueuD5jliY5iVv/n9ok20ZaQs
-	 rFEYxyTu8IHy4vWFJQQus2Y5ReL10550An05mT2nACI3a+kyzuwrbPX44tudqgBFUU
-	 r57+CplF1ng+w==
-Date: Wed, 10 Jul 2024 14:52:52 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: Re: [PATCH v3 1/2] dt-bindings: input: touchscreen: exc3000: add
- EXC81W32
-Message-ID: <20240710-couch-creamed-11ff20becccd@spud>
-References: <20240710-input-exc3000-exc81w32-v3-0-4272183628b4@pengutronix.de>
- <20240710-input-exc3000-exc81w32-v3-1-4272183628b4@pengutronix.de>
+	b=V3xs9yDpY344VxfBbhOk7n7ClxvATSRgjyBrefapCSdQxKBHlKp20p5Lrl/j3Z13r
+	 WbZFJfaNKdkJ7KSL8DRU4B+u1d/PRHfH1eo0sCOG5wg7TQl8/iWmQHW9S6pzudpa0k
+	 eOiBmJJZMHEQ5mHKk0yGuuXqJL8ojGjx35ZlRq7A=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WJzpS0lVGzcvq;
+	Wed, 10 Jul 2024 15:53:20 +0200 (CEST)
+Date: Wed, 10 Jul 2024 15:53:16 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Jann Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Kees Cook <keescook@chromium.org>, syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, 
+	jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	linux-fsdevel@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [syzbot] [lsm?] general protection fault in
+ hook_inode_free_security
+Message-ID: <20240710.Aephuhain8lu@digikod.net>
+References: <00000000000076ba3b0617f65cc8@google.com>
+ <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
+ <20240515.Yoo5chaiNai9@digikod.net>
+ <20240516.doyox6Iengou@digikod.net>
+ <20240627.Voox5yoogeum@digikod.net>
+ <CAHC9VhT-Pm6_nJ-8Xd_B4Fq+jZ0kYnfc3wwNa_jM+4=pg5RVrQ@mail.gmail.com>
+ <20240710.Hai0Uj3Phaij@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="XOyo+sROn9MECkm7"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240710-input-exc3000-exc81w32-v3-1-4272183628b4@pengutronix.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240710.Hai0Uj3Phaij@digikod.net>
+X-Infomaniak-Routing: alpha
 
+On Wed, Jul 10, 2024 at 02:23:23PM +0200, Mickaël Salaün wrote:
+> On Thu, Jun 27, 2024 at 02:28:03PM -0400, Paul Moore wrote:
+> > On Thu, Jun 27, 2024 at 9:34 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > >
+> > > I didn't find specific issues with Landlock's code except the extra
+> > > check in hook_inode_free_security().  It looks like inode->i_security is
+> > > a dangling pointer, leading to UAF.
+> > >
+> > > Reading security_inode_free() comments, two things looks weird to me:
+> > >
+> > > > /**
+> > > >  * security_inode_free() - Free an inode's LSM blob
+> > > >  * @inode: the inode
+> > > >  *
+> > > >  * Deallocate the inode security structure and set @inode->i_security to NULL.
+> > >
+> > > I don't see where i_security is set to NULL.
+> > 
+> > The function header comments are known to be a bit suspect, a side
+> > effect of being detached from the functions for many years, this may
+> > be one of those cases.  I tried to fix up the really awful ones when I
+> > moved the comments back, back I didn't have time to go through each
+> > one in detail.  Patches to correct the function header comments are
+> > welcome and encouraged! :)
+> > 
+> > > >  */
+> > > > void security_inode_free(struct inode *inode)
+> > > > {
+> > >
+> > > Shouldn't we add this check here?
+> > > if (!inode->i_security)
+> > >         return;
+> > 
+> > Unless I'm remembering something wrong, I believe we *should* always
+> > have a valid i_security pointer each time we are called, if not
+> > something has gone wrong, e.g. the security_inode_free() hook is no
+> > longer being called from the right place.  If we add a NULL check, we
+> > should probably have a WARN_ON(), pr_err(), or something similar to
+> > put some spew on the console/logs.
+> > 
+> > All that said, it would be good to hear some confirmation from the VFS
+> > folks that the security_inode_free() hook is located in a spot such
+> > that once it exits it's current RCU critical section it is safe to
+> > release the associated LSM state.
+> > 
+> > It's also worth mentioning that while we always allocate i_security in
+> > security_inode_alloc() right now, I can see a world where we allocate
+> > the i_security field based on need using the lsm_blob_size info (maybe
+> > that works today?  not sure how kmem_cache handled 0 length blobs?).
+> > The result is that there might be a legitimate case where i_security
+> > is NULL, yet we still want to call into the LSM using the
+> > inode_free_security() implementation hook.
+> 
+> Looking at existing LSM implementations, even if some helpers (e.g.
+> selinux_inode) return NULL if inode->i_security is NULL, this may not be
+> handled by the callers.  For instance, SELinux always dereferences the
+> blob pointer in the security_inode_permission() hook.  EVM seems to be
+> the only one properly handling this case.
+> 
+> Shouldn't we remove all inode->i_security checks and assume it is always
+> set?  This is currently the case anyway, but it would be clearer this
+> way and avoid false sense of security (with useless checks).
 
---XOyo+sROn9MECkm7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+A patch was sent to do this kind of check:
+https://lore.kernel.org/r/20140109101932.0508dec7@gandalf.local.home
+but the applied commit 3dc91d4338d6 ("SELinux: Fix possible NULL pointer
+dereference in selinux_inode_permission()") didn't include the
+i_security check.
 
-On Wed, Jul 10, 2024 at 12:28:31PM +0200, Philipp Zabel wrote:
-> Add compatible for EXC81W32 touchscreen controllers.
-> They use the same protocol and have the same resolution as EXC80H84.
->=20
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-> ---
-> v3: Mark exc81w32 as compatible with exc80h84.
-> ---
->  .../devicetree/bindings/input/touchscreen/eeti,exc3000.yaml  | 12 ++++++=
-++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/input/touchscreen/eeti,exc=
-3000.yaml b/Documentation/devicetree/bindings/input/touchscreen/eeti,exc300=
-0.yaml
-> index 9dc25d30a0a8..1c7ae05a8c15 100644
-> --- a/Documentation/devicetree/bindings/input/touchscreen/eeti,exc3000.ya=
-ml
-> +++ b/Documentation/devicetree/bindings/input/touchscreen/eeti,exc3000.ya=
-ml
-> @@ -14,10 +14,14 @@ allOf:
-> =20
->  properties:
->    compatible:
-> -    enum:
-> -      - eeti,exc3000
-> -      - eeti,exc80h60
-> -      - eeti,exc80h84
-> +    oneOf:
-> +      - const: eeti,exc3000
-> +      - const: eeti,exc80h60
-> +      - const: eeti,exc80h84
-
-This portion could've remained an enum.
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
-Cheers,
-Conor.
-
-> +      - items:
-> +          - enum:
-> +              - eeti,exc81w32
-> +          - const: eeti,exc80h84
->    reg:
->      const: 0x2a
->    interrupts:
->=20
-> --=20
-> 2.39.2
->=20
-
---XOyo+sROn9MECkm7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZo6SNAAKCRB4tDGHoIJi
-0vzYAQDcPRhGnxO6POKthGpu366MT1iGX+CXzGRY6KCZNAqyZQD+MjJES5StKWp4
-KA+fWgMhbNa5geuwCYyoGQc+SxlnHwg=
-=58jP
------END PGP SIGNATURE-----
-
---XOyo+sROn9MECkm7--
+Since this commit, the security_inode_free()'s header comment is no
+longer correct because i_security is no longer set to NULL.
 
