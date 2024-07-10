@@ -1,195 +1,94 @@
-Return-Path: <linux-kernel+bounces-247675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DDBB92D2E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:33:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A856A92D2E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EAB81F23BBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:33:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42102B279E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFDD192B89;
-	Wed, 10 Jul 2024 13:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28C4192B87;
+	Wed, 10 Jul 2024 13:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bnZZ9ovH"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="M9LTJIu3"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB131922C9
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37151922C9;
+	Wed, 10 Jul 2024 13:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720618418; cv=none; b=HzdbllnGnqQGKmm52LOBbF+CU8LlJDWJrat1ncpv4RGc2NTba6izW7evf9M5pfcwPXw/BBPYPJU8MhSGQRWZ1AyIpIsm1PDi4cwjYF3HI4tlmmhCqjo7MWfnUQtRO/V/PR8btGNK8HdSLuq0QivXf0txeaUoY98zguUCYVhtaC4=
+	t=1720618426; cv=none; b=grd/672hIuGxODuCSlzKouDvVSzO0hQXIJhbLyjJxG8kXCPiniD2VpG3tjmVQ/JXwZrX4d94tZzhHL1NYe4XZe7rJ3qQ2QVldYBSE4ogzNXDm34QXrqfDS3DPBLvVa5XCyT/nNCokg1Ip0fyd6C7WDHwvWYuEUArhbvPAP2qXCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720618418; c=relaxed/simple;
-	bh=FhnvB485w1HY1BpYWf4IIAKXmnfOo2Ex9Gt1bbXVihk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RmQ83zjjJS16KGFSTOD7avtSbQfATCIeWsAC46mMFpK71UNoNoT/G+BubTsmUDOxVjExZ1fS0L7yHGydLF7s04rMsS6nnctegGDuG1p41Gagwd6juAOHVzFNHdjFvv/7e58v0RamTaBEOtrarVVXjAvcP08FK4yi8aPjPrMEs1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bnZZ9ovH; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-58b966b4166so7805517a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:33:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720618415; x=1721223215; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1y6QWcxBkpL8sLlZ7Lnp0OFscz5jEsI1SABkkWAxiaY=;
-        b=bnZZ9ovHIb4KvV0wOL1seVMxVb9Zha3DLWqFwsd7SB3AnWWHFZh7HzOq+J9uLJMIBk
-         H1uqNT3roydNOumH6isYxACDbHYFfKySDxIwjfd9FHMbGOeULqKgt6DQxfWb+9MN7M47
-         J0AXFXT4MG7FH6usitKbV7Ib7QibPL7y3uUFffQD/DL4IUQAAsqUVOXQ5SNDgTSZtipw
-         UxWT2I/e8oc9n7/PpyMqZWEYZm++pDkut5KdRz91n4wJo+zYO5d8cMxH+I3EYYD7qyeG
-         1FtzQwiEInr80t7Tc55eo/IP7iizDEBpS1yXS03jdClLaZH1orerHZJLxHIQImpIoeAK
-         qawg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720618415; x=1721223215;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1y6QWcxBkpL8sLlZ7Lnp0OFscz5jEsI1SABkkWAxiaY=;
-        b=VinZolIpc40rUuh+t+aAm67lxyhoMWSiRiwWR/OXO/0n5oi7UpeDlwFpEiC3l7b/kD
-         bAjV0pINyZqjXCD7e7CPap2R64o72GXcfG0XbY+25Lbc9NGqRJ84n85ac9Lh0iDPsQaX
-         oJWFLk1J8T0Qt5VATLG6eWr5k274Pyn1GCbwcBcfG9qTm2hFk+629DM7FB/HJz87Z+ji
-         pFbbQpPy49RAkB58oNvEZy0nvxiyUJwq1yNnnLL5lBKKEllns4sG13UfJQFvzRgEqkKA
-         UTRpzxDi1TJbdWKX4RiBqb+5T6IG7k7tduunm426rPYdDzAV1nhEIEtl3QC/sBuYHq6z
-         ZV8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVpYd3nx1IyXCCdfewObB5lkduLXu+o4bo+/u8qm73vKbVTFO8c1OnUuzDPPYe87nyZrhjcDzkQ0IWmZlBKOgYx9+/hIr1DtJw/fQk0
-X-Gm-Message-State: AOJu0YyrxA2do1Ip/Qok9WDuY/vryoKtIo/t9qroEhXIT2p8IbHfPNPy
-	adwNc/dDiCjI11w3NYBAqkYAAYIZYsrqNM/6amz6TGSAFMSavFzsS0ToCRtZgBw=
-X-Google-Smtp-Source: AGHT+IEEff496JavyqfJq2LbrLMOXmUgoqw2wNiKA4XmY54IbkKvb8k1RWAvkt+sVr9kiG7HW6bnWA==
-X-Received: by 2002:a05:6402:b19:b0:58d:842:6272 with SMTP id 4fb4d7f45d1cf-594bb67e9demr2995655a12.25.1720618414622;
-        Wed, 10 Jul 2024 06:33:34 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bc4e81a6sm2220643a12.49.2024.07.10.06.33.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 06:33:34 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Wed, 10 Jul 2024 14:33:29 +0100
-Subject: [PATCH] tty: serial: samsung: add clock comment for earlycon on
- gs101
+	s=arc-20240116; t=1720618426; c=relaxed/simple;
+	bh=2hcCAtYib7Cs+niMrifUeOS1QsLxGjZWPakWKOZUp4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PtBP/BDt3jwf01Gg+rr0zRAfdp0OT05AL3sDLtQqaG19p5Gwr8knozOLXS1nFK+oPH82FA1o8KoHyXKbBjg8u05ZcdsEhadZzTlTvmhFII/Q9d/VpkcJ0kMySgPGr4Ovlidt6nvwLagyhAcvRn/068we5gVOQKOmO1Fr20EHldo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=M9LTJIu3; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=4gA98zOhBB3RrJOx3PzymQJlJUxX+ZinTD7Q9TPm3bE=; b=M9LTJIu34RsAljCahFllN2TIFm
+	7yLY9bK78/a/2FpX+BfeqlIkkLlN1248cHRExobbyYzsVodYdxCPAEh/NkWc4WwNMx3txvLQha+vu
+	L6SYskNC8Z//ttViCmyiVVwQL4/SJWfu3lx9b84rbPQckdDlXeN0nL9mzExlMa+p4TPs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sRXRq-002EDw-NH; Wed, 10 Jul 2024 15:33:30 +0200
+Date: Wed, 10 Jul 2024 15:33:30 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Li Zetao <lizetao1@huawei.com>, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 net-next] leds: trigger: netdev: Add support for
+ tx_err and rx_err notification with LEDs
+Message-ID: <8c8ba30d-dbec-47db-ae8c-a734fb2468c0@lunn.ch>
+References: <20240710100651.4059887-1-lukma@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240710-samsung_tty-gs101earlycon-v1-1-bd0f8481542a@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAKiNjmYC/x3MQQqDMBBA0avIrBuY0RTBq5RSopmkAzaWjIoi3
- t3g8i3+P0A5Cyt01QGZV1GZUgE9Khi+LkU24ouhxtpiS2jU/XRJ8TPPu4lKSOzyuA9TMpbanhr
- 04UkeSv/PHGS736/3eV5IQ8KBawAAAA==
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, 
- Sam Protsenko <semen.protsenko@linaro.org>, kernel-team@android.com, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710100651.4059887-1-lukma@denx.de>
 
-As pointed out in [1] before, the hand-over between earlycon and serial
-console is fragile due to clocking issues:
+On Wed, Jul 10, 2024 at 12:06:51PM +0200, Lukasz Majewski wrote:
+> This patch provides support for enabling blinking of LEDs when RX or TX
+> errors are detected.
+> 
+> Approach taken in this patch is similar to one for TX or RX data
+> transmission indication (i.e. TRIGGER_NETDEV_TX/RX attribute).
+> 
+> One can inspect transmission errors with:
+> ip -s link show eth0
+> 
+> Example LED configuration:
+> cd /sys/devices/platform/amba_pl@0/a001a000.leds/leds/
+> echo netdev > mode:blue/trigger && \
+> echo eth0 > mode:blue/device_name && \
+> echo 1 > mode:blue/tx_err
 
-    ... causing earlycon to stop to work sometime into the boot for two
-    reasons:
-    * peric0_top1_ipclk_0 requires its parent gout_cmu_peric0_ip to be
-      running, but because earlycon doesn't deal with clocks that
-      parent will be disabled when none of the other drivers that
-      actually deal with clocks correctly require it to be running and
-      the real serial driver (which does deal with clocks) hasn't taken
-      over yet
+When i look at the machines around me, they all have an error count of
+0. Do you have a real customer use case for this? What sort of systems
+do you have which do have sufficient errors to justify an LED?
 
-    The console UART, and I2C bus 8 are on the same cmu_peric0 controller,
-    and that cmu_peric0 has two clocks coming from cmu_top, ip and bus. For
-    I2C8 & UART to work, both of these clocks from cmu_top need to to be on
-    as they are the parent of the i2c8-(ip|pclk) and uart-(ip|pclk) each.
+There is no standardisation of LEDs. Every vendor implements something
+different. What i don't want is lots of different blink patterns,
+which nobody ever uses.
 
-    The bootloader leaves those clocks running, yes. So earlycon works (for
-    a while).
-
-    At some point into the boot, one of two things happens:
-    1) Linux will load the i2c driver. That driver does clock handling
-    (correctly), it will initialise and then it has nothing to do, therefore
-    it disables cmu_peric0's i2c8 ip and pclk clocks. Because at that stage
-    nothing appears to be using the cmu_peric0's ip clock (the real serial
-    driver hasn't initialised yet), Linux decides to also disable the parent
-    ip clock coming from cmu_top.
-
-    At this stage, the earlycon driver stops working, as the parent ip clock
-    of the uart ip clock is not running any more. No serial output can be
-    observed from this stage onwards. I think what is probably happening is
-    that the console uart FIFO doesn't get emptied anymore, and earlycon
-    will simply wait forever for space to become available in the FIFO (but
-    I didn't debug this).
-
-    Anyway, the boot doesn't progress, the system appears to hang. In any
-    case it's not usable as we have no other means of using it at this stage
-    (network / usb / display etc.).
-
-    2) Alternatively, the UART driver will load at this stage. Again, it
-    will tweak the clocks and after probe it will leave its clocks disabled.
-    The serial console driver hasn't taken over at this stage and earlycon
-    is still active. Again, the system will hang, because IP and PCLK have
-    been disabled by the UART driver. Once the serial console is enabled,
-    clocks are being enabled again, but because earlycon is still waiting
-    for progress, the boot doesn't progress past disabling ip and pclk. It
-    never gets to enabling the serial console (re-enabling the clocks).
-
-    So in both cases we get some output from earlycon, but the system hangs
-    once the first consumer driver of an IP attached to cmu_peric0 has
-    completed probing.
-
-    ...
-
-    If earlycon is not enabled in kernel command line, everything works
-    fine, the kernel buffers its messages and once the real serial console
-    driver starts, all messages since boot are being printed.
-
-As requested, add a comment to the code for posterity, so the
-information is not lost. The patch referenced in the comment can be
-found at [2].
-
-Link: https://lore.kernel.org/all/d45de3b2bb6b48653842cf1f74e58889ed6783ae.camel@linaro.org/ [1]
-Link: https://lore.kernel.org/all/20240710-gs101-non-essential-clocks-2-v3-2-5dcb8d040d1c@linaro.org/ [2]
-Suggested-by: Sam Protsenko <semen.protsenko@linaro.org>
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/tty/serial/samsung_tty.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/tty/serial/samsung_tty.c b/drivers/tty/serial/samsung_tty.c
-index dc35eb77d2ef..ae2378cfcf84 100644
---- a/drivers/tty/serial/samsung_tty.c
-+++ b/drivers/tty/serial/samsung_tty.c
-@@ -2821,6 +2821,15 @@ static int __init gs101_early_console_setup(struct earlycon_device *device,
- 	return s5pv210_early_console_setup(device, opt);
- }
- 
-+/*
-+ * Note that for earlycon to work, the respective ipclk and pclk need to be
-+ * running! The bootloader normally leaves them enabled, but the serial
-+ * driver will start handling those clocks before the console driver takes
-+ * over from earlycon, breaking earlycon. If earlycon is required, please
-+ * revert the patch "clk: samsung: gs101: don't mark non-essential (UART)
-+ * clocks critical" locally first to mark them CLK_IS_CRITICAL and avoid this
-+ * problem.
-+ */
- OF_EARLYCON_DECLARE(gs101, "google,gs101-uart", gs101_early_console_setup);
- 
- /* Apple S5L */
-
----
-base-commit: 523b23f0bee3014a7a752c9bb9f5c54f0eddae88
-change-id: 20240710-samsung_tty-gs101earlycon-417b130df51d
-
-Best regards,
--- 
-André Draszik <andre.draszik@linaro.org>
-
+	Andrew
 
