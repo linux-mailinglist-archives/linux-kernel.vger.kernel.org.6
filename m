@@ -1,84 +1,108 @@
-Return-Path: <linux-kernel+bounces-248296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1FDF92DB53
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:56:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A850992DB54
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64EC31C21557
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:56:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 507F5B235D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B0C1422CE;
-	Wed, 10 Jul 2024 21:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7533C14B081;
+	Wed, 10 Jul 2024 21:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TECaSot/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x+JLRtdo"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B6C12CD88;
-	Wed, 10 Jul 2024 21:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBBB12CD88
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 21:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720648588; cv=none; b=iAqFKJZb/C6e3kVYwU0J+omhpO7F5/whUDYA7MjWsFBuTtTwnMV08Kn3fvroTEx+wICZdzyIEaA6+AiAInP7LjGFsbIH6TB5/P60cXNyRy3hZX716vGPBvBlEpT1WuJESIUkGkG1AcyBIMTKX7CUJi+mkGr99Svx8DepYI94Pc4=
+	t=1720648593; cv=none; b=UhQDkFnCiGChzUhZ5qRhbaYGvG2fgEdd4XsOy/ep0y2wqvw1+uSz30KddWIoBUBfX48oERr1zoBLQ8OunIkQaJVQW4F8o+3xQ6HrXf0iPD2YUtj/WvMZtKX5HF+Xya0ZRCnZ9qeQ0Fr2x0hd44NZLY15hMMN23GxoJMJMjvzBfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720648588; c=relaxed/simple;
-	bh=f3pwRTbw+8TC7u8BN4p+ZxGF04f8V0va20I/q+MXNgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jd4DqtymrO+zuRIz+6kebbFxa3y1SqM2hBlEHFO90GWURsaYKllfCcMwWWozMMe0irsW6iC9L9ai8eQTrmI1fDVsYFK9uqwzX9bdLvS0unjN8IvCt2zG668JpRKEWgpv4EOetDeTCCZM+x9L6M79IAnxavKbo4wVwjIGiYqziBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TECaSot/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 890A4C32781;
-	Wed, 10 Jul 2024 21:56:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720648588;
-	bh=f3pwRTbw+8TC7u8BN4p+ZxGF04f8V0va20I/q+MXNgs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TECaSot/zkT/2SZeDyHFRWTMpWrm7LuBGoAFHlqll5EQbmKAByr1MvyBm9YWg4ADd
-	 oGLyIIdx/jNA/SNBROc24fDcGvvCiYOEv+Z8vEs1trDdo4sJneF9v82/tXUuzQZsSp
-	 oxvjim5FxyrgRIUH1QoexQsXPKF5u2JcwPTU/v6M0tFZ+oSpJusUkzNiI9Gkie5CrK
-	 Mcp0C9Ey+3vWpJfmLRc0AG7FojzggA3UlD1ezBhhwLS8bi9GMlrl7TSfwsAeDYrCgX
-	 vElTGtC71qU0SzJ8JF1D4tYLtn2BiNOPVF7abgi/H2B8v77QuIerd0TR0olpNfUsMo
-	 cV9DmHa8dzv1Q==
-Date: Wed, 10 Jul 2024 23:56:24 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, Binbin Zhou <zhoubinbin@loongson.cn>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 28/60] i2c: ls2x: reword according to newest
- specification
-Message-ID: <fvj3rmm2zrtpdn73auqkecltr5f4tq7j6be2exd65hjbvdarke@yjlovdeprmiz>
-References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
- <20240706112116.24543-29-wsa+renesas@sang-engineering.com>
+	s=arc-20240116; t=1720648593; c=relaxed/simple;
+	bh=v9gwvodIALaLZTiFk6iAF1MBNoj2kgdUYunqdySS94Q=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=eGuZ9pDoon3Xy12LETwMXMMWGmRU2yV25QgPwjRXkDKVw2I6kq2QPqh92aQETjOmUv91g4h5lIVM6hi+RjQQNUZo++OAPh/xeX/P7gP4Jj2L0GIGABYzAaDUXgBMvyE2lhQuqDFC9R/nudwK2wQ9YDIKjTzk3/l5TZtEB7XrfHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x+JLRtdo; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-6c559235c6eso136681a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:56:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720648592; x=1721253392; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UOPY7FMtYeUU5dmTWp7HgAObmI5uYd1GYWNtWLDcPCg=;
+        b=x+JLRtdoenShBIQt+J2J4r4i2Jzf4EFsIFG1RcyMtwoBV5Lfxi1zw0VtDsJ1ee5uTS
+         SvOSgOrHnysBNoVL0aROIW6qbGzS2Rau4cOo5ujjicB2O2cCBPFRyNjM1WEnbcpTywJ9
+         zmSy6B7Obzyi0nF5e7pGSKmnNJ3VmsrorT0jE04k6fJu24AF3OcAKHk2CnG2pcplk/Kc
+         hhMNL3rpESY8VH12B4+4uGkIISUEHK8bkazHE9Q5lN3NRrBnLc88cJJq05HAuF1iF4I6
+         0khy1v8ki4k/gi3jKN5ZQyB/lQkYkbP3Kf15m6K5e2UneBstb+0/HA+F8OY6XCIJ7WR7
+         p2Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720648592; x=1721253392;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UOPY7FMtYeUU5dmTWp7HgAObmI5uYd1GYWNtWLDcPCg=;
+        b=Na5agga2FV9YEbf4Yhe5L8DYyfiz1J8tF5dsdGWynfX/H0ev99Lo0SgusB5nnMLq+d
+         seX+qHz9vw3Qyh3WpYdPjGKqr/ehP4+zPR5cGsheFXXbIIPo+HQ7wwpQlzAQzmXtOJgc
+         mVBCxNrvm0e0Zxe22VmpZNEu0ShKFhoYAdQKazxJIAeuKumMLj9nHcjEoGP0d91oIfJR
+         Sk6k7DeHprqLNbvGAAf7C0tYRQl/JU0OB8XUZS46ujt6sUHacWLy7P27a445Vm5r1snN
+         N9ovngXlXLG44f0b5RgE/3UXmY5PjFxny5wq+uxNi3vllwbWOdV4AYmjJtrcSEK98i73
+         1l8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVr2C61yeB+WYecY99yo4EKlZsVTVwnJyRpNmVXG3UrRycDJWXpXGts4qK22ookeK0tInYxrVQMfOsCkMYJQFOEW8G5H1/XyJ5eavu4
+X-Gm-Message-State: AOJu0YxTL6OsM9+OHHscZtajgsuOF0Z2+107RsCTgyXWntgcXb1GflBW
+	mj51o21J/+x0F8CXOgcaTk/ei0Ja7I0Sfdu/16HhEaeswjXXy1X169mLxekQpH/2cQhvX3KcXAW
+	hBw==
+X-Google-Smtp-Source: AGHT+IEQe0aTdA93AgOP3bdo/+RIy3w6WTsIhnoelP3F0c9LSyPhjCsXCn6PU46FDaxB5eEK34EWvS5/yeU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:e541:b0:1f6:fbea:7959 with SMTP id
+ d9443c01a7336-1fbb6c228a7mr4802475ad.0.1720648591757; Wed, 10 Jul 2024
+ 14:56:31 -0700 (PDT)
+Date: Wed, 10 Jul 2024 14:56:30 -0700
+In-Reply-To: <CAF7b7mogOgTs5FZMfuUDms2uHqy3_CNu7p=3TanLzHkem=EMyA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240706112116.24543-29-wsa+renesas@sang-engineering.com>
+Mime-Version: 1.0
+References: <20240710174031.312055-1-pbonzini@redhat.com> <20240710174031.312055-3-pbonzini@redhat.com>
+ <CAF7b7mogOgTs5FZMfuUDms2uHqy3_CNu7p=3TanLzHkem=EMyA@mail.gmail.com>
+Message-ID: <Zo8DjhQq3GOpmO5f@google.com>
+Subject: Re: [PATCH v5 2/7] KVM: Add KVM_PRE_FAULT_MEMORY vcpu ioctl to
+ pre-populate guest memory
+From: Sean Christopherson <seanjc@google.com>
+To: Anish Moorthy <amoorthy@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	isaku.yamahata@intel.com, binbin.wu@linux.intel.com, xiaoyao.li@intel.com, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Wolfram,
+On Wed, Jul 10, 2024, Anish Moorthy wrote:
+> On Wed, Jul 10, 2024 at 10:41=E2=80=AFAM Paolo Bonzini <pbonzini@redhat.c=
+om> wrote:
+> >
+> > +       if (!PAGE_ALIGNED(range->gpa) ||
+> > +           !PAGE_ALIGNED(range->size) ||
+> > ...
+> > +               return -EINVAL;
+>=20
+> If 'gpa' and 'size' must be page-aligned anyways, doesn't it make
+> sense to just take a 'gfn' and 'num_pages'  and eliminate this error
+> condition?
 
-On Sat, Jul 06, 2024 at 01:20:28PM GMT, Wolfram Sang wrote:
-> Change the wording of this driver wrt. the newest I2C v7 and SMBus 3.2
-> specifications and replace "master/slave" with more appropriate terms.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-...
-
-> -#define LS2X_CTR_MST		BIT(5) /* 0: Slave mode 1: Master mode */
-> +#define LS2X_CTR_MST		BIT(5) /* 0: Target mode 1: Controller mode */
-
-heh! I believe MST stands for master, but this is one of those
-cases where it doesn't make sense to change as the naming it's
-imposed by the hardware specs.
-
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
-
-Thanks,
-Andi
+The downside is that taking gfn+num_pages prevents supporting sub-page pre-=
+faulting
+in the future.  I highly doubt that sub-page mappings will ever be a thing =
+in KVM,
+but two PAGE_ALIGNED() checks is super cheap, so it's soft of a "why not?" =
+scenario.
 
