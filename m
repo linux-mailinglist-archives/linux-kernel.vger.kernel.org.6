@@ -1,312 +1,194 @@
-Return-Path: <linux-kernel+bounces-246820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AA5F92C794
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 02:22:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 647C692C79E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 02:24:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 263C71F23C49
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:22:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20861282E9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38D912DD9B;
-	Wed, 10 Jul 2024 00:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7B14A07;
+	Wed, 10 Jul 2024 00:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EVV77sFc"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PuZKSTrB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453FB8F66
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 00:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B071366
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 00:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720570703; cv=none; b=nkicNR89jVEvp6ZxwYrHP4wL//TH0qJm7kdVjMSUCQp9JW91c3qUQJVXeGzFZ8xdD0mf3gsEYjrvTRpid9slLEIp0ddNbxVGTEK70duMzOH5IfNemBEyWfQcIX/Bj8F+z+OvJOVq6Y76bhVQRuWtAYEYXGKT3l6KX+/U8xhbo68=
+	t=1720571021; cv=none; b=VtQyJbUK70Z0H0wtrmBUPvpdUNb4Va9CRaOEpF4OrJwyWR8qMUYS833x8Zkbe1n3ManJUvNSdPnbJG/Yb/QlUhu6i30r+y9XLWZQmWJSHzAwUc29b8YfilmkJepSTdlwMrLkLHsJycFklKleKe1yHPhW5D3WuKIJLLOOVsG0q6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720570703; c=relaxed/simple;
-	bh=p9TCrtunq3Sc+tHM9HSo0pjT1D7aMbYnoIhXBBRGHcA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AlvVwhTteVHVQD5DtNN9Ba0rS0OuC9M7AzxVzhhw2S4mmSml9OvoADdYmYcavg0M9P2/7MnwtzIGh/RUJgsu1O4zv64HkrIpd0kML1IqR3yBQowH8adDc5r+9PZqWUQ0i2svC0Yv/I+HZ64jT0BY91rNNMjlPf4/JSp8WkdqKMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EVV77sFc; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-64f30b1f8ecso86720807b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 17:18:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720570696; x=1721175496; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5P7T8nlF1fJQfwxNLMQaeLRVD2aIiRw+Td5GpIM/t7s=;
-        b=EVV77sFceVqLWviNlasFmMPXU4GBHJpENMZH+Sm/tHPX0TueSjK0ZKKCFVJYMSvNDs
-         reOH61jlO3qdfcn85MDS69sd0u0z2PaX2tkL2SumrxgSCDJASw4I4k4T/vrSOf5/PI/S
-         o/0rKIrMrafJDGJzLCcQ9gFNUbhyT1FSl//biVrprxtE5umFIri2bP5/3BPMs+nHkV80
-         RvSB6kg4gO+DOlNId2ampA+XNE3J+RrBGzOimDFJsFPBeG8UeftfdAnuhyhmR1M0gHeh
-         HKzeFZow9jYU8bsN0lY2yIazW9QYEScP2bu/ncwvzuj1bZ3rh1PLNGxsYv0LhKPlNzB8
-         Sfqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720570696; x=1721175496;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5P7T8nlF1fJQfwxNLMQaeLRVD2aIiRw+Td5GpIM/t7s=;
-        b=e0FvFec6BUKeFgqywGV+pn0fjfpLOFtL5xXcF5jh6utLX4x83yLPxUDnk/NASasG4N
-         sd89aZjM+G4PxbpaHeNn2272+9+Hd7PuOYAx+MQ/WpzgI3zK7an3OA13ivjXQEWKQTIi
-         WA6u2BEay7LliWce3u6eQ3o32mqZ85990pStbNnaIZjKhkOj06KqIApb6EXPf/y5EVaY
-         IIR/pS7oZCsEvOeFZp8IrCFPafRLMgWCSmQx694cCpaP+M7sX/BKJ03e2O6OgvAPAh9J
-         jI7ejskY+X8nykycZcZMKB1G8iKnq2Lp/HqfF5YiIKGtDGNjB8Aac062a7Gvp/AYFtgm
-         mOng==
-X-Forwarded-Encrypted: i=1; AJvYcCXuZlydyv2rK1sjxEHDGg4bK+vI353QzgPcjQ/8xf5cPoOYjMj+K6iW/L0117RKhlgvxsksFd2mlFyuPEbclLwtyi/bVz+8FsGUyPxD
-X-Gm-Message-State: AOJu0YyAR6xX9G+TH1XuxQy2ngMuVuHudykXkAwujaPQMYSV/sx0KRPs
-	HOUq+rVgeKyqXoTfrhGcQ2+EAUHQO7Y+dydfpWL+kn+J/8lGVHVGOCYjyjEYVWi6YFprOr94pZo
-	Cbgvtpre5rVscpRqN8FJgPw==
-X-Google-Smtp-Source: AGHT+IFcaWW5jqfEL6UmmKDurzwGMgILdQq8qULJRfWHlLzreMoST4DZONBBVue+Todgr1TAQxDVXsqBdlPZBjt4Ag==
-X-Received: from almasrymina.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:4bc5])
- (user=almasrymina job=sendgmr) by 2002:a05:690c:4882:b0:627:a787:abf4 with
- SMTP id 00721157ae682-658eed5ddcamr1032287b3.3.1720570696535; Tue, 09 Jul
- 2024 17:18:16 -0700 (PDT)
-Date: Wed, 10 Jul 2024 00:17:46 +0000
-In-Reply-To: <20240710001749.1388631-1-almasrymina@google.com>
+	s=arc-20240116; t=1720571021; c=relaxed/simple;
+	bh=V/QakQQ7p4VjkeFT81ZqacA3tqktDnAZO8yv5atGPzI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NujmyxZn/aDuRUF+Nb57zHlLtT9ApOcnk4RIVOs/arnwonjOaI5BAYEChwvUOit0Jv+azRcnKfC+rKrqGOPppni+HCNJBH3+qPHiIquCQKCklNSLiUQrzFZWMVx4pKnWfhF0NAp2C1xRwtOLc22aCRBAUz4dz49XAyAAI8K2JC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PuZKSTrB; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720571018;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m98QTRZcoM7cdLTRv8nzQmeQDuHjle0ViPXCEKEAop4=;
+	b=PuZKSTrBOGLUBxSBSHvcAii1RDj+Hy86R8DeCoKqscexKvkcUmjMI7d4OOq9+ynskJKznS
+	W4Uf4l96NZtHuTBekf6/vqCupwP9UtPCyjEKY/5FL2taD3u7Nn3X5Ocya3ADCzNfFQXk5F
+	babKDYdjEMMjog6fUNkHlv216rnoM9g=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-145-YXwUBUYfMx6dbCnPTyBczQ-1; Tue,
+ 09 Jul 2024 20:23:33 -0400
+X-MC-Unique: YXwUBUYfMx6dbCnPTyBczQ-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 762891954B14;
+	Wed, 10 Jul 2024 00:23:31 +0000 (UTC)
+Received: from [10.22.34.7] (unknown [10.22.34.7])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6EF0819560AE;
+	Wed, 10 Jul 2024 00:23:29 +0000 (UTC)
+Message-ID: <3dd64de1-8762-4870-84b3-fb2c5234f736@redhat.com>
+Date: Tue, 9 Jul 2024 20:23:28 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240710001749.1388631-1-almasrymina@google.com>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Message-ID: <20240710001749.1388631-14-almasrymina@google.com>
-Subject: [PATCH net-next v16 13/13] netdev: add dmabuf introspection
-From: Mina Almasry <almasrymina@google.com>
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org
-Cc: Mina Almasry <almasrymina@google.com>, Donald Hunter <donald.hunter@gmail.com>, 
-	Jakub Kicinski <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, 
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, 
-	"=?UTF-8?q?Christian=20K=C3=B6nig?=" <christian.koenig@amd.com>, Bagas Sanjaya <bagasdotme@gmail.com>, 
-	Christoph Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>, Taehee Yoo <ap420073@gmail.com>, 
-	Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH-cgroup v2] cgroup: Show # of subsystem CSSes in root
+ cgroup.stat
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Jonathan Corbet <corbet@lwn.net>,
+ cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240709132814.2198740-1-longman@redhat.com>
+ <Zo3C-77TnViiOi6d@google.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <Zo3C-77TnViiOi6d@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Add dmabuf information to page_pool stats:
+On 7/9/24 19:08, Roman Gushchin wrote:
+> On Tue, Jul 09, 2024 at 09:28:14AM -0400, Waiman Long wrote:
+>> The /proc/cgroups file shows the number of cgroups for each of the
+>> subsystems.  With cgroup v1, the number of CSSes is the same as the
+>> number of cgroups. That is not the case anymore with cgroup v2. The
+>> /proc/cgroups file cannot show the actual number of CSSes for the
+>> subsystems that are bound to cgroup v2.
+>>
+>> So if a v2 cgroup subsystem is leaking cgroups (usually memory cgroup),
+>> we can't tell by looking at /proc/cgroups which cgroup subsystems may be
+>> responsible.  This patch adds CSS counts in the cgroup_subsys structure
+>> to keep track of the number of CSSes for each of the cgroup subsystems.
+>>
+>> As cgroup v2 had deprecated the use of /proc/cgroups, the root
+>> cgroup.stat file is extended to show the number of outstanding CSSes
+>> associated with all the non-inhibited cgroup subsystems that have been
+>> bound to cgroup v2.  This will help us pinpoint which subsystems may be
+>> responsible for the increasing number of dying (nr_dying_descendants)
+>> cgroups.
+>>
+>> The cgroup-v2.rst file is updated to discuss this new behavior.
+>>
+>> With this patch applied, a sample output from root cgroup.stat file
+>> was shown below.
+>>
+>> 	nr_descendants 53
+>> 	nr_dying_descendants 34
+>> 	nr_cpuset 1
+>> 	nr_cpu 40
+>> 	nr_io 40
+>> 	nr_memory 87
+>> 	nr_perf_event 54
+>> 	nr_hugetlb 1
+>> 	nr_pids 53
+>> 	nr_rdma 1
+>> 	nr_misc 1
+>>
+>> In this particular case, it can be seen that memory cgroup is the most
+>> likely culprit for causing the 34 dying cgroups.
+>>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+>>   Documentation/admin-guide/cgroup-v2.rst | 10 ++++++++--
+>>   include/linux/cgroup-defs.h             |  3 +++
+>>   kernel/cgroup/cgroup.c                  | 19 +++++++++++++++++++
+>>   3 files changed, 30 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+>> index 52763d6b2919..65af2f30196f 100644
+>> --- a/Documentation/admin-guide/cgroup-v2.rst
+>> +++ b/Documentation/admin-guide/cgroup-v2.rst
+>> @@ -981,6 +981,12 @@ All cgroup core files are prefixed with "cgroup."
+>>   		A dying cgroup can consume system resources not exceeding
+>>   		limits, which were active at the moment of cgroup deletion.
+>>   
+>> +	  nr_<cgroup_subsys>
+>> +		Total number of cgroups associated with that cgroup
+>> +		subsystem, e.g. cpuset or memory.  These cgroup counts
+>> +		will only be shown in the root cgroup and for subsystems
+>> +		bound to cgroup v2.
+>> +
+>>     cgroup.freeze
+>>   	A read-write single value file which exists on non-root cgroups.
+>>   	Allowed values are "0" and "1". The default is "0".
+>> @@ -2930,8 +2936,8 @@ Deprecated v1 Core Features
+>>   
+>>   - "cgroup.clone_children" is removed.
+>>   
+>> -- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" file
+>> -  at the root instead.
+>> +- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" or
+>> +  "cgroup.stat" files at the root instead.
+>>   
+>>   
+>>   Issues with v1 and Rationales for v2
+>> diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+>> index b36690ca0d3f..522ab77f0406 100644
+>> --- a/include/linux/cgroup-defs.h
+>> +++ b/include/linux/cgroup-defs.h
+>> @@ -776,6 +776,9 @@ struct cgroup_subsys {
+>>   	 * specifies the mask of subsystems that this one depends on.
+>>   	 */
+>>   	unsigned int depends_on;
+>> +
+>> +	/* Number of CSSes, used only for /proc/cgroups */
+>> +	atomic_t nr_csses;
+> I believe it should be doable without atomics because most of css
+> operations are already synchronized using the cgroup mutex.
+css_create() was protected under cgroup_mutex, but I don't believe 
+css_free_rwork_fn() is. It is called from the kworker. So atomic_t is 
+still needed.
+>
+> Other than that, I believe that this information is useful. Maybe
+> it can be retrieved using drgn/bpf iterator, but adding this functionality
+> to the kernel makes it easier to retrieve and the overhead is modest.
+>
+> Also, if you add it to the cgroupfs, why not make it fully hierarchical
+> as existing entries in cgroup.stat. And if not, I'd agree with Johannes
+> that it looks like the debugfs material.
 
-$ ./cli.py --spec ../netlink/specs/netdev.yaml --dump page-pool-get
-...
- {'dmabuf': 10,
-  'id': 456,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 455,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 454,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 453,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 452,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 451,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 450,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
- {'dmabuf': 10,
-  'id': 449,
-  'ifindex': 3,
-  'inflight': 1023,
-  'inflight-mem': 4190208},
+To make it hierarchical, I would have to store a nr_descendants and 
+nr_dying_descendants in each css, just like the corresponding ones in 
+cgroup. I think it is doable, but the patch will be much more complex.
 
-And queue stats:
+Cheers,
+Longman
 
-$ ./cli.py --spec ../netlink/specs/netdev.yaml --dump queue-get
-...
-{'dmabuf': 10, 'id': 8, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 9, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 10, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 11, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 12, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 13, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 14, 'ifindex': 3, 'type': 'rx'},
-{'dmabuf': 10, 'id': 15, 'ifindex': 3, 'type': 'rx'},
-
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Mina Almasry <almasrymina@google.com>
-
----
- Documentation/netlink/specs/netdev.yaml | 10 ++++++++++
- include/uapi/linux/netdev.h             |  2 ++
- net/core/netdev-genl.c                  | 10 ++++++++++
- net/core/page_pool_user.c               |  4 ++++
- tools/include/uapi/linux/netdev.h       |  2 ++
- 5 files changed, 28 insertions(+)
-
-diff --git a/Documentation/netlink/specs/netdev.yaml b/Documentation/netlink/specs/netdev.yaml
-index 0c747530c275e..08412c279297b 100644
---- a/Documentation/netlink/specs/netdev.yaml
-+++ b/Documentation/netlink/specs/netdev.yaml
-@@ -167,6 +167,10 @@ attribute-sets:
-           "re-attached", they are just waiting to disappear.
-           Attribute is absent if Page Pool has not been detached, and
-           can still be used to allocate new memory.
-+      -
-+        name: dmabuf
-+        doc: ID of the dmabuf this page-pool is attached to.
-+        type: u32
-   -
-     name: page-pool-info
-     subset-of: page-pool
-@@ -268,6 +272,10 @@ attribute-sets:
-         name: napi-id
-         doc: ID of the NAPI instance which services this queue.
-         type: u32
-+      -
-+        name: dmabuf
-+        doc: ID of the dmabuf attached to this queue, if any.
-+        type: u32
- 
-   -
-     name: qstats
-@@ -543,6 +551,7 @@ operations:
-             - inflight
-             - inflight-mem
-             - detach-time
-+            - dmabuf
-       dump:
-         reply: *pp-reply
-       config-cond: page-pool
-@@ -607,6 +616,7 @@ operations:
-             - type
-             - napi-id
-             - ifindex
-+            - dmabuf
-       dump:
-         request:
-           attributes:
-diff --git a/include/uapi/linux/netdev.h b/include/uapi/linux/netdev.h
-index 91bf3ecc5f1d9..7c308f04e7a06 100644
---- a/include/uapi/linux/netdev.h
-+++ b/include/uapi/linux/netdev.h
-@@ -93,6 +93,7 @@ enum {
- 	NETDEV_A_PAGE_POOL_INFLIGHT,
- 	NETDEV_A_PAGE_POOL_INFLIGHT_MEM,
- 	NETDEV_A_PAGE_POOL_DETACH_TIME,
-+	NETDEV_A_PAGE_POOL_DMABUF,
- 
- 	__NETDEV_A_PAGE_POOL_MAX,
- 	NETDEV_A_PAGE_POOL_MAX = (__NETDEV_A_PAGE_POOL_MAX - 1)
-@@ -131,6 +132,7 @@ enum {
- 	NETDEV_A_QUEUE_IFINDEX,
- 	NETDEV_A_QUEUE_TYPE,
- 	NETDEV_A_QUEUE_NAPI_ID,
-+	NETDEV_A_QUEUE_DMABUF,
- 
- 	__NETDEV_A_QUEUE_MAX,
- 	NETDEV_A_QUEUE_MAX = (__NETDEV_A_QUEUE_MAX - 1)
-diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
-index bd54cf50b658a..e944fd56c6b8e 100644
---- a/net/core/netdev-genl.c
-+++ b/net/core/netdev-genl.c
-@@ -293,6 +293,7 @@ static int
- netdev_nl_queue_fill_one(struct sk_buff *rsp, struct net_device *netdev,
- 			 u32 q_idx, u32 q_type, const struct genl_info *info)
- {
-+	struct net_devmem_dmabuf_binding *binding;
- 	struct netdev_rx_queue *rxq;
- 	struct netdev_queue *txq;
- 	void *hdr;
-@@ -312,6 +313,15 @@ netdev_nl_queue_fill_one(struct sk_buff *rsp, struct net_device *netdev,
- 		if (rxq->napi && nla_put_u32(rsp, NETDEV_A_QUEUE_NAPI_ID,
- 					     rxq->napi->napi_id))
- 			goto nla_put_failure;
-+
-+		binding = (struct net_devmem_dmabuf_binding *)
-+				  rxq->mp_params.mp_priv;
-+		if (binding) {
-+			if (nla_put_u32(rsp, NETDEV_A_QUEUE_DMABUF,
-+					binding->id))
-+				goto nla_put_failure;
-+		}
-+
- 		break;
- 	case NETDEV_QUEUE_TYPE_TX:
- 		txq = netdev_get_tx_queue(netdev, q_idx);
-diff --git a/net/core/page_pool_user.c b/net/core/page_pool_user.c
-index 3a3277ba167b1..ca13363aea343 100644
---- a/net/core/page_pool_user.c
-+++ b/net/core/page_pool_user.c
-@@ -212,6 +212,7 @@ static int
- page_pool_nl_fill(struct sk_buff *rsp, const struct page_pool *pool,
- 		  const struct genl_info *info)
- {
-+	struct net_devmem_dmabuf_binding *binding = pool->mp_priv;
- 	size_t inflight, refsz;
- 	void *hdr;
- 
-@@ -241,6 +242,9 @@ page_pool_nl_fill(struct sk_buff *rsp, const struct page_pool *pool,
- 			 pool->user.detach_time))
- 		goto err_cancel;
- 
-+	if (binding && nla_put_u32(rsp, NETDEV_A_PAGE_POOL_DMABUF, binding->id))
-+		goto err_cancel;
-+
- 	genlmsg_end(rsp, hdr);
- 
- 	return 0;
-diff --git a/tools/include/uapi/linux/netdev.h b/tools/include/uapi/linux/netdev.h
-index 91bf3ecc5f1d9..7c308f04e7a06 100644
---- a/tools/include/uapi/linux/netdev.h
-+++ b/tools/include/uapi/linux/netdev.h
-@@ -93,6 +93,7 @@ enum {
- 	NETDEV_A_PAGE_POOL_INFLIGHT,
- 	NETDEV_A_PAGE_POOL_INFLIGHT_MEM,
- 	NETDEV_A_PAGE_POOL_DETACH_TIME,
-+	NETDEV_A_PAGE_POOL_DMABUF,
- 
- 	__NETDEV_A_PAGE_POOL_MAX,
- 	NETDEV_A_PAGE_POOL_MAX = (__NETDEV_A_PAGE_POOL_MAX - 1)
-@@ -131,6 +132,7 @@ enum {
- 	NETDEV_A_QUEUE_IFINDEX,
- 	NETDEV_A_QUEUE_TYPE,
- 	NETDEV_A_QUEUE_NAPI_ID,
-+	NETDEV_A_QUEUE_DMABUF,
- 
- 	__NETDEV_A_QUEUE_MAX,
- 	NETDEV_A_QUEUE_MAX = (__NETDEV_A_QUEUE_MAX - 1)
--- 
-2.45.2.803.g4e1b14247a-goog
+>
+> Thanks!
+>
 
 
