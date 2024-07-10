@@ -1,140 +1,145 @@
-Return-Path: <linux-kernel+bounces-247699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D98A92D358
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:49:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A09592D35B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE9751F24378
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:49:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16ADEB21E87
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9EA13D501;
-	Wed, 10 Jul 2024 13:49:23 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1687919344F;
+	Wed, 10 Jul 2024 13:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=blackhole.kfki.hu header.i=@blackhole.kfki.hu header.b="Ek1pH4Tx"
+Received: from smtp2-kfki.kfki.hu (smtp2-kfki.kfki.hu [148.6.0.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31165190071
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9762D192B8F;
+	Wed, 10 Jul 2024 13:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.6.0.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720619362; cv=none; b=PSzmm8IoRYwBfm/zq2H5wBV6WW0jxWeSO9tfQo0wvHILpA9f9cPFw7IEIYdOIz6QLxFrIJO1BghdFIQbTk0qTmsvLkLMCoDYouZUDacyyAcBoDCyYtUdqMGbmNFc2BjngGYMqUldBOfXm0ar+1Esc3FtKQR1cr+U+cheA19dCho=
+	t=1720619373; cv=none; b=m1jN3gvGSn4l9JtjrqxFBK6iqhd3r9MZVQuXJGopj+vT31JLMeZbpXabWcWZPJk1sia2MtdJlKIdFXNcrrvl5zcss1BX7ShmHe7inefdvy5keEF/MZw8ezSvFOVg+5Tb8lPcHW9rq15gQee1aRHOXj9RRykiAvzZ/lb+qnKk4Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720619362; c=relaxed/simple;
-	bh=Ic+gqgDwUChwMcSG9fEkMsbq69XSE2/ufEDu0IWgNf0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=n0VBVytIKfy/KQN6QnCd6clLe3tBCMvxwhbXXtK7kUmpHVwDEVUpVNMFdvrL2RQOXQyogQE5dBz1Z2G/VdYsAWi0xna06dhI0TfRVnacaBw+IvPOH8jeAbCVAHy9oIYswFMi0RVrcDl1pSaZ5ilSvALl1wpHGPF/+MWRC74Gcbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-377160ff0adso65630085ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:49:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720619360; x=1721224160;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=izg+65yPEecv6UGK5yLFzhHTjabAcTQBYEicnAwokss=;
-        b=Ax0Y8X/Be3vvFKIIK0ipYgj1nCcito9ncFyYLwYigVqT/a2+PxHlmcBKjog0Gp1Upa
-         wBVRqCJ5aE+Wl6VH96MXBt7mNN4RIdU79mzoePmaOkLJmnWm7cAwdCgIr9jELd9gB35a
-         SrneF8iQ4ZqI6qQ7dmyGQLUltzLvvCBD/2ho8pVsSaWZ+wheCnONsh8RKOiBZVeVTABP
-         RZoWHCOYN2qoWMiiPhqT7E6u3RzxzudIeoQAL0D+upv0DBtXwh19xI7qtc8uzT9RicyM
-         fs873a0TxjTzTaP46YC5QTwvNgmDKkDmyRpjRnv36CxZj0DBiq9h/aFwE9ZAMJ3cqb+P
-         4e2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU+bmskeF3nkdF7nmRqyhAtxn6dZmxlEnzZxHrgArDbTHQWB03SbGlzQH/Nk9jUlnX2kXnLgGLigU4d+Yzf6XIVP9B/xsAqk7sNEKMM
-X-Gm-Message-State: AOJu0YxrICYu6rHyc2yxZGi0OBJLo99ikDBV9jiNOtLW/ypR+lCh1VEd
-	cJ/MlOvfs9Rcrgwi035TOKdmWQZSsP3yviEIEboC1SZbaKkxGnXP10fcpZshKuPxA3HXpFXkgFW
-	ebO4oV2JMbMaoMb7QpWmc0HPCiCd9xwaQp8rkuB2NJtjKCWPGfvcW25E=
-X-Google-Smtp-Source: AGHT+IG3zd6do+vNXy0cTLbaZ3+letjqvrwczulHDE1YOgYhn4OZfQauZ2qxggIRztU8Ac8fjewItsUxszus5c23vX3tmkb7zhe1
+	s=arc-20240116; t=1720619373; c=relaxed/simple;
+	bh=pArGaEjrBNzLagzcUQy7sb6LrTj46+cz3oLQRUFO5fc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=H9GjNe2ew/a0eJYC0dh3qip94ACfk/n19u8PqpTY1lgDvfj1kg0ZbORbrk7IDQAeOL73fs9SmAguvC54mFNcqr77uKfzBlBwTCM7dzKqn9s7ro4pQBfg6sDDBvond2+0t2WfWsK9szehwqi43PV5eGEYQQXVHXy7vbhLn7YYrfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=blackhole.kfki.hu; spf=pass smtp.mailfrom=blackhole.kfki.hu; dkim=pass (1024-bit key) header.d=blackhole.kfki.hu header.i=@blackhole.kfki.hu header.b=Ek1pH4Tx; arc=none smtp.client-ip=148.6.0.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=blackhole.kfki.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blackhole.kfki.hu
+Received: from localhost (localhost [127.0.0.1])
+	by smtp2.kfki.hu (Postfix) with ESMTP id 1FAF8CC02C0;
+	Wed, 10 Jul 2024 15:49:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	blackhole.kfki.hu; h=mime-version:references:message-id
+	:in-reply-to:from:from:date:date:received:received:received
+	:received; s=20151130; t=1720619365; x=1722433766; bh=z2NQrFM4Pv
+	+TQSD3+eNSvbpMh/+SSq4xiXJqjXQ/tu4=; b=Ek1pH4TxHJwpAN0hMu9hMVhv9Z
+	l5CXszvln762kNrB8+xgru6P4K6jjK5bvUV1+cKAB0kSiT78eavk2Bnmy0DJTP13
+	/r4jqbQDxeNZu7TU3vZwsEibdDXGzV9UuxyQMVFc58JgBedvxgtvWvaknLXKj7ls
+	baHu41t64KpwaRsbQ=
+X-Virus-Scanned: Debian amavisd-new at smtp2.kfki.hu
+Received: from smtp2.kfki.hu ([127.0.0.1])
+	by localhost (smtp2.kfki.hu [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP; Wed, 10 Jul 2024 15:49:25 +0200 (CEST)
+Received: from blackhole.kfki.hu (blackhole.szhk.kfki.hu [148.6.240.2])
+	by smtp2.kfki.hu (Postfix) with ESMTP id 8F693CC02B4;
+	Wed, 10 Jul 2024 15:49:24 +0200 (CEST)
+Received: by blackhole.kfki.hu (Postfix, from userid 1000)
+	id 4C35134316B; Wed, 10 Jul 2024 15:49:24 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by blackhole.kfki.hu (Postfix) with ESMTP id 4B7B534316A;
+	Wed, 10 Jul 2024 15:49:24 +0200 (CEST)
+Date: Wed, 10 Jul 2024 15:49:24 +0200 (CEST)
+From: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+To: yyxRoy <yyxroy22@gmail.com>
+cc: Florian Westphal <fw@strlen.de>, 979093444@qq.com, coreteam@netfilter.org, 
+    David Miller <davem@davemloft.net>, edumazet@google.com, 
+    gregkh@linuxfoundation.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+    netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, pabeni@redhat.com, 
+    Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: Re: [PATCH] netfilter: conntrack: tcp: do not lower timeout to CLOSE
+ for in-window RSTs
+In-Reply-To: <20240710094554.483075-1-979093444@qq.com>
+Message-ID: <7dd0aeaf-20cc-877c-e2d9-e0b40d40567d@blackhole.kfki.hu>
+References: <20240708141206.GA5340@breakpoint.cc> <20240710094554.483075-1-979093444@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cc42:0:b0:381:c5f0:20ef with SMTP id
- e9e14a558f8ab-38a5407a014mr1222425ab.0.1720619360295; Wed, 10 Jul 2024
- 06:49:20 -0700 (PDT)
-Date: Wed, 10 Jul 2024 06:49:20 -0700
-In-Reply-To: <000000000000fa6583061ccb8e3d@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c3b0fc061ce4e979@google.com>
-Subject: Re: [syzbot] [bluetooth?] WARNING in __hci_cmd_sync_sk
-From: syzbot <syzbot+f52b6db1fe57bfb08d49@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-syzbot has found a reproducer for the following issue on:
+Hi,
 
-HEAD commit:    34afb82a3c67 Merge tag '6.10-rc6-smb3-server-fixes' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13f33371980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3456bae478301dc8
-dashboard link: https://syzkaller.appspot.com/bug?extid=f52b6db1fe57bfb08d49
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12514831980000
+On Wed, 10 Jul 2024, yyxRoy wrote:
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-34afb82a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0b9edcefcae7/vmlinux-34afb82a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b24e5f6f0192/bzImage-34afb82a.xz
+> On Mon, 8 Jul 2024 at 22:12, Florian Westphal <fw@strlen.de> wrote:
+>> We can track TTL/NH.
+>> We can track TCP timestamps.
+>>
+>> But how would we use such extra information?
+>> E.g. what I we observe:
+>>
+>> ACK, TTL 32
+>> ACK, TTL 31
+>> ACK, TTL 30
+>> ACK, TTL 29
+>>
+>> ... will we just refuse to update TTL?
+>> If we reduce it, any attacker can shrink it to needed low value
+>> to prevent later RST from reaching end host.
+>>
+>> If we don't, connection could get stuck on legit route change?
+>> What about malicious entities injecting FIN/SYN packets rather than RST?
+>>
+>> If we have last ts.echo from remote side, we can make it harder, but
+>> what do if RST doesn't carry timestamp?
+>>
+>> Could be perfectly legal when machine lost state, e.g. power-cycled.
+>> So we can't ignore such RSTs.
+>
+> I fully agree with your considerations. There are indeed some challenges 
+> with the proposed methods of enhancing checks on RSTs of in-window 
+> sequence numbers, TTL, and timestamps.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f52b6db1fe57bfb08d49@syzkaller.appspotmail.com
+Your original suggestion was "Verify the sequence numbers of TCP packets 
+strictly and do not change the timeout of the NAT mapping for an in-window 
+RST packet." Please note, you should demonstrate that such a mitigation
 
-------------[ cut here ]------------
-WARNING: CPU: 2 PID: 5955 at kernel/workqueue.c:2282 __queue_work+0xc13/0x1020 kernel/workqueue.c:2281
-Modules linked in:
-CPU: 2 PID: 5955 Comm: syz-executor Not tainted 6.10.0-rc7-syzkaller-00012-g34afb82a3c67 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__queue_work+0xc13/0x1020 kernel/workqueue.c:2281
-Code: 07 83 c0 03 38 d0 7c 09 84 d2 74 05 e8 76 07 91 00 8b 5b 2c 31 ff 83 e3 20 89 de e8 d7 3f 35 00 85 db 75 2a e8 ce 44 35 00 90 <0f> 0b 90 e9 4d f9 ff ff e8 c0 44 35 00 90 0f 0b 90 e9 fc f8 ff ff
-RSP: 0018:ffffc9000b9978f0 EFLAGS: 00010093
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff81589fb9
-RDX: ffff888021b64880 RSI: ffffffff81589fc2 RDI: 0000000000000005
-RBP: 0000000000000200 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff8880269bcad0
-R13: 0000000000000008 R14: ffff888043e61000 R15: ffff888043e61000
-FS:  00005555879ee500(0000) GS:ffff88806b200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f5840efeda0 CR3: 0000000027ff8000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- queue_work_on+0x11a/0x140 kernel/workqueue.c:2411
- queue_work include/linux/workqueue.h:621 [inline]
- hci_cmd_sync_run net/bluetooth/hci_sync.c:145 [inline]
- __hci_cmd_sync_sk+0x359/0xf80 net/bluetooth/hci_sync.c:167
- __hci_cmd_sync_status_sk net/bluetooth/hci_sync.c:252 [inline]
- __hci_cmd_sync_status+0x3f/0x160 net/bluetooth/hci_sync.c:278
- hci_dev_cmd+0x625/0x9c0 net/bluetooth/hci_core.c:747
- hci_sock_ioctl+0x4f3/0x880 net/bluetooth/hci_sock.c:1150
- sock_do_ioctl+0x116/0x280 net/socket.c:1222
- sock_ioctl+0x22e/0x6c0 net/socket.c:1341
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl fs/ioctl.c:893 [inline]
- __x64_sys_ioctl+0x193/0x220 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5840f757db
-Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 1c 48 8b 44 24 18 64 48 2b 04 25 28 00 00
-RSP: 002b:00007ffea3fbfcb0 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f5840f757db
-RDX: 00007ffea3fbfd28 RSI: 00000000400448dd RDI: 0000000000000003
-RBP: 00005555879ee4a8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000005 R15: 0000000000000009
- </TASK>
+- does not prevent (from conntrack point of view) currently
+   handled/properly closed traffic to be handled with the mitigation as
+   well
+- the mitigation actually does not pose an easier exhaustion of the
+   conntrack table, i.e. creating an easier DoS vulnerability against it.
 
+> However, we now have known that conntrack may be vulnerable to attacks 
+> and illegal state transitions when it receives in-window RSTs with 
+> incorrect TTL or data packets + RSTs. Is it possible to find better 
+> methods to mitigate these issues, as they may pose threats to Netfilter 
+> users?
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+The attack requires exhaustive port scanning. That can be prevented with 
+proper firewall rules.
+
+> Note: We have also tested other connection tracking frameworks (such as 
+> FreeBSD/OpenBSD PF). Also playing the roles as middleboxes, they only 
+> change the state of the connection when they receive an RST with the 
+> currently known precise sequence number, thus avoiding these attacks. 
+> Could Netfilter adopt similar measures or else to further mitigate these 
+> issues?
+
+I find it really strange that those frameworks would match only the exact 
+SEQ of the RST packets.
+
+Best regards,
+Jozsef
+-- 
+E-mail : kadlec@netfilter.org, kadlec@blackhole.kfki.hu, kadlecsik.jozsef@wigner.hu
+Address: Wigner Research Centre for Physics
+          H-1525 Budapest 114, POB. 49, Hungary
 
