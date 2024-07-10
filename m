@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel+bounces-247617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49EAB92D1FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:52:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C019092D201
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBDFDB25582
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:52:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7686F28366D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A6C1922D0;
-	Wed, 10 Jul 2024 12:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C0C1922D7;
+	Wed, 10 Jul 2024 12:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XVEugl14"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2Den/WGY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14421E4AF;
-	Wed, 10 Jul 2024 12:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F3718FDD4;
+	Wed, 10 Jul 2024 12:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720615967; cv=none; b=lk6og6os23zFwEJoOlpvpKfKqBJvnyM8IvuclVTEAxx7rrDP9ZRGkfPcy4566bYMcdynC/9VrAvQIH2foI7G5kQUOC4jarMcu5LF6jvT1QgCfgUYMsHzAPYPtaILwvQd0H6oej5CEmC99NboKY78Eo7R2uEdRs+Ep0y09wwtHMs=
+	t=1720616036; cv=none; b=EKOc4/7wnrL4qMa2dyPCY+i9XsAeGrcSlKyq2H+Cezr++QnIJZxxYNioH5eNdWMUR6vn4oswAHMHDrYvqSDJuVbjlnTDai9YjP8t/HA19V89JcfX/FyvnRKYo1FRWEaKKBgHRN/lz5XqjSFeb/Wcq0DUJrLflM/f/yY0hNiLqXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720615967; c=relaxed/simple;
-	bh=p5q5TLsWHcIM6y8JrIJcnyuApQufaQ+cFxvzYcEXVvw=;
+	s=arc-20240116; t=1720616036; c=relaxed/simple;
+	bh=bJytAGwJkb5+HzIS7Gvp673v6K6DW4WaBn/JLdIV3KM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qS7TraFig6ck0kOoF+J0kLknP30BRwuMKYRxavUPVHU1tDgeQGJVUR6WAYMoQHF7WEUVRxPXZwBA/Z0FvIP2fhmaG6RWBe+Zl/MI8Qf9uMDFv3HdAkAw6k7lZHDTgtEayaRtKMprKs7XYGzu8g3UHd5Iz82Mwb8Iw85d89J095Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XVEugl14; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF83AC32781;
-	Wed, 10 Jul 2024 12:52:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=d7yI4P87IK3lT5P3AlBpVJapFL4Jw7t+o1xCRI0tcxxcW81NcQrbEd2CRxAKjTY0ETAxY7KvgDJzDXKWmkRvSOHpHjVzlLiUe3MT5OpkrjAfXIvqCmkK1vOFDu8dqy45Q3Lj+EPdVv4G+1Piz/FuVyZbMChdqpJQvzVDPP7zDyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2Den/WGY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B824C32781;
+	Wed, 10 Jul 2024 12:53:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720615967;
-	bh=p5q5TLsWHcIM6y8JrIJcnyuApQufaQ+cFxvzYcEXVvw=;
+	s=korg; t=1720616035;
+	bh=bJytAGwJkb5+HzIS7Gvp673v6K6DW4WaBn/JLdIV3KM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XVEugl14Z5E3gEmEtdZjLR8QP38vInKvQ/Sj31RRAO355Hc5sAOuZHKFHctxgLJ3z
-	 w31TNMCkmYByNXQr2A3Uk3INxgCn2JX9qnrMtdvNL9XK9HGvX90qDZv4n0W9TqXR+1
-	 pYxB9/01Z1Z1LbUCTvI1OjOu6Fr25H1oINKMVoBc=
-Date: Wed, 10 Jul 2024 14:52:14 +0200
+	b=2Den/WGY0sejh17n67j3SEyKdZmX0zrIIMri8BnUZnE82L/yTsFi+prcUy4YBfeRM
+	 FG9pK6w8RlwwOj13V1yduyuqG3VCkI2vDFxpHKmqqJ6RR7MyIsWWbosRJtGx/M+WRp
+	 ILCy9eq20OwMQ5Ku6UIlLkJaKRAt6jFcXBHJu+ls=
+Date: Wed, 10 Jul 2024 14:53:53 +0200
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/13] staging: rtl8723bs: Remove unused macros starting
- with hal_com_h2c.h
-Message-ID: <2024071053-headdress-spiritual-4b23@gregkh>
-References: <cover.1720245061.git.philipp.g.hortmann@gmail.com>
+To: Jisheng Zhang <jszhang@kernel.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] serial: 8250: move mmp|pxa uart earlycon code and add
+ xscale earlycon
+Message-ID: <2024071028-deskbound-crisping-7f69@gregkh>
+References: <20240706101856.3077-1-jszhang@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,12 +54,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1720245061.git.philipp.g.hortmann@gmail.com>
+In-Reply-To: <20240706101856.3077-1-jszhang@kernel.org>
 
-On Sun, Jul 07, 2024 at 08:51:54AM +0200, Philipp Hortmann wrote:
->  12 files changed, 4 insertions(+), 2310 deletions(-)
+On Sat, Jul 06, 2024 at 06:18:56PM +0800, Jisheng Zhang wrote:
+> There are two other drivers that bind to "mrvl,mmp-uart": the 8250_of
+> and the 8250_pxa. The previous one is generic and the latter is binded
+> to ARCH_PXA || ARCH_MMP. Now we may have pxa programming compatible
+> HW to support, making use of the generic 8250_of seems a good idea.
+> However, there's no earlycon support if we go with this solution. So
+> move the mmp|pxa-uart earlycon code to core 8250_early.c.
+> 
+> At the same, add xscale earlycon support too, only build test since
+> I have no xscale machine any more.
 
-That's always a nice diffstat to apply, great work!
+When you have an "and" in the changelog, that means it should be 2
+patches.  Please split this up into one that does the move, and one that
+adds the new entry.
+
+thanks,
 
 greg k-h
 
