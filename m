@@ -1,152 +1,205 @@
-Return-Path: <linux-kernel+bounces-248388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF97592DC86
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:19:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A80492DC7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5B30284079
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:19:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE4CE2840E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:17:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0A9156F3C;
-	Wed, 10 Jul 2024 23:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A97154BFE;
+	Wed, 10 Jul 2024 23:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="Yey7/kAu"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t2haqyCc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364D514D457
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2991527A7;
+	Wed, 10 Jul 2024 23:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720653523; cv=none; b=PIQMKz3ylqdeWyLYdl+IniNSPkcZUQtC3/YSbalFVfWZiZksnNdudfSeCgVOrL0wpux4fEcppl+fEwjd5LBzqLIPRjBM3o99UwdhjMUk3OOAdr/7Ftd49vFosMrHI8dxzTsfAiFF3rBVT2NevDJBE4p/yWo1936+U0styvXDzFM=
+	t=1720653435; cv=none; b=sY+kDCI8oYhjV0HqZvsLGd1Q1dtWqVg4sgmnGhJTZ7otYJHUW7Duaa/Qe7IWKW2FFw0dHpsk8Lz0WPzZPRP88xyOdCDsF3LqvMZnuGoMHLG7D2ZhVtPV/QA9zxR2s5+OkMHxIRd+wPTCMVKEEwAi3Xgw7HmuZVlIo94G6zn1YxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720653523; c=relaxed/simple;
-	bh=/Z3LhZV9FBdTa0nv078PPSOZZz1Eynyr/1qLnzPpDH4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dj9dQf7n9vNVUiiQogpE9MSsp/DbkmMnYBcb7tYSMRurZfDcYZRk9p4LZi0jSmtKvxy3DVtVTo5wlnYWX0nCiixyISoPdyvy4QD5EONnj/k+Boimr5nUYPHMLb9H0Qv1r4ULSAy7K9VPL54Qtcxgf6Dj8DyTBB/b7t42aoBacCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=Yey7/kAu; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5004a.ext.cloudfilter.net ([10.0.29.221])
-	by cmsmtp with ESMTPS
-	id RcXKsciH0vH7lRgYcsFoNJ; Wed, 10 Jul 2024 23:17:06 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id RgYbscxTW0vWTRgYbsV0xj; Wed, 10 Jul 2024 23:17:05 +0000
-X-Authority-Analysis: v=2.4 cv=ffZmyFQF c=1 sm=1 tr=0 ts=668f1671
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
- a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=wYkD_t78qR0A:10 a=VwQbUJbxAAAA:8
- a=pGLkceISAAAA:8 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=twV4k4tpM6jbvoAuFuAA:9
- a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=TjNXssC_j7lpFel5tvFf:22
- a=cvBusfyB2V15izCimMoJ:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=kMfEEDYKHMIokzjHcMS3uX5TREDWKTeMbnyO8Tlp8ZQ=; b=Yey7/kAuGkQWaUkXdzhvE7MtbZ
-	Fka+U097WBwjTUiHBRvkS59k3pur9fzY9FFUlCRPABTGH+bzL+WvfkesEIPKKG9qW2Mrcrt/3UKym
-	lLz7nONovpggW4DRyTPjijfclbmwWoHFwgfPbCZsQ2COIDoF3jePJKC766jLAtGVsILezxjq3/XCV
-	xI25a0KqoFVGfL2NFar7pbc/Xk0VTG77NNJg1h1hWJqYvpLUbL7r8qSiT+l+qUfmje4n5MWMi4CcQ
-	wZ5tICMMdXUSIBGOFyfy3mtjBK5q7WvbkMgmmFO+Sg6Udb24FLQgwhV0H6A72zfOnReKdHtlsfOY0
-	m5d9xXNA==;
-Received: from [201.172.173.139] (port=39968 helo=[192.168.15.4])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sRgYa-004DUh-1x;
-	Wed, 10 Jul 2024 18:17:04 -0500
-Message-ID: <21e3d039-a447-4779-b751-4cbf9a4e7584@embeddedor.com>
-Date: Wed, 10 Jul 2024 17:17:03 -0600
+	s=arc-20240116; t=1720653435; c=relaxed/simple;
+	bh=Jd3wkWpGIxjVE8bZuw1tGBEUQpwx9hG4gsdHuzurtTM=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=INrFtldTCpPaz0e4n48DOVqUH2/M6A2NH3IcrZL+yU2X1Bd2BsnpLJVce+y2mcH69Dqf3sH0Blz71DbZtk8gmRabp5LsvLW07FsTUg7uDbcyzaxw8GgVjPamXXx5xD3skFl+wA9JJbqnF/SsZzTDm0cI9421s7AWDa+5Mu7cl78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t2haqyCc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ECB6C4AF07;
+	Wed, 10 Jul 2024 23:17:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720653435;
+	bh=Jd3wkWpGIxjVE8bZuw1tGBEUQpwx9hG4gsdHuzurtTM=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=t2haqyCcJw9sr2yZK5l1zj+YhLnEb/FRj6I69HzdAMOqFUg0ApMQesfJ95wG4i6N2
+	 pzDekhpOYN6r9sbty0qVx9g1Jvx+Y/8jCTEw/iL6sXgDvJn88FkIrR4croxZMHbl10
+	 /j4QO0CQWqxaSbmE2cZCtCT2nkwcuKFildztLjt3FSpqhyAEFVG+rFlsPpSlTGoPY2
+	 kKCZxDLLPKKkmaQ8mN4IgCNuSNq8d986tEHFVUvTszT9ipKROy0yGZbtXTe01fp0Ii
+	 jko+aFhjpzgeBBc3agNERAjpSmj6Qo7rP6ghntuTvWG1I59tup4bkc18Sq7acJ1ih3
+	 EqJtmZ46F9miw==
+Message-ID: <d36ff27b56b3e9c8ef490bfd9d24761d.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] media: venus: hfi_cmds: struct
- hfi_session_release_buffer_pkt: Add __counted_by annotation
-To: Kees Cook <kees@kernel.org>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
-Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240710230728.work.977-kees@kernel.org>
- <20240710230914.3156277-2-kees@kernel.org>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20240710230914.3156277-2-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.139
-X-Source-L: No
-X-Exim-ID: 1sRgYa-004DUh-1x
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.4]) [201.172.173.139]:39968
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 11
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfL7qjLcppnBU/xo0Iyjq4HQSLqkTLQzBqrWEtz0qoNqr6OTcy/lNwsLtNrCOqO2IcxkymGs9/huLG8MyZTOFbh7wDcPe9lRIRIH55vzqqQB35BEZ8IXN
- 1Glu8LMQGfG39GWqzI5ibavS+88KsNs+yNVkdz+hJeP9f+A1p+zhaK8XnW1pm6PhSmm2szpX+tH13pbQiVbjrlkxCdItkh62ETEBWqE2L5YlKOyY0tTu/c3B
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240623-th1520-clk-v2-2-ad8d6432d9fb@tenstorrent.com>
+References: <20240623-th1520-clk-v2-0-ad8d6432d9fb@tenstorrent.com> <20240623-th1520-clk-v2-2-ad8d6432d9fb@tenstorrent.com>
+Subject: Re: [PATCH v2 2/7] clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Drew Fustini <dfustini@tenstorrent.com>
+To: Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor+dt@kernel.org>, Drew Fustini <dfustini@tenstorrent.com>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, Fu Wei <wefu@redhat.com>, Guo Ren <guoren@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>, Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Yangtao Li <frank.li@vivo.com>
+Date: Wed, 10 Jul 2024 16:17:12 -0700
+User-Agent: alot/0.10
 
+Quoting Drew Fustini (2024-06-23 19:12:32)
+> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th=
+1520-ap.c
+> new file mode 100644
+> index 000000000000..982d4d40f783
+> --- /dev/null
+> +++ b/drivers/clk/thead/clk-th1520-ap.c
+> @@ -0,0 +1,1086 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2023 Jisheng Zhang <jszhang@kernel.org>
+> + * Copyright (C) 2023 Vivo Communication Technology Co. Ltd.
+> + *  Authors: Yangtao Li <frank.li@vivo.com>
+> + */
+> +
+> +#include <dt-bindings/clock/thead,th1520-clk-ap.h>
 
+Preferably include dt-bindings after linux includes.
 
-On 10/07/24 17:09, Kees Cook wrote:
-> The only direct user of struct hfi_session_release_buffer_pkt is
-> pkt_session_unset_buffers() which sets "num_buffers" before using it
-> as a loop counter for accessing "buffer_info". Add the __counted_by
-> annotation to reflect the relationship.
-> 
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
-> Cc: Vikash Garodia <quic_vgarodia@quicinc.com>
-> Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-> Cc: linux-media@vger.kernel.org
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: linux-hardening@vger.kernel.org
+> +#include <linux/bitfield.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/device.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#define TH1520_PLL_POSTDIV2    GENMASK(26, 24)
+> +#define TH1520_PLL_POSTDIV1    GENMASK(22, 20)
+> +#define TH1520_PLL_FBDIV       GENMASK(19, 8)
+> +#define TH1520_PLL_REFDIV      GENMASK(5, 0)
+> +#define TH1520_PLL_BYPASS      BIT(30)
+> +#define TH1520_PLL_DSMPD       BIT(24)
+> +#define TH1520_PLL_FRAC                GENMASK(23, 0)
+> +#define TH1520_PLL_FRAC_BITS    24
+[...]
+> +
+> +static unsigned long th1520_pll_vco_recalc_rate(struct clk_hw *hw,
+> +                                               unsigned long parent_rate)
+> +{
+> +       struct ccu_pll *pll =3D hw_to_ccu_pll(hw);
+> +       unsigned long div, mul, frac, rate =3D parent_rate;
+> +       unsigned int cfg0, cfg1;
+> +
+> +       regmap_read(pll->common.map, pll->common.cfg0, &cfg0);
+> +       regmap_read(pll->common.map, pll->common.cfg1, &cfg1);
+> +
+> +       mul =3D FIELD_GET(TH1520_PLL_FBDIV, cfg0);
+> +       div =3D FIELD_GET(TH1520_PLL_REFDIV, cfg0);
+> +       if (!(cfg1 & TH1520_PLL_DSMPD)) {
+> +               mul <<=3D TH1520_PLL_FRAC_BITS;
+> +               frac =3D FIELD_GET(TH1520_PLL_FRAC, cfg1);
+> +               mul +=3D frac;
+> +               div <<=3D TH1520_PLL_FRAC_BITS;
+> +       }
+> +       rate =3D parent_rate * mul;
+> +       do_div(rate, div);
 
-Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+'rate' is only unsigned long, so do_div() isn't needed here. Perhaps if
+'parent_rate * mul' can overflow 32-bits then 'rate' should be
+u64.
 
-Thanks
---
-Gustavo
+> +       return rate;
+> +}
+> +
+> +static unsigned long th1520_pll_postdiv_recalc_rate(struct clk_hw *hw,
+> +                                                   unsigned long parent_=
+rate)
+> +{
+> +       struct ccu_pll *pll =3D hw_to_ccu_pll(hw);
+> +       unsigned long rate =3D parent_rate;
+> +       unsigned int cfg0, cfg1;
+> +
+> +       regmap_read(pll->common.map, pll->common.cfg0, &cfg0);
+> +       regmap_read(pll->common.map, pll->common.cfg1, &cfg1);
+> +
+> +       if (cfg1 & TH1520_PLL_BYPASS)
+> +               return rate;
+> +
+> +       do_div(rate, FIELD_GET(TH1520_PLL_POSTDIV1, cfg0) *
 
-> ---
->   drivers/media/platform/qcom/venus/hfi_cmds.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/hfi_cmds.h b/drivers/media/platform/qcom/venus/hfi_cmds.h
-> index 42825f07939d..1adf2d2ae5f2 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_cmds.h
-> +++ b/drivers/media/platform/qcom/venus/hfi_cmds.h
-> @@ -227,7 +227,7 @@ struct hfi_session_release_buffer_pkt {
->   	u32 extradata_size;
->   	u32 response_req;
->   	u32 num_buffers;
-> -	u32 buffer_info[];
-> +	u32 buffer_info[] __counted_by(num_buffers);
->   };
->   
->   struct hfi_session_release_resources_pkt {
+Same, 'rate' is unsigned long. Did you get some compilation error
+without this? How big is the divisor going to be? The fields are only
+3-bits wide, so the multiplication would fit into a u32 just fine. Given
+that 'rate' is unsigned long though I think you can just put the
+multiplication result into a local variable that's also unsigned long
+and then just write the divide with unsigned longs
+
+	div =3D FIELD_GET(...) * FIELD_GET(...);
+
+	return rate / div;
+
+> +                    FIELD_GET(TH1520_PLL_POSTDIV2, cfg0));
+> +
+> +       return rate;
+> +}
+> +
+> +static unsigned long ccu_pll_recalc_rate(struct clk_hw *hw,
+> +                                        unsigned long parent_rate)
+> +{
+> +       unsigned long rate =3D parent_rate;
+> +
+> +       rate =3D th1520_pll_vco_recalc_rate(hw, rate);
+> +       rate =3D th1520_pll_postdiv_recalc_rate(hw, rate);
+> +
+> +       return rate;
+> +}
+
+Please fold this in
+
+----8<---
+diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th15=
+20-ap.c
+index 982d4d40f783..0c3821d50765 100644
+--- a/drivers/clk/thead/clk-th1520-ap.c
++++ b/drivers/clk/thead/clk-th1520-ap.c
+@@ -411,7 +411,7 @@ static const struct clk_parent_data c910_i0_parents[] =
+=3D {
+ 	{ .index =3D 0 }
+ };
+=20
+-struct ccu_mux c910_i0_clk =3D {
++static struct ccu_mux c910_i0_clk =3D {
+ 	.mux	=3D TH_CCU_ARG(1, 1),
+ 	.common	=3D {
+ 		.clkid		=3D CLK_C910_I0,
+@@ -428,7 +428,7 @@ static const struct clk_parent_data c910_parents[] =3D {
+ 	{ .hw =3D &cpu_pll1_clk.common.hw }
+ };
+=20
+-struct ccu_mux c910_clk =3D {
++static struct ccu_mux c910_clk =3D {
+ 	.mux	=3D TH_CCU_ARG(0, 1),
+ 	.common	=3D {
+ 		.clkid		=3D CLK_C910,
+@@ -845,7 +845,7 @@ static const struct clk_parent_data uart_sclk_parents[]=
+ =3D {
+ 	{ .index =3D 0 },
+ };
+=20
+-struct ccu_mux uart_sclk =3D {
++static struct ccu_mux uart_sclk =3D {
+ 	.mux	=3D TH_CCU_ARG(0, 1),
+ 	.common	=3D {
+ 		.clkid          =3D CLK_UART_SCLK,
 
