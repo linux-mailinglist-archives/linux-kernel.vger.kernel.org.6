@@ -1,63 +1,65 @@
-Return-Path: <linux-kernel+bounces-247570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E8CD92D150
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:11:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8104792D151
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FBB01C2165B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:11:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34AD31F2460E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D706B191490;
-	Wed, 10 Jul 2024 12:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A12191477;
+	Wed, 10 Jul 2024 12:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XUyTJ60d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6NZWUFu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E38189F54;
-	Wed, 10 Jul 2024 12:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1FF190044;
+	Wed, 10 Jul 2024 12:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720613481; cv=none; b=BknMaXsqWGA9LRq8ewTwAuPj5+NDmOreFtCV0Ylb8B3WctyTiXg2q3ALDj4a3PNzpuv7jnKe6kCIxXgMegYOYGp8QAMAFN1eeBqZZSiHXzJGT0XWVFeQPigOc6mMaznNLpKagOPFkw3JMLLw/WBXa2EvQtpFDYjCF+gCeKcI4rE=
+	t=1720613502; cv=none; b=fjKjtEWYDdJAwcjQlsn70ELXIVUMQK8Fq1TETXmt6DEBWLLcyibTwdxZqrb9ofxx4uvbZX4Oq2cpzcBZ9Wg83Xu2GWBHclbAwjAug5yx4+FH8TFOuRKFV4r0fdluWh/L25Sccnu916pQMA74g1gjWsrpJE8ABP4upkrsBwZeS/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720613481; c=relaxed/simple;
-	bh=anmv0a+fn6y4MHTHMBE3LLoyPKbYLm/tq9yeIVSpZxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=lHJ1mzlf8rPtG7rHdzKwlG+oKI4DeUKBAcsDE4hASeGcFBtj1BOSTzADvoZBKvbPkdGRIGx9egIiilOHqocIVUW0hRNlZfVs5PmmomOgb+poMXGE4rTlIMY3H18VAtk9CM/O6Ooe4KjP2RuNv/3V/pZupsToF2lnQYLxaabT31o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XUyTJ60d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60D33C32781;
-	Wed, 10 Jul 2024 12:11:20 +0000 (UTC)
+	s=arc-20240116; t=1720613502; c=relaxed/simple;
+	bh=UurvNuYtwMtcWIKDARRq2Bnik8U4B3mY3wKPG7xV4pw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zd0U3KJLGukqAhvUXBq0x8kmwHKzVFRl3sQW4iQTmir3/s11SadaXIvYud9DA4vzfjzt7Yv3Ma2uG0Jj445QzBpSE0rWnPcdtfk/B/KvHkol1nUpZmGbyBJZmFOSRx4/+X4kfMBQPtqPQEryfXBFOrmP/DzmpnOI3XoF6yOfdvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6NZWUFu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28241C32781;
+	Wed, 10 Jul 2024 12:11:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720613480;
-	bh=anmv0a+fn6y4MHTHMBE3LLoyPKbYLm/tq9yeIVSpZxI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=XUyTJ60dp3PVIKShstrNhultd0dVL3IrKGUZ/0uIjYz28fuPv/iWlAiiDjJeG/1AK
-	 bdjfd3Bpf1PJdAywQZhTFfGx/nLSu0vD+yvCAQU/iN7jiBH6M3EqhVgudISK2KLKZ7
-	 ongZVBqPs4pGWGpqMr793T5e6kQlZY57a3YFDMkxrwTF9Pm6nPWnqCvEzBE4IRXqPg
-	 5axwV6tvC8fqjrD/v/OFnIYsdTnyctbNxaoKyJX1IkCHINoPoFXqaNsWErClbEPizz
-	 /U8b+WaLcHd3QSPfarA+/Ny+c1pmRKTXl9faaut/2qsLmQE9duJZNTHiz3zMVuhjyH
-	 EBmuA0K6S18vQ==
-Date: Wed, 10 Jul 2024 07:11:18 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, mhi@lists.linux.dev,
-	quic_vbadigan@quicinc.com, quic_ramkri@quicinc.com,
-	quic_nitegupt@quicinc.com, quic_skananth@quicinc.com,
-	quic_parass@quicinc.com, Manivannan Sadhasivam <mani@kernel.org>
-Subject: Re: [PATCH v7 2/4] PCI: qcom-ep: Add support for D-state change
- notification
-Message-ID: <20240710121118.GA240905@bhelgaas>
+	s=k20201202; t=1720613502;
+	bh=UurvNuYtwMtcWIKDARRq2Bnik8U4B3mY3wKPG7xV4pw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F6NZWUFu/No8NTOvvKb9LYVm32TiEC6YfZzQ9rP66+C3t7gEebuNCb3g5czsNx0Ad
+	 d1O30QXUgaGuUYzLpkwAoDbQILVIBFAGKjEpFQpTXmnXd9cwkfqWO3ZNa/1dciMmaH
+	 8MbuG4EA+vrFHpnTouhbDTdYyzpk6si8juUcPqS/sVjIXdLVMz8ThDvevCcDlncBqR
+	 MuCTxJ9S0mZnJA9H7CPG/DYoy0Dh7FF0DPtJzf8mEHaRlMwA1B4oA8c1BnTXK6dwKD
+	 EjyDoFRhPdMLRczBYepjDVr0I2YSxxmNQmrZN+VcdXeaDcPCg8g5IUNOTm3PUi/ww7
+	 32Ku/8xQDr+lQ==
+Date: Wed, 10 Jul 2024 13:11:36 +0100
+From: Will Deacon <will@kernel.org>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] arm64: hw_breakpoint: Save privilege of access
+ control via ptrace
+Message-ID: <20240710121136.GA14080@willie-the-truck>
+References: <20240709095506.9691-1-yangtiezhu@loongson.cn>
+ <20240709095506.9691-4-yangtiezhu@loongson.cn>
+ <20240709100515.GB12978@willie-the-truck>
+ <d72a04f5-7894-af6c-dd4a-c6728e936f73@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,65 +68,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240710-dstate_notifier-v7-2-8d45d87b2b24@quicinc.com>
+In-Reply-To: <d72a04f5-7894-af6c-dd4a-c6728e936f73@loongson.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Wed, Jul 10, 2024 at 04:38:15PM +0530, Krishna chaitanya chundru wrote:
-> Add support to pass D-state change notification to Endpoint
-> function driver.
-
-Blank line between paragraphs.
-
-> Read perst value to determine if the link is in D3Cold/D3hot.
-
-I assume this reads the state of the PERST# signal driven by the host.
-Style it to match the spec usage ("PERST#") to make that connection
-clearer.
-
-D3cold/D3hot is a device state and doesn't apply to a link.  Link
-states are L0, L1, L2, L3,etc.  Also in cover letter.
-
-I don't understand the connection between PERST# state and the device
-D state.  D3cold is defined to mean main power is absent.  Is the
-endpoint firmware still running when main power is absent?
-
-> Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
->  drivers/pci/controller/dwc/pcie-qcom-ep.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+On Tue, Jul 09, 2024 at 08:07:50PM +0800, Tiezhu Yang wrote:
+> On 07/09/2024 06:05 PM, Will Deacon wrote:
+> > On Tue, Jul 09, 2024 at 05:55:06PM +0800, Tiezhu Yang wrote:
+> > > diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
+> > > index 0d022599eb61..3b37c4a2e0d4 100644
+> > > --- a/arch/arm64/kernel/ptrace.c
+> > > +++ b/arch/arm64/kernel/ptrace.c
+> > > @@ -309,6 +309,7 @@ static struct perf_event *ptrace_hbp_create(unsigned int note_type,
+> > >  	attr.bp_addr	= 0;
+> > >  	attr.bp_len	= HW_BREAKPOINT_LEN_4;
+> > >  	attr.bp_type	= type;
+> > > +	attr.bp_priv	= AARCH64_BREAKPOINT_EL0;
+> > >  	attr.disabled	= 1;
+> > > 
+> > >  	bp = register_user_hw_breakpoint(&attr, ptrace_hbptriggered, NULL, tsk);
+> > > @@ -352,6 +353,7 @@ static int ptrace_hbp_fill_attr_ctrl(unsigned int note_type,
+> > >  	attr->bp_len	= len;
+> > >  	attr->bp_type	= type;
+> > >  	attr->bp_addr	+= offset;
+> > > +	attr->bp_priv	= ctrl.privilege;
+> > 
+> > Wait, so ptrace can now set breakpoints with arbitrary privileges?
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> index 236229f66c80..817fad805c51 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> @@ -648,6 +648,7 @@ static irqreturn_t qcom_pcie_ep_global_irq_thread(int irq, void *data)
->  	struct device *dev = pci->dev;
->  	u32 status = readl_relaxed(pcie_ep->parf + PARF_INT_ALL_STATUS);
->  	u32 mask = readl_relaxed(pcie_ep->parf + PARF_INT_ALL_MASK);
-> +	pci_power_t state;
->  	u32 dstate, val;
->  
->  	writel_relaxed(status, pcie_ep->parf + PARF_INT_ALL_CLEAR);
-> @@ -671,11 +672,16 @@ static irqreturn_t qcom_pcie_ep_global_irq_thread(int irq, void *data)
->  		dstate = dw_pcie_readl_dbi(pci, DBI_CON_STATUS) &
->  					   DBI_CON_STATUS_POWER_STATE_MASK;
->  		dev_dbg(dev, "Received D%d state event\n", dstate);
-> -		if (dstate == 3) {
-> +		state = dstate;
-> +		if (dstate == PCI_D3hot) {
->  			val = readl_relaxed(pcie_ep->parf + PARF_PM_CTRL);
->  			val |= PARF_PM_CTRL_REQ_EXIT_L1;
->  			writel_relaxed(val, pcie_ep->parf + PARF_PM_CTRL);
-> +
-> +			if (gpiod_get_value(pcie_ep->reset))
-> +				state = PCI_D3cold;
->  		}
-> +		pci_epc_dstate_notify(pci->ep.epc, state);
->  	} else if (FIELD_GET(PARF_INT_ALL_LINK_UP, status)) {
->  		dev_dbg(dev, "Received Linkup event. Enumeration complete!\n");
->  		dw_pcie_ep_linkup(&pci->ep);
+> The ptrace user should make sure the privilege is correct.
+> For example, the privilege is set as el0
+> in aarch64_point_encode_ctrl_reg() of GDB:
 > 
-> -- 
-> 2.42.0
+>   /* enabled at el0 */
+>   ctrl |= (2 << 1) | 1;
 > 
+> https://sourceware.org/git/?p=binutils-gdb.git;a=blob;f=gdb/nat/aarch64-hw-point.c#l135
+
+We shouldn't rely on userspace behaving correctly when dealing with
+privilege levels.
+
+Will
 
