@@ -1,144 +1,140 @@
-Return-Path: <linux-kernel+bounces-247865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1476C92D5BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:08:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1586992D5BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A099B243F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:08:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C616828742A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74451195F17;
-	Wed, 10 Jul 2024 16:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F081919538D;
+	Wed, 10 Jul 2024 16:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hKNTv/kB"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ROHHWhpW"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F571922C0
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22EB1946AD
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720627653; cv=none; b=PyHTSRBX8raYMzvnX1j5RqsIsMsr1OLfrVdAKvdSAoj1/1wE4T8rJlcEETAR52rVBKAcSFOxpwn49dnZNjUYsTcZHVmdLuj57mKjRxE3yx9UAS+zZepROI3JcXIZlPpo/u5+/WZQaII8AFSYqt1/dciQT6Rmy2aeQySCTgkWTPM=
+	t=1720627666; cv=none; b=lBhY70tUkIaa+tFdU84DcbB5GEmN6/AkTUcNjNC0jhM1PyVPjA+vaWIJwHQrCaKCyAQhPuLltWEtuRgx6mTizT6DYhFCdm+syD1+Jeh5ilz4QDGnae1cVX2pk3BuaER8aZ3r9gVIC2Ke4Tb96vMR3BZK7X/oyc/aJ8dsYYWgTyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720627653; c=relaxed/simple;
-	bh=PldZFf1DYVh6TpKO21NogJ4U+Og52dZrfLHR4m7G7So=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EgY2nOCG5DG6QNiWJ7S32A+qjlEirU+G7rgTUcE0lcmgS3YdKkSm5YV9b960NI9HHl669osfOVDqzATKjuRT8E1EYDrLkexKZNdsALBssadHbW3ufnVQ6ApaYReTcHslX0MKTEfELdHxe+ij+xm1l8Gqb5g9YJF52rQxdSw5rr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hKNTv/kB; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-7f7e24bac14so15726139f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:07:30 -0700 (PDT)
+	s=arc-20240116; t=1720627666; c=relaxed/simple;
+	bh=VGQr1x48FZtyRgV4QcACu+Gv3I85uYcfHn8pJAiuUgM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=R+3EZkpqmAYswN7Utgq8ZQaP2ZqafyAsLHt8iUw2pqxqYG7dGgL2Oc6Zwi1SmlUkijPm9opwKJaNz4pOIGRToSeJ3/YMqLmNnKvmRl1BQYpfYyK/ZsCl1LXmz3wb1AdBKWQTLrpsot9U5TAuE5LZqPEL8W785DYOsUGWiM4By1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ROHHWhpW; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-64d408a5d01so60391297b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:07:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1720627650; x=1721232450; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4twbxw2J4G69WNgVFZ3IS6Gan/GzlIJYjtUjczPK17c=;
-        b=hKNTv/kB6xeUG5GIYUjyQGf5Lu8nuJz/MqZ5JtAx+oDXDa2+r46rD4ygrcJQ28Vk2s
-         PqmxoPBEZpLXKJj++VrpkWCeda81JP4LDOjqE+ZXaep6xErq0XQteNiV0eb93BcWELX+
-         R40ugbnrEWS2WA8h2Q6+B0zX8EsWqNc8DkqHQ=
+        d=google.com; s=20230601; t=1720627664; x=1721232464; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6IPWMNSHPG0jt5D2DB0oJLSOfyEu5ju1yz0tYHzAJRc=;
+        b=ROHHWhpWmqTWJVviT2AsB3IO92CibcA4D3zXpwScTcTlbAxeAWsB1Wm0tSkZmpnLwK
+         Iok+mcsZccVvvo3TfCZ2h3PAjkCVNLzoX4a2te0HYsnLhR8e/XtTWsoCiVEb84jBf0J0
+         2u4eS7ibRtbq+Z891BjxTJvrqIEy2sUMu5GXTLh7mjfpcTCI1rHWAPaOpurDxBhXji93
+         yQhkG8oXFR5AHfayoRwV2qxsaOem2QdGltvwttsiw9xxr8gLH2sYsfzFYU85fljOv+Ki
+         3EIhHpaI/XzMsHn6vLNNGl7rWL6mD6qojSTcgG6ZaervuE/k3/urrgPiBpuTqFmIfoA3
+         f/GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720627650; x=1721232450;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4twbxw2J4G69WNgVFZ3IS6Gan/GzlIJYjtUjczPK17c=;
-        b=D/wVmVjIuO4jwg4gXU54+f9H3PhGH2RCu2gf8t4u/OS1ZIyn+MDzQ708ZbtgL0aP5d
-         hIUJB5QoKUTk8coaN4xKOwhIsXSGxIcMTnUJyO+NRWIK6BT3O3ha3/LETyuxnZbIRvHh
-         elgo79ghNA8kkqwEYMoqsWgkhukFdZfZICvyb20uvYRUGo93SqxNo0hCsz6cPJzOZZlj
-         8cZcjFcQbb1lpb+dwrlYlyrBf0wyCE0oxjJT1KxA+KFum6wUTKq61LZGiPmvD1ys//CR
-         8evwCA2CTXXk2zEbBYneswsIkKfp/BSFrrt2FQ7RuS2OIBbnkeYo187tLONGjd7hGCHz
-         zuug==
-X-Forwarded-Encrypted: i=1; AJvYcCVViNLe62zeN6EqWH/cgYwWBXZhwkWChPrZ2J3gAGnQk0cT07xWXXiQEGhKUuEpNcvKnh4S9c2vX+5T9srKUUjrSIiRvHiAhHHjPo/G
-X-Gm-Message-State: AOJu0YwTJj/oKKWJWwP6ZnRVJ+srxKl8XV2lWdhPC5OgBdfLp8VpVykw
-	b1a/FbvWhL2Fx3PTm7ve4oldpIw5rTvdnGUxwMCI5XacuTYhMWhF/q6x6S8Sh/Y=
-X-Google-Smtp-Source: AGHT+IEldwufc2Sxsle8c/cT0PCeq897Fwu514Zizte187NwmlrZ5oP7uDXPdKzvq06ZDsiIkiofSQ==
-X-Received: by 2002:a5d:93c4:0:b0:7f9:89a2:b846 with SMTP id ca18e2360f4ac-806e1fc1460mr1156639f.2.1720627649728;
-        Wed, 10 Jul 2024 09:07:29 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c0b1bf7b7esm1202110173.114.2024.07.10.09.07.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jul 2024 09:07:29 -0700 (PDT)
-Message-ID: <7521837f-72ba-4558-b1df-77aec2c5f5f1@linuxfoundation.org>
-Date: Wed, 10 Jul 2024 10:07:28 -0600
+        d=1e100.net; s=20230601; t=1720627664; x=1721232464;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6IPWMNSHPG0jt5D2DB0oJLSOfyEu5ju1yz0tYHzAJRc=;
+        b=MAjxW/4o1t1TZ2x23DDuUQ3F0JJ9/JgnAvYYscC4HeLTyRB4rsaVE9weCxnZM/NwRG
+         HN/AohHm6J4FuqM6B8esHnE+PvSVL08xF3idh/Gz+RGWeuVlWv4sfctlWm06/hlR6OUh
+         YYvoc9ZPRYvQewYPuOlqHgb/i8Fu/JA6P5rY/b8UffLdL11IbTLMVyT1zN/Ex1E3ED00
+         w9yIVVa8u8k+TjYfy7wDpvtQdPNY5j9chhCCXsQW2aOXfK0mIJLMABR288LKUFGjshrC
+         sTtBmqhpdhK+Asom4NfKPladOIAQ8GFv7k5SUdJerA13N7YDwDmlOrE2C9ZHdbQecl3Z
+         2ARQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVs0L1bhz4Aef5lVan+WDESDq3uAicSwNfjL7ZOSZIY5MrmTNoy/LdYzznjwrCr/30OViEjy7ERaKtsUTUCysAR2892t3s0fH5cBujH
+X-Gm-Message-State: AOJu0YyE8ILAqsOJh+TWvb7RsPVrbvlJesokdFD/67wAkYbntYhKIM3V
+	l4+qihqTkmfAuCtvsOkAb0O3YJ4+omZZDMaw3I2uHTOKcp7eRu2H1zqjsbZqjaYy+zny+D05oyc
+	qjCcInxgAxM1y2Cw0PXcr+J1kLwlx4er8zEuZ
+X-Google-Smtp-Source: AGHT+IG95Ds1vL1Lxc6rxvpgc0LZ9RAvUdPaRPYzzaTXRLygP88EEhWnO7DJ1al0B8Jjc4ePUl7qyTWTQArnO/49JyM=
+X-Received: by 2002:a05:690c:3688:b0:650:82d0:c12c with SMTP id
+ 00721157ae682-658eed5ea72mr67690917b3.19.1720627663451; Wed, 10 Jul 2024
+ 09:07:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/memfd:Fix a resource leak
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>, shuah@kernel.org,
- akpm@linux-foundation.org
-Cc: cyphar@cyphar.com, jeffxu@google.com, sauravshah.31@gmail.com,
- gthelen@google.com, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240710073351.6479-1-zhujun2@cmss.chinamobile.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240710073351.6479-1-zhujun2@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240704182718.2653918-1-Liam.Howlett@oracle.com>
+ <20240704182718.2653918-7-Liam.Howlett@oracle.com> <f12e65e3-adfb-4140-9aaa-e7b11cab972d@lucifer.local>
+ <l6j7mytvepxnpxzq6i4kru4datfxhijf44lzugltbxs5f23f6i@lsfcft2tkg7j>
+In-Reply-To: <l6j7mytvepxnpxzq6i4kru4datfxhijf44lzugltbxs5f23f6i@lsfcft2tkg7j>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 10 Jul 2024 09:07:32 -0700
+Message-ID: <CAJuCfpG0UQwuuw=u+J8E3=CLKBzFuE=YLh=Hi9eebD9yZHcntg@mail.gmail.com>
+Subject: Re: [PATCH v3 06/16] mm/mmap: Change munmap to use
+ vma_munmap_struct() for accounting and surrounding vmas
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, sidhartha.kumar@oracle.com, 
+	"Paul E . McKenney" <paulmck@kernel.org>, Bert Karwatzki <spasswolf@web.de>, Jiri Olsa <olsajiri@gmail.com>, 
+	linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/10/24 01:33, Zhu Jun wrote:
->  From a good programming practice perspective, especially in more
-> complex programs, explicitly freeing allocated memory is a good habit.
-> 
+On Fri, Jul 5, 2024 at 12:59=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+>
+> * Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [240705 15:27]:
+> > On Thu, Jul 04, 2024 at 02:27:08PM GMT, Liam R. Howlett wrote:
+> > > Clean up the code by changing the munmap operation to use a structure
+> > > for the accounting and munmap variables.
+> > >
+> > > Since remove_mt() is only called in one location and the contents wil=
+l
+> > > be reduce to almost nothing.  The remains of the function can be adde=
+d
+> > > to vms_complete_munmap_vmas().
+> > >
+> > > Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> > > ---
+> > >  mm/internal.h |  6 ++++
+> > >  mm/mmap.c     | 81 ++++++++++++++++++++++++++-----------------------=
+--
+> > >  2 files changed, 47 insertions(+), 40 deletions(-)
+> > >
+> > > diff --git a/mm/internal.h b/mm/internal.h
+> > > index f1e6dea2efcf..8cbbbe7d40f3 100644
+> > > --- a/mm/internal.h
+> > > +++ b/mm/internal.h
+> > > @@ -1488,12 +1488,18 @@ struct vma_munmap_struct {
+> > >     struct vma_iterator *vmi;
+> > >     struct mm_struct *mm;
+> > >     struct vm_area_struct *vma;     /* The first vma to munmap */
+> > > +   struct vm_area_struct *next;    /* vma after the munmap area */
+> > > +   struct vm_area_struct *prev;    /* vma before the munmap area */
+> >
+> > I mean this is about as pedantic as it gets, and, admittedly an annoyin=
+g
+> > comment to make, but the ordering... can't we at least put prev before
+> > next? ;)
+>
+> I can do that, no problem.
+> ...
+>
+> >
+> > This is a big improvement overall, very fiddly code.
+> >
+> > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-The change looks good to me, however can you elaborate more on what
-kind of leak your fixing here?
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 
-> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
-> ---
->   tools/testing/selftests/memfd/memfd_test.c | 7 +++++++
->   1 file changed, 7 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
-> index 95af2d78fd31..f842a4aeb47d 100644
-> --- a/tools/testing/selftests/memfd/memfd_test.c
-> +++ b/tools/testing/selftests/memfd/memfd_test.c
-> @@ -661,9 +661,11 @@ static void mfd_assert_grow_write(int fd)
->   	l = pwrite(fd, buf, mfd_def_size * 8, 0);
->   	if (l != (mfd_def_size * 8)) {
->   		printf("pwrite() failed: %m\n");
-> +		free(buf);
->   		abort();
->   	}
->   
-> +	free(buf);
->   	mfd_assert_size(fd, mfd_def_size * 8);
->   }
->   
-> @@ -685,8 +687,11 @@ static void mfd_fail_grow_write(int fd)
->   	l = pwrite(fd, buf, mfd_def_size * 8, 0);
->   	if (l == (mfd_def_size * 8)) {
->   		printf("pwrite() didn't fail as expected\n");
-> +		free(buf);
->   		abort();
->   	}
-> +
-> +	free(buf);
->   }
->   
->   static void mfd_assert_mode(int fd, int mode)
-> @@ -771,9 +776,11 @@ static pid_t spawn_thread(unsigned int flags, int (*fn)(void *), void *arg)
->   	pid = clone(fn, stack + STACK_SIZE, SIGCHLD | flags, arg);
->   	if (pid < 0) {
->   		printf("clone() failed: %m\n");
-> +		free(stack);
->   		abort();
->   	}
->   
-> +	free(stack);
->   	return pid;
->   }
->   
-
-thanks,
--- Shuah
+>
+> Thanks!
 
