@@ -1,145 +1,164 @@
-Return-Path: <linux-kernel+bounces-247700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A09592D35B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:49:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA6F92D35D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:50:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16ADEB21E87
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:49:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 787A6284E52
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1687919344F;
-	Wed, 10 Jul 2024 13:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA5B193078;
+	Wed, 10 Jul 2024 13:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=blackhole.kfki.hu header.i=@blackhole.kfki.hu header.b="Ek1pH4Tx"
-Received: from smtp2-kfki.kfki.hu (smtp2-kfki.kfki.hu [148.6.0.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="s3pJ9YQz"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9762D192B8F;
-	Wed, 10 Jul 2024 13:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.6.0.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39435192B8F;
+	Wed, 10 Jul 2024 13:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720619373; cv=none; b=m1jN3gvGSn4l9JtjrqxFBK6iqhd3r9MZVQuXJGopj+vT31JLMeZbpXabWcWZPJk1sia2MtdJlKIdFXNcrrvl5zcss1BX7ShmHe7inefdvy5keEF/MZw8ezSvFOVg+5Tb8lPcHW9rq15gQee1aRHOXj9RRykiAvzZ/lb+qnKk4Q4=
+	t=1720619394; cv=none; b=T8QvDrNUha8Xijq5feZtDTmqrDnRdtfMWF9YYcLjcoVUW9SoRHBeHcRPlu7Fze4c7GlxHLyLPzqv24QwopspKvibIucaKsU6xEecd2KIgd+8DPa0TOR5YBdGYQDG8N+G5yf7Xew+hkfMO7VJTt0q63qZynKo3+Q0Dxk4Oj1Eewo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720619373; c=relaxed/simple;
-	bh=pArGaEjrBNzLagzcUQy7sb6LrTj46+cz3oLQRUFO5fc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=H9GjNe2ew/a0eJYC0dh3qip94ACfk/n19u8PqpTY1lgDvfj1kg0ZbORbrk7IDQAeOL73fs9SmAguvC54mFNcqr77uKfzBlBwTCM7dzKqn9s7ro4pQBfg6sDDBvond2+0t2WfWsK9szehwqi43PV5eGEYQQXVHXy7vbhLn7YYrfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=blackhole.kfki.hu; spf=pass smtp.mailfrom=blackhole.kfki.hu; dkim=pass (1024-bit key) header.d=blackhole.kfki.hu header.i=@blackhole.kfki.hu header.b=Ek1pH4Tx; arc=none smtp.client-ip=148.6.0.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=blackhole.kfki.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blackhole.kfki.hu
-Received: from localhost (localhost [127.0.0.1])
-	by smtp2.kfki.hu (Postfix) with ESMTP id 1FAF8CC02C0;
-	Wed, 10 Jul 2024 15:49:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	blackhole.kfki.hu; h=mime-version:references:message-id
-	:in-reply-to:from:from:date:date:received:received:received
-	:received; s=20151130; t=1720619365; x=1722433766; bh=z2NQrFM4Pv
-	+TQSD3+eNSvbpMh/+SSq4xiXJqjXQ/tu4=; b=Ek1pH4TxHJwpAN0hMu9hMVhv9Z
-	l5CXszvln762kNrB8+xgru6P4K6jjK5bvUV1+cKAB0kSiT78eavk2Bnmy0DJTP13
-	/r4jqbQDxeNZu7TU3vZwsEibdDXGzV9UuxyQMVFc58JgBedvxgtvWvaknLXKj7ls
-	baHu41t64KpwaRsbQ=
-X-Virus-Scanned: Debian amavisd-new at smtp2.kfki.hu
-Received: from smtp2.kfki.hu ([127.0.0.1])
-	by localhost (smtp2.kfki.hu [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP; Wed, 10 Jul 2024 15:49:25 +0200 (CEST)
-Received: from blackhole.kfki.hu (blackhole.szhk.kfki.hu [148.6.240.2])
-	by smtp2.kfki.hu (Postfix) with ESMTP id 8F693CC02B4;
-	Wed, 10 Jul 2024 15:49:24 +0200 (CEST)
-Received: by blackhole.kfki.hu (Postfix, from userid 1000)
-	id 4C35134316B; Wed, 10 Jul 2024 15:49:24 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by blackhole.kfki.hu (Postfix) with ESMTP id 4B7B534316A;
-	Wed, 10 Jul 2024 15:49:24 +0200 (CEST)
-Date: Wed, 10 Jul 2024 15:49:24 +0200 (CEST)
-From: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-To: yyxRoy <yyxroy22@gmail.com>
-cc: Florian Westphal <fw@strlen.de>, 979093444@qq.com, coreteam@netfilter.org, 
-    David Miller <davem@davemloft.net>, edumazet@google.com, 
-    gregkh@linuxfoundation.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-    netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, pabeni@redhat.com, 
-    Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: Re: [PATCH] netfilter: conntrack: tcp: do not lower timeout to CLOSE
- for in-window RSTs
-In-Reply-To: <20240710094554.483075-1-979093444@qq.com>
-Message-ID: <7dd0aeaf-20cc-877c-e2d9-e0b40d40567d@blackhole.kfki.hu>
-References: <20240708141206.GA5340@breakpoint.cc> <20240710094554.483075-1-979093444@qq.com>
+	s=arc-20240116; t=1720619394; c=relaxed/simple;
+	bh=r+F/2KIaBzLyVXXF7GrQxs/ElB49C6RcPCOl+HwspH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ht8gegY0PLyRwAoaH0h2taZWut8vV8f72VQy5qkRjU4g16QrMlNh6O1jDEkmGV93ehSwYTHuNVMKxMyMr9/ePwFRYX5NbwQYLy8jEVQYQX1WJSDM8MOYOyuSRG6cQH0dx1gMUvTaxM5c2+Dq4eI6qFrqlRZfp0Dq+Jusg4kZ5HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=s3pJ9YQz; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from wsk (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 78CC088025;
+	Wed, 10 Jul 2024 15:49:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1720619390;
+	bh=rd4U7AAXKGsH3PODWZxvkjHuRjt4mypiIDTO9ncI2LM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=s3pJ9YQz61kH/L5aa6Claj18i83b1CazGcaOz3W/Jm3ut3G550mhGFpLp1Ky8s4yG
+	 LVCcuQJan5dVHjZ0b5BS4xtGaP78vIamzk7k0NP+gbfvr/CSNDUz2nT9ILD6PuxnA1
+	 cIFlk60uAuSJ1RboocHz3pGHKSjZnG0i7JgDTyxxggrVYS/JiR78OZeIyOzbEsf30U
+	 bmLjpxlw+lR5FGjW6npJaE5zwQAmcjMMfryUZEhekOp7vvepsVJsMG6FIUxSbImUjM
+	 f3yKWvXOfYiOePhiqPCekrqoYvYY1ISNYJG+JDWpYt7HKTE7JZToD9RXpAOKKatXZR
+	 nX4NLlqxw6qWQ==
+Date: Wed, 10 Jul 2024 15:49:37 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Christian Marangi <ansuelsmth@gmail.com>, Jakub
+ Kicinski <kuba@kernel.org>, Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>,
+ Daniel Golle <daniel@makrotopia.org>, Li Zetao <lizetao1@huawei.com>,
+ linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 net-next] leds: trigger: netdev: Add support for
+ tx_err and rx_err notification with LEDs
+Message-ID: <20240710154937.0dbcbd0c@wsk>
+In-Reply-To: <8c8ba30d-dbec-47db-ae8c-a734fb2468c0@lunn.ch>
+References: <20240710100651.4059887-1-lukma@denx.de>
+	<8c8ba30d-dbec-47db-ae8c-a734fb2468c0@lunn.ch>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: multipart/signed; boundary="Sig_/70z+RmfJzPl5=n.1MdvKHZn";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Hi,
+--Sig_/70z+RmfJzPl5=n.1MdvKHZn
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 10 Jul 2024, yyxRoy wrote:
+Hi Andrew,
 
-> On Mon, 8 Jul 2024 at 22:12, Florian Westphal <fw@strlen.de> wrote:
->> We can track TTL/NH.
->> We can track TCP timestamps.
->>
->> But how would we use such extra information?
->> E.g. what I we observe:
->>
->> ACK, TTL 32
->> ACK, TTL 31
->> ACK, TTL 30
->> ACK, TTL 29
->>
->> ... will we just refuse to update TTL?
->> If we reduce it, any attacker can shrink it to needed low value
->> to prevent later RST from reaching end host.
->>
->> If we don't, connection could get stuck on legit route change?
->> What about malicious entities injecting FIN/SYN packets rather than RST?
->>
->> If we have last ts.echo from remote side, we can make it harder, but
->> what do if RST doesn't carry timestamp?
->>
->> Could be perfectly legal when machine lost state, e.g. power-cycled.
->> So we can't ignore such RSTs.
->
-> I fully agree with your considerations. There are indeed some challenges 
-> with the proposed methods of enhancing checks on RSTs of in-window 
-> sequence numbers, TTL, and timestamps.
+> On Wed, Jul 10, 2024 at 12:06:51PM +0200, Lukasz Majewski wrote:
+> > This patch provides support for enabling blinking of LEDs when RX
+> > or TX errors are detected.
+> >=20
+> > Approach taken in this patch is similar to one for TX or RX data
+> > transmission indication (i.e. TRIGGER_NETDEV_TX/RX attribute).
+> >=20
+> > One can inspect transmission errors with:
+> > ip -s link show eth0
+> >=20
+> > Example LED configuration:
+> > cd /sys/devices/platform/amba_pl@0/a001a000.leds/leds/
+> > echo netdev > mode:blue/trigger && \
+> > echo eth0 > mode:blue/device_name && \
+> > echo 1 > mode:blue/tx_err =20
+>=20
+> When i look at the machines around me, they all have an error count of
+> 0.=20
 
-Your original suggestion was "Verify the sequence numbers of TCP packets 
-strictly and do not change the timeout of the NAT mapping for an in-window 
-RST packet." Please note, you should demonstrate that such a mitigation
+This is mostly true for ethernet. However, it happens on some low-level
+drivers that errors field is not zero when e.g. the received frame is
+malformed due to harsh work environment.
 
-- does not prevent (from conntrack point of view) currently
-   handled/properly closed traffic to be handled with the mitigation as
-   well
-- the mitigation actually does not pose an easier exhaustion of the
-   conntrack table, i.e. creating an easier DoS vulnerability against it.
+> Do you have a real customer use case for this?=20
 
-> However, we now have known that conntrack may be vulnerable to attacks 
-> and illegal state transitions when it receives in-window RSTs with 
-> incorrect TTL or data packets + RSTs. Is it possible to find better 
-> methods to mitigate these issues, as they may pose threats to Netfilter 
-> users?
+Yes.
 
-The attack requires exhaustive port scanning. That can be prevented with 
-proper firewall rules.
+The problem is apparent mostly with can interfaces and transmission for
+it.
 
-> Note: We have also tested other connection tracking frameworks (such as 
-> FreeBSD/OpenBSD PF). Also playing the roles as middleboxes, they only 
-> change the state of the connection when they receive an RST with the 
-> currently known precise sequence number, thus avoiding these attacks. 
-> Could Netfilter adopt similar measures or else to further mitigate these 
-> issues?
+> What sort of systems
+> do you have which do have sufficient errors to justify an LED?
 
-I find it really strange that those frameworks would match only the exact 
-SEQ of the RST packets.
+In my case it is an embedded industrial/automotive controller with 10+
+RGB LEDs. It only has LEDs to communicate with user.
+
+The way how and when they blink shows the status of the device.
+
+With this patch one is able to spot if some transmission is failing
+(among other things).
+
+>=20
+> There is no standardisation of LEDs. Every vendor implements something
+> different. What i don't want is lots of different blink patterns,
+> which nobody ever uses.
+
+As you can assess from the code - this patch extends neatly the current
+code, with use case valid for my customer.
+
+>=20
+> 	Andrew
+
+
+
 
 Best regards,
-Jozsef
--- 
-E-mail : kadlec@netfilter.org, kadlec@blackhole.kfki.hu, kadlecsik.jozsef@wigner.hu
-Address: Wigner Research Centre for Physics
-          H-1525 Budapest 114, POB. 49, Hungary
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/70z+RmfJzPl5=n.1MdvKHZn
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmaOkXEACgkQAR8vZIA0
+zr0jLAf/XZ+qitmpuHL0G7qOdb9cqtFnbmKWcGmxPHRaoksiIj315x7N9uiINrEP
+wh2rbqSseQq2ZZEGP/JopmsCJVGrDEW6LpJM5AZOlRRYWhmwLPW/AHgyrSNx6p4h
+KBgZA4jjjOgdC6xztzNzTMbIDKXHOXDVTQHROHYr3XHivp07x+ZB682NY0Hu51aL
+0kZdP35GOfrGlo/Sylbx0kwlJ8KSbWQaKNtDSjRnInGno4vnFgMnrxPVrYs7QNhe
+BqXzt3/VoEQH7RRcfNEiTXgAvNnMgrUAqCIkUWsqsFMj9CQQWyeo7plyTdzPdh19
+624Ompi6jxeJTUjC6rCqHZu8EShGAg==
+=4gdM
+-----END PGP SIGNATURE-----
+
+--Sig_/70z+RmfJzPl5=n.1MdvKHZn--
 
