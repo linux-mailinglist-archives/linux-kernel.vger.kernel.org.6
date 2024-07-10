@@ -1,187 +1,286 @@
-Return-Path: <linux-kernel+bounces-248078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95A7B92D82A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:20:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FEEC92D82B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4170E1F24236
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:20:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 554EE28195C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318C01957E4;
-	Wed, 10 Jul 2024 18:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2527F195F28;
+	Wed, 10 Jul 2024 18:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TUj2P34r"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2044.outbound.protection.outlook.com [40.107.244.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WfsP4bjL"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4A83BBED
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 18:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720635638; cv=fail; b=qgKyz7iCS+Y0o3/+6EGUfn5GJh6QOxNeMZxRzVEEQ44w6PihLZVwTaLPSuTzkID+dY6YlE2Uz1Qb8d1T3jZd70JPC6y7imtWxvJzwR83I9+vjwgiqFtQrC2xE/aDzyS4h/GC3lD15CjS8gsH/hEbOofBGDceXRee/CtPF+q1oQw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720635638; c=relaxed/simple;
-	bh=SeJ9UCdZW+AkOa5fJCHtg6DGiQ5gCT6gScf5LJ29Dyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tR4ABpCMvQ46PLtb6Wi+nLDKwbv3fqEoPzOKr86a7+XXfkC0sYzwYAqJykgU8FntdRAY/t3lrm3Voxfd34Efr70prXHVVQNsYRk1A8PafdeYHMS9cp95arOGDS0VYu1aobO9ZIBsSH2V51qNictUBVu5l7/iET0hWMA2HU7Ir10=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TUj2P34r; arc=fail smtp.client-ip=40.107.244.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SdBJEU4DYF5uVCSkDcjF+5KxI+UrN77BEq1El+E+kL5MsCxHlMxd6QgutN635RNDX3rdDrotmyNnWbUosIaFowGlGEYyDeW/wfRiQK42v1XTWDqcPtsUzebWZh/YoDhxwH83yU77tld2bN+IMLh3ID178BmeMtoWmbnxwfHwEcRJAyYrVkNl/iwUaUsxtHV4JHRs3QNE8yo+njPDGhDxzwMwysQjj3CDaDVgB5EXlVwi/6iuFZ/aTZisPlmYQSePowZe8fJjA2MZhO+iHoW16MTB4H7ov0xtaJFnkRwON/fbvt3mXS62i/3ZdTdzY4ySqotpZg/DdFRIPYJFxQ1xYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gyXBkT6N4dcr1+lhOzxXqG+6RrGXAWsz56nQn3oIsb8=;
- b=ikSuQY8qBhwqZpV0QekmnjlmdzLK+OdkvV34fDvfd2jdLYWAXILCPc4cAAgyIEk+wgigYz6h5i+eKM3cYnSyTxBtXorTeny7FFRgeuyn3LdyeBz26ZzsGRoIO6nFbff/iyWVpbBv4gS3Dp62UQ/YfPk9skAQClHoPhtvp5N2g8OKv2CG/zFWfoUqBnfQUkBtVApkducF2CkgLU8/2VUG1djGEfNgXsLRpNOAcoEFVjNE4nldNx6BuHFMEvaibzzSvDcKFE6/JXz3LEojCfBbctwu9Ur6ltHLQDg6HvllCP03cwnQGq1Qz90BHWWYROLl5yVutgQ9oodpuhTHb1qiHg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gyXBkT6N4dcr1+lhOzxXqG+6RrGXAWsz56nQn3oIsb8=;
- b=TUj2P34rY6MIIfkTNi/VXx1xUEG5WkxNYt1W1c/4CTio0RXS3qh2WqXMu+QwBTc5ZSrMpegzpEG4sNmVGcIBag32hGbVseaZFKYqJOujnmfjJOZpcceOjYOj459/qIK5XpBojBBuvODVGHe8h8eI7sgM6BpUZ9LT9NtjnlMY4yo=
-Received: from BN8PR03CA0018.namprd03.prod.outlook.com (2603:10b6:408:94::31)
- by PH0PR12MB7011.namprd12.prod.outlook.com (2603:10b6:510:21c::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34; Wed, 10 Jul
- 2024 18:20:32 +0000
-Received: from BN1PEPF00004683.namprd03.prod.outlook.com
- (2603:10b6:408:94:cafe::a4) by BN8PR03CA0018.outlook.office365.com
- (2603:10b6:408:94::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36 via Frontend
- Transport; Wed, 10 Jul 2024 18:20:31 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN1PEPF00004683.mail.protection.outlook.com (10.167.243.89) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7762.17 via Frontend Transport; Wed, 10 Jul 2024 18:20:29 +0000
-Received: from [10.252.216.179] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 10 Jul
- 2024 13:20:21 -0500
-Message-ID: <7acc5dd0-8cc0-be08-b08a-6f36c1964961@amd.com>
-Date: Wed, 10 Jul 2024 23:50:13 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41041922E3;
+	Wed, 10 Jul 2024 18:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720635722; cv=none; b=XsHo/YaBMpuNwc4hoVt44xmgVgjAcmmv9NkeV3HmqEzApFziwfbtnC4pqcpuVX50uS267mjz88/Mdm28AcuKWjmSQdKne5WlOqtnE8tYJcu4kAvAAGshZfV+19vcCNXpibwppTSQRBWOsuLCQuWLrVVCnkHmZ2S1QwX2RT80AKQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720635722; c=relaxed/simple;
+	bh=JhqOtN7Nt4JZLvleltSaa3gZnSb0/3zsfDrUcKoA6rA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=exdbhxyKyXgE5FmwUSnU6ajiZV6DiTKpnFbDRcUEYomzs/dPCyxUkB8zEsgE4geMuea66x2Gk0nV6/2svD223DuMAJW8arzH/EaJEG6Ubh2ov/KQz/hy/88gNsmp46uCGBHjJH+b4I+sflzeB2Mk9ybMQFsVGV1X6l4jYLWaMr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WfsP4bjL; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-6e7e23b42c3so4084a12.1;
+        Wed, 10 Jul 2024 11:22:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720635720; x=1721240520; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hijJCwlZElP88i4ewoTv3B36SaCunX2cH9w3pYqOHaM=;
+        b=WfsP4bjLrtLSyx4ZDMI8l/J7qqTgALcgMPEciYB77UZsSAF8yY3IwxZSqybWLZiUWF
+         UQm/pZhwOooxQoN2OPXilynYScqRSNJUFLNkYVszxAtYLj93YtCiraqwCxX7JNFY0N9a
+         exkqiqrPGup5/nq/NTPABke51FQtG6xzLZeJ2iPEh8GpzPqSAd2ilZbm22VaC1a4HTxt
+         mLF2BsYyweQT3kZ5KnfpvEtiVAp5ZUTW0t9E3S0x+p2VpAQR8EbEbYiAJ5iehBI50Knf
+         GCx4prJg0ZvuMSk3Ebb+x2TJiKE+9W3n/nAupjqbJ2dytlnf8P+bvlSmuRWNq3nj2OlM
+         3ihw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720635720; x=1721240520;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hijJCwlZElP88i4ewoTv3B36SaCunX2cH9w3pYqOHaM=;
+        b=k6CFdzVg/mIbCHoRl2Uh3g1G0ylCQ2o9GYczwozRUGpAbtr6b80hfLZURGh1VtMMz/
+         O+Fcdw7+WlbbdxivaM1joKmMokDJZo/FQp+SrDBahwzieMjuSi6S/ZxVIiDEsOAe9pCw
+         IFrSsPV8t859p4+b4mZwVKwHxT6E2AYzDfEOtP+DT4llYjoXuy4lxzZjvhWP2IT61lJ2
+         /nbRWw2i55+aLp/cg5p3S2u0HiJWGukmmHzhi149Fn2QbjumdOXAh/RjFhkADbZ9HOcE
+         uXcxbAtgczgjFOD9NTR9RTY7xjzT/of8l7VHOFo1pjiFT+Oyk4tLqpqbWgz+qjEckWBe
+         AfxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvOARfvRlePMayMTvTyNHb6NzANgJh5pAS8fOhZSqNTnW6LQ+bA0mqAMCdrvCP57Y9KYl+tFFbubhBJNdox3y3Z/oBznTuYSnBl1skC3bKkZMnPnVQX0aUeF1ahcmGrJqwXA+ynqyw+dYFQFT16Wnd
+X-Gm-Message-State: AOJu0YwYkHuO2LAMTMpViTPTIU76E9ZX0c9Jnxer3ErZzg+uZdA4c8zN
+	qzLuMFY7C3PASVt/I1sf/UshQsrUmWxEORqF1oW92sS/Gv7hk1fFhQIzB5RASPzAa0KNl76/y/V
+	arL7r5CTcPB79lpmMOEu1cH0kFA0=
+X-Google-Smtp-Source: AGHT+IEOEXFcihCKMkga13FImtABbjE3JVDkFjywdAZCA6bcksqB7C829APoE+r8J/9VoRjRiwurJuvc1T+BQC/f6JM=
+X-Received: by 2002:a05:6a20:918d:b0:1c2:911f:4d30 with SMTP id
+ adf61e73a8af0-1c2982163cemr6971863637.3.1720635719815; Wed, 10 Jul 2024
+ 11:21:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [RFC PATCH 3/3] softirq: Avoid waking up ksoftirqd from
- flush_smp_call_function_queue()
-Content-Language: en-US
-To: Peter Zijlstra <peterz@infradead.org>
-CC: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>, <linux-kernel@vger.kernel.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
-	<rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
-	<mgorman@suse.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, "Valentin
- Schneider" <vschneid@redhat.com>, "Paul E. McKenney" <paulmck@kernel.org>,
-	Imran Khan <imran.f.khan@oracle.com>, Leonardo Bras <leobras@redhat.com>,
-	"Guo Ren" <guoren@kernel.org>, Rik van Riel <riel@surriel.com>, Tejun Heo
-	<tj@kernel.org>, Cruz Zhao <CruzZhao@linux.alibaba.com>, Lai Jiangshan
-	<jiangshanlai@gmail.com>, Joel Fernandes <joel@joelfernandes.org>, Zqiang
-	<qiang.zhang1211@gmail.com>, Julia Lawall <julia.lawall@inria.fr>, "Gautham
- R. Shenoy" <gautham.shenoy@amd.com>
-References: <20240710090210.41856-1-kprateek.nayak@amd.com>
- <20240710090210.41856-4-kprateek.nayak@amd.com>
- <20240710150557.GB27299@noisy.programming.kicks-ass.net>
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20240710150557.GB27299@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00004683:EE_|PH0PR12MB7011:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5841cbda-8c8d-4e64-fc4e-08dca10cfabb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?STRaZzZFczJFdG0veFVDSzhacEZIQWVvOHVoOHF1NmlXV1FJWkxhTDgrTUVK?=
- =?utf-8?B?VXova0d4b01leWVjNWdObTVsemdLdi8vU0RVRnJ5cFV2VjIyRlBtZUM0aXAx?=
- =?utf-8?B?aElMSWJrMURTcmtZNjBRd0c5aW5zdS9oYzVjdXA5QkJWTWF3aVVoMTh5aGt1?=
- =?utf-8?B?aG5EUWZpYTJEbE8vV2tzUUFxejladm11YnFZM0ViN0xNTW95clV3NWdGMU5N?=
- =?utf-8?B?aGJMRDdvanpZSEpwR3doZ2Q1b2tkRjZvMENDMURiWVJ5QlR4TUoybjBsUDEx?=
- =?utf-8?B?ejhZd0VFaHd6b0laSkxjQlJ1U2lCMHgrekkyd0xob0RPOHBkSTlwV3lWUHAy?=
- =?utf-8?B?ZVdEdVlkaUd6djlwMFlJR2oyRjBuWlliWUMzWHZJUzE1cWJxK2N3dFZYQWNr?=
- =?utf-8?B?T1NzcUcwbVhmeFN5UGNZVEpJdnVGZklNT2RhcThHVEZHOC9mREd3MnE3aWpk?=
- =?utf-8?B?R2ZaVGloU0ZHbnRRWWcwNVkxdDlYKzBEbzUyM0doQ1psS2h4bE1iV3UvWEVF?=
- =?utf-8?B?YUhPYUYwekgya002VHoyblQ0M3cyMkU3UkFzR2JqRFBYbzhBOFRSU09ndzNt?=
- =?utf-8?B?WVVOT29pQTJSVlZvTFJmZFNhL2tEd3VvUmE4b2JZWEJLSVA2VjM5eGxCYkRU?=
- =?utf-8?B?S0ZENkZiRW1ycHVTN2k4YlFRL3VkWGlJTTZOcVhpNzdjaGc4WmFaM1kvTWlO?=
- =?utf-8?B?d25FNGFVNFM3bU00UFp6WEtFSWZKSERPWitpWndENzhCR2h3L21FWVdhZnlB?=
- =?utf-8?B?L3E1UkszZWdwVlZJMkpUQ2VXMU13dEUvdVBvQXI4a0FmT0JoM2F4Z3A4VFZw?=
- =?utf-8?B?RmJxUGdmODhMSlphaSs5QTFsRVJyOGM1NFY5K2Y3VzBvWFFyYzIxenMrdjVN?=
- =?utf-8?B?OUVOb1U5akN1Z3o0dGFQbFdIcjU3OG1PdjdzYkFsWG1DcEJ0UTNzbC9lM0d1?=
- =?utf-8?B?OTNMbWNHQmx6TlZxMU9YaWoybk5yL1lIL1NBMmdTcHQ4NnZhd0F0SWR2NnVa?=
- =?utf-8?B?RE9iSHlHZTFDUlhSU1NXMU5BdXBNcm5CUThZQmRnbE0yUW1KaE1XTUxQSHJ5?=
- =?utf-8?B?VllVRXBWcldLKzU1R3BCaXdHcUQxK3paY1YvMVFvQU51YnpvaUVNM2EyenVy?=
- =?utf-8?B?ZHBoOTdSWWk1ZzM0RFdqZUVkTDJpT2tmdlNpMXF2VlVmdERJVll5UDhpS3pl?=
- =?utf-8?B?enltcEJvZ25OOXNONGFOWTF0YmN2VHpIL21qUzFYVFVGQjNPL0EvUWlaNVBx?=
- =?utf-8?B?UEkzMDk3dkZxTzgvRkFUUy9YbjlRUW0rOVFBL2NJb1FvS0dyRDRCRlVMWHVq?=
- =?utf-8?B?S1lXaUxiME5xTnlsVWRTK2x6b3hoTmtEZVFzUWpBdHVaa2tsby9ZYnVyT2Fq?=
- =?utf-8?B?S1o5MmJFTU02YnhSL0FnZzBIaHl0VUZqWks4WENETmVjak9KNHVVTGFCRG5S?=
- =?utf-8?B?b2IrQVlpTDZreDVtMUNhSGoxU1lSU1dieUcyR3U4M3o2cCs4MVFXTTZOcm01?=
- =?utf-8?B?Ri9pMmNraFBjUXpWMEtzMmxRdTQ2YWZnUUl5RXB0bTdiSC9EMmN1V3lzR00v?=
- =?utf-8?B?WVZYMHcrV1daK2ZYYkdLR0FON0VGano0MU5FNnpXR2YrK0htZWk3a2JCNEVz?=
- =?utf-8?B?c3NLRkNJektSd01FM2hyR29Gb3QxODdCUm40MjFoVTVoV2lFWWR2cURZM29I?=
- =?utf-8?B?eDgzSjNlU2I4VFRjMk9DQmwyemhyYThIRHB1ZEtla0VFT1FSYmpLRnk4eDBJ?=
- =?utf-8?B?VXJSWkRkVzRSTlZwd2dRTHUrZmo1RVR0S3o2UWZlaitDQmFJUWNHMGs0ZEtm?=
- =?utf-8?B?RFdQcmhMcklpVE81V2diQmJtelRHS3Y5SkVoNVNrMHJua2JDNHA4WFR3dkJZ?=
- =?utf-8?B?OWhvWDY1OHB5OHFOU1VXMld2N0dORGRJeVJhY0FpUXVQcGRrM1lud1Uvc2dj?=
- =?utf-8?Q?Q3JGy1uaLTaf2IPKf3OcTPujypWcoRyW?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2024 18:20:29.5727
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5841cbda-8c8d-4e64-fc4e-08dca10cfabb
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00004683.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7011
+References: <20240710140017.GA1074@redhat.com> <20240710163022.GA13298@redhat.com>
+ <20240710163133.GD13298@redhat.com>
+In-Reply-To: <20240710163133.GD13298@redhat.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 10 Jul 2024 11:21:47 -0700
+Message-ID: <CAEf4BzZa0Ye83QfTbw6Sw3ERg2PJ7ioN_pEFHYui6JGEHhOg4Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] uprobes: make uprobe_register() return struct uprobe *
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org, clm@meta.com, 
+	jolsa@kernel.org, mingo@kernel.org, paulmck@kernel.org, rostedt@goodmis.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Peter,
+On Wed, Jul 10, 2024 at 9:33=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wro=
+te:
+>
+> This way uprobe_unregister() and uprobe_apply() do not need find_uprobe()=
+ +
+> put_uprobe(). And to me this change simplifies the code a bit.
+>
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> ---
+>  include/linux/uprobes.h     | 14 ++++++------
+>  kernel/events/uprobes.c     | 45 ++++++++++++-------------------------
+>  kernel/trace/bpf_trace.c    | 12 +++++-----
+>  kernel/trace/trace_uprobe.c | 28 +++++++++++------------
+>  4 files changed, 41 insertions(+), 58 deletions(-)
+>
+> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> index aa89a8b67039..399509befcf4 100644
+> --- a/include/linux/uprobes.h
+> +++ b/include/linux/uprobes.h
 
-Thank you for the feedback.
+I don't see struct uprobe forward-declared in this header, maybe we
+should add it?
 
-On 7/10/2024 8:35 PM, Peter Zijlstra wrote:
-> On Wed, Jul 10, 2024 at 09:02:10AM +0000, K Prateek Nayak wrote:
-> 
->> [..snip..]
-> 
-> On first reading I wonder why you've not re-used and hooked into the
-> PREEMPT_RT variant of should_wake_ksoftirqd(). That already has a per
-> CPU variable to do exactly this.
+> @@ -110,9 +110,9 @@ extern bool is_trap_insn(uprobe_opcode_t *insn);
+>  extern unsigned long uprobe_get_swbp_addr(struct pt_regs *regs);
+>  extern unsigned long uprobe_get_trap_addr(struct pt_regs *regs);
+>  extern int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_st=
+ruct *mm, unsigned long vaddr, uprobe_opcode_t);
+> -extern int uprobe_register(struct inode *inode, loff_t offset, loff_t re=
+f_ctr_offset, struct uprobe_consumer *uc);
+> -extern int uprobe_apply(struct inode *inode, loff_t offset, struct uprob=
+e_consumer *uc, bool);
+> -extern void uprobe_unregister(struct inode *inode, loff_t offset, struct=
+ uprobe_consumer *uc);
+> +extern struct uprobe *uprobe_register(struct inode *inode, loff_t offset=
+, loff_t ref_ctr_offset, struct uprobe_consumer *uc);
+> +extern int uprobe_apply(struct uprobe *uprobe, struct uprobe_consumer *u=
+c, bool);
+> +extern void uprobe_unregister(struct uprobe *uprobe, struct uprobe_consu=
+mer *uc);
+>  extern int uprobe_mmap(struct vm_area_struct *vma);
+>  extern void uprobe_munmap(struct vm_area_struct *vma, unsigned long star=
+t, unsigned long end);
+>  extern void uprobe_start_dup_mmap(void);
+> @@ -147,18 +147,18 @@ static inline void uprobes_init(void)
+>
+>  #define uprobe_get_trap_addr(regs)     instruction_pointer(regs)
+>
+> -static inline int
+> +static inline struct uprobe *
+>  uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offse=
+t, struct uprobe_consumer *uc)
+>  {
+> -       return -ENOSYS;
+> +       return ERR_PTR(-ENOSYS);
+>  }
+>  static inline int
+> -uprobe_apply(struct inode *inode, loff_t offset, struct uprobe_consumer =
+*uc, bool add)
+> +uprobe_apply(struct uprobe* uprobe, struct uprobe_consumer *uc, bool add=
+)
+>  {
+>         return -ENOSYS;
+>  }
 
-With this RFC, I intended to check if everyone was onboard with the idea
-and of the use-case. One caveat with re-using the existing
-"softirq_ctrl.cnt" hook that PREEMPT_RT uses is that we'll need to
-expose the functions that increment and decrement it, for it to be used
-in kernel/smp.c. I'll make those changes in v2 and we can see if there
-are sufficient WARN_ON() to catch any incorrect usage in !PREEMPT_RT
-case.
+complete aside, when I was looking at this code I was wondering why we
+even need uprobe_apply, it looks like some hacky variant of
+uprobe_register and uprobe_unregister. I didn't dig deeper, but think
+whether we even need this? If this is just to avoid (for some period)
+some consumer callback calling, then that could be handled at the
+consumer side by ignoring such calls.
 
--- 
-Thanks and Regards,
-Prateek
+callback call is cheap, it's the int3 handling that's expensive and
+with uprobe_apply we are already paying it anyways, so what is this
+for?
+
+>  static inline void
+> -uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_cons=
+umer *uc)
+> +uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
+>  {
+>  }
+>  static inline int uprobe_mmap(struct vm_area_struct *vma)
+
+[...]
+
+>
+> @@ -1133,41 +1126,39 @@ EXPORT_SYMBOL_GPL(uprobe_unregister);
+>   * refcount is released when the last @uc for the @uprobe
+>   * unregisters. Caller of uprobe_register() is required to keep @inode
+>   * (and the containing mount) referenced.
+> - *
+> - * Return errno if it cannot successully install probes
+> - * else return 0 (success)
+
+mention that it never returns NULL, but rather encodes error code
+inside the pointer on error? It's an important part of the contract.
+
+>   */
+> -int uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_o=
+ffset,
+> -                   struct uprobe_consumer *uc)
+> +struct uprobe *uprobe_register(struct inode *inode,
+> +                               loff_t offset, loff_t ref_ctr_offset,
+> +                               struct uprobe_consumer *uc)
+>  {
+
+[...]
+
+> @@ -1186,35 +1177,27 @@ int uprobe_register(struct inode *inode, loff_t o=
+ffset, loff_t ref_ctr_offset,
+>
+>         if (unlikely(ret =3D=3D -EAGAIN))
+>                 goto retry;
+> -       return ret;
+> +
+> +       return ret ? ERR_PTR(ret) : uprobe;
+>  }
+>  EXPORT_SYMBOL_GPL(uprobe_register);
+>
+>  /*
+
+this should be /** for doccomment checking (you'd get a warning for
+missing @uprobe if there was this extra star)
+
+>   * uprobe_apply - unregister an already registered probe.
+> - * @inode: the file in which the probe has to be removed.
+> - * @offset: offset from the start of the file.
+
+add @uprobe description now?
+
+>   * @uc: consumer which wants to add more or remove some breakpoints
+>   * @add: add or remove the breakpoints
+>   */
+> -int uprobe_apply(struct inode *inode, loff_t offset,
+> -                       struct uprobe_consumer *uc, bool add)
+> +int uprobe_apply(struct uprobe *uprobe, struct uprobe_consumer *uc, bool=
+ add)
+>  {
+> -       struct uprobe *uprobe;
+>         struct uprobe_consumer *con;
+>         int ret =3D -ENOENT;
+>
+
+[...]
+
+> @@ -3180,10 +3181,8 @@ static void bpf_uprobe_unregister(struct path *pat=
+h, struct bpf_uprobe *uprobes,
+>  {
+>         u32 i;
+>
+> -       for (i =3D 0; i < cnt; i++) {
+> -               uprobe_unregister(d_real_inode(path->dentry), uprobes[i].=
+offset,
+> -                                 &uprobes[i].consumer);
+> -       }
+> +       for (i =3D 0; i < cnt; i++)
+
+you'll now need !IS_ERR_OR_NULL(uprobes[i].uprobe) check (or just NULL
+check if you null-out it below)
+
+> +               uprobe_unregister(uprobes[i].uprobe, &uprobes[i].consumer=
+);
+>  }
+>
+>  static void bpf_uprobe_multi_link_release(struct bpf_link *link)
+> @@ -3477,11 +3476,12 @@ int bpf_uprobe_multi_link_attach(const union bpf_=
+attr *attr, struct bpf_prog *pr
+>                       &bpf_uprobe_multi_link_lops, prog);
+>
+>         for (i =3D 0; i < cnt; i++) {
+> -               err =3D uprobe_register(d_real_inode(link->path.dentry),
+> +               uprobes[i].uprobe =3D uprobe_register(d_real_inode(link->=
+path.dentry),
+
+will uprobe keep inode alive as long as uprobe is attached? If that's
+the case we can get rid of link->path (have it only as a local
+variable which we put as soon as we are done with registration). We
+can probably do that clean up separately, I'll defer to Jiri.
+
+>                                              uprobes[i].offset,
+>                                              uprobes[i].ref_ctr_offset,
+>                                              &uprobes[i].consumer);
+> -               if (err) {
+> +               if (IS_ERR(uprobes[i].uprobe)) {
+> +                       err =3D PTR_ERR(uprobes[i].uprobe);
+
+we can NULL-out uprobe on error for bpf_uprobe_unregister() to handle
+only NULL vs non-NULL case
+
+or maybe better yet let's just have local struct uprobe variable and
+only assign it if registration succeeded (still need NULL check in
+bpf_uprobe_unregister above)
+
+>                         bpf_uprobe_unregister(&path, uprobes, i);
+>                         goto error_free;
+>                 }
+
+[...]
 
