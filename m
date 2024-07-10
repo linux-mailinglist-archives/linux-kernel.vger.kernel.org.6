@@ -1,105 +1,159 @@
-Return-Path: <linux-kernel+bounces-246862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AFA992C81E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:53:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F416692C819
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:51:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C1221C21E9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:53:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2846F1C21F4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A670BA20;
-	Wed, 10 Jul 2024 01:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A2D79C0;
+	Wed, 10 Jul 2024 01:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DKO9kTJx"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EpAHh+3s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D199B644;
-	Wed, 10 Jul 2024 01:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C789A3D62
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 01:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720576406; cv=none; b=p0KP8PRPjuSM30qbf2IJ9N/b9CWQaw7UIfRXKACqS+NK6knCdikVNGGNUNnto5yAgHIxx6dD0b7xpI657tE4Mjp7EwS0X3bcwhacXCfjR23EQp/72hX6Mo4d87fEIjpsOeQY8pZo66b5AzSMMIAvUTNNobTWHRVc7WaNUCcf9zc=
+	t=1720576269; cv=none; b=moOKco18U1Sq655TCeQRC8KYaS2YMjZzo7/KbtLUrpffdZyEY9EXrdeixWzeN22j9Kl9AEx7AWkemA4gApuGpsY8OjWZ/XRbIE4OAb9M5OenoPYMWBi+zKeOd5gTZLOBsku5vOOPLG/ZrDyW/OoZhmyIUYQy27MJYSbsdq9U36Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720576406; c=relaxed/simple;
-	bh=42GSRl9Yz/xedkt4myWzIsmuKDimRhZEOTqooyoY7IA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=NSJFgCCdqteqUb1Wnw9n8FpwQMZtTqeHQaATpr4UqZtjFsxmzN0CHX2TPb8N3lpuGtN6434A0FiRMmO323WaYWceCnDdA+mAl1Whzb2MUsKPQbKbhhFIcURnWHZ+djbXAOScVl5Myf438SWjg7ZZsL8KYutIFBCR9YPekZm0+PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=DKO9kTJx; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720576400;
-	bh=MimI8cRpF1xic+V3ydQud5x6qr74DqfmKHOL//53Igs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=DKO9kTJxKBSGTj5hTvdFwAqVd2u7AZQinI6/nZH/OMUDq/Puw3wrBNsiT31b8Yj4/
-	 q2NnCcAfrZU+tXJw+kamMkic3Oq08lez3eTc7GUkzBNF3csfgPpaXACgdwuAAFj/pn
-	 lEuMWPX4FzjTrQQaBOw8smkhtBAjGLV6e3qRLtDwmQDDMCM8iFv6/Z0VFJRWwhOpFA
-	 b88YqDIbgbOuYrAnMZYrkHISXHYDvwrym1ww3jUXgyent+yhjty64d2TOUcVvKsfi+
-	 QiIsPsOvjGRJldzLlL5gHWgJQ/3LSy7YRmbHYAMj5/+cMpBO7d/BElC9/TaMsUs3y5
-	 jHt+x9+fvGaqg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJgqh2T2lz4w2F;
-	Wed, 10 Jul 2024 11:53:20 +1000 (AEST)
-Date: Wed, 10 Jul 2024 11:53:19 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Shawn Guo <shawnguo@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd
- Bergmann <arnd@arndb.de>
-Cc: Fabio Estevam <festevam@denx.de>, ARM
- <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the imx-mxs tree
-Message-ID: <20240710115319.10dae8e2@canb.auug.org.au>
+	s=arc-20240116; t=1720576269; c=relaxed/simple;
+	bh=ZvLp7r5qYpXgQ8FeJYMYjuwJ6F6KhsV/1xQSB21NOzY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oYb0T0bbXo3iTcyTzwxVVHckVVM1MNYjSP8khoeQQIWwNjoxKGPsqUDTuPCLHpy09h5sk4yEpAcKNPz3CFtS+aclPx7Db+ZdgLaeAyqvv80D2vc239vru54Y3thuxbQrT69UZu6TBphEPeei97ejv276UD/IHJEMrTuAKvL+voo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EpAHh+3s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D9E6C3277B;
+	Wed, 10 Jul 2024 01:51:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720576269;
+	bh=ZvLp7r5qYpXgQ8FeJYMYjuwJ6F6KhsV/1xQSB21NOzY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EpAHh+3sKtz1m+bYgcFLVMI5KjLyu0QMXujNasDcqXOK+IGr7IQBtM+eHAk5nzRz+
+	 tMk6XRyqPl7l5A1BVK5AqaccCektN/8Dhy752zi3rsCDh6EqrASj9AfqE06oNPkb+u
+	 RlqtaGS7nBYx58z+sPhHOPJIIsH2Q17uZDG7LEp8cyWQVUNJ++Pv1ZrgEndq4VYyKr
+	 3nk94moYyIg8C5KVOH5nS5Y1KwoL2gN3Sp1BNDwqP0SduRUZAjhSYGlDgpfHDV4kC+
+	 uHBbVV2EPUclEOEMkuqShJFgIeiEdgIXV25oVk93Q+IEPLqZSzJDaMOVZtzkCOODSe
+	 6qDR8/rj6yEkQ==
+From: alexs@kernel.org
+To: Christoph Lameter <cl@linux.com>,
+	Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Petr Mladek <pmladek@suse.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Yoann Congal <yoann.congal@smile.fr>,
+	"Alex Shi (Tencent)" <alexs@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>
+Subject: [PATCH v2] mm/memcg: alignment memcg_data define condition
+Date: Wed, 10 Jul 2024 09:56:08 +0800
+Message-ID: <20240710015608.100801-1-alexs@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/LCmrj5r2shomky_Tt6VYZnE";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/LCmrj5r2shomky_Tt6VYZnE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: "Alex Shi (Tencent)" <alexs@kernel.org>
 
-Hi all,
+commit 21c690a349ba ("mm: introduce slabobj_ext to support slab object
+extensions") changed the folio/page->memcg_data define condition from
+MEMCG to SLAB_OBJ_EXT. And selected SLAB_OBJ_EXT for MEMCG, just for
+SLAB_MATCH(memcg_data, obj_exts), even no other relationship between them.
 
-The following commit is also in the arm-soc tree as a different commit
-(but the same patch):
+Above action make memcg_data exposed and include SLAB_OBJ_EXT for
+!MEMCG. That's incorrect in logcial and pay on code size.
 
-  3898bc187cde ("arm64: defconfig: Enable the IWLWIFI driver")
+So let's remove SLAB_OBJ_EXT from MEMCG and as Vlastimil Babka suggested,
+add _unused_slab_obj_ext for SLAB_MATCH for slab.obj_exts while !MEMCG.
+That could resolve the match issue, clean up the feature logical and
+save the unnessary code adding.
 
-This is commit
+Signed-off-by: Alex Shi (Tencent) <alexs@kernel.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Yoann Congal <yoann.congal@smile.fr>
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+---
+ include/linux/mm_types.h | 8 ++++++--
+ init/Kconfig             | 1 -
+ mm/slab.h                | 4 ++++
+ 3 files changed, 10 insertions(+), 3 deletions(-)
 
-  465830ad2534 ("arm64: defconfig: Enable the IWLWIFI driver")
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index ef09c4eef6d3..4ac3abc673d3 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -180,8 +180,10 @@ struct page {
+ 	/* Usage count. *DO NOT USE DIRECTLY*. See page_ref.h */
+ 	atomic_t _refcount;
+ 
+-#ifdef CONFIG_SLAB_OBJ_EXT
++#ifdef CONFIG_MEMCG
+ 	unsigned long memcg_data;
++#elif defined(CONFIG_SLAB_OBJ_EXT)
++	unsigned long _unused_slab_obj_ext;
+ #endif
+ 
+ 	/*
+@@ -343,8 +345,10 @@ struct folio {
+ 			};
+ 			atomic_t _mapcount;
+ 			atomic_t _refcount;
+-#ifdef CONFIG_SLAB_OBJ_EXT
++#ifdef CONFIG_MEMCG
+ 			unsigned long memcg_data;
++#elif defined(CONFIG_SLAB_OBJ_EXT)
++			unsigned long _unused_slab_obj_ext;
+ #endif
+ #if defined(WANT_PAGE_VIRTUAL)
+ 			void *virtual;
+diff --git a/init/Kconfig b/init/Kconfig
+index 26bf8bb0a7ce..61e43ac9fe75 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -965,7 +965,6 @@ config MEMCG
+ 	bool "Memory controller"
+ 	select PAGE_COUNTER
+ 	select EVENTFD
+-	select SLAB_OBJ_EXT
+ 	help
+ 	  Provides control over the memory footprint of tasks in a cgroup.
+ 
+diff --git a/mm/slab.h b/mm/slab.h
+index 3586e6183224..8ffdd4f315f8 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -98,7 +98,11 @@ SLAB_MATCH(flags, __page_flags);
+ SLAB_MATCH(compound_head, slab_cache);	/* Ensure bit 0 is clear */
+ SLAB_MATCH(_refcount, __page_refcount);
+ #ifdef CONFIG_SLAB_OBJ_EXT
++#ifdef CONFIG_MEMCG
+ SLAB_MATCH(memcg_data, obj_exts);
++#else
++SLAB_MATCH(_unused_slab_obj_ext, obj_exts);
++#endif
+ #endif
+ #undef SLAB_MATCH
+ static_assert(sizeof(struct slab) <= sizeof(struct page));
+-- 
+2.43.0
 
-in the arm-soc tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/LCmrj5r2shomky_Tt6VYZnE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaN6Y8ACgkQAVBC80lX
-0GyxXgf+PhC90z+7WUNCXXmU536lmUz6cXSsEZAKK7daBZ7l/t9wvDeAgXf8dHR6
-rkoujb6cvXLoBSsG2IbhncN4QykwVvH+jJ5vlFj5RwpK33to6nUwmDHft1CVBItO
-9nfOXzXGVS2n9yaLqpYT/tqTgsWbjG+MRBv5uwq2WXZc7Od1qzULn6T5AbWY/yoq
-G9Y7upPYW56p8AYakRS705FJJYT6VFyEu40583pJ7gW4Y2kxGIVd+8GXoPsE8S/5
-u4WOC6aTFhMEUWYKvezr+VGzMvZni0hP/TJXA5i6bqsoqmWMfzbDtkw67562A1lT
-J1K5cg7o9d9XFnTK8G1vCRXWlxDKHQ==
-=/mtk
------END PGP SIGNATURE-----
-
---Sig_/LCmrj5r2shomky_Tt6VYZnE--
 
