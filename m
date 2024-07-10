@@ -1,177 +1,334 @@
-Return-Path: <linux-kernel+bounces-247142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E899D92CBCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:18:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170CC92CBD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88720B21302
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:18:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A2CF1C22B65
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DDC8289E;
-	Wed, 10 Jul 2024 07:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110CF82D93;
+	Wed, 10 Jul 2024 07:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="RBZ1t4z+";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="T7x6sGhg"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="slyHklQc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBACD535;
-	Wed, 10 Jul 2024 07:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49BE77109;
+	Wed, 10 Jul 2024 07:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720595903; cv=none; b=LLzky3b//X6052/OzMSHK/JJhbl/qghLa/hdUqmz+VZ7bOzYO1WFdNIZx15YhvL2/UuJTVf8T3l6ky884azLgf3R0KUdwLznTd0hIzMFMAfysQRQqVQZl2ITH9dBkqETVmxNyCzClqsjKglfW9sYI+pxXQ+qBuum1Oy9nI4larE=
+	t=1720595931; cv=none; b=nkvQp5KFYQ3EzQLAwYIdpeuVzKhmegYm2chhJywzDShWfJ46yoRhFEg1tmtedzo+wJZ4WsbwXCU1ZqU2NtajjlCGHJIyM4XVdsJxHDsN26HQfTxS0QBRlxJzjEbXvDGVABZOeu8wvxjj3ro48mak54+dkzZTiQ9DaINV7T7rZ3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720595903; c=relaxed/simple;
-	bh=q1n3vhCEwT0L8KK1wY4qRJB02yVy4nxM8B2JsbUp65g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tK+3eZaLGSxiLlq27MM/RGXdF4qPvHI0aCfPLi1ku1UeJkkF9j06tsDDZHy4TuUlDk/cCrE4X4S6FJNLITuGbXANvjjXXgCzK4Wy/oal23cFL4pxmV1SH/NbK4RTb41d1Cnz2uH4pMU2XDEbJ3SHXifjpArk63hE55btc/pdxDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=RBZ1t4z+; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=T7x6sGhg reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1720595900; x=1752131900;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=bzFdmN4YSMsYqNzg1gKeQE0QeWkldNu+KdO/Z6kO2Ok=;
-  b=RBZ1t4z+w1rQnAR2NJdBXh8cT1G7rBf3I4AhdgFE99Km2Pgl3ABtcZW8
-   2TWWUF4fuNmKTUlak4KQkvZs6OMndeYj9KpDvbrbSoRTXdeirjo6koMY6
-   iKAXDZeMj/rSKAy199k6Rz0Rvv7SRxRYY97t+SOX76/Y1huxKuY7x739W
-   KGXgdxJ0xRcHIR8lhljGhN8NhIsX6pmW1A+4xi2n42k6RCOsSDA0sYebI
-   iSHN1KRqwjreo3JVJnMAgSbSjA0U/iIS5ZFEDCUDbZsHsvCBwn4SYsEvv
-   Ix1UArZNJpTMdxBZvmYRD5HXbqcoyp/EE2gWBtVXiPIITv6p+Wv4vrkzy
-   Q==;
-X-CSE-ConnectionGUID: iBBx2iWjTXqVlKJTpMk04g==
-X-CSE-MsgGUID: a3vuhXTYTue6VNz0KPa+jA==
-X-IronPort-AV: E=Sophos;i="6.09,197,1716242400"; 
-   d="scan'208";a="37831245"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 10 Jul 2024 09:18:17 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D9E26160B1D;
-	Wed, 10 Jul 2024 09:18:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1720595893;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=bzFdmN4YSMsYqNzg1gKeQE0QeWkldNu+KdO/Z6kO2Ok=;
-	b=T7x6sGhgYzu7QX5HNtiaCZ0KFg4oZ43vL8ZbpFnbdYSyQYxbNHc/IbZ2WLU/qBrYvulVlo
-	j8prnJLSET50sm0dN0JVoe/Dz5uLVlvf2AsRqLoaGqupap+PHHDOpmfc/EUyLiQoSRKN0I
-	M//on1iSYxik7leOemWKsOWxJjo51dF0qno35w7M3f7qqH0oIkCkV4IvrE3Tjem7XSGmqK
-	O5fA2/SwsxX0Fjn3cPpMmXwOi9K3s0+1K1l7OeO0IolxQpIsm7YhWeOYI3QQuIa2RPPrgL
-	yJWugsvPjdnsEp6gNyx6GxfBkxS8BrTFCl8FFmZQ8HEd71hwXS6YzAdDTZOhsA==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: York Sun <york.sun@nxp.com>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Robert Richter <rric@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-arm-kernel@lists.infradead.org
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>, devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Frank Li <Frank.Li@nxp.com>, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH 4/6] dt-bindings: memory: fsl: Add compatible string nxp, imx9-memory-controller
-Date: Wed, 10 Jul 2024 09:18:16 +0200
-Message-ID: <6068670.lOV4Wx5bFT@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20240709-imx95_edac-v1-4-3e9c146c1b01@nxp.com>
-References: <20240709-imx95_edac-v1-0-3e9c146c1b01@nxp.com> <20240709-imx95_edac-v1-4-3e9c146c1b01@nxp.com>
+	s=arc-20240116; t=1720595931; c=relaxed/simple;
+	bh=rqmifjrlxx3s7RcDnkE3IqBzuxCRT6+ff8aBkU6UQOo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LteZzpcD5GTSgIk/Bbnp/Cq1190P3Np4ZH3RDbbR9jboUgGBaZmJTT3gmE8ySIlTq/hv/6WUaz8YffW6bCgflKUGyzlPh2OlkbmwyUlBaQFk2c6ypc0AVbghlxIwZ7MQ2VPCO5aacrtSSpefrI2b00YffZUQUUvZVh2pTE7sMDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=slyHklQc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A071C32781;
+	Wed, 10 Jul 2024 07:18:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720595930;
+	bh=rqmifjrlxx3s7RcDnkE3IqBzuxCRT6+ff8aBkU6UQOo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=slyHklQc95X/EDQbl1cTV1CxnT6/yvB1welQymjILaAWt4sb2cBJwNlE/rp7OqQcI
+	 ZpkXVxCsZrJo3MOdN8NM+GoZ5Q4vrrfOYWVeFRw/qBHwuVNofb9IDXSBPJ4cwZr2el
+	 ZXq367YJPNI0WN1Izf3KdaWm8o1w3VTz+jfw2ndJY7DEIyL8wa+mJw5AnUxhXdMzv1
+	 mNAgxDWZ/n/9kU8JeHyqlqU4euDuFcwhYjbSLk/M+ygVJ9Kb9xgY1/ZQjS7IG58cdW
+	 J+GlHi+1EMGuqNsPVkSfqalt35X4XuBgk/R1D2XFwiXSFlZIybgMzaCr6Qu8WhGPAQ
+	 gqs2hVkB23EOQ==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Manu Bretelle <chantra@meta.com>, Daniel Borkmann
+ <daniel@iogearbox.net>, KP Singh <kpsingh@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
+ <eddyz87@gmail.com>, Mykola Lysenko <mykolal@meta.com>, Alexei Starovoitov
+ <ast@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu
+ <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, "John
+ Fastabend" <john.fastabend@gmail.com>, Stanislav Fomichev <sdf@google.com>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Shuah Khan
+ <shuah@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Florent
+ Revest <revest@google.com>
+Subject: Re: [PATCH bpf] selftests/bpf: DENYLIST.aarch64: Remove fexit_sleep
+In-Reply-To: <SJ0PR15MB461564D3F7E7A763498CA6A8CBDB2@SJ0PR15MB4615.namprd15.prod.outlook.com>
+References: <20240705145009.32340-1-puranjay@kernel.org>
+ <c0ef7ecf-595b-375a-7785-d7bf50040c6b@iogearbox.net>
+ <mb61pjzhwvshc.fsf@kernel.org>
+ <CACYkzJ7d_u=aRzbubBypSVhnUSjBQnbZjPuGXhqnMzbp0tJm_g@mail.gmail.com>
+ <224eeadb-fc5f-baeb-0808-a4f9916afa3c@iogearbox.net>
+ <mb61ped836gn7.fsf@kernel.org>
+ <d36b0c2e-fdf2-d3b0-46a8-7936e0eda5a8@iogearbox.net>
+ <CACYkzJ5E+3xYkNsH7JoVkjabzSwnZZCzzTz5B50qDB7bLYkmMA@mail.gmail.com>
+ <890d23f2-636e-12d1-31cc-eb6469f2a9ac@iogearbox.net>
+ <SJ0PR15MB461564D3F7E7A763498CA6A8CBDB2@SJ0PR15MB4615.namprd15.prod.outlook.com>
+Date: Wed, 10 Jul 2024 07:18:23 +0000
+Message-ID: <mb61p34ohsojk.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
+
+--=-=-=
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
-
-Hi Frank,
-
-Am Dienstag, 9. Juli 2024, 22:23:05 CEST schrieb Frank Li:
-> iMX9 memory controller is similar with other layerscape chips. But some
-> register layout has a little bit difference, so add new compatible string
-> 'nxp,imx9-memory-controller' for it.
-
-Is this controller the same for all i.MX9 SoC? E.g. i.MX91, i.MX93,
-i.MX95 and any future variants?
-
-Best regards,
-Alexander
-
-> imx9 need two 'reg', one for DDR controller and the other is ECC inject
-> engine register space. Keep the same restriction for other compatible
-> string.
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../bindings/memory-controllers/fsl/fsl,ddr.yaml   | 31 ++++++++++++++++=
-+++++-
->  1 file changed, 30 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/fsl/fsl=
-,ddr.yaml b/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,dd=
-r.yaml
-> index 84f778a99546b..e0786153eec73 100644
-> --- a/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ddr.ya=
-ml
-> +++ b/Documentation/devicetree/bindings/memory-controllers/fsl/fsl,ddr.ya=
-ml
-> @@ -40,6 +40,7 @@ properties:
->            - fsl,p1021-memory-controller
->            - fsl,p2020-memory-controller
->            - fsl,qoriq-memory-controller
-> +          - nxp,imx9-memory-controller
-> =20
->    interrupts:
->      maxItems: 1
-> @@ -51,13 +52,41 @@ properties:
->      type: boolean
-> =20
->    reg:
-> -    maxItems: 1
-> +    items:
-> +      - description: Controller register space
-> +      - description: Inject register space
-> +    minItems: 1
-> +
-> +  reg-names:
-> +    items:
-> +      - const: ctrl
-> +      - const: inject
-> +    minItems: 1
-> =20
->  required:
->    - compatible
->    - interrupts
->    - reg
-> =20
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nxp,imx9-memory-controller
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 2
-> +        reg-names:
-> +          minItems: 2
-> +    else:
-> +      properties:
-> +        reg:
-> +          maxItems: 1
-> +        reg-names: false
-> +
->  additionalProperties: false
-> =20
->  examples:
->=20
->=20
 
 
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+[SNIP]
+
+>
+> Hm, the latest run actually hangs in fexit_sleep (which is the test right=
+ after
+> fexit_bpf2bpf). So looks like this was too early. It seems some CI runs p=
+ass on
+> arm64 but others fail:
+>
+> =C2=A0=C2=A0 https://github.com/kernel-patches/bpf/actions/runs/985982685=
+1/job/27224868398=C2=A0(fail)
+> =C2=A0=C2=A0 https://github.com/kernel-patches/bpf/actions/runs/985983721=
+3/job/27224955045=C2=A0(pass)
+>
+> Puranjay, do you have a chance to look into this again?
+>
+> Probably unrelated... but when I tried to reproduce this using qemu in fu=
+ll emulation mode [0], I am getting a kernel crash for fexit_sleep, but als=
+o for fexit_bpf2bpf, fentry_fexit
+>
+> stacktraces look like (for fentry_fexit)
+>
+>
+> root@(none):/mnt/vmtest/selftests/bpf# ./test_progs -v -t fentry_fexit
+> bpf_testmod.ko is already unloaded.
+> Loading bpf_testmod.ko...
+> Successfully loaded bpf_testmod.ko.
+> test_fentry_fexit:PASS:fentry_skel_load 0 nsec
+> test_fentry_fexit:PASS:fexit_skel_load 0 nsec
+>
+> test_fentry_fexit:PASS:fentry_attach 0 nsec
+> test_fentry_fexit:PASS:fexit_attach 0 nsec
+> Unable to handle kernel paging request at virtual address ffff0000c2a80e68
+> Mem abort info:
+>   ESR =3D 0x0000000096000004
+>   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
+>   SET =3D 0, FnV =3D 0
+>   EA =3D 0, S1PTW =3D 0
+>   FSC =3D 0x04: level 0 translation fault
+> Data abort info:
+>   ISV =3D 0, ISS =3D 0x00000004, ISS2 =3D 0x00000000
+>   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
+>   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
+> swapper pgtable: 4k pages, 52-bit VAs, pgdp=3D0000000041b4a000
+> [ffff0000c2a80e68] pgd=3D1000000042f28003, p4d=3D0000000000000000
+> Internal error: Oops: 0000000096000004 [#1] SMP
+> Modules linked in: bpf_testmod(OE) [last unloaded: bpf_testmod(OE)]
+> CPU: 0 PID: 97 Comm: test_progs Tainted: G           OE      6.10.0-rc6-g=
+b0eedd920017-dirty #67
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 01400005 (nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=3D--)
+> pc : __bpf_tramp_enter+0x58/0x190
+> lr : __bpf_tramp_enter+0xd8/0x190
+> sp : ffff800084afbc10
+> x29: ffff800084afbc10 x28: fff00000c28c2e80 x27: 0000000000000000
+> x26: 0000000000000000 x25: 0000000000000050 x24: 0000000000000000
+> x23: 000000000000000a x22: fff00000c28c2e80 x21: 0000ffffed100070
+> x20: ffff800082032938 x19: ffff0000c2a80c00 x18: 0000000000000000
+> x17: 0000000000000000 x16: 0000000000000000 x15: 0000ffffed100070
+> x14: 0000000000000000 x13: ffff800082032938 x12: 0000000000000000
+> x11: 0000000000020007 x10: 0000000000000007 x9 : 00000000ffffffff
+> x8 : 0000000000004008 x7 : ffff80008218fa78 x6 : 0000000000000000
+> x5 : 0000000000000001 x4 : 0000000086db7919 x3 : 0000000095481a34
+> x2 : 0000000000000001 x1 : fff00000c28c2e80 x0 : 0000000000000001
+> Call trace:
+>  __bpf_tramp_enter+0x58/0x190
+>  bpf_trampoline_6442499844+0x44/0x158
+>  bpf_fentry_test1+0x8/0x10
+>  bpf_prog_test_run_tracing+0x190/0x328
+>  __sys_bpf+0x844/0x2148
+>  __arm64_sys_bpf+0x2c/0x48
+>  invoke_syscall+0x4c/0x118
+>  el0_svc_common.constprop.0+0x48/0xf0
+>  do_el0_svc+0x24/0x38
+>  el0_svc+0x4c/0x120
+>  el0t_64_sync_handler+0xc0/0xc8
+>  el0t_64_sync+0x190/0x198
+> Code: 52800001 97f9f3df 942a3be8 35000400 (f9413660)
+> ---[ end trace 0000000000000000 ]---
+> Kernel panic - not syncing: Oops: Fatal exception
+> SMP: stopping secondary CPUs
+> Kernel Offset: disabled
+> CPU features: 0x00,00000006,8c13bd78,576676af
+> Memory Limit: none
+>
+> For "fexit_sleep" and "fexit_bpf2bpf" respectively:
+>
+>
+>  $ ( cd  9859826851 && vmtest -k kbuild-output/arch/arm64/boot/Image.gz -=
+r ../aarch64-rootfs -a aarch64 '/bin/mount bpffs /sys/fs/bpf -t bpf && ip l=
+ink set lo up && cd /mnt/vmtest/selftests/bpf/ && ./test_progs -v -t fexit_=
+sleep' )
+> =3D> Image.gz
+> =3D=3D=3D> Booting
+> =3D=3D=3D> Setting up VM
+> =3D=3D=3D> Running command
+> root@(none):/# bpf_testmod: loading out-of-tree module taints kernel.
+> bpf_testmod: module verification failed: signature and/or required key mi=
+ssing - tainting kernel
+> Unable to handle kernel paging request at virtual address ffff0000c19c2668
+> Mem abort info:
+>   ESR =3D 0x0000000096000004
+>   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
+>   SET =3D 0, FnV =3D 0
+>   EA =3D 0, S1PTW =3D 0
+>   FSC =3D 0x04: level 0 translation fault
+> Data abort info:
+>   ISV =3D 0, ISS =3D 0x00000004, ISS2 =3D 0x00000000
+>   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
+>   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
+> swapper pgtable: 4k pages, 52-bit VAs, pgdp=3D0000000041b4a000
+> [ffff0000c19c2668] pgd=3D1000000042f28003, p4d=3D0000000000000000
+> Internal error: Oops: 0000000096000004 [#1] SMP
+> Modules linked in: bpf_testmod(OE)
+> CPU: 1 PID: 91 Comm: test_progs Tainted: G           OE      6.10.0-rc6-g=
+b0eedd920017-dirty #67
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 01400005 (nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=3D--)
+> pc : __bpf_tramp_enter+0x58/0x190
+> lr : __bpf_tramp_enter+0xd8/0x190
+> sp : ffff800084c4bda0
+> x29: ffff800084c4bda0 x28: fff00000c274ae80 x27: 0000000000000000
+> x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+> x23: 0000000060001000 x22: 0000ffffa36b7a54 x21: 00000000ffffffff
+> x20: ffff800082032938 x19: ffff0000c19c2400 x18: 0000000000000000
+> x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+> x14: 0000000000000000 x13: ffff800082032938 x12: 0000000000000000
+> x11: 0000000000020007 x10: 0000000000000007 x9 : 00000000ffffffff
+> x8 : 0000000000004008 x7 : ffff80008218fa78 x6 : 0000000000000000
+> x5 : 0000000000000001 x4 : 0000000086db7919 x3 : 0000000095481a34
+> x2 : 0000000000000001 x1 : fff00000c274ae80 x0 : 0000000000000001
+> Call trace:
+>  __bpf_tramp_enter+0x58/0x190
+>  bpf_trampoline_6442487232+0x44/0x158
+>  __arm64_sys_nanosleep+0x8/0xf0
+>  invoke_syscall+0x4c/0x118
+>  el0_svc_common.constprop.0+0x48/0xf0
+>  do_el0_svc+0x24/0x38
+>  el0_svc+0x4c/0x120
+>  el0t_64_sync_handler+0xc0/0xc8
+>  el0t_64_sync+0x190/0x198
+> Code: 52800001 97f9f3df 942a3be8 35000400 (f9413660)
+> ---[ end trace 0000000000000000 ]---
+> Kernel panic - not syncing: Oops: Fatal exception
+> SMP: stopping secondary CPUs
+> Kernel Offset: disabled
+> CPU features: 0x00,00000006,8c13bd78,576676af
+> Memory Limit: none
+> Failed to run command
+>
+> Caused by:
+>     0: Failed to QGA guest-exec-status
+>     1: error running guest_exec_status
+>     2: Broken pipe (os error 32)
+>     3: Broken pipe (os error 32)
+> [11:46:14] chantra@devvm17937:scratchpad $
+> [11:47:56] chantra@devvm17937:scratchpad $
+> [11:47:57] chantra@devvm17937:scratchpad $ ( cd  9859826851 && vmtest -k =
+kbuild-output/arch/arm64/boot/Image.gz -r ../aarch64-rootfs -a aarch64 '/bi=
+n/mount bpffs /sys/fs/bpf -t bpf && ip link set lo up && cd /mnt/vmtest/sel=
+ftests/bpf/ && ./test_progs -v -t fexit_bpf2bpf' )
+> =3D> Image.gz
+> =3D=3D=3D> Booting
+> =3D=3D=3D> Setting up VM
+> =3D=3D=3D> Running command
+> root@(none):/# bpf_testmod: loading out-of-tree module taints kernel.
+> bpf_testmod: module verification failed: signature and/or required key mi=
+ssing - tainting kernel
+> Unable to handle kernel paging request at virtual address ffff0000c278de68
+> Mem abort info:
+>   ESR =3D 0x0000000096000004
+>   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
+>   SET =3D 0, FnV =3D 0
+>   EA =3D 0, S1PTW =3D 0
+>   FSC =3D 0x04: level 0 translation fault
+> Data abort info:
+>   ISV =3D 0, ISS =3D 0x00000004, ISS2 =3D 0x00000000
+>   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
+>   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
+> swapper pgtable: 4k pages, 52-bit VAs, pgdp=3D0000000041b4a000
+> [ffff0000c278de68] pgd=3D1000000042f28003, p4d=3D0000000000000000
+> Internal error: Oops: 0000000096000004 [#1] SMP
+> Modules linked in: bpf_testmod(OE)
+> CPU: 1 PID: 87 Comm: test_progs Tainted: G           OE      6.10.0-rc6-g=
+b0eedd920017-dirty #67
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 01400005 (nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=3D--)
+> pc : __bpf_tramp_enter+0x58/0x190
+> lr : __bpf_tramp_enter+0xd8/0x190
+> sp : ffff800084c4ba90
+> x29: ffff800084c4ba90 x28: ffff800080a32d10 x27: ffff800080a32d80
+> x26: ffff8000813e0ad8 x25: ffff800084c4bce4 x24: ffff800082fbd048
+> x23: 0000000000000001 x22: fff00000c2732e80 x21: fff00000c18a3200
+> x20: ffff800082032938 x19: ffff0000c278dc00 x18: 0000000000000000
+> x17: 0000000000000000 x16: 0000000000000000 x15: 0000aaaabcc22aa0
+> x14: 0000000000000000 x13: ffff800082032938 x12: 0000000000000000
+> x11: 0000000000000000 x10: 000000000ac0d5af x9 : 000000000ac0d5af
+> x8 : 00000000a4d7a457 x7 : ffff80008218fa78 x6 : 0000000000000000
+> x5 : 0000000000000002 x4 : 0000000006fa0785 x3 : 0000000081d7cd4c
+> x2 : 0000000000000202 x1 : fff00000c2732e80 x0 : 0000000000000001
+> Call trace:
+>  __bpf_tramp_enter+0x58/0x190
+>  bpf_trampoline_34359738386+0x44/0xf8
+>  bpf_prog_3b052b77318ab7c4_test_pkt_md_access+0x8/0x118
+>  bpf_test_run+0x200/0x3a0
+>  bpf_prog_test_run_skb+0x328/0x6d8
+>  __sys_bpf+0x844/0x2148
+>  __arm64_sys_bpf+0x2c/0x48
+>  invoke_syscall+0x4c/0x118
+>  el0_svc_common.constprop.0+0x48/0xf0
+>  do_el0_svc+0x24/0x38
+>  el0_svc+0x4c/0x120
+>  el0t_64_sync_handler+0xc0/0xc8
+>  el0t_64_sync+0x190/0x198
+> Code: 52800001 97f9f3df 942a3be8 35000400 (f9413660)
+> ---[ end trace 0000000000000000 ]---
+> Kernel panic - not syncing: Oops: Fatal exception in interrupt
+> SMP: stopping secondary CPUs
+> Kernel Offset: disabled
+> CPU features: 0x00,00000006,8c13bd78,576676af
+> Memory Limit: none
+> Failed to run command
+>
+> Caused by:
+>     0: Failed to QGA guest-exec-status
+>     1: error running guest_exec_status
+>     2: Broken pipe (os error 32)
+>     3: Broken pipe (os error 32)
+>
+>
+> [0] https://chantra.github.io/bpfcitools/bpfci-troubleshooting.html
 
 
+Thanks for sharing the logs,
+I will try to reproduce this and find the root cause.
+
+Thanks,
+Puranjay
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iIoEARYKADIWIQQ3wHGvVs/5bdl78BKwwPkjG3B2nQUCZo41wBQccHVyYW5qYXlA
+a2VybmVsLm9yZwAKCRCwwPkjG3B2nff7AQD5NhgufVv5SrRGgblNq+3Qs4aZtV0I
+FRNSA1uNza9PhAEApV3fxx7DC631inEOVo3nM2wgD3JfnrjmAlYxxkBB6A8=
+=oNqc
+-----END PGP SIGNATURE-----
+--=-=-=--
 
