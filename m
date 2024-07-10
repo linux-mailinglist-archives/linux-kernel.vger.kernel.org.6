@@ -1,112 +1,153 @@
-Return-Path: <linux-kernel+bounces-247651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69A9C92D295
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:18:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53C3192D298
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:18:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DBA0283615
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:18:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84EED1C23491
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045F1193072;
-	Wed, 10 Jul 2024 13:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB0619049C;
+	Wed, 10 Jul 2024 13:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxR7FxJ4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EVWo1ydm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A4B192B91;
-	Wed, 10 Jul 2024 13:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49CFB18560A;
+	Wed, 10 Jul 2024 13:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720617480; cv=none; b=Y1+FVUBAikBOvKtL5GP6V+sQ9xmGtf1JbNk9pcllf7uihHFRBpcPm5S+56jO2GgPajOhPuMWIAjILQkLcdza3pf6mv1T1WZ6KOQZlbOrpj9k+QelJeOuYkMDsCTC/8Z+TkT7iVZx7m/UmfeLq0Qw1+ZKo6hn+RFkNHWoXOVEgX0=
+	t=1720617514; cv=none; b=VL9nsMrsc/O/y1mLTD3to2yZnCF6R8YBqlk9tZrx6cIivT8awvxUEEa3Oc86tCsg+2GG/bi/xI/oX483ycSutYcMI8lc7KzdCQJ6JRqrgXKK9RsSgZof7vMx9tExlIP6FTdU4wGP5Hx3N8/oQdDbwqmg3tM4DprBKxt1Qef/C8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720617480; c=relaxed/simple;
-	bh=FmLG9ussU5FRxdr7oifUla5ahQxpdvQPzA+Zr6jz3LQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=id1j8TScQJHMWwxvbpHl4BF21ICoyQc2Bytr09ADuvgqYArJ4VilQk1roIh7bHcEm7KO894M2Al436bP3cW+OQFJD33sr7tqx9LOuVU85b1Q3Pkr7e3czqOTB4FlTnf5UlWlA9m9lxoYjlsoXPkU87WJlTHJRbiWGNwrNe6aYyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxR7FxJ4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC2C5C32782;
-	Wed, 10 Jul 2024 13:17:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720617479;
-	bh=FmLG9ussU5FRxdr7oifUla5ahQxpdvQPzA+Zr6jz3LQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rxR7FxJ4+AfkpLq1LVVuoYWlhWG4o7wcc2UQJnuNUo5vwhv0h/K3Jn6F2Fy7eYxS2
-	 vXxSDi+qYjizmB1AXmGqNnuzjoAEmuOaGmagE1d6vcEjlEamQVCKTsPHjJaO6y3zyd
-	 DMNSXyAUaYnfYIvoCMS1YJ3MGjYA2GtT3c4DZr+CeW7haLWFQe3y5XfKPyFmOXD3zT
-	 gOSs38ytTD+K5hODyj2QOwREYLZWHmGL0lGs7YHEB/nyGKhZY5sknBVu4nag/wGnSb
-	 TKJ2WGrFoakqcVV+5mmSCVO92d3Kv6tf5Cd6UQTV/wLqGdiEd72sr5dxnMNXeAi8W8
-	 G5VMdvNM1QnZA==
-Date: Wed, 10 Jul 2024 14:17:53 +0100
-From: Will Deacon <will@kernel.org>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Subject: Re: [PATCH v4 13/15] irqchip/gic-v3-its: Rely on genpool alignment
-Message-ID: <20240710131753.GB14582@willie-the-truck>
-References: <20240701095505.165383-1-steven.price@arm.com>
- <20240701095505.165383-14-steven.price@arm.com>
+	s=arc-20240116; t=1720617514; c=relaxed/simple;
+	bh=Xn7qVGu2+Og/sESzeFPW+xXM33yfy6MRu9O9WvJxqmQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uXevUtpxViTWRg124qugZaf+glO7xNPiHzHMJi8gC9/yA69IkF4M6JYsEYWaOfzn22jHsQYtR+Xv42YlOzS78bPV9kvn9lDQAnji14U2Pe8wVyASw/jbIepzDTothRR7abo6bRPZHSE3M2W4MKFSfgyVPZLubhnWSfidiuRWzYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EVWo1ydm; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720617512; x=1752153512;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Xn7qVGu2+Og/sESzeFPW+xXM33yfy6MRu9O9WvJxqmQ=;
+  b=EVWo1ydmh5VM7H37DKN6b/q/fCZVHM59/hAyGTeyeDN3Skeav0qM2QK/
+   HLZKv6kzL9TgG6dxw4//ncCo9lO2ad4Wdtnbk7w9cfYg0ehGU8pIazT18
+   EFv1tPCQgreKdhy6BhiF23Y9jBZ1EA89do4VhDM7ahR4hvOl0EFlp45tU
+   YJwJq93ZwCyg4o4axZZu9qsxzX/s2G2u/dvZ9fauaxwYNg01cr60EE15v
+   Xx5SJKuVwDhpSbFvW65mwavNXACLG3HY7CWhnTUbN1tsiQLboujLK+4wP
+   6EiOdTs6Pr0w+dwQTZotvxWXvHBZqzHDiwnGR9YMIuAlb53MOFNJ712pC
+   A==;
+X-CSE-ConnectionGUID: 3DAXja3RTVKHOcaPA6nqXA==
+X-CSE-MsgGUID: 5wrrmlXLQcG0/TcCjrpZvQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11128"; a="35471835"
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="35471835"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 06:18:31 -0700
+X-CSE-ConnectionGUID: Bh9vM9kMSd2HfyPwpYBwRg==
+X-CSE-MsgGUID: XNcAoN5JTF6g6wg3808MxQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="52605703"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.49.253])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 06:18:28 -0700
+Message-ID: <8b5bf7d6-8dfa-463b-a2ae-fa74a3e5ba73@intel.com>
+Date: Wed, 10 Jul 2024 16:18:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240701095505.165383-14-steven.price@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] mmc: sdhci-esdhc-imx: obtain the 'per' clock rate
+ after its enablement
+To: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
+ Haibo Chen <haibo.chen@nxp.com>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, s32@nxp.com
+References: <20240708121018.246476-1-ciprianmarian.costea@oss.nxp.com>
+ <20240708121018.246476-3-ciprianmarian.costea@oss.nxp.com>
+ <dbd73f2b-54ab-4832-9610-a4bc70e3b9f2@intel.com>
+ <7d851eb6-ef8e-480a-9b5a-8cb67d6adf8b@oss.nxp.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <7d851eb6-ef8e-480a-9b5a-8cb67d6adf8b@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 01, 2024 at 10:55:03AM +0100, Steven Price wrote:
-> its_create_device() over-allocated by ITS_ITT_ALIGN - 1 bytes to ensure
-> that an aligned area was available within the allocation. The new
-> genpool allocator has its min_alloc_order set to
-> get_order(ITS_ITT_ALIGN) so all allocations from it should be
-> appropriately aligned.
+On 10/07/24 15:50, Ciprian Marian Costea wrote:
+> On 7/10/2024 3:33 PM, Adrian Hunter wrote:
+>> On 8/07/24 15:10, Ciprian Costea wrote:
+>>> The I.MX SDHCI driver assumes that the frequency of the 'per' clock
+>>> can be obtained even on disabled clocks, which is not always the case.
+>>>
+>>> According to 'clk_get_rate' documentation, it is only valid
+>>> once the clock source has been enabled.
+>>
+>> The kerneldoc comment for clk_get_rate() says
+>>
+>>     Can be called regardless of the clock enabledness
+>>
+>> which sounds like the opposite.  Please clarify.
+>>
 > 
-> Remove the over-allocation from its_create_device() and alignment from
-> its_build_mapd_cmd().
+> Hello Adrian,
 > 
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->  drivers/irqchip/irq-gic-v3-its.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> My observation was based on the following [1] 'clk_get_rate()' documentation.
 > 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index 7d12556bc498..ab697e4004b9 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -699,7 +699,6 @@ static struct its_collection *its_build_mapd_cmd(struct its_node *its,
->  	u8 size = ilog2(desc->its_mapd_cmd.dev->nr_ites);
->  
->  	itt_addr = virt_to_phys(desc->its_mapd_cmd.dev->itt);
-> -	itt_addr = ALIGN(itt_addr, ITS_ITT_ALIGN);
->  
->  	its_encode_cmd(cmd, GITS_CMD_MAPD);
->  	its_encode_devid(cmd, desc->its_mapd_cmd.dev->device_id);
-> @@ -3520,7 +3519,7 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
->  	 */
->  	nr_ites = max(2, nvecs);
->  	sz = nr_ites * (FIELD_GET(GITS_TYPER_ITT_ENTRY_SIZE, its->typer) + 1);
-> -	sz = max(sz, ITS_ITT_ALIGN) + ITS_ITT_ALIGN - 1;
-> +	sz = max(sz, ITS_ITT_ALIGN);
->  
->  	itt = itt_alloc_pool(its->numa_node, sz);
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/clk.h#n720
+> 
+> Best Regards,
+> Ciprian
 
-Tested-by: Will Deacon <will@kernel.org>
+Yes, that is clear.
 
-Will
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
+> 
+>>>
+>>> Signed-off-by: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
+>>> ---
+>>>   drivers/mmc/host/sdhci-esdhc-imx.c | 8 +++++++-
+>>>   1 file changed, 7 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
+>>> index 21d984a77be8..8f0bc6dca2b0 100644
+>>> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
+>>> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+>>> @@ -1709,7 +1709,6 @@ static int sdhci_esdhc_imx_probe(struct platform_device *pdev)
+>>>       }
+>>>         pltfm_host->clk = imx_data->clk_per;
+>>> -    pltfm_host->clock = clk_get_rate(pltfm_host->clk);
+>>>       err = clk_prepare_enable(imx_data->clk_per);
+>>>       if (err)
+>>>           goto free_sdhci;
+>>> @@ -1720,6 +1719,13 @@ static int sdhci_esdhc_imx_probe(struct platform_device *pdev)
+>>>       if (err)
+>>>           goto disable_ipg_clk;
+>>>   +    pltfm_host->clock = clk_get_rate(pltfm_host->clk);
+>>> +    if (!pltfm_host->clock) {
+>>> +        dev_err(mmc_dev(host->mmc), "could not get clk rate\n");
+>>> +        err = -EINVAL;
+>>> +        goto disable_ahb_clk;
+>>> +    }
+>>> +
+>>>       imx_data->pinctrl = devm_pinctrl_get(&pdev->dev);
+>>>       if (IS_ERR(imx_data->pinctrl))
+>>>           dev_warn(mmc_dev(host->mmc), "could not get pinctrl\n");
+>>
+> 
+
 
