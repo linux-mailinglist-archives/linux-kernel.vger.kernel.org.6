@@ -1,180 +1,118 @@
-Return-Path: <linux-kernel+bounces-248198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDBB992D9B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:06:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 020CB92D9B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5A1D1C20EC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:06:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF8EA2817F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEA3194C96;
-	Wed, 10 Jul 2024 20:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D66197A89;
+	Wed, 10 Jul 2024 20:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hbnv8nHk"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lZnyBEOy"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992E54EB51
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 20:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8B54F1E2;
+	Wed, 10 Jul 2024 20:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720641974; cv=none; b=RyeST9zy4fwBsRKpIX/cwlSzd2UO2GhlDlnlHSCDjDKF0NjVXGEPeUSM0zq9shvar4qKQfUW9HBe2ICHSyJK/288MWOzIMMwWHlHrrd8DjT6h7E4h+F6yoZo77yz7ueoAJY+6s9nvQn07vqEuDfuvDMtdgGYdbNdYIv6he4msV4=
+	t=1720642159; cv=none; b=O3wZdeWSyNDGC5n97eiX3JjITl26YfHCu1qUhcVknvQhw9CPg3EBJ+Zcsc/3YoEFhQxYumi/TdFBhSFRGQSa9ZKzrvQrmMTAI4U0A+tcll+tw7d6Q51KpzVa/rLd2wCAyXpBZ9Hz9be0HlTG/CWgk7GfO+8lpMkOnZh9CKeNrME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720641974; c=relaxed/simple;
-	bh=yaZFbOF1F9Ja9FQEvL/ykv3jVOt1v2vsmoWiE05XgDU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mykwUF9pgDQxoBQdeSWYpeivoe3MboLEIUNtiBuL3nLhxgjzfo/nfSs2046qKu2RNRepnAOV7K3Nlvr53nawoONcWrpGz4MgLTO4CDUlGkI4Jwrn1bZLQde7YNvXRU+mpYaee6mbQFeYtEPTcYVCwNa+WIl/78sZjKikXRzHxgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hbnv8nHk; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a77d876273dso15603066b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:06:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1720641971; x=1721246771; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yaZFbOF1F9Ja9FQEvL/ykv3jVOt1v2vsmoWiE05XgDU=;
-        b=hbnv8nHkMgl3FE3lFv/KXEPvwLl/0zc11Mv2u/g6MSNw2WTynqWh8YzYNSzPbOkC4y
-         epN1FeqNiBHASIp2qFMc94Y72jMByVp5JNiVToFPFbC0h7mJiRomlTMaAHrhEbBJdDxt
-         qm2mLA0wzRNz9qjDav9UnvMShnErtZf1Sf33g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720641971; x=1721246771;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yaZFbOF1F9Ja9FQEvL/ykv3jVOt1v2vsmoWiE05XgDU=;
-        b=Qzoz7RpqAfNJw/q3x94a0KuWBpRBEE2dBT5kKAlqWkAf9Cp2FHdmfcAD3bbByQ8UNV
-         lxwcCAtwd3jS1au4E13Ch9Aj2NZORDx9YHDlGBXlw7jWajegJ1gNW0jwW+7G6K6NnKcR
-         ixKNUd5ph948wGa6iZKf3e6LNC8Jo5SEKecxBsqVvjwpovmtuMi+lY+ihMbYzij0/7bM
-         XQMopbQx9e1RlAjpxyL8omvlmowRV6VSsw8uuSjm/VD9w+YKVeurfKBYW0js9YW1pnFF
-         xHwObPM5iv9kay3CqKFCJTfkEP9dj129YAC036p83LSbeJBXkzKtuRtjcmuQgGX+Ja4T
-         wX7g==
-X-Gm-Message-State: AOJu0YwA6l6FQ2wWnW2JNlbB1k3iWke0vdEAGrizZlDT4xk6/LBLAUWv
-	jQ/4+1Jsd9oixBJg2236mnEqxV38HfkGSZC2jO6fvJel3FGhvf0P15kcQ+t4Zmnji9NDGXpSy3w
-	p0rBBlEg=
-X-Google-Smtp-Source: AGHT+IF1syUx6gj4qd65RysOmCRWjgsFSQRSUqGZ6iNtXYUi+2UCA19VmY/MV6XED52WKSnx4wp6QQ==
-X-Received: by 2002:a05:6402:1eca:b0:57c:5d4a:4122 with SMTP id 4fb4d7f45d1cf-594bac74fbemr5632396a12.9.1720641970622;
-        Wed, 10 Jul 2024 13:06:10 -0700 (PDT)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bc7c9e5fsm2589426a12.58.2024.07.10.13.06.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jul 2024 13:06:10 -0700 (PDT)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa6b3so103607a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:06:09 -0700 (PDT)
-X-Received: by 2002:a05:6512:2111:b0:52e:73f5:b7c4 with SMTP id
- 2adb3069b0e04-52eb99a3645mr4058074e87.37.1720641518212; Wed, 10 Jul 2024
- 12:58:38 -0700 (PDT)
+	s=arc-20240116; t=1720642159; c=relaxed/simple;
+	bh=nAq2UopC+lcHEXD0KwKR6HDnTvRTNu7sg5BZmooKNd4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=b7/qleyqcT1TNjhjYbmKAZkirLuM4OFD9XqFfdn5tZG3PLaCMFxkSVuCo01glLAPeezTTCYRO9Xbjr4e8xOLPInvRRJhIPU4HA/vxxGOdo05hG3zvAmCCqYhJ0vvxEODVq/FZYt58INS7HrnU/qmqrrinrZ5ytbF1BD/aZ/6CkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=lZnyBEOy; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720642149; x=1721246949; i=markus.elfring@web.de;
+	bh=rho+4554GMatJ4J6FFq/74f8fKeBu1vtC6simcrat64=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=lZnyBEOylSRk809Ia0nRj6Z4UOEm2+69GKJUsV28BelJpfAroe6EB9aG9iGeItoL
+	 qUkqtcCjUtfet5wQyWcREXNC4c28Up0ODFfT3WpklPVudUmhM3dhL6wtudDFZgBLg
+	 mqIA9EX4Mr2nw2/smMOZgkT+EI48cY+GjZAaG4TqULhMpog59YKeW433t8UKIe8Q1
+	 uepFe3ffpRtnnFS1c+DOdxK36BdayviYUCOB6RyFxLpsy0eKQcp65XLr4KZR3UyUr
+	 utWUyj2Unn6w+GVfVB9wuokCGSpKHIoHU6oksgWPeY8z8PgR8e5dv617OFNI6zVUv
+	 gwUipE3fEr1OzBj29g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MKMA7-1sfaVW3Sf9-00KXWF; Wed, 10
+ Jul 2024 22:09:09 +0200
+Message-ID: <8fd93c4e-3324-49b6-a77c-ea9986bc3033@web.de>
+Date: Wed, 10 Jul 2024 22:09:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1720611677.git.mst@redhat.com> <3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst@redhat.com>
- <CABVzXAnjAdQqVNtir_8SYc+2dPC-weFRxXNMBLRcmFsY8NxBhQ@mail.gmail.com> <20240710142239-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20240710142239-mutt-send-email-mst@kernel.org>
-From: Daniel Verkamp <dverkamp@chromium.org>
-Date: Wed, 10 Jul 2024 12:58:11 -0700
-X-Gmail-Original-Message-ID: <CABVzXAmp_exefHygEGvznGS4gcPg47awyOpOchLPBsZgkAUznw@mail.gmail.com>
-Message-ID: <CABVzXAmp_exefHygEGvznGS4gcPg47awyOpOchLPBsZgkAUznw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] virtio: fix vq # for balloon
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, 
-	Alexander Duyck <alexander.h.duyck@linux.intel.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Cornelia Huck <cohuck@redhat.com>, 
-	Halil Pasic <pasic@linux.ibm.com>, Eric Farman <farman@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Jason Wang <jasowang@redhat.com>, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	linux-um@lists.infradead.org, linux-remoteproc@vger.kernel.org, 
-	linux-s390@vger.kernel.org, virtualization@lists.linux.dev, 
-	kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Vasiliy Kovalev <kovalev@altlinux.org>, linux-fsdevel@vger.kernel.org,
+ lvc-patches@linuxtesting.org,
+ syzbot+d98fd19acd08b36ff422@syzkaller.appspotmail.com
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ "Tigran A. Aivazian" <aivazian.tigran@gmail.com>, dutyrok@altlinux.org
+References: <20240710191118.40431-2-kovalev@altlinux.org>
+Subject: Re: [PATCH fs/bfs 1/2] bfs: fix null-ptr-deref in bfs_move_block
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240710191118.40431-2-kovalev@altlinux.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:l1ptvMTFbiN/O1FzRBNPX9iH0hmjL8/DegvoUVGQWj22U3u9OgC
+ zVNYHpJHoaOhSeNt0HtfNDcG9ms+Rs/1q7bwVdqFnnkScQ5JvmqhTAqOOEaz1nHGHzRvSY7
+ 7oIvuwQLmhxy7c+wZYFppgoIbt2tCrBa9/WW4nUoigTlAV7WigaEukE/FPAgysDuTcFh5+V
+ lCmWYaugy+SO+QXSgo+DA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Oqzg30k6YCI=;ruKfetjCviKFaOH6HgG19JB8MFa
+ 5NtFyOrkk5/L2+xG9M3+FHKl6vutPANxBNDn8uP5odhUsE8u9KxamvELKGB/eQ8fecb52pgNa
+ 8nNN0RbjaTlxV/0z5o/SAViA/0ftjcLtDzgQKiqGApYYCCWIKnKgVC2Qj/pQZs4O/4x3UsFMm
+ xsbvxvI3EJXXXItgDfgJmWygfwbELLtSVD/ZIDJsNbKIMXSRG7E7QE2+ROMQRbiJdf6UEKuz0
+ 8XYw+zeivXXapthi20RHI0MRdU9d3zM3n0lSRjabuB8QhMlXHimttEUqyRW5Bl1+eXhaCThPF
+ Kaw2LcboryJuRlNRdw+x9Lp9TAhZC2eXg5vCd17cZxsFT7yru2h+fxqha2SXuwxoHhvxI9O2W
+ GEh3qQnb7rcw19v7GpcJAqUapAR0atDR04cQJhKr7TLK04r6DCS2xebHIcEKWoKMFhz43SeqJ
+ L1yM9A3TeaUrPJ+1ClPW0iqMK++5g2YaeZsDgK9Dic6izhEqU4FPQuAwdvKVJRqQqdD90Ik7p
+ udpmOV5xYZ8R30ntJxj6BEkADwb/CVHS3g2Wup3e2aLwB4L5RQgElpahYnoyDLvef+w8qhoiV
+ sNvZXOvGd8cO8qpLk6PLB0n6REyIrGR2Diu44RVFffxbjuzmWiMX3kRQRvqWyKYTZblRrW6oP
+ Nr7PYL/CX7KvyanL8JXsWqxdYFGdBaZXbhEaucrJWqCn4Sc9c/HLTrxUMnp5jyjU/Y4nKvoMj
+ Lt56XWCo88LmtC5j57/Oi3EfFMvtYzHaeq4n1+Ifk6QYfFqhm19LIgzQ4cgfnBHH2HJWf4e0a
+ eIg/t8cFPwQNJT+0r833a1MQ==
 
-On Wed, Jul 10, 2024 at 11:39=E2=80=AFAM Michael S. Tsirkin <mst@redhat.com=
-> wrote:
->
-> On Wed, Jul 10, 2024 at 11:12:34AM -0700, Daniel Verkamp wrote:
-> > On Wed, Jul 10, 2024 at 4:43=E2=80=AFAM Michael S. Tsirkin <mst@redhat.=
-com> wrote:
-> > >
-> > > virtio balloon communicates to the core that in some
-> > > configurations vq #s are non-contiguous by setting name
-> > > pointer to NULL.
-> > >
-> > > Unfortunately, core then turned around and just made them
-> > > contiguous again. Result is that driver is out of spec.
-> >
-> > Thanks for fixing this - I think the overall approach of the patch look=
-s good.
-> >
-> > > Implement what the API was supposed to do
-> > > in the 1st place. Compatibility with buggy hypervisors
-> > > is handled inside virtio-balloon, which is the only driver
-> > > making use of this facility, so far.
-> >
-> > In addition to virtio-balloon, I believe the same problem also affects
-> > the virtio-fs device, since queue 1 is only supposed to be present if
-> > VIRTIO_FS_F_NOTIFICATION is negotiated, and the request queues are
-> > meant to be queue indexes 2 and up. From a look at the Linux driver
-> > (virtio_fs.c), it appears like it never acks VIRTIO_FS_F_NOTIFICATION
-> > and assumes that request queues start at index 1 rather than 2, which
-> > looks out of spec to me, but the current device implementations (that
-> > I am aware of, anyway) are also broken in the same way, so it ends up
-> > working today. Queue numbering in a spec-compliant device and the
-> > current Linux driver would mismatch; what the driver considers to be
-> > the first request queue (index 1) would be ignored by the device since
-> > queue index 1 has no function if F_NOTIFICATION isn't negotiated.
->
->
-> Oh, thanks a lot for pointing this out!
->
-> I see so this patch is no good as is, we need to add a workaround for
-> virtio-fs first.
->
-> QEMU workaround is simple - just add an extra queue. But I did not
-> reasearch how this would interact with vhost-user.
->
-> From driver POV, I guess we could just ignore queue # 1 - would that be
-> ok or does it have performance implications?
+> Add a check to ensure 'sb_getblk' did not return NULL before copying dat=
+a.
 
-As a driver workaround for non-compliant devices, I think ignoring the
-first request queue would be a reasonable approach if the device's
-config advertises num_request_queues > 1. Unfortunately, both
-virtiofsd and crosvm's virtio-fs device have hard-coded
-num_request_queues =3D1, so this won't help with those existing devices.
-Maybe there are other devices that we would need to consider as well;
-commit 529395d2ae64 ("virtio-fs: add multi-queue support") quotes
-benchmarks that seem to be from a different virtio-fs implementation
-that does support multiple request queues, so the workaround could
-possibly be used there.
+Wording suggestion:
+                        that a sb_getblk() call
 
-> Or do what I did for balloon here: try with spec compliant #s first,
-> if that fails then assume it's the spec issue and shift by 1.
 
-If there is a way to "guess and check" without breaking spec-compliant
-devices, that sounds reasonable too; however, I'm not sure how this
-would work out in practice: an existing non-compliant device may fail
-to start if the driver tries to enable queue index 2 when it only
-supports one request queue, and a spec-compliant device would probably
-balk if the driver tries to enable queue 1 but does not negotiate
-VIRTIO_FS_F_NOTIFICATION. If there's a way to reset and retry the
-whole virtio device initialization process if a device fails like
-this, then maybe it's feasible. (Or can the driver tweak the virtqueue
-configuration and try to set DRIVER_OK repeatedly until it works? It's
-not clear to me if this is allowed by the spec, or what device
-implementations actually do in practice in this scenario.)
+How do you think about to use a summary phrase like
+=E2=80=9CPrevent null pointer dereference in bfs_move_block()=E2=80=9D?
 
-Thanks,
--- Daniel
+
+=E2=80=A6
+> +++ b/fs/bfs/file.c
+> @@ -35,16 +35,22 @@ static int bfs_move_block(unsigned long from, unsign=
+ed long to,
+>  					struct super_block *sb)
+>  {
+>  	struct buffer_head *bh, *new;
+> +	int err;
+
+Can a statement (like the following) become more appropriate for such
+a function implementation?
+
+	int ret =3D 0;
+
+
+Regards,
+Markus
 
