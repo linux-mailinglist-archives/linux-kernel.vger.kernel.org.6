@@ -1,197 +1,260 @@
-Return-Path: <linux-kernel+bounces-247153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECE4692CBF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:31:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A422B92CBF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B8B31C22ACE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:31:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 328471F23012
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606D283CD4;
-	Wed, 10 Jul 2024 07:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C73484A51;
+	Wed, 10 Jul 2024 07:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dJCiLAhd"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LRVvovir"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E96542056
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFA183A19;
+	Wed, 10 Jul 2024 07:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720596655; cv=none; b=lMRQPLhogTW8p35WkhdzJU9F0fEvAwvYb57EYQdHiM0e4bG8vNQUQlmk9gudPU3juwRomhSzkUbRFwf+M4s3v7bCePL4e3m9c9L3JxaqqwhYhBUBbuJ4fKdzRGkNATLqYAalsXhwq+2cvWIZFrhPMohjow1t6H43fXRCzgLhU8A=
+	t=1720596861; cv=none; b=L02f1Sm7lcIq7D9MW4q30dkBSASvQ9PUu27oq8dO8HyCcjHD+k8TRtdSTfaefNNHrfVU3W8Yn8iJfWKyOAKQ9XShm4gqBfbWyKct5/Yb2Xed3XtPBjxdRF3Wo/TW2917n7M8b3B5OO8y8+30rKcT4z4j+aRYtCN6aAQVwOQtk0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720596655; c=relaxed/simple;
-	bh=bg11X0+ouhSXutIZH+FX0laaIoy8Fd6IAGYyDkPoOmg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k64jSzPUWKrCUXdk8UpQBMo8V+nt2BOXwMoMQGrk9+P1xuKXDDutyhX4Yb3o8vPqzTLtdS1UqJ42SsOxcw7n/u32nQY0issN/x3iIulnJeczyAtAl8TsvHSDTLbiaQZoUAcQPXQWyAJ2so22SvE1hCNfvKRdn48pcJ6Sqn+zViI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dJCiLAhd; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a6265d3ba8fso547847866b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 00:30:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1720596652; x=1721201452; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BE/oQZmZGmjJjHSOCOGHNHHe0sV17vr1YpR/41Jzb5g=;
-        b=dJCiLAhd/2MRdbJWp59ir8VhnLVuK+eiZYL4Bb/vRADJi74iKHszneGBh0sliGvTxr
-         K/SJ72GSlzwYqH6wc4kUgVjYptXtWBsPcKHzWasteD4RPNaloPxQJvVrZ/oHyzNv5fm5
-         Ysq7+aQbcwtE2r0EhoQKmv+nb/OFGTohmFkk+MemWnsiwzyJeuBAUPsGpKsqXM5hOqyv
-         mFzLh/K+v/dMAn2MV2W7vtQw2HgZMa0DKphGC3pTuAlL+lo8UL67TblHD2BBHlQrmdcI
-         4//b90OGCk0KZUbbPIdpi91EWjNDLqXedO5Vpv8klLofrYYemNMTd19Nbn2M/Oz/oMkj
-         V7Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720596652; x=1721201452;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BE/oQZmZGmjJjHSOCOGHNHHe0sV17vr1YpR/41Jzb5g=;
-        b=mODg/Vt3saqhuhJQT1SXUIDg2MMgfspUHeSXvX/qQY1FYQmklMrnwpptgNtS3hkAH8
-         EBaiizKP0aoHEPj/4q0pEJzuN4OvwlvZww7KY8LppnXqQnQRwYIMV7SdQCQHDiKoBKjM
-         KuD8mEnhbvaQbefljq6nplJR0D7NGy6CD+0VZYVGox4S02G+JCaOodMjMOepvvl26ypZ
-         eFzrpLkMc4FQkxMwjfbne+B8B4aErTZ8vyyBDY1F5i5tCfCAmmsCuhK19muRy0Z4sBT/
-         6XIK/zUmj+LWmklVfz3xZalwGij8Ab40navCpi0fzDpWqzElqbHDRYtCGCvsLQqDrs75
-         qA5w==
-X-Forwarded-Encrypted: i=1; AJvYcCXmKksIsFcZ0oOvBSGuLTVgTMzvhDzFQ2wkrpbDeeQ7QHH4YhtVu+UfOl57cB0QH5K2gClDqQnBwR6TNErfGB0vufp3oKUV8UjeuGcL
-X-Gm-Message-State: AOJu0Yyfc7piG+Q3qxQao6PNtSh52GnE3Tzakp5WKa8r/AvT5dUfxH9l
-	o/68u5wM5Cf6qKKrN8wTrB3tzEJWUbRjSi1mUBmmZIi4LX76We49HG7UPwotl+o=
-X-Google-Smtp-Source: AGHT+IFC1z/bjrfqmHUH7re49LUgUD3hZ7k7PnkWdvTpsNEn2b9WWeiNWttRMRVU89UAnO150KlFSA==
-X-Received: by 2002:a17:907:2da1:b0:a71:ddb8:9394 with SMTP id a640c23a62f3a-a780b6fe3e7mr424621466b.40.1720596651593;
-        Wed, 10 Jul 2024 00:30:51 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a871f2fsm135117366b.202.2024.07.10.00.30.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jul 2024 00:30:51 -0700 (PDT)
-Message-ID: <0b2697fd-7ab4-469f-83a6-ec9ebc701ba0@suse.com>
-Date: Wed, 10 Jul 2024 09:30:49 +0200
+	s=arc-20240116; t=1720596861; c=relaxed/simple;
+	bh=dvoKNXwrD28MkkI8y466iNL0VlvuCYSk/fPFFvZKz3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RgofaytIANv1dpFUhg9C2F0muyg/DoeLlHQpS2sfeM8j3VzWOLz8X5Y7Oem96EYL05BNJjyCGN90k6cUmOPBrRghgW4WE6O4k9w3OlTdwXPcocSVgRxHvl2ezKkO0aFy07Xu89Nxqvx9lYwhGSYldVPqSGu1kkw5m4ibvFYM/gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LRVvovir; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F9CC32782;
+	Wed, 10 Jul 2024 07:34:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720596861;
+	bh=dvoKNXwrD28MkkI8y466iNL0VlvuCYSk/fPFFvZKz3w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LRVvovireNfQcRKQxb/uK2FuFMyJjw3TkEkJ22O/546QnRRV2zF7JWMfct3nzE+pd
+	 iu4WoPH27IVKO9aIdF5W6mx5AJgNXnQlImXYZ2/2vRBRfs4R71WfQU2nzevFuhPqnF
+	 TKKqwdfacz/bphBPOxDi0xD/k65vyQB0f+56uxW7A98Sq9jbnHoo6YuLaNO73gcuSH
+	 cbsB4K96xVc+RBmY0Qjj4u//FkFW1Z6G9r0XLNEMXUUOAvfE13MLwkgQW5HMcJq7S7
+	 3jJDBzQoeHsLcy2+VZ/lfvQA6qTD4yc6Cx9Fi3rjJMFD58cOk7fuwpyVec1qQT8rQp
+	 3/UutjGYb5zSg==
+Date: Wed, 10 Jul 2024 10:31:35 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Patrick Roy <roypat@amazon.co.uk>
+Cc: seanjc@google.com, pbonzini@redhat.com, akpm@linux-foundation.org,
+	dwmw@amazon.co.uk, david@redhat.com, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, willy@infradead.org, graf@amazon.com,
+	derekmn@amazon.com, kalyazin@amazon.com, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	dmatlack@google.com, tabba@google.com, chao.p.peng@linux.intel.com,
+	xmarcalx@amazon.co.uk
+Subject: Re: [RFC PATCH 5/8] kvm: gmem: add option to remove guest private
+ memory from direct map
+Message-ID: <Zo441yz7Yw2JZcPs@kernel.org>
+References: <20240709132041.3625501-1-roypat@amazon.co.uk>
+ <20240709132041.3625501-6-roypat@amazon.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/15] Implement MODVERSIONS for Rust
-Content-Language: en-US
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-References: <20240617175818.58219-17-samitolvanen@google.com>
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20240617175818.58219-17-samitolvanen@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709132041.3625501-6-roypat@amazon.co.uk>
 
-On 6/17/24 19:58, Sami Tolvanen wrote:
-> Hi folks,
+On Tue, Jul 09, 2024 at 02:20:33PM +0100, Patrick Roy wrote:
+> While guest_memfd is not available to be mapped by userspace, it is
+> still accessible through the kernel's direct map. This means that in
+> scenarios where guest-private memory is not hardware protected, it can
+> be speculatively read and its contents potentially leaked through
+> hardware side-channels. Removing guest-private memory from the direct
+> map, thus mitigates a large class of speculative execution issues
+> [1, Table 1].
 > 
-> This series implements CONFIG_MODVERSIONS for Rust, an important
-> feature for distributions like Android that want to ship Rust
-> kernel modules, and depend on modversions to help ensure module ABI
-> compatibility.
-
-Thanks for working on this. Below is some feedback with my (open)SUSE
-hat on, although it should be quite general.
-
-> There have been earlier proposals [1][2] that would allow Rust
-> modules to coexist with modversions, but none that actually implement
-> symbol versioning. Unlike C, Rust source code doesn't have sufficient
-> information about the final ABI, as the compiler has considerable
-> freedom in adjusting structure layout for improved performance [3],
-> for example, which makes using a source code parser like genksyms
-> a non-starter. Based on Matt's suggestion and previous feedback
-> from maintainers, this series uses DWARF debugging information for
-> computing versions. DWARF is an established and relatively stable
-> format, which includes all the necessary ABI details, and adding a
-> CONFIG_DEBUG_INFO dependency for Rust symbol versioning seems like a
-> reasonable trade-off.
-
-Using the DWARF data makes sense to me. Distribution kernels are
-normally built with debuginfo because one has to be able to debug them
-later, unsurprisingly. Besides that, one now typically wants to use BPF
-together with built-in BTF data (CONFIG_DEBUG_INFO_BTF), which also
-requires building the kernel with debuginfo.
-
-I would however keep in mind that producing all DWARF data has some
-cost. From a quick test, an x86_64-defconfig build is ~30% slower for me
-with CONFIG_DEBUG_INFO=y. The current genksyms tool allows to have
-debuginfo disabled when backporting some patches and consequently have
-a quicker feedback whether modversions changed. This option would
-disappear with gendwarfksyms but I think it is acceptable.
-
+> This patch adds a flag to the `KVM_CREATE_GUEST_MEMFD` which, if set, removes the
+> struct pages backing guest-private memory from the direct map. Should
+> `CONFIG_HAVE_KVM_GMEM_{INVALIDATE, PREPARE}` be set, pages are removed
+> after preparation and before invalidation, so that the
+> prepare/invalidate routines do not have to worry about potentially
+> absent direct map entries.
 > 
-> The first 12 patches of this series add a small tool for computing
-> symbol versions from DWARF, called gendwarfksyms. When passed a list
-> of exported symbols, the tool generates an expanded type string
-> for each symbol, and computes symbol CRCs similarly to genksyms.
-> gendwarfksyms is written in C and uses libdw to process DWARF, mainly
-> because of the existing support for C host tools that use elfutils
-> (e.g., objtool).
-
-In addition to calculating CRCs of exported symbols, genksyms has other
-features which I think are important.
-
-Firstly, the genksyms tool has a human-readable storage format for input
-data used in the calculation of symbol CRCs. Setting the make variable
-KBUILD_SYMTYPES enables dumping this data and storing it in *.symtypes
-files.
-
-When a developer later modifies the kernel and wants to check if some
-symbols have changed, they can take these files and feed them as
-*.symref back to genksyms. This allows the tool to provide an actual
-reason why some symbols have changed, instead of just printing that
-their CRCs are different.
-
-Is there any plan to add the same functionality to gendwarfksyms, or do
-you envison that people will use libabigail, Symbol-Type Graph, or
-another tool for making this type of comparison?
-
-Secondly, when distributions want to maintain stable kABI, they need to
-be able to deal with patch backports that add new members to structures.
-One common approach is to have placeholders in important structures
-which can be later replaced by the new members as needed. __GENKSYMS__
-ifdefs are then used at the C source level to hide these kABI-compatible
-changes from genksyms.
-
-Gendwarfksyms works on the resulting binary and so using such ifdefs
-wouldn't work. Instead, I suspect that what is required is a mechanism
-to tell the tool that a given change is ok, probably by allowing to
-specify some map from the original definition to the new one.
-
-Is there a plan to implement something like this, or how could it be
-addressed?
-
-> Another compatibility issue is fitting the extremely long mangled
-> Rust symbol names into struct modversion_info, which can only hold
-> 55-character names (on 64-bit systems). Previous proposals suggested
-> changing the structure to support longer names, but the conclusion was
-> that we cannot break userspace tools that parse the version table.
+> Direct map removal do not reuse the `KVM_GMEM_PREPARE` machinery, since `prepare` can be
+> called multiple time, and it is the responsibility of the preparation
+> routine to not "prepare" the same folio twice [2]. Thus, instead
+> explicitly check if `filemap_grab_folio` allocated a new folio, and
+> remove the returned folio from the direct map only if this was the case.
 > 
-> The next two patches of the series implement support for hashed
-> symbol names in struct modversion_info, where names longer than 55
-> characters are hashed, and the hash is stored in the name field. To
-> avoid breaking userspace tools, the binary hash is prefixed with a
-> null-terminated string containing the name of the hash function. While
-> userspace tools can later be updated to potentially produce more
-> useful information about the long symbols, this allows them to
-> continue working in the meantime.
+> The patch uses release_folio instead of free_folio to reinsert pages
+> back into the direct map as by the time free_folio is called,
+> folio->mapping can already be NULL. This means that a call to
+> folio_inode inside free_folio might deference a NULL pointer, leaving no
+> way to access the inode which stores the flags that allow determining
+> whether the page was removed from the direct map in the first place.
+> 
+> Lastly, the patch uses set_direct_map_{invalid,default}_noflush instead
+> of `set_memory_[n]p` to avoid expensive flushes of TLBs and the L*-cache
+> hierarchy. This is especially important once KVM restores direct map
+> entries on-demand in later patches, where simple FIO benchmarks of a
+> virtio-blk device have shown that TLB flushes on a Intel(R) Xeon(R)
+> Platinum 8375C CPU @ 2.90GHz resulted in 80% degradation in throughput
+> compared to a non-flushing solution.
+> 
+> Not flushing the TLB means that until TLB entries for temporarily
+> restored direct map entries get naturally evicted, they can be used
+> during speculative execution, and effectively "unhide" the memory for
+> longer than intended. We consider this acceptable, as the only pages
+> that are temporarily reinserted into the direct map like this will
+> either hold PV data structures (kvm-clock, asyncpf, etc), or pages
+> containing privileged instructions inside the guest kernel image (in the
+> MMIO emulation case).
+> 
+> [1]: https://download.vusec.net/papers/quarantine_raid23.pdf
+> 
+> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
+> ---
+>  include/uapi/linux/kvm.h |  2 ++
+>  virt/kvm/guest_memfd.c   | 52 ++++++++++++++++++++++++++++++++++------
+>  2 files changed, 47 insertions(+), 7 deletions(-)
+> 
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index e065d9fe7ab2..409116aa23c9 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -1563,4 +1563,6 @@ struct kvm_create_guest_memfd {
+>  	__u64 reserved[6];
+>  };
+>  
+> +#define KVM_GMEM_NO_DIRECT_MAP                 (1ULL << 0)
+> +
+>  #endif /* __LINUX_KVM_H */
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index 9148b9679bb1..dc9b0c2d0b0e 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -4,6 +4,7 @@
+>  #include <linux/kvm_host.h>
+>  #include <linux/pagemap.h>
+>  #include <linux/anon_inodes.h>
+> +#include <linux/set_memory.h>
+>  
+>  #include "kvm_mm.h"
+>  
+> @@ -49,9 +50,16 @@ static int kvm_gmem_prepare_folio(struct inode *inode, pgoff_t index, struct fol
+>  	return 0;
+>  }
+>  
+> +static bool kvm_gmem_not_present(struct inode *inode)
+> +{
+> +	return ((unsigned long)inode->i_private & KVM_GMEM_NO_DIRECT_MAP) != 0;
+> +}
+> +
+>  static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index, bool prepare)
+>  {
+>  	struct folio *folio;
+> +	bool zap_direct_map = false;
+> +	int r;
+>  
+>  	/* TODO: Support huge pages. */
+>  	folio = filemap_grab_folio(inode->i_mapping, index);
+> @@ -74,16 +82,30 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index, bool
+>  		for (i = 0; i < nr_pages; i++)
+>  			clear_highpage(folio_page(folio, i));
+>  
+> +		// We need to clear the folio before calling kvm_gmem_prepare_folio,
+> +		// but can only remove it from the direct map _after_ preparation is done.
 
-I think this approach with hashed names is quite complex. I'd personally
-be also in favor of having a new section with variable-length strings to
-store the names of imported symbols. As yet another alternative, it
-should be also possible to refer directly into .symtab/.strtab to avoid
-duplicating the names, but I suspect it would be non-trivial to
-implement.
+No C++ comments please
 
-Cheers,
-Petr
+> +		zap_direct_map = kvm_gmem_not_present(inode);
+> +
+>  		folio_mark_uptodate(folio);
+>  	}
+>  
+>  	if (prepare) {
+> -		int r =	kvm_gmem_prepare_folio(inode, index, folio);
+> -		if (r < 0) {
+> -			folio_unlock(folio);
+> -			folio_put(folio);
+> -			return ERR_PTR(r);
+> -		}
+> +		r = kvm_gmem_prepare_folio(inode, index, folio);
+> +		if (r < 0)
+> +			goto out_err;
+> +	}
+> +
+> +	if (zap_direct_map) {
+> +		r = set_direct_map_invalid_noflush(&folio->page);
+
+It's not future proof to presume that folio is a single page here.
+You should loop over folio pages and add a TLB flush after the loop.
+
+> +		if (r < 0)
+> +			goto out_err;
+> +
+> +		// We use the private flag to track whether the folio has been removed
+> +		// from the direct map. This is because inside of ->free_folio,
+> +		// we do not have access to the address_space anymore, meaning we
+> +		// cannot check folio_inode(folio)->i_private to determine whether
+> +		// KVM_GMEM_NO_DIRECT_MAP was set.
+> +		folio_set_private(folio);
+>  	}
+>  
+>  	/*
+> @@ -91,6 +113,10 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index, bool
+>  	 * unevictable and there is no storage to write back to.
+>  	 */
+>  	return folio;
+> +out_err:
+> +	folio_unlock(folio);
+> +	folio_put(folio);
+> +	return ERR_PTR(r);
+>  }
+>  
+>  static void kvm_gmem_invalidate_begin(struct kvm_gmem *gmem, pgoff_t start,
+> @@ -354,10 +380,22 @@ static void kvm_gmem_free_folio(struct folio *folio)
+>  }
+>  #endif
+>  
+> +static void kvm_gmem_invalidate_folio(struct folio *folio, size_t start, size_t end)
+> +{
+> +	if (start == 0 && end == PAGE_SIZE) {
+> +		// We only get here if PG_private is set, which only happens if kvm_gmem_not_present
+> +		// returned true in kvm_gmem_get_folio. Thus no need to do that check again.
+> +		BUG_ON(set_direct_map_default_noflush(&folio->page));
+
+Ditto.
+
+> +
+> +		folio_clear_private(folio);
+> +	}
+> +}
+> +
+>  static const struct address_space_operations kvm_gmem_aops = {
+>  	.dirty_folio = noop_dirty_folio,
+>  	.migrate_folio	= kvm_gmem_migrate_folio,
+>  	.error_remove_folio = kvm_gmem_error_folio,
+> +	.invalidate_folio = kvm_gmem_invalidate_folio,
+>  #ifdef CONFIG_HAVE_KVM_GMEM_INVALIDATE
+>  	.free_folio = kvm_gmem_free_folio,
+>  #endif
+> @@ -443,7 +481,7 @@ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args)
+>  {
+>  	loff_t size = args->size;
+>  	u64 flags = args->flags;
+> -	u64 valid_flags = 0;
+> +	u64 valid_flags = KVM_GMEM_NO_DIRECT_MAP;
+>  
+>  	if (flags & ~valid_flags)
+>  		return -EINVAL;
+> -- 
+> 2.45.2
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
