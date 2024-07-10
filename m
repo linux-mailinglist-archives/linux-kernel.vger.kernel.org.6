@@ -1,155 +1,125 @@
-Return-Path: <linux-kernel+bounces-247980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3AE792D6FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:59:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A64B92D6E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:51:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F19BDB2D6D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:49:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BAB31C20F80
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A4319599C;
-	Wed, 10 Jul 2024 16:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GeE9psM3"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5250194AF8;
+	Wed, 10 Jul 2024 16:51:29 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F49194C73;
-	Wed, 10 Jul 2024 16:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8026219347D
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720630143; cv=none; b=YD3lAAgDBKpuSJh4FPdaUHZeUP8bMn34H6FQmmmHWuKiCg3QYTC3qbcpRHHO2KV69AWXvoAp5yVoBJWCIv2l37pCwdMthDRUCsShZFEtKggyz7vjm4Kp3TyL3+yd5VidK1ry//W3DsPZ+fc8518dSKJ5JyLJDC1vUf2V5R3SXUU=
+	t=1720630289; cv=none; b=Dzwb9YuJko4S0MH0/JsgKceGxT5TGT+zvso88vZeJW0HRnfxZvGKCM1BPCOAHa+GespKBL0mlMFP63CI/MRxsDQwnR9L/sHzNLV8NW4MKXX387UGqzDbLe7BR+eV0qMtdVUggPILIMOsinPPa+6MS9FJFITf4Ij5rWPfY2mH9h0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720630143; c=relaxed/simple;
-	bh=eS/RMGP4VxRIFbhmXWkCrFvxioDBvmLiKkBEAODdwGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pCQ/7SSA2jPsUE9Nfax8t0rFtnFMzk6fWwhRqHFXxXe80js3uuqxMmIx7qjPIBXJvi1KybvFljiZsftFo/KWB5XYWPMWFnZwzrK6VEY0S709HDCs//wv87SQAKEbZtYt0L5QIam5uBo4tW70RAFEh1rPiNYyvrW7tJH9hIQSvb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GeE9psM3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24C51C32781;
-	Wed, 10 Jul 2024 16:49:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720630142;
-	bh=eS/RMGP4VxRIFbhmXWkCrFvxioDBvmLiKkBEAODdwGU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GeE9psM35dHGvAUo79TtOnu4kq5cY9EUrGF2ghylZhRExsJfxInrnrbzIGYTRdEyP
-	 JuNUksWFVoX99WDJK0OYBlsaXy6q6YA4gtH9ruZmomvqVAnZKrQ5V0cyaDEK1nrfmj
-	 TYzIOxglnzs0uEzQL7xFLg0IgYd2T3xSZ3m9tEEYvl2XCdOAvnosGa5j4fJc/Yy95m
-	 Fc5KKtoP2fmuVTazyDqaAh0RTuL+2gSo3Q0QXNcq8mXWHgnju0cDM5kOaxJGJVc4MU
-	 IX9XFPAHEsGhG08l+UfVEIDuPwq1AH3mfKgmvCy5HzZT6Og5qbJjr0Ohj8oZTpGXx8
-	 z5HtdpFuugVEQ==
-Date: Wed, 10 Jul 2024 09:49:00 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
- bpf@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
- <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, Ivan
- Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>,
- Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
- <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, Herbert
- Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem
- de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>,
- Sumit Semwal <sumit.semwal@linaro.org>, "Christian =?UTF-8?B?S8O2bmln?="
- <christian.koenig@amd.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
- Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
- Taehee Yoo <ap420073@gmail.com>, Pavel Begunkov <asml.silence@gmail.com>,
- David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
- <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
- Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
- Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
- <pkaligineedi@google.com>, linux-mm@kvack.org, Matthew Wilcox
- <willy@infradead.org>
-Subject: Re: [PATCH net-next v16 05/13] page_pool: devmem support
-Message-ID: <20240710094900.0f808684@kernel.org>
-In-Reply-To: <20240710001749.1388631-6-almasrymina@google.com>
-References: <20240710001749.1388631-1-almasrymina@google.com>
-	<20240710001749.1388631-6-almasrymina@google.com>
+	s=arc-20240116; t=1720630289; c=relaxed/simple;
+	bh=KMbR7EfVzwB9D5ZTMLl+uZI4Ij2acwu5IGFUS8yCHQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sZtmlsghRT4TBnJkk9WI5hL8LSfFsv9mJ1g4i0iIRlAxHmcYT7W4aQP6yepBMRMRbHgLA3BCrHhow6bplBhK5ef7C2sOGeMNzSXUxFYs0cmqbw1YcaoPYCCXqFunqtIiM6OtcQ4DfQ8j1F/BtIF/a8VbAcFFwMq988sOxFWa7Z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7DCBC32781;
+	Wed, 10 Jul 2024 16:51:26 +0000 (UTC)
+Date: Wed, 10 Jul 2024 17:51:24 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Yu Zhao <yuzhao@google.com>
+Cc: Nanyong Sun <sunnanyong@huawei.com>, will@kernel.org,
+	mike.kravetz@oracle.com, muchun.song@linux.dev,
+	akpm@linux-foundation.org, anshuman.khandual@arm.com,
+	willy@infradead.org, wangkefeng.wang@huawei.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v3 0/3] A Solution to Re-enable hugetlb vmemmap optimize
+Message-ID: <Zo68DP6siXfb6ZBR@arm.com>
+References: <20240113094436.2506396-1-sunnanyong@huawei.com>
+ <ZbKjHHeEdFYY1xR5@arm.com>
+ <d1671959-74a4-8ea5-81f0-539df8d9c0f0@huawei.com>
+ <ZcN7P0CGUOOgki71@arm.com>
+ <CAOUHufYo=SQmpaYA3ThrdHcY9fQfFmycriSvOX1iuC4Y=Gj7Xg@mail.gmail.com>
+ <ZogV9Iag4mxe6enx@arm.com>
+ <CAOUHufYwoTTsRBF_wWZU_jWzb8e6FF=vN8UKtVHBeXLBkwHWzA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOUHufYwoTTsRBF_wWZU_jWzb8e6FF=vN8UKtVHBeXLBkwHWzA@mail.gmail.com>
 
-On Wed, 10 Jul 2024 00:17:38 +0000 Mina Almasry wrote:
-> @@ -68,17 +107,103 @@ static inline netmem_ref page_to_netmem(struct page *page)
->  
->  static inline int netmem_ref_count(netmem_ref netmem)
->  {
-> +	/* The non-pp refcount of net_iov is always 1. On net_iov, we only
-> +	 * support pp refcounting which uses the pp_ref_count field.
-> +	 */
-> +	if (netmem_is_net_iov(netmem))
-> +		return 1;
-> +
->  	return page_ref_count(netmem_to_page(netmem));
->  }
+On Fri, Jul 05, 2024 at 11:41:34AM -0600, Yu Zhao wrote:
+> On Fri, Jul 5, 2024 at 9:49 AM Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > If I did the maths right, for a 2MB hugetlb page, we have about 8
+> > vmemmap pages (32K). Once we split a 2MB vmemap range,
+> 
+> Correct.
+> 
+> > whatever else
+> > needs to be touched in this range won't require a stop_machine().
+> 
+> There might be some misunderstandings here.
+> 
+> To do HVO:
+> 1. we split a PMD into 512 PTEs;
+> 2. for every 8 PTEs:
+>   2a. we allocate an order-0 page for PTE #0;
+>   2b. we remap PTE #0 *RW* to this page;
+>   2c. we remap PTEs #1-7 *RO* to this page;
+>   2d. we free the original order-3 page.
 
-How can this work if we had to revert the patch which made all of
-the networking stack take pp-aware refs? Maybe we should add the
-refcount, and let it be bumped, but WARN() if the net_iov is released
-with refcount other than 1? Or we need a very solid explanation why
-the conversion had to be reverted and this is fine.
+Thanks. I now remember why we reverted such support in 060a2c92d1b6
+("arm64: mm: hugetlb: Disable HUGETLB_PAGE_OPTIMIZE_VMEMMAP"). The main
+problem is that point 2c also changes the output address of the PTE
+(and the content of the page slightly). The architecture requires a
+break-before-make in such scenario, though it would have been nice if it
+was more specific on what could go wrong.
 
->  static inline unsigned long netmem_to_pfn(netmem_ref netmem)
->  {
-> +	if (netmem_is_net_iov(netmem))
-> +		return 0;
-> +
->  	return page_to_pfn(netmem_to_page(netmem));
->  }
+We can do point 1 safely if we have FEAT_BBM level 2. For point 2, I
+assume these 8 vmemmap pages may be accessed and that's why we can't do
+a break-before-make safely. I was wondering whether we could make the
+PTEs RO first and then change the output address but we have another
+rule that the content of the page should be the same. I don't think
+entries 1-7 are identical to entry 0 (though we could ask the architects
+for clarification here). Also, can we guarantee that nothing writes to
+entry 0 while we would do such remapping? We know entries 1-7 won't be
+written as we mapped them as RO but entry 0 contains the head page.
+Maybe it's ok to map it RO temporarily until the newly allocated hugetlb
+page is returned.
 
-Can we move this out and rename it to netmem_pfn_trace() ?
-Silently returning 0 is not generally okay, but since it's only 
-for tracing we don't care.
+If we could get the above work, it would be a lot simpler than thinking
+of stop_machine() or other locks to wait for such remapping.
 
-> +static inline struct net_iov *__netmem_clear_lsb(netmem_ref netmem)
-> +{
-> +	return (struct net_iov *)((__force unsigned long)netmem & ~NET_IOV);
-> +}
-> +
-> +static inline unsigned long netmem_get_pp_magic(netmem_ref netmem)
-> +{
-> +	return __netmem_clear_lsb(netmem)->pp_magic;
-> +}
-> +
-> +static inline void netmem_or_pp_magic(netmem_ref netmem, unsigned long pp_magic)
-> +{
-> +	__netmem_clear_lsb(netmem)->pp_magic |= pp_magic;
-> +}
-> +
-> +static inline void netmem_clear_pp_magic(netmem_ref netmem)
-> +{
-> +	__netmem_clear_lsb(netmem)->pp_magic = 0;
-> +}
-> +
-> +static inline struct page_pool *netmem_get_pp(netmem_ref netmem)
-> +{
-> +	return __netmem_clear_lsb(netmem)->pp;
-> +}
-> +
-> +static inline void netmem_set_pp(netmem_ref netmem, struct page_pool *pool)
-> +{
-> +	__netmem_clear_lsb(netmem)->pp = pool;
-> +}
+> To do de-HVO:
+> 1. for every 8 PTEs:
+>   1a. we allocate 7 order-0 pages.
+>   1b. we remap PTEs #1-7 *RW* to those pages, respectively.
 
-Why is all this stuff in the main header? It's really low level.
-Please put helpers which are only used by the core in a header
-under net/core/, like net/core/dev.h
+Similar problem in 1.b, changing the output address. Here we could force
+the content to be the same and remap PTEs 1-7 RO first to the new page,
+turn them RW afterwards and it's all compliant with the architecture
+(even without FEAT_BBM).
+
+> > What I meant is that we can leave the vmemmap alias in place and just
+> > reuse those pages via the linear map etc. The kernel should touch those
+> > struct pages to corrupt the data. The only problem would be if we
+> > physically unplug those pages but I don't think that's the case here.
+> 
+> Set the repercussions of memory corruption aside, we still can't do
+> this because PTEs #1-7 need to map meaningful data, hence step 2c
+> above.
+
+Yeah, I missed this one.
+
+-- 
+Catalin
 
