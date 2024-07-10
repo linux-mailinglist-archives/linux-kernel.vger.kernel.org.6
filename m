@@ -1,131 +1,174 @@
-Return-Path: <linux-kernel+bounces-248131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D4ED92D8B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:02:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F4D692D8B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 553741F24C93
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:02:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70BE51C21F83
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB07B19754D;
-	Wed, 10 Jul 2024 19:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8877197A62;
+	Wed, 10 Jul 2024 19:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lAy4C7Fw"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CEevvTM2"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD2519596F
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 19:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E6B19754A
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 19:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720638160; cv=none; b=jRH25GadGjEbJ8BBuOeY059wZbiHHQJq+RUGj0LHC6jYDIEvkJp8Do9oe35+lNooCPwzEsRr7UlcjFGZ7efMfC0CePu74SQ8JVyzdG9DMqqpy3j3KiZ2wFratT16SfFDCPIIk/cuL+iKAkfhGkBpjFpUxWHOVYx1OVcmQuTkvcQ=
+	t=1720638197; cv=none; b=RoIVap1CZ9TMiD65qB78zZU1Qsvp9vQafnx8mzWdYkMs8xsJiw5QyMzijs8ybwKwcCly6sV3OFbE+LNs13prMhH2+Hucap/g7neyNx9vD6Xc2lWzzFF/JvodyuUvS6Xvc5FpLEumdeEm/uedyYCB+G1t2gz7ZqfYH7B+1cwugWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720638160; c=relaxed/simple;
-	bh=PswQct0HzHiKHP29eqvg8c9/qemV3myFQvNJF13f+H0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c+4EvSKmGPs2vqk/9awPXi/hP2YVSQJZftYg93NDGWjGHrZkV/1pMkkhYOgytNckoBFfa+wqAgAYBHu4l9iE1He/KkkXm7iFSy2UO0UQmUcg6kOcR492SYFI4zn+AnljhvBwyn1HJ69BMvMZaR6bxOrk49vX6DeYTpa/IlnQyG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lAy4C7Fw; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee920b0781so786961fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 12:02:38 -0700 (PDT)
+	s=arc-20240116; t=1720638197; c=relaxed/simple;
+	bh=3d7FSi9Hcl0cdnxEUaHj4eTaDqmo6qk52W+AULnYB6g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VbMO5LGNJoHoDawfrc3C1xPNPVVU7a42O1wALrk8JtDXbT10BSH4NrgjVhlGbU3WIeR6vHadtQZx3GKgSXI0Z5TXnIuALZyyHvgUizQ7q3qeoluQH4f/I4YUXl401eHGPbHCKG7C3Hw2taX21NotSUuJGMmlaL5+WcJZzoH7VvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CEevvTM2; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so600145e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 12:03:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720638157; x=1721242957; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mPZ60RuL6ih0QLl/o8/14hY+krd4EK1oz7htgw57d1A=;
-        b=lAy4C7Fw2cwqL/V/QCRVp+eszZzgwF7wxCuSO1yLQGVrwESMeVkSB4Y3F/aDCimWNM
-         pUypWkAk1Ofgk5hLeQgREdzxBGN30iTJIffsAhn8Ti2HGpDOr5ApFKkUcjAzbl2YAMxf
-         2FKuq+eS/wzysXbC3F8VHAYNMhAnNUXec54ubYiJQOpGmJXcxkifPcAIcvqIJv6/5ou+
-         AqVh6/5CIRemfLX7U4BnTOtbsZ7gu+j+7kDfEaheIgRDvbin2A2P+GixAhTkLNwab8lg
-         nk2BT3hXcY24PBt0Bjdd8dsChL1qGaIV29826M5i9l4YxJSS5IiHvVjIw8EdHlJncJEU
-         FjQA==
+        d=linaro.org; s=google; t=1720638193; x=1721242993; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0zjwLVxsSVCJgFEWP9NFLGfREZ7pPp0SWHJc73R22HA=;
+        b=CEevvTM2CaEtOXJr+Z0HWaUAbgnXFEJamMk3ldKT/UL2ic5msqIAiy7gi0RhIEQ8HV
+         1sXUdLYtSl7I2nP10mBwoGep3vI30T56+wm0EwH8GDpn9S8bMUR90hroEpVVoKpSNogN
+         fk/wfM51Aifzx8OAxXOxQY1FwdagHYb1PcMgAtVN6j4LGq7sFvQvGBbS1rhnmZgU5qGA
+         JO5HxmYmKJPI24u99pjB+jtpJsCthfxt1xkknagkUPrJJ4teUbkBS8YVyLGWMdEti7U2
+         xpryqJ5f29i/Qqq26V0p0jkYs3j9wJdjNAo2M2QiOptLp4soSLgPcXmztP+UBHviQZi4
+         pjag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720638157; x=1721242957;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1720638193; x=1721242993;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mPZ60RuL6ih0QLl/o8/14hY+krd4EK1oz7htgw57d1A=;
-        b=mARizZh2RlBappASe9izXB6HqA9/lJ1qynuhf/4oAkHGXvSmitgFoL1iQ5jjjbI58k
-         m2AW9C73KeTBHXmN1X+jQKbXtZYod9byFNNLsSW6/3P4o/57mG3vHzPRzZ2EvYODkkuW
-         5z/KjnoxhLdJ5167FuK7uJX5zTwJTzrzsrlZZgmn2fKrUH24XhcrLkuliPzYbBmZJ4Kc
-         7CsvW3U99PdTPY06dDfHPJu+YEyeAGzdn2KpMMg64jZ7nFy4Bbuo2u9tb/4cB0rBpV/4
-         uYKCwHkx8jyc+6Ln0y4JcrEs2jU2xBjLRLrzBwILQONkPETzxJI9wGvD1DKk/knpLKjP
-         0dUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjbMDbfxDuUS8O+tj+neUEEw4wqLQFR6fvZtnJ04vW8DMhKNtFpDqyebBC4QmMBzzDp/4o7HwbSTHpPb1wSxEsJvGzdfbA6aRQFFnC
-X-Gm-Message-State: AOJu0Yyo3GQOMq1OuuzanUyBIfzjd4Lsp8079Pexf7bUwICpogqPbIMx
-	O3eHkmW8bPAlKPODz1227hOMo54inOETZrohZ5gP+kid4hjq2syS
-X-Google-Smtp-Source: AGHT+IG1L8BlhXFrRo5w/hZ2v8OTkzJw0dc162nd8YCUmtKMgy4icMkIxWKQCufiuhXBIwUNvFBW+Q==
-X-Received: by 2002:a2e:80cd:0:b0:2ee:974c:596f with SMTP id 38308e7fff4ca-2eeb30feba0mr38435041fa.28.1720638156546;
-        Wed, 10 Jul 2024 12:02:36 -0700 (PDT)
-Received: from ?IPV6:2a01:4b00:b211:ad00:1490:6cc2:4d06:940f? ([2a01:4b00:b211:ad00:1490:6cc2:4d06:940f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-426615876bbsm178014455e9.6.2024.07.10.12.02.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jul 2024 12:02:36 -0700 (PDT)
-Message-ID: <2fe63ea9-613a-4904-8b68-134442c43261@gmail.com>
-Date: Wed, 10 Jul 2024 20:02:35 +0100
+        bh=0zjwLVxsSVCJgFEWP9NFLGfREZ7pPp0SWHJc73R22HA=;
+        b=djD5fRbF4IACNG/FRgobZXqsumiAIriPkkVqn30VOqPcq7UpJ+MnnOL00fX4kM5yEs
+         xKIX0pUsCuFqRM+5rqG/QDcKszneW+sJ7AXYVXDoKTUgGfGyHdkM3wxe+jfmu88Asxut
+         a/K0hWym8M2QmICRp9uU37SES0JSqYMhMYWVxW65XgMsI/aSTqGqstLpNWtHa6GFgX9j
+         BOBu15WUs+8W60+3oydSXr+hdC8dgORa5jvX6bB8KscT2pXWCeiIVcFbLMD7L6Pg1SZa
+         T7H01slIoEdx2HHgE3EMai5rpx6rspGwQTLWe0e4I4HXHtWn+/1srbF/ECgJnCPgP03U
+         a23w==
+X-Forwarded-Encrypted: i=1; AJvYcCULuM03HjAkH9JtuPSD+doT6vPSS31eAcYPGsD6pfHH56S1G67P/flmpf0PoobrXoTnpCAaf+hBJivoxXuT00umcBWHexQt7eNmRWL0
+X-Gm-Message-State: AOJu0YyMZqyXCMQRowoM77jA8hNfb8BNIlB3LmrPAIqHYNmy1c0Jb6pE
+	MzHiw9jekRIpPCIEhMtn+NGxANJJNWd+1etDA9XEpBb0MxOjX0ZjQ/HrXH2IH9E=
+X-Google-Smtp-Source: AGHT+IExUAfzX0VoKakNYezADDA6Ffrq1A7HPVyOijOdE6adHeuyL79HjX9TXAmqMlMfUj5GJI4TPw==
+X-Received: by 2002:a05:600c:68c:b0:426:6960:34b2 with SMTP id 5b1f17b1804b1-426708f9b36mr39492695e9.33.1720638193372;
+        Wed, 10 Jul 2024 12:03:13 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff1f:b280:236a:cbae:b7ec:1f7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfab182sm5890728f8f.94.2024.07.10.12.03.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 12:03:12 -0700 (PDT)
+Date: Wed, 10 Jul 2024 21:03:06 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>,
+	Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 1/5] dt-bindings: display: panel: samsung,atna33xc20:
+ Document ATNA45AF01
+Message-ID: <Zo7a6qso7RZ2pkmb@linaro.org>
+References: <20240710-x1e80100-crd-backlight-v1-0-eb242311a23e@linaro.org>
+ <20240710-x1e80100-crd-backlight-v1-1-eb242311a23e@linaro.org>
+ <CAD=FV=XJuV12mStW3eUm5MHG8BA9W_fn0skN=BrtmqC+fnCZig@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linux-next:master] [mm] 47325a5c88:
- WARNING:at_mm/slub.c:#free_large_kmalloc
-To: Hugh Dickins <hughd@google.com>
-Cc: kernel test robot <oliver.sang@intel.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, oe-lkp@lists.linux.dev, lkp@intel.com,
- Linux Memory Management List <linux-mm@kvack.org>,
- Chengming Zhou <chengming.zhou@linux.dev>,
- Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
- David Hildenbrand <david@redhat.com>, "Huang, Ying" <ying.huang@intel.com>,
- Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>,
- Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
- ltp@lists.linux.it
-References: <202407101031.c6c3c651-lkp@intel.com>
- <dd08adbb-6df5-4556-9fc4-cf37b6234aa1@gmail.com>
- <053bd429-ae19-4beb-a733-a7a838b1e010@gmail.com>
- <4bc6400e-6199-4147-9399-4a54c94613fd@gmail.com>
- <612af749-0a59-f91d-693a-43d6217ffebb@google.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <612af749-0a59-f91d-693a-43d6217ffebb@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=XJuV12mStW3eUm5MHG8BA9W_fn0skN=BrtmqC+fnCZig@mail.gmail.com>
 
-
-
-On 10/07/2024 21:49, Hugh Dickins wrote:
-> It's a long time since I was active hereabouts, but the bot report
-> and your flurry of updates make me think that you should step back,
-> slow down, and look more carefully at the precedents here.
+On Wed, Jul 10, 2024 at 10:35:28AM -0700, Doug Anderson wrote:
+> On Wed, Jul 10, 2024 at 10:05 AM Stephan Gerhold
+> <stephan.gerhold@linaro.org> wrote:
+> >
+> > The Samsung ATNA45AF01 panel is an AMOLED eDP panel that has backlight
+> > control over the DP AUX channel. While it works almost correctly with the
+> > generic "edp-panel" compatible, the backlight needs special handling to
+> > work correctly. It is similar to the existing ATNA33XC20 panel, just with
+> > a larger resolution and size.
+> >
+> > Add a new "samsung,atna45af01" compatible to describe this panel in the DT.
+> >
+> > Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> > ---
+> >  .../devicetree/bindings/display/panel/samsung,atna33xc20.yaml       | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml b/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml
+> > index 765ca155c83a..d668e8d0d296 100644
+> > --- a/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml
+> > +++ b/Documentation/devicetree/bindings/display/panel/samsung,atna33xc20.yaml
+> > @@ -14,7 +14,11 @@ allOf:
+> >
+> >  properties:
+> >    compatible:
+> > -    const: samsung,atna33xc20
+> > +    enum:
+> > +      # Samsung 13.3" FHD (1920x1080 pixels) eDP AMOLED panel
+> > +      - samsung,atna33xc20
+> > +      # Samsung 14.5" WQXGA+ (2880x1800 pixels) eDP AMOLED panel
+> > +      - samsung,atna45af01
 > 
-> IIRC, the main problem is that parts of the swap_info_struct can
-> still be in use from before while you're wanting to set up new values.
-> Observe how alloc_swap_info() may return a fresh or an old allocation.
-> Observe how enable_swap_info() is called after getting swapon_mutex
-> late in swapon(), once past all possiblities of error.
+> Seems OK, but a few thoughts:
 > 
-> I expect that your new zeromap needs to be taking the same care as is
-> taken with swap_map and cluster_info: to be safe, follow their example
-> in both swapon() and swapoff().
+> 1. Is it worth renaming this file? Something like
+> "samsung,atna-oled-panel.yaml"? I'd be interested in DT maintainer
+> folks' opinions here.
 > 
-> Hugh
 
-Thanks, yeah sent too many in quick succession :). Will be more careful next time.
+I think examples for both approaches exist in the kernel tree, so I am
+also interested in the opinion of the DT maintainers here. :-)
 
-Both the 2nd and 3rd version are careful to solve the problem of using old allocation
-which you described.
+> 2. In theory you could make your compatible look like this:
+> 
+> compatible = "samsung,atna45af01", "samsung,atna33xc20"
+> 
+> ...which would say "I have a 45af01 but if the OS doesn't have
+> anything special to do that it would be fine to use the 33xc20
+> driver". That would allow device trees to work without the kernel
+> changes and would allow you to land the DT changes in parallel with
+> the driver changes and things would keep working.
+> 
+> ...and, in fact, that would mean you _didn't_ need to add the new
+> compatible string to the driver, which is nice.
+> 
 
-The 2nd one takes care of it in the same way as swap_map.
+Yeah, I considered this. I mentioned the reason why I decided against
+this in patch 2:
 
-But I believe its unnecessary to do all that change in the 2nd version, when you can just
-set it to NULL after kvfree, which is a much smaller change and takes care of reusing old
-allocation equally well.
+> While ATNA45AF01 would also work with "samsung,atna33xc20" as a fallback
+> compatible, the original submission of the compatible in commit
+> 4bfe6c8f7c23 ("drm/panel-simple: Add Samsung ATNA33XC20") had the timings
+> and resolution hardcoded. These would not work for ATNA45AF01.
+
+Basically, it works with the current driver. But if you would run the
+kernel at the state of the original submission then it would behave
+incorrectly. This is why I considered the resolution and timings to be
+part of the "samsung,atna33xc20" "ABI". The new panel would not be
+compatible with that.
+
+I don't mind changing it, if there is consensus that we should ignore
+this and use the fallback compatible instead.
+
+Thanks,
+Stephan
 
