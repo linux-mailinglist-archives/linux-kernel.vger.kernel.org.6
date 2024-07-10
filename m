@@ -1,161 +1,115 @@
-Return-Path: <linux-kernel+bounces-247238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF82C92CCF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:26:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7673092CCF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B33E282A9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:26:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 003C8B235F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4E412C52E;
-	Wed, 10 Jul 2024 08:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5CF12C489;
+	Wed, 10 Jul 2024 08:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cslxb1Mi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fXRE+2Ip"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CF486AEE;
-	Wed, 10 Jul 2024 08:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD76126F1E;
+	Wed, 10 Jul 2024 08:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720599961; cv=none; b=GvZKQTbQj7+vj++ggExk4j9CRL8zHh3CyCuxZn6/c4SFPCksImjbKbmO1TqXwNIV36B+h7iewxBzUXOwJdqIISgEtPhei40Savj1ZcsbLIMykvDjOiNV2KRGK4MQ0Dbv25oCgi0ZlOMtVYMjnwadL9foPCzgSZ8RXLig4qNblb4=
+	t=1720599986; cv=none; b=hHR3wnPNhahf1gQ49IjbE+lE/7R4MmDpQzolNarbLTj4iifjksmk3TsH9U8ggsaIHOuFEUJeYs0MoGxh+Jcq5SEhDlRIXEeqwl8kWrtSYaCD4jw5uBcvn7f3fbE+qMKJR9qjIOTK7pN+I8ZFmvManM07a7iagp41DIj0lb0u4vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720599961; c=relaxed/simple;
-	bh=fvB2g0Xiz+QuOEyjJz2Jei/hZ/zPhy+LZkMMMFz6D6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f0fmFVQfeKt52FDEEiGXDYDnb6fJM4ZbLzdc1jjFuu3Cm/RymQajw1Z+QQGV5VgAmMdJI/33HxlyxnshIFVidTFe0JhFjaUA3ZvolBAuM0DZcL1fG4QAQix2gTAW/gEZTWboVbZWok+lTUaa4YyAq3zOyXtBmS8UWC7d7Lpp35s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cslxb1Mi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77AC9C32786;
-	Wed, 10 Jul 2024 08:25:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720599960;
-	bh=fvB2g0Xiz+QuOEyjJz2Jei/hZ/zPhy+LZkMMMFz6D6U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Cslxb1MiQ0wVZ3OJrJ2gefb4pb+I0KCz1MOLyTf1TGKk1WAux/905mxPolVTgsMXb
-	 rQecD0l7dDKDib+wKzTxVoAazgQmKZYa/zVjS6Z6+xH5YgNthm9B5I0cCtpVaXk8HU
-	 i1/Zz09xnFoXa3bdC4GkMVlM+EL6pFz7Vx3zdRmqK6+5mp1P8t0LU5VCo7P/XD+L9E
-	 mx4HDYP+/xKCqkCpX3WQuTm6cRSH6BbgycJDKt4OgXnT49jK52Efq7bB9UjUxWl8Qp
-	 K7gzn8TpDp5lJYvAUJecQWbQBxnl69ecOlm0HbrYfLN7klIfAPtt/Oi//UJ1/bN2Cq
-	 Yhnl7yTpZDTLg==
-Message-ID: <9f1d3c63-8b1c-43a8-b002-5399a81e704d@kernel.org>
-Date: Wed, 10 Jul 2024 10:25:53 +0200
+	s=arc-20240116; t=1720599986; c=relaxed/simple;
+	bh=mhUbyhxNbtwDNd98Iv/UPDo+8zNh7NImfXpbZvaVDPA=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=p6arVk6HWcHLUKRgsFHGwF0MA/35OCFaTWXJiLvaF40K5RCGVyG/YyzjGjIZz6e0nL2fPbAbk+v0I11m40M1B/LOboXjh7AEd/jZQ+JrI6xquUqt0KFWuvsvgs7yrR+2qhZmwjQP4ed4eX1SynPo/us9PAkHdznqWUkcJfPcAv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fXRE+2Ip; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-36796a9b636so4108395f8f.2;
+        Wed, 10 Jul 2024 01:26:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720599983; x=1721204783; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=v9XRlS47aqf4yXL61p/y8Gu0BFUgxG7tE6brhjNimcA=;
+        b=fXRE+2Ip0JYezEthfYeLjku6G/AYefue6he3P5JyFuP0JOQsR4NBfWoFcCMim7SQIb
+         XDRwQopzrBSMMuF2vQadBB2EGohaILNaUX4gfnXlwcmLEDJfcSQowWQeEJwxaODlZCls
+         FfFd2McwnZFiXLAMMm9HFvln0WUG/72AIP2wiNWeHMVObt3ZF8RreTbDHF7T3WKsKEbL
+         r61ojFoAURFsFIwzB+VnQRzEVWzaMQP0IB67MTLhpDss92ZJTUHM1Y+jf69Di4tZWnJ7
+         /PMZZxwWUf8FOwp6Fs7n7p0biXu7xQIDQMUalldmu+dc9KrahE9C/ouZKQmvpd8zpbbH
+         fCGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720599983; x=1721204783;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v9XRlS47aqf4yXL61p/y8Gu0BFUgxG7tE6brhjNimcA=;
+        b=opEU0t5Ozej79KoESpXZMrnO2PA0jribo5h+0PQk5zRxF2/x+osyggvUFm+1LPS6xZ
+         3vLrAekrqbSTC6xq6HxmkoC5Ivj9/mgKErvEug7IsD5pedl8NLkhvVqNgxgnsWHT9cnW
+         FJ0ytUJ1/UzEv4Aumkntw7UsrRZAZxmoxJwjaWCGtyjKc2YbsC4Wi+1lDBaNgHzaOBJx
+         wisCvdBzVdDN78hkD6WalZxYwGBdEJDNU4m50fX+h3/La/MrwYKdrgZVgD768keGjidq
+         zmGpkLU0tF4tCi6Cw4pcWQugv2JkeewpkJWxOHnPiooQ3AyF2PfOLtMj2P9apjiSIa+G
+         stvw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2tSYSV1qFRXR/h9GrCKXNdN0gAKM/rpNraZGSMN5O7qURqYPxpea8jOOoI3Ozm0j76qM0kI8yDCGptuWt30Qia/zehvnvHBXEcCRYTAbGtL/jLlqYZLhgIySluXKvWonBMhOK8RmXivP0fsj+vo53EtoePUeE7Hv1rcrzgkC+QkI=
+X-Gm-Message-State: AOJu0Yy8kDC5p0A2JFxWuBuA7XNkpdetPVYUoX8n1yH+6DJarNW+XRSy
+	nv9itx0j80vPGjx6P3w+Zv/vhg4qhfCRonLTMMUWeWOWVRsm4CZx9XFEHNe+lMoMdRogZDCoQB4
+	jVQTSpkgTG+/WGs4qdVSTMr1T9ik=
+X-Google-Smtp-Source: AGHT+IFq7fqFpgTUktFNR3KjEHVvUwerVv9xL948nmX8KPjEqoQXZy79MIrW9lTfhGp8hJ28nyELwY0Y8zDn8rKuacg=
+X-Received: by 2002:a5d:5847:0:b0:366:f001:78d5 with SMTP id
+ ffacd0b85a97d-367cea46c97mr4276328f8f.13.1720599983351; Wed, 10 Jul 2024
+ 01:26:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ASoC: dt-bindings: qcom,msm8916-wcd-digital-codec:
- convert to dtschema
-To: Rayyan Ansari <rayyan.ansari@linaro.org>, devicetree@vger.kernel.org
-Cc: alsa-devel@alsa-project.org, Banajit Goswami <bgoswami@quicinc.com>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-References: <20240709152808.155405-1-rayyan.ansari@linaro.org>
- <20240709152808.155405-2-rayyan.ansari@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240709152808.155405-2-rayyan.ansari@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: richard clark <richard.xnu.clark@gmail.com>
+Date: Wed, 10 Jul 2024 16:26:11 +0800
+Message-ID: <CAJNi4rOGZpG6qK4ctO7yFY-s_uOax49TYNzdMx_GDXATepY4hQ@mail.gmail.com>
+Subject: 'rcu_preempt detected stalls on CPUs/tasks...' issue of cyclictest on rt-linux
+To: paulmck@kernel.org, josh@joshtriplett.org
+Cc: Lai Jiangshan <jiangshanlai@gmail.com>, mathieu.desnoyers@efficios.com, 
+	Steven Rostedt <rostedt@goodmis.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, rcu@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rt-users@vger.kernel.org, richard clark <richard.xnu.clark@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 09/07/2024 17:24, Rayyan Ansari wrote:
-> Convert the Qualcomm MSM8916 WCD Digital Audio Codec bindings from text
-> to yaml dt schema format.
-> Make bindings complete by adding #sound-dai-cells.
+Hi,
+I am running a Ubuntu 20.04.5 LTS on Nvidia Jetson AGX Orin platform
+with 12-cores as a guestOS, the kernel version is - 6.1.83-rt28.
+Kernel cmdline is:
+'root=/dev/mmcblk0p1 rw rootwait rootfstype=ext4 mminit_loglevel=4
+console=ttyTCU0,115200 console=tty0 firmware_class.path=/etc/firmware
+fbcon=map:0 net.ifnames=0'
 
+The cyclictest command 'cyclictest -Smp99 -H 3000
+--histfile=orin_idle_hyp_4h.hist -D 4h' will hang randomly during the
+test, then the minicom console will show below messages:
+...
 
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,msm8916-wcd-digital-codec
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 2
+[97619.450889] [CPU11-E] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+[97619.450894] [CPU11-E] rcu:   1-...!: (0 ticks this GP)
+idle=dc88/0/0x0 softirq=0/0 fqs=2 (false positive?)
+[97619.450914] [ CPU1-E] NMI backtrace for cpu 1
+[97619.451912] [CPU11-E] rcu: rcu_preempt kthread timer wakeup didn't
+happen for 5251 jiffies! g6029253 f0x0 RCU_GP_WAIT_FQS(5)
+->state=0x402
+[97619.451916] [CPU11-E] rcu:   Possible timer handling issue on cpu=1
+timer-softirq=342864
+[97619.451918] [CPU11-E] rcu: rcu_preempt kthread starved for 5252
+jiffies! g6029253 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=1
+[97619.451921] [CPU11-E] rcu:   Unless rcu_preempt kthread gets
+sufficient CPU time, OOM is now expected behavior.
+[97619.451923] [CPU11-E] rcu: RCU grace-period kthread stack dump:
+[97619.451966] [CPU11-E] rcu: Stack dump where RCU GP kthread last ran:
+...
+This issue doesn't show if run the Ubuntu 20.04.5 LTS with the same
+kernel natively on the Orin board.
 
-You can drop minItems if they equal max.
-
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    items:
-> +      - const: ahbix-clk
-> +      - const: mclk
-> +
-> +  '#sound-dai-cells':
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#sound-dai-cells'
-> +
-
-You need here allOf: with $ref to dai-common.yaml.
-
-> +additionalProperties: false
-
-... and this then becomes:
-unevaluatedProperties: false
-
-
-Best regards,
-Krzysztof
-
+Any comments about this or what can I do to triage this issue?
 
