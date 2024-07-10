@@ -1,281 +1,321 @@
-Return-Path: <linux-kernel+bounces-247747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C32C92D3E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:11:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 062FA92D3E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:12:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5108D2880B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:11:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59E25B222C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B265193085;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE28193474;
 	Wed, 10 Jul 2024 14:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LMEpsJTs"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tGoxu4F1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7455D193453
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4032193454
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720620703; cv=none; b=PE8NBX67t1fl0X//6IFOLccX2OlVvFmbZLcgy8FaZBrtfm2MuaC/9M46oXM0KtdNhZMsbwkVEOXd1Kr4YTYMeAc2hk/87BSGHeOlvKkrOoulpaGWZUGjTvrfq4Ab85izMOjgIRxYsz+kyYW+9dq+7kkjDHjMWqJ/BFgJOTRWilc=
+	t=1720620703; cv=none; b=O+wAhO6Ml985LdIebgc15lDNplVNw8O+FxD9iVXV0Rf8sMLIYjLapwC+9pk8e6JqePKqA7ZAJAZMIDC9J0or+8hrLO2WDzbxseQVUp6LnXN6cFQ2PgvKl5iUvdlm2cysiTp2SyC1lcx/8RWVz9moeS4apB+2SZkT4aKSfmkr0Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720620703; c=relaxed/simple;
-	bh=M3NTlKufyjn+J1Tx+IElh5yRPH9Gd298RvqHaxfBu5w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J/X1ayITVgfoWDKHP37w04OD4wBZCulKOca10hM1L2dsvfBFBd1Z4fn8kH+Vd4eWzvjxaYzNSw6wOgLrQ+MjPWMMordPfrpkixk/4eaeryrmomncMHrfxtlYutxhAb5HonoHJUMq5e0+5cTKbQ1uK1aVq193x9vWuNLjj16/wt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LMEpsJTs; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3d9ddfbbc58so348939b6e.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:11:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720620699; x=1721225499; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mBHCfF+fRoODKJrxxIob/lIHbfhaheSYHsBiC/FGg6I=;
-        b=LMEpsJTsmyOnMM7XtgCz2vMnGb2EJl8UHKaBvcHxZAEmF320y/DjeJLni8kNYT3mq6
-         iJ4Wk2vGYeHQPTAnCOVinm+A1YwpzbnLzfVARkmto/KlLlx5ZvwNkqswMtu4NXr1tFim
-         vAFqfbqh/sk7XYrtn0Z/pAYJPHGalannw0mrTasTd60N84vBLDIjoKOrjs7CQ2yAZG+n
-         F/gaGGC0RLlVyCMTBiyUt8UsFsytkCidDbdA2fIjt6Jb36i9Ph+vAgeF3mCZFuD/EaZe
-         aCu3mudMw8vp1S2833+FNC7UZLCN1weC5OgpUF3Gh8c9uV1F1d44FXzzScng9NyEBO25
-         D+0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720620699; x=1721225499;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mBHCfF+fRoODKJrxxIob/lIHbfhaheSYHsBiC/FGg6I=;
-        b=aR0o2nqwPt72+T1S9uxmmLYy9XvrRT/BaChlMxpHvFxBk2nMRc4d7nRvFvrgxcWx7X
-         nepJqaoYg4xeQlhhpU4aLakQ8lO3pcp2gmTPcdvuqyDsBxSw1OfiZG+rLwb7qW6XnKqQ
-         he/MDmBKP1bMELaf14Eqsbtzl7JhuqACl+awtZqJgG8Ig3DLsRUdKuuVjLiDA6UTILt+
-         kDfXntj7ENGX2wZ0qoIFhRzt5RqzMIuKYBwsD9Da5R87AZ9Kms8UyLNNL021XqWpcVR1
-         TaRjmxV63oC6Q6PF0w7cuXFXpLMiOZX1vbTayzkCwRXWudOT6IiUHClL91XP6lCKubRe
-         LXAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2r5wwzUCdvFpFiFUnzKEjOxMKYW1ffX7S4oY3ODhUtusL96a48aBP3k2/VFBZpxqD4k8moCkV2JjBPKuJLJu6tg2ozLVUdDrGptXJ
-X-Gm-Message-State: AOJu0Yy3kE4f/YXPeq8uMaWdKi9tIorgHZdWdU560o4LoLQM6xSWV/Eh
-	FimbX06z2L3a44FSIVre7LOZD//d659Mxam49gCr9Q06GllYEbnJ1rCcPOXkHvTGnCpuUFTsbL/
-	Y9IXUlkIm4/rfO7djML4O3ZrSL79jIcdF4CFupw==
-X-Google-Smtp-Source: AGHT+IGGO+ZLAwaPKfnWP2SYubTBuh3R69ACSSxI1COqxyNqeSYnfTw1TktmrY/JAg7lP1gVC2AllArgIH2awn8ysXs=
-X-Received: by 2002:a05:6808:1306:b0:3d6:9c05:1aff with SMTP id
- 5614622812f47-3d93beda13dmr7079147b6e.10.1720620699166; Wed, 10 Jul 2024
- 07:11:39 -0700 (PDT)
+	bh=xvZFHfzrws40qBOdnuo2zBTV3gBCWVhP040MLBMFlp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VGFdRFJASCAh9MdachyLlk+uZcgDumUVkGbbzyjVmDvbBo29tjiwHq2JIx4fRoCYBuj4A9bohTuJ2kbSr0Wvxwle9zJ9U3uIDJebpGj5TIL+z8oUeLxvcDcJXd4BhDPw8dwxBdgo3VyhBaUz7gnfRW2qypzw6JeIfcnKuRlFqw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tGoxu4F1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECB58C32786;
+	Wed, 10 Jul 2024 14:11:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720620703;
+	bh=xvZFHfzrws40qBOdnuo2zBTV3gBCWVhP040MLBMFlp0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tGoxu4F16qrHa46OHBv/mCYkNlVfabt9fYjDLFWSdFf5F9P+c2jIwrUryGMyUA4TU
+	 iUjDW0Q1GBbdcSN/uomrwJad9ryxWXH9EZ2aoUEy1+RHtgfPYWYGLkd8OcoTTucMOQ
+	 UZEnvyEXSbz31syaLqC3xaQkaO8xujcPXv6CcjOQ=
+Date: Wed, 10 Jul 2024 16:11:40 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Vamsi Krishna Attunuru <vattunuru@marvell.com>
+Cc: "arnd@arndb.de" <arnd@arndb.de>, Jerin Jacob <jerinj@marvell.com>,
+	Srujana Challa <schalla@marvell.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [EXTERNAL] Re: [PATCH v10 1/1] misc: mrvl-cn10k-dpi: add Octeon
+ CN10K DPI administrative driver
+Message-ID: <2024071012-backpedal-punctured-5d7b@gregkh>
+References: <2024070333-matchless-batch-57ec@gregkh>
+ <20240706153009.3775333-1-vattunuru@marvell.com>
+ <2024071026-squirt-trustful-5845@gregkh>
+ <MW4PR18MB52442E363AE0BED30607F251A6A42@MW4PR18MB5244.namprd18.prod.outlook.com>
+ <2024071053-mahogany-cavalier-6692@gregkh>
+ <MW4PR18MB524491EEA2A628469595FE47A6A42@MW4PR18MB5244.namprd18.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240709110658.146853929@linuxfoundation.org>
-In-Reply-To: <20240709110658.146853929@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 10 Jul 2024 19:41:27 +0530
-Message-ID: <CA+G9fYvTZvjcWL1KgQcQKX1-qn-YANGnAmy3mcvgtjAK-t71hQ@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/139] 6.6.39-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <MW4PR18MB524491EEA2A628469595FE47A6A42@MW4PR18MB5244.namprd18.prod.outlook.com>
 
-On Tue, 9 Jul 2024 at 16:42, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.39 release.
-> There are 139 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 11 Jul 2024 11:06:25 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.39-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Wed, Jul 10, 2024 at 01:48:40PM +0000, Vamsi Krishna Attunuru wrote:
+> 
+> 
+> >-----Original Message-----
+> >From: Greg KH <gregkh@linuxfoundation.org>
+> >Sent: Wednesday, July 10, 2024 6:57 PM
+> >To: Vamsi Krishna Attunuru <vattunuru@marvell.com>
+> >Cc: arnd@arndb.de; Jerin Jacob <jerinj@marvell.com>; Srujana Challa
+> ><schalla@marvell.com>; linux-kernel@vger.kernel.org
+> >Subject: Re: [EXTERNAL] Re: [PATCH v10 1/1] misc: mrvl-cn10k-dpi: add
+> >Octeon CN10K DPI administrative driver
+> >
+> >On Wed, Jul 10, 2024 at 01: 19: 56PM +0000, Vamsi Krishna Attunuru wrote: > >
+> >> >-----Original Message----- > >From: Greg KH
+> ><gregkh@ linuxfoundation. org> > >Sent: Wednesday, July 10, 2024 6: 28 PM >
+> >>To: Vamsi 
+> >On Wed, Jul 10, 2024 at 01:19:56PM +0000, Vamsi Krishna Attunuru wrote:
+> >>
+> >>
+> >> >-----Original Message-----
+> >> >From: Greg KH <gregkh@linuxfoundation.org>
+> >> >Sent: Wednesday, July 10, 2024 6:28 PM
+> >> >To: Vamsi Krishna Attunuru <vattunuru@marvell.com>
+> >> >Cc: arnd@arndb.de; Jerin Jacob <jerinj@marvell.com>; Srujana Challa
+> >> ><schalla@marvell.com>; linux-kernel@vger.kernel.org
+> >> >Subject: [EXTERNAL] Re: [PATCH v10 1/1] misc: mrvl-cn10k-dpi: add
+> >> >Octeon CN10K DPI administrative driver
+> >> >
+> >> >On Sat, Jul 06, 2024 at 08: 30: 09AM -0700, Vamsi Attunuru wrote: >
+> >> >Adds a misc driver for Marvell CN10K DPI(DMA Engine) device's
+> >> >physical > function which initializes DPI DMA hardware's global
+> >> >configuration and > enables hardware mailbox On Sat, Jul 06, 2024 at
+> >> >08:30:09AM -0700, Vamsi Attunuru wrote:
+> >> >> Adds a misc driver for Marvell CN10K DPI(DMA Engine) device's
+> >> >> physical function which initializes DPI DMA hardware's global
+> >> >> configuration and enables hardware mailbox channels between
+> >> >> physical function (PF) and it's virtual functions (VF). VF device
+> >> >> drivers (User space drivers) use this hw mailbox to communicate any
+> >> >> required device configuration on it's respective VF device.
+> >> >> Accordingly, this DPI PF driver provisions the VF device resources.
+> >> >>
+> >> >> At the hardware level, the DPI physical function (PF) acts as a
+> >> >> management interface to setup the VF device resources, VF devices
+> >> >> are only provisioned to handle or control the actual DMA Engine's
+> >> >> data transfer
+> >> >capabilities.
+> >> >>
+> >> >> Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
+> >> >> Reviewed-by: Srujana Challa <schalla@marvell.com>
+> >> >> ---
+> >> >> Changes V9 -> V10
+> >> >> - Added checks to ensure reserved fields are set to 0
+> >> >>
+> >> >> Changes V8 -> V9:
+> >> >> - Addressed minor comments
+> >> >>
+> >> >> Changes V7 -> V8:
+> >> >> - Used bit shift operations to access mbox msg fields
+> >> >> - Removed bitfields in mailbox msg structure
+> >> >>
+> >> >> Changes V6 -> V7:
+> >> >> - Updated documentation with required references
+> >> >> - Addressed V6 review comments
+> >> >>
+> >> >> Changes V5 -> V6:
+> >> >> - Updated documentation
+> >> >> - Fixed data types in uapi file
+> >> >>
+> >> >> Changes V4 -> V5:
+> >> >> - Fixed license and data types in uapi file
+> >> >>
+> >> >> Changes V3 -> V4:
+> >> >> - Moved ioctl definations to .h file
+> >> >> - Fixed structure alignements which are passed in ioctl
+> >> >>
+> >> >> Changes V2 -> V3:
+> >> >> - Added ioctl operation to the fops
+> >> >> - Used managed version of kzalloc & request_irq
+> >> >> - Addressed miscellaneous comments
+> >> >>
+> >> >> Changes V1 -> V2:
+> >> >> - Fixed return values and busy-wait loops
+> >> >> - Merged .h file into .c file
+> >> >> - Fixed directory structure
+> >> >> - Removed module params
+> >> >> - Registered the device as misc device
+> >> >>
+> >> >>  Documentation/misc-devices/index.rst          |   1 +
+> >> >>  Documentation/misc-devices/mrvl_cn10k_dpi.rst |  52 ++
+> >> >>  .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+> >> >>  MAINTAINERS                                   |   5 +
+> >> >>  drivers/misc/Kconfig                          |  14 +
+> >> >>  drivers/misc/Makefile                         |   1 +
+> >> >>  drivers/misc/mrvl_cn10k_dpi.c                 | 676 ++++++++++++++++++
+> >> >>  include/uapi/misc/mrvl_cn10k_dpi.h            |  39 +
+> >> >>  8 files changed, 789 insertions(+)
+> >> >>
+> >> >> diff --git a/Documentation/misc-devices/index.rst
+> >> >> b/Documentation/misc-devices/index.rst
+> >> >> index 2d0ce9138588..8c5b226d8313 100644
+> >> >> --- a/Documentation/misc-devices/index.rst
+> >> >> +++ b/Documentation/misc-devices/index.rst
+> >> >> @@ -21,6 +21,7 @@ fit into other categories.
+> >> >>     isl29003
+> >> >>     lis3lv02d
+> >> >>     max6875
+> >> >> +   mrvl_cn10k_dpi
+> >> >>     oxsemi-tornado
+> >> >>     pci-endpoint-test
+> >> >>     spear-pcie-gadget
+> >> >> diff --git a/Documentation/misc-devices/mrvl_cn10k_dpi.rst
+> >> >> b/Documentation/misc-devices/mrvl_cn10k_dpi.rst
+> >> >> new file mode 100644
+> >> >> index 000000000000..a75e372723d8
+> >> >> --- /dev/null
+> >> >> +++ b/Documentation/misc-devices/mrvl_cn10k_dpi.rst
+> >> >> @@ -0,0 +1,52 @@
+> >> >> +.. SPDX-License-Identifier: GPL-2.0
+> >> >> +
+> >> >> +===============================================
+> >> >> +Marvell CN10K DMA packet interface (DPI) driver
+> >> >> +===============================================
+> >> >> +
+> >> >> +Overview
+> >> >> +========
+> >> >> +
+> >> >> +DPI is a DMA packet interface hardware block in Marvell's CN10K silicon.
+> >> >> +DPI hardware comprises a physical function (PF), its virtual
+> >> >> +functions, mailbox logic, and a set of DMA engines & DMA command
+> >> >queues.
+> >> >> +
+> >> >> +DPI PF function is an administrative function which services the
+> >> >> +mailbox requests from its VF functions and provisions DMA engine
+> >> >> +resources to it's VF functions.
+> >> >> +
+> >> >> +mrvl_cn10k_dpi.ko misc driver loads on DPI PF device and services
+> >> >> +the mailbox commands submitted by the VF devices and accordingly
+> >> >> +initializes the DMA engines and VF device's DMA command queues.
+> >> >> +Also, driver creates /dev/mrvl-cn10k-dpi node to set DMA engine
+> >> >> +and PEM (PCIe interface) port attributes like fifo length, molr, mps &
+> >mrrs.
+> >> >> +
+> >> >> +DPI PF driver is just an administrative driver to setup its VF
+> >> >> +device's queues and provisions the hardware resources, it cannot
+> >> >> +initiate any DMA operations. Only VF devices are provisioned with
+> >> >> +DMA
+> >> >capabilities.
+> >> >> +
+> >> >> +Driver location
+> >> >> +===============
+> >> >> +
+> >> >> +drivers/misc/mrvl_cn10k_dpi.c
+> >> >> +
+> >> >> +Driver IOCTLs
+> >> >> +=============
+> >> >> +
+> >> >> +:c:macro::`DPI_MPS_MRRS_CFG`
+> >> >> +ioctl that sets max payload size & max read request size
+> >> >> +parameters of a pem port to which DMA engines are wired.
+> >> >> +
+> >> >> +
+> >> >> +:c:macro::`DPI_ENGINE_CFG`
+> >> >> +ioctl that sets DMA engine's fifo sizes & max outstanding load
+> >> >> +request thresholds.
+> >> >> +
+> >> >> +User space code example
+> >> >> +=======================
+> >> >> +
+> >> >> +DPI VF devices are probed and accessed from user space
+> >> >> +applications using vfio-pci driver. Below is a sample dpi dma
+> >> >> +application to demonstrate on how applications use mailbox and
+> >> >> +ioctl services from DPI
+> >> >PF kernel driver.
+> >> >> +
+> >> >> +https://urldefense.proofpoint.com/v2/url?u=https-
+> >> <https://urldefense.proofpoint.com/v2/url?u=https-  >>
+> >> >3A__github.com_Marve
+> >> >> +llEmbeddedProcessors_dpi-2Dsample-
+> >> >2Dapp&d=DwIBAg&c=nKjWec2b6R0mOyPaz7
+> >> >>
+> >>
+> >>+xtfQ&r=WllrYaumVkxaWjgKto6E_rtDQshhIhik2jkvzFyRhW8&m=bFx_7eltw7
+> >S
+> >> >6zzVu
+> >> >>
+> >>
+> >>+1LNEdtsbwwynJfAKTja649QUwGNU_y4uWqGoEZ4f7JluYLjX&s=wOMzADb
+> >q
+> >> >9f4xxz1Oug
+> >> >> +-slj_xy4ZcbrnWfQJWeO0_ugA&e=
+> >> >> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> >> >> b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> >> >> index a141e8e65c5d..def539770439 100644
+> >> >> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> >> >> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> >> >> @@ -362,6 +362,7 @@ Code  Seq#    Include File
+> >> >Comments
+> >> >>  0xB6  all    linux/fpga-dfl.h
+> >> >>  0xB7  all    uapi/linux/remoteproc_cdev.h                            <mailto:linux-
+> >> >remoteproc@vger.kernel.org>
+> >> >>  0xB7  all    uapi/linux/nsfs.h                                       <mailto:Andrei Vagin
+> >> ><avagin@openvz.org>>
+> >> >> +0xB8  01-02  uapi/misc/mrvl_cn10k_dpi.h                              Marvell CN10K
+> >DPI
+> >> >driver
+> >> >>  0xC0  00-0F  linux/usb/iowarrior.h  0xCA  00-0F  uapi/misc/cxl.h
+> >> >> 0xCA  10-2F  uapi/misc/ocxl.h diff --git a/MAINTAINERS
+> >> >> b/MAINTAINERS index aae88b7a6c32..2c17d651954a 100644
+> >> >> --- a/MAINTAINERS
+> >> >> +++ b/MAINTAINERS
+> >> >> @@ -13477,6 +13477,11 @@ S:	Supported
+> >> >>  F:	Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml
+> >> >>  F:	drivers/mmc/host/sdhci-xenon*
+> >> >>
+> >> >> +MARVELL OCTEON CN10K DPI DRIVER
+> >> >> +M:	Vamsi Attunuru <vattunuru@marvell.com>
+> >> >> +S:	Supported
+> >> >> +F:	drivers/misc/mrvl_cn10k_dpi.c
+> >> >> +
+> >> >>  MATROX FRAMEBUFFER DRIVER
+> >> >>  L:	linux-fbdev@vger.kernel.org
+> >> >>  S:	Orphan
+> >> >> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig index
+> >> >> faf983680040..965641017a62 100644
+> >> >> --- a/drivers/misc/Kconfig
+> >> >> +++ b/drivers/misc/Kconfig
+> >> >> @@ -585,6 +585,20 @@ config NSM
+> >> >>  	  To compile this driver as a module, choose M here.
+> >> >>  	  The module will be called nsm.
+> >> >>
+> >> >> +config MARVELL_CN10K_DPI
+> >> >> +	tristate "Octeon CN10K DPI driver"
+> >> >> +	depends on ARM64 && PCI
+> >> >
+> >> >Why does ARM64 matter here?  I don't see any dependency required of it.
+> >> >
+> >> Thanks, Greg, for your time. This DPI device is an on-chip PCIe device
+> >> and only present on Marvell's CN10K platforms(which are 64-bit ARM SoC
+> >processors), so added those dependency.
+> >
+> >Then perhaps keep the ARM64 and add a COMPILE_TEST option as well so
+> >that we can build this as part of normal testing?
+> >
+> >So that would be:
+> >	depends on PCI && (ARM64 || COMPILE_TEST) right?
+> >
+> Yes, it makes sense to add. Can I send this fix as next version now so that it will show
+> up in next release, please suggest.
 
-[Please ignore older version report email]
-[Here is the latest one]
+Send it as a follow-on patch on top of my tree, doing what Arnd
+suggested.
 
-Results from Linaro=E2=80=99s test farm.
-We have two major regressions.
+thanks,
 
-1)
-As I have reported on 6.9.9-rc1 the same kernel panic was noticed while
-running kunit tests [1] seen on 6.6.39-rc1.
-
-  BUG: KASAN: null-ptr-deref in _raw_spin_lock_irq+0xa4/0x158
-
- [1] https://lore.kernel.org/stable/CA+G9fYsqkB4=3DpVZyELyj3YqUc9jXFfgNULsP=
-k9t8q-+P1w_G6A@mail.gmail.com/
-
-2)
-s390 build regressions [2]:
---------
-arch/s390/include/asm/processor.h:311:11: error: expected ';' at end
-of declaration
-  311 |         psw_t psw __uninitialized;
-      |                  ^
-      |                  ;
-
- [2] https://storage.tuxsuite.com/public/linaro/lkft/builds/2j0Y8vJ0DjSyCxU=
-Fw4CFk1yTq9S/
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build
-* kernel: 6.6.39-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 3be0ca2a17a0142c600526e9ec5676d797ad213e
-* git describe: v6.6.38-140-g3be0ca2a17a0
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.3=
-8-140-g3be0ca2a17a0
-
-## Test Regressions (compared to v6.6.35-193-g580e509ea134)
-
-* qemu-armv5, boot
-  - clang-18-multi_v5_defconfig-kunit
-  - clang-nightly-multi_v5_defconfig-kunit
-  - gcc-13-multi_v5_defconfig-kunit
-
-* qemu-i386, boot
-  - gcc-13-lkftconfig-kunit
-
-* s390, build
-  - clang-18-allnoconfig
-  - clang-18-defconfig
-  - clang-18-tinyconfig
-  - clang-nightly-allnoconfig
-  - clang-nightly-defconfig
-  - clang-nightly-tinyconfig
-  - gcc-13-allnoconfig
-  - gcc-13-defconfig
-  - gcc-13-tinyconfig
-  - gcc-8-allnoconfig
-  - gcc-8-defconfig-fe40093d
-  - gcc-8-tinyconfig
-
-
-## Metric Regressions (compared to v6.6.35-193-g580e509ea134)
-
-## Test Fixes (compared to v6.6.35-193-g580e509ea134)
-
-## Metric Fixes (compared to v6.6.35-193-g580e509ea134)
-
-## Test result summary
-total: 249497, pass: 213701, fail: 5004, skip: 30287, xfail: 505
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 127 total, 127 passed, 0 failed
-* arm64: 36 total, 36 passed, 0 failed
-* i386: 27 total, 27 passed, 0 failed
-* mips: 24 total, 24 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 34 total, 34 passed, 0 failed
-* riscv: 17 total, 17 passed, 0 failed
-* s390: 12 total, 0 passed, 12 failed
-
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 31 total, 31 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-smoketest
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+greg k-h
 
