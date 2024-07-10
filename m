@@ -1,109 +1,109 @@
-Return-Path: <linux-kernel+bounces-246962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EAB292C95F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:41:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD0D92C93C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04A1C1F2420E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:41:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC7811F23E2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82403BBED;
-	Wed, 10 Jul 2024 03:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A924839850;
+	Wed, 10 Jul 2024 03:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="FrgcZHwo"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="lKHfKX2H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24B241C92;
-	Wed, 10 Jul 2024 03:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0150200C1;
+	Wed, 10 Jul 2024 03:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720582882; cv=none; b=Tp+GPPyE/65AZ+gqDTJRpAapeuFtYFGaSGKtgtmzKgcBCJT9VZ5rxfVPX5t22sP4ZqZnkXYUCyI1/LkU+OK6S0iyRBc5vEoNLt2y9JUB+2l0ckTkkAlfw9PKW5BK0Ua0u9glYWfdR5on1z81ZuEyBx2BjSHOYATxZTPDLlIF+XM=
+	t=1720582470; cv=none; b=q2+KJNVsxQLYT3sBRA3K60Cr+Gbo9kWh+LVAJ34+sO51GzQ6+gBpHQjWp0+y2f62JkMR9Ul7tlHC4xcodHRF6LMbbnnbs8NDnbVAPv6O5usZ/VMxUcnbP0IbQivimq/JVEHIK8ZDSdttaCWl7iKvbzDOAMTfSJ8qh5djBLMO6sE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720582882; c=relaxed/simple;
-	bh=gg9quY78nmialQjcz3/JYfkyMKp1VuYLp3UKUmhRoK0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kcFY/fM9iM5f6TeAAEGmh2vYE8JzWv/tMZxQE/GIKclNE+DLj78cqrcAm1c5xGml3ZlFbqXo/0mTuBOn3xxG0RGtcVeEEIbJ0pyRqdamCIlD4DeatUnP5Ovqci2m9g57sNBawdWhqrgRNLddAZe6j93Q6hjY2K2G6/kiAgcSpvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=FrgcZHwo; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46A3esiP71591466, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1720582854; bh=gg9quY78nmialQjcz3/JYfkyMKp1VuYLp3UKUmhRoK0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=FrgcZHwoHjouYvEw757/CdfxBlwhCZ9rDxCaLciX0fjl/uwADC+BczFKhX1Av3EBK
-	 L19NI/uRflgSU/4HiFFdmxbJuIdS7V50BY0ZUfVWaSgxNnhEQjs/mrkR/3t0ju+bgp
-	 m+sPmf6hGzQWVFRJO/RhuAKmcGLeG7/Zt2zseA2mvGDIhJc/Jn4u18ir2mZou8RUwu
-	 vIMPesu9FT/qsaUAjXSoZYKSGFRKEQf6NUnZojSfMAIpbmn/AlO6L+S7cv1PB+Xd/I
-	 f4Yjfl1A3HClsA7VntszdPXrHlXQTaRVU3XVKIZ66SVVo6o5RhpvNBR2i35XeAG2qG
-	 rZB5nKkz6RbGQ==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46A3esiP71591466
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 10 Jul 2024 11:40:54 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 10 Jul 2024 11:40:55 +0800
-Received: from RTDOMAIN (172.21.210.68) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Wed, 10 Jul
- 2024 11:40:54 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: <kuba@kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <andrew@lunn.ch>, <jiri@resnulli.us>, <horms@kernel.org>,
-        <rkannoth@marvell.com>, <jdamato@fastly.com>, <pkshih@realtek.com>,
-        <larry.chiu@realtek.com>, "Justin
- Lai" <justinlai0215@realtek.com>
-Subject: [PATCH net-next v23 13/13] MAINTAINERS: Add the rtase ethernet driver entry
-Date: Wed, 10 Jul 2024 11:32:34 +0800
-Message-ID: <20240710033234.26868-14-justinlai0215@realtek.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240710033234.26868-1-justinlai0215@realtek.com>
-References: <20240710033234.26868-1-justinlai0215@realtek.com>
+	s=arc-20240116; t=1720582470; c=relaxed/simple;
+	bh=Xr4Z6N+ZLNTCjn0mcOpsgrbnQi+pMrx8xtd5Xs8BJfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VfY7iuVji75YS0zB3ZEJXdcon2q/IvejdAo5yxqg7zsILs9xKQeph+GgObcyW1yGPPVwhtHO26KRlXIXljqBfSfEWcmLhGj9xO2FiHLLY9MXZBrGrPVq/bMAQJie8wiSLRg4JfIjzSBncs6p6fMT/SHNJzRIxi0f2s1dgPFzF+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=lKHfKX2H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C803C32781;
+	Wed, 10 Jul 2024 03:34:27 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="lKHfKX2H"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1720582466;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p5i/Lzo9gkW+zVOJlOn+7/krq7+rGz0YNs8CYQNCYFc=;
+	b=lKHfKX2Hd1YwMf/8JrhbMnEEbz50FIzoBGgq11j6QV8Foke+nnTWukxN3KSR+lQio1Ai/p
+	LK8VYTvBxZ13Oixal63xrLklzS70IEQThuvWfR9+tQQsmEjGLR1rhRxPlFoI43my/4rNMA
+	txvthB06F6B2HIIvNAPnw7t8o/S24SY=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 11d72e4e (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Wed, 10 Jul 2024 03:34:24 +0000 (UTC)
+Date: Wed, 10 Jul 2024 05:34:22 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+	tglx@linutronix.de, linux-crypto@vger.kernel.org,
+	linux-api@vger.kernel.org, x86@kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Carlos O'Donell <carlos@redhat.com>,
+	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	Jann Horn <jannh@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+Subject: Re: [PATCH v21 1/4] mm: add VM_DROPPABLE for designating always
+ lazily freeable mappings
+Message-ID: <Zo4BPjTIitoYSBMP@zx2c4.com>
+References: <e2f104ac-b6d9-4583-b999-8f975c60d469@redhat.com>
+ <CAHk-=wibRRHVH5D4XvX1maQDCT-o4JLkANXHMoZoWdn=tN0TLA@mail.gmail.com>
+ <6705c6c8-8b6a-4d03-ae0f-aa83442ec0ab@redhat.com>
+ <CAHk-=wi=XvCZ9r897LjEb4ZarLzLtKN1p+Fyig+F2fmQDF8GSA@mail.gmail.com>
+ <7439da2e-4a60-4643-9804-17e99ce6e312@redhat.com>
+ <Zovv4lzM38EHtnms@zx2c4.com>
+ <Zov6SZZCKrqmigua@zx2c4.com>
+ <75d6c45d-deea-464d-b0fd-b36e5d73b898@redhat.com>
+ <Zoyd1DYuD7cmJbgx@zx2c4.com>
+ <b71d8619-1182-43b6-940b-d68f672aa379@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b71d8619-1182-43b6-940b-d68f672aa379@redhat.com>
 
-Add myself and Larry Chiu as the maintainer for the rtase ethernet driver.
+On Wed, Jul 10, 2024 at 05:05:06AM +0200, David Hildenbrand wrote:
+> On 09.07.24 04:17, Jason A. Donenfeld wrote:
+> > Hi David,
+> > 
+> > On Mon, Jul 08, 2024 at 10:21:09PM +0200, David Hildenbrand wrote:
+> >> BTW, I was just trying to understand how MADV_FREE + MAP_DROPPABLE would
+> >> behave without any swap space around.
+> >>
+> >> Did you experiment with that?
+> > 
+> > You mean on a system without any swap configured? That's actually my
+> > primary test environment for this. It behaves as expected: when ram
+> > fills up and the scanner is trying to reclaim what it can,
+> > folio_test_swapbacked(folio) is false, and the memory gets freed. After,
+> > reads fault in a zero page. So it's working as expected.
+> 
+> Okay, just to be clear: no swap/zram/zswap. The reclaim code regarding 
+> not scanning anonymous memory without swap was a bit confusing.
 
-Signed-off-by: Justin Lai <justinlai0215@realtek.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Right, no swap, as boring a system as can be. I've experimented with
+that behavior on my swap-less 64GB thinkpad, as well as on little
+special purpose VMs, where I hacked the VM_DROPPABLE test code into the
+wireguard test suite.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e0f28278e504..bd49c895339e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19490,6 +19490,13 @@ L:	linux-remoteproc@vger.kernel.org
- S:	Maintained
- F:	drivers/tty/rpmsg_tty.c
- 
-+RTASE ETHERNET DRIVER
-+M:	Justin Lai <justinlai0215@realtek.com>
-+M:	Larry Chiu <larry.chiu@realtek.com>
-+L:	netdev@vger.kernel.org
-+S:	Maintained
-+F:	drivers/net/ethernet/realtek/rtase/
-+
- RTL2830 MEDIA DRIVER
- L:	linux-media@vger.kernel.org
- S:	Orphan
--- 
-2.34.1
-
+Jason
 
