@@ -1,334 +1,166 @@
-Return-Path: <linux-kernel+bounces-247143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 170CC92CBD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:19:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F001692CBD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A2CF1C22B65
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:19:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F2F91C22B0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110CF82D93;
-	Wed, 10 Jul 2024 07:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D0D84A21;
+	Wed, 10 Jul 2024 07:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="slyHklQc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GYqZHxQs"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49BE77109;
-	Wed, 10 Jul 2024 07:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6064B83A09;
+	Wed, 10 Jul 2024 07:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720595931; cv=none; b=nkvQp5KFYQ3EzQLAwYIdpeuVzKhmegYm2chhJywzDShWfJ46yoRhFEg1tmtedzo+wJZ4WsbwXCU1ZqU2NtajjlCGHJIyM4XVdsJxHDsN26HQfTxS0QBRlxJzjEbXvDGVABZOeu8wvxjj3ro48mak54+dkzZTiQ9DaINV7T7rZ3Y=
+	t=1720595935; cv=none; b=GPZ9rUWHUC9g+u6TMW3d+Qy/lj8j0xn07haCS+LpTPlXtLK2RsHH8UbyZ+vHUpoSsQEqFHrr3oMnVKuWmM6bICGjeGrFxrDAUB7K/i3iYsKiATRa7khYajVPrvdmRknyoxeJvyo5yIm1KAMJnhRtXX0Ari4MPTb/Q8gUZfqISlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720595931; c=relaxed/simple;
-	bh=rqmifjrlxx3s7RcDnkE3IqBzuxCRT6+ff8aBkU6UQOo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LteZzpcD5GTSgIk/Bbnp/Cq1190P3Np4ZH3RDbbR9jboUgGBaZmJTT3gmE8ySIlTq/hv/6WUaz8YffW6bCgflKUGyzlPh2OlkbmwyUlBaQFk2c6ypc0AVbghlxIwZ7MQ2VPCO5aacrtSSpefrI2b00YffZUQUUvZVh2pTE7sMDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=slyHklQc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A071C32781;
-	Wed, 10 Jul 2024 07:18:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720595930;
-	bh=rqmifjrlxx3s7RcDnkE3IqBzuxCRT6+ff8aBkU6UQOo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=slyHklQc95X/EDQbl1cTV1CxnT6/yvB1welQymjILaAWt4sb2cBJwNlE/rp7OqQcI
-	 ZpkXVxCsZrJo3MOdN8NM+GoZ5Q4vrrfOYWVeFRw/qBHwuVNofb9IDXSBPJ4cwZr2el
-	 ZXq367YJPNI0WN1Izf3KdaWm8o1w3VTz+jfw2ndJY7DEIyL8wa+mJw5AnUxhXdMzv1
-	 mNAgxDWZ/n/9kU8JeHyqlqU4euDuFcwhYjbSLk/M+ygVJ9Kb9xgY1/ZQjS7IG58cdW
-	 J+GlHi+1EMGuqNsPVkSfqalt35X4XuBgk/R1D2XFwiXSFlZIybgMzaCr6Qu8WhGPAQ
-	 gqs2hVkB23EOQ==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Manu Bretelle <chantra@meta.com>, Daniel Borkmann
- <daniel@iogearbox.net>, KP Singh <kpsingh@kernel.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
- <eddyz87@gmail.com>, Mykola Lysenko <mykolal@meta.com>, Alexei Starovoitov
- <ast@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, "John
- Fastabend" <john.fastabend@gmail.com>, Stanislav Fomichev <sdf@google.com>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Shuah Khan
- <shuah@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Florent
- Revest <revest@google.com>
-Subject: Re: [PATCH bpf] selftests/bpf: DENYLIST.aarch64: Remove fexit_sleep
-In-Reply-To: <SJ0PR15MB461564D3F7E7A763498CA6A8CBDB2@SJ0PR15MB4615.namprd15.prod.outlook.com>
-References: <20240705145009.32340-1-puranjay@kernel.org>
- <c0ef7ecf-595b-375a-7785-d7bf50040c6b@iogearbox.net>
- <mb61pjzhwvshc.fsf@kernel.org>
- <CACYkzJ7d_u=aRzbubBypSVhnUSjBQnbZjPuGXhqnMzbp0tJm_g@mail.gmail.com>
- <224eeadb-fc5f-baeb-0808-a4f9916afa3c@iogearbox.net>
- <mb61ped836gn7.fsf@kernel.org>
- <d36b0c2e-fdf2-d3b0-46a8-7936e0eda5a8@iogearbox.net>
- <CACYkzJ5E+3xYkNsH7JoVkjabzSwnZZCzzTz5B50qDB7bLYkmMA@mail.gmail.com>
- <890d23f2-636e-12d1-31cc-eb6469f2a9ac@iogearbox.net>
- <SJ0PR15MB461564D3F7E7A763498CA6A8CBDB2@SJ0PR15MB4615.namprd15.prod.outlook.com>
-Date: Wed, 10 Jul 2024 07:18:23 +0000
-Message-ID: <mb61p34ohsojk.fsf@kernel.org>
+	s=arc-20240116; t=1720595935; c=relaxed/simple;
+	bh=/U+lMHxjqHQW8J2TYbjkeT6OFd4TTGHcoGKVHsPmD5Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rYXfjAsrnB9xeuoFNdPzpor9BWEnyaE4V4HjI08RlLaWhEAAzJT9dFls6Bj3gXnYeZ1KB+KNJAWYQnMTJ0Ke5pN6TuzSvj8GlNeiJL/pe+zTJA8SJAt0cMlBOu9Us/GkjW7QXibonfDz+2t//Al00M0XLLKJ2yy8BN7ymHOX+qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GYqZHxQs; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469Kxdqu000478;
+	Wed, 10 Jul 2024 07:18:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hhjMHZvhOUEYvnVQe7XP5sYYHiKGScbresm5K6/Asx8=; b=GYqZHxQs0LXIIQtu
+	yX6Ik5iRcSzYq+R8BChT4A5+ZNdkJcb415/TOwqOTYJFyGwttpJ9NmDZv1Jx2g2T
+	Q2tzJAC4EO7bIc86svYC+V1eBKboleqrKNrzfaWrSgiO+/z9Crt0QhCu127h7rEd
+	qHlFRN8QElSGpeq21UVagQq029aGT638zCCh5ZjWGobC/tGdqNOc+OxTbJtSMk83
+	hhHOlhEqLoLNoM5Trodl6jFwL6thMvtjPvLg8B54sD1rmxW//d03mFUDao/LmiEZ
+	05CYgUXhWBoJMcMrOTOeJmRQJfdn3o9Z0ivRcKZh4L+MIuFPqM985f4rli+o9vfV
+	xe5glA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wgwrhtk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jul 2024 07:18:45 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46A7IilF015641
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jul 2024 07:18:44 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 10 Jul
+ 2024 00:18:38 -0700
+Message-ID: <417ff30e-87d9-4816-addc-943f96ec64ac@quicinc.com>
+Date: Wed, 10 Jul 2024 15:18:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
-
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-
-[SNIP]
-
->
-> Hm, the latest run actually hangs in fexit_sleep (which is the test right=
- after
-> fexit_bpf2bpf). So looks like this was too early. It seems some CI runs p=
-ass on
-> arm64 but others fail:
->
-> =C2=A0=C2=A0 https://github.com/kernel-patches/bpf/actions/runs/985982685=
-1/job/27224868398=C2=A0(fail)
-> =C2=A0=C2=A0 https://github.com/kernel-patches/bpf/actions/runs/985983721=
-3/job/27224955045=C2=A0(pass)
->
-> Puranjay, do you have a chance to look into this again?
->
-> Probably unrelated... but when I tried to reproduce this using qemu in fu=
-ll emulation mode [0], I am getting a kernel crash for fexit_sleep, but als=
-o for fexit_bpf2bpf, fentry_fexit
->
-> stacktraces look like (for fentry_fexit)
->
->
-> root@(none):/mnt/vmtest/selftests/bpf# ./test_progs -v -t fentry_fexit
-> bpf_testmod.ko is already unloaded.
-> Loading bpf_testmod.ko...
-> Successfully loaded bpf_testmod.ko.
-> test_fentry_fexit:PASS:fentry_skel_load 0 nsec
-> test_fentry_fexit:PASS:fexit_skel_load 0 nsec
->
-> test_fentry_fexit:PASS:fentry_attach 0 nsec
-> test_fentry_fexit:PASS:fexit_attach 0 nsec
-> Unable to handle kernel paging request at virtual address ffff0000c2a80e68
-> Mem abort info:
->   ESR =3D 0x0000000096000004
->   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
->   SET =3D 0, FnV =3D 0
->   EA =3D 0, S1PTW =3D 0
->   FSC =3D 0x04: level 0 translation fault
-> Data abort info:
->   ISV =3D 0, ISS =3D 0x00000004, ISS2 =3D 0x00000000
->   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
->   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-> swapper pgtable: 4k pages, 52-bit VAs, pgdp=3D0000000041b4a000
-> [ffff0000c2a80e68] pgd=3D1000000042f28003, p4d=3D0000000000000000
-> Internal error: Oops: 0000000096000004 [#1] SMP
-> Modules linked in: bpf_testmod(OE) [last unloaded: bpf_testmod(OE)]
-> CPU: 0 PID: 97 Comm: test_progs Tainted: G           OE      6.10.0-rc6-g=
-b0eedd920017-dirty #67
-> Hardware name: linux,dummy-virt (DT)
-> pstate: 01400005 (nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=3D--)
-> pc : __bpf_tramp_enter+0x58/0x190
-> lr : __bpf_tramp_enter+0xd8/0x190
-> sp : ffff800084afbc10
-> x29: ffff800084afbc10 x28: fff00000c28c2e80 x27: 0000000000000000
-> x26: 0000000000000000 x25: 0000000000000050 x24: 0000000000000000
-> x23: 000000000000000a x22: fff00000c28c2e80 x21: 0000ffffed100070
-> x20: ffff800082032938 x19: ffff0000c2a80c00 x18: 0000000000000000
-> x17: 0000000000000000 x16: 0000000000000000 x15: 0000ffffed100070
-> x14: 0000000000000000 x13: ffff800082032938 x12: 0000000000000000
-> x11: 0000000000020007 x10: 0000000000000007 x9 : 00000000ffffffff
-> x8 : 0000000000004008 x7 : ffff80008218fa78 x6 : 0000000000000000
-> x5 : 0000000000000001 x4 : 0000000086db7919 x3 : 0000000095481a34
-> x2 : 0000000000000001 x1 : fff00000c28c2e80 x0 : 0000000000000001
-> Call trace:
->  __bpf_tramp_enter+0x58/0x190
->  bpf_trampoline_6442499844+0x44/0x158
->  bpf_fentry_test1+0x8/0x10
->  bpf_prog_test_run_tracing+0x190/0x328
->  __sys_bpf+0x844/0x2148
->  __arm64_sys_bpf+0x2c/0x48
->  invoke_syscall+0x4c/0x118
->  el0_svc_common.constprop.0+0x48/0xf0
->  do_el0_svc+0x24/0x38
->  el0_svc+0x4c/0x120
->  el0t_64_sync_handler+0xc0/0xc8
->  el0t_64_sync+0x190/0x198
-> Code: 52800001 97f9f3df 942a3be8 35000400 (f9413660)
-> ---[ end trace 0000000000000000 ]---
-> Kernel panic - not syncing: Oops: Fatal exception
-> SMP: stopping secondary CPUs
-> Kernel Offset: disabled
-> CPU features: 0x00,00000006,8c13bd78,576676af
-> Memory Limit: none
->
-> For "fexit_sleep" and "fexit_bpf2bpf" respectively:
->
->
->  $ ( cd  9859826851 && vmtest -k kbuild-output/arch/arm64/boot/Image.gz -=
-r ../aarch64-rootfs -a aarch64 '/bin/mount bpffs /sys/fs/bpf -t bpf && ip l=
-ink set lo up && cd /mnt/vmtest/selftests/bpf/ && ./test_progs -v -t fexit_=
-sleep' )
-> =3D> Image.gz
-> =3D=3D=3D> Booting
-> =3D=3D=3D> Setting up VM
-> =3D=3D=3D> Running command
-> root@(none):/# bpf_testmod: loading out-of-tree module taints kernel.
-> bpf_testmod: module verification failed: signature and/or required key mi=
-ssing - tainting kernel
-> Unable to handle kernel paging request at virtual address ffff0000c19c2668
-> Mem abort info:
->   ESR =3D 0x0000000096000004
->   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
->   SET =3D 0, FnV =3D 0
->   EA =3D 0, S1PTW =3D 0
->   FSC =3D 0x04: level 0 translation fault
-> Data abort info:
->   ISV =3D 0, ISS =3D 0x00000004, ISS2 =3D 0x00000000
->   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
->   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-> swapper pgtable: 4k pages, 52-bit VAs, pgdp=3D0000000041b4a000
-> [ffff0000c19c2668] pgd=3D1000000042f28003, p4d=3D0000000000000000
-> Internal error: Oops: 0000000096000004 [#1] SMP
-> Modules linked in: bpf_testmod(OE)
-> CPU: 1 PID: 91 Comm: test_progs Tainted: G           OE      6.10.0-rc6-g=
-b0eedd920017-dirty #67
-> Hardware name: linux,dummy-virt (DT)
-> pstate: 01400005 (nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=3D--)
-> pc : __bpf_tramp_enter+0x58/0x190
-> lr : __bpf_tramp_enter+0xd8/0x190
-> sp : ffff800084c4bda0
-> x29: ffff800084c4bda0 x28: fff00000c274ae80 x27: 0000000000000000
-> x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
-> x23: 0000000060001000 x22: 0000ffffa36b7a54 x21: 00000000ffffffff
-> x20: ffff800082032938 x19: ffff0000c19c2400 x18: 0000000000000000
-> x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-> x14: 0000000000000000 x13: ffff800082032938 x12: 0000000000000000
-> x11: 0000000000020007 x10: 0000000000000007 x9 : 00000000ffffffff
-> x8 : 0000000000004008 x7 : ffff80008218fa78 x6 : 0000000000000000
-> x5 : 0000000000000001 x4 : 0000000086db7919 x3 : 0000000095481a34
-> x2 : 0000000000000001 x1 : fff00000c274ae80 x0 : 0000000000000001
-> Call trace:
->  __bpf_tramp_enter+0x58/0x190
->  bpf_trampoline_6442487232+0x44/0x158
->  __arm64_sys_nanosleep+0x8/0xf0
->  invoke_syscall+0x4c/0x118
->  el0_svc_common.constprop.0+0x48/0xf0
->  do_el0_svc+0x24/0x38
->  el0_svc+0x4c/0x120
->  el0t_64_sync_handler+0xc0/0xc8
->  el0t_64_sync+0x190/0x198
-> Code: 52800001 97f9f3df 942a3be8 35000400 (f9413660)
-> ---[ end trace 0000000000000000 ]---
-> Kernel panic - not syncing: Oops: Fatal exception
-> SMP: stopping secondary CPUs
-> Kernel Offset: disabled
-> CPU features: 0x00,00000006,8c13bd78,576676af
-> Memory Limit: none
-> Failed to run command
->
-> Caused by:
->     0: Failed to QGA guest-exec-status
->     1: error running guest_exec_status
->     2: Broken pipe (os error 32)
->     3: Broken pipe (os error 32)
-> [11:46:14] chantra@devvm17937:scratchpad $
-> [11:47:56] chantra@devvm17937:scratchpad $
-> [11:47:57] chantra@devvm17937:scratchpad $ ( cd  9859826851 && vmtest -k =
-kbuild-output/arch/arm64/boot/Image.gz -r ../aarch64-rootfs -a aarch64 '/bi=
-n/mount bpffs /sys/fs/bpf -t bpf && ip link set lo up && cd /mnt/vmtest/sel=
-ftests/bpf/ && ./test_progs -v -t fexit_bpf2bpf' )
-> =3D> Image.gz
-> =3D=3D=3D> Booting
-> =3D=3D=3D> Setting up VM
-> =3D=3D=3D> Running command
-> root@(none):/# bpf_testmod: loading out-of-tree module taints kernel.
-> bpf_testmod: module verification failed: signature and/or required key mi=
-ssing - tainting kernel
-> Unable to handle kernel paging request at virtual address ffff0000c278de68
-> Mem abort info:
->   ESR =3D 0x0000000096000004
->   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
->   SET =3D 0, FnV =3D 0
->   EA =3D 0, S1PTW =3D 0
->   FSC =3D 0x04: level 0 translation fault
-> Data abort info:
->   ISV =3D 0, ISS =3D 0x00000004, ISS2 =3D 0x00000000
->   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
->   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-> swapper pgtable: 4k pages, 52-bit VAs, pgdp=3D0000000041b4a000
-> [ffff0000c278de68] pgd=3D1000000042f28003, p4d=3D0000000000000000
-> Internal error: Oops: 0000000096000004 [#1] SMP
-> Modules linked in: bpf_testmod(OE)
-> CPU: 1 PID: 87 Comm: test_progs Tainted: G           OE      6.10.0-rc6-g=
-b0eedd920017-dirty #67
-> Hardware name: linux,dummy-virt (DT)
-> pstate: 01400005 (nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=3D--)
-> pc : __bpf_tramp_enter+0x58/0x190
-> lr : __bpf_tramp_enter+0xd8/0x190
-> sp : ffff800084c4ba90
-> x29: ffff800084c4ba90 x28: ffff800080a32d10 x27: ffff800080a32d80
-> x26: ffff8000813e0ad8 x25: ffff800084c4bce4 x24: ffff800082fbd048
-> x23: 0000000000000001 x22: fff00000c2732e80 x21: fff00000c18a3200
-> x20: ffff800082032938 x19: ffff0000c278dc00 x18: 0000000000000000
-> x17: 0000000000000000 x16: 0000000000000000 x15: 0000aaaabcc22aa0
-> x14: 0000000000000000 x13: ffff800082032938 x12: 0000000000000000
-> x11: 0000000000000000 x10: 000000000ac0d5af x9 : 000000000ac0d5af
-> x8 : 00000000a4d7a457 x7 : ffff80008218fa78 x6 : 0000000000000000
-> x5 : 0000000000000002 x4 : 0000000006fa0785 x3 : 0000000081d7cd4c
-> x2 : 0000000000000202 x1 : fff00000c2732e80 x0 : 0000000000000001
-> Call trace:
->  __bpf_tramp_enter+0x58/0x190
->  bpf_trampoline_34359738386+0x44/0xf8
->  bpf_prog_3b052b77318ab7c4_test_pkt_md_access+0x8/0x118
->  bpf_test_run+0x200/0x3a0
->  bpf_prog_test_run_skb+0x328/0x6d8
->  __sys_bpf+0x844/0x2148
->  __arm64_sys_bpf+0x2c/0x48
->  invoke_syscall+0x4c/0x118
->  el0_svc_common.constprop.0+0x48/0xf0
->  do_el0_svc+0x24/0x38
->  el0_svc+0x4c/0x120
->  el0t_64_sync_handler+0xc0/0xc8
->  el0t_64_sync+0x190/0x198
-> Code: 52800001 97f9f3df 942a3be8 35000400 (f9413660)
-> ---[ end trace 0000000000000000 ]---
-> Kernel panic - not syncing: Oops: Fatal exception in interrupt
-> SMP: stopping secondary CPUs
-> Kernel Offset: disabled
-> CPU features: 0x00,00000006,8c13bd78,576676af
-> Memory Limit: none
-> Failed to run command
->
-> Caused by:
->     0: Failed to QGA guest-exec-status
->     1: error running guest_exec_status
->     2: Broken pipe (os error 32)
->     3: Broken pipe (os error 32)
->
->
-> [0] https://chantra.github.io/bpfcitools/bpfci-troubleshooting.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] PCI: qcom-ep: Add HDMA support for QCS9100 SoC
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "Lorenzo
+ Pieralisi" <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+	<kw@linux.com>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas
+	<bhelgaas@google.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, <kernel@quicinc.com>,
+        <linux-pci@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240709162621.GA175973@bhelgaas>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <20240709162621.GA175973@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: FMFiu0mJ3ebQ_-I4SHSCVkL4oHTerKB_
+X-Proofpoint-ORIG-GUID: FMFiu0mJ3ebQ_-I4SHSCVkL4oHTerKB_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-10_03,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ adultscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1015 priorityscore=1501 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407100051
 
 
-Thanks for sharing the logs,
-I will try to reproduce this and find the root cause.
 
-Thanks,
-Puranjay
+On 7/10/2024 12:26 AM, Bjorn Helgaas wrote:
+> On Tue, Jul 09, 2024 at 10:53:44PM +0800, Tengfei Fan wrote:
+>> QCS9100 SoC supports the new Hyper DMA (HDMA) DMA Engine inside the DWC IP,
+>> so add support for it by passing the mapping format and the number of
+>> read/write channels count.
+>>
+>> The PCIe EP controller used on this SoC is of version 1.34.0, so a separate
+>> config struct is introduced for the sake of enabling HDMA conditionally.
+> 
+> This patch doesn't add a new config struct.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+Thank you for pointing out this. I will remove this commit message in 
+the next version patch series.
 
------BEGIN PGP SIGNATURE-----
+> 
+>> It should be noted that for the eDMA support (predecessor of HDMA), there
+>> are no mapping format and channels count specified. That is because eDMA
+>> supports auto detection of both parameters, whereas HDMA doesn't.
+>>
+>> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+>> platform use non-SCMI resource. In the future, the SA8775p platform will
+>> move to use SCMI resources and it will have new sa8775p-related device
+>> tree. Consequently, introduce "qcom,qcs9100-pcie-ep" to the PCIe device
+>> match table.
+> 
+> This series doesn't add the new SCMI stuff you mention.  It sounds
+> like this should be deferred and added when you actually move to using
+> SCMI resources.
 
-iIoEARYKADIWIQQ3wHGvVs/5bdl78BKwwPkjG3B2nQUCZo41wBQccHVyYW5qYXlA
-a2VybmVsLm9yZwAKCRCwwPkjG3B2nff7AQD5NhgufVv5SrRGgblNq+3Qs4aZtV0I
-FRNSA1uNza9PhAEApV3fxx7DC631inEOVo3nM2wgD3JfnrjmAlYxxkBB6A8=
-=oNqc
------END PGP SIGNATURE-----
---=-=-=--
+This patch shouldn't be deferred.
+
+This patch is used to support QSC9100. QCS9100 uses non-SCMI resources, 
+so there is nothing related to SCMI in this patch.
+
+Only SA8775p will move to use SCMI resources in the future.
+
+
+> 
+>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>> ---
+>>   drivers/pci/controller/dwc/pcie-qcom-ep.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+>> index 236229f66c80..e2775f4ca7ee 100644
+>> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
+>> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+>> @@ -904,6 +904,7 @@ static const struct qcom_pcie_ep_cfg cfg_1_34_0 = {
+>>   };
+>>   
+>>   static const struct of_device_id qcom_pcie_ep_match[] = {
+>> +	{ .compatible = "qcom,qcs9100-pcie-ep", .data = &cfg_1_34_0},
+>>   	{ .compatible = "qcom,sa8775p-pcie-ep", .data = &cfg_1_34_0},
+>>   	{ .compatible = "qcom,sdx55-pcie-ep", },
+>>   	{ .compatible = "qcom,sm8450-pcie-ep", },
+>>
+>> -- 
+>> 2.25.1
+>>
+
+-- 
+Thx and BRs,
+Tengfei Fan
 
