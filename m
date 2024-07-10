@@ -1,139 +1,170 @@
-Return-Path: <linux-kernel+bounces-247445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2CC792CFEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:59:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2582492CF83
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BEC1B2C25B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:45:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5775C1C2227B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571091922FD;
-	Wed, 10 Jul 2024 10:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8365C19538A;
+	Wed, 10 Jul 2024 10:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e+BAytUE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GtbYkouH"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0A5194ACC
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 10:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE2519408E
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 10:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720607808; cv=none; b=GAlEM9VhKuQqWQxrY7x9BvHAdLQtQZydUplTdCyMFzonXJQLleQDPAMXxhHA8inQKtj5WvxZHkvZrf1Lsqfk3ftTweelwbIXbhwcNZKcgvKahwiGtqScCQQkOTGUSP+EEhpLxhiU267U46c8nZ0Z/gyhNyp2hBWUcUrs9DpbT9c=
+	t=1720607794; cv=none; b=fYWO1XzA1slZk8SGHWiDC5N/0KTRyrfZ2HweKI+LmS6ZkG1Dm+Uz0qD/KAh6jfLLrKPS+sKPuBWY/DP+WmAfkZoBCFs8VD6dPH1arWcRRJkW7xC3Wpdd8frgZlow+uEHaqrF+bJJc0Oa8NRMePeu7UQlzx+kgJ0z1gopAOUBoxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720607808; c=relaxed/simple;
-	bh=kqLm5P45NxwgK+tmNpa+OcNHo84diEsXJjayzggqo7c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=aVfE2Ye71ZESvmYbgQsJzRnILxrIr2d0Cn6XQXsyzBLuhJEszZB6zXFhK7LTwtgzJNhpYwEA8s7EcWJBWWizXFhfVXpz8L+9ltWx5Fcj4xcmbTTjgwZiy/TgBa22W8RrIDtuq/AHsWcK8uOV0bEbSHMpUSxwNNe/5NFf5oG9Hf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e+BAytUE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720607806;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TbJg6z7j+ZQBtm21UhpDM4r/48rTnLX4yDmOeuhoEeA=;
-	b=e+BAytUEUePovg/uo48HWDv8cwIBr34355jzalrP+4UHFE3qDQcsbxbVMrAX840DDO1S6V
-	H+JbYaTmfzfZd9H/aXoKFR/IhLH1djsixXwQBPhisg7QD5SF1PPVBo/C3wOn5gENg/ngd/
-	FFZuel0R/Jo/yWst4t8xzBd2tR3e90g=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-186-a07wZjSjMfOCkc_bgrfTiQ-1; Wed,
- 10 Jul 2024 06:36:41 -0400
-X-MC-Unique: a07wZjSjMfOCkc_bgrfTiQ-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 07722196CE01;
-	Wed, 10 Jul 2024 10:36:36 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.45.224.154])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A378D19560AE;
-	Wed, 10 Jul 2024 10:36:24 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
- <will@kernel.org>,  Jonathan Corbet <corbet@lwn.net>,  Andrew Morton
- <akpm@linux-foundation.org>,  Marc Zyngier <maz@kernel.org>,  Oliver Upton
- <oliver.upton@linux.dev>,  James Morse <james.morse@arm.com>,  Suzuki K
- Poulose <suzuki.poulose@arm.com>,  Arnd Bergmann <arnd@arndb.de>,  Oleg
- Nesterov <oleg@redhat.com>,  Eric Biederman <ebiederm@xmission.com>,
-  Shuah Khan <shuah@kernel.org>,  "Rick P. Edgecombe"
- <rick.p.edgecombe@intel.com>,  Deepak Gupta <debug@rivosinc.com>,  Ard
- Biesheuvel <ardb@kernel.org>,  Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-  Kees Cook <kees@kernel.org>,  "H.J. Lu" <hjl.tools@gmail.com>,  Paul
- Walmsley <paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>,
-  Albert Ou <aou@eecs.berkeley.edu>,  Christian Brauner
- <brauner@kernel.org>,  Thiago Jung Bauermann
- <thiago.bauermann@linaro.org>,  Ross Burton <ross.burton@arm.com>,
-  linux-arm-kernel@lists.infradead.org,  linux-doc@vger.kernel.org,
-  kvmarm@lists.linux.dev,  linux-fsdevel@vger.kernel.org,
-  linux-arch@vger.kernel.org,  linux-mm@kvack.org,
-  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-riscv@lists.infradead.org, "Schimpe, Christina"
- <christina.schimpe@intel.com>, "Pandey, Sunil K"
- <sunil.k.pandey@intel.com>
-Subject: Re: [PATCH v9 05/39] arm64/gcs: Document the ABI for Guarded
- Control Stacks
-In-Reply-To: <20240625-arm64-gcs-v9-5-0f634469b8f0@kernel.org> (Mark Brown's
-	message of "Tue, 25 Jun 2024 15:57:33 +0100")
-References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
-	<20240625-arm64-gcs-v9-5-0f634469b8f0@kernel.org>
-Date: Wed, 10 Jul 2024 12:36:21 +0200
-Message-ID: <87a5iph6u2.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1720607794; c=relaxed/simple;
+	bh=v+I5fZKIK+3f31tZX+uZTfNTTOvQkNNPPT3FGfrJxo0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=B89jn2xzuH1YGFzvFwlXlkvsiJ+ZzjT2Sy+qvU3IBAew0OJB/xCj7QrKkWCBzyZk+1JKRNT+VxxU8GxrXrT59lEOap67FPlYuRmv0VXyke2pITvf49BwGsDEI0qwFJi/PFPLw8CUmptSkzXW3bQLQY+zVLOzjP6rttAY0mb2cB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GtbYkouH; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58c947a6692so7767830a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 03:36:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720607791; x=1721212591; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2EHz6jGnv+MSlXLIFJTYz0j3V4QrlhRk5xlWpqxujXQ=;
+        b=GtbYkouH9DhQu2BJZIWgcBQ4f0ismW72b1jmrRUmxnpCiiZy2uwhg8I9gg8LCvGRbv
+         /+/yqIb9CykbiIhZx17d0Zxm1KNqRVu9CagxlPg6dEws/PYB9xIxQHTBYLxyAQE88thl
+         7+0DynZW4zNv0iHD56phWgIOWJdvFVBR+UzakpaF9Pf+9ZF1PZl874vtvKQdY2kzd4nV
+         8QXRZj+njSC3RSlC4KTbehFkuzQbXOK6HPeeJWkd8c75IClf2/E7Xuod2WFsDmyRGEcX
+         8hXGknAPyciJYOcA8y8fpaPWElHzOgWG7TOBCfMDAfxI1Zii3Zeco8untVBxASf88mzs
+         /exQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720607791; x=1721212591;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2EHz6jGnv+MSlXLIFJTYz0j3V4QrlhRk5xlWpqxujXQ=;
+        b=teS6f4vDLVgvpVD9WHwEMstVXohiuJDoQVCuYkpEhc5OtLZWrvGdWAATl5knIq4Xjx
+         02s4SjEPMMVlYXN5woE8o7tBNtMTZrch7OsMfTRQEpigBkbaaw6MqQpfZ/87Oc/nVW/Q
+         goHyUMJUJvuZ5W0jwb4oMHpmy/ISbAJKIjNRFQNdfEbR8zV9teirBmTwTf/YhHFbbcj0
+         d2L7wKfWzjBfJ1pqydNBr0i2MCiwqB7pC1tSPSPmySAIrwficCRydvNRDchYx9SfOkPB
+         pB63xwOUErm7UXTkL9ItZdE8VLE0vgL3Ox/hdLzu9wHGu0jZsSaNFY1gO7MudqFjXmd1
+         c0EA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwRr5Ah5+R1ESnYnD+mHKvWt+JrYhtQ9F9sxIQcJ1Cd37QHHR9DIXRX4upVp2cQqb5g8/bz3OBUMWiK364h+kSA0/sFVKGuInA/Bqk
+X-Gm-Message-State: AOJu0YwU33zNqSBUHD2RI8NsE6N0y8Y9/yXPhZ1y73AT2H4FdlFzCU+M
+	Lm58EMbivMa02ustVv7c1bKkF5LYXPaWyuA5atPuD0uuUvRgy3y7TRH6XrK4eIKpww+IgRFvmcu
+	0tFc=
+X-Google-Smtp-Source: AGHT+IHONz7ukaXxFyPTjynNVCKibzciLGDtNH5tc/vYHzKXbY/8i2tsQWiv7EwjCwlhWObWe5BgqA==
+X-Received: by 2002:a17:907:2d2b:b0:a75:2d52:8ca8 with SMTP id a640c23a62f3a-a780b89f457mr441045866b.75.1720607790824;
+        Wed, 10 Jul 2024 03:36:30 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6dc77dsm146576966b.52.2024.07.10.03.36.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 03:36:30 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Wed, 10 Jul 2024 11:36:22 +0100
+Subject: [PATCH 15/15] usb: typec: tcpm/tcpci_maxim: use device managed
+ TCPCI port deregistration
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240710-tcpc-cleanup-v1-15-0ec1f41f4263@linaro.org>
+References: <20240710-tcpc-cleanup-v1-0-0ec1f41f4263@linaro.org>
+In-Reply-To: <20240710-tcpc-cleanup-v1-0-0ec1f41f4263@linaro.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, 
+ Badhri Jagan Sridharan <badhri@google.com>, kernel-team@android.com, 
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-* Mark Brown:
+Instead of open-coding the call to tcpci_unregister_port() in various
+places, let's just register a hook using devm_add_action_or_reset() so
+that it gets called automatically as and when necessary by the device
+management APIs.
 
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+ drivers/usb/typec/tcpm/tcpci_maxim_core.c | 30 ++++++++++++++----------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
 
-> +4.  Signal handling
-> +--------------------
-> +
-> +* A new signal frame record gcs_context encodes the current GCS mode and
-> +  pointer for the interrupted context on signal delivery.  This will always
-> +  be present on systems that support GCS.
-> +
-> +* The record contains a flag field which reports the current GCS configuration
-> +  for the interrupted context as PR_GET_SHADOW_STACK_STATUS would.
-> +
-> +* The signal handler is run with the same GCS configuration as the interrupted
-> +  context.
-> +
-> +* When GCS is enabled for the interrupted thread a signal handling specific
-> +  GCS cap token will be written to the GCS, this is an architectural GCS cap
-> +  token with bit 63 set and the token type (bits 0..11) all clear.  The
-> +  GCSPR_EL0 reported in the signal frame will point to this cap token.
+diff --git a/drivers/usb/typec/tcpm/tcpci_maxim_core.c b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
+index ee3e86797f17..7abfd29b4b01 100644
+--- a/drivers/usb/typec/tcpm/tcpci_maxim_core.c
++++ b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
+@@ -472,6 +472,11 @@ static bool max_tcpci_attempt_vconn_swap_discovery(struct tcpci *tcpci, struct t
+ 	return true;
+ }
+ 
++static void max_tcpci_unregister_tcpci_port(void *tcpci)
++{
++	tcpci_unregister_port(tcpci);
++}
++
+ static int max_tcpci_probe(struct i2c_client *client)
+ {
+ 	int ret;
+@@ -515,27 +520,21 @@ static int max_tcpci_probe(struct i2c_client *client)
+ 		return dev_err_probe(&client->dev, PTR_ERR(chip->tcpci),
+ 				     "TCPCI port registration failed\n");
+ 
++        ret = devm_add_action_or_reset(&client->dev,
++				       max_tcpci_unregister_tcpci_port,
++				       chip->tcpci);
++        if (ret)
++                return ret;
++
+ 	chip->port = tcpci_get_tcpm_port(chip->tcpci);
++
+ 	ret = max_tcpci_init_alert(chip, client);
+ 	if (ret < 0)
+-		goto unreg_port;
++		return dev_err_probe(&client->dev, ret,
++				     "IRQ initialization failed\n");
+ 
+ 	device_init_wakeup(chip->dev, true);
+ 	return 0;
+-
+-unreg_port:
+-	tcpci_unregister_port(chip->tcpci);
+-
+-	return dev_err_probe(&client->dev, ret,
+-			     "Maxim TCPCI driver initialization failed\n");
+-}
+-
+-static void max_tcpci_remove(struct i2c_client *client)
+-{
+-	struct max_tcpci_chip *chip = i2c_get_clientdata(client);
+-
+-	if (!IS_ERR_OR_NULL(chip->tcpci))
+-		tcpci_unregister_port(chip->tcpci);
+ }
+ 
+ static const struct i2c_device_id max_tcpci_id[] = {
+@@ -558,7 +557,6 @@ static struct i2c_driver max_tcpci_i2c_driver = {
+ 		.of_match_table = of_match_ptr(max_tcpci_of_match),
+ 	},
+ 	.probe = max_tcpci_probe,
+-	.remove = max_tcpci_remove,
+ 	.id_table = max_tcpci_id,
+ };
+ module_i2c_driver(max_tcpci_i2c_driver);
 
-How does this marker interfere with Top Byte Ignore (TBI; I hope I got
-the name right)?  The specification currently does not say that only
-addresses pushed to the shadow stack with the top byte cleared, which
-potentially makes the markup ambiguous.  On x86-64, the same issue may
-exist with LAM.  I have not tested yet what happens there.  On AArch64
-and RISC-V, it may be more natural to use the LSB instead of the LSB for
-the mark bit because of its instruction alignment.
-
-We also have a gap on x86-64 for backtrace generation because the
-interrupted instruction address does not end up on the shadow stack.
-This address is potentially quite interesting for backtrace generation.
-I assume it's currently missing because the kernel does not resume
-execution using a regular return instruction.  It would be really useful
-if it could be pushed to the shadow stack, or recoverable from the
-shadow stack in some other way (e.g., the address of the signal context
-could be pushed instead).  That would need some form of marker as well.
-
-Thanks,
-Florian
+-- 
+2.45.2.803.g4e1b14247a-goog
 
 
