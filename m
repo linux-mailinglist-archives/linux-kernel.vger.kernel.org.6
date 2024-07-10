@@ -1,178 +1,119 @@
-Return-Path: <linux-kernel+bounces-247527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96F5292D0C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:36:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B37F392D0D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBA6C1C22118
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:36:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4D2F1C22A14
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA0719048B;
-	Wed, 10 Jul 2024 11:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D7F19048D;
+	Wed, 10 Jul 2024 11:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LyG8bhfy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bf3zF0lr"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F44A190473
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 11:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC97190489
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 11:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720611375; cv=none; b=SHsWJKJmkSMB3PXVTm1BBQ5gX5iVxGcuSj1Y6rXJrZd8ZYNaE8SLe58LSzE8pKQaSlOqIyExy+h9iy9EPK17aaV+f6IOGiREx8cu7RqZOV1uSlHJkd9IwiM1I0H4BLJVvLaNVDz+l66Zlwkz2YY+NvsP7gTPq9YThMR2VX0fMiY=
+	t=1720611582; cv=none; b=AW48mWDHVuwmFp/EuvNFrZs332+W8WL441eFzAaaN9dMs6Uv5NFCK7pqb+5HB62JeqQdg/TpxPlrTcZwdH74BL0Oam4soa/ySfk0VKldkf7RcpHJ+X7kPvzC7hSFOmV6cPIzD3pOCdrepAAnmMePSiMNQp6vyrMH95Q69aUvzI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720611375; c=relaxed/simple;
-	bh=X8uDFXcnEE5RI3vslZAxqO3xUCnLxKmC6eeolodP1ls=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nby936BiAxBiq2/tBbTF6JWdy/W9fyBh5fzHPjWr32Bjxa+OeOajV7SCZwwR8+hKyRhNbxmnDRt/NBDnqKu2WEHdEkqx8qWqDCXrTwKUU6eeZQ6OQGrheLk4bv0UZJAOalblAMIw3f9r8Qfm+nTGbMPOPnD/YE6+wLSk0eYOudQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LyG8bhfy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720611373;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2suduc0eZg9XX+FDprjOHVDzW/H7s1JCz2GVtSoayG0=;
-	b=LyG8bhfyonup1L0lSqEfkisID/vTGVEI1dfnuQASY3lPZF1rsTdbkkk8NmErbOKkNoJeIj
-	ueFWPBgX4bFgAxx+FMarOXVvL0HZuIXIntMpLPQH491al/C10XonLaMvTTRbdcRTbXRj0g
-	6f3+uuZSse+O0EnGBTUV6+v1e7kFSuY=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-182-dZLAnS0ZMqy41wztXxGyNg-1; Wed, 10 Jul 2024 07:36:11 -0400
-X-MC-Unique: dZLAnS0ZMqy41wztXxGyNg-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a77af33ce50so501166366b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 04:36:11 -0700 (PDT)
+	s=arc-20240116; t=1720611582; c=relaxed/simple;
+	bh=Zi1bu+0mhBf3Hk6tKFUnpbpzDHk75+uCDG1w0Ixbnr4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pivWHmRpZk/QRo1NE+KnLU1CYr3nL1/VoaYMMRdyj4sihXhAfKtVewGdgFdL9NUEOezz6r4WbQCmTwmE0n9AiBzNhboUudC4KuKItgXCvcRi0/bo1MVWsbge+WA7PUPVkZru2J1aZAHdRg2ZnWpSpF5ml77E1l5PD2dH1z4dgNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bf3zF0lr; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-426526d30aaso35029125e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 04:39:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720611579; x=1721216379; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MHKc6WWhLmwAuWzJd0ksrdeT5LunJAc73Qa62Pmp84o=;
+        b=bf3zF0lrAjMZG1XAs24vtGv3b9bZuWMLPwMKZuSrq1Xxr36q1+GbV78eKuKr++b2Mg
+         QBgfvn2JAEXRvZYwpARsYzalMtzoXYw/i7fJOuGc6heO7IZhiX1zZs398a2yUNIVpp06
+         BttZdjuSQxBKg/u1YGsxbTwO3yAv5Jj3j8B0IT2qQk49z1mzAVBSO8PPdkkkWvZe+jmw
+         HKoMBbUk8Q1fwu0lc8DFwDHhxCLYNA49dDswu83OGjre98U7jcEFe3SSR5s2zxcfmWAC
+         Vu8ISbLWif/FBJZiqBq4LAfQXGyuE55G0Dcpi1tmTi5zHCy5vODxjNgqzWDuP7Ff76iF
+         PQSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720611369; x=1721216169;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2suduc0eZg9XX+FDprjOHVDzW/H7s1JCz2GVtSoayG0=;
-        b=HMmx8+yqbm2k9gqrQQi+CZKRXhYIz0dLM2dmbH4HkU6vWWev1njuUxznQFCr5mqzjq
-         P7dyFyYNSPznN8AfDhqtVdOzVNy/dBDGabkCH5QSpKTg8ZBCjXwYNd6E261+SWKeRj3v
-         waanglZmGJJgNRnyN9ZNtrj78KZMUnuirEP4NwUMYAUsBWRvckh6ai4gPtfgrquoNgJI
-         CjEvZQc66JYECB3zgPH2pcFH5aKLzxQ+okqmCno9cQJgIjh6tsLetTUyMFEJH2iTWtjH
-         UhsvQSyw5yG9KnL6DyOnqC/qxelNLo3kD/SnGQwX9ynZhCWalqa67qQSGgD0CLIzVqFU
-         YCPA==
-X-Gm-Message-State: AOJu0YyHHGIH5xLYDrUOCvX5hOM1eUslCx9Cqrl+2ifYfSdbUl6GQsB8
-	R4xnrnOWuCblZiWNHuQ7cxoU+z0LJ+LdncAHg6noaf+FYgNK7cEBTLEZQsSmbQnuArLaVxnr777
-	3ZIuhCjRKWZooH6sx6ojmfz6wuxQI1m4H8prRiYvvzq86tEnGY8+HyMi0pM341Q==
-X-Received: by 2002:a17:906:118f:b0:a6c:7181:4ffe with SMTP id a640c23a62f3a-a780b89cae7mr337171266b.66.1720611369132;
-        Wed, 10 Jul 2024 04:36:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH1927fCvntios62qJMLPjpSJ34oAaJFk3+qIAErLv8E/TF32/P37V3lT+hs0r8hE+DUqaNEA==
-X-Received: by 2002:a17:906:118f:b0:a6c:7181:4ffe with SMTP id a640c23a62f3a-a780b89cae7mr337169166b.66.1720611368490;
-        Wed, 10 Jul 2024 04:36:08 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:174:f6ae:a6e3:8cbc:2cbd:b8ff])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a854592sm152506866b.146.2024.07.10.04.36.05
+        d=1e100.net; s=20230601; t=1720611579; x=1721216379;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MHKc6WWhLmwAuWzJd0ksrdeT5LunJAc73Qa62Pmp84o=;
+        b=l/I9AR7IfaO3cKDvoTCquZMr4lVa4ZWMU0Go3ZHIcRPLy2yf5zgqACKTZnEs9+D6Sm
+         0G1DoWPHzM6xGSpFkru5eITV8KpWx1lDeX++50AuKQM8QQ4lYRFnjj0enVGLPBODIhyD
+         lAOZ9xqHliblgwYqeUza73SeMjgkcYeHUxTQBNlg3oz8+cXgiGYGTw9mf8PwUYEYkVf3
+         pxnqSZokEnWXscDoz3QoHC2Hdtm8lrwcMyeDIEzDBQm8l4ukItFWVUlE50/Sgm+Xa0my
+         +SYSIaUtPY8sHjo7OhY7takjdXiPOLl2vzohr9OhwkZFPLnfs8WADpt9jgmN8RdW1Wi2
+         2DXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUs42vfCqcIp4wDqdh3pYcxDdETqnPnCCTkQdBVLEyJ4tWcPSs/fYtJDBHIHRJBBYcwPxb+Qi3t26ECLRIZ8IVGe6toDsg26S8ZsgXu
+X-Gm-Message-State: AOJu0Yxhizv3ofJNGti0lhNLfLZhkhXdb/cfSBiWT8pDsppOBWQ9UwIw
+	SanPLU3GC2AFUhCnR0A/IKAr2RCp4Y/ZxIr0r2OeW4yY44ixqGezYHWnZG/ZB2M=
+X-Google-Smtp-Source: AGHT+IFHYPwe6yZ9R+JtpGuu8hlP3VMdv3GZsmSGlWY6ENZv3HqEopDNWzX5jjb+nxuJh9OPTx/xuw==
+X-Received: by 2002:a05:600c:22d3:b0:426:5f09:cf57 with SMTP id 5b1f17b1804b1-426707e3445mr33231125e9.19.1720611579201;
+        Wed, 10 Jul 2024 04:39:39 -0700 (PDT)
+Received: from rayyan-pc.broadband ([2a0a:ef40:ee7:2401:197d:e048:a80f:bc44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f7361b5sm78602875e9.29.2024.07.10.04.39.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 04:36:07 -0700 (PDT)
-Date: Wed, 10 Jul 2024 07:36:01 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
-	Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	virtualization@lists.linux.dev
-Subject: Re: [PATCH 1/2] virtio_balloon: add work around for out of spec QEMU
-Message-ID: <20240710065317-mutt-send-email-mst@kernel.org>
-References: <cover.1720173841.git.mst@redhat.com>
- <14b1a2a1acfcaf6d519db8c67f6f207d7cdd7c3b.1720173841.git.mst@redhat.com>
- <CACGkMEtszy1YNB1KAtXVdYFkythWDfrYR+w6CSBAQWV1NCc3hA@mail.gmail.com>
- <20240710021441-mutt-send-email-mst@kernel.org>
- <CACGkMEv7-si5b9Eq7mEDZHGC2r_6CFudOHj9ge7u3s7a1epNcA@mail.gmail.com>
+        Wed, 10 Jul 2024 04:39:38 -0700 (PDT)
+From: Rayyan Ansari <rayyan.ansari@linaro.org>
+To: devicetree@vger.kernel.org
+Cc: Rayyan Ansari <rayyan.ansari@linaro.org>,
+	alsa-devel@alsa-project.org,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2 0/2] ASoC: dt-bindings: convert qcom sound bindings to yaml
+Date: Wed, 10 Jul 2024 12:36:05 +0100
+Message-ID: <20240710113833.39859-1-rayyan.ansari@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACGkMEv7-si5b9Eq7mEDZHGC2r_6CFudOHj9ge7u3s7a1epNcA@mail.gmail.com>
 
-On Wed, Jul 10, 2024 at 03:37:49PM +0800, Jason Wang wrote:
-> On Wed, Jul 10, 2024 at 2:16 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > On Wed, Jul 10, 2024 at 11:23:20AM +0800, Jason Wang wrote:
-> > > On Fri, Jul 5, 2024 at 6:09 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > >
-> > > > QEMU implemented the configuration
-> > > >         VIRTIO_BALLOON_F_REPORTING && ! VIRTIO_BALLOON_F_FREE_PAGE_HINT
-> > > > incorrectly: it then uses vq3 for reporting, spec says it is always 4.
-> > > >
-> > > > This is masked by a corresponding bug in driver:
-> > > > add a work around as I'm going to try and fix the driver bug.
-> > > >
-> > > > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> > > > ---
-> > > >  drivers/virtio/virtio_balloon.c | 19 +++++++++++++++++--
-> > > >  1 file changed, 17 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-> > > > index 9a61febbd2f7..7dc3fcd56238 100644
-> > > > --- a/drivers/virtio/virtio_balloon.c
-> > > > +++ b/drivers/virtio/virtio_balloon.c
-> > > > @@ -597,8 +597,23 @@ static int init_vqs(struct virtio_balloon *vb)
-> > > >
-> > > >         err = virtio_find_vqs(vb->vdev, VIRTIO_BALLOON_VQ_MAX, vqs,
-> > > >                               callbacks, names, NULL);
-> > > > -       if (err)
-> > > > -               return err;
-> > > > +       if (err) {
-> > > > +               /*
-> > > > +                * Try to work around QEMU bug which since 2020 confused vq numbers
-> > > > +                * when VIRTIO_BALLOON_F_REPORTING but not
-> > > > +                * VIRTIO_BALLOON_F_FREE_PAGE_HINT are offered.
-> > > > +                */
-> > > > +               if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_REPORTING) &&
-> > > > +                   !virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
-> > > > +                       names[VIRTIO_BALLOON_VQ_FREE_PAGE] = "reporting_vq";
-> > > > +                       callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] = balloon_ack;
-> > > > +                       err = virtio_find_vqs(vb->vdev,
-> > > > +                                             VIRTIO_BALLOON_VQ_REPORTING, vqs, callbacks, names, NULL);
-> > > > +               }
-> > > > +
-> > > > +               if (err)
-> > > > +                       return err;
-> > > > +       }
-> > > >
-> > > >         vb->inflate_vq = vqs[VIRTIO_BALLOON_VQ_INFLATE];
-> > > >         vb->deflate_vq = vqs[VIRTIO_BALLOON_VQ_DEFLATE];
-> > > > --
-> > > > MST
-> > > >
-> > >
-> > > Acked-by: Jason Wang <jasowang@redhat.com>
-> > >
-> > > Do we need a spec to say this is something that needs to be considered
-> > > by the driver?
-> > >
-> > > Thanks
-> >
-> > I'd say it's a temporary situation that we won't need to bother
-> > about in several years.
-> 
-> I mean, should a newly-written virtio-balloon driver care about this?
-> If not, it means it can't work for several Qemu versions.
-> 
-> Thanks
+Hi,
+These patches convert the remaining plain text bindings for Qualcomm
+sound drivers to dt schema, so device trees can be validated against
+them.
 
-True - I could not find a way to make it work in a way that
-would be compatible with old qemu.
+v1: https://lore.kernel.org/all/20240709152808.155405-1-rayyan.ansari@linaro.org/
 
+Thanks,
+Rayyan
 
-> >
-> > --
-> > MST
-> >
+Rayyan Ansari (2):
+  ASoC: dt-bindings: qcom,msm8916-wcd-digital-codec: convert to dtschema
+  ASoC: dt-bindings: qcom,apq8096-sndcard: use dtschema
+
+ .../bindings/sound/qcom,apq8096.txt           | 128 ------------------
+ .../sound/qcom,msm8916-wcd-digital-codec.yaml |  55 ++++++++
+ .../sound/qcom,msm8916-wcd-digital.txt        |  20 ---
+ .../bindings/sound/qcom,sm8250.yaml           |   1 +
+ 4 files changed, 56 insertions(+), 148 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/qcom,apq8096.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,msm8916-wcd-digital-codec.yaml
+ delete mode 100644 Documentation/devicetree/bindings/sound/qcom,msm8916-wcd-digital.txt
+
+-- 
+2.45.2
 
 
