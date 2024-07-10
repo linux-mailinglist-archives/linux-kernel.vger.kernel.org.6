@@ -1,104 +1,139 @@
-Return-Path: <linux-kernel+bounces-247081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7083192CAF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:23:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0624F92CAF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E953EB23F25
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:23:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1D2E1F2319B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720A06F31C;
-	Wed, 10 Jul 2024 06:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1ECF6F31C;
+	Wed, 10 Jul 2024 06:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DpMW98EQ"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MFd1WkVz"
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AABA1B86FC
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A666F2F9
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720592601; cv=none; b=O8aQg0p1UZF2SQfbjl2AxZltIPYf7Ol6AdcidxaUwsEuWNSMOMllQSEOa98qiKeqN8uec2fsWrrCD6S8zNV550c2IxYQ9DWsJGYN2I58AXcanYeJ39MuKH5sHS/j5ptbn3jcmFJNX3grViANq6JP7W/Ui+HgkxDkWFJ5jNgyZyo=
+	t=1720592621; cv=none; b=nJmrN0ZnpDczp0rhVTg7J/HEIH06FNfH5JAjUwkWDIluUH4EvQXNjViQ4x31pDSjHfnaRktQTX1OesuNG6nymlqR42jOCwBIvt1hsk/fei00mUMpDCwtKh2Gi1xmeA0Lw/1q4AmcORY7oh2tULFMMJbvlr4we5y9emMpAEgwrow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720592601; c=relaxed/simple;
-	bh=wVEF8y6xZNB+oKDSE8R24T0vBRM1iZVrY0XO/xNh7GY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VAQvCZBLtrjudGgN6tBkxlWTx6RsW9uJuljsVCiXSjYGud3Ut85rnWrTR96HOiF+CRJGtzU0twtSY/yUbMXj/kMsvjm9/oox17FfQA/znIVPx2vTokYKPRtPO+8Geje9t/ji7gZv0IDPcP/w4I00rtOjAaPIYFs2CZ+NFmu0aRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DpMW98EQ; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-447f8aa87bfso260131cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 23:23:20 -0700 (PDT)
+	s=arc-20240116; t=1720592621; c=relaxed/simple;
+	bh=Vh2PxRkX6tPQ21qX4H/N8GPRCj89j3ozdiQOdbkgRcU=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=crQMl3XhBi1LDVKh8Bc9CErp6EdjRYJ4NX7Xomt8F56yGse0vCWwWhMWCjZ8IiZKTgvKHxC9PDhCM2ttc6Mgo45CGm7GH2q8pup1YvyXcQZTLnXWCuFCKEhFzf9oL2NeLkaoBqTYYbwc/FVGDrgwnUYLS/XOSRZzapu8jeOEG7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MFd1WkVz; arc=none smtp.client-ip=209.85.222.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-80fa2957fa0so701400241.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 23:23:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720592599; x=1721197399; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wVEF8y6xZNB+oKDSE8R24T0vBRM1iZVrY0XO/xNh7GY=;
-        b=DpMW98EQy8tSnfw1iOOoleZ1mdBAmmwCE7jvPp9+UXfATRPH5KgZ0mZJVRW/rg2UFb
-         zyUJxp7Z75cOPx/QlAA20QxL8GlKk0FrObIs7rgfFK2AxpdAnF729a9MUEbgALuKpdyV
-         qmZyAP0wQfFLguAI0VnP7s0Lvx79jGJ4t58o8O/6zq0Q8Er4sTGDx08wOFGePciefeH3
-         0fnWMM2g6xvT9LN0lSgY/pMKmqf8/6eHnnMez1Y35pPb+yNOIQ2pkzwanYd8fzFDr+IX
-         fV/jjQWU3QZxqXLJOk/QlDqUUc/rAbUpI1VB+bLA85HUm03Jf1Wkb+wYwAH9+QK5JeYD
-         35Ww==
+        d=linaro.org; s=google; t=1720592618; x=1721197418; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=rfO/tubJkRWNsflDwLIYJeDnbtKjZsGMZyxTOtYX+yQ=;
+        b=MFd1WkVzRL3huC4Mc1CQJiSA5Fko0AaapOI6/24TKwagSD6PKkjgKM90gBjIW353zO
+         vTRH/8rTRi4Sy5Cxe0FGTZyrMkM9OhkPgA5SoMey/J5c73UXPzq00wAR9/8XqKsRlrtf
+         NlnLKLn4ZqikWRhVtQQ2c8j/IazkIpKgx0WdmlqNhah9G6wk9QdSKqmXPePkMZMNaXtk
+         xnQRMT6G4SXLEtZQfvnX74HmHNh3qkVyrbPkzmJI7ZI8ge+yfQ9VjGDuooRRr0Tatp0p
+         Ow2JYU7V4a68CPQ+y6in76UUtv8CtdXoH7h4vX683sFqHkgULRFDZP/jpniaw0MShTaO
+         ZgWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720592599; x=1721197399;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wVEF8y6xZNB+oKDSE8R24T0vBRM1iZVrY0XO/xNh7GY=;
-        b=oSEjGQLrJWdVKsRJp0Edr58Sg8IWsS2zUWW2y7HujGlx4tDMlL4QFmdvBgM3XRPmN/
-         SnxQvbRzUSRMS/dBeSAWWyWz86/AVozAKkfIZ+B1qsWw40LVz8wbDvDCVLASLb/xwK/e
-         yqMkhfwgWY5zEMnz7qGy0ZGSwb2X/yfw9ArWLrjmNCx7skut5TSh4gnPxE59TC4VReIH
-         +0dDlOgCdN299f56jMU0/gqIqMzQ1K+awU7rm33zJkM0TiiElFjeEwfsckm4R/4dRQdf
-         zxrQxd0iqbWiuS3fCRD2zX4szt6lIaqnVURHtkQ6Z6jj76lK78t5gnx/ZN7ueGX4nD9i
-         pTww==
-X-Forwarded-Encrypted: i=1; AJvYcCXBg9yaRYRZztX30WbCstAUj0OlsR8nznZvvZHC4k+Gpg/jf6BN1G5WI/7xKcKMqjbSD3ahFpHy7qh9r0uNXgM24YTMScO7N+mfs8qA
-X-Gm-Message-State: AOJu0YwrJyyEMgu9cFwkjg07rhb+eW78BiLPwCKxVl2eXDZXjxYBntx6
-	gauVjh/L/0XuAwJ3lVbTc0qG/LLF8fvkZejIVmY1QEG6BIFyMkLrybsJg+FK4W3Ktaow90gEEKx
-	3eoIA8YGSzdpfkydU8ttP1U4J7MTFlCjf6GMG
-X-Google-Smtp-Source: AGHT+IEO2hDzsb7JZgkOy3SSJpcUo7AcmhmbVcZB9D8ZLb/iEgICdqvaoNFDl8Ja4olFYV1ZNcgAvovm39xOVF1n4t0=
-X-Received: by 2002:a05:622a:8014:b0:447:daca:4b25 with SMTP id
- d75a77b69052e-44acee81c74mr1902151cf.28.1720592599073; Tue, 09 Jul 2024
- 23:23:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720592618; x=1721197418;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rfO/tubJkRWNsflDwLIYJeDnbtKjZsGMZyxTOtYX+yQ=;
+        b=izA9qrpQJrq12/6lp+Fji32EuDoH+rC4CGCL/YMwmPCE1ve1tcTmvO1NXW4u4i4lmk
+         EKGFEr0nw0mG05IrEnnO/oZQ8hPdwYPFHrF+qyuPLW/DG1vwl8DZzsosNxNns2BjldtN
+         wacpnaDnUai6F34zCpsCGyfDxnexlfeDSraUhkBAVNRhYIyBwnnFtk6KVy77/JaAYuzI
+         zmf+Aucm+f0EK53++0POL0/OTD1H/T102LHxp6mZglyBhxLvF2syqOx1CmsZ8u3JggIe
+         7gz/Z43s0ZP7CKvGszQRMsdpjVMlG1Ox54WlTIUuU732NaHmqV9O0xUWvxJQW/jpS+MM
+         gxPw==
+X-Gm-Message-State: AOJu0YxXyr77r6NOLuobtGKjKGq9ijgq9treMOlMomu6vLjjAz9ot6HR
+	3hPVLIhhierssczz2lWeStfqcVQ2q7nNlEYo7VNVn3yhwMd1ZvITpdCMHrmAn+DAqGDEeUw8rXL
+	QMuUhT5qzho9U/RtosrnH5Vi1mQHvl9HW27Eia8ZshqqA1/i/GD+5QQ==
+X-Google-Smtp-Source: AGHT+IHHBbLJpcxImsi97rq9EoasWijE1hp+uHEFhkSG2ol4YRtSD65QsSk4l3zo4kM3na3TwQ5YhMfh0rPcDkFpGiM=
+X-Received: by 2002:a05:6102:26d1:b0:48f:6581:c16c with SMTP id
+ ada2fe7eead31-490320f2e96mr4920436137.6.1720592617827; Tue, 09 Jul 2024
+ 23:23:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202407091001.1250ad4a-oliver.sang@intel.com>
-In-Reply-To: <202407091001.1250ad4a-oliver.sang@intel.com>
-From: Yu Zhao <yuzhao@google.com>
-Date: Wed, 10 Jul 2024 00:22:40 -0600
-Message-ID: <CAOUHufYdGbgnqNprKVUH8woMR_R5Wcc=281vcmm3+NRO-=+-jw@mail.gmail.com>
-Subject: Re: [linux-next:master] [mm/hugetlb_vmemmap] 875fa64577:
- vm-scalability.throughput -34.3% regression
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, 
-	Linux Memory Management List <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Muchun Song <muchun.song@linux.dev>, David Hildenbrand <david@redhat.com>, 
-	Frank van der Linden <fvdl@google.com>, Matthew Wilcox <willy@infradead.org>, Peter Xu <peterx@redhat.com>, 
-	Yang Shi <yang@os.amperecomputing.com>, linux-kernel@vger.kernel.org, 
-	ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 10 Jul 2024 11:53:26 +0530
+Message-ID: <CA+G9fYsptR8VoPA0TBV0qeCy7TX2EHyD4v-EMsVbomeS5yVSLg@mail.gmail.com>
+Subject: mips-gic-timer.c:180:11: error: call to undeclared function 'read_gic_redir_counter'
+To: open list <linux-kernel@vger.kernel.org>, linux-mips@vger.kernel.org, 
+	lkft-triage@lists.linaro.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Serge Semin <Sergey.Semin@baikalelectronics.ru>, 
+	Serge Semin <fancer.lancer@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 8, 2024 at 11:11=E2=80=AFPM kernel test robot <oliver.sang@inte=
-l.com> wrote:
->
-> Hello,
->
-> kernel test robot noticed a -34.3% regression of vm-scalability.throughpu=
-t on:
->
->
-> commit: 875fa64577da9bc8e9963ee14fef8433f20653e7 ("mm/hugetlb_vmemmap: fi=
-x race with speculative PFN walkers")
+The arch mips builds failed on Linux next-20240709 tag due to below
+build warnings / errors [1] with clang-18 and gcc-12 / gcc-8.
 
-This is likely caused by synchronize_rcu() wandering into the
-allocation path. I'll patch that up soon.
+This is started from Linux next-20240709.
+  GOOD: next-20240703
+  BAD: next-20240709
+
+Build details,
+-------
+kernel: 6.10.0-rc7
+git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+git_ref: master
+git_sha: 82d01fe6ee52086035b201cfa1410a3b04384257
+git_describe: next-20240709
+Test details: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240709
+
+Regressions (compared to build next-20240703)
+------------------------------------------------------------------------
+
+mips:
+  build:
+    * clang-18-allnoconfig
+    * clang-nightly-defconfig
+    * gcc-8-allnoconfig
+    * gcc-12-malta_defconfig
+    * clang-18-tinyconfig
+    * gcc-12-defconfig
+    * clang-nightly-allnoconfig
+    * gcc-12-tinyconfig
+    * gcc-8-malta_defconfig
+    * gcc-12-allnoconfig
+    * clang-18-defconfig
+    * gcc-8-tinyconfig
+    * clang-nightly-tinyconfig
+    * gcc-8-defconfig
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+Build warnings / errors [2]:
+---------
+drivers/clocksource/mips-gic-timer.c:180:11: error: call to undeclared
+function 'read_gic_redir_counter'; ISO C99 and later do not support
+implicit function declarations [-Wimplicit-function-declaration]
+  180 |                 count = read_gic_redir_counter();
+      |                         ^
+drivers/clocksource/mips-gic-timer.c:184:7: error: call to undeclared
+function 'read_gic_redir_counter_32h'; ISO C99 and later do not
+support implicit function declarations
+[-Wimplicit-function-declaration]
+  184 |         hi = read_gic_redir_counter_32h();
+      |              ^
+
+Links:
+----
+[1] https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240709/testrun/24543079/suite/build/test/clang-18-defconfig/log
+[2] https://storage.tuxsuite.com/public/linaro/lkft/builds/2j0Ox1y8pT9eOUt60DNHQZjFjD1/
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
