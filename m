@@ -1,134 +1,123 @@
-Return-Path: <linux-kernel+bounces-247906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C569192D629
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:19:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0A792D62F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 364BAB27FA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:19:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33EEA1C20DFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DD0194AF0;
-	Wed, 10 Jul 2024 16:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925E9194AF3;
+	Wed, 10 Jul 2024 16:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R97OiEqh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K4e6wWkx"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F621922ED
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547E720312;
+	Wed, 10 Jul 2024 16:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720628374; cv=none; b=s9273gAgKxoS6B2KF3KiqZtHPljMgsjHaP9OLuJtvzfB2mB16WAmPCKrgnfuChkQInJS/7mq/j4ZUIUzymeh+hYUBeP46PmjImlrJmg4/29JRu5HMh7L7XOzy7Ulu5vJ1oIgB1iggNKv966KZte98fHJkLZIjD5x9MLGn1bmrdI=
+	t=1720628547; cv=none; b=qI+njVGOqRHaUF2U+Vq6lwRb8e5qKcYI551aAdGt7G09d13DtO7LEehNAeiLKhW6XSZAlLJUzmijJsDhn/iQPV+/I1Eoxn0mn63+/NFEQAGOt5ritFqcgynTJs3ICE+ug/Cz2s1gBGcjfb4E+0KokhSmzYB4OkoPMhmxBsXz9RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720628374; c=relaxed/simple;
-	bh=Chce1rrJY0BnzM4+QZlqMrwKVqtoRAIWdssG4Erh0g0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tDASf9wUkv1iTaGfJ62UR/w3NJinyuQzWW5zealaA4Zl6SXYUhGOSQws/8xumqep2S4SknR5Jh5IRLAwMpO1Uk4GSkuuflenjiF7gjzf14ZaokasB96/aYKTiPBZkFq4yKTw5cYxnAzv8tIbYi+bB79k8lCQLxCMMl/XZ7GAfQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R97OiEqh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720628372;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Chce1rrJY0BnzM4+QZlqMrwKVqtoRAIWdssG4Erh0g0=;
-	b=R97OiEqhKHq2MfTlbQZyDraTJ0bZqcBN8mKaHud57KZRa+oM2e3IkwlCCgKtWtmQCm/T+o
-	Ag0YBeLHhLKGImt9g1Xe0EpWyjWxSM6sSx9laTNRKdvyGdItFg2iYIc/hbgMjpFwmHOx68
-	YMicV2mlcrJ/2Bjtlcltddva1BawQ1k=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-104-GD9gwqkbNpunkRj1Pjuo4Q-1; Wed, 10 Jul 2024 12:19:29 -0400
-X-MC-Unique: GD9gwqkbNpunkRj1Pjuo4Q-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3678fcc4d7fso1266183f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:19:29 -0700 (PDT)
+	s=arc-20240116; t=1720628547; c=relaxed/simple;
+	bh=s9iOTRxw5Qytoe+VupdvA/reAQiawx9dExWT989PAS0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ggeCB9mWX8bV9YPU9anCfpVB7sxeIV6N87sgy6hTdZjnWprocIkx0jL2hrKEWACEAGmJFNe8vahTEiKVjZ4tPPPZ/xrn0cKvfEjax8FmnFCczuHjYQax0ePkq4d8vHMbfi1bZylAit/ga9SfVvII8Gv5pKUPDxWtLEUK9ldsD28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K4e6wWkx; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6fd513f18bso700950166b.3;
+        Wed, 10 Jul 2024 09:22:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720628545; x=1721233345; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s9iOTRxw5Qytoe+VupdvA/reAQiawx9dExWT989PAS0=;
+        b=K4e6wWkxZOHXGx1zHCFxR14/d3eUGz4z/x2Hr1UhuaSoZHn97ncReYKgeaaMRYL2hJ
+         m4r1B7/raALpNluGNTKiBAnLW/1Tdgo6l/Q9noy5sXzAjtlmaAMVoG8CRJjz58ehKDGN
+         fWL4PHTiwpVU/6B5BEDl3QfSUVYhi9gbMc2mktF8UE2+ZlXD5ENOagAbLY+MOK4qR/Zo
+         Q/CKnycRw9t8Q9NEF+zwzEOiJO0jvb2oJ6x4WMswVQS5kSxdoeaKLYkg4Z5VAOLhB6WU
+         OMu0psNm2VnVnDgUg8NBbROE85U6hWbouVG/ccgONfr8W1+TgXx21DulY9YvaRpnQR3u
+         qWBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720628368; x=1721233168;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Chce1rrJY0BnzM4+QZlqMrwKVqtoRAIWdssG4Erh0g0=;
-        b=jD0NAF4ISKbjYYcbTZks+yTkTLDpVPzZArHBsoLQytOg3/AclUwGGRw6XTABhSS5f4
-         UOoA9q2z33bchvkUptNKmFcC4nlZ7hOdmX84Oj6x6Ak6jAhxLUS4LdMt+TlHPgbZw5P6
-         WdpMFu8gV26ZKP38i07AupDOKPHKmHbcKLM0Sw6xsZl/90naTPZohyHSQQlQ8NAV4Rqw
-         Gf2lXsPocD18/whR2dbirW0VnUcASsbxXt0J1U5aY6lpogse04KMPZtvkxNcdNu9eRNQ
-         b3snobv4+KXLuu2DPQTDGywoX/pR/B6xoM5q/tnI3GHlWn/n+rzFxnAsqNqg7oHyH3sL
-         r8OA==
-X-Forwarded-Encrypted: i=1; AJvYcCXviHNMH7n/umethjshD4EinmXrWSZpmnLCkwJpA6oE9xXOmML4GDXs4eq87y2lvSLbOZ5lPdlWR4XLnrlPTiIpXx6DYR0+V3GSVyMF
-X-Gm-Message-State: AOJu0YyIPv+tdsMalOW0u1eUX+e/CIEBYw0RKrTTGhTq6iW2FGOH0nBP
-	2Km27EUpBN9EFZ13+zQ8wzxpTnQ/PfpYcz4tlt031TrYwpoZid6T5cR84Xr2faJluP776fXJYRI
-	Gj7yNIbfgo42JMKnuovn8ZAtKDRxisx9wWpvm8a8U1tCJd9Xqi1MRjMII2IwEIA==
-X-Received: by 2002:a05:600c:1c13:b0:426:6fc0:5910 with SMTP id 5b1f17b1804b1-426706cd15cmr41873425e9.1.1720628368521;
-        Wed, 10 Jul 2024 09:19:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG/lyWkP69+kBEZ1ugjN8BD2Qu3nh72MQIQtaAAVD8PVAje3AS5s9VBYJ66XkqZYUL+9qmdTQ==
-X-Received: by 2002:a05:600c:1c13:b0:426:6fc0:5910 with SMTP id 5b1f17b1804b1-426706cd15cmr41873085e9.1.1720628367835;
-        Wed, 10 Jul 2024 09:19:27 -0700 (PDT)
-Received: from gerbillo.redhat.com ([2a0d:3344:1710:e810::f71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42663f049e5sm153412275e9.35.2024.07.10.09.19.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 09:19:27 -0700 (PDT)
-Message-ID: <934ac0b8491ec56dd35b9f0ab7422daa1926c4df.camel@redhat.com>
-Subject: Re: [PATCH v3] net: fix rc7's __skb_datagram_iter()
-From: Paolo Abeni <pabeni@redhat.com>
-To: Hugh Dickins <hughd@google.com>
-Cc: Sagi Grimberg <sagi@grimberg.me>, Jakub Kicinski <kuba@kernel.org>, Eric
- Dumazet <edumazet@google.com>, Thorsten Leemhuis
- <regressions@leemhuis.info>,  regressions@lists.linux.dev,
- netdev@vger.kernel.org,  linux-kernel@vger.kernel.org, Linus Torvalds
- <torvalds@linux-foundation.org>
-Date: Wed, 10 Jul 2024 18:19:25 +0200
-In-Reply-To: <66e53f14-bfca-6b1a-d9db-9b1c0786d07a@google.com>
-References: <58ad4867-6178-54bd-7e49-e35875d012f9@google.com>
-	 <ae4e55df-6fe6-4cab-ac44-3ed10a63bfbe@grimberg.me>
-	 <fef352e8-b89a-da51-f8ce-04bc39ee6481@google.com>
-	 <51b9cb9c-cf7d-47b3-ab08-c9efbdb1b883@grimberg.me>
-	 <66e53f14-bfca-6b1a-d9db-9b1c0786d07a@google.com>
-Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=mQINBGISiDUBEAC5uMdJicjm3ZlWQJG4u2EU1EhWUSx8IZLUTmEE8zmjPJFSYDcjtfGcbzLPb63BvX7FADmTOkO7gwtDgm501XnQaZgBUnCOUT8qv5MkKsFH20h1XJyqjPeGM55YFAXc+a4WD0YyO5M0+KhDeRLoildeRna1ey944VlZ6Inf67zMYw9vfE5XozBtytFIrRyGEWkQwkjaYhr1cGM8ia24QQVQid3P7SPkR78kJmrT32sGk+TdR4YnZzBvVaojX4AroZrrAQVdOLQWR+w4w1mONfJvahNdjq73tKv51nIpu4SAC1Zmnm3x4u9r22mbMDr0uWqDqwhsvkanYmn4umDKc1ZkBnDIbbumd40x9CKgG6ogVlLYeJa9WyfVMOHDF6f0wRjFjxVoPO6p/ZDkuEa67KCpJnXNYipLJ3MYhdKWBZw0xc3LKiKc+nMfQlo76T/qHMDfRMaMhk+L8gWc3ZlRQFG0/Pd1pdQEiRuvfM5DUXDo/YOZLV0NfRFU9SmtIPhbdm9cV8Hf8mUwubihiJB/9zPvVq8xfiVbdT0sPzBtxW0fXwrbFxYAOFvT0UC2MjlIsukjmXOUJtdZqBE3v3Jf7VnjNVj9P58+MOx9iYo8jl3fNd7biyQWdPDfYk9ncK8km4skfZQIoUVqrWqGDJjHO1W9CQLAxkfOeHrmG29PK9tHIwARAQABtB9QYW9sbyBBYmVuaSA8cGFiZW5pQHJlZGhhdC5jb20+iQJSBBMBCAA8FiEEg1AjqC77wbdLX2LbKSR5jcyPE6QFAmISiDUCGwMFCwkIBwIDIgIBBhUKCQgLAgQWAgMBAh4HAheAAAoJECkkeY3MjxOkJSYQAJcc6MTsuFxYdYZkeWjW//zbD3ApRHzpNlHLVSuJqHr9/aDS+tyszgS8jj9MiqALzgq4iZbg
- 7ZxN9ZsDL38qVIuFkSpgMZCiUHdxBC11J8nbBSLlpnc924UAyr5XrGA99 6Wl5I4Km3128GY6iAkH54pZpOmpoUyBjcxbJWHstzmvyiXrjA2sMzYjt3Xkqp0cJfIEekOi75wnNPofEEJg28XPcFrpkMUFFvB4Aqrdc2yyR8Y36rbw18sIX3dJdomIP3dL7LoJi9mfUKOnr86Z0xltgcLPGYoCiUZMlXyWgB2IPmmcMP2jLJrusICjZxLYJJLofEjznAJSUEwB/3rlvFrSYvkKkVmfnfro5XEr5nStVTECxfy7RTtltwih85LlZEHP8eJWMUDj3P4Q9CWNgz2pWr1t68QuPHWaA+PrXyasDlcRpRXHZCOcvsKhAaCOG8TzCrutOZ5NxdfXTe3f1jVIEab7lNgr+7HiNVS+UPRzmvBc73DAyToKQBn9kC4jh9HoWyYTepjdcxnio0crmara+/HEyRZDQeOzSexf85I4dwxcdPKXv0fmLtxrN57Ae82bHuRlfeTuDG3x3vl/Bjx4O7Lb+oN2BLTmgpYq7V1WJPUwikZg8M+nvDNcsOoWGbU417PbHHn3N7yS0lLGoCCWyrK1OY0QM4EVsL3TjOfUtCNQYW9sbyBBYmVuaSA8cGFvbG8uYWJlbmlAZ21haWwuY29tPokCUgQTAQgAPBYhBINQI6gu+8G3S19i2ykkeY3MjxOkBQJiEoitAhsDBQsJCAcCAyICAQYVCgkICwIEFgIDAQIeBwIXgAAKCRApJHmNzI8TpBzHD/45pUctaCnhee1vkQnmStAYvHmwrWwIEH1lzDMDCpJQHTUQOOJWDAZOFnE/67bxSS81Wie0OKW2jvg1ylmpBA0gPpnzIExQmfP72cQ1TBoeVColVT6Io35BINn+ymM7c0Bn8RvngSEpr3jBtqvvWXjvtnJ5/HbOVQCg62NC6ewosoKJPWpGXMJ9SKsVIOUHsmoWK60spzeiJoSmAwm3zTJQnM5kRh2q
- iWjoCy8L35zPqR5TV+f5WR5hTVCqmLHSgm1jxwKhPg9L+GfuE4d0SWd84y GeOB3sSxlhWsuTj1K6K3MO9srD9hr0puqjO9sAizd0BJP8ucf/AACfrgmzIqZXCfVS7jJ/M+0ic+j1Si3yY8wYPEi3dvbVC0zsoGj9n1R7B7L9c3g1pZ4L9ui428vnPiMnDN3jh9OsdaXeWLvSvTylYvw9q0DEXVQTv4/OkcoMrfEkfbXbtZ3PRlAiddSZA5BDEkkm6P9KA2YAuooi1OD9d4MW8LFAeEicvHG+TPO6jtKTacdXDRe611EfRwTjBs19HmabSUfFcumL6BlVyceIoSqXFe5jOfGpbBevTZtg4kTSHqymGb6ra6sKs+/9aJiONs5NXY7iacZ55qG3Ib1cpQTps9bQILnqpwL2VTaH9TPGWwMY3Nc2VEc08zsLrXnA/yZKqZ1YzSY9MGXWYLkCDQRiEog1ARAAyXMKL+x1lDvLZVQjSUIVlaWswc0nV5y2EzBdbdZZCP3ysGC+s+n7xtq0o1wOvSvaG9h5q7sYZs+AKbuUbeZPu0bPWKoO02i00yVoSgWnEqDbyNeiSW+vI+VdiXITV83lG6pS+pAoTZlRROkpb5xo0gQ5ZeYok8MrkEmJbsPjdoKUJDBFTwrRnaDOfb+Qx1D22PlAZpdKiNtwbNZWiwEQFm6mHkIVSTUe2zSemoqYX4QQRvbmuMyPIbwbdNWlItukjHsffuPivLF/XsI1gDV67S1cVnQbBgrpFDxN62USwewXkNl+ndwa+15wgJFyq4Sd+RSMTPDzDQPFovyDfA/jxN2SK1Lizam6o+LBmvhIxwZOfdYH8bdYCoSpqcKLJVG3qVcTwbhGJr3kpRcBRz39Ml6iZhJyI3pEoX3bJTlR5Pr1Kjpx13qGydSMos94CIYWAKhegI06aTdvvuiigBwjngo/Rk5S+iEGR5KmTqGyp27o6YxZy6D4NIc6PKUzhIUxfvuHNvfu
- sD2W1U7eyLdm/jCgticGDsRtweytsgCSYfbz0gdgUuL3EBYN3JLbAU+UZpy v/fyD4cHDWaizNy/KmOI6FFjvVh4LRCpGTGDVPHsQXaqvzUybaMb7HSfmBBzZqqfVbq9n5FqPjAgD2lJ0rkzb9XnVXHgr6bmMRlaTlBMAEQEAAYkCNgQYAQgAIBYhBINQI6gu+8G3S19i2ykkeY3MjxOkBQJiEog1AhsMAAoJECkkeY3MjxOkY1YQAKdGjHyIdOWSjM8DPLdGJaPgJdugHZowaoyCxffilMGXqc8axBtmYjUIoXurpl+f+a7S0tQhXjGUt09zKlNXxGcebL5TEPFqgJTHN/77ayLslMTtZVYHE2FiIxkvW48yDjZUlefmphGpfpoXe4nRBNto1mMB9Pb9vR47EjNBZCtWWbwJTIEUwHP2Z5fV9nMx9Zw2BhwrfnODnzI8xRWVqk7/5R+FJvl7s3nY4F+svKGD9QHYmxfd8Gx42PZc/qkeCjUORaOf1fsYyChTtJI4iNm6iWbD9HK5LTMzwl0n0lL7CEsBsCJ97i2swm1DQiY1ZJ95G2Nz5PjNRSiymIw9/neTvUT8VJJhzRl3Nb/EmO/qeahfiG7zTpqSn2dEl+AwbcwQrbAhTPzuHIcoLZYV0xDWzAibUnn7pSrQKja+b8kHD9WF+m7dPlRVY7soqEYXylyCOXr5516upH8vVBmqweCIxXSWqPAhQq8d3hB/Ww2A0H0PBTN1REVw8pRLNApEA7C2nX6RW0XmA53PIQvAP0EAakWsqHoKZ5WdpeOcH9iVlUQhRgemQSkhfNaP9LqR1XKujlTuUTpoyT3xwAzkmSxN1nABoutHEO/N87fpIbpbZaIdinF7b9srwUvDOKsywfs5HMiUZhLKoZzCcU/AEFjQsPTATACGsWf3JYPnWxL9
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+        d=1e100.net; s=20230601; t=1720628545; x=1721233345;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s9iOTRxw5Qytoe+VupdvA/reAQiawx9dExWT989PAS0=;
+        b=CSlY3cQs/h3ES127YOR5fp00njrgtMQX1bAHqLplK9H4LJyutYGcqFj++UU9Jdtga0
+         hmt8t2t7P96S3hGi8YpObn3KCpQmOC4Am/Np0DzJBvlxIRm2cOJhjldWRA5BeTxXjxZj
+         9vECIbOOj4yd4X22+aaVDc+unfkm3mGsN1fgd49Ssp0TH3XcgqsyiOaDDZi6goPLDrV/
+         H9yg+2EawiCHyiy0ILQGYgOGEI0sb/sOG6bh+BnO7yVurVSkJZq2w8nKaM6GJZ96W1kb
+         vamGle8N4Mdui5pS9d/SbTR0iWRL2Bxv+knnmJpBFbbcWHDeO59qfyQ37IYT7abtNut6
+         yoYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUP9UKL1S0qT6IYyKUfZnBor5b7GGSIchOQPhahAS5oLK19WBYrs8VNZviTToK9mhKkr7RCXpXykPX1xMmBAVnlLkjRePQcmIKg4qlm8e9PoRrram2UJ2u8YPzRIDvslrNiXgVZWwg0JSWcUxmLwu8AAUZpHNsO58z3iylyEzfozd3lyU7r
+X-Gm-Message-State: AOJu0YzZ6CU/30jB3I+lgU1Tso3p4xzcxqXZ+LDhT2ycQ89n2oTKhmwI
+	RDdCEPBItzS2HuR5mV6fK3mvRf0Dvjh0agWgSoiU3/b/0+WmAsTb6apgiackbHRaxFCvu2WEHuZ
+	N6iI+/byhlw6T9nubIINa81yWvn4=
+X-Google-Smtp-Source: AGHT+IFNvET9t815HfmplLSrRTvXphreJ0MNbUuIvztk3gg9+0wgDIzf2fKBnSwvpmHDF9a0kWQlSc1e+i3iMabrSK0=
+X-Received: by 2002:a17:907:2d87:b0:a77:f5ca:f847 with SMTP id
+ a640c23a62f3a-a780b68a20emr471719666b.3.1720628544538; Wed, 10 Jul 2024
+ 09:22:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240124011459.12204-1-jason-jh.lin@mediatek.com>
+ <20240124011459.12204-2-jason-jh.lin@mediatek.com> <f91d3ac1-0a7d-4ca2-bf0f-c5e471c2f6bb@collabora.com>
+ <2a2a939c9cb56de0383ec3e42db9bcf8e8518775.camel@mediatek.com> <CABb+yY2_oJ_AC2w5AgHMBvqFDeyaUq9BLczqY8JhLFPDnfzY_Q@mail.gmail.com>
+In-Reply-To: <CABb+yY2_oJ_AC2w5AgHMBvqFDeyaUq9BLczqY8JhLFPDnfzY_Q@mail.gmail.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Wed, 10 Jul 2024 11:22:13 -0500
+Message-ID: <CABb+yY3ddp6Ex50yh3hZn2aQcEULvmFfd99xb7ZNVnTPn7=mUg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: mailbox: Add mediatek,gce-props.yaml
+To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>
+Cc: "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, 
+	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>, 
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, 
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, 
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
+	=?UTF-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>, 
+	=?UTF-8?B?Sm9obnNvbiBXYW5nICjnjovogZbpkasp?= <Johnson.Wang@mediatek.com>, 
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	=?UTF-8?B?SmFzb24tY2ggQ2hlbiAo6Zmz5bu66LGqKQ==?= <Jason-ch.Chen@mediatek.com>, 
+	=?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>, 
+	=?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"fshao@chromium.org" <fshao@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2024-07-10 at 08:36 -0700, Hugh Dickins wrote:
-> X would not start in my old 32-bit partition (and the "n"-handling looks
-> just as wrong on 64-bit, but for whatever reason did not show up there):
-> "n" must be accumulated over all pages before it's added to "offset" and
-> compared with "copy", immediately after the skb_frag_foreach_page() loop.
->=20
-> Fixes: d2d30a376d9c ("net: allow skb_datagram_iter to be called from any =
-context")
-> Signed-off-by: Hugh Dickins <hughd@google.com>
-> Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-> ---
-> v3: added reviewed-by Sagi, try sending direct to Linus
+On Wed, Jul 10, 2024 at 9:28=E2=80=AFAM Jassi Brar <jassisinghbrar@gmail.co=
+m> wrote:
+>
+> On Sun, May 26, 2024 at 10:04=E2=80=AFAM Jason-JH Lin (=E6=9E=97=E7=9D=BF=
+=E7=A5=A5)
+> <Jason-JH.Lin@mediatek.com> wrote:
+> >
+> > Hi Angelo, Jassi,
+> >
+> > Could you help me apply this series?
+> > Thanks!
+> >
+> Please get it reviewed by DT maintainers .... Rob or Krzysztof.
+>
+I see Conor Dooley listed as another maintainer, so I am picking it up.
+BTW, I was not CC'ed on the original patch.
 
-V2 is already applied to the 'net' tree and will be included in our
-next 'net' PR, coming tomorrow.
-
-It looks like the netdev bot decided it needed an holiday (or was
-fooled by the threaded submission for v2), so no notification landed on
-the ML.
-
-@Hugh: next time please check the current tree status or patchwork
-before submitting a new revision. And please avoid submitting the new
-version in reply to a previous one, it makes things difficult for our
-CI.
-
-Thanks,
-
-Paolo
-
+-Jassi
 
