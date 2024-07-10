@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-248419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADE492DCE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:45:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1112492DCF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 552AD2870F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:45:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0008281674
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58FA16849C;
-	Wed, 10 Jul 2024 23:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D6E16C6A3;
+	Wed, 10 Jul 2024 23:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rMFUNTKL"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DWy7bWTF"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BE115F33A
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0099516132B
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720654969; cv=none; b=s1wk3eeaY/CEX7ZtLgssSoCSOGt7BOhSyJnlnj7XvFbjko4KosX0MMs6sUlF3a0cpm11FGHXBGh4gXZ05Q0XYTUDQctpRvt/MFWQEYrPyFB1eDm2MTnAxd55+9eGyE/Fwtorui+mK6UhHPHRc4A5uouPAPM/0Vnc7AO4xUhN7Zg=
+	t=1720654972; cv=none; b=b12NfgIRYTLxcAUImABfsp8OcXjOlmxHE1VuXlJmbjJNMLDNRrD6PLb1nPMtpMtflKavdVywpPRPRu62JSGzBgNuGH6OMRs15gdKOC8YQmbclnXtT1N62V6EYplhGF51zWkvA3G+2pnwOq1KvYNIl8arM90CUBJYICxno7aGsPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720654969; c=relaxed/simple;
-	bh=EiaFG/eYwx8Esdk1XHkxgkjzifP+kflmXrizk7/imlQ=;
+	s=arc-20240116; t=1720654972; c=relaxed/simple;
+	bh=51xqz35xJjNqxl6o9J1L1+yTufTjMwvN6j0qSUdwPuQ=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Eo8h467dMORI+tYCmveM2Ti2fTdORrr53nkpvQtqySJUHJwD0YTYW2lOAPxU+tJuO+Bw+E1aFVk66ZYOYQnLHnQkVU9YWwP7E4rF30ALovTIWgT8yRqSjTtWpwDVCb8WMjUx01AyyNPQJDH5aOfU8iIZBdIpMKXMAXijilgT8yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rMFUNTKL; arc=none smtp.client-ip=209.85.219.202
+	 To:Cc:Content-Type; b=Hh31mmcnjy7mGMJC75v20zH/SGLy4iPr7jHk2SMLbot1fFzq1LYK9oRI8c9gn2D1ClElOOfaYSMekJa0QQUCYtwVz/kST9/9O0J3XuMKwZUTZVTqpZYpz9D5J8o3/hRD0njAZBzIKf9oHBMBei6zrRSGsbndgJ1SRw40c746mZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DWy7bWTF; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e02b5792baaso527634276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:42:47 -0700 (PDT)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e037c3d20a6so518299276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:42:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720654967; x=1721259767; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1720654968; x=1721259768; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=45lnTGeGmxXRWR2sOGpDAv49wjAnxo1Jn2Fj4ejBtf8=;
-        b=rMFUNTKLofPpwYducIF7Cw1iPUXYaUMhIvA4pJK+FJsMhuBbEfYeGicZCi2TAepbxP
-         /gfUoP17B9rXWJ04a8cN6dpwPorrae1HDEr0DaMvofo0rxTKVYyJk9uUPiW5jtycP6sM
-         pZCFGBncyRsJ84unXBEqIZeqeIws7SW9Aowz3p9Z4Xi6IVfFcdNkG+NI1RgmFuLsV6lL
-         UmM+1Q0Svtf4n6oRyE3aVLRupiIw93GNtJDF0o8h9JlpvB5VAcPLnJj2TRcnb92fpZhf
-         4B7SwgKMUOCpAGuicSrQ9lZgLXgduUWTfR31z++P+QGZH+8fD6eMyxul0aWQ/fd1+Pht
-         1qfA==
+        bh=m+X5KVuFwrRiCUCCxSkgB4VRafKsM+RRSJ9rZMEadTc=;
+        b=DWy7bWTFhe/KIs13Ct3SsUbD+oF93GBAGRkLqujDeMAfUYNC12irf/BXHA7+3oTOx4
+         4Fpwge7jjhMAE+omuvcFPSamQ/Q+FundE26AFNHWZ+TyrVhXwEZgu5nASqzHrPmZQqBp
+         jwNYETChRg+l0zLY/dduL+CRaYYdWCfHnTVFR/hr7speNuvW2qFeNXHgpjzatRI4Hljf
+         B980UHG+z1+ukIYI+53h60THD/CUgre1E4gv0S5dmAI8kNFLoczV0HLOJIUu20HV0jhV
+         nThjBZO8gAQL9cgx6a7vznQJQpk1IBIkPWTvDYbETqPveDo7579rtaQRFKFBoOvpoBuG
+         fhig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720654967; x=1721259767;
+        d=1e100.net; s=20230601; t=1720654968; x=1721259768;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=45lnTGeGmxXRWR2sOGpDAv49wjAnxo1Jn2Fj4ejBtf8=;
-        b=RNz1T3xW0IomVcMpYEzZ20dahWXDtzoQ1T53qf7w+3C1OhMIgc7vfDdeL9ZSu+78gy
-         aWFdCXDV5SnzHV50ocdOydBjlw3Iq/qpsh8pnzgt0dLi8Z0iDdccoAgYf47byYxTUTbu
-         1+/NeO5oOW7rbN4apScYtdycKFjrfw9bkeCSsSb6DO6l/W0C43OkkiBFM4bre+HDq4nD
-         z6K3PPHlHVwpu7f1F8SL91W2T3HN67vewC2RyTYeZlYgpkaXT566jdFvQ65RcB3+0luj
-         l1cbvrmxk2Yo2W1dRHOrK1tgMeq5TmVSQKp7mDl5ULl95ziE+qGHMaspF8IMmm4HBOAu
-         qP+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUm9GDdnEshJ0UCUpm6/RySGoRt+EPSPHgt42y2kafBIad4iQiF4EZPOL7xu2k4ZAYId8H9GzH1QIeChGftKhKtb5GQyRXT16C1IQMT
-X-Gm-Message-State: AOJu0YzCz+cALre9MbblKnSjebcSIa/ro34sb10xGLCvtSdVGaZ8LWVq
-	ixHekkgzMef9mXIcQA9Wc6qUri1Hf2bhbuibht7q2XaIZn2Qq83VMrjgwKgNoNK8jn4ao4sDtii
-	zlNVuQeX1KKtE8EQ6tA==
-X-Google-Smtp-Source: AGHT+IFCxPs0hzUflzzz70jRYwVRx4Gd4jDUqm7Yw06oBbmfCbRIBM9zwU8x8QPsTa/dYviA394CpxXkoxFldKzv
+        bh=m+X5KVuFwrRiCUCCxSkgB4VRafKsM+RRSJ9rZMEadTc=;
+        b=efbefmMN8eqnsCNAwaJwX/+/10WKIX5ZQIEeaDpuDtct1Xnqk66TDuKxRA1RNlvTjT
+         ZZMP1X50nYXjzWYmYRPdXcWTrC+iPDjlZcyOSXTyaTTa66YhLdkmf498RvOHLsdCCf9D
+         9it0apSqFpq6TDcEE0U+gkOKhxOyBtuLyoE2bDhtIROltrs8jx9vaTxRIs6KybtZnwOI
+         up8+Ky/VEc61xF6Tk6KkM26NU5txKF+tLkF8fM/v5544d++fiIYE9ryS0kG+pr7RMqTv
+         Y9EP880fABAi+FW2ineR++/uPJzDT9hhUCkoYVw3r/MHjKOStIguqzWVWddatu0qWjwY
+         pYbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRvUzUHQAdjqVXBVAIxT3JcF44/Jb+UD16Tto8+/drowF73jyBzOait0i7dtZEanWEIVtmCIOsSGS7xI8J5CSI4xBQ/y5P660qsbMV
+X-Gm-Message-State: AOJu0YweFs+Xl6X9LLT7O1hKCfcLd5Nxfwnl10ODCqo5IyMc/u/5166Y
+	yMx55YsUQwVnh6biigUY/CV8SBWq5NujkaEWC1H1ECSkuxz+UBFZcKOnZdDCW93Cv5ezhN8Bom8
+	Rf7weXYQ73NcKmOQgbQ==
+X-Google-Smtp-Source: AGHT+IEiMSeqlL0E6QDriJWFXsS3O5CZdgADUq/m5UJK+f9Pzpz6qFNvBqMVhziD7REowA6fLBLwvMzZP6ooxfuZ
 X-Received: from jthoughton.c.googlers.com ([fda3:e722:ac3:cc00:14:4d90:c0a8:2a4f])
- (user=jthoughton job=sendgmr) by 2002:a05:6902:2381:b0:e05:65b7:32d9 with
- SMTP id 3f1490d57ef6-e0565b7352bmr91773276.6.1720654966908; Wed, 10 Jul 2024
- 16:42:46 -0700 (PDT)
-Date: Wed, 10 Jul 2024 23:42:13 +0000
+ (user=jthoughton job=sendgmr) by 2002:a05:6902:2089:b0:e03:2bfe:40c9 with
+ SMTP id 3f1490d57ef6-e041b032f48mr13750276.3.1720654967914; Wed, 10 Jul 2024
+ 16:42:47 -0700 (PDT)
+Date: Wed, 10 Jul 2024 23:42:14 +0000
 In-Reply-To: <20240710234222.2333120-1-jthoughton@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240710234222.2333120-1-jthoughton@google.com>
 X-Mailer: git-send-email 2.45.2.993.g49e7a77208-goog
-Message-ID: <20240710234222.2333120-10-jthoughton@google.com>
-Subject: [RFC PATCH 09/18] KVM: x86: Add vCPU fault fast-path for Userfault
+Message-ID: <20240710234222.2333120-11-jthoughton@google.com>
+Subject: [RFC PATCH 10/18] KVM: arm64: Add KVM Userfault support
 From: James Houghton <jthoughton@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
@@ -86,39 +86,92 @@ Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
 	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 
-Without this fast-path, we will take the asynchronous userfault path
-every time, which is inefficient.
-
-As implemented today, KVM Userfault isn't well optimized at all, but I'm
-providing this optimization because something like this will be required
-to significantly improve post-copy performance. Memory fault exits for
-userfaultfd were proposed for the same reason[1].
-
-[1]: https://lore.kernel.org/kvm/20240215235405.368539-7-amoorthy@google.com/
+Support comes in three parts:
+1. When KVM Userfault is enabled, only install PAGE_SIZE PTEs. This
+   prevents us from being able to map a userfault-enabled pfn with a
+   huge PTE in response to a fault on a non-userfault pfn.
+2. When we get KVM_PFN_ERR_USERFAULT from __gfn_to_pfn_memslot, return a
+   memory fault to userspace.
+3. When KVM Userfault is enabled for a particular kvm_gfn_range, unmap
+   it, so that we can get faults on it.
 
 Signed-off-by: James Houghton <jthoughton@google.com>
 ---
- arch/x86/kvm/mmu/mmu.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm64/kvm/Kconfig |  1 +
+ arch/arm64/kvm/mmu.c   | 36 ++++++++++++++++++++++++++++++++++--
+ 2 files changed, 35 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 6b6a053758ec..f0dbc3c68e5c 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -4380,6 +4380,13 @@ static int __kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
- 	if (fault->is_private)
- 		return kvm_faultin_pfn_private(vcpu, fault);
+diff --git a/arch/arm64/kvm/Kconfig b/arch/arm64/kvm/Kconfig
+index 58f09370d17e..358153d91d58 100644
+--- a/arch/arm64/kvm/Kconfig
++++ b/arch/arm64/kvm/Kconfig
+@@ -37,6 +37,7 @@ menuconfig KVM
+ 	select HAVE_KVM_VCPU_RUN_PID_CHANGE
+ 	select SCHED_INFO
+ 	select GUEST_PERF_EVENTS if PERF_EVENTS
++	select KVM_USERFAULT
+ 	help
+ 	  Support hosting virtualized guest machines.
  
-+	/* Pre-check for userfault and bail out early. */
-+	if (gfn_has_userfault(fault->slot->kvm, fault->gfn)) {
-+		fault->pfn = KVM_PFN_ERR_USERFAULT;
-+		kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
-+		return -EFAULT;
+diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+index 8bcab0cc3fe9..ac283e606516 100644
+--- a/arch/arm64/kvm/mmu.c
++++ b/arch/arm64/kvm/mmu.c
+@@ -1434,7 +1434,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 	 * logging_active is guaranteed to never be true for VM_PFNMAP
+ 	 * memslots.
+ 	 */
+-	if (logging_active) {
++	if (logging_active || kvm->userfault) {
+ 		force_pte = true;
+ 		vma_shift = PAGE_SHIFT;
+ 	} else {
+@@ -1494,8 +1494,15 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 		kvm_send_hwpoison_signal(hva, vma_shift);
+ 		return 0;
+ 	}
+-	if (is_error_noslot_pfn(pfn))
++	if (is_error_noslot_pfn(pfn)) {
++		if (pfn == KVM_PFN_ERR_USERFAULT)
++			kvm_prepare_memory_fault_exit(vcpu, gfn << PAGE_SHIFT,
++						      PAGE_SIZE, write_fault,
++						      /*exec=*/false,
++						      /*private=*/false,
++						      /*userfault=*/true);
+ 		return -EFAULT;
 +	}
+ 
+ 	if (kvm_is_device_pfn(pfn)) {
+ 		/*
+@@ -2105,3 +2112,28 @@ void kvm_toggle_cache(struct kvm_vcpu *vcpu, bool was_enabled)
+ 
+ 	trace_kvm_toggle_cache(*vcpu_pc(vcpu), was_enabled, now_enabled);
+ }
 +
- 	async = false;
- 	fault->pfn = __gfn_to_pfn_memslot(fault->slot, fault->gfn, false, false,
- 					  &async, fault->write,
++#ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
++bool kvm_arch_pre_set_memory_attributes(struct kvm *kvm,
++					struct kvm_gfn_range *range)
++{
++	unsigned long attrs = range->arg.attributes;
++
++	/*
++	 * We only need to unmap if we're enabling userfault. Disabling it
++	 * does not need an unmap. An unmap to get huge mappings will come
++	 * later.
++	 */
++	if (attrs & KVM_MEMORY_ATTRIBUTE_USERFAULT)
++		kvm_unmap_gfn_range(kvm, range);
++
++	return false;
++}
++
++bool kvm_arch_post_set_memory_attributes(struct kvm *kvm,
++					 struct kvm_gfn_range *range)
++{
++	/* Nothing to do! */
++	return false;
++}
++#endif
 -- 
 2.45.2.993.g49e7a77208-goog
 
