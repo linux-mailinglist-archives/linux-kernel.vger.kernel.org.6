@@ -1,164 +1,132 @@
-Return-Path: <linux-kernel+bounces-247701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA6F92D35D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:50:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C67992D365
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 787A6284E52
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:50:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F28BA1F24712
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA5B193078;
-	Wed, 10 Jul 2024 13:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB33193088;
+	Wed, 10 Jul 2024 13:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="s3pJ9YQz"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I/YRcBEf"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39435192B8F;
-	Wed, 10 Jul 2024 13:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C398192B8F
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720619394; cv=none; b=T8QvDrNUha8Xijq5feZtDTmqrDnRdtfMWF9YYcLjcoVUW9SoRHBeHcRPlu7Fze4c7GlxHLyLPzqv24QwopspKvibIucaKsU6xEecd2KIgd+8DPa0TOR5YBdGYQDG8N+G5yf7Xew+hkfMO7VJTt0q63qZynKo3+Q0Dxk4Oj1Eewo=
+	t=1720619536; cv=none; b=cm5iC6KzpDbxj7BiYL2mPqTA/2lgLSzUj59/bkW+v/JFDg4FLkWC8ih1vRLjzgkAljz8/6JTuGBl3abPj9pv/KRWYWAknIcOcFvag9X+UYTwxI6MkupOJfRlMHr+YTR1vhtRv2ybxcbjO7BTNvY8pzpeUy6fgMQYx2Zvm6/PRlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720619394; c=relaxed/simple;
-	bh=r+F/2KIaBzLyVXXF7GrQxs/ElB49C6RcPCOl+HwspH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ht8gegY0PLyRwAoaH0h2taZWut8vV8f72VQy5qkRjU4g16QrMlNh6O1jDEkmGV93ehSwYTHuNVMKxMyMr9/ePwFRYX5NbwQYLy8jEVQYQX1WJSDM8MOYOyuSRG6cQH0dx1gMUvTaxM5c2+Dq4eI6qFrqlRZfp0Dq+Jusg4kZ5HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=s3pJ9YQz; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from wsk (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: lukma@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 78CC088025;
-	Wed, 10 Jul 2024 15:49:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1720619390;
-	bh=rd4U7AAXKGsH3PODWZxvkjHuRjt4mypiIDTO9ncI2LM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=s3pJ9YQz61kH/L5aa6Claj18i83b1CazGcaOz3W/Jm3ut3G550mhGFpLp1Ky8s4yG
-	 LVCcuQJan5dVHjZ0b5BS4xtGaP78vIamzk7k0NP+gbfvr/CSNDUz2nT9ILD6PuxnA1
-	 cIFlk60uAuSJ1RboocHz3pGHKSjZnG0i7JgDTyxxggrVYS/JiR78OZeIyOzbEsf30U
-	 bmLjpxlw+lR5FGjW6npJaE5zwQAmcjMMfryUZEhekOp7vvepsVJsMG6FIUxSbImUjM
-	 f3yKWvXOfYiOePhiqPCekrqoYvYY1ISNYJG+JDWpYt7HKTE7JZToD9RXpAOKKatXZR
-	 nX4NLlqxw6qWQ==
-Date: Wed, 10 Jul 2024 15:49:37 +0200
-From: Lukasz Majewski <lukma@denx.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, Heiner Kallweit
- <hkallweit1@gmail.com>, Christian Marangi <ansuelsmth@gmail.com>, Jakub
- Kicinski <kuba@kernel.org>, Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>,
- Daniel Golle <daniel@makrotopia.org>, Li Zetao <lizetao1@huawei.com>,
- linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 net-next] leds: trigger: netdev: Add support for
- tx_err and rx_err notification with LEDs
-Message-ID: <20240710154937.0dbcbd0c@wsk>
-In-Reply-To: <8c8ba30d-dbec-47db-ae8c-a734fb2468c0@lunn.ch>
-References: <20240710100651.4059887-1-lukma@denx.de>
-	<8c8ba30d-dbec-47db-ae8c-a734fb2468c0@lunn.ch>
-Organization: denx.de
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1720619536; c=relaxed/simple;
+	bh=3WiWOBn7pHdmhx9iPoez08ScqRj7WvY9UsQuBoxjbvQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UEI2u6xky1sdeocnMBDchNxk9EMjEt/ZbDFm7rhvsStXu7/tb1AbNWnOZG140mXEVt6mVgHwC8/F7rpA34mvQyBJW2FVXa4v3TVL/9F/FM0GTA0gA6jU/9PxVc38i32Y3v6n8x32rWyAbtrcjKpj7x6qIkRsP7JkBJ4ash5P3c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I/YRcBEf; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e02c4983bfaso6593021276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:52:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720619532; x=1721224332; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=s6ihtFgMXol2238V4wCVG6CHvKqmNcnW+Q3HHUXDtbg=;
+        b=I/YRcBEff5PrvIhr8gqO5kZjyjr1Cb4kNaAidhFvpiOXYlphQF2XBfcEnxEeEo2a2a
+         fVPYFO9VaKoanXiEB8wFOSRK8lzhUFSXn1h/08HFQEULyVj7CVH2ZQfJbuT4RJ4kNleX
+         Wuf6pV2vbCBd+OQFoVtY4TrCQ0e7q3l8+Bk1x9UA4KxuyOcRAsnO4h9KFiXrADD8s6Fl
+         izhrQRn3XhMhCMscVDvootI8LWke5iGTYCOI543vCh9OTV+E0IbDS/Mcc0+zyb9F0xG7
+         Rr7MkHzUiTr724g9b4O+tGn97C9QdqSitWoiV3TNVUNE5bBSO1vOkEel6BqrahftsjC6
+         NquA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720619532; x=1721224332;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s6ihtFgMXol2238V4wCVG6CHvKqmNcnW+Q3HHUXDtbg=;
+        b=POowHDafq35Z0+nLKCK0+r4K5eWyyMDcLXUnm6yrtuoBGvT+8ibVj9Cq8OS2cAIa9a
+         opOCLulzlnyLVovge6hyepOKdmPEyzutNdAU5Ba2mC+4F3BK+RRYxvhoixuyX4KCiop1
+         yzkDIhL+28E1PvzXf4Cta716h0zm7xbRTGFgoF3DOZWk6DZHjCm/vL+GIo/yUNGNquNw
+         sddKeJPn99bBhsBiOHADQtNvuSAkHJPAa03vjR4A5W/OWY8pRbFZoIe08xDehirzMHny
+         NALNAFPUSeibMUDlTJXiiVyiRh7sK58PsZU36uWaHycT6MR4jaD4ioR6zLKemFwgrk7U
+         JlTA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvRqFcapWTTza6fIh5IARKk1vKbfN4KgoFOdidG0bfXef3aJJ1b6PXy7CgU8xXhfLr5/2Jn/xWFZ1HlZfEq03wRLkwcaPq733lWaOu
+X-Gm-Message-State: AOJu0YwMKlcuC2RqNXCjfiwuZWkLZfydtIRFufA+vNYMtg/rAmfHsF/x
+	ZLQIOmHUtAfuRIRECa0WBCQGiCBE5i7GTHYZjUyJ2G0xRTEx5LLBJDIGWlXHDe8A2Py61lPdnCd
+	5agteoluoZwbI0yfR9AWjk8Wdczy6sCjktUPMHQ==
+X-Google-Smtp-Source: AGHT+IEgGhImB1CZ9V2zyPwOjbF7xu90LRXOFMyWlUsr33fZ9RPD7FcjB6nD790/e/8piCgrefZcj52pseUw7tQZ7qs=
+X-Received: by 2002:a25:bc8a:0:b0:e03:4ddd:49f0 with SMTP id
+ 3f1490d57ef6-e041b22a2c7mr6248368276.57.1720619532289; Wed, 10 Jul 2024
+ 06:52:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/70z+RmfJzPl5=n.1MdvKHZn";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+References: <20240618155013.323322-1-ulf.hansson@linaro.org>
+ <20240625105425.pkociumt4biv4j36@vireshk-i7> <CAPDyKFpLfBjozpcOzKp4jngkYenqSdpmejvCK37XvE1-WbBY2g@mail.gmail.com>
+ <20240701114748.hodf6pngk7opx373@vireshk-i7> <20240702051526.hyqhvmxnywofsjp2@vireshk-i7>
+In-Reply-To: <20240702051526.hyqhvmxnywofsjp2@vireshk-i7>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 10 Jul 2024 15:51:35 +0200
+Message-ID: <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
+Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM domains
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/70z+RmfJzPl5=n.1MdvKHZn
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2 Jul 2024 at 07:15, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 01-07-24, 17:17, Viresh Kumar wrote:
+> > What about this patch instead ?
+> >
+> > diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> > index 5f4598246a87..2086292f8355 100644
+> > --- a/drivers/opp/core.c
+> > +++ b/drivers/opp/core.c
+> > @@ -1091,7 +1091,8 @@ static int _set_required_opps(struct device *dev, struct opp_table *opp_table,
+> >               if (devs[index]) {
+> >                       required_opp = opp ? opp->required_opps[index] : NULL;
+> >
+> > -                     ret = dev_pm_opp_set_opp(devs[index], required_opp);
+> > +                     /* Set required OPPs forcefully */
+> > +                     ret = dev_pm_opp_set_opp_forced(devs[index], required_opp, true);
+>
+> Maybe better to do just this instead:
+>
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 5f4598246a87..9484acbeaa66 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -1386,7 +1386,12 @@ int dev_pm_opp_set_opp(struct device *dev, struct dev_pm_opp *opp)
+>                 return PTR_ERR(opp_table);
+>         }
+>
+> -       ret = _set_opp(dev, opp_table, opp, NULL, false);
+> +       /*
+> +        * For a genpd's OPP table, we always want to set the OPP (and
+> +        * performance level) and let the genpd core take care of aggregating
+> +        * the votes. Set `forced` to true for a genpd here.
+> +        */
+> +       ret = _set_opp(dev, opp_table, opp, NULL, opp_table->is_genpd);
+>         dev_pm_opp_put_opp_table(opp_table);
 
-Hi Andrew,
+I think this should work, but in this case we seem to need a similar
+thing for dev_pm_opp_set_rate().
 
-> On Wed, Jul 10, 2024 at 12:06:51PM +0200, Lukasz Majewski wrote:
-> > This patch provides support for enabling blinking of LEDs when RX
-> > or TX errors are detected.
-> >=20
-> > Approach taken in this patch is similar to one for TX or RX data
-> > transmission indication (i.e. TRIGGER_NETDEV_TX/RX attribute).
-> >=20
-> > One can inspect transmission errors with:
-> > ip -s link show eth0
-> >=20
-> > Example LED configuration:
-> > cd /sys/devices/platform/amba_pl@0/a001a000.leds/leds/
-> > echo netdev > mode:blue/trigger && \
-> > echo eth0 > mode:blue/device_name && \
-> > echo 1 > mode:blue/tx_err =20
->=20
-> When i look at the machines around me, they all have an error count of
-> 0.=20
+Another option is to let _set_opp() check "opp_table->is_genpd" and
+enforce the opp to be set in that case. Whatever you prefer, I can
+re-spin the patch.
 
-This is mostly true for ethernet. However, it happens on some low-level
-drivers that errors field is not zero when e.g. the received frame is
-malformed due to harsh work environment.
-
-> Do you have a real customer use case for this?=20
-
-Yes.
-
-The problem is apparent mostly with can interfaces and transmission for
-it.
-
-> What sort of systems
-> do you have which do have sufficient errors to justify an LED?
-
-In my case it is an embedded industrial/automotive controller with 10+
-RGB LEDs. It only has LEDs to communicate with user.
-
-The way how and when they blink shows the status of the device.
-
-With this patch one is able to spot if some transmission is failing
-(among other things).
-
->=20
-> There is no standardisation of LEDs. Every vendor implements something
-> different. What i don't want is lots of different blink patterns,
-> which nobody ever uses.
-
-As you can assess from the code - this patch extends neatly the current
-code, with use case valid for my customer.
-
->=20
-> 	Andrew
-
-
-
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/70z+RmfJzPl5=n.1MdvKHZn
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmaOkXEACgkQAR8vZIA0
-zr0jLAf/XZ+qitmpuHL0G7qOdb9cqtFnbmKWcGmxPHRaoksiIj315x7N9uiINrEP
-wh2rbqSseQq2ZZEGP/JopmsCJVGrDEW6LpJM5AZOlRRYWhmwLPW/AHgyrSNx6p4h
-KBgZA4jjjOgdC6xztzNzTMbIDKXHOXDVTQHROHYr3XHivp07x+ZB682NY0Hu51aL
-0kZdP35GOfrGlo/Sylbx0kwlJ8KSbWQaKNtDSjRnInGno4vnFgMnrxPVrYs7QNhe
-BqXzt3/VoEQH7RRcfNEiTXgAvNnMgrUAqCIkUWsqsFMj9CQQWyeo7plyTdzPdh19
-624Ompi6jxeJTUjC6rCqHZu8EShGAg==
-=4gdM
------END PGP SIGNATURE-----
-
---Sig_/70z+RmfJzPl5=n.1MdvKHZn--
+Kind regards
+Uffe
 
