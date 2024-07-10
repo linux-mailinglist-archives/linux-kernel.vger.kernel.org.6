@@ -1,277 +1,189 @@
-Return-Path: <linux-kernel+bounces-247864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2229492D5B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:08:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22EF92D5BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84348B24291
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:08:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2109D1F227C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0B119580C;
-	Wed, 10 Jul 2024 16:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72AFD194C7A;
+	Wed, 10 Jul 2024 16:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yMILGtge"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JSFMftbV"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252821922C0
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28311195FE8
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720627643; cv=none; b=mwq/rR2NW8DAHeaAi16PEtxSOFtm+28g72hEIYJ3PnK6Qmr2gFYS6Pir3y0/qhMVOoCmXDjEezX4psGuF1/RiUSbHIqD/bTh4aqna1D+YXrWijQ+t2r20+EcYzTXhuOq6fXA1ZNC2u/cJ5XHP3jFOdR6Snpi7oyIPuBE0LFYW0U=
+	t=1720627657; cv=none; b=idKltsk8aUKciCBr2sc6kt2ahxEoGQ92yb2LaJHy6m+onEa1YT2V3AQwaUedsC//Ksr/SCvMp6oLmkbIJjtfYppTFZbZIKL/1yAveNOZhKL98YdiGqkpOJbKpveaQMjdTATDSj1W5Kq9N9B4axWwb3AKp6w1cc11jbbr46FUFh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720627643; c=relaxed/simple;
-	bh=S3ViMiwB539QvvsBUKXOhdUzccwenRP0IV4dHvQLo44=;
+	s=arc-20240116; t=1720627657; c=relaxed/simple;
+	bh=6UgaRsBKuBqnUMotrXmGfoJp7a55bSAyLHCf5fFjFTs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oXuh9ePRINAxFEpobkYM+JpCkxTBfpDkHCzJosV1iub7MPCZY1kq2GT7/yq+dj23Q8S+cupLpbhSNVwfUmHxxgfJzEf2Np2f4ZJance1BLajNFwmaNSkQt8vQR9YSOyY3sJu15DJBF69c0kbis6NO0MzwQOB5zFVT8ZWTAbFuhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yMILGtge; arc=none smtp.client-ip=209.85.128.170
+	 To:Content-Type; b=K3eHH5U6oe0VtCWLrUz3jWpOndfD3vzuSR7lPIL9RfKBQr266qbcW11Zl1pLPsRRGjZpEmmiAUPX7hUChxGj2z8QiQj+Sp1StoxwbEk8m/tqCkQL4NDTB90BhcjxQyt+iAO0nTe8OogwNQRaef+b1woSpLNSFRU+LncaSzMThmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JSFMftbV; arc=none smtp.client-ip=209.85.219.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-650469f59d7so58497677b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:07:21 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dfe43dca3bfso6575089276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:07:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720627641; x=1721232441; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=google.com; s=20230601; t=1720627655; x=1721232455; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mSQUshmSdhXe881WB/NNrPxsfE0Hz+Zz8a2QxDP5NDU=;
-        b=yMILGtgeTh3zGTqocsZbYsQIxqCAdm/mjwKPGmF2PvUGCiz/pHPlyAYlPKA0DN4Hz1
-         w2/9gO2iNI8inzYEffW5iTrtlQsZDaWVE12dw5kEm1zkecTTitNs4+Iur/v6p+7z4nRN
-         kTnHXz/TFdvni4n2Bp6f+IRQ1CcPUUGLFwcUMwKfyNA5G8EJ6Upt7tyZSoAiEJYpVy/C
-         iGvvk5VccH5TQqzAa0ksgjY63J35jlvLPHDyLQmMhZFPtt90dIRHw2hLtkWXinx21hPb
-         eHg0JcWAjVGTAgGTBkckZ0XR8rA6NKk9P/ZvjluwF0s+3ect4vzLSrxQx850VoGoddq1
-         IGQg==
+        bh=5hOi+CbH+LQ53IgFxOEWuC6/Y+tbAitu1myzto5D+qI=;
+        b=JSFMftbV1tFSQiqRtfGON7SDVIyPAxJ5eCfCBvGJty2O/CTfTu3VbeN+PocW704b3J
+         N7HIXjqhTHDkhM9L8SYGlNJaVVKaQMkxxg1eXOvtwBh7dXQTqAvQ7KyEjEvWPAjXcB1d
+         8rbqL3nzOcCpELYNcdXNRtH796UpvhD0GPuwicFBPbvy2+SQh8Iw1mKCKPxXlUzIEqXA
+         4StguKylV3nP+2+k3wyaS+tjy/gBh/VRjTm83ESkHhax4QqyX/Gqk6SeMleaV5/uz/fv
+         Wklofj7ktCRZkjKHtTTcf5If3dO5fxnMWyTJMeKLwgCNBzfrYfY+WVZSo+wDhJPxRi1R
+         dpNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720627641; x=1721232441;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1720627655; x=1721232455;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mSQUshmSdhXe881WB/NNrPxsfE0Hz+Zz8a2QxDP5NDU=;
-        b=QM7dlxmL9dZwl+MO00W34U+DgqpnzJPRefWzvCyGUVYkeKxucNkxE7UT93NE64kzZH
-         NlxFE0x/L34M0iXexmdC8baDyrJuoMh0F4RYh7Fb1guMzhxG1PHs8JGoajsfd2fjTJVw
-         vSRrgonmROy3wl5dtforYObI3ADsM7s09/Pm8ISikoBp96VKOtccHf/3tFdGwZFyan0i
-         kYHFO9NUVt5cLxQN1lIjjJ4Ppf+5bjGZoRYaCUVa0yRacMKbihl6HV7qIBfY8PGJGnRf
-         ue+wqkKq9QM58xjfViu2Fit5gwe0xrZDeK9Vi0y/7Ilbqpfz+WgkgTi4MCvXYysBQXhM
-         TSNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMYjBv6gquL0LNdeD1vkneIT2sNfjWz9mh8qAP15sIhhNCVlv2AQLFHnh/2o5WihOIerV7ZOINmVYPSUvCJDaAv28bDQs20ZA/o0uK
-X-Gm-Message-State: AOJu0YxhRhHuKvoD5btsfdRB4pKhVzoZRHKAOwP1YAkvP10rzBXXwkyP
-	RfFWCdcpXVLFsWGqpzPSa0ZWOru1JsCLNkTGMHn/vWzQw6acpTg6n+OmXxxr6i6xwToEu66V5f4
-	BInC4YimHbnugdGWE8cvAzJYPlJtbApkE4p0W
-X-Google-Smtp-Source: AGHT+IFSykq+WyrWdT6Uv/EHdnZgmAh2o20rzvf6Nwh0G62ITLVVLQ8XZ8JteXgDLTJ5bYm4oUeM2YtLoJxpK+Xw1+c=
-X-Received: by 2002:a0d:f6c5:0:b0:631:2219:a441 with SMTP id
- 00721157ae682-658f08cc76dmr60471887b3.48.1720627640761; Wed, 10 Jul 2024
- 09:07:20 -0700 (PDT)
+        bh=5hOi+CbH+LQ53IgFxOEWuC6/Y+tbAitu1myzto5D+qI=;
+        b=KPCtmVudGbGhO/VcefN0pK2rFRSahZYy6HB/2deG702vhirNjBLBBGh1h72XX3WLiu
+         GVjno6ozemhsGt7CwxjxTycwmDEBqMElrlXnIcHm4M88a50b1CIX8Z/oC44soD/St/Ai
+         jgln7o3+iV3tDvTCUKbdVZxZ9U1WbmvaErE7kq3A10hy4sHMEThMr10W3odF+aRKIa4G
+         Glse+IsSRGqbfGhpOXJtezOJnK+BrKtWnhESzvfgMLsZ1YMyNVfYaHn4AasiM5W9zKkK
+         sVY+CVMpr0Txo0n+ayU9HzM3kHKNxvzJDPljQeP6lnQiukx8nZ2/mI4Sx2V8w16Ez4rR
+         DYwg==
+X-Forwarded-Encrypted: i=1; AJvYcCUITGvPeshdJe/b0aWCF1JTEfX9ZZbJpwk2DmMWauuSrGfe0/s9BNpzTrXRHB4TmrSQssi9ZFkpJrg0/4fWe/hVL3/Q8F1iz1K4K33y
+X-Gm-Message-State: AOJu0Yx4I1R05WhBrFASX4IwLptLQ1MzdChOaYyZI2ejbkV5mqvt3aig
+	7eh3x967o1QxNFWcJFj6eT69M6UCWUWIjiKKI1Jn3/qKtL9bY3h7X8ZfspDNTQnLF2HaRxFyngn
+	gYUFYn1D1g/pKxMIwZ3/mRuPRguBN1zXEcjlg
+X-Google-Smtp-Source: AGHT+IFM/MM4d9wyqLSExKu598+a2Z0e1WDGShpZknWBuRov1q90hJ4xSnWPGct7PhaG0u0h7tLK8i94ggVSXRilV0U=
+X-Received: by 2002:a05:690c:f09:b0:63b:ca6d:7bb8 with SMTP id
+ 00721157ae682-658ee7911c8mr78026367b3.11.1720627654703; Wed, 10 Jul 2024
+ 09:07:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704182718.2653918-1-Liam.Howlett@oracle.com> <20240704182718.2653918-5-Liam.Howlett@oracle.com>
-In-Reply-To: <20240704182718.2653918-5-Liam.Howlett@oracle.com>
+References: <20240704182718.2653918-1-Liam.Howlett@oracle.com>
+ <20240704182718.2653918-6-Liam.Howlett@oracle.com> <a1f1e48c-5aed-4c03-b4d1-b4d4ac85a6de@lucifer.local>
+ <jcdeostzaoalxqbtlz4x6egjay2agiox6mg5o744ovfznbxh3i@pdqvicfbbblb>
+In-Reply-To: <jcdeostzaoalxqbtlz4x6egjay2agiox6mg5o744ovfznbxh3i@pdqvicfbbblb>
 From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 10 Jul 2024 09:07:09 -0700
-Message-ID: <CAJuCfpFHK+Bw8H1r5691yjgB+OjUEd1cedDydsfqp8zJwfRb_w@mail.gmail.com>
-Subject: Re: [PATCH v3 04/16] mm/mmap: Extract the gathering of vmas from do_vmi_align_munmap()
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, 
+Date: Wed, 10 Jul 2024 09:07:23 -0700
+Message-ID: <CAJuCfpG+Jok-ySXzRkokU-hrvnLxxMkeufXRMk1tmPLQcgnzNw@mail.gmail.com>
+Subject: Re: [PATCH v3 05/16] mm/mmap: Introduce vma_munmap_struct for use in
+ munmap operations
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, 
 	Matthew Wilcox <willy@infradead.org>, sidhartha.kumar@oracle.com, 
 	"Paul E . McKenney" <paulmck@kernel.org>, Bert Karwatzki <spasswolf@web.de>, Jiri Olsa <olsajiri@gmail.com>, 
 	linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 4, 2024 at 11:27=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
+On Fri, Jul 5, 2024 at 12:09=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
 e.com> wrote:
 >
-> Create vmi_gather_munmap_vmas() to handle the gathering of vmas into a
-> detached maple tree for removal later.  Part of the gathering is the
-> splitting of vmas that span the boundary.
+> * Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [240705 14:39]:
+> > On Thu, Jul 04, 2024 at 02:27:07PM GMT, Liam R. Howlett wrote:
+> > > Use a structure to pass along all the necessary information and count=
+ers
+> > > involved in removing vmas from the mm_struct.
+> > >
+> > > Update vmi_ function names to vms_ to indicate the first argument
+> > > type change.
+> > >
+> > > Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> > > Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+> > > ---
+> > >  mm/internal.h |  16 ++++++
+> > >  mm/mmap.c     | 137 ++++++++++++++++++++++++++----------------------=
+--
+> > >  2 files changed, 88 insertions(+), 65 deletions(-)
+> > >
+> > > diff --git a/mm/internal.h b/mm/internal.h
+> > > index 2ea9a88dcb95..f1e6dea2efcf 100644
+> > > --- a/mm/internal.h
+> > > +++ b/mm/internal.h
+> > > @@ -1481,6 +1481,22 @@ struct vma_prepare {
+> > >     struct vm_area_struct *remove2;
+> > >  };
+> > >
+> > > +/*
+> > > + * vma munmap operation
+> > > + */
+> > > +struct vma_munmap_struct {
+> > > +   struct vma_iterator *vmi;
+> > > +   struct mm_struct *mm;
+> > > +   struct vm_area_struct *vma;     /* The first vma to munmap */
+> > > +   struct list_head *uf;           /* Userfaultfd list_head */
+> > > +   unsigned long start;            /* Aligned start addr */
+> > > +   unsigned long end;              /* Aligned end addr */
+> > > +   int vma_count;                  /* Number of vmas that will be re=
+moved */
+> > > +   unsigned long nr_pages;         /* Number of pages being removed =
+*/
+> > > +   unsigned long locked_vm;        /* Number of locked pages */
+> > > +   bool unlock;                    /* Unlock after the munmap */
+> > > +};
+> >
+> >
+> > I'm a big fan of breaking out and threading state like this through som=
+e of
+> > these more... verbose VMA functions.
+> >
+> > I have a similar idea as part of my long dreamed of 'delete vma_merge()=
+'
+> > patch set. Coming soon :)
+> >
+> > > +
+> > >  void __meminit __init_single_page(struct page *page, unsigned long p=
+fn,
+> > >                             unsigned long zone, int nid);
+> > >
+> > > diff --git a/mm/mmap.c b/mm/mmap.c
+> > > index 8dc8ffbf9d8d..76e93146ee9d 100644
+> > > --- a/mm/mmap.c
+> > > +++ b/mm/mmap.c
+> > > @@ -500,6 +500,31 @@ static inline void init_vma_prep(struct vma_prep=
+are *vp,
+> > >     init_multi_vma_prep(vp, vma, NULL, NULL, NULL);
+> > >  }
+> > >
+> > > +/*
+> > > + * init_vma_munmap() - Initializer wrapper for vma_munmap_struct
+> > > + * @vms: The vma munmap struct
+> > > + * @vmi: The vma iterator
+> > > + * @vma: The first vm_area_struct to munmap
+> > > + * @start: The aligned start address to munmap
+> > > + * @end: The aligned end address to munmap
+> >
+> > Maybe worth mentioning if inclusive/exclusive.
 >
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-> ---
->  mm/mmap.c | 82 +++++++++++++++++++++++++++++++++++++++----------------
->  1 file changed, 58 insertions(+), 24 deletions(-)
+> The "address to munmap" isn't specific enough that we are using the same
+> logic as the munmap call?  That is, the vma inclusive and exclusive for
+> start and end, respectively.
 >
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 411798f46932..8dc8ffbf9d8d 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -2656,32 +2656,29 @@ vmi_complete_munmap_vmas(struct vma_iterator *vmi=
-, struct vm_area_struct *vma,
->  }
->
->  /*
-> - * do_vmi_align_munmap() - munmap the aligned region from @start to @end=
-.
-> + * vmi_gather_munmap_vmas() - Put all VMAs within a range into a maple t=
-ree
-> + * for removal at a later date.  Handles splitting first and last if nec=
-essary
-> + * and marking the vmas as isolated.
-> + *
->   * @vmi: The vma iterator
->   * @vma: The starting vm_area_struct
->   * @mm: The mm_struct
->   * @start: The aligned start address to munmap.
->   * @end: The aligned end address to munmap.
->   * @uf: The userfaultfd list_head
-> - * @unlock: Set to true to drop the mmap_lock.  unlocking only happens o=
-n
-> - * success.
-> + * @mas_detach: The maple state tracking the detached tree
->   *
-> - * Return: 0 on success and drops the lock if so directed, error and lea=
-ves the
-> - * lock held otherwise.
-> + * Return: 0 on success
->   */
->  static int
-> -do_vmi_align_munmap(struct vma_iterator *vmi, struct vm_area_struct *vma=
-,
-> +vmi_gather_munmap_vmas(struct vma_iterator *vmi, struct vm_area_struct *=
-vma,
->                     struct mm_struct *mm, unsigned long start,
-> -                   unsigned long end, struct list_head *uf, bool unlock)
-> +                   unsigned long end, struct list_head *uf,
-> +                   struct ma_state *mas_detach, unsigned long *locked_vm=
-)
->  {
->         struct vm_area_struct *next =3D NULL;
-> -       struct maple_tree mt_detach;
->         int count =3D 0;
->         int error =3D -ENOMEM;
-> -       unsigned long locked_vm =3D 0;
-> -       MA_STATE(mas_detach, &mt_detach, 0, 0);
-> -       mt_init_flags(&mt_detach, vmi->mas.tree->ma_flags & MT_FLAGS_LOCK=
-_MASK);
-> -       mt_on_stack(mt_detach);
->
->         /*
->          * If we need to split any vma, do it now to save pain later.
-> @@ -2720,15 +2717,14 @@ do_vmi_align_munmap(struct vma_iterator *vmi, str=
-uct vm_area_struct *vma,
->                                 goto end_split_failed;
->                 }
->                 vma_start_write(next);
-> -               mas_set(&mas_detach, count);
-> -               error =3D mas_store_gfp(&mas_detach, next, GFP_KERNEL);
-> +               mas_set(mas_detach, count++);
-> +               if (next->vm_flags & VM_LOCKED)
-> +                       *locked_vm +=3D vma_pages(next);
+> Not a big change, either way.
 
-Uh, this was confusing. You moved locked_vm/count accounting before
-mas_store_gfp(), so if mas_store_gfp() fails, they will be one-off
-because we incremented them but failed to insert the element. Only
-later I realized that if mas_store_gfp() fails then we never use these
-counters. The code is still correct but I'm wondering if this movement
-was necessary. We wouldn't use wrong values but why make them wrong in
-the first place?
-In later patches you account for more things in here and all that is
-also done before mas_store_gfp(). Would moving all that after
-mas_store_gfp() and keeping them always correct be an issue?
-
++1. Every time I look into these functions with start/end I have to go
+back and check these inclusive/exclusive rules, so mentioning it would
+be helpful.
 
 
-
-> +
-> +               error =3D mas_store_gfp(mas_detach, next, GFP_KERNEL);
->                 if (error)
->                         goto munmap_gather_failed;
->                 vma_mark_detached(next, true);
-> -               if (next->vm_flags & VM_LOCKED)
-> -                       locked_vm +=3D vma_pages(next);
-> -
-> -               count++;
->                 if (unlikely(uf)) {
->                         /*
->                          * If userfaultfd_unmap_prep returns an error the=
- vmas
-> @@ -2753,7 +2749,7 @@ do_vmi_align_munmap(struct vma_iterator *vmi, struc=
-t vm_area_struct *vma,
->  #if defined(CONFIG_DEBUG_VM_MAPLE_TREE)
->         /* Make sure no VMAs are about to be lost. */
->         {
-> -               MA_STATE(test, &mt_detach, 0, 0);
-> +               MA_STATE(test, mas_detach->tree, 0, 0);
->                 struct vm_area_struct *vma_mas, *vma_test;
->                 int test_count =3D 0;
 >
-> @@ -2773,6 +2769,48 @@ do_vmi_align_munmap(struct vma_iterator *vmi, stru=
-ct vm_area_struct *vma,
->         while (vma_iter_addr(vmi) > start)
->                 vma_iter_prev_range(vmi);
+> ...
 >
-> +       return 0;
-> +
-> +userfaultfd_error:
-> +munmap_gather_failed:
-> +end_split_failed:
-> +       abort_munmap_vmas(mas_detach);
-> +start_split_failed:
-> +map_count_exceeded:
-> +       return error;
-> +}
-> +
-> +/*
-> + * do_vmi_align_munmap() - munmap the aligned region from @start to @end=
-.
-> + * @vmi: The vma iterator
-> + * @vma: The starting vm_area_struct
-> + * @mm: The mm_struct
-> + * @start: The aligned start address to munmap.
-> + * @end: The aligned end address to munmap.
-> + * @uf: The userfaultfd list_head
-> + * @unlock: Set to true to drop the mmap_lock.  unlocking only happens o=
-n
-> + * success.
-> + *
-> + * Return: 0 on success and drops the lock if so directed, error and lea=
-ves the
-> + * lock held otherwise.
-> + */
-> +static int
-> +do_vmi_align_munmap(struct vma_iterator *vmi, struct vm_area_struct *vma=
-,
-> +                   struct mm_struct *mm, unsigned long start,
-> +                   unsigned long end, struct list_head *uf, bool unlock)
-> +{
-> +       struct maple_tree mt_detach;
-> +       MA_STATE(mas_detach, &mt_detach, 0, 0);
-> +       mt_init_flags(&mt_detach, vmi->mas.tree->ma_flags & MT_FLAGS_LOCK=
-_MASK);
-> +       mt_on_stack(mt_detach);
-> +       int error;
-> +       unsigned long locked_vm =3D 0;
-> +
-> +       error =3D vmi_gather_munmap_vmas(vmi, vma, mm, start, end, uf,
-> +                                      &mas_detach, &locked_vm);
-> +       if (error)
-> +               goto gather_failed;
-> +
->         error =3D vma_iter_clear_gfp(vmi, start, end, GFP_KERNEL);
->         if (error)
->                 goto clear_tree_failed;
-> @@ -2783,12 +2821,8 @@ do_vmi_align_munmap(struct vma_iterator *vmi, stru=
-ct vm_area_struct *vma,
->         return 0;
+> >
+> > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 >
->  clear_tree_failed:
-> -userfaultfd_error:
-> -munmap_gather_failed:
-> -end_split_failed:
->         abort_munmap_vmas(&mas_detach);
-> -start_split_failed:
-> -map_count_exceeded:
-> +gather_failed:
->         validate_mm(mm);
->         return error;
->  }
-> --
-> 2.43.0
+> Thanks
 >
 
