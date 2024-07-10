@@ -1,163 +1,170 @@
-Return-Path: <linux-kernel+bounces-247817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 783F092D4FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:30:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49A0792D500
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F5ED1F21902
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:30:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08E8F286002
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1EF191494;
-	Wed, 10 Jul 2024 15:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6C119347C;
+	Wed, 10 Jul 2024 15:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CkqcZUIA"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ctviIJLc"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8471946C2
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073F710A09;
+	Wed, 10 Jul 2024 15:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720625409; cv=none; b=tM5DqY0hXhy04di+vgf4h2kviTWj21iWaQzv9yf8MMBmDCu36x0YTV+gkZ18lT3hLdocqj5fGQgQQ0LwKre1BSoTWulSYRqQwHaw554G0HYXUMf9SvBWDapvUGenrZRRzJCh3SGwBC7l1bc5QU57VrpUAoZj/peN/JYdlckCMd0=
+	t=1720625609; cv=none; b=HhV/GamXgQk+kHbk+JFn+XqYKeyZzP9WqNDbL2fHADu6NUzuJEdY7tlkYPxPAR3M2a2YRnDlft+8vXOA+q+HAZnIS08tDeUw43WyKKQhhN7CBnuYkU/eeZSd0OnNBUbIuIfm/9V4jx1L9hXrB94x9MaNI35OhoZPjXlrE75eYzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720625409; c=relaxed/simple;
-	bh=8/gfPXWxxf7FOY8AgpmCewWXxXTZYt2IGleiv5CqE8g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=aohTL0akSTMncJoINJwI2LvhIxGEXL1HwQN8eyXgzL0ixvDBcFLz/t+CrSWjmHRfdzcatvjkxFudcEGNFah4WkqyqQaVY330GFlUmvfeuRvX49EFmOR1rQtNH8bd6iu1SQ4P/o8SFckSXR5raqpbclOiBZe/kveibmp4yypxhQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CkqcZUIA; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7fb3529622dso12823539f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:30:06 -0700 (PDT)
+	s=arc-20240116; t=1720625609; c=relaxed/simple;
+	bh=aTVeWmvuai/R1U1FoOT+kwJPiR7ddJ+S95lzMnEtAgA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=I6FPIWxYWFwwgiOkV4cTuqgUECCLw90JNBM4svE7lfZuAMbUxMP5aWb+1BXER91XET42W/REEVwAKIXwnD8mtywix+CY8FHEYF7sMdY9mCDfGxMaPn8QAA71bXsXJSGVqfC7B9cdKkjmVhG21TsqlZyAl6mU0erJGV+OpZG+hPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ctviIJLc; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-651da7c1531so60341447b3.0;
+        Wed, 10 Jul 2024 08:33:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1720625406; x=1721230206; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Gh4KlpRRZVtRU7Y7a9D5NYIzadIHQ/XSQ7aTvmHJrcU=;
-        b=CkqcZUIAEsLP7D+L1o6ycdoU+bQ3sEcRS7O1q+3JvY8FIziIPHNrnUVtIBk+Pe2nRz
-         U1E0xNBjfw+iDCOhbSCSoA6FenmLSILVRTZ8wHm9ZyhTI/upboGAwoqN8JTK+hmXUBD5
-         8kv55PVsfz60McK9T6XfCzB4Rd4DlKkCKs7Tc=
+        d=gmail.com; s=20230601; t=1720625606; x=1721230406; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4gr5uYzcvQrUbhANpY2co45rv/Wb7vmR13XKq1IXwwI=;
+        b=ctviIJLcW8TfVmF2mam5Csa8hfitv/XbCO+72WQF3cRNSC0mUOF56kYJdmHMObxqGZ
+         fDHqHZwxLxsXFj4bf+a1jsiarHV88JSHbVnhHCbkaTUg/LL3n2sOEcnazMeoSClk4rjc
+         ZLUZQ5uJ2TxAN2AShN4zbi/e5EfljN4rgJ/9efyxL3LYqHVr/tVr8KaVKk26aUX4zYlo
+         X16sNH/erc0PtMFJqhcrygOyiakqn05n953R1ufhYy+7Zfn/rT+htRvRemas+HSDfQ3S
+         myWV/Ny6ZV/XSDR0VxPZ114v3NAZTFpt7nAyMbIGyzcd2zFnRnn+rxNSvJ4Oa1GF5kLA
+         1CyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720625406; x=1721230206;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gh4KlpRRZVtRU7Y7a9D5NYIzadIHQ/XSQ7aTvmHJrcU=;
-        b=qfeqlE8FqIiW3iLvq27EBQpnZ2ay35mAgLvGOSGeMOM+a6Hju77wRtZ4mbIOjaqxaM
-         d1a0TCLHy2H0sAfrNe9+qqZjD/O/D0omQIZNRe1Yq43P4puRJYXLlV4cTTevYGy92x5U
-         kWYsnTeDzEnki88k8mkk6l7wYx5sKs5z2e4ou+B8kCDwx1OZ1+YKRcdDz8NigkmNNUsg
-         +/oq+9t7BOLsZynqElDC6mT49XsqqNVCSD/gvJX4j+u3uoM67uzb5mnocO8ZpIM2QnDB
-         vhJeTUCFF80O+nQO8QTGa0UvbJ59LkSdLt+s+QTlUiDgpf2QludJMVAh8XxJpUW5dZHc
-         f3dg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIkBStuxj0sDRM8/auy/eUPjzaFMuxna1sKspfbe1floZc2T3WO5YLZz8irnEIeu2u64PuZdCQALzX6SzwuWSjWUsxj2NOqN697np8
-X-Gm-Message-State: AOJu0YyvPAkMlWACrzN24oRpdQElBYeHqZQnMWmjqIhtTOlBxUCbo4DS
-	LF5h+VG/IExngE0D3Sa/a+U26Z+yjs54kA87qUdLzUwe3Fy3ge/ZmUNQpL4KgY49stGhwFU8CrC
-	j
-X-Google-Smtp-Source: AGHT+IEaNw0ouQ+VXx2iRgxdND1WLK34gMh/WUa7EyQuElws8C+1LmKST3HSfMbu0U5iEmjqwA1QWQ==
-X-Received: by 2002:a05:6602:3413:b0:7f8:bfcd:db53 with SMTP id ca18e2360f4ac-8000269672bmr658618839f.1.1720625405978;
-        Wed, 10 Jul 2024 08:30:05 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c0b1c13848sm1184863173.133.2024.07.10.08.30.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jul 2024 08:30:05 -0700 (PDT)
-Message-ID: <273183c9-101c-422b-9fcd-a9921c127cb1@linuxfoundation.org>
-Date: Wed, 10 Jul 2024 09:30:04 -0600
+        d=1e100.net; s=20230601; t=1720625606; x=1721230406;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4gr5uYzcvQrUbhANpY2co45rv/Wb7vmR13XKq1IXwwI=;
+        b=v5qlaTPZ/Ui70E5BI1uwbxk88rfI31VXhiNvYi39SGaQ4MoWxJe/SxrMoG+1yyqC5J
+         DObMRl8XhOVy7dJv3qs4QWNMSCvVNgtjwjQUP0M2BPZdlotBcXiopOH5opv5auBa5Kio
+         4Jlwhhi0UIFPPW1yrKNkTR+h+oNBhkjb875T0BlhEoCTI1ZMP3xB1NAEo0gN3BvIrZDy
+         Ey7Jy3ngV8IywhOyXBdhSbItGBjGQvnHHkdsr8Ei+8gsSj7Dd+emP+66iPA18X+BZOTO
+         z2tMLOXZxkswk1eLSxOSULPnVO8+/8EE0OlG9T/VmHJHrIyOE0/pcGbSUzGN0O/INP8w
+         ML8g==
+X-Forwarded-Encrypted: i=1; AJvYcCW09ufB7eKmNlBAo8EW/HJriQRGmx7YXNBmlK0oIif02OBXVTDXricSnoG5CxSvcFVGy9Gw72cfH4G0WyX0HKUjKyWtLtOUedscpcX2
+X-Gm-Message-State: AOJu0Yzh19vI8nNBGWwdkVhYAtMkcv8/dIJVeRN864LeiKH4Q5B2wZLT
+	eEektkc+AicP50sIQEnfG67IcoyTtFvnKwDhoGHs8y4pWTtnXi+uFoivWA==
+X-Google-Smtp-Source: AGHT+IEu3Ni5t8+SMTgaHEnlIoC/Vuf6JBd1nltHcz3U4Kd98F2p5GBHknD+xkNMn1UIAlk8SSKFfQ==
+X-Received: by 2002:a05:690c:6612:b0:64a:69c2:b6e4 with SMTP id 00721157ae682-658ef34145cmr79626997b3.28.1720625606006;
+        Wed, 10 Jul 2024 08:33:26 -0700 (PDT)
+Received: from [127.0.1.1] (107-197-105-120.lightspeed.sntcca.sbcglobal.net. [107.197.105.120])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e4d2a7d1sm7620967b3.31.2024.07.10.08.33.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 08:33:25 -0700 (PDT)
+From: Pei Li <peili.dev@gmail.com>
+Date: Wed, 10 Jul 2024 08:33:24 -0700
+Subject: [PATCH] Fix WARNING: suspicious RCU usage in
+ bch2_bucket_ref_update
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2] selftests/bpf:fix a resource leak
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>, jolsa@kernel.org,
- shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, mykolal@fb.com, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240710015913.2554-1-zhujun2@cmss.chinamobile.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240710015913.2554-1-zhujun2@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240710-bug10-v1-1-f1f8cf98f7c0@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAMOpjmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDcwNL3aTSdEMDXbMkY1OTFENL4zQjAyWg2oKi1LTMCrA50bG1tQD9yXo
+ mVwAAAA==
+To: Kent Overstreet <kent.overstreet@linux.dev>, 
+ Brian Foster <bfoster@redhat.com>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ skhan@linuxfoundation.org, syzkaller-bugs@googlegroups.com, 
+ linux-kernel-mentees@lists.linuxfoundation.org, 
+ syzbot+e74fea078710bbca6f4b@syzkaller.appspotmail.com, 
+ Pei Li <peili.dev@gmail.com>
+X-Mailer: b4 0.15-dev-13183
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720625604; l=2446;
+ i=peili.dev@gmail.com; s=20240625; h=from:subject:message-id;
+ bh=aTVeWmvuai/R1U1FoOT+kwJPiR7ddJ+S95lzMnEtAgA=;
+ b=lNEuCBby2LIHOBFQJWiBICH9AZBveXtH9UVkQmYRmAgWXhsoMvc+l6pVvk2oNBW8QcqFuPWJ0
+ C6IMhyvlU+bCVZj0CNaulb1njfIn2W+HQzDS5UqsiFh1sRrCnbZesYL
+X-Developer-Key: i=peili.dev@gmail.com; a=ed25519;
+ pk=I6GWb2uGzELGH5iqJTSK9VwaErhEZ2z2abryRD6a+4Q=
 
-On 7/9/24 19:59, Zhu Jun wrote:
-> The requested resources should be closed before return
-> in main(), otherwise resource leak will occur
-> 
-> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+When dereference ca->bucket_gens, we are expecting one of the three
+locks to be hold if ca->fs is not NULL.
 
-How did you find this problem? Please give more details
-on the tool used including the output from the tool.
-> ---
-> Changes in v2:
->   - check for cg_fd >= 0 and have just one out label
-> 
->   tools/testing/selftests/bpf/test_sockmap.c | 11 +++++++----
->   1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/bpf/test_sockmap.c b/tools/testing/selftests/bpf/test_sockmap.c
-> index a34e95040994..285a9a714666 100644
-> --- a/tools/testing/selftests/bpf/test_sockmap.c
-> +++ b/tools/testing/selftests/bpf/test_sockmap.c
-> @@ -2075,8 +2075,10 @@ int main(int argc, char **argv)
->   
->   	if (!cg_fd) {
->   		cg_fd = cgroup_setup_and_join(CG_PATH);
-> -		if (cg_fd < 0)
-> -			return cg_fd;
-> +		if (cg_fd < 0) {
-> +			err = cg_fd;
-> +			goto out;
-> +		}
+This patch acquires mark_lock before entering __mark_pointer()
 
-I don't this this improves the code - it makes it more complex.
-If you want to improve this - add the same error message that
-gets printed out for
+Note: testing is done by a robot and is best-effort only.
 
-case 'c':
+To: Kent Overstreet <kent.overstreet@linux.dev>
+To: Brian Foster <bfoster@redhat.com>
+Cc: linux-bcachefs@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: skhan@linuxfoundation.org
+Cc: syzkaller-bugs@googlegroups.com
+Cc: linux-kernel-mentees@lists.linuxfoundation.org
+Reported-by: syzbot+e74fea078710bbca6f4b@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=e74fea078710bbca6f4b
+Tested-by: syzbot+e74fea078710bbca6f4b@syzkaller.appspotmail.com
+Signed-off-by: Pei Li <peili.dev@gmail.com>
+---
+Syzbot reported the following warning:
 
-in argument parsing.
+fs/bcachefs/buckets.h:107 suspicious rcu_dereference_check() usage!
 
-fprintf(stderr, "ERROR: (%i) open cg path failed: %s\n",
-                  cg_fd, optarg);
->   		cg_created = 1;
->   	}
->   
-> @@ -2092,7 +2094,7 @@ int main(int argc, char **argv)
->   	if (err) {
->   		fprintf(stderr, "populate program: (%s) %s\n",
->   			bpf_file, strerror(errno));
-> -		return 1;
-> +		goto out;
+When dereference ca->bucket_gens, we are expecting one of the three
+locks to be hold if ca->fs is not NULL.
 
-This looks good to me.
+This patch acquires mark_lock before entering __mark_pointer()
 
->   	}
->   	running = 1;
->   
-> @@ -2109,7 +2111,8 @@ int main(int argc, char **argv)
->   		free(options.whitelist);
->   	if (options.blacklist)
->   		free(options.blacklist);
-> -	close(cg_fd);
-> +	if (cg_fd >= 0)
+Tested on:
 
-Why is this check necessary?
-> +		close(cg_fd);
+commit:         34afb82a Merge tag '6.10-rc6-smb3-server-fixes' of git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1492e87e980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=42a432cfd0e579e0
+dashboard link: https://syzkaller.appspot.com/bug?extid=e74fea078710bbca6f4b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15e2e87e980000
 
+Note: testing is done by a robot and is best-effort only.
+---
+ fs/bcachefs/buckets.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
->   	if (cg_created)
->   		cleanup_cgroup_environment();
->   	return err;
+diff --git a/fs/bcachefs/buckets.c b/fs/bcachefs/buckets.c
+index 743d57eba760..03147e46dc47 100644
+--- a/fs/bcachefs/buckets.c
++++ b/fs/bcachefs/buckets.c
+@@ -1033,8 +1033,14 @@ static int bch2_trigger_pointer(struct btree_trans *trans,
+ 
+ 	if (flags & BTREE_TRIGGER_transactional) {
+ 		struct bkey_i_alloc_v4 *a = bch2_trans_start_alloc_update(trans, bucket);
++
++		percpu_down_read(&c->mark_lock);
++
+ 		ret = PTR_ERR_OR_ZERO(a) ?:
+ 			__mark_pointer(trans, ca, k, &p.ptr, *sectors, bp.data_type, &a->v);
++
++		percpu_up_read(&c->mark_lock);
++
+ 		if (ret)
+ 			goto err;
+ 
 
-thanks,
--- Shuah
+---
+base-commit: 256abd8e550ce977b728be79a74e1729438b4948
+change-id: 20240709-bug10-6b354d193f20
+
+Best regards,
+-- 
+Pei Li <peili.dev@gmail.com>
+
 
