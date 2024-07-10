@@ -1,127 +1,97 @@
-Return-Path: <linux-kernel+bounces-247987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F4792D707
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:05:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1599C92D719
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A01E9B214E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:05:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 338321F23E18
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D861C1946DE;
-	Wed, 10 Jul 2024 17:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52312194C75;
+	Wed, 10 Jul 2024 17:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TB1BeChD"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f4JQkaJI"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A628234545
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 17:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1181946DE
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 17:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720631097; cv=none; b=s5Jbw9OlliusAVldKG2SWmc+jSQQOptYKcCAK9xkVMeG6hMyf0nj89Kn1PX3hvldbGL9qH3FqzU+eCGOn4PR36S3B/+gvu7Ju3HimKfat/Vn7Eb64iAqUkUUewLpQNUcU1unma0dtsiyeYubclAaHIPZYuNZfVumqbTCjspyxTQ=
+	t=1720631112; cv=none; b=JNv5ldIBVCFCpkyEYHby3DW4zmr33GS+7oWLW3sbSks6hZJ/dVxyNTBFcXUgjhvhA+pTFz1aedAO5aTNq0UcsYK5l4o+DPvw5zKV8FraeMbacHGm8lA9cNVKA9bYeSCT0GhzgQj5l+gy/2Vm9M/zZjrr+xWgmsl/t7I1Gge5S7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720631097; c=relaxed/simple;
-	bh=oq70z4/bCsrC1GoQvBoxOPOia/ExqElmdDJ/iZsXfL8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vB5/AOmUrahvezV+cfiLr7R4VXV8oxg+qlmj7wqnPrkZ+hTL43vWvNciK3BEk8godIc44XzRSxFQAQdavca/x6BL78dYpEVGlSUSxjoK3gqWPYUaXCuxiOvNenVPBdGCBpHZdhLuQEXdQml/RdrFx7JV9eWaq1DG24Kqr4TwgaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TB1BeChD; arc=none smtp.client-ip=209.85.208.44
+	s=arc-20240116; t=1720631112; c=relaxed/simple;
+	bh=IfcJkSc/LNwp9LlB29Us6vaIZxKEnh2p+SCln+tmuyI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=DeT795pRUfMPm90G7MzVDmZRm22sQRrZP85hf+Ix2p1MCg+Ox2rwQXzieQySJF+d/4J+scrMnAHI7vtAwwyNm5sgdOPx/yWPzpDe0OEPRErhhuhy9xN1UWHtrOCyfe7akbJezEfeDxwqz5wC1exLBAyMCjYq9fwcvV+nk9DOszs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ericchancf.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f4JQkaJI; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-58c92e77ac7so266a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 10:04:55 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ericchancf.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e03a544b9c8so10484797276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 10:05:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720631094; x=1721235894; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1HGeZAs5GCO0/ogUU/V9u51auuYtWzKSV+J+gDPs5AQ=;
-        b=TB1BeChDHW6vSnVRI/5kHSoCHullabm7gJQ8B/sVA71vlWgHTfigpyqjJ8WGjR4bgC
-         y+Y+SsWXzDiCivYqRr1IfKBImgLQsUc4ew+xQk+Xjw8X0SO5mHQA+5y1C940Dd8hFL25
-         eqtNo0BlH/H58pmNwi2b6ffDA8GNUIGW8c5TLCgi5S3D6z1gloUiAAJh+tNo/dTulMIr
-         nnf/tWDEfbaDIlTF9Uul5n5sGJSt1su5lO9xdISDIODoc0+Va3WOcwuQ/UK9iI8pLm7t
-         k64K0XjuGXp2c1n5YWr5lKJ9QxJI3HM7kB61aNljVpcNUofckiKgKbprRd8kGUsnFMGg
-         3+ew==
+        d=google.com; s=20230601; t=1720631110; x=1721235910; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cY/lfgDlHnS08Kow/zkoxri6JCWNBRfckkCZV0YNXKM=;
+        b=f4JQkaJI1QFykHYnMu4RSuWXFH0ZKrwRm5cqvM84MzIIvDU/y95O2KwyCddGpuZdi7
+         V61JUuMRXYgvfuXaQu+TNbfmW6XleovcKo95xlRVEbo/LGVW/NqTCcE+FeVfsVCTryeG
+         H+BYIwgXOI+uDL8rYt6y79gDdVo/lOJPEb4cTda0DMtndZ91Zk+muUGD4hlgKABrdACE
+         jCRavVfTmjzkJk6xuaPvEr0jdpPalI6e3bb4LWXutHdiee2XXmBtBO1+cznKo8Z4y+gE
+         +yh9jDa1nnHJ1cBhc6R6oAj+ewNwGhYHqkbE9VDn+RLkqraJauKzo3v2VjKzgoIXrVSM
+         fnOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720631094; x=1721235894;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1HGeZAs5GCO0/ogUU/V9u51auuYtWzKSV+J+gDPs5AQ=;
-        b=CtOjjeIbRo02T/IWDBUh9wHH/hxTimw5EvmGW2b2smkUIrKrcIlJj0xivrq7I86RHr
-         0nQ3nRHd+2RPeXe/2AyqZbLgcrlql3KBpKh6WPjKDdgW3AtpUCN7+9FFwIXRYORgxwOB
-         MLsGD6Y5dd7F1J+GppjPMr7+G7igKCM9jWKUcSHn4ethZbcTCBcYoeuwsu1jWCpIrcIn
-         7/KQwi+FV1FebCWx7rWONNHpYVO91FvTAPHnziSOkTY+HX9ih9DnD21B9yFBOOCu/Di0
-         RHJtXmYVocrhLvqBEJ8AKKkCxK/wJurDXM2+F0CiQBLUTSNzzsnHHboMVMeDf7LkebmC
-         kUJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaFABxskVL5QatWpJfimqCkGy/bMvMGByNSzqCDRr5bma1vfsaQmUGnmFgX9CWpeE5ZrzRPQdLyxGDYAUZQVLs1LvZmy/C8MALQUoP
-X-Gm-Message-State: AOJu0Yx83ByLfedvcbFSZ5gZKW/S4eCZdiv3zRgzmYTXaDdbAlhkzFNH
-	DZKrTP7JHXroZqPN2JS4dNVYWUohntlA+iQkafqHeLFvhyoyJ5wcAFr3lU66g4ldGyuKaiZz0q4
-	1/0wNvClSX8YlOiB8OKPUdGT0O3YkjLAQvlbQ
-X-Google-Smtp-Source: AGHT+IFY/CNV/3qrOH0Lh/APA9kMWu5yookxnY4Qhb2zRpXDPgqdWc1JKzZnJgXLhNnDQvH3c7i3SF5iReQ6xkV6bXo=
-X-Received: by 2002:a50:8716:0:b0:58b:15e4:d786 with SMTP id
- 4fb4d7f45d1cf-596f914a15amr216846a12.5.1720631093774; Wed, 10 Jul 2024
- 10:04:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720631110; x=1721235910;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cY/lfgDlHnS08Kow/zkoxri6JCWNBRfckkCZV0YNXKM=;
+        b=SnBcTHWgxb9e//CmsICoiap7c0oIBKZpH7Czsu6yQz+t8E8h9F7ILcr9H4tFbDJ70I
+         mTrY3h1WGbC2XoFBmo5S0h7cFe24HcIJLtJb51BhSwEqnnhbR9QmuDG52s6KwYzSvdNM
+         KFeJKZOpy5xRW9T1EixU4YWwduNvex3DynoB57B3EUqSl/KgJsFsBbDVXMVTpRNZsPHf
+         LA66YyKm4qlsXNpZMqRZBHJtYUFF+a3m2O+wFV0ORgOWmcl0baTHny+Cd42QEVDP6Gyj
+         9zyJwx/3hPdXoAhHhSnwzyzGv4ni0xc9xq9vW16MnaN99B8LpyeHpKjmcrtXjEjWPddJ
+         NoBw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmA3FpP+URmCG/gUI5W9SyAit0CCOSW7iPjAhd7vvdqgTog9EmPSXtFHaUnQCkzCjR6vEP6X1JcA8hCe+3lqdLv+//1OGbi/pM94Y6
+X-Gm-Message-State: AOJu0YxoFneqCzcklDC916zrHb705wcji6LIz3r5phwvi47TEoAhoHmR
+	U/DGE3A8+W3FQk5ti4remtM37EGbQBfUQZnD8s2fVqNlO4YNyb5kR9PbIMrBrUQSFLIjympIZmi
+	TqXKmqbRc9xxhMSCcwA==
+X-Google-Smtp-Source: AGHT+IGj8HtzaJx1AJHVLeKKYwrMAwK8N6nm3v4IK7iTRBO5uLo7bkOz+HhmrwwwdqMrcdtrCJ2Toe+er6l63gMY
+X-Received: from ericchancf.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:4139])
+ (user=ericchancf job=sendgmr) by 2002:a05:6902:2b0d:b0:e03:3c8c:e806 with
+ SMTP id 3f1490d57ef6-e041b07159cmr15222276.7.1720631110325; Wed, 10 Jul 2024
+ 10:05:10 -0700 (PDT)
+Date: Wed, 10 Jul 2024 17:04:48 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240709125433.4026177-1-leitao@debian.org> <CANn89iJSUg8LJkpRrT0BWWMTiHixJVo1hSpt2-2kBw7BzB8Mqg@mail.gmail.com>
- <Zo5uRR8tOswuMhq0@gmail.com>
-In-Reply-To: <Zo5uRR8tOswuMhq0@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 10 Jul 2024 10:04:39 -0700
-Message-ID: <CANn89iLssOFT2JDfjk9LYh8SVzWZv8tRGS_6ziTLcUTqvqTwYQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] netdevice: define and allocate &net_device _properly_
-To: Breno Leitao <leitao@debian.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, keescook@chromium.org, horms@kernel.org, 
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com, linux-hardening@vger.kernel.org, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Jiri Pirko <jiri@resnulli.us>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Johannes Berg <johannes.berg@intel.com>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, 
-	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+Message-ID: <20240710170448.1399967-1-ericchancf@google.com>
+Subject: [PATCH 0/3] kunit: Improve the readability and functionality of macro.
+From: Eric Chan <ericchancf@google.com>
+To: brendan.higgins@linux.dev, davidgow@google.com, rmoar@google.com
+Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, ericchancf@google.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 10, 2024 at 4:19=E2=80=AFAM Breno Leitao <leitao@debian.org> wr=
-ote:
->
-> Hello Eric,
->
-> On Tue, Jul 09, 2024 at 08:27:45AM -0700, Eric Dumazet wrote:
-> > On Tue, Jul 9, 2024 at 5:54=E2=80=AFAM Breno Leitao <leitao@debian.org>=
- wrote:
->
-> > > @@ -2596,7 +2599,7 @@ void dev_net_set(struct net_device *dev, struct=
- net *net)
-> > >   */
-> > >  static inline void *netdev_priv(const struct net_device *dev)
-> > >  {
-> > > -       return (char *)dev + ALIGN(sizeof(struct net_device), NETDEV_=
-ALIGN);
-> > > +       return (void *)dev->priv;
-> >
-> > Minor remark : the cast is not needed, but this is fine.
->
-> In fact, the compiler is not very happy if I remove the cast:
->
->         ./include/linux/netdevice.h:2603:9: error: returning 'const u8[]'=
- (aka 'const unsigned char[]') from a function with result type 'void *' di=
-scards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers=
-]
->          2603 |         return dev->priv;
->               |                ^~~~~~~~~
+This series let kunit macro more neat and clear.
+Fix comment and rename the macro.
+Also introduce new type of assertion marco for functionality.
 
-This is because of the =E2=80=98const=E2=80=99 qualifier of the parameter.
+Eric Chan (3):
+  kunit: Fix the comment of KUNIT_ASSERT_STRNEQ as assertion
+  kunit: Rename KUNIT_ASSERT_FAILURE to KUNIT_ASSERT for readability
+  kunit: Introduce KUNIT_ASSERT_MEMEQ and KUNIT_ASSERT_MEMNEQ macros
 
-This could be solved with _Generic() later, if we want to keep the
-const qualifier.
+ drivers/input/tests/input_test.c |  2 +-
+ include/kunit/assert.h           |  2 +-
+ include/kunit/test.h             | 71 ++++++++++++++++++++++++++++++--
+ 3 files changed, 70 insertions(+), 5 deletions(-)
+
+-- 
+2.45.2.803.g4e1b14247a-goog
 
