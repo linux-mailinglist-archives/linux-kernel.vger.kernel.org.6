@@ -1,113 +1,99 @@
-Return-Path: <linux-kernel+bounces-247943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5602692D684
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:33:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8FD992D687
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DE2C1F25777
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:33:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83C8E1F25CF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1863B195985;
-	Wed, 10 Jul 2024 16:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61AD01953BE;
+	Wed, 10 Jul 2024 16:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="qNJYuxlu"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gG3tV/qN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2D2194AF8;
-	Wed, 10 Jul 2024 16:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CCE6194A66;
+	Wed, 10 Jul 2024 16:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720628809; cv=none; b=d1XsUpJcr2DfDLKqVlNVwVq/mQ3n2sNfbqGUwO7764TTKPio3BIdqfVbjwK1CP2n3xA/GUkdug+X0folJ1E6S8euDQBvPywrD3kW/HaRu1mYU6rafsXNgLpQMtIKgL+LB3Gv3AN46rLsjFqaGfJybemui70DPlsAqYwaVBKx2AU=
+	t=1720628867; cv=none; b=SYrUtjaDhiU5qrnoFOs8wsAbjpiz7A7SZMHsFf4YdFc8OblXvGywss+M/nb5zngPbkIqwVWEWJF7u1SSheSNXlFElh8jH7vWE4D43iD7L3vrkdV8xiqdyZEc9lN7TtBRDKNXSqh62rxZ7btHsNtCfZ6bqW4Sil1nPcuYpMJSD/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720628809; c=relaxed/simple;
-	bh=f4AWJ4v7LBNJ1i5ZPwA6x/8HFvJo4c4qap3ClodWtdU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qgYRvYgGyo5BwRBC0ks50vBJi0sndN48tqJCOBk4RuKl5B563m3tIquKs0UZU5rsroGwOxWOijedv/NxgyrT58eBWAdSDh//xiTrlxz+jQTyorB4PQrN2I2/6zrmA7lT2S0Zb56XiUHZDEMakC4aelfMSoq+2zVywGPOW8gyVaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=qNJYuxlu; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1720628807; x=1752164807;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=f4AWJ4v7LBNJ1i5ZPwA6x/8HFvJo4c4qap3ClodWtdU=;
-  b=qNJYuxlumSVnHLPO1Cg+eE6WBb0QBpH/yL2Bi0n6rOU1JDfpm2ybe6PI
-   W8Sfewlpn9LMnzpomRs9q9P11XjtDqufuNZBMKaj4LibBCqFgou10x2cN
-   oY74klzkUw9mQaCZa+vXHiYuYITfu6gzkjGmeOl4pjDVQPf5bh3QtWdBv
-   kTw0ny14PxTe+krxphbHznDj7xHVMRePBlOSTF+GQUYf8qZcMg0CLB/1U
-   WM6T0a0uQP5uQBrsWOIQNYQow2bbMdWCVj1XeUBY1q0D7cYURLRAhTDbT
-   bjOwygj9nnJUPoqNdyKckaTpgPwwF5hoe5mhkNd9cGoPPy4DkPU88qHPi
-   A==;
-X-CSE-ConnectionGUID: XASOd4uNTD+x0ce+O9FQrA==
-X-CSE-MsgGUID: cLKmhQ2tRUKqBsKw0SCqzg==
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="29043742"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Jul 2024 09:26:45 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 10 Jul 2024 09:26:15 -0700
-Received: from ROU-LL-M43238.amer.actel.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Wed, 10 Jul 2024 09:26:12 -0700
-From: <nicolas.ferre@microchip.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Conor Dooley
-	<conor.dooley@microchip.com>, Andi Shyti <andi.shyti@kernel.org>, Rob Herring
-	<robh@kernel.org>, <devicetree@vger.kernel.org>
-CC: Claudiu Beznea <claudiu.beznea@tuxon.dev>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>, "Nicolas
- Ferre" <nicolas.ferre@microchip.com>
-Subject: [PATCH] dt-bindings: i2c: at91: Add sama7d65 compatible string
-Date: Wed, 10 Jul 2024 18:26:15 +0200
-Message-ID: <20240710162615.332888-1-nicolas.ferre@microchip.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1720628867; c=relaxed/simple;
+	bh=TaQWp+cfnQ4j1Bv5I03np4F0DZRpYrtGyDGXjqfU5eI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bojc8dqFYlr9IBTCRJB8bO4iteIVgjC/howa2yUmE4D384fwouUFBSGmqF0loPHz0iN+HbrLYRWaigcjV8D103bgxmXfFBjruXi8YpAr2WL2tV4ut/sblU4ldTGJMWJSz8qQtTAaZI6/9TIHRVopUA/+NAnNLW3KMrdRE/R7WXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gG3tV/qN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F25F6C32781;
+	Wed, 10 Jul 2024 16:27:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720628866;
+	bh=TaQWp+cfnQ4j1Bv5I03np4F0DZRpYrtGyDGXjqfU5eI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gG3tV/qNFxAOaFIVb8nvkjnNJs1m+LnG/+148o/J/s0l0Fu5XK71oplaIKs9jOhtr
+	 poW2L2TsEhdss3jbmP0LuPiRH6rF2gZV7YenfwhOA2cQIA179BFAGv9MONpezpahAy
+	 gMWicTb8KTiijROIKBn3t6e7sP9yPN5LqGcHe6AZ5e5Xz09aTM46ieqlnt46ZdelKg
+	 +6iMJzpUqikk/fqbKWIBNAbxYk12kLi2077S/I9TWq8ttUUB3+fXDaaycEiAdgVbmS
+	 vEJUBzMpu2HnD1sBOB212BI3HLweH99zn6gDQK28gAVPS9dv/Fy8nNP8Gi44etWQyd
+	 JRfi+x+/j/hAg==
+Date: Wed, 10 Jul 2024 10:27:45 -0600
+From: Rob Herring <robh@kernel.org>
+To: Tengfei Fan <quic_tengfan@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel@quicinc.com
+Subject: Re: [PATCH v2] dt-bindings: phy: qcom,usb-snps-femto-v2: Add
+ bindings for QCS9100
+Message-ID: <20240710162745.GA3212156-robh@kernel.org>
+References: <20240709-document_qcs9100_usb_hs_phy_compatible-v2-1-c84fbbafa9d6@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709-document_qcs9100_usb_hs_phy_compatible-v2-1-c84fbbafa9d6@quicinc.com>
 
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
+On Tue, Jul 09, 2024 at 08:46:19PM +0800, Tengfei Fan wrote:
+> Document the compatible string for USB phy found in Qualcomm QCS9100
+> SoC.
+> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+> platform use non-SCMI resource. In the future, the SA8775p platform will
+> move to use SCMI resources and it will have new sa8775p-related device
+> tree. Consequently, introduce "qcom,qcs9100-usb-hs-phy" to describe
+> non-SCMI based USB phy.
+> 
+> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> ---
+> Introduce support for the QCS9100 SoC device tree (DTSI) and the
+> QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+> While the QCS9100 platform is still in the early design stage, the
+> QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+> mounts the QCS9100 SoC instead of the SA8775p SoC.
+> 
+> The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
+> all the compatible strings will be updated from "SA8775p" to "QCS9100".
+> The QCS9100 device tree patches will be pushed after all the device tree
+> bindings and device driver patches are reviewed.
 
-Add compatible string for sama7d65. Like sama7g5, it currently binds to
-"microchip,sam9x60-i2c" compatible string for this driver.
+I'm not convinced this is not just pointless churn. Aren't we going to 
+end up with 2 compatible strings for everything? SCMI should just change 
+the providers, but otherwise the consumers are the same. I suppose if 
+clocks are abstracted into power-domains (an abuse IMO) then the 
+bindings change.
 
-Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
----
- Documentation/devicetree/bindings/i2c/atmel,at91sam-i2c.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+Why do we need to support both SCMI and not-SCMI for the same chip?
 
-diff --git a/Documentation/devicetree/bindings/i2c/atmel,at91sam-i2c.yaml b/Documentation/devicetree/bindings/i2c/atmel,at91sam-i2c.yaml
-index 588478862bd1..e61cdb5b16ef 100644
---- a/Documentation/devicetree/bindings/i2c/atmel,at91sam-i2c.yaml
-+++ b/Documentation/devicetree/bindings/i2c/atmel,at91sam-i2c.yaml
-@@ -26,6 +26,7 @@ properties:
-               - microchip,sam9x60-i2c
-       - items:
-           - enum:
-+              - microchip,sama7d65-i2c
-               - microchip,sama7g5-i2c
-               - microchip,sam9x7-i2c
-           - const: microchip,sam9x60-i2c
-@@ -78,6 +79,7 @@ allOf:
-               - atmel,sama5d4-i2c
-               - atmel,sama5d2-i2c
-               - microchip,sam9x60-i2c
-+              - microchip,sama7d65-i2c
-               - microchip,sama7g5-i2c
-     then:
-       properties:
--- 
-2.39.2
-
+Rob
 
