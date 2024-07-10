@@ -1,181 +1,197 @@
-Return-Path: <linux-kernel+bounces-247886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2655992D5ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:13:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6669592D5B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3C51288971
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:13:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6A92285452
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990B0196450;
-	Wed, 10 Jul 2024 16:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E94E194C6F;
+	Wed, 10 Jul 2024 16:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DAx1C/94"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I/jh//GD"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765F7195390;
-	Wed, 10 Jul 2024 16:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A14F1922C0
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720627848; cv=none; b=KhI0tvhCOZwpbLyxiyDIXV5CLwuw9/1FaE5NwP//kbCxX7sfSnyboBnQK4j3GkjrGsKn3nd4xqcJoFIKvRXON06S8gXf4F0OgoWCnYI34f3vzW/vAzH5oDoFlI2nNJpwfiKaZW2yQ6V2jJHZFucqEJkqiDAYJbdVoIKGfhtgGoE=
+	t=1720627622; cv=none; b=WCpnZ+Wra0TWMQDIvwIiQxHA6SmyKBvMfGUAoQ7gGwCpJfZY1Tg/9Utyec3+OWpBCEBtvQoLrXxlYOd0dwZJN1BoxPPJB7dU/yp0vmqARsUaasuWtiqTjrB7CU7Pfrv/whggHDAetmG85sNTOp+UTNmseINKygrqF/T97eFH1qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720627848; c=relaxed/simple;
-	bh=C6MFhZXeK/t1+ET0yvxa+dCt6aFMcL8iI+b6zXefigE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pgDlwKyreLUZ+5vPrU+0PkeLBSkQX9WwIsxqSJ2QurzDjjPng6PWNAh2EOu44k6gRDaBvQQTpGDkf9Hk3wghGwyPJ9YKA9Umw7ZSZNxvvJcd2yBgzokS4XfUq9tI9FDajXhuuhUikef+fcFTnK84BFONqAQnYa0QIFMjfxqPGaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DAx1C/94; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720627847; x=1752163847;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=C6MFhZXeK/t1+ET0yvxa+dCt6aFMcL8iI+b6zXefigE=;
-  b=DAx1C/94Hc/FkXszPlCBPaJw/gU3w/4dBu2KzzfPpZBl4EVCfCcDywyR
-   rgm3ELFDXcvVEkA1wprb5IVthvONkHL0GdP5UbDNRsOXd2bownhPT5jNt
-   us0sgDsIg8oMFBSE1W/qebQwMUL5zbzXfECFVU1TQk1bLGS5e3XA8QG/M
-   L5M2w7fLF3xZe5oBixv1iardyKn53PjjvuMhQe7c1Jp710l7GFBFzqRYM
-   e8qSLOAwNt6RMt8kSBV4m0cgQYePSn1dVo8phXn2wqyy98sBvUF7nGm5r
-   8ylSmACx9vVdeaXnLZdkm8rrl/BmcwGisAEfy19k2GIeV6kki+6dgBvdG
-   w==;
-X-CSE-ConnectionGUID: zh7ihOc7Sh6QcPVm+gnxLA==
-X-CSE-MsgGUID: e8Kc0fY6QvCN2gTjIg7mVg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="18103352"
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="18103352"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 09:10:46 -0700
-X-CSE-ConnectionGUID: v5X2TLgRSNWA649daTdhnw==
-X-CSE-MsgGUID: 5Ro2g62hR2Sg/FQoxkLaOg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="53085454"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by orviesa003.jf.intel.com with ESMTP; 10 Jul 2024 09:10:34 -0700
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Xiongwei Song <xiongwei.song@windriver.com>,
-	Xin Li <xin3.li@intel.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Brijesh Singh <brijesh.singh@amd.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Tony Luck <tony.luck@intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Alexey Kardashevskiy <aik@amd.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Sandipan Das <sandipan.das@amd.com>,
-	Breno Leitao <leitao@debian.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Yian Chen <yian.chen@intel.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Hou Tao <houtao1@huawei.com>,
-	Juergen Gross <jgross@suse.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Kees Cook <kees@kernel.org>,
-	Eric Biggers <ebiggers@google.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Yuntao Wang <ytcoode@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Tejun Heo <tj@kernel.org>,
-	Changbin Du <changbin.du@huawei.com>,
-	Huang Shijie <shijie@os.amperecomputing.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org
-Subject: [PATCH v4 11/16] x86/vsyscall: Disable LASS if vsyscall mode is set to EMULATE
-Date: Wed, 10 Jul 2024 19:06:47 +0300
-Message-ID: <20240710160655.3402786-12-alexander.shishkin@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240710160655.3402786-1-alexander.shishkin@linux.intel.com>
-References: <20240710160655.3402786-1-alexander.shishkin@linux.intel.com>
+	s=arc-20240116; t=1720627622; c=relaxed/simple;
+	bh=BnK96PQxtuG60DRvHzoqWDIQOXQm+SPpSv1Nr+RugEg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=CY9wUS9qbMBFbboB/ebBHQNr63ClsKa49yXGfXO0v8xBnRi7uuhl5VLppOMSb/xOq+FwnqQRIwDoBG+9QTBftPCUR71tKhg8Sy5Jo4A2m8AATDlhI3V/SV1wuVbuA1v6IFX2Ma0uNSC9FtY4yMDyUCDT/vWFvl5NxuT2EEPiB2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I/jh//GD; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-704473c0698so708282a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:07:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720627620; x=1721232420; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yn9Zi1KqPp5aaxLNBj+DM807b8H8qBITowNXvBGV8jI=;
+        b=I/jh//GDiIVsC0Wm0qTgC0/hlNDLMLMshHaEu6ert/tDJU1FoYSaF+BhUcYYYGhAVf
+         J+8e5xBF6KkG6zw8VPbTC4IxiZFAfWJLjdkFwlz6gN/LA3JuIyyOVopsE92BYHdRglwE
+         SDN48lKU5j7PozGHaC8aW1Hsxch2lUZfMj2lDpMq5t3Q6JAPqI2HfLuNjgq3JsuMCOE7
+         tnzHMsWxt4/xQ8jra/9o4GN35AggT48uuwGEZqcwGJ+PLUsHW/Ihp7BUa4q2yqRAacad
+         0qLQgOnLaZIy+wByW0bgbsmdMti3MLJcj4WhR/WBVYTAPHKSjDiBQlQK/Vg+Yjw5n0Jt
+         HnhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720627620; x=1721232420;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Yn9Zi1KqPp5aaxLNBj+DM807b8H8qBITowNXvBGV8jI=;
+        b=luqOpSyAOGb4Kus3MgcMwRfpjM2dOApSL0ktYcZkOF3gObJY+6JAtZB47U6hMvk6f4
+         /FkiVVdBr/UmQWrt4G/FeepKr1H6H2MwIP57fDMtMuMecadMulZB1k0bKhy8h+5p9Evf
+         RYf1PIRb0JK8XQhpyMnktLTW5tiHVmrpOAagkS40qJAq8xdCfch4epbUnP0M2Q5TtshU
+         aGvqKavUCTAdKq/A//0O0gxsRwx81zMMdLyBwJJ7yDF8OAzLPQwEkN9Kc9S1NXS2t01E
+         /HL9UwArMKfT0EyGJTV5JdV5XN5bn7lz+7/6XVkA81l8QRRxcWjV435UlgnxbDGIxNaZ
+         nEFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNwUy09xNAMPAnjCVvUuA/At0IAE8i0Vqow/dvxgcpj8vmSX6TI9zwGcyP0HF3hkRilcXR58E5jH8cQCDr+6d66lGjdIf9CJJNpdDq
+X-Gm-Message-State: AOJu0YwVwzG7dEkbWi5jIxJi19PxMqa9LklSEzDsF9ALqMvWVI0UmmKU
+	x5383kFS77c5D8VnxOpk46QTxK0SpPJ2i6mBRwRJhQrX64UvoVojyhA3EQzipA5MvH6FBgzBKdV
+	eiZuAu0PzIAWOAti9NmxiQTvd/s3gIIBck/3r
+X-Google-Smtp-Source: AGHT+IFZMhd3IwcTT5MRRD5rKcqIqs3l1YV7f+9GXdgWrMHusgkuEPHllYjtToXd2RmT45movpPujJPp8yOAIEehbh8=
+X-Received: by 2002:a9d:6ac7:0:b0:701:ff2a:e50c with SMTP id
+ 46e09a7af769-70375a07e4dmr6764092a34.13.1720627619855; Wed, 10 Jul 2024
+ 09:06:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240704182718.2653918-1-Liam.Howlett@oracle.com>
+ <20240704182718.2653918-3-Liam.Howlett@oracle.com> <f9b7c816-b0a4-4e9c-a5c6-0cc5990e56d2@lucifer.local>
+ <fftle4xpq4vqskgf4tdlczs3wnlzdoj4obhmmsj4wlc6sylo7i@xzeyqg5kvxsk>
+In-Reply-To: <fftle4xpq4vqskgf4tdlczs3wnlzdoj4obhmmsj4wlc6sylo7i@xzeyqg5kvxsk>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 10 Jul 2024 09:06:48 -0700
+Message-ID: <CAJuCfpEkpXp-TsU=we-nH=9+QzN8Cnu5Xev9we=ZQeKvLASd-Q@mail.gmail.com>
+Subject: Re: [PATCH v3 02/16] mm/mmap: Introduce abort_munmap_vmas()
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
+	sidhartha.kumar@oracle.com, "Paul E . McKenney" <paulmck@kernel.org>, 
+	Bert Karwatzki <spasswolf@web.de>, Jiri Olsa <olsajiri@gmail.com>, linux-kernel@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Sohil Mehta <sohil.mehta@intel.com>
+On Fri, Jul 5, 2024 at 11:12=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+>
+> * Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [240705 13:02]:
+> > On Thu, Jul 04, 2024 at 02:27:04PM GMT, Liam R. Howlett wrote:
+> > > Extract clean up of failed munmap() operations from
+> > > do_vmi_align_munmap().  This simplifies later patches in the series.
+> > >
+> > > Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 
-The EMULATE mode of vsyscall maps the vsyscall page into user address
-space which can be read directly by the user application. This mode has
-been deprecated recently and can only be enabled from a special command
-line parameter vsyscall=emulate. See commit bf00745e7791 ("x86/vsyscall:
-Remove CONFIG_LEGACY_VSYSCALL_EMULATE")
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 
-Fixing the LASS violations during the EMULATE mode would need complex
-instruction decoding since the resulting #GP fault does not include any
-useful error information and the vsyscall address is not readily
-available in the RIP.
 
-At this point, no one is expected to be using the insecure and
-deprecated EMULATE mode. The rare usages that need support probably
-don't care much about security anyway. Disable LASS when EMULATE mode is
-requested during command line parsing to avoid breaking user software.
-LASS will be supported if vsyscall mode is set to XONLY or NONE.
-
-Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
----
- arch/x86/entry/vsyscall/vsyscall_64.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/vsyscall_64.c
-index 97608883b4b4..7c845c1db3b4 100644
---- a/arch/x86/entry/vsyscall/vsyscall_64.c
-+++ b/arch/x86/entry/vsyscall/vsyscall_64.c
-@@ -36,6 +36,7 @@
- #include <asm/vsyscall.h>
- #include <asm/unistd.h>
- #include <asm/fixmap.h>
-+#include <asm/tlbflush.h>
- #include <asm/traps.h>
- #include <asm/paravirt.h>
- 
-@@ -63,6 +64,13 @@ static int __init vsyscall_setup(char *str)
- 		else
- 			return -EINVAL;
- 
-+		if (cpu_feature_enabled(X86_FEATURE_LASS) &&
-+		    vsyscall_mode == EMULATE) {
-+			cr4_clear_bits(X86_CR4_LASS);
-+			setup_clear_cpu_cap(X86_FEATURE_LASS);
-+			pr_warn_once("x86/cpu: Disabling LASS support due to vsyscall=emulate\n");
-+		}
-+
- 		return 0;
- 	}
- 
--- 
-2.43.0
-
+> > > ---
+> > >  mm/mmap.c | 25 ++++++++++++++++++++-----
+> > >  1 file changed, 20 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/mm/mmap.c b/mm/mmap.c
+> > > index 28a46d9ddde0..d572e1ff8255 100644
+> > > --- a/mm/mmap.c
+> > > +++ b/mm/mmap.c
+> > > @@ -2586,6 +2586,25 @@ struct vm_area_struct *vma_merge_extend(struct=
+ vma_iterator *vmi,
+> > >                      vma->vm_userfaultfd_ctx, anon_vma_name(vma));
+> > >  }
+> > >
+> > > +/*
+> > > + * abort_munmap_vmas - Undo any munmap work and free resources
+> > > + *
+> > > + * Reattach detached vmas, free up maple tree used to track the vmas=
+.
+> > > + */
+> > > +static inline void abort_munmap_vmas(struct ma_state *mas_detach)
+> > > +{
+> > > +   struct vm_area_struct *vma;
+> > > +   int limit;
+> > > +
+> > > +   limit =3D mas_detach->index;
+> >
+> > This feels like a change to existing behaviour actually, I mean a sensi=
+ble
+> > one - as you are not just walking the tree start-to-end but rather only
+> > walking up to the point that it has been populated (assuming I'm not
+> > missing anything, looks to me like mas_for_each is _inclusive_ on max).
+>
+> This is not the main tree, but the detached tree.  It only contains the
+> vmas that are going to be freed (or, rather aborted from being freed).
+>
+> I see what you mean that the end in the abort code below would be one
+> beyond the tree walk.  The new abort code uses the index (from the
+> previous write) as the limit.
+>
+> All that really matters is that we go to a number high enough to cover
+> all vmas that were detached.  I used 'end' in the below code because I
+> knew it would cover all of the vmas added (we actually start at index
+> 0).
+>
+> The value of 'mas_detach->index' is used in the new code because I knew
+> that's as far as I had to go, and I could limit the arguments passed
+> to the function.
+>
+> I think that I'll actually change limit to ULONG_MAX in another revision
+> because I like that better than expecting the index to have not been
+> touched by others.
+>
+> >
+> > Maybe  worth mentioning in commit msg?
+>
+> Yes, good idea.  Thanks for catching this.
+>
+> >
+> > > +   mas_set(mas_detach, 0);
+> > > +   /* Re-attach any detached VMAs */
+> > > +   mas_for_each(mas_detach, vma, limit)
+> > > +           vma_mark_detached(vma, false);
+> > > +
+> > > +   __mt_destroy(mas_detach->tree);
+> > > +}
+> > > +
+> > >  /*
+> > >   * do_vmi_align_munmap() - munmap the aligned region from @start to =
+@end.
+> > >   * @vmi: The vma iterator
+> > > @@ -2740,11 +2759,7 @@ do_vmi_align_munmap(struct vma_iterator *vmi, =
+struct vm_area_struct *vma,
+> > >  userfaultfd_error:
+> > >  munmap_gather_failed:
+> > >  end_split_failed:
+> > > -   mas_set(&mas_detach, 0);
+> > > -   mas_for_each(&mas_detach, next, end)
+> > > -           vma_mark_detached(next, false);
+> > > -
+> > > -   __mt_destroy(&mt_detach);
+> > > +   abort_munmap_vmas(&mas_detach);
+> > >  start_split_failed:
+> > >  map_count_exceeded:
+> > >     validate_mm(mm);
+> > > --
+> > > 2.43.0
+> > >
+> >
+> > This looks fine though, feel free to add:
+> >
+> > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>
+> Thanks.
+>
 
