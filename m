@@ -1,126 +1,116 @@
-Return-Path: <linux-kernel+bounces-248241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F6B92DA83
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:02:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D828492DA7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:01:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38DC7284F03
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:02:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66C8CB23897
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF0D12A14C;
-	Wed, 10 Jul 2024 21:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3918712A16D;
+	Wed, 10 Jul 2024 21:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="DiaSjFal"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="K7GuTBHk"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B19681723
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 21:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D8739FCF
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 21:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720645318; cv=none; b=QGts1baz6T5+axnx0jhFWGbWLqiueUrEDzhrRloyRqUKRxTLRnaYDY1O5Yo7Dko81/M7DFlgsSYWCsMizCMpL1jNFQcfLg0Uecv+lc5zGD9APxW1ZIL5L12nWra7P14GM3Ot3GzLFJj6CpvzSxblfOJkTNWKZIzdShNZiuNRQRY=
+	t=1720645282; cv=none; b=HaaOt6xjVrwvrFbVLvs5r1ZthRUkFJNmhNJ5JMFqPfDXHRXINstQJLPubCy1zOUs9zxnLjhK/aEDdEHiZvLeV/1PrJ3sK2Zw5JqzMOja/LUca0ygGx23NGBzJHgfN9uUh/AQmhlbNKKRDEJ9hNALY9CSUCKMZ8XwcY3Y9mnAv+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720645318; c=relaxed/simple;
-	bh=uJjXrGcMu8RjpDfGGmOQVnAvn8BDTyPZX6ZiQktuOuk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K4Q6vREob3P4ZUwwLkr/LweI1YMrMGhnPRDuSAncXjnuzPww2Fwp9D+jHhCmChX2wMZFOnUtX15qRAJozcDH1T0LtYAVgJf7a37RiGR3pwpe5ZS7aMm2vw0iRx7tf0hH0ujinUEVazqlY0Y/5oQkzS2GewG0dj1QYpLU2almWIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=DiaSjFal; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ee91d9cb71so1854261fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:01:57 -0700 (PDT)
+	s=arc-20240116; t=1720645282; c=relaxed/simple;
+	bh=YPDmmNoAUyXwZHXSht6VtzUcGLW+qpswXPd+aTbq5ZE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jF5vUHTz7V3QypB+2QXo/RBGAnlCzdGD0ywVH4VpEN/CKdaHE/i0KbxfEKwsH4gxU6d5IdHNFmM1UCwK9FBI+6lFCf2xQ6I7H9Y+z2xgWJ+++ScYNqC9qoWneBChUY8rtFiMS4bByR6qTC7OhftyWYSJM0+S6Lplgr6u3BfxmmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=K7GuTBHk; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-804bc63afe2so1024339f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:01:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1720645316; x=1721250116; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vfPD6oQM4WTY/ZUL1ljka0zg8gHP6mHHiU2gRkoeXcY=;
-        b=DiaSjFalN/F50wahFAXbNwCw3+mnaxE7zBhHQEp5D125IWb4rYLvFrziRs3/zMCwZe
-         4c68ZuJ7cG/yAuuLQz9RDo9P+cb3k+ZKcFI1e5UBBlYWMDcmxPjLwu4fljqbmZ049/Sv
-         g84Tiqv2IWV/Uazx8R7Fhwkr6bD+Yhn3eQUWrJvWJiIZ6gB1h4noQUP6JQWU+81kQ7I5
-         LRtx3yr7FhvefY2Z1aezoNbFWQe5sDvvezJubf0Swbbqc7Nw/d0m3hJUhhrm7EFpplsS
-         +Qtw5EziPq0PydbsXNRq4NsRIvDA2drtZuUZgLXZa+uVtmNpT9UHCbzPY50ZPZIvUHj/
-         +7MA==
+        d=linuxfoundation.org; s=google; t=1720645280; x=1721250080; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FkmU4c0f3mtYkwmFpfIN45QWoWLCvMlQ38MMmzJf92U=;
+        b=K7GuTBHkVCeQUSh0C2a/WqJGBRY4cK9DW15NyX7HvqZQJ7mvQ40+cXtS7ULDrsQaux
+         61tZI6u98GGLay+7exNS7K3ecckPywvxZoQiC3WiGVQNf60XZI/aLEtPnyL/IwIrPyfK
+         D8uOhxlEzKJVLkyyb013m3lu83GmW2ZAPAYco=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720645316; x=1721250116;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vfPD6oQM4WTY/ZUL1ljka0zg8gHP6mHHiU2gRkoeXcY=;
-        b=G1SjoUARa7BjLRvsA+/+75CdlRz1gRTijPpYxWsNTF9uQBa2IpTjqeAEZqnZeMswLK
-         cYEO3R9GyR7Efejq3ApnPsByeh1qI80ncaG177p8aaJAghqZfRSBa+XM9j8Henps35Fq
-         zR/ZoADZb+oa0+mFAO9DpxRflIE1sjNmfuc06HflfnHBIYzTYIr7Xobp/aYz86QpTyZO
-         tLtNHR4nLoBBKQaxkHMiVS7Hjk6napmP6OLQIMutue0gCDOvmGzt5JG8IvFxF9Pc8Szu
-         IIxy9/izs538FMd4+Md0m0SNeSRC4N7J4Yu26nGPg5cc1jhEjtO7EPNMufUTLux5dAu9
-         jR/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUcxgofoqwT2EOVI3YU4zjw9AbCg0W9/hiqQdQvplq5xbYrj7qxfjE4JRhykk8w0jzs8ZoKFE7fkwBEMwnXFnGHaIxmXfa0XWxacH9m
-X-Gm-Message-State: AOJu0YxUEr6zHDEoSRLTfu3vN+LEoPV7T1tyZNcMi4xsWORvown5qWap
-	Ry4dplBlwCpU2B+zZOraG0ow/2cnQ53Mv+WfvWCyqbteVmz5V4t2LR6r2VHTMAY=
-X-Google-Smtp-Source: AGHT+IGvQA+P7LFh+KIoLHnBwWndid7fZ5r4y7e3S09VhX9Fpm8r0gitrY3HYtpl80Rj2AdHvdq33Q==
-X-Received: by 2002:a2e:8081:0:b0:2ee:4e67:85ec with SMTP id 38308e7fff4ca-2eeb30bc9d4mr43078141fa.5.1720645315622;
-        Wed, 10 Jul 2024 14:01:55 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-82-135-80-26.dynamic.mnet-online.de. [82.135.80.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6f5a27sm92480685e9.23.2024.07.10.14.01.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 14:01:55 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: thierry.reding@gmail.com,
-	mperttunen@nvidia.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	jonathanh@nvidia.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] drm/tegra: hub: Use fn parameter directly to fix Coccinelle warning
-Date: Wed, 10 Jul 2024 23:00:35 +0200
-Message-ID: <20240710210034.796032-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1720645280; x=1721250080;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FkmU4c0f3mtYkwmFpfIN45QWoWLCvMlQ38MMmzJf92U=;
+        b=EtWVzYgLcWzjMZxjsl/p4R4CWbGbU7QM3G4M58x4vm3RsxQdOhwCV2c//VKSNG7akC
+         jP9DrPt3HFESxnfVjygqiAffsSeJ9jS70wHb63ZlSFdrF9FbU72vBXxBFSJDULraTo4R
+         wkUMwd6guRR3rImtaDYcZSCE0i8kHae4lZLNC7O3yIvS/EKJd2gsxD3GhV+UXQyrGnLv
+         fKb8B9cIBCT/WlTRWNoev2voyg4ZVkC9aO1FlS6VsLoxoEzZf7NeuvD5PFu7TZv2QPYp
+         wZ5D6CVywMibJHP4P2sAWETmkzVEssNp7YYPCWsv6k5Rne3sW+3x7VD5YauUkFKCOPgW
+         CPbA==
+X-Forwarded-Encrypted: i=1; AJvYcCXYDzme1DRwl+2EFEp3R2xTYsoY2G0aXtoyYbR/U6DEiJst8cgDlTs4U/+KFxuuK9WrrzOyPh/F1WKCFXfThXrG4XwZLyXxlPBmAvZJ
+X-Gm-Message-State: AOJu0YwiugTjr5AwmQarx59cxeFx618URd5z80OmhYLRAYE5JTNYBIPY
+	e3GfS9RPD9sD37l1rXERQ3XVNglt6iMTLnKqsYzr6o1BdmiEAJFi/I22zUdL42Q=
+X-Google-Smtp-Source: AGHT+IEMIw9ChT8Chrl80uN4BKJnJvv472LLG6KXSZMG/KiVRYehpKZ3nU8JHUAAO4irZmzBbux4MA==
+X-Received: by 2002:a05:6602:6199:b0:7f3:d3ed:1ca3 with SMTP id ca18e2360f4ac-80001930275mr817986139f.1.1720645279844;
+        Wed, 10 Jul 2024 14:01:19 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c0b1c1385esm1388311173.150.2024.07.10.14.01.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jul 2024 14:01:19 -0700 (PDT)
+Message-ID: <561a35cc-4b66-4755-8662-805f870471e4@linuxfoundation.org>
+Date: Wed, 10 Jul 2024 15:01:18 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests:Fix printf format string in kselftest_harness.h
+To: Zhu Jun <zhujun2@cmss.chinamobile.com>, shuah@kernel.org
+Cc: kees@kernel.org, luto@amacapital.net, wad@chromium.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240710032813.3782-1-zhujun2@cmss.chinamobile.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240710032813.3782-1-zhujun2@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The function parameter out can be used directly instead of assigning it
-to a temporary u64 variable first.
+On 7/9/24 21:28, Zhu Jun wrote:
+> '%u' in format string requires 'unsigned int' in __wait_for_test()
+> but the argument type is 'signed int'.
+> 
+> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+> ---
+>   tools/testing/selftests/kselftest_harness.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+> index b634969cbb6f..dbbbcc6c04ee 100644
+> --- a/tools/testing/selftests/kselftest_harness.h
+> +++ b/tools/testing/selftests/kselftest_harness.h
+> @@ -1084,7 +1084,7 @@ void __wait_for_test(struct __test_metadata *t)
+>   		}
+>   	} else {
+>   		fprintf(TH_LOG_STREAM,
+> -			"# %s: Test ended in some other way [%u]\n",
+> +			"# %s: Test ended in some other way [%d]\n",
+>   			t->name,
+>   			status);
+>   	}
 
-Remove the local variable tmp2 and use the parameter out directly as the
-divisor in do_div() to remove the following Coccinelle/coccicheck
-warning reported by do_div.cocci:
+The change is fine. I do want to see you find the problem in the
+changelog.
 
-  WARNING: do_div() does a 64-by-32 division, please consider using div64_u64 instead
-
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- drivers/gpu/drm/tegra/hub.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/hub.c b/drivers/gpu/drm/tegra/hub.c
-index f21e57e8599e..e0c2019a591b 100644
---- a/drivers/gpu/drm/tegra/hub.c
-+++ b/drivers/gpu/drm/tegra/hub.c
-@@ -521,12 +521,11 @@ static void tegra_shared_plane_atomic_disable(struct drm_plane *plane,
- 
- static inline u32 compute_phase_incr(fixed20_12 in, unsigned int out)
- {
--	u64 tmp, tmp1, tmp2;
-+	u64 tmp, tmp1;
- 
- 	tmp = (u64)dfixed_trunc(in);
--	tmp2 = (u64)out;
--	tmp1 = (tmp << NFB) + (tmp2 >> 1);
--	do_div(tmp1, tmp2);
-+	tmp1 = (tmp << NFB) + ((u64)out >> 1);
-+	do_div(tmp1, out);
- 
- 	return lower_32_bits(tmp1);
- }
--- 
-2.45.2
+thanks,
+-- Shuah
 
 
