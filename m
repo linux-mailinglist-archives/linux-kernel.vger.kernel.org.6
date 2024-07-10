@@ -1,225 +1,251 @@
-Return-Path: <linux-kernel+bounces-248087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E92CF92D841
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:28:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD6A792D844
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17F6E1C21213
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:28:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 957CE281993
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D2119645E;
-	Wed, 10 Jul 2024 18:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72786196434;
+	Wed, 10 Jul 2024 18:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UvU6NyC6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YrdI4Dx5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC381922E3;
-	Wed, 10 Jul 2024 18:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD43195FD5
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 18:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720636093; cv=none; b=t3dFtGuevibP4RKuLQDlwtjwGLABy/0ST+gUEdmG10RCm6glaTznrsJX1rthlFI+e4RlU9b0TGwlrZo62kShIrQl4JhzjhKAYWYtx06CW+QGLrHygP+/T4HSfC1xaZKPD6yxEUL3n3rw1yu/AqZbIpHi6DkAypBvG0+zkfpMBeM=
+	t=1720636117; cv=none; b=tDl07wI93ixC8VH04ppv1yKlphI8Er5IUN9VzsIujoDQB85gle3+iRvEKOc2p6Hi4EsuO2BVx7uEuyDZNfyTPbCvUzbTwoylLzyMwuZjPhiFQ3wePwJ5kMrkbyPApgKvdkOQAi1RupO6wTniwJD3Z5dIEJelW+9iwOc21iQtSog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720636093; c=relaxed/simple;
-	bh=PbMaBEL1Vn3w0nHRy4gywthrdx0lWu7HFhqULAUjVEQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O9Pmxww/HeRA810yWljaQpVrhSzQIQU6nzEGEX6uQjMe6t9919sURYA6HY5cBIzj4sDbvnVHLWTjH5zzgpAlcgNRi0GQzgX0e4wGkYKS2Xcawnwx8fR1WPzo8pEz3uSyMEdQlbT0h3g4F4ZGSwa5Kh74jMuyCcxm+N7G6fG2A1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UvU6NyC6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2D33C32781;
-	Wed, 10 Jul 2024 18:28:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720636093;
-	bh=PbMaBEL1Vn3w0nHRy4gywthrdx0lWu7HFhqULAUjVEQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UvU6NyC6n6BlKuA4+lMz9GvmSNdczbL4GlIU1Vlj32L2u2+fGLMjQrSxfNRxSnY0w
-	 u+QMzrP0KgOpVekTFJDTqLU8gpZW23h64170xdmE2sQdz/m7dwy52MdnKoey53dJLP
-	 R0YLR+tUbDS31gc4Max8kHksKS2N+ybbZqtvM6YsI+TgT0fcZPqhTAKNDuLGGU6b4w
-	 QGgcbCBVpzPT/2YJVNh3yJ9MT7u3furVwVKoPSpWQq7fU2V9BAwPyBS+1BYIOLBBjk
-	 efnAstd6iMz4rdXX6u0YoSny2uTLWV2AQgD9fxXNp1bkvmtYEI8prMzJpNaBsWYmBn
-	 blZJUA488qtFw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sRc30-00BJ5c-7F;
-	Wed, 10 Jul 2024 19:28:10 +0100
-Date: Wed, 10 Jul 2024 19:28:09 +0100
-Message-ID: <86ttgx2jba.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v9 13/39] KVM: arm64: Manage GCS registers for guests
-In-Reply-To: <Zo7B_sRyUyxv7xmO@finisterre.sirena.org.uk>
-References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
-	<20240625-arm64-gcs-v9-13-0f634469b8f0@kernel.org>
-	<86v81d2s5t.wl-maz@kernel.org>
-	<Zo7B_sRyUyxv7xmO@finisterre.sirena.org.uk>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1720636117; c=relaxed/simple;
+	bh=ZVpVZPoW5DhjzOavrR5GY0hpK7EfHLGxovPutWlyOEU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z2Pd6tew45oX4Pzp0LRS9v4202O+oG7rCyaaFeK0amldsojVhnITYXtjhfbSWNh48dgVOTS6+NBrenh7cRgrBO1Omm4kV4xALaJr77NKx8NZMxjWJy0R3cnLIGmQUD6YOnWXeb9+Ln4tqKbStyDt9s9Koa7ExVJiRnooMLsCPR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YrdI4Dx5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720636114;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qF8mAtiIKc1hNwFwVQgDd+xtcEIQ7/hxF8mGp9dv70U=;
+	b=YrdI4Dx5F9dXZMZHUXxcVE7ZjTTn4EPphi7Ers9DSnPV6qDxr8UJmTbzHQb0kwWVV26gDK
+	xk/HsgNQP4cRs4PycC7SRnkiX3YYswFscAebvmZO/atqy3W65bzZl3djv1NjFXRVQFBlNZ
+	jHEOneMsc04dKFhSLeCU7j8pEf51ZZg=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-347-kjVYtQYOOeyYt79GQJew1g-1; Wed,
+ 10 Jul 2024 14:28:30 -0400
+X-MC-Unique: kjVYtQYOOeyYt79GQJew1g-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7C03519560BF;
+	Wed, 10 Jul 2024 18:28:27 +0000 (UTC)
+Received: from [10.22.48.10] (unknown [10.22.48.10])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 93A2D3000181;
+	Wed, 10 Jul 2024 18:28:25 +0000 (UTC)
+Message-ID: <bea18088-0417-4bfc-b7aa-48489bb6a1db@redhat.com>
+Date: Wed, 10 Jul 2024 14:28:24 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, akpm@linux-foundation.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, arnd@arndb.de, oleg@redhat.com, ebiederm@xmission.com, shuah@kernel.org, rick.p.edgecombe@intel.com, debug@rivosinc.com, ardb@kernel.org, Szabolcs.Nagy@arm.com, kees@kernel.org, hjl.tools@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, fweimer@redhat.com, brauner@kernel.org, thiago.bauermann@linaro.org, ross.burton@arm.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH-cgroup v2] cgroup: Show # of subsystem CSSes in root
+ cgroup.stat
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Kamalesh Babulal <kamalesh.babulal@oracle.com>, Tejun Heo
+ <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+ Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240709132814.2198740-1-longman@redhat.com>
+ <1c0d9ee1-e80a-46da-a48d-2ab23dd04673@oracle.com>
+ <4291c0ed-bc37-46de-b081-271e8b299b1d@redhat.com>
+ <20240709180231.GA251628@cmpxchg.org>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240709180231.GA251628@cmpxchg.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed, 10 Jul 2024 18:16:46 +0100,
-Mark Brown <broonie@kernel.org> wrote:
-> 
-> [1  <text/plain; us-ascii (7bit)>]
-> On Wed, Jul 10, 2024 at 04:17:02PM +0100, Marc Zyngier wrote:
-> > Mark Brown <broonie@kernel.org> wrote:
-> 
-> > > +	if (ctxt_has_gcs(ctxt)) {
-> 
-> > Since this is conditioned on S1PIE, it should be only be evaluated
-> > when PIE is enabled in the guest.
-> 
-> So make ctxt_has_gcs() embed a check of ctxt_has_s1pie()?
-
-No. I mean nest the whole thing *under* the check for S1PIE.
-
-> 
-> > > +		ctxt_sys_reg(ctxt, GCSPR_EL1)	= read_sysreg_el1(SYS_GCSPR);
-> > > +		ctxt_sys_reg(ctxt, GCSCR_EL1)	= read_sysreg_el1(SYS_GCSCR);
-> > > +		ctxt_sys_reg(ctxt, GCSCRE0_EL1)	= read_sysreg_s(SYS_GCSCRE0_EL1);
-> 
-> > Why is this part of the EL1 context? It clearly only matters to EL0
-> > execution, so it could be switched in load/put on nVHE as well. And
-> > actually, given that the whole thing is strictly for userspace, why do
-> > we switch *anything* eagerly at all?
-> 
-> GCS can also be used independently at EL1 (and EL2 for that matter),
-> it's not purely for userspace even though this series only implements
-> use in userspace.  GCSPR_EL1 and GCSCR_EL1 control the use of GCS at
-> EL1, not EL0, and the guest might be using GCS at EL1 even if the host
-> doesn't.
+On 7/9/24 14:02, Johannes Weiner wrote:
+> On Tue, Jul 09, 2024 at 12:09:05PM -0400, Waiman Long wrote:
+>> On 7/9/24 11:58, Kamalesh Babulal wrote:
+>>> On 7/9/24 6:58 PM, Waiman Long wrote:
+>>>> The /proc/cgroups file shows the number of cgroups for each of the
+>>>> subsystems.  With cgroup v1, the number of CSSes is the same as the
+>>>> number of cgroups. That is not the case anymore with cgroup v2. The
+>>>> /proc/cgroups file cannot show the actual number of CSSes for the
+>>>> subsystems that are bound to cgroup v2.
+>>>>
+>>>> So if a v2 cgroup subsystem is leaking cgroups (usually memory cgroup),
+>>>> we can't tell by looking at /proc/cgroups which cgroup subsystems may be
+>>>> responsible.  This patch adds CSS counts in the cgroup_subsys structure
+>>>> to keep track of the number of CSSes for each of the cgroup subsystems.
+>>>>
+>>>> As cgroup v2 had deprecated the use of /proc/cgroups, the root
+>>>> cgroup.stat file is extended to show the number of outstanding CSSes
+>>>> associated with all the non-inhibited cgroup subsystems that have been
+>>>> bound to cgroup v2.  This will help us pinpoint which subsystems may be
+>>>> responsible for the increasing number of dying (nr_dying_descendants)
+>>>> cgroups.
+>>>>
+>>>> The cgroup-v2.rst file is updated to discuss this new behavior.
+>>>>
+>>>> With this patch applied, a sample output from root cgroup.stat file
+>>>> was shown below.
+>>>>
+>>>> 	nr_descendants 53
+>>>> 	nr_dying_descendants 34
+>>>> 	nr_cpuset 1
+>>>> 	nr_cpu 40
+>>>> 	nr_io 40
+>>>> 	nr_memory 87
+>>>> 	nr_perf_event 54
+>>>> 	nr_hugetlb 1
+>>>> 	nr_pids 53
+>>>> 	nr_rdma 1
+>>>> 	nr_misc 1
+>>>>
+>>>> In this particular case, it can be seen that memory cgroup is the most
+>>>> likely culprit for causing the 34 dying cgroups.
+>>>>
+>>>> Signed-off-by: Waiman Long <longman@redhat.com>
+>>>> ---
+>>>>    Documentation/admin-guide/cgroup-v2.rst | 10 ++++++++--
+>>>>    include/linux/cgroup-defs.h             |  3 +++
+>>>>    kernel/cgroup/cgroup.c                  | 19 +++++++++++++++++++
+>>>>    3 files changed, 30 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+>>>> index 52763d6b2919..65af2f30196f 100644
+>>>> --- a/Documentation/admin-guide/cgroup-v2.rst
+>>>> +++ b/Documentation/admin-guide/cgroup-v2.rst
+>>>> @@ -981,6 +981,12 @@ All cgroup core files are prefixed with "cgroup."
+>>>>    		A dying cgroup can consume system resources not exceeding
+>>>>    		limits, which were active at the moment of cgroup deletion.
+>>>>    
+>>>> +	  nr_<cgroup_subsys>
+>>>> +		Total number of cgroups associated with that cgroup
+>>>> +		subsystem, e.g. cpuset or memory.  These cgroup counts
+>>>> +		will only be shown in the root cgroup and for subsystems
+>>>> +		bound to cgroup v2.
+>>>> +
+>>>>      cgroup.freeze
+>>>>    	A read-write single value file which exists on non-root cgroups.
+>>>>    	Allowed values are "0" and "1". The default is "0".
+>>>> @@ -2930,8 +2936,8 @@ Deprecated v1 Core Features
+>>>>    
+>>>>    - "cgroup.clone_children" is removed.
+>>>>    
+>>>> -- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" file
+>>>> -  at the root instead.
+>>>> +- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" or
+>>>> +  "cgroup.stat" files at the root instead.
+>>>>    
+>>>>    
+>>>>    Issues with v1 and Rationales for v2
+>>>> diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+>>>> index b36690ca0d3f..522ab77f0406 100644
+>>>> --- a/include/linux/cgroup-defs.h
+>>>> +++ b/include/linux/cgroup-defs.h
+>>>> @@ -776,6 +776,9 @@ struct cgroup_subsys {
+>>>>    	 * specifies the mask of subsystems that this one depends on.
+>>>>    	 */
+>>>>    	unsigned int depends_on;
+>>>> +
+>>>> +	/* Number of CSSes, used only for /proc/cgroups */
+>>>> +	atomic_t nr_csses;
+>>>>    };
+>>>>    
+>>>>    extern struct percpu_rw_semaphore cgroup_threadgroup_rwsem;
+>>>> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+>>>> index c8e4b62b436a..48eba2737b1a 100644
+>>>> --- a/kernel/cgroup/cgroup.c
+>>>> +++ b/kernel/cgroup/cgroup.c
+>>>> @@ -3669,12 +3669,27 @@ static int cgroup_events_show(struct seq_file *seq, void *v)
+>>>>    static int cgroup_stat_show(struct seq_file *seq, void *v)
+>>>>    {
+>>>>    	struct cgroup *cgroup = seq_css(seq)->cgroup;
+>>>> +	struct cgroup_subsys *ss;
+>>>> +	int i;
+>>>>    
+>>>>    	seq_printf(seq, "nr_descendants %d\n",
+>>>>    		   cgroup->nr_descendants);
+>>>>    	seq_printf(seq, "nr_dying_descendants %d\n",
+>>>>    		   cgroup->nr_dying_descendants);
+>>>>    
+>>>> +	if (cgroup_parent(cgroup))
+>>>> +		return 0;
+>>>> +
+>>>> +	/*
+>>>> +	 * For the root cgroup, shows the number of csses associated
+>>>> +	 * with each of non-inhibited cgroup subsystems bound to it.
+>>>> +	 */
+>>>> +	do_each_subsys_mask(ss, i, ~cgrp_dfl_inhibit_ss_mask) {
+>>>> +		if (ss->root != &cgrp_dfl_root)
+>>>> +			continue;
+>>>> +		seq_printf(seq, "nr_%s %d\n", ss->name,
+>>>> +			   atomic_read(&ss->nr_csses));
+>>>> +	} while_each_subsys_mask();
+>>>>    	return 0;
+>>>>    }
+>>>>    
+>>> Thanks for adding nr_csses, the patch looks good to me. A preference comment,
+>>> nr_<subsys>_css format, makes it easier to interpret the count.
+>>>
+>>> With or without the changes to the cgroup subsys format:
+>>>
+>>> Reviewed-by: Kamalesh Babulal <kamalesh.babulal@oracle.com>
+>> Thanks for the review.
+>>
+>> CSS is a kernel internal name for cgroup subsystem state. Non kernel
+>> developers or users may not know what CSS is and cgroup-v2.rst doesn't
+>> mention CSS at all. So I don't think it is a good idea to add the "_css"
+>> suffix. From the user point of view, the proper term to use here is the
+>> number of cgroups, just like what "nr_descendants" and
+>> "nr_dying_descendants" are referring to before this patch. The only
+>> issue that I didn't address is the use of the proper plural form which
+>> is hard for cgroup subsystem names that we have.
+> It's not quite the same right? You could have 1 dying cgroup with
+> multiple zombie subsys states. At least in theory. It could be
+> confusing to add these counts without introducing the css concept.
 >
-> GCSCRE0_EL1 is for EL0 though, it ended up here mainly because it's an
-> _EL1 register and we are already context switching PIRE0_EL1 in the EL1
-> functions so it seemed consistent to follow the same approach for GCS.
-> The _el1 and _user save/restore functions are called from the same place
-> for both VHE and nVHE so the practical impact of the placement should be
-> minimal AFAICT.  Unlike PIRE0_EL1 GCSCRE0_EL1 only has an impact for
-> code runnning at EL0 so I can move it to the _user functions.
-
-Exactly. That's where it belongs, because we never execute EL0 while a
-vcpu is loaded. On the contrary, we can make use of a uaccess helper
-while a vcpu is loaded, and that makes a hell of a difference.
-
-And it makes a difference because it would allow the loading of
-EL0-specific context differently. We had this at some point, and it
-was a reasonable optimisation that we lost. I'm keen on bringing it
-back.
-
-> 
-> TBH I'm not following your comments about switching eagerly too here at
-> all, where would you expect to see the switching done?  You've said
-> something along these lines before which prompted me to send a patch to
-> only save the S1PIE registers if they'd been written to which you were
-> quite reasonably not happy with given the extra traps it would cause:
-> 
->    https://lore.kernel.org/r/20240301-kvm-arm64-defer-regs-v1-1-401e3de92e97@kernel.org
-> 
-> but I'm at a loss as to how to make things less eager otherwise.
+> I also wonder if it would be better to just report the dying css
+> instead of all of them. Live ones are 1) under user control and 2)
+> easy to inspect in cgroupfs. I can see a scenario for the
+> nr_descendants aggregation ("Oh, that's a lot of subgroups!"); and a
+> scenario for dying css ("Oh, it's memory state pinning dead groups!").
+> But not so much "Oh, that's a lot of live memory controlled groups!"
 >
-> > > @@ -2306,7 +2323,8 @@ static const struct sys_reg_desc sys_reg_descs[] = {
-> > >  		   ID_AA64PFR0_EL1_GIC |
-> > >  		   ID_AA64PFR0_EL1_AdvSIMD |
-> > >  		   ID_AA64PFR0_EL1_FP), },
-> > > -	ID_SANITISED(ID_AA64PFR1_EL1),
-> > > +	ID_WRITABLE(ID_AA64PFR1_EL1, ~(ID_AA64PFR1_EL1_RES0 |
-> > > +				       ID_AA64PFR1_EL1_BT)),
-> 
-> > I don't know what you're trying to do here, but that's not right. If
-> > you want to make this register writable, here's the shopping list:
-> 
-> > https://lore.kernel.org/all/87ikxsi0v9.wl-maz@kernel.org/
-> 
-> Yes, trying to make things writable.  I do see we need to exclude more
-> bits there and I'm not clear why I excluded BTI, looks like I forgot to
-> add a TODO comment at some point and finish that off.  Sorry about that.
-> 
-> In the linked mail you say you want to see all fields explicitly
-> handled, could you be more direct about what such explicit handling
+> I can't think of a good name for it though.
+>
+> nr_dying_memory_css is a mouthful
+>
+> nr_offline_memory?
+>
+> nr_zombie_memory?
+>
+> Should this be in debugfs?
+>
+I just have sent out a v3 patch that make this hierarchical and separate 
+out live and dying csses. Let me know if you have other suggestions.
 
-This emails enumerate, point after point, everything that needs to be
-done. I really cannot be clearer or more direct. This email is the
-clearer I can be, short of writing the code myself. And I have decided
-not to do it for once, unless I really need to. And as it turns out, I
-don't.
+Thanks,
+Longman
 
-> would look like?  I see a number of examples in the existing code like:
-> 
-> 	ID_WRITABLE(ID_AA64ZFR0_EL1, ~ID_AA64ZFR0_EL1_RES0),
-
-This is clear: Everything is writable, and there are no bits here that
-are otherwise conditional or unsupported.
-
-> 
-> 	ID_WRITABLE(ID_AA64ISAR0_EL1, ~ID_AA64ISAR0_EL1_RES0),
-
-Same thing.
-
-> 	ID_WRITABLE(ID_AA64ISAR1_EL1, ~(ID_AA64ISAR1_EL1_GPI |
-> 					ID_AA64ISAR1_EL1_GPA |
-> 					ID_AA64ISAR1_EL1_API |
-> 					ID_AA64ISAR1_EL1_APA)),
-
-This one needs fixing because of LS64, and I have an in-progress
-series for it.
-
-> which look to my eye very similar to the above, they do not visibliy
-> explictly enumerate every field in the registers and given that there's
-> a single mask specified it's not clear how that would look.  If
-> ID_WRITABLE() took separate read/write masks and combined them it'd be
-> more obvious but it's just not written that way.
-
-I don't really see what it would buy us, but never mind.
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
 
