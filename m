@@ -1,166 +1,111 @@
-Return-Path: <linux-kernel+bounces-247463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAF3892CFC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:51:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E2392D006
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75C2528B678
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:51:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 202DEB2C993
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9173E1514C6;
-	Wed, 10 Jul 2024 10:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cQ3cuRsj"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8CF18FDCF;
+	Wed, 10 Jul 2024 10:49:38 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274BE3C39
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 10:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF013C39;
+	Wed, 10 Jul 2024 10:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720608559; cv=none; b=mAFR79RJc+2RDShoOvjd8NSa8WqbnqOeS52snXmuMEFYcMp9c4jToSoDY8FDcGTC1A2IUCmLwjgiqR6OwH+Xu2HEOY0WEthFwlDy2b0UZVmjwogZudogrOT1zIX9qne8Y4IQLuAjYD+3nQmQf4VhXZf2MgKrM2SLDYZ1VRnG98o=
+	t=1720608577; cv=none; b=gK5HQKAuP16ufPmGbK8VM/3KPCKTMLInOulwUXX81vJyPbLn+6j3gzOZqbajLP5zGOcs0eGR31ohSXjCfL7R3let8cSailAy4BoyV5BvYELn0ahGaLHP44jygPHysqGPj4GzDNmZgWqU0WDsPQPT86TAgvNtEqDp4SJcRuov1rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720608559; c=relaxed/simple;
-	bh=bbaLeSmE37zgEmxjhsm3MgKlF7I7utb0zJojaDQSFPQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=shnzRIPN/sHaOAV14VnTrvHjj0/AkQdFgBH6xSB0ykZu2yJ2sRFdv2Mg9+TD8Hs2wetmIh2eG0wef6PObcLCTJUVjSXHwkAJ7m0ymROf7fdPhtO9sovLLAlMorfxJxy8Kx9yO+jKhKwc84Ux1oakwxW1+q6UMtTRbF1LHynvjZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cQ3cuRsj; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7527afa23cso770145566b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 03:49:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720608556; x=1721213356; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=p2SmmD8lFnK+3ph0iUIhMMBa+ayR7kGRg2lbUgLnUKk=;
-        b=cQ3cuRsjQjxzycuQulvSBpAp0d3dNgTkYHhxP+1pZxBhP1i9fh4PmwuvZKxu5TB8xb
-         bOQ9hKROK1reSQ9BnNmy78AMOtacNgWyRlXMXlLS83ywTp4TsIZOHVA3I8OX/k1+iuQz
-         MsWGzzEbowGRY1gBKm1OYiR+YWqjUAYkeByS3gAjGmtTjPZm6E4fya9udS2tJulVGkWd
-         IP+/2UGfRQUSdFu3oHmJ/lUMiRJsBTIAklLMBMoE0ydmOHrOKKjK+QuGjX8F8CSWPhPA
-         G1lvMRKgHu+srwd2aO/Z/SXNrBCJe5JKFNMKqawz7OUMgIBYCB2cdC03J6KV/c8QXqcF
-         tNRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720608556; x=1721213356;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p2SmmD8lFnK+3ph0iUIhMMBa+ayR7kGRg2lbUgLnUKk=;
-        b=IuqZfzG2yrbECz71hdKK8S9XXBlyYZi58tnI+BQEphVXanoNhaSlOg5U4GaNNgDovi
-         nry9obdH09XHuoy+QxKZdj3Wa3Nnd83fC9IjZTr2hY79aCjn5LY/nPXR+9Wig11+QieA
-         PAuJPAtuoHya8EE2Qbn6iKHqSKWNEvF2svIFRveFgw/plFx3p3SJD1PAxn7eh5antepG
-         yLg+Xm4sd2XKgf3FItZOgR3y44rRwJrtLHMJ4u3hAi3V0DK9tbAP5dESalTdGoXPT6MP
-         2FLyWUKS4bSM54/7bhtY+tBpxGG59OIQt0lyxEGQ+NI7eOLSnPXW1eRp3h5JS7h5Kgpp
-         QuKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsDrfJN0iZJCnapVKgmN35N4c4yLHJeAeOhjN+8nJfyLSULaE45Byi4OPHOP3KI5gcONCNhLuzd9rwRbphXR5bwI/GD40fFzkNyyxy
-X-Gm-Message-State: AOJu0Yz8TAYRnbXY0ForPfyMx92FxoWfwR/3RQv3PQy+k2CUXTVaNLyJ
-	c51XsSXa4HUr7q42zOSKKoevuLf5UKMPggJ9/KPf+F60D5i92MjHTVh61zvvc6g=
-X-Google-Smtp-Source: AGHT+IG3kAOB3GOzFDTrAkyUAM0HTc3HljgITzx2bz5AFyIbijHZglmfyD1oe5cVWg1XVEjLEK7DfA==
-X-Received: by 2002:a17:907:7e9c:b0:a6f:e3cf:2b8e with SMTP id a640c23a62f3a-a780b89dd3bmr501964266b.76.1720608556339;
-        Wed, 10 Jul 2024 03:49:16 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a856dd6sm148649466b.180.2024.07.10.03.49.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jul 2024 03:49:16 -0700 (PDT)
-Message-ID: <a4deabfa-1366-47ef-993f-2fae3e206a44@linaro.org>
-Date: Wed, 10 Jul 2024 12:49:13 +0200
+	s=arc-20240116; t=1720608577; c=relaxed/simple;
+	bh=mTV/Bxn5YrSb8vb6gm6dEmvdfCiglcs/3pLGoW2b1dM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aH1jSS06HQJAMA4ks7b2eNGI3q3HnlaguCtIBM5qjyHitsZ87nnPlrpwjtvSWkT7tkxvacmWEmo39DlR+dSpHj/s4aUgWM5FNwUhizzhGenmJ7jqbMOUN0Vbhhfuk+1eD+La+5B1IegojL3WByrrrDjlirBI3h47AKrdw3OvCtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0F58C32781;
+	Wed, 10 Jul 2024 10:49:34 +0000 (UTC)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Bibo Mao <maobibo@loongson.cn>
+Cc: kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [GIT PULL] LoongArch KVM changes for v6.11
+Date: Wed, 10 Jul 2024 18:49:23 +0800
+Message-ID: <20240710104923.2569660-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] arm64: dts: qcom: ipq5332: Add icc provider
- ability to gcc
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, djakov@kernel.org,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20240709063949.4127310-1-quic_varada@quicinc.com>
- <20240709063949.4127310-4-quic_varada@quicinc.com>
- <cef54c07-4ecb-44bd-ad7c-aea475b89ffb@linaro.org>
- <Zo5lfDVVdgZ/iwi3@hu-varada-blr.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <Zo5lfDVVdgZ/iwi3@hu-varada-blr.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10.07.2024 12:42 PM, Varadarajan Narayanan wrote:
-> On Tue, Jul 09, 2024 at 11:53:41AM +0200, Konrad Dybcio wrote:
->> On 9.07.2024 8:39 AM, Varadarajan Narayanan wrote:
->>> IPQ SoCs dont involve RPM in managing NoC related clocks and
->>> there is no NoC scaling. Linux itself handles these clocks.
->>> However, these should not be exposed as just clocks and align
->>> with other Qualcomm SoCs that handle these clocks from a
->>> interconnect provider.
->>>
->>> Hence include icc provider capability to the gcc node so that
->>> peripherals can use the interconnect facility to enable these
->>> clocks.
->>>
->>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->>> ---
->>
->> Doesn't the USB host need to have its path described to keep working?
-> 
-> Presently, USB host enables GCC_SNOC_USB_CLK directly using
-> the clocks/clock-name entries. So it is not dependent on ICC.
-> 
-> Shall I update the USB DT node to use interconnects now itself,
-> or wait until this IPQ5332 ICC enablement series is approved?
-> Please let me know.
+The following changes since commit 256abd8e550ce977b728be79a74e1729438b4948:
 
-Definitely so. Now that you registered that clock with the
-interconnect framework, the current usage is essentially
-circumventing it..
+  Linux 6.10-rc7 (2024-07-07 14:23:46 -0700)
 
-Say some consumers casted an ICC vote on that node, and then
-the USB driver called set_rate on the clock.. The data from
-icc-clk would be discarded
+are available in the Git repository at:
 
-Konrad
+  git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-kvm-6.11
+
+for you to fetch changes up to 492ac37fa38faf520b5beae44c930063265ee183:
+
+  perf kvm: Add kvm-stat for loongarch64 (2024-07-10 16:50:27 +0800)
+
+----------------------------------------------------------------
+LoongArch KVM changes for v6.11
+
+1. Add ParaVirt steal time support.
+2. Add some VM migration enhancement.
+3. Add perf kvm-stat support for loongarch.
+
+----------------------------------------------------------------
+Bibo Mao (10):
+      LoongArch: KVM: Sync pending interrupt when getting ESTAT from user mode
+      LoongArch: KVM: Delay secondary mmu tlb flush until guest entry
+      LoongArch: KVM: Select huge page only if secondary mmu supports it
+      LoongArch: KVM: Discard dirty page tracking on readonly memslot
+      LoongArch: KVM: Add memory barrier before update pmd entry
+      LoongArch: KVM: Add dirty bitmap initially all set support
+      LoongArch: KVM: Mark page accessed and dirty with page ref added
+      LoongArch: KVM: Add PV steal time support in host side
+      LoongArch: KVM: Add PV steal time support in guest side
+      perf kvm: Add kvm-stat for loongarch64
+
+Jia Qingtong (1):
+      LoongArch: KVM: always make pte young in page map's fast path
+
+ Documentation/admin-guide/kernel-parameters.txt |   6 +-
+ arch/loongarch/Kconfig                          |  11 ++
+ arch/loongarch/include/asm/kvm_host.h           |  13 ++
+ arch/loongarch/include/asm/kvm_para.h           |  11 ++
+ arch/loongarch/include/asm/kvm_vcpu.h           |   5 +
+ arch/loongarch/include/asm/loongarch.h          |   1 +
+ arch/loongarch/include/asm/paravirt.h           |   5 +
+ arch/loongarch/include/uapi/asm/kvm.h           |   4 +
+ arch/loongarch/kernel/paravirt.c                | 145 ++++++++++++++++++++++
+ arch/loongarch/kernel/time.c                    |   2 +
+ arch/loongarch/kvm/Kconfig                      |   1 +
+ arch/loongarch/kvm/exit.c                       |  38 +++++-
+ arch/loongarch/kvm/main.c                       |   1 +
+ arch/loongarch/kvm/mmu.c                        |  72 +++++++----
+ arch/loongarch/kvm/tlb.c                        |   5 +-
+ arch/loongarch/kvm/vcpu.c                       | 154 +++++++++++++++++++++++-
+ tools/perf/arch/loongarch/Makefile              |   1 +
+ tools/perf/arch/loongarch/util/Build            |   2 +
+ tools/perf/arch/loongarch/util/header.c         |  96 +++++++++++++++
+ tools/perf/arch/loongarch/util/kvm-stat.c       | 139 +++++++++++++++++++++
+ 20 files changed, 680 insertions(+), 32 deletions(-)
+ create mode 100644 tools/perf/arch/loongarch/util/header.c
+ create mode 100644 tools/perf/arch/loongarch/util/kvm-stat.c
 
