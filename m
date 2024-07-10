@@ -1,150 +1,197 @@
-Return-Path: <linux-kernel+bounces-248095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB0F092D85E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:40:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49A5D92D863
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 292061C20F7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:40:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06A85281FFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE8F196C86;
-	Wed, 10 Jul 2024 18:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89001197A76;
+	Wed, 10 Jul 2024 18:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D4o42eGK"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f0wSAoDd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCFF194C9A;
-	Wed, 10 Jul 2024 18:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DF2196D98
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 18:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720636833; cv=none; b=G/25RxL1G+XD8/FO6ri+BXExOKyueae3Yq+CiwKuepsquF26bz5Eajnn74fm6ZBa8XxveC/pzUdh5Bi7RdnQGaqBWuvnzsB2e9Ku+vzx1yn0HqYznaZEumW/hbHCoEifuXyZBNAZd0NAkXu7CAIispjrgNV3aoLUWq8Rza5j+yo=
+	t=1720636836; cv=none; b=N8G2SF/18+qmjMGUH5NoHeLwDKsujglerEGjEAy1aiOuY3MPjHAfxeCNhGhUkl00o2XyRIk61dAsUNrNwm9q/cdknZrSzNeHNXZnU10iLoWTCt5tWBay1nwZn/aXk5zYTQAovetobkCJ1leEymF+TjRJvO2jkpEFWcLi3LEDs5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720636833; c=relaxed/simple;
-	bh=mOG1/dy9foWXLBEbNdNTS2vxukoMRdb2jrb0IqcqAdM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eZB8hHlja7I6phyehCRU4niQ9zG+TqLIgQjX0B21bZr14du4BJY5nK84Hj/b7UmH3Em/9jnEQwU9GzYmiVvvN221tCk0+jjboVNWIMZ4Cpnlw/xYwJD/TlmL9+22IiMeVEkwMXp38UFqWjw8f2VVMGgZyJWvVNgnuCnP6fC8cRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D4o42eGK; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70b05260c39so111835b3a.0;
-        Wed, 10 Jul 2024 11:40:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720636830; x=1721241630; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DH2iXf/QMBEgCOBgDj4vj0d1Ba4Ks2ZfB6GNwCH8rhU=;
-        b=D4o42eGKZv6V1qEe/PdcQsGA2E/ROijA9fBj+6lXnrOqBOE3i200zVWtGlY7UZ1XW5
-         tDjJmcK2E4D4crpUurbeDM/1jS0xnrtFNnywpsC7rBFc4Iho17Yg1Rkwyyfoeq87NgNK
-         woRw0r2HlpPofd6qhzC7lWBat4iwqvVqiv9e3QMooO4Iy6FI1ZV26RTWrUx2KZDjbbPT
-         VwBe093DbEEBsvUpQs4An00/6ehM1SZV50OaehX6p2tC9socu3ii2IWoUjTuGih5igK+
-         QPvWrEM7NcdfZdqUV88o8p+FqnYie0ZWFJ90kA4g5ZZLcrbnTXcqCTjgz/6suyf6zHiY
-         f9fg==
+	s=arc-20240116; t=1720636836; c=relaxed/simple;
+	bh=cpmhhhVhRKvhrC/g+4t7qnyh17qX5WLx6FJHCFwK3Ho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V62SgmFgZDZ9y4f20oKo56YzVnnY+ysZD1AVhdjjVgv0MKs9RUr5qHR4KxCmgtk1CvVJ+kPvmmkegsMgK1Wm5XPZEPklTX9TykVTcS4f7rLUzBd1+70twkSPmbZg2kErM+Iyq8Y17s7/SLHIrWfSqkGIbK+oUk0MytsTCiVSRhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f0wSAoDd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720636834;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nOMGW3S5XfF0umS0MhtMBuBfpR4wOzwlUDWp6i5Agkc=;
+	b=f0wSAoDdUUe3Pa+QTBQuDPp+JsCDRd8Dnce19gJpG+GuJNne0K40S/zVAgmt1IEBqUmnei
+	4OaLVkAG6M9oWDrem0f6ukTMVayvQbshHUexwAk0ExcJlLTujjAwTpja8Cy1SeYzIQMDDc
+	xDVedoTGOCcOynErLytMmCzXxj2A2l0=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-97-Bl8n6SZWPh-Hc0ykcNFZrw-1; Wed, 10 Jul 2024 14:40:31 -0400
+X-MC-Unique: Bl8n6SZWPh-Hc0ykcNFZrw-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42674318a4eso657155e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 11:40:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1720636830; x=1721241630;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DH2iXf/QMBEgCOBgDj4vj0d1Ba4Ks2ZfB6GNwCH8rhU=;
-        b=fS+hUW0WhbrZoLDUu45xQC0f0j2E6x/lVBaXgKMoxVa+n1qM4J97cZ6D+B2e2f2ZL7
-         7ImQpbq01/jRotzNYx5M64OehLxTio88uMXpL8Gu+0JfXClOSxzYR/UUbiKTEwP8HeEb
-         YvBVj3YKc6VfNzr7o4l2CGEKVwezljUoob6gVvVwcQaszEcM6J73sfFCJi5itAqg9pRN
-         QoQysQ0BBCc+osSn8XmwTtchzwxsCqASYHxkD3StW65RTFta/oPTW4xEAqcgVC7iMpHW
-         yl3GIrzgShINna7EoehHUcmUABF/YwyjQJp15ZJVBGcm25Xsf1iG4mKLHzpzIldE0YVw
-         Y7Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjOSN9qInP1QHeBbabsUJ2clJFQUy4adP6G962oUYYj4H1pzfgb39uiS2HXEbysl6zJNLyYRABR9WcKkT79WugAx2sc0O5JrqO+OufV6YlF+fwObk/qgoxf8YGIcZ3S6DP
-X-Gm-Message-State: AOJu0Yzwrb35W6nMknd9xxmIOcipdGKqwSfVjB0WYUZd9iwQ1lFKsjqD
-	yY71iNPpoksMw8QXIhUi/cNGPu2MZuMS0PZ8yfe9bnwdqwghJF+Q5WMM2edxQdDzkJnTtWod9aC
-	ZZzdopfanYjloG+XutMBZwO/pKi8=
-X-Google-Smtp-Source: AGHT+IHbcbETAey3NnuCmNe9kMNNq4TJGEo4sZLOKWaX4wJefc0OEeANmtUqvBXPG/ZjU+u19uigzELjdNSis4bytkA=
-X-Received: by 2002:a05:6a20:c22:b0:1be:c88f:c60d with SMTP id
- adf61e73a8af0-1c2984d82d1mr4743125637.56.1720636830506; Wed, 10 Jul 2024
- 11:40:30 -0700 (PDT)
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nOMGW3S5XfF0umS0MhtMBuBfpR4wOzwlUDWp6i5Agkc=;
+        b=ayQ+ffGYcXwXFjM5Dsys5lOHMDJa3cMqB/fxe4W6v7J8EfFSBQGsl/muRLGKxY9MT+
+         VZNbhxksW1VC1KcF9fSQc6+dofwOxCfzCC3OpUg8pQ14LFmvLMjepeHrcdh3mQKcDHAn
+         31D6RzLR8OQ9eTZGbKESB+/4LhhU3oGR9STUWil28L1gJE7/ET3Q6ETz4IWzOF2YG0zQ
+         0nzVwUi0VkA9qWja3y4KPcAB+o81tLqhS3nKV315fXuo8bq4NmWWiAXzWPWpJZcopVbG
+         7Yxp1sFSIJh84TNTvgoaYNrt/rZCikQNyaH3Rqqc6UC26TBJHbde/2xk9qTpQcXjfMJc
+         v/gQ==
+X-Gm-Message-State: AOJu0Yy0hhZGAkvKCPungU5yqsZfdC9ecqUQFteZ3i14tY75ZbMEzCB+
+	qx2m5aOGb/A0nYH/vO2EhLOTsTAJRPzseQbEezhiedLnSgLzSmpUFlIuWJmxNOJN7sTDW2i88rB
+	UAyWExIZDOb7qw1HX/DjE+kJ23j/MrteyMZ2MSlIL2p7wFp5JMCjOSNj0pq8QBg==
+X-Received: by 2002:a1c:4b0e:0:b0:426:5b76:13bd with SMTP id 5b1f17b1804b1-426708f2127mr51924305e9.38.1720636830427;
+        Wed, 10 Jul 2024 11:40:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHW6BXHt7TvysChZRc5l+/HKuwpL6Ky9xwFKNWqpa0ClAMfEvn97X0Cu0s4c3ufKnu0Y+84KA==
+X-Received: by 2002:a1c:4b0e:0:b0:426:5b76:13bd with SMTP id 5b1f17b1804b1-426708f2127mr51924105e9.38.1720636829731;
+        Wed, 10 Jul 2024 11:40:29 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:174:f6ae:a6e3:8cbc:2cbd:b8ff])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde7e039sm5973934f8f.2.2024.07.10.11.40.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 11:40:29 -0700 (PDT)
+Date: Wed, 10 Jul 2024 14:40:24 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Daniel Verkamp <dverkamp@chromium.org>
+Cc: linux-kernel@vger.kernel.org,
+	Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Cornelia Huck <cohuck@redhat.com>,
+	Halil Pasic <pasic@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	linux-um@lists.infradead.org, linux-remoteproc@vger.kernel.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] virtio: fix vq # for balloon
+Message-ID: <20240710144012-mutt-send-email-mst@kernel.org>
+References: <cover.1720611677.git.mst@redhat.com>
+ <3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst@redhat.com>
+ <CABVzXAnjAdQqVNtir_8SYc+2dPC-weFRxXNMBLRcmFsY8NxBhQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708091241.544262971@infradead.org> <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
- <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
- <20240709090304.GG27299@noisy.programming.kicks-ass.net> <Zo0KX1P8L3Yt4Z8j@krava>
- <20240709101634.GJ27299@noisy.programming.kicks-ass.net> <20240710071046.e032ee74903065bddba9a814@kernel.org>
- <20240710101003.GV27299@noisy.programming.kicks-ass.net> <20240710235616.5a9142faf152572db62d185c@kernel.org>
-In-Reply-To: <20240710235616.5a9142faf152572db62d185c@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 10 Jul 2024 11:40:17 -0700
-Message-ID: <CAEf4BzZGHGxsqNWSBu3B79ZNEM6EruiqSD4vT-O=_RzsBeKP0w@mail.gmail.com>
-Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Jiri Olsa <olsajiri@gmail.com>, mingo@kernel.org, 
-	andrii@kernel.org, linux-kernel@vger.kernel.org, rostedt@goodmis.org, 
-	oleg@redhat.com, clm@meta.com, paulmck@kernel.org, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABVzXAnjAdQqVNtir_8SYc+2dPC-weFRxXNMBLRcmFsY8NxBhQ@mail.gmail.com>
 
-On Wed, Jul 10, 2024 at 7:56=E2=80=AFAM Masami Hiramatsu <mhiramat@kernel.o=
-rg> wrote:
->
-> On Wed, 10 Jul 2024 12:10:03 +0200
-> Peter Zijlstra <peterz@infradead.org> wrote:
->
-> > On Wed, Jul 10, 2024 at 07:10:46AM +0900, Masami Hiramatsu wrote:
+On Wed, Jul 10, 2024 at 11:12:34AM -0700, Daniel Verkamp wrote:
+> On Wed, Jul 10, 2024 at 4:43 AM Michael S. Tsirkin <mst@redhat.com> wrote:
 > >
-> > > > FFS :-/ That touches all sorts and doesn't have any perf ack on. Ma=
-sami
-> > > > what gives?
-> > >
-> > > This is managing *probes and related dynamic trace-events. Those has =
-been
-> > > moved from tip. Could you also add linux-trace-kernel@vger ML to CC?
+> > virtio balloon communicates to the core that in some
+> > configurations vq #s are non-contiguous by setting name
+> > pointer to NULL.
 > >
-> > ./scripts/get_maintainer.pl -f kernel/events/uprobes.c
+> > Unfortunately, core then turned around and just made them
+> > contiguous again. Result is that driver is out of spec.
+> 
+> Thanks for fixing this - I think the overall approach of the patch looks good.
+> 
+> > Implement what the API was supposed to do
+> > in the 1st place. Compatibility with buggy hypervisors
+> > is handled inside virtio-balloon, which is the only driver
+> > making use of this facility, so far.
+> 
+> In addition to virtio-balloon, I believe the same problem also affects
+> the virtio-fs device, since queue 1 is only supposed to be present if
+> VIRTIO_FS_F_NOTIFICATION is negotiated, and the request queues are
+> meant to be queue indexes 2 and up. From a look at the Linux driver
+> (virtio_fs.c), it appears like it never acks VIRTIO_FS_F_NOTIFICATION
+> and assumes that request queues start at index 1 rather than 2, which
+> looks out of spec to me, but the current device implementations (that
+> I am aware of, anyway) are also broken in the same way, so it ends up
+> working today. Queue numbering in a spec-compliant device and the
+> current Linux driver would mismatch; what the driver considers to be
+> the first request queue (index 1) would be ignored by the device since
+> queue index 1 has no function if F_NOTIFICATION isn't negotiated.
+> 
+> [...]
+> > diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
+> > index 7d82facafd75..fa606e7321ad 100644
+> > --- a/drivers/virtio/virtio_pci_common.c
+> > +++ b/drivers/virtio/virtio_pci_common.c
+> > @@ -293,7 +293,7 @@ static int vp_find_vqs_msix(struct virtio_device *vdev, unsigned int nvqs,
+> >         struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+> >         struct virtqueue_info *vqi;
+> >         u16 msix_vec;
+> > -       int i, err, nvectors, allocated_vectors, queue_idx = 0;
+> > +       int i, err, nvectors, allocated_vectors;
 > >
-> > disagrees with that, also things like:
+> >         vp_dev->vqs = kcalloc(nvqs, sizeof(*vp_dev->vqs), GFP_KERNEL);
+> >         if (!vp_dev->vqs)
+> > @@ -332,7 +332,7 @@ static int vp_find_vqs_msix(struct virtio_device *vdev, unsigned int nvqs,
+> >                         msix_vec = allocated_vectors++;
+> >                 else
+> >                         msix_vec = VP_MSIX_VQ_VECTOR;
+> > -               vqs[i] = vp_setup_vq(vdev, queue_idx++, vqi->callback,
+> > +               vqs[i] = vp_setup_vq(vdev, i, vqi->callback,
+> >                                      vqi->name, vqi->ctx, msix_vec);
+> >                 if (IS_ERR(vqs[i])) {
+> >                         err = PTR_ERR(vqs[i]);
+> > @@ -368,7 +368,7 @@ static int vp_find_vqs_intx(struct virtio_device *vdev, unsigned int nvqs,
+> >                             struct virtqueue_info vqs_info[])
+> >  {
+> >         struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+> > -       int i, err, queue_idx = 0;
+> > +       int i, err;
 > >
-> >   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git=
-/commit/?h=3Dprobes/for-next&id=3D4a365eb8a6d9940e838739935f1ce21f1ec8e33f
-> >
-> > touch common perf stuff, and very much would require at least an ack
-> > from the perf folks.
->
-> Hmm, indeed. I'm OK to pass those patches (except for trace_uprobe things=
-)
-> to -tip if you can.
->
-> >
-> > Not cool.
->
+> >         vp_dev->vqs = kcalloc(nvqs, sizeof(*vp_dev->vqs), GFP_KERNEL);
+> >         if (!vp_dev->vqs)
+> > @@ -388,8 +388,13 @@ static int vp_find_vqs_intx(struct virtio_device *vdev, unsigned int nvqs,
+> >                         vqs[i] = NULL;
+> >                         continue;
+> >                 }
+> > +<<<<<<< HEAD
+> >                 vqs[i] = vp_setup_vq(vdev, queue_idx++, vqi->callback,
+> >                                      vqi->name, vqi->ctx,
+> > +=======
+> > +               vqs[i] = vp_setup_vq(vdev, i, callbacks[i], names[i],
+> > +                                    ctx ? ctx[i] : false,
+> > +>>>>>>> f814759f80b7... virtio: fix vq # for balloon
+> 
+> This still has merge markers in it.
+> 
+> Thanks,
+> -- Daniel
 
-You were aware of this patch and cc'ed personally (just like
-linux-perf-users@vger.kernel.org) on all revisions of it. I addressed
-your concerns in [0], you went silent after that and patches were
-sitting idle for more than a month.
+ouch forgot to commit ;)
 
-But regardless, if you'd like me to do any adjustments, please let me know.
-
-  [0] https://lore.kernel.org/all/CAEf4Bzazi7YMz9n0V46BU7xthQjNdQL_zma5vzgC=
-m_7C-_CvmQ@mail.gmail.com/
-
-> Yeah, the probe things are boundary.
-> BTW, IMHO, there could be dependency issues on *probes. Those are usually=
- used
-> by ftrace/perf/bpf, which are managed by different trees. This means a se=
-ries
-> can span multiple trees. Mutually reviewing is the solution?
->
-
-I agree, there is no one best tree for stuff like this. So as long as
-relevant people and mailing lists are CC'ed we hopefully should be
-fine?
-
-> Thank you,
->
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
