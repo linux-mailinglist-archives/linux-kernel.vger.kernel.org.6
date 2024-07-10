@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-246966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E839C92C96D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:52:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26DEC92C970
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7582C28344D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:52:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AFD81C22408
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215B739FCF;
-	Wed, 10 Jul 2024 03:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F59C3EA6C;
+	Wed, 10 Jul 2024 03:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PYQ6OFaG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hLeEloT5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B1B1799B
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 03:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16623BBF0
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 03:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720583573; cv=none; b=KHLSRRDxWc5YoMaH35ABLECsVWpM35dMo91KOGUpYlmGr7KOokFnK84gPwsQuZKJyIgW1nDsMODI2aJIa/ukiMq9NsBs4A65dfYk7wcxb4ji/HOML25I2iu6c4pwpNFBKDIcFEfQoFGPUsROhBO9NhQZbdh0t+G8EBkTlq3/S+w=
+	t=1720583604; cv=none; b=h5tVTZdmXdXGO8sxk9BKeQcv08GM3HpF6eZJGi5U78VxZkBOjbYolrNr+2s9RUaaS/5KWkVb5OQ58uQFphYeRktEapn9HYO5/XKCJ3TdzrTp0zRyKNMWBr1m4fvY5As0UebXTrjdPW2ATe8+EoLg5ZsrgV3ZCf/bZ0OdzICxths=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720583573; c=relaxed/simple;
-	bh=sYyTLW2B8fZZKrR2tHmqnqiqiLu6J2I0mZzzGSldCHA=;
+	s=arc-20240116; t=1720583604; c=relaxed/simple;
+	bh=G128oUr+qCIRBR7nowEROTw1zOSfR0auy4jqH2JVQkI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KvVlDlXh+cmqIDPv49ivowITizwgtkq0SGH1DO0sOSAmxoNLF7lSamvDTvaNaXOm9fPzBgr3mnekCSefw4byKe2a75ybkp5LvvDkznTdRPDrFVyOyaxFRxvlNr52ljliboowWp4igjToi47DhZ5+Hb2tN4O5TV/ub8UyJLz8rf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PYQ6OFaG; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=UO5XR+uFcKbWGpCSeXIzvHGmUDuN/4MjD5jmtqqbPDMTKW5d6bPcmclExwigSpSCkBRCQOJqPKyF+McPTNvy8OI8/uQDvZiM60N3q33i871qhrvkzDkqUwVzUrXEqNxNd6pI35XgJcfpLhjOOGS3+siAOyDwTiYoPZyD3iSajq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hLeEloT5; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720583570;
+	s=mimecast20190719; t=1720583601;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/2WRjnk8r9q2UOyOTngjbjGNJsMgVn92/1xNwrFbWAI=;
-	b=PYQ6OFaG53/uGZ67SIlpwBhN0WgeubUldOmbTMEbfwFaejxa1S9CBvyWhAUcAPEkTneIaK
-	W8ph5qqkO7Cra5DxorB6/rS5fPnKQx7UiptGkP800ZUoa/rAi+AaqxbsAeaoWT0dPPOAkA
-	Vtivmv/PYshFS7+ak2i5FTEfA2sIcAs=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=8rIGnL/7yS1yko4wAcwcwoYD4aALcV2EdKmJ89sPeeo=;
+	b=hLeEloT5kHXUgDpb7ISLvcqHH2Obt3ysrWbj8/UbViWoouyu6IPB46OxkU79UVjO876IUb
+	9r/1O1UEuCxdOFpDX2hXuJemSjrP6fywo9lVzVE0SL1pVU7r8xOitLUe0QRRtk6tMaBTlG
+	7KoNyhDmN0xEs3IqpXinaaPzW2GUDBA=
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
+ [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-295-W4DRyFYfO-G0I8TbyzIOYQ-1; Tue, 09 Jul 2024 23:52:46 -0400
-X-MC-Unique: W4DRyFYfO-G0I8TbyzIOYQ-1
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-70af5f8def2so4372237b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 20:52:46 -0700 (PDT)
+ us-mta-444-2a6jK-mmOfWiKKvggKKEMw-1; Tue, 09 Jul 2024 23:53:16 -0400
+X-MC-Unique: 2a6jK-mmOfWiKKvggKKEMw-1
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-70afa26ec21so4905121b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 20:53:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720583566; x=1721188366;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/2WRjnk8r9q2UOyOTngjbjGNJsMgVn92/1xNwrFbWAI=;
-        b=KfjV9wBxUVJ2DqbFjyDK0hfcbbyPpuoV/37mIvSrdMVny1zSMW2IOh8Peyr3ObCNzl
-         EoLm+qa1Dzbzn+NcSNZ2q8eXykwjOVT41e+chPJula8Ep+Wm81LMz1kzgwU2vckBMmwv
-         zXDHj8tXG7GwBK+ImqysSHZmHWmuW52BpCQaAK/k6IAabKPmZe2ClTmc8LQ6DT2Vc/F0
-         kgfvNcNA/1Mumr8+E/JihWP4fpMJhOllx5hIWkfWZ4mHjgf/1Lrml7EAMUqIf7h6iZwm
-         NQn8/3BVRpOrnvodgaCP7iWZ5hKle1GrAWne7pamF4S0TOaVES0ZT7ucs2nieXIBaKtU
-         VRNg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBodW7GwDheXEgZUTAV1gM5/wkA3M15PfvMYt1qHAGniFsnaQxRFeArcJAHU3yhkccABoM1SBMRZP1dtVEuEhicvNQ2hj//QiwnEAZ
-X-Gm-Message-State: AOJu0Yz+Sei4vO+wO/sXKv9zmE8ZDjaBUcEMaJXTJK2cYJFn1h1L5i9w
-	UA6X531cZn10lm1mASuDlFLkv9bOYkBcWji24gELptsbZ8wCpPdghtcUA3f1laEtVyuZn4ECZoL
-	hosEL3w3kcUPpxXTMFw6WM20mwWSblzSztQuNZqgIVicDehz+RV0x3/qxZr2U0A==
-X-Received: by 2002:a05:6a20:3c91:b0:1c0:f3e5:bda4 with SMTP id adf61e73a8af0-1c297d2384amr5254307637.0.1720583565744;
-        Tue, 09 Jul 2024 20:52:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEr1lxw2WapwDLATRyUEHjO0p/oGlycJSSwOxxQ8m96L48fZfje8RdV4SRAVQNkdgXKvu4rlg==
-X-Received: by 2002:a05:6a20:3c91:b0:1c0:f3e5:bda4 with SMTP id adf61e73a8af0-1c297d2384amr5254289637.0.1720583565282;
-        Tue, 09 Jul 2024 20:52:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720583596; x=1721188396;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8rIGnL/7yS1yko4wAcwcwoYD4aALcV2EdKmJ89sPeeo=;
+        b=Q1anHLIneSiN4rjtsdRMuGdXOKRZYzYISfIHs/ybNp5VjPP2fqabXlG+BzRW3WcR5M
+         jN3+/g0gJ5c/Sv3yC8QYFvEBmL27vS5ml0rEuTx2AWdRLx0QjFNiduvt642TifZA3B9w
+         5ykJnHN2fgk8w3H1LdfRRkiCHMaPhJBVwH9sS7YbGGG4NgB6LvMJhH7q9wVxn39qekJ+
+         SP1FMGIvqQIIZ7cARQQJP+XHiL5d50CWS76xwGzEt+kyJER+A3QlUmIytMIZzeCmVL2P
+         bmt7zcRxPqbD3wbd05x+ninZKNg1cP/rNKtVUiDmwRfcA6G5i1lAth2lL2yablT5Y55S
+         Du0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWxvnqRqB4VyhIz3EVOKnKjEZPTGrbO13CZ+JL5sZLTMio0bEdoBgXYms672Huym2ZTix4bVzClzwKaaGpJrzB8UJhbWvjXJqYDUkxv
+X-Gm-Message-State: AOJu0YxhmqV9SOffYnEZrwusj+Yscq1XevbaZAUSXaDvWzVHzPxVG4Ph
+	Bhko9WoVjvyWB8O33T56rfS1q/20kdmaiivry7djMa9LNLBRH50C/on8cnwLq32caRetG49qJeF
+	oiXqq2swzvTRHvor1nW7qQJoyxv/fd6Y9C/Ldy4B67AQWhzrX8doCxikpB0n9og==
+X-Received: by 2002:a05:6a00:1748:b0:705:b81b:6ee2 with SMTP id d2e1a72fcca58-70b4356a698mr5890541b3a.19.1720583595922;
+        Tue, 09 Jul 2024 20:53:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGn3njPMJJBJ5F0Zt8iJ6gKpKa4GsBSnEFY4YFOmgLnTJeV0xDzKBATDsOFxABmhNHKJN8Ipw==
+X-Received: by 2002:a05:6a00:1748:b0:705:b81b:6ee2 with SMTP id d2e1a72fcca58-70b4356a698mr5890525b3a.19.1720583595531;
+        Tue, 09 Jul 2024 20:53:15 -0700 (PDT)
 Received: from [172.20.2.228] ([4.28.11.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a961f50sm10898810a91.21.2024.07.09.20.52.44
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b43898af8sm2649036b3a.42.2024.07.09.20.53.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 20:52:44 -0700 (PDT)
-Message-ID: <9d5980e3-72e6-4848-b1ac-83ffab8522c4@redhat.com>
-Date: Wed, 10 Jul 2024 05:52:43 +0200
+        Tue, 09 Jul 2024 20:53:15 -0700 (PDT)
+Message-ID: <6e978965-5bfd-483d-9504-f362fdf19ec5@redhat.com>
+Date: Wed, 10 Jul 2024 05:53:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,21 +82,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/45] hugetlb pagewalk unification
-To: Oscar Salvador <osalvador@suse.de>
-Cc: Peter Xu <peterx@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Muchun Song <muchun.song@linux.dev>, SeongJae Park <sj@kernel.org>,
- Miaohe Lin <linmiaohe@huawei.com>, Michal Hocko <mhocko@suse.com>,
- Matthew Wilcox <willy@infradead.org>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Jason Gunthorpe <jgg@nvidia.com>
-References: <20240704043132.28501-1-osalvador@suse.de>
- <617169bc-e18c-40fa-be3a-99c118a6d7fe@redhat.com> <Zoax9nwi5qmgTQR4@x1n>
- <84d4e799-90da-487e-adba-6174096283b5@redhat.com>
- <Zoug1swoTOqNUPJo@localhost.localdomain>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v21 1/4] mm: add VM_DROPPABLE for designating always
+ lazily freeable mappings
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev, tglx@linutronix.de,
+ linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+ Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
+ Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+ Christian Brauner <brauner@kernel.org>,
+ David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+References: <e2f104ac-b6d9-4583-b999-8f975c60d469@redhat.com>
+ <CAHk-=wibRRHVH5D4XvX1maQDCT-o4JLkANXHMoZoWdn=tN0TLA@mail.gmail.com>
+ <6705c6c8-8b6a-4d03-ae0f-aa83442ec0ab@redhat.com>
+ <CAHk-=wi=XvCZ9r897LjEb4ZarLzLtKN1p+Fyig+F2fmQDF8GSA@mail.gmail.com>
+ <7439da2e-4a60-4643-9804-17e99ce6e312@redhat.com>
+ <Zovv4lzM38EHtnms@zx2c4.com> <Zov6SZZCKrqmigua@zx2c4.com>
+ <75d6c45d-deea-464d-b0fd-b36e5d73b898@redhat.com>
+ <Zoyd1DYuD7cmJbgx@zx2c4.com>
+ <b71d8619-1182-43b6-940b-d68f672aa379@redhat.com>
+ <Zo4BPjTIitoYSBMP@zx2c4.com>
 Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
  dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
@@ -142,113 +151,36 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <Zoug1swoTOqNUPJo@localhost.localdomain>
+In-Reply-To: <Zo4BPjTIitoYSBMP@zx2c4.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 08.07.24 10:18, Oscar Salvador wrote:
-> On Thu, Jul 04, 2024 at 05:23:30PM +0200, David Hildenbrand wrote:
->> My thinking was if "remove hugetlb_entry" cannot wait for "remove
->> page_walk", because we found a reasonable way to do it better and convert
->> the individual users. Maybe it can't.
+On 10.07.24 05:34, Jason A. Donenfeld wrote:
+> On Wed, Jul 10, 2024 at 05:05:06AM +0200, David Hildenbrand wrote:
+>> On 09.07.24 04:17, Jason A. Donenfeld wrote:
+>>> Hi David,
+>>>
+>>> On Mon, Jul 08, 2024 at 10:21:09PM +0200, David Hildenbrand wrote:
+>>>> BTW, I was just trying to understand how MADV_FREE + MAP_DROPPABLE would
+>>>> behave without any swap space around.
+>>>>
+>>>> Did you experiment with that?
+>>>
+>>> You mean on a system without any swap configured? That's actually my
+>>> primary test environment for this. It behaves as expected: when ram
+>>> fills up and the scanner is trying to reclaim what it can,
+>>> folio_test_swapbacked(folio) is false, and the memory gets freed. After,
+>>> reads fault in a zero page. So it's working as expected.
 >>
->> I've not given up hope that we can end up with something better and clearer
->> than the current page_walk API :)
+>> Okay, just to be clear: no swap/zram/zswap. The reclaim code regarding
+>> not scanning anonymous memory without swap was a bit confusing.
 > 
-> Hi David,
-> 
+> Right, no swap, as boring a system as can be. I've experimented with
+> that behavior on my swap-less 64GB thinkpad, as well as on little
+> special purpose VMs, where I hacked the VM_DROPPABLE test code into the
+> wireguard test suite.
 
-Hi!
-
-> I agree that the current page_walk might be a bit convoluted, and that the
-> indirect functions approach is a bit of a hassle.
-> Having said that, let me clarify something.
-> 
-> Although this patchset touches the page_walk API wrt. getting rid of
-> hugetlb special casing all over the place, my goal was not as focused on
-> the page_walk as it was on the hugetlb code to gain hability to be
-> interpreted on PUD/PMD level.
-
-I understand that. And it would all be easier+more straight forward if 
-we wouldn't have that hugetlb CONT-PTE / CONT-PMD stuff in there that 
-works similar, but different to "ordinary" cont-pte for thp.
-
-I'm sure you stumbled over the set_huge_pte_at() on arm64 for example. 
-If we, at one point *don't* use these hugetlb functions right now to 
-modify hugetlb entries, we might be in trouble.
-
-That's why I think we should maybe invest our time and effort in having 
-a new pagewalker that will just batch such things naturally, and users 
-that can operate on that naturally. For example: a hugetlb 
-cont-pte-mapped folio will just naturally be reported as a "fully mapped 
-folio", just like a THP would be if mapped in a compatible way.
-
-Yes, this requires more work, but as raised in some patches here, 
-working on individual PTEs/PMDs for hugetlb is problematic.
-
-You have to batch every operation, to essentially teach ordinary code to 
-do what the hugetlb_* special code would have done on cont-pte/cont-pmd 
-things.
-
-
-(as a side note, cont-pte/cont-pmd should primarily be a hint from arch 
-code on how many entries we can batch, like we do in folio_pte_batch(); 
-point is that we want to batch also on architectures where we don't have 
-such bits, and prepare for architectures that implement various sizes of 
-batching; IMHO, having cont-pte/cont-pmd checks in common code is likely 
-the wrong approach. Again, folio_pte_batch() is where we tackled the 
-problem differently from the THP perspective)
-
-> 
-> One of the things, among other things, that helped in creating this
-> mess/duplication we have wrt. hugetlb code vs mm core is that hugetlb
-> __always__ operates on ptes, which means that we cannot rely on the mm
-> core to do the right thing, and we need a bunch of hugetlb-pte functions
-> that knows about their thing, so we lean on that.
-> 
-> IMHO, that was a mistake to start with, but I was not around when it was
-> introduced and maybe there were good reasons to deal with that the way
-> it is done.
-> But, the thing is that my ultimate goal, is for hugetlb code to be able
-> to deal with PUD/PMD (pte and cont-pte is already dealt with) just like
-> mm core does for THP (PUD is not supported by THP, but you get me), and
-> that is not that difficult to do, as this patchset tries to prove.
-> 
-> Of course, for hugetlb to gain the hability to operate on PUD/PMD, this
-> means we need to add a fairly amount of code. e.g: for operating
-> hugepages on PUD level, code for markers on PUD/PMD level for
-> uffd/poison stuff (only dealt
-> on pmd/pte atm AFAIK), swap functions for PUD (is_swap_pud for PUD), etc.
-> Basically, almost all we did for PMD-* stuff we need it for PUD as well,
-> and that will be around when THP gains support for PUD if it ever does
-> (I guess that in a few years if memory capacity keeps increasing).
-> 
-> E.g: pud_to_swp_entry to detect that a swp entry is hwpoison with
->       is_hwpoison_entry
-> 
-> Yes, it is a hassle to have more code around, but IMO, this new code
-> will help us in 1) move away from __always__ operate on ptes 2) ease
-> integrate hugetlb code into mm core.
-> 
-> I will keep working on this patchset not because of pagewalk savings,
-> but because I think it will help us in have hugetlb more mm-core ready,
-> since the current pagewalk has to test that a hugetlb page can be
-> properly read on PUD/PMD/PTE level no matter what: uffd for hugetlb on PUD/PMD,
-> hwpoison entries for swp on PUD/PMD, pud invalidating, etc.
-> 
-> If that gets accomplished, I think that a fair amount of code that lives
-> in hugetlb.c can be deleted/converted as less special casing will be needed.
-> 
-> I might be wrong and maybe I will hit a brick wall, but hopefully not.
-
-I have an idea for a better page table walker API that would try 
-batching most entries (under one PTL), and walkers can just register for 
-the types they want. Hoping I will find some time to at least scetch the 
-user interface soon.
-
-That doesn't mean that this should block your work, but the 
-cont-pte/cont/pmd hugetlb stuff is really nasty to handle here, and I 
-don't particularly like where this is going.
+Great, thanks!
 
 -- 
 Cheers,
