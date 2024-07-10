@@ -1,114 +1,151 @@
-Return-Path: <linux-kernel+bounces-247193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E1A92CC55
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:56:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9574E92CC59
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:57:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 615D01F24406
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:56:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E32D0B2347E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E04A84A36;
-	Wed, 10 Jul 2024 07:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2409284A52;
+	Wed, 10 Jul 2024 07:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="rbF+/Oze"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LpkaeFse"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEE27BB17
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0817BB17;
+	Wed, 10 Jul 2024 07:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720598207; cv=none; b=QenAiMh8MTlLImt8DiwHDaYn81PlINB/l18gMys+JIcxrqqu8L1QgPNtO7BSb76xTZZ21e4wb8dYu8zd0yIGQ5f25D8G2OxTK5niZnpXkyh6ijAB+shwCpPrrRfQd66iy5JWHVXh4qONOm+FeniepWcaSKDHAJdi9eIq9Gb+oaM=
+	t=1720598250; cv=none; b=q0kqy13tACOeF5rq7Qwm84rO+hubI7Iir+/AYz4v7FgeOiO+gZqFvYm9HH3SCjjzU6RL394GCAoyNrjTYzrE8dDIGjQKpHFn6y8NXFw1l/ISqCPRuSbBeIQXzMftZxGuxgXx8uAfVirtAhx3ysnrHFVfxY8ImD9ivrASSBraxtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720598207; c=relaxed/simple;
-	bh=c95Qk0eEWg1EqqavyDXuIh3UP1MhVbRWFGKlXhpw6xM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y40meib5m4CESzlG9b36ULJ0mVAdjv1qEVYIBBV/HzHflkIcdqI1iaxjhUmU6Fec/Cm6A3uGT9Fe2+ws+4eBIX2kfK4ja/4DeDe2Rro3XjM4woLwB/Yg0Y3/OunUu/PYCuVPbGzzWULjfuNf4Ulo5fv6ybLNu5crexd/ObofhNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=rbF+/Oze; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ee9b1b422fso4796611fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 00:56:45 -0700 (PDT)
+	s=arc-20240116; t=1720598250; c=relaxed/simple;
+	bh=i42cyECbHzlN26RdEGKZmFhzW0fNAKgkRQXnsJsIEEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L7cxgulSGLczDQJ1N0kYicMNQG/KZEftiPDIEHL8yjGDx+7BCaeph7kqVPeNZkli4yS7dULhsScVxKrz00ix0C5iuHyDwugeioUpwnhT62d9rsIX3p1bDmOfwrTfJGy5/uSKD6OxO58LNt2+oc2iUmszzGItvc+0eoWAf5c/maI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LpkaeFse; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fb0d88fd25so3664065ad.0;
+        Wed, 10 Jul 2024 00:57:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720598204; x=1721203004; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1720598248; x=1721203048; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HOSNhvX2fTnZ5eop2y/6vcG46FGcgD00Yko2TrPilbc=;
-        b=rbF+/OzeilR0kR5X7oJ1/MZSSuHWDONCRvT8m5nkoz3/kE72zy2H4lQ7JDx8oFgpPY
-         j3zGlrBM+iC/pLhImh2vF3lnSwnKlIx9Iu1r20sdqlh0WTMBS4UTQ1P7oCvyY1qvWp7T
-         W3PIWyu5xsncZ6KY9Mi/KQ1n+t7mUQFEMYOvSi+mi7VNgFqwTGYTgcU+7eHM77HHREof
-         3kzXk1wniHsxS2E/oN6KGy9dNSFpSp3x4u7Qftq9ZKDIhF6KMjxOHQvw6thTeHbcIMg2
-         sVhlvlysqGaowJjAxBHAJewXPjFgWLkJuwx5n2HS9P2u06NXy6jtumICcjMTqxRjgv5y
-         lB0A==
+        bh=jL3xB5qZUeDvQW0Bt9eHIWR5Sgy7Fo6pxuuDb821234=;
+        b=LpkaeFseIh20YLaDxEVbONEG1D9v17osqvud3CAhqBbNbjv5BjBinJOyMnekOhhhAX
+         gaW4S47t0/ADuOiEQ4DyH92f/W1lh76qa9kAkPX9KmK9rTw7QWzIcwF+KdqxuI8xTrP2
+         AIpwv1ueJUsX+mNEBmhcy3DkLS5rx/bLGuwsi0KuW7zX9GWEL8X/0nA88RH+VPJncWGY
+         neOMGavYWmjvTeDXkzTkZcnKVAFaTUSuCfVj3RyB+MnqWVNGRzwcGJekTG9JaxSpC/Wh
+         1eSX1iKTmg7XZ6N/2iflUze9FaPZcMKFjoX9Z48/dvOky2ntsd8QZ6qvZnyi57u8EWEc
+         nE3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720598204; x=1721203004;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1720598248; x=1721203048;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HOSNhvX2fTnZ5eop2y/6vcG46FGcgD00Yko2TrPilbc=;
-        b=SbV7rEJJn435+8uVYulNfdV0bm5/C+fuXHaQBf3GyXAesSypZG5645uugHr/jzH1WW
-         5EbNKW8h/Q262vH7iNz9NaEY3w4dwnwcBhjFFKJo1WtbFuGDQBwiscAdoTcwCEH2CsHc
-         YKAmOGRg0aQiCQMMC3y1WWygZbP7tn4y3lh5OQzmA5TZRXE7C+8eAtPeIIlZR8jfJ6qi
-         CiMzly1Sw1/mbXs5y52/eT7gKhlvMdIu7nvJBUxNTaxcvsszNrIdtNTO1x4lX+TKiY/B
-         Pc7NYXB9rMPsNPTlNppaIQ+KRACqgqJP4Ql5B3lcq+v3S2/EimO+abIK7Ztb/NDjnjL4
-         BkIA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2caSbygO/uWzmbpkC6FnU3rUcCrVLWpBpXpCpQ7O4PxT5cPL7LIhAKMmY9dEW/+COKjGjdginHjRqmhPmS8BSy0HBz4CfCtdVN3Df
-X-Gm-Message-State: AOJu0Yy9X+/55B5vHZlfCa2mRSjuki/r6XV27/Q/7GpIPS6AwcsoWzay
-	uDC0XcMNEQ+Bpa3dI4WztT9nkgyLCM/DHedcgqw0pC7X2zzUMepvIhaQOYR2lQWTzF25LXx312x
-	o+F5WOJ9Rgswy5oNFp+aL+lJjzw38hVhKlqwPsbFgMpCsU/Qx
-X-Google-Smtp-Source: AGHT+IEQPK5BvKG62/rcQJWivaYYXpcgyK4iH/08mQXPMMZVo+si0r71P5cFlWmZxZJpKSjf0rsjIlTsd+8hqxYiTpQ=
-X-Received: by 2002:a2e:9d8e:0:b0:2ec:3f79:dcd5 with SMTP id
- 38308e7fff4ca-2eeb46d031fmr12617111fa.18.1720598204058; Wed, 10 Jul 2024
- 00:56:44 -0700 (PDT)
+        bh=jL3xB5qZUeDvQW0Bt9eHIWR5Sgy7Fo6pxuuDb821234=;
+        b=LzUs6y2Ej9aC8IApbqCBvIvhfK1GuThv0xJ1UIfiRID802eZCTSjxXIKcgJpX+qaUG
+         wZW+B8pjDIL6+Jry2ScTAGMvRE+bvvo7hHGUNc+BwqKFH35ksgnZK1/+h0fC1dNeqbdY
+         9CVsGjv5n7Yg7bO6NzLKZBSyTxsLgN5PRUaO3aTwR715gUQUXTESP6a21PfMBtEbZ9fD
+         MmqqR6TOwwIswgfl5cMR0XXqUmDcDJRJckjjf990TWgXMUyNl7inYWLxyQDYMc7WdSAA
+         dfr75aWPnPEi3nZObclUYIYwqBeYycUjH5P26IC3Y1ZUlrcQ0EqkWXAIHtqEs6Vijk0J
+         opXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTFpR4Uvw5pK6UVwHw38YSweoQgiG6lGF4nhw8vKDZambKRJzXs6TX5P3PaoErip6Mf6czQwxXzJXcS6fms9LCORacKi+NTeFyUgV6TAMvziCLlnjKyFK9nM54f6XOUWEVTcpO
+X-Gm-Message-State: AOJu0YyN38sMrVRbeZ41zAFymj21IO/VDwILBtQNQJzhFmmGdIG4Chdn
+	bRAVR2cPrXcKD9sPqKpINE8JW3bXr4wptkwJ6ZlqHeoEvNGgqJZk
+X-Google-Smtp-Source: AGHT+IEuKjHd15gR0P5vFk2U3b61+gsTLHqlQVreOnbUjVAf1fwZQtG7Ac4RBBngQ0FVGYThZcZ7bA==
+X-Received: by 2002:a17:902:f141:b0:1f7:1bf3:db10 with SMTP id d9443c01a7336-1fbb8015510mr44928735ad.20.1720598247862;
+        Wed, 10 Jul 2024 00:57:27 -0700 (PDT)
+Received: from localhost ([129.146.253.192])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6b31977sm27555975ad.287.2024.07.10.00.57.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 00:57:27 -0700 (PDT)
+Date: Wed, 10 Jul 2024 15:57:14 +0800
+From: Furong Xu <0x1207@gmail.com>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Jianheng Zhang
+ <Jianheng.Zhang@synopsys.com>, "David S. Miller" <davem@davemloft.net>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
+ <joabreu@synopsys.com>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Joao Pinto <jpinto@synopsys.com>,
+ netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ xfr@outlook.com, rock.xu@nio.com
+Subject: Re: [PATCH net-next v1 1/7] net: stmmac: xgmac: drop incomplete FPE
+ implementation
+Message-ID: <20240710155714.000010cb@gmail.com>
+In-Reply-To: <20240709171018.7tifdirqjhq6cohy@skbuf>
+References: <cover.1720512888.git.0x1207@gmail.com>
+	<d142b909d0600b67b9ceadc767c4177be216f5bd.1720512888.git.0x1207@gmail.com>
+	<b313d570-e3f3-479f-a469-ba2759313ea4@lunn.ch>
+	<20240709171018.7tifdirqjhq6cohy@skbuf>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710014401.1719716-1-nichen@iscas.ac.cn>
-In-Reply-To: <20240710014401.1719716-1-nichen@iscas.ac.cn>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 10 Jul 2024 09:56:33 +0200
-Message-ID: <CAMRc=MdfG5Tru1VS1xg+Q_w0dPEOwMuwbEzHBZiuFDO_mjioEg@mail.gmail.com>
-Subject: Re: [PATCH] ARM: davinci: Convert comma to semicolon
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 10, 2024 at 3:44=E2=80=AFAM Chen Ni <nichen@iscas.ac.cn> wrote:
->
-> Replace a comma between expression statements by a semicolon.
->
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> ---
->  arch/arm/mach-davinci/pm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm/mach-davinci/pm.c b/arch/arm/mach-davinci/pm.c
-> index 8aa39db095d7..2c5155bd376b 100644
-> --- a/arch/arm/mach-davinci/pm.c
-> +++ b/arch/arm/mach-davinci/pm.c
-> @@ -61,7 +61,7 @@ static void davinci_pm_suspend(void)
->
->         /* Configure sleep count in deep sleep register */
->         val =3D __raw_readl(pm_config.deepsleep_reg);
-> -       val &=3D ~DEEPSLEEP_SLEEPCOUNT_MASK,
-> +       val &=3D ~DEEPSLEEP_SLEEPCOUNT_MASK;
->         val |=3D pm_config.sleepcount;
->         __raw_writel(val, pm_config.deepsleep_reg);
->
-> --
-> 2.25.1
->
+Hi Vladimir
 
-Same as the GPIO patch, can you add the Fixes tag?
+On Tue, 9 Jul 2024 20:10:18 +0300, Vladimir Oltean <olteanv@gmail.com> wrote:
+> Hi Andrew, Furong,
+> 
+> On Tue, Jul 09, 2024 at 03:16:35PM +0200, Andrew Lunn wrote:
+> > On Tue, Jul 09, 2024 at 04:21:19PM +0800, Furong Xu wrote:  
+> > > The FPE support for xgmac is incomplete, drop it temporarily.
+> > > Once FPE implementation is refactored, xgmac support will be added.  
+> > 
+> > This is a pretty unusual thing to do. What does the current
+> > implementation do? Is there enough for it to actually work? If i was
+> > doing a git bisect and landed on this patch, could i find my
+> > networking is broken?
+> > 
+> > More normal is to build a new implementation by the side, and then
+> > swap to it.
+> > 
+> > 	Andrew
+> >   
+> 
+> There were 2 earlier attempts from Jianheng Zhang @ Synopsys to add FPE
+> support to new hardware.
+> 
+> I told him that the #1 priority should be to move the stmmac driver over
+> to the new standard API which uses ethtool + tc.
+> https://lore.kernel.org/netdev/CY5PR12MB63726FED738099761A9B81E7BF8FA@CY5PR12MB6372.namprd12.prod.outlook.com/
+> https://lore.kernel.org/netdev/CY5PR12MB63727C24923AE855CFF0D425BF8EA@CY5PR12MB6372.namprd12.prod.outlook.com/
+> 
+> I'm not sure what happened in the meantime. Jianheng must have faced
+> some issue, because he never came back.
+> 
+> I did comment this at the time:
+> 
+> | Even this very patch is slightly strange - it is not brand new hardware
+> | support, but it fills in some more FPE ops in dwxlgmac2_ops - when
+> | dwxgmac3_fpe_configure() was already there. So this suggests the
+> | existing support was incomplete. How complete is it now? No way to tell.
+> | There is a selftest to tell, but we can't run it because the driver
+> | doesn't integrate with those kernel APIs.
+> 
+> So it is relatively known that the support is incomplete. But I still
+> think we should push for more reviewer insight into this driver by
+> having access to a selftest to get a clearer picture of how it behaves.
+> For that, we need the compliance to the common API.
+> 
 
-Bart
+After some searching and learning about your commits for FPE using the
+generic framework, I think it is clear enough to me to implement the new
+standard driver interface which uses ethtool + tc, and then the refactor
+of low level FPE function can follow.
+Thanks.
 
