@@ -1,122 +1,112 @@
-Return-Path: <linux-kernel+bounces-247301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E3992CDCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:01:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3778792CDCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AF3D1F26DB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:01:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68D031C21D41
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F2017D344;
-	Wed, 10 Jul 2024 08:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE50176AD0;
+	Wed, 10 Jul 2024 09:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O7NGWvao"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QhUdn1nd"
+Received: from mail-il1-f196.google.com (mail-il1-f196.google.com [209.85.166.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9231C17D341
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72A717836C;
+	Wed, 10 Jul 2024 09:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720601975; cv=none; b=ZnIWHfeJVy3CyMXoQpJ2zuXBi7g4LaG5iJVmp0itzjUQH3WdQNvIZT5XiFCkCA37m7U5MxqQzBiZZSKRZ0EFlMDRV26VrOsHo0Iqx105nhNVhzKlV6pRWHEK1y73Hp5vgRRvmrUXaxa2rOI4G+0QhJ2Evet/fEebWrx0H8+VXlg=
+	t=1720602004; cv=none; b=q+3YKx58EaW3sYs3eWzDXQsFgK/XmkIiPk57iYH5y5cDEq+PA+uza2qUvQ32orePPV1gv8PYuOdToNbN7o+GLCCc1Utw7h44laO7P9dp+HI6xvfBjG364U+KWTj2rkhXH6TD4SCtIOF6FRGlyK5+5uaGv8Y7X1l5zy8ZkTmemHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720601975; c=relaxed/simple;
-	bh=wsu5tc6BdVJCdLiq4ZS+eTjcl5TUiujEyzCku6yizhQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p6+Bvswp/UImZ+mX3jd7QTnl6D+AJ+/yFTB/IiUSlK/TrNPAB/1YWz2vnyygcE1wcuRQql17al9ktL620osMbJOunoPfvt6jrpdDKCIHjG/2RgdRQ2Kng5xJCmF4acBS+qgYwedG7zOmylQ6YS+hXVuCZ+u59x/0mzqSPwDPwyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O7NGWvao; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1720602004; c=relaxed/simple;
+	bh=rI4emRMTI36UV2uznkSdc4z/SSDEK/mpaZIb93O596o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=u/ta49vVW341Lh8WhMF9HYaJxrg3kH1kUTf1+2uHYmpJZmzFjonBQ8/oc7DCJtrO5qM7perOpVlpmNwQidHDGBD3x4Fru2Bavh6QyWXlYAjWLAonxfLSxmgJtZdPDRtIsE30WWUMPFL2S5oBjJ7PJBvOM9iavPLaOXDERQrQiIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QhUdn1nd; arc=none smtp.client-ip=209.85.166.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5854ac817afso7348977a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 01:59:33 -0700 (PDT)
+Received: by mail-il1-f196.google.com with SMTP id e9e14a558f8ab-38b1ce72526so5519455ab.0;
+        Wed, 10 Jul 2024 02:00:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720601972; x=1721206772; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1AFgkrTsAbch65s0iFzsbxEhv7dvuaqj7iB6yNyk3Ig=;
-        b=O7NGWvaoSRt6TItsvoOr/M7i8VSDxrAvlJwn/ozcMRJe74Pg4uQo/23yTsS93d6fwO
-         R25YYoEhNGbx9b0rPAp1HGP/YWVEWowsCvOe9F8g/7CCdUHLwFP0WwAD4q2XjCzH9Hbl
-         pAaVhdS+SriwLFBhRfIVMcSQPp1byeW8Y5po98sL1sUIWbbgaETPmUmekc0+5dFkrGtB
-         P0EsxSYnxcoJOsJfrLZ7Xt2Zfku3bW1h+RgxnRvBXmGkE5A2s4sYpaWuxmwWD9WKQgea
-         VHV3SoUwqaU3AOycqi3PBalnZvhVuzCD2Qf2z67Pcy1R1uc+BMVDx99bunj1qAmQ8i3B
-         1cFg==
+        d=gmail.com; s=20230601; t=1720602001; x=1721206801; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FxYvFXWDS6rYr4mBF26COM5Q4SvhFcKuutaGTTwwarA=;
+        b=QhUdn1nd9NTk3ssLQDBNz5jIkBIADfVNlovg/MCXIC9tPOcsZvZ0/vHssfgKYP4Whg
+         Wh4nrLOikiBtmkAYDgJTb9Pixr/i0r2D0+1IaECSUZHjy9n3n8ZfO744UB3Gr1DHqFZm
+         H29FHvB5wSPVRlzDomuen6pDyVeXoq3/kI/3MviBX1fnDsFawlAfcDfSBUaQjXjsdmsQ
+         EDE7Vd04pZOiMOJ8ln2FrFlm2BDWyYbukvlmLsvkSnMiH1N1mucqgRWNhBMz2Qanwypo
+         GwUa+G3uymhXQhX11sVpIkOId4HQdIzv313ObZ4PxYAhKMFXzJi+Vxvx0aB2+kvn1Th3
+         2kXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720601972; x=1721206772;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1AFgkrTsAbch65s0iFzsbxEhv7dvuaqj7iB6yNyk3Ig=;
-        b=nrG5v7dNCBAWMaL7pk24Wl96MIgouAttEowY8HTZ6hHUEQjsvagjdi4Tx3nnK2oQ/R
-         KCg+KiBlYeob/DWx7FOqKpO22Osgb8EsOHH8unmXTV6Z1JUbGgPKC3qWp450uFUY6GyQ
-         uXsuVW6qcpvGDakXtQnQGzU8qtLjX9DjqTZbsuIGk5l0M5fr5EmTpNOmPug4SqfI3BtQ
-         S6J8VU0QOWG5JM6AnQKzF0M1Bz8Yu2QJ+6fWEKR0l+yrjbjrHERrB3SEd9ukm4aQ0XcQ
-         tZPePX537ksMzRpSHoqktX2VeE+lhJEATeb+ovoVxers0QqMkZRdUovCZog69Xc/8L2q
-         +opg==
-X-Forwarded-Encrypted: i=1; AJvYcCWvZTpK1oL1OdB5h+Ondxhem/Z0am0+sAX3aegZJCdEbNDpEwAFwBOR0fN4hQdzaTUcOJFLSYYm+ciJKWSTNnvWMqasId8JG4AEsV2i
-X-Gm-Message-State: AOJu0YwfNaGYTVHB9zRYqC7qG0SLlfzWbtXL5p+jOsyRDV5SVKu8moA1
-	rpqDdxT7176qMgvDAPZS813YZD/uXER7yfscDo951EY4kuo6fAs=
-X-Google-Smtp-Source: AGHT+IHCzjHr6Syhg0aC064+TZHFvRek9NsnVb6QHpIQDonygpLufrewp4hvcMMBSM1RPvW2GL3vAw==
-X-Received: by 2002:a17:907:720c:b0:a77:c5a5:f662 with SMTP id a640c23a62f3a-a780b68a9camr406398866b.12.1720601971601;
-        Wed, 10 Jul 2024 01:59:31 -0700 (PDT)
-Received: from localhost ([151.47.106.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a797ddb28ccsm27298466b.147.2024.07.10.01.59.30
+        d=1e100.net; s=20230601; t=1720602001; x=1721206801;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FxYvFXWDS6rYr4mBF26COM5Q4SvhFcKuutaGTTwwarA=;
+        b=XZqV9Vav6HAlGoBnCRVM5HkwIDT2rvIovlKM97RNBIE/izj0Q7/MXu+xk/8OcXK9wn
+         SX55MNgVz5FnMKYs4jwNYFH3i1naxny3UijLvdTlRo8UApnCrOoDEb0nlBkKDhl6m6Im
+         azB7zx78RLRYyEegY7pKLOnfnawD3/vKFrEnSC3uTG3/7rKk8f0SC7L5ES1Ri/lRQHpT
+         rp++/LHA0g4HsmNPtSSqZwJ9tZda4ZNKlOfUyVU0BHAdD9zQtiLlkKiVKXsHjnE5/jkO
+         1T7PtAQB9nTWyLgUO6o4pSkE4L5O3Sq5EZUc5kQuJ4/txmMA5rgdDL7Ho/e7vzaxTPOW
+         geuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ/FyV64fnwtebc8Yk9B8f+3FP72Q0XMrzlfu2s7cQXoWxcMQoxsnUbQGPtGzyDgIqhOZn1wB2R0M+6e/J5AE7utA3mSVpw0vCh4jRx3Q3lKQg0nnJVasDJ0PkXL0p/d6cceP0qzA5S1GF3mNe9Ivqe8Vcsa5ZutZIAz/s6s5i+3CsSE7B
+X-Gm-Message-State: AOJu0Yzu3XHuw4jP5AJBabnssuduqkpjwASOMqpZFpU474JEyDeFS2tk
+	jivU87z8jc/DFUA48oKBwX98gfJ/SEaxf4H2M48GKNCyTBSCeGvhXhEcrxUn
+X-Google-Smtp-Source: AGHT+IFyKkjEbWfPpt0EWoNM5+CbHhaTh+m9pQG9L5aZhJOLuywBhuPVhceQAqOKndZHHEJZ/FtPUw==
+X-Received: by 2002:a05:6e02:1a49:b0:375:ae17:a2cd with SMTP id e9e14a558f8ab-38a5a35bdcamr52822395ab.27.1720602000758;
+        Wed, 10 Jul 2024 02:00:00 -0700 (PDT)
+Received: from localhost.localdomain ([43.129.25.208])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b43969b41sm3235527b3a.138.2024.07.10.01.59.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 01:59:31 -0700 (PDT)
-Date: Wed, 10 Jul 2024 10:59:29 +0200
-From: Andrea Righi <righi.andrea@gmail.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: void@manifault.com, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	schatzberg.dan@gmail.com, mingo@redhat.com, peterz@infradead.org,
-	changwoo@igalia.com
-Subject: Re: [PATCH 3/6] sched_ext: Make @rf optional for
- dispatch_to_local_dsq()
-Message-ID: <Zo5Ncd8DxGSVztoH@gpd>
-References: <20240709212137.1199269-1-tj@kernel.org>
- <20240709212137.1199269-4-tj@kernel.org>
+        Wed, 10 Jul 2024 02:00:00 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: mhiramat@kernel.org
+Cc: rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Menglong Dong <dongml2@chinatelecom.cn>
+Subject: [PATCH bpf-next] bpf: kprobe: remove unused declaring of bpf_kprobe_override
+Date: Wed, 10 Jul 2024 16:59:39 +0800
+Message-Id: <20240710085939.11520-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240709212137.1199269-4-tj@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 09, 2024 at 11:21:09AM -1000, Tejun Heo wrote:
-...
-> @@ -2052,17 +2052,20 @@ static bool move_task_to_local_dsq(struct rq *rq, struct task_struct *p,
->  static void dispatch_to_local_dsq_lock(struct rq *rq, struct rq_flags *rf,
->  				       struct rq *src_rq, struct rq *dst_rq)
->  {
-> -	rq_unpin_lock(rq, rf);
-> +	if (rf)
-> +		rq_unpin_lock(rq, rf);
->  
->  	if (src_rq == dst_rq) {
->  		raw_spin_rq_unlock(rq);
->  		raw_spin_rq_lock(dst_rq);
->  	} else if (rq == src_rq) {
->  		double_lock_balance(rq, dst_rq);
-> -		rq_repin_lock(rq, rf);
-> +		if (rf)
-> +			rq_repin_lock(rq, rf);
->  	} else if (rq == dst_rq) {
->  		double_lock_balance(rq, src_rq);
-> -		rq_repin_lock(rq, rf);
-> +		if (rf)
-> +			rq_repin_lock(rq, rf);
->  	} else {
->  		raw_spin_rq_unlock(rq);
->  		double_rq_lock(src_rq, dst_rq);
+After the commit 66665ad2f102 ("tracing/kprobe: bpf: Compare instruction
+pointer with original one"), "bpf_kprobe_override" is not used anywhere
+anymore, and we can remove it now.
 
-Not a blocker, but would it make sense to provide some wrappers for
-rq_unpin_lock() / rq_repin_lock() to simply return if rf == NULL?
+Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+---
+ include/linux/trace_events.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-Maybe it can help to make the code a bit more readable.
+diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+index 9df3e2973626..9435185c10ef 100644
+--- a/include/linux/trace_events.h
++++ b/include/linux/trace_events.h
+@@ -880,7 +880,6 @@ do {									\
+ struct perf_event;
+ 
+ DECLARE_PER_CPU(struct pt_regs, perf_trace_regs);
+-DECLARE_PER_CPU(int, bpf_kprobe_override);
+ 
+ extern int  perf_trace_init(struct perf_event *event);
+ extern void perf_trace_destroy(struct perf_event *event);
+-- 
+2.39.2
 
--Andrea
 
