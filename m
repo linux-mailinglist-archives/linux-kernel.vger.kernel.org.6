@@ -1,100 +1,88 @@
-Return-Path: <linux-kernel+bounces-247545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 188CC92D103
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:50:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0144F92D105
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6EDA1F24748
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:50:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9951D1F24610
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187B6190684;
-	Wed, 10 Jul 2024 11:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C941190688;
+	Wed, 10 Jul 2024 11:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="BY6u0s20"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mjm0Ft4j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8642818FC89;
-	Wed, 10 Jul 2024 11:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61FB18FA39;
+	Wed, 10 Jul 2024 11:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720612195; cv=none; b=WwIiEF+hWXdY+XwGZxYKbeh4MLkvC9S8hNWP90X6BO5B9KFTH/lZ+/dVuan1rcTs0jfOucrQAMoEMjLa2u35OlVqqi4TGp8aF6qII41Hbi8eclJ7ucBdDXJ6T1AUvaZaXMz562kEdbYpb/RBt1smxe8VOno2liFnUkFRCf44nh8=
+	t=1720612307; cv=none; b=BYuNgbG8oI4rdrZ/Bq7k4fXdsIThUYMplUgPXL/4KO45wnxSybR2P7scglZPMnoQlmNPidE8vgYArjpkvgR6bfHYvlwVDqnxtxq8cmkKjYxcT172iV92JlnXF4L5vA2pV1MhvX4W53oJpqRZQas+ZMCU8SyAJnAXN0QhuxdIZxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720612195; c=relaxed/simple;
-	bh=Icr0XLd+tOg3lAw80ex57lRQGN7ul6Qtxts5UDyAvg4=;
+	s=arc-20240116; t=1720612307; c=relaxed/simple;
+	bh=+8Hn6GirerIMLeoeogts/cGCrU1jbWtvtugPsuhHr8Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kukZJ1F+EVT2xQEmLsCGG9BJYd7V1DGJoj6amFxgcrSxgcFhWdJ18QUcaygzV7e4FlHXuXE6PEqIaVzzeNnTcj7yPhuxkO5+tysHMh8CL2GQU9u9SxZUATTQ2qK8gUMbNul/GeT5QiPpwDyrfnXSgJLWpHTbZtlx7e9ZUE5yTGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=BY6u0s20; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1720612187;
-	bh=Icr0XLd+tOg3lAw80ex57lRQGN7ul6Qtxts5UDyAvg4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=rGiqygYyCLO137luLYGTR6nHjxqjoxvpwezy6QbZevcLNua1sIW0KbfXewqVjQsgNXElzpkvMOKod6xlKCnxBDmzzePaUhq1o7UHzRc6UIyXws3frtl8qRCBxj3qqRPOSpLGc/IOlIK1BDj/TGXQqIK3oQP+JKrvVmKvLUmpbrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mjm0Ft4j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 926EBC32781;
+	Wed, 10 Jul 2024 11:51:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720612307;
+	bh=+8Hn6GirerIMLeoeogts/cGCrU1jbWtvtugPsuhHr8Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BY6u0s20vMPLvcKT8EiZ6u51jA8aJYTsyIkn4AkC5LcNxsPUrSEOB+KykKQ89LYBO
-	 KWxkdaiat01fNaAzJXVBhz9VuKPdfRSNCxtoHTPtgdGz3zAUAGbchs9TSExoK7zmM8
-	 zRlwzky5ISAMHdXmGuEkOKFs+3bMJMEJHBLdBGPY=
-Date: Wed, 10 Jul 2024 13:49:47 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>, 
-	Lance Ortiz <lance.ortiz@hp.com>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, stable@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] ACPI: sysfs: manage sysfs attributes through
- device core
-Message-ID: <8c5c7067-7954-4fad-be3b-3b5a22cfbd5c@t-8ch.de>
-References: <20240709-acpi-sysfs-groups-v2-0-058ab0667fa8@weissschuh.net>
- <CAJZ5v0iR4r6BFTd5fPEdoCVBv=c=HqyoV239Bd99tbO0gFihLw@mail.gmail.com>
+	b=mjm0Ft4jZI39dqIpTr6DOyr1YfcrZd+bvWZvDz07VCTPvnit+IvmONgtvltSco4nR
+	 SX4UlRX2si4Xz1ipLGKhC4FY/lV1OvD+MJNQeYxn6bapyyEvMD3BP7HigJitmRrrAv
+	 0Xmj4H52NNyK6kQnjDFCEfUvgYvvBb8/aFzBd3TQ=
+Date: Wed, 10 Jul 2024 13:51:44 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Akash Kumar <quic_akakum@quicinc.com>
+Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Jing Leng <jleng@ambarella.com>, Felipe Balbi <balbi@kernel.org>,
+	Jack Pham <quic_jackp@quicinc.com>, kernel@quicinc.com,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Daniel Scally <dan.scally@ideasonboard.com>,
+	Vijayavardhan Vennapusa <quic_vvreddy@quicinc.com>,
+	Krishna Kurapati <quic_kriskura@quicinc.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: gadget: uvc: Add H264 frame format support
+Message-ID: <2024071054-anatomist-purchase-1e98@gregkh>
+References: <20240708041328.1942-1-quic_akakum@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0iR4r6BFTd5fPEdoCVBv=c=HqyoV239Bd99tbO0gFihLw@mail.gmail.com>
+In-Reply-To: <20240708041328.1942-1-quic_akakum@quicinc.com>
 
-On 2024-07-10 13:43:57+0000, Rafael J. Wysocki wrote:
-> On Tue, Jul 9, 2024 at 10:38 PM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> >
-> > Simplify the lifecycle of the sysfs attributes by letting the device
-> > core manage them.
-> >
-> > Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> > ---
-> > Changes in v2:
-> > - Add fix to validate buffer type validation (patch 1)
-> > - Drop usage of devm-APIs as these are unusable for unbound devices
-> > - Evaluate _STR on each sysfs access
-> > - Link to v1: https://lore.kernel.org/r/20240613-acpi-sysfs-groups-v1-0-665e0deb052a@weissschuh.net
-> >
-> > ---
-> > Thomas Weißschuh (5):
-> >       ACPI: sysfs: validate return type of _STR method
-> >       ACPI: sysfs: evaluate _STR on each sysfs access
-> >       ACPI: sysfs: manage attributes as attribute_group
-> >       ACPI: sysfs: manage sysfs attributes through device core
-> >       ACPI: sysfs: remove return value of acpi_device_setup_files()
-> >
-> >  drivers/acpi/device_sysfs.c | 196 +++++++++++++++++++-------------------------
-> >  drivers/acpi/internal.h     |   3 +-
-> >  drivers/acpi/scan.c         |   6 +-
-> >  include/acpi/acpi_bus.h     |   1 -
-> >  4 files changed, 89 insertions(+), 117 deletions(-)
-> > ---
+On Mon, Jul 08, 2024 at 09:43:28AM +0530, Akash Kumar wrote:
+> Add support for framebased frame format which can be used to support
+> multiple formats like H264 or H265 other than mjpeg and YUV frames.
 > 
-> If this is not urgent, and I don't think it is, I'd rather defer it to
-> the 6.12 cycle (that is, I'd apply it after the upcoming 6.11 merge
-> window).
+> Framebased format is set to H264 by default, which can be updated to
+> other formats by updating the GUID through guid configfs attribute.
+> 
+> Signed-off-by: Akash Kumar <quic_akakum@quicinc.com>
+> ---
+>  drivers/usb/gadget/function/uvc_configfs.c | 570 ++++++++++++++++++---
+>  drivers/usb/gadget/function/uvc_configfs.h |  34 +-
+>  drivers/usb/gadget/function/uvc_v4l2.c     |  80 ++-
+>  include/uapi/linux/usb/video.h             |  62 +++
+>  4 files changed, 638 insertions(+), 108 deletions(-)
 
-Sounds good to me.
+DOn't you need to add the new configfs entries to Documentation/ABI/?
 
+And how is anyone going to know about this new api or format if there
+are not new files?  WHere is it now documented?
 
-Thanks,
-Thomas
+thanks,
+
+greg k-h
 
