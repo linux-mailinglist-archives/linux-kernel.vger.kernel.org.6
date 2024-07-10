@@ -1,180 +1,94 @@
-Return-Path: <linux-kernel+bounces-247393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4515992CEE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:09:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F67692CEE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:10:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A84F5B26B3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:09:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9856AB20EB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2DE18FC64;
-	Wed, 10 Jul 2024 10:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD3918FC64;
+	Wed, 10 Jul 2024 10:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JnD3ha88"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Jkd/Ix7X"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0602F43156;
-	Wed, 10 Jul 2024 10:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535AE43156;
+	Wed, 10 Jul 2024 10:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720606168; cv=none; b=jY4H7QI9jFLXPper5R9iRlfyj3oKNhePUCRGenwmYkMaXUbHZM7OCuUjtrPZIy1HieFZeo7nvMKYB6TpajHdyfO9F0Jqv8+I+BSzrLBu6pFCvwhJ22F9pJVd+rS6jiXx7ds1B/lzMv/5sPStqb5g5ncU+vURE73wnTyVM9YOKik=
+	t=1720606210; cv=none; b=CWtO6rLfKJ9Y/IghzBWAcSP9GFyKn2XNGmntAFnzZVwyrAon1YeVe3/Lo78iKEoxPOVmnFzLUB7dapqEIMVxHDDEINBJBFyHBy9aug6lDaqU225pCqG5MQbM/DK/OyJ8HK0es3hb7rIa1GRbIEm313vMgrA49CKTibJcof1gyFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720606168; c=relaxed/simple;
-	bh=YeOOqgqihShtVaR4aobEpHkV+3/ihbCPBoX+nXP4imc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RVF2zvFuhFLg6sdk8en0FiVSqbmmnzKeAaFi4DZ36zv5ySQWNhVuRpgHmvhCCdUiPeEQlmZwWebxB92AZjG5L8kxqwzNHlMEhJH6SnXlnlVnZ6rRgqcoaPm3Tx0E0noW0ekYAqMpF8GDuDkzc7/tlGj9/LjMsrSwLJp06o9RQBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JnD3ha88; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FD60C32781;
-	Wed, 10 Jul 2024 10:09:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720606167;
-	bh=YeOOqgqihShtVaR4aobEpHkV+3/ihbCPBoX+nXP4imc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JnD3ha88K7DkkntKt9UlcD+9HmgoBYN3T8c0dpyiFyQjy1CKoCrElTXyDlOf/O/n8
-	 +xkitYfn5pc2z73Ucg/upY6bJ4/pwi3QCtJxx6z3olBFpZuqmesY305clciDvsd7j9
-	 vIfPCexDNkfhA98cFOtbjC/hbbEtJLN4f4Mk3tgtXTt7pziQ5gKFTcZ4ausC+5Lisy
-	 KK/B8zAlf+bfzFqiKY0p9EqqEJDlIWzdUVLFuCtSKR2JK7VLHzO59BqB2Cq9vOVymB
-	 VHf676l7/lG6qjUcLK6R22EAFd8ZfGZ5kyg9vvCXLWz3U1h2slJygKavNzWQfU2USX
-	 BQcuKh3WLiI3w==
-Message-ID: <54468cb8-9603-430e-8d09-ba2a243ff552@kernel.org>
-Date: Wed, 10 Jul 2024 12:09:24 +0200
+	s=arc-20240116; t=1720606210; c=relaxed/simple;
+	bh=Ng8S+1BcKoxumpudowjbxL6VLbDq5Q9gGByFKUUsFYk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UmM/y38IFIlbi+QqYBsAUrKxdngE+Aee50dPZ9O2NM02w4iLiJzTIl+8bb9UUj3NLMxHVPEurdPp/ABrsKGwV4Fh8W6zY1T6LIPcwfVGKvppTchiCJqmY4rRp00Zm8iMPQCowBwtbPvPZe0SZN3ialX2nw9xHQUkLAIGkH5Fqt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Jkd/Ix7X; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=1yWFMPrFqfyC61fi5S/A3/M+2F2s2Kz1I84XYYwzx1k=; b=Jkd/Ix7XQG2rIawzoekH1STabw
+	yI8CzwNv25PfCc2ujPrznY6xNqZSWcGAq9+G0WUFcYXUiGqR3+/brumwIvfW2rmmnkeaH4rxFuV8C
+	gnWJx7t+IDr/Gbns4iY+pNHM5so/se2bPWfQTmQwlBuo2rSYR/7HKoowlsnsTDc0GYzKHT3u4RWHE
+	W1A5QTjIH2iJi0VlWu7tvLMeKPS0SO8P/1vnrRIaoPN7sfW0d16jsC9YTqce8GkZXEBiPolxLlncS
+	tlgBrUSUGFEG1+PzEBeeRLQf5IRZoIW0kespIB3fX64LCL8E1kS1wq5bbQxCygUWsz1gGzrF30rQb
+	qZ1Oa4PA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRUGy-000000095kw-0eN8;
+	Wed, 10 Jul 2024 10:10:04 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C246B300694; Wed, 10 Jul 2024 12:10:03 +0200 (CEST)
+Date: Wed, 10 Jul 2024 12:10:03 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Jiri Olsa <olsajiri@gmail.com>,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>, mingo@kernel.org,
+	andrii@kernel.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, oleg@redhat.com, clm@meta.com,
+	paulmck@kernel.org, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+Message-ID: <20240710101003.GV27299@noisy.programming.kicks-ass.net>
+References: <20240708091241.544262971@infradead.org>
+ <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
+ <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
+ <20240709090304.GG27299@noisy.programming.kicks-ass.net>
+ <Zo0KX1P8L3Yt4Z8j@krava>
+ <20240709101634.GJ27299@noisy.programming.kicks-ass.net>
+ <20240710071046.e032ee74903065bddba9a814@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: iio: humidity: add ENS21x sensor family
-To: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240709-ens21x-v1-0-678521433cdd@thegoodpenguin.co.uk>
- <20240709-ens21x-v1-1-678521433cdd@thegoodpenguin.co.uk>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240709-ens21x-v1-1-678521433cdd@thegoodpenguin.co.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710071046.e032ee74903065bddba9a814@kernel.org>
 
-On 09/07/2024 18:36, Joshua Felmeden wrote:
-> Add device tree documentation for ENS21x family of temperature and
-> humidity sensors
+On Wed, Jul 10, 2024 at 07:10:46AM +0900, Masami Hiramatsu wrote:
+
+> > FFS :-/ That touches all sorts and doesn't have any perf ack on. Masami
+> > what gives?
 > 
-> Signed-off-by: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
+> This is managing *probes and related dynamic trace-events. Those has been
+> moved from tip. Could you also add linux-trace-kernel@vger ML to CC?
 
+./scripts/get_maintainer.pl -f kernel/events/uprobes.c
 
-I believe that's either RESEND or v2, so you are supposed to mark it in
-patch prefix accordingly. If it is v2, then provide also changelog under
---- or in cover letter.
+disagrees with that, also things like:
 
-> ---
->  .../bindings/iio/humidity/sciosense,ens21x.yaml    | 50 ++++++++++++++++++++++
->  1 file changed, 50 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/humidity/sciosense,ens21x.yaml b/Documentation/devicetree/bindings/iio/humidity/sciosense,ens21x.yaml
-> new file mode 100644
-> index 000000000000..3140349a58b8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/humidity/sciosense,ens21x.yaml
-> @@ -0,0 +1,50 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/humidity/sciosense,ens21x.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ScioSense ENS21x temperature and humidity sensor
-> +
-> +maintainers:
-> +  - Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
-> +
-> +description: |
-> +  Temperature and Humidity sensor.
-> +
-> +  Datasheet:
-> +    https://www.sciosense.com/wp-content/uploads/2024/04/ENS21x-Datasheet.pdf
-> +    https://www.sciosense.com/wp-content/uploads/2023/12/ENS210-Datasheet.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - sciosense,ens210
-> +      - sciosense,ens210a
-> +      - sciosense,ens211
-> +      - sciosense,ens212
-> +      - sciosense,ens213a
-> +      - sciosense,ens215
+  https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git/commit/?h=probes/for-next&id=4a365eb8a6d9940e838739935f1ce21f1ec8e33f
 
-Driver suggests these are compatible, so I would normally expect using
-one as fallback for others.
+touch common perf stuff, and very much would require at least an ack
+from the perf folks.
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-
-Missing supply.
-
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +unevaluatedProperties: false
-
-This must be additionalProperties instead.
-
-Best regards,
-Krzysztof
-
+Not cool.
 
