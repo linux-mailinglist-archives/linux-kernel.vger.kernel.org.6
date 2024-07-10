@@ -1,119 +1,123 @@
-Return-Path: <linux-kernel+bounces-247078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB63092CAE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:21:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60AC092CAE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:22:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A4C8B21A13
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:21:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0759028397E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63E75EE8D;
-	Wed, 10 Jul 2024 06:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E7D6A33B;
+	Wed, 10 Jul 2024 06:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GVpwoxc5"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Brwc913e"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5DB17BDA
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9EE75B1F8
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720592482; cv=none; b=Ft7ZHraAHXbTeYuEbqAx4VZOymEx45vHqXqx43nsNR/TeAKJ8hzuIcqKh2JCWLZnFUWG3jBsDoh2zMis/1MM4LHuKCDPD9+l94ysRO3q4HiZyY8y4xdP2wLORMQ7vVcLxOFCXixtCqOMqhvQp8Z6E790YdHxyA7BQ7Zm0VRYgnY=
+	t=1720592516; cv=none; b=Depa5Ykpes0ndbh0hDadqvDggw/UH4mvrpCEwiVL7wW3K2G4IOTAb1YdciyK+W0Yzm6gJMoj6/CvNJV/KY1aDjlJx5hRy55teHzXhlkliyMVefJcddZN9zB6y/SGT1B0A4TM2lwgItzfrACIR+RlgebzQxbz5FXtwwg33e5bkHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720592482; c=relaxed/simple;
-	bh=0ZoqnbEUB5Ap9hkteRABbj1Sg/92x8xwPykf9Y4550o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b2mvS9S4BY/oTTp69uNjErE7TQ0l5PEklGt5mHUq64NhoXu2NsD7jGNYkV0Ucx2SDoW5jqIu5wlpOZ8xZoUdQNUhL9EyVqb3MbwG8DmUTMCv063Wg/NQs0klx3KYT8+/rYXEmwEGUFk/7cqppr0l9ehXBt6xdzn12GYNh/TnAVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GVpwoxc5; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-70b2421471aso3144294a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 23:21:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720592480; x=1721197280; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FDfqB3vBZ3wdNf6zYO9+rUXgJFWsxTnpFjqLnoTLgGw=;
-        b=GVpwoxc51jte9bIyzlAg1MRURjpiloY12uRBgPAaNbChicZeJKTVQMOF//h5jbOiEx
-         BF1trjd+opYika1MeJnC7LHDkjayIHU+2BpTg95NTMIOOPkdg9hmII/ZI9ssjqSZyks3
-         AHnbBH5iPKsfN5/6KHOjzL/5oBa55ibpnxU1KpWatvJpnEpkmJjoBYDQK7QUFO6W3OYk
-         AHvRBu6YTczBJu3TrSfAWr8ZC0SNKn2JD2SCVGSSbfGr0+r0Z22KcyfUStCLLuUOBNhN
-         O8VQZ4P4YwjK0bSvqkZt0QeKweLHJaB83Sq5z/YurJr1nzxW3WVQd39lKPhEyxmKYHnA
-         QUeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720592480; x=1721197280;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FDfqB3vBZ3wdNf6zYO9+rUXgJFWsxTnpFjqLnoTLgGw=;
-        b=m8wsSeQerQx7hjrEa4aTBKxVBfCj7gYhOKKtlpbPc0qrJlJ7pDTEwAJ9CDbaFQopjR
-         ypClN2uKVBDBa8jUMiXZJGBHZswkWihbcNcthaJBpKDQXvm04zNeExHa+z4/sVn7dXCd
-         7A2vGgq3KqUBR7LHcfnpZzVr/XVWhtsIouqQ5H0J6kUQZtLpKlirE49ePDkKNBpO1ldO
-         r1V+diBXX/ccdjyvMGu4XYEJcCx6oqN+mWatrc21xyO7bHgOguEGn2V3ayIM2se14d+o
-         RPW1+m4noyY7xQPBOyobdYAE/EAPUi4GCVr+T/o9SKPvK/Kh7Hys9i4xcLOliUoaJFrQ
-         rKUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtst5i9roeEL1zAh6pzWTp/DMQWhtY4rbqL2bGDIkipetp1zDT/HH1HVPuVUXBhtIL1r6YcGe+RsSeY2haYhE2LFXnBWrsnOJPp6Kl
-X-Gm-Message-State: AOJu0Ywro0PoiMtD+1WRhiSw/WwZ7Dhx1czapPeq2uEMHMHGSqH9E+Cl
-	NwWSRAAWMOdt/c4TuJSygqlTS1cetdJWjhtZe12STSimaP0LKikgnpWx+6eoiXGN/Jk9i0Xyfoy
-	603BqiuLjP5M3mesPRBZ6brdQe68=
-X-Google-Smtp-Source: AGHT+IFVSRdYhlRo2fU3wUndUgbALxo8r/fCvmgBgcUou0oGKzMd/WDmckS/0xJOp8csiFwHox1JZYX2RomQzamEB6E=
-X-Received: by 2002:a05:6a20:3c8a:b0:1c0:f23b:d35f with SMTP id
- adf61e73a8af0-1c2982148eamr5178939637.13.1720592479926; Tue, 09 Jul 2024
- 23:21:19 -0700 (PDT)
+	s=arc-20240116; t=1720592516; c=relaxed/simple;
+	bh=DjRfHsq2OwCmyWbMuyL8sU1oh74XsFkOydwtU3E+bvY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gQ97T/cuFxBmG4TJOERdaa+FZiyaM23tvnhixtwjh/QFSA6XSUOZZtqZ/AW5e8IXmlo8yIihATxQoaBP6mzFl4W8kdaLtd8f0ASW8ryGULF/hmFJSoX1hF8g+1yG8Zj+G3W+RXYvAkU0s8wFalFbPaKyeIkVwXz60nk/x+Dxc1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Brwc913e; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=Hsis
+	lCWVw+VYGXePRMPXTjTZABHOco1LrXMIPTs+dV4=; b=Brwc913ejyOxvPscFA+v
+	K6Lci7ruCt0Se064R8bF16I3tizAfKA24DOcdYG5rRCD6erZ5/SQppnPB0FLksPc
+	QL/8guQUxo89wlpUk3mP6VHzjWuB++LoeezPWIMXzQ7+6bWVDRCe8xkbS6T05UQB
+	FQgQY16hXtxcTBMIseSSMvLlqJKEVRCVhfvtz/tPUW+kDUATHmqAlEWDBG2zwV7Q
+	GZDFtID6MKZjZMDo2x//YrboPoTflErMPqLkovRCfZvXq0GunrWqQXyCdcLZFxKq
+	J1OVwxhUKFkB3g9dW79WpxWP5AP6qf2KTIr1gPjfDE7RKSCrQ/bHfpMcka458Iaz
+	Bw==
+Received: (qmail 428081 invoked from network); 10 Jul 2024 08:21:48 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Jul 2024 08:21:48 +0200
+X-UD-Smtp-Session: l3s3148p1@qUM7qd4cPMYujnsa
+Date: Wed, 10 Jul 2024 08:21:47 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Lee Jones <lee@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the mfd tree with the mmc tree
+Message-ID: <Zo4oe536Yo14SlBT@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>, Lee Jones <lee@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20240710141010.4fbd65a0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704065213.13559-1-qiang.zhang1211@gmail.com> <4673661c-b6c0-4188-a98c-83dfdda48a13@paulmck-laptop>
-In-Reply-To: <4673661c-b6c0-4188-a98c-83dfdda48a13@paulmck-laptop>
-From: Z qiang <qiang.zhang1211@gmail.com>
-Date: Wed, 10 Jul 2024 14:21:08 +0800
-Message-ID: <CALm+0cU_B24pHUWcM5_1N7bYPLkii5e5c_K8eTcev3YL7Y7-cQ@mail.gmail.com>
-Subject: Re: [PATCH] smp: Fix missed destroy_work_on_stack() calls in smp_call_on_cpu()
-To: paulmck@kernel.org
-Cc: imran.f.khan@oracle.com, tglx@linutronix.de, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="9cxp5WarzjLTxvue"
+Content-Disposition: inline
+In-Reply-To: <20240710141010.4fbd65a0@canb.auug.org.au>
 
->
-> On Thu, Jul 04, 2024 at 02:52:13PM +0800, Zqiang wrote:
-> > For builts with CONFIG_DEBUG_OBJECTS_WORK=y kernels, the sscs.work
-> > defined using INIT_WORK_ONSTACK() will be initialized by
-> > debug_object_init_on_stack() for debug check in __init_work().
-> > This commit therefore invoke destroy_work_on_stack() to free
-> > sscs.work debug objects before smp_call_on_cpu() returns.
-> >
-> > Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
->
-> I have queued this for testing.  My guess is that it should go to
-> mainline some other way, so:
->
-> Tested-by: Paul E. McKenney <paulmck@kernel.org>
 
-Thanks Paul for testing this change ;) .
+--9cxp5WarzjLTxvue
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
-> > ---
-> >  kernel/smp.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/kernel/smp.c b/kernel/smp.c
-> > index cc13e73a887c..61f10f982341 100644
-> > --- a/kernel/smp.c
-> > +++ b/kernel/smp.c
-> > @@ -1135,6 +1135,7 @@ int smp_call_on_cpu(unsigned int cpu, int (*func)(void *), void *par, bool phys)
-> >
-> >       queue_work_on(cpu, system_wq, &sscs.work);
-> >       wait_for_completion(&sscs.done);
-> > +     destroy_work_on_stack(&sscs.work);
-> >
-> >       return sscs.ret;
-> >  }
-> > --
-> > 2.17.1
-> >
+On Wed, Jul 10, 2024 at 02:10:10PM +1000, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Today's linux-next merge of the mfd tree got a conflict in:
+>=20
+>   include/linux/mfd/tmio.h
+>=20
+> between commits:
+>=20
+>   89f415b99050 ("mfd: tmio: Remove obsolete .set_clk_div() callback")
+>   f86937afb446 ("mmc: tmio: Remove obsolete .set_pwr() callback()")
+>=20
+> from the mmc tree and commit:
+>=20
+>   70b46487b155 ("mfd: tmio: Move header to platform_data")
+>=20
+> from the mfd tree.
+>=20
+> I fixed it up (I removed the file and applied the following patch) and
+
+The fix looks good to me. Thank you!
+
+
+--9cxp5WarzjLTxvue
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaOKHsACgkQFA3kzBSg
+KbYNuhAAiV7yl4g0HVVc3mrLR2UfgTk9z46YIjJ4vs413DWJ38KfSWCjB/gchepx
+60YvSzFwNf7fSeJ9qFq9ovp5UfA+LPeN/gHY1Ik47jKU+0shR277vYVtslFKcMC8
+jX2NKs3+AWiJHKWS4vQRKQOET2FjmipjVR/oKqCRJTrP6fzguVVs4UnVts9Z5pzs
+Pt8uV7M8Na7Z18fNXeFh4bH+xEYwG2sfmjvqYkmsmVwr8O/O5meRDQPdvXnBsWah
+2d4VUOkytrLwlf6Dobv3UrqywcOXzIOuhG/LJIss84xqo0yTfV5p7FHs2nYSxPMg
+eeqsx3TtAWi/Nspngg7P/5QOPuAMV3Mu2b5WqvLLJZJnE0HyUbcoYC19bZ9W/6KG
+ehX2yFuXSJEaVKKUT2g575nmE5n/wEj4WfW0nZO7j5vE4bR0UD11RPYrXJQ9OTX/
+qmrcKTgnql95GCcuPVNASgwQMRzJakBCDFgRAoBWnUIZ5dJNpHkd0/jkVBq3rZRV
+7RECkWUdjmWV2MP5fciSpLO3mduvVoPkG11+yeQCfplrtHP73aBu9CCdZlia3n94
+cuOXc69HMCALWOs3AJsOVHZ0BhxLmniuGI+aLEPhLOsgFVKwYglrjAf6+8MEOIHZ
+gsJGPiWGEtM0suL7Lu/UhzddQQNATnAiAOjTBwqOHj857R8gxsE=
+=r2KP
+-----END PGP SIGNATURE-----
+
+--9cxp5WarzjLTxvue--
 
