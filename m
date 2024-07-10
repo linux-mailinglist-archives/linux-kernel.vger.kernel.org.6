@@ -1,208 +1,153 @@
-Return-Path: <linux-kernel+bounces-248382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E16BA92DC75
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:16:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 352D592DC78
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:17:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42A92B21FBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:16:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67A941C226F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851DA152515;
-	Wed, 10 Jul 2024 23:16:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B7C1534FC;
+	Wed, 10 Jul 2024 23:17:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lW1IzOpI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="uRUsS3Oc"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E4112BF23;
-	Wed, 10 Jul 2024 23:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400CC13C679
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720653383; cv=none; b=RXhMUhM2K/6Nc+/5dVeK1kq3L+HHAxukY8WKl4s+W77QUpIYEG26wzPypfjl7enihej4Gq7GvOvV4bnS5T3lS+JBA1/1+r/Wanl+Kc72ABV0YQrdV99RET1TIrVLy2CgQkvwkldmWx+zdplhmzyb4OP77uvgEh3bJ6XhE5ymX+A=
+	t=1720653420; cv=none; b=tRyj5N8sIJ5Yng4uPr9xXAEubugG3NEgUfjbD3z6SBvmkOTDOSGjUOx9ZMd4mdjqEdc0Uv/3OKuylQ2mdBNZtI11t+lJIG7bDDtHpY5izlhm/d/c5b6UL4He8vasBfkkq0L0aQvpQgnvTmVlPpDYX9Ppia4v03GvLeJwP5XLti4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720653383; c=relaxed/simple;
-	bh=fer+00iaGcBfnRBG7yRtqmNuSbkPeeQfXN4EbD/eWvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o57gnDesIqmELJQZnN79m8lVlE4mbqLmjzrJeHZRiXuPpwfJr2kV2xd19gf2EW6rXLxl8HlYwux4Oily3KRVO2eIfWbWYZDvpmbZfKoKJ0PYolx1fhZEEW3j7+hOmdxGComMKhNdXdbGEgcD42BBs3lpp0ut41dC/HQikpJOT2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lW1IzOpI; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720653382; x=1752189382;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fer+00iaGcBfnRBG7yRtqmNuSbkPeeQfXN4EbD/eWvk=;
-  b=lW1IzOpIZO7/7LhjXdqwHc6qayrLYFEfCI8Tp4h+ohM059bccsOvzdBM
-   aMGpOHGNinI6gHITM6mcZg2NshhibwcZ8iOkZQ/SsuDclhr3p4AZe+nXl
-   FM2RjtRy0wvC1C08gZoZZAx8z/Bz4deTTuZl3OYHkNatmL5spWfY0pykl
-   vb0CKmQH8q/ppERaPdLUrjwleVUXpu+cBNx5nnyLwSjO27bpQbeYwuF4Y
-   ZlXLzcySuhvuLn7Nyr3kxLGAYoTikwTnpxnVUOOblhdytK4SlGPnaSK6/
-   NLaiv15wGGsVzrILA4K9TTw7VWv6n70Mh/l2ppyuYnSHvBkQ0I2zAkWZM
-   Q==;
-X-CSE-ConnectionGUID: NM0g50VXSmyQs2FcCEhJiA==
-X-CSE-MsgGUID: UatasSfmQfaR3UH663DxRw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="18141153"
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="18141153"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 16:16:21 -0700
-X-CSE-ConnectionGUID: ZJi+3G5qT+S7/VBH0Q/g5A==
-X-CSE-MsgGUID: rHmOepUKSWGsFSH4Lkd/hg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="48336145"
-Received: from kwangwoo-mobl1.gar.corp.intel.com (HELO desk) ([10.209.72.253])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 16:16:22 -0700
-Date: Wed, 10 Jul 2024 16:16:09 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Robert Gill <rtgill82@gmail.com>,
-	Jari Ruusu <jariruusu@protonmail.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
-	antonio.gomez.iglesias@linux.intel.com,
-	daniel.sneddon@linux.intel.com, stable@vger.kernel.org
-Subject: Re: [PATCH v4] x86/entry_32: Use stack segment selector for VERW
- operand
-Message-ID: <20240710231609.rbxd7m5mjk53rthl@desk>
-References: <20240710-fix-dosemu-vm86-v4-1-aa6464e1de6f@linux.intel.com>
- <8551ef61-71fb-18f3-a8a8-6c7c3ed731e6@gmail.com>
+	s=arc-20240116; t=1720653420; c=relaxed/simple;
+	bh=sC+v9/yANl9hLQYeBgjFHxA+lkxPKYW5RPrkbjfI/zE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L7/VlIT8CPlpVviMrrquEuhCwMIyBSkVLJCA+Nsh5rdDiUJRfoO2gnVektBudNmSv49NbSiB2RcED9ZludH3dx93D4BGcXT3Mdx1RXq0RQ0vZQy+v3eFDkfbKI9um2VPw5NIvx9XysLheJtYya3zX3jCatB6O92gfxaDLl2mXko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=uRUsS3Oc; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6002a.ext.cloudfilter.net ([10.0.30.222])
+	by cmsmtp with ESMTPS
+	id RcXJshZrsjnP5RgYOsPRu2; Wed, 10 Jul 2024 23:16:52 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id RgYOsGYWjX56wRgYOsKzH3; Wed, 10 Jul 2024 23:16:52 +0000
+X-Authority-Analysis: v=2.4 cv=MY6nuI/f c=1 sm=1 tr=0 ts=668f1664
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
+ a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
+ a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8
+ a=mQTSY71ofxE6tXbfK60A:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
+ a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=AX4VtRHSQCF7dAnD2xsWmA+IklZiBVIQGTjA3CNugNA=; b=uRUsS3Oc2b9NPpqrHgj/SWUpdR
+	ViqpY9movygUdVcpKD/LNIdGBlz+1xNNThF6GfeBaXyDYpI2ono3NYcSAa8qI7oVrPUIulbE8fI45
+	kV2VpjraNnHZwV9/EeIC1Pz5Y5vWsdGcHGajcunj09RABZyYZ+OgY9FxNHmuF+f5wNjOHnchKjZS4
+	JvuUuA/KiX84KwxhAzy5tZxe7Bne7cCDgyKRNvmgPDbZIb3P6AHePemKNjrvbn2gZgNmYNvn9lYlT
+	tplq8f5JW+XgSlzC53qwXUP0Xf3dAnygPyl7iKdyvcAe/cnAgoGJPIQDKVS840kh4vw37kppo5V/S
+	tmodMN3A==;
+Received: from [201.172.173.139] (port=54868 helo=[192.168.15.4])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sRgYN-004Cic-22;
+	Wed, 10 Jul 2024 18:16:51 -0500
+Message-ID: <4193c6b4-164e-4c65-bd8b-cf392b1a865f@embeddedor.com>
+Date: Wed, 10 Jul 2024 17:16:49 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8551ef61-71fb-18f3-a8a8-6c7c3ed731e6@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] media: venus: hfi_cmds: struct
+ hfi_session_release_buffer_pkt: Replace 1-element array with flexible array
+To: Kees Cook <kees@kernel.org>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240710230728.work.977-kees@kernel.org>
+ <20240710230914.3156277-1-kees@kernel.org>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20240710230914.3156277-1-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.139
+X-Source-L: No
+X-Exim-ID: 1sRgYN-004Cic-22
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.4]) [201.172.173.139]:54868
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 1
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfPTNBp/2bTB0gLeB4lqzQ4N9ux0tUUIjbw8mT3dkpm//GMn5DcORlFDFEZSzn5lITblmlw9y08xoKrTJKc9vaWCL9sEWbiBNtl8VR9ajJ58yPC8UihIF
+ 4OIIwDvygvaVfnNklkCFXRbJg/p/Qao+4DsGjcfNj3SJlj955BEryeiXfKYYzmaht99ydS3tQD2z2/TEsbBXv/+pcCGUwUaSrx25wu84dTtdIn52OXolO2Zo
 
-On Wed, Jul 10, 2024 at 11:50:50PM +0200, Uros Bizjak wrote:
-> 
-> 
-> On 10. 07. 24 21:06, Pawan Gupta wrote:
-> > Robert Gill reported below #GP when dosemu software was executing vm86()
-> > system call:
-> > 
-> >    general protection fault: 0000 [#1] PREEMPT SMP
-> >    CPU: 4 PID: 4610 Comm: dosemu.bin Not tainted 6.6.21-gentoo-x86 #1
-> >    Hardware name: Dell Inc. PowerEdge 1950/0H723K, BIOS 2.7.0 10/30/2010
-> >    EIP: restore_all_switch_stack+0xbe/0xcf
-> >    EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00000000
-> >    ESI: 00000000 EDI: 00000000 EBP: 00000000 ESP: ff8affdc
-> >    DS: 0000 ES: 0000 FS: 0000 GS: 0033 SS: 0068 EFLAGS: 00010046
-> >    CR0: 80050033 CR2: 00c2101c CR3: 04b6d000 CR4: 000406d0
-> >    Call Trace:
-> >     show_regs+0x70/0x78
-> >     die_addr+0x29/0x70
-> >     exc_general_protection+0x13c/0x348
-> >     exc_bounds+0x98/0x98
-> >     handle_exception+0x14d/0x14d
-> >     exc_bounds+0x98/0x98
-> >     restore_all_switch_stack+0xbe/0xcf
-> >     exc_bounds+0x98/0x98
-> >     restore_all_switch_stack+0xbe/0xcf
-> > 
-> > This only happens when VERW based mitigations like MDS/RFDS are enabled.
-> > This is because segment registers with an arbitrary user value can result
-> > in #GP when executing VERW. Intel SDM vol. 2C documents the following
-> > behavior for VERW instruction:
-> > 
-> >    #GP(0) - If a memory operand effective address is outside the CS, DS, ES,
-> > 	   FS, or GS segment limit.
-> > 
-> > CLEAR_CPU_BUFFERS macro executes VERW instruction before returning to user
-> > space. Replace CLEAR_CPU_BUFFERS with a safer version that uses %ss to
-> > refer VERW operand mds_verw_sel. This ensures VERW will not #GP for an
-> > arbitrary user %ds. Also, in NMI return path, move VERW to after
-> > RESTORE_ALL_NMI that touches GPRs.
-> > 
-> > For clarity, below are the locations where the new CLEAR_CPU_BUFFERS_SAFE
-> > version is being used:
-> > 
-> > * entry_INT80_32(), entry_SYSENTER_32() and interrupts (via
-> >    handle_exception_return) do:
-> > 
-> > restore_all_switch_stack:
-> >    [...]
-> >     mov    %esi,%esi
-> >     verw   %ss:0xc0fc92c0  <-------------
-> >     iret
-> > 
-> > * Opportunistic SYSEXIT:
-> > 
-> >     [...]
-> >     verw   %ss:0xc0fc92c0  <-------------
-> >     btrl   $0x9,(%esp)
-> >     popf
-> >     pop    %eax
-> >     sti
-> >     sysexit
-> > 
-> > *  nmi_return and nmi_from_espfix:
-> >     mov    %esi,%esi
-> >     verw   %ss:0xc0fc92c0  <-------------
-> >     jmp     .Lirq_return
-> > 
-> > Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
-> > Cc: stable@vger.kernel.org # 5.10+
-> > Reported-by: Robert Gill <rtgill82@gmail.com>
-> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218707
-> > Closes: https://lore.kernel.org/all/8c77ccfd-d561-45a1-8ed5-6b75212c7a58@leemhuis.info/
-> > Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-> > Suggested-by: Brian Gerst <brgerst@gmail.com> # Use %ss
-> > Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> > ---
-> > v4:
-> > - Further simplify the patch by using %ss for all VERW calls in 32-bit mode (Brian).
-> > - In NMI exit path move VERW after RESTORE_ALL_NMI that touches GPRs (Dave).
-> > 
-> > v3: https://lore.kernel.org/r/20240701-fix-dosemu-vm86-v3-1-b1969532c75a@linux.intel.com
-> > - Simplify CLEAR_CPU_BUFFERS_SAFE by using %ss instead of %ds (Brian).
-> > - Do verw before popf in SYSEXIT path (Jari).
-> > 
-> > v2: https://lore.kernel.org/r/20240627-fix-dosemu-vm86-v2-1-d5579f698e77@linux.intel.com
-> > - Safe guard against any other system calls like vm86() that might change %ds (Dave).
-> > 
-> > v1: https://lore.kernel.org/r/20240426-fix-dosemu-vm86-v1-1-88c826a3f378@linux.intel.com
-> > ---
-> > 
-> > ---
-> >   arch/x86/entry/entry_32.S | 18 +++++++++++++++---
-> >   1 file changed, 15 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-> > index d3a814efbff6..d54f6002e5a0 100644
-> > --- a/arch/x86/entry/entry_32.S
-> > +++ b/arch/x86/entry/entry_32.S
-> > @@ -253,6 +253,16 @@
-> >   .Lend_\@:
-> >   .endm
-> > +/*
-> > + * Safer version of CLEAR_CPU_BUFFERS that uses %ss to reference VERW operand
-> > + * mds_verw_sel. This ensures VERW will not #GP for an arbitrary user %ds.
-> > + */
-> > +.macro CLEAR_CPU_BUFFERS_SAFE
-> > +	ALTERNATIVE "jmp .Lskip_verw\@", "", X86_FEATURE_CLEAR_CPU_BUF
-> > +	verw	%ss:_ASM_RIP(mds_verw_sel)
-> > +.Lskip_verw\@:
-> > +.endm
-> 
-> Why not simply:
-> 
-> .macro CLEAR_CPU_BUFFERS_SAFE
-> 	ALTERNATIVE "", __stringify(verw %ss:_ASM_RIP(mds_verw_sel)),
-> X86_FEATURE_CLEAR_CPU_BUF
-> .endm
 
-We can do it this way as well. But, there are stable kernels that don't
-support relocations in ALTERNATIVEs. The way it is done in current patch
-can be backported without worrying about which kernels support relocations.
+
+On 10/07/24 17:09, Kees Cook wrote:
+> Replace the deprecated[1] use of a 1-element array in
+> struct hfi_session_release_buffer_pkt with a modern flexible array.
+> 
+> No binary differences are present after this conversion.
+> 
+> Link: https://github.com/KSPP/linux/issues/79 [1]
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
+> Cc: Vikash Garodia <quic_vgarodia@quicinc.com>
+> Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+> Cc: linux-media@vger.kernel.org
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-hardening@vger.kernel.org
+
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+
+Thanks
+--
+Gustavo
+
+> ---
+>   drivers/media/platform/qcom/venus/hfi_cmds.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/hfi_cmds.h b/drivers/media/platform/qcom/venus/hfi_cmds.h
+> index 20acd412ee7b..42825f07939d 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_cmds.h
+> +++ b/drivers/media/platform/qcom/venus/hfi_cmds.h
+> @@ -227,7 +227,7 @@ struct hfi_session_release_buffer_pkt {
+>   	u32 extradata_size;
+>   	u32 response_req;
+>   	u32 num_buffers;
+> -	u32 buffer_info[1];
+> +	u32 buffer_info[];
+>   };
+>   
+>   struct hfi_session_release_resources_pkt {
 
