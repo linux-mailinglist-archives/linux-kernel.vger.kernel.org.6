@@ -1,327 +1,180 @@
-Return-Path: <linux-kernel+bounces-246927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0112C92C8FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:11:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B551A92C900
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:12:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D8592825BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:11:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A43B282702
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7346E2B9C6;
-	Wed, 10 Jul 2024 03:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6080437703;
+	Wed, 10 Jul 2024 03:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rdZ7i90Y"
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B0AtciIL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E522C182
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 03:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27DD33986
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 03:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720581095; cv=none; b=PM+N8J4PW3LylcWnQv+OhNcXFyJC3JJDtnwSJvST6yUgvfSJIblP6mVobU1WTH0QECE3J3IsLcLyYrr6Oyt+h2HnUXph7nkpO3eJGOUqu1GtgtHsSEFr7mfx2JtzRO5Joi+LB4M2OCHVSb0k5+fVvmXMGCCfXw+g7Hyv5FT+1J4=
+	t=1720581114; cv=none; b=SxJ4RVkQDMvp6XxZqhPdnl/eMzh4HfzRhV6sagcv4ui/K1e4HsFUmzI3T9UD4Pq/U1E3bta5zBYuueWciv8Vqns/IjuJIx7oyfLOboaTAXbEQvtvfe5gcIhhrPTaphUTmWMtTLZ8glsZAg92k7K76iMXLSfGdfH0eIAxNgxVA4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720581095; c=relaxed/simple;
-	bh=9iAjbDUsI/zhA0vvsjprTEYjwvHRrCaeF74Z8TO9kE4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PmdMOT+QO2gmEUfQ2J/DfW/D9NI7u6MViYzSbe6WmJp1+HV2fOGtlpAElQYpmq0xlA8MfF3ynvbT6QzPPHNd/PKw3ty5Mvn37zOuXdeOrmeWe82sduN4R9XIOSOHK/im3GzkH2jBQ98h2Yh7kl4Bwg3/rhSJ/H6vHpOqMHbV15o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rdZ7i90Y; arc=none smtp.client-ip=209.85.217.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-48fde151f25so1978309137.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 20:11:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720581092; x=1721185892; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6XIMdkfppqyP8G+FM/MdMhJ0bX3EL1i/c4IN0WSrWSw=;
-        b=rdZ7i90YHjAfli1TqMlmNo24sY4dDqNT+DdEOyMdGbMWnlF3JV4neaGD7/45LNB011
-         vzeMaArT9VTP/cS25d3OmpRw56+bd0uAiC8mJiQyOB+p9uGDgAfc+bZd+bQgQb5NeArX
-         F4voNhqkvMRRuNXkMcO6LC8FvYBex3pOJq/6MlouDjRw4x21xquz+d8Q3vJyEOrBEyxG
-         9qhehpXYkX6FNz2c2yms32GY/TEA661NjM26tJYi78uVSYFmAXqBichHABjHmfPI6nLv
-         FWwo3RHzDS5j429q2OqB4xSUn8qy1KrAz0UJuBx1GAqhE/v8TC01n/YWQn6bVAe8g2xq
-         cD5Q==
+	s=arc-20240116; t=1720581114; c=relaxed/simple;
+	bh=3NOnxPeqz46/sAvEE83H7u7j2ktfneTnXDn1vhrcZa8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QBW2sVwallJnEilM5Xj8QriLlUnYRhdB/Jh90Eloj6hYZ3yKJwiFz1o9E6Xn/aSF1o0+5CE69Bqk7x48au9MMpb5uFlKiisI+kAA4q0UfJy/fOgdlDThf6U/SH8VqPhmGBeDG0YaprESHN1z4QYx3BnY6slm2ZLyLNeqhg01cIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B0AtciIL; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720581111;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vCNOA7gvvgVnC+LVcxVufvda3OPPudA6Qls0CypVWcA=;
+	b=B0AtciILY+E/UY2PY8dfIhsiCCw0UbKQSEHjRl6QkSQ6jLRcCWSlvRd1X+dqTu5Xxt5vQJ
+	OfyKMdCKB1YijEQZnfyU7u8WhTrGWbDi98wyXgpgt8E3uwbGFRmede3dHQp6IU1y0j1A/c
+	GIlmhtS+P7GpZQzH9i8SKWDdvNIFJgI=
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
+ [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-296-1Z06xo0TNlyumUG5QeIrYw-1; Tue, 09 Jul 2024 23:11:48 -0400
+X-MC-Unique: 1Z06xo0TNlyumUG5QeIrYw-1
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-70afa26ec21so4887640b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 20:11:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720581092; x=1721185892;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6XIMdkfppqyP8G+FM/MdMhJ0bX3EL1i/c4IN0WSrWSw=;
-        b=ilems2sPqRdPGnyk+qpLjKES8K9Ql795XQNzUf9mBKr6QBkQlma4oGLKG2jlEFwDRI
-         WnsFnGtCkwLvks4/PVOSt3MI7mKl6Udf4db3PMR3zOdm6u3Rf/OXPplmHE5dj0sYyg0O
-         j2ysAEyRlhk2DcA/QJeyn6H0y9z8E2RlVgGBcIxeVGj/QWEhAtmCLsYEADrvSI/qsp0h
-         oWPhc6Uh8EVcy9RI0U95lcdCyamM2hEgacw3U3Ha77NVYEXchqOBKkaiP7YMWyzZIGOT
-         qwmUkzN201jYlla1UdfucN6brcoAqjUJT5YJCqj20Jv7fDTrz21PrtHl9JxsPwCyFI0+
-         HMpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWgnxb+n16oW7kSqPJw7KjV/1J1J0Z88tn+QHu2Xwt3K6lN3R7ySu59g5WqO8uXqHhUeZPBikHrgd14Ol28Hepai+IMLfP7PxPTLGg0
-X-Gm-Message-State: AOJu0YzyXMG7U5Km6I10q8PEbDnSsMmU/aOWsJhumLiRbE93LrL+nPg4
-	YBoleMl94z+cSPhPB9XWiPSIjFQfDwAJA4QqP6hWHrMG/5HN8a3nHkvQ0wwGu1VAUPzyMep26oX
-	x1VsFv9uDrksCiNM6s/tdPBcLNfwAvUiXFc1erw==
-X-Google-Smtp-Source: AGHT+IEMEZ1PvfeDqTx8SuS+zx9EDRB6rW1s9H1rbATcOiobIk2cxUBMvcJeODpR6jQKmwdMkxhLWeAXs9BOMVS9U+E=
-X-Received: by 2002:a05:6102:3906:b0:48f:143a:d8e9 with SMTP id
- ada2fe7eead31-490321597afmr4549583137.20.1720581092076; Tue, 09 Jul 2024
- 20:11:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720581107; x=1721185907;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vCNOA7gvvgVnC+LVcxVufvda3OPPudA6Qls0CypVWcA=;
+        b=mW0yrw0eAcKU58aL6xlSMygArshEDgDJctl66A+fB0e+R8JQ0znLyg2206penUdXXX
+         W+n2CUItKgO7dgHiTCmwBKAjDuRhw5Arhp2ZyVqUQqj6hERJFD23e2UYHgM6uqyO9gfR
+         YaPOcgq1v7HCDcdvZZnUai6Oau5+lf/1cVAs5SQmlj8gqKd018hUje+79bVUfHzadmJC
+         fLHX6FYsF2vEQZZIcp26IGFXTX2sWvxxSpMhfZEDf0n2/1AN/3lQDHltJNoAIMGjGksC
+         KFaDwW71Ty7QqbfH09sXNLCzQwYfhzvTN9vD9fcFrf9noqiK6wCSl1EnDcf+5bUPlnPf
+         BzRA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaztyKUBASKTr0Q0knJl8b4Jw7FianWinN+z+7nMPwuxo4JL9gp0oSA/DWzEUqMjtH7Utw00Z/bonLUOMYgtHKrx7h4IqoMk4dOhKV
+X-Gm-Message-State: AOJu0YzKtZY7f2paFNzq+fST0A8UAwPllVhRGQoUjzF2fb9nNMsldKrd
+	94Ma9HFFCJFCtK7PYqz7Sh/txHAYiMuy/gCAMuKpGw5veyHBw/r9naxFJ3Fexge5ohJBTXH000W
+	Kl1QbnoJEROdW4oVaMSHQjBzZ3ZSQjodxmL/4h7p76+Pa3tMbhMrc8yF+ssaYZQ==
+X-Received: by 2002:a05:6a00:1949:b0:704:23dc:6473 with SMTP id d2e1a72fcca58-70b436166edmr5499430b3a.30.1720581107116;
+        Tue, 09 Jul 2024 20:11:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF8oI2aN4+ak8c3jDP61GEReq16JAGEtkM86sB98aWAD5Ov3rnJ9XEgn6CuTL8JfIJu3pFWLg==
+X-Received: by 2002:a05:6a00:1949:b0:704:23dc:6473 with SMTP id d2e1a72fcca58-70b436166edmr5499408b3a.30.1720581106688;
+        Tue, 09 Jul 2024 20:11:46 -0700 (PDT)
+Received: from [172.20.2.228] ([4.28.11.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b439b9afbsm2586937b3a.191.2024.07.09.20.11.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 20:11:46 -0700 (PDT)
+Message-ID: <d5fb2840-aff0-4f7a-a7ac-dcee155ddca2@redhat.com>
+Date: Wed, 10 Jul 2024 05:11:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240709110708.903245467@linuxfoundation.org>
-In-Reply-To: <20240709110708.903245467@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 10 Jul 2024 08:41:20 +0530
-Message-ID: <CA+G9fYsqkB4=pVZyELyj3YqUc9jXFfgNULsPk9t8q-+P1w_G6A@mail.gmail.com>
-Subject: Re: [PATCH 6.9 000/197] 6.9.9-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org, Anders Roxell <anders.roxell@linaro.org>, 
-	Mike Christie <michael.christie@oracle.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	rcu <rcu@vger.kernel.org>, gnstark@salutedevices.com, 
-	linux-mm <linux-mm@kvack.org>, Jinliang Zheng <alexjlzheng@tencent.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] virtio: fix vq # when vq skipped
+To: "Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Richard Weinberger <richard@nod.at>,
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Cornelia Huck <cohuck@redhat.com>, Halil Pasic <pasic@linux.ibm.com>,
+ Eric Farman <farman@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Jason Wang <jasowang@redhat.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ linux-um@lists.infradead.org, linux-remoteproc@vger.kernel.org,
+ linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+ kvm@vger.kernel.org
+References: <cover.1720173841.git.mst@redhat.com>
+ <1a5d7456542bcd1df8e397c93c48deacd244add5.1720173841.git.mst@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <1a5d7456542bcd1df8e397c93c48deacd244add5.1720173841.git.mst@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 9 Jul 2024 at 16:49, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.9.9 release.
-> There are 197 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 11 Jul 2024 11:06:25 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.9.9-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.9.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 05.07.24 12:09, Michael S. Tsirkin wrote:
+> virtio balloon communicates to the core that in some
+> configurations vq #s are non-contiguous by setting name
+> pointer to NULL.
+> 
+> Unfortunately, core then turned around and just made them
+> contiguous again. Result is that driver is out of spec.
+> 
+> Implement what the API was supposed to do
+> in the 1st place. Compatibility with buggy hypervisors
+> is handled inside virtio-balloon, which is the only driver
+> making use of this facility, so far.
+> 
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> ---
 
-Results from Linaro=E2=80=99s test farm.
-The following kernel panic was noticed while running kunit tests.
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-First seen on
-git commit id: 2471237b27c681c22e5f2b7175584aa7d5c89bfc
-date: on July 9th 2024.
+-- 
+Cheers,
 
-  GOOD: v6.9.7-223-g03247eed042d
-  BAD: v6.9.8-198-g2471237b27c6
+David / dhildenb
 
-Always reproduce: yes.
-
-* qemu-arm64, Juno-r2, rk3399-rock-pi-4b and qemu-x86_64 the kunit-boot fai=
-led.
-  - gcc-13-defconfig-kunit
-  - clang-18-defconfig-kunit
-  - clang-nightly-defconfig-kunit
-  - gcc-8-defconfig-kunit
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-Crash log [1]:
----------
-<4>[ 63.601683] kernel_init_freeable (init/main.c:1559)
-<4>[ 63.602335] kernel_init (init/main.c:1446)
-<4>[ 63.602980] ret_from_fork (arch/arm64/kernel/entry.S:861)
-<3>[   63.603703]
-<3>[   63.604057] The buggy address belongs to the object at fff00000c07582=
-e8
-<3>[   63.604057]  which belongs to the cache inode_cache of size 616
-<3>[   63.605281] The buggy address is located 80 bytes to the right of
-<3>[   63.605281]  allocated 616-byte region [fff00000c07582e8,
-fff00000c0758550)
-<3>[   63.606592]
-<3>[   63.607294] The buggy address belongs to the physical page:
-<4>[   63.607948] page: refcount:1 mapcount:0 mapping:0000000000000000
-index:0x0 pfn:0x100758
-<4>[   63.608830] head: order:2 entire_mapcount:0 nr_pages_mapped:0 pincoun=
-t:0
-<4>[   63.609593] flags:
-0xbfffe0000000840(slab|head|node=3D0|zone=3D2|lastcpupid=3D0x1ffff)
-<4>[   63.610449] page_type: 0xffffffff()
-<4>[   63.611934] raw: 0bfffe0000000840 fff00000c08d2dc0
-dead000000000122 0000000000000000
-<4>[   63.612810] raw: 0000000000000000 0000000080160016
-00000001ffffffff 0000000000000000
-<4>[   63.613668] head: 0bfffe0000000840 fff00000c08d2dc0
-dead000000000122 0000000000000000
-<4>[   63.614525] head: 0000000000000000 0000000080160016
-00000001ffffffff 0000000000000000
-<4>[   63.615694] head: 0bfffe0000000002 ffffc1ffc301d601
-ffffc1ffc301d648 00000000ffffffff
-<4>[   63.616583] head: 0000000400000000 0000000000000000
-00000000ffffffff 0000000000000000
-<4>[   63.617391] page dumped because: kasan: bad access detected
-<3>[   63.618034]
-<3>[   63.618354] Memory state around the buggy address:
-<3>[   63.619281]  fff00000c0758480: 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00
-<3>[   63.620086]  fff00000c0758500: 00 00 00 00 00 00 00 00 00 00 fc
-fc fc fc fc fc
-<3>[   63.620886] >fff00000c0758580: fc fc fc fc fc fc fc fc fc fc 00
-00 00 00 00 00
-<3>[   63.621664]                                ^
-<3>[   63.622235]  fff00000c0758600: 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00
-<3>[   63.623362]  fff00000c0758680: 00 00 00 00 00 00 00 00 00 00 00
-00 00 00 00 00
-<3>[   63.624138]
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-<6>[   63.645148]         not ok 1 block_bits=3D10 cluster_bits=3D3
-blocks_per_group=3D8192 group_count=3D4 desc_size=3D64
-<6>[   63.658504]         ok 2 block_bits=3D12 cluster_bits=3D3
-blocks_per_group=3D8192 group_count=3D4 desc_size=3D64
-<1>[   63.674531] Unable to handle kernel NULL pointer dereference at
-virtual address 0000000000000008
-<1>[   63.675691] Mem abort info:
-<1>[   63.676527]   ESR =3D 0x000000009600006b
-<1>[   63.677658]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-<1>[   63.678274]   SET =3D 0, FnV =3D 0
-<1>[   63.678906]   EA =3D 0, S1PTW =3D 0
-<1>[   63.679880]   FSC =3D 0x2b: level -1 translation fault
-<1>[   63.680879] Data abort info:
-<1>[   63.681606]   ISV =3D 0, ISS =3D 0x0000006b, ISS2 =3D 0x00000000
-<1>[   63.682544]   CM =3D 0, WnR =3D 1, TnD =3D 0, TagAccess =3D 0
-<1>[   63.683493]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-<1>[   63.684732] [0000000000000008] user address but active_mm is swapper
-<0>[   63.686080] Internal error: Oops: 000000009600006b [#1] PREEMPT SMP
-<4>[   63.688843] Modules linked in:
-<4>[   63.689662] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G    B
-    N 6.9.9-rc1 #1
-<4>[   63.690522] Hardware name: linux,dummy-virt (DT)
-<4>[   63.691532] pstate: 224000c9 (nzCv daIF +PAN -UAO +TCO -DIT
--SSBS BTYPE=3D--)
-<4>[ 63.692423] pc : _raw_spin_lock_irq
-(arch/arm64/include/asm/atomic_lse.h:271
-arch/arm64/include/asm/cmpxchg.h:120
-arch/arm64/include/asm/cmpxchg.h:169
-include/linux/atomic/atomic-arch-fallback.h:2055
-include/linux/atomic/atomic-arch-fallback.h:2173
-include/linux/atomic/atomic-instrumented.h:1302
-include/asm-generic/qspinlock.h:111 include/linux/spinlock.h:187
-include/linux/spinlock_api_smp.h:120 kernel/locking/spinlock.c:170)
-<4>[ 63.693097] lr : _raw_spin_lock_irq
-(include/linux/atomic/atomic-arch-fallback.h:2172 (discriminator 1)
-include/linux/atomic/atomic-instrumented.h:1302 (discriminator 1)
-include/asm-generic/qspinlock.h:111 (discriminator 1)
-include/linux/spinlock.h:187 (discriminator 1)
-include/linux/spinlock_api_smp.h:120 (discriminator 1)
-kernel/locking/spinlock.c:170 (discriminator 1))
-<4>[   63.693714] sp : ffff800080087620
-<4>[   63.694519] x29: ffff800080087680 x28: 1ffff00010010f45 x27:
-ffff800080087a20
-<4>[   63.696315] x26: 1ffff00010010f47 x25: ffff800080087a00 x24:
-fff00000c99f0028
-<4>[   63.697334] x23: 0000000000000000 x22: dfff800000000000 x21:
-ffff800080087640
-<4>[   63.698333] x20: 1ffff00010010ec4 x19: 0000000000000008 x18:
-000000004b9fd0a9
-<4>[   63.699711] x17: 0000000000000000 x16: fff00000da13e180 x15:
-ffffaa8e3330c4c4
-<4>[   63.700732] x14: ffffaa8e33312508 x13: ffffaa8e3583b0ec x12:
-ffff700010010ec9
-<4>[   63.701734] x11: 1ffff00010010ec8 x10: ffff700010010ec8 x9 :
-dfff800000000000
-<4>[   63.702792] x8 : 0000000000000003 x7 : 0000000000000001 x6 :
-ffff700010010ec8
-<4>[   63.704539] x5 : ffff800080087640 x4 : ffff700010010ec8 x3 :
-ffffaa8e3585c520
-<4>[   63.705529] x2 : 0000000000000001 x1 : 0000000000000000 x0 :
-0000000000000000
-<4>[   63.706625] Call trace:
-<4>[ 63.707408] _raw_spin_lock_irq
-(arch/arm64/include/asm/atomic_lse.h:271
-arch/arm64/include/asm/cmpxchg.h:120
-arch/arm64/include/asm/cmpxchg.h:169
-include/linux/atomic/atomic-arch-fallback.h:2055
-include/linux/atomic/atomic-arch-fallback.h:2173
-include/linux/atomic/atomic-instrumented.h:1302
-include/asm-generic/qspinlock.h:111 include/linux/spinlock.h:187
-include/linux/spinlock_api_smp.h:120 kernel/locking/spinlock.c:170)
-<4>[ 63.708130] wait_for_completion_timeout
-(kernel/sched/completion.c:84 kernel/sched/completion.c:116
-kernel/sched/completion.c:127 kernel/sched/completion.c:167)
-<4>[ 63.708902] kunit_try_catch_run (lib/kunit/try-catch.c:85)
-<4>[ 63.709710] kunit_run_case_catch_errors (lib/kunit/test.c:544)
-<4>[ 63.710558] kunit_run_tests (lib/kunit/test.c:649)
-<4>[ 63.711555] __kunit_test_suites_init (lib/kunit/test.c:732
-(discriminator 1))
-<4>[ 63.712489] kunit_run_all_tests (lib/kunit/executor.c:276
-lib/kunit/executor.c:392)
-<4>[ 63.713317] kernel_init_freeable (init/main.c:1559)
-<4>[ 63.713971] kernel_init (init/main.c:1446)
-<4>[ 63.714503] ret_from_fork (arch/arm64/kernel/entry.S:861)
-<0>[ 63.716154] Code: 93407c02 d503201f 2a0003e1 52800022 (88e17e62)
-All code
-=3D=3D=3D=3D=3D=3D=3D=3D
-   0: 93407c02 sxtw x2, w0
-   4: d503201f nop
-   8: 2a0003e1 mov w1, w0
-   c: 52800022 mov w2, #0x1                    // #1
-  10:* 88e17e62 casa w1, w2, [x19] <-- trapping instruction
-
-Code starting with the faulting instruction
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-   0: 88e17e62 casa w1, w2, [x19]
-<4>[   63.717705] ---[ end trace 0000000000000000 ]---
-<6>[   63.718649] note: swapper/0[1] exited with irqs disabled
-<6>[   63.720758] note: swapper/0[1] exited with preempt_count 1
-<0>[   63.722091] Kernel panic - not syncing: Attempted to kill init!
-exitcode=3D0x0000000b
-<2>[   63.724608] SMP: stopping secondary CPUs
-<0>[   63.725877] Kernel Offset: 0x2a8db2200000 from 0xffff800080000000
-<0>[   63.726534] PHYS_OFFSET: 0x40000000
-<0>[   63.727664] CPU features: 0x0,00000006,8f17bd7c,6766773f
-<0>[   63.729291] Memory Limit: none
-<0>[   63.731074] ---[ end Kernel panic - not syncing: Attempted to
-kill init! exitcode=3D0x0000000b ]---
-
-Steps to reproduce on qemu-arm64 link provided [2].
-Build artifacts arm64 link provided [3].
-The Kconfig is built with defconfig+Kunit and the config link provided [4].
-This occurred on following Toolchain builds gcc-13, clang-18,
-clang-nightly and gcc-8.
-
-Reproducible always on following devices and emulators,
- * rk3399-rock-pi-4b
- * qemu-arm64
- * qemu-x86_64
-
-I am bisecting this reported issue.
-Please let me know if you need more information.
-
-Links:
-[1] https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.9.y/build/v6=
-.9.8-198-g2471237b27c6/testrun/24552495/suite/boot/test/gcc-13-lkftconfig-k=
-unit/log
-[2] https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2j0YCw=
-foW0D9nrPUAeDspHG0iFE/reproducer
-[3] https://storage.tuxsuite.com/public/linaro/lkft/builds/2j0Y8lX6zRNGTiGT=
-ZmteMwzwHj2/
-[4] https://storage.tuxsuite.com/public/linaro/lkft/builds/2j0Y8lX6zRNGTiGT=
-ZmteMwzwHj2/config
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
