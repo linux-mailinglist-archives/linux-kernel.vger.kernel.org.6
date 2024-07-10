@@ -1,501 +1,289 @@
-Return-Path: <linux-kernel+bounces-247662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B2AE92D2B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:24:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 849D592D2B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 033F81F22F87
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:24:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A77351C21D64
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2AFB19309E;
-	Wed, 10 Jul 2024 13:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85722192495;
+	Wed, 10 Jul 2024 13:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="QTqy/eKi"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="i+I04Zyv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6702192B85
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960731DDC5
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720617852; cv=none; b=cCtE8d1zow+sqvdf/6dCZFlWF/OFMeJk/LtDrr+qN1DajRDwJXpnWYgqWfXFq2LfLtycizARRdhcF8tuGcSiOemrBzayRFAWNHUypUUMIqNvwQtJbneniHli6gJxhWuZ9F3LQMqCgJORb7PVkls5FmR0o5+56Xl1mzwyBDaZrv0=
+	t=1720618031; cv=none; b=EvI3sXbMdG4+qfCLLZFOJS1UIsOAHzjJBEENs1aInKDEXBGr/RJC730CgIQkxUPojxR3PNhBGbkb7L0U5NEu2jj9Hvi/OaXiE8iGxGy/5AW1VG3m4+Y9HNLsodw2T8qKHiiTXD0cyyqQT5JvCyWBb0zxlXmsZKoO93EwzfGUdn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720617852; c=relaxed/simple;
-	bh=ICLsqNvL10hXdLP4anyG8IgZQB0UXih4s9woLNjMGJc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mY6eaPM9LKi+aQvNZ0b2a/eBT9A/i6lB6cwE3u5w0bjtIl8VnniYJp0+5CupGYAeR00p3nR8d3DTlI9YDUtnVc3ZnwfBxGmlvtiNz3WeR0F7427pKBTpxPjHkaOIIbslGSkHSfgd9DbHoxcn4wpIXsBOOnMXOUre9xm4x+or7fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=QTqy/eKi; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-36785e72a48so3670493f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:24:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1720617849; x=1721222649; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qd8lfk/DK5nljoGwbuoQZrtP2AYKa+u/2J2wl4uBopE=;
-        b=QTqy/eKisV023oVTshYHqtMdxGhB8mR8Imw2Y46dbv6AsQwDi10BuNTeCBDtOfWiVa
-         3g0z5GkkhTW98r2JvgbYi3dL8a2ogCs34vzI5XlsXYjMjSsQ+xsSAHEbhGdn3m3r0Ahk
-         lT971KS2tQjcXW4GT9OY0rhBb11b8b9/Borw2oHxlJfR+a6LhsB42A3jqyyNF8kq6VSd
-         jP+SkohPDFnCDNjhKfgzUBlmroPL60Ih81yQjkHsjJSGtboVFSQfQ2hOkmAmwx2jSzQ/
-         llQIZS8bLS5BphXdQ0vWNTYuM9YHbya+hdjWwFYSRlFPEuH757bvFNqoELHP17l52RLX
-         6Q8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720617849; x=1721222649;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qd8lfk/DK5nljoGwbuoQZrtP2AYKa+u/2J2wl4uBopE=;
-        b=AHuBrCazt11auBGOlEU7/k+bkz9+WozLh4wfB0aDaScul+zpStIpNETEyVhiGF9Rxc
-         c2sc5iTw8YMhQJe6NhtYwg75HRe7C28hsY+ycctPZHyGnWKoExyA1bOHHgss51Uruy27
-         vPMptXNeyBqDdoapDSO6uwGj7cAKn0bSdOkWZwLfrAroap8GakZEG6l1VPlkhVIOIByR
-         wt4p23CEqs2fJYhe5BlYigY/w0ujSnl1CR1DAQ+fePcnzwMQZ+Y7xQ6gfYYvMPcAh+Ae
-         2t4z5H8c5a6yae+YPke3I3NOdcsXEKRLsjT0AwDQmgbePg4dLGR6yLJYxOxByOgdhYjg
-         9Jfw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+15pB5tlF1gnwCfRS8Xy0jTBvkdcgiRq/aDiVnWfS5Gs0ewnFXuE/5NEnVhMYBuLew7PmXZWMzDLQL0rSfm3tyd2+cCqz6OmlBWDk
-X-Gm-Message-State: AOJu0YwDzXsFUsXujIwEFeTcLhlRSIOLv39Wh6NWeUoFR9udg7VQlmtD
-	wUljmsmxuUbW+Omt6dKVFu1S5hlKD5QQaO9t/BTT0uS/FjZHXRwE5irXXlZ8fuM=
-X-Google-Smtp-Source: AGHT+IH5KmyCnuc3sxWqKWpmi42K2taohqLYmQJ2IXY+aVWWnWrlUEd3YWr14Me0K/bUH7mCUj9vpA==
-X-Received: by 2002:a5d:4b88:0:b0:35f:2366:12c5 with SMTP id ffacd0b85a97d-367cea67f1amr3793502f8f.23.1720617849296;
-        Wed, 10 Jul 2024 06:24:09 -0700 (PDT)
-Received: from carbon.local (aztw-29-b2-v4wan-166913-cust1764.vm26.cable.virginm.net. [82.37.38.229])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266d0185d9sm106441025e9.3.2024.07.10.06.24.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 06:24:08 -0700 (PDT)
-From: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
-Date: Wed, 10 Jul 2024 14:24:05 +0100
-Subject: [PATCH v3 2/2] iio: humidity: Add support for ENS21x
+	s=arc-20240116; t=1720618031; c=relaxed/simple;
+	bh=UNsXxnrRStkdEmctUxdgHywps83zZJ/TlY0S14ZRfQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fXKZll1Nr+5zmHiBbT+6b4WSw3Db0DEjsOirmuyliY7eN9f2equvCEcd4XmBih+MEUyPPWwoM7RMnf9fjAFQOoptVOgEKoWArFrAUlj+wUKBoxnYP5k1Gh+8z038WU+oRcoo7fJdTAGHjbtBbFhC0SFeQIIxI1ExjsCNf9FYdqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=i+I04Zyv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6212C32781;
+	Wed, 10 Jul 2024 13:27:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1720618031;
+	bh=UNsXxnrRStkdEmctUxdgHywps83zZJ/TlY0S14ZRfQE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i+I04Zyv6/oseALRLTcXVX55eL5COjUGfws+ReRKLdg2y2CRfUmCajgPNRr1P3R2o
+	 ivOIFfzVi87DqucGFnoXqZ12cZjwfU8VSYU8kT4OEUz0X6s0zlS4JzUL0jEtRUAmkW
+	 nWqPKTRWszgnxa2Y35TJeSoi82KOAG7G0cxYLZA0=
+Date: Wed, 10 Jul 2024 15:27:08 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Vamsi Krishna Attunuru <vattunuru@marvell.com>
+Cc: "arnd@arndb.de" <arnd@arndb.de>, Jerin Jacob <jerinj@marvell.com>,
+	Srujana Challa <schalla@marvell.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [EXTERNAL] Re: [PATCH v10 1/1] misc: mrvl-cn10k-dpi: add Octeon
+ CN10K DPI administrative driver
+Message-ID: <2024071053-mahogany-cavalier-6692@gregkh>
+References: <2024070333-matchless-batch-57ec@gregkh>
+ <20240706153009.3775333-1-vattunuru@marvell.com>
+ <2024071026-squirt-trustful-5845@gregkh>
+ <MW4PR18MB52442E363AE0BED30607F251A6A42@MW4PR18MB5244.namprd18.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240710-ens21x-v3-2-4e3fbcf2a7fb@thegoodpenguin.co.uk>
-References: <20240710-ens21x-v3-0-4e3fbcf2a7fb@thegoodpenguin.co.uk>
-In-Reply-To: <20240710-ens21x-v3-0-4e3fbcf2a7fb@thegoodpenguin.co.uk>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720617846; l=11621;
- i=jfelmeden@thegoodpenguin.co.uk; s=20240709; h=from:subject:message-id;
- bh=ICLsqNvL10hXdLP4anyG8IgZQB0UXih4s9woLNjMGJc=;
- b=UK+dOIbU++DavcGgs/E5IPmJ23j2Iie+HEmm68wOpGWZmagceFTkNZBKwPDqb66CXbwIlySHE
- aIryA7/m8iKDLJ6x5x1SnlnQzlHzeZGrVmA89ZGE+ATqcnWAtJlHR+5
-X-Developer-Key: i=jfelmeden@thegoodpenguin.co.uk; a=ed25519;
- pk=tePkZ5iJ3ejQ2O3vjhsj7GrLYcyJN1o1sMT3IEXvKo0=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <MW4PR18MB52442E363AE0BED30607F251A6A42@MW4PR18MB5244.namprd18.prod.outlook.com>
 
-Add support for ENS210/ENS210A/ENS211/ENS212/ENS213A/ENS215.
+On Wed, Jul 10, 2024 at 01:19:56PM +0000, Vamsi Krishna Attunuru wrote:
+> 
+> 
+> >-----Original Message-----
+> >From: Greg KH <gregkh@linuxfoundation.org>
+> >Sent: Wednesday, July 10, 2024 6:28 PM
+> >To: Vamsi Krishna Attunuru <vattunuru@marvell.com>
+> >Cc: arnd@arndb.de; Jerin Jacob <jerinj@marvell.com>; Srujana Challa
+> ><schalla@marvell.com>; linux-kernel@vger.kernel.org
+> >Subject: [EXTERNAL] Re: [PATCH v10 1/1] misc: mrvl-cn10k-dpi: add Octeon
+> >CN10K DPI administrative driver
+> >
+> >On Sat, Jul 06, 2024 at 08: 30: 09AM -0700, Vamsi Attunuru wrote: > Adds a
+> >misc driver for Marvell CN10K DPI(DMA Engine) device's physical > function
+> >which initializes DPI DMA hardware's global configuration and > enables
+> >hardware mailbox 
+> >On Sat, Jul 06, 2024 at 08:30:09AM -0700, Vamsi Attunuru wrote:
+> >> Adds a misc driver for Marvell CN10K DPI(DMA Engine) device's physical
+> >> function which initializes DPI DMA hardware's global configuration and
+> >> enables hardware mailbox channels between physical function (PF) and
+> >> it's virtual functions (VF). VF device drivers (User space drivers)
+> >> use this hw mailbox to communicate any required device configuration
+> >> on it's respective VF device. Accordingly, this DPI PF driver
+> >> provisions the VF device resources.
+> >>
+> >> At the hardware level, the DPI physical function (PF) acts as a
+> >> management interface to setup the VF device resources, VF devices are
+> >> only provisioned to handle or control the actual DMA Engine's data transfer
+> >capabilities.
+> >>
+> >> Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
+> >> Reviewed-by: Srujana Challa <schalla@marvell.com>
+> >> ---
+> >> Changes V9 -> V10
+> >> - Added checks to ensure reserved fields are set to 0
+> >>
+> >> Changes V8 -> V9:
+> >> - Addressed minor comments
+> >>
+> >> Changes V7 -> V8:
+> >> - Used bit shift operations to access mbox msg fields
+> >> - Removed bitfields in mailbox msg structure
+> >>
+> >> Changes V6 -> V7:
+> >> - Updated documentation with required references
+> >> - Addressed V6 review comments
+> >>
+> >> Changes V5 -> V6:
+> >> - Updated documentation
+> >> - Fixed data types in uapi file
+> >>
+> >> Changes V4 -> V5:
+> >> - Fixed license and data types in uapi file
+> >>
+> >> Changes V3 -> V4:
+> >> - Moved ioctl definations to .h file
+> >> - Fixed structure alignements which are passed in ioctl
+> >>
+> >> Changes V2 -> V3:
+> >> - Added ioctl operation to the fops
+> >> - Used managed version of kzalloc & request_irq
+> >> - Addressed miscellaneous comments
+> >>
+> >> Changes V1 -> V2:
+> >> - Fixed return values and busy-wait loops
+> >> - Merged .h file into .c file
+> >> - Fixed directory structure
+> >> - Removed module params
+> >> - Registered the device as misc device
+> >>
+> >>  Documentation/misc-devices/index.rst          |   1 +
+> >>  Documentation/misc-devices/mrvl_cn10k_dpi.rst |  52 ++
+> >>  .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+> >>  MAINTAINERS                                   |   5 +
+> >>  drivers/misc/Kconfig                          |  14 +
+> >>  drivers/misc/Makefile                         |   1 +
+> >>  drivers/misc/mrvl_cn10k_dpi.c                 | 676 ++++++++++++++++++
+> >>  include/uapi/misc/mrvl_cn10k_dpi.h            |  39 +
+> >>  8 files changed, 789 insertions(+)
+> >>
+> >> diff --git a/Documentation/misc-devices/index.rst
+> >> b/Documentation/misc-devices/index.rst
+> >> index 2d0ce9138588..8c5b226d8313 100644
+> >> --- a/Documentation/misc-devices/index.rst
+> >> +++ b/Documentation/misc-devices/index.rst
+> >> @@ -21,6 +21,7 @@ fit into other categories.
+> >>     isl29003
+> >>     lis3lv02d
+> >>     max6875
+> >> +   mrvl_cn10k_dpi
+> >>     oxsemi-tornado
+> >>     pci-endpoint-test
+> >>     spear-pcie-gadget
+> >> diff --git a/Documentation/misc-devices/mrvl_cn10k_dpi.rst
+> >> b/Documentation/misc-devices/mrvl_cn10k_dpi.rst
+> >> new file mode 100644
+> >> index 000000000000..a75e372723d8
+> >> --- /dev/null
+> >> +++ b/Documentation/misc-devices/mrvl_cn10k_dpi.rst
+> >> @@ -0,0 +1,52 @@
+> >> +.. SPDX-License-Identifier: GPL-2.0
+> >> +
+> >> +===============================================
+> >> +Marvell CN10K DMA packet interface (DPI) driver
+> >> +===============================================
+> >> +
+> >> +Overview
+> >> +========
+> >> +
+> >> +DPI is a DMA packet interface hardware block in Marvell's CN10K silicon.
+> >> +DPI hardware comprises a physical function (PF), its virtual
+> >> +functions, mailbox logic, and a set of DMA engines & DMA command
+> >queues.
+> >> +
+> >> +DPI PF function is an administrative function which services the
+> >> +mailbox requests from its VF functions and provisions DMA engine
+> >> +resources to it's VF functions.
+> >> +
+> >> +mrvl_cn10k_dpi.ko misc driver loads on DPI PF device and services the
+> >> +mailbox commands submitted by the VF devices and accordingly
+> >> +initializes the DMA engines and VF device's DMA command queues. Also,
+> >> +driver creates /dev/mrvl-cn10k-dpi node to set DMA engine and PEM
+> >> +(PCIe interface) port attributes like fifo length, molr, mps & mrrs.
+> >> +
+> >> +DPI PF driver is just an administrative driver to setup its VF
+> >> +device's queues and provisions the hardware resources, it cannot
+> >> +initiate any DMA operations. Only VF devices are provisioned with DMA
+> >capabilities.
+> >> +
+> >> +Driver location
+> >> +===============
+> >> +
+> >> +drivers/misc/mrvl_cn10k_dpi.c
+> >> +
+> >> +Driver IOCTLs
+> >> +=============
+> >> +
+> >> +:c:macro::`DPI_MPS_MRRS_CFG`
+> >> +ioctl that sets max payload size & max read request size parameters
+> >> +of a pem port to which DMA engines are wired.
+> >> +
+> >> +
+> >> +:c:macro::`DPI_ENGINE_CFG`
+> >> +ioctl that sets DMA engine's fifo sizes & max outstanding load
+> >> +request thresholds.
+> >> +
+> >> +User space code example
+> >> +=======================
+> >> +
+> >> +DPI VF devices are probed and accessed from user space applications
+> >> +using vfio-pci driver. Below is a sample dpi dma application to
+> >> +demonstrate on how applications use mailbox and ioctl services from DPI
+> >PF kernel driver.
+> >> +
+> >> +https://urldefense.proofpoint.com/v2/url?u=https-
+> >3A__github.com_Marve
+> >> +llEmbeddedProcessors_dpi-2Dsample-
+> >2Dapp&d=DwIBAg&c=nKjWec2b6R0mOyPaz7
+> >>
+> >+xtfQ&r=WllrYaumVkxaWjgKto6E_rtDQshhIhik2jkvzFyRhW8&m=bFx_7eltw7S
+> >6zzVu
+> >>
+> >+1LNEdtsbwwynJfAKTja649QUwGNU_y4uWqGoEZ4f7JluYLjX&s=wOMzADbq
+> >9f4xxz1Oug
+> >> +-slj_xy4ZcbrnWfQJWeO0_ugA&e=
+> >> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> >> b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> >> index a141e8e65c5d..def539770439 100644
+> >> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> >> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> >> @@ -362,6 +362,7 @@ Code  Seq#    Include File
+> >Comments
+> >>  0xB6  all    linux/fpga-dfl.h
+> >>  0xB7  all    uapi/linux/remoteproc_cdev.h                            <mailto:linux-
+> >remoteproc@vger.kernel.org>
+> >>  0xB7  all    uapi/linux/nsfs.h                                       <mailto:Andrei Vagin
+> ><avagin@openvz.org>>
+> >> +0xB8  01-02  uapi/misc/mrvl_cn10k_dpi.h                              Marvell CN10K DPI
+> >driver
+> >>  0xC0  00-0F  linux/usb/iowarrior.h
+> >>  0xCA  00-0F  uapi/misc/cxl.h
+> >>  0xCA  10-2F  uapi/misc/ocxl.h
+> >> diff --git a/MAINTAINERS b/MAINTAINERS index
+> >> aae88b7a6c32..2c17d651954a 100644
+> >> --- a/MAINTAINERS
+> >> +++ b/MAINTAINERS
+> >> @@ -13477,6 +13477,11 @@ S:	Supported
+> >>  F:	Documentation/devicetree/bindings/mmc/marvell,xenon-sdhci.yaml
+> >>  F:	drivers/mmc/host/sdhci-xenon*
+> >>
+> >> +MARVELL OCTEON CN10K DPI DRIVER
+> >> +M:	Vamsi Attunuru <vattunuru@marvell.com>
+> >> +S:	Supported
+> >> +F:	drivers/misc/mrvl_cn10k_dpi.c
+> >> +
+> >>  MATROX FRAMEBUFFER DRIVER
+> >>  L:	linux-fbdev@vger.kernel.org
+> >>  S:	Orphan
+> >> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig index
+> >> faf983680040..965641017a62 100644
+> >> --- a/drivers/misc/Kconfig
+> >> +++ b/drivers/misc/Kconfig
+> >> @@ -585,6 +585,20 @@ config NSM
+> >>  	  To compile this driver as a module, choose M here.
+> >>  	  The module will be called nsm.
+> >>
+> >> +config MARVELL_CN10K_DPI
+> >> +	tristate "Octeon CN10K DPI driver"
+> >> +	depends on ARM64 && PCI
+> >
+> >Why does ARM64 matter here?  I don't see any dependency required of it.
+> >
+> Thanks, Greg, for your time. This DPI device is an on-chip PCIe device and only present on
+> Marvell's CN10K platforms(which are 64-bit ARM SoC processors), so added those dependency.
 
-The ENS21x is a family of temperature and relative humidity sensors with
-accuracies tailored to the needs of specific applications.
+Then perhaps keep the ARM64 and add a COMPILE_TEST option as well so
+that we can build this as part of normal testing?
 
-Signed-off-by: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
----
- drivers/iio/humidity/Kconfig  |  11 ++
- drivers/iio/humidity/Makefile |   1 +
- drivers/iio/humidity/ens21x.c | 346 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 358 insertions(+)
+So that would be:
+	depends on PCI && (ARM64 || COMPILE_TEST)
+right?
 
-diff --git a/drivers/iio/humidity/Kconfig b/drivers/iio/humidity/Kconfig
-index b15b7a3b66d5..ff62abf730d1 100644
---- a/drivers/iio/humidity/Kconfig
-+++ b/drivers/iio/humidity/Kconfig
-@@ -25,6 +25,17 @@ config DHT11
- 	  Other sensors should work as well as long as they speak the
- 	  same protocol.
- 
-+config ENS21X
-+	tristate "ENS21X temperature and humidity sensor"
-+	depends on I2C
-+	help
-+	  Say yes here to get support for the ScioSense ENS21X family of
-+	  humidity and temperature sensors.
-+
-+	  This driver can also be built as a module. If so, the module will be
-+	  called ens21x.
-+
-+
- config HDC100X
- 	tristate "TI HDC100x relative humidity and temperature sensor"
- 	depends on I2C
-diff --git a/drivers/iio/humidity/Makefile b/drivers/iio/humidity/Makefile
-index 5fbeef299f61..26590d06d11f 100644
---- a/drivers/iio/humidity/Makefile
-+++ b/drivers/iio/humidity/Makefile
-@@ -5,6 +5,7 @@
- 
- obj-$(CONFIG_AM2315) += am2315.o
- obj-$(CONFIG_DHT11) += dht11.o
-+obj-$(CONFIG_ENS21X) += ens21x.o
- obj-$(CONFIG_HDC100X) += hdc100x.o
- obj-$(CONFIG_HDC2010) += hdc2010.o
- obj-$(CONFIG_HDC3020) += hdc3020.o
-diff --git a/drivers/iio/humidity/ens21x.c b/drivers/iio/humidity/ens21x.c
-new file mode 100644
-index 000000000000..7b2e279d1559
---- /dev/null
-+++ b/drivers/iio/humidity/ens21x.c
-@@ -0,0 +1,346 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * ens21x.c - Support for ScioSense ens21x
-+ *           temperature & humidity sensor
-+ *
-+ * (7-bit I2C slave address 0x43 ENS210)
-+ * (7-bit I2C slave address 0x43 ENS210A)
-+ * (7-bit I2C slave address 0x44 ENS211)
-+ * (7-bit I2C slave address 0x45 ENS212)
-+ * (7-bit I2C slave address 0x46 ENS213A)
-+ * (7-bit I2C slave address 0x47 ENS215)
-+ *
-+ * Datasheet:
-+ *  https://www.sciosense.com/wp-content/uploads/2024/04/ENS21x-Datasheet.pdf
-+ *  https://www.sciosense.com/wp-content/uploads/2023/12/ENS210-Datasheet.pdf
-+ */
-+
-+#include <linux/types.h>
-+#include <linux/i2c.h>
-+#include <linux/delay.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/iio/iio.h>
-+#include <linux/iio/sysfs.h>
-+#include <linux/crc7.h>
-+
-+/* register definitions */
-+#define ENS21X_REG_PART_ID		0x00
-+#define ENS21X_REG_DIE_REV		0x02
-+#define ENS21X_REG_UID			0x04
-+#define ENS21X_REG_SYS_CTRL		0x10
-+#define ENS21X_REG_SYS_STAT		0x11
-+#define ENS21X_REG_SENS_RUN		0x21
-+#define ENS21X_REG_SENS_START		0x22
-+#define ENS21X_REG_SENS_STOP		0x23
-+#define ENS21X_REG_SENS_STAT		0x24
-+#define ENS21X_REG_T_VAL		0x30
-+#define ENS21X_REG_H_VAL		0x33
-+
-+/* value definitions */
-+#define ENS21X_SENS_START_T_START		BIT(0)
-+#define ENS21X_SENS_START_H_START		BIT(1)
-+
-+#define ENS21X_SENS_STAT_T_ACTIVE		BIT(0)
-+#define ENS21X_SENS_STAT_H_ACTIVE		BIT(1)
-+
-+#define ENS21X_SYS_CTRL_LOW_POWER_ENABLE	BIT(0)
-+#define ENS21X_SYS_CTRL_SYS_RESET		BIT(7)
-+
-+#define ENS21X_SYS_STAT_SYS_ACTIVE		BIT(0)
-+
-+/* magic constants */
-+#define ENS21X_CONST_TEMP_SCALE_INT 15 /* integer part of temperature scale (1/64) */
-+#define ENS21X_CONST_TEMP_SCALE_DEC 625000 /* decimal part of temperature scale */
-+#define ENS21X_CONST_HUM_SCALE_INT 1 /* integer part of humidity scale (1/512) */
-+#define ENS21X_CONST_HUM_SCALE_DEC 953125 /* decimal part of humidity scale */
-+#define ENS21X_CONST_TEMP_OFFSET_INT -17481 /* temperature offset (64 * -273.15) */
-+#define ENS21X_CONST_TEMP_OFFSET_DEC 600000 /* decimal part of offset */
-+#define ENS210_CONST_CONVERSION_TIME 130
-+#define ENS212_CONST_CONVERSION_TIME 32
-+#define ENS215_CONST_CONVERSION_TIME 132
-+
-+static const struct of_device_id ens21x_of_match[];
-+
-+struct ens21x_dev {
-+	struct i2c_client *client;
-+	struct mutex lock;
-+	int part_id;
-+};
-+
-+enum ens21x_partnumber {
-+	ENS210	= 0x0210,
-+	ENS210A	= 0xa210,
-+	ENS211	= 0x0211,
-+	ENS212	= 0x0212,
-+	ENS213A	= 0xa213,
-+	ENS215	= 0x0215,
-+};
-+
-+/* calculate 17-bit crc7 */
-+static u8 ens21x_crc7(u32 val)
-+{
-+	u32 val_be = (htonl(val & 0x1ffff) >> 0x8);
-+
-+	return crc7_be(0xde, (u8 *)&val_be, 3) >> 1;
-+}
-+
-+static int ens21x_get_measurement(struct iio_dev *indio_dev, bool temp, int *val)
-+{
-+	u32 regval, regval_le;
-+	int ret, tries;
-+	struct ens21x_dev *dev_data = iio_priv(indio_dev);
-+
-+	/* assert read */
-+	i2c_smbus_write_byte_data(dev_data->client, ENS21X_REG_SENS_START,
-+				  temp ? ENS21X_SENS_START_T_START :
-+					 ENS21X_SENS_START_H_START);
-+
-+	/* wait for conversion to be ready */
-+	switch (dev_data->part_id) {
-+	case ENS210:
-+	case ENS210A:
-+		msleep(ENS210_CONST_CONVERSION_TIME);
-+		break;
-+	case ENS211:
-+	case ENS212:
-+		msleep(ENS212_CONST_CONVERSION_TIME);
-+		break;
-+	case ENS213A:
-+	case ENS215:
-+		msleep(ENS215_CONST_CONVERSION_TIME);
-+		break;
-+	default:
-+		dev_err(&dev_data->client->dev, "unrecognised device");
-+		return -ENODEV;
-+	}
-+
-+	tries = 10;
-+	while (tries-- > 0) {
-+		usleep_range(4000, 5000);
-+		ret = i2c_smbus_read_byte_data(dev_data->client,
-+					       ENS21X_REG_SENS_STAT);
-+		if (ret < 0)
-+			continue;
-+		if (!(ret & (temp ? ENS21X_SENS_STAT_T_ACTIVE :
-+				    ENS21X_SENS_STAT_H_ACTIVE)))
-+			break;
-+	}
-+	if (tries < 0) {
-+		dev_err(&indio_dev->dev, "timeout waiting for sensor reading\n");
-+		return -EIO;
-+	}
-+
-+	/* perform read */
-+	ret = i2c_smbus_read_i2c_block_data(
-+		dev_data->client, temp ? ENS21X_REG_T_VAL : ENS21X_REG_H_VAL, 3,
-+		(u8 *)&regval_le);
-+	if (ret < 0) {
-+		dev_err(&dev_data->client->dev, "failed to read register");
-+		return -EIO;
-+	} else if (ret == 3) {
-+		regval = le32_to_cpu(regval_le);
-+		if (ens21x_crc7(regval) == ((regval >> 17) & 0x7f)) {
-+			*val = regval & 0xffff;
-+			return IIO_VAL_INT;
-+		}
-+		/* crc fail */
-+		dev_err(&indio_dev->dev, "ens invalid crc\n");
-+		return -EIO;
-+	}
-+
-+	dev_err(&indio_dev->dev, "expected 3 bytes, received %d\n", ret);
-+	return -EIO;
-+}
-+
-+static int ens21x_read_raw(struct iio_dev *indio_dev,
-+			   struct iio_chan_spec const *channel, int *val,
-+			   int *val2, long mask)
-+{
-+	struct ens21x_dev *dev_data = iio_priv(indio_dev);
-+	int ret = -EINVAL;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_RAW:
-+		mutex_lock(&dev_data->lock);
-+		ret = ens21x_get_measurement(
-+			indio_dev, channel->type == IIO_TEMP, val);
-+		mutex_unlock(&dev_data->lock);
-+		break;
-+	case IIO_CHAN_INFO_SCALE:
-+		if (channel->type == IIO_TEMP) {
-+			*val = ENS21X_CONST_TEMP_SCALE_INT;
-+			*val2 = ENS21X_CONST_TEMP_SCALE_DEC;
-+		} else {
-+			*val = ENS21X_CONST_HUM_SCALE_INT;
-+			*val2 = ENS21X_CONST_HUM_SCALE_DEC;
-+		}
-+		ret = IIO_VAL_INT_PLUS_MICRO;
-+		break;
-+	case IIO_CHAN_INFO_OFFSET:
-+		if (channel->type == IIO_TEMP) {
-+			*val = ENS21X_CONST_TEMP_OFFSET_INT;
-+			*val2 = ENS21X_CONST_TEMP_OFFSET_DEC;
-+			ret = IIO_VAL_INT_PLUS_MICRO;
-+			break;
-+		}
-+		*val = 0;
-+		ret =  IIO_VAL_INT;
-+		break;
-+	default:
-+		break;
-+	}
-+	return ret;
-+}
-+
-+static const struct iio_chan_spec ens21x_channels[] = {
-+	/* Temperature channel */
-+	{
-+		.type = IIO_TEMP,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+				      BIT(IIO_CHAN_INFO_SCALE) |
-+				      BIT(IIO_CHAN_INFO_OFFSET),
-+	},
-+	/* Humidity channel */
-+	{
-+		.type = IIO_HUMIDITYRELATIVE,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+				      BIT(IIO_CHAN_INFO_SCALE) |
-+				      BIT(IIO_CHAN_INFO_OFFSET),
-+	}
-+};
-+
-+static const struct iio_info ens21x_info = {
-+	.read_raw = ens21x_read_raw,
-+};
-+
-+static int ens21x_probe(struct i2c_client *client)
-+{
-+	const struct i2c_device_id *id = i2c_client_get_device_id(client);
-+	const struct of_device_id *match;
-+	struct ens21x_dev *dev_data;
-+	struct iio_dev *indio_dev;
-+	uint16_t part_id_le, part_id;
-+	int ret, tries;
-+
-+	if (!i2c_check_functionality(client->adapter,
-+			I2C_FUNC_SMBUS_WRITE_BYTE_DATA |
-+			I2C_FUNC_SMBUS_WRITE_BYTE |
-+			I2C_FUNC_SMBUS_READ_I2C_BLOCK)) {
-+		dev_err(&client->dev,
-+			"adapter does not support some i2c transactions\n");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	match = i2c_of_match_device(ens21x_of_match, client);
-+	if (!match)
-+		return -ENODEV;
-+
-+	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*dev_data));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	dev_data = iio_priv(indio_dev);
-+	i2c_set_clientdata(client, indio_dev);
-+	dev_data->client = client;
-+	mutex_init(&dev_data->lock);
-+
-+	/* reset device */
-+	ret = i2c_smbus_write_byte_data(client, ENS21X_REG_SYS_CTRL,
-+					ENS21X_SYS_CTRL_SYS_RESET);
-+	if (ret)
-+		return ret;
-+
-+	/* wait for device to become active */
-+	usleep_range(4000, 5000);
-+
-+	/* disable low power mode */
-+	ret = i2c_smbus_write_byte_data(client, ENS21X_REG_SYS_CTRL, 0x00);
-+	if (ret)
-+		return ret;
-+
-+	/* wait for device to become active */
-+	tries = 10;
-+	while (tries-- > 0) {
-+		msleep(20);
-+		ret = i2c_smbus_read_byte_data(client, ENS21X_REG_SYS_STAT);
-+		if (ret < 0)
-+			return ret;
-+		if (ret & ENS21X_SYS_STAT_SYS_ACTIVE)
-+			break;
-+	}
-+	if (tries < 0) {
-+		dev_err(&client->dev,
-+			"timeout waiting for ens21x to become active\n");
-+		return -EIO;
-+	}
-+
-+	/* get part_id */
-+	part_id_le = i2c_smbus_read_word_data(client, ENS21X_REG_PART_ID);
-+	if (part_id_le < 0)
-+		return part_id_le;
-+	part_id = le16_to_cpu(part_id_le);
-+
-+	if (part_id != id->driver_data) {
-+		dev_err(&client->dev,
-+			"Part ID does not match (0x%04x != 0x%04lx)\n", part_id,
-+			id->driver_data);
-+		return -ENODEV;
-+	}
-+
-+	/* reenable low power */
-+	ret = i2c_smbus_write_byte_data(client, ENS21X_REG_SYS_CTRL,
-+					ENS21X_SYS_CTRL_LOW_POWER_ENABLE);
-+	if (ret)
-+		return ret;
-+
-+	dev_data->part_id = part_id;
-+
-+	indio_dev->name = id->name;
-+	indio_dev->modes = INDIO_DIRECT_MODE;
-+	indio_dev->channels = ens21x_channels;
-+	indio_dev->num_channels = ARRAY_SIZE(ens21x_channels);
-+	indio_dev->info = &ens21x_info;
-+
-+	return devm_iio_device_register(&client->dev, indio_dev);
-+}
-+
-+
-+static const struct of_device_id ens21x_of_match[] = {
-+	{ .compatible = "sciosense,ens210", .data = (void *)ENS210},
-+	{ .compatible = "sciosense,ens210a", .data = (void *)ENS210A },
-+	{ .compatible = "sciosense,ens211", .data = (void *)ENS211},
-+	{ .compatible = "sciosense,ens212", .data = (void *)ENS212},
-+	{ .compatible = "sciosense,ens213a", .data = (void *)ENS213A },
-+	{ .compatible = "sciosense,ens215", .data = (void *)ENS215},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, ens21x_of_match);
-+
-+static const struct i2c_device_id ens21x_id[] = {
-+	{"ens210", ENS210},
-+	{"ens210a", ENS210A},
-+	{"ens211", ENS211},
-+	{"ens212", ENS212},
-+	{"ens213a", ENS213A},
-+	{"ens215", ENS215},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(i2c, ens21x_id);
-+
-+static struct i2c_driver ens21x_driver = {
-+	.probe = ens21x_probe,
-+	.id_table = ens21x_id,
-+	.driver = {
-+		.name = "ens21x",
-+		.of_match_table = ens21x_of_match,
-+	},
-+};
-+
-+module_i2c_driver(ens21x_driver);
-+
-+MODULE_DESCRIPTION("ScioSense ENS21x temperature and humidity sensor driver");
-+MODULE_AUTHOR("Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>");
-+MODULE_LICENSE("GPL");
-+
+thanks,
 
--- 
-2.39.2
-
+greg k-h
 
