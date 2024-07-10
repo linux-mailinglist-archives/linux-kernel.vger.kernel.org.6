@@ -1,243 +1,132 @@
-Return-Path: <linux-kernel+bounces-247395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92ADB92CEED
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:18:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74DC692CEF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D56B1F25223
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:18:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 658A01C20EEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F1518FDB9;
-	Wed, 10 Jul 2024 10:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D71190045;
+	Wed, 10 Jul 2024 10:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i26JYMet"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LLKrog3W"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519BC18FA12;
-	Wed, 10 Jul 2024 10:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5362A18FA12;
+	Wed, 10 Jul 2024 10:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720606331; cv=none; b=ShYneo/PtydR7IXk3407fk+q2iV1jULZlV40BYqXlVuOqFVFA/2uRRvFn+Fs+cnHWJ2x2nQcEdIVnr01VFTsoEXYTEgbDiITbHWhlTaPn+xIBFZUKpn5aKj2fJJbHoTMX0VO/sJ73zKGOtTUIObBg8ikBwzy0ABbTRNBvBAJvyM=
+	t=1720606366; cv=none; b=dfGLoV7UZzHyfKsWTO7iZXDpzm6bAWYcS8dMyuiUHYk3I652YHEooAyLMzYG6T4y8W/uxjbVtsGIpvRaHjYBm1tDtKw+tyPRXwGa1MwwlVYdRdVENJjPtqZgm8lOeXkxaBDEIG7Gd7orGf7OaTRY7h/PBbAunMKP145zU1qqFaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720606331; c=relaxed/simple;
-	bh=s7XkNZJ/tmvmUOUOkwxRuX1V+80bZRwPqlq5S+jNx0I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t95e/mLIyJMP39wKv28j4msyvGNu1iYVEEWogb7JWFoTlQ48mbh0s88G2hXoYFuxKQT+2iJMk8MMa/s9nQivZrc9wGSAWfIX6jh0p4/m80vbZZ0//eZr3NhIn2dJfeiZwPEjbYnUksvPn1sPXqsB6tF6awzw6wuu0xsUtqFRNt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i26JYMet; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7BA5C32781;
-	Wed, 10 Jul 2024 10:12:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720606329;
-	bh=s7XkNZJ/tmvmUOUOkwxRuX1V+80bZRwPqlq5S+jNx0I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i26JYMetfFZ5QN4o7NY1cg/b0O21ZjQnvo9785yPyj53aTuaWeylNI3peXlGCdTIA
-	 p/WLdagSqNkkgz/fFQP7N1zwZq9+nI4R6zuzBsz0LDZgYL7ngrk3exZClL86ass1sR
-	 7x0Cg8dZukIlKgzjlu6fCaNoYSoV/Ljljgb7ZBessk9FZwtAPbiEEihf4eU6lEd8AA
-	 C71Gg9P6APcVazdWIPw3uFESzUvLNQbafuHIymlWJKOJbr3/31OrKloYDdkMWifYeA
-	 f13rYj+8fR4vGqlk69X64ms8U4RRw1NlsULUAWtA0mUJeRRoSewLAvnwD1Pd1lUDZ7
-	 cWZdchxHO55aQ==
-Message-ID: <3828472d-b0ec-4629-a844-d2fb81bc31a8@kernel.org>
-Date: Wed, 10 Jul 2024 12:12:06 +0200
+	s=arc-20240116; t=1720606366; c=relaxed/simple;
+	bh=4MVl39cZUHo+cRYDs++fNGDt+ZsyCXiHmNfV5hD+l18=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=htfa8ZhtPckOcofy/3riY5Mq17NVigoJur6+TGJdYtw1OJcWrnBREFjQO1TQre356aXIHf0sMKis0GvQnNL+oju/0AZ1pbnC6189tXHjBaBstwISrgSDDomTKZ0MjXSi02zXHVsfc5XAxkhFK4GGlqvmzYvrx+qrqNQIDNhb4eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LLKrog3W; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=wMUKqNeGsniDV27HFxXZLOgNCHO5p0I89QFIUolap+0=; b=LLKrog3WGsNt3l0WRb3R1IGULx
+	RXiRx2KVsVrh9NYNVCbkwQPswJLqOusw6zQt5d212HcIMqmZDuhiT3IxdPGlCicZSL1qnnTrY9Yv0
+	pz4Xc3XYsX6T8FVRi53NsRLeZcHLyWb4rH7Xc46lILCxCQmEoYQ/HLyj8RqCKHtXGmQv5YMWGawxF
+	TA3PfuAshq2hEDZVM6r6t4SjOevCL4w9uHBmXwWwkrSEFFNLdiQfAxmWVWq5l+VlYy1njJTQTxdm+
+	4hysqbIXi8iF3Wu1akYN5WBMILyAxKWl2ydKMU8QI7vH/OWQ9MCUfIrCiDbyMNjabkeaUADbEsX9A
+	8iMGAm4A==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRUJT-000000095rK-44BV;
+	Wed, 10 Jul 2024 10:12:40 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 97AEA300694; Wed, 10 Jul 2024 12:12:39 +0200 (CEST)
+Date: Wed, 10 Jul 2024 12:12:39 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org,
+	andrii@kernel.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org,
+	clm@meta.com, paulmck@kernel.org, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+Message-ID: <20240710101239.GW27299@noisy.programming.kicks-ass.net>
+References: <20240708091241.544262971@infradead.org>
+ <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
+ <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
+ <CAEf4BzZbjqoNw4jJkO3TOmPJSxyCAze56YeUQULPbK3oLmOvsA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] iio: humidity: Add support for ENS21x
-To: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240709-ens21x-v1-0-678521433cdd@thegoodpenguin.co.uk>
- <20240709-ens21x-v1-2-678521433cdd@thegoodpenguin.co.uk>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240709-ens21x-v1-2-678521433cdd@thegoodpenguin.co.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4BzZbjqoNw4jJkO3TOmPJSxyCAze56YeUQULPbK3oLmOvsA@mail.gmail.com>
 
-On 09/07/2024 18:36, Joshua Felmeden wrote:
-> Add support for ENS210/ENS210A/ENS211/ENS212/ENS213A/ENS215.
+On Tue, Jul 09, 2024 at 02:47:12PM -0700, Andrii Nakryiko wrote:
+> Running in my local VM with debugging config, I'm getting the
+> following. Please check if that's something new or it's just another
+> symptom of the issues that Oleg pointed out already.
 > 
-> The ENS21x is a family of temperature and relative humidity sensors with
-> accuracies tailored to the needs of specific applications.
 > 
-> Signed-off-by: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
-> ---
->  drivers/iio/humidity/Kconfig  |  11 ++
->  drivers/iio/humidity/Makefile |   1 +
->  drivers/iio/humidity/ens21x.c | 348 ++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 360 insertions(+)
-> 
+> [   11.213834] ================================================
+> [   11.214225] WARNING: lock held when returning to user space!
+> [   11.214603] 6.10.0-rc6-gd3f5cbffe86b #1263 Tainted: G           OE
+> [   11.215040] ------------------------------------------------
+> [   11.215426] urandom_read/2412 is leaving the kernel with locks still held!
+> [   11.215876] 1 lock held by urandom_read/2412:
+> [   11.216175]  #0: ffffffff835ce8f0 (uretprobes_srcu){.+.+}-{0:0},
+> at: srcu_read_lock+0x31/0x3f
 
+Bah, I forgot the SRCU thing had lockdep on.
 
-> +
-> +static int ens21x_probe(struct i2c_client *client)
-> +{
-> +	const struct i2c_device_id *id = i2c_client_get_device_id(client);
-> +	const struct of_device_id *match;
-> +	struct ens21x_dev *dev_data;
-> +	struct iio_dev *indio_dev;
-> +	uint16_t part_id_le, part_id;
-> +	int ret, tries;
-> +
-> +	if (!i2c_check_functionality(client->adapter,
-> +			I2C_FUNC_SMBUS_WRITE_BYTE_DATA |
-> +			I2C_FUNC_SMBUS_WRITE_BYTE |
-> +			I2C_FUNC_SMBUS_READ_I2C_BLOCK)) {
-> +		dev_err(&client->dev,
-> +			"adapter does not support some i2c transactions\n");
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	match = of_match_device(ens21x_of_match, &client->dev);
-> +	if (!match) {
-> +		dev_err(&client->dev, "failed to get match data\n");
+> [   11.262797] ------------[ cut here ]------------
+> [   11.263162] refcount_t: underflow; use-after-free.
+> [   11.263474] WARNING: CPU: 1 PID: 2409 at lib/refcount.c:28
+> refcount_warn_saturate+0x99/0xda
+> [   11.263995] Modules linked in: bpf_testmod(OE) aesni_intel(E)
+> crypto_simd(E) floppy(E) cryptd(E) i2c_piix4(E) crc32c_intel(E)
+> button(E) i2c_core(E) i6300esb(E) pcspkr(E) serio_raw(E)
+> [   11.265105] CPU: 1 PID: 2409 Comm: test_progs Tainted: G
+> OE      6.10.0-rc6-gd3f5cbffe86b #1263
+> [   11.265740] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
+> [   11.266507] RIP: 0010:refcount_warn_saturate+0x99/0xda
+> [   11.266862] Code: 05 ba 29 1d 02 01 e8 e2 c0 b4 ff 0f 0b c3 80 3d
+> aa 29 1d 02 00 75 53 48 c7 c7 20 59 50 82 c6 05 9a 29 1d 02 01 e8 c3
+> c0 b4 ff <0f> 0b c3 80 3d 8a 29 1d 02 00 75 34 a
+> [   11.268099] RSP: 0018:ffffc90001fbbd60 EFLAGS: 00010282
+> [   11.268451] RAX: 0000000000000026 RBX: ffff88810f333000 RCX: 0000000000000027
+> [   11.268931] RDX: 0000000000000000 RSI: ffffffff82580a45 RDI: 00000000ffffffff
+> [   11.269417] RBP: ffff888105937818 R08: 0000000000000000 R09: 0000000000000000
+> [   11.269910] R10: 00000000756f6366 R11: 0000000063666572 R12: ffff88810f333030
+> [   11.270387] R13: ffffc90001fbbb80 R14: ffff888100535190 R15: dead000000000100
+> [   11.270870] FS:  00007fc938bd2d00(0000) GS:ffff88881f680000(0000)
+> knlGS:0000000000000000
+> [   11.271363] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   11.271725] CR2: 000000000073a005 CR3: 00000001127d5004 CR4: 0000000000370ef0
+> [   11.272220] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [   11.272693] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [   11.273182] Call Trace:
+> [   11.273370]  <TASK>
+> [   11.273518]  ? __warn+0x8b/0x14d
+> [   11.273753]  ? report_bug+0xdb/0x151
+> [   11.273997]  ? refcount_warn_saturate+0x99/0xda
+> [   11.274326]  ? handle_bug+0x3c/0x5b
+> [   11.274564]  ? exc_invalid_op+0x13/0x5c
+> [   11.274831]  ? asm_exc_invalid_op+0x16/0x20
+> [   11.275119]  ? refcount_warn_saturate+0x99/0xda
+> [   11.275428]  uprobe_unregister_nosync+0x61/0x7c
+> [   11.275768]  __probe_event_disable+0x5d/0x7d
+> [   11.276069]  probe_event_disable+0x50/0x58
 
-That's odd. This should never happen, so printing error suggests
-something is odd in your driver.
+This I'll have to stare at for a bit.
 
-There is anyway helper for getting match data from i2c/of cases.
-
-
-> +		return -ENODEV;
-> +	}
-> +
-> +	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*dev_data));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	dev_data = iio_priv(indio_dev);
-> +	i2c_set_clientdata(client, indio_dev);
-> +	dev_data->client = client;
-> +	mutex_init(&dev_data->lock);
-> +
-> +	/* reset device */
-> +	ret = i2c_smbus_write_byte_data(client, ENS21X_REG_SYS_CTRL,
-> +					ENS21X_SYS_CTRL_SYS_RESET);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* wait for device to become active */
-> +	usleep_range(4000, 5000);
-> +
-> +	/* disable low power mode */
-> +	ret = i2c_smbus_write_byte_data(client, ENS21X_REG_SYS_CTRL, 0x00);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* wait for device to become active */
-> +	tries = 10;
-> +	while (tries-- > 0) {
-> +		msleep(20);
-> +		ret = i2c_smbus_read_byte_data(client, ENS21X_REG_SYS_STAT);
-> +		if (ret < 0)
-> +			return ret;
-> +		if (ret & ENS21X_SYS_STAT_SYS_ACTIVE)
-> +			break;
-> +	}
-> +	if (tries < 0) {
-> +		dev_err(&client->dev,
-> +			"timeout waiting for ens21x to become active\n");
-> +		return -EIO;
-> +	}
-> +
-> +	/* get part_id */
-> +	part_id_le = i2c_smbus_read_word_data(client, ENS21X_REG_PART_ID);
-> +	if (part_id_le < 0)
-> +		return part_id_le;
-> +	part_id = le16_to_cpu(part_id_le);
-> +
-> +	if (part_id != id->driver_data) {
-> +		dev_err(&client->dev,
-> +			"Part ID does not match (0x%04x != 0x%04lx)\n", part_id,
-> +			id->driver_data);
-> +		return -ENODEV;
-> +	}
-> +
-> +	/* reenable low power */
-> +	ret = i2c_smbus_write_byte_data(client, ENS21X_REG_SYS_CTRL,
-> +					ENS21X_SYS_CTRL_LOW_POWER_ENABLE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	dev_data->part_id = part_id;
-> +
-> +	indio_dev->name = id->name;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->channels = ens21x_channels;
-> +	indio_dev->num_channels = ARRAY_SIZE(ens21x_channels);
-> +	indio_dev->info = &ens21x_info;
-> +
-> +	return devm_iio_device_register(&client->dev, indio_dev);
-> +}
-> +
-> +
-> +static const struct of_device_id ens21x_of_match[] = {
-> +	{ .compatible = "sciosense,ens210" },
-> +	{ .compatible = "sciosense,ens210a" },
-> +	{ .compatible = "sciosense,ens211" },
-> +	{ .compatible = "sciosense,ens212" },
-> +	{ .compatible = "sciosense,ens213a" },
-> +	{ .compatible = "sciosense,ens215" },
-
-Mismathed with i2c_device_id. These should have the same data. Also,
-keep the tables next to each other (here).
-
-
-
-Best regards,
-Krzysztof
-
+Thanks!
 
