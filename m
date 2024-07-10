@@ -1,146 +1,90 @@
-Return-Path: <linux-kernel+bounces-247900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 729DB92D61A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:17:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6453492D619
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2210A1F278D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:17:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91F011C20D6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CDD196D9E;
-	Wed, 10 Jul 2024 16:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7546E194C66;
+	Wed, 10 Jul 2024 16:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I/Hg8bdc"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fMaxg75q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C629D1953BA
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E1D1803D;
+	Wed, 10 Jul 2024 16:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720628157; cv=none; b=n0xW4PZd0MsglsAnzH8q5kYu0p335XkjAHgBljGT189oghbdyerhKDoP66xOCSwL3p/Iy9LZffbqzU7d0mfasfBuUfK35IoHM5kovCR1w6ro2SK2Mx/zb/E95cEO4To+8XhxeHFmMfW7K8s0GIVysRtEu02GlZaEpk5TDha2yNQ=
+	t=1720628152; cv=none; b=al7sCuZiKOLWYEfTy08mNC1aSnGtKJwG2QHwoic/VOKAOo9SKF3+aAVMOtJxa4M2QKICNMFvqg1upT4RIc7sqrLHRpKz/U8J49F5+0GSOvLAlK4x+w2eah3bemTIbvxYJDUULGjCDilB+S9zd09mCouiq6yu7EzVZ2JQYlAKKLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720628157; c=relaxed/simple;
-	bh=TgOKlANK2h/PGDdeOGOPxmFLAyYqKVcQrEFN0PRUTFY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TM3LMpy3lBKt4HWpzy1R1ExKu/82MCLQIpOBa2PYR3Qt1jLgi6fGYyyJGtppTxGEr0NoysocVRUU0X4X9VMUC24zGhNY8JIMi7Vg/eVWqVSUhXCcdE7IJIWYhSKOrPmv2EhEFeAoH+0DQL7gDTeXUJnM0A/iUI8H0glSf6kThmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I/Hg8bdc; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-64b29539d86so59364037b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:15:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720628154; x=1721232954; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h4xVThAQgk7n6R5xLRV2ywFddDRqebZaKIPSQDVaDtw=;
-        b=I/Hg8bdcxXSu1n2xs2lWKCmIQG3yjbEtM2Ir5dpFj30zMh0zobzDcNLUzdR4nL0TTL
-         WphqTlN0Q/FvYmsKQmPep1A7VzK40NqiQ5uu/s0tbRmCHQi7jJACvc5xFw9hzRwqGxlb
-         +HnW1hZC/tsveRzLRcBRiAOW03yKSvCWvv2PskQnmLL9ixKsHGHPyB7k2YnFZrtDS13+
-         Q2Ikf3p2w41sxmhgP20bMOBe0A0rS/0NCoceOHmLaO5scMllTt2VYQiwYsCyTzkeIbPv
-         lBywIUedsG+p2DemJaOpu5JQA0wkCvWcy72vMqJm6vd9Zam8x6AdYWl4hOkeVkjPnxw2
-         CByg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720628154; x=1721232954;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h4xVThAQgk7n6R5xLRV2ywFddDRqebZaKIPSQDVaDtw=;
-        b=cdSQHrNmlkmIgkK8Wco7LVfgbvu5jx/d4SHtSfMiiGv8W2LP8TshrZCGf9vVb0QtPe
-         THqdP90bMRMg5sQDlBL/FxFHTlnitqHqCRhFj+Stlw+w6KQytCBXe2bK+BpbsjCUJ1Fy
-         RRPGjd/PLessZyG9YNqrT+VAEQ6duu0ES+gHpVVWHs4l44a2Z5/e07UDn8/J0jq/QjUH
-         ptz2gDxY3rI5+0JsbD4cDLdU4dVqfhWS/73bDv7IWX+U66R4nzj2X+bz2wug2OwSsqDg
-         47BpB6IsXERmY/ZP0Hhrmey8N6BJ5AUT6v7leq2LM72AhQDTx+L+sZNfUji6ALz7l5SI
-         9FCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWNrcKIpcyFUWx5mKPtHVkoPSJx8dBgxr0di6OhVoNy33QmAH5mI0S2zV5M5Z9O1CS538DwF/jqAIqKxPOnTEkvl7Eq3K5R/z6inrTa
-X-Gm-Message-State: AOJu0YwGeGbntYjHaJk7ygYKXmZCxBWz36jozrPnwIEYCT9AoVAQ9vq8
-	n5gbRXlmbZmIMHMg3yZP8LWiSiaenmzuXTNPSJxalkDXayB4a0OzLDSyZhPSxiH9X9qkPhqKlgD
-	kEcN4gUpjXq7ulV0o6C0T6Sz7b8Eg8+yDe5TA
-X-Google-Smtp-Source: AGHT+IGCoqOolpEeqhQMOEIsEQnyWipG02ffK00hOOo8l2FHKvLvFsXzjXv1yEHKYMw/uXlDNKaotNWQ+7BvNWHYkRA=
-X-Received: by 2002:a81:69c3:0:b0:650:279f:8c67 with SMTP id
- 00721157ae682-658f0fb30f1mr69528697b3.46.1720628153459; Wed, 10 Jul 2024
- 09:15:53 -0700 (PDT)
+	s=arc-20240116; t=1720628152; c=relaxed/simple;
+	bh=Y89/WY8lavOdGYJXlEhyTDXv6Bi38yp2eX7+OnkOJHs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t/oFSU6AdKy1qr/pDkG/rBaVON9Yw5h/YYFn0abYTNVbQFH9ifulBYJYN2Z31l236WC8HBiPCsvhl62CFlxw8wdrjrjrKcQhHjZo1eDmUbQVT96F7VQUbjyYFQrpqk8Rm4WNSAnlbuSUYiHbxxL+tWSD0cFiSuW0Wi9i2Fq9Z/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fMaxg75q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFEEBC32781;
+	Wed, 10 Jul 2024 16:15:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720628152;
+	bh=Y89/WY8lavOdGYJXlEhyTDXv6Bi38yp2eX7+OnkOJHs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fMaxg75qmt4ABmx/LmDAVm3Jm2sVASR3uIDZ7aVJ/JRwI+pP23r/b63F0sdF8491T
+	 OuxNvH/zWEP4YKOEy0jWZJ7gaPQAr/mi199XzR75XUlXXWfj0QsmDiaFrReRZYe4eh
+	 GIYv7AepbGkNGv3qahvXXLdq4N6dWUfF2wYpcSKqWifQRYQe2l9/zELes2qduSAuZg
+	 OOTnwUnpp9LASZ/nSmMLeLUPSyisiRQwgtmlxRQdEXBhARiANlKzpxQ5v1i0pmUH6j
+	 zihlKmhJwSBPKqb25wK6h9GAGjfzG9fGv96eo8fjlutbzykV8g+RCK7FuGuUqNYo0A
+	 x+ZcVbCfBq+yQ==
+Date: Wed, 10 Jul 2024 10:15:50 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Jakub Kicinski <kuba@kernel.org>, Marcel Holtmann <marcel@holtmann.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-bluetooth@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Rocky Liao <quic_rjliao@quicinc.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>, netdev@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v3 1/6] dt-bindings: bluetooth: qualcomm: describe the
+ inputs from PMU for wcn7850
+Message-ID: <172062814990.3211927.13043381327085522946.robh@kernel.org>
+References: <20240709-hci_qca_refactor-v3-0-5f48ca001fed@linaro.org>
+ <20240709-hci_qca_refactor-v3-1-5f48ca001fed@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704182718.2653918-1-Liam.Howlett@oracle.com> <20240704182718.2653918-9-Liam.Howlett@oracle.com>
-In-Reply-To: <20240704182718.2653918-9-Liam.Howlett@oracle.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 10 Jul 2024 09:15:42 -0700
-Message-ID: <CAJuCfpFNJ1j7Kcf3Z6efBB0xmvpRCWnfZhnNOuD_hBZmKc-bqA@mail.gmail.com>
-Subject: Re: [PATCH v3 08/16] mm/mmap: Inline munmap operation in mmap_region()
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, sidhartha.kumar@oracle.com, 
-	"Paul E . McKenney" <paulmck@kernel.org>, Bert Karwatzki <spasswolf@web.de>, Jiri Olsa <olsajiri@gmail.com>, 
-	linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709-hci_qca_refactor-v3-1-5f48ca001fed@linaro.org>
 
-On Thu, Jul 4, 2024 at 11:27=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
->
-> mmap_region is already passed sanitized addr and len, so change the
-> call to do_vmi_munmap() to do_vmi_align_munmap() and inline the other
-> checks.
 
-Hmm. I think such refactoring when you want to skip some checks would
-be done a bit differently... You would introduce a __do_vmi_munmap()
-function which is called at the end of do_vmi_munmap() after the
-checks and then call __do_vmi_munmap() directly wherever you want to
-skip the checks. That would avoid code duplication. Any reason that
-can't be done here?
-
->
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+On Tue, 09 Jul 2024 14:18:32 +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Drop the inputs from the host and instead expect the Bluetooth node to
+> consume the outputs of the internal PMU. This model is closer to reality
+> than how we represent it now.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > ---
->  mm/mmap.c | 20 ++++++++++++++------
->  1 file changed, 14 insertions(+), 6 deletions(-)
->
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 8d9be791997a..e9858ca8bbd4 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -2937,12 +2937,20 @@ unsigned long mmap_region(struct file *file, unsi=
-gned long addr,
->                         return -ENOMEM;
->         }
->
-> -       /* Unmap any existing mapping in the area */
-> -       error =3D do_vmi_munmap(&vmi, mm, addr, len, uf, false);
-> -       if (error =3D=3D -EPERM)
-> -               return error;
-> -       else if (error)
-> -               return -ENOMEM;
-> +
-> +       if (unlikely(!can_modify_mm(mm, addr, end)))
-> +               return -EPERM;
-> +
-> +        /* arch_unmap() might do unmaps itself.  */
-> +       arch_unmap(mm, addr, end);
-> +
-> +       /* Find the first overlapping VMA */
-> +       vma =3D vma_find(&vmi, end);
-> +       if (vma) {
-> +               if (do_vmi_align_munmap(&vmi, vma, mm, addr, end, uf, fal=
-se))
-> +                       return -ENOMEM;
-> +               vma =3D NULL;
-> +       }
->
->         /*
->          * Private writable mapping: check memory availability
-> --
-> 2.43.0
->
+>  .../bindings/net/bluetooth/qualcomm-bluetooth.yaml     | 18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
+> 
+
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+
 
