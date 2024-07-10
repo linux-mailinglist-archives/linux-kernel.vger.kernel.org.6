@@ -1,138 +1,88 @@
-Return-Path: <linux-kernel+bounces-248433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A66C92DD1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:49:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A12C292DD2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9DB328522A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:49:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D23928783B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEC615ECEA;
-	Wed, 10 Jul 2024 23:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F56F15958D;
+	Wed, 10 Jul 2024 23:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QJdZuh1q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TxVFDFfZ"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A94363A5;
-	Wed, 10 Jul 2024 23:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A45D15EFAF
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720655220; cv=none; b=qOUatTOrMvN6Dh3Qm0vONqtG0+mOqhz+TpIj9osBq1Phi5L2IJUtJDg0+YnoGFjdrfNeTyWbi1x3W7atZIEUns4Yhyq3qS8+wfAXpGuPXdYByQBufsMy5hBfU/0c2S6pNTZayMQsCVi9UxOXbNCL+FJgsQfyoebxoDL1SsMyp1E=
+	t=1720655355; cv=none; b=t/qPlketQJZDyifsteVjJhbimBfR044cajb5wSK06tcxvzuaDUfi2t9Y6z5joXsW/+McTAiy+ATRs0oMb9ZgmS1Em7bHks8c31l30yO39V67RPk1Y+43hLmT0U3gzkwRpoPNhmjpvOqqDP50cP4/5uiwQwEsIwILb5NN8NJfKm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720655220; c=relaxed/simple;
-	bh=QB8/3eOL68A8pTiMnSt7yeyEfnMWPcIv2g/lKtnx46A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rnx077ClfQ4v2JJixBnNOLNrr1xMZdNXuWbX6G/C+GnF0wmgyOt2AG17gB7ABl2WixjbUy4kSIm0VsI80BdydDr6umAqwPYwHxzjoGybfRlG9z5hX/4KlDa9kQgglkomf5+xGgeKjfGRfA2pmO7MFXdYVaepGiqE53fK7Lat2k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QJdZuh1q; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720655220; x=1752191220;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=QB8/3eOL68A8pTiMnSt7yeyEfnMWPcIv2g/lKtnx46A=;
-  b=QJdZuh1qIcj5O/3ttjsLfpWBds3TcnvgZNvVUOa2lvAjla1Zhp+NJxZ7
-   dXgWVi+/+a3OWnpI8lli5wi/6wgYC5ARUw4sgAy3+RAP9zDCKhYvRX98E
-   iNjoNANQ/YR4JtYBFduYBIZGFje2OiCHNpuShaL5vn9XSTqE12tH57Y8L
-   0kDpimalVdQJjtgEkPQIUOMSMB5c00AyCHMWNlKJswvLRpmeDJga16csp
-   TUv/aYtcJLe8ed2O3Aaznmix2tqY4KHoq0LZ96t/Q/ao1wxRU8oNiRnZK
-   oGgEU/Fk8Y8ef04XUe9FWpt5TSJpOrYcDz2M9dyP+KglVcOruJuMw5ROb
-   A==;
-X-CSE-ConnectionGUID: A+ZWGag5Sb+cBFGgjjLSdw==
-X-CSE-MsgGUID: SL3XTy0dRaC7jh84dUju9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="18152049"
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="18152049"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 16:46:59 -0700
-X-CSE-ConnectionGUID: UTZflU3SSXC3Cwd1Y5qXtQ==
-X-CSE-MsgGUID: FyQKValqTn6wDncF77Auzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="48345030"
-Received: from bmurrell-mobl.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.221.70])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 16:46:58 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jesse Brandeburg
- <jesse.brandeburg@intel.com>, Tony
- Nguyen <anthony.l.nguyen@intel.com>, Simon Horman <horms@kernel.org>,
- Richard Cochran <richardcochran@gmail.com>, Paul Menzel
- <pmenzel@molgen.mpg.de>, Sasha Neftin <sasha.neftin@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, Faizal Rahim
- <faizal.abdul.rahim@linux.intel.com>
-Subject: Re: [PATCH iwl-net v2 1/3] igc: Fix qbv_config_change_errors logics
-In-Reply-To: <20240707125318.3425097-2-faizal.abdul.rahim@linux.intel.com>
-References: <20240707125318.3425097-1-faizal.abdul.rahim@linux.intel.com>
- <20240707125318.3425097-2-faizal.abdul.rahim@linux.intel.com>
-Date: Wed, 10 Jul 2024 16:46:57 -0700
-Message-ID: <87ikxcu7wu.fsf@intel.com>
+	s=arc-20240116; t=1720655355; c=relaxed/simple;
+	bh=WpUWnTWcQ9yZbCFEuArGMs4Fxk919PYBB/xOGitk7xM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ll6rFYWqtLgkOkA7HSKR8WH5EanONWQ/R29YdTTt/OtRZt9fyGhys5gT2FZ6e+wIZwz0h/JiJFHWIZs1Pxqe3rebHbKrWs7rV6ayMOUUKsNbVE3bC5I0yKUE2coIGuluSXySgTfDQWZ6KeKmZVELmkX7mlHZse09CdnMLDPXhu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TxVFDFfZ; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-447df43324fso64781cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:49:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720655353; x=1721260153; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WpUWnTWcQ9yZbCFEuArGMs4Fxk919PYBB/xOGitk7xM=;
+        b=TxVFDFfZrvROa1IKZ3G5x2ZkEvq9G8gQk4z8oeAb/KpPpPvQOH/gIU0KLHUwUU6GFn
+         zHjX3/emlwa1Wq8KkRnLm/gAk7ZSpGZd+0D0hWyGHNdvypxPkVvYAwNkIG7hDC0jmwns
+         6BwPHSONhiwDP92nugSYgG/1eVSF9OzY4SWiAe45CXyIaey6oVcoW7jc7pvnOLXgCnNK
+         AR5QwzdR+o+LAOiRAiEgiegcIRa2yNMefFsu/Zjn+6Ok0C22D+4MxmqggJiAH2ljTTCy
+         rHuCbdu4xAxVsXkUPgUR1XYB3+y2/ecAqd96rNfabcyRGfdJAU47FpwBR8yJMOjCJI9u
+         H6Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720655353; x=1721260153;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WpUWnTWcQ9yZbCFEuArGMs4Fxk919PYBB/xOGitk7xM=;
+        b=umgsK7DndA9YqgSPfX4GsPXueoDEZEnlhMQAuZwwRd+1UKLdyMhpBAgbIqxNNO3O1I
+         +h/Bdqou6XwJYenDk6fpoC9A95NTAtxHfd+ozoz92vWO/MgX+mBCcvYpK0tN4FLHZsg0
+         WTGm7iF6W06aL9cLTrfyw62VU0sX/ha65bnyoqoVKThM0C0J+UdRCU2bOuDN4XRTFWDJ
+         DxsNbHntiNw977ipOsA6YctePgo/jV4F4uW5wKMdy7YKn9O9NbzRu3YzLS7AXsT/XfId
+         AvKeAfRH1ip24NbrOORyCyKlSNyN2D8HUk5w1NK4RGANXM+oRSkNw/zPu751Cx/9GLG3
+         JYOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWbeD35hGwNxr2YkGhCwQOTtmzrJ+TwK7j34P8FpaWx8Bm8sEM20LdXbHd6E0h+n7eOXQr++gL7DtJjE+Uvl2HP58IcvCPAeOq82/nG
+X-Gm-Message-State: AOJu0Yzv8OLwRn8KP3C3ZQK/+VaxtA1o9MQ+FHGgY1+iLlTBdRZX/YsN
+	AzE0sEt+zAu7ptVeM87zK43uIRHj9cRLiCLsQrqMnUsK7NT3uTd0wY8JjeaIgH4jz2SRJD1BZmZ
+	RLho6JToava0SCXXyb2fsleAzp49U1esGiVLn
+X-Google-Smtp-Source: AGHT+IEuslvTU7O114maCMu6s7q1QatazKYK4Au3LHFSN1TQt2fd6q24xfMVdE/dWH6oyRO5MWqPuiKjKkMbsPD4dqw=
+X-Received: by 2002:ac8:7386:0:b0:447:ec33:f488 with SMTP id
+ d75a77b69052e-44d0aa4788bmr1329661cf.4.1720655352838; Wed, 10 Jul 2024
+ 16:49:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240710234222.2333120-1-jthoughton@google.com>
+In-Reply-To: <20240710234222.2333120-1-jthoughton@google.com>
+From: James Houghton <jthoughton@google.com>
+Date: Wed, 10 Jul 2024 16:48:36 -0700
+Message-ID: <CADrL8HUHRMwUPhr7jLLBgD9YLFAnVHc=N-C=8er-x6GUtV97pQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/18] KVM: Post-copy live migration for guest_memfd
+To: Paolo Bonzini <pbonzini@redhat.com>, Peter Xu <peterx@redhat.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Sean Christopherson <seanjc@google.com>, Shuah Khan <shuah@kernel.org>, 
+	Axel Rasmussen <axelrasmussen@google.com>, David Matlack <dmatlack@google.com>, kvm@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-Faizal Rahim <faizal.abdul.rahim@linux.intel.com> writes:
-
-> When user issues these cmds:
-> 1. Either a) or b)
->    a) mqprio with hardware offload disabled
->    b) taprio with txtime-assist feature enabled
-> 2. etf
-> 3. tc qdisc delete
-> 4. taprio with base time in the past
->
-> At step 4, qbv_config_change_errors wrongly increased by 1.
->
-> Excerpt from IEEE 802.1Q-2018 8.6.9.3.1:
-> "If AdminBaseTime specifies a time in the past, and the current schedule
-> is running, then: Increment ConfigChangeError counter"
->
-> qbv_config_change_errors should only increase if base time is in the past
-> and no taprio is active. In user perspective, taprio was not active when
-> first triggered at step 4. However, i225/6 reuses qbv for etf, so qbv is
-> enabled with a dummy schedule at step 2 where it enters
-> igc_tsn_enable_offload() and qbv_count got incremented to 1. At step 4, it
-> enters igc_tsn_enable_offload() again, qbv_count is incremented to 2.
-> Because taprio is running, tc_setup_type is TC_SETUP_QDISC_ETF and
-> qbv_count > 1, qbv_config_change_errors value got incremented.
->
-> This issue happens due to reliance on qbv_count field where a non-zero
-> value indicates that taprio is running. But qbv_count increases
-> regardless if taprio is triggered by user or by other tsn feature. It does
-> not align with qbv_config_change_errors expectation where it is only
-> concerned with taprio triggered by user.
->
-> Fixing this by relocating the qbv_config_change_errors logic to
-> igc_save_qbv_schedule(), eliminating reliance on qbv_count and its
-> inaccuracies from i225/6's multiple uses of qbv feature for other TSN
-> features.
->
-> The new function created: igc_tsn_is_taprio_activated_by_user() uses
-> taprio_offload_enable field to indicate that the current running taprio
-> was triggered by user, instead of triggered by non-qbv feature like etf.
->
-> Fixes: ae4fe4698300 ("igc: Add qbv_config_change_errors counter")
-> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> ---
-
-Looks good:
-
-Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-
-
-Cheers,
--- 
-Vinicius
+Ah, I put the wrong email for Peter! I'm so sorry!
 
