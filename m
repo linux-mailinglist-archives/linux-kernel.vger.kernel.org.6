@@ -1,106 +1,72 @@
-Return-Path: <linux-kernel+bounces-246805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D41092C6EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 02:13:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0C6A92C6F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 02:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2B1C1C221C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:13:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A6C5282F74
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E1E3207;
-	Wed, 10 Jul 2024 00:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6DB10F1;
+	Wed, 10 Jul 2024 00:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="icHRJ8B0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JxhNR7St"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EF72CA5;
-	Wed, 10 Jul 2024 00:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FFC1366;
+	Wed, 10 Jul 2024 00:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720570390; cv=none; b=XGf/nD+uW4zABujyX5hEYqUux3VCxWwZ/TU2Ub+5LqnNv5mZ5KNFYM9nfU2u7rRfqD+ZXQNXSLyaFWsEcf08vA5KYHNiRwwpkuaEPeH58B6tp7TdyX48CyiJvg72RkjVDuJk+GhJ4RBusesyQKg34NaKJwjPX9dcNUOXkY0aPc0=
+	t=1720570429; cv=none; b=d5imNXP8cP2mWftpivsgtxIg0keAqj/xcz38/OXsz4hz/J03LkOu1+GVH+7RvWxeFU6K53/VLvC0TU2B0b1PuM7WHJ7uqCxi4A7iQd64bsNQEtXmulB3solZd8kXn5hVJQA1YQV6NMMAYo3p3KyjjF2dO84hJNmX8P/C+JiDD3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720570390; c=relaxed/simple;
-	bh=hH6XjJwh6V5T6DG7L0RoEforFSSEUVc2U+XkuNZxBNE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Qv62RZ91b+/N7NIALdkAnXG1Lk/bL9TNz4bs7FtOJMPigbYPnX1G4M/dQ8ot4cMegP2QyT7/CTVM80Gsze8RoFo6cJ47L+7oDAHVE3H80LfHl7BL40xpgH5hmGTzwWvyAii8kk/qUNLMr6YKzzjDcAtYl/0XWk/nlIl5kchrBXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=icHRJ8B0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BCC3C3277B;
-	Wed, 10 Jul 2024 00:13:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720570389;
-	bh=hH6XjJwh6V5T6DG7L0RoEforFSSEUVc2U+XkuNZxBNE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=icHRJ8B0eDG1Qx8r/n3MURe/rvL4idQyb6BGWWs/sO4Jg5Y51b+mldfvf7Z7lGL8s
-	 RekzE5wmoMzjHzw6cibrKx49F9Y9dJpdnD/h/xl4tQ/8qnDUhIEJJ1qzE8QFAhWQum
-	 kjetS56rHjDPBx1egrKvrm8jY/rgM7VgU4a7yR8dJdUO+xuedI3x+Rd2i3KVaiZFEs
-	 w1NQzZLibrCX0NogCxW3EESNz3Lm/W12j+7L6UYkfiJpBWpe9ibNlOUx99qDG71i54
-	 7xIVpAgFW8EJrEmLppexjOC9tQq6Nkq1W1rPKGCNTYezFS9wwNx7yEGYdHPld7Cdp+
-	 zVJcilc4Lxu6A==
-From: Kees Cook <kees@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Kees Cook <kees@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] mm/kmemleak: Replace strncpy() with strscpy()
-Date: Tue,  9 Jul 2024 17:13:08 -0700
-Message-Id: <20240710001300.work.004-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720570429; c=relaxed/simple;
+	bh=EibiTzLr2qa+oH2HKV/cZW2EB7ch+eovc3WHYxkuENw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mSi9Uk7OKJXpZLg51xxC82NrsBvRtxN6cHl68ebBmE94TFTvDkzyVs6cVxadqKxJ5uQx+MzDzlJVCtjQCSa76Xn19/KHaXnvTalpb1EmvsKiFycydmXmnKp8ZyQoSl96LKdkc88aeFKCNrILM6Qyk2k5cPfI4gtxT++8xZYvbU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JxhNR7St; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=EibiTzLr2qa+oH2HKV/cZW2EB7ch+eovc3WHYxkuENw=; b=JxhNR7St7Jz6DRFiCjc1RIjZ3/
+	iaX4ybgaOmhY1D5W64YQ+GArS2tz57+jlYuy4dJlXXLd3oC6IqI9+XOu1T8CkOQfX/Y8TxT4+fcBJ
+	rjX3NKAfrdu3fYfOKbMcokyUdTq5jqerg77ZVuOwJlS8CXsZLiaVcqgdWE/7omuwpvc7VvZ0vpZVJ
+	DjVGDlQleyQVEfSHFu3+9umlGSOra/yHYiSUdJud3t1OMjDVHY8Fsl/EXrjQDtEbt6XOe2D/HoNUH
+	u6D/8Q9T0GtuNRonWWWsxF39yrJ2ZPFfxuUGIuEM72DwAQFM1GIlM+rrTqbTN3S4CDdSFHGi4Lqpg
+	Gc6R6BRw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRKxr-00000008VZH-3cTz;
+	Wed, 10 Jul 2024 00:13:43 +0000
+Date: Wed, 10 Jul 2024 01:13:43 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Ram Tummala <rtummala@nvidia.com>
+Cc: akpm@linux-foundation.org, fengwei.yin@intel.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, apopple@nvidia.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] mm: Fix PTE_AF handling in fault path on architectures
+ with HW AF support
+Message-ID: <Zo3SN_qlYUWLAlyR@casper.infradead.org>
+References: <20240710000942.623704-1-rtummala@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1360; i=kees@kernel.org; h=from:subject:message-id; bh=hH6XjJwh6V5T6DG7L0RoEforFSSEUVc2U+XkuNZxBNE=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmjdITQN4XGi2gMp0xUR/LaBXup1y35hiihuVMJ 0WIjbRi1FGJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZo3SEwAKCRCJcvTf3G3A JlRiD/9yskQJyvP7pOcththEpmK24+FXaILTCqWmbqZgjvaF2/vGJO6zo74E5dBy1rTLJwRNJET UEEke92ESGPIy/VGTuFrSrbsUqqwP+uwq7RK/hde0EwXFQAYnvHeIu2tyl9Z5ZEtp3N3oTYUAY+ 6ui4VWM0EYrasSssRaGuCxawfBCt/YsGj9lGi644Hf2X/rz8HcE8DUWSYhEU+q4hgo04m6lxC/o InBKlWGH0lmcJdnlGO3zMAQjkxhmROVUzUHVSdkIVSIaGgewAjgafPR+XGIf9HCvKl5ZSRDGRAZ b2WZKknsgRrjdRAqlhBkC+W+MOHXm82Ue5JeMNhvYHc3ydvFInBWiOo0Q5ST9T0upsAlB1woe9g ypnHKWU0bGWqj35Gd2pBGrmEFurtoOIkQuZSseXdU7E3R/YNSTu7iHLnu4YDpbKuYxsivtso2po cimMrWcHZ8b2izLOHeVu7AllZagdP8PIny9J+m4urxt+ec6YUl6MRTFEg0xgGxxRbmVzpMrCy5G 2YSVeYTNBKVaVndVRcEdnUGRBw5HTZcgLjCLGV+Vn5DMAyAYxusnDkfjzHRMhZUPwov6YmjKA03 eYleQ+a12Aop6lsd5vVoD2JlUbtw8AYabkFiTj4ISXIh2ANXHvo4kM1AYeBM0rdvOYI6mez3/ph TU6iGeSfeAMoa
- 3A==
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710000942.623704-1-rtummala@nvidia.com>
 
-Replace the depreciated[1] strncpy() calls with strscpy(). Uses of
-object->comm do not depend on the padding side-effect.
+On Tue, Jul 09, 2024 at 05:09:42PM -0700, Ram Tummala wrote:
+> Commit 3bd786f76de2 ("mm: convert do_set_pte() to set_pte_range()")
+> replaced do_set_pte() with set_pte_range() and that introduced a regression
+> in the following faulting path of non-anonymous vmas on CPUs with HW AF
 
-Link: https://github.com/KSPP/linux/issues/90 [1]
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org
----
- mm/kmemleak.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-index d5b6fba44fc9..764b08100570 100644
---- a/mm/kmemleak.c
-+++ b/mm/kmemleak.c
-@@ -657,10 +657,10 @@ static struct kmemleak_object *__alloc_object(gfp_t gfp)
- 	/* task information */
- 	if (in_hardirq()) {
- 		object->pid = 0;
--		strncpy(object->comm, "hardirq", sizeof(object->comm));
-+		strscpy(object->comm, "hardirq");
- 	} else if (in_serving_softirq()) {
- 		object->pid = 0;
--		strncpy(object->comm, "softirq", sizeof(object->comm));
-+		strscpy(object->comm, "softirq");
- 	} else {
- 		object->pid = current->pid;
- 		/*
-@@ -669,7 +669,7 @@ static struct kmemleak_object *__alloc_object(gfp_t gfp)
- 		 * dependency issues with current->alloc_lock. In the worst
- 		 * case, the command line is not correct.
- 		 */
--		strncpy(object->comm, current->comm, sizeof(object->comm));
-+		strscpy(object->comm, current->comm);
- 	}
- 
- 	/* kernel backtrace */
--- 
-2.34.1
-
+At no point in this do you say what "AF" stands for.
 
