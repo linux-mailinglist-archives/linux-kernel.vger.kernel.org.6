@@ -1,236 +1,207 @@
-Return-Path: <linux-kernel+bounces-247563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3486692D13A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:03:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D09DA92D13E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:03:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA943283A71
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:03:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 646631F25675
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E83191484;
-	Wed, 10 Jul 2024 12:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Svd8TDsE"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9A3191F91;
+	Wed, 10 Jul 2024 12:03:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53893189F54
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 12:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D38F191F62
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 12:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720612980; cv=none; b=Y2O+lbN/kDiaADhtZ11dbn5FG/uDrzO7cingZwQKiRvNmMPbz5EED5tUpKl6Osmh/dpMOnJnLedXH2Qa7wtlIhxbar4kqz2UOwuZa4nEwiQ+7vhvxxmHfN2+8pA1JdRkKYO7aI03m7cHXAkBV0SCB/fmFW5I4QH4wjWaUVbj6OE=
+	t=1720612985; cv=none; b=Zi39/vkt+NjvzrsXAbjJn/PThFpg+GaYciZz+gxTa02yNowKHKLq4gdYQWu4ZUpUVED4392AEyfOtZh6IzM7YOaDTf/ojydXtEb8OBJ5xZEOqiFI2Qw1XKw179X0IJcNUavHdiVuMVAHJHZZVOBOjspqeUROaeAFNjP1dBXdk9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720612980; c=relaxed/simple;
-	bh=WblItfEWCmH+Cp+O0L2GwRr2jMnQBjgUip7cm8z6MbQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u+7gZjAGpx3xbCciS12R4OQrVJaZ+hllJzWM7l9Z1DZPoSfonKKRDkBh1oDPTN1HHi9rMn7pA+wrtp2Kbwl26yh0L0oSq7IZZqDi0fO8wCFajpFJNBDbQreqgMT5LP1vnba2QBlwijoXMZo7vFRa4XvFuoW2+E2lyPAoyJjtkdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Svd8TDsE; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2eeb1ba0468so28823261fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 05:02:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720612976; x=1721217776; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fUjKFWFxbGBOdWwWQ3smtcT5i5d9Ks6ekYS3JTphrnM=;
-        b=Svd8TDsEQ1yGrAvN7tgJwIS88EoUVpU6OJ+O0vS6aD5WUktAYavqiiqI0HWWVV1ppk
-         C2I4b0vcz0g0OgyCCdD0RIiB9v5IkPxpOR6oy/xDjSfYK/oXe4yUR0VQiWjalA/YYPZX
-         LBweK4MIXEfHoVe9tKevQD/v8i4ZRUi49KXLdlC6lBkUHXQ/ug1BdMlEhnThZjZvLCBC
-         3gu/OD7p7s5oHvxlSK0PHROIhoNfZBZsSRaD+Yj6rpQVqzRy/ne6c5LhuAbCnY6/WIxO
-         4EeMrw/AjhH5DBL5NaPp9bmEcLiEPbkNL7cuBS9lK21tlybmLFCwzsjLHbMUigApUNCX
-         hPFg==
+	s=arc-20240116; t=1720612985; c=relaxed/simple;
+	bh=WDo5+x5cmUB3dXHJlZD94j9ct538jcW9HURkvyAORrA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=S8oLzvW23eYV2moRyBodSw1RIHnez3BBbxVid/FQUfHVO8SCzfbhMI26nzmUy1ItPQcZdkmHkLMVaD0d2uUaa59nni86yOSniaOby67XJm3H72clBAGVARotijPMr1fE3TdK+M8FIL1czKGOH20OiGkCFV2yVRU7P5sfgzLj82s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f684ab3f9cso55917839f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 05:03:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720612976; x=1721217776;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1720612983; x=1721217783;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fUjKFWFxbGBOdWwWQ3smtcT5i5d9Ks6ekYS3JTphrnM=;
-        b=Z9gZvkzMbzWiq7GZTeTbLTnHUUWJ7ncaU/1nCv+PJNMIaFfA9iKro10XXdBH01dUHJ
-         GNWAJpJw/76+9Ud0Up48i6ELcjj7YbslkW1hBRicW748b3L778PHicA6w1Gk9Iq4uk8d
-         bXe9FP7SBcHKyKLE8qlD6wL1ynhMPfjCaNwJODIOLfJXZk3N5DtM6gF+xXQd1QL/ueqk
-         eqgmDzvIdBAdToI/vwWXOqAsaHMItAlAc+1Bu3wVplWzp6Y5CK5z9u2kGKyKF1qd7qCB
-         N0A/lu9cVDGNCiNeVymZdfhf0DbOy62OGEoFAAfNkZMuSWBj39Y4m9NUzqpu107+xrpP
-         5cew==
-X-Forwarded-Encrypted: i=1; AJvYcCXoIQQ69Coe3+77VL00J4KnA7FYgz9rCbpJ78zZ5eghCS78EOUXhmGYiIEypjilPQ4oyXQrQz341PB9fOfCMdOxucH/z5Fhu2IxrZ8c
-X-Gm-Message-State: AOJu0YyPW50wJYhAgea7c0VKrK8XrKGCN6KWAEznTxMdI+n3cX2vIxPu
-	boLNA6308cmuWSK+K233IGcAi3R4YEqBabgsSreJdRw/LJ0yzVRcv8HLFmXVxMs=
-X-Google-Smtp-Source: AGHT+IHwMozocS3Y6Q4EbJZwzdte7bV4LDmxqmg7mqTKJnNgYhapQxxEyL1pU+iMJpmNVwoo+n+VbQ==
-X-Received: by 2002:a05:651c:d0:b0:2ec:18e5:e68f with SMTP id 38308e7fff4ca-2eeb318a399mr34441171fa.33.1720612976393;
-        Wed, 10 Jul 2024 05:02:56 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfab080sm5141787f8f.104.2024.07.10.05.02.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jul 2024 05:02:56 -0700 (PDT)
-Message-ID: <8cc2b819-8342-444e-8a31-582949cb9b3d@linaro.org>
-Date: Wed, 10 Jul 2024 13:02:55 +0100
+        bh=EzRGOhh9vr1Rqh4giu3YSxXI/iifk7bpXPeE0OlPPEw=;
+        b=U0uDfz0L8Ibo/9tfQtjDzFJCfpReAyzwXmQOrwSTLhBkwvBnWsGj3ZWjX62EFxyouy
+         uaojH3LoYQKWBhnuNvMqzJOxWM1rwkBrlnSgdMRWQj1fdO6w9gIKJ9lI+qsu+d5vP6Ti
+         zpL6U3RB2v/9ZtPP2iIfcolcUGeqtJOu9wfEu97t6a87OiHiG5oq7VTB/AxUpR4N+pKd
+         7scSLKwarWkE7XAdXKlTjoBV/jKLusCH7yug+NHf9YVeYEv43Hu76xOpHaZdyLY59mmR
+         C+Z5OGKXxwyiOh0kTIYe/8ZRflc7/2vyEcOoQMcJbSTdL18+Fl2yh6cN8DIT5L5uVzuy
+         Wuiw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0/M7rg5m6+wP6NUQoiXWFklcscJjIAl2fjc7ZwUpgy1osLRUOmc3wIm1NUIM+lcUk7vEyaWcUuwY+4fkpCtLM+kNFGhvgcjSAXtai
+X-Gm-Message-State: AOJu0YxA9yu4CRZGHbXsy8OwhlAuJaGbWmrhT5vusQkvBun2WACKxZ3n
+	p+LEv52XnRhXala5lFG0B/D1rO4B36M/2mZdTfqvYzDqLHr29Ua8E/XWG9XA0LZtF5mX6uqVdJG
+	hSJk5Io6bj9hkmWQ0kNrmvHJ5bXnZvVDuxJkTAul673YxNGJXIPWcsJU=
+X-Google-Smtp-Source: AGHT+IGoaKbktm/lianNymGBgJl9rNR1DtMwKo5aLYoD1dmVhPUOiRcvRc53M3hB3Ej6xTr48GDIkYxVyFw534sSGSyczYiWkvQL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/13] media: qcom: camss: Add sm8550 support
-To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20240709160656.31146-1-quic_depengs@quicinc.com>
- <20240709160656.31146-13-quic_depengs@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20240709160656.31146-13-quic_depengs@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:12d3:b0:4b9:9c0a:6f6c with SMTP id
+ 8926c6da1cb9f-4c0b3686024mr322115173.1.1720612983127; Wed, 10 Jul 2024
+ 05:03:03 -0700 (PDT)
+Date: Wed, 10 Jul 2024 05:03:03 -0700
+In-Reply-To: <20240710031620.58099-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a7d0da061ce36d5b@google.com>
+Subject: Re: [syzbot] [net?] [s390?] possible deadlock in smc_release
+From: syzbot <syzbot+621fd56ba002faba6392@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 09/07/2024 17:06, Depeng Shao wrote:
-> Add in functional logic throughout the code to support the SM8550.
-> 
-> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
-> ---
->   .../media/platform/qcom/camss/camss-csid.c    | 21 +++++++++++++++++++
->   .../qcom/camss/camss-csiphy-3ph-1-0.c         |  6 ++++++
->   drivers/media/platform/qcom/camss/camss-vfe.c |  6 ++++++
->   drivers/media/platform/qcom/camss/camss.h     |  1 +
->   4 files changed, 34 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
-> index 858db5d4ca75..90fba25db4c6 100644
-> --- a/drivers/media/platform/qcom/camss/camss-csid.c
-> +++ b/drivers/media/platform/qcom/camss/camss-csid.c
-> @@ -1013,6 +1013,7 @@ int msm_csid_subdev_init(struct camss *camss, struct csid_device *csid,
->   {
->   	struct device *dev = camss->dev;
->   	struct platform_device *pdev = to_platform_device(dev);
-> +	struct resource *top_res;
->   	int i, j;
->   	int ret;
->   
-> @@ -1040,6 +1041,26 @@ int msm_csid_subdev_init(struct camss *camss, struct csid_device *csid,
->   		else
->   			csid->base = csid->res->parent_dev_ops->get_base_address(camss, id)
->   				 + VFE_480_CSID_OFFSET;
-> +	} else if (camss->res->version == CAMSS_8550) {
-> +		/* for titan 780, CSID lite registers are inside the VFE lite region,
-> +		 * between the VFE "top" and "bus" registers. this requires
-> +		 * VFE to be initialized before CSID
-> +		 */
-> +		if (csid_is_lite(csid))
-> +			csid->base =  csid->res->parent_dev_ops->get_base_address(camss, id);
-> +		else {
-> +			csid->base = devm_platform_ioremap_resource_byname(pdev, res->reg[0]);
-> +			/* CSID "top" is a new function in Titan780.
-> +			 * CSID can connect to VFE & SFE(Sensor Front End).
-> +			 * This connection is ontrolled by CSID "top" registers.
-> +			 * CSID "top" registers at only one region.
-> +			 */
-> +			top_res = platform_get_resource_byname(pdev, IORESOURCE_MEM, res->reg[1]);
-> +			csid->top_base = ioremap(top_res->start, resource_size(top_res));
-> +		}
+Hello,
 
-If we just specify the csid lite regs in the dts, we don't need custom 
-code to get a pointer to them.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+possible deadlock in smc_release
 
-Similarly the csid->top_base = () should be generic not SoC specific, 
-i.e. we should be able to add in CSID 980 without adding any custom code 
-to camss-csid.c
+======================================================
+WARNING: possible circular locking dependency detected
+6.10.0-rc7-syzkaller-g34afb82a3c67-dirty #0 Not tainted
+------------------------------------------------------
+syz-executor.0/20276 is trying to acquire lock:
+ffff88802ba176f8 ((work_completion)(&new_smc->smc_listen_work)){+.+.}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ffff88802ba176f8 ((work_completion)(&new_smc->smc_listen_work)){+.+.}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ffff88802ba176f8 ((work_completion)(&new_smc->smc_listen_work)){+.+.}-{0:0}, at: start_flush_work kernel/workqueue.c:4138 [inline]
+ffff88802ba176f8 ((work_completion)(&new_smc->smc_listen_work)){+.+.}-{0:0}, at: __flush_work+0xe6/0xd00 kernel/workqueue.c:4197
 
-> +
-> +		if (IS_ERR(csid->base))
-> +			return PTR_ERR(csid->base);
->   	} else {
->   		csid->base = devm_platform_ioremap_resource_byname(pdev, res->reg[0]);
->   		if (IS_ERR(csid->base))
-> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-> index b6d5a27b94a6..53c46c2e5896 100644
-> --- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-> +++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-> @@ -631,6 +631,7 @@ static bool csiphy_is_gen2(u32 version)
->   	case CAMSS_845:
->   	case CAMSS_8250:
->   	case CAMSS_8280XP:
-> +	case CAMSS_8550:
->   		ret = true;
->   		break;
->   	}
-> @@ -718,6 +719,11 @@ static int csiphy_init(struct csiphy_device *csiphy)
->   		regs->lane_regs = &lane_regs_sc8280xp[0];
->   		regs->lane_array_size = ARRAY_SIZE(lane_regs_sc8280xp);
->   		break;
-> +	case CAMSS_8550:
-> +		regs->lane_regs = &lane_regs_sm8550[0];
-> +		regs->lane_array_size = ARRAY_SIZE(lane_regs_sm8550);
-> +		regs->offset = 0x1000;
-> +		break;
->   	default:
->   		WARN(1, "unknown csiphy version\n");
->   		return -ENODEV;
-> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
-> index 83c5a36d071f..479474c1cd95 100644
-> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
-> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-> @@ -338,6 +338,7 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
->   	case CAMSS_845:
->   	case CAMSS_8250:
->   	case CAMSS_8280XP:
-> +	case CAMSS_8550:
->   		switch (sink_code) {
->   		case MEDIA_BUS_FMT_YUYV8_1X16:
->   		{
-> @@ -408,6 +409,10 @@ int vfe_reset(struct vfe_device *vfe)
->   
->   	reinit_completion(&vfe->reset_complete);
->   
-> +	/* The reset has been moved to csid in 8550 */
-> +	if (vfe->camss->res->version == CAMSS_8550)
-> +		return 0;
-> +
+but task is already holding lock:
+ffff88807c4a0258 (sk_lock-AF_SMC/1){+.+.}-{0:0}, at: smc_release+0x231/0x530
 
-Custom code for a specific SoC in camss.c camss-csid.c or camss-vfe.c 
-indicates to me we need to do more work elsewhere.
+which lock already depends on the new lock.
 
-This would do the same job for you.
 
-static void vfe_global_reset(struct vfe_device *vfe)
-{
-         /* VFE780 has no global reset, simply report a completion */
-         complete(&vfe->reset_complete);
-}
+the existing dependency chain (in reverse order) is:
 
-const struct vfe_hw_ops vfe_ops_780 = {
-         .global_reset = vfe_global_reset,
+-> #1 (sk_lock-AF_SMC/1){+.+.}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       lock_sock_nested+0x48/0x100 net/core/sock.c:3534
+       smc_listen_out+0x113/0x3d0 net/smc/af_smc.c:1906
+       process_one_work kernel/workqueue.c:3248 [inline]
+       process_scheduled_works+0xab6/0x18e0 kernel/workqueue.c:3329
+       worker_thread+0x86d/0xd50 kernel/workqueue.c:3409
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
->   	vfe->res->hw_ops->global_reset(vfe);
->   
->   	time = wait_for_completion_timeout(&vfe->reset_complete,
-> @@ -1695,6 +1700,7 @@ static int vfe_bpl_align(struct vfe_device *vfe)
->   	case CAMSS_845:
->   	case CAMSS_8250:
->   	case CAMSS_8280XP:
-> +	case CAMSS_8550:
->   		ret = 16;
->   		break;
->   	default:
-> diff --git a/drivers/media/platform/qcom/camss/camss.h b/drivers/media/platform/qcom/camss/camss.h
-> index 65fcebd42c4b..feac83510a17 100644
-> --- a/drivers/media/platform/qcom/camss/camss.h
-> +++ b/drivers/media/platform/qcom/camss/camss.h
-> @@ -79,6 +79,7 @@ enum camss_version {
->   	CAMSS_845,
->   	CAMSS_8250,
->   	CAMSS_8280XP,
-> +	CAMSS_8550,
->   };
->   
->   enum icc_count {
+-> #0 ((work_completion)(&new_smc->smc_listen_work)){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
+       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       touch_work_lockdep_map kernel/workqueue.c:3910 [inline]
+       start_flush_work kernel/workqueue.c:4164 [inline]
+       __flush_work+0x73c/0xd00 kernel/workqueue.c:4197
+       __cancel_work_sync+0xbc/0x110 kernel/workqueue.c:4347
+       smc_clcsock_release+0x62/0xf0 net/smc/smc_close.c:29
+       __smc_release+0x683/0x800 net/smc/af_smc.c:302
+       smc_close_non_accepted+0xd8/0x1f0 net/smc/af_smc.c:1838
+       smc_close_cleanup_listen net/smc/smc_close.c:45 [inline]
+       smc_close_active+0xad8/0xe90 net/smc/smc_close.c:225
+       __smc_release+0xa0/0x800 net/smc/af_smc.c:276
+       smc_release+0x2d9/0x530 net/smc/af_smc.c:345
+       __sock_release net/socket.c:659 [inline]
+       sock_close+0xbc/0x240 net/socket.c:1421
+       __fput+0x24a/0x8a0 fs/file_table.c:422
+       __do_sys_close fs/open.c:1563 [inline]
+       __se_sys_close fs/open.c:1548 [inline]
+       __x64_sys_close+0x7f/0x110 fs/open.c:1548
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
----
-bod
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(sk_lock-AF_SMC/1);
+                               lock((work_completion)(&new_smc->smc_listen_work));
+                               lock(sk_lock-AF_SMC/1);
+  lock((work_completion)(&new_smc->smc_listen_work));
+
+ *** DEADLOCK ***
+
+3 locks held by syz-executor.0/20276:
+ #0: ffff8880699e1a10 (&sb->s_type->i_mutex_key#10){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:791 [inline]
+ #0: ffff8880699e1a10 (&sb->s_type->i_mutex_key#10){+.+.}-{3:3}, at: __sock_release net/socket.c:658 [inline]
+ #0: ffff8880699e1a10 (&sb->s_type->i_mutex_key#10){+.+.}-{3:3}, at: sock_close+0x90/0x240 net/socket.c:1421
+ #1: ffff88807c4a0258 (sk_lock-AF_SMC/1){+.+.}-{0:0}, at: smc_release+0x231/0x530
+ #2: ffffffff8e334820 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ #2: ffffffff8e334820 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ #2: ffffffff8e334820 (rcu_read_lock){....}-{1:2}, at: start_flush_work kernel/workqueue.c:4138 [inline]
+ #2: ffffffff8e334820 (rcu_read_lock){....}-{1:2}, at: __flush_work+0xe6/0xd00 kernel/workqueue.c:4197
+
+stack backtrace:
+CPU: 0 PID: 20276 Comm: syz-executor.0 Not tainted 6.10.0-rc7-syzkaller-g34afb82a3c67-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
+ __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+ touch_work_lockdep_map kernel/workqueue.c:3910 [inline]
+ start_flush_work kernel/workqueue.c:4164 [inline]
+ __flush_work+0x73c/0xd00 kernel/workqueue.c:4197
+ __cancel_work_sync+0xbc/0x110 kernel/workqueue.c:4347
+ smc_clcsock_release+0x62/0xf0 net/smc/smc_close.c:29
+ __smc_release+0x683/0x800 net/smc/af_smc.c:302
+ smc_close_non_accepted+0xd8/0x1f0 net/smc/af_smc.c:1838
+ smc_close_cleanup_listen net/smc/smc_close.c:45 [inline]
+ smc_close_active+0xad8/0xe90 net/smc/smc_close.c:225
+ __smc_release+0xa0/0x800 net/smc/af_smc.c:276
+ smc_release+0x2d9/0x530 net/smc/af_smc.c:345
+ __sock_release net/socket.c:659 [inline]
+ sock_close+0xbc/0x240 net/socket.c:1421
+ __fput+0x24a/0x8a0 fs/file_table.c:422
+ __do_sys_close fs/open.c:1563 [inline]
+ __se_sys_close fs/open.c:1548 [inline]
+ __x64_sys_close+0x7f/0x110 fs/open.c:1548
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f952867bc9a
+Code: 48 3d 00 f0 ff ff 77 48 c3 0f 1f 80 00 00 00 00 48 83 ec 18 89 7c 24 0c e8 03 7f 02 00 8b 7c 24 0c 89 c2 b8 03 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 36 89 d7 89 44 24 0c e8 63 7f 02 00 8b 44 24
+RSP: 002b:00007fff0f13dee0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 00007f952867bc9a
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
+RBP: 0000000000000032 R08: 0000001b2cb60000 R09: 00007f95287abf8c
+R10: 00007fff0f13e030 R11: 0000000000000293 R12: 00007f95282003f8
+R13: ffffffffffffffff R14: 00007f9528200000 R15: 000000000003a6d4
+ </TASK>
+
+
+Tested on:
+
+commit:         34afb82a Merge tag '6.10-rc6-smb3-server-fixes' of git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=115531e1980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=451e6d4de6561673
+dashboard link: https://syzkaller.appspot.com/bug?extid=621fd56ba002faba6392
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13d53371980000
+
 
