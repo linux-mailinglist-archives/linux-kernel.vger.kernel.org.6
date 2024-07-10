@@ -1,308 +1,151 @@
-Return-Path: <linux-kernel+bounces-247474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD89892CFDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:53:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDBB292CFE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4095E1F219B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:53:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BAA51C23AB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90AF192B74;
-	Wed, 10 Jul 2024 10:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41375FB9B;
+	Wed, 10 Jul 2024 10:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="A98K2eBm";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="j/VNTJ8g";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rs4IeFFz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="t6BWMfnr"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qLWt3CKt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C563C191F95
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 10:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01160176AD5;
+	Wed, 10 Jul 2024 10:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720608696; cv=none; b=f2Bk6y6mfrnWo3zNxAPnWngmIA0+7/W5EbJHMJYy5AR0IfhGbwPgmn78BSQ8gX8wn5yi2GHrUi7przHfTbfRxMMvK3waFEscff5tO6uqa5Hjv8ScOo3lZ9ZkicyQ9B9uc9RMJYuz3G+rHHP9WmvJxESakd+Mjn/kbIznE1xs44Q=
+	t=1720608839; cv=none; b=VT3fhP2mxTHZpbby1fTrsZNmCDV21JUA64z4Vp2xiEsI6xun5l13JOoGnhMJ2JT5zuP1BN8Sj6OXk8wsuEI6NpGrT+5pR59Al3CQR/mxRRcjZOg8VOuZsRzQIZ0Y7hH4U0fThcu2NJ7N8grCxOtS9qyRxb6C4s473jIFxHUKfFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720608696; c=relaxed/simple;
-	bh=ybqIPHDsajNAyasPWa/siY7VxuHeP9mYmsaiuNS9Z9s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kEmG5STOVo3cltCoc8ReMJV6lltjrC6A0Q25WpWk4GrP7GWeqsa0TjwR/lPC+SQWlz9MNjR7nNpkutvZvphYI8kenMcJR3yQ8cjdRV/8LEy3/Har9Yj6UWOBBgr8Tf88LLqA5aw6fS1XQpEyrC2y3CIaz2bjv5fLS48lBDmYS90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=A98K2eBm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=j/VNTJ8g; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rs4IeFFz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=t6BWMfnr; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E21F121A3D;
-	Wed, 10 Jul 2024 10:51:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1720608693; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m7b0FFfloSBNSR2ZzezMp+fU3t5dKSCqfMIY6cE3U0k=;
-	b=A98K2eBm6Gsqbion+I8upTty0hFnnNSEoZJDzP8V3Ba7Zd8avnjBnknSIEblzvcgRWO3f9
-	7xTFJhTCQjH2Hq6tGHv4juQDJiWHP/5vdUjuLKqRFfQi7Im1E9JCcrwRa5A09W2oFetiIB
-	11iXdwkRurVljAjqGqpWXIeVyeS4PtE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1720608693;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m7b0FFfloSBNSR2ZzezMp+fU3t5dKSCqfMIY6cE3U0k=;
-	b=j/VNTJ8gVG5iHz8ywTjWTHn20BAe7Zgu3aD9+u+Ei2+8RVyx0Hfk6rgbHq0UxO64HONWBC
-	p5bNzdbCwc84EBAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1720608692; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m7b0FFfloSBNSR2ZzezMp+fU3t5dKSCqfMIY6cE3U0k=;
-	b=rs4IeFFzhz69FMWvI0QKY00JQtl778j3n78qia0/IsoPc0P6GNP6iBmn8UOFrweyMGe4Md
-	Xy87v1OVVvjvvuz/nc7EKHWWeRkgAa2kustip+8z2BPVKzM/SHL5ubgqlYQKI9dcWh9rYW
-	PQcxbkGSx8kMqhv9vEUcDHH4184Qnno=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1720608692;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m7b0FFfloSBNSR2ZzezMp+fU3t5dKSCqfMIY6cE3U0k=;
-	b=t6BWMfnrG2VPsHdWL347hUkhoiFuG1SE0aSsXFmtmrBxY0QA0RyX3XAgJUyybj2K3cD+H7
-	PsC15Z+C8sHLNvDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CB26D1369A;
-	Wed, 10 Jul 2024 10:51:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8L0uLbNnjmazcwAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 10 Jul 2024 10:51:31 +0000
-From: Oscar Salvador <osalvador@suse.de>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Muchun Song <muchun.song@linux.dev>,
-	David Hildenbrand <david@redhat.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Donet Tom <donettom@linux.ibm.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Oscar Salvador <osalvador@suse.de>
-Subject: [RFC PATCH 8/8] mm: Consolidate common checks in hugetlb_mmap_check_and_align
-Date: Wed, 10 Jul 2024 12:50:42 +0200
-Message-ID: <20240710105042.30165-9-osalvador@suse.de>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240710105042.30165-1-osalvador@suse.de>
-References: <20240710105042.30165-1-osalvador@suse.de>
+	s=arc-20240116; t=1720608839; c=relaxed/simple;
+	bh=OD3bqGvL2hPkyOSps3OHYrVBAjoKhSimI4RhpJ9k4mg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XEy0+ytK26TGMjROKlAoyf1qXxTUW0FRbG2RLfSNCSG4TnEBkpl+ReEwufQzVPGrjR7DZctlbTkzfQC2oMGI/9Rj+TSYla/c0vxpEOVRucd7H+OFyiE8BJwnfV+JlVi2yv/VkUCYZ/kg4NSQHPLezdTlYbCcViXwztV8u2nH/aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qLWt3CKt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A080DC32786;
+	Wed, 10 Jul 2024 10:53:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720608838;
+	bh=OD3bqGvL2hPkyOSps3OHYrVBAjoKhSimI4RhpJ9k4mg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qLWt3CKtxsB5Azz4cujIwWErXOQYbp8JczXL+F1U/0yEAsZEu/KP9OmUtRkJFmrRX
+	 jN0NiCKuyPF5qxXqA7Qc+OYiC2KQz1hjeTGn2sxGfmLBBwd3MMBw1UNpH3luwQJsdb
+	 7c02jBUpbWat6d2eTGiEZX9ZokiKeASqYeBsBfm3N42/egW2/7brA87idfJAcpfNpU
+	 CDX1w3Tyq1vuRFA/mC7kt6p8jPg7WuMXxO3oF0mJh3uxe+kosNn6KYeEXd4BuplK11
+	 l/jzs2F5ulTbH+bUedrOGoNGlHATR5gSufOJuEojPHsaeLg9s0IAwh779O2mxOTP20
+	 7ZsYWzwpx/gcA==
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a77c9c5d68bso618426966b.2;
+        Wed, 10 Jul 2024 03:53:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVhhVqxvY3UoMvEVitWQtj1ancoix6vnBlNLy0VcaTMhKHFwL5TpS/BWf5BMLUZSRXaHPapT6D7GOmNjunaA3eQnRFayH387ewVIy7q/mQXTKv8OkCf0X/F9X6Jt1VyXsoXYzxK5RjRR6Y=
+X-Gm-Message-State: AOJu0YzpYMUAyNsR1SfP7jkZFYsAzcONTz5yQ5dtN2eNJw5mAcwORi80
+	k0szbrtYsrUgADENlWx81woYpLDELTqwRL8KeoctUs/xdzMLs3aa4BYnGtRNiYLK2yav6M6WblQ
+	chjIOc2+AdFLMBI6QVNasNYElWrk=
+X-Google-Smtp-Source: AGHT+IHpD80G3Seki3XvE5LyhZ4sCGFSCXxvHpad6cyq05UMHyp/ueL/EP8hXnuK/LcWCyN0vZycsZF3Iv0QNg7ooz8=
+X-Received: by 2002:a17:906:478f:b0:a74:914b:ffb2 with SMTP id
+ a640c23a62f3a-a780b89e8f0mr413161266b.72.1720608837248; Wed, 10 Jul 2024
+ 03:53:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -6.80
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_TWO(0.00)[2];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	R_RATELIMIT(0.00)[to_ip_from(RL61jpu64h8b3ddwbzqogesdsf)];
-	RCVD_TLS_ALL(0.00)[]
+References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
+ <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
+ <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
+ <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
+ <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
+ <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
+ <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
+ <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
+ <CAK-xaQYYx6SPQaOVwL+ardB0y5LzYJw9a_hfWWtVEZ=y1rXq5w@mail.gmail.com>
+ <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com>
+ <CAL3q7H6V9M0B4jmW79keUtTdjWsabyWZeU5g4KEN5_-a+wEHVQ@mail.gmail.com>
+ <CAK-xaQZ=c7aociwZ5YQreTmT+sBLGdH0rkTKmFzt4i_mrXBmgg@mail.gmail.com>
+ <CAK-xaQb2OrgNOKKXp8d_43kqMNyuHxS1V8jSDL6PdNZPTv79+g@mail.gmail.com>
+ <CAK-xaQZ25nyCeOvMs0G31sL7R71dxQqZhx61cYzTK7rZD-JxeQ@mail.gmail.com>
+ <CAL3q7H4D8Sq1-pbgZb8J_0VeNO=MZqDYPM7aauXqLHDM70UmAg@mail.gmail.com>
+ <CAK-xaQaesuU-TjDQcXgbjoNbZa0Y2qLHtSu5efy99EUDVnuhUg@mail.gmail.com>
+ <CAK-xaQbcpzvH1uGiDa04g1NrQsBMnyH2z-FPC4CdS=GDfRCsLg@mail.gmail.com>
+ <CAL3q7H63GexJexkDxSz9Av_s=XyYotJqLqjUubZmuU7vynaQNQ@mail.gmail.com>
+ <CABXGCsO_6cJruBxKdqXzEze_hDGVsPtN8DBCob=OWF5OpT4s7Q@mail.gmail.com>
+ <CAL3q7H46BxXUnrZ8Q3WxYf=2Tx0taMt9-2wf0TCrwj_kOiC=Dg@mail.gmail.com>
+ <CABXGCsOcpzy7QvRUuSDT-Ouvp_jJHDvuziPQbej4rHLh9te58g@mail.gmail.com>
+ <CAL3q7H6FwUFKb5oODK8jcAbRbjTjsZ2=4usW1_4A6b-t5nF7ng@mail.gmail.com> <CABXGCsP_V-Dh97SkLbYZvHSUdfhgXY_-RSqdRwv16hz+r3B3FQ@mail.gmail.com>
+In-Reply-To: <CABXGCsP_V-Dh97SkLbYZvHSUdfhgXY_-RSqdRwv16hz+r3B3FQ@mail.gmail.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Wed, 10 Jul 2024 11:53:20 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H5zfQNS1qy=jAAZa-7w088Q1K-R7+asj-f++6=N8skWzg@mail.gmail.com>
+Message-ID: <CAL3q7H5zfQNS1qy=jAAZa-7w088Q1K-R7+asj-f++6=N8skWzg@mail.gmail.com>
+Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
+ execution time of the kswapd0 process and symptoms as if there is not enough memory
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Cc: Andrea Gelmini <andrea.gelmini@gmail.com>, 
+	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
+	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
+	dsterba@suse.com, josef@toxicpanda.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-prepare_hugepage_range() performs almost the same checks for all
-architectures that define it, with the exception of mips and loongarch
-that also check for overflows.
-The rest checks for the addr and len to be properly aligned, so we can
-move that to the generic hugetlb_mmap_check_and_align() function and get
-rid of a fair amount of duplicated code.
+On Wed, Jul 10, 2024 at 10:24=E2=80=AFAM Mikhail Gavrilov
+<mikhail.v.gavrilov@gmail.com> wrote:
+>
+> On Mon, Jul 8, 2024 at 7:16=E2=80=AFPM Filipe Manana <fdmanana@kernel.org=
+> wrote:
+> >
+> > That's weird, I think you might be observing some variance.
+> > I noticed that too for your reports of the test2 branch and the old
+> > test3 branch, which were very identical, yet you got a very
+> > significant difference between them.
+> >
+> > Thanks.
+> >
+>
+> up  1:00
+> root         269 10.2  0.0      0     0 ?        S    10:06   6:13 [kswap=
+d0]
+> up  2:01
+> root         269  9.1  0.0      0     0 ?        S    10:06  11:07 [kswap=
+d0]
+> up  3:00
+> root         269  8.4  0.0      0     0 ?        R    10:06  15:18 [kswap=
+d0]
+> up  4:21
+> root         269 11.7  0.0      0     0 ?        S    10:06  30:33 [kswap=
+d0]
+> up  5:01
+> root         269 11.7  0.0      0     0 ?        S    10:06  35:19 [kswap=
+d0]
+> up  6:27
+> root         269 11.5  0.0      0     0 ?        S    10:06  44:39 [kswap=
+d0]
+> up  7:00
+> root         269 11.2  0.0      0     0 ?        R    10:06  47:18 [kswap=
+d0]
+>
+> The measurement error can reach =C2=B110 min.
+> Did you plan to merge the fix before the 6.10 release?
 
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
----
- arch/loongarch/include/asm/hugetlb.h |  4 ----
- arch/mips/include/asm/hugetlb.h      |  4 ----
- arch/parisc/include/asm/hugetlb.h    | 15 ---------------
- arch/s390/include/asm/hugetlb.h      | 16 ----------------
- arch/sh/include/asm/hugetlb.h        | 15 ---------------
- fs/hugetlbfs/inode.c                 |  8 ++++++--
- include/asm-generic/hugetlb.h        |  7 -------
- 7 files changed, 6 insertions(+), 63 deletions(-)
+I've submitted a patchset with the goal to apply against 6.10 (see the
+notes there in the cover letter):
 
-diff --git a/arch/loongarch/include/asm/hugetlb.h b/arch/loongarch/include/asm/hugetlb.h
-index aa44b3fe43dd..107566c98938 100644
---- a/arch/loongarch/include/asm/hugetlb.h
-+++ b/arch/loongarch/include/asm/hugetlb.h
-@@ -18,10 +18,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	unsigned long task_size = STACK_TOP;
- 	struct hstate *h = hstate_file(file);
- 
--	if (len & ~huge_page_mask(h))
--		return -EINVAL;
--	if (addr & ~huge_page_mask(h))
--		return -EINVAL;
- 	if (len > task_size)
- 		return -ENOMEM;
- 	if (task_size - len < addr)
-diff --git a/arch/mips/include/asm/hugetlb.h b/arch/mips/include/asm/hugetlb.h
-index fd69c8808554..6a63d82a8ab3 100644
---- a/arch/mips/include/asm/hugetlb.h
-+++ b/arch/mips/include/asm/hugetlb.h
-@@ -19,10 +19,6 @@ static inline int prepare_hugepage_range(struct file *file,
- 	unsigned long task_size = STACK_TOP;
- 	struct hstate *h = hstate_file(file);
- 
--	if (len & ~huge_page_mask(h))
--		return -EINVAL;
--	if (addr & ~huge_page_mask(h))
--		return -EINVAL;
- 	if (len > task_size)
- 		return -ENOMEM;
- 	if (task_size - len < addr)
-diff --git a/arch/parisc/include/asm/hugetlb.h b/arch/parisc/include/asm/hugetlb.h
-index 72daacc472a0..5b3a5429f71b 100644
---- a/arch/parisc/include/asm/hugetlb.h
-+++ b/arch/parisc/include/asm/hugetlb.h
-@@ -12,21 +12,6 @@ void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
- pte_t huge_ptep_get_and_clear(struct mm_struct *mm, unsigned long addr,
- 			      pte_t *ptep);
- 
--/*
-- * If the arch doesn't supply something else, assume that hugepage
-- * size aligned regions are ok without further preparation.
-- */
--#define __HAVE_ARCH_PREPARE_HUGEPAGE_RANGE
--static inline int prepare_hugepage_range(struct file *file,
--			unsigned long addr, unsigned long len)
--{
--	if (len & ~HPAGE_MASK)
--		return -EINVAL;
--	if (addr & ~HPAGE_MASK)
--		return -EINVAL;
--	return 0;
--}
--
- #define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
- static inline pte_t huge_ptep_clear_flush(struct vm_area_struct *vma,
- 					  unsigned long addr, pte_t *ptep)
-diff --git a/arch/s390/include/asm/hugetlb.h b/arch/s390/include/asm/hugetlb.h
-index ce5f4fe8be4d..38a10b47dc99 100644
---- a/arch/s390/include/asm/hugetlb.h
-+++ b/arch/s390/include/asm/hugetlb.h
-@@ -23,22 +23,6 @@ pte_t huge_ptep_get(pte_t *ptep);
- pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
- 			      unsigned long addr, pte_t *ptep);
- 
--/*
-- * If the arch doesn't supply something else, assume that hugepage
-- * size aligned regions are ok without further preparation.
-- */
--static inline int prepare_hugepage_range(struct file *file,
--			unsigned long addr, unsigned long len)
--{
--	struct hstate *h = hstate_file(file);
--
--	if (len & ~huge_page_mask(h))
--		return -EINVAL;
--	if (addr & ~huge_page_mask(h))
--		return -EINVAL;
--	return 0;
--}
--
- static inline void arch_clear_hugetlb_flags(struct folio *folio)
- {
- 	clear_bit(PG_arch_1, &folio->flags);
-diff --git a/arch/sh/include/asm/hugetlb.h b/arch/sh/include/asm/hugetlb.h
-index 75028bd568ba..4a92e6e4d627 100644
---- a/arch/sh/include/asm/hugetlb.h
-+++ b/arch/sh/include/asm/hugetlb.h
-@@ -5,21 +5,6 @@
- #include <asm/cacheflush.h>
- #include <asm/page.h>
- 
--/*
-- * If the arch doesn't supply something else, assume that hugepage
-- * size aligned regions are ok without further preparation.
-- */
--#define __HAVE_ARCH_PREPARE_HUGEPAGE_RANGE
--static inline int prepare_hugepage_range(struct file *file,
--			unsigned long addr, unsigned long len)
--{
--	if (len & ~HPAGE_MASK)
--		return -EINVAL;
--	if (addr & ~HPAGE_MASK)
--		return -EINVAL;
--	return 0;
--}
--
- #define __HAVE_ARCH_HUGE_PTEP_CLEAR_FLUSH
- static inline pte_t huge_ptep_clear_flush(struct vm_area_struct *vma,
- 					  unsigned long addr, pte_t *ptep)
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 722e60327615..82ec499feb41 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -180,8 +180,12 @@ hugetlb_mmap_check_and_align(struct file *file, unsigned long addr,
- 
- 	if (len & ~huge_page_mask(h))
- 		return -EINVAL;
--	if ((flags & MAP_FIXED) && prepare_hugepage_range(file, addr, len))
--		return -EINVAL;
-+	if (flags & MAP_FIXED) {
-+		if (addr & ~huge_page_mask(h))
-+			return -EINVAL;
-+		if (prepare_hugepage_range(file, addr, len))
-+			return -EINVAL;
-+	}
- 	if (addr)
- 		addr0 = ALIGN(addr, huge_page_size(h));
- 
-diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
-index 6dcf4d576970..d522581441e5 100644
---- a/include/asm-generic/hugetlb.h
-+++ b/include/asm-generic/hugetlb.h
-@@ -115,13 +115,6 @@ static inline int huge_pte_none_mostly(pte_t pte)
- static inline int prepare_hugepage_range(struct file *file,
- 		unsigned long addr, unsigned long len)
- {
--	struct hstate *h = hstate_file(file);
--
--	if (len & ~huge_page_mask(h))
--		return -EINVAL;
--	if (addr & ~huge_page_mask(h))
--		return -EINVAL;
--
- 	return 0;
- }
- #endif
--- 
-2.45.2
+https://lore.kernel.org/linux-btrfs/cover.1720448663.git.fdmanana@suse.com/
 
+But it's up to David to submit to Linus, as he's the maintainer.
+Though I haven't heard from him yet.
+
+I plan at least one more improvement for the shrinker, but I would
+like to know too if those patches go into 6.10 before it's released or
+not,
+because there are conflicts with the for-next branch.
+
+> --
+> Best Regards,
+> Mike Gavrilov.
 
