@@ -1,160 +1,104 @@
-Return-Path: <linux-kernel+bounces-247847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF3892D578
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:56:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B657F92D583
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:57:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89656287C6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:56:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E34051C215E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A900194A6F;
-	Wed, 10 Jul 2024 15:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9F7194C96;
+	Wed, 10 Jul 2024 15:56:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xdTbbfyf"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nhh6UqTy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0CC36AF8
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44791194ACF;
+	Wed, 10 Jul 2024 15:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720626997; cv=none; b=Sxf9oO5S5sZVM3ACJ4Uum7clio8Ato2PxB43pShhPR7IrzizXTC9+gJmoeHXLDlb1VOe4eM6By+0C0/fvopj1FR1bP0E9W2/b136kvt7MPahj3ureuYxe36rtLbHL8fgnGhlLBxNII0siyCuHHzX9CAUB+sjYug+8jbKhMPyBDw=
+	t=1720627000; cv=none; b=Ubk1J8xN+AjpFPC3oyxn9cz6+lYGu7Xkd3KQzXIGpNIYRzdnUECoiNGX0uToNAn9Z80/VhSN80xaLDaUb1ZUtIXAjDhsur4akC68tVCa/IfFfk+XPIazT0xOMTauQoUKLLDsTpHnNES7rKZrG9MqL49zDc6Bz1X+bxTGbbY1+6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720626997; c=relaxed/simple;
-	bh=kZ4X/X7uweqQlVqpnE7kg/TNuLAZPIXBexv3MMulPcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JP3fncAAIq2L52CdPw6OfvwVLAfTkS3ugTRjiOGXqWuXBp05P5rgPdVjTHSnlOvVX6AwtsoKa8fRNKphXuXxfcLrNKKFuAu8JcQOfQhfhg3KRjz2YfrTO9rcxWDBWyJ6Lqvr6fHryOmfVzg+DIhnn/ugzjneQNrK0R+XxWkyOeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xdTbbfyf; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fb3cf78fa6so37105495ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:56:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720626995; x=1721231795; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uBj2YmtSTrFPZPUbLzrldXTaT0nXgCHgIoklfp+Mzk8=;
-        b=xdTbbfyf3cZrh4Gq6g7lHD/zJkP5S5lF5naGD7NQBYy7jeAtkfBuah17bt7YuonDYx
-         cgBZly9KBPi/KoK93HOcBRjdz0EbBYiSdIvsxHIlOjMKA518OUlLzuP+u8RjwN8xwvmB
-         ompwQ2+GCArt/riX+lzcK8FMxuy+JUXM6KCEMFK+az1HGlU+07RPbXfr3A9eijbF5dFA
-         +pfob5rXTwLwaV3cGZ+g7HQBvZbTqhZ5FAu8qBQkYGvvC3b9CuFdWwjiLk4UHkS21/Zb
-         wmH1achojxWOxrCsMCIhj8Sg0rOVH0iKl4QS/wnXpmVYYrhFrj1e+lxVtLyb+6hzGsuv
-         9ffQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720626995; x=1721231795;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uBj2YmtSTrFPZPUbLzrldXTaT0nXgCHgIoklfp+Mzk8=;
-        b=AtQXNAEtxO7NQDXyZ2Q/Ieor/alP9Biq8FAe7Rt3/0AL9iPVbkQRiq/Rp4skpDk9bU
-         hz1pgW8qWuAg8LDWHiOBAmxrOugviYGrQDF2QFvy4wptPlK5blW6aO54dEz0LOIug4in
-         zx8IqxLWWMvXUwqPj0UWXBJObqAC4tjBllT2mXYAop8frpo8Yb5hWrEoipP4OdUTBwL3
-         u/N0/8XXe1EjxYpvSoX08uEkiJR6k2sa1ho2pbcnO+Hc/dLuX3bAaplb0hBAcWIN0LCG
-         ziOPcHCrls4x1LD/a38X1FtznjY7JBejiUjj7HtWeYbu+yGBLkATiwOfrDwOPJOp7f39
-         KKug==
-X-Forwarded-Encrypted: i=1; AJvYcCUE5k4rkktfwoKx5grvdivRyLPyrHgNfuF/fe3b/st/4MtHqoDUPOnT2Q1DFFsdq4nIGozlSPsuYQQp7SjabFrldCvYf+D8ujt6exel
-X-Gm-Message-State: AOJu0YxYj1RaJaDCNJmZ6vmvRliYW50vh7ejyzWwd4GkH+7oZJizQBVH
-	hXBbQhmk4zrRM/qE4I/ekonWeXRjLgKUo2eewDvRALKr2UQlS/6TCfofSmS+Oxw=
-X-Google-Smtp-Source: AGHT+IER42wfBDvYrn5WVV2tIZB6J3uCihrTxDQpbbWz7C02veVVpbReOeakDmwhl/pQRtvuZYvxfA==
-X-Received: by 2002:a17:90a:c385:b0:2c9:66d3:4663 with SMTP id 98e67ed59e1d1-2ca35d58971mr4748875a91.43.1720626994926;
-        Wed, 10 Jul 2024 08:56:34 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:8408:4ecd:288d:848b])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ca34e6fc0csm3985584a91.21.2024.07.10.08.56.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 08:56:34 -0700 (PDT)
-Date: Wed, 10 Jul 2024 09:56:32 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Shun-yi Wang <shun-yi.wang@mediatek.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Project_Global_Chrome_Upstream_Group@mediatek.com,
-	jason-ch.chen@mediatek.com, yaya.chang@mediatek.com,
-	teddy.chen@mediatek.com, olivia.wen@mediatek.com
-Subject: Re: [PATCH 1/1] remoteproc: mediatek: Support multiple reserved
- memory regions
-Message-ID: <Zo6vMPaefxCaDe7D@p14s>
-References: <20240703115308.17436-1-shun-yi.wang@mediatek.com>
- <20240703115308.17436-2-shun-yi.wang@mediatek.com>
+	s=arc-20240116; t=1720627000; c=relaxed/simple;
+	bh=LnSN3f1kBTQZBMgn9k+Kpjy3WQodTEYNn6I5AuMkXR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TuEeR10RyODCEz/6odpBqwPSHdV90x2mLplpPnogrs5Yyq2V6R4cHtnzZd8+0lenBfbBz/UiAs0CFtPEg7WBmVknPX+WBtahQzv7hASpvvmD9qcnmlCCabSfj2kDuySohBJ4u0ZQlo+hmNPXX0hJI3SM7q41J2HyGGUQzamsifQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nhh6UqTy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E7A0C4AF0F;
+	Wed, 10 Jul 2024 15:56:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720627000;
+	bh=LnSN3f1kBTQZBMgn9k+Kpjy3WQodTEYNn6I5AuMkXR0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Nhh6UqTyrSr0wo2AywZf2hg4eQ0qQGSBsIOTv4oGyXQTX6vabooxsZHLJX1VF1c59
+	 tSODVeFqtFA2V8MxwFzIpm4gp/4O29+s9eX715D6Rq36F5EKQOe6ryT2OR0gglz/UO
+	 UKohM+G9agXaWRQxMn6sSbc3DQYzoRrBXaqJz1VydZ+/IN+BVAkeuET3oh+YhAxE0R
+	 h9ouVOeN7urrk1jU9/IKmO48m/vG2HGtWSX6NNlntfMbLGdNMTy7dwUnWPRVqrmgpi
+	 D7BDS6Sqpuuv8GoHSGy+v01VvLPT8j1t851KKG4kjk87hcVQlLRJ/CcXiE7RBN/SZj
+	 F4nU4p5RcNZyw==
+Date: Wed, 10 Jul 2024 08:56:37 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ bpf@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
+ <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, Ivan
+ Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>,
+ Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
+ <arnd@arndb.de>, Steffen Klassert <steffen.klassert@secunet.com>, Herbert
+ Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem
+ de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>, "Christian =?UTF-8?B?S8O2bmln?="
+ <christian.koenig@amd.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
+ Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
+ Taehee Yoo <ap420073@gmail.com>, Pavel Begunkov <asml.silence@gmail.com>,
+ David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
+ <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
+ Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
+ <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, Kaiyuan
+ Zhang <kaiyuanz@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: Re: [PATCH net-next v16 03/13] netdev: support binding dma-buf to
+ netdevice
+Message-ID: <20240710085637.4284c7d7@kernel.org>
+In-Reply-To: <20240710001749.1388631-4-almasrymina@google.com>
+References: <20240710001749.1388631-1-almasrymina@google.com>
+	<20240710001749.1388631-4-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703115308.17436-2-shun-yi.wang@mediatek.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 03, 2024 at 07:53:08PM +0800, Shun-yi Wang wrote:
-> From: "shun-yi.wang" <shun-yi.wang@mediatek.com>
-> 
-> SCP supports multiple reserved memory regions, intended for
-> specific hardwards.
->
-> Signed-off-by: shun-yi.wang <shun-yi.wang@mediatek.com>
-> ---
->  drivers/remoteproc/mtk_scp.c | 25 +++++++++++++++++--------
->  1 file changed, 17 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index 9ecd5ea04b5f3..1902826cea0af 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -1006,22 +1006,31 @@ EXPORT_SYMBOL_GPL(scp_mapping_dm_addr);
->  
->  static int scp_map_memory_region(struct mtk_scp *scp)
->  {
-> -	int ret;
-> +	int ret, i, err;
->  	const struct mtk_scp_sizes_data *scp_sizes;
-> +	struct device_node *node = scp->dev->of_node;
-> +	struct of_phandle_iterator it;
-> +
-> +	i = 0;
-> +	of_for_each_phandle(&it, err, node, "memory-region", NULL, 0) {
-> +		ret = of_reserved_mem_device_init_by_idx(scp->dev, node, i);
-> +
-> +		if (ret) {
-> +			dev_err(scp->dev, "failed to assign memory-region: %s\n",
-> +				it.node->name);
-> +			of_node_put(it.node);
-> +			return -ENOMEM;
+On Wed, 10 Jul 2024 00:17:36 +0000 Mina Almasry wrote:
+> +		err = gen_pool_add_owner(binding->chunk_pool, dma_addr,
+> +					 dma_addr, len, dev_to_node(&dev->dev),
+> +					 owner);
+> +		if (err) {
+
+	kfree(owner);
+
+right? If the insert fails gen_pool_for_each_chunk() won't see it
+
+> +			err = -EINVAL;
+> +			goto err_free_chunks;
 > +		}
-
-With this patch the code is out of sync with the bindings which are still
-specifying a maxItems of 1 - please address.
-
-Thanks,
-Mathieu
-
->  
-> -	ret = of_reserved_mem_device_init(scp->dev);
-> +		i++;
-> +	}
->  
->  	/* reserved memory is optional. */
-> -	if (ret == -ENODEV) {
-> +	if (!i) {
->  		dev_info(scp->dev, "skipping reserved memory initialization.");
->  		return 0;
->  	}
->  
-> -	if (ret) {
-> -		dev_err(scp->dev, "failed to assign memory-region: %d\n", ret);
-> -		return -ENOMEM;
-> -	}
-> -
->  	/* Reserved SCP code size */
->  	scp_sizes = scp->data->scp_sizes;
->  	scp->cpu_addr = dma_alloc_coherent(scp->dev, scp_sizes->max_dram_size,
-> -- 
-> 2.18.0
-> 
 
