@@ -1,115 +1,137 @@
-Return-Path: <linux-kernel+bounces-247579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9452F92D16F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:19:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36EE492D180
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2815BB29741
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:19:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E02941F24643
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B5719046D;
-	Wed, 10 Jul 2024 12:19:40 +0000 (UTC)
-Received: from h3cspam02-ex.h3c.com (smtp.h3c.com [60.191.123.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3356F19149D;
+	Wed, 10 Jul 2024 12:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="zhzCAGF5"
+Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0AA46444
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 12:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.191.123.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F51D4DA13
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 12:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720613980; cv=none; b=QUdds5vqYiv32Ujcr5pvqYVjU2y0f89gg/sCjSiDFH27zymtYcgRIY25f3bVQ5uKmwNJ0LUBWlRtgEajPazJf8E9pLJ9VtzMLlOt5nbNf2LjZ/jNX6Wn5NQxAJjmdyIZSzZz8OoiR8VJQGB8FWXd0pAFWQDCammbM/cQOTI8G6U=
+	t=1720614212; cv=none; b=ECO8f4E8M92nYvVtuEO4EvDfVgJjLKz08xRlnFmu/cbrrQYzPTGzbWPQ8GqrDZ8h0fnetwLiEZqap2Kvo7ByjKRINrZV6/1PcEfk7f4E5uvrTZ8QiyCjq576OUQaKitS7Ta3+fGIhfPzBrYEXhVrNVxUnrq7G4w/WpM9SpA7Nsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720613980; c=relaxed/simple;
-	bh=LUxcke6cCvFGxBD8FujaEFN2PRI41jELIs/CQ2+jB+k=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WyWd1VwldcD9dckBKA0ToEzxrKROLPukMPgv9Ns7sEjahXHzoYPVdY5mfhAYLML45HYHLGXyXjb4M4QoPqVUKBtYIz3EAE1MG/sTJu48mRBHi92rtGGKAo5NfKwO4r4r7up1LgeEaM+KiTZlUe0j4iUL3H48ktEhV11J/iH3Pnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com; spf=pass smtp.mailfrom=h3c.com; arc=none smtp.client-ip=60.191.123.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=h3c.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h3c.com
-Received: from mail.maildlp.com ([172.25.15.154])
-	by h3cspam02-ex.h3c.com with ESMTP id 46ACJ2NP094860;
-	Wed, 10 Jul 2024 20:19:02 +0800 (GMT-8)
-	(envelope-from zhang.chunA@h3c.com)
-Received: from DAG6EX09-BJD.srv.huawei-3com.com (unknown [10.153.34.11])
-	by mail.maildlp.com (Postfix) with ESMTP id ECAB32004BCE;
-	Wed, 10 Jul 2024 20:23:19 +0800 (CST)
-Received: from localhost.localdomain.com (10.99.206.13) by
- DAG6EX09-BJD.srv.huawei-3com.com (10.153.34.11) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1258.27; Wed, 10 Jul 2024 20:19:05 +0800
-From: zhangchun <zhang.chuna@h3c.com>
-To: <akpm@linux-foundation.org>
-CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <jiaoxupo@h3c.com>,
-        <zhang.zhengming@h3c.com>, <zhang.zhansheng@h3c.com>,
-        <shaohaojize@126.com>, zhangchun <zhang.chuna@h3c.com>
-Subject: [PATCH v2] =?UTF-8?q?mm:=20Give=20kmap=5Flock=20before=20call=20flus?= =?UTF-8?q?h=5Ftlb=5Fkernel=5Frang=EF=BC=8Cavoid=20kmap=5Fhigh=20deadlock.?=
-Date: Wed, 10 Jul 2024 20:20:28 +0800
-Message-ID: <1720614028-2260-1-git-send-email-zhang.chuna@h3c.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1720614212; c=relaxed/simple;
+	bh=vSt8ATyc0QW2ELjNwenXd0lqCgeHqfN85jWMuOX2ZOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oTt6Kr+gSm1sigVlAmhcKd4DPhY8Vh0Qfh1b6V3ZBQdN60tQoljVHMNi7Upqh0lpO2j7I+IDR1URRPZkfXqiZYOWcnff21JuIn2uP4FZ1yR4/2aZyGF4/5dRI1w67T7/pFUcySO4shuZNSFOm5ZuqO2TKx1a//Ewt85Q8dh+WaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=zhzCAGF5; arc=none smtp.client-ip=45.157.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WJxpk1YQpzsmx;
+	Wed, 10 Jul 2024 14:23:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1720614206;
+	bh=qkUVf6tdsMSSUWcWV6e8p4MA3pLxRix77tQItoe1jNU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=zhzCAGF5s9ET2l9+tmW3qbMoPxije6wbrhoSbv+Se0LFOECSpA7VvvPNjRBpxuU32
+	 9tY8U51d4GEqg35DR0ZEa+Qw3sr5w9wK7WnuWLpjusJTLeKmyCJdBJSKhCjcbsBXyc
+	 eUs9FQUceaBhR1TfSs7iFRkhAw0a78u4CtEmatrk=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WJxph4lRRz18YT;
+	Wed, 10 Jul 2024 14:23:24 +0200 (CEST)
+Date: Wed, 10 Jul 2024 14:23:21 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Jann Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Kees Cook <keescook@chromium.org>, syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, 
+	jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	linux-fsdevel@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [syzbot] [lsm?] general protection fault in
+ hook_inode_free_security
+Message-ID: <20240710.Hai0Uj3Phaij@digikod.net>
+References: <00000000000076ba3b0617f65cc8@google.com>
+ <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
+ <20240515.Yoo5chaiNai9@digikod.net>
+ <20240516.doyox6Iengou@digikod.net>
+ <20240627.Voox5yoogeum@digikod.net>
+ <CAHC9VhT-Pm6_nJ-8Xd_B4Fq+jZ0kYnfc3wwNa_jM+4=pg5RVrQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BJSMTP02-EX.srv.huawei-3com.com (10.63.20.133) To
- DAG6EX09-BJD.srv.huawei-3com.com (10.153.34.11)
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:h3cspam02-ex.h3c.com 46ACJ2NP094860
+In-Reply-To: <CAHC9VhT-Pm6_nJ-8Xd_B4Fq+jZ0kYnfc3wwNa_jM+4=pg5RVrQ@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-Use kmap_high and kmap_XXX or kumap_xxx among differt cores at the same
-time may cause deadlock. The issue is like this：
+On Thu, Jun 27, 2024 at 02:28:03PM -0400, Paul Moore wrote:
+> On Thu, Jun 27, 2024 at 9:34 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > I didn't find specific issues with Landlock's code except the extra
+> > check in hook_inode_free_security().  It looks like inode->i_security is
+> > a dangling pointer, leading to UAF.
+> >
+> > Reading security_inode_free() comments, two things looks weird to me:
+> >
+> > > /**
+> > >  * security_inode_free() - Free an inode's LSM blob
+> > >  * @inode: the inode
+> > >  *
+> > >  * Deallocate the inode security structure and set @inode->i_security to NULL.
+> >
+> > I don't see where i_security is set to NULL.
+> 
+> The function header comments are known to be a bit suspect, a side
+> effect of being detached from the functions for many years, this may
+> be one of those cases.  I tried to fix up the really awful ones when I
+> moved the comments back, back I didn't have time to go through each
+> one in detail.  Patches to correct the function header comments are
+> welcome and encouraged! :)
+> 
+> > >  */
+> > > void security_inode_free(struct inode *inode)
+> > > {
+> >
+> > Shouldn't we add this check here?
+> > if (!inode->i_security)
+> >         return;
+> 
+> Unless I'm remembering something wrong, I believe we *should* always
+> have a valid i_security pointer each time we are called, if not
+> something has gone wrong, e.g. the security_inode_free() hook is no
+> longer being called from the right place.  If we add a NULL check, we
+> should probably have a WARN_ON(), pr_err(), or something similar to
+> put some spew on the console/logs.
+> 
+> All that said, it would be good to hear some confirmation from the VFS
+> folks that the security_inode_free() hook is located in a spot such
+> that once it exits it's current RCU critical section it is safe to
+> release the associated LSM state.
+> 
+> It's also worth mentioning that while we always allocate i_security in
+> security_inode_alloc() right now, I can see a world where we allocate
+> the i_security field based on need using the lsm_blob_size info (maybe
+> that works today?  not sure how kmem_cache handled 0 length blobs?).
+> The result is that there might be a legitimate case where i_security
+> is NULL, yet we still want to call into the LSM using the
+> inode_free_security() implementation hook.
 
- CPU 0:                                                 CPU 1:
- kmap_high(){                                           kmap_xxx() {
-               ...                                        irq_disable();
-        spin_lock(&kmap_lock)
-               ...
-        map_new_virtual                                     ...
-           flush_all_zero_pkmaps
-              flush_tlb_kernel_range         /* CPU0 holds the kmap_lock */
-                      smp_call_function_many         spin_lock(&kmap_lock)
-                      ...                                   ....
-        spin_unlock(&kmap_lock)
-               ...
+Looking at existing LSM implementations, even if some helpers (e.g.
+selinux_inode) return NULL if inode->i_security is NULL, this may not be
+handled by the callers.  For instance, SELinux always dereferences the
+blob pointer in the security_inode_permission() hook.  EVM seems to be
+the only one properly handling this case.
 
-CPU 0 holds the kmap_lock, waiting for CPU 1 respond to IPI. But CPU 1
-has disabled irqs, waiting for kmap_lock, cannot answer the IPI. Fix
-this by releasing  kmap_lock before call flush_tlb_kernel_range,
-avoid kmap_lock deadlock.
-
-Fixes: 3297e760776a ("highmem: atomic highmem kmap page pinning")
-Signed-off-by: zhangchun <zhang.chuna@h3c.com>
-Co-developed-by: zhangzhansheng <zhang.zhansheng@h3c.com>
-Signed-off-by: zhangzhansheng <zhang.zhansheng@h3c.com>
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Reviewed-by: zhangzhengming <zhang.zhengming@h3c.com>
----
- mm/highmem.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/mm/highmem.c b/mm/highmem.c
-index bd48ba4..841b370 100644
---- a/mm/highmem.c
-+++ b/mm/highmem.c
-@@ -220,8 +220,11 @@ static void flush_all_zero_pkmaps(void)
- 		set_page_address(page, NULL);
- 		need_flush = 1;
- 	}
--	if (need_flush)
-+	if (need_flush) {
-+		unlock_kmap();
- 		flush_tlb_kernel_range(PKMAP_ADDR(0), PKMAP_ADDR(LAST_PKMAP));
-+		lock_kmap();
-+	}
- }
- 
- void __kmap_flush_unused(void)
--- 
-1.8.3.1
-
+Shouldn't we remove all inode->i_security checks and assume it is always
+set?  This is currently the case anyway, but it would be clearer this
+way and avoid false sense of security (with useless checks).
 
