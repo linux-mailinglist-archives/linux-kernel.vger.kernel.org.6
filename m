@@ -1,113 +1,114 @@
-Return-Path: <linux-kernel+bounces-248337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2672992DBDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:20:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF50492DBDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:21:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58E5E1C23AAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:20:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DACE1C2389C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF10714C5A1;
-	Wed, 10 Jul 2024 22:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6356C14A4F8;
+	Wed, 10 Jul 2024 22:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XWG858WN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="fQkH2e9H"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BCA1422CF
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 22:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B33D1EB40
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 22:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720649945; cv=none; b=qcgw84eZDY7UHz+QvYy+1lwiN2c5UBeYMdKGBBQ/lcJUxQs9VMTAqOCW2REej2QITieFGQqpRPJuS/9zPrF3QmgFQjTP3k57kG9alLEm+8YXFwzIIGZ3mUtv7ar4mGSa3+TLBoMZwuNhmm/OQd4pEEMPJsGWMTgxIrGdhRrC058=
+	t=1720650072; cv=none; b=ImksxGQKqvsjgXUpGZip1Fpv03mYmLM0ulYwgbMuyLv4f2VTdT6uOvUy8Xn22uP3EUFuLJfPxZRxX/iTaWCTvyulPjRBwdPTB3634LNkXyOwwAndmIIaSo1LEqfl2dnzGuy/XOiX3g4rDpfz/RAXFG3vFTHkgTRKMD/nB7ojvgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720649945; c=relaxed/simple;
-	bh=tHBs//jzzMW8Db4CGodh7oxVfzQiy5dEjuEreyM8fXo=;
+	s=arc-20240116; t=1720650072; c=relaxed/simple;
+	bh=UR9u1b1LERdObB5H9teSx8y9oN2qUYckeEFv+IKQgpA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k1D+In41reawP6xoPN5qLYKnrkY+pnskLTYEgtu14dqloIrxXCcWgAVhnEcgbcYEpIIi9uKPPJpqF9Aq9Bry61ZJDZ9yh250MGDvbdpUYb9MtNV5TI6+GbU4L69xzNYpzOd2ZEJo75Zl6kEFL9wiHznPMoGGknhwdbU77Mjubi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XWG858WN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720649942;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tHBs//jzzMW8Db4CGodh7oxVfzQiy5dEjuEreyM8fXo=;
-	b=XWG858WN856qjJ4IKgGoROD7M9OQNnHxmTYV/njwSyEzPhXmIb6kkv9m9qx9ygDAQLppAs
-	ZkPGiSX0Mqm2HbkpWfkRZH3CEEB41XgOg8oV9HcQaltMk1QYsKAzpiM6Usi8pYwp/2+GNV
-	Q1DVz0TybQxynG/AAY7hCLXMKTWWsck=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-403-tdph6YrkPeu1zVblzju0dw-1; Wed,
- 10 Jul 2024 18:18:58 -0400
-X-MC-Unique: tdph6YrkPeu1zVblzju0dw-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0420C19560B2;
-	Wed, 10 Jul 2024 22:18:56 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.169])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A5B0D19560AE;
-	Wed, 10 Jul 2024 22:18:51 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu, 11 Jul 2024 00:17:19 +0200 (CEST)
-Date: Thu, 11 Jul 2024 00:17:14 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Tycho Andersen <tandersen@netflix.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Julian Orth <ju.orth@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 2/2] kernel: rerun task_work while freezing in
- get_signal()
-Message-ID: <20240710221713.GI9228@redhat.com>
-References: <20240709190743.GB3892@redhat.com>
- <d2667002-1631-4f42-8aad-a9ea56c0762b@gmail.com>
- <20240709193828.GC3892@redhat.com>
- <d9c00f01-576c-46cd-a88c-76e244460dac@gmail.com>
- <Zo3bt3AJHSG5rVnZ@slm.duckdns.org>
- <933e7957-7a73-4c9a-87a7-c85b702a3a32@gmail.com>
- <20240710191015.GC9228@redhat.com>
- <Zo7e8RQQfG7U5fuT@slm.duckdns.org>
- <20240710213418.GH9228@redhat.com>
- <Zo8Ex0qFRbU2mAOQ@slm.duckdns.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YmFWwaXh/ONZMUdmAn/sWOVCDd7aKoHd+EdZV3/WZVJS+dvQndLREQmvbVGRtrUstc9J+F94BQRfR/kvqbmuhSiN5lYMNjXCKu/w8YWitDMQGt1MnKh58GvmKlEI2jx2Wo+CVH3rTbvQ+mj6xjE2lbMsnUqnm9M0K83aGf4Po6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=fQkH2e9H; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=5Gfc
+	wj1h/9hwmssK1LHK7dJ8iHOpSHErohYtvx8U/Jg=; b=fQkH2e9HIcKdIvYY5oON
+	IKDJqF8DV06ALI+M7NVl+EUJ7ByYLtZEtjpFjUe7RSfepjl4z1YcMY5t7JdpcowN
+	ZPh6pf1a8s9JzHe3H2a/xfi2SIshs5Ww0LcUHtwYwYxQZ2X8NccO0+8bAO9+CxJm
+	Jmv9KiQzTfuF08mXTm5Y9BB0erDowCFY+KdwSVV/DUbd3jaUW/JGgY1T/0AHRHhh
+	3i196nYBA1OYsEdXjNIW2IlP8LJwkbmTybA39QeQ+7ky+yH5eYmmR4nXKJH16Kvv
+	O2LqjAbHfOAfTJvROgWQfB5DBepKAlZdxhtiLgy7+JrL2xikA6Cx7L6YiROfV0y1
+	/A==
+Received: (qmail 653563 invoked from network); 11 Jul 2024 00:21:05 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Jul 2024 00:21:05 +0200
+X-UD-Smtp-Session: l3s3148p1@NZTrD+wctoUujnsa
+Date: Thu, 11 Jul 2024 00:21:05 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c@vger.kernel.org,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	linux-kernel@vger.kernel.org, Jean Delvare <jdelvare@suse.com>
+Subject: Re: [PATCH v2 32/60] i2c: mv64xxx: reword according to newest
+ specification
+Message-ID: <Zo8JUWIfmHhKs4jd@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	linux-kernel@vger.kernel.org, Jean Delvare <jdelvare@suse.com>
+References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
+ <20240706112116.24543-33-wsa+renesas@sang-engineering.com>
+ <7szxutsq35uaydvbo6bzrpsvnx765de7ps3kpvzs3b4ubczq6x@weaxji5u2p7c>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nxE7TigkqQEf5t7E"
+Content-Disposition: inline
+In-Reply-To: <7szxutsq35uaydvbo6bzrpsvnx765de7ps3kpvzs3b4ubczq6x@weaxji5u2p7c>
+
+
+--nxE7TigkqQEf5t7E
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zo8Ex0qFRbU2mAOQ@slm.duckdns.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: quoted-printable
 
-On 07/10, Tejun Heo wrote:
->
-> > But how do you think this patch can make the things worse wrt CRIU ?
->
-> Oh, I'm not arguing against the patch at all. Just daydreaming about what
-> future cleanups should look like.
 
-Ah, sorry, I misunderstood you!
+> > -	MV64XXX_I2C_STATE_WAITING_FOR_SLAVE_ACK,
+> > -	MV64XXX_I2C_STATE_WAITING_FOR_SLAVE_DATA,
+> > +	MV64XXX_I2C_STATE_WAITING_FOR_TARGET_ACK,
+> > +	MV64XXX_I2C_STATE_WAITING_FOR_TARGET_DATA,
+>=20
+> I searched online for the datasheet but couldn't find it. It
+> would be helpful to know if the SLAVE naming comes from the
+> datasheet or if it is arbitrary.
 
-> > In short, I don't like this patch either, I just don't see a better
-> > solution for now ;)
->
-> I think we're on the same page.
+I was considering datasheet names, but obviously I concluded that these
+are custom names.
 
-Yes, and I agree with your concerns and your thoughts about future cleanups.
 
-Oleg.
+--nxE7TigkqQEf5t7E
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaPCU0ACgkQFA3kzBSg
+Kbb/mhAArl6U/dAyn1dNsFQSmYcw7GLbDJWa3SOf5W39+JRUBruxGzNXub7Qq+uD
+V2j1V9t+yzD4O2+vyuzUHjQ3ru5Ky/Rc7INwiGGK+vwWmqvR9EG5lLQOZttAVfWf
+kkn1lw8oTCd4jVqUV+gKjsqJyOLGn6b3+Ysm+7ezSbPLCyMc9uaxFEecrBSjxIqi
+eMX2/DrGJ01XerhTAVbcP9dSXgtbwOZ2Qqg0L9Lw4LVHUUyYJ7Kkvi5aCt89KflN
+V7nSgl5vz1T7aS9BEXF0Apo+pBuiyMg8zzl+dsq/Y+8wuWz7jGjMF9mgYwfSDQ2X
+68IornfEriGfTsh3ylbdZzq0PZjRe/spqTFjs/j78DeFw6xuF7AjqZy/yPygJ/YN
+jqNTnt9HjE9n9UCiXe7wqgddeNm0uSXrZ8HDykDF6d+dLWWucXyVFkxPs4Hpp4op
+kse/w/I7WpXGhPeSvCSOPyeoZmGb5ueq1O7iEBrm26A1uJ+9mXetfZgWjf9nMIS0
+kbMjNFyJDKwsP8/25BsSQ04nhds7rrjnYi02k9g2RBwYwPNlMJWf6G5vtjshT6C1
+2oNewIuFTiYnnWMKdCnZraXMraTDqRD0WAAw0KxS9zY7aZU+NIDG/ZvdPiayf3VJ
+9LEgLY1wE2gyU/7H6JzNRO/NM7/LCSa5L33FrbMTQHPkTabAljw=
+=pPql
+-----END PGP SIGNATURE-----
+
+--nxE7TigkqQEf5t7E--
 
