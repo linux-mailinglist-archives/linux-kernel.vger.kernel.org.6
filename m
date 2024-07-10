@@ -1,104 +1,140 @@
-Return-Path: <linux-kernel+bounces-248395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 298D792DC9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:26:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50B3F92DC9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:26:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA54284040
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:26:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 828341C2112D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A18A153835;
-	Wed, 10 Jul 2024 23:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39830155382;
+	Wed, 10 Jul 2024 23:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KuruZDGU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="caB/dvEL"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29A31527A7;
-	Wed, 10 Jul 2024 23:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D9B156F3C
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720653971; cv=none; b=ZLCnDze7WLq7Yt3J6b4a40rNBixHpj6sXx4flMlkubGTL2JRaijaM67YRZ3SLajdbRNlcUaachJv4YkGk2ETsfHBZN7bm5WX8YQblZn3ukDL3U0ljN/XojkgrYVK3eLFLgO3cZzMyw3sDYhobhhrMJeNLp0kHT1+EvgNX3ICF5Y=
+	t=1720653975; cv=none; b=gYNsibIiaSVvZ1RXlzJ4XFcovpm2NsU1Nh0+vPK3Bzpvk4zbJtJDc1yBDvRWb9oj29JaCfqQVhf2Yg1B+wvEiTbhHeyWVLV+tEfOJF6fHmBMr6idf/sXIlUTta9xXTttsFalWXlbpobMpnHHSI5UTq0VdGH7xE0F6sSN7Ol+ApU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720653971; c=relaxed/simple;
-	bh=4j7HhjyR3P0XTsOa2hJfJvKNhltv5iQXTeJBSXBmgDs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=FgTNcvRTgSniz8muL5io4z/7qJRUiXRih50LqbAn4jXEVBCTNcPGpLfP1oNiiqjT9J1KOZiiakYS7Goum7549UAZMhqD41eLHE3lgFRAS3Atv73oxBQAqbzITNddE89PSXSgjYhhEmcKpRtDDODPMpif/JLDSgyiYKy/6MJJnes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KuruZDGU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84466C32781;
-	Wed, 10 Jul 2024 23:26:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720653971;
-	bh=4j7HhjyR3P0XTsOa2hJfJvKNhltv5iQXTeJBSXBmgDs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=KuruZDGU1G9jIshYs8VLqAtfT4LDSGyTiG3NMoJm4+yhB4U++ekx+EtxHSpUo9cD6
-	 6m2pVVNOcvWU8KFzFsoPyqttrDJVxzW2+hwK8E8cpyHvACGi4OGzCrKyHjzxFhiYfI
-	 x5en6NxFiJCLl/OSjS7xD459Oo49zmKpo9Aj7bRFclnALDYUV7H5sSP2kbholTWkRz
-	 pvKX2MOJeuZ6L21eB+TxWTaPV3jhv+vEcKa09o8KsUaRQY1L6CrOT7IWmcxxYRgdC/
-	 qt3kewJN0ylFfma5mUF11JYIemKsHBomT/5zchH9KgbjWRm9c3XAHuJ0zlPM3yMfaD
-	 sX8gm/0aL/Edg==
-From: Mark Brown <broonie@kernel.org>
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>, 
- David Rhodes <david.rhodes@cirrus.com>, 
- Richard Fitzgerald <rf@opensource.cirrus.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, patches@opensource.cirrus.com, 
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240709184231.125207-1-animeshagarwal28@gmail.com>
-References: <20240709184231.125207-1-animeshagarwal28@gmail.com>
-Subject: Re: [PATCH v2] ASoC: dt-bindings: cirrus,cs4270: Convert to
- dtschema
-Message-Id: <172065396818.391308.16919623245935152451.b4-ty@kernel.org>
-Date: Thu, 11 Jul 2024 00:26:08 +0100
+	s=arc-20240116; t=1720653975; c=relaxed/simple;
+	bh=jJuojDJkKVM0mSdix5fpD3/fkoozXZpH2UoKNPWTDZc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AZ0rKdBV0HiceR8RrMvour7BoG5goS1LPoxN4/dEipnlnYoFD//UwPVb8vJGxhMiweuozcJ9xYMdMxWB7Ik7JPiythsnE31KylqofthQHKvGcnmV8nTEfk2lpqbREvz/38LQ5hvKD4nXDl57Fz4zbzqA3hGDOMCBYIiOAV6ltcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=caB/dvEL; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5009a.ext.cloudfilter.net ([10.0.29.176])
+	by cmsmtp with ESMTPS
+	id RcWNsVINYumtXRghRswCB6; Wed, 10 Jul 2024 23:26:14 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id RghQsdXWkJYlLRghRsyQzW; Wed, 10 Jul 2024 23:26:13 +0000
+X-Authority-Analysis: v=2.4 cv=CKIsXwrD c=1 sm=1 tr=0 ts=668f1895
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
+ a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
+ a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8 a=QdaU3yBqoJsCgmx-8bwA:9 a=QEXdDO2ut3YA:10
+ a=AjGcO6oz07-iQ99wixmX:22 a=WzC6qhA0u3u7Ye7llzcV:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=fAOAkXV81GJSC1GjllVIjMD6JIIEOVrg4bHKVpSfYVc=; b=caB/dvEL+y+mrfzuPdAJU0c5+M
+	rBis592lSUrxor4iU69dZb7v1oqUE2bJ4E+5y4kCzEcAGVvFLPh3zObKd5spN9Nlb8Y2et76fj02v
+	gKFCZEnyPOEUlaL6Xz6b9dv5cwLNJcWKMOtkGfCeBVVk4S9IrlUCc0cf5PO7QQcH/+WomULuW9ZMu
+	+ALrnZM5EdQMiCCZiL+lWul+DWEeSdqh0aRmgLhqc23yT64vE03xTHmxK42lyhrlFa3fVNACI1Cqo
+	g7bkK2y1Uivuz9cOUU99oZujHlMJm3xPm4Pf4CLyVwRvNRmsWj6RPr78wRc7pgKrpfZKk0nyW2bGk
+	S9rn1ZCA==;
+Received: from [201.172.173.139] (port=58644 helo=[192.168.15.4])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sRghQ-004MkP-1K;
+	Wed, 10 Jul 2024 18:26:12 -0500
+Message-ID: <1f3ad235-b2c7-47e8-bf70-b910d397d690@embeddedor.com>
+Date: Wed, 10 Jul 2024 17:26:11 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs/affs: struct affs_head: Replace 1-element array with
+ flexible array
+To: Kees Cook <kees@kernel.org>, David Sterba <dsterba@suse.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20240710225709.work.175-kees@kernel.org>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20240710225709.work.175-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-0bd45
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.139
+X-Source-L: No
+X-Exim-ID: 1sRghQ-004MkP-1K
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.4]) [201.172.173.139]:58644
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 39
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfGZANMiImbXlL+UbmDatFiFQ02DMVXHxvqIesEn2lotAsNFDjrOYTU0c4cE/+D/HX9vJWgun4ozSd4AuMJ4XNVrzSJTC4yjVtXuJTgm5JkRkk18Xc9Cv
+ cK08c7wgTpXKgueiuzxRKYmQVneP4MwiG/PeHGnbWEEdq02RGR2pPnLnXJLaKpJvH1J6wBXcQkwkBIAAOXew3vuIeZE/OqiT2L3htP1tfxVrhn3R68jwPTPk
 
-On Wed, 10 Jul 2024 00:12:25 +0530, Animesh Agarwal wrote:
-> Convert the Cirrus Logic CS4270 audio CODEC bindings to DT schema. Add
-> missing va-supply, vd-supply and vlc-supply properties, because they
-> are already being used in the DTS and the driver for this device.
+
+
+On 10/07/24 16:57, Kees Cook wrote:
+> AFFS uses struct affs_head's "table" array as a flexible array. Switch
+> this to a proper flexible array[1]. There are no sizeof() uses; struct
+> affs_head is only ever uses via direct casts. No binary output
+> differences were found after this change.
 > 
+> Link: https://github.com/KSPP/linux/issues/79 [1]
+> Signed-off-by: Kees Cook <kees@kernel.org>
+
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+
+Thanks
+-- 
+Gustavo
+
+> ---
+> Cc: David Sterba <dsterba@suse.com>
+> Cc: linux-fsdevel@vger.kernel.org
+> ---
+>   fs/affs/amigaffs.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: dt-bindings: cirrus,cs4270: Convert to dtschema
-      commit: e021e0eecba99d7ec68f6e7972a72175f54ff6e3
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> diff --git a/fs/affs/amigaffs.h b/fs/affs/amigaffs.h
+> index 5509fbc98bc0..09dc23a644df 100644
+> --- a/fs/affs/amigaffs.h
+> +++ b/fs/affs/amigaffs.h
+> @@ -80,7 +80,7 @@ struct affs_head {
+>   	__be32 spare1;
+>   	__be32 first_data;
+>   	__be32 checksum;
+> -	__be32 table[1];
+> +	__be32 table[];
+>   };
+>   
+>   struct affs_tail {
 
