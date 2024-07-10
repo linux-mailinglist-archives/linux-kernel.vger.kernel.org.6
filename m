@@ -1,314 +1,167 @@
-Return-Path: <linux-kernel+bounces-247094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BBF692CB28
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:34:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF8892CB3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF6D41F23A75
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:34:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 966AE285601
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CFC978281;
-	Wed, 10 Jul 2024 06:34:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABD27CF39;
+	Wed, 10 Jul 2024 06:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TnJtdDUm"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jmUCGW0E"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BAC56FE16;
-	Wed, 10 Jul 2024 06:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C3657CBC;
+	Wed, 10 Jul 2024 06:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720593254; cv=none; b=TJGZEIuP5D6Zyf2jBTGLGkkZS6GWRpTCmDsuMI/HOfdYUdlXD9Ys2v7gIwXeA7b4NGgf9T+z2z329il3eQnzu8d9L3YWtKeU2q5fB5IYSU3snB1Uok4aJMn6u0a+uqIKBN9N9EXcb0AyznIEur5oDvff1LNZhsntPoaJBqzblKo=
+	t=1720593460; cv=none; b=X15Ekj+MNodXr4mxF3bCAmU+uIQcfVI4JVYhJk27OMu83Vw8rX7Br1xLCdlya/sNZYQLzDmdnYc82SqcXda8s/ZIYM/byrIcQApazrMUyswb7FmeksssqXnvcCPFDoAMXTUyEg8FnUFP8Fv+6FsS+5mJuhCq5+A8dOP7t9bHYpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720593254; c=relaxed/simple;
-	bh=EW33cY2zlcay7IG+0/XdIXo4qlfcpWlCkZ2LSBAZsY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=QnqZKEm/mh8WSHOMXnsVUJSMjqMgycsIjqUjA4dPzYVbmIdveOoc5bemlgyBiTvWTIzimTMoLUYiraPwqVeTlSkejM8H9BL2lM47PlujKu7CTmYb7m1wmLNZMmPF9Ymimqobh3Enlyfv/Wx2eUgCj/H85yBYMTCXLl+bLGcJp3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TnJtdDUm; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1720593247;
-	bh=xJ/lnR/dxJ7aCDZ1UXJhCvVcBEHDIexFfDSnarVEzAY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=TnJtdDUmTAJ4HcZSTbvmxbDC0zLjQ10+kQrtmJUp83zalJPRal/Ic7DBRc9PzCm8z
-	 OYqBa8uYsp+IwUgldR/TsXWspjfWEJEATavMj1XxkKqPZmJezQOQ9mR/U28HZ1+D0G
-	 PBYRuGMw/TxONA55vUaxUno95VwtU6kE6oVNbFEJdlZcpKHjGhpMsKch+LvIdD8Uah
-	 HKoeZIWaT6rx0QY8PutKqDHyJlHIsr5Gav6U/pG7X5kFaGl940QtycevP8gPCUCVrS
-	 MQ5c4+Ez9rqdDzj9SGiRQa/gYfJ2mGcmU82DPkYkNk3UBjdOa33oGAQq94i/lGQmI9
-	 adJ5+Kfhfh2Qg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJp3g4d47z4w2K;
-	Wed, 10 Jul 2024 16:34:07 +1000 (AEST)
-Date: Wed, 10 Jul 2024 16:34:07 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Lee Jones <lee@kernel.org>
-Cc: Christian Marangi <ansuelsmth@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the leds-lj tree
-Message-ID: <20240710163407.6393021f@canb.auug.org.au>
+	s=arc-20240116; t=1720593460; c=relaxed/simple;
+	bh=87AHnkJ8UfsgESziEwaLMdfncxJiLVWYj5UjZeZYoug=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PcycaeVa4AWdN/VnSdgrShiq0ETQ3sOdbFE3SrsaTuwiX7n505iQa38oMyGpLONKbDWzwqxR/kTg+Hqy5mIkUeUOCN+vqiegi+UNlM6bIzjq9Y4p7GUHiykZCcB6CwGdTLZyMK1AqxL7x7zkIVqyhGF/MrHzAFBOoNDoe3EfQn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jmUCGW0E; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469MCRpx012919;
+	Wed, 10 Jul 2024 06:37:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	12CEwnz1VdvoSOCH4gcRkSmXRgXBbr4JlTL5IqebeCI=; b=jmUCGW0Eb/CUsiJO
+	bk8MTaSzy2o+6fwCEgAgHs83NFc8Yf5bTmV1amGiGwoLhG7taH7iaO8nF3OykaGB
+	qEIccHkzeZEq5MMSG0IfvmD5FNmrvqPWKiSA/IMimxncHbZU3LpO2BIc64xVSvn/
+	gZR7k2nw2ds/QHHfkH32DA0SugKkpaLWsEoHMkFeWaAW6a9Ny/l+DgXrBIuTGEWX
+	WH/v16ADsf0M+G54En3SfXY2xX0ZQLkTsHjnm9PHDD6mN09uk84yhpkV38BrLMOP
+	c6tLVIXqtlPxiM2BCWQO+kOcS+frdV6rLVimj/iTK/Bnm1KB+nHat/dUwRA9G64s
+	xpG3vA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x518kyh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jul 2024 06:37:29 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46A6bShw015355
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jul 2024 06:37:28 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
+ 23:37:21 -0700
+Message-ID: <e429e0d5-ed88-44c7-aa76-62abd593a3d1@quicinc.com>
+Date: Wed, 10 Jul 2024 14:37:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/hNw_6dGlq3+C7iW9qNvyHNl";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: PCI: Document compatible for QCS9100
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+	<kw@linux.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240709162912.GA176161@bhelgaas>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <20240709162912.GA176161@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6lON1HvE_L5ft_bw0PurpKBVRJU4wYIZ
+X-Proofpoint-ORIG-GUID: 6lON1HvE_L5ft_bw0PurpKBVRJU4wYIZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-10_02,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ suspectscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407100049
 
---Sig_/hNw_6dGlq3+C7iW9qNvyHNl
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-After merging the leds-lj tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+On 7/10/2024 12:29 AM, Bjorn Helgaas wrote:
+> On Tue, Jul 09, 2024 at 10:59:29PM +0800, Tengfei Fan wrote:
+>> Document compatible for QCS9100 platform.
+> 
+> Add blank line for paragraph breaks.
 
-drivers/leds/leds-lp5521.c: In function 'lp5521_selftest':
-drivers/leds/leds-lp5521.c:189:33: error: macro "guard" passed 2 arguments,=
- but takes just 1
-  189 |         guard(mutex, &chip->lock);
-      |                                 ^
-In file included from drivers/leds/leds-lp5521.c:12:
-include/linux/cleanup.h:166: note: macro "guard" defined here
-  166 | #define guard(_name) \
-      |=20
-drivers/leds/leds-lp5521.c:189:9: error: 'guard' undeclared (first use in t=
-his function)
-  189 |         guard(mutex, &chip->lock);
-      |         ^~~~~
-drivers/leds/leds-lp5521.c:189:9: note: each undeclared identifier is repor=
-ted only once for each function it appears in
-drivers/leds/leds-lp5523.c: In function 'lp5523_selftest':
-drivers/leds/leds-lp5523.c:192:33: error: macro "guard" passed 2 arguments,=
- but takes just 1
-  192 |         guard(mutex, &chip->lock);
-      |                                 ^
-In file included from drivers/leds/leds-lp5523.c:12:
-include/linux/cleanup.h:166: note: macro "guard" defined here
-  166 | #define guard(_name) \
-      |=20
-drivers/leds/leds-lp5523.c:192:9: error: 'guard' undeclared (first use in t=
-his function)
-  192 |         guard(mutex, &chip->lock);
-      |         ^~~~~
-drivers/leds/leds-lp5523.c:192:9: note: each undeclared identifier is repor=
-ted only once for each function it appears in
-drivers/leds/leds-lp5562.c: In function 'lp5562_led_brightness':
-drivers/leds/leds-lp5562.c:175:33: error: macro "guard" passed 2 arguments,=
- but takes just 1
-  175 |         guard(mutex, &chip->lock);
-      |                                 ^
-In file included from drivers/leds/leds-lp5562.c:10:
-include/linux/cleanup.h:166: note: macro "guard" defined here
-  166 | #define guard(_name) \
-      |=20
-drivers/leds/leds-lp5562.c:175:9: error: 'guard' undeclared (first use in t=
-his function)
-  175 |         guard(mutex, &chip->lock);
-      |         ^~~~~
-drivers/leds/leds-lp5562.c:175:9: note: each undeclared identifier is repor=
-ted only once for each function it appears in
-drivers/leds/leds-lp5562.c: In function 'lp5562_store_pattern':
-drivers/leds/leds-lp5562.c:272:33: error: macro "guard" passed 2 arguments,=
- but takes just 1
-  272 |         guard(mutex, &chip->lock);
-      |                                 ^
-include/linux/cleanup.h:166: note: macro "guard" defined here
-  166 | #define guard(_name) \
-      |=20
-drivers/leds/leds-lp5562.c:272:9: error: 'guard' undeclared (first use in t=
-his function)
-  272 |         guard(mutex, &chip->lock);
-      |         ^~~~~
-drivers/leds/leds-lp5562.c: In function 'lp5562_store_engine_mux':
-drivers/leds/leds-lp5562.c:324:33: error: macro "guard" passed 2 arguments,=
- but takes just 1
-  324 |         guard(mutex, &chip->lock);
-      |                                 ^
-include/linux/cleanup.h:166: note: macro "guard" defined here
-  166 | #define guard(_name) \
-      |=20
-drivers/leds/leds-lp5562.c:324:9: error: 'guard' undeclared (first use in t=
-his function)
-  324 |         guard(mutex, &chip->lock);
-      |         ^~~~~
-drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_led_brightness':
-drivers/leds/leds-lp55xx-common.c:276:33: error: macro "guard" passed 2 arg=
-uments, but takes just 1
-  276 |         guard(mutex, &chip->lock);
-      |                                 ^
-In file included from drivers/leds/leds-lp55xx-common.c:13:
-include/linux/cleanup.h:166: note: macro "guard" defined here
-  166 | #define guard(_name) \
-      |=20
-drivers/leds/leds-lp55xx-common.c:276:9: error: 'guard' undeclared (first u=
-se in this function)
-  276 |         guard(mutex, &chip->lock);
-      |         ^~~~~
-drivers/leds/leds-lp55xx-common.c:276:9: note: each undeclared identifier i=
-s reported only once for each function it appears in
-drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_multicolor_brightnes=
-s':
-drivers/leds/leds-lp55xx-common.c:291:33: error: macro "guard" passed 2 arg=
-uments, but takes just 1
-  291 |         guard(mutex, &chip->lock);
-      |                                 ^
-include/linux/cleanup.h:166: note: macro "guard" defined here
-  166 | #define guard(_name) \
-      |=20
-drivers/leds/leds-lp55xx-common.c:291:9: error: 'guard' undeclared (first u=
-se in this function)
-  291 |         guard(mutex, &chip->lock);
-      |         ^~~~~
-drivers/leds/leds-lp55xx-common.c: In function 'led_current_store':
-drivers/leds/leds-lp55xx-common.c:409:33: error: macro "guard" passed 2 arg=
-uments, but takes just 1
-  409 |         guard(mutex, &chip->lock);
-      |                                 ^
-include/linux/cleanup.h:166: note: macro "guard" defined here
-  166 | #define guard(_name) \
-      |=20
-drivers/leds/leds-lp55xx-common.c:409:9: error: 'guard' undeclared (first u=
-se in this function)
-  409 |         guard(mutex, &chip->lock);
-      |         ^~~~~
-drivers/leds/leds-lp55xx-common.c: In function 'run_engine_store':
-drivers/leds/leds-lp55xx-common.c:637:33: error: macro "guard" passed 2 arg=
-uments, but takes just 1
-  637 |         guard(mutex, &chip->lock);
-      |                                 ^
-include/linux/cleanup.h:166: note: macro "guard" defined here
-  166 | #define guard(_name) \
-      |=20
-drivers/leds/leds-lp55xx-common.c:637:9: error: 'guard' undeclared (first u=
-se in this function)
-  637 |         guard(mutex, &chip->lock);
-      |         ^~~~~
-drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_store_engine_mode':
-drivers/leds/leds-lp55xx-common.c:676:33: error: macro "guard" passed 2 arg=
-uments, but takes just 1
-  676 |         guard(mutex, &chip->lock);
-      |                                 ^
-include/linux/cleanup.h:166: note: macro "guard" defined here
-  166 | #define guard(_name) \
-      |=20
-drivers/leds/leds-lp55xx-common.c:676:9: error: 'guard' undeclared (first u=
-se in this function)
-  676 |         guard(mutex, &chip->lock);
-      |         ^~~~~
-drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_store_engine_load':
-drivers/leds/leds-lp55xx-common.c:704:33: error: macro "guard" passed 2 arg=
-uments, but takes just 1
-  704 |         guard(mutex, &chip->lock);
-      |                                 ^
-include/linux/cleanup.h:166: note: macro "guard" defined here
-  166 | #define guard(_name) \
-      |=20
-drivers/leds/leds-lp55xx-common.c:704:9: error: 'guard' undeclared (first u=
-se in this function)
-  704 |         guard(mutex, &chip->lock);
-      |         ^~~~~
-drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_store_engine_leds':
-drivers/leds/leds-lp55xx-common.c:803:33: error: macro "guard" passed 2 arg=
-uments, but takes just 1
-  803 |         guard(mutex, &chip->lock);
-      |                                 ^
-include/linux/cleanup.h:166: note: macro "guard" defined here
-  166 | #define guard(_name) \
-      |=20
-drivers/leds/leds-lp55xx-common.c:803:9: error: 'guard' undeclared (first u=
-se in this function)
-  803 |         guard(mutex, &chip->lock);
-      |         ^~~~~
-drivers/leds/leds-lp55xx-common.c:798:17: error: unused variable 'ret' [-We=
-rror=3Dunused-variable]
-  798 |         ssize_t ret;
-      |                 ^~~
-drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_show_master_fader':
-drivers/leds/leds-lp55xx-common.c:827:33: error: macro "guard" passed 2 arg=
-uments, but takes just 1
-  827 |         guard(mutex, &chip->lock);
-      |                                 ^
-include/linux/cleanup.h:166: note: macro "guard" defined here
-  166 | #define guard(_name) \
-      |=20
-drivers/leds/leds-lp55xx-common.c:827:9: error: 'guard' undeclared (first u=
-se in this function)
-  827 |         guard(mutex, &chip->lock);
-      |         ^~~~~
-drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_store_master_fader':
-drivers/leds/leds-lp55xx-common.c:851:33: error: macro "guard" passed 2 arg=
-uments, but takes just 1
-  851 |         guard(mutex, &chip->lock);
-      |                                 ^
-include/linux/cleanup.h:166: note: macro "guard" defined here
-  166 | #define guard(_name) \
-      |=20
-drivers/leds/leds-lp55xx-common.c:851:9: error: 'guard' undeclared (first u=
-se in this function)
-  851 |         guard(mutex, &chip->lock);
-      |         ^~~~~
-drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_show_master_fader_le=
-ds':
-drivers/leds/leds-lp55xx-common.c:870:33: error: macro "guard" passed 2 arg=
-uments, but takes just 1
-  870 |         guard(mutex, &chip->lock);
-      |                                 ^
-include/linux/cleanup.h:166: note: macro "guard" defined here
-  166 | #define guard(_name) \
-      |=20
-drivers/leds/leds-lp55xx-common.c:870:9: error: 'guard' undeclared (first u=
-se in this function)
-  870 |         guard(mutex, &chip->lock);
-      |         ^~~~~
-drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_store_master_fader_l=
-eds':
-drivers/leds/leds-lp55xx-common.c:901:33: error: macro "guard" passed 2 arg=
-uments, but takes just 1
-  901 |         guard(mutex, &chip->lock);
-      |                                 ^
-include/linux/cleanup.h:166: note: macro "guard" defined here
-  166 | #define guard(_name) \
-      |=20
-drivers/leds/leds-lp55xx-common.c:901:9: error: 'guard' undeclared (first u=
-se in this function)
-  901 |         guard(mutex, &chip->lock);
-      |         ^~~~~
-cc1: all warnings being treated as errors
+A blank line will be added in the next verion patch series.
 
-Caused by commit
+> 
+>> QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
+>> platform use non-SCMI resource. In the future, the SA8775p platform will
+>> move to use SCMI resources and it will have new sa8775p-related device
+>> tree. Consequently, introduce "qcom,pcie-qcs9100" to describe non-SCMI
+>> based PCIe.
+> 
+> Not connected to the patch below.  Move to where it is relevant.
 
-  efd0d1cbb8c5 ("leds: leds-lp55xx: Convert mutex lock/unlock to guard API")
+As mentioned in the cover letter, we will also push the QCS9100 device 
+tree patch series to upstream after all the binding and driver patches 
+are reviewd. The QCS9100 device tree is directly renamed from the 
+SA8775p device tree.
 
-I have used the led-lj tree from next-20240709 for today.
+This comment message serves to explain why we need to push this PCIe 
+binding patch, thus avoiding any questions from reviews about why we are 
+not continuing to use the "qcom,pcie-sa8775p" compatible name.
 
---=20
-Cheers,
-Stephen Rothwell
+If you still think that this comment message is not necessay here, I 
+will move this comment message from binding and driver patches to the 
+cover letter.
 
---Sig_/hNw_6dGlq3+C7iW9qNvyHNl
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> 
+>> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+>> ---
+>>   Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml | 5 ++++-
+>>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
+>> index efde49d1bef8..4de33df6963f 100644
+>> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
+>> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml
+>> @@ -16,7 +16,10 @@ description:
+>>   
+>>   properties:
+>>     compatible:
+>> -    const: qcom,pcie-sa8775p
+>> +    items:
+>> +      - enum:
+>> +          - qcom,pcie-qcs9100
+>> +          - qcom,pcie-sa8775p
+>>   
+>>     reg:
+>>       minItems: 6
+>>
+>> -- 
+>> 2.25.1
+>>
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaOK18ACgkQAVBC80lX
-0GxfiQf9GYNBzqxqSZlT5RHhXdBuiHs0YOzgwYieeXZenOQT4p9iG/bkyjkMw0uM
-C2lWDCUVnteFx9+rBnKyXPrtMWI9rXE0/LBTbLadjLdu8T9shR5GvyZHWj6sm8V1
-ZcBoRX1on6RrQbOZNBEQlYVkT2mAQSOBECsEHSo4AfJFJAYGmMdQRPStmsfTO6yS
-fNITcu4cJ5p3V97nMlBve1dvkchfIbUxS6nmHF6AWs8xwIP0udfQLxdeurZ1ByEN
-cXGFtLUw4w8YDEJns6hWPufMUGvsqB/hCoTUT/HJnZCgf3VNYEpGFQ/v23jiIwlt
-vzKmsfNUK/tNFGbGIesMBhXiFCqXrw==
-=FcjJ
------END PGP SIGNATURE-----
-
---Sig_/hNw_6dGlq3+C7iW9qNvyHNl--
+-- 
+Thx and BRs,
+Tengfei Fan
 
