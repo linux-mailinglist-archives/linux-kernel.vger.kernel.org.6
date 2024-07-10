@@ -1,175 +1,69 @@
-Return-Path: <linux-kernel+bounces-248188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E71292D955
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:38:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9FFB92D97E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6262B1C21073
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:38:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D0C31C20F35
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6CB19538B;
-	Wed, 10 Jul 2024 19:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98774F1E2;
+	Wed, 10 Jul 2024 19:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LDQVz0h9"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kRrlAxsg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AF6197A91;
-	Wed, 10 Jul 2024 19:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BE315E88;
+	Wed, 10 Jul 2024 19:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720640326; cv=none; b=PASjtSb7bScl/6qL0x/QQUsKsoBC9ebovyEj3JeP2WYOZTr2YdDu21XlV3epAYqnnrx/JDBAHXmySCIeTuDL+9ZpcUCLewQ5WIkSDn1mffhldN7TTcfFCGJmVlRtCfakPyxB3hMuuGJi4MZh6cxNIS2dBVAF5SWKmQYPqlrNdJs=
+	t=1720640869; cv=none; b=NnO1qjA9q7VNzQtp0ZXXPKYmrtHx+hf+iMa4mtAWXhEabZoV6cbNI8FRSh3Hpbun40YMKe8k4AlXxErbLTR7Laq+1IJ79AvMaAH9QfvzfioQRwP+KZ5EyQr02h09uyH/oe6MzkImBc8+5iMBsHSFeP/Ji3bBQ6a+oI66w2j55KE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720640326; c=relaxed/simple;
-	bh=67Yjzf2Um2vbW/jejczx+mLuuT41TRVxg2Nb7tadK7c=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xx0QLreUgNZ5vk1J+a80nGMretWkZCafPQhLGqRS1y/g0oj3zltt+s+bV/UzSswGyc+8jMG2ntJEhxyI6lyW+CbzZ3QVPug53Puw9ZFEQTmUE1Ac+ve8Y27WcuIA66NLL7dS4MUN7N8owaELF/NSvZwe95+39X/Ip4Mj8j3w9hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LDQVz0h9; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52ea33671ffso137156e87.3;
-        Wed, 10 Jul 2024 12:38:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720640323; x=1721245123; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ucNUszqGgbpRfZE5T8sdF/JDYyD263mTxEW1kpHw0MY=;
-        b=LDQVz0h99rIjdNa9Hx3HQHi5NJvUPLVRmFnjSKrFJbcjyTwEOQnb9pCtdEJQolDx/X
-         Roh+XzyEkOYydcVOF4E5YEjlHrjdPKJeuWw2rrVXrYz7eGGxfqIQARDUS0bG6ouESlvZ
-         if5IEkmVIRf0bJqqkJV6v1mGhX0VS1cpsbOnAHJSvs0h80S1I0zG5mq8GdI1YGR/tztk
-         eYAQP/qK1gEQZfy+OnO/O2LhlC9jMnFyM8fDu3UWiGWTSOfpQG5g6kYURCV7EISIJ0M5
-         99Z1913hzlG4N7JQz3KAlEm1qBEzjwdi1rnMoQGig2pnl/hKNQS89JuHNfIAgAo81LRU
-         WduA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720640323; x=1721245123;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ucNUszqGgbpRfZE5T8sdF/JDYyD263mTxEW1kpHw0MY=;
-        b=ErOyMD6V6fhI+k+0jqe4QMh4Ni6ku5hF1MPMMrx502EqE8YTmk09PAtOQw3wK7ESa8
-         FBKus76wEFu66c4E+I5ivKJ6Lge8wZH2RlfGywumiRw4CC1ICpEX5Iah0o6SDERO7PNI
-         8b5rzVC/Dl435TftM6R4AeknAnKTNaf3+2L6BuZ5GkaDgI7kFJCRBt9BAGFXAbCQQ7LM
-         9Gd20ERJ47MlnFeNsVJ6cyCgK3mLTDTKRopHIEGocqQcEEj3R/2gC9xJvXtZhWe5N2RK
-         UmcwJ0M9Ze6YGCJd6Iz1/Oow8gVmxgzoG6V3qUQZSaVRQxrI0zjykzYWoYkBmIA4670B
-         DXgg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOh7yzRr5AgXZaoMKUQQj0Odb8P4/x+63euQFLOZxhMoEkXJrdbo6ZZNJwqz3agyZy+R+TvVxxfrHA16qU1Gu/z/E/dA5A4DVdFzwN4WFjSV3jbDyI6s7mgzdqmlUxI6O/XvY3+0uASWx41k1qWnKa
-X-Gm-Message-State: AOJu0YyBUcvUXrEPlXqu79Mqd85YlEnT+ok93FSZe0/FMpYfatO4mvqd
-	Wl2IqjhtR5SWt3HkzbtbP9Xu3tyxt26w+qYYD2dHoFwUdwCfyFauzsEF5A==
-X-Google-Smtp-Source: AGHT+IEuOXyyWPPNk0yoLSmKUKV5JcDXpfD54l4ptMXZhiaBuTy+1ygXqNIRx0nn3b5/jHy0OsiXEQ==
-X-Received: by 2002:a05:6512:48c5:b0:52e:be14:7012 with SMTP id 2adb3069b0e04-52ebe14717emr2370217e87.32.1720640322359;
-        Wed, 10 Jul 2024 12:38:42 -0700 (PDT)
-Received: from krava (85-193-35-231.rib.o2.cz. [85.193.35.231])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6e09fcsm93162645e9.4.2024.07.10.12.38.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 12:38:42 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 10 Jul 2024 21:38:40 +0200
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
-	andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org,
-	clm@meta.com, mingo@kernel.org, paulmck@kernel.org,
-	rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] uprobes: make uprobe_register() return struct uprobe
- *
-Message-ID: <Zo7jQOWyUGp6YTbz@krava>
-References: <20240710140017.GA1074@redhat.com>
- <20240710163022.GA13298@redhat.com>
- <20240710163133.GD13298@redhat.com>
- <Zo67c9nvbRD0h4-b@krava>
- <CAEf4BzaSDUWiSywUNrDtd-yW6p53vFYkZkr5mb461jmUgWV_2g@mail.gmail.com>
+	s=arc-20240116; t=1720640869; c=relaxed/simple;
+	bh=UuJMlch6WraU5bI9HL7iYn7FKqFuRq32/WSvkM0/YRU=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=KaWy+mmS4P5CxXmAdBfiYCGroOfwi0m5HBVDGJ+WgNUT6IAOcYrrggUIQlRPgb3r/mUi4pPwmQoMWYFtgqfalNGt7LHGIkKV008r+KQBtOO3fBy0j12XBXt8hAD9cT5YZAIcLmdheb9v94/KHr3RKLRm5iwAxz1/q2varlVAGcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kRrlAxsg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F70EC32781;
+	Wed, 10 Jul 2024 19:47:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720640868;
+	bh=UuJMlch6WraU5bI9HL7iYn7FKqFuRq32/WSvkM0/YRU=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=kRrlAxsg/ofRQNnJkliK4cbH50GLBLqqkzChA0cmrQglOc2GBRPVh9DhWtAbiFIjR
+	 svKrNUmyoVeyuHeOxl2FvxVMkGfkojVL5El+Kj3HCaELlZZxCBvrUApB++1iA9sagy
+	 SdqVbDTvCXM7bRb58V4IikN0rGjVZnP70IvFOiKQVOSBwCcORWU94A/mEdxyOiGPYn
+	 3EQZx7DrCTp/MrWn7fx2V7qTqOKU4VNkbxyNXvcoFmH0lVAq9z7fmm2aYYPCFZXPPw
+	 TXWONDFVZwpkeU0y7l0Lz7TMFtDbu/fvjnDaJ8xDIBHCWzXUndFqnNykZNlTf4crAN
+	 flcWmNkmoDNHA==
+Message-ID: <cc91609f78905a8c5d5bf28590a1a23b.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzaSDUWiSywUNrDtd-yW6p53vFYkZkr5mb461jmUgWV_2g@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240703-clk-const-regmap-v1-9-7d15a0671d6f@gmail.com>
+References: <20240703-clk-const-regmap-v1-0-7d15a0671d6f@gmail.com> <20240703-clk-const-regmap-v1-9-7d15a0671d6f@gmail.com>
+Subject: Re: [PATCH 09/10] clk: sunxi-ng r40: Constify struct regmap_config
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sunxi@lists.linux.dev, Javier Carrasco <javier.carrasco.cruz@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Javier Carrasco <javier.carrasco.cruz@gmail.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@amd.com>, Neil Armstrong <neil.armstrong@linaro.org>, Samuel Holland <samuel@sholland.org>, Vladimir Zapolskiy <vz@mleia.com>
+Date: Wed, 10 Jul 2024 12:47:46 -0700
+User-Agent: alot/0.10
 
-On Wed, Jul 10, 2024 at 11:23:10AM -0700, Andrii Nakryiko wrote:
-> On Wed, Jul 10, 2024 at 9:49 AM Jiri Olsa <olsajiri@gmail.com> wrote:
-> >
-> > On Wed, Jul 10, 2024 at 06:31:33PM +0200, Oleg Nesterov wrote:
-> >
-> > SNIP
-> >
-> > > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> > > index 467f358c8ce7..7571811127a2 100644
-> > > --- a/kernel/trace/bpf_trace.c
-> > > +++ b/kernel/trace/bpf_trace.c
-> > > @@ -3157,6 +3157,7 @@ struct bpf_uprobe {
-> > >       loff_t offset;
-> > >       unsigned long ref_ctr_offset;
-> > >       u64 cookie;
-> > > +     struct uprobe *uprobe;
-> > >       struct uprobe_consumer consumer;
-> > >  };
-> > >
-> > > @@ -3180,10 +3181,8 @@ static void bpf_uprobe_unregister(struct path *path, struct bpf_uprobe *uprobes,
-> > >  {
-> > >       u32 i;
-> > >
-> > > -     for (i = 0; i < cnt; i++) {
-> > > -             uprobe_unregister(d_real_inode(path->dentry), uprobes[i].offset,
-> > > -                               &uprobes[i].consumer);
-> > > -     }
-> >
-> > nice, we could also drop path argument now
-> 
-> see my comments to Oleg, I think we can/should get rid of link->path
-> altogether if uprobe itself keeps inode alive.
+Quoting Javier Carrasco (2024-07-03 02:50:22)
+> `sun8i_r40_ccu_regmap_config` is not modified and can be declared as
+> const to move its data to a read-only section.
+>=20
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
 
-yea, I was thinking of that, but then it's kind of useful to have it in
-bpf_uprobe_multi_link_fill_link_info, otherwise we have to take it from
-first uprobe in the link, but ok, still probably worth to remove it ;-)
-
-anyway as you wrote it's ok for follow up cleanup, I'll check on that
-
-> 
-> BTW, Jiri, do we have any test for multi-uprobe that simulates partial
-> attachment success/failure (whichever way you want to look at it). It
-> would be super useful to have to check at least some error handling
-> code in the uprobe code base. If we don't, do you mind adding
-> something simple to BPF selftests?
-
-there's test_attach_api_fails, but I think all checked fails are before
-actually calling uprobe_register function
-
-I think there are few ways to fail the uprobe_register, like install it
-on top of int3.. will check add some test for that
-
-jirka
-
-> 
-> >
-> > jirka
-> >
-> > > +     for (i = 0; i < cnt; i++)
-> > > +             uprobe_unregister(uprobes[i].uprobe, &uprobes[i].consumer);
-> > >  }
-> > >
-> > >  static void bpf_uprobe_multi_link_release(struct bpf_link *link)
-> > > @@ -3477,11 +3476,12 @@ int bpf_uprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
-> > >                     &bpf_uprobe_multi_link_lops, prog);
-> > >
-> > >       for (i = 0; i < cnt; i++) {
-> > > -             err = uprobe_register(d_real_inode(link->path.dentry),
-> > > +             uprobes[i].uprobe = uprobe_register(d_real_inode(link->path.dentry),
-> > >                                            uprobes[i].offset,
-> > >                                            uprobes[i].ref_ctr_offset,
-> > >                                            &uprobes[i].consumer);
-> > > -             if (err) {
-> > > +             if (IS_ERR(uprobes[i].uprobe)) {
-> > > +                     err = PTR_ERR(uprobes[i].uprobe);
-> > >                       bpf_uprobe_unregister(&path, uprobes, i);
-> > >                       goto error_free;
-> > >               }
+Applied to clk-next
 
