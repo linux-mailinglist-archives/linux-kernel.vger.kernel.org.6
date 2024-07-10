@@ -1,95 +1,153 @@
-Return-Path: <linux-kernel+bounces-248441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E19C092DD35
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:56:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFBCB92DD37
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 979CE1F2373E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:56:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55DC4B212EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C302A158861;
-	Wed, 10 Jul 2024 23:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65400158861;
+	Wed, 10 Jul 2024 23:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAM7wnhe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ucx2S3yl"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D0563A5;
-	Wed, 10 Jul 2024 23:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE6814A4F7;
+	Wed, 10 Jul 2024 23:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720655809; cv=none; b=ZaPM2IZN4C5F6SGInis3JUjyMieYX1N+jJMCi63lODBLHTuRWoba4bAcahCfxoSCadD4gYYQ5T2ziXZeoHqYBAKhiPFnEK9V7Un1m90V2P5ixN3rFIK+kWjAFYDrVrYHry/aGT5oTuVW+NxZXb5TlpU9bCt/71X9698fzQIUkkg=
+	t=1720655826; cv=none; b=TrVl9DNPndqjJYZ32RuYNH2IKubqGsV6KrSvJj36nYOp6L+W38bR6pYINs/FdOxKyem6dgVs2ystpvhEX0pKbL6larXUWoQ/PEGnPmd0alHSxsyjbSv8DHIv8S7jKbkct2Targ5Qdbqs1VrbMEhY6wpt8+/q4LDC0wnZNcHs8BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720655809; c=relaxed/simple;
-	bh=2tc8RIIyfHOiaSxzCTfQKeyqP8HdT8b53uA/ghjOZWg=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=VubvFZvZCBMd9tju/DKp8BIyTnS9BRxTkJlYugCagmV+w2BlYantRcjyWmClud/cvZRchnkiHATeSbnZLWp7euxe/0+qncdgBY/euM+2QIDdlaRNM2sV7A2/6Zc8PAmTppvIiDvZMyrrZheXASLO/UPDNth9PTV/02n9AflwC9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAM7wnhe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63FD9C32781;
-	Wed, 10 Jul 2024 23:56:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720655808;
-	bh=2tc8RIIyfHOiaSxzCTfQKeyqP8HdT8b53uA/ghjOZWg=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=fAM7wnhekV4nm0zqMszEdt5ToIwVrIMloMD303uJBTeDCflfCUZkQmRHxSUd+8Vda
-	 tS8rIyA3sIc6/9uLhyZVsMlO295+nC9Mr0a1ZHOT2kRua0kmkZvVf2x9cE/JJnQuDO
-	 sR/+bjAIBXl4ALv+wBUETS8lnrtgij+RjLLlnNsoIZO68tc6rKl3EeNPS4JOsB0Lwt
-	 6VPrXmMMZ0pO6Fw4nKzQbUXcotOuf3CUkT1HkR5rNI3M6fvYsQAyYD+o8bfykkY7Qu
-	 GKO5yEXfoTNlCGr16m/9thGN+UThWRgOX8yf2c4Tir6myf71DaCsxmbGIsZTG/hrGC
-	 pDAyn21p2eI/g==
-Message-ID: <b3c450a94bcb4ad0bc5b3c7ee8712cb8.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1720655826; c=relaxed/simple;
+	bh=20LodhAF5NZY/wj9L6s++4NvO1MS0tf0GZZ308h5avA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IfDYfLBU88wsu4nDC+li7trTrG8HHwbQBcg7wDhyVy9VIY7AcrajIDnfs2IJo8D6l60CSqTo/INTfefdowAMTHkSDmkcCBy9Rgo64fueyvJTFUwnhD9FDNZROHUdC4ImTSMZ8G7eY3Y4Iu70T8ngVK3oZLa2Ttv8vlnNXBdtVr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ucx2S3yl; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720655821;
+	bh=vMGO5t7CfB8Jzk6TZKffnuhhdmCstVI6as26I67ukKI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ucx2S3ylHQdUQRgS0VBgz9enzZZfvI67JWL3Nuhc0IRG3+9SawQ5sEQwRPxhDIazU
+	 8p9Eoi+du0hJw7hFYO9MDFkIONnY82sr7Mu1c4gsaQ4r8fXDJHkSjO1nSqBdw6kZUj
+	 tSoJqfrOJA4fWnGBJr/6j/wY4vQ5BNTbc3BdUtu9XoZ44Vm9V150iNRWHVPdR+P8+y
+	 cz7pDmckhLqBSRT6lQuubbR/EfD6fz9yQpfw6H0UsDPjIUg3Ho2K4VHStNwLkqAix4
+	 WqLPjJ1C2BO9eO0UIOoG4UQZY20vXU1tVJtHFu1auTWQDUIt5MFvKlIiYgzCpPVT0m
+	 qvZeu2bhBVKIg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WKFC14dBbz4wZx;
+	Thu, 11 Jul 2024 09:57:01 +1000 (AEST)
+Date: Thu, 11 Jul 2024 09:57:01 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the bcachefs tree with Linus' tree
+Message-ID: <20240711095701.3779f634@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/o5XShApwHJv/aCNkmq65PVx";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/o5XShApwHJv/aCNkmq65PVx
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1903511.1xdlsreqCQ@diego>
-References: <20240709123121.1452394-1-heiko@sntech.de> <20240709123121.1452394-2-heiko@sntech.de> <2e5852b9e94b9a8d0261ce7ad79f4329.sboyd@kernel.org> <1903511.1xdlsreqCQ@diego>
-Subject: Re:  Re: [PATCH 1/6] dt-bindings: clocks: add binding for generic clock-generators
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, quentin.schulz@cherry.de, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-To: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>, mturquette@baylibre.com
-Date: Wed, 10 Jul 2024 16:56:46 -0700
-User-Agent: alot/0.10
 
-Quoting Heiko St=C3=BCbner (2024-07-10 01:02:57)
-> Am Dienstag, 9. Juli 2024, 23:45:20 CEST schrieb Stephen Boyd:
-> > Quoting Heiko Stuebner (2024-07-09 05:31:16)
-> > > diff --git a/Documentation/devicetree/bindings/clock/clock-generator.=
-yaml b/Documentation/devicetree/bindings/clock/clock-generator.yaml
-> > > new file mode 100644
-> > > index 0000000000000..f44e61e414e89
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/clock/clock-generator.yaml
-> > > @@ -0,0 +1,62 @@
-[...]
->=20
->=20
-> > Maybe instead of creating a generic binding just make a binding for
-> > these diodes parts? It certainly looks like a generic binding could come
-> > later when another vendor supports the same binding.
->=20
-> I was actually primarily aiming at solving the Rock 5 ITX clock generator
-> issue described in patch 5, where the 100 MHz clock generator is just
-> described as "100MHz,3.3V,3225" in the schematics, but definitly needs
-> the supply regulator to be enabled [1].
+Hi all,
 
-That looks like a VCO (voltage controlled oscillator). Maybe the
-compatible string can be "voltage-oscillator" or "clock-vco" and it can
-require the vdd-supply.
+Today's linux-next merge of the bcachefs tree got a conflict in:
 
-Those diodes parts look different. They look like PLLs that have a
-reference clock, hence the 'clocks' property I was expecting to see.
-That would use the VCO you have to make the PCIE reference clk
-frequencies. A generic compatible for those diodes parts is likely
-"phase-locked-loop", or "clock-pll", but I'd avoid that given that PLLs
-are almost always complicated and can have multiple output frequencies
-if they have post and pre-dividers, etc. It's easier to be specific
-here and make a binding for the part you have.
+  fs/bcachefs/backpointers.c
+
+between commit:
+
+  92e1c29ae803 ("bcachefs: bch2_btree_write_buffer_maybe_flush()")
+
+from Linus' tree and commit:
+
+  f75ad706a1cf ("bcachefs: fsck_err() may now take a btree_trans")
+
+from the bcachefs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/bcachefs/backpointers.c
+index 6d8b1bc90be0,ca16fa5de7c8..000000000000
+--- a/fs/bcachefs/backpointers.c
++++ b/fs/bcachefs/backpointers.c
+@@@ -903,18 -925,20 +903,18 @@@ static int check_one_backpointer(struc
+  	if (ret)
+  		return ret;
+ =20
+ -	if (!k.k && !bpos_eq(*last_flushed_pos, bp.k->p)) {
+ -		*last_flushed_pos =3D bp.k->p;
+ -		ret =3D bch2_btree_write_buffer_flush_sync(trans) ?:
+ -			-BCH_ERR_transaction_restart_write_buffer_flush;
+ -		goto out;
+ -	}
+ +	if (!k.k) {
+ +		ret =3D bch2_btree_write_buffer_maybe_flush(trans, bp.s_c, last_flushed=
+);
+ +		if (ret)
+ +			goto out;
+ =20
+- 		if (fsck_err(c, backpointer_to_missing_ptr,
+ -	if (fsck_err_on(!k.k,
+ -			trans, backpointer_to_missing_ptr,
+ -			"backpointer for missing %s\n  %s",
+ -			bp.v->level ? "btree node" : "extent",
+ -			(bch2_bkey_val_to_text(&buf, c, bp.s_c), buf.buf))) {
+ -		ret =3D bch2_btree_delete_at_buffered(trans, BTREE_ID_backpointers, bp.=
+k->p);
+ -		goto out;
+++		if (fsck_err(trans, backpointer_to_missing_ptr,
+ +			     "backpointer for missing %s\n  %s",
+ +			     bp.v->level ? "btree node" : "extent",
+ +			     (bch2_bkey_val_to_text(&buf, c, bp.s_c), buf.buf))) {
+ +			ret =3D bch2_btree_delete_at_buffered(trans, BTREE_ID_backpointers, bp=
+.k->p);
+ +			goto out;
+ +		}
+  	}
+  out:
+  fsck_err:
+
+--Sig_/o5XShApwHJv/aCNkmq65PVx
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaPH80ACgkQAVBC80lX
+0GyvewgAnsjpKKPfLH0pUHX6ACTJNY4vTfqRb5tWcdeqk4ymCpT+48J9ykP/QeRa
+HVgySJQe+Vq/2B4ogrYkF2xMawxoHjvCGKAGlnG/Ja110GYS5SK6wAxxGbZFcRhE
+qKIxpEgte5Qa17HTQ6hq0U02y58+lkyJrFKOkL01YiolgpADacbrFlhmFALAXpWY
+LX7368/E76nk9fgWE9XDagLJgQP/K2T6kRTstnw1mtp4UHSe2l5CbjuN+m3H5Oqb
+0SHlolymQoE2MD9MJQYbthVmTqBQwRlPlOLbmZ04MUPHUGbMz2r6j6+SfJTBFO1E
+C8KDvgel/LleUTJS3dsPG9/VBLQcqA==
+=jZHV
+-----END PGP SIGNATURE-----
+
+--Sig_/o5XShApwHJv/aCNkmq65PVx--
 
