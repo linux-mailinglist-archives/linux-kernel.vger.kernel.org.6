@@ -1,132 +1,133 @@
-Return-Path: <linux-kernel+bounces-247679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A50B92D2F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:35:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3E5B92D2F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93CC91C219AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:35:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B828B2347F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258D0192B71;
-	Wed, 10 Jul 2024 13:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4C0192B8F;
+	Wed, 10 Jul 2024 13:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="iPEZVz/a"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b="DkKwCr5/"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F2C12C530
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984B51922FE
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720618547; cv=none; b=a/DR6EPtBR/rXmta/Co92rRPPQUXaNxyQqrNfQM5TbLQSD79IAXXleWsqcvTBSjRWOWYsjHRhwNHS8hDI3RLg4okG/urjSTVDtU00VrmsKGtToMW3d0nUhcNNUkZ4FR0iuQoN9TLI7mNv6K1fFVO97uWg65MPe8EMnGvj8PwW80=
+	t=1720618586; cv=none; b=CKnPldVlBV+SKlFMJl92odWTRtCB1elAu9K0K0QNFO6pv2wgtAGf67fTt4s+ThkCIIXkwPxuiTwIVlD7Bfb+qNfV0mP6TLM+V08YQNxLB9zrcrZmFYWR8uwJKhbqTMLIMJEIK4Xl/EGBa+w0d4tT2MkF2yYQaqJemdYtSpnkjvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720618547; c=relaxed/simple;
-	bh=alfaPAnYlwGLuTXIQSUbSYcOGGMHFgocc2kkQdoI5Ws=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=O4HHPhC+N6F60PHMAMUT4DbmLZ2ubM6AN07lwAKbaCBZbIjhKW+2gY50SVcbPqVgbzCPnQkrsBBP+0XEly8KGAxSa++5Xu0xK29RXRf9ct9AF8EROM7lDbXUlv5or4qPVCXkEm7TGo8xbrLzLTsuubkZfUtQMZ88ckkMosz6jfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=iPEZVz/a; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 5D155A0E1D;
-	Wed, 10 Jul 2024 15:35:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=ONej5SCahqjBap2i9K2K
-	IncrdXGPjQBpSHbxrdrxP3Y=; b=iPEZVz/abMEJGGpAe6Cuv2vorbbtMmrBp8Vq
-	V6jMk82ycMpNG/QzGCJ/MIiHcK1UICR5RQZHPWAsn3ABoRY99uk3ZN2uukhSbZ76
-	d7bae7RjviGwkja4TEHc09HO3hWp2X/YnVlSLdqFus5gc7U06pB+usOBuKxv66UM
-	Ke7jKQFBYIEwJMeKZSYd7BWKNsgKnrXx5L7RmkJtwY6/qE3vqoBnMKO6yix5VE7I
-	hExaoLUwScjgBMlIrvdUw8RfL3yr5cW4VZGR4mcKAO5QSkSZUI+SYUwIoucc5K7W
-	/UEH6w+BZLLcrDDyC6QUhjSpyfSSdBdPaPYu2UzVcLj+pSBgmsrp0g/He6WOTUJ9
-	mlP0CzCYLK27cxfxyjDWvPx/weAT7ybCg3Mq+QmtY6IdrngTBKy3ZUPKUkV/Tjpf
-	RgPMF7WsjydUSxWIgMBINSxweCzG3a6AJ/IVBHbfCD0ttNeCr/kP80tWQ54E7PTn
-	8bvGx9Q9B+PsW4GO38yfNsvVtAtWSlJrpiWRlg5T26MSwLImnrIjcX/uKHv5xTqX
-	0+hSANTZZaUXd3QKjF9PTNHkkmrNdcUG0+vgCSN1rOCs4vX22CI44eatTBfyo2ig
-	w8bH9oFJ9gSseG3BKJsQc4Kd7hInM2W1t6gTKFLQ+B/8m8+nZAJ7kOfhERHiIIO7
-	Hb8MCGY=
-Message-ID: <5fe0e312-0844-4de7-8096-eae24361c0a4@prolan.hu>
-Date: Wed, 10 Jul 2024 15:35:38 +0200
+	s=arc-20240116; t=1720618586; c=relaxed/simple;
+	bh=WcNEWQKtSC+Dj0jBIox3Xr3GfAY2vvuavazXjG/PjMk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YLCisMUQu6sYz4QQvNtiQ+T2ykNGkzGM7l1q/B8vcwZ9ncjhAZQAw58TFAFawe4YE5QXlWJBTi8zVWDKFcMPm32nETEXYjnCT+Zs9XLL2FLpPE7Rno7ro4UK6KbjuDbV/WbKbNf6jfLaidapPeW7UfMWNR54CcHdtEjS1Otcbn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b=DkKwCr5/; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2c95ca60719so3961494a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:36:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=futuring-girl-com.20230601.gappssmtp.com; s=20230601; t=1720618584; x=1721223384; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H+5I4HocYoLlRWtU9xSNyyq0WSjcKj0wutOR3acSvmA=;
+        b=DkKwCr5/HhDZszQ8jD1Q8lP+Glcopv0cWkqQNGOth8+HssWb/d5eH9IXeXTKXmwxaT
+         eTAxEfn94l/8M6KSVdf7ENpxYsb6SzKahAf7LfBC9rNIilrB4mpooCowDRl3dN0oBP8r
+         scXWLG1Ugco/enDpeQyaVI3CWZFePWn0ptHjPuL8Tiz4Z33I0EOKsVblwOESLd5VMN6L
+         fiir6ybTtwpPfehKo2D0mwNDrm+uP6RNKtaohFS4LsY6tILHfHJ8AveLJP/vBBj0O+P6
+         xIzMK0RKMs+1LGWo5RPfBNt5gZMtQ/72JvBpG7b1MA7Lx5n5fS58d6eNEEwmr5ZK2QtZ
+         lsrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720618584; x=1721223384;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H+5I4HocYoLlRWtU9xSNyyq0WSjcKj0wutOR3acSvmA=;
+        b=ZmLdJRn7iOG6NlD9tYmyYa5AyG2+UbfLvAXKDWB/IVlM8vbrpKwFz5I0mQ69ZkrDc6
+         FpZUcUKfNpAacDtyKFUPoq5THPKVDS4jSJ7gC8RntSMpAbx5+CHsoGt/Mb3/5ncq4ugA
+         Pn8lBwzc5DgB4/iAv5dnnYYCqNNBr2TrIA09gjMGvGkrXBJ4mBQ4EPXXp54BFHq9gHbs
+         Gk6cdBUoid/DHH3WbuKdLUPlmm46Ae/EJbvaxTaafZQO4rHfQ9RnUbex+nGD26FApvbn
+         Stn2Uc+c+uBid5W++SYLPjBpwCPb2ivO0JvB7osUyrAZvTCNqCKeY8aU4RhgbFm7K9EA
+         cccA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsbmE3GiiRYF2H0HTme7FqZjV50OQjoHKJyZLiUxz00bxY7PR4ql2l3b+XYnVTEQLv5mr13gAOKQP8UU/wfSLmGxmqKj2d3cTKEI8n
+X-Gm-Message-State: AOJu0YywATMDV9vzfocCGnFTrWpGZBeChB9hv0ObrWGmEqueeJovX+ZE
+	tj8LDCf6DDpO3aqbAiFsOPOZSmLxW/WhtIBZnWvrgTeG6dZxpNSa78gsRZ8U0yq2rL9vSuH2E7h
+	jH01BXwlUUAUw2C05gZ3HDo16engsbG9wZSiwqQ==
+X-Google-Smtp-Source: AGHT+IGVWjcx2CIKKhJpC93dsIDJRQ59BMorlnyl7TRS9pMm/YWO3qF6CzwWosQ+pKzgyemjtuMmhhNtcB7dLeMy0JM=
+X-Received: by 2002:a17:90a:4b46:b0:2c9:65f5:5f61 with SMTP id
+ 98e67ed59e1d1-2ca35be8f0emr4813325a91.9.1720618583619; Wed, 10 Jul 2024
+ 06:36:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mtd: spi-nor: sst: Factor out common write operation to
- `sst_nor_write_data()`
-To: Pratyush Yadav <pratyush@kernel.org>
-CC: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>, "Tudor
- Ambarus" <tudor.ambarus@linaro.org>, Michael Walle <mwalle@kernel.org>,
-	"Miquel Raynal" <miquel.raynal@bootlin.com>, Richard Weinberger
-	<richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-References: <20240710091401.1282824-1-csokas.bence@prolan.hu>
- <mafs07cdto0t9.fsf@kernel.org>
-Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <mafs07cdto0t9.fsf@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94854647461
+References: <20240709110658.146853929@linuxfoundation.org>
+In-Reply-To: <20240709110658.146853929@linuxfoundation.org>
+From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+Date: Wed, 10 Jul 2024 22:36:12 +0900
+Message-ID: <CAKL4bV4bzzKhUv7u3SUUDD=dp_KZ35K43faoZp9aQp5GmUfTCA@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/139] 6.6.39-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi!
+Hi Greg
 
-On 7/10/24 15:04, Pratyush Yadav wrote:
->> Notes:
->>      RFC: I'm thinking of removing SPINOR_OP_BP in favor of
->>      SPINOR_OP_PP (they have the same value). SPINOR_OP_PP
->>      is the "standard" name for the elementary unit-sized
->>      (1 byte, in the case of NOR) write operation. I find it
->>      confusing to have two names for the same operation,
->>      so in a followup I plan to remove the vendor-specific
->>      name in favor of the standard one.
-> 
-> Even though the operations have the same opcode, I see them as different
-> operations. One is a byte program: it can only write one byte at a time.
-> The other is a page program: it can write up to one page (256 bytes
-> usually) at a time.
-> 
-> So I would actually find it more confusing if you use page program in a
-> situation where the operation is actually a byte program, and attempting
-> to program the whole page will fail.
+On Tue, Jul 9, 2024 at 8:12=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.39 release.
+> There are 139 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 11 Jul 2024 11:06:25 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.6.39-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-Yes, SST engineers took some _unconventional_ steps when designing this 
-family... However, there are no 256 byte pages in these chips. You 
-either program it one byte at a time, or as a sequence of two byte 
-values. So, in my eyes, that makes it a Flash where the page size is 1 
-byte, and the vendor-specific write is something extra added on (and 
-mind you, that's not a page program either, you just feed it an 
-*arbitrary* even number of bytes, there really are no pages here at all, 
-only erase sectors).
+6.6.39-rc1 tested.
 
-> Not directly related to this patch, but when reviewing this patch I
-> noticed another small improvement you can make. [...]
-> Here, we do a write disable. Then if a one-byte write is needed, do a
-> write enable again, write the data and write disable.
-> 
-> Do we really need to toggle write enable between these? If not, it can
-> be simplified to only do the write disable after all bytes have been
-> written.
+Build successfully completed.
+Boot successfully completed.
+No dmesg regressions.
+Video output normal.
+Sound output normal.
 
-Honestly, I'm not sure, I was too afraid to touch that part. However, 
-from the datasheet of SST25VF040B I presume that if we did not toggle 
-it, then the Flash chip would interpret the 0x02 opcode and its argument 
-as another 2 bytes of data to write at the end. Byte Program takes 
-exactly 1 argument, so it can be followed by another command, but AAI WP 
-goes on until ~CS goes high.
+Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
 
- > Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
+[    0.000000] Linux version 6.6.39-rc1rv
+(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.1.1 20240522, GNU ld (GNU
+Binutils) 2.42.0) #1 SMP PREEMPT_DYNAMIC Wed Jul 10 21:13:34 JST 2024
 
-Thanks!
+Thanks
 
-Bence
-
+Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
