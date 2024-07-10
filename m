@@ -1,173 +1,162 @@
-Return-Path: <linux-kernel+bounces-246858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE0692C812
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:48:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 581D892C817
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B6BA1F23D3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:48:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D6EC1F23DAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 01:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B62B644;
-	Wed, 10 Jul 2024 01:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02298F6C;
+	Wed, 10 Jul 2024 01:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OQuOXysx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NE207wwx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E47B647;
-	Wed, 10 Jul 2024 01:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F8979C0;
+	Wed, 10 Jul 2024 01:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720576086; cv=none; b=J6ShYEp5yWTDU/qzHxwqI9Dw9NWjsWp/I7rdY0+D1FcuO8vF+QmI8HAz69+F6z4dL+Inr9eGdmZ+EneQAMVktP0ZO9OnBaaXDbw/Ib2LnrsQtuBDP/3YJ1iOrJxZT0s6uTA6X798M8rRcQSu9yTw1s1lR/da6XDHFNtcA2TPMdc=
+	t=1720576183; cv=none; b=ltVb5zuKfjPaU/MgNm3BcyUYUqe8yyDA0njWQkex2KWymHcS/8gpprxaN0hONEGSa8b+LocUxbtrpjQoxz2VEgF6hMOqoixMiQaK76ABYywrowyg+00eHE54SNUdcFf/aiwc2vWJYf6qUzWXMSOPmBg9UKLvMjVWLZT60UYAvEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720576086; c=relaxed/simple;
-	bh=vD2sV5W0bYeBHvrmPBn3ILNAFY37y/wzNJt1a7Ii+18=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Ij7XUG5jRg1914ESn2tU0wLlfQC1DURCbpXWmw6AWHYoyaPix8pJchvtTfsEKXXrU2k9rg+Jkz59RfmsonZMJS7t5OSMVSsCk2bAMc0EBlU45T4sTG5UtW12PDxE9euaEALcwKuIhr0DQfmdHbugWMQqwIVmWTUiyoMQaj9gEUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OQuOXysx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46A0clsu007187;
-	Wed, 10 Jul 2024 01:47:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JiA0RxQryTXBcCfDA4FDOuiea7ag/p3qvsCr1kY0UcI=; b=OQuOXysx4ck9keOZ
-	YlTHy5CpDlKKzyn4UVmuh1e4xYSpKFb+kcN4ovqMdZPgn+Ms7G+6MO2D14DXxLk4
-	sY+FHOuz9ty4+RjjJV/gYjpVUGu2VHf/aMbXtwMZGYbklquTdYPGJaPGYZWqT/JV
-	podrY72sia5mL3dJ+XiS59WE5vVfXJupbciwrnKp+qaswbOGlxJDZnjnVXxZ1k6s
-	EwnFP1ASePMIT2qO/SLqI9kiNTjOJSPLwx1AQp0Qe79sDDDpoViaHZcm3nc+d9Rg
-	c9cs8ynD1SXNksMbtxg3LPuAsRk4nVwD2xistSNv85JKd/nQUrpIoZVg+L9xRpWR
-	6WwU8Q==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x5185ap-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jul 2024 01:47:56 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46A1luCN011288
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jul 2024 01:47:56 GMT
-Received: from [10.239.132.150] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
- 18:47:49 -0700
-Message-ID: <1fafb584-fc49-45be-a8a4-4027739eba32@quicinc.com>
-Date: Wed, 10 Jul 2024 09:47:47 +0800
+	s=arc-20240116; t=1720576183; c=relaxed/simple;
+	bh=hD4LrztM6N9+rwV/yVX+lKNIMz5a4kUkTDbd+sFYw3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qg6eNHbIbmfqufFPd/zV+SHq+M/NTrifkSnIBIhPMna0pA43VbKwnTr2bwkMLOcMNyfCyJsiCKcooNXt5eBMan1G/pX+yRN3f6fozfzdbOm8MiyBAv32/H0LQORh7XMFpnMDHF9AJgjX7VSQ6cVkxsk/L7FwMtMX1YdULa1ojOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NE207wwx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7534C3277B;
+	Wed, 10 Jul 2024 01:49:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720576182;
+	bh=hD4LrztM6N9+rwV/yVX+lKNIMz5a4kUkTDbd+sFYw3g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NE207wwxzpMle/bQPfHJVKud6rOkVPB4B99dxMeAxuothw/TWo6bebO3D1fjk1NqE
+	 2FDmsUkmdrpVIVMIS7mpEf9JDfZ5fxGJjlxnumxWGD425CrZv4LBj/VNyebzaXWwZK
+	 3fq2SQuf5rGOJKW+JsOwWzEEYVVwAVNefl6ekA+YQ7qP27k16YUrGw3OkK790sKsQj
+	 vcv8Y3ASG7gR6+AmphqRUqQ8G1NRtEFk5V9y3FjOJBWRSWYxmXxeIQFvuz+CNj4SVh
+	 SiU7+/sIb0scil/g5UHME8ErzegKyJ3MpQ8VI2UhpGkx5SC5QE3oRnol91tkVzAJ1z
+	 I9odHWU8vzPpQ==
+Date: Wed, 10 Jul 2024 09:49:34 +0800
+From: Peter Chen <peter.chen@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Oliver Neukum <oneukum@suse.com>,
+	Alan Stern <stern@rowland.harvard.edu>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] usb: add missing MODULE_DESCRIPTION() macros
+Message-ID: <20240710014934.GA2914204@nchen-desktop>
+References: <20240618-md-drivers-usb-v2-1-e9b20a5eb7f9@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] PCI: qcom: Add QCS9100 PCIe compatible
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Tengfei Fan
-	<quic_tengfan@quicinc.com>
-CC: Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
-	<kw@linux.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>, <kernel@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240709-add_qcs9100_pcie_compatible-v2-0-04f1e85c8a48@quicinc.com>
- <20240709175823.GB44420@thinkpad>
-From: "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <20240709175823.GB44420@thinkpad>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bK-Zf2hMVrVzkh2iqgT_an2tFVH64yjs
-X-Proofpoint-ORIG-GUID: bK-Zf2hMVrVzkh2iqgT_an2tFVH64yjs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_12,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- suspectscore=0 impostorscore=0 mlxlogscore=964 mlxscore=0 bulkscore=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407100012
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618-md-drivers-usb-v2-1-e9b20a5eb7f9@quicinc.com>
 
-
-
-On 7/10/2024 1:58 AM, Manivannan Sadhasivam wrote:
-> On Tue, Jul 09, 2024 at 10:59:28PM +0800, Tengfei Fan wrote:
->> Introduce support for the QCS9100 SoC device tree (DTSI) and the
->> QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
->> While the QCS9100 platform is still in the early design stage, the
->> QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
->> mounts the QCS9100 SoC instead of the SA8775p SoC.
->>
->> The QCS9100 SoC DTSI is directly renamed from the SA8775p SoC DTSI, and
->> all the compatible strings will be updated from "SA8775p" to "QCS9100".
->> The QCS9100 device tree patches will be pushed after all the device tree
->> bindings and device driver patches are reviewed.
->>
+On 24-06-18 08:18:26, Jeff Johnson wrote:
+> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/core/usbcore.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/mon/usbmon.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/class/usbtmc.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/storage/uas.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/chipidea/ci_hdrc_msm.o
 > 
-> Are you going to remove SA8775p compatible from all drivers as well?
-
-SA8775p compatible and corresponding scmi solutions for the driver will
-be taken care from auto team, currently IOT team is adding QCS9100
-support only. Auto team have a dependency on the current QCS9100(IOT
-non-scmi solution) and SA8775p(AUTO SCMI solution) device tree splitting
-effort.
-
-More background and information can be referenced from [1].
-[1] v1:
-https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
 > 
-> - Mani
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> This is the remaining one-off fixes in usb.
 > 
->> The final dtsi will like:
->> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-3-quic_tengfan@quicinc.com/
->>
->> The detailed cover letter reference:
->> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
->>
->> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
->> ---
->> Changes in v2:
->>   - Split huge patch series into different patch series according to
->>     subsytems
->>   - Update patch commit message
->>
->> prevous disscussion here:
->> [1] v1: https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
->>
->> ---
->> Tengfei Fan (2):
->>       dt-bindings: PCI: Document compatible for QCS9100
->>       PCI: qcom: Add support for QCS9100 SoC
->>
->>  Documentation/devicetree/bindings/pci/qcom,pcie-sa8775p.yaml | 5 ++++-
->>  drivers/pci/controller/dwc/pcie-qcom.c                       | 1 +
->>  2 files changed, 5 insertions(+), 1 deletion(-)
->> ---
->> base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
->> change-id: 20240709-add_qcs9100_pcie_compatible-ceec013a335d
->>
->> Best regards,
->> -- 
->> Tengfei Fan <quic_tengfan@quicinc.com>
->>
+> Corrections to these descriptions are welcomed. I'm not an expert in
+> this code so in most cases I've taken these descriptions directly from
+> code comments, Kconfig descriptions, or git logs.  History has shown
+> that in some cases these are originally wrong due to cut-n-paste
+> errors, and in other cases the drivers have evolved such that the
+> original information is no longer accurate.
 > 
+> Let me know if any of these changes need to be segregated into
+> separate patches to go through different maintainer trees.
+> ---
+> Changes in v2:
+> - Updated drivers/usb/core/usb.c description per Alan
+> - Link to v1: https://lore.kernel.org/r/20240611-md-drivers-usb-v1-1-8b8d669e8e73@quicinc.com
+> ---
+>  drivers/usb/chipidea/ci_hdrc_msm.c | 1 +
+>  drivers/usb/class/usbtmc.c         | 1 +
+>  drivers/usb/core/usb.c             | 1 +
+>  drivers/usb/mon/mon_main.c         | 1 +
+>  drivers/usb/storage/uas.c          | 1 +
+>  5 files changed, 5 insertions(+)
+> 
+> diff --git a/drivers/usb/chipidea/ci_hdrc_msm.c b/drivers/usb/chipidea/ci_hdrc_msm.c
+> index 7b5b47ce8a02..1661639cd2eb 100644
+> --- a/drivers/usb/chipidea/ci_hdrc_msm.c
+> +++ b/drivers/usb/chipidea/ci_hdrc_msm.c
+> @@ -303,4 +303,5 @@ module_platform_driver(ci_hdrc_msm_driver);
+>  
+>  MODULE_ALIAS("platform:msm_hsusb");
+>  MODULE_ALIAS("platform:ci13xxx_msm");
+> +MODULE_DESCRIPTION("ChipIdea Highspeed Dual Role Controller");
 
--- 
-Thx and BRs,
-Aiqun(Maria) Yu
+MODULE_DESCRIPTION("MSM ChipIdea Glue Layer Driver");
+
+Peter
+
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/usb/class/usbtmc.c b/drivers/usb/class/usbtmc.c
+> index 311007b1d904..6bd9fe565385 100644
+> --- a/drivers/usb/class/usbtmc.c
+> +++ b/drivers/usb/class/usbtmc.c
+> @@ -2592,4 +2592,5 @@ static struct usb_driver usbtmc_driver = {
+>  
+>  module_usb_driver(usbtmc_driver);
+>  
+> +MODULE_DESCRIPTION("USB Test & Measurement class driver");
+>  MODULE_LICENSE("GPL");
+> diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
+> index a0c432b14b20..0b4685aad2d5 100644
+> --- a/drivers/usb/core/usb.c
+> +++ b/drivers/usb/core/usb.c
+> @@ -1150,4 +1150,5 @@ static void __exit usb_exit(void)
+>  
+>  subsys_initcall(usb_init);
+>  module_exit(usb_exit);
+> +MODULE_DESCRIPTION("USB core host-side support");
+>  MODULE_LICENSE("GPL");
+> diff --git a/drivers/usb/mon/mon_main.c b/drivers/usb/mon/mon_main.c
+> index 824904abe76f..af852d53aac6 100644
+> --- a/drivers/usb/mon/mon_main.c
+> +++ b/drivers/usb/mon/mon_main.c
+> @@ -419,4 +419,5 @@ static void __exit mon_exit(void)
+>  module_init(mon_init);
+>  module_exit(mon_exit);
+>  
+> +MODULE_DESCRIPTION("USB Monitor");
+>  MODULE_LICENSE("GPL");
+> diff --git a/drivers/usb/storage/uas.c b/drivers/usb/storage/uas.c
+> index a48870a87a29..9b8f578eef53 100644
+> --- a/drivers/usb/storage/uas.c
+> +++ b/drivers/usb/storage/uas.c
+> @@ -1280,6 +1280,7 @@ static void __exit uas_exit(void)
+>  module_init(uas_init);
+>  module_exit(uas_exit);
+>  
+> +MODULE_DESCRIPTION("USB Attached SCSI driver");
+>  MODULE_LICENSE("GPL");
+>  MODULE_IMPORT_NS(USB_STORAGE);
+>  MODULE_AUTHOR(
+> 
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240611-md-drivers-usb-86999d57ed16
+> 
 
