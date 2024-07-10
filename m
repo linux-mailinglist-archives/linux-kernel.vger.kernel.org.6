@@ -1,96 +1,107 @@
-Return-Path: <linux-kernel+bounces-247122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3523292CB85
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:00:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EB9E92CB88
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E40D9283D39
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:00:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEB2A1F24233
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1ED80C0C;
-	Wed, 10 Jul 2024 07:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UMbZNrIn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F20823C3;
+	Wed, 10 Jul 2024 07:01:00 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B298BEC
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE12580BF8;
+	Wed, 10 Jul 2024 07:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720594841; cv=none; b=jJYEtOIr0owJ/C49AjgjfWb6uxpm4Rxct8DdPVWj0LJV/owZOf6DCvvL5S6RDl752ulWT6ZcM7N77uBjrFmHZMpHvh3ckKKyRrqu4qBApZVm5wpW7CljiWIGqLjHf25AQYuw6ym2piZPNxQT9VsVBJUVlUPUKVCyVhsb0kNlkUg=
+	t=1720594860; cv=none; b=OA/fTP1vVDlSs3+jOUTNigSUSBryAl7cUHArOeC6tPX989MjLXU2nll2wKVa4oJ2iWMok5Y+KzpoUOImYVlKuimgEDQleCKu0aHrIX0+OwfOVMS1OxLgLpgJQBWo4PkZWLhTqigHf2w/3PRTPJXHjcJoiin7evRCbMcB5xxLQTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720594841; c=relaxed/simple;
-	bh=x8GBngejj0m77ddusgbzZvxU8YJqB49Y9l+UOIB4xmg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ec0Rn41kMlKj3TZY2q8rC2VAkomtwvCmzYt9dNMiDIYxrhqx5ea65G3YpU1b3vNgq0IpyDV2FvoQq24kExFkEgcJXkj6X09Gf4HcUUATHBQBqRfnRJWA3EbQG7DkWKgB5gvPcUSQghj+2kGwHBK6a3Zz9XGmRFvGDjpCM22nWzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UMbZNrIn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71010C32781;
-	Wed, 10 Jul 2024 07:00:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720594840;
-	bh=x8GBngejj0m77ddusgbzZvxU8YJqB49Y9l+UOIB4xmg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UMbZNrInU+R3SFzHh1k6lwaOD7cMdHRtOLtPAfepFHCUCGV3m2QhuaxfZmACJ95Pu
-	 7EMjTYfHHKPtlm8Rm8+BbFK2VNR6rzK62fBB/qCq0KC2q4ZEgUqYAqnJCcjKgkD6zi
-	 W3AFN5eqkm+yZVVWcLuYiDTL4k2okPpT0a7dO0D55hfhWJ/9D4YD1LIA/wnHPaS7XM
-	 Pa/VLN1d37xlf53TITz02NTWdTf3qagr0Ng+6kCaHquQEtkgFQJslS7XJb807IqIMa
-	 2PTOdrxyjUKvjz5/OdOk3hTWn/p6IZl8BDyDD98WhrcPo4cdf2+aYCorC2TGcoqriV
-	 y4Bm3wZMTjiEQ==
-Date: Wed, 10 Jul 2024 09:00:37 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Johan Jonker <jbx6244@gmail.com>
-Cc: Andy Yan <andy.yan@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, 
-	hjc@rock-chips.com, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
-	airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] drm/rockchip: rk3066_hdmi: change to bridge driver
- mode
-Message-ID: <20240710-daft-brave-woodlouse-eb76b7@houat>
-References: <08fc2878-722e-4884-94f3-19ec4717cccd@gmail.com>
+	s=arc-20240116; t=1720594860; c=relaxed/simple;
+	bh=WY/+69caToVAW5kyLQ8q/hb0Eacuf9bFcTcP6mPygGs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q/933pSvzECh/Y0UOYVXUgmwzRn2zAnCcx56fAtkil1yUlTBz43kgeocXbT7iTFiArIO0Z6U2NSkr9KaHtfj7uskJuYbYC8wbLn88M6kkJ0TYkRSs6AhmOqgXSnpxPLCYbGeq+QJpoBz5pDid+/UKjNvkoNZzt5wChOGRD+H0LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowAAnEyCXMY5m1lSGAg--.48744S2;
+	Wed, 10 Jul 2024 15:00:50 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: adrian.hunter@intel.com,
+	ulf.hansson@linaro.org
+Cc: linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>
+Subject: [PATCH] mmc: sdhci-pxav3: Fix potential NULL dereference in sdhci_pxav3_probe
+Date: Wed, 10 Jul 2024 15:00:39 +0800
+Message-Id: <20240710070039.318658-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="55im7zqn4h44tcza"
-Content-Disposition: inline
-In-Reply-To: <08fc2878-722e-4884-94f3-19ec4717cccd@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAAnEyCXMY5m1lSGAg--.48744S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFWfuF18Ww4xJFyDZFWfGrg_yoW8JFWkpa
+	15XFW5KrWUKr1fGas5Z345ua1SkF1Fv3y29Fs3Jw1S9FZ5tryDJan7CFy0yr1UXFW5G3W3
+	JF4DX345CrykXaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkK14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+	1j6rxdM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
+	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
+	0VAGYxC7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
+	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
+	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUb0PfJ
+	UUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
+In sdhci_pxav3_probe(), mv_mbus_dram_info() returns NULL if
+CONFIG_PLAT_ORION macro is not defined. Fix this bug by adding NULL check.
 
---55im7zqn4h44tcza
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: aa8165f91442 ("mmc: sdhci-pxav3: do the mbus window configuration after enabling clocks")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/mmc/host/sdhci-pxav3.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Hi,
+diff --git a/drivers/mmc/host/sdhci-pxav3.c b/drivers/mmc/host/sdhci-pxav3.c
+index 3af43ac05825..ac89cb2eb9f6 100644
+--- a/drivers/mmc/host/sdhci-pxav3.c
++++ b/drivers/mmc/host/sdhci-pxav3.c
+@@ -375,6 +375,7 @@ static int sdhci_pxav3_probe(struct platform_device *pdev)
+ 	struct sdhci_host *host = NULL;
+ 	struct sdhci_pxa *pxa = NULL;
+ 	const struct of_device_id *match;
++	const struct mbus_dram_target_info *dram;
+ 	int ret;
+ 
+ 	host = sdhci_pltfm_init(pdev, &sdhci_pxav3_pdata, sizeof(*pxa));
+@@ -406,7 +407,12 @@ static int sdhci_pxav3_probe(struct platform_device *pdev)
+ 		ret = armada_38x_quirks(pdev, host);
+ 		if (ret < 0)
+ 			goto err_mbus_win;
+-		ret = mv_conf_mbus_windows(pdev, mv_mbus_dram_info());
++		dram = mv_mbus_dram_info();
++		if (!dram) {
++			ret = 0;
++			goto err_mbus_win;
++		}
++		ret = mv_conf_mbus_windows(pdev, dram);
+ 		if (ret < 0)
+ 			goto err_mbus_win;
+ 	}
+-- 
+2.25.1
 
-On Tue, Jul 09, 2024 at 08:01:26PM GMT, Johan Jonker wrote:
-> Change rk3066_hdmi.c to bridge driver mode.
->=20
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-
-Generally speaking, I think you should use the new HDMI bridge
-infrastructure that recently landed in drm-misc-next.
-
-Maxime
-
---55im7zqn4h44tcza
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZo4xkAAKCRAnX84Zoj2+
-dryRAX9YiJOsTbpyWzR2aqSOG506OuP0LZ1kg1b+brmWtuQR3QWgW3B3LGcd5c0Q
-IzhZ+zEBfjJE9PFtVPe+zJqbdBk4Td9pLMrSbYo1e0i+pLwapXFH+E4Mo3k5i9M8
-ZiupE7/QtA==
-=elhX
------END PGP SIGNATURE-----
-
---55im7zqn4h44tcza--
 
