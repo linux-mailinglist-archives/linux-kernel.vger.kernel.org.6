@@ -1,136 +1,165 @@
-Return-Path: <linux-kernel+bounces-247335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6811892CE22
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:26:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D38692CE24
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:26:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22E9E2840D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:26:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 124191F23F08
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5D618FA09;
-	Wed, 10 Jul 2024 09:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB4618F2FC;
+	Wed, 10 Jul 2024 09:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gmM0zSHW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="faewIIti"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1D684A5B;
-	Wed, 10 Jul 2024 09:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3DB84A5B;
+	Wed, 10 Jul 2024 09:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720603574; cv=none; b=rACnbm6IOg6uFbFKV+GNff8WjgO6nCjDv7RzoAyCY/mejfO2Ik/am9f0txcnzj5wV5Hx6RksrmI+m7jwaaN4zgBrezTBqarI0bwaCp633I7FenYiLoawjLMnpJ8pde/U2rjglFP2imbdKdQ9H39E23U6VIc6meYxD0nJLqvgAk4=
+	t=1720603585; cv=none; b=uum8kLrhK/GHl7192uA9A6bE/3NnF7knzvJDkERShpp/3fGgM3F7627jtTGUYuimd/g7iCcSbO8NeFFqW4WE5D+EYaAoPzh7Kr4cZG2jNFtuCBSwcv67Zhwh8l5i2EdC4kpCDkkvTw9MtCB3+yCufrIxoS+Qqj2/AEcPplwTFDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720603574; c=relaxed/simple;
-	bh=EzM+QQuPvXYqipkCKXA/ADx49Lc0KveRdc2IsyP5wb0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZBJL5XfaNIym/b7jLXBA7JDfPuwufBQPSkUK1i6SywRuvG1YQBCbe4DkxNzwKhzxn3ESHIS2OE4z9DFUIoB+xKxaN2EjlypUMr3KxDArq7w4G3oMeTFISrXAx7qmhZlifsWft3Ndv7QtGMYoqoQxRQd+TgIAMJV/zfDVc88kzZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gmM0zSHW; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720603572; x=1752139572;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=EzM+QQuPvXYqipkCKXA/ADx49Lc0KveRdc2IsyP5wb0=;
-  b=gmM0zSHWvaQEKp/BXTO4iGyqw+I0nwFKFVL6NbuLKHVSN/k9yUfxp8S4
-   dovhvgm46imsc9Zb0E/vBRuxK0vsMHtSY6PRlMCR13dqdV6fylcPE6mVL
-   ydvQddJiCHj9DIBnqutkkzJhRmCQjG+EPV0DX4XdBQ2M4CT5lNpw+fdTO
-   RnR/+Q5A6Mnprw7JvLsbwwO8MjUj5a/JtYxcszamuXRFAgapU7FnvP+rr
-   HHhrTsQdTeatRpwfkcZsluN5Z8L+YIX+eKwQ+8QEkbZcusDuhXt0gIVxD
-   LGw7nEopTA88aEAfQSuUxra+kDNz0ncsVooCmIQn318+JH2W4WCjlq5Em
-   Q==;
-X-CSE-ConnectionGUID: s0v9eu3RQl6Gae2SX0oP3Q==
-X-CSE-MsgGUID: dHBQIe/+QXGY9vaudgVSwg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11128"; a="18017238"
-X-IronPort-AV: E=Sophos;i="6.09,197,1716274800"; 
-   d="scan'208";a="18017238"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 02:26:11 -0700
-X-CSE-ConnectionGUID: qvEQbwiDT9qu8ZygTKhhrA==
-X-CSE-MsgGUID: zuQvFWvCRFi3E4z3B1FB/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,197,1716274800"; 
-   d="scan'208";a="48057791"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.49.253])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 02:26:10 -0700
-Message-ID: <ed01edf2-f3d6-4a93-884d-08525ddaac03@intel.com>
-Date: Wed, 10 Jul 2024 12:26:04 +0300
+	s=arc-20240116; t=1720603585; c=relaxed/simple;
+	bh=1zElswsvJ3pJJN6VbPn+rOgECvzW/EETLvmAKoGVLuA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XbHSPeB9/H7871PFO9wDYcBV/PT3eL+8mMLO2GFgTfAK93Rv1f+GKODZDQSz4nZDp/froImXa17Ag7KpQDWSpHuR705h2ijPjfHAiTATiwiUJAzN7Amij0UOeIDSWDG3YL2DAWqMIybcK6mrcwTQU6bT43UsctInofbTqRfkCDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=faewIIti; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 7386eb9c3e9e11ef87684b57767b52b1-20240710
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=5JQ5bL4uRYPelWxEtL/T3yFSFEnrFbUa7wxiQo1QJ1Q=;
+	b=faewIItifotUUTQ87g8hRaU+6aNxhAB84yvqUfuRVWEJISzaFBCmgSjPUqvJ4JBTmfPRBeKIrRA5mQkRJq1gYM9DTG0Wv0H4RQvCst84KohsiXcQ/Fb2m3naq42TtgWu0Brsjx8/qyEU00xHgHzkzNWp3SEkTO2k+gwwpGphXYo=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.40,REQID:caa6c047-9202-4507-976c-1b1bc9897b53,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:ba885a6,CLOUDID:c10e4a0d-46b0-425a-97d3-4623fe284021,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 7386eb9c3e9e11ef87684b57767b52b1-20240710
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
+	(envelope-from <chris.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1161178547; Wed, 10 Jul 2024 17:26:13 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 10 Jul 2024 02:26:15 -0700
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 10 Jul 2024 17:26:15 +0800
+From: Chris Lu <chris.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>,
+	Steve Lee <steve.lee@mediatek.com>, linux-bluetooth
+	<linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
+Subject: [PATCH v2] Bluetooth: btmtk: Fix btmtk.c undefined reference build error
+Date: Wed, 10 Jul 2024 17:26:14 +0800
+Message-ID: <20240710092614.7297-1-chris.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: sdhci-pxav3: Fix potential NULL dereference in
- sdhci_pxav3_probe
-To: Ma Ke <make24@iscas.ac.cn>, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240710070039.318658-1-make24@iscas.ac.cn>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240710070039.318658-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 10/07/24 10:00, Ma Ke wrote:
-> In sdhci_pxav3_probe(), mv_mbus_dram_info() returns NULL if
-> CONFIG_PLAT_ORION macro is not defined. Fix this bug by adding NULL check.
+MediaTek move some usb interface related function to btmtk.c which
+may cause build failed if BT USB Kconfig wasn't enabled.
+Fix undefined reference by adding config check.
 
-Looks like mv_conf_mbus_windows() in sdhci-pxav3.c already checks
-for NULL i.e.
+btmtk.c:(.text+0x89c): undefined reference to `usb_alloc_urb'
+btmtk.c:(.text+0x8e3): undefined reference to `usb_free_urb'
+btmtk.c:(.text+0x956): undefined reference to `usb_free_urb'
+btmtk.c:(.text+0xa0e): undefined reference to `usb_anchor_urb'
+btmtk.c:(.text+0xb43): undefined reference to `usb_autopm_get_interface'
+btmtk.c:(.text+0xb7e): undefined reference to `usb_autopm_put_interface'
+btmtk.c:(.text+0xf70): undefined reference to `usb_disable_autosuspend'
+btmtk.c:(.text+0x133a): undefined reference to `usb_control_msg'
 
-static int mv_conf_mbus_windows(struct platform_device *pdev,
-				const struct mbus_dram_target_info *dram)
-{
-	int i;
-	void __iomem *regs;
-	struct resource *res;
+Fixes: 39a9e1c69e74 ("Bluetooth: btmtk: move btusb_mtk_hci_wmt_sync to btmtk.c")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202407091928.AH0aGZnx-lkp@intel.com/
+Co-developed-by: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Chris Lu <chris.lu@mediatek.com>
+---
+Change from v1 to v2:
+-fix and update commit message warning
+---
+ drivers/bluetooth/btmtk.c | 2 ++
+ drivers/bluetooth/btmtk.h | 4 ++++
+ 2 files changed, 6 insertions(+)
 
-	if (!dram) {
-		dev_err(&pdev->dev, "no mbus dram info\n");
-		return -EINVAL;
-	}
-
-
-> 
-> Fixes: aa8165f91442 ("mmc: sdhci-pxav3: do the mbus window configuration after enabling clocks")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
->  drivers/mmc/host/sdhci-pxav3.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-pxav3.c b/drivers/mmc/host/sdhci-pxav3.c
-> index 3af43ac05825..ac89cb2eb9f6 100644
-> --- a/drivers/mmc/host/sdhci-pxav3.c
-> +++ b/drivers/mmc/host/sdhci-pxav3.c
-> @@ -375,6 +375,7 @@ static int sdhci_pxav3_probe(struct platform_device *pdev)
->  	struct sdhci_host *host = NULL;
->  	struct sdhci_pxa *pxa = NULL;
->  	const struct of_device_id *match;
-> +	const struct mbus_dram_target_info *dram;
->  	int ret;
->  
->  	host = sdhci_pltfm_init(pdev, &sdhci_pxav3_pdata, sizeof(*pxa));
-> @@ -406,7 +407,12 @@ static int sdhci_pxav3_probe(struct platform_device *pdev)
->  		ret = armada_38x_quirks(pdev, host);
->  		if (ret < 0)
->  			goto err_mbus_win;
-> -		ret = mv_conf_mbus_windows(pdev, mv_mbus_dram_info());
-> +		dram = mv_mbus_dram_info();
-> +		if (!dram) {
-> +			ret = 0;
-> +			goto err_mbus_win;
-> +		}
-> +		ret = mv_conf_mbus_windows(pdev, dram);
->  		if (ret < 0)
->  			goto err_mbus_win;
->  	}
+diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
+index b7c348687a77..9789296ad4f6 100644
+--- a/drivers/bluetooth/btmtk.c
++++ b/drivers/bluetooth/btmtk.c
+@@ -437,6 +437,7 @@ int btmtk_process_coredump(struct hci_dev *hdev, struct sk_buff *skb)
+ }
+ EXPORT_SYMBOL_GPL(btmtk_process_coredump);
+ 
++#if IS_ENABLED(CONFIG_BT_HCIBTUSB_MTK)
+ static void btmtk_usb_wmt_recv(struct urb *urb)
+ {
+ 	struct hci_dev *hdev = urb->context;
+@@ -1487,6 +1488,7 @@ int btmtk_usb_shutdown(struct hci_dev *hdev)
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(btmtk_usb_shutdown);
++#endif
+ 
+ MODULE_AUTHOR("Sean Wang <sean.wang@mediatek.com>");
+ MODULE_AUTHOR("Mark Chen <mark-yw.chen@mediatek.com>");
+diff --git a/drivers/bluetooth/btmtk.h b/drivers/bluetooth/btmtk.h
+index 453ed5131a37..890dbe9beff8 100644
+--- a/drivers/bluetooth/btmtk.h
++++ b/drivers/bluetooth/btmtk.h
+@@ -165,6 +165,7 @@ struct btmtk_data {
+ 	btmtk_reset_sync_func_t reset_sync;
+ 	struct btmtk_coredump_info cd_info;
+ 
++#if IS_ENABLED(CONFIG_BT_HCIBTUSB_MTK)
+ 	struct usb_device *udev;
+ 	struct usb_interface *intf;
+ 	struct usb_anchor *ctrl_anchor;
+@@ -177,6 +178,7 @@ struct btmtk_data {
+ 
+ 	/* spinlock for ISO data transmission */
+ 	spinlock_t isorxlock;
++#endif
+ };
+ 
+ typedef int (*wmt_cmd_sync_func_t)(struct hci_dev *,
+@@ -202,6 +204,7 @@ int btmtk_process_coredump(struct hci_dev *hdev, struct sk_buff *skb);
+ void btmtk_fw_get_filename(char *buf, size_t size, u32 dev_id, u32 fw_ver,
+ 			   u32 fw_flavor);
+ 
++#if IS_ENABLED(CONFIG_BT_HCIBTUSB_MTK)
+ int btmtk_usb_subsys_reset(struct hci_dev *hdev, u32 dev_id);
+ 
+ int btmtk_usb_recv_acl(struct hci_dev *hdev, struct sk_buff *skb);
+@@ -216,6 +219,7 @@ int btmtk_usb_suspend(struct hci_dev *hdev);
+ int btmtk_usb_setup(struct hci_dev *hdev);
+ 
+ int btmtk_usb_shutdown(struct hci_dev *hdev);
++#endif
+ #else
+ 
+ static inline int btmtk_set_bdaddr(struct hci_dev *hdev,
+-- 
+2.18.0
 
 
