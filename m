@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-247358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5569592CE6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:42:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A2892CE69
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F5FB2882D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:42:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84EC3B22F4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A808718FC7D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 103DB18FC61;
 	Wed, 10 Jul 2024 09:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="S3Q35DX5"
+	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="UmnX5lmT"
 Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086A518FA0F;
-	Wed, 10 Jul 2024 09:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E8B18FA14;
+	Wed, 10 Jul 2024 09:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720604526; cv=none; b=FDcF+KfYd/8GGI7+iaB2J8VkFjjxUSxgntah/1ONVb1FTEJxIHxlIcWtnj/31MU/oIMEzypmJivnyutQGyMnxbmlKhIEqc7AQm3xzlJ7SXWEqXOW3/0rt5VxHn6u8AcbU0XysY1fdrwVRXngv2mQQoGJh5xyRH2+IqjPHYS1phk=
+	t=1720604525; cv=none; b=YAxGacjTziZGMcc4etngTWbwDWkdzpnzTQ7ZjsZ9mPgOzZFlsFv69U9cYdJ/tebIgwJcZBGp/bVu5q68gjS+3+UJI+Zuj0cUu6f3eN8MG2448GoP89DQMZJii5wYJdyiCPQZ+tqtF9QKBdDgxwlw6j6z+VRnhrBy7P2B2mxrIvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720604526; c=relaxed/simple;
-	bh=mFJu3AuQwBhYu6nvYHmXFe8W3vkUUK1zringR+EoIf0=;
+	s=arc-20240116; t=1720604525; c=relaxed/simple;
+	bh=F09pGXI36gTc54xO6rR55cxg708answbdVUpxYTieXM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KsAsjNovXnI/wNeNilybaGnZsXIDDMu1UrpaHYBGo80Cs5TArtQkHVipn0XR10wOn+ztZfDvo5X6+uIVIGqvPy7TeJpeTZ5iSPpfkJZrMfbvkDKQBlM84d8z3mGvml4jX+sw0CYvZI7bEbyJzXleYec4CuGeaYbO+hq7nMp+TZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=S3Q35DX5; arc=none smtp.client-ip=94.231.106.210
+	 MIME-Version:Content-Type; b=kegXGpb5RVUmqtoFxEp6cBTf9MVgJcqXqdcbUHtKM0Yi+DittFvgVFNMlMoXu243NwkbM+xAuHIL1tsjEVqb+poyD457nyIpnFIAVlHi6Btjt6zySQELyxfd4CD0hnyCQ0Xc607Ic48OYYIYVuLfurKpLEaWlwdq2tYubV3Y0a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=UmnX5lmT; arc=none smtp.client-ip=94.231.106.210
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
 Received: from localhost (localhost [127.0.0.1])
-	by smtp.simply.com (Simply.com) with ESMTP id 4WJtDT3mTfz1DPkb;
+	by smtp.simply.com (Simply.com) with ESMTP id 4WJtDT6944z1DPkh;
 	Wed, 10 Jul 2024 11:42:01 +0200 (CEST)
 Received: from andreas.got.gaisler.com (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
-	by smtp.simply.com (Simply.com) with ESMTPA id 4WJtDT1gsPz1DPks;
+	by smtp.simply.com (Simply.com) with ESMTPA id 4WJtDT3bjgz1DPkC;
 	Wed, 10 Jul 2024 11:42:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
 	s=unoeuro; t=1720604521;
-	bh=JmftKPWxL9NkSuMkpkySeuAYiQ7NRqf/1r5N/kj6mYY=;
+	bh=a+ls+m7uo39S1xs1SfdgV4y0qwjJ1vBlTRzPr3sdHZE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=S3Q35DX5rS1BXnVgEVE4/WB5zVvohltKTwzz38IeMNQG6iyNmXExdfn7w9aiy+SCb
-	 Ajd5dxrjFihYpo8tDpZHJ7YjmNQf/hAX0G4ZQ4BtEq/dGVbcI+eOp94piZ3KnXaFml
-	 A5gFqSP6vbCJ7xc9qbrKX/Ug7DCDG6ySnEqqNNSk=
+	b=UmnX5lmTyQpYLdiu6IU9+qTo5B2FuuF5f9P/dbGIKkGs0wmeXwAFWqjBuIrTQK5oJ
+	 BGXowgm7FxiPoOtRAcr1IgqkHj+mwZzPD+CJUDvFQZpBbytK+2bDJv3Av7n+nfH8bj
+	 LAB73dTZabjzHNgs1SUIWTWnEhHZUW0OBiTzS0/s=
 From: Andreas Larsson <andreas@gaisler.com>
 To: David Miller <davem@davemloft.net>,
 	sparclinux@vger.kernel.org
 Cc: Sam Ravnborg <sam@ravnborg.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] sparc64: Fix prototype warning for prom_get_mmu_ihandle
-Date: Wed, 10 Jul 2024 11:41:54 +0200
-Message-Id: <20240710094155.458731-4-andreas@gaisler.com>
+Subject: [PATCH 4/4] sparc64: Fix prototype warnings in hibernate.c
+Date: Wed, 10 Jul 2024 11:41:55 +0200
+Message-Id: <20240710094155.458731-5-andreas@gaisler.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240710094155.458731-1-andreas@gaisler.com>
 References: <20240710094155.458731-1-andreas@gaisler.com>
@@ -63,29 +63,30 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-arch/sparc/prom/misc_64.c:165:5: warning: no previous prototype for ‘prom_get_mmu_ihandle’
+Fix the following warnings:
+arch/sparc/power/hibernate.c:22:5: warning: no previous prototype for ‘pfn_is_nosave’
+arch/sparc/power/hibernate.c:30:6: warning: no previous prototype for ‘save_processor_state’
+arch/sparc/power/hibernate.c:35:6: warning: no previous prototype for ‘restore_processor_state’
 
-The function prom_get_mmu_ihandle has no users outside of misc_64.c so
-declare it static.
+The prototypes are available from linux/suspend.h so include that.
 
 Signed-off-by: Andreas Larsson <andreas@gaisler.com>
 ---
- arch/sparc/prom/misc_64.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/sparc/power/hibernate.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/sparc/prom/misc_64.c b/arch/sparc/prom/misc_64.c
-index aed94cd4a1e73..3792736ff21fd 100644
---- a/arch/sparc/prom/misc_64.c
-+++ b/arch/sparc/prom/misc_64.c
-@@ -162,7 +162,7 @@ unsigned char prom_get_idprom(char *idbuf, int num_bytes)
- 	return 0xff;
- }
+diff --git a/arch/sparc/power/hibernate.c b/arch/sparc/power/hibernate.c
+index 47b06f4af1f91..da8e2bc2e516a 100644
+--- a/arch/sparc/power/hibernate.c
++++ b/arch/sparc/power/hibernate.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2013 Kirill V Tkhai (tkhai@yandex.ru)
+  */
  
--int prom_get_mmu_ihandle(void)
-+static int prom_get_mmu_ihandle(void)
- {
- 	phandle node;
- 	int ret;
++#include <linux/suspend.h>
+ #include <linux/mm.h>
+ 
+ #include <asm/hibernate.h>
 -- 
 2.34.1
 
