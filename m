@@ -1,85 +1,79 @@
-Return-Path: <linux-kernel+bounces-248273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1B4592DB16
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:36:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1741392DB12
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6288D2839C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:36:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A77CFB2102C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B2313DDCC;
-	Wed, 10 Jul 2024 21:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54A3132113;
+	Wed, 10 Jul 2024 21:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YVeuBr8a"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VYWV0kp3"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC0E12FB31
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 21:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8461D535
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 21:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720647370; cv=none; b=PB1Z0dPV7dmepLE2CcaQTlAk6pedtsWYDo6XN5M7Y+VoOyMDrLvXJQLGXS+2pkpdLXIT0XBTD9Yr9gWkkCgWQPNtnb4r5sqIF8iND/nbwIfjQ1qRbbx1IZMMdHPblk629p7UX6soCqdOHs/Uvba/WSSB/3dj1IyQ4qafcwPRHRs=
+	t=1720647334; cv=none; b=WZTdOT19H1r4QOLHemhRE0SfwK6v3oeU43J4yZe5/Im+p5785aPP/4KYbFgzDRv2MofmsXFoTyazPMoSseWgp+9sPaT6NR6tMxyUoGA31m5+vl1npP5R4aESFc42vF0FmH1MI3qJghV4/xN6RddApoqry1hJbZkYGSHcjunJ5GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720647370; c=relaxed/simple;
-	bh=UwINd/1rcWL4hkNdPe+avjy4QtRQ3WHNZFHXTjmTdGY=;
+	s=arc-20240116; t=1720647334; c=relaxed/simple;
+	bh=Pi8WdlhTSSJvc9pv+3NmsA4JZvFP5qgK2wjgiLuWAsg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kYdzlBBd9r5Uj+ldpM2oAmlo3ihCNS07aW6YDqBXST1eFSDgfG9pj29FMNUoFeIXc+/34EvIK2IL1G9Ni7CyY+ne9hYkSkvYyE13zqWUux6ePd+Esw4dWVWrr0XMSj7D71oZugXpMdlkjeHDthrlLLKqeqtXDmClOYYVzd48x/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YVeuBr8a; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720647367;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UwINd/1rcWL4hkNdPe+avjy4QtRQ3WHNZFHXTjmTdGY=;
-	b=YVeuBr8atoNUPbkZrWsZbs4PRf8bKW99GFYRRzuferPD6kLKNM8NSNr8qv2gbpgDN1UFNS
-	lAfeQXUeZVoW3Xjahjl54Y8Sf0PkJt7X64S82hFjk3rKrueG4Qp+1H8f3+CWxfB96bplvl
-	xm8pock5Pr7U491qs5sE+nMfpB2bOnk=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-675-WyQ7EOp7OJq6o4au8hBwYA-1; Wed,
- 10 Jul 2024 17:36:04 -0400
-X-MC-Unique: WyQ7EOp7OJq6o4au8hBwYA-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B2DFB1955F40;
-	Wed, 10 Jul 2024 21:36:01 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.169])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id C1FEC3000181;
-	Wed, 10 Jul 2024 21:35:56 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 10 Jul 2024 23:34:25 +0200 (CEST)
-Date: Wed, 10 Jul 2024 23:34:19 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Tycho Andersen <tandersen@netflix.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Julian Orth <ju.orth@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 2/2] kernel: rerun task_work while freezing in
- get_signal()
-Message-ID: <20240710213418.GH9228@redhat.com>
-References: <658da3fe-fa02-423b-aff0-52f54e1332ee@gmail.com>
- <Zo1ntduTPiF8Gmfl@slm.duckdns.org>
- <20240709190743.GB3892@redhat.com>
- <d2667002-1631-4f42-8aad-a9ea56c0762b@gmail.com>
- <20240709193828.GC3892@redhat.com>
- <d9c00f01-576c-46cd-a88c-76e244460dac@gmail.com>
- <Zo3bt3AJHSG5rVnZ@slm.duckdns.org>
- <933e7957-7a73-4c9a-87a7-c85b702a3a32@gmail.com>
- <20240710191015.GC9228@redhat.com>
- <Zo7e8RQQfG7U5fuT@slm.duckdns.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ergtk1jd9tx2GCKf8LlPmgUikSR3OpnqCEx5hojSJEPevhhSYsZlx4nsUjOPV7822hjVEzW5vmRW7LpF40WfLish6VoYTt7oecavWqt72T7mLkDWBzCnFWyab5B4noMzMLwerAQTIANsH1Vgz+IdAcF8g53XUHqI4w8sz5MXkaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VYWV0kp3; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fb64d627b0so1265255ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:35:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720647332; x=1721252132; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+mh1YKAf63/S0XqtjUv8ftSMZW1U9zvPprxysY5clxE=;
+        b=VYWV0kp3iTIuIf4r3KVfFO6L6vcj/sAro/X7kKhoAjzSDEViEfxZDOQHyY+EAMQhuy
+         PGDpWGOsbAD0NNg88C7pTlYu4S8U7oQ1AwRTVxyawZg7tCAOmNvFaooP+1wYFYCYL3A7
+         cA199NCEWhXZFm1aiGrWNMHEVsN94GGq5cWbjE4Q3kTaGWHQdNzoLDaRj4NyVhBjx+9O
+         ackoXx+9hdmJcw4JA5Lfu32flF/WZ3F1aL/0G1HTMka2Pgd44FqI4nGpj3uHa95rFXg7
+         3QoWN1vv19wbkWQTgy8/4AEzwR2pJAmXlESKaNJRwxkw7KfhJBsXJ2wVj1W+gvDZhbwu
+         tVRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720647332; x=1721252132;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+mh1YKAf63/S0XqtjUv8ftSMZW1U9zvPprxysY5clxE=;
+        b=GKKmbJJH8JU9bUvIXgeqAU9djyQSCU1TVml2GUcH296BM3giVCuTT45dW2XabcoLLC
+         cyBBWtxFPKRYH3rax32rCL9aDbLea1m9/heG5LdchuJZrBwwxDQJkJIwLuYdDUoRaUsD
+         mfdgIAWqKY52TNrev7Pb9b2HI9J8JpBMa1zCeL6Lcse9+2+x0Cv4MwVfR7EjReYPvN3/
+         CKLhHonpYMurQ/4sLnrgrG+h9PLWsV/emcJwZ6YzeY8rFz4uzDdVX3RhML7ReRiBY3CM
+         F4PaIRBMzeyQt7ld3NkAfPV7XYiJrLMkv+tWQgCwum5YkBEltr1+UEyh0iNgzq3ZvEKz
+         iuVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXyQEOTxwWxVhpc7OkJapGvSoprTxsGzWWYcmuf0EAV29K/qyhSY39PPWE3xa25zMp+NDQrYDHL4/8xBbUsvqz0ehR7+uvfha5a0Y1
+X-Gm-Message-State: AOJu0YxZ3KdPSXSXqjpz056e0YpFsk0i4350BNuiSjT9vg8T/ZnvKR2L
+	SIgPPAdFQuWL0Wo8Zs2iz2kUINZZRt0iex/bEof9+mfETV+ZnTkp
+X-Google-Smtp-Source: AGHT+IHowEDtJHIVcOWj6cqfwZrZrnbWPf45TqOG8gduFJR1xDuf3YYCdYvQmPQZ1poRSpRSm8iDmA==
+X-Received: by 2002:a17:903:1205:b0:1fb:4c2e:9803 with SMTP id d9443c01a7336-1fbb6cda8a4mr64193975ad.10.1720647328154;
+        Wed, 10 Jul 2024 14:35:28 -0700 (PDT)
+Received: from localhost ([216.228.127.130])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ab6d80sm38250885ad.170.2024.07.10.14.35.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 14:35:27 -0700 (PDT)
+Date: Wed, 10 Jul 2024 14:35:25 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Wei Yang <richard.weiyang@gmail.com>
+Cc: linux@rasmusvillemoes.dk, willy@infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] radix tree test suite: put definition of
+ bitmap_clear() into lib/bitmap.c
+Message-ID: <Zo7-ndzkju1QT0j-@yury-ThinkPad>
+References: <20240710172701.21339-1-richard.weiyang@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,60 +82,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zo7e8RQQfG7U5fuT@slm.duckdns.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <20240710172701.21339-1-richard.weiyang@gmail.com>
 
-On 07/10, Tejun Heo wrote:
->
-> Hello,
->
-> On Wed, Jul 10, 2024 at 09:10:16PM +0200, Oleg Nesterov wrote:
-> ...
-> > If nothing else. CRIU needs to attach and make this task TASK_TRACED, right?
->
-> Yeah, AFAIK, that's the only way to implement check-pointing for now.
+On Wed, Jul 10, 2024 at 05:27:01PM +0000, Wei Yang wrote:
+> In tools/ directory, function bitmap_clear() is currently only used in
+> object file tools/testing/radix-tree/xarray.o.
+> 
+> But instead of keeping a bitmap.c with only bitmap_clear() definition in
+> radix-tree's own directory, it would be more proper to put it in common
+> directory lib/.
+> 
+> Sync the kernel definition and link some related libs, no functional
+> change is expected.
+> 
+> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+> CC: Matthew Wilcox <willy@infradead.org>
+> CC: Yury Norov <yury.norov@gmail.com>
 
-OK,
-
-> > And once the target task is traced, it won't react to task_work_add(TWA_SIGNAL).
->
-> I don't know how task_work is being used but the requirement would be that
-> if a cgroup is frozen, task_works shouldn't be making state changes which
-> can't safely be replayed (e.g. by restarting the frozen syscalls).
-
-Well, in theory task_work can do "anything".
-
-Of course, it can't, say, restart a frozen syscall, task_work_run() just
-executes the callbacks in kernel mode and returns.
-
-> it'd be better to freeze them together.
-
-And I tend to agree. simply beacase do_freezer_trap() (and more users of
-clear_thread_flag(TIF_SIGPENDING) + schedule(TASK_INTERRUPTIBLE) pattern)
-do not take TIF_NOTIFY_SIGNAL into account.
-
-But how do you think this patch can make the things worse wrt CRIU ?
-
-And let's even forget this patch which fixes the real problem.
-How do you think the fact that the task sleeping in do_freezer_trap()
-can react to TIF_NOTIFY_SIGNAL, call task_work_run(), and then sleep
-in do_freezer_trap() again can make any difference in this sense?
-
-> As this thing is kinda difficult to reason about,
-
-Agreed,
-
-> it'd probably be easier to just freeze them together if we can.
-
-Agreed, but this needs some "generic" changes while Pavel needs a
-simple and backportable workaround to suppress a real problem.
-
-In short, I don't like this patch either, I just don't see a better
-solution for now ;)
+Added in bitmap-for-next for testing.
 
 Thanks,
-
-Oleg.
-
+Yury
 
