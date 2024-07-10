@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-246971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8417092C979
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:04:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D67792C97B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97709B21B9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 04:04:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30E501C22A90
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 04:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9AD23776;
-	Wed, 10 Jul 2024 04:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407BD39855;
+	Wed, 10 Jul 2024 04:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sssbe07F"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SEp9Y60L"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA88482C8
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 04:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A944AEEA
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 04:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720584280; cv=none; b=rhbm1sVtfRxEB12jIY0d+n2bjBe9QbZliXr0B8h1ithsNDlxHk4HUZlTJZjRxiFcCtoFA0Z1IWzV94GDSdlXh1AFBUS0ad0OAk/U7fTFH6+eFTHR7JLDY/akhrNDQDiveHdMgRKFRSOH08da7FMQ3tU8qSt5JZhjS8rqTTEYLHk=
+	t=1720584344; cv=none; b=JXWPSTdI27MG4vLSp3fnCM32aEC/8bdZ5NFWZ+75iqS1f0MBHYdqPUI3igf4Gy4VTGI5zj5FzZuaHxmDdOLkbrBeeQbY1J8uZwC+2BMFVMymxkj44WiBXSgIKtpZO8Wz4LQ6omFWqBX2YqvpVuF7v5iDFFF6zQfXjPln09VJX/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720584280; c=relaxed/simple;
-	bh=drGFBqUeZ0OQaUV8OkJ+ZRoQas9J1h1gnNwX0RGakVA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KKnVSSNea3cSj4V3SE55C1EzAieaQtcbdB5sgp3poVK4SKwFqfYuilEcajbDUL6Lhi73ahyFyC317TVDIPr5gpsRaTrHhFlaQiKltR2RijrYLgFI75aeRwgOwpgVqJgZnTCofb1eP9V7Phat2p8bZKAYL8ei579FebMdguQCPyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sssbe07F; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1720584344; c=relaxed/simple;
+	bh=N1DLSASEZAN3kKjigTdMNNTl81NLknNxhrYdWutM44Q=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=iqiInrloGQ6RAzDKXXcgFhrbnHohsOmpavSiTbJOcRM8uxbDbjQgpmq8/om8n/xf70wDT/tebMca765+jkq2T9ZL6gQmeP9dKF3C7PI9g/7Mqk6zTml5vgE5jNbQ4QhWNFJp9S/klKeeqTqynwIxh/056yHYvcp/4RVes9IElWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SEp9Y60L; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720584277;
+	s=mimecast20190719; t=1720584341;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RE7Ixx0Q34BPFkOJiQTbilowtXIyriXhevMq78qZbb0=;
-	b=Sssbe07FjrMSLiL4bCoscnBc0oWdA8bW1TMYfQprIr/mjUhC6pIb8lJvwV1cLi6KX+HHzf
-	9khwje5XzVCC3DX4atey7zchqX42kd5eCHfMjI1J8jm/HcKKrFXn/h19CiFDMbbCs9I+Ry
-	rrpZg9tTqj+EdQyAqTcD1ZPwnPz4Q6Q=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=DmsPM2YP83ayw/MNMYnl2BCj1FnEks7yViZlukNd1Wc=;
+	b=SEp9Y60LQYrv8vSenSPHDb96jWNsjBM1AvUp2zPJd/c+zdDznf/sMQRRtSTWBRhdFcnY2e
+	0p4ZRhI1c+InAkiSXGP3DuX7Ap8jCV/Nk4r6sO+KOtvDDY7TkvWqloGQnBuNl8IV1IM+1w
+	5ClR8eIuvLuf9Tjaiwlt1VpMsQq84nw=
+Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com
+ [209.85.167.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-596-I_uDUeeTMNC-O75q2W08Dg-1; Wed, 10 Jul 2024 00:04:31 -0400
-X-MC-Unique: I_uDUeeTMNC-O75q2W08Dg-1
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-7276dd142b4so301212a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 21:04:31 -0700 (PDT)
+ us-mta-47-hm79Od4VPm2x3NSrz2yiQg-1; Wed, 10 Jul 2024 00:05:40 -0400
+X-MC-Unique: hm79Od4VPm2x3NSrz2yiQg-1
+Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-3d9e10444fcso12244b6e.2
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 21:05:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720584270; x=1721189070;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RE7Ixx0Q34BPFkOJiQTbilowtXIyriXhevMq78qZbb0=;
-        b=mIK2waJ5NxUeSy3JnvRlQgeeU+Q6Uxr5OIdAnvjXrP9vCQq86EM3iSSkMjZ49+OSBF
-         cxkizV5B14EijDU101Z2LlD+34O/6YtgmY3ryJ2JP0c8kshYfy1doYKU8hkgnwPRzrzj
-         fMZvLBY8ZzCJnwcotwvdAUfn6u7Awl8IazXLudrCZLQLzpwul5IM0Xe9JV2UdvyZU3we
-         k58xiTwY5UYkX5inpf7fLgO1CTVrGSh+emWjka93re5H44BvDiURlSTVSklyriXxLwpf
-         EFI9+qSQfKeeebtAbrzgPFq/nXnzYxubZ/7eBQ4VM9pWp0aeeDHvg6P4b2GK2GH6T+4D
-         CLuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBN+g6hkHNQfCd7fuCItBCoDrn2Aihlp+E+dv/UWes1R5PBwaaV0fTGKoQyWrALZoS++ROqZZ6LCDWXw9hcADY3xz/ssq+/r9cyUX+
-X-Gm-Message-State: AOJu0YwfrmsE+/ZMpdxn8R0BXOpVnIIGJnWVOadit+G4Ht80tVOw0jJu
-	0MBnAF2MQkUQzEi8IGbnqgHyCyjgJ1En2Z4jw7TfuGyTx6QygVwaFFnJwAw2xV0O9zjyMVn+Txx
-	wwgmW82HEWgU0srQJHwlse1onT2frauslbV6JeV00uNx0fO4T0W0B7LCvXisW/A==
-X-Received: by 2002:a17:90b:1118:b0:2c2:4109:9466 with SMTP id 98e67ed59e1d1-2ca3a7c0d98mr5778107a91.8.1720584269993;
-        Tue, 09 Jul 2024 21:04:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH0krlCxnKAc7EE9J0n6iDLH9gCQWjxQNgwaQtlQ2TwdFonUzo8r/H5OLYOVVtLAAofsi9XBw==
-X-Received: by 2002:a17:90b:1118:b0:2c2:4109:9466 with SMTP id 98e67ed59e1d1-2ca3a7c0d98mr5778084a91.8.1720584269477;
-        Tue, 09 Jul 2024 21:04:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720584339; x=1721189139;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DmsPM2YP83ayw/MNMYnl2BCj1FnEks7yViZlukNd1Wc=;
+        b=eEsbA2umPWzGOZSU+9i3JCEbHnF3jOOQxqaKu8af1qK60StAPk7gx8Fvi1rnIGBQIY
+         HNrzxTnvsy7QXa0MgLyaCp/oUUf0n4zkgy7A0NWY2njfWpRxcQP2rUk3mFtnSLKbjSmU
+         xu7ABfWnGt4RIZdCrYPfF2Q5pJwQHclMzWOEpEDF1XZO87QvfZxXaUXkCbFdAAS1JOGc
+         C9GANRPftJ0jryGBsOGA3DbPlvjNzmwygThZttsL5GHcUrYeYvoCJa23Ian14r0LkNBc
+         FKV6fmecZwfVxSpWVjAQUGFIi/EyH1gYMOw/2adRvDR8mPBAWxnfldZJVq0NViQcjcqP
+         Z3hw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFh9RMGWXPekwnmb11jutcw9p3ax7+baqTgn3kL1MSlV7zzR8eaaN9LtyEA1CunpQIhz4R0WtisgSGqZ8Akeby8/cKDSZbE43/5dOa
+X-Gm-Message-State: AOJu0YzwnAM86dpXVMv1DqEjSYuc7jleyQp/bL011TWluN9EGuik4ovp
+	SAwaFo5KGsD5fWnfoInbXtSS1U4l7bJcz6F5+zVdXuLi45zl2vBy++suQA5FWIY39ONHRIwGiw0
+	Ahn3/9ArlL5mJrvAWhf8VQtc7u7CYloJzcENz/fVCyJOIVKjO2sIlmO44xeSkfg==
+X-Received: by 2002:a05:6808:14c5:b0:3d6:32be:a8a5 with SMTP id 5614622812f47-3d93bee56ddmr5526567b6e.4.1720584339223;
+        Tue, 09 Jul 2024 21:05:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEgdLnkHjsM7KRqdvsvUHsf1OJloSf5RcHmhVmwnIt7ECNqQrB5n6pEpzefYp+WqCn1g6D/tg==
+X-Received: by 2002:a05:6808:14c5:b0:3d6:32be:a8a5 with SMTP id 5614622812f47-3d93bee56ddmr5526539b6e.4.1720584338879;
+        Tue, 09 Jul 2024 21:05:38 -0700 (PDT)
 Received: from [172.20.2.228] ([4.28.11.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ca353ccedasm2701287a91.57.2024.07.09.21.04.28
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4396740asm2662984b3a.105.2024.07.09.21.05.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 21:04:28 -0700 (PDT)
-Message-ID: <9d77dc44-f61c-4e52-938f-c268daf0e169@redhat.com>
-Date: Wed, 10 Jul 2024 06:04:27 +0200
+        Tue, 09 Jul 2024 21:05:36 -0700 (PDT)
+Message-ID: <9b400450-46bc-41c7-9e89-825993851101@redhat.com>
+Date: Wed, 10 Jul 2024 06:05:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,17 +82,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7] mm: shrink skip folio mapped by an exiting process
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, justinjiang@vivo.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- opensource.kernel@vivo.com, willy@infradead.org
-References: <20240709142312.372b20d49c6a97ecd2cd9904@linux-foundation.org>
- <20240710033212.36497-1-21cnbao@gmail.com>
- <dc2c3395-e514-40ad-b9d8-b76cf04ba0df@redhat.com>
- <CAGsJ_4zkt5wKk-JhEpZgqpQgNK--50jwpZFK4E_eXgBpKkMKmQ@mail.gmail.com>
-Content-Language: en-US
+Subject: Re: [PATCH v22 1/4] mm: add MAP_DROPPABLE for designating always
+ lazily freeable mappings
 From: David Hildenbrand <david@redhat.com>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
+ patches@lists.linux.dev, tglx@linutronix.de
+Cc: linux-crypto@vger.kernel.org, linux-api@vger.kernel.org, x86@kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+ Carlos O'Donell <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
+ Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+ Christian Brauner <brauner@kernel.org>,
+ David Hildenbrand <dhildenb@redhat.com>, linux-mm@kvack.org
+References: <20240709130513.98102-1-Jason@zx2c4.com>
+ <20240709130513.98102-2-Jason@zx2c4.com>
+ <378f23cb-362e-413a-b221-09a5352e79f2@redhat.com>
+Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
  dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
@@ -138,155 +144,84 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <CAGsJ_4zkt5wKk-JhEpZgqpQgNK--50jwpZFK4E_eXgBpKkMKmQ@mail.gmail.com>
+In-Reply-To: <378f23cb-362e-413a-b221-09a5352e79f2@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 10.07.24 06:02, Barry Song wrote:
-> On Wed, Jul 10, 2024 at 3:59 PM David Hildenbrand <david@redhat.com> wrote:
+On 10.07.24 05:27, David Hildenbrand wrote:
+> On 09.07.24 15:05, Jason A. Donenfeld wrote:
+>> The vDSO getrandom() implementation works with a buffer allocated with a
+>> new system call that has certain requirements:
 >>
->> On 10.07.24 05:32, Barry Song wrote:
->>> On Wed, Jul 10, 2024 at 9:23 AM Andrew Morton <akpm@linux-foundation.org> wrote:
->>>>
->>>> On Tue,  9 Jul 2024 20:31:15 +0800 Zhiguo Jiang <justinjiang@vivo.com> wrote:
->>>>
->>>>> The releasing process of the non-shared anonymous folio mapped solely by
->>>>> an exiting process may go through two flows: 1) the anonymous folio is
->>>>> firstly is swaped-out into swapspace and transformed into a swp_entry
->>>>> in shrink_folio_list; 2) then the swp_entry is released in the process
->>>>> exiting flow. This will result in the high cpu load of releasing a
->>>>> non-shared anonymous folio mapped solely by an exiting process.
->>>>>
->>>>> When the low system memory and the exiting process exist at the same
->>>>> time, it will be likely to happen, because the non-shared anonymous
->>>>> folio mapped solely by an exiting process may be reclaimed by
->>>>> shrink_folio_list.
->>>>>
->>>>> This patch is that shrink skips the non-shared anonymous folio solely
->>>>> mapped by an exting process and this folio is only released directly in
->>>>> the process exiting flow, which will save swap-out time and alleviate
->>>>> the load of the process exiting.
->>>>
->>>> It would be helpful to provide some before-and-after runtime
->>>> measurements, please.  It's a performance optimization so please let's
->>>> see what effect it has.
->>>
->>> Hi Andrew,
->>>
->>> This was something I was curious about too, so I created a small test program
->>> that allocates and continuously writes to 256MB of memory. Using QEMU, I set
->>> up a small machine with only 300MB of RAM to trigger kswapd.
->>>
->>> qemu-system-aarch64 -M virt,gic-version=3,mte=off -nographic \
->>>    -smp cpus=4 -cpu max \
->>>    -m 300M -kernel arch/arm64/boot/Image
->>>
->>> The test program will be randomly terminated by its subprocess to trigger
->>> the use case of this patch.
->>>
->>> #include <stdio.h>
->>> #include <stdlib.h>
->>> #include <unistd.h>
->>> #include <string.h>
->>> #include <sys/types.h>
->>> #include <sys/wait.h>
->>> #include <time.h>
->>> #include <signal.h>
->>>
->>> #define MEMORY_SIZE (256 * 1024 * 1024)
->>>
->>> unsigned char *memory;
->>>
->>> void allocate_and_write_memory()
->>> {
->>>       memory = (unsigned char *)malloc(MEMORY_SIZE);
->>>       if (memory == NULL) {
->>>           perror("malloc");
->>>           exit(EXIT_FAILURE);
->>>       }
->>>
->>>       while (1)
->>>           memset(memory, 0x11, MEMORY_SIZE);
->>> }
->>>
->>> int main()
->>> {
->>>       pid_t pid;
->>>       srand(time(NULL));
->>>
->>>       pid = fork();
->>>
->>>       if (pid < 0) {
->>>           perror("fork");
->>>           exit(EXIT_FAILURE);
->>>       }
->>>
->>>       if (pid == 0) {
->>>           int delay = (rand() % 10000) + 10000;
->>>           usleep(delay * 1000);
->>>
->>>        /* kill parent when it is busy on swapping */
->>>           kill(getppid(), SIGKILL);
->>>           _exit(0);
->>>       } else {
->>>           allocate_and_write_memory();
->>>
->>>           wait(NULL);
->>>
->>>           free(memory);
->>>       }
->>>
->>>       return 0;
->>> }
->>>
->>> I tracked the number of folios that could be redundantly
->>> swapped out by adding a simple counter as shown below:
->>>
->>> @@ -879,6 +880,9 @@ static bool folio_referenced_one(struct folio *folio,
->>>                       check_stable_address_space(vma->vm_mm)) &&
->>>                       folio_test_swapbacked(folio) &&
->>>                       !folio_likely_mapped_shared(folio)) {
->>> +                       static long i, size;
->>> +                       size += folio_size(folio);
->>> +                       pr_err("index: %d skipped folio:%lx total size:%d\n", i++, (unsigned long)folio, size);
->>>                           pra->referenced = -1;
->>>                           page_vma_mapped_walk_done(&pvmw);
->>>                           return false;
->>>
->>>
->>> This is what I have observed:
->>>
->>> / # /home/barry/develop/linux/skip_swap_out_test
->>> [   82.925645] index: 0 skipped folio:fffffdffc0425400 total size:65536
->>> [   82.925960] index: 1 skipped folio:fffffdffc0425800 total size:131072
->>> [   82.927524] index: 2 skipped folio:fffffdffc0425c00 total size:196608
->>> [   82.928649] index: 3 skipped folio:fffffdffc0426000 total size:262144
->>> [   82.929383] index: 4 skipped folio:fffffdffc0426400 total size:327680
->>> [   82.929995] index: 5 skipped folio:fffffdffc0426800 total size:393216
->>> ...
->>> [   88.469130] index: 6112 skipped folio:fffffdffc0390080 total size:97230848
->>> [   88.469966] index: 6113 skipped folio:fffffdffc038d000 total size:97296384
->>> [   89.023414] index: 6114 skipped folio:fffffdffc0366cc0 total size:97300480
->>>
->>> I observed that this patch effectively skipped 6114 folios (either 4KB or 64KB
->>> mTHP), potentially reducing the swap-out by up to 92MB (97,300,480 bytes) during
->>> the process exit.
->>>
->>> Despite the numerous mistakes Zhiguo made in sending this patch, it is still
->>> quite valuable. Please consider pulling his v9 into the mm tree for testing.
+>> - It shouldn't be written to core dumps.
+>>     * Easy: VM_DONTDUMP.
+>> - It should be zeroed on fork.
+>>     * Easy: VM_WIPEONFORK.
 >>
->> BTW, we dropped the folio_test_anon() check, but what about shmem? They
->> also do __folio_set_swapbacked()?
+>> - It shouldn't be written to swap.
+>>     * Uh-oh: mlock is rlimited.
+>>     * Uh-oh: mlock isn't inherited by forks.
+>>
+>> It turns out that the vDSO getrandom() function has three really nice
+>> characteristics that we can exploit to solve this problem:
+>>
+>> 1) Due to being wiped during fork(), the vDSO code is already robust to
+>>      having the contents of the pages it reads zeroed out midway through
+>>      the function's execution.
+>>
+>> 2) In the absolute worst case of whatever contingency we're coding for,
+>>      we have the option to fallback to the getrandom() syscall, and
+>>      everything is fine.
+>>
+>> 3) The buffers the function uses are only ever useful for a maximum of
+>>      60 seconds -- a sort of cache, rather than a long term allocation.
+>>
+>> These characteristics mean that we can introduce VM_DROPPABLE, which
+>> has the following semantics:
+>>
+>> a) It never is written out to swap.
+>> b) Under memory pressure, mm can just drop the pages (so that they're
+>>      zero when read back again).
+>> c) It is inherited by fork.
+>> d) It doesn't count against the mlock budget, since nothing is locked.
+>>
+>> This is fairly simple to implement, with the one snag that we have to
+>> use 64-bit VM_* flags, but this shouldn't be a problem, since the only
+>> consumers will probably be 64-bit anyway.
+>>
+>> This way, allocations used by vDSO getrandom() can use:
+>>
+>>       VM_DROPPABLE | VM_DONTDUMP | VM_WIPEONFORK | VM_NORESERVE
+>>
+>> And there will be no problem with using memory when not in use, not
+>> wiping on fork(), coredumps, or writing out to swap.
+>>
+>> In order to let vDSO getrandom() use this, expose these via mmap(2) as
+>> MAP_DROPPABLE.
+>>
+>> Finally, the provided self test ensures that this is working as desired.
 > 
-> my point is that the purpose is skipping redundant swap-out, if shmem is single
-> mapped, they could be also skipped.
+> Acked-by: David Hildenbrand <david@redhat.com>
+> 
+> 
+> I'll try to think of some corner cases we might be missing.
 
-But they won't get necessarily *freed* when unmapping them. They might 
-just continue living in tmpfs? where some other process might just map 
-them later?
+BTW, do we have to handle the folio_set_swapbacked() in sort_folio() as well?
 
-IMHO, there is a big difference here between anon and shmem. (well, 
-anon_shmem would actually be different :) )
+
+	/* dirty lazyfree */
+	if (type == LRU_GEN_FILE && folio_test_anon(folio) && folio_test_dirty(folio)) {
+		success = lru_gen_del_folio(lruvec, folio, true);
+		VM_WARN_ON_ONCE_FOLIO(!success, folio);
+		folio_set_swapbacked(folio);
+		lruvec_add_folio_tail(lruvec, folio);
+		return true;
+	}
+
+Maybe more difficult because we don't have a VMA here ... hmm
+
+IIUC, we have to make sure that no folio_set_swapbacked() would ever get
+performed on these folios, correct?
 
 -- 
 Cheers,
