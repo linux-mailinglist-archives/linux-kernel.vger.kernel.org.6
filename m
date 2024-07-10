@@ -1,195 +1,913 @@
-Return-Path: <linux-kernel+bounces-247319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A2D792CDF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:11:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98E1992CDFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:12:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1A2A1F23198
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:11:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1821F22C95
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFF518F2F7;
-	Wed, 10 Jul 2024 09:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA2818FA04;
+	Wed, 10 Jul 2024 09:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d3Q4sren"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DYiU+sf7"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488C716F27A
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0666517BB20;
+	Wed, 10 Jul 2024 09:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720602673; cv=none; b=ihWggZB62OG8Q+Ix5WjxbMLmn3odWwSxVBICSMIB2wveOUf5VtvEkTJW9qNMFjDKfrgmGmr3STx1aUnvrbjXXaP5jHdS0ZhheDgQra3sA7xSfz/lH4ubNTi8GUQu7IJuYjZ1M9dMlzuVUjTkyl6tuTyN0jY+bB+l+vD02ptUE/g=
+	t=1720602726; cv=none; b=dFtfdYgnxNt8Um/Dp5jSgKgdlu2oWQUnxBZLUxWIPoM27xPrI5933k8Sh/gQL23+Pwb1Pwcr6EPV+heCKViBcYH26jE6+QH1fyEK94yJDGDjGV8jbydPe2nKIHv2RuRCTuiPfl+IVoyzfDL/hlWHFAJUPzwL4ZZazzDjGwzmMXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720602673; c=relaxed/simple;
-	bh=sVcVGZKl2xwIdvcTfd9mefZDBHmsqt4J1Ded4unQblk=;
+	s=arc-20240116; t=1720602726; c=relaxed/simple;
+	bh=SekCS2YC/lQTxtwkXwvUZIGU4LFmv57StseXj/9mFwg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qz+6X3gaeULzk7T634UFp8FZ0fWL52cfzqFXUCNFlnCwzI7Izl2dta1l1KewHNWKnzZxfKGjneVmhvyX08IcKuFe8vM6OQrl4LM+Y3O2JCeEz3g15zcXcpD0gUFUj8+mPGq849MnwgNcQvwvhFAi9rfQn8PdPs/dSoEHc8BJdYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d3Q4sren; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720602671;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1cQDDUjmr5ak9+joDdULTaEfg0ceo+yAVZe0qbv7s9U=;
-	b=d3Q4srenZ8pyavahp9KCEyPNfugmBkHaBXatSgukzfHpOhFcElY5kVV2gktHKd1gZikQyo
-	G1nLM8IvrQbLUlyX8qwFKD3hrwnFTpET+Jkqvs/2BO29Hu3b7RE0PzJ1rnlKp/iL/siQQZ
-	6q4vZ/Bd1sTxoF+tvv0Cp1s018RgRkk=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-267-3TQvQujxNrSZVEy4zukMAQ-1; Wed, 10 Jul 2024 05:11:09 -0400
-X-MC-Unique: 3TQvQujxNrSZVEy4zukMAQ-1
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-58c4f94b57cso4673321a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 02:11:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720602668; x=1721207468;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1cQDDUjmr5ak9+joDdULTaEfg0ceo+yAVZe0qbv7s9U=;
-        b=eSBIeyxsT3xIfUX0L2J68FSciwBU95i0F8hBE/9HvsHYdOzcT5s3+SBIrRw0bKJowK
-         HFPwHiWyHqS/JsfrqZIEW9v88vybkrPAjR078I+A/V+1D4IwHZXyC6K4aDE+kHNX4Olg
-         /LH8W+PanDlSPSPYIsFmK/rNrv2qFG6TVFJF+Vovkb4eA57IQ3KRBJ4ypq0Q4xc3VgQI
-         nMYBjTlWk/eyWvpIbpdmd1fDaOQ4AhQfydFMkm/EiUXpSORdN1cjQkSZa5r99JeOP2Lk
-         NedIHczumERGnInff1+DmKTN4dnFQ3Lih3UzFOjC+B2gSYT7FpvFzMTwQ8O/OxbQu7rD
-         1rHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUk8EAWbJc2KrI+zFeu5eDHnRDrWbogASp/pS23DGC/RGXZIFMcIP2mjX5I3RCu80WDGqZh3JCx2eYa8AkbhztRJPKYqInFrdhYAC2k
-X-Gm-Message-State: AOJu0YzcvAXTGOMhPGDAP0RN3dTOb4aF4c3xpb75Ln5BH+qmdmLJ4rK9
-	wjjwD6M3kafKPQmJ7xArTM4VG8XFuQeuU6LnomhlAQIQQN7NOJHNJ8T3Auui6DdZgLgrvta8Rem
-	q1sChz9mgtvJGwZww5h90UHuGmK0qOz7vz5pGiCo3szE69E30B9zPI+Sfr1qFgA==
-X-Received: by 2002:a05:6402:2552:b0:58b:1df9:d3c1 with SMTP id 4fb4d7f45d1cf-594baf871aamr3923845a12.12.1720602668488;
-        Wed, 10 Jul 2024 02:11:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHMHjnifV3M27H8S9u+6/lvaJAWQKKtA/LzTGGDKIijdNacTcJVUCSPqn79d2thZJLRbSd3sQ==
-X-Received: by 2002:a05:6402:2552:b0:58b:1df9:d3c1 with SMTP id 4fb4d7f45d1cf-594baf871aamr3923807a12.12.1720602667795;
-        Wed, 10 Jul 2024 02:11:07 -0700 (PDT)
-Received: from sgarzare-redhat (host-82-57-51-153.retail.telecomitalia.it. [82.57.51.153])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bba548e8sm2009554a12.1.2024.07.10.02.11.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 02:11:07 -0700 (PDT)
-Date: Wed, 10 Jul 2024 11:11:03 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, 
-	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] test/vsock: add install target
-Message-ID: <pugaghoxmegwtlzcmdaqhi5j77dvqpwg4qiu46knvdfu3bx7vt@cnqycuxo5pjb>
-References: <20240709135051.3152502-1-peng.fan@oss.nxp.com>
- <twxr5pyfntg6igr4mznbljf6kmukxeqwsd222rhiisxonjst2p@suum7sgl5tss>
- <PAXPR04MB845959D5F558BCC2AB46575788A42@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ccEPnL1mVNstlduzLDCWW0KWITtMGq+s0UlbYwe8bFvBI4lXEPHJd6BSyDIUxTko3Ac+HXCW4KJX8HMBrZdlQ10+DepKiO4qzMLG7KYfCNIgCUA7FYa5zSE4CPK8tyDPkexuJLmykIIkzz3zgg0rbqHSgjd6TvEOrzs/ruQduYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DYiU+sf7; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (unknown [IPv6:2001:b07:5d2e:52c9:72c3:346:a663:c82d])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1E7C4C62;
+	Wed, 10 Jul 2024 11:11:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1720602688;
+	bh=SekCS2YC/lQTxtwkXwvUZIGU4LFmv57StseXj/9mFwg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DYiU+sf7GmUyvzKAHTBOeFJgKNOCjjsavH1FIxco2iVRR8r3Nsch3sd0qbd65yiQE
+	 AxdTwgtGdatlebJ9yTARhaNF4vm8aM0i0KkZlvgQ96nPKntUZLkaSsQh0pAw+hpLNZ
+	 iiYcXcAZhS5vRYkl6hf+AB9VFSjtKiTHonejtRko=
+Date: Wed, 10 Jul 2024 11:11:57 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Mingjia Zhang <mingjia.zhang@mediatek.com>, 
+	Jack Zhu <jack.zhu@starfivetech.com>, Keith Zhao <keith.zhao@starfivetech.com>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH v5 01/14] media: starfive: Add JH7110 ISP module
+ definitions
+Message-ID: <h52qw6ndset7h7rgbfs6jqbsweldgvc3ewforvzlhmacvmqzzl@u4ik6jeswswi>
+References: <20240709083824.430473-1-changhuang.liang@starfivetech.com>
+ <20240709083824.430473-2-changhuang.liang@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <PAXPR04MB845959D5F558BCC2AB46575788A42@PAXPR04MB8459.eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240709083824.430473-2-changhuang.liang@starfivetech.com>
 
-On Wed, Jul 10, 2024 at 08:11:32AM GMT, Peng Fan wrote:
->> Subject: Re: [PATCH] test/vsock: add install target
->>
->> On Tue, Jul 09, 2024 at 09:50:51PM GMT, Peng Fan (OSS) wrote:
->> >From: Peng Fan <peng.fan@nxp.com>
->> >
->> >Add install target for vsock to make Yocto easy to install the images.
->> >
->> >Signed-off-by: Peng Fan <peng.fan@nxp.com>
->> >---
->> > tools/testing/vsock/Makefile | 12 ++++++++++++
->> > 1 file changed, 12 insertions(+)
->> >
->> >diff --git a/tools/testing/vsock/Makefile
->> >b/tools/testing/vsock/Makefile index a7f56a09ca9f..5c8442fa9460
->> 100644
->> >--- a/tools/testing/vsock/Makefile
->> >+++ b/tools/testing/vsock/Makefile
->> >@@ -8,8 +8,20 @@ vsock_perf: vsock_perf.o
->> msg_zerocopy_common.o
->> > vsock_uring_test: LDLIBS = -luring
->> > vsock_uring_test: control.o util.o vsock_uring_test.o timeout.o
->> >msg_zerocopy_common.o
->> >
->> >+VSOCK_INSTALL_PATH ?= $(abspath .)
->> >+# Avoid changing the rest of the logic here and lib.mk.
->> >+INSTALL_PATH := $(VSOCK_INSTALL_PATH)
->> >+
->> > CFLAGS += -g -O2 -Werror -Wall -I. -I../../include
->> > -I../../../usr/include -Wno-pointer-sign -fno-strict-overflow
->> > -fno-strict-aliasing -fno-common -MMD -U_FORTIFY_SOURCE -
->> D_GNU_SOURCE
->> > .PHONY: all test clean
->> > clean:
->> > 	${RM} *.o *.d vsock_test vsock_diag_test vsock_perf
->> vsock_uring_test
->> > -include *.d
->> >+
->> >+install: all
->> >+	@# Ask all targets to install their files
->> >+	mkdir -p $(INSTALL_PATH)/vsock
->>
->> why using the "vsock" subdir?
->>
->> IIUC you were inspired by selftests/Makefile, but it installs under
->> $(INSTALL_PATH)/kselftest/ the scripts used by the main one
->> `run_kselftest.sh`, which is installed in $(INSTALL_PATH instead.
->> So in this case I would install everything in $(INSTALL_PATH).
->>
->> WDYT?
->
->I agree.
->
->>
->> >+	install -m 744 vsock_test $(INSTALL_PATH)/vsock/
->> >+	install -m 744 vsock_perf $(INSTALL_PATH)/vsock/
->> >+	install -m 744 vsock_diag_test $(INSTALL_PATH)/vsock/
->> >+	install -m 744 vsock_uring_test $(INSTALL_PATH)/vsock/
->>
->> Also from selftests/Makefile, what about using the ifdef instead of
->> using $(abspath .) as default place?
->>
->> I mean this:
->>
->> install: all
->> ifdef INSTALL_PATH
->>    ...
->> else
->> 	$(error Error: set INSTALL_PATH to use install) endif
->
->Is the following looks good to you?
->
-># Avoid conflict with INSTALL_PATH set by the main Makefile
->VSOCK_INSTALL_PATH ?=
->INSTALL_PATH := $(VSOCK_INSTALL_PATH)
+Hello Changhuang
 
-I'm not a super Makefile expert, but why do we need both 
-VSOCK_INSTALL_PATH and INSTALL_PATH?
-
-Stefano
-
+On Tue, Jul 09, 2024 at 01:38:11AM GMT, Changhuang Liang wrote:
+> Add JH7110 ISP module definitions for user space.
 >
->install: all
->ifdef INSTALL_PATH
->        mkdir -p $(INSTALL_PATH)
->        install -m 744 vsock_test $(INSTALL_PATH)
->        install -m 744 vsock_perf $(INSTALL_PATH)
->        install -m 744 vsock_diag_test $(INSTALL_PATH)
->        install -m 744 vsock_uring_test $(INSTALL_PATH)
->else
->        $(error Error: set INSTALL_PATH to use install)
->Endif
->
->Thanks,
->Peng.
->>
->> Thanks,
->> Stefano
->
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> Signed-off-by: Zejian Su <zejian.su@starfivetech.com>
+> ---
+>  MAINTAINERS                     |   1 +
+>  include/uapi/linux/jh7110-isp.h | 739 ++++++++++++++++++++++++++++++++
 
+With the recently merged support for the RaspberryPi PiSP BE we have
+introduced include/uapi/linux/media/raspberry.
+
+Would you consider placing this in
+include/uapi/linux/media/startfive/ ?
+
+>  2 files changed, 740 insertions(+)
+>  create mode 100644 include/uapi/linux/jh7110-isp.h
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 507f04a80499..890604eb0d64 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21305,6 +21305,7 @@ S:	Maintained
+>  F:	Documentation/admin-guide/media/starfive_camss.rst
+>  F:	Documentation/devicetree/bindings/media/starfive,jh7110-camss.yaml
+>  F:	drivers/staging/media/starfive/camss
+> +F:	include/uapi/linux/jh7110-isp.h
+>
+>  STARFIVE CRYPTO DRIVER
+>  M:	Jia Jie Ho <jiajie.ho@starfivetech.com>
+> diff --git a/include/uapi/linux/jh7110-isp.h b/include/uapi/linux/jh7110-isp.h
+> new file mode 100644
+> index 000000000000..4939cd63e771
+> --- /dev/null
+> +++ b/include/uapi/linux/jh7110-isp.h
+> @@ -0,0 +1,739 @@
+> +/* SPDX-License-Identifier: ((GPL-2.0+ WITH Linux-syscall-note) OR BSD-3-Clause) */
+> +/*
+> + * jh7110-isp.h
+> + *
+> + * JH7110 ISP driver - user space header file.
+> + *
+> + * Copyright © 2023 StarFive Technology Co., Ltd.
+> + *
+> + * Author: Zejian Su <zejian.su@starfivetech.com>
+> + *
+> + */
+> +
+> +#ifndef __JH7110_ISP_H_
+> +#define __JH7110_ISP_H_
+> +
+
+Do you need to include
+
+#include <linux/types.h>
+
+> +/**
+
+Is this kernel-doc or a single * would do ?
+
+> + * ISP Module Diagram
+> + * ------------------
+> + *
+> + *  Raw  +-----+    +------+    +------+    +----+
+> + *  ---->| OBC |--->| OECF |--->| LCCF |--->| WB |-----+
+> + *       +-----+    +------+    +------+    +----+     |
+> + *                                                     |
+> + *  +--------------------------------------------------+
+> + *  |
+> + *  |    +-----+    +-----+    +-----+    +-----+
+> + *  +--->| DBC |--->| CTC |--->| CFA |--->| CAR |------+
+> + *       +-----+    +-----+    +-----+    +-----+      |
+> + *                                                     |
+> + *  +--------------------------------------------------+
+> + *  |
+> + *  |    +-----+    +--------+    +-----+    +------+
+> + *  +--->| CCM |--->| GMARGB |--->| R2Y |--->| YCRV |--+
+> + *       +-----+    +--------+    +-----+    +------+  |
+> + *                                                     |
+> + *  +--------------------------------------------------+
+> + *  |
+> + *  |    +-------+    +-------+    +-----+    +----+
+> + *  +--->| SHARP |--->| DNYUV |--->| SAT |--->| SC |
+> + *       +-------+    +-------+    +-----+    +----+
+> + *
+> + */
+> +
+> +/* Auto White Balance */
+> +#define JH7110_ISP_MODULE_WB_SETTING			(1U << 0)
+> +/* Color Artifact Removal */
+> +#define JH7110_ISP_MODULE_CAR_SETTING			(1U << 1)
+> +/* Color Correction Matrix */
+> +#define JH7110_ISP_MODULE_CCM_SETTING			(1U << 2)
+> +/* Color Filter Arrays */
+> +#define JH7110_ISP_MODULE_CFA_SETTING			(1U << 3)
+> +/* Crosstalk Correction */
+> +#define JH7110_ISP_MODULE_CTC_SETTING			(1U << 4)
+> +/* Defect Bad Pixel Correction */
+> +#define JH7110_ISP_MODULE_DBC_SETTING			(1U << 5)
+> +/* Denoise YUV */
+> +#define JH7110_ISP_MODULE_DNYUV_SETTING			(1U << 6)
+> +/* RGB Gamma */
+> +#define JH7110_ISP_MODULE_GMARGB_SETTING		(1U << 7)
+> +/* Lens Correction Cosine Fourth */
+> +#define JH7110_ISP_MODULE_LCCF_SETTING			(1U << 8)
+> +/* Optical Black Correction */
+> +#define JH7110_ISP_MODULE_OBC_SETTING			(1U << 9)
+> +/* Opto-Electric Conversion Function */
+> +#define JH7110_ISP_MODULE_OECF_SETTING			(1U << 10)
+> +/* RGB To YUV */
+> +#define JH7110_ISP_MODULE_R2Y_SETTING			(1U << 11)
+> +/* Saturation */
+> +#define JH7110_ISP_MODULE_SAT_SETTING			(1U << 12)
+> +/* Sharpen */
+> +#define JH7110_ISP_MODULE_SHARP_SETTING			(1U << 13)
+> +/* Y Curve */
+> +#define JH7110_ISP_MODULE_YCRV_SETTING			(1U << 14)
+> +/* Statistics Collection */
+> +#define JH7110_ISP_MODULE_SC_SETTING			(1U << 15)
+> +
+> +/**
+> + * struct jh7110_isp_wb_gain - auto white balance gain
+> + *
+> + * @gain_r: gain value for red component.
+> + * @gain_g: gain value for green component.
+> + * @gain_b: gain value for blue component.
+> + */
+> +struct jh7110_isp_wb_gain {
+> +	__u16 gain_r;
+> +	__u16 gain_g;
+> +	__u16 gain_b;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_wb_setting - Configuration used by auto white balance gain
+> + *
+> + * @enabled: enabled setting flag.
+> + * @gains: auto white balance gain setting.
+> + */
+> +struct jh7110_isp_wb_setting {
+> +	__u32 enabled;
+> +	struct jh7110_isp_wb_gain gains;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_car_setting - Configuration used by color artifact removal
+> + *
+> + * @enabled: enabled setting flag.
+> + */
+> +struct jh7110_isp_car_setting {
+> +	__u32 enabled;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_ccm_smlow - Color correction matrix
+> + *
+> + * @ccm: color transform matrix with size 3 by 3.
+> + * @offsets: the offsets of R, G, B after the transform by the ccm.
+> + */
+> +struct jh7110_isp_ccm_smlow {
+> +	__s32 ccm[3][3];
+> +	__s32 offsets[3];
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_ccm_setting - Configuration used by color correction matrix
+> + *
+> + * @enabled: enabled setting flag.
+> + * @ccm_smlow: Color correction matrix.
+> + */
+> +struct jh7110_isp_ccm_setting {
+> +	__u32 enabled;
+> +	struct jh7110_isp_ccm_smlow ccm_smlow;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_cfa_params - demosaic parameters
+> + *
+> + * @hv_width: detail smooth factor
+> + * @cross_cov: Cross covariance weighting.
+> + */
+> +struct jh7110_isp_cfa_params {
+> +	__s32 hv_width;
+> +	__s32 cross_cov;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_cfa_params - Configuration used by demosaic module
+> + *
+> + * @enabled: enabled setting flag.
+> + * @settings: demosaic parameters.
+> + */
+> +struct jh7110_isp_cfa_setting {
+> +	__u32 enabled;
+> +	struct jh7110_isp_cfa_params settings;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_ctc_params - crosstalk remove parameters
+> + *
+> + * @saf_mode: smooth area filter mode.
+> + * @daf_mode: detail area filter mode.
+> + * @max_gt: the threshold for imbalance detection when pixel intensity is close to maximum.
+
+You could easily make this < 80 cols (here and in other places).
+
+I know there are different opinions on how strict on the 80 cols limit
+we should be, so up to you.
+
+> + * @min_gt: the threshold for imbalance detection when pixel intensity is close to 0.
+> + */
+> +struct jh7110_isp_ctc_params {
+> +	__u8 saf_mode;
+> +	__u8 daf_mode;
+> +	__s32 max_gt;
+> +	__s32 min_gt;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_ctc_params - Configuration used by crosstalk remove
+> + *
+> + * @enabled: enabled setting flag.
+> + * @settings: corsstalk remove parameters.
+
+crosstalk
+
+> + */
+> +struct jh7110_isp_ctc_setting {
+> +	__u32 enabled;
+> +	struct jh7110_isp_ctc_params settings;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_dbc_params - defect pixels correction parameters
+> + *
+> + * @bad_gt: bad pixel threshold for the green channel.
+> + * @bad_xt: bad pixel threshold for the red and blue channels.
+> + */
+> +struct jh7110_isp_dbc_params {
+> +	__s32 bad_gt;
+> +	__s32 bad_xt;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_dbc_params - Configuration used by defect bad pixels correction
+> + *
+> + * @enabled: enabled setting flag.
+> + * @settings: defect pixels correction parameters.
+> + */
+> +struct jh7110_isp_dbc_setting {
+> +	__u32 enabled;
+> +	struct jh7110_isp_dbc_params settings;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_dnyuv_params - yuv domain denoise parameters
+> + *
+> + * @y_sweight: ten coefficients of 7x7 spatial filter for Y channel.
+> + * @y_curve: intensity difference (similarity) weight lookup table for Y channel.
+> + * @uv_sweight: ten coefficients of 7x7 spatial filter for U and V channel.
+> + * @uv_curve: intensity difference (similarity) weight lookup table for U and V channel.
+> + */
+> +struct jh7110_isp_dnyuv_params {
+> +	__u8 y_sweight[10];
+> +	__u16 y_curve[7];
+> +	__u8 uv_sweight[10];
+> +	__u16 uv_curve[7];
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_dnyuv_params - Configuration used by yuv domain denoise
+> + *
+> + * @enabled: enabled setting flag.
+> + * @settings: yuv domain denoise parameters.
+> + */
+> +struct jh7110_isp_dnyuv_setting {
+> +	__u32 enabled;
+> +	struct jh7110_isp_dnyuv_params settings;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_gmargb_point - RGB Gamma point
+> + *
+> + * @g_val: RGB gamma value.
+> + * @sg_val: RGB gamma slope value.
+> + */
+> +struct jh7110_isp_gmargb_point {
+> +	__u16 g_val;
+> +	__u16 sg_val;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_gmargb_setting - Configuration used by RGB gamma
+> + *
+> + * @enabled: enabled setting flag.
+> + * @curve: RGB Gamma point table.
+> + */
+> +struct jh7110_isp_gmargb_setting {
+> +	__u32 enabled;
+> +	struct jh7110_isp_gmargb_point curve[15];
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_lccf_circle - len circle
+
+lens ?
+
+> + *
+> + * @center_x: center X distance from capture window.
+> + * @center_y: center Y distance from capture window.
+> + * @radius: len circle radius.
+
+here as well
+
+> + */
+> +struct jh7110_isp_lccf_circle {
+> +	__s16 center_x;
+> +	__s16 center_y;
+> +	__u8 radius;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_lccf_curve_param - lens correction cosine fourth curve param
+> + *
+> + * @f1: F1 parameter.
+> + * @f2: F2 parameter.
+> + */
+> +struct jh7110_isp_lccf_curve_param {
+> +	__s16 f1;
+> +	__s16 f2;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_lccf_setting - Configuration used by lens correction cosine fourth
+> + *
+> + * @enabled: enabled setting flag.
+> + * @circle: len circle.
+> + * @r_param: lens correction cosine fourth curve param for Bayer pattern R.
+> + * @gr_param: lens correction cosine fourth curve param for Bayer pattern Gr.
+> + * @gb_param: lens correction cosine fourth curve param for Bayer pattern Gb.
+> + * @b_param: lens correction cosine fourth curve param for Bayer pattern B.
+> + */
+> +struct jh7110_isp_lccf_setting {
+> +	__u32 enabled;
+> +	struct jh7110_isp_lccf_circle circle;
+> +	struct jh7110_isp_lccf_curve_param r_param;
+> +	struct jh7110_isp_lccf_curve_param gr_param;
+> +	struct jh7110_isp_lccf_curve_param gb_param;
+> +	struct jh7110_isp_lccf_curve_param b_param;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_obc_win_size - optical black correction window size
+> + *
+> + * @width: window width.
+> + * @height: window height.
+> + */
+> +struct jh7110_isp_obc_win_size {
+> +	__u32 width;
+> +	__u32 height;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_obc_gain - optical black correction symbol gain
+> + *
+> + * @tl_gain: gain at point A for symbol.
+> + * @tr_gain: gain at point B for symbol.
+> + * @bl_gain: gain at point C for symbol.
+> + * @br_gain: gain at point D for symbol.
+> + */
+> +struct jh7110_isp_obc_gain {
+> +	__u8 tl_gain;
+> +	__u8 tr_gain;
+> +	__u8 bl_gain;
+> +	__u8 br_gain;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_obc_offset - optical black correction symbol offset
+> + *
+> + * @tl_offset: offset at point A for symbol.
+> + * @tr_offset: offset at point B for symbol.
+> + * @bl_offset: offset at point C for symbol.
+> + * @br_offset: offset at point D for symbol.
+> + */
+> +struct jh7110_isp_obc_offset {
+> +	__u8 tl_offset;
+> +	__u8 tr_offset;
+> +	__u8 bl_offset;
+> +	__u8 br_offset;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_obc_setting - Configuration used by optical black correction
+> + *
+> + * @enabled: enabled setting flag.
+> + * @win_size: optical black correction window size.
+> + * @gain: optical black correction symbol gain.
+> + * @offset: optical black correction symbol offset.
+> + */
+> +struct jh7110_isp_obc_setting {
+> +	__u32 enabled;
+> +	struct jh7110_isp_obc_win_size win_size;
+> +	struct jh7110_isp_obc_gain gain[4];
+> +	struct jh7110_isp_obc_offset offset[4];
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_oecf_point - oecf curve
+> + *
+> + * @x: x coordinate.
+> + * @y: y coordinate.
+> + * @slope: the slope between this point and the next point.
+> + */
+> +struct jh7110_isp_oecf_point {
+> +	__u16 x;
+> +	__u16 y;
+> +	__s16 slope;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_oecf_setting - Configuration used by opto-electric conversion function
+> + *
+> + * @enabled: enabled setting flag.
+> + * @r_curve: red pixel oecf curve.
+> + * @gr_curve: green pixel oecf curve in GR line.
+> + * @gb_curve: green pixel oecf curve in GB line.
+> + * @b_curve: blue pixel oecf curve.
+> + */
+> +struct jh7110_isp_oecf_setting {
+> +	__u32 enabled;
+> +	struct jh7110_isp_oecf_point r_curve[16];
+> +	struct jh7110_isp_oecf_point gr_curve[16];
+> +	struct jh7110_isp_oecf_point gb_curve[16];
+> +	struct jh7110_isp_oecf_point b_curve[16];
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_r2y_matrix - RGB to YUV color conversion matrix
+> + *
+> + * @m: The 3x3 color conversion matrix coefficient.
+> + */
+> +struct jh7110_isp_r2y_matrix {
+> +	__s16 m[9];
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_r2y_setting - Configuration used by RGB To YUV
+> + *
+> + * @enabled: enabled setting flag.
+> + * @matrix: RGB to YUV color conversion matrix.
+> + */
+> +struct jh7110_isp_r2y_setting {
+> +	__u32 enabled;
+> +	struct jh7110_isp_r2y_matrix matrix;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_sat_curve - Saturation curve
+> + *
+> + * @yi_min: the minimum input Y value.
+> + * @yo_ir: the ratio of Y output range to input range.
+> + * @yo_min: the minimum output Y value.
+> + * @yo_max: the maximum output Y value.
+> + */
+> +struct jh7110_isp_sat_curve {
+> +	__s16 yi_min;
+> +	__s16 yo_ir;
+> +	__s16 yo_min;
+> +	__s16 yo_max;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_sat_hue_info - Chroma Saturation Hue Factor
+> + *
+> + * @cos: COS hue factor.
+> + * @sin: SIN hue factor.
+> + */
+> +struct jh7110_isp_sat_hue_info {
+> +	__s16 cos;
+> +	__s16 sin;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_sat_info - Saturation information
+> + *
+> + * @gain_cmab: Chroma saturation magnitude amplification base for gain.
+> + * @gain_cmmd: Chroma saturation magnitude amplification delta for gain.
+> + * @threshold_cmb: Chroma saturation magnitude base threshold.
+> + * @threshold_cmd: Chroma saturation magnitude delta threshold.
+> + * @offset_u: Chroma saturation U offset.
+> + * @offset_v: Chroma saturation V offset.
+> + * @cmsf: Chroma saturation magnitude scaling factor.
+> + */
+> +struct jh7110_isp_sat_info {
+> +	__s16 gain_cmab;
+> +	__s16 gain_cmmd;
+> +	__s16 threshold_cmb;
+> +	__s16 threshold_cmd;
+> +	__s16 offset_u;
+> +	__s16 offset_v;
+> +	__s16 cmsf;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_sat_setting - Configuration used by Saturation
+> + *
+> + * @enabled: enabled setting flag.
+> + * @curve: Saturation curve.
+> + * @hue_info: Chroma Saturation Hue Factor.
+> + * @sat_info: Saturation information.s
+
+informations.
+
+> + */
+> +struct jh7110_isp_sat_setting {
+> +	__u32 enabled;
+> +	struct jh7110_isp_sat_curve curve;
+> +	struct jh7110_isp_sat_hue_info hue_info;
+> +	struct jh7110_isp_sat_info sat_info;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_sharp_weight - Sharpe weight
+> + *
+> + * @weight: Sharpen filter weight.
+> + * @recip_wei_sum: Sharpen amplification filter weight normalization factor.
+> + */
+> +struct jh7110_isp_sharp_weight {
+> +	__u8 weight[15];
+> +	__u32 recip_wei_sum;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_sharp_strength - Sharpen strength
+> + *
+> + * @diff: Sharpen Edge amplification delta level.
+> + * @f: Sharpen Edge amplification factor.
+> + * @s: Sharpen Edge amplification factor slope.
+> + */
+> +struct jh7110_isp_sharp_strength {
+> +	__s16 diff[4];
+> +	__s16 f[3];
+> +	__s32 s[3];
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_sharp_setting - Configuration used by Sharpen
+> + *
+> + * @enabled: enabled setting flag.
+> + * @weight: Sharpe weight.
+> + * @strength: Sharpen strength.
+> + * @pdirf: Positive Factor Multiplier.
+> + * @ndirf: Negative Factor Multiplier.
+> + */
+> +struct jh7110_isp_sharp_setting {
+> +	__u32 enabled;
+> +	struct jh7110_isp_sharp_weight weight;
+> +	struct jh7110_isp_sharp_strength strength;
+> +	__s8 pdirf;
+> +	__s8 ndirf;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_ycrv_curve - Y Curve parameters table
+> + *
+> + * @y: Y curve L parameters value.
+> + */
+> +struct jh7110_isp_ycrv_curve {
+> +	__s16 y[64];
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_ycrv_setting - Configuration used by Y Curve
+> + *
+> + * @enabled: enabled setting flag.
+> + * @curve: Y Curve parameters table.
+> + */
+> +struct jh7110_isp_ycrv_setting {
+> +	__u32 enabled;
+> +	struct jh7110_isp_ycrv_curve curve;
+
+I am a bit failing in seeing the point of embedding the settings in a
+dedicated structure when you have a single instance of the
+configuration like this and in other instances. Isn't
+
+        struct jh7110_isp_ycrv_setting {
+                __u32 enabled;
+                __s16 y[64];
+        };
+
+easier ? Or do you need a dedicated type for other reasons ?
+
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_sc_config - statistics collection crop configure
+> + *
+> + * @h_start: Horizontal starting point for frame cropping.
+> + * @v_start: Vertical starting point for frame cropping.
+> + * @sw_width: Width of statistics collection sub-window.
+> + * @sw_height: Height of statistics collection sub-window.
+> + * @hperiod: Horizontal period.
+> + * @hkeep: Horizontal keep.
+> + * @vperiod: Vertical period.
+> + * @vkeep: Vertical keep.
+> + */
+> +struct jh7110_isp_sc_config {
+> +	__u16 h_start;
+> +	__u16 v_start;
+> +	__u8 sw_width;
+> +	__u8 sw_height;
+> +	__u8 hperiod;
+> +	__u8 hkeep;
+> +	__u8 vperiod;
+> +	__u8 vkeep;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_sc_af_config - statistics collection auto focus configure
+> + *
+> + * @es_hor_mode: Horizontal mode.
+> + * @es_sum_mode: sum mode.
+
+Other fields are documented with a capital letter -> "Sum mode."
+
+> + * @hor_en: Horizontal enable.
+> + * @ver_en: Vertical enable.
+> + * @es_ver_thr: Vertical threshold.
+> + * @es_hor_thr: Horizontal threshold.
+> + */
+> +struct jh7110_isp_sc_af_config {
+> +	__u8 es_hor_mode;
+> +	__u8 es_sum_mode;
+> +	__u8 hor_en;
+> +	__u8 ver_en;
+> +	__u8 es_ver_thr;
+> +	__u16 es_hor_thr;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_sc_awb_ps - statistics collection auto white balance pixel sum
+> + *
+> + * @awb_ps_rl: Lower boundary of R value for pixel sum.
+> + * @awb_ps_ru: Upper boundary of R value for pixel sum.
+> + * @awb_ps_gl: Lower boundary of G value for pixel sum.
+> + * @awb_ps_gu: Upper boundary of G value for pixel sum.
+> + * @awb_ps_bl: Lower boundary of B value for pixel sum.
+> + * @awb_ps_bu: Upper boundary of B value for pixel sum.
+> + * @awb_ps_yl: Lower boundary of Y value for pixel sum.
+> + * @awb_ps_yu: Upper boundary of Y value for pixel sum.
+> + * @awb_ps_grl: Lower boundary of G/R ratio for pixel sum.
+> + * @awb_ps_gru: Upper boundary of G/R ratio for pixel sum.
+> + * @awb_ps_gbl: Lower boundary of G/B ratio for pixel sum.
+> + * @awb_ps_gbu: Upper boundary of G/B ratio for pixel sum.
+> + * @awb_ps_grbl: Lower boundary of (Gr/R + b/a * Gb/B) for pixel sum.
+> + * @awb_ps_grbu: Upper boundary of (Gr/R + b/a * Gb/B) for pixel sum.
+> + */
+> +struct jh7110_isp_sc_awb_ps {
+> +	__u8 awb_ps_rl;
+> +	__u8 awb_ps_ru;
+> +	__u8 awb_ps_gl;
+> +	__u8 awb_ps_gu;
+> +	__u8 awb_ps_bl;
+> +	__u8 awb_ps_bu;
+> +	__u8 awb_ps_yl;
+> +	__u8 awb_ps_yu;
+> +	__u16 awb_ps_grl;
+> +	__u16 awb_ps_gru;
+> +	__u16 awb_ps_gbl;
+> +	__u16 awb_ps_gbu;
+> +	__u16 awb_ps_grbl;
+> +	__u16 awb_ps_grbu;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_sc_awb_ws - statistics collection auto white balance weight sum
+> + *
+> + * @awb_ws_rl: Lower boundary of R value for weight sum.
+> + * @awb_ws_ru: Upper boundary of R value for weight sum.
+> + * @awb_ws_grl: Lower boundary of Gr value for weight sum.
+> + * @awb_ws_gru: Upper boundary of Gr value for weight sum.
+> + * @awb_ws_gbl: Lower boundary of Gb value for weight sum.
+> + * @awb_ws_gbu: Upper boundary of Gb value for weight sum.
+> + * @awb_ws_bl: Lower boundary of B value for weight sum.
+> + * @awb_ws_bu: Upper boundary of B value for weight sum.
+> + */
+> +struct jh7110_isp_sc_awb_ws {
+> +	__u8 awb_ws_rl;
+> +	__u8 awb_ws_ru;
+> +	__u8 awb_ws_grl;
+> +	__u8 awb_ws_gru;
+> +	__u8 awb_ws_gbl;
+> +	__u8 awb_ws_gbu;
+> +	__u8 awb_ws_bl;
+> +	__u8 awb_ws_bu;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_sc_awb_point - statistics collection auto white balance point
+> + *
+> + * @weight: Weighting value at point.
+> + */
+> +struct jh7110_isp_sc_awb_point {
+> +	__u8 weight;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_sc_awb_config - statistics collection auto white balance configure
+> + *
+> + * @ps_config: statistics collection auto white balance pixel sum.
+
+nit: please be consistent with using capital letters or not in doc.
+
+> + * @awb_ps_grb_ba: auto white balance b/a value.
+> + * @sel: input mux for statistics collection auto white balance.
+> + * @ws_config: statistics collection auto white balance weight sum.
+> + * @awb_cw: Weighting value at 13x13 point.
+> + * @pts: statistics collection auto white balance point.
+> + */
+> +struct jh7110_isp_sc_awb_config {
+> +	struct jh7110_isp_sc_awb_ps ps_config;
+> +	__u8 awb_ps_grb_ba;
+> +	__u8 sel;
+> +	struct jh7110_isp_sc_awb_ws ws_config;
+> +	__u8 awb_cw[169];
+> +	struct jh7110_isp_sc_awb_point pts[17];
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_sc_setting - Configuration used by statistics collection
+> + *
+> + * @enabled: enabled setting flag.
+> + * @crop_config: statistics collection crop configure.
+> + * @af_config: statistics collection auto focus configure.
+> + * @awb_config: statistics collection auto white balance configure.
+> + */
+> +struct jh7110_isp_sc_setting {
+> +	__u32 enabled;
+> +	struct jh7110_isp_sc_config crop_config;
+> +	struct jh7110_isp_sc_af_config af_config;
+> +	struct jh7110_isp_sc_awb_config awb_config;
+> +};
+> +
+> +/**
+> + * struct jh7110_isp_params_buffer - StarFive JH7110 ISP Parameters Meta Data
+> + *
+> + * @enable_setting: enabled setting module (JH7110_ISP_MODULE_* definitions).
+> + * @wb_setting: Configuration used by auto white balance gain.
+> + * @car_setting: Configuration used by color artifact removal.
+> + * @ccm_setting: Configuration used by color correction matrix.
+> + * @cfa_setting: Configuration used by demosaic module.
+> + * @ctc_setting: Configuration used by crosstalk remove.
+> + * @dbc_setting: Configuration used by defect bad pixels correction.
+> + * @dnyuv_setting: Configuration used by yuv domain denoise.
+> + * @gmargb_setting: Configuration used by RGB gamma.
+> + * @lccf_setting: Configuration used by lens correction cosine fourth.
+> + * @obc_setting: Configuration used by optical black compensation.
+> + * @oecf_setting: Configuration used by opto-electric conversion function.
+> + * @r2y_setting: Configuration used by RGB To YUV.
+> + * @sat_setting: Configuration used by Saturation.
+> + * @sharp_setting: Configuration used by Sharpen.
+> + * @ycrv_setting: Configuration used by Y Curve.
+> + * @sc_setting: Configuration used by statistics collection.
+> + */
+> +struct jh7110_isp_params_buffer {
+> +	__u32 enable_setting;
+> +	struct jh7110_isp_wb_setting wb_setting;
+> +	struct jh7110_isp_car_setting car_setting;
+> +	struct jh7110_isp_ccm_setting ccm_setting;
+> +	struct jh7110_isp_cfa_setting cfa_setting;
+> +	struct jh7110_isp_ctc_setting ctc_setting;
+> +	struct jh7110_isp_dbc_setting dbc_setting;
+> +	struct jh7110_isp_dnyuv_setting dnyuv_setting;
+> +	struct jh7110_isp_gmargb_setting gmargb_setting;
+> +	struct jh7110_isp_lccf_setting lccf_setting;
+> +	struct jh7110_isp_obc_setting obc_setting;
+> +	struct jh7110_isp_oecf_setting oecf_setting;
+> +	struct jh7110_isp_r2y_setting r2y_setting;
+> +	struct jh7110_isp_sat_setting sat_setting;
+> +	struct jh7110_isp_sharp_setting sharp_setting;
+> +	struct jh7110_isp_ycrv_setting ycrv_setting;
+> +	struct jh7110_isp_sc_setting sc_setting;
+> +};
+> +
+> +/**
+> + * Statistics Collection Meta Data Flag
+> + */
+> +#define JH7110_ISP_SC_FLAG_AWB			0x0
+> +#define JH7110_ISP_SC_FLAG_AE_AF		0xffff
+> +
+> +#pragma pack(1)
+> +
+> +/**
+> + * struct jh7110_isp_sc_buffer - StarFive JH7110 ISP Statistics Collection Meta Data
+> + *
+> + * @y_histogram: Y histogram data for saturation control.
+> + * @reserv0: reserve byte.
+> + * @bright_sc: bright statistic. If flag is JH7110_ISP_SC_FLAG_AE_AF, This field is
+
+s/bright statistics/brightness statistics/
+
+no capital "T" after ,
+
+> + *             saved auto exposure and auto focus. If flag is JH7110_ISP_SC_FLAG_AWB,
+> + *             This field is saved auto white balance.
+
+no capital "T" after ,
+
+I would replace "this field is saved" which doesn't sound great in
+English (not a native speaker though) with "this field stores".
+
+> + * @reserv1: reserve byte.
+> + * @ae_hist_y: Y histogram for auto exposure.
+> + * @reserv2: reserve byte.
+> + * @flag: Statistics Collection Meta Data Flag (JH7110_ISP_SC_FLAG_* definitions)
+> + */
+> +struct jh7110_isp_sc_buffer {
+> +	__u32 y_histogram[64];
+> +	__u32 reserv0[33];
+> +	__u32 bright_sc[4096];
+> +	__u32 reserv1[96];
+> +	__u32 ae_hist_y[128];
+> +	__u32 reserv2[511];
+> +	__u16 flag;
+> +};
+> +
+> +#pragma pack()
+
+This structure is packed, is it populated directly from HW registers
+with a memcpy or a DMA transfer ? I guess I'll find it out in the next
+patches.
+
+Thanks
+   j
+
+> +
+> +#endif
+> --
+> 2.25.1
+>
+>
 
