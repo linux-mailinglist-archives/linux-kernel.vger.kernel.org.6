@@ -1,147 +1,136 @@
-Return-Path: <linux-kernel+bounces-247334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B905592CE1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:24:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6811892CE22
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E64101C223CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:24:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22E9E2840D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF5C18FA0D;
-	Wed, 10 Jul 2024 09:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5D618FA09;
+	Wed, 10 Jul 2024 09:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="beaT11/B"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gmM0zSHW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DED984A5B;
-	Wed, 10 Jul 2024 09:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1D684A5B;
+	Wed, 10 Jul 2024 09:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720603480; cv=none; b=OcpOhUC7O0nt9g+TtIWYKc6y5m3Vos5TLcmOqCgYrfb3Ih1vufhrkr8XHEHXqdesZpevSjn1TumaqvkbN4ce0dHv5SmUs1zhllTXJRDqWF3REMtLzHa062aSo6G+5DN5CNF8Fo3o1B/N9DeTmfK8frFXYz3VjhNgiQHGGYXHW9U=
+	t=1720603574; cv=none; b=rACnbm6IOg6uFbFKV+GNff8WjgO6nCjDv7RzoAyCY/mejfO2Ik/am9f0txcnzj5wV5Hx6RksrmI+m7jwaaN4zgBrezTBqarI0bwaCp633I7FenYiLoawjLMnpJ8pde/U2rjglFP2imbdKdQ9H39E23U6VIc6meYxD0nJLqvgAk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720603480; c=relaxed/simple;
-	bh=mt5D8AY+7EO0szlXthTVjPtn1EMLtk1kIsZWF6D2fXY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P1F001cHHgfuRatSkpuJSuRX1xHejVflbgZiEmMBAoVILnmfAA81ubpzlzg96dGNbuBVdfy+7MWeQD734c0vAoJE9I1EwTiOOMdk66AK3TO6vymO2a3QCIKQ2puY9u/eq8ONH5kh1INHIj5HIU+Znk2x0F0gX29UkZS9WtuN87M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=beaT11/B; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6b605c48717so4225096d6.3;
-        Wed, 10 Jul 2024 02:24:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720603477; x=1721208277; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eWMHgpbIy0GnN29ystn44vJIYgOS+Ps6swBxJ3oTQT8=;
-        b=beaT11/BYLTJq2mxkUTyU7p0ENHx/y+SIcuQWvMnMuRHoDPkya9eNtpqFQtYL5acJN
-         VbVgJjjHcbMQ4Y+2xum9+/ng3dYPQB1WoGnYhW3sFKnKK4p/I6rP6pkdWyVlr43Ib/dV
-         iD0lPlrT0NSQ6p1Gsz/knBVnDwMVKVnXugaNuz++wF5f4piOlcFA03tJ0+lwnh8o1V2w
-         A3PhiEtskOwTVi5130AGeF7eJjUV+WzidB0dpqQR8LRenG5pkd3rdSERQS7N4Up3SCvL
-         4pzJBLkIEua+rZ/09fxXDKvf/vZKnoDx2DQhP6qNqwvtpOFR2ygyYuNL8ZHeYz3YtJhD
-         mp5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720603477; x=1721208277;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eWMHgpbIy0GnN29ystn44vJIYgOS+Ps6swBxJ3oTQT8=;
-        b=BxF6U0Pqcsv9LAQmiDA1J9w93DoDiU6EdM8IkjE08KD0yjGWG7TB3VtIQirCKLp2Er
-         mDyEevgkaruYUZ0zAwUBQK64cE6ujz711j8VTKxkT5kbqIn5Bm4CoKwwBHDELQ+K44Cq
-         6dH2YM4+446ra/vzSs8vuHpsm7SRP0yU9fOnQdCM6vI5OyZvpHDbGVbcTVzpM+IgHtM4
-         XwtckbwmR03l8E6NIT1EykV6y0MCeZAKN2/5hG5M0yBUkCbg4zBrSczPPz5B4EjppQJk
-         lCBFozIg74CF6XNYiDVmh0lDv/bGjz/NS3BKbVFN7zY8EXjaC6ngP4MVVc6EF3/AD6VK
-         pLdg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtAAqKqU1x1W5HSNTMNsRwhMofiyv3WzVWPvJnlJOJ6BGShbkoX+AZyj/WUmI35zfWK5wCdwvlu7ywwkkY88P3UujPVaJDgeax2H/GkNMXjVwqgMeKV/NHwxmDr/8GWSu9vOdtuYJa5p0=
-X-Gm-Message-State: AOJu0YyYrQ6/YYvC1TF2bONOAbMmTFe3pRk7PeT36e020PqBz6U5TewV
-	RMb6uffQwKuKOyVEUSiHqwcJ6aMy2LhPq5WcATGcs3iKnaQ+Zf/wxlL6sYeEGdz/gZFWFt12wfK
-	JFSIxad1aR92QhYzwsnjBVjnZ6co=
-X-Google-Smtp-Source: AGHT+IF7E8zn61udfFE2MLrr5RfDLaBzXvM82WJiBjIRP1r9i+9UFnsbu3O6AeiGCBZSYyYR7HPPSUE7OQ7NYaQcYK8=
-X-Received: by 2002:ad4:5b8f:0:b0:6b5:ec9a:41ef with SMTP id
- 6a1803df08f44-6b61bca42a1mr53442686d6.2.1720603477379; Wed, 10 Jul 2024
- 02:24:37 -0700 (PDT)
+	s=arc-20240116; t=1720603574; c=relaxed/simple;
+	bh=EzM+QQuPvXYqipkCKXA/ADx49Lc0KveRdc2IsyP5wb0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZBJL5XfaNIym/b7jLXBA7JDfPuwufBQPSkUK1i6SywRuvG1YQBCbe4DkxNzwKhzxn3ESHIS2OE4z9DFUIoB+xKxaN2EjlypUMr3KxDArq7w4G3oMeTFISrXAx7qmhZlifsWft3Ndv7QtGMYoqoQxRQd+TgIAMJV/zfDVc88kzZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gmM0zSHW; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720603572; x=1752139572;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=EzM+QQuPvXYqipkCKXA/ADx49Lc0KveRdc2IsyP5wb0=;
+  b=gmM0zSHWvaQEKp/BXTO4iGyqw+I0nwFKFVL6NbuLKHVSN/k9yUfxp8S4
+   dovhvgm46imsc9Zb0E/vBRuxK0vsMHtSY6PRlMCR13dqdV6fylcPE6mVL
+   ydvQddJiCHj9DIBnqutkkzJhRmCQjG+EPV0DX4XdBQ2M4CT5lNpw+fdTO
+   RnR/+Q5A6Mnprw7JvLsbwwO8MjUj5a/JtYxcszamuXRFAgapU7FnvP+rr
+   HHhrTsQdTeatRpwfkcZsluN5Z8L+YIX+eKwQ+8QEkbZcusDuhXt0gIVxD
+   LGw7nEopTA88aEAfQSuUxra+kDNz0ncsVooCmIQn318+JH2W4WCjlq5Em
+   Q==;
+X-CSE-ConnectionGUID: s0v9eu3RQl6Gae2SX0oP3Q==
+X-CSE-MsgGUID: dHBQIe/+QXGY9vaudgVSwg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11128"; a="18017238"
+X-IronPort-AV: E=Sophos;i="6.09,197,1716274800"; 
+   d="scan'208";a="18017238"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 02:26:11 -0700
+X-CSE-ConnectionGUID: qvEQbwiDT9qu8ZygTKhhrA==
+X-CSE-MsgGUID: zuQvFWvCRFi3E4z3B1FB/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,197,1716274800"; 
+   d="scan'208";a="48057791"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.49.253])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 02:26:10 -0700
+Message-ID: <ed01edf2-f3d6-4a93-884d-08525ddaac03@intel.com>
+Date: Wed, 10 Jul 2024 12:26:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
- <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
- <CABXGCsMWYaxZry+VDCgP=UM7c9do+JYSKdHAbCcx5=xEwXjE6Q@mail.gmail.com>
- <CAL3q7H7Xb9FQx-5PMQtK_-reMq-cbfysCx6s-ZOWL1FUPSm8sA@mail.gmail.com>
- <CABXGCsP9tSwgR4dN-k97maqHB1KOtykakmHNz78SYbAuHydUTQ@mail.gmail.com>
- <CAL3q7H6vG6PEKjcsXtSuq=yks_g-MczAz_-V96QSZCs9ezRZpg@mail.gmail.com>
- <CAL3q7H5RC6dinsA2KLtus07jxDuY1PecPXbhYOWtW+nVyzXwuA@mail.gmail.com>
- <CAL3q7H4MiarsqxSMc0OzY2TNRk8J7Lg+89MaPHY2+NPO-EcDgQ@mail.gmail.com>
- <CAK-xaQYYx6SPQaOVwL+ardB0y5LzYJw9a_hfWWtVEZ=y1rXq5w@mail.gmail.com>
- <CAL3q7H74jpSoMvvkSvmrtB_VGiscz8zN5aHnApWuYU+hpKe+rA@mail.gmail.com>
- <CAL3q7H6V9M0B4jmW79keUtTdjWsabyWZeU5g4KEN5_-a+wEHVQ@mail.gmail.com>
- <CAK-xaQZ=c7aociwZ5YQreTmT+sBLGdH0rkTKmFzt4i_mrXBmgg@mail.gmail.com>
- <CAK-xaQb2OrgNOKKXp8d_43kqMNyuHxS1V8jSDL6PdNZPTv79+g@mail.gmail.com>
- <CAK-xaQZ25nyCeOvMs0G31sL7R71dxQqZhx61cYzTK7rZD-JxeQ@mail.gmail.com>
- <CAL3q7H4D8Sq1-pbgZb8J_0VeNO=MZqDYPM7aauXqLHDM70UmAg@mail.gmail.com>
- <CAK-xaQaesuU-TjDQcXgbjoNbZa0Y2qLHtSu5efy99EUDVnuhUg@mail.gmail.com>
- <CAK-xaQbcpzvH1uGiDa04g1NrQsBMnyH2z-FPC4CdS=GDfRCsLg@mail.gmail.com>
- <CAL3q7H63GexJexkDxSz9Av_s=XyYotJqLqjUubZmuU7vynaQNQ@mail.gmail.com>
- <CABXGCsO_6cJruBxKdqXzEze_hDGVsPtN8DBCob=OWF5OpT4s7Q@mail.gmail.com>
- <CAL3q7H46BxXUnrZ8Q3WxYf=2Tx0taMt9-2wf0TCrwj_kOiC=Dg@mail.gmail.com>
- <CABXGCsOcpzy7QvRUuSDT-Ouvp_jJHDvuziPQbej4rHLh9te58g@mail.gmail.com> <CAL3q7H6FwUFKb5oODK8jcAbRbjTjsZ2=4usW1_4A6b-t5nF7ng@mail.gmail.com>
-In-Reply-To: <CAL3q7H6FwUFKb5oODK8jcAbRbjTjsZ2=4usW1_4A6b-t5nF7ng@mail.gmail.com>
-From: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Date: Wed, 10 Jul 2024 14:24:25 +0500
-Message-ID: <CABXGCsP_V-Dh97SkLbYZvHSUdfhgXY_-RSqdRwv16hz+r3B3FQ@mail.gmail.com>
-Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
- execution time of the kswapd0 process and symptoms as if there is not enough memory
-To: Filipe Manana <fdmanana@kernel.org>
-Cc: Andrea Gelmini <andrea.gelmini@gmail.com>, 
-	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
-	dsterba@suse.com, josef@toxicpanda.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mmc: sdhci-pxav3: Fix potential NULL dereference in
+ sdhci_pxav3_probe
+To: Ma Ke <make24@iscas.ac.cn>, ulf.hansson@linaro.org
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240710070039.318658-1-make24@iscas.ac.cn>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240710070039.318658-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 8, 2024 at 7:16=E2=80=AFPM Filipe Manana <fdmanana@kernel.org> =
-wrote:
->
-> That's weird, I think you might be observing some variance.
-> I noticed that too for your reports of the test2 branch and the old
-> test3 branch, which were very identical, yet you got a very
-> significant difference between them.
->
-> Thanks.
->
+On 10/07/24 10:00, Ma Ke wrote:
+> In sdhci_pxav3_probe(), mv_mbus_dram_info() returns NULL if
+> CONFIG_PLAT_ORION macro is not defined. Fix this bug by adding NULL check.
 
-up  1:00
-root         269 10.2  0.0      0     0 ?        S    10:06   6:13 [kswapd0=
-]
-up  2:01
-root         269  9.1  0.0      0     0 ?        S    10:06  11:07 [kswapd0=
-]
-up  3:00
-root         269  8.4  0.0      0     0 ?        R    10:06  15:18 [kswapd0=
-]
-up  4:21
-root         269 11.7  0.0      0     0 ?        S    10:06  30:33 [kswapd0=
-]
-up  5:01
-root         269 11.7  0.0      0     0 ?        S    10:06  35:19 [kswapd0=
-]
-up  6:27
-root         269 11.5  0.0      0     0 ?        S    10:06  44:39 [kswapd0=
-]
-up  7:00
-root         269 11.2  0.0      0     0 ?        R    10:06  47:18 [kswapd0=
-]
+Looks like mv_conf_mbus_windows() in sdhci-pxav3.c already checks
+for NULL i.e.
 
-The measurement error can reach =C2=B110 min.
-Did you plan to merge the fix before the 6.10 release?
+static int mv_conf_mbus_windows(struct platform_device *pdev,
+				const struct mbus_dram_target_info *dram)
+{
+	int i;
+	void __iomem *regs;
+	struct resource *res;
 
---=20
-Best Regards,
-Mike Gavrilov.
+	if (!dram) {
+		dev_err(&pdev->dev, "no mbus dram info\n");
+		return -EINVAL;
+	}
+
+
+> 
+> Fixes: aa8165f91442 ("mmc: sdhci-pxav3: do the mbus window configuration after enabling clocks")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>  drivers/mmc/host/sdhci-pxav3.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-pxav3.c b/drivers/mmc/host/sdhci-pxav3.c
+> index 3af43ac05825..ac89cb2eb9f6 100644
+> --- a/drivers/mmc/host/sdhci-pxav3.c
+> +++ b/drivers/mmc/host/sdhci-pxav3.c
+> @@ -375,6 +375,7 @@ static int sdhci_pxav3_probe(struct platform_device *pdev)
+>  	struct sdhci_host *host = NULL;
+>  	struct sdhci_pxa *pxa = NULL;
+>  	const struct of_device_id *match;
+> +	const struct mbus_dram_target_info *dram;
+>  	int ret;
+>  
+>  	host = sdhci_pltfm_init(pdev, &sdhci_pxav3_pdata, sizeof(*pxa));
+> @@ -406,7 +407,12 @@ static int sdhci_pxav3_probe(struct platform_device *pdev)
+>  		ret = armada_38x_quirks(pdev, host);
+>  		if (ret < 0)
+>  			goto err_mbus_win;
+> -		ret = mv_conf_mbus_windows(pdev, mv_mbus_dram_info());
+> +		dram = mv_mbus_dram_info();
+> +		if (!dram) {
+> +			ret = 0;
+> +			goto err_mbus_win;
+> +		}
+> +		ret = mv_conf_mbus_windows(pdev, dram);
+>  		if (ret < 0)
+>  			goto err_mbus_win;
+>  	}
+
 
