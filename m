@@ -1,93 +1,235 @@
-Return-Path: <linux-kernel+bounces-247500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72BBF92D040
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:10:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A0E492D000
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D5EC285269
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:10:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 409A8287F54
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3F918FC98;
-	Wed, 10 Jul 2024 11:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4317618FA35;
+	Wed, 10 Jul 2024 11:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=hardfalcon.net header.i=@hardfalcon.net header.b="WQgnylkd"
-Received: from 0.smtp.remotehost.it (0.smtp.remotehost.it [213.190.28.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="sdQ92Wiq";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="sdQ92Wiq"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2255B3C39;
-	Wed, 10 Jul 2024 11:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.190.28.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A728913AD22;
+	Wed, 10 Jul 2024 11:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720609847; cv=none; b=gQBggB6LXLCjw8pX6Lf6H1pX35BHnADKaonNytdfc4Hm+uokvgLb9FfAfgFfj52xIKOlZtF3JvoSUXIMqqEs4lbRta3eUO3wMvnuL2D8J6DHq8zuC7RUljORDV1pymNaAboecDMOLMmY6UqovghT6dZHJ+IRCQdZ77LAqVV2XSc=
+	t=1720609307; cv=none; b=WTJZUVkXpu+Fr1TVZMFNWetSo5asqpWnMH4WJ58RUP3rReeQOdaVLtB1ne5PTJrr4JTL/Xz+hx/BVP3Idubt8elTwdedKttgW3epHUfhbl4iVxGljFegvhjAN/FLHV1lc+/uX67dTqlOSAekgYEmACuBpGKsPVLA3ztgysRLyWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720609847; c=relaxed/simple;
-	bh=Pk9Dp0mnPPUcm8CNk/XoO5KLyYdGd5hWQYCuxbtJ3lE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kis8wGZQ4bb4kF50Iqrf9tfXVVzweDk5ojmnlgjPlGCYTMg8BaMwf1fm55pefCDURgQe7xy8Q77Vmz7czkSqFgFu1EbD8og0gguYlF61E5YQCJ/jNIb/1oAxVk8iTn5Y+ncpT2dc2HG5rHhelfc657UWCtcYC+p5ndmWCQToylg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardfalcon.net; spf=pass smtp.mailfrom=hardfalcon.net; dkim=permerror (0-bit key) header.d=hardfalcon.net header.i=@hardfalcon.net header.b=WQgnylkd; arc=none smtp.client-ip=213.190.28.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardfalcon.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hardfalcon.net
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=hardfalcon.net;
-	s=dkim_2024-02-03; t=1720609300;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+IvsDJVaB6RzaetSPmfHiiJoDXFHI0vEjBVyq9YM0Fw=;
-	b=WQgnylkdpBykFP3Vu+wunVlwaR3KuYTDExX8bdWe+tPCFHBR52BphPvxDB8ggig4oLiWVv
-	KG0IbfFpZY3ONaBQ==
-Message-ID: <580c5ba0-1c23-4d83-9e5c-e0c1679ff5ed@hardfalcon.net>
-Date: Wed, 10 Jul 2024 13:01:38 +0200
+	s=arc-20240116; t=1720609307; c=relaxed/simple;
+	bh=9MzSqZA89i3yAjv7qMUx8Jm9CyLjSJ/e1nb8slOEcP4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jSbW1tNGCcBMwDib/MGH9ZMugTE7hmf7YUo0gUwKqWyCX9iiFJuc1gK/F+gqcpUrWb9tMVHf2yUzO3AnfJ0RRoLYEuIPY1dIYM76krWREaAjjWXx9cBsXy/mYJtuM5W/JXhnU0XS+kLP+dkYsCCE9RAfY9qizYqTvSw2zkQH7MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=sdQ92Wiq; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=sdQ92Wiq; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A953021BB7;
+	Wed, 10 Jul 2024 11:01:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1720609302; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=ltOTFVyo5Uy/X1RTKFluQ2RUhWSohIyrX25ZCB/KpNE=;
+	b=sdQ92WiqNXgpT5tzis+FpuQEk0LBdUw6aNmj4gQ10TlzwkR+qnyOjBEX/qlQOxDBb0iKr1
+	vy9lHeVcK9GhczwP+i+OKlemk4D/11MwIJLAG0Gj8b1bXp+gfDKYvUWhZ3Nwcp8UN+RXtt
+	ZJrnKD6uclL6CKlyFCscNkDJ3WfcfXo=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=sdQ92Wiq
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1720609302; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=ltOTFVyo5Uy/X1RTKFluQ2RUhWSohIyrX25ZCB/KpNE=;
+	b=sdQ92WiqNXgpT5tzis+FpuQEk0LBdUw6aNmj4gQ10TlzwkR+qnyOjBEX/qlQOxDBb0iKr1
+	vy9lHeVcK9GhczwP+i+OKlemk4D/11MwIJLAG0Gj8b1bXp+gfDKYvUWhZ3Nwcp8UN+RXtt
+	ZJrnKD6uclL6CKlyFCscNkDJ3WfcfXo=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 28E201369A;
+	Wed, 10 Jul 2024 11:01:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5GKDCBZqjmYbdwAAD6G6ig
+	(envelope-from <jgross@suse.com>); Wed, 10 Jul 2024 11:01:42 +0000
+From: Juergen Gross <jgross@suse.com>
+To: linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	linux-doc@vger.kernel.org
+Cc: Juergen Gross <jgross@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	xen-devel@lists.xenproject.org
+Subject: [PATCH] x86/xen: remove deprecated xen_nopvspin boot parameter
+Date: Wed, 10 Jul 2024 13:01:39 +0200
+Message-ID: <20240710110139.22300-1-jgross@suse.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 6.9 000/197] 6.9.9-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240709110708.903245467@linuxfoundation.org>
-Content-Language: en-US
-From: Pascal Ernster <git@hardfalcon.net>
-In-Reply-To: <20240709110708.903245467@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-1.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.com:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.com:+];
+	FREEMAIL_CC(0.00)[suse.com,lwn.net,oracle.com,linutronix.de,redhat.com,alien8.de,linux.intel.com,zytor.com,infradead.org,kernel.org,gmail.com,lists.xenproject.org];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: A953021BB7
+X-Spam-Flag: NO
+X-Spam-Score: -1.51
+X-Spam-Level: 
 
-[2024-07-09 13:07] Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.9.9 release.
-> There are 197 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 11 Jul 2024 11:06:25 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.9-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+The xen_nopvspin boot parameter is deprecated since 2019. nopvspin
+can be used instead.
 
+Remove the xen_nopvspin boot parameter and replace the xen_pvspin
+variable use cases with nopvspin.
 
-Hi, 6.9.9-rc1 compiled and is running fine on various x86_64 bare metal 
-and virtual machines of mine (Haswell, Skylake, Kaby Lake, Coffee Lake).
+This requires to move the nopvspin variable out of the .initdata
+section, as it needs to be accessed for cpuhotplug, too.
 
-Tested-by: Pascal Ernster <git@hardfalcon.net>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+ .../admin-guide/kernel-parameters.txt         |  5 -----
+ arch/x86/xen/spinlock.c                       | 20 +++++--------------
+ kernel/locking/qspinlock.c                    |  2 +-
+ 3 files changed, 6 insertions(+), 21 deletions(-)
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index b33d048e01d8..2074ba03f2e3 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -7439,11 +7439,6 @@
+ 			access functions when running as Xen PV guest. The
+ 			default value is controlled by CONFIG_XEN_PV_MSR_SAFE.
+ 
+-	xen_nopvspin	[X86,XEN,EARLY]
+-			Disables the qspinlock slowpath using Xen PV optimizations.
+-			This parameter is obsoleted by "nopvspin" parameter, which
+-			has equivalent effect for XEN platform.
+-
+ 	xen_nopv	[X86]
+ 			Disables the PV optimizations forcing the HVM guest to
+ 			run as generic HVM guest with no PV drivers.
+diff --git a/arch/x86/xen/spinlock.c b/arch/x86/xen/spinlock.c
+index 5c6fc16e4b92..8e4efe0fb6f9 100644
+--- a/arch/x86/xen/spinlock.c
++++ b/arch/x86/xen/spinlock.c
+@@ -18,7 +18,6 @@
+ static DEFINE_PER_CPU(int, lock_kicker_irq) = -1;
+ static DEFINE_PER_CPU(char *, irq_name);
+ static DEFINE_PER_CPU(atomic_t, xen_qlock_wait_nest);
+-static bool xen_pvspin = true;
+ 
+ static void xen_qlock_kick(int cpu)
+ {
+@@ -68,7 +67,7 @@ void xen_init_lock_cpu(int cpu)
+ 	int irq;
+ 	char *name;
+ 
+-	if (!xen_pvspin)
++	if (nopvspin)
+ 		return;
+ 
+ 	WARN(per_cpu(lock_kicker_irq, cpu) >= 0, "spinlock on CPU%d exists on IRQ%d!\n",
+@@ -95,7 +94,7 @@ void xen_uninit_lock_cpu(int cpu)
+ {
+ 	int irq;
+ 
+-	if (!xen_pvspin)
++	if (nopvspin)
+ 		return;
+ 
+ 	kfree(per_cpu(irq_name, cpu));
+@@ -125,10 +124,10 @@ PV_CALLEE_SAVE_REGS_THUNK(xen_vcpu_stolen);
+ void __init xen_init_spinlocks(void)
+ {
+ 	/*  Don't need to use pvqspinlock code if there is only 1 vCPU. */
+-	if (num_possible_cpus() == 1 || nopvspin)
+-		xen_pvspin = false;
++	if (num_possible_cpus() == 1)
++		nopvspin = true;
+ 
+-	if (!xen_pvspin) {
++	if (nopvspin) {
+ 		printk(KERN_DEBUG "xen: PV spinlocks disabled\n");
+ 		static_branch_disable(&virt_spin_lock_key);
+ 		return;
+@@ -143,12 +142,3 @@ void __init xen_init_spinlocks(void)
+ 	pv_ops.lock.kick = xen_qlock_kick;
+ 	pv_ops.lock.vcpu_is_preempted = PV_CALLEE_SAVE(xen_vcpu_stolen);
+ }
+-
+-static __init int xen_parse_nopvspin(char *arg)
+-{
+-	pr_notice("\"xen_nopvspin\" is deprecated, please use \"nopvspin\" instead\n");
+-	xen_pvspin = false;
+-	return 0;
+-}
+-early_param("xen_nopvspin", xen_parse_nopvspin);
+-
+diff --git a/kernel/locking/qspinlock.c b/kernel/locking/qspinlock.c
+index 1df5fef8a656..7d96bed718e4 100644
+--- a/kernel/locking/qspinlock.c
++++ b/kernel/locking/qspinlock.c
+@@ -583,7 +583,7 @@ EXPORT_SYMBOL(queued_spin_lock_slowpath);
+ #include "qspinlock_paravirt.h"
+ #include "qspinlock.c"
+ 
+-bool nopvspin __initdata;
++bool nopvspin;
+ static __init int parse_nopvspin(char *arg)
+ {
+ 	nopvspin = true;
+-- 
+2.43.0
 
-Regard
-Pascal
 
