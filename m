@@ -1,250 +1,248 @@
-Return-Path: <linux-kernel+bounces-248372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2619392DC49
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:04:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA8092DC50
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A883A1F216BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:04:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18D721C21837
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C85815DBB2;
-	Wed, 10 Jul 2024 23:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADE114D6EE;
+	Wed, 10 Jul 2024 23:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="CZLZGW3I"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010051.outbound.protection.outlook.com [52.101.69.51])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DwVM0d4b"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A62F15699E;
-	Wed, 10 Jul 2024 23:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720652576; cv=fail; b=lxtVdxI24vxq3Ul1NP9vywkZ1IoC2hc521bP7AHwZf6+kuiSorpONkajKa1KYZ/3p4pFbirsCE95cver3lmZDZul+boOOHenqfK/XN2KOGgPV874IzzryC3iTsuUtPJO+Egt50oF1yh3m7sfeZgoH7GOTeJDjJ4q56wSfBq8kTE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720652576; c=relaxed/simple;
-	bh=KIaR4KiuqLQ+BWXn1FoPuKby62dlXYXgqiFj7UAupHY=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=Fu8c1YQs/uztZJEwArthGhFeSUH4IEYf3iYwtQ/uINNn35WQm/i/1LRu+ETSpi4+bhs0vaO9O0sqWraKWidpB6s8c/O4hiVin7PqeSXWFbv5rKED4bfN0UayOAjVrZ6yrINsBA8hX5BsxW/jU95Xj+POQljPfraH0xDPwgKz4lQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=CZLZGW3I; arc=fail smtp.client-ip=52.101.69.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CI/cIuBkZVS5uLKeA+xzKu91gPXEj0NzX36Tzwnyx7CejMjBeeiorOqtrpqejybyVBc6M28IqkrR/gU2t8nOfHf0uvDLpZL5YPuQJBSl9WNkgfesNIg2LTcIYFrADD47vtI5yKy5oNg0R/MLWKv4Hg/+Xw7cuUHBvYpiEBRC/LddSeL+rA449dRf7e1Q28pBMA+MxnwJEWpECo61bbx0mS81fV9PjLulYOF1PDyEu+aZzhyGDBe70SY3FRsZ49q+e62f1W0XBMU7f4G6pP7umkHmxNJK6iIfFw9X7hMO5XEsifjZTjuMZsvjaSI62XaMEkakc9QkhlxkF5hMNEdf3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e2OWyG6x4PTBJIKOHvsthpRWkAtMo3y1ItAo0YN6Dgc=;
- b=jLUv9q1el6kGmA0E3h7ffDkxAaeacCzB2Sb2hm6DJZA0SMbR+ox+2IsjullQVbwyKl3XK/LYdkitl3rNr6eAw0E4mcr7I6iPnuTR1AUfzICQcKd2Wwvlu+p+JQOeGPKrkDLRTtl+NEuWhiiT3K1Y+cVpLki+nWEt2ixqMcut26yxDU5OvlamyGggIZBm2fvNlsSHIsgGjX8IVb+uUGxO5tyeU+uPgs9SfubUPZxFaV5Taq3M1av6eLgwB2SCy/oyzGi2eNbNOOFiMQyumGQvjsRt2CPwhihJ+83U5gKj034hSfE8bMQnKAbLFc0Hyw302daLU1ssChqilGmkyWW3LQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e2OWyG6x4PTBJIKOHvsthpRWkAtMo3y1ItAo0YN6Dgc=;
- b=CZLZGW3I8v6p0DAt7FQ4OEZm/sUvZrvCWplLt4Dtklx9K9IZtLX25k6tt46NvdbD8oyX+md1l6+PndUx98l2bGethC3poPHgoUEt31HM+NHhnCOYxt9gpRYymCHiovhBJMLCbNIA5R6bhyHI7AjZNI1tfYU9IDVF1qjQohCMNZA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by GV1PR04MB10751.eurprd04.prod.outlook.com (2603:10a6:150:20d::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Wed, 10 Jul
- 2024 23:02:52 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7741.033; Wed, 10 Jul 2024
- 23:02:52 +0000
-From: Frank Li <Frank.Li@nxp.com>
-Date: Wed, 10 Jul 2024 19:02:24 -0400
-Subject: [PATCH 3/3] arm64: dts: layerscape: move dwc3 usb under glue layer
- node
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240710-ls-dwc-v1-3-62f8cbed31d7@nxp.com>
-References: <20240710-ls-dwc-v1-0-62f8cbed31d7@nxp.com>
-In-Reply-To: <20240710-ls-dwc-v1-0-62f8cbed31d7@nxp.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Shawn Guo <shawnguo@kernel.org>
-Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>
-X-Mailer: b4 0.13-dev-e586c
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720652559; l=2194;
- i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=KIaR4KiuqLQ+BWXn1FoPuKby62dlXYXgqiFj7UAupHY=;
- b=zuB4jrZEFslV5TtndQ0K23pgygpf57RZdg2Nu4KbFIC2w37t5B1+Z6HxyYDbwE2A6Al61X4b1
- ohoXcT8mvw1AE8xzrjznaX/jwzMyrKAC249ZYxTQm1zsu8jLwXbPEtr
-X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
- pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
-X-ClientProxiedBy: BYAPR05CA0092.namprd05.prod.outlook.com
- (2603:10b6:a03:e0::33) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BCE14B084
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720652731; cv=none; b=YBzR9ZgiERuuqU7W0/uSMPtvDpwAYEBHhEPKMo04cHMT53jW8bNN5hRJnHLj5vvlu8PFDWsrq8yrqo0sYHiMONRZbeIz3Hs1Lav9bRdcrvzS4xrSmNRomMWO+g6aEJuWwsT72IJZzXUE3UyZlIW7ynmpd7acm2dCVvSmZp2pcfE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720652731; c=relaxed/simple;
+	bh=dHyQFmMz5lxrpJK4rm2aTZY4iDQooBZuodwjk+/rx7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bS2gXy80mM0XwbUCiOMH6L6eWbgtI7HHHkcctBF4v+K+Cm04fRBaN8DVY+0F7GlIt+efihBwjZ4qd3kKZpaFZtJM5Yb53t/P6HZUQ5+50z/Yofl9DQOSqJogc1lum72GgmGAnpc6z6/BT9lq1u7RGlpHXlgUZ1cTT1wbKCpIwyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DwVM0d4b; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720652728;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pocGWFShxQ+GSWj0tkDTAgxmCbZcO+UfiqU5SyA0Efs=;
+	b=DwVM0d4b6Y12iVLuUEVLL0Atdz5CK7jrTtCR8n+aO0+L9PhX9nL6gDJPYIPWLHuzn/YTzg
+	wQzospDOwRVaSnfsbaoEQwWwi6xRA9LpMoAcsP8Grtc+6w4l/Qth6fhnPvggOSiUEq1Oe2
+	OGGq2XkTc1mIhMdW41lEMroF59V0QB0=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-37-dTSWUrMxNN-TndMRIrcgOQ-1; Wed, 10 Jul 2024 19:05:27 -0400
+X-MC-Unique: dTSWUrMxNN-TndMRIrcgOQ-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3678fd1edf8so658143f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:05:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720652726; x=1721257526;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pocGWFShxQ+GSWj0tkDTAgxmCbZcO+UfiqU5SyA0Efs=;
+        b=a1EyHWDlV/CKrK/RmjPvcE3/MFxMETPZ8p6v+Duu0gCLMfCUwwySIrMkncM2X0seSY
+         N7+Gk4QHSSJgVmu9X+EQ9Yc/XWgdpXtfSP96Yoj7q9xDtkz3C600CHvknsmz+pfYDQ6B
+         HXnVMLev24SMF5GWjPMQH987kI1YyGtPgYdwNUSZgjjNkGDeZurjcsO4zXr9VInqm22d
+         cdsqa/0GKL+8VcSp2CC6uNh2evayZAPvYhnh3tPP+PYZghSSBd2+5eQjOPY+lFmh+cxm
+         ZQw/SaSejVSJTy1/JjkJm0wkFZdcDUfBL8Pl7ujBrr9SRwFVaJpBzch155E142xWNx32
+         BMUg==
+X-Gm-Message-State: AOJu0YyUNLPHL10fls8HMV7743L5tFuTw+Txfu7wBjGFNcxUjNBPwQI7
+	W4hZwhtkYjyvRZ+WSzOSfFMFXpwsej5taF/1TiEeKvxIK7yzUzYk90HXIcKAzB3FYj8qwMIu5dR
+	lFNDJI9vg3C/C51z/3bjZ3md3ELNqRn+h7RHG084ETc4V4w/sRGP9TYnqFHx2NQ==
+X-Received: by 2002:a5d:674d:0:b0:366:e9f7:4e73 with SMTP id ffacd0b85a97d-367f04c394fmr848924f8f.5.1720652726254;
+        Wed, 10 Jul 2024 16:05:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHfrrspXtlMpDRODV1gtZ6UbNGtoYk75D8SS60rLLEn4NhjjhpRqJHKf/56m95g7RzAi+V6jQ==
+X-Received: by 2002:a5d:674d:0:b0:366:e9f7:4e73 with SMTP id ffacd0b85a97d-367f04c394fmr848885f8f.5.1720652725448;
+        Wed, 10 Jul 2024 16:05:25 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:174:f6ae:a6e3:8cbc:2cbd:b8ff])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde8904csm6208508f8f.49.2024.07.10.16.05.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 16:05:24 -0700 (PDT)
+Date: Wed, 10 Jul 2024 19:05:20 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Daniel Verkamp <dverkamp@chromium.org>
+Cc: linux-kernel@vger.kernel.org,
+	Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Cornelia Huck <cohuck@redhat.com>,
+	Halil Pasic <pasic@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	linux-um@lists.infradead.org, linux-remoteproc@vger.kernel.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] virtio: fix vq # for balloon
+Message-ID: <20240710190222-mutt-send-email-mst@kernel.org>
+References: <cover.1720611677.git.mst@redhat.com>
+ <3d655be73ce220f176b2c163839d83699f8faf43.1720611677.git.mst@redhat.com>
+ <CABVzXAnjAdQqVNtir_8SYc+2dPC-weFRxXNMBLRcmFsY8NxBhQ@mail.gmail.com>
+ <20240710142239-mutt-send-email-mst@kernel.org>
+ <CABVzXAmp_exefHygEGvznGS4gcPg47awyOpOchLPBsZgkAUznw@mail.gmail.com>
+ <20240710162640-mutt-send-email-mst@kernel.org>
+ <CABVzXA=W0C6NNNSYnjop67B=B3nA2MwAetkxM1vY3VggbBVsMg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GV1PR04MB10751:EE_
-X-MS-Office365-Filtering-Correlation-Id: c5e98d81-c276-4b19-5758-08dca1346d6b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|1800799024|7416014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SFpscm80KzZvUGRJMnRUdnl6WXNscW53UzluMEVnWW0vbGNKcGdDS3RLNUJM?=
- =?utf-8?B?VVVMcHdjQ1FuRG5FbkhyU0R1aEU1b3pKd0lpVTc5VExsY3B2ZFRyVUxmYzZ6?=
- =?utf-8?B?ZW5QTlNLMHBVNUtDek5WcmJlRTBHaG9HSk50dHJNTmdGcldNTjlDeFRZVHJ1?=
- =?utf-8?B?aThqNjRWRnpZcU1sczdhUjVOT0JocnI1WlZSVzFzdy9xMlhyNXVqMFVRZWN3?=
- =?utf-8?B?bWRyTUxpQjhEZzNldjhaS1JEekV5dWZyeFVrUGpyRDZpSlYvejdORzd6NTc5?=
- =?utf-8?B?V0ZXWW5kT2VJMlJ0VExVL1FBVi9KdUxWRzZxKzE2SDU4ZkhYVG5WbmxIclhG?=
- =?utf-8?B?OXgyQnpEQUxSdVNuSWxFTDZSNjRFWGZZR1hlWU16NU42ZnoxeGJ6R1J1d3VD?=
- =?utf-8?B?MWZ1QVZCNmgwdDJGVnFsdUJZYXR5M0h1UzV4cDFCUXVXUXRUVHY2b0xueEE3?=
- =?utf-8?B?ckdvSUM5bXlpRHN3TTJvdXdoM1RxNGRLMktoWnQwRlk0UldnTmdlMHBGa3dJ?=
- =?utf-8?B?K2lHU1QvSDBVSTEvUytUS0NvNHpucEhDdFZHajFYSkZwM0RqckZFZmhiNFc1?=
- =?utf-8?B?b1piZEtLQ0RNM3g0RGY2NnBrdG1PZWxmZzlDbi93b2JFL3JnbjFRVFVReVAr?=
- =?utf-8?B?bUJWRWMzQzU5T0g3ZVdqRjJBalQrTDhGeTZhTENIajcwUmxDNlpzRVhmSGln?=
- =?utf-8?B?eld1cVcxdjhsYVA4eDR2T2dBZ2pKNnpUNjVCRHhUYTExSUhWSzNXTGJnMzQ0?=
- =?utf-8?B?anNqMGplbnVRNHlHUjRoWGdlNlo3Q1pZb0NjaW5nM2N1OHpSMWovVTlIMGFz?=
- =?utf-8?B?bUJwbjMzcFpyeVlEREJEZnJtU205LzEzVGgzS0pmTzdHTXQyUTltc0tQdDVj?=
- =?utf-8?B?K1Iwc2g2TGhIeW1nSWpqSlAzWUtWdDhid2NRbDExbGsyQVZGVzlGRno0ZHZt?=
- =?utf-8?B?ekhBNmNoeE5vTm41UXhEQ3NHdVIyQnA0UVlXZFBZR3JxbVFaVUNTeG9aM0lU?=
- =?utf-8?B?L1NyTXd1Y0VQY04vVmJ2akRUOC9rS3QzNzU0WnBKeC9yMjIrZlJHbXAxNHZB?=
- =?utf-8?B?TlRETnRiOWFDclJBWElYTlVYNW5pQTdFKzV5RFh4L2xJNmhBRVRrZDAzbkZB?=
- =?utf-8?B?MDhlcVFIU3cyWXBWMWxaenJIOVZyMHBKdG93U0huMmJ6aEJsbThGUUVqVTBj?=
- =?utf-8?B?TEZub054QnhUbjU5bEwzRHpnVnI3alh1OEFhUXJnZEtXZXpjWjVnY2VqWmV1?=
- =?utf-8?B?Z0NtdHRsVm5NQlJ2R2ZiUFd6TzVDYzY3ZkZtQ1U0SXFVSjhoeFYvMmpJZkhI?=
- =?utf-8?B?R3gwbEFEWUI0d1NPbWVGeHpnd3JibjlBWHQvNm5wTEtObHBmYUxBTnkrUTl6?=
- =?utf-8?B?djRnUjZnK0VSZmJVOTlvdlVCNjN2ZXZaT3ptRDlBN2NnZVJqbDM0TitKcHU0?=
- =?utf-8?B?S3V4TlhBekpBbHltdkFaYVBLMXdmcDM2SjYwRnhNTVJNeUE3emJsQzlDeHpU?=
- =?utf-8?B?bzFKQzFoMythOWNZRE1OWTFWQjZKSC9kVy9XWUgzQi84bFBaMklaYlUxN0xD?=
- =?utf-8?B?dlM4TGI3TU9ZRHgyZlhWSEEvQkVPUVRHR01TSEppQjN6QVVYWmdGckJzcW5T?=
- =?utf-8?B?ZWJ3eWJGQ2xKalZKbmNyN25JazVscTJmeldqWFY1Y2RrSEduU056NStyRU5k?=
- =?utf-8?B?UDk2TEF5ZEZ2amNWRDJ5T3BDbzkyMm05SExpNmt3cythM3hrK01Ma2pvRllL?=
- =?utf-8?B?MWRld3g3K3hUUTJtTXlld2dmUUh3TmUreXJyVytPSThXNTk4alJUQ0l1dC9t?=
- =?utf-8?B?d0FrTnFDOGQyZFF5K0RCcFhnemlEWEUzRE9mMmJ1azdyRXVwb2NjWGRCYmJx?=
- =?utf-8?B?SlozTjN1N05wYTEvUDVkay83ajZUMlN1MWpaK2NxeXhwR3c9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(7416014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aVhqS1RMWlg0a05vRFhNNTJmMnhqOVY5Y3U0eFBDaGJQdUFBV3lUSG1JSDdu?=
- =?utf-8?B?Z1gxMElUWGhWUWFmYUZWMUZQSjhXbWpOUTJFdjM3OU4wUjRXaC9pNnB5aFhh?=
- =?utf-8?B?WFlYTVhFUzl6TEp6Q2htbkQ5QkhmKzN0ZUlSZWxWV0JHVE93TW1abUJQR1Bo?=
- =?utf-8?B?RmtNejUwdWs2T0JwMUx5RTFsV21wdDRFUGowUGpKR1lRL2JWWWJ4YnFvQytN?=
- =?utf-8?B?U3czS0dtUWtsMkUxZnEvbkpLY3lyZ3pmTGhKUVBubWhBNDJ6MnFEVG1mZzlt?=
- =?utf-8?B?WFFITmVOblg3UDMrRFRBa0Q0Uy9TOXVhUlpLKzNOVXhZclh6NlJHdGMxbC9u?=
- =?utf-8?B?NFh2Q1l3YmlINmtmZHhYQXRaQUVEYnd5b1lZSndSZitGY1BvUXozcDBCUlE2?=
- =?utf-8?B?Y0hXcjJZRGNPTmFiZmVtMXRnakVXUkpkdXg3NXc1cjNWV1BlV1ZtNEFNZVZZ?=
- =?utf-8?B?aERlblE2eFFPdTdLQzcyUXdyNkpjRzFQNkt5a2NudGhFQXlMSlBYcmh5TUlh?=
- =?utf-8?B?RW5LeC9aQktPYjZ2ZWpUNUQ4cVJUMmM3bjhaMldiNkg1L2l4K0hHRGJIZk92?=
- =?utf-8?B?RmdrUE81ektUK3lhNWtwT0Nac1BuUzF0MkI0YnZjeEIrVVVwNzZBa1dsV3Fl?=
- =?utf-8?B?eTNLSmVWdjJ4VlRVeVZtMU5yczN4aFlSdmFYcWhhUEZJU1U3WDg1N09teVhu?=
- =?utf-8?B?T1QreTBmelZHa1dvazRPM3pZTWp1WEJ1VDBFSjZmUG1IdFJPdlcraTJRcFZu?=
- =?utf-8?B?Qk9jdFNLc25rcjE0ZzM2b3pxa1N3bDJaNUl5dGNuUGlYUE5KQm5UTVdPS3Rt?=
- =?utf-8?B?NzdndWp4c0JOaEU1OE1pc3BtUGZUdjZYY2t3QzZReVk1Wm12bHo2L21KVm9Q?=
- =?utf-8?B?ZE0wREFUNGlsY09jc24wd2VDdE80VUdPWDl4WXhGdTlGWmlocWlIb0ovTGNv?=
- =?utf-8?B?Y0ZxT0FGdDY4b2NleEJGSTF5ODlkZlVVZzJkbDNEQWVuU3htcm9SWG80UUhR?=
- =?utf-8?B?VnlmMU9WdHh4aVFqZ0dOZFlWWHA3R0FQdkxxVEoyOUVCbXRORmlOd2JubzF3?=
- =?utf-8?B?YkhWNThWOWtpTmxJSzdaNmxoMFBLUTRlQkZkNXFwcnY4MDV4NmxNL0gzWSs0?=
- =?utf-8?B?VWhYNHVDQ1gyd1lMbEFIYXBCNlJ3ZEQ2SnEya2x2K3Q0WHJNWlpDOGxGNUJ3?=
- =?utf-8?B?SHJZL0lpTWFoUTE5bE5kWk1uTnViODArSnJURFI3UWJNTGxaRGx2TXhGaC9o?=
- =?utf-8?B?a1M2RXVkd2xIOWRIc2ZYbThXME9zMERpOHA4K2dvR1k0ZUk3ajcrNnh1UlpL?=
- =?utf-8?B?ZHdMa1FlTkNiZ0lnR0E3OGVrdjlubHorMmtHK2c4SG1oZmVQTmI1YkQ5aUo0?=
- =?utf-8?B?Yk1rUW9oR3Q5dXFGbjcyZkxEOEdJUG1VR1NQamIrbE1QR1RtZFh5Z1BqS3lS?=
- =?utf-8?B?dDVYcWdGUFBDUGIrbVhQSjJEWlNLTm9HdUFoemNyaVovQXdldUhEVFlpY2Fo?=
- =?utf-8?B?OVUrNU93OE9uZS84U3VnWTU5dWhGV0xreXZxUkc3NExqQ2VsbXpRTGpLRjFp?=
- =?utf-8?B?RFJUVHlKTlM1UDBZamMyL3dNeW1SVVBqTlF5VGRJM3dVbXR0MlU3S0NpOFBt?=
- =?utf-8?B?cjBSdzlYZjlTRE5TR2xURlVUNHlaMTFZa1d3V0dXdGlmK3dnMHkvS1Y0NTlP?=
- =?utf-8?B?UXRQVm9kTUlIVmlvOHY3UElQNWk2ZkZJUmYzcWlJTXdTSGwwbVZhYkJtRk12?=
- =?utf-8?B?dnJMNGdqcjV0VFFYbnRDZldOdDV4czE1Z3R2MTcvSGFtSFRsQUxTRHdNSTdm?=
- =?utf-8?B?L2NwdGQxRWFMVGhLRHMrbVdYNHR3Q1pTQ1J1OWFkRVdlRzV4SzVtMlFNWVVX?=
- =?utf-8?B?Ti9EQ1h2NzZML3ZtSm16RXBRQ294L0hCckk3d3d0bDJSUVJFZTVra0w4eUxi?=
- =?utf-8?B?bVFQZVJQVXRzNm81UXZOckJzcThDeUNCeGx3M2lsTXY3V0xlZnJMZkMwa0FM?=
- =?utf-8?B?MVVxQ0Zxa0h0QkRwUnZSelJOTEwzNEZXd012T1QvUThrK3ROeGNuRCtQcTVi?=
- =?utf-8?B?amJhNmsvbEF2dDJrcnVRWTFVajVVTVBLeXExOGxGWStZUVVjOVJxQzhHZ0Fn?=
- =?utf-8?Q?Av8h0zp9r2SGKnX8oXq9GUz3T?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c5e98d81-c276-4b19-5758-08dca1346d6b
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2024 23:02:52.6923
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XjgVK90WC8YhtxOa85si1zAGGtVT6CXQyGDbwA2aKG2wNU88JxHp7sFAv/1O5CTG8t2ZCZGkJGDmr9glAjV08w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10751
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABVzXA=W0C6NNNSYnjop67B=B3nA2MwAetkxM1vY3VggbBVsMg@mail.gmail.com>
 
-New usb glue layer driver support enable dma-coherent. So put dwc3 usb node
-under glue layer node and enable dma-coherent.
+On Wed, Jul 10, 2024 at 03:54:22PM -0700, Daniel Verkamp wrote:
+> On Wed, Jul 10, 2024 at 1:39 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> >
+> > On Wed, Jul 10, 2024 at 12:58:11PM -0700, Daniel Verkamp wrote:
+> > > On Wed, Jul 10, 2024 at 11:39 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+> > > >
+> > > > On Wed, Jul 10, 2024 at 11:12:34AM -0700, Daniel Verkamp wrote:
+> > > > > On Wed, Jul 10, 2024 at 4:43 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+> > > > > >
+> > > > > > virtio balloon communicates to the core that in some
+> > > > > > configurations vq #s are non-contiguous by setting name
+> > > > > > pointer to NULL.
+> > > > > >
+> > > > > > Unfortunately, core then turned around and just made them
+> > > > > > contiguous again. Result is that driver is out of spec.
+> > > > >
+> > > > > Thanks for fixing this - I think the overall approach of the patch looks good.
+> > > > >
+> > > > > > Implement what the API was supposed to do
+> > > > > > in the 1st place. Compatibility with buggy hypervisors
+> > > > > > is handled inside virtio-balloon, which is the only driver
+> > > > > > making use of this facility, so far.
+> > > > >
+> > > > > In addition to virtio-balloon, I believe the same problem also affects
+> > > > > the virtio-fs device, since queue 1 is only supposed to be present if
+> > > > > VIRTIO_FS_F_NOTIFICATION is negotiated, and the request queues are
+> > > > > meant to be queue indexes 2 and up. From a look at the Linux driver
+> > > > > (virtio_fs.c), it appears like it never acks VIRTIO_FS_F_NOTIFICATION
+> > > > > and assumes that request queues start at index 1 rather than 2, which
+> > > > > looks out of spec to me, but the current device implementations (that
+> > > > > I am aware of, anyway) are also broken in the same way, so it ends up
+> > > > > working today. Queue numbering in a spec-compliant device and the
+> > > > > current Linux driver would mismatch; what the driver considers to be
+> > > > > the first request queue (index 1) would be ignored by the device since
+> > > > > queue index 1 has no function if F_NOTIFICATION isn't negotiated.
+> > > >
+> > > >
+> > > > Oh, thanks a lot for pointing this out!
+> > > >
+> > > > I see so this patch is no good as is, we need to add a workaround for
+> > > > virtio-fs first.
+> > > >
+> > > > QEMU workaround is simple - just add an extra queue. But I did not
+> > > > reasearch how this would interact with vhost-user.
+> > > >
+> > > > From driver POV, I guess we could just ignore queue # 1 - would that be
+> > > > ok or does it have performance implications?
+> > >
+> > > As a driver workaround for non-compliant devices, I think ignoring the
+> > > first request queue would be a reasonable approach if the device's
+> > > config advertises num_request_queues > 1. Unfortunately, both
+> > > virtiofsd and crosvm's virtio-fs device have hard-coded
+> > > num_request_queues =1, so this won't help with those existing devices.
+> >
+> > Do they care what the vq # is though?
+> > We could do some magic to translate VQ #s in qemu.
+> >
+> >
+> > > Maybe there are other devices that we would need to consider as well;
+> > > commit 529395d2ae64 ("virtio-fs: add multi-queue support") quotes
+> > > benchmarks that seem to be from a different virtio-fs implementation
+> > > that does support multiple request queues, so the workaround could
+> > > possibly be used there.
+> > >
+> > > > Or do what I did for balloon here: try with spec compliant #s first,
+> > > > if that fails then assume it's the spec issue and shift by 1.
+> > >
+> > > If there is a way to "guess and check" without breaking spec-compliant
+> > > devices, that sounds reasonable too; however, I'm not sure how this
+> > > would work out in practice: an existing non-compliant device may fail
+> > > to start if the driver tries to enable queue index 2 when it only
+> > > supports one request queue,
+> >
+> > You don't try to enable queue - driver starts by checking queue size.
+> > The way my patch works is that it assumes a non existing queue has
+> > size 0 if not available.
+> >
+> > This was actually a documented way to check for PCI and MMIO:
+> >         Read the virtqueue size from queue_size. This controls how big the virtqueue is (see 2.6 Virtqueues).
+> >         If this field is 0, the virtqueue does not exist.
+> > MMIO:
+> >         If the returned value is zero (0x0) the queue is not available.
+> >
+> > unfortunately not for CCW, but I guess CCW implementations outside
+> > of QEMU are uncommon enough that we can assume it's the same?
+> >
+> >
+> > To me the above is also a big hint that drivers are allowed to
+> > query size for queues that do not exist.
+> 
+> Ah, that makes total sense - detecting queue presence by non-zero
+> queue size sounds good to me, and it should work in the normal virtio
+> device case.
+> 
+> I am not sure about vhost-user, since there is no way for the
+> front-end to ask the back-end for a queue's size; the confusingly
+> named VHOST_USER_SET_VRING_NUM allows the front-end to configure the
+> size of a queue, but there's no corresponding GET message.
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 43 ++++++++++++++++----------
- 1 file changed, 26 insertions(+), 17 deletions(-)
+So for vhost user I would assume it is non spec compliant
+and qemu remaps queue numbers?
+And can add a backend feature for supporting
+VHOST_USER_GET_VRING_NUM and with that, also
+require that backends are spec compliant?
+And again, qemu can remap queue numbers.
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-index 70b8731029c4e..24b937032480f 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-@@ -615,24 +615,33 @@ gpio3: gpio@2320000 {
- 			little-endian;
- 		};
- 
--		usb0: usb@3100000 {
--			compatible = "fsl,ls1028a-dwc3", "snps,dwc3";
--			reg = <0x0 0x3100000 0x0 0x10000>;
--			interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
--			snps,dis_rxdet_inp3_quirk;
--			snps,quirk-frame-length-adjustment = <0x20>;
--			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
--			status = "disabled";
--		};
-+		usb {
-+			compatible = "fsl,ls1028a-dwc3";
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			usb0: usb@3100000 {
-+				compatible = "snps,dwc3";
-+				reg = <0x0 0x3100000 0x0 0x10000>;
-+				interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
-+				dma-coherent;
-+				snps,dis_rxdet_inp3_quirk;
-+				snps,quirk-frame-length-adjustment = <0x20>;
-+				snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
-+				status = "disabled";
-+			};
- 
--		usb1: usb@3110000 {
--			compatible = "fsl,ls1028a-dwc3", "snps,dwc3";
--			reg = <0x0 0x3110000 0x0 0x10000>;
--			interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
--			snps,dis_rxdet_inp3_quirk;
--			snps,quirk-frame-length-adjustment = <0x20>;
--			snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
--			status = "disabled";
-+			usb1: usb@3110000 {
-+				compatible = "snps,dwc3";
-+				reg = <0x0 0x3110000 0x0 0x10000>;
-+				interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
-+				dma-coherent;
-+				snps,dis_rxdet_inp3_quirk;
-+				snps,quirk-frame-length-adjustment = <0x20>;
-+				snps,incr-burst-type-adjustment = <1>, <4>, <8>, <16>;
-+				status = "disabled";
-+			};
- 		};
- 
- 		sata: sata@3200000 {
 
--- 
-2.34.1
+
+> > > and a spec-compliant device would probably
+> > > balk if the driver tries to enable queue 1 but does not negotiate
+> > > VIRTIO_FS_F_NOTIFICATION. If there's a way to reset and retry the
+> > > whole virtio device initialization process if a device fails like
+> > > this, then maybe it's feasible. (Or can the driver tweak the virtqueue
+> > > configuration and try to set DRIVER_OK repeatedly until it works? It's
+> > > not clear to me if this is allowed by the spec, or what device
+> > > implementations actually do in practice in this scenario.)
+> > >
+> > > Thanks,
+> > > -- Daniel
+> >
+> > My patch starts with a spec compliant behaviour. If that fails,
+> > try non-compliant one as a fallback.
+> 
+> Got it, that sounds reasonable to me given the explanation above.
+> 
+> Thanks,
+> -- Daniel
 
 
