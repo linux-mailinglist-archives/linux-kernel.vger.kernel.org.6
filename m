@@ -1,126 +1,196 @@
-Return-Path: <linux-kernel+bounces-247391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A4B92CED5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:05:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF2C92CEDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC12D28836D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:05:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BB42283C0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A991C18FC62;
-	Wed, 10 Jul 2024 10:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CB418FA34;
+	Wed, 10 Jul 2024 10:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gd9NeJ1V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="NUAVtNEe"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA558288F;
-	Wed, 10 Jul 2024 10:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCD61B86F3;
+	Wed, 10 Jul 2024 10:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720605944; cv=none; b=o9tXHwq4kCbXUIlCGBGXWNibtm7MoRLe0q03LKDCUrvocqcf4yytobMxekJynOOXjFd9qKuXoPZg7u6kxxKEpRGAy+fvhQ42N8cF+NmBVkJdy6qFWeia7TXl6doztRYjyoWsYpXt2ViEC3DJ/Dxqu+S5y/EItU2M1CbTw2kDw9M=
+	t=1720606049; cv=none; b=W8leYlGGQuCY/+7jwTy8yVTe8CnsgV3pTo8JbekwDak+95egBjV3zxJGri3sdwxn6xSjizHWkuQMRbdseJxyvEy/iEifzleUA7/u6I2tczleOoY9tI7X7joeHPjKK/xBT3E2yLkaFuWJyLBWXCvK/GNZdvJLLJ0hF1OatmWcAlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720605944; c=relaxed/simple;
-	bh=WseIQlHNbc9vSw3sBMfgBfqjHy6gFXtvzDiFsRdb6UU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ubvvULg9UprdEL7PETcN2t4lf5k5geSsy7nyxijBSd3gjG13Lhkc2kvhsZevQF3HNYium+Pd2HqQVZIcbkAr41ugsb1DqsbPYnTyXXV7t9gdt/gMbGF/DOuQBTqQnvjDw/X5BynowORFkkTxSql6hRfKBVHD89rVra5UumMUyQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gd9NeJ1V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77500C32781;
-	Wed, 10 Jul 2024 10:05:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720605943;
-	bh=WseIQlHNbc9vSw3sBMfgBfqjHy6gFXtvzDiFsRdb6UU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gd9NeJ1V8k2X2ErFaBqjxrs1lWzmpOMEmGj4OGnUb798XkWJkGVfW+cjY4nwWRbho
-	 65xLW6a/oTNMr7r4myUf+8WFzaqsILWACha5IgUkQXlnun2KE1GP0iyb7KT1euw0Se
-	 gktb5a420rzV0f7m67yxu5FV/2q5ZIasf6AatUMV2Q8Od8dLP9Z2ab0GGRGswwKUoN
-	 OUsp4Ap4F2nxjHpt1253tVyoWfxGN/b8lmwqHXWw2sFJB7NPBHfDK5wk1aY+E2GY1H
-	 khI48SDN1HqqpOp+QyTDQyy2qd3Cb+r7sbg5r92JrkGX9HyKjv8dfK/Yqhi0TnEUpQ
-	 gHhzTK7vqDywg==
-Message-ID: <55dd9b13-3430-4455-bd67-1575b5ab3f98@kernel.org>
-Date: Wed, 10 Jul 2024 12:05:38 +0200
+	s=arc-20240116; t=1720606049; c=relaxed/simple;
+	bh=6wXpt7XYjcDNGjv5yoOXr7CoBDQcbXL3aGdpf2FY4yI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KtrjC8T26nRCxBxzTo3+ORXMz05bXv80WoyLZL5Apdxq1POlolaDZb8kxhC/Js33XUE21V8UbN0GHb/paADfA8Cvfq9FGH7YCUnjb42N2IwtVJsYijpD2jTrKN56u6OCb29la3gxqmu0HdsGY+8G+oIKikZLTRJILMPWZObDvYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=NUAVtNEe; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 5805C886EE;
+	Wed, 10 Jul 2024 12:07:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1720606039;
+	bh=ylgL5qgH3GiW86diEu73+cfrmEBeNmq9X/KhYaPz8rE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NUAVtNEexXjQmiUylNIcugGMv8sL0weM6AmC3/idhQCyw00N+yHEkxArxYrCguzJO
+	 z9TDXOr2/1snN9Z+wvefZr8VA5DHaDJ+JxWtyEJEV+7iezXRapQBh4njPAN+5aHOlX
+	 YuCZVTS04N7paM9904AFZNfePT1DkracfrVV+cWI/uAMs6br4coRgeirX7yzeF65Ht
+	 pExEx1pR78lGyJ1q/SOEXitGZ17QlG1QHKYBjCgrWT7uz6xOxA9l1PNKX27J+gbE/5
+	 aFUuowmhdQIujEzA+FdqQJbUlTtQwqu/+Z7odZ8rPKCiSGg75PmowWOHWvwqd/tAEb
+	 +7AF5AqkZ+ieA==
+From: Lukasz Majewski <lukma@denx.de>
+To: Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Li Zetao <lizetao1@huawei.com>,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukasz Majewski <lukma@denx.de>
+Subject: [PATCH v1 net-next] leds: trigger: netdev: Add support for tx_err and rx_err notification with LEDs
+Date: Wed, 10 Jul 2024 12:06:51 +0200
+Message-Id: <20240710100651.4059887-1-lukma@denx.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ASoC: dt-bindings: cirrus,cs4270: Convert to dtschema
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>,
- David Rhodes <david.rhodes@cirrus.com>,
- Richard Fitzgerald <rf@opensource.cirrus.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, patches@opensource.cirrus.com,
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240709184231.125207-1-animeshagarwal28@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240709184231.125207-1-animeshagarwal28@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On 09/07/2024 20:42, Animesh Agarwal wrote:
-> Convert the Cirrus Logic CS4270 audio CODEC bindings to DT schema. Add
-> missing va-supply, vd-supply and vlc-supply properties, because they
-> are already being used in the DTS and the driver for this device.
-> 
-> Cc: Daniel Baluta <daniel.baluta@nxp.com>
-> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
-> 
+This patch provides support for enabling blinking of LEDs when RX or TX
+errors are detected.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Approach taken in this patch is similar to one for TX or RX data
+transmission indication (i.e. TRIGGER_NETDEV_TX/RX attribute).
 
-Best regards,
-Krzysztof
+One can inspect transmission errors with:
+ip -s link show eth0
+
+Example LED configuration:
+cd /sys/devices/platform/amba_pl@0/a001a000.leds/leds/
+echo netdev > mode:blue/trigger && \
+echo eth0 > mode:blue/device_name && \
+echo 1 > mode:blue/tx_err
+
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
+---
+ drivers/leds/trigger/ledtrig-netdev.c | 24 +++++++++++++++++++++---
+ include/linux/leds.h                  |  2 ++
+ 2 files changed, 23 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/leds/trigger/ledtrig-netdev.c b/drivers/leds/trigger/ledtrig-netdev.c
+index 22bba8e97642..4b0863db901a 100644
+--- a/drivers/leds/trigger/ledtrig-netdev.c
++++ b/drivers/leds/trigger/ledtrig-netdev.c
+@@ -39,6 +39,8 @@
+  *         (has carrier) or not
+  * tx -  LED blinks on transmitted data
+  * rx -  LED blinks on receive data
++ * tx_err -  LED blinks on transmit error
++ * rx_err -  LED blinks on receive error
+  *
+  * Note: If the user selects a mode that is not supported by hw, default
+  * behavior is to fall back to software control of the LED. However not every
+@@ -144,7 +146,9 @@ static void set_baseline_state(struct led_netdev_data *trigger_data)
+ 		 * checking stats
+ 		 */
+ 		if (test_bit(TRIGGER_NETDEV_TX, &trigger_data->mode) ||
+-		    test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode))
++		    test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode) ||
++		    test_bit(TRIGGER_NETDEV_TX_ERR, &trigger_data->mode) ||
++		    test_bit(TRIGGER_NETDEV_RX_ERR, &trigger_data->mode))
+ 			schedule_delayed_work(&trigger_data->work, 0);
+ 	}
+ }
+@@ -337,6 +341,8 @@ static ssize_t netdev_led_attr_show(struct device *dev, char *buf,
+ 	case TRIGGER_NETDEV_FULL_DUPLEX:
+ 	case TRIGGER_NETDEV_TX:
+ 	case TRIGGER_NETDEV_RX:
++	case TRIGGER_NETDEV_TX_ERR:
++	case TRIGGER_NETDEV_RX_ERR:
+ 		bit = attr;
+ 		break;
+ 	default:
+@@ -371,6 +377,8 @@ static ssize_t netdev_led_attr_store(struct device *dev, const char *buf,
+ 	case TRIGGER_NETDEV_FULL_DUPLEX:
+ 	case TRIGGER_NETDEV_TX:
+ 	case TRIGGER_NETDEV_RX:
++	case TRIGGER_NETDEV_TX_ERR:
++	case TRIGGER_NETDEV_RX_ERR:
+ 		bit = attr;
+ 		break;
+ 	default:
+@@ -429,6 +437,8 @@ DEFINE_NETDEV_TRIGGER(half_duplex, TRIGGER_NETDEV_HALF_DUPLEX);
+ DEFINE_NETDEV_TRIGGER(full_duplex, TRIGGER_NETDEV_FULL_DUPLEX);
+ DEFINE_NETDEV_TRIGGER(tx, TRIGGER_NETDEV_TX);
+ DEFINE_NETDEV_TRIGGER(rx, TRIGGER_NETDEV_RX);
++DEFINE_NETDEV_TRIGGER(tx_err, TRIGGER_NETDEV_TX_ERR);
++DEFINE_NETDEV_TRIGGER(rx_err, TRIGGER_NETDEV_RX_ERR);
+ 
+ static ssize_t interval_show(struct device *dev,
+ 			     struct device_attribute *attr, char *buf)
+@@ -538,6 +548,8 @@ static struct attribute *netdev_trig_attrs[] = {
+ 	&dev_attr_half_duplex.attr,
+ 	&dev_attr_rx.attr,
+ 	&dev_attr_tx.attr,
++	&dev_attr_rx_err.attr,
++	&dev_attr_tx_err.attr,
+ 	&dev_attr_interval.attr,
+ 	&dev_attr_offloaded.attr,
+ 	NULL
+@@ -628,7 +640,9 @@ static void netdev_trig_work(struct work_struct *work)
+ 
+ 	/* If we are not looking for RX/TX then return  */
+ 	if (!test_bit(TRIGGER_NETDEV_TX, &trigger_data->mode) &&
+-	    !test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode))
++	    !test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode) &&
++	    !test_bit(TRIGGER_NETDEV_TX_ERR, &trigger_data->mode) &&
++	    !test_bit(TRIGGER_NETDEV_RX_ERR, &trigger_data->mode))
+ 		return;
+ 
+ 	dev_stats = dev_get_stats(trigger_data->net_dev, &temp);
+@@ -636,7 +650,11 @@ static void netdev_trig_work(struct work_struct *work)
+ 	    (test_bit(TRIGGER_NETDEV_TX, &trigger_data->mode) ?
+ 		dev_stats->tx_packets : 0) +
+ 	    (test_bit(TRIGGER_NETDEV_RX, &trigger_data->mode) ?
+-		dev_stats->rx_packets : 0);
++		dev_stats->rx_packets : 0) +
++	    (test_bit(TRIGGER_NETDEV_TX_ERR, &trigger_data->mode) ?
++		dev_stats->tx_errors : 0) +
++	    (test_bit(TRIGGER_NETDEV_RX_ERR, &trigger_data->mode) ?
++		dev_stats->rx_errors : 0);
+ 
+ 	if (trigger_data->last_activity != new_activity) {
+ 		led_stop_software_blink(trigger_data->led_cdev);
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 6300313c46b7..c4087c15e61d 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -574,6 +574,8 @@ enum led_trigger_netdev_modes {
+ 	TRIGGER_NETDEV_FULL_DUPLEX,
+ 	TRIGGER_NETDEV_TX,
+ 	TRIGGER_NETDEV_RX,
++	TRIGGER_NETDEV_TX_ERR,
++	TRIGGER_NETDEV_RX_ERR,
+ 
+ 	/* Keep last */
+ 	__TRIGGER_NETDEV_MAX,
+-- 
+2.39.2
 
 
