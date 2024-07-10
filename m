@@ -1,80 +1,77 @@
-Return-Path: <linux-kernel+bounces-246909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDC3292C8CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:01:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75EB292C8CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15C40B216B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:01:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A964CB2197D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6278D376E7;
-	Wed, 10 Jul 2024 03:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D2017C61;
+	Wed, 10 Jul 2024 03:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="VLeZE1kO"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2102.outbound.protection.outlook.com [40.107.117.102])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="rAra8Aej"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2065.outbound.protection.outlook.com [40.107.117.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8072E414;
-	Wed, 10 Jul 2024 03:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.102
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9EC10E6
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 03:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.65
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720580445; cv=fail; b=jt7ZV0HBB9FtYvR4IpLlTp61cXOl159JCQ0f5MXvA82v/XuHsQu6rVF39pqzL0imh4u87VPvdZPrWNNTbp4pjSWyapcTkOw+lyP3hMB5TzGoIzs2NJjdmyhMcufajcJm9cM4kCSgnK7kTfzJvFuYNnem9JIWSxxuU1DOD2VLjU4=
+	t=1720580437; cv=fail; b=gyJnx7tq+f0YedCLWOpNYVA+jjXU1D6cP68Eo8u65gNdc/0f2X7kgoiAkJzazeKVFS5YQmdDgzNcWdyLb/HoHV71CGx5RV+d4/dEF12TrPfDhBB8SfT3Sp61tTwzQn8coZs5eRlhxXCmi6Zh6kxcZS/eXx4kVPcDWAUqZHqhGqk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720580445; c=relaxed/simple;
-	bh=cCBPQYRD2ZE81qEf/7ialNxlWLkms2gWMHMdEsAorsE=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=U+ae1+ulBovynbhUDBRUlx5eX8w2QYJOT+l4uRIUd6o1jSIQRC/7QznsVUE5VGeLGfOlq2XSDEE29rIgDgjKmdc6V8sL+qki9rYvRI9oqS8K/4u8Kj5HKwAvBtKmqO33+iuSy9nuOOJaQ+IKLQylVQ54cmXlcgQyW810O+QIRHs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=VLeZE1kO; arc=fail smtp.client-ip=40.107.117.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UB1McHwktOeDalWHBtLP0e99Wou0J/qelfTTjZzifA6JBPZCDAckh1qwWabK/jUDVCpStON9+3xH2KH4HkCzeLXT5xn/vJxZwX3QJ5HOm4OgbNroDoLsQ1JtbcwR7dVMUJCjyJAtDKHg+cRorQ1/EJoz8kdW/eC8F4+4Ku5GCzKgjYf7UwEt4UUt5kz99iD/MVug5lNQsdSiytGq/I/tWsl6K8KL4RQcDj0mjlRS4W9BS4o8wRQ5aGKNQ/D8VpPGiXmVADSu3p3SBPFP96phkbxxl9OiChUcd2ampOMdveNyDSccrAEkRfYyy/bwX8jucsOGNaaieCrDDJ6s9XisGg==
+	s=arc-20240116; t=1720580437; c=relaxed/simple;
+	bh=bvYcvDNI3gj+yL3GlEmVZsdPRyr9FmA48ONl28i0NCw=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=kxydlwfITznQsU5UbuBJx38YMQF1Gijb2WYgUZTNaYHWOwk/L+dGSelBnElzU6hLKHwDXGkMaScq8F/ASG73B5FtVaroA9J305XuwJ9bR10+mkD/9LJV6u6DauJCgK8fX0ksS0pgAHhoe/Y+weRrQolDhqEq0s2h/nmWHRn9gSw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=rAra8Aej; arc=fail smtp.client-ip=40.107.117.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=G3uPssDhVUBCV9VWJ9IRJl2mRq58KTN69VfNDWJdIeODrtK6ykUwwgqZgMLgt/5IQlNSD0HYj7uEKXh9RYn9Wn5sQIKj9t8l9StrDoCFQa2yhyQwE1vDE+0DstKAOM9vMRQ4T7SGHVcR7j3OfdtWrDuppaDUbeUT5zlmrfIeYXyHUnL3RiIjMNYWnTUCG9VV1QWc7epeekZGh7syOeCA32QTE99+B5Yax0HC0kg9HRjk/GV9GGCdjheY/w20xC+oEDSPVGiXHHH9HCMaiHdFNNi7N/KjFD2JzDwEU8RTMApv4n2fDxNIRvBAhv/eUXNsuGdxTFgwZo1N2tozCdpYCA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
+ s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1X/mO+T/3ER5nxQenRXaEXU+72EdmYLRzNSZ3FUIR+8=;
- b=EBlFG6f1hjDrciEOl4cULr70DzdkY3nthWtVRt+SxXVXjhMK/ZLK+X7r+Y7bv//j8CLa3Mjg90RQu6ivTQu69caKNEN+E2BemK9uU2N53dUwfb/WgtegCEuUgIUvY7XAVyJp7hPIyuriKBNDw1uDWiVv9n4sLvNtj2ih7vtnJs2RKdDK1YBcxoj9GsAuGI9bo/I6cOUxCqCQ6HUIWEB4oo2LV0Q5lXsmKbwFsFwwE7Sm2IuEbQkDIM3NT/p3SwWO/lLkCSUqrqtPiWY+Z3YnDp0h4oIu2FMLs+mw9rx9Jihx6Bs21TSrxZp/drIZ5oD4y6/kz9/d8aa3m4CgSfszZQ==
+ bh=bWWNqK8pXgK0eAdo6WhK+EsnHwPSAI7WARq3E3sMOrM=;
+ b=LTFr3UnWgtgiDmZOypcSrYfVtMzy5V0Jbq0lizYp5CjiKclv1L/OptGpxy9GM0MJ0QCY6NYkse9wIUFn98xBg0sSztbwRxMJzgi+LTh312I6eOafH+7hlMhY3VFGwajQyThnAN5c8mLAsMODgOJG6tknpM/QKUXUMPT8tjdgjudAOYF5uod4WbDzZAJyyXtbrUXGdwXLlNCl+WZwgJn1arEeGiFeYfNu5Nq41/ukJE0uXZvs+4MvAHirnWcVPGVDd8cPjJ5gHXPK7Re31zZJUf35e2WuK/2aitzrQOZqAFO7GxqnAR5dGYj5P5UNQ/fSsBkyJ+R/lQvUvh65NseZqg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1X/mO+T/3ER5nxQenRXaEXU+72EdmYLRzNSZ3FUIR+8=;
- b=VLeZE1kOPy3Y14UnMSquX/6GC1EFvy58xvWwSP16ugARCACCSaslcKUtMkZmv90ki2ueRQWc0kmYqMK8LcPaBxK+88RTDXyL0EwbK7lan1L++GWtApfzKrZw4mChAuZ6h33bvFmw50X4Rcjsk99Cxf7xdB6zcw8CBIho18HEV9BWaAprssBvyVuNOfqwerHAe61vaewOtqGSoEDHfnYFEvPx4+v9t4kkUjqCZKseerFa/0eTha53lBX94FdWNGqx21kFbMzfr7SBUmDza7NdsR16uagMfRg+YvfYieN/Yzxf4KGULkENa26FQNyQbuDGVQz95oY4GvLKpBFefU7THw==
+ bh=bWWNqK8pXgK0eAdo6WhK+EsnHwPSAI7WARq3E3sMOrM=;
+ b=rAra8Aej+aYilesNlSdxGMRe8LRqxJWdmWLVWOBgl71IecfkUR+rGp2P5WFpkMesAshAx9WPCyGlIkCfahcwgdtxZ9BlhZalGvg8xEld2ow4iQ3mTXQ3/RjUbpE93IW38wY7BHoJmZ3RxqDzpG6VOM6Yn1frtmFnzJ1zELB5W3EZMBOXlvZ6AxRZjP8Lyeh3KQrjLsIcJkztUnwZC0NeAEMsLUIx3tkVQUb1moXheQknQJkRlXx6984jKCirSL5zKXTEJVlv3VC2tX1z+sBkx1AA8hB6cscqbH7LUwlmCwUi71Ahy4SnS9LbP/kqheEv3X+NGRt0yuk1adPa8Clm7w==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from JH0PR03MB7468.apcprd03.prod.outlook.com (2603:1096:990:16::12)
- by KL1PR03MB8824.apcprd03.prod.outlook.com (2603:1096:820:140::10) with
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from JH0PR06MB6849.apcprd06.prod.outlook.com (2603:1096:990:47::12)
+ by SEYPR06MB5468.apcprd06.prod.outlook.com (2603:1096:101:b5::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34; Wed, 10 Jul
- 2024 03:00:40 +0000
-Received: from JH0PR03MB7468.apcprd03.prod.outlook.com
- ([fe80::4128:9446:1a0f:11fd]) by JH0PR03MB7468.apcprd03.prod.outlook.com
- ([fe80::4128:9446:1a0f:11fd%6]) with mapi id 15.20.7741.033; Wed, 10 Jul 2024
- 03:00:38 +0000
-Message-ID: <fbc089d4-8be9-4ebf-b84d-04fbd3d5a253@amlogic.com>
-Date: Wed, 10 Jul 2024 11:00:13 +0800
-User-Agent: Mozilla Thunderbird
-From: Yang Li <yang.li@amlogic.com>
-Subject: Re: [PATCH 2/3] power: sequenceing: Add power sequence for Amlogic
- WCN chips
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20240705-pwrseq-v1-0-31829b47fc72@amlogic.com>
- <20240705-pwrseq-v1-2-31829b47fc72@amlogic.com>
- <CAMRc=MeZvHV-iOSTcaki=+8_j2Uqm_qpY3b1V15o9K0zefy+hw@mail.gmail.com>
-In-Reply-To: <CAMRc=MeZvHV-iOSTcaki=+8_j2Uqm_qpY3b1V15o9K0zefy+hw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.19; Wed, 10 Jul
+ 2024 03:00:30 +0000
+Received: from JH0PR06MB6849.apcprd06.prod.outlook.com
+ ([fe80::ed24:a6cd:d489:c5ed]) by JH0PR06MB6849.apcprd06.prod.outlook.com
+ ([fe80::ed24:a6cd:d489:c5ed%3]) with mapi id 15.20.7741.033; Wed, 10 Jul 2024
+ 03:00:30 +0000
+From: Zhiguo Jiang <justinjiang@vivo.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Barry Song <baohua@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>
+Cc: opensource.kernel@vivo.com,
+	Zhiguo Jiang <justinjiang@vivo.com>
+Subject: [PATCH v9] mm: shrink skip folio mapped by an exiting process
+Date: Wed, 10 Jul 2024 11:00:21 +0800
+Message-ID: <20240710030021.1657-1-justinjiang@vivo.com>
+X-Mailer: git-send-email 2.41.0.windows.3
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TY2PR0101CA0007.apcprd01.prod.exchangelabs.com
- (2603:1096:404:92::19) To JH0PR03MB7468.apcprd03.prod.outlook.com
- (2603:1096:990:16::12)
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR02CA0038.apcprd02.prod.outlook.com
+ (2603:1096:4:196::22) To JH0PR06MB6849.apcprd06.prod.outlook.com
+ (2603:1096:990:47::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,394 +79,326 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: JH0PR03MB7468:EE_|KL1PR03MB8824:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5cadb034-1d2d-409f-ada4-08dca08c79d9
+X-MS-TrafficTypeDiagnostic: JH0PR06MB6849:EE_|SEYPR06MB5468:EE_
+X-MS-Office365-Filtering-Correlation-Id: f25301ea-2612-4dca-adfc-08dca08c755e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?THhxMk9CanUycUQvS0tCUFBvb1ZnZ0JJak9yZmpvdk4zTGNlaW9kMUxGSzJK?=
- =?utf-8?B?cHVkTXMxYXlTTUdFV3lUb1dXWWdweDZpMVMwMU1vZzR5bkVNVHMxRjM1ZEpV?=
- =?utf-8?B?VUxsK0t1WmdlczVXeml1eHJxTnkwdFNzRHdXVUp3bnZBejBJNWRGcWdNeGNV?=
- =?utf-8?B?L1FxR3ZlNzlYVldlMGhoUDhUZThsaFduaTJDRkJEbUtvZHEzeFdDTXlxYVMw?=
- =?utf-8?B?dnE3bnhHaXV0aGZjTWViTjBFdGRabExiTzhuUURrVS9Oam0yVUNIa3ZhUDhW?=
- =?utf-8?B?dU1QUGVxd2VFTStNclZJOHpNbDhabUdSeTE5Z0tQMUJYaUttQ01IR1BwRzJR?=
- =?utf-8?B?Z1hUZTRCczNFeXhYT215eGY4eVdXWEY5bHQvaUpURlBXamE0U0NFeXF2N2dJ?=
- =?utf-8?B?Q084YU5DWFVMWEhuRHdkQWJkamt2V3M5UktuVnA3VEN4M1hITWV6NDQ4ZXgz?=
- =?utf-8?B?WllPMS9LNFpWZEdqT3hGUk5VakVCRE5zQUp0SmNDSk4ybWdYRWd3L3RNdjhy?=
- =?utf-8?B?THJxVnVJOG9JYmFJbnpuNmJrZGZaajQ3RU9vVDFLMVVUUHU4UUIxY1l4S09B?=
- =?utf-8?B?Nm1kMzVZckZPUUdPNytLeUhsRWRRVEJpUmZRWXhodzNuYmJqZlpvWEE1K1Bq?=
- =?utf-8?B?bmZRelVKTTRXWStpQ3JOUXhNZHdmK2NIY1Z3REYxdGVKaFhnUGVvOVQzcjdj?=
- =?utf-8?B?TXZJNHE4dkI1Y1IwMUtjU280QWNRYUhKbkttQ29IQU8wcE5VQzBuQjVad1V3?=
- =?utf-8?B?NGU3TVVGdFpaNzVROTJNbGNjS2ZEUTF0dTg5cHlNUjV0d3R5K01zQUlpYWk1?=
- =?utf-8?B?ejNvazg2Y25ST29ya0RGNVFHeC9oekdqL1dPRmNuOStRalFTdVU3TytsZWl0?=
- =?utf-8?B?ZGxTSzYwcmZ6REMwNENNdmllQmgxMXpIeGhsRS9SeTJzUEZnMXVEdmtNSXJ3?=
- =?utf-8?B?RXNXdXRxQzU1R0hGbzdSdjF5bnA3U0tTN3ZDai9qRFM5QzFmbC9Kb3p6SStE?=
- =?utf-8?B?U1o1amR4MHBWdDI0SkIxYVpaOE4zL1gzY0k5dE50eTFuUThMbVhzQzcwdXYw?=
- =?utf-8?B?bDREYzl2RnB6ZEJBalVDVmVuT0FsYmZ4Rzd4VW05UXFUY1loMWlRUUJPS1Zj?=
- =?utf-8?B?eGZJVFhtb2x5WWdMZU8xelNaTTY1MEdVdE9GREQ4MlgyY01YWGFkREl3OGZy?=
- =?utf-8?B?YmhndTRIOFpqUW5HcVpsbkxwNUt2YXhvSFQ3bFpoVTZuL05ob0JtRnNVa1pv?=
- =?utf-8?B?VlJCNm1JVExuWG9lYStvVGtTenMrRmYzSUtxZWlmbTgvK2pHT1JaRFhjOGJF?=
- =?utf-8?B?VkVxM0d2dmxhVUZsYnd0c1l6bCt3NWxDQWpLWlFBWlBTbHJzaSs1ZVNVL1FM?=
- =?utf-8?B?dVF0Y2VEZ0I3YUF2b3hqR3lKcnY3TjN6WEZMbDlab3p6aE5xTmVBKzdQU3Zx?=
- =?utf-8?B?ZHhKQ1BWWnhHYTVwZTl1cStJUENFSDNkMTVrS3pxRndGcTZyeXI1OVhDczVj?=
- =?utf-8?B?NmhiYlNQWEM4aVp2ajlYNDBON05ZNGwwMCtFT1BFUVdLT05FSUJDQy9lTGM3?=
- =?utf-8?B?cE5HMkZBTWgybWladlVnR3lyQmRKL2xVSGdFSEx1TUR5d1I4T04rS1J2REhS?=
- =?utf-8?B?b2dEbFlwRDVDNUhpYVN1akl5ZHVvYUwvU2xIclhoOFJhZUdUT1BOekk3SExH?=
- =?utf-8?B?OHc4SXBhL01VOHdjUVV1cnhJTUs5bW1EYmRmK3Z2VWdEL29jZGdSblp6QVY3?=
- =?utf-8?B?QXNrUHBuVlhCRTQwOEZNTHF6QThPWnVLN2JFQmZZcnF0eEx6L1B1SmZzQ1ZX?=
- =?utf-8?B?Z3UrRW13SzVaTzJIWlNwUT09?=
+	=?us-ascii?Q?0shDE7Jk7nxtoFAngfR07UQx/m8ky7hy/HCdL8oWvMjQ4IaKNI+kX8+j15WU?=
+ =?us-ascii?Q?MYygcdngUiXPc7Fk3m5yXdQlIH07//0f0dWg879S9CeJEDd1l7oh8PbwggaP?=
+ =?us-ascii?Q?/Yz+4e0EemSd5ujvCH6J3y5fj7Iy4ch2WZTyItbOp43v/BnGF3eIa9GkprwG?=
+ =?us-ascii?Q?gphKszdSSiCb+xV6jCBzucsSR8cpbeBKSLJnRe4TPRxGDZP66bqcOU7Dl7lg?=
+ =?us-ascii?Q?0qp6gZQ/AshF4/gO/RT8uV21tRD/YcYwd73nyZ8JElrWIVjI+NAXzkm6/W82?=
+ =?us-ascii?Q?vqwOmgvoiB0ybwXNXMPuQ5LwOLfo7EjYKnw5jE3S7cGtFUIAs0lWhLrSo46p?=
+ =?us-ascii?Q?YlIPUmDDrjPpEvP20wYD5p5NqQgcg+pcd89PlPVLV7sBhkgaXUPfePzkRHwz?=
+ =?us-ascii?Q?CTQmJ1DppjD4zTYrX+tfzeab5xkaIcK7zGfY1ER5LSARFHgAnoWkigNdxybq?=
+ =?us-ascii?Q?ZioveQ7Osr/oUT2Eti+HI6VWgZpt9jFgpw75/BUPTNRBw0wHEgtbfuHqEeKx?=
+ =?us-ascii?Q?RgvweFyL2pL7DGEd5cCnn61XY5KY1DR8oLqXok3PsOTcIn3CNfjtCswfEHSn?=
+ =?us-ascii?Q?IBlEjyslNh5E0F7Ga/21bAdG1Z/A+aztzTXUxjHeZCJaD7bWNjTGK61DZQvr?=
+ =?us-ascii?Q?ZFFEkr3YTUiuCd0tGpcQze1IApe5q89q8Y563CqZpy6iWnVnN+OkEN9yiYAV?=
+ =?us-ascii?Q?P6CXfbBLJCi3RzvwOo2dqkhr/k/KqjJeiR64IBQIl90ozPOQ1XvfzADK2y/f?=
+ =?us-ascii?Q?Ee/dPXpnmRlbmv4blv4HwjnnvIZnJBinBUo5eE7OfMFIJ9rkkcmYtLeBvptq?=
+ =?us-ascii?Q?CIjW+wUq89GDZOQytVX9/WUVR/3AmfnSMeSiCFRszZ4cdFndGuUU+IFfrAig?=
+ =?us-ascii?Q?R2/UuLbVia7MWA3IBjVC4822Kw318bdtkSrlSitzKqtDFFBycBmsAMN/JH3C?=
+ =?us-ascii?Q?A5kDnOiiIgoXpIW7KOTcLrkOjoVaG6poGf9wwhST6yPWz7vYfgpUiYf3/J73?=
+ =?us-ascii?Q?R0s4GWBvBVFgpVAb+8uXKL6u8IVQxV/1He33CU8H1AM0vPN8X0W0JWkzE6cf?=
+ =?us-ascii?Q?IuhM9/mKNovqWl4jz4SrBCcNTb9pnw+T3IjXTv8hPhglj3Docg1fUFtEQNDT?=
+ =?us-ascii?Q?5WBxR7V/HCJxiu4eRDnXLnjH+EMabwFeOitHH6cds30Oj4fiTpfHbVnMh6gD?=
+ =?us-ascii?Q?p2GO3fGmtKLYs7zZTwZdAGwl3Iwv+8QgFrAsdeqDPL/pkPNko3Ry4ovKaKCF?=
+ =?us-ascii?Q?eSajmA7FURQ7ENjgCjlh24x5ADiZ6vwtkd6P0PPgiUN55EwojTxq/YooYd7i?=
+ =?us-ascii?Q?eHFxvxr0t6dLKAzo07KjfEPqYpbX3tx1/Oy4bZPeaPWMg364nubHMDh5o3y9?=
+ =?us-ascii?Q?BQFX2Jg=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR03MB7468.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR06MB6849.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TWlxNDVwTDFObTVGUFVORUZ5NGVIeTZIc1JXZ2ZCS3htTmNqdm1JVXViUk5S?=
- =?utf-8?B?NjhBOGJJeGhXdE1XNlQ4RW5yb2k2eFVLcm11cUJtVnZlSElMZnNsS0VVdWpY?=
- =?utf-8?B?dlA4ZnF3cFhkWElldktkMElwcUpLZTd2MmZuSnBxVHZ3T3loYlhVeUtyckN1?=
- =?utf-8?B?V012LzZ3YXZ2aXREc2p3b2o0bnAvRWhiTTgvdUI3L1oveEorZlBBT01MdFlZ?=
- =?utf-8?B?Q1J5YnZxZXUwc0tDdFZGeUZlZWJiTi85M2FZQmErVEdtV0ZFaDZJV1JGK0to?=
- =?utf-8?B?d0ZaR0ljWlNtQW1SUnJOdWdIaWNlbmJ5bHYrTE15SFVVcHBJeUt0ZzYvVlZw?=
- =?utf-8?B?VHFrdno3eE1mZjRCUkVlWjNiZFRNekYwMTBHNGl1bUFnUUY3bDZIY2VvelF5?=
- =?utf-8?B?R1FYcVp5U1BzdDVsNUl5T3RSTmVLTXFKZ3hmUjc3ckFaWU5NWUpWdGpXUkJN?=
- =?utf-8?B?VDB5Vmx0UHF2L1pqeWE2MXNNVWgyNVVWdW1LTW1HSi9PT1JPZjBqQ0dTdUVT?=
- =?utf-8?B?bFpqVkplZnphVG5MNml2TzNxUUJWb21ONmNuVGVKZkNsR2ZmZjArWjQ2U0pn?=
- =?utf-8?B?WnRndW5xcjVHam1wOW52VXZ4TStQeHJubVF0SmFJUFZQRGRpYXEyUlNGTVQ3?=
- =?utf-8?B?VlJhKzBuVDh2SG9wR01Ea3dGUDdjeXdIejJtVW4wYW43SlpHcHBYVFZtYWVo?=
- =?utf-8?B?VVlGRVpVVm5OV09uZ0tJZU5BVE5ncUFFU2JUaGNMT0ZDc2RzL1hjOFY3TDlu?=
- =?utf-8?B?cVppUTJZbEhvT3NIejMyMUEwMzF0ejBRZms2QVFyRVFDeFUybmovaDBVcmNL?=
- =?utf-8?B?c3N2WEhrdXVlK0RBNko2U0tPQkxrcFFSdnFjZVFBK3RFbXdFYk1yL3YwcmFq?=
- =?utf-8?B?YVRCQlBwVlV2bms3U2VOb0J0MHBEOEhaYjVrVWlXOUxpZTBWLzN5WGZtYWp4?=
- =?utf-8?B?M21JRkh1MDlmZ3M2WXE5aUNTdUp0Ump6WHhoSjhjOWZsYUlsT0NXWDNmV3dU?=
- =?utf-8?B?N044R1JBb2FtQXdTM1VCdnljc0VHT2RzMzVZL2Q1U1NCSnpjT2dhaWNIcktl?=
- =?utf-8?B?T2h2L0F3ajNpV1VHNkNGZisxSkE2bnl2U01rbCtIYU0zMmNIN2NHTFFwWWF3?=
- =?utf-8?B?czBNNTdzczJSTGpmVUp3U3AzNUN1SVY2dGpaNUQzaEJaYkFpVU05V0lyQmF5?=
- =?utf-8?B?NG9XTVNiSk5KZ0dKWm04cWZvTXN5RU82SHZ6bWI1d2JvSGpHYmQ1YVZ0Q0lR?=
- =?utf-8?B?WjAzMmtnT0hqRUtTOUEwWFVpTlNOdlNWWWljVlAxV3Qxai9ma2hPa3UxK0RT?=
- =?utf-8?B?cGNPWVJrNTZNa01kM3RNTWhIYXdCMUZUWTNPNUtQelZ4eUtGUEIrZjZuNU8v?=
- =?utf-8?B?NXdqZkFmekF5Mktkd3pQRnA1bkJEZUxQVGxtTzBuNXFUSXNkcnkxWndUM2lF?=
- =?utf-8?B?bHhobjhpUHBzMWVudEVKOEpIQTJPZXNKWXlhMXZWODVESDg3OW9IbllCekFt?=
- =?utf-8?B?c3B2RHpSL1p0bkpnVmN5SXhzZWZxbENXZzU5cERybVpNUkxXZUlNc0o5V2sx?=
- =?utf-8?B?QzFSSEdzQkZoLzAyL3RPTE0rRFkzMCtraDFBK0pLeVAvZEpjeGRudHhVZFZX?=
- =?utf-8?B?MmlYa1dzZXBtaFVscjJNOWltd2FyVi83SDZ0K3hjU2dWeTdWam9vUm5lSWpB?=
- =?utf-8?B?dnZINW9wSGZxdFNaR3J4SkVzMVUycGpDcC9vZGU3UlhQek1yVGlucnpnaTZp?=
- =?utf-8?B?SUN5dU5HZFFrWUo2SFR6bHBVYVAxQ2VYZXVrTUZsN2V5bER5VEh6VzJ0VTlF?=
- =?utf-8?B?RVpIbmJDWWo0MWdNMTVLamZrMjJoNklxalA3Q1pabzdJa3kzUFdrYkNWMXVU?=
- =?utf-8?B?SzNYQTNLeEp4N1cwRlBoaE4yNUNmS2FlTjZmSDNyRU9TZVZPQVZaZnpFNW0w?=
- =?utf-8?B?S2hlaFU1eUdON1YwT0p5dTZMa05OZzhsemh2NldaR2xraGwwT0xaRWo0Qktw?=
- =?utf-8?B?Sy9xQzNiRWoveGpXVmdlbk5iSkZtbUxwMllwZ1prcllSY3FJdnY1bUFpOXZh?=
- =?utf-8?B?bVB5bnhzVW16Tmprait4QlV4Z3lkZmllbjVIaHlvRGtGREtaVzgycjl6MC9y?=
- =?utf-8?Q?bsTOWHJoypTMazB0RdsSvE4qN?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5cadb034-1d2d-409f-ada4-08dca08c79d9
-X-MS-Exchange-CrossTenant-AuthSource: JH0PR03MB7468.apcprd03.prod.outlook.com
+	=?us-ascii?Q?4VYqNqikwgnEouOqWyjYtGr7cLvDpVObLVbhR9jCmgNcdOVFb4qJyegKhjCu?=
+ =?us-ascii?Q?cZXFv0pjkNv26kNsfqdBxC7ii6I8OyV34OF6SGiN4lYGQ/9Hv8+aXdgYOnRK?=
+ =?us-ascii?Q?69HWWd74ArMSfQan4dq3/mB8F9NEi8K2FHJajYa5GXYVdxxlGFN+01BpcVJo?=
+ =?us-ascii?Q?bLp0G035UVpI2wF5ZHadaZbDfH/LSl5V/Y7Mlr3zEdkRv8nqHiOkfMhXkMb+?=
+ =?us-ascii?Q?kwpspMjPqmYqVzNjdj98zjT132VU66VuI+/6x9skxnRsyWwX99s/oLbqyz0Q?=
+ =?us-ascii?Q?u5KN+zvW3PmRua2dAjZ06fzLssUVukIpQfzzDMGd4uF9hFSo2NxSoYPSvEkm?=
+ =?us-ascii?Q?n4glkNJkdgbqdW+VIf08VVvzGptyO9wo1LLg01GdGd/qRCWLwyv6q3IB8hOC?=
+ =?us-ascii?Q?XA1DjOicCZpjhfdR/iaaL2h+d0K47VXa52dh7tdQs6pe3jmA+oHBipBC5r61?=
+ =?us-ascii?Q?p/OShfXShzyftG+VNT0H8Fe3liLHDO2i533Ip+QKkWUo9GIailfujU2LguNh?=
+ =?us-ascii?Q?WQWbTt+eQUFdvtN0+37jG4wz4fTiwtI1HWzV40xKhWt95dWN2MblzP7mYylz?=
+ =?us-ascii?Q?G/ZWm+JpyhynrhPE+8d9ibf9HE1oLX4iFghx8pFSEoHV7wXQKXO5O7Bna6+y?=
+ =?us-ascii?Q?7VM1oa1HOWb4BJZtzpjgZFbkvVAMIFlzGSpyxYwTFDwPNc05jGBsVRsLT86K?=
+ =?us-ascii?Q?2jLdBo1H4mIy3t7TaF91XJee6pBZnxpu/rQKS6owo2e5nhbY1DmTY/VVeIIA?=
+ =?us-ascii?Q?k4P1q4vpg/ro+fr9SJFv/ukqWDXZ7b859JEHw+Gj85PRQhSXIGmtOJHmGL/A?=
+ =?us-ascii?Q?l0VXdiRLfFw5zRnAF+Fq+aJ/f1xh9W6XQp1XCBnRdZmCg7sZFIPZNDOP2Bqn?=
+ =?us-ascii?Q?uuTzOS1lRiqchGXQNOxgNy4/WLLzwYjS1qu0YA1QbMLdAhoPtnXPh7cpWPSp?=
+ =?us-ascii?Q?xBcoexgaUxcLXzv9CI13atJe/BXKf/o0illUps5k7H4FkYrRXNUtLLkD5PLH?=
+ =?us-ascii?Q?hFqwGDFSb9DW3c9DyQQBezC4eoSTEp2ft3dSnAqvy/k+GniOAS1rOO9B7zIG?=
+ =?us-ascii?Q?883x6NRi+1WE4r17WKMjG6RtOoSBRhx2lo+DP3u9OzmenM3bRx/23Kjr+IIx?=
+ =?us-ascii?Q?rNmywB5Bpg9fKpMimH72LlhPhW6yNtSONe0fbBk/3zumEmyhiAbeGdmbuQ4S?=
+ =?us-ascii?Q?L9ezwIusx/4rwP2LD9k5PPcKHIgXOv/ztxd7y0WNvoZfrM+4vkq31wO26B9L?=
+ =?us-ascii?Q?RvRB4zOcBYsfvpa0swuZsJ/XPRFmxmunNPGB7QK+JvM3Z1gHnwNPKxmxvpP9?=
+ =?us-ascii?Q?fJUZmDvwdKdtzldgE1iX1M3MrUsuZeJfWwPjLgFTpiRQeu+sScrimV3cyuyS?=
+ =?us-ascii?Q?FKnECy+rq/MUG5HcWO8KS9DIAElsjwBdbsvb01xb8XvHADF43jz0kkP7QngG?=
+ =?us-ascii?Q?x1j0rG9oxMZesURLiISWNtnV3JV3fyyAqgF5ByeFz/hj3ZqivLxRveuFi6kI?=
+ =?us-ascii?Q?vb7ZgHtmUOTsA5qK8e7bU3jvdZTMIPeNI8f+QpqzBwed/rqI6b1Dx1+DBLfy?=
+ =?us-ascii?Q?a9mM9S1MZiazYHJEZU3C5xhH2vcrTTgkpfUJi0Vk?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f25301ea-2612-4dca-adfc-08dca08c755e
+X-MS-Exchange-CrossTenant-AuthSource: JH0PR06MB6849.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2024 03:00:38.1422
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2024 03:00:30.6019
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 67gjxApNjxvaNJIHFn2uwACgbjVo8Z9O1uV+jPLeWA1cHWr+sjj1VKpwnVOm3KjO0dD695hyDj5BpmZZ1F9KrQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB8824
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0ZLj8DxPRhCzk2l0jzgvheOW0eevWhYO0gLlMWx+hEqPwChz4GpO1IET9BNf5b3HZVdxCWxRu65Ke+VpDVpj1g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5468
 
+The releasing process of the non-shared anonymous folio mapped solely by
+an exiting process may go through two flows: 1) the anonymous folio is
+firstly is swaped-out into swapspace and transformed into a swp_entry
+in shrink_folio_list; 2) then the swp_entry is released in the process
+exiting flow. This will result in the high cpu load of releasing a
+non-shared anonymous folio mapped solely by an exiting process.
 
-On 2024/7/5 21:46, Bartosz Golaszewski wrote:
-> On Fri, Jul 5, 2024 at 1:13 PM Yang Li via B4 Relay
-> <devnull+yang.li.amlogic.com@kernel.org>  wrote:
->> From: Yang Li<yang.li@amlogic.com>
->>
->> Add power sequence for Bluetooth and Wi-Fi respectively, including chip_en
->> pull-up and bt_en pull-up, and generation of the 32.768 clock.
->>
->> Signed-off-by: Yang Li<yang.li@amlogic.com>
->> ---
->>   drivers/power/sequencing/Kconfig          |   7 +
->>   drivers/power/sequencing/Makefile         |   1 +
->>   drivers/power/sequencing/pwrseq-aml-wcn.c | 209 ++++++++++++++++++++++++++++++
->>   3 files changed, 217 insertions(+)
->>
->> diff --git a/drivers/power/sequencing/Kconfig b/drivers/power/sequencing/Kconfig
->> index c9f1cdb66524..65d3b2c20bfb 100644
->> --- a/drivers/power/sequencing/Kconfig
->> +++ b/drivers/power/sequencing/Kconfig
->> @@ -26,4 +26,11 @@ config POWER_SEQUENCING_QCOM_WCN
->>            this driver is needed for correct power control or else we'd risk not
->>            respecting the required delays between enabling Bluetooth and WLAN.
->>
->> +config POWER_SEQUENCING_AML_WCN
->> +       tristate "Amlogic WCN family PMU driver"
->> +       default m if ARCH_MESON
->> +       help
->> +         Say Y here to enable the power sequencing driver for Amlogic
->> +         WCN Bluetooth/WLAN chipsets.
->> +
->>   endif
->> diff --git a/drivers/power/sequencing/Makefile b/drivers/power/sequencing/Makefile
->> index 2eec2df7912d..32706daf8f0f 100644
->> --- a/drivers/power/sequencing/Makefile
->> +++ b/drivers/power/sequencing/Makefile
->> @@ -4,3 +4,4 @@ obj-$(CONFIG_POWER_SEQUENCING)          += pwrseq-core.o
->>   pwrseq-core-y                          := core.o
->>
->>   obj-$(CONFIG_POWER_SEQUENCING_QCOM_WCN)        += pwrseq-qcom-wcn.o
->> +obj-$(CONFIG_POWER_SEQUENCING_AML_WCN) += pwrseq-aml-wcn.o
->> diff --git a/drivers/power/sequencing/pwrseq-aml-wcn.c b/drivers/power/sequencing/pwrseq-aml-wcn.c
->> new file mode 100644
->> index 000000000000..6f5bfcf60b9c
->> --- /dev/null
->> +++ b/drivers/power/sequencing/pwrseq-aml-wcn.c
->> @@ -0,0 +1,209 @@
->> +// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
->> +/*
->> + * Copyright (C) 2024 Amlogic, Inc. All rights reserved
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/delay.h>
->> +#include <linux/device.h>
->> +#include <linux/mod_devicetable.h>
->> +#include <linux/module.h>
->> +#include <linux/mutex.h>
->> +#include <linux/of.h>
->> +#include <linux/gpio.h>
-> Please see line 5 in this file.
-I got it, I will remove this line, and include linux/gpio/consumer.h.
->> +#include <linux/of_gpio.h>
-> You don't need this either.
-Yes, I will remove it.
->> +#include <linux/platform_device.h>
->> +#include <linux/pwrseq/provider.h>
->> +#include <linux/string.h>
->> +#include <linux/types.h>
->> +
->> +struct pwrseq_aml_wcn_ctx {
->> +       struct pwrseq_device *pwrseq;
->> +       int bt_enable_gpio;
->> +       int chip_enable_gpio;
->> +       struct clk *lpo_clk;
->> +       unsigned int pwr_count;
->> +};
->> +
->> +static DEFINE_MUTEX(pwrseq_lock);
->> +
-> Why is this global?
-Okay, I will add it to structure of pwrseq_aml_wcn_ctx .
->> +static int pwrseq_aml_wcn_chip_enable(struct pwrseq_device *pwrseq)
->> +{
->> +       struct pwrseq_aml_wcn_ctx *ctx = pwrseq_device_get_drvdata(pwrseq);
->> +       int err;
->> +
->> +       mutex_lock(&pwrseq_lock);
-> Please use guard() from linux/cleanup.h.
-Well, I will use guard(mutex)(&pwrse_lock) to replace 
-mutex_lock(&pwrseq_lock).
->> +       if (ctx->pwr_count == 0) {
->> +               gpio_request(ctx->chip_enable_gpio, "chip-enable-gpios");
->> +               gpio_direction_output(ctx->chip_enable_gpio, 1);
->> +               gpio_free(ctx->chip_enable_gpio);
-> Not only are these legacy APIs but they are also used wrong. You
-> almost never want to release the GPIO after setting the direction as
-> someone else may grab it and use it.
-Okay, I will use consumer API of devm_gpiod_get() to replace them.
->> +
->> +               if (!IS_ERR(ctx->lpo_clk)) {
->> +                       err = clk_prepare_enable(ctx->lpo_clk);
->> +                       if (err) {
->> +                               mutex_unlock(&pwrseq_lock);
->> +                               return err;
->> +                       }
->> +               }
->> +       }
->> +
->> +       ctx->pwr_count++;
->> +       mutex_unlock(&pwrseq_lock);
->> +       return 0;
->> +}
->> +
->> +static int pwrseq_aml_wcn_chip_disable(struct pwrseq_device *pwrseq)
->> +{
->> +       struct pwrseq_aml_wcn_ctx *ctx = pwrseq_device_get_drvdata(pwrseq);
->> +
->> +       mutex_lock(&pwrseq_lock);
->> +       if (--ctx->pwr_count == 0) {
->> +               gpio_request(ctx->chip_enable_gpio, "chip-enable-gpios");
->> +               gpio_direction_output(ctx->chip_enable_gpio, 0);
->> +               gpio_free(ctx->chip_enable_gpio);
->> +
->> +               if (!IS_ERR(ctx->lpo_clk))
->> +                       clk_disable_unprepare(ctx->lpo_clk);
->> +       }
->> +
->> +       mutex_unlock(&pwrseq_lock);
->> +       return 0;
->> +}
->> +
->> +static const struct pwrseq_unit_data pwrseq_aml_wcn_chip_power_unit_data = {
->> +       .name = "chip-enable",
->> +       .enable = pwrseq_aml_wcn_chip_enable,
->> +       .disable = pwrseq_aml_wcn_chip_disable,
->> +};
->> +
->> +static const struct pwrseq_unit_data *pwrseq_aml_wcn_unit_deps[] = {
->> +       &pwrseq_aml_wcn_chip_power_unit_data,
->> +       NULL
->> +};
->> +
->> +static int pwrseq_aml_wcn_bt_enable(struct pwrseq_device *pwrseq)
->> +{
->> +       struct pwrseq_aml_wcn_ctx *ctx = pwrseq_device_get_drvdata(pwrseq);
->> +
->> +       gpio_request(ctx->bt_enable_gpio, "bt-enable-gpios");
->> +       gpio_direction_output(ctx->bt_enable_gpio, 1);
->> +       gpio_free(ctx->bt_enable_gpio);
->> +
->> +       /* wait 100ms for bluetooth controller power on  */
->> +       msleep(100);
->> +
->> +       return 0;
->> +}
->> +
->> +static int pwrseq_aml_wcn_bt_disable(struct pwrseq_device *pwrseq)
->> +{
->> +       struct pwrseq_aml_wcn_ctx *ctx = pwrseq_device_get_drvdata(pwrseq);
->> +
->> +       gpio_request(ctx->bt_enable_gpio, "bt-enable-gpios");
->> +       gpio_direction_output(ctx->bt_enable_gpio, 0);
->> +       gpio_free(ctx->bt_enable_gpio);
->> +
->> +       return 0;
->> +}
->> +
->> +static const struct pwrseq_unit_data pwrseq_aml_wcn_bt_unit_data = {
->> +       .name = "bluetooth-enable",
->> +       .deps = pwrseq_aml_wcn_unit_deps,
->> +       .enable = pwrseq_aml_wcn_bt_enable,
->> +       .disable = pwrseq_aml_wcn_bt_disable,
->> +};
->> +
->> +static const struct pwrseq_unit_data pwrseq_aml_wcn_wlan_unit_data = {
->> +       .name = "wlan-enable",
->> +       .deps = pwrseq_aml_wcn_unit_deps,
->> +};
->> +
->> +static const struct pwrseq_target_data pwrseq_aml_wcn_bt_target_data = {
->> +       .name = "bluetooth",
->> +       .unit = &pwrseq_aml_wcn_bt_unit_data,
->> +};
->> +
->> +static const struct pwrseq_target_data pwrseq_aml_wcn_wlan_target_data = {
->> +       .name = "wlan",
->> +       .unit = &pwrseq_aml_wcn_wlan_unit_data,
->> +};
->> +
->> +static const struct pwrseq_target_data *pwrseq_aml_wcn_targets[] = {
->> +       &pwrseq_aml_wcn_bt_target_data,
->> +       &pwrseq_aml_wcn_wlan_target_data,
->> +       NULL
->> +};
->> +
->> +static int pwrseq_aml_wcn_match(struct pwrseq_device *pwrseq,
->> +                                struct device *dev)
->> +{
->> +       struct device_node *dev_node = dev->of_node;
->> +
->> +       if (!of_property_present(dev_node, "amlogic,wcn-pwrseq"))
->> +               return 0;
->> +
-> You must never reference the notion of power sequencing in the DT.
-> Please take a look at the pwrseq-qcom-wcn driver where we model the
-> PMU with its regulators and then parse them in match() to figure out
-> if we have the right thing or not.
+When the low system memory and the exiting process exist at the same
+time, it will be likely to happen, because the non-shared anonymous
+folio mapped solely by an exiting process may be reclaimed by
+shrink_folio_list.
 
-There is some different between pwrseq-aml-wcn and pwrseq-qcom-wcn, 
-pwrseq-aml-wcn device is abstracted to manage the chip-en pin, bt-en 
-pin, and 32.768KHz clock. The drivers/power/sequence/core.c requirements 
-need to be defined match () function is used to determine whether a 
-potential consumers actually related to the sequencer. So, I need to add 
-a meaningless node "amlogic,wcn-pwrseq" to both the consumer dt-binding 
-and the provider dt-binding.
+This patch is that shrink skips the non-shared anonymous folio solely
+mapped by an exting process and this folio is only released directly in
+the process exiting flow, which will save swap-out time and alleviate
+the load of the process exiting. 
 
-Right now, I add "amlogic,wcn-pwrseq" in binding file of 
-"amlogic,w155s2-bt.yaml" only, may I need to add this properties 
-("amlogic,wcn-pwrseq") in the binding file of "amlogic,w155s2-pwrseq.yaml"?
+Acked-by: Barry Song <baohua@kernel.org>
+Signed-off-by: Zhiguo Jiang <justinjiang@vivo.com>
+---
 
-Or there are any others way to fixed this issue please let me know.
+Change log:
+v8->v9:
+1.Update Reviewed-by tag information.
+v7->v8:
+1.Add tags of Reviewed-by and Acked-by.
+2.Add #include <linux/oom.h> to solve compilation issue.
+v6->v7:
+1.Modify tab indentation to space indentation of the continuation
+lines of the condition.
+v5->v6:
+1.Move folio_likely_mapped_shared() under the PTL.
+2.Add check_stable_address_space() to replace MMF_OOM_SKIP.
+3.Remove folio_test_anon(folio).
+v4->v5:
+1.Further modify to skip non-shared anonymous folio only.
+2.Update comments for pra->referenced = -1.
+v3->v4:
+1.Modify to skip only the non-shared anonymous folio mapped solely
+by an exiting process.
+v2->v3:
+Nothing.
+v1->v2:
+1.The VM_EXITING added in v1 patch is removed, because it will fail
+to compile in 32-bit system.
 
->> +       return 1;
->> +}
->> +
->> +static int pwrseq_aml_wcn_probe(struct platform_device *pdev)
->> +{
->> +       struct device *dev = &pdev->dev;
->> +       struct pwrseq_aml_wcn_ctx *ctx;
->> +       struct pwrseq_config config;
->> +
->> +       ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
->> +       if (!ctx)
->> +               return -ENOMEM;
->> +
->> +       ctx->bt_enable_gpio = of_get_named_gpio(dev->of_node,
->> +                                              "amlogic,bt-enable-gpios", 0);
->> +       if (!gpio_is_valid(ctx->bt_enable_gpio))
->> +               return dev_err_probe(dev, ctx->bt_enable_gpio,
->> +                               "Failed to get the bt enable GPIO");
->> +
->> +       ctx->chip_enable_gpio = of_get_named_gpio(dev->of_node,
->> +                                              "amlogic,chip-enable-gpios", 0);
-> You don't need the OF variant. Use the regular devm_gpiod_get(). You
-> also forgot to release it but the devres variant will take care of it.
-Well, I will do it.
->
->> +       if (!gpio_is_valid(ctx->chip_enable_gpio))
->> +               return dev_err_probe(dev, ctx->bt_enable_gpio,
->> +                                       "Failed to get the chip enable GPIO");
-> Wat
-I got it, and I will fix it.
->
->> +
->> +       ctx->lpo_clk = devm_clk_get_optional(dev, NULL);
->> +       if (IS_ERR(ctx->lpo_clk))
->> +               return dev_err_probe(dev, PTR_ERR(ctx->lpo_clk),
->> +                               "Failed to get the clock source");
->> +
->> +       memset(&config, 0, sizeof(config));
->> +
->> +       config.parent = dev;
->> +       config.owner = THIS_MODULE;
->> +       config.drvdata = ctx;
->> +       config.match = pwrseq_aml_wcn_match;
->> +       config.targets = pwrseq_aml_wcn_targets;
->> +
->> +       ctx->pwr_count = 0;
->> +       ctx->pwrseq = devm_pwrseq_device_register(dev, &config);
->> +       if (IS_ERR(ctx->pwrseq))
->> +               return dev_err_probe(dev, PTR_ERR(ctx->pwrseq),
->> +                                    "Failed to register the power sequencer\n");
->> +
->> +       return 0;
->> +}
->> +
->> +static const struct of_device_id pwrseq_aml_wcn_of_match[] = {
->> +       { .compatible = "amlogic,w155s2-pwrseq" },
->> +       { /* sentinel */ },
->> +};
->> +MODULE_DEVICE_TABLE(of, pwrseq_aml_wcn_of_match);
->> +
->> +static struct platform_driver pwrseq_aml_wcn_driver = {
->> +       .driver = {
->> +               .name = "pwrseq-aml_wcn",
->> +               .of_match_table = pwrseq_aml_wcn_of_match,
->> +       },
->> +       .probe = pwrseq_aml_wcn_probe,
->> +};
->> +module_platform_driver(pwrseq_aml_wcn_driver);
->> +
->> +MODULE_AUTHOR("Yang Li<yang.li@amlogic.com>");
->> +MODULE_DESCRIPTION("Amlogic WCN PMU power sequencing driver");
->> +MODULE_LICENSE("GPL");
->>
->> --
->> 2.42.0
->>
->>
-> Bart
+Comments from participants and my responses:
+[v8->v9]:
+1.Barry Song <baohua@kernel.org>
+No, this is a disaster. Please ask someone for help before you send it.
+Neither Willy nor David has ever posted any Reviewed-by tags.
+Please do get someone to help you. Stop posting like this!
+-->
+Update Reviewed-by tag information in v9.
+
+[v7->v8]:
+1.Barry Song <baohua@kernel.org>
+You should have collected tags such as reviewed-by, acked-by you got in
+v6 while sending v7.
+-->
+Added in patch v8.
+
+You didn't even pass the compilation stage because you're missing
+'linux/oom.h'. It's quite disappointing because I believe in your idea,
+but you didn't even build it before sending.
+-->
+Sorry, I overlooked the compilation of folio_likely_mapped_shared() added
+in patch v5. Compiled and Updated have been compeleted in patch v8.
+
+[v6->v7]:
+1.Matthew Wilcox <willy@infradead.org>
+You told me you'd fix the indentation.  You cannot indent both the
+continuation lines of the condition and the body of the if by one tab
+each!
+-->
+Modify tab indentation to space indentation of the continuation
+lines of the condition.
+
+[v5->v6]:
+1.David Hildenbrand <david@redhat.com>
+I'm currently working on moving all folio_likely_mapped_shared() under
+the PTL, where we are then sure that the folio is actually mapped by
+this process (e.g., no concurrent unmapping poisslbe). Can we do the
+same here directly? 
+-->
+You are right. we might use page_vma_mapped_walk_done() to bail out.
+(Barry Song)
+
+2.Barry Song <baohua@kernel.org>
+By the way, I am not convinced that using test_bit(MMF_OOM_SKIP,
+&vma->vm_mm->flags) is correct (I think it is wrong). And exit_mmap()
+automatically has MMF_OOM_SKIP. What is the purpose of this check?
+Is there a better way to determine if a process is an OOM target?
+What about check_stable_address_space() ?
+-->
+Sorry, I overlook the situation with if (is_global_init(p)),
+MMF_OOM_SKIP is indeed not suitable. It seems feasible for
+check_stable_address_space() replacing MMF_OOM_SKIP.
+check_stable_address_space() can indicate oom kill, and
+!atomic_read(&vma->vm_mm->mm_users) can indicate the normal
+process exiting. 
+
+I also think we actually can remove "folio_test_anon(folio)".
+-->
+Yes, update in patch v6.
+
+[v4->v5]:
+1.Barry Song <baohua@kernel.org>
+I don't think this is correct. folio_likely_mapped_shared() is almost
+"correct" but not always.
+Please explain why you set  pra->referenced =  -1. Please address all
+comments before you send a new version.
+-->
+Update in patch v5.
+
+2.Matthew Wilcox <willy@infradead.org>
+How is the file folio similar?  File folios are never written to swap,
+and they'll be written back from the page cache whenever the filesystem
+decides it's a good time to do so.
+-->
+What do you mean is that the file folio will not have any relevant
+identifier left in memory after it is reclamed in the shrink flow,
+and it will not be released again during an exiting process? If that's
+the case, I think we only need the anon folio is skipped here. 
+
+[v3->v4]:
+1.Barry Song <baohua@kernel.org>
+This is clearly version 3, as you previously sent version 2, correct?
+-->
+Yes.
+
+Could you please describe the specific impact on users, including user
+experience and power consumption? How serious is this problem?
+-->
+At present, I do not have a suitable method to accurately measure the
+optimization benefit datas of this modifications, but I believe it
+theoretically has some benefits.
+Launching large memory app (for example, starting the camera) in multiple
+backend scenes may result in the high cpu load of the exiting processes. 
+
+Applications?
+-->
+Yes, when system is low memory, it more likely to occur.
+
+I'm not completely convinced this patch is correct, but it appears to be
+heading in the right direction. Therefore, I expect to see new versions
+rather than it being dead.
+You changed the file mode to 755, which is incorrect.
+-->
+Solved.
+
+Why use -1? Is this meant to simulate lock contention to keep the folio
+without activating it? Please do have some comments to explain why.
+I'm not convinced this change is appropriate for shared folios. It seems
+more suitable for exclusive folios used solely by the exiting process.
+-->
+The skiped folios are FOLIOREF_KEEP and added into inactive lru, beacase
+the folios will be freed soon in the exiting process flow.
+Yes, the shared folios can not be simply skipped. I have made relevant
+modifications in patch v4 and please help to further review.
+https://lore.kernel.org/linux-mm/20240708031517.856-1-justinjiang@vivo.com/
+
+2.David Hildenbrand <david@redhat.com>
+but what if it is shared among multiple processes and only one of them
+is exiting?
+-->
+Modify to skip only the non-shared anonymous folio mapped solely
+by an exiting process in next version v4.
+
+[v2->v3:]
+Nothing.
+
+[v1->v2]:
+1.Matthew Wilcox <willy@infradead.org>
+What testing have you done of this patch?  How often does it happen?
+Are there particular workloads that benefit from this?  (I'm not sure
+what "mutil backed-applications" are?)
+And I do mean specifically of this patch, because to my eyes it
+shouldn't even compile. Except on 32-bit where it'll say "warning:
+integer constant out of range".
+-->
+Yes, I have tested. When the low system memory and the exiting process
+exist at the same time, it will happen. This modification can alleviate
+the load of the exiting process. 
+"mutil backed-applications" means that there are a large number of
+the backend applications in the system.
+The VM_EXITING added in v1 patch is removed, because it will fail
+to compile in 32-bit system.
+
+ mm/rmap.c   | 15 +++++++++++++++
+ mm/vmscan.c |  7 ++++++-
+ 2 files changed, 21 insertions(+), 1 deletion(-)
+ mode change 100644 => 100755 mm/rmap.c
+
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 26806b49a86f..5b92c3dadcc2 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -75,6 +75,7 @@
+ #include <linux/memremap.h>
+ #include <linux/userfaultfd_k.h>
+ #include <linux/mm_inline.h>
++#include <linux/oom.h>
+ 
+ #include <asm/tlbflush.h>
+ 
+@@ -870,6 +871,20 @@ static bool folio_referenced_one(struct folio *folio,
+ 			continue;
+ 		}
+ 
++		/*
++		 * Skip the non-shared swapbacked folio mapped solely by
++		 * the exiting or OOM-reaped process. This avoids redundant
++		 * swap-out followed by an immediate unmap.
++		 */
++		if ((!atomic_read(&vma->vm_mm->mm_users) ||
++		    check_stable_address_space(vma->vm_mm)) &&
++		    folio_test_swapbacked(folio) &&
++		    !folio_likely_mapped_shared(folio)) {
++			pra->referenced = -1;
++			page_vma_mapped_walk_done(&pvmw);
++			return false;
++		}
++
+ 		if (pvmw.pte) {
+ 			if (lru_gen_enabled() &&
+ 			    pte_young(ptep_get(pvmw.pte))) {
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 80f9a486cf27..1d5f78a3dbeb 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -863,7 +863,12 @@ static enum folio_references folio_check_references(struct folio *folio,
+ 	if (vm_flags & VM_LOCKED)
+ 		return FOLIOREF_ACTIVATE;
+ 
+-	/* rmap lock contention: rotate */
++	/*
++	 * There are two cases to consider.
++	 * 1) Rmap lock contention: rotate.
++	 * 2) Skip the non-shared swapbacked folio mapped solely by
++	 *    the exiting or OOM-reaped process.
++	 */
+ 	if (referenced_ptes == -1)
+ 		return FOLIOREF_KEEP;
+ 
+-- 
+2.39.0
+
 
