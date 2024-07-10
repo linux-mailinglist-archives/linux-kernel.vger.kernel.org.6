@@ -1,165 +1,355 @@
-Return-Path: <linux-kernel+bounces-247336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D38692CE24
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:26:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8290592CE27
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 124191F23F08
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:26:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC0E1C226DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB4618F2FC;
-	Wed, 10 Jul 2024 09:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44DC418FA09;
+	Wed, 10 Jul 2024 09:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="faewIIti"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="daUgGD9t";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="VNjObKCs"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3DB84A5B;
-	Wed, 10 Jul 2024 09:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E54484A5B;
+	Wed, 10 Jul 2024 09:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720603585; cv=none; b=uum8kLrhK/GHl7192uA9A6bE/3NnF7knzvJDkERShpp/3fGgM3F7627jtTGUYuimd/g7iCcSbO8NeFFqW4WE5D+EYaAoPzh7Kr4cZG2jNFtuCBSwcv67Zhwh8l5i2EdC4kpCDkkvTw9MtCB3+yCufrIxoS+Qqj2/AEcPplwTFDI=
+	t=1720603678; cv=none; b=HzYH6nwZw1FP9a1gpaU++pXvA+8iC0IBQ94yVfFsj+5vJvmJvkFrNu1Fby4jihKnKJhpCEP3FaEjvJn9S73yEEzd+fmyWL+e981e+T+PCnbeUe/urSnvszfQ3PDZ45hqBjLcIqY3TqAiRVrC9uMjnqQ/GIoYjj4y621VUcz1Btg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720603585; c=relaxed/simple;
-	bh=1zElswsvJ3pJJN6VbPn+rOgECvzW/EETLvmAKoGVLuA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XbHSPeB9/H7871PFO9wDYcBV/PT3eL+8mMLO2GFgTfAK93Rv1f+GKODZDQSz4nZDp/froImXa17Ag7KpQDWSpHuR705h2ijPjfHAiTATiwiUJAzN7Amij0UOeIDSWDG3YL2DAWqMIybcK6mrcwTQU6bT43UsctInofbTqRfkCDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=faewIIti; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 7386eb9c3e9e11ef87684b57767b52b1-20240710
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=5JQ5bL4uRYPelWxEtL/T3yFSFEnrFbUa7wxiQo1QJ1Q=;
-	b=faewIItifotUUTQ87g8hRaU+6aNxhAB84yvqUfuRVWEJISzaFBCmgSjPUqvJ4JBTmfPRBeKIrRA5mQkRJq1gYM9DTG0Wv0H4RQvCst84KohsiXcQ/Fb2m3naq42TtgWu0Brsjx8/qyEU00xHgHzkzNWp3SEkTO2k+gwwpGphXYo=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.40,REQID:caa6c047-9202-4507-976c-1b1bc9897b53,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:ba885a6,CLOUDID:c10e4a0d-46b0-425a-97d3-4623fe284021,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 7386eb9c3e9e11ef87684b57767b52b1-20240710
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
-	(envelope-from <chris.lu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1161178547; Wed, 10 Jul 2024 17:26:13 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 10 Jul 2024 02:26:15 -0700
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 10 Jul 2024 17:26:15 +0800
-From: Chris Lu <chris.lu@mediatek.com>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
-	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
-CC: Sean Wang <sean.wang@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>,
-	Steve Lee <steve.lee@mediatek.com>, linux-bluetooth
-	<linux-bluetooth@vger.kernel.org>, linux-kernel
-	<linux-kernel@vger.kernel.org>, linux-mediatek
-	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
-Subject: [PATCH v2] Bluetooth: btmtk: Fix btmtk.c undefined reference build error
-Date: Wed, 10 Jul 2024 17:26:14 +0800
-Message-ID: <20240710092614.7297-1-chris.lu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1720603678; c=relaxed/simple;
+	bh=VEqA41itZfYP/d964jrgEgto9VD/PxH1g3l/LYZKcGY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kzDcNWNPs1Ad65N1kzNm21Dob0pg1X4/K1wNnYyOFmdYaIeR3NRxuMU9Lvo03lS0TQcUPipXRpSZdYb+jEd50haQmEdV9zlxSXFWJrXYnz/3IWGUJ5T+HhGeGMeyHX+gqX5TnT04N4BqT8YCdHMhSfUnJAO2NFkIKYwHuYVsKSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=daUgGD9t; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=VNjObKCs; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id F09E01F824;
+	Wed, 10 Jul 2024 09:27:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1720603674; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=yvkLuMdtx87SaARp851BXKgU7x+Jf7wtc4J0og1cdRI=;
+	b=daUgGD9tEMuNPzUgpg/FQZ7RXfLbw7PD673gmBqu0GAQ1EHGap50iw99rOTyB2Jie4ovOP
+	alKzOglb8/g5W2QVPudBnakYBl/9ke77Hk0B/q8GWscRpBEpyCdplcnzQFxE/VejuamPlx
+	2w/ZUCOLaw3uA94uVi3Ui/7kG6qycpU=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=VNjObKCs
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1720603673; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=yvkLuMdtx87SaARp851BXKgU7x+Jf7wtc4J0og1cdRI=;
+	b=VNjObKCsO11Do8K01whufQ0VT1CjbyhKjCTvzRHWR/YBxTTNV8YvonFIb04cdBbJ15utIl
+	L6F1XDtd3jVpsRltj4cuXAPG6uzOEolcKDAPmX2uU+yGUbZjosV29utrn3VkZX0ZVSqPlf
+	PML+I4PQU2pW7x5kLsxihGTa+nzdo5A=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 94F64137D2;
+	Wed, 10 Jul 2024 09:27:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BpvjIhhUjmY+WAAAD6G6ig
+	(envelope-from <jgross@suse.com>); Wed, 10 Jul 2024 09:27:52 +0000
+From: Juergen Gross <jgross@suse.com>
+To: linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	linux-doc@vger.kernel.org
+Cc: Juergen Gross <jgross@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	xen-devel@lists.xenproject.org
+Subject: [PATCH v2] xen: make multicall debug boot time selectable
+Date: Wed, 10 Jul 2024 11:27:49 +0200
+Message-ID: <20240710092749.13595-1-jgross@suse.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: F09E01F824
+X-Spam-Score: -3.01
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,suse.com:dkim];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-MediaTek move some usb interface related function to btmtk.c which
-may cause build failed if BT USB Kconfig wasn't enabled.
-Fix undefined reference by adding config check.
+Today Xen multicall debugging needs to be enabled via modifying a
+define in a source file for getting debug data of multicall errors
+encountered by users.
 
-btmtk.c:(.text+0x89c): undefined reference to `usb_alloc_urb'
-btmtk.c:(.text+0x8e3): undefined reference to `usb_free_urb'
-btmtk.c:(.text+0x956): undefined reference to `usb_free_urb'
-btmtk.c:(.text+0xa0e): undefined reference to `usb_anchor_urb'
-btmtk.c:(.text+0xb43): undefined reference to `usb_autopm_get_interface'
-btmtk.c:(.text+0xb7e): undefined reference to `usb_autopm_put_interface'
-btmtk.c:(.text+0xf70): undefined reference to `usb_disable_autosuspend'
-btmtk.c:(.text+0x133a): undefined reference to `usb_control_msg'
+Switch multicall debugging to depend on a boot parameter "xen_mc_debug"
+instead, enabling affected users to boot with the new parameter set in
+order to get better diagnostics.
 
-Fixes: 39a9e1c69e74 ("Bluetooth: btmtk: move btusb_mtk_hci_wmt_sync to btmtk.c")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202407091928.AH0aGZnx-lkp@intel.com/
-Co-developed-by: Sean Wang <sean.wang@mediatek.com>
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Signed-off-by: Chris Lu <chris.lu@mediatek.com>
+With debugging enabled print the following information in case at least
+one of the batched calls failed:
+- all calls of the batch with operation, result and caller
+- all parameters of each call
+- all parameters stored in the multicall data for each call
+
+Signed-off-by: Juergen Gross <jgross@suse.com>
 ---
-Change from v1 to v2:
--fix and update commit message warning
+V2:
+- fixed argument printing, added parameter printing
+- in debug case print entries without error, too
+- rename struct member from debug to entries (Boris Ostrovsky)
+- get rid of get_mc_debug_ptr() (Boris Ostrovsky)
 ---
- drivers/bluetooth/btmtk.c | 2 ++
- drivers/bluetooth/btmtk.h | 4 ++++
- 2 files changed, 6 insertions(+)
+ .../admin-guide/kernel-parameters.txt         |   6 +
+ arch/x86/xen/multicalls.c                     | 125 ++++++++++++++----
+ 2 files changed, 108 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
-index b7c348687a77..9789296ad4f6 100644
---- a/drivers/bluetooth/btmtk.c
-+++ b/drivers/bluetooth/btmtk.c
-@@ -437,6 +437,7 @@ int btmtk_process_coredump(struct hci_dev *hdev, struct sk_buff *skb)
- }
- EXPORT_SYMBOL_GPL(btmtk_process_coredump);
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 27ec49af1bf2..b33d048e01d8 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -7427,6 +7427,12 @@
+ 			Crash from Xen panic notifier, without executing late
+ 			panic() code such as dumping handler.
  
-+#if IS_ENABLED(CONFIG_BT_HCIBTUSB_MTK)
- static void btmtk_usb_wmt_recv(struct urb *urb)
- {
- 	struct hci_dev *hdev = urb->context;
-@@ -1487,6 +1488,7 @@ int btmtk_usb_shutdown(struct hci_dev *hdev)
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(btmtk_usb_shutdown);
-+#endif
++	xen_mc_debug	[X86,XEN,EARLY]
++			Enable multicall debugging when running as a Xen PV guest.
++			Enabling this feature will reduce performance a little
++			bit, so it should only be enabled for obtaining extended
++			debug data in case of multicall errors.
++
+ 	xen_msr_safe=	[X86,XEN,EARLY]
+ 			Format: <bool>
+ 			Select whether to always use non-faulting (safe) MSR
+diff --git a/arch/x86/xen/multicalls.c b/arch/x86/xen/multicalls.c
+index 07054572297f..a8d699687d5c 100644
+--- a/arch/x86/xen/multicalls.c
++++ b/arch/x86/xen/multicalls.c
+@@ -23,6 +23,8 @@
+ #include <linux/percpu.h>
+ #include <linux/hardirq.h>
+ #include <linux/debugfs.h>
++#include <linux/jump_label.h>
++#include <linux/printk.h>
  
- MODULE_AUTHOR("Sean Wang <sean.wang@mediatek.com>");
- MODULE_AUTHOR("Mark Chen <mark-yw.chen@mediatek.com>");
-diff --git a/drivers/bluetooth/btmtk.h b/drivers/bluetooth/btmtk.h
-index 453ed5131a37..890dbe9beff8 100644
---- a/drivers/bluetooth/btmtk.h
-+++ b/drivers/bluetooth/btmtk.h
-@@ -165,6 +165,7 @@ struct btmtk_data {
- 	btmtk_reset_sync_func_t reset_sync;
- 	struct btmtk_coredump_info cd_info;
+ #include <asm/xen/hypercall.h>
  
-+#if IS_ENABLED(CONFIG_BT_HCIBTUSB_MTK)
- 	struct usb_device *udev;
- 	struct usb_interface *intf;
- 	struct usb_anchor *ctrl_anchor;
-@@ -177,6 +178,7 @@ struct btmtk_data {
+@@ -31,18 +33,12 @@
  
- 	/* spinlock for ISO data transmission */
- 	spinlock_t isorxlock;
-+#endif
+ #define MC_BATCH	32
+ 
+-#define MC_DEBUG	0
+-
+ #define MC_ARGS		(MC_BATCH * 16)
+ 
+ 
+ struct mc_buffer {
+ 	unsigned mcidx, argidx, cbidx;
+ 	struct multicall_entry entries[MC_BATCH];
+-#if MC_DEBUG
+-	struct multicall_entry debug[MC_BATCH];
+-	void *caller[MC_BATCH];
+-#endif
+ 	unsigned char args[MC_ARGS];
+ 	struct callback {
+ 		void (*fn)(void *);
+@@ -50,13 +46,98 @@ struct mc_buffer {
+ 	} callbacks[MC_BATCH];
  };
  
- typedef int (*wmt_cmd_sync_func_t)(struct hci_dev *,
-@@ -202,6 +204,7 @@ int btmtk_process_coredump(struct hci_dev *hdev, struct sk_buff *skb);
- void btmtk_fw_get_filename(char *buf, size_t size, u32 dev_id, u32 fw_ver,
- 			   u32 fw_flavor);
++struct mc_debug_data {
++	struct multicall_entry entries[MC_BATCH];
++	void *caller[MC_BATCH];
++	size_t argsz[MC_BATCH];
++	unsigned long *args[MC_BATCH];
++};
++
+ static DEFINE_PER_CPU(struct mc_buffer, mc_buffer);
++static struct mc_debug_data mc_debug_data_early __initdata;
++static struct mc_debug_data __percpu *mc_debug_data __refdata =
++	&mc_debug_data_early;
+ DEFINE_PER_CPU(unsigned long, xen_mc_irq_flags);
  
-+#if IS_ENABLED(CONFIG_BT_HCIBTUSB_MTK)
- int btmtk_usb_subsys_reset(struct hci_dev *hdev, u32 dev_id);
++static struct static_key mc_debug __ro_after_init;
++static bool mc_debug_enabled __initdata;
++
++static int __init xen_parse_mc_debug(char *arg)
++{
++	mc_debug_enabled = true;
++	static_key_slow_inc(&mc_debug);
++
++	return 0;
++}
++early_param("xen_mc_debug", xen_parse_mc_debug);
++
++static int __init mc_debug_enable(void)
++{
++	struct mc_debug_data __percpu *mcdb;
++	unsigned long flags;
++
++	if (!mc_debug_enabled)
++		return 0;
++
++	mcdb = alloc_percpu(struct mc_debug_data);
++	if (!mcdb) {
++		pr_err("xen_mc_debug inactive\n");
++		static_key_slow_dec(&mc_debug);
++		return -ENOMEM;
++	}
++
++	/* Be careful when switching to percpu debug data. */
++	local_irq_save(flags);
++	xen_mc_flush();
++	mc_debug_data = mcdb;
++	local_irq_restore(flags);
++
++	pr_info("xen_mc_debug active\n");
++
++	return 0;
++}
++early_initcall(mc_debug_enable);
++
++/* Number of parameters of hypercalls used via multicalls. */
++static const uint8_t hpcpars[] = {
++	[__HYPERVISOR_mmu_update] = 4,
++	[__HYPERVISOR_stack_switch] = 2,
++	[__HYPERVISOR_fpu_taskswitch] = 1,
++	[__HYPERVISOR_update_descriptor] = 2,
++	[__HYPERVISOR_update_va_mapping] = 3,
++	[__HYPERVISOR_mmuext_op] = 4,
++};
++
++static void print_debug_data(struct mc_buffer *b, struct mc_debug_data *mcdb,
++			     int idx)
++{
++	unsigned int arg;
++	unsigned int opidx = mcdb->entries[idx].op & 0xff;
++	unsigned int pars = 0;
++
++	pr_err("  call %2d: op=%lu result=%ld caller=%pS ", idx + 1,
++	       mcdb->entries[idx].op, b->entries[idx].result,
++	       mcdb->caller[idx]);
++	if (opidx < ARRAY_SIZE(hpcpars))
++		pars = hpcpars[opidx];
++	if (pars) {
++		pr_cont("pars=");
++		for (arg = 0; arg < pars; arg++)
++			pr_cont("%lx ", mcdb->entries[idx].args[arg]);
++	}
++	if (mcdb->argsz[idx]) {
++		pr_cont("args=");
++		for (arg = 0; arg < mcdb->argsz[idx] / 8; arg++)
++			pr_cont("%lx ", mcdb->args[idx][arg]);
++	}
++	pr_cont("\n");
++}
++
+ void xen_mc_flush(void)
+ {
+ 	struct mc_buffer *b = this_cpu_ptr(&mc_buffer);
+ 	struct multicall_entry *mc;
++	struct mc_debug_data *mcdb = NULL;
+ 	int ret = 0;
+ 	unsigned long flags;
+ 	int i;
+@@ -69,10 +150,11 @@ void xen_mc_flush(void)
  
- int btmtk_usb_recv_acl(struct hci_dev *hdev, struct sk_buff *skb);
-@@ -216,6 +219,7 @@ int btmtk_usb_suspend(struct hci_dev *hdev);
- int btmtk_usb_setup(struct hci_dev *hdev);
+ 	trace_xen_mc_flush(b->mcidx, b->argidx, b->cbidx);
  
- int btmtk_usb_shutdown(struct hci_dev *hdev);
-+#endif
- #else
+-#if MC_DEBUG
+-	memcpy(b->debug, b->entries,
+-	       b->mcidx * sizeof(struct multicall_entry));
+-#endif
++	if (static_key_false(&mc_debug)) {
++		mcdb = this_cpu_ptr(mc_debug_data);
++		memcpy(mcdb->entries, b->entries,
++		       b->mcidx * sizeof(struct multicall_entry));
++	}
  
- static inline int btmtk_set_bdaddr(struct hci_dev *hdev,
+ 	switch (b->mcidx) {
+ 	case 0:
+@@ -103,21 +185,14 @@ void xen_mc_flush(void)
+ 		pr_err("%d of %d multicall(s) failed: cpu %d\n",
+ 		       ret, b->mcidx, smp_processor_id());
+ 		for (i = 0; i < b->mcidx; i++) {
+-			if (b->entries[i].result < 0) {
+-#if MC_DEBUG
+-				pr_err("  call %2d: op=%lu arg=[%lx] result=%ld\t%pS\n",
+-				       i + 1,
+-				       b->debug[i].op,
+-				       b->debug[i].args[0],
+-				       b->entries[i].result,
+-				       b->caller[i]);
+-#else
++			if (static_key_false(&mc_debug)) {
++				print_debug_data(b, mcdb, i);
++			} else if (b->entries[i].result < 0) {
+ 				pr_err("  call %2d: op=%lu arg=[%lx] result=%ld\n",
+ 				       i + 1,
+ 				       b->entries[i].op,
+ 				       b->entries[i].args[0],
+ 				       b->entries[i].result);
+-#endif
+ 			}
+ 		}
+ 	}
+@@ -155,9 +230,13 @@ struct multicall_space __xen_mc_entry(size_t args)
+ 	}
+ 
+ 	ret.mc = &b->entries[b->mcidx];
+-#if MC_DEBUG
+-	b->caller[b->mcidx] = __builtin_return_address(0);
+-#endif
++	if (static_key_false(&mc_debug)) {
++		struct mc_debug_data *mcdb = this_cpu_ptr(mc_debug_data);
++
++		mcdb->caller[b->mcidx] = __builtin_return_address(0);
++		mcdb->argsz[b->mcidx] = args;
++		mcdb->args[b->mcidx] = (unsigned long *)(&b->args[argidx]);
++	}
+ 	b->mcidx++;
+ 	ret.args = &b->args[argidx];
+ 	b->argidx = argidx + args;
 -- 
-2.18.0
+2.43.0
 
 
