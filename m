@@ -1,251 +1,148 @@
-Return-Path: <linux-kernel+bounces-248178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74FA892D91F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:28:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F156F92D920
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:29:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C586FB228DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:28:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 740791F23B82
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766E8198E82;
-	Wed, 10 Jul 2024 19:25:29 +0000 (UTC)
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219CE198830;
+	Wed, 10 Jul 2024 19:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Glb66gbx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277C1197A99
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 19:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C846A19882E
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 19:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720639528; cv=none; b=rcrT4Sr6yZs7tDC4yqwIiwBTdnD4CY7Qtj5jIcDycffMlktU5O+gXfY862spW5c/cE+lLB+eLNwyt7P1ArQwNlv3alNkhdUJOuPnO5kkEfSiDlIFsuec/nKqGYPh08b/jLuYOkr9TOd9uQ3v+Wu9yJjDbQJ6swmpj1QaMTAcc+k=
+	t=1720639649; cv=none; b=kWZ9XLFcR0YtfY8diw0H4lobRKLqgDltBivSPgTLFoNHw2twkuPl6eZN3Wl6DdXp5fVZG+M0WATa++JjEtGtLeI2UiazHfIwMKr1mr/HlYM5xkSEBqlQBP3dmDj+5LxzWos+xp6FyFryNoc2sHnYy8hN4kFDuYIyZmHmoSUY+EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720639528; c=relaxed/simple;
-	bh=PFAg6SJ57fxsi+6mjemW/CflrBjAMPdAglLPhzyQwho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HILU4mn4N5iuuRxoMPkVoc9fbzBKXyMS/sVbqyildB9n1/5ipzrJI5Ab8WZnzStVIeF+q0vBFlaoAsbxhHhgI0pR8ZD1sGIUpravZm61Uo/129m9rEqzWgd+sPp/UZoAMVLoMXMfl5Kp80GME9FmDZipDyOFC6DrpmUcPLiCyqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a05c755477so7314085a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 12:25:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720639526; x=1721244326;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sCWvci8IV7OplvrFwjkVv8OMdd+Q055fqz/RR0EqFqY=;
-        b=qUMwJdrXXG1Q+hq3ofymjnZtJItdOJMOAGEveVj564En2ilW5ieT64lUUn8KNJW08/
-         Ua+g9b4wrEW6A9UNwZ2MPVDyVGWVnP4kWiurOA55dHbojndAWA/4csw8v+v9aLuC3V3u
-         p48N1xZ/qoJYRi/mSjKKh5o6xxSjMP/yuAFJbN5QFIhskyrxticZ3fasPNMJAyJq1o5E
-         f9VSeGWbgPy9bWsWjzIqPbtJ/5ViiSOWHU/aIp1Ak4EQtRaeM549mIjujbiBfWifWYtu
-         9a7OmmejHj6CeGjcDuZ1w7pRmwa11Wl2uwy4VvHZ/jipq7SnTho41IFgJBRfsaQXvFzR
-         VZSg==
-X-Gm-Message-State: AOJu0Yxprf7vgKV08ZWdeDZIJnCEX5OMVlPnP4U7GCf4t79MWOtOP7Ra
-	h78UIt70mxDbhzbj2jX2nIJD5RwyABL+xqPgmdQYkzlsH7K4kibK
-X-Google-Smtp-Source: AGHT+IGmhmNQ/FeU8tw/Jox9AR6KZdZPMbaL/ahz0VVaqtHAu4z4bTxtMzhzuQYQymKIuzlwHmnxRA==
-X-Received: by 2002:a37:c40a:0:b0:79f:a82:51aa with SMTP id af79cd13be357-79f19ae5133mr741913785a.59.1720639526081;
-        Wed, 10 Jul 2024 12:25:26 -0700 (PDT)
-Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79f1908adc7sm221554985a.72.2024.07.10.12.25.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 12:25:25 -0700 (PDT)
-Date: Wed, 10 Jul 2024 14:25:23 -0500
-From: David Vernet <void@manifault.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	schatzberg.dan@gmail.com, mingo@redhat.com, peterz@infradead.org,
-	changwoo@igalia.com, righi.andrea@gmail.com
-Subject: Re: [PATCH 6/6] sched_ext/scx_qmap: Pick idle CPU for direct
- dispatch on !wakeup enqueues
-Message-ID: <20240710192523.GF317151@maniforge>
-References: <20240709212137.1199269-1-tj@kernel.org>
- <20240709212137.1199269-7-tj@kernel.org>
+	s=arc-20240116; t=1720639649; c=relaxed/simple;
+	bh=wz1T43W9fI2ApkLY0iAxYoCPKKX/ROhTNeF++ORC+5I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E9NviGfit3IQXPVF5DAFSXDhoWasPgRWQLlPaGIZ8twMXHlV/+k9qU/nwdi3blyXxUA6w6kiz8ege6LUpPqrq3Tu0NOTJuzRzpvluSG5DBQNmCNUxmc1iAyKK5DDcDt1vRTWuT6m5D15+LzF25qb6D0QuQn3cLV9gXXQg7ywSsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Glb66gbx; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720639647; x=1752175647;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=wz1T43W9fI2ApkLY0iAxYoCPKKX/ROhTNeF++ORC+5I=;
+  b=Glb66gbx4DNO8GrRZSo5FJWB4EyQTesrSV9+eG/CA5vXm9VsEdIEVeDA
+   2XsfW1ixNGBt5yGd0s6ugC3r6OHAkIViv453g16AULJpc/lRWXlTwytOP
+   2A2uvcRzqLmeSnadGMC+4R4UodKwh8TSyq/O+ZIrjMxb57NR6OApnZ/TZ
+   JosjwFSHt/Mizjo0UfCwrYrEZt8fKU/Ni54lJyp+TKpwypZp5w4VZBpmB
+   jqY9NptOdGitUZtdiZDn6bOXtay82vEI8ToVVkhWArx0YXHZJi3+I5m2B
+   8agec7IKkQTtQ91gS7vJizVwlrGWqj5bz2JiWtFWplZ2XPqWxJNRFQmSF
+   w==;
+X-CSE-ConnectionGUID: /dvxETyLRDKEirOvVug7Sg==
+X-CSE-MsgGUID: mXpdDVAaQU2ojrwITbrKQA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="18121560"
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="18121560"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 12:27:27 -0700
+X-CSE-ConnectionGUID: YqrZYSNiSrCxr0ShbrXQ8Q==
+X-CSE-MsgGUID: 3Uj9siAVQwGIT5LEiuzJzQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="48197487"
+Received: from inaky-mobl1.amr.corp.intel.com (HELO [10.125.109.156]) ([10.125.109.156])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 12:27:25 -0700
+Message-ID: <c9e94bb8-e45d-4fb7-9811-b6c7e78c537f@intel.com>
+Date: Wed, 10 Jul 2024 12:27:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="MdD7hTEMKDb7BSGH"
-Content-Disposition: inline
-In-Reply-To: <20240709212137.1199269-7-tj@kernel.org>
-User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 17/21] mm/mmap: Drop arch_unmap() call from all archs
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Lorenzo Stoakes <lstoakes@gmail.com>, Matthew Wilcox <willy@infradead.org>,
+ sidhartha.kumar@oracle.com, "Paul E . McKenney" <paulmck@kernel.org>,
+ Bert Karwatzki <spasswolf@web.de>, Jiri Olsa <olsajiri@gmail.com>,
+ linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>,
+ LEROY Christophe <christophe.leroy2@cs-soprasteria.com>,
+ linuxppc-dev@lists.ozlabs.org, Dmitry Safonov <dima@arista.com>,
+ Michael Ellerman <mpe@ellerman.id.au>
+References: <20240710192250.4114783-1-Liam.Howlett@oracle.com>
+ <20240710192250.4114783-18-Liam.Howlett@oracle.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240710192250.4114783-18-Liam.Howlett@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 7/10/24 12:22, Liam R. Howlett wrote:
+> The arch_unmap call was previously moved above the rbtree modifications
+> in commit 5a28fc94c914 ("x86/mpx, mm/core: Fix recursive munmap()
+> corruption").  The move was motivated by an issue with calling
+> arch_unmap() after the rbtree was modified.
+> 
+> Since the above commit, mpx was dropped from the kernel in 45fc24e89b7c
+> ("x86/mpx: remove MPX from arch/x86"), so the motivation for calling
+> arch_unmap() prior to modifying the vma tree no longer exists
+> (regardless of rbtree or maple tree implementations).
+> 
+> Furthermore, the powerpc implementation is also no longer needed as per
+> [1] and [2].  So the arch_unmap() function can be completely removed.
 
---MdD7hTEMKDb7BSGH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for doing this cleanup, Liam!
 
-On Tue, Jul 09, 2024 at 11:21:12AM -1000, Tejun Heo wrote:
-> Because there was no way to directly dispatch to the local DSQ of a remote
-> CPU from ops.enqueue(), scx_qmap skipped looking for an idle CPU on !wake=
-up
-> enqueues. This restriction was removed and schbed_ext now allows
-
-s/schbed_ext/sched_ext
-
-> SCX_DSQ_LOCAL_ON verdicts for direct dispatches.
->=20
-> Factor out pick_direct_dispatch_cpu() from ops.select_cpu() and use it to
-> direct dispatch from ops.enqueue() on !wakeup enqueues.
->=20
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Cc: David Vernet <void@manifault.com>
-> Cc: Dan Schatzberg <schatzberg.dan@gmail.com>
-> Cc: Changwoo Min <changwoo@igalia.com>
-> Cc: Andrea Righi <righi.andrea@gmail.com>
-
-Hi Tejun,
-
-This LG as is, but I also left a comment below in case we want to tweak. Fe=
-el
-free to just apply the tag if you'd rather not iterate given that this is j=
-ust
-an example scheduler.
-
-Acked-by: David Vernet <void@manifault.com>
-
-> ---
->  tools/sched_ext/scx_qmap.bpf.c | 39 ++++++++++++++++++++++++++--------
->  tools/sched_ext/scx_qmap.c     |  5 +++--
->  2 files changed, 33 insertions(+), 11 deletions(-)
->=20
-> diff --git a/tools/sched_ext/scx_qmap.bpf.c b/tools/sched_ext/scx_qmap.bp=
-f.c
-> index 27e35066a602..892278f12dce 100644
-> --- a/tools/sched_ext/scx_qmap.bpf.c
-> +++ b/tools/sched_ext/scx_qmap.bpf.c
-> @@ -120,11 +120,26 @@ struct {
->  } cpu_ctx_stor SEC(".maps");
-> =20
->  /* Statistics */
-> -u64 nr_enqueued, nr_dispatched, nr_reenqueued, nr_dequeued;
-> +u64 nr_enqueued, nr_dispatched, nr_reenqueued, nr_dequeued, nr_ddsp_from=
-_enq;
->  u64 nr_core_sched_execed;
->  u32 cpuperf_min, cpuperf_avg, cpuperf_max;
->  u32 cpuperf_target_min, cpuperf_target_avg, cpuperf_target_max;
-> =20
-> +static s32 pick_direct_dispatch_cpu(struct task_struct *p, s32 prev_cpu)
-> +{
-> +	s32 cpu;
-> +
-> +	if (p->nr_cpus_allowed =3D=3D 1 ||
-> +	    scx_bpf_test_and_clear_cpu_idle(prev_cpu))
-> +		return prev_cpu;
-> +
-> +	cpu =3D scx_bpf_pick_idle_cpu(p->cpus_ptr, 0);
-> +	if (cpu >=3D 0)
-> +		return cpu;
-> +
-> +	return -1;
-> +}
-> +
->  s32 BPF_STRUCT_OPS(qmap_select_cpu, struct task_struct *p,
->  		   s32 prev_cpu, u64 wake_flags)
->  {
-> @@ -137,17 +152,14 @@ s32 BPF_STRUCT_OPS(qmap_select_cpu, struct task_str=
-uct *p,
->  		return -ESRCH;
->  	}
-> =20
-> -	if (p->nr_cpus_allowed =3D=3D 1 ||
-> -	    scx_bpf_test_and_clear_cpu_idle(prev_cpu)) {
-> +	cpu =3D pick_direct_dispatch_cpu(p, prev_cpu);
-> +
-> +	if (cpu >=3D 0) {
->  		tctx->force_local =3D true;
-> +		return cpu;
-> +	} else {
->  		return prev_cpu;
->  	}
-> -
-> -	cpu =3D scx_bpf_pick_idle_cpu(p->cpus_ptr, 0);
-> -	if (cpu >=3D 0)
-> -		return cpu;
-> -
-> -	return prev_cpu;
->  }
-> =20
->  static int weight_to_idx(u32 weight)
-> @@ -172,6 +184,7 @@ void BPF_STRUCT_OPS(qmap_enqueue, struct task_struct =
-*p, u64 enq_flags)
->  	u32 pid =3D p->pid;
->  	int idx =3D weight_to_idx(p->scx.weight);
->  	void *ring;
-> +	s32 cpu;
-> =20
->  	if (p->flags & PF_KTHREAD) {
->  		if (stall_kernel_nth && !(++kernel_cnt % stall_kernel_nth))
-> @@ -207,6 +220,14 @@ void BPF_STRUCT_OPS(qmap_enqueue, struct task_struct=
- *p, u64 enq_flags)
->  		return;
->  	}
-> =20
-> +	/* if !WAKEUP, select_cpu() wasn't called, try direct dispatch */
-> +	if (!(enq_flags & SCX_ENQ_WAKEUP) &&
-> +	    (cpu =3D pick_direct_dispatch_cpu(p, scx_bpf_task_cpu(p))) >=3D 0) {
-> +		__sync_fetch_and_add(&nr_ddsp_from_enq, 1);
-> +		scx_bpf_dispatch(p, SCX_DSQ_LOCAL_ON | cpu, slice_ns, enq_flags);
-> +		return;
-> +	}
-
-Hmm, will this be a typical pattern for how this is used? I'd expect
-ops.select_cpu() and ops.enqueue() to quite often be nearly the same
-implementation. Meaning you would e.g. try to find an idle core in both, an=
-d do
-SCX_DSQ_LOCAL_ON, with the difference being that you'd just return the cpu =
-and
-save the extra lock juggling if you did it on the ops.select_cpu() path. No=
-t a
-huge deal given that it's just an example scheduler, but it might be a good
-idea to try and mirror typical use cases for that reason as well so readers=
- get
-an idea of what a typical pattern would look like.
-
-> +
->  	/*
->  	 * If the task was re-enqueued due to the CPU being preempted by a
->  	 * higher priority scheduling class, just re-enqueue the task directly
-> diff --git a/tools/sched_ext/scx_qmap.c b/tools/sched_ext/scx_qmap.c
-> index 304f0488a386..c9ca30d62b2b 100644
-> --- a/tools/sched_ext/scx_qmap.c
-> +++ b/tools/sched_ext/scx_qmap.c
-> @@ -116,10 +116,11 @@ int main(int argc, char **argv)
->  		long nr_enqueued =3D skel->bss->nr_enqueued;
->  		long nr_dispatched =3D skel->bss->nr_dispatched;
-> =20
-> -		printf("stats  : enq=3D%lu dsp=3D%lu delta=3D%ld reenq=3D%"PRIu64" deq=
-=3D%"PRIu64" core=3D%"PRIu64"\n",
-> +		printf("stats  : enq=3D%lu dsp=3D%lu delta=3D%ld reenq=3D%"PRIu64" deq=
-=3D%"PRIu64" core=3D%"PRIu64" enq_ddsp=3D%"PRIu64"\n",
->  		       nr_enqueued, nr_dispatched, nr_enqueued - nr_dispatched,
->  		       skel->bss->nr_reenqueued, skel->bss->nr_dequeued,
-> -		       skel->bss->nr_core_sched_execed);
-> +		       skel->bss->nr_core_sched_execed,
-> +		       skel->bss->nr_ddsp_from_enq);
->  		if (__COMPAT_has_ksym("scx_bpf_cpuperf_cur"))
->  			printf("cpuperf: cur min/avg/max=3D%u/%u/%u target min/avg/max=3D%u/%=
-u/%u\n",
->  			       skel->bss->cpuperf_min,
-> --=20
-> 2.45.2
->=20
-
---MdD7hTEMKDb7BSGH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZo7gIwAKCRBZ5LhpZcTz
-ZHuzAQDK60O4YRyEBe+GWd5GWsOmod1VpeC/bYNHvhTtFBkLoQEAikChMivxEQAE
-sBX4dkfGc0S3xMiFSR3j6D3JBUv1IAA=
-=+GFF
------END PGP SIGNATURE-----
-
---MdD7hTEMKDb7BSGH--
+Acked-by: Dave Hansen <dave.hansen@intel.com>
 
