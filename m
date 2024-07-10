@@ -1,165 +1,113 @@
-Return-Path: <linux-kernel+bounces-247648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84D5592D28C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:15:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD5ED92D292
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CD851F24A86
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:15:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32277B222AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6480C19004F;
-	Wed, 10 Jul 2024 13:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF88192B72;
+	Wed, 10 Jul 2024 13:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mi0MmQFE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTTNBMZf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC976192492;
-	Wed, 10 Jul 2024 13:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2E61DDC5;
+	Wed, 10 Jul 2024 13:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720617310; cv=none; b=QmxZm28HqYY4FYWvo9gtRCxeRVe6LziJLx1zMpEWDQu10ztfK8s/NW9u4+nq9UjSF+v8zcAoarbM+v3SFxXTAfT99kHK+N+/RXHvOuzGACKOPXDtugmA5sePmwMCPLSXlISVr9MmczamULpqWIYfWGxRqPaAF2+L0D6EPV5QOz4=
+	t=1720617460; cv=none; b=iPu+uD7cZ+MTY7UIXJ+VRNNVLidu0fHKHA3VWfs9RXgZoeP0N9m24lXIoX6WQZjTziz8om4TAIkagU2bD71kPrEczqdAh++I5GQ0oiJianOgfdLRfbOwqWs6TLqn2qP2pg8Wxst7B69fmVRdNITexQPRSmZfYvN/ciOsm/6xmO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720617310; c=relaxed/simple;
-	bh=QqROtBlwIbTLLGVHQb9i+CqPbESJBaurcZ9oTX/Jk/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SutEatKfJn/AbK9ViRbMmtwNDoBp7G51VAy9P3zy+i9I3CV0TkYI82Jme7NkhYQEM1kiuO+TES2Z/C9mlyYZGYginsDSNYYQOAztLmSsuCbz+Pm82Lo0IQMbmpbYCieF54tKvZLY1Q3RxOQtxxEmx26oWheXFpeI6Vy8KdYdN6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mi0MmQFE; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720617309; x=1752153309;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=QqROtBlwIbTLLGVHQb9i+CqPbESJBaurcZ9oTX/Jk/g=;
-  b=mi0MmQFEhXE0BxsrYOAzEm49nF9XF94rR9mwtvJrYV3o+xkB/lp5ibUu
-   4QRbUd3Rb+lFpT6GgFeWeIKM59RXW9Wi7qNia+hVdJVx9UozUsuBfwCAN
-   jP88xAVTMurCzpvZ1PAXfv+0fiGowKkiTYO2Vs/KH+bwbXM2DUBN9M61r
-   s9Qe7s8K0Ctn2g/hdOKMAm3hmetw+ReX5UHbGAnRGXw6ErCJ7Bb5aRUsr
-   lbZLgsUfCVD42NjXUxPugUsQIzg9+X6baZBf6Duw1lrWULrVGozs5ovS9
-   F6INT/F6+1UanC/CTuhCDVwnI593EcrEB06Iser0SvnZSjA8f30q3CgMo
-   A==;
-X-CSE-ConnectionGUID: TNGWco4QTxq5+ubrKs3PCQ==
-X-CSE-MsgGUID: HvC3B+IUT7iKKcDd3Udp+A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11128"; a="20840264"
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="20840264"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 06:15:08 -0700
-X-CSE-ConnectionGUID: bCHm0/F/Q4WgbKzFPP11sg==
-X-CSE-MsgGUID: 9lkXQ7MjRMmArgSvJof8OQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="53012361"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 06:15:08 -0700
-Received: from [10.212.47.151] (kliang2-mobl1.ccr.corp.intel.com [10.212.47.151])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id B49EF20738FE;
-	Wed, 10 Jul 2024 06:15:06 -0700 (PDT)
-Message-ID: <a0ac56fc-eedc-492b-884c-d68e0460f178@linux.intel.com>
-Date: Wed, 10 Jul 2024 09:15:05 -0400
+	s=arc-20240116; t=1720617460; c=relaxed/simple;
+	bh=VmKKD27z2aOVSa1CLMwiPu6poVOxX6juNUr5X9b0taU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XToNS+q9bHy52JNzo71Bo5ZfixsO2FRxVnnwvfqLslMwqJchmnvSio95AAuzJuv9hBupIKyyGYggHWIoSsHK9qyDxf/btv5lNpFBR5ZZLGRDapHKDwlSDUAKGexaWqZKqosLULIK6xX5CaN523ZbUqKcxloz9C5jHRJoYwMTJJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTTNBMZf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BE85C32781;
+	Wed, 10 Jul 2024 13:17:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720617459;
+	bh=VmKKD27z2aOVSa1CLMwiPu6poVOxX6juNUr5X9b0taU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HTTNBMZfK6jQPbUQiR+ZQNJTyFKIzXUwDwG3CxLvDtdvvXlvNs0XOATi7iVLKYn9e
+	 m8JNnSn7CylHOU7YGDW76bP/SAGy2NPMth/avv3ywV2QgxDJ3HYi0/ZA8Nebs6IWI1
+	 8QETJa+mDNGc9DYlKRosmz0ZtQeqClTY4YmXtwmSxa2fmRewamQ2bks755KtcJLf+k
+	 wX2zku7GU1H0KfM6grraBzhxffOcWHGPpTxG8UXhFQ4y2ywXNzBDcKGd4s7yGON3Ia
+	 dHePDZM2Oskj6DKewi5UXiyHXthxYRPUUpDccMQ9/TP1nB4g4Kx9YUrc2YexMe741q
+	 zacACTAkKZAiQ==
+Date: Wed, 10 Jul 2024 14:17:33 +0100
+From: Will Deacon <will@kernel.org>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Subject: Re: [PATCH v4 12/15] irqchip/gic-v3-its: Share ITS tables with a
+ non-trusted hypervisor
+Message-ID: <20240710131732.GA14582@willie-the-truck>
+References: <20240701095505.165383-1-steven.price@arm.com>
+ <20240701095505.165383-13-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linux-next:master] [perf vendor events] e2641db83f:
- perf-sanity-tests.perf_all_PMU_test.fail
-To: kernel test robot <oliver.sang@intel.com>, Ian Rogers <irogers@google.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
- Linux Memory Management List <linux-mm@kvack.org>,
- Namhyung Kim <namhyung@kernel.org>, Weilin Wang <weilin.wang@intel.com>,
- Caleb Biggers <caleb.biggers@intel.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <202407101021.2c8baddb-oliver.sang@intel.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <202407101021.2c8baddb-oliver.sang@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240701095505.165383-13-steven.price@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
+On Mon, Jul 01, 2024 at 10:55:02AM +0100, Steven Price wrote:
+> Within a realm guest the ITS is emulated by the host. This means the
+> allocations must have been made available to the host by a call to
+> set_memory_decrypted(). Introduce an allocation function which performs
+> this extra call.
+> 
+> For the ITT use a custom genpool-based allocator that calls
+> set_memory_decrypted() for each page allocated, but then suballocates
+> the size needed for each ITT. Note that there is no mechanism
+> implemented to return pages from the genpool, but it is unlikely the
+> peak number of devices will so much larger than the normal level - so
+> this isn't expected to be an issue.
+> 
+> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> Changes since v3:
+>  * Use BIT() macro.
+>  * Use a genpool based allocator in its_create_device() to avoid
+>    allocating a full page.
+>  * Fix subject to drop "realm" and use gic-v3-its.
+>  * Add error handling to ITS alloc/free.
+> Changes since v2:
+>  * Drop 'shared' from the new its_xxx function names as they are used
+>    for non-realm guests too.
+>  * Don't handle the NUMA_NO_NODE case specially - alloc_pages_node()
+>    should do the right thing.
+>  * Drop a pointless (void *) cast.
+> ---
+>  drivers/irqchip/irq-gic-v3-its.c | 139 ++++++++++++++++++++++++++-----
+>  1 file changed, 116 insertions(+), 23 deletions(-)
 
+I gave this (and the following patch) a spin in a protected guest under
+pKVM and was able to use MSIs for my virtio devices, so:
 
-On 2024-07-10 12:59 a.m., kernel test robot wrote:
-> 
-> 
-> Hello,
-> 
-> kernel test robot noticed "perf-sanity-tests.perf_all_PMU_test.fail" on:
-> 
-> commit: e2641db83f18782f57a0e107c50d2d1731960fb8 ("perf vendor events: Add/update skylake events/metrics")
-> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> 
-> [test failed on linux-next/master 82d01fe6ee52086035b201cfa1410a3b04384257]
-> 
-> in testcase: perf-sanity-tests
-> version: 
-> with following parameters:
-> 
-> 	perf_compiler: gcc
-> 
-> 
-> 
-> compiler: gcc-13
-> test machine: 16 threads 1 sockets Intel(R) Xeon(R) E-2278G CPU @ 3.40GHz (Coffee Lake) with 32G memory
-> 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
-> 
-> 
-> we also observed two cases which also failed on parent can pass on this commit.
-> FYI.
-> 
-> 
-> caccae3ce7b988b6 e2641db83f18782f57a0e107c50
-> ---------------- ---------------------------
->        fail:runs  %reproduction    fail:runs
->            |             |             |
->            :6          100%           6:6     perf-sanity-tests.perf_all_PMU_test.fail
->            :6          100%           6:6     perf-sanity-tests.perf_all_metricgroups_test.pass
->            :6          100%           6:6     perf-sanity-tests.perf_all_metrics_test.pass
-> 
-> 
-> 
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202407101021.2c8baddb-oliver.sang@intel.com
-> 
-> 
-> 
-> 2024-07-09 07:09:53 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 105
-> 105: perf all metricgroups test                                      : Ok
-> 2024-07-09 07:10:11 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 106
-> 106: perf all metrics test                                           : Ok
-> 2024-07-09 07:10:23 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 107
-> 107: perf all libpfm4 events test                                    : Ok
-> 2024-07-09 07:10:47 sudo /usr/src/linux-perf-x86_64-rhel-8.3-bpf-e2641db83f18782f57a0e107c50d2d1731960fb8/tools/perf/perf test 108
-> 108: perf all PMU test                                               : FAILED!
+Tested-by: Will Deacon <will@kernel.org>
 
-Can you please try the -vvv option, which should tell the failed event?
-perf test -vvv "perf all PMU test"
-
-Thanks,
-Kan
-> 
-> 
-> 
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20240710/202407101021.2c8baddb-oliver.sang@intel.com
-> 
-> 
-> 
+Will
 
