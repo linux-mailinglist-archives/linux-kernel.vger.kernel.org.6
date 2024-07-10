@@ -1,260 +1,308 @@
-Return-Path: <linux-kernel+bounces-247134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33DB292CBB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:11:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA25E92CBB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6121F2413D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:11:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297801F24124
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB65824B1;
-	Wed, 10 Jul 2024 07:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEC582D94;
+	Wed, 10 Jul 2024 07:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTmO8E+F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e8JSDYvn"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9701F823C3;
-	Wed, 10 Jul 2024 07:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFD882877
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720595500; cv=none; b=MwYEVQ9oM2jyd0Nv2sGtdiozSAi1aLlEVmvX2GxqHHVA8H5K57+buHE+pOR91WYO78xTsT5EHlB/diGZVUfbPYSj8C/Jkr03JGnue9t5HNlKrUkqqFtjkes5y7duuHQ5lQoHexGvby5P+b58SvUD+/UJkTR2mwisDL6A4QQa9Hk=
+	t=1720595503; cv=none; b=Iia1MLeM8fWVVRd8e/5IlOYy+d4IQG17wpvwhFzQ01VsSsK4MDUIWO4XjpFpvbVft3PPn7shdEllsWpXWC57KIhBcQ4qksW7qTT7DIS9svPedx6pDbRLLzCBYLLfXRDbWa9t14kwWWqDE11dUiYG00QH6hiMYNLKxLpRc726p64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720595500; c=relaxed/simple;
-	bh=yRGnsgGlGwr5grPehw5y2cKQYkE2B7D3quzhosQ5QRE=;
+	s=arc-20240116; t=1720595503; c=relaxed/simple;
+	bh=WKwVkyeloxz7aqvt/RbuzbHWOr70GQmZYCrNVVX/kWU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UaIa4fHSNdkZBRs46sq4oV/nnA2mKr190gF9er7Spdh8OYPhEnpOIOY18ifx84t5V0WBCwA4AYEQAbb631c2nLj/VwmXaZ5VivO/vaNhGSIcSAFTseacwILd1DKDWT9WfkrqYJx6LIkhsnz0PJ1nbhykig8H1kjo7Nrg/olW5Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTmO8E+F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BD7BC4AF12;
-	Wed, 10 Jul 2024 07:11:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720595500;
-	bh=yRGnsgGlGwr5grPehw5y2cKQYkE2B7D3quzhosQ5QRE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HTmO8E+F8eose52/VnA/B0vmpjX9ymccYf6jHURxa/cwWqbcKY1pwUBErJriDAWxL
-	 ccuTwsM8pBwWhlEU1jsC9Lno19lIKOuuO8ckSAzbmSsCDbWLDLjHp5dvGp0T08pyw2
-	 CSihJe+CRobM4xiHozvntm+D9urrj1SXB33cE2PCNkAqMh0kBI8mKm8FJtKP8+i7eh
-	 DyR76B1Llvo5yz1tr55Rq02lmpLR32C+tIkGMQh7fliPvQ2/NwMsHOD9kNAsggJvQM
-	 g19lhnGDGyiVX5GQ53AR4vpKVCZ2X6pr36iiSR+OqDV6974ETZqew55iwT5lhI4OmC
-	 ftY/AO2RszF5Q==
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a77c349bb81so538597566b.3;
-        Wed, 10 Jul 2024 00:11:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVjeBTPPeQGOVcdqZHoM71ISnluEV2t9/nbe11apDBMJ1NdBOQ2lmy/edk2O7fI55lH/fbaHw3ve2du36PhbsgyF5ubDalqaGZHTjZ9Uj86WJVPsZgYWO2HqggO7YU3lyl0VBcK5wQkcXK1k033XsWix1lemoEKeo7yQowCge3Y2wroMgw2rVmHzYtxrV8VVPZYYcDQXA5GGmo0hkqyYiy6SVyxPQ==
-X-Gm-Message-State: AOJu0YxJ5yPePFDv0JQ8EJQjKFUMzuDHrefGXP30/fQqzn4ZFqvySwUt
-	Wu522K3d5QiPZiN4KBNQ2eAvaOot3I8N3szlvIkvXI41XnGzK60ELtHhcwRJCB66ZGvj+ivb5dT
-	AS7bBv6gfKpbqzncT8HQIAcW3ZNk=
-X-Google-Smtp-Source: AGHT+IFW/4IhCaqk+cMkQ0EHa+zFblHpkhI9EPOEKdDUo/9mDGAR8HGdktmPIDk+sr/xPlO+uLv+eef+gW+ddkeQnWc=
-X-Received: by 2002:a17:907:20f1:b0:a75:25ff:550d with SMTP id
- a640c23a62f3a-a780b6b361cmr259682466b.26.1720595498854; Wed, 10 Jul 2024
- 00:11:38 -0700 (PDT)
+	 To:Cc:Content-Type; b=TMSmmArRzrz0qpkoMcx5TmgbTyBUnWgN1udscPKygRJO1+nadSA4r/Lo02a7aiWFhosVOLSmPtrKFq7hLbt3RLgU3i29689knXf6N2M6cQOfhllpt6qB3ExQHLsdckVFU62S8RljeX5ggTYCI5gdvvDHxF4Bx+70t2q0S8i7IJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e8JSDYvn; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4e7eadf3668so2377649e0c.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 00:11:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720595501; x=1721200301; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=He2L5WrIWi5QoCXzzcw2qnnMDdoTPVxOHG3qIMG7HS8=;
+        b=e8JSDYvnk9zusv7lkaLrtSue3bA3CRy3Fxs/oQJcpxWhx+SdtloKIv85sWInfA6C8t
+         Ma3Kix2Pphea16mx4/H+LI6E+W4eDJo5+28Z/CDCNH+ByfUHDNeDRLGTR1k/MzSiM5e3
+         DoBKpvMbPpIG2OhhlbbwJQWvPbkiLt8K3UZpgT3AEAwUWvcDOi1zffM7uJZk5isTA4lP
+         tGdyG4s/ljTu8Phkoo9isPG1dFQ5lMcDWQlm1NSwSD43VTW15eYmcm8MgItwfV77c1SP
+         L1oC2UQXDNYRpI40JFWrh2nD91Rt/X3+f8PcEO7fAAvfQDIC3yA1QePk8tQd/1qByfZ/
+         JTwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720595501; x=1721200301;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=He2L5WrIWi5QoCXzzcw2qnnMDdoTPVxOHG3qIMG7HS8=;
+        b=QffDML1pyOl9F7/t/qOa8BV6rTY1xRcXIkRVXKGjmYSDb/5tQo0UQvgJOCEPlDTWYU
+         0kh6/acfARIjem1AopBdp3sFMc4hRNL/cjX5Iyo2QpwBGMSNWo4skjCjAeX51Ow5YimH
+         N6VTmVemB52lbk2UGo5Zk4Ll+snmj8tYkDvbfUw/xpiC9ULwNhGDPI4rGqKW2zwJ28D4
+         YZjP9ze8NhiSa1PiTg5t5mrgFR62DAnSgcK88jY1SBlJo+OhJoYkAhfOY2yksle9WDF+
+         K3BPSx8VpkyHMm9jbIdE6CYyzAcORU5S9L9zVlkujG96/ZcRbHOElZGjlidw8/1SwL6y
+         K0Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOcqTa2bCcSbVnU18BZH/dQLdcRhmIEYJvVLbkuuSbw7R65EF/Mnyp+VPeJc0dU5A4R8WU/O/561vbG2VkbThhZnyonhY+ADU9SZEv
+X-Gm-Message-State: AOJu0YzWNMtaZbPfDtLCr95ur3xWDR7Rzcn0qaXMBYytUyzIonPRVEP8
+	NIA5jpumMXnouevzL0FG57vg69nsRGxBCUHJNcEEVWksxXex7AUF+quPwDvyQdKtLSGvuoz6IXl
+	B+6ETwUlPM+mntDzjMx55d3fjvUQ=
+X-Google-Smtp-Source: AGHT+IFAjl4gZJyeHnaT6uSffenpdOL61wv9ZowgTtk/gj4Lcvq45arB9s57StgvMBPiEfJeRBRK9ObdOT9pToW8jKg=
+X-Received: by 2002:a05:6122:4114:b0:4f3:1e1:f10e with SMTP id
+ 71dfb90a1353d-4f33f2293c3mr6198768e0c.9.1720595501004; Wed, 10 Jul 2024
+ 00:11:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619-xtheadvector-v3-0-bff39eb9668e@rivosinc.com> <20240619-xtheadvector-v3-5-bff39eb9668e@rivosinc.com>
-In-Reply-To: <20240619-xtheadvector-v3-5-bff39eb9668e@rivosinc.com>
-From: Guo Ren <guoren@kernel.org>
-Date: Wed, 10 Jul 2024 15:11:27 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTQdjDouYTC9+kq-TdXhQch50p121yq8mTwXsGd6g_TSVA@mail.gmail.com>
-Message-ID: <CAJF2gTQdjDouYTC9+kq-TdXhQch50p121yq8mTwXsGd6g_TSVA@mail.gmail.com>
-Subject: Re: [PATCH v3 05/13] riscv: vector: Use vlenb from DT for thead
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Evan Green <evan@rivosinc.com>, 
-	Andy Chiu <andy.chiu@sifive.com>, Jessica Clarke <jrtc27@jrtc27.com>, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20240709142312.372b20d49c6a97ecd2cd9904@linux-foundation.org>
+ <20240710033212.36497-1-21cnbao@gmail.com> <dc2c3395-e514-40ad-b9d8-b76cf04ba0df@redhat.com>
+ <CAGsJ_4zkt5wKk-JhEpZgqpQgNK--50jwpZFK4E_eXgBpKkMKmQ@mail.gmail.com>
+ <9d77dc44-f61c-4e52-938f-c268daf0e169@redhat.com> <CAGsJ_4z6kv=KhZ=DY-puG0uVosEPWx2=CNH0TGBG4W9tZoW+NA@mail.gmail.com>
+ <db98cf80-6755-4083-83d7-cd750fd029b6@vivo.com>
+In-Reply-To: <db98cf80-6755-4083-83d7-cd750fd029b6@vivo.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 10 Jul 2024 19:11:29 +1200
+Message-ID: <CAGsJ_4ze50AYaBnAAt=pyZ0rWQ6scpeuYaFiqJfGeibET+anKg@mail.gmail.com>
+Subject: Re: [PATCH v7] mm: shrink skip folio mapped by an exiting process
+To: zhiguojiang <justinjiang@vivo.com>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, opensource.kernel@vivo.com, 
+	willy@infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 20, 2024 at 7:57=E2=80=AFAM Charlie Jenkins <charlie@rivosinc.c=
-om> wrote:
+On Wed, Jul 10, 2024 at 6:47=E2=80=AFPM zhiguojiang <justinjiang@vivo.com> =
+wrote:
 >
-> If thead,vlenb is provided in the device tree, prefer that over reading
-> the vlenb csr.
 >
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> ---
->  arch/riscv/Kconfig.vendor           | 13 ++++++++++
->  arch/riscv/include/asm/cpufeature.h |  2 ++
->  arch/riscv/kernel/cpufeature.c      | 48 +++++++++++++++++++++++++++++++=
-++++++
->  arch/riscv/kernel/vector.c          | 12 +++++++++-
->  4 files changed, 74 insertions(+), 1 deletion(-)
 >
-> diff --git a/arch/riscv/Kconfig.vendor b/arch/riscv/Kconfig.vendor
-> index 9897442bd44f..b096548fe0ff 100644
-> --- a/arch/riscv/Kconfig.vendor
-> +++ b/arch/riscv/Kconfig.vendor
-> @@ -26,6 +26,19 @@ config RISCV_ISA_VENDOR_EXT_THEAD
->           extensions. Without this option enabled, T-Head vendor extensio=
-ns will
->           not be detected at boot and their presence not reported to user=
-space.
->
-> +         If you don't know what to do here, say Y.
-> +
-> +config RISCV_ISA_XTHEADVECTOR
-> +       bool "xtheadvector extension support"
-> +       depends on RISCV_ISA_VENDOR_EXT_THEAD
-> +       depends on RISCV_ISA_V
-> +       depends on FPU
-> +       default y
-> +       help
-> +         Say N here if you want to disable all xtheadvector related proc=
-edures
-> +         in the kernel. This will disable vector for any T-Head board th=
-at
-> +         contains xtheadvector rather than the standard vector.
-> +
->           If you don't know what to do here, say Y.
->  endmenu
->
-> diff --git a/arch/riscv/include/asm/cpufeature.h b/arch/riscv/include/asm=
-/cpufeature.h
-> index b029ca72cebc..e0a3164c7a06 100644
-> --- a/arch/riscv/include/asm/cpufeature.h
-> +++ b/arch/riscv/include/asm/cpufeature.h
-> @@ -31,6 +31,8 @@ DECLARE_PER_CPU(struct riscv_cpuinfo, riscv_cpuinfo);
->  /* Per-cpu ISA extensions. */
->  extern struct riscv_isainfo hart_isa[NR_CPUS];
->
-> +extern u32 thead_vlenb_of;
-> +
->  void riscv_user_isa_enable(void);
->
->  #define _RISCV_ISA_EXT_DATA(_name, _id, _subset_exts, _subset_exts_size)=
- {     \
-> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeatur=
-e.c
-> index 2107c59575dd..077be4ab1f9a 100644
-> --- a/arch/riscv/kernel/cpufeature.c
-> +++ b/arch/riscv/kernel/cpufeature.c
-> @@ -37,6 +37,8 @@ static DECLARE_BITMAP(riscv_isa, RISCV_ISA_EXT_MAX) __r=
-ead_mostly;
->  /* Per-cpu ISA extensions. */
->  struct riscv_isainfo hart_isa[NR_CPUS];
->
-> +u32 thead_vlenb_of;
-> +
->  /**
->   * riscv_isa_extension_base() - Get base extension word
->   *
-> @@ -625,6 +627,46 @@ static void __init riscv_fill_vendor_ext_list(int cp=
-u)
->         }
->  }
->
-> +static int has_thead_homogeneous_vlenb(void)
-> +{
-> +       int cpu;
-> +       u32 prev_vlenb =3D 0;
-> +       u32 vlenb;
-> +
-> +       /* Ignore thead,vlenb property if xtheavector is not enabled in t=
-he kernel */
-> +       if (!IS_ENABLED(CONFIG_RISCV_ISA_XTHEADVECTOR))
-> +               return 0;
-> +
-> +       for_each_possible_cpu(cpu) {
-> +               struct device_node *cpu_node;
-> +
-> +               cpu_node =3D of_cpu_device_node_get(cpu);
-> +               if (!cpu_node) {
-> +                       pr_warn("Unable to find cpu node\n");
-> +                       return -ENOENT;
-> +               }
-> +
-> +               if (of_property_read_u32(cpu_node, "thead,vlenb", &vlenb)=
-) {
-> +                       of_node_put(cpu_node);
-> +
-> +                       if (prev_vlenb)
-> +                               return -ENOENT;
-> +                       continue;
-> +               }
-> +
-> +               if (prev_vlenb && vlenb !=3D prev_vlenb) {
-> +                       of_node_put(cpu_node);
-> +                       return -ENOENT;
-> +               }
-> +
-> +               prev_vlenb =3D vlenb;
-> +               of_node_put(cpu_node);
-> +       }
-> +
-> +       thead_vlenb_of =3D vlenb;
-> +       return 0;
-> +}
-> +
->  static int __init riscv_fill_hwcap_from_ext_list(unsigned long *isa2hwca=
-p)
->  {
->         unsigned int cpu;
-> @@ -689,6 +731,12 @@ static int __init riscv_fill_hwcap_from_ext_list(uns=
-igned long *isa2hwcap)
->                 riscv_fill_vendor_ext_list(cpu);
->         }
->
-> +       if (riscv_isa_vendor_extension_available(THEAD_VENDOR_ID, XTHEADV=
-ECTOR) &&
-> +           has_thead_homogeneous_vlenb() < 0) {
-> +               pr_warn("Unsupported heterogeneous vlenb detected, vector=
- extension disabled.\n");
-> +               elf_hwcap &=3D ~COMPAT_HWCAP_ISA_V;
-> +       }
-> +
-XTHEADVECTOR is 0.7.1 for old XuanTie processors; we only have
-homogeneous vlenb=3D128 chips.
+> =E5=9C=A8 2024/7/10 12:44, Barry Song =E5=86=99=E9=81=93:
+> > [Some people who received this message don't often get email from 21cnb=
+ao@gmail.com. Learn why this is important at https://aka.ms/LearnAboutSende=
+rIdentification ]
+> >
+> > On Wed, Jul 10, 2024 at 4:04=E2=80=AFPM David Hildenbrand <david@redhat=
+.com> wrote:
+> >> On 10.07.24 06:02, Barry Song wrote:
+> >>> On Wed, Jul 10, 2024 at 3:59=E2=80=AFPM David Hildenbrand <david@redh=
+at.com> wrote:
+> >>>> On 10.07.24 05:32, Barry Song wrote:
+> >>>>> On Wed, Jul 10, 2024 at 9:23=E2=80=AFAM Andrew Morton <akpm@linux-f=
+oundation.org> wrote:
+> >>>>>> On Tue,  9 Jul 2024 20:31:15 +0800 Zhiguo Jiang <justinjiang@vivo.=
+com> wrote:
+> >>>>>>
+> >>>>>>> The releasing process of the non-shared anonymous folio mapped so=
+lely by
+> >>>>>>> an exiting process may go through two flows: 1) the anonymous fol=
+io is
+> >>>>>>> firstly is swaped-out into swapspace and transformed into a swp_e=
+ntry
+> >>>>>>> in shrink_folio_list; 2) then the swp_entry is released in the pr=
+ocess
+> >>>>>>> exiting flow. This will result in the high cpu load of releasing =
+a
+> >>>>>>> non-shared anonymous folio mapped solely by an exiting process.
+> >>>>>>>
+> >>>>>>> When the low system memory and the exiting process exist at the s=
+ame
+> >>>>>>> time, it will be likely to happen, because the non-shared anonymo=
+us
+> >>>>>>> folio mapped solely by an exiting process may be reclaimed by
+> >>>>>>> shrink_folio_list.
+> >>>>>>>
+> >>>>>>> This patch is that shrink skips the non-shared anonymous folio so=
+lely
+> >>>>>>> mapped by an exting process and this folio is only released direc=
+tly in
+> >>>>>>> the process exiting flow, which will save swap-out time and allev=
+iate
+> >>>>>>> the load of the process exiting.
+> >>>>>> It would be helpful to provide some before-and-after runtime
+> >>>>>> measurements, please.  It's a performance optimization so please l=
+et's
+> >>>>>> see what effect it has.
+> >>>>> Hi Andrew,
+> >>>>>
+> >>>>> This was something I was curious about too, so I created a small te=
+st program
+> >>>>> that allocates and continuously writes to 256MB of memory. Using QE=
+MU, I set
+> >>>>> up a small machine with only 300MB of RAM to trigger kswapd.
+> >>>>>
+> >>>>> qemu-system-aarch64 -M virt,gic-version=3D3,mte=3Doff -nographic \
+> >>>>>     -smp cpus=3D4 -cpu max \
+> >>>>>     -m 300M -kernel arch/arm64/boot/Image
+> >>>>>
+> >>>>> The test program will be randomly terminated by its subprocess to t=
+rigger
+> >>>>> the use case of this patch.
+> >>>>>
+> >>>>> #include <stdio.h>
+> >>>>> #include <stdlib.h>
+> >>>>> #include <unistd.h>
+> >>>>> #include <string.h>
+> >>>>> #include <sys/types.h>
+> >>>>> #include <sys/wait.h>
+> >>>>> #include <time.h>
+> >>>>> #include <signal.h>
+> >>>>>
+> >>>>> #define MEMORY_SIZE (256 * 1024 * 1024)
+> >>>>>
+> >>>>> unsigned char *memory;
+> >>>>>
+> >>>>> void allocate_and_write_memory()
+> >>>>> {
+> >>>>>        memory =3D (unsigned char *)malloc(MEMORY_SIZE);
+> >>>>>        if (memory =3D=3D NULL) {
+> >>>>>            perror("malloc");
+> >>>>>            exit(EXIT_FAILURE);
+> >>>>>        }
+> >>>>>
+> >>>>>        while (1)
+> >>>>>            memset(memory, 0x11, MEMORY_SIZE);
+> >>>>> }
+> >>>>>
+> >>>>> int main()
+> >>>>> {
+> >>>>>        pid_t pid;
+> >>>>>        srand(time(NULL));
+> >>>>>
+> >>>>>        pid =3D fork();
+> >>>>>
+> >>>>>        if (pid < 0) {
+> >>>>>            perror("fork");
+> >>>>>            exit(EXIT_FAILURE);
+> >>>>>        }
+> >>>>>
+> >>>>>        if (pid =3D=3D 0) {
+> >>>>>            int delay =3D (rand() % 10000) + 10000;
+> >>>>>            usleep(delay * 1000);
+> >>>>>
+> >>>>>         /* kill parent when it is busy on swapping */
+> >>>>>            kill(getppid(), SIGKILL);
+> >>>>>            _exit(0);
+> >>>>>        } else {
+> >>>>>            allocate_and_write_memory();
+> >>>>>
+> >>>>>            wait(NULL);
+> >>>>>
+> >>>>>            free(memory);
+> >>>>>        }
+> >>>>>
+> >>>>>        return 0;
+> >>>>> }
+> >>>>>
+> >>>>> I tracked the number of folios that could be redundantly
+> >>>>> swapped out by adding a simple counter as shown below:
+> >>>>>
+> >>>>> @@ -879,6 +880,9 @@ static bool folio_referenced_one(struct folio *=
+folio,
+> >>>>>                        check_stable_address_space(vma->vm_mm)) &&
+> >>>>>                        folio_test_swapbacked(folio) &&
+> >>>>>                        !folio_likely_mapped_shared(folio)) {
+> >>>>> +                       static long i, size;
+> >>>>> +                       size +=3D folio_size(folio);
+> >>>>> +                       pr_err("index: %d skipped folio:%lx total s=
+ize:%d\n", i++, (unsigned long)folio, size);
+> >>>>>                            pra->referenced =3D -1;
+> >>>>>                            page_vma_mapped_walk_done(&pvmw);
+> >>>>>                            return false;
+> >>>>>
+> >>>>>
+> >>>>> This is what I have observed:
+> >>>>>
+> >>>>> / # /home/barry/develop/linux/skip_swap_out_test
+> >>>>> [   82.925645] index: 0 skipped folio:fffffdffc0425400 total size:6=
+5536
+> >>>>> [   82.925960] index: 1 skipped folio:fffffdffc0425800 total size:1=
+31072
+> >>>>> [   82.927524] index: 2 skipped folio:fffffdffc0425c00 total size:1=
+96608
+> >>>>> [   82.928649] index: 3 skipped folio:fffffdffc0426000 total size:2=
+62144
+> >>>>> [   82.929383] index: 4 skipped folio:fffffdffc0426400 total size:3=
+27680
+> >>>>> [   82.929995] index: 5 skipped folio:fffffdffc0426800 total size:3=
+93216
+> >>>>> ...
+> >>>>> [   88.469130] index: 6112 skipped folio:fffffdffc0390080 total siz=
+e:97230848
+> >>>>> [   88.469966] index: 6113 skipped folio:fffffdffc038d000 total siz=
+e:97296384
+> >>>>> [   89.023414] index: 6114 skipped folio:fffffdffc0366cc0 total siz=
+e:97300480
+> >>>>>
+> >>>>> I observed that this patch effectively skipped 6114 folios (either =
+4KB or 64KB
+> >>>>> mTHP), potentially reducing the swap-out by up to 92MB (97,300,480 =
+bytes) during
+> >>>>> the process exit.
+> >>>>>
+> >>>>> Despite the numerous mistakes Zhiguo made in sending this patch, it=
+ is still
+> >>>>> quite valuable. Please consider pulling his v9 into the mm tree for=
+ testing.
+> >>>> BTW, we dropped the folio_test_anon() check, but what about shmem? T=
+hey
+> >>>> also do __folio_set_swapbacked()?
+> >>> my point is that the purpose is skipping redundant swap-out, if shmem=
+ is single
+> >>> mapped, they could be also skipped.
+> >> But they won't get necessarily *freed* when unmapping them. They might
+> >> just continue living in tmpfs? where some other process might just map
+> >> them later?
+> >>
+> > You're correct. I overlooked this aspect, focusing on swap and thinking=
+ of shmem
+> > solely in terms of swap.
+> >
+> >> IMHO, there is a big difference here between anon and shmem. (well,
+> >> anon_shmem would actually be different :) )
+> > Even though anon_shmem behaves similarly to anonymous memory when
+> > releasing memory, it doesn't seem worth the added complexity?
+> >
+> > So unfortunately it seems Zhiguo still needs v10 to take folio_test_ano=
+n()
+> > back? Sorry for my bad, Zhiguo.
+> If folio_test_anon(folio) && folio_test_swapbacked(folio) condition is
+> used, can
+> it means that the folio is anonymous anther than shmem definitely? So doe=
+s
+> folio_likely_mapped_shared() need to be removed?
 
-So:
+No, shared memory (shmem) isn't necessarily shared, and private anonymous
+memory isn't necessarily unshared. There is no direct relationship between
+them.
 
-Acked-by: Guo Ren <guoren@kernel.org>
+In the case of a fork, your private anonymous folio can be shared by
+two or more processes before CoW.
 
->         if (bitmap_empty(riscv_isa, RISCV_ISA_EXT_MAX))
->                 return -ENOENT;
+> >
+> >> --
+> >> Cheers,
+> >>
+> >> David / dhildenb
+> >>
+> > Thanks
+> > Barry
+> Thanks
+> Zhiguo
 >
-> diff --git a/arch/riscv/kernel/vector.c b/arch/riscv/kernel/vector.c
-> index 6727d1d3b8f2..3ba2f2432483 100644
-> --- a/arch/riscv/kernel/vector.c
-> +++ b/arch/riscv/kernel/vector.c
-> @@ -33,7 +33,17 @@ int riscv_v_setup_vsize(void)
->  {
->         unsigned long this_vsize;
->
-> -       /* There are 32 vector registers with vlenb length. */
-> +       /*
-> +        * There are 32 vector registers with vlenb length.
-> +        *
-> +        * If the thead,vlenb property was provided by the firmware, use =
-that
-> +        * instead of probing the CSRs.
-> +        */
-> +       if (thead_vlenb_of) {
-> +               this_vsize =3D thead_vlenb_of * 32;
-> +               return 0;
-> +       }
-> +
->         riscv_v_enable();
->         this_vsize =3D csr_read(CSR_VLENB) * 32;
->         riscv_v_disable();
->
-> --
-> 2.34.1
->
-
-
---=20
-Best Regards
- Guo Ren
 
