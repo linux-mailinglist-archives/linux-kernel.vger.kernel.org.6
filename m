@@ -1,153 +1,117 @@
-Return-Path: <linux-kernel+bounces-247760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA5CB92D42A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:24:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE38992D432
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:29:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75745287DC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:24:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D6A01F23945
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC462193467;
-	Wed, 10 Jul 2024 14:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA70919347C;
+	Wed, 10 Jul 2024 14:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t1RER4hI"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L4f1GDgM"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F1822084
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689E3193461;
+	Wed, 10 Jul 2024 14:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720621482; cv=none; b=AepnQmUPvb9e8YaNr4ALmWwwec6uP0fE3l7hx3KX4Acwp5oaFYafWlapHNIi70QEDOYdNLsXaxEOaHvL2DnVEKerqIgoO0dzntGtJd3MzQHwhqr8WvQKWx4mGOyxWbM2Lvj3ORWAd9ulVgB0IrEwVK7qUa2KRyoqLi8gzP/W1WI=
+	t=1720621753; cv=none; b=duqh5rdh5XXZrN2Gvjh2oIMtr2Gq1DNT5ZBsMwPlFQ5Smo+KFTID0sCz0oD07658cMh7Usowsiq1rCbXVN/wRPdvtnTRjgJAg0x+Xb3VGM+1W7uZjf2VhGqeHfd/TFQbYf2a8Hzcvs75cMsWw3lM54PE69uIjYsGElLzl0OS+qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720621482; c=relaxed/simple;
-	bh=ChF+b4cIyc7fCjOcYOy7UtdhfzOyBsxNJFTkDtUUcUo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e6DqWMmHThLOoPPVIG0wZiCXfhILSfBh4iNlf2pq3G0HXquoN/ARDCuSXHx5YHCQGD5bITGXNH81ugi1O3Xw/GGK9HvzqZfnOuNs0CkqnF/67OOn9pSpL2bfPm5ec3I8wNLsQLPNgCtqpMf7Kc7HcOQ7diYCHOJTToQDmdDhWbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t1RER4hI; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2eea7e2b073so45043381fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:24:40 -0700 (PDT)
+	s=arc-20240116; t=1720621753; c=relaxed/simple;
+	bh=c8gJnKjoA3sk0MHNnCyDf7HxbJLOHfbLKYv1jyslxAs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZykZ5I8MouCZjqolb3yCDae/hryk+4KErKWrFoZLbeZmfRsRrjyFrUw3CqdO8/XP/aCu+rAkUcriEVxtr7oY+eSdcU4WreJgN7WkIZAJ3vDkK4Gr8YzZ/en3y8rk92Ld9YIPPXK3QGoqkj3PisY6xRFnHQhQUtBX4DkibqfVv0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L4f1GDgM; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-58f9874aeb4so7312571a12.0;
+        Wed, 10 Jul 2024 07:29:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720621478; x=1721226278; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5H9IHnb2BfIy5LWjrgIDA3ZNIdnegixuQukc5lGoDAc=;
-        b=t1RER4hIHPNenyEfK6vkXD0hfBX7c4efGIBAowhiaQ+eWlwOrCiRNLXau1+jJjbC6U
-         io4JozGlW7geMg4P4gicbBwqL+kHHJ+ZkKTATM8okF9kmA1HhcEaGNxvAPD1BrNofOxs
-         ORffN4yun7HtNrlCfvAgIWywf6b4ZcwzUDW6HKIjHB5YwrCgH1K0d1KXqLfeKfkHpe/n
-         nxHTJDnZ4kNcnEdc4G2xu5C/pzreUbEnpgHuKQAvfHLQ/9dqeasHNdWojPuLtwyT9KwB
-         QnAo89nmHJV9BrWTum72DSVqyhX34S1+n5f46k9SG1npzjHANH+s+PclOuyPcLa6jBbL
-         IOrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720621478; x=1721226278;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1720621750; x=1721226550; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5H9IHnb2BfIy5LWjrgIDA3ZNIdnegixuQukc5lGoDAc=;
-        b=xPqzDOhSDrl9MYQlDicXTBNMDB8L9bebvc8BaZUKxPc8RgyshMLInKZi8d7+5TqSqs
-         WzMhTIWq8LbbILJ8KqDM2GyP8PqmuRe+3jqsByE+67xSpne/13eOzki0MCpq0EryWsz3
-         kXfej0ScXb2TR+rloNWzSPmcjXyZtJBUldX7zE4Cu1fE/20cuW7evqPbStd40aweZ3rx
-         c/H4BapSMigqSr3MBdupJvaLdzfYzWOL1amx+u/c66x3E5Mu7Ct4uyWTSYa8lko2TJtH
-         VmcSbllRnWLd/gIGUmRypR5OXE4uCQGXn6Pa+1WfPOdUd9pncw7BmvP/XlowenfCL2YV
-         tqrw==
-X-Forwarded-Encrypted: i=1; AJvYcCXAwjxEBZRixwvW5KQJ9iI+RglPPlCAiRoFmXf+MGJw+8gdN6ObZoSeYp948u2mT5SW9Wb+cMeeeqiVDweDbtqHoVyp0fQeSPY5VYSw
-X-Gm-Message-State: AOJu0YzCioepTwxVcL8FZgcbMsw+85Xi8x7ImvukJ0dHbrryoxcMmzyQ
-	6S0vh3Q9/Y6M1MiiGpxt7kMeJHY1nliWNzmbma6w1+07h70LAzMm7Vh2f2cyBzQ=
-X-Google-Smtp-Source: AGHT+IE+lvP8VMUstzxL0cIY1jUrmGsR7qKPN8HrdXbM7Juk1xxZxDuuslhOFTVEqHjsa2fzcF7X1A==
-X-Received: by 2002:a2e:8805:0:b0:2ec:54ec:1741 with SMTP id 38308e7fff4ca-2eeb30e397emr35473451fa.18.1720621478488;
-        Wed, 10 Jul 2024 07:24:38 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2eeb33fff6fsm5140421fa.24.2024.07.10.07.24.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 07:24:37 -0700 (PDT)
-Date: Wed, 10 Jul 2024 17:24:36 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abel Vesa <abel.vesa@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] spmi: pmic-arb: Pass the correct of_node to
- irq_domain_add_tree
-Message-ID: <Zo6ZpFDECO_MwGsl@eriador.lumag.spb.ru>
-References: <20240522-topic-spmi_multi_master_irqfix-v2-1-7ec92a862b9f@linaro.org>
- <Zk5JWzpc8a9Dyfay@linaro.org>
+        bh=c8gJnKjoA3sk0MHNnCyDf7HxbJLOHfbLKYv1jyslxAs=;
+        b=L4f1GDgMWix+sFh58pxaWxMjzL9VJ/llpD5bJYEFo8znBjcinBQw0QqZ9leGBwGcBU
+         OEivl9JYzOFkIFipqHjXJhtNQSAKL4CMMnJpSHrl9L9W83zaRSGofiNb2Fqk1EQuZbPg
+         wNgphh921QejEGSdN8hvdPW5OxQGRFUYuozjjJuLOM7K1O6RQSyR2TDBBuxR2kkC/ee7
+         faIXRfON6fGy3lHFDfxTknwPkVYDMB6gBgAc81YdVBTPOdFWgNXpRuzoyUgLsPKsBwlf
+         27r/gMyP/rsS2ip0SgpUYbRun4SIgBG6mvbc6vPFMHJvOIGIHyQz99RysFB3MOhWzzkH
+         tl2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720621750; x=1721226550;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c8gJnKjoA3sk0MHNnCyDf7HxbJLOHfbLKYv1jyslxAs=;
+        b=gZaMdPSWE+nnK06rleY3kjvZqI61fKjtwtjxnycoLuUJxdUeDq1k1MZVQV1/NHJYZf
+         l9c5LZHy2df44tzf91NeeBQFtt33e/NB0ZuKB7CJ2BuTlF37Kv4Vl7POjQJmC3/8+lCM
+         xYvL1PjBka3cM4Q4D/KjEYGfOS39addq28L+oP4z7XgWW78OPbrpuRWS0jMjvd/cP/MG
+         +KTmMrRxtx+oa2776YLxjVSB1M6/0oKmr0MMGqWuzxmXVPL3NRDGBedSC8dMf+BbNIpp
+         C+o0s8+e7YTAommdUrqzvjaYo/QqhVSTP102IA9PEB2PPTqfcg5BWT4cwupOKyg4c/j4
+         0eLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8Z6Rci78hCRit2Ml5fe4HhfmROqkVpmL2TNGhfyKw7kgF+ydqubszIi4/n2pb4OhklYkwFXZP2tp7ZT8jw4uVNiThpBVl06VsQrT73QEB0DvfYWaQ9DHA5/hE0fSDmyrK82TIG1QlwBVjpqJw0VLyQOmtMrv1Qe1tnKwZOX8DImFKOHO3
+X-Gm-Message-State: AOJu0YyufHtfpHk0K9Cfd5O07SYiu1miOCQwpSntfja0VFyjhnO4Fo2H
+	jE9iJ+DdY8zr7w5VRSW+NulXWLA1+HF3wVNf7kqhcIV9hdykz1PLQ+tUu6voB0uLPEidelY6HFi
+	58O3lDw8WQsX/iJ8Rz0VXRMZYdJY=
+X-Google-Smtp-Source: AGHT+IFA5+m5xZv4TYCT5QPxWx1vJf/iXq68BQ4T7QErwC03UwTWky2h2CUAYZOmGS5DJLngCY+qzVcAGRFLZMxsAl8=
+X-Received: by 2002:a17:907:868e:b0:a72:4d91:6223 with SMTP id
+ a640c23a62f3a-a780b8849cbmr438447066b.62.1720621749595; Wed, 10 Jul 2024
+ 07:29:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zk5JWzpc8a9Dyfay@linaro.org>
+References: <20240124011459.12204-1-jason-jh.lin@mediatek.com>
+ <20240124011459.12204-2-jason-jh.lin@mediatek.com> <f91d3ac1-0a7d-4ca2-bf0f-c5e471c2f6bb@collabora.com>
+ <2a2a939c9cb56de0383ec3e42db9bcf8e8518775.camel@mediatek.com>
+In-Reply-To: <2a2a939c9cb56de0383ec3e42db9bcf8e8518775.camel@mediatek.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Wed, 10 Jul 2024 09:28:58 -0500
+Message-ID: <CABb+yY2_oJ_AC2w5AgHMBvqFDeyaUq9BLczqY8JhLFPDnfzY_Q@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: mailbox: Add mediatek,gce-props.yaml
+To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>
+Cc: "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, 
+	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>, 
+	"robh+dt@kernel.org" <robh+dt@kernel.org>, 
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, 
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
+	=?UTF-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>, 
+	=?UTF-8?B?Sm9obnNvbiBXYW5nICjnjovogZbpkasp?= <Johnson.Wang@mediatek.com>, 
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	=?UTF-8?B?SmFzb24tY2ggQ2hlbiAo6Zmz5bu66LGqKQ==?= <Jason-ch.Chen@mediatek.com>, 
+	=?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>, 
+	=?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"fshao@chromium.org" <fshao@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 22, 2024 at 10:36:59PM +0300, Abel Vesa wrote:
-> On 24-05-22 20:08:17, Konrad Dybcio wrote:
-> > Currently, irqchips for all of the subnodes (which represent a given
-> > bus master) point to the parent wrapper node. This is no bueno, as
-> > no interrupts arrive, ever (because nothing references that node).
-> > 
-> > Fix that by passing a reference to the respective master's of_node.
-> > 
-> > Worth noting, this is a NOP for devices with only a single master
-> > described.
-> > 
-> > Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> 
-> You forgot the fixes tag here as well.
+On Sun, May 26, 2024 at 10:04=E2=80=AFAM Jason-JH Lin (=E6=9E=97=E7=9D=BF=
+=E7=A5=A5)
+<Jason-JH.Lin@mediatek.com> wrote:
+>
+> Hi Angelo, Jassi,
+>
+> Could you help me apply this series?
+> Thanks!
+>
+Please get it reviewed by DT maintainers .... Rob or Krzysztof.
 
-Fixes: 02922ccbb330 ("spmi: pmic-arb: Register controller for bus instead of arbiter")
-Cc: stable@vger.kernel.org # 6.10
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-Let's hope we can get it in 6.11 at least (6.10 would still be better)
-
-> 
-> LGTM otherwise.
-> 
-> Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-> 
-> > ---
-> > Changes in v2:
-> > - Un-delete the missing ampersand
-> > - Link to v1: https://lore.kernel.org/r/20240522-topic-spmi_multi_master_irqfix-v1-1-f7098b9c8804@linaro.org
-> > ---
-> >  drivers/spmi/spmi-pmic-arb.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
-> > index 791cdc160c51..e6a4bf3abb1f 100644
-> > --- a/drivers/spmi/spmi-pmic-arb.c
-> > +++ b/drivers/spmi/spmi-pmic-arb.c
-> > @@ -1737,8 +1737,7 @@ static int spmi_pmic_arb_bus_init(struct platform_device *pdev,
-> >  
-> >  	dev_dbg(&pdev->dev, "adding irq domain for bus %d\n", bus_index);
-> >  
-> > -	bus->domain = irq_domain_add_tree(dev->of_node,
-> > -					  &pmic_arb_irq_domain_ops, bus);
-> > +	bus->domain = irq_domain_add_tree(node, &pmic_arb_irq_domain_ops, bus);
-> >  	if (!bus->domain) {
-> >  		dev_err(&pdev->dev, "unable to create irq_domain\n");
-> >  		return -ENOMEM;
-> > 
-> > ---
-> > base-commit: 8314289a8d50a4e05d8ece1ae0445a3b57bb4d3b
-> > change-id: 20240522-topic-spmi_multi_master_irqfix-f63ebf47b02c
-> > 
-> > Best regards,
-> > -- 
-> > Konrad Dybcio <konrad.dybcio@linaro.org>
-> > 
-
--- 
-With best wishes
-Dmitry
+-Jassi
 
