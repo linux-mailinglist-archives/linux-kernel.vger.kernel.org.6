@@ -1,164 +1,219 @@
-Return-Path: <linux-kernel+bounces-247164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFED792CC0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:38:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A719192CC12
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60338B23E8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:38:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D6462816CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043D884A21;
-	Wed, 10 Jul 2024 07:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Tmpgs1ij"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9CB83A0D;
-	Wed, 10 Jul 2024 07:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2235F84A31;
+	Wed, 10 Jul 2024 07:39:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9816582D9A;
+	Wed, 10 Jul 2024 07:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720597125; cv=none; b=CxUCZyE33xtQ5N2fYQH01UQkWoXKi3KDXQOhvbtL3/AY8Z0NNSw5dtPeaChP3T+jrKotRp0r8YAcds9bBQNAr23LfphcV8lOzdFALExHYtG110J0/FK8slgPu/94ymVEFPXQ/j40ba7I4no3gcZ0nGd5XyKhOCSFdPsgzsSggKk=
+	t=1720597190; cv=none; b=O8f1RF8jnhe4otyCJ6s7CEl09cXvibwyWuZXh4GEwwxWdOlsJPnchHUXiCGEPrMWC++yyOMKWKxbaTToyIdOE/SE4PUtTSOf1xLfpqqL/g/1RA6Yb7hNWNoagb7UfZ3P6W2KSuk9aDmyhyFPw2ZTDQxQ3EK2EBr0FVThxaFC0zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720597125; c=relaxed/simple;
-	bh=p37UAUNUsUJN0YgOa0VEOZL/K037gFMz9T9TMFx2Enw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Kwfbg/oGze/rbuyffHgUadTsc6RPwaBqSv5kjQFxRUiC0vX85N+Yf13vBjgNK+htZ+b0Qg3SXnOf8YqJnxHJGIR89ekt65kbUvWn9gmBQ9yM9UbP2mIOUYsF9DMGQZZTpo9XWy0b770StCymisTHLFaG4YU//fZ2vlvXvT9i5Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Tmpgs1ij; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 68a813fe3e8f11ef87684b57767b52b1-20240710
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=mvSw0YCcP6OkaKMinb0d5io/X3LmFsIcP7XhTzkLI/c=;
-	b=Tmpgs1ijDkccsmszzkw+X3d4HdfbngcDEraO9w7+VF++5p8Gd4h4HRmF/3nR474RZgQkJfi856M5LXxSoVJ8R1BO2E/5469ci2QkCvtbtgNifP8iK/+BaLk5PmzPzTZjoLxp1vSvisaKt0Q7ngRV3/BYaw2DWccj6JMvakkFFEw=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.40,REQID:b6c99462-9bf0-44fe-8237-a00c4fdeba69,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:ba885a6,CLOUDID:5be24ed1-436f-4604-ad9d-558fa44a3bbe,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 68a813fe3e8f11ef87684b57767b52b1-20240710
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
-	(envelope-from <chris.lu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1630659267; Wed, 10 Jul 2024 15:38:32 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 10 Jul 2024 15:38:33 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 10 Jul 2024 15:38:33 +0800
-From: Chris Lu <chris.lu@mediatek.com>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
-	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
-CC: Sean Wang <sean.wang@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>,
-	Steve Lee <steve.lee@mediatek.com>, linux-bluetooth
-	<linux-bluetooth@vger.kernel.org>, linux-kernel
-	<linux-kernel@vger.kernel.org>, linux-mediatek
-	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
-Subject: [PATCH] Bluetooth: btmtk: Fix btmtk.c undefined reference build error
-Date: Wed, 10 Jul 2024 15:38:32 +0800
-Message-ID: <20240710073832.4381-1-chris.lu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1720597190; c=relaxed/simple;
+	bh=JhMfW57/9iSZh7BVvOYhsv3aSRrroecUv3Uu8fQSAaw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AyS1XZc5tz/BW91SqdGnAwjgG5Ykvp4UH+uqEcyzz0SdG8XfgQKxf/quRXPSC5hXIFpyrqgPuFpmGv75ChC1YN+Br4KJnQP1YOJfg+89vzZy5JpDnlXtC+7IcwF2CEZDv5Fc70aqxem1zsNqVkBI91su/DKUapmPmbxUD1H2XMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BEB18113E;
+	Wed, 10 Jul 2024 00:40:09 -0700 (PDT)
+Received: from [10.162.40.89] (a079740.arm.com [10.162.40.89])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 897D13F766;
+	Wed, 10 Jul 2024 00:39:34 -0700 (PDT)
+Message-ID: <65aaf9bb-ab2c-4185-b5bb-22a717ac7e73@arm.com>
+Date: Wed, 10 Jul 2024 13:09:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--12.091700-8.000000
-X-TMASE-MatchedRID: IL7zMc1rB96iwkztVCsqbzl6J+7ealtWvtVce6w5+K8sfFlFugSGUDAx
-	/Q55TgrfZW9aUrh/vYDSwA55kcDk3Pww9Stut6YHmNvbnzNu6oL4qCLIu0mtICz+5QCTrE/sI6q
-	q9xPsXYiTFmqgSxbocNnFK+oGmxAsIzPPScfZfh+gx+na8dyT1fqtWPv3hAK2Cjo47SvV0k1Xvy
-	lpgLr3gMrdT5sfS91sBFQhScLIoJdAW3ODyfm3/gwfhKwa9GwDftnnpG0AB3VdhPmPvbogbKPFj
-	JEFr+olwXCBO/GKkVqOhzOa6g8KrUWRK7Bl4Dml/FhLcV2i0H//0q3VBjI4L5bjsrNE7+gtGl94
-	w95vR5c=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--12.091700-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP: 5E7C9090678A3D3D1A6745644C61EEA5F16F33400E3FA696709DF94C7AE55AC22000:8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 00/10] perf tools: Fix test "perf probe of function
+ from different CU"
+To: linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ingo Molnar <mingo@redhat.com>
+Cc: anshuman.khandual@arm.com, james.clark@arm.com,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
+ Will Deacon <will@kernel.org>, Leo Yan <leo.yan@linaro.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, Chenyuan Mi <cymi20@fudan.edu.cn>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Ravi Bangoria
+ <ravi.bangoria@amd.com>,
+ =?UTF-8?Q?Ahelenia_Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>,
+ Colin Ian King <colin.i.king@gmail.com>, Changbin Du
+ <changbin.du@huawei.com>, Kan Liang <kan.liang@linux.intel.com>,
+ Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+ Tiezhu Yang <yangtiezhu@loongson.cn>, Alexey Dobriyan <adobriyan@gmail.com>,
+ =?UTF-8?Q?Georg_M=C3=BCller?= <georgmueller@gmx.net>,
+ Liam Howlett <liam.howlett@oracle.com>, bpf@vger.kernel.org,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240601125946.1741414-1-ChaitanyaS.Prakash@arm.com>
+Content-Language: en-US
+From: Chaitanya S Prakash <ChaitanyaS.Prakash@arm.com>
+In-Reply-To: <20240601125946.1741414-1-ChaitanyaS.Prakash@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-MediaTek move some usb interface related function to btmtk.c which
-may cause build failed if BT USB Kconfig wasn't enabled.
-Fix undefined reference by adding config check.
+Gentle ping, are there any updates on the string clean up patch set?
 
-Fixes: 39a9e1c69e74 Bluetooth: btmtk: move btusb_mtk_hci_wmt_sync to btmtk.c
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202407091928.AH0aGZnx-lkp@intel.com/
-Signed-off-by: Chris Lu <chris.lu@mediatek.com>
----
- drivers/bluetooth/btmtk.c | 2 ++
- drivers/bluetooth/btmtk.h | 4 ++++
- 2 files changed, 6 insertions(+)
-
-diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
-index b7c348687a77..9789296ad4f6 100644
---- a/drivers/bluetooth/btmtk.c
-+++ b/drivers/bluetooth/btmtk.c
-@@ -437,6 +437,7 @@ int btmtk_process_coredump(struct hci_dev *hdev, struct sk_buff *skb)
- }
- EXPORT_SYMBOL_GPL(btmtk_process_coredump);
- 
-+#if IS_ENABLED(CONFIG_BT_HCIBTUSB_MTK)
- static void btmtk_usb_wmt_recv(struct urb *urb)
- {
- 	struct hci_dev *hdev = urb->context;
-@@ -1487,6 +1488,7 @@ int btmtk_usb_shutdown(struct hci_dev *hdev)
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(btmtk_usb_shutdown);
-+#endif
- 
- MODULE_AUTHOR("Sean Wang <sean.wang@mediatek.com>");
- MODULE_AUTHOR("Mark Chen <mark-yw.chen@mediatek.com>");
-diff --git a/drivers/bluetooth/btmtk.h b/drivers/bluetooth/btmtk.h
-index 453ed5131a37..890dbe9beff8 100644
---- a/drivers/bluetooth/btmtk.h
-+++ b/drivers/bluetooth/btmtk.h
-@@ -165,6 +165,7 @@ struct btmtk_data {
- 	btmtk_reset_sync_func_t reset_sync;
- 	struct btmtk_coredump_info cd_info;
- 
-+#if IS_ENABLED(CONFIG_BT_HCIBTUSB_MTK)
- 	struct usb_device *udev;
- 	struct usb_interface *intf;
- 	struct usb_anchor *ctrl_anchor;
-@@ -177,6 +178,7 @@ struct btmtk_data {
- 
- 	/* spinlock for ISO data transmission */
- 	spinlock_t isorxlock;
-+#endif
- };
- 
- typedef int (*wmt_cmd_sync_func_t)(struct hci_dev *,
-@@ -202,6 +204,7 @@ int btmtk_process_coredump(struct hci_dev *hdev, struct sk_buff *skb);
- void btmtk_fw_get_filename(char *buf, size_t size, u32 dev_id, u32 fw_ver,
- 			   u32 fw_flavor);
- 
-+#if IS_ENABLED(CONFIG_BT_HCIBTUSB_MTK)
- int btmtk_usb_subsys_reset(struct hci_dev *hdev, u32 dev_id);
- 
- int btmtk_usb_recv_acl(struct hci_dev *hdev, struct sk_buff *skb);
-@@ -216,6 +219,7 @@ int btmtk_usb_suspend(struct hci_dev *hdev);
- int btmtk_usb_setup(struct hci_dev *hdev);
- 
- int btmtk_usb_shutdown(struct hci_dev *hdev);
-+#endif
- #else
- 
- static inline int btmtk_set_bdaddr(struct hci_dev *hdev,
--- 
-2.18.0
-
+On 6/1/24 18:29, Chaitanya S Prakash wrote:
+> From: Chaitanya S Prakash <chaitanyas.prakash@arm.com>
+>
+> Perf treated all files beginning with "/tmp/perf-" as a map file despite
+> them always ending in ".map", this caused the test "perf probe of
+> function from different CU" to fail when Perf was built with NO_DWARF=1.
+> As the file was parsed as a map file, the probe...--funcs command output
+> garbage values instead of listing the functions in the binary. After
+> fixing the issue an additional check to test the output of the
+> probe...--funcs command has been added.
+>
+> Additionally, various functions within the codebase have been refactored
+> and restructured. The definition of str_has_suffix() has been adopted
+> from tools/bpf/bpftool/gen.c and added to tools/lib/string.c in an
+> attempt to make the function more generic. The implementation has been
+> retained but the return values have been modified to resemble that of
+> str_has_prefix(), i.e., return strlen(suffix) on success and 0 on
+> failure. In light of the new addition, "ends_with()", a locally defined
+> function used for checking if a string had a given suffix has been
+> deleted and str_has_suffix() has replaced its usage. A call to
+> strtailcmp() has also been replaced as str_has_suffix() seemed more
+> suited for that particular use case.
+>
+> Finally str_has_prefix() is adopted from the kernel and is added to
+> tools/lib/string.c, following which strstarts() is deleted and its use
+> has been replaced with str_has_prefix().
+>
+> This patch series has been tested on 6.10-rc1 mainline kernel, both on
+> arm64 and x86 platforms.
+>
+> Changes in V3:
+>
+> - Patch adding configs required by "perf probe of function from different
+>    CU" was originally part of the series but has been merged in 6.10-rc1.
+>    https://github.com/torvalds/linux/commit/6b718ac6874c2233b8dec369a8a377d6c5b638e6
+>
+> - Restructure patches according to the maintainer trees.
+> - Add explanation for why '| grep "foo"' is used.
+> - Fix build errors for when perf is built with LLVM=1.
+>
+> Changes in V2:
+> https://lore.kernel.org/all/20240408062230.1949882-1-ChaitanyaS.Prakash@arm.com/
+>
+> - Add str_has_suffix() and str_has_prefix() to tools/lib/string.c
+> - Delete ends_with() and replace its usage with str_has_suffix()
+> - Replace an instance of strtailcmp() with str_has_suffix()
+> - Delete strstarts() from tools/include/linux/string.h and replace its
+>    usage with str_has_prefix()
+>
+> Changes in V1:
+> https://lore.kernel.org/all/20240220042957.2022391-1-ChaitanyaS.Prakash@arm.com/
+>
+> Cc: Josh Poimboeuf <jpoimboe@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Cc: Mike Leach <mike.leach@linaro.org>
+> Cc: James Clark <james.clark@arm.com>
+> Cc: John Garry <john.g.garry@oracle.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Leo Yan <leo.yan@linaro.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Ian Rogers <irogers@google.com>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Chenyuan Mi <cymi20@fudan.edu.cn>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Ravi Bangoria <ravi.bangoria@amd.com>
+> Cc: Ahelenia Ziemiańska <nabijaczleweli@nabijaczleweli.xyz>
+> Cc: Colin Ian King <colin.i.king@gmail.com>
+> Cc: Changbin Du <changbin.du@huawei.com>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+> Cc: Tiezhu Yang <yangtiezhu@loongson.cn>
+> Cc: Alexey Dobriyan <adobriyan@gmail.com>
+> Cc: Georg Müller <georgmueller@gmx.net>
+> Cc: Liam Howlett <liam.howlett@oracle.com>
+> Cc: bpf@vger.kernel.org
+> Cc: coresight@lists.linaro.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-perf-users@vger.kernel.org
+>
+> Chaitanya S Prakash (10):
+>    tools lib: adopt str_has_suffix() from bpftool/gen.c
+>    perf util: Delete ends_with() and replace its use with
+>      str_has_suffix()
+>    perf util: Replace an instance of strtailcmp() by str_has_suffix()
+>    tools lib: Adopt str_has_prefix() from kernel
+>    libsubcmd: Replace strstarts() usage with str_has_prefix()
+>    objtool: Replace strstarts() usage with str_has_prefix()
+>    perf tools: Replace strstarts() usage with str_has_prefix()
+>    tools lib: Remove strstarts() as all its usecases have been replaced
+>      by str_has_prefix()
+>    perf tools: Only treat files as map files when they have the extension
+>      .map
+>    perf test: Check output of the probe ... --funcs command
+>
+>   tools/include/linux/string.h                  | 12 ++---
+>   tools/lib/string.c                            | 48 +++++++++++++++++++
+>   tools/lib/subcmd/help.c                       |  2 +-
+>   tools/lib/subcmd/parse-options.c              | 18 +++----
+>   tools/objtool/check.c                         |  2 +-
+>   tools/perf/arch/arm/util/pmu.c                |  4 +-
+>   tools/perf/arch/x86/annotate/instructions.c   | 14 +++---
+>   tools/perf/arch/x86/util/env.c                |  2 +-
+>   tools/perf/builtin-c2c.c                      |  4 +-
+>   tools/perf/builtin-config.c                   |  2 +-
+>   tools/perf/builtin-daemon.c                   |  2 +-
+>   tools/perf/builtin-ftrace.c                   |  2 +-
+>   tools/perf/builtin-help.c                     |  6 +--
+>   tools/perf/builtin-kmem.c                     |  2 +-
+>   tools/perf/builtin-kvm.c                      | 14 +++---
+>   tools/perf/builtin-kwork.c                    | 10 ++--
+>   tools/perf/builtin-lock.c                     |  6 +--
+>   tools/perf/builtin-mem.c                      |  4 +-
+>   tools/perf/builtin-sched.c                    |  6 +--
+>   tools/perf/builtin-script.c                   | 30 ++++--------
+>   tools/perf/builtin-stat.c                     |  4 +-
+>   tools/perf/builtin-timechart.c                |  2 +-
+>   tools/perf/builtin-trace.c                    |  6 +--
+>   tools/perf/perf.c                             | 12 ++---
+>   .../shell/test_uprobe_from_different_cu.sh    |  2 +-
+>   tools/perf/tests/symbols.c                    |  2 +-
+>   tools/perf/ui/browser.c                       |  2 +-
+>   tools/perf/ui/browsers/scripts.c              |  2 +-
+>   tools/perf/ui/stdio/hist.c                    |  2 +-
+>   tools/perf/util/amd-sample-raw.c              |  4 +-
+>   tools/perf/util/annotate.c                    |  2 +-
+>   tools/perf/util/callchain.c                   |  2 +-
+>   tools/perf/util/config.c                      | 12 ++---
+>   tools/perf/util/map.c                         |  8 ++--
+>   tools/perf/util/pmus.c                        |  2 +-
+>   tools/perf/util/probe-event.c                 |  2 +-
+>   tools/perf/util/sample-raw.c                  |  2 +-
+>   tools/perf/util/symbol-elf.c                  |  4 +-
+>   tools/perf/util/symbol.c                      |  3 +-
+>   39 files changed, 148 insertions(+), 117 deletions(-)
+>
 
