@@ -1,275 +1,197 @@
-Return-Path: <linux-kernel+bounces-247152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 598FE92CBED
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:29:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE4692CBF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B44A1C22B12
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:29:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B8B31C22ACE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A835882C63;
-	Wed, 10 Jul 2024 07:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606D283CD4;
+	Wed, 10 Jul 2024 07:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SsOda2py"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dJCiLAhd"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F7982D66
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E96542056
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720596537; cv=none; b=fDDZiX/Vn56yTxB7k2mJncnOiJ1AUBNSd3vXVFKjHjuXrkr+cuwPI2f0lVxAL2WpfoN5k+JKt+YHiIomHaQE0zDHGzjcg5jQepzGtn2c7DtEvkVNAW1H8DKG4KlsqwvMZSjDwj44TTogFOrGw23S/uRh8IM4FdAXiPAsRLLdJ4Y=
+	t=1720596655; cv=none; b=lMRQPLhogTW8p35WkhdzJU9F0fEvAwvYb57EYQdHiM0e4bG8vNQUQlmk9gudPU3juwRomhSzkUbRFwf+M4s3v7bCePL4e3m9c9L3JxaqqwhYhBUBbuJ4fKdzRGkNATLqYAalsXhwq+2cvWIZFrhPMohjow1t6H43fXRCzgLhU8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720596537; c=relaxed/simple;
-	bh=xQh5HU5tluzMTaHOeOkGuFGYbA1Vq50E5qJn6PoW5Ek=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GAeuqKcFVYgTCrmm32U7q1V/N52Sw1Fsd69aZZTxd/DmX6ntsQBXpvkK/+GDCAFJyWP82UlAYvvH+/KcuEM6CQjO8AxIwaRk/+0oT3S294QBcd1YXmMAiddj1XJxnHMYFTpR6USqgHoohlnAYb8r6oNG7uodZm90/xZoaxeTQNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SsOda2py; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720596534;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TxCFFb+O+FYVotTIPR8WWbYkloVGsx7sbWOFar1qXXo=;
-	b=SsOda2pyMjejK8OnWMr0iVLjxvbIrPL82u+YfLif7/ESI1TBD99DTUzn4DyD0m7+zg9H4P
-	MYjo0izuRknOAQPSQw9/oDFYR3KyNAeGclhPxUH0svLeBkME6J7Bwg1dR4qpzeq8mysw0Z
-	ZkG7t4EWuSPYbM7XAPcQC5fLb13gZHU=
-Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com
- [209.85.160.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-427-WtUfGOnEPAecR85ZWSa3VQ-1; Wed, 10 Jul 2024 03:28:44 -0400
-X-MC-Unique: WtUfGOnEPAecR85ZWSa3VQ-1
-Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-25e919618c4so2797283fac.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 00:28:44 -0700 (PDT)
+	s=arc-20240116; t=1720596655; c=relaxed/simple;
+	bh=bg11X0+ouhSXutIZH+FX0laaIoy8Fd6IAGYyDkPoOmg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k64jSzPUWKrCUXdk8UpQBMo8V+nt2BOXwMoMQGrk9+P1xuKXDDutyhX4Yb3o8vPqzTLtdS1UqJ42SsOxcw7n/u32nQY0issN/x3iIulnJeczyAtAl8TsvHSDTLbiaQZoUAcQPXQWyAJ2so22SvE1hCNfvKRdn48pcJ6Sqn+zViI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dJCiLAhd; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a6265d3ba8fso547847866b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 00:30:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1720596652; x=1721201452; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BE/oQZmZGmjJjHSOCOGHNHHe0sV17vr1YpR/41Jzb5g=;
+        b=dJCiLAhd/2MRdbJWp59ir8VhnLVuK+eiZYL4Bb/vRADJi74iKHszneGBh0sliGvTxr
+         K/SJ72GSlzwYqH6wc4kUgVjYptXtWBsPcKHzWasteD4RPNaloPxQJvVrZ/oHyzNv5fm5
+         Ysq7+aQbcwtE2r0EhoQKmv+nb/OFGTohmFkk+MemWnsiwzyJeuBAUPsGpKsqXM5hOqyv
+         mFzLh/K+v/dMAn2MV2W7vtQw2HgZMa0DKphGC3pTuAlL+lo8UL67TblHD2BBHlQrmdcI
+         4//b90OGCk0KZUbbPIdpi91EWjNDLqXedO5Vpv8klLofrYYemNMTd19Nbn2M/Oz/oMkj
+         V7Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720596524; x=1721201324;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TxCFFb+O+FYVotTIPR8WWbYkloVGsx7sbWOFar1qXXo=;
-        b=GqdJJuq2V3a87OTOktOcyMIGdki9vqCGtWeJ9tXESfuA5ckXeCC14ZlKL1kCLuhIfo
-         9Eyio6iFfaDn3znzbWG0DbM7Y/i2ywcwGfACq5Sh/FPWYI7kEnDRmsDSAF9DMU6tb3kE
-         Gs+5j9U8MDcGu+g1vjQ9Xh3ASLgj6DX7eOAQjgFwbTSI1zbREAhvOnGDzyt6ZQodroae
-         jklY/V8i7qX408CtF5kJ1R80hplP86wnC7sCW1KJSJBkRRK6wvhOHXYj58oLefGR1lLe
-         dH0g6xJ9J9CMbsiTbcm3uvaKG0CboN3VF6qLoDrF8F7UE/G94IvyYnwRP/n5fTVyK5GT
-         5paw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2XGK7mhWHucOM+9GM+UZpjpwhcJ6IAIgB4511XZeyWnBv0z2ns/svNppQeZgGatbzJlbGqaEDcXAjcQHIHf4MjqXFjvj5BVCiaQ5p
-X-Gm-Message-State: AOJu0YwPZEl5BSGUZ6hOm0qFZoNHzRLzexss5RWCqifh2+Hq/WQkwJmM
-	X4FB5X5kEbzgfHKEbWhIhtfBS33kPx7pjCs8l/oeDBc2/9/rDvlMmN7mOY7wMaVzeNbtbsE77nS
-	+XaZxIIObMzz7bqH1FGrzIri0iSGZYpY8jCmR8VhWW/MgecIGvjFBuw+szfmRN6nY7z7oo6NZdn
-	6gxOknry87mG8Fr5Uf6otP769/qMZfhSNuUzP0
-X-Received: by 2002:a05:6870:71c9:b0:25e:ebb:b4f4 with SMTP id 586e51a60fabf-25eae75fa03mr3659220fac.2.1720596524025;
-        Wed, 10 Jul 2024 00:28:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEOTIeMcESujn8AqeMOf7hlU3PPNIoV11WktqFb+Dz6M9e/IfuDLcZm0kQUi5duDpXKsbY8UOxkXk1JPmgkqvQ=
-X-Received: by 2002:a05:6870:71c9:b0:25e:ebb:b4f4 with SMTP id
- 586e51a60fabf-25eae75fa03mr3659213fac.2.1720596523579; Wed, 10 Jul 2024
- 00:28:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720596652; x=1721201452;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BE/oQZmZGmjJjHSOCOGHNHHe0sV17vr1YpR/41Jzb5g=;
+        b=mODg/Vt3saqhuhJQT1SXUIDg2MMgfspUHeSXvX/qQY1FYQmklMrnwpptgNtS3hkAH8
+         EBaiizKP0aoHEPj/4q0pEJzuN4OvwlvZww7KY8LppnXqQnQRwYIMV7SdQCQHDiKoBKjM
+         KuD8mEnhbvaQbefljq6nplJR0D7NGy6CD+0VZYVGox4S02G+JCaOodMjMOepvvl26ypZ
+         eFzrpLkMc4FQkxMwjfbne+B8B4aErTZ8vyyBDY1F5i5tCfCAmmsCuhK19muRy0Z4sBT/
+         6XIK/zUmj+LWmklVfz3xZalwGij8Ab40navCpi0fzDpWqzElqbHDRYtCGCvsLQqDrs75
+         qA5w==
+X-Forwarded-Encrypted: i=1; AJvYcCXmKksIsFcZ0oOvBSGuLTVgTMzvhDzFQ2wkrpbDeeQ7QHH4YhtVu+UfOl57cB0QH5K2gClDqQnBwR6TNErfGB0vufp3oKUV8UjeuGcL
+X-Gm-Message-State: AOJu0Yyfc7piG+Q3qxQao6PNtSh52GnE3Tzakp5WKa8r/AvT5dUfxH9l
+	o/68u5wM5Cf6qKKrN8wTrB3tzEJWUbRjSi1mUBmmZIi4LX76We49HG7UPwotl+o=
+X-Google-Smtp-Source: AGHT+IFC1z/bjrfqmHUH7re49LUgUD3hZ7k7PnkWdvTpsNEn2b9WWeiNWttRMRVU89UAnO150KlFSA==
+X-Received: by 2002:a17:907:2da1:b0:a71:ddb8:9394 with SMTP id a640c23a62f3a-a780b6fe3e7mr424621466b.40.1720596651593;
+        Wed, 10 Jul 2024 00:30:51 -0700 (PDT)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a871f2fsm135117366b.202.2024.07.10.00.30.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jul 2024 00:30:51 -0700 (PDT)
+Message-ID: <0b2697fd-7ab4-469f-83a6-ec9ebc701ba0@suse.com>
+Date: Wed, 10 Jul 2024 09:30:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240705112821.144819-1-sgarzare@redhat.com> <20240705073017-mutt-send-email-mst@kernel.org>
- <25fehn7xgvqyqgd6zcscsjazzfhktyjrazffyrtbp2oibnhkey@ggobdyv4zxkf>
- <CACLfguWtcdTM-+GjiXWC-s=d-bvkUedHbCimzsfvYXWJ-=3iDQ@mail.gmail.com>
- <CACGkMEurseUpMKaiLpJEkcT9U_tmqm4yqp3OgR--6XnAY=C9WQ@mail.gmail.com>
- <3f5d33l4c73nudppajvhnjhpdpvft5yolm7vdraikany2tfdjz@i62d45j4ucs5>
- <CACGkMEuqiAx-a0sPJf0Xpvmr=5wbzbuOr0-w+9ZcwQMTWFU1rw@mail.gmail.com>
- <xuruyrbkago7w7tjbvqmfvjoqy665srurqozbenfayagfxl72y@wqy56jenfo2u>
- <CACGkMEtB1maGywWRPNHgVGJog+rbowXvKG0nEDXPn_9-VB0Azw@mail.gmail.com> <emhlvvttkq5yqcbphdkyrcmcxpyk22uxe2eiohmrapmjrv4vsz@zbiixmblizcj>
-In-Reply-To: <emhlvvttkq5yqcbphdkyrcmcxpyk22uxe2eiohmrapmjrv4vsz@zbiixmblizcj>
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 10 Jul 2024 15:28:31 +0800
-Message-ID: <CACGkMEtT-UeLk6Hv1AFXk_yhiVxx-5tWknqs=OYg8+cAGDmd9w@mail.gmail.com>
-Subject: Re: [PATCH] vdpa_sim_blk: add `capacity` module parameter
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Cindy Lu <lulu@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, virtualization@lists.linux.dev, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/15] Implement MODVERSIONS for Rust
+Content-Language: en-US
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <20240617175818.58219-17-samitolvanen@google.com>
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20240617175818.58219-17-samitolvanen@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 10, 2024 at 3:19=E2=80=AFPM Stefano Garzarella <sgarzare@redhat=
-.com> wrote:
->
-> On Wed, Jul 10, 2024 at 11:08:48AM GMT, Jason Wang wrote:
-> >On Tue, Jul 9, 2024 at 8:41=E2=80=AFPM Stefano Garzarella <sgarzare@redh=
-at.com> wrote:
-> >>
-> >> On Tue, Jul 09, 2024 at 10:56:16AM GMT, Jason Wang wrote:
-> >> >On Mon, Jul 8, 2024 at 4:15=E2=80=AFPM Stefano Garzarella <sgarzare@r=
-edhat.com> wrote:
-> >> >>
-> >> >> Hi Cindy, Jason,
-> >> >>
-> >> >> On Mon, Jul 08, 2024 at 03:59:34PM GMT, Jason Wang wrote:
-> >> >> >On Mon, Jul 8, 2024 at 3:06=E2=80=AFPM Cindy Lu <lulu@redhat.com> =
-wrote:
-> >> >> >>
-> >> >> >> On Fri, 5 Jul 2024 at 20:42, Stefano Garzarella <sgarzare@redhat=
-.com> wrote:
-> >> >> >> >
-> >> >> >> > On Fri, Jul 05, 2024 at 07:30:51AM GMT, Michael S. Tsirkin wro=
-te:
-> >> >> >> > >On Fri, Jul 05, 2024 at 01:28:21PM +0200, Stefano Garzarella =
-wrote:
-> >> >> >> > >> The vDPA block simulator always allocated a 128 MiB ram-dis=
-k, but some
-> >> >> >> > >> filesystems (e.g. XFS) may require larger minimum sizes (se=
-e
-> >> >> >> > >> https://issues.redhat.com/browse/RHEL-45951).
-> >> >> >> > >>
-> >> >> >> > >> So to allow us to test these filesystems, let's add a modul=
-e parameter
-> >> >> >> > >> to control the size of the simulated virtio-blk devices.
-> >> >> >> > >> The value is mapped directly to the `capacity` field of the=
- virtio-blk
-> >> >> >> > >> configuration space, so it must be expressed in sector numb=
-ers of 512
-> >> >> >> > >> bytes.
-> >> >> >> > >>
-> >> >> >> > >> The default value (0x40000) is the same as the previous val=
-ue, so the
-> >> >> >> > >> behavior without setting `capacity` remains unchanged.
-> >> >> >> > >>
-> >> >> >> > >> Before this patch or with this patch without setting `capac=
-ity`:
-> >> >> >> > >>   $ modprobe vdpa-sim-blk
-> >> >> >> > >>   $ vdpa dev add mgmtdev vdpasim_blk name blk0
-> >> >> >> > >>   virtio_blk virtio6: 1/0/0 default/read/poll queues
-> >> >> >> > >>   virtio_blk virtio6: [vdb] 262144 512-byte logical blocks =
-(134 MB/128 MiB)
-> >> >> >> > >>
-> >> >> >> > >> After this patch:
-> >> >> >> > >>   $ modprobe vdpa-sim-blk capacity=3D614400
-> >> >> >> > >>   $ vdpa dev add mgmtdev vdpasim_blk name blk0
-> >> >> >> > >>   virtio_blk virtio6: 1/0/0 default/read/poll queues
-> >> >> >> > >>   virtio_blk virtio6: [vdb] 614400 512-byte logical blocks =
-(315 MB/300 MiB)
-> >> >> >> > >>
-> >> >> >> > >> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> >> >> >> > >
-> >> >> >> > >What a hack. Cindy was working on adding control over config
-> >> >> >> > >space, why can't that be used?
-> >> >> >> >
-> >> >> >> > If it can be used easily with virtio-blk device too, it will b=
-e great.
-> >> >> >> > @Cindy do you plan to support that changes for a virtio-blk de=
-vice too?
-> >> >> >> >
-> >> >> >> Hi Stefano
-> >> >> >> I plan to add support to change the vdpa device's configuration =
-after
-> >> >> >> it is created.
-> >> >> >
-> >> >> >I think for Stefano's case, we can just implement it via provision=
-ing
-> >> >> >parameters?
-> >> >>
-> >> >> Yep, I think we don't need to change it after creation, but specify=
-ing
-> >> >> while creating should be enough.
-> >> >>
-> >> >> So, IIUC we can already do it, implementing something similar to
-> >> >> vdpasim_net_setup_config() to call during vdpasim_blk_dev_add(), ri=
-ght?
-> >> >
-> >> >Right.
-> >> >
-> >> >>
-> >> >> What about when we have `shared_backend` set to true for the
-> >> >> vdpa_sim_blk.ko? In this case the backend is supposed to be shared
-> >> >> between all the devices to test live migration.
-> >> >
-> >> >This seems to be another topic.
-> >>
-> >> Yep, but really related. I think we need to handle that case when
-> >> supporting the `capacity` setting.
-> >
-> >Ok, so if I was not wrong, the goal is to test migration.
->
-> Sorry, I was not clear, I try to rephrase:
-> vdpa_sim_blk already supports a module parameter called `shared_backend`
-> introduced mainly to test live migration on the same host. When that
-> parameter is on, all the created devices share the same backend and so
-> we can easily do migration from one to another.
->
-> With that parameter on or off, the device is always 128 MB, but now
-> that's a problem for testing, because it looks like XFS requires at
-> least 300 MB: https://issues.redhat.com/browse/RHEL-45951
->
-> That's why I sent this patch.
->
-> When `shared_backend` is off (default), using the provisioning
-> parameters seems feasible to me, but when it's on, how do I deal with
-> it?
->
-> Being a simulator, we can maybe make it so that only the first device
-> can change the size for example, or that all devices control the size,
-> but then we would have to handle the size change at runtime, which I
-> think is feasible, but it requires some work to send a notification of
-> configuration change, etc.
+On 6/17/24 19:58, Sami Tolvanen wrote:
+> Hi folks,
+> 
+> This series implements CONFIG_MODVERSIONS for Rust, an important
+> feature for distributions like Android that want to ship Rust
+> kernel modules, and depend on modversions to help ensure module ABI
+> compatibility.
 
-Can we mandate the size parameter to be exactly the same as the first
-vDPA block simulator?
+Thanks for working on this. Below is some feedback with my (open)SUSE
+hat on, although it should be quite general.
 
->
-> >
-> >>
-> >> >
-> >> >>
-> >> >> Maybe we can just change the size of the shared ramdisk to be refle=
-cted
-> >> >> to all devices.
-> >> >>
-> >> >> Suggestions?
-> >> >
-> >> >Could we specify the path to tmpfs or others during provisioning
-> >> >instead?  It seems more general (but more work).
-> >>
-> >> Then it would almost become a real device, no longer just a simulator.
-> >> It's enough work, though, as you said, but at that point we'd just hav=
-e
-> >> to specify the backend file to use for the device.
-> >>
-> >> In that case what API would we need to use to allow the user to set th=
-e
-> >> backend file?
-> >
-> >Yes, I think we can allow some vendor specific provisioning parameters.
-> >
-> >But not sure it's an overkill for the use case here. If others are
-> >happy with the shared_backed. I'm fine.
->
-> Yeah, maybe it's overkill and I don't have much time these days :-(
->
-> I think the easiest way is to merge this patch, but I understand that a
-> module parameter is not very beautiful
->
-> I'll try to see if I can implement provisioning parameters for
-> vdpa_sim_blk. Allowing capacity to be set only to the first device if
-> `shared_backend` is on.
->
-> WDYT?
+> There have been earlier proposals [1][2] that would allow Rust
+> modules to coexist with modversions, but none that actually implement
+> symbol versioning. Unlike C, Rust source code doesn't have sufficient
+> information about the final ABI, as the compiler has considerable
+> freedom in adjusting structure layout for improved performance [3],
+> for example, which makes using a source code parser like genksyms
+> a non-starter. Based on Matt's suggestion and previous feedback
+> from maintainers, this series uses DWARF debugging information for
+> computing versions. DWARF is an established and relatively stable
+> format, which includes all the necessary ABI details, and adding a
+> CONFIG_DEBUG_INFO dependency for Rust symbol versioning seems like a
+> reasonable trade-off.
 
-Something like this.
+Using the DWARF data makes sense to me. Distribution kernels are
+normally built with debuginfo because one has to be able to debug them
+later, unsurprisingly. Besides that, one now typically wants to use BPF
+together with built-in BTF data (CONFIG_DEBUG_INFO_BTF), which also
+requires building the kernel with debuginfo.
 
-When there's no block simulator, allow an arbitrary capacity. When
-there is one, fail the creation when the capacity doesn't match. (when
-'shared_backend' is on).
+I would however keep in mind that producing all DWARF data has some
+cost. From a quick test, an x86_64-defconfig build is ~30% slower for me
+with CONFIG_DEBUG_INFO=y. The current genksyms tool allows to have
+debuginfo disabled when backporting some patches and consequently have
+a quicker feedback whether modversions changed. This option would
+disappear with gendwarfksyms but I think it is acceptable.
 
-Thanks
+> 
+> The first 12 patches of this series add a small tool for computing
+> symbol versions from DWARF, called gendwarfksyms. When passed a list
+> of exported symbols, the tool generates an expanded type string
+> for each symbol, and computes symbol CRCs similarly to genksyms.
+> gendwarfksyms is written in C and uses libdw to process DWARF, mainly
+> because of the existing support for C host tools that use elfutils
+> (e.g., objtool).
 
->
-> Thanks,
-> Stefano
->
+In addition to calculating CRCs of exported symbols, genksyms has other
+features which I think are important.
 
+Firstly, the genksyms tool has a human-readable storage format for input
+data used in the calculation of symbol CRCs. Setting the make variable
+KBUILD_SYMTYPES enables dumping this data and storing it in *.symtypes
+files.
+
+When a developer later modifies the kernel and wants to check if some
+symbols have changed, they can take these files and feed them as
+*.symref back to genksyms. This allows the tool to provide an actual
+reason why some symbols have changed, instead of just printing that
+their CRCs are different.
+
+Is there any plan to add the same functionality to gendwarfksyms, or do
+you envison that people will use libabigail, Symbol-Type Graph, or
+another tool for making this type of comparison?
+
+Secondly, when distributions want to maintain stable kABI, they need to
+be able to deal with patch backports that add new members to structures.
+One common approach is to have placeholders in important structures
+which can be later replaced by the new members as needed. __GENKSYMS__
+ifdefs are then used at the C source level to hide these kABI-compatible
+changes from genksyms.
+
+Gendwarfksyms works on the resulting binary and so using such ifdefs
+wouldn't work. Instead, I suspect that what is required is a mechanism
+to tell the tool that a given change is ok, probably by allowing to
+specify some map from the original definition to the new one.
+
+Is there a plan to implement something like this, or how could it be
+addressed?
+
+> Another compatibility issue is fitting the extremely long mangled
+> Rust symbol names into struct modversion_info, which can only hold
+> 55-character names (on 64-bit systems). Previous proposals suggested
+> changing the structure to support longer names, but the conclusion was
+> that we cannot break userspace tools that parse the version table.
+> 
+> The next two patches of the series implement support for hashed
+> symbol names in struct modversion_info, where names longer than 55
+> characters are hashed, and the hash is stored in the name field. To
+> avoid breaking userspace tools, the binary hash is prefixed with a
+> null-terminated string containing the name of the hash function. While
+> userspace tools can later be updated to potentially produce more
+> useful information about the long symbols, this allows them to
+> continue working in the meantime.
+
+I think this approach with hashed names is quite complex. I'd personally
+be also in favor of having a new section with variable-length strings to
+store the names of imported symbols. As yet another alternative, it
+should be also possible to refer directly into .symtab/.strtab to avoid
+duplicating the names, but I suspect it would be non-trivial to
+implement.
+
+Cheers,
+Petr
 
