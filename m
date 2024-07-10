@@ -1,75 +1,101 @@
-Return-Path: <linux-kernel+bounces-248292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB56D92DB49
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:54:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D57E692DB4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:55:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE0981C215A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:54:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 136CC1C21522
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AECD14373A;
-	Wed, 10 Jul 2024 21:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158AE1422A6;
+	Wed, 10 Jul 2024 21:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lh/ZYt+C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MCxzR80F"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B70D12CDAE;
-	Wed, 10 Jul 2024 21:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61F53AC0C;
+	Wed, 10 Jul 2024 21:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720648451; cv=none; b=Evom+vPd3l3s9Blv8kuv0yv13kZR6jM8KQYwoHLy74x/jRZXVVWo18jbO5gjKwI23MwJymKgevVZtwILVy01wB5yF7WjonMMCRQmSumFaf7Q5Y0k4tQ4Fgc5FFq1u2VWdjTtL1UNTID+ENQIpzERl/uBO1jgBeThVcxzJTURF/M=
+	t=1720648525; cv=none; b=fuRElC4M9k3zCvJSQgXORWBHnK5lYYwomevXB6Lhv5BVC2pD8BgIWCHwyP7nA9A/zkrGkyAKYs557tyuHRMttMFq7Im5IlUZHSNTp5FFktg8W0XWvQzTNw4iR0GiNl2s5aq9zHszo/fSBZ/7T1tmdLpxKvDb36Y/LR71GByL5ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720648451; c=relaxed/simple;
-	bh=60OwlEBX0ESWlqXkMiMdHEeliRGI0B4nU4qRbCL11NI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EjDNrsyMnPvYc74JT0azdjDkzGL9l+k3SJHRtnndfc2MEJ6Isq02IJqFy+M3FNKZHHj289gSsJjPt9faM5FshNH8FBRm2jcTWYm5l3WUCk5VzU/OQOqjnuPsy6m4sVgRM/YE+3MG23jvSblFgEqMTaRJHW6jQqrVclQPecAFmRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lh/ZYt+C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A7A6C32781;
-	Wed, 10 Jul 2024 21:54:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720648451;
-	bh=60OwlEBX0ESWlqXkMiMdHEeliRGI0B4nU4qRbCL11NI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Lh/ZYt+Ch5gR3CPIKv7xfrc7XzKWD8T3iJJ/pMfW4LY2rqWT3lVTlDk4sBYIabUr0
-	 RSbLybkfVGX6FCavf0j2zr7oYPyhThh5gTAhnSoInPP71ag+hUhzgYUayaWgZZ+I69
-	 lUiY9dJodGn/2QyzcOplU/7RPoRSk1QOppG5El+w/OE5gWXI6R7CPMcXWNhfNxU9pR
-	 1q3lTKmDTaWw8Cq17HWX5S01KR1e4IGUESITiPMTq90Nck9jG5D2tFeppw3Lik4Jlg
-	 TpCaAoJXvWvtjr1CVYeEefMJEpkGiitypt/vzVWJYX/FTGrqo0ixBRHfk55ZJqQdn5
-	 Rari2Malwbg+g==
-Date: Wed, 10 Jul 2024 23:54:07 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, Vladimir Zapolskiy <vz@mleia.com>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 27/60] i2c: lpc2k: reword according to newest
- specification
-Message-ID: <ksdqyb3pwxmoyspmolecxqbqhxmzp4y7ha3bh32zwvkjirdbwq@ea56gmyx3edx>
-References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
- <20240706112116.24543-28-wsa+renesas@sang-engineering.com>
+	s=arc-20240116; t=1720648525; c=relaxed/simple;
+	bh=MBSnxvViUIPwJIJlbg5CbbgSgPo6xdIuhpGkPieRbWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=dLm9oN7FEJzd8TQVzdkfX5BS3U8obGKRhRJCSA03PGEJDJZkvByhCNB5d1dnLTiFlZhOt8qWtsgGwn5KTQAUWKONIuab5v1eI/F8vZ13v4Re53ToyFWreI3eHJ/Hs6rJSl6U9g1oLUnPhhEWtTpqCwp7XGUSCnVMTyXpG7QWQ0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=MCxzR80F; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720648518;
+	bh=PPielcce1kKyqJtQDm+UqaANRKhAF7i1JjPiQt/KZPc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=MCxzR80F8iMMjqhUESintSZWITZbG03QMULYjKTLYzI50Ohp0233Wa8I1Qh1IL1FX
+	 tZpX3Cy85jsEdH+u0Pz6oJsGg3CzLbrxs1fpfXJofLDtDXKPQk7nwCaF2fMd47dTJ6
+	 dyp87P4sEMR3Z3JNojsnXX40zGCj0ALa3Z88r/c2YaSWiHZsiMbzEWXqjjMOmYTNO9
+	 N3HTJQ7soqiPenkFhp2UNa1hIL0qrMLaRTyIinhOAKRwSORIa+66ofllV3JezqDgYJ
+	 3C1i3EtMoeIG+sdw2JKQW0yaHSKLaC2vHeYYpzgnyxYMCqPxzB4IMtv8jUgLZ0oZ/i
+	 fMHBYHD87DKLQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WKBVY6QlWz4w2D;
+	Thu, 11 Jul 2024 07:55:17 +1000 (AEST)
+Date: Thu, 11 Jul 2024 07:55:15 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+ <johan.hedberg@gmail.com>
+Cc: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the bluetooth tree
+Message-ID: <20240711075515.48777bbd@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240706112116.24543-28-wsa+renesas@sang-engineering.com>
+Content-Type: multipart/signed; boundary="Sig_/wYZl80dQQ7_Jju0qP8PANeI";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Wolfram,
+--Sig_/wYZl80dQQ7_Jju0qP8PANeI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 06, 2024 at 01:20:27PM GMT, Wolfram Sang wrote:
-> Change the wording of this driver wrt. the newest I2C v7 and SMBus 3.2
-> specifications and replace "master/slave" with more appropriate terms.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi all,
 
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+Commits
 
-Thanks,
-Andi
+  b9a7772aba0c ("power: pwrseq: add a driver for the PMU module on the QCom=
+ WCN chipsets")
+  4989331f005b ("power: sequencing: implement the pwrseq core")
+
+are missing a Signed-off-by from their committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/wYZl80dQQ7_Jju0qP8PANeI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaPA0MACgkQAVBC80lX
+0GzJxgf8CU7OKg3shBpxz42OGIfkmXy6weGSaIYbItUREnnhs1DMia6zoSTJeq6B
+7esdsORZsfzK4bLJ85+kjtxnYcGGTU0o5IM0BSkpyKR1T0zywA4sIYw4jBWGfT2K
+CoklitZkpiAZoLyIb0xbAnUibIgGrF11esJZV3BFn84k9E/CHax8Yzsyh6zjOnRL
++9cXhhfJWJcpPALf3ctTYQfKGhf4gRsiHv2jjGPIiS023aMrjQxbE5inBlWnvz4E
+ldcgPxPP55o1jj9kc6n7m6yHJkU1ONOpqXE0Nr7w8VVQs/mkuw+wISPblBPqNG5D
+GlBzoK7pBTKsMZMGvgIp3xH7BRZZ7g==
+=0nUf
+-----END PGP SIGNATURE-----
+
+--Sig_/wYZl80dQQ7_Jju0qP8PANeI--
 
