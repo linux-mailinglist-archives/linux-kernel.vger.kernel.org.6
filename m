@@ -1,99 +1,91 @@
-Return-Path: <linux-kernel+bounces-247485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E011F92D027
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:09:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 095B392D007
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34EC4B25CFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:02:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 399BC1C20A0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B140018FC63;
-	Wed, 10 Jul 2024 11:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4418D18FC63;
+	Wed, 10 Jul 2024 11:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0i+BFO8H";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TnWTzxN7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="gxh2nwty"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8574317FD;
-	Wed, 10 Jul 2024 11:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F27513AD22
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 11:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720609367; cv=none; b=SCXHxKwsuuuULP4MgFUHwKt6zwLcf6pNvbSKSudEywKRU/AOM4tl2R3qMepT6YJ5S3OJFSkGU/3+tVeAE/ZVygU/JwYulJFseR5DlpDhtWVkBw4SFvzHN/H/rhAKXo3vMAVEh8iL5LLihm1qA+E7xnsIW/u+0OFXeyZI+mbXG88=
+	t=1720609413; cv=none; b=VRgljPoksMNeuMjoHHGadni1uiY0kbt9nwqucOVUGIqXEFR9XHQ5MvD1JlSHusImE7H05bwU9oprWSplqcSU+HTortjmt8BAnRd076K1H8DLTiwIgzXixJy6A6w3JVQaY3fSNmYC53wM7tDHoWLURjlArhx9Rih2Y6NcLtH92pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720609367; c=relaxed/simple;
-	bh=MB5RUz9En8zgRblZi0YlJjmBHs76SzaICxSLYusWtHk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rZ1LHNeDO6N0JO1mAQNN5s5q47OxcgypGttfKfbcYlv9mPaYyUHkgi1pksdC1Ayhvh4iY9Zc3h3KvehxnYHcWd8wywEQAISf5clMSbg3Y9pNKnO2tgB1L2re7zEBw372w/Yj/cQ6cr/rpwydznpkUDf0KWifEAOeV/rUxgBM10g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0i+BFO8H; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TnWTzxN7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1720609363;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MB5RUz9En8zgRblZi0YlJjmBHs76SzaICxSLYusWtHk=;
-	b=0i+BFO8HLrjhBE23gu5RU+VP//VQGx7vfP0Ussd6Mzs7fmI3MqZqwtO6gVraOzZCvzj5Wt
-	ZdJhW0mKwWTZTg81dyZ+K3lzM/1zbhtUYuxGB1mng0bqo+jpgGLF2H6/rT0TsntP71GQ2X
-	xA1WBNl/6HUoW8WaIwYYqCBZd4j1cZ/XyDqsDmA4H239njnXMnZZVe7XGYV97e9XD965ln
-	Mn31S1LGxBAOCqyVN5OLGvXXRagN+qKfAk8jxP9T6BA/dCb/CA8po7LZypucSu1Px0VM8D
-	9XiFu+O4p9AjP5OZMqvI8lP7AXbqNZhEcYlkIvW0uC9lPZ9nvDVPKFsQ0h5TWQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1720609363;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MB5RUz9En8zgRblZi0YlJjmBHs76SzaICxSLYusWtHk=;
-	b=TnWTzxN7PjYBExaJdixfiCKsoQwmIaEjW23sPMzLsrosGcAODgfoVfcEiLCXyuKTmu3ay6
-	BNX61qresqLc2bDw==
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, DRI Development
- <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Cc: Intel Graphics Development <intel-gfx@lists.freedesktop.org>, Daniel
- Vetter <daniel.vetter@ffwll.ch>,
- syzbot+6cebc1af246fe020a2f0@syzkaller.appspotmail.com, Daniel Vetter
- <daniel.vetter@intel.com>, stable@vger.kernel.org, Kent Overstreet
- <kent.overstreet@linux.dev>, Brian Foster <bfoster@redhat.com>,
- linux-bcachefs@vger.kernel.org, Petr Mladek <pmladek@suse.com>, Steven
- Rostedt <rostedt@goodmis.org>, Sergey Senozhatsky
- <senozhatsky@chromium.org>
-Subject: Re: [PATCH 2/2] bcachefs: only console_trylock in
- bch2_print_string_as_lines
-In-Reply-To: <20240710093120.732208-2-daniel.vetter@ffwll.ch>
-References: <20240710093120.732208-1-daniel.vetter@ffwll.ch>
- <20240710093120.732208-2-daniel.vetter@ffwll.ch>
-Date: Wed, 10 Jul 2024 13:08:42 +0206
-Message-ID: <87frsh33xp.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1720609413; c=relaxed/simple;
+	bh=0t0azsxRFwTHJyK0rshFrglsTJ86Rj4OCjaw64QomKA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HwOV+yolgk4UfmurM6UinJzRAxgYkLRPItsaVY584avNe70b10KgGc8OlrSFL0XuhEPTE9chOT5QtJ9tg45FoHx1E0Pzfa0FHvhglie0tgyG7lnISYk91db4p4m2UbDruM/GnWcOlncIPlp1MU7SPQv0Ld3U8ZCt0PPpepaRbyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=gxh2nwty; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=WkVMEbo8RR32pB
+	GLYFBjnzqg9Cn7vP2XzOaB36zaeBc=; b=gxh2nwtyjzPNz+yQjYDtHxzi4FpIyc
+	EjE47q8rFoFL0LwelyqAlrWyNvMnYJCt0eZTHSW3lc6KIw5vuTNwwBluswciH91y
+	3xxXzgBISXtQsyyPSNLEsKtEnOM66WMeEeoaeI7dm3WPJixKVgdQ4Ve0vD2Az/sw
+	3J+yYVd0+gkqEACfNMzs4l2in7W/+S+SQHcUmd7wn8xAFkjUP3IUj0wwgA2FOuU/
+	MfMzJBHWIQJY/X/EC0jXJ3Xozb/X96jpuHaoHIk1uxhiXhM+vxqIqLcSwtRmpX9F
+	aExzC2ni2hqg7d8oTO84dFft5JZ8iVJ9JkrJADWOa5LgOBvZMnd7v3ig==
+Received: (qmail 504693 invoked from network); 10 Jul 2024 13:03:20 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Jul 2024 13:03:20 +0200
+X-UD-Smtp-Session: l3s3148p1@Zl8UmOIcONwujnsa
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] i2c: rcar: clear NO_RXDMA flag after resetting
+Date: Wed, 10 Jul 2024 13:03:00 +0200
+Message-ID: <20240710110259.49181-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On 2024-07-10, Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
-> console_lock is the outermost subsystem lock for a lot of subsystems,
-> which means get/put_user must nest within. Which means it cannot be
-> acquired somewhere deeply nested in other locks, and most definitely
-> not while holding fs locks potentially needed to resolve faults.
->
-> console_trylock is the best we can do here.
->
-> Including printk folks since even trylock feels realyl iffy here to
-> me.
+We should allow RXDMA only if the reset was really successful, so clear
+the flag after the reset call.
 
-Using the console lock here at all is wrong. The console lock does not
-prevent other CPUs from calling printk() and inserting lines in between.
+Fixes: 0e864b552b23 ("i2c: rcar: reset controller is mandatory for Gen3+")
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/i2c/busses/i2c-rcar.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-There is no way to guarantee a contiguous ringbuffer block using
-multiple printk() calls.
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index 29c7fafeb8a9..8f2ede534f30 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -912,10 +912,10 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
+ 
+ 	/* Gen3+ needs a reset. That also allows RXDMA once */
+ 	if (priv->devtype >= I2C_RCAR_GEN3) {
+-		priv->flags &= ~ID_P_NO_RXDMA;
+ 		ret = rcar_i2c_do_reset(priv);
+ 		if (ret)
+ 			goto out;
++		priv->flags &= ~ID_P_NO_RXDMA;
+ 	}
+ 
+ 	rcar_i2c_init(priv);
+-- 
+2.43.0
 
-The console_lock usage should be removed.
-
-John Ogness
 
