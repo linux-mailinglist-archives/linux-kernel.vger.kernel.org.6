@@ -1,71 +1,82 @@
-Return-Path: <linux-kernel+bounces-247956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB92F92D6A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:37:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B27892D69D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67979287167
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:37:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC0B0B2C62B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FF81957F2;
-	Wed, 10 Jul 2024 16:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B20198E93;
+	Wed, 10 Jul 2024 16:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V4hfGr+j"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I+5zVTK2"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238A9BE4E
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857F2198E80
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720629203; cv=none; b=mC/RI2YS2f3v4W6SlU4X9CvReUK8z1f+X+XS6Vg6cz0aQHurkYBlL1RAVDfcBQKBFbbhhQqxwqwgky2rWQ+HvT4ohgYBNUovKEDngSRrPTSmpPA3M/wLH/UOXI/y+kpAI42TCfheZQrh4d3kjMoSn5ggYEnPbtGlet5ranpxDE0=
+	t=1720629099; cv=none; b=XXUIQK/4doSgAv86pmNt5cJR/ic79FLqP6l1BEIN3lwc6PM39Bv6pgbB2HWnw+ixBqmQLl3W6S9CoL2UiCwN2rIWsimNp/MDEKF9iyq4DGpjsNKGq5P4v5nhC+6gud0Wnf9+aRYbO8V2TC40npJ9cf9PqLAzfCNT8n0OpPypkhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720629203; c=relaxed/simple;
-	bh=xSn6aWn2VSQKHTpQ2P/SzpL4K8+RF4WT6iLKwi2Jo88=;
+	s=arc-20240116; t=1720629099; c=relaxed/simple;
+	bh=wMB6ffOH4zzKa3yoQT+9WAqc8SQ6K+qCARxI6+FuQgU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SVmmmuRqRRPWuECttzF9JMtRtFdTeAM/nBzD78Jc3+CssexFZF9FEHAjb6GndfiXb+NK1RAZIQ/OXRYZ06CN1yszF5VtRhCcX8O8RoBe4C39PLzBzeOH01K9s9fn46gSkBM6C+SR45BWih+2jzTaF/qQKrduLS+Gi0Ls9CFXz2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V4hfGr+j; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720629201;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jbKCCwZUAG8+N7TuFtLLFIVTbn6KobI4S7EYoLAaXBE=;
-	b=V4hfGr+jideQtkqUDVfJ2Of+Pvbuw+U2cnl1XQ4zYS3ANU2ifAiL0kv+lO3kxEDiXVp6+T
-	E0sLL+CKWriCq5kUincHdv95N0AYecgwtPYDdsv1wgUoqXGdHRUaCHLRptU2EMhkNLdhZR
-	85q9m77v7xkROLwkmswV7BbvtP7t380=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-422-nzynZEw5OtCFZTzOKy9FUw-1; Wed,
- 10 Jul 2024 12:33:17 -0400
-X-MC-Unique: nzynZEw5OtCFZTzOKy9FUw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1C689196CDEF;
-	Wed, 10 Jul 2024 16:33:15 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.169])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 3EF321955E70;
-	Wed, 10 Jul 2024 16:33:10 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 10 Jul 2024 18:31:38 +0200 (CEST)
-Date: Wed, 10 Jul 2024 18:31:33 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org
-Cc: clm@meta.com, jolsa@kernel.org, mingo@kernel.org, paulmck@kernel.org,
-	rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH 3/3] uprobes: make uprobe_register() return struct uprobe *
-Message-ID: <20240710163133.GD13298@redhat.com>
-References: <20240710140017.GA1074@redhat.com>
- <20240710163022.GA13298@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eXuuJ/RSkfpJOn4erFAWP6fJ6cVhMjhpcmzpxcPoJHmFSHcBjqCFKOmXy5/L1wPduL5zdsXGpRx9F2ozDeVgnULrfHeOJj8VdlLQCN0fW1/HPThyT0wDLxdvvrbeP8HJX0JbfSij56hgylbp6gH0koCxfWo3po4VLeb0/694n7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I+5zVTK2; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58e76294858so1896694a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:31:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720629096; x=1721233896; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aFxlOsMqy2T1bTm6nymFbY6yBbL0VdpobMbhBdfw3jM=;
+        b=I+5zVTK2CbwN/kHIPsv+galqLLum0Y9F5JMdg7CX2/2e4txB7mS0CZxgJT/H/MsMLX
+         LGWy7R39eQKTjEcBsSnVDVvxn5SQgDhTwTs/77kAMWDGAvxKgCuRpDGlLh+19MU600c3
+         v4pCI1gEhjWldJpM3IMxnoommdzFOTKvLGEV8kFKzqwWbEunjYqGn6cxheGIFs8PJIDE
+         xHIOU7EL5KtuYiv72iO9KgzwL1eKbKPA1v1sWYXJfhzFukFFGmWQNws/QlxTQVbE1Ul2
+         6lAlNVZxvuuzls2qv11v5lw88iqyS8qfCstl7Hcv2hKsSUXhtqLeCvlgGbKIG37OtpBl
+         GufA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720629096; x=1721233896;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=aFxlOsMqy2T1bTm6nymFbY6yBbL0VdpobMbhBdfw3jM=;
+        b=phWqYoEQag02MES5XGzTueyCgHfdSTT356LBT8/cHNJET+OUsqLIjE7Q95hCoH3IVI
+         PIrV0J6y9D5lFL8qJzWkh/5ZT2mpTxj+pkrXOgGvJarbYKxw+WDmhVXij0+GkArC/ydT
+         GPt7g2lVG8VKCM8qLizFx3N5dnn0KC3aWHRnN5eHaFca9Av9GYjZJcVccwX3cHSlBmBO
+         dLQs2IeVIj2WxX2fHtPCb4Slay54rKq0Z6gv+EBAkXkJYjo1PScwS7C+BYn1yekSMNy4
+         tmaECNw3LhyKfEpMXvNjbSKV1TkWKQAYYeN/IxnRth9Tln348oek1g+rIsPecc0JHuOU
+         6C5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUqmoFWDf4JidHj8npy0mVZZuym+cfeAOqOVosuTmDGKzK2GFr1nzB4Zr3yT8qoPWzUANvzfLuyuMWaGqQOFGQhGea3WbCEp4qTT08d
+X-Gm-Message-State: AOJu0YxJSNokG6HEsWhB6ajzbuAUfBvXqmc5jyNWiFRZ5MfR23ua2kXI
+	WuJKgu9X0HEmJVfNZMRzdnSH4qnFbglRneTmGjs++zEVD1xeqYgyI734FDJp
+X-Google-Smtp-Source: AGHT+IGjXS/unGM247VI8FFw2SSzudpUQO77MxfYWHl3GuzqaKaUlZLaTbpxCAZjTadQ5zUdP0EWBA==
+X-Received: by 2002:a17:906:c105:b0:a6f:20e0:1d1a with SMTP id a640c23a62f3a-a798a42f054mr15604866b.33.1720629095619;
+        Wed, 10 Jul 2024 09:31:35 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a6bcc97sm172538066b.35.2024.07.10.09.31.34
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 10 Jul 2024 09:31:34 -0700 (PDT)
+Date: Wed, 10 Jul 2024 16:31:34 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>, linux@rasmusvillemoes.dk,
+	willy@infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] radix tree test suite: put definition of bitmap_clear()
+ into lib/bitmap.c
+Message-ID: <20240710163134.a36xircnefbz5m6n@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20240710095554.16725-1-richard.weiyang@gmail.com>
+ <Zo6z_AuI6U8JBvfk@yury-ThinkPad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,295 +85,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240710163022.GA13298@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <Zo6z_AuI6U8JBvfk@yury-ThinkPad>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-This way uprobe_unregister() and uprobe_apply() do not need find_uprobe() +
-put_uprobe(). And to me this change simplifies the code a bit.
+On Wed, Jul 10, 2024 at 09:17:00AM -0700, Yury Norov wrote:
+>On Wed, Jul 10, 2024 at 09:55:54AM +0000, Wei Yang wrote:
+>> Instead of keeping a bitmap.c in radix-tree own directory, we can use
+>> the common implementation in lib/ directory.
+>> 
+>> Just move the definition and link some related libs, no functional
+>> change.
+>> 
+>> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+>> CC: Matthew Wilcox <willy@infradead.org>
+>
+>Hi Wei,
+>
+>bitmap_clear() is not used in radix tests, and in fact not used
+>anywhere in tools at all. Unless you have plans on it, it's
+>better to drop bitmap_clear() from tools, instead of bloating
+>the library.
 
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- include/linux/uprobes.h     | 14 ++++++------
- kernel/events/uprobes.c     | 45 ++++++++++++-------------------------
- kernel/trace/bpf_trace.c    | 12 +++++-----
- kernel/trace/trace_uprobe.c | 28 +++++++++++------------
- 4 files changed, 41 insertions(+), 58 deletions(-)
+I guess you didn't try to compile the test. After remove the bitmap_clear(),
+we see this error.
 
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index aa89a8b67039..399509befcf4 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -110,9 +110,9 @@ extern bool is_trap_insn(uprobe_opcode_t *insn);
- extern unsigned long uprobe_get_swbp_addr(struct pt_regs *regs);
- extern unsigned long uprobe_get_trap_addr(struct pt_regs *regs);
- extern int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned long vaddr, uprobe_opcode_t);
--extern int uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc);
--extern int uprobe_apply(struct inode *inode, loff_t offset, struct uprobe_consumer *uc, bool);
--extern void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc);
-+extern struct uprobe *uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc);
-+extern int uprobe_apply(struct uprobe *uprobe, struct uprobe_consumer *uc, bool);
-+extern void uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc);
- extern int uprobe_mmap(struct vm_area_struct *vma);
- extern void uprobe_munmap(struct vm_area_struct *vma, unsigned long start, unsigned long end);
- extern void uprobe_start_dup_mmap(void);
-@@ -147,18 +147,18 @@ static inline void uprobes_init(void)
- 
- #define uprobe_get_trap_addr(regs)	instruction_pointer(regs)
- 
--static inline int
-+static inline struct uprobe *
- uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc)
- {
--	return -ENOSYS;
-+	return ERR_PTR(-ENOSYS);
- }
- static inline int
--uprobe_apply(struct inode *inode, loff_t offset, struct uprobe_consumer *uc, bool add)
-+uprobe_apply(struct uprobe* uprobe, struct uprobe_consumer *uc, bool add)
- {
- 	return -ENOSYS;
- }
- static inline void
--uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
-+uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
- {
- }
- static inline int uprobe_mmap(struct vm_area_struct *vma)
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index e5b7c6239970..dba41403d7b8 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -1100,22 +1100,15 @@ __uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
- 
- /*
-  * uprobe_unregister - unregister an already registered probe.
-- * @inode: the file in which the probe has to be removed.
-+ * @uprobe: uprobe to remove
-  * @offset: offset from the start of the file.
-  * @uc: identify which probe if multiple probes are colocated.
-  */
--void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
-+void uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
- {
--	struct uprobe *uprobe;
--
--	uprobe = find_uprobe(inode, offset);
--	if (WARN_ON(!uprobe))
--		return;
--
- 	down_write(&uprobe->register_rwsem);
- 	__uprobe_unregister(uprobe, uc);
- 	up_write(&uprobe->register_rwsem);
--	put_uprobe(uprobe);
- }
- EXPORT_SYMBOL_GPL(uprobe_unregister);
- 
-@@ -1133,41 +1126,39 @@ EXPORT_SYMBOL_GPL(uprobe_unregister);
-  * refcount is released when the last @uc for the @uprobe
-  * unregisters. Caller of uprobe_register() is required to keep @inode
-  * (and the containing mount) referenced.
-- *
-- * Return errno if it cannot successully install probes
-- * else return 0 (success)
-  */
--int uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset,
--		    struct uprobe_consumer *uc)
-+struct uprobe *uprobe_register(struct inode *inode,
-+				loff_t offset, loff_t ref_ctr_offset,
-+				struct uprobe_consumer *uc)
- {
- 	struct uprobe *uprobe;
- 	int ret;
- 
- 	/* Uprobe must have at least one set consumer */
- 	if (!uc->handler && !uc->ret_handler)
--		return -EINVAL;
-+		return ERR_PTR(-EINVAL);
- 
- 	/* copy_insn() uses read_mapping_page() or shmem_read_mapping_page() */
- 	if (!inode->i_mapping->a_ops->read_folio &&
- 	    !shmem_mapping(inode->i_mapping))
--		return -EIO;
-+		return ERR_PTR(-EIO);
- 	/* Racy, just to catch the obvious mistakes */
- 	if (offset > i_size_read(inode))
--		return -EINVAL;
-+		return ERR_PTR(-EINVAL);
- 
- 	/*
- 	 * This ensures that copy_from_page(), copy_to_page() and
- 	 * __update_ref_ctr() can't cross page boundary.
- 	 */
- 	if (!IS_ALIGNED(offset, UPROBE_SWBP_INSN_SIZE))
--		return -EINVAL;
-+		return ERR_PTR(-EINVAL);
- 	if (!IS_ALIGNED(ref_ctr_offset, sizeof(short)))
--		return -EINVAL;
-+		return ERR_PTR(-EINVAL);
- 
-  retry:
- 	uprobe = alloc_uprobe(inode, offset, ref_ctr_offset);
- 	if (IS_ERR(uprobe))
--		return PTR_ERR(uprobe);
-+		return uprobe;
- 
- 	/*
- 	 * We can race with uprobe_unregister()->delete_uprobe().
-@@ -1186,35 +1177,27 @@ int uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset,
- 
- 	if (unlikely(ret == -EAGAIN))
- 		goto retry;
--	return ret;
-+
-+	return ret ? ERR_PTR(ret) : uprobe;
- }
- EXPORT_SYMBOL_GPL(uprobe_register);
- 
- /*
-  * uprobe_apply - unregister an already registered probe.
-- * @inode: the file in which the probe has to be removed.
-- * @offset: offset from the start of the file.
-  * @uc: consumer which wants to add more or remove some breakpoints
-  * @add: add or remove the breakpoints
-  */
--int uprobe_apply(struct inode *inode, loff_t offset,
--			struct uprobe_consumer *uc, bool add)
-+int uprobe_apply(struct uprobe *uprobe, struct uprobe_consumer *uc, bool add)
- {
--	struct uprobe *uprobe;
- 	struct uprobe_consumer *con;
- 	int ret = -ENOENT;
- 
--	uprobe = find_uprobe(inode, offset);
--	if (WARN_ON(!uprobe))
--		return ret;
--
- 	down_write(&uprobe->register_rwsem);
- 	for (con = uprobe->consumers; con && con != uc ; con = con->next)
- 		;
- 	if (con)
- 		ret = register_for_each_vma(uprobe, add ? uc : NULL);
- 	up_write(&uprobe->register_rwsem);
--	put_uprobe(uprobe);
- 
- 	return ret;
- }
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 467f358c8ce7..7571811127a2 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -3157,6 +3157,7 @@ struct bpf_uprobe {
- 	loff_t offset;
- 	unsigned long ref_ctr_offset;
- 	u64 cookie;
-+	struct uprobe *uprobe;
- 	struct uprobe_consumer consumer;
- };
- 
-@@ -3180,10 +3181,8 @@ static void bpf_uprobe_unregister(struct path *path, struct bpf_uprobe *uprobes,
- {
- 	u32 i;
- 
--	for (i = 0; i < cnt; i++) {
--		uprobe_unregister(d_real_inode(path->dentry), uprobes[i].offset,
--				  &uprobes[i].consumer);
--	}
-+	for (i = 0; i < cnt; i++)
-+		uprobe_unregister(uprobes[i].uprobe, &uprobes[i].consumer);
- }
- 
- static void bpf_uprobe_multi_link_release(struct bpf_link *link)
-@@ -3477,11 +3476,12 @@ int bpf_uprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
- 		      &bpf_uprobe_multi_link_lops, prog);
- 
- 	for (i = 0; i < cnt; i++) {
--		err = uprobe_register(d_real_inode(link->path.dentry),
-+		uprobes[i].uprobe = uprobe_register(d_real_inode(link->path.dentry),
- 					     uprobes[i].offset,
- 					     uprobes[i].ref_ctr_offset,
- 					     &uprobes[i].consumer);
--		if (err) {
-+		if (IS_ERR(uprobes[i].uprobe)) {
-+			err = PTR_ERR(uprobes[i].uprobe);
- 			bpf_uprobe_unregister(&path, uprobes, i);
- 			goto error_free;
- 		}
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 78a5c40e885a..2872955da202 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -58,8 +58,8 @@ struct trace_uprobe {
- 	struct dyn_event		devent;
- 	struct uprobe_consumer		consumer;
- 	struct path			path;
--	struct inode			*inode;
- 	char				*filename;
-+	struct uprobe			*uprobe;
- 	unsigned long			offset;
- 	unsigned long			ref_ctr_offset;
- 	unsigned long			nhit;
-@@ -1084,17 +1084,17 @@ typedef bool (*filter_func_t)(struct uprobe_consumer *self,
- 
- static int trace_uprobe_enable(struct trace_uprobe *tu, filter_func_t filter)
- {
--	int ret;
-+	struct inode *inode = d_real_inode(tu->path.dentry);
-+	struct uprobe *uprobe;
- 
- 	tu->consumer.filter = filter;
--	tu->inode = d_real_inode(tu->path.dentry);
--
--	ret = uprobe_register(tu->inode, tu->offset, tu->ref_ctr_offset,
--			      &tu->consumer);
--	if (ret)
--		tu->inode = NULL;
-+	uprobe = uprobe_register(inode, tu->offset, tu->ref_ctr_offset,
-+				&tu->consumer);
-+	if (IS_ERR(uprobe))
-+		return PTR_ERR(uprobe);
- 
--	return ret;
-+	tu->uprobe = uprobe;
-+	return 0;
- }
- 
- static void __probe_event_disable(struct trace_probe *tp)
-@@ -1105,11 +1105,11 @@ static void __probe_event_disable(struct trace_probe *tp)
- 	WARN_ON(!uprobe_filter_is_empty(tu->tp.event->filter));
- 
- 	list_for_each_entry(tu, trace_probe_probe_list(tp), tp.list) {
--		if (!tu->inode)
-+		if (!tu->uprobe)
- 			continue;
- 
--		uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
--		tu->inode = NULL;
-+		uprobe_unregister(tu->uprobe, &tu->consumer);
-+		tu->uprobe = NULL;
- 	}
- }
- 
-@@ -1306,7 +1306,7 @@ static int uprobe_perf_close(struct trace_event_call *call,
- 		return 0;
- 
- 	list_for_each_entry(tu, trace_probe_probe_list(tp), tp.list) {
--		ret = uprobe_apply(tu->inode, tu->offset, &tu->consumer, false);
-+		ret = uprobe_apply(tu->uprobe, &tu->consumer, false);
- 		if (ret)
- 			break;
- 	}
-@@ -1330,7 +1330,7 @@ static int uprobe_perf_open(struct trace_event_call *call,
- 		return 0;
- 
- 	list_for_each_entry(tu, trace_probe_probe_list(tp), tp.list) {
--		err = uprobe_apply(tu->inode, tu->offset, &tu->consumer, true);
-+		err = uprobe_apply(tu->uprobe, &tu->consumer, true);
- 		if (err) {
- 			uprobe_perf_close(call, event);
- 			break;
+cc -fsanitize=address -fsanitize=undefined  main.o xarray.o radix-tree.o idr.o linux.o test.o maple.o slab.o find_bit.o bitmap.o hweight.o vsprintf.o regression1.o regression2.o regression3.o regression4.o tag_check.o multiorder.o idr-test.o iteration_check.o iteration_check_2.o benchmark.o  -lpthread -lurcu -o main
+/usr/bin/ld: xarray.o: in function `xas_squash_marks':
+/home/richard/git/linux/tools/testing/radix-tree/../../../lib/xarray.c:139: undefined reference to `bitmap_clear'
+
+>
+>Thanks,
+>Yury
+>
+>> ---
+>>  tools/lib/bitmap.c                | 20 ++++++++++++++++++++
+>>  tools/testing/radix-tree/Makefile |  4 ++--
+>>  tools/testing/radix-tree/bitmap.c | 23 -----------------------
+>>  3 files changed, 22 insertions(+), 25 deletions(-)
+>>  delete mode 100644 tools/testing/radix-tree/bitmap.c
+>> 
+>> diff --git a/tools/lib/bitmap.c b/tools/lib/bitmap.c
+>> index c3e4871967bc..a96dbf001244 100644
+>> --- a/tools/lib/bitmap.c
+>> +++ b/tools/lib/bitmap.c
+>> @@ -100,3 +100,23 @@ bool __bitmap_intersects(const unsigned long *bitmap1,
+>>  			return true;
+>>  	return false;
+>>  }
+>> +
+>> +void bitmap_clear(unsigned long *map, unsigned int start, int len)
+>> +{
+>> +	unsigned long *p = map + BIT_WORD(start);
+>> +	const unsigned int size = start + len;
+>> +	int bits_to_clear = BITS_PER_LONG - (start % BITS_PER_LONG);
+>> +	unsigned long mask_to_clear = BITMAP_FIRST_WORD_MASK(start);
+>> +
+>> +	while (len - bits_to_clear >= 0) {
+>> +		*p &= ~mask_to_clear;
+>> +		len -= bits_to_clear;
+>> +		bits_to_clear = BITS_PER_LONG;
+>> +		mask_to_clear = ~0UL;
+>> +		p++;
+>> +	}
+>> +	if (len) {
+>> +		mask_to_clear &= BITMAP_LAST_WORD_MASK(size);
+>> +		*p &= ~mask_to_clear;
+>> +	}
+>> +}
+>> diff --git a/tools/testing/radix-tree/Makefile b/tools/testing/radix-tree/Makefile
+>> index 7527f738b4a1..505cc24a8b9c 100644
+>> --- a/tools/testing/radix-tree/Makefile
+>> +++ b/tools/testing/radix-tree/Makefile
+>> @@ -5,8 +5,8 @@ CFLAGS += -I. -I../../include -I../../../lib -g -Og -Wall \
+>>  LDFLAGS += -fsanitize=address -fsanitize=undefined
+>>  LDLIBS+= -lpthread -lurcu
+>>  TARGETS = main idr-test multiorder xarray maple
+>> -CORE_OFILES := xarray.o radix-tree.o idr.o linux.o test.o find_bit.o bitmap.o \
+>> -			 slab.o maple.o
+>> +LIBS := find_bit.o bitmap.o hweight.o vsprintf.o
+>> +CORE_OFILES := xarray.o radix-tree.o idr.o linux.o test.o slab.o maple.o $(LIBS)
+>>  OFILES = main.o $(CORE_OFILES) regression1.o regression2.o regression3.o \
+>>  	 regression4.o tag_check.o multiorder.o idr-test.o iteration_check.o \
+>>  	 iteration_check_2.o benchmark.o
+>> diff --git a/tools/testing/radix-tree/bitmap.c b/tools/testing/radix-tree/bitmap.c
+>> deleted file mode 100644
+>> index 66ec4a24a203..000000000000
+>> --- a/tools/testing/radix-tree/bitmap.c
+>> +++ /dev/null
+>> @@ -1,23 +0,0 @@
+>> -/* lib/bitmap.c pulls in at least two other files. */
+>> -
+>> -#include <linux/bitmap.h>
+>> -
+>> -void bitmap_clear(unsigned long *map, unsigned int start, int len)
+>> -{
+>> -	unsigned long *p = map + BIT_WORD(start);
+>> -	const unsigned int size = start + len;
+>> -	int bits_to_clear = BITS_PER_LONG - (start % BITS_PER_LONG);
+>> -	unsigned long mask_to_clear = BITMAP_FIRST_WORD_MASK(start);
+>> -
+>> -	while (len - bits_to_clear >= 0) {
+>> -		*p &= ~mask_to_clear;
+>> -		len -= bits_to_clear;
+>> -		bits_to_clear = BITS_PER_LONG;
+>> -		mask_to_clear = ~0UL;
+>> -		p++;
+>> -	}
+>> -	if (len) {
+>> -		mask_to_clear &= BITMAP_LAST_WORD_MASK(size);
+>> -		*p &= ~mask_to_clear;
+>> -	}
+>> -}
+>> -- 
+>> 2.34.1
+
 -- 
-2.25.1.362.g51ebf55
-
-
+Wei Yang
+Help you, Help me
 
