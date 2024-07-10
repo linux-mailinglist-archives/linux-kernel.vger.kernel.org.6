@@ -1,352 +1,232 @@
-Return-Path: <linux-kernel+bounces-247810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189B892D4D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:17:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE2292D4DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:21:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A6BDB24726
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:17:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C2EF1C21A6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC381946CA;
-	Wed, 10 Jul 2024 15:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6jZQSP0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938401946AA;
+	Wed, 10 Jul 2024 15:21:27 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAD819414B;
-	Wed, 10 Jul 2024 15:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B0B19308C
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720624626; cv=none; b=T0Rcqdbjbl7GkiaBd82BY63zZNu/yoMs+DupI9M6XkbMRGhZy5piorM2Z7JKklONEZehXUXPnKAYKT5tLbvsXapllCS7kAoqjmFK/np85v29PWsjfRS21aBx4rXoLa80rMOdP8jfUPYrqBKzFTHfNSBvNrdi9ZD247vPb2/det4=
+	t=1720624887; cv=none; b=ls5FXwBg1GhkIqi6S1rDYvbC9CRw1ESO7fH+D05MGl0YCJGuGr4HXPnnQR24T1xwpHvSRTi3yIWE5Izr3Ehi94fyOWGw+Tbu2qezNYDo7EkyPgqoLdywsbDkca0Csoubt/qwM1TdVyLcSmRph7a3/HdRcSiRS/JetyQ+B4DJLIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720624626; c=relaxed/simple;
-	bh=cIWgb+WwHCzNqFP0w9tgD3BNR/vixJLgr9imkGmex74=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GoIWz5y30bWwqDLX7ta47bhnMhkb+djXXrQ2xLvT+FIc4hILTMOSp/mBaD+n+VGnubNhkg01lFnwT9fWmhHse2xHFe+i7+w9MSgoZ6JzLMYQ/lM+W5PCekPuMb3VWkUwqQLoXIvZ9NG6uGa/kkLgOFARo83ZB1VdWm5+p9Dx8gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6jZQSP0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CF81C4AF07;
-	Wed, 10 Jul 2024 15:17:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720624625;
-	bh=cIWgb+WwHCzNqFP0w9tgD3BNR/vixJLgr9imkGmex74=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=F6jZQSP0HMZGJ0kxmrpKUUXfbWtb/nG2GZybwT25OIn4HmzeV1eYP2SE2ynOBFgH6
-	 yodT3lyTpiXhifuzZ5Z8LRe9JdI5gjjqQLmrn/LkhyCnafGBnukgD+po3Rt60CE0rX
-	 aCwtvcxPgM1/dfqW1iBkzr4RF0e3uT4k8gt1yIuLXDw8NEpklpS+mi/EDBScCE1Q7W
-	 cmPj/s21BeYokNON74pL6qewB5oLS/j/OSz8E2R/o+za1z38PkhF5jmqQM8isuW3tu
-	 B12cyw40htlHjuOy1GGJBTinEW/egxG+O8okSWQ4M7/ysH883WHuM6KPR/I/AcIVaV
-	 wQiEdapMcQpPA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sRZ42-00BFfJ-O7;
-	Wed, 10 Jul 2024 16:17:02 +0100
-Date: Wed, 10 Jul 2024 16:17:02 +0100
-Message-ID: <86v81d2s5t.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v9 13/39] KVM: arm64: Manage GCS registers for guests
-In-Reply-To: <20240625-arm64-gcs-v9-13-0f634469b8f0@kernel.org>
-References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
-	<20240625-arm64-gcs-v9-13-0f634469b8f0@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1720624887; c=relaxed/simple;
+	bh=tzP8zIxopcJsOmcjsM8AJL7Wlp4Sri4G1wOpI92nR7E=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LBUvrNbIyZOV9Inx1ihryzEwruNp8jDlhKJeFjnKalM+iffkmN9g4Vmd/gxG9L6EJEdKzDOi5cYoIsx4h4g3RninOcppvAJcYngN1/0z4Q5rUlfe5j/AAobFLvvPxJvpELIxUi7IA+xsG3qF5jirFZT4aqJqRj/9tzxCcTYzbpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-38437330bb9so68128025ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:21:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720624884; x=1721229684;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HxxII31q7fuG7hZ/Q2eiQTNmx2gCG6jesezUdHaFxcw=;
+        b=WK3iBvQjTx4mnSNHzwRoelU/L9UvAAkcVCnZVS5ConNUPAbX+I6FEBWyxAKdxUJX13
+         ZBtB8RACnq3O94cjAmF6qeFuOzDNF5qU8Va9exBV94tZkrsg6V26PDYVukwJoB0Cfrjn
+         96Mzc+lQm/hVN+0qrlznc80U7CvLzWhTKpHeccnauGk/7G+Nyz5/OR+Utxvnoz2yYwzx
+         W86UPqqy9+UektORCs+XLBXmqAugY/ixxgpcOE2GpwmAdlu6jYjfTcS3iRawyIy4Y9q4
+         lRGLCpcuYN4nQfYw86xp3LCI3izKUEV7wtzmVCKpTKYuvXFC3NLKlnd1+u1uHLNzkdRa
+         fnkg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6MpifcsS6Z1KdW2IO59RIKQA7DwcWsWUgh7nvtBbfKtK99B/VvdtKPS8gIbite3V1GswkWYyaM+tZk4o/EWLEUxvnThuBN+eLE9qa
+X-Gm-Message-State: AOJu0Yxo7kcLvPRdQtWb/BjQRVLqop1TJTKWtN0vPFdrVsTs8cP+5a+F
+	cIdwW6bxFzn5dRo8oeg0NHesGHHASqeP/jM6afKDWOnJ+t0gqOG2vwpd3B9RbEdAtV3u9ezGaSv
+	kbmtzXrH3I1NrNxIgQx29uRMh6nKnUk4oEsyGlH57UP/DgwO1nc1C/fQ=
+X-Google-Smtp-Source: AGHT+IGhZ33aGEZmppDxzUhDwXzPJ/Kd0/t+OCu65s73HBSGGE2nxAfzeRETdCnK8Xg0ZOC3MhLNbs7/qHBMjWNwrZyle85iNh8t
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, akpm@linux-foundation.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, arnd@arndb.de, oleg@redhat.com, ebiederm@xmission.com, shuah@kernel.org, rick.p.edgecombe@intel.com, debug@rivosinc.com, ardb@kernel.org, Szabolcs.Nagy@arm.com, kees@kernel.org, hjl.tools@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, fweimer@redhat.com, brauner@kernel.org, thiago.bauermann@linaro.org, ross.burton@arm.com, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+X-Received: by 2002:a92:d9c1:0:b0:381:c14:70cf with SMTP id
+ e9e14a558f8ab-38a56c0a199mr598775ab.1.1720624884607; Wed, 10 Jul 2024
+ 08:21:24 -0700 (PDT)
+Date: Wed, 10 Jul 2024 08:21:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000009ff2e061ce633d7@google.com>
+Subject: [syzbot] [net?] possible deadlock in ip_mroute_setsockopt
+From: syzbot <syzbot+e227429f6fa77945d7e4@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 25 Jun 2024 15:57:41 +0100,
-Mark Brown <broonie@kernel.org> wrote:
-> 
-> GCS introduces a number of system registers for EL1 and EL0, on systems
-> with GCS we need to context switch them and expose them to VMMs to allow
-> guests to use GCS, as well as describe their fine grained traps to
-> nested virtualisation.  Traps are already disabled.
+Hello,
 
-I don't see anything related to FGTs at all.
+syzbot found the following issue on:
 
-> 
-> Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  arch/arm64/include/asm/kvm_host.h          | 14 +++++++++
->  arch/arm64/include/asm/vncr_mapping.h      |  2 ++
->  arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h | 48 +++++++++++++++++++++++-------
->  arch/arm64/kvm/sys_regs.c                  | 25 +++++++++++++++-
->  4 files changed, 78 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index 36b8e97bf49e..316fb412f355 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -411,6 +411,10 @@ enum vcpu_sysreg {
->  	GCR_EL1,	/* Tag Control Register */
->  	TFSRE0_EL1,	/* Tag Fault Status Register (EL0) */
->  
-> +	/* Guarded Control Stack registers */
-> +	GCSCRE0_EL1,	/* Guarded Control Stack Control (EL0) */
-> +	GCSPR_EL0,	/* Guarded Control Stack Pointer (EL0) */
-> +
->  	/* 32bit specific registers. */
->  	DACR32_EL2,	/* Domain Access Control Register */
->  	IFSR32_EL2,	/* Instruction Fault Status Register */
-> @@ -481,6 +485,10 @@ enum vcpu_sysreg {
->  	VNCR(PIR_EL1),	 /* Permission Indirection Register 1 (EL1) */
->  	VNCR(PIRE0_EL1), /*  Permission Indirection Register 0 (EL1) */
->  
-> +	/* Guarded Control Stack registers */
-> +	VNCR(GCSPR_EL1),	/* Guarded Control Stack Pointer (EL1) */
-> +	VNCR(GCSCR_EL1),	/* Guarded Control Stack Control (EL1) */
-> +
->  	VNCR(HFGRTR_EL2),
->  	VNCR(HFGWTR_EL2),
->  	VNCR(HFGITR_EL2),
-> @@ -1343,6 +1351,12 @@ static inline bool __vcpu_has_feature(const struct kvm_arch *ka, int feature)
->  
->  #define kvm_vcpu_initialized(v) vcpu_get_flag(vcpu, VCPU_INITIALIZED)
->  
-> +static inline bool has_gcs(void)
-> +{
-> +	return IS_ENABLED(CONFIG_ARM64_GCS) &&
-> +		cpus_have_final_cap(ARM64_HAS_GCS);
-> +}
+HEAD commit:    40ab9e0dc865 netxen_nic: Use {low,upp}er_32_bits() helpers
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=14ce4831980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=db697e01efa9d1d7
+dashboard link: https://syzkaller.appspot.com/bug?extid=e227429f6fa77945d7e4
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-This is mostly useless, see below.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> +
->  int kvm_trng_call(struct kvm_vcpu *vcpu);
->  #ifdef CONFIG_KVM
->  extern phys_addr_t hyp_mem_base;
-> diff --git a/arch/arm64/include/asm/vncr_mapping.h b/arch/arm64/include/asm/vncr_mapping.h
-> index df2c47c55972..5e83e6f579fd 100644
-> --- a/arch/arm64/include/asm/vncr_mapping.h
-> +++ b/arch/arm64/include/asm/vncr_mapping.h
-> @@ -88,6 +88,8 @@
->  #define VNCR_PMSIRR_EL1         0x840
->  #define VNCR_PMSLATFR_EL1       0x848
->  #define VNCR_TRFCR_EL1          0x880
-> +#define VNCR_GCSPR_EL1		0x8C0
-> +#define VNCR_GCSCR_EL1		0x8D0
->  #define VNCR_MPAM1_EL1          0x900
->  #define VNCR_MPAMHCR_EL2        0x930
->  #define VNCR_MPAMVPMV_EL2       0x938
-> diff --git a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
-> index 4be6a7fa0070..b20212d80e9b 100644
-> --- a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
-> +++ b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
-> @@ -16,6 +16,27 @@
->  #include <asm/kvm_hyp.h>
->  #include <asm/kvm_mmu.h>
->  
-> +static inline struct kvm_vcpu *ctxt_to_vcpu(struct kvm_cpu_context *ctxt)
-> +{
-> +	struct kvm_vcpu *vcpu = ctxt->__hyp_running_vcpu;
-> +
-> +	if (!vcpu)
-> +		vcpu = container_of(ctxt, struct kvm_vcpu, arch.ctxt);
-> +
-> +	return vcpu;
-> +}
-> +
-> +static inline bool ctxt_has_gcs(struct kvm_cpu_context *ctxt)
-> +{
-> +	struct kvm_vcpu *vcpu;
-> +
-> +	if (!cpus_have_final_cap(ARM64_HAS_GCS))
-> +		return false;
-> +
-> +	vcpu = ctxt_to_vcpu(ctxt);
-> +	return kvm_has_feat(kern_hyp_va(vcpu->kvm), ID_AA64PFR1_EL1, GCS, IMP);
-> +}
-> +
->  static inline void __sysreg_save_common_state(struct kvm_cpu_context *ctxt)
->  {
->  	ctxt_sys_reg(ctxt, MDSCR_EL1)	= read_sysreg(mdscr_el1);
-> @@ -25,16 +46,8 @@ static inline void __sysreg_save_user_state(struct kvm_cpu_context *ctxt)
->  {
->  	ctxt_sys_reg(ctxt, TPIDR_EL0)	= read_sysreg(tpidr_el0);
->  	ctxt_sys_reg(ctxt, TPIDRRO_EL0)	= read_sysreg(tpidrro_el0);
-> -}
-> -
-> -static inline struct kvm_vcpu *ctxt_to_vcpu(struct kvm_cpu_context *ctxt)
-> -{
-> -	struct kvm_vcpu *vcpu = ctxt->__hyp_running_vcpu;
-> -
-> -	if (!vcpu)
-> -		vcpu = container_of(ctxt, struct kvm_vcpu, arch.ctxt);
-> -
-> -	return vcpu;
-> +	if (ctxt_has_gcs(ctxt))
-> +		ctxt_sys_reg(ctxt, GCSPR_EL0) = read_sysreg_s(SYS_GCSPR_EL0);
->  }
->  
->  static inline bool ctxt_has_mte(struct kvm_cpu_context *ctxt)
-> @@ -80,6 +93,12 @@ static inline void __sysreg_save_el1_state(struct kvm_cpu_context *ctxt)
->  	ctxt_sys_reg(ctxt, PAR_EL1)	= read_sysreg_par();
->  	ctxt_sys_reg(ctxt, TPIDR_EL1)	= read_sysreg(tpidr_el1);
->  
-> +	if (ctxt_has_gcs(ctxt)) {
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/82323446a05a/disk-40ab9e0d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9ef73ffa3427/vmlinux-40ab9e0d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/38572b425814/bzImage-40ab9e0d.xz
 
-Since this is conditioned on S1PIE, it should be only be evaluated
-when PIE is enabled in the guest.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e227429f6fa77945d7e4@syzkaller.appspotmail.com
 
-> +		ctxt_sys_reg(ctxt, GCSPR_EL1)	= read_sysreg_el1(SYS_GCSPR);
-> +		ctxt_sys_reg(ctxt, GCSCR_EL1)	= read_sysreg_el1(SYS_GCSCR);
-> +		ctxt_sys_reg(ctxt, GCSCRE0_EL1)	= read_sysreg_s(SYS_GCSCRE0_EL1);
+======================================================
+WARNING: possible circular locking dependency detected
+6.10.0-rc6-syzkaller-01403-g40ab9e0dc865 #0 Not tainted
+------------------------------------------------------
+syz.1.1201/8409 is trying to acquire lock:
+ffffffff8f5e9108 (rtnl_mutex){+.+.}-{3:3}, at: ip_mroute_setsockopt+0x15b/0x1190 net/ipv4/ipmr.c:1369
 
-Why is this part of the EL1 context? It clearly only matters to EL0
-execution, so it could be switched in load/put on nVHE as well. And
-actually, given that the whole thing is strictly for userspace, why do
-we switch *anything* eagerly at all?
+but task is already holding lock:
+ffff88805f784c50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0x1c3/0xe50 net/smc/af_smc.c:3064
 
-> +	}
-> +
->  	if (ctxt_has_mte(ctxt)) {
->  		ctxt_sys_reg(ctxt, TFSR_EL1) = read_sysreg_el1(SYS_TFSR);
->  		ctxt_sys_reg(ctxt, TFSRE0_EL1) = read_sysreg_s(SYS_TFSRE0_EL1);
-> @@ -113,6 +132,8 @@ static inline void __sysreg_restore_user_state(struct kvm_cpu_context *ctxt)
->  {
->  	write_sysreg(ctxt_sys_reg(ctxt, TPIDR_EL0),	tpidr_el0);
->  	write_sysreg(ctxt_sys_reg(ctxt, TPIDRRO_EL0),	tpidrro_el0);
-> +	if (ctxt_has_gcs(ctxt))
-> +		write_sysreg_s(ctxt_sys_reg(ctxt, GCSPR_EL0), SYS_GCSPR_EL0);
->  }
->  
->  static inline void __sysreg_restore_el1_state(struct kvm_cpu_context *ctxt)
-> @@ -156,6 +177,13 @@ static inline void __sysreg_restore_el1_state(struct kvm_cpu_context *ctxt)
->  	write_sysreg(ctxt_sys_reg(ctxt, PAR_EL1),	par_el1);
->  	write_sysreg(ctxt_sys_reg(ctxt, TPIDR_EL1),	tpidr_el1);
->  
-> +	if (ctxt_has_gcs(ctxt)) {
-> +		write_sysreg_el1(ctxt_sys_reg(ctxt, GCSPR_EL1),	SYS_GCSPR);
-> +		write_sysreg_el1(ctxt_sys_reg(ctxt, GCSCR_EL1),	SYS_GCSCR);
-> +		write_sysreg_s(ctxt_sys_reg(ctxt, GCSCRE0_EL1),
-> +			       SYS_GCSCRE0_EL1);
-> +	}
-> +
->  	if (ctxt_has_mte(ctxt)) {
->  		write_sysreg_el1(ctxt_sys_reg(ctxt, TFSR_EL1), SYS_TFSR);
->  		write_sysreg_s(ctxt_sys_reg(ctxt, TFSRE0_EL1), SYS_TFSRE0_EL1);
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index 22b45a15d068..cf068dcfbd49 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -2015,6 +2015,23 @@ static unsigned int mte_visibility(const struct kvm_vcpu *vcpu,
->  	.visibility = mte_visibility,		\
->  }
->  
-> +static unsigned int gcs_visibility(const struct kvm_vcpu *vcpu,
-> +				   const struct sys_reg_desc *rd)
-> +{
-> +	if (has_gcs())
-> +		return 0;
+which lock already depends on the new lock.
 
-No. we've been here before.
 
-> +
-> +	return REG_HIDDEN;
-> +}
-> +
-> +#define GCS_REG(name) {				\
-> +	SYS_DESC(SYS_##name),			\
-> +	.access = undef_access,			\
-> +	.reset = reset_unknown,			\
-> +	.reg = name,				\
-> +	.visibility = gcs_visibility,		\
-> +}
-> +
->  static unsigned int el2_visibility(const struct kvm_vcpu *vcpu,
->  				   const struct sys_reg_desc *rd)
->  {
-> @@ -2306,7 +2323,8 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  		   ID_AA64PFR0_EL1_GIC |
->  		   ID_AA64PFR0_EL1_AdvSIMD |
->  		   ID_AA64PFR0_EL1_FP), },
-> -	ID_SANITISED(ID_AA64PFR1_EL1),
-> +	ID_WRITABLE(ID_AA64PFR1_EL1, ~(ID_AA64PFR1_EL1_RES0 |
-> +				       ID_AA64PFR1_EL1_BT)),
+the existing dependency chain (in reverse order) is:
 
-I don't know what you're trying to do here, but that's not right. If
-you want to make this register writable, here's the shopping list:
+-> #2 (&smc->clcsock_release_lock){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       smc_switch_to_fallback+0x35/0xd00 net/smc/af_smc.c:902
+       smc_sendmsg+0x11f/0x530 net/smc/af_smc.c:2779
+       sock_sendmsg_nosec net/socket.c:730 [inline]
+       __sock_sendmsg+0x221/0x270 net/socket.c:745
+       __sys_sendto+0x3a4/0x4f0 net/socket.c:2192
+       __do_sys_sendto net/socket.c:2204 [inline]
+       __se_sys_sendto net/socket.c:2200 [inline]
+       __x64_sys_sendto+0xde/0x100 net/socket.c:2200
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-https://lore.kernel.org/all/87ikxsi0v9.wl-maz@kernel.org/
+-> #1 (sk_lock-AF_INET6){+.+.}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       lock_sock_nested+0x48/0x100 net/core/sock.c:3543
+       do_ipv6_setsockopt+0xbf3/0x3630 net/ipv6/ipv6_sockglue.c:567
+       ipv6_setsockopt+0x5c/0x1a0 net/ipv6/ipv6_sockglue.c:993
+       do_sock_setsockopt+0x3af/0x720 net/socket.c:2312
+       __sys_setsockopt+0x1ae/0x250 net/socket.c:2335
+       __do_sys_setsockopt net/socket.c:2344 [inline]
+       __se_sys_setsockopt net/socket.c:2341 [inline]
+       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2341
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
->  	ID_UNALLOCATED(4,2),
->  	ID_UNALLOCATED(4,3),
->  	ID_WRITABLE(ID_AA64ZFR0_EL1, ~ID_AA64ZFR0_EL1_RES0),
-> @@ -2390,6 +2408,10 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  	PTRAUTH_KEY(APDB),
->  	PTRAUTH_KEY(APGA),
->  
-> +	GCS_REG(GCSCR_EL1),
-> +	GCS_REG(GCSPR_EL1),
-> +	GCS_REG(GCSCRE0_EL1),
-> +
->  	{ SYS_DESC(SYS_SPSR_EL1), access_spsr},
->  	{ SYS_DESC(SYS_ELR_EL1), access_elr},
->  
-> @@ -2476,6 +2498,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  	{ SYS_DESC(SYS_SMIDR_EL1), undef_access },
->  	{ SYS_DESC(SYS_CSSELR_EL1), access_csselr, reset_unknown, CSSELR_EL1 },
->  	{ SYS_DESC(SYS_CTR_EL0), access_ctr },
-> +	GCS_REG(GCSPR_EL0),
->  	{ SYS_DESC(SYS_SVCR), undef_access },
->  
->  	{ PMU_SYS_REG(PMCR_EL0), .access = access_pmcr, .reset = reset_pmcr,
+-> #0 (rtnl_mutex){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
+       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       ip_mroute_setsockopt+0x15b/0x1190 net/ipv4/ipmr.c:1369
+       do_ip_setsockopt+0x129f/0x3cd0 net/ipv4/ip_sockglue.c:948
+       ip_setsockopt+0x63/0x100 net/ipv4/ip_sockglue.c:1417
+       smc_setsockopt+0x275/0xe50 net/smc/af_smc.c:3072
+       do_sock_setsockopt+0x3af/0x720 net/socket.c:2312
+       __sys_setsockopt+0x1ae/0x250 net/socket.c:2335
+       __do_sys_setsockopt net/socket.c:2344 [inline]
+       __se_sys_setsockopt net/socket.c:2341 [inline]
+       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2341
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-I don't see the vcpu's hcrx_el2 being updated to enable GCS. How does
-it work then? I also don't see the FGU updates when GCS is disabled,
-nor the corresponding FGT bits being marked as RES0.
+other info that might help us debug this:
 
-	M.
+Chain exists of:
+  rtnl_mutex --> sk_lock-AF_INET6 --> &smc->clcsock_release_lock
 
--- 
-Without deviation from the norm, progress is not possible.
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&smc->clcsock_release_lock);
+                               lock(sk_lock-AF_INET6);
+                               lock(&smc->clcsock_release_lock);
+  lock(rtnl_mutex);
+
+ *** DEADLOCK ***
+
+1 lock held by syz.1.1201/8409:
+ #0: ffff88805f784c50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_setsockopt+0x1c3/0xe50 net/smc/af_smc.c:3064
+
+stack backtrace:
+CPU: 0 PID: 8409 Comm: syz.1.1201 Not tainted 6.10.0-rc6-syzkaller-01403-g40ab9e0dc865 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
+ __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+ ip_mroute_setsockopt+0x15b/0x1190 net/ipv4/ipmr.c:1369
+ do_ip_setsockopt+0x129f/0x3cd0 net/ipv4/ip_sockglue.c:948
+ ip_setsockopt+0x63/0x100 net/ipv4/ip_sockglue.c:1417
+ smc_setsockopt+0x275/0xe50 net/smc/af_smc.c:3072
+ do_sock_setsockopt+0x3af/0x720 net/socket.c:2312
+ __sys_setsockopt+0x1ae/0x250 net/socket.c:2335
+ __do_sys_setsockopt net/socket.c:2344 [inline]
+ __se_sys_setsockopt net/socket.c:2341 [inline]
+ __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2341
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5dfd375bd9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f5dfe06b048 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00007f5dfd503f60 RCX: 00007f5dfd375bd9
+RDX: 00000000000000ca RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00007f5dfd3e4e60 R08: 0000000000000010 R09: 0000000000000000
+R10: 0000000020000100 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007f5dfd503f60 R15: 00007fff4a8a5b18
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
