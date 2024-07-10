@@ -1,141 +1,99 @@
-Return-Path: <linux-kernel+bounces-248070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BAEE92D80C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:11:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22A4592D806
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A512281380
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:11:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D27A6284D6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C50197531;
-	Wed, 10 Jul 2024 18:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94134195B28;
+	Wed, 10 Jul 2024 18:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MhSiVtxW"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Yt1bmhFR"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29D119580B;
-	Wed, 10 Jul 2024 18:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B31F195804;
+	Wed, 10 Jul 2024 18:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720635046; cv=none; b=sbnvSbR91PB+K6pFk18K8k/bd26hj08bI4SrDiuh6tH4ZT51ske4s8paKLVtmC67NTualbTjKYDf0xX09LfbqXIi0/Ju4pIqsdPhM26aatYsy8G/yaFZYMadkGueaRtN1GcPiGPDpuH31ZlXzI6sTa/TUdPobsMBskoKkGEP2U8=
+	t=1720635036; cv=none; b=QH6G3dtjJphpGIsSmjEouILlMhEOw5exE5DBsP399SkxkdbH7MtCpDKzp95crn/69Lb6LB0uZa1LUv+j4ny8awgJvGId1dKp1OCheOeU1bm50vYeA9pOw2ruls6hT7cwIF7jigftG9i9oO0lsli2bljWGgId8qUVlG1ShICkQrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720635046; c=relaxed/simple;
-	bh=WtpRa4xiQ1qNOnmfmePnx9yWjyXo7LYTsm+BC1oCOQY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Bg+pSGj5JeTKKoRJcKnIupEN62p4CdRbMPDuojDDXdYIM3EuViAFxYWpu6O6rBzKUbXWufRZ/wbfMf+n2kkmmje8PihhwAg30DnXBQOQi6LMlpY7B7IuKBEOwwUxK0bVOF04amwngLLqvh6h4Ofc4eH9UNIQkhlZkgqQKfgtNZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MhSiVtxW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46ACWEfa011903;
-	Wed, 10 Jul 2024 18:10:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	upO1q7UqDwCuQ6QLFOEiDF+Q8CwpGosAr4b+J/eawts=; b=MhSiVtxWaVTKrhD8
-	nKeBhCa4J9LTJj9OpBq6I+NwwrLkQUpmcviw3inTZC3Vii8YhWqA5L888SJ8doD2
-	JxPcDlhtLy+QiUc1DrkP6W/YzuWth42zl2kOOy5c8leM4zu8nRj7w52bg9brSZLE
-	E+Z2ZuOaA+JU9VGxRtvw39Sw7lhqCjKNDK5Lp/mlr31Hw0pl70a2zBOjclKT+Raa
-	myM/7dTkr28LvNnImiUCULz/BoOvfpCveuJ7U+5Gy00ZZG+LR+rTAm8iNbC0YaPK
-	t0sjA8OysuQ9mI1GSe2I3iEBLYJ2db4FwiJHt793TqtTwwYbkZybq5HvFydPkhXZ
-	U8Swbw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406xpdsvnb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jul 2024 18:10:31 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46AIAC61028829
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jul 2024 18:10:12 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 10 Jul
- 2024 11:10:12 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 10 Jul 2024 11:10:04 -0700
-Subject: [PATCH net-next 2/2] libceph: fix crush_choose_firstn() kernel-doc
- warnings
+	s=arc-20240116; t=1720635036; c=relaxed/simple;
+	bh=SwSaCHdtrV0ysbFH+TeNCysgd5A2WJZwnuYrUg5e1uo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ol94Tc07/DfvNzOPx6H2IO8TGvj/sN00kiJUhg+byfeJkrCm9vD+D8GQUff4sHFt24eiNT0rgvaqdbrsiuYL2FWYbLmbya04aE7zcB81nAOkDswJWa4AplyHG32TQuht4vvuzq1qTDZXxEdASlTRnRcndyf/ygf9GgBIAaC4DZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Yt1bmhFR; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720635008; x=1721239808; i=markus.elfring@web.de;
+	bh=SwSaCHdtrV0ysbFH+TeNCysgd5A2WJZwnuYrUg5e1uo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Yt1bmhFRE0sJRZnT21Kuq0DjWvRplaGG8BhbLt1N5KJLGDJ2ozxaEgeu4fmsjeFZ
+	 N5q6lqemHV+eZlbjwvKosy4920fD4v+XAEeACyP2ElTBKufnS9C89J2HOtTtJB0cp
+	 3ug5eE07KctxYJKwnexgI/Y7kEWUiaCSAj6Ian0rnCLONjnMp5FR2uBnt0jqJrhYU
+	 lSkdU2bUJUJqFtrckuVv5Lux8LP/DyIexqmL4iAWOgHOc2hNpW9q2KSeUpxWeWre/
+	 T8AREgS3OT9EbTHbdXum7SlDVMswaB7OrX95LR0gO3xzbKmkKaSo7ZkSjhbK5oZNG
+	 LGXP/WyWflaCCs+W2w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.82.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N6bD0-1sJBmA0uL8-013stn; Wed, 10
+ Jul 2024 20:10:08 +0200
+Message-ID: <f33d44a1-7100-46f8-8d31-942237e61d90@web.de>
+Date: Wed, 10 Jul 2024 20:10:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [3/3] leds: leds-lp55xx: Convert mutex lock/unlock to guard API
+To: Christian Marangi <ansuelsmth@gmail.com>, linux-leds@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>,
+ Lee Jones <lee@kernel.org>
+References: <20240626221520.2846-1-ansuelsmth@gmail.com>
+ <20240626221520.2846-3-ansuelsmth@gmail.com>
+ <493f3160-90be-4c02-a0d8-bedb630e5f1c@web.de>
+ <20240710165528.GH501857@google.com>
+ <668ebf50.050a0220.4aa0d.31b3@mx.google.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <668ebf50.050a0220.4aa0d.31b3@mx.google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-ID: <20240710-kd-crush_choose_indep-v1-2-fe2b85f322c6@quicinc.com>
-References: <20240710-kd-crush_choose_indep-v1-0-fe2b85f322c6@quicinc.com>
-In-Reply-To: <20240710-kd-crush_choose_indep-v1-0-fe2b85f322c6@quicinc.com>
-To: Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
-        "David S.
- Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-CC: <ceph-devel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: LrxBBlL1OzgaKpHzNzOicAglcVAa70E6
-X-Proofpoint-ORIG-GUID: LrxBBlL1OzgaKpHzNzOicAglcVAa70E6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-10_13,2024-07-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- adultscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999 spamscore=0
- clxscore=1015 lowpriorityscore=0 priorityscore=1501 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407100128
+X-Provags-ID: V03:K1:cfGRNW5EkVW/03TmD4VvZcXD4vFVtNRqFplmYOp5/RZtiL+LlZw
+ eEd3Ol7Eqm5gyBQyDAwqIadwLn99BCvz+nhU8aR7zUMXkpnKvJ9if9oMdEjTNVy1NMJv6Ku
+ gaF2GyflCcIcRaC71/NCTImzrajk3UYNb7CWUukGoPgjDvucwsBIS0AmuFB6mVZIDcn+PUP
+ 3t/GUV62nABwEJXcVyEVQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8K92NhQMigY=;Q2EC19q7SUWE0VO8/APvhdnUMK2
+ iuhChihQl9DGictp2cjUOxZGCIY42pmxosNHM5VEej9wXuiYcoxRPCjlCSBJGWe/9MF+aNRCs
+ MA1YsfStvhpYxpgDHjjJB++Ac/kobZVJpXxz0EesbWFdOp6rn/uAfGvtt6MP2mR1XVx3iyuwJ
+ cQmgPqP9+bq2hv6MleSZ36cg4ojHCoDGuLDO4p0OUdgt/48NY2AtqE8JypoS4ZnxoxRg9Kn42
+ +gzjcF8U9kvGt4iFKbY+uJfeIOHMa91ugp8m8iwSDuVPMzlU2sBj5Zj1VVPpauKVd2CPoZsFp
+ hZxOBqyx52iRwYjQTCG9Z1dDnDeUSV5TrIT9zNvDyRKmuxzcl5LYyzObkgUcffZEhbv/FrZRO
+ iMjnXaRa6hEORxQgeqb+dVP3Dxzn92NCdnxSJHSyQU8VhHpoche9Gu8L4xQ+RIY6l1I3/Rtd8
+ Q79veAo9wktE/kalSgof1B3w2ahR+XRApZdc8kOF/A8n5KnEdHzUYu94nXEVqOp933cF9ZvIP
+ w0400BdsVgDZ3v2HhQVJ4/F+6f90dpobxXKNpC4EchMNZl7eUA0dPOEpGTttE2inv4eHfku5g
+ Tx3+CFZWINZaehd5X7k5cHyYflsXqMv3xmsfNzalCxZ+N01sNrKtY5+t85RA54j0mYZcL+Y4D
+ vAyKMsU9knJh+X0VNplfZoue9w8uQzw/KNQxowdefjpGh1U88z19+3FHC+4DczFbFOf/8b0xy
+ L84fbE6NRZ6Q6W0aMM5YmzrFy4y6UpdoeLfgBiUmBDqJt3IvhayGq1mdbxjNkqEAnddScrRTf
+ 3DJRhOwSptdVaRibvtLBHHCA==
 
-Currently, when built with "make W=1", the following warnings are
-generated:
+> What is the next step?
 
-net/ceph/crush/mapper.c:466: warning: Function parameter or struct member 'work' not described in 'crush_choose_firstn'
-net/ceph/crush/mapper.c:466: warning: Function parameter or struct member 'weight' not described in 'crush_choose_firstn'
-net/ceph/crush/mapper.c:466: warning: Function parameter or struct member 'weight_max' not described in 'crush_choose_firstn'
-net/ceph/crush/mapper.c:466: warning: Function parameter or struct member 'choose_args' not described in 'crush_choose_firstn'
+I hope that you would dare to offer a subsequent improved patch version.
 
-Update the crush_choose_firstn() kernel-doc to document these
-parameters.
-
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- net/ceph/crush/mapper.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/net/ceph/crush/mapper.c b/net/ceph/crush/mapper.c
-index 3194d5090963..16a0f7e63d37 100644
---- a/net/ceph/crush/mapper.c
-+++ b/net/ceph/crush/mapper.c
-@@ -429,7 +429,10 @@ static int is_out(const struct crush_map *map,
- /**
-  * crush_choose_firstn - choose numrep distinct items of given type
-  * @map: the crush_map
-+ * @work: crush workspace initialized by crush_init_workspace()
-  * @bucket: the bucket we are choose an item from
-+ * @weight: weight vector (for map leaves)
-+ * @weight_max: size of weight vector
-  * @x: crush input value
-  * @numrep: the number of items to choose
-  * @type: the type of item to choose
-@@ -445,6 +448,7 @@ static int is_out(const struct crush_map *map,
-  * @vary_r: pass r to recursive calls
-  * @out2: second output vector for leaf items (if @recurse_to_leaf)
-  * @parent_r: r value passed from the parent
-+ * @choose_args: weights and ids for each known bucket
-  */
- static int crush_choose_firstn(const struct crush_map *map,
- 			       struct crush_work *work,
-
--- 
-2.42.0
-
+Regards,
+Markus
 
