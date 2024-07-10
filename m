@@ -1,142 +1,105 @@
-Return-Path: <linux-kernel+bounces-247806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB74A92D4C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:15:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9249992D4C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E3781F23B8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:15:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F3E7284860
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494DA194131;
-	Wed, 10 Jul 2024 15:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E0819414A;
+	Wed, 10 Jul 2024 15:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LTjT+rem"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RSV/sQab"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F332918635
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6C95F876;
+	Wed, 10 Jul 2024 15:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720624520; cv=none; b=TMXsGCnoPc95ex8qT37lJTmqrjZFVYNVh8I1ipylLzhKGvn8EjQEyRinjH3KxKb2Bwef3uwB6aJDmbdPQUBwaMpIaqXTUGJ2+tnTuQZegMGcld7eqcvvUw4Ugz/X0v67O4g1F9biFZq05SMZFtXYQYe/qkslA3A4H5ZxVM6nt0w=
+	t=1720624509; cv=none; b=F8dmVVAHyXOQBFuu8Nj3aMDZ912GMAvAGnTfO4bC9hH7yUZFvXgDQKTmYlu1xv+xBYUKSbnfrKv5/aWTzvk1kX/QJ5IQXn/QSFWnZr6d5pJtz++CCW+CZ74Ls/m97Er1cqJAUei0ElyP/jSy42VL7g96QQql55Jwg45yO3pNJsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720624520; c=relaxed/simple;
-	bh=FfUIvAoGgrICtX2UtlualkM/7Z6PkggeIsDM53BE+hw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CPyMmgLCvQ410Xp+hEmVnPmLVPPBakrU6AJrDMdy94vFwluxRO8Cc8gf8d30/kUjmsRA2ThU701hqOkvkSRJ3JfecHAP6LAJsbB3AXsXT0cr9SpuOxx6BGf6rYX+crk1C7rGRWbDxLbYq1RkmNS0o3/dmKz/ZRBZtYAQdE4Q3OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LTjT+rem; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52e98087e32so7243171e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:15:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720624517; x=1721229317; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=11bwyp3mzRgMF9CNOeJnvGVtvdDnSAqFTcq7kcgU97Y=;
-        b=LTjT+remq76qPeUwRIPP+R9/opDz6/mGmikadXFekaneLHvDFVsTNC1DDTEk3xMPwH
-         SWp8jRdpKBrCLAFWi8auUfTDdhEXvWBMsxftT1//VP30F/X2Csuq8FP0tbNlf+ghZkWl
-         +SE4/21UyfBo+3JBIgjNGDNYJM5+ZWU1WDNXVmCI3m6Mo/Wh/HZSqeX1gzwWNp56YoLt
-         qIBgWYowUwfOxqDvGja27RwcDkAt5cvHlFyLpShLIKWyWEt0oMcFKN016huh0B80JC17
-         dk/43TeVXCf1y6wVgak0gHDQbRrjTOQV2jK/KzZ+AAJXsSz7Q1lu2PxCZ2vQkBrlMGGe
-         j4FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720624517; x=1721229317;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=11bwyp3mzRgMF9CNOeJnvGVtvdDnSAqFTcq7kcgU97Y=;
-        b=C5cNbOtJ3AtZb8VfRUyRcTZ80IsTv3i5HFysRi6SkAEmmOzuvFQtoFetVWZqed8jWG
-         O0VNjw7l50RHwKroCLTjuyXFmR8ZJJR+LV3mXEZu0lfG5rUHDbp7xJrG72ffV9e/Ntw9
-         jZIcJ6v7kpRTHjlbNISqgzPrWWBqWCpMCzqN0a8uSBfZ1IDKrQ4rEbc8dHgMR0GOzJl7
-         tmADtklqs0TunBxiapjjQ83ZNVR78jvcWgtdNjG4T2O7UEqFpGXG3xST4jrbSCnT9RIQ
-         KwShQ0pcNQKOGHKZvx0nEsBE6CH/lAX9q2KxPOCtjz5CD5gZZJPRQ2NWENiT0kfTxuY4
-         XtGg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsmayhYx/dEiMzRO/waT5amlrTpBGYyPi7x2UPHmVUgeqBrNRO1oTrrKh+WozQg6J9jNe0TkntXYpuHwjw5hD9uZX8/82emXHaK6s7
-X-Gm-Message-State: AOJu0YzhI79rGr0JOEAGbNMtRnIXQ1tagxTKwexedMdOmOP5XNDts5eK
-	aNDwuXf1HcEWQMKAZEB/19rhljexwBA/rLpvLk2D+vKJaXwVZdptIhkcstvHTkI68E8mX8N6Lr3
-	5NmAMSO+E6Jlxid053xLZ2AWqLZU=
-X-Google-Smtp-Source: AGHT+IFf2/IqU+lWECTTK4YpYuwcHyu16mdGNAy0zcyMCPJx2FjekA7dU0dJBEbjuqpOiS1E0WQUSrCr6SZ7kj1+qUs=
-X-Received: by 2002:a05:6512:304f:b0:52c:e16e:6033 with SMTP id
- 2adb3069b0e04-52eb998e74emr4207069e87.2.1720624516844; Wed, 10 Jul 2024
- 08:15:16 -0700 (PDT)
+	s=arc-20240116; t=1720624509; c=relaxed/simple;
+	bh=XNvLVakjrsrGH7feZEiDVixq9xnBJRkQVc8Z6YE/axE=;
+	h=Content-Type:To:Cc:Subject:References:Date:MIME-Version:From:
+	 Message-ID:In-Reply-To; b=cQqEjYcW2t2WpjTCr67YvR9MNwwTBHE4c5XU85FdUu8K7yydjmVo+I9628W9HJ8VEfyQIM27QC2Pw/NL5i4W24yeqySJU6Ddtrfe8bdUMjz9UuyvNfqlaurtK0TyODTtIla+4LDcPuUStjrOiUAAYUqdr/H8HRE9MOFW3TzYmBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RSV/sQab; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720624508; x=1752160508;
+  h=to:cc:subject:references:date:mime-version:
+   content-transfer-encoding:from:message-id:in-reply-to;
+  bh=XNvLVakjrsrGH7feZEiDVixq9xnBJRkQVc8Z6YE/axE=;
+  b=RSV/sQabnBS/UQ6/kJA3iLkeH2vt5mJ67Zdy4h+FRU92kJzcsx81lIbm
+   aSD7tDjgSHqvi611qhUwt52mCNAR5L94QblwLN1R0BwLWWYpLFSgtAkzL
+   3d4OvyIf4ejCWh6WQmbDPZXNW+w1SlyGMkNWrQs7q0Vjn8YfpYeonGESG
+   VCNWQqwtB5z7d04QrUmb0cUPAJeH1CoznbVA7X4bRXFV5VOreQm/MoAkO
+   HOxEkDLU7xUAWhqj3T0f8/L69H2I8SRtMGpG7zEKbRutYIK4T2/so0rPm
+   cfGls8hHmoNJwQBz1uqE5ECBaBWq9jxaYoxE+OOjz9oD1WJshgIankkeM
+   A==;
+X-CSE-ConnectionGUID: C7VfLItPRrC0f8M0ZsUS/A==
+X-CSE-MsgGUID: L827ZDRZR72HpvH6+JMCdg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="29348876"
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="29348876"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 08:15:07 -0700
+X-CSE-ConnectionGUID: vvt6Lvg3SHK+0sdEAduMcw==
+X-CSE-MsgGUID: pfDhorXdRZGpSKlrlepxEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="53195241"
+Received: from hhuan26-mobl.amr.corp.intel.com ([10.246.119.97])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/AES256-SHA; 10 Jul 2024 08:15:06 -0700
+Content-Type: text/plain; charset=iso-8859-15; format=flowed; delsp=yes
+To: dave.hansen@linux.intel.com, jarkko@kernel.org, kai.huang@intel.com,
+ reinette.chatre@intel.com, linux-sgx@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Dmitrii Kuvaiskii"
+ <dmitrii.kuvaiskii@intel.com>
+Cc: mona.vij@intel.com, kailun.qin@intel.com, stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] x86/sgx: Split SGX_ENCL_PAGE_BEING_RECLAIMED into
+ two flags
+References: <20240705074524.443713-1-dmitrii.kuvaiskii@intel.com>
+ <20240705074524.443713-2-dmitrii.kuvaiskii@intel.com>
+Date: Wed, 10 Jul 2024 10:15:02 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710140017.GA1074@redhat.com> <20240710140108.GB1084@redhat.com>
-In-Reply-To: <20240710140108.GB1084@redhat.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 10 Jul 2024 08:15:02 -0700
-Message-ID: <CAEf4Bza94=39M7s1fNTZYFcx7QG1SotcdZ-O+WnyEza=rFkETA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] uprobes: is_trap_at_addr: don't use get_user_pages_remote()
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org, clm@meta.com, 
-	jolsa@kernel.org, mingo@kernel.org, paulmck@kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+From: "Haitao Huang" <haitao.huang@linux.intel.com>
+Organization: Intel
+Message-ID: <op.2qo8ncfwwjvjmi@hhuan26-mobl.amr.corp.intel.com>
+In-Reply-To: <20240705074524.443713-2-dmitrii.kuvaiskii@intel.com>
+User-Agent: Opera Mail/1.0 (Win32)
 
-On Wed, Jul 10, 2024 at 7:02=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wro=
-te:
->
-> get_user_pages_remote() and the comment above it make no sense.
->
-> There is no task_struct passed into get_user_pages_remote() anymore, and
-> nowadays mm_account_fault() increments the current->min/maj_flt counters
-> regardless of FAULT_FLAG_REMOTE.
->
-> Reported-by: Andrii Nakryiko <andrii@kernel.org>
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-> ---
->  kernel/events/uprobes.c | 10 ++--------
->  1 file changed, 2 insertions(+), 8 deletions(-)
->
+On Fri, 05 Jul 2024 02:45:22 -0500, Dmitrii Kuvaiskii  
+<dmitrii.kuvaiskii@intel.com> wrote:
 
-Makes sense
-
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
-
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index d52b624a50fa..1bdf386485d4 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -453,7 +453,7 @@ static int update_ref_ctr(struct uprobe *uprobe, stru=
-ct mm_struct *mm,
->   * @vaddr: the virtual address to store the opcode.
->   * @opcode: opcode to be written at @vaddr.
->   *
-> - * Called with mm->mmap_lock held for read or write.
-> + * Called with mm->mmap_lock held.
->   * Return 0 (success) or a negative errno.
->   */
->  int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *m=
-m,
-> @@ -2024,13 +2024,7 @@ static int is_trap_at_addr(struct mm_struct *mm, u=
-nsigned long vaddr)
->         if (likely(result =3D=3D 0))
->                 goto out;
+> SGX_ENCL_PAGE_BEING_RECLAIMED flag is set when the enclave page is being
+> reclaimed (moved to the backing store). This flag however has two
+> logical meanings:
 >
-> -       /*
-> -        * The NULL 'tsk' here ensures that any faults that occur here
-> -        * will not be accounted to the task.  'mm' *is* current->mm,
-> -        * but we treat this as a 'remote' access since it is
-> -        * essentially a kernel access to the memory.
-> -        */
-> -       result =3D get_user_pages_remote(mm, vaddr, 1, FOLL_FORCE, &page,=
- NULL);
-> +       result =3D get_user_pages(vaddr, 1, FOLL_FORCE, &page);
->         if (result < 0)
->                 return result;
+> 1. Don't attempt to load the enclave page (the page is busy).
+> 2. Don't attempt to remove the PCMD page corresponding to this enclave
+>    page (the PCMD page is busy).
 >
-> --
-> 2.25.1.362.g51ebf55
+> To reflect these two meanings, split SGX_ENCL_PAGE_BEING_RECLAIMED into
+> two flags: SGX_ENCL_PAGE_BUSY and SGX_ENCL_PAGE_PCMD_BUSY. Currently,
+> both flags are set only when the enclave page is being reclaimed. A
+> future commit will introduce a new case when the enclave page is being
+> removed; this new case will set only the SGX_ENCL_PAGE_BUSY flag.
 >
->
+LGTM.
+Reviewed-by: Haitao Huang <haitao.huang@linux.intel.com>
+Thanks
+Haitao
 
