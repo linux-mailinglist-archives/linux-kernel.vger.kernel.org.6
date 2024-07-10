@@ -1,136 +1,179 @@
-Return-Path: <linux-kernel+bounces-247977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A59A92D6D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:46:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E15392D6D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE4FB28679B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:46:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40F531C210B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B9D194AC7;
-	Wed, 10 Jul 2024 16:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8283194AC7;
+	Wed, 10 Jul 2024 16:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nIYqhKrg"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MLeK+XYs"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8902A189F54
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9BA5190472
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720630008; cv=none; b=K1++hSmnAvsM1/Y+2g0xxeI+70jTL458gMlnVqi8X4d1D8TwBqbwLVoib0viJmBIux+CTCEGTQWmkB2lEz9IDIOPI7XfnrHVDaQocIBmG/lKx003mDXe1B2Fy1xBfmhfyP8qjicvgzV8m0vQphdL/UunzcfHgt+AB3h9P40Byc8=
+	t=1720630097; cv=none; b=EhZ0AlvLn3mXgG6bHNuzPT0QmTVmq/eEI/TqJ2OU1BrRnPwwdY7/DFhgdDswqKngbPCgnDtKTrBY/u4GXZLI5htA0r8yp+9tXWcm00a716vZWwYg+bo9OXBcuUBRrPP42Acel9CDDnieCOzdLzyYfU33qoNaSMS95a22TAugTV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720630008; c=relaxed/simple;
-	bh=V2n+Ze34PEYFSyQdvOGt1c4qyPWWne875QtYOiCnpw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t8/q1sUQoN0DvmDqUakk81VWiZzAijm12EAqwmaqpYJR769qcw850Wy5hpUzuWc3INjgz0A1lvOJ68QaCtAoxKH8IAXgxy1TFAZJDkqpN95M+Qp5sI4ItYmtKNDx3dZD+ueuZi6KW/Ncw/abrLCJvgXnBhLLhWVjCygtIUju7ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nIYqhKrg; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fb3cf78ff3so45531385ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:46:47 -0700 (PDT)
+	s=arc-20240116; t=1720630097; c=relaxed/simple;
+	bh=aBr2yYvTYdJys4Svg50j/p4d7tTDXOblJFbpEv5+QJE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Konw0PECrzk2BFgTsKGtnev67IpS69aApED0Jh/iV9SkPtzl5g2Nu7iKMNRebnICkqBps5WI1xg+adxQAKyn9PbdMpFHh6WrbRBZDPwXjNJOCfi/ZglsebZkjoGfkbg0yXOM91IBmtUxUCArXmJy9AbFnc1rwZWPAdW8UJThuGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MLeK+XYs; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-64f4c11d2c9so52718877b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:48:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720630007; x=1721234807; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mofC4X5TTESlT4CnJ/wmSmndZ3QAbkDzpU+xUACnz0Q=;
-        b=nIYqhKrgrauR2Ap+KYQaMIkiMGe1on6NCBbChTj4q8z0Tq0pnGSVRFwB5N6kxdh/hq
-         cfFVHoYjV1+sKtfYOeOmAY88wJnZ+MTFzQk01DWfNOInRuIH9FiTYMudhV5spFl+pZ+P
-         2aye7iZHoEq151dh6yhfy2Ftj5dKU4USuxyA5h3XO30zeGRI3vb/3GhnXmgmo3coFO9e
-         xVMcB5XgRUcgsS+mVrWd65c1rJwzmWKuM5J67iS6PV8YPdqkAQ0KKCXltFw+1VDNrwIL
-         fmZpfuPahyylY8jJ4Y1IIVEcB9FPa3p8PZmmllkTu51By77JtRZ6BlmXE9hpr32D8vwK
-         PZug==
+        d=google.com; s=20230601; t=1720630095; x=1721234895; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RuDM3Oavg7a7aWkCZ/CY2yFe5Ng8yBclNy+WY2KUGrU=;
+        b=MLeK+XYs+8ABg/TdK91UKMhz0GlYCV61XbH5wMd4OzN0tBsDA9S8MK0jy93R5kRqdt
+         4l/wcb2zuCviTEsEmn7zx05k0a9eX2WJxSKL9AWScQUXG5ZFqlO35N/Ddp9laxf6r+Y/
+         J+BbJ6Ij+jxHSfBQ6IIQVZNopc6deezqDnym+7t2a+t/2+Y4Shhyu0WEFrcDCG32H0Fv
+         228mpB7L9ZBXTFMaXiH2IJxpnvQHa7TGOjOuBjYXk6+V3nJDKlmsr1qmzMzYR9oJyWba
+         WB4gU8kjIa0mesp3MfN2oHqFAkVO9DbWXDSrfEQyoTL4CIB8uOKIfPyDsVi4sxV1ahEk
+         Zpvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720630007; x=1721234807;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1720630095; x=1721234895;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mofC4X5TTESlT4CnJ/wmSmndZ3QAbkDzpU+xUACnz0Q=;
-        b=KB8ulBxEhERBt8S7lBrTgDRfY+NDsnl9ESKnv480L4dNRkaEQZCam1s4IzTKLz0uUf
-         4xl7laOm4UNRSQ46abk0/nA6wcMwzAdCfEaFV94G/hGJszBiWikS0w04TxUc2iU10wbx
-         k+e6dQkHRRokMnKMqkMiXcRJ3VzP/XeRerz9lR0rrRUku8ZBN0Ufrnd5hXu+earwsz7k
-         sNg43XUu0u7RaRmqXJY9tyQi8GA7y1Nnh9YzoD5odwpqdSsI5LBSIJbPZsMTUg+7ZztL
-         EKV62OKPxdBvbrNRKeyVCrKU9mOPqFcSRDYZZ9kJF5RvYRUMvES8Ov3a4qBVxYheU2wn
-         hi2g==
-X-Gm-Message-State: AOJu0YwRxFwWDAXeQTqAUuzFE/zyQbbCK97OyKfDpcdCf6mekLyJ9J6g
-	EJ54bQgZ3KMQkM2NMkfQvGoXoCcWYJArJsN7jHzwDJpr4VjL2OcB
-X-Google-Smtp-Source: AGHT+IH9cCVNitNXz2yx1yT42G3RDrXBoPo/B3ONEiTzm6BcR/O5JS2Xz6wadxzm7IHo7QQ8to2t8w==
-X-Received: by 2002:a17:903:1252:b0:1f6:f0fe:6cc9 with SMTP id d9443c01a7336-1fbb6d8938dmr51192005ad.54.1720630006777;
-        Wed, 10 Jul 2024 09:46:46 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6ab7980sm35913715ad.177.2024.07.10.09.46.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 09:46:46 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Wed, 10 Jul 2024 06:46:45 -1000
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	schatzberg.dan@gmail.com, mingo@redhat.com, peterz@infradead.org,
-	changwoo@igalia.com, righi.andrea@gmail.com
-Subject: Re: [PATCH 3/6] sched_ext: Make @rf optional for
- dispatch_to_local_dsq()
-Message-ID: <Zo669YYpd9oYVoaP@slm.duckdns.org>
-References: <20240709212137.1199269-1-tj@kernel.org>
- <20240709212137.1199269-4-tj@kernel.org>
- <20240710161025.GA317151@maniforge>
+        bh=RuDM3Oavg7a7aWkCZ/CY2yFe5Ng8yBclNy+WY2KUGrU=;
+        b=gHvrkKX7TGHvKliO7V86Sqs+oJQs7BevdntXePHIL2TbZs5plAZUqDrlZkBRtFn79L
+         1QiTfzc8rkm/j5chZQGDPshAgU8I4SPzyhbJC+hJLAwWajujahMJ3MDco6QPxyS5soDM
+         JTTNj2sB9+vhI+Qd6ffwExesNB5nSy0jJD5VJlpUtwUD6reTCrrF7k1e5VFbZXIzGZKK
+         Nrmpaqo4UfOit10PLEaBssOw8KJEhGSMcG8J4KXeRmEp/c72xCnqV0ykEni9/J6CDOFr
+         ENRKW+UNrPzmxYk8lr22PXSqb4Ete/TUwdg24789o0KaOvJdun17vFtNNxzsU06e19Mw
+         XOSA==
+X-Forwarded-Encrypted: i=1; AJvYcCWPG3w/aV4+FBbwa74jSyShvancejFRFLj6TjMh8Co9ajECtfIfFhqPE/cbVQPINMgUUQzMXUZJuS6NjqmhbVLHjpUXK3oWfVSXRHJ0
+X-Gm-Message-State: AOJu0YzRAJqwDAzl5IZpt3eUB6DHsd2uyMsdqfqpqyXaMhu6CZdWbpKb
+	mKGgp8QzbmOruJt1bxeO6oaqy13ZtRVGg4qmgIzGLwTMi/OSCN7udGIOebF6jh+GQBJogtCeYbZ
+	7fBkrOLcY8W5u287/2kFEAbOfpRPwYD7IPpK9
+X-Google-Smtp-Source: AGHT+IEJvx0em+H6LCIgYPFqc5wzIKIKb8/L9hMaxZp+TLpsllYvO+qfvhu+Db/DSgLHIYpVSH8n7AdwjCO1O/h8wRM=
+X-Received: by 2002:a05:690c:6112:b0:631:ffc1:4397 with SMTP id
+ 00721157ae682-658ef34a2e9mr80983457b3.29.1720630094523; Wed, 10 Jul 2024
+ 09:48:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710161025.GA317151@maniforge>
+References: <20240704182718.2653918-1-Liam.Howlett@oracle.com> <20240704182718.2653918-11-Liam.Howlett@oracle.com>
+In-Reply-To: <20240704182718.2653918-11-Liam.Howlett@oracle.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 10 Jul 2024 09:48:02 -0700
+Message-ID: <CAJuCfpEqJi30kz7Q0ZAJqkDuQH4ng8Wa+x0sK10wVbtQ9wF6dA@mail.gmail.com>
+Subject: Re: [PATCH v3 10/16] mm/mmap: Reposition vma iterator in mmap_region()
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, sidhartha.kumar@oracle.com, 
+	"Paul E . McKenney" <paulmck@kernel.org>, Bert Karwatzki <spasswolf@web.de>, Jiri Olsa <olsajiri@gmail.com>, 
+	linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Jul 4, 2024 at 11:27=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+>
+> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+>
+> Instead of moving (or leaving) the vma iterator pointing at the previous
+> vma, leave it pointing at the insert location.  Pointing the vma
+> iterator at the insert location allows for a cleaner walk of the vma
+> tree for MAP_FIXED and the no expansion cases.
+>
+> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
+> ---
+>  mm/mmap.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
+>
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index f5b33de4e717..ecf55d32e804 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -2963,11 +2963,12 @@ unsigned long mmap_region(struct file *file, unsi=
+gned long addr,
+>                 vms_complete_munmap_vmas(&vms, &mas_detach);
+>                 next =3D vms.next;
+>                 prev =3D vms.prev;
+> -               vma_prev(&vmi);
+>                 vma =3D NULL;
+>         } else {
+>                 next =3D vma_next(&vmi);
+>                 prev =3D vma_prev(&vmi);
+> +               if (prev)
+> +                       vma_iter_next_range(&vmi);
+>         }
+>
+>         /*
+> @@ -2980,11 +2981,8 @@ unsigned long mmap_region(struct file *file, unsig=
+ned long addr,
+>                 vm_flags |=3D VM_ACCOUNT;
+>         }
+>
+> -       if (vm_flags & VM_SPECIAL) {
+> -               if (prev)
+> -                       vma_iter_next_range(&vmi);
+> +       if (vm_flags & VM_SPECIAL)
+>                 goto cannot_expand;
+> -       }
+>
+>         /* Attempt to expand an old mapping */
+>         /* Check next */
+> @@ -3005,19 +3003,21 @@ unsigned long mmap_region(struct file *file, unsi=
+gned long addr,
+>                 merge_start =3D prev->vm_start;
+>                 vma =3D prev;
+>                 vm_pgoff =3D prev->vm_pgoff;
+> -       } else if (prev) {
+> -               vma_iter_next_range(&vmi);
+> +               vma_prev(&vmi);
+>         }
+>
+> -       /* Actually expand, if possible */
+> -       if (vma &&
+> -           !vma_expand(&vmi, vma, merge_start, merge_end, vm_pgoff, next=
+)) {
+> -               khugepaged_enter_vma(vma, vm_flags);
+> -               goto expanded;
+> +       if (vma) {
+> +               /* Actually expand, if possible */
+> +               if (!vma_expand(&vmi, vma, merge_start, merge_end, vm_pgo=
+ff, next)) {
+> +                       khugepaged_enter_vma(vma, vm_flags);
+> +                       goto expanded;
+> +               }
+> +
+> +               /* If the expand fails, then reposition the vma iterator =
+*/
+> +               if (unlikely(vma =3D=3D prev))
+> +                       vma_iter_set(&vmi, addr);
+>         }
+>
+> -       if (vma =3D=3D prev)
+> -               vma_iter_set(&vmi, addr);
 
-On Wed, Jul 10, 2024 at 11:10:25AM -0500, David Vernet wrote:
-> >  static void dispatch_to_local_dsq_lock(struct rq *rq, struct rq_flags *rf,
-> >  				       struct rq *src_rq, struct rq *dst_rq)
-> >  {
-> > -	rq_unpin_lock(rq, rf);
-> > +	if (rf)
-> > +		rq_unpin_lock(rq, rf);
-> >  
-> >  	if (src_rq == dst_rq) {
-> >  		raw_spin_rq_unlock(rq);
-> >  		raw_spin_rq_lock(dst_rq);
-> >  	} else if (rq == src_rq) {
-> >  		double_lock_balance(rq, dst_rq);
-> > -		rq_repin_lock(rq, rf);
-> > +		if (rf)
-> > +			rq_repin_lock(rq, rf);
-> >  	} else if (rq == dst_rq) {
-> >  		double_lock_balance(rq, src_rq);
-> > -		rq_repin_lock(rq, rf);
-> > +		if (rf)
-> > +			rq_repin_lock(rq, rf);
-> 
-> It feels kind of weird to have the callee need to know about pinning
-> requirements in the caller instead of vice versa. I mean, I guess it's inherent
-> to doing an unpin / repin inside of a locked region, but it'd be nice if we
-> could minimize the amount of variance in that codepath regardless. I think what
-> you have is correct, but maybe it'd simpler if we just pinned in the caller on
-> the enqueue path? That way the semantics of when locks can be dropped is
-> consistent in dispatch_to_local_dsq().
+Before this change we would reposition vmi if vma =3D=3D prev =3D=3D NULL.
+After this change we don't do that. Is this situation possible and if
+so, will vmi be correct?
 
-Yeah, it's kinda nasty. I think going the other direction probalby is
-better. The reason why we're doing unpin/repin down in the callstack is
-because this is being called from sched_class->balance() which is invoked
-with rq locked and pinned, but also with @rf so that the lock can be
-unpinned. There isn't much that can benefit from extending rq lock pinning
-deeper into balance implementation, so it probably makes more sense to do so
-in the outer balance function so that the inner functions don't have to
-worry about it.
-
-Thanks.
-
--- 
-tejun
+>  cannot_expand:
+>
+>         /*
+> --
+> 2.43.0
+>
 
