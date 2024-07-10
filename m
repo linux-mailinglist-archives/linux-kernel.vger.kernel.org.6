@@ -1,240 +1,134 @@
-Return-Path: <linux-kernel+bounces-247317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3BA092CDF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:09:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A5692CDF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7961E1F252C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:09:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49859285512
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE9718FA03;
-	Wed, 10 Jul 2024 09:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52F918F2EF;
+	Wed, 10 Jul 2024 09:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="etm7GiP3"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="k0mf0D5X"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C91E16F0D9
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7018B18D4BB;
+	Wed, 10 Jul 2024 09:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720602562; cv=none; b=aBuS4TdMiSvthB3+aTR2Q930TEGcwEPtHFqZJaC02Na0/zE+ahvJLW4eK4Cy/xbJS4cS40AudTTTuPXngCFLPpI7KXVzlAPiIpWzm1+kRB2U+rc/urcMxS9YrD4873dYqqz1tcxmeib9E2sCBMMwpd6fpbYylRIlrPlQg2YNuuM=
+	t=1720602589; cv=none; b=rKIlfg23ng5JU56geifBZqH4lu2XoUM9IZiyrWeDN8G/4n9te0Y4AcYjTmGWgFiNX/OfG/w01ul6j1+dHr8PnLsI8tKlD0Y3qGX85xTHQHht7FCcKruhy/WqLWNK0aUwctbrRhe5kZ+phOL9hL7ix/dv/hLhr8J3Me3gKzcWhww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720602562; c=relaxed/simple;
-	bh=OL0xBeE5B9xMb/taxExodvPnT0mvuX5Ke320Hr8e1+c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NvYcALg3HX+rzJGq2QtcsvTQIJ2zhZ6yF+3TYHMSL85X7VgXpFu5tjcYz+Mq2/YIAnfEPyCDxnS9+WnKzT5jImVtY6c2pevNZMugXfgx3JOJYJZYHw9lQCg0FUkVuCcBzyYW1kykPXNenu/J7k2bcqPjXLVeC1sWqev0ZvljzNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=etm7GiP3; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52eafa1717bso3398011e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 02:09:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1720602559; x=1721207359; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CRLAIQn7INxSa6LmU1FATfsmVNtWbmSVKNRxCMfKnhc=;
-        b=etm7GiP3cVUMd7GK7x9JQRE+HIzVmzLA1N7C5GL/PhxTda/WTTsPVEY4RkSBW6SX2B
-         0GAnXSqTScX7U0NUSSTF19I8NcugBIIamJV2Hh4KsYeVHHoknp8h7nEE7tqMF1qIvJXu
-         kYaPHVvmo4IIKKiI78zEl2aoQfkdGq+SDnpEk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720602559; x=1721207359;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CRLAIQn7INxSa6LmU1FATfsmVNtWbmSVKNRxCMfKnhc=;
-        b=gElnYRuzVnxirkFL6Wdp4uiiR7NwP/CB06ScBnwZMEBi5logbGQ1bj3YVo5Eu/Eyez
-         HeSgTetA264+7aHOZQ1Ex8Qf8l4ckGf0Na76FP7jCARa7jYWn9sLAZCuA8a98EE2/EUk
-         SjsInmPqSyuP6uNECCFHJJBMphfyI0w8ExcbkDi6JWBhID4KSeRFkXEW55tg6YHTQb+Z
-         UXtHkqelf1B9BNOkGPuqlqsSOYNRnv4CB7VBRSUsE9/FaVgH+locVCzXpU5kk9tJv1JF
-         bSB19mvB/Wm8pwof/l1MMiq77W4MB7BhV/c6yqh0MKS+CqBCDTwEHhtPRt4nUqPL7zhL
-         hhBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXp4hHb1jRib6qgokBtegO4X04JAQuF94dQYnWU8oHsfaO50ML8blvXH15sLBf65BSzwV91N6Nx2In4YYFTNm80JuWkwW+pNMMG8mo8
-X-Gm-Message-State: AOJu0Yy2xhFDImrJkkbyA7dAKHpX0z5OC3zQ4VedylFlGP9K/V7nv0nF
-	oyAtE/Jux1pr0J4/slM5VTHCzVPDGAiC3/HEEV1YXcw+dPNWiCYRe3gi66wZj7beibEVs5l6UDN
-	d03awWwSOJ6GGgXg1V08aGvqHtda0yv3eEhxw
-X-Google-Smtp-Source: AGHT+IHQ65msyduECZCMbfVj2aq75YSqK1S1BeX9AleoFRtScjRNeSszEoPX3RpEw2apr5PJddctiKZo8pkWzfmLCSw=
-X-Received: by 2002:a05:6512:108c:b0:52e:9480:9e71 with SMTP id
- 2adb3069b0e04-52eb9996055mr3106359e87.28.1720602558706; Wed, 10 Jul 2024
- 02:09:18 -0700 (PDT)
+	s=arc-20240116; t=1720602589; c=relaxed/simple;
+	bh=h754w0AZwBqaW9S+IIdF6AkvgEKM2drXdBzIPZttEuo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YCBcdFu1x0N4sOh5CY9FwkMSQMPMu1uwQitYT7nHlomEreweqKqxvZH3ZkmMDSH2L69Ki7wmmMKbXOsNqp5TCkOhhuedNODyvuIcaAl1Sz7rpWjMxpxovjaGfbN7zTf9k1wkVJFsqoT0CTO5BhYscfd3UjtpBOxBmmuA6drRChI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=k0mf0D5X; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46A4s4Cs006601;
+	Wed, 10 Jul 2024 04:09:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=x/iSfhnjQc3v89FNYti7Mzilbr8FM6mdZXiL+wsib0c=; b=
+	k0mf0D5XERMViEcaVCJPTU+KI1gRbAxVPVn7lo0j2EAcCIq3kIL8ntrhXuN5TwQq
+	XVr4YNGcfF4+hGTAN6XEG+anDUBGw2A18W2BG2zoEan/RfcYSKkNhbYSP1G4NS4t
+	gE0ovs1MA0xRtUlqYGy0f32QqSR/g2yJiuFvzRQdC0JG+jw0Vkelwsxo2aZshbhY
+	0DaB6AYrSdF5HTQezBkPdmZzsLE/FB4BrOx5T5eaiWFCbzIX0i4vlk0CfuvWt2gw
+	hV3/mB7to2lxLOG2Y6HSUurHiwwokmobPvHlwODeRsgaZSrOHEuXJUj8CMwChX9z
+	OHDuomzwzFwaA371V8r9cQ==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 409c9a8f44-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jul 2024 04:09:39 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 10 Jul
+ 2024 10:09:38 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Wed, 10 Jul 2024 10:09:38 +0100
+Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 2F19D820244;
+	Wed, 10 Jul 2024 09:09:38 +0000 (UTC)
+Message-ID: <afc1a70b-4ed2-4afe-a506-1ca04d080342@opensource.cirrus.com>
+Date: Wed, 10 Jul 2024 10:09:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710075127.2274582-1-schalla@marvell.com> <20240710075127.2274582-6-schalla@marvell.com>
-In-Reply-To: <20240710075127.2274582-6-schalla@marvell.com>
-From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
-Date: Wed, 10 Jul 2024 14:39:06 +0530
-Message-ID: <CAH-L+nPXV0=wAknOHvM6KCKLj61RsMpN57DMCJuMTc6Ze4vSig@mail.gmail.com>
-Subject: Re: [PATCH net,v2,5/5] octeontx2-af: fix issue with IPv4 match for RSS
-To: Srujana Challa <schalla@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org, 
-	davem@davemloft.net, pabeni@redhat.com, edumazet@google.com, 
-	sgoutham@marvell.com, lcherian@marvell.com, gakula@marvell.com, 
-	jerinj@marvell.com, hkelam@marvell.com, sbhatta@marvell.com, 
-	ndabilpuram@marvell.com, Satheesh Paul <psatheesh@marvell.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="00000000000055cf36061ce1003e"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] firmware: cs_dsp: Merge wmfw format log message into
+ INFO message
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+CC: <broonie@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>, <alsa-devel@alsa-project.org>,
+        <linux-sound@vger.kernel.org>
+References: <20240709145156.268074-1-rf@opensource.cirrus.com>
+ <20240709145156.268074-4-rf@opensource.cirrus.com>
+ <Zo1YZHiE6WK3d8rm@opensource.cirrus.com>
+Content-Language: en-GB
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+In-Reply-To: <Zo1YZHiE6WK3d8rm@opensource.cirrus.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: b4iguY7-UgafPlxbRoTRuiiD-9X2YqcV
+X-Proofpoint-GUID: b4iguY7-UgafPlxbRoTRuiiD-9X2YqcV
+X-Proofpoint-Spam-Reason: safe
 
---00000000000055cf36061ce1003e
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 09/07/2024 16:33, Charles Keepax wrote:
+> On Tue, Jul 09, 2024 at 03:51:55PM +0100, Richard Fitzgerald wrote:
+>> Log the WMFW file format version with the INFO_TEST message.
+>>
+>> The behaviour of firmware controls depends on the WMFW format version,
+>> so this is useful information to log for debugging. But there's no
+>> need to use a separate log line just for this value.
+>>
+>> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+>> ---
+>>   drivers/firmware/cirrus/cs_dsp.c | 3 +--
+>>   1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/firmware/cirrus/cs_dsp.c b/drivers/firmware/cirrus/cs_dsp.c
+>> index 1bc2e0b6d40b..141a6c9d6737 100644
+>> --- a/drivers/firmware/cirrus/cs_dsp.c
+>> +++ b/drivers/firmware/cirrus/cs_dsp.c
+>> @@ -1502,7 +1502,6 @@ static int cs_dsp_load(struct cs_dsp *dsp, const struct firmware *firmware,
+>>   		goto out_fw;
+>>   	}
+>>   
+>> -	cs_dsp_info(dsp, "Firmware version: %d\n", header->ver);
+>>   	dsp->fw_ver = header->ver;
+>>   
+>>   	if (header->core != dsp->type) {
+>> @@ -1552,7 +1551,7 @@ static int cs_dsp_load(struct cs_dsp *dsp, const struct firmware *firmware,
+>>   		case WMFW_INFO_TEXT:
+>>   		case WMFW_NAME_TEXT:
+>>   			region_name = "Info/Name";
+>> -			cs_dsp_info(dsp, "%s: %.*s\n", file,
+>> +			cs_dsp_info(dsp, "%s (rev %d): %.*s\n", file, dsp->fw_ver,
+>>   				    min(le32_to_cpu(region->len), 100), region->data);
+> 
+> Are we sure on this one? I don't think a WMFW is required to
+> include an INFO/NAME block so it is now possible for this to not
+> get printed. Granted I have not seen one that doesn't include
+> at least one of these blocks but it isn't required. I think I
+> would lean towards keening the separate print personally.
+> 
+> Thanks,
+> Charles
 
-On Wed, Jul 10, 2024 at 1:24=E2=80=AFPM Srujana Challa <schalla@marvell.com=
-> wrote:
->
-> From: Satheesh Paul <psatheesh@marvell.com>
->
-> While performing RSS based on IPv4, packets with
-> IPv4 options are not being considered. Adding changes
-> to match both plain IPv4 and IPv4 with option header.
->
-> Fixes: 41a7aa7b800d ("octeontx2-af: NIX Rx flowkey configuration for RSS"=
-)
-> Signed-off-by: Satheesh Paul <psatheesh@marvell.com>
+The specification says that the first INFO block is mandatory, but
+specifications can change so I don't mind leaving it on its own line.
 
-LGTM
-Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
-> ---
->  drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c b/driver=
-s/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-> index 19fe3ed5c0ee..3dc828cf6c5a 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-> @@ -3866,6 +3866,8 @@ static int get_flowkey_alg_idx(struct nix_hw *nix_h=
-w, u32 flow_cfg)
->
->  /* Mask to match ipv6(NPC_LT_LC_IP6) and ipv6 ext(NPC_LT_LC_IP6_EXT) */
->  #define NPC_LT_LC_IP6_MATCH_MSK ((~(NPC_LT_LC_IP6 ^ NPC_LT_LC_IP6_EXT)) =
-& 0xf)
-> +/* Mask to match both ipv4(NPC_LT_LC_IP) and ipv4 ext(NPC_LT_LC_IP_OPT) =
-*/
-> +#define NPC_LT_LC_IP_MATCH_MSK  ((~(NPC_LT_LC_IP ^ NPC_LT_LC_IP_OPT)) & =
-0xf)
->
->  static int set_flowkey_fields(struct nix_rx_flowkey_alg *alg, u32 flow_c=
-fg)
->  {
-> @@ -3936,7 +3938,7 @@ static int set_flowkey_fields(struct nix_rx_flowkey=
-_alg *alg, u32 flow_cfg)
->                         field->hdr_offset =3D 9; /* offset */
->                         field->bytesm1 =3D 0; /* 1 byte */
->                         field->ltype_match =3D NPC_LT_LC_IP;
-> -                       field->ltype_mask =3D 0xF;
-> +                       field->ltype_mask =3D NPC_LT_LC_IP_MATCH_MSK;
->                         break;
->                 case NIX_FLOW_KEY_TYPE_IPV4:
->                 case NIX_FLOW_KEY_TYPE_INNR_IPV4:
-> @@ -3963,8 +3965,7 @@ static int set_flowkey_fields(struct nix_rx_flowkey=
-_alg *alg, u32 flow_cfg)
->                                         field->bytesm1 =3D 3; /* DIP, 4 b=
-ytes */
->                                 }
->                         }
-> -
-> -                       field->ltype_mask =3D 0xF; /* Match only IPv4 */
-> +                       field->ltype_mask =3D NPC_LT_LC_IP_MATCH_MSK;
->                         keyoff_marker =3D false;
->                         break;
->                 case NIX_FLOW_KEY_TYPE_IPV6:
-> --
-> 2.25.1
->
->
-
-
---=20
-Regards,
-Kalesh A P
-
---00000000000055cf36061ce1003e
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIIQiwYJKoZIhvcNAQcCoIIQfDCCEHgCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-gg3iMIIFDTCCA/WgAwIBAgIQeEqpED+lv77edQixNJMdADANBgkqhkiG9w0BAQsFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMDA5MTYwMDAwMDBaFw0yODA5MTYwMDAwMDBaMFsxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBS
-MyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
-vbCmXCcsbZ/a0fRIQMBxp4gJnnyeneFYpEtNydrZZ+GeKSMdHiDgXD1UnRSIudKo+moQ6YlCOu4t
-rVWO/EiXfYnK7zeop26ry1RpKtogB7/O115zultAz64ydQYLe+a1e/czkALg3sgTcOOcFZTXk38e
-aqsXsipoX1vsNurqPtnC27TWsA7pk4uKXscFjkeUE8JZu9BDKaswZygxBOPBQBwrA5+20Wxlk6k1
-e6EKaaNaNZUy30q3ArEf30ZDpXyfCtiXnupjSK8WU2cK4qsEtj09JS4+mhi0CTCrCnXAzum3tgcH
-cHRg0prcSzzEUDQWoFxyuqwiwhHu3sPQNmFOMwIDAQABo4IB2jCCAdYwDgYDVR0PAQH/BAQDAgGG
-MGAGA1UdJQRZMFcGCCsGAQUFBwMCBggrBgEFBQcDBAYKKwYBBAGCNxQCAgYKKwYBBAGCNwoDBAYJ
-KwYBBAGCNxUGBgorBgEEAYI3CgMMBggrBgEFBQcDBwYIKwYBBQUHAxEwEgYDVR0TAQH/BAgwBgEB
-/wIBADAdBgNVHQ4EFgQUljPR5lgXWzR1ioFWZNW+SN6hj88wHwYDVR0jBBgwFoAUj/BLf6guRSSu
-TVD6Y5qL3uLdG7wwegYIKwYBBQUHAQEEbjBsMC0GCCsGAQUFBzABhiFodHRwOi8vb2NzcC5nbG9i
-YWxzaWduLmNvbS9yb290cjMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
-b20vY2FjZXJ0L3Jvb3QtcjMuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vcm9vdC1yMy5jcmwwWgYDVR0gBFMwUTALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgEo
-CjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAN
-BgkqhkiG9w0BAQsFAAOCAQEAdAXk/XCnDeAOd9nNEUvWPxblOQ/5o/q6OIeTYvoEvUUi2qHUOtbf
-jBGdTptFsXXe4RgjVF9b6DuizgYfy+cILmvi5hfk3Iq8MAZsgtW+A/otQsJvK2wRatLE61RbzkX8
-9/OXEZ1zT7t/q2RiJqzpvV8NChxIj+P7WTtepPm9AIj0Keue+gS2qvzAZAY34ZZeRHgA7g5O4TPJ
-/oTd+4rgiU++wLDlcZYd/slFkaT3xg4qWDepEMjT4T1qFOQIL+ijUArYS4owpPg9NISTKa1qqKWJ
-jFoyms0d0GwOniIIbBvhI2MJ7BSY9MYtWVT5jJO3tsVHwj4cp92CSFuGwunFMzCCA18wggJHoAMC
-AQICCwQAAAAAASFYUwiiMA0GCSqGSIb3DQEBCwUAMEwxIDAeBgNVBAsTF0dsb2JhbFNpZ24gUm9v
-dCBDQSAtIFIzMRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpHbG9iYWxTaWduMB4XDTA5
-MDMxODEwMDAwMFoXDTI5MDMxODEwMDAwMFowTDEgMB4GA1UECxMXR2xvYmFsU2lnbiBSb290IENB
-IC0gUjMxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2JhbFNpZ24wggEiMA0GCSqG
-SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDMJXaQeQZ4Ihb1wIO2hMoonv0FdhHFrYhy/EYCQ8eyip0E
-XyTLLkvhYIJG4VKrDIFHcGzdZNHr9SyjD4I9DCuul9e2FIYQebs7E4B3jAjhSdJqYi8fXvqWaN+J
-J5U4nwbXPsnLJlkNc96wyOkmDoMVxu9bi9IEYMpJpij2aTv2y8gokeWdimFXN6x0FNx04Druci8u
-nPvQu7/1PQDhBjPogiuuU6Y6FnOM3UEOIDrAtKeh6bJPkC4yYOlXy7kEkmho5TgmYHWyn3f/kRTv
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
-BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
-hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
-JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
-aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
-FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
-T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
-o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
-aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
-YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
-cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
-ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
-HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
-Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
-LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
-zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
-4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
-cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
-u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
-a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
-x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
-VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
-bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
-AQkEMSIEIE59LJd14aFgr/cvkoKk9/aL6T8PfffLYLeLkqiIUCmNMBgGCSqGSIb3DQEJAzELBgkq
-hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDcxMDA5MDkxOVowaQYJKoZIhvcNAQkPMVwwWjAL
-BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
-9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQC3xmFwh/ZE
-UZZd1+bGKs3hNqVYyWxAZ3C6T/xxmEBIpZBB2pwMnqOt8TnXUKVIf27nTFNgCD4uJ0Yam7eWPMFo
-L1VIIQ8Uf6wrAkqb2rbcLidAKYqLQq5x1hUx3LThRC2kDeGmwjfBS6q30fgtTmmnYpG4EcoXfo6A
-mMPOoFQGSwRnfij7wZftZy42DVykR+GViHwy/LmHaz6j/KnLk8epZQyDinfR7NQehF6b2eRsSQ52
-+qYdaYSunEuqgl20BqeP8cUtzFOpQShscr61uHF3pFBKK6ZlDuNv3KzT0hMDcu9oSf9u0yqGiVzs
-lY8Mnw811ZlSdh8JskGx9XTBcRSG
---00000000000055cf36061ce1003e--
+I've just noticed a typo in the commit description (INFO_TEST should be
+INFO_TEXT) so I want to send a V2 chain anyway.
 
