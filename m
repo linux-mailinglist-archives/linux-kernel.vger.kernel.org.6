@@ -1,112 +1,110 @@
-Return-Path: <linux-kernel+bounces-247302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3778792CDCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:01:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 407F692CDD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68D031C21D41
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:01:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA5DA1F274CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE50176AD0;
-	Wed, 10 Jul 2024 09:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A902D1862B2;
+	Wed, 10 Jul 2024 09:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QhUdn1nd"
-Received: from mail-il1-f196.google.com (mail-il1-f196.google.com [209.85.166.196])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CePkZSpP"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72A717836C;
-	Wed, 10 Jul 2024 09:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D25185E6A;
+	Wed, 10 Jul 2024 09:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720602004; cv=none; b=q+3YKx58EaW3sYs3eWzDXQsFgK/XmkIiPk57iYH5y5cDEq+PA+uza2qUvQ32orePPV1gv8PYuOdToNbN7o+GLCCc1Utw7h44laO7P9dp+HI6xvfBjG364U+KWTj2rkhXH6TD4SCtIOF6FRGlyK5+5uaGv8Y7X1l5zy8ZkTmemHA=
+	t=1720602103; cv=none; b=ZKf3c7Il+cdzMt5TOhd4v+sCkuDx/Fy9Szfyv0kaVdW3k6+VK3BtpDyCCMf8sJrqfY4dUvzjiagzK0sQg5ZJrYpQhH33rSfW+jwB4VMKHys0GNj4X8btLYOG5541CQLk4SBhE6vpmqR1QagU8fNXqoEdN6ORi0Vyh/8ndMHCzAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720602004; c=relaxed/simple;
-	bh=rI4emRMTI36UV2uznkSdc4z/SSDEK/mpaZIb93O596o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=u/ta49vVW341Lh8WhMF9HYaJxrg3kH1kUTf1+2uHYmpJZmzFjonBQ8/oc7DCJtrO5qM7perOpVlpmNwQidHDGBD3x4Fru2Bavh6QyWXlYAjWLAonxfLSxmgJtZdPDRtIsE30WWUMPFL2S5oBjJ7PJBvOM9iavPLaOXDERQrQiIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QhUdn1nd; arc=none smtp.client-ip=209.85.166.196
+	s=arc-20240116; t=1720602103; c=relaxed/simple;
+	bh=vmFXtyVCMNyYbHABAh9iS+RSpjavkSOYAah2Pgbu5sU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JgVrZIiAcHYKqhaVHZUu51lS5RQ1uwQNwFZPF6mj57TLQRHWPBtKMTsT73yNHXRYfibrU+PtuPmIxjveWEkRxplhmHUGoImKvaQ1ucr/MISZC5R61Am49YloBB1eVcLLFOtggqr9GZi1J1UAROLCGY3mmjIDZZmJrMIBnyKO7yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CePkZSpP; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f196.google.com with SMTP id e9e14a558f8ab-38b1ce72526so5519455ab.0;
-        Wed, 10 Jul 2024 02:00:01 -0700 (PDT)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2c983d8bdc7so4481685a91.0;
+        Wed, 10 Jul 2024 02:01:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720602001; x=1721206801; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FxYvFXWDS6rYr4mBF26COM5Q4SvhFcKuutaGTTwwarA=;
-        b=QhUdn1nd9NTk3ssLQDBNz5jIkBIADfVNlovg/MCXIC9tPOcsZvZ0/vHssfgKYP4Whg
-         Wh4nrLOikiBtmkAYDgJTb9Pixr/i0r2D0+1IaECSUZHjy9n3n8ZfO744UB3Gr1DHqFZm
-         H29FHvB5wSPVRlzDomuen6pDyVeXoq3/kI/3MviBX1fnDsFawlAfcDfSBUaQjXjsdmsQ
-         EDE7Vd04pZOiMOJ8ln2FrFlm2BDWyYbukvlmLsvkSnMiH1N1mucqgRWNhBMz2Qanwypo
-         GwUa+G3uymhXQhX11sVpIkOId4HQdIzv313ObZ4PxYAhKMFXzJi+Vxvx0aB2+kvn1Th3
-         2kXA==
+        d=gmail.com; s=20230601; t=1720602101; x=1721206901; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vmFXtyVCMNyYbHABAh9iS+RSpjavkSOYAah2Pgbu5sU=;
+        b=CePkZSpPDrkFPl3Gn6a8okuj1P+4dni4rgmqac8S064pzoP8qWrwT1PP9DuIJB3yTG
+         2kJ0rASc8JR5Hm4V/8yGvniflWUi9fnfmUSnUtee5ULAy35tYz8wNFaCTb6OWxMd4tPo
+         yA/am7lPfnWRJg+CTR+7Aj+Qsfs6s0ndjGOMngdhQ/UMo/hQDBsz+1eIFIxfBCOSYyBP
+         vHtGfRAmMhc5FVJfmOf8xxlV9RwiX0gWT2SxTgTJA0XE5nDRMXJ5+aKFuxyBHOK/DZIc
+         mLMPz0x7Ap7IZ8+H7wpl2h+SDibFCS2zhgeYu+q25y4rhcDi1CGYIn1gYBtoX/SGHaMy
+         rPsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720602001; x=1721206801;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FxYvFXWDS6rYr4mBF26COM5Q4SvhFcKuutaGTTwwarA=;
-        b=XZqV9Vav6HAlGoBnCRVM5HkwIDT2rvIovlKM97RNBIE/izj0Q7/MXu+xk/8OcXK9wn
-         SX55MNgVz5FnMKYs4jwNYFH3i1naxny3UijLvdTlRo8UApnCrOoDEb0nlBkKDhl6m6Im
-         azB7zx78RLRYyEegY7pKLOnfnawD3/vKFrEnSC3uTG3/7rKk8f0SC7L5ES1Ri/lRQHpT
-         rp++/LHA0g4HsmNPtSSqZwJ9tZda4ZNKlOfUyVU0BHAdD9zQtiLlkKiVKXsHjnE5/jkO
-         1T7PtAQB9nTWyLgUO6o4pSkE4L5O3Sq5EZUc5kQuJ4/txmMA5rgdDL7Ho/e7vzaxTPOW
-         geuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ/FyV64fnwtebc8Yk9B8f+3FP72Q0XMrzlfu2s7cQXoWxcMQoxsnUbQGPtGzyDgIqhOZn1wB2R0M+6e/J5AE7utA3mSVpw0vCh4jRx3Q3lKQg0nnJVasDJ0PkXL0p/d6cceP0qzA5S1GF3mNe9Ivqe8Vcsa5ZutZIAz/s6s5i+3CsSE7B
-X-Gm-Message-State: AOJu0Yzu3XHuw4jP5AJBabnssuduqkpjwASOMqpZFpU474JEyDeFS2tk
-	jivU87z8jc/DFUA48oKBwX98gfJ/SEaxf4H2M48GKNCyTBSCeGvhXhEcrxUn
-X-Google-Smtp-Source: AGHT+IFyKkjEbWfPpt0EWoNM5+CbHhaTh+m9pQG9L5aZhJOLuywBhuPVhceQAqOKndZHHEJZ/FtPUw==
-X-Received: by 2002:a05:6e02:1a49:b0:375:ae17:a2cd with SMTP id e9e14a558f8ab-38a5a35bdcamr52822395ab.27.1720602000758;
-        Wed, 10 Jul 2024 02:00:00 -0700 (PDT)
-Received: from localhost.localdomain ([43.129.25.208])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b43969b41sm3235527b3a.138.2024.07.10.01.59.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 02:00:00 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: mhiramat@kernel.org
-Cc: rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Menglong Dong <dongml2@chinatelecom.cn>
-Subject: [PATCH bpf-next] bpf: kprobe: remove unused declaring of bpf_kprobe_override
-Date: Wed, 10 Jul 2024 16:59:39 +0800
-Message-Id: <20240710085939.11520-1-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1720602101; x=1721206901;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vmFXtyVCMNyYbHABAh9iS+RSpjavkSOYAah2Pgbu5sU=;
+        b=FUglQXFOYjAXQBk2W0plej80OO+EAP8aBrvi5jU+L0L6pPTPrkXIsdePDYqy7xbywn
+         K0MR2dtJ8d33qVY4n0KuliLRAOtfPRvQ0DPETw+DJG8mVrGiWRy8UjdbRi1eUEkSwteu
+         8d62hKagc4rsWNzMjbyisv3iD3qxqUnfMzVCPPu7jvb4ZVeOiTnmRGr90F2rlCXiNoc8
+         i8RP1rnLqfovdpypW37K70LLSiCgVT7V7zCRtO6rws80OxytpdrW67pjnkFKgQ8aas3n
+         sa5AK4mjxD0BgYBWrAfrFMuZGRKVXY9hhFxRlYTuSSRt51103GWhh8RcE58LOQSQW3Hj
+         sXLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIGXMBhfMzGoAx99y2F8GCXMHdCl3+d3WmKbP82OIfeooH5zw9YR8z7y0f/wpiZ6cFL/mhdAAIyBAM/RPtxp4ptkxhKvqgULVuNlUphtPFv/9N9VRKAt36nmZnjAdEZTDlxedfS5llE8sMrII=
+X-Gm-Message-State: AOJu0YzK5ToYSezLkvswZKXddksDxPiiywPyQ6jfQuT7P6CDj36NXhWZ
+	YFtXt1FdcsTA75JOFSsrMjKBp+R9qmjIyTLk8cN1+6J4mMXTnoTjasQBA9vCSfnq5CVA+dcyHOf
+	ibvuLUhPio1/YaAGUgBF8FaXdsIM=
+X-Google-Smtp-Source: AGHT+IEzaE9GFxB1MbaoIUhf8vmwgNC6NulwUarj52xV5HAtPJpAIzgEeJpgYD+koAiX9yk1ne21kbfzrbf8TOOCYEA=
+X-Received: by 2002:a17:90a:c385:b0:2c9:66d3:4663 with SMTP id
+ 98e67ed59e1d1-2ca35d58971mr3979784a91.43.1720602071142; Wed, 10 Jul 2024
+ 02:01:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240709084458.158659-1-jfalempe@redhat.com> <20240709084458.158659-5-jfalempe@redhat.com>
+ <CANiq72kS2fAgRnR8yNfpN69tMG+UPfgfytaA8sE=tYH+OQ_L6A@mail.gmail.com> <e19d875c-70b4-4e0d-a481-ab2a99a8ee42@redhat.com>
+In-Reply-To: <e19d875c-70b4-4e0d-a481-ab2a99a8ee42@redhat.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 10 Jul 2024 11:00:58 +0200
+Message-ID: <CANiq72n-OXYPywckp3M5T8vA3AcFt0kSUUVN60FLx+yY3pPpag@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] drm/panic: Add a qr_code panic screen
+To: Jocelyn Falempe <jfalempe@redhat.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-After the commit 66665ad2f102 ("tracing/kprobe: bpf: Compare instruction
-pointer with original one"), "bpf_kprobe_override" is not used anywhere
-anymore, and we can remove it now.
+On Tue, Jul 9, 2024 at 5:10=E2=80=AFPM Jocelyn Falempe <jfalempe@redhat.com=
+> wrote:
+>
+> I used to list all QR versions in an enum, but I find it a bit too much
+> boilerplate to ensure the version is between 1 and 40.
+> By transparent newtypes, you mean adding "#[repr(transparent)]" to a
+> struct ?
+> I don't plan to add more "version" usage, so probably not worth it.
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
- include/linux/trace_events.h | 1 -
- 1 file changed, 1 deletion(-)
+Yeah, that is what I meant. It may not be worth it in that case -- it
+is just something we should generally consider when we see "raw" types
+appear in parameters that need extra documentation/preconditions, but
+sometimes it simply does not make sense.
 
-diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-index 9df3e2973626..9435185c10ef 100644
---- a/include/linux/trace_events.h
-+++ b/include/linux/trace_events.h
-@@ -880,7 +880,6 @@ do {									\
- struct perf_event;
- 
- DECLARE_PER_CPU(struct pt_regs, perf_trace_regs);
--DECLARE_PER_CPU(int, bpf_kprobe_override);
- 
- extern int  perf_trace_init(struct perf_event *event);
- extern void perf_trace_destroy(struct perf_event *event);
--- 
-2.39.2
+Thanks!
 
+Cheers,
+Miguel
 
