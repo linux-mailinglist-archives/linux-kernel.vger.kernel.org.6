@@ -1,360 +1,385 @@
-Return-Path: <linux-kernel+bounces-247799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8492892D4AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:07:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FCA792D4B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:09:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7E9D1C21235
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:07:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D241C21EF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0AD194131;
-	Wed, 10 Jul 2024 15:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE057194137;
+	Wed, 10 Jul 2024 15:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gvG1DpIo"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LewGopmc"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CFB18FA14
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43F519248D
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720624060; cv=none; b=qCBaSADkSQA4hP3y4f2Kdda2GJjqWNl0oBAKpZq8b8Hj3M7W9Gd2M+cxjBlqm67bAMsNEbH+G0O/qab9RZ21cow1LQLBSPtjjZnMZ0rl+VAkK2WFRsPVBrDOi+Vxu23fQ9nDW92zAItMgHhwju+P9uytnGtpufBHXamKwClc7MQ=
+	t=1720624162; cv=none; b=MQPdozD/FvgIluyqYbixgJXxgteEynKw6PNd0vQcUzCKh+b/Lb/Bc6MhEIkYyD9uOS+6J5D356AiKIll7r/lwyarDkLbLnSLWbaHvJH3tk2CcYmUT8LAYc92Qe1Y8BmAmbEQyI7+81cmIffkDMzCjZVTwCoqCDuwX+RNo/skJ1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720624060; c=relaxed/simple;
-	bh=vcdY9MUN5ZYdD+0dlB3pMyvklIPqAlqyJqfrffSbRRg=;
+	s=arc-20240116; t=1720624162; c=relaxed/simple;
+	bh=W5Qb+dcqh4oCAFNgsrRCVEZ0CxssIgHT2pXbyWol0+U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZlvVklacuQ08iI5wkcYE66sAOMBnysrzoHgLU8kXi+NFEnbvxH7ZRqvE+zzIlavqqNv5xRXz4Dzvaxun/E6O9BBIr7Xx9iuaTiH2iFWy+brc/KFS5REUi0f/Rna1WEERNWWMFAy4+Dyf21JIR+DrKlSW1cdUWx/Gy7Sf92b8kmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gvG1DpIo; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-447f8aa87bfso447601cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:07:37 -0700 (PDT)
+	 To:Cc:Content-Type; b=VasGqs1/xTd76FeRLDm5HpSgDY1wyX685jturAQWGNzzouHwR0fi7lqSE1P0dZt3VLlyZUBOtStciB/GyqWr+ddyEI0Ngc/hMn/Zw5/3u9x66B9PPk3srtbGLb8ckelkJ4vRGzGd9V1EDD7LFm0/Qt5aC3l77g7QLRIEx4WE5R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LewGopmc; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a77e5929033so552384966b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:09:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720624056; x=1721228856; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1720624159; x=1721228959; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=U5dgbGRorkiVAKVlp8pxM+M8gBnLAiXQeIsnSMwLS+Y=;
-        b=gvG1DpIoTfGwkOxhaLSUq+thLUw0BWjdujqKXQnjs8sodGGp7fGaE9n0rqN5TSqj2p
-         EaFT0A2Ko1sZms2TxpFG/eGa2hIc09348u1nP3q5uiZEw6jaaej2uw1Z4ZvPxrsTRH0w
-         Nu4ZIkxQ29waZegpqF2Uicrmz8mBQ57jwv52RWH2VV5gg51f3OxeRXAoWcCaMioABpzx
-         lGIROdxAGhHfdZabuC6RvY622qVqFVbcP1d0BtHWqIokMBwpArQfFHevHH6a0jpzCoUW
-         VYlpiiOKiUKZcoXYcSZ8tFXrYFTDwweZrGUghvmGlsX750u1k0oButDbTe8leSpZa9xh
-         6ZIQ==
+        bh=4XAx6Sn0YTFV2cc6+dOGYCTHn11SvsaL/idVw9oChw8=;
+        b=LewGopmcKMbQpL8XEbpA/6RWERE63PoQ88EQIloCQ2RazFusZFbsoLU6zR/V/Wf7UL
+         697gP3ghhmXSTQ4cZOGgIpLZUXg0CF43fm6PCuxbSIUZHcEou34DmtJ/nZHS41o342KN
+         aP8b4Dggwn3XvsUGFREneVP+hYsRxWRujJn20=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720624056; x=1721228856;
+        d=1e100.net; s=20230601; t=1720624159; x=1721228959;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=U5dgbGRorkiVAKVlp8pxM+M8gBnLAiXQeIsnSMwLS+Y=;
-        b=hy40jlvpC9fo5YBRajkGp16L1JDZtKple02aMGlOZ9rauaWJIWxhklktCEtAgn9gnG
-         Jyou6qaSMDOwNhXj5v7Ukfd7/0E0U9sNxUNIXPQAouZEdkFip5rLXo+Zpm4ciFcnsMRN
-         edPmpBLmkMEq2B27nqhliviKYYismAV45i6+xP++Q4eft1hUcd4dRG3muiqhlsow41kK
-         YR4rc+YTot4z6I46z/itptE6D408y6doWYHYmw4gOhMeQNtGtlZk8tRm3LYSbAJ0nZRA
-         0z0lNhUYgLWS5r+0h9CtEnTsToIC+tJXocK2LPOszg4Bjsw4JLZH5/5olVYCiiZNYmUR
-         1OqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWD+YpyvGHpSrPSNWE6ln2yFzaOloqueOybdLH/AWDX3HwU4y9atPBug1fVeyuRDP2mPExya0Qf2VeGIYoksypkdxxK04p6AZkhRF3k
-X-Gm-Message-State: AOJu0YwcxfV8W1Hc9gB2rDYRfMJ8xvXqbPLkxLPoEKp9q8eUZ3NHJ6zk
-	P/b1Om2LoWg0SOtO/CSF7u2Vgx6IlAT503vAEwsGNV99imdOicQ2aHxOkXjTx+kdW+n+RSQoOYv
-	084R20RlV1cGf//t64Crwl7/WFdoYo0Lvlgt7
-X-Google-Smtp-Source: AGHT+IGUH2nK2xcoFXiC07fLg1WSH8kZWE9jVRC1F0SAx2p4Pnt+AS8ShMAk1LHq6s1BiNkwxfcndS6qd9jvqgJHE2k=
-X-Received: by 2002:ac8:72d7:0:b0:447:e847:486 with SMTP id
- d75a77b69052e-44b16c85d3fmr3032061cf.3.1720624056102; Wed, 10 Jul 2024
- 08:07:36 -0700 (PDT)
+        bh=4XAx6Sn0YTFV2cc6+dOGYCTHn11SvsaL/idVw9oChw8=;
+        b=k4cYzdGOWJRH7tc8nbIWLXuWCfuuwuGuZSjGVc4GXgpnIYA3t0wzSA4ciukMnE/9pG
+         4PQMgFPiDIAQ0FHpkwy8G9ZCT/YlhEp3C/0jxyENepFI6ml6zT0WJZqiqANtpdkjYVWD
+         LZz3psvKEu4fmYdYlnG58Ci3sHH8EDWShgs3T61Fou+EFYOYaetN8R1bdYXtohn7B2WZ
+         Ka4in2gcTgHPJEwgOxqtDOadoTlwyts0UHCkwA4qXS2sbQyBrCxhZ4Cbh7M5zhX0aQi9
+         IgP17BZ/9iUly94UyErFYYp0U1QmHKUTXMM3hZ1xzgVN18RluXXACf4CiQXp+UxfHFjb
+         2Dyw==
+X-Forwarded-Encrypted: i=1; AJvYcCW9gxKP0JKjTVKuJC5IQZ/IPatvzV/RZIKgIJAWpjvaBaXHBGFmAasbpaQ35d8p9iS82la5gntwEY/cCoGr9VqtVdv/Bok5nqgRVZwi
+X-Gm-Message-State: AOJu0YyL8AgPkkV2DMgePIHKQo5NEJP94+vNqwd1jgegrK7vdA3uQH3H
+	URldiYwjwfcDOJ21apt2NRHNqsntpaCH1C1Dkx0bGtrRZBrILYiSCiBRIR0gYg2mS5V0i7Eu/tn
+	fQMNSxHz7sUoXubBXaXODEz8uYVhMmUOJEW2E
+X-Google-Smtp-Source: AGHT+IFkoATHPds5XCsl0LyzFdirEBfxh7cRVDWfNpPEtYmJFTd/OoyhW7vOVd1mE4GxBjfB4T1thnbWKxCJcwZz/mE=
+X-Received: by 2002:a17:906:3710:b0:a77:cf9d:f49b with SMTP id
+ a640c23a62f3a-a780b8802fbmr359916566b.54.1720624159129; Wed, 10 Jul 2024
+ 08:09:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708144204.839486-1-dapeng1.mi@linux.intel.com>
- <20240708144204.839486-4-dapeng1.mi@linux.intel.com> <CAP-5=fVPb4JGR3RxfPBGrihrra8bFzdJfFt2iASSs2xHOy=U4g@mail.gmail.com>
- <4d39856e-396d-4a48-9ca3-2e1a574f50d7@linux.intel.com> <CAP-5=fW65kxuABBJVAzKwoyBWW92_jkndWgY+4u9s3OGj_UkEg@mail.gmail.com>
- <afea2a93-0769-4ce5-ab59-2693d2d2f344@linux.intel.com>
-In-Reply-To: <afea2a93-0769-4ce5-ab59-2693d2d2f344@linux.intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 10 Jul 2024 08:07:24 -0700
-Message-ID: <CAP-5=fUP1O+VnH+7PaZtEgsFUFOpjo-tRtmAyVjG=Q4GFToR7g@mail.gmail.com>
-Subject: Re: [Patch v2 3/5] perf x86/topdown: Don't move topdown metrics
- events when sorting events
-To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yongwei Ma <yongwei.ma@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20240708172339.GA139099@bhelgaas> <e1ed82cb-6d20-4ca8-b047-4a02dde115a8@gmail.com>
+In-Reply-To: <e1ed82cb-6d20-4ca8-b047-4a02dde115a8@gmail.com>
+From: George-Daniel Matei <danielgeorgem@chromium.org>
+Date: Wed, 10 Jul 2024 17:09:08 +0200
+Message-ID: <CACfW=qpNmSeQVG_qSeYpEdk9pf_RTAEEKp+OiBYrRFd3d6HOXg@mail.gmail.com>
+Subject: Re: [PATCH] PCI: r8169: add suspend/resume aspm quirk
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, nic_swsd@realtek.com, netdev@vger.kernel.org, 
+	Bjorn Helgaas <helgaas@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 10, 2024 at 2:40=E2=80=AFAM Mi, Dapeng <dapeng1.mi@linux.intel.=
-com> wrote:
->
->
-> On 7/10/2024 6:37 AM, Ian Rogers wrote:
-> > On Mon, Jul 8, 2024 at 9:18=E2=80=AFPM Mi, Dapeng <dapeng1.mi@linux.int=
-el.com> wrote:
-> >>
-> >> On 7/8/2024 11:08 PM, Ian Rogers wrote:
-> >>> On Mon, Jul 8, 2024 at 12:40=E2=80=AFAM Dapeng Mi <dapeng1.mi@linux.i=
-ntel.com> wrote:
-> >>>> when running below perf command, we say error is reported.
-> >>>>
-> >>>> perf record -e "{slots,instructions,topdown-retiring}:S" -vv -C0 sle=
-ep 1
-> >>>>
-> >>>> ------------------------------------------------------------
-> >>>> perf_event_attr:
-> >>>>   type                             4 (cpu)
-> >>>>   size                             168
-> >>>>   config                           0x400 (slots)
-> >>>>   sample_type                      IP|TID|TIME|READ|CPU|PERIOD|IDENT=
-IFIER
-> >>>>   read_format                      ID|GROUP|LOST
-> >>>>   disabled                         1
-> >>>>   sample_id_all                    1
-> >>>>   exclude_guest                    1
-> >>>> ------------------------------------------------------------
-> >>>> sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 =3D 5
-> >>>> ------------------------------------------------------------
-> >>>> perf_event_attr:
-> >>>>   type                             4 (cpu)
-> >>>>   size                             168
-> >>>>   config                           0x8000 (topdown-retiring)
-> >>>>   { sample_period, sample_freq }   4000
-> >>>>   sample_type                      IP|TID|TIME|READ|CPU|PERIOD|IDENT=
-IFIER
-> >>>>   read_format                      ID|GROUP|LOST
-> >>>>   freq                             1
-> >>>>   sample_id_all                    1
-> >>>>   exclude_guest                    1
-> >>>> ------------------------------------------------------------
-> >>>> sys_perf_event_open: pid -1  cpu 0  group_fd 5  flags 0x8
-> >>>> sys_perf_event_open failed, error -22
-> >>>>
-> >>>> Error:
-> >>>> The sys_perf_event_open() syscall returned with 22 (Invalid argument=
-) for event (topdown-retiring).
-> >>>>
-> >>>> The reason of error is that the events are regrouped and
-> >>>> topdown-retiring event is moved to closely after the slots event and
-> >>>> topdown-retiring event needs to do the sampling, but Intel PMU drive=
-r
-> >>>> doesn't support to sample topdown metrics events.
-> >>>>
-> >>>> For topdown metrics events, it just requires to be in a group which =
-has
-> >>>> slots event as leader. It doesn't require topdown metrics event must=
- be
-> >>>> closely after slots event. Thus it's a overkill to move topdown metr=
-ics
-> >>>> event closely after slots event in events regrouping and furtherly c=
-ause
-> >>>> the above issue.
-> >>>>
-> >>>> Thus delete the code that moving topdown metrics events to fix the
-> >>>> issue.
-> >>> I think this is wrong. The topdown events may not be in a group, such
-> >>> cases can come from metrics due to grouping constraints, and so they
-> >>> must be sorted together so that they may be gathered into a group to
-> >>> avoid the perf event opens failing for ungrouped topdown events. I'm
-> >>> not understanding what these patches are trying to do, if you want to
-> >>> prioritize the event for leader sampling why not modify it to compare
-> >> Per my understanding, this change doesn't break anything. The events
-> >> regrouping can be divided into below several cases.
-> >>
-> >> a. all events in a group
-> >>
-> >> perf stat -e "{instructions,topdown-retiring,slots}" -C0 sleep 1
-> >> WARNING: events were regrouped to match PMUs
-> >>
-> >>  Performance counter stats for 'CPU(s) 0':
-> >>
-> >>         15,066,240      slots
-> >>          1,899,760      instructions
-> >>          2,126,998      topdown-retiring
-> >>
-> >>        1.045783464 seconds time elapsed
-> >>
-> >> In this case, slots event would be adjusted as the leader event and al=
-l
-> >> events are still in same group.
-> >>
-> >> b. all events not in a group
-> >>
-> >> perf stat -e "instructions,topdown-retiring,slots" -C0 sleep 1
-> >> WARNING: events were regrouped to match PMUs
-> >>
-> >>  Performance counter stats for 'CPU(s) 0':
-> >>
-> >>          2,045,561      instructions
-> >>         17,108,370      slots
-> >>          2,281,116      topdown-retiring
-> >>
-> >>        1.045639284 seconds time elapsed
-> >>
-> >> In this case, slots and topdown-retiring are placed into a group and s=
-lots
-> >> is the group leader. instructions event is outside the group.
-> >>
-> >> c. slots event in group but topdown metric events outside the group
-> >>
-> >> perf stat -e "{instructions,slots},topdown-retiring"  -C0 sleep 1
-> >> WARNING: events were regrouped to match PMUs
-> >>
-> >>  Performance counter stats for 'CPU(s) 0':
-> >>
-> >>         20,323,878      slots
-> >>          2,634,884      instructions
-> >>          3,028,656      topdown-retiring
-> >>
-> >>        1.045076380 seconds time elapsed
-> >>
-> >> In this case, topdown-retiring event is placed into previous group and
-> >> slots is adjusted to leader event.
-> >>
-> >> d. multiple event groups
-> >>
-> >> perf stat -e "{instructions,slots},{topdown-retiring}"  -C0 sleep 1
-> >> WARNING: events were regrouped to match PMUs
-> >>
-> >>  Performance counter stats for 'CPU(s) 0':
-> >>
-> >>         26,319,024      slots
-> >>          2,427,791      instructions
-> >>          2,683,508      topdown-retiring
-> >>
-> >>        1.045495830 seconds time elapsed
-> >>
-> >> In this case, the two groups are merged to one group and slots event i=
-s
-> >> adjusted as leader.
-> >>
-> >> The key point of this patch is that it's unnecessary to move topdown
-> >> metrics events closely after slots event. It's a overkill since Intel =
-core
-> >> PMU driver doesn't require that. Intel PMU driver just requires topdow=
-n
-> >> metrics events are in a group where slots event is the group leader, a=
-nd
-> >> worse the movement for topdown metrics events causes the issue in the
-> >> commit message mentioned.
-> >>
-> >> This patch doesn't block to regroup topdown metrics event. It just rem=
-oves
-> >> the unnecessary movement for topdown metrics events.
-> > But you will get the same behavior because of the non-arch dependent
-> > force group index - I guess you don't care as the sample read only
-> > happens when you have a group.
-> >
-> > I'm thinking of cases like (which admittedly is broken):
-> > ```
-> > $ perf stat -e "{slots,instructions},cycles,topdown-fe-bound" -a sleep =
-0.1
-> > [sudo] password for irogers:
-> >
-> > Performance counter stats for 'system wide':
-> >
-> >     2,589,345,900      slots
-> >       852,492,838      instructions
-> >       583,525,372      cycles
-> >   <not supported>      topdown-fe-bound
-> >
-> >       0.103930790 seconds time elapsed
-> > ```
->
-> I run the upstream code (commit 73e931504f8e0d42978bfcda37b323dbbd1afc08)
-> without this patchset, I see same issue.
->
-> perf stat -e "{slots,instructions},cycles,topdown-fe-bound" -a sleep 0.1
->
->  Performance counter stats for 'system wide':
->
->        262,448,922      slots
->         29,630,373      instructions
->         43,891,902      cycles
->    <not supported>      topdown-fe-bound
->
->        0.150369560 seconds time elapsed
->
-> #perf -v
-> perf version 6.10.rc6.g73e931504f8e
->
-> This issue is not caused by this patchset.
+Hi,
 
-I agree, but I think what is broken above was caused by the forced
-grouping change that I did for Andi. The point of your change here is
-to say that topdown events don't need to be moved while sorting, but
-what should be happening here is just that. topdown-fe-bound should be
-moved into the group with slots and instructions so it isn't "<not
-supported>". So yes the current code has issues, but that's not the
-same as saying we don't need to move topdown events, we do so that we
-may group them better.
+>> Added aspm suspend/resume hooks that run
+>> before and after suspend and resume to change
+>> the ASPM states of the PCI bus in order to allow
+>> the system suspend while trying to prevent card hangs
+>
+> Why is this needed?  Is there a r8169 defect we're working around?
+> A BIOS defect?  Is there a problem report you can reference here?
+>
 
-Thanks,
-Ian
+We encountered this issue while upgrading from kernel v6.1 to v6.6.
+The system would not suspend with 6.6. We tracked down the problem to
+the NIC of the device, mainly that the following code was removed in
+6.6:
+> else if (tp->mac_version >=3D RTL_GIGA_MAC_VER_46)
+>         rc =3D pci_disable_link_state(pdev, PCIE_LINK_STATE_L1_2);
+For the listed devices, ASPM L1 is disabled entirely in 6.6. As for
+the reason, L1 was observed to cause some problems
+(https://bugzilla.kernel.org/show_bug.cgi?id=3D217814). We use a Raptor
+Lake soc and it won't change residency if the NIC doesn't have L1
+enabled. I saw in 6.1 the following comment:
+> Chips from RTL8168h partially have issues with L1.2, but seem
+> to work fine with L1 and L1.1.
+I was thinking that disabling/enabling L1.1 on the fly before/after
+suspend could help mitigate the risk associated with L1/L1.1 . I know
+that ASPM settings are exposed in sysfs and that this could be done
+from outside the kernel, that was my first approach, but it was
+suggested to me that this kind of workaround would be better suited
+for quirks. I did around 1000 suspend/resume cycles of 16-30 seconds
+each (correcting the resume dev->bus->self being configured twice
+mistake) and did not notice any problems. What do you think, is this a
+good approach ... ?
 
-> > As the slots event is grouped there's no force group index on it, we
-> > want to shuffle the topdown-fe-bound into the group so we want it to
-> > compare as less than cycles - ie we're comparing topdown events with
-> > non topdown events and trying to shuffle the topdown events first.
->
-> Current evlist__cmp() won't really swap the order of cycles and
-> topdown-fe-bound.
->
-> if (lhs_sort_idx !=3D rhs_sort_idx)
->         return lhs_sort_idx - rhs_sort_idx;
->
-> When comparing cycles and topdown-fe-bound events, lhs_sort_idx is 2 and
-> rhs_sort_idx is 3, so the swap won't happen.
->
-> So the event sequence after sorting is still "slots, instructions ,cycles=
+>> +             //configure device
+>> +             pcie_capability_clear_and_set_word(dev, PCI_EXP_LNKCTL,
+>> +                                                PCI_EXP_LNKCTL_ASPMC, 0=
+);
+>> +
+>> +             pci_read_config_word(dev->bus->self,
+>> +                                  dev->bus->self->l1ss + PCI_L1SS_CTL1,
+>> +                                  &val);
+>> +             val =3D val & ~PCI_L1SS_CTL1_L1SS_MASK;
+>> +             pci_write_config_word(dev->bus->self,
+>> +                                   dev->bus->self->l1ss + PCI_L1SS_CTL1=
 ,
-> topdown-fe-bound". Both cycles and topdown-fe-bound events won't be place=
-d
-> into the group.
+>> +                                   val);
+> Updates the parent (dev->bus->self) twice; was the first one supposed
+> to update the device (dev)?
+Yes, it was supposed to update the device (dev). It's my first time
+sending a patch and I messed something up while doing some style
+changes, I will correct it. I'm sorry for that.
+
+> This doesn't restore the state as it existed before suspend.  Does
+> this rely on other parts of restore to do that?
+It operates on the assumption that after driver initialization
+PCI_EXP_LNKCTL_ASPMC is 0 and that there are no states enabled in
+CTL1. I did a lspci -vvv dump on the affected devices before and after
+the quirks ran and saw no difference. This could be improved.
+
+> What is the RTL8168 chip version used on these systems?
+It should be RTL8111H.
+
+> What's the root cause of the issue?
+> A silicon bug on the host side?
+I think it's the ASPM implementation of the soc.
+
+> ASPM L1 is disabled per default in r8169. So why is the patch needed
+> at all?
+Leaving it disabled all the time prevents the system from suspending.
+
+Thank you,
+George-Daniel Matei
+
+
+
+
+
+On Tue, Jul 9, 2024 at 12:15=E2=80=AFAM Heiner Kallweit <hkallweit1@gmail.c=
+om> wrote:
 >
+> On 08.07.2024 19:23, Bjorn Helgaas wrote:
+> > [+cc r8169 folks]
+> >
+> > On Mon, Jul 08, 2024 at 03:38:15PM +0000, George-Daniel Matei wrote:
+> >> Added aspm suspend/resume hooks that run
+> >> before and after suspend and resume to change
+> >> the ASPM states of the PCI bus in order to allow
+> >> the system suspend while trying to prevent card hangs
+> >
+> > Why is this needed?  Is there a r8169 defect we're working around?
+> > A BIOS defect?  Is there a problem report you can reference here?
+> >
 >
+> Basically the same question from my side. Apparently such a workaround
+> isn't needed on any other system. And Realtek NICs can be found on more
+> or less every consumer system. What's the root cause of the issue?
+> A silicon bug on the host side?
+>
+> What is the RTL8168 chip version used on these systems?
+>
+> ASPM L1 is disabled per default in r8169. So why is the patch needed
+> at all?
+>
+> > s/Added/Add/
 > >
-> > Thanks,
-> > Ian
+> > s/aspm/ASPM/ above
 > >
+> > s/PCI bus/device and parent/
 > >
+> > Add period at end of sentence.
 > >
-> >>> first?
-> >>>
-> >>> Thanks,
-> >>> Ian
-> >>>
-> >>>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> >>>> ---
-> >>>>  tools/perf/arch/x86/util/evlist.c | 5 -----
-> >>>>  1 file changed, 5 deletions(-)
-> >>>>
-> >>>> diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86=
-/util/evlist.c
-> >>>> index 332e8907f43e..6046981d61cf 100644
-> >>>> --- a/tools/perf/arch/x86/util/evlist.c
-> >>>> +++ b/tools/perf/arch/x86/util/evlist.c
-> >>>> @@ -82,11 +82,6 @@ int arch_evlist__cmp(const struct evsel *lhs, con=
-st struct evsel *rhs)
-> >>>>                         return -1;
-> >>>>                 if (arch_is_topdown_slots(rhs))
-> >>>>                         return 1;
-> >>>> -               /* Followed by topdown events. */
-> >>>> -               if (arch_is_topdown_metrics(lhs) && !arch_is_topdown=
-_metrics(rhs))
-> >>>> -                       return -1;
-> >>>> -               if (!arch_is_topdown_metrics(lhs) && arch_is_topdown=
-_metrics(rhs))
-> >>>> -                       return 1;
-> >>>>         }
-> >>>>
-> >>>>         /* Default ordering by insertion index. */
-> >>>> --
-> >>>> 2.40.1
-> >>>>
+> > Rewrap to fill 75 columns.
+> >
+> >> Signed-off-by: George-Daniel Matei <danielgeorgem@chromium.org>
+> >> ---
+> >>  drivers/pci/quirks.c | 142 ++++++++++++++++++++++++++++++++++++++++++=
++
+> >>  1 file changed, 142 insertions(+)
+> >>
+> >> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> >> index dc12d4a06e21..aa3dba2211d3 100644
+> >> --- a/drivers/pci/quirks.c
+> >> +++ b/drivers/pci/quirks.c
+> >> @@ -6189,6 +6189,148 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, =
+0x56b0, aspm_l1_acceptable_latency
+> >>  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x56b1, aspm_l1_accepta=
+ble_latency);
+> >>  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x56c0, aspm_l1_accepta=
+ble_latency);
+> >>  DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x56c1, aspm_l1_accepta=
+ble_latency);
+> >> +
+> >> +static const struct dmi_system_id chromebox_match_table[] =3D {
+> >> +    {
+> >> +            .matches =3D {
+> >> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Brask"),
+> >> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> >> +            }
+> >> +    },
+> >> +    {
+> >> +            .matches =3D {
+> >> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Aurash"),
+> >> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> >> +            }
+> >> +    },
+> >> +            {
+> >> +            .matches =3D {
+> >> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Bujia"),
+> >> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> >> +            }
+> >> +    },
+> >> +    {
+> >> +            .matches =3D {
+> >> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Gaelin"),
+> >> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> >> +            }
+> >> +    },
+> >> +    {
+> >> +            .matches =3D {
+> >> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Gladios"),
+> >> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> >> +            }
+> >> +    },
+> >> +    {
+> >> +            .matches =3D {
+> >> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Hahn"),
+> >> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> >> +            }
+> >> +    },
+> >> +    {
+> >> +            .matches =3D {
+> >> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Jeev"),
+> >> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> >> +            }
+> >> +    },
+> >> +    {
+> >> +            .matches =3D {
+> >> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Kinox"),
+> >> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> >> +            }
+> >> +    },
+> >> +    {
+> >> +            .matches =3D {
+> >> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Kuldax"),
+> >> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> >> +            }
+> >> +    },
+> >> +    {
+> >> +            .matches =3D {
+> >> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Lisbon"),
+> >> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> >> +            }
+> >> +    },
+> >> +    {
+> >> +                    .matches =3D {
+> >> +                    DMI_MATCH(DMI_PRODUCT_NAME, "Moli"),
+> >> +                    DMI_MATCH(DMI_BIOS_VENDOR, "coreboot"),
+> >> +            }
+> >> +    },
+> >> +    { }
+> >> +};
+> >> +
+> >> +static void rtl8169_suspend_aspm_settings(struct pci_dev *dev)
+> >> +{
+> >> +    u16 val =3D 0;
+> >> +
+> >> +    if (dmi_check_system(chromebox_match_table)) {
+> >> +            //configure parent
+> >> +            pcie_capability_clear_and_set_word(dev->bus->self,
+> >> +                                               PCI_EXP_LNKCTL,
+> >> +                                               PCI_EXP_LNKCTL_ASPMC,
+> >> +                                               PCI_EXP_LNKCTL_ASPM_L1=
+);
+> >> +
+> >> +            pci_read_config_word(dev->bus->self,
+> >> +                                 dev->bus->self->l1ss + PCI_L1SS_CTL1=
+,
+> >> +                                 &val);
+> >> +            val =3D (val & ~PCI_L1SS_CTL1_L1SS_MASK) |
+> >> +                  PCI_L1SS_CTL1_PCIPM_L1_2 | PCI_L1SS_CTL1_PCIPM_L1_2=
+ |
+> >> +                  PCI_L1SS_CTL1_ASPM_L1_1;
+> >> +            pci_write_config_word(dev->bus->self,
+> >> +                                  dev->bus->self->l1ss + PCI_L1SS_CTL=
+1,
+> >> +                                  val);
+> >> +
+> >> +            //configure device
+> >> +            pcie_capability_clear_and_set_word(dev, PCI_EXP_LNKCTL,
+> >> +                                               PCI_EXP_LNKCTL_ASPMC,
+> >> +                                               PCI_EXP_LNKCTL_ASPM_L1=
+);
+> >> +
+> >> +            pci_read_config_word(dev, dev->l1ss + PCI_L1SS_CTL1, &val=
+);
+> >> +            val =3D (val & ~PCI_L1SS_CTL1_L1SS_MASK) |
+> >> +                  PCI_L1SS_CTL1_PCIPM_L1_2 | PCI_L1SS_CTL1_PCIPM_L1_2=
+ |
+> >> +                  PCI_L1SS_CTL1_ASPM_L1_1;
+> >> +            pci_write_config_word(dev, dev->l1ss + PCI_L1SS_CTL1, val=
+);
+> >> +    }
+> >> +}
+> >> +
+> >> +DECLARE_PCI_FIXUP_SUSPEND(PCI_VENDOR_ID_REALTEK, 0x8168,
+> >> +                      rtl8169_suspend_aspm_settings);
+> >> +
+> >> +static void rtl8169_resume_aspm_settings(struct pci_dev *dev)
+> >> +{
+> >> +    u16 val =3D 0;
+> >> +
+> >> +    if (dmi_check_system(chromebox_match_table)) {
+> >> +            //configure device
+> >> +            pcie_capability_clear_and_set_word(dev, PCI_EXP_LNKCTL,
+> >> +                                               PCI_EXP_LNKCTL_ASPMC, =
+0);
+> >> +
+> >> +            pci_read_config_word(dev->bus->self,
+> >> +                                 dev->bus->self->l1ss + PCI_L1SS_CTL1=
+,
+> >> +                                 &val);
+> >> +            val =3D val & ~PCI_L1SS_CTL1_L1SS_MASK;
+> >> +            pci_write_config_word(dev->bus->self,
+> >> +                                  dev->bus->self->l1ss + PCI_L1SS_CTL=
+1,
+> >> +                                  val);
+> >> +
+> >> +            //configure parent
+> >> +            pcie_capability_clear_and_set_word(dev->bus->self,
+> >> +                                               PCI_EXP_LNKCTL,
+> >> +                                               PCI_EXP_LNKCTL_ASPMC, =
+0);
+> >> +
+> >> +            pci_read_config_word(dev->bus->self,
+> >> +                                 dev->bus->self->l1ss + PCI_L1SS_CTL1=
+,
+> >> +                                 &val);
+> >> +            val =3D val & ~PCI_L1SS_CTL1_L1SS_MASK;
+> >> +            pci_write_config_word(dev->bus->self,
+> >> +                                  dev->bus->self->l1ss + PCI_L1SS_CTL=
+1,
+> >> +                                  val);
+> >
+> > Updates the parent (dev->bus->self) twice; was the first one supposed
+> > to update the device (dev)?
+> >
+> > This doesn't restore the state as it existed before suspend.  Does
+> > this rely on other parts of restore to do that?
+> >
+> >> +    }
+> >> +}
+> >> +
+> >> +DECLARE_PCI_FIXUP_RESUME(PCI_VENDOR_ID_REALTEK, 0x8168,
+> >> +                     rtl8169_resume_aspm_settings);
+> >>  #endif
+> >>
+> >>  #ifdef CONFIG_PCIE_DPC
+> >> --
+> >> 2.45.2.803.g4e1b14247a-goog
+> >>
+>
 
