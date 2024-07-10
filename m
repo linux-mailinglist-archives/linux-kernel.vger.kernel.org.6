@@ -1,58 +1,57 @@
-Return-Path: <linux-kernel+bounces-248020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 694EC92D779
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:30:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AD4492D77B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A8081C20627
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:30:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAF2B1F215FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5210819538C;
-	Wed, 10 Jul 2024 17:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77917195383;
+	Wed, 10 Jul 2024 17:30:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eVQgOzk9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKJN0R27"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9053512F37C;
-	Wed, 10 Jul 2024 17:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A8F191F8E;
+	Wed, 10 Jul 2024 17:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720632632; cv=none; b=QNqHc4eLx/34hF0Wou7iuAei9lHIDevWo8b68dFz0hrcSaxf35OQEHWT4pctXeM9vtewajEfiph/XbGOIuyT6aCrMrHaGbfxXiIBbRQHDdiBE8IXdb1004blTRcSEKEmDFbjz7D6rZb/hL+OFnycN5sJM5C7y2mzaMvc+NIhADg=
+	t=1720632641; cv=none; b=de7N+jWX/KRuDT9sNRSJI1O1itPkvDhWuYxaiH2TJOPsY1JSfI18QrS1i6w8WJ1hd39RFtVNwaP3LwHZcOvqeIOLozXMcnBw1vzA5pkxaOilLa8FDedT6cSOxMyxYtbxxZXkJqjkYUtQekSTa1FEuncQikQ0zb87gY5SK8MaZ6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720632632; c=relaxed/simple;
-	bh=EiksLOAaR1h6v3xrh4/4fRtC36Iw+GB1jm/EDk0JfoA=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=t8JWicRiM9E0hALURHKGmnn0s/nqOJJRniCtS7Kp+FHpmwzR6DGi36o7koZbcBSO3vGDExcD1Qbr2bU15WbuHeXIAqhzFlizIaB/XBEYbE+qMnhZREyPjGg11aNkvZC+SvqQbqigIyLKxZoTBONo94JPNJ7uXL/jqG1v0T1tl9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eVQgOzk9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AA00C32781;
-	Wed, 10 Jul 2024 17:30:29 +0000 (UTC)
+	s=arc-20240116; t=1720632641; c=relaxed/simple;
+	bh=Di4N2+cqCl7OWvZju80WUQzsEksScl5VdjNETIMG00w=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=K+STRmnxm2tMX3DCegQ3lel0LHxZKB2zV5nAWrNLDYsnawZQ2DyF2WnseHPDojAnlS207W1PuPBl1C3yFZzanNPEO34JP2WOHCpogzs/rq1j2o+HdiE/G4RYtlVL0gi8NgpBuEan58nxc5Y3cebjkb0ASswAzFbzKFo/lHJuPsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKJN0R27; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34303C32781;
+	Wed, 10 Jul 2024 17:30:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720632632;
-	bh=EiksLOAaR1h6v3xrh4/4fRtC36Iw+GB1jm/EDk0JfoA=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=eVQgOzk9hfJedk1BA8ccP7L4Fram1XErnxU3vSVe+NDJyPRcG7+hXr0trNCw6ireR
-	 Xa4eeIS64MlFSXeKANSJ0HORIp+XFgG1dRYW96cRzfkwhtRIXpIGeJJEx5ZmpAVx2W
-	 ndSzyS2kF4CWVFfWv4XMU99pofXcehJrNb9q523FQArPhJnKwhkTF10FOHXlYKZnHD
-	 PTdHo2xiGUBeCATAoT1FSNiDE9OqjwKep2+1xZDOuPfE3+zVfs8sOEhEO48Kk+KMdl
-	 z2TaacVQanJXWaFQED2P31RqCXASZKxcjX10vuI6HoFcaOD+i8BFkXW0II5JdBMO6L
-	 6SpmBKXoVceaQ==
+	s=k20201202; t=1720632641;
+	bh=Di4N2+cqCl7OWvZju80WUQzsEksScl5VdjNETIMG00w=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=qKJN0R27Xog5Tz7/XAEJvxQO76CdTZFxbmPuehklH9ZM4+2fKHaVVUGNIaMmEt6TH
+	 hLdQjVB0zt9oq71N5UswCoNIQLnGh2rayodHhe9SdPew6weL4+NDO9LqJHMwVDSfBq
+	 XFKldJqsbowAgDEyeerjO9E9tiSvp0wYvEj1NqFDZgzrPDzTv4l+i0Q0hqcwRoJNEO
+	 /ghUYe23bbMfKr7NGcSL4sJrJzd+FMxacPyFu0gD9jB4NqOz2IhNHB4y0A77mVECDW
+	 zQ9DjFAANqmPnzsFEehx6AriQBS296Uriwms8vRAJrjY13APvIxPVlZeO67icHv3rh
+	 F/I+vbpcsT5lg==
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Banajit Goswami <bgoswami@quicinc.com>, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, 
- linux-arm-msm@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240701171917.596173-1-krzysztof.kozlowski@linaro.org>
-References: <20240701171917.596173-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 1/2] ASoC: codecs: aw88395: Simplify with cleanup.h
-Message-Id: <172063262990.22653.3673550348945714885.b4-ty@kernel.org>
-Date: Wed, 10 Jul 2024 18:30:29 +0100
+To: Oleksij Rempel <o.rempel@pengutronix.de>, 
+ Marc Kleine-Budde <mkl@pengutronix.de>, 
+ David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240708-spi-mux-fix-v1-0-6c8845193128@baylibre.com>
+References: <20240708-spi-mux-fix-v1-0-6c8845193128@baylibre.com>
+Subject: Re: [PATCH 0/3] spi: fix spi-mux/spi_optimize_message()
+ compatibility
+Message-Id: <172063263994.22861.3909751860412680134.b4-ty@kernel.org>
+Date: Wed, 10 Jul 2024 18:30:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,23 +62,30 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Mon, 01 Jul 2024 19:19:16 +0200, Krzysztof Kozlowski wrote:
-> Allocate memory, which is being freed at end of the scope, with
-> scoped/cleanup.h to reduce number of error paths and make code a bit
-> simpler.
+On Mon, 08 Jul 2024 20:05:27 -0500, David Lechner wrote:
+> Since the spi-mux controller driver is doing unusual things with SPI
+> messages, it needs special handling with regard to spi_optimize_message
+> and friends.
 > 
+> The main fix along with a detailed explanation is in the second patch.
 > 
+> The first patch is another unrelated general fix that I noticed while
+> working on this.
+> 
+> [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/2] ASoC: codecs: aw88395: Simplify with cleanup.h
-      commit: d0f4ce8a28dd992579949b8ea2df810c4b5fe9b5
-[2/2] ASoC: qcom: topology: Simplify with cleanup.h
-      commit: a8915e2fe86c29304a3038f269f4667b371b87d2
+[1/3] spi: don't unoptimize message in spi_async()
+      commit: c86a918b1bdba78fb155184f8d88dfba1e63335d
+[2/3] spi: add defer_optimize_message controller flag
+      commit: ca52aa4c60f76566601b42e935b8a78f0fb4f8eb
+[3/3] spi: mux: set ctlr->bits_per_word_mask
+      commit: c8bd922d924bb4ab6c6c488310157d1a27996f31
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
