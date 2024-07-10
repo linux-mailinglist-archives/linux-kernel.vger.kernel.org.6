@@ -1,82 +1,77 @@
-Return-Path: <linux-kernel+bounces-247196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9E3492CC64
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:02:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C290892CC67
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E5881F243E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:02:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EDFFB231AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAA884A57;
-	Wed, 10 Jul 2024 08:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2769185C5E;
+	Wed, 10 Jul 2024 08:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KvNsMLRK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wa+yGhgz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2B73A8E4;
-	Wed, 10 Jul 2024 08:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63EA63A8E4;
+	Wed, 10 Jul 2024 08:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720598531; cv=none; b=JZvmKrmY9YqFkTefogzk0vJN0d70bzKqRyk5zaRvO4HmIjQFb+xVfJP78mJpKxIznHg6IP0zdpMrKVte7sqFX7ymwbLhjSE8SOdBlePXQIabjbhFhJ5hHXHKFp/nt/mmWRHObxGf9bjKoEU+bur1E7b7lUx9uyZ8E3kOshZxhq4=
+	t=1720598536; cv=none; b=QTpXOQKMb2uk9zOVGeGpXcQTSegMWwDiQ7tBgCKGO56bOf0O/sJuIlEY/O4FECoaS4paKmlC+vuaL0/QfDuA2zPpVcLc09Pci9ep9XyamtbdisM6mYlK2TbgBwTiQGYZ9CJkvvxqAqRBp2yKjKH9hkHHyyevPVFeOeJxQb90T9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720598531; c=relaxed/simple;
-	bh=IU4zclk/Ulyub3QjR0wMrawi5zxEuiagGVree2vLW50=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=qMB4Rmo3O6rhTU4CzT9WPYVj1IXhZ7/maeolm8BL0hkvtW0VpXA07z2zBTuvpcZt4qhd76y+pHuoe33NzwEY7lGYaFOAJm05m7ox5C7E/m/VPTtyRyZtIfGiT0nv8f8OEPk2cG7JHEkGjJstmO7kNHTWlmmVIOc4HB0yhgXYXvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KvNsMLRK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E20F2C32781;
-	Wed, 10 Jul 2024 08:02:07 +0000 (UTC)
+	s=arc-20240116; t=1720598536; c=relaxed/simple;
+	bh=tsVFU6PpPDag/m1vEhJjAgzkLvickuoY8VN/4QbAiBg=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ex2iCTJ2Jpde+c8iQmOfavCoqMPDRLnzTxjLkHBM+gj+HzQ8lFsiF2XU9T4WcNp8fByPkGr7Lw5JFZKpkahQPwr87BaqX9HTdxIQWQsl8QvuegPAPreJwSb9SxlfWPh+RwJUvZNA5BwlHw0oMSGpDEKmbMDFRXlHCury1GX2GRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wa+yGhgz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97EBFC32781;
+	Wed, 10 Jul 2024 08:02:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720598529;
-	bh=IU4zclk/Ulyub3QjR0wMrawi5zxEuiagGVree2vLW50=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=KvNsMLRKkbA5xLGtPHlcEYqkodYQO348rZWv037tyGfeg8xW9NaCsmSlyKRO7UnMK
-	 a6HIVFpdZloOSUUkTyEINE9XbDuh2dUOhygTTxFXReY1WTvQCEYe7SDRMOTbXHoVrq
-	 3bMc4adbQTYnxCEK28vhhJ9rKX6oTv/1oEp3twX4TeZNz52fTJd7nkq9wMJbsKByLt
-	 4879/7iZnjTvF9wGI6TfDmJoPBOmATKnK+TaOIMpALUj+zTQ8uQK1LuT29wipcjsfv
-	 U4NWnfOn2nLPJSo7ND8kGrW1LHi88eB/NM+z+AJM01sAPBcjgsVh/Z1UlRGABTjyxn
-	 s3tIcCCsyB2LQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: David Lin <yu-hao.lin@nxp.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-  "briannorris@chromium.org" <briannorris@chromium.org>,
-  "francesco@dolcini.it" <francesco@dolcini.it>,  Pete Hsieh
- <tsung-hsien.hsieh@nxp.com>,  Rafael Beims <rafael.beims@toradex.com>,
-  Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v11 0/2] wifi: mwifiex: add code to support host mlme
-References: <20240704033001.603419-1-yu-hao.lin@nxp.com>
-	<PA4PR04MB9638BD3D09017A786FC3DAECD1A42@PA4PR04MB9638.eurprd04.prod.outlook.com>
-Date: Wed, 10 Jul 2024 11:02:06 +0300
-In-Reply-To: <PA4PR04MB9638BD3D09017A786FC3DAECD1A42@PA4PR04MB9638.eurprd04.prod.outlook.com>
-	(David Lin's message of "Wed, 10 Jul 2024 01:47:17 +0000")
-Message-ID: <8734ohn08x.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=k20201202; t=1720598536;
+	bh=tsVFU6PpPDag/m1vEhJjAgzkLvickuoY8VN/4QbAiBg=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=Wa+yGhgzIUvoAWYtoMybC8N22r5vfYvhr61hvbjZvDvWA4z4t7LI2OudZtzgYkNNh
+	 jf8xVEe+PDEbrTiufzJchsiz2ONbvxHkD1uzDrhmd1IAZeajbmvr78Ia+hrQfuAO6g
+	 RFilcvM23EVAYz5rg3dBePMCXNJlxP0Q4aQn4GiLYnpP/nZ2u6IJhjY88Om9B9Ni7C
+	 YS4hwATG43cJA4cbsfVkvKWjx3YMRY14M4kbWJP05XtetciUErF8xXw39VRdIfW3Pc
+	 MFSkOMJqwYv4QYAAeOEKyDHAGFIEO6UJg7a1kmsCsMVowtWAoGgxuVLbberD84FaU0
+	 NqO5k6bZM44eQ==
+Date: Wed, 10 Jul 2024 10:02:12 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/3] i2c: rcar: minor changes to adhere to coding style
+Message-ID: <k2uzki2fvxzp5sexkgaevdvri5kiw3vrsb5psy4lv4q7idkjlt@vubcmobiyqfv>
+References: <20240707082848.5424-4-wsa+renesas@sang-engineering.com>
+ <f93eda7e-e65f-42e9-b96d-e88290201ca0@web.de>
+ <Zop2vNCrzDmEKKiO@shikoro>
+ <Zou2g8nGBD7Pv8kR@shikoro>
+ <5trq7ondxem43rfnckonywhrucvjvecc52pvyik2fsz64ivknv@r22caitz5y3s>
+ <Zo4qVeIjGCQH5zXn@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zo4qVeIjGCQH5zXn@shikoro>
 
-David Lin <yu-hao.lin@nxp.com> writes:
+Hi Wolfram,
 
-> I found the state of this patch series had been changed to "Deferred".
->
-> Since this patch series had been reviewed for a long period of time and
-> reviewed, tested, and acked by members from community. I wonder what
-> else should I do to let it be merged to mainline Linux kernel?
+> > That's OK... if you want I can remove those blank lines before
+> > applying them, it's just two cases in your patch.
+> 
+> Then, please do that. Thanks!
 
-Most likely the merge window opens on Sunday and I didn't want to apply
-the patchset last minute. So this has to wait v6.12.
+done! Applied 2 and 3 to i2c/i2c-host.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Thanks,
+Andi
 
