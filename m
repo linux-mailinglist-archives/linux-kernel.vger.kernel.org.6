@@ -1,99 +1,128 @@
-Return-Path: <linux-kernel+bounces-247244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD9E692CD02
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:29:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DBDE92CD04
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72BAC1F2506F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:29:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC2771F25262
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8906129A74;
-	Wed, 10 Jul 2024 08:28:56 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77DC12C465;
+	Wed, 10 Jul 2024 08:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IuO0akwV"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E332512C549;
-	Wed, 10 Jul 2024 08:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A67F12BEBE
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720600136; cv=none; b=jA3SD+yLhC/eiX7OCATbIYS4yVcISmjV/C8i8LV7L6IzcxDE9z1fDB+6Ai/ehjrWeztM/gEDro0xbCbBwtR7Qz/OHQLhjlEsPi6t9ZbcVIpehjqhghOSE+2++l8CihIYQg5tTScyHiEWupC04E7pefZRlPkmYZN61Lb3wgcFBCA=
+	t=1720600146; cv=none; b=Tsz+9GtsA3WQh+1ycQpPY2yZNEKe1lxOSEcXs3XsUfaY7lXFbExhxhdPwnRKaCONUBn2eoqWvYDE0GC4LDqnYvJi2/4uScGwijSrCk/RlLX/VUAvo/DiWtw9nNPRRTy/Ozb2LwGIcbLVHNezOSBzZELOJjBx1J4oGlNZDb7EJKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720600136; c=relaxed/simple;
-	bh=Fzz5H2IBbo9sOJO1IirQSVT8MWh8tE0AqIx/b5n/IUs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RmCTM6xIPpV8moDXXLNSs/QfznPx7ZZJWaAMw8Yl00EHNd7PgBLYSxxXepkA4cxhFciisVyJXAirF+AYaT54BkIwK2CnmxHA9yCeDXDi9ImdtNbnzgAf8ZPF4+sRt6hSz0ZOdoWzkzwwuu/ulwHSqvNoBQ/fws7D4VPCmfKIYAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowADHzpo9Ro5mSR0CFQ--.49246S2;
-	Wed, 10 Jul 2024 16:28:45 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	grant.likely@secretlab.ca
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH v2] gpio: mc33880: Convert comma to semicolon
-Date: Wed, 10 Jul 2024 16:28:13 +0800
-Message-Id: <20240710082813.2287329-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720600146; c=relaxed/simple;
+	bh=82PcTa7bx+K/Hz+Gpu2UxrwKXT57bQ+Qj7JMg8Nc1DU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VcZhrPXE8MJXo7ECjd0x3Waf+nQ8R9yRDN7o7PwjCIQyXQxj/1aNnvbOsPG43nPZjsDAylAo+ZVnSLJd9WIh1qLP0WeAPj+Si3bEtV+BYyjclgNvSVFDRDuvys4xjg78Wg9cNSxxAdJ9Uq+IAmZs48ythA4fKqXZHwrZB07/8dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IuO0akwV; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 71CC340E019C;
+	Wed, 10 Jul 2024 08:29:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id xMQNtBnnzLfi; Wed, 10 Jul 2024 08:28:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1720600131; bh=Gz8zpmUEOhXBICxhQhA3WF7pBmoNmpOGJgO4k4XQxAE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IuO0akwVKy5z31sjLRq37o5//4P9THV4bjwFbH+DQBREdWvV/6GZxCa6NidC09lr9
+	 VUOQs7bh1ZZsUUQDmtYLJXpcKvMjHhkOGnbEaYpRPCMWlP7ngK+VVdZoT3iEJU36XL
+	 6/oM3GNNAo3HP26hW2rLnMHJ7FHvccgvRofuCpX1dYyEK35tar5gBCqOyuxaUTIZEc
+	 gGw1rMC5hMjvXJiF1ns2BNlOLQscFuIDGp3aOlQ7UOi2RoEqf9XQ6Ivq6x2aXnEOk/
+	 jqK8R/DJF8H9/jR4Wi8YfunQyhtEQ8kuPmKcu0bFemB+RpKnbjBkdjletCO3zhk8S2
+	 Y4x+SHXVoHR7j888B+l9zF3qDXO7ExasIcMZgt6H4A+VhV3FWwNCw0p/gNKQgAdcSH
+	 fXDt7Ouup8bf+TmWEU/c52HN+H1V2eJKzOSTA2uQlA2aZ4A8IEIq4+KamMQy8knx5o
+	 sqSsG57JqQ4yVgafh/IkuU3rFAAlHGs4+ZTbydaJ7OLrzE/GisTb2BHCpufUBCT96X
+	 /QM+72ZVQhGBD3R6+rUv9e38Ki1mooZpoGk4NZQZ2uKstg8lXB0ww9+yJhh7h3abRN
+	 naxA61CJigscHqkGEpdjmTf9ZPmdMyE4TT9Tz+EiJ1WPUCdFINxFDw388W0PDUqtYm
+	 6vnsTFOeIKQqp3YZMMxvfp60=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 89D7340E0206;
+	Wed, 10 Jul 2024 08:28:44 +0000 (UTC)
+Date: Wed, 10 Jul 2024 10:28:38 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Nikunj A Dadhania <nikunj@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>
+Subject: Re: [tip:x86/sev] [x86/sev]  06685975c2:
+ BUG:kernel_failed_in_early-boot_stage,last_printk:Booting_the_kernel(entry_offset:#)
+Message-ID: <20240710082838.GBZo5GNvuxJbTjG1TZ@fat_crate.local>
+References: <202407091342.46d7dbb-oliver.sang@intel.com>
+ <20240709090323.GAZoz822G64Mr9M9lV@fat_crate.local>
+ <Zo3oOK6RH2OJO3rC@xsang-OptiPlex-9020>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowADHzpo9Ro5mSR0CFQ--.49246S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF17GFy5tr45Jw1DWrg_yoW3XrX_Cw
-	nYqF43Wr1UKr4qvrnxAayav34S9ryvgrs5uFZ2qFZ8AryDZF18ur17Zr1xXry8XF1DGry3
-	J3Z3Wry5XFZxCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbckFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26F4j6r4UJwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW8
-	ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr
-	0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUgqXQUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zo3oOK6RH2OJO3rC@xsang-OptiPlex-9020>
 
-Replace a comma between expression statements by a semicolon.
+On Wed, Jul 10, 2024 at 09:47:36AM +0800, Oliver Sang wrote:
+> no. when this bisect done, we tested the branch tip 8434cf006ceae,
+> the issue is still persistent.
 
-Fixes: c103de240439 ("gpio: reorganize drivers")
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+Ok, I think that should fix it:
+
+From: "Borislav Petkov (AMD)" <bp@alien8.de>
+Date: Wed, 10 Jul 2024 10:16:18 +0200
+Subject: [PATCH] x86/coco/sev: Disable KCSAN too
+
+The SEV guest code was moved to x86/coco/ along with the instrumentation
+exclusion bits. However, there is a blanket KCSAN disable in
+arch/x86/kernel/Makefile due to boot hangs.
+
+Copy that disable to the coco's sev Makefile too.
+
+Fixes:  Fixes: 06685975c209 ("x86/sev: Move SEV compilation units")
+Closes: https://lore.kernel.org/oe-lkp/202407091342.46d7dbb-oliver.sang@intel.com
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
 ---
-Changelog:
+ arch/x86/coco/sev/Makefile | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-v1 -> v2:
-
-1. Add Fixes tag.
----
- drivers/gpio/gpio-mc33880.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpio/gpio-mc33880.c b/drivers/gpio/gpio-mc33880.c
-index 94f6fefc011b..5fb357d7b78a 100644
---- a/drivers/gpio/gpio-mc33880.c
-+++ b/drivers/gpio/gpio-mc33880.c
-@@ -99,7 +99,7 @@ static int mc33880_probe(struct spi_device *spi)
- 
- 	mc->spi = spi;
- 
--	mc->chip.label = DRIVER_NAME,
-+	mc->chip.label = DRIVER_NAME;
- 	mc->chip.set = mc33880_set;
- 	mc->chip.base = pdata->base;
- 	mc->chip.ngpio = PIN_NUMBER;
+diff --git a/arch/x86/coco/sev/Makefile b/arch/x86/coco/sev/Makefile
+index 5f72e92b37ff..4e375e7305ac 100644
+--- a/arch/x86/coco/sev/Makefile
++++ b/arch/x86/coco/sev/Makefile
+@@ -9,3 +9,7 @@ endif
+ KASAN_SANITIZE_core.o	:= n
+ KMSAN_SANITIZE_core.o	:= n
+ KCOV_INSTRUMENT_core.o	:= n
++
++# With some compiler versions the generated code results in boot hangs, caused
++# by several compilation units. To be safe, disable all instrumentation.
++KCSAN_SANITIZE		:= n
 -- 
-2.25.1
+2.43.0
 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
