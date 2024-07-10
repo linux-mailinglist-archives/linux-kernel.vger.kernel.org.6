@@ -1,103 +1,164 @@
-Return-Path: <linux-kernel+bounces-247452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F1B92CFEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:58:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68AAD92CF3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDBF9B27A99
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:48:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95A21F2292F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8572192492;
-	Wed, 10 Jul 2024 10:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A0F190475;
+	Wed, 10 Jul 2024 10:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b="1OLhefG3";
-	dkim=permerror (0-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b="hPcthnPY";
-	dkim=pass (2048-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b="Cf5PUmHi"
-Received: from trent.utfs.org (trent.utfs.org [94.185.90.103])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="LyoeV7gW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TQea+NHx"
+Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8BE192483;
-	Wed, 10 Jul 2024 10:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.185.90.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3CC18FC7B;
+	Wed, 10 Jul 2024 10:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720607838; cv=none; b=IUqfQwvuA+MXvhChGI6iRfmo5InqJHwcfiYhNu9lWE5NT5pqythLjW7iJ3mPfmbGIYcRH5qKQlxXoNTbos++cThuuqn8n9U3PGttWNUfL9jcCqUXSMWcyqdeVVrRdkKx2QV3OC6XAbJPcttzOWM60CTfB2Et3l9O1HViE3kk1yY=
+	t=1720607261; cv=none; b=KAPCWEaXDK8iulnZrCKrIziNC9fadVcK29jRhZKzXJHlswvFv7v7zfZKWhw2hAKUrUbLJkJBkd+pFgsc49ZmvcSVAu4WiFVxCSJReKdzPvKBHMQWfOf4ixg+k/u4ITGX0Ua1b1qhGBHK+NSozjiBntJvSGcEBDQwBHQZR5MWQIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720607838; c=relaxed/simple;
-	bh=Vmbz1kK3GlYxZQsiTl+3RZqOOLwNAAA/LayB1v2Vt7g=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=SfWcykaf+D9W5TUN09SjOPbEtqjDYTEQsGZVzHrhgw++iX4+kfmvdkThWYW973XDuJ6io/q3OOPDRyhnAz78fHKvKvAqdz2sHT016UzyD6bwnwHRvW27ICrSqZuG5jl9l4u4S0xStXmE2BIGnlzLbKhDftpVeOs9FnaNZlS5ZFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nerdbynature.de; spf=pass smtp.mailfrom=nerdbynature.de; dkim=permerror (0-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b=1OLhefG3; dkim=permerror (0-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b=hPcthnPY; dkim=pass (2048-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b=Cf5PUmHi; arc=none smtp.client-ip=94.185.90.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nerdbynature.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nerdbynature.de
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/simple;
- d=nerdbynature.de; i=@nerdbynature.de; q=dns/txt; s=key1;
- t=1720607227; h=date : from : to : cc : subject : in-reply-to :
- message-id : references : mime-version : content-type : from;
- bh=Vmbz1kK3GlYxZQsiTl+3RZqOOLwNAAA/LayB1v2Vt7g=;
- b=1OLhefG3fY7X3piTjP8dU57Kk6b/puhbX86fKVURh4XTnBxWW/HxXdThGhMuczN2Q8/Tl
- lrs0qu1n2sPyf2HBQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=nerdbynature.de;
-	s=dkim; t=1720607227;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IPG40DNeh1bA8vQMqxypWsF1Z7oGkQ4DVc3MuZC4QII=;
-	b=hPcthnPYx9cfRcsQRcbRHAQnryhhxTX4kyN2wOg1V736dJQelk0pUokIA68Rx8eANwPGun
-	64usllrnYTr1PuAQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nerdbynature.de;
- i=@nerdbynature.de; q=dns/txt; s=key0; t=1720607227; h=date : from :
- to : cc : subject : in-reply-to : message-id : references :
- mime-version : content-type : from;
- bh=Vmbz1kK3GlYxZQsiTl+3RZqOOLwNAAA/LayB1v2Vt7g=;
- b=Cf5PUmHimuZy3iMD3QwqJy9btT9R/vv119rhUjoQVC5elWFjKiRD1hoRQoV8z1xoZXmLe
- 86TGGVTONoY5oeN2AYV6aZiGsT6b8zSpktTWpiuWxgv8jPglggcAPILRTOy4+HYvxCrApj8
- pwK0pksynmC6CNP9SbljvMFb/rokWZEqOWVnUSgJOG1Idwm/cwzWHvK8VXcmmRdDGIj2W5i
- mSQmqNz2qwsbqAIkONNWCSMLHAJq0vFDvyERc7WFXu0JQ0kVQg+v1sJ4PtBM7SneyIeQygk
- 0NuDodHK0wIGOBfw7RrqVQUhX1Ve1EHg8Nujf8ZQpf9nyxK+YgdWwBPyszjg==
-Received: from localhost (localhost [IPv6:::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by trent.utfs.org (Postfix) with ESMTPS id D3E8C5FA2F;
-	Wed, 10 Jul 2024 12:27:07 +0200 (CEST)
-Date: Wed, 10 Jul 2024 12:27:07 +0200 (CEST)
-From: Christian Kujau <lists@nerdbynature.de>
-To: Vlastimil Babka <vbabka@suse.cz>
-cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, andrii@kernel.org, 
-    ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net, 
-    eddyz87@gmail.com, haoluo@google.com, javier.carrasco.cruz@gmail.com, 
-    john.fastabend@gmail.com, jolsa@kernel.org, kent.overstreet@linux.dev, 
-    kpsingh@kernel.org, linux-kernel@vger.kernel.org, lstoakes@gmail.com, 
-    martin.lau@linux.dev, peter.ujfalusi@intel.com, 
-    regressions@lists.linux.dev, sdf@google.com, sheharyaar48@gmail.com, 
-    song@kernel.org, surenb@google.com, yonghong.song@linux.dev
-Subject: Re: [PATCH for 6.10] bpf: fix order of args in call to
- bpf_map_kvcalloc
-In-Reply-To: <20240710100521.15061-2-vbabka@suse.cz>
-Message-ID: <d4e5caad-7a5d-863d-bf65-63978ff9a865@nerdbynature.de>
-References: <CAADnVQK_ftwe5Dxtc0bopeDg2ku=GrFYrMOUWHLnXaK1bqoXXA@mail.gmail.com> <20240710100521.15061-2-vbabka@suse.cz>
+	s=arc-20240116; t=1720607261; c=relaxed/simple;
+	bh=4Sico1dlLx2cucIw1hVJsr7ffu6bFhVb6M989R6P0Gw=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=F5OVXG3f0NDSD3gCyOJqqCvtPRJmSZztxK/ioBOh/M653O2VPQdXpvm8kpRoSHGcqwNPj1u5GEWV07OVrU9LXKDtV4EVZsJ8OpPRo6AvRe2FRi2vG0UrCQbWZmK9eGRPQWCwb9zLx5PAjIU6WRZ/gc9DRbIdXH0aFpgjfnhGgaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=LyoeV7gW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TQea+NHx; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 7FA5213807ED;
+	Wed, 10 Jul 2024 06:27:37 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Wed, 10 Jul 2024 06:27:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1720607257; x=1720693657; bh=y7I9x5O068
+	rIa6OwNh1cKNoYpCATZicSDmRnAUguLsU=; b=LyoeV7gWDoZN30PXCwvf8Wxeg6
+	VhoBTVUhVW1s1omN6d8MKzk7jEzeXh8G5o3fMq2+GFZyBVg/9/7OEhye+/coWt2O
+	XfAhCV6pfHeQn17iPTTX2lKtnsu7/SS85QVlYeEFAIh8HBt+aTgpZe20ljb+djY9
+	KkAzG4mjhKV0qUKdG0gR+2CejXzNw/FxE5kv6+1kjsvhxagXsgNXyayRyPdaQbeQ
+	4TBQPDKF3YFf+VvY9c/rWAvGbZGkMYb+IU1xgJ04tc8Lwn7CByXKIAgP2f3v93aA
+	AoojIIDVoBGSZB+yjz8jXJf75ilDChNU4VltOrQAj2Dm90JSVQOz8ktykirw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1720607257; x=1720693657; bh=y7I9x5O068rIa6OwNh1cKNoYpCAT
+	ZicSDmRnAUguLsU=; b=TQea+NHxpLxXt64jCbNK563C0E1TLCjGTuZN4XWClfBX
+	Q+hiwNI0APwrfFgBUmFeN+FlkT0ajXZjAbuIrQNBXBMSAspspDtA+vFl5wSJsH6E
+	cf197a4HNOG7bQXAR4Io3DEpsVFMTnNaNAdR20K7xWSpjgQ7DH48OO1jWq65WdVZ
+	KocA8mDU0G6OXbyBpcTXLQml76zE9t4F4YwV0CnWbjiN2MSuT46ZA1ZodsAUvB1Y
+	EMkXZXgPKUePYdiFfv6KLd+xOkVCBcPaKAeZ1lDw51o7t4aMsNfmIySSOVLdSNYT
+	RR8pYHgQg1azc7LSxH3IoyoJBkXtKrOxBa0ztmnx8Q==
+X-ME-Sender: <xms:FWKOZu7OEleYA2ZaQhHK0YTUnp8ZCDHU5Qv_qlmoFX318_1KRZ1MzQ>
+    <xme:FWKOZn4LSmiq1Nz2uEK5cmUYFupZB_cnhbb__NNmw8e_CrlbvFEeBRejSUSAy3RoL
+    fmzX2g8WT0vglJEYbo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfedugddvkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:FWKOZtdwYsGl2L1-gJ_SxX2LvVQtIBz8P-0pqaYJsEiEIkuD8KivmA>
+    <xmx:FWKOZrKhYoVjzenA5bi3dxmDRoOXqMLEY13McAvD4kG-Wyq4f5hJDw>
+    <xmx:FWKOZiKJoBDOxda2I585qtzs7LQ5PYxoOCjycASUr7Si107QHnftyQ>
+    <xmx:FWKOZsyLzbfGhHPd5czHKWB7WVZYFT3G51G187eTM8ruvcR7PmmdPw>
+    <xmx:GWKOZurc55eLY785N_cbAB-SOzxSp53CmaIywxCCzaSOw7ZJQ6KRTTUf>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id C869EB6008F; Wed, 10 Jul 2024 06:27:33 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Message-Id: <9b269c2a-c6b5-4fa0-801b-e5e1c3ccb671@app.fastmail.com>
+In-Reply-To: <20240704143611.2979589-13-arnd@kernel.org>
+References: <20240704143611.2979589-1-arnd@kernel.org>
+ <20240704143611.2979589-13-arnd@kernel.org>
+Date: Wed, 10 Jul 2024 12:27:13 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Arnd Bergmann" <arnd@kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>
+Cc: "Masahiro Yamada" <masahiroy@kernel.org>,
+ "Nathan Chancellor" <nathan@kernel.org>,
+ "Nicolas Schier" <nicolas@fjasle.eu>, "Vineet Gupta" <vgupta@kernel.org>,
+ "Russell King" <linux@armlinux.org.uk>,
+ "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Will Deacon" <will@kernel.org>, guoren <guoren@kernel.org>,
+ "Brian Cain" <bcain@quicinc.com>, "Huacai Chen" <chenhuacai@kernel.org>,
+ "WANG Xuerui" <kernel@xen0n.name>, "Dinh Nguyen" <dinguyen@kernel.org>,
+ "Jonas Bonn" <jonas@southpole.se>,
+ "Stefan Kristiansson" <stefan.kristiansson@saunalahti.fi>,
+ "Stafford Horne" <shorne@gmail.com>,
+ "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>,
+ "Albert Ou" <aou@eecs.berkeley.edu>, "Rich Felker" <dalias@libc.org>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Andreas Larsson" <andreas@gaisler.com>,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Mark Rutland" <mark.rutland@arm.com>, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org,
+ "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+ linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+ "linux-openrisc@vger.kernel.org" <linux-openrisc@vger.kernel.org>,
+ linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 12/17] csky: convert to generic syscall table
+Content-Type: text/plain
 
-On Wed, 10 Jul 2024, Vlastimil Babka wrote:
-> Fixes: 6ac99e8f23d4 ("bpf: Introduce bpf sk local storage")
+On Thu, Jul 4, 2024, at 16:36, Arnd Bergmann wrote:
+> -
+> -#define __NR_set_thread_area	(__NR_arch_specific_syscall + 0)
+> -__SYSCALL(__NR_set_thread_area, sys_set_thread_area)
+> -#define __NR_cacheflush		(__NR_arch_specific_syscall + 1)
+> -__SYSCALL(__NR_cacheflush, sys_cacheflush)
+> +#include <asm/unistd_32.h>
+> +#define __NR_sync_file_range2 __NR_sync_file_range
 
-Thanks for not forgetting about this! If this matters, just tested this 
-against today's mainline:
+A small update: I have folded this fixup into this patch
+and the hexagon one, to ensure we don't define both
+__NR_sync_file_range2 and __NR_sync_file_range. I already
+have patches to clean this up further to avoid both the
+#undef and #define, but that is part of a larger rework
+that is not ready before the merge window.
 
-Tested-by: Christian Kujau <lists@nerdbynature.de>
+     Arnd
 
-C.
--- 
-BOFH excuse #418:
-
-Sysadmins busy fighting SPAM.
+diff --git a/arch/csky/include/uapi/asm/unistd.h b/arch/csky/include/uapi/asm/unistd.h
+index 794adbc04e48..44882179a6e1 100644
+--- a/arch/csky/include/uapi/asm/unistd.h
++++ b/arch/csky/include/uapi/asm/unistd.h
+@@ -1,4 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+ 
+ #include <asm/unistd_32.h>
+-#define __NR_sync_file_range2 __NR_sync_file_range
++
++#define __NR_sync_file_range2 84
++#undef __NR_sync_file_range
+diff --git a/arch/hexagon/include/uapi/asm/unistd.h b/arch/hexagon/include/uapi/asm/unistd.h
+index 6f670347dd61..a3b0cac25580 100644
+--- a/arch/hexagon/include/uapi/asm/unistd.h
++++ b/arch/hexagon/include/uapi/asm/unistd.h
+@@ -29,4 +29,5 @@
+ 
+ #include <asm/unistd_32.h>
+ 
+-#define __NR_sync_file_range2 __NR_sync_file_range
++#define __NR_sync_file_range2 84
++#undef __NR_sync_file_range
 
