@@ -1,236 +1,183 @@
-Return-Path: <linux-kernel+bounces-247056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BCF992CA66
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:09:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 717D292CA69
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:11:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B70A01F23833
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:09:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D44881F23890
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EDF055C0A;
-	Wed, 10 Jul 2024 06:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8335820E;
+	Wed, 10 Jul 2024 06:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ys6Y8w8O"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dvsRFLqV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CB61A28D
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA471A28D
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720591778; cv=none; b=muqhUR2ZhSHqeSUrRtEJBzcqi+kXaXJbsEhcWyAtol9oAfkdHlrW126Df20Dpi79spr96SdtnL5jTlJGH2AmMantgnUBYAbkkfQUxElr9bq/h9VorxffjKRTj8z8ZSZcTGOofdAwUVmZMoF/W0yLSFb+83JUy2MlVu5XFimmMEw=
+	t=1720591851; cv=none; b=pDk3rMn98wdH9Lp3NQfOGX0z3bG9TEAIDyNz0bccjo5KHWIpe2gv16a4F57tZtbpFpKeSYkWgcJU2mGmMoOXlfy6gP8pJ3+YU7cDXu5y+oIyzaJ8JJM8nxDioWJ8ijDL1fbo8kUXnGCwdn2wn6bY8mjI5AMg2RhnorveDHx62wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720591778; c=relaxed/simple;
-	bh=0+fZuP12qY21RTPxHU6v5ZKge2p5BesIMlD0z50Q5AU=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Hw2OAosuETBWgJO7C+eu6FzwIuXGVy1dLVzD37GI7gcKkoa8zYWjnUe0HRvLA1El8zydIB1f0auE0EUNis9U7maI351Fi0sRpv7CLv7TyJMENQ512BUrrNA+4KPT30OQgbaNPOWzT6wkXiXf8caLMRwGMGeQ2W8CF2rOIz6Dwyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ys6Y8w8O; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e03a3aafc6eso9520855276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 23:09:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720591776; x=1721196576; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=h5uZ7CARkJp0bCCnNjPnh/UCvn8scxgN13mnhGZm9ws=;
-        b=ys6Y8w8Orv7vwFSBL7eYPOlzTgNO5mIgG/sYfw5HLOCaZd4HqtFF9dQvb4dTjsVQ7k
-         uTRSilc3oeLMiiXelEi878YABHotQ7PRF+sdNhtm5NnNPaPxYiEyb4La/IcmBhDAvzge
-         CRs+8v9LLVy7Ljhv+h5tyGa0k00pofQJSz0nPUngt9d74CFah/1K5EaDYFenR9Dm9X17
-         8zA1PLvfwSJjTdzZ33l3x2pd55lcHlncrfGdOHp1bIQekZc1Kidz0qh/BqC6I8zm6Lo3
-         tKS36qn8xMh8pjw4K8akzyDWesUcunMhLl1M6dkIEs3CFTrmjlZHtpkIK3yw+E71dN1B
-         dhnw==
+	s=arc-20240116; t=1720591851; c=relaxed/simple;
+	bh=1OteSeEEKH0xI0Oh+CNKtD7aOdOLUK4Wax0gEtG/3rY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=te9ZRXR9K3fDu73Ue6atIrQ/hsn7V0B9h/Mw4AlW1nvzDS6md9pexLMI/9aTaxUQzH3rGj+YNQI1eRM6+x0IcKRW6FEqTVhbHU0JXtcA9wEWn06/AN7aIcDfNcRMPPSioDnOjfI5ihD5Y4RYWIupSr/c69cwrE+OokO4ybiGgLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dvsRFLqV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720591848;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X4MsH1lA4eWc8gvy+b6nRd+irAYUf4vc/vQAj43j3S8=;
+	b=dvsRFLqVVes0doTNK7yYNnH7tlVnP+/H8jWYAtril39/PogA1o2ZJBzQ4viAfpHeZ34jLK
+	mvKdX0iQ6pqbhXBnFOii90Zl3CVtDih3wbROcPNFynFpcrHBDVcUlFvgAfa04W41/EuvLx
+	K+zbjJBh9uN874dj0uFHAaCmNN7mfXo=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-346-fLkHXA_DNuquGYXe6TTCZA-1; Wed, 10 Jul 2024 02:10:47 -0400
+X-MC-Unique: fLkHXA_DNuquGYXe6TTCZA-1
+Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-52ea1a947aeso5957964e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 23:10:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720591776; x=1721196576;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=h5uZ7CARkJp0bCCnNjPnh/UCvn8scxgN13mnhGZm9ws=;
-        b=OSoFKSZu78JtE8y2ZikkBQ2l94FZ4Fy2BSDfWgCYuvhJRgkeLX6bkwQFwVcik4R9Gt
-         yKcJ8x1pM1f181KKUHXRt5KQLoX1BI9H9wgz2RbumrSYbe+X/nirmVlrEl3APexzovcT
-         HxfqVB0MbL5o4XjSvlr2wTt7xLuS5345aTATM7atgy8aqIgiG8KeQUjozVEjKZh0jYoA
-         BcOeaD57bOyUEa7jgFuIK4SJStN+AY/6UcC1Exq6Xun2ZDzy2Da1MGj9bHMPdniSD91k
-         zjYoAYeqL+Xc2VRDbabP6DOR99XLF/dcRONc8CCmG+i7vI9CZarpWGz2Vgtq6l90paJc
-         rYdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjawdSpDQDlUUJAwiEqaKoYXlAW3q3CvwrSQVUaLZs4rzVN3CiwWBgib0KRuDmsHNppMNSS4ay+IJbcwPIRcnp7gkMh8SqM7hIdFD5
-X-Gm-Message-State: AOJu0YxS4/Fz5hFawWQIvYBm404EchUfIxv/2UZmjwTWTC251jldT6yH
-	60c1bDiPcNeRZYpIY45U8dfDNkM+qr02GNY0omPFgGs5LFJ7DAf426n82CQEhuPMzyNVVlooKxu
-	O1Q==
-X-Google-Smtp-Source: AGHT+IHC47f78BVmo+sdyjTSABTw0/Tqy6HN60awY2Lq4hntIiDkKOsp2uNyQ+wFfxFT0ijOssIk3hgSFsg=
-X-Received: from yuzhao2.bld.corp.google.com ([2a00:79e0:2e28:6:32c1:5ac8:f94b:a9a])
- (user=yuzhao job=sendgmr) by 2002:a05:6902:124a:b0:e03:31ec:8a25 with SMTP id
- 3f1490d57ef6-e041b10fd77mr10931276.10.1720591776148; Tue, 09 Jul 2024
- 23:09:36 -0700 (PDT)
-Date: Wed, 10 Jul 2024 00:09:33 -0600
+        d=1e100.net; s=20230601; t=1720591846; x=1721196646;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X4MsH1lA4eWc8gvy+b6nRd+irAYUf4vc/vQAj43j3S8=;
+        b=vmc5mnCdsA2TN2MdDod1/eptXpeCMPRdtdwjGX02WYD7siGpNP0qDNaiw0OyXqwE8w
+         uZ5GYu71gK+7K6/iDXcXz4WUSEUOtUj+o1f7bqpligIk71u1kp0tzzZfVpoDwzvXsc5l
+         OzWdNI5CmRMcwFWff05fgKDOLKqQ7J10jwkOiYuIT4+w3c8BbAtI3HMsOOPWC2RZhsRr
+         aPdFAKuI/o3kQ51XKEVVJgnUBzfc1iPZNZkdaL0WALKV40L0k8rRUcYIOHRTzJyybcJJ
+         AT+E8FKWuBj3ZIQK/p6FmWkOwMuMamoD2Gtm8eqmiuUxBoS85JZm9jW9WK7ZIDEfwXfx
+         pIGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqdPxpoT+Ku0GcJPqR6E6ZpiUZPtUqx7sCFuj+XWCwQhzLTtAB2WbydCyTM4kuwMT+HQKKbfJtM6q6dtlpBi/YOkGG/oHeECSSxxw+
+X-Gm-Message-State: AOJu0YxEjjR1YzjgdqsygPu3GgA+/MBBHfPKjA/A4qs3wFi+EkVP+ikv
+	QOlcwU6Wi9dAkkUC17JStJK8v+z+16ZUd0vZ3fvz4sjpDNliZr7C63jmvh5jPZwD9h/oy+6IZe5
+	o4ATIC9nnvcchCbcQW3oWbjCVT0x7DOmWKJHHu13KnBe59fAAZLJxi6eVkzXltQ==
+X-Received: by 2002:ac2:42d8:0:b0:52b:b327:9c1c with SMTP id 2adb3069b0e04-52eb99d59e8mr2530509e87.62.1720591845787;
+        Tue, 09 Jul 2024 23:10:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGPbauTJ9QFnUJHiEZRXf8cKpY/Ph2hFs+oVaX3YRKAndRpINbHSQxy+Oi4OwHlpwQjmGnGuw==
+X-Received: by 2002:ac2:42d8:0:b0:52b:b327:9c1c with SMTP id 2adb3069b0e04-52eb99d59e8mr2530479e87.62.1720591845031;
+        Tue, 09 Jul 2024 23:10:45 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:174:f6ae:a6e3:8cbc:2cbd:b8ff])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266b03feecsm101417875e9.10.2024.07.09.23.10.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 23:10:43 -0700 (PDT)
+Date: Wed, 10 Jul 2024 02:10:37 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: Cindy Lu <lulu@redhat.com>, Parav Pandit <parav@nvidia.com>,
+	Dragos Tatulea <dtatulea@nvidia.com>,
+	"sgarzare@redhat.com" <sgarzare@redhat.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	Leonardo Milleri <lmilleri@redhat.com>
+Subject: Re: [PATCH v3 0/2] vdpa: support set mac address from vdpa tool
+Message-ID: <20240710020852-mutt-send-email-mst@kernel.org>
+References: <20240708064820.88955-1-lulu@redhat.com>
+ <PH0PR12MB5481AE2FD52AEE1C10411F3DDCDB2@PH0PR12MB5481.namprd12.prod.outlook.com>
+ <CACLfguXk4qiw4efRGK4Gw8OZQ_PKw6j+GVQJCVtbyJ+hxOoE0Q@mail.gmail.com>
+ <20240709084109-mutt-send-email-mst@kernel.org>
+ <CACGkMEtdFgbgrjNDoYfW1B+4BwG8=i9CP5ePiULm2n3837n29w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Message-ID: <20240710060933.3979380-1-yuzhao@google.com>
-Subject: [PATCH mm-unstable v2] mm/truncate: batch-clear shadow entries
-From: Yu Zhao <yuzhao@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Bharata B Rao <bharata@amd.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACGkMEtdFgbgrjNDoYfW1B+4BwG8=i9CP5ePiULm2n3837n29w@mail.gmail.com>
 
-Make clear_shadow_entry() clear shadow entries in `struct folio_batch`
-so that it can reduce contention on i_lock and i_pages locks, e.g.,
+On Wed, Jul 10, 2024 at 11:05:48AM +0800, Jason Wang wrote:
+> On Tue, Jul 9, 2024 at 8:42 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> >
+> > On Tue, Jul 09, 2024 at 02:19:19PM +0800, Cindy Lu wrote:
+> > > On Tue, 9 Jul 2024 at 11:59, Parav Pandit <parav@nvidia.com> wrote:
+> > > >
+> > > > Hi Cindy,
+> > > >
+> > > > > From: Cindy Lu <lulu@redhat.com>
+> > > > > Sent: Monday, July 8, 2024 12:17 PM
+> > > > >
+> > > > > Add support for setting the MAC address using the VDPA tool.
+> > > > > This feature will allow setting the MAC address using the VDPA tool.
+> > > > > For example, in vdpa_sim_net, the implementation sets the MAC address to
+> > > > > the config space. However, for other drivers, they can implement their own
+> > > > > function, not limited to the config space.
+> > > > >
+> > > > > Changelog v2
+> > > > >  - Changed the function name to prevent misunderstanding
+> > > > >  - Added check for blk device
+> > > > >  - Addressed the comments
+> > > > > Changelog v3
+> > > > >  - Split the function of the net device from vdpa_nl_cmd_dev_attr_set_doit
+> > > > >  - Add a lock for the network device's dev_set_attr operation
+> > > > >  - Address the comments
+> > > > >
+> > > > > Cindy Lu (2):
+> > > > >   vdpa: support set mac address from vdpa tool
+> > > > >   vdpa_sim_net: Add the support of set mac address
+> > > > >
+> > > > >  drivers/vdpa/vdpa.c                  | 81 ++++++++++++++++++++++++++++
+> > > > >  drivers/vdpa/vdpa_sim/vdpa_sim_net.c | 19 ++++++-
+> > > > >  include/linux/vdpa.h                 |  9 ++++
+> > > > >  include/uapi/linux/vdpa.h            |  1 +
+> > > > >  4 files changed, 109 insertions(+), 1 deletion(-)
+> > > > >
+> > > > > --
+> > > > > 2.45.0
+> > > >
+> > > > Mlx5 device already allows setting the mac and mtu during the vdpa device creation time.
+> > > > Once the vdpa device is created, it binds to vdpa bus and other driver vhost_vdpa etc bind to it.
+> > > > So there was no good reason in the past to support explicit config after device add complicate the flow for synchronizing this.
+> > > >
+> > > > The user who wants a device with new attributes, as well destroy and recreate the vdpa device with new desired attributes.
+> > > >
+> > > > vdpa_sim_net can also be extended for similar way when adding the vdpa device.
+> > > >
+> > > > Have you considered using the existing tool and kernel in place since 2021?
+> > > > Such as commit d8ca2fa5be1.
+> > > >
+> > > > An example of it is,
+> > > > $ vdpa dev add name bar mgmtdev vdpasim_net mac 00:11:22:33:44:55 mtu 9000
+> > > >
+> > > Hi Parav
+> > > Really thanks for your comments. The reason for adding this function
+> > > is to support Kubevirt.
+> > > the problem we meet is that kubevirt chooses one random vdpa device
+> > > from the pool and we don't know which one it going to pick. That means
+> > > we can't get to know the Mac address before it is created. So we plan
+> > > to have this function to change the mac address after it is created
+> > > Thanks
+> > > cindy
+> >
+> > Well you will need to change kubevirt to teach it to set
+> > mac address, right?
+> 
+> That's the plan. Adding Leonardo.
+> 
+> Thanks
 
-  watchdog: BUG: soft lockup - CPU#29 stuck for 11s! [fio:2701649]
-    clear_shadow_entry+0x3d/0x100
-    mapping_try_invalidate+0x117/0x1d0
-    invalidate_mapping_pages+0x10/0x20
-    invalidate_bdev+0x3c/0x50
-    blkdev_common_ioctl+0x5f7/0xa90
-    blkdev_ioctl+0x109/0x270
+So given you are going to change kubevirt, can we
+change it to create devices as needed with the
+existing API?
 
-Also, rename clear_shadow_entry() to clear_shadow_entries() accordingly.
-
-Reported-by: Bharata B Rao <bharata@amd.com>
-Closes: https://lore.kernel.org/d2841226-e27b-4d3d-a578-63587a3aa4f3@amd.com/
-Tested-by: Bharata B Rao <bharata@amd.com>
-Signed-off-by: Yu Zhao <yuzhao@google.com>
----
- mm/truncate.c | 68 +++++++++++++++++++++++----------------------------
- 1 file changed, 31 insertions(+), 37 deletions(-)
-
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 5ce62a939e55..dfb3d1f4d456 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -39,12 +39,25 @@ static inline void __clear_shadow_entry(struct address_space *mapping,
- 	xas_store(&xas, NULL);
- }
- 
--static void clear_shadow_entry(struct address_space *mapping, pgoff_t index,
--			       void *entry)
-+static void clear_shadow_entries(struct address_space *mapping,
-+				 struct folio_batch *fbatch, pgoff_t *indices)
- {
-+	int i;
-+
-+	/* Handled by shmem itself, or for DAX we do nothing. */
-+	if (shmem_mapping(mapping) || dax_mapping(mapping))
-+		return;
-+
- 	spin_lock(&mapping->host->i_lock);
- 	xa_lock_irq(&mapping->i_pages);
--	__clear_shadow_entry(mapping, index, entry);
-+
-+	for (i = 0; i < folio_batch_count(fbatch); i++) {
-+		struct folio *folio = fbatch->folios[i];
-+
-+		if (xa_is_value(folio))
-+			__clear_shadow_entry(mapping, indices[i], folio);
-+	}
-+
- 	xa_unlock_irq(&mapping->i_pages);
- 	if (mapping_shrinkable(mapping))
- 		inode_add_lru(mapping->host);
-@@ -105,36 +118,6 @@ static void truncate_folio_batch_exceptionals(struct address_space *mapping,
- 	fbatch->nr = j;
- }
- 
--/*
-- * Invalidate exceptional entry if easily possible. This handles exceptional
-- * entries for invalidate_inode_pages().
-- */
--static int invalidate_exceptional_entry(struct address_space *mapping,
--					pgoff_t index, void *entry)
--{
--	/* Handled by shmem itself, or for DAX we do nothing. */
--	if (shmem_mapping(mapping) || dax_mapping(mapping))
--		return 1;
--	clear_shadow_entry(mapping, index, entry);
--	return 1;
--}
--
--/*
-- * Invalidate exceptional entry if clean. This handles exceptional entries for
-- * invalidate_inode_pages2() so for DAX it evicts only clean entries.
-- */
--static int invalidate_exceptional_entry2(struct address_space *mapping,
--					 pgoff_t index, void *entry)
--{
--	/* Handled by shmem itself */
--	if (shmem_mapping(mapping))
--		return 1;
--	if (dax_mapping(mapping))
--		return dax_invalidate_mapping_entry_sync(mapping, index);
--	clear_shadow_entry(mapping, index, entry);
--	return 1;
--}
--
- /**
-  * folio_invalidate - Invalidate part or all of a folio.
-  * @folio: The folio which is affected.
-@@ -494,6 +477,7 @@ unsigned long mapping_try_invalidate(struct address_space *mapping,
- 	unsigned long ret;
- 	unsigned long count = 0;
- 	int i;
-+	bool xa_has_values = false;
- 
- 	folio_batch_init(&fbatch);
- 	while (find_lock_entries(mapping, &index, end, &fbatch, indices)) {
-@@ -503,8 +487,8 @@ unsigned long mapping_try_invalidate(struct address_space *mapping,
- 			/* We rely upon deletion not changing folio->index */
- 
- 			if (xa_is_value(folio)) {
--				count += invalidate_exceptional_entry(mapping,
--							     indices[i], folio);
-+				xa_has_values = true;
-+				count++;
- 				continue;
- 			}
- 
-@@ -522,6 +506,10 @@ unsigned long mapping_try_invalidate(struct address_space *mapping,
- 			}
- 			count += ret;
- 		}
-+
-+		if (xa_has_values)
-+			clear_shadow_entries(mapping, &fbatch, indices);
-+
- 		folio_batch_remove_exceptionals(&fbatch);
- 		folio_batch_release(&fbatch);
- 		cond_resched();
-@@ -616,6 +604,7 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
- 	int ret = 0;
- 	int ret2 = 0;
- 	int did_range_unmap = 0;
-+	bool xa_has_values = false;
- 
- 	if (mapping_empty(mapping))
- 		return 0;
-@@ -629,8 +618,9 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
- 			/* We rely upon deletion not changing folio->index */
- 
- 			if (xa_is_value(folio)) {
--				if (!invalidate_exceptional_entry2(mapping,
--						indices[i], folio))
-+				xa_has_values = true;
-+				if (dax_mapping(mapping) &&
-+				    !dax_invalidate_mapping_entry_sync(mapping, indices[i]))
- 					ret = -EBUSY;
- 				continue;
- 			}
-@@ -666,6 +656,10 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
- 				ret = ret2;
- 			folio_unlock(folio);
- 		}
-+
-+		if (xa_has_values)
-+			clear_shadow_entries(mapping, &fbatch, indices);
-+
- 		folio_batch_remove_exceptionals(&fbatch);
- 		folio_batch_release(&fbatch);
- 		cond_resched();
--- 
-2.45.2.803.g4e1b14247a-goog
+> >
+> > --
+> > MST
+> >
 
 
