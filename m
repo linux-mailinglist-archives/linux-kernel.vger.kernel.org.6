@@ -1,173 +1,141 @@
-Return-Path: <linux-kernel+bounces-248252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1032092DAA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:22:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E32D92DAA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31E311C21371
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:22:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 131C41F23427
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8B91339B1;
-	Wed, 10 Jul 2024 21:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15AF12DD9B;
+	Wed, 10 Jul 2024 21:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Df2BxCCl"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3SNf1DPz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SgNIEhqk"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC4A12CDAE
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 21:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A547839F3
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 21:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720646559; cv=none; b=dm+iOBB2F26koF9diM1wCDxImbarUkRF/R+b5qRtoflGELufYloqmQcHnllZzwtaoR1lK4y5P+p8J5pCn4hmA8ecZq5j642lPxMxQlJ9A48XM/tQgslrrSQuzigSXF+fuSJpoKFt2Go2244FxGBZxYBxAosOGmFL1GWn68L2P0A=
+	t=1720646621; cv=none; b=cuCppCzzUE/4C5eXuGr5oFndy02G0xzJv5AbFKT5vv3CEJPwGOYzC62rHLwtRaLJGOaReBCga+xknkqN1aVX2ERh2UliOAdZ8W4qgtDQvuwZP3YN2dRlv0KuC0vOoarhiJDLdXvuTBYIdkz4V/2ujxlPvrf1A1LxgJH0PW5V204=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720646559; c=relaxed/simple;
-	bh=0BNHICJWDsPhZyxdhWmJ+uG5xfSbgW27fugthvOms/k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PtDjOjmBqBIW8bM50IjlsXRFS1GFjkx9pcJDRjhHwp+P3tsh/X/BStkmtqnuY0BiHTUJ27GRLHD0CVWxV3PQIQzmXL28N20zOK4HO38MiLf381+hgRPT1qeKQEFWZ4p/wNM5M7vfV1Au2wdYIEvM4dDfINwKcpV+86bsMpzt1XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Df2BxCCl; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-64789495923so2088357b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:22:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1720646556; x=1721251356; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eUUiE1xWbipMzcW+Lwvs1Sskisgr/3NB0p4XqiIIqwY=;
-        b=Df2BxCCl74pwSqBZGJPunVyMCVQVyrRp75gFr21BFm/HMTuXEmT3H48VsAnLzva4H5
-         6nQNlXJUJj5lw41lfeC9O+XpvwkmrsNVKOT4SaMv9AL7TOZl65cWN5uC6fq4TCsP2Lj9
-         miYAsdUq2s9bQ/yQ+PFGTsmq2ebwpT/PuMVUZnQnHyeNGG58xTu0HYOi/3HC/FRRiunH
-         KoK33zauJiydrKf2lUgtIzE0avV5ZGmt8udVc6F6jRyG3ZUDYxlBDCwszSq9lwpvUBrI
-         NPOR6uhEMKT7i2rElJVUUtnlSGZ2BGKR2oGUjz3cJ9SXY8mS4dCdSzkwtgT7zMFma5pv
-         HspQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720646556; x=1721251356;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eUUiE1xWbipMzcW+Lwvs1Sskisgr/3NB0p4XqiIIqwY=;
-        b=emV9zp0yi/TByfdhWVhzdG3Ba7srBuQEfODb7205Uwvdo2AGtgNkyldVdHGA3xCe1B
-         ws+a2SAUthzhlEqkuLKoZ1/Kkf5mKkSFnE17fmMHj/6jwaxlFNP/QssgzY0M+rAfAhCJ
-         gVDJaH7cDmmJNKxhoGj1VIVEpWmOrVJpnL7T/aNfrb7YQtQ5XLv6hBh26F3AuC6ILKp2
-         FueqC/FsfS73Bugc835tWrRIdltOcIY9P54u49PZsQ1Q+phRlJskPuAGm9pfDQ6+jh7l
-         4ckJTv9ZobVHIio87TUaC0R+j7r3QUlmpOO7PQj/VQXPUdbQtoXSpcrEdD9jwuL963Vb
-         P2UA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtoake5KhK1YlooNsgafXBQ0tnJEgYe4d2hlNtDz53xUrODHN8bn00b3m45Qrlejshg62l9WUdzXu7VyVGTRxG692pZvXUZgk2VCd4
-X-Gm-Message-State: AOJu0YwAx77K3ADY3v6tyVyKh9mIXAkkxzcTay9RwYszSOt3IH3NlOrt
-	tYAa2y9OYYBwrphK8cd8weJSOkBwU5wOZ5L0CUOjUkHJ0hwoElItzAA0etvmdJngAmWEV4wb2aD
-	oCfLYQWPaOg+1ADPeKeevOCZehcs1HRW5Fm5f
-X-Google-Smtp-Source: AGHT+IFEmQcY5GeddQt9TLiu/V/Bm0luCGaLRyN1p4cPBqjVAyuRZ9fBxeTQo9ZtiHdwffXfWQeXDbgrBfeJEhb4QAw=
-X-Received: by 2002:a81:88c5:0:b0:64a:79f6:2f2d with SMTP id
- 00721157ae682-658ef341451mr69065717b3.31.1720646556460; Wed, 10 Jul 2024
- 14:22:36 -0700 (PDT)
+	s=arc-20240116; t=1720646621; c=relaxed/simple;
+	bh=A55kOLavbsaksNe5+Uo8WbZYGi5CKsD8jDpeWIrf2hU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fHxWuq8Hmfo9vWzhnbCceqgzQGCuJjz4RVCK7HAC6D3Lsjxnx1xBSkyO30WEQ2VHtltWSVmHIxK9ykp8bHSUBGsIEJmySLQDRS0BlVTijYA9iofUz+6a+iXUGv1UpRP9eJ+q5lO09dMpTwjiwxfjiD/Bg4Dz41+tulPrLe5vQrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3SNf1DPz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SgNIEhqk; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720646617;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qai35pVbZsCAlYx5gSFWwKAMlp16eBVHMbaSLM6FB6U=;
+	b=3SNf1DPzgEJgZmpZ2nucmsni1Fu85jhLmse9zFpUyhJ9kprXRwHQMZBXfiehSrAIiZxUw2
+	Y847QVXEQUq2hKD+edB7kdCGj/uffL+wba6UgJf6oZ/JQHX8bdCqOFvtE5P766kgfg+Sd/
+	c+u/CxGOCvmcbYN2nNHwN0fXm3JUc8pDbAu8KKawkoxsPdJsVDBDg4/WJqgqnmPcSsU+kY
+	g1llbm1fy1Ak/3CQeXdPjhJzTg5vx0WiVLMaUcG7oD1LTSCgIGP1UruI+5fyNrqOrALJyV
+	n+CgaixR+G/E8/oKtSxaXB6ae00IViezu8PfsfGBNqeySknUmk3866rWdK/jPw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720646617;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qai35pVbZsCAlYx5gSFWwKAMlp16eBVHMbaSLM6FB6U=;
+	b=SgNIEhqkevv98PI65/+TIxgjlypqbHQCLZUkUGV8EQrTij6oa2dQT+9R3NImTDlv441B2E
+	rXsyFnrtBkDBv2BA==
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: jstultz@google.com, sboyd@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] timekeeping: Use min() to fix Coccinelle warning
+In-Reply-To: <E601C587-4432-472D-A13A-6C03E88BDD59@toblux.com>
+References: <20240624062411.321995-2-thorsten.blum@toblux.com>
+ <87jzid7cmc.ffs@tglx> <E601C587-4432-472D-A13A-6C03E88BDD59@toblux.com>
+Date: Wed, 10 Jul 2024 23:23:36 +0200
+Message-ID: <87h6cxuejr.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000076ba3b0617f65cc8@google.com> <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
- <20240515.Yoo5chaiNai9@digikod.net> <20240516.doyox6Iengou@digikod.net>
- <20240627.Voox5yoogeum@digikod.net> <CAHC9VhT-Pm6_nJ-8Xd_B4Fq+jZ0kYnfc3wwNa_jM+4=pg5RVrQ@mail.gmail.com>
- <20240710.Hai0Uj3Phaij@digikod.net>
-In-Reply-To: <20240710.Hai0Uj3Phaij@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 10 Jul 2024 17:22:25 -0400
-Message-ID: <CAHC9VhT-n+a0R-XozggrTU2HskwEC+jRuWtKKz9bHwYk-j+dqQ@mail.gmail.com>
-Subject: Re: [syzbot] [lsm?] general protection fault in hook_inode_free_security
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Jann Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Kees Cook <keescook@chromium.org>, 
-	syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, jmorris@namei.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
-	linux-fsdevel@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Wed, Jul 10, 2024 at 8:23=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
-> On Thu, Jun 27, 2024 at 02:28:03PM -0400, Paul Moore wrote:
-> > On Thu, Jun 27, 2024 at 9:34=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > >
-> > > I didn't find specific issues with Landlock's code except the extra
-> > > check in hook_inode_free_security().  It looks like inode->i_security=
- is
-> > > a dangling pointer, leading to UAF.
-> > >
-> > > Reading security_inode_free() comments, two things looks weird to me:
-> > >
-> > > > /**
-> > > >  * security_inode_free() - Free an inode's LSM blob
-> > > >  * @inode: the inode
-> > > >  *
-> > > >  * Deallocate the inode security structure and set @inode->i_securi=
-ty to NULL.
-> > >
-> > > I don't see where i_security is set to NULL.
-> >
-> > The function header comments are known to be a bit suspect, a side
-> > effect of being detached from the functions for many years, this may
-> > be one of those cases.  I tried to fix up the really awful ones when I
-> > moved the comments back, back I didn't have time to go through each
-> > one in detail.  Patches to correct the function header comments are
-> > welcome and encouraged! :)
-> >
-> > > >  */
-> > > > void security_inode_free(struct inode *inode)
-> > > > {
-> > >
-> > > Shouldn't we add this check here?
-> > > if (!inode->i_security)
-> > >         return;
-> >
-> > Unless I'm remembering something wrong, I believe we *should* always
-> > have a valid i_security pointer each time we are called, if not
-> > something has gone wrong, e.g. the security_inode_free() hook is no
-> > longer being called from the right place.  If we add a NULL check, we
-> > should probably have a WARN_ON(), pr_err(), or something similar to
-> > put some spew on the console/logs.
-> >
-> > All that said, it would be good to hear some confirmation from the VFS
-> > folks that the security_inode_free() hook is located in a spot such
-> > that once it exits it's current RCU critical section it is safe to
-> > release the associated LSM state.
-> >
-> > It's also worth mentioning that while we always allocate i_security in
-> > security_inode_alloc() right now, I can see a world where we allocate
-> > the i_security field based on need using the lsm_blob_size info (maybe
-> > that works today?  not sure how kmem_cache handled 0 length blobs?).
-> > The result is that there might be a legitimate case where i_security
-> > is NULL, yet we still want to call into the LSM using the
-> > inode_free_security() implementation hook.
+Thorsten!
+
+On Sat, Jun 29 2024 at 16:12, Thorsten Blum wrote:
+> On 24. Jun 2024, at 23:36, Thomas Gleixner <tglx@linutronix.de> wrote:
+>> On Mon, Jun 24 2024 at 08:24, Thorsten Blum wrote:
+>> 
+>>> Fixes the following Coccinelle/coccicheck warning reported by
+>>> minmax.cocci:
+>>> 
+>>> WARNING opportunity for min()
+>> 
+>> I'm fine with the change, but not so much with the change log.
+>> 
+>> You cannot fix a coccinelle warning. You can only fix the code which
+>> triggers the warning, right?
+>> 
+>> 'Opportunity to use min()' is nothing else than an opportunity, but
+>> what's the benefit of replacing correct code with it? What does this
+>> fix?
+>> 
+>> It fixes nothing. So calling it a fix is confusing at best.
 >
-> Looking at existing LSM implementations, even if some helpers (e.g.
-> selinux_inode) return NULL if inode->i_security is NULL, this may not be
-> handled by the callers.  For instance, SELinux always dereferences the
-> blob pointer in the security_inode_permission() hook.
+> I think it's pretty common to "fix a warning" -- there are thousands of
+> commits in the kernel using this wording in the summary alone -- even
+> when the change doesn't actually "fix" anything other than removing the
+> warning.
 
-Since SELinux requires space in inode->i_security there should never
-be a case where SELinux is enabled and we don't allocate a blob for
-inode->i_security.
+Following the lemmings does not make a technical argument.
 
-> Shouldn't we remove all inode->i_security checks and assume it is always
-> set?  This is currently the case anyway, but it would be clearer this
-> way and avoid false sense of security (with useless checks).
+> However, how about 'resolve' instead?
+>
+> timekeeping: Use min() to resolve Coccinelle warning
+>
+>> What you want to say is something like this:
+>> 
+>> Subject: timekeeping: Replace open coded min()
+>> 
+>> Replace open coded min() because $GOOD_REASON
+>> 
+>> Discovered by minmax.cocci
+>> 
+>> $GOOD_REASON is not 'coccinelle emitted a warning'.
+>
+> Removing a warning can be a good reason in itself to refactor code,
+> because fewer warnings make "real" warnings and potential problems
+> become more noticeable and thus more likely to get fixed. In short, it
+> improves maintainability.
+>
+> To me this is obvious, but I'm happy to add something like "refactor
+> code to remove warning and improve overall maintainability" to the
+> commit message.
 
-It would be interesting to draft a patch to do that and make sure
-everything still works; it *should*, but I'd want to see that change
-get some good testing :)
+Again. The code _is_ correct and replacing it with min() does neither
+fix nor remove a warning.
 
-Keep in mind, this still doesn't mean that an LSM is required to use
-any space in inode->i_security if it wants to use the inode hooks.
+What's wrong with saying:
 
---=20
-paul-moore.com
+       timekeeping: Replace open coded min()
+
+       The open coded min implementation is correct, but triggers a
+       Coccinelle warning in minmax.cocci.
+
+       Replace the open coded variant with min() to reduce the noise of
+       false positives.
+
+That does not sound as spetacular as 'Fix', but it reflects the actual
+technical reason for making this change.
+
+Thanks,
+
+        tglx
 
