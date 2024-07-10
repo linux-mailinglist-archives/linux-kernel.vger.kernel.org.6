@@ -1,103 +1,140 @@
-Return-Path: <linux-kernel+bounces-248393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D86C892DC98
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:25:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C47DF92DC99
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15F9F1C21BF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:25:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71BCB1F263C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:25:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E257D154BE8;
-	Wed, 10 Jul 2024 23:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA1B156997;
+	Wed, 10 Jul 2024 23:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NmoRNHVT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="PKXF+f4s"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5C213DDC0;
-	Wed, 10 Jul 2024 23:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333A415534D
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720653896; cv=none; b=G0R10VotOeOdoEctFE0FQi33eETSgYdfeaNBu4tZeDOfbNYPRws/LNnPxnglUDkc4Ia3fyHdpEMRR8DG60gZPlgtkoh7hAtVURshQE0nClgqejyiC4I8/4Zzy4K+0jvgf9jUd12j6PnROJHyUFEfx7HaqowsnwHojuLaXlKQlhc=
+	t=1720653912; cv=none; b=HojV3T9BR+YKrr+v3mKVnDa9F2NB/J0Dwi2JDxtDWKjcYFZrZ5xX9Gk43+JGcASbf4a/oTErHWpTmgbcdpZK+4uRHxinfE9F6fPEdg23nERtT2e0y9W9nqI/YF+1skG2LflQMZ5oG3jR1mD5lqu0iUBO6hxHmw45MQwPCXDOx5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720653896; c=relaxed/simple;
-	bh=A3coxChkmt0sW/kbzFpptkntvbuKBBJ+zpKIjQW1Krg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=n2VBIW2JkrAT3zFHK4+d6N28yoe5oYt/m406x8Cu1hVbRcaOYoqsHMC92HhsiWFz2XWz2iOYAHPDJX/QEduJPyZclltLjrwxz53kj3EWmLeTs/GanB+naSq1JOVsgjJz6xFxFKY+Wx1wYzOAv78cECQtomCpeJfaeOo3MWEMS4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NmoRNHVT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BA9BC32781;
-	Wed, 10 Jul 2024 23:24:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720653895;
-	bh=A3coxChkmt0sW/kbzFpptkntvbuKBBJ+zpKIjQW1Krg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=NmoRNHVTlz4xIpvn31hnhnPptF9ngE4EXyBHWr+GvE8EvaiXvCHS3rbkVWpcsOFPM
-	 YTlmTUse3B1nL6WnbAjJZ80ZNc3n3EinLbERsnEaYIkNjLGcpftNyhIlGxrJqq/FzN
-	 6nrqOMWKqakDfEUkz5gDrBkE4CpkTwpRFjMSdXLY1RJzKBQKV5/1gCtAlxLXKxwUIO
-	 EBZ+bN5rKTF+BO7kFEpkg1AqJfGKM8JJi4CW0YHRFbv6VtrgShy1YSvfTcxYD9knTb
-	 4qYvNl0R1ZlLEfP012bu/p1RdvU0b6wxvLT3geq2K6mXQwm1NKWfGP7SDqw0a6fSyy
-	 d0hh/zi51QMkA==
-From: Mark Brown <broonie@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J . Wysocki" <rafael@kernel.org>, Jean Delvare <jdelvare@suse.com>, 
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240710015622.1960522-1-linux@roeck-us.net>
-References: <20240710015622.1960522-1-linux@roeck-us.net>
-Subject: Re: (subset) [RFC PATCH 0/3] regmap: Implement
- regmap_multi_reg_read()
-Message-Id: <172065389381.390030.364634447127435335.b4-ty@kernel.org>
-Date: Thu, 11 Jul 2024 00:24:53 +0100
+	s=arc-20240116; t=1720653912; c=relaxed/simple;
+	bh=gw/MLm2hIT4+Tpb2VM+DAxnSIDoNHKfcf/mPwPe0CAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r7OaYHJMyi0vkHeSPmBYa23utMD4ALeI5UO+hUdiR8pDPw7jxhsLCyyyqfUj+8RRAlrnlowckKo1FnoUcAYmsTAyWSJZu9uomrOp4bCrfYkmYWaznNu+G8iJ9dAAJhBgfFanae8ethC2HVbRYsR83sAViDHmJrOtfp23zL8I6qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=PKXF+f4s; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6002a.ext.cloudfilter.net ([10.0.30.222])
+	by cmsmtp with ESMTPS
+	id RcYqsjUbdg2lzRggQsCPer; Wed, 10 Jul 2024 23:25:10 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id RggPsGg9aX56wRggPsL5ZY; Wed, 10 Jul 2024 23:25:10 +0000
+X-Authority-Analysis: v=2.4 cv=MY6nuI/f c=1 sm=1 tr=0 ts=668f1856
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=frY+GlAHrI6frpeK1MvySw==:17
+ a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
+ a=VwQbUJbxAAAA:8 a=iox4zFpeAAAA:8 a=vS7kxI9omEbEOQks6BwA:9 a=QEXdDO2ut3YA:10
+ a=AjGcO6oz07-iQ99wixmX:22 a=WzC6qhA0u3u7Ye7llzcV:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=5JTzYDV8HuQdO+rGyaS9OUcGkFAqlJYU3lF427AyccY=; b=PKXF+f4sBIZSdXNIUYQIXOOBsS
+	XUytasohbtpTlT2vQc53it49tKfEgdptJRsoOyQTjMTaAzVj1cTETqrhldXCGKy6T6iIxXVUdYDL7
+	z5Qn9EZrVqFi27IuD0nty6XwCCPFf8asS00sx4KUNlpM1n4690aA8zd7rBnN9shBVhe2fTbErJyd5
+	JfZYy1ZyXTjrr5HRTfz4FGKCOrvqMmfDlmWkvzZrHZLLf7hGOQ8wdMzIfLyUOl/jfYrrxis5kkCJK
+	2TU7uRLpJA7EhtNU9LDzJxnhVaXvpB+N4RhvXUp2OJgSnQyb+abVqmqsXXtFNhEdB/iPGQ0MsH4vA
+	E2KdXE2A==;
+Received: from [201.172.173.139] (port=36682 helo=[192.168.15.4])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sRggP-004LFD-0j;
+	Wed, 10 Jul 2024 18:25:09 -0500
+Message-ID: <ee3b7adb-0f11-4650-ad1f-afc9dceedc8a@embeddedor.com>
+Date: Wed, 10 Jul 2024 17:25:08 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs/affs: struct affs_data_head: Replace 1-element array
+ with flexible array
+To: Kees Cook <kees@kernel.org>, David Sterba <dsterba@suse.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20240710225725.work.409-kees@kernel.org>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20240710225725.work.409-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-0bd45
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.139
+X-Source-L: No
+X-Exim-ID: 1sRggP-004LFD-0j
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.4]) [201.172.173.139]:36682
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 34
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfELoLtk4lckFjJEGW1rqtFLRzQmPASTlIBb0NCxQXPMLYFHUlhTMet1vI2daGdw0E6txesKXUSO3Qn9+vD5F2hxDZ8YAW5454O/TdymXfY1GxxE693BQ
+ JCBNXGjyf+2sz9N8QBMduYMERSZNE1lWTVS86TKRpjiEBGJ6km/qGLn9uh849ZHlyR42+kR+/6ZNUXtzYfG40c8R9PHSGTj3FQB0H4EsBQ5Rj5knuj0L5WrN
 
-On Tue, 09 Jul 2024 18:56:19 -0700, Guenter Roeck wrote:
-> regmap_multi_reg_read() is similar to regmap_bilk_read() but reads from
-> an array of non-sequential registers. It is helpful if multiple non-
-> sequential registers need to be read in a single operation which would
-> otherwise have to be mutex protected.
+
+
+On 10/07/24 16:57, Kees Cook wrote:
+> Replace the deprecated[1] use of a 1-element array in
+> struct affs_data_head with a modern flexible array.
 > 
-> The name of the new function was chosen to match the existing function
-> regmap_multi_reg_write().
+> No binary differences are present after this conversion.
 > 
-> [...]
+> Link: https://github.com/KSPP/linux/issues/79 [1]
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
-Applied to
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
+Thanks
+-- 
+Gustavo
 
-Thanks!
-
-[1/3] regmap: Implement regmap_multi_reg_read()
-      commit: 450a60ef607900bb9affb0e822fea9726679c512
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> ---
+> Cc: David Sterba <dsterba@suse.com>
+> Cc: linux-fsdevel@vger.kernel.org
+> ---
+>   fs/affs/amigaffs.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/affs/amigaffs.h b/fs/affs/amigaffs.h
+> index 09dc23a644df..1b973a669d23 100644
+> --- a/fs/affs/amigaffs.h
+> +++ b/fs/affs/amigaffs.h
+> @@ -119,7 +119,7 @@ struct affs_data_head
+>   	__be32 size;
+>   	__be32 next;
+>   	__be32 checksum;
+> -	u8 data[1];	/* depends on block size */
+> +	u8 data[];	/* depends on block size */
+>   };
+>   
+>   /* Permission bits */
 
