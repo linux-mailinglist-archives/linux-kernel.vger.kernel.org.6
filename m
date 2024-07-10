@@ -1,139 +1,104 @@
-Return-Path: <linux-kernel+bounces-247535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD22492D0E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:41:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64BC892D0E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52694B2564C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:41:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F8D41F24403
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2A2190499;
-	Wed, 10 Jul 2024 11:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CB6190492;
+	Wed, 10 Jul 2024 11:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FQyuN10O"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pqb/wdjI"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803D018FA02;
-	Wed, 10 Jul 2024 11:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767C1190486
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 11:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720611678; cv=none; b=QPgO3GCHJVpvGpUfnGW7rIl7on6Sw5g2GH7/z9qgHVwqtbyGYdYzd9B+xSa2Zm5fVGOIOodWPTLESRqfXksMThmwq5r+9G/jdirOU3bi8lGPGAR1XwEhRUoy14gqoKUWyZb+DWQfBYez3YS2WvO62IBjG6HQdorPdZ0/Zc5sk0c=
+	t=1720611711; cv=none; b=pZGIOxZYzfzCPwcfLKEi27/iS4rRtyQ0HUPoAelDe5IeKK6cQiUBn63gW1hcX4Oqgv3hDqcTxa5pCgFRwk2JH8+uYNa16L9MEPs3Yb89OweUxo0Ae6mRGmRtacONCO08OiEf3svKye5JH3nleBEnNxmX1Rznrl/vDRb6je18YcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720611678; c=relaxed/simple;
-	bh=5Gc+WSgaTvQtTb2+K/MRvKwRBLP+XYM5K3LbNVGzSCk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=omIhe6DLQRxRo4He2GTQcOMuFbYQ7eCPuyy4CO5U459NbFBN6oxlUyTl3gGKDqbbo77hhE3Knquo26AvbCVLGsMN4YTaWVODtcMLUUzMPmONXmx6rcbnmcZOl4ojPuhZIWwvlHaLKiBPWiFFkzpkN0nzkXXNzSZ3/VV6nvjkhkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FQyuN10O; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720611677; x=1752147677;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=5Gc+WSgaTvQtTb2+K/MRvKwRBLP+XYM5K3LbNVGzSCk=;
-  b=FQyuN10OUauAk+T/2KyTVsPUwXqUJQnQzBgYLSuTHieQc7MrBbvwvqqj
-   H1MTCFDSUTyEarcOP5hg3o3ETGY3+YFR+apRTqnpCwX/gjCtGwIGmSUii
-   wsBB69fLozffqH5MHChUesXCDiNlxiDFoAsmU/MjmE9Rf1oYjU/4m7Dma
-   pcRXQ8msGDL6C/hPf4JugTutPZIJJo+AY3MPuTm3Ufa/BAVnfd43sJvk+
-   yfDGRDRbIMf74qrH2Ezd1H3CH+VArmVAOaUoD+DEafZAzJuJPHGtaKObU
-   r4I6GLp4Cd9IGfGdcYuWr+4weR2hs/Ji0kTDzpRt0ocAroXMCYfTVXW9u
-   A==;
-X-CSE-ConnectionGUID: zGhJnXRcRXCmE+snZu9VFA==
-X-CSE-MsgGUID: 0DUrFJu0TCW18M2awpl13Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11128"; a="18066862"
-X-IronPort-AV: E=Sophos;i="6.09,197,1716274800"; 
-   d="scan'208";a="18066862"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 04:41:16 -0700
-X-CSE-ConnectionGUID: FyEZfcl2RR+h8h2flw7WQA==
-X-CSE-MsgGUID: DeJi4XD0Q/aWHRIglF9rNQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,197,1716274800"; 
-   d="scan'208";a="78923789"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.49.253])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 04:41:13 -0700
-Message-ID: <dc6d8995-3e7c-4459-b82c-8ba402fdc094@intel.com>
-Date: Wed, 10 Jul 2024 14:41:08 +0300
+	s=arc-20240116; t=1720611711; c=relaxed/simple;
+	bh=SevchnRjLxN262FH3CoJo6NLdyefYAkp5DdHLTpmSoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OVlui0GmX3in9aXkTg2KkFdzyOOu89CkeMzzjZ8cgoSgg0RFIaGs+58qJX34wN+5PECmEZOFEG5hctzISpxMx4JEDaiDRQezYVEIF26EjSl/JzIfkcPLsvxDdozDlQ8+1BHqL7buFPoF3CTKRzusD7tevljd8TeXikShHGJYZn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pqb/wdjI; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Ys+KAWxJuasF9TIEMynAnbA52tKXzDW2JdSwnqUx9Ss=; b=pqb/wdjIGjR8fvZ7/wHo5I3CqC
+	mb4VkD2NjBeNFuZ3+B4fNC+OEXVPK3jZ6z25Y0lltkDIqRZ518q1qUKtEy6dF6UESqhozrbdA5g8e
+	wceJdSnX2eBsfz84qBHJrhxiH9Rv/JSiwcycAoj1j1A+7QXAkxk7BG0XSV45ljXJOFSV9G61c/jel
+	zEHOejGpRWurZpUw+NQrNdCw+ztFhQYxgDarsDfv9xJ5NzDAi2fcovnNdr+r/Qf2F9VPTq6lX8Vb3
+	Em7L/PcTj1qZxBUEpCRdSj/is0aOJto8n/YbYgboPM/sD7RxcxzjgxvMreTEn2UCCB+FgzQm1Xmjf
+	EwIlJQqw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRVhf-00000009CxE-0fT1;
+	Wed, 10 Jul 2024 11:41:43 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C6323300694; Wed, 10 Jul 2024 13:41:42 +0200 (CEST)
+Date: Wed, 10 Jul 2024 13:41:42 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrea Righi <righi.andrea@gmail.com>
+Cc: Tejun Heo <tj@kernel.org>, void@manifault.com,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	schatzberg.dan@gmail.com, mingo@redhat.com, changwoo@igalia.com
+Subject: Re: [PATCH 3/6] sched_ext: Make @rf optional for
+ dispatch_to_local_dsq()
+Message-ID: <20240710114142.GY27299@noisy.programming.kicks-ass.net>
+References: <20240709212137.1199269-1-tj@kernel.org>
+ <20240709212137.1199269-4-tj@kernel.org>
+ <Zo5Ncd8DxGSVztoH@gpd>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mmc: sdhci-pxav3: Fix potential NULL dereference in
- sdhci_pxav3_probe
-To: Ma Ke <make24@iscas.ac.cn>, ulf.hansson@linaro.org,
- thomas.petazzoni@free-electrons.com
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240710105911.2076942-1-make24@iscas.ac.cn>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240710105911.2076942-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zo5Ncd8DxGSVztoH@gpd>
 
-On 10/07/24 13:59, Ma Ke wrote:
-> In sdhci_pxav3_probe(), mv_mbus_dram_info() returns NULL if
-> CONFIG_PLAT_ORION macro is not defined[1]. Fix this bug by adding NULL 
-> check.
-
-As was commented last time, there already is a NULL check in
-mv_conf_mbus_windows(). Another check is not necessary.
-
+On Wed, Jul 10, 2024 at 10:59:29AM +0200, Andrea Righi wrote:
+> On Tue, Jul 09, 2024 at 11:21:09AM -1000, Tejun Heo wrote:
+> ...
+> > @@ -2052,17 +2052,20 @@ static bool move_task_to_local_dsq(struct rq *rq, struct task_struct *p,
+> >  static void dispatch_to_local_dsq_lock(struct rq *rq, struct rq_flags *rf,
+> >  				       struct rq *src_rq, struct rq *dst_rq)
+> >  {
+> > -	rq_unpin_lock(rq, rf);
+> > +	if (rf)
+> > +		rq_unpin_lock(rq, rf);
+> >  
+> >  	if (src_rq == dst_rq) {
+> >  		raw_spin_rq_unlock(rq);
+> >  		raw_spin_rq_lock(dst_rq);
+> >  	} else if (rq == src_rq) {
+> >  		double_lock_balance(rq, dst_rq);
+> > -		rq_repin_lock(rq, rf);
+> > +		if (rf)
+> > +			rq_repin_lock(rq, rf);
+> >  	} else if (rq == dst_rq) {
+> >  		double_lock_balance(rq, src_rq);
+> > -		rq_repin_lock(rq, rf);
+> > +		if (rf)
+> > +			rq_repin_lock(rq, rf);
+> >  	} else {
+> >  		raw_spin_rq_unlock(rq);
+> >  		double_rq_lock(src_rq, dst_rq);
 > 
-> Fixes: aa8165f91442 ("mmc: sdhci-pxav3: do the mbus window configuration after enabling clocks")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
-> Changes in v2:
-> - refined the vulnerability description;
+> Not a blocker, but would it make sense to provide some wrappers for
+> rq_unpin_lock() / rq_repin_lock() to simply return if rf == NULL?
 
-Referencing a link not actually in the commit message
-
-> - provided similar vulnerability's reference link[2].
-
-Not the same because in that case dram was dereferenced
-without checking first.
-
-> Reference link:
-> [1] https://github.com/torvalds/linux/blob/34afb82a3c67f869267a26f593b6f8fc6bf35905/include/linux/mbus.h#L65
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=d48d0c5fd733bd6d8d3ddb2ed553777ab4724169
-> ---
->  drivers/mmc/host/sdhci-pxav3.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-pxav3.c b/drivers/mmc/host/sdhci-pxav3.c
-> index 3af43ac05825..ac89cb2eb9f6 100644
-> --- a/drivers/mmc/host/sdhci-pxav3.c
-> +++ b/drivers/mmc/host/sdhci-pxav3.c
-> @@ -375,6 +375,7 @@ static int sdhci_pxav3_probe(struct platform_device *pdev)
->  	struct sdhci_host *host = NULL;
->  	struct sdhci_pxa *pxa = NULL;
->  	const struct of_device_id *match;
-> +	const struct mbus_dram_target_info *dram;
->  	int ret;
->  
->  	host = sdhci_pltfm_init(pdev, &sdhci_pxav3_pdata, sizeof(*pxa));
-> @@ -406,7 +407,12 @@ static int sdhci_pxav3_probe(struct platform_device *pdev)
->  		ret = armada_38x_quirks(pdev, host);
->  		if (ret < 0)
->  			goto err_mbus_win;
-> -		ret = mv_conf_mbus_windows(pdev, mv_mbus_dram_info());
-> +		dram = mv_mbus_dram_info();
-> +		if (!dram) {
-> +			ret = 0;
-> +			goto err_mbus_win;
-> +		}
-> +		ret = mv_conf_mbus_windows(pdev, dram);
->  		if (ret < 0)
->  			goto err_mbus_win;
->  	}
-
+There are very limited contexts where unpin is sound. I have no idea if
+this is one of them or not.
 
