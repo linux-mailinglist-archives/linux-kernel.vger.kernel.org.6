@@ -1,113 +1,171 @@
-Return-Path: <linux-kernel+bounces-247339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3720C92CE31
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:29:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A8392CE34
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E699F2878CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:29:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A936B23F9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B4718FA10;
-	Wed, 10 Jul 2024 09:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF3613777F;
+	Wed, 10 Jul 2024 09:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="b19vBv3x"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="1ZbfSaOo"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4460B84A28;
-	Wed, 10 Jul 2024 09:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422A117FD
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720603778; cv=none; b=CXfiubb3zTLQ8yzPsT4S0OUPj5qmUW8Fufq5OBGIX1MbqZj5ysxFmVvZaga6pRbwwyS4lKPISzMH2rr945dO4r8n09cK0wOrhX7FFZb3zg27hSY8k745ve2oPzRxNts6RECiGPMX6QLxKwWTopuHH/l8oVBBcHKXylX8/nfwZ3Y=
+	t=1720603875; cv=none; b=JorTrkNV5yNsU6uvu/NbaQrAo3ANcAAjEduIQqdW84b9cFA0+j+ARr8lWrwu9sL5s5Erv6Brehw48McxJ/mcBdKSQm2OidW7jiVc/Ny3l9qgIpDXyVW3GFXKSoCdb3aVvFBl0b67xNpKdzUt3rt4El5vKCvoxCYtGeChWTg+KBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720603778; c=relaxed/simple;
-	bh=qrk8NXyiTW0nBxvzS9xj4sUy4pCeUTbEIIlK+lDgQWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=khpJTDWrjK9jc+/OQYSuOu0xGAZuCoLEJGE+dNCvCHReFcNr7gwO1QeuT87noBEVshye9vYmCfsa+VzvWAlce9HoAbnIZ07vFhI626g24JUkMq/v7rd/im8f/YTSgdUERmoYSua/B49UyShg2Evqsf7Aedy5zWslNd6tfkxfL4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=b19vBv3x; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 24C5D40E019C;
-	Wed, 10 Jul 2024 09:29:35 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id tNn6bnHpsR2I; Wed, 10 Jul 2024 09:29:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1720603771; bh=B5ftZJIE3FPYjKompJae1w7F5CeyPFIf+KZ7NWfDTrc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b19vBv3xz/d1WcEHMfng1K+26ZNzgkioWOvew28E0Ch91cW4MZJb0iTDS0ceE2Vi9
-	 WpsXb15D0PS6Eu+3ZmYdFuipLIXhgMXqBTCoSt8cREmkjZ39K+RQPS0c/K6bNJEkXM
-	 0Yg1uwOVDl2fjJ2ElI7dyhBQ2tDPzOZ1vgVoaKnVQfyDvVGosQ1sPcZat1JDaabh/s
-	 fL8hU6yvP0C2bHZu7zGNzVFs3fZpewi5CbqW60lfl4bdANg61BUxAnvbVtRIYWjbVR
-	 6qq1n5n84/GqFhkZQ0TeiwToaNL7h2DBckIMr56sTAnlf1IWY1EzQ8jINRzz/PrWK0
-	 F2VNapYf7OzrdSxK2cmKdMuMyt1Q7M/ePD5IS31OSceXLu1bDVVeHSKLLiUf6Ac5VY
-	 X4ExU9hznYW9S2To+GCXA+oRdjBLPg3SPAiICx+PvyZvRG38yZ44JbmcuTydtm9dzP
-	 GvI5cE8e3M+Ky4P8cTHurqNIuT5zeDOFjKIsaWyfKBERsogKQb6MVgDpB3cr5IVxIA
-	 uEn0qmXDtESVH+eMOM90SS+xzfLsSlejbDiA0CNTji7jna4b7l+WOaHJRM9EYvbfKk
-	 TPhIyKPxL5Cz3UpXnO2EpsECTUr4+P8qJGWOEG+fGDzw9pN0m8+WnMEPgCAxZdKyIi
-	 wOvXqfRWdGZFrOvtk9h1LEMk=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	s=arc-20240116; t=1720603875; c=relaxed/simple;
+	bh=IqVKXZ8bzrEAVXLR1bSuGmEfouFfD3UiPXeCKpXfUBM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IcB0TrR4CtIgaTJtY+O24IXRpT+6o87T7FhCtFO2lBuo9B+vWJGMQE0Vm+x8RvYqKjx6Jn7P6VVqACYtU+JgftEHm310snxTjJnvee+wTmN1PJYtSG0VW8qKSSHGXkISgSrl2cTrLNaSKTPJmfmWc4WQyf6bQeyCV7yFRLysbGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=1ZbfSaOo; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720603872;
+	bh=IqVKXZ8bzrEAVXLR1bSuGmEfouFfD3UiPXeCKpXfUBM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=1ZbfSaOoLHbue0Cip7tDl6DIVtZ5ZJLyzYri0l8yvRJQP2xLCSscp2fO7bJlP+45m
+	 8vLM2CZZb7wPppO2lUtZKUGx+PqppwYMuYNI9b9W5GOxvNqSdGsY5V5I6rdLzDk/Lb
+	 oYbln6lJ9eH9Vvojnvp1q4jkoAwZ4sLGGG/dudzLx0gcOjAhYo7FfqYYEYwqu8I+Oh
+	 yJj7vP60S4WblpgaKh9oGZCDy4TTwLuso6Qi9yGOHdrg22K1fcTmBmWbIyrgS88D1n
+	 oIIVSr6I+e5PfRTX3GaHVYM9rbGyqmFLrQHwGCWfyl8ckAmRt/W1kkhNx9JPe/ZCz/
+	 NPivhegOYtgBg==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ADBB140E0027;
-	Wed, 10 Jul 2024 09:29:17 +0000 (UTC)
-Date: Wed, 10 Jul 2024 11:29:12 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Dexuan Cui <decui@microsoft.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"open list:X86 TRUST DOMAIN EXTENSIONS (TDX)" <linux-coco@lists.linux.dev>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	Michael Kelley <mikelley@microsoft.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Kai Huang <kai.huang@intel.com>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH] x86/tdx: Support vmalloc() for tdx_enc_status_changed()
-Message-ID: <20240710092912.GCZo5UaD-JZeuMpIwK@fat_crate.local>
-References: <20240708183946.3991-1-decui@microsoft.com>
- <20240708191703.GJZow7L9DBNZVBXE95@fat_crate.local>
- <SA1PR21MB1317816DFCE6EF38A92CF254BFDA2@SA1PR21MB1317.namprd21.prod.outlook.com>
- <20240709110656.GEZo0Z0EoI4xmHDx9b@fat_crate.local>
- <SA1PR21MB13173395ACC3C0FD6D62E36EBFA42@SA1PR21MB1317.namprd21.prod.outlook.com>
- <20240710081501.GAZo5DBW3nvdzp34AI@fat_crate.local>
- <SA1PR21MB1317C5633D8F537A73A1CE17BFA42@SA1PR21MB1317.namprd21.prod.outlook.com>
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0407F3782192;
+	Wed, 10 Jul 2024 09:31:11 +0000 (UTC)
+Message-ID: <a1914f2b-93f2-4de4-9c4b-2e1f6b39cf3a@collabora.com>
+Date: Wed, 10 Jul 2024 11:31:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <SA1PR21MB1317C5633D8F537A73A1CE17BFA42@SA1PR21MB1317.namprd21.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] nvmem: mtk-efuse: Only register socinfo device if
+ needed cells are there
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20240708-mtk-socinfo-no-data-probe-err-v2-1-7ae252acbcc2@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240708-mtk-socinfo-no-data-probe-err-v2-1-7ae252acbcc2@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 10, 2024 at 09:20:46AM +0000, Dexuan Cui wrote:
-> I didn't expect that 'diff' could generate so many lines of changes :-)
+Il 08/07/24 21:43, Nícolas F. R. A. Prado ha scritto:
+> Not every efuse region has cells storing SoC information. Only register
+> an socinfo device if the required cells are present.
+> 
+> This prevents the pointless process of creating an socinfo device,
+> probing it with the socinfo driver only to ultimately error out like so
+> 
+>    mtk-socinfo mtk-socinfo.0.auto: error -ENOENT: Failed to get socinfo data
+>    mtk-socinfo mtk-socinfo.0.auto: probe with driver mtk-socinfo failed with error -2
+> 
+> This issue is observed on the mt8183-kukui-jacuzzi-juniper-sku16
+> platform, which has two efuse regions, but only one of them contains the
+> SoC data.
+> 
 
-It is not about the number of changed lines - it is about *what* gets changed.
+I think that we should rather remove or disable the first eFuse region, as
+even though that is enabled:
 
-A single character change can invalidate the tags of a patch and a huge
-diffstat solely cleaning up whitespace will not, even though we prefer if
-those get done in a separate patch to ease review.
+  - This is the only SoC having two regions
+    - I'm not even sure that the region at 0x8000000 is really efuse
+    - Not even referenced in datasheets....
+  - It's unused, as in, it's not exposing any information and no declared cells
 
-I'm sure you can think of examples.
+Don't misunderstand me, this is not an invalid change, but I rather prefer
+to resolve this by disabling that (effectively unused!) node, avoiding to
+add more lines to this driver that would be useless after fixing that small
+single thing.
 
--- 
-Regards/Gruss,
-    Boris.
+Cheers,
+Angelo
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+> Changes in v2:
+> - Added missing include for of.h
+> - Link to v1: https://lore.kernel.org/r/20240708-mtk-socinfo-no-data-probe-err-v1-1-fb2acd3a47bf@collabora.com
+> ---
+>   drivers/nvmem/mtk-efuse.c | 18 ++++++++++++++----
+>   1 file changed, 14 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/nvmem/mtk-efuse.c b/drivers/nvmem/mtk-efuse.c
+> index 9caf04667341..74def409bc20 100644
+> --- a/drivers/nvmem/mtk-efuse.c
+> +++ b/drivers/nvmem/mtk-efuse.c
+> @@ -11,6 +11,7 @@
+>   #include <linux/nvmem-provider.h>
+>   #include <linux/platform_device.h>
+>   #include <linux/property.h>
+> +#include <linux/of.h>
+>   
+>   struct mtk_efuse_pdata {
+>   	bool uses_post_processing;
+> @@ -60,6 +61,8 @@ static void mtk_efuse_fixup_dt_cell_info(struct nvmem_device *nvmem,
+>   		cell->read_post_process = mtk_efuse_gpu_speedbin_pp;
+>   }
+>   
+> +static const char socinfo_data_first_name[] = "socinfo-data1";
+> +
+>   static int mtk_efuse_probe(struct platform_device *pdev)
+>   {
+>   	struct device *dev = &pdev->dev;
+> @@ -69,6 +72,7 @@ static int mtk_efuse_probe(struct platform_device *pdev)
+>   	struct mtk_efuse_priv *priv;
+>   	const struct mtk_efuse_pdata *pdata;
+>   	struct platform_device *socinfo;
+> +	struct device_node *np;
+>   
+>   	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>   	if (!priv)
+> @@ -92,10 +96,16 @@ static int mtk_efuse_probe(struct platform_device *pdev)
+>   	if (IS_ERR(nvmem))
+>   		return PTR_ERR(nvmem);
+>   
+> -	socinfo = platform_device_register_data(&pdev->dev, "mtk-socinfo",
+> -						PLATFORM_DEVID_AUTO, NULL, 0);
+> -	if (IS_ERR(socinfo))
+> -		dev_info(dev, "MediaTek SoC Information will be unavailable\n");
+> +	np = of_get_child_by_name(pdev->dev.of_node, socinfo_data_first_name);
+> +	if (np) {
+> +		of_node_put(np);
+> +		socinfo = platform_device_register_data(&pdev->dev, "mtk-socinfo",
+> +							PLATFORM_DEVID_AUTO, NULL, 0);
+> +		if (IS_ERR(socinfo))
+> +			dev_info(dev, "MediaTek SoC Information will be unavailable\n");
+> +	} else {
+> +		dev_info(dev, "Efuse region does not contain SoC information - skipping socinfo driver setup\n");
+> +	}
+>   
+>   	platform_set_drvdata(pdev, socinfo);
+>   	return 0;
+> 
+> ---
+> base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+> change-id: 20240708-mtk-socinfo-no-data-probe-err-d7558343dc82
+> 
+> Best regards,
+
 
