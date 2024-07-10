@@ -1,334 +1,340 @@
-Return-Path: <linux-kernel+bounces-247420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B98C592CF49
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:36:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9BA92CF4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38F771F21384
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:36:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D5F9B23CBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80FCE18FDCD;
-	Wed, 10 Jul 2024 10:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9511818FDB7;
+	Wed, 10 Jul 2024 10:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TBmZyMIw"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMLsdwWj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB8817FD
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 10:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9497112DDBF;
+	Wed, 10 Jul 2024 10:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720607471; cv=none; b=qULAoS5ri26ecSEW4Q/7+dWmY4lNR7Sh/ahaitROs32xups5v3Jbk0y1FMfh5C0AG7Msfe103STXwkeRI0QVMPN064VxFm4a9k0uHlmziLC/EXrn4GD2OgY+CCwgr8NHuB/rPYNwzdnfys5lfuY+7iduf92q/zBnlb9hXQLjvjQ=
+	t=1720607518; cv=none; b=IKuo3jT7VP/dscWayyfbj2AUlsjeCIRQ+crFEbowAJeyd7oXmjQlZgixoFiR6VgStT/srRqfZIrtRnh5sTxM9G4zbJuiRtwHewflc0Mxn/mfr/wXakyX+FE+LsWYVXqDMg1XA05hCDSAvDP0tjMtMr+wXAuFPrzqmvEclZGRjsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720607471; c=relaxed/simple;
-	bh=7Lhie7ob6XN2MfK3M+u9hh6fDPhqpPGPGWl4Rs6GGlY=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=tyOajjHG6ritpdg7tQ2hrdVu0HLxpBt2H8pV8lAnFoLaePANO67nUgpv0/3JFFWbsig8uquFKbjzmgxwTsnwhm+6I2mUEmFLkL3NphRdJUpz9WHnGYHIq25LaS1zzxvlK7dpkDL66oepDeXjwFdkUxFoPvJ1Nur7cey5a1da1tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TBmZyMIw; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240710103106epoutp02b82a0c52ed29c2455295afa8715055b7~g01-dkajm1924319243epoutp02j
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 10:31:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240710103106epoutp02b82a0c52ed29c2455295afa8715055b7~g01-dkajm1924319243epoutp02j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1720607466;
-	bh=nbk9Pdg7OYXICEjwvvLvJ1kmU48SoJWAfgQWramsV64=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=TBmZyMIwS1pd/aImfWEPhNtY9EgLmeDw6VIiO5qt34hHFPuPpxVf60svoUjQE5Pir
-	 iw1gPCTHb9EilEUt9jA0eVr976byne3JiXS7I+5/320vA3TpJaDhJ4LsR6Z+O0Jqv9
-	 9pELQ5IffCZyoT6mqsKCnimm2whyN0oUgeES4nfM=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240710103105epcas5p2fe1d0154c7bca0415a1c3a44f12e6de1~g01_7maka1040310403epcas5p2Y;
-	Wed, 10 Jul 2024 10:31:05 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.178]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4WJvK42xdHz4x9Q1; Wed, 10 Jul
-	2024 10:31:04 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	53.0E.06857.8E26E866; Wed, 10 Jul 2024 19:31:04 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240710103103epcas5p1e4d33af6169900a1395c0c62e20fc1c3~g018-gFuM2946029460epcas5p1U;
-	Wed, 10 Jul 2024 10:31:03 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240710103103epsmtrp1c03e6e073d00f653bc70b3a918af22ee~g018_ReTl2327923279epsmtrp1S;
-	Wed, 10 Jul 2024 10:31:03 +0000 (GMT)
-X-AuditID: b6c32a4b-88bff70000021ac9-48-668e62e8493a
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	2A.D1.18846.7E26E866; Wed, 10 Jul 2024 19:31:03 +0900 (KST)
-Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240710103100epsmtip196e11e56159895c3b6822ba649ce5c85~g0152aB1u2202122021epsmtip1C;
-	Wed, 10 Jul 2024 10:31:00 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>, "'Rafael J.
- Wysocki'" <rafael@kernel.org>, "'Daniel Lezcano'"
-	<daniel.lezcano@linaro.org>, "'Zhang Rui'" <rui.zhang@intel.com>, "'Lukasz
- Luba'" <lukasz.luba@arm.com>, "'Florian Fainelli'"
-	<florian.fainelli@broadcom.com>, "'Ray Jui'" <rjui@broadcom.com>, "'Scott
- Branden'" <sbranden@broadcom.com>, "'Broadcom internal kernel review list'"
-	<bcm-kernel-feedback-list@broadcom.com>, "'Bartlomiej Zolnierkiewicz'"
-	<bzolnier@gmail.com>, "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Shawn
- Guo'" <shawnguo@kernel.org>, "'Sascha Hauer'" <s.hauer@pengutronix.de>,
-	"'Pengutronix Kernel Team'" <kernel@pengutronix.de>, "'Fabio Estevam'"
-	<festevam@gmail.com>, "'Amit Kucheria'" <amitk@kernel.org>, "'Thara
- Gopinath'" <thara.gopinath@gmail.com>
-Cc: <linux-pm@vger.kernel.org>, <linux-rpi-kernel@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-msm@vger.kernel.org>
-In-Reply-To: <20240709-thermal-probe-v1-4-241644e2b6e0@linaro.org>
-Subject: RE: [PATCH 04/12] thermal/drivers/exynos: simplify probe() with
- local dev variable
-Date: Wed, 10 Jul 2024 16:00:58 +0530
-Message-ID: <019601dad2b4$439c8b90$cad5a2b0$@samsung.com>
+	s=arc-20240116; t=1720607518; c=relaxed/simple;
+	bh=qZCBkedOnz4cUGI4ezY6Jbb/+7sW1blOaFzbW32X4Rw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JbZxA4NNcYJHwPtrhvAj3IqJmGWkyPwgYC/YhVSzPNklCsJrVlwotmWgIRnZc5pOlkq9vXdZAKimCcYndP66zJZo0ifqjUx3VeqQWV9E091OsD8pm5dCanu1RgCi1+jnY+mB5lIlu+8N7PnjPrNuPfHB0i0s9n+oAsZ8y+j3Vjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMLsdwWj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C1C1C32781;
+	Wed, 10 Jul 2024 10:31:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720607518;
+	bh=qZCBkedOnz4cUGI4ezY6Jbb/+7sW1blOaFzbW32X4Rw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RMLsdwWjFLAUG6prdpUgAaFyvBgL0qdeJvtB6ZzodSnecMFSNU8mzH14cAC2zL6LW
+	 6CjcdBpVbh/f26aHi9u90+t4mvunLaLTZvwIpOkPeIG8gFScTuDp8agttN/y1pMJWJ
+	 5GLILe4qww+bXLDLmpS96LEmz9xC8ISLVnkFbi/6GPSx5WLI11i6Mhj/tuSaaxQthA
+	 ATeF2tiFFE+5/FxLLDznSVdj2EN/ROxPpxGt3JEXNSnhKt5FltwnUebWwZm6KEG72I
+	 fWd7TdKBoSiMQZF/0XN/uqeV23imHAdK5NnQZzPmD5N8AZkJiOcC2cRzL7BZVWs5G3
+	 BFgjh2GwlSGJA==
+Message-ID: <751ebf34-cd0d-4d3a-bf02-e25ca3dd350b@kernel.org>
+Date: Wed, 10 Jul 2024 12:31:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] ASoC: codecs: Add NeoFidelity NTP8835 codec
+To: Igor Prusov <ivprusov@salutedevices.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: prusovigor@gmail.com, kernel@salutedevices.com,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240709172834.9785-1-ivprusov@salutedevices.com>
+ <20240709172834.9785-7-ivprusov@salutedevices.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240709172834.9785-7-ivprusov@salutedevices.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQILhc/2wHZoSi9ND1AGTvp0WerExgJCFhw7Asyq3nOxZeaNUA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TbUxTZxT2bcttYYFcCo7XTjbWCAy3QitQXghMnMTdDI0YF1lYFijttRBK
-	W3vLxlyIZAJOOkCGMmgQpiAflTFSsFJA3AA/N6xEPmSMrwoZjA9BlsDWkKz0ouPfc57znPec
-	57w5HCb3LJvHSVVqSY1SouBjLixTT8A7gtnkwpPCRyM46qnKRD8W3GGhtdZhBqpc9UZTg0dR
-	k2mcicrHczFkuGRmIYulmY1uzd9gI+OzISdUfLuPjZ60V2BotaAXoOJRe7bM0sVAV77OYaPL
-	f19iopnyFgxNTxViaOOmkYWWrk8DNNvqhQYay7BoSDRWNgJCP9GHEWb9GJuo7pxjEEbDeYz4
-	Y6gTI1pqzhCzLeWAKNoQEqvGN+NcEtIiU0iJjNT4kEqpSpaqlEfxY48nHkwMFQtFAlE4CuP7
-	KCXpZBQ/5nCc4FCqwm6X7/O5RJFhp+IkFMUPej9So8rQkj4pKkobxSfVMoU6RB1ISdKpDKU8
-	UElqI0RC4b5QuzApLWX52xm22iTKtH4/BbLBpH8+cOZAPAR2NvU4bWIu3gFgV5lbPnCx4xcA
-	XjCVgVeB6UY162VF7WIdm06YAawvKWTSwSyAL6obwKYKwwWwrToP20x44k0YfNxhcARMfAXA
-	P//9HdtUOeMfwIZ1k+NdD/wzeP/xVUc1C/eFNn2Vg3fFw2H9o3ZAY3f4oHzawTPxt+DNxQom
-	PZMP/Gem1uHC0/5m7dAIoDVecO5Or2NWiF93htm2Jie6IAYO9xcwaOwB/7rXyqYxD84V5W3h
-	NHivX4/ROBPqcle2+P3QbB2xD8GxNwiAP7UH0b3cYIFtmrFJQ9wVfpPHpdW+8OzS4Nbq3oDF
-	Op0TLSFgqcnjAnhbv82Yfpsx/TYD+v97/QBYBrCLVFPpcpIKVQcryS9efbhUlW4EjmvYG9sG
-	rJPLgd2AwQHdAHKYfE/Xqqe6k1xXmeTL06RGlajJUJBUNwi1b7uYydspVdnPSalNFIWEC0PE
-	YnFIeLBYxPdync+9LOPicomWTCNJNal5WcfgOPOyGVz/eRf89LmLJwxtQzuy9P6cuvf6OzS8
-	JKrS5l9Mhk7U1aDXguSkIX3PsjwwQarzOzYsW9hZOjzV5mVbr4ha2m3ODnv9VHD+vkLcIli7
-	Gx3sjiqv9bLDs/0GOIPSSF7AfGvyM4/O2wt9qQ/u6yKTknd1EO4x39X/PHaurLn+4gFriYfp
-	4CdhY36FK7V1X8Wbu5/AAYnxQKnYW7S7SSHNSjjiLYh3n/D9MHr507WZxY8DD9fpB9YiflsX
-	qD4ajYlTPFx4nmOKPDQ6Xqtv3vFrybrwmHXoeNu7e4663Xoq35ATlgjriZRrWfE15jP7bTmW
-	q113GxqrzxcJn5snH8YSv5zis6gUiWgvU0NJ/gOL2hillgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJIsWRmVeSWpSXmKPExsWy7bCSnO7zpL40g9ezlCwOz6+wWNt7lMXi
-	+5brTBbzPstaPLzqb7Fu2z1mi5n3WtksVk3dyWJx/vwGdou9r7eyW2x6fI3VYuL+s+wWl3fN
-	YbP43HuE0WLibaDsjPP7mCwWNrWwW8z9MpXZ4unMzWwWTx72sVn83b6JxeLd6ieMFi+2iFtc
-	WTODzUHCY828NYwes+6fZfPYOesuu8fiPS+ZPDat6mTzuHNtD5vH5iX1Hi82z2T06P9r4PF5
-	k1wAVxSXTUpqTmZZapG+XQJXxoeep+wF2wwrHk1/yNjA+EC9i5GTQ0LARGLZ2+XsXYxcHEIC
-	2xklnv/tZYVISEtc3ziBHcIWllj57zlU0TNGiZkbPjCBJNgEdCV2LG5jA7FFBHawScy64gRS
-	xCzwnVHiY+9SVoiOk4wSC7dNYQGp4hRwklj5YxuYLSwQLTFx/mWwbhYBVYnfs+aDxXkFLCVW
-	nNvFCGELSpyc+QQsziygLfH05lMoW15i+9s5zBDnKUj8fLqMFeIKJ4ll124yQtSIS7w8eoR9
-	AqPwLCSjZiEZNQvJqFlIWhYwsqxiFE0tKM5Nz00uMNQrTswtLs1L10vOz93ECE4NWkE7GJet
-	/6t3iJGJg/EQowQHs5II7/wb3WlCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeZVzOlOEBNITS1Kz
-	U1MLUotgskwcnFINTHWe8fuzarfpsGoqOc9Yx8dsEvLZLy1s+U4Xxr/2769P2l/29ta+7WmL
-	ax99UbBeHv78i8oUufdX/b568X2pXGyh4G1b90/HqFCyaBnPlTULX3FH7RIt70/buneSTkeo
-	Ux/TuedC0Ywvb9j0u0SImv1aHOxz+5Rh8d9dNbIxdrLh54S/6K+OnfFzuZnrgfPXmOtny23Y
-	fXKGYcKJgoOM4sFy9avnGOruOPer4PfF4uQlz+d9f3D5zK1LldxPqzuvZMhUVXbtrnNiD7mu
-	wrNRqVtn8b7fc+oYqmIlN5dqsH5c++np4j2t1kvaN/5Yk76fd8cfU/+OHbMvl3r+L2cL9Lnw
-	sbRg3cut79X2F8h9MFJiKc5INNRiLipOBACs0ki0fAMAAA==
-X-CMS-MailID: 20240710103103epcas5p1e4d33af6169900a1395c0c62e20fc1c3
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240709130006epcas5p186c04ed3c733d13e59d58349a6043f92
-References: <20240709-thermal-probe-v1-0-241644e2b6e0@linaro.org>
-	<CGME20240709130006epcas5p186c04ed3c733d13e59d58349a6043f92@epcas5p1.samsung.com>
-	<20240709-thermal-probe-v1-4-241644e2b6e0@linaro.org>
 
-Hello Krzysztof
+On 09/07/2024 19:28, Igor Prusov wrote:
+> The NeoFidelity NTP8835 adn NTP8835C are 2.1 channel amplifiers with
+> mixer and biquad filters. Both amplifiers have identical programming
+> interfaces but differ in output signal characteristics.
+> 
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Sent: Tuesday, July 9, 2024 6:30 PM
-> To: Rafael J. Wysocki <rafael@kernel.org>; Daniel Lezcano
-> <daniel.lezcano@linaro.org>; Zhang Rui <rui.zhang@intel.com>; Lukasz Luba
-> <lukasz.luba@arm.com>; Florian Fainelli <florian.fainelli@broadcom.com>;
-> Ray Jui <rjui@broadcom.com>; Scott Branden <sbranden@broadcom.com>;
-> Broadcom internal kernel review list <bcm-kernel-feedback-
-> list@broadcom.com>; Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>;
-> Krzysztof Kozlowski <krzk@kernel.org>; Alim Akhtar
-> <alim.akhtar@samsung.com>; Shawn Guo <shawnguo@kernel.org>; Sascha
-> Hauer <s.hauer@pengutronix.de>; Pengutronix Kernel Team
-> <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Amit
-> Kucheria <amitk@kernel.org>; Thara Gopinath <thara.gopinath@gmail.com>
-> Cc: linux-pm@vger.kernel.org; linux-rpi-kernel@lists.infradead.org; linux-
-> arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
-> samsung-soc@vger.kernel.org; imx@lists.linux.dev; linux-arm-
-> msm@vger.kernel.org; Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org>
-> Subject: [PATCH 04/12] thermal/drivers/exynos: simplify probe() with local
-> dev variable
-> 
-> Simplify the probe() function by using local 'dev' instead of &pdev->dev.
-> While touching devm_kzalloc(), use preferred sizeof(*) syntax.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/moduleparam.h>
 
->  drivers/thermal/samsung/exynos_tmu.c | 42 +++++++++++++++++----------
-> ---------
->  1 file changed, 20 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c
-> b/drivers/thermal/samsung/exynos_tmu.c
-> index 6482513bfe66..1152871cc982 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -1004,11 +1004,11 @@ static const struct thermal_zone_device_ops
-> exynos_sensor_ops = {
-> 
->  static int exynos_tmu_probe(struct platform_device *pdev)  {
-> +	struct device *dev = &pdev->dev;
->  	struct exynos_tmu_data *data;
->  	int ret;
-> 
-> -	data = devm_kzalloc(&pdev->dev, sizeof(struct exynos_tmu_data),
-> -					GFP_KERNEL);
-> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->  	if (!data)
->  		return -ENOMEM;
-> 
-> @@ -1020,7 +1020,7 @@ static int exynos_tmu_probe(struct
-> platform_device *pdev)
->  	 * TODO: Add regulator as an SOC feature, so that regulator enable
->  	 * is a compulsory call.
->  	 */
-> -	ret = devm_regulator_get_enable_optional(&pdev->dev, "vtmu");
-> +	ret = devm_regulator_get_enable_optional(dev, "vtmu");
->  	switch (ret) {
->  	case 0:
->  	case -ENODEV:
-> @@ -1028,8 +1028,7 @@ static int exynos_tmu_probe(struct
-> platform_device *pdev)
->  	case -EPROBE_DEFER:
->  		return -EPROBE_DEFER;
->  	default:
-> -		dev_err(&pdev->dev, "Failed to get enabled regulator:
-> %d\n",
-> -			ret);
-> +		dev_err(dev, "Failed to get enabled regulator: %d\n", ret);
->  		return ret;
->  	}
-> 
-> @@ -1037,44 +1036,44 @@ static int exynos_tmu_probe(struct
-> platform_device *pdev)
->  	if (ret)
->  		return ret;
-> 
-> -	data->clk = devm_clk_get(&pdev->dev, "tmu_apbif");
-> +	data->clk = devm_clk_get(dev, "tmu_apbif");
->  	if (IS_ERR(data->clk)) {
-> -		dev_err(&pdev->dev, "Failed to get clock\n");
-> +		dev_err(dev, "Failed to get clock\n");
->  		return PTR_ERR(data->clk);
->  	}
-> 
-> -	data->clk_sec = devm_clk_get(&pdev->dev, "tmu_triminfo_apbif");
-> +	data->clk_sec = devm_clk_get(dev, "tmu_triminfo_apbif");
->  	if (IS_ERR(data->clk_sec)) {
->  		if (data->soc == SOC_ARCH_EXYNOS5420_TRIMINFO) {
-> -			dev_err(&pdev->dev, "Failed to get triminfo
-> clock\n");
-> +			dev_err(dev, "Failed to get triminfo clock\n");
->  			return PTR_ERR(data->clk_sec);
->  		}
->  	} else {
->  		ret = clk_prepare(data->clk_sec);
->  		if (ret) {
-> -			dev_err(&pdev->dev, "Failed to get clock\n");
-> +			dev_err(dev, "Failed to get clock\n");
->  			return ret;
->  		}
->  	}
-> 
->  	ret = clk_prepare(data->clk);
->  	if (ret) {
-> -		dev_err(&pdev->dev, "Failed to get clock\n");
-> +		dev_err(dev, "Failed to get clock\n");
->  		goto err_clk_sec;
->  	}
-> 
->  	switch (data->soc) {
->  	case SOC_ARCH_EXYNOS5433:
->  	case SOC_ARCH_EXYNOS7:
-> -		data->sclk = devm_clk_get(&pdev->dev, "tmu_sclk");
-> +		data->sclk = devm_clk_get(dev, "tmu_sclk");
->  		if (IS_ERR(data->sclk)) {
-> -			dev_err(&pdev->dev, "Failed to get sclk\n");
-> +			dev_err(dev, "Failed to get sclk\n");
->  			ret = PTR_ERR(data->sclk);
->  			goto err_clk;
->  		} else {
->  			ret = clk_prepare_enable(data->sclk);
->  			if (ret) {
-> -				dev_err(&pdev->dev, "Failed to enable
-> sclk\n");
-> +				dev_err(dev, "Failed to enable sclk\n");
->  				goto err_clk;
->  			}
->  		}
-> @@ -1085,33 +1084,32 @@ static int exynos_tmu_probe(struct
-> platform_device *pdev)
-> 
->  	ret = exynos_tmu_initialize(pdev);
->  	if (ret) {
-> -		dev_err(&pdev->dev, "Failed to initialize TMU\n");
-> +		dev_err(dev, "Failed to initialize TMU\n");
->  		goto err_sclk;
->  	}
-> 
-> -	data->tzd = devm_thermal_of_zone_register(&pdev->dev, 0, data,
-> +	data->tzd = devm_thermal_of_zone_register(dev, 0, data,
->  						  &exynos_sensor_ops);
->  	if (IS_ERR(data->tzd)) {
->  		ret = PTR_ERR(data->tzd);
->  		if (ret != -EPROBE_DEFER)
-> -			dev_err(&pdev->dev, "Failed to register sensor:
-> %d\n",
-> -				ret);
-> +			dev_err(dev, "Failed to register sensor: %d\n", ret);
->  		goto err_sclk;
->  	}
-> 
->  	ret = exynos_thermal_zone_configure(pdev);
->  	if (ret) {
-> -		dev_err(&pdev->dev, "Failed to configure the thermal
-> zone\n");
-> +		dev_err(dev, "Failed to configure the thermal zone\n");
->  		goto err_sclk;
->  	}
-> 
-> -	ret = devm_request_threaded_irq(&pdev->dev, data->irq, NULL,
-> +	ret = devm_request_threaded_irq(dev, data->irq, NULL,
->  					exynos_tmu_threaded_irq,
->  					IRQF_TRIGGER_RISING
->  						| IRQF_SHARED |
-> IRQF_ONESHOT,
-> -					dev_name(&pdev->dev), data);
-> +					dev_name(dev), data);
->  	if (ret) {
-> -		dev_err(&pdev->dev, "Failed to request irq: %d\n", data-
-> >irq);
-> +		dev_err(dev, "Failed to request irq: %d\n", data->irq);
->  		goto err_sclk;
->  	}
-> 
-> 
-> --
-> 2.43.0
+Where do you use moduleparam?
 
+> +#include <linux/bits.h>
+> +#include <linux/gpio.h>
+
+And gpio?
+
+> +#include <linux/slab.h>
+> +#include <linux/of.h>
+> +#include <linux/of_gpio.h>
+
+And this?
+
+Please clean up the driver first.
+
+> +#include <linux/reset.h>
+> +#include <linux/init.h>
+> +#include <linux/i2c.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <sound/initval.h>
+> +#include <sound/core.h>
+> +#include <sound/pcm.h>
+> +#include <sound/pcm_params.h>
+> +#include <sound/soc.h>
+> +#include <sound/soc-component.h>
+> +#include <sound/tlv.h>
+> +
+> +#include "ntpfw.h"
+> +
+> +#define NTP8835_FORMATS     (SNDRV_PCM_FMTBIT_S16_LE | \
+> +			     SNDRV_PCM_FMTBIT_S20_3LE | \
+> +			     SNDRV_PCM_FMTBIT_S24_LE | \
+> +			     SNDRV_PCM_FMTBIT_S32_LE)
+> +
+> +#define NTP8835_INPUT_FMT			0x0
+> +#define  NTP8835_INPUT_FMT_MASTER_MODE		BIT(0)
+> +#define  NTP8835_INPUT_FMT_GSA_MODE		BIT(1)
+> +#define NTP8835_GSA_FMT				0x1
+> +#define  NTP8835_GSA_BS_MASK			GENMASK(3, 2)
+> +#define  NTP8835_GSA_BS(x)			((x) << 2)
+> +#define  NTP8835_GSA_RIGHT_J			BIT(0)
+> +#define  NTP8835_GSA_LSB			BIT(1)
+> +#define NTP8835_SOFT_MUTE			0x26
+> +#define  NTP8835_SOFT_MUTE_SM1			BIT(0)
+> +#define  NTP8835_SOFT_MUTE_SM2			BIT(1)
+> +#define  NTP8835_SOFT_MUTE_SM3			BIT(2)
+> +#define NTP8835_PWM_SWITCH			0x27
+> +#define  NTP8835_PWM_SWITCH_POF1		BIT(0)
+> +#define  NTP8835_PWM_SWITCH_POF2		BIT(1)
+> +#define  NTP8835_PWM_SWITCH_POF3		BIT(2)
+> +#define NTP8835_PWM_MASK_CTRL0			0x28
+> +#define  NTP8835_PWM_MASK_CTRL0_OUT_LOW		BIT(1)
+> +#define  NTP8835_PWM_MASK_CTRL0_FPMLD		BIT(2)
+> +#define NTP8835_MASTER_VOL			0x2e
+> +#define NTP8835_CHNL_A_VOL			0x2f
+> +#define NTP8835_CHNL_B_VOL			0x30
+> +#define NTP8835_CHNL_C_VOL			0x31
+> +#define REG_MAX					NTP8835_CHNL_C_VOL
+> +
+> +#define NTP8835_FW_NAME				"eq_8835.bin"
+> +#define NTP8835_FW_MAGIC			0x38383335	/* "8835" */
+> +
+
+
+...
+
+
+> +
+> +static void ntp8835_reset_gpio(struct ntp8835_priv *ntp8835, bool active)
+> +{
+> +	if (active) {
+> +		/*
+> +		 * According to NTP8835 datasheet, 6.2 Timing Sequence (recommended):
+> +		 * Deassert for T2 >= 1ms...
+> +		 */
+> +		reset_control_deassert(ntp8835->reset);
+
+Explain in comment why do you need to power up device to perform
+reset... This sounds odd.
+
+> +		fsleep(1000);
+> +
+> +		/* ...Assert for T3 >= 0.1us... */
+> +		reset_control_assert(ntp8835->reset);
+> +		fsleep(1);
+> +
+> +		/* ...Deassert, and wait for T4 >= 0.5ms before sound on sequence. */
+> +		reset_control_deassert(ntp8835->reset);
+> +		fsleep(500);
+> +	} else {
+> +		reset_control_assert(ntp8835->reset);
+
+This function is confusing. It is supposed to perform reset and leave
+the device in active state, but here it leaves the device in reset.
+
+
+
+> +
+> +static struct snd_soc_dai_driver ntp8835_dai = {
+
+Not const?
+
+> +	.name = "ntp8835-amplifier",
+> +	.playback = {
+> +		.stream_name = "Playback",
+> +		.channels_min = 1,
+> +		.channels_max = 3,
+> +		.rates = SNDRV_PCM_RATE_8000_192000,
+> +		.formats = NTP8835_FORMATS,
+> +	},
+> +	.ops = &ntp8835_dai_ops,
+> +};
+> +
+> +static struct regmap_config ntp8835_regmap = {
+
+Not const?
+
+Judging by weird includes and such simple issues, it looks like you try
+to upstream downstream or old code. That's not how you are supposed to
+bring new devices. You expect us to perform review on the same issues we
+fixed already. Work on newest drivers - take them as template - so you
+will not repeat the same issues we already fixed.
+
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.max_register = REG_MAX,
+> +	.cache_type = REGCACHE_MAPLE,
+> +};
+> +
+> +static int ntp8835_i2c_probe(struct i2c_client *i2c)
+> +{
+> +	struct ntp8835_priv *ntp8835;
+> +	struct regmap *regmap;
+> +	int ret;
+> +
+> +	ntp8835 = devm_kzalloc(&i2c->dev, sizeof(struct ntp8835_priv), GFP_KERNEL);
+
+sizeof(*)
+
+> +	if (!ntp8835)
+> +		return -ENOMEM;
+> +
+> +	ntp8835->i2c = i2c;
+> +
+> +	ntp8835->reset = devm_reset_control_get_shared(&i2c->dev, NULL);
+
+shared is on purpose?
+
+> +	if (IS_ERR(ntp8835->reset))
+> +		return dev_err_probe(&i2c->dev, PTR_ERR(ntp8835->reset),
+> +				     "Failed to get reset\n");
+> +
+> +	ret = reset_control_deassert(ntp8835->reset);
+> +	if (ret)
+> +		return dev_err_probe(&i2c->dev, PTR_ERR(ntp8835->reset),
+> +				     "Failed to deassert reset\n");
+> +
+> +	dev_set_drvdata(&i2c->dev, ntp8835);
+> +
+> +	ntp8835_reset_gpio(ntp8835, true);
+> +
+> +	regmap = devm_regmap_init_i2c(i2c, &ntp8835_regmap);
+> +	if (IS_ERR(regmap))
+> +		return dev_err_probe(&i2c->dev, PTR_ERR(regmap),
+> +				     "Failed to allocate regmap\n");
+> +
+> +	ret = devm_snd_soc_register_component(&i2c->dev, &soc_component_ntp8835,
+> +					      &ntp8835_dai, 1);
+> +	if (ret)
+> +		return dev_err_probe(&i2c->dev, ret,
+> +				     "Failed to register component\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct i2c_device_id ntp8835_i2c_id[] = {
+> +	{ "ntp8835", 0 },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(i2c, ntp8835_i2c_id);
+> +
+> +static const struct of_device_id ntp8835_of_match[] = {
+> +	{.compatible = "neofidelity,ntp8835",},
+> +	{.compatible = "neofidelity,ntp8835c",},
+
+This does not match your i2c IDs, which leads to troubles when matching
+variants.
+
+Anyway, aren't they compatible?
+
+
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, ntp8835_of_match);
+> +
+> +static struct i2c_driver ntp8835_i2c_driver = {
+> +	.probe = ntp8835_i2c_probe,
+> +	.id_table = ntp8835_i2c_id,
+> +	.driver = {
+> +		.name = "NTP8835",
+
+Driver names are lowercase
+
+> +		.of_match_table = ntp8835_of_match,
+> +	},
+> +};
+> +module_i2c_driver(ntp8835_i2c_driver);
+> +
+> +MODULE_AUTHOR("Igor Prusov <ivprusov@salutedevices.com>");
+> +MODULE_DESCRIPTION("NTP8835 Audio Amplifier Driver");
+> +MODULE_LICENSE("GPL");
+
+Best regards,
+Krzysztof
 
 
