@@ -1,57 +1,62 @@
-Return-Path: <linux-kernel+bounces-247191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF05A92CC51
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:55:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 090AE92CC53
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 688CA28127F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:55:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A83101F21285
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51C484A36;
-	Wed, 10 Jul 2024 07:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1F184A35;
+	Wed, 10 Jul 2024 07:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ozPoOvRS"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cdrOSkbt"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCC984A21;
-	Wed, 10 Jul 2024 07:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7371D7BB17
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720598119; cv=none; b=MVzvl+0qU2Z8BV8v/p9t/CltEx8NXuXvYup1dtN0Ap8/QLomTlakoPDdfUeh+5TzuBLmfPyy7mdptaUpe1R+QhINJuxxxaJVhFJd0zlKpQ7esJvMFlfvELW5ss3/9tsHzoy8psKMC5spUEGlj9n0cvu1+PMcuVOlmWjO8Lpiqrk=
+	t=1720598167; cv=none; b=XzpWPY/P6SnzeVJy+5PNeD5VrqVsBdz0edx8C1/FRym3tL/pNa1xpXnhoaZUyQdOxbtBPC2/33eg9goC0zrxnYKem3aReM+A7GYSyH6e+Bzvz8t+AHJcU0VjIuRA/GEHAuNPmf8DgzkmVKb+ubFNxOl4vPWMSpXG5bgsTdiJKD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720598119; c=relaxed/simple;
-	bh=AEuuguye4paXqrHJqwbhYfUH6lx8TebFSbjlaD3Jz38=;
+	s=arc-20240116; t=1720598167; c=relaxed/simple;
+	bh=inmnD2fQgpAM/3A0Ue90iCvsEUAxhw8QfjYju/cmk7U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jK2eVX1SDXp3ie7BWWbVnTY8hW3EheSm7bgdIPUxo3ShmqfoA4ptUk7T2SJBJ2wt/5eXd2jegSyAetxz6T5xUd5GGFBMFFIOkzc/WttUEWJLQ82kstEAqas1k+p3q0oTfGwSiSXttgwU7WX95R68q6i8u+wUDuY2kwY+QVyZ3Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ozPoOvRS; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4309A20004;
-	Wed, 10 Jul 2024 07:55:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720598114;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n8bOPsWE/D64uVpyJZt5keXGhkUWczcPlKgpEkNPXbw=;
-	b=ozPoOvRST3NQfO5QHnWp8qHli9wbCvFhdX8aux1qDUhaZ+h2zs39bDpgWtGNME8CJv2W5B
-	iC0fDa2FzrS2rFsW2YiUk7E7/ulrGNuCTCAIhuQEXYlh75KVCfMUPOx4kwSQdJ9svJZ5pq
-	ahLH+PQ6BqvYHoqjymzPvrRhA/VQZyvkltUY4TFQ6fbEOBfdImQwLLHtgbk+0BlRuYJc0l
-	bwFJlbEK0JqWFjNGy7MBTh8rDDcZZIwib9qlyOrmke2KFXSy3iGNp31u7pifyhZgKE8h2u
-	MNxCVfHbo0TNuS9qjGMlonrgh2cnznemqI+Vt0AscwWI5MHhRxtXc5qYwJSEdw==
-Date: Wed, 10 Jul 2024 09:55:13 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-rtc@vger.kernel.org, shuah@kernel.org
-Subject: Re: [PATCH v2] selftests/rtc:Fix a resource leak
-Message-ID: <20240710075513332c564f@mail.local>
-References: <20240710071650f7265b40@mail.local>
- <20240710074309.6647-1-zhujun2@cmss.chinamobile.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qsN4bVKC5s4ioKCs9XNEIA0TLP0sSxbYCMSQDL94NPx727I4INSJ0y4Sk09tFQ2yyWwszYYg8BZWilYK0WOHpCtQ/pBp22Q44e33s+WTRsXT7+u9u2ah3V/xMorjMXaTrisEd333zvhAP6XKj2wSgvOZ9hKFh01B4jjvzg0PTx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cdrOSkbt; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=9kAqGJsHyHkATKKyUNzXIJNUM9lm6tJYyjP0FY/do5o=; b=cdrOSkbtByOdWixEuGDhRpTe4m
+	WpQedhIUoxhHMP6l6lW/lTi0VfGOlHWjmRv1P903QOMcyg7w1sCdQHkhv3HwWvgiGWfkj53XZDO56
+	Mq0/n6OSB95PZ1iPJdgdYJQ4Kse9cwy2idgfoJm1u2WQd7ShZ0V7zGiOMwoxVr1rtXGB2b5iH3sLt
+	jjk5FaXBchtYCPsUvfdDOgjz8fAl0yIkWwPXRAICATVi2bGFzOVhaKn9lLEjr1wb3anWOEJCfQ7Wv
+	9Z7MditnzOi1mciYtRPhnf2CG3bRK2tAQpYxmufi3KQ7KH76GUmhUZgDMa3cvRgkLqHO10KFgTYpH
+	i0Mf/i9Q==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRSBB-00000000sHz-3e1S;
+	Wed, 10 Jul 2024 07:55:58 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3D3B7300694; Wed, 10 Jul 2024 09:55:57 +0200 (CEST)
+Date: Wed, 10 Jul 2024 09:55:57 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: mingo@kernel.org, andrii@kernel.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org,
+	clm@meta.com, paulmck@kernel.org
+Subject: Re: [PATCH 03/10] rbtree: Provide rb_find_rcu() / rb_find_add_rcu()
+Message-ID: <20240710075557.GS27299@noisy.programming.kicks-ass.net>
+References: <20240708091241.544262971@infradead.org>
+ <20240708092415.464066230@infradead.org>
+ <20240710102959.291a71349ec71ef48919a9fe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,46 +65,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240710074309.6647-1-zhujun2@cmss.chinamobile.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <20240710102959.291a71349ec71ef48919a9fe@kernel.org>
 
-On 10/07/2024 00:43:09-0700, Zhu Jun wrote:
-> The opened file should be closed before exit, otherwise resource leak
-> will occur that this problem was discovered by code reading
+On Wed, Jul 10, 2024 at 10:29:59AM +0900, Masami Hiramatsu wrote:
+> On Mon, 08 Jul 2024 11:12:44 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > Much like latch_tree, add two RCU methods for the regular RB-tree,
+> > which can be used in conjunction with a seqcount to provide lockless
+> > lookups.
+> > 
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > ---
+> >  include/linux/rbtree.h |   67 +++++++++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 67 insertions(+)
+> > 
+> > --- a/include/linux/rbtree.h
+> > +++ b/include/linux/rbtree.h
+> > @@ -245,6 +245,42 @@ rb_find_add(struct rb_node *node, struct
+> >  }
+> >  
+> >  /**
+> > + * rb_find_add_rcu() - find equivalent @node in @tree, or add @node
+> > + * @node: node to look-for / insert
+> > + * @tree: tree to search / modify
+> > + * @cmp: operator defining the node order
+> > + *
+> > + * Adds a Store-Release for link_node.
+> > + *
+> > + * Returns the rb_node matching @node, or NULL when no match is found and @node
+> > + * is inserted.
+> > + */
+> > +static __always_inline struct rb_node *
+> > +rb_find_add_rcu(struct rb_node *node, struct rb_root *tree,
+> > +		int (*cmp)(struct rb_node *, const struct rb_node *))
+> > +{
+> > +	struct rb_node **link = &tree->rb_node;
+> > +	struct rb_node *parent = NULL;
+> > +	int c;
+> > +
+> > +	while (*link) {
+> 
+> 	Don't we need to use rcu_dereference_raw(*link) here?
 
-The question is still why should it be closed before exit as it will be
-closed on exit?
+This is a modifying operation and as such we can assume operation under
+the exclusive lock. IOW the tree should be stable here.
 
-> 
-> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
-> ---
-> From a good programming practice perspective, especially in more complex programs, 
-> explicitly freeing allocated memory is a good habit!
-> 
-> 
->  tools/testing/selftests/rtc/setdate.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/testing/selftests/rtc/setdate.c b/tools/testing/selftests/rtc/setdate.c
-> index b303890b3de2..17a00affb0ec 100644
-> --- a/tools/testing/selftests/rtc/setdate.c
-> +++ b/tools/testing/selftests/rtc/setdate.c
-> @@ -65,6 +65,7 @@ int main(int argc, char **argv)
->  	retval = ioctl(fd, RTC_RD_TIME, &current);
->  	if (retval == -1) {
->  		perror("RTC_RD_TIME ioctl");
-> +		close(fd);
->  		exit(errno);
->  	}
->  
-> -- 
-> 2.17.1
-> 
-> 
-> 
+> > +		parent = *link;
+> > +		c = cmp(node, parent);
+> > +
+> > +		if (c < 0)
+> > +			link = &parent->rb_left;
+> > +		else if (c > 0)
+> > +			link = &parent->rb_right;
+> > +		else
+> > +			return parent;
+> > +	}
+> > +
+> > +	rb_link_node_rcu(node, parent, link);
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Only the link operation needs the rcu_assign_pointer() thing for
+publishing our new node.
+
+> > +	rb_insert_color(node, tree);
+
+The rotations use WRITE_ONCE() to avoid tearing.
+
+> > +	return NULL;
+> > +}
 
