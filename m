@@ -1,249 +1,233 @@
-Return-Path: <linux-kernel+bounces-248248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE3692DA9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:14:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FFFD92DA9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:17:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CDEC1C213AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:14:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4664A282B6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8991F196D80;
-	Wed, 10 Jul 2024 21:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TuxM9/LV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DB312F365;
+	Wed, 10 Jul 2024 21:17:24 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D2384047
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 21:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C052D8120F
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 21:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720646052; cv=none; b=S+IuIqa8ZDDN1vEm8EaQ8ZanMX8/+n9+SlkIl/tFGHY++ZPwsQYf6ZZOIHKRsXSap5B4lSLOPLrettxJgEsgYVuDUFFFDG9Is4n89JwAl9xjcicqi3oEOF4Q3P6MFdpwBfiPV/8bb94+QQ+232No9tO0HSVEWilrUSQGla8smIg=
+	t=1720646244; cv=none; b=LBNI/9trKhtNwsuOjii1LZyVdmXSNytRZNv6L7dQF0j1iq0gYSizjss45wnxM9wEcCM+f6TPHgQkzyU0BaYwaD/Uyz+WWvgznmIpQTn7IWuJElYDSCbtN9XXphgYhxUjEUBLU+IWJ0oy/x3UZaL5jinAPBPkYn07MmpjE/dfI5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720646052; c=relaxed/simple;
-	bh=LxJp3MpjlW3XhQhZ/broXQZIzle4N+yhALuMK83M/+U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e65nAC/ozQoRtCJNQaGpKucoIVncsaNiJox29dlsKnaifcoV9ZEQ/Fz+l6iTAAoPEO45qxUpnQ+WMTchZuov7Atq3vvZJrANSFfCrmgvqTPgxwYaqGRTX2y1SQhp4zU+Ocy2qSaAC4kSIcIXj/csqDx0Pxr0J3DNwZOnz+C2tXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TuxM9/LV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720646049;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UelbpIUr40UAVvqSX5FfP2oj9LzgIV56BaNyb4HIROM=;
-	b=TuxM9/LV4TmYAEylcR2JdsPepJX7e3T3A9HwbbgVsCAKsXcNC5lpO3BzL9TIONnTz00vJs
-	YG+aMWJsSX9CI+PFqGet73yOoAIWiViaPelh8DA4kHH0F744hBXIZijtcX8jHH5PIAVX1q
-	UNWyegrA0DyRGOy9ryRoLne54Mn6k8Y=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-328-9vF6W4yZOo2pC3gFx9RSMw-1; Wed, 10 Jul 2024 17:14:07 -0400
-X-MC-Unique: 9vF6W4yZOo2pC3gFx9RSMw-1
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-70afee11d7bso206725b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:14:07 -0700 (PDT)
+	s=arc-20240116; t=1720646244; c=relaxed/simple;
+	bh=gJYJBB0NsyzzqMUK7KfgIhOcbcB8cneMSWttlzudC2Q=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=A6fPyL3xXSzW4nlFL/x4UnnOhZl1RiDtW4S4rDWt++dkLBTpQxboPOyGo/xVm88dMc3jLMTgB5ikvVw71J6eXDEnRC5wA9jyMB5WtVTXVeH6hNhniqBXKs5i7m+bhyu7KVxgEQu8hK4L8wcWa8F9boGzzs/5oSTTL+nUODbZmJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-80376d9cf1eso29414239f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:17:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720646047; x=1721250847;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UelbpIUr40UAVvqSX5FfP2oj9LzgIV56BaNyb4HIROM=;
-        b=j9GY8XBztG+uOEXQbqEgTWBbuE1H017861o+yr3btHVA0p4gGFYuiQMLduZJwqZiOT
-         0m2XtROWe8b4kebYK5lkrvTd8l7IqSRYgn6RYNh2mXR/Ze9BWt1bXIZxCQr9H4Z3H6T9
-         gpY0OtydbVRGadK1lI/FPzD5Hhft9xYzqUt2A0nOXbYZ6ItVRJ04yB4aUCDPUpBXaB3+
-         36cXkj2uYitiD8o5TP6C8ehB2emqSBeZht4uc+0NBQsU4HJC/1giWROTDdbjmGL8WgZN
-         /E3D11iPpyVRzTnaWMUSTQ8q2QCN6NSj44S5UXvBfdB4L/qKbAUm74SmYGH0tkWIjf3w
-         TRUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLRU84jOvn4ddh0DRvA7G28uKLTnGyo0WPwG13508aaxeMfmCQnuaU940vTmQHZtWPvHnqWQbp312zKmA2dkb7QOYbwsULrmxQELbJ
-X-Gm-Message-State: AOJu0YzUSQXAaClkrbIs1FMeCfGujlVMTgGGwCz7E7xdL2Qzf7H4IvGy
-	uZz6Eo0C8Hhl7wTD0nURcqf4LCHUBeNBoVCX25gfrwwJLdpJvgGDzZNlhHi05LAj9NYVWPlg1Yx
-	SYvlt57KivZZp6kfe9YB0KwHZWUVHoHEoYMNTrw6ZrpEJaTSawBoIjR0KLsYYvg==
-X-Received: by 2002:a05:6a00:1d83:b0:70b:17a9:e98a with SMTP id d2e1a72fcca58-70b43626d6amr7509463b3a.33.1720646046747;
-        Wed, 10 Jul 2024 14:14:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGIL5NZakoeWxrceiZO5dPOGtHYUbvR+7u663g+7/eUG7NXVlKeuTVAdylslhMzFr1TdO1NJw==
-X-Received: by 2002:a05:6a00:1d83:b0:70b:17a9:e98a with SMTP id d2e1a72fcca58-70b43626d6amr7509431b3a.33.1720646046328;
-        Wed, 10 Jul 2024 14:14:06 -0700 (PDT)
-Received: from [10.35.209.243] ([208.115.86.71])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b4397c02fsm4390228b3a.143.2024.07.10.14.14.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jul 2024 14:14:06 -0700 (PDT)
-Message-ID: <c87a4ba0-b9c4-4044-b0c3-c1112601494f@redhat.com>
-Date: Wed, 10 Jul 2024 23:14:04 +0200
+        d=1e100.net; s=20230601; t=1720646242; x=1721251042;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7CMc7XLzacg8kfKZlW0Mj3vytwn0Qj3S+42+6j7j+dE=;
+        b=bk341jmOFFhcYmF2pBF9o6ZMULyG4/mspf9zUOlqw60+/LVQItrs2KsImzh5VnM+wW
+         FqTrrH6hK2vq+fW6e8gkCTPY9TXYhyDe/gh5Xnp3s6Tv/wvHSZKJzaJgsRw5UEUZZnVq
+         ESeRbdlY5KTlbRZTe9M7ATprmK0CqgC36WbhXDtksg7jmQo1CuivAhZeHeKPI7e3n0rY
+         EFQTD/hw+3N5GAOUTlHFho/Sg46sGG/AyojU7mi6zgIthfKjHH1XbNFL+GD3G/j6TThu
+         tmIMQoJlD+LsAVsVy6UGfyCgSBC43DSNBrPfSA0ZYemMExwluoyPXKHDPL36UmvDS4qg
+         cH7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVTeNPis47BrNGDolfrN/x0EN9S21jFCgAzSzapfe6UrrrXGigGR9YNlkIslb7l5pPFU3kjdpwxjD4RP3YcJpVbDh89W615IH3Ugf7Y
+X-Gm-Message-State: AOJu0Yyj7MVmF+CK68k2/Gw1OObRTTexfX93QaBKON/4Q0GRAgMt0Sbg
+	LR0t3nMHAVAWvV/0+3z+KCFMoXqrAp5FpWF66pQktcd76XoDRVEgjntNp8ZRn02HTxtH8Y7Q4fa
+	8Gom+tSAlOzW3DA42daBQLv45LyxYrlXLA9oxjSsdgSRxuSDf/WbTK+0=
+X-Google-Smtp-Source: AGHT+IFt9WpGMIVtdYuPIEYdZiSbqTU9SeqhxXTf69jeA/Soe1gQamKv+CmmpopZeIVr1MOyLppV4+AGD65aDUwcf0IGoTJSzAXm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 7/8] mm: secretmem: use AS_INACCESSIBLE to prohibit
- GUP
-To: Patrick Roy <roypat@amazon.co.uk>, Mike Rapoport <rppt@kernel.org>
-Cc: seanjc@google.com, pbonzini@redhat.com, akpm@linux-foundation.org,
- dwmw@amazon.co.uk, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- willy@infradead.org, graf@amazon.com, derekmn@amazon.com,
- kalyazin@amazon.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, dmatlack@google.com, tabba@google.com,
- chao.p.peng@linux.intel.com, xmarcalx@amazon.co.uk,
- James Gowans <jgowans@amazon.com>
-References: <20240709132041.3625501-1-roypat@amazon.co.uk>
- <20240709132041.3625501-8-roypat@amazon.co.uk>
- <0dc45181-de7e-4d97-9178-573c6f683f55@redhat.com>
- <Zo45CQGe_UDUnXXu@kernel.org>
- <258b3b76-cf87-4dfc-bcfa-b2af94aba811@amazon.co.uk>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <258b3b76-cf87-4dfc-bcfa-b2af94aba811@amazon.co.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:831e:b0:4c0:73d0:3d77 with SMTP id
+ 8926c6da1cb9f-4c0b2b6b9damr514464173.5.1720646241959; Wed, 10 Jul 2024
+ 14:17:21 -0700 (PDT)
+Date: Wed, 10 Jul 2024 14:17:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000955a0061ceb2c38@google.com>
+Subject: [syzbot] [net?] possible deadlock in do_ip_getsockopt (3)
+From: syzbot <syzbot+aa5e39930997b0fe3dba@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 10.07.24 11:50, Patrick Roy wrote:
-> 
-> 
-> On 7/10/24 08:32, Mike Rapoport wrote:
->> CAUTION: This email originated from outside of the organization. Do not click links or open attachments unless you can confirm the sender and know the content is safe.
->>
->>
->>
->> On Tue, Jul 09, 2024 at 11:09:29PM +0200, David Hildenbrand wrote:
->>> On 09.07.24 15:20, Patrick Roy wrote:
->>>> Inside of vma_is_secretmem and secretmem_mapping, instead of checking
->>>> whether a vm_area_struct/address_space has the secretmem ops structure
->>>> attached to it, check whether the address_space has the AS_INACCESSIBLE
->>>> bit set. Then set the AS_INACCESSIBLE flag for secretmem's
->>>> address_space.
->>>>
->>>> This means that get_user_pages and friends are disables for all
->>>> adress_spaces that set AS_INACCESIBLE. The AS_INACCESSIBLE flag was
->>>> introduced in commit c72ceafbd12c ("mm: Introduce AS_INACCESSIBLE for
->>>> encrypted/confidential memory") specifically for guest_memfd to indicate
->>>> that no reads and writes should ever be done to guest_memfd
->>>> address_spaces. Disallowing gup seems like a reasonable semantic
->>>> extension, and means that potential future mmaps of guest_memfd cannot
->>>> be GUP'd.
->>>>
->>>> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
->>>> ---
->>>>    include/linux/secretmem.h | 13 +++++++++++--
->>>>    mm/secretmem.c            |  6 +-----
->>>>    2 files changed, 12 insertions(+), 7 deletions(-)
->>>>
->>>> diff --git a/include/linux/secretmem.h b/include/linux/secretmem.h
->>>> index e918f96881f5..886c8f7eb63e 100644
->>>> --- a/include/linux/secretmem.h
->>>> +++ b/include/linux/secretmem.h
->>>> @@ -8,10 +8,19 @@ extern const struct address_space_operations secretmem_aops;
->>>>    static inline bool secretmem_mapping(struct address_space *mapping)
->>>>    {
->>>> -   return mapping->a_ops == &secretmem_aops;
->>>> +   return mapping->flags & AS_INACCESSIBLE;
->>>> +}
->>>> +
->>>> +static inline bool vma_is_secretmem(struct vm_area_struct *vma)
->>>> +{
->>>> +   struct file *file = vma->vm_file;
->>>> +
->>>> +   if (!file)
->>>> +           return false;
->>>> +
->>>> +   return secretmem_mapping(file->f_inode->i_mapping);
->>>>    }
->>>
->>> That sounds wrong. You should leave *secretmem alone and instead have
->>> something like inaccessible_mapping that is used where appropriate.
->>>
->>> vma_is_secretmem() should not suddenly succeed on something that is not
->>> mm/secretmem.c
->>
->> I'm with David here.
->>
-> 
-> Right, that makes sense. My thinking here was that if memfd_secret and
-> potential mappings of guest_memfd have the same behavior wrt GUP, then
-> it makes sense to just have them rely on the same checks. But I guess I
-> didn't follow that thought to its logical conclusion of renaming the
-> "secretmem" checks into "inaccessible" checks and moving them out of
-> secretmem.h.
-> 
-> Or do you mean to just leave secretmem untouched and add separate
-> "inaccessible" checks? But then we'd have two different ways of
-> disabling GUP for specific VMAs that both rely on checks in exactly the
-> same places :/
+Hello,
 
-You can just replace the vma_is_secretmem in relevant places by checks 
-if inaccessible address spaces. No need for the additional 
-vma_is_secretmem check then.
+syzbot found the following issue on:
 
-BUT, as raised in my other reply, I wonder if adding support for 
-secretmem in KVM (I assume) would be simpler+cleaner.
+HEAD commit:    0b58e108042b Add linux-next specific files for 20240703
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=171d06e1980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ed034204f2e40e53
+dashboard link: https://syzkaller.appspot.com/bug?extid=aa5e39930997b0fe3dba
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-> 
->>> --
->>> Cheers,
->>>
->>> David / dhildenb
->>>
->>
->> --
->> Sincerely yours,
->> Mike.
-> 
+Unfortunately, I don't have any reproducer for this issue yet.
 
--- 
-Cheers,
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1d079762feae/disk-0b58e108.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e53996c8d8c2/vmlinux-0b58e108.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a0bf21cdd844/bzImage-0b58e108.xz
 
-David / dhildenb
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+aa5e39930997b0fe3dba@syzkaller.appspotmail.com
 
+======================================================
+WARNING: possible circular locking dependency detected
+6.10.0-rc6-next-20240703-syzkaller #0 Not tainted
+------------------------------------------------------
+syz.4.2164/18168 is trying to acquire lock:
+ffffffff8f5ff788 (rtnl_mutex){+.+.}-{3:3}, at: do_ip_getsockopt+0x10f5/0x2940 net/ipv4/ip_sockglue.c:1702
+
+but task is already holding lock:
+ffff88807ce84c50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_getsockopt+0x144/0x3e0 net/smc/af_smc.c:3144
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&smc->clcsock_release_lock){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5816
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       smc_switch_to_fallback+0x35/0xd00 net/smc/af_smc.c:902
+       smc_sendmsg+0x11f/0x530 net/smc/af_smc.c:2779
+       sock_sendmsg_nosec net/socket.c:730 [inline]
+       __sock_sendmsg+0x221/0x270 net/socket.c:745
+       __sys_sendto+0x3a4/0x4f0 net/socket.c:2204
+       __do_sys_sendto net/socket.c:2216 [inline]
+       __se_sys_sendto net/socket.c:2212 [inline]
+       __x64_sys_sendto+0xde/0x100 net/socket.c:2212
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (sk_lock-AF_INET){+.+.}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5816
+       lock_sock_nested+0x48/0x100 net/core/sock.c:3543
+       do_ip_setsockopt+0x1a2d/0x3cd0 net/ipv4/ip_sockglue.c:1078
+       ip_setsockopt+0x63/0x100 net/ipv4/ip_sockglue.c:1417
+       do_sock_setsockopt+0x3af/0x720 net/socket.c:2324
+       __sys_setsockopt+0x1ae/0x250 net/socket.c:2347
+       __do_sys_setsockopt net/socket.c:2356 [inline]
+       __se_sys_setsockopt net/socket.c:2353 [inline]
+       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2353
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (rtnl_mutex){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3158 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3277 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
+       __lock_acquire+0x1359/0x2000 kernel/locking/lockdep.c:5193
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5816
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       do_ip_getsockopt+0x10f5/0x2940 net/ipv4/ip_sockglue.c:1702
+       ip_getsockopt+0xed/0x2e0 net/ipv4/ip_sockglue.c:1765
+       tcp_getsockopt+0x163/0x1c0 net/ipv4/tcp.c:4409
+       smc_getsockopt+0x1d9/0x3e0 net/smc/af_smc.c:3154
+       do_sock_getsockopt+0x373/0x850 net/socket.c:2386
+       __sys_getsockopt+0x271/0x330 net/socket.c:2415
+       __do_sys_getsockopt net/socket.c:2425 [inline]
+       __se_sys_getsockopt net/socket.c:2422 [inline]
+       __x64_sys_getsockopt+0xb5/0xd0 net/socket.c:2422
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  rtnl_mutex --> sk_lock-AF_INET --> &smc->clcsock_release_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&smc->clcsock_release_lock);
+                               lock(sk_lock-AF_INET);
+                               lock(&smc->clcsock_release_lock);
+  lock(rtnl_mutex);
+
+ *** DEADLOCK ***
+
+1 lock held by syz.4.2164/18168:
+ #0: ffff88807ce84c50 (&smc->clcsock_release_lock){+.+.}-{3:3}, at: smc_getsockopt+0x144/0x3e0 net/smc/af_smc.c:3144
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 18168 Comm: syz.4.2164 Not tainted 6.10.0-rc6-next-20240703-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2203
+ check_prev_add kernel/locking/lockdep.c:3158 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3277 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
+ __lock_acquire+0x1359/0x2000 kernel/locking/lockdep.c:5193
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5816
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+ do_ip_getsockopt+0x10f5/0x2940 net/ipv4/ip_sockglue.c:1702
+ ip_getsockopt+0xed/0x2e0 net/ipv4/ip_sockglue.c:1765
+ tcp_getsockopt+0x163/0x1c0 net/ipv4/tcp.c:4409
+ smc_getsockopt+0x1d9/0x3e0 net/smc/af_smc.c:3154
+ do_sock_getsockopt+0x373/0x850 net/socket.c:2386
+ __sys_getsockopt+0x271/0x330 net/socket.c:2415
+ __do_sys_getsockopt net/socket.c:2425 [inline]
+ __se_sys_getsockopt net/socket.c:2422 [inline]
+ __x64_sys_getsockopt+0xb5/0xd0 net/socket.c:2422
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa7f3175bd9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fa7f2bff048 EFLAGS: 00000246 ORIG_RAX: 0000000000000037
+RAX: ffffffffffffffda RBX: 00007fa7f3303f60 RCX: 00007fa7f3175bd9
+RDX: 0000000000000029 RSI: 0000000000000000 RDI: 0000000000000005
+RBP: 00007fa7f31e4aa1 R08: 00000000200000c0 R09: 0000000000000000
+R10: 0000000020000080 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007fa7f3303f60 R15: 00007fffb5a9a058
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
