@@ -1,121 +1,115 @@
-Return-Path: <linux-kernel+bounces-247182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D4DF92CC3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:52:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB5B92CC47
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B760B1F23A24
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 676001F2147C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8323286267;
-	Wed, 10 Jul 2024 07:51:48 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314BD84A5C;
+	Wed, 10 Jul 2024 07:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="TpTboUc2"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7990184D25
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CC15CB8;
+	Wed, 10 Jul 2024 07:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720597908; cv=none; b=N76LfFGUk+vWE9r41ub8PBlQMdmSMYV/o8UxK4GvhEwf6XV5mevb2WmcdEFNwl/GJ5k7iJLRETYO9YkRkip90mZGTyAJFAreYS4Xad7gAws5GNj6KtJOghGb3QBBE/iZAcmZyuspjXj1AUBcUF0xO4PtDOYfWSZSML4UjtE4700=
+	t=1720598022; cv=none; b=n2r5+bSrp2bdIwEnvuvQbN8VFYYcLECzuCUbG27aog3TyYR8WKvRqqlBoLbdSaqOt5Ut5aLv9N0OnrW9oW33D3XxTKv7VVDcOxBDZDSDiM/f6hGh412OyEZRzq58SXeoOOa3t7C5aJ59UstIPO5gLS2cfvLX+r8PQztpijGYJA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720597908; c=relaxed/simple;
-	bh=P+XptGl9DFkWiOOf5gEDy59BT6RaK29b7Gl+mTkrxXs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A5bNM42TFlI2pAvy9Ph7r/NQtorT0XpRsEj4h8l8+WLkZI70ruYTlpAAXHTyq3nD3W9q+qvof3lB6cAPJPh5JVJer65dklbxr1CbZm197DbuIrxM8p3CQm9HleYBRjxdyixCMUJoSwAUxHIyeLOcTOmdgmzp8/SporjCnOx2qso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WJqn72Jh2z9sSy;
-	Wed, 10 Jul 2024 09:51:39 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id Msdeejhv638O; Wed, 10 Jul 2024 09:51:39 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WJqmw5HDpz9sTK;
-	Wed, 10 Jul 2024 09:51:28 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 715EE8B779;
-	Wed, 10 Jul 2024 09:51:28 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 5aOEaBIr4O0c; Wed, 10 Jul 2024 09:51:28 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.233.26])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 31AA68B778;
-	Wed, 10 Jul 2024 09:51:28 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	x86@kernel.org,
-	linux-riscv@lists.infradead.org,
-	Oscar Salvador <osalvador@suse.de>,
-	Peter Xu <peterx@redhat.com>
-Subject: [PATCH v2 2/3] mm: Remove pud_user() from asm-generic/pgtable-nopmd.h
-Date: Wed, 10 Jul 2024 09:51:21 +0200
-Message-ID: <c31a39463929daba6c91917598ec05cf47103af5.1720597744.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <bcd6ab8246348f18fdc77694e321ee6458f05781.1720597744.git.christophe.leroy@csgroup.eu>
-References: <bcd6ab8246348f18fdc77694e321ee6458f05781.1720597744.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1720598022; c=relaxed/simple;
+	bh=z+M+w1EjrOsMpQ0c7ARWpLvveG+iJC0ITyQx8aamhXQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VSbEN8ZXoEElbto3G2QYAWjCi+jhEolcUWVHaeSL6RxjgfvDvKaXn88zkpQgUysv6fuTgAv14O5G7CkslZuv9MZthyI2v+zwtJB7inopqpM161Rn3XIjkimpdNJmvPs8RtK2EiLgfIR7rhQgehCKStX+7lC6tWp4v1SAHJdQf2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=TpTboUc2; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469MPZGT021946;
+	Wed, 10 Jul 2024 00:53:36 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=Cv4znu/u3vG5DtSV0M5c1ln
+	aufVMKH31TxEAtQiDsjA=; b=TpTboUc264GsjkK4rRrNiZNhzZkY3QN9Td5bbTg
+	kwv5v/ukNKbawCTNeENrBMiG3F4ECVkotgB2r+nvN+4w/PIxCcLcjHw+/c1HdkGY
+	3uIrcZEB12XMhBRA0zag+65RGFVe2AD5wsIJZxTjJW6HWzLknbEGswo5jiZifLKu
+	y6ns23/vZNikkc8BM62YD/f+0ICE135aBK7/YG9UgWes9XNYmK1KhNyLHdETmAJR
+	bncxW/WVZDW0rvEG27fkx7+5y9qPjOfVzaJg9kAGC3jVbOdmXTbywQUr6VOEE1G2
+	0+Z2gsJHIOTpO8Tnj7Vv+3xk/vUas92CSLkXPgDgAwHekIQ==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 409e061p7r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jul 2024 00:53:35 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 10 Jul 2024 00:51:32 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 10 Jul 2024 00:51:32 -0700
+Received: from localhost.localdomain (unknown [10.28.36.175])
+	by maili.marvell.com (Postfix) with ESMTP id 0840B3F705E;
+	Wed, 10 Jul 2024 00:51:27 -0700 (PDT)
+From: Srujana Challa <schalla@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
+        <edumazet@google.com>, <sgoutham@marvell.com>, <lcherian@marvell.com>,
+        <gakula@marvell.com>, <jerinj@marvell.com>, <hkelam@marvell.com>,
+        <sbhatta@marvell.com>, <ndabilpuram@marvell.com>,
+        <schalla@marvell.com>
+Subject: [PATCH net,v2,0/5] Fixes for CPT and RSS configuration
+Date: Wed, 10 Jul 2024 13:21:22 +0530
+Message-ID: <20240710075127.2274582-1-schalla@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720597882; l=1658; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=P+XptGl9DFkWiOOf5gEDy59BT6RaK29b7Gl+mTkrxXs=; b=4OAIfRcbzGZiTThCn+52k1t3OLfWXpjONvRAqOB3CJHAKApZphNbftRQQVoK9x0oBHpC3u7Sh lQY8C28x+HSAHuZKfuXlBaRhY70+1c0WDh8lUCy4Op4atGDbaMZoNRm
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: eXwRxScGd2DaGCXX_oW5e3oFM-8Y1Wxx
+X-Proofpoint-GUID: eXwRxScGd2DaGCXX_oW5e3oFM-8Y1Wxx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-10_04,2024-07-09_01,2024-05-17_01
 
-Commit 2c8a81dc0cc5 ("riscv/mm: fix two page table check related
-issues") added pud_user() in include/asm-generic/pgtable-nopmd.h
+This series of patches fixes various issues related to CPT
+configuration and RSS configuration.
 
-But pud_user() only exists on ARM64 and RISCV and is not expected
-by any part of MM.
+v1->v2:
+- Excluded the patch "octeontx2-af: reduce cpt flt interrupt vectors for
+  cn10kb" to submit it to net-next.
+- Addressed the review comments.
 
-Add the missing definition in arch/riscv/include/asm/pgtable-32.h
-and remove it from asm-generic/pgtable-nopmd.h
+Kiran Kumar K (1):
+  octeontx2-af: Fix issue with IPv6 ext match for RSS
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- arch/riscv/include/asm/pgtable-32.h | 5 +++++
- include/asm-generic/pgtable-nopmd.h | 1 -
- 2 files changed, 5 insertions(+), 1 deletion(-)
+Michal Mazur (1):
+  octeontx2-af: fix detection of IP layer
 
-diff --git a/arch/riscv/include/asm/pgtable-32.h b/arch/riscv/include/asm/pgtable-32.h
-index 00f3369570a8..37878ef37466 100644
---- a/arch/riscv/include/asm/pgtable-32.h
-+++ b/arch/riscv/include/asm/pgtable-32.h
-@@ -36,4 +36,9 @@
- static const __maybe_unused int pgtable_l4_enabled;
- static const __maybe_unused int pgtable_l5_enabled;
- 
-+static inline int pud_user(pud_t pud)
-+{
-+	return 0;
-+}
-+
- #endif /* _ASM_RISCV_PGTABLE_32_H */
-diff --git a/include/asm-generic/pgtable-nopmd.h b/include/asm-generic/pgtable-nopmd.h
-index 8ffd64e7a24c..b01349a312fa 100644
---- a/include/asm-generic/pgtable-nopmd.h
-+++ b/include/asm-generic/pgtable-nopmd.h
-@@ -30,7 +30,6 @@ typedef struct { pud_t pud; } pmd_t;
- static inline int pud_none(pud_t pud)		{ return 0; }
- static inline int pud_bad(pud_t pud)		{ return 0; }
- static inline int pud_present(pud_t pud)	{ return 1; }
--static inline int pud_user(pud_t pud)		{ return 0; }
- static inline int pud_leaf(pud_t pud)		{ return 0; }
- static inline void pud_clear(pud_t *pud)	{ }
- #define pmd_ERROR(pmd)				(pud_ERROR((pmd).pud))
+Nithin Dabilpuram (1):
+  octeontx2-af: replace cpt slot with lf id on reg write
+
+Satheesh Paul (1):
+  octeontx2-af: fix issue with IPv4 match for RSS
+
+Srujana Challa (1):
+  octeontx2-af: fix a issue with cpt_lf_alloc mailbox
+
+ .../net/ethernet/marvell/octeontx2/af/mbox.h  |  2 +-
+ .../net/ethernet/marvell/octeontx2/af/npc.h   |  8 +++++--
+ .../ethernet/marvell/octeontx2/af/rvu_cpt.c   | 23 +++++++++++++------
+ .../ethernet/marvell/octeontx2/af/rvu_nix.c   | 12 ++++++----
+ 4 files changed, 31 insertions(+), 14 deletions(-)
+
 -- 
-2.44.0
+2.25.1
 
 
