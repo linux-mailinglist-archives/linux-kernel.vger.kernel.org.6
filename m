@@ -1,175 +1,140 @@
-Return-Path: <linux-kernel+bounces-248315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19E0892DBA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:09:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6552D92DBA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DAE41C217B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:08:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CEB9283085
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC23E146017;
-	Wed, 10 Jul 2024 22:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E373E143C58;
+	Wed, 10 Jul 2024 22:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lwCPatGc"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CLou8rv+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E647143873
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 22:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0823013D886
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 22:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720649302; cv=none; b=OOXM9i0F7QweASglBtO2d6o7UH/l0tFo+K+TUZodkZfuYcdxELysFQqvMFX9/M5mZFJCGS3b+0Yo4zGe/1qXfjA8voDIeYOMSrHyy+A3cckbexk2k2PSnoLDNrp5t1oR5zcGnTR4MEnrfo6RbtwvaRaON8ENRnoF6NGK163GBzo=
+	t=1720649395; cv=none; b=uCV1kvKumpjLAqZWk2EPr7Ku1z0Z8WBUClTaBTtlVTIVSM7RcGhJYjPZRttFzp1LIYRcpQT3mYiS4nr8J3KykQQHpFxaTwXRZi1TbXPFc83kAlpkHXIm11KYEPhCoYg5ZgYm6K9+r97O5c/zWDVv27rPerAXX12gVFUwCvFvOFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720649302; c=relaxed/simple;
-	bh=dzOLJpFyieQl7kksJPwjcpnbe7AKqyPC/fUWFO7I6TY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WLcthf4Ka8bqkyfbd6zCoAr/tSRs6quelxj/m1fIbWU72FerkqMT2a1qL3i2mJs+/xxbPcKMZsJYbwvI4rx9RtEQayDcSKaZJ3/MwQimrctx5jO3ws5kgmQ6PaTkmoI7DlmQmKyPcTroYn3zqdLS796fdQPv/PT11dwRYy8okos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lwCPatGc; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2eea8ea8bb0so3546621fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:08:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720649299; x=1721254099; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=IbyAVC5whDcTrfC0f+jOeAkJG6+z9GUKk1zNJj92TQw=;
-        b=lwCPatGcQxe+wDMwNtcBtnz+Brwi29I16ZfR+pZMjB25AzhGqSdenxIsy1WJieZ4uv
-         x1nEncoMOtHjmCHlmB/rMReuY6Wre/M13QsXHoz2DZsXGXYUzrD6BqXDy4TNNmbFwOYd
-         8Z7AYZiOEo3awTKUz3BPTNdx40RI9FG2mNNEXbkebudXtgdAtW4mgxavEbjmTBchqnvG
-         b/exIrXiPfMaDHN0DpeStfMpzjRXQOIftFK3GjN8JCZv/o1RpZG2oS4wDyauxvg2Tk0U
-         RyjavS7R8O3jmncaDalVdIQEZdfw/pMWVVsoUliqAnYbM5BJw6BLOgprAbiliyghHiOa
-         7scA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720649299; x=1721254099;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IbyAVC5whDcTrfC0f+jOeAkJG6+z9GUKk1zNJj92TQw=;
-        b=YWS2w5xA2/gr2JuVp6Z1nGkwUw2MmHv8IQSomSGABuCyWkNHrEz9NY9oez44/lDEw8
-         fCG8bf4KApYdVDsH4BL6/v/H3b/lIFw/Hq0Y4YF0ZAL5+TYwDgtwUXiawHxTRz0EbSLc
-         7zLugfCBD5F7ZC2KTeI8Fyn5kpUsaVJAIXapJwEQ+g7z6ILL2L9W6McbLm7BqvRo0ANr
-         Rq+6uRh6/935QXzf/Fd/aJEH29qX/XKAI0lICti6okZ2PIsjKj7+lEHStCLoCSuB3C/m
-         km+ogoWkTBQSbwZt9Gl9bU2oX7C+uXcDeRJxRPBHJ7Rtlx8ttFAyNU831+dPeMEOQFwb
-         TFpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMoe+Ybh+oYLpptQJmJwox40YC2fCMAMpdT3brNLefJV1pCvfLH1hspf6Lss/foSWJBVN94lVDHMAscb8BD1XCRSKUAxseSlEQhY0w
-X-Gm-Message-State: AOJu0YzQdk5fqABb6XQOo5VQHnMu4qyzoLedzqXohTqjhCIqz3McwwF3
-	zCMp//Dfnv1FvvOVnBSenXFBl3nMpCFF1aQWqf7lvWETGC6Qkz7SWTWIMLpP+DGOxgrtGMMPAAP
-	6
-X-Google-Smtp-Source: AGHT+IEA6hboE4ANnrmdhtPnPW83+HWCE5AxVYj933A9tcXvMgs+IAOcjdkaTD850mZDlEWXc6meOg==
-X-Received: by 2002:a2e:99d1:0:b0:2ee:8566:32cb with SMTP id 38308e7fff4ca-2eeb30e45a8mr54224841fa.16.1720649298383;
-        Wed, 10 Jul 2024 15:08:18 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a8561cfsm193900166b.163.2024.07.10.15.08.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jul 2024 15:08:18 -0700 (PDT)
-Message-ID: <05ae1a45-107e-4d01-9cfe-648b52cbb364@linaro.org>
-Date: Thu, 11 Jul 2024 00:08:14 +0200
+	s=arc-20240116; t=1720649395; c=relaxed/simple;
+	bh=wSMLdOaAIyfeMlYDPE9ykwDaq14eIz1cba3/eVSQBdo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BhDyHYDt3Jrpbp+Ry7Rda+V6Cx3GOuAlS/OW5d1laZSumJUkpzkcHcHjJvyTiaeG1TH+yOSQTdiyjyBmu4UdOl4ksitbL6gnZI+Ij/i7ZxI8EEjxVpYH9JY8QNz2rm3j1hddCQYc+3RHM9+SpRfhn9lg7st0brG917M40B7/HyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CLou8rv+; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720649392; x=1752185392;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wSMLdOaAIyfeMlYDPE9ykwDaq14eIz1cba3/eVSQBdo=;
+  b=CLou8rv+TW6JB+pKAO687vVTgiUldAdEGYMJw/UpZMnN6EWfwH+Tmydy
+   0RNNhpVj+bix3DSgWhH8KA9J3qP1+LFgOca361GI6M92y5TSbHuScg1iI
+   0p3JUOKh88siyI6b8NkjJMf9Xctv9FXMBHSWaDlVueTBK3Bi+jF3Uz8h0
+   ZakaffyEzRanbsZcoTRuYFO1WqcBGaYunQD8o1r7T34+LuS6yCYER7bPW
+   HnsKZhKYrzRI/n4Kov1y5lYdZBlUMHrsgpL8cqApnLNBuswV/cBTrsqQd
+   HyQKvQ8tWgUzi+SzJzZt+v+JMr5qFtkjC2wp0+wzWIyUMawP0CCo6lBhP
+   g==;
+X-CSE-ConnectionGUID: X4c7XYd0Q/OhWUMY5FDgtQ==
+X-CSE-MsgGUID: UCuYvI9vRxCimPmWT/isAQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="20911552"
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="20911552"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 15:09:51 -0700
+X-CSE-ConnectionGUID: eaqdFRdISdqNQ+NTKGO1yw==
+X-CSE-MsgGUID: hl/y1xj5Q2GJi/ICes6TNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
+   d="scan'208";a="48440999"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 10 Jul 2024 15:09:48 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sRfVS-000YLq-1N;
+	Wed, 10 Jul 2024 22:09:46 +0000
+Date: Thu, 11 Jul 2024 06:09:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Cheng Ming Lin <linchengming884@gmail.com>, miquel.raynal@bootlin.com,
+	vigneshr@ti.com, linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, richard@nod.at,
+	alvinzhou@mxic.com.tw, leoyu@mxic.com.tw,
+	Cheng Ming Lin <chengminglin@mxic.com.tw>
+Subject: Re: [PATCH 2/3] mtd: spinand: macronix: Fixups for PLANE_SELECT_BIT
+Message-ID: <202407110520.pbPnrOlM-lkp@intel.com>
+References: <20240710011541.342682-3-linchengming884@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/6] Bluetooth: hci_qca: use the power sequencer for
- wcn7850
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- patchwork-bot+bluetooth@kernel.org
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, marcel@holtmann.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- quic_bgodavar@quicinc.com, quic_rjliao@quicinc.com, andersson@kernel.org,
- linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, bartosz.golaszewski@linaro.org
-References: <20240709-hci_qca_refactor-v3-0-5f48ca001fed@linaro.org>
- <172064103479.11923.11962118903624442308.git-patchwork-notify@kernel.org>
- <CABBYNZKvSF9h1K29oex3kXm+2h+62gwJ8+YJPM0Orap6_xVDTQ@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <CABBYNZKvSF9h1K29oex3kXm+2h+62gwJ8+YJPM0Orap6_xVDTQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710011541.342682-3-linchengming884@gmail.com>
 
-On 10.07.2024 10:43 PM, Luiz Augusto von Dentz wrote:
-> Hi Bartosz,
-> 
-> On Wed, Jul 10, 2024 at 3:50 PM <patchwork-bot+bluetooth@kernel.org> wrote:
->>
->> Hello:
->>
->> This series was applied to bluetooth/bluetooth-next.git (master)
->> by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
->>
->> On Tue, 09 Jul 2024 14:18:31 +0200 you wrote:
->>> The following series extend the usage of the power sequencing subsystem
->>> in the hci_qca driver.
->>>
->>> The end goal is to convert the entire driver to be exclusively pwrseq-based
->>> and simplify it in the process. However due to a large number of users we
->>> need to be careful and consider every case separately.
->>>
->>> [...]
->>
->> Here is the summary with links:
->>   - [v3,1/6] dt-bindings: bluetooth: qualcomm: describe the inputs from PMU for wcn7850
->>     https://git.kernel.org/bluetooth/bluetooth-next/c/e1c54afa8526
->>   - [v3,2/6] Bluetooth: hci_qca: schedule a devm action for disabling the clock
->>     https://git.kernel.org/bluetooth/bluetooth-next/c/a887c8dede8e
->>   - [v3,3/6] Bluetooth: hci_qca: unduplicate calls to hci_uart_register_device()
->>     https://git.kernel.org/bluetooth/bluetooth-next/c/cdd10964f76f
->>   - [v3,4/6] Bluetooth: hci_qca: make pwrseq calls the default if available
->>     https://git.kernel.org/bluetooth/bluetooth-next/c/958a33c3f9fc
->>   - [v3,5/6] Bluetooth: hci_qca: use the power sequencer for wcn7850 and wcn6855
->>     https://git.kernel.org/bluetooth/bluetooth-next/c/4fa54d8731ec
->>   - [v3,6/6] arm64: dts: qcom: sm8650-qrd: use the PMU to power up bluetooth
->>     (no matching commit)
-> 
-> Last one doesn't apply so you will probably need to rebase or
-> something if it really needs to go thru bluetooth-next.
+Hi Cheng,
 
-Bartosz forgot to mention it should go through qcom
+kernel test robot noticed the following build warnings:
 
-Konrad
+[auto build test WARNING on mtd/nand/next]
+[also build test WARNING on next-20240710]
+[cannot apply to linus/master v6.10-rc7]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Cheng-Ming-Lin/include-linux-mtd-spinand-h-Add-fixups-for-spinand/20240710-184654
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next
+patch link:    https://lore.kernel.org/r/20240710011541.342682-3-linchengming884%40gmail.com
+patch subject: [PATCH 2/3] mtd: spinand: macronix: Fixups for PLANE_SELECT_BIT
+config: i386-randconfig-014-20240711 (https://download.01.org/0day-ci/archive/20240711/202407110520.pbPnrOlM-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240711/202407110520.pbPnrOlM-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407110520.pbPnrOlM-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/mtd/nand/spi/macronix.c:113: warning: Function parameter or struct member 'spinand' not described in 'write_Plane_Select_bit_in_cadd'
+>> drivers/mtd/nand/spi/macronix.c:113: warning: Function parameter or struct member 'req' not described in 'write_Plane_Select_bit_in_cadd'
+>> drivers/mtd/nand/spi/macronix.c:113: warning: Function parameter or struct member 'column' not described in 'write_Plane_Select_bit_in_cadd'
+>> drivers/mtd/nand/spi/macronix.c:113: warning: expecting prototype for Macronix serial NAND flash with a two(). Prototype was for write_Plane_Select_bit_in_cadd() instead
+
+
+vim +113 drivers/mtd/nand/spi/macronix.c
+
+   102	
+   103	/**
+   104	 * Macronix serial NAND flash with a two-plane structure
+   105	 * should insert Plane Select bit into the column address
+   106	 * during the write_to_cache operation.
+   107	 * Additionally, MX35{U,F}2G14AC also need to insert Plane
+   108	 * Select bit into the column address during the read_from_cache
+   109	 * operation.
+   110	 */
+   111	static unsigned int write_Plane_Select_bit_in_cadd(struct spinand_device *spinand,
+   112				const struct nand_page_io_req *req, unsigned int column)
+ > 113	{
+   114		struct nand_device *nand = spinand_to_nand(spinand);
+   115	
+   116		return column | (req->pos.plane << fls(nanddev_page_size(nand)));
+   117	}
+   118	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
