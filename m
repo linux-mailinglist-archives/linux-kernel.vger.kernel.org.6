@@ -1,72 +1,87 @@
-Return-Path: <linux-kernel+bounces-247846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B269292D575
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:56:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF3892D578
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4CEA1C21EF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:56:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89656287C6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D53B1946D9;
-	Wed, 10 Jul 2024 15:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A900194A6F;
+	Wed, 10 Jul 2024 15:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qSlj/Xo/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xdTbbfyf"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C104194135;
-	Wed, 10 Jul 2024 15:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0CC36AF8
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720626980; cv=none; b=OacsVdpJPEMxkhsEi53rMkb65GKdvFk74Ehp+7iQG9eYgHkGpcSvkdn37E6wnk/6OWhnh4x2V9u01dOrS+R3IRCyHdvrHa9tHVsYyPMmHI38vicAfhhFgANI91yzE/8cJbqCMVXm3hL/3iilGYhFkyvHK13kttcyg9M69Doyvwo=
+	t=1720626997; cv=none; b=Sxf9oO5S5sZVM3ACJ4Uum7clio8Ato2PxB43pShhPR7IrzizXTC9+gJmoeHXLDlb1VOe4eM6By+0C0/fvopj1FR1bP0E9W2/b136kvt7MPahj3ureuYxe36rtLbHL8fgnGhlLBxNII0siyCuHHzX9CAUB+sjYug+8jbKhMPyBDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720626980; c=relaxed/simple;
-	bh=XjBzCjwIpp8SXuUwXq2uIFVgVjUPOVR8FS4xVOZVhoU=;
+	s=arc-20240116; t=1720626997; c=relaxed/simple;
+	bh=kZ4X/X7uweqQlVqpnE7kg/TNuLAZPIXBexv3MMulPcA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KHn5dZZbZi4pk8UjWMdN9nHjKmRjdZ+QqiPsVsxQ3wyzgfSWC4tuk1mxAJdFSndW5QByQjXF9r2BQUvYIk0qrcy+9ClI/SpvPavAPAU1p08el2YpL2bxxD4M1E2j88hI+RQNnybLwJFswdYKAUtJGLWR4WPp4vP2X45AasSUYK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qSlj/Xo/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3D16C32786;
-	Wed, 10 Jul 2024 15:56:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720626980;
-	bh=XjBzCjwIpp8SXuUwXq2uIFVgVjUPOVR8FS4xVOZVhoU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qSlj/Xo/BcOIel08H62BzJavL5R76fyw07sAGq7g/JewbdHnTVeAd0WmSMGer/UO/
-	 RvXhAhSma9UZ5Fc7Cj1ry0BnWdSYB69DDHmYcO1TM7+G2lH4p5qlSXpJwn34jofpRW
-	 ZAXZK51vVr11AlyGNFBu5yItuYNgD+1ErGxl2dZTSUaXC9LxXVLDAYINUkTAugDSpl
-	 dwE1JJmvjYWJpNn4imAAmgxxoCEUb6U2YwTTvn9Mn3yiiYbCJ+hlgQCcSmhI6q8NQY
-	 QHKGvZtLde1eVeEgzuPalReXXqwgEdPM2TEjrpUjRmuCU2q3cmkBfpvLoqoqxjC5Sm
-	 QITqwtuNb9nqA==
-Date: Wed, 10 Jul 2024 09:56:03 -0600
-From: Rob Herring <robh@kernel.org>
-To: Adam Skladowski <a39.skl@gmail.com>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
-	Georgi Djakov <djakov@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Vladimir Lypak <vladimir.lypak@gmail.com>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Rohit Agarwal <quic_rohiagar@quicinc.com>,
-	Danila Tikhonov <danila@jiaxyga.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
-	Andrew Halaney <ahalaney@redhat.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Barnabas Czeman <barnabas.czeman@mainlining.org>,
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Abel Vesa <abel.vesa@linaro.org>
-Subject: Re: [PATCH v3 3/9] dt-bindings: interconnect: qcom: Add Qualcomm
- MSM8937 NoC
-Message-ID: <20240710155603.GB3133981-robh@kernel.org>
-References: <20240709102728.15349-1-a39.skl@gmail.com>
- <20240709102728.15349-4-a39.skl@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JP3fncAAIq2L52CdPw6OfvwVLAfTkS3ugTRjiOGXqWuXBp05P5rgPdVjTHSnlOvVX6AwtsoKa8fRNKphXuXxfcLrNKKFuAu8JcQOfQhfhg3KRjz2YfrTO9rcxWDBWyJ6Lqvr6fHryOmfVzg+DIhnn/ugzjneQNrK0R+XxWkyOeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xdTbbfyf; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fb3cf78fa6so37105495ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:56:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720626995; x=1721231795; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uBj2YmtSTrFPZPUbLzrldXTaT0nXgCHgIoklfp+Mzk8=;
+        b=xdTbbfyf3cZrh4Gq6g7lHD/zJkP5S5lF5naGD7NQBYy7jeAtkfBuah17bt7YuonDYx
+         cgBZly9KBPi/KoK93HOcBRjdz0EbBYiSdIvsxHIlOjMKA518OUlLzuP+u8RjwN8xwvmB
+         ompwQ2+GCArt/riX+lzcK8FMxuy+JUXM6KCEMFK+az1HGlU+07RPbXfr3A9eijbF5dFA
+         +pfob5rXTwLwaV3cGZ+g7HQBvZbTqhZ5FAu8qBQkYGvvC3b9CuFdWwjiLk4UHkS21/Zb
+         wmH1achojxWOxrCsMCIhj8Sg0rOVH0iKl4QS/wnXpmVYYrhFrj1e+lxVtLyb+6hzGsuv
+         9ffQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720626995; x=1721231795;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uBj2YmtSTrFPZPUbLzrldXTaT0nXgCHgIoklfp+Mzk8=;
+        b=AtQXNAEtxO7NQDXyZ2Q/Ieor/alP9Biq8FAe7Rt3/0AL9iPVbkQRiq/Rp4skpDk9bU
+         hz1pgW8qWuAg8LDWHiOBAmxrOugviYGrQDF2QFvy4wptPlK5blW6aO54dEz0LOIug4in
+         zx8IqxLWWMvXUwqPj0UWXBJObqAC4tjBllT2mXYAop8frpo8Yb5hWrEoipP4OdUTBwL3
+         u/N0/8XXe1EjxYpvSoX08uEkiJR6k2sa1ho2pbcnO+Hc/dLuX3bAaplb0hBAcWIN0LCG
+         ziOPcHCrls4x1LD/a38X1FtznjY7JBejiUjj7HtWeYbu+yGBLkATiwOfrDwOPJOp7f39
+         KKug==
+X-Forwarded-Encrypted: i=1; AJvYcCUE5k4rkktfwoKx5grvdivRyLPyrHgNfuF/fe3b/st/4MtHqoDUPOnT2Q1DFFsdq4nIGozlSPsuYQQp7SjabFrldCvYf+D8ujt6exel
+X-Gm-Message-State: AOJu0YxYj1RaJaDCNJmZ6vmvRliYW50vh7ejyzWwd4GkH+7oZJizQBVH
+	hXBbQhmk4zrRM/qE4I/ekonWeXRjLgKUo2eewDvRALKr2UQlS/6TCfofSmS+Oxw=
+X-Google-Smtp-Source: AGHT+IER42wfBDvYrn5WVV2tIZB6J3uCihrTxDQpbbWz7C02veVVpbReOeakDmwhl/pQRtvuZYvxfA==
+X-Received: by 2002:a17:90a:c385:b0:2c9:66d3:4663 with SMTP id 98e67ed59e1d1-2ca35d58971mr4748875a91.43.1720626994926;
+        Wed, 10 Jul 2024 08:56:34 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:8408:4ecd:288d:848b])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ca34e6fc0csm3985584a91.21.2024.07.10.08.56.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 08:56:34 -0700 (PDT)
+Date: Wed, 10 Jul 2024 09:56:32 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Shun-yi Wang <shun-yi.wang@mediatek.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Project_Global_Chrome_Upstream_Group@mediatek.com,
+	jason-ch.chen@mediatek.com, yaya.chang@mediatek.com,
+	teddy.chen@mediatek.com, olivia.wen@mediatek.com
+Subject: Re: [PATCH 1/1] remoteproc: mediatek: Support multiple reserved
+ memory regions
+Message-ID: <Zo6vMPaefxCaDe7D@p14s>
+References: <20240703115308.17436-1-shun-yi.wang@mediatek.com>
+ <20240703115308.17436-2-shun-yi.wang@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,160 +90,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240709102728.15349-4-a39.skl@gmail.com>
+In-Reply-To: <20240703115308.17436-2-shun-yi.wang@mediatek.com>
 
-On Tue, Jul 09, 2024 at 12:22:48PM +0200, Adam Skladowski wrote:
-> Add bindings for Qualcomm MSM8937 Network-On-Chip interconnect devices.
-
-That is obvious. What would be useful is detailing how 8937 is similar 
-to the existing devices.
-
+On Wed, Jul 03, 2024 at 07:53:08PM +0800, Shun-yi Wang wrote:
+> From: "shun-yi.wang" <shun-yi.wang@mediatek.com>
 > 
-> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+> SCP supports multiple reserved memory regions, intended for
+> specific hardwards.
+>
+> Signed-off-by: shun-yi.wang <shun-yi.wang@mediatek.com>
 > ---
->  .../bindings/interconnect/qcom,msm8939.yaml   |  8 +-
->  .../dt-bindings/interconnect/qcom,msm8937.h   | 93 +++++++++++++++++++
->  2 files changed, 99 insertions(+), 2 deletions(-)
->  create mode 100644 include/dt-bindings/interconnect/qcom,msm8937.h
+>  drivers/remoteproc/mtk_scp.c | 25 +++++++++++++++++--------
+>  1 file changed, 17 insertions(+), 8 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml b/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
-> index 0641a3c992a5..d19e20247df8 100644
-> --- a/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
-> +++ b/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
-> @@ -4,13 +4,13 @@
->  $id: http://devicetree.org/schemas/interconnect/qcom,msm8939.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index 9ecd5ea04b5f3..1902826cea0af 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -1006,22 +1006,31 @@ EXPORT_SYMBOL_GPL(scp_mapping_dm_addr);
 >  
-> -title: Qualcomm MSM8939/MSM8976 Network-On-Chip interconnect
-> +title: Qualcomm MSM8937/MSM8939/MSM8976 Network-On-Chip interconnect
+>  static int scp_map_memory_region(struct mtk_scp *scp)
+>  {
+> -	int ret;
+> +	int ret, i, err;
+>  	const struct mtk_scp_sizes_data *scp_sizes;
+> +	struct device_node *node = scp->dev->of_node;
+> +	struct of_phandle_iterator it;
+> +
+> +	i = 0;
+> +	of_for_each_phandle(&it, err, node, "memory-region", NULL, 0) {
+> +		ret = of_reserved_mem_device_init_by_idx(scp->dev, node, i);
+> +
+> +		if (ret) {
+> +			dev_err(scp->dev, "failed to assign memory-region: %s\n",
+> +				it.node->name);
+> +			of_node_put(it.node);
+> +			return -ENOMEM;
+> +		}
+
+With this patch the code is out of sync with the bindings which are still
+specifying a maxItems of 1 - please address.
+
+Thanks,
+Mathieu
+
 >  
->  maintainers:
->    - Konrad Dybcio <konradybcio@kernel.org>
+> -	ret = of_reserved_mem_device_init(scp->dev);
+> +		i++;
+> +	}
 >  
->  description:
-> -  The Qualcomm MSM8939/MSM8976 interconnect providers support
-> +  The Qualcomm MSM8937/MSM8939/MSM8976 interconnect providers support
->    adjusting the bandwidth requirements between the various NoC fabrics.
+>  	/* reserved memory is optional. */
+> -	if (ret == -ENODEV) {
+> +	if (!i) {
+>  		dev_info(scp->dev, "skipping reserved memory initialization.");
+>  		return 0;
+>  	}
 >  
->  allOf:
-> @@ -19,6 +19,9 @@ allOf:
->  properties:
->    compatible:
->      enum:
-> +      - qcom,msm8937-bimc
-> +      - qcom,msm8937-pcnoc
-> +      - qcom,msm8937-snoc
->        - qcom,msm8939-bimc
->        - qcom,msm8939-pcnoc
->        - qcom,msm8939-snoc
-> @@ -43,6 +46,7 @@ patternProperties:
->      properties:
->        compatible:
->          enum:
-> +          - qcom,msm8937-snoc-mm
->            - qcom,msm8939-snoc-mm
->            - qcom,msm8976-snoc-mm
->  
-> diff --git a/include/dt-bindings/interconnect/qcom,msm8937.h b/include/dt-bindings/interconnect/qcom,msm8937.h
-> new file mode 100644
-> index 000000000000..98b8a4637aab
-> --- /dev/null
-> +++ b/include/dt-bindings/interconnect/qcom,msm8937.h
-> @@ -0,0 +1,93 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Qualcomm MSM8937 interconnect IDs
-> + */
-> +
-> +#ifndef __DT_BINDINGS_INTERCONNECT_QCOM_MSM8937_H
-> +#define __DT_BINDINGS_INTERCONNECT_QCOM_MSM8937_H
-> +
-> +/* BIMC fabric */
-> +#define MAS_APPS_PROC		0
-> +#define MAS_OXILI		1
-> +#define MAS_SNOC_BIMC_0		2
-> +#define MAS_SNOC_BIMC_2		3
-> +#define MAS_SNOC_BIMC_1		4
-> +#define MAS_TCU_0		5
-> +#define SLV_EBI			6
-> +#define SLV_BIMC_SNOC		7
-> +
-> +/* PCNOC fabric */
-> +#define MAS_SPDM		0
-> +#define MAS_BLSP_1		1
-> +#define MAS_BLSP_2		2
-> +#define MAS_USB_HS1		3
-> +#define MAS_XI_USB_HS1		4
-> +#define MAS_CRYPTO		5
-> +#define MAS_SDCC_1		6
-> +#define MAS_SDCC_2		7
-> +#define MAS_SNOC_PCNOC		8
-> +#define PCNOC_M_0		9
-> +#define PCNOC_M_1		10
-> +#define PCNOC_INT_0		11
-> +#define PCNOC_INT_1		12
-> +#define PCNOC_INT_2		13
-> +#define PCNOC_INT_3		14
-> +#define PCNOC_S_0		15
-> +#define PCNOC_S_1		16
-> +#define PCNOC_S_2		17
-> +#define PCNOC_S_3		18
-> +#define PCNOC_S_4		19
-> +#define PCNOC_S_6		20
-> +#define PCNOC_S_7		21
-> +#define PCNOC_S_8		22
-> +#define SLV_SDCC_2		23
-> +#define SLV_SPDM		24
-> +#define SLV_PDM			25
-> +#define SLV_PRNG		26
-> +#define SLV_TCSR		27
-> +#define SLV_SNOC_CFG		28
-> +#define SLV_MESSAGE_RAM		29
-> +#define SLV_CAMERA_SS_CFG	30
-> +#define SLV_DISP_SS_CFG		31
-> +#define SLV_VENUS_CFG		32
-> +#define SLV_GPU_CFG		33
-> +#define SLV_TLMM		34
-> +#define SLV_BLSP_1		35
-> +#define SLV_BLSP_2		36
-> +#define SLV_PMIC_ARB		37
-> +#define SLV_SDCC_1		38
-> +#define SLV_CRYPTO_0_CFG	39
-> +#define SLV_USB_HS		40
-> +#define SLV_TCU			41
-> +#define SLV_PCNOC_SNOC		42
-> +
-> +/* SNOC fabric */
-> +#define MAS_QDSS_BAM		0
-> +#define MAS_BIMC_SNOC		1
-> +#define MAS_PCNOC_SNOC		2
-> +#define MAS_QDSS_ETR		3
-> +#define QDSS_INT		4
-> +#define SNOC_INT_0		5
-> +#define SNOC_INT_1		6
-> +#define SNOC_INT_2		7
-> +#define SLV_KPSS_AHB		8
-> +#define SLV_WCSS		9
-> +#define SLV_SNOC_BIMC_1		10
-> +#define SLV_IMEM		11
-> +#define SLV_SNOC_PCNOC		12
-> +#define SLV_QDSS_STM		13
-> +#define SLV_CATS_1		14
-> +#define SLV_LPASS		15
-> +
-> +/* SNOC-MM fabric */
-> +#define MAS_JPEG		0
-> +#define MAS_MDP			1
-> +#define MAS_VENUS		2
-> +#define MAS_VFE0		3
-> +#define MAS_VFE1		4
-> +#define MAS_CPP			5
-> +#define SLV_SNOC_BIMC_0		6
-> +#define SLV_SNOC_BIMC_2		7
-> +#define SLV_CATS_0		8
-> +
-> +#endif /* __DT_BINDINGS_INTERCONNECT_QCOM_MSM8937_H */
+> -	if (ret) {
+> -		dev_err(scp->dev, "failed to assign memory-region: %d\n", ret);
+> -		return -ENOMEM;
+> -	}
+> -
+>  	/* Reserved SCP code size */
+>  	scp_sizes = scp->data->scp_sizes;
+>  	scp->cpu_addr = dma_alloc_coherent(scp->dev, scp_sizes->max_dram_size,
 > -- 
-> 2.45.2
+> 2.18.0
 > 
 
