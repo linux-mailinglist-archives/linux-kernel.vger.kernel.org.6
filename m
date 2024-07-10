@@ -1,135 +1,110 @@
-Return-Path: <linux-kernel+bounces-247103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7348F92CB55
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:49:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8C1192CBA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 191851F22FB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:49:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 611251F2415D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C0D7CF39;
-	Wed, 10 Jul 2024 06:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOVtK0RS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4976B81AC3;
+	Wed, 10 Jul 2024 07:09:52 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B943E24A08;
-	Wed, 10 Jul 2024 06:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01007522E
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720594164; cv=none; b=aUFIL5qmRofQdex3cey6b3tQZkHx8Fmeceqpm6ytUpCKYEB26f4qnwaihg0WLmDffkUNTiWHSJxXY9guvd5yvhI4ptwmTlvu9A5Khs+oJ459bDYI2OuecHknOwJ5yHAuxNfshjQCsIBRLzrIcScJ//tPnrS0b9mV4aDZJXRtmZM=
+	t=1720595391; cv=none; b=S1lLM7GtSlVWH2geovN0Do1EWcblTV0Y+NxdqLRt3uBnOi7DLLyI1HGwzvF3w1eXSyND1rpa/3/ta2OI4y2C740xvO3Qwfp8i0CjHOLe28uACFVD46J0kA45WbivV/B4kdCuM6CUjhYWAeDJNUwANTHwUqFkXSG8OGEchphGSL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720594164; c=relaxed/simple;
-	bh=UbnvCJzCBndq3QGFLOtJtVqvYzxgrfMBwhlR/fv0Vuo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nm/C5rj1lpigq41cc0Fo51aGDftoOu0aVOat2qPwVVMXH7AdTYTk0zQctK/tbj+jEm7o2416Pc/Pylama7GiEldpUMAv2oI+3EB+uYOZn2LXuq6zWANkp/AAWkuKTcNQ4dGrT/mcnaijgFnwZkx8LgLTqRnetrwnnbKrom94Vek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOVtK0RS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E76A1C4AF0C;
-	Wed, 10 Jul 2024 06:49:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720594164;
-	bh=UbnvCJzCBndq3QGFLOtJtVqvYzxgrfMBwhlR/fv0Vuo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JOVtK0RS8m0S/JsFvsP0HOejVnNdo9YZz+3mwn39Kinppt1bsKJnFVFMCqYkI/c69
-	 dSxP9mp428E7A/KSbGd1ML0SD4FFMRmpRnTnZ0UTiRQ41n1Viszep2jWmvgAJ5kUoe
-	 1a4V2cKeAN6EKhqtWsH4YVIlYstTqMap8SP9f6T+Dd9AEsgRw/F/Ft7YHrJ41wLftm
-	 dW2OVmNcftgpDLU61ATNtz3mTm6unkITuS7avnaWL0qxQKd1WDjc7Fv4fVZj1oawQX
-	 n0C+Y9yFqgH9VchZ9khOpkkcy4iFeISvLJfaaA0m9toCV8pc/JWmg941UNJEDor/QM
-	 m/2de3qX1cpUg==
-Message-ID: <af257b02-5c94-4f3f-a399-40840b594264@kernel.org>
-Date: Wed, 10 Jul 2024 08:49:15 +0200
+	s=arc-20240116; t=1720595391; c=relaxed/simple;
+	bh=c3ZMsDMrBDsBNE7pwd9r6HkLUkDsTX5tVlsx7ZAcyWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TGSAP28itcLcGcZ+Kl9KZxN2mMsux8G1rljDL4UydJurUhUqirY/ftUoM3XPl3WY1oN96Dl6r2TXgocq24V+TA+WLd0EDiMPG8buaRpvPzFDlWDlbs0o74fzeX1y5hGHbwfx+shSFkr3Cz85XroGBGyersw4FjDF215TkYBmWAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sRRAQ-0004e6-NZ; Wed, 10 Jul 2024 08:51:06 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sRRAO-008SMR-WE; Wed, 10 Jul 2024 08:51:05 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sRRAO-008MRg-2u;
+	Wed, 10 Jul 2024 08:51:04 +0200
+Date: Wed, 10 Jul 2024 08:51:04 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Horia Geanta <horia.geanta@nxp.com>,
+	Pankaj Gupta <pankaj.gupta@nxp.com>,
+	Gaurav Jain <gaurav.jain@nxp.com>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] crypto: caam - enable hash api only on ARM platforms per
+ default
+Message-ID: <20240710065104.q5qh2bmf3r7wi7bz@pengutronix.de>
+References: <20240626155724.4045056-1-m.felsch@pengutronix.de>
+ <258feb43-382d-4ea0-9164-357924350dec@nxp.com>
+ <ZofSbH2Fu/xLnzif@gondor.apana.org.au>
+ <20240709085454.you3b3ueb3xbtrv6@pengutronix.de>
+ <Zo2ZcqP5zSLB0mf+@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] dt-bindings: memory: fsl: Add compatible string
- nxp,imx9-memory-controller
-To: Frank Li <Frank.Li@nxp.com>, York Sun <york.sun@nxp.com>,
- Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
- James Morse <james.morse@arm.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Robert Richter <rric@kernel.org>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
- Borislav Petkov <bp@suse.de>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-References: <20240709-imx95_edac-v1-0-3e9c146c1b01@nxp.com>
- <20240709-imx95_edac-v1-4-3e9c146c1b01@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240709-imx95_edac-v1-4-3e9c146c1b01@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zo2ZcqP5zSLB0mf+@gondor.apana.org.au>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 09/07/2024 22:23, Frank Li wrote:
-> iMX9 memory controller is similar with other layerscape chips. But some
-> register layout has a little bit difference, so add new compatible string
-> 'nxp,imx9-memory-controller' for it.
+On 24-07-10, Herbert Xu wrote:
+> On Tue, Jul 09, 2024 at 10:54:54AM +0200, Marco Felsch wrote:
+> >
+> > We had an patch exactly doing this but depending on the SoC the default
+> > prio may valid since the CAAM is used on ARMv7 and ARMv8 NXP SoCs. To
+> > not cause any regression we went this way.
 > 
-> imx9 need two 'reg', one for DDR controller and the other is ECC inject
-> engine register space. Keep the same restriction for other compatible
-> string.
+> I don't understand.  Why not just set the priority depending on
+> IS_ENABLED(CONFIG_ARM)? 
+
+Argh.. you're right. I had something other in my mind, sry.
+
+> That way it's strictly better than the Kconfig patch:
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> 1) If the driver is indeed slower then you'd have achieved the same
+> result of preferring the non-driver algorithm.
+> 
+> 2) If the driver ends up being faster then at least the admin can
+> adjust the priorities.
+> 
+> Or perhaps your Kconfig option should set the priority.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+NACK since no admin knows the prios. I will go with the "IS_ENABLED"
+solution, thank you!
 
-I assume this will go via EDAC tree (not memory-controllers tree).
+Regards,
+  Marco
 
-Best regards,
-Krzysztof
-
+> Cheers,
+> -- 
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> 
 
