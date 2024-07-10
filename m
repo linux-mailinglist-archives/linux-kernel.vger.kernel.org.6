@@ -1,137 +1,153 @@
-Return-Path: <linux-kernel+bounces-248086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D36492D83C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:27:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79F1592D83B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16AAB1F22D7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:27:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F4E1281F8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DFB19752C;
-	Wed, 10 Jul 2024 18:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7336196455;
+	Wed, 10 Jul 2024 18:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iqZbUlJy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kBignoqF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EDF1922E3;
-	Wed, 10 Jul 2024 18:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0B31922E3;
+	Wed, 10 Jul 2024 18:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720636030; cv=none; b=VU5Yw+bOzwbb1vIzCPT/HCidwrjorPDUc9Dfo7Sz+xJDeYN6UXBdO+vtLlAIp7srKcrSvmJ8dVPfbpeAqKHERvnqdWdlabvAByh7s2Z4SwRS0+64yEeP9d9tuciVVOtHMS6ql3V0y0ff9tT45Z3OxtmbDE0NyxK9n+ovBtJemb0=
+	t=1720636024; cv=none; b=Ws2UaXNSHwuHpw55JdI6RSS7PQ8+MMaCALHCSqtq/K7SV5oVZ40wGwTg76NEBMmZF9kHkbZ+eMaNnfbPESo2B8hipw0k0W9dYiYCMklBCENCOvv6S0EL68o16TZX5ZtlRO4nnctwiTiEryJtWX1d5VjaHwXQDxGQL6N0eVbz8UA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720636030; c=relaxed/simple;
-	bh=vE4YwZqVSyf+g3MpvOLWDYqAVnZMm6ZdBSNJBrlYexg=;
+	s=arc-20240116; t=1720636024; c=relaxed/simple;
+	bh=eRrtqZRqKI+Vs713ksZJJnhpC7362rwfU+pQUCdgXy0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sMScOCuBWKGFiI2l50YvOxi1NIR0HQx3fDVuScBFeUsbTBwGNMA251FKOAm7sO2/QSVEdQeafqJiXddHhRVmjMApzNeda2otdZabeZV3NBYZUlJqUDl6PN2T/rgDzDMUNmvulKcaDx7X9UN1s5CnX6UqYaE4YIpQq4d6/KPrgZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iqZbUlJy; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720636027; x=1752172027;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vE4YwZqVSyf+g3MpvOLWDYqAVnZMm6ZdBSNJBrlYexg=;
-  b=iqZbUlJyVHzBFubW/zfQ/WSVFu3q9GVWVg0lxtEKBw0bSLhs3lzO/1Hb
-   gKzAi5Txv87Rpn+kNGDncxDgyzEUQ2XF2lpfKEZKBDqEUNeCVpY6qmaRn
-   jmeadrW3YaP8f4ZzKk215oSaZBVVQYDUP0XqAAI56l4YG0gXuo8eUch43
-   sAP0nsVwZ0pP6mrCTBBdGFpBlUVUWHubx5z3qnlcy1k/EfwSOrGxGualx
-   NFH4iyIiiuTtobXdu2B2f7T3VZ/qHRV0tMXIjMdqyFLE84rb+ogoGApxP
-   JwVljxAwRRsnKV5hXBLF1i79ez8zpSHmialF2Wd1hfXqTk2e4lAE9fvY0
-   w==;
-X-CSE-ConnectionGUID: njQxMGGpQYiMbt+CARYQYA==
-X-CSE-MsgGUID: mRz4/FC1Q4yREdATvfgZ4Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11129"; a="18116550"
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="18116550"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 11:26:58 -0700
-X-CSE-ConnectionGUID: 57EtbHqaTjieQffc5EaEOg==
-X-CSE-MsgGUID: c+uv0ukqQkmGTgV3zK17xQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,198,1716274800"; 
-   d="scan'208";a="48313002"
-Received: from janchell-mobl1.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.72.164])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 11:26:58 -0700
-Date: Wed, 10 Jul 2024 11:26:56 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: peng guo <engguopeng@buaa.edu.cn>
-Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	vishal.l.verma@intel.com, ira.weiny@intel.com,
-	dan.j.williams@intel.com, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, wyguopeng@163.com
-Subject: Re: [PATCH v3] cxl/core: Support mbox op clear log of vendor debug
- logs
-Message-ID: <Zo7ScFy2B4jFSGtb@aschofie-mobl2>
-References: <20240710023112.8063-1-engguopeng@buaa.edu.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aPeosFbvqjlyQYn1QY7GP5ha88SL7uqkhqj/oPwD8LsWatiSlC2EXsBnCkSq9yY9tpaRjrCuFH39gYyjskTz6WdSD1N+Os45fHKoGF/Y8Cdgmw6v0/yaK9kVBytpHWZDY5TX7Hm9eqCEeMEJH2YhttFQlFx9+k1gwwxxklLVaOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kBignoqF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5056C32781;
+	Wed, 10 Jul 2024 18:27:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720636023;
+	bh=eRrtqZRqKI+Vs713ksZJJnhpC7362rwfU+pQUCdgXy0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kBignoqFgMiQnAofIwr6TpBgYH9jPjzRaSC842ug8+rx6x5ll0CjTdOuNwKz+XNaU
+	 NDvkrwV2QNWMtc2QwoU1ijOz5da9rUzzZ4Zm4X9y1ohMBoG7CVKn0v8dUDWTmbo5kp
+	 qCrq3abaj3XVJlXugg7JTU4S4r1FduVMcT4Z37pYvXrQ+HC5Pfyh6axADebI74bLMd
+	 mL+FCPzGJMJSDDh/UgJFPTRSJhQcGB2O3dEluBrE8THwZhBROKgdbzxw1XeKE8fCoR
+	 WqmFYL3/Bn0OvLOJQI+kNsc03yBZkhbSjm+4JlasoCc+ZLBwTbq5WG/vpdgUXOB+/4
+	 KqrO9fqPgf3Gw==
+Date: Wed, 10 Jul 2024 19:27:00 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Florian Weimer <fweimer@redhat.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	"Schimpe, Christina" <christina.schimpe@intel.com>,
+	"Pandey, Sunil K" <sunil.k.pandey@intel.com>
+Subject: Re: [PATCH v9 05/39] arm64/gcs: Document the ABI for Guarded Control
+ Stacks
+Message-ID: <Zo7SdDT_cBp6uXgT@finisterre.sirena.org.uk>
+References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
+ <20240625-arm64-gcs-v9-5-0f634469b8f0@kernel.org>
+ <87a5iph6u2.fsf@oldenburg.str.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="GNMZNZkOBV+voqRu"
+Content-Disposition: inline
+In-Reply-To: <87a5iph6u2.fsf@oldenburg.str.redhat.com>
+X-Cookie: Your love life will be... interesting.
+
+
+--GNMZNZkOBV+voqRu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240710023112.8063-1-engguopeng@buaa.edu.cn>
 
-On Wed, Jul 10, 2024 at 10:31:12AM +0800, peng guo wrote:
-> When user send a mbox cmd whose opcode is CXL_MBOX_OP_CLEAR_LOG and
-> the in_payload is normal vendor debug log UUID according to
-> the CXL specification
-> cxl_payload_from_user_allowed() will return false unexpectedly,
-> Sending mobox cmd operation failed and the kernel log will print:
-> Clear Log: input payload not allowed.
-> 
-> All CXL devices that support a debug log shall support the Vendor Debug
-> Log to allow the log to be accessed through a common host driver, for any
-> device, all versions of the CXL specification define the same value with
-> Log Identifier of: 5e1819d9-11a9-400c-811f-d60719403d86
-> 
-> refer to:
-> CXL spec r2.0 Table 169
-> CXL spec r3.0 Table 8-62
-> CXL spec r3.1 Table 8-71
-> 
-> Fix the definition value of DEFINE_CXL_VENDOR_DEBUG_UUID to match the
-> CXL r3.1 specification.
-> 
-> Fixes: 472b1ce6e9d6 ("cxl/mem: Enable commands via CEL")
-> Signed-off-by: peng guo <engguopeng@buaa.edu.cn>
+On Wed, Jul 10, 2024 at 12:36:21PM +0200, Florian Weimer wrote:
+> * Mark Brown:
 
+> > +* When GCS is enabled for the interrupted thread a signal handling specific
+> > +  GCS cap token will be written to the GCS, this is an architectural GCS cap
+> > +  token with bit 63 set and the token type (bits 0..11) all clear.  The
+> > +  GCSPR_EL0 reported in the signal frame will point to this cap token.
 
-Peng: Thanks for the patch!
+> How does this marker interfere with Top Byte Ignore (TBI; I hope I got
+> the name right)?  The specification currently does not say that only
+> addresses pushed to the shadow stack with the top byte cleared, which
+> potentially makes the markup ambiguous.  On x86-64, the same issue may
 
-DaveJ: Please fixup paragraph one split and s/mobox/mbox when applying.
+Indeed...  Given that we use the address on the GCS as part of the token
+on first pass I think we could get away with just using the address and
+not setting the top bit, we'd have an invalid cap pointing into a GCS
+page which shouldn't otherwise be on the GCS.  I'll give that some more
+thought.
 
-Reviewed-by: Alison Schofield <alison.schofield@intel.com>
+> exist with LAM.  I have not tested yet what happens there.  On AArch64
+> and RISC-V, it may be more natural to use the LSB instead of the LSB for
+> the mark bit because of its instruction alignment.
 
+The LSB is already taken by the architecture on aarch64, the bottom bits
+of the value are used for the token type field with no values/bits
+reserved for software use.
 
-> ---
-> v2 -> v3: Add a description of the impact of this issue on user usage
->           Modify the fixes tag
-> v1 -> v2: update commit message  and addressed review comments
-> 
->  drivers/cxl/cxlmem.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
-> index af8169ccdbc0..feb1106559d2 100644
-> --- a/drivers/cxl/cxlmem.h
-> +++ b/drivers/cxl/cxlmem.h
-> @@ -563,7 +563,7 @@ enum cxl_opcode {
->  		  0x3b, 0x3f, 0x17)
->  
->  #define DEFINE_CXL_VENDOR_DEBUG_UUID                                           \
-> -	UUID_INIT(0xe1819d9, 0x11a9, 0x400c, 0x81, 0x1f, 0xd6, 0x07, 0x19,     \
-> +	UUID_INIT(0x5e1819d9, 0x11a9, 0x400c, 0x81, 0x1f, 0xd6, 0x07, 0x19,     \
->  		  0x40, 0x3d, 0x86)
->  
->  struct cxl_mbox_get_supported_logs {
-> -- 
-> 2.43.0
-> 
+> We also have a gap on x86-64 for backtrace generation because the
+> interrupted instruction address does not end up on the shadow stack.
+> This address is potentially quite interesting for backtrace generation.
+> I assume it's currently missing because the kernel does not resume
+> execution using a regular return instruction.  It would be really useful
+> if it could be pushed to the shadow stack, or recoverable from the
+> shadow stack in some other way (e.g., the address of the signal context
+> could be pushed instead).  That would need some form of marker as well.
+
+Right, we'd have to manually consume any extra address we put on the
+GCS.  I'm not seeing any gagetisation issues with writing an extra value
+there that isn't a valid stack cap at the minute but I'll need to think
+it through properly - don't know if anyone else has thoughts here?
+
+--GNMZNZkOBV+voqRu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaO0nMACgkQJNaLcl1U
+h9CYNwf9FL92M924ZTMgdzdOGnvfj92Q8ImGFAmDoUP3IjVPivJTPYhDuY+GaQaY
+hojzU0+/ygci8GNBa3kaJGdT2kzo4J6aMfzV8Lw5OFhjfZvg98gQbw+HeRVou0BB
+trtAQLx/+CWEYHy1qXMPQ3jRHuINOT80L4T321NSPyd7rlSksPpZU/NqHmUI9iW9
+MpODGOLfCOg2W3CrQMA8AT1F09NeC4fBr+XRq1f3PwskzNRz/DR89M1amdCG7bky
+oOk/WAsSGY8RWuY7/GurREwf7vUc1akIFax3lqDscpCbSuZ89FcFfs6YEAUqgq86
+qV5kGewLUdqaGwutNJRSCAV+QkJXjw==
+=dJd9
+-----END PGP SIGNATURE-----
+
+--GNMZNZkOBV+voqRu--
 
