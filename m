@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-246917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0480A92C8E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:06:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6CB592C8ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:06:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80A751F23CF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:06:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DCDE281561
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 03:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3336239855;
-	Wed, 10 Jul 2024 03:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D492C182;
+	Wed, 10 Jul 2024 03:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="HpQAZwjo"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2070.outbound.protection.outlook.com [40.107.215.70])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="AesXsTSt"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2052.outbound.protection.outlook.com [40.107.117.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFBF168D0
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 03:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FDF17BDA
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 03:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.52
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720580766; cv=fail; b=F7l5r4DaJW2GH+AzwE4gi2sAp4HSTPdD23g2vPgIK15acvmdqQdRi1nDJzCsS0bW71ViHx9zXEN+pE26Z4aN4UDl/4ShstKfM0wBGQ6vTRm6xp0w11B0ClAc0qPT93T5MoDPuNzP6dhec9k9ESQUUwvJcBshLq4jt6VAm2PBgWs=
+	t=1720580790; cv=fail; b=OfdGzUtPV9vqHekQ0g1P/5oCGik0d2GuZG8aIuv/AlPieAz5BnVMnlkD8ADhC7ZeM0c9uBbzAImEH6PY7hiCetOGLiBmesqPrANsGtlDapeUYxXElAjCMKAiGqwX3Pf8wr+L+hV6Z2rRSJpaqWLxTGQENFglmBMjMTntMC3+ii8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720580766; c=relaxed/simple;
-	bh=1oiDfYrs0dAKpC+obxtQnCzafjHkUEuGGgYedo2uFGw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=XHHALGhsTMmh/t7TcPacrru+nqos2G2qvWvYHJ3+ISLIoA+psU5O+M0Dynx+sntJSCmRcOv1jf+nNOVU/rZJFu79ua33cRoNroz1SSmLBNdofzzCrHPjm19Q0qbcTi1pqTplbaMz7vbE+zEE273Wi5QwYgKc/NqjVpopqoPVj1Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=HpQAZwjo; arc=fail smtp.client-ip=40.107.215.70
+	s=arc-20240116; t=1720580790; c=relaxed/simple;
+	bh=7LcXkY4OG8+tAoInfcUTbYu+MCCjyiHl4dBDPnuBOcI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mXtI0LbUkEaAosV5Sgl0WjzO+56cwnhtTuMBUDygNiwSH6MNma0BHNw/pSwLDjVKjaRjwLbqCEkEU2JG3FG+dYEKR7rzeCQAsfec/pQuawjZOlUmpHd9W1UPlH8pm2TsX6lWSnIYLvyTrCmvNPzsPocq/HSuZ7NpH8Qm3WQFpZw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=AesXsTSt; arc=fail smtp.client-ip=40.107.117.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RCKaf0rydjS+GtrcTjlD9z/9cKW5wGnNKss4OtAu3KMFkk4pMLug3KBMopmzfL75ytiJkr9lNTjIVXi1OBlRbFEX+FBNLeKYugoFQJf09VT0Ojl9CsNll11zt82wnF2jT6q7Xia3w7QhyVjNCMKYU4W/C/5TQezt9Hk5ALSsUi8IXX4Bax6iDhD8Kh5jfoqGQW5Iwpkgd+KZLeCmlERiLLFfTOo79dcH+ksgct7ykYsV1varWorWRk71wEphNkQcvvRVConSsPC/PfSmxCjjKbS67r+Ob37isriPsO5cUJ4uXPei54tVIncDEFDkwC2YdmCIMD/sqg81deYKTFS+BA==
+ b=OcV9z10KvKfGwQZviVTO6zP6bm/g8p+dsWvTBpQEM43fyfuoFJbj4EWvh7jVlm0Y2XtVUzHifqxYP4ckJQmh7GalFC47Kx966YozhpEMXProDsuCpARhmxBOXbg9KZvKXAH5OKS0r/BS2Wpqc6SPehTsGgGacWZ/VOqIPKB4scRaIgH0lYeCwD5i5mxQLxpbGw7AAmdrDHYqFPoxcnoeAY7qrVg4xFLHff7htTGEQOphNT4V2la/v7A9fwGMdabJ97shlUEffiht6lQZZHCNWm4Hcm+ABS344dAL7iw5WPLqE+0rrtJY5IIv6bs2KbYniGX8JgoxYffF0PszSqPm4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/MONZwtHh/ZBLZ2ju1G2NMtCjtSA/Y+5JQIeoTg5Kxs=;
- b=bx+t77m1Monpp/8Hux9PWv8OEROek5TH9mYGtlbvKRb7AwYnPINg62Uazjkzj8BBE7DrVqOe9HSFgz8JwM2bcBfWpSKvPxmx1+jFIUGEv1bssjFXySZ3BcymbPvfLDG6m7jCLYoeGk7bqhwCgrt/98P/EW8x0wJEajAzRdt6MHfxeYBbbCbxXv8RU7vYL+S59lzO9XyA5XESrOumH6vjqt4TynKdTdZzuld851xhMa/kGV15Y4Q6wbEcXEm1l/+Qx2ptSEH9fXB1zG2Y44LaWKvoiMHAK/0xchTZB88USxuG3qEnPdPOCzEsNbNfvk0o71EDHkoP4nKyA+rJx1AOTA==
+ bh=Ev6p1RULBr8hJZaw8HlYO4WmszUtHZ131cla4tKfV3w=;
+ b=XQuJ+FEXyivOcSqtPabFjv71VQ+wNGQoVJCevc56Oe+4GJCArhMfPFugbk9EmcOR9T9sNNJbbSENnEQEc/FCS9Bm2BFJGv2RgMRXUy64QqC47r00Qp1f1XH12HH/xf8pjj4jldO8ZflFoltdqvRJi9a9aHWGqRBMgf2alUP2KnLYQMT+pbJB7oR4AJX/JYYcOgj4p0FAM5LxnlFZmtEuojYiOyc9N+wmyD1neRvM49nr17ZaWMD9pWa4MHWNKxAmMWLeBWWgq8GUsx5LuFB7NZf+s8GQa7HBJdtAXo/1RTQE4w5akyTCIMS2uut8AXXeI4qxeuc8qJ1G5CvqGMI2kw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
  dkim=pass header.d=vivo.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/MONZwtHh/ZBLZ2ju1G2NMtCjtSA/Y+5JQIeoTg5Kxs=;
- b=HpQAZwjoEC/wE3JNW7jhmGj7jIYiMFsHqMohrSgkMyhCti0qJHPcORU7iFvVzLQ2AvBKKNgQGfEzfc10x9Zsoz+xe1Kfn9fwtTKfyJvgckj5ap0rRco+W++IdswQwCrxQ8jL0Gj8/w57tWgqPElmqSNzSHtMHnHMfjzbdVp5t/hKv9bpR9WeMimCmOr9ojSbx6wOyjlzvMGH171OCJ72GbthwJnw07DLa2c/Zg6ObZTgC7Pm5SDbgR/6Tyhtpk4N2YsKnwxDUUiW4EDDjULErcxRLJMoupwZqGkWF5THtX6DHoywNyDM/ji9IFQ6dsPKjqQoClxrbFfpG+n/YpIulQ==
+ bh=Ev6p1RULBr8hJZaw8HlYO4WmszUtHZ131cla4tKfV3w=;
+ b=AesXsTStTfaTI06McPQ9M5VQ7xUMvsKQpR67uwEyXRY2PlH9ZnEAZvOu8GLheA4s1kC/dAKNuF0kbLWLgxZHOAMtFn1x9Hsm10Rz/cktnIfmYGpspvc1khSg+kY51FdzOexv4EyIDa4aOkP1H4vBSNQmnt7N5wbzZtkAylEt5lVNQl3ASia6F5izOt6oW9iG/b7UIe7dwsBp7lpn6TnXVlXNFAUDXWfbR5yK9yKUJKGE/qOLCHPuEdS7ZbDlF6VLn2SQKVhwBj3F8ujRAcgVMqbaDeAjcI6R32l8YMPq6I62NVAY8ZxHSlXjWGny+BNAOIvURXmxkNNd1OUtbqf5Og==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from JH0PR06MB6849.apcprd06.prod.outlook.com (2603:1096:990:47::12)
- by SEZPR06MB6014.apcprd06.prod.outlook.com (2603:1096:101:ea::12) with
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by TYZPR06MB5640.apcprd06.prod.outlook.com (2603:1096:400:28e::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Wed, 10 Jul
- 2024 03:05:53 +0000
-Received: from JH0PR06MB6849.apcprd06.prod.outlook.com
- ([fe80::ed24:a6cd:d489:c5ed]) by JH0PR06MB6849.apcprd06.prod.outlook.com
- ([fe80::ed24:a6cd:d489:c5ed%3]) with mapi id 15.20.7741.033; Wed, 10 Jul 2024
- 03:05:53 +0000
-Message-ID: <2450be89-f729-4a75-a008-90ab247313d1@vivo.com>
-Date: Wed, 10 Jul 2024 11:05:50 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8] mm: shrink skip folio mapped by an exiting process
-To: Barry Song <baohua@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>,
- Matthew Wilcox <willy@infradead.org>, opensource.kernel@vivo.com
-References: <20240710023901.1624-1-justinjiang@vivo.com>
- <CAGsJ_4yX5K3ytepCAqRbHfiEUKGxApvSin0d2ohK3ohGu7CfTg@mail.gmail.com>
-From: zhiguojiang <justinjiang@vivo.com>
-In-Reply-To: <CAGsJ_4yX5K3ytepCAqRbHfiEUKGxApvSin0d2ohK3ohGu7CfTg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Wed, 10 Jul
+ 2024 03:06:24 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%6]) with mapi id 15.20.7741.033; Wed, 10 Jul 2024
+ 03:06:24 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>
+Cc: bo.wu@vivo.com,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH v4] f2fs:Add write priority option based on zone UFS
+Date: Wed, 10 Jul 2024 11:06:08 +0800
+Message-Id: <20240710030608.28496-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240702062952.28859-1-liaoyuanhong@vivo.com>
+References: <20240702062952.28859-1-liaoyuanhong@vivo.com>
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI1PR02CA0046.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::14) To JH0PR06MB6849.apcprd06.prod.outlook.com
- (2603:1096:990:47::12)
+Content-Type: text/plain
+X-ClientProxiedBy: TY2PR0101CA0016.apcprd01.prod.exchangelabs.com
+ (2603:1096:404:92::28) To SEZPR06MB5576.apcprd06.prod.outlook.com
+ (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,352 +80,264 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: JH0PR06MB6849:EE_|SEZPR06MB6014:EE_
-X-MS-Office365-Filtering-Correlation-Id: 78ff224b-4a4e-4688-f0bb-08dca08d35e1
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|TYZPR06MB5640:EE_
+X-MS-Office365-Filtering-Correlation-Id: ab3a8588-1a67-4d82-84dc-08dca08d4844
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014|43062017;
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RjlBcVlXZUVyc3FyblByRFNza0RVN0YvR1NvUHYwZlZLL1hROUFUT3prWGVW?=
- =?utf-8?B?cFhCZ2wyMEFWaVg4MnNGQ3hzWUF1eGpQcFlSR1lMTlhCWE5xdU1XcXFjTmVu?=
- =?utf-8?B?UTQvSXdJUHlGc2gzK3dQYXJlcEVzK1ZZWC9SRDFrRzUrT3p4dUhEbXh1Q012?=
- =?utf-8?B?Q1NpYW5kUU5IVGJqeXM4dVl4WHNZOGdoTjdCVDRwTmJmaTNadlN1eTFaTXJJ?=
- =?utf-8?B?U1pBdC9QZzBLdUdYQllmUkVJZDF3ZHhtWkx6RnUveFBqdElPZHg1aHNMdUZL?=
- =?utf-8?B?S2ljdUJ2MERuZXVmd2g0NmUxSU96TlU4bUJYT2h4bm1ndkpIaGVsUkR2T20r?=
- =?utf-8?B?a09qS1NmMW5VR3lWa3lITWZPVHpUMk9TdEhuL3hKdmpZV0EzVUlFR2NFakpK?=
- =?utf-8?B?Wlo0cFZTREJUVk8wQ2FlOGxQRWFPUXZvQUZIa2VzdG5mR3RmTE1pK3Zqa2Iy?=
- =?utf-8?B?V2pObmpKVGd4WEFVR1RMakFpMEV3L2ZIT1F4QmZBbmVmeFJOWFZ5UHZQOE5o?=
- =?utf-8?B?RUZNVDRpY05LTWl2OWNoRXUvQ0d2VDVKOElkNXB3c2JiLzk3M3VHdUtWUTRm?=
- =?utf-8?B?dW9wNFE2dDFMVEVKbndxdXI1V3J2Y1RwdDZEUkdQYThTeDhxbHI0WXNTSVp4?=
- =?utf-8?B?Q0IzbHorUWJKRk1GZitjTjBIS0dvNzlIenBwQzVvWjBEdEpqMjFsQ1RtQzZH?=
- =?utf-8?B?QUJKQ242c1BzbVZjaE43QWtDc3Nham1BVnB6b2J1Mkd2OGdOaGw3N1hWYzVq?=
- =?utf-8?B?em53VEFUbXNUbExrQ0RSSjZLTnFxdDVtelhyMXlnWHlMbnkrQkpRbHAxMUZu?=
- =?utf-8?B?RWd1a0tKdWJPdVNXTiswQkE0MUpDbU5NVjBydXBtWHgwdXhqblJERU1NTU1D?=
- =?utf-8?B?ZjQ1Ymt3S21Qb0tBMmdRRW9NbkV2MHlYeXFtNEVjQS9Cc1AraWxoU2QrVDVj?=
- =?utf-8?B?ZCtXczU5SWY0SXJieWpCYWZrZlNKSE9XTVV3STQ0dld3VkxvTzNOSHArU1M1?=
- =?utf-8?B?bWo3SHRKdEtGTmJLNU55YWZ2d2dRS21hbGJPU2tscW9pNjdFS2s5L0U1c3g4?=
- =?utf-8?B?cWR4QUhNaGNMeGJUUmxDaFlzY0x5TVNvU05naWd4aGJmSlFjM0hoM3pkY0Ri?=
- =?utf-8?B?bUwzQnZUeUFzOEVEV2w5bTN5RnlrOGRkN1NqcGVOd2RMdmZaSVhHYVZndnda?=
- =?utf-8?B?YXo2ZUVUc0lVb3hUaUYzeC9rY3lTclJKaU1HQUkrckp3Q01YZ09zREp2c2Q5?=
- =?utf-8?B?NTJYUFlMQlpVM3NXM1dVSVZoV2ZVY2hvVWRhVk5ncUtNUzlHd1ZCYmVpLzBS?=
- =?utf-8?B?YW5lTFVqUTNVcFZNRFhKZUJJSmdLVlp6d3l6UUlZWHBQUFNCUC9DVTNPUE9W?=
- =?utf-8?B?djJPcHNoTDZ3bGp5d2R2Z1crMFI3MmZtN0x4ZnIzK3N6TmpSZGJCaFh5blRO?=
- =?utf-8?B?RGNna0EyTDhmbmNxc1JjR1dNK0dzQ3YraXh3cWZmcG1NN0MrNVM5blJzMkJE?=
- =?utf-8?B?ZjdWMVFjVTkyL2U4ZTVwMWpQYlpmZ2V1T0xjRlR1QnVHYjBCUkNYQVY0UzZI?=
- =?utf-8?B?MEZZc1JOZ1Ivd1VORmNid0pWL1JKdnpyZmxPR1RwdC9CV3N0M3o0UDlnSWEw?=
- =?utf-8?B?V21SV2orQnVkblVJN0tGanZERTVuenZ0OE9peUV3bCtwUFdmR2JGT0dRT2Ft?=
- =?utf-8?B?TGRveTBWZWF5UytjNjRoZEQ5SkZ0cXF6US91aU5mV0pnN0s2aWxKd1NaL1VY?=
- =?utf-8?B?RS9WOGN6WHE5SldQY0x3MnZyRG10em5KRWVEaHNuSUYrSWpuSFhZTEthc1gw?=
- =?utf-8?B?MTh2K2NMV2RmNzlXZXJFQU52bHlWQW5xUEVvSnIxYVl3aGxBdXp0anFQLzdz?=
- =?utf-8?Q?1uEzRYM2wst5j?=
+	=?us-ascii?Q?siKAoQsiaXwOguRQHkdbt76de3hFtT/kG5etOCwl9G5lLB0vbNnFuDxjAqEq?=
+ =?us-ascii?Q?WyQiT7a6q2mxBijyGcK0DAqZwGYKti+QpxWPDwPLExVvQT820yxP1/PSwlEm?=
+ =?us-ascii?Q?fGG/m5SFmKrclry+1ZyjZLjbI4uUACCHqarH3snqKXO8Wilpssv7XeGHuOKD?=
+ =?us-ascii?Q?mn5AgqXM53N7bNZU9RVDdqE57J+EEx2DIhZr/lPwkP9jVVfzWnypgOcjzx9P?=
+ =?us-ascii?Q?3v8/pT6Nf5a+UreTixdsBHagdZhPwwBkXde70dlxCdYO2X1V9n7Vqs5WxVkw?=
+ =?us-ascii?Q?ghsk0UikB4pO3fU7Ug3Rf3Q9Sj0BA6AuCGVAw17bQkFUOtK97j8COD8NBOcx?=
+ =?us-ascii?Q?o88XUGNzfH7jRPviQpQgoPOuiQeZs3YRNYEGHV3X4r4gWnxBgTv7qX4EJuM1?=
+ =?us-ascii?Q?t3qMn3H+J0nCLQ6kDKDcnwVakZIh3ypwQHYDN31jokBJm8v9Cy5vtuLJeT66?=
+ =?us-ascii?Q?8tOAwcrEIxYCfMbZJhQJhkiLy4s+/kcttzYcJfA/siDRlW9jgA9QuHryZBYa?=
+ =?us-ascii?Q?EpFs41HnGvPKa9I7JYYQQE+lO81hYDa4zFB5Z4D2+NK+zliTLxA2gIXc5WqT?=
+ =?us-ascii?Q?wUfyH0+atOzq6otNeTetbSO+h6h2lUcLBhAj36elqN96K90Yq5kElAKcN/p9?=
+ =?us-ascii?Q?1BTy5nkrANwktmY41r2imuPT9aGRNaozTj5hbwgeD/eZqW8NhiakGZRwoniw?=
+ =?us-ascii?Q?UgdVk9MJz2FBqxf2br2elRZ417XiwuNM7j8wnM/wVLFIESLBGJGTer+EI0im?=
+ =?us-ascii?Q?d6lJstanDvMhFE3OK1OORgLLU2CwReSP4aa19xIdv0kZ5/rE5YdVP4PW7CFl?=
+ =?us-ascii?Q?WvAz/AthweGFZ2VmKBoWEG/L2L+dvy+7QH0YMyACAC8xTRDf/aEZA0+iH3qm?=
+ =?us-ascii?Q?RbMAqmXLVe1lVNenJxdQcbmMFTL++TX6zAfNoSSAftbAnrR9N8Kpq2AHsuxP?=
+ =?us-ascii?Q?AEhR0zqmv4wcW4CgqMLQ3F19iIzC3xhInNuv/UA7F8GN4R1UDVObbWADAwab?=
+ =?us-ascii?Q?NWz9fAj4X0WoaLI4rLQShJeDMGewjNVqooZRShbIDWobSa6S65lktLlBFkE8?=
+ =?us-ascii?Q?14sf6b4KtvrMB/Qb8GZc7VrYouWskcNOpFYP3dmT2TA/AOVcm0d7i2HCbjAv?=
+ =?us-ascii?Q?wpH0/Ele1svAX+rM8BRAEEwuOHbn+oxnJ+TIVUpG4gSqBisGaXC/JqPuXD+M?=
+ =?us-ascii?Q?iqPoBOUOPIwyFZsLtdqF+1UjoXqHIlEvKdeu87jOP9HMMDPIXBDkMu15Muzn?=
+ =?us-ascii?Q?vHml6LDRMYPcWlIIRxxZRAEhXO2WnEhxngYxSJ/RovlYXBR+o1UVE3GkO6tv?=
+ =?us-ascii?Q?b3h7BCOi61xKiTOOCSZ8KmCjNPfiJ1A5P3TfG+oljPo3yTbDn6WKTo2DZRYh?=
+ =?us-ascii?Q?5/zfZkkBmhx7aqQQL/cpdUeZej8rT7gXf9WSBMEiAA5pVNoixw=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR06MB6849.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014)(43062017);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RmpzQUNyanFCTDhGZ2xQeStQMTh5NHJ2SzJ6VVpQdjdkZEp4LzJZZ1NzUWJ2?=
- =?utf-8?B?RDliQVJoc2hGSFhvM2hmaTkzZXdlV2NrWFJxUW4vYWlybTdWZ3FheFFLbjBW?=
- =?utf-8?B?VUpGSUhXMGtwVDZqZVlJSVF1d3I4WWdhUVhPOEVWV3grakdVbGRBeHBvWDVJ?=
- =?utf-8?B?ZXBkSGE4cjFESFpLT0pjejczSHVkd2R5Tnh1SUZVVVF0Q2xFdmIwUFA2dklF?=
- =?utf-8?B?ZVUxbmFQakMzZDdQVjNzdkpwWXRiYVczWGNwL0pBcUtQajNiZmFSM3NjQTBk?=
- =?utf-8?B?anpGWXhOYnJtQUc4V0g1Mk9VMTFhQnFNN1NrbXBJeGdZUmFtSUYzMUFOVS9t?=
- =?utf-8?B?VFh2cVZIdFNsWXI5NGFOamVNZ0FSWHVBMVhkbmxRazY2ZUcwOThxOEJtWDVU?=
- =?utf-8?B?Q3J5OHdpbUR5TmVrV3gwa29OaHRzdmpTejZDL0t3d1dxR0dKYWNaNFRCMXg4?=
- =?utf-8?B?NlNkVU5ZVVYwU1duVm1ReDkvRjJvdEozczc3WXZWdFpmenAwNlh0aGVPYTdU?=
- =?utf-8?B?MUh1WnpHYi9WWDArUlR2enl4N1VHREdUOFlxK2hpSGE0Q0VLNUNjQzlkTnRp?=
- =?utf-8?B?NE9td0NhSVFNRUVqN1ZJKzdpQzJDSzh0OXRjM0ljbHlBMndDc2hYS29xWHlX?=
- =?utf-8?B?ZXZxRUNTSkFBejBVSWRyNXNId3A4U3hiNzJlSlcwQmJjL3IrdTZTM2ZLamlZ?=
- =?utf-8?B?Z0d1TFM2cFZZdm1FTW0rMk4wZmVxUXFFdGJqRGVKRUROTFdObmVCbUtib2Vs?=
- =?utf-8?B?YzQ2ZGhBWWFkZk5jTWtXcE9ieGY2VGprbTRTNEc1K3FLbkN1SzlXaWdnbGVu?=
- =?utf-8?B?Y3ZOZ2tRNjhWNU9qUy9jQ0w4c2ROcUtUMVYzY3lPQzl1TUpVbEREb25QV1Yw?=
- =?utf-8?B?NFpnTTRPeHc0UWtrb1lPWGh0VnZQeHl4a04wOUphNWVlMkNiVys0aWNZVHBC?=
- =?utf-8?B?b2xXR1NrZ3M3aVBja0J5eUtPYnVhc1VVMXR1ekpVSHVlTXVraTFJeFZ5QXZp?=
- =?utf-8?B?UGFGQ2pkT2p3SGhOdGhmMUtiWHh4ZDJvRm5vb05RTnVjOW5uZHhPSWVEOXpJ?=
- =?utf-8?B?U0FTYlZRTk1UNFZoa2Jab3NlRmpTY0s5cUlmYzVuN0ZSRTVoSGpWRFlvWnBG?=
- =?utf-8?B?V3pMUTYyVHRxQllNbkVnZjhPVHJvZEU0SGVINE9lN0c2ekVNWFlSQjVyUTRE?=
- =?utf-8?B?MzNtZG5mcU11TFU1eXViUG1RN3dXS01jRnZRbmEzTUFVRHFkOUYwcUNGYWpU?=
- =?utf-8?B?TkRyaXpETHJrNEliUGhlUlliWUZDSXVXUEVEZ3FuSVEweG1SSG53MTZzNXg0?=
- =?utf-8?B?a2dTVGg1SEJHNTJDVng1T3h2M01ObHMwVGRKbys4a090U2xKR0JSSGZvbmFQ?=
- =?utf-8?B?MDd4UkFTNVFJUHBsamJteW93SjYwQ1VDalJMa0gwSnJrdDM2cDEwRnJaQmVQ?=
- =?utf-8?B?MVQ1azMyUlRpVTN2bG9iTjd6MVlRcW5JL2hlYVdrbTdBcEpicnVJU1JyUFg4?=
- =?utf-8?B?TjQxZk5FRHdVZTZZVk5VYjdYZlptRUpjdzhScE5ydHltRjVCK2RaS3lGZG1I?=
- =?utf-8?B?cDlUVSt6ZDBBWldyd1BaYndicGZ3OWIxdExuLzZrR2Rhc1c5MlVvaElRa3Yv?=
- =?utf-8?B?V2FoV1pZWUhiK3F1NnplVWtkS1duUVdwMU95eUo2NW1nd29YRVlZcEIzd2F1?=
- =?utf-8?B?VnZtL3JjTExidG9XMjd0RVlWQVlSWk9jOG5DbS9WZGRTWHAwRm9nM1ZMWXdM?=
- =?utf-8?B?ZjNOVHdGcXFETmsxZzBacmhRWVBWdmQzQzcvN0hxMWhUZzFVRFJqT24vS2ZM?=
- =?utf-8?B?RkM4cHp6VDVDdWtvZkRBODlINUkycXd3dDdCYUNyOGlvUFJjd3ljVDJOMXM4?=
- =?utf-8?B?dlQ1cm1UNTJmUitweXRNNHJJWlRsWGY5MllrTlJNUzZlVENNelVEMllLSm5O?=
- =?utf-8?B?TW5LNGpuajM4V0NWWnlMUjFxZG5qYkxYSVBQNGVpN0I3NFliTnE4VkhrNjE4?=
- =?utf-8?B?bmtkejlHMXVPbW9Rb2M4ZU5JdklMNng2cmkrZTJjNU9kKzBGV3RPZmJjRGV3?=
- =?utf-8?B?V2RzeDVOWS9QOXlaalI2RSs3Vnh4eUxDQVJuMW8vUzBvSVM5OWs5d3YxdGdS?=
- =?utf-8?Q?KU0QCpVXjv59lPdzoFkjjeUYU?=
+	=?us-ascii?Q?3Dfa91qK8fiume3v1zTvqmmzEEEScTbwFYE8Z6DIQetoF+VC7EHytN9VMJek?=
+ =?us-ascii?Q?Gyy4aByg8B7gq220FbgZ5ru7QK/WciNf/3Pu4WS3SKDyjUs+JYDWcqJHOwM8?=
+ =?us-ascii?Q?rpZaZG/hXzzMTgckyyWTGRYfd9b9Kjbkkf0Fd+VDnK3QE3Q+wRNRg2rbA30T?=
+ =?us-ascii?Q?mLLZ/A1F8Vkhg0j5sWC3+crgALvRtkiYgg8MBDeWiIT4gVwQHuaowMqer8ei?=
+ =?us-ascii?Q?G5Yiq9P4ka/v3MShE9c9NKvdInfLn4U9YeO4RAXb5J7eXoe1txALr0zpNqZu?=
+ =?us-ascii?Q?NHCGXtxMOPmo6eZKN37tFCB5uaf3M03lNxLvIXyB6Q5ZgKS4OgVgTmsUaL2z?=
+ =?us-ascii?Q?gdpo1ifmTvQLPmCTQr4KLAJaaAxdTu/f17iRPF4mB+GR+jycyEQTDLL6WyOT?=
+ =?us-ascii?Q?cPPWWk6yeS4wYuYr84JDAk73FDNUdWq9cNILbgyECUixEmwo7OxUiHzKewZx?=
+ =?us-ascii?Q?ZU5PLZN+myw9dpWvmzIV8KrN7K4kxwY3+AWntmbtR1HUgaakjeQCRZaXFHKX?=
+ =?us-ascii?Q?huWB9CRtaZaZSKcDPF4T9VvzI4RR7F3RZrg5CjR9UWbgB4RvKTNlzCjFsZay?=
+ =?us-ascii?Q?VbS7UVeUCILB5LrNI8FMca62d6cLvVGAfctlLx62LLYEChRBjJUpWc+g6HwR?=
+ =?us-ascii?Q?lUOQ1pfbt6uRwd2WTAHNExCLCmp5Pu8cbirFFIUh9I1xSb+PQbQriqDudKQP?=
+ =?us-ascii?Q?zPjJufmWQacho8yLerr11LgC+497B58LPjMsabaOIlS26HwUe7SaUgZ03FNb?=
+ =?us-ascii?Q?mFIHtKwN+RmH85h/boew9x5GjI8/z4IcOxXXsWUOZK823gcWv9PrdPcop2cg?=
+ =?us-ascii?Q?H3N0+P+A10Jb+mSkxvQEmxq8+fR+xhA/O0iLJ5l1bG4rB8Fe8DdiS6mHRZap?=
+ =?us-ascii?Q?CSHiPxLxSfoHWjXuS3taMXAAZ1UBBEeJkZWer/JB4QBW4fHvlyvERyTHLYjJ?=
+ =?us-ascii?Q?4+N1+p5TfAcrAl2u1V5mLf4tNbN8GA6wOw+cBN0F/9DaofxzuQtkI5mBSQN2?=
+ =?us-ascii?Q?0VHS+dIQH6cjLID7lnrCMGqP/Bj/V47jVOx1BfFV9Lq+xjgX9ts4kZ55uPxa?=
+ =?us-ascii?Q?yCjAVtN/EG0D3QgdO22BXDuoqQbDxxYlzJNf1buEpucaejAkhLR6WD6nfEQy?=
+ =?us-ascii?Q?1cRmfnPXWFwYF7wpqWJd0jntwchxIvcIxqkfdC7741LJ7VrKH87og3zy3wby?=
+ =?us-ascii?Q?iSRmmZTKtpFbW22N3XZZQ/VfskOTSQI1NCldtwhQc3wUHRPMP5yKa006Q5i0?=
+ =?us-ascii?Q?HFbxxAGD4oxZxMl8nkQlTgRGeyTCl9tTO6U1KkLvsqrY8GMHfgrs9YgbRvoj?=
+ =?us-ascii?Q?dEhHMzNd5JaHfTDM2TMxTX6yd8VjDc22P1taQC00TB2McZ/BYqRhzqi7urcQ?=
+ =?us-ascii?Q?gE1SofHCYI35Go6XEVa8vjNmr1e9VxJrFRHDU/XQujCQ+sGXMNzwoI5gs2TK?=
+ =?us-ascii?Q?4a7H+pFZt4Pix8V7sib7xkyb1mJFJXh8r/h21lqExosusT+MJN1uVaABTdqv?=
+ =?us-ascii?Q?rmU8F/GVK/DOh1D2Uv3cdKNk6rK7y4XfcCnXKDkRpjsNmpg3HaPEd6aRv4+a?=
+ =?us-ascii?Q?lkN50JmEqyn9ujiYjFcbJg85x2oIyd6bqZlLrnXX?=
 X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78ff224b-4a4e-4688-f0bb-08dca08d35e1
-X-MS-Exchange-CrossTenant-AuthSource: JH0PR06MB6849.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab3a8588-1a67-4d82-84dc-08dca08d4844
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2024 03:05:53.5443
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2024 03:06:24.5215
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: itj8ClYNWD/RyuhS+m4DWYt+WQq4SeFxQYnXHy1IMLhJtoOGS6kjgc7h8vWDaexStIbcPN/gT0AHt25SpH4kvA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6014
+X-MS-Exchange-CrossTenant-UserPrincipalName: BZJTCuF+CCBwALuEdfemJqoLO04JHEtjVDvIQNrZcb0jl6wbbwDAGzQ6i6k//ivZaDy4OMdLRzvsdchnAklgyw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5640
 
+Currently, we are using a mix of traditional UFS and zone UFS to support 
+some functionalities that cannot be achieved on zone UFS alone. However, 
+there are some issues with this approach. There exists a significant 
+performance difference between traditional UFS and zone UFS. Under normal 
+usage, we prioritize writes to zone UFS. However, in critical conditions 
+(such as when the entire UFS is almost full), we cannot determine whether 
+data will be written to traditional UFS or zone UFS. This can lead to 
+significant performance fluctuations, which is not conducive to 
+development and testing. To address this, we have added an option 
+zlu_io_enable under sys with the following three modes:
+1) zlu_io_enable == 0:Normal mode, prioritize writing to zone UFS;
+2) zlu_io_enable == 1:Zone UFS only mode, only allow writing to zone UFS;
+3) zlu_io_enable == 2:Traditional UFS priority mode, prioritize writing to 
+traditional UFS.
 
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+Signed-off-by: Wu Bo <bo.wu@vivo.com>
+---
+v4:
+	-Change some constant's name.
+---
+v3:
+	-Delete excess comments,
+	-Use enum instead of define,
+	-Modify some judgment criteria to make them more reasonable.
+---
+v2:
+	-Change name to blkzone_alloc_policy,
+	-Update manual of f2fs sysfs entry,
+	-Use macro instead of magic number,
+	-Initialize it w/ default policy in f2fs_scan_devices,
+	-Add validation check,
+	-Merged the ifdef PROFIG-BLK-DEV_ZONED area.
+---
+ Documentation/ABI/testing/sysfs-fs-f2fs | 14 ++++++++++++++
+ fs/f2fs/f2fs.h                          |  8 ++++++++
+ fs/f2fs/segment.c                       | 25 ++++++++++++++++++++++++-
+ fs/f2fs/super.c                         |  1 +
+ fs/f2fs/sysfs.c                         | 11 +++++++++++
+ 5 files changed, 58 insertions(+), 1 deletion(-)
 
-在 2024/7/10 10:41, Barry Song 写道:
-> On Wed, Jul 10, 2024 at 2:39 PM Zhiguo Jiang <justinjiang@vivo.com> wrote:
->> The releasing process of the non-shared anonymous folio mapped solely by
->> an exiting process may go through two flows: 1) the anonymous folio is
->> firstly is swaped-out into swapspace and transformed into a swp_entry
->> in shrink_folio_list; 2) then the swp_entry is released in the process
->> exiting flow. This will result in the high cpu load of releasing a
->> non-shared anonymous folio mapped solely by an exiting process.
->>
->> When the low system memory and the exiting process exist at the same
->> time, it will be likely to happen, because the non-shared anonymous
->> folio mapped solely by an exiting process may be reclaimed by
->> shrink_folio_list.
->>
->> This patch is that shrink skips the non-shared anonymous folio solely
->> mapped by an exting process and this folio is only released directly in
->> the process exiting flow, which will save swap-out time and alleviate
->> the load of the process exiting.
->>
->> Reviewed-by: Matthew Wilcox <willy@infradead.org>
->> Reviewed-by: David Hildenbrand <david@redhat.com>
-> No, this is a disaster. Please ask someone for help before you send it.
-> Neither Willy nor David has ever posted any Reviewed-by tags.
-> Please do get someone to help you. Stop posting like this!
-
-Reviewed-by tags information has been updated in v9. Thank you for agreeing
-my idea and providing strong assistance in improving the subsequent patchs.
-
-Thanks
-Zhiguo
-
->
->
->> Acked-by: Barry Song <baohua@kernel.org>
->> Signed-off-by: Zhiguo Jiang <justinjiang@vivo.com>
->> ---
->>
->> Change log:
->> v7->v8:
->> 1.Add tags of Reviewed-by and Acked-by.
->> 2.Add #include <linux/oom.h> to solve compilation issue.
->> v6->v7:
->> 1.Modify tab indentation to space indentation of the continuation
->> lines of the condition.
->> v5->v6:
->> 1.Move folio_likely_mapped_shared() under the PTL.
->> 2.Add check_stable_address_space() to replace MMF_OOM_SKIP.
->> 3.Remove folio_test_anon(folio).
->> v4->v5:
->> 1.Further modify to skip non-shared anonymous folio only.
->> 2.Update comments for pra->referenced = -1.
->> v3->v4:
->> 1.Modify to skip only the non-shared anonymous folio mapped solely
->> by an exiting process.
->> v2->v3:
->> Nothing.
->> v1->v2:
->> 1.The VM_EXITING added in v1 patch is removed, because it will fail
->> to compile in 32-bit system.
->>
->> Comments from participants and my responses:
->> [v7->v8]:
->> 1.Barry Song <baohua@kernel.org>
->> You should have collected tags such as reviewed-by, acked-by you got in
->> v6 while sending v7.
->> -->
->> Added in patch v8.
->>
->> You didn't even pass the compilation stage because you're missing
->> 'linux/oom.h'. It's quite disappointing because I believe in your idea,
->> but you didn't even build it before sending.
->> -->
->> Sorry, I overlooked the compilation of folio_likely_mapped_shared() added
->> in patch v5. Compiled and Updated have been compeleted in patch v8.
->>
->> [v6->v7]:
->> 1.Matthew Wilcox <willy@infradead.org>
->> You told me you'd fix the indentation.  You cannot indent both the
->> continuation lines of the condition and the body of the if by one tab
->> each!
->> -->
->> Modify tab indentation to space indentation of the continuation
->> lines of the condition.
->>
->> [v5->v6]:
->> 1.David Hildenbrand <david@redhat.com>
->> I'm currently working on moving all folio_likely_mapped_shared() under
->> the PTL, where we are then sure that the folio is actually mapped by
->> this process (e.g., no concurrent unmapping poisslbe). Can we do the
->> same here directly?
->> -->
->> You are right. we might use page_vma_mapped_walk_done() to bail out.
->> (Barry Song)
->>
->> 2.Barry Song <baohua@kernel.org>
->> By the way, I am not convinced that using test_bit(MMF_OOM_SKIP,
->> &vma->vm_mm->flags) is correct (I think it is wrong). And exit_mmap()
->> automatically has MMF_OOM_SKIP. What is the purpose of this check?
->> Is there a better way to determine if a process is an OOM target?
->> What about check_stable_address_space() ?
->> -->
->> Sorry, I overlook the situation with if (is_global_init(p)),
->> MMF_OOM_SKIP is indeed not suitable. It seems feasible for
->> check_stable_address_space() replacing MMF_OOM_SKIP.
->> check_stable_address_space() can indicate oom kill, and
->> !atomic_read(&vma->vm_mm->mm_users) can indicate the normal
->> process exiting.
->>
->> I also think we actually can remove "folio_test_anon(folio)".
->> -->
->> Yes, update in patch v6.
->>
->> [v4->v5]:
->> 1.Barry Song <baohua@kernel.org>
->> I don't think this is correct. folio_likely_mapped_shared() is almost
->> "correct" but not always.
->> Please explain why you set  pra->referenced =  -1. Please address all
->> comments before you send a new version.
->> -->
->> Update in patch v5.
->>
->> 2.Matthew Wilcox <willy@infradead.org>
->> How is the file folio similar?  File folios are never written to swap,
->> and they'll be written back from the page cache whenever the filesystem
->> decides it's a good time to do so.
->> -->
->> What do you mean is that the file folio will not have any relevant
->> identifier left in memory after it is reclamed in the shrink flow,
->> and it will not be released again during an exiting process? If that's
->> the case, I think we only need the anon folio is skipped here.
->>
->> [v3->v4]:
->> 1.Barry Song <baohua@kernel.org>
->> This is clearly version 3, as you previously sent version 2, correct?
->> -->
->> Yes.
->>
->> Could you please describe the specific impact on users, including user
->> experience and power consumption? How serious is this problem?
->> -->
->> At present, I do not have a suitable method to accurately measure the
->> optimization benefit datas of this modifications, but I believe it
->> theoretically has some benefits.
->> Launching large memory app (for example, starting the camera) in multiple
->> backend scenes may result in the high cpu load of the exiting processes.
->>
->> Applications?
->> -->
->> Yes, when system is low memory, it more likely to occur.
->>
->> I'm not completely convinced this patch is correct, but it appears to be
->> heading in the right direction. Therefore, I expect to see new versions
->> rather than it being dead.
->> You changed the file mode to 755, which is incorrect.
->> -->
->> Solved.
->>
->> Why use -1? Is this meant to simulate lock contention to keep the folio
->> without activating it? Please do have some comments to explain why.
->> I'm not convinced this change is appropriate for shared folios. It seems
->> more suitable for exclusive folios used solely by the exiting process.
->> -->
->> The skiped folios are FOLIOREF_KEEP and added into inactive lru, beacase
->> the folios will be freed soon in the exiting process flow.
->> Yes, the shared folios can not be simply skipped. I have made relevant
->> modifications in patch v4 and please help to further review.
->> https://lore.kernel.org/linux-mm/20240708031517.856-1-justinjiang@vivo.com/
->>
->> 2.David Hildenbrand <david@redhat.com>
->> but what if it is shared among multiple processes and only one of them
->> is exiting?
->> -->
->> Modify to skip only the non-shared anonymous folio mapped solely
->> by an exiting process in next version v4.
->>
->> [v2->v3:]
->> Nothing.
->>
->> [v1->v2]:
->> 1.Matthew Wilcox <willy@infradead.org>
->> What testing have you done of this patch?  How often does it happen?
->> Are there particular workloads that benefit from this?  (I'm not sure
->> what "mutil backed-applications" are?)
->> And I do mean specifically of this patch, because to my eyes it
->> shouldn't even compile. Except on 32-bit where it'll say "warning:
->> integer constant out of range".
->> -->
->> Yes, I have tested. When the low system memory and the exiting process
->> exist at the same time, it will happen. This modification can alleviate
->> the load of the exiting process.
->> "mutil backed-applications" means that there are a large number of
->> the backend applications in the system.
->> The VM_EXITING added in v1 patch is removed, because it will fail
->> to compile in 32-bit system.
->>
->>   mm/rmap.c   | 15 +++++++++++++++
->>   mm/vmscan.c |  7 ++++++-
->>   2 files changed, 21 insertions(+), 1 deletion(-)
->>   mode change 100644 => 100755 mm/rmap.c
->>
->> diff --git a/mm/rmap.c b/mm/rmap.c
->> index 26806b49a86f..5b92c3dadcc2 100644
->> --- a/mm/rmap.c
->> +++ b/mm/rmap.c
->> @@ -75,6 +75,7 @@
->>   #include <linux/memremap.h>
->>   #include <linux/userfaultfd_k.h>
->>   #include <linux/mm_inline.h>
->> +#include <linux/oom.h>
->>
->>   #include <asm/tlbflush.h>
->>
->> @@ -870,6 +871,20 @@ static bool folio_referenced_one(struct folio *folio,
->>                          continue;
->>                  }
->>
->> +               /*
->> +                * Skip the non-shared swapbacked folio mapped solely by
->> +                * the exiting or OOM-reaped process. This avoids redundant
->> +                * swap-out followed by an immediate unmap.
->> +                */
->> +               if ((!atomic_read(&vma->vm_mm->mm_users) ||
->> +                   check_stable_address_space(vma->vm_mm)) &&
->> +                   folio_test_swapbacked(folio) &&
->> +                   !folio_likely_mapped_shared(folio)) {
->> +                       pra->referenced = -1;
->> +                       page_vma_mapped_walk_done(&pvmw);
->> +                       return false;
->> +               }
->> +
->>                  if (pvmw.pte) {
->>                          if (lru_gen_enabled() &&
->>                              pte_young(ptep_get(pvmw.pte))) {
->> diff --git a/mm/vmscan.c b/mm/vmscan.c
->> index 80f9a486cf27..1d5f78a3dbeb 100644
->> --- a/mm/vmscan.c
->> +++ b/mm/vmscan.c
->> @@ -863,7 +863,12 @@ static enum folio_references folio_check_references(struct folio *folio,
->>          if (vm_flags & VM_LOCKED)
->>                  return FOLIOREF_ACTIVATE;
->>
->> -       /* rmap lock contention: rotate */
->> +       /*
->> +        * There are two cases to consider.
->> +        * 1) Rmap lock contention: rotate.
->> +        * 2) Skip the non-shared swapbacked folio mapped solely by
->> +        *    the exiting or OOM-reaped process.
->> +        */
->>          if (referenced_ptes == -1)
->>                  return FOLIOREF_KEEP;
->>
->> --
->> 2.39.0
->>
+diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+index cad6c3dc1f9c..3500920ab7ce 100644
+--- a/Documentation/ABI/testing/sysfs-fs-f2fs
++++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+@@ -763,3 +763,17 @@ Date:		November 2023
+ Contact:	"Chao Yu" <chao@kernel.org>
+ Description:	It controls to enable/disable IO aware feature for background discard.
+ 		By default, the value is 1 which indicates IO aware is on.
++
++What:		/sys/fs/f2fs/<disk>/blkzone_alloc_policy
++Date:		July 2024
++Contact:	"Yuanhong Liao" <liaoyuanhong@vivo.com>
++Description:	The zone UFS we are currently using consists of two parts:
++		conventional zones and sequential zones. It can be used to control which part
++		to prioritize for writes, with a default value of 0.
++
++		========================  =========================================
++		value					  description
++		blkzone_alloc_policy = 0  Prioritize writing to sequential zones
++		blkzone_alloc_policy = 1  Only allow writing to sequential zones
++		blkzone_alloc_policy = 2  Prioritize writing to conventional zones
++		========================  =========================================
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index f7ee6c5e371e..adefd19810ff 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -134,6 +134,12 @@ typedef u32 nid_t;
+ 
+ #define COMPRESS_EXT_NUM		16
+ 
++enum blkzone_allocation_policy {
++	BLKZONE_ALLOC_PRIOR_SEQ;	/* Prioritize writing to sequential zones */
++	BLKZONE_ALLOC_ONLY_SEQ;		/* Only allow writing to sequential zones */
++	BLKZONE_ALLOC_PRIOR_CONV;	/* Prioritize writing to conventional zones */
++};
++
+ /*
+  * An implementation of an rwsem that is explicitly unfair to readers. This
+  * prevents priority inversion when a low-priority reader acquires the read lock
+@@ -1555,6 +1561,8 @@ struct f2fs_sb_info {
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 	unsigned int blocks_per_blkz;		/* F2FS blocks per zone */
+ 	unsigned int max_open_zones;		/* max open zone resources of the zoned device */
++	/* For adjust the priority writing position of data in zone UFS */
++	unsigned int blkzone_alloc_policy;
+ #endif
+ 
+ 	/* for node-related operations */
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 4db1add43e36..026b61602113 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2686,17 +2686,40 @@ static int get_new_segment(struct f2fs_sb_info *sbi,
+ 			goto got_it;
+ 	}
+ 
++#ifdef CONFIG_BLK_DEV_ZONED
+ 	/*
+ 	 * If we format f2fs on zoned storage, let's try to get pinned sections
+ 	 * from beginning of the storage, which should be a conventional one.
+ 	 */
+ 	if (f2fs_sb_has_blkzoned(sbi)) {
+-		segno = pinning ? 0 : max(first_zoned_segno(sbi), *newseg);
++		/* Prioritize writing to conventional zones */
++		if (sbi->blkzone_alloc_policy == BLKZONE_ALLOC_PRIOR_CONV || pinning)
++			segno = 0;
++		else
++			segno = max(first_zoned_segno(sbi), *newseg);
+ 		hint = GET_SEC_FROM_SEG(sbi, segno);
+ 	}
++#endif
+ 
+ find_other_zone:
+ 	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
++
++#ifdef CONFIG_BLK_DEV_ZONED
++	if (secno >= MAIN_SECS(sbi) && f2fs_sb_has_blkzoned(sbi)) {
++		/* Write only to sequential zones */
++		if (sbi->blkzone_alloc_policy == BLKZONE_ALLOC_ONLY_SEQ) {
++			hint = GET_SEC_FROM_SEG(sbi, first_zoned_segno(sbi));
++			secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
++		} else
++			secno = find_first_zero_bit(free_i->free_secmap,
++								MAIN_SECS(sbi));
++		if (secno >= MAIN_SECS(sbi)) {
++			ret = -ENOSPC;
++			goto out_unlock;
++		}
++	}
++#endif
++
+ 	if (secno >= MAIN_SECS(sbi)) {
+ 		secno = find_first_zero_bit(free_i->free_secmap,
+ 							MAIN_SECS(sbi));
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 4a1bc8f40f9a..95ae6de77939 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4229,6 +4229,7 @@ static int f2fs_scan_devices(struct f2fs_sb_info *sbi)
+ 	sbi->aligned_blksize = true;
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 	sbi->max_open_zones = UINT_MAX;
++	sbi->blkzone_alloc_policy = BLKZONE_ALLOC_PRIOR_SEQ;
+ #endif
+ 
+ 	for (i = 0; i < max_devices; i++) {
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index fee7ee45ceaa..63ff2d1647eb 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -627,6 +627,15 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+ 	}
+ #endif
+ 
++#ifdef CONFIG_BLK_DEV_ZONED
++	if (!strcmp(a->attr.name, "blkzone_alloc_policy")) {
++		if (t < BLKZONE_ALLOC_PRIOR_SEQ || t > BLKZONE_ALLOC_PRIOR_CONV)
++			return -EINVAL;
++		sbi->blkzone_alloc_policy = t;
++		return count;
++	}
++#endif
++
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 	if (!strcmp(a->attr.name, "compr_written_block") ||
+ 		!strcmp(a->attr.name, "compr_saved_block")) {
+@@ -1033,6 +1042,7 @@ F2FS_SBI_GENERAL_RW_ATTR(warm_data_age_threshold);
+ F2FS_SBI_GENERAL_RW_ATTR(last_age_weight);
+ #ifdef CONFIG_BLK_DEV_ZONED
+ F2FS_SBI_GENERAL_RO_ATTR(unusable_blocks_per_sec);
++F2FS_SBI_GENERAL_RW_ATTR(blkzone_alloc_policy);
+ #endif
+ 
+ /* STAT_INFO ATTR */
+@@ -1187,6 +1197,7 @@ static struct attribute *f2fs_attrs[] = {
+ #endif
+ #ifdef CONFIG_BLK_DEV_ZONED
+ 	ATTR_LIST(unusable_blocks_per_sec),
++	ATTR_LIST(blkzone_alloc_policy),
+ #endif
+ #ifdef CONFIG_F2FS_FS_COMPRESSION
+ 	ATTR_LIST(compr_written_block),
+-- 
+2.25.1
 
 
