@@ -1,130 +1,175 @@
-Return-Path: <linux-kernel+bounces-248187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1B3A92D94B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:38:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E71292D955
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3F6F1C20FA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:38:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6262B1C21073
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A147719882F;
-	Wed, 10 Jul 2024 19:38:06 +0000 (UTC)
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6CB19538B;
+	Wed, 10 Jul 2024 19:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LDQVz0h9"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0734419538B;
-	Wed, 10 Jul 2024 19:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AF6197A91;
+	Wed, 10 Jul 2024 19:38:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720640286; cv=none; b=tTx2+QMTJKYOue66zRU7nfKYkKloSrl875fax+X90Ej3zlLV/sW4LkQwL4TYwydkdVNjTALwx1q1opG8VqUhedOnQv3cV6NJRbXsSAfnhvrxeFyR7vz1PmgNn02HL3m8X2ueWD+8WO1il+FhwsRinP1VuTvIp5wVIaPSVsU+qQI=
+	t=1720640326; cv=none; b=PASjtSb7bScl/6qL0x/QQUsKsoBC9ebovyEj3JeP2WYOZTr2YdDu21XlV3epAYqnnrx/JDBAHXmySCIeTuDL+9ZpcUCLewQ5WIkSDn1mffhldN7TTcfFCGJmVlRtCfakPyxB3hMuuGJi4MZh6cxNIS2dBVAF5SWKmQYPqlrNdJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720640286; c=relaxed/simple;
-	bh=n6EYr46AuST27gIAUpFNLvkfz5XkGxXolnSJHFI7on4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=IyX/tnByP5INReKftNA56tdk9Aw1n6pRuCZyG4gMhRv+q8OmrL0+yOQKG1R6fbPfwBlOkocrJqXO9Qnqaeocf4Hy+xq/c6TOdnAsrIXMG2cZJdi2S/tAQLb5XEyxtxU6LC2h7yXMXl68i3r5/lJyN37XqzDl7X6M2YRGv21biZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [IPv6:2a02:810b:4340:4ee9:4685:ff:fe12:5967])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id 72D59581A;
-	Wed, 10 Jul 2024 21:38:00 +0200 (CEST)
+	s=arc-20240116; t=1720640326; c=relaxed/simple;
+	bh=67Yjzf2Um2vbW/jejczx+mLuuT41TRVxg2Nb7tadK7c=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xx0QLreUgNZ5vk1J+a80nGMretWkZCafPQhLGqRS1y/g0oj3zltt+s+bV/UzSswGyc+8jMG2ntJEhxyI6lyW+CbzZ3QVPug53Puw9ZFEQTmUE1Ac+ve8Y27WcuIA66NLL7dS4MUN7N8owaELF/NSvZwe95+39X/Ip4Mj8j3w9hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LDQVz0h9; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52ea33671ffso137156e87.3;
+        Wed, 10 Jul 2024 12:38:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720640323; x=1721245123; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ucNUszqGgbpRfZE5T8sdF/JDYyD263mTxEW1kpHw0MY=;
+        b=LDQVz0h99rIjdNa9Hx3HQHi5NJvUPLVRmFnjSKrFJbcjyTwEOQnb9pCtdEJQolDx/X
+         Roh+XzyEkOYydcVOF4E5YEjlHrjdPKJeuWw2rrVXrYz7eGGxfqIQARDUS0bG6ouESlvZ
+         if5IEkmVIRf0bJqqkJV6v1mGhX0VS1cpsbOnAHJSvs0h80S1I0zG5mq8GdI1YGR/tztk
+         eYAQP/qK1gEQZfy+OnO/O2LhlC9jMnFyM8fDu3UWiGWTSOfpQG5g6kYURCV7EISIJ0M5
+         99Z1913hzlG4N7JQz3KAlEm1qBEzjwdi1rnMoQGig2pnl/hKNQS89JuHNfIAgAo81LRU
+         WduA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720640323; x=1721245123;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ucNUszqGgbpRfZE5T8sdF/JDYyD263mTxEW1kpHw0MY=;
+        b=ErOyMD6V6fhI+k+0jqe4QMh4Ni6ku5hF1MPMMrx502EqE8YTmk09PAtOQw3wK7ESa8
+         FBKus76wEFu66c4E+I5ivKJ6Lge8wZH2RlfGywumiRw4CC1ICpEX5Iah0o6SDERO7PNI
+         8b5rzVC/Dl435TftM6R4AeknAnKTNaf3+2L6BuZ5GkaDgI7kFJCRBt9BAGFXAbCQQ7LM
+         9Gd20ERJ47MlnFeNsVJ6cyCgK3mLTDTKRopHIEGocqQcEEj3R/2gC9xJvXtZhWe5N2RK
+         UmcwJ0M9Ze6YGCJd6Iz1/Oow8gVmxgzoG6V3qUQZSaVRQxrI0zjykzYWoYkBmIA4670B
+         DXgg==
+X-Forwarded-Encrypted: i=1; AJvYcCXOh7yzRr5AgXZaoMKUQQj0Odb8P4/x+63euQFLOZxhMoEkXJrdbo6ZZNJwqz3agyZy+R+TvVxxfrHA16qU1Gu/z/E/dA5A4DVdFzwN4WFjSV3jbDyI6s7mgzdqmlUxI6O/XvY3+0uASWx41k1qWnKa
+X-Gm-Message-State: AOJu0YyBUcvUXrEPlXqu79Mqd85YlEnT+ok93FSZe0/FMpYfatO4mvqd
+	Wl2IqjhtR5SWt3HkzbtbP9Xu3tyxt26w+qYYD2dHoFwUdwCfyFauzsEF5A==
+X-Google-Smtp-Source: AGHT+IEuOXyyWPPNk0yoLSmKUKV5JcDXpfD54l4ptMXZhiaBuTy+1ygXqNIRx0nn3b5/jHy0OsiXEQ==
+X-Received: by 2002:a05:6512:48c5:b0:52e:be14:7012 with SMTP id 2adb3069b0e04-52ebe14717emr2370217e87.32.1720640322359;
+        Wed, 10 Jul 2024 12:38:42 -0700 (PDT)
+Received: from krava (85-193-35-231.rib.o2.cz. [85.193.35.231])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6e09fcsm93162645e9.4.2024.07.10.12.38.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 12:38:42 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 10 Jul 2024 21:38:40 +0200
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+	andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org,
+	clm@meta.com, mingo@kernel.org, paulmck@kernel.org,
+	rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] uprobes: make uprobe_register() return struct uprobe
+ *
+Message-ID: <Zo7jQOWyUGp6YTbz@krava>
+References: <20240710140017.GA1074@redhat.com>
+ <20240710163022.GA13298@redhat.com>
+ <20240710163133.GD13298@redhat.com>
+ <Zo67c9nvbRD0h4-b@krava>
+ <CAEf4BzaSDUWiSywUNrDtd-yW6p53vFYkZkr5mb461jmUgWV_2g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 10 Jul 2024 21:38:00 +0200
-Message-Id: <D2M42ODWQPAU.I0BMEOLKUP29@kernel.org>
-Subject: Re: [PATCH v1 4/4] drm/panel: ili9806e: Break some CMDS into helper
- functions
-Cc: "Cong Yang" <yangcong5@huaqin.corp-partner.google.com>,
- <quic_jesszhan@quicinc.com>, <neil.armstrong@linaro.org>,
- <linus.walleij@linaro.org>, <airlied@gmail.com>,
- <dmitry.baryshkov@linaro.org>, <dri-devel@lists.freedesktop.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Doug Anderson" <dianders@chromium.org>
-X-Mailer: aerc 0.16.0
-References: <20240710084715.1119935-1-yangcong5@huaqin.corp-partner.google.com> <20240710084715.1119935-5-yangcong5@huaqin.corp-partner.google.com> <D2LQJROQYIY3.2Q88EXS8HUDLQ@kernel.org> <CAD=FV=WAosZPSKdpwR6pjOmiy4hih=jXaMg2guuVgmc+qj-Csw@mail.gmail.com>
-In-Reply-To: <CAD=FV=WAosZPSKdpwR6pjOmiy4hih=jXaMg2guuVgmc+qj-Csw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzaSDUWiSywUNrDtd-yW6p53vFYkZkr5mb461jmUgWV_2g@mail.gmail.com>
 
-On Wed Jul 10, 2024 at 9:12 PM CEST, Doug Anderson wrote:
-> Hi,
->
-> On Wed, Jul 10, 2024 at 2:02=E2=80=AFAM Michael Walle <mwalle@kernel.org>=
- wrote:
+On Wed, Jul 10, 2024 at 11:23:10AM -0700, Andrii Nakryiko wrote:
+> On Wed, Jul 10, 2024 at 9:49 AM Jiri Olsa <olsajiri@gmail.com> wrote:
 > >
-> > On Wed Jul 10, 2024 at 10:47 AM CEST, Cong Yang wrote:
-> > > Break select page cmds into helper function.
+> > On Wed, Jul 10, 2024 at 06:31:33PM +0200, Oleg Nesterov wrote:
 > >
-> > Why though? I don't find that anything easier to read. In fact, I
-> > deliberately chose not to factor that out into a function. It's just
-> > a sequence of magic commands, taken straight from the datasheet. So,
-> > I'd like to keep it that way.
->
-> The consensus of previous discussion on the lists was that folks
-> agreed that we should, where possible, make it more obvious what these
-> magic sequences of commands were doing. IMO separating out the page
-> switch command helps. Certainly I'm always happy to hear other
-> opinions, though.
-
-Fair enough, but in that case, one should take the datasheet (which
-you can find online) and replace all the magic numbers with the
-correct command names from it. E.g. 0xff is the ENEXTC register. To
-be clear, I'm not just talking about the "switch page command".
-
-As patch stands, I don't see much value, TBH. On the contrary, you
-make it harder to compare it with the Ortustech panel datasheet.
-
-just my 2c,
--michael
-
-> > -michael
+> > SNIP
 > >
-> > > Signed-off-by: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
-> > > ---
-> > >  drivers/gpu/drm/panel/panel-ilitek-ili9806e.c | 14 ++++++++++----
-> > >  1 file changed, 10 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9806e.c b/drivers/=
-gpu/drm/panel/panel-ilitek-ili9806e.c
-> > > index e4a44cd26c4d..68fb9a1a4d80 100644
-> > > --- a/drivers/gpu/drm/panel/panel-ilitek-ili9806e.c
-> > > +++ b/drivers/gpu/drm/panel/panel-ilitek-ili9806e.c
-> > > @@ -35,6 +35,12 @@ struct ili9806e_panel {
-> > >       enum drm_panel_orientation orientation;
+> > > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> > > index 467f358c8ce7..7571811127a2 100644
+> > > --- a/kernel/trace/bpf_trace.c
+> > > +++ b/kernel/trace/bpf_trace.c
+> > > @@ -3157,6 +3157,7 @@ struct bpf_uprobe {
+> > >       loff_t offset;
+> > >       unsigned long ref_ctr_offset;
+> > >       u64 cookie;
+> > > +     struct uprobe *uprobe;
+> > >       struct uprobe_consumer consumer;
 > > >  };
 > > >
-> > > +#define ILI9806E_DCS_SWITCH_PAGE     0xff
-> > > +
-> > > +#define ili9806e_switch_page(ctx, page) \
-> > > +     mipi_dsi_dcs_write_seq_multi(ctx, ILI9806E_DCS_SWITCH_PAGE, \
-> > > +                                  0xff, 0x98, 0x06, 0x04, (page))
-> > > +
-> > >  static const char * const regulator_names[] =3D {
-> > >       "vdd",
-> > >       "vccio",
-> > > @@ -227,7 +233,7 @@ static void ili9806e_dsi_remove(struct mipi_dsi_d=
-evice *dsi)
-> > >  static void com35h3p70ulc_init(struct mipi_dsi_multi_context *ctx)
+> > > @@ -3180,10 +3181,8 @@ static void bpf_uprobe_unregister(struct path *path, struct bpf_uprobe *uprobes,
 > > >  {
-> > >       /* Switch to page 1 */
-> > > -     mipi_dsi_dcs_write_seq_multi(ctx, 0xff, 0xff, 0x98, 0x06, 0x04,=
- 0x01);
-> > > +     ili9806e_switch_page(ctx, 0x01);
->
-> I think with your change you should remove the "Switch to page X"
-> comments since they're now obvious. Other than that, I'm happy with:
->
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> > >       u32 i;
+> > >
+> > > -     for (i = 0; i < cnt; i++) {
+> > > -             uprobe_unregister(d_real_inode(path->dentry), uprobes[i].offset,
+> > > -                               &uprobes[i].consumer);
+> > > -     }
+> >
+> > nice, we could also drop path argument now
+> 
+> see my comments to Oleg, I think we can/should get rid of link->path
+> altogether if uprobe itself keeps inode alive.
 
+yea, I was thinking of that, but then it's kind of useful to have it in
+bpf_uprobe_multi_link_fill_link_info, otherwise we have to take it from
+first uprobe in the link, but ok, still probably worth to remove it ;-)
+
+anyway as you wrote it's ok for follow up cleanup, I'll check on that
+
+> 
+> BTW, Jiri, do we have any test for multi-uprobe that simulates partial
+> attachment success/failure (whichever way you want to look at it). It
+> would be super useful to have to check at least some error handling
+> code in the uprobe code base. If we don't, do you mind adding
+> something simple to BPF selftests?
+
+there's test_attach_api_fails, but I think all checked fails are before
+actually calling uprobe_register function
+
+I think there are few ways to fail the uprobe_register, like install it
+on top of int3.. will check add some test for that
+
+jirka
+
+> 
+> >
+> > jirka
+> >
+> > > +     for (i = 0; i < cnt; i++)
+> > > +             uprobe_unregister(uprobes[i].uprobe, &uprobes[i].consumer);
+> > >  }
+> > >
+> > >  static void bpf_uprobe_multi_link_release(struct bpf_link *link)
+> > > @@ -3477,11 +3476,12 @@ int bpf_uprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
+> > >                     &bpf_uprobe_multi_link_lops, prog);
+> > >
+> > >       for (i = 0; i < cnt; i++) {
+> > > -             err = uprobe_register(d_real_inode(link->path.dentry),
+> > > +             uprobes[i].uprobe = uprobe_register(d_real_inode(link->path.dentry),
+> > >                                            uprobes[i].offset,
+> > >                                            uprobes[i].ref_ctr_offset,
+> > >                                            &uprobes[i].consumer);
+> > > -             if (err) {
+> > > +             if (IS_ERR(uprobes[i].uprobe)) {
+> > > +                     err = PTR_ERR(uprobes[i].uprobe);
+> > >                       bpf_uprobe_unregister(&path, uprobes, i);
+> > >                       goto error_free;
+> > >               }
 
