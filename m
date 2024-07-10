@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-248314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A82E292DBA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:08:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E0892DBA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:09:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31FC21F26CC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:08:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DAE41C217B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6666E14A0B2;
-	Wed, 10 Jul 2024 22:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC23E146017;
+	Wed, 10 Jul 2024 22:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eWAfO2w+"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lwCPatGc"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C06143873
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 22:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E647143873
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 22:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720649238; cv=none; b=NwTV5mUkL4TKim/JuJxuuLPcyuZ3KzBqi8GAvfk2VgJBI5c252UmGu80dwSK9klqlla1ByZmsoxSP9d2xo1M6RJ3QzrY48J8LufNu3r/Uw+ic16G/GADllZl0w01t/NQJzV4WsbocA51k/YwJ09GAuSfd/x1k+lsIT9BIOr7+rk=
+	t=1720649302; cv=none; b=OOXM9i0F7QweASglBtO2d6o7UH/l0tFo+K+TUZodkZfuYcdxELysFQqvMFX9/M5mZFJCGS3b+0Yo4zGe/1qXfjA8voDIeYOMSrHyy+A3cckbexk2k2PSnoLDNrp5t1oR5zcGnTR4MEnrfo6RbtwvaRaON8ENRnoF6NGK163GBzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720649238; c=relaxed/simple;
-	bh=8PdMT0Xa+IAWrYH5CqVad+0d9o3IwBxq8Utk8wkqAio=;
+	s=arc-20240116; t=1720649302; c=relaxed/simple;
+	bh=dzOLJpFyieQl7kksJPwjcpnbe7AKqyPC/fUWFO7I6TY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lkgE66AOfw2XaddAUjq3AUxhOuysHi2ZXS1vXJGoiRzXrPq/pJkcC8oHkZ3WhzG4daKWSKy/FbiHSU8id7ITde+pYpmYKqrga6DDYXq1NTWADnlwYhYLlLIkVb2Sj+7PvrXDGbqqh7Jj9giHYhgFWkX8JcyzI2eXVlTnGuRchDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eWAfO2w+; arc=none smtp.client-ip=209.85.208.41
+	 In-Reply-To:Content-Type; b=WLcthf4Ka8bqkyfbd6zCoAr/tSRs6quelxj/m1fIbWU72FerkqMT2a1qL3i2mJs+/xxbPcKMZsJYbwvI4rx9RtEQayDcSKaZJ3/MwQimrctx5jO3ws5kgmQ6PaTkmoI7DlmQmKyPcTroYn3zqdLS796fdQPv/PT11dwRYy8okos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lwCPatGc; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa69dso341486a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:07:15 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2eea8ea8bb0so3546621fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:08:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720649234; x=1721254034; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720649299; x=1721254099; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=9H9KVdvsFZKQpaap3qbncNFDicrGBdDbDfc5aQ3qGYo=;
-        b=eWAfO2w+B3TTlKK+zDr7cVeQDkCfYckokVfk7IRvNKqxgqvYc2d8Di1dlIP910FfZf
-         1dVX7UUwTMr8G7pBeA3y450d0ESJSGMZB3qY0r3WG82IU1f5Xqb26fjH21yNAU3MNDwA
-         oL1P9xvk+X/qYgWJ5AYS3iS96I5h/HIzz16XW67cJq1MqxYUptrDEMipvcLPhmypJFxA
-         H79fjbo5Q6cA9WzZsEnwxIgeBjQyyUyYtuA/43HFzAsdO6uPyie+dsfFiP66K8iUZ10l
-         KN8l8xs1rt/5HeCJEQe9wFfs6IsvFzsapr1JsehSe2j8hnuLBfd/O7hsbaE8V6aRT7tm
-         U2KA==
+        bh=IbyAVC5whDcTrfC0f+jOeAkJG6+z9GUKk1zNJj92TQw=;
+        b=lwCPatGcQxe+wDMwNtcBtnz+Brwi29I16ZfR+pZMjB25AzhGqSdenxIsy1WJieZ4uv
+         x1nEncoMOtHjmCHlmB/rMReuY6Wre/M13QsXHoz2DZsXGXYUzrD6BqXDy4TNNmbFwOYd
+         8Z7AYZiOEo3awTKUz3BPTNdx40RI9FG2mNNEXbkebudXtgdAtW4mgxavEbjmTBchqnvG
+         b/exIrXiPfMaDHN0DpeStfMpzjRXQOIftFK3GjN8JCZv/o1RpZG2oS4wDyauxvg2Tk0U
+         RyjavS7R8O3jmncaDalVdIQEZdfw/pMWVVsoUliqAnYbM5BJw6BLOgprAbiliyghHiOa
+         7scA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720649234; x=1721254034;
+        d=1e100.net; s=20230601; t=1720649299; x=1721254099;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9H9KVdvsFZKQpaap3qbncNFDicrGBdDbDfc5aQ3qGYo=;
-        b=rSy6pAej4zDQ+m01eC7m/IIl4CcnumbZ/rWZep/GfueMAiALRtCDeDAjLpTzctHYRJ
-         hE88tmC86RtkBH37FChhcIidTnj+5tFiGW/Uke9Lkts8URzj0r1gjmKcTfpg5WT3hp4Y
-         fuO8IeK1Oy6bgbk/kH+VDEp8omBSQDnoT5ONjgK/+7xumPU3vdYyp6xNZ9MLKpGdO8r1
-         gqxYqzaDV1XIwD9Td5m6GXUHeqshGBVN9gTVE7sIv8tMOxVQLPC8gan3pjRw3Rc2ODup
-         lm1f3ZP0nJP4k+zOIb/A8oQD5tvp0zaLi+Ry/CJvK2vF47YDDwDCUhhYdRzdaHFaGNvn
-         uKLA==
-X-Forwarded-Encrypted: i=1; AJvYcCXS91Jb8sJpjHF5q7jjR/f1tyiNFaQEXVIdz4FTrbao3+e7NhQhTFer6KkqceMf++ae0n5VLT/pzTzg/5l8/XgoZykaGavX//Drxced
-X-Gm-Message-State: AOJu0YwriN6sOYV1vQZmkZF+MPao8dCrvZ0SofUbSmyFYoB/mZt/uhpl
-	isEjdCoeuZ1hPWiNvrmtysyXMayJAZuhB3ci27aCAbP1Sp+1zfJJenndnMQyLEw=
-X-Google-Smtp-Source: AGHT+IEro5tD1HRn9AyujC41uwXOu47HaADaQB9ttxw2u6NdKu7uNyCdC1pcI2Ix9Uz3iAKvZKcijg==
-X-Received: by 2002:a50:ef01:0:b0:58b:a92f:2901 with SMTP id 4fb4d7f45d1cf-594baf9181amr3957891a12.17.1720649233561;
-        Wed, 10 Jul 2024 15:07:13 -0700 (PDT)
+        bh=IbyAVC5whDcTrfC0f+jOeAkJG6+z9GUKk1zNJj92TQw=;
+        b=YWS2w5xA2/gr2JuVp6Z1nGkwUw2MmHv8IQSomSGABuCyWkNHrEz9NY9oez44/lDEw8
+         fCG8bf4KApYdVDsH4BL6/v/H3b/lIFw/Hq0Y4YF0ZAL5+TYwDgtwUXiawHxTRz0EbSLc
+         7zLugfCBD5F7ZC2KTeI8Fyn5kpUsaVJAIXapJwEQ+g7z6ILL2L9W6McbLm7BqvRo0ANr
+         Rq+6uRh6/935QXzf/Fd/aJEH29qX/XKAI0lICti6okZ2PIsjKj7+lEHStCLoCSuB3C/m
+         km+ogoWkTBQSbwZt9Gl9bU2oX7C+uXcDeRJxRPBHJ7Rtlx8ttFAyNU831+dPeMEOQFwb
+         TFpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXMoe+Ybh+oYLpptQJmJwox40YC2fCMAMpdT3brNLefJV1pCvfLH1hspf6Lss/foSWJBVN94lVDHMAscb8BD1XCRSKUAxseSlEQhY0w
+X-Gm-Message-State: AOJu0YzQdk5fqABb6XQOo5VQHnMu4qyzoLedzqXohTqjhCIqz3McwwF3
+	zCMp//Dfnv1FvvOVnBSenXFBl3nMpCFF1aQWqf7lvWETGC6Qkz7SWTWIMLpP+DGOxgrtGMMPAAP
+	6
+X-Google-Smtp-Source: AGHT+IEA6hboE4ANnrmdhtPnPW83+HWCE5AxVYj933A9tcXvMgs+IAOcjdkaTD850mZDlEWXc6meOg==
+X-Received: by 2002:a2e:99d1:0:b0:2ee:8566:32cb with SMTP id 38308e7fff4ca-2eeb30e45a8mr54224841fa.16.1720649298383;
+        Wed, 10 Jul 2024 15:08:18 -0700 (PDT)
 Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bd459aafsm2676284a12.78.2024.07.10.15.07.11
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a8561cfsm193900166b.163.2024.07.10.15.08.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jul 2024 15:07:13 -0700 (PDT)
-Message-ID: <58b1274b-1f53-4d10-a6e3-6334eb589ab3@linaro.org>
-Date: Thu, 11 Jul 2024 00:07:10 +0200
+        Wed, 10 Jul 2024 15:08:18 -0700 (PDT)
+Message-ID: <05ae1a45-107e-4d01-9cfe-648b52cbb364@linaro.org>
+Date: Thu, 11 Jul 2024 00:08:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,18 +77,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] arm64: dts: qcom: x1e80100-crd: Fix backlight
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>
-Cc: Jessica Zhang <quic_jesszhan@quicinc.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Douglas Anderson <dianders@chromium.org>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>
-References: <20240710-x1e80100-crd-backlight-v1-0-eb242311a23e@linaro.org>
- <20240710-x1e80100-crd-backlight-v1-4-eb242311a23e@linaro.org>
+Subject: Re: [PATCH v3 0/6] Bluetooth: hci_qca: use the power sequencer for
+ wcn7850
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ patchwork-bot+bluetooth@kernel.org
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, marcel@holtmann.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ quic_bgodavar@quicinc.com, quic_rjliao@quicinc.com, andersson@kernel.org,
+ linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, bartosz.golaszewski@linaro.org
+References: <20240709-hci_qca_refactor-v3-0-5f48ca001fed@linaro.org>
+ <172064103479.11923.11962118903624442308.git-patchwork-notify@kernel.org>
+ <CABBYNZKvSF9h1K29oex3kXm+2h+62gwJ8+YJPM0Orap6_xVDTQ@mail.gmail.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
@@ -125,40 +128,48 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20240710-x1e80100-crd-backlight-v1-4-eb242311a23e@linaro.org>
+In-Reply-To: <CABBYNZKvSF9h1K29oex3kXm+2h+62gwJ8+YJPM0Orap6_xVDTQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10.07.2024 7:05 PM, Stephan Gerhold wrote:
-> The backlight does not work correctly with the current display panel
-> configuration: It works after boot, but once the display gets disabled it
-> is not possible to get it back on. It turns out that the ATNA45AF01 panel
-> needs exactly the same non-standard power sequence as implemented by the
-> panel-samsung-atna33xc20 driver for sc7180-trogdor-homestar.
+On 10.07.2024 10:43 PM, Luiz Augusto von Dentz wrote:
+> Hi Bartosz,
 > 
-> Switch the panel in the DT to the new compatible and make two more changes
-> to make it work correctly:
+> On Wed, Jul 10, 2024 at 3:50 PM <patchwork-bot+bluetooth@kernel.org> wrote:
+>>
+>> Hello:
+>>
+>> This series was applied to bluetooth/bluetooth-next.git (master)
+>> by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
+>>
+>> On Tue, 09 Jul 2024 14:18:31 +0200 you wrote:
+>>> The following series extend the usage of the power sequencing subsystem
+>>> in the hci_qca driver.
+>>>
+>>> The end goal is to convert the entire driver to be exclusively pwrseq-based
+>>> and simplify it in the process. However due to a large number of users we
+>>> need to be careful and consider every case separately.
+>>>
+>>> [...]
+>>
+>> Here is the summary with links:
+>>   - [v3,1/6] dt-bindings: bluetooth: qualcomm: describe the inputs from PMU for wcn7850
+>>     https://git.kernel.org/bluetooth/bluetooth-next/c/e1c54afa8526
+>>   - [v3,2/6] Bluetooth: hci_qca: schedule a devm action for disabling the clock
+>>     https://git.kernel.org/bluetooth/bluetooth-next/c/a887c8dede8e
+>>   - [v3,3/6] Bluetooth: hci_qca: unduplicate calls to hci_uart_register_device()
+>>     https://git.kernel.org/bluetooth/bluetooth-next/c/cdd10964f76f
+>>   - [v3,4/6] Bluetooth: hci_qca: make pwrseq calls the default if available
+>>     https://git.kernel.org/bluetooth/bluetooth-next/c/958a33c3f9fc
+>>   - [v3,5/6] Bluetooth: hci_qca: use the power sequencer for wcn7850 and wcn6855
+>>     https://git.kernel.org/bluetooth/bluetooth-next/c/4fa54d8731ec
+>>   - [v3,6/6] arm64: dts: qcom: sm8650-qrd: use the PMU to power up bluetooth
+>>     (no matching commit)
 > 
->  1. Add the missing GPIO for the panel EL_ON3 line (EDP_BL_EN on CRD and
->     enable-gpios in the DT).
->  2. Drop the regulator-always-on for the panel regulator. The panel does
->     not seem to power off properly if the regulator stays on.
-> 
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> ---
+> Last one doesn't apply so you will probably need to rebase or
+> something if it really needs to go thru bluetooth-next.
 
-[...]
-
-> +		power-source = <1>; /* 1.8V */
-
-Would be nice to get the #defines for this PMIC instead..
-
-> +		input-disable;
-> +		output-enable;
-
-LGTM otherwise
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Bartosz forgot to mention it should go through qcom
 
 Konrad
 
