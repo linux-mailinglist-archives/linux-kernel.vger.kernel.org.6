@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-247426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F1092CF5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:38:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38AAC92CF5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DECDB25951
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:38:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D77EC1F25A97
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3722A190480;
-	Wed, 10 Jul 2024 10:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137C218FC64;
+	Wed, 10 Jul 2024 10:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CU4+DIki"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LpvQn61f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D49318FC89;
-	Wed, 10 Jul 2024 10:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4496F6BFD4;
+	Wed, 10 Jul 2024 10:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720607693; cv=none; b=asY3j2GZCMc0bjpSlBm2PlZXrLuSAGKdlOudpc9bcmZUCP87z/kNo+e8JQki2+m44qg+hf8l8yuWpOcicmOaEvA8/6p6uNLFEyR85WrCVVSE0h1UbMG5ez4te8BUX94WjQB1q/V5ryGILn36qYWtjjbMTjHI55Ey9fccJg+qVZw=
+	t=1720607748; cv=none; b=T6xULncnl88qsu878e//3wU0ZrORbOyw/Rkc3c+6z1RlqSHMTA/piBqHUPn5Irk0WvtTcrQl+yLC3sVp/w4Ro6TiYSGjJKSbA5SuzNHQ1TSxHqitbLusDnx++txlwVE7OVMXL9qJ+neuGW884zhO4MyVjlMHeDgV68dDBAn34v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720607693; c=relaxed/simple;
-	bh=8WdRmuyLpXfw6l4a1GwdoX0mS8F1vUEiws7qIN6fA1s=;
+	s=arc-20240116; t=1720607748; c=relaxed/simple;
+	bh=bXZYO9RHIxeSVjLHuff4LEIg4CvGwIiPDrO2aVTi9ww=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hXs/TAL+yJ1bDVqiqBb3SP/wBn7MieZ9PNYvsG2ShGwbkQERGO/d0KrtW2oklzxDiimD7Nn7oqPhl0+wuwWImXtb1k67jVBwoff3xu1QoepVQzO6gTUpeJQU+qdNgFAhakLvdngNy3ssBeV4B8IViZSy1sF/ZiwnyTDf5FgAmd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CU4+DIki; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B4BBC32781;
-	Wed, 10 Jul 2024 10:34:49 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=bLGWEl21Au1huH34AuLvWmkxZ9GYBka+c9X+dCaoc+cgFJScng9UloSmKMEs56WPVKmZ489lRO6tkpdroozl3iduIqDbcs2UjrhyEqOOL32B9Fj/4EwxNtV/KCt5Haz8i25tYhSRQGB6tqOQUjC74gDNskCRZuFimPkM9ts9m90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LpvQn61f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1179AC32781;
+	Wed, 10 Jul 2024 10:35:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720607692;
-	bh=8WdRmuyLpXfw6l4a1GwdoX0mS8F1vUEiws7qIN6fA1s=;
+	s=k20201202; t=1720607747;
+	bh=bXZYO9RHIxeSVjLHuff4LEIg4CvGwIiPDrO2aVTi9ww=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CU4+DIki6TGMsLcTq0tv7w4+ItVU85rVMGBmVkAgIkj3ruLsFylO/OVerYIq5DTWj
-	 ZK1K3e+mYmmwUKUo2ZhqkTHSRGGdo8VfcE1DVizTDJ3nPf8Ijp0ONkDASlyzn+wlRj
-	 a8xZaiOfjlJZFBxXmljcAJUo2l5aa38k+BzJi79WkmlW8AouRP8G7q3MqK34/q6TC0
-	 RucCN+5PiL3oWus78Cp5iuHHJ+GfdpX+ZgY+STTK/yWgN8jYuLxfrhhEuabRi7ioar
-	 cVJnt06p4Ea3SxKcMg4LZ9+JyDghkCgp58eRWwU/Q3D9qlRFQ51zPYIEztIj9BVU+H
-	 PicTuLmZvsg3Q==
-Message-ID: <05ed39c6-3c0b-4a43-b655-d26c69f686fa@kernel.org>
-Date: Wed, 10 Jul 2024 12:34:47 +0200
+	b=LpvQn61fwbwnbimgP1ScYns2ZmwYYoWHkNlorrCcLKaJTw1ZI2ZCHGEwP2QiK369g
+	 D7XvMKHzDGXgnSbks3m+897+aJ7I+xWRZx6toIbyWqOYTNmk44LlQD6vttJIF5d2fL
+	 nCo+JwZjNhOGWQ8bRo9GVLF7pxbxbVPXjNpHZhFdQxjn/zHxj76cXnKbje1xZrVIUh
+	 9uJzBQknGOq03xFBB31bMXSLPVyXyXaxXq4Djl8LQDnI6Z1T3bTLCD0DNr38Bvq5fq
+	 zAcqm2VfWvED/NZodqhohfqprtXNcffUZE1e0g/voPU+WvaUFXir+fFXJVZUhgnh75
+	 Jw6bXv4DUQRhQ==
+Message-ID: <9e49c726-9cc9-46ac-a9dc-9e2debbc90b7@kernel.org>
+Date: Wed, 10 Jul 2024 12:35:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] ASoC: codecs: add ES7243E ADC driver
+Subject: Re: [PATCH 1/2] ASoC: dt-bindings: Add bindings for Everest ES7243E
 To: Igor Prusov <ivprusov@salutedevices.com>,
  Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
  Takashi Iwai <tiwai@suse.com>
 Cc: prusovigor@gmail.com, kernel@salutedevices.com,
- David Yang <yangxiaohua@everest-semi.com>,
- Viktor Prutyanov <vvprutyanov@sberdevices.ru>, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 References: <20240709104117.33431-1-ivprusov@salutedevices.com>
- <20240709104117.33431-3-ivprusov@salutedevices.com>
+ <20240709104117.33431-2-ivprusov@salutedevices.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,187 +105,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240709104117.33431-3-ivprusov@salutedevices.com>
+In-Reply-To: <20240709104117.33431-2-ivprusov@salutedevices.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 09/07/2024 12:41, Igor Prusov wrote:
-> Add support for Everest Semi es7243e, which is a 24 bit, 8 to 48 kHz
-> stereo audio ADC with I2C control and I2S output.
+> Add dt-bindings for Everest Semi ES7243E ADC.
 > 
-> Datasheet: https://www.pawpaw.cn/media/documents/2022-04/ES7243E_DS_pawpaw%E6%9C%A8%E7%93%9C%E7%A7%91%E6%8A%80.pdf
-> 
-> Signed-off-by: David Yang <yangxiaohua@everest-semi.com>
 > Signed-off-by: Igor Prusov <ivprusov@salutedevices.com>
-> Signed-off-by: Viktor Prutyanov <vvprutyanov@sberdevices.ru>
 > ---
->  sound/soc/codecs/Kconfig   |   3 +
->  sound/soc/codecs/Makefile  |   2 +
->  sound/soc/codecs/es7243e.c | 676 +++++++++++++++++++++++++++++++++++++
->  3 files changed, 681 insertions(+)
->  create mode 100644 sound/soc/codecs/es7243e.c
-> 
-> diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-> index 4afc43d3f71f..bfc21073ea24 100644
-> --- a/sound/soc/codecs/Kconfig
-> +++ b/sound/soc/codecs/Kconfig
-> @@ -1097,6 +1097,9 @@ config SND_SOC_ES7134
->  config SND_SOC_ES7241
->  	tristate "Everest Semi ES7241 CODEC"
->  
-> +config SND_SOC_ES7243E
-> +	tristate "Everest Semi ES7243E CODEC"
-> +
->  config SND_SOC_ES83XX_DSM_COMMON
->  	depends on ACPI
->  	tristate
-> diff --git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
-> index b4df22186e25..9469903662f8 100644
-> --- a/sound/soc/codecs/Makefile
-> +++ b/sound/soc/codecs/Makefile
-> @@ -118,6 +118,7 @@ snd-soc-da9055-y := da9055.o
->  snd-soc-dmic-y := dmic.o
->  snd-soc-es7134-y := es7134.o
->  snd-soc-es7241-y := es7241.o
-> +snd-soc-es7243-y := es7243.o
->  snd-soc-es83xx-dsm-common-y := es83xx-dsm-common.o
->  snd-soc-es8316-y := es8316.o
->  snd-soc-es8326-y := es8326.o
-> @@ -515,6 +516,7 @@ obj-$(CONFIG_SND_SOC_DA9055)	+= snd-soc-da9055.o
->  obj-$(CONFIG_SND_SOC_DMIC)	+= snd-soc-dmic.o
->  obj-$(CONFIG_SND_SOC_ES7134)	+= snd-soc-es7134.o
->  obj-$(CONFIG_SND_SOC_ES7241)	+= snd-soc-es7241.o
-> +obj-$(CONFIG_SND_SOC_ES7243E)	+= snd-soc-es7243e.o
->  obj-$(CONFIG_SND_SOC_ES83XX_DSM_COMMON)    += snd-soc-es83xx-dsm-common.o
->  obj-$(CONFIG_SND_SOC_ES8316)    += snd-soc-es8316.o
->  obj-$(CONFIG_SND_SOC_ES8326)    += snd-soc-es8326.o
-> diff --git a/sound/soc/codecs/es7243e.c b/sound/soc/codecs/es7243e.c
-> new file mode 100644
-> index 000000000000..be877d980cec
-> --- /dev/null
-> +++ b/sound/soc/codecs/es7243e.c
-> @@ -0,0 +1,676 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/**
-> + * es7243e.c - ASoC Everest Semiconductor ES7243E audio ADC driver
-> + *
-> + * Copyright (c) 2024, SaluteDevices. All Rights Reserved.
-> + *
-> + * Authors: Viktor Prutyanov <vvprutyanov@sberdevices.ru>
-> + *	    Igor Prusov <ivprusov@salutedevices.com>
-> + *
-> + * Based on ES7243E driver by David Yang <yangxiaohua@everest-semi.com>
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/module.h>
-> +#include <linux/moduleparam.h>
-
-Same issues.
 
 
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#sound-dai-cells"
 > +
-> +static const struct regmap_config es7243e_regmap_config = {
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +      es7243e: es7243e@14 {
 
-But this one is correct...
-
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +	.max_register = ES7243E_CHIP_VER,
-> +	.cache_type = REGCACHE_MAPLE,
-> +};
-> +
-> +struct coeff_div {
-
-declarations go before definitions.
-
-> +	u32 mclk;		/* mclk frequency */
-> +	u32 sr_rate;		/* sample rate */
-> +	u8 osr;			/* ADC over sample rate */
-> +	u8 mclk_pre;		/* mclk prediv/premult */
-> +	u8 cf_dsp_div;		/* adclrck divider and daclrck divider */
-> +	u8 scale;		/* ADC gain scale up */
-> +	u8 lrckdiv;		/* lrck divider */
-> +	u8 bclkdiv;		/* sclk divider */
-> +};
-> +
-> +static const struct coeff_div coeff_div[] = {
-> +	/* mclk     lrck   osr   pre   div   scale lrdiv bclkdiv */
-> +	{ 24576000, 8000,  0x20, 0x50, 0x00, 0x00, 0x0b, 0x2f },
-> +	{ 24576000, 12000, 0x20, 0x30, 0x00, 0x00, 0x07, 0x1f },
-> +	{ 24576000, 16000, 0x20, 0x20, 0x00, 0x00, 0x05, 0x17 },
-> +	{ 24576000, 24000, 0x20, 0x10, 0x00, 0x00, 0x03, 0x0f },
-> +	{ 24576000, 32000, 0x20, 0x21, 0x00, 0x00, 0x02, 0x0b },
-> +	{ 24576000, 48000, 0x20, 0x00, 0x00, 0x00, 0x01, 0x07 },
-> +	{ 12288000, 8000,  0x20, 0x20, 0x00, 0x00, 0x05, 0x17 },
-> +	{ 12288000, 12000, 0x20, 0x10, 0x00, 0x00, 0x03, 0x0f },
-> +	{ 12288000, 16000, 0x20, 0x21, 0x00, 0x00, 0x02, 0x0b },
-> +	{ 12288000, 24000, 0x20, 0x00, 0x00, 0x00, 0x01, 0x07 },
-> +	{ 12288000, 32000, 0x20, 0x22, 0x00, 0x00, 0x01, 0x05 },
-> +	{ 12288000, 48000, 0x20, 0x01, 0x00, 0x00, 0x00, 0x03 },
-> +	{ 6144000,  8000,  0x20, 0x21, 0x00, 0x00, 0x02, 0x0b },
-> +	{ 6144000,  12000, 0x20, 0x00, 0x00, 0x00, 0x01, 0x07 },
-> +	{ 6144000,  16000, 0x20, 0x22, 0x00, 0x00, 0x01, 0x05 },
-> +	{ 6144000,  24000, 0x20, 0x01, 0x00, 0x00, 0x00, 0x03 },
-> +	{ 6144000,  32000, 0x20, 0x23, 0x00, 0x00, 0x00, 0x02 },
-> +	{ 6144000,  48000, 0x20, 0x02, 0x00, 0x00, 0x00, 0x01 },
-> +	{ 3072000,  8000,  0x20, 0x22, 0x00, 0x00, 0x01, 0x05 },
-> +	{ 3072000,  12000, 0x20, 0x01, 0x00, 0x00, 0x00, 0x03 },
-> +	{ 3072000,  16000, 0x20, 0x23, 0x00, 0x00, 0x00, 0x02 },
-> +	{ 3072000,  24000, 0x20, 0x02, 0x00, 0x00, 0x00, 0x01 },
-> +	{ 3072000,  32000, 0x10, 0x03, 0x20, 0x04, 0x00, 0x02 },
-> +	{ 3072000,  48000, 0x20, 0x03, 0x00, 0x00, 0x00, 0x00 },
-> +	{ 1536000,  8000,  0x20, 0x23, 0x00, 0x00, 0x00, 0x02 },
-> +	{ 1536000,  12000, 0x20, 0x02, 0x00, 0x00, 0x00, 0x01 },
-> +	{ 1536000,  16000, 0x10, 0x03, 0x20, 0x04, 0x00, 0x00 },
-> +	{ 1536000,  24000, 0x20, 0x03, 0x00, 0x00, 0x00, 0x00 },
-> +	{ 32768000, 8000,  0x20, 0x70, 0x00, 0x00, 0x0f, 0x3f },
-> +	{ 32768000, 16000, 0x20, 0x30, 0x00, 0x00, 0x07, 0x1f },
-> +	{ 32768000, 32000, 0x20, 0x10, 0x00, 0x00, 0x03, 0x0f },
-> +	{ 16384000, 8000,  0x20, 0x30, 0x00, 0x00, 0x07, 0x1f },
-> +	{ 16384000, 16000, 0x20, 0x10, 0x00, 0x00, 0x03, 0x0f },
-> +	{ 16384000, 32000, 0x20, 0x00, 0x00, 0x00, 0x01, 0x07 },
-> +	{ 8192000,  8000,  0x20, 0x10, 0x00, 0x00, 0x03, 0x0f },
-> +	{ 8192000,  16000, 0x20, 0x00, 0x00, 0x00, 0x01, 0x07 },
-> +	{ 8192000,  32000, 0x20, 0x01, 0x00, 0x00, 0x00, 0x03 },
-> +	{ 4096000,  8000,  0x20, 0x00, 0x00, 0x00, 0x01, 0x07 },
-> +	{ 4096000,  16000, 0x20, 0x01, 0x00, 0x00, 0x00, 0x03 },
-> +	{ 4096000,  32000, 0x20, 0x02, 0x00, 0x00, 0x00, 0x01 },
-> +	{ 2048000,  8000,  0x20, 0x01, 0x00, 0x00, 0x00, 0x03 },
-> +	{ 2048000,  16000, 0x20, 0x02, 0x00, 0x00, 0x00, 0x01 },
-> +	{ 2048000,  32000, 0x20, 0x03, 0x00, 0x00, 0x00, 0x00 },
-> +	{ 1024000,  8000,  0x20, 0x02, 0x00, 0x00, 0x00, 0x01 },
-> +	{ 1024000,  16000, 0x20, 0x03, 0x00, 0x00, 0x00, 0x00 },
-> +	{ 22579200, 11025, 0x20, 0x30, 0x00, 0x00, 0x07, 0x1f },
-> +	{ 22579200, 22050, 0x20, 0x10, 0x00, 0x00, 0x03, 0x0f },
-> +	{ 22579200, 44100, 0x20, 0x00, 0x00, 0x00, 0x01, 0x07 },
-> +	{ 11289600, 11025, 0x20, 0x10, 0x00, 0x00, 0x03, 0x0f },
-> +	{ 11289600, 22050, 0x20, 0x00, 0x00, 0x00, 0x01, 0x07 },
-> +	{ 11289600, 44100, 0x20, 0x01, 0x00, 0x00, 0x00, 0x03 },
-> +	{ 56448000, 11025, 0x20, 0x00, 0x00, 0x00, 0x01, 0x07 },
-> +	{ 56448000, 22050, 0x20, 0x01, 0x00, 0x00, 0x00, 0x03 },
-> +	{ 56448000, 44100, 0x20, 0x02, 0x00, 0x00, 0x00, 0x01 },
-> +	{ 28224000, 11025, 0x20, 0x01, 0x00, 0x00, 0x00, 0x03 },
-> +	{ 28224000, 22050, 0x20, 0x02, 0x00, 0x00, 0x00, 0x01 },
-> +	{ 28224000, 44100, 0x20, 0x03, 0x00, 0x00, 0x00, 0x00 },
-> +	{ 14112000, 11025, 0x20, 0x02, 0x00, 0x00, 0x00, 0x01 },
-> +	{ 14112000, 22050, 0x20, 0x03, 0x00, 0x00, 0x00, 0x00 },
-> +};
-> +
-> +static const struct coeff_div *get_coeff(int mclk, int rate)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(coeff_div); i++)
-> +		if (coeff_div[i].sr_rate == rate && coeff_div[i].mclk == mclk)
-> +			return &coeff_div[i];
-> +
-> +	return NULL;
-> +}
-> +
-> +static unsigned int rates_12288[] = {
-
-Not a const?
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+usually audio-codec
 
 Best regards,
 Krzysztof
