@@ -1,378 +1,183 @@
-Return-Path: <linux-kernel+bounces-248050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7442492D7BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:49:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DCB392D7BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAA881F2197B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:49:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A8121F220A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5B61953BE;
-	Wed, 10 Jul 2024 17:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE811957E4;
+	Wed, 10 Jul 2024 17:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xv9z/j3T"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="wGCWgoLm";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="wGCWgoLm"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5931369A8
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 17:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768291369A8;
+	Wed, 10 Jul 2024 17:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720633753; cv=none; b=E5jk7/CI88xxnVcZG1DjtqA8JG4Hd/hPUoABA7+Tag7p05JHI/v/S88Zrxce3ZnDpaZjqAtIrfEpZz3Cg9+xf6wyIHvpThH0aDDLek32KA7VkbDe9tpQm8tuVhhvXejU/Es+Ba17+RNhAVZBCWXmfFxryAZhPTZwe1uJh9zL0U8=
+	t=1720633740; cv=none; b=l+eVyYKwfpUgnRbKtUBoLpLaj40JEGSUUdTg4j3tlauVKH6Fanckx9F51u90mWaPlXtuyF2ZbD4daZpYiNdvwEHpoF3gD/wzNc+bykgzWB7yBg7Uxzk2rje7ea8DrtdeHa0I9mRW+8dU/b3P4OVkLl5grrC5cOpQ2qyN5GYZSKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720633753; c=relaxed/simple;
-	bh=Sfdc4NZvv/cBXpR3ob8R/UA36Z4F3Mx19Dbq3aeE5+c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=doIwJAjDG9VrZWaSRpNXsU7hCFrrsE4ao+2DGlu5kXQ5XVxRk8PDa57LA2fCThr7/d2BQ/VMlSLWDFHKkjTsFZ6jFQGJzkKCILFuPRRpCv+CiRtuaKGd86JZFgylAWoDaWhFHEbkWFUh8XmFSJBNBRMYIBeH8UOyuyz1FpEZefA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xv9z/j3T; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f70ec6ff8bso17265ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 10:49:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720633748; x=1721238548; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eopy7nJGqtMwtA6DCPPNfhPiypGuunPXZItDdpFX038=;
-        b=Xv9z/j3TKf9VnAaqtpC4UKCXdilsLyEagMlkTjOI8VoaZjfutTOeXeyJdmCKuyA5fz
-         iX7EgF44IaZjLmLwEAFVJB03uFl/yRM0ompVstoPmTTZqjqf5OLTo3RJWPE9jcPklZby
-         pa9jXp/jA5TqMWQopJwuhjpMQrdy3CfuRNrlAMuMx7kEqPkL1yp9sOmtWa1AMluBxNzs
-         VvrdkLGSDLiIa/yIcNAo/MurTVvLom2XfM8HpsPxr5vJm+4O1qe08H05IOopdkuBNHTk
-         ZQ3kib8FY+bNsqKk0Q0G3n/wZinGYEISE5O3JHG2NzSwvKgWELcB7cLIyd5V1IJOiogp
-         d3ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720633748; x=1721238548;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eopy7nJGqtMwtA6DCPPNfhPiypGuunPXZItDdpFX038=;
-        b=gf5HrlvdgiNQpIgHVm3i5YI0t+BnL3wC2SPR/y4+qHKlMbUreJSI4f4DJ1Y0dSUn4o
-         zblYdIw5bnM8RcWjY2zHXhmghtOvjBzGHrlxLC969mzGnVKRaa/SJlKsf4lVBnekca0X
-         GYF8zPey77FrbvnIgeWk8szkBM9Bn8Jsd+xWcrD1ENA5DOtMMZhO5t/oxTPiqy8O/Q+8
-         TWTGH33KSqkPQi/XZScVHsAQNBMczULafYeCRZOHUbq7Tbv/b/FPVQbzeaqSKr3irTB8
-         UvwrAzUz1cUW/ZDwJOkiHVqugPe9SsbS/qw+icoTE6+iRU3uhj5mhPC2OLTtM2eN5OUL
-         SPUw==
-X-Forwarded-Encrypted: i=1; AJvYcCW9Zkwg1MUQlI/tUg55VeZt6L07Cnn7UcDWIdrUAsKp5ZoQM5iHG74uU4beC5uFZVj0Fe8NiXiKvw4Gcsqjr4Jx4ca7rq8PWi36s9Uk
-X-Gm-Message-State: AOJu0YylADI+q7q/5IQXHIYi3RNuVu8kzwVAB/RpgCjDfwtq5lzoDTU6
-	LjqVzZLbZoKRidfkyvLO9MlTCy0+OGpt7/vM3ARBOPB4GKGR+qII0CexjwQH4RwwKVexFoJTIF1
-	tj/04d6WgV4vNrQlyRdkfLFAAk19jIKg1gGUm
-X-Google-Smtp-Source: AGHT+IG3ZGQl5ynCGjnZfBOtJ7/ejx7/me9AyQez3px1M6JZ5uXwt8rP1BeZK6BBBpN6CjGXZOVunjjPCK1s7JQ2HwM=
-X-Received: by 2002:a17:902:7b89:b0:1f9:bc99:d94a with SMTP id
- d9443c01a7336-1fbdd4d6bc6mr18305ad.5.1720633748102; Wed, 10 Jul 2024 10:49:08
- -0700 (PDT)
+	s=arc-20240116; t=1720633740; c=relaxed/simple;
+	bh=CnP+d+fWQpiP9tgiGxYKpgdz2IM3KLGz288TsVNUudM=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=JEUAeC3eaGAyryeh39hg2ysSAKRqFfvwu2x5WZuhvNSY9MvSGtG079//FlcENALqF02gDvk6l55u506VgD6/8lJPxA8DvscHd82LD/ci6uUHRpS18lTxCZE7bXRtQ3JitFIsOyaTMRvLP8JUBYVz05W1HRFvAKfizo+kAYkxnlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=wGCWgoLm; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=wGCWgoLm; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1720633737;
+	bh=CnP+d+fWQpiP9tgiGxYKpgdz2IM3KLGz288TsVNUudM=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=wGCWgoLm9z0ZulKLN9OHjDAWgweeexpyHyz22u6Hzj/F6aGByd81cfroLcMONbn0U
+	 /0snLH7F98H9B5JDbwk9d/oBXsAtW6b/wTh0PCMnZTl1nN//ZrMh/Ftw+cP1knJr4X
+	 j/X9IB+LZ69G4QA+KmLYzxRUH4tzlLZ6KKUtN/ws=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 8B38A1286F76;
+	Wed, 10 Jul 2024 13:48:57 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id UJEUysR6rIVl; Wed, 10 Jul 2024 13:48:57 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1720633737;
+	bh=CnP+d+fWQpiP9tgiGxYKpgdz2IM3KLGz288TsVNUudM=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=wGCWgoLm9z0ZulKLN9OHjDAWgweeexpyHyz22u6Hzj/F6aGByd81cfroLcMONbn0U
+	 /0snLH7F98H9B5JDbwk9d/oBXsAtW6b/wTh0PCMnZTl1nN//ZrMh/Ftw+cP1knJr4X
+	 j/X9IB+LZ69G4QA+KmLYzxRUH4tzlLZ6KKUtN/ws=
+Received: from [10.106.168.35] (unknown [167.220.57.35])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 38DDD1286E22;
+	Wed, 10 Jul 2024 13:48:57 -0400 (EDT)
+Message-ID: <ce3dd4dc5924fa3fbc1468a5dca262aed50bb4d7.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 6.10-rc7
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
+	 <torvalds@linux-foundation.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel
+	 <linux-kernel@vger.kernel.org>
+Date: Wed, 10 Jul 2024 10:48:56 -0700
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240705094300.585156-1-howardchu95@gmail.com> <20240705094300.585156-5-howardchu95@gmail.com>
-In-Reply-To: <20240705094300.585156-5-howardchu95@gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 10 Jul 2024 10:48:56 -0700
-Message-ID: <CAP-5=fVhPDuvJ7=H=BggPbYcT7WrD8-yG=czPjnNiXWvt_Etmg@mail.gmail.com>
-Subject: Re: [PATCH v5 4/8] perf trace: Filter enum arguments with enum names
-To: Howard Chu <howardchu95@gmail.com>
-Cc: acme@kernel.org, adrian.hunter@intel.com, jolsa@kernel.org, 
-	kan.liang@linux.intel.com, namhyung@kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Arnaldo Carvalho de Melo <acme@redhat.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 5, 2024 at 2:43=E2=80=AFAM Howard Chu <howardchu95@gmail.com> w=
-rote:
->
-> Before:
->
-> perf $ ./perf trace -e timer:hrtimer_start --filter=3D'mode!=3DHRTIMER_MO=
-DE_ABS_PINNED_HARD' --max-events=3D1
-> No resolver (strtoul) for "mode" in "timer:hrtimer_start", can't set filt=
-er "(mode!=3DHRTIMER_MODE_ABS_PINNED_HARD) && (common_pid !=3D 281988)"
->
-> After:
->
-> perf $ ./perf trace -e timer:hrtimer_start --filter=3D'mode!=3DHRTIMER_MO=
-DE_ABS_PINNED_HARD' --max-events=3D1
->      0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff9498a6ca5f18, function=
-: 0xffffffffa77a5be0, expires: 12351248764875, softexpires: 12351248764875,=
- mode: HRTIMER_MODE_ABS)
->
-> && and ||:
->
-> perf $ ./perf trace -e timer:hrtimer_start --filter=3D'mode !=3D HRTIMER_=
-MODE_ABS_PINNED_HARD && mode !=3D HRTIMER_MODE_ABS' --max-events=3D1
->      0.000 Hyprland/534 timer:hrtimer_start(hrtimer: 0xffff9497801a84d0, =
-function: 0xffffffffc04cdbe0, expires: 12639434638458, softexpires: 1263943=
-3638458, mode: HRTIMER_MODE_REL)
->
-> perf $ ./perf trace -e timer:hrtimer_start --filter=3D'mode =3D=3D HRTIME=
-R_MODE_REL || mode =3D=3D HRTIMER_MODE_PINNED' --max-events=3D1
->      0.000 ldlck-test/60639 timer:hrtimer_start(hrtimer: 0xffffb16404ee7b=
-f8, function: 0xffffffffa7790420, expires: 12772614418016, softexpires: 127=
-72614368016, mode: HRTIMER_MODE_REL)
->
-> Switching it up, using both enum name and integer value(--filter=3D'mode =
-=3D=3D HRTIMER_MODE_ABS_PINNED_HARD || mode =3D=3D 0'):
->
-> perf $ ./perf trace -e timer:hrtimer_start --filter=3D'mode =3D=3D HRTIME=
-R_MODE_ABS_PINNED_HARD || mode =3D=3D 0' --max-events=3D3
->      0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff9498a6ca5f18, function=
-: 0xffffffffa77a5be0, expires: 12601748739825, softexpires: 12601748739825,=
- mode: HRTIMER_MODE_ABS_PINNED_HARD)
->      0.036 :0/0 timer:hrtimer_start(hrtimer: 0xffff9498a6ca5f18, function=
-: 0xffffffffa77a5be0, expires: 12518758748124, softexpires: 12518758748124,=
- mode: HRTIMER_MODE_ABS_PINNED_HARD)
->      0.172 tmux: server/41881 timer:hrtimer_start(hrtimer: 0xffffb164081e=
-7838, function: 0xffffffffa7790420, expires: 12518768255836, softexpires: 1=
-2518768205836, mode: HRTIMER_MODE_ABS)
->
-> P.S.
-> perf $ pahole hrtimer_mode
-> enum hrtimer_mode {
->         HRTIMER_MODE_ABS             =3D 0,
->         HRTIMER_MODE_REL             =3D 1,
->         HRTIMER_MODE_PINNED          =3D 2,
->         HRTIMER_MODE_SOFT            =3D 4,
->         HRTIMER_MODE_HARD            =3D 8,
->         HRTIMER_MODE_ABS_PINNED      =3D 2,
->         HRTIMER_MODE_REL_PINNED      =3D 3,
->         HRTIMER_MODE_ABS_SOFT        =3D 4,
->         HRTIMER_MODE_REL_SOFT        =3D 5,
->         HRTIMER_MODE_ABS_PINNED_SOFT =3D 6,
->         HRTIMER_MODE_REL_PINNED_SOFT =3D 7,
->         HRTIMER_MODE_ABS_HARD        =3D 8,
->         HRTIMER_MODE_REL_HARD        =3D 9,
->         HRTIMER_MODE_ABS_PINNED_HARD =3D 10,
->         HRTIMER_MODE_REL_PINNED_HARD =3D 11,
-> };
->
-> Committer testing:
->
->   root@x1:~# perf trace -e timer:hrtimer_start --filter=3D'mode !=3D HRTI=
-MER_MODE_ABS' --max-events=3D2
->        0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff2a5050, functi=
-on: 0xffffffff9e22ddd0, expires: 241502326000000, softexpires: 241502326000=
-000, mode: HRTIMER_MODE_ABS_PINNED_HARD)
->   18446744073709.488 :0/0 timer:hrtimer_start(hrtimer: 0xffff8d4eff425050=
-, function: 0xffffffff9e22ddd0, expires: 241501814000000, softexpires: 2415=
-01814000000, mode: HRTIMER_MODE_ABS_PINNED_HARD)
->   root@x1:~# perf trace -e timer:hrtimer_start --filter=3D'mode !=3D HRTI=
-MER_MODE_ABS && mode !=3D HRTIMER_MODE_ABS_PINNED_HARD' --max-events=3D2
->        0.000 podman/510644 timer:hrtimer_start(hrtimer: 0xffffa2024f5f7dd=
-0, function: 0xffffffff9e2170c0, expires: 241530497418194, softexpires: 241=
-530497368194, mode: HRTIMER_MODE_REL)
->       40.251 gnome-shell/2484 timer:hrtimer_start(hrtimer: 0xffff8d48bda1=
-7650, function: 0xffffffffc0661550, expires: 241550528619247, softexpires: =
-241550527619247, mode: HRTIMER_MODE_REL)
->   root@x1:~# perf trace -v -e timer:hrtimer_start --filter=3D'mode !=3D H=
-RTIMER_MODE_ABS && mode !=3D HRTIMER_MODE_ABS_PINNED_HARD && mode !=3D HRTI=
-MER_MODE_REL' --max-events=3D2
->   Using CPUID GenuineIntel-6-BA-3
->   vmlinux BTF loaded
->   <SNIP>
->   0
->   0xa
->   0x1
->   New filter for timer:hrtimer_start: (mode !=3D 0 && mode !=3D 0xa && mo=
-de !=3D 0x1) && (common_pid !=3D 524049 && common_pid !=3D 4041)
->   mmap size 528384B
->   ^Croot@x1:~#
->
-> Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Ian Rogers <irogers@google.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Link: https://lore.kernel.org/lkml/ZnCcliuecJABD5FN@x1
-> Link: https://lore.kernel.org/r/20240624181345.124764-5-howardchu95@gmail=
-.com
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
->  tools/perf/builtin-trace.c | 62 ++++++++++++++++++++++++++++++++++----
->  1 file changed, 56 insertions(+), 6 deletions(-)
->
-> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-> index 5618feb7d01a..e664001d5ed7 100644
-> --- a/tools/perf/builtin-trace.c
-> +++ b/tools/perf/builtin-trace.c
-> @@ -932,6 +932,37 @@ static int syscall_arg_fmt__cache_btf_enum(struct sy=
-scall_arg_fmt *arg_fmt, stru
->         return arg_fmt->type =3D=3D NULL ? -1 : 0;
->  }
->
-> +static bool syscall_arg__strtoul_btf_enum(char *bf, size_t size, struct =
-syscall_arg *arg, u64 *val)
-> +{
-> +       const struct btf_type *bt;
-> +       char *type =3D arg->parm;
-> +       struct btf_enum *be;
-> +       struct btf *btf;
-> +
-> +       trace__load_vmlinux_btf(arg->trace);
-> +
-> +       btf =3D arg->trace->btf;
-> +       if (btf =3D=3D NULL)
-> +               return false;
-> +
-> +       if (syscall_arg_fmt__cache_btf_enum(arg->fmt, btf, type) < 0)
-> +               return false;
-> +
-> +       bt =3D arg->fmt->type;
-> +       be =3D btf_enum(bt);
-> +       for (int i =3D 0; i < btf_vlen(bt); ++i, ++be) {
-> +               const char *name =3D btf__name_by_offset(btf, be->name_of=
-f);
-> +               int max_len =3D max(size, strlen(name));
-> +
-> +               if (strncmp(name, bf, max_len) =3D=3D 0) {
-> +                       *val =3D be->val;
-> +                       return true;
-> +               }
-> +       }
-> +
-> +       return false;
-> +}
-> +
->  static size_t btf_enum_scnprintf(const struct btf_type *type, struct btf=
- *btf, char *bf, size_t size, int val)
->  {
->         struct btf_enum *be =3D btf_enum(type);
-> @@ -965,8 +996,16 @@ static size_t trace__btf_enum_scnprintf(struct trace=
- *trace __maybe_unused, stru
->  {
->         return 0;
->  }
-> +
-> +static bool syscall_arg__strtoul_btf_enum(char *bf __maybe_unused, size_=
-t size __maybe_unused,
-> +                                         struct syscall_arg *arg __maybe=
-_unused, u64 *val __maybe_unused)
-> +{
-> +       return false;
-> +}
->  #endif // HAVE_LIBBPF_SUPPORT
->
-> +#define STUL_BTF_ENUM syscall_arg__strtoul_btf_enum
-> +
->  #define STRARRAY(name, array) \
->           { .scnprintf  =3D SCA_STRARRAY, \
->             .strtoul    =3D STUL_STRARRAY, \
-> @@ -1867,6 +1906,7 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt =
-*arg, struct tep_format_field
->                         arg->scnprintf =3D SCA_FD;
->                 } else if (strstr(field->type, "enum") && use_btf !=3D NU=
-LL) {
->                         *use_btf =3D arg->is_enum =3D true;
-> +                       arg->strtoul =3D STUL_BTF_ENUM;
->                 } else {
->                         const struct syscall_arg_fmt *fmt =3D
->                                 syscall_arg_fmt__find_by_name(field->name=
-);
-> @@ -3792,7 +3832,8 @@ static int ordered_events__deliver_event(struct ord=
-ered_events *oe,
->         return __trace__deliver_event(trace, event->event);
->  }
->
-> -static struct syscall_arg_fmt *evsel__find_syscall_arg_fmt_by_name(struc=
-t evsel *evsel, char *arg)
-> +static struct syscall_arg_fmt *evsel__find_syscall_arg_fmt_by_name(struc=
-t evsel *evsel, char *arg,
-> +                                                                  char *=
-*type)
->  {
->         struct tep_format_field *field;
->         struct syscall_arg_fmt *fmt =3D __evsel__syscall_arg_fmt(evsel);
-> @@ -3801,13 +3842,15 @@ static struct syscall_arg_fmt *evsel__find_syscal=
-l_arg_fmt_by_name(struct evsel
->                 return NULL;
->
->         for (field =3D evsel->tp_format->format.fields; field; field =3D =
-field->next, ++fmt)
-> -               if (strcmp(field->name, arg) =3D=3D 0)
-> +               if (strcmp(field->name, arg) =3D=3D 0) {
-> +                       *type =3D field->type;
->                         return fmt;
-> +               }
->
->         return NULL;
->  }
->
-> -static int trace__expand_filter(struct trace *trace __maybe_unused, stru=
-ct evsel *evsel)
-> +static int trace__expand_filter(struct trace *trace, struct evsel *evsel=
-)
->  {
->         char *tok, *left =3D evsel->filter, *new_filter =3D evsel->filter=
-;
->
-> @@ -3840,14 +3883,14 @@ static int trace__expand_filter(struct trace *tra=
-ce __maybe_unused, struct evsel
->                         struct syscall_arg_fmt *fmt;
->                         int left_size =3D tok - left,
->                             right_size =3D right_end - right;
-> -                       char arg[128];
-> +                       char arg[128], *type;
->
->                         while (isspace(left[left_size - 1]))
->                                 --left_size;
->
->                         scnprintf(arg, sizeof(arg), "%.*s", left_size, le=
-ft);
->
-> -                       fmt =3D evsel__find_syscall_arg_fmt_by_name(evsel=
-, arg);
-> +                       fmt =3D evsel__find_syscall_arg_fmt_by_name(evsel=
-, arg, &type);
->                         if (fmt =3D=3D NULL) {
->                                 pr_err("\"%s\" not found in \"%s\", can't=
- set filter \"%s\"\n",
->                                        arg, evsel->name, evsel->filter);
-> @@ -3860,9 +3903,16 @@ static int trace__expand_filter(struct trace *trac=
-e __maybe_unused, struct evsel
->                         if (fmt->strtoul) {
->                                 u64 val;
->                                 struct syscall_arg syscall_arg =3D {
-> -                                       .parm =3D fmt->parm,
-> +                                       .trace =3D trace,
-> +                                       .fmt   =3D fmt,
->                                 };
->
-> +                               if (fmt->is_enum) {
-> +                                       syscall_arg.parm =3D type;
-> +                               } else {
-> +                                       syscall_arg.parm =3D fmt->parm;
-> +                               }
+One core change that moves a disk start message to a location where it
+will only be printed once instead of twice plus a couple of error
+handling race fixes in the ufs driver.
 
-Hi Howard,
+The patch is available here:
 
-minor nit that cases like this shouldn't use curly braces as per:
-https://www.kernel.org/doc/html/v4.10/process/coding-style.html#placing-bra=
-ces-and-spaces
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-Thanks,
-Ian
+The short changelog is:
 
-> +
->                                 if (fmt->strtoul(right, right_size, &sysc=
-all_arg, &val)) {
->                                         char *n, expansion[19];
->                                         int expansion_lenght =3D scnprint=
-f(expansion, sizeof(expansion), "%#" PRIx64, val);
-> --
-> 2.45.2
->
+Damien Le Moal (1):
+      scsi: sd: Do not repeat the starting disk message
+
+Peter Wang (2):
+      scsi: ufs: core: Fix ufshcd_abort_one racing issue
+      scsi: ufs: core: Fix ufshcd_clear_cmd racing issue
+
+And the diffstat:
+
+ drivers/scsi/sd.c          |  5 ++---
+ drivers/ufs/core/ufs-mcq.c | 11 ++++++-----
+ drivers/ufs/core/ufshcd.c  |  2 ++
+ 3 files changed, 10 insertions(+), 8 deletions(-)
+
+With full diff below
+
+James
+
+---
+
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index fe82baa924f8..6203915945a4 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -4117,8 +4117,6 @@ static int sd_resume(struct device *dev)
+ {
+ 	struct scsi_disk *sdkp = dev_get_drvdata(dev);
+ 
+-	sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
+-
+ 	if (opal_unlock_from_suspend(sdkp->opal_dev)) {
+ 		sd_printk(KERN_NOTICE, sdkp, "OPAL unlock failed\n");
+ 		return -EIO;
+@@ -4135,12 +4133,13 @@ static int sd_resume_common(struct device *dev, bool runtime)
+ 	if (!sdkp)	/* E.g.: runtime resume at the start of sd_probe() */
+ 		return 0;
+ 
++	sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
++
+ 	if (!sd_do_start_stop(sdkp->device, runtime)) {
+ 		sdkp->suspended = false;
+ 		return 0;
+ 	}
+ 
+-	sd_printk(KERN_NOTICE, sdkp, "Starting disk\n");
+ 	ret = sd_start_stop_device(sdkp, 1);
+ 	if (!ret) {
+ 		sd_resume(dev);
+diff --git a/drivers/ufs/core/ufs-mcq.c b/drivers/ufs/core/ufs-mcq.c
+index 8944548c30fa..c532416aec22 100644
+--- a/drivers/ufs/core/ufs-mcq.c
++++ b/drivers/ufs/core/ufs-mcq.c
+@@ -105,16 +105,15 @@ EXPORT_SYMBOL_GPL(ufshcd_mcq_config_mac);
+  * @hba: per adapter instance
+  * @req: pointer to the request to be issued
+  *
+- * Return: the hardware queue instance on which the request would
+- * be queued.
++ * Return: the hardware queue instance on which the request will be or has
++ * been queued. %NULL if the request has already been freed.
+  */
+ struct ufs_hw_queue *ufshcd_mcq_req_to_hwq(struct ufs_hba *hba,
+ 					 struct request *req)
+ {
+-	u32 utag = blk_mq_unique_tag(req);
+-	u32 hwq = blk_mq_unique_tag_to_hwq(utag);
++	struct blk_mq_hw_ctx *hctx = READ_ONCE(req->mq_hctx);
+ 
+-	return &hba->uhq[hwq];
++	return hctx ? &hba->uhq[hctx->queue_num] : NULL;
+ }
+ 
+ /**
+@@ -515,6 +514,8 @@ int ufshcd_mcq_sq_cleanup(struct ufs_hba *hba, int task_tag)
+ 		if (!cmd)
+ 			return -EINVAL;
+ 		hwq = ufshcd_mcq_req_to_hwq(hba, scsi_cmd_to_rq(cmd));
++		if (!hwq)
++			return 0;
+ 	} else {
+ 		hwq = hba->dev_cmd_queue;
+ 	}
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 1b65e6ae4137..46433ecf0c4d 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -6456,6 +6456,8 @@ static bool ufshcd_abort_one(struct request *rq, void *priv)
+ 	/* Release cmd in MCQ mode if abort succeeds */
+ 	if (is_mcq_enabled(hba) && (*ret == 0)) {
+ 		hwq = ufshcd_mcq_req_to_hwq(hba, scsi_cmd_to_rq(lrbp->cmd));
++		if (!hwq)
++			return 0;
+ 		spin_lock_irqsave(&hwq->cq_lock, flags);
+ 		if (ufshcd_cmd_inflight(lrbp->cmd))
+ 			ufshcd_release_scsi_cmd(hba, lrbp);
+
 
