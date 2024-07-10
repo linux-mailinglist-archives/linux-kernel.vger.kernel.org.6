@@ -1,188 +1,234 @@
-Return-Path: <linux-kernel+bounces-247845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75AA92D56F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:56:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B269292D575
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 562F71F234D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:56:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4CEA1C21EF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A562194A68;
-	Wed, 10 Jul 2024 15:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D53B1946D9;
+	Wed, 10 Jul 2024 15:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="ZTthLxzi"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qSlj/Xo/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDED4194135
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C104194135;
+	Wed, 10 Jul 2024 15:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720626974; cv=none; b=WTw2J3FIKO9uZHNTSObhbAEhVULU6MKAw2ygFZb3b3KUKQ4RE79W+T7eB4rn/2m+ksAqy6T0g/FHjUmMVUgSzSrL2/21fkTzz17irC9rTYjY6TRpORYSX6ckY5CN5YF3puXUO8L67bbUhCH/uHGvGQViBRzDU54Ip4/WcTQhUfc=
+	t=1720626980; cv=none; b=OacsVdpJPEMxkhsEi53rMkb65GKdvFk74Ehp+7iQG9eYgHkGpcSvkdn37E6wnk/6OWhnh4x2V9u01dOrS+R3IRCyHdvrHa9tHVsYyPMmHI38vicAfhhFgANI91yzE/8cJbqCMVXm3hL/3iilGYhFkyvHK13kttcyg9M69Doyvwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720626974; c=relaxed/simple;
-	bh=B/nG4TR56/cwzYMHqCDCNFF2y43gf1Y4lESNrmlv6BY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZAjq/TSh4trd+UdiYYPtDcuZ9Okv2TXhg45XC8Kortf5CN5Dvdm1n8Uq8ECiw4qsNNvtT3XN0cHhTrlXfGr5RWUTAnoxvO08co8ba/QAMbhcnf61MjjjIK2lczFAIxcFZ958mks/1b/3sbY2oT+6TJEN3izj6N8iSB70GhtjAlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=ZTthLxzi; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-58c947a6692so8253022a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:56:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1720626971; x=1721231771; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ISPkngAyeCTHdiiqdfhGRhrD7gcMn5QvhxpyUZ/8MrQ=;
-        b=ZTthLxziALFZ68HvrQ8nyU5KluBqycIZqUnWteKz1XM5wzs8yuAs9O7XOtW11aqeEK
-         k4yyftRCct9SCgCcDZFhGM0FpO/EhDiN/7SXgQ72x1LaY6hbCWFCDxFwk+dplsDWUIwZ
-         o++A4sX5zj1V3ornTDcfAF3vVlm5ArDZSQrCnwnAMJ4crq4lvHBeLAXQkH4f3W1PxAve
-         5GImhS8Ogx8oDjIH6s5Uo456PB3bJyq7u85JWCsjJ5vRnP85lqBdCRFqcc+ee/Kurv/V
-         TALLGuBd5q/BQooDt16UW9bd0gsF7UZ8VvP9NUuMsNzrp1IEZlFbjs2KuoKYRmLrPTtX
-         /FjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720626971; x=1721231771;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ISPkngAyeCTHdiiqdfhGRhrD7gcMn5QvhxpyUZ/8MrQ=;
-        b=u2qXBk1XlwU16I2h1YWcir3cFQto4Y3mp3GVcYw0nvdbY0mUE5v7v0XJ16nKCr6Eri
-         nuUAg5KLPsKO13/gGoRPa/zNvhRK1Xt1sxtalmSR4AM1sDpFcDz6Kwo2sPmo8GARJBhH
-         8Kd7J3EGjdMizb1EB9mMcIHZaIe/KTDBy4u81Ww5itsVIi7eEueScEuj4oj4Bqj4mCdJ
-         CymqX0FtW8O40UMalDIt4z+LHZvDI+JwTkk6hwrG0i16JzG0RW+OsHNUnJqMto9R4BiY
-         4iD2ln7EChJbVs08L0QSSiG1QH+22ue8wi+gFQZjgtHpVqpA6Z1U2zZ49sCRVlmXXHxp
-         aJuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWWK36pgyTB4djgmcxOa9tRmIoDsU3OL511W3LCONK9jBfUqauhTcDXYHt9CkiZKXQ4VUlbztzLhGPfFi7tjYlJXS+T8/JdVYu0EKWA
-X-Gm-Message-State: AOJu0YysRMOdMU8V/ZNSQI4rH/axIXSVtvjP0DzGxwB19//Fv4XZUH3D
-	khQuSIIJTPjYWiZyhP9dy4kkDoj6zW/VoQPSKOviKjgMEGKWjD1WONywZc0BijJV7hiP/Gxs9AK
-	w0C5iW0WhG3ZnSEBj4y7rksPLYKyXfXZM1JjLcA==
-X-Google-Smtp-Source: AGHT+IHs4uU/4yOkk+bzRj18biX0XTt2Rbdp+dHRjb7JtDRHUJObhcKGm+ZUnkDr1LXg3IpCyRDMKsne4rSn0QUuPgI=
-X-Received: by 2002:a17:906:e950:b0:a77:e1c2:3ab with SMTP id
- a640c23a62f3a-a780b884b52mr389055966b.50.1720626971164; Wed, 10 Jul 2024
- 08:56:11 -0700 (PDT)
+	s=arc-20240116; t=1720626980; c=relaxed/simple;
+	bh=XjBzCjwIpp8SXuUwXq2uIFVgVjUPOVR8FS4xVOZVhoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KHn5dZZbZi4pk8UjWMdN9nHjKmRjdZ+QqiPsVsxQ3wyzgfSWC4tuk1mxAJdFSndW5QByQjXF9r2BQUvYIk0qrcy+9ClI/SpvPavAPAU1p08el2YpL2bxxD4M1E2j88hI+RQNnybLwJFswdYKAUtJGLWR4WPp4vP2X45AasSUYK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qSlj/Xo/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3D16C32786;
+	Wed, 10 Jul 2024 15:56:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720626980;
+	bh=XjBzCjwIpp8SXuUwXq2uIFVgVjUPOVR8FS4xVOZVhoU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qSlj/Xo/BcOIel08H62BzJavL5R76fyw07sAGq7g/JewbdHnTVeAd0WmSMGer/UO/
+	 RvXhAhSma9UZ5Fc7Cj1ry0BnWdSYB69DDHmYcO1TM7+G2lH4p5qlSXpJwn34jofpRW
+	 ZAXZK51vVr11AlyGNFBu5yItuYNgD+1ErGxl2dZTSUaXC9LxXVLDAYINUkTAugDSpl
+	 dwE1JJmvjYWJpNn4imAAmgxxoCEUb6U2YwTTvn9Mn3yiiYbCJ+hlgQCcSmhI6q8NQY
+	 QHKGvZtLde1eVeEgzuPalReXXqwgEdPM2TEjrpUjRmuCU2q3cmkBfpvLoqoqxjC5Sm
+	 QITqwtuNb9nqA==
+Date: Wed, 10 Jul 2024 09:56:03 -0600
+From: Rob Herring <robh@kernel.org>
+To: Adam Skladowski <a39.skl@gmail.com>
+Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+	Georgi Djakov <djakov@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Vladimir Lypak <vladimir.lypak@gmail.com>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Rohit Agarwal <quic_rohiagar@quicinc.com>,
+	Danila Tikhonov <danila@jiaxyga.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
+	Andrew Halaney <ahalaney@redhat.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Barnabas Czeman <barnabas.czeman@mainlining.org>,
+	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Abel Vesa <abel.vesa@linaro.org>
+Subject: Re: [PATCH v3 3/9] dt-bindings: interconnect: qcom: Add Qualcomm
+ MSM8937 NoC
+Message-ID: <20240710155603.GB3133981-robh@kernel.org>
+References: <20240709102728.15349-1-a39.skl@gmail.com>
+ <20240709102728.15349-4-a39.skl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625005001.37901-1-jesse@rivosinc.com> <20240625005001.37901-4-jesse@rivosinc.com>
-In-Reply-To: <20240625005001.37901-4-jesse@rivosinc.com>
-From: Evan Green <evan@rivosinc.com>
-Date: Wed, 10 Jul 2024 08:55:35 -0700
-Message-ID: <CALs-HsvE9PzTrhVO0umh3KaJuLQLdk-h8sYKBg7XA4a-MXAmOg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/8] RISC-V: Check scalar unaligned access on all CPUs
-To: Jesse Taube <jesse@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, Jonathan Corbet <corbet@lwn.net>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Charlie Jenkins <charlie@rivosinc.com>, 
-	Xiao Wang <xiao.w.wang@intel.com>, Andy Chiu <andy.chiu@sifive.com>, 
-	Eric Biggers <ebiggers@google.com>, Greentime Hu <greentime.hu@sifive.com>, 
-	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
-	Heiko Stuebner <heiko@sntech.de>, Costa Shulyupin <costa.shul@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
-	Anup Patel <apatel@ventanamicro.com>, Zong Li <zong.li@sifive.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Ben Dooks <ben.dooks@codethink.co.uk>, 
-	Alexandre Ghiti <alexghiti@rivosinc.com>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	Erick Archer <erick.archer@gmx.com>, Joel Granados <j.granados@samsung.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709102728.15349-4-a39.skl@gmail.com>
 
-On Mon, Jun 24, 2024 at 5:51=E2=80=AFPM Jesse Taube <jesse@rivosinc.com> wr=
-ote:
->
-> Originally, the check_unaligned_access_emulated_all_cpus function
-> only checked the boot hart. This fixes the function to check all
-> harts.
->
-> Fixes: 71c54b3d169d ("riscv: report misaligned accesses emulation to hwpr=
-obe")
-> Signed-off-by: Jesse Taube <jesse@rivosinc.com>
-> Cc: stable@vger.kernel.org
+On Tue, Jul 09, 2024 at 12:22:48PM +0200, Adam Skladowski wrote:
+> Add bindings for Qualcomm MSM8937 Network-On-Chip interconnect devices.
+
+That is obvious. What would be useful is detailing how 8937 is similar 
+to the existing devices.
+
+> 
+> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
 > ---
-> V1 -> V2:
->  - New patch
-> V2 -> V3:
->  - Split patch
-> ---
->  arch/riscv/kernel/traps_misaligned.c | 23 ++++++-----------------
->  1 file changed, 6 insertions(+), 17 deletions(-)
->
-> diff --git a/arch/riscv/kernel/traps_misaligned.c b/arch/riscv/kernel/tra=
-ps_misaligned.c
-> index b62d5a2f4541..8fadbe00dd62 100644
-> --- a/arch/riscv/kernel/traps_misaligned.c
-> +++ b/arch/riscv/kernel/traps_misaligned.c
-> @@ -526,31 +526,17 @@ int handle_misaligned_store(struct pt_regs *regs)
->         return 0;
->  }
->
-> -static bool check_unaligned_access_emulated(int cpu)
-> +static void check_unaligned_access_emulated(struct work_struct *unused)
->  {
-> +       int cpu =3D smp_processor_id();
->         long *mas_ptr =3D per_cpu_ptr(&misaligned_access_speed, cpu);
->         unsigned long tmp_var, tmp_val;
-> -       bool misaligned_emu_detected;
->
->         *mas_ptr =3D RISCV_HWPROBE_MISALIGNED_UNKNOWN;
->
->         __asm__ __volatile__ (
->                 "       "REG_L" %[tmp], 1(%[ptr])\n"
->                 : [tmp] "=3Dr" (tmp_val) : [ptr] "r" (&tmp_var) : "memory=
-");
-> -
-> -       misaligned_emu_detected =3D (*mas_ptr =3D=3D RISCV_HWPROBE_MISALI=
-GNED_EMULATED);
-> -       /*
-> -        * If unaligned_ctl is already set, this means that we detected t=
-hat all
-> -        * CPUS uses emulated misaligned access at boot time. If that cha=
-nged
-> -        * when hotplugging the new cpu, this is something we don't handl=
-e.
-> -        */
-> -       if (unlikely(unaligned_ctl && !misaligned_emu_detected)) {
-> -               pr_crit("CPU misaligned accesses non homogeneous (expecte=
-d all emulated)\n");
-> -               while (true)
-> -                       cpu_relax();
-> -       }
-
-This chunk was meant to detect and refuse to run on a system where a
-heterogeneous CPU is hotplugged into a previously homogenous system.
-The commit message doesn't mention this change, how come you
-deleted it?
-
-
-> -
-> -       return misaligned_emu_detected;
->  }
->
->  bool check_unaligned_access_emulated_all_cpus(void)
-> @@ -562,8 +548,11 @@ bool check_unaligned_access_emulated_all_cpus(void)
->          * accesses emulated since tasks requesting such control can run =
-on any
->          * CPU.
->          */
-> +       schedule_on_each_cpu(check_unaligned_access_emulated);
+>  .../bindings/interconnect/qcom,msm8939.yaml   |  8 +-
+>  .../dt-bindings/interconnect/qcom,msm8937.h   | 93 +++++++++++++++++++
+>  2 files changed, 99 insertions(+), 2 deletions(-)
+>  create mode 100644 include/dt-bindings/interconnect/qcom,msm8937.h
+> 
+> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml b/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
+> index 0641a3c992a5..d19e20247df8 100644
+> --- a/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
+> +++ b/Documentation/devicetree/bindings/interconnect/qcom,msm8939.yaml
+> @@ -4,13 +4,13 @@
+>  $id: http://devicetree.org/schemas/interconnect/qcom,msm8939.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+> -title: Qualcomm MSM8939/MSM8976 Network-On-Chip interconnect
+> +title: Qualcomm MSM8937/MSM8939/MSM8976 Network-On-Chip interconnect
+>  
+>  maintainers:
+>    - Konrad Dybcio <konradybcio@kernel.org>
+>  
+>  description:
+> -  The Qualcomm MSM8939/MSM8976 interconnect providers support
+> +  The Qualcomm MSM8937/MSM8939/MSM8976 interconnect providers support
+>    adjusting the bandwidth requirements between the various NoC fabrics.
+>  
+>  allOf:
+> @@ -19,6 +19,9 @@ allOf:
+>  properties:
+>    compatible:
+>      enum:
+> +      - qcom,msm8937-bimc
+> +      - qcom,msm8937-pcnoc
+> +      - qcom,msm8937-snoc
+>        - qcom,msm8939-bimc
+>        - qcom,msm8939-pcnoc
+>        - qcom,msm8939-snoc
+> @@ -43,6 +46,7 @@ patternProperties:
+>      properties:
+>        compatible:
+>          enum:
+> +          - qcom,msm8937-snoc-mm
+>            - qcom,msm8939-snoc-mm
+>            - qcom,msm8976-snoc-mm
+>  
+> diff --git a/include/dt-bindings/interconnect/qcom,msm8937.h b/include/dt-bindings/interconnect/qcom,msm8937.h
+> new file mode 100644
+> index 000000000000..98b8a4637aab
+> --- /dev/null
+> +++ b/include/dt-bindings/interconnect/qcom,msm8937.h
+> @@ -0,0 +1,93 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Qualcomm MSM8937 interconnect IDs
+> + */
 > +
->         for_each_online_cpu(cpu)
-> -               if (!check_unaligned_access_emulated(cpu))
-> +               if (per_cpu(misaligned_access_speed, cpu)
-> +                   !=3D RISCV_HWPROBE_MISALIGNED_EMULATED)
->                         return false;
->
->         unaligned_ctl =3D true;
-> --
+> +#ifndef __DT_BINDINGS_INTERCONNECT_QCOM_MSM8937_H
+> +#define __DT_BINDINGS_INTERCONNECT_QCOM_MSM8937_H
+> +
+> +/* BIMC fabric */
+> +#define MAS_APPS_PROC		0
+> +#define MAS_OXILI		1
+> +#define MAS_SNOC_BIMC_0		2
+> +#define MAS_SNOC_BIMC_2		3
+> +#define MAS_SNOC_BIMC_1		4
+> +#define MAS_TCU_0		5
+> +#define SLV_EBI			6
+> +#define SLV_BIMC_SNOC		7
+> +
+> +/* PCNOC fabric */
+> +#define MAS_SPDM		0
+> +#define MAS_BLSP_1		1
+> +#define MAS_BLSP_2		2
+> +#define MAS_USB_HS1		3
+> +#define MAS_XI_USB_HS1		4
+> +#define MAS_CRYPTO		5
+> +#define MAS_SDCC_1		6
+> +#define MAS_SDCC_2		7
+> +#define MAS_SNOC_PCNOC		8
+> +#define PCNOC_M_0		9
+> +#define PCNOC_M_1		10
+> +#define PCNOC_INT_0		11
+> +#define PCNOC_INT_1		12
+> +#define PCNOC_INT_2		13
+> +#define PCNOC_INT_3		14
+> +#define PCNOC_S_0		15
+> +#define PCNOC_S_1		16
+> +#define PCNOC_S_2		17
+> +#define PCNOC_S_3		18
+> +#define PCNOC_S_4		19
+> +#define PCNOC_S_6		20
+> +#define PCNOC_S_7		21
+> +#define PCNOC_S_8		22
+> +#define SLV_SDCC_2		23
+> +#define SLV_SPDM		24
+> +#define SLV_PDM			25
+> +#define SLV_PRNG		26
+> +#define SLV_TCSR		27
+> +#define SLV_SNOC_CFG		28
+> +#define SLV_MESSAGE_RAM		29
+> +#define SLV_CAMERA_SS_CFG	30
+> +#define SLV_DISP_SS_CFG		31
+> +#define SLV_VENUS_CFG		32
+> +#define SLV_GPU_CFG		33
+> +#define SLV_TLMM		34
+> +#define SLV_BLSP_1		35
+> +#define SLV_BLSP_2		36
+> +#define SLV_PMIC_ARB		37
+> +#define SLV_SDCC_1		38
+> +#define SLV_CRYPTO_0_CFG	39
+> +#define SLV_USB_HS		40
+> +#define SLV_TCU			41
+> +#define SLV_PCNOC_SNOC		42
+> +
+> +/* SNOC fabric */
+> +#define MAS_QDSS_BAM		0
+> +#define MAS_BIMC_SNOC		1
+> +#define MAS_PCNOC_SNOC		2
+> +#define MAS_QDSS_ETR		3
+> +#define QDSS_INT		4
+> +#define SNOC_INT_0		5
+> +#define SNOC_INT_1		6
+> +#define SNOC_INT_2		7
+> +#define SLV_KPSS_AHB		8
+> +#define SLV_WCSS		9
+> +#define SLV_SNOC_BIMC_1		10
+> +#define SLV_IMEM		11
+> +#define SLV_SNOC_PCNOC		12
+> +#define SLV_QDSS_STM		13
+> +#define SLV_CATS_1		14
+> +#define SLV_LPASS		15
+> +
+> +/* SNOC-MM fabric */
+> +#define MAS_JPEG		0
+> +#define MAS_MDP			1
+> +#define MAS_VENUS		2
+> +#define MAS_VFE0		3
+> +#define MAS_VFE1		4
+> +#define MAS_CPP			5
+> +#define SLV_SNOC_BIMC_0		6
+> +#define SLV_SNOC_BIMC_2		7
+> +#define SLV_CATS_0		8
+> +
+> +#endif /* __DT_BINDINGS_INTERCONNECT_QCOM_MSM8937_H */
+> -- 
 > 2.45.2
->
+> 
 
