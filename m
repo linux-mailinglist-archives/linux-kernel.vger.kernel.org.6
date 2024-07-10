@@ -1,134 +1,149 @@
-Return-Path: <linux-kernel+bounces-247183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D09592CC3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:52:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0291192CC41
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CFA62859C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:52:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A855D1F2415B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F5212A14C;
-	Wed, 10 Jul 2024 07:51:53 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A137484A3F;
+	Wed, 10 Jul 2024 07:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="FmA8eo6H"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23CC584A21
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D40B5CB8;
+	Wed, 10 Jul 2024 07:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720597912; cv=none; b=SRTa7Ddr557crq503v1gIw1SKwMToHLXYUC04C4nPuPm2mrbfHZDf7vHZyI2IK9qaPHoGc3k+odkutLrUi3KXCrPf0+ht6ia/xQ1HhA/dvSuzMv+lDUCIroxGsAiuxTY80emH6MoAYjXNnnwBalYzIrxdE6nq+v+TP7xxgjt+GM=
+	t=1720597973; cv=none; b=emHctS/HsZlARKZD443cudi1q1DyF0TNULE77S56FEgC8R9jH+PYQ+KLb80DyruL4COU6Tl8GPXuTM6GFupOHYLgfM5xTfNM6ybLd/7TGEroIHLoc3qwKswpnOIdc6FGG5eZ5dFW9lDN9ORpS8nMbLGZRUoQG1FRyQbI7umeVGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720597912; c=relaxed/simple;
-	bh=KrmMH7bKbT2qDBAZ6LB+t1vXN/9qd6MtCCjJv9qO9v0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BmqdY6NQCuGemGzuRZ25W3MZj4yZ6l4GUOqhhgKi5Rk9BzK0mUMAlzRp5pHlxSU5pWA8oWEnpFK2UTCJKISb4CzyKY4QhDCqSbKs/nD+i+BGmAT5LE8nJmLKNscxruGpGzmprDB5BsAAu5NSV2aQS1o4BtvpkVJscMRcO8cnzIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4WJqn86kSVz9sT0;
-	Wed, 10 Jul 2024 09:51:40 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id DO_FCbpqAp2z; Wed, 10 Jul 2024 09:51:40 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4WJqmw5Xm4z9sTL;
-	Wed, 10 Jul 2024 09:51:28 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id AEAED8B778;
-	Wed, 10 Jul 2024 09:51:28 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id F75U0umoaS2G; Wed, 10 Jul 2024 09:51:28 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.233.26])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6EC4A8B766;
-	Wed, 10 Jul 2024 09:51:28 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	x86@kernel.org,
-	linux-riscv@lists.infradead.org,
-	Oscar Salvador <osalvador@suse.de>,
-	Peter Xu <peterx@redhat.com>
-Subject: [PATCH v2 3/3] mm: Add p{g/4}d_leaf() in asm-generic/pgtable-nop{4/u}d.h
-Date: Wed, 10 Jul 2024 09:51:22 +0200
-Message-ID: <f69941b076bf8fec89b6bec5573fdb79483c2a75.1720597744.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <bcd6ab8246348f18fdc77694e321ee6458f05781.1720597744.git.christophe.leroy@csgroup.eu>
-References: <bcd6ab8246348f18fdc77694e321ee6458f05781.1720597744.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1720597973; c=relaxed/simple;
+	bh=2PFKWkKhSPHmpls7uAOXhTnAwAM9+qDsosLmiGqxaYY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=afiP1otu/QcJOegWBYeUBHMNnETeYG+5GuT8lC/hfVy8lOSAKpK3ICNDvbH2+FQEDNbksBB33ES8vVlSm0qOGnX2w62VsZmAjm8/0fOtQBiKDbJ5DN9rDyGo+g6TxhYWtrBoolQR66Pnlb/G3LdvY1Zhb5HTwFgySP2pGJE6DzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=FmA8eo6H; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469MQ88D022710;
+	Wed, 10 Jul 2024 00:52:39 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=7
+	IxJjYfcrPnDxCKWi5guGHlYcsizf4wTIbtgyKp8Oas=; b=FmA8eo6H1wTFDfzQr
+	MXrI8VueJh+798a4PFfeUbGJfb5/K9WUyr1VdAe4TuuKPIrPGWNArNImpcQy+Txc
+	t5R5roBUOm/2m+AjTrab5dFipFzL1twjMyod4EOg0hXnxTru55Qwtzmpjfjx/1JA
+	43EOpO6Z8NucyIyAlVl9GHWPatvluTZt8/v2CnA08w40ucd9zvRUquJFJiwFZ6cj
+	D9FWgvsTVrHzz8kvCmrq2yUS7ho+41IRJySZ+v3RaDhh/Va3uGjBEyiAbSPu9HQ/
+	LZPLuJp7e5VbSB4f/EMp743hoR6Gjkk4433xWq+8lZjgWylbDg6/npUVmqf287Ok
+	QfL8w==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 409e061p0j-10
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jul 2024 00:52:39 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 10 Jul 2024 00:51:36 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 10 Jul 2024 00:51:36 -0700
+Received: from localhost.localdomain (unknown [10.28.36.175])
+	by maili.marvell.com (Postfix) with ESMTP id 860063F705E;
+	Wed, 10 Jul 2024 00:51:32 -0700 (PDT)
+From: Srujana Challa <schalla@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
+        <edumazet@google.com>, <sgoutham@marvell.com>, <lcherian@marvell.com>,
+        <gakula@marvell.com>, <jerinj@marvell.com>, <hkelam@marvell.com>,
+        <sbhatta@marvell.com>, <ndabilpuram@marvell.com>,
+        <schalla@marvell.com>
+Subject: [PATCH net,v2,1/5] octeontx2-af: replace cpt slot with lf id on reg write
+Date: Wed, 10 Jul 2024 13:21:23 +0530
+Message-ID: <20240710075127.2274582-2-schalla@marvell.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240710075127.2274582-1-schalla@marvell.com>
+References: <20240710075127.2274582-1-schalla@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720597882; l=2461; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=KrmMH7bKbT2qDBAZ6LB+t1vXN/9qd6MtCCjJv9qO9v0=; b=pGaWWJEGDivcTq/5LpqkCHIxHohVMbXxhf5suF8mh+EeYylaNrKQXv2k5AEG2JkUQc5H3Jal6 i+vMA84HOjbCpusC+m6HDo5+DieuE1RR+YB2uewJR0SbO5l1KYE5xsN
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: Sb8QWzcP8fJ9QMSb_6GRqxDSiogf_-ZU
+X-Proofpoint-GUID: Sb8QWzcP8fJ9QMSb_6GRqxDSiogf_-ZU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-10_04,2024-07-09_01,2024-05-17_01
 
-Commit 2c8a81dc0cc5 ("riscv/mm: fix two page table check related
-issues") added pud_leaf() in include/asm-generic/pgtable-nopmd.h
+From: Nithin Dabilpuram <ndabilpuram@marvell.com>
 
-Do the same for p4d_leaf() and pgd_leaf() to avoid getting them
-erroneously defined by architectures that do not implement the
-related page level.
+Replace slot id with global CPT lf id on reg read/write as
+CPTPF/VF driver would send slot number instead of global
+lf id in the reg offset. And also update the mailbox response
+with the global lf's register offset.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Fixes: ae454086e3c2 ("octeontx2-af: add mailbox interface for CPT")
+Signed-off-by: Nithin Dabilpuram <ndabilpuram@marvell.com>
 ---
-v2: Added pXd_leaf macro as well in asm-generic/pgtable-nopXd.h to cohabit with the fallback
----
- include/asm-generic/pgtable-nop4d.h | 2 ++
- include/asm-generic/pgtable-nopmd.h | 1 +
- include/asm-generic/pgtable-nopud.h | 2 ++
- 3 files changed, 5 insertions(+)
+ .../ethernet/marvell/octeontx2/af/rvu_cpt.c   | 23 +++++++++++++------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/include/asm-generic/pgtable-nop4d.h b/include/asm-generic/pgtable-nop4d.h
-index 03b7dae47dd4..ed7ba008469f 100644
---- a/include/asm-generic/pgtable-nop4d.h
-+++ b/include/asm-generic/pgtable-nop4d.h
-@@ -21,6 +21,8 @@ typedef struct { pgd_t pgd; } p4d_t;
- static inline int pgd_none(pgd_t pgd)		{ return 0; }
- static inline int pgd_bad(pgd_t pgd)		{ return 0; }
- static inline int pgd_present(pgd_t pgd)	{ return 1; }
-+static inline int pgd_leaf(pgd_t pgd)		{ return 0; }
-+#define pgd_leaf pgd_leaf
- static inline void pgd_clear(pgd_t *pgd)	{ }
- #define p4d_ERROR(p4d)				(pgd_ERROR((p4d).pgd))
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.c
+index f047185f38e0..3e09d2285814 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_cpt.c
+@@ -696,7 +696,8 @@ int rvu_mbox_handler_cpt_rd_wr_register(struct rvu *rvu,
+ 					struct cpt_rd_wr_reg_msg *req,
+ 					struct cpt_rd_wr_reg_msg *rsp)
+ {
+-	int blkaddr;
++	u64 offset = req->reg_offset;
++	int blkaddr, lf;
  
-diff --git a/include/asm-generic/pgtable-nopmd.h b/include/asm-generic/pgtable-nopmd.h
-index b01349a312fa..e178ace2e23e 100644
---- a/include/asm-generic/pgtable-nopmd.h
-+++ b/include/asm-generic/pgtable-nopmd.h
-@@ -31,6 +31,7 @@ static inline int pud_none(pud_t pud)		{ return 0; }
- static inline int pud_bad(pud_t pud)		{ return 0; }
- static inline int pud_present(pud_t pud)	{ return 1; }
- static inline int pud_leaf(pud_t pud)		{ return 0; }
-+#define pud_leaf pud_leaf
- static inline void pud_clear(pud_t *pud)	{ }
- #define pmd_ERROR(pmd)				(pud_ERROR((pmd).pud))
+ 	blkaddr = validate_and_get_cpt_blkaddr(req->blkaddr);
+ 	if (blkaddr < 0)
+@@ -707,17 +708,25 @@ int rvu_mbox_handler_cpt_rd_wr_register(struct rvu *rvu,
+ 	    !is_cpt_vf(rvu, req->hdr.pcifunc))
+ 		return CPT_AF_ERR_ACCESS_DENIED;
  
-diff --git a/include/asm-generic/pgtable-nopud.h b/include/asm-generic/pgtable-nopud.h
-index eb70c6d7ceff..655dfebea91c 100644
---- a/include/asm-generic/pgtable-nopud.h
-+++ b/include/asm-generic/pgtable-nopud.h
-@@ -28,6 +28,8 @@ typedef struct { p4d_t p4d; } pud_t;
- static inline int p4d_none(p4d_t p4d)		{ return 0; }
- static inline int p4d_bad(p4d_t p4d)		{ return 0; }
- static inline int p4d_present(p4d_t p4d)	{ return 1; }
-+static inline int p4d_leaf(p4d_t p4d)		{ return 0; }
-+#define p4d_leaf p4d_leaf
- static inline void p4d_clear(p4d_t *p4d)	{ }
- #define pud_ERROR(pud)				(p4d_ERROR((pud).p4d))
+-	rsp->reg_offset = req->reg_offset;
+-	rsp->ret_val = req->ret_val;
+-	rsp->is_write = req->is_write;
+-
+ 	if (!is_valid_offset(rvu, req))
+ 		return CPT_AF_ERR_ACCESS_DENIED;
  
++	/* Translate local LF used by VFs to global CPT LF */
++	lf = rvu_get_lf(rvu, &rvu->hw->block[blkaddr], req->hdr.pcifunc,
++			(offset & 0xFFF) >> 3);
++
++	/* Translate local LF's offset to global CPT LF's offset */
++	offset &= 0xFF000;
++	offset += lf << 3;
++
++	rsp->reg_offset = offset;
++	rsp->ret_val = req->ret_val;
++	rsp->is_write = req->is_write;
++
+ 	if (req->is_write)
+-		rvu_write64(rvu, blkaddr, req->reg_offset, req->val);
++		rvu_write64(rvu, blkaddr, offset, req->val);
+ 	else
+-		rsp->val = rvu_read64(rvu, blkaddr, req->reg_offset);
++		rsp->val = rvu_read64(rvu, blkaddr, offset);
+ 
+ 	return 0;
+ }
 -- 
-2.44.0
+2.25.1
 
 
