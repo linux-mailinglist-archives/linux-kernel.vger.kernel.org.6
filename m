@@ -1,131 +1,204 @@
-Return-Path: <linux-kernel+bounces-247366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F4B92CE80
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:46:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76F2B92CE86
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:47:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48DA41F22E03
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:46:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A7E11C235DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0FF18FA2A;
-	Wed, 10 Jul 2024 09:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214A818FC65;
+	Wed, 10 Jul 2024 09:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dbBOmPSC"
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YatCsrQp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE983C39;
-	Wed, 10 Jul 2024 09:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CBCC3BBF5
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720604777; cv=none; b=BlU7Dl3JmP6/faM/D6qyuqxdqdUWXh5+HhtUwIaMHGK+yEoW0nPW//9gGvS7Z1uCHW+tXMXjjGG3bVjMB588v82h+kWClYIKipZTWCxZEw0GZsSGz4WkskC7FN5dxW4G2pELhcgQz6hQ2wuihJ1pgWeLPHfLF5H+Tt5igMgasHE=
+	t=1720604807; cv=none; b=PuFj9HgAfyCheWsNGDvi+Y+3bMWItDD40/Ys/a+xWIfw7lKBNTu3J7pJH+uJQk1Kh2jCiU4iiYWSpQ9T2tr+nhQIbieWjZdYdbWecy+HBdSQXmt0gqcxekpbJF5Uzc3VTs6aTWh3Hz4NLKPwn5gP5DOL/UKdaSgZEIovHMs40yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720604777; c=relaxed/simple;
-	bh=87OuMfoBp1HIgSib8dcBMnekVnZsd8KTyRWTjgXz2SU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NoaWMc4ZOl6I3wFvMk3g1S6iHCc1h9Ywk3TWEefmragGZGGb1bA2wOWxbRyltSuzjD/ojW0VQnn7nOMs3nm005wKzQ/QMpIDaCImbqmVWX3+ijvgtqdtikDwPHegdBV7g3F27z+CR5Odf2+DfwnryErJztupFYeqc1beN9K7kck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dbBOmPSC; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-1fb4a807708so50185315ad.2;
-        Wed, 10 Jul 2024 02:46:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720604775; x=1721209575; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i3a1COtwgflpykMRm7QZx/0MpqKdO0JXYgUvgqxRrRE=;
-        b=dbBOmPSCA312Zb2IMdIXnr+PR9yz6QOx+xMR4tAR0oTh+0rP0dQuwj0c6ArV3u4sWQ
-         /oa3eL9e8XggehofBJ2EiurcdgerG7yZj15OHC7r16mLdi09EEOMy1nXH8L+UEDkmVAT
-         ut0Ivw9ql8e81tEPItmN+pPwydeMYCkxX4GtWa4A7qY90TnZlAi04dU/dUUoP7J8FloQ
-         zmeJNUYjP7bz0ArYpJxlhxd4h3HHPf6ZFEsSgtMbvigX3pPCTx0d3FsxJcYKAxSWBZob
-         okRTqUgOmUsEqNr9QTy27ajn9FvQRUVQgrargvD72wW7wI/UnxCtkgmrnfl73BAB+1BH
-         Kv/A==
+	s=arc-20240116; t=1720604807; c=relaxed/simple;
+	bh=LZFnsJhlMMXmLcnLjHwif3Tko8RTPA1FKx72W7VDpJM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nhmf0dyLZtqdh+1mryI9tmyN7/p/Hz+rb4eSmgM/n+AzeIwFrCjMl/BTH+zVgrdV2KBp2LwAcv7qHe3agee87SH/YDMX3/FvWq8RmV7/wPQGPFFOe4Vo7R1+CzSgNNYZdIWNnqbI6sN+lQEmHnbm3KT0uIgeK9m4Huq1DTj4BVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YatCsrQp; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720604803;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wr3Fzy04+IjAcueeHCouhzEQFA2vb2X2x/Lajkzkytk=;
+	b=YatCsrQpJ/OO0CxDVg2fqzIj8akACHno4x0xxpaagEwisLr/+FQ+51BbnL5/6uNPkVtVI4
+	PH1xwL70j94+hs503mPBKFJSKk5Yhg+1piLEA28LlIH5kZ/oE1RKUKGr3rEXJiOklf1CDe
+	BJumird57RJt5nbMQl9xklVeOVTuZRQ=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-190-e2UFyAbXMsOHu3LL4QZ6aQ-1; Wed, 10 Jul 2024 05:46:42 -0400
+X-MC-Unique: e2UFyAbXMsOHu3LL4QZ6aQ-1
+Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2ee9308bc8cso51308071fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 02:46:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720604775; x=1721209575;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1720604800; x=1721209600;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=i3a1COtwgflpykMRm7QZx/0MpqKdO0JXYgUvgqxRrRE=;
-        b=mtVvwlhVOyvb+Yr1qsgLQnP+MrBCK8poGDcWpADTQ/W9JC018E8HIM7eS+ShL5W2HX
-         SJCC7OX6/kAoosXfoiqYqL2y/3O9IcJZZMirmc4AG8eE+afYgqdo7Ck+Yown4nSuLNrg
-         kgokiONZ1F/CdGYBGC1NKFGwpca+CBRQW0VxUjj8JMLeClCY/WVo3VPizzb+cD53cIMY
-         xSf3lX2qZwXZz7jz+De3YGrNFwYecfUY/Qci2G5Pf/zZZozs6N1Th/XIF8zT0mgJvg3N
-         BfNfnP48EFHgFcR37kzZrh0iZ0EdSOECqWhqDIYrIWhZzp4b0njCbORw9a7x4Qcz63Mz
-         btGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWyozc4LPO3zC5OMvLZ83bBqgOzqhicpF6xJiXmNebOgMki1Bjqu3ztzUaCpq6s41u7S/fU1WHrOSvYV5L3UWo+Zu5BKLfQxIZxS+NMZffqHUswnbrvfaGLMI0yHug5k8TzuILEzrBkBLykHWc2Pibv99hsq1lBqQtTpOGGwVXc6g/uXswZ
-X-Gm-Message-State: AOJu0Yz8vRzJ1SqZjCIqHGK6pw2wdhu5euKOw41EQ6fG/Db1rqC+7fYs
-	OT+W5pg/jot+tXMjaIbR9+u6e18tbIubK6EYr6Ojt4T29xUK6m2Y
-X-Google-Smtp-Source: AGHT+IGvdJH3+OVZQzebmwVF4nk/h4qXhnEwC50oELwCdSIdGXrrNeQs5RPx3J9NVn8La2ZNmCKYbg==
-X-Received: by 2002:a17:903:2448:b0:1fb:7f66:250 with SMTP id d9443c01a7336-1fbb6ed578dmr44493075ad.46.1720604774874;
-        Wed, 10 Jul 2024 02:46:14 -0700 (PDT)
-Received: from localhost.localdomain ([166.111.236.150])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a107d2sm29972995ad.18.2024.07.10.02.46.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 02:46:14 -0700 (PDT)
-From: yyxRoy <yyxroy22@gmail.com>
-X-Google-Original-From: yyxRoy <979093444@qq.com>
-To: fw@strlen.de
-Cc: 979093444@qq.com,
-	coreteam@netfilter.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	gregkh@linuxfoundation.org,
-	kadlec@blackhole.kfki.hu,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	netfilter-devel@vger.kernel.org,
-	pabeni@redhat.com,
-	pablo@netfilter.org,
-	yyxroy22@gmail.com
-Subject: Re: [PATCH] netfilter: conntrack: tcp: do not lower timeout to CLOSE for in-window RSTs
-Date: Wed, 10 Jul 2024 17:45:54 +0800
-Message-Id: <20240710094554.483075-1-979093444@qq.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240708141206.GA5340@breakpoint.cc>
-References: <20240708141206.GA5340@breakpoint.cc>
+        bh=Wr3Fzy04+IjAcueeHCouhzEQFA2vb2X2x/Lajkzkytk=;
+        b=ZrXoVmDyxS/0xfsXSEyhoIpEOmNtT/hqoq05mYX+cEA7EbeRq+AvTGR0XjLsbmFEqa
+         0ycCvzH7Sws9EHbsY80wishGFPuruJo8FmaBQ2+IGtUr3H2pIMzA1AySPpmMreKd/VvW
+         li1BTM8/vo35xtpwX6HT0+8S7xswWQ9XV+Mj14tG3eEU3Bo5qtxlb7ii35JULDraFA4s
+         mar17hhBrCBAXHShKVB85hwch65oJQluaIwryuro8XMfdSJ54GB5yoloxYUzIlB82AuC
+         12Fzr4cUPBt7aIRsWNtHD4qb6b1sJL2f/amn0hX5tp7Yo1ANYqcCqB/a6ZzLuVgbJMdo
+         bfQA==
+X-Forwarded-Encrypted: i=1; AJvYcCV972hQ03R/OFWlvq4viQOrBOQX2Zeo7bcnxLGjEqXGsqulZsQOXQsCJK5VwIuR+Tkm5O57gTUgmJayZhgX6A8+ewOigWJ1UTiSAtKy
+X-Gm-Message-State: AOJu0YyOr6ezSU9WTqRde+V6Fk4iZ5pMngDGHwM+YIM0jvbykRuoXSXx
+	EKFgUk9neNRw9FlnhowJKtrJ8F69X+zVfyH8YxN02UpVp6ypGulLdkbEUyp3TVMhNaL90OG0wc+
+	H8pUf77K1RCDljL1yyoEdR0r5nlAbjockc7Galwuitg+cyXW8dc59BsjacyRj421nhZUsilg+qH
+	0o3poDVp6BLsZqigdlueTP9XnlCPNfVx+qP0I7
+X-Received: by 2002:a05:651c:97:b0:2ee:8aed:ddcd with SMTP id 38308e7fff4ca-2eeb30ba01bmr30673201fa.2.1720604800506;
+        Wed, 10 Jul 2024 02:46:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH0ffFCw3VbNM6Vw/r2MqpTFMKw6bcckSDGxnXr5Oj3vP+HBV03PNXiHpFH5GB2HlKHopl3lyeXuVt4nS1YdPI=
+X-Received: by 2002:a05:651c:97:b0:2ee:8aed:ddcd with SMTP id
+ 38308e7fff4ca-2eeb30ba01bmr30673101fa.2.1720604800176; Wed, 10 Jul 2024
+ 02:46:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240708064820.88955-1-lulu@redhat.com> <PH0PR12MB5481AE2FD52AEE1C10411F3DDCDB2@PH0PR12MB5481.namprd12.prod.outlook.com>
+ <CACLfguXk4qiw4efRGK4Gw8OZQ_PKw6j+GVQJCVtbyJ+hxOoE0Q@mail.gmail.com>
+ <20240709084109-mutt-send-email-mst@kernel.org> <CACGkMEtdFgbgrjNDoYfW1B+4BwG8=i9CP5ePiULm2n3837n29w@mail.gmail.com>
+ <20240710020852-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20240710020852-mutt-send-email-mst@kernel.org>
+From: Cindy Lu <lulu@redhat.com>
+Date: Wed, 10 Jul 2024 17:46:02 +0800
+Message-ID: <CACLfguW0HxPy7ZF7gg7hNzMqFcf5x87asQKBUqZMOJC_S8kSbw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] vdpa: support set mac address from vdpa tool
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>, Parav Pandit <parav@nvidia.com>, 
+	Dragos Tatulea <dtatulea@nvidia.com>, "sgarzare@redhat.com" <sgarzare@redhat.com>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	Leonardo Milleri <lmilleri@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 8 Jul 2024 at 22:12, Florian Westphal <fw@strlen.de> wrote:
-> We can track TTL/NH.
-> We can track TCP timestamps.
-> 
-> But how would we use such extra information?
-> E.g. what I we observe:
-> 
-> ACK, TTL 32
-> ACK, TTL 31
-> ACK, TTL 30
-> ACK, TTL 29
-> 
-> ... will we just refuse to update TTL?
-> If we reduce it, any attacker can shrink it to needed low value
-> to prevent later RST from reaching end host.
-> 
-> If we don't, connection could get stuck on legit route change?
-> What about malicious entities injecting FIN/SYN packets rather than RST?
-> 
-> If we have last ts.echo from remote side, we can make it harder, but
-> what do if RST doesn't carry timestamp?
-> 
-> Could be perfectly legal when machine lost state, e.g. power-cycled.
-> So we can't ignore such RSTs.
+On Wed, 10 Jul 2024 at 14:10, Michael S. Tsirkin <mst@redhat.com> wrote:
+>
+> On Wed, Jul 10, 2024 at 11:05:48AM +0800, Jason Wang wrote:
+> > On Tue, Jul 9, 2024 at 8:42=E2=80=AFPM Michael S. Tsirkin <mst@redhat.c=
+om> wrote:
+> > >
+> > > On Tue, Jul 09, 2024 at 02:19:19PM +0800, Cindy Lu wrote:
+> > > > On Tue, 9 Jul 2024 at 11:59, Parav Pandit <parav@nvidia.com> wrote:
+> > > > >
+> > > > > Hi Cindy,
+> > > > >
+> > > > > > From: Cindy Lu <lulu@redhat.com>
+> > > > > > Sent: Monday, July 8, 2024 12:17 PM
+> > > > > >
+> > > > > > Add support for setting the MAC address using the VDPA tool.
+> > > > > > This feature will allow setting the MAC address using the VDPA =
+tool.
+> > > > > > For example, in vdpa_sim_net, the implementation sets the MAC a=
+ddress to
+> > > > > > the config space. However, for other drivers, they can implemen=
+t their own
+> > > > > > function, not limited to the config space.
+> > > > > >
+> > > > > > Changelog v2
+> > > > > >  - Changed the function name to prevent misunderstanding
+> > > > > >  - Added check for blk device
+> > > > > >  - Addressed the comments
+> > > > > > Changelog v3
+> > > > > >  - Split the function of the net device from vdpa_nl_cmd_dev_at=
+tr_set_doit
+> > > > > >  - Add a lock for the network device's dev_set_attr operation
+> > > > > >  - Address the comments
+> > > > > >
+> > > > > > Cindy Lu (2):
+> > > > > >   vdpa: support set mac address from vdpa tool
+> > > > > >   vdpa_sim_net: Add the support of set mac address
+> > > > > >
+> > > > > >  drivers/vdpa/vdpa.c                  | 81 ++++++++++++++++++++=
+++++++++
+> > > > > >  drivers/vdpa/vdpa_sim/vdpa_sim_net.c | 19 ++++++-
+> > > > > >  include/linux/vdpa.h                 |  9 ++++
+> > > > > >  include/uapi/linux/vdpa.h            |  1 +
+> > > > > >  4 files changed, 109 insertions(+), 1 deletion(-)
+> > > > > >
+> > > > > > --
+> > > > > > 2.45.0
+> > > > >
+> > > > > Mlx5 device already allows setting the mac and mtu during the vdp=
+a device creation time.
+> > > > > Once the vdpa device is created, it binds to vdpa bus and other d=
+river vhost_vdpa etc bind to it.
+> > > > > So there was no good reason in the past to support explicit confi=
+g after device add complicate the flow for synchronizing this.
+> > > > >
+> > > > > The user who wants a device with new attributes, as well destroy =
+and recreate the vdpa device with new desired attributes.
+> > > > >
+> > > > > vdpa_sim_net can also be extended for similar way when adding the=
+ vdpa device.
+> > > > >
+> > > > > Have you considered using the existing tool and kernel in place s=
+ince 2021?
+> > > > > Such as commit d8ca2fa5be1.
+> > > > >
+> > > > > An example of it is,
+> > > > > $ vdpa dev add name bar mgmtdev vdpasim_net mac 00:11:22:33:44:55=
+ mtu 9000
+> > > > >
+> > > > Hi Parav
+> > > > Really thanks for your comments. The reason for adding this functio=
+n
+> > > > is to support Kubevirt.
+> > > > the problem we meet is that kubevirt chooses one random vdpa device
+> > > > from the pool and we don't know which one it going to pick. That me=
+ans
+> > > > we can't get to know the Mac address before it is created. So we pl=
+an
+> > > > to have this function to change the mac address after it is created
+> > > > Thanks
+> > > > cindy
+> > >
+> > > Well you will need to change kubevirt to teach it to set
+> > > mac address, right?
+> >
+> > That's the plan. Adding Leonardo.
+> >
+> > Thanks
+>
+> So given you are going to change kubevirt, can we
+> change it to create devices as needed with the
+> existing API?
+>
+Hi Micheal and Parav,
+I'm really not familiar with kubevirt, hope Leonardo can help answer
+these questions
+Hi @Leonardo Milleri
+would you help answer these questions?
 
-I fully agree with your considerations. There are indeed some challenges with the proposed methods of enhancing checks on RSTs of in-window sequence numbers, TTL, and timestamps.
+Thanks
+Cindy
+> > >
+> > > --
+> > > MST
+> > >
+>
 
-However, we now have known that conntrack may be vulnerable to attacks and illegal state transitions when it receives in-window RSTs with incorrect TTL or data packets + RSTs. Is it possible to find better methods to mitigate these issues, as they may pose threats to Netfilter users?
-
-Note: We have also tested other connection tracking frameworks (such as FreeBSD/OpenBSD PF). Also playing the roles as middleboxes, they only change the state of the connection when they receive an RST with the currently known precise sequence number, thus avoiding these attacks. Could Netfilter adopt similar measures or else to further mitigate these issues?
-
-Thank you again for your time and for your efforts in maintaining the community's performance and security!
 
