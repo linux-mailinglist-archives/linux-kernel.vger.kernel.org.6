@@ -1,44 +1,63 @@
-Return-Path: <linux-kernel+bounces-247051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A96D92CA51
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:59:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA5A92CA53
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F8781F21005
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:59:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B06D1C22551
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895304F8A0;
-	Wed, 10 Jul 2024 05:58:58 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE98446CF;
+	Wed, 10 Jul 2024 06:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1bGArdIE";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aY765yiw"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945483D96D;
-	Wed, 10 Jul 2024 05:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32D017C9
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720591138; cv=none; b=U4UMApKe7Kg0n7vERwJ7vqOmSmxXkDLSMFmRAf5+21xQPMM4ZMDUewIBHahx0EsYYGgS2M9cMUQ01v/zB23UCO072pGOvGOcpxHhYEeK07Nl5kT+v+rfDmgsD4JNcmRnxNLyitjz+clw4vmU7t+Upus3v4dQTnCdiIwO34mVpPg=
+	t=1720591320; cv=none; b=u4ub3Ykf3zSCo1dW7wJvUmJvEF4m91sQs42KuzDzEcRHzlv7GGw9orV14FVZIMAUyukj4J5Tc76ruqpBR6YaPKYIWdFD95+PvTSW8eK6RtWONWS9qpm1c861agssyx19LTfVzyH4YlR/pCT7HA6g5Uv4W2zplXGunlAcAStoKRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720591138; c=relaxed/simple;
-	bh=LxSfHsZSnJgwNBoZ6mU0B6p/dKISUffVjHIWD6HA7ko=;
+	s=arc-20240116; t=1720591320; c=relaxed/simple;
+	bh=QDFuKbY/lFGtlFiMEK/m0bauR/F2ScuWg1EF/31L9A4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q+C+/7bB0dLiy3jYyZhTF7Nbilm6SKqs5+FQWJvAhfWPto+3C/e9IQFCw1IB9i6STnLNGGIklGAqToeP2UTOKkmQhy1GsHhPZIK/brwN/DnxKcj11+TuECCltooqC8q+/9yCi5gsaR5+fELp6DpCOphLQsLmOaohcS3FgSNnisg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 26300227A87; Wed, 10 Jul 2024 07:58:53 +0200 (CEST)
-Date: Wed, 10 Jul 2024 07:58:52 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christoph Hellwig <hch@lst.de>, Michael Kelley <mhklinux@outlook.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the dma-mapping tree
-Message-ID: <20240710055852.GB25305@lst.de>
-References: <20240710110545.110366a4@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=U9uN94sj6J4sr+57wqQxcjFnWo/PKjH1QoDw4K5Fq3OWBI8mweFNUIzpov7DvXYuP3FRuFhq/wqqYzafaKq+haKgfEH5lrBOaT5FkqmiZ15wNqz4Pa3M/D6jUhnAYGITxTBoMTpWhveWJuCIHHVy9AQRzCkOs7smv7e5KKtPfj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1bGArdIE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aY765yiw; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 10 Jul 2024 08:01:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1720591316;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VFpeUUACA6NTNu3LnOhh72MWRdsJCh6gQP5+7xWftQs=;
+	b=1bGArdIEO5lUJKNOScOJoD4pXU+iVhYkdcfsXtcKPLMjyfUWMjOTVRevnJ6G/FJQVvtd8F
+	vam/RPc041BMhsGnkmtODtwsvV/DvLPDVB2sFpQRT+4YZiCbgcVnxpdFwHkaGGzBP4BCVT
+	RCCqXMNA/9Whe2xuALb4XYTRcxuFxZC8oY9RnQu8vStJJexALO/xwudCl10O+UFIbHFcip
+	lCKW9MQpsQExjrMGVsZz9GPfhOng6+fIsvcQUXhJ5jel6r/x5Yf28rEee0jh5SayclF2d5
+	XZ5z2U9NkWw+9aRkIEqf3srE3JssJfMPGvskcV43irNTUrq3ymEDWdhQ32BSxw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1720591316;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VFpeUUACA6NTNu3LnOhh72MWRdsJCh6gQP5+7xWftQs=;
+	b=aY765yiwoBLANlpGh+lK48587cnzfDthp1PKt6+du8XnLwrHnOYzuc4+8cGfXPwqOKHbhc
+	+fI1qMYfT02nB0BA==
+From: Nam Cao <namcao@linutronix.de>
+To: Tyler Taormina <taormina.dev@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH] staging: vme_user: Remove redundant parentheses
+Message-ID: <20240710060152.Qu9miO0u@linutronix.de>
+References: <Zo2MTjKCM_UaLIGx@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,18 +66,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240710110545.110366a4@canb.auug.org.au>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <Zo2MTjKCM_UaLIGx@localhost.localdomain>
 
-On Wed, Jul 10, 2024 at 11:05:45AM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Tue, Jul 09, 2024 at 12:15:26PM -0700, Tyler Taormina wrote:
+> Adhere to Linux kernel coding style.
 > 
-> After merging the dma-mapping tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> Reported by checkpatch:
 > 
-> kernel/dma/swiotlb.c: In function 'swiotlb_alloc':
-> kernel/dma/swiotlb.c:1770:17: error: too few arguments to function 'swiotlb_release_slots'
+> CHECK: Unnecessary parentheses around (...)
+> 
+> Signed-off-by: Tyler Taormina <taormina.dev@gmail.com>
 
-Thanks for the notice and your patch which looks correct.  I'll fold
-it in.
+Staging tree's maintainer (Greg) disagrees with checkpatch.pl on this one
+and prefers to keep these parentheses. So I would leave them be.
+
+You can look up the staging mailing list for details.
+
+Best regards,
+Nam
 
