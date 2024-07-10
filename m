@@ -1,93 +1,103 @@
-Return-Path: <linux-kernel+bounces-247070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E001492CAA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:15:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F2E92CAD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93D3B1F21431
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:15:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0C382868E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7735914A;
-	Wed, 10 Jul 2024 06:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04AC4762C1;
+	Wed, 10 Jul 2024 06:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jC9lX+ju"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uPewflyz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5394A3E
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452DB5B1F8;
+	Wed, 10 Jul 2024 06:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720592141; cv=none; b=FdZ+LID/u0fvUB1dWGOffy93cs600Ikr3uGCVexqhQ9InnHu5s4uQgJBtzbTkpj5X1rhDXvCcN469zjglcNwz2Nxr8oiNha5SjOPGTblg5Edg3gCOcYf5i1NC4LIW8BUyj4/+drfcBURUNf1RSQXv4sbPwRJpf53PoEGTclReXo=
+	t=1720592198; cv=none; b=c/ZJI4Mcvovc7PCGJupxmR9ZfzyNv4NTrxRL78zlL6d0pWqKaujFG1xHhD9ly8+0MyML3OXHZWiy8EjHDrM9lOcd5NqCDbi9JomV1Fg4bhZ+2N25f6F7DrVe4A5yIdgHLhKJsgMIkhWKhd8CS3yA9WrFsYv90u7KMrjBs4XEmC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720592141; c=relaxed/simple;
-	bh=x58WhQ7etFsQVZtCXZu4tY1OB+k0z0c2wcqS0/1zYhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u/uerXGLoAkZrB1aqRogHQsH4AoVFWyn7/GFeyqf+dG+A4H3o7qPNdyZPrQz6nhQm9qPQovTqozQ0RmMGt/03MAa+cSKh561RcZb4lCdDB3Gm1hSsD6kqNqSjXdHKsYi90DWUmf6BCYusESAafd61oz4T68iB1jyWX+9AYzaQgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jC9lX+ju; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720592140; x=1752128140;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=x58WhQ7etFsQVZtCXZu4tY1OB+k0z0c2wcqS0/1zYhM=;
-  b=jC9lX+jueTpT9ahrFSD7hXCuK696rF1CGZVL51xfTuH/WrpG45LDuuvV
-   58bhNWstT63LtT4AbvWYSHZNRdiFT2+Wbdo+11cuOkBbHAj9AgEs/dQjZ
-   r0vuHVR9Xd7voGsLJPer3HW3G48X6WxSiDfVFUq6utFcHnvVDLEaPoJNh
-   oUJlbaGgIdVlZ5O6XOjaq84ltbtNjtcFZe8AcXvXWiw+JpVGvzecm6m9t
-   GJjkUgJuwp2wrIgbCJcL/1wk+sP4/1sT7VQ3dHvkdEtEBr42N4Kgqhv68
-   95tVkjHtvAlb9Y3reGXKtrY/GbHTFG6FxY/U4JGW7Dla7RXJdQr/JQQFy
-   g==;
-X-CSE-ConnectionGUID: Rf+sEdntQBq4j56uP1mWVQ==
-X-CSE-MsgGUID: 45aIY66HSvStlaa58lOK1Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11128"; a="17709624"
-X-IronPort-AV: E=Sophos;i="6.09,197,1716274800"; 
-   d="scan'208";a="17709624"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 23:15:40 -0700
-X-CSE-ConnectionGUID: rRQkPTmuT56j1vvRSQve9w==
-X-CSE-MsgGUID: qJJpVziqTTidtkwdgt+B5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,197,1716274800"; 
-   d="scan'208";a="47873124"
-Received: from dskiper-mobl1.amr.corp.intel.com (HELO desk) ([10.209.88.162])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 23:15:38 -0700
-Date: Tue, 9 Jul 2024 23:15:26 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: "Shanavas.K.S" <shanavasks@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: intel CPU vulnerability NO_SSB whitelist for AIRMONT
-Message-ID: <20240710061526.so5rjsg3trw337ep@desk>
-References: <CAEJ9NQdhh+4GxrtG1DuYgqYhvc0hi-sKZh-2niukJ-MyFLntAA@mail.gmail.com>
+	s=arc-20240116; t=1720592198; c=relaxed/simple;
+	bh=pviwYWTgWw3NGArxYhhEFp+fozfsJBF9UBiIPePQypQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=arVudMt5sSFnsDX6j6+C3zdbAUwFec1hm8Avl2FdjnKxkisCj33EN/hJ3HSeRKzUqSSwq5dTy7xfROL/wlSkqH2J4T1Z7Z74/GqO+M+wlIeeEKT3ih0WqnQZUydKnLxPVQ9hFC5VytHcCv0TsMUFsCWzpvI1N2d6duJ2LEdPve4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uPewflyz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id AF1A1C32781;
+	Wed, 10 Jul 2024 06:16:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720592197;
+	bh=pviwYWTgWw3NGArxYhhEFp+fozfsJBF9UBiIPePQypQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=uPewflyzyoJUSO4xqexro0tqcnODuYneaQF7yo00UPxuEiy+UUSaQnBvN7DfSjybL
+	 KoKFsVOPyNVv1HTEXv2oXwhzCQvmZLDpZAztwetB/e+1nCVKLRKY8QRuB8zE0ZHXkO
+	 O6v/XsUmfVjT+Ey8WK1f9eXRgZsV8E2D3bCUxiaimufexOWVGLgGGxtTL01Aw+VQXe
+	 8HTHJgDuoCTIPNOX2ESRvT4PhaoajQQzSqh5QoVJeDXyy40kOgjwm8MFfgUi3d3iOg
+	 BY/1zOEPX6ckwCNc7bAqHRgnuV8Obdebz4Hnw3k2er29ay5ivM+NuVrijg8gQjWC77
+	 AkQRcyIU7eFYA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3484C3DA42;
+	Wed, 10 Jul 2024 06:16:37 +0000 (UTC)
+From: Pieterjan Camerlynck via B4 Relay <devnull+pieterjanca.gmail.com@kernel.org>
+Subject: [PATCH 0/2] leds: leds-pca995x: Add support for NXP PCA9956B
+Date: Wed, 10 Jul 2024 08:15:43 +0200
+Message-Id: <20240710-pca995x-v1-0-545015603000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEJ9NQdhh+4GxrtG1DuYgqYhvc0hi-sKZh-2niukJ-MyFLntAA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAA8njmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDcwNL3YLkREtL0wrdFPNk0zRL8zSz1KRkJaDqgqLUtMwKsEnRsbW1AIU
+ h1oJZAAAA
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Isai Gaspar <isaiezequiel.gaspar@nxp.com>, Marek Vasut <marex@denx.de>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Pieterjan Camerlynck <pieterjanca@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1720592196; l=851;
+ i=pieterjanca@gmail.com; s=20240709; h=from:subject:message-id;
+ bh=pviwYWTgWw3NGArxYhhEFp+fozfsJBF9UBiIPePQypQ=;
+ b=gN6PPOVhY6hcmCR6ePaNQo7jHDwWqhmkx7tGNyHg06AKjZ4k+cJdsEUy8EaLP+3JMZ6lf+ANk
+ yNjDM/+TE/SCvLoefDlQCMrr8s0wXQMpaMLnRum5O8vuyBH5p3EkUP+
+X-Developer-Key: i=pieterjanca@gmail.com; a=ed25519;
+ pk=gSAHfvqQjVhNa1MhUClqbt7d3S+fviKz6FdQVaWFRyM=
+X-Endpoint-Received: by B4 Relay for pieterjanca@gmail.com/20240709 with
+ auth_id=182
+X-Original-From: Pieterjan Camerlynck <pieterjanca@gmail.com>
+Reply-To: pieterjanca@gmail.com
 
-On Tue, Jul 09, 2024 at 01:21:44PM +0530, Shanavas.K.S wrote:
-> Hi All,
-> This is in reference to
-> https://github.com/torvalds/linux/blame/master/arch/x86/kernel/cpu/common.c#L1169.
-> The whitelist for INTEL_ATOM_AIRMONT has NO_SSB enabled  which means
-> cache speculation vulnerability(spectre 4,CVE-2018-3639) is not
-> applicable to  this processor. But NO_SSB is not set for
-> INTEL_ATOM_AIRMONT_NP and INTEL_ATOM_AIRMONT_MID. Are these settings
-> missing for AIRMONT_NP and AIRMONT_MID or is there a real difference
-> between cache speculation between these processors?
+This series adds support for NXP PCA9956B to the pca995x driver. This
+chip is similar to the others but has 24 instead of 16 outputs and a
+slightly different register layout. Datasheet available at [1].
 
-I believe they were released much later than AIRMONT and hence should be
-enumerating MSR IA32_ARCH_CAPABILITIES[SSB_NO](bit 4). If you have these
-system, is bit 4 not set?
+[1]: https://www.nxp.com/docs/en/data-sheet/PCA9956B.pdf
 
-If it is set there is no need to explicitly add NO_SSB to the table.
+Signed-off-by: Pieterjan Camerlynck <pieterjanca@gmail.com>
+---
+Pieterjan Camerlynck (2):
+      dt-bindings: leds: pca995x: Add new nxp,pca9956b compatible
+      leds: leds-pca995x: Add support for NXP PCA9956B
+
+ .../devicetree/bindings/leds/nxp,pca995x.yaml      |  6 +-
+ drivers/leds/leds-pca995x.c                        | 88 +++++++++++++---------
+ 2 files changed, 56 insertions(+), 38 deletions(-)
+---
+base-commit: 82d01fe6ee52086035b201cfa1410a3b04384257
+change-id: 20240709-pca995x-d7c5f97f6ebc
+
+Best regards,
+-- 
+Pieterjan Camerlynck <pieterjanca@gmail.com>
+
+
 
