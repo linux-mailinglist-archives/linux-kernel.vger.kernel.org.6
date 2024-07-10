@@ -1,273 +1,208 @@
-Return-Path: <linux-kernel+bounces-248007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE2D92D75A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:21:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1134792D75E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:21:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1A7F1F227EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:21:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42DA01C20E29
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51BF21953A1;
-	Wed, 10 Jul 2024 17:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED5C19580F;
+	Wed, 10 Jul 2024 17:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZlCDndiS"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hOU0ty+q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB79618FA02;
-	Wed, 10 Jul 2024 17:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045EF194C6F;
+	Wed, 10 Jul 2024 17:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720632049; cv=none; b=WwleNcZHEw1ky0+MFWH//yw2FMLLsQUPBp/y2q4w/gX0wEEmBhfccW9OkGY59fqQDdaEsdv2YMJjg2ne/JJT1kRdZ11rr30Ap1SIAFfWUQEnPSSeFNUptkaMpEHMmJnY6bKKCu5TogEsDPC2oUWWKUeK0trr6eVj8WCLaST70fs=
+	t=1720632064; cv=none; b=OFhPJaZ59ibZAibf8z1ZVpbj1qzMnj5Qc+0eZfiUnUjmwSPJKhXHY52+IROVlx4/PYiUb3I0Hj+1yCvJikl+4gUu+qxeZ22tsHB0d8pV7Y1DB+g37oBm3+okZJpcP7IplV3aZwt9IK/AZDUOXHlfhLi8HNUNdo0rMrl44yHo0QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720632049; c=relaxed/simple;
-	bh=qRcTcUopRK2xHoEu39uGsBqYKTPXei/IqbG5uKck4zM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bwDHBAUhZdo784v6VqFRrb7w0fZ9VNV67V4WX7IhlVCXbouA8s/KhAgj0EeeFlyGKa8XCeMimNykhI/Ziz6Nlv8fcu2VgpnbUBjHBqcERKXkjYU4sgsu8no+vffitME64B+SbyhkVGozFYyWOG+HdJr/nckGhdDHulczVPylufk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZlCDndiS; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fa9ecfb321so41588995ad.0;
-        Wed, 10 Jul 2024 10:20:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720632047; x=1721236847; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pcl1f+AK0P8JCKXXKjbHo0YsgLy2QnOimTj9DcDVJYs=;
-        b=ZlCDndiSZTJRnQ06WWWS4Kk7VWBtoY6PRy11eeN4tIxTfO9yMtxHHObN10SdbR8uOp
-         fqv6dc8x+QsHkmPLMH+Ic4ifZfUhirLRZp/rcyl5UYJ6k4594fQ2OHZKup3xBHE7kei8
-         XOBlgAd2RTm3clKtSjm+iMb69gGtzFS3GMGCa+MwTogFiN/hr+uzXCfqQPUfkei0sXpg
-         uceVKEYQ81eqc3rYANS7KpCQMCUcS2yo0OFypWySCRQyydv/YCaGpEdtrJ0IEBei8315
-         dycGJIMnaF+7YVvcdnIY/y6GO6eK/W7Ac7nW4mYCK6ynMO2f/kX0ed+H45esfjhxeTH8
-         L2rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720632047; x=1721236847;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pcl1f+AK0P8JCKXXKjbHo0YsgLy2QnOimTj9DcDVJYs=;
-        b=m6IR7nAR8RePNvWwNKW3Di2AGcd1N2kfrXQnDzT3NP07mL9vdna23fHMc+E7EV9/s7
-         ExWJUMEL283tPRnHMj8CjQ0SIWsiTVrMoT+APrpwt1sM2RiSODoQvYRmey8Pj5YRA4wA
-         alcUrXSuJ2f0ieUp0VZt3WOPg6i39rtszVy6yj2a1qU4FqFnJNaPT/iYitKoQLTLjJOj
-         YspHHVsVM4RSK8mhVgIiu7KjP2doi3wsOq/eRpMd65fLzpNjaZZ8jo2gJmycKGH8vvU9
-         4MZ7/LUiCriyEq5DKhgz84QSxe48SFH4vPP5zwqZzMhf1xmBMjW/r2qEeN+BLi1wS4D8
-         babQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX663Cra7aTy4LVuIwvI3sjyvAbXMpGVhCYTUJk43w4P1bH0wbqvwXkEaQ8+e9HY26fFtcWzhctl2n8DwIt+Bz1gZjRlqFPBq1JsYRRNUQhrz6TQvG4aLSfs/BWTpgWMzsiYx6tH52FodV2vTsenDkKnef1XrVW5UJ0+V8ZhgRLoPglnfJLKL//R2wh
-X-Gm-Message-State: AOJu0YzHB2r1PvQWGNb14h24P/dhwLw6thMol8XEu+EAwcXJhZS/bOns
-	jv4B0RVWE3t1Aj6Qq76if56yEANTH1wbV6hDbhdSAIlD8jLA0Z7G
-X-Google-Smtp-Source: AGHT+IGTzt5K2rzfweaEtxiqsl4HgDFZ/lCPOIrLsQV0ScOaq5I5BseMmXfl86hdYqwHj3mGlMJLBg==
-X-Received: by 2002:a17:90b:4f8b:b0:2c9:cf1d:1bcc with SMTP id 98e67ed59e1d1-2ca35d386c5mr5149648a91.36.1720632046879;
-        Wed, 10 Jul 2024 10:20:46 -0700 (PDT)
-Received: from tahera-OptiPlex-5000 ([136.159.49.123])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ca34e6a7dcsm4101196a91.16.2024.07.10.10.20.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 10:20:46 -0700 (PDT)
-Date: Wed, 10 Jul 2024 11:20:44 -0600
-From: Tahera Fahimi <fahimitahera@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Jann Horn <jannh@google.com>, outreachy@lists.linux.dev,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v6] landlock: Add abstract unix socket connect restriction
-Message-ID: <Zo7C7MUfnPApp0Np@tahera-OptiPlex-5000>
-References: <Zn32CYZiu7pY+rdI@tahera-OptiPlex-5000>
- <20240704.uab4aveeYad0@digikod.net>
+	s=arc-20240116; t=1720632064; c=relaxed/simple;
+	bh=FF0aSktouEQaGWd9Hm0QcgvEejLKXDoWmf2IlT0telM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dKvYb/uN603+bDe8aYDxrGn0S4zqpN6hT8r2mFaYue3wgVaFVhdrZE4kavKBEPwY2qVai5h9Fs+0Xn7ywXFf+1taz6jDkt0L6H1Y7es5VibXFWZBVtSVbcFJzrYxd6Veis2Iecw4et3P+wt1W3KGtDzrFLWXh8hulOJlV320Jmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hOU0ty+q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9034EC32781;
+	Wed, 10 Jul 2024 17:21:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720632063;
+	bh=FF0aSktouEQaGWd9Hm0QcgvEejLKXDoWmf2IlT0telM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hOU0ty+q8xrVwNpiFshOm/bFyN+vdegtm/F5NX43mkp8WEcX9fQ71ISqToQTtF0e6
+	 0j0Y+uRgyOV7jDEBUCGpYbyn/nTLTh2j7uVEKTre8k4g5UevahiEpgcKo8MdAVM1er
+	 aMRkDdJovuhi95ObaONk7IXJvyXvYNej0Jagkc90tUIxew+OOhhgPX5qTpw5cJ6kn4
+	 ioeptSRxPhsX+7Js4/4Dcy3wkC/mpdF1ZxWk0EWbbIJcSRWP2z+zbl2At9Tg2WLS8x
+	 Pv3dgAxCCAI+P+D0naIbSWOr3C5I6Ls+3ffbDaIdUnZtgae5xsJqzuju+pR4QeF/DJ
+	 fOgFWDEyauo/A==
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-44930ea05b8so13415021cf.1;
+        Wed, 10 Jul 2024 10:21:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXEGWtvwlctR/pa1S1Ny731QbDx4QLzMs0ke+my67VpLwPBuhnm3yTXgj01LCrPKO5sjkshmUJM59bJB8+uVcmgKiwgAGxwxut1lo+RnJ6b2o/jMBUshuESfy8jiweNaA7/AOs0cdl/WQHF4kidQttjHxovt3s5lhYrTsyK1g2YL1S/XH62E4pl
+X-Gm-Message-State: AOJu0YyBI3SuZ6Ds2qFA5bbhLVIyyCyHXV3SnxnMxZwIEwsUyzeE/W6+
+	j7/g+N303eNXY0sxRSZIY4bTsaLo1urFsawIRQkrPVJa+v+x/NvqpSvjg2pSQeEaNIS5vzm2Ofl
+	nMa5F9cbdQGCK8jmWtQ7y+sVr1fU=
+X-Google-Smtp-Source: AGHT+IE93hixvKRPtGdm2fytIjue/h7k9Qm8hBlA2dg0b0ijKs92ZN9gaaVKBlhiHqiRp+nik0lHjYL9wLIXDLbVNkc=
+X-Received: by 2002:ac8:5ace:0:b0:447:efb8:97f4 with SMTP id
+ d75a77b69052e-447fa825df1mr69787041cf.2.1720632062902; Wed, 10 Jul 2024
+ 10:21:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240704.uab4aveeYad0@digikod.net>
+References: <20240625-md-fs-nfs-v2-1-2316b64ffaa5@quicinc.com>
+ <abe2e12fcd6a64b603179f234ca684a182657d6a.camel@kernel.org>
+ <e0a9f5ab-92d4-4a41-8693-358e861f2ef6@quicinc.com> <ab51cd2e8fef48dac690ca4549b409269ff9beae.camel@kernel.org>
+In-Reply-To: <ab51cd2e8fef48dac690ca4549b409269ff9beae.camel@kernel.org>
+From: Anna Schumaker <anna@kernel.org>
+Date: Wed, 10 Jul 2024 13:20:46 -0400
+X-Gmail-Original-Message-ID: <CAFX2Jfm4OaVa0i5Za2YM9EBL4aCgP6+LZRijazthRY_88_vhig@mail.gmail.com>
+Message-ID: <CAFX2Jfm4OaVa0i5Za2YM9EBL4aCgP6+LZRijazthRY_88_vhig@mail.gmail.com>
+Subject: Re: [PATCH v2] fs: nfs: add missing MODULE_DESCRIPTION() macros
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Jeff Johnson <quic_jjohnson@quicinc.com>, 
+	Trond Myklebust <trond.myklebust@hammerspace.com>, Chuck Lever <chuck.lever@oracle.com>, 
+	Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+	Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 08, 2024 at 05:35:48PM +0200, Mickaël Salaün wrote:
-> Please add a user documentation with the next version.  You can take
-> some inspiration in commits that changed
-> Documentation/userspace-api/landlock.rst
-> 
-> You also need to extend samples/landlock/sandboxer.c with this new
-> feature.  You might want to use a new environment variable (LL_SCOPED)
-> with "a" (for abstract unix socket) as the only valid content.  New kind
-> of sopping could add new characters.  I'm not sure this is the most
-> ergonomic, but let's go this way unless you have something else in mind.
-Thanks for the feedback. 
-This will be added in the next patch. 
+On Wed, Jul 10, 2024 at 8:27=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+>
+> On Tue, 2024-07-09 at 13:47 -0700, Jeff Johnson wrote:
+> > On 6/25/2024 9:44 AM, Jeff Layton wrote:
+> > > On Tue, 2024-06-25 at 09:42 -0700, Jeff Johnson wrote:
+> > > > Fix the 'make W=3D1' warnings:
+> > > > WARNING: modpost: missing MODULE_DESCRIPTION() in
+> > > > fs/nfs_common/nfs_acl.o
+> > > > WARNING: modpost: missing MODULE_DESCRIPTION() in
+> > > > fs/nfs_common/grace.o
+> > > > WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfs.o
+> > > > WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv2.o
+> > > > WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv3.o
+> > > > WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv4.o
+> > > >
+> > > > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> > > > ---
+> > > > Changes in v2:
+> > > > - Updated the description in grace.c per Jeff Layton
+> > > > - Link to v1:
+> > > > https://lore.kernel.org/r/20240527-md-fs-nfs-v1-1-64a15e9b53a6@quic=
+inc.com
+> > > > ---
+> > > >  fs/nfs/inode.c         | 1 +
+> > > >  fs/nfs/nfs2super.c     | 1 +
+> > > >  fs/nfs/nfs3super.c     | 1 +
+> > > >  fs/nfs/nfs4super.c     | 1 +
+> > > >  fs/nfs_common/grace.c  | 1 +
+> > > >  fs/nfs_common/nfsacl.c | 1 +
+> > > >  6 files changed, 6 insertions(+)
+> > > >
+>
+> Given that this is mostly client-side changes, this should probably go
+> through the client tree. Anna, could you pick this one up?
 
-> All the related patches (kernel change, tests, sample, documentation)
-> should be in the same patch series, with a cover letter introducing the
-> feature and pointing to the previous versions with links to
-> https://lore.kernel.org/r/...
-Noted.
-> 
-> On Thu, Jun 27, 2024 at 05:30:17PM -0600, Tahera Fahimi wrote:
-> > Abstract unix sockets are used for local inter-process communications
-> > without a filesystem. Currently a sandboxed process can connect to a
-> 
-> "local inter-process communications independant of the filesystem."
-> 
-> > socket outside of the sandboxed environment, since Landlock has no
-> > restriction for connecting to an abstract socket address. Access to
-> > such sockets for a sandboxed process should be scoped the same way
-> > ptrace is limited.
-> > 
-> > Because of compatibility reasons and since landlock should be flexible,
-> 
-> Landlock
+Yep, It's been in my linux-next branch for a while now.
 
-[...]
-> > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> > index 68625e728f43..010aaca5b05a 100644
-> > --- a/include/uapi/linux/landlock.h
-> > +++ b/include/uapi/linux/landlock.h
-> > @@ -37,6 +37,12 @@ struct landlock_ruleset_attr {
-> >  	 * rule explicitly allow them.
-> >  	 */
-> >  	__u64 handled_access_net;
-> > +	/**
-> > +	 * @scoped: Bitmask of scopes (cf. `Scope flags`_)
-> > +	 * restricting a Landlock domain from accessing outside
-> > +	 * resources(e.g. IPCs).
-> 
-> A space is missing.
-> 
-> > +	 */
-> > +	__u64 scoped;
-> >  };
-> >  
-> >  /*
-> > @@ -266,4 +272,27 @@ struct landlock_net_port_attr {
-> >  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
-> >  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
-> >  /* clang-format on */
-> > +
-> > +/**
-> > + * DOC: scope
-> > + *
-> > + * .scoped attribute handles a set of restrictions on kernel IPCs through
-> > + * the following flags.
-> 
-> I think you can remove this sentence.
-> 
-[...] 
-> > diff --git a/security/landlock/task.c b/security/landlock/task.c
-> > index 849f5123610b..acc6e0fbc111 100644
-> > --- a/security/landlock/task.c
-> > +++ b/security/landlock/task.c
-> > @@ -13,6 +13,8 @@
-> >  #include <linux/lsm_hooks.h>
-> >  #include <linux/rcupdate.h>
-> >  #include <linux/sched.h>
-> > +#include <net/sock.h>
-> > +#include <net/af_unix.h>
-> >  
-> >  #include "common.h"
-> >  #include "cred.h"
-> > @@ -108,9 +110,69 @@ static int hook_ptrace_traceme(struct task_struct *const parent)
-> >  	return task_ptrace(parent, current);
-> >  }
-> >  
-> > +static access_mask_t
-> > +get_scoped_accesses(const struct landlock_ruleset *const domain)
-> > +{
-> > +	access_mask_t access_dom = 0;
-> > +	size_t layer_level;
-> > +
-> > +	for (layer_level = 0; layer_level < domain->num_layers; layer_level++)
-> > +		access_dom |= landlock_get_scope_mask(domain, layer_level);
-> > +	return access_dom;
-> > +}
-> > +
-> > +static bool sock_is_scoped(struct sock *const other)
-> > +{
-> > +	const struct landlock_ruleset *dom_other;
-> > +	const struct landlock_ruleset *const dom =
-> > +		landlock_get_current_domain();
-> > +
-> > +	/* quick return if there is no domain or .scoped is not set */
-> > +	if (!dom || !get_scoped_accesses(dom))
-> > +		return true;
-> > +
-> > +	/* the credentials will not change */
-> > +	lockdep_assert_held(&unix_sk(other)->lock);
-> > +	if (other->sk_type != SOCK_DGRAM) {
-> > +		dom_other = landlock_cred(other->sk_peer_cred)->domain;
-> 
-> Why using different credentials for connected or not connected sockets?
-> We should use the same consistent logic for both:
-> other->sk_socket->file->f_cred (the process that created the socket, not
-> the one listening).
-The aim was to use the process's credential that utilized the socket for
-connected sockets, and the process's credential created the socket for
-non-connected sockets. However, I will change it and use the same
-credential to keep it consistent for both cases. 
+Anna
 
-> > +	} else {
-> > +		dom_other =
-> > +			landlock_cred(other->sk_socket->file->f_cred)->domain;
-> > +	}
-> > +
-> > +	if (!dom_other || !get_scoped_accesses(dom_other))
-> 
-> What if only one layer in dom_other is scoped?
-The function `get_scoped_accesses()` cover this. 
-
-> > +		return false;
-> > +
-> > +	/* other is scoped, they connect if they are in the same domain */
-> 
-> This doesn't fit with each domain's scoping. It only considers no
-> scopping for all domains, or all domains as scopped if any of them is.
-> domain_scope_le() needs to be changed to follow each domain's contract.
-Noted.
-
-> > +	return domain_scope_le(dom, dom_other);
-> > +}
-> > +
-> > +static int hook_unix_stream_connect(struct sock *const sock,
-> > +				    struct sock *const other,
-> > +				    struct sock *const newsk)
-> > +{
-> > +	if (sock_is_scoped(other))
-> > +		return 0;
-> > +
-> > +	return -EPERM;
-> > +}
-> > +
-> > +static int hook_unix_may_send(struct socket *const sock,
-> > +			      struct socket *const other)
-> > +{
-> > +	pr_warn("XXX %s:%d sock->file:%p other->file:%p\n", __func__, __LINE__,
-> > +		sock->file, other->file);
-> 
-> Please remove debug code.
-> 
-> > +	if (sock_is_scoped(other->sk))
-> > +		return 0;
-> > +
-> > +	return -EPERM;
-> > +}
-> > +
-> >  static struct security_hook_list landlock_hooks[] __ro_after_init = {
-> >  	LSM_HOOK_INIT(ptrace_access_check, hook_ptrace_access_check),
-> >  	LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
-> > +	LSM_HOOK_INIT(unix_stream_connect, hook_unix_stream_connect),
-> > +	LSM_HOOK_INIT(unix_may_send, hook_unix_may_send),
-> >  };
-> >  
-> >  __init void landlock_add_task_hooks(void)
-> > -- 
-> > 2.34.1
-> > 
-> > 
+>
+> Thanks,
+> Jeff
+>
+> > > > diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+> > > > index acef52ecb1bb..57c473e9d00f 100644
+> > > > --- a/fs/nfs/inode.c
+> > > > +++ b/fs/nfs/inode.c
+> > > > @@ -2538,6 +2538,7 @@ static void __exit exit_nfs_fs(void)
+> > > >
+> > > >  /* Not quite true; I just maintain it */
+> > > >  MODULE_AUTHOR("Olaf Kirch <okir@monad.swb.de>");
+> > > > +MODULE_DESCRIPTION("NFS client support");
+> > > >  MODULE_LICENSE("GPL");
+> > > >  module_param(enable_ino64, bool, 0644);
+> > > >
+> > > > diff --git a/fs/nfs/nfs2super.c b/fs/nfs/nfs2super.c
+> > > > index 467f21ee6a35..b1badc70bd71 100644
+> > > > --- a/fs/nfs/nfs2super.c
+> > > > +++ b/fs/nfs/nfs2super.c
+> > > > @@ -26,6 +26,7 @@ static void __exit exit_nfs_v2(void)
+> > > >   unregister_nfs_version(&nfs_v2);
+> > > >  }
+> > > >
+> > > > +MODULE_DESCRIPTION("NFSv2 client support");
+> > > >  MODULE_LICENSE("GPL");
+> > > >
+> > > >  module_init(init_nfs_v2);
+> > > > diff --git a/fs/nfs/nfs3super.c b/fs/nfs/nfs3super.c
+> > > > index 8a9be9e47f76..20a80478449e 100644
+> > > > --- a/fs/nfs/nfs3super.c
+> > > > +++ b/fs/nfs/nfs3super.c
+> > > > @@ -27,6 +27,7 @@ static void __exit exit_nfs_v3(void)
+> > > >   unregister_nfs_version(&nfs_v3);
+> > > >  }
+> > > >
+> > > > +MODULE_DESCRIPTION("NFSv3 client support");
+> > > >  MODULE_LICENSE("GPL");
+> > > >
+> > > >  module_init(init_nfs_v3);
+> > > > diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
+> > > > index 8da5a9c000f4..b29a26923ce0 100644
+> > > > --- a/fs/nfs/nfs4super.c
+> > > > +++ b/fs/nfs/nfs4super.c
+> > > > @@ -332,6 +332,7 @@ static void __exit exit_nfs_v4(void)
+> > > >   nfs_dns_resolver_destroy();
+> > > >  }
+> > > >
+> > > > +MODULE_DESCRIPTION("NFSv4 client support");
+> > > >  MODULE_LICENSE("GPL");
+> > > >
+> > > >  module_init(init_nfs_v4);
+> > > > diff --git a/fs/nfs_common/grace.c b/fs/nfs_common/grace.c
+> > > > index 1479583fbb62..27cd0d13143b 100644
+> > > > --- a/fs/nfs_common/grace.c
+> > > > +++ b/fs/nfs_common/grace.c
+> > > > @@ -139,6 +139,7 @@ exit_grace(void)
+> > > >  }
+> > > >
+> > > >  MODULE_AUTHOR("Jeff Layton <jlayton@primarydata.com>");
+> > > > +MODULE_DESCRIPTION("NFS client and server infrastructure");
+> > > >  MODULE_LICENSE("GPL");
+> > > >  module_init(init_grace)
+> > > >  module_exit(exit_grace)
+> > > > diff --git a/fs/nfs_common/nfsacl.c b/fs/nfs_common/nfsacl.c
+> > > > index 5a5bd85d08f8..ea382b75b26c 100644
+> > > > --- a/fs/nfs_common/nfsacl.c
+> > > > +++ b/fs/nfs_common/nfsacl.c
+> > > > @@ -29,6 +29,7 @@
+> > > >  #include <linux/nfs3.h>
+> > > >  #include <linux/sort.h>
+> > > >
+> > > > +MODULE_DESCRIPTION("NFS ACL support");
+> > > >  MODULE_LICENSE("GPL");
+> > > >
+> > > >  struct nfsacl_encode_desc {
+> > > >
+> > > > ---
+> > > > base-commit: 50736169ecc8387247fe6a00932852ce7b057083
+> > > > change-id: 20240527-md-fs-nfs-42f19eb60b50
+> > > >
+> > >
+> > > Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> >
+> > I don't see this in linux-next yet so following up to see if anything e=
+lse is
+> > needed to get this merged.
+> >
+>
+> --
+> Jeff Layton <jlayton@kernel.org>
 
