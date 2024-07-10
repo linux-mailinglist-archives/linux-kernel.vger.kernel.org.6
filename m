@@ -1,661 +1,365 @@
-Return-Path: <linux-kernel+bounces-247640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AE9992D24C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:07:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0EE292D252
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:08:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3B9C288DC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:07:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA7E31C23672
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F8E1922C1;
-	Wed, 10 Jul 2024 13:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A9E192490;
+	Wed, 10 Jul 2024 13:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="PQ7PlYhl"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=opensynergy.com header.i=@opensynergy.com header.b="i/YWP2dI"
+Received: from refb01.tmes.trendmicro.eu (refb01.tmes.trendmicro.eu [18.185.115.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E2E19246C;
-	Wed, 10 Jul 2024 13:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720616840; cv=none; b=jWYmKsWJarrQ7bwV56egFsfO6NmJr6PDa0pm9Vr1tNQ9gnaFKHN3MGVwMJCW3vXnmaZoEmhQPPu7s9hD0HZDMCUogdxBPM9mC2jSO2hktjLe7XDVC4Bqkl7UWBhQSZQe8o1G6og5FBoI7zfwl+TIqtfNHNiKMnB+TejABVWHsMU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720616840; c=relaxed/simple;
-	bh=PQUx0I7MGHuyxPAlOVfpjTcKELjmVcJvI9KKtgifZs0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IUFeqOyhriQ2O8/v34TZX3je3N6OBx8nkUycft3olgfqrN1KBZHeku8QgXQcY1rHxlS8PkA1y1ejRu4Xpr5O6JB96hSDQh8FucYRQgnZUIhuKJD5lEl4MqLf8O5E9/sxwSdZwIC83ks7GWqxM4MYdEQZG5VXMdtRsUweAl8mnTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=PQ7PlYhl; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (unknown [IPv6:2001:b07:5d2e:52c9:72c3:346:a663:c82d])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C84D47E2;
-	Wed, 10 Jul 2024 15:06:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1720616802;
-	bh=PQUx0I7MGHuyxPAlOVfpjTcKELjmVcJvI9KKtgifZs0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PQ7PlYhlEkyaY15kd0AlDnemluWzvJQ5/OGVQ0qU4Jsk5UpKxYYcrD6FrG0cO6xji
-	 2USp0L+2fq/oFB3Uegv+xzSz5lbNYw1q4PmNoB8VgdKM9t8jG8xMbpTIZ2qmQ+08Eq
-	 O7QCclHsL1JigOpMtJi6wRzsiV/r2FbdgUbrYeU4=
-Date: Wed, 10 Jul 2024 15:07:12 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>, 
-	Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Mingjia Zhang <mingjia.zhang@mediatek.com>, 
-	Jack Zhu <jack.zhu@starfivetech.com>, Keith Zhao <keith.zhao@starfivetech.com>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v5 11/14] staging: media: starfive: Add ISP params video
- device
-Message-ID: <kjrkmnmtw5rij6clxgtcfi525xydhy3njrp7vbjxs2wqjwvv72@3dertnkvlyie>
-References: <20240709083824.430473-1-changhuang.liang@starfivetech.com>
- <20240709083824.430473-12-changhuang.liang@starfivetech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1537E19246A
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=18.185.115.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720616889; cv=fail; b=JOH4L05D9+Ajz35PjO6fWpVbUj52ts8jz8nKjtmGfOGs+gZWa7B+B6KU69eJiZrJQnc62698fppzQj/TQAWCVxpbETtEMCKVLtlUFWVrGwdZQtkhZmKvgUpU5MFwTu6GSRJ2Ii9MHowfK+IlgA8yXCNAJ5JCuYx0p0GGnlRxFMg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720616889; c=relaxed/simple;
+	bh=2LmZfy6AdnUPeBAFvNLv5gk2YKhaO7WPdjpuBNAphGE=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rFYu8Y2TTFpUY27jyIC0xfwtCzfHszMoyzQfS5HATEq9YpNvE+l6ezQHtsPmtsxq73vUBn04yNZ4NYJ3MGeeV3mGpJ6QcI/TOrmu55BDi2untoFtmeFdWYpcB5WBFBpf7vuugdzA4utwY6pJr+06Xc9cF0nhe06JctpZi2T5d/M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensynergy.com; spf=pass smtp.mailfrom=opensynergy.com; dkim=pass (2048-bit key) header.d=opensynergy.com header.i=@opensynergy.com header.b=i/YWP2dI; arc=fail smtp.client-ip=18.185.115.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensynergy.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensynergy.com
+Received: from 40.93.78.5_.trendmicro.com (unknown [172.21.19.51])
+	by refb01.tmes.trendmicro.eu (Postfix) with ESMTPS id 698A21011044A
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:07:59 +0000 (UTC)
+Received: from 40.93.78.5_.trendmicro.com (unknown [172.21.186.216])
+	by repost01.tmes.trendmicro.eu (Postfix) with SMTP id E1FA3100004DF;
+	Wed, 10 Jul 2024 13:07:46 +0000 (UTC)
+X-TM-MAIL-RECEIVED-TIME: 1720616864.113000
+X-TM-MAIL-UUID: bd038ec8-7d32-4c07-bb82-f9337933f04f
+Received: from FR6P281CU001.outbound.protection.outlook.com (unknown [40.93.78.5])
+	by repre01.tmes.trendmicro.eu (Trend Micro Email Security) with ESMTPS id 1BFBB100014CC;
+	Wed, 10 Jul 2024 13:07:44 +0000 (UTC)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IohlWkx3uxxinldXEVk6jgWXbV/uAADH+4eFCWzJY3BSQwcTShqsvByXNsIhY5WGy1OhlHLDXGbKIXpLz/0xsFkZWqNukVW98qIsZoBEUafj0yovGSu29+Tf3Nx0+1OzY36SfVfliV+oREqwViklw45SP2BTEmVxbuB0xsR82+F9G8WfG2xlpmXwrFUGOoHVi52spL5MF+ThULUAXHBNNVoFc5fntAVlhSrh4ZBkFCcGv42yDOUCN0x/aagzPSarhR7pFD6oxh9U/xYDdI2fzMrFhSo8t1nHYTPjASiyyrzICsZJMlyWbLvqJ+xKe5bNsoCwmbVxpipWVjPyuGmtOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=usDZOkm3KvOLTfskzYNfwt5v7YYwfq3or7jcN0ucjWo=;
+ b=emh0DnGVDGU5dktbM2nWW4MeUqeOxsUp3gbTY59KODOKIp1wo4omE2FLz9coYk+6yyWH7SlKtQS7vdQlOmoI2fLU8xRqAgYnFFO7a5oQQVbu2NOgDMd2ZTw1nlCQQpjmS9QbF6hO1yZLxosLdRRcJAXF+Zv7i8IV0ebJs2Pdd44mDnqQwMlRUYy9WZp2ZDRkjEKplxmKhNPms16AZD6xH3Z6t8D0y6DNZqIg5E88xwys3Mwylq98o4zuVtllotrg5PikRu7edXaV+y2g1rTf85R2rJrXJLwOWxTYGI9/lutt/DI6gUr1m2xc8yjfEY1z/0QF3nnk1McVnanBSOfIwQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=opensynergy.com; dmarc=pass action=none
+ header.from=opensynergy.com; dkim=pass header.d=opensynergy.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=opensynergy.com;
+Message-ID: <060f392c-7ba9-4ff6-be82-c64f542abaa1@opensynergy.com>
+Date: Wed, 10 Jul 2024 15:07:40 +0200
+From: Peter Hilber <peter.hilber@opensynergy.com>
+Subject: Re: [RFC PATCH v4] ptp: Add vDSO-style vmclock support
+To: David Woodhouse <dwmw2@infradead.org>, linux-kernel@vger.kernel.org,
+ virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-rtc@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>,
+ virtio-dev@lists.linux.dev, "Luu, Ryan" <rluu@amazon.com>,
+ "Chashper, David" <chashper@amazon.com>
+Cc: "Christopher S . Hall" <christopher.s.hall@intel.com>,
+ Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
+ "Michael S . Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org,
+ Richard Cochran <richardcochran@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Alessandro Zummo <a.zummo@towertech.it>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ qemu-devel <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
+References: <20240708092924.1473461-1-dwmw2@infradead.org>
+Content-Language: en-US
+In-Reply-To: <20240708092924.1473461-1-dwmw2@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0048.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:4a::20) To BE1P281MB1906.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:3d::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240709083824.430473-12-changhuang.liang@starfivetech.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BE1P281MB1906:EE_|BE2P281MB4804:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8d3ae4bb-f756-4325-a2c7-08dca0e1487e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UEUvblpJZXJZbmpSeGJWS3BCSS83ejNpRmlZK3ppcEJnM3R3TDFJbWxDQ1Jy?=
+ =?utf-8?B?UnU4V0JpdVo5QjNNWnJQTGNTdlpsRUh1UG52VUUvc1Rtc0ppd2dSdXp2NkJP?=
+ =?utf-8?B?ZVI3NlJGcUUySU9ISWQxN3RyTytBRHhpN0UrcDgrckFsQUZpREE3U0FVeUlv?=
+ =?utf-8?B?RWZtb0NuNzB5dm1rK2FSd0xkZXp0TTBWQWZFc2FldXFuME54SGdmMHlLeDhv?=
+ =?utf-8?B?Z0huMHB6b1VYTXdxYkl2N1FSREtPVytnWHhXY1hMb0JkOFRyaGFQZ1ZGVEsy?=
+ =?utf-8?B?cDVJdDR6bXFnSlB6M1Uvd0hEbVMrQ2krcjVXUlp4dXVBcmRqOFpyOUNjOWNU?=
+ =?utf-8?B?bnQ2MVlnRWpyeGZ4QmVmbm03UWRMSHBiRnoySTBnOHNvb3ZVN3JwRzFiMDVI?=
+ =?utf-8?B?eTFjNVhXZlRRSVdQYXBTY20rOWJ3Nm1NUlNDM2diUWg3ZUpLNFhzNGczSndv?=
+ =?utf-8?B?Z2o1K0lqN1g5MkIvMUVYZ3d1ckZONGh5MFl1NC9acGlWZXdYTGFhUXVsMzVB?=
+ =?utf-8?B?RW1kektCb1ZRdlBzdE9aeXl2Szh1ZWgrVmJiZ29EYXE4QlZMcE44STFhWS9C?=
+ =?utf-8?B?WFpzV2RyNFF1NjZaSE1sbXZyT0hGcldqSE1nUmY5T3Y5Z0tyZ0VJRk5TaDFS?=
+ =?utf-8?B?K0dZWnhaMGJ2V0duTmVnaVBnSUxNMWJaNEt2czYxT2Jzc090b0ZpT2NJRTRJ?=
+ =?utf-8?B?cngwLzYxVWM0SFQ0bDV1d1llODlKUUd4UlUvblZscGl1VXcrTzZQUVM0R3pW?=
+ =?utf-8?B?c1NWZlovdjVmZW05VTlIYUJWVkVEVm1CQThXMzIxNnd3aHRBMk5KNjhSVmNH?=
+ =?utf-8?B?SEwwVmpwWGF3U0pWWWppd1hBNXpuYTJ1eGNscS9EUXR4aytJaWtaNHNUMzNn?=
+ =?utf-8?B?MDY0ODhWdjFaN25rampla0lHaEJ3UXc5NnJCeHB2TGNic3BFMW5NK1NGQ0xH?=
+ =?utf-8?B?b0dIcWNIRXNHMnNaWVBFRGlrV2FBeDN3TlU0T2NiZTlNQkp6TnZKTGEyaG14?=
+ =?utf-8?B?TlkxbG91T05EMUVOakdMRmU1MGhYNnU4UnZEYlN4Qks5eUh4NWQ5RWo2QXl2?=
+ =?utf-8?B?VGJQT21CdU03SUF4d0w2RHZaNzUrYnpKNnEwWTFVZHNnalA4YzJ6TnBaa1Ju?=
+ =?utf-8?B?NWVQbHBLTWhGOGdCZFhWRVJpdE8xcGNnQ2tVTGR5by8yNEZZZ01pRXJJMyt0?=
+ =?utf-8?B?SGFDMHA4V2NJRXlwUzVuT2JtMldxOThvWHNKN2lzc1Z1NDVvUUhwYThUcHht?=
+ =?utf-8?B?S1lDdGZRcmxaZEhTTy8vbE9IUGs2TENhZ20vSGpkTkhvUGdjS1YzMTJ4bjRk?=
+ =?utf-8?B?R1NhUi9JVWVSMC8wTFprTDIrcnJiRGxVbnIzUmpNdFBmaC9iN3BhWndlSzc1?=
+ =?utf-8?B?anFia1VUaGphYS9YZVBUUFRyTnJXRmVJV3JpRU04MDJhUnpMQWtxdmVYN013?=
+ =?utf-8?B?cWlyblo0UlNmbnF1R1NTRk40T3hIdW9BQnVtMWsxeGh5ZnBqVkFFTGl3Z2Fk?=
+ =?utf-8?B?eUVRWkgrRm1YYTBSa054TVE5NkNjbmJLNVRaY3ZFRjJzTmpRVVhxVXFhNStO?=
+ =?utf-8?B?Mk5vM2txUGk1SDBKN3pRam1yeUNNWE5sUzBQdjdhdWFsNkNvK1NKUkFSR1hV?=
+ =?utf-8?B?SytucTdoa3d3YUo0NkxjV25zWHJJb3NjcG93Q0huZDA5V1U3TXNKYTFpVGY2?=
+ =?utf-8?B?SXhXNkVwSmFuQjlWb1ZneGMrRXZZcWJiV05Pa09iYk80YTQxNGowd2hBWW1O?=
+ =?utf-8?B?YkpqWVR1cW11NDJ1MUVvVFdIdU1ydW5ZTTJHZFJUcnhPSDBzSG1oMnlIcXh4?=
+ =?utf-8?B?bWE5THdjYWV1VmMyRlViQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BE1P281MB1906.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V0w3ak4zZm8vQ2RmdmlXQWlQY3VURElHODllcVlyQm1UMUxqQmVVUE5iSmtv?=
+ =?utf-8?B?YzkxU1c1Q2lWZlVVNDIwYUtBbmNkdkZBTzZPYUxIQ2lWSlJuRFUxSXd4VUlO?=
+ =?utf-8?B?cjFzZmEwU2l0ZXY0QjM4MEFNaWtRY05GN0xwTlZvczdGTVBYVVdFT3ZMTGVu?=
+ =?utf-8?B?WGNZT08wbTVVWEF0Um5MMEIrZFh5QXJGUUY3bFhrclFQLzFya3FkTjlzMnRX?=
+ =?utf-8?B?b1ZVSEEwcWVoeVBBYk5lQ05oNHB3dG05RzJuRnRLNEp4UlNzSjM0Q1pPU25n?=
+ =?utf-8?B?eDVQQlVpV2VWblhDYzQ2bHd5bnFxQy9wRUJGeDlMaE9OekdFaWIzV1NrcVZG?=
+ =?utf-8?B?endBOGRDSXE4RTE4TWR2NXB1bU1UUkMreHpFUFVoQzltSTlXMDY5bmJtTURI?=
+ =?utf-8?B?aEEwUWEvcUNSTGtaZ1J6L1VxQm9sT2pEd214UzRwb25jSnpOZ0FHR3h6V3A4?=
+ =?utf-8?B?SThhNGVaNXlhSmZoUjFRc0lmVktwSUsvL3RMQjduT3FNTEd4bk5uQ0dWMmFI?=
+ =?utf-8?B?bHFNZ25NUUVaU29JZDBCZFRtRlhqNGRpTXJlQklQZnJxWmR1TENiN25DQ1dS?=
+ =?utf-8?B?em53K3pvaXVjWlJGUmlObWdrZm1WVHpqRHZ4SVMrd1dqM3NHaXh5VVp2eStm?=
+ =?utf-8?B?UnN4UVdEY05wSitrV2RtQW5nQ0psd2I4K2lnN3piVVJrSy9DMGhkMmFyNHVC?=
+ =?utf-8?B?WWdGWC8xVmNSUnA5M0VROTRJaGEwcnNyWVpQcmNlcitMeVp5cGVjRXNsTjFO?=
+ =?utf-8?B?L0wyODIrczY0RiswbEdUTTVHUHVJTEgxOHZob3llcGhSbjNhalJkOFJYYVA4?=
+ =?utf-8?B?UXAyZGhndkc0ZnRnUTFhOWFZRnJQVzQxMm94ZlowVWMxRW5RNW5ValNrNXAz?=
+ =?utf-8?B?ckJ0ajJHajhZdnBaYWhKQjNQU21TMkY1MXNLVUl6cTFabmZkT3paQlNvOWFh?=
+ =?utf-8?B?Rm5lOWNDb1JnWld1bWczaTBpdUNuZjhFQmhOa04ydEM3Q1FoaWZqVGN3MVRM?=
+ =?utf-8?B?K2gwYmFSTWFnNGJxWGM3N3hVdWdTR0dnazlOVU9HNi9wcUxyV1RrTkpNcjZH?=
+ =?utf-8?B?MWRwekczRElZS21RUVVLeldtU1VPa05GYWpUS1Q5bHRyajVqckY5U0FleFps?=
+ =?utf-8?B?RjF4ZGZjT3BQTEh1aHVKMmlISStnYUpicy80UmRZSGlBY01KelhPb3Mzd21a?=
+ =?utf-8?B?am1leFg2YWd0c3B1Mk13a2lTTHZ2ck1qc0JBcXh6Z0ZPZVZDUXVMSklYb0Rm?=
+ =?utf-8?B?VThzanBvOXNVYmw4SXRmZWZwd0RnZ09Ebm1wQ3lscVovR3R6Qm5OS1dkaTdP?=
+ =?utf-8?B?QVBkTk41a1FhU0pjOUl3bzdEZmo5V2dVTzRtNDhzVVZsekYzZ2NlZFM5cC9k?=
+ =?utf-8?B?bER5bHVjWWtycWdGN2QzYW1sdFVYUTF0YTYrUFZKa25ERlIyZmZqekZ0ZHpl?=
+ =?utf-8?B?SEZuNDhZZ3F4Q29TNFZab0RuWWdnYXRjcEpaem05SHlKdWMxcnNBaWlJbGtP?=
+ =?utf-8?B?cGhiWkpvVkVYR1UzaWNGbURQa1h3aGdOcEtMRjc5WTZjYzRFeXMrQ0hDMGFk?=
+ =?utf-8?B?N3dGYjlaNDZER05lM2UzN3ZQT01JTWVva1JmQnhNcDZPYjF5ZFR3R3V0V01V?=
+ =?utf-8?B?OFkxYjBQQ1JtekdyRUtXWXRhcXRjaUcxcnZzZ0xVS3Juam0yT2JIUUVYaVNm?=
+ =?utf-8?B?aWZjamxJdldPTGZNMS9lMWY2Umdzdk9rZ0tHZ2VyNG41VUpuaFlIMXd2dnBa?=
+ =?utf-8?B?QW5hRlcrcFdFL1VWMzN2MnBhSXpzdjErSjdPYW5ISG0rS0NGRFhuekcvZWJD?=
+ =?utf-8?B?cWJubmgrNHozUWhhOGhSUm85RUQwS2poNlI1dUxyenMxdWorWWtnOEtKUnU3?=
+ =?utf-8?B?NTBpN3RzN0sxNGJZQzNSWTFkNTlOcU80b05hRVBJOTRnZkU4eTY0STVaWUYx?=
+ =?utf-8?B?bERRUTh3UW1rSXFOcXR5NnZqOFVKT3libmJZVG9kUUVNSTMrMDJXenJ2TnRG?=
+ =?utf-8?B?bTZ5dEFOUWlqVzNlV0RvLzhBSGtqRDZRc1dYdVBycTl2Und5S01HWWNaUmlN?=
+ =?utf-8?B?RlJyM2hJMm9XSEIwb0wzQTFFcWovM0NlL2lmbjl6ZzBDclVXMmJ6TDArNFd0?=
+ =?utf-8?B?TnloekpPSEJxWlBveUQwc00rRlkvR2JjVW8xS1ErdWwway9jTVZGZm5MeVlJ?=
+ =?utf-8?Q?fdb+lWziTcR5JNNe184pT3ZNTLigVsD+sh00qzghHr/c?=
+X-OriginatorOrg: opensynergy.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d3ae4bb-f756-4325-a2c7-08dca0e1487e
+X-MS-Exchange-CrossTenant-AuthSource: BE1P281MB1906.DEUP281.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2024 13:07:42.5363
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 800fae25-9b1b-4edc-993d-c939c4e84a64
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: j7bZI5EkmdZ/yp29HQhQ8RlLTUMXw0EgSE0FU1eqZO3zDPWm0rVuPmL+xIxUu1NjX0npe99NnvuiqumGwYPtlw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BE2P281MB4804
+X-TM-AS-ERS: 40.93.78.5-0.0.0.0
+X-TMASE-Version: StarCloud-1.3-9.1.1026-28520.007
+X-TMASE-Result: 10--21.189900-4.000000
+X-TMASE-MatchedRID: u6ojmU07PKz5ETspAEX/ngw4DIWv1jSVbU+XbFYs1xK3UJJ8+n/4RdDF
+	H3Wq0Hei8/CUaSFEolDtIrpZrVLcYZ5mTKF4TLatoSymbNaqh690oFi/bzvqqGHCsfOTI0iVFIB
+	UXk42ekvZFrPm8SKYrjMfis/0rGfSRebobsPZHKY5z9yWarHTmlxF+wAaDLINWQMS6lqffg/KAK
+	ZFbhJUT6hlHCU6UdV8e4+4YeTdG8lv9tn1n4xOAwtA/CxcpPQhEuR84e9GA+J2QL/KCo6K9CdNK
+	8X5KGCDMyz8KcxrQzE8zCPEDFRZmrO8hCGjfYuCCffN9El9NwP9jl71CJrVKfVG52rL0ActKRIb
+	qmytiUjGkRdfu4ZhYRYZpj/SC0BbR7Y+O/RwUmnLDwjBUT3qPiGWu3tLGgHRw36vBjEESACnOaM
+	BWSqGEjr1hhcccj1BGD/UaR452kcTevXTasglgSTufEFUWmNnoJ9fUBwJTsy9LHBqtd453Of9ry
+	7KXO1jH2xok6cGGNDfkeDeqjcUMrQXAzqRhcjW5enkh7Jrzn7uB3lKociGMr2L79/20sYbwRa8Z
+	S5VxQvVrcffp4Ytrftv/hUiBMyU6LWWRS861V9rAlSpuYY8Hdo+48giqZwn+ng65LLRQXGvngkj
+	HjojpK5VxRkWDMVwEA4s0Z67fd0qIw/OY3zSGZx7TrJxMWvN0K2S3XHNPUe/2tJ3foSBQj4yqD4
+	LKu3A
+X-TMASE-XGENCLOUD: 418d8773-f408-429f-848f-aad0f85e976f-0-0-200-0
+X-TM-Deliver-Signature: F3C1C06C21DA97FBE6BD18D7EB79DC94
+X-TM-Addin-Auth: ueep1XE1kbXbQ5j/37MYk69tDcYlkkLO7FHKAHd6pwDSgAxLqzflKXh7ZwI
+	07bQjNacelv6eEjt3NKxX10TA8cD34LzJjY2S6+QgpwEfvwPJl+E3J96X5M+Dhrqb+43PaCA/HZ
+	UGi8aTX2fNrZi1T2BG8Q3+efsx4YazTkVR5qIyQPXV2SalrF+aD2W6j2yRETL3GUfSQtulX7NPr
+	BBeevw1XR5P9Cjb9eaoxf/ifm55+Wan5a1xlTBIRHsScoGdlcwhq8HNlzXvAR8eqs+gkxd8GpmN
+	gXOFqv7WyUx/xwY=.p+ttgUtEAigtavdDJVrcQZlX1cpeAxVt8pvCglrcbhvSG+s6c6rvvtSRj4
+	tOjXzXJW3ohx8rxY8N42J6vPzlL3BTuaEKcmvrT5fu23SUclnqG0amqhriXAnFvZ3jDP0NAssWB
+	gCDMWFdC/dIDDZHFgFJwsPAPKIptTXvFOxqqaj17gSVv/oUpp+UZ59bzOBarflcb04jVA6UKwcH
+	KfK7lUnqf53okSjJjCSN737gx2/V+AXZNgQTrFYBE7Qq8CvJgs/w1fphognFSuLaBmln3wMbSn3
+	278vn7wA6YjVKXOGJioCmiEQqg218/JHqZ4navQkbmCRqsbCC+QCSXBxPJQ==
+X-TM-Addin-ProductCode: EMS
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=opensynergy.com;
+	s=TM-DKIM-20210503141657; t=1720616866;
+	bh=2LmZfy6AdnUPeBAFvNLv5gk2YKhaO7WPdjpuBNAphGE=; l=6919;
+	h=Date:From:To;
+	b=i/YWP2dIj1bLrbIW+8bM+chdQYeCAxNS8dYX+aLNR3f5WdHT2acqd/8WqkMevetUK
+	 vYIl1H1tWImbgcuI3d9cNMWq4/5c96OUNc4CE0mE8Dc6F92ysagy/GaT2a35ocIHo0
+	 tZiM3W58CDWHXn3HuNQEzVPOyt0rObjfYaZ4YC/MhBRFTICI2/yzQe6uZigzceK+6e
+	 P60s7+R2hiGG7jRTc7yO3FD4jZTlHdVx2W0foDJJi/8N1XxzB0HNZ9+WsMSv5E5IzK
+	 UwUKpKPg/JYOjj5oMMoTlWfYuAECoN37i5qwS2PyHh1v40D0e3z+6Gto1MOGUOmRf+
+	 VHkdSrs/ktK6Q==
 
-Hi Changhuang
+On 08.07.24 11:27, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
+> 
+> The vmclock "device" provides a shared memory region with precision clock
+> information. By using shared memory, it is safe across Live Migration.
+> 
+> Like the KVM PTP clock, this can convert TSC-based cross timestamps into
+> KVM clock values. Unlike the KVM PTP clock, it does so only when such is
+> actually helpful.
+> 
+> The memory region of the device is also exposed to userspace so it can be
+> read or memory mapped by application which need reliable notification of
+> clock disruptions.
+> 
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 
-   + Hans for one question on the vb2 queue mem_ops to use.
-
-On Tue, Jul 09, 2024 at 01:38:21AM GMT, Changhuang Liang wrote:
-> Add ISP params video device to write ISP parameters for 3A.
->
-> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-> ---
->  drivers/staging/media/starfive/camss/Makefile |   2 +
->  .../staging/media/starfive/camss/stf-camss.c  |  23 +-
->  .../staging/media/starfive/camss/stf-camss.h  |   3 +
->  .../media/starfive/camss/stf-isp-params.c     | 240 ++++++++++++++++++
->  .../staging/media/starfive/camss/stf-isp.h    |   4 +
->  .../staging/media/starfive/camss/stf-output.c |  83 ++++++
->  .../staging/media/starfive/camss/stf-output.h |  22 ++
->  7 files changed, 376 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/staging/media/starfive/camss/stf-isp-params.c
->  create mode 100644 drivers/staging/media/starfive/camss/stf-output.c
->  create mode 100644 drivers/staging/media/starfive/camss/stf-output.h
->
-> diff --git a/drivers/staging/media/starfive/camss/Makefile b/drivers/staging/media/starfive/camss/Makefile
-> index 411b45f3fb52..077165cbba7a 100644
-> --- a/drivers/staging/media/starfive/camss/Makefile
-> +++ b/drivers/staging/media/starfive/camss/Makefile
-> @@ -9,6 +9,8 @@ starfive-camss-objs += \
->  		stf-capture.o \
->  		stf-isp.o \
->  		stf-isp-hw-ops.o \
-> +		stf-isp-params.o \
-> +		stf-output.o \
-
-so now you have
-
-stf-capture.c and stf-output.c
-
-that define the entry point for the isp driver to register video nodes
-and initialize the type-specific operations.
-
-They call into:
-
-stf-video.c (and now) into stf-params.c
-
-to initialize the vb2 queue and register the video devices.
-
-stf-video.c handles RAW, YUV and STAT nodes
-stf-params.c handles PARAMS
-
-I'm not asking you to change this, but most drivers have a single file
-for -params, -stats and -video where they handle both the vb2 queue,
-the video device registration.
-
-Seeing however that stf-output is only 83 lines I wonder if it
-shouldn't be collapsed into stf-isp-params.c
-
-You're now a v5 already, this is an invasive change, but I guess it's
-something that could be post-poned to when the driver will be
-de-staged
-
->  		stf-video.o
->
->  obj-$(CONFIG_VIDEO_STARFIVE_CAMSS) += starfive-camss.o
-> diff --git a/drivers/staging/media/starfive/camss/stf-camss.c b/drivers/staging/media/starfive/camss/stf-camss.c
-> index fafa3ce2f6da..4b2288c3199c 100644
-> --- a/drivers/staging/media/starfive/camss/stf-camss.c
-> +++ b/drivers/staging/media/starfive/camss/stf-camss.c
-> @@ -128,6 +128,7 @@ static int stfcamss_register_devs(struct stfcamss *stfcamss)
->  {
->  	struct stf_capture *cap_yuv = &stfcamss->captures[STF_CAPTURE_YUV];
->  	struct stf_capture *cap_scd = &stfcamss->captures[STF_CAPTURE_SCD];
-> +	struct stf_output *output = &stfcamss->output;
->  	struct stf_isp_dev *isp_dev = &stfcamss->isp_dev;
->  	int ret;
->
-> @@ -138,13 +139,20 @@ static int stfcamss_register_devs(struct stfcamss *stfcamss)
->  		return ret;
->  	}
->
-> -	ret = stf_capture_register(stfcamss, &stfcamss->v4l2_dev);
-> +	ret = stf_output_register(stfcamss, &stfcamss->v4l2_dev);
->  	if (ret < 0) {
->  		dev_err(stfcamss->dev,
->  			"failed to register capture: %d\n", ret);
->  		goto err_isp_unregister;
->  	}
->
-> +	ret = stf_capture_register(stfcamss, &stfcamss->v4l2_dev);
-> +	if (ret < 0) {
-> +		dev_err(stfcamss->dev,
-> +			"failed to register capture: %d\n", ret);
-> +		goto err_out_unregister;
-> +	}
-> +
->  	ret = media_create_pad_link(&isp_dev->subdev.entity, STF_ISP_PAD_SRC,
->  				    &cap_yuv->video.vdev.entity, 0, 0);
->  	if (ret)
-> @@ -159,13 +167,23 @@ static int stfcamss_register_devs(struct stfcamss *stfcamss)
->
->  	cap_scd->video.source_subdev = &isp_dev->subdev;
->
-> +	ret = media_create_pad_link(&output->video.vdev.entity, 0,
-> +				    &isp_dev->subdev.entity, STF_ISP_PAD_SINK_PARAMS,
-> +				    0);
-> +	if (ret)
-> +		goto err_rm_links1;
-> +
->  	return ret;
->
-> +err_rm_links1:
-
-or err_rm_link_scd
-
-> +	media_entity_remove_links(&cap_scd->video.vdev.entity);
->  err_rm_links0:
->  	media_entity_remove_links(&isp_dev->subdev.entity);
->  	media_entity_remove_links(&cap_yuv->video.vdev.entity);
->  err_cap_unregister:
->  	stf_capture_unregister(stfcamss);
-> +err_out_unregister:
-> +	stf_output_unregister(stfcamss);
->  err_isp_unregister:
->  	stf_isp_unregister(&stfcamss->isp_dev);
->
-> @@ -176,14 +194,17 @@ static void stfcamss_unregister_devs(struct stfcamss *stfcamss)
->  {
->  	struct stf_capture *cap_yuv = &stfcamss->captures[STF_CAPTURE_YUV];
->  	struct stf_capture *cap_scd = &stfcamss->captures[STF_CAPTURE_SCD];
-> +	struct stf_output *output = &stfcamss->output;
->  	struct stf_isp_dev *isp_dev = &stfcamss->isp_dev;
->
-> +	media_entity_remove_links(&output->video.vdev.entity);
->  	media_entity_remove_links(&isp_dev->subdev.entity);
->  	media_entity_remove_links(&cap_yuv->video.vdev.entity);
->  	media_entity_remove_links(&cap_scd->video.vdev.entity);
->
->  	stf_isp_unregister(&stfcamss->isp_dev);
->  	stf_capture_unregister(stfcamss);
-> +	stf_output_unregister(stfcamss);
->  }
->
->  static int stfcamss_subdev_notifier_bound(struct v4l2_async_notifier *async,
-> diff --git a/drivers/staging/media/starfive/camss/stf-camss.h b/drivers/staging/media/starfive/camss/stf-camss.h
-> index ae49c7031ab7..3f84f1a1e997 100644
-> --- a/drivers/staging/media/starfive/camss/stf-camss.h
-> +++ b/drivers/staging/media/starfive/camss/stf-camss.h
-> @@ -21,6 +21,7 @@
->  #include "stf-buffer.h"
->  #include "stf-isp.h"
->  #include "stf-capture.h"
-> +#include "stf-output.h"
->
->  enum stf_port_num {
->  	STF_PORT_DVP = 0,
-> @@ -55,6 +56,7 @@ struct stfcamss {
->  	struct device *dev;
->  	struct stf_isp_dev isp_dev;
->  	struct stf_capture captures[STF_CAPTURE_NUM];
-> +	struct stf_output output;
->  	struct v4l2_async_notifier notifier;
->  	void __iomem *syscon_base;
->  	void __iomem *isp_base;
-> @@ -132,4 +134,5 @@ static inline void stf_syscon_reg_clear_bit(struct stfcamss *stfcamss,
->  	value = ioread32(stfcamss->syscon_base + reg);
->  	iowrite32(value & ~bit_mask, stfcamss->syscon_base + reg);
->  }
-> +
-
-not necessary
-
->  #endif /* STF_CAMSS_H */
-> diff --git a/drivers/staging/media/starfive/camss/stf-isp-params.c b/drivers/staging/media/starfive/camss/stf-isp-params.c
-> new file mode 100644
-> index 000000000000..e015857815f0
-> --- /dev/null
-> +++ b/drivers/staging/media/starfive/camss/stf-isp-params.c
-> @@ -0,0 +1,240 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * stf-isp-params.c
-> + *
-> + * StarFive Camera Subsystem - V4L2 device node
-> + *
-> + * Copyright (C) 2021-2023 StarFive Technology Co., Ltd.
-> + */
-> +
-> +#include <media/videobuf2-dma-contig.h>
-> +
-> +#include "stf-camss.h"
-> +#include "stf-video.h"
-> +
-> +static inline struct stfcamss_buffer *
-> +to_stfcamss_buffer(struct vb2_v4l2_buffer *vbuf)
-> +{
-> +	return container_of(vbuf, struct stfcamss_buffer, vb);
-> +}
-> +
-> +static int stf_isp_params_queue_setup(struct vb2_queue *q,
-> +				      unsigned int *num_buffers,
-> +				      unsigned int *num_planes,
-> +				      unsigned int sizes[],
-> +				      struct device *alloc_devs[])
-> +{
-> +	if (*num_planes)
-> +		return sizes[0] < sizeof(struct jh7110_isp_params_buffer) ? -EINVAL : 0;
-> +
-> +	*num_planes = 1;
-> +	sizes[0] = sizeof(struct jh7110_isp_params_buffer);
-> +
-> +	return 0;
-> +}
-> +
-> +static int stf_isp_params_buf_init(struct vb2_buffer *vb)
-> +{
-> +	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
-> +	struct stfcamss_buffer *buffer = to_stfcamss_buffer(vbuf);
-> +	dma_addr_t *paddr;
-> +
-> +	paddr = vb2_plane_cookie(vb, 0);
-
-same question as for the stat
-
-> +	buffer->addr[0] = *paddr;
-> +	buffer->vaddr = vb2_plane_vaddr(vb, 0);
-> +
-> +	return 0;
-> +}
-
-You could as well (unless something's related to cookies I don't
-understand) get the vaddr() of the buffer at the time it gets used and
-drop _buf_init() completely
+[...]
 
 > +
-> +static int stf_isp_params_buf_prepare(struct vb2_buffer *vb)
-> +{
-> +	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
+> +struct vmclock_abi {
+> +	/* CONSTANT FIELDS */
+> +	uint32_t magic;
+> +#define VMCLOCK_MAGIC	0x4b4c4356 /* "VCLK" */
+> +	uint32_t size;		/* Size of region containing this structure */
+> +	uint16_t version;	/* 1 */
+> +	uint8_t counter_id; /* Matches VIRTIO_RTC_COUNTER_xxx except INVALID */
+> +#define VMCLOCK_COUNTER_ARM_VCNT	0
+> +#define VMCLOCK_COUNTER_X86_TSC		1
+> +#define VMCLOCK_COUNTER_INVALID		0xff
+> +	uint8_t time_type; /* Matches VIRTIO_RTC_TYPE_xxx */
+> +#define VMCLOCK_TIME_UTC			0	/* Since 1970-01-01 00:00:00z */
+> +#define VMCLOCK_TIME_TAI			1	/* Since 1970-01-01 00:00:00z */
+> +#define VMCLOCK_TIME_MONOTONIC			2	/* Since undefined epoch */
+> +#define VMCLOCK_TIME_INVALID_SMEARED		3	/* Not supported */
+> +#define VMCLOCK_TIME_INVALID_MAYBE_SMEARED	4	/* Not supported */
 > +
-> +	if (sizeof(struct jh7110_isp_params_buffer) > vb2_plane_size(vb, 0))
-> +		return -EINVAL;
-> +
-> +	vb2_set_plane_payload(vb, 0, sizeof(struct jh7110_isp_params_buffer));
+> +	/* NON-CONSTANT FIELDS PROTECTED BY SEQCOUNT LOCK */
+> +	uint32_t seq_count;	/* Low bit means an update is in progress */
+> +	/*
+> +	 * This field changes to another non-repeating value when the CPU
+> +	 * counter is disrupted, for example on live migration. This lets
+> +	 * the guest know that it should discard any calibration it has
+> +	 * performed of the counter against external sources (NTP/PTP/etc.).
+> +	 */
+> +	uint64_t disruption_marker;
+> +	uint64_t flags;
+> +	/* Indicates that the tai_offset_sec field is valid */
+> +#define VMCLOCK_FLAG_TAI_OFFSET_VALID		(1 << 0)
+> +	/*
+> +	 * Optionally used to notify guests of pending maintenance events.
+> +	 * A guest which provides latency-sensitive services may wish to
+> +	 * remove itself from service if an event is coming up. Two flags
+> +	 * indicate the approximate imminence of the event.
+> +	 */
+> +#define VMCLOCK_FLAG_DISRUPTION_SOON		(1 << 1) /* About a day */
+> +#define VMCLOCK_FLAG_DISRUPTION_IMMINENT	(1 << 2) /* About an hour */
+> +#define VMCLOCK_FLAG_PERIOD_ESTERROR_VALID	(1 << 3)
+> +#define VMCLOCK_FLAG_PERIOD_MAXERROR_VALID	(1 << 4)
+> +#define VMCLOCK_FLAG_TIME_ESTERROR_VALID	(1 << 5)
+> +#define VMCLOCK_FLAG_TIME_MAXERROR_VALID	(1 << 6)
+> +	/*
+> +	 * Even regardless of leap seconds, the time presented through this
+> +	 * mechanism may not be strictly monotonic. If the counter slows down
+> +	 * and the host adapts to this discovery, the time calculated from
+> +	 * the value of the counter immediately after an update to this
+> +	 * structure, may appear to be *earlier* than a calculation just
+> +	 * before the update (while the counter was believed to be running
+> +	 * faster than it now is). A guest operating system will typically
+> +	 * *skew* its own system clock back towards the reference clock
+> +	 * exposed here, rather than following this clock directly. If,
+> +	 * however, this structure is being populated from such a system
+> +	 * clock which is already handled in such a fashion and the results
+> +	 * *are* guaranteed to be monotonic, such monotonicity can be
+> +	 * advertised by setting this bit.
+> +	 */
 
-This shouldn't be done by the kernel on OUTPUT queues, but you should
-make sure that the payload set by userspace has the correct size
-(which is sizeof(struct jh7110_isp_params_buffer)). I think you can
-also drop the check for vb2_plane_size() as the buffer size is set at
-queue_setup().
+I wonder if this might be difficult to define in a standard.
 
-> +
-> +	vbuf->field = V4L2_FIELD_NONE;
+Is there a need to define device and driver behavior in more detail? What
+would happen if e.g. the device first decides how to update the clock, but
+is then slow to update the SHM?
 
-Also this is not necessary I guess
+> +#define VMCLOCK_FLAG_TIME_MONOTONIC		(1 << 7)
 > +
-> +	return 0;
-> +}
+> +	uint8_t pad[2];
+> +	uint8_t clock_status;
+> +#define VMCLOCK_STATUS_UNKNOWN		0
+> +#define VMCLOCK_STATUS_INITIALIZING	1
+> +#define VMCLOCK_STATUS_SYNCHRONIZED	2
+> +#define VMCLOCK_STATUS_FREERUNNING	3
+> +#define VMCLOCK_STATUS_UNRELIABLE	4
 > +
-> +static void stf_isp_params_buf_queue(struct vb2_buffer *vb)
-> +{
-> +	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
-> +	struct stfcamss_video *video = vb2_get_drv_priv(vb->vb2_queue);
-> +	struct stfcamss_buffer *buffer = to_stfcamss_buffer(vbuf);
-> +
-> +	video->ops->queue_buffer(video, buffer);
+> +	/*
+> +	 * The time exposed through this device is never smeared. This field
+> +	 * corresponds to the 'subtype' field in virtio-rtc, which indicates
+> +	 * the smearing method. However in this case it provides a *hint* to
+> +	 * the guest operating system, such that *if* the guest OS wants to
+> +	 * provide its users with an alternative clock which does not follow
+> +	 * the POSIX CLOCK_REALTIME standard, it may do so in a fashion
+> +	 * consistent with the other systems in the nearby environment.
 
-You can really do that here and drop the -output.c file
+AFAIU the POSIX.1-2017 standard does not mandate UTC, esp. not w.r.t.
+leap seconds [1, A.4.16 Seconds Since the Epoch]:
 
-> +}
-> +
-> +static void stf_isp_params_stop_streaming(struct vb2_queue *q)
-> +{
-> +	struct stfcamss_video *video = vb2_get_drv_priv(q);
-> +
-> +	video->ops->flush_buffers(video, VB2_BUF_STATE_ERROR);
-> +}
-> +
-> +static const struct vb2_ops stf_isp_params_vb2_q_ops = {
-> +	.queue_setup     = stf_isp_params_queue_setup,
-> +	.wait_prepare    = vb2_ops_wait_prepare,
-> +	.wait_finish     = vb2_ops_wait_finish,
-> +	.buf_init        = stf_isp_params_buf_init,
-> +	.buf_prepare     = stf_isp_params_buf_prepare,
-> +	.buf_queue       = stf_isp_params_buf_queue,
-> +	.stop_streaming  = stf_isp_params_stop_streaming,
-> +};
-> +
-> +static int stf_isp_params_init_format(struct stfcamss_video *video)
-> +{
-> +	video->active_fmt.fmt.meta.dataformat = V4L2_META_FMT_STF_ISP_PARAMS;
-> +	video->active_fmt.fmt.meta.buffersize = sizeof(struct jh7110_isp_params_buffer);
+> Those applications which do care about leap seconds can determine how to
+> handle them in whatever way those applications feel is best. This was
+> particularly emphasized because there was disagreement about what the best
+> way of handling leap seconds might be. It is a practical impossibility to
+> mandate that a conforming implementation must have a fixed relationship to
+> any particular official clock (consider isolated systems, or systems
+> performing "reruns" by setting the clock to some arbitrary time).
 
-There's not need to store this in the active_fmt. params.c can use
-V4L2_META_FMT_STF_ISP_PARAMS and sizeof(struct
-jh7110_isp_params_buffer) directly in enum_fmt and g_fmt.
+So the above comment should probably refer to UTC instead of POSIX
+CLOCK_REALTIME.
 
-> +
-> +	return 0;
-> +}
-> +
-> +static int stf_isp_params_querycap(struct file *file, void *fh,
-> +				   struct v4l2_capability *cap)
-> +{
-> +	strscpy(cap->driver, "starfive-camss", sizeof(cap->driver));
-> +	strscpy(cap->card, "Starfive Camera Subsystem", sizeof(cap->card));
-> +
-> +	return 0;
-> +}
-> +
-> +static int stf_isp_params_enum_fmt(struct file *file, void *priv,
-> +				   struct v4l2_fmtdesc *f)
-> +{
-> +	struct stfcamss_video *video = video_drvdata(file);
-> +
-> +	if (f->index > 0 || f->type != video->type)
-> +		return -EINVAL;
-> +
-> +	f->pixelformat = video->active_fmt.fmt.meta.dataformat;
-> +	return 0;
-> +}
-> +
-> +static int stf_isp_params_g_fmt(struct file *file, void *fh, struct v4l2_format *f)
-> +{
-> +	struct stfcamss_video *video = video_drvdata(file);
-> +	struct v4l2_meta_format *meta = &f->fmt.meta;
-> +
-> +	if (f->type != video->type)
-> +		return -EINVAL;
-> +
-> +	meta->dataformat = video->active_fmt.fmt.meta.dataformat;
-> +	meta->buffersize = video->active_fmt.fmt.meta.buffersize;
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct v4l2_ioctl_ops stf_isp_params_ioctl_ops = {
-> +	.vidioc_querycap                = stf_isp_params_querycap,
-> +	.vidioc_enum_fmt_meta_out	= stf_isp_params_enum_fmt,
-> +	.vidioc_g_fmt_meta_out          = stf_isp_params_g_fmt,
-> +	.vidioc_s_fmt_meta_out          = stf_isp_params_g_fmt,
-> +	.vidioc_try_fmt_meta_out        = stf_isp_params_g_fmt,
-> +	.vidioc_reqbufs                 = vb2_ioctl_reqbufs,
-> +	.vidioc_querybuf                = vb2_ioctl_querybuf,
-> +	.vidioc_qbuf                    = vb2_ioctl_qbuf,
-> +	.vidioc_expbuf                  = vb2_ioctl_expbuf,
-> +	.vidioc_dqbuf                   = vb2_ioctl_dqbuf,
-> +	.vidioc_create_bufs             = vb2_ioctl_create_bufs,
-> +	.vidioc_prepare_buf             = vb2_ioctl_prepare_buf,
-> +	.vidioc_streamon                = vb2_ioctl_streamon,
-> +	.vidioc_streamoff               = vb2_ioctl_streamoff,
-> +};
-> +
-> +static const struct v4l2_file_operations stf_isp_params_fops = {
-> +	.owner          = THIS_MODULE,
-> +	.unlocked_ioctl = video_ioctl2,
-> +	.open           = v4l2_fh_open,
-> +	.release        = vb2_fop_release,
-> +	.poll           = vb2_fop_poll,
-> +	.mmap           = vb2_fop_mmap,
-> +};
-> +
-> +static void stf_isp_params_release(struct video_device *vdev)
-> +{
-> +	struct stfcamss_video *video = video_get_drvdata(vdev);
-> +
-> +	media_entity_cleanup(&vdev->entity);
-> +
-> +	mutex_destroy(&video->q_lock);
-> +	mutex_destroy(&video->lock);
-> +}
-> +
-> +int stf_isp_params_register(struct stfcamss_video *video,
-> +			    struct v4l2_device *v4l2_dev,
-> +			    const char *name)
-> +{
-> +	struct video_device *vdev = &video->vdev;
-> +	struct vb2_queue *q;
-> +	struct media_pad *pad = &video->pad;
-> +	int ret;
-> +
-> +	mutex_init(&video->q_lock);
-> +	mutex_init(&video->lock);
+> +	 */
+> +	uint8_t leap_second_smearing_hint; /* Matches VIRTIO_RTC_SUBTYPE_xxx */
+> +#define VMCLOCK_SMEARING_STRICT		0
+> +#define VMCLOCK_SMEARING_NOON_LINEAR	1
+> +#define VMCLOCK_SMEARING_UTC_SLS	2
+> +	int16_t tai_offset_sec;
+> +	uint8_t leap_indicator; /* Based on VIRTIO_RTC_LEAP_xxx */
+> +#define VMCLOCK_LEAP_NONE	0	/* No known nearby leap second */
+> +#define VMCLOCK_LEAP_PRE_POS	1	/* Leap second + at end of month */
 
-are two mutexes required for the vb2 queue and the video node ? I see,
-in example, rkisp1-params.c uses a single one
+A positive leap second usually means stepping the clock backwards, so 
+`Leap second +` is somewhat confusing.
 
-> +
-> +	q = &video->vb2_q;
-> +	q->drv_priv = video;
-> +	q->mem_ops = &vb2_dma_contig_memops;
+> +#define VMCLOCK_LEAP_PRE_NEG	2	/* Leap second - at end of month */
+> +#define VMCLOCK_LEAP_POS	3	/* Set during 23:59:60 second */
+> +#define VMCLOCK_LEAP_NEG	4	/* Not used in VMCLOCK */
+> +	/*
+> +	 * These values are not (yet) in virtio-rtc. They indicate that a
+> +	 * leap second *has* occurred at the start of the month. This allows
+> +	 * a guest to generate a smeared clock from the accurate clock which
+> +	 * this device provides, as smearing may need to continue for up to a
+> +	 * period of time *after* the point of the leap second itself. Must
+> +	 * be cleared by the 15th day of the month.
+> +	 */
+> +#define VMCLOCK_LEAP_POST_POS	5
+> +#define VMCLOCK_LEAP_POST_NEG	6
 
-Now, I might be wrong, but unless you need to allocate memory from a
-DMA-capable area, you shouldn't need to use vb2_dma_contig_memops.
+I think it can still be discussed in the context of virtio-rtc whether we
+should add dedicated identifiers for message-based smeared clock readouts.
 
-Looking at the next patches you apply configuration parameters to the
-ISP by inspecting the user supplied parameters one by one, not by
-transfering the whole parameters buffer to a memory area. Hans what do
-you think ?
 
-> +	q->ops = &stf_isp_params_vb2_q_ops;
-> +	q->type = video->type;
-> +	q->io_modes = VB2_DMABUF | VB2_MMAP;
-> +	q->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
-> +	q->buf_struct_size = sizeof(struct stfcamss_buffer);
-> +	q->dev = video->stfcamss->dev;
-> +	q->lock = &video->q_lock;
-> +	q->min_queued_buffers = STFCAMSS_MIN_BUFFERS;
-> +	ret = vb2_queue_init(q);
-> +	if (ret < 0) {
-> +		dev_err(video->stfcamss->dev,
-> +			"Failed to init vb2 queue: %d\n", ret);
-> +		goto err_mutex_destroy;
-> +	}
-> +
-> +	pad->flags = MEDIA_PAD_FL_SOURCE;
-> +	ret = media_entity_pads_init(&vdev->entity, 1, pad);
-> +	if (ret < 0) {
-> +		dev_err(video->stfcamss->dev,
-> +			"Failed to init video entity: %d\n", ret);
-> +		goto err_mutex_destroy;
-> +	}
-> +
-> +	ret = stf_isp_params_init_format(video);
-> +	if (ret < 0) {
-> +		dev_err(video->stfcamss->dev,
-> +			"Failed to init format: %d\n", ret);
-> +		goto err_media_cleanup;
-> +	}
-> +	vdev->ioctl_ops = &stf_isp_params_ioctl_ops;
-> +	vdev->device_caps = V4L2_CAP_META_OUTPUT;
-> +	vdev->fops = &stf_isp_params_fops;
-> +	vdev->device_caps |= V4L2_CAP_STREAMING | V4L2_CAP_IO_MC;
-
-Same as per the stat nodes, there's a single format, IO_MC doesn't
-give you anything ?
-
-> +	vdev->vfl_dir = VFL_DIR_TX;
-> +	vdev->release = stf_isp_params_release;
-> +	vdev->v4l2_dev = v4l2_dev;
-> +	vdev->queue = &video->vb2_q;
-> +	vdev->lock = &video->lock;
-> +	strscpy(vdev->name, name, sizeof(vdev->name));
-> +
-> +	video_set_drvdata(vdev, video);
-> +
-> +	ret = video_register_device(vdev, VFL_TYPE_VIDEO, -1);
-> +	if (ret < 0) {
-> +		dev_err(video->stfcamss->dev,
-> +			"Failed to register video device: %d\n", ret);
-> +		goto err_media_cleanup;
-> +	}
-> +
-> +	return 0;
-> +
-> +err_media_cleanup:
-> +	media_entity_cleanup(&vdev->entity);
-> +err_mutex_destroy:
-> +	mutex_destroy(&video->lock);
-> +	mutex_destroy(&video->q_lock);
-> +	return ret;
-> +}
-> diff --git a/drivers/staging/media/starfive/camss/stf-isp.h b/drivers/staging/media/starfive/camss/stf-isp.h
-> index eca3ba1ade75..76ea943bfe98 100644
-> --- a/drivers/staging/media/starfive/camss/stf-isp.h
-> +++ b/drivers/staging/media/starfive/camss/stf-isp.h
-> @@ -474,4 +474,8 @@ void stf_set_scd_addr(struct stfcamss *stfcamss,
->  		      dma_addr_t yhist_addr, dma_addr_t scd_addr,
->  		      enum stf_isp_type_scd type_scd);
->
-> +int stf_isp_params_register(struct stfcamss_video *video,
-> +			    struct v4l2_device *v4l2_dev,
-> +			    const char *name);
-> +
->  #endif /* STF_ISP_H */
-> diff --git a/drivers/staging/media/starfive/camss/stf-output.c b/drivers/staging/media/starfive/camss/stf-output.c
-> new file mode 100644
-> index 000000000000..8eaf4979cafa
-> --- /dev/null
-> +++ b/drivers/staging/media/starfive/camss/stf-output.c
-> @@ -0,0 +1,83 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * StarFive Camera Subsystem - output device
-> + *
-> + * Copyright (C) 2023 StarFive Technology Co., Ltd.
-> + */
-> +
-> +#include "stf-camss.h"
-> +
-> +static inline struct stf_output *to_stf_output(struct stfcamss_video *video)
-> +{
-> +	return container_of(video, struct stf_output, video);
-> +}
-> +
-> +static int stf_output_queue_buffer(struct stfcamss_video *video,
-> +				   struct stfcamss_buffer *buf)
-> +{
-> +	struct stf_output *output = to_stf_output(video);
-> +	struct stf_v_buf *v_bufs = &output->buffers;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&v_bufs->lock, flags);
-> +	stf_buf_add_ready(v_bufs, buf);
-> +	spin_unlock_irqrestore(&v_bufs->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static int stf_output_flush_buffers(struct stfcamss_video *video,
-> +				    enum vb2_buffer_state state)
-> +{
-> +	struct stf_output *output = to_stf_output(video);
-> +	struct stf_v_buf *v_bufs = &output->buffers;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&v_bufs->lock, flags);
-> +	stf_buf_flush(v_bufs, state);
-> +	spin_unlock_irqrestore(&v_bufs->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct stfcamss_video_ops stf_output_ops = {
-> +	.queue_buffer = stf_output_queue_buffer,
-> +	.flush_buffers = stf_output_flush_buffers,
-> +};
-> +
-> +static void stf_output_init(struct stfcamss *stfcamss, struct stf_output *out)
-> +{
-> +	out->buffers.state = STF_OUTPUT_OFF;
-> +	out->buffers.buf[0] = NULL;
-> +	out->buffers.buf[1] = NULL;
-> +	out->buffers.active_buf = 0;
-> +	INIT_LIST_HEAD(&out->buffers.pending_bufs);
-> +	INIT_LIST_HEAD(&out->buffers.ready_bufs);
-> +	spin_lock_init(&out->buffers.lock);
-> +
-> +	out->video.stfcamss = stfcamss;
-> +	out->video.type = V4L2_BUF_TYPE_META_OUTPUT;
-> +}
-> +
-> +void stf_output_unregister(struct stfcamss *stfcamss)
-> +{
-> +	struct stf_output *output = &stfcamss->output;
-> +
-> +	if (!video_is_registered(&output->video.vdev))
-> +		return;
-> +
-> +	media_entity_cleanup(&output->video.vdev.entity);
-> +	vb2_video_unregister_device(&output->video.vdev);
-> +}
-> +
-> +int stf_output_register(struct stfcamss *stfcamss,
-> +			struct v4l2_device *v4l2_dev)
-> +{
-> +	struct stf_output *output = &stfcamss->output;
-> +
-> +	output->video.ops = &stf_output_ops;
-> +	stf_output_init(stfcamss, output);
-> +	stf_isp_params_register(&output->video, v4l2_dev, "output_params");
-> +
-> +	return 0;
-> +}
-> diff --git a/drivers/staging/media/starfive/camss/stf-output.h b/drivers/staging/media/starfive/camss/stf-output.h
-> new file mode 100644
-> index 000000000000..d3591a0b609b
-> --- /dev/null
-> +++ b/drivers/staging/media/starfive/camss/stf-output.h
-> @@ -0,0 +1,22 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Starfive Camera Subsystem driver
-> + *
-> + * Copyright (C) 2023 StarFive Technology Co., Ltd.
-> + */
-> +
-> +#ifndef STF_OUTPUT_H
-> +#define STF_OUTPUT_H
-> +
-> +#include "stf-video.h"
-> +
-> +struct stf_output {
-> +	struct stfcamss_video video;
-> +	struct stf_v_buf buffers;
-> +};
-> +
-> +int stf_output_register(struct stfcamss *stfcamss,
-> +			struct v4l2_device *v4l2_dev);
-> +void stf_output_unregister(struct stfcamss *stfcamss);
-> +
-> +#endif
-> --
-> 2.25.1
->
->
+[1] https://pubs.opengroup.org/onlinepubs/9699919799/
 
