@@ -1,116 +1,89 @@
-Return-Path: <linux-kernel+bounces-246799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C2392C6DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 02:04:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7AE392C6E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 02:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAF3F1F23909
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:04:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E3EC2843AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 00:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B06410E6;
-	Wed, 10 Jul 2024 00:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC1010F1;
+	Wed, 10 Jul 2024 00:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B5We3Hvt"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F43125C1;
-	Wed, 10 Jul 2024 00:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	dkim=pass (1024-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b="F/228x4D"
+Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69CF161;
+	Wed, 10 Jul 2024 00:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720569880; cv=none; b=H7BzTpOIBTDZPl0OfiY0Gcb5ACxTl+Aw0YVpYAzovvfju6t5DfN+UTIkEQslpLpaTd96Taa8FBPc2z/IkFTumK2EE+bGuErpBaPSrViWs6ZoZAfA8F/SfZEmxyuw/dqoOiKt/IVWsACnONjc4Dou2uFFIj/n3h5DsO6GGYSx9D0=
+	t=1720570075; cv=none; b=O1Nma28lgePfMSJtlZPMLHEnIMGEOKkSSAw2wNOxS4W4FCVRIa5ke8a60jRl1Sj7ybhKNPd6ieYGtSZrmKcaVLT2VkHc/oyLgyw6t350E0tbCoszWP4BuiGDxCmkH+oRKBqRArn/9ECEh+DhTJkUdBOy9h6CkUSjJWu6j9F4atA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720569880; c=relaxed/simple;
-	bh=7svXtIRIQev3qw6/H5fBsnzbi9V2xC1keg6/wSjP/jc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VkqBZhDxe6I02GSwTZUHLPRxNbfdrZsQS/OXBh1qlUzja8qH0eopS+huwRRJj9uVJdG+CV1x/0tOBmHNJweKjm6gY9zf4dwXwr5/j5aZjgUfHcjseLNu8FuEkPjRrC8PHsnFJL382DE2NRwhYjEshDVqJI3IuYSqpjMCeh6bTRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B5We3Hvt; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70b12572bd8so2852499b3a.2;
-        Tue, 09 Jul 2024 17:04:39 -0700 (PDT)
+	s=arc-20240116; t=1720570075; c=relaxed/simple;
+	bh=pGy4LxQr1LhB9eaHPJeIs8TK0+uf3RKY15IAM0rqmoI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=P8rk7dIHZax1GFRKMNK6ElfkskbIsV7zdOJ/z7x7Dq30UteP1WjY0k5bLzSQXP3RqkZ1l4l7HR7okFw4f4AOKJ87NVpqvNsJvORRJrgTz2WW0MyiXuj01748XF35gJx3YVrIHstl6NrhcZtz24tiWaMZJk9BxD6McPpqMWDIsOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn; spf=pass smtp.mailfrom=buaa.edu.cn; dkim=pass (1024-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b=F/228x4D; arc=none smtp.client-ip=162.243.161.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buaa.edu.cn
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720569878; x=1721174678; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=skE6m8I/Wpu8lnOuMGo8EZdY4lGens1131mvpVe4I+8=;
-        b=B5We3Hvtn+Dz/pJs+24DtTGjGqqKRSd2xagoOP9LDOHnFLrWhfGMXuR9DaRpCHGonx
-         dCIGG5hz5hNKou0c8Nh6j05lwKlYEZsz/2YPsK43682ku2f/6daIBcFqXYBjbaR8cEKP
-         PI3BxaUoddgb5VRxgmoVeY1eUnC+oZujx5E+ncqHpecWTHyYJfkXfy1QGIoSz+AFTSLU
-         JmEfL7Z0EbWJQ9rK+v90yniTuzNY/sxnrASTHo21+Cl5oBobq6ZLQmBOtg018zPxE/yb
-         wvPgQpdkZlw0OW4j8dOnJC2G8V7iAxcQidSLVIXCV2B2a6FRvO6rNp/bK0ExGBFkHRz/
-         7IAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720569878; x=1721174678;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=skE6m8I/Wpu8lnOuMGo8EZdY4lGens1131mvpVe4I+8=;
-        b=WJbNZw6nPAC8ImPyKkouTVRVGHAshoKOsnU+d9lW+evMzmZzEHPMyEo8ZeubFacPK5
-         DSOsqto8VfUqhyDEud+GMe1VEy/3UVhrzR+F1v1tfx5/mx0yHXilecTPqI3ApKS65GuJ
-         61bbC8Eu7MipIu2EYCtVfL7xhTLCmH78aDMPBKsWpAKrBI7MDffkBOxC+9cLZS1A8DNJ
-         bxrYCjAVpw2H9760rrZrA2HgjS0f/uD/Hwqnscle7dFr2NlislFFs6ByQ65gS8tJiPWM
-         GNEJrRwW4EWys0oiao/9w1WiqXgup+Aj5bmecaALmqNrnx912Ddq9QozgjyMqmiCyv8q
-         jWgg==
-X-Gm-Message-State: AOJu0YzlxfvOVWHoWn42wbwWkc8twNENpOONtM+vzZbU/DWPy9Nk0pNO
-	3XscxekHZVudK5dMJUZLh1Hmfbv4ovjLNzHsbb1blvEjbcNo4dfHY1FiBQ==
-X-Google-Smtp-Source: AGHT+IHEHZ8qSXr8kyZHsPzj3a9OH8na6Fyw9Ccju34FIBurqIo2WnGg7EevDuqfe3tq7zruW6eQog==
-X-Received: by 2002:a05:6a00:3e02:b0:706:5b9a:b6d5 with SMTP id d2e1a72fcca58-70b43576ab9mr4518027b3a.15.1720569878226;
-        Tue, 09 Jul 2024 17:04:38 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:f11c:146:525b:f491])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b439ac718sm2420477b3a.168.2024.07.09.17.04.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 17:04:37 -0700 (PDT)
-Date: Tue, 9 Jul 2024 17:04:35 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Mirsad Todorovac <mtodorovac69@gmail.com>
-Subject: [PATCH] Input: twl4030-pwrbutton - fix kernel-doc warning
-Message-ID: <Zo3QE00GqCrA3M9b@google.com>
+	d=buaa.edu.cn; s=buaa; h=Received:From:To:Cc:Subject:Date:
+	Message-ID:In-Reply-To:References:MIME-Version:
+	Content-Transfer-Encoding; bh=pGy4LxQr1LhB9eaHPJeIs8TK0+uf3RKY15
+	IAM0rqmoI=; b=F/228x4D3/l2sBB+6T9Y47+UDOmWJSEfxGBsGbJvE2c+lT3iIE
+	TrhVxqam+0lYYLFTEJxBg3RmeyPr/N+eUNvNgE5nUuMTL4jN2qu+0mQvpmj0NNLb
+	acQG/7RUa50N/aEsxkXjNU7fq8+eelNx0XSXjqIJ/p1NFC+fLxTGLtc24=
+Received: from gp-VMware-Virtual-Platform.localdomain (unknown [139.227.253.190])
+	by coremail-app2 (Coremail) with SMTP id Nyz+CgD3UfXG0I1moBuqAA--.62945S2;
+	Wed, 10 Jul 2024 08:07:36 +0800 (CST)
+From: peng guo <engguopeng@buaa.edu.cn>
+To: alison.schofield@intel.com
+Cc: dan.j.williams@intel.com,
+	dave.jiang@intel.com,
+	dave@stgolabs.net,
+	engguopeng@buaa.edu.cn,
+	ira.weiny@intel.com,
+	jonathan.cameron@huawei.com,
+	linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	vishal.l.verma@intel.com,
+	wyguopeng@163.com
+Subject: Re: [PATCH] cxl core:wrong value of macro definition
+Date: Wed, 10 Jul 2024 08:07:34 +0800
+Message-ID: <20240710000734.6010-1-engguopeng@buaa.edu.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <Zow0Aw+vrXShXv+n@aschofie-mobl2>
+References: <Zow0Aw+vrXShXv+n@aschofie-mobl2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Nyz+CgD3UfXG0I1moBuqAA--.62945S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYP7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+	0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7MxkIecxEwVAFwVWDMxAIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY2
+	0_Aw1UJr1UMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
+	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42
+	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjg18DUUUUU==
+X-CM-SenderInfo: d2isijirrujqpexdthxhgxhubq/
 
-Do not use kernel-doc style for comment describing contents of the
-source file, as it trips the script:
+Sorry, I didn't use the latest code when I checked your reply, so that I didn't see this definition in use.
 
-  scripts/kernel-doc -none   drivers/input/misc/twl4030-pwrbutton.c
-drivers/input/misc/twl4030-pwrbutton.c:2: info: Scanning doc for function twl4030
-drivers/input/misc/twl4030-pwrbutton.c:33: warning: expecting prototype for twl4030(). Prototype was for PWR_PWRON_IRQ() instead
-1 warnings
+I just started browsing the CXL related code, and just happened to find this error point when checking the specification.
 
-Also remove file name from the same comment - it it not the best idea
-to have it as they tend to get stale when sources get moved or renamed.
+It will fail when the user uses CXL_MBOX_OP_CLEAR_LOG. So, do I need to continue to update message and make it specific.
 
-Reported-by: Mirsad Todorovac <mtodorovac69@gmail.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/input/misc/twl4030-pwrbutton.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/input/misc/twl4030-pwrbutton.c b/drivers/input/misc/twl4030-pwrbutton.c
-index e3ee0638ffba..f85cc289c053 100644
---- a/drivers/input/misc/twl4030-pwrbutton.c
-+++ b/drivers/input/misc/twl4030-pwrbutton.c
-@@ -1,5 +1,5 @@
--/**
-- * twl4030-pwrbutton.c - TWL4030 Power Button Input Driver
-+/*
-+ * TWL4030 Power Button Input Driver
-  *
-  * Copyright (C) 2008-2009 Nokia Corporation
-  *
--- 
-2.45.2.803.g4e1b14247a-goog
-
-
--- 
-Dmitry
 
