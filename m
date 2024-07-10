@@ -1,138 +1,273 @@
-Return-Path: <linux-kernel+bounces-248006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7371C92D756
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:19:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE2D92D75A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBAB31F2240F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:19:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1A7F1F227EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F68D194A7C;
-	Wed, 10 Jul 2024 17:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51BF21953A1;
+	Wed, 10 Jul 2024 17:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NCoX9DS0"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZlCDndiS"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1719534545;
-	Wed, 10 Jul 2024 17:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB79618FA02;
+	Wed, 10 Jul 2024 17:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720631985; cv=none; b=ApmJsuqDJCJ/J7jBblA+3bu3ZCQvC7OsJrh5czf/rycNjR7ZoZfgJXWYIbRd4rmPuXnFlzxxtwy/dSt4zesJ+sMoErDTDPsIY8lVptX+13alo4p+ihFEvCxYbBoE9k8aI2RIlwxLYsEyky+liaC81voyZvewtyt2PUO5uhdyy80=
+	t=1720632049; cv=none; b=WwleNcZHEw1ky0+MFWH//yw2FMLLsQUPBp/y2q4w/gX0wEEmBhfccW9OkGY59fqQDdaEsdv2YMJjg2ne/JJT1kRdZ11rr30Ap1SIAFfWUQEnPSSeFNUptkaMpEHMmJnY6bKKCu5TogEsDPC2oUWWKUeK0trr6eVj8WCLaST70fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720631985; c=relaxed/simple;
-	bh=1WCxG06P7mAa9HcCvP5iXR0Vo/X3kjtL5preMakYO/k=;
+	s=arc-20240116; t=1720632049; c=relaxed/simple;
+	bh=qRcTcUopRK2xHoEu39uGsBqYKTPXei/IqbG5uKck4zM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YfPkgUMGsTn6vu4zEwOlx8dB92L3nNHVSxBfFQ84B4PvspD9RgWxGQuhUs6s1dZh44anuNeAQ+0a+mdOZoJSBWb/EPU33L64BeuDOk9oTXG0Ah2SBYwaoG9p/+4CtWOnlUtGatXPSQ8bXRbAci98wOtadtMhl2pGgHMCkVXvmL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NCoX9DS0; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 067A140E0206;
-	Wed, 10 Jul 2024 17:19:39 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ewiBphV7D_KG; Wed, 10 Jul 2024 17:19:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1720631974; bh=eCwsCaHH3nNUtEHLmttXrdCWSWB8LWlW1inXQHgFI2g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NCoX9DS0Ni66Z7QLBuk8BAgkpRB3a8dX0WXg52nC8Alpt048IoglDMnzFPmDykUDE
-	 vrEMEEghVqlC4rBNAlavEojIR7BspEXgwcqhUg4QxK30YOOkw/qcn+H7agBtEnS/gP
-	 GSqsFsem29H0Sr7bJnM5Y3gcoGtip61mlRSstEOoScOPINSMVh9g16slgqjYIPRjki
-	 nkdroKhfUK4oK+cztBJa+6ln1C/plo4S9bx/qonmeLxWRYXyyTbh3ycJvRKSx4peeD
-	 rpY6wnJ6YFHH4kmhMB09+6RKCkwf0RuU7Hj0cs+I35un8YJKydi8tBbkPxWyTxR0Xi
-	 nq2TTyXOo0tUciciJqfoXj2kiIEDozBP7QAeAtnHrMVEuS3g9Bj+FdnI5QbQQMRtcR
-	 z3c+42afC9o0KFKGW7PoLoldJy1DIrfXEu9zYQztsH1yBQA00bRqPpiEYBHpGSzdHe
-	 eLwK7c2zolYIV7Yh6X2u35GvmoThRluK1+ULhK5txGl0p8i24yFINvw0Sqr0KETd/y
-	 hRq4eFmWabSWSY61oCH8bie/wuTkpOvMKgBdmzqpZ7uQrdG9ycBIU/cH/uAk83uman
-	 fNPbjtQUkShDarIUH5FL14Eqm1U6Agle73ym+89GSQejo10IZJ1bMTV5LH+SbJ9iD7
-	 Azz0lvwfp9KVHAz0C/eRh7M0=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8E6EC40E0027;
-	Wed, 10 Jul 2024 17:18:42 +0000 (UTC)
-Date: Wed, 10 Jul 2024 19:18:36 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Xiongwei Song <xiongwei.song@windriver.com>,
-	Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Brijesh Singh <brijesh.singh@amd.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Tony Luck <tony.luck@intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Alexey Kardashevskiy <aik@amd.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar <mingo@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Sandipan Das <sandipan.das@amd.com>,
-	Breno Leitao <leitao@debian.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Yian Chen <yian.chen@intel.com>,
-	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
-	Juergen Gross <jgross@suse.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Yuntao Wang <ytcoode@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
-	Huang Shijie <shijie@os.amperecomputing.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org
-Subject: Re: [PATCH v4 03/16] x86/alternatives: Disable LASS when patching
- kernel alternatives
-Message-ID: <20240710171836.GGZo7CbFJeZwLCZUAt@fat_crate.local>
-References: <20240710160655.3402786-1-alexander.shishkin@linux.intel.com>
- <20240710160655.3402786-4-alexander.shishkin@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bwDHBAUhZdo784v6VqFRrb7w0fZ9VNV67V4WX7IhlVCXbouA8s/KhAgj0EeeFlyGKa8XCeMimNykhI/Ziz6Nlv8fcu2VgpnbUBjHBqcERKXkjYU4sgsu8no+vffitME64B+SbyhkVGozFYyWOG+HdJr/nckGhdDHulczVPylufk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZlCDndiS; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fa9ecfb321so41588995ad.0;
+        Wed, 10 Jul 2024 10:20:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720632047; x=1721236847; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pcl1f+AK0P8JCKXXKjbHo0YsgLy2QnOimTj9DcDVJYs=;
+        b=ZlCDndiSZTJRnQ06WWWS4Kk7VWBtoY6PRy11eeN4tIxTfO9yMtxHHObN10SdbR8uOp
+         fqv6dc8x+QsHkmPLMH+Ic4ifZfUhirLRZp/rcyl5UYJ6k4594fQ2OHZKup3xBHE7kei8
+         XOBlgAd2RTm3clKtSjm+iMb69gGtzFS3GMGCa+MwTogFiN/hr+uzXCfqQPUfkei0sXpg
+         uceVKEYQ81eqc3rYANS7KpCQMCUcS2yo0OFypWySCRQyydv/YCaGpEdtrJ0IEBei8315
+         dycGJIMnaF+7YVvcdnIY/y6GO6eK/W7Ac7nW4mYCK6ynMO2f/kX0ed+H45esfjhxeTH8
+         L2rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720632047; x=1721236847;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pcl1f+AK0P8JCKXXKjbHo0YsgLy2QnOimTj9DcDVJYs=;
+        b=m6IR7nAR8RePNvWwNKW3Di2AGcd1N2kfrXQnDzT3NP07mL9vdna23fHMc+E7EV9/s7
+         ExWJUMEL283tPRnHMj8CjQ0SIWsiTVrMoT+APrpwt1sM2RiSODoQvYRmey8Pj5YRA4wA
+         alcUrXSuJ2f0ieUp0VZt3WOPg6i39rtszVy6yj2a1qU4FqFnJNaPT/iYitKoQLTLjJOj
+         YspHHVsVM4RSK8mhVgIiu7KjP2doi3wsOq/eRpMd65fLzpNjaZZ8jo2gJmycKGH8vvU9
+         4MZ7/LUiCriyEq5DKhgz84QSxe48SFH4vPP5zwqZzMhf1xmBMjW/r2qEeN+BLi1wS4D8
+         babQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX663Cra7aTy4LVuIwvI3sjyvAbXMpGVhCYTUJk43w4P1bH0wbqvwXkEaQ8+e9HY26fFtcWzhctl2n8DwIt+Bz1gZjRlqFPBq1JsYRRNUQhrz6TQvG4aLSfs/BWTpgWMzsiYx6tH52FodV2vTsenDkKnef1XrVW5UJ0+V8ZhgRLoPglnfJLKL//R2wh
+X-Gm-Message-State: AOJu0YzHB2r1PvQWGNb14h24P/dhwLw6thMol8XEu+EAwcXJhZS/bOns
+	jv4B0RVWE3t1Aj6Qq76if56yEANTH1wbV6hDbhdSAIlD8jLA0Z7G
+X-Google-Smtp-Source: AGHT+IGTzt5K2rzfweaEtxiqsl4HgDFZ/lCPOIrLsQV0ScOaq5I5BseMmXfl86hdYqwHj3mGlMJLBg==
+X-Received: by 2002:a17:90b:4f8b:b0:2c9:cf1d:1bcc with SMTP id 98e67ed59e1d1-2ca35d386c5mr5149648a91.36.1720632046879;
+        Wed, 10 Jul 2024 10:20:46 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ca34e6a7dcsm4101196a91.16.2024.07.10.10.20.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 10:20:46 -0700 (PDT)
+Date: Wed, 10 Jul 2024 11:20:44 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Jann Horn <jannh@google.com>, outreachy@lists.linux.dev,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v6] landlock: Add abstract unix socket connect restriction
+Message-ID: <Zo7C7MUfnPApp0Np@tahera-OptiPlex-5000>
+References: <Zn32CYZiu7pY+rdI@tahera-OptiPlex-5000>
+ <20240704.uab4aveeYad0@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240710160655.3402786-4-alexander.shishkin@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240704.uab4aveeYad0@digikod.net>
 
-On Wed, Jul 10, 2024 at 07:06:39PM +0300, Alexander Shishkin wrote:
->  static void text_poke_memcpy(void *dst, const void *src, size_t len)
->  {
-> -	memcpy(dst, src, len);
-> +	stac();
-> +	__inline_memcpy(dst, src, len);
-> +	clac();
+On Mon, Jul 08, 2024 at 05:35:48PM +0200, Mickaël Salaün wrote:
+> Please add a user documentation with the next version.  You can take
+> some inspiration in commits that changed
+> Documentation/userspace-api/landlock.rst
+> 
+> You also need to extend samples/landlock/sandboxer.c with this new
+> feature.  You might want to use a new environment variable (LL_SCOPED)
+> with "a" (for abstract unix socket) as the only valid content.  New kind
+> of sopping could add new characters.  I'm not sure this is the most
+> ergonomic, but let's go this way unless you have something else in mind.
+Thanks for the feedback. 
+This will be added in the next patch. 
 
-I think you need LASS-specific stac()/clac() or an alternative_2 or so. You
-can't cause that perf penalty on !LASS machines.
+> All the related patches (kernel change, tests, sample, documentation)
+> should be in the same patch series, with a cover letter introducing the
+> feature and pointing to the previous versions with links to
+> https://lore.kernel.org/r/...
+Noted.
+> 
+> On Thu, Jun 27, 2024 at 05:30:17PM -0600, Tahera Fahimi wrote:
+> > Abstract unix sockets are used for local inter-process communications
+> > without a filesystem. Currently a sandboxed process can connect to a
+> 
+> "local inter-process communications independant of the filesystem."
+> 
+> > socket outside of the sandboxed environment, since Landlock has no
+> > restriction for connecting to an abstract socket address. Access to
+> > such sockets for a sandboxed process should be scoped the same way
+> > ptrace is limited.
+> > 
+> > Because of compatibility reasons and since landlock should be flexible,
+> 
+> Landlock
 
--- 
-Regards/Gruss,
-    Boris.
+[...]
+> > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> > index 68625e728f43..010aaca5b05a 100644
+> > --- a/include/uapi/linux/landlock.h
+> > +++ b/include/uapi/linux/landlock.h
+> > @@ -37,6 +37,12 @@ struct landlock_ruleset_attr {
+> >  	 * rule explicitly allow them.
+> >  	 */
+> >  	__u64 handled_access_net;
+> > +	/**
+> > +	 * @scoped: Bitmask of scopes (cf. `Scope flags`_)
+> > +	 * restricting a Landlock domain from accessing outside
+> > +	 * resources(e.g. IPCs).
+> 
+> A space is missing.
+> 
+> > +	 */
+> > +	__u64 scoped;
+> >  };
+> >  
+> >  /*
+> > @@ -266,4 +272,27 @@ struct landlock_net_port_attr {
+> >  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+> >  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+> >  /* clang-format on */
+> > +
+> > +/**
+> > + * DOC: scope
+> > + *
+> > + * .scoped attribute handles a set of restrictions on kernel IPCs through
+> > + * the following flags.
+> 
+> I think you can remove this sentence.
+> 
+[...] 
+> > diff --git a/security/landlock/task.c b/security/landlock/task.c
+> > index 849f5123610b..acc6e0fbc111 100644
+> > --- a/security/landlock/task.c
+> > +++ b/security/landlock/task.c
+> > @@ -13,6 +13,8 @@
+> >  #include <linux/lsm_hooks.h>
+> >  #include <linux/rcupdate.h>
+> >  #include <linux/sched.h>
+> > +#include <net/sock.h>
+> > +#include <net/af_unix.h>
+> >  
+> >  #include "common.h"
+> >  #include "cred.h"
+> > @@ -108,9 +110,69 @@ static int hook_ptrace_traceme(struct task_struct *const parent)
+> >  	return task_ptrace(parent, current);
+> >  }
+> >  
+> > +static access_mask_t
+> > +get_scoped_accesses(const struct landlock_ruleset *const domain)
+> > +{
+> > +	access_mask_t access_dom = 0;
+> > +	size_t layer_level;
+> > +
+> > +	for (layer_level = 0; layer_level < domain->num_layers; layer_level++)
+> > +		access_dom |= landlock_get_scope_mask(domain, layer_level);
+> > +	return access_dom;
+> > +}
+> > +
+> > +static bool sock_is_scoped(struct sock *const other)
+> > +{
+> > +	const struct landlock_ruleset *dom_other;
+> > +	const struct landlock_ruleset *const dom =
+> > +		landlock_get_current_domain();
+> > +
+> > +	/* quick return if there is no domain or .scoped is not set */
+> > +	if (!dom || !get_scoped_accesses(dom))
+> > +		return true;
+> > +
+> > +	/* the credentials will not change */
+> > +	lockdep_assert_held(&unix_sk(other)->lock);
+> > +	if (other->sk_type != SOCK_DGRAM) {
+> > +		dom_other = landlock_cred(other->sk_peer_cred)->domain;
+> 
+> Why using different credentials for connected or not connected sockets?
+> We should use the same consistent logic for both:
+> other->sk_socket->file->f_cred (the process that created the socket, not
+> the one listening).
+The aim was to use the process's credential that utilized the socket for
+connected sockets, and the process's credential created the socket for
+non-connected sockets. However, I will change it and use the same
+credential to keep it consistent for both cases. 
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> > +	} else {
+> > +		dom_other =
+> > +			landlock_cred(other->sk_socket->file->f_cred)->domain;
+> > +	}
+> > +
+> > +	if (!dom_other || !get_scoped_accesses(dom_other))
+> 
+> What if only one layer in dom_other is scoped?
+The function `get_scoped_accesses()` cover this. 
+
+> > +		return false;
+> > +
+> > +	/* other is scoped, they connect if they are in the same domain */
+> 
+> This doesn't fit with each domain's scoping. It only considers no
+> scopping for all domains, or all domains as scopped if any of them is.
+> domain_scope_le() needs to be changed to follow each domain's contract.
+Noted.
+
+> > +	return domain_scope_le(dom, dom_other);
+> > +}
+> > +
+> > +static int hook_unix_stream_connect(struct sock *const sock,
+> > +				    struct sock *const other,
+> > +				    struct sock *const newsk)
+> > +{
+> > +	if (sock_is_scoped(other))
+> > +		return 0;
+> > +
+> > +	return -EPERM;
+> > +}
+> > +
+> > +static int hook_unix_may_send(struct socket *const sock,
+> > +			      struct socket *const other)
+> > +{
+> > +	pr_warn("XXX %s:%d sock->file:%p other->file:%p\n", __func__, __LINE__,
+> > +		sock->file, other->file);
+> 
+> Please remove debug code.
+> 
+> > +	if (sock_is_scoped(other->sk))
+> > +		return 0;
+> > +
+> > +	return -EPERM;
+> > +}
+> > +
+> >  static struct security_hook_list landlock_hooks[] __ro_after_init = {
+> >  	LSM_HOOK_INIT(ptrace_access_check, hook_ptrace_access_check),
+> >  	LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
+> > +	LSM_HOOK_INIT(unix_stream_connect, hook_unix_stream_connect),
+> > +	LSM_HOOK_INIT(unix_may_send, hook_unix_may_send),
+> >  };
+> >  
+> >  __init void landlock_add_task_hooks(void)
+> > -- 
+> > 2.34.1
+> > 
+> > 
 
