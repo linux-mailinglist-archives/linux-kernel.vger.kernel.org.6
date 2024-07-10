@@ -1,183 +1,266 @@
-Return-Path: <linux-kernel+bounces-247373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B93C292CE91
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:51:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67ED992CE95
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC5351C23261
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:51:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E75828767E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B2418FC9C;
-	Wed, 10 Jul 2024 09:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FC418FA31;
+	Wed, 10 Jul 2024 09:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="GWN7TO4G"
-Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="dIIPtUq6"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0652B9C6;
-	Wed, 10 Jul 2024 09:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6EB18FA10;
+	Wed, 10 Jul 2024 09:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720605044; cv=none; b=NhjtkaE9KltPN64JIHbGyrajHAA+ZtndiyooWm6f5HDl1wp+3RB5fClti/jaynHx5PWoHpxqfLcZBWC+ATllZz1PZdTGx1przpWc1+TRLQW/rvt/hr5Vf7Cswt448VHl+pmRlWJ0MZIgvPKlbvYcstfpX+7i2cEozLCvyEudZYY=
+	t=1720605072; cv=none; b=jv3sjAWdzTNkegoGplvK6hgRUFl70pr2OQezpFTi1dC+ehfWs4LcopnELhwulEAnAiVNNAz36cPPoHZ4SUucwou0sTrvKrrCWF0uxDox76u2v/8iGvckMzWuvdtIgMrQUcgjpMrSjx6eFwuk9R9OYW+yztGxkyKMvRWsZukwZfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720605044; c=relaxed/simple;
-	bh=jOn7hmsbOmREtHu0Gwg2PyRuvbsDbY6SWLRxt380v3c=;
-	h=Subject:Message-ID:Date:MIME-Version:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nCAg/ro5XGBq/5f69GNRMGqulfaNf9bHelS/bLz7e0GgOT16vR0aQLpNhuHAbgmH3P4UGJTfK0hzq4QA0CaR2WDOEyIzfkt4amBJOq/IRkgCL29ZfTbHccjHvXPSQUPDutN5clieVNrzd13H0jolQu7bXVzdZlpRjoDs8IyrwHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=GWN7TO4G; arc=none smtp.client-ip=52.119.213.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1720605044; x=1752141044;
-  h=message-id:date:mime-version:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:subject;
-  bh=DnO9vyxIjhRPaz3em9T0G9QiR6aV7OUdcc5EJkgzZRY=;
-  b=GWN7TO4GUYDWnDQOT2dZXZ7Htn+8CurOT8PaCVlV/Oa+3DaTqSWhFpGo
-   CPLDYPORwl0Qc/vm2Xyg2cEXFE4vuer00iE91qjZxEqSdmyOeTaBaYpcN
-   iUPx9xI/5yo1FGxGZXvo5ED/QhWS73KpEBpQxC4XwFsqJHJo1Vj62k4mw
-   0=;
-X-IronPort-AV: E=Sophos;i="6.09,197,1716249600"; 
-   d="scan'208";a="666251251"
-Subject: Re: [RFC PATCH 7/8] mm: secretmem: use AS_INACCESSIBLE to prohibit GUP
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 09:50:40 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [10.0.38.20:41730]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.19.144:2525] with esmtp (Farcaster)
- id 82a19754-40f2-4c44-87d8-6c4b9cb6e7ce; Wed, 10 Jul 2024 09:50:38 +0000 (UTC)
-X-Farcaster-Flow-ID: 82a19754-40f2-4c44-87d8-6c4b9cb6e7ce
-Received: from EX19D020UWC002.ant.amazon.com (10.13.138.147) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 10 Jul 2024 09:50:37 +0000
-Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
- EX19D020UWC002.ant.amazon.com (10.13.138.147) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 10 Jul 2024 09:50:36 +0000
-Received: from [127.0.0.1] (172.19.88.180) by mail-relay.amazon.com
- (10.250.64.254) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34 via Frontend
- Transport; Wed, 10 Jul 2024 09:50:31 +0000
-Message-ID: <258b3b76-cf87-4dfc-bcfa-b2af94aba811@amazon.co.uk>
-Date: Wed, 10 Jul 2024 10:50:30 +0100
+	s=arc-20240116; t=1720605072; c=relaxed/simple;
+	bh=/lz7TfdkZjmIY+30uFONHKA3AxyCFXG3tTDrvxeSxsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oGZ6ReLQ1vEAe8AmTy+CvLlKKmA43vYWx9Gbj3bwV6kRkXOobT/KBkOXJlvld5aEj0p2lnwF+GmQpNXMW6+q/ljGnAGitVfAHhNpE8jIq+f32S9su+lii9QvfYHakDERRpvdljTuDe5acKiRZ0l+Pzi3KSc39FsDK77jzMiTeNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=dIIPtUq6; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (unknown [IPv6:2001:b07:5d2e:52c9:72c3:346:a663:c82d])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B36738D0;
+	Wed, 10 Jul 2024 11:50:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1720605035;
+	bh=/lz7TfdkZjmIY+30uFONHKA3AxyCFXG3tTDrvxeSxsU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dIIPtUq6FrtGCq89r6LWnBSv0seawEou4lV+48KU6s5/nUnzw5F4Mu4c5u+1ApEV+
+	 vVaC/VsUeOlpl/x3Zo8tBBi9hgaM2PQCU+lwSS8CE8BLGkhC7pN+Y5Hh9SEcUphEYJ
+	 PKan4p2/d+W3O/UqZiQbsa5MZ0Ssrog0by94nxUY=
+Date: Wed, 10 Jul 2024 11:51:05 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Mingjia Zhang <mingjia.zhang@mediatek.com>, 
+	Jack Zhu <jack.zhu@starfivetech.com>, Keith Zhao <keith.zhao@starfivetech.com>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH v5 04/14] staging: media: starfive: Add a params sink pad
+ and a scd source pad for ISP
+Message-ID: <ku5lhlocshwrc6yxbofr7dtqgrpdijaop4c265njyjnu42rpi5@o36mnwborhjo>
+References: <20240709083824.430473-1-changhuang.liang@starfivetech.com>
+ <20240709083824.430473-5-changhuang.liang@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Mike Rapoport <rppt@kernel.org>, David Hildenbrand <david@redhat.com>
-CC: <seanjc@google.com>, <pbonzini@redhat.com>, <akpm@linux-foundation.org>,
-	<dwmw@amazon.co.uk>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-	<hpa@zytor.com>, <willy@infradead.org>, <graf@amazon.com>,
-	<derekmn@amazon.com>, <kalyazin@amazon.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <dmatlack@google.com>,
-	<tabba@google.com>, <chao.p.peng@linux.intel.com>, <xmarcalx@amazon.co.uk>,
-	James Gowans <jgowans@amazon.com>
-References: <20240709132041.3625501-1-roypat@amazon.co.uk>
- <20240709132041.3625501-8-roypat@amazon.co.uk>
- <0dc45181-de7e-4d97-9178-573c6f683f55@redhat.com>
- <Zo45CQGe_UDUnXXu@kernel.org>
-Content-Language: en-US
-From: Patrick Roy <roypat@amazon.co.uk>
-Autocrypt: addr=roypat@amazon.co.uk; keydata=
- xjMEY0UgYhYJKwYBBAHaRw8BAQdA7lj+ADr5b96qBcdINFVJSOg8RGtKthL5x77F2ABMh4PN
- NVBhdHJpY2sgUm95IChHaXRodWIga2V5IGFtYXpvbikgPHJveXBhdEBhbWF6b24uY28udWs+
- wpMEExYKADsWIQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbAwULCQgHAgIiAgYVCgkI
- CwIEFgIDAQIeBwIXgAAKCRBVg4tqeAbEAmQKAQC1jMl/KT9pQHEdALF7SA1iJ9tpA5ppl1J9
- AOIP7Nr9SwD/fvIWkq0QDnq69eK7HqW14CA7AToCF6NBqZ8r7ksi+QLOOARjRSBiEgorBgEE
- AZdVAQUBAQdAqoMhGmiXJ3DMGeXrlaDA+v/aF/ah7ARbFV4ukHyz+CkDAQgHwngEGBYKACAW
- IQQ5DAcjaM+IvmZPLohVg4tqeAbEAgUCY0UgYgIbDAAKCRBVg4tqeAbEAtjHAQDkh5jZRIsZ
- 7JMNkPMSCd5PuSy0/Gdx8LGgsxxPMZwePgEAn5Tnh4fVbf00esnoK588bYQgJBioXtuXhtom
- 8hlxFQM=
-In-Reply-To: <Zo45CQGe_UDUnXXu@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240709083824.430473-5-changhuang.liang@starfivetech.com>
 
+Hello Changhuang
 
+On Tue, Jul 09, 2024 at 01:38:14AM GMT, Changhuang Liang wrote:
+> StarFive ISP can use params sink pad to transmit ISP parameters and use
+> scd source pad to capture statistics collection data.
+>
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> ---
+>  .../staging/media/starfive/camss/stf-isp.c    | 77 +++++++++++++++++--
+>  .../staging/media/starfive/camss/stf-isp.h    |  2 +
+>  2 files changed, 71 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/staging/media/starfive/camss/stf-isp.c b/drivers/staging/media/starfive/camss/stf-isp.c
+> index 4e6e26736852..0ebffd09842a 100644
+> --- a/drivers/staging/media/starfive/camss/stf-isp.c
+> +++ b/drivers/staging/media/starfive/camss/stf-isp.c
+> @@ -21,13 +21,23 @@ static const struct stf_isp_format isp_formats_sink[] = {
+>  	{ MEDIA_BUS_FMT_SBGGR10_1X10, 10 },
+>  };
+>
+> +static const struct stf_isp_format isp_formats_sink_params[] = {
+> +	{ MEDIA_BUS_FMT_METADATA_FIXED },
+> +};
+> +
+>  static const struct stf_isp_format isp_formats_source[] = {
+>  	{ MEDIA_BUS_FMT_YUYV8_1_5X8, 8 },
+>  };
+>
+> +static const struct stf_isp_format isp_formats_source_scd[] = {
+> +	{ MEDIA_BUS_FMT_METADATA_FIXED },
+> +};
+> +
+>  static const struct stf_isp_format_table isp_formats_st7110[] = {
+>  	{ isp_formats_sink, ARRAY_SIZE(isp_formats_sink) },
+> +	{ isp_formats_sink_params, ARRAY_SIZE(isp_formats_sink_params) },
+>  	{ isp_formats_source, ARRAY_SIZE(isp_formats_source) },
+> +	{ isp_formats_source_scd, ARRAY_SIZE(isp_formats_source_scd) },
+>  };
+>
+>  static const struct stf_isp_format *
+> @@ -93,13 +103,19 @@ static void isp_try_format(struct stf_isp_dev *isp_dev,
+>
+>  	formats = &isp_dev->formats[pad];
+>
+> -	fmt->width = clamp_t(u32, fmt->width, STFCAMSS_FRAME_MIN_WIDTH,
+> -			     STFCAMSS_FRAME_MAX_WIDTH);
+> -	fmt->height = clamp_t(u32, fmt->height, STFCAMSS_FRAME_MIN_HEIGHT,
+> -			      STFCAMSS_FRAME_MAX_HEIGHT);
+> -	fmt->height &= ~0x1;
+> +	if (pad != STF_ISP_PAD_SRC_SCD && pad != STF_ISP_PAD_SINK_PARAMS) {
+> +		fmt->width = clamp_t(u32, fmt->width, STFCAMSS_FRAME_MIN_WIDTH,
+> +				     STFCAMSS_FRAME_MAX_WIDTH);
+> +		fmt->height = clamp_t(u32, fmt->height, STFCAMSS_FRAME_MIN_HEIGHT,
+> +				      STFCAMSS_FRAME_MAX_HEIGHT);
+> +		fmt->height &= ~0x1;
+> +		fmt->colorspace = V4L2_COLORSPACE_SRGB;
+> +	} else {
+> +		fmt->width = 1;
+> +		fmt->height = 1;
+> +	}
+> +
+>  	fmt->field = V4L2_FIELD_NONE;
+> -	fmt->colorspace = V4L2_COLORSPACE_SRGB;
+>  	fmt->flags = 0;
+>
+>  	if (!stf_g_fmt_by_mcode(formats, fmt->code))
+> @@ -119,7 +135,7 @@ static int isp_enum_mbus_code(struct v4l2_subdev *sd,
+>
+>  		formats = &isp_dev->formats[code->pad];
+>  		code->code = formats->fmts[code->index].code;
+> -	} else {
+> +	} else if (code->pad == STF_ISP_PAD_SRC) {
+>  		struct v4l2_mbus_framefmt *sink_fmt;
+>
+>  		if (code->index >= ARRAY_SIZE(isp_formats_source))
+> @@ -131,6 +147,10 @@ static int isp_enum_mbus_code(struct v4l2_subdev *sd,
+>  		code->code = sink_fmt->code;
+>  		if (!code->code)
+>  			return -EINVAL;
+> +	} else {
+> +		if (code->index > 0)
+> +			return -EINVAL;
+> +		code->code = MEDIA_BUS_FMT_METADATA_FIXED;
+>  	}
+>  	code->flags = 0;
+>
+> @@ -151,6 +171,9 @@ static int isp_set_format(struct v4l2_subdev *sd,
+>  	isp_try_format(isp_dev, state, fmt->pad, &fmt->format);
+>  	*format = fmt->format;
+>
+> +	if (fmt->pad == STF_ISP_PAD_SRC_SCD || fmt->pad == STF_ISP_PAD_SINK_PARAMS)
 
-On 7/10/24 08:32, Mike Rapoport wrote:
-> CAUTION: This email originated from outside of the organization. Do not click links or open attachments unless you can confirm the sender and know the content is safe.
-> 
-> 
-> 
-> On Tue, Jul 09, 2024 at 11:09:29PM +0200, David Hildenbrand wrote:
->> On 09.07.24 15:20, Patrick Roy wrote:
->>> Inside of vma_is_secretmem and secretmem_mapping, instead of checking
->>> whether a vm_area_struct/address_space has the secretmem ops structure
->>> attached to it, check whether the address_space has the AS_INACCESSIBLE
->>> bit set. Then set the AS_INACCESSIBLE flag for secretmem's
->>> address_space.
->>>
->>> This means that get_user_pages and friends are disables for all
->>> adress_spaces that set AS_INACCESIBLE. The AS_INACCESSIBLE flag was
->>> introduced in commit c72ceafbd12c ("mm: Introduce AS_INACCESSIBLE for
->>> encrypted/confidential memory") specifically for guest_memfd to indicate
->>> that no reads and writes should ever be done to guest_memfd
->>> address_spaces. Disallowing gup seems like a reasonable semantic
->>> extension, and means that potential future mmaps of guest_memfd cannot
->>> be GUP'd.
->>>
->>> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
->>> ---
->>>   include/linux/secretmem.h | 13 +++++++++++--
->>>   mm/secretmem.c            |  6 +-----
->>>   2 files changed, 12 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/include/linux/secretmem.h b/include/linux/secretmem.h
->>> index e918f96881f5..886c8f7eb63e 100644
->>> --- a/include/linux/secretmem.h
->>> +++ b/include/linux/secretmem.h
->>> @@ -8,10 +8,19 @@ extern const struct address_space_operations secretmem_aops;
->>>   static inline bool secretmem_mapping(struct address_space *mapping)
->>>   {
->>> -   return mapping->a_ops == &secretmem_aops;
->>> +   return mapping->flags & AS_INACCESSIBLE;
->>> +}
->>> +
->>> +static inline bool vma_is_secretmem(struct vm_area_struct *vma)
->>> +{
->>> +   struct file *file = vma->vm_file;
->>> +
->>> +   if (!file)
->>> +           return false;
->>> +
->>> +   return secretmem_mapping(file->f_inode->i_mapping);
->>>   }
->>
->> That sounds wrong. You should leave *secretmem alone and instead have
->> something like inaccessible_mapping that is used where appropriate.
->>
->> vma_is_secretmem() should not suddenly succeed on something that is not
->> mm/secretmem.c
-> 
-> I'm with David here.
-> 
+nit: can easily be made < 80 cols (again, not mandatory in Linux but
+enforced in v4l according to
+Documentation/driver-api/media/maintainer-entry-profile.rst)
 
-Right, that makes sense. My thinking here was that if memfd_secret and
-potential mappings of guest_memfd have the same behavior wrt GUP, then
-it makes sense to just have them rely on the same checks. But I guess I
-didn't follow that thought to its logical conclusion of renaming the
-"secretmem" checks into "inaccessible" checks and moving them out of
-secretmem.h.
+> +		return 0;
+> +
+>  	isp_dev->current_fmt = stf_g_fmt_by_mcode(&isp_dev->formats[fmt->pad],
+>  						  fmt->format.code);
+>
+> @@ -202,6 +225,9 @@ static int isp_get_selection(struct v4l2_subdev *sd,
+>  	struct v4l2_subdev_format fmt = { 0 };
+>  	struct v4l2_rect *rect;
+>
+> +	if (sel->pad == STF_ISP_PAD_SRC_SCD || sel->pad == STF_ISP_PAD_SINK_PARAMS)
+> +		return -EINVAL;
+> +
+>  	switch (sel->target) {
+>  	case V4L2_SEL_TGT_CROP_BOUNDS:
+>  		if (sel->pad == STF_ISP_PAD_SINK) {
+> @@ -239,6 +265,9 @@ static int isp_set_selection(struct v4l2_subdev *sd,
+>  	struct stf_isp_dev *isp_dev = v4l2_get_subdevdata(sd);
+>  	struct v4l2_rect *rect;
+>
+> +	if (sel->pad == STF_ISP_PAD_SRC_SCD || sel->pad == STF_ISP_PAD_SINK_PARAMS)
+> +		return -EINVAL;
+> +
+>  	if (sel->target != V4L2_SEL_TGT_CROP)
+>  		return -EINVAL;
+>
+> @@ -296,8 +325,38 @@ static int isp_init_formats(struct v4l2_subdev *sd,
+>  			.height = 1080
+>  		}
+>  	};
+> +	struct v4l2_subdev_format format_params = {
+> +		.pad = STF_ISP_PAD_SINK_PARAMS,
+> +		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+> +		.format = {
+> +			.code = MEDIA_BUS_FMT_METADATA_FIXED,
+> +			.width = 1,
+> +			.height = 1
+> +		}
+> +	};
+> +	struct v4l2_subdev_format format_scd = {
+> +		.pad = STF_ISP_PAD_SRC_SCD,
+> +		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+> +		.format = {
+> +			.code = MEDIA_BUS_FMT_METADATA_FIXED,
+> +			.width = 1,
+> +			.height = 1
+> +		}
+> +	};
+> +	int ret;
+> +
+> +	/* Init for STF_ISP_PAD_SINK and STF_ISP_PAD_SRC pad */
 
-Or do you mean to just leave secretmem untouched and add separate
-"inaccessible" checks? But then we'd have two different ways of
-disabling GUP for specific VMAs that both rely on checks in exactly the
-same places :/
+Does this initialize the format on STF_ISP_PAD_SRC for real ?
 
->> --
->> Cheers,
->>
->> David / dhildenb
->>
-> 
+Anyway, was there already so
+Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+
+Thanks
+  j
+
+> +	ret = isp_set_format(sd, sd_state, &format);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	/* Init for STF_ISP_PAD_SINK_PARAMS pad */
+> +	ret = isp_set_format(sd, sd_state, &format_params);
+> +	if (ret < 0)
+> +		return ret;
+>
+> -	return isp_set_format(sd, sd_state, &format);
+> +	/* Init for STF_ISP_PAD_SRC_SCD pad */
+> +	return isp_set_format(sd, sd_state, &format_scd);
+>  }
+>
+>  static const struct v4l2_subdev_video_ops isp_video_ops = {
+> @@ -338,7 +397,9 @@ int stf_isp_register(struct stf_isp_dev *isp_dev, struct v4l2_device *v4l2_dev)
+>  	v4l2_set_subdevdata(sd, isp_dev);
+>
+>  	pads[STF_ISP_PAD_SINK].flags = MEDIA_PAD_FL_SINK;
+> +	pads[STF_ISP_PAD_SINK_PARAMS].flags = MEDIA_PAD_FL_SINK;
+>  	pads[STF_ISP_PAD_SRC].flags = MEDIA_PAD_FL_SOURCE;
+> +	pads[STF_ISP_PAD_SRC_SCD].flags = MEDIA_PAD_FL_SOURCE;
+>
+>  	sd->entity.function = MEDIA_ENT_F_PROC_VIDEO_ISP;
+>  	sd->entity.ops = &isp_media_ops;
+> diff --git a/drivers/staging/media/starfive/camss/stf-isp.h b/drivers/staging/media/starfive/camss/stf-isp.h
+> index 955cbb048363..bc7e7b0736fa 100644
+> --- a/drivers/staging/media/starfive/camss/stf-isp.h
+> +++ b/drivers/staging/media/starfive/camss/stf-isp.h
+> @@ -392,7 +392,9 @@
+>  /* pad id for media framework */
+>  enum stf_isp_pad_id {
+>  	STF_ISP_PAD_SINK = 0,
+> +	STF_ISP_PAD_SINK_PARAMS,
+>  	STF_ISP_PAD_SRC,
+> +	STF_ISP_PAD_SRC_SCD,
+>  	STF_ISP_PAD_MAX
+>  };
+>
 > --
-> Sincerely yours,
-> Mike.
+> 2.25.1
+>
+>
 
