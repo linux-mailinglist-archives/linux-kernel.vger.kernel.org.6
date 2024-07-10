@@ -1,117 +1,131 @@
-Return-Path: <linux-kernel+bounces-248132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A805192D8B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:02:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D4ED92D8B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D85831C21E52
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:02:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 553741F24C93
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BE0197A8F;
-	Wed, 10 Jul 2024 19:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB07B19754D;
+	Wed, 10 Jul 2024 19:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Wv1Qqe/i"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lAy4C7Fw"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E607D197559
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 19:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD2519596F
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 19:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720638163; cv=none; b=tNpvwTvVjoy66NU9DwDQ2Usbwc93vz6A9dtQwW+HIIf38JqddOcnHxCVon/K7QfnbF9drxRhjEFxaCzMyLD2TIRPB7ahrJSH8R5vs72I0uTgh8u8lfDoYf8cfbXipGuQKRdSUff+XOnNq+fI6r43X+0XLO2v6Vm86ijtoIiVxrg=
+	t=1720638160; cv=none; b=jRH25GadGjEbJ8BBuOeY059wZbiHHQJq+RUGj0LHC6jYDIEvkJp8Do9oe35+lNooCPwzEsRr7UlcjFGZ7efMfC0CePu74SQ8JVyzdG9DMqqpy3j3KiZ2wFratT16SfFDCPIIk/cuL+iKAkfhGkBpjFpUxWHOVYx1OVcmQuTkvcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720638163; c=relaxed/simple;
-	bh=xIYV3Fj6qdDwEkkVVSBucNvkmmcSy+3j9t1HSenvQqc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qMOhJEcPYwphhdUriodu13Qb3Y/5ay9+r1HtDoY48eMBwRle1oN/YVDWLv16nGHpbC0WN7NT2zso42DGK648vVoP08Mfr2x7wJeYW1GIFkfQ8PEXi/Av6uuVpT3SD9vKQu+oo5dr9hNPW6gKGjo5P/1gaozRDCpwYd94quV1R+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Wv1Qqe/i; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-781f5007950so55256a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 12:02:41 -0700 (PDT)
+	s=arc-20240116; t=1720638160; c=relaxed/simple;
+	bh=PswQct0HzHiKHP29eqvg8c9/qemV3myFQvNJF13f+H0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c+4EvSKmGPs2vqk/9awPXi/hP2YVSQJZftYg93NDGWjGHrZkV/1pMkkhYOgytNckoBFfa+wqAgAYBHu4l9iE1He/KkkXm7iFSy2UO0UQmUcg6kOcR492SYFI4zn+AnljhvBwyn1HJ69BMvMZaR6bxOrk49vX6DeYTpa/IlnQyG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lAy4C7Fw; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee920b0781so786961fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 12:02:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1720638161; x=1721242961; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vJeijJfEPOXYsmpptZE2kjhEsCyE10v7ErxULEeU9Eg=;
-        b=Wv1Qqe/iiNS/xynTG906dJccSu8gqWF+zTvDu05qDtfuG5rv7uRxBkqv4JBRm8bJEg
-         hXkNaibR7TCFuDcKIHX/cNO2MmwimkzdX4IWcYe70XOxZszwK3aTt/pao+W0/RUBmHVt
-         ngTxuUmz1Ke+JxnenuJk7uQ78b/5L5lO0uJgc=
+        d=gmail.com; s=20230601; t=1720638157; x=1721242957; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mPZ60RuL6ih0QLl/o8/14hY+krd4EK1oz7htgw57d1A=;
+        b=lAy4C7Fw2cwqL/V/QCRVp+eszZzgwF7wxCuSO1yLQGVrwESMeVkSB4Y3F/aDCimWNM
+         pUypWkAk1Ofgk5hLeQgREdzxBGN30iTJIffsAhn8Ti2HGpDOr5ApFKkUcjAzbl2YAMxf
+         2FKuq+eS/wzysXbC3F8VHAYNMhAnNUXec54ubYiJQOpGmJXcxkifPcAIcvqIJv6/5ou+
+         AqVh6/5CIRemfLX7U4BnTOtbsZ7gu+j+7kDfEaheIgRDvbin2A2P+GixAhTkLNwab8lg
+         nk2BT3hXcY24PBt0Bjdd8dsChL1qGaIV29826M5i9l4YxJSS5IiHvVjIw8EdHlJncJEU
+         FjQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720638161; x=1721242961;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vJeijJfEPOXYsmpptZE2kjhEsCyE10v7ErxULEeU9Eg=;
-        b=jxL7USj0zjuQjZvAPkyxDKB+0zMexfUdLAmo9DhbVQqGWwP/cuO6U4gCLM+JKaCTZW
-         aMdQLNckWT4v2iy77yygGJopDWaHOimcIzjh8fZjlfLtd85ve+goXjjCUAjXB89sApkY
-         xHzB5vbRCf6ZLc1bbR+Y0LwvsWCpZx1nphLKLotwxG3BMFt2ClVKAfGhU1M9lU8hllbO
-         EzCITtKc3qyUKArsxX2cygThHpz04FJBJV8u2b/+zKXNtQHOvWufgSpk1pWcsHjPVtM6
-         +FlF2QK9SikuGPah9/5EaknR/UWW3CYXd22t0zAFTlk7qfte8OTSj6cjI4+MVH0S2zoE
-         vVSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKWysgDeBMU+sSEp6SdKvZ2aYeegb7vYzFmbfu7vo7vQogKIJcxR/OKyBqh98fRHKbWyk0WdD4kA4POPtR50wvSU+qqqTu7jPdOcSG
-X-Gm-Message-State: AOJu0Yw7A9/vFGlRA6ejgJLDAkzvrGAlbNQxZvt1Y+yfSjyNeldKJMlk
-	pCL5VMpu1r499DDb4sfsc39HQkjrxadTEjyKGY63WNSyeuNbXCaj2TFZP+Janw==
-X-Google-Smtp-Source: AGHT+IEgVRmEn2piggzG+hwvFk1I2yMgFuficmdy/JT00IcXmj5hSQr3zkuMnizZlMJCY4YCQpZxxw==
-X-Received: by 2002:a05:6a20:7fa9:b0:1c0:f1c9:6846 with SMTP id adf61e73a8af0-1c2984c8526mr7639552637.42.1720638161127;
-        Wed, 10 Jul 2024 12:02:41 -0700 (PDT)
-Received: from hsinyi.sjc.corp.google.com ([2620:15c:9d:2:b77:3eaa:6a48:5e05])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-77d603fa567sm3270940a12.35.2024.07.10.12.02.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 12:02:40 -0700 (PDT)
-From: Hsin-Yi Wang <hsinyi@chromium.org>
-To: dri-devel@lists.freedesktop.org
-Cc: Douglas Anderson <dianders@chromium.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/panel-edp: Add BOE NV140WUM-N41
-Date: Wed, 10 Jul 2024 12:02:19 -0700
-Message-ID: <20240710190235.1095156-1-hsinyi@chromium.org>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+        d=1e100.net; s=20230601; t=1720638157; x=1721242957;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mPZ60RuL6ih0QLl/o8/14hY+krd4EK1oz7htgw57d1A=;
+        b=mARizZh2RlBappASe9izXB6HqA9/lJ1qynuhf/4oAkHGXvSmitgFoL1iQ5jjjbI58k
+         m2AW9C73KeTBHXmN1X+jQKbXtZYod9byFNNLsSW6/3P4o/57mG3vHzPRzZ2EvYODkkuW
+         5z/KjnoxhLdJ5167FuK7uJX5zTwJTzrzsrlZZgmn2fKrUH24XhcrLkuliPzYbBmZJ4Kc
+         7CsvW3U99PdTPY06dDfHPJu+YEyeAGzdn2KpMMg64jZ7nFy4Bbuo2u9tb/4cB0rBpV/4
+         uYKCwHkx8jyc+6Ln0y4JcrEs2jU2xBjLRLrzBwILQONkPETzxJI9wGvD1DKk/knpLKjP
+         0dUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjbMDbfxDuUS8O+tj+neUEEw4wqLQFR6fvZtnJ04vW8DMhKNtFpDqyebBC4QmMBzzDp/4o7HwbSTHpPb1wSxEsJvGzdfbA6aRQFFnC
+X-Gm-Message-State: AOJu0Yyo3GQOMq1OuuzanUyBIfzjd4Lsp8079Pexf7bUwICpogqPbIMx
+	O3eHkmW8bPAlKPODz1227hOMo54inOETZrohZ5gP+kid4hjq2syS
+X-Google-Smtp-Source: AGHT+IG1L8BlhXFrRo5w/hZ2v8OTkzJw0dc162nd8YCUmtKMgy4icMkIxWKQCufiuhXBIwUNvFBW+Q==
+X-Received: by 2002:a2e:80cd:0:b0:2ee:974c:596f with SMTP id 38308e7fff4ca-2eeb30feba0mr38435041fa.28.1720638156546;
+        Wed, 10 Jul 2024 12:02:36 -0700 (PDT)
+Received: from ?IPV6:2a01:4b00:b211:ad00:1490:6cc2:4d06:940f? ([2a01:4b00:b211:ad00:1490:6cc2:4d06:940f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-426615876bbsm178014455e9.6.2024.07.10.12.02.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jul 2024 12:02:36 -0700 (PDT)
+Message-ID: <2fe63ea9-613a-4904-8b68-134442c43261@gmail.com>
+Date: Wed, 10 Jul 2024 20:02:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linux-next:master] [mm] 47325a5c88:
+ WARNING:at_mm/slub.c:#free_large_kmalloc
+To: Hugh Dickins <hughd@google.com>
+Cc: kernel test robot <oliver.sang@intel.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, oe-lkp@lists.linux.dev, lkp@intel.com,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ Chengming Zhou <chengming.zhou@linux.dev>,
+ Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
+ David Hildenbrand <david@redhat.com>, "Huang, Ying" <ying.huang@intel.com>,
+ Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
+ ltp@lists.linux.it
+References: <202407101031.c6c3c651-lkp@intel.com>
+ <dd08adbb-6df5-4556-9fc4-cf37b6234aa1@gmail.com>
+ <053bd429-ae19-4beb-a733-a7a838b1e010@gmail.com>
+ <4bc6400e-6199-4147-9399-4a54c94613fd@gmail.com>
+ <612af749-0a59-f91d-693a-43d6217ffebb@google.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <612af749-0a59-f91d-693a-43d6217ffebb@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The raw edid of the panel is:
-00 ff ff ff ff ff ff 00 09 e5 e8 0a 00 00 00 00
-2a 1f 01 04 a5 1e 13 78 03 fb f5 96 5d 5a 91 29
-1e 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
-01 01 01 01 01 01 9c 3e 80 c8 70 b0 3c 40 30 20
-36 00 2e bc 10 00 00 1a 00 00 00 fd 00 28 3c 4c
-4c 10 01 0a 20 20 20 20 20 20 00 00 00 fe 00 42
-4f 45 20 43 51 0a 20 20 20 20 20 20 00 00 00 fe
-00 4e 56 31 34 30 57 55 4d 2d 4e 34 31 0a 00 26
 
-Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
----
- drivers/gpu/drm/panel/panel-edp.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
-index 3a574a9b46e7..f85a6404ba58 100644
---- a/drivers/gpu/drm/panel/panel-edp.c
-+++ b/drivers/gpu/drm/panel/panel-edp.c
-@@ -1895,6 +1895,7 @@ static const struct edp_panel_entry edp_panels[] = {
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0a3e, &delay_200_500_e80, "NV116WHM-N49"),
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0a5d, &delay_200_500_e50, "NV116WHM-N45"),
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0ac5, &delay_200_500_e50, "NV116WHM-N4C"),
-+	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0ae8, &delay_200_500_e50_p2e80, "NV140WUM-N41"),
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0b34, &delay_200_500_e80, "NV122WUM-N41"),
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0b43, &delay_200_500_e200, "NV140FHM-T09"),
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0b56, &delay_200_500_e80, "NT140FHM-N47"),
--- 
-2.45.2.803.g4e1b14247a-goog
+On 10/07/2024 21:49, Hugh Dickins wrote:
+> It's a long time since I was active hereabouts, but the bot report
+> and your flurry of updates make me think that you should step back,
+> slow down, and look more carefully at the precedents here.
+> 
+> IIRC, the main problem is that parts of the swap_info_struct can
+> still be in use from before while you're wanting to set up new values.
+> Observe how alloc_swap_info() may return a fresh or an old allocation.
+> Observe how enable_swap_info() is called after getting swapon_mutex
+> late in swapon(), once past all possiblities of error.
+> 
+> I expect that your new zeromap needs to be taking the same care as is
+> taken with swap_map and cluster_info: to be safe, follow their example
+> in both swapon() and swapoff().
+> 
+> Hugh
 
+Thanks, yeah sent too many in quick succession :). Will be more careful next time.
+
+Both the 2nd and 3rd version are careful to solve the problem of using old allocation
+which you described.
+
+The 2nd one takes care of it in the same way as swap_map.
+
+But I believe its unnecessary to do all that change in the 2nd version, when you can just
+set it to NULL after kvfree, which is a much smaller change and takes care of reusing old
+allocation equally well.
 
