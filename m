@@ -1,203 +1,236 @@
-Return-Path: <linux-kernel+bounces-247055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B1392CA64
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:08:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BCF992CA66
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A5F11C21D7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:08:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B70A01F23833
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E154C58AC4;
-	Wed, 10 Jul 2024 06:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EDF055C0A;
+	Wed, 10 Jul 2024 06:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UORCCyXi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ys6Y8w8O"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAB756458
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720591709; cv=fail; b=lDcXjNPbHUG2FAC1s3a4hm3HYwuYC0cMsrRhRNhuX5uEyp/iDH+mkM668V3DEg7LvagYDb4oXnaAk+qIpJYLf4NWUuQijZj6h5/k72DV73/zOGvoP8HjFHlKfRNgIWUc4RIfQx6ufbXNPKOWaOHAoe1XzNt7p5DFCwzO745oLcE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720591709; c=relaxed/simple;
-	bh=iI8/JhG0A6ZQ3bqrwKGYobHgKc1Lbfe+abMMIpO2fL8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=U3NzsF6KbCzGUlzgIYoxP9mNppPh1R4s9wW4l6kig2aGYoAHeqhoJhF4h17JRl0jmw/tc3cCzjOIxqrC5Axjt6CXI/omuU3dsgwAVinscC2EfeOa9Yz7zsKLGJsyEdOo6ZEmwdj3TtvIhojDecKPvmhi+W2DxFSb1d8o5r1vZp0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UORCCyXi; arc=fail smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720591708; x=1752127708;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=iI8/JhG0A6ZQ3bqrwKGYobHgKc1Lbfe+abMMIpO2fL8=;
-  b=UORCCyXiPuU96pKpo8OjE0oUtF9RLamaad8aGumBhsSHOEvoXTxqKAWX
-   gJoCSQUTyi21mtOkTE2N8HN0gSYvnM7K8qAg8U6YUBWVlpGD6nYrqyhyw
-   8NkWT/uHplMEC5QFUYzaCCbdYv+kQCr4kGkXVttkcL/WtLizTs4P8hGis
-   Sx6o5xhTukIaonbwb5HD/ujDbd9wyKcd+aoh4ptjAyzIcxcTP8/+E1Z5D
-   2Mib8dLWrLS5UYV2Y++wtf8cYNGc5/8He8N1zd26gQpDb/yvWbhH+MSwa
-   hKU69j5ku7OhxA4AUkFcK2R4m/dXr9pVs6jBim/x2bFpaNGR9JY5tGfdP
-   w==;
-X-CSE-ConnectionGUID: UzgSO/9UTt6qI4nhOWYpzg==
-X-CSE-MsgGUID: /iJ9/N+DTtWYkfCVs+CZ6Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11128"; a="28481845"
-X-IronPort-AV: E=Sophos;i="6.09,197,1716274800"; 
-   d="scan'208";a="28481845"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2024 23:08:28 -0700
-X-CSE-ConnectionGUID: RT6t0iSzRfKnrB+F3IOvJg==
-X-CSE-MsgGUID: BTV9vWEiTD6Ykdd27Rx8Dg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,197,1716274800"; 
-   d="scan'208";a="48763533"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 Jul 2024 23:08:28 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 9 Jul 2024 23:08:27 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 9 Jul 2024 23:08:26 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 9 Jul 2024 23:08:26 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.170)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 9 Jul 2024 23:08:26 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UWFMNR53b0en8f3LbGeS15nxSIX/AP85yPOJNIcmYV1Ph2uLO56D1hco0WbzL0ozMqNh595gc8edCSV67nLitVy0yJjGNlehmsSDkBjGRgE16naVMWxu6nVbEJDucIvEG10CasApE87qQPlWpSWANUeDI0l4CFXgrUi0wxIe3JYBUvDBo8gxIetpgXfO4HqybFecpvjVJViehcCOS2ORiV1WRQ7xGfeUasj7PCdIBByeVhWhlVV5YNrlKaDcsNQBgfdGJd+JY7NoO31xdPpbXpeTCvZOVDy3YHNv1cN551Mco3ZnPbDoYZPVH1E08wDkdFQV6BeFGHGwfYzxjkw4+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iI8/JhG0A6ZQ3bqrwKGYobHgKc1Lbfe+abMMIpO2fL8=;
- b=lby2K+iZNu34nU+wjbmbFolMASyE8CMiudJZSFThbTcmE1Rr7Gp7eXwilhZkdwKhS9TJG6dUAv1RH4o1MfrCj0mbEoT11TqMw7Ywv/2YBTf74nHBJUCQsW9EtGqJhvhMYUKEHT5K9g7kII8a1KHfBRbtAusIfWX6+Xsj/SR3oge8ZYOWUZUewKSKbjlcQGI0S0VR0GoirQOjlab8IamGdADovYgTT0ns2g3hRLQPIKnhG2+B9crsjCvYrl8dkR8mExyA3lH7ma/bWISbbueCJbZcLjh+MNGXsFI1GTHJd9816nIZHgMA9qPLC7512Joamlrs0/Allr3PKn97ad0oSw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
- by PH7PR11MB6353.namprd11.prod.outlook.com (2603:10b6:510:1ff::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Wed, 10 Jul
- 2024 06:08:24 +0000
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44%7]) with mapi id 15.20.7741.033; Wed, 10 Jul 2024
- 06:08:24 +0000
-Date: Wed, 10 Jul 2024 01:08:24 -0500
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-CC: <thomas.hellstrom@linux.intel.com>, <rodrigo.vivi@intel.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH -next] drm/xe: Remove duplicate generated/xe_wa_oob.h
- header
-Message-ID: <erm6tkdg5yfozjxnntcyscshh76qiibmbmpldk34ss5an5xxp3@4fkuan4nlj66>
-References: <20240710054941.44013-1-jiapeng.chong@linux.alibaba.com>
-Content-Type: text/plain; charset="us-ascii"; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240710054941.44013-1-jiapeng.chong@linux.alibaba.com>
-X-ClientProxiedBy: MW4P223CA0012.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:303:80::17) To CY5PR11MB6139.namprd11.prod.outlook.com
- (2603:10b6:930:29::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CB61A28D
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720591778; cv=none; b=muqhUR2ZhSHqeSUrRtEJBzcqi+kXaXJbsEhcWyAtol9oAfkdHlrW126Df20Dpi79spr96SdtnL5jTlJGH2AmMantgnUBYAbkkfQUxElr9bq/h9VorxffjKRTj8z8ZSZcTGOofdAwUVmZMoF/W0yLSFb+83JUy2MlVu5XFimmMEw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720591778; c=relaxed/simple;
+	bh=0+fZuP12qY21RTPxHU6v5ZKge2p5BesIMlD0z50Q5AU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Hw2OAosuETBWgJO7C+eu6FzwIuXGVy1dLVzD37GI7gcKkoa8zYWjnUe0HRvLA1El8zydIB1f0auE0EUNis9U7maI351Fi0sRpv7CLv7TyJMENQ512BUrrNA+4KPT30OQgbaNPOWzT6wkXiXf8caLMRwGMGeQ2W8CF2rOIz6Dwyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ys6Y8w8O; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e03a3aafc6eso9520855276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 23:09:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720591776; x=1721196576; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=h5uZ7CARkJp0bCCnNjPnh/UCvn8scxgN13mnhGZm9ws=;
+        b=ys6Y8w8Orv7vwFSBL7eYPOlzTgNO5mIgG/sYfw5HLOCaZd4HqtFF9dQvb4dTjsVQ7k
+         uTRSilc3oeLMiiXelEi878YABHotQ7PRF+sdNhtm5NnNPaPxYiEyb4La/IcmBhDAvzge
+         CRs+8v9LLVy7Ljhv+h5tyGa0k00pofQJSz0nPUngt9d74CFah/1K5EaDYFenR9Dm9X17
+         8zA1PLvfwSJjTdzZ33l3x2pd55lcHlncrfGdOHp1bIQekZc1Kidz0qh/BqC6I8zm6Lo3
+         tKS36qn8xMh8pjw4K8akzyDWesUcunMhLl1M6dkIEs3CFTrmjlZHtpkIK3yw+E71dN1B
+         dhnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720591776; x=1721196576;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h5uZ7CARkJp0bCCnNjPnh/UCvn8scxgN13mnhGZm9ws=;
+        b=OSoFKSZu78JtE8y2ZikkBQ2l94FZ4Fy2BSDfWgCYuvhJRgkeLX6bkwQFwVcik4R9Gt
+         yKcJ8x1pM1f181KKUHXRt5KQLoX1BI9H9wgz2RbumrSYbe+X/nirmVlrEl3APexzovcT
+         HxfqVB0MbL5o4XjSvlr2wTt7xLuS5345aTATM7atgy8aqIgiG8KeQUjozVEjKZh0jYoA
+         BcOeaD57bOyUEa7jgFuIK4SJStN+AY/6UcC1Exq6Xun2ZDzy2Da1MGj9bHMPdniSD91k
+         zjYoAYeqL+Xc2VRDbabP6DOR99XLF/dcRONc8CCmG+i7vI9CZarpWGz2Vgtq6l90paJc
+         rYdg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjawdSpDQDlUUJAwiEqaKoYXlAW3q3CvwrSQVUaLZs4rzVN3CiwWBgib0KRuDmsHNppMNSS4ay+IJbcwPIRcnp7gkMh8SqM7hIdFD5
+X-Gm-Message-State: AOJu0YxS4/Fz5hFawWQIvYBm404EchUfIxv/2UZmjwTWTC251jldT6yH
+	60c1bDiPcNeRZYpIY45U8dfDNkM+qr02GNY0omPFgGs5LFJ7DAf426n82CQEhuPMzyNVVlooKxu
+	O1Q==
+X-Google-Smtp-Source: AGHT+IHC47f78BVmo+sdyjTSABTw0/Tqy6HN60awY2Lq4hntIiDkKOsp2uNyQ+wFfxFT0ijOssIk3hgSFsg=
+X-Received: from yuzhao2.bld.corp.google.com ([2a00:79e0:2e28:6:32c1:5ac8:f94b:a9a])
+ (user=yuzhao job=sendgmr) by 2002:a05:6902:124a:b0:e03:31ec:8a25 with SMTP id
+ 3f1490d57ef6-e041b10fd77mr10931276.10.1720591776148; Tue, 09 Jul 2024
+ 23:09:36 -0700 (PDT)
+Date: Wed, 10 Jul 2024 00:09:33 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|PH7PR11MB6353:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b11f11e-9a76-4e86-780b-08dca0a6b4f3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?h8n00yGKwQefpiWOkD1TOgT2VnJ3sOnC16qeTzEBU6V34dxBu/y4uhIr79fq?=
- =?us-ascii?Q?p5qI+G2FchYCwbrIhX17QuvG3NGdFUSavfI8pCIhYHAVcblQvOKSIjMfRTFd?=
- =?us-ascii?Q?BM46XQFCpGuD6u2RupY4JB1r+iqcLsQJTmLL6ph3GZ0/Ncwj9jNXh+2Mtww1?=
- =?us-ascii?Q?EmTphlA91auL3soIcQoScRJe7wuaB1bQj79GSYa0iEwaMCaB9tULCzFpCKqr?=
- =?us-ascii?Q?V+TRi7X6kLoAsLobDMDihjQUl6nuv8T4g5LFLXYpjgBkdlYjak8vlU6TPeLz?=
- =?us-ascii?Q?nFOgvep5Ms19qNmxaEsfCJuZGAAB8E4GAzIKBe7MNJY20NG80gYfhbGe88+e?=
- =?us-ascii?Q?Rnb1zI+9WDMizfhiM31t4TJ6ge+DVtLlnkveLEK/xG61oHKjYmH3StJcHVZL?=
- =?us-ascii?Q?jh/eBdbBrRC8hX7LkmE0bg6z6HjxbUVEMQlC9R7cs6i36W/OnKTdvtOpAYRm?=
- =?us-ascii?Q?Z6B5QHrCw6raZY2fqE3n9vdIQ7GKRUAXi+u2FYhtXgQxSREhPIyVf+pEqxLZ?=
- =?us-ascii?Q?erslKdb/iVw5uj96tuEK/LVzD1upplrPU5yyf+taZntPzn6qKnk34PLQlIGM?=
- =?us-ascii?Q?p62ouWlHS5auanpjnchJSpKDlpGOg4KyRW1i+RMpCN9OcOSBYcJF+1FVl3Pu?=
- =?us-ascii?Q?WPfJ/DaTzl+zUsLDOLYe0Z9JtXnVn4nq5AZJoi33bwvnrOZMO0Fvp93cbCmo?=
- =?us-ascii?Q?pkR3xdpdICVopTIOfD9xgRZNPjiZyJYlwQ6eRvC7O+/aHxiqPcIpfUVY/28Y?=
- =?us-ascii?Q?65VFjFyHWN4CIVDjjdUeTDY8qTaNR/FKcreH345+A46qIPvo7aHvXG3Bv+eN?=
- =?us-ascii?Q?CXdnqLBvxwpdzmfM/q5GCyakkz7bR0cCmLhO/mVqxFIDHLOkuCD0M2m7JDgJ?=
- =?us-ascii?Q?re8ucAI3WqQ3hJpQt4YW0Ez5e+AruIBWWDYOCaKO9gq8u9MdA4cFMr88CJPB?=
- =?us-ascii?Q?/UVJdsO4kE7gyu55u4+f23duPS/cJv3juzAe72qHvkffephH7xSTsrpgCf3l?=
- =?us-ascii?Q?7iJQNgtEVclLGPZZqx84B/anMqOMtV1hY24k4sqITkijZx9CHdk9VOoJ4u4P?=
- =?us-ascii?Q?HTm64NlTpxDAT4Y4D8bQs06vUdnhWDb9T03Q5nh8G8RKBg1oK+pyvI9UlVgG?=
- =?us-ascii?Q?U4a8kZsGR/h0ljU6XLrjOnSOTI5tpKlAW8OQJYbHRhxHQTXGA4jKwKoK7Sx3?=
- =?us-ascii?Q?xzjxOP8/lbYNm7lDnHC0QmrVrXov6uhd5RDaMdKP7dYeHj8gWzOPbdZl/U/l?=
- =?us-ascii?Q?lde+0ysv0uXcs01GiYMZdk3kLByRKUOINoQ2h2R7x6I14EtsadW7laq5ScNh?=
- =?us-ascii?Q?jag=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?wpUuvdAncwjVLtXtv5TcYwcRutOdrpMUYbLLtPvD0siONLNg9CnJLZkSPh95?=
- =?us-ascii?Q?DvXPv6B9hKLZ7dwHVcZBhEh9uevv9ddSkCEVWSpbwjpkiwZSU+FnSnkqB8ez?=
- =?us-ascii?Q?Kg/irq7ILOcLnmUO7H+7fLJrY66p4YCF+ZaNhrzivyZyFuyIoizxg/2Dxb1j?=
- =?us-ascii?Q?0Uc3hCWXkZvb/v1O1HpCOjKC01fI+GINJc95MVgix+foahnLe50bebK0nQwH?=
- =?us-ascii?Q?WLIW5VN6ZNElCje1NZ2cjNCtbxnYQVTdVd5DgtWBBCrWKw0t7gEi3luQH0Hq?=
- =?us-ascii?Q?1NBnwUFj8VsQeRUoNJEYrDqh5DlAwuju3EKQS2kCR3epVhbhSAe6CyM1a9vE?=
- =?us-ascii?Q?quHq/AbrQBjQSOaiy9vl9tFuRclIoZRfTuodYEqizV1doMv7fiT+TQUvt89q?=
- =?us-ascii?Q?tS02BvbEv1Wvttp/v2UChRHkn2n9BWKaejY3iU0SUYfRdCS6FR4DRbP/My1f?=
- =?us-ascii?Q?VmM6zS7h8lXJrBpPCMtAQcOeE5+aMk/4BmRv8r16yNtdj9dabCGVDiSimBFd?=
- =?us-ascii?Q?+nMhqTv2URK3EQ6DnsbU94gTZBgo5u3m94BorXztTi3Uk/+4DfnypBd/8q2f?=
- =?us-ascii?Q?w73do/v8/2j548YDcRic2r/VhLZEfKd5xUb4TJwq34mMbBQmqzQK9x/eJmL9?=
- =?us-ascii?Q?L2I7oobobSy4qpjIut01EHzGUSEDkvwMrtMwlLqG2BHcVt79uRUVmQ9UPTUW?=
- =?us-ascii?Q?btO0CjXNYP/DUSknqbBK3XCScbyL30fM8LUzRlM2IZZ43Bd8j+Gq7qRt+lY1?=
- =?us-ascii?Q?LDTsZBvv3OIAgWvFvNWfgP9oDzjBMGlf4dMindjBwWKNq96GeI3lua6xSXwp?=
- =?us-ascii?Q?k0Tj1V3KZ1yNj4OPq6sR4tRxd7d60dvqhK+Xmol5L/nxbscDDCLIcm3f8+bc?=
- =?us-ascii?Q?0ixi1/vMKdzhA91kYYZaocYPZx+LS4FTcXJTdwnxV5iXidIjlboPTY/9hOay?=
- =?us-ascii?Q?KNfMo9sm7PI+BzqBr5sCtUoJXqkx+8HLWcm9/67NA/3BRlSglLfffPxQaGuZ?=
- =?us-ascii?Q?e/b2yka79B4sP1BtXWPAGCgZBDHFYdZPw8z0foAt+yQdrre2Povhx93yD1HY?=
- =?us-ascii?Q?/ZPrmslWmI2x8MAQTp6/a8WIbgOITkrRdUEpfOj/Cp0WbJrpAnzaKq22bepW?=
- =?us-ascii?Q?y8W9Ecv86wouYF4/egC6o6dm2PGoevikECJAYTdUl0FP5IzeQUT3w3gHigWw?=
- =?us-ascii?Q?9bXHdNkxBLCJuO3Bi7ZEige/H4lyEuyusrY1cg50/XttDtjZNfVPghZrAJfA?=
- =?us-ascii?Q?+3XL2xN9tHt9YTEUs4UHwU1RDHRTYiZXs0qyZ3xWAVZOgwTicMaTA+GIXqHC?=
- =?us-ascii?Q?wV1gCU5+ztw3qekDCr3byX54iJdBWGMH2T4pSWJYCOHyYWHlp16LEMRHsoqA?=
- =?us-ascii?Q?qq+6aZT0orVL79C1eN+5F1fqcXVE2o7lVfZV+T3tjWPj/+ri3KUK/kjLmIYB?=
- =?us-ascii?Q?RXpm1cojriOxudQuQXwRa+4EZLhWfDzLt8yV6XLu8SGpXa7RS9Z1crAfS+Vi?=
- =?us-ascii?Q?52vm2xom8HeEC421pmBVufaYCuQEmIqpX9PDkChciNLhmYGXCcKqASsoSZZa?=
- =?us-ascii?Q?5vcrEOKfl3WVop5d5DAOnkOcdsIFMP8V//OVt2PO3LmiYN9AuK6OWJPrWpuS?=
- =?us-ascii?Q?6w=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b11f11e-9a76-4e86-780b-08dca0a6b4f3
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2024 06:08:24.1796
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XHIBlZUe0hVHloyE196XU2kY3IsW6llCK/uUa5C26gc7fLcgBL9CwGwX1bp+fKEGyQozXh6INm1ji0gptB9Pr0eDp4gBTZ0o4ujUDqq2Ouc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6353
-X-OriginatorOrg: intel.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+Message-ID: <20240710060933.3979380-1-yuzhao@google.com>
+Subject: [PATCH mm-unstable v2] mm/truncate: batch-clear shadow entries
+From: Yu Zhao <yuzhao@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Bharata B Rao <bharata@amd.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 10, 2024 at 01:49:41PM GMT, Jiapeng Chong wrote:
->./drivers/gpu/drm/xe/xe_gt.c: generated/xe_wa_oob.h is included more than once.
->
->Reported-by: Abaci Robot <abaci@linux.alibaba.com>
->Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9493
->Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Make clear_shadow_entry() clear shadow entries in `struct folio_batch`
+so that it can reduce contention on i_lock and i_pages locks, e.g.,
 
-thanks, but a similar patch got merged yesterday:
-https://lore.kernel.org/intel-xe/20240708173301.1543871-1-lucas.demarchi@intel.com/#r
+  watchdog: BUG: soft lockup - CPU#29 stuck for 11s! [fio:2701649]
+    clear_shadow_entry+0x3d/0x100
+    mapping_try_invalidate+0x117/0x1d0
+    invalidate_mapping_pages+0x10/0x20
+    invalidate_bdev+0x3c/0x50
+    blkdev_common_ioctl+0x5f7/0xa90
+    blkdev_ioctl+0x109/0x270
 
-Lucas De Marchi
+Also, rename clear_shadow_entry() to clear_shadow_entries() accordingly.
+
+Reported-by: Bharata B Rao <bharata@amd.com>
+Closes: https://lore.kernel.org/d2841226-e27b-4d3d-a578-63587a3aa4f3@amd.com/
+Tested-by: Bharata B Rao <bharata@amd.com>
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+---
+ mm/truncate.c | 68 +++++++++++++++++++++++----------------------------
+ 1 file changed, 31 insertions(+), 37 deletions(-)
+
+diff --git a/mm/truncate.c b/mm/truncate.c
+index 5ce62a939e55..dfb3d1f4d456 100644
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -39,12 +39,25 @@ static inline void __clear_shadow_entry(struct address_space *mapping,
+ 	xas_store(&xas, NULL);
+ }
+ 
+-static void clear_shadow_entry(struct address_space *mapping, pgoff_t index,
+-			       void *entry)
++static void clear_shadow_entries(struct address_space *mapping,
++				 struct folio_batch *fbatch, pgoff_t *indices)
+ {
++	int i;
++
++	/* Handled by shmem itself, or for DAX we do nothing. */
++	if (shmem_mapping(mapping) || dax_mapping(mapping))
++		return;
++
+ 	spin_lock(&mapping->host->i_lock);
+ 	xa_lock_irq(&mapping->i_pages);
+-	__clear_shadow_entry(mapping, index, entry);
++
++	for (i = 0; i < folio_batch_count(fbatch); i++) {
++		struct folio *folio = fbatch->folios[i];
++
++		if (xa_is_value(folio))
++			__clear_shadow_entry(mapping, indices[i], folio);
++	}
++
+ 	xa_unlock_irq(&mapping->i_pages);
+ 	if (mapping_shrinkable(mapping))
+ 		inode_add_lru(mapping->host);
+@@ -105,36 +118,6 @@ static void truncate_folio_batch_exceptionals(struct address_space *mapping,
+ 	fbatch->nr = j;
+ }
+ 
+-/*
+- * Invalidate exceptional entry if easily possible. This handles exceptional
+- * entries for invalidate_inode_pages().
+- */
+-static int invalidate_exceptional_entry(struct address_space *mapping,
+-					pgoff_t index, void *entry)
+-{
+-	/* Handled by shmem itself, or for DAX we do nothing. */
+-	if (shmem_mapping(mapping) || dax_mapping(mapping))
+-		return 1;
+-	clear_shadow_entry(mapping, index, entry);
+-	return 1;
+-}
+-
+-/*
+- * Invalidate exceptional entry if clean. This handles exceptional entries for
+- * invalidate_inode_pages2() so for DAX it evicts only clean entries.
+- */
+-static int invalidate_exceptional_entry2(struct address_space *mapping,
+-					 pgoff_t index, void *entry)
+-{
+-	/* Handled by shmem itself */
+-	if (shmem_mapping(mapping))
+-		return 1;
+-	if (dax_mapping(mapping))
+-		return dax_invalidate_mapping_entry_sync(mapping, index);
+-	clear_shadow_entry(mapping, index, entry);
+-	return 1;
+-}
+-
+ /**
+  * folio_invalidate - Invalidate part or all of a folio.
+  * @folio: The folio which is affected.
+@@ -494,6 +477,7 @@ unsigned long mapping_try_invalidate(struct address_space *mapping,
+ 	unsigned long ret;
+ 	unsigned long count = 0;
+ 	int i;
++	bool xa_has_values = false;
+ 
+ 	folio_batch_init(&fbatch);
+ 	while (find_lock_entries(mapping, &index, end, &fbatch, indices)) {
+@@ -503,8 +487,8 @@ unsigned long mapping_try_invalidate(struct address_space *mapping,
+ 			/* We rely upon deletion not changing folio->index */
+ 
+ 			if (xa_is_value(folio)) {
+-				count += invalidate_exceptional_entry(mapping,
+-							     indices[i], folio);
++				xa_has_values = true;
++				count++;
+ 				continue;
+ 			}
+ 
+@@ -522,6 +506,10 @@ unsigned long mapping_try_invalidate(struct address_space *mapping,
+ 			}
+ 			count += ret;
+ 		}
++
++		if (xa_has_values)
++			clear_shadow_entries(mapping, &fbatch, indices);
++
+ 		folio_batch_remove_exceptionals(&fbatch);
+ 		folio_batch_release(&fbatch);
+ 		cond_resched();
+@@ -616,6 +604,7 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
+ 	int ret = 0;
+ 	int ret2 = 0;
+ 	int did_range_unmap = 0;
++	bool xa_has_values = false;
+ 
+ 	if (mapping_empty(mapping))
+ 		return 0;
+@@ -629,8 +618,9 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
+ 			/* We rely upon deletion not changing folio->index */
+ 
+ 			if (xa_is_value(folio)) {
+-				if (!invalidate_exceptional_entry2(mapping,
+-						indices[i], folio))
++				xa_has_values = true;
++				if (dax_mapping(mapping) &&
++				    !dax_invalidate_mapping_entry_sync(mapping, indices[i]))
+ 					ret = -EBUSY;
+ 				continue;
+ 			}
+@@ -666,6 +656,10 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
+ 				ret = ret2;
+ 			folio_unlock(folio);
+ 		}
++
++		if (xa_has_values)
++			clear_shadow_entries(mapping, &fbatch, indices);
++
+ 		folio_batch_remove_exceptionals(&fbatch);
+ 		folio_batch_release(&fbatch);
+ 		cond_resched();
+-- 
+2.45.2.803.g4e1b14247a-goog
+
 
