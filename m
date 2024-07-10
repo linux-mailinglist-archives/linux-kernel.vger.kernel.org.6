@@ -1,163 +1,93 @@
-Return-Path: <linux-kernel+bounces-247483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CA1792CFFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:01:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72BBF92D040
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19267284FA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:01:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D5EC285269
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC5718FC64;
-	Wed, 10 Jul 2024 11:01:20 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3F918FC98;
+	Wed, 10 Jul 2024 11:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=permerror (0-bit key) header.d=hardfalcon.net header.i=@hardfalcon.net header.b="WQgnylkd"
+Received: from 0.smtp.remotehost.it (0.smtp.remotehost.it [213.190.28.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02B317FD;
-	Wed, 10 Jul 2024 11:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2255B3C39;
+	Wed, 10 Jul 2024 11:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.190.28.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720609280; cv=none; b=f6YzkNrVVmIo3w67fuM6lh55JO3yQCm19l/fso1TcBaw2lc/5XQg9b5iKOjFNodHivIEn9LqDjTI2LypQ2AKU0gxSXrP6R+7q8jeYO4dctWefRVsiXJ2GXYmO0WY9orArUuf4GwF7Y/foehOhSNflze9EUMg6FkYWIMfMgtAT2s=
+	t=1720609847; cv=none; b=gQBggB6LXLCjw8pX6Lf6H1pX35BHnADKaonNytdfc4Hm+uokvgLb9FfAfgFfj52xIKOlZtF3JvoSUXIMqqEs4lbRta3eUO3wMvnuL2D8J6DHq8zuC7RUljORDV1pymNaAboecDMOLMmY6UqovghT6dZHJ+IRCQdZ77LAqVV2XSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720609280; c=relaxed/simple;
-	bh=CTVf2zX3BBwBZucezxV+16F9kjB4D6ihhIVLyeOxcQo=;
+	s=arc-20240116; t=1720609847; c=relaxed/simple;
+	bh=Pk9Dp0mnPPUcm8CNk/XoO5KLyYdGd5hWQYCuxbtJ3lE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rdKuSqm1H4ztsH33EefuiZOtp36RpuH2/SSxrbKcUbzxBWYkSIoEu4swHQ27IHQPR4b/6vT1xmoOnEAu/rpoOuyVR5RwPp+Ob/w9hHUznErZHkwBdw+ZqUaDcrGL0xNYBdJc/NK/EDa8lAbvjYK+uhdeeDwzN7AIGeX5Cs+EPuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 406A061E64862;
-	Wed, 10 Jul 2024 13:00:39 +0200 (CEST)
-Message-ID: <261d8aad-5188-4c08-8c3d-34c2e00db2e6@molgen.mpg.de>
-Date: Wed, 10 Jul 2024 13:00:38 +0200
+	 In-Reply-To:Content-Type; b=kis8wGZQ4bb4kF50Iqrf9tfXVVzweDk5ojmnlgjPlGCYTMg8BaMwf1fm55pefCDURgQe7xy8Q77Vmz7czkSqFgFu1EbD8og0gguYlF61E5YQCJ/jNIb/1oAxVk8iTn5Y+ncpT2dc2HG5rHhelfc657UWCtcYC+p5ndmWCQToylg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardfalcon.net; spf=pass smtp.mailfrom=hardfalcon.net; dkim=permerror (0-bit key) header.d=hardfalcon.net header.i=@hardfalcon.net header.b=WQgnylkd; arc=none smtp.client-ip=213.190.28.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardfalcon.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hardfalcon.net
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=hardfalcon.net;
+	s=dkim_2024-02-03; t=1720609300;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+IvsDJVaB6RzaetSPmfHiiJoDXFHI0vEjBVyq9YM0Fw=;
+	b=WQgnylkdpBykFP3Vu+wunVlwaR3KuYTDExX8bdWe+tPCFHBR52BphPvxDB8ggig4oLiWVv
+	KG0IbfFpZY3ONaBQ==
+Message-ID: <580c5ba0-1c23-4d83-9e5c-e0c1679ff5ed@hardfalcon.net>
+Date: Wed, 10 Jul 2024 13:01:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Bluetooth: btmtk: Fix btmtk.c undefined reference
- build error
-To: Chris Lu <chris.lu@mediatek.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Von Dentz <luiz.dentz@gmail.com>, Sean Wang <sean.wang@mediatek.com>,
- Aaron Hou <aaron.hou@mediatek.com>, Steve Lee <steve.lee@mediatek.com>,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org
-References: <20240710092614.7297-1-chris.lu@mediatek.com>
+Subject: Re: [PATCH 6.9 000/197] 6.9.9-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240709110708.903245467@linuxfoundation.org>
 Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20240710092614.7297-1-chris.lu@mediatek.com>
+From: Pascal Ernster <git@hardfalcon.net>
+In-Reply-To: <20240709110708.903245467@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Dear Chris,
-
-
-Am 10.07.24 um 11:26 schrieb Chris Lu:
-> MediaTek move some usb interface related function to btmtk.c which
-
-move*d*
-
-Maybe add … in commit XXX ("yyy") … in that sentence.
-
-> may cause build failed if BT USB Kconfig wasn't enabled.
-
-Is not enabling BT USB Kconfig when using btmtk a valid use-case?
-
-> Fix undefined reference by adding config check.
+[2024-07-09 13:07] Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.9.9 release.
+> There are 197 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> btmtk.c:(.text+0x89c): undefined reference to `usb_alloc_urb'
-> btmtk.c:(.text+0x8e3): undefined reference to `usb_free_urb'
-> btmtk.c:(.text+0x956): undefined reference to `usb_free_urb'
-> btmtk.c:(.text+0xa0e): undefined reference to `usb_anchor_urb'
-> btmtk.c:(.text+0xb43): undefined reference to `usb_autopm_get_interface'
-> btmtk.c:(.text+0xb7e): undefined reference to `usb_autopm_put_interface'
-> btmtk.c:(.text+0xf70): undefined reference to `usb_disable_autosuspend'
-> btmtk.c:(.text+0x133a): undefined reference to `usb_control_msg'
+> Responses should be made by Thu, 11 Jul 2024 11:06:25 +0000.
+> Anything received after that time might be too late.
 > 
-> Fixes: 39a9e1c69e74 ("Bluetooth: btmtk: move btusb_mtk_hci_wmt_sync to btmtk.c")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202407091928.AH0aGZnx-lkp@intel.com/
-> Co-developed-by: Sean Wang <sean.wang@mediatek.com>
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> Signed-off-by: Chris Lu <chris.lu@mediatek.com>
-> ---
-> Change from v1 to v2:
-> -fix and update commit message warning
-> ---
->   drivers/bluetooth/btmtk.c | 2 ++
->   drivers/bluetooth/btmtk.h | 4 ++++
->   2 files changed, 6 insertions(+)
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.9-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
+> and the diffstat can be found below.
 > 
-> diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
-> index b7c348687a77..9789296ad4f6 100644
-> --- a/drivers/bluetooth/btmtk.c
-> +++ b/drivers/bluetooth/btmtk.c
-> @@ -437,6 +437,7 @@ int btmtk_process_coredump(struct hci_dev *hdev, struct sk_buff *skb)
->   }
->   EXPORT_SYMBOL_GPL(btmtk_process_coredump);
->   
-> +#if IS_ENABLED(CONFIG_BT_HCIBTUSB_MTK)
->   static void btmtk_usb_wmt_recv(struct urb *urb)
->   {
->   	struct hci_dev *hdev = urb->context;
-> @@ -1487,6 +1488,7 @@ int btmtk_usb_shutdown(struct hci_dev *hdev)
->   	return 0;
->   }
->   EXPORT_SYMBOL_GPL(btmtk_usb_shutdown);
-> +#endif
->   
->   MODULE_AUTHOR("Sean Wang <sean.wang@mediatek.com>");
->   MODULE_AUTHOR("Mark Chen <mark-yw.chen@mediatek.com>");
-> diff --git a/drivers/bluetooth/btmtk.h b/drivers/bluetooth/btmtk.h
-> index 453ed5131a37..890dbe9beff8 100644
-> --- a/drivers/bluetooth/btmtk.h
-> +++ b/drivers/bluetooth/btmtk.h
-> @@ -165,6 +165,7 @@ struct btmtk_data {
->   	btmtk_reset_sync_func_t reset_sync;
->   	struct btmtk_coredump_info cd_info;
->   
-> +#if IS_ENABLED(CONFIG_BT_HCIBTUSB_MTK)
->   	struct usb_device *udev;
->   	struct usb_interface *intf;
->   	struct usb_anchor *ctrl_anchor;
-> @@ -177,6 +178,7 @@ struct btmtk_data {
->   
->   	/* spinlock for ISO data transmission */
->   	spinlock_t isorxlock;
-> +#endif
->   };
->   
->   typedef int (*wmt_cmd_sync_func_t)(struct hci_dev *,
-> @@ -202,6 +204,7 @@ int btmtk_process_coredump(struct hci_dev *hdev, struct sk_buff *skb);
->   void btmtk_fw_get_filename(char *buf, size_t size, u32 dev_id, u32 fw_ver,
->   			   u32 fw_flavor);
->   
-> +#if IS_ENABLED(CONFIG_BT_HCIBTUSB_MTK)
->   int btmtk_usb_subsys_reset(struct hci_dev *hdev, u32 dev_id);
->   
->   int btmtk_usb_recv_acl(struct hci_dev *hdev, struct sk_buff *skb);
-> @@ -216,6 +219,7 @@ int btmtk_usb_suspend(struct hci_dev *hdev);
->   int btmtk_usb_setup(struct hci_dev *hdev);
->   
->   int btmtk_usb_shutdown(struct hci_dev *hdev);
-> +#endif
->   #else
->   
->   static inline int btmtk_set_bdaddr(struct hci_dev *hdev,
+> thanks,
+> 
+> greg k-h
 
 
-Kind regards,
+Hi, 6.9.9-rc1 compiled and is running fine on various x86_64 bare metal 
+and virtual machines of mine (Haswell, Skylake, Kaby Lake, Coffee Lake).
 
-Paul
+Tested-by: Pascal Ernster <git@hardfalcon.net>
+
+
+Regard
+Pascal
 
