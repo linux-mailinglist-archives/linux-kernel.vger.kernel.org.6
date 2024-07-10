@@ -1,107 +1,133 @@
-Return-Path: <linux-kernel+bounces-247167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA89B92CC1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:41:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3D0092CC01
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:36:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6359EB23B17
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:41:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CE101F22BFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8882A84A35;
-	Wed, 10 Jul 2024 07:41:01 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32842824BC;
-	Wed, 10 Jul 2024 07:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8290784D0D;
+	Wed, 10 Jul 2024 07:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b+cXkk9n"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DEA556458
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720597261; cv=none; b=jT/H8Iy8FKQ5s22o0uJ2th6qZPolcPugt+oLqebWItl0duaGphEjD+j/eJL/OUjXlVtKDsDMFWEP8y05VhEorK6ohmpTNO/dYoR1+FLA2jEQvrjLekbXNBIJtCiW2O+61OfRtazZZCgdOl+tFCTxWVmkbLMHTW/Ic8jdXuFVf8U=
+	t=1720596988; cv=none; b=I8diXBky+yNMLBN/EUAD0ujI6x88+UFC47ZQ/GbG5x1VP0uN0qpSLn5O4gf4UEnkP7zM4Czf0iYdPpLYpSi7hTKYIke+ZZSEf838iZSc2pq1KMfIpXmca863E36tkwtD2ghrswZYyw0Nu5Kzn14ekjbGnHxlSmVDR6SK9YPhPxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720597261; c=relaxed/simple;
-	bh=ic/doOQaVCqp0tFw78Ip2mj0kPGzk2er21GSUClPl3Q=;
+	s=arc-20240116; t=1720596988; c=relaxed/simple;
+	bh=AXDTQiOUe+sk2xVyvNXQw8kniv5/H1hlzYclQjp88nQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r2hKFGQNAYY69XvDIYK/hjNO0CgwL5haLJX8fCeffuOiAsOjTTH0r2pm+l/dTepE1c2XsdV9zXKLbfrviX4c29NzA01vtm3W0wMyw2DF1cWSXPvFdfUaet7C4KONvorQgZNenbe0Vz+yp/CxCjhrr9PSN2Cy0ONegNSfMsbfdRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sRRwG-0003DV-00; Wed, 10 Jul 2024 09:40:32 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 6ED58C0120; Wed, 10 Jul 2024 09:36:13 +0200 (CEST)
-Date: Wed, 10 Jul 2024 09:36:13 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: "Maciej W. Rozycki" <macro@orcam.me.uk>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-	Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <philmd@linaro.org>
-Subject: Re: [PATCH v3] MIPS: Implement ieee754 NAN2008 emulation mode
-Message-ID: <Zo457UgAkhbAgm2R@alpha.franken.de>
-References: <20240612-mips_ieee754_emul-v3-1-2c21b450abdb@flygoat.com>
- <Zn1FuxNw2CUttzdg@alpha.franken.de>
- <9cc26415-9cbc-47fa-a132-7d8c000874a4@app.fastmail.com>
- <alpine.DEB.2.21.2406272053180.43454@angie.orcam.me.uk>
- <fbd421a6-cf37-49ab-bdbe-6128a7cae8be@app.fastmail.com>
- <Zoz6+YmUk7CBsNFw@alpha.franken.de>
- <7797a7b2-1bb2-4c45-b65d-678f685dfa3d@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=caoL3D0I2SR9mv2n+qiM1ybnih1ypGoVMDlmwwIhmhORYrYhbHsNjKUPtbH9tFZmtUQHah+7HRuKfJvx9EXpy1XBiRCil87lXam3CKybMAoluSvpiodCUmnmczVjPEiph6WVyCALbkrCP5oqjTnhtO+X4LhR2WppRFViNnHAr4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b+cXkk9n; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70b4267ccfcso1731012b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 00:36:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720596987; x=1721201787; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ib7gCSaVLlpxg25S4ZxyQLMvzlSiQ7LEAEKDAEqbxxI=;
+        b=b+cXkk9nlTvsQncBuLaPLoRiXQvjttPTvw/139tAfsFpkiasxmTZm/kbVnniGszKmI
+         PKw+SA6GDJey2aQp229at7e7bJDuGfdKeKUErt+Haw0CXKHMBzmzTwDWSaTr4koif/An
+         7QGYuii0oOwH9yqEZn/z8W7Jqp32pvH1yD1r97PapdBSzu4oC0225hfHiEfCUtaL22KE
+         JpIJ01SRy80snehVqjg3S2rugAuGwqyHdzKcdZ81IAh9jlUj0gax7DEzDOeFmbgoGzDz
+         J55BIx7Ol5OTNiqGgavb7tUX6sqkuP0yH0QT+E6Pq95ib4VdxAXzAX1XFzblMpRCXHlw
+         IshQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720596987; x=1721201787;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ib7gCSaVLlpxg25S4ZxyQLMvzlSiQ7LEAEKDAEqbxxI=;
+        b=oHS9srorHYOe6Vhey/7yRaONk4R09Oz3KxnsY4STrHNI/wYF6NAE7uwL/k6M1K5GqW
+         YnQb4QcwPZAB2gH0k6RvWPADz6gCnXhTNCqmoT//BL51/5MiPaTOm0EJNIJKlXNidZf6
+         JeVG27ylcrxcaxRgBNLxdj8bMwQVMlHezymZdcFKftMbyAuz+3NM2+3j1Fl7V8BMu63A
+         MJMr449mVeRQ0qEAact8iSmmBToVrF2pAUitJngLQxyYkd57tgMuuLLFr+BWOF4Ajm5U
+         FK5/U4GdRqtjPJGjKF2F0clVz3qWVTbHwdWSdv58XMC0QcKmY62SnBpsW3tCb3DFxN8s
+         s80Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXrKYYgqKHBdINcxo2tvMddybd4+wWdLU8FMFv7N6BxLKeZWjv9MtdCRK/iycNOoQ6G4fOk6oeExf7NWJSVIDSjtEmiq1QbA2d2oZcv
+X-Gm-Message-State: AOJu0YyRs+zdt7GevT7RRYOyzfvBAYzWcCicpq6/oUNuZPeLRqrf8EBc
+	f6HI7/DlremDDYnBYZ23kGx7me309Mcw3xhONUtxOJDX0k2QJq1SXb6/7omWFwk=
+X-Google-Smtp-Source: AGHT+IHg433AhW7OnnB4QmPzublPxbiEIgkyNA0iz+B1GaI1iSou2hECJs1ftjC8msq7230tW5DcQg==
+X-Received: by 2002:a05:6a00:1251:b0:706:700c:7864 with SMTP id d2e1a72fcca58-70b4351fde0mr6327577b3a.4.1720596986761;
+        Wed, 10 Jul 2024 00:36:26 -0700 (PDT)
+Received: from localhost ([122.172.84.129])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b439b9afbsm3065996b3a.191.2024.07.10.00.36.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 00:36:26 -0700 (PDT)
+Date: Wed, 10 Jul 2024 13:06:23 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+	rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH V3 1/8] rust: Add initial bindings for OPP framework
+Message-ID: <20240710073623.qdxatsqvumkguabp@vireshk-i7>
+References: <cover.1719990273.git.viresh.kumar@linaro.org>
+ <fe8e9a96b29122876346fc98a6a9ede7e4f28707.1719990273.git.viresh.kumar@linaro.org>
+ <ZoVvn0QCSR8y4HQJ@Boquns-Mac-mini.home>
+ <20240709110245.o73xnrj6jsvz2v2w@vireshk-i7>
+ <Zo13PB-fZ8B9WEYy@boqun-archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7797a7b2-1bb2-4c45-b65d-678f685dfa3d@app.fastmail.com>
+In-Reply-To: <Zo13PB-fZ8B9WEYy@boqun-archlinux>
 
-On Wed, Jul 10, 2024 at 01:34:41PM +0800, Jiaxun Yang wrote:
+On 09-07-24, 10:45, Boqun Feng wrote:
+> On Tue, Jul 09, 2024 at 04:32:45PM +0530, Viresh Kumar wrote:
+> > On 03-07-24, 08:34, Boqun Feng wrote:
+> > > On Wed, Jul 03, 2024 at 12:44:26PM +0530, Viresh Kumar wrote:
+> > > > +// SAFETY: `OPP` only holds a pointer to a C OPP, which is safe to be used from any thread.
+> > > > +unsafe impl Send for OPP {}
+> > > > +
+> > > > +// SAFETY: `OPP` only holds a pointer to a C OPP, references to which are safe to be used from any
+> > > > +// thread.
+> > > > +unsafe impl Sync for OPP {}
+> > > > +
+> > > 
+> > > Same for the above safety comments, as they are still based on the old
+> > > implementation.
+> > 
+> > Do I still need to change these ? Since we aren't always using ARef
+> > now.
+> > 
 > 
-> 
-> 在2024年7月9日七月 下午4:55，Thomas Bogendoerfer写道：
-> > On Fri, Jun 28, 2024 at 01:33:06AM +0100, Jiaxun Yang wrote:
-> >> 
-> >> 
-> >> 在2024年6月27日六月 下午8:54，Maciej W. Rozycki写道：
-> >> > On Thu, 27 Jun 2024, Jiaxun Yang wrote:
-> >> >
-> >> >> >> @@ -318,6 +318,10 @@ void mips_set_personality_nan(struct arch_elf_state *state)
-> >> >> >>  	t->thread.fpu.fcr31 = c->fpu_csr31;
-> >> >> >>  	switch (state->nan_2008) {
-> >> >> >>  	case 0:
-> >> >> >> +		if (!(c->fpu_msk31 & FPU_CSR_NAN2008))
-> >> >> >> +			t->thread.fpu.fcr31 &= ~FPU_CSR_NAN2008;
-> >> >> >> +		if (!(c->fpu_msk31 & FPU_CSR_ABS2008))
-> >> >> >> +			t->thread.fpu.fcr31 &= ~FPU_CSR_ABS2008;
-> >> >> >
-> >> >> > why is this needed?
-> >> >> 
-> >> >> Because t->thread.fpu.fcr31 comes from c->fpu_csr31, in this case we the default
-> >> >> value of c->fpu_csr31 is read from hardware and we don't know what would that be.
-> >> >
-> >> >  But it has always been like this.  What has changed with your patch that 
-> >> > you need to mask the bit out now?
-> >> 
-> >> After this patch kernel's copy of t->thread.fpu.fcr31 can disagree with hardware.
-> >> When disagree happens, we trigger emulation.
-> >> 
-> >> Before that patch for nan legacy binary running on nan2008 CPU t->thread.fpu.fcr31
-> >> will still be nan2008 (for ieee754=relaxed) so that's not relevant.
-> >
-> > I'm considering to apply your patch, how much testing/verification did
-> > this patch see ? Do have some test binaries ?
-> 
-> It has been tested against Debian rootfs. There is no need to test againt special binary,
-> but you need NaN2008 hardware such as Loongson 3A4000.
+> Correct, you will still need to change these. You're welcome to submit
+> a draft version here and I can help take a look before you send out a
+> whole new version, if you prefer that way.
 
-that's just one case, what about NaN2008 binaries on a legacy MIPS CPU ?
-
-Thomas.
+I am not entirely sure what the change must be like that :)
 
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+viresh
 
