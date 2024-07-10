@@ -1,124 +1,115 @@
-Return-Path: <linux-kernel+bounces-247734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A5C992D3C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:04:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4446292D3A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 858E3287892
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:04:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 735791C22E4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BB31946C3;
-	Wed, 10 Jul 2024 14:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9F519344F;
+	Wed, 10 Jul 2024 14:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gzoODdDS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HlgOnuRb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22198193479
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B56E18622;
+	Wed, 10 Jul 2024 14:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720620177; cv=none; b=O6IKgEHdNP5rjqNaj4Fy+07E7Q1gDiC5ebXR0W4uQbLXJRubwD9d5WMLEiiJDYyqy2EdxByfOVaRR3vN11eZe7Ctqr/k8Uvhbx3ZKTIMzQK2lZdJh9pMxpnLrDLUT4e9tlasUGI/CGmwbUF2sasjx2EMho2N5zWMRc1ubCfPAWI=
+	t=1720620077; cv=none; b=QmhaqBF7WdzSUDHH/yHbXf18F2MnSrVAKr30zWlutfrrdmkFdAWxEYXRoeUw9/L7Sl7H3kpyPH91Zb43ZCFwy4o4L/59dZTrARDhL1Z2pOFEWbhUIKm0xQVsBzyNAZ/Q5G59Tq3b1DJa7OqrFPZ55rkj9qrNIWQnH+fLZUoVF3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720620177; c=relaxed/simple;
-	bh=qQ79RzLBTWxB6Auh/T2Kou6a+uEjkroibsTjepEuM1k=;
+	s=arc-20240116; t=1720620077; c=relaxed/simple;
+	bh=DqU9cIN76ke48HhYoQkN5R6zkS5nfvCzZJkiZIS32WY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Al9T2klgCt1stnwXIRn/g85z2QuvIXeab/6om4qVhY4QZ7qHpcURph6Y3DkrcNmeqcR+Za2R9nJKbuuy3oyvmEDVqMC0rFIZuJ0oafVcf8qkzcVlJhBXaqj7rPVyZxUZW+fcRqOS18Zl47NReePGvgeDYCBE5WQFLe5hTFp3M7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gzoODdDS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720620175;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5yFh0y+ODzvRZigdpubheI7oPQ5BzZkZLBnUPJoaMxI=;
-	b=gzoODdDSc9742FV6I5XHe8AjCm3sO38Gw5MCD7E/n6cWuygGfojlRLynG0H9PjJF5eLU27
-	tzIMjJm27BI+vyUwVF/LvnjUVE7mjIPtqX70zU19Lfos6llkbncsRZXxrMMImbZ8AXl14u
-	R1jtiYQrGkLkWtz1X5dt+GU3X16DZ40=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-658-gYxavUMBMLOoLtjXA_AV_w-1; Wed,
- 10 Jul 2024 10:02:50 -0400
-X-MC-Unique: gYxavUMBMLOoLtjXA_AV_w-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E38B41956048;
-	Wed, 10 Jul 2024 14:02:48 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.169])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id C28EA1955F6E;
-	Wed, 10 Jul 2024 14:02:45 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 10 Jul 2024 16:01:12 +0200 (CEST)
-Date: Wed, 10 Jul 2024 16:01:08 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org
-Cc: clm@meta.com, jolsa@kernel.org, mingo@kernel.org, paulmck@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] uprobes: is_trap_at_addr: don't use
- get_user_pages_remote()
-Message-ID: <20240710140108.GB1084@redhat.com>
-References: <20240710140017.GA1074@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u2qsYIRyGBdfuL75n3GBclI9F2kQOUuPUreEsyqHVlaNDHTFRRo78elbCyOcGkQb+MgKXgEpPRd6WQdqhZ4YSTx2QWqkUzlRqvlzVvserPWYmBKuD3rz6ZMLd1SNrDmD78T/t0bAtqLeMzgKcbj0HpN+H0cX6AkShqt8vqzv2lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HlgOnuRb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC0FAC32781;
+	Wed, 10 Jul 2024 14:01:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720620077;
+	bh=DqU9cIN76ke48HhYoQkN5R6zkS5nfvCzZJkiZIS32WY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HlgOnuRbZ6Xx/tQ4gLcqAf1Gwh+iqXg4Mwrgmxhw0RxEamHK/vWBzh6aW6egfM4UU
+	 2VJMSyzxe9Gz34O1AHUYmkPLb+84UVZlTLaMm7RMIUwfTyrHjKU0TDn1fKlkTKCiE1
+	 CpS9AF1V2gFvOI/ys1c0rF0kXb2IRt2RDKUgW/Ek0YTL2qxeLPwZ1Ni4lJg9Z6LZ1y
+	 J+hXtqI2ygWYGSp8+GOSVeLVHALLni5Ji0i2R/6/UrdSdP9h4GS8fppawM8UfRBy4r
+	 8RE30X/M+dLvqXO/TZGsJrhsvXpmFSlyuYz8ElZxikpuTX88ZOoQoZRn9jnPgF1Nfp
+	 VIf1GNy49IdqA==
+Date: Wed, 10 Jul 2024 15:01:11 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Hironori KIKUCHI <kikuchan98@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Jagan Teki <jagan@amarulasolutions.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] dt-bindings: display: st7701: Add Anbernic RG28XX
+ panel
+Message-ID: <20240710-showdown-antirust-a3eb8b65c57f@spud>
+References: <20240706102338.99231-1-kikuchan98@gmail.com>
+ <20240706102338.99231-4-kikuchan98@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="HFMSCswt+gKrOFT8"
+Content-Disposition: inline
+In-Reply-To: <20240706102338.99231-4-kikuchan98@gmail.com>
+
+
+--HFMSCswt+gKrOFT8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240710140017.GA1074@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: quoted-printable
 
-get_user_pages_remote() and the comment above it make no sense.
+On Sat, Jul 06, 2024 at 07:23:34PM +0900, Hironori KIKUCHI wrote:
+> The RG28XX panel is a display panel of the Anbernic RG28XX, a handheld
+> gaming device from Anbernic. It is 2.8 inches in size (diagonally) with
+> a resolution of 480x640.
+>=20
+> This panel is driven by a variant of the ST7701 driver IC internally,
+> confirmed by dumping and analyzing its BSP initialization sequence
+> by using a logic analyzer. It is very similar to the existing
+> densitron,dmt028vghmcmi-1a panel, but differs in some unknown
+> register values, so add a new entry for the panel to distinguish them.
+>=20
+> Additionally, the panel only has an SPI instead of MIPI DSI.
+> So add and modify for SPI as well.
+>=20
+> Signed-off-by: Hironori KIKUCHI <kikuchan98@gmail.com>
 
-There is no task_struct passed into get_user_pages_remote() anymore, and
-nowadays mm_account_fault() increments the current->min/maj_flt counters
-regardless of FAULT_FLAG_REMOTE.
+With a mention in the commit message about why we are adding a property
+and then immediately forbidding its use:
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-Reported-by: Andrii Nakryiko <andrii@kernel.org>
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- kernel/events/uprobes.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+Thanks,
+Conor.
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index d52b624a50fa..1bdf386485d4 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -453,7 +453,7 @@ static int update_ref_ctr(struct uprobe *uprobe, struct mm_struct *mm,
-  * @vaddr: the virtual address to store the opcode.
-  * @opcode: opcode to be written at @vaddr.
-  *
-- * Called with mm->mmap_lock held for read or write.
-+ * Called with mm->mmap_lock held.
-  * Return 0 (success) or a negative errno.
-  */
- int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
-@@ -2024,13 +2024,7 @@ static int is_trap_at_addr(struct mm_struct *mm, unsigned long vaddr)
- 	if (likely(result == 0))
- 		goto out;
- 
--	/*
--	 * The NULL 'tsk' here ensures that any faults that occur here
--	 * will not be accounted to the task.  'mm' *is* current->mm,
--	 * but we treat this as a 'remote' access since it is
--	 * essentially a kernel access to the memory.
--	 */
--	result = get_user_pages_remote(mm, vaddr, 1, FOLL_FORCE, &page, NULL);
-+	result = get_user_pages(vaddr, 1, FOLL_FORCE, &page);
- 	if (result < 0)
- 		return result;
- 
--- 
-2.25.1.362.g51ebf55
+--HFMSCswt+gKrOFT8
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZo6UJwAKCRB4tDGHoIJi
+0rWJAP9IHO7fHqyM5a/UICny+oqraSfmKGBb4QQ3LA2EqBU78AD/a0EsmZU8OROj
+g207SYlLjekZTX5pN4bqKdUwpSj4AQE=
+=8tYI
+-----END PGP SIGNATURE-----
+
+--HFMSCswt+gKrOFT8--
 
