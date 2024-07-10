@@ -1,100 +1,115 @@
-Return-Path: <linux-kernel+bounces-247599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FB5992D1B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:36:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 280ED92D1B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF823286F1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:36:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FAA2B26911
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF501922ED;
-	Wed, 10 Jul 2024 12:36:38 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528AD191F95;
+	Wed, 10 Jul 2024 12:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PXFxNTcz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704D0128369;
-	Wed, 10 Jul 2024 12:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9071C128369;
+	Wed, 10 Jul 2024 12:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720614998; cv=none; b=etRW88U6x65/U4UKTNUk/94h1lBlP+UYm47j4eNq4JNvbDVoBeWj2oDVNAArJIy5qCv3IMU5V0Ml3sUWMSoIPqaRDiKGCLDkCfpZJjW+FU6FM5AL1fIeyzZYECGoR09ZMaNcXuJsaS1xe/noRCnMcqrjICB1mTpyiAbW5Uh0gXA=
+	t=1720614988; cv=none; b=TabFeX7vFH8ZEN8niyy5oqqRcKMSrM6dJ+rwFL0F1p1pRw/YnkrZX4Igdi9TK0BT8O6Rv4XM1M2WRQ9sarfOYYKMeCwTddRJj7jwpiaYNmNhyyELI+XCvkex4kGvREg4e2tLfiN7CZz5/8EulL3X97slVwxyEHn4YVuX/7aqtTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720614998; c=relaxed/simple;
-	bh=It3imBc3BM6SehI+VEHWR2OIlg/DcDnLWTXrkGkSGLQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FUCJv8QwOCX2J9Fdidg/xbsZG5uvNrn9fKmqNCL4VeUIpFUul5CjSZMyJFMivXenmwRmnCoDcqTYtenVyoDZdYNqQsk0y2Hh0WnLiC/MEtZZ5WDk/Hi9bLYOAZysth5Y4kx7gFJpY84hOHuobIxYbcaW/yI6EAVbbUWv9kVqLXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4B4392006AD;
-	Wed, 10 Jul 2024 14:36:29 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 12D04200E34;
-	Wed, 10 Jul 2024 14:36:29 +0200 (CEST)
-Received: from pe-lt8779.in-pnq01.nxp.com (pe-lt8779.in-pnq01.nxp.com [10.17.104.141])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 9D1C1183487B;
-	Wed, 10 Jul 2024 20:36:27 +0800 (+08)
-From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	amitkumar.karwar@nxp.com,
-	rohit.fule@nxp.com,
-	neeraj.sanjaykale@nxp.com,
-	sherry.sun@nxp.com,
-	ziniu.wang_1@nxp.com,
-	haibo.chen@nxp.com,
-	LnxRevLi@nxp.com
-Subject: [PATCH v2] Bluetooth: btnxpuart: Fix warnings for suspend and resume functions
-Date: Wed, 10 Jul 2024 18:04:26 +0530
-Message-Id: <20240710123426.935122-1-neeraj.sanjaykale@nxp.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1720614988; c=relaxed/simple;
+	bh=Y4Al+y2W175lU4nuPuJc7qg78aq+qmDqDJ0XFPiR0qg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MLwJ5BE7Ijwr3s72HxcIbigUtTwj2MsHZA4595/57mX+If5qiqxi6fUq0shgAqRvxdBojcMCk0wlZBWDcW7tkWI3YbXnLvWVtHhztUukPHyu5Unv6mCw8Gf/k+hOC0HgwbgELegMw79K1ORptv7KoGL42Ei/jB89cWjIobe1VGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PXFxNTcz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46AFEC32781;
+	Wed, 10 Jul 2024 12:36:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720614988;
+	bh=Y4Al+y2W175lU4nuPuJc7qg78aq+qmDqDJ0XFPiR0qg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PXFxNTczHjo8Pn6CMsxF5GxaFs9FIwMXtAf9rKkX5vEHvZMdgBDUy5SpN1ZW/kgil
+	 ZCZkCPmDFjBmxoJbx35WGsbyBW2zAFTy31a5aVBxKdA69vvx1FbDgTdgoapZXIgmS6
+	 bIDWvflWRo0Boa/8X/b/VqvEw7K0nnLCsjDe1EnMQ4JPF5GcdlhlKpscNgrwXsGxdn
+	 0fBI6Qe7mh++WOIB/T7uGFKiaS9/bNGcw9vnCTpaXQZIeQ2uGSOBFlH6/gI5CrMBN+
+	 uIeU5MV1K69500Mia8cyCigJNxEKOZFc6tpprU4tz45iFABhgEv0jU6/xxlIQVnYGO
+	 VS3IdlNlBb8mQ==
+Date: Wed, 10 Jul 2024 13:36:20 +0100
+From: Will Deacon <will@kernel.org>
+To: Russell King <linux@armlinux.org.uk>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	James Clark <james.clark@arm.com>,
+	"Rob Herring (Arm)" <robh@kernel.org>
+Cc: kernel-team@android.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v2 00/12] arm64: Add support for Armv9.4 PMU fixed
+ instruction counter
+Message-ID: <20240710123620.GA14423@willie-the-truck>
+References: <20240626-arm-pmu-3-9-icntr-v2-0-c9784b4f4065@kernel.org>
+ <172001203729.3396033.17013529444643308853.b4-ty@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <172001203729.3396033.17013529444643308853.b4-ty@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-This fixes the warnings 'nxp_serdev_resume' and 'nxp_serdev_suspend'
-defined but not used.
+On Wed, Jul 03, 2024 at 03:38:44PM +0100, Will Deacon wrote:
+> On Wed, 26 Jun 2024 16:32:24 -0600, Rob Herring (Arm) wrote:
+> > This series adds support for the optional fixed instruction counter
+> > added in Armv9.4 PMU. Most of the series is a refactoring to remove the
+> > index to counter number conversion which dates back to the Armv7 PMU
+> > driver. Removing it is necessary in order to support more than 32
+> > counters without a bunch of conditional code further complicating the
+> > conversion.
+> > 
+> > [...]
+> 
+> Applied to will (for-next/perf), thanks!
+> 
+> [01/12] perf: arm_pmuv3: Avoid assigning fixed cycle counter with threshold
+>         https://git.kernel.org/will/c/81e15ca3e523
+> [02/12] perf: arm_pmuv3: Drop unnecessary IS_ENABLED(CONFIG_ARM64) check
+>         https://git.kernel.org/will/c/598c1a2d9f4b
+> [03/12] perf/arm: Move 32-bit PMU drivers to drivers/perf/
+>         https://git.kernel.org/will/c/8d75537bebfa
+> [04/12] perf: arm_v6/7_pmu: Drop non-DT probe support
+>         https://git.kernel.org/will/c/12f051c987dc
+> [05/12] perf: arm_pmuv3: Include asm/arm_pmuv3.h from linux/perf/arm_pmuv3.h
+>         https://git.kernel.org/will/c/d688ffa26942
 
-Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202407100518.06Xxq5PK-lkp@intel.com/
----
-v2: Rebase master, fix conflict due to copy-paste error from previous
-patch (bluez.test.bot)
----
- drivers/bluetooth/btnxpuart.c | 2 ++
- 1 file changed, 2 insertions(+)
+I've had an off-list report that this series causes a kernel crash under
+KVM unit tests (panic in write_pmevtypern()).
 
-diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
-index f75b24bd3045..31d3dd90b672 100644
---- a/drivers/bluetooth/btnxpuart.c
-+++ b/drivers/bluetooth/btnxpuart.c
-@@ -1522,6 +1522,7 @@ static void nxp_serdev_remove(struct serdev_device *serdev)
- 	hci_free_dev(hdev);
- }
- 
-+#ifdef CONFIG_PM_SLEEP
- static int nxp_serdev_suspend(struct device *dev)
- {
- 	struct btnxpuart_dev *nxpdev = dev_get_drvdata(dev);
-@@ -1539,6 +1540,7 @@ static int nxp_serdev_resume(struct device *dev)
- 	ps_control(psdata->hdev, PS_STATE_AWAKE);
- 	return 0;
- }
-+#endif
- 
- static struct btnxpuart_data w8987_data __maybe_unused = {
- 	.helper_fw_name = NULL,
--- 
-2.34.1
+Given that I don't have enough information to repro/debug and Catalin is
+tagging the arm64 branch for 6.11 today, I've dropped patches 6-12 for
+now. Please can you send a fixed version after the merge window?
 
+Cheers,
+
+Will
 
