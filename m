@@ -1,211 +1,127 @@
-Return-Path: <linux-kernel+bounces-246896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-246897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2278A92C8A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 04:35:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630E492C8A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 04:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D3E3B2138B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 02:35:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79FAD284527
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 02:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B502E414;
-	Wed, 10 Jul 2024 02:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AD517C61;
+	Wed, 10 Jul 2024 02:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cxZCyDY8"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eAjW5BJP"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7039A22075
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 02:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D2363A5;
+	Wed, 10 Jul 2024 02:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720578897; cv=none; b=JEbi3j6buliK1S/+ckHX34UO3yeO3/7Z45xc4s+NXGcqBpepfQwtfG2AjClUy5xAfLpMsfeeXy8H1Rz2exrVRc7jA7M3t8nbdkCD4daQ0aTVq0x2P2/s4iZDaGsd8ztrsEE3YGoqG3WfdMiAx2qbTAGxSMTgB5lAlnalF6sT3WY=
+	t=1720578985; cv=none; b=rn6ABhLsKBUFM7hYWJETezCb4Qd1UyKb6qf4GNaTvA04UzlU6xDM2ZEBe1havtfrKe/btPdcp0TM5d/miTcEi2JXZX/fl1pfP1YSEVCmz8HXm7RxAAewWkNqVouRCQKhaI1sX9PPY44kXflfPYsRFuUvvEjWSy1Zernxwz4ip9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720578897; c=relaxed/simple;
-	bh=GQhZ9NiweAuXcUzMZDobgANyOOU4DoNB9IAhUaTU288=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=cvXlnhLH1yrZlug3DBT+ARpLRUJtjZVKckgUoAKzzaacHSQe/yxaxR8r6OufNzMGwYzyz/uRsqYEofkqQM0XpsbSd/mhpnY+PuikBu6JKzyhYstQlXOJQQrTyTvrsEo5q8RDLkcLFhx55hIgWNwJRoqjPz0AgL9JN2S6PFO4mk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cxZCyDY8; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240710023453epoutp0201c27432be195081f69c882109b5d44f~guWNLhmMO2227422274epoutp02g
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 02:34:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240710023453epoutp0201c27432be195081f69c882109b5d44f~guWNLhmMO2227422274epoutp02g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1720578893;
-	bh=GQhZ9NiweAuXcUzMZDobgANyOOU4DoNB9IAhUaTU288=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=cxZCyDY8FdHvnGbWY4F+s4xcuNtZN5kuq1LzpaCKMDSTF0T+oVXgNoYC+CjDkC18Z
-	 gNcOccN6U9b1DQ4lhrdU/zds2gMSPoZF0y9yTM9OJVKi4TmiwevbtBZFEWnXdM6Ewq
-	 tO8XzR3Hh1iXEgY93Z9mjPy6Iurh0FSMQZ3IE4dc=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240710023453epcas5p1480efc2119468f7bee3f379b7fd6e9be~guWMx_ItE0967409674epcas5p1B;
-	Wed, 10 Jul 2024 02:34:53 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4WJhlb2Qzyz4x9Q2; Wed, 10 Jul
-	2024 02:34:51 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	16.2A.11095.B43FD866; Wed, 10 Jul 2024 11:34:51 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240710023450epcas5p144d272af968fa2897bd7a87f0e9d7b7a~guWKbAGgi0428204282epcas5p1Z;
-	Wed, 10 Jul 2024 02:34:50 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240710023450epsmtrp12dd603a4386918c3f504e65c6d224533~guWKaHn8v0997209972epsmtrp1Y;
-	Wed, 10 Jul 2024 02:34:50 +0000 (GMT)
-X-AuditID: b6c32a49-423b770000012b57-30-668df34bfdce
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9A.1C.18846.A43FD866; Wed, 10 Jul 2024 11:34:50 +0900 (KST)
-Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240710023448epsmtip1bce226b48afaba14252ccadac227b492~guWIm4V5X2932829328epsmtip18;
-	Wed, 10 Jul 2024 02:34:48 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'sunyeal.hong'" <sunyeal.hong@samsung.com>, "'Krzysztof Kozlowski'"
-	<krzk@kernel.org>, "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-	"'Chanwoo Choi'" <cw00.choi@samsung.com>, "'Michael Turquette'"
-	<mturquette@baylibre.com>, "'Stephen Boyd'" <sboyd@kernel.org>, "'Rob
- Herring'" <robh@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <000201dad26f$b18c3690$14a4a3b0$@samsung.com>
-Subject: RE: [PATCH v2 3/4] clk: samsung: clk-pll: Add support for pll_531x
-Date: Wed, 10 Jul 2024 08:04:47 +0530
-Message-ID: <015601dad271$bcd53e00$367fba00$@samsung.com>
+	s=arc-20240116; t=1720578985; c=relaxed/simple;
+	bh=tGu8rw5vWLBsyolu3kJFWqz4hqJW9K9KWwC9yucMDSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H7X+MknLJOIxQwBtFypB0FJw2QQlYSVYdnZdEVWJf6NsmGV5AP1qe84+cI1n4FtIxAPSQiZeY3Ju8yOoxzdL2prvwArrc91UGaQNpBVQZjgWPmzM24saLGd3GnIXlV1QONHomPx8ef2W5Nb/CvZkR1xD+rj9nTPZ291KM020S3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eAjW5BJP; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2c9df3eb0edso2678585a91.3;
+        Tue, 09 Jul 2024 19:36:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720578982; x=1721183782; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=E3eVF5jv0cXgwhtzNr2pMSO028nrJpif6y5JReYu+lA=;
+        b=eAjW5BJP+/x6tb04Qs78EzQXWSaA+ViZcaEQHjtFLkcdwS8abu48aIYY/4Fjh2kxxR
+         zCH8E29xGDV4CTPRPjEsLlJeRr64edYNjBM1tmBXuv8iXOUsE0Fuxk1piOtuX38c3v+l
+         wyHNjfGtudsJQ9oGGw529hSGF8X9nRfW4pxWGgOn6BcxvmJGUidARDMmWK8hIlU60tAz
+         N7MAYZURyXn6mF0L/XjbuepzdFDK5G4LuHxvrH6rilRRgietWd6zOGd3DE/2EF1iVNvS
+         Hzn88v8pl7MbLvNB+5UxSIndA9xObqIgCAFtiIXUmSINfgElt6lQaQWjsKeE1Uw2rNUA
+         O6Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720578982; x=1721183782;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E3eVF5jv0cXgwhtzNr2pMSO028nrJpif6y5JReYu+lA=;
+        b=KsuYaTXXDXXO1fok7UveMfYqsSBKBB/d6QaHuWtiinQ9HihZOzPkjcQxvfL+nS5vzf
+         Mi7KyWFbzg7ZG76kcJIffPM9mQLxyjp4uYV6ogQAEg0XMk6/yvNmU9EBJm6w05pKiYUk
+         M1nKxXislOmkwisHDBkvUaX6LcZJ36oYBWtkVWDlfEGEpu3904MxG5ASAJiqqyA4BhC0
+         nbdj//PcZ3xCJAn6Q3UzzP7iG5pqStqCy6gaOdzYEsohLOb5rkY5OcIkwSO88aWWkon1
+         2tVfFddD90GFik8Zkp/Fu5Muf2lOqQ/eM/HP5ZUfzDw0D74HSYGB7/nSxFeib7voEmaT
+         IqAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVInYfnrqFlrN2yFKQZcECG7vWfp3GEAfaBDA+FbORlo656wmJRjq41tcbfcEnojggEwEfxm1yYSN7N3hzCAqM/2jH2rkxebT6eWWcBQYnzPxjkz0AH2vko4sM5xGNwjfNctrKr
+X-Gm-Message-State: AOJu0YzwKMIAPRuXQz26AsL8WiVIG1jCAHZWNRov2MhsTLPyIixZ45Xk
+	oMZWLlPAXXY2WCgitNFEgWjdeRzGWDPYjlM3W6lXH6VeAMi3KQMP
+X-Google-Smtp-Source: AGHT+IF+Q+M86l7Qx4r0vqs78vkZcPhB/pCwYEDqZV+cSgfw6KiHKdWBc5piMJp6W/iMDhe00k4bHQ==
+X-Received: by 2002:a17:90a:c595:b0:2c9:7611:e15d with SMTP id 98e67ed59e1d1-2ca35c36578mr3641145a91.20.1720578981795;
+        Tue, 09 Jul 2024 19:36:21 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99aa65074sm10744798a91.39.2024.07.09.19.36.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 19:36:20 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id B791B184796BC; Wed, 10 Jul 2024 09:36:15 +0700 (WIB)
+Date: Wed, 10 Jul 2024 09:36:15 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.9 000/197] 6.9.9-rc1 review
+Message-ID: <Zo3zn6Jnb6YE4lmE@archie.me>
+References: <20240709110708.903245467@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zic0MhIYsiJHXIn+"
+Content-Disposition: inline
+In-Reply-To: <20240709110708.903245467@linuxfoundation.org>
+
+
+--zic0MhIYsiJHXIn+
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJHtUpDsgLCeLIQdS8546uqgvLWdQHhk3nlAbaaqcQDPX93AAGcPnKhsNHoffA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOJsWRmVeSWpSXmKPExsWy7bCmpq735940g3ULBCzW7D3HZHH9y3NW
-	i/lHzrFanD+/gd1i0+NrrBYfe+6xWlzeNYfNYsb5fUwWF0+5Wvzfs4Pd4vCbdlaLf9c2slg0
-	LVvP5MDr8f5GK7vHplWdbB6bl9R79G1ZxejxeZNcAGtUtk1GamJKapFCal5yfkpmXrqtkndw
-	vHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0IlKCmWJOaVAoYDE4mIlfTubovzSklSFjPzi
-	Elul1IKUnAKTAr3ixNzi0rx0vbzUEitDAwMjU6DChOyMeeeOsxT8FquY+PgfUwPjFuEuRk4O
-	CQETiQu3ZjB1MXJxCAnsZpS482QOlPOJUeJo6z9GOKdvcicTTMvtCZNZIBI7GSXOfV/NDOG8
-	YJS41NrCClLFJqArsWNxGxtIQkTgHpPEgx/tYIOZBdYxSmyeeYQdpIpTwEqi/U0zUDsHh7CA
-	t8T71hyQMIuAqsT8L1+YQWxeAUuJlXeuskPYghInZz5hAbGZBbQlli18zQxxkoLEz6fLwBaL
-	CPhJTD1+EapGXOLlUZBVXEA1Ozgktr06wgiyS0LAReL6XAWIXmGJV8e3sEPYUhIv+9ug7GyJ
-	4xdnsUHYFRLdrR+h4vYSOx/dZAEZwyygKbF+lz7EKj6J3t9PmCCm80p0tAlBVKtKNL+7ygJh
-	S0tM7O5mhbA9JA682cg0gVFxFpLHZiF5bBaSB2YhLFvAyLKKUTK1oDg3PbXYtMAwL7UcHuHJ
-	+bmbGMEpWMtzB+PdBx/0DjEycTAeYpTgYFYS4Z1/oztNiDclsbIqtSg/vqg0J7X4EKMpMLQn
-	MkuJJucDs0BeSbyhiaWBiZmZmYmlsZmhkjjv69a5KUIC6YklqdmpqQWpRTB9TBycUg1MMoJ1
-	L8T39snrHatrYWm9fDzLrWbbah3bJa6rvrIt1PrfxbIztG3mezVvbg3GMi6doKCHHy9G+lRn
-	XS1e+U/xqUQ7f7L9nQ7Ha6v/tj5u3OA72eO+xF+H4qsBCxZdmnl8pUSYPY8X7/sLHUfKZEJ3
-	7plSyr/0WpqWH6vyrrVf9FSDH3Ff+Dyv9otqsqzS/fzsV9NbNd9wH1t5pK5d47FaibibuMAC
-	pvwtxZOFFsSsnLVMoG5Z36kp7O6iGe/fH7zfYB/uf7lnocIsgxevb/77XXRJjmV/z5o31vfj
-	GdUP2S4y3XJ938VFptEvRKXvPds/ccPCKws+sPfuUS1Z9nlXOR/bfs6jMhoG7oU7nmm8UGIp
-	zkg01GIuKk4EAEObiUNKBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDIsWRmVeSWpSXmKPExsWy7bCSnK7X5940gye/NS3W7D3HZHH9y3NW
-	i/lHzrFanD+/gd1i0+NrrBYfe+6xWlzeNYfNYsb5fUwWF0+5Wvzfs4Pd4vCbdlaLf9c2slg0
-	LVvP5MDr8f5GK7vHplWdbB6bl9R79G1ZxejxeZNcAGsUl01Kak5mWWqRvl0CV0bvhLNsBRPE
-	Kn4d/MvcwHhcqIuRk0NCwETi9oTJLF2MXBxCAtsZJW78PskKkZCWuL5xAjuELSyx8t9zdoii
-	Z4wSO4+eZAZJsAnoSuxY3MYGYosIPGGSuPShHKSIWWATo8S53TfZIDoWMklc2fEarINTwEqi
-	/U0zkM3BISzgLfG+NQckzCKgKjH/yxewEl4BS4mVd66yQ9iCEidnPmEBsZkFtCWe3nwKZy9b
-	CDFSQkBB4ufTZawQR/hJTD1+EapGXOLl0SPsExiFZyEZNQvJqFlIRs1C0rKAkWUVo2hqQXFu
-	em5ygaFecWJucWleul5yfu4mRnAEagXtYFy2/q/eIUYmDsZDjBIczEoivPNvdKcJ8aYkVlal
-	FuXHF5XmpBYfYpTmYFES51XO6UwREkhPLEnNTk0tSC2CyTJxcEo1MK2rn7WJOYXBMzlnFvOB
-	jKJZz3KuR/or17Bu1Lwrojx/7R8J6SmRs3z6jW/xtKf/E13o98blupZNe+KfG8m5PQL/3hQH
-	mwRNVD17cS9v4R7frM89qV2GpbNnnOjxyI+9Gzt5SShb9PMvd1V9Wqwj9rb2sBY+P+X4S3dL
-	tqQKo/SaqJhLf1zvOeaqlQnffqXufsxpRd1txQ1/hC+/2J56KuTHslKva7tz/ou1ts6+f8fm
-	IuuGeXzpLf3stv0V1g0zn1UmmUc/3crv8bHSZ7umVcb8poif3goLRX53hrHJP2FyndrgJSIy
-	9fOapWd4pjq2TBeafq5y+corXKYZAZqaMsekeD79/GwQ927vAnFLJZbijERDLeai4kQAKJFF
-	ni8DAAA=
-X-CMS-MailID: 20240710023450epcas5p144d272af968fa2897bd7a87f0e9d7b7a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240707231445epcas2p18815fee7d176f63619d244d836ab64fc
-References: <20240707231331.3433340-1-sunyeal.hong@samsung.com>
-	<CGME20240707231445epcas2p18815fee7d176f63619d244d836ab64fc@epcas2p1.samsung.com>
-	<20240707231331.3433340-4-sunyeal.hong@samsung.com>
-	<000601dad12e$19ff3f30$4dfdbd90$@samsung.com>
-	<000201dad26f$b18c3690$14a4a3b0$@samsung.com>
 
-Hello Sunyeal,
-
-> -----Original Message-----
-> From: sunyeal.hong <sunyeal.hong=40samsung.com>
-> Sent: Wednesday, July 10, 2024 7:50 AM
-> To: 'Alim Akhtar' <alim.akhtar=40samsung.com>; 'Krzysztof Kozlowski'
-> <krzk=40kernel.org>; 'Sylwester Nawrocki' <s.nawrocki=40samsung.com>;
-> 'Chanwoo Choi' <cw00.choi=40samsung.com>; 'Michael Turquette'
-> <mturquette=40baylibre.com>; 'Stephen Boyd' <sboyd=40kernel.org>; 'Rob
-> Herring' <robh=40kernel.org>; 'Conor Dooley' <conor+dt=40kernel.org>
-> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> kernel=40vger.kernel.org
-> Subject: RE: =5BPATCH v2 3/4=5D clk: samsung: clk-pll: Add support for pl=
-l_531x
->=20
-> Hello Alim,
->=20
-> > -----Original Message-----
-> > From: Alim Akhtar <alim.akhtar=40samsung.com>
-> > Sent: Monday, July 8, 2024 8:58 PM
-> > To: 'Sunyeal Hong' <sunyeal.hong=40samsung.com>; 'Krzysztof Kozlowski'
-> > <krzk=40kernel.org>; 'Sylwester Nawrocki' <s.nawrocki=40samsung.com>;
-> > 'Chanwoo Choi' <cw00.choi=40samsung.com>; 'Michael Turquette'
-> > <mturquette=40baylibre.com>; 'Stephen Boyd' <sboyd=40kernel.org>; 'Rob
-> > Herring' <robh=40kernel.org>; 'Conor Dooley' <conor+dt=40kernel.org>
-> > Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> > devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;
-> > linux- kernel=40vger.kernel.org
-> > Subject: RE: =5BPATCH v2 3/4=5D clk: samsung: clk-pll: Add support for
-> > pll_531x
-> >
-> > Hello Sunyeal,
-> >
-> > > -----Original Message-----
-> > > From: Sunyeal Hong <sunyeal.hong=40samsung.com>
-> > > Sent: Monday, July 8, 2024 4:44 AM
-> > > To: Krzysztof Kozlowski <krzk=40kernel.org>; Sylwester Nawrocki
-> > > <s.nawrocki=40samsung.com>; Chanwoo Choi
-> <cw00.choi=40samsung.com>; Alim
-> > > Akhtar <alim.akhtar=40samsung.com>; Michael Turquette
-> > > <mturquette=40baylibre.com>; Stephen Boyd <sboyd=40kernel.org>; Rob
-> > > Herring <robh=40kernel.org>; Conor Dooley <conor+dt=40kernel.org>
-> > > Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> > > devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;
-> > > linux- kernel=40vger.kernel.org; Sunyeal Hong
-> > > <sunyeal.hong=40samsung.com>
-> > > Subject: =5BPATCH v2 3/4=5D clk: samsung: clk-pll: Add support for
-> > > pll_531x
-> > >
-> > > pll531x PLL is used in Exynos Auto v920 SoC for shared pll.
-> > > pll531x: Integer/fractional PLL with mid frequency FVCO (800 to 3120
-> > > MHz)
-> > >
-> > > PLL531x
-> > > FOUT =3D (MDIV + F/2=5E32-F=5B31=5D) * FIN/(PDIV x 2=5ESDIV)
-> > >
-> > Any reason for not mentioning equation for integer PLL?
-> >
-> If the F value is 0, it operates as an integer PLL.
-Thanks for clarification, it is good to mention the same in the commit mess=
-age.=20
-
-=5Bsnip=5D
-> > > --
-> > > 2.45.2
-> >
+On Tue, Jul 09, 2024 at 01:07:34PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.9.9 release.
+> There are 197 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >=20
 
+Successfully compiled and installed the kernel on my computer (Acer
+Aspire E15, Intel Core i3 Haswell). No noticeable regressions.
 
+Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--zic0MhIYsiJHXIn+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZo3zmgAKCRD2uYlJVVFO
+o+01AP4mIZ5kKbM9zklvAspFa6bsr7gp7U0T/+qaqHAhrD7v0gEAyp/AoqUHC3dT
+9wZ3pJAqsLYzVT61PWU1pEQRTKYwlgI=
+=4wD9
+-----END PGP SIGNATURE-----
+
+--zic0MhIYsiJHXIn+--
 
