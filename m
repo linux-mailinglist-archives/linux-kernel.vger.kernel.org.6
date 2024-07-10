@@ -1,88 +1,74 @@
-Return-Path: <linux-kernel+bounces-247330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38EFA92CE16
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:21:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3C8692CE19
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E103F1F218F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:21:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B7F0280EB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C208918FA1F;
-	Wed, 10 Jul 2024 09:21:06 +0000 (UTC)
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069A318FA14;
-	Wed, 10 Jul 2024 09:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626CF18FA0A;
+	Wed, 10 Jul 2024 09:21:32 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B741918F2F7;
+	Wed, 10 Jul 2024 09:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720603266; cv=none; b=u3401Dnk/DH/J0U4u1UdrxA6MnHfSphcjmDHtlZrJbVy3KIn/60KpKpXgTjwVUzO0fZBDUr18FLv+YhPpqCYwg5Nyto/MMXiC7WIrRY4tA188KDcklyZ/e+UdeI3/ne0yCLMyf1SOP1oMRbgnUHGVes0zmBoIdtGFwYOzECjigg=
+	t=1720603292; cv=none; b=rT3xRKAL281H1tAUYtay3nXxowRwoQRYrLsGJNbvxHbS25AGj3c1XbqCMJBnl1IUzxqbOdt6R7OS3MZpOSX88V1uVTi2sV1OuqQkXMTBAgqzeuePjvO+3NY/BmZ5Dbje2x7t24hnMw3EccJNgVnvc3s0ZUQcaes6GzjfOe3MiXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720603266; c=relaxed/simple;
-	bh=oZ0UJA4Acip3MKngjgpHuxz2PTeYKAyHntqjAxPEbLo=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=tA8ignm+pGa4D8APVfPb/NGJc4EP+9KiSaHWk0GuodL+jYiH28hswkxXjFOxLgcjiWK67K5Z32qXxONphYbuKMRziHrSUNpomta6jHMIEjugFRRAgcywLNMK5MexsCZiQKb3NVkNYluKgeXi8Yy1Uxf0RvCDwFyWgXt2b3ac/YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
-	by madrid.collaboradmins.com (Postfix) with ESMTP id A1F4E3782192;
-	Wed, 10 Jul 2024 09:21:01 +0000 (UTC)
-From: "Shreeya Patel" <shreeya.patel@collabora.com>
-In-Reply-To: <20240709110658.146853929@linuxfoundation.org>
-Content-Type: text/plain; charset="utf-8"
-X-Forward: 127.0.0.1
-References: <20240709110658.146853929@linuxfoundation.org>
-Date: Wed, 10 Jul 2024 10:21:01 +0100
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org, "kernelci-regressions mailing list" <kernelci-regressions@lists.collabora.co.uk>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+	s=arc-20240116; t=1720603292; c=relaxed/simple;
+	bh=CvV6B9ZEnynNgddzGLGfSr5hjeldvTVOvNTMV/usLK0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=qrYoytlqfyCbab5HMH5uyqpjx+q5F4tW6cNgvPY5lPQHLMgHiG3am8dxCk5NOm9oCDlIswwa8THSxYozCFFemlTIpjzyAFvUuUTCYTQ/n6w5ShvreWIAWwm2k0dV47LR0HvPw4mlRTgw+ISfwPz0wLRgMNaT9/zu2bx/Egvm1CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 1F66292009C; Wed, 10 Jul 2024 11:21:21 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 1B1E892009B;
+	Wed, 10 Jul 2024 10:21:21 +0100 (BST)
+Date: Wed, 10 Jul 2024 10:21:21 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, Jonathan Corbet <corbet@lwn.net>, 
+    linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
+    =?UTF-8?Q?Philippe_Mathieu-Daud=C3=A9?= <philmd@linaro.org>
+Subject: Re: [PATCH v3] MIPS: Implement ieee754 NAN2008 emulation mode
+In-Reply-To: <Zo457UgAkhbAgm2R@alpha.franken.de>
+Message-ID: <alpine.DEB.2.21.2407101015120.38148@angie.orcam.me.uk>
+References: <20240612-mips_ieee754_emul-v3-1-2c21b450abdb@flygoat.com> <Zn1FuxNw2CUttzdg@alpha.franken.de> <9cc26415-9cbc-47fa-a132-7d8c000874a4@app.fastmail.com> <alpine.DEB.2.21.2406272053180.43454@angie.orcam.me.uk> <fbd421a6-cf37-49ab-bdbe-6128a7cae8be@app.fastmail.com>
+ <Zoz6+YmUk7CBsNFw@alpha.franken.de> <7797a7b2-1bb2-4c45-b65d-678f685dfa3d@app.fastmail.com> <Zo457UgAkhbAgm2R@alpha.franken.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <24207a-668e5280-3-5ee11a80@72419162>
-Subject: =?utf-8?q?Re=3A?= [PATCH =?utf-8?q?6=2E6?= 000/139] 
- =?utf-8?q?6=2E6=2E39-rc1?= review
-User-Agent: SOGoMail 5.10.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Tuesday, July 09, 2024 16:38 IST, Greg Kroah-Hartman <gregkh@linuxfo=
-undation.org> wrote:
+On Wed, 10 Jul 2024, Thomas Bogendoerfer wrote:
 
-> This is the start of the stable review cycle for the 6.6.39 release.
-> There are 139 patches in this series, all will be posted as a respons=
-e
-> to this one.  If anyone has any issues with these being applied, plea=
-se
-> let me know.
->=20
-> Responses should be made by Thu, 11 Jul 2024 11:06:25 +0000.
-> Anything received after that time might be too late.
->=20
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6=
-.39-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc=
-.git linux-6.6.y
-> and the diffstat can be found below.
->=20
-KernelCI report for stable-rc/linux-6.6.y for this week :-
+> > > I'm considering to apply your patch, how much testing/verification did
+> > > this patch see ? Do have some test binaries ?
+> > 
+> > It has been tested against Debian rootfs. There is no need to test againt special binary,
+> > but you need NaN2008 hardware such as Loongson 3A4000.
+> 
+> that's just one case, what about NaN2008 binaries on a legacy MIPS CPU ?
 
-Date: 2024-07-10
+ It would be good to check with hard-float QEMU configured for writable 
+FCSR.NAN2008 (which is one way original code was verified) that things 
+have not regressed.  And also what happens if once our emulation has 
+triggered for the unsupported FCSR.NAN2008 mode, an attempt is made to 
+flip the mode bit via ptrace(2), e.g. under GDB, which I reckon our 
+emulation permits for non-legacy CPUs (and which I think should not be 
+allowed under the new setting).
 
-## Build failures:
-No **new** boot failures seen for the stable-rc/linux-6.6.y commit head=
- \o/
-
-Tested-by: kernelci.org bot <bot@kernelci.org>
-
-Thanks,
-Shreeya Patel
-
+  Maciej
 
