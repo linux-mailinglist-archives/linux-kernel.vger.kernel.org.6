@@ -1,193 +1,266 @@
-Return-Path: <linux-kernel+bounces-247578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0213D92D16E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:19:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA7B92D18B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C2B4B29639
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:19:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EED95285C57
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916BC1922E1;
-	Wed, 10 Jul 2024 12:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D68A191F70;
+	Wed, 10 Jul 2024 12:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="d64EYn10"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010060.outbound.protection.outlook.com [52.101.69.60])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JVcLdY5x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783F8191477;
-	Wed, 10 Jul 2024 12:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720613920; cv=fail; b=NcO8o8+W6u1jiWV0cmBUQN48y6CHQhYbncp5PFTSQOIQsDkCBaly2Ff4RtAwrb/ilNgC3Yz7QCvW29u9/Y/J1cV+yvIQ/nOIbXnjIdWUrKLFw0JIhliNuL4MNgDBSGT8tEwDelGq05tmOsInfA0kkos2UNHQYu3jlFkQBdD2ISU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720613920; c=relaxed/simple;
-	bh=ExV+RpNswrPRGA+WKUeHwaTdph4ssiA39H91lNS1flw=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=YKnWHl0Jd/lmq+gNrt/mNxD3xJcaMS5tXYi10crk3+BjVSaJcQORU2hTPuwdIsOuVH1G/37yAThTdNfG/jrAjAltvCVobTl4gLZ9pbh42GGoJG1QhZVuHlUZWb16LwDnxfWVisg/bAoBD00fUdKfMP4SEbd8HEKTiX8G+oZSyhk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=d64EYn10; arc=fail smtp.client-ip=52.101.69.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BxrLIHKYAdPFdUVodUtSbvjz2+gXf8C8Ltt3wCtaSzTaJ1EYtaSDb6ayUqWJDvL2KdW3wWcgmCSlwMZTqZA9OECASd0omaRqrUiXopvtJzHpl3gnVJOEEA2ON4VFWQSQSbKHmoRZDqLk3pr8LLh18ZLbDxeOEFOxND84Lqz6aBhQ5ORNsFoxIn1u1uZmJ34lI4tSUi73yzJtwSQPN9gENL7m7EPkQC47V7JkzDTkVU2ZEOO6g2a3fQ7VLlyl1NH5x/Q+5B0E/fMT2WVRFC2OlHeh0Hz/txT0+Miozw/spjkqkZVJ5jzizyycHo34s9lG2MzJG81fmNsRGwLlpBnltw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/AsbxyPe8r+M89vO7tRkT0ibxwgq2s2Bdvt+sLip8gs=;
- b=OIPPrVjFV9hdC8bRpd4SKG52g/R3n9a9Gmk+wFO6yuWKy0unDH9BaHhn478jI+VjbM6Fn92OCV9t6PxfsRXUxeCP/dv0UZQXV0kijscl93oQJwva866hI30WU3+QSBVnmNLBpccBRMShgDVGnoa3t9go+yKjV5riT+eoiWE4wj4ADGCvWgB7zmolL3EGaNDP6c0K8XGr5ByP1R02nRHlT0BK4uDADLGkKkw0qM79w1l7ZLei/94kQY+8p9BXUg+bbK34m0cXpP7uQb4jehDX4cnljLpztJOUWZum7J++bY4/WVcap+NDif5OPsHpgjEmxOthfEETlwE4mwoUPJcrbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/AsbxyPe8r+M89vO7tRkT0ibxwgq2s2Bdvt+sLip8gs=;
- b=d64EYn10TIa4V2PXoqjpiDJQZ3/7F8wDU4OlqYNSA9LUwrTn32oX749vhg6IE9GXqbKqO73D67P5/Jxm8P6PbQiE8zUxgYuklVIbjOIHViuJjM/LcGD9+Bm4NDBsbpcIkStRZj72FIA+N0PulfiT3bJHKUyiJw8NfTmdOBgckSk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by DB9PR04MB9789.eurprd04.prod.outlook.com (2603:10a6:10:4ed::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Wed, 10 Jul
- 2024 12:18:33 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.7762.016; Wed, 10 Jul 2024
- 12:18:33 +0000
-From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To: sgarzare@redhat.com
-Cc: virtualization@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V2] test/vsock: add install target
-Date: Wed, 10 Jul 2024 20:27:28 +0800
-Message-Id: <20240710122728.45044-1-peng.fan@oss.nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2P153CA0004.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:140::23) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82804848E;
+	Wed, 10 Jul 2024 12:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720614471; cv=none; b=lR8sYKtSYhggrzPR8xxy+4Fci6EF9ohJMVcCQBtukv2P0cWiJFNmYb4f9TzZuzbJG51AzO+dufT8EXobgJJGD1tTo8EHkC3gUVsBRc5Jdy7mG3sj7EkUdM+L7DhLkyDoavC+uzrKxTyi5dr58nDAo9bu6ofJH/4pvbrTIdbOj3s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720614471; c=relaxed/simple;
+	bh=4wrsszOLddIRNBVCieagn/MyNyNDe45McIeZkYshbCg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ss0OCHU57lBo+dAy3wtExx+HKcXPEQwNlD/pozqZnkUlvEEXNoSLDX8JkKij927VfzeJvbeN1riNV8MXa+NzcIRSv0DCVEiv8BC/ykwpF5kvtTRBuDrIswhvT2voOb8L0KMONwrALkrjmLL1+Gf+DDphWEPthZDNEg/jWbmUW9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JVcLdY5x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01BB2C32781;
+	Wed, 10 Jul 2024 12:27:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720614471;
+	bh=4wrsszOLddIRNBVCieagn/MyNyNDe45McIeZkYshbCg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=JVcLdY5x3P4C1FGSs4PttCGvweS+vX6H0GMYJaa1s39ZL/FisvxL4wItNYuZ23nfV
+	 +p18nfiHU3dSeOT8y71Rz8m6EcFyvcAZWfqI3fpPqE2wvugsueY2rKtagFLTJYndwu
+	 C72ZcaCJhqwm08OZTvXENRB0LzHoA9JBg/JftPAFV3Tx/zM4brsw/yX8fUuWd9Msa2
+	 5udmhfyEGXFouGKSwWFqLqHj0Xq/IMovCGlxZG5QlAiZ8ioi0LbwC4x24NPauCq7+x
+	 EQASDY4mkQT6H59zUqNWgfJxjKgMaqJJtfLOR9ezzB23LEmJmEhmbJ7JEBTAF7wEKj
+	 DeEXPtfXgz2xQ==
+Message-ID: <ab51cd2e8fef48dac690ca4549b409269ff9beae.camel@kernel.org>
+Subject: Re: [PATCH v2] fs: nfs: add missing MODULE_DESCRIPTION() macros
+From: Jeff Layton <jlayton@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, Trond Myklebust
+ <trond.myklebust@hammerspace.com>, Anna Schumaker <anna@kernel.org>, Chuck
+ Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, Olga
+ Kornievskaia <kolga@netapp.com>,  Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey
+ <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Date: Wed, 10 Jul 2024 08:27:48 -0400
+In-Reply-To: <e0a9f5ab-92d4-4a41-8693-358e861f2ef6@quicinc.com>
+References: <20240625-md-fs-nfs-v2-1-2316b64ffaa5@quicinc.com>
+	 <abe2e12fcd6a64b603179f234ca684a182657d6a.camel@kernel.org>
+	 <e0a9f5ab-92d4-4a41-8693-358e861f2ef6@quicinc.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40app2) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DB9PR04MB9789:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0236e507-3d38-40a7-d989-08dca0da6a9c
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|366016|376014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0QoXa0HgILMHc5wMd469KxjqhQ/Xf8VmatLKS+uT2divaRdE7xkXnxo99xpq?=
- =?us-ascii?Q?91str7D+UYy3FaM6iTG82i7VclAdbhxZYx+Pbjkx0gid+10nG46Bp1TVX3L/?=
- =?us-ascii?Q?OrIJ+pdji/ezNpcjmKIiKN2b4lcRcBKi85LSMIx1bKSGF0SlpbUEcaLPfuvN?=
- =?us-ascii?Q?cxb6In/jZiFCcPQSTyyDdYy/ZHBEYskgGrY7jLTzZUKRj+wyOPt8Y2wnvcTG?=
- =?us-ascii?Q?YBciQBJkX0xYNFAbOQkyEcvpjTljVxhJHxCLO0+z8aLR4wGeB3GscbfnvxiZ?=
- =?us-ascii?Q?gTmrNfG6gs01pbTUMDORTGxP7LIv5jk46WTquDrkUIhBvU/iXTAOoGU5KfuN?=
- =?us-ascii?Q?ue3K8xLl7nl5Ih4MdxgQCjxu2m3mUZcT5A4uMW4ABWDEoTOk5wqnuVdHyZXF?=
- =?us-ascii?Q?UeF3doQbz3N/4QI40iWWAfd8A4pBZ/NL0Uqj+sSL2XvEM9wUHUChS57ILe0f?=
- =?us-ascii?Q?lK3FLxG8ToqqBGWw+La4SOHUhQgm8Z9j5WxhSXxRxwY5FLVVmk66xF5vXO+I?=
- =?us-ascii?Q?tYcEK4GLsgH67HFvYrJioGIRpMhIF6ED2T6QCeduh3hNUNA+NShyQt0hAOdk?=
- =?us-ascii?Q?24a2VzkH28f8B23yJtzVjO4qCIxhDx1LvNzQcAGQP+TQWGjd0Gq3tuzB49e+?=
- =?us-ascii?Q?KC2Ny9Lje0wN9icw1GEf2eei7hZ4t6eQfF7ocfePVwFmRmObACiN92vz+b0E?=
- =?us-ascii?Q?B8FadsTe5IbavHqY1pmcyGXGQ/Fr6Q4DA1GvMACnWXOp6sNpqO/f2KV7AcDE?=
- =?us-ascii?Q?rrYMKdPgOqf9mOnmj7vRKevobiZQlDzLnk/kExFvcS+V0e+Fp7vP+sXd0p8I?=
- =?us-ascii?Q?gRyblTzrk2CZuBCJj5e5ob/IKw/CbZFvCvo6Fim5M0uE4vNvX/Ql0bJfiWLd?=
- =?us-ascii?Q?pb14gJUV7pz6QVRrGTwzduEWWV3jiz5ikeRozVJJt/l9Io4Zg8LjisFsUjCC?=
- =?us-ascii?Q?aQublgQBD50U/4lkt+zrAPxiSw0bWDaViRlFitIkYJd907JF2xEO52+Xc9fv?=
- =?us-ascii?Q?6cPAUI3ZaNw2NRdWDoXiFu7NL3Bco4a2mYxqtd9XZcBFBqi90HH2JpMVec7S?=
- =?us-ascii?Q?3RJlF5xG6S7nvGActfj+GjNiSbJe7sDpbojtqbYb/rDt9oY35DvQ1wtstPL9?=
- =?us-ascii?Q?4bcSa8vZieJNZVvOqwoYD/Uxjx6GKJwqRT8X7ezgsSd69pmEc93NqRKHV8ho?=
- =?us-ascii?Q?WicujWL4VOz4zqtJxftkyzvbliJ4ZBLcebW4u+uW3HXimfFrsKS5RKOXo95J?=
- =?us-ascii?Q?AxWLpTBCn6h4MIIhT4mT0+b+qc3Z8mVAoiAck/MYZXvm3ROT6ZwTUo+AgD9A?=
- =?us-ascii?Q?6x8+mZH5mN3pRCbwNT68SEcIf4cI9KdH/vhs46TiCwZfdZrd44HTBdYZKkCJ?=
- =?us-ascii?Q?Y7R73IIYYTf4z5eZvC0BljSXV7aQVscmxXEwahcwf7ZDhZoOsA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CRiKXdJQbEd0qc+75JG852E6sOZ5/mNmNVYW8h0W0RUNad42xCE8GTq2swvt?=
- =?us-ascii?Q?DgZM1BaGl+JoBlw/ifbxKhOVEAY+Sp+E7V4oNOdjBVebWI+1ezwj2ntrHMGU?=
- =?us-ascii?Q?4+0wRKse6KGDFcgbhWGyorS6DKmRSBD3CakyYH7T6qcVsWiddnM5ivCUYG2+?=
- =?us-ascii?Q?aXVDrAwILbTi9LFnt/jFRRPeOKXJ4GRf6c8nTXMmSBDaTBOVkagAoxvkEIwW?=
- =?us-ascii?Q?WiL9qsZBJ29Fh8q65aK7pUtXi2aU+FWIHsRYT4B6aluc/TKdLLQCZz3ho973?=
- =?us-ascii?Q?69sLyXzWSK3O2gR1oQD0TExjosYx25jl2FnBJyEMkg/H1IQ50pE/xKQXcl0k?=
- =?us-ascii?Q?vuCICsussevjPLIifwkqiEiasV753m6oGmuofb2iIZiFCaTqjXL3XKOHXToN?=
- =?us-ascii?Q?2cark0Z5103vNyxBMj2Q/f223bRk2VRwJmYMA3ehTWdPFLU1FH/MCtkOWn/I?=
- =?us-ascii?Q?jpWYgxqi1av2yTL9cUEzgNWkIGrrRBCMCCicUHI0FZm3Xwzi1Eg/CxC2hHos?=
- =?us-ascii?Q?bj5z4D8emGi9muoPHLsD/xS2xwQCXKafsC/omCoW7mw4a7JOy71Tcb1IflqV?=
- =?us-ascii?Q?ls5huoLBvS5/DLJHrcIQODFRxWLYNTnub6it1Ro0AWpLbv0cWPF8BDOe6nan?=
- =?us-ascii?Q?WlOtc+Lihbpyimqu85q5ur68sKLK61e4J+eXhog0zFFGVbwNhprxss2Eskxz?=
- =?us-ascii?Q?AelvB0HuODLZg7SANahFFNYiQ0tlrdfxcJOKpuE2DE1yRRdLD21jI/gD4A2r?=
- =?us-ascii?Q?PyL8+uS4P9DaCiBWHieMn9lCJb9DjTw3pjV8vP5u3M5ZvGG35SnPc3Ng7ezh?=
- =?us-ascii?Q?gXtDx6fB3XdYcFXk5ItqvbPZED4uFCpOMZ/7Sdc5iiDC9HAgyWLvdgumv+WT?=
- =?us-ascii?Q?4PusYJEV9QcLv8h/KooA/K7FNzGVmZUvFB7mzgRPUdbkJexPJiBmj/m57XhI?=
- =?us-ascii?Q?/2GlzSVhfKdseASTVClSIm8gSbpvLRVOP2x1y+f6TginkIGiaYY4SipAiP6I?=
- =?us-ascii?Q?nMz1Y0vimzEpJiASa4f06EPj0RmHOMX4kV1mrKntf/6dZwDkoM48wo+GVSo/?=
- =?us-ascii?Q?xM0ap4L2P7+97vIUisZpHOr+VWl2r0zUDGbScf+W7azt8uNrEOsFl70u6Ew7?=
- =?us-ascii?Q?PZ9NFXSYaQjf8F1+A/N3bZd2mse7IcBRSr1tg5aXGyi3jFhDWf5GBIwwzsFR?=
- =?us-ascii?Q?9EZ84bn2vdtLJUE5Z242BAlrlSEd4hSNhmtg1dZSU5uhyn7LOd6Mj10aK5Mn?=
- =?us-ascii?Q?8EsKtjMKb+2Gt9LeWaqeh7OB5Tzcux3Vu0fLA15c96aEfCYFhwDRwkMfIO6p?=
- =?us-ascii?Q?7qPLiD2tcTv1I1kxcwye6zCJBTqwuyJ1bDh3Cu+GSwNG7l/roI6h8mKnoDgR?=
- =?us-ascii?Q?hBP3QaEccJ8+H+Am6O1JHqgCWAQMZbhGmbLU8gyE1MnDsaAcS/fcSLlN5lbd?=
- =?us-ascii?Q?vI+t1Uhm4n4MmI5+HER/D7NpVunnGNUnYr3OHFFM1NYFslz+ZmkKQiY1Hk86?=
- =?us-ascii?Q?Al5kV9pH6qnuuY5MESCG2vzssdqVW6TIKpGMFI+aAEVP48QPS3S+99GIxEM2?=
- =?us-ascii?Q?cbWf3fBWzqREB4dWDz0o8uP4+QZb0UQtd0v/lFT8?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0236e507-3d38-40a7-d989-08dca0da6a9c
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2024 12:18:33.4740
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: n6+nZ0NdUWY0Iq/trQ+dM0jzukZ/5Z6TtaK5vuA8a/mvYz9qVqb9/o/nMAvEOWwWcS42LXQX8q4b11xAkJZBrg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9789
 
-From: Peng Fan <peng.fan@nxp.com>
+On Tue, 2024-07-09 at 13:47 -0700, Jeff Johnson wrote:
+> On 6/25/2024 9:44 AM, Jeff Layton wrote:
+> > On Tue, 2024-06-25 at 09:42 -0700, Jeff Johnson wrote:
+> > > Fix the 'make W=3D1' warnings:
+> > > WARNING: modpost: missing MODULE_DESCRIPTION() in
+> > > fs/nfs_common/nfs_acl.o
+> > > WARNING: modpost: missing MODULE_DESCRIPTION() in
+> > > fs/nfs_common/grace.o
+> > > WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfs.o
+> > > WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv2.o
+> > > WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv3.o
+> > > WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv4.o
+> > >=20
+> > > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> > > ---
+> > > Changes in v2:
+> > > - Updated the description in grace.c per Jeff Layton
+> > > - Link to v1:
+> > > https://lore.kernel.org/r/20240527-md-fs-nfs-v1-1-64a15e9b53a6@quicin=
+c.com
+> > > ---
+> > > =C2=A0fs/nfs/inode.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+| 1 +
+> > > =C2=A0fs/nfs/nfs2super.c=C2=A0=C2=A0=C2=A0=C2=A0 | 1 +
+> > > =C2=A0fs/nfs/nfs3super.c=C2=A0=C2=A0=C2=A0=C2=A0 | 1 +
+> > > =C2=A0fs/nfs/nfs4super.c=C2=A0=C2=A0=C2=A0=C2=A0 | 1 +
+> > > =C2=A0fs/nfs_common/grace.c=C2=A0 | 1 +
+> > > =C2=A0fs/nfs_common/nfsacl.c | 1 +
+> > > =C2=A06 files changed, 6 insertions(+)
+> > >=20
 
-Add install target for vsock to make Yocto easy to install the images.
+Given that this is mostly client-side changes, this should probably go
+through the client tree. Anna, could you pick this one up?
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
+Thanks,
+Jeff
 
-V2:
- Use VSOCK_INSTALL_PATH, drop INSTALL_PATH
+> > > diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+> > > index acef52ecb1bb..57c473e9d00f 100644
+> > > --- a/fs/nfs/inode.c
+> > > +++ b/fs/nfs/inode.c
+> > > @@ -2538,6 +2538,7 @@ static void __exit exit_nfs_fs(void)
+> > > =C2=A0
+> > > =C2=A0/* Not quite true; I just maintain it */
+> > > =C2=A0MODULE_AUTHOR("Olaf Kirch <okir@monad.swb.de>");
+> > > +MODULE_DESCRIPTION("NFS client support");
+> > > =C2=A0MODULE_LICENSE("GPL");
+> > > =C2=A0module_param(enable_ino64, bool, 0644);
+> > > =C2=A0
+> > > diff --git a/fs/nfs/nfs2super.c b/fs/nfs/nfs2super.c
+> > > index 467f21ee6a35..b1badc70bd71 100644
+> > > --- a/fs/nfs/nfs2super.c
+> > > +++ b/fs/nfs/nfs2super.c
+> > > @@ -26,6 +26,7 @@ static void __exit exit_nfs_v2(void)
+> > > =C2=A0	unregister_nfs_version(&nfs_v2);
+> > > =C2=A0}
+> > > =C2=A0
+> > > +MODULE_DESCRIPTION("NFSv2 client support");
+> > > =C2=A0MODULE_LICENSE("GPL");
+> > > =C2=A0
+> > > =C2=A0module_init(init_nfs_v2);
+> > > diff --git a/fs/nfs/nfs3super.c b/fs/nfs/nfs3super.c
+> > > index 8a9be9e47f76..20a80478449e 100644
+> > > --- a/fs/nfs/nfs3super.c
+> > > +++ b/fs/nfs/nfs3super.c
+> > > @@ -27,6 +27,7 @@ static void __exit exit_nfs_v3(void)
+> > > =C2=A0	unregister_nfs_version(&nfs_v3);
+> > > =C2=A0}
+> > > =C2=A0
+> > > +MODULE_DESCRIPTION("NFSv3 client support");
+> > > =C2=A0MODULE_LICENSE("GPL");
+> > > =C2=A0
+> > > =C2=A0module_init(init_nfs_v3);
+> > > diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
+> > > index 8da5a9c000f4..b29a26923ce0 100644
+> > > --- a/fs/nfs/nfs4super.c
+> > > +++ b/fs/nfs/nfs4super.c
+> > > @@ -332,6 +332,7 @@ static void __exit exit_nfs_v4(void)
+> > > =C2=A0	nfs_dns_resolver_destroy();
+> > > =C2=A0}
+> > > =C2=A0
+> > > +MODULE_DESCRIPTION("NFSv4 client support");
+> > > =C2=A0MODULE_LICENSE("GPL");
+> > > =C2=A0
+> > > =C2=A0module_init(init_nfs_v4);
+> > > diff --git a/fs/nfs_common/grace.c b/fs/nfs_common/grace.c
+> > > index 1479583fbb62..27cd0d13143b 100644
+> > > --- a/fs/nfs_common/grace.c
+> > > +++ b/fs/nfs_common/grace.c
+> > > @@ -139,6 +139,7 @@ exit_grace(void)
+> > > =C2=A0}
+> > > =C2=A0
+> > > =C2=A0MODULE_AUTHOR("Jeff Layton <jlayton@primarydata.com>");
+> > > +MODULE_DESCRIPTION("NFS client and server infrastructure");
+> > > =C2=A0MODULE_LICENSE("GPL");
+> > > =C2=A0module_init(init_grace)
+> > > =C2=A0module_exit(exit_grace)
+> > > diff --git a/fs/nfs_common/nfsacl.c b/fs/nfs_common/nfsacl.c
+> > > index 5a5bd85d08f8..ea382b75b26c 100644
+> > > --- a/fs/nfs_common/nfsacl.c
+> > > +++ b/fs/nfs_common/nfsacl.c
+> > > @@ -29,6 +29,7 @@
+> > > =C2=A0#include <linux/nfs3.h>
+> > > =C2=A0#include <linux/sort.h>
+> > > =C2=A0
+> > > +MODULE_DESCRIPTION("NFS ACL support");
+> > > =C2=A0MODULE_LICENSE("GPL");
+> > > =C2=A0
+> > > =C2=A0struct nfsacl_encode_desc {
+> > >=20
+> > > ---
+> > > base-commit: 50736169ecc8387247fe6a00932852ce7b057083
+> > > change-id: 20240527-md-fs-nfs-42f19eb60b50
+> > >=20
+> >=20
+> > Reviewed-by: Jeff Layton <jlayton@kernel.org>
+>=20
+> I don't see this in linux-next yet so following up to see if anything els=
+e is
+> needed to get this merged.
+>=20
 
- tools/testing/vsock/Makefile | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/tools/testing/vsock/Makefile b/tools/testing/vsock/Makefile
-index a7f56a09ca9f..6e0b4e95e230 100644
---- a/tools/testing/vsock/Makefile
-+++ b/tools/testing/vsock/Makefile
-@@ -13,3 +13,16 @@ CFLAGS += -g -O2 -Werror -Wall -I. -I../../include -I../../../usr/include -Wno-p
- clean:
- 	${RM} *.o *.d vsock_test vsock_diag_test vsock_perf vsock_uring_test
- -include *.d
-+
-+VSOCK_INSTALL_PATH ?=
-+
-+install: all
-+ifdef VSOCK_INSTALL_PATH
-+	mkdir -p $(VSOCK_INSTALL_PATH)
-+	install -m 744 vsock_test $(VSOCK_INSTALL_PATH)
-+	install -m 744 vsock_perf $(VSOCK_INSTALL_PATH)
-+	install -m 744 vsock_diag_test $(VSOCK_INSTALL_PATH)
-+	install -m 744 vsock_uring_test $(VSOCK_INSTALL_PATH)
-+else
-+	$(error Error: set VSOCK_INSTALL_PATH to use install)
-+endif
--- 
-2.37.1
-
+--=20
+Jeff Layton <jlayton@kernel.org>
 
