@@ -1,179 +1,141 @@
-Return-Path: <linux-kernel+bounces-247978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E15392D6D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:48:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F33C92D6D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:49:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40F531C210B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:48:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDDC2281161
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8283194AC7;
-	Wed, 10 Jul 2024 16:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDD7194AF7;
+	Wed, 10 Jul 2024 16:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MLeK+XYs"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TfJ31m0X"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9BA5190472
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E165190472;
+	Wed, 10 Jul 2024 16:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720630097; cv=none; b=EhZ0AlvLn3mXgG6bHNuzPT0QmTVmq/eEI/TqJ2OU1BrRnPwwdY7/DFhgdDswqKngbPCgnDtKTrBY/u4GXZLI5htA0r8yp+9tXWcm00a716vZWwYg+bo9OXBcuUBRrPP42Acel9CDDnieCOzdLzyYfU33qoNaSMS95a22TAugTV8=
+	t=1720630141; cv=none; b=mltICGkk5r1MJJZLOxLkDJSCi/NZ2s/yxkLEoXJpcBdTGJULsDTgLiFcmhIEAPmEvhAdecBPR8NJqJro6lhcEMUsmqR86eUJtFqGuk/Jc9fcU057H6ogz9Np2eceazZk/CK3jq/EpbSiMuaHvejO2IUVUoo0bo4qedJg93CpMK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720630097; c=relaxed/simple;
-	bh=aBr2yYvTYdJys4Svg50j/p4d7tTDXOblJFbpEv5+QJE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Konw0PECrzk2BFgTsKGtnev67IpS69aApED0Jh/iV9SkPtzl5g2Nu7iKMNRebnICkqBps5WI1xg+adxQAKyn9PbdMpFHh6WrbRBZDPwXjNJOCfi/ZglsebZkjoGfkbg0yXOM91IBmtUxUCArXmJy9AbFnc1rwZWPAdW8UJThuGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MLeK+XYs; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-64f4c11d2c9so52718877b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:48:15 -0700 (PDT)
+	s=arc-20240116; t=1720630141; c=relaxed/simple;
+	bh=+ngUvyNIMDI0dVPwuIaEz2ATgrqHeeU37EI9ohHmQOo=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=psxUaIL4CG0lveGI6UFYLDTkJ4duUGiB5D6FqI8HvRwRjcPUkenIFfS3A95f2PWmRik5/MLvaQNSlXe1PtdicBjxP+5AdC7nx6PttxfOyMf9zhGyc700BtCiE7qhCz+Qu5wAzYov7xe7YH32vRfxMZYMKo+Xxzw1E14vVNl17V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TfJ31m0X; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a797c62565aso105985066b.2;
+        Wed, 10 Jul 2024 09:48:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720630095; x=1721234895; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RuDM3Oavg7a7aWkCZ/CY2yFe5Ng8yBclNy+WY2KUGrU=;
-        b=MLeK+XYs+8ABg/TdK91UKMhz0GlYCV61XbH5wMd4OzN0tBsDA9S8MK0jy93R5kRqdt
-         4l/wcb2zuCviTEsEmn7zx05k0a9eX2WJxSKL9AWScQUXG5ZFqlO35N/Ddp9laxf6r+Y/
-         J+BbJ6Ij+jxHSfBQ6IIQVZNopc6deezqDnym+7t2a+t/2+Y4Shhyu0WEFrcDCG32H0Fv
-         228mpB7L9ZBXTFMaXiH2IJxpnvQHa7TGOjOuBjYXk6+V3nJDKlmsr1qmzMzYR9oJyWba
-         WB4gU8kjIa0mesp3MfN2oHqFAkVO9DbWXDSrfEQyoTL4CIB8uOKIfPyDsVi4sxV1ahEk
-         Zpvw==
+        d=gmail.com; s=20230601; t=1720630134; x=1721234934; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mZ5Fgm9vLR52D4wwBlA+HMoDcnz5HQEVDNo626dqfWM=;
+        b=TfJ31m0XDmyvoQLZLLjUUUzSsYGs4FMcgvuYBXVaSvQSusy3hKQ2y/Nl+hSTB0pBIt
+         WCU9pbgqIArssBzouF2GF1/4DfffjgUnywoxFU8v/WVzhLuivbFmija6Q+5474wgH3II
+         ExmN7r9LSyVNhGi0CpBliW+n7QkjDSkI4C4pD/PWYoIxs2PY8eyWV5pgDNKxAO2dXj9J
+         jAJvTN0sP5exUkfdKsJRfKy8MFw/3yGYiU9u7vdO9Cua3OzpKEEiJNnmDlXikMuQLjWw
+         M+5DUuG2Gys7vQrSLUaTo7/4j3f6kcnMATNY5vsDAiQMSWl/Tu+QvR+m2WSrXZSHcuvK
+         PGRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720630095; x=1721234895;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RuDM3Oavg7a7aWkCZ/CY2yFe5Ng8yBclNy+WY2KUGrU=;
-        b=gHvrkKX7TGHvKliO7V86Sqs+oJQs7BevdntXePHIL2TbZs5plAZUqDrlZkBRtFn79L
-         1QiTfzc8rkm/j5chZQGDPshAgU8I4SPzyhbJC+hJLAwWajujahMJ3MDco6QPxyS5soDM
-         JTTNj2sB9+vhI+Qd6ffwExesNB5nSy0jJD5VJlpUtwUD6reTCrrF7k1e5VFbZXIzGZKK
-         Nrmpaqo4UfOit10PLEaBssOw8KJEhGSMcG8J4KXeRmEp/c72xCnqV0ykEni9/J6CDOFr
-         ENRKW+UNrPzmxYk8lr22PXSqb4Ete/TUwdg24789o0KaOvJdun17vFtNNxzsU06e19Mw
-         XOSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPG3w/aV4+FBbwa74jSyShvancejFRFLj6TjMh8Co9ajECtfIfFhqPE/cbVQPINMgUUQzMXUZJuS6NjqmhbVLHjpUXK3oWfVSXRHJ0
-X-Gm-Message-State: AOJu0YzRAJqwDAzl5IZpt3eUB6DHsd2uyMsdqfqpqyXaMhu6CZdWbpKb
-	mKGgp8QzbmOruJt1bxeO6oaqy13ZtRVGg4qmgIzGLwTMi/OSCN7udGIOebF6jh+GQBJogtCeYbZ
-	7fBkrOLcY8W5u287/2kFEAbOfpRPwYD7IPpK9
-X-Google-Smtp-Source: AGHT+IEJvx0em+H6LCIgYPFqc5wzIKIKb8/L9hMaxZp+TLpsllYvO+qfvhu+Db/DSgLHIYpVSH8n7AdwjCO1O/h8wRM=
-X-Received: by 2002:a05:690c:6112:b0:631:ffc1:4397 with SMTP id
- 00721157ae682-658ef34a2e9mr80983457b3.29.1720630094523; Wed, 10 Jul 2024
- 09:48:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720630134; x=1721234934;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mZ5Fgm9vLR52D4wwBlA+HMoDcnz5HQEVDNo626dqfWM=;
+        b=mxS+SkSW9g86Xb+nWPP7gUt/+I8y6GjUHpfYjZPriPj5gDWMEaqJNF6ULJ4Wscafwp
+         53Oeadmb2tYkkpc5Cbr0JLh0xCO5uKP6kvKd3yxHeA6ocAWWzH6FRR/reG0+fCGSjFrL
+         sKGjeWDM2p38fMQO4l3O/nP17aoIeNF5ONQd/QqNPxc8GkTwgcbuq/dVAtA7cU+Ck5iV
+         UjN7cea0D6sqWmTwSHl8meQoXFQh9tzdigj0hE6v0raIfTiw84NFnlSDZi7jEIMShzot
+         mo447EzOVv5Jbc/U+Th/01qqUTU4pe2f40yaynF32L7vqyjahbxO3nTM0NCcp7HovvN3
+         Mi8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX5QUuRmG0wU3phiaKxcalvoUOYBM4GdS72KTGQaJmrpQKWGXpWMQxf2Wvf0/8M6HDCzwblNhnKJJl672+dXgjNLPkJkVyIyDnBKVlCmyFN024zC8oV0fJ+sb3HL2H17LVSrA2D5/ySBPsUiOhHHsEC
+X-Gm-Message-State: AOJu0Yy0KA74KubqCLNi+/MC75mCDDny179gmVJvl5Du612mUXJtlg1d
+	8UJezXiJRGf2qIGzbYQRjrpMzQwztf6HfXACiMymq3GVWq5019tK
+X-Google-Smtp-Source: AGHT+IHV+UY1VaTqQ+sQFxAzBoDDUb3ky3ChoM8MgrJclXvNtmLns/7fHXDdMCQvcjIVqs2Rmt/ZFA==
+X-Received: by 2002:a17:906:3590:b0:a77:c8f8:f9d0 with SMTP id a640c23a62f3a-a780b705305mr421737266b.44.1720630134261;
+        Wed, 10 Jul 2024 09:48:54 -0700 (PDT)
+Received: from krava (ip4-95-82-160-96.cust.nbox.cz. [95.82.160.96])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a8720f9sm174343166b.220.2024.07.10.09.48.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 09:48:54 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 10 Jul 2024 18:48:51 +0200
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org,
+	clm@meta.com, mingo@kernel.org, paulmck@kernel.org,
+	rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] uprobes: make uprobe_register() return struct uprobe
+ *
+Message-ID: <Zo67c9nvbRD0h4-b@krava>
+References: <20240710140017.GA1074@redhat.com>
+ <20240710163022.GA13298@redhat.com>
+ <20240710163133.GD13298@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240704182718.2653918-1-Liam.Howlett@oracle.com> <20240704182718.2653918-11-Liam.Howlett@oracle.com>
-In-Reply-To: <20240704182718.2653918-11-Liam.Howlett@oracle.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 10 Jul 2024 09:48:02 -0700
-Message-ID: <CAJuCfpEqJi30kz7Q0ZAJqkDuQH4ng8Wa+x0sK10wVbtQ9wF6dA@mail.gmail.com>
-Subject: Re: [PATCH v3 10/16] mm/mmap: Reposition vma iterator in mmap_region()
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lstoakes@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, sidhartha.kumar@oracle.com, 
-	"Paul E . McKenney" <paulmck@kernel.org>, Bert Karwatzki <spasswolf@web.de>, Jiri Olsa <olsajiri@gmail.com>, 
-	linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710163133.GD13298@redhat.com>
 
-On Thu, Jul 4, 2024 at 11:27=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
->
-> Instead of moving (or leaving) the vma iterator pointing at the previous
-> vma, leave it pointing at the insert location.  Pointing the vma
-> iterator at the insert location allows for a cleaner walk of the vma
-> tree for MAP_FIXED and the no expansion cases.
->
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-> ---
->  mm/mmap.c | 28 ++++++++++++++--------------
->  1 file changed, 14 insertions(+), 14 deletions(-)
->
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index f5b33de4e717..ecf55d32e804 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -2963,11 +2963,12 @@ unsigned long mmap_region(struct file *file, unsi=
-gned long addr,
->                 vms_complete_munmap_vmas(&vms, &mas_detach);
->                 next =3D vms.next;
->                 prev =3D vms.prev;
-> -               vma_prev(&vmi);
->                 vma =3D NULL;
->         } else {
->                 next =3D vma_next(&vmi);
->                 prev =3D vma_prev(&vmi);
-> +               if (prev)
-> +                       vma_iter_next_range(&vmi);
->         }
->
->         /*
-> @@ -2980,11 +2981,8 @@ unsigned long mmap_region(struct file *file, unsig=
-ned long addr,
->                 vm_flags |=3D VM_ACCOUNT;
->         }
->
-> -       if (vm_flags & VM_SPECIAL) {
-> -               if (prev)
-> -                       vma_iter_next_range(&vmi);
-> +       if (vm_flags & VM_SPECIAL)
->                 goto cannot_expand;
-> -       }
->
->         /* Attempt to expand an old mapping */
->         /* Check next */
-> @@ -3005,19 +3003,21 @@ unsigned long mmap_region(struct file *file, unsi=
-gned long addr,
->                 merge_start =3D prev->vm_start;
->                 vma =3D prev;
->                 vm_pgoff =3D prev->vm_pgoff;
-> -       } else if (prev) {
-> -               vma_iter_next_range(&vmi);
-> +               vma_prev(&vmi);
->         }
->
-> -       /* Actually expand, if possible */
-> -       if (vma &&
-> -           !vma_expand(&vmi, vma, merge_start, merge_end, vm_pgoff, next=
-)) {
-> -               khugepaged_enter_vma(vma, vm_flags);
-> -               goto expanded;
-> +       if (vma) {
-> +               /* Actually expand, if possible */
-> +               if (!vma_expand(&vmi, vma, merge_start, merge_end, vm_pgo=
-ff, next)) {
-> +                       khugepaged_enter_vma(vma, vm_flags);
-> +                       goto expanded;
-> +               }
-> +
-> +               /* If the expand fails, then reposition the vma iterator =
-*/
-> +               if (unlikely(vma =3D=3D prev))
-> +                       vma_iter_set(&vmi, addr);
->         }
->
-> -       if (vma =3D=3D prev)
-> -               vma_iter_set(&vmi, addr);
+On Wed, Jul 10, 2024 at 06:31:33PM +0200, Oleg Nesterov wrote:
 
-Before this change we would reposition vmi if vma =3D=3D prev =3D=3D NULL.
-After this change we don't do that. Is this situation possible and if
-so, will vmi be correct?
+SNIP
 
->  cannot_expand:
->
->         /*
-> --
-> 2.43.0
->
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index 467f358c8ce7..7571811127a2 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -3157,6 +3157,7 @@ struct bpf_uprobe {
+>  	loff_t offset;
+>  	unsigned long ref_ctr_offset;
+>  	u64 cookie;
+> +	struct uprobe *uprobe;
+>  	struct uprobe_consumer consumer;
+>  };
+>  
+> @@ -3180,10 +3181,8 @@ static void bpf_uprobe_unregister(struct path *path, struct bpf_uprobe *uprobes,
+>  {
+>  	u32 i;
+>  
+> -	for (i = 0; i < cnt; i++) {
+> -		uprobe_unregister(d_real_inode(path->dentry), uprobes[i].offset,
+> -				  &uprobes[i].consumer);
+> -	}
+
+nice, we could also drop path argument now
+
+jirka
+
+> +	for (i = 0; i < cnt; i++)
+> +		uprobe_unregister(uprobes[i].uprobe, &uprobes[i].consumer);
+>  }
+>  
+>  static void bpf_uprobe_multi_link_release(struct bpf_link *link)
+> @@ -3477,11 +3476,12 @@ int bpf_uprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
+>  		      &bpf_uprobe_multi_link_lops, prog);
+>  
+>  	for (i = 0; i < cnt; i++) {
+> -		err = uprobe_register(d_real_inode(link->path.dentry),
+> +		uprobes[i].uprobe = uprobe_register(d_real_inode(link->path.dentry),
+>  					     uprobes[i].offset,
+>  					     uprobes[i].ref_ctr_offset,
+>  					     &uprobes[i].consumer);
+> -		if (err) {
+> +		if (IS_ERR(uprobes[i].uprobe)) {
+> +			err = PTR_ERR(uprobes[i].uprobe);
+>  			bpf_uprobe_unregister(&path, uprobes, i);
+>  			goto error_free;
+>  		}
 
