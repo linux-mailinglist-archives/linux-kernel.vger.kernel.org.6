@@ -1,147 +1,119 @@
-Return-Path: <linux-kernel+bounces-247596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A312192D1B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:34:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06E9792D1B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A684B262CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:34:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A32681F24BCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D72191F62;
-	Wed, 10 Jul 2024 12:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6465F1922F9;
+	Wed, 10 Jul 2024 12:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NJtdrsdc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Pd0Z887G"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BB8128369;
-	Wed, 10 Jul 2024 12:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF82128369;
+	Wed, 10 Jul 2024 12:34:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720614860; cv=none; b=l0id6vImmv7AQxlKOqavZFAWwD+eTlWXapAWN/G7FLAYDAdiJ0m0N0IMYQrJiKBBox6xSU9K05w5dmdjBikGjHYUyaDOqq7WEgZ4V6lopnTvQg+8Q3sh7W/XlNua3Yeibh5UxMy031uvYJLbajgdpoYWFCXR3WL/m5qGMiOt8Rw=
+	t=1720614865; cv=none; b=ro8W70WnevC4i7Qh5RlOFMQOaNqxbu9kPs88EDsHH6ZTfDX74sF9tHogBLBj7k3eVdctIPySZOrmsRLiBH7HpzJXcDoDqf0ndZcw5J2CLu/CZKD9BclcWaBBF6QYFcxCx6Tp3JJoQvRMT9Ur8e5hI/Pb5gshb2vXfLiFqVhR/kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720614860; c=relaxed/simple;
-	bh=BFEunEcs5aC7iaDHnjDB4ntE9xA4uD5Oi8bIhDKbpc4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rZ8FhaDeF3LrUY73kAANLRLq3KlBZ68aea0ZtQXx45k1YD54iNey2WUocC2FKTJW7iwDYP0fY40QJqTWFve43TXLYfkfyhSdf8GnQV59uO4N+Itwetu61X6rxBAYWXjug1UfMjERcbKFBdtRnVO6SQnHeZSIi6pgPYxxyvAYpHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NJtdrsdc; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720614859; x=1752150859;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=BFEunEcs5aC7iaDHnjDB4ntE9xA4uD5Oi8bIhDKbpc4=;
-  b=NJtdrsdczb+XKWRDq1ZbDDrI4FrU2JQ+xS11w3mQcQXIK3b14IwQXEy7
-   LL0VIzz3qp1vl0KB1R5tMkYfXRzD9N+UtJn0AfSwBs4zkzOkS70AqWOEH
-   ppCXxrdr/7Skm2sTU8aTQbgipPA/UriQewkzrQiXsHIPJ6coopjcUi5D8
-   Vrh8/yAn0dIq+y5p4F5QPzpzKh/S0D/8vxum1wOFl5K1gHzyisVQHGZam
-   hbjO6iSF+6kw3zdkNONM9CoZbovVUTiluLlDUdNM1TL6BpNCvjNLrXYlm
-   jE7ICl5tz5i7Gwr+XUGeL4zQTaCktX3B5IC4rpoeGEYqOp5heBxFVTUJx
-   A==;
-X-CSE-ConnectionGUID: pW7AEx2nRg+EVp1SQry2eg==
-X-CSE-MsgGUID: LSl3BwL+TG6M9ZeuLrS4Fg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11128"; a="18136686"
-X-IronPort-AV: E=Sophos;i="6.09,197,1716274800"; 
-   d="scan'208";a="18136686"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 05:34:18 -0700
-X-CSE-ConnectionGUID: xa8q9aYMQ1eK4DrvGkWfqw==
-X-CSE-MsgGUID: puOcjTheTg+Cvxk4wOtLjw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,197,1716274800"; 
-   d="scan'208";a="48082515"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.49.253])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2024 05:34:15 -0700
-Message-ID: <6a577d6c-04ad-4c12-bfad-815e811deee3@intel.com>
-Date: Wed, 10 Jul 2024 15:34:10 +0300
+	s=arc-20240116; t=1720614865; c=relaxed/simple;
+	bh=wewUG4IZchjeZssOIuJfKJylJpoaeDqsB1KujGr5eHE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dGMhhKwayDuctcSGPMTEQEBh4zB0lO+RQ6sQN6P8hVkNquXoXPynWZOHbC1zxVS4rXtCL4TJvoK2enuZ/u5s+DV17YzEzx1nXvqoGizRPyXoB4JynJZh4XaLIN4KOhcXgwDhCHan+eoviolRWqZNZX7jAZ3+AJTysYLVDvxeink=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Pd0Z887G; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=48Y4AkOsRZ9alFneJAl39JsCkF7IC2qXmdtCVDdzxKk=; b=Pd0Z887GwhyPOXnZEoAU33AOq1
+	uGPX5oFdiowKCT3gB5cN3h6+DUDxS+o27rZWuakQXKVKOFxXNH0dprc935HA348i55X7RI9qlThx+
+	Zr7hV0a4h2QTSnDlJz5qZtack32BpD6QUTBEItgclstfsW75AUB0x7v8ulpBqxz6AAUM3JQQ1wpbq
+	eksmq4wd3aTxuG09gDmwWZgwdkri/4QB3mB6y2XQ9JjhpgDiqkqsjXfEk+Z+W6zamRkfw5Ty6mlpZ
+	3HKIQ2vhSvTwrOe75UdJvjsZcPTFyZ7lHlkAF9joJfG3W35LyyzucYpjb7IEjs1J11sRgtTQ/vS9H
+	KbuRn90Q==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sRWWY-00000009H4Y-2XuR;
+	Wed, 10 Jul 2024 12:34:18 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 2CF9C300694; Wed, 10 Jul 2024 14:34:18 +0200 (CEST)
+Date: Wed, 10 Jul 2024 14:34:18 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, mingo@kernel.org,
+	andrii@kernel.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org, oleg@redhat.com, jolsa@kernel.org,
+	clm@meta.com, paulmck@kernel.org, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH 00/10] perf/uprobe: Optimize uprobes
+Message-ID: <20240710123418.GH28838@noisy.programming.kicks-ass.net>
+References: <20240708091241.544262971@infradead.org>
+ <20240709075651.122204f1358f9f78d1e64b62@kernel.org>
+ <CAEf4BzY6tXrDGkW6mkxCY551pZa1G+Sgxeuex==nvHUEp9ynpg@mail.gmail.com>
+ <CAEf4BzZbjqoNw4jJkO3TOmPJSxyCAze56YeUQULPbK3oLmOvsA@mail.gmail.com>
+ <20240710101239.GW27299@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] mmc: sdhci-esdhc-imx: disable card detect wake for
- S32G based platforms
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
- Haibo Chen <haibo.chen@nxp.com>, Ulf Hansson <ulf.hansson@linaro.org>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, s32@nxp.com
-References: <20240708121018.246476-1-ciprianmarian.costea@oss.nxp.com>
- <20240708121018.246476-2-ciprianmarian.costea@oss.nxp.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240708121018.246476-2-ciprianmarian.costea@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710101239.GW27299@noisy.programming.kicks-ass.net>
 
-On 8/07/24 15:10, Ciprian Costea wrote:
-> In case of S32G based platforms, GPIO CD used for card detect
-> wake mechanism is not available.
+On Wed, Jul 10, 2024 at 12:12:39PM +0200, Peter Zijlstra wrote:
+
+> > [   11.262797] ------------[ cut here ]------------
+> > [   11.263162] refcount_t: underflow; use-after-free.
+> > [   11.263474] WARNING: CPU: 1 PID: 2409 at lib/refcount.c:28
+> > refcount_warn_saturate+0x99/0xda
+> > [   11.263995] Modules linked in: bpf_testmod(OE) aesni_intel(E)
+> > crypto_simd(E) floppy(E) cryptd(E) i2c_piix4(E) crc32c_intel(E)
+> > button(E) i2c_core(E) i6300esb(E) pcspkr(E) serio_raw(E)
+> > [   11.265105] CPU: 1 PID: 2409 Comm: test_progs Tainted: G
+> > OE      6.10.0-rc6-gd3f5cbffe86b #1263
+> > [   11.265740] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> > BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
+> > [   11.266507] RIP: 0010:refcount_warn_saturate+0x99/0xda
+> > [   11.266862] Code: 05 ba 29 1d 02 01 e8 e2 c0 b4 ff 0f 0b c3 80 3d
+> > aa 29 1d 02 00 75 53 48 c7 c7 20 59 50 82 c6 05 9a 29 1d 02 01 e8 c3
+> > c0 b4 ff <0f> 0b c3 80 3d 8a 29 1d 02 00 75 34 a
+> > [   11.268099] RSP: 0018:ffffc90001fbbd60 EFLAGS: 00010282
+> > [   11.268451] RAX: 0000000000000026 RBX: ffff88810f333000 RCX: 0000000000000027
+> > [   11.268931] RDX: 0000000000000000 RSI: ffffffff82580a45 RDI: 00000000ffffffff
+> > [   11.269417] RBP: ffff888105937818 R08: 0000000000000000 R09: 0000000000000000
+> > [   11.269910] R10: 00000000756f6366 R11: 0000000063666572 R12: ffff88810f333030
+> > [   11.270387] R13: ffffc90001fbbb80 R14: ffff888100535190 R15: dead000000000100
+> > [   11.270870] FS:  00007fc938bd2d00(0000) GS:ffff88881f680000(0000)
+> > knlGS:0000000000000000
+> > [   11.271363] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [   11.271725] CR2: 000000000073a005 CR3: 00000001127d5004 CR4: 0000000000370ef0
+> > [   11.272220] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > [   11.272693] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > [   11.273182] Call Trace:
+> > [   11.273370]  <TASK>
+> > [   11.273518]  ? __warn+0x8b/0x14d
+> > [   11.273753]  ? report_bug+0xdb/0x151
+> > [   11.273997]  ? refcount_warn_saturate+0x99/0xda
+> > [   11.274326]  ? handle_bug+0x3c/0x5b
+> > [   11.274564]  ? exc_invalid_op+0x13/0x5c
+> > [   11.274831]  ? asm_exc_invalid_op+0x16/0x20
+> > [   11.275119]  ? refcount_warn_saturate+0x99/0xda
+> > [   11.275428]  uprobe_unregister_nosync+0x61/0x7c
+> > [   11.275768]  __probe_event_disable+0x5d/0x7d
+> > [   11.276069]  probe_event_disable+0x50/0x58
 > 
-> For this scenario the newly introduced flag
-> 'ESDHC_FLAG_SKIP_CD_WAKE' is used.
-> 
-> Signed-off-by: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
+> This I'll have to stare at for a bit.
 
-Should have:
-
- - put the patch set version number (v2) in the subject e.g.
-   [PATCH v2 1/3] mmc: sdhci-esdhc-imx: disable card detect wake for S32G based platforms
-
- - added Haibo Chen's Reviewed-by tag
-
-Anyway:
-
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-
-
-> ---
->  drivers/mmc/host/sdhci-esdhc-imx.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-> index 40a6e2f8145a..21d984a77be8 100644
-> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
-> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-> @@ -201,6 +201,9 @@
->  /* ERR004536 is not applicable for the IP  */
->  #define ESDHC_FLAG_SKIP_ERR004536	BIT(17)
->  
-> +/* The IP does not have GPIO CD wake capabilities */
-> +#define ESDHC_FLAG_SKIP_CD_WAKE		BIT(18)
-> +
->  enum wp_types {
->  	ESDHC_WP_NONE,		/* no WP, neither controller nor gpio */
->  	ESDHC_WP_CONTROLLER,	/* mmc controller internal WP */
-> @@ -298,7 +301,7 @@ static struct esdhc_soc_data usdhc_s32g2_data = {
->  	.flags = ESDHC_FLAG_USDHC | ESDHC_FLAG_MAN_TUNING
->  			| ESDHC_FLAG_HAVE_CAP1 | ESDHC_FLAG_HS200
->  			| ESDHC_FLAG_HS400 | ESDHC_FLAG_HS400_ES
-> -			| ESDHC_FLAG_SKIP_ERR004536,
-> +			| ESDHC_FLAG_SKIP_ERR004536 | ESDHC_FLAG_SKIP_CD_WAKE,
->  };
->  
->  static struct esdhc_soc_data usdhc_imx7ulp_data = {
-> @@ -1726,7 +1729,8 @@ static int sdhci_esdhc_imx_probe(struct platform_device *pdev)
->  		host->mmc->caps |= MMC_CAP_1_8V_DDR | MMC_CAP_3_3V_DDR;
->  
->  		/* GPIO CD can be set as a wakeup source */
-> -		host->mmc->caps |= MMC_CAP_CD_WAKE;
-> +		if (!(imx_data->socdata->flags & ESDHC_FLAG_SKIP_CD_WAKE))
-> +			host->mmc->caps |= MMC_CAP_CD_WAKE;
->  
->  		if (!(imx_data->socdata->flags & ESDHC_FLAG_HS200))
->  			host->quirks2 |= SDHCI_QUIRK2_BROKEN_HS200;
-
+I found one put_uprobe() that should've now been a srcu_read_unlock().
+That might explain things.
 
