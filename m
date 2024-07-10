@@ -1,130 +1,136 @@
-Return-Path: <linux-kernel+bounces-247625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9516D92D21B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:00:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87D8A92D222
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28065B23DBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:00:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3286B1F237CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33AC019246D;
-	Wed, 10 Jul 2024 12:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C129192480;
+	Wed, 10 Jul 2024 13:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="vYx7VkBq"
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="H/pXqN6N"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844A8192B62
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 12:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5317F192488
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720616381; cv=none; b=uSYGSE6bgoRPuPWPM4SD6gfjwK0AyWP2Mc9hlfQB4TwntleexRtaRidFsk63evHyoUNGkTeWiJ8d6zphUKuC8r+6zUyVcwOcxyXPPRBhKBtDP+IdPNvg0a1hF2EcLVajkTsSLdNFQooaOrJFKuuwUPx8M6RlpE43Iost97Ry0Ec=
+	t=1720616403; cv=none; b=SuAeNP23gqfH4K0V8+efWeAtyBd8C5qMaRGnZX1CuGSm/HO3nWUm4sBrhBJHqW5mt91x667UzZwhLuix9aIrJgLRsujKmhYnGr45ymVhSTGynYbZc4NcO2MwcwfzWYH/5uPZdqaJVC1wEKHcwJIqu1/3279cXJa8L5yTsOAM24w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720616381; c=relaxed/simple;
-	bh=obHF9AJpMxnGLrY5noCk5gC/7nZIV0lagmg4KPXKWIs=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=NPvkRupbodZPu4ngzqMwrC8IdzGnzl9RL3hFB2YWva6rNWWd+7yDaOjgpj8JWniGeMxayJ4iJPDMYFPKSJnC2625O31CLzEoZjdtLIO6VHb4D0OINKYaFdgQ7e+nOR/vzxZubzukPOWgGXBVR1WOYB+uZCK8KW+vQ6ZNPdDOJLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=vYx7VkBq; arc=none smtp.client-ip=44.202.169.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6004a.ext.cloudfilter.net ([10.0.30.197])
-	by cmsmtp with ESMTPS
-	id RPQys2tuvAidIRWv3siMOS; Wed, 10 Jul 2024 12:59:37 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id RWv2s0TJLDweaRWv3sne4E; Wed, 10 Jul 2024 12:59:37 +0000
-X-Authority-Analysis: v=2.4 cv=BcYT0at2 c=1 sm=1 tr=0 ts=668e85b9
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=-Ou01B_BuAIA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22 a=nmWuMzfKamIsx3l42hEX:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ByEBJS4d3crkbAji8f8f5XgXAQWRnugm4hD1So0pZnw=; b=vYx7VkBqHnuay/hP/6O5hbOj3o
-	gz6vgQbbQQb06mzc0f6w6J4f6IjVl1y6bMecAOMTazScMUcLdR77eLHE57ung84uaGcwAoymT1/Qw
-	XcHxLnaPDgZPXOPlaaZVjbql0VPHaakjXDbN5N/04fa/7m9J2ltsZdrYAVd3hfyHVAYtjc9mmFou4
-	/jdFaItRVe0obhVVsH5Th1IIlZ2rCxTPSPdLwyi5pDH5lVpA1WXyTsceplJKa8IarsXCQsm0xiLqc
-	NG4AT2HYSWHHYn7isuly8gcRZCtXCjY/Ya4FRISBQgnngCq5RbMJcOj6yi0a86SzSGQP81yb+ZuNT
-	W1+AHdTw==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:47970 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1sRWv0-001cyG-1t;
-	Wed, 10 Jul 2024 06:59:34 -0600
-Subject: Re: [PATCH 6.9 000/197] 6.9.9-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240709110708.903245467@linuxfoundation.org>
-In-Reply-To: <20240709110708.903245467@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <0edcfe59-908a-dc29-a34e-afa7923b25a7@w6rz.net>
-Date: Wed, 10 Jul 2024 05:59:32 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1720616403; c=relaxed/simple;
+	bh=+q8K+JhEmrQnBJLkJsy7lFA+cisrhXhsBdLSScjyYmY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E99jURynzbeR9hmV8HKrAjG0J5ShlKqz7QVicQ4DDyRiaStx+sdqhOB//aWhJmn1tzRmtVwN/TvOC3Uc5szrNfAnYyweoDbQ3BIiwOVCn3OY+WMkO3I5VtfG9a+Yld0wKLtKU/P8y8t0g1QiiuZKN7/gJre0wjopxuV0MIdHSdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=H/pXqN6N; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ee90f56e02so62129571fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:00:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720616398; x=1721221198; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VGdJpvqIEQU8RX9NGwZGOHnsVHJRF022GnfIot2nots=;
+        b=H/pXqN6Ni5GIa/0lwuWvURtitRPQTpC6tgkWVPIUVd7seDFf1KkPsy6AsiTKhrlffQ
+         sqqne0JaKEDdQLicFH4fhbh5ZhQ54TzWG3xyIZ5oOc2SpTo5r582kO7aF8Ntq6VvHBsC
+         WR5HY8SGW04btEjfM276HTqngrI3yWBkSBe8EHN8ccKUUfHp9q9wycHzfOrVS3Bq8h9e
+         Hnk6jjtwnSDZt6xN7B3i4lkEz6b8/lRyKf83yRSSBW+xE6BQInJB+pTFgiZDlltFNJrR
+         ltOO8+FvBSooMQNIQDnz81QRj9tkvmsWaiJccrnVmiF6eCo0/nhyiYFOGvoFbk7JTyzd
+         zmwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720616398; x=1721221198;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VGdJpvqIEQU8RX9NGwZGOHnsVHJRF022GnfIot2nots=;
+        b=LFXIN7QfAc2NoV04kKp6b5rVjuWX63L3dyEjXruyfj68FwBrLpJCQ9qaiiG8tb7hst
+         pDOB2vf7VTOosmIlwEVz6IhMtJ2F5VKGK5tzo6IOGHQpDElLN+FBRlvqxYC6uS82zZAj
+         ZlZWwstT3LDazlCSxMaU+bgw+3N2gBZalygj1gt1PgegsxhoVevwZ0E2+evcAMyKMUdO
+         cgWYOJv9BmHY6XBOIyPpKF42dFyhGhmTNhyzz4j4RKNf62XZn+BAXMGpupDSmrD0mSf5
+         1ipF3kyxjx1QA95QUkXKQ5jJ061CsC8llj7LZptr/qVs6ceZC8ltNFPtkvNC9a4BJSHR
+         mJVw==
+X-Forwarded-Encrypted: i=1; AJvYcCWtrrdqGpuq3jcnoCwSU4Uez0tkyoo7g3Vt2a2E34UiJBYiJTWQR0E5a4MzeAzlNHq0d5n6ImCUmV2i4qdhqAmEWvGSEESUThWA6m6M
+X-Gm-Message-State: AOJu0YxrJfppKho0JXIgYNEkwbsHt+QyFwCBGA1Xjnd4cQbBEICaHmy7
+	Dda9fpBIwOmSnt1KE0htmqzohIseEvemD6dGM0mwPPdDdFkQqeooPh2bqfsR35BnAsD2z3AW8z7
+	OPBIn3HMXFEkhWsIxXxtz3JdJYNfA9vAfiWj0LA==
+X-Google-Smtp-Source: AGHT+IH/j0tB3q6Oob0h+dYBea8dzUqqOODjZONtdFvf3j/P6dPoyQJkhUenc2mYLdwUqlwO12I2J5bpi1srvsWqmLs=
+X-Received: by 2002:a2e:b046:0:b0:2ee:83f7:8b32 with SMTP id
+ 38308e7fff4ca-2eeb30dc45amr34980521fa.21.1720616398404; Wed, 10 Jul 2024
+ 05:59:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1sRWv0-001cyG-1t
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:47970
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 4
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfJ1aakVu2C87Yf28kcPipRkAaL/bEd3XgAIz+Ih0QataID9NkAco0BnlEilChg5f4jf52mkzgpuj3OJFMu/B1PYAafmfkJgNNeQN+5Pb1dY4Uyy3GB3O
- hPKP99BZ+3qab1SkoISv4bJjPxAwOb4BYWqgAP9kj70kG6GlT6CehfnpD5moapvTDtAD/QvWu/yKWXSrFr99Ke690BXf6uO3JhQ=
+References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
+ <20240701-b4-v6-10-topic-usbc-tcpci-v1-5-3fd5f4a193cc@pengutronix.de> <27cf3056-5c7b-4759-b03a-1fa9b785611e@app.fastmail.com>
+In-Reply-To: <27cf3056-5c7b-4759-b03a-1fa9b785611e@app.fastmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 10 Jul 2024 14:59:47 +0200
+Message-ID: <CAMRc=McvRLeCTTXgC_OD5z5OAxQ0pZ46dTKP8XO+T-LkXKgRfQ@mail.gmail.com>
+Subject: Re: [PATCH 5/9] ARM: defconfig: convert to MTD_EEPROM_AT24
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Marco Felsch <m.felsch@pengutronix.de>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@armlinux.org.uk>, 
+	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Vladimir Zapolskiy <vz@mleia.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Gregory Clement <gregory.clement@bootlin.com>, 
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Tony Lindgren <tony@atomide.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Dinh Nguyen <dinguyen@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jon Hunter <jonathanh@nvidia.com>, =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Huacai Chen <chenhuacai@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	imx@lists.linux.dev, Linux-OMAP <linux-omap@vger.kernel.org>, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, 
+	openbmc@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-mips@vger.kernel.org, loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/9/24 4:07 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.9.9 release.
-> There are 197 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, Jul 10, 2024 at 2:49=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
+:
 >
-> Responses should be made by Thu, 11 Jul 2024 11:06:25 +0000.
-> Anything received after that time might be too late.
+> On Mon, Jul 1, 2024, at 15:53, Marco Felsch wrote:
+> > The EEPROM_AT24 Kconfig symbol is marked as deprecated. Make use of the
+> > new Kconfig symbol to select the I2C EEPROM driver support.
+> >
+> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> > ---
+> >  arch/arm/configs/aspeed_g4_defconfig   | 2 +-
+> >  arch/arm/configs/aspeed_g5_defconfig   | 2 +-
+> >  arch/arm/configs/at91_dt_defconfig     | 2 +-
+> >  arch/arm/configs/axm55xx_defconfig     | 2 +-
+> >  arch/arm/configs/davinci_all_defconfig | 2 +-
+> >  arch/arm/configs/imx_v4_v5_defconfig   | 2 +-
+> >  arch/arm/configs/imx_v6_v7_defconfig   | 2 +-
+> >  arch/arm/configs/ixp4xx_defconfig      | 2 +-
+> >  arch/arm/configs/keystone_defconfig    | 2 +-
+> >  arch/arm/configs/lpc18xx_defconfig     | 2 +-
 >
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.9-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
-> and the diffstat can be found below.
+> Applied to soc/defconfig, thanks
 >
-> thanks,
->
-> greg k-h
+>    Arnd
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+No! Why? This is still being discussed and it's not clear it will even
+make it upstream.
 
-Tested-by: Ron Economos <re@w6rz.net>
-
+Bart
 
