@@ -1,209 +1,203 @@
-Return-Path: <linux-kernel+bounces-248339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B34F992DBE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:27:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7559492DBE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 00:29:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3ACF1C236FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:27:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C25C2861E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF62149E0E;
-	Wed, 10 Jul 2024 22:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC7E1494CE;
+	Wed, 10 Jul 2024 22:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kNtUg6xm"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="T6z+AU0s"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C827219F9;
-	Wed, 10 Jul 2024 22:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA3114AD3D
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 22:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720650428; cv=none; b=uHw/UV5aLzwSfnkRFUdk1yf9017t9c1oEiEicAKWyUY4zJd7MKBuJl5VgiqHjG9pJqDRBY8exkY/otCJB7trB3sjyUbU2Qlh4qhZn4jCKwQLMrvudRMdZIWoXzb57pY/Xp3d4GX30NKgquA+v76zS0ohEvYRbyUiQkD4JPceuLc=
+	t=1720650583; cv=none; b=Ws1TpHYTs+fMHLaKJzEWlefayiGzg9yzkzxJto51SeyCXCo6gMErU/qnqGy+laDpDh/SVz7hAcTR/KTbBUdZy3ZPyT7rYrMG32Hfd/5QsgOMdMqkE1I663lpaF/6b6Cx0i7N+NI1YuQ8PV8TvVt6tb3C0dawekeEdnnDnm+bC5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720650428; c=relaxed/simple;
-	bh=G1+nNhIsGUQHbss19tlUCSGwPVzvI+a7IrCT1i0Lyqo=;
+	s=arc-20240116; t=1720650583; c=relaxed/simple;
+	bh=rsM6wOIIuPtiTXHYi0ZYdEkTXszm2PRQO/8IL35wGpA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cdx1Uz43u5NLdXVHVCaOwhgSbRlSY/mBL7Y7LSnGQEVAuzs1HwgDCt+Mr8Bn2aFhmMOvzsLd0u2aiw6mDoKTPK9pmfrkdCVWdsfLWXLYk9qnVlYK8LLBhfK5F9WdsRauFU5hlkGZJ9rJpk5iVaYfub3xzxYN7DdMrCDMgMmcF2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kNtUg6xm; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e03a9f7c6a6so228046276.3;
-        Wed, 10 Jul 2024 15:27:07 -0700 (PDT)
+	 To:Cc:Content-Type; b=rwxr9na9Xl0bWAOIPCSxO2XnGm0ZllFaiiZkTTnX2YTjzZCrufonaarirPcGadzst6OdzLt85hrCC4R2i3am11TzHy2zMcmhQAUqRDb+Rw++Yw0ICOV2qgPncKlF/NdFy16wza+h79mkG5uoRW0Bj/1VdH4WfnwCreDsPAR7OmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=T6z+AU0s; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2c2c6b27428so229452a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:29:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720650426; x=1721255226; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1720650579; x=1721255379; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=I/Cc2aQVQ5C4YUCt2A1KuP8JFLG/zHl92A4qTb1v1cg=;
-        b=kNtUg6xmzEvX9mqenkyG0qUg1YYcIJtJmm/lVuoqvZLJurbQylljZeqC0xOZhKeBKB
-         DL2CUvAN3VfeZFLBDngmC4xYTiII1a2uD60Yrxows4LkfrvGrcofWVg0XK/ZaO8JJZLB
-         /ds/adsLkMLpZX3FC6Xr0Ok3qdfhZEjdt0S7WqdqoNrorVJgg7GXg0tSFsN4qsA7Iapc
-         Gu59/9gNSQlyFoNyJoHuKt/gsiigwD5xolxDEWM4uZsLh3v6KZt6HJ0Im/EvIjFp2kzT
-         S7BtmhCAJyfK3PTAZN7RHMjnpOSV9tcCP+s0rTTU3oiVqPgqFxBZVlR5EmxZCG74KrQ7
-         WJhA==
+        bh=4NTgih/I/qtspn9wPSsT5PQdbbKiYuSLrBWTOJWi/Yo=;
+        b=T6z+AU0s8w6gBLmADCXNMWbBsHGbY+tyinUxuEH/OO0q6Wg9FiImX3vui2ZkY52XYR
+         wWiDFDtWYaCfgTLpPuoTndyQ1H3OQ6FJq3XrLMTPwRdVoqhb3VUvEM+74iSgFLMA9J+1
+         SK9SJFvC22mefOQz4eKZTJxqesD3Ej5lDMMmwARPCJgeOne4FP7n8vXLcZ36XmwAAwNS
+         unRhQqWMH2LSDrhlNlVR5B/scKOSiQr5zz5h4zxMcZhkgK9WJ1vGhnfNmQZLd9/nTMZ6
+         dD1DZaZYuPij2sCklOStYQz5FRDCMZU5LS3zf1sqpycORsqKxsvt1s698FlcY5eTZoAx
+         /J2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720650426; x=1721255226;
+        d=1e100.net; s=20230601; t=1720650579; x=1721255379;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=I/Cc2aQVQ5C4YUCt2A1KuP8JFLG/zHl92A4qTb1v1cg=;
-        b=XclFOzzOZASXhaToJPVDH29jYQN86LWi/x6CU5qhnUqZxHB/g+z79wJuQafl84UVyj
-         N/NT9U3ase/hRo66W4WTWcwrt1CHfaJUEcjhqSww8DoEp/AHaae+a0e/DwHSBAtjGadM
-         pt6Nf8BlkE4zpoHEprDY/s+9ObDSbeKArhIB9jKNjbKSb8EVarQPL3ne54Y22oaQse5u
-         xNYNXJxumcxPvrfD/CJtHCDeF/gVJEzBz7mcpBbHt6Ilbms8Ps0WQMraTyK7fe1mnzJ3
-         zWc50phUaGEbJFf/Wj7Cs+MnSRT9DeGRf9VMqqVUh6TRep1iIcHaG9rhC2TK4RU5d553
-         kKyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUY/hk/KnkndEfcGflZI3bvgs0thn5PjkIGNnkN3eovjLtRK2Ylyyp6oYKqjtNdF4uZ2F6LuT7ocPvcv09KSbsCmgHm1RABEdVvglTID+Nr0iFm0e/q2o4Yiw2MlibLL+ZsUhBmG68
-X-Gm-Message-State: AOJu0YwvableGWw8JAXi8fJnEqJE6DAHudQkj8ASgP9FU1rIvuns1r8n
-	GLF036PDyWXYfomKeah1LR9BtpKNbfvG/oILQpwtu27YN0CzpKrg+aMCFfCvuUsIGJOO3tbEFyT
-	5QGkrEiPYOsWSPV5BXNs7TG8m6/E=
-X-Google-Smtp-Source: AGHT+IE3MSNblNyjPTWlXtNx8ItMNm10tT48kqwkStoBU3USdjc5JBVU9DQ4bDKUP4uy6AFDnPXlKLFcfHrwVbPwkz4=
-X-Received: by 2002:a25:8387:0:b0:dfb:bf0:59db with SMTP id
- 3f1490d57ef6-e041b120cdamr7581879276.41.1720650426328; Wed, 10 Jul 2024
- 15:27:06 -0700 (PDT)
+        bh=4NTgih/I/qtspn9wPSsT5PQdbbKiYuSLrBWTOJWi/Yo=;
+        b=nRc2VGVVivhfDoj74HfHDqXQTPzpfFuGrB33qFq42VyBKa9VCpzaAPxDtu546HBQNq
+         IFStaTT+qNlf1HWzmUdGRx4VjrX2XKVvCU8YTw0NCKrcq3UgUevgR3bdGQhP/vmRGxJ5
+         LS0UIwZisdMI328wQmCn0o+NaPb1RknBUTELs2tLygj5MarOzN4r9+BGAMfKgrPSDv0N
+         74Cv5wsCkX8bo6pGi+MRkZzCfRXPtiR7/epoFHtWyz2yewrCtk0uouwN1D9tjm1T0Qm5
+         CMW0yMr6EfbhRw284tkgwf50s/MYhnNFjAwlZikxsxMHogtw1Um2Y6A49l7vpG/cfyaB
+         4HWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWfqd3G6E7bA/ylCft49+a6xX7P94O+UOZCkObDpo3ecVDmRMNh7yG+IzNmVQt4R1+FLECkGgkB5IWkqs4iXHcJblqngVzPLDuj40v
+X-Gm-Message-State: AOJu0YxivOYxvhIe0WfcEYgEeTWbP2uA4n0pFIbP8ulkcNj1IpleQZFN
+	9TmeBDvh9Z8cvVU4iaRY6LmU7BN6Svon3OZCQg6KnjhdW0M/tnqFO48+LFmbXkclf2Z/O0ib4GY
+	NBF+V9e4Z5s0Kz7lfoYPRzcfc2RJ15i6SnrEXRg==
+X-Google-Smtp-Source: AGHT+IEG0fJWzbKu94wc/lGrrWrq4ZTcQCHpdjfNmMcuIOCOrmIosFxlMKcxuEkUwIgTY3hOtUi5EqpS3gyOLgsysHw=
+X-Received: by 2002:a17:90a:9a81:b0:2c9:60ea:2f11 with SMTP id
+ 98e67ed59e1d1-2ca35bd24a5mr5291639a91.1.1720650579090; Wed, 10 Jul 2024
+ 15:29:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240706022523.1104080-1-flintglass@gmail.com> <CAKEwX=NL1gOe9k5+JB8Q-UAoZ4ie8SBGg7XTjaqM7j4-hiHv=A@mail.gmail.com>
-In-Reply-To: <CAKEwX=NL1gOe9k5+JB8Q-UAoZ4ie8SBGg7XTjaqM7j4-hiHv=A@mail.gmail.com>
-From: Takero Funaki <flintglass@gmail.com>
-Date: Thu, 11 Jul 2024 07:26:55 +0900
-Message-ID: <CAPpoddefXD1RAjyW2+X_ankGYNpQgY0Y0+xd1yOFgCc_egaX8A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] mm: zswap: global shrinker fix and proactive shrink
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Domenico Cerasuolo <cerasuolodomenico@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20240708232302.15267-1-cachen@purestorage.com>
+ <20240708232302.15267-2-cachen@purestorage.com> <CAM9d7cisBvfLTzNp8=0SG6g3CA9zJFNayjopSEDX0fxRyG05UA@mail.gmail.com>
+In-Reply-To: <CAM9d7cisBvfLTzNp8=0SG6g3CA9zJFNayjopSEDX0fxRyG05UA@mail.gmail.com>
+From: Casey Chen <cachen@purestorage.com>
+Date: Wed, 10 Jul 2024 15:29:27 -0700
+Message-ID: <CALCePG0_PpwKK_=YrpCGr-j51dG8xtDP-yzBYGeLwphscFobRg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] perf tool: fix handling NULL al->maps returned from thread__find_map
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	yzhong@purestorage.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-2024=E5=B9=B47=E6=9C=889=E6=97=A5(=E7=81=AB) 9:53 Nhat Pham <nphamcs@gmail.=
-com>:
-
-> > post-patch, 6.10-rc4 with patch 1 to 5
+On Mon, Jul 8, 2024 at 10:01=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
 >
-> You mean 1 to 6? There are 6 patches, no?
-
-oops. with patches 1 to 6.
-
+> Hello,
 >
-> Just out of pure curiosity, could you include the stats from patch 1-3 on=
-ly?
->
-
-I will rerun the bench in v3. I assume this bench does not reflect
-patches 4 to 6, as delta pool_limit_hit=3D0 means no rejection from
-zswap.
-
-> Ah this is interesting. Did you actually see improvement in your real
-> deployment (i.e not the benchmark) with patch 4-6 in?
->
-
-As replied in patch 6, memory consuming tasks like `apt upgrade` for instan=
-ce.
-
+> On Mon, Jul 8, 2024 at 4:23=E2=80=AFPM Casey Chen <cachen@purestorage.com=
+> wrote:
 > >
-> > Intended scenario for memory reclaim:
-> > 1. zswap pool < accept_threshold as the initial state. This is achieved
-> >    by patch 3, proactive shrinking.
-> > 2. Active processes start allocating pages. Pageout is buffered by zswa=
-p
-> >    without IO.
-> > 3. zswap reaches shrink_start_threshold. zswap continues to buffer
-> >    incoming pages and starts writeback immediately in the background.
-> > 4. zswap reaches max pool size. zswap interrupts the global shrinker an=
-d
-> >    starts rejecting pages. Write IO for the rejected page will consume
-> >    all IO resources.
+> > With 0dd5041c9a0e ("perf addr_location: Add init/exit/copy functions"),
+> > thread__find_map() would return with al->maps or al->map being NULL
+> > when cpumode is 3 (macro PERF_RECORD_MISC_HYPERVISOR),
+> > later deferencing on it would crash.
+> >
+> > Fix callers of thread__find_map() or thread__find_symbol() to handle
+> > this.
 >
-> This sounds like the proactive shrinker is still not aggressive
-> enough, and/or there are some sort of misspecifications of the zswap
-> setting... Correct me if I'm wrong, but the new proactive global
-> shrinker begins 1% after the acceptance threshold, and shrinks down to
-> acceptance threshold, right? How are we still hitting the pool
-> limit...
+> It looks like you drop the callchain if it doesn't find a map/symbol.
+> Can we keep the entries with raw hex numbers instead?
 >
+In add_callchain_ip(), my change let it return if either al.maps is
+NULL or al.map is NULL after thread__find_symbol(), I'm not sure what
+else can add_callchain_ip() could do to keep raw hex numbers. If it
+proceeds, al.sym is NULL, the code inside 'if (al.sym !=3D NULL)' would
+skip. callchain_srcline() would return NULL. chain_cursor_append()
+would append a node whose ms.maps/ ms.map are NULL. Later
+dereferencing them would cause trouble. But we could add other
+information to the node, like ip, branch, nr_loop_iter, iter_cycles,
+branch_from, are these information good to have ? but how to avoid
+dereferencing NULL maps/map later.
 
-Proactive shrinking should not be aggressive. With patches 4 and 6, I
-modified the global shrinker to be less aggressive against pagein/out.
-Shrinking proactively cannot avoid hitting the pool limit when memory
-pressure grows faster.
+Thanks
+Casey
 
-> My concern is that we are knowingly (and perhaps unnecessarily)
-> creating an LRU inversion here - preferring swapping out the rejected
-> pages over the colder pages in the zswap pool. Shouldn't it be the
-> other way around? For instance, can we spiral into the following
-> scenario:
+> Thanks,
+> Namhyung
 >
-> 1. zswap pool becomes full.
-> 2. Memory is still tight, so anonymous memory will be reclaimed. zswap
-> keeps rejecting incoming pages, and putting a hold on the global
-> shrinker.
-> 3. The pages that are swapped out are warmer than the ones stored in
-> the zswap pool, so they will be more likely to be swapped in (which,
-> IIUC, will also further delay the global shrinker).
->
-> and the cycle keeps going on and on?
-
-I agree this does not follow LRU, but I think the LRU priority
-inversion is unavoidable once the pool limit is hit.
-The accept_thr_percent should be lowered to reduce the probability of
-LRU inversion if it matters. (it is why I implemented proactive
-shrinker.)
-
-When the writeback throughput is slower than memory usage grows,
-zswap_store() will have to reject pages sooner or later.
-If we evict the oldest stored pages synchronously before rejecting a
-new page (rotating pool to keep LRU), it will affect latency depending
-how much writeback is required to store the new page. If the oldest
-pages were compressed well, we would have to evict too many pages to
-store a warmer page, which blocks the reclaim progress. Fragmentation
-in the zspool may also increase the required writeback amount.
-We cannot accomplish both maintaining LRU priority and maintaining
-pageout latency.
-
-Additionally, zswap_writeback_entry() is slower than direct pageout. I
-assume this is because shrinker performs 4KB IO synchronously. I am
-seeing shrinking throughput is limited by disk IOPS * 4KB while much
-higher throughput can be achieved by disabling zswap. direct pageout
-can be faster than zswap writeback, possibly because of bio
-optimization or sequential allocation of swap.
-
-
-> Have you experimented with synchronous reclaim in the case the pool is
-> full? All the way to the acceptance threshold is too aggressive of
-> course - you might need to find something in between :)
->
-
-I don't get what the expected situation is.
-The benchmark of patch 6 is performing synchronous reclaim in the case
-the pool is full, since bulk memory allocation (write to mmapped
-space) is much faster than writeback throughput. The zswap pool is
-filled instantly at the beginning of benchmark runs. The
-accept_thr_percent is not significant for the benchmark, I think.
-
-
->
-> I wonder if this contention would show up in PSI metrics
-> (/proc/pressure/io, or the cgroup variants if you use them ). Maybe
-> correlate reclaim counters (pgscan, zswpout, pswpout, zswpwb etc.)
-> with IO pressure to show the pattern, i.e the contention problem was
-> there before, and is now resolved? :)
-
-Unfortunately, I could not find a reliable metric other than elapsed
-time. It seems PSI does not distinguish stalls for rejected pageout
-from stalls for shrinker writeback.
-For counters, this issue affects latency but does not increase the
-number of pagein/out. Is there any better way to observe the origin of
-contention?
-
-Thanks.
+> > ---
+> >  tools/perf/arch/powerpc/util/skip-callchain-idx.c | 10 ++++++----
+> >  tools/perf/util/machine.c                         |  5 +++++
+> >  tools/perf/util/unwind-libdw.c                    |  6 ++++--
+> >  3 files changed, 15 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/tools/perf/arch/powerpc/util/skip-callchain-idx.c b/tools/=
+perf/arch/powerpc/util/skip-callchain-idx.c
+> > index 5f3edb3004d8..25b0804df4c4 100644
+> > --- a/tools/perf/arch/powerpc/util/skip-callchain-idx.c
+> > +++ b/tools/perf/arch/powerpc/util/skip-callchain-idx.c
+> > @@ -255,13 +255,14 @@ int arch_skip_callchain_idx(struct thread *thread=
+, struct ip_callchain *chain)
+> >
+> >         thread__find_symbol(thread, PERF_RECORD_MISC_USER, ip, &al);
+> >
+> > -       if (al.map)
+> > -               dso =3D map__dso(al.map);
+> > +       if (!al.map)
+> > +               goto out;
+> > +
+> > +       dso =3D map__dso(al.map);
+> >
+> >         if (!dso) {
+> >                 pr_debug("%" PRIx64 " dso is NULL\n", ip);
+> > -               addr_location__exit(&al);
+> > -               return skip_slot;
+> > +               goto out;
+> >         }
+> >
+> >         rc =3D check_return_addr(dso, map__start(al.map), ip);
+> > @@ -282,6 +283,7 @@ int arch_skip_callchain_idx(struct thread *thread, =
+struct ip_callchain *chain)
+> >                 skip_slot =3D 3;
+> >         }
+> >
+> > +out:
+> >         addr_location__exit(&al);
+> >         return skip_slot;
+> >  }
+> > diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+> > index 8477edefc299..fa4037d7f3d4 100644
+> > --- a/tools/perf/util/machine.c
+> > +++ b/tools/perf/util/machine.c
+> > @@ -2098,7 +2098,12 @@ static int add_callchain_ip(struct thread *threa=
+d,
+> >                         }
+> >                         goto out;
+> >                 }
+> > +
+> >                 thread__find_symbol(thread, *cpumode, ip, &al);
+> > +               if (!al.maps || !al.map) {
+> > +                       err =3D 1;
+> > +                       goto out;
+> > +               }
+> >         }
+> >
+> >         if (al.sym !=3D NULL) {
+> > diff --git a/tools/perf/util/unwind-libdw.c b/tools/perf/util/unwind-li=
+bdw.c
+> > index b38d322734b4..fb038ef55be2 100644
+> > --- a/tools/perf/util/unwind-libdw.c
+> > +++ b/tools/perf/util/unwind-libdw.c
+> > @@ -53,8 +53,10 @@ static int __report_module(struct addr_location *al,=
+ u64 ip,
+> >          */
+> >         thread__find_symbol(ui->thread, PERF_RECORD_MISC_USER, ip, al);
+> >
+> > -       if (al->map)
+> > -               dso =3D map__dso(al->map);
+> > +       if (!al->map)
+> > +               return -1;
+> > +
+> > +       dso =3D map__dso(al->map);
+> >
+> >         if (!dso)
+> >                 return 0;
+> > --
+> > 2.45.2
+> >
+> >
 
