@@ -1,193 +1,226 @@
-Return-Path: <linux-kernel+bounces-247029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E1492CA1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:18:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81D0992CA1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 298A81F23A33
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:18:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36306284D60
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE3C4F606;
-	Wed, 10 Jul 2024 05:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4BE4776E;
+	Wed, 10 Jul 2024 05:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=endava.com header.i=@endava.com header.b="wArE2Ahy"
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2117.outbound.protection.outlook.com [40.107.104.117])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aoxxe9yR"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6409F17FD;
-	Wed, 10 Jul 2024 05:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.117
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720588686; cv=fail; b=Y+cN3gzM6/QVNcTFZpiZvTVKU4EvlKoQtRcXYCkE7jqDIxgRmypgQZYa0Mqlia0Fw2OZk3Px3DhXVfoNiYCdo5+Fm47+98tOnDiAr4Ln9ajO7lfCGsaJT3ANwFdMUXabEOaIY8gotHoAE8oTVDoXu2uJt0FWDuhT6SDDCaZ4jDI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720588686; c=relaxed/simple;
-	bh=28UOaI5+utANsdEojiEL2G53RdP/dUxpVvYEiBbVFUU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=stNZNinvxk73jcATrSRjduZI3r3A+g2NrKEXNzVZ3KE6jxaNAMhFRO3DuSp1cRC/RIaprE6/HXvVwzUY/vXl01K2En889M4RhkQwvKUToos99W1afl3Q2du11I8LAvEmkp4VeYAfTrRU2sfgVb/udN9zRqV7ppNQDXqivME2M2Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=endava.com; spf=pass smtp.mailfrom=endava.com; dkim=pass (2048-bit key) header.d=endava.com header.i=@endava.com header.b=wArE2Ahy; arc=fail smtp.client-ip=40.107.104.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=endava.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endava.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nV6tSLgP0VEd3gUa4UIUsnSXzlMtb0fmlWHSwOP8+MIURKwAhv0xZxbX4qEQzbDdoWg8SrxeEZnlv5aqZMog4YMl+EESucVSw1sfv+Tyi60CXVQIQrgqIQKXLSoCOU4PxNPKIfZo0YxGx+t50H2DJ546rMEgPE0S6L2VHjbJsTx1opITyVbWzXmriu2WpxCsz7rq4e4j9lJ2lh+332xfXlc7v8mZYwJVadQKrbHKA7xBoNhjhHxIjXZFD98HuPw8Yjuoo6913GwQyQBCx5hA/HOw1l3VSgvu7MBqLdMwjCIdMn16MONWkz/GQgvbSX8e1f13l4aFaD/s1vcegZe6VQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=28UOaI5+utANsdEojiEL2G53RdP/dUxpVvYEiBbVFUU=;
- b=eN9ooW2QmbQ4xAUFJjWmjcZRXXE4WY4ohZNHRmpio2+7c+lXt85OZfpNmuOqWwH36vmWStjkvFY9eKgXjj4XSuMUZNTAhiA9UCTqPmPl41CtBHrK918Lb0eGPF+G2Y2SB3PlWQeOH707cvgBHqlUp5IJHi8GLhHKoD2E8C2Lo8cgOLVNw9a/+cRUW3ZQQzzFg0f3LOyiiGFWFvw3++Tdc/jKVfA7IQTjR2DUoWbykfduHZyFYlqyBbx41tICMHP2bn19ici7+vOzbGqlK/swgIKr1jWtuDwJyh5MehwgCB8Z4z+JyswPSlnd7IYmBm1ccE28epGcWorOSSvQt8ULEQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=endava.com; dmarc=pass action=none header.from=endava.com;
- dkim=pass header.d=endava.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=endava.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=28UOaI5+utANsdEojiEL2G53RdP/dUxpVvYEiBbVFUU=;
- b=wArE2Ahy4a28vel2sk3KlsHvSiJum/cL4ySwVIdE153iDJuGYPAlsQRB40K/+cdw3iVBsriQ70RZ0BEt6MHHeQFsFJX+Acu3IYjknYOmFQLpJ5aP8l4hk8TYJMoBQVoHeUWWVoa5YdvAyb3uLyqjo3Ibob5EQeFtyx25YoLOc4HvZJmi1udcCxcIJU5zhUemWz2t7dy2Z+J4hMBWKT6GJYhphsRZUb/Xf1pN7gfmzSrP91ThLQYLW51x1xpBXLUirNgr2YQUPPUOeeUhPvK8eoH7sDtVavjhD79xgDp5i3DjbVWixVJxVyKpkVBlRZpAfleetHQ1GS74qHOu08cEjw==
-Received: from AS5PR06MB8752.eurprd06.prod.outlook.com (2603:10a6:20b:67d::20)
- by AS8PR06MB7685.eurprd06.prod.outlook.com (2603:10a6:20b:318::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Wed, 10 Jul
- 2024 05:18:02 +0000
-Received: from AS5PR06MB8752.eurprd06.prod.outlook.com
- ([fe80::72f2:c654:1827:9c41]) by AS5PR06MB8752.eurprd06.prod.outlook.com
- ([fe80::72f2:c654:1827:9c41%3]) with mapi id 15.20.7741.033; Wed, 10 Jul 2024
- 05:18:01 +0000
-From: Tung Nguyen <tung.q.nguyen@endava.com>
-To: Shigeru Yoshida <syoshida@redhat.com>, "jmaloy@redhat.com"
-	<jmaloy@redhat.com>, "ying.xue@windriver.com" <ying.xue@windriver.com>,
-	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
-	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"tipc-discussion@lists.sourceforge.net"
-	<tipc-discussion@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net-next] tipc: Consolidate redundant functions
-Thread-Topic: [PATCH net-next] tipc: Consolidate redundant functions
-Thread-Index: AQHa0g3JG17RS1Bp/kCgIVTZN2hae7HvbEUw
-Date: Wed, 10 Jul 2024 05:18:01 +0000
-Message-ID:
- <AS5PR06MB87528FD333E3D56A4DCEDB67DBA42@AS5PR06MB8752.eurprd06.prod.outlook.com>
-References: <20240709143632.352656-1-syoshida@redhat.com>
-In-Reply-To: <20240709143632.352656-1-syoshida@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=endava.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS5PR06MB8752:EE_|AS8PR06MB7685:EE_
-x-ms-office365-filtering-correlation-id: ed329fb8-5d66-41a1-34c5-08dca09faba1
-x-ms-exchange-atpmessageproperties: SA
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?/9LrUGJhtltxP327G2So6UXHiKFpaGFUgFCIf4mG75Em0j+1l8vf7+BkNgKL?=
- =?us-ascii?Q?PFXJsui3xj4plJgqtzwvKQujyQTWkbKUpT4LltxsX915Cqw07RTvNxBc4zbz?=
- =?us-ascii?Q?ZWSXIKYYogxsLYi6HdPz6HXO6/MrAFeQNfyvmViqcAKo28l7Y+/J78hJyLyY?=
- =?us-ascii?Q?FmHDkneMTSX3hpDuHdrTcanUNYrUSwS1yxq0+aDnUYeEb3UzgNJOJyKsKTp0?=
- =?us-ascii?Q?5pwbGypndoxk+dfa4DqemeQKUZSLOT2qvoYgnTPw4VBNIxGvT1lB7jPp6JKU?=
- =?us-ascii?Q?cuaxqkEP11Sl3F5myuW4H5GWZqXtSrWIlGaYsKOWvnfQNeY8nDChCBLF5BR3?=
- =?us-ascii?Q?t1/ss/B1UHHLNlBAgZBRwXMyIOeX6oLnHV/vE2TWDoW2LD+IirMAGCclVxwB?=
- =?us-ascii?Q?Sda3roqYNH8IF1kwKL1xnJ04F+SjAvtoPRqgluryYnbVTK9vbktq5S+txI2r?=
- =?us-ascii?Q?B8FIy5i8Z39Q7Pi5HBbLSwTqpW8A7QLXa4Ts02Zdp5dU+JaqmYUOCuD8pQcO?=
- =?us-ascii?Q?5EBd0GAREOBDKUinUi3k6SXSwklvm8NVFWG/CWWLpaOagy1Dj4XUZFVXq9rX?=
- =?us-ascii?Q?MBUO25Oh5ihv0oLYMq4EJUmWPDCtW6sv0ppI6q7HLw01m4NhaiKPaVW8Ok4p?=
- =?us-ascii?Q?tFCkYXgkgyTaAQZ45F05Eq5EliphkBlkxva8xG3S7VnIzLJ9+xwsJAjLBRPK?=
- =?us-ascii?Q?c2Rgf5+CLpIVwVM+4kbr/Mn/5dtaFaUR1onBwM8soqWbdFLXGrl1kQCKZSS4?=
- =?us-ascii?Q?85Pyxckd8/IwA+j5RazRg8EXBfjCDCEt8K77CpKEB1Wp2N2JVFul4Z57LZb3?=
- =?us-ascii?Q?mjDvi7xwDWoK2o4EZ6EvSIErZUQ3jeZvH+ctJaKwfqGWqpKXi0vdQogFive+?=
- =?us-ascii?Q?T0vUrPO9nFQu7XoJaSMrGjwRnFpjDSBdv1f1AZnk0iSBEiwB5o5ONH+EZdFC?=
- =?us-ascii?Q?jYXSETVkiVNob0qySs6pntRo6FWAbxfKIsEXVXpRBfcSrlCK4ELe5KbkLELu?=
- =?us-ascii?Q?joDq9qKSVg4ep6E8BEDC8dCVPiTfAGeVdQAlJYzd6jkdw2QHWfSbeWLC6ICK?=
- =?us-ascii?Q?HMOWQG1aF5KaLLD/cYza1Al6nlR/P7GIVIao/qm15AcmZ6S45m9g799tRbtL?=
- =?us-ascii?Q?CQ/Yzxh2nCMKlgqmtaXThVgCvwoJo3UNJKUW0xetAU8bgEqtajQVvlG/Z8YE?=
- =?us-ascii?Q?G/sqfvQtXbeQrtvn5q7WwUd6qBtbUiZeh8MXq8v5G2daXaVXHEeaWXTzGNWe?=
- =?us-ascii?Q?wFG62U5131obEilAigg5EhsE+xj9bHcitqQn7KXRT+j25wckl/booBCaSfri?=
- =?us-ascii?Q?vaSgxaVNTgjhBrtjhjtryoe/B6BK1BPDPRFFKriTMCwlFEUObGx0mAoYwK2m?=
- =?us-ascii?Q?tSselSydVMXG6kgPuQ8IEozqYqmv1ITU37pG1uJNZZiV4U4Zbg=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS5PR06MB8752.eurprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?i5ydp+aomwJ3D8d80zE+a40+Pe9f4V/7Ltbk1WPMGNsc7qt+roMzvcNDEyxQ?=
- =?us-ascii?Q?agLj+rdQZk5NAsV9KJnQT0S8oY2qy990hToeOHq4XXh2wvynCOnTkMKn+wLM?=
- =?us-ascii?Q?tEExFq0m0XV1sACyugBI1eyXwWEX/PWIPQO4mOno5EPjFZkf4wywl9Jll1Ga?=
- =?us-ascii?Q?KCwfyfwNrR1E1DEvy5cp5CHxLaSICEK4YOU2BSNAdupLnxjzGyICamD8171s?=
- =?us-ascii?Q?LykSbwW/zuP6OA/LhlovLlTB++vVqPwQgX1rzxNDaiQbZOza7oYbUKw5NEV+?=
- =?us-ascii?Q?HEo8BQQNzQCQ85H6NiNw1Q3ACknjK+Cc6ZrDx+6oR1vVwQObZG3/UtICpFNi?=
- =?us-ascii?Q?kusQutsibuuaDzUHuvuDUYVm9ySBDxlGt19jVzrUW1Vv1GqNHFxaR3lEYYjV?=
- =?us-ascii?Q?wywg0qvi46Zzy9JPOol46T9nmdZish1IfDMh/2ZKwlcSSwI1yiyAuBAzKgtT?=
- =?us-ascii?Q?LaJcafA80quQYQkgSLV4hIXZxJwcpOE1EyjNobUExTA+wkCZ+DcxAd9Wd1Yb?=
- =?us-ascii?Q?HeF0BZE8y/0da7ODtkKJ1U1qmV75dkhHv7EkW5b7RuhTYPhazx0e8LGD354Z?=
- =?us-ascii?Q?l7p/Vl4uGQ9nXQD6CmrCNU5RtIgu5QgpcUl5rtgP1J9HnbqJtgR6Ma4j8qi0?=
- =?us-ascii?Q?IqzJY//LZFso2+LKvzwzEeokq1Me1VvL10W7ZsySvLYxgfTpdUTU+syufBBD?=
- =?us-ascii?Q?LleV4zbEfvHYTY7lp55Lapv5gqLFmYJ/V7GrxKq9TzYIFtqnxKG74ulNZ82m?=
- =?us-ascii?Q?UEE+uXns9NPDv0HVo0P2rdh9FlQM2khi4k6k3d08VZZ427eLmKesvXoKBSxj?=
- =?us-ascii?Q?x2+YWDeFrxm2+6LXhJqhEYLO1G1+1rcaIw3xH3BqgPm65A89lumSXoABFhUA?=
- =?us-ascii?Q?bk/zGjvEU4hTcZACpSyAfF/Y0fGcEXLa73rqrBS91xXkrv3a1taGwSCjWQLn?=
- =?us-ascii?Q?DCYODyAqu7CaFnUbg1JlH6QNl77W6s7Aq80o332ya/QxN9q0/cgL9Xm48znB?=
- =?us-ascii?Q?DpXKCheMS4EgEQ2ucEjkp358TjM9TrN6Y5QTFKwac0lEh0N4yw5oaRwkUONZ?=
- =?us-ascii?Q?Cwl6EBibwPkLaScLEu7Izu5nOMcuCoyw2AWWO/ShF60mXG3+fKKn/6Xq8D6a?=
- =?us-ascii?Q?XJAZD3mdALEu00a/W9UPTuxoEMA5E0SsDqfb9+1FJoJU85HH5v70xgJlPmoC?=
- =?us-ascii?Q?n5TnV3JEImkgll//t+HR5wtn9KWURZ0LyboycHu3VsmzzpuB8SJK6lHhpXrW?=
- =?us-ascii?Q?AhMsQRvi3weJt5p4m/da9nqwV7We5s6qt5vmBRiswakJAv/ixSYCQ7UgakPC?=
- =?us-ascii?Q?zNVVueAaNCgnxYxSpVEEBybwBMiccsKBEa6+QkvceAnUG+iwYri7qKU9NtYl?=
- =?us-ascii?Q?21OTqUqOmyewQ0GTZAlzc3kEPuxcHn0vrcBvo7oWwwiDQ/1+UPNlbP/dnnAr?=
- =?us-ascii?Q?wVK9jq3p3R69pVl/yLqsCesOdultwVxWS7XRPtxRPqGL63WEh1zwIgH+FAlm?=
- =?us-ascii?Q?xnkzgFH09kyoLTC6ULrY9fOEy3eeE3n32HcICqNbdJ2Ia2T9Ju96F0eu/GAl?=
- =?us-ascii?Q?LY48LxQiCp2vIHXQ+xknlGVrb5VKMSg7J/2hL8It?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B2517FD
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 05:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720588796; cv=none; b=Jy6gq0n7y4XhC9MFRx8cn4F8A/exM8NSEf0Ljp9JeVoSl0k3B9eAR47/4Qq0YexzDlIUMiWD0296oEiw1UQHHCD0ChXxGSfH2gQiitk+kCswMK5zovTXo9N3umUvUUK5ip0jySYoi9VIShXNKcO0LOXk5O1p/Y1AvzA093/l09s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720588796; c=relaxed/simple;
+	bh=n2s3o8q4v7j+RxNat2yf/U7NfD/vMRwcxyjm1SF4J7E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WFBrnzO6oJpNZ3y4vaRlKQ7t8U0PLHAFgqdFe7Ly4RhIKyT6WC6kfsggpNi9fkQ+bTpQYjGwQBsI7vc44NcTGIzGS0dc6Yhr7DsndmaJUoiTQxse5HEFEM/UssjA0P0keM0UzopVCFt+KJ7144PxsXiYhRUFTeTm/JijbpFJbBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aoxxe9yR; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46A4vfTf017813;
+	Wed, 10 Jul 2024 05:19:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:content-transfer-encoding
+	:mime-version; s=pp1; bh=6BvyBR57+4bOjGzhiVOtOwfSUiZBWtVHAhehWzI
+	xV5g=; b=aoxxe9yRqhUQU5m5TLuOZDOSmiY9RRMvhKZL+7E5R7yOh0TAm+W6Dmz
+	5r6tCdv6Cqg1JfnnuzHHOv6MgQjrS77gm0dcSJCGJOrf7ZiKlpPs3EsrF22n9uss
+	PVUCH8rOIa/U7aPuvjeesnXJWt3NxmM7jA4oAOvXztuIaaS2UIipPyx5XkOIc3Cz
+	/hyuQEoqXJjcW7qzfvl4pvKLUCOqs+aGIZf1HncqdgGU0KhSkmJphLsDLCIU3mj2
+	Oj6x9rZzc0vo6MKBAiuRqixIoIWrGatLomlw+bT8pTuxPgWVXConmV44C7ZKb/T1
+	178q4whSAL2UtWgudBLqwd+CQ2xp21w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 409gnugfun-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jul 2024 05:19:28 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46A5JRH5017582;
+	Wed, 10 Jul 2024 05:19:27 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 409gnugfuh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jul 2024 05:19:27 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46A2PCIs025046;
+	Wed, 10 Jul 2024 05:19:26 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 407g8u9fkj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jul 2024 05:19:26 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46A5JMLs55902602
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 10 Jul 2024 05:19:25 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D62C12004B;
+	Wed, 10 Jul 2024 05:19:22 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A304520040;
+	Wed, 10 Jul 2024 05:19:20 +0000 (GMT)
+Received: from ltczz402-lp1.aus.stglabs.ibm.com (unknown [9.40.194.31])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 10 Jul 2024 05:19:20 +0000 (GMT)
+From: Donet Tom <donettom@linux.ibm.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Muchun Song <muchun.song@linux.dev>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>,
+        Mike Rapoport <rppt@kernel.org>, David Hildenbrand <david@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Tony Battersby <tonyb@cybernetics.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+        Donet Tom <donettom@linux.ibm.com>
+Subject: [PATCH v3] hugetlbfs: Ensure generic_hugetlb_get_unmapped_area() returns higher address than mmap_min_addr
+Date: Wed, 10 Jul 2024 00:19:12 -0500
+Message-ID: <20240710051912.4681-1-donettom@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: eXjPB2DIEx78qqOf_HQlGo0-EbgYisCH
+X-Proofpoint-GUID: BeQV48yM1TyCSP-cQFPb40GhdOf-yhbT
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: endava.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS5PR06MB8752.eurprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed329fb8-5d66-41a1-34c5-08dca09faba1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2024 05:18:01.8875
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0b3fc178-b730-4e8b-9843-e81259237b77
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: hXYpnHqtMtSK9pgPYrpa+xdc5xQ4w8KVfHPAF72d8X3sp7QCBBgIF1muLNKg5Ewmgd8EugJQ8EjvYMWEU4hUpUSJWnju0eKmutm24Y67SKw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR06MB7685
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-10_01,2024-07-09_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ mlxscore=0 spamscore=0 malwarescore=0 phishscore=0 adultscore=0
+ impostorscore=0 mlxlogscore=999 suspectscore=0 priorityscore=1501
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407100036
 
->link_is_up() and tipc_link_is_up() have the same functionality.
->Consolidate these functions.
->
->Signed-off-by: Shigeru Yoshida <syoshida@redhat.com>
->---
-Reviewed-by: Tung Nguyen <tung.q.nguyen@endava.com>
+generic_hugetlb_get_unmapped_area() was returning an address less
+than mmap_min_addr if the mmap argument addr, after alignment, was
+less than mmap_min_addr, causing mmap to fail.
 
-The information in this email is confidential and may be legally privileged=
-. It is intended solely for the addressee. Any opinions expressed are mine =
-and do not necessarily represent the opinions of the Company. Emails are su=
-sceptible to interference. If you are not the intended recipient, any discl=
-osure, copying, distribution or any action taken or omitted to be taken in =
-reliance on it, is strictly prohibited and may be unlawful. If you have rec=
-eived this message in error, do not open any attachments but please notify =
-the Endava Service Desk on (+44 (0)870 423 0187), and delete this message f=
-rom your system. The sender accepts no responsibility for information, erro=
-rs or omissions in this email, or for its use or misuse, or for any act com=
-mitted or omitted in connection with this communication. If in doubt, pleas=
-e verify the authenticity of the contents with the sender. Please rely on y=
-our own virus checkers as no responsibility is taken by the sender for any =
-damage rising out of any bug or virus infection.
+This is because current generic_hugetlb_get_unmapped_area() code does
+not take into account mmap_min_addr.
 
-Endava plc is a company registered in England under company number 5722669 =
-whose registered office is at 125 Old Broad Street, London, EC2N 1AR, Unite=
-d Kingdom. Endava plc is the Endava group holding company and does not prov=
-ide any services to clients. Each of Endava plc and its subsidiaries is a s=
-eparate legal entity and has no liability for another such entity's acts or=
- omissions.
+This patch ensures that generic_hugetlb_get_unmapped_area() always returns
+an address that is greater than mmap_min_addr. Additionally, similar to
+generic_get_unmapped_area(), vm_end_gap() checks are included to maintain
+stack gap.
+
+How to reproduce
+================
+
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <sys/mman.h>
+ #include <unistd.h>
+
+ #define HUGEPAGE_SIZE (16 * 1024 * 1024)
+
+ int main() {
+
+    void *addr = mmap((void *)-1, HUGEPAGE_SIZE,
+                 PROT_READ | PROT_WRITE,
+                 MAP_SHARED | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    if (addr == MAP_FAILED) {
+        perror("mmap");
+        exit(EXIT_FAILURE);
+    }
+
+    snprintf((char *)addr, HUGEPAGE_SIZE, "Hello, Huge Pages!");
+
+    printf("%s\n", (char *)addr);
+
+    if (munmap(addr, HUGEPAGE_SIZE) == -1) {
+        perror("munmap");
+        exit(EXIT_FAILURE);
+    }
+
+    return 0;
+ }
+
+Result without fix
+==================
+ # cat /proc/meminfo |grep -i HugePages_Free
+ HugePages_Free:       20
+ # ./test
+ mmap: Permission denied
+ #
+
+Result with fix
+===============
+ # cat /proc/meminfo |grep -i HugePages_Free
+ HugePages_Free:       20
+ # ./test
+ Hello, Huge Pages!
+ #
+
+V3:
+Changed subject prefix and commit message.
+
+V2:
+Added vm_end_gap() check.
+https://lore.kernel.org/all/20240709092122.41232-1-donettom@linux.ibm.com/
+
+V1:
+https://lore.kernel.org/all/20240705071150.84972-1-donettom@linux.ibm.com/
+
+Reported-by Pavithra Prakash <pavrampu@linux.vnet.ibm.com>
+Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+---
+ fs/hugetlbfs/inode.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 412f295acebe..cdd8e53ddd19 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -222,13 +222,13 @@ generic_hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
+ 				  unsigned long flags)
+ {
+ 	struct mm_struct *mm = current->mm;
+-	struct vm_area_struct *vma;
++	struct vm_area_struct *vma, *prev;
+ 	struct hstate *h = hstate_file(file);
+ 	const unsigned long mmap_end = arch_get_mmap_end(addr, len, flags);
+ 
+ 	if (len & ~huge_page_mask(h))
+ 		return -EINVAL;
+-	if (len > TASK_SIZE)
++	if (len > mmap_end - mmap_min_addr)
+ 		return -ENOMEM;
+ 
+ 	if (flags & MAP_FIXED) {
+@@ -239,9 +239,10 @@ generic_hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
+ 
+ 	if (addr) {
+ 		addr = ALIGN(addr, huge_page_size(h));
+-		vma = find_vma(mm, addr);
+-		if (mmap_end - len >= addr &&
+-		    (!vma || addr + len <= vm_start_gap(vma)))
++		vma = find_vma_prev(mm, addr, &prev);
++		if (mmap_end - len >= addr && addr >= mmap_min_addr &&
++		    (!vma || addr + len <= vm_start_gap(vma)) &&
++		    (!prev || addr >= vm_end_gap(prev)))
+ 			return addr;
+ 	}
+ 
+-- 
+2.43.5
+
 
