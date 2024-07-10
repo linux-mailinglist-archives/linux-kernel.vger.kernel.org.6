@@ -1,295 +1,224 @@
-Return-Path: <linux-kernel+bounces-248436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8336F92DD25
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:50:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA6D92DD27
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Jul 2024 01:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7E2B1C22482
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:50:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2407A2874C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 23:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1885215E5BD;
-	Wed, 10 Jul 2024 23:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C42E15EFA4;
+	Wed, 10 Jul 2024 23:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iDAn7u0B"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hCApfn/f"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9153D12B169;
-	Wed, 10 Jul 2024 23:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD5E15D5C7
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 23:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720655349; cv=none; b=l+TBn3ZgCXX64afO6nLwX0Ntm7omcfDxVlim3G0plXohA36cSBsgfUSmcSVC11Ycp9DSNWoqLmtudW2Dbd64Of7SY3tGRPKFMQcmOfSRQOKq9SiBZ/x7kLSdYZ+S9gFYqQN9DjKARufPNLhxe4cbAvSlDFe5E/reqE9W7YFYYLk=
+	t=1720655352; cv=none; b=Oo1OOT9WuBWUNXlWBfzA/Qinv6ai4s9NHhOuVvGTy58oiTqTiYXu4irJnGUvnJlbhQvIC/G//aMpqMtcqXPIL2NZWJADOiYN40quBjRsaSGnyDka4evd29Yf4MwpGf7/1Vc0I/n2RQlUNULTXyZnn8jm/ktn3ZGM2/Or3RiFQkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720655349; c=relaxed/simple;
-	bh=/qhZ/8EldfOQcZyKDuycbq7YZYfFu4W+0Ywhu0pKNtk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hXTdlqEKcSOGiV8xV90HMS4MumswpYmd3trs5x2H16Gc7OfNiOvaHS9LPQ9mcDIBTy20EBqdugh0WixixJORVdrfCKa3O2tLdR2NHe2DCHoFMBDz++hluz00xU4HS453op+k81VKAr6yeyi7w7R8+dser0UXogeIyDo/BsF87kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iDAn7u0B; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7035c367c4cso130354a34.2;
-        Wed, 10 Jul 2024 16:49:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720655346; x=1721260146; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x9sJ1oPQPjgwywY1YlFfTHBfdtWjkTQty7nEM6VOOkE=;
-        b=iDAn7u0BlIi/iAH2pYt/QR/1lULJJnksCwWMy4ov4kiKgv9x3Lh8LxNQQpVwPwUkLr
-         cRnQSDtZgr7eRw0wuYBYDBK5EhFiVF6O6N967E5UDEgTcYCiX0KLdO4bBneTiVqlzIzc
-         eYIf3DrmVZ8R1TqNPZ2/zoa2G97JiGY6sAtSRoDU8cuGsKqi2E4p/vVeRYO/HauHlstw
-         +bpMWTf/XniATGe5YmMXf3dYpapGOzztC6JUzjzW9i1aKa01+jAvbHjp+yg79fFITvmv
-         t+iPFr/nTpTd79Ab8Iuh6zeADcjJEVRo4cPuF5vTnz+xzzj+ukHbt+hxbcgQQkNNYDJW
-         rJGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720655346; x=1721260146;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x9sJ1oPQPjgwywY1YlFfTHBfdtWjkTQty7nEM6VOOkE=;
-        b=vrD2a82JZXIab5iVfR5BZrQPp+uuyEk2qXPEEa8xQyWjEBfc5ExBXsc/w1Ucgtmnx5
-         gk8nr5vvmPdbH8+YE2ICTteBDBkXIpzLx+r0zjeWYsAavXUdgrQaY+u/LD8CTsn1jaDG
-         0qfPCzYBCdd7ELzFgujU8O+gQBsygRREX0JqiaI22KnqpX+IEVphlEeboaw2RzM6QfvI
-         r6MFHYMJd6SlHveeKBtLI0HZlKX7M06tYDxbxdn+ZK24tbxvC+xfGoLgaEWo+SCnIms6
-         Zw5jvJ2Zud5AnbLERDBID1zi5kwurqQsW9s/5XOEqkOsRHlIB/mVCBs6yO8v/XHuZDlL
-         yruQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWBN2brlJ8kHUvHyo0PlPNNXqodbC68w6ZBbx9mMfuHbMI4QdtC2h3v+x1GLw3x3ztkPZdeD0Cf5fwOyYvJvhqv5cnZSPfncRzdF7q
-X-Gm-Message-State: AOJu0Yx58lR0i4nmVakJhNkL9efMVkcc4eOCBZLLhpwDz+w2USx536VB
-	cpFWNrzy31JGHwb1Nh9lm0dP7xbxq148sfiQhrhpG+BML4Iiz7EH8oZdMw==
-X-Google-Smtp-Source: AGHT+IH11VZpABvg+vhll8L/b6XBNn75fkidKUjb6kX6hO4Uo+1hHwEHseZyiG5WSoPJdzEMAwVp2A==
-X-Received: by 2002:a9d:7358:0:b0:704:b695:9557 with SMTP id 46e09a7af769-704b6959812mr2784547a34.16.1720655346386;
-        Wed, 10 Jul 2024 16:49:06 -0700 (PDT)
-Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:4761:5ea8:2da4:8299])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70b439b4efasm4382803b3a.182.2024.07.10.16.49.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 16:49:05 -0700 (PDT)
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: linux-input@vger.kernel.org
-Cc: usbb2k-api-dev@nongnu.org,
-	linux-kernel@vger.kernel.org,
-	Henk Vergonet <Henk.Vergonet@gmail.com>,
-	Greg KH <gregkh@linuxfoundation.org>
-Subject: [PATCH 2/2] Input: yealink - simplify locking in sysfs attribute handling
-Date: Wed, 10 Jul 2024 16:48:54 -0700
-Message-ID: <20240710234855.311366-2-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-In-Reply-To: <20240710234855.311366-1-dmitry.torokhov@gmail.com>
-References: <20240710234855.311366-1-dmitry.torokhov@gmail.com>
+	s=arc-20240116; t=1720655352; c=relaxed/simple;
+	bh=xErRzgL2ci3yf1V+chWf3igrRYsqFLOzJFR6C1U9pkE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cJmKHIw9SEB5jzaNfsuIwkCoKPt/1DxeWZwpzW4d+d7P9gVwPhbJVojGpu+41AesA6h9UTcAXMAGwBriay3rKDCtZkXCHhACq2e+gTLi/Q8Gn/aRQjK4RSxVFxtS8QxLDvLorTeeiLZjkRLffrv0AfuScOkt2P/CoSyVXYvzYJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hCApfn/f; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720655350;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NvMGbDK6gdZgu1QxmY35VViJYMc88dUgJ5oCbQmvDJs=;
+	b=hCApfn/fB/jTLZerARMK+TaNiJHcg3HoRy0xKEtYed6qnRDX1yNbUDAx4GVwc7YEw9vjle
+	roGdqkWeaSolZ6dCkCJgdmq7JLvjVCy0jsaDLm9RAniOrjDn27mqF9yLXQqlsi2HtKmIhu
+	23oPf4kER7rA96FN3D16kI6ofTN9nl8=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-654-RbA8F_4XO52R5Ef7XlCXJA-1; Wed,
+ 10 Jul 2024 19:49:05 -0400
+X-MC-Unique: RbA8F_4XO52R5Ef7XlCXJA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A330519560B6;
+	Wed, 10 Jul 2024 23:49:03 +0000 (UTC)
+Received: from [10.22.48.10] (unknown [10.22.48.10])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0AEFF3000181;
+	Wed, 10 Jul 2024 23:49:00 +0000 (UTC)
+Message-ID: <50b74abc-093b-467c-91bc-5ff786d3affd@redhat.com>
+Date: Wed, 10 Jul 2024 19:49:00 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] cgroup: Show # of subsystem CSSes in cgroup.stat
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Jonathan Corbet <corbet@lwn.net>,
+ cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Kamalesh Babulal <kamalesh.babulal@oracle.com>
+References: <20240710182353.2312025-1-longman@redhat.com>
+ <Zo8AmTVEdirZdgol@google.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <Zo8AmTVEdirZdgol@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-The locking rules in the driver came from era when sysfs attributes
-could live past the point of time when device would be unbound from
-the driver, and so used module-global semaphore (potentially shared
-between multiple yealink devices). Thankfully these times are long
-gone and attributes will not be accessible once they are removed.
+On 7/10/24 17:43, Roman Gushchin wrote:
+> On Wed, Jul 10, 2024 at 02:23:52PM -0400, Waiman Long wrote:
+>> Cgroup subsystem state (CSS) is an abstraction in the cgroup layer to
+>> help manage different structures in various cgroup subsystems by being
+>> an embedded element inside a larger structure like cpuset or mem_cgroup.
+>>
+>> The /proc/cgroups file shows the number of cgroups for each of the
+>> subsystems.  With cgroup v1, the number of CSSes is the same as the
+>> number of cgroups.  That is not the case anymore with cgroup v2. The
+>> /proc/cgroups file cannot show the actual number of CSSes for the
+>> subsystems that are bound to cgroup v2.
+>>
+>> So if a v2 cgroup subsystem is leaking cgroups (usually memory cgroup),
+>> we can't tell by looking at /proc/cgroups which cgroup subsystems may
+>> be responsible.
+>>
+>> As cgroup v2 had deprecated the use of /proc/cgroups, the hierarchical
+>> cgroup.stat file is now being extended to show the number of live and
+>> dying CSSes associated with all the non-inhibited cgroup subsystems
+>> that have been bound to cgroup v2 as long as it is not zero.  The number
+>> includes CSSes in the current cgroup as well as in all the descendants
+>> underneath it.  This will help us pinpoint which subsystems are
+>> responsible for the increasing number of dying (nr_dying_descendants)
+>> cgroups.
+>>
+>> The cgroup-v2.rst file is updated to discuss this new behavior.
+>>
+>> With this patch applied, a sample output from root cgroup.stat file
+>> was shown below.
+>>
+>> 	nr_descendants 54
+>> 	nr_dying_descendants 44
+>> 	nr_cpuset 1
+>> 	nr_cpu 40
+>> 	nr_io 40
+>> 	nr_memory 54
+>> 	nr_dying_memory 44
+>> 	nr_perf_event 55
+>> 	nr_hugetlb 1
+>> 	nr_pids 54
+>> 	nr_rdma 1
+>> 	nr_misc 1
+>>
+>> Another sample output from system.slice/cgroup.stat was:
+>>
+>> 	nr_descendants 32
+>> 	nr_dying_descendants 37
+>> 	nr_cpu 30
+>> 	nr_io 30
+>> 	nr_memory 32
+>> 	nr_dying_memory 37
+>> 	nr_perf_event 33
+>> 	nr_pids 32
+>>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+> I like it way more than the previous version, thank you for the update.
+>
+>> ---
+>>   Documentation/admin-guide/cgroup-v2.rst | 14 ++++++-
+>>   include/linux/cgroup-defs.h             |  7 ++++
+>>   kernel/cgroup/cgroup.c                  | 50 ++++++++++++++++++++++++-
+>>   3 files changed, 68 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+>> index 52763d6b2919..9031419271cd 100644
+>> --- a/Documentation/admin-guide/cgroup-v2.rst
+>> +++ b/Documentation/admin-guide/cgroup-v2.rst
+>> @@ -981,6 +981,16 @@ All cgroup core files are prefixed with "cgroup."
+>>   		A dying cgroup can consume system resources not exceeding
+>>   		limits, which were active at the moment of cgroup deletion.
+>>   
+>> +	  nr_<cgroup_subsys>
+>> +		Total number of live cgroups associated with that cgroup
+>> +		subsystem (e.g. memory) at and beneath the current
+>> +		cgroup.  An entry will only be shown if it is not zero.
+>> +
+>> +	  nr_dying_<cgroup_subsys>
+>> +		Total number of dying cgroups associated with that cgroup
+>> +		subsystem (e.g. memory) beneath the current cgroup.
+>> +		An entry will only be shown if it is not zero.
+>> +
+>>     cgroup.freeze
+>>   	A read-write single value file which exists on non-root cgroups.
+>>   	Allowed values are "0" and "1". The default is "0".
+>> @@ -2930,8 +2940,8 @@ Deprecated v1 Core Features
+>>   
+>>   - "cgroup.clone_children" is removed.
+>>   
+>> -- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" file
+>> -  at the root instead.
+>> +- /proc/cgroups is meaningless for v2.  Use "cgroup.controllers" or
+>> +  "cgroup.stat" files at the root instead.
+>>   
+>>   
+>>   Issues with v1 and Rationales for v2
+>> diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+>> index b36690ca0d3f..62de18874508 100644
+>> --- a/include/linux/cgroup-defs.h
+>> +++ b/include/linux/cgroup-defs.h
+>> @@ -210,6 +210,13 @@ struct cgroup_subsys_state {
+>>   	 * fields of the containing structure.
+>>   	 */
+>>   	struct cgroup_subsys_state *parent;
+>> +
+>> +	/*
+>> +	 * Keep track of total numbers of visible and dying descendant CSSes.
+>> +	 * Protected by cgroup_mutex.
+>> +	 */
+>> +	int nr_descendants;
+>> +	int nr_dying_descendants;
+>>   };
+>>   
+>>   /*
+>> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+>> index c8e4b62b436a..18c982a06446 100644
+>> --- a/kernel/cgroup/cgroup.c
+>> +++ b/kernel/cgroup/cgroup.c
+>> @@ -3669,12 +3669,34 @@ static int cgroup_events_show(struct seq_file *seq, void *v)
+>>   static int cgroup_stat_show(struct seq_file *seq, void *v)
+>>   {
+>>   	struct cgroup *cgroup = seq_css(seq)->cgroup;
+>> +	struct cgroup_subsys_state *css;
+>> +	int ssid;
+>>   
+>> +	/* cgroup_mutex required for for_each_css() */
+>> +	cgroup_lock();
+> I *guess* it can be done under a rcu_read_lock(), isn't it?
+> That would eliminate a need for the second patch as well, which
+> is questionable (e.g. one unprivileged user can block others?)
 
-Simplify the logic by moving to per-device mutex, stop checking if
-there is driver data instance attached to the interface, and use
-guard notation to acquire the mutex.
+I am just following the instruction in the for_each_css() macro:
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/input/misc/yealink.c | 72 ++++++++++--------------------------
- 1 file changed, 20 insertions(+), 52 deletions(-)
+  *
+  * Should be called under cgroup_mutex.
+  */
 
-diff --git a/drivers/input/misc/yealink.c b/drivers/input/misc/yealink.c
-index 435a46baad9d..8866bf65d347 100644
---- a/drivers/input/misc/yealink.c
-+++ b/drivers/input/misc/yealink.c
-@@ -36,7 +36,7 @@
- #include <linux/kernel.h>
- #include <linux/slab.h>
- #include <linux/module.h>
--#include <linux/rwsem.h>
-+#include <linux/mutex.h>
- #include <linux/usb/input.h>
- #include <linux/map_to_7segment.h>
- 
-@@ -103,6 +103,8 @@ struct yealink_dev {
- 	u8 lcdMap[ARRAY_SIZE(lcdMap)];	/* state of LCD, LED ... */
- 	int key_code;			/* last reported key	 */
- 
-+	struct mutex sysfs_mutex;
-+
- 	unsigned int shutdown:1;
- 
- 	int	stat_ix;
-@@ -548,8 +550,6 @@ static void input_close(struct input_dev *dev)
-  * sysfs interface
-  ******************************************************************************/
- 
--static DECLARE_RWSEM(sysfs_rwsema);
--
- /* Interface to the 7-segments translation table aka. char set.
-  */
- static ssize_t show_map(struct device *dev, struct device_attribute *attr,
-@@ -580,15 +580,10 @@ static ssize_t store_map(struct device *dev, struct device_attribute *attr,
-  */
- static ssize_t show_line(struct device *dev, char *buf, int a, int b)
- {
--	struct yealink_dev *yld;
-+	struct yealink_dev *yld = dev_get_drvdata(dev);
- 	int i;
- 
--	down_read(&sysfs_rwsema);
--	yld = dev_get_drvdata(dev);
--	if (yld == NULL) {
--		up_read(&sysfs_rwsema);
--		return -ENODEV;
--	}
-+	guard(mutex)(&yld->sysfs_mutex);
- 
- 	for (i = a; i < b; i++)
- 		*buf++ = lcdMap[i].type;
-@@ -598,7 +593,6 @@ static ssize_t show_line(struct device *dev, char *buf, int a, int b)
- 	*buf++ = '\n';
- 	*buf = 0;
- 
--	up_read(&sysfs_rwsema);
- 	return 3 + ((b - a) << 1);
- }
- 
-@@ -630,22 +624,16 @@ static ssize_t show_line3(struct device *dev, struct device_attribute *attr,
- static ssize_t store_line(struct device *dev, const char *buf, size_t count,
- 		int el, size_t len)
- {
--	struct yealink_dev *yld;
-+	struct yealink_dev *yld = dev_get_drvdata(dev);
- 	int i;
- 
--	down_write(&sysfs_rwsema);
--	yld = dev_get_drvdata(dev);
--	if (yld == NULL) {
--		up_write(&sysfs_rwsema);
--		return -ENODEV;
--	}
-+	guard(mutex)(&yld->sysfs_mutex);
- 
- 	if (len > count)
- 		len = count;
- 	for (i = 0; i < len; i++)
- 		setChar(yld, el++, buf[i]);
- 
--	up_write(&sysfs_rwsema);
- 	return count;
- }
- 
-@@ -675,15 +663,10 @@ static ssize_t store_line3(struct device *dev, struct device_attribute *attr,
- static ssize_t get_icons(struct device *dev, struct device_attribute *attr,
- 			char *buf)
- {
--	struct yealink_dev *yld;
-+	struct yealink_dev *yld = dev_get_drvdata(dev);
- 	int i, ret = 1;
- 
--	down_read(&sysfs_rwsema);
--	yld = dev_get_drvdata(dev);
--	if (yld == NULL) {
--		up_read(&sysfs_rwsema);
--		return -ENODEV;
--	}
-+	guard(mutex)(&yld->sysfs_mutex);
- 
- 	for (i = 0; i < ARRAY_SIZE(lcdMap); i++) {
- 		if (lcdMap[i].type != '.')
-@@ -692,7 +675,7 @@ static ssize_t get_icons(struct device *dev, struct device_attribute *attr,
- 				yld->lcdMap[i] == ' ' ? "  " : "on",
- 				lcdMap[i].u.p.name);
- 	}
--	up_read(&sysfs_rwsema);
-+
- 	return ret;
- }
- 
-@@ -700,15 +683,10 @@ static ssize_t get_icons(struct device *dev, struct device_attribute *attr,
- static ssize_t set_icon(struct device *dev, const char *buf, size_t count,
- 			int chr)
- {
--	struct yealink_dev *yld;
-+	struct yealink_dev *yld = dev_get_drvdata(dev);
- 	int i;
- 
--	down_write(&sysfs_rwsema);
--	yld = dev_get_drvdata(dev);
--	if (yld == NULL) {
--		up_write(&sysfs_rwsema);
--		return -ENODEV;
--	}
-+	guard(mutex)(&yld->sysfs_mutex);
- 
- 	for (i = 0; i < ARRAY_SIZE(lcdMap); i++) {
- 		if (lcdMap[i].type != '.')
-@@ -719,7 +697,6 @@ static ssize_t set_icon(struct device *dev, const char *buf, size_t count,
- 		}
- 	}
- 
--	up_write(&sysfs_rwsema);
- 	return count;
- }
- 
-@@ -739,22 +716,16 @@ static ssize_t hide_icon(struct device *dev, struct device_attribute *attr,
-  */
- 
- /* Stores raw ringtone data in the phone */
--static ssize_t store_ringtone(struct device *dev,
--		struct device_attribute *attr,
--		const char *buf, size_t count)
-+static ssize_t store_ringtone(struct device *dev, struct device_attribute *attr,
-+			      const char *buf, size_t count)
- {
--	struct yealink_dev *yld;
-+	struct yealink_dev *yld = dev_get_drvdata(dev);
- 
--	down_write(&sysfs_rwsema);
--	yld = dev_get_drvdata(dev);
--	if (yld == NULL) {
--		up_write(&sysfs_rwsema);
--		return -ENODEV;
--	}
-+	guard(mutex)(&yld->sysfs_mutex);
- 
- 	/* TODO locking with async usb control interface??? */
- 	yealink_set_ringtone(yld, (char *)buf, count);
--	up_write(&sysfs_rwsema);
-+
- 	return count;
- }
- 
-@@ -835,14 +806,10 @@ static int usb_cleanup(struct yealink_dev *yld, int err)
- 
- static void usb_disconnect(struct usb_interface *intf)
- {
--	struct yealink_dev *yld;
--
--	down_write(&sysfs_rwsema);
--	yld = usb_get_intfdata(intf);
--	usb_set_intfdata(intf, NULL);
--	up_write(&sysfs_rwsema);
-+	struct yealink_dev *yld = usb_get_intfdata(intf);
- 
- 	usb_cleanup(yld, 0);
-+	usb_set_intfdata(intf, NULL);
- }
- 
- static int usb_probe(struct usb_interface *intf, const struct usb_device_id *id)
-@@ -870,6 +837,7 @@ static int usb_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 
- 	yld->udev = udev;
- 	yld->intf = intf;
-+	mutex_init(&yld->sysfs_mutex);
- 
- 	yld->idev = input_dev = input_allocate_device();
- 	if (!input_dev)
--- 
-2.45.2.803.g4e1b14247a-goog
+I think taking rcu_read_lock() should also work in this case. Will try 
+it out and update the patch after some testing.
+
+Thanks,
+Longman
 
 
