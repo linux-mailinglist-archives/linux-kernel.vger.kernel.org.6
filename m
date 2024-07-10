@@ -1,168 +1,150 @@
-Return-Path: <linux-kernel+bounces-247646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD8E92D287
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:13:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B70F92D28B
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98191286F8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:13:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC2861C22874
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0AF192B71;
-	Wed, 10 Jul 2024 13:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43249192B99;
+	Wed, 10 Jul 2024 13:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QFfyB67p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GVIEhoPs"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7263919249F;
-	Wed, 10 Jul 2024 13:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9DF192492;
+	Wed, 10 Jul 2024 13:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720617201; cv=none; b=JA6d9wW5zkaR6KvHAbuTOlDzqPIWDNSQO26YDkPNv3AU5unJeQK5t003/AmWeck7nr+buQKoso/EknmrRibUnTvGtQLpW5xQ5j6O8TJaUiZ1z0cFuA+w+hsrsmnOXulTTqKFADWL6tEBd2D49vvLGy1sumHZdgog7jub+gg1ENA=
+	t=1720617305; cv=none; b=dk0yyHP7jNkfxN4T1vpmT2NiheC3krKmzoMVI9pza3bCq1XSUxopEma3lovuwEs9BjZRuKBr5QNYG/w3pvr95IJDI8UAgYzdDHW5ZVx5hyZd02tN1tL6pT3zVLfmlZ5aZXpYySCB+5ZBudyo27yWSSTRoIfBN4uGUAeEPi33VIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720617201; c=relaxed/simple;
-	bh=huUNhhTJhWFtjsInUEv7wh3a987qL/8BId3TQ7pKYso=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OOdnrDbo5bfITkpwkByO8/hn3c5Wk5pttTlOC6OPEt8UaWle3xkfryyVVm0Ga6+lEfEddSN6DoVeJTyK/cH5S4HWgM5ALfgMNMaeL7qaUDu+aMbXVt9OQMtAB2Kv5GTmVrch3LRjwHaovZz3sE3TmeMFc/pHfKoFHhtMuJvt3qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QFfyB67p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06155C4AF07;
-	Wed, 10 Jul 2024 13:13:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720617201;
-	bh=huUNhhTJhWFtjsInUEv7wh3a987qL/8BId3TQ7pKYso=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QFfyB67pfrArc/YSAZmhXQa585RK3v8YkxzG7BSr2h1//0jKCv0ASOCvYpNkOCazg
-	 gYHXFuovFgDM8Isq8gBwKnGZzHOfsctCNO8ipr8W/e84BNhYTCgoMFdqdkME45ZDsv
-	 f86A7wM01Wckpb0gAJFIyWJiHkv2cWOgUIUQ7uAMnCIWhaH5td4GJWDrNkwAGxomGC
-	 qhciIfHSypgh+9ciECLWnV0TgpaHk8YjhBT+5/M6RPYHpO+a+dj5RtzodCP+2a36Uq
-	 m915b7qGhzXIBoggnYAIh8Eq5aqK7SbBQfUsu376GqQA3Sy9ag/bbnNb7h/NJ6cHV7
-	 17GBMed6HVCCg==
-Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5c7aff2005bso22716eaf.2;
-        Wed, 10 Jul 2024 06:13:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWvU38mTARVsfxixBvliZ9D/mQv/K4XP2J+Q5YVbgsEeaLighp61yoOxRzmhm2F2M7VLNm+oB07yek5/vyfoiueuJwwBEoFAxNrOw==
-X-Gm-Message-State: AOJu0YxIHbmOdvHQKeXAnkCwPcqyy1P9wfuxUMSvozen29z0Mgq6Gmp6
-	wCV2u0pM1s9+wzTMHjeWjxvqlFrGaJnUTLXJEvy+zfr4pJTzTQTok49ETkbmLALXMceWHm4fWTv
-	C3xjo85E01yasRdLbuSY5B+5RtlE=
-X-Google-Smtp-Source: AGHT+IHsJZjuZ8j57DYvMIy9ZN5zAAF9UpBAeroiul+VAjZIQYW74gb6rUlf8Jz7HB9fp726J4USbwLXE+GLRaP7hM0=
-X-Received: by 2002:a4a:a6cc:0:b0:5c6:6aae:b5f5 with SMTP id
- 006d021491bc7-5c68df9c85emr5607255eaf.0.1720617200161; Wed, 10 Jul 2024
- 06:13:20 -0700 (PDT)
+	s=arc-20240116; t=1720617305; c=relaxed/simple;
+	bh=DGfVoZNfPdaJiCC+VkpyJKmwJ+ljufKF/kBN7p8Ex/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mSFKr1oE4v96AIcWXhDfbTJpbl7uYFo07RYni5lV/WlaujJ0J1EOy0tQPRhVg+6G8ln4QnZNgcbBlBQ6T8amVEVa++Pv1r8dp2fMxoWvbiFRawPiBaxMlkOi+mavjexBubaazTqnkj5WhS62/j5oPCF1nfMnpcEfhfc1aMF6c3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GVIEhoPs; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46ACU7SX009474;
+	Wed, 10 Jul 2024 13:14:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xIzS/n1i16QTfubuhek/ODHZ/H5HNuwuEmZGlaTudYc=; b=GVIEhoPsp9qnIMcj
+	p4h8bWoKha/n6pE7F1veaDVm9eV5/2uLnPXuRMnZkEzkHkznJubOo6+Z+nvHWzG/
+	Gndp+elVQJ5S9UXBkXSel58DiZ0eVgWNJbnXouaVLST/lfYdrKCH3qOmvyJhhj8+
+	K5AKNlWENCA0x09nd2HKb091TPhdGjB/YBUQErxGlT2ZPCCJA1oXUTLlJcbNL4Nr
+	Nq7SRPPSts9s303NaAvD9FQ0FUILtr6p+WZReoKVBcjy0Yg2nKNda00zozux0kHL
+	iqmzKD1kEP9rXOKFFpqlJeF/bfwPgR1jnJ8pwi7ntf/FP04TM5/UGiFoTocSGZSv
+	ermIjA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 408w0rc8jh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jul 2024 13:14:58 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46ADEvhF020617
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 10 Jul 2024 13:14:57 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 10 Jul
+ 2024 06:14:51 -0700
+Message-ID: <2ab60446-7187-43c9-893b-68cac8c9b96f@quicinc.com>
+Date: Wed, 10 Jul 2024 21:14:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <205bd84a-fe8e-4963-968e-0763285f35ba@message-id.googlemail.com> <67d74985-7be5-4e29-aab2-97a08208ca3f@intel.com>
-In-Reply-To: <67d74985-7be5-4e29-aab2-97a08208ca3f@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 10 Jul 2024 15:13:08 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i0jJBDqYjp+9_Bmhhf67SrWNXaRY1ZfDx6GEKfCLcGVQ@mail.gmail.com>
-Message-ID: <CAJZ5v0i0jJBDqYjp+9_Bmhhf67SrWNXaRY1ZfDx6GEKfCLcGVQ@mail.gmail.com>
-Subject: Re: Regression in 6.8 from "ACPI: OSL: Use a threaded interrupt
- handler for SCI"
-To: Stefan Seyfried <stefan.seyfried@googlemail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, 
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, 
-	"Wysocki, Rafael J" <rafael.j.wysocki@intel.com>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: multipart/mixed; boundary="00000000000002bab2061ce46990"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/13] media: qcom: camss: csiphy-3ph: Add Gen2 v1.2
+ two-phase MIPI CSI-2 DPHY init
+To: Krzysztof Kozlowski <krzk@kernel.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <quic_eberman@quicinc.com>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>
+References: <20240709160656.31146-1-quic_depengs@quicinc.com>
+ <20240709160656.31146-9-quic_depengs@quicinc.com>
+ <e1b298df-05da-4881-a628-149a8a625544@kernel.org>
+Content-Language: en-US
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <e1b298df-05da-4881-a628-149a8a625544@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: gvrLUFD4Czg5RT3Ve2NcwOzvn-dSwMuv
+X-Proofpoint-GUID: gvrLUFD4Czg5RT3Ve2NcwOzvn-dSwMuv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-10_08,2024-07-10_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ impostorscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
+ phishscore=0 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407100092
 
---00000000000002bab2061ce46990
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 8, 2024 at 3:51=E2=80=AFPM Wysocki, Rafael J
-<rafael.j.wysocki@intel.com> wrote:
->
-> Hi,
->
-> On 7/8/2024 10:07 AM, Stefan Seyfried wrote:
-> > Hi all,
-> >
-> > any kernels after 6.7 break my trusty old Toughbook CF-51 by rendering
-> > many PCI devices unusable.
-> >
-> > I did first notice that i915 did no longer work and filed
-> > https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/11437, there I
-> > was pointed to commit
-> >
-> > commit 7a36b901a6eb0e9945341db71ed3c45c7721cfa9
-> > Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Date:   Mon Nov 27 20:57:43 2023 +0100
-> >
-> >     ACPI: OSL: Use a threaded interrupt handler for SCI
-> >
-> > which I verified with a week-long bisecting from 6.7 to 6.8 (just for
-> > fun :-)
-> >
-> Thanks for reporting this, although it would be nice to put linux-acpi
-> on the CC.
->
->
-> > Just reverting this commit top of 6.10-rc5 (sorry, this machine is not
-> > very powerful so I did not try the latest git master) makes everything
-> > work fine again.
-> >
-> > I get these messages in dmesg when running the broken kernels:
-> >
-> > [  T308] genirq: Flags mismatch irq 9. 00000080 (yenta) vs. 00002080
-> > (acpi)
-> > [  T305] genirq: Flags mismatch irq 9. 00000080 (uhci_hcd:usb1) vs.
-> > 00002080 (acpi)
-> > [  T305] genirq: Flags mismatch irq 9. 00000080 (uhci_hcd:usb1) vs.
-> > 00002080 (acpi)
-> > [   T46] genirq: Flags mismatch irq 9. 00000080 (ehci_hcd:usb1) vs.
-> > 00002080 (acpi)
-> > [  T312] genirq: Flags mismatch irq 9. 00000080 (firewire_ohci) vs.
-> > 00002080 (acpi)
-> > [  T305] genirq: Flags mismatch irq 9. 00000080 (uhci_hcd:usb1) vs.
-> > 00002080 (acpi)
-> > [  T308] genirq: Flags mismatch irq 9. 00000080 (yenta) vs. 00002080
-> > (acpi)
-> > [  T592] genirq: Flags mismatch irq 9. 00000080 (snd_intel8x0) vs.
-> > 00002080 (acpi)
-> > [  T581] genirq: Flags mismatch irq 9. 00000080 (i915) vs. 00002080
-> > (acpi)
-> > [  T874] genirq: Flags mismatch irq 9. 00000080 (enp2s1) vs. 00002080
-> > (acpi)
-> >
-> > These are not present with that commit reverted.
-> >
-> So all of the drivers above attempt to share the IRQ with the SCI and
-> they don't use IRQF_ONESHOT and because they all are threaded, there is
-> a flags conflict.
->
-> They all need to be made pass IRQF_COND_ONESHOT when requesting
-> interrupts and it will all work again.
->
-> I'll send you a patch for this (hopefully later today), but I guess it
-> will take a while until it gets absorbed.
->
-> Thanks!
 
-So can you please check if the attached patch helps?
+On 7/10/2024 7:09 PM, Krzysztof Kozlowski wrote:
+> On 09/07/2024 18:06, Depeng Shao wrote:
+>> Add a PHY configuration sequence for the SM8550 which uses a Qualcomm
+>> Gen 2 version 1.2 CSI-2 PHY.
+>>
+>> The PHY can be configured as two phase or three phase in C-PHY or D-PHY
+>> mode. This configuration supports two-phase D-PHY mode.
+>>
+>> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
+>> ---
+>>   .../qcom/camss/camss-csiphy-3ph-1-0.c         | 105 ++++++++++++++++++
+>>   1 file changed, 105 insertions(+)
+>>
+>> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+>> index 1219a25ec55b..b6d5a27b94a6 100644
+>> --- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+>> +++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+>> @@ -324,6 +324,111 @@ csiphy_lane_regs lane_regs_sm8250[] = {
+>>   	{0x0884, 0x01, 0x00, CSIPHY_DEFAULT_PARAMS},
+>>   };
+>>   
+>> +/* GEN2 1.2 2PH */
+>> +static const struct
+>> +csiphy_lane_regs lane_regs_sm8550[] = {
+> 
+> This should sparkle warnings.
+> 
+> There is no user of it. You must organize your patches in logical junks.
+> Adding piece of structure without users is not a logical chunk.
+> 
+> Best regards,
+> Krzysztof
+> 
 
---00000000000002bab2061ce46990
-Content-Type: text/x-patch; charset="US-ASCII"; name="irq-flags-mismatch-fixes.patch"
-Content-Disposition: attachment; filename="irq-flags-mismatch-fixes.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lyfv0amz0>
-X-Attachment-Id: f_lyfv0amz0
+Hi Krzysztof,
 
-LS0tCiBpbmNsdWRlL2xpbnV4L2ludGVycnVwdC5oIHwgICAgMyArKy0KIDEgZmlsZSBjaGFuZ2Vk
-LCAyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKCkluZGV4OiBsaW51eC1wbS9pbmNsdWRl
-L2xpbnV4L2ludGVycnVwdC5oCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0KLS0tIGxpbnV4LXBtLm9yaWcvaW5jbHVkZS9s
-aW51eC9pbnRlcnJ1cHQuaAorKysgbGludXgtcG0vaW5jbHVkZS9saW51eC9pbnRlcnJ1cHQuaApA
-QCAtMTY4LDcgKzE2OCw4IEBAIHN0YXRpYyBpbmxpbmUgaW50IF9fbXVzdF9jaGVjawogcmVxdWVz
-dF9pcnEodW5zaWduZWQgaW50IGlycSwgaXJxX2hhbmRsZXJfdCBoYW5kbGVyLCB1bnNpZ25lZCBs
-b25nIGZsYWdzLAogCSAgICBjb25zdCBjaGFyICpuYW1lLCB2b2lkICpkZXYpCiB7Ci0JcmV0dXJu
-IHJlcXVlc3RfdGhyZWFkZWRfaXJxKGlycSwgaGFuZGxlciwgTlVMTCwgZmxhZ3MsIG5hbWUsIGRl
-dik7CisJcmV0dXJuIHJlcXVlc3RfdGhyZWFkZWRfaXJxKGlycSwgaGFuZGxlciwgTlVMTCwKKwkJ
-CQkgICAgZmxhZ3MgfCBJUlFGX0NPTkRfT05FU0hPVCwgbmFtZSwgZGV2KTsKIH0KIAogZXh0ZXJu
-IGludCBfX211c3RfY2hlY2sK
---00000000000002bab2061ce46990--
+Sure, will move this patch to "media: qcom: camss: Add sm8550 support",
+It is used in below code.
+
+> +	case CAMSS_8550:
+> +		regs->lane_regs = &lane_regs_sm8550[0];
+> +		regs->lane_array_size = ARRAY_SIZE(lane_regs_sm8550);
+> +		regs->offset = 0x1000;
+> +		break;
+>  	default:
+
+Thanks,
+Depeng
+
 
