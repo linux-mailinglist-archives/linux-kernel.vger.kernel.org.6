@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-247213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1EC292CC91
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:12:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E5692CC95
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 346C3B21893
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:12:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBF99B23C7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471D5126F1A;
-	Wed, 10 Jul 2024 08:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003D184E16;
+	Wed, 10 Jul 2024 08:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="LiAqt8Mt"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kep5ygiU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2169984DFE
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3299182C60;
+	Wed, 10 Jul 2024 08:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720599102; cv=none; b=pzMEELw9ZelqCLJalW1e/vZP/K3VCZzeqT0l6vYNdvHDqy+ZscH3j2YkycMTGRT/xfo5xGipkwfOPnqbuwqR2bTDzCu0pRvpVmIdoKkmuzX5oMXvJoEbfDoWO3ABRsSef/lCVoMzv7h7MdYeUg/ZNhgQ48nkdebuxL98gfWTx94=
+	t=1720599139; cv=none; b=aaJViAGSc0Zws/u4QOdp9HgQpDytXXWp+7U3eHv3/PpzkwX8N/zQZf/pUrBZ5T9q7Gba7DX+jLP87kLe9iKT2l4rPpso8DtgUds9wjeds45wamunxGskvo8xs+lOxUZ37CSGs0aIS3trdpn/qdXHJymLcES8kz93dtluArlJfVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720599102; c=relaxed/simple;
-	bh=5FU1zzRFbuB4uhsRO4HVLl91TuFNoGlocUKN1UZpmDE=;
+	s=arc-20240116; t=1720599139; c=relaxed/simple;
+	bh=X2ZYnrR74fzhAKIBrsNGTaVQu9HZa0yNJflphJndmrI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pUF/Mjxf+yv9pStRr/ti1Qopb58d/sFZ9TDl2BZQOpE8RsUhHo/zFQ/RPK9z6Qx23Z+JOl2Jzvzo6JoVseUcV7lIF32sRTmx2rjOY23gTHlr0TN7wFSum+2YnMthxoeWfhCtlRT/d5BGgwuwIK2FWXEDQnr1xBccsDecCxvQfdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=LiAqt8Mt; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-426659ff58bso4189675e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 01:11:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1720599098; x=1721203898; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pP3rsBHrs6LAuVI18mzEk+n0N0LSnWOC/Vuq5a5yPXk=;
-        b=LiAqt8MttYegqMf+ySLm4TDI/K67NMC277ExY1lZycNQnNyU/NOPvkNoBSXYeG+EMn
-         usOXIJIZSkB44hMr0MvyRo27FfdJvzXFw7LI11+NGDL/p+I0vTW70N0Kj8tZp/qgSqY3
-         LwKxBPAk+xyLyOttXm9m4njjJTk8GDuX059oR+GrsuyAYW+gNcd375X1qEaESUkUTObC
-         NqGfJpLj77BuIyi4yw4eobvEJTBpFl2BktQd8Yw+D1tj9scOHDp8V/msYD5v/MCAILzE
-         G1nKptdbSAXBwfwzt4gt/vDnCZgPlXIV9dcNSHsde0UJoRU6mu4ttRrX9JytaT+/SxB3
-         LtcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720599098; x=1721203898;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pP3rsBHrs6LAuVI18mzEk+n0N0LSnWOC/Vuq5a5yPXk=;
-        b=IinQmELMvSJCmyDb6fGGSzWf8AB2dSCDdW3a7i5g0ClmbxuAcpti9Hok/3nOJldfmM
-         tp6R/I0L+MvoFmFrdWz5/DxDnrKcSIPpqNHM9e6ZgpMS4le9l9WCA5Q7bfWyW08U2087
-         4zroNdDuwB7sHi3URy3/PVTEG4Zng+XSxt0d1QirmCqqZUE+GDJVpl0MqA28frlh6fqy
-         Kf2LS0l3u9gmxJbvPhb1uTfnx8JpDAXFtxxocqq44ErUS00GYchPclB7dwOQi0iLuDBA
-         txhuQB/OEltTsjyj/fQX3jfiAHKq+/x/YRTx2J/s1iikLV1qmSfM4sNRsa9evhuUbpy7
-         iAyg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0okcBCCY2ekkGsjzZAfPDGytDwUEQ6cryoXrm9VmsnFMV9KX8xnVI2aPoEXe6knDUz3Ac2/4IhJjoMSyV3LFg8oSejxt43RWgK3+d
-X-Gm-Message-State: AOJu0YynxMWNHcjkCHQX/y9KSSEB21PawTl38pjDgnl7BkvvJVYFS2WI
-	YB6TVaWrSA2P7zCGbbrlC3n+08VnyuslOjZL81u40SJZa0MKjbLVpRdYwZO9ReQ=
-X-Google-Smtp-Source: AGHT+IHiJ1nkZnHNRQCCCBe5FmNUVzq1xa7b8POK+qqL/NKNo3HVmRS2AFa/K/5vF+7jWC2tTjfwew==
-X-Received: by 2002:a05:6000:1f8a:b0:367:9614:fdf7 with SMTP id ffacd0b85a97d-367ce5de5admr3310878f8f.0.1720599098343;
-        Wed, 10 Jul 2024 01:11:38 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:9fb4:e15f:31d3:4404? ([2a01:e0a:e17:9700:9fb4:e15f:31d3:4404])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde8467fsm4608471f8f.27.2024.07.10.01.11.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jul 2024 01:11:37 -0700 (PDT)
-Message-ID: <c053051f-e469-4ec9-a5a3-509fb2232d3f@rivosinc.com>
-Date: Wed, 10 Jul 2024 10:11:37 +0200
+	 In-Reply-To:Content-Type; b=nXpg9lshKAodwMc7Aa3fLu/J9sPJe47KxF7WJ4bfK/6x56Wfj/yOogos07sFTH+rmVnhEB7UAHR6o5QoyZZMkI65Y7tvI+coKveAXaEXS1ClHOR/qv3WoDV3btGXmy6KhImALARWXOwwWL2u/LXEhR98KxxdTzeu8fMSL2Hp6J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kep5ygiU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F7B3C32781;
+	Wed, 10 Jul 2024 08:12:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720599138;
+	bh=X2ZYnrR74fzhAKIBrsNGTaVQu9HZa0yNJflphJndmrI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kep5ygiUMRc5PpqqtR83bVSfda72KErlxT7Oeuee3TluemxsVBwAdFgRrU4IU4n4c
+	 TOuQZsb4jQ2qxWtr3d+VGt22DGHME11K1JsNwyXTL0xVS9hLXxCUBoVXN1zrA9o/oN
+	 lrmm+ycAiX+IUZ5ikLpCX0KZ6rutpDRy3reUvLVuiuv9Q75P6JQIdoVQlZwDrxHPG2
+	 a0kpr5TLR7/DazuBmtZbBBamOZJy/M0YlSQA7OaTXnUGmag8YTzETdvR/DwKwwCEXl
+	 6gyCMYkd74WzwkLlRhT8J8jrRtsdRXmV8QRwKw2MmgEfkUBeC02/YTQGgcYuglQJk2
+	 Hli6Ltm1W7SUg==
+Message-ID: <51c19f82-9a4c-498b-b292-7aa147e64b96@kernel.org>
+Date: Wed, 10 Jul 2024 10:12:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,66 +49,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] riscv: errata: sifive: Use SYM_*() assembly macros
-To: Jisheng Zhang <jszhang@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240709160536.3690-1-jszhang@kernel.org>
- <20240709160536.3690-2-jszhang@kernel.org>
+Subject: Re: [PATCH 1/4] dt-bindings: pinctrl: qcom,apq8064-pinctrl: convert
+ to dtschema
+To: Rayyan Ansari <rayyan.ansari@linaro.org>, devicetree@vger.kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-arm-msm@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Rob Herring <robh@kernel.org>
+References: <20240709162009.5166-1-rayyan.ansari@linaro.org>
+ <20240709162009.5166-2-rayyan.ansari@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <20240709160536.3690-2-jszhang@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240709162009.5166-2-rayyan.ansari@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-
-
-On 09/07/2024 18:05, Jisheng Zhang wrote:
-> ENTRY()/END() macros are deprecated and we should make use of the
-> new SYM_*() macros [1] for better annotation of symbols. Replace the
-> deprecated ones with the new ones.
+On 09/07/2024 18:17, Rayyan Ansari wrote:
+> Convert the Qualcomm APQ8064 TLMM block bindings from text to yaml dt
+> schema format.
 > 
-> [1] https://docs.kernel.org/core-api/asm-annotations.html
-> 
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> ---
->  arch/riscv/errata/sifive/errata_cip_453.S | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/riscv/errata/sifive/errata_cip_453.S b/arch/riscv/errata/sifive/errata_cip_453.S
-> index f1b9623fe1de..b1f7b636fe9a 100644
-> --- a/arch/riscv/errata/sifive/errata_cip_453.S
-> +++ b/arch/riscv/errata/sifive/errata_cip_453.S
-> @@ -21,7 +21,7 @@
->  1:
->  .endm
->  
-> -ENTRY(sifive_cip_453_page_fault_trp)
-> +SYM_FUNC_START(sifive_cip_453_page_fault_trp)
->  	ADD_SIGN_EXT a0, t0, t1
->  #ifdef CONFIG_MMU
->  	la t0, do_page_fault
-> @@ -29,10 +29,10 @@ ENTRY(sifive_cip_453_page_fault_trp)
->  	la t0, do_trap_unknown
->  #endif
->  	jr t0
-> -END(sifive_cip_453_page_fault_trp)
-> +SYM_FUNC_END(sifive_cip_453_page_fault_trp)
->  
-> -ENTRY(sifive_cip_453_insn_fault_trp)
-> +SYM_FUNC_START(sifive_cip_453_insn_fault_trp)
->  	ADD_SIGN_EXT a0, t0, t1
->  	la t0, do_trap_insn_fault
->  	jr t0
-> -END(sifive_cip_453_insn_fault_trp)
-> +SYM_FUNC_END(sifive_cip_453_insn_fault_trp)
+> Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
 
-Hi Jisheng,
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Reviewed-By: Clément Léger <cleger@rivosinc.com>
+Best regards,
+Krzysztof
 
-Thanks !
-
-Clément
 
