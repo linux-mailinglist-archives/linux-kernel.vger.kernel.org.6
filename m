@@ -1,115 +1,139 @@
-Return-Path: <linux-kernel+bounces-247605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B9E492D1C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:41:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 243C992D1DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:44:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA4971F24CF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:41:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4BA21F24C93
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8175D1922FA;
-	Wed, 10 Jul 2024 12:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A991922E3;
+	Wed, 10 Jul 2024 12:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gBKxwxnF"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CMO6hb9A"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C28F1922C9
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 12:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BEA190485
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 12:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720615268; cv=none; b=I4hhnvOZRjy7hlRJfXh2nsWlJU47Y6slE9m11tn2j/pzEwF+cDfONjqeA7ROmsuL7kq+OaeXb3vpxHDicApCeIW2vpxF2Ote+DwIjBPnIOL7HW8DR+uajnclIk+d5j0woC3901vtg0jFkl5C7fcOg5Mtnw+R/cX+8QKU7BIc/B4=
+	t=1720615438; cv=none; b=hxJoS+EY18fbZ9C/jIch3C7eOvP8dX6hlcoVSrx1okxH7rQongUSGRdHU50u2PQUagFdAABkBI6AV5Y3BHQy2lRz0lxYAWTrs/x9XFnRnnUUjE0oF80eqtTxOIqv1yttljMCNobKiNgK2BUpQGAW5sSphjHoUmLiUUjzsAUBNRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720615268; c=relaxed/simple;
-	bh=Ool8JEcomupLYFCAVUceeyirLvgRl1G6dqSHkrYH0y8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=YLnyrQ2bXHOkUoXWrVkr1xPfDPLoos1MH+rtNGBoSfpEQhQ3KdaLQhA7KRJIOTcSuKMgTndHR0H2E+moAUny5Qms5qWwaZ3TtsoJUwTG79bZr43ZNu7ORP8zti+IUXU6oYepE2GCa6sAByW+/L9Ex3ndbYvcuxg2IQbo4hnsv1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gBKxwxnF; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42797bcfc77so34395e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 05:41:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720615263; x=1721220063; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MQLVDFNoFuKRZg7eJdxMfqN4N8nKsyXTgSDfnf3uLGM=;
-        b=gBKxwxnFgp9AOzK/2lb/jr8A/NhFbZkPUvlg5TH0mYbtG80V2yXBxIIGQvh4g7ceFq
-         /p8TADEAgk5hHMbeU8Tukh32d9OIGqzZmfx95mc6DLzqR8snLBQlJQCAs/BkM6qpK4Hp
-         N6T2dw64rhaATV3XQn682pDmYgzZnjOyUe28zGdBZk9rtBdEKvAwBxUwtyxngbHCS4QR
-         zL2fucGqKtrty8SgITaWWyVyRhze8rY5iLuZ+Q4jsuVNssqLydBEXXYq86zPrfcvVZKI
-         3rTFR/GdzADTnvoVz8gMZo3ox3VRVv1SB7RBvQfcFu9D6CIOG9HqeYx5XbK+gFgGgdmn
-         u7QA==
+	s=arc-20240116; t=1720615438; c=relaxed/simple;
+	bh=43DDJK4SeQY7M8v3PtNKvgwHxdoCohqLSGhU/xmdabo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dmvysWBMfbhBu3HV1ixQgwrM4NUyoUpTa/296T46kmhlbVoRp6QBCQDaBo4qJcs0MeL8f1noaoGydNDwTZnmR6qni8H3xbaNx0Ba4IXJCfvBzJ/yP1xvvyH2tcnc2AoOkZhjbrbJjjUIpj7uO5Q6nNtC7C7DeIQOtmGq6Fl/Km8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CMO6hb9A; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720615434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2/9lippDLEXmtWgWziQzdujSsOrakrUjnFWOu2HZ5zc=;
+	b=CMO6hb9AXYWKvSLxmwukDJk1pb9C3w68F9yKeh1cP1JavrS6OBiasI8RvWrjULrL4HPcig
+	Ft1pQepEFadxnizTbwrK+pnTZF99yQAS1Fsc+fcRounkMnnzmrpjP4zM/2B6Bbq45qpZDt
+	gOIGLWPH7hAzoC0YlUf/eEYdyTMPP3Y=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-315-25TrsA6tOZaGSRYJKjlwNQ-1; Wed, 10 Jul 2024 08:43:53 -0400
+X-MC-Unique: 25TrsA6tOZaGSRYJKjlwNQ-1
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-57c6979daf7so5291084a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 05:43:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720615263; x=1721220063;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MQLVDFNoFuKRZg7eJdxMfqN4N8nKsyXTgSDfnf3uLGM=;
-        b=UYd8aDJfvAw0UwXch3s/7tfgyPOGr0esux+1AF0FzM7AEwryUCYMNx1jO52br2up1U
-         QyTvx//iJUsEH/wuzdaWnQBnUEZjN7s7SC4ZUIv4/JfuakI7/mD047eC7Aettq/BFHpH
-         +zJEmWRfeOXVvtVTysvcMjbO8Vg6D6E1kXHEdLDUzEBuFeME1VtRMFhzZRAdVVyapBa/
-         UddlAkB263NTDTZS3jY3J2HudAinoRk8Bzy0pGzILScZpEN35GG3QcV7s7cZrwYt3mYv
-         IxD/dEIjTEAP/sKGPHQhTmsBQwwnOEABkH6FVn/CMa6HBzUxvCAMFTXH7Qo8skWmQEdC
-         qwOg==
-X-Forwarded-Encrypted: i=1; AJvYcCU94LI0pu7VinOuyeUSPLFwxJzOCPuqE02uomyqnyFCE8LhBYbWTEWBwy4DjxAxotQahqFzRNVLUDHXmhaHTCjA/jUszdFt4X36sEwj
-X-Gm-Message-State: AOJu0YxemIY64eaaoiFKMN34nYiWaEkp5Wk0r0KvJwytHTgj+m6KWKXs
-	0jOvw7S9FbiuvOAi0XsP1AupiOjIfHsdTlyvKp9Tsxy2wNp8jM+SOyfikuXgqu4=
-X-Google-Smtp-Source: AGHT+IGT5ilXJSn/KNzsrB9+RCqhsbkJiqU3dqpEBIzoFB+Fcmer/Kih8Fhroy2GBRX27ac1gAp6gw==
-X-Received: by 2002:a05:600c:6c51:b0:426:51e8:5192 with SMTP id 5b1f17b1804b1-426709fac0bmr30666695e9.41.1720615262749;
-        Wed, 10 Jul 2024 05:41:02 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:f3cc:df72:f495:3b49])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-367cde890f6sm5214025f8f.53.2024.07.10.05.41.01
+        d=1e100.net; s=20230601; t=1720615432; x=1721220232;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2/9lippDLEXmtWgWziQzdujSsOrakrUjnFWOu2HZ5zc=;
+        b=AXdEjQ8GrJsTwN1mpE3Wc/MVIjcRUeS5gD3cM+qDyCyC67yOsW3QKbzO+JZ8oZQJtB
+         QozlA+BeYapiwto+yu2kU7ElJYMBCGbuHrMi6p8TxzQgMKuJXkdZ7x8z788Po1iwMMyO
+         Gk6SHmUcMlSb2UTyvlZmmmS2a7xWXmibjT0OL8FqGgdGaU+QLPS0lZsYD3HD1uMsICtX
+         5isDTcHD2TbvMJXbEHvJY4oZA+3DS4vcekM3/gH/Qb2LitUWuD7hBm7rKJX5InB0rogc
+         18a2NRfHb3GAEBnLLXgGIJbxKL51ZTpnlBqPBkVTit6TifMBLO5TDx9EDRRTsjrxo5XH
+         8xlA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzgzQ4eQuJph7XM50tnUNcPGExjbEt5CazoCTSH1rnWic12oftwAcquSP9FaPFqn5K68vsVFJjGKk/fgw2TbRN4Vqk0pI8cwCu13an
+X-Gm-Message-State: AOJu0Yx7YX3yxNUauDkPElcxgjoSSpRbmQl9vDIAB6e9RQUQR4QJZKFl
+	dlYRTftAKmxsx8cA+FUT6lNEUkapPHndNGa1C1EzO+xr8h3G7OycaD+pYA5AxEZD07JChaGQQAC
+	RtvnansUYyuEPsOT95+rUtHdcQaqfMn2j6JRq+UfPd8oh8eAOiaVvqsNa/X4INQ==
+X-Received: by 2002:a05:6402:270c:b0:58c:ccc1:17f7 with SMTP id 4fb4d7f45d1cf-594baf87f81mr3887204a12.15.1720615432396;
+        Wed, 10 Jul 2024 05:43:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGizrLSJI1qs8JqxXWm1KqqiwDtq78ZjQ4fIt6a38oE7t7gbjWggSz07taF+RS8p94KE7RgCw==
+X-Received: by 2002:a05:6402:270c:b0:58c:ccc1:17f7 with SMTP id 4fb4d7f45d1cf-594baf87f81mr3887184a12.15.1720615431778;
+        Wed, 10 Jul 2024 05:43:51 -0700 (PDT)
+Received: from sgarzare-redhat (host-82-57-51-153.retail.telecomitalia.it. [82.57.51.153])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bbe2cc82sm2177127a12.23.2024.07.10.05.43.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 05:41:02 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Vladimir Zapolskiy <vz@mleia.com>, Bjorn Andersson <andersson@kernel.org>, 
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Michal Simek <michal.simek@amd.com>, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-sunxi@lists.linux.dev
-In-Reply-To: <20240703-clk-const-regmap-v1-0-7d15a0671d6f@gmail.com>
-References: <20240703-clk-const-regmap-v1-0-7d15a0671d6f@gmail.com>
-Subject: Re: (subset) [PATCH 00/10] clk: constify struct regmap_config
-Message-Id: <172061526145.2117005.2499091095196670705.b4-ty@baylibre.com>
-Date: Wed, 10 Jul 2024 14:41:01 +0200
+        Wed, 10 Jul 2024 05:43:50 -0700 (PDT)
+Date: Wed, 10 Jul 2024 14:43:46 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH V2] test/vsock: add install target
+Message-ID: <e6oxt6gw36mhv54qbgc2bihcaym2xrquxtsjhyvm2u7wj76nu5@zneaxujp6oei>
+References: <20240710122728.45044-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20240710122728.45044-1-peng.fan@oss.nxp.com>
 
-Applied to clk-meson (clk-meson-next), thanks!
+On Wed, Jul 10, 2024 at 08:27:28PM GMT, Peng Fan (OSS) wrote:
+>From: Peng Fan <peng.fan@nxp.com>
+>
+>Add install target for vsock to make Yocto easy to install the images.
+>
+>Signed-off-by: Peng Fan <peng.fan@nxp.com>
+>---
 
-[01/10] clk: meson: a1: peripherals: Constify struct regmap_config
-        https://github.com/BayLibre/clk-meson/commit/4a7665b885b6
-[02/10] clk: meson: a1: pll: Constify struct regmap_config
-        https://github.com/BayLibre/clk-meson/commit/5c6ffe3537d5
-[03/10] clk: meson: c3: peripherals: Constify struct regmap_config
-        https://github.com/BayLibre/clk-meson/commit/af3e4505e6bc
-[04/10] clk: meson: c3: pll: Constify struct regmap_config
-        https://github.com/BayLibre/clk-meson/commit/11c7c1b94059
-[05/10] clk: meson: s4: peripherals: Constify struct regmap_config
-        https://github.com/BayLibre/clk-meson/commit/02cc1df92d75
-[06/10] clk: meson: s4: pll: Constify struct regmap_config
-        https://github.com/BayLibre/clk-meson/commit/3d0e8b6edd6b
+LGTM! This is a net-next material, so next time better to specify it 
+(e.g. [PATCH net-next]).
 
-Best regards,
---
-Jerome
+If not queued within a week, please resend specifying net-next.
+
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+
+>
+>V2:
+> Use VSOCK_INSTALL_PATH, drop INSTALL_PATH
+>
+> tools/testing/vsock/Makefile | 13 +++++++++++++
+> 1 file changed, 13 insertions(+)
+>
+>diff --git a/tools/testing/vsock/Makefile b/tools/testing/vsock/Makefile
+>index a7f56a09ca9f..6e0b4e95e230 100644
+>--- a/tools/testing/vsock/Makefile
+>+++ b/tools/testing/vsock/Makefile
+>@@ -13,3 +13,16 @@ CFLAGS += -g -O2 -Werror -Wall -I. -I../../include -I../../../usr/include -Wno-p
+> clean:
+> 	${RM} *.o *.d vsock_test vsock_diag_test vsock_perf vsock_uring_test
+> -include *.d
+>+
+>+VSOCK_INSTALL_PATH ?=
+>+
+>+install: all
+>+ifdef VSOCK_INSTALL_PATH
+>+	mkdir -p $(VSOCK_INSTALL_PATH)
+>+	install -m 744 vsock_test $(VSOCK_INSTALL_PATH)
+>+	install -m 744 vsock_perf $(VSOCK_INSTALL_PATH)
+>+	install -m 744 vsock_diag_test $(VSOCK_INSTALL_PATH)
+>+	install -m 744 vsock_uring_test $(VSOCK_INSTALL_PATH)
+>+else
+>+	$(error Error: set VSOCK_INSTALL_PATH to use install)
+>+endif
+>-- 
+>2.37.1
+>
 
 
