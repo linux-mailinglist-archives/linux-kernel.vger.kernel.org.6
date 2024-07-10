@@ -1,271 +1,117 @@
-Return-Path: <linux-kernel+bounces-247174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1718692CC30
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:46:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48FA592CC38
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68754B21F30
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:46:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAD77B23A25
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D644284A3F;
-	Wed, 10 Jul 2024 07:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A44584A27;
+	Wed, 10 Jul 2024 07:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="opPjPT1V";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="G6+JlULH"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="dVAcPjKZ"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D68D535;
-	Wed, 10 Jul 2024 07:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B259C37708
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720597596; cv=none; b=ksyQgXPmespgOJmEu2tkN1KurHalmuqoRt/zMj2wCYTPlkyk74k1BppqJ2dABIl1aI64Ph7KZkybP/GV7bqBJyFREKhzAolBuxHaM/Il8kVZlIDbHfgTz7n84b+C+cD4kqJnMLZsgcecJYN1ha2GROWGXn9R0eqVbZ53bmTSIow=
+	t=1720597738; cv=none; b=IvAoBX9Y9KuGJi77AJZtZwf0E9SgaZ0MQKuulas1HvwkdBdAVqX7iu1uTIqjWkwYZB6CZOUWjGF/guJEUO9zeosLk0yGSQ31uXAD4wswrZTqAk/zhWeV+4IelfIH3qbhCWzisg6VECssU7R+hSsZ0wxXAYY8zOWrR/scsnvPnso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720597596; c=relaxed/simple;
-	bh=jL9QRqaslQ4cEHAQYLLzFk0VWk2T4B6GOv5rS797vwU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VIZoYvIksbkao/Qp1YFuTic1hZhVmJKnczWVgc/+049Jbyf7Qc2e2FQZ+7ZXmjEvZTPfng1G1XvpESbyd2NjSPVBp1/q5tlYp+mgUtMxsJX3TwE+bDlxhXZwLBRD/0l7hBKnJN4F6vhn/j9B7awmJURt/XfLYQUle2Y7XmUpD+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=opPjPT1V; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=G6+JlULH reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1720597738; c=relaxed/simple;
+	bh=l57ULaTVxshBfT8ljxhHFmSRKxxjjQdae0gDKqMvOqw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NitkbnC7c57uHXU/+SFZVpIcomBU0KLN56O+WO0CjwSJCEJUS32G8LlEncvOYj+CgDyE5gaBeB2TzXOVg/CxM5OB6xOrUSpnammV3KvbIlSnaM5VsTzaT7DbMd+W00mGoUMilrc1kml5OQHiNMxQOC+4UVstEACsHOiiOoUQUCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=dVAcPjKZ; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52e976208f8so6603089e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 00:48:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1720597593; x=1752133593;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=jL9QRqaslQ4cEHAQYLLzFk0VWk2T4B6GOv5rS797vwU=;
-  b=opPjPT1V32E+iz/61tSnxKU9yQuTCaQNRa2vmdoaixbKru7CGzj+dYZe
-   HqXNaZlEds4xH2N8tzQUVy+CHEGIvT3FK435n8X/r6UxBcUIj9zUgshvw
-   FCd5YGBDGPuF95nA6PaQptvTzM7KSaOQipjIb55j1xqsqhzXObRLDcZ1F
-   JhlGlEpBOUp5ulbGnZFpA1EYkVo3vkibibGTm2PkG5LMyLoNxcTr4Zwj8
-   k8koMEmqTD8wu8KdXiB0ety9YY6tFp/RpA3UNXG5sdVM9bHBi6/bR397g
-   qokjUEaj0GHOPlVxl56pJJtPOMbPGkBy5ROR2sxTU9++uo/WeQySleS6p
-   Q==;
-X-CSE-ConnectionGUID: 64uWWlOzSQuI3t/PZnqU+A==
-X-CSE-MsgGUID: y01Ja1aVQpeS9GgMNhflVw==
-X-IronPort-AV: E=Sophos;i="6.09,197,1716242400"; 
-   d="scan'208";a="37832087"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 10 Jul 2024 09:46:30 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 92D67161586;
-	Wed, 10 Jul 2024 09:46:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1720597586;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=jL9QRqaslQ4cEHAQYLLzFk0VWk2T4B6GOv5rS797vwU=;
-	b=G6+JlULHlgxjKBkO66J+9gmPBqq8KA3KCBjgbtlBQDdeUi7Z3GVeK/c92zYk+W8xGqmwZI
-	/mFRTfXaHvEifEGzefycU3tTEF9lErB89f8Be0+zN1B/IH62Yd+MY0IT2kXqJ1PGSsIn1M
-	j1LPn/548m9C9V8CoQoSyR2T4rZVfjWuQmU94BmrRjSQQZfDKTgcKKdAyXdK3dCmg7rBAu
-	SixBSOo2MahFucnMVJPvDQrOuwd3t/RSuAGJFTTxHzVxfkwiDnBjQoRTGII9hUhuhWORHQ
-	Z1URs5RUU30cNhAAZ9AjNBwXTRZyldYb/j/nk9XlXl6Eo8X3jc/uVDRx9y36jA==
-Message-ID: <945b275d60c37b6d4db631c10973f04cca2b5182.camel@ew.tq-group.com>
-Subject: Re: Kernel hang caused by commit "can: m_can: Start/Cancel polling
- timer together with interrupts"
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Chandrasekar Ramakrishnan
- <rcsekar@samsung.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>, Tony Lindgren
- <tony@atomide.com>, Judith Mendez <jm@ti.com>,  linux-can@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux@ew.tq-group.com, Linux regressions mailing list
- <regressions@lists.linux.dev>
-Date: Wed, 10 Jul 2024 09:46:23 +0200
-In-Reply-To: <tyq2h55iyfxmebysxbdv352vops7i5fhi3avs6u7h6yinwv75j@m6wicydoobbp>
-References: <e72771c75988a2460fa8b557b0e2d32e6894f75d.camel@ew.tq-group.com>
-	 <c93ab2cc-d8e9-41ba-9f56-51acb331ae38@leemhuis.info>
-	 <h7lmtmqizoipzlazl36fz37w2f5ow7nbghvya3wu766la5hx6d@3jdesa3ltmuz>
-	 <08aabeaf-6a81-48a9-9c5b-82a69b071faa@leemhuis.info>
-	 <734a29a87613b9052fc795d56a30690833e4aba9.camel@ew.tq-group.com>
-	 <76faeb323353b584b310f2f1b53e9b2745d2f12c.camel@ew.tq-group.com>
-	 <tyq2h55iyfxmebysxbdv352vops7i5fhi3avs6u7h6yinwv75j@m6wicydoobbp>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1720597735; x=1721202535; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GNsDfIDnf4EzGjKDdcme11QFsKS3nMXn+3RFV1TKwBQ=;
+        b=dVAcPjKZQbbmzoF+Ga0jLtPFKboNvgKH0wpVqS8GsYDL6B2QY5Hu9DO+ROJ63GBxml
+         d+tzliWEUrHFj0GMxbiBqQfaWOpZmmp8WvcyXU5vARubm8p/efw67XSW5lK/yFN91yNQ
+         dwpTFCcTSBUvfy0jtqaKdnTFEsCny7kj2Qhi1KsfaIKDfpoJHOrr3Wea1FbafWmDeX6Y
+         cOzKPKkTruG7fOgRy+EPoBofiXe3ZNpV7bVE9ihEyXexjy1EcFuu2g74FSlAWBL7cz7d
+         N3D8+eKBBS22UT2Ul9xQLV2FTCeuTrulgsv7ze5Qs2HfxFVPQPzoXSrCW9570/OQE9NI
+         Zg3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720597735; x=1721202535;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GNsDfIDnf4EzGjKDdcme11QFsKS3nMXn+3RFV1TKwBQ=;
+        b=q+yMTpJsdA1iVjNUvCujzdvi2MDjPoSALtDwuEiVJp2VoOtMM7xAJhtJvD8gXy4H75
+         /BlPK9ZUY5or0VkWLlU8eAcn1hPqnfOQAvcRsmYv/vJWolk8+nFYF/FMqxlEic6AWNk/
+         FB2HouA3iKPnkB6gH1s/z4DrNt3KMFWrbfPQ6HIPf+g1v55/MQuG6TjBj86TXbOJyic9
+         YQFb6CUVyKBAg1xZjD3aL5q7tslBn0RuJfB9vfcLTxNtSgxoFO+2DMKuTt2wEW4Pv9mS
+         nm/DCYowfGNKEutj8vYNi0IdwQRP3yrYViHYXgS2ha10M6io5a/DFIIrStY+DRC/4xJ9
+         8fkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpzMiYqwwHOVUg3yZYIM/wTjGC7x69WDiWSGWXFMbbN+/VIR/Z9DVoEHX6IJcHU2H3qu1Z6pjio6jitQ0zcNGeW/lA2ube4wf25jGb
+X-Gm-Message-State: AOJu0YwC/DlxrQ8af17iuCtgfk1OYltgXq5xAMEQwkgzMaxA7CWlIkLh
+	kTBD9pB1kXTa0o4UbWnHyLlL8h98pLP6OewoNr3s41YU6MFFcYo1g1JATHP6PkU=
+X-Google-Smtp-Source: AGHT+IG80H6A817GZXvHI9egaLq2gNkzKl5Ws5DDQve3aWxctuque2YrycdsMJ8ERJDon1+bu1hJ2w==
+X-Received: by 2002:ac2:5544:0:b0:52c:db0a:a550 with SMTP id 2adb3069b0e04-52eb99d2025mr2795508e87.42.1720597734730;
+        Wed, 10 Jul 2024 00:48:54 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-82-135-80-26.dynamic.mnet-online.de. [82.135.80.26])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cdfa06absm4537414f8f.80.2024.07.10.00.48.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 00:48:54 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: jani.nikula@linux.intel.com,
+	joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	tursulin@ursulin.net,
+	airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] drm/i915: Explicitly cast divisor to fix Coccinelle warning
+Date: Wed, 10 Jul 2024 09:46:51 +0200
+Message-ID: <20240710074650.419902-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2024-07-09 at 14:23 +0200, Markus Schneider-Pargmann wrote:
->=20
->=20
-> Hi,
->=20
-> On Wed, Jul 03, 2024 at 02:50:04PM GMT, Matthias Schiffer wrote:
-> > On Tue, 2024-07-02 at 12:03 +0200, Matthias Schiffer wrote:
-> > > On Tue, 2024-07-02 at 07:37 +0200, Linux regression tracking (Thorste=
-n Leemhuis) wrote:
-> > > >=20
-> > > >=20
-> > > > On 01.07.24 16:34, Markus Schneider-Pargmann wrote:
-> > > > > On Mon, Jul 01, 2024 at 02:12:55PM GMT, Linux regression tracking=
- (Thorsten Leemhuis) wrote:
-> > > > > > [CCing the regression list, as it should be in the loop for reg=
-ressions:
-> > > > > > https://docs.kernel.org/admin-guide/reporting-regressions.html]
-> > > > > >=20
-> > > > > > Hi, Thorsten here, the Linux kernel's regression tracker. Top-p=
-osting
-> > > > > > for once, to make this easily accessible to everyone.
-> > > > > >=20
-> > > > > > Hmm, looks like there was not even a single reply to below regr=
-ession
-> > > > > > report. But also seens Markus hasn't posted anything archived o=
-n Lore
-> > > > > > since about three weeks now, so he might be on vacation.
-> > > > > >=20
-> > > > > > Marc, do you might have an idea what's wrong with the culprit? =
-Or do we
-> > > > > > expected Markus to be back in action soon?
-> > > > >=20
-> > > > > Great, ping here.
-> > > >=20
-> > > > Thx for replying!
-> > > >=20
-> > > > > @Matthias: Thanks for debugging and sorry for breaking it. If you=
- have a
-> > > > > fix for this, let me know. I have a lot of work right now, so I a=
-m not
-> > > > > sure when I will have a proper fix ready. But it is on my todo li=
-st.
-> > > >=20
-> > > > Thx. This made me wonder: is "revert the culprit to resolve this qu=
-ickly
-> > > > and reapply it later together with a fix" something that we should
-> > > > consider if a proper fix takes some time? Or is this not worth it i=
-n
-> > > > this case or extremely hard? Or would it cause a regression on it's=
- own
-> > > > for users of 6.9?
-> > > >=20
-> > > > Ciao, Thorsten
-> > >=20
-> > > Hi,
-> > >=20
-> > > I think on 6.9 a revert is not easily possible (without reverting sev=
-eral other commits adding new
-> > > features), but it should be considered for 6.6.
-> > >=20
-> > > I don't think further regressions are possible by reverting, as on 6.=
-6 the timer is only used for
-> > > platforms without an m_can IRQ, and on these platforms the current be=
-havior is "the kernel
-> > > reproducibly deadlocks in atomic context", so there is not much room =
-for making it worse.
-> > >=20
-> > > Like Markus, I have writing a proper fix for this on my TODO list, bu=
-t I'm not sure when I can get
-> > > to it - hopefully next week.
-> > >=20
-> > > Best regards,
-> > > Matthias
-> >=20
-> > A small update from my side:
-> >=20
-> > I had a short look into the issue today, but I've found that I don't qu=
-ite grasp the (lack of)
-> > locking in the m_can driver. The m_can_classdev fields active_interrupt=
-s and irqstatus are accessed
-> > from a number of=C2=A0different contexts:
-> >=20
-> > - active_interrupts is *mostly* read and written from the ISR/hrtimer c=
-allback, but also from
-> > m_can_start()/m_can_stop() and (in error paths) indirectly from m_can_p=
-oll() (NAPI callback). It is
-> > not clear to me whether start/stop/poll could race with the ISR on a di=
-fferent CPU. Besides being
-> > used for ndo_open/stop, m_can_start/stop also happen from PM callbacks.
-> > - irqstatus is written from the ISR (or hrtimer callback) and read from=
- m_can_poll() (NAPI callback)
-> >=20
-> > Is this correct without explicit sychronization, or should there be som=
-e locking or atomic for these
-> > accesses?
->=20
-> Thanks for pointing these out. I started creating some fixes for some of
-> the patches. Not done yet, but I am working on it.
->=20
-> Best,
-> Markus
+As the comment explains, the if check ensures that the divisor oa_period
+is a u32. Explicitly cast oa_period to u32 to remove the following
+Coccinelle/coccicheck warning reported by do_div.cocci:
 
-Hi Markus,
+  WARNING: do_div() does a 64-by-32 division, please consider using div64_u64 instead
 
-thanks for the update. I'm going to be out of office from Jul 12-26, so I w=
-ill only be able to test
-fixes when I'm back.
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ drivers/gpu/drm/i915/i915_perf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Matthias
+diff --git a/drivers/gpu/drm/i915/i915_perf.c b/drivers/gpu/drm/i915/i915_perf.c
+index 0b1cd4c7a525..24722e758aaf 100644
+--- a/drivers/gpu/drm/i915/i915_perf.c
++++ b/drivers/gpu/drm/i915/i915_perf.c
+@@ -4103,7 +4103,7 @@ static int read_properties_unlocked(struct i915_perf *perf,
+ 			 */
+ 			if (oa_period <= NSEC_PER_SEC) {
+ 				u64 tmp = NSEC_PER_SEC;
+-				do_div(tmp, oa_period);
++				do_div(tmp, (u32)oa_period);
+ 				oa_freq_hz = tmp;
+ 			} else
+ 				oa_freq_hz = 0;
+-- 
+2.45.2
 
-
-
->=20
-> >=20
-> > Best regards,
-> > Matthias
-> >=20
-> >=20
-> >=20
-> > >=20
-> > >=20
-> > >=20
-> > > >=20
-> > > > > > On 18.06.24 18:12, Matthias Schiffer wrote:
-> > > > > > > Hi Markus,
-> > > > > > >=20
-> > > > > > > we've found that recent kernels hang on the TI AM62x SoC (whe=
-re no m_can interrupt is available and
-> > > > > > > thus the polling timer is used), always a few seconds after t=
-he CAN interfaces are set up.
-> > > > > > >=20
-> > > > > > > I have bisected the issue to commit a163c5761019b ("can: m_ca=
-n: Start/Cancel polling timer together
-> > > > > > > with interrupts"). Both master and 6.6 stable (which received=
- a backport of the commit) are
-> > > > > > > affected. On 6.6 the commit is easy to revert, but on master =
-a lot has happened on top of that
-> > > > > > > change.
-> > > > > > >=20
-> > > > > > > As far as I can tell, the reason is that hrtimer_cancel() tri=
-es to cancel the timer synchronously,
-> > > > > > > which will deadlock when called from the hrtimer callback its=
-elf (hrtimer_callback -> m_can_isr ->
-> > > > > > > m_can_disable_all_interrupts -> hrtimer_cancel).
-> > > > > > >=20
-> > > > > > > I can try to come up with a fix, but I think you are much mor=
-e familiar with the driver code. Please
-> > > > > > > let me know if you need any more information.
-> > > > > > >=20
-> > > > > > > Best regards,
-> > > > > > > Matthias
-> > > > > > >=20
-> > > > > > >=20
-> > > > >=20
-> > > > >=20
-> > >=20
-> >=20
-> > --=20
-> > TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, =
-Germany
-> > Amtsgericht M=C3=BCnchen, HRB 105018
-> > Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan=
- Schneider
-> > https://www.tq-group.com/
-
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
 
