@@ -1,183 +1,84 @@
-Return-Path: <linux-kernel+bounces-247025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E19E692CA10
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:00:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49E1292CA14
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 07:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C9101F24164
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:00:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 355FB2843DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 05:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D72F4597B;
-	Wed, 10 Jul 2024 05:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jl3YCnKU"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C56641A84;
+	Wed, 10 Jul 2024 05:11:05 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0437A4A07;
-	Wed, 10 Jul 2024 05:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BAD4A07
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 05:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720587618; cv=none; b=ZhX8oEEzbQ+/gFqoK9D6UtnIdt82E2rz2C+RmS7oOJJYP4I0zBMxrfkG3aXw53NF1MVR8M//oLZsIO9LnA+wAiQGcFlo75PmKWD9dM7Onu7PRtji8dBMLVgdfLZpVxh17W5mR84BPri1omyrRFMNBr5zMQt95sB9pDhd7BMD3uA=
+	t=1720588264; cv=none; b=i/lj4X1gZOSSxW+QA8nOzkUawBMPiTMH3H37RWUMQwWz/AikdX2Lj5Jh1DOQi7R0t/1iOtRX9CasWwj71p5oet5959uk/JuKPKrQpwwsLlP4dVMdtWh2/CID+US+QbgiJum87JUOb/T44J9lch3Jd3TLHzuFEPRvoVi/xq8A/sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720587618; c=relaxed/simple;
-	bh=pI4XSLU0+3UNmL28LII8gHITrzyjHueWVVed6laXvBw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mdR8Z6jpTJtgn9yxKI4kRybv+IeahxRBisT0gZ7wRmRCHxHMV+6uSWjRhBj94fjmyaVQV3DYpJEYfjuNGD0/kD9Zz0bVZbY+TEWGy4VNDEIg4m3XDlX0E3vOIIkHDguEXfuaQqjpyr2Puf76IJcQYZLkrAu4mZvP0jzLSW2B6LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jl3YCnKU; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46A4xmnm059734;
-	Tue, 9 Jul 2024 23:59:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1720587588;
-	bh=Q7P3aIhdZOB3zwAz4JcRP+9F7wT1ukLiFU2YAebXE40=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=jl3YCnKUhCTLPH9YUlnX3ba18w7/Fvjq6iIFb8SKFqsUw5+DiZ+RGy7aIdFFT2me1
-	 vr08Zqwbuu7DWkuNS/8By319/QlPJKWO+C2vjogYj9fyi3rw0sy0rn4s/cDzH1aY5I
-	 2OtXWQengPw2XrrR9wl6Xm7VSCHVLCPgyR4yO/JA=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46A4xmnU010468
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 9 Jul 2024 23:59:48 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 9
- Jul 2024 23:59:48 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 9 Jul 2024 23:59:48 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46A4xk3E064380;
-	Tue, 9 Jul 2024 23:59:47 -0500
-Date: Wed, 10 Jul 2024 10:29:46 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Andrew Halaney <ahalaney@redhat.com>
-CC: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <sjakhade@cadence.com>, <rogerq@kernel.org>,
-        <thomas.richard@bootlin.com>, <theo.lebrun@bootlin.com>,
-        <make24@iscas.ac.cn>, <linux-phy@lists.infradead.org>,
-        <s-vadapalli@ti.com>, <mranostay@ti.com>
-Subject: Re: [BUG] k3-j784s4-evm/phy-cadence-torrent: Shared reset using
- exclusive API
-Message-ID: <46e635e6-b6bf-404c-87a2-57fe25b4855a@ti.com>
-References: <yhtb4clns57t7qo5yxil3oofisdlzfubyiwrvjo2ufw2ngv67m@g6p7ktxfgfv3>
+	s=arc-20240116; t=1720588264; c=relaxed/simple;
+	bh=5WwZZS/GnossFKcZhqYUOwZ/Ni3kvr5R+TdE7KtXpBc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=W7e8EYcBiXIVk08mvFlDs5GbQootDojqBc//1YmMmpClOxrdJtlzaoKwdSMbiR3i0cHq+FF/y7WHORVXuqYhLx0qf2UxVYvb0DfNK6JOxAPyF4o3KdtfCYqBgMRMUGpX5+8PMAh0sfP5+HBXW739/aRykPtckQ0KxTlBN7xfoQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7f682fb3b16so483603539f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 09 Jul 2024 22:11:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720588262; x=1721193062;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cYo/+8P+Tx6CDbTq021WZoOhi1qMhLygAn18UoLwJ1I=;
+        b=j23KU+HKLLVt+RgpzALuIOGHQk5V3cnOpAMxMQc046X8FKgTt8BJe2DjjQmpfiwUnY
+         CoMvzYD3pIyAf/8grKbDifJSQOTWeC1BxN68DAypdm33f2+kHdqm3iuipN696FBK2N+e
+         vF2S6S8t1nLQ0j9poFj28g0OW/crVcWfNzfe0h1QzaoSt2cA7XnIqPDSou8wL68F7bb9
+         mbprXe+Dn3pfpKoFpEacSIeymwPSSghJSGgip60WnpumKGbETcj9MYDTWgwIZNikexC2
+         d5eWKOy0pkNdgLVEXs1gZi41Dba2R/qfVtMsH6rAIZ41MdKKf+4/rGctWhP4pa8ICmD+
+         U4Aw==
+X-Gm-Message-State: AOJu0YzRykYO75FDimji7oR7+Ew1SRM7ry5Y2FBvrN3TCh+RuDqTtq+P
+	C/ldBu2KAfV4NfdZcmV+HTUVdlAhmJwgIIPdjXbFd/GepsjhioyyzRXpY2RmyBMK82vPDkgo7nV
+	EgcsR0vzdlIEwEyn4cChtGrzTCKNr5oiUulmNuzNjMJAlCtZGZrwqEWw=
+X-Google-Smtp-Source: AGHT+IHrQHRI2bpe6mhYOjyKw/dJ/WJv3kOAOsIMpFWL9YAVWZyKiBB9YqkDR9ALCVZuf9J6n0CR/XxzgKW2eCRwGnkeeFcuIJBa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <yhtb4clns57t7qo5yxil3oofisdlzfubyiwrvjo2ufw2ngv67m@g6p7ktxfgfv3>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Received: by 2002:a05:6638:24c7:b0:4c0:838e:9fd1 with SMTP id
+ 8926c6da1cb9f-4c0b2b7ed9fmr571934173.5.1720588262555; Tue, 09 Jul 2024
+ 22:11:02 -0700 (PDT)
+Date: Tue, 09 Jul 2024 22:11:02 -0700
+In-Reply-To: <CAMc0M--OXtWqECVC3rQ8=jbcLPmYPS2op+DoeSJFKyn0ND_jCQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000031d472061cddacc2@google.com>
+Subject: Re: [syzbot] [bcachefs?] WARNING: suspicious RCU usage in bch2_bucket_ref_update
+From: syzbot <syzbot+e74fea078710bbca6f4b@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, peili.dev@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 09, 2024 at 04:57:09PM -0500, Andrew Halaney wrote:
-> Hi,
-> 
+Hello,
 
-[...]
+syzbot tried to test the proposed patch but the build/boot failed:
 
-> 
-> this is because the devicetree has two[0][1] consumers of the same reset:
-> 
-> 	&serdes0 {
-> 		status = "okay";
-> 
-> 		serdes0_pcie1_link: phy@0 {
-> 			reg = <0>;
-> 			cdns,num-lanes = <4>;
-> 			#phy-cells = <0>;
-> 			cdns,phy-type = <PHY_TYPE_PCIE>;
-> 			resets = <&serdes_wiz0 1>, <&serdes_wiz0 2>,
-> 				 <&serdes_wiz0 3>, <&serdes_wiz0 4>;
-> 		};
-> 	};
-> 	...
-> 	&serdes0 {
-> 		status = "okay";
-> 
-> 		serdes0_usb_link: phy@3 {
-> 			reg = <3>;
-> 			cdns,num-lanes = <1>;
-> 			#phy-cells = <0>;
-> 			cdns,phy-type = <PHY_TYPE_USB3>;
-> 			resets = <&serdes_wiz0 4>;
-> 		};
-> 	};
-> 
-> phy-cadence-torrent (the serdes0 consumer here) uses the exclusive consumer API[2],
-> so this blows up.
-> 
-> Is the problem here that one of the above devicetree nodes is using the wrong
-> reset, or does the driver need to look into using the shared API? I'm
-> not sure where to find the reset definitions for the IP here unfortunately,
-> so I'm hoping someone can help confirm if those are correct or not.
+fs/bcachefs/buckets.c:1040:39: error: incompatible pointer types passing 'struct extent_ptr_decoded *' to parameter of type 'const struct bch_extent_ptr *' [-Werror,-Wincompatible-pointer-types]
 
-No, the resets are correct. Both PCIe1 and USB0 use the same instances
-of SERDES which is SERDES0. I had posted the series for PCIe at:
-https://lore.kernel.org/r/20240529082259.1619695-1-s-vadapalli@ti.com/
-with all 4 Lanes of SERDES0 given to PCIe1. Similarly, Ravi had posted
-the series for USB at:
-https://lore.kernel.org/r/20240507095545.8210-1-r-gunasekaran@ti.com/
-with lane 3 of SERDES0 given to USB0.
 
-Since both of the series got merged on the same day (14 Jun 2024):
-PCIe series:
-https://lore.kernel.org/r/171826022277.240984.16790260886500529482.b4-ty@ti.com/
-USB series:
-https://lore.kernel.org/r/171826022274.240984.5150753966671933401.b4-ty@ti.com/
-the dependency was unknown when the individual series were posted as
-neither of them was a part of linux-next/ti-k3-dts-next when the other
-one was posted.
+Tested on:
 
-> 
-> Total aside, I think we should put the above dts snippet into one &serdes0 reference
-> for readability sake. I'd post the patch but I'm hoping to get the above answered
-> first in order to clean that up before shuffling things around for readability sake.
+commit:         34afb82a Merge tag '6.10-rc6-smb3-server-fixes' of git..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=42a432cfd0e579e0
+dashboard link: https://syzkaller.appspot.com/bug?extid=e74fea078710bbca6f4b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=140531e1980000
 
-Yes, I agree that both sub-nodes should go into the same referenced
-serdes0 node in k3-j784s4-evm.dts. The reason it didn't happen that way
-to begin with is due to the fact that both series got merged on the same
-day as I pointed out above.
-
-The fix in this case will be to assign lanes 0 and 1 of SERDES0 to PCIe1
-and lane 3 to USB0 with lane 2 left unused since PCIe doesn't have the
-concept of a x3 link. In such a configuration, the device-tree nodes
-will look like:
-
-&serdes0 {
-	status = "okay";
-
-	serdes0_pcie1_link: phy@0 {
-		reg = <0>;
-		cdns,num-lanes = <2>;
-		#phy-cells = <0>;
-		cdns,phy-type = <PHY_TYPE_PCIE>;
-		resets = <&serdes_wiz0 1>, <&serdes_wiz0 2>;
-	};
-
-	serdes0_usb_link: phy@3 {
-		reg = <3>;
-		cdns,num-lanes = <1>;
-		#phy-cells = <0>;
-		cdns,phy-type = <PHY_TYPE_USB3>;
-		resets = <&serdes_wiz0 4>;
-	};
-};
-
-Thank you for pointing out this issue. Please let me know if you plan to
-post the patch with the above fix or you want me to post the patch for it.
-
-Regards,
-Siddharth.
 
