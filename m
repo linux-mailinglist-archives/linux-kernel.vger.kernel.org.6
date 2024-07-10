@@ -1,88 +1,137 @@
-Return-Path: <linux-kernel+bounces-247786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C6EB92D489
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:51:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A7E792D48A
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 395541C21402
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:51:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBDF2B21C3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 14:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3E119309E;
-	Wed, 10 Jul 2024 14:51:00 +0000 (UTC)
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15EE193462;
+	Wed, 10 Jul 2024 14:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IQSHrNF4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6454015E97;
-	Wed, 10 Jul 2024 14:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3157915E97
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 14:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720623059; cv=none; b=THmJHQ1DHr3q4wXBk1UAgOrQw+/aJ43pnjvR0p6uR7ztFfHvnGEXPSumF7/8K1luuO92eIk/AUtvhuQv7ublV+Ug2cR+B6jKY2eta4sNngd6iQ8db+x/ljschZ08AkANjYoDit+nhAovwsise2LbHDN5aChlDmdATAZMnkLe8yo=
+	t=1720623124; cv=none; b=ovAkECVaQVfC5JhMEH5w2349QYR1vj1vpZQA+mh3pDEJijHlyziEXuUyGbeumxFLeq2AeMbHnimC6s+PO2nxi2ykyMuA8zZ3Vb2Z08OE47SEJ7KD5WR5j/YiTZaIYV0zSGTeJktW59Trvsrjia1Id0lXsjOemyv1QbbK+B2GRQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720623059; c=relaxed/simple;
-	bh=aIcQjENbMyNuWqzMtJ29qLel2RrxfyQIlKM05QX9NIE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XhnjHoOeeJTwFecsQikkecTldqPDCUrxJ5V8FpNrk/bT9eOdLWRq2nbpn38vSJD3o4v0fxxSNZfVwoRrIqxv1edj9kMOAbVWL0ZvU4mzwbNpwLHok83cygXV7q/0Z2jT5fTiC7Q4NzgdoSaBebgwHPnZ67ERvShCP186b/8PSz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c00:fb60:82c0:6879:f4d2:caf4])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 6F3577E0166;
-	Wed, 10 Jul 2024 22:50:13 +0800 (CST)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: jonas@kwiboo.se
-Cc: amadeus@jmu.edu.cn,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	heiko@sntech.de,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	robh@kernel.org
-Subject: Re: [PATCH v2 7/9] arm64: dts: rockchip: use generic Ethernet PHY reset bindings for Lunzn Fastrhino R68S
-Date: Wed, 10 Jul 2024 22:50:10 +0800
-Message-Id: <20240710145010.688986-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <caf55fe6-4674-4c89-a94e-f4ad348e2ba0@kwiboo.se>
-References: <caf55fe6-4674-4c89-a94e-f4ad348e2ba0@kwiboo.se>
+	s=arc-20240116; t=1720623124; c=relaxed/simple;
+	bh=6v7MmdrjvBjtmq4zAnDalq+Hgqf5n1EhZ9LB18i61Eo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=VJkgfR2MScrG5oe0tlFI5ntDIw/qDusT7y9N1d10MvQmg+o0zYMvDg79T84Dq/Hv2N2vT7euGiu1p8y61buxDJI5hu27c7QKLPCLAGdu0caPC+o8M8PWDmW1SxssWVItwOY8L111rMS24lBeO5qGTECGh0qLOqdvFeCWqCvy7JM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IQSHrNF4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7331C4AF0B;
+	Wed, 10 Jul 2024 14:52:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720623123;
+	bh=6v7MmdrjvBjtmq4zAnDalq+Hgqf5n1EhZ9LB18i61Eo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IQSHrNF40+znhWV4VRq7IgRW+TixQaGFJ8XLTew5eJfUnuojkPpswwflD90TTFfQO
+	 Rejzghwon6KCVmog+zTQPzit+fPteKrqmAcECIyiPxnAgsSGpc3fCS1I6yLeocI1Wb
+	 g7GU4JNCp54Bdat10EaseweEbdAeNNhu6JFbbLGUp8d+sokynJrtsuSYImBd7bYf1l
+	 R2pTtSVLGeuRK5yluHMK6m1mbcZpTM9Z8NXL+fEjxBHGMi0HjOgehbyXidQAsehNXV
+	 IZBUAKNf60fbPpOv+hBFKDAWRURoMCf/Ctp9zDWX+NpK1YaBhA9GU6wx4l89oN9FWV
+	 qj+MmF96UZDZA==
+Date: Wed, 10 Jul 2024 23:51:59 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: andrii@kernel.org, peterz@infradead.org, clm@meta.com, jolsa@kernel.org,
+ mingo@kernel.org, paulmck@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] uprobes: document the usage of mm->mmap_lock
+Message-Id: <20240710235159.23b8bc0f5247c358ccea699d@kernel.org>
+In-Reply-To: <20240710140045.GA1084@redhat.com>
+References: <20240710140017.GA1074@redhat.com>
+	<20240710140045.GA1084@redhat.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCQh1OVk5PGR1NHU1OHx1ISVYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtLQR0ZTUtBQ0kYS0FNQ0xCQR1PH0lBGBodT1lXWRYaDx
-	IVHRRZQVlPS0hVSktISUxCS1VKS0tVSkJLS1kG
-X-HM-Tid: 0a909d1f9f3f03a2kunm6f3577e0166
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PTI6Egw6GTIzDDAOIyIRPzAJ
-	KwsKC1ZVSlVKTElLTUlIS0pPS0NCVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
-	Sx5BSBlIQUkYS0tBHRlNS0FDSRhLQU1DTEJBHU8fSUEYGh1PWVdZCAFZQUpDTU83Bg++
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> Where do you find the 72ms in the datasheet?
+On Wed, 10 Jul 2024 16:00:45 +0200
+Oleg Nesterov <oleg@redhat.com> wrote:
 
-I refer to this commit:
-https://github.com/torvalds/linux/commit/1c7412530d5d0e0a0b27f1642f5c13c8b9f36f05
-BTW I found that some boards use the RTL8211F-VD PHY,
-but I can't find the datasheet.
+> The comment above uprobe_write_opcode() is wrong, unapply_uprobe() calls
+> it under mmap_read_lock() and this is correct.
+> 
+> And it is completely unclear why register_for_each_vma() takes mmap_lock
+> for writing, add a comment to explain that mmap_write_lock() is needed to
+> avoid the following race:
+> 
+> 	- A task T hits the bp installed by uprobe and calls
+> 	  find_active_uprobe()
+> 
+> 	- uprobe_unregister() removes this uprobe/bp
+> 
+> 	- T calls find_uprobe() which returns NULL
+> 
+> 	- another uprobe_register() installs the bp at the same address
+> 
+> 	- T calls is_trap_at_addr() which returns true
+> 
+> 	- T returns to handle_swbp() and gets SIGTRAP.
+> 
+> Reported-by: Andrii Nakryiko <andrii@kernel.org>
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> ---
+>  kernel/events/uprobes.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 2c83ba776fc7..d52b624a50fa 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -453,7 +453,7 @@ static int update_ref_ctr(struct uprobe *uprobe, struct mm_struct *mm,
+>   * @vaddr: the virtual address to store the opcode.
+>   * @opcode: opcode to be written at @vaddr.
+>   *
+> - * Called with mm->mmap_lock held for write.
+> + * Called with mm->mmap_lock held for read or write.
+>   * Return 0 (success) or a negative errno.
+>   */
+>  int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
+> @@ -1046,7 +1046,12 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
+>  
+>  		if (err && is_register)
+>  			goto free;
+> -
+> +		/*
+> +		 * We take mmap_lock for writing to avoid the race with
+> +		 * find_active_uprobe(), install_breakpoint() must not
+> +		 * make is_trap_at_addr() true right after find_uprobe()
+> +		 * returns NULL.
 
-> In RTL8211F-CG v1.1 I see 10ms and minimum of 30ms, in v1.2 and v1.4
-> I see 10ms and minimum of 50ms.
+Sorry, I couldn't catch the latter part. What is the relationship of
+taking the mmap_lock and install_breakpoint() and is_trap_at_addr() here?
 
-> I have used 50ms on a few recently added boards and they seem to all
-> work fine with 50ms, wonder if the deassert delay should be changed for
-> those boards.
+You meant that find_active_uprobe() is using find_uprobe() which searchs
+uprobe form rbtree? But it seems uprobe is already inserted to the rbtree
+in alloc_uprobe() so find_uprobe() will not return NULL here, right?
 
-Thanks,
-Chukun
+Thank you,
+
+> +		 */
+>  		mmap_write_lock(mm);
+>  		vma = find_vma(mm, info->vaddr);
+>  		if (!vma || !valid_vma(vma, is_register) ||
+> -- 
+> 2.25.1.362.g51ebf55
+> 
+> 
+
 
 -- 
-2.25.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
