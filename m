@@ -1,130 +1,134 @@
-Return-Path: <linux-kernel+bounces-247905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C6C92D626
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:18:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C569192D629
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 18:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24346B27CEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:18:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 364BAB27FA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 16:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C0A194A77;
-	Wed, 10 Jul 2024 16:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DD0194AF0;
+	Wed, 10 Jul 2024 16:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hu6QIg/U"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R97OiEqh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBEB1922FD
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F621922ED
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 16:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720628315; cv=none; b=hsyWEXWHRvuHokIV02Fs6q4+WRkIPv9OVxP4wsBRsAXJNO3wRJq6Bf5XFml99oi23zmkNODxlwHz4Ea78A+1s/wMQq08/ssG3V87N9IJgg4vNzrNyLvPzEbsgAqZy/S15PUeMcTCxp3fGdwPQZ3+jm56NyNtXICVnXX2b+CKurw=
+	t=1720628374; cv=none; b=s9273gAgKxoS6B2KF3KiqZtHPljMgsjHaP9OLuJtvzfB2mB16WAmPCKrgnfuChkQInJS/7mq/j4ZUIUzymeh+hYUBeP46PmjImlrJmg4/29JRu5HMh7L7XOzy7Ulu5vJ1oIgB1iggNKv966KZte98fHJkLZIjD5x9MLGn1bmrdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720628315; c=relaxed/simple;
-	bh=BhiEz3XFYdvcAqXpz81szUnwQYJeZRV0ML/HN1ZAXHA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VTigEVihA5dCfYEmkYGSDs0b6vNhRUPGZKV9A0/T94Njm1lT4C06XNXQFWOZ0NQu49Xy365GT0EDcdtQVOJeTG3l+8N0gjXcbyv1XMGVZ2WXdq+MulOHLL1BcR6uIDc280UuHSCvB5ciccXHzwNdRSHtOYYEzEAN//P59cL2NVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hu6QIg/U; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-389cb8f18beso1873295ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:18:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1720628312; x=1721233112; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iHljrcvv9xSR6a4aB4WFPaWjB6HUnBki1i7whrGubyc=;
-        b=hu6QIg/UnqjOfZ6SBbnyk3sKHteFjhN8Mq4k7ndimv70mPgHTtfiABY62Bd5noGrZl
-         2bPOOH6dX7lATJn4RqfF+ZPPgWO7u5OzzTPTThKob/rHlFZUnvCVMIFBKMOJTolgRZF+
-         LkZZHHUebfhAxxG6gAI2kcBYJ8oPmNetCaN0Q=
+	s=arc-20240116; t=1720628374; c=relaxed/simple;
+	bh=Chce1rrJY0BnzM4+QZlqMrwKVqtoRAIWdssG4Erh0g0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tDASf9wUkv1iTaGfJ62UR/w3NJinyuQzWW5zealaA4Zl6SXYUhGOSQws/8xumqep2S4SknR5Jh5IRLAwMpO1Uk4GSkuuflenjiF7gjzf14ZaokasB96/aYKTiPBZkFq4yKTw5cYxnAzv8tIbYi+bB79k8lCQLxCMMl/XZ7GAfQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R97OiEqh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720628372;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Chce1rrJY0BnzM4+QZlqMrwKVqtoRAIWdssG4Erh0g0=;
+	b=R97OiEqhKHq2MfTlbQZyDraTJ0bZqcBN8mKaHud57KZRa+oM2e3IkwlCCgKtWtmQCm/T+o
+	Ag0YBeLHhLKGImt9g1Xe0EpWyjWxSM6sSx9laTNRKdvyGdItFg2iYIc/hbgMjpFwmHOx68
+	YMicV2mlcrJ/2Bjtlcltddva1BawQ1k=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-104-GD9gwqkbNpunkRj1Pjuo4Q-1; Wed, 10 Jul 2024 12:19:29 -0400
+X-MC-Unique: GD9gwqkbNpunkRj1Pjuo4Q-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3678fcc4d7fso1266183f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:19:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720628312; x=1721233112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1720628368; x=1721233168;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iHljrcvv9xSR6a4aB4WFPaWjB6HUnBki1i7whrGubyc=;
-        b=ZQDvnRu4lE1GzIg98nrr5RU9Vjj9Vr0plPhFvMwtmOpsoN08WRIz6E7Bv/yBJ+esai
-         H+vhFL9I1fax02uDFe/FIcj0S5cmHpJch7ZjrzoUU2aYe3a/NjHcvibTuzB/maRSylv5
-         AdHOVJHw4l316X2CEK769OXphcY517/OpVLVLwalhGwSKlOfwi0AY8rJkUlX54SMhcN9
-         p/GUxV1tRN3Mz8Jbb7pJQfeJcWqb5giC+p+ROc/Izqda31SHPB8yz9M0xVCT1F4jM93/
-         VpeAUNGkWVYsZlaKOLM11eTktM7omXR4BEr0sHiWktFdpOY1gpetSB0T8bI45ajj9Wo6
-         UL7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUmrvaFvqVIfToEKzughUSkYPdci1UdLqGvH+Vx5JG9K3QA2oSTei9y+rh8TVX3CtFwE+S30ecX/Nn+i2fpeOxWnI7c6LiRzdoXEcYL
-X-Gm-Message-State: AOJu0YyMv0sTOgQRlxVr9LatV6dB00geVrE06BLJUeiVlEMbrSTcURJX
-	UgurgdGkXQ33QSWgvx5B2TIMcEUo9IOmbX4YdcvQQobGLWa94l8LTQfEgg27CuU=
-X-Google-Smtp-Source: AGHT+IHKIgwOJ6lvY3g0u6pV5cXN6BCyOe9NGCIkSlkJ1vMuQ+Me50O5EtJflkRnIAhB21NE8sOl5g==
-X-Received: by 2002:a92:d5cc:0:b0:375:a4f9:e701 with SMTP id e9e14a558f8ab-38a5a740bb1mr57234205ab.3.1720628312572;
-        Wed, 10 Jul 2024 09:18:32 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-38a4964bcdcsm10336285ab.34.2024.07.10.09.18.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jul 2024 09:18:32 -0700 (PDT)
-Message-ID: <6d82fa16-ed2e-41f1-a466-c752032b6f68@linuxfoundation.org>
-Date: Wed, 10 Jul 2024 10:18:31 -0600
+        bh=Chce1rrJY0BnzM4+QZlqMrwKVqtoRAIWdssG4Erh0g0=;
+        b=jD0NAF4ISKbjYYcbTZks+yTkTLDpVPzZArHBsoLQytOg3/AclUwGGRw6XTABhSS5f4
+         UOoA9q2z33bchvkUptNKmFcC4nlZ7hOdmX84Oj6x6Ak6jAhxLUS4LdMt+TlHPgbZw5P6
+         WdpMFu8gV26ZKP38i07AupDOKPHKmHbcKLM0Sw6xsZl/90naTPZohyHSQQlQ8NAV4Rqw
+         Gf2lXsPocD18/whR2dbirW0VnUcASsbxXt0J1U5aY6lpogse04KMPZtvkxNcdNu9eRNQ
+         b3snobv4+KXLuu2DPQTDGywoX/pR/B6xoM5q/tnI3GHlWn/n+rzFxnAsqNqg7oHyH3sL
+         r8OA==
+X-Forwarded-Encrypted: i=1; AJvYcCXviHNMH7n/umethjshD4EinmXrWSZpmnLCkwJpA6oE9xXOmML4GDXs4eq87y2lvSLbOZ5lPdlWR4XLnrlPTiIpXx6DYR0+V3GSVyMF
+X-Gm-Message-State: AOJu0YyIPv+tdsMalOW0u1eUX+e/CIEBYw0RKrTTGhTq6iW2FGOH0nBP
+	2Km27EUpBN9EFZ13+zQ8wzxpTnQ/PfpYcz4tlt031TrYwpoZid6T5cR84Xr2faJluP776fXJYRI
+	Gj7yNIbfgo42JMKnuovn8ZAtKDRxisx9wWpvm8a8U1tCJd9Xqi1MRjMII2IwEIA==
+X-Received: by 2002:a05:600c:1c13:b0:426:6fc0:5910 with SMTP id 5b1f17b1804b1-426706cd15cmr41873425e9.1.1720628368521;
+        Wed, 10 Jul 2024 09:19:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG/lyWkP69+kBEZ1ugjN8BD2Qu3nh72MQIQtaAAVD8PVAje3AS5s9VBYJ66XkqZYUL+9qmdTQ==
+X-Received: by 2002:a05:600c:1c13:b0:426:6fc0:5910 with SMTP id 5b1f17b1804b1-426706cd15cmr41873085e9.1.1720628367835;
+        Wed, 10 Jul 2024 09:19:27 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3344:1710:e810::f71])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42663f049e5sm153412275e9.35.2024.07.10.09.19.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 09:19:27 -0700 (PDT)
+Message-ID: <934ac0b8491ec56dd35b9f0ab7422daa1926c4df.camel@redhat.com>
+Subject: Re: [PATCH v3] net: fix rc7's __skb_datagram_iter()
+From: Paolo Abeni <pabeni@redhat.com>
+To: Hugh Dickins <hughd@google.com>
+Cc: Sagi Grimberg <sagi@grimberg.me>, Jakub Kicinski <kuba@kernel.org>, Eric
+ Dumazet <edumazet@google.com>, Thorsten Leemhuis
+ <regressions@leemhuis.info>,  regressions@lists.linux.dev,
+ netdev@vger.kernel.org,  linux-kernel@vger.kernel.org, Linus Torvalds
+ <torvalds@linux-foundation.org>
+Date: Wed, 10 Jul 2024 18:19:25 +0200
+In-Reply-To: <66e53f14-bfca-6b1a-d9db-9b1c0786d07a@google.com>
+References: <58ad4867-6178-54bd-7e49-e35875d012f9@google.com>
+	 <ae4e55df-6fe6-4cab-ac44-3ed10a63bfbe@grimberg.me>
+	 <fef352e8-b89a-da51-f8ce-04bc39ee6481@google.com>
+	 <51b9cb9c-cf7d-47b3-ab08-c9efbdb1b883@grimberg.me>
+	 <66e53f14-bfca-6b1a-d9db-9b1c0786d07a@google.com>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: openat2: don't print total number of tests and
- then skip
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Shuah Khan <shuah@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, kernel@collabora.com,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Aleksa Sarai <cyphar@cyphar.com>, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240522214647.3568788-1-usama.anjum@collabora.com>
- <1fc06a15-f06e-4db1-ace5-b9d52250d0df@collabora.com>
- <20240701.085146-junky.rubs.mossy.crews-uyuNIdHgWxb@cyphar.com>
- <148d4c61-b60a-401f-96ee-b0291bcf87b3@collabora.com>
- <c0007f80-d44b-42fa-afd4-fdaeb3b89f70@collabora.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <c0007f80-d44b-42fa-afd4-fdaeb3b89f70@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 7/10/24 03:33, Muhammad Usama Anjum wrote:
-> Hi Shuah,
-> 
-> Can you take the patch as is or by removing following from this patch:
-> 
-> -	if (geteuid() != 0)
-> +	if (geteuid())
+On Wed, 2024-07-10 at 08:36 -0700, Hugh Dickins wrote:
+> X would not start in my old 32-bit partition (and the "n"-handling looks
+> just as wrong on 64-bit, but for whatever reason did not show up there):
+> "n" must be accumulated over all pages before it's added to "offset" and
+> compared with "copy", immediately after the skb_frag_foreach_page() loop.
+>=20
+> Fixes: d2d30a376d9c ("net: allow skb_datagram_iter to be called from any =
+context")
+> Signed-off-by: Hugh Dickins <hughd@google.com>
+> Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+> ---
+> v3: added reviewed-by Sagi, try sending direct to Linus
 
-As Aleksa mentioned, geteuid() != 0 is preferred.
+V2 is already applied to the 'net' tree and will be included in our
+next 'net' PR, coming tomorrow.
 
-> 
-> On 7/2/24 12:02 PM, Muhammad Usama Anjum wrote:
->> On 7/1/24 2:14 PM, Aleksa Sarai wrote:
->>> On 2024-07-01, Muhammad Usama Anjum <usama.anjum@collabora.com> wrote:
->>>> Adding more people for review
->>>>
->>>> On 5/23/24 2:46 AM, Muhammad Usama Anjum wrote:
->>>>> Don't print that 88 sub-tests are going to be executed. But then skip.
->>>>> The error is printed that executed test was only 1 while 88 should have
->>>>> run:
->>>>>
->>>>> Old output:
->>>>>    TAP version 13
->>>>>    1..88
->>>>>    ok 2 # SKIP all tests require euid == 0
->>>>>    # Planned tests != run tests (88 != 1)
->>>>>    # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:1 error:0
->>>>>
->>>>> New and correct output:
->>>>>    TAP version 13
->>>>>    1..0 # SKIP all tests require euid == 0
+It looks like the netdev bot decided it needed an holiday (or was
+fooled by the threaded submission for v2), so no notification landed on
+the ML.
 
-I think having total number tell you how many tests are there.
-I don't this this is good change.
+@Hugh: next time please check the current tree status or patchwork
+before submitting a new revision. And please avoid submitting the new
+version in reply to a previous one, it makes things difficult for our
+CI.
 
-thanks,
--- Shuah
+Thanks,
+
+Paolo
+
 
