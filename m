@@ -1,126 +1,151 @@
-Return-Path: <linux-kernel+bounces-247333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B11C92CE1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:22:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A423292CE37
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C859A2815B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:22:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40881B24849
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DEA18FA02;
-	Wed, 10 Jul 2024 09:22:33 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059B616938C;
+	Wed, 10 Jul 2024 09:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="VeczMIl9"
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D7517BB31
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC6617FD;
+	Wed, 10 Jul 2024 09:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720603352; cv=none; b=aMWu0D9dkXP8W5NUuMQ1TGd/WKD3v0q/eknP6By5d8SDMElnjBIRl9ZTXzyexVSphxpSko4yHqhG2wjorEdquLgsNR10Qdh+NZk8PjZFqNxssc98izA84rGuUEHs+tFB0G2BUhP487jFM4YMBF7otxWYi+Ig8szg7mXrNKbYTgY=
+	t=1720603951; cv=none; b=hEThDf1gnw5vgPq8EWe+POdNRCddkEUm0PkPTy5zMSvNRnqFAd9l+k8OshKUbVEyndE7KilyT97Hh2xY8WzMbEyT7syxlKSp/RNwhsKbb/tug1iT+ztH6LpEZspD2gjYxk5e0veot58U9NDwwcAcifU9NZ/3qzwc9XvWnzZpnCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720603352; c=relaxed/simple;
-	bh=lm/8qfiBjHen1y6BT5w44kd55lk39t21Zsly8ioYfZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Po0iArV/ITwpl7woQj3Eu/FA5GEAnHZ9rqYrpQxcjadJN1mB+gh/DeOFj8cCKRQD7X1jbI50/QL1U3tQGZcjQP4WbNWleDFBqPjBsXj9+l7nQsrC2nyqHGrKZm1VFAryHk/WSO1PaDv5TRKrTLcIH76Ozr9DrfvS1zd7qnu2vyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FB44C32781;
-	Wed, 10 Jul 2024 09:22:30 +0000 (UTC)
-Date: Wed, 10 Jul 2024 10:22:28 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Yang Shi <yang@os.amperecomputing.com>
-Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, will@kernel.org,
-	anshuman.khandual@arm.com, david@redhat.com,
-	scott@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [v5 PATCH] arm64: mm: force write fault for atomic RMW
- instructions
-Message-ID: <Zo5S1JE8B912SHya@arm.com>
-References: <Zn7q3oL1AE8jdM-g@arm.com>
- <773c8be7-eb73-010c-acea-1c2fefd65b84@gentwo.org>
- <Zn7xs6OYZz4dyA8a@arm.com>
- <200c5d06-c551-4847-adaf-287750e6aac4@os.amperecomputing.com>
- <ZoMG6n4hQp5XMhUN@arm.com>
- <1689cd26-514a-4d72-a1bd-b67357aab3e0@os.amperecomputing.com>
- <ZoZzhf9gGQxADLFM@arm.com>
- <35f70ba6-5305-4268-b7ba-81545cacd83f@os.amperecomputing.com>
- <Zo2C4eXr5_9kifyO@arm.com>
- <cb0bd817-6948-4944-ab09-4ec2aba41cfa@os.amperecomputing.com>
+	s=arc-20240116; t=1720603951; c=relaxed/simple;
+	bh=acLe3ldn1XAUOZC1eJHeqqQHZemln1Q0UW4ImH3kPpc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ynin7xttHHx17F+uI+zZvD5o3IbkFZqAGR2It0O9x8eicgrYL36yPuMFZ18nu38pBzKn8h8MiKq+Lek3972aq2fws/YhvZlus90n8Tmgg5ho7bqpPVQucfSJAakZ7LYuQD0+/RHnsK994mrH7rG1l9OdmBs9PZI2cx5dA8muJEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=VeczMIl9; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4WJsqw0X4Xz1DPkj;
+	Wed, 10 Jul 2024 11:24:12 +0200 (CEST)
+Received: from andreas.got.gaisler.com (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	by smtp.simply.com (Simply.com) with ESMTPA id 4WJsqv5S0dz1DPkB;
+	Wed, 10 Jul 2024 11:24:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=unoeuro; t=1720603451;
+	bh=eYu5bXT7dIaOhYcImSTacFJvmy2a/tFfDo4KgkIKANM=;
+	h=From:To:Cc:Subject:Date;
+	b=VeczMIl9sddXJPmuyutEJAO6jfajx2XYK2OgueiVSyqGu8mdd0u6jxPGix74xWZBu
+	 GVslai9DR1j8hfjEre6gfSgb7RqST5aBTvdlxpN5gCtTGxVTvC0LN92QbadqkzhUEx
+	 RWpwZB7QXKb9cz+8S+5z/aszuVG+7v1v2X6CM1hI=
+From: Andreas Larsson <andreas@gaisler.com>
+To: David Miller <davem@davemloft.net>,
+	sparclinux@vger.kernel.org
+Cc: Sam Ravnborg <sam@ravnborg.org>,
+	linux-kernel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] sparc32: Fix truncated relocation errors when linking large kernels
+Date: Wed, 10 Jul 2024 11:23:41 +0200
+Message-Id: <20240710092341.457591-1-andreas@gaisler.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <cb0bd817-6948-4944-ab09-4ec2aba41cfa@os.amperecomputing.com>
 
-On Tue, Jul 09, 2024 at 03:29:58PM -0700, Yang Shi wrote:
-> On 7/9/24 11:35 AM, Catalin Marinas wrote:
-> > On Tue, Jul 09, 2024 at 10:56:55AM -0700, Yang Shi wrote:
-> > > On 7/4/24 3:03 AM, Catalin Marinas wrote:
-> > > I tested exec-only on QEMU tcg, but I don't have a hardware supported EPAN.
-> > > I don't think performance benchmark on QEMU tcg makes sense since it is
-> > > quite slow, such small overhead is unlikely measurable on it.
-> > 
-> > Yeah, benchmarking under qemu is pointless. I think you can remove some
-> > of the ARM64_HAS_EPAN checks (or replaced them with ARM64_HAS_PAN) just
-> > for testing. For security reason, we removed this behaviour in commit
-> > 24cecc377463 ("arm64: Revert support for execute-only user mappings")
-> > but it's good enough for testing. This should give you PROT_EXEC-only
-> > mappings on your hardware.
-> 
-> Thanks for the suggestion. IIUC, I still can emulate exec-only even though
-> hardware doesn't support EPAN? So it means reading exec-only area in kernel
-> still can trigger fault, right?
+Use jumps instead of branches when jumping from one section to another
+to avoid branches to addresses further away than 22 bit offsets can
+handle that results in errors such as
 
-Yes, it's been supported since ARMv8.0. We limited it to EPAN only since
-setting a PROT_EXEC mapping still allowed the kernel to access the
-memory even if PSTATE.PAN was set.
+arch/sparc/kernel/signal_32.o:(.fixup+0x0): relocation truncated to fit: R_SPARC_WDISP22 against `.text'
 
-> And 24cecc377463 ("arm64: Revert support for execute-only user mappings")
-> can't be reverted cleanly by git revert, so I did it manually as below.
+This is the same approach that was taken for sparc64 in commit
+52eb053b7191 ("[SPARC64]: Fix linkage of enormous kernels.")
 
-Yeah, I wasn't expecting that to work.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202405080936.tWaJdO3P-lkp@intel.com/
+Closes: https://lore.kernel.org/oe-kbuild-all/202406240441.5zaoshVX-lkp@intel.com/
+Signed-off-by: Andreas Larsson <andreas@gaisler.com>
+---
+ arch/sparc/include/asm/uaccess_32.h |  6 ++++--
+ arch/sparc/kernel/head_32.S         | 15 +++++++++++----
+ 2 files changed, 15 insertions(+), 6 deletions(-)
 
-> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> index 6a8b71917e3b..0bdedd415e56 100644
-> --- a/arch/arm64/mm/fault.c
-> +++ b/arch/arm64/mm/fault.c
-> @@ -573,8 +573,8 @@ static int __kprobes do_page_fault(unsigned long far,
-> unsigned long esr,
->                 /* Write implies read */
->                 vm_flags |= VM_WRITE;
->                 /* If EPAN is absent then exec implies read */
-> -               if (!alternative_has_cap_unlikely(ARM64_HAS_EPAN))
-> -                       vm_flags |= VM_EXEC;
-> +               //if (!alternative_has_cap_unlikely(ARM64_HAS_EPAN))
-> +               //      vm_flags |= VM_EXEC;
->         }
-> 
->         if (is_ttbr0_addr(addr) && is_el1_permission_fault(addr, esr, regs))
-> {
-> diff --git a/arch/arm64/mm/mmap.c b/arch/arm64/mm/mmap.c
-> index 642bdf908b22..d30265d424e4 100644
-> --- a/arch/arm64/mm/mmap.c
-> +++ b/arch/arm64/mm/mmap.c
-> @@ -19,7 +19,7 @@ static pgprot_t protection_map[16] __ro_after_init = {
->         [VM_WRITE]                                      = PAGE_READONLY,
->         [VM_WRITE | VM_READ]                            = PAGE_READONLY,
->         /* PAGE_EXECONLY if Enhanced PAN */
-> -       [VM_EXEC]                                       = PAGE_READONLY_EXEC,
-> +       [VM_EXEC]                                       = PAGE_EXECONLY,
->         [VM_EXEC | VM_READ]                             = PAGE_READONLY_EXEC,
->         [VM_EXEC | VM_WRITE]                            = PAGE_READONLY_EXEC,
->         [VM_EXEC | VM_WRITE | VM_READ]                  = PAGE_READONLY_EXEC,
-
-In theory you'd need to change the VM_SHARED | VM_EXEC entry as well.
-Otherwise it looks fine.
-
+diff --git a/arch/sparc/include/asm/uaccess_32.h b/arch/sparc/include/asm/uaccess_32.h
+index 9fd6c53644b6..43284b6ec46a 100644
+--- a/arch/sparc/include/asm/uaccess_32.h
++++ b/arch/sparc/include/asm/uaccess_32.h
+@@ -95,7 +95,8 @@ __asm__ __volatile__(							\
+ 		".section .fixup,#alloc,#execinstr\n\t"			\
+ 		".align	4\n"						\
+ 	"3:\n\t"							\
+-		"b	2b\n\t"						\
++		"sethi	%%hi(2b), %0\n\t"				\
++		"jmpl	%0 + %%lo(2b), %%g0\n\t"			\
+ 		" mov	%3, %0\n\t"					\
+ 		".previous\n\n\t"					\
+ 		".section __ex_table,#alloc\n\t"			\
+@@ -163,8 +164,9 @@ __asm__ __volatile__(							\
+ 		".section .fixup,#alloc,#execinstr\n\t"			\
+ 		".align	4\n"						\
+ 	"3:\n\t"							\
++		"sethi	%%hi(2b), %0\n\t"				\
+ 		"clr	%1\n\t"						\
+-		"b	2b\n\t"						\
++		"jmpl	%0 + %%lo(2b), %%g0\n\t"			\
+ 		" mov	%3, %0\n\n\t"					\
+ 		".previous\n\t"						\
+ 		".section __ex_table,#alloc\n\t"			\
+diff --git a/arch/sparc/kernel/head_32.S b/arch/sparc/kernel/head_32.S
+index 964c61b5cd03..38345460d542 100644
+--- a/arch/sparc/kernel/head_32.S
++++ b/arch/sparc/kernel/head_32.S
+@@ -118,9 +118,12 @@ current_pc:
+ 		mov	%o7, %g3
+ 
+ 		tst	%o0
+-		be	no_sun4u_here
++		bne	2f
+ 		 mov	%g4, %o7		/* Previous %o7. */
+-
++		sethi	%hi(no_sun4u_here), %l1
++		jmpl	%l1 + %lo(no_sun4u_here), %g0
++		 nop
++2:
+ 		mov	%o0, %l0		! stash away romvec
+ 		mov	%o0, %g7		! put it here too
+ 		mov	%o1, %l1		! stash away debug_vec too
+@@ -195,7 +198,8 @@ halt_notsup:
+ 		sub	%o0, %l6, %o0
+ 		call	%o1
+ 		 nop
+-		ba	halt_me
++		sethi	%hi(halt_me), %o0
++		jmpl	%o0 + %lo(halt_me), %g0
+ 		 nop
+ 
+ not_a_sun4:
+@@ -431,8 +435,11 @@ leon_init:
+ #ifdef CONFIG_SMP
+ 		ldub	[%g2 + %lo(boot_cpu_id)], %g1
+ 		cmp	%g1, 0xff		! unset means first CPU
+-		bne	leon_smp_cpu_startup	! continue only with master
++		be 1f
++		 sethi	%hi(leon_smp_cpu_startup), %g1
++		jmpl	%g1 + %lo(leon_smp_cpu_startup), %g0
+ 		 nop
++1:
+ #endif
+ 		/* Get CPU-ID from most significant 4-bit of ASR17 */
+ 		rd     %asr17, %g1
 -- 
-Catalin
+2.34.1
+
 
