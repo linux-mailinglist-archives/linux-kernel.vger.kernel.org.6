@@ -1,106 +1,224 @@
-Return-Path: <linux-kernel+bounces-247242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBEF292CCFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:28:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0F992CC7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86EF81F24C4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:28:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8701AB24132
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71E0127B62;
-	Wed, 10 Jul 2024 08:28:09 +0000 (UTC)
-Received: from 5.mo575.mail-out.ovh.net (5.mo575.mail-out.ovh.net [46.105.62.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1632B84A4C;
+	Wed, 10 Jul 2024 08:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="H2eKVdlA"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0DB129A74
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.105.62.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E183B8615A;
+	Wed, 10 Jul 2024 08:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720600089; cv=none; b=HGQ3Hfv+28p8xqFri2hc3xol3giOicwvHossmTWYdn+yyIZX82Q0I/PnZZ/+ecyA4IxAWWWJr/1fqngCL/3lLrJkdiJLXKohIfR74RN3o3aaC4Oh+LKYPWTvKcmIaHpZD46PQZMtblNhX79sVml9k3hI1oQWf9r1EZ2bobBB5Ak=
+	t=1720598766; cv=none; b=Gvzf6ZqKsLfHJQJnCFRy0tifeSMRKZBqtV9absS5TBYc+Y0gRa+tP4bcTfCqukWgPU1c3uC3/TWkgsspDSUscBUNCvf8tjEae8YbWvO8LdZp18l1CbakIjM8Q45sWK/ZIw0L26N6hzdjaShvyEXlBWPgqy1xRwouzSjo38BGFTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720600089; c=relaxed/simple;
-	bh=B/1AVUhi3fdyHCWvdmnSAHO6m8FgIQyf6PgNj++ghls=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=t7d5WGP8HLxms5mk7IiGcghARESVmCGfQ+Ka4V78trCLww5dCK9aqYypYdt9laFDxea7gmJtRzKcLwS7VUa3RZCdmKidhh1EXPU3qr4e1g7JphuyTTCdrEa+SkOHw/Ac0kT07gmDGDvE3160ZPLlfklzt6zUJLFRRCPjTHapvWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=etezian.org; arc=none smtp.client-ip=46.105.62.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=etezian.org
-Received: from director6.ghost.mail-out.ovh.net (unknown [10.108.9.136])
-	by mo575.mail-out.ovh.net (Postfix) with ESMTP id 4WJqjf0GQcz1L5j
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 07:48:38 +0000 (UTC)
-Received: from ghost-submission-6684bf9d7b-r67vw (unknown [10.111.174.42])
-	by director6.ghost.mail-out.ovh.net (Postfix) with ESMTPS id D278C1FE90;
-	Wed, 10 Jul 2024 07:48:31 +0000 (UTC)
-Received: from etezian.org ([37.59.142.97])
-	by ghost-submission-6684bf9d7b-r67vw with ESMTPSA
-	id RP03Ls88jmZigQgAT/Bd8w
-	(envelope-from <andi@etezian.org>); Wed, 10 Jul 2024 07:48:31 +0000
-Authentication-Results:garm.ovh; auth=pass (GARM-97G002cc69158a-4158-4f76-8eca-04ea18067c8a,
-                    5DA0C46D5EC14CA26BF336A1987C86317D8662FA) smtp.auth=andi@etezian.org
-X-OVh-ClientIp:194.230.248.195
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, 
- Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
- Drew Fustini <dfustini@tenstorrent.com>, 
- Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
- Conor Dooley <conor@kernel.org>, 
- Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- Conor Dooley <conor.dooley@microchip.com>
-In-Reply-To: <20240618-i2c-th1520-v3-0-3042590a16b1@bootlin.com>
-References: <20240618-i2c-th1520-v3-0-3042590a16b1@bootlin.com>
-Subject: Re: (subset) [PATCH v3 0/3] Add I2C support on TH1520
-Message-Id: <172059771094.2294116.14777114514280404581.b4-ty@kernel.org>
-Date: Wed, 10 Jul 2024 09:48:30 +0200
+	s=arc-20240116; t=1720598766; c=relaxed/simple;
+	bh=IrY+szMv6r3qp86jQb0TltgeA0YlhoI7y8wRxi4ku58=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=gVAoecjryYoplrZsapxzeBQPj+gmvOVE55PyhlSdWhzR1x+gujjlxwMaM9JDtf4FCA2MHdYNG1Pn06rp7To9+NMPltwPdDEwRUNzZ3VAenUGlQTnwTQSjz0NcXr7SCu6+ijWo9YFbkvlJQ7JgogXfSfbdtgDHsTBzFfhBdQ3jSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=H2eKVdlA; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720598328;
+	bh=IrY+szMv6r3qp86jQb0TltgeA0YlhoI7y8wRxi4ku58=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=H2eKVdlA17V/UI0H6Gv+u/6BH/pp28omb9H6NZneq0KvPWYq5OxqllXeOy+UoeF1M
+	 mW7VTYozKi2ifEw3V7O+msiwvReawVWwGFCepD9EOaGIR/ToR2o2AiA5qv282t4KVB
+	 DXkztkcozzWuxN/QawIe+c0l0qkkEbe2h0MklelafMHQLtpNH+H47qxQy6NFFy5GVq
+	 qxmi8KJciddOlEOD6tStR0UwhJNNKErVfThHWewkj+fAVxow/nXutRBfxMC5fuH2ZE
+	 ERrzzulxJq3pPB0/h9fyf/oBmC10bnwIqfCwlifj9wKBo3ivTN8IGW7IqEkoSFIS6N
+	 qCx6n+UYODnOQ==
+Received: from [100.113.15.66] (ec2-34-240-57-77.eu-west-1.compute.amazonaws.com [34.240.57.77])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 28D603782109;
+	Wed, 10 Jul 2024 07:58:45 +0000 (UTC)
+Message-ID: <b0402960-6719-4c36-9f39-d799e2a285b5@collabora.com>
+Date: Wed, 10 Jul 2024 12:58:43 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
-X-Ovh-Tracer-Id: 4383409814818392609
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrfedtgdduvdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvegjfhfukfffgggtgffosehtjeertdertdejnecuhfhrohhmpeetnhguihcuufhhhihtihcuoegrnhguihdrshhhhihtiheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrhhnpeffteehudffvdfhudfgffdugfejjeduheehgeefgeeuhfeiuefghffgueffvdfgfeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduvdejrddtrddtrddupdduleegrddvfedtrddvgeekrdduleehpdefjedrheelrddugedvrdeljeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduvdejrddtrddtrddupdhmrghilhhfrhhomheprghnughisegvthgviihirghnrdhorhhgpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdfovfetjfhoshhtpehmohehjeehpdhmohguvgepshhmthhpohhuth
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests: tpm2: conform test to TAP output
+To: Shuah Khan <skhan@linuxfoundation.org>,
+ Jarkko Sakkinen <jarkko@kernel.org>, Shuah Khan <shuah@kernel.org>
+References: <20240702065559.772855-1-usama.anjum@collabora.com>
+ <6940383d-68cb-4966-a587-9fa0cc56545e@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <6940383d-68cb-4966-a587-9fa0cc56545e@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi
+Hi Shuah,
 
-On Tue, 18 Jun 2024 09:42:37 +0200, Thomas Bonnefille wrote:
-> This adds I2C support in the device tree of the T-Head TH1520 RISCV-SoC
-> and a default configuration for the BeagleV-Ahead. It appears that the
-> TH1520 I2C is already supported in the upstream kernel through the
-> Synopsis Designware I2C adapter driver.
+On 7/10/24 4:36 AM, Shuah Khan wrote:
+> On 7/2/24 00:55, Muhammad Usama Anjum wrote:
+>> The python unittest is being used for executing tests. TAP output
+>> cannot be added in the unittest framework. The python unittest is being
+>> run from a script. Add the output TAP logs to the script. Add "#"
+>> prefix to the python unittest output which will mark all output as
+>> informational TAP messages. Check exit status of the python unittest to
+>> decide if test passed or failed. Not sure why but python unittest
+>> outputs logs in stderr. So redirect the logs to stdout and then add
+>> prefix.
+>>
+>> Specify the bash explicitly instead of sh to run these tests as all of
+>> the kselftests are shifting towards using bash explicitly. Some
+>> interpreters have different syntax and cause issues.
+>>
+>> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>> ---
+>> Changes since v1:
+>> - CC more people which were missing earlier
+>> ---
+>>   tools/testing/selftests/tpm2/test_async.sh | 24 ++++++++++++++++------
+>>   tools/testing/selftests/tpm2/test_smoke.sh | 19 ++++++++++++++---
+>>   tools/testing/selftests/tpm2/test_space.sh | 19 ++++++++++++++---
+>>   3 files changed, 50 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/tpm2/test_async.sh
+>> b/tools/testing/selftests/tpm2/test_async.sh
+>> index 43bf5bd772fd4..0e6e5d9d649fb 100755
+>> --- a/tools/testing/selftests/tpm2/test_async.sh
+>> +++ b/tools/testing/selftests/tpm2/test_async.sh
+>> @@ -1,10 +1,22 @@
+>> -#!/bin/sh
+>> +#!/bin/bash
+>>   # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+>>   -# Kselftest framework requirement - SKIP code is 4.
+>> -ksft_skip=4
+>> +DIR="$(dirname $(readlink -f "$0"))"
+>> +source "${DIR}"/../kselftest/ktap_helpers.sh
+>>   -[ -e /dev/tpm0 ] || exit $ksft_skip
+>> -[ -e /dev/tpmrm0 ] || exit $ksft_skip
+>> +ktap_print_header
+>>   -python3 -m unittest -v tpm2_tests.AsyncTest
+>> +[ -e /dev/tpm0 ] || ktap_finished
+>> +[ -e /dev/tpmrm0 ] || ktap_finished
+>> +
+>> +ktap_set_plan 1
+>> +
+>> +python3 -m unittest -v tpm2_tests.AsyncTest 2>&1 | sed "s/^/# /"
+>> +
+>> +if [ ${PIPESTATUS[0]} -eq $ksft_pass ]; then
+>> +    ktap_test_pass "tpm2_tests.AsyncTest"
+>> +else
+>> +    ktap_test_fail "tpm2_tests.AsyncTest"
+>> +fi
+>> +
+>> +ktap_finished
+>> diff --git a/tools/testing/selftests/tpm2/test_smoke.sh
+>> b/tools/testing/selftests/tpm2/test_smoke.sh
+>> index 58af963e5b55a..2219a180de91d 100755
+>> --- a/tools/testing/selftests/tpm2/test_smoke.sh
+>> +++ b/tools/testing/selftests/tpm2/test_smoke.sh
+>> @@ -1,9 +1,22 @@
+>> -#!/bin/sh
+>> +#!/bin/bash
+>>   # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+>>     # Kselftest framework requirement - SKIP code is 4.
+>> -ksft_skip=4
+>> +DIR="$(dirname $(readlink -f "$0"))"
+>> +source "${DIR}"/../kselftest/ktap_helpers.sh
+>> +
+>> +ktap_print_header
+>>     [ -e /dev/tpm0 ] || exit $ksft_skip
+>>   -python3 -m unittest -v tpm2_tests.SmokeTest
+>> +ktap_set_plan 1
+>> +
+>> +python3 -m unittest -v tpm2_tests.SmokeTest 2>&1 | sed "s/^/# /"
+>> +
+>> +if [ ${PIPESTATUS[0]} -eq $ksft_pass ]; then
+>> +    ktap_test_pass "tpm2_tests.AsyncTest"
+>> +else
+>> +    ktap_test_fail "tpm2_tests.AsyncTest"
+>> +fi
+>> +
+>> +ktap_finished
+>> diff --git a/tools/testing/selftests/tpm2/test_space.sh
+>> b/tools/testing/selftests/tpm2/test_space.sh
+>> index 04c47b13fe8ac..6a55d13d74983 100755
+>> --- a/tools/testing/selftests/tpm2/test_space.sh
+>> +++ b/tools/testing/selftests/tpm2/test_space.sh
+>> @@ -1,9 +1,22 @@
+>> -#!/bin/sh
+>> +#!/bin/bash
+>>   # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+>>     # Kselftest framework requirement - SKIP code is 4.
+>> -ksft_skip=4
+>> +DIR="$(dirname $(readlink -f "$0"))"
+>> +source "${DIR}"/../kselftest/ktap_helpers.sh
+>> +
+>> +ktap_print_header
+>>     [ -e /dev/tpmrm0 ] || exit $ksft_skip
+>>   -python3 -m unittest -v tpm2_tests.SpaceTest
+>> +ktap_set_plan 1
+>> +
+>> +python3 -m unittest -v tpm2_tests.SpaceTest 2>&1 | sed "s/^/# /"
+>> +
+>> +if [ ${PIPESTATUS[0]} -eq $ksft_pass ]; then
+>> +    ktap_test_pass "tpm2_tests.AsyncTest"
+>> +else
+>> +    ktap_test_fail "tpm2_tests.AsyncTest"
+>> +fi
+>> +
+>> +ktap_finished
 > 
-> This patch depends on the clock patch from Drew Fustini
-> Link: https://lore.kernel.org/linux-riscv/20240615-th1520-clk-v1-0-3ba4978c4d6b@tenstorrent.com
-> and the pinctrl patch from Emil Renner Berthing
-> Link: https://lore.kernel.org/linux-riscv/20240103132852.298964-1-emil.renner.berthing@canonical.com
+> Usama,
 > 
-> [...]
+> As I mentioned another TAP conversion patch from you  patch if the
+> following command gives you TAP, there is  no need to convert.
+> 
+> make -C tools/testing/tmp2 run_tests
+> make kselftest TARGETS=tmp2
+> 
+> kselftest framework lib.mk and runtests wrappers take care for
+> TAP. The reason to take care of this at framework level is to
+> avoid changes to individual tests. The wrapper keys off of
+> KSFT_* codes returned from tests.
+> 
+> Please don't send TAP conversion patches like this one. The output
+> from the commands will have duplicate messages. The reason tests
+> return
+> 
+> make -C tools/testing/tmp2 run_tests
+> make kselftest TARGETS=tmp2
+It is understandable. Thank you for clearing this about TAP conformance.
+I've been looking at individual test conformance.
 
-Applied to i2c/i2c-host on
+This patch has some fixes. I'll send them as new patch series after
+removing TAP conformance changes.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/local tree
+> 
+> thanks,
+> -- Shuah
+> 
+> 
+> 
+> 
 
-Thank you,
-Andi
-
-Patches applied
-===============
-[1/3] dt-bindings: i2c: dw: Document compatible thead,th1520-i2c
-      commit: 00fa2450c11138c1c3171224cd2727a3a6240bae
-
+-- 
+BR,
+Muhammad Usama Anjum
 
