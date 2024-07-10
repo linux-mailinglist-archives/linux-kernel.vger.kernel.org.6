@@ -1,121 +1,320 @@
-Return-Path: <linux-kernel+bounces-247458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0247A92CFBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:50:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9830592CFBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 12:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAEDC1F2207D
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:50:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 537CE28A911
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 10:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EBB190682;
-	Wed, 10 Jul 2024 10:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86A6191491;
+	Wed, 10 Jul 2024 10:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aqStqJcK"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ul/DvtK2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D329217FD;
-	Wed, 10 Jul 2024 10:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A018D13AD22;
+	Wed, 10 Jul 2024 10:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720608156; cv=none; b=G1BB13QfNR+DJfWLKoTyT1+7sB/OGe0cWfvn0hUxeLjmKA3xBuDw4T/Hf9SyzT1ssM0aeN9UYbgW4kEAegkUvDGl68WkwBAlS5QG6zOWQAGjkNj30fmDbIy0kdEndBBuqk2ALT7CHHpPjywGV/MtliXSO92iHu1+EA0rmEuACp0=
+	t=1720608314; cv=none; b=AkIYdZTxhaKAEIDktLUO+sPDk1dfzS5KDk1qIu8Z1ieifotcdJJeYvISUZJ5yK1lZijpllZXTyl895mNuQAoQeKn3se9rO/tzLuro3SJhrS/z8Ed5ztt1EAClK0fX7ujh5Ufv9UTr2qWBqwurlySnhw4CY20zki6x3xG4sMvrWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720608156; c=relaxed/simple;
-	bh=ayD8gBlKt0AM6K9DCWhxBeDD+DoHF7KhDZstIfhcxLk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q2rjf9BKUUeO3MrLuib2SwLAb5c27Ys4Zsg1a0DBepOXE39LoPM4ibCb+7g4beTGp8+fJLxlpHMsShweT5rWPQkxgMYKUYVImz4gPaTS6F4tNvNsNz8DTqQ1iPr/DS83Ki4n7tKBA0TBm5EyDpy5BnskSr6osWu8Vv/2t3Hhru8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aqStqJcK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46A9ntvA016998;
-	Wed, 10 Jul 2024 10:42:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=ayD8gBlKt0AM6K9DCWhxBeDD
-	+DoHF7KhDZstIfhcxLk=; b=aqStqJcKqv1P7FccCVgOd2BTDmuaMS6G3JuPKpb1
-	x7vPR8z0Sbp65IbRd17FRCWx3FT1IRK7Vh/VC/ZVica6p9IGQ2KO/D5VSwWGjsBF
-	/WBzFvfBmcuMJolsJX/cxah2LVS6oIr3tsYTMc8SQZn6RgZ2q84KUlhTvZyjV2C6
-	D+zB3MV/ipxkOiPVYOxUij/BczsVGOOJSYX9oJ2l6swYiG7Dl4b4zpIplSRzmBwV
-	MiZ1VO8rGdBwBHdjz20jkQeFi2L/TqVBXsJui/o2i8m8GKyCMNcagSkMvRnNCSP+
-	WzTEKgs9dYCFckJq8lUUSoMwYMjhYLCiyWo86oAmn0qdaA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406xa68yk4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jul 2024 10:42:30 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46AAgSwS011286
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jul 2024 10:42:28 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 10 Jul 2024 03:42:07 -0700
-Date: Wed, 10 Jul 2024 16:12:04 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <djakov@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v1 3/3] arm64: dts: qcom: ipq5332: Add icc provider
- ability to gcc
-Message-ID: <Zo5lfDVVdgZ/iwi3@hu-varada-blr.qualcomm.com>
-References: <20240709063949.4127310-1-quic_varada@quicinc.com>
- <20240709063949.4127310-4-quic_varada@quicinc.com>
- <cef54c07-4ecb-44bd-ad7c-aea475b89ffb@linaro.org>
+	s=arc-20240116; t=1720608314; c=relaxed/simple;
+	bh=LE/oYnTYJnZzNSZjVdRZsuFUBrpiaPaP6arHr61Ezs0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PoOM2yd5+b7fpm2A1BmwzgCbtMxjBpcaT9GnjrRmO9cQlLhJubgZHxKppTHDzL6ugZQwlM8kn9zSyH7SnmiIaqpYkgCUjH2bjHFVLf80i+InfoSIs+jTEy/6xcclM28n4cJqr05WT4phEJBB9rDw4ybEkF8MHf8bDCmg8B1sy5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ul/DvtK2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEBE4C32781;
+	Wed, 10 Jul 2024 10:45:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720608314;
+	bh=LE/oYnTYJnZzNSZjVdRZsuFUBrpiaPaP6arHr61Ezs0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ul/DvtK2rX+5FMBNGck+kBMzIRGpz4orkB2r1kF3F5/H/AeS899Ul9hgipFnF2Lsm
+	 fqhIZOiv0leypARDaRmv+aZkXZtcOvdUsj+5wap2S1ZSPRJLotPgXA81bc6A5UAr0z
+	 z5VHQSdaDORQpwUmL9AwWVjobHdkprOWnNJAWDyejM5upkZwlW91BAuftToNssIxV9
+	 EPNxe6DUirVuysfk8vJy1WkTXiFl6rFYV46XNiVG+oPrdlwGwMZBTH8vZCI8bMMe5G
+	 /7D7ufOL9UNFYDutNSZl10IpjTK0gCefF+Rg+k1DThhxQ1VVYHUolVBiV04f72Jh8X
+	 OofIXEtB5nDgQ==
+Date: Wed, 10 Jul 2024 12:45:06 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Sunil V L <sunilvl@ventanamicro.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-acpi@vger.kernel.org,
+	linux-pci@vger.kernel.org, acpica-devel@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Anup Patel <anup@brainfault.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Robert Moore <robert.moore@intel.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Atish Kumar Patra <atishp@rivosinc.com>,
+	Haibo1 Xu <haibo1.xu@intel.com>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>
+Subject: Re: [PATCH v6 11/17] ACPI: RISC-V: Initialize GSI mapping structures
+Message-ID: <Zo5mMiWbEtKEeZ2r@lpieralisi>
+References: <20240601150411.1929783-1-sunilvl@ventanamicro.com>
+ <20240601150411.1929783-12-sunilvl@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cef54c07-4ecb-44bd-ad7c-aea475b89ffb@linaro.org>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rkWirG9LXCcRGq27wtfX0eij9naWv6dL
-X-Proofpoint-ORIG-GUID: rkWirG9LXCcRGq27wtfX0eij9naWv6dL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-10_06,2024-07-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=724
- suspectscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0 spamscore=0
- clxscore=1015 adultscore=0 malwarescore=0 mlxscore=0 bulkscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407100073
+In-Reply-To: <20240601150411.1929783-12-sunilvl@ventanamicro.com>
 
-On Tue, Jul 09, 2024 at 11:53:41AM +0200, Konrad Dybcio wrote:
-> On 9.07.2024 8:39 AM, Varadarajan Narayanan wrote:
-> > IPQ SoCs dont involve RPM in managing NoC related clocks and
-> > there is no NoC scaling. Linux itself handles these clocks.
-> > However, these should not be exposed as just clocks and align
-> > with other Qualcomm SoCs that handle these clocks from a
-> > interconnect provider.
-> >
-> > Hence include icc provider capability to the gcc node so that
-> > peripherals can use the interconnect facility to enable these
-> > clocks.
-> >
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > ---
->
-> Doesn't the USB host need to have its path described to keep working?
+On Sat, Jun 01, 2024 at 08:34:05PM +0530, Sunil V L wrote:
+> RISC-V has PLIC and APLIC in MADT as well as namespace devices.
+> Initialize the list of those structures using MADT and namespace devices
+> to create mapping between the ACPI handle and the GSI ranges. This will
+> be used later to add dependencies.
+> 
+> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
+> ---
+>  arch/riscv/include/asm/irq.h |  22 ++++++
+>  drivers/acpi/riscv/init.c    |   2 +
+>  drivers/acpi/riscv/init.h    |   4 +
+>  drivers/acpi/riscv/irq.c     | 142 +++++++++++++++++++++++++++++++++++
+>  4 files changed, 170 insertions(+)
+>  create mode 100644 drivers/acpi/riscv/init.h
+> 
+> diff --git a/arch/riscv/include/asm/irq.h b/arch/riscv/include/asm/irq.h
+> index 8e10a94430a2..44a0b128c602 100644
+> --- a/arch/riscv/include/asm/irq.h
+> +++ b/arch/riscv/include/asm/irq.h
+> @@ -16,4 +16,26 @@ void riscv_set_intc_hwnode_fn(struct fwnode_handle *(*fn)(void));
+>  
+>  struct fwnode_handle *riscv_get_intc_hwnode(void);
+>  
+> +#ifdef CONFIG_ACPI
+> +
+> +enum riscv_irqchip_type {
+> +	ACPI_RISCV_IRQCHIP_INTC		= 0x00,
+> +	ACPI_RISCV_IRQCHIP_IMSIC	= 0x01,
+> +	ACPI_RISCV_IRQCHIP_PLIC		= 0x02,
+> +	ACPI_RISCV_IRQCHIP_APLIC	= 0x03,
+> +};
+> +
+> +int riscv_acpi_get_gsi_info(struct fwnode_handle *fwnode, u32 *gsi_base,
+> +			    u32 *id, u32 *nr_irqs, u32 *nr_idcs);
+> +struct fwnode_handle *riscv_acpi_get_gsi_domain_id(u32 gsi);
+> +
+> +#else
+> +static inline int riscv_acpi_get_gsi_info(struct fwnode_handle *fwnode, u32 *gsi_base,
+> +					  u32 *id, u32 *nr_irqs, u32 *nr_idcs)
+> +{
+> +	return 0;
+> +}
+> +
+> +#endif /* CONFIG_ACPI */
+> +
+>  #endif /* _ASM_RISCV_IRQ_H */
+> diff --git a/drivers/acpi/riscv/init.c b/drivers/acpi/riscv/init.c
+> index 5f7571143245..22db97f7a772 100644
+> --- a/drivers/acpi/riscv/init.c
+> +++ b/drivers/acpi/riscv/init.c
+> @@ -6,7 +6,9 @@
+>   */
+>  
+>  #include <linux/acpi.h>
+> +#include "init.h"
+>  
+>  void __init acpi_riscv_init(void)
+>  {
+> +	riscv_acpi_init_gsi_mapping();
+>  }
+> diff --git a/drivers/acpi/riscv/init.h b/drivers/acpi/riscv/init.h
+> new file mode 100644
+> index 000000000000..0b9a07e4031f
+> --- /dev/null
+> +++ b/drivers/acpi/riscv/init.h
+> @@ -0,0 +1,4 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +#include <linux/init.h>
+> +
+> +void __init riscv_acpi_init_gsi_mapping(void);
+> diff --git a/drivers/acpi/riscv/irq.c b/drivers/acpi/riscv/irq.c
+> index f56e103a501f..0473428e8d1e 100644
+> --- a/drivers/acpi/riscv/irq.c
+> +++ b/drivers/acpi/riscv/irq.c
+> @@ -7,6 +7,21 @@
+>  
+>  #include <linux/acpi.h>
+>  #include <linux/sort.h>
+> +#include <linux/irq.h>
+> +
+> +#include "init.h"
+> +
+> +struct riscv_ext_intc_list {
+> +	acpi_handle handle;
+> +	u32 gsi_base;
+> +	u32 nr_irqs;
+> +	u32 nr_idcs;
+> +	u32 id;
+> +	u32 type;
+> +	struct list_head list;
+> +};
+> +
+> +LIST_HEAD(ext_intc_list);
+>  
+>  static int irqchip_cmp_func(const void *in0, const void *in1)
+>  {
+> @@ -30,3 +45,130 @@ void arch_sort_irqchip_probe(struct acpi_probe_entry *ap_head, int nr)
+>  		return;
+>  	sort(ape, nr, sizeof(*ape), irqchip_cmp_func, NULL);
+>  }
+> +
+> +static void riscv_acpi_update_gsi_handle(u32 gsi_base, acpi_handle handle)
+> +{
+> +	struct riscv_ext_intc_list *ext_intc_element;
+> +	struct list_head *i, *tmp;
+> +
+> +	list_for_each_safe(i, tmp, &ext_intc_list) {
+> +		ext_intc_element = list_entry(i, struct riscv_ext_intc_list, list);
+> +		if (gsi_base == ext_intc_element->gsi_base) {
+> +			ext_intc_element->handle = handle;
+> +			return;
+> +		}
+> +	}
+> +
+> +	acpi_handle_err(handle, "failed to find the GSI mapping entry\n");
+> +}
+> +
+> +int riscv_acpi_get_gsi_info(struct fwnode_handle *fwnode, u32 *gsi_base,
+> +			    u32 *id, u32 *nr_irqs, u32 *nr_idcs)
+> +{
+> +	struct riscv_ext_intc_list *ext_intc_element;
+> +	struct list_head *i, *tmp;
+> +
+> +	list_for_each_safe(i, tmp, &ext_intc_list) {
+> +		ext_intc_element = list_entry(i, struct riscv_ext_intc_list, list);
+> +		if (ext_intc_element->handle == ACPI_HANDLE_FWNODE(fwnode)) {
+> +			*gsi_base = ext_intc_element->gsi_base;
+> +			*id = ext_intc_element->id;
+> +			*nr_irqs = ext_intc_element->nr_irqs;
+> +			if (nr_idcs)
+> +				*nr_idcs = ext_intc_element->nr_idcs;
+> +
+> +			return 0;
+> +		}
+> +	}
+> +
+> +	return -ENODEV;
+> +}
+> +
+> +struct fwnode_handle *riscv_acpi_get_gsi_domain_id(u32 gsi)
+> +{
+> +	struct riscv_ext_intc_list *ext_intc_element;
+> +	struct acpi_device *adev;
+> +	struct list_head *i, *tmp;
+> +
+> +	list_for_each_safe(i, tmp, &ext_intc_list) {
+> +		ext_intc_element = list_entry(i, struct riscv_ext_intc_list, list);
+> +		if (gsi >= ext_intc_element->gsi_base &&
+> +		    gsi < (ext_intc_element->gsi_base + ext_intc_element->nr_irqs)) {
+> +			adev = acpi_fetch_acpi_dev(ext_intc_element->handle);
+> +			if (!adev)
+> +				return NULL;
+> +
+> +			return acpi_fwnode_handle(adev);
+> +		}
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +static int __init riscv_acpi_register_ext_intc(u32 gsi_base, u32 nr_irqs, u32 nr_idcs,
+> +					       u32 id, u32 type)
+> +{
+> +	struct riscv_ext_intc_list *ext_intc_element;
+> +
+> +	ext_intc_element = kzalloc(sizeof(*ext_intc_element), GFP_KERNEL);
+> +	if (!ext_intc_element)
+> +		return -ENOMEM;
+> +
+> +	ext_intc_element->gsi_base = gsi_base;
+> +	ext_intc_element->nr_irqs = nr_irqs;
+> +	ext_intc_element->nr_idcs = nr_idcs;
+> +	ext_intc_element->id = id;
+> +	list_add_tail(&ext_intc_element->list, &ext_intc_list);
+> +	return 0;
+> +}
+> +
+> +static acpi_status __init riscv_acpi_create_gsi_map(acpi_handle handle, u32 level,
+> +						    void *context, void **return_value)
+> +{
+> +	acpi_status status;
+> +	u64 gbase;
+> +
+> +	if (!acpi_has_method(handle, "_GSB")) {
+> +		acpi_handle_err(handle, "_GSB method not found\n");
+> +		return AE_OK;
+> +	}
+> +
+> +	status = acpi_evaluate_integer(handle, "_GSB", NULL, &gbase);
+> +	if (ACPI_FAILURE(status)) {
+> +		acpi_handle_err(handle, "failed to evaluate _GSB method\n");
+> +		return AE_OK;
+> +	}
+> +
+> +	riscv_acpi_update_gsi_handle((u32)gbase, handle);
+> +	return AE_OK;
+> +}
+> +
+> +static int __init riscv_acpi_aplic_parse_madt(union acpi_subtable_headers *header,
+> +					      const unsigned long end)
+> +{
+> +	struct acpi_madt_aplic *aplic = (struct acpi_madt_aplic *)header;
+> +
+> +	return riscv_acpi_register_ext_intc(aplic->gsi_base, aplic->num_sources, aplic->num_idcs,
+> +					    aplic->id, ACPI_RISCV_IRQCHIP_APLIC);
+> +}
+> +
+> +static int __init riscv_acpi_plic_parse_madt(union acpi_subtable_headers *header,
+> +					     const unsigned long end)
+> +{
+> +	struct acpi_madt_plic *plic = (struct acpi_madt_plic *)header;
+> +
+> +	return riscv_acpi_register_ext_intc(plic->gsi_base, plic->num_irqs, 0,
+> +					    plic->id, ACPI_RISCV_IRQCHIP_PLIC);
+> +}
+> +
+> +void __init riscv_acpi_init_gsi_mapping(void)
+> +{
+> +	/* There can be either PLIC or APLIC */
+> +	if (acpi_table_parse_madt(ACPI_MADT_TYPE_PLIC, riscv_acpi_plic_parse_madt, 0) > 0) {
+> +		acpi_get_devices("RSCV0001", riscv_acpi_create_gsi_map, NULL, NULL);
+> +		return;
+> +	}
+> +
+> +	if (acpi_table_parse_madt(ACPI_MADT_TYPE_APLIC, riscv_acpi_aplic_parse_madt, 0) > 0)
+> +		acpi_get_devices("RSCV0002", riscv_acpi_create_gsi_map, NULL, NULL);
+> +}
 
-Presently, USB host enables GCC_SNOC_USB_CLK directly using
-the clocks/clock-name entries. So it is not dependent on ICC.
+I don't know if it is needed in RISC-V - it is a question - but how would you
+resolve a GSI mapping before the ACPI intepreter is initialized ?
 
-Shall I update the USB DT node to use interconnects now itself,
-or wait until this IPQ5332 ICC enablement series is approved?
-Please let me know.
+This model relies on the _GSB method to be called on the interrupt controller
+device to discover the GSI range it actually covers, I was wondering how this
+works for "devices" (eg components described in static table, eg timers)
+that require a GSI mapping before you are able to retrieve the required
+information from the namespace devices.
 
-Thanks
-Varada
+Thanks,
+Lorenzo
 
