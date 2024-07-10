@@ -1,274 +1,352 @@
-Return-Path: <linux-kernel+bounces-248222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01AF692DA24
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:32:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDCA492DA28
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 22:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53B2628256B
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:32:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17369B23BDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 20:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FF819882F;
-	Wed, 10 Jul 2024 20:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC7319149A;
+	Wed, 10 Jul 2024 20:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="U2Wvolcp"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2073.outbound.protection.outlook.com [40.107.237.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YJgR3O7q"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC595193068;
-	Wed, 10 Jul 2024 20:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720643519; cv=fail; b=kZYFmnMMK/mElFU9t7LVo47m3Zcom8o2n3LM6l1XH6eNt+9Yk0I6cxkEZ7u5tMb5s3HIB7UTFY8cHhQrfBt0r2NZfk5UZN0h2FyqnDz5H7fRn4n22HPvdhwyUek19l8IB4k8DeTHZI/gbR+lFnU0Ae0AU6ElpB4ly2y7mtml8SA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720643519; c=relaxed/simple;
-	bh=msueP/Sa8oUocjommD3h70bNF1frkzzU3pZmbcPV3V4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kwINg9LcdXnX/Qwbs2QdId2TRmg1zpvM7YyrIzkc6xBJkLYQ9Jxf2ZvEaDwRPHFXiHuMdVetDTJ2N8panw9c3WApmo2FwjgNGCo3O5emCnDaUzuY2QHa4RvqUx11iZ3Tilp+gqUJso1M9vGTMFseO9In9TZ5Yks1rtTng8KW7BQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=U2Wvolcp; arc=fail smtp.client-ip=40.107.237.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WpaGFUzKV70g/dGsuMYRhxQPCwJoerFJ0fzfU9mymQnSEEJN6E/Bn/TARVJQfEm3ID/zUS4qJPIk+IklYGC+0mfEDF0Mkjs4UiEbYGp1OBgbnnzUvhSs6zCvkIWKn4kTdm3yyvMbT4RKtgUmHcVpeb/XMnZro6lN28qgDWsCgY4RnLV2If5RSqaLWDsfn/PHilj9VCe4eCMewsOT8/pVLQlF9wQg1fCOboZ0zmqbPRowkG7CjTrle76LEY9K4PQiEISfmNC8vGiOfY4x0LtZqViDg5xF6WPt+W06HbM/P7wfgHfBa8AvgLMQgdtsIT943GwxN9hiFvwWqNA74dJs1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Wzt7IM6PIc0MpS9h2RwlTYmB3imstn1QfgeZ8lD8JnQ=;
- b=MzLTLqfCDQEnp0o/zBIb6pBGxJ/oDXHgvFbaB5MU56DmJpb8qvMfr0amxZ3z/FhU8gy5lPL6x785PCSYXEvk/LzVnqhJcZBH8KPR82bQaFr9sk/tT+1DujAmx5TXu8inm6IVjp1WCVoNBthHHB/VJ4YPilGDcSxEcku6F4IHiFHq/DehGo8Z3m7IqE2EFMV5sNlElMeFcs3mYq7W4FaHj3VNlwx4FFAWMfQrT2SnM6FxsK+5P9/zshDZ9jnBIeIF48pY78AT+NderA3VrXqnKAX4hA073BFoIZcsgPWHZu32EkG0npaaJNb2SWtz1DxtjZMF5AvKS7lCqg55DseaLg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wzt7IM6PIc0MpS9h2RwlTYmB3imstn1QfgeZ8lD8JnQ=;
- b=U2WvolcpFQyMt4fRv7k9yxMMx5sB3FLXO8YG3aLk1NxJkUUibebSiPpdtRF5/7jzj1xXAUqaki0Pk0BsxFMkXZKV4Ee9cFzkfG6QytfEhjICMJL2IKUkPHXfT2A1Uny3jVWl/38XdUUHTi8vM6ZBMYdKYPKhpPtaatEHCPdYZhM=
-Received: from PH7P220CA0030.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:326::6)
- by PH8PR12MB7423.namprd12.prod.outlook.com (2603:10b6:510:229::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.34; Wed, 10 Jul
- 2024 20:31:49 +0000
-Received: from SJ5PEPF000001ED.namprd05.prod.outlook.com
- (2603:10b6:510:326:cafe::69) by PH7P220CA0030.outlook.office365.com
- (2603:10b6:510:326::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36 via Frontend
- Transport; Wed, 10 Jul 2024 20:31:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001ED.mail.protection.outlook.com (10.167.242.201) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7762.17 via Frontend Transport; Wed, 10 Jul 2024 20:31:48 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 10 Jul
- 2024 15:31:47 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 10 Jul
- 2024 15:31:47 -0500
-Received: from [172.25.198.154] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Wed, 10 Jul 2024 15:31:46 -0500
-Message-ID: <1d0b52bd-1654-4510-92dc-bd48447ff41d@amd.com>
-Date: Wed, 10 Jul 2024 16:31:46 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6624C193068;
+	Wed, 10 Jul 2024 20:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720643580; cv=none; b=MtSHbHgPNvvWTMv1vOVkWE+2lNLP1Kc5eO74ImAN5MtoRLzpA9mrQBkNejcmFLFGgEXB69TiOKzhkLKrPN8Kvy7ioxJdK3CWJpLkOq6GAJVsFYbsx6Kwjn1JTNLW6Cz5eebNmmrrbTkioGNfvy19kNxTIV8zd56d8PX/CtNogVA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720643580; c=relaxed/simple;
+	bh=u1EaGdzdZhazkExoELLOUh5xVpslqzZXG1v3WYXqMLc=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=bQJmKrab5CzGmtFaYut8KGzrvd1bVWcN5nmSYAnTX1z1j9iKiQqPoehz2EIKSCHm1vyzVjjdT50cHamZWNSRfILM/8VyrmMUOkRUpICmq74nuIEWqEMPM6ZYmQjEZXOFcFUARPB/rmbgEI2qhvpSTw51vvoldkawc0ez51MdNkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YJgR3O7q; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70af5fbf0d5so149616b3a.1;
+        Wed, 10 Jul 2024 13:32:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720643579; x=1721248379; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Eq3JIg1oATa3NdJjOk623LvywPQZdgGRBXTXdShRg5I=;
+        b=YJgR3O7qX4nF71RRaloCVgVJjuTy+cp/FN0BZ6+ZHt0PyF6nKMu28OboUpS0tAirP0
+         39o3+YDJ6yuwGFX66QOzSKWRsbnE/C6ne7Rx5mIx6VXnc5XA7M/U98YOD4AHXI5pPsD0
+         NgGBMkg/+Fdpk0vnwHtt4bNLNA6L8AWW/pg3OAx2zWE04G3aRfjKCCVDBy1quHZrbQbl
+         YbjfrnZzZ3LdxDtdsHk20KIJVwcVz4zBuwdIhmVwzlEwq3jmEPm03A1oGdzKEOm0x6HY
+         5fBti8TlxUjcYGJIFWIxavC5MZmdJjb3BIHKKgKStZoYgb+B51g7rwtD29dMUhuO+9Ek
+         d2JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720643579; x=1721248379;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Eq3JIg1oATa3NdJjOk623LvywPQZdgGRBXTXdShRg5I=;
+        b=TjClA+didvJ8hWFswpUzWetMYsPqkH0xav9Fe9OftjO10sTfiAAX8BKyWYEdbbOAqs
+         w1QNPah92ABYX9kSxn0Rt9jvMeW/u+BmU+0B1TpiwLat0W9UM132p9T9vFhqh7m9pQ1C
+         FibIR4W9meuigXDa2xLDvArT396HMvwoB91M2oDaFbg9PG4Qzg9cxZ3BOgKt1MuTj2z2
+         OJNPg0DMbQ+sEFUnzoGfvL8o+NFH8CDlkAZcIvVH2SMI8KHwOMrvZG3+4NUjvSOwzviE
+         4oeiLnCMWeXxvI3vu252FknwRA6wX80KxuTVnNcHpSXv3jCaQKqbuQgR7MpQFMciVGfY
+         ik9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVe1F9fNTlT9XNSQdUP1lHlonBFGAFzHRRIG3XUv6tvQFAYVPzr+Jsp+YzJwbRW/FY44mQ4697UdHaU+4AY5OAq7jX/k4/O7oHxDd3rbJrvaWGg/Y0Oegvx77EPOJSh2YsmAJiOEQRribb4G9JZ
+X-Gm-Message-State: AOJu0YxfLPpZbjcUMph4wkgFa3RI5JG4jkFl9K2hMUu8o1HYqzDRKnAR
+	5vLnaFMIcMDWo9RfkynHebYmLgFbeRJw0UzGU24y1e3OGGN8X69a
+X-Google-Smtp-Source: AGHT+IE9TuBFXjREoKsBh0G0aHT26DqQ90JHzqJd/5KbGHIun9eti3YCqMKqUCzeKlMzN86W6uMUWw==
+X-Received: by 2002:a05:6a00:986:b0:706:5c4c:1390 with SMTP id d2e1a72fcca58-70b5de18917mr903207b3a.7.1720643578437;
+        Wed, 10 Jul 2024 13:32:58 -0700 (PDT)
+Received: from localhost.localdomain ([2604:a880:4:1d0::427:6000])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70b439b5676sm4222180b3a.184.2024.07.10.13.32.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 13:32:57 -0700 (PDT)
+From: Gatlin Newhouse <gatlin.newhouse@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Kees Cook <keescook@chromium.org>,
+	Marco Elver <elver@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Gatlin Newhouse <gatlin.newhouse@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Pengfei Xu <pengfei.xu@intel.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Changbin Du <changbin.du@huawei.com>,
+	Xin Li <xin3.li@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	kasan-dev@googlegroups.com,
+	linux-hardening@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH v4] x86/traps: Enable UBSAN traps on x86
+Date: Wed, 10 Jul 2024 20:32:38 +0000
+Message-Id: <20240710203250.238782-1-gatlin.newhouse@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] PCI: restore memory decoding after reallocation
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240709161646.GA175516@bhelgaas>
-Content-Language: en-US
-From: Stewart Hildebrand <stewart.hildebrand@amd.com>
-In-Reply-To: <20240709161646.GA175516@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Received-SPF: None (SATLEXMB05.amd.com: stewart.hildebrand@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001ED:EE_|PH8PR12MB7423:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b79d89e-d5ee-4964-5791-08dca11f530a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y1R5QU9mak5SSWV3UkZaWGgyYVJXUTcyWG5iSlFRQjdLTGduRFpFVzR4S3lj?=
- =?utf-8?B?Wk5uK1NuRDRHUjdhdUNxa281dVNTbHBwcXk1TjZnK2VnRmRXcWEvNkYxdHpV?=
- =?utf-8?B?ZDMzYmhlRkxNMS8xUHFXSkxiL0xYT1NYQU0zRnM0T3JUeHdEMHN4MXZlNXI3?=
- =?utf-8?B?U1lSbmVJRGxsN2RrSHQ4cGlQZEt1V1N5VytPTkdsQjFZeEUrc1oyU3NlcWNo?=
- =?utf-8?B?SmpMdTFrWmJvWlpGcW1vUTRSaDF4K2RUeVo5UzBWUjRqOGQrU1JiTnNkZDE3?=
- =?utf-8?B?Y0dyc0xHS1FkbHRBb09qZExOa1pCRHBMcWhFRW9LcjNHMlZJWFA1akZjSlNK?=
- =?utf-8?B?K3pmTnpUb3ZTMFdWYnpwcjdrWC9BMGw1ay9qNTk2RnQzV0x4aWhnSmc2dG1B?=
- =?utf-8?B?NGxKRXNRQXV6ZkZvTml6bVIxY09NV3g0NjdBdWxvaGMvTmM0ajhOWWxZb3M4?=
- =?utf-8?B?OVZtVmYySTV5L0ozT0RhOHdsZHRwUlJRTHM5TVR4d1NlWkZqQlI0UTNybG4r?=
- =?utf-8?B?eWk4dCtCSG1LWnplczc2ckRMZ1EyZWtITFNNVUVsbm5QRmRXVmc4YUpMV1pO?=
- =?utf-8?B?Zm9Iam04M3lES3FCM2I0ZmhlRVBzWkN5SSt1OVlvaDdXZFBjei9UZ29kaWxF?=
- =?utf-8?B?dFpJQWZQcnMrZm1JblNVbkNHU3J5SU82L3N1ZXFwbks4c0dCZ0lib1dlcnZl?=
- =?utf-8?B?bHpZaVh4dDBMMzlaZ3BDalExNm9MTGxSejBOK0lyNmhQZHNMUkJjcitRS2xm?=
- =?utf-8?B?cDZrODFjQUsvYVF1alV1elp3Skc3bFJWaGRNaktMTlNLa1BONHBiWkJ2cDRC?=
- =?utf-8?B?SWd0TEYxa25nN1BaT0xiOEp4cXpUY1kya2ZkYktEaWJUUTBhS2lsNjhxZDl0?=
- =?utf-8?B?cjBDR0xBRXJCVVZETWROK1RFemtvb2lpTnZJYkVhWXRHL0MwcjJMT0RqQk9J?=
- =?utf-8?B?dS9IdnBlOHpiN1VyOUk3M242RkdHbUdTbmNxVlM0TkFFVlNvUGhpS3hNbnVF?=
- =?utf-8?B?N2JNdmo2cFpZa0JhOXRKdmhlTnhJalNDZGdFbXJEZ083T1ZNc0JkUUFoeWhM?=
- =?utf-8?B?bVNlUFpRdWJVOEROb1hWZXNTS3lmVEhPTVpUWERFcHd5TXptVGx4WGZpV0cx?=
- =?utf-8?B?Y2swT0RUejEwMmFJWUdycnZkNzMxRWlZTGkzT0hDd0cvZVlxYW5FczdqZG13?=
- =?utf-8?B?QmtCL1lvalc5ZklIRVFpQVNyWjhRdldIOGdaeTliVzlXSU04QUNKTnpxVFVN?=
- =?utf-8?B?NnF3ZFJuL1J4WTNnYmN4d25rZXpzSmhBc1YwOW9GWTgvcG9mSUg3RlM0YTIx?=
- =?utf-8?B?OU1FU255dHVmZG1nYlFWY3hFckJiYlJMT2t4b0swYnlsRTZSNkl4dS91aFlT?=
- =?utf-8?B?V0wxZk9xL3BtQ1NMVklsRkhlVmp0MFI5dkp2aXphNk9jZE1STXZMTndCamNE?=
- =?utf-8?B?NjV5SjJocm4rVnhIcXdZMVM5WG1URHEwYTQrcDQvMmJKYTEvcWZxaFJCeWl4?=
- =?utf-8?B?M2lXWnhqNGNqK0ZPY1lVYWVYYnRxS2JhaVVFcDdBY2p5RHhEWEpOMUkydEE5?=
- =?utf-8?B?Rk1QZDRHQU5reUwzUUxNTk8yenJvd3pZc1JZRmsrQ1Q0cmhCVzhkUDhoN2ox?=
- =?utf-8?B?dHd0blI5L3MwNmxGWVh1WnBzamNjM1B2OTBhK2RWWW04MVg0L2VLZFd3a3ZG?=
- =?utf-8?B?bjhVUm9NOHVpa2x2VVZNd0dOeVl2NzI3MEFBZ3Y4Zjh5alBGV3NXTVgrUDhl?=
- =?utf-8?B?dmtKeWhGbFp5ckl4ZEVIUmRQNEtiR01FdUM3ZVpoZE5YekdVUi9kQjdCQlBU?=
- =?utf-8?B?QjgwWHFWMERJOFd1eE1QRU4yRmN3QVZtNm9NY1RaR0Q1bGphZjdRUUtJYkhx?=
- =?utf-8?B?aWZDMDZUY2JOaVFQZVptbVdSdlQwQk1nL2d4YnprN3pKbkE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jul 2024 20:31:48.7137
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b79d89e-d5ee-4964-5791-08dca11f530a
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001ED.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7423
 
-On 7/9/24 12:16, Bjorn Helgaas wrote:
-> On Tue, Jul 09, 2024 at 09:36:00AM -0400, Stewart Hildebrand wrote:
->> Currently, the PCI subsystem unconditionally clears the memory decoding
->> bit of devices with resource alignment specified. Unfortunately, some
->> drivers assume memory decoding was enabled by firmware. Restore the
->> memory decoding bit after the resource has been reallocated.
-> 
-> Which drivers have you tripped over?  Those drivers apparently don't
-> call pci_enable_device() and assume the firmware has left memory
-> decoding enabled.  I don't think there's any guarantee that firmware
-> must do that, so the drivers are probably broken on some platforms,
-> and we could improve things overall by adding the pci_enable_device()
-> to them.
+Currently ARM architectures extract which specific sanitizer
+has caused a trap via encoded data in the trap instruction.
+Clang on x86 currently encodes the same data in ud1 instructions
+but the x86 handle_bug() and is_valid_bugaddr() functions
+currently only look at ud2s.
 
-Agreed. Well, it would be vgacon, but lspci -v doesn't actually show any
-driver attached to the device in my test case. Presumably because vgacon
-just uses the 0xb8000 buffer directly without any sort of PCI
-involvement. Memory decoding must be enabled on this particular VGA
-device for vgacon to properly display a console on the display. If
-memory decoding becomes disabled on the VGA device (or fails to be
-reenabled), the console ceases to display properly.
+Bring x86 to parity with arm64, similar to commit 25b84002afb9
+("arm64: Support Clang UBSAN trap codes for better reporting").
+Enable the reporting of UBSAN sanitizer detail on x86 architectures
+compiled with clang when CONFIG_UBSAN_TRAP=y.
 
->> Signed-off-by: Stewart Hildebrand <stewart.hildebrand@amd.com>
->> ---
->> Relevant prior discussion at [1]
->>
->> [1] https://lore.kernel.org/linux-pci/20160906165652.GE1214@localhost/
->> ---
->>  drivers/pci/pci.c       |  1 +
->>  drivers/pci/setup-bus.c | 25 +++++++++++++++++++++++++
->>  include/linux/pci.h     |  2 ++
->>  3 files changed, 28 insertions(+)
->>
->> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
->> index f017e7a8f028..7953e75b9129 100644
->> --- a/drivers/pci/pci.c
->> +++ b/drivers/pci/pci.c
->> @@ -6633,6 +6633,7 @@ void pci_reassigndev_resource_alignment(struct pci_dev *dev)
->>  
->>  	pci_read_config_word(dev, PCI_COMMAND, &command);
->>  	if (command & PCI_COMMAND_MEMORY) {
->> +		dev->dev_flags |= PCI_DEV_FLAGS_MEMORY_ENABLE;
->>  		command &= ~PCI_COMMAND_MEMORY;
->>  		pci_write_config_word(dev, PCI_COMMAND, command);
->>  	}
-> 
-> It would be nice if this could be contained to
-> pci_reassigndev_resource_alignment() so the clear and restore could be
-> in the same function.  But I suppose the concern is that re-enabling
-> decoding too early could be an issue in a hierarchy where bridge
-> windows are also reassigned?
+Signed-off-by: Gatlin Newhouse <gatlin.newhouse@gmail.com>
+---
+Changes in v4:
+  - Implement Peter's suggestions for decode_bug(), and fix
+    inconsistent capitalization in hex values.
 
-Well, yes, and, even if the bridge windows are sufficient and we're just
-allocating a new a BAR, that happens later on. If we were to return from
-pci_reassigndev_resource_alignment() with memory decoding enabled, we'd
-have the situation described in [1] with our knowledge of what the BAR
-contains thrown away while memory decoding is enabled. We'd also
-potentially be writing the new BAR while memory decoding is enabled.
+Changes in v3:
+  - Address Thomas's remarks about: change log structure,
+    get_ud_type() instead of is_valid_bugaddr(), handle_bug()
+    changes, and handle_ubsan_failure().
 
->> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
->> index ab7510ce6917..6847b251e19a 100644
->> --- a/drivers/pci/setup-bus.c
->> +++ b/drivers/pci/setup-bus.c
->> @@ -2131,6 +2131,29 @@ pci_root_bus_distribute_available_resources(struct pci_bus *bus,
->>  	}
->>  }
->>  
->> +static void restore_memory_decoding(struct pci_bus *bus)
->> +{
->> +	struct pci_dev *dev;
->> +
->> +	list_for_each_entry(dev, &bus->devices, bus_list) {
->> +		struct pci_bus *b;
->> +
->> +		if (dev->dev_flags & PCI_DEV_FLAGS_MEMORY_ENABLE) {
->> +			u16 command;
->> +
->> +			pci_read_config_word(dev, PCI_COMMAND, &command);
->> +			command |= PCI_COMMAND_MEMORY;
->> +			pci_write_config_word(dev, PCI_COMMAND, command);
->> +		}
->> +
->> +		b = dev->subordinate;
->> +		if (!b)
->> +			continue;
->> +
->> +		restore_memory_decoding(b);
->> +	}
->> +}
->> +
->>  /*
->>   * First try will not touch PCI bridge res.
->>   * Second and later try will clear small leaf bridge res.
->> @@ -2229,6 +2252,8 @@ void pci_assign_unassigned_root_bus_resources(struct pci_bus *bus)
->>  	goto again;
->>  
->>  dump:
->> +	restore_memory_decoding(bus);
->> +
->>  	/* Dump the resource on buses */
->>  	pci_bus_dump_resources(bus);
->>  }
->> diff --git a/include/linux/pci.h b/include/linux/pci.h
->> index e83ac93a4dcb..cb5df4c6a999 100644
->> --- a/include/linux/pci.h
->> +++ b/include/linux/pci.h
->> @@ -245,6 +245,8 @@ enum pci_dev_flags {
->>  	PCI_DEV_FLAGS_NO_RELAXED_ORDERING = (__force pci_dev_flags_t) (1 << 11),
->>  	/* Device does honor MSI masking despite saying otherwise */
->>  	PCI_DEV_FLAGS_HAS_MSI_MASKING = (__force pci_dev_flags_t) (1 << 12),
->> +	/* Firmware enabled memory decoding, to be restored if BAR is updated */
->> +	PCI_DEV_FLAGS_MEMORY_ENABLE = (__force pci_dev_flags_t) (1 << 13),
->>  };
->>  
->>  enum pci_irq_reroute_variant {
->> -- 
->> 2.45.2
->>
+Changes in v2:
+  - Name the new constants 'LEN_ASOP' and 'INSN_ASOP' instead of
+    'LEN_REX' and 'INSN_REX'
+  - Change handle_ubsan_failure() from enum bug_trap_type to void
+    function
+
+v1: https://lore.kernel.org/linux-hardening/20240529022043.3661757-1-gatlin.newhouse@gmail.com/
+v2: https://lore.kernel.org/linux-hardening/20240601031019.3708758-1-gatlin.newhouse@gmail.com/
+v3: https://lore.kernel.org/linux-hardening/20240625032509.4155839-1-gatlin.newhouse@gmail.com/
+---
+ MAINTAINERS                  |  2 ++
+ arch/x86/include/asm/bug.h   | 11 +++++++
+ arch/x86/include/asm/ubsan.h | 23 +++++++++++++++
+ arch/x86/kernel/Makefile     |  1 +
+ arch/x86/kernel/traps.c      | 57 ++++++++++++++++++++++++++++++++----
+ arch/x86/kernel/ubsan.c      | 21 +++++++++++++
+ 6 files changed, 110 insertions(+), 5 deletions(-)
+ create mode 100644 arch/x86/include/asm/ubsan.h
+ create mode 100644 arch/x86/kernel/ubsan.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 28e20975c26f..b8512887ffb1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22635,6 +22635,8 @@ L:	kasan-dev@googlegroups.com
+ L:	linux-hardening@vger.kernel.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/hardening
++F:	arch/x86/include/asm/ubsan.h
++F:	arch/x86/kernel/ubsan.c
+ F:	Documentation/dev-tools/ubsan.rst
+ F:	include/linux/ubsan.h
+ F:	lib/Kconfig.ubsan
+diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+index a3ec87d198ac..ccd573d58edb 100644
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -13,6 +13,17 @@
+ #define INSN_UD2	0x0b0f
+ #define LEN_UD2		2
+ 
++/*
++ * In clang we have UD1s reporting UBSAN failures on X86, 64 and 32bit.
++ */
++#define INSN_ASOP	0x67
++#define OPCODE_PREFIX	0x0f
++#define OPCODE_UD1	0xb9
++#define OPCODE_UD2	0x0b
++#define BUG_NONE	0xffff
++#define BUG_UD1		0xfffe
++#define BUG_UD2		0xfffd
++
+ #ifdef CONFIG_GENERIC_BUG
+ 
+ #ifdef CONFIG_X86_32
+diff --git a/arch/x86/include/asm/ubsan.h b/arch/x86/include/asm/ubsan.h
+new file mode 100644
+index 000000000000..ac2080984e83
+--- /dev/null
++++ b/arch/x86/include/asm/ubsan.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_X86_UBSAN_H
++#define _ASM_X86_UBSAN_H
++
++/*
++ * Clang Undefined Behavior Sanitizer trap mode support.
++ */
++#include <linux/bug.h>
++#include <linux/ubsan.h>
++#include <asm/ptrace.h>
++
++/*
++ * UBSAN uses the EAX register to encode its type in the ModRM byte.
++ */
++#define UBSAN_REG	0x40
++
++#ifdef CONFIG_UBSAN_TRAP
++void handle_ubsan_failure(struct pt_regs *regs, u16 insn);
++#else
++static inline void handle_ubsan_failure(struct pt_regs *regs, u16 insn) { return; }
++#endif /* CONFIG_UBSAN_TRAP */
++
++#endif /* _ASM_X86_UBSAN_H */
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 74077694da7d..fe1d9db27500 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -145,6 +145,7 @@ obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
+ obj-$(CONFIG_AMD_MEM_ENCRYPT)		+= sev.o
+ 
+ obj-$(CONFIG_CFI_CLANG)			+= cfi.o
++obj-$(CONFIG_UBSAN_TRAP)		+= ubsan.o
+ 
+ obj-$(CONFIG_CALL_THUNKS)		+= callthunks.o
+ 
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 4fa0b17e5043..b6664016622a 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -67,6 +67,7 @@
+ #include <asm/vdso.h>
+ #include <asm/tdx.h>
+ #include <asm/cfi.h>
++#include <asm/ubsan.h>
+ 
+ #ifdef CONFIG_X86_64
+ #include <asm/x86_init.h>
+@@ -91,6 +92,45 @@ __always_inline int is_valid_bugaddr(unsigned long addr)
+ 	return *(unsigned short *)addr == INSN_UD2;
+ }
+ 
++/*
++ * Check for UD1 or UD2, accounting for Address Size Override Prefixes.
++ * If it's a UD1, get the ModRM byte to pass along to UBSan.
++ */
++__always_inline int decode_bug(unsigned long addr, u32 *imm)
++{
++	u8 v;
++
++	if (addr < TASK_SIZE_MAX)
++		return BUG_NONE;
++
++	v = *(u8 *)(addr++);
++	if (v == INSN_ASOP)
++		v = *(u8 *)(addr++);
++	if (v != OPCODE_PREFIX)
++		return BUG_NONE;
++
++	v = *(u8 *)(addr++);
++	if (v == OPCODE_UD2)
++		return BUG_UD2;
++	if (v != OPCODE_UD1)
++		return BUG_NONE;
++
++	v = *(u8 *)(addr++);
++	if (X86_MODRM_RM(v) == 4)
++		addr++;
++
++	*imm = 0;
++	if (X86_MODRM_MOD(v) == 1)
++		*imm = *(u8 *)addr;
++	else if (X86_MODRM_MOD(v) == 2)
++		*imm = *(u32 *)addr;
++	else
++		WARN_ONCE(1, "Unexpected MODRM_MOD: %u\n", X86_MODRM_MOD(v));
++
++	return BUG_UD1;
++}
++
++
+ static nokprobe_inline int
+ do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
+ 		  struct pt_regs *regs,	long error_code)
+@@ -216,6 +256,8 @@ static inline void handle_invalid_op(struct pt_regs *regs)
+ static noinstr bool handle_bug(struct pt_regs *regs)
+ {
+ 	bool handled = false;
++	int ud_type;
++	u32 imm;
+ 
+ 	/*
+ 	 * Normally @regs are unpoisoned by irqentry_enter(), but handle_bug()
+@@ -223,7 +265,8 @@ static noinstr bool handle_bug(struct pt_regs *regs)
+ 	 * irqentry_enter().
+ 	 */
+ 	kmsan_unpoison_entry_regs(regs);
+-	if (!is_valid_bugaddr(regs->ip))
++	ud_type = decode_bug(regs->ip, &imm);
++	if (ud_type == BUG_NONE)
+ 		return handled;
+ 
+ 	/*
+@@ -236,10 +279,14 @@ static noinstr bool handle_bug(struct pt_regs *regs)
+ 	 */
+ 	if (regs->flags & X86_EFLAGS_IF)
+ 		raw_local_irq_enable();
+-	if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
+-	    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
+-		regs->ip += LEN_UD2;
+-		handled = true;
++	if (ud_type == BUG_UD2) {
++		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
++		    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
++			regs->ip += LEN_UD2;
++			handled = true;
++		}
++	} else {
++		handle_ubsan_failure(regs, imm);
+ 	}
+ 	if (regs->flags & X86_EFLAGS_IF)
+ 		raw_local_irq_disable();
+diff --git a/arch/x86/kernel/ubsan.c b/arch/x86/kernel/ubsan.c
+new file mode 100644
+index 000000000000..c90e337a1b6a
+--- /dev/null
++++ b/arch/x86/kernel/ubsan.c
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Clang Undefined Behavior Sanitizer trap mode support.
++ */
++#include <linux/bug.h>
++#include <linux/string.h>
++#include <linux/printk.h>
++#include <linux/ubsan.h>
++#include <asm/ptrace.h>
++#include <asm/ubsan.h>
++
++/*
++ * Checks for the information embedded in the UD1 trap instruction
++ * for the UB Sanitizer in order to pass along debugging output.
++ */
++void handle_ubsan_failure(struct pt_regs *regs, u16 type)
++{
++	if ((type & 0xFF) == UBSAN_REG)
++		type >>= 8;
++	pr_crit("%s at %pS\n", report_ubsan_failure(regs, type), (void *)regs->ip);
++}
+-- 
+2.25.1
 
 
