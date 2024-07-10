@@ -1,137 +1,90 @@
-Return-Path: <linux-kernel+bounces-247796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B058E92D4A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:02:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7996492D4A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7B531C211F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:02:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07D022817FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC28193475;
-	Wed, 10 Jul 2024 15:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2395919409A;
+	Wed, 10 Jul 2024 15:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nkjc4JAM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="buBiwgwM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB624404;
-	Wed, 10 Jul 2024 15:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B0D18FA14;
+	Wed, 10 Jul 2024 15:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720623717; cv=none; b=DSCWjRfrgx/fcce9R8zBUYbuMbRrp9uD3d4tRqlCe/dOwT/2A7P+3nuCm/M/yun2/RF5oOU00MaRIbZ8bCLc5fuEtq1UpAMQaTmlPdDoxPiIOQWwzTsYCPwgO6E+ARZO6vaICD71stzgDR94utV04SZw8UtXkPiREZEdYpQ4Zf4=
+	t=1720623955; cv=none; b=N4Ik8tUJFcg+vZ806f4eZuWkQOPc1ikpMkDnUasvueVF8ow9y01IB/+q9GveEUr7R7qkgdSbGcudfaJMiASkTiLAbk0RiLPV95q4iT4Ri+CoSCnMQ7IVI7LVonCmPJkvj/mLTDACKXmapeJRQ8DLsZgCk6EbkdA/qyUsI4KuyhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720623717; c=relaxed/simple;
-	bh=9GpPEqrxGU8rpTktXRrEpW0O4vhd27+dwvUB6phuEy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F2hraoHcsmq+CY4Q+hA9LKSu6bxTeCO6onbGsMKb0Co4tUsMGDmjkqrMNTp/u+2CVbfeuu8niukeay1W4ydZjV4ReQZ4YWZ7Xc3xxOGoiFwxGH6D/I6fSIii0er4prh5Wi2AbbwBT+n3iwzRZjJhSLhwaKJHtEvIuMfGxHf0Ijc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nkjc4JAM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A002CC32781;
-	Wed, 10 Jul 2024 15:01:56 +0000 (UTC)
+	s=arc-20240116; t=1720623955; c=relaxed/simple;
+	bh=FDOqf3NZsuH6K85ttda3DFcxqrcrd0sCoBz7WWYK+7o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aL/JfbFL2YzKby9SrFMzJCBllP1nNcQJBtntwwyRV/mM42Osc7n+wgvkDBpRbibBbgNxrdeDPORxgt1qnoDrEeSCvMjW4yVjkvPetZ2LDJmcNa1mXllFPVlOYSZKe+BOupoDZpdzJ54KzvejAOjotcvtC+s4ixrCxrWNLg6sQ/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=buBiwgwM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3056EC4AF09;
+	Wed, 10 Jul 2024 15:05:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720623717;
-	bh=9GpPEqrxGU8rpTktXRrEpW0O4vhd27+dwvUB6phuEy4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nkjc4JAMA17eXOiiHeFs87S3AMp9M+/UjmcPP/IGhNbVqoL+QNTUja2xZSgqr0uF4
-	 udATUrC2e25rsvJD8PahWekPC4oFMy7KTwATCCqG/vdHnD3qV55QACdY00Qqimxa3W
-	 vpVlAXZhElyxPDjnr0OLufSue09fpVgsnA5MBiMfJSsmt17I5PIWzkp9Vncslc5bBU
-	 K6LM2/24AMX9Ry6/EvkkUb9XXm0dxWjpbhkVmYnDD335SBGRZuOp/tdX3HZwhc+CYR
-	 8VSPqDudePAd3V0Wd8II1OdeW08maHc6wPceaSIGFUZHDW/nR+5xSXvTsvkDu38qow
-	 sat8AmF00dEkA==
-Date: Wed, 10 Jul 2024 08:01:54 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: sxwjean@me.com, vbabka@suse.cz, surenb@google.com, cl@linux.co,
-	penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
-	akpm@linux-foundation.org, roman.gushchin@linux.dev,
-	42.hyeyoo@gmail.com, xiongwei.song@linux.dev, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>,
-	llvm@lists.linux.dev, Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: [PATCH] mm/slub: quiet the clang warning with -Wunused-function
- enabled
-Message-ID: <20240710150154.GA1684801@thelio-3990X>
-References: <20240710025418.394321-1-sxwjean@me.com>
- <Zo36BTqhzGkukyT_@casper.infradead.org>
+	s=k20201202; t=1720623955;
+	bh=FDOqf3NZsuH6K85ttda3DFcxqrcrd0sCoBz7WWYK+7o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=buBiwgwMpETkR87hwbkaQomyp8rP8g99MAYSG+UkgSuVODkJzxu1xuQIz97qcF9g6
+	 wybZBhigsHK8Pv+mNlQ3QjTLMBcKICPTrAqKZIinDLt3CdXN5VtERxYKndgzwce+vZ
+	 y3UeGgyr0W4z7pj0mDvU958nFkUwQZbNt/Nc+FOkSK5GbvpcYReX0DJAnaVoVjc+eG
+	 6/ik+1FF5K/v2SOVtSwklNZcEed66p5M6Q2UMJb18ZffYmCcLKAFQPYmx7ta346V6t
+	 aTyggwErqjG+k7RoNypUSRcZCAVnRRykvR95OknnWVrIBgLXjZBV3b0vb4R5Hkxcjj
+	 eVfshG3om/eMg==
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52e9944764fso7283020e87.3;
+        Wed, 10 Jul 2024 08:05:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWCUqiAA8vnmq+rIQjKMDO4COaOAOGmHHDRB6VNfjMM2L8jSGZdwfWpSxGGwtP868n4XUI/W83IZRw4Rp/bZuK6wDcm/YATp4QegHVamtIC9oNgrUmMrya3ChzKmRWjpnN6QwbrMPqzgA==
+X-Gm-Message-State: AOJu0YybJHUgYPDaTL+/5MXCLTnDvBTiNoAdqiDGeKqGQBSTHDXLhoa/
+	vJ2NLqIpCLZFEuh3s4I+epsQKlmfTgrxCkBln4fcjxjdTcvQbGW97RbMHrf+Pq9LBCzXhXKydYW
+	ymIwaaLjw6OtzML1E4OGKbNB/mg==
+X-Google-Smtp-Source: AGHT+IEIUkk/BsP8wkKMGirN8S3ezlwotGr6d0Lu6412aAG8/TajyZAFmIdYfqJvaNgLw8m5fcuAyLE1Puf5rWJHW+o=
+X-Received: by 2002:a05:6512:200b:b0:52e:9ab9:da14 with SMTP id
+ 2adb3069b0e04-52eb999a268mr2794941e87.31.1720623953481; Wed, 10 Jul 2024
+ 08:05:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zo36BTqhzGkukyT_@casper.infradead.org>
+References: <aeaa9b78-5853-473e-b985-b10241e88e0d@xenosoft.de>
+ <8FDD860C-4DA4-46EF-BAD6-8F68837DA993@xenosoft.de> <c8010a06-9d8d-466a-9a83-ee25950f1885@xenosoft.de>
+In-Reply-To: <c8010a06-9d8d-466a-9a83-ee25950f1885@xenosoft.de>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 10 Jul 2024 09:05:41 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJE+YZY3h+MZ0wzT2SZ5dLq_zR1iteNcdLUOoVPwKkxRw@mail.gmail.com>
+Message-ID: <CAL_JsqJE+YZY3h+MZ0wzT2SZ5dLq_zR1iteNcdLUOoVPwKkxRw@mail.gmail.com>
+Subject: Re: [PowerPC] [PASEMI] Issue with the identification of ATA drives
+ after the of/irq updates 2024-05-29
+To: Christian Zigotzky <chzigotzky@xenosoft.de>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Marc Zyngier <maz@kernel.org>, apatel@ventanamicro.com, 
+	DTML <devicetree@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, 
+	mad skateman <madskateman@gmail.com>, "R.T.Dickinson" <rtd2@xtra.co.nz>, 
+	Matthew Leaman <matthew@a-eon.biz>, Darren Stevens <darren@stevens-zone.net>, 
+	Christian Zigotzky <info@xenosoft.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 10, 2024 at 04:03:33AM +0100, Matthew Wilcox wrote:
-> On Wed, Jul 10, 2024 at 10:54:18AM +0800, sxwjean@me.com wrote:
-> > From: Xiongwei Song <xiongwei.song@linux.dev>
-> > 
-> > The only user of prepare_slab_obj_exts_hook() is
-> > alloc_tagging_slab_alloc_hook(), which can build with
-> > CONFIG_MEM_ALLOC_PROFILING enabled. So, the warning was triggerred
-> > when disabling CONFIG_MEM_ALLOC_PROFILING. Let's add "__maybe_unused"
-> > for prepare_slab_obj_exts_hook().
-> 
-> Perhaps instead clang can be fixed to match gcc's behaviour?
+On Tue, Jul 9, 2024 at 9:53=E2=80=AFPM Christian Zigotzky
+<chzigotzky@xenosoft.de> wrote:
+>
+> Hi All,
+>
+> The RC7 of kernel 6.10 boots without any problems [1] if we use the
+> second irq patch [2]. Is it possible to add this patch to the mainline
+> kernel?
 
-Clang only differs from GCC on warning for unused static inline functions in .c
-files, not .h files. The kernel already handles this in
-include/linux/compiler_types.h but it disables this workaround for W=1 to catch
-unused functions like this as a result of commit 6863f5643dd7 ("kbuild: allow
-Clang to find unused static inline functions for W=1 build"):
+Yes, sent it to Linus yesterday.
 
-/*
- * GCC does not warn about unused static inline functions for -Wunused-function.
- * Suppress the warning in clang as well by using __maybe_unused, but enable it
- * for W=1 build. This will allow clang to find unused functions. Remove the
- * __inline_maybe_unused entirely after fixing most of -Wunused-function warnings.
- */
-#ifdef KBUILD_EXTRA_WARN1
-#define __inline_maybe_unused
-#else
-#define __inline_maybe_unused __maybe_unused
-#endif
-
-So I don't really think there is much for clang to do here and I think having
-the ability to find unused static inline functions in .c files is useful (you
-might disagree, perhaps a revert could still be discussed). I guess
-IS_ENABLED() can't be used there, so it seems like either taking this patch,
-ignoring the warning, or refactoring the code in some other way are the only
-options I see.
-
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202407050845.zNONqauD-lkp@intel.com/
-> > Signed-off-by: Xiongwei Song <xiongwei.song@linux.dev>
-> > ---
-> >  mm/slub.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/mm/slub.c b/mm/slub.c
-> > index ce39544acf7c..2e26f20759c0 100644
-> > --- a/mm/slub.c
-> > +++ b/mm/slub.c
-> > @@ -2027,7 +2027,7 @@ static inline bool need_slab_obj_ext(void)
-> >  	return false;
-> >  }
-> >  
-> > -static inline struct slabobj_ext *
-> > +static inline struct slabobj_ext * __maybe_unused
-> >  prepare_slab_obj_exts_hook(struct kmem_cache *s, gfp_t flags, void *p)
-> >  {
-> >  	struct slab *slab;
-> > @@ -2068,7 +2068,7 @@ static inline bool need_slab_obj_ext(void)
-> >  	return false;
-> >  }
-> >  
-> > -static inline struct slabobj_ext *
-> > +static inline struct slabobj_ext * __maybe_unused
-> >  prepare_slab_obj_exts_hook(struct kmem_cache *s, gfp_t flags, void *p)
-> >  {
-> >  	return NULL;
-> > -- 
-> > 2.34.1
-> > 
-> > 
+Rob
 
