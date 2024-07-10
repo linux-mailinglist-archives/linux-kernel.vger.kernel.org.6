@@ -1,299 +1,137 @@
-Return-Path: <linux-kernel+bounces-248146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-248147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEF9092D8DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:14:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FAAD92D8E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 21:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 394051F26342
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:14:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 333D51F265AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 19:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C85197A6E;
-	Wed, 10 Jul 2024 19:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7206197A7F;
+	Wed, 10 Jul 2024 19:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ItckB6X9"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f7cl4TVu"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185B51EB2B;
-	Wed, 10 Jul 2024 19:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AFA195B18
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 19:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720638854; cv=none; b=LVODMtEMJ6P4DVAljfw8ZaFrLMAhPyWBvw+lUmaiOpsaGBk8L9fv8OxW+SWdifdXQj32qNfusoYETpd4TEh9HFrKRkIQK0OEd7wYWZBFE2RnOMb2+xaVvMDeizJI34hG2qnUKFwr5c4AfJKB4/M8ZakbRwsr8K/5cLOsz6CzfbU=
+	t=1720638910; cv=none; b=RBZstXLsG3hXuuAGZoAi6pMJkV/6Rs/CDKem725dsbK9LXsmvHWfdlsTAmoxc8JHiuLKD/7zf8QlIzPw64mdC9J87VVD5vPYeH4kGxYhv3gvl0VfDx0m0InvxmIBFn9V9wsCHTVRBIMmueID7HZHfxzIvYu/JTd9HFQ5aj608W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720638854; c=relaxed/simple;
-	bh=eZ6cjGi8o+Aj/PSz/XB/OWeEExB9LzZmO8Q1/j80HBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SFZM0WTv9rhq6RbxdSOne/2wKj3kHgVqRDBsrhvCj//FPNpo6WD0mfi5KAT6NUfr3caOu6DUlSrla7Q6xyiZhKErLTX18mEQmi+WIUpYP2WmYlL83K3v4/wKYpygMZrKLjKx4OBuzcrgPYq/Rpq8k9omKySCsHIyFCnKjU4GCLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ItckB6X9; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52ea7d2a039so118534e87.3;
-        Wed, 10 Jul 2024 12:14:11 -0700 (PDT)
+	s=arc-20240116; t=1720638910; c=relaxed/simple;
+	bh=J4aNViHux4qP/o52knB7g/6ZzUmCLkg1Jd1N2W1AC0M=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=sUYqgNhdPdOr87evKNWtIDswstNuQoyzmddHmaTWUInKBW7HxlCPePmJK8TNSBzKi124JfihQdDiLQxMTOa4aPh6W9uQdnK9QaM+E07BYNrh3Eo4ocE6AVHQOTPCqDipP35/74R9GH0VawtgTa3z+W8K6jqxrcSNFYmSrxBHDvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f7cl4TVu; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6510c0c8e29so1181977b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 12:15:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720638850; x=1721243650; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jqC5gDqtTmXfZHUqyPfhS4E8CKyUJdF2TbkOhkf7BJY=;
-        b=ItckB6X9AOx/JhhYPqTCQC5O2MmrMCAG84DJubmWsvbWMbSpV55Vo3d1Wg08NaDQK8
-         U64XQ7WvQjAJ4+MeE+VPH0JBPRu/OT7P1eYR9nQn5w8OQ0FC0ehqXjm9krrjtcdC2HkU
-         kmBRTx327BG/Yxnmo0mQy5CJmDk+Xdk0NgPK8EEt23v6N64K33EMebiGw6sK67NAPsfc
-         JbbxkT2C7SGsiu3vf96bnXAkbbZY6fhOaNDboCQe3VUImx3dDCUbwtkLlQiE5K1r1AvV
-         RcbnTkw2mKdgG+LHpJqgv9vgaWadQdtfq4PD3b3NMxan1VDu13it8ONGUUcn055pB7wE
-         amhw==
+        d=google.com; s=20230601; t=1720638908; x=1721243708; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xpJH7O0IK+mWa36m8icY/tzE/YoR+c7Wf4G7xE5ZzLM=;
+        b=f7cl4TVuaH3p1nmqJTgJ+SLmQnF79S1laeBdvuItvCVB+hHste0ENNXzHvb8fdCnZA
+         FWj1c8OfdiHRMMVRoaMtvM4tnev9/i+lNzDYx8Hhddx0q7UJq+bKg4ymJRqXuPEa0wRo
+         Hj10NQSRkJID5zPSfT0IAlQVGKIDBn7WKka1Wus7obB0ZNpbSjMZnkZrdVA5FShmaH0q
+         fBZd+s23LsPXWKaFxvl7U21vAXJCkpAd+JPwfE4iKgoCvUW3MFIiWImABM7Y3xWCd8Cf
+         YVslsfmBPueSnCsQEbj1W+++J43t817b79HU66uxcCkqlAZjvN9pHoI4//fYuI+v+W5n
+         +C8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720638850; x=1721243650;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jqC5gDqtTmXfZHUqyPfhS4E8CKyUJdF2TbkOhkf7BJY=;
-        b=IMkGu1RFw+Mf2bq7JBv2THEuA2mN5Hv3bCzlZanrbiGWfkLtf0SQHOXqFEDtUtRyeU
-         p88P5duN+x9Oi5jRfZ5tQzaDreOWYRcpbbZpyfeSzteyIF1I5ngyUF/r+7xE0yAF/ue9
-         WXuBMd9rNXf97udJr7yNGZ5Vm1I5xZxnW/XV/mJkUDiYsSVDPEid9abNlUrDDGrpBf3L
-         6gC0vVkxvLgc8BufxmRGw20ehrr8dGwCNJGzhWyTa6bl4A0mtidvFr2rOHEUZO7ZKr6J
-         CY/5JRIA1dISYNzeNL7Q23m5eYYPyGin9jrcJjS++UVBQKMzxPXmZh72UlmwupSD/7xH
-         4gRA==
-X-Forwarded-Encrypted: i=1; AJvYcCWdWEnl3vaDKdRbbJNAkpkvMtxezUFAsXQ2qq/f2m1xMoQwFl3v3GJeGELKABq+B3gg6Br3gLlp8135wA/6sj5wN/Uxev0sM6z2501HdBo=
-X-Gm-Message-State: AOJu0Yy9NzYfc8qQSO7/ZUbHjASsehIMwRZ8eAO1Zbmp8h25emDoiiaP
-	UJmy8PDkyb6Gv51vqoCW8ol6+7jDiPDu3QZmaBFzzSyZZwsan3VM
-X-Google-Smtp-Source: AGHT+IGPDPNSQEjxd6w8tf5TVTm5GzmLNNo/cyNFG/eo2qPeQzqS2qn8Pfr/lThRwWCKrqS9gQ/L8Q==
-X-Received: by 2002:a19:4302:0:b0:52c:9906:fa33 with SMTP id 2adb3069b0e04-52eb99d4cc8mr3283512e87.43.1720638849892;
-        Wed, 10 Jul 2024 12:14:09 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-43-148.xnet.hr. [88.207.43.148])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42726c62ed2sm60072415e9.15.2024.07.10.12.14.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Jul 2024 12:14:09 -0700 (PDT)
-Message-ID: <5dd0d3c9-6fc6-491a-9458-f372fe81af5a@gmail.com>
-Date: Wed, 10 Jul 2024 21:14:08 +0200
+        d=1e100.net; s=20230601; t=1720638908; x=1721243708;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xpJH7O0IK+mWa36m8icY/tzE/YoR+c7Wf4G7xE5ZzLM=;
+        b=dFVlpmrOP+8UsXoFJfJ8mI83WLByyIh3EGnEpg4tMau/pwV51k7zpNjw5UeBdpwh0y
+         R1e6yK7VVDamr+NaY5yiM+1FOUCb5LVfPBpQM8Z1gx2VXUux+sBzN2MLB0WhPX2ZWXxS
+         BBFA0ElMcwuYDkB9fWiz3fzdeIpkYIOPL/Kc8dCpNJCx725BhVtJ85Qcj1EI5wIafo/f
+         LKgNGEeJTRSdR1eVBHXlbKgA2u4dWBA8L7cdFd5b5Zi2jCEcFP7Qjq7vhNMv6CpF/6Yb
+         dod+ChYfo3W7z6+PNjf61V0rlhkRriooN7JOpl2tp/eRVf4pIn3zQvA3QldjXWPo5vtM
+         nrYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVI37p8Q75BhThsMOzfhfwbVUcWZSXwJDr+5wOYE0Opltc3O2S2c8tx4RxQD+LQ6mdi2F6wEIit/8hMSv/mfwnMb4JuJh/0ix007ysK
+X-Gm-Message-State: AOJu0Yyewj0pYtqlt5tfmJvkRlPQ5/m5ntA8WpwmJr8h+8DeaaHtpb4r
+	2b6H/Ak/VuI4vBD2HFZZoriL8BORj4eXhdlmR+kokpOgGk3YSzEQtALq3z8uiw==
+X-Google-Smtp-Source: AGHT+IFWZTHBjlwLdnh07cjhHTC+j0sZPJwKS9lkD9EQ+SwBth2W8WJCPyjo5BJ/hREJijMn9wPueA==
+X-Received: by 2002:a05:690c:ec5:b0:630:de2f:79b8 with SMTP id 00721157ae682-658eed5ebd3mr74295227b3.13.1720638907584;
+        Wed, 10 Jul 2024 12:15:07 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e4d2d5d1sm8308867b3.55.2024.07.10.12.15.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 12:15:07 -0700 (PDT)
+Date: Wed, 10 Jul 2024 12:14:55 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Usama Arif <usamaarif642@gmail.com>
+cc: Hugh Dickins <hughd@google.com>, kernel test robot <oliver.sang@intel.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Johannes Weiner <hannes@cmpxchg.org>, oe-lkp@lists.linux.dev, 
+    lkp@intel.com, Linux Memory Management List <linux-mm@kvack.org>, 
+    Chengming Zhou <chengming.zhou@linux.dev>, 
+    Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>, 
+    David Hildenbrand <david@redhat.com>, "Huang, Ying" <ying.huang@intel.com>, 
+    Matthew Wilcox <willy@infradead.org>, 
+    Shakeel Butt <shakeel.butt@linux.dev>, Andi Kleen <ak@linux.intel.com>, 
+    linux-kernel@vger.kernel.org, ltp@lists.linux.it
+Subject: Re: [linux-next:master] [mm] 47325a5c88:
+ WARNING:at_mm/slub.c:#free_large_kmalloc
+In-Reply-To: <2fe63ea9-613a-4904-8b68-134442c43261@gmail.com>
+Message-ID: <75bc4bf4-afe0-a1e0-36bb-1fad7ecee210@google.com>
+References: <202407101031.c6c3c651-lkp@intel.com> <dd08adbb-6df5-4556-9fc4-cf37b6234aa1@gmail.com> <053bd429-ae19-4beb-a733-a7a838b1e010@gmail.com> <4bc6400e-6199-4147-9399-4a54c94613fd@gmail.com> <612af749-0a59-f91d-693a-43d6217ffebb@google.com>
+ <2fe63ea9-613a-4904-8b68-134442c43261@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?Q?Re=3A_=5BPROBLEM_linux-next=5D_fs/reiserfs/do=5Fbalan=2Ec?=
- =?UTF-8?B?OjExNDc6MTM6IGVycm9yOiB2YXJpYWJsZSDigJhsZWFmX21p4oCZIHNldCBidXQg?=
- =?UTF-8?Q?not_used_=5B-Werror=3Dunused-but-set-variable=5D?=
-To: Kees Cook <kees@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>,
- reiserfs-devel@vger.kernel.org
-References: <39591663-9151-42f9-9906-4684acaa685c@gmail.com>
- <202407101116.2E9836EBAF@keescook>
-Content-Language: en-US
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-In-Reply-To: <202407101116.2E9836EBAF@keescook>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 7/10/24 20:17, Kees Cook wrote:
-> On Wed, Jul 10, 2024 at 08:09:27PM +0200, Mirsad Todorovac wrote:
->> Dear all,
->>
->> On the linux-next vanilla next-20240709 tree, I have attempted the seed KCONFIG_SEED=0xEE7AB52F
->> which was known from before to trigger various errors in compile and build process.
->>
->> Though this might seem as contributing to channel noise, Linux refuses to build this config,
->> treating warnings as errors, using this build line:
->>
->> $ time nice make W=1 -k -j 36 |& tee ../err-next-20230709-01a.log; date
->>
->> As I know that the Chief Penguin doesn't like warnings, but I am also aware that there are plenty
->> left, there seems to be more tedious work ahead to make the compilers happy.
->>
->> The compiler output is:
->>
->> ---------------------------------------------------------------------------------------------------------
->> fs/reiserfs/do_balan.c: In function ‘balance_leaf_new_nodes_paste_whole’:
->> fs/reiserfs/do_balan.c:1147:13: error: variable ‘leaf_mi’ set but not used [-Werror=unused-but-set-variable]
->>  1147 |         int leaf_mi;
->>       |             ^~~~~~~
->>   CC      fs/reiserfs/lbalance.o
->> fs/reiserfs/fix_node.c: In function ‘dc_check_balance_leaf’:
->> fs/reiserfs/fix_node.c:1938:13: error: variable ‘maxsize’ set but not used [-Werror=unused-but-set-variable]
->>  1938 |         int maxsize, ret;
->>       |             ^~~~~~~
->> fs/reiserfs/fix_node.c:1935:13: error: variable ‘levbytes’ set but not used [-Werror=unused-but-set-variable]
->>  1935 |         int levbytes;
->>       |             ^~~~~~~~
->> fs/reiserfs/prints.c: In function ‘prepare_error_buf’:
->> fs/reiserfs/prints.c:221:17: error: function ‘prepare_error_buf’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
->>   221 |                 p += vscnprintf(p, end - p, fmt1, args);
->>       |                 ^
->> fs/reiserfs/prints.c:260:9: error: function ‘prepare_error_buf’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
->>   260 |         p += vscnprintf(p, end - p, fmt1, args);
->>       |         ^
->> make[4]: Target 'arch/x86/kernel/' not remade because of errors.
->> make[3]: *** [scripts/Makefile.build:485: arch/x86/kernel] Error 2
->> make[3]: Target 'arch/x86/' not remade because of errors.
->> make[2]: *** [scripts/Makefile.build:485: arch/x86] Error 2
->> fs/reiserfs/lbalance.c: In function ‘leaf_copy_items’:
->> fs/reiserfs/lbalance.c:524:29: error: variable ‘dest’ set but not used [-Werror=unused-but-set-variable]
->>   524 |         struct buffer_head *dest;
->>       |                             ^~~~
->> cc1: all warnings being treated as errors
->> make[4]: *** [scripts/Makefile.build:244: fs/reiserfs/do_balan.o] Error 1
->> cc1: all warnings being treated as errors
->> make[4]: *** [scripts/Makefile.build:244: fs/reiserfs/prints.o] Error 1
->> cc1: all warnings being treated as errors
->> make[4]: *** [scripts/Makefile.build:244: fs/reiserfs/fix_node.o] Error 1
->> ---------------------------------------------------------------------------------------------------------
->>
->> In fs/reiserfs/fix_node.c:1938:13, fs/reiserfs/fix_node.c:1935:13, and fs/reiserfs/lbalance.c:524:29,
->> the problem seem to lie within the construct RFALSE(), like
->>
->>  521 static int leaf_copy_items(struct buffer_info *dest_bi, struct buffer_head *src,
->>  522                            int last_first, int cpy_num, int cpy_bytes)
->>  523 {
->>  524         struct buffer_head *dest;
->>  525         int pos, i, src_nr_item, bytes;
->>  526 
->>  527         dest = dest_bi->bi_bh;
->>  528         RFALSE(!dest || !src, "vs-10210: !dest || !src");
->>  529         RFALSE(last_first != FIRST_TO_LAST && last_first != LAST_TO_FIRST,
->>  530                "vs-10220:last_first != FIRST_TO_LAST && last_first != LAST_TO_FIRST");
->>  531         RFALSE(B_NR_ITEMS(src) < cpy_num,
->>  532                "vs-10230: No enough items: %d, req. %d", B_NR_ITEMS(src),
->>  533                cpy_num);
->>  534         RFALSE(cpy_num < 0, "vs-10240: cpy_num < 0 (%d)", cpy_num);
+On Wed, 10 Jul 2024, Usama Arif wrote:
+> On 10/07/2024 21:49, Hugh Dickins wrote:
+> > It's a long time since I was active hereabouts, but the bot report
+> > and your flurry of updates make me think that you should step back,
+> > slow down, and look more carefully at the precedents here.
+> > 
+> > IIRC, the main problem is that parts of the swap_info_struct can
+> > still be in use from before while you're wanting to set up new values.
+> > Observe how alloc_swap_info() may return a fresh or an old allocation.
+> > Observe how enable_swap_info() is called after getting swapon_mutex
+> > late in swapon(), once past all possiblities of error.
+> > 
+> > I expect that your new zeromap needs to be taking the same care as is
+> > taken with swap_map and cluster_info: to be safe, follow their example
+> > in both swapon() and swapoff().
+> > 
+> > Hugh
 > 
-> Can you prepare a patch to solve these? It should be possible to just
-> wrap the offending variables as done for RFALSE itself:
+> Thanks, yeah sent too many in quick succession :). Will be more careful next time.
 > 
-> #ifdef CONFIG_REISERFS_CHECK
-> 	struct buffer_head *dest;
-> #endif
+> Both the 2nd and 3rd version are careful to solve the problem of using old allocation
+> which you described.
 > 
-> etc...
+> The 2nd one takes care of it in the same way as swap_map.
 
-Hi, Mr. Kees,
+It didn't look like that: it set "p->zeromap = zeromap" as soon as
+zeromap had been allocated; whereas swap_map is only installed later
+via enable_swap_info().
 
-Well, i sort fo did it but I am not happy with it (it is not elegant like the original code):
+> 
+> But I believe its unnecessary to do all that change in the 2nd version, when you can just
+> set it to NULL after kvfree, which is a much smaller change and takes care of reusing old
+> allocation equally well.
 
------><------------------
-$ git diff fs/reiserfs
-diff --git a/fs/reiserfs/do_balan.c b/fs/reiserfs/do_balan.c
-index 5129efc6f2e6..fbe73f267853 100644
---- a/fs/reiserfs/do_balan.c
-+++ b/fs/reiserfs/do_balan.c
-@@ -1144,7 +1144,9 @@ static void balance_leaf_new_nodes_paste_whole(struct tree_balance *tb,
- {
-        struct buffer_head *tbS0 = PATH_PLAST_BUFFER(tb->tb_path);
-        int n = B_NR_ITEMS(tbS0);
-+#ifdef CONFIG_REISERFS_CHECK
-        int leaf_mi;
-+#endif
-        struct item_head *pasted;
-        struct buffer_info bi;
- 
-@@ -1157,7 +1159,6 @@ static void balance_leaf_new_nodes_paste_whole(struct tree_balance *tb,
-                reiserfs_panic(tb->tb_sb,
-                             "PAP-12235",
-                             "pos_in_item must be equal to ih_item_len");
--#endif
- 
-        leaf_mi = leaf_move_items(LEAF_FROM_S_TO_SNEW, tb, tb->snum[i],
-                                  tb->sbytes[i], tb->S_new[i]);
-@@ -1165,6 +1166,7 @@ static void balance_leaf_new_nodes_paste_whole(struct tree_balance *tb,
-        RFALSE(leaf_mi,
-               "PAP-12240: unexpected value returned by leaf_move_items (%d)",
-               leaf_mi);
-+#endif
- 
-        /* paste into item */
-        buffer_info_init_bh(tb, &bi, tb->S_new[i]);
-diff --git a/fs/reiserfs/fix_node.c b/fs/reiserfs/fix_node.c
-index 6c13a8d9a73c..0ad41751eca5 100644
---- a/fs/reiserfs/fix_node.c
-+++ b/fs/reiserfs/fix_node.c
-@@ -1926,6 +1926,7 @@ static int dc_check_balance_leaf(struct tree_balance *tb, int h)
- {
-        struct virtual_node *vn = tb->tb_vn;
- 
-+#ifdef CONFIG_REISERFS_CHECK
-        /*
-         * Number of bytes that must be deleted from
-         * (value is negative if bytes are deleted) buffer which
-@@ -1935,21 +1936,32 @@ static int dc_check_balance_leaf(struct tree_balance *tb, int h)
-        int levbytes;
- 
-        /* the maximal item size */
--       int maxsize, ret;
-+       int maxsize;
-+#endif
- 
-        /*
-         * S0 is the node whose balance is currently being checked,
-         * and F0 is its father.
-         */
--       struct buffer_head *S0, *F0;
-+
-+#ifdef CONFIG_REISERFS_CHECK
-+       struct buffer_head *S0;
-+#endif
-+       struct buffer_head *F0;
-+
-        int lfree, rfree /* free space in L and R */ ;
-+       int ret;
- 
-+#ifdef CONFIG_REISERFS_CHECK
-        S0 = PATH_H_PBUFFER(tb->tb_path, 0);
-+#endif
-        F0 = PATH_H_PPARENT(tb->tb_path, 0);
- 
-+#ifdef CONFIG_REISERFS_CHECK
-        levbytes = tb->insert_size[h];
- 
-        maxsize = MAX_CHILD_SIZE(S0);   /* maximal possible size of an item */
-+#endif
- 
-        if (!F0) {              /* S[0] is the root now. */
- 
-diff --git a/fs/reiserfs/lbalance.c b/fs/reiserfs/lbalance.c
-index 7f868569d4d0..aa8d897368da 100644
---- a/fs/reiserfs/lbalance.c
-+++ b/fs/reiserfs/lbalance.c
-@@ -521,10 +521,14 @@ static void leaf_item_bottle(struct buffer_info *dest_bi,
- static int leaf_copy_items(struct buffer_info *dest_bi, struct buffer_head *src,
-                           int last_first, int cpy_num, int cpy_bytes)
- {
-+#ifdef CONFIG_REISERFS_CHECK
-        struct buffer_head *dest;
-+#endif
-        int pos, i, src_nr_item, bytes;
- 
-+#ifdef CONFIG_REISERFS_CHECK
-        dest = dest_bi->bi_bh;
-+#endif
-        RFALSE(!dest || !src, "vs-10210: !dest || !src");
-        RFALSE(last_first != FIRST_TO_LAST && last_first != LAST_TO_FIRST,
-               "vs-10220:last_first != FIRST_TO_LAST && last_first != LAST_TO_FIRST");
---
+It's possible that there's a good reason why zeromap does not need the
+same care as swap_map; and it's possible that things have changed down
+the years and swap_map itself doesn't even need all that care.
 
-P.S.
+But you haven't persuaded me: I repeat, step back, slow down,
+think carefully about why the existing sequence is as it is
+(and please don't respond without doing so).
 
-I could not find a mitigation for these:
-
-fs/reiserfs/prints.c: In function ‘prepare_error_buf’:
-fs/reiserfs/prints.c:221:17: error: function ‘prepare_error_buf’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
-  221 |                 p += vscnprintf(p, end - p, fmt1, args);
-      |                 ^
-fs/reiserfs/prints.c:260:9: error: function ‘prepare_error_buf’ might be a candidate for ‘gnu_printf’ format attribute [-Werror=suggest-attribute=format]
-  260 |         p += vscnprintf(p, end - p, fmt1, args);
-      |         ^
-
-221                 p += vscnprintf(p, end - p, fmt1, args);
-
-Hope this helps.
-
-Best regards,
-Mirsad Todorovac
-
+Hugh
 
