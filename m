@@ -1,108 +1,314 @@
-Return-Path: <linux-kernel+bounces-247093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E054E92CB22
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:32:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BBF692CB28
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 08:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9567C1F238CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:32:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF6D41F23A75
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 06:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3726977F1B;
-	Wed, 10 Jul 2024 06:31:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CFC978281;
+	Wed, 10 Jul 2024 06:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="GCASBJhn"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TnJtdDUm"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A66D4F602
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 06:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BAC56FE16;
+	Wed, 10 Jul 2024 06:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720593113; cv=none; b=fbqn2x6vXyarnp+ERQ/NxerJlyH8ux2vVsVAoeh13z9LusdF2sanhFFB1PAsfWD+dPG3m0et95GihpF+Bk9rLTsYh26B0HoKzDNld8GCCEGV7AtT2FoIrEx0+oXE47RW6eULQgLOVNkb4xEOPRdUQnZXxokSEs0OokRKDOMRYdk=
+	t=1720593254; cv=none; b=TJGZEIuP5D6Zyf2jBTGLGkkZS6GWRpTCmDsuMI/HOfdYUdlXD9Ys2v7gIwXeA7b4NGgf9T+z2z329il3eQnzu8d9L3YWtKeU2q5fB5IYSU3snB1Uok4aJMn6u0a+uqIKBN9N9EXcb0AyznIEur5oDvff1LNZhsntPoaJBqzblKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720593113; c=relaxed/simple;
-	bh=YNDrrTRBQSjhUMAakyE2kGoYvvxbKHmBOp6I/Rc0QpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dQvIAcBBwLrCoPFbKwT2qTNwWo8FCB4KQOBAbfhczTHC8SlGB9pClCbVqV1fgyYftXn2oUYgfrSbplK9qXqBUqA+Jaw32yCj1MXTn6oMVVm3Teh/+O8z7tHERyjiPdksJ4PvRPNhg/pHu+78N6weeAg29EGDWGaPgxYYEshP+zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=GCASBJhn; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=YNDr
-	rTRBQSjhUMAakyE2kGoYvvxbKHmBOp6I/Rc0QpM=; b=GCASBJhnrUssM10ejZm9
-	xA8xARZloXym1g7Fyzef3UUj69nj02V2BUKy9hvzADge2vvUJ+dXvCOfSsqGZXWD
-	vKwedEiUVRocwlT4aCYF3q7f+whxxmfUBhF/P9LuKQGPAJQr1KpYG1H0iS0PjqM6
-	aKMlc2GbYxVZ8EYFGU+U70cXU54zomHQ11U+02xAm0TBqpYEbnNBgp9giAtMIbfg
-	TquFpXgwkzJ61OLPcC1yGHNFftZlOz1eeoAaru6IXwVkVwqNq4TtNemawF7qdltV
-	v0eSl+dhZLifZwvqh5VHWqBnkoCWT7QTC/Q47Hp0QLKImCHgwu3N6sRpVTRZ3R7G
-	FQ==
-Received: (qmail 430513 invoked from network); 10 Jul 2024 08:31:48 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Jul 2024 08:31:48 +0200
-X-UD-Smtp-Session: l3s3148p1@8FcKzd4cPrAujnsa
-Date: Wed, 10 Jul 2024 08:31:48 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: add debug message for detected HostNotify alerts
-Message-ID: <Zo4q1NeXY-cI2GhD@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-renesas-soc@vger.kernel.org,
-	Andi Shyti <andi.shyti@kernel.org>, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-References: <20240704032940.4268-2-wsa+renesas@sang-engineering.com>
+	s=arc-20240116; t=1720593254; c=relaxed/simple;
+	bh=EW33cY2zlcay7IG+0/XdIXo4qlfcpWlCkZ2LSBAZsY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=QnqZKEm/mh8WSHOMXnsVUJSMjqMgycsIjqUjA4dPzYVbmIdveOoc5bemlgyBiTvWTIzimTMoLUYiraPwqVeTlSkejM8H9BL2lM47PlujKu7CTmYb7m1wmLNZMmPF9Ymimqobh3Enlyfv/Wx2eUgCj/H85yBYMTCXLl+bLGcJp3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TnJtdDUm; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1720593247;
+	bh=xJ/lnR/dxJ7aCDZ1UXJhCvVcBEHDIexFfDSnarVEzAY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=TnJtdDUmTAJ4HcZSTbvmxbDC0zLjQ10+kQrtmJUp83zalJPRal/Ic7DBRc9PzCm8z
+	 OYqBa8uYsp+IwUgldR/TsXWspjfWEJEATavMj1XxkKqPZmJezQOQ9mR/U28HZ1+D0G
+	 PBYRuGMw/TxONA55vUaxUno95VwtU6kE6oVNbFEJdlZcpKHjGhpMsKch+LvIdD8Uah
+	 HKoeZIWaT6rx0QY8PutKqDHyJlHIsr5Gav6U/pG7X5kFaGl940QtycevP8gPCUCVrS
+	 MQ5c4+Ez9rqdDzj9SGiRQa/gYfJ2mGcmU82DPkYkNk3UBjdOa33oGAQq94i/lGQmI9
+	 adJ5+Kfhfh2Qg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WJp3g4d47z4w2K;
+	Wed, 10 Jul 2024 16:34:07 +1000 (AEST)
+Date: Wed, 10 Jul 2024 16:34:07 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Lee Jones <lee@kernel.org>
+Cc: Christian Marangi <ansuelsmth@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the leds-lj tree
+Message-ID: <20240710163407.6393021f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lNfHY2uifUQlosPe"
-Content-Disposition: inline
-In-Reply-To: <20240704032940.4268-2-wsa+renesas@sang-engineering.com>
+Content-Type: multipart/signed; boundary="Sig_/hNw_6dGlq3+C7iW9qNvyHNl";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-
---lNfHY2uifUQlosPe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/hNw_6dGlq3+C7iW9qNvyHNl
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 04, 2024 at 05:28:59AM +0200, Wolfram Sang wrote:
-> Setting up HostNotify can be tricky. Support debugging by stating
-> when a HostNotify alert was received independent of the irq being
-> mapped. Especially useful with the in-kernel i2c testunit. Update
-> documentation as well.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+Hi all,
 
-Applied to for-next, thanks!
+After merging the leds-lj tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
+drivers/leds/leds-lp5521.c: In function 'lp5521_selftest':
+drivers/leds/leds-lp5521.c:189:33: error: macro "guard" passed 2 arguments,=
+ but takes just 1
+  189 |         guard(mutex, &chip->lock);
+      |                                 ^
+In file included from drivers/leds/leds-lp5521.c:12:
+include/linux/cleanup.h:166: note: macro "guard" defined here
+  166 | #define guard(_name) \
+      |=20
+drivers/leds/leds-lp5521.c:189:9: error: 'guard' undeclared (first use in t=
+his function)
+  189 |         guard(mutex, &chip->lock);
+      |         ^~~~~
+drivers/leds/leds-lp5521.c:189:9: note: each undeclared identifier is repor=
+ted only once for each function it appears in
+drivers/leds/leds-lp5523.c: In function 'lp5523_selftest':
+drivers/leds/leds-lp5523.c:192:33: error: macro "guard" passed 2 arguments,=
+ but takes just 1
+  192 |         guard(mutex, &chip->lock);
+      |                                 ^
+In file included from drivers/leds/leds-lp5523.c:12:
+include/linux/cleanup.h:166: note: macro "guard" defined here
+  166 | #define guard(_name) \
+      |=20
+drivers/leds/leds-lp5523.c:192:9: error: 'guard' undeclared (first use in t=
+his function)
+  192 |         guard(mutex, &chip->lock);
+      |         ^~~~~
+drivers/leds/leds-lp5523.c:192:9: note: each undeclared identifier is repor=
+ted only once for each function it appears in
+drivers/leds/leds-lp5562.c: In function 'lp5562_led_brightness':
+drivers/leds/leds-lp5562.c:175:33: error: macro "guard" passed 2 arguments,=
+ but takes just 1
+  175 |         guard(mutex, &chip->lock);
+      |                                 ^
+In file included from drivers/leds/leds-lp5562.c:10:
+include/linux/cleanup.h:166: note: macro "guard" defined here
+  166 | #define guard(_name) \
+      |=20
+drivers/leds/leds-lp5562.c:175:9: error: 'guard' undeclared (first use in t=
+his function)
+  175 |         guard(mutex, &chip->lock);
+      |         ^~~~~
+drivers/leds/leds-lp5562.c:175:9: note: each undeclared identifier is repor=
+ted only once for each function it appears in
+drivers/leds/leds-lp5562.c: In function 'lp5562_store_pattern':
+drivers/leds/leds-lp5562.c:272:33: error: macro "guard" passed 2 arguments,=
+ but takes just 1
+  272 |         guard(mutex, &chip->lock);
+      |                                 ^
+include/linux/cleanup.h:166: note: macro "guard" defined here
+  166 | #define guard(_name) \
+      |=20
+drivers/leds/leds-lp5562.c:272:9: error: 'guard' undeclared (first use in t=
+his function)
+  272 |         guard(mutex, &chip->lock);
+      |         ^~~~~
+drivers/leds/leds-lp5562.c: In function 'lp5562_store_engine_mux':
+drivers/leds/leds-lp5562.c:324:33: error: macro "guard" passed 2 arguments,=
+ but takes just 1
+  324 |         guard(mutex, &chip->lock);
+      |                                 ^
+include/linux/cleanup.h:166: note: macro "guard" defined here
+  166 | #define guard(_name) \
+      |=20
+drivers/leds/leds-lp5562.c:324:9: error: 'guard' undeclared (first use in t=
+his function)
+  324 |         guard(mutex, &chip->lock);
+      |         ^~~~~
+drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_led_brightness':
+drivers/leds/leds-lp55xx-common.c:276:33: error: macro "guard" passed 2 arg=
+uments, but takes just 1
+  276 |         guard(mutex, &chip->lock);
+      |                                 ^
+In file included from drivers/leds/leds-lp55xx-common.c:13:
+include/linux/cleanup.h:166: note: macro "guard" defined here
+  166 | #define guard(_name) \
+      |=20
+drivers/leds/leds-lp55xx-common.c:276:9: error: 'guard' undeclared (first u=
+se in this function)
+  276 |         guard(mutex, &chip->lock);
+      |         ^~~~~
+drivers/leds/leds-lp55xx-common.c:276:9: note: each undeclared identifier i=
+s reported only once for each function it appears in
+drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_multicolor_brightnes=
+s':
+drivers/leds/leds-lp55xx-common.c:291:33: error: macro "guard" passed 2 arg=
+uments, but takes just 1
+  291 |         guard(mutex, &chip->lock);
+      |                                 ^
+include/linux/cleanup.h:166: note: macro "guard" defined here
+  166 | #define guard(_name) \
+      |=20
+drivers/leds/leds-lp55xx-common.c:291:9: error: 'guard' undeclared (first u=
+se in this function)
+  291 |         guard(mutex, &chip->lock);
+      |         ^~~~~
+drivers/leds/leds-lp55xx-common.c: In function 'led_current_store':
+drivers/leds/leds-lp55xx-common.c:409:33: error: macro "guard" passed 2 arg=
+uments, but takes just 1
+  409 |         guard(mutex, &chip->lock);
+      |                                 ^
+include/linux/cleanup.h:166: note: macro "guard" defined here
+  166 | #define guard(_name) \
+      |=20
+drivers/leds/leds-lp55xx-common.c:409:9: error: 'guard' undeclared (first u=
+se in this function)
+  409 |         guard(mutex, &chip->lock);
+      |         ^~~~~
+drivers/leds/leds-lp55xx-common.c: In function 'run_engine_store':
+drivers/leds/leds-lp55xx-common.c:637:33: error: macro "guard" passed 2 arg=
+uments, but takes just 1
+  637 |         guard(mutex, &chip->lock);
+      |                                 ^
+include/linux/cleanup.h:166: note: macro "guard" defined here
+  166 | #define guard(_name) \
+      |=20
+drivers/leds/leds-lp55xx-common.c:637:9: error: 'guard' undeclared (first u=
+se in this function)
+  637 |         guard(mutex, &chip->lock);
+      |         ^~~~~
+drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_store_engine_mode':
+drivers/leds/leds-lp55xx-common.c:676:33: error: macro "guard" passed 2 arg=
+uments, but takes just 1
+  676 |         guard(mutex, &chip->lock);
+      |                                 ^
+include/linux/cleanup.h:166: note: macro "guard" defined here
+  166 | #define guard(_name) \
+      |=20
+drivers/leds/leds-lp55xx-common.c:676:9: error: 'guard' undeclared (first u=
+se in this function)
+  676 |         guard(mutex, &chip->lock);
+      |         ^~~~~
+drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_store_engine_load':
+drivers/leds/leds-lp55xx-common.c:704:33: error: macro "guard" passed 2 arg=
+uments, but takes just 1
+  704 |         guard(mutex, &chip->lock);
+      |                                 ^
+include/linux/cleanup.h:166: note: macro "guard" defined here
+  166 | #define guard(_name) \
+      |=20
+drivers/leds/leds-lp55xx-common.c:704:9: error: 'guard' undeclared (first u=
+se in this function)
+  704 |         guard(mutex, &chip->lock);
+      |         ^~~~~
+drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_store_engine_leds':
+drivers/leds/leds-lp55xx-common.c:803:33: error: macro "guard" passed 2 arg=
+uments, but takes just 1
+  803 |         guard(mutex, &chip->lock);
+      |                                 ^
+include/linux/cleanup.h:166: note: macro "guard" defined here
+  166 | #define guard(_name) \
+      |=20
+drivers/leds/leds-lp55xx-common.c:803:9: error: 'guard' undeclared (first u=
+se in this function)
+  803 |         guard(mutex, &chip->lock);
+      |         ^~~~~
+drivers/leds/leds-lp55xx-common.c:798:17: error: unused variable 'ret' [-We=
+rror=3Dunused-variable]
+  798 |         ssize_t ret;
+      |                 ^~~
+drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_show_master_fader':
+drivers/leds/leds-lp55xx-common.c:827:33: error: macro "guard" passed 2 arg=
+uments, but takes just 1
+  827 |         guard(mutex, &chip->lock);
+      |                                 ^
+include/linux/cleanup.h:166: note: macro "guard" defined here
+  166 | #define guard(_name) \
+      |=20
+drivers/leds/leds-lp55xx-common.c:827:9: error: 'guard' undeclared (first u=
+se in this function)
+  827 |         guard(mutex, &chip->lock);
+      |         ^~~~~
+drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_store_master_fader':
+drivers/leds/leds-lp55xx-common.c:851:33: error: macro "guard" passed 2 arg=
+uments, but takes just 1
+  851 |         guard(mutex, &chip->lock);
+      |                                 ^
+include/linux/cleanup.h:166: note: macro "guard" defined here
+  166 | #define guard(_name) \
+      |=20
+drivers/leds/leds-lp55xx-common.c:851:9: error: 'guard' undeclared (first u=
+se in this function)
+  851 |         guard(mutex, &chip->lock);
+      |         ^~~~~
+drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_show_master_fader_le=
+ds':
+drivers/leds/leds-lp55xx-common.c:870:33: error: macro "guard" passed 2 arg=
+uments, but takes just 1
+  870 |         guard(mutex, &chip->lock);
+      |                                 ^
+include/linux/cleanup.h:166: note: macro "guard" defined here
+  166 | #define guard(_name) \
+      |=20
+drivers/leds/leds-lp55xx-common.c:870:9: error: 'guard' undeclared (first u=
+se in this function)
+  870 |         guard(mutex, &chip->lock);
+      |         ^~~~~
+drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_store_master_fader_l=
+eds':
+drivers/leds/leds-lp55xx-common.c:901:33: error: macro "guard" passed 2 arg=
+uments, but takes just 1
+  901 |         guard(mutex, &chip->lock);
+      |                                 ^
+include/linux/cleanup.h:166: note: macro "guard" defined here
+  166 | #define guard(_name) \
+      |=20
+drivers/leds/leds-lp55xx-common.c:901:9: error: 'guard' undeclared (first u=
+se in this function)
+  901 |         guard(mutex, &chip->lock);
+      |         ^~~~~
+cc1: all warnings being treated as errors
 
---lNfHY2uifUQlosPe
-Content-Type: application/pgp-signature; name="signature.asc"
+Caused by commit
+
+  efd0d1cbb8c5 ("leds: leds-lp55xx: Convert mutex lock/unlock to guard API")
+
+I have used the led-lj tree from next-20240709 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/hNw_6dGlq3+C7iW9qNvyHNl
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmaOKtQACgkQFA3kzBSg
-KbZ7Fw/6A8i37TXaEbXEtYmoR7BsLnIcOdYClfNGNCbg3+AReDDs3lHRTRmtHJUA
-v6Gn5EmgfBpBKi6potQf2mCrqGvosJrvwNdtk5/ydsMf9xRGp8p7MKFElMZoocQ1
-det8Br9vzh6WXLtfnaU6vOyICp/gE1TUkzlQ032HMf/iFdTAEibogSRGZXpzu26u
-sMIanEOiZ55++SOhXccY7yflvEggnAcZS93RPq1675FVeQxgBLp1t/VtsCgsITRN
-4/x7ydn3renfwI851lngio8eF16wKoY9541SJWRIHFtSgvCcIfRGr/LNZZfKehEq
-9Gutmjig1jFnB/Nma2iBknclzeyl9B+MEG+CExA1QZH0KgpjrpvydiWH5Ny8z0gY
-FH5Nq/ivOZEES3K7YeTDuq8hEl6XUJXlEniL/+OWULMmx+CoDBJUeS2zBg6aNP68
-Qt7/9llHwNyKIEaoQrxETfC3WP3I/wmXXiliHFI2RhJRh2dZblpHQ6ve66YXN0mb
-jCgOX9udkxTLrwgdqJcZUSRDdHZEM5vSe5uDiu9gnEpEiS+hjS3CmopbaEn6dGx8
-6nksdnAFsyocdCAW1WLxfw8lzaWhFvaCXjbJyXwAIxMhui6skoVAjvA0EXPB9nJ7
-ocUh4cRXo8ITHNGMDGY0ND5N3L1AQ3YcE7jPJCognoL+PwcdwwQ=
-=G+fr
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaOK18ACgkQAVBC80lX
+0GxfiQf9GYNBzqxqSZlT5RHhXdBuiHs0YOzgwYieeXZenOQT4p9iG/bkyjkMw0uM
+C2lWDCUVnteFx9+rBnKyXPrtMWI9rXE0/LBTbLadjLdu8T9shR5GvyZHWj6sm8V1
+ZcBoRX1on6RrQbOZNBEQlYVkT2mAQSOBECsEHSo4AfJFJAYGmMdQRPStmsfTO6yS
+fNITcu4cJ5p3V97nMlBve1dvkchfIbUxS6nmHF6AWs8xwIP0udfQLxdeurZ1ByEN
+cXGFtLUw4w8YDEJns6hWPufMUGvsqB/hCoTUT/HJnZCgf3VNYEpGFQ/v23jiIwlt
+vzKmsfNUK/tNFGbGIesMBhXiFCqXrw==
+=FcjJ
 -----END PGP SIGNATURE-----
 
---lNfHY2uifUQlosPe--
+--Sig_/hNw_6dGlq3+C7iW9qNvyHNl--
 
