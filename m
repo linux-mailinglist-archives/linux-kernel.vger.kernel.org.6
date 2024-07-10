@@ -1,204 +1,167 @@
-Return-Path: <linux-kernel+bounces-247311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E37A92CDE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:05:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B009592CDE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 11:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DEFD283862
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:05:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9FC21F284BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 09:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A4D18FA07;
-	Wed, 10 Jul 2024 09:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEAE718FA07;
+	Wed, 10 Jul 2024 09:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R6i/T4HN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nOOdkfKj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E65518EFCC
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 09:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E6516938C;
+	Wed, 10 Jul 2024 09:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720602314; cv=none; b=bnyKvxyRc9iHUYYOkGJvO6RrYQUb/0hrX3mlV3QaGVxW3cwC8ttZ2eVBgDC/BHeg4oXJpWLB1nvpuTOho6EXLAx41k0KYbbcHsRW1TFhs1SXCoB8BsdoHnNj/lG+QX/texojmVtAH9hUjjEnPq5ZMHIxjTxDMOOLerZy3/zYBvg=
+	t=1720602342; cv=none; b=Y/83+4ndmJJbps5nTpLV3KpTqZDxbttte68pik++DTMsdBf6TurvsBy0gmDELCkQD4+i5xo34ruv3vAYW+owDNsx9sF5kjcNwoJupCOVX4RhFt8TWZHOwiG10n9Iw8X9ZFycGVlJmNOSEK4ViuOhF5kLksfu9CKE4CKgdouHCOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720602314; c=relaxed/simple;
-	bh=PBIpta0YjOKEnNozLsSWGsjK6vJDUcH8zexdl5Nhcxw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TKqS/LWWQN1U0BvhLL0zjitnOrDk6dNdh9kSH+xmsd1VTyIHXG8/a8LniOp04kSQKusS/AHA1+14bxOKwI25JEgyFD7+YRge2gcVR/hPEKOc0a6eK9xoTy991yxWj7fAPJ1zgpyUx9ytb3HTKNmCodVYdbiScBuzcTVDoRVV5dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R6i/T4HN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720602311;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Lo9HjTqXg+zsuHsAZC/cmPCTHvmkkLcTQoYiizXM1HQ=;
-	b=R6i/T4HNm4lLSHg985dcTmb1XSfLgcnhQmITsj0IVA/ibACOUB4ITxUcYRnD3GY8qkuRb3
-	QWI8f4qpfS/zLFTckHOp1rsevyQrlOisZE2s0bKUfwcdRocDB4RszmJetM2/6Bv00q5tmQ
-	8M2ZtIqudA7CDLkVuUXxNAjvR/6SElM=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-511-zbX3YZPhOjaKYtuR5Kmb6g-1; Wed,
- 10 Jul 2024 05:05:08 -0400
-X-MC-Unique: zbX3YZPhOjaKYtuR5Kmb6g-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 75FAC19560AA;
-	Wed, 10 Jul 2024 09:05:06 +0000 (UTC)
-Received: from antares.redhat.com (unknown [10.39.192.91])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DCE313000181;
-	Wed, 10 Jul 2024 09:05:02 +0000 (UTC)
-From: Adrian Moreno <amorenoz@redhat.com>
-To: netdev@vger.kernel.org
-Cc: Adrian Moreno <amorenoz@redhat.com>,
-	Pravin B Shelar <pshelar@ovn.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	dev@openvswitch.org,
-	linux-kselftest@vger.kernel.org,
+	s=arc-20240116; t=1720602342; c=relaxed/simple;
+	bh=oV4+5bN3h0YlN7HPv4WOQIlgS47Ixt5yvCvPSzurRN0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CkwXk99PLQR9FL7OJysNnvCG+HaTHL1uk+WL4CIm+XVqFzoiMEYzxkbzS6+5TDwsQBNW+1Yu+Na+yGWaFE+0LRwTQZzDuAw3XUOulFmAt8vpVKx/OIr98mcTN5cXALbyjQwWIggkV+zCqYZYsNQfxrxcR90LaLvO9EIvw2gwabg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nOOdkfKj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C587C32781;
+	Wed, 10 Jul 2024 09:05:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720602341;
+	bh=oV4+5bN3h0YlN7HPv4WOQIlgS47Ixt5yvCvPSzurRN0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nOOdkfKjPBYe5QietuCg0nb8HQcizq7Glr3tdoW7spRIEGHsWILsm9CLcyQpx8Iqe
+	 /6SiHWUryFpLgMQAG8jp/vSRpmAYFmhHKZnyt/uICGV2gLbGOwC+R8/VnijSt0ucSR
+	 RydMN0yCPJMhRNheF/UvkJUDHEybBdYBRiO6SbWfu0of98HjklgBfqRkKQfILPFV3S
+	 ht1Diu5N+QaqkMMeR7x3r2nLC91ne3vaqLKeiBP9a/fgIPCh9PfCcxmS18UppKoQmB
+	 hRXjxHPpse6HLsqMvrjCk9l+1+SQihe+6zaiyiFav9m3BVIl/XSm9t4btRgiHdumEB
+	 nnFz4P8YqwqsA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sRTGd-00BAW4-24;
+	Wed, 10 Jul 2024 10:05:39 +0100
+Date: Wed, 10 Jul 2024 10:05:37 +0100
+Message-ID: <86wmlt39cu.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: David Dai <davidai@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Quentin Perret <qperret@google.com>,
+	Masami Hiramatsu <mhiramat@google.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Pavan Kondeti <quic_pkondeti@quicinc.com>,
+	Gupta Pankaj <pankaj.gupta@amd.com>,
+	Mel Gorman <mgorman@suse.de>,
+	kernel-team@android.com,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2] selftests: openvswitch: retry instead of sleep
-Date: Wed, 10 Jul 2024 11:04:59 +0200
-Message-ID: <20240710090500.1655212-1-amorenoz@redhat.com>
+Subject: Re: [PATCH v6 2/2] cpufreq: add virtual-cpufreq driver
+In-Reply-To: <20240628125106.i4hhyzdgt3uoskat@bogus>
+References: <20240521043102.2786284-1-davidai@google.com>
+	<20240521043102.2786284-3-davidai@google.com>
+	<20240628125106.i4hhyzdgt3uoskat@bogus>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: sudeep.holla@arm.com, davidai@google.com, rafael@kernel.org, viresh.kumar@linaro.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, saravanak@google.com, qperret@google.com, mhiramat@google.com, will@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org, oliver.upton@linux.dev, dietmar.eggemann@arm.com, quic_pkondeti@quicinc.com, pankaj.gupta@amd.com, mgorman@suse.de, kernel-team@android.com, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-There are a couple of places where the test script "sleep"s to wait for
-some external condition to be met.
+On Fri, 28 Jun 2024 13:51:06 +0100,
+Sudeep Holla <sudeep.holla@arm.com> wrote:
+> 
+> On Mon, May 20, 2024 at 09:30:52PM -0700, David Dai wrote:
+> > Introduce a virtualized cpufreq driver for guest kernels to improve
+> > performance and power of workloads within VMs.
+> >
+> > This driver does two main things:
+> >
+> > 1. Sends the frequency of vCPUs as a hint to the host. The host uses the
+> > hint to schedule the vCPU threads and decide physical CPU frequency.
+> >
+> > 2. If a VM does not support a virtualized FIE(like AMUs), it queries the
+> > host CPU frequency by reading a MMIO region of a virtual cpufreq device
+> > to update the guest's frequency scaling factor periodically. This enables
+> > accurate Per-Entity Load Tracking for tasks running in the guest.
+> >
+> > +
+> > +/*
+> > + * CPU0..CPUn
+> > + * +-------------+-------------------------------+--------+-------+
+> > + * | Register    | Description                   | Offset |   Len |
+> > + * +-------------+-------------------------------+--------+-------+
+> > + * | cur_perf    | read this register to get     |    0x0 |   0x4 |
+> > + * |             | the current perf (integer val |        |       |
+> > + * |             | representing perf relative to |        |       |
+> > + * |             | max performance)              |        |       |
+> > + * |             | that vCPU is running at       |        |       |
+> > + * +-------------+-------------------------------+--------+-------+
+> > + * | set_perf    | write to this register to set |    0x4 |   0x4 |
+> > + * |             | perf value of the vCPU        |        |       |
+> > + * +-------------+-------------------------------+--------+-------+
+> > + * | perftbl_len | number of entries in perf     |    0x8 |   0x4 |
+> > + * |             | table. A single entry in the  |        |       |
+> > + * |             | perf table denotes no table   |        |       |
+> > + * |             | and the entry contains        |        |       |
+> > + * |             | the maximum perf value        |        |       |
+> > + * |             | that this vCPU supports.      |        |       |
+> > + * |             | The guest can request any     |        |       |
+> > + * |             | value between 1 and max perf  |        |       |
+> > + * |             | when perftbls are not used.   |        |       |
+> > + * +---------------------------------------------+--------+-------+
+> > + * | perftbl_sel | write to this register to     |    0xc |   0x4 |
+> > + * |             | select perf table entry to    |        |       |
+> > + * |             | read from                     |        |       |
+> > + * +---------------------------------------------+--------+-------+
+> > + * | perftbl_rd  | read this register to get     |   0x10 |   0x4 |
+> > + * |             | perf value of the selected    |        |       |
+> > + * |             | entry based on perftbl_sel    |        |       |
+> > + * +---------------------------------------------+--------+-------+
+> > + * | perf_domain | performance domain number     |   0x14 |   0x4 |
+> > + * |             | that this vCPU belongs to.    |        |       |
+> > + * |             | vCPUs sharing the same perf   |        |       |
+> > + * |             | domain number are part of the |        |       |
+> > + * |             | same performance domain.      |        |       |
+> > + * +-------------+-------------------------------+--------+-------+
+> > + */
+> 
+> I think it is good idea to version this table, so that it gives flexibility
+> to update the entries. It is a must if we are getting away with DT. I didn't
+> give complete information in my previous response where I agreed with Rafael.
+> 
+> I am not sure how much feasible it is, but can it be queried via KVM IOCTLs
+> to VMM. Just a thought, I am exploring how to make this work even on ACPI
+> systems. It is simpler if we neednot rely on DT or ACPI.
 
-This is error prone, specially in slow systems (identified in CI by
-"KSFT_MACHINE_SLOW=yes").
+KVM should not have to know any of this. This is purely between a
+contract (and a pretty weak one) between userspace and the guest.
 
-To fix this, add a "ovs_wait" function that tries to execute a command
-a few times until it succeeds. The timeout used is set to 5s for
-"normal" systems and doubled if a slow CI machine is detected.
+	M.
 
-This should make the following work:
-
-$ vng --build  \
-    --config tools/testing/selftests/net/config \
-    --config kernel/configs/debug.config
-
-$ vng --run . --user root -- "make -C tools/testing/selftests/ \
-    KSFT_MACHINE_SLOW=yes TARGETS=net/openvswitch run_tests"
-
-Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
----
- .../selftests/net/openvswitch/openvswitch.sh  | 45 +++++++++++++++----
- .../selftests/net/openvswitch/ovs-dpctl.py    |  1 +
- 2 files changed, 38 insertions(+), 8 deletions(-)
-
-diff --git a/tools/testing/selftests/net/openvswitch/openvswitch.sh b/tools/testing/selftests/net/openvswitch/openvswitch.sh
-index bc71dbc18b21..cc0bfae2bafa 100755
---- a/tools/testing/selftests/net/openvswitch/openvswitch.sh
-+++ b/tools/testing/selftests/net/openvswitch/openvswitch.sh
-@@ -11,6 +11,11 @@ ksft_skip=4
- PAUSE_ON_FAIL=no
- VERBOSE=0
- TRACING=0
-+WAIT_TIMEOUT=5
-+
-+if test "X$KSFT_MACHINE_SLOW" == "Xyes"; then
-+	WAIT_TIMEOUT=10
-+fi
- 
- tests="
- 	arp_ping				eth-arp: Basic arp ping between two NS
-@@ -29,6 +34,30 @@ info() {
- 	[ $VERBOSE = 0 ] || echo $*
- }
- 
-+ovs_wait() {
-+	info "waiting $WAIT_TIMEOUT s for: $@"
-+
-+	if "$@" ; then
-+		info "wait succeeded immediately"
-+		return 0
-+	fi
-+
-+	# A quick re-check helps speed up small races in fast systems.
-+	# However, fractional sleeps might not necessarily work.
-+	local start=0
-+	sleep 0.1 || { sleep 1; start=1; }
-+
-+	for (( i=start; i<WAIT_TIMEOUT; i++ )); do
-+		if "$@" ; then
-+			info "wait succeeded after $i seconds"
-+			return 0
-+		fi
-+		sleep 1
-+	done
-+	info "wait failed after $i seconds"
-+	return 1
-+}
-+
- ovs_base=`pwd`
- sbxs=
- sbx_add () {
-@@ -278,20 +307,19 @@ test_psample() {
- 
- 	# Record psample data.
- 	ovs_spawn_daemon "test_psample" python3 $ovs_base/ovs-dpctl.py psample-events
-+	ovs_wait grep -q "listening for psample events" ${ovs_dir}/stdout
- 
- 	# Send a single ping.
--	sleep 1
- 	ovs_sbx "test_psample" ip netns exec client ping -I c1 172.31.110.20 -c 1 || return 1
--	sleep 1
- 
- 	# We should have received one userspace action upcall and 2 psample packets.
--	grep -E "userspace action command" $ovs_dir/s0.out >/dev/null 2>&1 || return 1
-+	ovs_wait grep -q "userspace action command" $ovs_dir/s0.out || return 1
- 
- 	# client -> server samples should only contain the first 14 bytes of the packet.
--	grep -E "rate:4294967295,group:1,cookie:c0ffee data:[0-9a-f]{28}$" \
--			 $ovs_dir/stdout >/dev/null 2>&1 || return 1
--	grep -E "rate:4294967295,group:2,cookie:eeff0c" \
--			 $ovs_dir/stdout >/dev/null 2>&1 || return 1
-+	ovs_wait grep -qE "rate:4294967295,group:1,cookie:c0ffee data:[0-9a-f]{28}$" \
-+		$ovs_dir/stdout || return 1
-+
-+	ovs_wait grep -q "rate:4294967295,group:2,cookie:eeff0c" $ovs_dir/stdout || return 1
- 
- 	return 0
- }
-@@ -711,7 +739,8 @@ test_upcall_interfaces() {
- 	ovs_add_netns_and_veths "test_upcall_interfaces" ui0 upc left0 l0 \
- 	    172.31.110.1/24 -u || return 1
- 
--	sleep 1
-+	ovs_wait grep -q "listening on upcall packet handler" ${ovs_dir}/left0.out
-+
- 	info "sending arping"
- 	ip netns exec upc arping -I l0 172.31.110.20 -c 1 \
- 	    >$ovs_dir/arping.stdout 2>$ovs_dir/arping.stderr
-diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-index 1e15b0818074..8a0396bfaf99 100644
---- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-+++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-@@ -2520,6 +2520,7 @@ class PsampleEvent(EventSocket):
-     marshal_class = psample_msg
- 
-     def read_samples(self):
-+        print("listening for psample events", flush=True)
-         while True:
-             try:
-                 for msg in self.get():
 -- 
-2.45.2
-
+Without deviation from the norm, progress is not possible.
 
