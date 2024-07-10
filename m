@@ -1,155 +1,122 @@
-Return-Path: <linux-kernel+bounces-247827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38B9692D521
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:37:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2226092D525
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 17:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D03D51F2334E
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:37:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5309C1C210A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7C2194ACB;
-	Wed, 10 Jul 2024 15:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2AC194A43;
+	Wed, 10 Jul 2024 15:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ipCQfKJm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UWu5iIF0"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFC0194A44
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276411946BC
+	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 15:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720625809; cv=none; b=qmD/s1RoMyJ7b/mUvipAVikWbDVM9l1T4U8AtWj5UOVWxu5TznQSt86LxA/mAHQ+4IUXHgYd/HC8jKRpCM/DPk8ZChV0Tqef0a43sgu6G+umuYmM3DP6xezfZrn4DYGSfVK8bc5B0x7LSsSWDXkkuyAhsq4opw0vm4HUBYhfw3o=
+	t=1720625829; cv=none; b=kRGRwZiyR8VaXRBNu1IJZHmdxzP7fA/vvlvE1uC0BwcP/1FVcHJ0FBHshroSt++sjrz7V1ncwx2pS52cw2t023adjZBxqzSIU2nE0TLdGM9IejcydwHcJcyiZliOaWJ23j3QDRUqH0CdVXJPTVwx0eELuPWyqOAfx/19IGUaWOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720625809; c=relaxed/simple;
-	bh=QOlGEjG6fe8bchNVtMBv9s4auVk1QxHifUB7L6evv18=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jv/BXc2o6jOxK3wi8vvhKJQ7eTQAixL5KeZEca3aSDV9/STwcvRMEeSPeENnZTFQaRdA0m8YYnS9TRFcSW3GpJT0Vdr04eC5rVJn3j607DkuTogvhhkwZYXFvUUssSDkha9lQpv3D9kZ1XJ/yjASPckSZ56uHRWmjcu2FK3L974=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ipCQfKJm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1720625807;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s64RA7czZjoxKqdjU5coO4Q/NqOYJDpUbBArTWbAtjU=;
-	b=ipCQfKJmzj4ctdkNsakV09y27ZWOKBxKdBFbG3KWShH7eoceZexsVtLqzYb04V4uSipTzH
-	prlP7keG6oB86W6iFJtTPon7m/22HnUSD1saT2I7PKmhdeQJyf9N+03MEuqEDCsQZ2MbDm
-	hYEizaYkr9d1WIqSd2gPkNfibs3GN9w=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-675-lkt_SUP9OOix3Smfqddpkw-1; Wed, 10 Jul 2024 11:36:45 -0400
-X-MC-Unique: lkt_SUP9OOix3Smfqddpkw-1
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6b61dbb0005so25811536d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:36:44 -0700 (PDT)
+	s=arc-20240116; t=1720625829; c=relaxed/simple;
+	bh=x+o4kPbiFSGaMLLk+/3IeoS/mUq9fZMtsf7DYiEwpco=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=poLftCUi+Ktpy4rAjgWIz6jSRsIfz4JuG1SEJTHGJpoixw8FrDRc9GAgY24ESsZ3W0O/VypS5scUR9dL2AFSD3yZuxGezCwGnEm7U94LRyUYHU15fWR5skid4UpLRO9/a4eX296VW19bBK1Q722qz/Cv2f/6liD5TtN4Lw49Lgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UWu5iIF0; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e035dc23a21so5880391276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 08:37:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1720625827; x=1721230627; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Zc8nMT3AAU8QDxt/phKAKKjkSLDSDuDLlhBSXcN3vI=;
+        b=UWu5iIF0efUgDniKDzNw8OZHm81UsFfCp9sbuh7WGDFIu9+ZmNiUzKJYgqxV7DrKTS
+         4lb40W4HcEQUISWpO8YixcvTTg13UZ26EWnbwaMDktJgcE99kIZbGYyLm8FlKYHfxef1
+         pCRQkD05YJKiUgPLaRg3IppKVkNN1zzVSlAcadh+8p9EIito4kIhTt4L4fNtlczipLBP
+         b8hYoUtW9WOZthY7cK7tI9SBeYIlrlu0aafjyEA5eWEcd/mtCDaKUXJizlyO03W23s/H
+         OaMHRjlW+UxfPye/liHmA4yFSdQISv0MthZryme6kGolsQpKuW3b0ojvl6yfSYaa0IQp
+         OtnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720625804; x=1721230604;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s64RA7czZjoxKqdjU5coO4Q/NqOYJDpUbBArTWbAtjU=;
-        b=UcET//Tc6gXImBySnt1xZ9Tww+XhOycvDfEW0n2qv4kRlsAVM1LOtLYd1V8ndrmc2K
-         UYSnXhhC89Njet/dCjfixNd5uJ9mcx9VRzGCxfMAQYIRMC6RUHwXWb0DfOOfbmjReDrx
-         yAz12dHE2w5CgjXvDo47el258KFXXfcI8iv78qNwzLTPiJT7r9cZAJU7XW/3WstTPTi1
-         f8yD0+aMcAmBy1ZXBYPVt9moqFJA4fzbmfyyjiZ0d99Ou5AE8cGmhuv6m9K8ow6M6rAV
-         iHZlSE/wcB3dT4ZEOzNmfXpRTeBmYt7EuTr+cLO8ft1He1lCUJug/OlJ7Y2AWICts+eD
-         vLgg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBl898JPD08YZ2HOvj1dcKNTBzg0ogPczeC4QeYVSFqpy6xIJbWi2Rb97secKIYxxHU6pWvgz7PiSIGVMS/Qx4Ic8nDdOWBumNU46Y
-X-Gm-Message-State: AOJu0Yx5gePkVYVabcU4Qt6hJvaw96hSp7Wc77T5IBN65Mnx7CGean8F
-	7fJUE07m2nk1OyT0jccnswm7p2o93/hQ87z5JsOqqPkED+MuI6+qg6Qwy9Qy48PZbzpl03irJ2i
-	QB4Ua+iwpL7gpQFnmVnJq83DNaher6lfOs6Zjm+pwYdF/iOyoyFD0/19lQHEMD1oy8stdh++nmn
-	jar+Yw4OzBxpPKYfpRMywWg2ojdgH29ptt166T9J4tmdyGxg==
-X-Received: by 2002:a05:6214:1cc1:b0:6b5:dca9:675c with SMTP id 6a1803df08f44-6b61bc7ef93mr77770706d6.4.1720625803672;
-        Wed, 10 Jul 2024 08:36:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHB/GdF4nMtnZWIqpj1bOX+NMDeXUNW4j07PUySuL9OsO7VkDuRhctdh8i+I5JTRQjusLsnqA==
-X-Received: by 2002:a05:6214:1cc1:b0:6b5:dca9:675c with SMTP id 6a1803df08f44-6b61bc7ef93mr77770346d6.4.1720625803239;
-        Wed, 10 Jul 2024 08:36:43 -0700 (PDT)
-Received: from [192.168.1.111] ([2600:1700:1ff0:d0e0::40])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b61ba74d8esm17970576d6.94.2024.07.10.08.36.41
+        d=1e100.net; s=20230601; t=1720625827; x=1721230627;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Zc8nMT3AAU8QDxt/phKAKKjkSLDSDuDLlhBSXcN3vI=;
+        b=pEQu38xosxpLEsoICZNPQwqoIYr0+QEpvoLv9L5ieUsbKPf9ttVj+00Zo+02yY8oXv
+         O0fUKj58cHif7DeITgQ20WA1PFHIVspCHOOHJMJigq3Ev1ZzoLUu7+xIL/p80fNZswCi
+         tNiK03+t8gJ6t8uUwsgYvwDEFo8/mtDHLWqUI1aOxYTAh3+uvr86mUHXPQVtbi6+fLXH
+         uh80S48KYJRvCI/WfrXqdmvB/nwFKakVizKEImw3/xRPro9qg2/+mqYX5qKV8Z3/ysIu
+         vZ6AxHMmJr2zVYtSSvyKY6qo5QJgSfzr3cU4M7r3AHvwyZeT4wLWTjjtky9P5MD3Iof4
+         txlw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpniu06TulDlnVEKQTKTAUi68giAN/bwvnXWn/YbqsFOCh6WF5p0OjG9LbI4cfmi0XBGbRvlb4B0gIiLvpUvGIxhGZbv4c7P+pF72/
+X-Gm-Message-State: AOJu0YwHzaRVJQlAvhmccGilWm2pl9YwxaBGTbwj7PbkTg63//bg5Ckr
+	YcXjfgYGmLqebsnxVD4YukiSOTkyrMx/T6QN3ozuTCbORerRcK/+n9PEYny/5Q==
+X-Google-Smtp-Source: AGHT+IFHIo6fU+7NNSLyfzTcFAbf/t4vdnUEaBIfh5qv8+9oqH3J3Xkmyxjko8dPd+A7uoIPPYKtPA==
+X-Received: by 2002:a25:7408:0:b0:e03:34ec:16b2 with SMTP id 3f1490d57ef6-e041b11d31amr6735103276.42.1720625826988;
+        Wed, 10 Jul 2024 08:37:06 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e041a9a156fsm637366276.65.2024.07.10.08.37.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 08:36:42 -0700 (PDT)
-From: Andrew Halaney <ahalaney@redhat.com>
-Date: Wed, 10 Jul 2024 10:36:14 -0500
-Subject: [PATCH 2/2] arm64: dts: ti: k3-j784s4-evm: Consolidate serdes0
- references
+        Wed, 10 Jul 2024 08:37:06 -0700 (PDT)
+Date: Wed, 10 Jul 2024 08:36:54 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: Hugh Dickins <hughd@google.com>, Sagi Grimberg <sagi@grimberg.me>, 
+    Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+    Eric Dumazet <edumazet@google.com>, 
+    Thorsten Leemhuis <regressions@leemhuis.info>, regressions@lists.linux.dev, 
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] net: fix rc7's __skb_datagram_iter()
+In-Reply-To: <51b9cb9c-cf7d-47b3-ab08-c9efbdb1b883@grimberg.me>
+Message-ID: <66e53f14-bfca-6b1a-d9db-9b1c0786d07a@google.com>
+References: <58ad4867-6178-54bd-7e49-e35875d012f9@google.com> <ae4e55df-6fe6-4cab-ac44-3ed10a63bfbe@grimberg.me> <fef352e8-b89a-da51-f8ce-04bc39ee6481@google.com> <51b9cb9c-cf7d-47b3-ab08-c9efbdb1b883@grimberg.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240710-k3-j784s4-evm-serdes0-cleanup-v1-2-03850fe33922@redhat.com>
-References: <20240710-k3-j784s4-evm-serdes0-cleanup-v1-0-03850fe33922@redhat.com>
-In-Reply-To: <20240710-k3-j784s4-evm-serdes0-cleanup-v1-0-03850fe33922@redhat.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Siddharth Vadapalli <s-vadapalli@ti.com>, mranostay@ti.com
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Andrew Halaney <ahalaney@redhat.com>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=US-ASCII
 
-Subnodes were added to serdes0 in two different spots (due to independent
-development of their consumer usage). Let's go ahead and combine those
-into one reference for readability's sake.
+X would not start in my old 32-bit partition (and the "n"-handling looks
+just as wrong on 64-bit, but for whatever reason did not show up there):
+"n" must be accumulated over all pages before it's added to "offset" and
+compared with "copy", immediately after the skb_frag_foreach_page() loop.
 
-Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
+Fixes: d2d30a376d9c ("net: allow skb_datagram_iter to be called from any context")
+Signed-off-by: Hugh Dickins <hughd@google.com>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
 ---
- arch/arm64/boot/dts/ti/k3-j784s4-evm.dts | 24 ++++++++----------------
- 1 file changed, 8 insertions(+), 16 deletions(-)
+v3: added reviewed-by Sagi, try sending direct to Linus
+v2: moved the "n = 0" down, per Sagi: no functional change.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-index e54ccf4f37955..ffa38f41679d8 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-@@ -1262,6 +1262,14 @@ &dss {
- &serdes0 {
- 	status = "okay";
- 
-+	serdes0_pcie1_link: phy@0 {
-+		reg = <0>;
-+		cdns,num-lanes = <2>;
-+		#phy-cells = <0>;
-+		cdns,phy-type = <PHY_TYPE_PCIE>;
-+		resets = <&serdes_wiz0 1>, <&serdes_wiz0 2>;
-+	};
-+
- 	serdes0_usb_link: phy@3 {
- 		reg = <3>;
- 		cdns,num-lanes = <1>;
-@@ -1386,22 +1394,6 @@ &main_mcan4 {
- 	phys = <&transceiver3>;
- };
- 
--&serdes0 {
--	status = "okay";
--
--	serdes0_pcie1_link: phy@0 {
--		reg = <0>;
--		cdns,num-lanes = <2>;
--		#phy-cells = <0>;
--		cdns,phy-type = <PHY_TYPE_PCIE>;
--		resets = <&serdes_wiz0 1>, <&serdes_wiz0 2>;
--	};
--};
--
--&serdes_wiz0 {
--	status = "okay";
--};
--
- &pcie1_rc {
- 	status = "okay";
- 	num-lanes = <2>;
+ net/core/datagram.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/net/core/datagram.c b/net/core/datagram.c
+index e9ba4c7b449d..e72dd78471a6 100644
+--- a/net/core/datagram.c
++++ b/net/core/datagram.c
+@@ -423,11 +423,12 @@ static int __skb_datagram_iter(const struct sk_buff *skb, int offset,
+ 			if (copy > len)
+ 				copy = len;
+ 
++			n = 0;
+ 			skb_frag_foreach_page(frag,
+ 					      skb_frag_off(frag) + offset - start,
+ 					      copy, p, p_off, p_len, copied) {
+ 				vaddr = kmap_local_page(p);
+-				n = INDIRECT_CALL_1(cb, simple_copy_to_iter,
++				n += INDIRECT_CALL_1(cb, simple_copy_to_iter,
+ 					vaddr + p_off, p_len, data, to);
+ 				kunmap_local(vaddr);
+ 			}
 -- 
-2.45.2
-
+2.35.3
 
