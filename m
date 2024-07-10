@@ -1,93 +1,137 @@
-Return-Path: <linux-kernel+bounces-247681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DDEA92D2F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:38:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02A1592D2FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 072D21F23A90
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:38:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D6E71C23237
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53311192B86;
-	Wed, 10 Jul 2024 13:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C78192B91;
+	Wed, 10 Jul 2024 13:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="y7X8EMUg"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="n3cY/H6j"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EA612C530
-	for <linux-kernel@vger.kernel.org>; Wed, 10 Jul 2024 13:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AF1190673;
+	Wed, 10 Jul 2024 13:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720618672; cv=none; b=oLSwUfq/IMzA89M7Wc/sl/7AyAJ/LgK9VjayJ+MY02BwDVZlPXGcFIETy9TX5tHg7Y3CAPkdxBuvueg8GRprUn4R2fOLQp8wajw0d27EdyfoIuDngOwhUPKEx/DL5+nuM2kibzCvgsYd92EQWgoev7SyfQScoYMrNxJszeKvh6k=
+	t=1720618810; cv=none; b=JrqBAvwHB9c1OzgxFUiwUWyIyuORTFfFQAO64wBIObIj70WrMr7+OHJQM/3k13js6kRCI4DqQw4t4oiSdLWTKiHSBILvs04bD+mILusP52joUeDVd2dOMZ+zcQlc4RR3YU2A6/L4pJRe6uRtLnG0oqJrTjGDsVSMG62mbqK7s04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720618672; c=relaxed/simple;
-	bh=++gOqx0AOCHPw/QIqgTzJc//pa7fEsdTH3n+2JOdDTg=;
+	s=arc-20240116; t=1720618810; c=relaxed/simple;
+	bh=KLq/YBxo8i9fPeOf0/APuvNk+ktCben/txQXDLZ1oz8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YZ1elUUE9y4ms4ydnraSwSesicbsWeAy+O5aCLDMuY59/5/N8yiNqXNvhv0Ks+hgYV3bB/Z0sEYMzyia8goNut+g/CzWoUpYnzmk+jc8FJxwhFzBVNvKA8S7WKGlz1SKuApQUps8gyBzq3I/oSNRs3QeEMAjygRUCKi2186D9ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=y7X8EMUg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC22DC32781;
-	Wed, 10 Jul 2024 13:37:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bWQe7TdvHnRT1gGJ02X9fJgd4ADgMIRKxiDKrPQ9i+b8H/OWJN2csYlgr+XHQu6gTR4/A04UDbRnLl3yh/XM+U7Zkx14F3Ef+ZFMG4kE1rec5cHGpr1s+J+JTIVfn2ggp9HdWKtQ0eIUyFaAA14du9R3fDBpIjrXI7wmMJSQ3pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=n3cY/H6j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B976CC32781;
+	Wed, 10 Jul 2024 13:40:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1720618672;
-	bh=++gOqx0AOCHPw/QIqgTzJc//pa7fEsdTH3n+2JOdDTg=;
+	s=korg; t=1720618810;
+	bh=KLq/YBxo8i9fPeOf0/APuvNk+ktCben/txQXDLZ1oz8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=y7X8EMUg/89nhrALzuUAgFd7mCazxXozUFEDUeXZwhWMDezVTbSga7NJZp8Sd8z3C
-	 PvIZj/hLB0YVvsGYp9SVloyqXCudJUEU507c5XD1oh7CZNI5XIWjfJX5WXI48tkwNv
-	 WMji1IYTM+D/CCP5J6I3M/nx3SPCciWeFfNkwL3s=
-Date: Wed, 10 Jul 2024 15:37:49 +0200
+	b=n3cY/H6jyMdMnJ549TffWKHs1+JXEYfbICoqs79P44zfctQKuuFn6E2W9fcY5e6nU
+	 U2zj4IVpZ5LbTS7ziu5hoQjFjmPsqnoxA9QY204M283trCeVg4K+qrdqBE25VRoCr+
+	 bmCH+Tu+8TCQ6dNWKedmgVT9jiHAzDbMayxIld/w=
+Date: Wed, 10 Jul 2024 15:40:07 +0200
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dio: Have dio_bus_match() callback take a const *
-Message-ID: <2024071034-dealer-uncover-0794@gregkh>
-References: <20240710074452.2841173-1-geert@linux-m68k.org>
- <2024071031-afterglow-porridge-de26@gregkh>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Will McVicker <willmcvicker@google.com>,
+	Sam Protsenko <semen.protsenko@linaro.org>, kernel-team@android.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH] tty: serial: samsung: add clock comment for earlycon on
+ gs101
+Message-ID: <2024071030-gravy-backwater-88ec@gregkh>
+References: <20240710-samsung_tty-gs101earlycon-v1-1-bd0f8481542a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2024071031-afterglow-porridge-de26@gregkh>
+In-Reply-To: <20240710-samsung_tty-gs101earlycon-v1-1-bd0f8481542a@linaro.org>
 
-On Wed, Jul 10, 2024 at 09:47:47AM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Jul 10, 2024 at 09:44:52AM +0200, Geert Uytterhoeven wrote:
-> > drivers/dio/dio-driver.c:128:11: error: initialization of ‘int (*)(struct device *, const struct device_driver *)’ from incompatible pointer type ‘int (*)(struct device *, struct device_driver *)’ [-Werror=incompatible-pointer-types]
-> >   128 |  .match = dio_bus_match,
-> >       |           ^~~~~~~~~~~~~
-> > drivers/dio/dio-driver.c:128:11: note: (near initialization for ‘dio_bus_type.match’)
-> > 
-> > Reported-by: noreply@ellerman.id.au
-> > Fixes: d69d804845985c29 ("driver core: have match() callback in struct bus_type take a const *")
-> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > ---
-> >  drivers/dio/dio-driver.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/dio/dio-driver.c b/drivers/dio/dio-driver.c
-> > index 2d9fa6011945d88b..12fa2d209dab9d3c 100644
-> > --- a/drivers/dio/dio-driver.c
-> > +++ b/drivers/dio/dio-driver.c
-> > @@ -110,10 +110,10 @@ void dio_unregister_driver(struct dio_driver *drv)
-> >   *  and 0 if there is no match.
-> >   */
-> >  
-> > -static int dio_bus_match(struct device *dev, struct device_driver *drv)
-> > +static int dio_bus_match(struct device *dev, const struct device_driver *drv)
-> >  {
-> >  	struct dio_dev *d = to_dio_dev(dev);
-> > -	struct dio_driver *dio_drv = to_dio_driver(drv);
-> > +	const struct dio_driver *dio_drv = to_dio_driver(drv);
+On Wed, Jul 10, 2024 at 02:33:29PM +0100, Andr� Draszik wrote:
+> As pointed out in [1] before, the hand-over between earlycon and serial
+> console is fragile due to clocking issues:
 > 
-> Same here, to_dio_driver() should be changed to use container_of_const()
+>     ... causing earlycon to stop to work sometime into the boot for two
+>     reasons:
+>     * peric0_top1_ipclk_0 requires its parent gout_cmu_peric0_ip to be
+>       running, but because earlycon doesn't deal with clocks that
+>       parent will be disabled when none of the other drivers that
+>       actually deal with clocks correctly require it to be running and
+>       the real serial driver (which does deal with clocks) hasn't taken
+>       over yet
+> 
+>     The console UART, and I2C bus 8 are on the same cmu_peric0 controller,
+>     and that cmu_peric0 has two clocks coming from cmu_top, ip and bus. For
+>     I2C8 & UART to work, both of these clocks from cmu_top need to to be on
+>     as they are the parent of the i2c8-(ip|pclk) and uart-(ip|pclk) each.
+> 
+>     The bootloader leaves those clocks running, yes. So earlycon works (for
+>     a while).
+> 
+>     At some point into the boot, one of two things happens:
+>     1) Linux will load the i2c driver. That driver does clock handling
+>     (correctly), it will initialise and then it has nothing to do, therefore
+>     it disables cmu_peric0's i2c8 ip and pclk clocks. Because at that stage
+>     nothing appears to be using the cmu_peric0's ip clock (the real serial
+>     driver hasn't initialised yet), Linux decides to also disable the parent
+>     ip clock coming from cmu_top.
+> 
+>     At this stage, the earlycon driver stops working, as the parent ip clock
+>     of the uart ip clock is not running any more. No serial output can be
+>     observed from this stage onwards. I think what is probably happening is
+>     that the console uart FIFO doesn't get emptied anymore, and earlycon
+>     will simply wait forever for space to become available in the FIFO (but
+>     I didn't debug this).
+> 
+>     Anyway, the boot doesn't progress, the system appears to hang. In any
+>     case it's not usable as we have no other means of using it at this stage
+>     (network / usb / display etc.).
+> 
+>     2) Alternatively, the UART driver will load at this stage. Again, it
+>     will tweak the clocks and after probe it will leave its clocks disabled.
+>     The serial console driver hasn't taken over at this stage and earlycon
+>     is still active. Again, the system will hang, because IP and PCLK have
+>     been disabled by the UART driver. Once the serial console is enabled,
+>     clocks are being enabled again, but because earlycon is still waiting
+>     for progress, the boot doesn't progress past disabling ip and pclk. It
+>     never gets to enabling the serial console (re-enabling the clocks).
+> 
+>     So in both cases we get some output from earlycon, but the system hangs
+>     once the first consumer driver of an IP attached to cmu_peric0 has
+>     completed probing.
+> 
+>     ...
+> 
+>     If earlycon is not enabled in kernel command line, everything works
+>     fine, the kernel buffers its messages and once the real serial console
+>     driver starts, all messages since boot are being printed.
+> 
+> As requested, add a comment to the code for posterity, so the
+> information is not lost. The patch referenced in the comment can be
+> found at [2].
 
-I've added that to the change when I've merged this to my tree, thanks!
+That should also be in the comment in the .c file, right?  Along with
+the git id that you feel should be reverted?
+
+thanks,
 
 greg k-h
 
