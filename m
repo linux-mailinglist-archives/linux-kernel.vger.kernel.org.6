@@ -1,264 +1,121 @@
-Return-Path: <linux-kernel+bounces-247633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-247632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63F2F92D237
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:05:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A8A792D235
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 15:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3A1BB2238F
-	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:05:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35909288130
+	for <lists+linux-kernel@lfdr.de>; Wed, 10 Jul 2024 13:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F80D19248E;
-	Wed, 10 Jul 2024 13:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBC219246D;
+	Wed, 10 Jul 2024 13:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ffpC0Ptx"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFe895Wt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17DA191497;
-	Wed, 10 Jul 2024 13:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F64191F70;
+	Wed, 10 Jul 2024 13:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720616702; cv=none; b=CvIOaBo4jWyLxnMy3KFohcLn6ZmU7UbCO0TuF3rG/PuSB6MZsVYX4O7Ek7pnmanlMwXc41kJN02vBmFC5yPO6qDdVCviKjNIiZH1Mo+fG4LGYcdCFGZTA2p5jmFum0T2xbplqq62iUl4pRUlCAlXjNRbnQVppDUV5eW0GCM1X9E=
+	t=1720616702; cv=none; b=takgrk/Jw3ZTGnFhx/3R8E6IkXlSn4LmQ8cjEZ8JpRuMNdboorK2b8VVojOHQQH5ZC7KcfaZBuPbFfjoVXoQbiq3XjCUC4qRl0CxuUPczT3Do25vbZP1YF2sepWeFVIVmj9pKWxpi7WWqvJaxXshAUhckVPkqOWQ6DExBxgJazk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720616702; c=relaxed/simple;
-	bh=SyVxla2et2wQdF7Ur4jp45UAsd15s5o3dZy1WA18ZDI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bHwa39V4U1v0xFEijaXP+FKPeGv2/Msa0VyLMTkXcRhqwYNqJ4/Ng6Hwy50MzHSwRef8QPGAvgAiELSzr+V+YPqHw5pWb8PmhNI65OXg7vWyNi5M0rmdNTj7UTewyv6EGdGqjNo8OFlsaKqASBYIZdKYp+fzUk2RPAXZt7Z3b5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ffpC0Ptx; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a6fd513f18bso667422166b.3;
-        Wed, 10 Jul 2024 06:05:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720616699; x=1721221499; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wO7cOo1kh0P6Txqc4PJ38t7/AZC3sWDggaziBs/A6L4=;
-        b=ffpC0Ptx7Paa7NIuXWvTVGfCsTATf535PBhZQ4STb3ErLpW2TeqoMUQMCa+0FvlGyZ
-         WCPJVsHO4W82+VDo9CWOR0t2HzNt9ujnfnnWhteaTv5WgMQ3mwAtImCGnbjhaYvwOX5E
-         xuPj9BkKQaY0FZqJLiNvjRbJ098tCXUB+ZCGwEY617oS0xxCSHAr2T2yLmWQcmErAOby
-         HhOtZK6six7+D/Fq+XlzZBRRICXDhNYpfkiRqJa7+bEYpXSe0mBeGUqI3Z+o7ehu/27k
-         WLLDX48U2A7GquCPoZB/SA1QzQzfpRxMby9p4UX/x99hoYpQft1ubFSIKnB8wpm5RNH8
-         hC7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720616699; x=1721221499;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wO7cOo1kh0P6Txqc4PJ38t7/AZC3sWDggaziBs/A6L4=;
-        b=gR4TMmde8rBqo/JTTJvafMweqnpiXcOmAFlIwomCbuQd1OFuLF7lDJxSC6Nkg1jf/O
-         dilGio5lEacvAa5Ou+gIpBCxjCGSJoh6/sTwllBLqJ8NCBBbOd339MZYa7URqFL+Psvh
-         zUpqrDqUf1liihdW7x51W9n3kjuZrJEOYYb2LBTKCYFAFF5vRZclo1crrEWKar1DUbUj
-         IBRfIEG6TNVooq+nJVzYHXI+0U4EYFwmzf4ro0I80Q6Cj9QPagbsUmJtBrbB88WJuBER
-         CfkLJugck7bUnzehu8NJ1V+FLzHfCD2AzL1opXTQbK6OOcZmVlxRrPBazjW7+jVChcdk
-         VhGA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1BmHTmyxDuj3DzAZp3Sobfjq/K7Ws91ErWp4qfeqpmEyCt8dzZ+dMIQgdMwYilxslrDw/N5Hm8RS6tpITPsrKZTXxw1Z19A65KcM+yjnRs9YcwLrxr8d0SsCLMK9Mig+n3E8pcNhUD1dS8g==
-X-Gm-Message-State: AOJu0Yyb6IkJyTaw3rOSsphJgv7oGSLAi7EqAQx2ohqq8wQEL2LbICP/
-	6exBWUu1m8Jl5gbXNxP1z/y1tlreMYqq8rC1V3i/Sd+l/K/T3wAdt6aK+2nLwT7it13ZigWKd3w
-	3OXivOS2Qo1HWU5MlWaOE83AMz/4=
-X-Google-Smtp-Source: AGHT+IGCFxVCXdmp75r1wbdIFzjDoi24n+M4oPOXt5hliNLw6PRGoAOxUk2qC0wxwjz9YrQ49yXsGWc7xU/JD1IB1Ig=
-X-Received: by 2002:a17:906:794a:b0:a77:abe5:5f47 with SMTP id
- a640c23a62f3a-a780b89e7c3mr512946366b.63.1720616698896; Wed, 10 Jul 2024
- 06:04:58 -0700 (PDT)
+	bh=t39MmqwSPaxrZuPTDtESZrs/I/TqlSQHH2rexBiE5uU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JxG0mx41EmVkgSnk9CY5jWpbGgQRXcfv5/wFB7fjF2W2OerqLzDnwt45F8fStExkl123/ktnpjY/Oh7JjBaic3ZDuusd5DbtrZ1uAl8Vn3oZ/T1MJqPe6v8Nw2rzaI6B1sRCOGlty/t5k/ykmID8Cg7lvOJeMZbUK9bUX1RLF6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFe895Wt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A31DC32781;
+	Wed, 10 Jul 2024 13:05:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720616701;
+	bh=t39MmqwSPaxrZuPTDtESZrs/I/TqlSQHH2rexBiE5uU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YFe895WtRUX9zFbWxG6cn58NS6JBTJvPfw/+5fJi1Bl+56gkLPVhVJEWEPBUjPL3U
+	 GA0xxc/Yg05QHNHXIcEp3r3m5/L+gae3EEpw4TBTbyLab133Z77jRLGsygGMoypDyB
+	 zCDkZTmMLi2oP3lf2dAk6McQTG2ezHXBGKr+b4aKwqX0rWlYFVopJ7nF/Zyf3jDHui
+	 g/RvEIcOCKg0760T3ZBPpv2uxPMWUt4xbuwkvetKsGexMuAIfR9Nde5eWsQR2sDf2G
+	 P8jO5lMVEqXbHbSSDvzysNHVUarwsalpD6VKzQ9eeAezyiZjbbJWcV7hXefHHXcION
+	 5jx3MBeOPMt1w==
+Date: Wed, 10 Jul 2024 14:04:52 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Subject: Re: [PATCH 6.9 000/197] 6.9.9-rc1 review
+Message-ID: <Zo6G9C-AzU2jBrOt@finisterre.sirena.org.uk>
+References: <20240709110708.903245467@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d2841226-e27b-4d3d-a578-63587a3aa4f3@amd.com> <CAOUHufawNerxqLm7L9Yywp3HJFiYVrYO26ePUb1jH-qxNGWzyA@mail.gmail.com>
- <4307e984-a593-4495-b4cc-8ef509ddda03@amd.com> <CAGudoHH4N0eEQCpJqFioRCJx75WAO5n+kCA0XcRZ-914xFR0gw@mail.gmail.com>
-In-Reply-To: <CAGudoHH4N0eEQCpJqFioRCJx75WAO5n+kCA0XcRZ-914xFR0gw@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 10 Jul 2024 15:04:46 +0200
-Message-ID: <CAGudoHEsg95BHX+nmK-N7Ps5dsw4ffg6YPimXMFvS+AhGSJeGw@mail.gmail.com>
-Subject: Re: Hard and soft lockups with FIO and LTP runs on a large system
-To: Bharata B Rao <bharata@amd.com>
-Cc: Yu Zhao <yuzhao@google.com>, david@fromorbit.com, kent.overstreet@linux.dev, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, nikunj@amd.com, 
-	"Upadhyay, Neeraj" <Neeraj.Upadhyay@amd.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, willy@infradead.org, vbabka@suse.cz, kinseyho@google.com, 
-	Mel Gorman <mgorman@suse.de>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jul 10, 2024 at 2:24=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
->
-> On Wed, Jul 10, 2024 at 2:04=E2=80=AFPM Bharata B Rao <bharata@amd.com> w=
-rote:
-> >
-> > On 07-Jul-24 4:12 AM, Yu Zhao wrote:
-> > >> Some experiments tried
-> > >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > >> 1) When MGLRU was enabled many soft lockups were observed, no hard
-> > >> lockups were seen for 48 hours run. Below is once such soft lockup.
-> > <snip>
-> > >> Below preemptirqsoff trace points to preemption being disabled for m=
-ore
-> > >> than 10s and the lock in picture is lruvec spinlock.
-> > >
-> > > Also if you could try the other patch (mglru.patch) please. It should
-> > > help reduce unnecessary rotations from deactivate_file_folio(), which
-> > > in turn should reduce the contention on the LRU lock for MGLRU.
-> >
-> > Thanks. With mglru.patch on a MGLRU-enabled system, the below latency
-> > trace record is no longer seen for a 30hr workload run.
-> >
-> > >
-> > >>       # tracer: preemptirqsoff
-> > >>       #
-> > >>       # preemptirqsoff latency trace v1.1.5 on 6.10.0-rc3-mglru-irqs=
-trc
-> > >>       # ------------------------------------------------------------=
---------
-> > >>       # latency: 10382682 us, #4/4, CPU#128 | (M:desktop VP:0, KP:0,=
- SP:0
-> > >> HP:0 #P:512)
-> > >>       #    -----------------
-> > >>       #    | task: fio-2701523 (uid:0 nice:0 policy:0 rt_prio:0)
-> > >>       #    -----------------
-> > >>       #  =3D> started at: deactivate_file_folio
-> > >>       #  =3D> ended at:   deactivate_file_folio
-> > >>       #
-> > >>       #
-> > >>       #                    _------=3D> CPU#
-> > >>       #                   / _-----=3D> irqs-off/BH-disabled
-> > >>       #                  | / _----=3D> need-resched
-> > >>       #                  || / _---=3D> hardirq/softirq
-> > >>       #                  ||| / _--=3D> preempt-depth
-> > >>       #                  |||| / _-=3D> migrate-disable
-> > >>       #                  ||||| /     delay
-> > >>       #  cmd     pid     |||||| time  |   caller
-> > >>       #     \   /        ||||||  \    |    /
-> > >>            fio-2701523 128...1.    0us$: deactivate_file_folio
-> > >> <-deactivate_file_folio
-> > >>            fio-2701523 128.N.1. 10382681us : deactivate_file_folio
-> > >> <-deactivate_file_folio
-> > >>            fio-2701523 128.N.1. 10382683us : tracer_preempt_on
-> > >> <-deactivate_file_folio
-> > >>            fio-2701523 128.N.1. 10382691us : <stack trace>
-> > >>        =3D> deactivate_file_folio
-> > >>        =3D> mapping_try_invalidate
-> > >>        =3D> invalidate_mapping_pages
-> > >>        =3D> invalidate_bdev
-> > >>        =3D> blkdev_common_ioctl
-> > >>        =3D> blkdev_ioctl
-> > >>        =3D> __x64_sys_ioctl
-> > >>        =3D> x64_sys_call
-> > >>        =3D> do_syscall_64
-> > >>        =3D> entry_SYSCALL_64_after_hwframe
-> >
-> > However the contention now has shifted to inode_hash_lock. Around 55
-> > softlockups in ilookup() were observed:
-> >
-> > # tracer: preemptirqsoff
-> > #
-> > # preemptirqsoff latency trace v1.1.5 on 6.10.0-rc3-trnmglru
-> > # --------------------------------------------------------------------
-> > # latency: 10620430 us, #4/4, CPU#260 | (M:desktop VP:0, KP:0, SP:0 HP:=
-0
-> > #P:512)
-> > #    -----------------
-> > #    | task: fio-3244715 (uid:0 nice:0 policy:0 rt_prio:0)
-> > #    -----------------
-> > #  =3D> started at: ilookup
-> > #  =3D> ended at:   ilookup
-> > #
-> > #
-> > #                    _------=3D> CPU#
-> > #                   / _-----=3D> irqs-off/BH-disabled
-> > #                  | / _----=3D> need-resched
-> > #                  || / _---=3D> hardirq/softirq
-> > #                  ||| / _--=3D> preempt-depth
-> > #                  |||| / _-=3D> migrate-disable
-> > #                  ||||| /     delay
-> > #  cmd     pid     |||||| time  |   caller
-> > #     \   /        ||||||  \    |    /
-> >       fio-3244715 260...1.    0us$: _raw_spin_lock <-ilookup
-> >       fio-3244715 260.N.1. 10620429us : _raw_spin_unlock <-ilookup
-> >       fio-3244715 260.N.1. 10620430us : tracer_preempt_on <-ilookup
-> >       fio-3244715 260.N.1. 10620440us : <stack trace>
-> > =3D> _raw_spin_unlock
-> > =3D> ilookup
-> > =3D> blkdev_get_no_open
-> > =3D> blkdev_open
-> > =3D> do_dentry_open
-> > =3D> vfs_open
-> > =3D> path_openat
-> > =3D> do_filp_open
-> > =3D> do_sys_openat2
-> > =3D> __x64_sys_openat
-> > =3D> x64_sys_call
-> > =3D> do_syscall_64
-> > =3D> entry_SYSCALL_64_after_hwframe
-> >
-> > It appears that scalability issues with inode_hash_lock has been brough=
-t
-> > up multiple times in the past and there were patches to address the sam=
-e.
-> >
-> > https://lore.kernel.org/all/20231206060629.2827226-9-david@fromorbit.co=
-m/
-> > https://lore.kernel.org/lkml/20240611173824.535995-2-mjguzik@gmail.com/
-> >
-> > CC'ing FS folks/list for awareness/comments.
->
-> Note my patch does not enable RCU usage in ilookup, but this can be
-> trivially added.
->
-> I can't even compile-test at the moment, but the diff below should do
-> it. Also note the patches are present here
-> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=3Dvfs.=
-inode.rcu
-> , not yet integrated anywhere.
->
-> That said, if fio you are operating on the same target inode every
-> time then this is merely going to shift contention to the inode
-> spinlock usage in find_inode_fast.
->
-> diff --git a/fs/inode.c b/fs/inode.c
-> index ad7844ca92f9..70b0e6383341 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -1524,10 +1524,14 @@ struct inode *ilookup(struct super_block *sb,
-> unsigned long ino)
->  {
->         struct hlist_head *head =3D inode_hashtable + hash(sb, ino);
->         struct inode *inode;
-> +
->  again:
-> -       spin_lock(&inode_hash_lock);
-> -       inode =3D find_inode_fast(sb, head, ino, true);
-> -       spin_unlock(&inode_hash_lock);
-> +       inode =3D find_inode_fast(sb, head, ino, false);
-> +       if (IS_ERR_OR_NULL_PTR(inode)) {
-> +               spin_lock(&inode_hash_lock);
-> +               inode =3D find_inode_fast(sb, head, ino, true);
-> +               spin_unlock(&inode_hash_lock);
-> +       }
->
->         if (inode) {
->                 if (IS_ERR(inode))
->
-
-I think I expressed myself poorly, so here is take two:
-1. inode hash soft lookup should get resolved if you apply
-https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=3Dvfs=
-.inode.rcu&id=3D7180f8d91fcbf252de572d9ffacc945effed0060
-and the above pasted fix (not compile tested tho, but it should be
-obvious what the intended fix looks like)
-2. find_inode_hash spinlocks the target inode. if your bench only
-operates on one, then contention is going to shift there and you may
-still be getting soft lockups. not taking the spinlock in this
-codepath is hackable, but I don't want to do it without a good
-justification.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7cKoKgjgoj6gFu6Q"
+Content-Disposition: inline
+In-Reply-To: <20240709110708.903245467@linuxfoundation.org>
+X-Cookie: Your love life will be... interesting.
 
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+--7cKoKgjgoj6gFu6Q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Jul 09, 2024 at 01:07:34PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.9.9 release.
+> There are 197 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+I'm seeing the RTC date_read_loop test start triggering timeouts on the
+i.MX8MP EVK with this:
+
+# #  RUN           rtc.date_read_loop ...
+# # rtctest.c:95:date_read_loop:Continuously reading RTC time for 30s (with 11ms breaks after every read).
+# # date_read_loop: Test terminated by timeout
+
+The test was fine with v6.10-rc3 (the first tag it worked at all for
+v6.10 but that's another story...), but is broken in -next:
+
+# #  RUN           rtc.date_read_loop ...
+# # rtctest.c:95:date_read_loop:Continuously reading RTC time for 30s (with 11ms breaks after every read).
+# # rtctest.c:122:date_read_loop:Performed 2954 RTC time reads.
+# #            OK  rtc.date_read_loop
+
+Bisection points to "selftests/harness: Fix tests timeout and race
+condition" but this looks like a test bug, the timeout for tests is 30s
+and the test tries to run for 30s which obviously doesn't add up.
+Previously the test would pass because the bug the patch is fixing is
+that timeout had no effect.  I'm also running the test on other
+platforms without it triggering new timeouts, it's just this one
+specific platform that triggered which is a bit worrying.
+
+I'll send a patch for the test.
+
+--7cKoKgjgoj6gFu6Q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaOhvMACgkQJNaLcl1U
+h9ADCwf/Xcr6nSrhNXlBvO9LvYnwTFr5vm7XLa2D4BrIJ+SLvmihiQXZt/jsCnpj
+sEeVakh712Z41PKO9+kXvG+fCyNJnnSGj+C6YwMqO3IhfLrmoa392JVmRDB1ad97
+YdfDNhTEgisqfMJJyIbzYY6tN0ZpB56DrBwyJIHYJkUL+JaXfbVtGBd1xg2rk5ZY
+ONIcxLjrIhdJRbh9pGiUSkYoWM/pQWQNFVFHnvjE1Wkb5XrE2maRyPDJuSKM4/tZ
+hxZdqRJQX7UwNwkLrG1GI6OeC1YBGd3pMNuhRQAAmsz/jcHCFfDD+i3tvTk77M/Z
+QA3FPmIZwQjoGbo/gRlTSokzwO8AhA==
+=K/ql
+-----END PGP SIGNATURE-----
+
+--7cKoKgjgoj6gFu6Q--
 
